@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-04T19:22:57.193Z",
+  "last_updated": "2026-11-04T19:33:57.967Z",
   "total_verified_learnings": 1209,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -4564,8 +4564,8 @@
       "slug": "beclab-olares",
       "platform": "github",
       "source_url": "https://github.com/beclab/Olares",
-      "source_version": "714b5043",
-      "content_hash": "ee08a730d0a2c5d1e1b33757db3b85b4fba4930afa43bfd6ef62a774ce86040d",
+      "source_version": "2e0f254a",
+      "content_hash": "f60931850ddc18ef32940cb0fcfb0299579877c785346f9240a394a623c917a6",
       "dossier_path": "07_PROJECT_LEARNING/beclab-olares-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/beclab-olares-learnings.md",
       "promoted_rules": [
@@ -4658,6 +4658,11 @@
           "number": 6606,
           "title": "files(fix): improve file service stability (#4396)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6931,
+          "title": "files(fix): archive, share permissions, paused tasks and cross-node  (#4402)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -4665,7 +4670,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T20:50:04.516Z",
+      "verified_at": "2026-11-04T19:33:52.381Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -8460,8 +8465,8 @@
       "slug": "crate-ci-typos",
       "platform": "github",
       "source_url": "https://github.com/crate-ci/typos",
-      "source_version": "4c8b7f51",
-      "content_hash": "07a67f6feff551640fac4e14f0da75d45bb59410959968c2cfed920d8ac0cc29",
+      "source_version": "7cd4cdb2",
+      "content_hash": "9cad7fd3f8220b52ac933b1a3afa9193ebffd37268d2bbe63b41d8fa4391fe00",
       "dossier_path": "07_PROJECT_LEARNING/crate-ci-typos-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/crate-ci-typos-learnings.md",
       "promoted_rules": [
@@ -8479,6 +8484,11 @@
           "number": 2328,
           "title": "Length-Bounded Static Perfect Hash Table Pruning",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6928,
+          "title": "Merge pull request #1642 from edgarrmondragon/pyproject-metadata",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -8486,7 +8496,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T12:18:33.344Z",
+      "verified_at": "2026-11-04T19:33:45.500Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -45357,8 +45367,8 @@
       "slug": "open-ani-animeko",
       "platform": "github",
       "source_url": "https://github.com/open-ani/animeko",
-      "source_version": "8ca97e5d",
-      "content_hash": "f5f4a199374d084a531a83461c84aed2403c30fefcae7fee1bdea6f484869250",
+      "source_version": "bd7a42f3",
+      "content_hash": "32a775c3ea1ad3a689a1d0333bdb1bd45cbf9f1db316bef33bd168a409bc9c35",
       "dossier_path": "07_PROJECT_LEARNING/open-ani-animeko-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/open-ani-animeko-learnings.md",
       "promoted_rules": [
@@ -45396,6 +45406,11 @@
           "number": 6190,
           "title": "Complete Traditional Chinese (Taiwan) translation (#3670)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6932,
+          "title": "download): 下载弹窗选源默认自动匹配, 切过的模式在会话内保持 (#3691)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -45403,7 +45418,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T12:15:46.841Z",
+      "verified_at": "2026-11-04T19:33:52.681Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -71523,8 +71538,8 @@
       "slug": "volcengine-openviking",
       "platform": "github",
       "source_url": "https://github.com/volcengine/OpenViking",
-      "source_version": "5760af6f",
-      "content_hash": "c1a9149b82e64fff30bb50f01f2588369244ab9c5a3ba028c4039496a0e97402",
+      "source_version": "3e0c9dcc",
+      "content_hash": "0a089e86484bca094f0f7a791cdaa544b50a74da72747912642a2e8defc0f565",
       "dossier_path": "07_PROJECT_LEARNING/volcengine-openviking-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/volcengine-openviking-learnings.md",
       "promoted_rules": [
@@ -71612,6 +71627,11 @@
           "number": 6591,
           "title": "pathlock): preserve independent holders across handoff and recovery (#6895)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6933,
+          "title": "frontend): add shared React UI workspace and bilingual component docs (#6996)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -71619,7 +71639,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T19:24:25.678Z",
+      "verified_at": "2026-11-04T19:33:57.935Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -176602,6 +176622,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-04T19:22:57.166Z"
+    },
+    "rule-6928": {
+      "learning_id": "rule-6928",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6928,
+      "title": "Merge pull request #1642 from edgarrmondragon/pyproject-metadata",
+      "source_url": "https://github.com/crate-ci/typos",
+      "source_version": "7cd4cdb2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T19:33:45.500Z"
+    },
+    "rule-6931": {
+      "learning_id": "rule-6931",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6931,
+      "title": "files(fix): archive, share permissions, paused tasks and cross-node  (#4402)",
+      "source_url": "https://github.com/beclab/Olares",
+      "source_version": "2e0f254a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T19:33:52.381Z"
+    },
+    "rule-6932": {
+      "learning_id": "rule-6932",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6932,
+      "title": "download): 下载弹窗选源默认自动匹配, 切过的模式在会话内保持 (#3691)",
+      "source_url": "https://github.com/open-ani/animeko",
+      "source_version": "bd7a42f3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T19:33:52.681Z"
+    },
+    "rule-6933": {
+      "learning_id": "rule-6933",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6933,
+      "title": "frontend): add shared React UI workspace and bilingual component docs (#6996)",
+      "source_url": "https://github.com/volcengine/OpenViking",
+      "source_version": "3e0c9dcc",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T19:33:57.935Z"
     }
   },
   "aliases": {

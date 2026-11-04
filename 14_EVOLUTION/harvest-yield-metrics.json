@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-04T19:22:57.293Z",
-  "total_cycles_completed": 7274,
-  "total_learnings_persisted": 7274,
-  "total_rules_promoted": 6963,
+  "last_updated": "2026-11-04T19:33:58.065Z",
+  "total_cycles_completed": 7279,
+  "total_learnings_persisted": 7279,
+  "total_rules_promoted": 6970,
   "history": [
-    {
-      "timestamp": "2026-11-04T01:20:39.525Z",
-      "repository": "pulumi/pulumi",
-      "learningId": "learn-github-pulumi-pulumi",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T01:20:41.133Z",
-      "repository": "sigstore/cosign",
-      "learningId": "learn-github-sigstore-cosign",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T01:27:43.556Z",
-      "repository": "AndyTheFactory/newspaper4k",
-      "learningId": "learn-github-andythefactory-newspaper4k",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T01:27:48.525Z",
-      "repository": "saltstack/salt",
-      "learningId": "learn-github-saltstack-salt",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T01:27:52.252Z",
-      "repository": "cilium/cilium",
-      "learningId": "learn-github-cilium-cilium",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-04T01:27:53.769Z",
       "repository": "xerj-org/xerj",
@@ -1402,6 +1367,41 @@
       "timestamp": "2026-11-04T19:22:57.293Z",
       "repository": "bee-san/Ciphey",
       "learningId": "learn-github-bee-san-ciphey",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T19:33:45.631Z",
+      "repository": "crate-ci/typos",
+      "learningId": "learn-github-crate-ci-typos",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T19:33:52.539Z",
+      "repository": "Nanbeige/Nanbeige4.3-33B",
+      "learningId": "learn-huggingface-nanbeige-nanbeige4-3-33b",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T19:33:52.574Z",
+      "repository": "beclab/Olares",
+      "learningId": "learn-github-beclab-olares",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T19:33:52.813Z",
+      "repository": "open-ani/animeko",
+      "learningId": "learn-github-open-ani-animeko",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T19:33:58.065Z",
+      "repository": "volcengine/OpenViking",
+      "learningId": "learn-github-volcengine-openviking",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

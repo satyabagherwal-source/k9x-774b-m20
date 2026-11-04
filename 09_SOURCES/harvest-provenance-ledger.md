@@ -7306,3 +7306,8 @@ Every entry in this ledger must capture:
 | `learn-huggingface-huggingfacebio-carbon-x` | `https://huggingface.co/HuggingFaceBio/Carbon-X` | `hf-hugging` | Multi-dimensional audit evidence | 2026-11-04T19:22:52.846Z |
 | `learn-github-gkd-kit-gkd` | `https://github.com/gkd-kit/gkd` | `0fe172f5` | Multi-dimensional audit evidence | 2026-11-04T19:22:54.645Z |
 | `learn-github-bee-san-ciphey` | `https://github.com/bee-san/Ciphey` | `041ce8c7` | Multi-dimensional audit evidence | 2026-11-04T19:22:57.287Z |
+| `learn-github-crate-ci-typos` | `https://github.com/crate-ci/typos` | `7cd4cdb2` | Multi-dimensional audit evidence | 2026-11-04T19:33:45.625Z |
+| `learn-huggingface-nanbeige-nanbeige4-3-33b` | `https://huggingface.co/Nanbeige/Nanbeige4.3-33B` | `hf-nanbeig` | Multi-dimensional audit evidence | 2026-11-04T19:33:52.527Z |
+| `learn-github-beclab-olares` | `https://github.com/beclab/Olares` | `2e0f254a` | Multi-dimensional audit evidence | 2026-11-04T19:33:52.565Z |
+| `learn-github-open-ani-animeko` | `https://github.com/open-ani/animeko` | `bd7a42f3` | Multi-dimensional audit evidence | 2026-11-04T19:33:52.807Z |
+| `learn-github-volcengine-openviking` | `https://github.com/volcengine/OpenViking` | `3e0c9dcc` | Multi-dimensional audit evidence | 2026-11-04T19:33:58.060Z |

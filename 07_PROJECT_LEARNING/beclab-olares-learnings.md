@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/beclab-olares-learnings.md`  
 > **Source**: github ([https://github.com/beclab/Olares](https://github.com/beclab/Olares))  
-> **Source Version**: `714b5043`  
+> **Source Version**: `2e0f254a`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T20:50:03.828Z  
+> **Timestamp**: 2026-11-04T19:33:51.476Z  
 > **Learning ID**: `learn-github-beclab-olares`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/beclab-olares-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/beclab/Olares](https://github.com/beclab/Olares))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T20:49:39.040Z  
+> **Harvest Timestamp**: 2026-11-04T19:33:51.073Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Open-Source Personal Cloud OS for Always-On Agents
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 5339 stars
+- **Stars / Engagement**: 5342 stars
 
 ---
 
@@ -1137,12 +1137,10 @@ export const formatPathtoUrl = (path: string) => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `714b5043` (2026-11-03)
-**Commit Message**: files(fix): improve file service stability (#4396)
+### Incident Patch 1: `2e0f254a` (2026-11-04)
+**Commit Message**: files(fix): archive, share permissions, paused tasks and cross-node  (#4402)
 
-* files(fix): improve file service stability and security
-
-* Update files_deploy.yaml
+files(fix): archive, share permissions, paused tasks and cross-node storage fixes
 
 **File**: `framework/files/.olares/config/cluster/deploy/files_deploy.yaml` (modified, +2/-2)
 ```diff
@@ -1150,8 +1148,8 @@ Observed empirical fixes and code patches:
  {{ end }}
  
          - name: samba-server
--          image: beclab/samba-server:0.0.24
-+          image: beclab/samba-server:0.0.26
+-          image: beclab/samba-server:0.0.26
++          image: beclab/samba-server:0.0.27
            imagePullPolicy: IfNotPresent
            securityContext:
              allowPrivilegeEscalation: true
@@ -1159,80 +1157,20 @@ Observed empirical fixes and code patches:
            command:
              - /samba_share
          - name: files
--          image: beclab/files-server:v0.2.209
-+          image: beclab/files-server:v0.2.214
-           imagePullPolicy: IfNotPresent
-           securityContext:
-             allowPrivilegeEscalation: true
-```
-
----
-
-### Incident Patch 2: `0a3bb16d` (2026-11-02)
-**Commit Message**: fix(gpu): register before sending queued timeslice lock requests (#4376)
-
-fix(hami): register before sending queued timeslice lock requests
-
-**File**: `infrastructure/gpu/.olares/config/gpu/hami/values.yaml` (modified, +1/-1)
-```diff
-@@ -4,7 +4,7 @@ nameOverride: ""
- fullnameOverride: ""
- namespaceOverride: ""
- imagePullSecrets: []
--version: "v2.6.30"
-+version: "v2.6.31"
- 
- # Nvidia GPU Parameters
- resourceName: "nvidia.com/gpu"
-```
-
-**File**: `platform/hami/.olares/Olares.yaml` (modified, +1/-1)
-```diff
-@@ -3,7 +3,7 @@ target: prebuilt
- output:
-   containers:
-     - 
--      name: beclab/hami:v2.6.30
-+      name: beclab/hami:v2.6.31
-     - 
-       name: beclab/hami-webui-fe-oss:v1.0.8
-     - 
-```
-
----
-
-### Incident Patch 3: `cc0ba9c5` (2026-11-02)
-**Commit Message**: files(fix): improve reliability of file operations and sharing (#4388)
-
-**File**: `framework/files/.olares/config/cluster/deploy/files_deploy.yaml` (modified, +2/-2)
-```diff
-@@ -148,7 +148,7 @@ spec:
- {{ end }}
- 
-         - name: samba-server
--          image: beclab/samba-server:0.0.21
-+          image: beclab/samba-server:0.0.24
-           imagePullPolicy: IfNotPresent
-           securityContext:
-             allowPrivilegeEscalation: true
-@@ -242,7 +242,7 @@ spec:
-           command:
-             - /samba_share
-         - name: files
--          image: beclab/files-server:v0.2.206
-+          image: beclab/files-server:v0.2.209
+-          image: beclab/files-server:v0.2.214
++          image: beclab/files-server:v0.2.219
            imagePullPolicy: IfNotPresent
            securityContext:
              allowPrivilegeEscalation: true
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4403** (2026-11-04): chore(system-apps, wizard, auth): update frontend images (@qq815776412)
+- **PR #4402** (2026-11-04): files(fix): archive, share permissions, paused tasks and cross-node  (@aby913)
+- **PR #4401** (2026-11-04): chore(authelia, lldap): bump image tag (@hysyeah)
+- **PR #4399** (2026-11-04): docs: align Plex tutorial with verified setup and playback flow (@fnalways)
 - **PR #4397** (2026-11-03): chore(system-apps, wizard, auth): update frontend images (@qq815776412)
 - **PR #4396** (2026-11-03): files(fix): improve file service stability (@aby913)
-- **PR #4395** (2026-11-03): chore(authelia,lldap): bump image tag (@hysyeah)
-- **PR #4394** (2026-11-03): chore(bfl): remove unused api rules and adjust activate state transition (@dkeven)
-- **PR #4393** (2026-11-03): fix(search3): upgrade release server to v0.4.5 and monitor to v0.4.6 (@bleachzou3)
-- **PR #4392** (2026-11-03): chore(l4): image tag to v0.4.1 (@hysyeah)
 
 ---
 
@@ -1252,13 +1190,13 @@ fix(hami): register before sending queued timeslice lock requests
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. files(fix): improve file service stability (#4396)
+## X. files(fix): archive, share permissions, paused tasks and cross-node  (#4402)
 
 **RULE**:
 When implementing operations in `framework/files/.olares/config/cluster/deploy/files_deploy.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in beclab/Olares. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `714b5043`: files(fix): improve file service stability (#4396). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2e0f254a`: files(fix): archive, share permissions, paused tasks and cross-node  (#4402). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `framework/files/.olares/config/cluster/deploy/files_deploy.yaml`.
@@ -1266,16 +1204,16 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-          image: beclab/samba-server:0.0.26
-          image: beclab/files-server:v0.2.214
+          image: beclab/samba-server:0.0.27
+          image: beclab/files-server:v0.2.219
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-          image: beclab/samba-server:0.0.24
-          image: beclab/files-server:v0.2.209
+          image: beclab/samba-server:0.0.26
+          image: beclab/files-server:v0.2.214
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `714b5043` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2e0f254a` are properly handled with clean fallback behavior.

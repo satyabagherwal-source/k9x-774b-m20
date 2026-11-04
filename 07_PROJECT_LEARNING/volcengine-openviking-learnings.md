@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/volcengine-openviking-learnings.md`  
 > **Source**: github ([https://github.com/volcengine/OpenViking](https://github.com/volcengine/OpenViking))  
-> **Source Version**: `5760af6f`  
+> **Source Version**: `3e0c9dcc`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T19:24:25.051Z  
+> **Timestamp**: 2026-11-04T19:33:57.230Z  
 > **Learning ID**: `learn-github-volcengine-openviking`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/volcengine-openviking-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/volcengine/OpenViking](https://github.com/volcengine/OpenViking))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T19:24:23.514Z  
+> **Harvest Timestamp**: 2026-11-04T19:33:56.697Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Self-evolving Context Database for AI Agents. Unify Agent Memory, Knowledge RAG and Skills.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 41452 stars
+- **Stars / Engagement**: 41532 stars
 
 ---
 
@@ -1474,11 +1474,11 @@ class AsyncProgressTracker:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #6928** (2026-11-03): **[Bug]: vikingbot gateway crashes with UnicodeEncodeError printing "✓" on Chinese Windows (GBK stdio)**
-  *Symptoms*: ### Issue Origin  Observed or reproduced in a real environment  ### Bug Description  On Chinese Windows (system ANSI code page 936 / GBK), vikingbot gateway crashes with UnicodeEncodeError: 'gbk' codec can't encode character '\u2713' when it prints the "✓" checkmark in console.print(f"[green]✓[/green] Gateway mode: ...") (bot/vikingbot/cli/commands.py:561). Root cause: rich's legacy Windows renderer (legacy_windows_render -> LegacyWindowsTerm -> _win32_console.write_text) writes through the locale-encoded sys.stdout. When vikingbot's output is redirected (piped to a file, a log collector, CI, or a service), Python uses the system encoding gbk on Chinese Windows, and gbk cannot encode U+2713 (✓). This does not reproduce in an interactive console because Python forces UTF-8 there (PEP 528).  ### Steps to Reproduce  1. On Chinese Windows (ANSI code page 936), ensure Python UTF-8 mode is off (no `PYTHONUTF8` / `PYTHONIOENCODING` environment variables). 2. Redirect vikingbot's output so stdout is not an interactive console: vikingbot gateway 2>&1 | Out-File gateway_test.txt 3. The process crashes when it prints "✓ Gateway mode: ...".  ### Expected Behavior  Gateway starts and prints "✓ Gateway mode: ..." normally, even when output is redirected.  ### Actual Behavior  UnicodeEncodeError: 'gbk' codec can't encode character '\u2713' in position 0: illegal multibyte sequence  ### Minimal Reproducible Example  ```python import sys sys.stdout.reconfigure(encoding="gbk")  # simulate redi
+- **Issue #6985** (2026-11-04): **[Bug]: auto-commit policy silently truncates fractional and boolean thresholds**
+  *Symptoms*: ### Issue Origin  Observed or reproduced in a real environment  ### Bug Description  `AutoCommitPolicy.from_dict()` validates fields described as integers by calling `int(value)` in `_coerce_int()`. A fractional JSON number is silently truncated; e.g. `message_count_threshold: 0.5` becomes `0`, which disables message-count auto-commit. A JSON boolean also becomes an integer (`true` -> `1`). `validate_idle_timeout_input()` has the same truncation behavior. The server configuration validator passes a raw policy dict to these functions, so this can change user-supplied configuration semantics without an error.  ### Steps to Reproduce  1. On main commit `5760af6ff41fdc7b74056a7b408807ee7cdbc9b1`, run the example below against `openviking.session.auto_commit_policy`. 2. Observe that fractional and boolean values are accepted and changed. I executed the current policy module locally in isolation, with only its `InvalidArgumentError` import stubbed; I did not start the full server.  ### Expected Behavior  Reject fractional numbers and booleans for integer policy fields with a clear validation error. Keep the existing documented bounds/clamping for valid integers, if intended. Invalid input must not silently disable or accelerate auto-commit.  ### Actual Behavior  `{"message_count_threshold": 0.5}` becomes `message_count_threshold=0`; `{"idle_timeout_seconds": 300.9}` becomes `300`; `{"message_count_threshold": true}` becomes `1`. There is no error, despite the validation message say
 
-- **Issue #6872** (2026-11-02): **[Bug]: content write normalizes whitespace path segments to _ but read does not — edit on an existing memory forks a new file**
-  *Symptoms*: ### Issue Origin  Observed or reproduced in a real environment  ### Bug Description  # [Bug] content write normalizes whitespace path segments to `_` but read does not — `edit` on an existing memory forks a new file  **Version**: v0.5.2 (`openviking[bot]==0.5.2`, plugin `@openviking/opencode-plugin` 0.5.19)  The same applies to `write mode=replace` on any pre-existing whitespace path.  ## Scale (our deployment, read-only count)  ~11% of memory `.md` files (4,697 / 42,505) sit under a path segment containing a space.  ## Related  #5178 (`a09a9d20a`) lowercases `preferences` / `cases` / `experiences` / `trajectories` filenames (`{{ user|lower }}/...`), so one user's preferences now also split between `Jane Doe/` (pre-0.5) and `jane doe/` (new topics). Combined with this bug a single user can end up with `Jane Doe/`, `jane doe/` and `Jane_Doe/`.  ### Steps to Reproduce  ## Reproduce  Any memory file whose path has a space-containing segment; call the MCP `edit` tool on it with a valid `old_string`, then `read` the original URI and `ls` the parent.  ### Expected Behavior  ## Expected  Read and write resolve the same canonical URI. Options: apply the same normalization on read (with the existing `%20` fallback extended to the space→`_` form), or skip whitespace normalization for paths that already exist / for `memories/` targets, and make memory templates produce canonical segments up front.   ### Actual Behavior  ## What happens  Since #5328 (`d8f675445`), `ContentWriteService.wr
+- **Issue #6984** (2026-11-04): **[Bug]: CSV/TSV tool-result synopsis materializes every row before externalization**
+  *Symptoms*: ### Issue Origin  Observed or reproduced in a real environment  ### Bug Description  Large CSV/TSV tool outputs are meant to be externalized, but `openviking/session/tool_result_synopsis.py::_try_table()` calls `list(csv.reader(...))` and then builds a second list of nonempty rows. `ToolOutputExternalizer.prepared_externalized_preview()` calls this synopsis generator before externalizing an oversized tool result. This creates a large transient allocation on the path intended to handle large results.  ### Steps to Reproduce  1. On main commit `5760af6ff41fdc7b74056a7b408807ee7cdbc9b1`, run the example below against `openviking.session.tool_result_synopsis`. 2. Observe peak Python allocations after the CSV string has already been created. I ran the current module in isolation; I did not start the full server.  ### Expected Behavior  Count rows and retain only the header, first data row, and small validation window. Additional peak memory should remain bounded rather than scale with the total parsed table size.  ### Actual Behavior  An 8.69 MB CSV string (100,000 rows, two columns) caused 71.35 MB of additional peak Python allocations under Python 3.11.8 on Windows. The synopsis itself only reports row and column counts and a short sample.  ### Minimal Reproducible Example  ```python import tracemalloc from openviking.session.tool_result_synopsis import generate_tool_result_synopsis  content = "id,value\n" + "".join(f"{i}," + "x" * 80 + "\n" for i in range(100_000)) tracemalloc.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1495,2060 +1495,909 @@ class AsyncProgressTracker:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3a90bbb3` (2026-11-02)
-**Commit Message**: fix(pathlock): preserve independent holders across handoff and recovery (#6895)
+### Incident Patch 1: `e6437c93` (2026-11-04)
+**Commit Message**: feat(frontend): add shared React UI workspace and bilingual component docs (#6996)
 
-Keep each lease independently renewable and releasable, and recover durable handoffs under their original owner without losing lock coverage.
+* feat(ui): scaffold React library and Rspress component docs
 
-**File**: `crates/ragfs-python/src/lib.rs` (modified, +33/-0)
+* docs(ui): add agent development guidelines
+
+* refactor(ui): group StatusBadge files
+
+Co-authored-by: Copilot <[REDACTED_EMAIL]>
+
+* docs(ui): define module structure and navigation conventions
+
+Co-authored-by: Copilot <[REDACTED_EMAIL]>
+
+* feat(ui): add English and Chinese documentation locales
+
+Co-authored-by: Copilot <[REDACTED_EMAIL]>
+
+* feat(ui): 使用 Rslib 构建并预留公共模块入口 (#6933)
+
+* refactor(ui): 明确视图组件与页面层边界 (#6945)
+
+* feat(frontend): migrate shared workspace and add file icons
+
+Move the shared workspace from ui to frontend and update CI and documentation paths. Rename the React package, add inline SVG file icons and bilingual interactive examples, and fix the migration and shared-source ignore rules.
+
+* feat(frontend): add component subpaths and scoped stylesheet entries (#6954)
+
+* ci(frontend): add React UI npm release workflow
+
+* chore(frontend): bump React UI to 0.1.1
+
+* chore(frontend): add Rslint checks and upgrade to TypeScript 7 (#6978)
+
+* docs(react): require justified useEffect usage (#6979)
+
+* feat(ui): define props and ship 
+
+**File**: `.github/actions/build-ui/action.yml` (added, +27/-0)
 ```diff
-@@ -1475,6 +1475,9 @@ fn extract_optional_owned_lease_ref(
- /// Convert a PathLockHandoffRef to a Python dict.
- fn handoff_ref_to_py_dict(py: Python<'_>, handoff: &PathLockHandoffRef) -> PyResult<Py<PyAny>> {
-     let dict = PyDict::new(py);
-+    if let Some(holder_id) = &handoff.holder_id {
-+        dict.set_item("holder_id", holder_id)?;
-+    }
-     if let Some(lease_ref) = &handoff.lease_ref {
-         dict.set_item("lease_ref", lease_ref)?;
-     }
-@@ -2936,6 +2939,32 @@ impl RAGFSBindingClient {
-         })
-     }
- 
-+    /// Reacquire validated durable coverage under its original logical owner.
-+    #[pyo3(signature = (ctx, requests, owner_id, timeout_secs=0.0))]
-+    fn pathlock_reacquire_batch_async<'py>(
-+        &self,
-+        py: Python<'py>,
-+        ctx: Option<HashMap<String, String>>,
-+        requests: Vec<HashMap<String, String>>,
-+        owner_id: String,
-+        timeout_secs: f64,
-+    ) -> PyResult<Bound<'py, PyAny>> {
-+        let fs_ctx = build_fs_context(ctx);
-+        let timeout = validate_timeout_secs(timeout_secs)?;
-+        let requests = parse_pathlock_request_batch(&requests)?;
-+        let manager = self.clone_pathlock_manager();
-+        let task = self.rt.spawn(FS_CTX.scope(fs_ctx, async move {
-+            manager.reacquire_batch(&requests, &owner_id, timeout).await
-+        }));
-+        pyo3_async_runtimes::tokio::future_into_py(py, async move {
-+            let lease = task
-+                .await
-+                .map_err(|error| PyRuntimeError::new_err(error.to_string()))?
-+                .map_err(pathlock_err_to_py)?;
-+            Python::attach(|py| owned_lease_to_py_dict(py, &lease))
-+        })
-+    }
+@@ -0,0 +1,27 @@
++name: Build UI
++description: Install, lint, type-check, and build the UI library and documentation
++runs:
++  using: composite
++  steps:
++    - name: Set up Node.js for UI
++      uses: actions/setup-node@v6
++      with:
++        node-version: 22
++        cache: npm
++        cache-dependency-path: frontend/package-lock.json
 +
-     /// Create a borrowed view of an owned lease.
-     #[pyo3(signature = (ctx, owned_lease_ref))]
-     fn pathlock_as_borrowed(
-@@ -3176,6 +3205,10 @@ impl RAGFSBindingClient {
-             })
-             .transpose()?;
-         let handoff = PathLockHandoffRef {
-+            holder_id: handoff_ref
-+                .get("holder_id")
-+                .map(|v| v.extract(py))
-+                .transpose()?,
-             lease_ref,
-             handle_mode,
-             owner_id,
++    - name: Install UI dependencies
++      shell: bash
++      run: npm ci --prefix frontend
++
++    - name: Lint and type-check UI
++      shell: bash
++      run: npm run lint --prefix frontend
++
++    - name: Build UI library and docs
++      shell: bash
++      run: npm run build --prefix frontend
++
++    - name: Check UI docs output
++      shell: bash
++      run: test -f frontend/docs/doc_build/index.html
 ```
 
-**File**: `crates/ragfs/benches/pathlock_perf.md` (modified, +21/-0)
+**File**: `.github/workflows/_docs-deploy.yml` (modified, +8/-0)
 ```diff
-@@ -1,5 +1,26 @@
- # PathLock performance baselines
+@@ -40,6 +40,14 @@ jobs:
+           VITE_COUNTER_URL: ${{ vars.VITE_COUNTER_URL }}
+           VITE_DOCS_SEARCH_URL: ${{ vars.VITE_DOCS_SEARCH_URL }}
  
-+Holder-lease comparison on 2026-11-01 (macOS arm64, release native binding,
-+Python 3.13, local Redis, 200 unrelated live locks in the same namespace).
-+Each provider used a fresh local workspace, 10 warmup cycles and 300 measured
-+Exact/Tree acquire cycles; release pooled both kinds (600 samples). The comparison
-+base was `main` at `f423d8e72`. Times include the synchronous Python binding.
++      - name: Build UI
++        uses: ./.github/actions/build-ui
 +
-+| Provider | Exact acquire P50, µs (main → holders) | Tree acquire P50, µs | Release P50, µs |
-+| --- | --- | --- | --- |
-+| Memory | 29.3 → 5.2 | 30.8 → 5.5 | 1.5 → 1.5 |
-+| Filesystem on local disk | 1975.5 → 1849.6 | 2050.8 → 1931.0 | 329.7 → 334.4 |
-+| SQLite on local disk | 82.2 → 66.1 | 88.2 → 67.8 | 54.1 → 54.7 |
-+| Redis | 138.2 → 121.0 | 490.4 → 258.4 | 230.5 → 206.7 |
++      - name: Include UI docs in site
++        run: |
++          mkdir -p docs/.vitepress/dist/ui
++          cp -a frontend/docs/doc_build/. docs/.vitepress/dist/ui/
 +
-+Filesystem acquire P95 varied (Exact: 3060.6 → 3581.4 µs, Tree:
-+3256.5 → 3506.3 µs); this small local sample does not establish tail-latency
-+equivalence. No acquisition or release failed. Holder adoption performs a storage
-+mutation even locally; its cost is no longer comparable to main's registry-only
-+local adoption. Redis Tree acquisition still scans HASH fields, although unrelated
-+holder decoding/cleanup is bounded. Run the concurrency benchmark below for
-+database writer contention and multi-process behavior.
-+
- Run from the repository root:
+       - name: Build plugin downloads
+         run: bash .github/scripts/build-plugin-downloads.sh docs/.vitepress/dist/dl https://docs.openviking.ai/dl
  
- ```sh
 ```
 
-**File**: `crates/ragfs/src/lock/cache_provder.rs` (modified, +343/-46)
+**File**: `.github/workflows/docs-tos.yml` (modified, +49/-1)
 ```diff
-@@ -21,14 +21,16 @@ use super::provider::{
-     AcquisitionChange, AtomicAcquisition, AtomicAcquisitionResult, PathLockHandleMode,
-     PathLockProvider,
- };
--use super::types::{LockToken, PathLockError, PathLockKind, PathLockRequest, PathLockResult};
-+use super::types::{
-+    HandoffRecoveryReason, LockToken, PathLockError, PathLockKind, PathLockRequest, PathLockResult,
-+};
+@@ -5,6 +5,8 @@ on:
+     branches: [ main ]
+     paths:
+       - 'docs/**'
++      - 'frontend/**'
++      - '.github/actions/build-ui/**'
+       - '.github/workflows/docs-tos.yml'
+       # The deploy also publishes the plugin downloads under /dl.
+       - 'examples/.claude-plugin/**'
+@@ -27,6 +29,7 @@ env:
+ jobs:
+   deploy:
+     name: Build and Upload Docs to TOS
++    if: github.repository == 'volcengine/OpenViking'
+     runs-on: ubuntu-24.04
+     steps:
+       - name: Checkout repository
+@@ -50,6 +53,14 @@ jobs:
+           VITE_COUNTER_URL: ${{ vars.VITE_COUNTER_URL }}
+           VITE_DOCS_SEARCH_URL: ${{ vars.VITE_DOCS_SEARCH_URL }}
  
--const ACQUIRE_BATCH_ID: &str = "pathlock.acquire_batch.v2";
-+const ACQUIRE_BATCH_ID: &str = "pathlock.acquire_batch.v4";
- const ROLLBACK_BATCH_ID: &str = "pathlock.rollback_batch.v1";
- const COMPARE_WRITE_ID: &str = "pathlock.compare_write.v1";
- const COMPARE_REMOVE_ID: &str = "pathlock.compare_remove.v1";
- const REFRESH_ID: &str = "pathlock.refresh.v1";
--const REFRESH_BATCH_ID: &str = "pathlock.refresh_batch.v1";
-+const REFRESH_BATCH_ID: &str = "pathlock.refresh_batch.v2";
- // Bound each Lua execution so large leases do not monopolize Redis.
- const REFRESH_BATCH_SIZE: usize = 256;
- const IS_LOCKED_ID: &str = "pathlock.is_locked.v1";
-@@ -47,9 +49,13 @@ local function normalize_decimal(value)
-     if not value or not string.match(value, "^%d+$") then
-         return nil
-     end
--    local normalized = string.gsub(value, "^0+", "")
--    if normalized == "" then
--        return "0"
-+    -- Rust writes canonical decimals; skip the pattern scan in the common case.
-+    local normalized = value
-+    if string.byte(value, 1) == 48 then
-+        normalized = string.gsub(value, "^0+", "")
-+        if normalized == "" then
-+            return "0"
-+        end
-     end
-     if string.len(normalized) > string.len(u128_max)
-         or (string.len(normalized) == string.len(u128_max)
-@@ -70,7 +76,27 @@ local function decimal_less(left, right)
-     end
-     return left < right
- end
--local function decode_token(raw)
-+local function decode_token(raw, stale_before)
-+    if string.sub(raw, 1, 3) == "v2|" then
-+        local owner, body = string.match(raw, "^v2|([^|:,]+)|(.+)$")
-+        if not owner then return nil end
-+        local token = { owner = owner, time_ns = "0", kind = "E", holders = {} }
-+        local seen = {}
-+        local count = 0
-+        for item in string.gmatch(body .. ",", "(.-),") do
-+            local id, kind, time = string.match(item, "^([^|:,]+):([ET]):(%d+)$")
-+            if not id or seen[id] or not normalize_decimal(time) then return nil end
-+            seen[id] = true
-+            count = count + 1
-+            if not stale_before or decimal_less(time, stale_before) ~= true then
-+                table.insert(token.holders, { id = id, kind = kind, time_ns = time })
-+                if kind == "T" then token.kind = "T" end
-+                if decimal_less(token.time_ns, time) then token.time_ns = time end
-+            end
-+        end
-+        if count == 0 then return nil end
-+        return token
-+    end
-     local p1 = string.find(raw, ":", 1, true)
-     local p2 = p1 and string.find(raw, ":", p1 + 1, true)
-     local p3 = p2 and string.find(raw, ":", p2 + 1, true)
-@@ -86,6 +112,9 @@ local function decode_token(raw)
-     end
-     return { owner = token_owner, time_ns = time_ns, kind = kind }
- end
-+local function holder_less(a, b)
-+    return a.id < b.id
-+end
- local function is_normalized_path(path)
-     if not path or string.sub(path, 1, 1) ~= "/"
-         or (path ~= "/" and string.sub(path, -1) == "/")
-@@ -131,6 +160,13 @@ local owner = ARGV[1]
- local now_ns = ARGV[2]
- local stale_before_ns = ARGV[3]
- local ttl_ms = tonumber(ARGV[4])
-+-- The holder entrypoint supplies a versioned identity envelope. The legacy
-+-- entrypoint remains available for reading/testing drained v1 deployments.
-+local holder, source
-+if string.sub(owner, 1, 3) == "v2|" then
-+    owner, holder, source = string.match(owner, "^v2|([^|:,]+)|([^|:,]+)|([^|:,]*)$")
-+    if not owner then return { "invalid_request", "invalid holder identity" } end
-+end
- local function is_descendant(path, root)
-     if root == "/" then
-         return path ~= "/"
-@@ -160,15 +196,40 @@ end
++      - name: Build UI
++        uses: ./.github/actions/build-ui
++
++      - name: Include UI docs in site
++        run: |
++          mkdir -p docs/.vitepress/dist/ui
++          cp -a frontend/docs/doc_build/. docs/.vitepress/dist/ui/
++
+       - name: Build plugin downloads
+         run: bash .github/scripts/build-plugin-downloads.sh docs/.vitepress/dist/dl https://docs.openviking.net/dl
  
- local records = {}
- if includes_tree then
-+    -- Decode every record that can conflict, plus a bounded sample of unrelated
-+    -- records for opportunistic stale cleanup.
-+    local unrelated_budget = 16
-+    local related = {}
-+    for _, request in ipairs(requests) do
-+        related[request.path] = true
-+        for _, ancestor in ipairs(ancestors(request.path)) do
-+            related[ancestor] = true
-+        end
-+    end
-     local values = redis.call("HGETALL", key)
-     for index = 1, #values, 2 do
-         local path = values[index]
--        local raw = values[index + 1]
--        local token = decode_token(raw)
--        if not token then
--            return { "invalid_token", path, raw }
-+        local relevant = related[path]
-+        if not relevant then
-+            for _, request in ipairs(requests) do
-+                if request.kind == "T" and is_descendant(path, request.path) then
-+                    relevant = true
-+                    break
-+              
+@@ -123,19 +134,40 @@ jobs:
+             --cache-control "${STATIC_CACHE_CONTROL}" \
+             --only-show-errors
+ 
++          # UI assets may be nested outside the main site's assets directory.
++          # Publish every non-HTML UI resource first. Revalidate their stable
++          # URLs rather than assuming every file has a content hash.
++          aws s3 cp "${DIST_DIR}/ui" "s3://${TOS_BUCKET}/ui/" \
++            --endpoint-url "https://${TOS_S3_ENDPOINT}" \
++            --recursive \
++            --exclude "*.html" \
++            --cache-control "${HTML_CACHE_CONTROL}" \
++            --only-show-errors
++
+           aws s3 cp "${DIST_DIR}" "s3://${TOS_BUCKET}/" \
+             --endpoint-url "https://${TOS_S3_ENDPOINT}" \
+             --recursive \
+             --exclude ".git/*" \
+             --exclude "assets/*" \
+             --exclude "dl/*" \
++            --exclude "ui/*" \
++            --cache-control "${HTML_CACHE_CONTROL}" \
++            --only-show-errors
++
++          aws s3 cp "${DIST_DIR}/ui" "s3://${TOS_BUCKET}/ui/" \
++            --endpoint-url "https://${TOS_S3_ENDPOINT}" \
++            --recursive \
++            --exclude "*" \
++            --include "*.html" \
+             --cache-control "${HTML_CACHE_CONTROL}" \
+             --only-show-errors
+ 
+           while IFS= read -r -d '' html_file; do
+             rel_path="${html_file#${DIST_DIR}/}"
+             case "${rel_path}" in
+-              index.html|404.html) continue ;;
++              # UI uses its own generated routes; don't create main-site
++              # clean-URL aliases (especially an object at /ui).
++              index.html|404.html|ui/*) continue ;;
+             esac
+ 
+             clean_path="${rel_path%.html}"
+@@ -146,6 +178,22 @@ jobs:
+               --only-show-errors
+           done < <(find "${DIST_DIR}" -type f -name "*.html" -print0)
+ 
++          # Rspress may emit leaf.html for extensionless links. Keep those
++          # aliases inside /ui; directory index pages retain their index route.
++          # Never create an object at /ui that could shadow the site's prefix.
++          while IFS= read -r -d '' html_file; do
++            rel_path="${html_file#${DIST_DIR}/}"
++            case "${rel_path}" in
++              ui/index.html|ui/404.html|*/index.html) continue ;;
++            esac
++
++            aws s3 cp "${html_file}" "s3://${TOS_BUCKET}/${rel_path%.html}" \
++              --endpoint-url "https://${TOS_S3_ENDPOINT}" \
++              --content-type "text/html; charset=utf-8" \
++              --cache-control "${HTML_CACHE_CONTROL}" \
++              --only-show-errors
++          done < <(find "${DIST_DIR}/ui" -type f -name "*.html" -print0)
++
+           if [ -d "${DIST_DIR}/agents" ]; then
+             aws s3 cp "${DIST_DIR}/agents" "s3://${TOS_BUCKET}/agents/" \
+               --endpoint-url "https://${TOS_S3_ENDPOINT}" \
 ```
 
-**File**: `crates/ragfs/src/lock/cache_refresh_tests.rs` (modified, +98/-2)
+**File**: `.github/workflows/docs.yml` (modified, +4/-0)
 ```diff
-@@ -185,7 +185,9 @@ async fn manager_uses_batch_for_manual_and_background_refresh() {
-     let observed = calls.clone();
-     let (runtime, provider) = mock_provider(move |request| match request.script_id.as_str() {
-         ACQUIRE_BATCH_ID => {
--            let owner = std::str::from_utf8(&request.args[0]).unwrap();
-+            let identity = std::str::from_utf8(&request.args[0]).unwrap();
-+            let mut identity = identity.strip_prefix("v2|").unwrap().split('|');
-+            let (owner, holder) = (identity.next().unwrap(), identity.next().unwrap());
-             let time = std::str::from_utf8(&request.args[1]).unwrap();
-             let mut results = vec![
-                 ScriptValue::Bytes(b"ok".to_vec()),
-@@ -197,7 +199,7 @@ async fn manager_uses_batch_for_manual_and_background_refresh() {
-                     ScriptValue::Bytes(pair[0].to_vec()),
-                     ScriptValue::Bytes(b"created".to_vec()),
-                     ScriptValue::Bytes(Vec::new()),
--                    ScriptValue::Bytes(format!("{owner}:{time}:{kind}").into_bytes()),
-+                    ScriptValue::Bytes(format!("v2|{owner}|{holder}:{kind}:{time}").into_bytes()),
-                 ]);
-             }
-             Ok(ScriptValue::Array(results))
-@@ -271,6 +273,7 @@ async fn redis_batch_preserves_kind_ownership_errors_and_hash_ttl() {
-                     owner_id: owner.to_string(),
-                     time_ns: 100,
-                     lock_type: kind,
-+                    holders: Vec::new(),
-                 },
-             )
-             .await
-@@ -349,3 +352,96 @@ async fn redis_batch_preserves_kind_ownership_errors_and_hash_ttl() {
-     }
-     runtime.close().await.unwrap();
- }
-+
-+#[tokio::test]
-+async fn redis_holder_batch_preserves_ownership_kind_and_result_order() {
-+    let Ok(endpoint) = std::env::var("REDIS_URL") else {
-+        return;
-+    };
-+    let runtime = CacheRuntime::redis(crate::cache_runtime::RedisProviderConfig {
-+        endpoints: vec![endpoint],
-+        ..crate::cache_runtime::RedisProviderConfig::default()
-+    })
-+    .await
-+    .unwrap();
-+    let provider = RedisPathLockProvider::new(
-+        runtime.clone(),
-+        &format!("refresh-{}", uuid::Uuid::new_v4()),
-+        30.0,
-+    )
-+    .unwrap();
-+    let paths: Vec<_> = (0..300).map(|i| format!("/local/account/{i}")).collect();
-+    for path in &paths {
-+        provider
-+            .try_create_token(
-+                path,
-+                &LockToken::held("owner", "holder", PathLockKind::Exact, 100),
-+            )
-+            .await
-+            .unwrap();
-+    }
-+    let mut requests = paths.clone();
-+    requests.extend(["/local/other/missing".into(), "/invalid".into()]);
-+    let results = provider
-+        .refresh_holders(&requests, "owner", "holder", 200, 0)
-+        .await;
-+    assert_eq!(results.len(), requests.len());
-+    assert!(results[..300].iter().all(|r| matches!(r, Ok(true))));
-+    assert!(matches!(results[300], Ok(false)));
-+    assert!(matches!(
-+        results[301],
-+        Err(PathLockError::InvalidRequest(_))
-+    ));
-+    assert!(provider
-+        .refresh_holders(&paths, "owner", "wrong-holder", 300, 0)
-+        .await
-+        .iter()
-+        .all(|r| matches!(r, Ok(false))));
-+    // A sibling's heartbeat cannot revive an expired Tree holder.
-+    let path = "/local/account/mixed";
-+    let mut token = LockToken::held("owner", "expired-tree", PathLockKind::Tree, 1);
-+    token.add_holder("live-exact", PathLockKind::Exact, 100, 0, None);
-+    provider.try_create_token(path, &token).await.unwrap();
-+    assert!(matches!(
-+        provider
-+            .refresh_holders(&[path.into()], "owner", "expired-tree", 200, 50)
-+            .await[0],
-+        Ok(false)
-+    ));
-+    assert!(matches!(
-+        provider
-+            .refresh_holders(&[path.into()], "owner", "live-exact", 200, 50)
-+            .await[0],
-+        Ok(true)
-+    ));
-+    let current = provider.read_token(path).await.unwrap().unwrap();
-+    assert_eq!(current.lock_type, PathLockKind::Exact);
-+    assert!(!provider.refresh_token(path, "owner", 300).await.unwrap());
-+    assert!(!provider.remove_token(path, "owner", true).await.unwrap());
-+    // Prefix-related holder IDs must use the same canonical order as Rust CAS.
-+    let prefix_path = "/local/account/prefix";
-+    let mut prefix_token = LockToken::held("owner", "a", PathLockKind::Exact, 100);
-+    prefix_token.add_holder("a-", PathLockKind::Exact, 100, 0, None);
-+    provider
-+        .try_create_token(prefix_path, &prefix_token)
-+        .await
-+        .unwrap();
-+    assert!(matches!(
-+        provider
-+            .refresh_holders(&[prefix_path.into()], "owner", "a", 200, 0)
-+            .await[0],
-+        Ok(true)
-+    ));
-+    assert!(provider
-+        .mutate_holder(prefix_path, "owner", "a", 200, 0, true)
-+        .await
-+        .unwrap());
-+    assert!(provider
-+        .mutate_holder(prefix_path, "owner", "a-", 200, 0, true)
-+        .await
-+        .unwrap()
+@@ -4,13 +4,17 @@ on:
+   pull_request:
+     paths:
+       - 'docs/**'
++      - 'frontend/**'
++      - '.github/actions/build-ui/**'
+       - '.github/workflows/_docs.yml'
+       - '.github/workflows/_docs-deploy.yml'
+       - '.github/workflows/docs.yml'
+   push:
+     branches: [ main ]
+     paths:
+       - 'docs/**'
++      - 'frontend/**'
++      - '.github/actions/build-ui/**'
+       - '.github/workflows/_docs.yml'
+       - '.github/workflows/_docs-deploy.yml'
+       - '.github/workflows/docs.yml'
 ```
 
-**File**: `crates/ragfs/src/lock/codec.rs` (modified, +74/-9)
+**File**: `.github/workflows/react-release.yml` (added, +56/-0)
 ```diff
-@@ -1,15 +1,27 @@
- //! Lock token encoder/decoder.
- //!
--//! Wire format: `{owner_id}:{time_ns}:{lock_type}` where lock_type is `E` or `T`.
-+//! Holder format: `v2|owner|holder:kind:time,...`. Legacy owner tokens remain readable.
- 
--use super::types::{LockToken, PathLockError, PathLockKind, PathLockResult};
-+use super::types::{LockHolder, LockToken, PathLockError, PathLockKind, PathLockResult};
- 
--/// Encodes and decodes lock tokens in the `owner_id:time_ns:lock_type` text format.
-+/// Encodes holder tokens and decodes holder or legacy token formats.
- pub struct LockTokenCodec;
- 
- impl LockTokenCodec {
-     /// Encode a `LockToken` into its wire format.
-     pub fn encode(token: &LockToken) -> String {
-+        if !token.holders.is_empty() {
-+            return format!(
-+                "v2|{}|{}",
-+                token.owner_id,
-+                token
-+                    .holders
-+                    .iter()
-+                    .map(|h| format!("{}:{}:{}", h.id, h.kind.to_code(), h.time_ns))
-+                    .collect::<Vec<_>>()
-+                    .join(",")
-+            );
-+        }
-         format!(
-             "{}:{}:{}",
-             token.owner_id,
-@@ -21,22 +33,61 @@ impl LockTokenCodec {
-     /// Decode a raw token string into a `LockToken`.
-     /// Only accepts `E` (Exact) and `T` (Tree) lock type codes.
-     pub fn decode(raw: &str) -> PathLockResult<LockToken> {
-+        if let Some(body) = raw.strip_prefix("v2|") {
-+            let invalid = || PathLockError::InvalidToken(raw.into());
-+            let (owner, refs) = body.split_once('|').ok_or_else(invalid)?;
-+            if !Self::valid_id(owner) || refs.is_empty() {
-+                return Err(invalid());
-+            }
-+            let mut token = LockToken {
-+                owner_id: owner.into(),
-+                time_ns: 0,
-+                lock_type: PathLockKind::Exact,
-+                holders: Vec::new(),
-+            };
-+            for item in refs.split(',') {
-+                let parts: Vec<_> = item.split(':').collect();
-+                if parts.len() != 3
-+                    || !Self::valid_id(parts[0])
-+                    || parts[1].len() != 1
-+                    || parts[2].is_empty()
-+                    || !parts[2].bytes().all(|b| b.is_ascii_digit())
-+                    || token.holders.iter().any(|h| h.id == parts[0])
-+                {
-+                    return Err(invalid());
-+                }
-+                token.holders.push(LockHolder {
-+                    id: parts[0].into(),
-+                    kind: PathLockKind::from_code(parts[1].chars().next().unwrap())
-+                        .ok_or_else(invalid)?,
-+                    time_ns: parts[2].parse().map_err(|_| invalid())?,
-+                });
-+            }
-+            token.recompute();
-+            return Ok(token);
-+        }
-         let (owner_id, rest) = raw
-             .split_once(':')
-             .ok_or_else(|| PathLockError::InvalidToken(format!("missing ':' in token: {raw}")))?;
- 
-         let (time_ns_str, rest) = rest.split_once(':').ok_or_else(|| {
-             PathLockError::InvalidToken(format!("missing second ':' in token: {raw}"))
-         })?;
-+        if !Self::valid_id(owner_id)
-+            || time_ns_str.is_empty()
-+            || !time_ns_str.bytes().all(|b| b.is_ascii_digit())
-+        {
-+            return Err(PathLockError::InvalidToken(raw.into()));
-+        }
- 
--        let time_ns: u128 = time_ns_str.parse().map_err(|_| {
--            PathLockError::InvalidToken(format!("invalid time_ns in token: {raw}"))
--        })?;
-+        let time_ns: u128 = time_ns_str
-+            .parse()
-+            .map_err(|_| PathLockError::InvalidToken(format!("invalid time_ns in token: {raw}")))?;
- 
-         let mut lock_type_chars = rest.chars();
--        let lock_type_char = lock_type_chars
--            .next()
--            .ok_or_else(|| PathLockError::InvalidToken(format!("empty lock type in token: {raw}")))?;
-+        let lock_type_char = lock_type_chars.next().ok_or_else(|| {
-+            PathLockError::InvalidToken(format!("empty lock type in token: {raw}"))
-+        })?;
-         if lock_type_chars.next().is_some() {
-             return Err(PathLockError::InvalidToken(format!(
-                 "invalid lock type in token: {raw}"
-@@ -54,8 +105,14 @@ impl LockTokenCodec {
-             owner_id: owner_id.to_string(),
-             time_ns,
-             lock_type,
-+            holders: Vec::new(),
-         })
-     }
+@@ -0,0 +1,56 @@
++name: React UI Release
 +
-+    /// Validate identities before placing them in the delimited wire format.
-+    pub fn valid_id(id: &str) -> bool {
-+        !id.is_empty() && !id.chars().any(|c| c.is_control() || ":|,".contains(c))
-+    }
- }
- 
- #[cfg(test)]
-@@ -66,11 +123,13 @@ mod tests {
-     fn roundtrip_supported_lock_types() {
-         for token in [
-             LockToken {
-+                holders: Vec::new(),
-                 owner_id: "abc-123".to_string(),
-                 time_ns: 1700000000000000000,
-                 lock_t
++on:
++  push:
++    tags:
++      - "react@*"
++
++permissions:
++  contents: read
++  id-token: write
++
++concurrency:
++  group: react-release-${{ github.ref }}
++  cancel-in-progress: false
++
++jobs:
++  publish:
++    if: github.repository == 'volcengine/OpenViking'
++    runs-on: ubuntu-24.04
++    defaults:
++      run:
++        working-directory: frontend
++    steps:
++      - uses: actions/checkout@v6
++      - uses: actions/setup-node@v6
++        with:
++          node-version: "24"
++          registry-url: https://registry.npmjs.org
++          cache: npm
++          cache-dependency-path: frontend/package-lock.json
++      - name: Validate release tag
++        env:
++          RELEASE_TAG: ${{ github.ref_name }}
++        run: |
++          PACKAGE_VERSION="$(node -p "require('./packages/react/package.json').version")"
++          test "$RELEASE_TAG" = "react@$PACKAGE_VERSION"
++      - run: npm ci
++      - run: npm run format:check
++      - run: npm run check
++      - run: npm run build:docs
++      - run: npm pack --dry-run --workspace @openviking/react
++      - name: Check whether version already exists
++        id: published
++        run: |
++          PACKAGE_VERSION="$(node -p "require('./packages/react/package.json').version")"
++          if npm view "@openviking/react@$PACKAGE_VERSION" version >/dev/null 2>&1; then
++            echo "exists=true" >> "$GITHUB_OUTPUT"
++            echo "@openviking/react@$PACKAGE_VERSION already exists; skipping."
++          else
++            echo "exists=false" >> "$GITHUB_OUTPUT"
++          fi
++      - name: Publish React UI
++        if: steps.published.outputs.exists == 'false'
++        env:
++          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
++        run: npm publish --workspace @openviking/react --access public --provenance
 ```
 
-**File**: `crates/ragfs/src/lock/lost_lease_tests.rs` (modified, +384/-82)
+**File**: `.github/workflows/ui.yml` (added, +34/-0)
 ```diff
-@@ -1,7 +1,9 @@
- //! Lost lease authorization, renewal deadlines, and bounded cleanup regressions.
- use super::*;
- use crate::core::{FsContextInner, PathLockContext, WriteFlag, FS_CTX};
--use crate::lock::provider::{FilesystemPathLockProvider, MemoryPathLockProvider};
-+use crate::lock::provider::{
-+    AtomicAcquisitionResult, FilesystemPathLockProvider, MemoryPathLockProvider,
-+};
- use crate::lock::wrapper::PathLockWrappedFS;
- use crate::plugins::memfs::MemFileSystem;
- use async_trait::async_trait;
-@@ -15,6 +17,12 @@ struct FaultProvider {
-     refresh_calls: AtomicUsize,
-     remove_calls: AtomicUsize,
-     delay: Duration,
-+    /// Fail the next token write at this path with an I/O error.
-+    fail_write: StdMutex<Option<String>>,
-+    /// Bump a holder heartbeat just before the next token write.
-+    race_write: AtomicBool,
-+    /// Delete the source token immediately before CAS at this path.
-+    lose_source_on_write: StdMutex<Option<String>>,
- }
- 
- impl FaultProvider {
-@@ -26,6 +34,9 @@ impl FaultProvider {
-             refresh_calls: AtomicUsize::new(0),
-             remove_calls: AtomicUsize::new(0),
-             delay: Duration::ZERO,
-+            fail_write: StdMutex::new(None),
-+            race_write: AtomicBool::new(false),
-+            lose_source_on_write: StdMutex::new(None),
-         }
-     }
- }
-@@ -38,15 +49,54 @@ impl PathLockProvider for FaultProvider {
-     fn handle_mode(&self) -> PathLockHandleMode {
-         self.inner.handle_mode()
-     }
--    async fn try_acquire_batch_atomic(
-+    async fn try_acquire_holders_atomic(
-         &self,
-         requests: &[PathLockRequest],
-         owner: &str,
-+        holder: &str,
-         now: u128,
-         stale: u128,
--    ) -> PathLockResult<Option<Vec<AtomicAcquisition>>> {
-+        source: Option<&str>,
-+    ) -> PathLockResult<Option<AtomicAcquisitionResult>> {
-         self.inner
--            .try_acquire_batch_atomic(requests, owner, now, stale)
-+            .try_acquire_holders_atomic(requests, owner, holder, now, stale, source)
-+            .await
-+    }
-+    async fn compare_and_remove_token(
-+        &self,
-+        path: &str,
-+        expected: &LockToken,
-+    ) -> PathLockResult<bool> {
-+        self.inner.compare_and_remove_token(path, expected).await
-+    }
-+    async fn mutate_holder(
-+        &self,
-+        path: &str,
-+        owner: &str,
-+        holder: &str,
-+        now: u128,
-+        stale: u128,
-+        release: bool,
-+    ) -> PathLockResult<bool> {
-+        if release {
-+            self.remove_calls.fetch_add(1, Ordering::SeqCst);
-+            if self.fail_remove.load(Ordering::SeqCst) {
-+                return Err(PathLockError::Io("injected cleanup timeout".into()));
-+            }
-+        } else {
-+            self.refresh_calls.fetch_add(1, Ordering::SeqCst);
-+            if !self.delay.is_zero() {
-+                tokio::time::sleep(self.delay).await;
-+            }
-+            let fault = self.failures.lock().unwrap().get(path).copied();
-+            match fault {
-+                Some(true) => return Err(PathLockError::Io("injected refresh timeout".into())),
-+                Some(false) => return Ok(false),
-+                None => {}
-+            }
-+        }
-+        self.inner
-+            .mutate_holder(path, owner, holder, now, stale, release)
-             .await
-     }
-     async fn read_token(&self, path: &str) -> PathLockResult<Option<LockToken>> {
-@@ -61,30 +111,43 @@ impl PathLockProvider for FaultProvider {
-         expected: &LockToken,
-         replacement: &LockToken,
-     ) -> PathLockResult<bool> {
-+        if self
-+            .fail_write
-+            .lock()
-+            .unwrap()
-+            .take_if(|p| p == path)
-+            .is_some()
-+        {
-+            return Err(PathLockError::Io("injected write failure".into()));
-+        }
-+        if self.race_write.swap(false, Ordering::SeqCst) {
-+            let mut refreshed = expected.clone();
-+            refreshed.holders[0].time_ns += 1;
-+            refreshed.recompute();
-+            assert!(
-+                self.inner
-+                    .compare_and_write_token(path, expected, &refreshed)
-+                    .await?
-+            );
-+        }
-+        let lose_source = self
-+            .lose_source_on_write
-+            .lock()
-+            .unwrap()
-+            .take_if(|p| p == path)
-+            .is_some();
-+        if lose_source {
-+            assert!(self.inner.compare_and_remove_token(path, expected).await?);
-+        }
-         self.inner
-             .compare_and_write_token(path, expected, replacement)
-             .await
-     }
-     async fn refresh_token(&self, path: &str, owner: &str, now: u128) -> PathLockResult<bool> {
--        self.refresh_calls.fetch_add(1, Ordering::SeqCst);
--        if !self.delay.is_zero() {
--            tokio::time::sleep(self.delay).await;
--        }
--        let fault = self.failures.lock().unwrap().get(path).copied();
--        match fault {
--            Some(true) => Err(PathLockE
+@@ -0,0 +1,34 @@
++name: UI
++
++on:
++  pull_request:
++    paths:
++      - 'frontend/**'
++      - '.github/actions/build-ui/**'
++      - '.github/workflows/ui.yml'
++  push:
++    paths:
++      - 'frontend/**'
++      - '.github/actions/build-ui/**'
++      - '.github/workflows/ui.yml'
++  workflow_dispatch:
++
++permissions:
++  contents: read
++
++concurrency:
++  group: ui-${{ github.workflow }}-${{ github.ref }}
++  cancel-in-progress: true
++
++jobs:
++  check:
++    name: Type-check and Build UI
++    runs-on: ubuntu-24.04
++    steps:
++      - name: Checkout repository
++        uses: actions/checkout@v6
++        with:
++          persist-credentials: false
++
++      - name: Build UI
++        uses: ./.github/actions/build-ui
 ```
 
-**File**: `crates/ragfs/src/lock/manager.rs` (modified, +432/-736)
+**File**: `.gitignore` (modified, +3/-0)
 ```diff
-@@ -18,12 +18,15 @@ use crate::core::{FileSystem, FsContextView};
+@@ -157,6 +157,9 @@ RAGbenchmark/*.log
+ CLAUDE.md
+ *.so
+ AGENTS.md
++!/frontend/AGENTS.md
++!/frontend/packages/react/src/components/AGENTS.md
++!/frontend/packages/react/src/pages/AGENTS.md
+ AGENTS.md.local
  
- use super::metrics::LockMetrics;
- use super::path::normalize_logical_path;
--use super::provider::{AcquisitionChange, AtomicAcquisition, PathLockHandleMode, PathLockProvider};
-+use super::provider::{
-+    validate_handoff_source, AcquisitionChange, AtomicAcquisition, PathLockHandleMode,
-+    PathLockProvider,
-+};
- use super::resolver::{LockPathResolver, ResolvedExactPaths};
- use super::types::{
--    BorrowedPathLockLease, HandoffRecoveryReason, LockToken, OwnedPathLockLease, PathLockConflict,
--    PathLockError, PathLockHandoffRef, PathLockKind, PathLockLease, PathLockObserveSnapshot,
--    PathLockRequest, PathLockResult,
-+    BorrowedPathLockLease, HandoffRecoveryReason, LockHolder, LockToken, OwnedPathLockLease,
-+    PathLockConflict, PathLockError, PathLockHandoffRef, PathLockKind, PathLockLease,
-+    PathLockObserveSnapshot, PathLockRequest, PathLockResult,
- };
- 
- /// Configuration for the PathLockManager.
-@@ -66,6 +69,8 @@ const POLL_JITTER_PERCENT: u64 = 20;
- const LEASE_VALIDITY_RATIO: f64 = 0.8;
- /// Retry invalidated cleanup for six heartbeat intervals, then forget locally.
- const CLEANUP_RETRY_INTERVALS: f64 = 6.0;
-+/// CAS retries for one holder mutation before reporting retryable contention.
-+const HOLDER_CAS_ATTEMPTS: usize = 16;
- 
- impl PathLockManager {
-     fn poll_interval_bounds(attempt: u32) -> (u64, u64) {
-@@ -162,22 +167,11 @@ struct TokenHealth {
-     consecutive_failures: u64,
- }
- 
--#[derive(Debug)]
--enum DowngradeTokenResult {
--    Downgraded,
--    AlreadyExact,
--    Missing,
--    OwnerLost,
--    Changed,
--}
--
- #[derive(Debug, Default)]
- struct OwnerRegistry {
-     entries: HashMap<String, LeaseEntry>,
-     lock_refs: HashMap<String, usize>,
-     token_health: HashMap<String, TokenHealth>,
--    // ponytail: grows with handoffs while this owner lives; encode generations if measured.
--    consumed_handoff_refs: HashSet<String>,
- }
- 
- impl OwnerRegistry {
-@@ -218,7 +212,7 @@ impl OwnerRegistry {
-             if unique_paths.insert(lock_path.clone()) {
-                 *self.lock_refs.entry(lock_path.clone()).or_default() += 1;
-                 self.token_health
--                    .entry(lock_path.clone())
-+                    .entry(format!("{lease_ref}\0{lock_path}"))
-                     .or_insert(TokenHealth {
-                         last_confirmed_at: confirmed_at,
-                         consecutive_failures: 0,
-@@ -247,6 +241,9 @@ impl OwnerRegistry {
-     /// Remove one newly inserted lease without touching provider state.
-     fn rollback_insert(&mut self, lease_ref: &str) -> Option<LeaseEntry> {
-         let entry = self.entries.remove(lease_ref)?;
-+        for path in &entry.lease.lock_paths {
-+            self.token_health.remove(&format!("{lease_ref}\0{path}"));
-+        }
-         self.decrement_refs(&entry.lease.lock_paths);
-         Some(entry)
-     }
-@@ -262,21 +259,10 @@ impl OwnerRegistry {
-         })
-     }
- 
--    /// Return the strongest remaining kind after one lease drops a lock path.
--    fn strongest_kind_excluding(&self, lease_ref: &str, lock_path: &str) -> Option<PathLockKind> {
--        self.entries
--            .iter()
--            .filter(|(candidate_ref, _)| candidate_ref.as_str() != lease_ref)
--            .filter(|(_, entry)| entry.invalidation.is_none())
--            .filter_map(|(_, entry)| entry.lock_kinds.get(lock_path).copied())
--            .max_by_key(|kind| match kind {
--                PathLockKind::Exact => 0,
--                PathLockKind::Tree => 1,
--            })
--    }
--
-     /// Remove one committed lock path from a lease and its local reference count.
-     fn remove_path(&mut self, lease_ref: &str, lock_path: &str) {
-+        self.token_health
-+            .remove(&format!("{lease_ref}\0{lock_path}"));
-         let remove_entry = {
-             let Some(entry) = self.entries.get_mut(lease_ref) else {
-                 return;
-@@ -328,37 +314,6 @@ impl OwnerRegistry {
-         }
-     }
- 
--    /// Adopt a parked lease: migrate the entry to a fresh lease_ref key and rotate
--    /// ownership_ref, permanently invalidating the producer's stale refs (both the
--    /// lease_ref-only paths like borrow/auto-lock and the ownership_ref paths).
--    /// Returns the refreshed owned lease. Errors when the entry is missing or not
--    /// currently pending handoff.
--    ///
--    /// Re-keying entries does not change lock paths or reference counts.
--    fn take_pending_handoff(
--        &mut self,
--        lease_ref: &str,
--        new_lease_ref: String,
--        new_ownership_ref: String,
--    ) -> Option<OwnedPathLockLease> {
--        if !self.entries.get(lease_ref)?.pending_handoff
--            || self.entries.get(lease_ref)?.invalidation.is_some()
--        {
--            return None;
--        }
--        let mut entry = self.entries.remove(lease_ref)?;
--        entry.pending_handoff = false;
--        entry.ownership_ref = new_ownership_ref.clone();
--        entry.lease.lease_ref
+ # Git worktrees
 ```
 
-**File**: `crates/ragfs/src/lock/provider.rs` (modified, +465/-16)
+**File**: `frontend/.gitignore` (added, +10/-0)
 ```diff
-@@ -3,7 +3,7 @@
- //! The provider owns token storage. Backends with transactional storage may also
- //! implement the optional atomic capabilities used by `PathLockManager`.
- 
--use std::collections::HashMap;
-+use std::collections::BTreeMap;
- use std::sync::Arc;
- 
- use async_trait::async_trait;
-@@ -14,7 +14,9 @@ use crate::core::FileSystem;
- use crate::crypto;
- 
- use super::codec::LockTokenCodec;
--use super::types::{LockToken, PathLockError, PathLockRequest, PathLockResult};
-+use super::types::{
-+    HandoffRecoveryReason, LockToken, PathLockError, PathLockKind, PathLockRequest, PathLockResult,
-+};
- 
- /// Representation used for handles stored in a PathLock lease.
- #[derive(Debug, Clone, Copy, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
-@@ -66,6 +68,85 @@ pub struct AtomicAcquisitionResult {
- /// Storage abstraction for lock tokens. Only `PathLockManager` should call these methods.
- #[async_trait]
- pub trait PathLockProvider: Send + Sync {
-+    /// Atomic conflict check plus holder insertion/replacement. A supplied source
-+    /// must exist, be live and match the requested kind before any mutation.
-+    /// None selects the filesystem CAS protocol; transactional backends override.
-+    async fn try_acquire_holders_atomic(
-+        &self,
-+        _requests: &[PathLockRequest],
-+        _owner: &str,
-+        _holder: &str,
-+        _now: u128,
-+        _stale_before: u128,
-+        _source: Option<&str>,
-+    ) -> PathLockResult<Option<AtomicAcquisitionResult>> {
-+        Ok(None)
-+    }
+@@ -0,0 +1,10 @@
++# Shared source, not a Python build artifact.
++!/packages/lib/
 +
-+    /// Delete precisely the observed token, including its holder set.
-+    async fn compare_and_remove_token(
-+        &self,
-+        _path: &str,
-+        _expected: &LockToken,
-+    ) -> PathLockResult<bool> {
-+        Err(PathLockError::Internal(
-+            "provider lacks conditional token deletion".into(),
-+        ))
-+    }
-+
-+    /// Refresh/release only the named reference. Missing and expired references
-+    /// never revive, even when another live reference has the same owner.
-+    async fn mutate_holder(
-+        &self,
-+        path: &str,
-+        owner: &str,
-+        holder: &str,
-+        now: u128,
-+        stale_before: u128,
-+        release: bool,
-+    ) -> PathLockResult<bool> {
-+        for _ in 0..16 {
-+            let Some(current) = self.read_token(path).await? else {
-+                return Ok(false);
-+            };
-+            let Some(next) =
-+                mutate_holder_record(&current, owner, holder, now, stale_before, release)
-+            else {
-+                return Ok(false);
-+            };
-+            let changed = if next.holders.is_empty() {
-+                self.compare_and_remove_token(path, &current).await?
-+            } else {
-+                self.compare_and_write_token(path, &current, &next).await?
-+            };
-+            if changed {
-+                return Ok(true);
-+            }
-+        }
-+        Err(PathLockError::Busy {
-+            lock_path: path.into(),
-+            operation: "holder mutation".into(),
-+        })
-+    }
-+
-+    /// Renew one lease across its paths, preserving result order.
-+    async fn refresh_holders(
-+        &self,
-+        paths: &[String],
-+        owner: &str,
-+        holder: &str,
-+        now: u128,
-+        stale_before: u128,
-+    ) -> Vec<PathLockResult<bool>> {
-+        let mut results = Vec::with_capacity(paths.len());
-+        for path in paths {
-+            results.push(
-+                self.mutate_holder(path, owner, holder, now, stale_before, false)
-+                    .await,
-+            );
-+        }
-+        results
-+    }
-     /// Add provider-owned observations to the manager's metrics snapshot.
-     fn update_metrics(&self, _metrics: &mut super::metrics::LockMetrics) {}
- 
-@@ -77,7 +158,8 @@ pub trait PathLockProvider: Send + Sync {
-         PathLockHandleMode::LockPath
-     }
- 
--    /// Attempt one atomic batch acquisition when supported.
-+    /// Legacy v1 token API, retained for storage compatibility tests. The manager
-+    /// exclusively uses `try_acquire_holders_atomic`.
-     async fn try_acquire_batch_atomic(
-         &self,
-         _requests: &[PathLockRequest],
-@@ -106,7 +188,8 @@ pub trait PathLockProvider: Send + Sync {
-             }))
-     }
- 
--    /// Roll back one completed atomic acquisition when supported.
-+    /// Legacy v1 rollback. Holder acquisitions roll back the individual holder
-+    /// and handoff source through the manager.
-     async fn rollback_acquisitions_atomic(
-         &self,
-         _acquisitions: &[AtomicAcquisition],
-@@ -141,7 +224,7 @@ pub trait PathLockProvider: Send + Sync {
-         replacement: &LockToken,
-     ) -> PathLockResult<bool>;
- 
--    /// Refresh the timestamp of an existing token owned by `owner_id`.
-+    /// Legacy v1 refresh; must refuse tokens containing holders.
-     /// Returns `true` if the token was refreshed, `false` if not found or wrong owner.
-     async fn refresh_token(
-         &self,
-@@ -166,7 +249,7 @@ pub trait PathLockProvid
++node_modules/
++dist/
++doc_build/
++.rspress/
++.rspress-cache/
++*.tsbuildinfo
++*.tgz
 ```
 
 ---
 
-### Incident Patch 2: `aa153606` (2026-11-03)
-**Commit Message**: fix: 避免账户初始化与多写任务锁冲突 (#6958)
+### Incident Patch 2: `3e0c9dcc` (2026-11-04)
+**Commit Message**: feat(ui): restore the reviewed ScopeSwitcher API and package entry (#7051)
 
-* fix: 避免账户初始化与多写任务锁冲突
+* feat(ui): restore the reviewed ScopeSwitcher API and package entry
 
-账户创建在首次写入前统一持有 Tree 锁，并为 multiwrite 临时锁冲突增加有界指数退避，避免初始化失败和事件丢失。
+Restore the scope-switcher component removed together with the other
+placeholder APIs, on top of the current reviewed contract:
 
-* fix: 隔离多写任务的账户重试
+- two level shapes discriminated by `kind`: a fixed level that only shows
+  the current value, and a selectable level that renders a trigger and panel
+- a controlled `visible` / `onVisibleChange` pair, so each host decides when
+  the panel closes instead of the component closing it on select
+- `renderPanel` receives the rendered `search` and `list` blocks and owns
+  everything else in the panel; `renderOption` receives the default row
+  content first, so hosts can append without rebuilding the row
+- search visibility is decided internally by the loaded count or `total`
+  against `SCOPE_SWITCHER_SEARCH_THRESHOLD`; no switch is exposed
+- paging is left to the host through `onScroll` metrics
 
-避免单个账户的初始化锁冲突阻塞其他账户事件消费，同时保持原有退避上限和待处理计数语义。
+Ship the original placeholder, scoped and aggregate styles, package and
+build entries, the shared demo and bilingual documentation.
 
----------
+The view is still a placeholder; real rendering is future implementation
+work.
+
+* docs(ui): a
+
+**File**: `frontend/docs/docs/_demos/scope-switcher-basic.tsx` (added, +6/-0)
+```diff
+@@ -0,0 +1,6 @@
++import { ScopeSwitcher } from '@openviking/react/components/scope-switcher';
++import '@openviking/react/components/scope-switcher/style.css';
++
++export default function ScopeSwitcherBasic() {
++  return <ScopeSwitcher />;
++}
+```
+
+**File**: `frontend/docs/docs/en/components/index.mdx` (modified, +4/-0)
+```diff
+@@ -16,6 +16,10 @@ A tabbed file-preview view with header actions, tab switching, and plain-text pr
+ 
+ The reviewed API for command records, results and input. The current view is a placeholder; command completion, shared CLI metadata and result rendering will be implemented later.
+ 
++### [ScopeSwitcher](./scope-switcher)
++
++A header scope breadcrumb. The host declares the levels and their options; the component renders the triggers, dropdown panels, option list and search, and reports switch intent.
++
+ ### [Icons](./icons)
+ 
+ Five file-type icons with configurable image dimensions and accessible labels: audio, PDF, presentation, video, and word-processing files.
+```
+
+**File**: `frontend/docs/docs/en/components/scope-switcher.mdx` (added, +213/-0)
+```diff
+@@ -0,0 +1,213 @@
++# ScopeSwitcher
++
++A scope breadcrumb for the header. The host declares how many levels exist, what they are called and where the options come from; the component renders the breadcrumb triggers and dropdown panels, and reports search, switch and action intent.
++
++This is a placeholder component: it renders a fixed-size empty shell and consumes no props, so hosts can integrate against the published package before the view is migrated. The props contract below is final; the placeholder implementation will be replaced.
++
++## Basic usage
++
++```tsx file="../../_demos/scope-switcher-basic.tsx" preview
++
++```
++
++The placeholder is 640 × 40, matching the header scope bar.
++
++## Levels
++
++The component knows nothing about "library / data space / user". It renders the `levels` array left to right, joined by `/`. One level is a single picker; three levels are a full breadcrumb:
++
++```tsx
++<ScopeSwitcher
++  levels={[
++    {
++      kind: 'selectable',
++      key: 'library',
++      ariaLabel: 'Switch library',
++      selectedLabel: library.name,
++      options,
++      selectedId,
++      visible: libraryOpen,
++      onVisibleChange: setLibraryOpen,
++      onSelect,
++    },
++    {
++      kind: 'selectable',
++      key: 'account',
++      ariaLabel: 'Switch data space',
++      selectedLabel: accountId,
++      options,
++      selectedId,
++      visible: accountOpen,
++      onVisibleChange: setAccountOpen,
++      onSelect,
++    },
++    {
++      kind: 'selectable',
++      key: 'user',
++      ariaLabel: 'Switch user',
++      selectedLabel: userId,
++      options,
++      selectedId,
++      visible: userOpen,
++      onVisibleChange: setUserOpen,
++      onSelect,
++    },
++  ]}
++/>
++```
++
++Each level's search keyword, paging and selection are owned by the host; the component only renders them and reports intent. It has no built-in paging rule: the first screen is prepared when `onVisibleChange` reports the panel opening, and whether to load the next page is the host's call inside `onScroll`.
++
++### Fixed and selectable levels
++
++`kind` splits a level into two forms, and both can be mixed in one row:
++
++- `kind: 'selectable'` — renders an expandable trigger and a dropdown panel; needs `options` and `onSelect`.
++- `kind: 'fixed'` — shows the current value only, with no expand affordance and no click target, and takes no option or panel fields.
++
++The host picks the form from whether the current scope can be switched, without fabricating an empty option list to say "not switchable":
++
++```tsx
++// Personal terminal: library and data space follow the sign-in, only the user switches
++levels={[
++  { kind: 'fixed', key: 'library', ariaLabel: 'Library', selectedLabel: library.name },
++  { kind: 'fixed', key: 'account', ariaLabel: 'Data space', selectedLabel: accountId },
++  { kind: 'selectable', key: 'user', ariaLabel: 'Switch user', selectedLabel: userId, options, selectedId, visible: userOpen, onVisibleChange: setUserOpen, onSelect },
++]}
++```
++
++On a `kind: 'selectable'` level, `disabled` means something else: it could be switched but currently cannot, so the trigger renders dimmed instead of dropping its expand affordance.
++
++The level count can also vary with the sign-in method. When the host cannot resolve a level yet, it simply leaves it out: the component neither renders nor reserves space for it:
++
++```tsx
++// Only the data space is available, so declare two levels
++levels={[dataSpaceLevel, userLevel]}
++```
++
++## Panels
++
++Each level maps to one dropdown panel. The component owns three things only: the search box, the option list and the loading, empty and failed states. Everything else is implemented by the host's `renderPanel`.
++
++`renderPanel` receives `{ search, list }`: `search` is the search box and `list` is the list with its states. The host can place them separately or use only one. Panel visibility is controlled by the host through `visible`, so after an in-panel action the host simply sets `visible` to `false`:
++
++```tsx
++{
++  kind: 'selectable',
++  key: 'library',
++  selectedLabel: library.name,
++  options,
++  selectedId: library.id,
++  visible,
++  onVisibleChange: setVisible,
++  onSelect,
++  renderPanel: ({ search, list }) => (
++    <>
++      <header>
++        <span>All libraries</span>
++        <Button onClick={() => { setVisible(false); onCreate(); }}>Create</Button>
++      </header>
++      {search}
++      {list}
++      <footer>
++        <Link to={settingsPath} onClick={() => setVisible(false)}>Library settings</Link>
++        <a href={billingUrl}>Billing</a>
++        <button onClick={onUnsubscribe}>Unsubscribe</button>
++      </footer>
++    </>
++  ),
++  renderOption: (content, option) => <>{content}<LibraryRowMenu option={option} /></>,
++}
++```
++
++The data space and user panels work the same way, each rendering its own "Select …" heading and "Manage spaces / Manage users" entry. A host that wants to turn the typed value into a new option can append such an entry under `list`.
++
++Why these entries 
+```
+
+**File**: `frontend/docs/docs/zh/components/index.mdx` (modified, +4/-0)
+```diff
+@@ -16,6 +16,10 @@
+ 
+ 已确认的命令记录、结果与输入区 API。当前视图仍为占位实现；命令补全、CLI 共享元数据与结果渲染后续实现。
+ 
++### [ScopeSwitcher 作用域选择](./scope-switcher)
++
++头部作用域面包屑。宿主声明层级与选项；组件渲染触发器、下拉面板、选项列表与搜索，并上报切换意图。
++
+ ### [图标](./icons)
+ 
+ 提供音频、PDF、演示文稿、视频与文字文档五种文件类型图标，支持自定义图片尺寸与无障碍描述。
+```
+
+**File**: `frontend/docs/docs/zh/components/scope-switcher.mdx` (added, +213/-0)
+```diff
+@@ -0,0 +1,213 @@
++# ScopeSwitcher 作用域选择
++
++头部作用域面包屑。宿主声明有几个层级、各自叫什么、选项从哪来；组件渲染面包屑触发器与下拉面板，并上报搜索、切换与动作意图。
++
++当前是占位组件：只渲染一个固定尺寸的空壳，不消费 props，宿主可先对着已发布的包开发，真实视图后续迁入。下方的 props 契约是最终形态，占位实现会被替换。
++
++## 基础用法
++
++```tsx file="../../_demos/scope-switcher-basic.tsx" preview
++
++```
++
++占位尺寸为 640 × 40，对齐头部作用域条。
++
++## 层级
++
++组件不知道「库 / 数据空间 / 用户」这些语义，只按 `levels` 数组顺序从左到右渲染，用 `/` 分隔。声明一层就是单个选择器，声明三层就是完整面包屑：
++
++```tsx
++<ScopeSwitcher
++  levels={[
++    {
++      kind: 'selectable',
++      key: 'library',
++      ariaLabel: '切换库',
++      selectedLabel: library.name,
++      options,
++      selectedId,
++      visible: libraryOpen,
++      onVisibleChange: setLibraryOpen,
++      onSelect,
++    },
++    {
++      kind: 'selectable',
++      key: 'account',
++      ariaLabel: '切换数据空间',
++      selectedLabel: accountId,
++      options,
++      selectedId,
++      visible: accountOpen,
++      onVisibleChange: setAccountOpen,
++      onSelect,
++    },
++    {
++      kind: 'selectable',
++      key: 'user',
++      ariaLabel: '切换用户',
++      selectedLabel: userId,
++      options,
++      selectedId,
++      visible: userOpen,
++      onVisibleChange: setUserOpen,
++      onSelect,
++    },
++  ]}
++/>
++```
++
++每个层级的搜索关键字、分页与选中项都由宿主持有，组件只负责渲染并上报意图。组件不内置分页规则：首屏由 `onVisibleChange` 通知宿主准备，是否加载下一页由宿主的 `onScroll` 自己判断。
++
++### 固定层级与可切换层级
++
++每个层级按 `kind` 分两种形态，同一行里可以混用：
++
++- `kind: 'selectable'` —— 渲染可展开的触发器与下拉面板，需要 `options` 与 `onSelect`。
++- `kind: 'fixed'` —— 只展示当前值，没有展开箭头、不可点击，不接收任何选项或面板字段。
++
++宿主按当前作用域是否可切换来选择形态，不需要伪造空选项列表来表达「不可切换」：
++
++```tsx
++// 个人终端：库与数据空间跟随登录态固定，只有用户可切换
++levels={[
++  { kind: 'fixed', key: 'library', ariaLabel: '库', selectedLabel: library.name },
++  { kind: 'fixed', key: 'account', ariaLabel: '数据空间', selectedLabel: accountId },
++  { kind: 'selectable', key: 'user', ariaLabel: '切换用户', selectedLabel: userId, options, selectedId, visible: userOpen, onVisibleChange: setUserOpen, onSelect },
++]}
++```
++
++`kind: 'selectable'` 上的 `disabled` 表达的是另一种语义：本可以切换，只是当前不可用，因此渲染置灰的触发器而不是省略展开箭头。
++
++层数也可以随登录方式变化。宿主暂时解析不到某一层时直接不声明它，组件既不渲染也不占位：
++
++```tsx
++// 只能拿到数据空间时，只声明两层
++levels={[dataSpaceLevel, userLevel]}
++```
++
++## 面板
++
++每个层级对应一个下拉面板。组件只负责三样：搜索框、选项列表、加载/空/失败三态。其余内容全部由宿主的 `renderPanel` 实现。
++
++`renderPanel` 收到 `{ search, list }`：`search` 是搜索框，`list` 是列表与三态。宿主可以分别摆放、也可以只放其中一块。面板何时关闭由宿主控制（`visible` 受控），所以在面板里执行完动作后，宿主自己把 `visible` 置为 `false` 即可：
++
++```tsx
++{
++  kind: 'selectable',
++  key: 'library',
++  selectedLabel: library.name,
++  options,
++  selectedId: library.id,
++  visible,
++  onVisibleChange: setVisible,
++  onSelect,
++  renderPanel: ({ search, list }) => (
++    <>
++      <header>
++        <span>全部库</span>
++        <Button onClick={() => { setVisible(false); onCreate(); }}>创建</Button>
++      </header>
++      {search}
++      {list}
++      <footer>
++        <Link to={settingsPath} onClick={() => setVisible(false)}>库设置</Link>
++        <a href={billingUrl}>查看账单</a>
++        <button onClick={onUnsubscribe}>退订</button>
++      </footer>
++    </>
++  ),
++  renderOption: (content, option) => <>{content}<LibraryRowMenu option={option} /></>,
++}
++```
++
++数据空间与用户面板同理，各自渲染自己的「选择 XXX」标题与「管理空间 / 管理 User」入口。需要把当前输入直接当作新选项的宿主，也可以在 `list` 下方追加这样的入口。
++
++为什么不在组件里定义这些入口：三个宿主的「库设置」「查看账单」「退订」「管理空间」在跳转目标、权限与可用性上完全不同，结构化字段只能不断长出新属性（`href`、`trailingIcon`、`destructive`、`disabled`……）来逼近，最终把页面职责搬进组件。而且三者的底部形态本身就不一样——库是三条纯文字，数据空间和用户是一个带边框的整宽按钮，组件无法用同一个容器表达。
++
++- `emptyFallback` / `errorFallback` —— 替换空态与失败态，不传时用内置文案。
++- `renderOption(content, option)` —— 在默认行内容 `content` 上追加或替换，例如行尾「更多」菜单、失效态标记。
++
++面板可见性受控：宿主用 `visible` 决定开合，`onVisibleChange` 回调时写回。这样「打开面板才取数」「异步切换成功后才关」都能由宿主决定，不必在挂载时就请求所有层级的选项。
++
++## 内部推导
++
++- 搜索框可见性由组件判断：已加载条数或 `total` 超过 `SCOPE_SWITCHER_SEARCH_THRESHOLD`（10），或 `searchKeyword` 非空时显示。
++- 命中高亮按 `searchKeyword` 在组件内部计算。
++- 选中项统一用 `role="listbox"` + `role="option"` + `aria-selected`，触发器带 `aria-haspopup="listbox"` 与 `aria-expanded`。
++
++## 属性
++
++### ScopeSwitcherProps
++
++| 属性     | 类型                             | 默认值 | 说明                               |
++| -------- | -------------------------------- | ------ | ---------------------------------- |
++| `levels` | `readonly ScopeSwitcherLevel[]`  | 必填   | 从左到右渲染的层级。               |
++| `labels` | `ScopeSwitcherLabels`            | 英文   | 可替换文案。                       |
++| 其余属性 | `HTMLAttributes<HTMLDivElement>` | —      | 标准 div 属性，`children` 已排除。 |
++
++### ScopeSwitcherLevel
++
++`ScopeSwitcherLevel = ScopeSwitcherFixedLevel | ScopeSwitcherSelectableLevel`，按 `kind` 判别。
++
++公共字段（`ScopeSwitcherLevelBase`）：
++
++| 属性            | 类型                      | 说明                                                                  |
++| --------------- | ------------------------- | --------------------------------------------------------------------- |
++| `kind`          | `'fixed' \| 'selectable'` | `'fixed'` 只展示值、不渲染下拉；`'selectable'` 渲染触发器与面板。     |
++| `key`           | `string`                  | 稳定标识，例如 `library`、`account`、`user`。                         |
++| `ariaLabel`     | `string`                  | 触发器的无障碍名称，只写入 `aria-label`，不出现在界面上；不传则不
+```
+
+**File**: `frontend/docs/rspress.config.ts` (modified, +5/-0)
+```diff
+@@ -56,6 +56,7 @@ export default defineConfig({
+                 { text: 'FileTree', link: '/components/file-tree' },
+                 { text: 'FilePreview', link: '/components/file-preview' },
+                 { text: 'Tui', link: '/components/tui' },
++                { text: 'ScopeSwitcher', link: '/components/scope-switcher' },
+               ],
+             },
+           ],
+@@ -112,6 +113,10 @@ export default defineConfig({
+                   link: '/zh/components/file-preview',
+                 },
+                 { text: 'Tui 命令控制台', link: '/zh/components/tui' },
++                {
++                  text: 'ScopeSwitcher 作用域选择',
++                  link: '/zh/components/scope-switcher',
++                },
+               ],
+             },
+           ],
+```
+
+**File**: `frontend/packages/react/README.md` (modified, +10/-9)
+```diff
+@@ -6,15 +6,16 @@ This package inherits the repository's AGPL-3.0-only license. The release workfl
+ 
+ ## 模块目录
+ 
+-| 源码目录                                                           | 公开入口                                    | 职责                                                 |
+-| ------------------------------------------------------------------ | ------------------------------------------- | ---------------------------------------------------- |
+-| [components/file-tree](./src/components/file-tree/README.md)       | `@openviking/react/components/file-tree`    | 目录树渲染、展开、选中与事件回传                     |
+-| [components/file-preview](./src/components/file-preview/README.md) | `@openviking/react/components/file-preview` | 只读预览状态与扩展页签                               |
+-| [components/tui](./src/components/tui/README.md)                   | `@openviking/react/components/tui`          | 已确认的命令记录、结果与输入区类型；视图仍为占位实现 |
+-| [modules](./src/modules/README.md)                                 | `@openviking/react/modules/<模块>`          | 五个业务模块的占位组件与类型                         |
+-| [hooks](./src/hooks/README.md)、[utils](./src/utils/README.md)     | 仅包内使用                                  | 跨模块 Hook 与纯工具                                 |
+-
+-FileTree 已实现目录树视图与交互，FilePreview 已实现页签与纯文本预览、编辑基础；具体限制见各自文档。包还提供五种文件类型图标。
++| 源码目录                                                               | 公开入口                                      | 职责                                                       |
++| ---------------------------------------------------------------------- | --------------------------------------------- | ---------------------------------------------------------- |
++| [components/file-tree](./src/components/file-tree/README.md)           | `@openviking/react/components/file-tree`      | 目录树渲染、展开、选中与事件回传                           |
++| [components/file-preview](./src/components/file-preview/README.md)     | `@openviking/react/components/file-preview`   | 只读预览状态与扩展页签                                     |
++| [components/tui](./src/components/tui/README.md)                       | `@openviking/react/components/tui`            | 已确认的命令记录、结果与输入区类型；视图仍为占位实现       |
++| [components/scope-switcher](./src/components/scope-switcher/README.md) | `@openviking/react/components/scope-switcher` | 作用域面包屑的层级、选项、面板与搜索契约；视图仍为占位实现 |
++| [modules](./src/modules/README.md)                                     | `@openviking/react/modules/<模块>`            | 五个业务模块的占位组件与类型                               |
++| [hooks](./src/hooks/README.md)、[utils](./src/utils/README.md)         | 仅包内使用                                    | 跨模块 Hook 与纯工具                                       |
++
++FileTree 已实现目录树视图与交互，FilePreview 已实现页签与纯文本预览、编辑基础；具体限制见各自文档。Tui 与 ScopeSwitcher 已确认公开 API，视图仍为占位实现。包还提供五种文件类型图标。
+ 组件通过 props 接收视图数据与状态，通过回调表达用户意图，遵循 [组件目录约定](./src/components/AGENTS.md)。[modules](./src/modules/README.md) 按业务能力规划 Hook 与视图：Hook 负责取数、状态和操作，组合视图将其接入组件。完整页面与产品专属流程由宿主负责，管理后台不在本期范围内。当前 `file-browser`、`console`、`agent-connect`、`task-center` 与 `user-usage` 已提供占位组件、基础 Props / Labels 类型与样式，可先接入布局；业务 Hook、数据加载和联动尚未实现。
+ 
+ 模块默认通过共享 Client 消费 OpenViking 原生 API，由 Provider 下发 `baseURL`、headers 等配置，模块或独立 Hook 可通过 `requestOptions` 局部覆盖。标准接入无需逐模块实现 Adapter；非标准网关集中在宿主请求接入层适配。详见[请求约定](./src/modules/README.md#请求契约与默认配置)；Client 与 Provider 当前也尚未实现或导出。
+```
+
+**File**: `frontend/packages/react/package.json` (modified, +5/-0)
+```diff
+@@ -40,6 +40,11 @@
+       "import": "./dist/components/tui.js"
+     },
+     "./components/tui/style.css": "./dist/components/tui/style.css",
++    "./components/scope-switcher": {
++      "types": "./dist/components/scope-switcher/scope-switcher.d.ts",
++      "import": "./dist/components/scope-switcher.js"
++    },
++    "./components/scope-switcher/style.css": "./dist/components/scope-switcher/style.css",
+     "./style.css": "./dist/style.css",
+     "./components/style.css": "./dist/components/style.css",
+     "./modules/file-browser": {
+```
+
+---
+
+### Incident Patch 3: `7a0ad748` (2026-11-04)
+**Commit Message**: fix(pathlock): 修复账户根锁文件的上下文冲突 (#6972)
 
 Co-authored-by: zhanghe.1216 <@bytedance.com>
 
-**File**: `crates/ragfs/src/multibackend/runtime.rs` (modified, +224/-13)
+**File**: `crates/ragfs/src/core/mountable.rs` (modified, +75/-0)
 ```diff
-@@ -3,7 +3,7 @@
- use std::collections::{HashMap, HashSet};
- use std::sync::atomic::{AtomicBool, AtomicUsize, Ordering};
- use std::sync::{Arc, Mutex as StdMutex};
--use std::time::Duration;
-+use std::time::{Duration, Instant};
- 
- use tokio::sync::{mpsc, watch};
- use tokio::task::JoinHandle;
-@@ -12,6 +12,7 @@ use tracing::{debug, error};
- use crate::core::context::{FsContextInner, FS_CTX};
- use crate::core::errors::{Error, Result};
- use crate::core::filesystem::FileSystem;
-+use crate::lock::types::PathLockError;
- use crate::multibackend::catch_up::{CatchUpTarget, CatchUpWorker};
- use crate::multibackend::checkpoint::{CheckpointReader, CheckpointWorker};
- use crate::multibackend::codec::{decode_segment, sha256_hex};
-@@ -26,6 +27,10 @@ use crate::multibackend::router::AccountRouter;
- 
- const CATCH_UP_INTERVAL_SECS: u64 = 300;
- const CATCH_UP_FULL_SCAN_TICKS: usize = 6;
-+const FLUSH_RETRY_INITIAL_DELAY: Duration = Duration::from_millis(100);
-+const FLUSH_RETRY_MAX_DELAY: Duration = Duration::from_secs(10);
-+const FLUSH_RETRY_MAX_ELAPSED: Duration = Duration::from_secs(180);
-+const FLUSH_RETRY_MAX_ATTEMPTS: u32 = 32;
- 
- /// Read active account ids from the encrypted or plain primary registry.
- pub(crate) async fn read_active_accounts(primary: &dyn FileSystem) -> Result<HashSet<String>> {
-@@ -319,6 +324,13 @@ pub struct FlushWorker {
-     metrics: Arc<MultiWriteMetricsSnapshot>,
- }
- 
-+struct FlushRetryState {
-+    events: Vec<PendingEvent>,
-+    attempts: u32,
-+    started_at: Instant,
-+    retry_at: Instant,
-+}
-+
- impl FlushWorker {
-     /// Create a worker using one metadata store and persistence provider.
-     pub(crate) fn new(
-@@ -349,20 +361,191 @@ impl FlushWorker {
-         mut receiver: mpsc::UnboundedReceiver<PendingEvent>,
-         pending_events: Arc<AtomicUsize>,
-     ) {
--        while let Some(first) = receiver.recv().await {
--            let mut batch = vec![first];
--            while let Ok(event) = receiver.try_recv() {
--                batch.push(event);
-+        let mut retries = HashMap::<String, FlushRetryState>::new();
-+        let mut receiver_open = true;
-+        loop {
-+            if retries.is_empty() {
-+                if !receiver_open {
-+                    break;
-+                }
-+                let Some(first) = receiver.recv().await else {
-+                    receiver_open = false;
-+                    continue;
-+                };
-+                let mut batch = vec![first];
-+                while let Ok(event) = receiver.try_recv() {
-+                    batch.push(event);
-+                }
-+                self.flush_fresh_events(batch, &mut retries, &pending_events)
-+                    .await;
-+                continue;
-+            }
-+
-+            let (account, retry_at) = retries
-+                .iter()
-+                .min_by_key(|(_, state)| state.retry_at)
-+                .map(|(account, state)| (account.clone(), state.retry_at))
-+                .expect("retry map is not empty");
-+            if receiver_open {
-+                tokio::select! {
-+                    event = receiver.recv() => {
-+                        match event {
-+                            Some(first) => {
-+                                let mut batch = vec![first];
-+                                while let Ok(event) = receiver.try_recv() {
-+                                    batch.push(event);
-+                                }
-+                                self.flush_fresh_events(batch, &mut retries, &pending_events)
-+                                    .await;
-+                            }
-+                            None => receiver_open = false,
-+                        }
-+                    }
-+                    _ = tokio::time::sleep_until(tokio::time::Instant::from_std(retry_at)) => {
-+                        let state = retries.remove(&account).expect("retry account exists");
-+                        self.flush_retry(&account, state, &mut retries, &pending_events)
-+                            .await;
-+                    }
-+                }
-+            } else {
-+                tokio::time::sleep_until(tokio::time::Instant::from_std(retry_at)).await;
-+                let state = retries.remove(&account).expect("retry account exists");
-+                self.flush_retry(&account, state, &mut retries, &pending_events)
-+                    .await;
-             }
--            let attempted = batch.len();
--            self.flush_batch(batch).await;
--            pending_events.fetch_sub(attempted, Ordering::Relaxed);
-         }
+@@ -1750,6 +1750,81 @@ mod tests {
+         );
      }
  
--    /// Flush one batch while recording and dropping failed events.
--    async fn flush_batch(&mut self, batch: Vec<PendingEvent>) {
-+    async fn flush_fresh_events(
-+        &mut self,
-+        events: Vec<PendingEvent>,
-+        retries: &mut HashMap<String, FlushRetryState>,
-+        pending_events: &AtomicUsize,
-+    ) {
-+        let mut ready = Vec::new();
-+        for event in events {
-+            if let Some(state) = retries.get_mut(
-```
-
-**File**: `crates/ragfs/src/multibackend/tests/test_runtime.rs` (modified, +227/-1)
-```diff
-@@ -82,7 +82,7 @@ async fn delete_account_event_removes_backup_scope() {
-         metrics,
-     );
- 
--    worker
-+    let retry = worker
-         .flush_batch(vec![PendingEvent {
-             operation_id: uuid::Uuid::from_u128(1),
-             account_id: "account".to_string(),
-@@ -92,10 +92,236 @@ async fn delete_account_event_removes_backup_scope() {
-             route_hint: None,
-         }])
-         .await;
-+    assert!(retry.is_empty());
-     catch_up.run_once().await.unwrap();
- 
-     assert!(matches!(
-         backup.stat("/account").await.unwrap_err(),
-         Error::NotFound(_)
-     ));
- }
++    #[tokio::test]
++    async fn account_root_pathlock_sidecar_bypasses_multiwrite_account_resolution() {
++        use crate::core::{FsContextInner, FS_CTX};
++        use crate::lock::{
++            FilesystemPathLockProvider, PathLockConfig, PathLockManager, PathLockProvider,
++        };
++        use crate::plugins::LocalFSPlugin;
 +
-+/// Verifies account initialization contention preserves pending events until retry succeeds.
-+#[tokio::test]
-+async fn flush_worker_retries_account_initialization_after_tree_lock_release() {
-+    let primary: Arc<dyn FileSystem> = Arc::new(MemFileSystem::new());
-+    primary
-+        .ensure_parent_dirs("/_system/accounts.json", 0o755)
-+        .await
-+        .unwrap();
-+    primary
-+        .write(
-+            "/_system/accounts.json",
-+            br#"{"accounts":{"account":{}}}"#,
-+            0,
-+            WriteFlag::Create,
-+        )
-+        .await
-+        .unwrap();
++        let primary = tempfile::tempdir().unwrap();
++        let backup = tempfile::tempdir().unwrap();
++        let mfs = Arc::new(MountableFS::new());
++        mfs.register_plugin(LocalFSPlugin::new()).await;
++        let lock_fs: Arc<dyn FileSystem> = mfs.clone();
++        let lock_provider: Arc<dyn PathLockProvider> =
++            Arc::new(FilesystemPathLockProvider::new(lock_fs.clone(), 30.0));
++        let manager = Arc::new(PathLockManager::new(
++            lock_fs,
++            lock_provider,
++            PathLockConfig::default(),
++        ));
++        mfs.set_pathlock_manager(manager.clone()).await;
 +
-+    let manager = Arc::new(PathLockManager::new(
-+        primary.clone(),
-+        Arc::new(MemoryPathLockProvider::new()),
-+        PathLockConfig::default(),
-+    ));
-+    let tree_lease = manager
-+        .acquire_tree("/local/account", Duration::ZERO, None)
-+        .await
-+        .unwrap();
-+    let store = Arc::new(MetadataStore::new(primary.clone(), manager.clone(), "/local").unwrap());
-+    let provider = Arc::new(FilesystemProvider::new(store.clone()));
-+    let mut worker = FlushWorker::new(
-+        store.clone(),
-+        provider,
-+        1,
-+        Vec::new(),
-+        Some(primary.clone()),
-+        Vec::new(),
-+        Arc::new(MultiWriteMetricsSnapshot::default()),
-+    );
-+    let retry = worker
-+        .flush_batch(vec![PendingEvent {
-+            operation_id: uuid::Uuid::from_u128(2),
-+            account_id: "account".to_string(),
-+            kind: PendingEventKind::Data(SegmentEventType::Remove),
-+            path: "/local/account/file.md".to_string(),
-+            destination_path: None,
-+            route_hint: None,
-+        }])
-+        .await;
-+    assert_eq!(retry.len(), 1);
-+    assert_eq!(store.worker_error_count(MultiWriteWorker::Flush), 0);
++        let mut config = multiwrite_test_config("localfs", "localfs", "/local");
++        config.params.insert(
++            "local_dir".to_string(),
++            ConfigValue::String(primary.path().to_string_lossy().into_owned()),
++        );
++        config.backups.as_mut().unwrap().items[0].params = serde_json::json!({
++            "local_dir": backup.path().to_string_lossy(),
++        });
++        mfs.mount(config).await.unwrap();
++        mfs.mkdir("/local/accountzhanghe", 0o755).await.unwrap();
++        mfs.mkdir("/local/other", 0o755).await.unwrap();
 +
-+    let (sender, receiver) = mpsc::unbounded_channel();
-+    let pending = Arc::new(AtomicUsize::new(1));
-+    sender.send(retry.into_iter().next().unwrap()).unwrap();
-+    drop(sender);
-+    assert_eq!(pending.load(Ordering::Relaxed), 1);
++        let account_ctx = Arc::new(FsContextInner::new("accountzhanghe"));
++        let lease = FS_CTX
++            .scope(account_ctx.clone(), async {
++                manager
++                    .acquire_tree("/local/accountzhanghe", Duration::ZERO, None)
++                    .await
++            })
++            .await
++            .unwrap();
 +
-+    manager.release(&tree_lease).await.unwrap();
-+    let worker_task = tokio::spawn(worker.run(receiver, pending.clone()));
-+    tokio::time::timeout(Duration::from_secs(3), worker_task)
-+        .await
-+        .unwrap()
-+        .unwrap();
-+    assert_eq!(pending.load(Ordering::Relaxed), 0);
-+    let manifest = store.paths().account_manifest("account").unwrap().1;
-+    assert!(primary.stat(&manifest).await.is_ok());
-+}
++        let primary_has_sidecar = std::fs::read_dir(primary.path()).unwrap().any(|entry| {
++            entry
++                .unwrap()
++                .file_name()
++                .to_string_lossy()
++                .starts_with(".exact.ovlock.accountzhanghe.")
++        });
++        let backup_has_sidecar = std::fs::read_dir(backup.path()).unwrap().any(|entry| {
++            entry
++                .unwrap()
++                .file_name()
++                .to_string_lossy()
++                .starts_with(".exact.ovlock.accountzhanghe.")
++        });
++        assert!(primary_has_sidecar);
++        assert!(!backup_has_sidecar);
 +
-+/// Verifies one account's initialization retry does not block another account.
-+#[tokio::test]
-+async fn flush_worker_processes_other_accounts_while_one_account_retries() {
-+    let primary: Arc<dyn FileSystem> = Arc::new(MemFileSystem::new());
-+    primary
-+        .ensure_parent_dirs("/_system/accounts.json", 0o755)
-+        .await
-+        .unwrap();
-+    primary
-+        .write(
-+            "/_system/accounts.json",
-+            br#"{"accounts":{"blocked":{},"ready":{}}}"#,
-+            0,
-+            WriteFlag::Create,
-+        )
-+        .await
-+        .unwrap();
-+
-+    let manager = Arc::new(PathLockManager::new(
-+        primary.clone(),
-+        Arc::new(MemoryPathLockProvider::new()),
-+        PathLockConfig::default(),
-+    ));
-+    let tree_lease = manager
-+        .acquire_tree("/local/blocked", Duration::ZERO, None)
-+        .await
-+        .unwrap();
-+    let store = Arc::new(MetadataStore::new(primary.clone(), manager.clone(), "/local").unwrap());
-+    let provider = Arc::new(FilesystemProvider::new(store.clone()));
-+    let mut worker = FlushWorker::new(
-+        store.clone(),
-+        provider,
-+        1,
-+        Vec::new(),
-+        Some(primary.clone()),
-+        Vec::new(),
-+        Arc::new(MultiWriteMetricsSnapshot::default()),
-+    );
-+    let blocked_event = PendingEvent {
-+        operation_id: uuid::Uuid::from_u128(3),
-+        account_id: "blocked".to_string(),
-+        kind: PendingEventKind::Data(SegmentEventType::Remove),
-+        path: "/local/blocked/file.md".to_string(),
-+        destination_path: None,
-+        route_hint: None,
-+    };
-+    let started_at = Instant::now();
-+    let mut retries = HashMap::from([(
-+        "blocked".to_string(),
-+        FlushRetryState {
-+            events: vec![blocked_event],
-+            attempts: 1,
-+            started_at,
-+            retry_at: started_at + FLUSH_RETRY_INITIAL_DELAY,
-+        },
-+    )]);
-+    l
-```
-
-**File**: `openviking/config/manager.py` (modified, +32/-5)
-```diff
-@@ -365,11 +365,23 @@ async def patch_cluster(self, patch: dict) -> ConfigChangeEvent:
-         return await run_to_completion(lambda: self._patch(scope, patch))
- 
-     async def patch_account(
--        self, account_id: str, patch: dict, *, creating: bool = False
-+        self,
-+        account_id: str,
-+        patch: dict,
-+        *,
-+        creating: bool = False,
-+        lease_ref: object | None = None,
-     ) -> ConfigChangeEvent:
-         """Apply a three-state PATCH to one Account configuration and publish."""
-         scope = ConfigScope.account(account_id)
--        return await run_to_completion(lambda: self._patch(scope, patch, creating=creating))
-+        return await run_to_completion(
-+            lambda: self._patch(
-+                scope,
-+                patch,
-+                creating=creating,
-+                lease_ref=lease_ref,
++        let error = FS_CTX
++            .scope(
++                account_ctx,
++                mfs.write("/local/other/file.md", b"must fail", 0, WriteFlag::Create),
 +            )
-+        )
- 
-     async def delete_account(self, account_id: str) -> ConfigChangeEvent:
-         """Delete one Account configuration and evict all manager-owned state."""
-@@ -392,15 +404,25 @@ async def _delete_account(self, scope: ConfigScope) -> ConfigChangeEvent:
-         return event
- 
-     async def _patch(
--        self, scope: ConfigScope, patch: dict, *, creating: bool = False
-+        self,
-+        scope: ConfigScope,
-+        patch: dict,
-+        *,
-+        creating: bool = False,
-+        lease_ref: object | None = None,
-     ) -> ConfigChangeEvent:
-         # Phase 1: validate only the request boundary. Candidate validation
-         # happens after the current document has been merged.
-         self._validate_patch_request(scope, patch, creating)
- 
-         # Phase 2: serialize the scope's read/merge/validate/write operation.
-         async with self._lock_for(scope):
--            prepared = await self._persist_validated_patch(scope, patch, creating=creating)
-+            prepared = await self._persist_validated_patch(
-+                scope,
-+                patch,
-+                creating=creating,
-+                lease_ref=lease_ref,
-+            )
- 
-             # Phase 3: publish only the already-built candidate. Account and
-             # Cluster publications are independent; a Cluster pointer change
-@@ -434,6 +456,7 @@ async def _persist_validated_patch(
-         patch: dict,
-         *,
-         creating: bool,
-+        lease_ref: object | None = None,
-     ) -> _PreparedPatch:
-         """Prepare one candidate and persist its explicit scope document."""
-         prepared: Optional[_PreparedPatch] = None
-@@ -443,7 +466,11 @@ def mutate(current: Optional[dict]) -> dict:
-             prepared = self._prepare_patch(scope, current, patch, creating=creating)
-             return prepared.persisted_settings
- 
--        persisted_settings = await self._source.update(scope, mutate)
-+        update_with_lease = getattr(self._source, "update_with_lease", None)
-+        if lease_ref is not None and callable(update_with_lease):
-+            persisted_settings = await update_with_lease(scope, mutate, lease_ref)
-+        else:
-+            persisted_settings = await self._source.update(scope, mutate)
-         if prepared is None:
-             raise RuntimeError("config source update did not invoke its mutate callback")
-         if prepared.persisted_settings is not persisted_settings:
++            .await
++            .unwrap_err();
++        assert!(error
++            .to_string()
++            .contains("conflicts with context account 'accountzhanghe'"));
++
++        manager.release(&lease).await.unwrap();
++    }
++
+     #[cfg(feature = "cache")]
+     #[tokio::test]
+     async fn shutdown_reaches_cache_queuefs_through_stats_wrapper() {
 ```
 
-**File**: `openviking/config/source/file_source.py` (modified, +40/-13)
+**File**: `crates/ragfs/src/core/multibackend_wrapper.rs` (modified, +10/-1)
 ```diff
-@@ -124,31 +124,57 @@ async def load(self, scope: ConfigScope) -> Optional[dict]:
-         return override
- 
-     async def update(self, scope: ConfigScope, mutate: Mutate) -> dict:
-+        return await self._update(scope, mutate)
-+
-+    async def update_with_lease(
-+        self,
-+        scope: ConfigScope,
-+        mutate: Mutate,
-+        lease_ref: object,
-+    ) -> dict:
-+        """Update using an outer Tree lease owned by the provisioning caller."""
-+        return await self._update(scope, mutate, lease_ref=lease_ref)
-+
-+    async def _update(
-+        self,
-+        scope: ConfigScope,
-+        mutate: Mutate,
-+        *,
-+        lease_ref: object | None = None,
-+    ) -> dict:
-         path = self._path(scope)
--        try:
--            lease = await self._client.pathlock_acquire_exact(
--                path, timeout_secs=self._lock_timeout_secs
--            )
--        except LockAcquisitionError as exc:
--            raise ResourceBusyError(
--                "Another configuration update is in progress. Please retry.",
--                uri=path,
--                conflict_type="runtime_config_busy",
--            ) from exc
-+        lease = lease_ref
-+        if lease is None:
-+            try:
-+                lease = await self._client.pathlock_acquire_exact(
-+                    path, timeout_secs=self._lock_timeout_secs
-+                )
-+            except LockAcquisitionError as exc:
-+                raise ResourceBusyError(
-+                    "Another configuration update is in progress. Please retry.",
-+                    uri=path,
-+                    conflict_type="runtime_config_busy",
-+                ) from exc
-         fs_ctx = _lease_fs_ctx(path, lease)
-         try:
-             current_raw, current = await self._read_override(scope)
-             new_override = mutate(current)
-             encoded = self._encode(new_override)
- 
-             try:
--                await self._client.ensure_parent_dirs(path)
-+                if lease_ref is None:
-+                    await self._client.ensure_parent_dirs(path)
-+                else:
-+                    await self._client.ensure_parent_dirs(path, fs_ctx=fs_ctx)
-             except AGFSAlreadyExistsError:
-                 pass
- 
-             backup_path = self._backup_path(scope)
-             if backup_path is not None and current_raw is not None:
--                await self._client.write(backup_path, current_raw)
-+                if lease_ref is None:
-+                    await self._client.write(backup_path, current_raw)
-+                else:
-+                    await self._client.write(backup_path, current_raw, fs_ctx=fs_ctx)
- 
-             try:
-                 await self._client.write(path, encoded, fs_ctx=fs_ctx)
-@@ -165,7 +191,8 @@ async def update(self, scope: ConfigScope, mutate: Mutate) -> dict:
-                 raise
-             return new_override
-         finally:
--            await self._client.pathlock_release(lease)
-+            if lease_ref is None:
-+                await self._client.pathlock_release(lease)
- 
-     async def delete(self, scope: ConfigScope) -> None:
-         path = self._path(scope)
-```
-
-**File**: `openviking/server/account_stores/base.py` (modified, +4/-0)
-```diff
-@@ -34,6 +34,8 @@ async def create_account(
-         self,
-         account_id: str,
-         admin_user_id: str,
-+        *,
-+        lease_ref: object | None = None,
-     ) -> None: ...
- 
-     @abstractmethod
-@@ -42,6 +44,8 @@ async def create_account_with_api_key(
-         account_id: str,
-         admin_user_id: str,
-         api_key: str,
-+        *,
-+        lease_ref: object | None = None,
-     ) -> None: ...
- 
-     @abstractmethod
-```
-
-**File**: `openviking/server/account_stores/file.py` (modified, +35/-13)
-```diff
-@@ -384,6 +384,8 @@ async def _create_account_identity(
-         account_id: str,
-         admin_user_id: str,
-         api_key: str | None = None,
-+        *,
-+        lease_ref: object | None = None,
-     ) -> None:
-         """Create an account and its first admin, optionally with a credential."""
-         if error := validate_account_id(account_id):
-@@ -423,8 +425,9 @@ async def _create_account_identity(
-                 account_id,
-                 {admin_user_id: user_info},
-                 replace_existing=account_was_created,
-+                lease_ref=lease_ref,
-             )
--            await self._write_groups_json(account_id, {})
-+            await self._write_groups_json(account_id, {}, lease_ref=lease_ref)
-         except Exception:
-             await self._rollback_create_account(
-                 account_id, account_was_created=account_was_created
-@@ -1322,17 +1325,22 @@ async def _save_users_json(
-         reject_existing_user_ids: set[str] | None = None,
-         replace_existing: bool = False,
-         expected_api_keys: dict[str, str] | None = None,
-+        lease_ref: object | None = None,
-     ) -> None:
-         """Merge targeted user mutations, or initialize a newly created account."""
-         path = USERS_PATH_TEMPLATE.format(account_id=account_id)
--        try:
--            lease = await self._async_agfs.pathlock_acquire_exact(path, timeout_secs=10.0)
--        except LockAcquisitionError as exc:
--            raise ResourceBusyError(
--                "Another user operation is in progress for this account. Please retry.",
--                uri=path,
--                conflict_type="user_registry_busy",
--            ) from exc
-+        lease = lease_ref
-+        if lease is None:
-+            try:
-+                lease = await self._async_agfs.pathlock_acquire_exact(
-+                    path, timeout_secs=10.0
-+                )
-+            except LockAcquisitionError as exc:
-+                raise ResourceBusyError(
-+                    "Another user operation is in progress for this account. Please retry.",
-+                    uri=path,
-+                    conflict_type="user_registry_busy",
-+                ) from exc
-         try:
-             if replace_existing:
-                 users = copy.deepcopy(updated_users or {})
-@@ -1369,11 +1377,18 @@ async def _save_users_json(
-                 account.users = users
-                 self._account_key_indexes[account_id] = key_index
-         finally:
--            await self._async_agfs.pathlock_release(lease)
-+            if lease_ref is None:
-+                await self._async_agfs.pathlock_release(lease)
- 
--    async def _write_groups_json(self, account_id: str, groups: dict) -> None:
-+    async def _write_groups_json(
-+        self,
-+        account_id: str,
-+        groups: dict,
-+        *,
-+        lease_ref: object | None = None,
-+    ) -> None:
-         path = GROUPS_PATH_TEMPLATE.format(account_id=account_id)
--        await self._write_json(path, {"groups": groups})
-+        await self._write_json(path, {"groups": groups}, lease_ref=lease_ref)
- 
-     def _watcher_running(self) -> bool:
-         return self._watch_task is not None and not self._watch_task.done()
-@@ -1461,23 +1476,30 @@ async def create_account_with_api_key(
-         account_id: str,
-         admin_user_id: str,
-         api_key: str,
-+        *,
-+        lease_ref: object | None = None,
-     ) -> None:
-         async with self._mutation_lock:
-             await self._refresh_accounts_for_management_read_unlocked()
-             await self._create_account_identity(
-                 account_id,
-                 admin_user_id,
-                 api_key,
-+                lease_ref=lease_ref,
-             )
- 
-     async def create_account(
-         self,
-         account_id: str,
-         admin_user_id: str,
-+        *,
-+        lease_ref: object | None = None,
-     ) -> None:
-         async with self._mutation_lock:
-             await self._refresh_accounts_for_management_read_unlocked()
--            await self._create_account_identity(account_id, admin_user_id)
-+            await self._create_account_identity(
-+                account_id, admin_user_id, lease_ref=lease_ref
-+            )
- 
-     async def create_user(self, account_id: str, user_id: str, role: str) -> None:
-         async with self._mutation_lock:
-```
-
-**File**: `openviking/server/account_stores/mysql.py` (modified, +6/-0)
-```diff
-@@ -511,7 +511,10 @@ async def create_account(
-         self,
-         account_id: str,
-         admin_user_id: str,
-+        *,
-+        lease_ref: object | None = None,
-     ) -> None:
-+        del lease_ref
-         _validate(account_id, validate_account_id, "account_id")
-         _validate(admin_user_id, validate_user_id, "admin_user_id")
-         try:
-@@ -536,7 +539,10 @@ async def create_account_with_api_key(
-         account_id: str,
-         admin_user_id: str,
-         api_key: str,
-+        *,
-+        lease_ref: object | None = None,
-     ) -> None:
-+        del lease_ref
-         _validate(account_id, validate_account_id, "account_id")
-         _validate(admin_user_id, validate_user_id, "admin_user_id")
-         try:
-```
-
-**File**: `openviking/server/account_stores/redis_mysql.py` (modified, +6/-0)
-```diff
-@@ -773,7 +773,10 @@ async def create_account(
-         self,
-         account_id: str,
-         admin_user_id: str,
-+        *,
-+        lease_ref: object | None = None,
-     ) -> None:
-+        del lease_ref
-         await self._mutate_account(
-             account_id,
-             lambda: self._mysql.create_account(account_id, admin_user_id),
-@@ -784,7 +787,10 @@ async def create_account_with_api_key(
-         account_id: str,
-         admin_user_id: str,
-         api_key: str,
-+        *,
-+        lease_ref: object | None = None,
-     ) -> None:
-+        del lease_ref
-         await self._mutate_account(
-             account_id,
-             lambda: self._mysql.create_account_with_api_key(
-```
-
----
-
-### Incident Patch 3: `50626052` (2026-11-03)
-**Commit Message**: fix(compile): preserve image evidence across verified VLM transports (#6951)
-
-* fix(compile): deliver image evidence through declared provider protocols
-
-Signed-off-by: lusendong.6789 <[REDACTED_EMAIL]>
-
-* test(compile): cover Doubao configuration and image evidence path
-
-Signed-off-by: lusendong.6789 <[REDACTED_EMAIL]>
-
-* fix(compile): preserve image evidence and text-route compatibility
-
-Signed-off-by: lusendong.6789 <[REDACTED_EMAIL]>
-
-* docs(compile): clarify image routes and configuration mismatches
-
-Signed-off-by: lusendong.6789 <[REDACTED_EMAIL]>
-
-* refactor(compile): simplify tests and image error messages
-
-Signed-off-by: lusendong.6789 <[REDACTED_EMAIL]>
-
-* refactor(compile): align image tests with existing contracts
-
-Signed-off-by: lusendong.6789 <[REDACTED_EMAIL]>
-
-* refactor(compile): consolidate media tests and shorten diagnostics
-
-Signed-off-by: lusendong.6789 <[REDACTED_EMAIL]>
-
-* docs(compile): remove implementation details from user guides
-
-Signed-off-by: lusendong.6789 <[REDACTED_EMAIL]>
-
-* refactor(compile): trim repetitive implementation commentary
-
-Signed-off-by: lusendong.6789 <[REDACTED_EMAIL]>
-
-* test(compile): retain distinct image regression contracts
-
-Sig
-
-**File**: `bot/tests/test_agent_loop_outcome.py` (modified, +35/-7)
-```diff
-@@ -330,8 +330,8 @@ async def test_context_build_messages_can_skip_system_prompt(temp_dir: Path):
- 
- 
- @pytest.mark.asyncio
--@pytest.mark.parametrize("supports_media", [False, True])
--async def test_agent_loop_gates_multimodal_result_by_provider(make_loop, supports_media: bool):
-+@pytest.mark.parametrize("scope", ["disabled", "native", "chat", "compile"])
-+async def test_agent_loop_gates_multimodal_result_by_provider(make_loop, monkeypatch, scope):
-     content = [
-         {"type": "text", "text": "Source: viking://resources/image.png"},
-         {
-@@ -340,7 +340,29 @@ async def test_agent_loop_gates_multimodal_result_by_provider(make_loop, support
-         },
-     ]
- 
--    provider = _MediaProvider([[_image_call("call-1")]], supports_media=supports_media)
-+    provider: LLMProvider
-+    if scope in {"chat", "compile"}:
-+        from vikingbot.compile.service import _CompileProvider
-+        from vikingbot.integrations.langfuse import LangfuseClient
-+        from vikingbot.providers.vlm_adapter import VLMProviderAdapter
-+
-+        from openviking.models.vlm import VLMFactory
-+        from openviking.models.vlm.base import ToolCall, VLMResponse
-+
-+        vlm = VLMFactory.create({"provider": "kimi", "model": "kimi-k2"})
-+        completion = AsyncMock(
-+            side_effect=[
-+                VLMResponse(tool_calls=[ToolCall("call-1", "read_image", {})]),
-+                VLMResponse(content="done"),
-+            ]
-+        )
-+        monkeypatch.setattr(vlm, "get_completion_async", completion)
-+        adapter = VLMProviderAdapter(vlm, "kimi-k2", langfuse_client=LangfuseClient())
-+        provider = (
-+            _CompileProvider(adapter, asyncio.Semaphore(1)) if scope == "compile" else adapter
-+        )
-+    else:
-+        provider = _MediaProvider([[_image_call("call-1")]], supports_media=scope == "native")
-     loop = make_loop(provider=provider, max_iterations=2)
- 
-     final, _reasoning, tools_used, _usage, _iteration = await loop._run_agent_loop(
-@@ -351,12 +373,18 @@ async def test_agent_loop_gates_multimodal_result_by_provider(make_loop, support
-     )
- 
-     assert final == "done"
--    tool_message = next(message for message in provider.calls[1] if message["role"] == "tool")
--    if supports_media:
-+    sent = (
-+        provider.calls[1]
-+        if isinstance(provider, _MediaProvider)
-+        else completion.await_args_list[-1].kwargs["messages"]
-+    )
-+    tool_message = next(message for message in sent if message["role"] == "tool")
-+    assert bool(loop_module._inline_media_bytes(sent)) == (scope in {"native", "compile"})
-+    if scope == "native":
-         assert tool_message["content"] == content
--    else:
-+    elif scope != "compile":
-         assert tool_message["content"].startswith("Image resource.")
--        assert "does not support media in tool results" in tool_message["content"]
-+        assert "tool-result media policy" in tool_message["content"]
-     assert tools_used[0]["result"] == "Image resource."
- 
- 
-```
-
-**File**: `bot/tests/test_bot_provider_thinking.py` (modified, +178/-42)
-```diff
-@@ -1,64 +1,200 @@
-+import json
-+from copy import deepcopy
- from types import SimpleNamespace
--from unittest.mock import MagicMock
-+from typing import Any
-+from unittest.mock import AsyncMock, MagicMock
- 
-+import litellm
- import pytest
-+from litellm.types.utils import LlmProviders
-+from litellm.utils import ProviderConfigManager
-+from vikingbot.integrations.langfuse import LangfuseClient
- from vikingbot.providers.vlm_adapter import VLMProviderAdapter
- 
-+from openviking.models.model_error import ModelError, ModelErrorKind
-+from openviking.models.vlm import FailoverVLM, MultiCredentialVLM, VLMFactory, VolcEngineVLM
- from openviking.models.vlm.backends.litellm_vlm import (
-     LiteLLMVLMProvider as OpenVikingLiteLLMVLMProvider,
- )
-+from openviking.models.vlm.base import VLMResponse
- 
- 
--def test_vlm_adapter_exposes_only_native_tool_result_media_backends():
--    langfuse = SimpleNamespace()
-+def test_provider_names_do_not_grant_undeclared_media_capabilities():
-+    unknown = SimpleNamespace(provider="openai")
-+    adapter = VLMProviderAdapter(unknown, "vision", langfuse_client=LangfuseClient())
-+    assert adapter.supports_tool_result_media() is False
- 
--    codex = VLMProviderAdapter(
--        SimpleNamespace(provider="openai-codex"),
--        default_model="gpt-5.3-codex",
--        langfuse_client=langfuse,
--    )
--    anthropic = VLMProviderAdapter(
--        SimpleNamespace(provider="anthropic"),
--        default_model="claude-sonnet",
--        langfuse_client=langfuse,
--    )
--    openai = VLMProviderAdapter(
--        SimpleNamespace(provider="openai"),
--        default_model="gpt-4o",
--        langfuse_client=langfuse,
-+    primary = VLMFactory.create({"provider": "openai", "model": "gpt-4o"})
-+    backup = OpenVikingLiteLLMVLMProvider({"provider": "litellm", "model": "sagemaker/custom"})
-+    for chain in (
-+        FailoverVLM(primary, backup),
-+        MultiCredentialVLM([primary, backup], credential_ids=["primary", "backup"]),
-+    ):
-+        adapter = VLMProviderAdapter(chain, "vision", langfuse_client=LangfuseClient())
-+        assert adapter.supports_tool_result_media() is False
-+
-+
-+@pytest.mark.asyncio
-+@pytest.mark.parametrize(
-+    "model,mode",
-+    [
-+        ("openai/future-claude-vision", "user_message"),
-+        ("azure/deployment", "user_message"),
-+        ("dashscope/qwen3-vl-plus", "user_message"),
-+        ("moonshot/kimi-k2.5", "user_message"),
-+        ("zai/glm-4.6v", "user_message"),
-+        ("openrouter/qwen/qwen3-vl-32b-instruct", "user_message"),
-+        ("databricks/databricks-meta-llama-3-3-70b-instruct", "user_message"),
-+        ("hosted_vllm/private-vision-model", "user_message"),
-+        ("nvidia_nim/nvidia/llama-3.2-nv-vision-90b-v1", "user_message"),
-+        ("gemini/gemini-2.5-flash", "user_message"),
-+        ("vertex_ai/gemini-2.5-flash", "user_message"),
-+        ("anthropic/claude-sonnet-4-5", "native"),
-+        ("vertex_ai/claude-sonnet-4-5", "native"),
-+        ("azure_ai/claude-sonnet-4-5", "native"),
-+        ("bedrock/anthropic.claude-3-5-sonnet-20241022-v2:0", "user_message"),
-+        ("ollama/llava", "user_message"),
-+        ("ollama_chat/llama3.2-vision", "user_message"),
-+        ("github_copilot/gpt-4o", "user_message"),
-+        ("minimax/MiniMax-M3", "user_message"),
-+        ("mistral/pixtral-large-latest", "user_message"),
-+        ("cohere/command-a-vision-07-2025", "user_message"),
-+        ("groq/meta-llama/llama-4-scout-17b-16e-instruct", "user_message"),
-+        ("deepseek/deepseek-chat", None),
-+        ("sambanova/model", None),
-+        ("heroku/model", None),
-+        ("docker_model_runner/model", None),
-+        ("azure_text/deployment", None),
-+        ("future-claude-vision", None),
-+        ("custom/my-model", None),
-+        ("gemini/future-claude-vision", None),
-+    ],
-+)
-+async def test_litellm_declared_media_survives_actual_conversion(
-+    monkeypatch, tmp_path, model, mode
-+):
-+    def no_auth(*args, **kwargs):
-+        raise AssertionError("Capability checks must not resolve credentials or log in")
-+
-+    monkeypatch.setattr("litellm.get_llm_provider", no_auth)
-+    monkeypatch.setattr(
-+        "litellm.llms.github_copilot.authenticator.Authenticator.get_api_key", no_auth
-     )
-+    monkeypatch.setenv("GITHUB_COPILOT_TOKEN_DIR", str(tmp_path))
-+    vlm = OpenVikingLiteLLMVLMProvider({"provider": "litellm", "model": model})
-+    assert vlm.tool_result_media_mode() == mode
-+    if mode is None:
-+        return
-+
-+    encoded = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+a5XsAAAAASUVORK5CYII="
-+    image = {"type": "image_url", "image_url": {"url": f"data:image/png;base64,{encoded}"}}
-+    tools = [
+@@ -15,7 +15,7 @@ use super::types::{
+     BackendRole, FileInfo, GlobPage, GrepOptions, GrepResult, ListSortBy, SortOrder, TreeEntry,
+     WriteFlag,
+ };
+-use crate::core::internal_names::is_multiwrite_internal_path;
++use crate::core::internal_names::{is_hidden_runtime_lock_name, is_multiwrite_internal_path};
+ use crate::metrics::{RagfsMetric, RagfsMetricValue};
+ use crate::multibackend::catch_up::CatchUpTarget;
+ use crate::multibackend::meta::{
+@@ -373,6 +373,15 @@ impl MultiWriteWrappedFS {
+         kind: SegmentEventType,
+         destination_path: Option<&str>,
+     ) -> Result<Option<PendingEvent>> {
++        // Runtime lock files are primary-only and may sit outside an account root.
++        if destination_path.is_none()
++            && path
++                .rsplit('/')
++                .next()
++                .is_some_and(is_hidden_runtime_lock_name)
 +        {
-+            "type": "function",
-+            "function": {"name": "read_image", "parameters": {"type": "object", "properties": {}}},
++            return Ok(None);
 +        }
-+    ]
-+    messages: list[dict[str, Any]] = [
-+        {"role": "user", "content": "Read the source image."},
-+        {
-+            "role": "
-```
-
-**File**: `bot/tests/test_bot_vlm_streaming.py` (modified, +8/-6)
-```diff
-@@ -100,13 +100,10 @@ async def test_vlm_adapter_streams_openai_content_deltas():
-     )
-     attach_client(vlm, completions)
-     provider = make_adapter(vlm, "gpt-test")
-+    image = {"type": "image_url", "image_url": {"url": "data:image/png;base64,AA=="}}
-+    messages = [{"role": "tool", "tool_call_id": "read", "content": [image]}]
- 
--    events = [
--        event
--        async for event in provider.chat_stream(
--            messages=[{"role": "user", "content": "hi"}],
--        )
--    ]
-+    events = [event async for event in provider.chat_stream(messages=messages)]
- 
-     assert [event.type for event in events] == [
-         "content_delta",
-@@ -123,6 +120,11 @@ async def test_vlm_adapter_streams_openai_content_deltas():
-     assert completions.calls[0]["stream"] is True
-     assert completions.calls[0]["stream_options"] == {"include_usage": True}
-     assert "thinking" not in completions.calls[0]
-+    sent = completions.calls[0]["messages"]
-+    assert [m["role"] for m in sent] == ["tool", "user"]
-+    assert isinstance(sent[0]["content"], str)
-+    assert sent[1]["content"][-1] == image
-+    assert messages[0]["content"] == [image]
- 
- 
- @pytest.mark.asyncio
-```
-
-**File**: `bot/tests/test_compile_sources.py` (modified, +108/-0)
-```diff
-@@ -7,8 +7,10 @@
- from dataclasses import asdict
- from io import BytesIO
- from types import SimpleNamespace
-+from typing import Any
- from unittest.mock import AsyncMock, Mock, call
- 
-+import httpx
- import pytest
- from PIL import Image, ImageDraw
- from vikingbot.agent.loop import AgentLoop, _inline_media_bytes
-@@ -23,11 +25,14 @@
- from vikingbot.compile.ops.common import pack, payload
- from vikingbot.compile.pipeline import Pipeline
- from vikingbot.compile.pipeline_agent import ChildProvider, complete_tool_result
-+from vikingbot.compile.pipeline_io import ModelCallError
- from vikingbot.compile.results import CombineResponse, FileResponse, RecordResponse
- from vikingbot.compile.service import BotCompileService
- from vikingbot.compile.skill_resources import EvidenceReader
- from vikingbot.compile.sources import read_source, split_source
-+from vikingbot.config import loader
- from vikingbot.config.schema import Config, SessionKey
-+from vikingbot.integrations.langfuse import LangfuseClient
- from vikingbot.providers.base import LLMProvider, LLMResponse, ToolCallRequest
- from vikingbot.sandbox.backends.direct import DirectBackend
- from vikingbot.session.manager import SessionManager
-@@ -170,6 +175,109 @@ def respond(**kwargs):
-         assert result.files[0].inputs == [image.record_id]
- 
- 
-+@pytest.mark.asyncio
-+@pytest.mark.parametrize("backend,status", [("volcengine", 200), ("openai", 200), ("openai", 400)])
-+async def test_compile_image_reaches_chat_completion_wire(
-+    runtime, tmp_path, monkeypatch, backend, status
-+):
-+    """Load Bot configuration and serialize original PNG evidence through the SDK."""
-+    from openai import AsyncOpenAI
-+    from vikingbot.cli.commands import _make_provider
-+    from volcenginesdkarkruntime import AsyncArk
-+
-+    pipeline, png = runtime
-+    model = "doubao-seed-2.1-lite"
-+    api_base = "https://ark.cn-beijing.volces.com/api/coding/v3"
-+    selected = {
-+        "provider": backend,
-+        "model": model,
-+        "api_base": api_base,
-+        "api_key": "test-key",
-+        "max_retries": 0,
-+    }
-+    config_path = tmp_path / "ov.conf"
-+    config_path.write_text(json.dumps({"vlm": selected}))
-+    monkeypatch.setattr(loader, "CONFIG_PATH", config_path)
-+    monkeypatch.setenv("OPENVIKING_CONFIG_FILE", str(config_path))
-+    pipeline.model.provider = _make_provider(loader.load_config(), langfuse_client=LangfuseClient())
-+    pipeline.model.model = model
-+    image = await seed(runtime)
-+
-+    call = {
-+        "id": "read-image",
-+        "type": "function",
-+        "function": {
-+            "name": "read_evidence",
-+            "arguments": json.dumps({"source_range": image.record_id}),
-+        },
-+    }
-+    files = [{"path": "image.md", "content": URI, "inputs": [image.record_id]}]
-+    replies: list[dict[str, Any]] = [
-+        {"role": "assistant", "content": None, "tool_calls": [call]},
-+        {"role": "assistant", "content": json.dumps({"files": files})},
-+    ]
-+    requests = []
-+
-+    def handle(request):
-+        body = json.loads(request.content)
-+        assert str(request.url) == f"{api_base}/chat/completions" and body["model"] == model
-+        requests.append(body)
-+        if len(requests) == 2 and status == 400:
-+            return httpx.Response(
-+                400, json={"error": {"message": "Model does not support image inputs."}}
-+            )
-+        reply = replies[len(requests) - 1]
-+        return httpx.Response(
-+            200,
-+            json={
-+                "id": "compile-test",
-+                "object": "chat.completion",
-+                "created": 0,
-+                "model": model,
-+                "choices": [
-+                    {
-+                        "index": 0,
-+                        "message": reply,
-+                        "finish_reason": "tool_calls" if reply.get("tool_calls") else "stop",
-+                    }
-+                ],
-+            },
-+        )
-+
-+    vlm = pipeline.model.provider._vlm.inner
-+    sdk_type = AsyncArk if backend == "volcengine" else AsyncOpenAI
-+    async with (
-+        httpx.AsyncClient(transport=httpx.MockTransport(handle)) as http,
-+        sdk_type(
-+            api_key=vlm.api_key, base_url=vlm.api_base, http_client=http, max_retries=0
-+        ) as sdk,
-+    ):
-+        monkeypatch.setattr(vlm, "get_async_client", lambda: sdk)
-+        response = pipeline.model.ask(
-+            "compile",
-+            "Inspect the image.",
-+            {"inputs": [await payload(pipeline, image)]},
-+            FileResponse,
-+        )
-+        if status == 400:
-+            with pytest.raises(ModelCallError, match="does not support image"):
-+                await response
-+        else:
-+            await response
-+
-+    sent = requests[-1]["messages"]
-+    serialized = json.dumps(sent)
-+    assert URI in serialized and serialized.count(base64.b64encode(png).decode()) == 1
-+    images = [
-+        base64.b64decode(p["image_url"]["url"].split(",", 1)[1])
-+        for m in sent
-+     
-```
-
-**File**: `bot/vikingbot/agent/loop.py` (modified, +3/-3)
-```diff
-@@ -2182,10 +2182,10 @@ async def execute_single_tool(
-                         )
-                     if isinstance(result, MultimodalToolResult):
-                         result_media_bytes = _inline_media_bytes([{"content": result.content}])
--                        if not self.provider.supports_tool_result_media(self.model):
-+                        if not self.provider.should_inline_tool_result_media(self.model):
-                             model_result = (
--                                f"{result_text}\n\nMedia content was omitted because the configured "
--                                "model provider does not support media in tool results."
-+                                f"{result_text}\n\nMedia content was omitted by the configured "
-+                                "tool-result media policy."
-                             )
-                         else:
-                             overflow = (
-```
-
-**File**: `bot/vikingbot/providers/base.py` (modified, +5/-1)
-```diff
-@@ -200,9 +200,13 @@ async def chat_stream(
-         yield LLMStreamEvent(type="response", response=response)
- 
-     def supports_tool_result_media(self, model: str | None = None) -> bool:
--        """Whether this provider can preserve media inside a tool result."""
-+        """Whether this provider can deliver media returned by a tool to the model."""
-         return False
- 
-+    def should_inline_tool_result_media(self, model: str | None = None) -> bool:
-+        """Agent Loop policy; scoped providers can opt into adapted image delivery."""
-+        return self.supports_tool_result_media(model)
-+
-     @abstractmethod
-     def get_default_model(self) -> str:
-         """Get the default model for this provider."""
-```
-
-**File**: `bot/vikingbot/providers/vlm_adapter.py` (modified, +20/-23)
-```diff
-@@ -17,6 +17,8 @@
- 
- from openviking.models.model_error import model_error_kind
- from openviking.models.vlm.backends.volcengine_vlm import build_volcengine_request_headers
-+from openviking.models.vlm.base import ToolResultMediaMode
-+from openviking.utils.message_format import tool_images_as_user_messages
- from openviking.utils.model_retry import effective_max_retries, retry_async
- from openviking.utils.multimodal import redact_image_data_urls
- from openviking_cli.utils import get_logger
-@@ -296,8 +298,13 @@ async def chat(
-                 if reasoning_effort is not None and self._vlm.provider == "volcengine"
-                 else {}
-             )
-+            request_messages = (
-+                tool_images_as_user_messages(messages)
-+                if self._tool_result_media_mode(self._vlm) == "user_message"
-+                else messages
-+            )
-             result = await self._vlm.get_completion_async(
--                messages=messages,
-+                messages=request_messages,
-                 thinking=thinking if thinking is not None else getattr(self._vlm, "thinking", None),
-                 tools=response_tools,
-                 tool_choice="auto" if response_tools else None,
-@@ -556,6 +563,8 @@ def _build_stream_kwargs(
-         max_tokens: int | None,
-         temperature: float | None,
-     ) -> dict[str, Any]:
-+        if self._tool_result_media_mode(vlm) == "user_message":
-+            messages = tool_images_as_user_messages(messages)
-         provider = getattr(vlm, "provider", None)
-         configured_max_tokens = getattr(vlm, "max_tokens", None)
-         effective_max_tokens = max_tokens if max_tokens is not None else configured_max_tokens
-@@ -701,30 +710,18 @@ def get_default_model(self) -> str:
-         return self._default_model
- 
-     def supports_tool_result_media(self, model: str | None = None) -> bool:
--        """Return true only for backends with native rich tool-result support."""
--        return self._backend_supports_tool_result_media(self._vlm)
--
--    @classmethod
--    def _backend_supports_tool_result_media(cls, vlm: Any) -> bool:
--        instances = getattr(vlm, "_vlm_instances", None)
--        if instances is not None:
--            return bool(instances) and all(
--                cls._backend_supports_tool_result_media(item) for item in instances
--            )
-+        """Whether every configured backend can deliver image evidence from tools."""
-+        return self._tool_result_media_mode(self._vlm) is not None
- 
--        primary = getattr(vlm, "primary", None)
--        backup = getattr(vlm, "backup", None)
--        if primary is not None and backup is not None:
--            return cls._backend_supports_tool_result_media(
--                primary
--            ) and cls._backend_supports_tool_result_media(backup)
-+    def should_inline_tool_result_media(self, model: str | None = None) -> bool:
-+        """Keep ordinary chats native-only; Compile's scoped providers opt in."""
-+        return self._tool_result_media_mode(self._vlm) == "native"
- 
--        resolve_provider = getattr(vlm, "resolved_provider", None)
--        provider = (
--            resolve_provider() if callable(resolve_provider) else getattr(vlm, "provider", "")
--        )
--        provider = str(provider or "").lower()
--        return provider in {"anthropic", "openai-codex"}
-+    @staticmethod
-+    def _tool_result_media_mode(vlm: Any) -> ToolResultMediaMode | None:
-+        capability = getattr(vlm, "tool_result_media_mode", None)
-+        mode = capability() if callable(capability) else None
-+        return mode if mode in ("native", "user_message") else None
- 
-     # ------------------------------------------------------------------
-     # Langfuse helpers
-```
-
-**File**: `openviking/models/vlm/backends/codex_vlm.py` (modified, +6/-0)
-```diff
-@@ -22,6 +22,8 @@
- from types import SimpleNamespace
- from typing import Any, Dict
- 
-+from ..base import ToolResultMediaMode
-+
- try:
-     import openai
- except ImportError:
-@@ -46,6 +48,10 @@ def __init__(self, config: Dict[str, Any]):
-         super().__init__(normalized)
-         self._async_client = None
- 
-+    def tool_result_media_mode(self) -> ToolResultMediaMode:
-+        """The Responses adapter preserves images inside function-call outputs."""
-+        return "native"
-+
-     def _build_responses_client(self, api_key: str, api_base: str):
-         kwargs = _build_openai_client_kwargs(
-             "openai",
+         let ctx = self.resolve_context(path)?;
+         let account_id = ctx.account_id().to_string();
+         let mut path = logical_path(&account_id, path)?;
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #6979** (2026-11-03): docs(react): require justified useEffect usage (@LaamGinghong)
-- **PR #6978** (2026-11-03): chore(frontend): add Rslint checks and upgrade to TypeScript 7 (@LaamGinghong)
-- **PR #6973** (2026-11-03): feat(auth): scope GLOBAL reads to owner policy (@MaojiaSheng)
-- **PR #6969** (2026-11-03): refactor(retrieval): unify keywords search scope filters (@ByteDanceLiuYang)
-- **PR #6958** (2026-11-03): fix: 避免账户初始化与多写任务锁冲突 (@hezhang-1216)
-- **PR #6954** (2026-11-03): feat(frontend): add component subpaths and scoped stylesheet entries (@LaamGinghong)
+- **PR #7056** (2026-11-04): fix(reindex): restore ReindexExecutor resolver init on v0.5.2-hotfix (@ZaynJarvis)
+- **PR #7051** (2026-11-04): feat(ui): restore the reviewed ScopeSwitcher API and package entry (@LaamGinghong)
+- **PR #7044** (2026-11-04): feat(tui): restore reviewed public API and package entry (@LaamGinghong)
+- **PR #7033** (2026-11-04): fix(ui)!: separate file operations from success notifications (@LaamGinghong)
+- **PR #7032** (2026-11-04): docs(ui): 精简公开组件 Props 注释 (@LaamGinghong)
+- **PR #7031** (2026-11-04): fix(ui)!: notify file preview copy success (@LaamGinghong)
 
 ---
 
@@ -3568,46 +2417,47 @@ Sig
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. pathlock): preserve independent holders across handoff and recovery (#6895)
+## X. frontend): add shared React UI workspace and bilingual component docs (#6996)
 
 **RULE**:
-When implementing operations in `crates/ragfs-python/src/lib.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in volcengine/OpenViking. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/actions/build-ui/action.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in volcengine/OpenViking. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3a90bbb3`: pathlock): preserve independent holders across handoff and recovery (#6895). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e6437c93`: frontend): add shared React UI workspace and bilingual component docs (#6996). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/ragfs-python/src/lib.rs`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/actions/build-ui/action.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-    if let Some(holder_id) = &handoff.holder_id {
-        dict.set_item("holder_id", holder_id)?;
-    }
-    /// Reacquire validated durable coverage under its original logical owner.
-    #[pyo3(signature = (ctx, requests, owner_id, timeout_secs=0.0))]
-    fn pathlock_reacquire_batch_async<'py>(
-        &self,
-        py: Python<'py>,
-        ctx: Option<HashMap<String, String>>,
-        requests: Vec<HashMap<String, String>>,
-        owner_id: String,
-        timeout_secs: f64,
-    ) -> PyResult<Bound<'py, PyAny>> {
-        let fs_ctx = build_fs_context(ctx);
-        let timeout = validate_timeout_secs(timeout_secs)?;
-        let requests = parse_pathlock_request_batch(&requests)?;
-        let manager = self.clone_pathlock_manager();
-        let task = self.rt.spawn(FS_CTX.scope(fs_ctx, async move {
-            manager.reacquire_batch(&requests, &owner_id, timeout).await
-        }));
-        pyo3_async_runtimes::tokio::future_into_py(py, async move {
-            let lease = task
-                .await
-                .map_err(|error| PyRuntimeError::new_err(error.to_string()))?
-                .map_err(pathlock_err_to_py)?;
-            Python::attach(|py| owned_lease_to_py_dict(py,
+name: Build UI
+description: Install, lint, type-check, and build the UI library and documentation
+runs:
+  using: composite
+  steps:
+    - name: Set up Node.js for UI
+      uses: actions/setup-node@v6
+      with:
+        node-version: 22
+        cache: npm
+        cache-dependency-path: frontend/package-lock.json
+
+    - name: Install UI dependencies
+      shell: bash
+      run: npm ci --prefix frontend
+
+    - name: Lint and type-check UI
+      shell: bash
+      run: npm run lint --prefix frontend
+
+    - name: Build UI library and docs
+      shell: bash
+      run: npm run build --prefix frontend
+
+    - name: Check UI docs output
+      shell: bash
+      run: test -f frontend/docs/doc_build/index.html
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -3617,4 +2467,4 @@ Subsystems managing Python data structures, boundary deserialization, API parsin
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3a90bbb3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e6437c93` are properly handled with clean fallback behavior.

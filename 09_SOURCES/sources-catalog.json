@@ -1603,10 +1603,10 @@
     "repository": "volcengine/OpenViking",
     "platform": "github",
     "sourceUrl": "https://github.com/volcengine/OpenViking",
-    "sourceVersion": "5760af6f",
+    "sourceVersion": "3e0c9dcc",
     "license": "AGPL-3.0",
-    "contentHash": "c1a9149b82e64fff30bb50f01f2588369244ab9c5a3ba028c4039496a0e97402",
-    "lastHarvestedAt": "2026-11-03T19:24:25.789Z",
+    "contentHash": "0a089e86484bca094f0f7a791cdaa544b50a74da72747912642a2e8defc0f565",
+    "lastHarvestedAt": "2026-11-04T19:33:58.060Z",
     "learningId": "learn-github-volcengine-openviking"
   },
   "saffsanity-sill": {
@@ -2973,10 +2973,10 @@
     "repository": "beclab/Olares",
     "platform": "github",
     "sourceUrl": "https://github.com/beclab/Olares",
-    "sourceVersion": "714b5043",
+    "sourceVersion": "2e0f254a",
     "license": "AGPL-3.0",
-    "contentHash": "ee08a730d0a2c5d1e1b33757db3b85b4fba4930afa43bfd6ef62a774ce86040d",
-    "lastHarvestedAt": "2026-11-03T20:50:04.637Z",
+    "contentHash": "f60931850ddc18ef32940cb0fcfb0299579877c785346f9240a394a623c917a6",
+    "lastHarvestedAt": "2026-11-04T19:33:52.565Z",
     "learningId": "learn-github-beclab-olares"
   },
   "cryfs-cryfs": {
@@ -6303,10 +6303,10 @@
     "repository": "open-ani/animeko",
     "platform": "github",
     "sourceUrl": "https://github.com/open-ani/animeko",
-    "sourceVersion": "8ca97e5d",
+    "sourceVersion": "bd7a42f3",
     "license": "AGPL-3.0",
-    "contentHash": "f5f4a199374d084a531a83461c84aed2403c30fefcae7fee1bdea6f484869250",
-    "lastHarvestedAt": "2026-10-31T12:15:46.941Z",
+    "contentHash": "32a775c3ea1ad3a689a1d0333bdb1bd45cbf9f1db316bef33bd168a409bc9c35",
+    "lastHarvestedAt": "2026-11-04T19:33:52.807Z",
     "learningId": "learn-github-open-ani-animeko"
   },
   "k3s-io-k3s": {
@@ -7073,10 +7073,10 @@
     "repository": "crate-ci/typos",
     "platform": "github",
     "sourceUrl": "https://github.com/crate-ci/typos",
-    "sourceVersion": "4c8b7f51",
+    "sourceVersion": "7cd4cdb2",
     "license": "Apache-2.0",
-    "contentHash": "07a67f6feff551640fac4e14f0da75d45bb59410959968c2cfed920d8ac0cc29",
-    "lastHarvestedAt": "2026-11-03T12:18:33.476Z",
+    "contentHash": "9cad7fd3f8220b52ac933b1a3afa9193ebffd37268d2bbe63b41d8fa4391fe00",
+    "lastHarvestedAt": "2026-11-04T19:33:45.625Z",
     "learningId": "learn-github-crate-ci-typos"
   },
   "emberstack-kubernetes-reflector": {
@@ -10705,8 +10705,8 @@
     "sourceUrl": "https://huggingface.co/Nanbeige/Nanbeige4.3-33B",
     "sourceVersion": "hf-nanbeige-nanbeige4.3-33b",
     "license": "Open-Source",
-    "contentHash": "6f75363f5b7b6edd85731b001e09393311f05f2132d642f16e7b4e238d968c92",
-    "lastHarvestedAt": "2026-10-31T03:26:04.166Z",
+    "contentHash": "fe63a84485f05d2c4172865102829deae27eb021b11bdc141c79928146c23ad1",
+    "lastHarvestedAt": "2026-11-04T19:33:52.527Z",
     "learningId": "learn-huggingface-nanbeige-nanbeige4-3-33b"
   },
   "kajisho5-ffmpeg-skill": {
