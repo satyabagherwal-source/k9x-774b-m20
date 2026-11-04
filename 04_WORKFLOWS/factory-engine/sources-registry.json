@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-04T19:48:23.556Z",
-    "lastVerified": "2026-11-04T19:48:23.556Z",
+    "lastChecked": "2026-11-04T19:55:34.475Z",
+    "lastVerified": "2026-11-04T19:55:34.475Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -245,8 +245,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-04T19:22:56.612Z",
-    "lastVerified": "2026-11-04T19:22:56.612Z",
+    "lastChecked": "2026-11-04T19:55:31.030Z",
+    "lastVerified": "2026-11-04T19:55:31.030Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -335,12 +335,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "pathwaycom-llm-app": {
-    "name": "pathwaycom/serviette",
+    "name": "llm-app",
     "officialUrl": "https://github.com/pathwaycom/llm-app",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-03T20:01:00.464Z",
-    "lastVerified": "2026-11-03T20:01:00.464Z",
+    "lastChecked": "2026-11-04T19:55:28.518Z",
+    "lastVerified": "2026-11-04T19:55:28.518Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-pathwaycom-serviette",
@@ -349,7 +349,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "84e92a33"
   },
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
@@ -1326,8 +1327,8 @@
     "officialUrl": "https://github.com/cryfs/cryfs",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-04T10:45:24.879Z",
-    "lastVerified": "2026-11-04T10:45:24.879Z",
+    "lastChecked": "2026-11-04T19:55:26.020Z",
+    "lastVerified": "2026-11-04T19:55:26.020Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-cryfs-cryfs",
@@ -3283,9 +3284,9 @@
   "cdk-team-cdk": {
     "name": "CDK",
     "officialUrl": "https://github.com/cdk-team/CDK",
-    "lastChecked": "2026-11-03T21:17:18.322Z",
+    "lastChecked": "2026-11-04T19:55:23.586Z",
     "revisionIdentifier": "69da22ad",
-    "lastVerified": "2026-11-03T21:17:18.322Z"
+    "lastVerified": "2026-11-04T19:55:23.586Z"
   },
   "lioensky-vcptoolbox": {
     "name": "lioensky/VCPToolBox",
@@ -6494,9 +6495,9 @@
   "hungps-flutter_pokedex": {
     "name": "flutter_pokedex",
     "officialUrl": "https://github.com/hungps/flutter_pokedex",
-    "lastChecked": "2026-10-31T12:39:28.982Z",
+    "lastChecked": "2026-11-04T19:55:21.052Z",
     "revisionIdentifier": "7e2b6d49",
-    "lastVerified": "2026-10-31T12:39:28.982Z"
+    "lastVerified": "2026-11-04T19:55:21.052Z"
   },
   "cycloidio-terracognita": {
     "name": "terracognita",
@@ -12866,13 +12867,13 @@
     "officialUrl": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-31T03:52:17.258Z",
-    "lastVerified": "2026-10-31T03:52:17.258Z",
+    "lastChecked": "2026-11-04T19:55:18.550Z",
+    "lastVerified": "2026-11-04T19:55:18.550Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-nvidia-nvidia-nemotron-3-5-bolt-e4b-4gb",
-    "contentHash": "85c574bbbcfca2c5e7803b33b326b824c0c3cd7bc3ac309f05a6879bff19b919",
-    "promotedRulesCount": 3,
+    "contentHash": "44a1dcd4b63e51e98b6ae8932e479fbd083f6586665032012ebf92725d58f63c",
+    "promotedRulesCount": 2,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
@@ -13419,6 +13420,23 @@
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "matthart1983-netwatch": {
+    "name": "matthart1983/netwatch",
+    "officialUrl": "https://github.com/matthart1983/netwatch",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-11-04T19:55:20.365Z",
+    "lastVerified": "2026-11-04T19:55:20.365Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-matthart1983-netwatch",
+    "contentHash": "662f844b747902face96d04b281ed3e94cd19bd746028dce3ea8c6368c864364",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 11,
+    "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
   }

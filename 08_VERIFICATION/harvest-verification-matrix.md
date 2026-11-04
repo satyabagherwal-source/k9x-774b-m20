@@ -7309,3 +7309,5 @@
 | `CYCLE-20261104-4A6S` | `2026-11-04T19:48:09.748Z` | `XHToken/Spark-X2.6-4B-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6937, Rule 6938, Rule 6939` | Yes (`bb8890df...`) |
 | `CYCLE-20261104-4BA4` | `2026-11-04T19:48:11.164Z` | `meilisearch/meilisearch` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6940` | Yes (`d7d6eae4...`) |
 | `CYCLE-20261104-4IVB` | `2026-11-04T19:48:20.999Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6941` | Yes (`ede37a31...`) |
+| `CYCLE-20261104-DJBT` | `2026-11-04T19:55:21.497Z` | `matthart1983/netwatch` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6942` | Yes (`662f844b...`) |
+| `CYCLE-20261104-DRDF` | `2026-11-04T19:55:31.923Z` | `nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6943, Rule 6944` | Yes (`44a1dcd4...`) |

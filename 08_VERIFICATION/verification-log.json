@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261102-Z8RI",
-    "timestamp": "2026-11-02T15:00:58.014Z",
-    "repository": "NucleoidAI/Nucleoid",
-    "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "85b804010015fb460a60bd03a061c3c6ee99f0ef8693fe2e893bb428d317efa8",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261102-Z8SU",
-    "timestamp": "2026-11-02T15:00:58.062Z",
-    "repository": "lioensky/VCPToolBox",
-    "learningId": "learn-github-lioensky-vcptoolbox",
-    "contentHash": "33d92ebc9531f8adccc66de78f93723fc18ff76fad25d25cc69413b52aff7fcd",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261102-8OYQ",
     "timestamp": "2026-11-02T15:08:18.914Z",
     "repository": "hashicorp/terraform",
@@ -7492,6 +7462,36 @@
     "contentHash": "ede37a315931cde4e418a8605c755469e97b93531ae9d6283b4ee9adad43bdd8",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-DJBT",
+    "timestamp": "2026-11-04T19:55:21.497Z",
+    "repository": "matthart1983/netwatch",
+    "learningId": "learn-github-matthart1983-netwatch",
+    "contentHash": "662f844b747902face96d04b281ed3e94cd19bd746028dce3ea8c6368c864364",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-DRDF",
+    "timestamp": "2026-11-04T19:55:31.923Z",
+    "repository": "nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB",
+    "learningId": "learn-huggingface-nvidia-nvidia-nemotron-3-5-bolt-e4b-4gb",
+    "contentHash": "44a1dcd4b63e51e98b6ae8932e479fbd083f6586665032012ebf92725d58f63c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

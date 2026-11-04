@@ -10825,8 +10825,8 @@
     "sourceUrl": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB",
     "sourceVersion": "hf-nvidia-nvidia-nemotron-3.5-bolt-e4b-4gb",
     "license": "Open-Source",
-    "contentHash": "85c574bbbcfca2c5e7803b33b326b824c0c3cd7bc3ac309f05a6879bff19b919",
-    "lastHarvestedAt": "2026-10-31T03:52:28.650Z",
+    "contentHash": "44a1dcd4b63e51e98b6ae8932e479fbd083f6586665032012ebf92725d58f63c",
+    "lastHarvestedAt": "2026-11-04T19:55:31.927Z",
     "learningId": "learn-huggingface-nvidia-nvidia-nemotron-3-5-bolt-e4b-4gb"
   },
   "gaurav-gosain-tuios": {
@@ -11908,5 +11908,15 @@
     "contentHash": "a3cdd04f02a97e12e609dca94b7a1d9021b6b8d10f67d779a0986afdb4feb0b2",
     "lastHarvestedAt": "2026-11-04T19:08:58.947Z",
     "learningId": "learn-huggingface-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-coder-gguf"
+  },
+  "matthart1983-netwatch": {
+    "repository": "matthart1983/netwatch",
+    "platform": "github",
+    "sourceUrl": "https://github.com/matthart1983/netwatch",
+    "sourceVersion": "ee7d2174",
+    "license": "MIT",
+    "contentHash": "662f844b747902face96d04b281ed3e94cd19bd746028dce3ea8c6368c864364",
+    "lastHarvestedAt": "2026-11-04T19:55:21.501Z",
+    "learningId": "learn-github-matthart1983-netwatch"
   }
 }

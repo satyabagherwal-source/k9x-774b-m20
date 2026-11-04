@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-04T19:48:20.945Z",
-  "total_verified_learnings": 1209,
+  "last_updated": "2026-11-04T19:55:31.839Z",
+  "total_verified_learnings": 1210,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -141048,7 +141048,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB",
       "source_version": "hf-nvidia-nvidia-nemotron-3.5-bolt-e4b-4gb",
-      "content_hash": "85c574bbbcfca2c5e7803b33b326b824c0c3cd7bc3ac309f05a6879bff19b919",
+      "content_hash": "44a1dcd4b63e51e98b6ae8932e479fbd083f6586665032012ebf92725d58f63c",
       "dossier_path": "07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotron-3.5-bolt-e4b-4gb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotron-3.5-bolt-e4b-4gb-learnings.md",
       "promoted_rules": [
@@ -141081,6 +141081,16 @@
           "number": 6054,
           "title": "Tokenizer Chat-Template Consistency Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6943,
+          "title": "Quantization-Aware Context Window Allocation",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6944,
+          "title": "Chat Template Determinism for Tool Use",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -141088,7 +141098,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T03:52:28.546Z",
+      "verified_at": "2026-11-04T19:55:31.816Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -176830,6 +176840,81 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-04T19:48:20.931Z"
+    },
+    "learn-github-matthart1983-netwatch": {
+      "learning_id": "learn-github-matthart1983-netwatch",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "matthart1983/netwatch",
+      "repository": "matthart1983/netwatch",
+      "slug": "matthart1983-netwatch",
+      "platform": "github",
+      "source_url": "https://github.com/matthart1983/netwatch",
+      "source_version": "ee7d2174",
+      "content_hash": "662f844b747902face96d04b281ed3e94cd19bd746028dce3ea8c6368c864364",
+      "dossier_path": "07_PROJECT_LEARNING/matthart1983-netwatch-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/matthart1983-netwatch-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 6942,
+          "title": "config): refuse a config.toml that does not load instead of using defaults (#146",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-04T19:55:21.389Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-6942": {
+      "learning_id": "rule-6942",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6942,
+      "title": "config): refuse a config.toml that does not load instead of using defaults (#146",
+      "source_url": "https://github.com/matthart1983/netwatch",
+      "source_version": "ee7d2174",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T19:55:21.389Z"
+    },
+    "rule-6943": {
+      "learning_id": "rule-6943",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6943,
+      "title": "Quantization-Aware Context Window Allocation",
+      "source_url": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB",
+      "source_version": "hf-nvidia-nvidia-nemotron-3.5-bolt-e4b-4gb",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T19:55:31.816Z"
+    },
+    "rule-6944": {
+      "learning_id": "rule-6944",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6944,
+      "title": "Chat Template Determinism for Tool Use",
+      "source_url": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB",
+      "source_version": "hf-nvidia-nvidia-nemotron-3.5-bolt-e4b-4gb",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T19:55:31.816Z"
     }
   },
   "aliases": {

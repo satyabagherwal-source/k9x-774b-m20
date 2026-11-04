@@ -20284,5 +20284,20 @@
     "downloads": 73282,
     "qualityScore": 3560,
     "discoveredAt": "2026-11-04T19:06:28.731Z"
+  },
+  {
+    "name": "netwatch",
+    "fullName": "matthart1983/netwatch",
+    "url": "https://github.com/matthart1983/netwatch",
+    "type": "github",
+    "domain": "high-perf-systems",
+    "description": "Real-time network diagnostics in your terminal. One command, zero config, instant visibility.",
+    "stars": 3571,
+    "forks": 166,
+    "openIssues": 2,
+    "language": "Rust",
+    "qualityScore": 2089,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-11-04T19:52:37.963Z"
   }
 ]

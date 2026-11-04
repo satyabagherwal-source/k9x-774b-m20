@@ -7318,3 +7318,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-xhtoken-spark-x2-6-4b-gguf` | `https://huggingface.co/XHToken/Spark-X2.6-4B-GGUF` | `hf-xhtoken` | Multi-dimensional audit evidence | 2026-11-04T19:48:09.751Z |
 | `learn-github-meilisearch-meilisearch` | `https://github.com/meilisearch/meilisearch` | `c18c8197` | Multi-dimensional audit evidence | 2026-11-04T19:48:11.167Z |
 | `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `5aa241a1` | Multi-dimensional audit evidence | 2026-11-04T19:48:21.002Z |
+| `learn-github-matthart1983-netwatch` | `https://github.com/matthart1983/netwatch` | `ee7d2174` | Multi-dimensional audit evidence | 2026-11-04T19:55:21.501Z |
+| `learn-huggingface-nvidia-nvidia-nemotron-3-5-bolt-e4b-4gb` | `https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB` | `hf-nvidia-` | Multi-dimensional audit evidence | 2026-11-04T19:55:31.927Z |
