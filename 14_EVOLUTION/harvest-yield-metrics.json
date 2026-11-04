@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-04T18:35:47.933Z",
-  "total_cycles_completed": 7255,
-  "total_learnings_persisted": 7255,
-  "total_rules_promoted": 6936,
+  "last_updated": "2026-11-04T18:42:22.598Z",
+  "total_cycles_completed": 7258,
+  "total_learnings_persisted": 7258,
+  "total_rules_promoted": 6940,
   "history": [
-    {
-      "timestamp": "2026-11-04T00:32:08.492Z",
-      "repository": "dkhamsing/open-source-ios-apps",
-      "learningId": "learn-github-dkhamsing-open-source-ios-apps",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T00:38:30.656Z",
-      "repository": "rdfjs/N3.js",
-      "learningId": "learn-github-rdfjs-n3-js",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T00:38:32.313Z",
-      "repository": "react-hook-form/react-hook-form",
-      "learningId": "learn-github-react-hook-form-react-hook-form",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-04T00:38:40.058Z",
       "repository": "crate/crate",
@@ -1403,6 +1382,27 @@
       "repository": "ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF",
       "learningId": "learn-huggingface-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-gguf",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T18:42:13.646Z",
+      "repository": "topgrade-rs/topgrade",
+      "learningId": "learn-github-topgrade-rs-topgrade",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T18:42:19.034Z",
+      "repository": "Comfy-Org/Fibo-2.0",
+      "learningId": "learn-huggingface-comfy-org-fibo-2-0",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T18:42:22.598Z",
+      "repository": "nolabs-ai/nono",
+      "learningId": "learn-github-nolabs-ai-nono",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

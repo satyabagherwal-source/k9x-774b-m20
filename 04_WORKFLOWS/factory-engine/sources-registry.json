@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-04T18:35:50.488Z",
-    "lastVerified": "2026-11-04T18:35:50.488Z",
+    "lastChecked": "2026-11-04T18:42:25.128Z",
+    "lastVerified": "2026-11-04T18:42:25.128Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -245,8 +245,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-04T18:13:51.350Z",
-    "lastVerified": "2026-11-04T18:13:51.350Z",
+    "lastChecked": "2026-11-04T18:42:20.657Z",
+    "lastVerified": "2026-11-04T18:42:20.657Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -601,22 +601,21 @@
     "lastVerified": "2026-11-04T09:39:59.344Z"
   },
   "nolabs-ai-nono": {
-    "name": "nono",
+    "name": "nolabs-ai/nono",
     "officialUrl": "https://github.com/nolabs-ai/nono",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-04T09:33:00.278Z",
-    "lastVerified": "2026-11-04T09:33:00.278Z",
+    "lastChecked": "2026-11-04T18:42:20.867Z",
+    "lastVerified": "2026-11-04T18:42:20.867Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nolabs-ai-nono",
-    "contentHash": "93b372f4fbee7e930f25b74c5e8054352077354d4388d9cda2ec89dd67819299",
+    "contentHash": "c67e80fa6ab04553697670042a49f60712915959eac9ff6a2a16e510bf97929d",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "1680298d"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "vectifyai-pageindex": {
     "name": "VectifyAI/PageIndex",
@@ -2784,9 +2783,9 @@
   "easegress-io-easegress": {
     "name": "easegress",
     "officialUrl": "https://github.com/easegress-io/easegress",
-    "lastChecked": "2026-11-03T19:37:41.269Z",
+    "lastChecked": "2026-11-04T18:42:13.091Z",
     "revisionIdentifier": "48bacc2e",
-    "lastVerified": "2026-11-03T19:37:41.269Z"
+    "lastVerified": "2026-11-04T18:42:13.091Z"
   },
   "ontos-ai-knowhere": {
     "name": "Ontos-AI/knowhere",
@@ -5940,9 +5939,9 @@
   "shoutem-ui": {
     "name": "ui",
     "officialUrl": "https://github.com/shoutem/ui",
-    "lastChecked": "2026-10-31T11:39:48.795Z",
+    "lastChecked": "2026-11-04T18:42:10.592Z",
     "revisionIdentifier": "92e3f530",
-    "lastVerified": "2026-10-31T11:39:48.795Z"
+    "lastVerified": "2026-11-04T18:42:10.592Z"
   },
   "decodingai-magazine-llm-twin-course": {
     "name": "llm-twin-course",
@@ -7097,14 +7096,14 @@
     "officialUrl": "https://github.com/topgrade-rs/topgrade",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-03T11:38:58.520Z",
-    "lastVerified": "2026-11-03T11:38:58.520Z",
+    "lastChecked": "2026-11-04T18:42:11.260Z",
+    "lastVerified": "2026-11-04T18:42:11.260Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-topgrade-rs-topgrade",
-    "contentHash": "3e0299083c312134e0084794b69e21760cdf9f4117b17a9e5735f6a3c1f40d08",
-    "promotedRulesCount": 0,
-    "recentFixesCount": 2,
+    "contentHash": "1338916b1b35c99c5d987b6f40b2fcf09268c3ca65f96e2fb446cb3fbb807d66",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -7522,9 +7521,9 @@
   "libsql-libsql": {
     "name": "libsql",
     "officialUrl": "https://github.com/libsql/libsql",
-    "lastChecked": "2026-11-03T18:30:07.707Z",
+    "lastChecked": "2026-11-04T18:42:18.081Z",
     "revisionIdentifier": "d8bc862d",
-    "lastVerified": "2026-11-03T18:30:07.707Z"
+    "lastVerified": "2026-11-04T18:42:18.081Z"
   },
   "zvec-ai-zvec-grep": {
     "name": "zvec-ai/zvec-grep",
@@ -12720,12 +12719,12 @@
     "officialUrl": "https://huggingface.co/Comfy-Org/Fibo-2.0",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-31T02:44:01.959Z",
-    "lastVerified": "2026-10-31T02:44:01.959Z",
+    "lastChecked": "2026-11-04T18:42:08.213Z",
+    "lastVerified": "2026-11-04T18:42:08.213Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-comfy-org-fibo-2-0",
-    "contentHash": "c0b6ab4f0d2e8c3deed016bea94795661c87ccf74e8bde417cb6f5551d6aa353",
+    "contentHash": "bc30b4c54d066eb8382c80d1266080452661bc903cdda1c596ee0d7ac61dc526",
     "promotedRulesCount": 2,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

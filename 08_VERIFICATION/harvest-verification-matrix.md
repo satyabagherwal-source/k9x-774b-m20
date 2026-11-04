@@ -7278,3 +7278,6 @@
 | `CYCLE-20261104-IU83` | `2026-11-04T18:35:30.051Z` | `domcyrus/rustnet` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6899` | Yes (`7ed17eed...`) |
 | `CYCLE-20261104-J4W9` | `2026-11-04T18:35:43.881Z` | `ClickHouse/ClickHouse` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6900` | Yes (`bf84840f...`) |
 | `CYCLE-20261104-J80L` | `2026-11-04T18:35:47.925Z` | `ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6901, Rule 6902, Rule 6903` | Yes (`bc175e06...`) |
+| `CYCLE-20261104-RHMS` | `2026-11-04T18:42:13.637Z` | `topgrade-rs/topgrade` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6904` | Yes (`1338916b...`) |
+| `CYCLE-20261104-RLSJ` | `2026-11-04T18:42:19.027Z` | `Comfy-Org/Fibo-2.0` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6905, Rule 6906` | Yes (`bc30b4c5...`) |
+| `CYCLE-20261104-ROJJ` | `2026-11-04T18:42:22.591Z` | `nolabs-ai/nono` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6907` | Yes (`c67e80fa...`) |

@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261101-P4PB",
-    "timestamp": "2026-11-01T01:33:36.911Z",
-    "repository": "openbmb/MiniCPM-V-4.7-35B-A3B-gguf",
-    "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b-gguf",
-    "contentHash": "19cc97c72da98ab24881835b846e7d1049931411335996cabec6b8f786a2dd3d",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261101-XZKU",
-    "timestamp": "2026-11-01T01:40:30.174Z",
-    "repository": "nvidia/Qwen3.8-Flash-Next-FP4-Local",
-    "learningId": "learn-huggingface-nvidia-qwen3-8-flash-next-fp4-local",
-    "contentHash": "0c3242062bb6544936efc2b098a66f06017d149a26d46f6d6b18f61fb1485614",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261101-XZVY",
-    "timestamp": "2026-11-01T01:40:30.574Z",
-    "repository": "argoproj/argo-events",
-    "learningId": "learn-github-argoproj-argo-events",
-    "contentHash": "37a32afa459a09952e339d50e110d4601fe1589feba4700a69f0d28b4fa016f8",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261101-6ENC",
     "timestamp": "2026-11-01T01:47:02.952Z",
     "repository": "OpenMOSS-Team/MOSS-Image-Base",
@@ -7492,6 +7447,51 @@
     "contentHash": "bc175e06f28b2865a4fc5696e26374d2245d39856315ad31342eaf62bab34796",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-RHMS",
+    "timestamp": "2026-11-04T18:42:13.637Z",
+    "repository": "topgrade-rs/topgrade",
+    "learningId": "learn-github-topgrade-rs-topgrade",
+    "contentHash": "1338916b1b35c99c5d987b6f40b2fcf09268c3ca65f96e2fb446cb3fbb807d66",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-RLSJ",
+    "timestamp": "2026-11-04T18:42:19.027Z",
+    "repository": "Comfy-Org/Fibo-2.0",
+    "learningId": "learn-huggingface-comfy-org-fibo-2-0",
+    "contentHash": "bc30b4c54d066eb8382c80d1266080452661bc903cdda1c596ee0d7ac61dc526",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-ROJJ",
+    "timestamp": "2026-11-04T18:42:22.591Z",
+    "repository": "nolabs-ai/nono",
+    "learningId": "learn-github-nolabs-ai-nono",
+    "contentHash": "c67e80fa6ab04553697670042a49f60712915959eac9ff6a2a16e510bf97929d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

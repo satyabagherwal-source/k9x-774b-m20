@@ -2353,10 +2353,10 @@
     "repository": "nolabs-ai/nono",
     "platform": "github",
     "sourceUrl": "https://github.com/nolabs-ai/nono",
-    "sourceVersion": "1680298d",
+    "sourceVersion": "0e15816b",
     "license": "Apache-2.0",
-    "contentHash": "93b372f4fbee7e930f25b74c5e8054352077354d4388d9cda2ec89dd67819299",
-    "lastHarvestedAt": "2026-11-03T23:32:21.837Z",
+    "contentHash": "c67e80fa6ab04553697670042a49f60712915959eac9ff6a2a16e510bf97929d",
+    "lastHarvestedAt": "2026-11-04T18:42:22.594Z",
     "learningId": "learn-github-nolabs-ai-nono"
   },
   "dathere-qsv": {
@@ -6863,10 +6863,10 @@
     "repository": "topgrade-rs/topgrade",
     "platform": "github",
     "sourceUrl": "https://github.com/topgrade-rs/topgrade",
-    "sourceVersion": "2dfd6fcd",
+    "sourceVersion": "155a490a",
     "license": "GPL-3.0",
-    "contentHash": "3e0299083c312134e0084794b69e21760cdf9f4117b17a9e5735f6a3c1f40d08",
-    "lastHarvestedAt": "2026-11-03T11:45:01.142Z",
+    "contentHash": "1338916b1b35c99c5d987b6f40b2fcf09268c3ca65f96e2fb446cb3fbb807d66",
+    "lastHarvestedAt": "2026-11-04T18:42:13.642Z",
     "learningId": "learn-github-topgrade-rs-topgrade"
   },
   "lucide-icons-lucide": {
@@ -10615,8 +10615,8 @@
     "sourceUrl": "https://huggingface.co/Comfy-Org/Fibo-2.0",
     "sourceVersion": "hf-comfy-org-fibo-2.0",
     "license": "Open-Source",
-    "contentHash": "c0b6ab4f0d2e8c3deed016bea94795661c87ccf74e8bde417cb6f5551d6aa353",
-    "lastHarvestedAt": "2026-10-31T02:44:15.000Z",
+    "contentHash": "bc30b4c54d066eb8382c80d1266080452661bc903cdda1c596ee0d7ac61dc526",
+    "lastHarvestedAt": "2026-11-04T18:42:19.030Z",
     "learningId": "learn-huggingface-comfy-org-fibo-2-0"
   },
   "hf-ornith-ai-ornith-1.5-122b": {
