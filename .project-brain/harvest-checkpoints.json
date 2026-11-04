@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-04T21:50:16.157Z",
+  "last_updated": "2026-11-04T21:58:20.607Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -305,14 +305,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-moonshotai-kimi-k3",
-      "content_hash": "23931a2ed9aa1dbdd886758a812a079b2630402773ab4ff1e1740d149e2bb511",
-      "verified_at": "2026-10-31T06:18:09.683Z",
+      "content_hash": "86e1ea5267424e2b0d453067682345b2968a00392c9a653ea05b045e93d54cde",
+      "verified_at": "2026-11-04T21:58:20.606Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T06:18:09.683Z"
+      "last_updated": "2026-11-04T21:58:20.606Z"
     },
     "stabilityai/stable-diffusion-xl-base-1.0": {
       "repository": "stabilityai/stable-diffusion-xl-base-1.0",
@@ -10731,14 +10731,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-necolas-react-native-web",
-      "content_hash": "14d78936b8f6d3852e7b948726215800525099988cbae08c0c4f297cfb33947c",
-      "verified_at": "2026-10-31T14:32:36.401Z",
+      "content_hash": "7a96298d11fec4927dc1b54ec2eda27b87ace8cc020af176ac71ac804c54db15",
+      "verified_at": "2026-11-04T21:57:20.170Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T14:32:36.402Z"
+      "last_updated": "2026-11-04T21:57:20.170Z"
     },
     "zvec-ai/zvec-grep": {
       "repository": "zvec-ai/zvec-grep",
@@ -11721,14 +11721,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zed-industries-zed",
-      "content_hash": "fc17b3057affce68499f37a9c7bf395e016fca2f4ab5c49d430ed89764a02e95",
-      "verified_at": "2026-11-03T17:38:17.585Z",
+      "content_hash": "5a3ea6fa764acad3ba1d16169afc9767d51657f926d558249278740911d4eb8e",
+      "verified_at": "2026-11-04T21:57:16.214Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T17:38:17.585Z"
+      "last_updated": "2026-11-04T21:57:16.214Z"
     },
     "MohamedRejeb/compose-rich-editor": {
       "repository": "MohamedRejeb/compose-rich-editor",

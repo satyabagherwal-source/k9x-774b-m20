@@ -7366,3 +7366,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-black-forest-labs-flux-1-dev` | `https://huggingface.co/black-forest-labs/FLUX.1-dev` | `hf-black-f` | Multi-dimensional audit evidence | 2026-11-04T21:42:55.266Z |
 | `learn-github-oxc-project-oxc` | `https://github.com/oxc-project/oxc` | `3d3a6f46` | Multi-dimensional audit evidence | 2026-11-04T21:50:01.354Z |
 | `learn-huggingface-deepseek-ai-deepseek-r1` | `https://huggingface.co/deepseek-ai/DeepSeek-R1` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-11-04T21:50:16.140Z |
+| `learn-github-zed-industries-zed` | `https://github.com/zed-industries/zed` | `c7bea343` | Multi-dimensional audit evidence | 2026-11-04T21:57:16.196Z |
+| `learn-github-necolas-react-native-web` | `https://github.com/necolas/react-native-web` | `c43635ed` | Multi-dimensional audit evidence | 2026-11-04T21:57:20.150Z |
+| `learn-huggingface-moonshotai-kimi-k3` | `https://huggingface.co/moonshotai/Kimi-K3` | `hf-moonsho` | Multi-dimensional audit evidence | 2026-11-04T21:58:20.598Z |

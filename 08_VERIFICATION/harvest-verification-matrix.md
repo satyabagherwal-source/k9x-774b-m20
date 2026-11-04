@@ -7357,3 +7357,6 @@
 | `CYCLE-20261104-7V33` | `2026-11-04T21:42:55.263Z` | `black-forest-labs/FLUX.1-dev` | Commit diff / Patch analysis | `VERIFIED` | `Rule 801` | Yes (`687d328c...`) |
 | `CYCLE-20261104-GZUU` | `2026-11-04T21:50:01.350Z` | `oxc-project/oxc` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6984` | Yes (`976839c7...`) |
 | `CYCLE-20261104-HB9K` | `2026-11-04T21:50:16.136Z` | `deepseek-ai/DeepSeek-R1` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6985, Rule 6986, Rule 6987` | Yes (`ebd10e60...`) |
+| `CYCLE-20261104-QBDS` | `2026-11-04T21:57:16.192Z` | `zed-industries/zed` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6988` | Yes (`5a3ea6fa...`) |
+| `CYCLE-20261104-QEFM` | `2026-11-04T21:57:20.146Z` | `necolas/react-native-web` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6989` | Yes (`7a96298d...`) |
+| `CYCLE-20261104-RP2N` | `2026-11-04T21:58:20.591Z` | `moonshotai/Kimi-K3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-moonshotai-kimi-k3-learnings.md` | Yes (`86e1ea52...`) |

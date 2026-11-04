@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-04T21:50:16.051Z",
+  "last_updated": "2026-11-04T21:58:20.499Z",
   "total_verified_learnings": 1210,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -27282,7 +27282,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/moonshotai/Kimi-K3",
       "source_version": "hf-moonshotai-kimi-k3",
-      "content_hash": "23931a2ed9aa1dbdd886758a812a079b2630402773ab4ff1e1740d149e2bb511",
+      "content_hash": "86e1ea5267424e2b0d453067682345b2968a00392c9a653ea05b045e93d54cde",
       "dossier_path": "07_PROJECT_LEARNING/hf-moonshotai-kimi-k3-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-moonshotai-kimi-k3-learnings.md",
       "promoted_rules": [
@@ -27345,7 +27345,7 @@
         "learn-huggingface-hf-moonshotai-kimi-k3-mv4438bt",
         "learn-huggingface-hf-moonshotai-kimi-k3-mv4hc41y"
       ],
-      "verified_at": "2026-10-31T06:18:09.573Z",
+      "verified_at": "2026-11-04T21:58:20.473Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -43110,8 +43110,8 @@
       "slug": "necolas-react-native-web",
       "platform": "github",
       "source_url": "https://github.com/necolas/react-native-web",
-      "source_version": "646103a4",
-      "content_hash": "14d78936b8f6d3852e7b948726215800525099988cbae08c0c4f297cfb33947c",
+      "source_version": "c43635ed",
+      "content_hash": "7a96298d11fec4927dc1b54ec2eda27b87ace8cc020af176ac71ac804c54db15",
       "dossier_path": "07_PROJECT_LEARNING/necolas-react-native-web-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/necolas-react-native-web-learnings.md",
       "promoted_rules": [
@@ -43139,6 +43139,11 @@
           "number": 6223,
           "title": "[fix] Text: shrink below the longest word in a flex row, as View does (#2922)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6989,
+          "title": "[change] UIManager: faster measureLayout, flow types, React Native parity (#2955",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -43146,7 +43151,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T14:32:36.300Z",
+      "verified_at": "2026-11-04T21:57:20.023Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -62376,8 +62381,8 @@
       "slug": "zed-industries-zed",
       "platform": "github",
       "source_url": "https://github.com/zed-industries/zed",
-      "source_version": "8a47b351",
-      "content_hash": "fc17b3057affce68499f37a9c7bf395e016fca2f4ab5c49d430ed89764a02e95",
+      "source_version": "c7bea343",
+      "content_hash": "5a3ea6fa764acad3ba1d16169afc9767d51657f926d558249278740911d4eb8e",
       "dossier_path": "07_PROJECT_LEARNING/zed-industries-zed-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zed-industries-zed-learnings.md",
       "promoted_rules": [
@@ -62445,6 +62450,11 @@
           "number": 6557,
           "title": "Windows shell detection for uppercase executable names (#66387)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6988,
+          "title": "opening `path:line` in a running Zed on Windows (#66501)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -62452,7 +62462,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T17:38:17.450Z",
+      "verified_at": "2026-11-04T21:57:16.088Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -177742,6 +177752,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-04T21:50:16.028Z"
+    },
+    "rule-6988": {
+      "learning_id": "rule-6988",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6988,
+      "title": "opening `path:line` in a running Zed on Windows (#66501)",
+      "source_url": "https://github.com/zed-industries/zed",
+      "source_version": "c7bea343",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T21:57:16.088Z"
+    },
+    "rule-6989": {
+      "learning_id": "rule-6989",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6989,
+      "title": "[change] UIManager: faster measureLayout, flow types, React Native parity (#2955",
+      "source_url": "https://github.com/necolas/react-native-web",
+      "source_version": "c43635ed",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T21:57:20.024Z"
     }
   },
   "aliases": {

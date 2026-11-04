@@ -275,8 +275,8 @@
     "sourceUrl": "https://huggingface.co/moonshotai/Kimi-K3",
     "sourceVersion": "hf-moonshotai-kimi-k3",
     "license": "Open-Source",
-    "contentHash": "23931a2ed9aa1dbdd886758a812a079b2630402773ab4ff1e1740d149e2bb511",
-    "lastHarvestedAt": "2026-10-31T06:18:09.674Z",
+    "contentHash": "86e1ea5267424e2b0d453067682345b2968a00392c9a653ea05b045e93d54cde",
+    "lastHarvestedAt": "2026-11-04T21:58:20.598Z",
     "learningId": "learn-huggingface-moonshotai-kimi-k3"
   },
   "hf-stabilityai-stable-diffusion-xl-base-1.0": {
@@ -7123,10 +7123,10 @@
     "repository": "necolas/react-native-web",
     "platform": "github",
     "sourceUrl": "https://github.com/necolas/react-native-web",
-    "sourceVersion": "646103a4",
+    "sourceVersion": "c43635ed",
     "license": "MIT",
-    "contentHash": "14d78936b8f6d3852e7b948726215800525099988cbae08c0c4f297cfb33947c",
-    "lastHarvestedAt": "2026-10-31T14:32:36.393Z",
+    "contentHash": "7a96298d11fec4927dc1b54ec2eda27b87ace8cc020af176ac71ac804c54db15",
+    "lastHarvestedAt": "2026-11-04T21:57:20.150Z",
     "learningId": "learn-github-necolas-react-native-web"
   },
   "zvec-ai-zvec-grep": {
@@ -7783,10 +7783,10 @@
     "repository": "zed-industries/zed",
     "platform": "github",
     "sourceUrl": "https://github.com/zed-industries/zed",
-    "sourceVersion": "8a47b351",
+    "sourceVersion": "c7bea343",
     "license": "NOASSERTION",
-    "contentHash": "fc17b3057affce68499f37a9c7bf395e016fca2f4ab5c49d430ed89764a02e95",
-    "lastHarvestedAt": "2026-11-03T17:38:17.576Z",
+    "contentHash": "5a3ea6fa764acad3ba1d16169afc9767d51657f926d558249278740911d4eb8e",
+    "lastHarvestedAt": "2026-11-04T21:57:16.196Z",
     "learningId": "learn-github-zed-industries-zed"
   },
   "mohamedrejeb-compose-rich-editor": {

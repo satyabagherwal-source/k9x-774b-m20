@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-04T21:50:16.145Z",
-  "total_cycles_completed": 7334,
-  "total_learnings_persisted": 7334,
-  "total_rules_promoted": 7032,
+  "last_updated": "2026-11-04T21:58:20.603Z",
+  "total_cycles_completed": 7337,
+  "total_learnings_persisted": 7337,
+  "total_rules_promoted": 7034,
   "history": [
-    {
-      "timestamp": "2026-11-04T07:26:05.644Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T07:33:20.309Z",
-      "repository": "avajs/ava",
-      "learningId": "learn-github-avajs-ava",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T07:33:20.852Z",
-      "repository": "RunanywhereAI/runanywhere-sdks",
-      "learningId": "learn-github-runanywhereai-runanywhere-sdks",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-04T07:33:22.863Z",
       "repository": "rook/rook",
@@ -1403,6 +1382,27 @@
       "repository": "deepseek-ai/DeepSeek-R1",
       "learningId": "learn-huggingface-deepseek-ai-deepseek-r1",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T21:57:16.201Z",
+      "repository": "zed-industries/zed",
+      "learningId": "learn-github-zed-industries-zed",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T21:57:20.156Z",
+      "repository": "necolas/react-native-web",
+      "learningId": "learn-github-necolas-react-native-web",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T21:58:20.603Z",
+      "repository": "moonshotai/Kimi-K3",
+      "learningId": "learn-huggingface-moonshotai-kimi-k3",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]
