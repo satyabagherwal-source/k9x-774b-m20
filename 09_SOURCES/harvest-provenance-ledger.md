@@ -7124,3 +7124,6 @@ Every entry in this ledger must capture:
 | `learn-github-scrapinghub-dateparser` | `https://github.com/scrapinghub/dateparser` | `2d93cdc5` | Multi-dimensional audit evidence | 2026-11-04T01:58:20.924Z |
 | `learn-github-pubkey-rxdb` | `https://github.com/pubkey/rxdb` | `b41fd6bd` | Multi-dimensional audit evidence | 2026-11-04T01:58:23.324Z |
 | `learn-github-crossplane-crossplane` | `https://github.com/crossplane/crossplane` | `20a45168` | Multi-dimensional audit evidence | 2026-11-04T01:58:25.965Z |
+| `learn-github-google-closure-compiler` | `https://github.com/google/closure-compiler` | `e2d3152d` | Multi-dimensional audit evidence | 2026-11-04T02:04:42.868Z |
+| `learn-huggingface-microsoft-mage-vl-cowork` | `https://huggingface.co/microsoft/Mage-VL-Cowork` | `hf-microso` | Multi-dimensional audit evidence | 2026-11-04T02:04:45.006Z |
+| `learn-github-meshery-meshery` | `https://github.com/meshery/meshery` | `501f825c` | Multi-dimensional audit evidence | 2026-11-04T02:04:47.481Z |

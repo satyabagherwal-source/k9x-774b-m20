@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-04T01:58:25.871Z",
-  "total_verified_learnings": 1203,
+  "last_updated": "2026-11-04T02:04:47.430Z",
+  "total_verified_learnings": 1204,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -39753,8 +39753,8 @@
       "slug": "meshery-meshery",
       "platform": "github",
       "source_url": "https://github.com/meshery/meshery",
-      "source_version": "640a546d",
-      "content_hash": "39ac189288fde2ac02e2dee3f181e83294f948e900ea8b77cbec897355f6a2f6",
+      "source_version": "501f825c",
+      "content_hash": "fe64b0a5809f1e83d63700cfd3943dbfea085e35e3a2e7e659e2d10ae19e8f2b",
       "dossier_path": "07_PROJECT_LEARNING/meshery-meshery-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/meshery-meshery-learnings.md",
       "promoted_rules": [
@@ -39822,6 +39822,11 @@
           "number": 6449,
           "title": "Merge pull request #22705 from Supersaiyan101/bug/SuperSaiyan101/fix-design-expo",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6718,
+          "title": "Merge pull request #22769 from meshery/fix/22764-event-metadata-no-design-conten",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -39829,7 +39834,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-02T16:11:43.550Z",
+      "verified_at": "2026-11-04T02:04:47.417Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -75706,8 +75711,8 @@
       "slug": "google-closure-compiler",
       "platform": "github",
       "source_url": "https://github.com/google/closure-compiler",
-      "source_version": "7a8ed58c",
-      "content_hash": "401679b9af3b6f6a719476779521aec7c6c78dec8099280410ba29146b3a72d5",
+      "source_version": "e2d3152d",
+      "content_hash": "066c0451fedb82ad568d51874e7ca73a333b3e0c86f4677fb6db672874207775",
       "dossier_path": "07_PROJECT_LEARNING/google-closure-compiler-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/google-closure-compiler-learnings.md",
       "promoted_rules": [
@@ -75730,6 +75735,11 @@
           "number": 5826,
           "title": "Fixed a crash when a property logical assignment (e.g. `o.p ??= v`) appears in t",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6714,
+          "title": "`zizmor/template-injection` findings in `.github/workflows/release.yaml`.",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -75737,7 +75747,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T18:25:30.281Z",
+      "verified_at": "2026-11-04T02:04:42.803Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -172353,6 +172363,119 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-04T01:58:25.847Z"
+    },
+    "rule-6714": {
+      "learning_id": "rule-6714",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6714,
+      "title": "`zizmor/template-injection` findings in `.github/workflows/release.yaml`.",
+      "source_url": "https://github.com/google/closure-compiler",
+      "source_version": "e2d3152d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T02:04:42.803Z"
+    },
+    "learn-huggingface-microsoft-mage-vl-cowork": {
+      "learning_id": "learn-huggingface-microsoft-mage-vl-cowork",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "microsoft/Mage-VL-Cowork",
+      "repository": "microsoft/Mage-VL-Cowork",
+      "slug": "hf-microsoft-mage-vl-cowork",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/microsoft/Mage-VL-Cowork",
+      "source_version": "hf-microsoft-mage-vl-cowork",
+      "content_hash": "0b64c5e5da4831b05f56904e443ce71c4f7df6d47ecb6a4b49ca6af732b921fd",
+      "dossier_path": "07_PROJECT_LEARNING/hf-microsoft-mage-vl-cowork-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-microsoft-mage-vl-cowork-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 6715,
+          "title": "Hybrid Action Space Policy Unification",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6716,
+          "title": "Progressive Specialize-Then-Unify Curriculum",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6717,
+          "title": "Harness Evolution for Data Synthesis",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-04T02:04:44.941Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-6715": {
+      "learning_id": "rule-6715",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6715,
+      "title": "Hybrid Action Space Policy Unification",
+      "source_url": "https://huggingface.co/microsoft/Mage-VL-Cowork",
+      "source_version": "hf-microsoft-mage-vl-cowork",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T02:04:44.941Z"
+    },
+    "rule-6716": {
+      "learning_id": "rule-6716",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6716,
+      "title": "Progressive Specialize-Then-Unify Curriculum",
+      "source_url": "https://huggingface.co/microsoft/Mage-VL-Cowork",
+      "source_version": "hf-microsoft-mage-vl-cowork",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T02:04:44.941Z"
+    },
+    "rule-6717": {
+      "learning_id": "rule-6717",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6717,
+      "title": "Harness Evolution for Data Synthesis",
+      "source_url": "https://huggingface.co/microsoft/Mage-VL-Cowork",
+      "source_version": "hf-microsoft-mage-vl-cowork",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T02:04:44.941Z"
+    },
+    "rule-6718": {
+      "learning_id": "rule-6718",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6718,
+      "title": "Merge pull request #22769 from meshery/fix/22764-event-metadata-no-design-conten",
+      "source_url": "https://github.com/meshery/meshery",
+      "source_version": "501f825c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T02:04:47.417Z"
     }
   },
   "aliases": {

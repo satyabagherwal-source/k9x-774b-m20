@@ -20209,5 +20209,17 @@
     "qualityScore": 1084,
     "verifiedOrg": false,
     "discoveredAt": "2026-11-04T01:03:45.544Z"
+  },
+  {
+    "name": "microsoft/Mage-VL-Cowork",
+    "fullName": "microsoft/Mage-VL-Cowork",
+    "url": "https://huggingface.co/microsoft/Mage-VL-Cowork",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: microsoft/Mage-VL-Cowork (156 likes, 1541 downloads)",
+    "likes": 156,
+    "downloads": 1541,
+    "qualityScore": 3101,
+    "discoveredAt": "2026-11-04T02:02:20.232Z"
   }
 ]

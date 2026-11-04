@@ -5003,10 +5003,10 @@
     "repository": "meshery/meshery",
     "platform": "github",
     "sourceUrl": "https://github.com/meshery/meshery",
-    "sourceVersion": "640a546d",
+    "sourceVersion": "501f825c",
     "license": "Apache-2.0",
-    "contentHash": "39ac189288fde2ac02e2dee3f181e83294f948e900ea8b77cbec897355f6a2f6",
-    "lastHarvestedAt": "2026-11-02T16:11:43.617Z",
+    "contentHash": "fe64b0a5809f1e83d63700cfd3943dbfea085e35e3a2e7e659e2d10ae19e8f2b",
+    "lastHarvestedAt": "2026-11-04T02:04:47.481Z",
     "learningId": "learn-github-meshery-meshery"
   },
   "arangodb-arangodb": {
@@ -9933,10 +9933,10 @@
     "repository": "google/closure-compiler",
     "platform": "github",
     "sourceUrl": "https://github.com/google/closure-compiler",
-    "sourceVersion": "7a8ed58c",
+    "sourceVersion": "e2d3152d",
     "license": "Apache-2.0",
-    "contentHash": "401679b9af3b6f6a719476779521aec7c6c78dec8099280410ba29146b3a72d5",
-    "lastHarvestedAt": "2026-10-30T18:25:30.380Z",
+    "contentHash": "066c0451fedb82ad568d51874e7ca73a333b3e0c86f4677fb6db672874207775",
+    "lastHarvestedAt": "2026-11-04T02:04:42.868Z",
     "learningId": "learn-github-google-closure-compiler"
   },
   "shpigford-chops": {
@@ -11848,5 +11848,15 @@
     "contentHash": "eed003ab9db599c7034eb12d9ac40bb56cb0951ed397f784e58e97770e366775",
     "lastHarvestedAt": "2026-11-04T01:07:27.816Z",
     "learningId": "learn-github-agentlas-ai-agentlas-os"
+  },
+  "hf-microsoft-mage-vl-cowork": {
+    "repository": "microsoft/Mage-VL-Cowork",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/microsoft/Mage-VL-Cowork",
+    "sourceVersion": "hf-microsoft-mage-vl-cowork",
+    "license": "Open-Source",
+    "contentHash": "0b64c5e5da4831b05f56904e443ce71c4f7df6d47ecb6a4b49ca6af732b921fd",
+    "lastHarvestedAt": "2026-11-04T02:04:45.006Z",
+    "learningId": "learn-huggingface-microsoft-mage-vl-cowork"
   }
 }

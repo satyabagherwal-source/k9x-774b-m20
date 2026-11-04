@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261031-4T1J",
-    "timestamp": "2026-10-31T15:29:56.743Z",
-    "repository": "NucleoidAI/Nucleoid",
-    "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "e5a68e3168583c917cb634c5da9dd4daa8f76360a15bbbc26006d7e8353c0fff",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261031-D3MY",
-    "timestamp": "2026-10-31T15:36:23.722Z",
-    "repository": "meta-llama/Llama-2-7b-chat-hf",
-    "learningId": "learn-huggingface-meta-llama-llama-2-7b-chat-hf",
-    "contentHash": "0b7c6ef6501f76cd6ed543976e228478988770b5d14e09f212c003851fbf0767",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261031-D7VM",
-    "timestamp": "2026-10-31T15:36:29.218Z",
-    "repository": "codewhale-hq/Codewhale",
-    "learningId": "learn-github-codewhale-hq-codewhale",
-    "contentHash": "7d6b77560598b14e9b8fc0b797e4a0ba40d0cf4fa59b3f53d0fcf3c70acf2f1f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261031-DAP9",
     "timestamp": "2026-10-31T15:36:32.877Z",
     "repository": "tw93/Mole",
@@ -7490,6 +7445,51 @@
     "repository": "crossplane/crossplane",
     "learningId": "learn-github-crossplane-crossplane",
     "contentHash": "cbbd1e35d65f1cd82389abab265a59619ab1d1b4779d8d332a5fabd056e47139",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-4OHE",
+    "timestamp": "2026-11-04T02:04:42.866Z",
+    "repository": "google/closure-compiler",
+    "learningId": "learn-github-google-closure-compiler",
+    "contentHash": "066c0451fedb82ad568d51874e7ca73a333b3e0c86f4677fb6db672874207775",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-4Q4R",
+    "timestamp": "2026-11-04T02:04:45.003Z",
+    "repository": "microsoft/Mage-VL-Cowork",
+    "learningId": "learn-huggingface-microsoft-mage-vl-cowork",
+    "contentHash": "0b64c5e5da4831b05f56904e443ce71c4f7df6d47ecb6a4b49ca6af732b921fd",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-4S1J",
+    "timestamp": "2026-11-04T02:04:47.479Z",
+    "repository": "meshery/meshery",
+    "learningId": "learn-github-meshery-meshery",
+    "contentHash": "fe64b0a5809f1e83d63700cfd3943dbfea085e35e3a2e7e659e2d10ae19e8f2b",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

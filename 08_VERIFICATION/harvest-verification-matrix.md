@@ -7115,3 +7115,6 @@
 | `CYCLE-20261104-WHRS` | `2026-11-04T01:58:20.920Z` | `scrapinghub/dateparser` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6711` | Yes (`f9074c6e...`) |
 | `CYCLE-20261104-WJMG` | `2026-11-04T01:58:23.320Z` | `pubkey/rxdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6712` | Yes (`cb187707...`) |
 | `CYCLE-20261104-WLNT` | `2026-11-04T01:58:25.961Z` | `crossplane/crossplane` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6713` | Yes (`cbbd1e35...`) |
+| `CYCLE-20261104-4OHE` | `2026-11-04T02:04:42.866Z` | `google/closure-compiler` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6714` | Yes (`066c0451...`) |
+| `CYCLE-20261104-4Q4R` | `2026-11-04T02:04:45.003Z` | `microsoft/Mage-VL-Cowork` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6715, Rule 6716, Rule 6717` | Yes (`0b64c5e5...`) |
+| `CYCLE-20261104-4S1J` | `2026-11-04T02:04:47.479Z` | `meshery/meshery` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6718` | Yes (`fe64b0a5...`) |

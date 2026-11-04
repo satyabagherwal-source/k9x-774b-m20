@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-04T01:58:25.976Z",
+  "last_updated": "2026-11-04T02:04:47.487Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -7626,14 +7626,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-meshery-meshery",
-      "content_hash": "39ac189288fde2ac02e2dee3f181e83294f948e900ea8b77cbec897355f6a2f6",
-      "verified_at": "2026-11-02T16:11:43.623Z",
+      "content_hash": "fe64b0a5809f1e83d63700cfd3943dbfea085e35e3a2e7e659e2d10ae19e8f2b",
+      "verified_at": "2026-11-04T02:04:47.487Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-02T16:11:43.623Z"
+      "last_updated": "2026-11-04T02:04:47.487Z"
     },
     "arangodb/arangodb": {
       "repository": "arangodb/arangodb",
@@ -14946,14 +14946,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-google-closure-compiler",
-      "content_hash": "401679b9af3b6f6a719476779521aec7c6c78dec8099280410ba29146b3a72d5",
-      "verified_at": "2026-10-30T18:25:30.388Z",
+      "content_hash": "066c0451fedb82ad568d51874e7ca73a333b3e0c86f4677fb6db672874207775",
+      "verified_at": "2026-11-04T02:04:42.875Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T18:25:30.388Z"
+      "last_updated": "2026-11-04T02:04:42.875Z"
     },
     "Shpigford/chops": {
       "repository": "Shpigford/chops",
@@ -17834,6 +17834,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-04T01:07:27.823Z"
+    },
+    "microsoft/Mage-VL-Cowork": {
+      "repository": "microsoft/Mage-VL-Cowork",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-microsoft-mage-vl-cowork",
+      "content_hash": "0b64c5e5da4831b05f56904e443ce71c4f7df6d47ecb6a4b49ca6af732b921fd",
+      "verified_at": "2026-11-04T02:04:45.011Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-04T02:04:45.011Z"
     }
   },
   "repos": {
