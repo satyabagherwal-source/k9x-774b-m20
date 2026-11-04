@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-04T07:49:14.673Z",
+  "last_updated": "2026-11-04T07:55:46.142Z",
   "total_verified_learnings": 1205,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -77013,8 +77013,8 @@
       "slug": "faker-js-faker",
       "platform": "github",
       "source_url": "https://github.com/faker-js/faker",
-      "source_version": "e1f9a84a",
-      "content_hash": "f777c3db089bf17aebf6809c64b9b3ad4bf61f7d5933db2d9ab3928c4f428131",
+      "source_version": "10eeb7cc",
+      "content_hash": "f52cf0c195001ff4a8934b83b95e522ddb7e0913e7499de1f13a7a8b9e75db62",
       "dossier_path": "07_PROJECT_LEARNING/faker-js-faker-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/faker-js-faker-learnings.md",
       "promoted_rules": [
@@ -77047,6 +77047,11 @@
           "number": 5903,
           "title": "Strict Architectural Decoupling of Zero-Data Primitives from Localized Trees",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6767,
+          "title": "locale): use valid area codes and mobile prefixes for zh_CN phone numbers (#4247",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -77054,7 +77059,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T21:55:48.903Z",
+      "verified_at": "2026-11-04T07:55:46.128Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -173423,6 +173428,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-04T07:49:14.651Z"
+    },
+    "rule-6767": {
+      "learning_id": "rule-6767",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6767,
+      "title": "locale): use valid area codes and mobile prefixes for zh_CN phone numbers (#4247",
+      "source_url": "https://github.com/faker-js/faker",
+      "source_version": "10eeb7cc",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T07:55:46.128Z"
     }
   },
   "aliases": {

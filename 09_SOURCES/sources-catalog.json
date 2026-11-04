@@ -10283,10 +10283,10 @@
     "repository": "faker-js/faker",
     "platform": "github",
     "sourceUrl": "https://github.com/faker-js/faker",
-    "sourceVersion": "e1f9a84a",
+    "sourceVersion": "10eeb7cc",
     "license": "NOASSERTION",
-    "contentHash": "f777c3db089bf17aebf6809c64b9b3ad4bf61f7d5933db2d9ab3928c4f428131",
-    "lastHarvestedAt": "2026-10-30T21:55:49.001Z",
+    "contentHash": "f52cf0c195001ff4a8934b83b95e522ddb7e0913e7499de1f13a7a8b9e75db62",
+    "lastHarvestedAt": "2026-11-04T07:55:46.201Z",
     "learningId": "learn-github-faker-js-faker"
   },
   "storybookjs-storybook": {

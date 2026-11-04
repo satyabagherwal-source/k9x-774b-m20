@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261031-1IK0",
-    "timestamp": "2026-10-31T18:15:20.880Z",
-    "repository": "nomic-ai/nomic-embed-text-v1.5",
-    "learningId": "learn-huggingface-nomic-ai-nomic-embed-text-v1-5",
-    "contentHash": "12f2b7b58eda7b00bedbebc8409b960c0a65549b1409c62428e15174c0facbfb",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261031-1WBH",
     "timestamp": "2026-10-31T18:15:38.717Z",
     "repository": "yugabyte/yugabyte-db",
@@ -7490,6 +7475,21 @@
     "repository": "cilium/cilium",
     "learningId": "learn-github-cilium-cilium",
     "contentHash": "5f9777f1ec52f9a323d67d372329ee42de02bffc7255694db7f634b92feb1055",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-O51Y",
+    "timestamp": "2026-11-04T07:55:46.198Z",
+    "repository": "faker-js/faker",
+    "learningId": "learn-github-faker-js-faker",
+    "contentHash": "f52cf0c195001ff4a8934b83b95e522ddb7e0913e7499de1f13a7a8b9e75db62",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
