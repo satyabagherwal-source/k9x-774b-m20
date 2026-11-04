@@ -7215,3 +7215,7 @@ Every entry in this ledger must capture:
 | `learn-github-midudev-preguntas-entrevista-react` | `https://github.com/midudev/preguntas-entrevista-react` | `99d805f1` | Multi-dimensional audit evidence | 2026-11-04T10:05:35.243Z |
 | `learn-github-kube-rs-kube` | `https://github.com/kube-rs/kube` | `e737551c` | Multi-dimensional audit evidence | 2026-11-04T10:05:36.986Z |
 | `learn-github-arangodb-arangodb` | `https://github.com/arangodb/arangodb` | `ad2fd90c` | Multi-dimensional audit evidence | 2026-11-04T10:05:42.213Z |
+| `learn-github-ntex-rs-ntex` | `https://github.com/ntex-rs/ntex` | `0d39f808` | Multi-dimensional audit evidence | 2026-11-04T10:12:25.279Z |
+| `learn-github-gardener-gardener` | `https://github.com/gardener/gardener` | `a8da5a8a` | Multi-dimensional audit evidence | 2026-11-04T10:12:33.036Z |
+| `learn-github-bee-san-ciphey` | `https://github.com/bee-san/Ciphey` | `ad59a3bc` | Multi-dimensional audit evidence | 2026-11-04T10:12:36.211Z |
+| `learn-github-trinodb-trino` | `https://github.com/trinodb/trino` | `90f4ba81` | Multi-dimensional audit evidence | 2026-11-04T10:12:39.052Z |

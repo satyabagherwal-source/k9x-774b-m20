@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261031-5YZ0",
-    "timestamp": "2026-10-31T20:38:46.860Z",
-    "repository": "autotrust/JEV-27B-VL",
-    "learningId": "learn-huggingface-autotrust-jev-27b-vl",
-    "contentHash": "1d1cc344e296d743616df1339bbfd5d1c3d1825faf04bb3551632a3084271e1d",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261031-66JX",
-    "timestamp": "2026-10-31T20:38:56.685Z",
-    "repository": "aleo-labs-protocol/snarkOS",
-    "learningId": "learn-github-aleo-labs-protocol-snarkos",
-    "contentHash": "12ed42b3e0e7b252eb382bf5f0464b66c8015bf206d7dfb778876ef6d90ab67b",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261031-G27G",
-    "timestamp": "2026-10-31T20:46:37.612Z",
-    "repository": "autotrust/GEV-26B-Decide",
-    "learningId": "learn-huggingface-autotrust-gev-26b-decide",
-    "contentHash": "4f3fe48d90e964f5d207078f1c38bca675da081bc79f854653c67625b59b9182",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261031-G2WJ",
-    "timestamp": "2026-10-31T20:46:38.515Z",
-    "repository": "metalbear-co/mirrord",
-    "learningId": "learn-github-metalbear-co-mirrord",
-    "contentHash": "7d442a8ffc81b026a1dc8d1d311f5c152f6f02fc3a3166771ea37223880023bd",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261031-G77V",
     "timestamp": "2026-10-31T20:46:44.107Z",
     "repository": "TableProApp/TablePro",
@@ -7492,6 +7432,66 @@
     "contentHash": "3fa6ab2368b407457cdce2ba359d6fa3f8ea8682dc96523f793b5740149cf721",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-JVI4",
+    "timestamp": "2026-11-04T10:12:25.276Z",
+    "repository": "ntex-rs/ntex",
+    "learningId": "learn-github-ntex-rs-ntex",
+    "contentHash": "22f0dc33312c41a8cef607749eadd7b641631fed95af2cab0f9d9e6c338ca0cb",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-K1HM",
+    "timestamp": "2026-11-04T10:12:33.034Z",
+    "repository": "gardener/gardener",
+    "learningId": "learn-github-gardener-gardener",
+    "contentHash": "e16ed959b909239f5124f3cc5eec10d749ed7fe519dcb84f2b49223a29f9fe61",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-K3XT",
+    "timestamp": "2026-11-04T10:12:36.209Z",
+    "repository": "bee-san/Ciphey",
+    "learningId": "learn-github-bee-san-ciphey",
+    "contentHash": "3605c59669503808ff14909f593cd796381d82c8d265c53121699906d38c71fd",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-K64Q",
+    "timestamp": "2026-11-04T10:12:39.050Z",
+    "repository": "trinodb/trino",
+    "learningId": "learn-github-trinodb-trino",
+    "contentHash": "3c130a3170e5873012aa3ba8965d447c226a525352411cee578138bbf8f2e06d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

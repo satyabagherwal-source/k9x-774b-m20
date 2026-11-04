@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-04T10:05:42.221Z",
-  "total_cycles_completed": 7183,
-  "total_learnings_persisted": 7183,
-  "total_rules_promoted": 6829,
+  "last_updated": "2026-11-04T10:12:39.056Z",
+  "total_cycles_completed": 7187,
+  "total_learnings_persisted": 7187,
+  "total_rules_promoted": 6833,
   "history": [
-    {
-      "timestamp": "2026-11-03T21:09:02.473Z",
-      "repository": "webrecorder/browsertrix-crawler",
-      "learningId": "learn-github-webrecorder-browsertrix-crawler",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-03T21:09:05.130Z",
-      "repository": "signerlabs/Klee",
-      "learningId": "learn-github-signerlabs-klee",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-03T21:17:07.495Z",
-      "repository": "LiquidAI/LFM3-Audio-2B",
-      "learningId": "learn-huggingface-liquidai-lfm3-audio-2b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-03T21:17:16.239Z",
-      "repository": "Automattic/harper",
-      "learningId": "learn-github-automattic-harper",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-03T21:17:23.255Z",
       "repository": "sweetpad-dev/sweetpad",
@@ -1403,6 +1375,34 @@
       "repository": "arangodb/arangodb",
       "learningId": "learn-github-arangodb-arangodb",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T10:12:25.283Z",
+      "repository": "ntex-rs/ntex",
+      "learningId": "learn-github-ntex-rs-ntex",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T10:12:33.040Z",
+      "repository": "gardener/gardener",
+      "learningId": "learn-github-gardener-gardener",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T10:12:36.215Z",
+      "repository": "bee-san/Ciphey",
+      "learningId": "learn-github-bee-san-ciphey",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T10:12:39.056Z",
+      "repository": "trinodb/trino",
+      "learningId": "learn-github-trinodb-trino",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

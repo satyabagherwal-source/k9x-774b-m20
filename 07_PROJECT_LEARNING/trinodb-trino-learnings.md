@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/trinodb-trino-learnings.md`  
 > **Source**: github ([https://github.com/trinodb/trino](https://github.com/trinodb/trino))  
-> **Source Version**: `a1e7e9ed`  
+> **Source Version**: `90f4ba81`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T12:51:51.595Z  
+> **Timestamp**: 2026-11-04T10:12:38.589Z  
 > **Learning ID**: `learn-github-trinodb-trino`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/trinodb-trino-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/trinodb/trino](https://github.com/trinodb/trino))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T12:51:51.590Z  
+> **Harvest Timestamp**: 2026-11-04T10:12:37.900Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Official repository of Trino, the distributed SQL query engine for big data, formerly known as PrestoSQL (https://trino.io)
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 13436 stars
+- **Stars / Engagement**: 13449 stars
 
 ---
 
@@ -1862,269 +1862,283 @@ export const SqlBlock = ({ language, code }) => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `bdd23f55` (2026-11-02)
-**Commit Message**: Fix overflow in Faker long decimal sequences
+### Incident Patch 1: `1e780aaf` (2026-10-28)
+**Commit Message**: Report local exchange memory growth only on additions
 
-Long decimal sequences multiplied the step by the row number before
-capping the value at the max, so a large step, like one close to the
-whole range of a DECIMAL(38) column, failed queries with an arithmetic
-overflow after a few rows.
+A removal that reported growth from another thread could throw past the
+page counters, so the source never finished and the reservation leaked.
 
-**File**: `plugin/trino-faker/src/main/java/io/trino/plugin/faker/FakerPageSource.java` (modified, +15/-5)
+**File**: `core/trino-main/src/main/java/io/trino/operator/exchange/LocalExchangeMemoryManager.java` (modified, +9/-4)
 ```diff
-@@ -1074,7 +1074,7 @@ long at(long index)
-         }
-     }
- 
--    private record Int128Range(Int128 low, Int128 high, Int128 step)
-+    private record Int128Range(Int128 low, Int128 high, Int128 step, long lastIndex)
-     {
-         static Int128Range of(Range range)
-         {
-@@ -1091,14 +1091,24 @@ static Int128Range of(Range range, Int128 step)
-             if (!range.isHighUnbounded() && range.isHighInclusive()) {
-                 high = add(high, Int128.ONE);
-             }
--            return new Int128Range(low, high, step);
-+            // multiplying the step by an index after the last one that fits in the range can overflow, so such indexes are capped instead
-+            long lastIndex = high.toBigInteger().subtract(BigInteger.ONE).subtract(low.toBigInteger())
-+                    .divide(step.toBigInteger())
-+                    .min(BigInteger.valueOf(Long.MAX_VALUE))
-+                    .longValue();
-+            return new Int128Range(low, high, step, lastIndex);
-         }
- 
-         Int128 at(long index)
-         {
--            Int128 nextValue = add(low, Int128Math.multiply(Int128.valueOf(index), step));
--            Int128 highInclusive = Int128Math.subtract(high, Int128.ONE);
--            return highInclusive.compareTo(nextValue) < 0 ? highInclusive : nextValue;
-+            if (index > lastIndex) {
-+                return Int128Math.subtract(high, Int128.ONE);
-+            }
-+            // decimals span almost twice the max value of Int128, so multiplying the step by the index can overflow,
-+            // even if the result doesn't, but adding each half separately keeps every partial result in the range
-+            long halfIndex = index / 2;
-+            Int128 halfway = add(low, Int128Math.multiply(Int128.valueOf(halfIndex), step));
-+            return add(halfway, Int128Math.multiply(Int128.valueOf(index - halfIndex), step));
-         }
-     }
- 
-```
-
-**File**: `plugin/trino-faker/src/test/java/io/trino/plugin/faker/TestFakerQueries.java` (modified, +1/-0)
-```diff
-@@ -834,6 +834,7 @@ void testSelectStepProperties()
-                 .add(new TestDataType("rnd_timestamp", "timestamp", Map.of("min", "2000-01-01 00:00:00.000", "step", "1d"), "count(distinct rnd_timestamp) = 200000 AND min(rnd_timestamp) = TIMESTAMP '2000-01-01 00:00:00.000' AND max(rnd_timestamp) = TIMESTAMP '2000-01-01 00:00:00.000' + INTERVAL '199999' DAY", "true"))
-                 .add(new TestDataType("rnd_bigint", "bigint", Map.of("min", "0", "step", "100000000000000"), "count(distinct rnd_bigint) = 92235 AND min(rnd_bigint) = 0", "true"))
-                 .add(new TestDataType("rnd_bigint_wide", "bigint", Map.of("min", "-9223372036854775808", "max", "9223372036854775807", "step", "9223372036854775807"), "count(distinct rnd_bigint_wide) = 4 AND max(rnd_bigint_wide) = 9223372036854775807", "true"))
-+                .add(new TestDataType("rnd_decimal_wide", "decimal(38,0)", Map.of("min", "-99999999999999999999999999999999999999", "max", "99999999999999999999999999999999999999", "step", "99999999999999999999999999999999999999"), "count(distinct rnd_decimal_wide) = 3 AND max(rnd_decimal_wide) = DECIMAL '99999999999999999999999999999999999999'", "true"))
-                 .build();
- 
-         for (TestDataType testCase : testCases) {
-```
-
----
-
-### Incident Patch 2: `2ebde3a7` (2026-09-17)
-**Commit Message**: Fix deduplication of TABLESAMPLE subqueries
-
-Treat sampled relations as non-deterministic during scope-aware expression
-comparison, unless the sample keeps all rows or none, so repeated sampling
-subqueries are planned independently.
-
-Add regression coverage for BERNOULLI and SYSTEM sampling.
-
-Fixes #31178
-
-**File**: `core/trino-main/src/main/java/io/trino/sql/planner/ScopeAware.java` (modified, +13/-0)
-```diff
-@@ -22,6 +22,7 @@
- import io.trino.sql.tree.FunctionCall;
- import io.trino.sql.tree.Identifier;
- import io.trino.sql.tree.Node;
-+import io.trino.sql.tree.SampledRelation;
- 
- import java.util.Optional;
- import java.util.OptionalInt;
-@@ -46,6 +47,9 @@
-  * named query "t". This is because we currently don't assign identity to table references. (TODO: implement this)
-  *
-  * <pre>SELECT (SELECT t.a FROM t), (SELECT a FROM t)</pre>
-+ * <p>
-+ * Non-deterministic function calls and sampled relations are equal only to themselves, unless the sample keeps all rows or none.
-+ * Only those written inside the compared expression are detected: one behind a named query or view is compared as a plain table reference.
+@@ -31,7 +31,8 @@
+  * reservation is blocked on the memory pool. The reported bytes move to one
+  * step above the buffered bytes only when the buffered bytes exceed them or
+  * fall two steps below them, so adding and removing pages does not touch the
+- * memory reservation shared with other managers between moves.
++ * memory reservation shared with other managers between moves. Only adding
++ * pages reports growth, so removing pages never fails on the memory limit.
   */
- public class ScopeAware<T extends Node>
- {
-@@ -158,6 +162,15 @@ private Boolean scopeAwareComparison(Node left, Node right)
+ @ThreadSafe
+ public class LocalExchangeMemoryManager
+@@ -68,9 +69,9 @@ public void updateMemoryUsage(long bytesAdded)
+     {
+         long bufferedBytes = this.bufferedBytes.addAndGet(bytesAdded);
+         long reportedBytes = this.reportedBytes;
+-        if (bufferedBytes > reportedBytes || bufferedBytes < reportedBytes - 2 * reportStepBytes) {
++        if ((bytesAdded > 0 && bufferedBytes > reportedBytes) || bufferedBytes < reportedBytes - 2 * reportStepBytes) {
+             try {
+-                reportMemoryUsage();
++                reportMemoryUsage(bytesAdded > 0);
              }
+             catch (RuntimeException e) {
+                 // a page rejected by the memory pool is never buffered
+@@ -96,10 +97,14 @@ public void updateMemoryUsage(long bytesAdded)
          }
+     }
  
-+        if (left instanceof SampledRelation leftSample && right instanceof SampledRelation rightSample) {
-+            double leftRatio = analysis.getSampleRatio(leftSample);
-+            double rightRatio = analysis.getSampleRatio(rightSample);
-+            // Sampling is non-deterministic, unless it keeps all rows or none.
-+            if (leftRatio != rightRatio || (leftRatio > 0 && leftRatio < 1)) {
-+                return left == right;
-+            }
+-    private synchronized void reportMemoryUsage()
++    private synchronized void reportMemoryUsage(boolean reportGrowth)
+     {
+         // re-check since another thread may have reported
+         long bufferedBytes = this.bufferedBytes.get();
++        // the thread that added the bytes reports the growth
++        if (bufferedBytes > reportedBytes && !reportGrowth) {
++            return;
 +        }
-+
-         if (!left.shallowEquals(right)) {
-             return false;
+         if (bufferedBytes <= reportedBytes && bufferedBytes >= reportedBytes - 2 * reportStepBytes) {
+             return;
          }
-```
-
-**File**: `core/trino-main/src/test/java/io/trino/sql/analyzer/TestAnalyzer.java` (modified, +17/-0)
-```diff
-@@ -1122,6 +1122,23 @@ public void testNonDeterministicOrderBy()
-                 .hasErrorCode(EXPRESSION_NOT_IN_DISTINCT);
-     }
- 
-+    @Test
-+    public void testRepeatedSampledSubquery()
-+    {
-+        analyze("SELECT DISTINCT (SELECT count(*) FROM t2 TABLESAMPLE BERNOULLI (50)) AS x FROM t1 ORDER BY x");
-+        analyze("SELECT (SELECT count(*) FROM t2 TABLESAMPLE BERNOULLI (50)) FROM t1 ORDER BY (SELECT count(*) FROM t2 TABLESAMPLE BERNOULLI (50))");
-+        assertFails("SELECT DISTINCT (SELECT count(*) FROM t2 TABLESAMPLE BERNOULLI (50)) FROM t1 ORDER BY (SELECT count(*) FROM t2 TABLESAMPLE BERNOULLI (50))")
-+                .hasErrorCode(EXPRESSION_NOT_IN_DISTINCT);
-+
-+        analyze("SELECT (SELECT count(*) FROM t2 TABLESAMPLE BERNOULLI (50) WHERE t2.a = t1.a) FROM t1 GROUP BY 1");
-+        assertFails("SELECT (SELECT count(*) FROM t2 TABLESAMPLE BERNOULLI (50) WHERE t2.a = t1.a) FROM t1 GROUP BY (SELECT count(*) FROM t2 TABLESAMPLE BERNOULLI (50) WHERE t2.a = t1.a)")
-+                .hasErrorCode(EXPRESSION_NOT_AGGREGATE);
-+
-+        // a sample that keeps all rows or none is deterministic
-+        analyze("SELECT DISTINCT (SELECT count(*) FROM t2 TABLESAMPLE BERNOULLI (100)) FROM t1 ORDER BY (SELECT count(*) FROM t2 TABLESAMPLE BERNOULLI (100))");
-+        analyze("SELECT DISTINCT (SELECT count(*) FROM t2 TABLESAMPLE BERNOULLI (0)) FROM t1 ORDER BY (SELECT count(*) FROM t2 TABLESAMPLE BERNOULLI (0))");
-+    }
-+
-     @Test
-     public void testNonBooleanWhereClause()
-     {
-```
-
-**File**: `core/trino-main/src/test/java/io/trino/sql/planner/TestLogicalPlanner.java` (modified, +54/-0)
-```diff
-@@ -85,6 +85,8 @@
- import io.trino.type.CharVarcharCoercion;
- import io.trino.type.Reals;
- import org.junit.jupiter.api.Test;
-+import org.junit.jupiter.params.ParameterizedTest;
-+import org.junit.jupiter.params.provider.ValueSource;
- 
- import java.util.List;
- import java.util.Map;
-@@ -779,6 +781,58 @@ public void testSameScalarSubqueryIsAppliedOnlyOnce()
-                 TableScanNode.class::isInstance)).isEqualTo(3);
-     }
- 
-+    @ParameterizedTest
-+    @ValueSource(strings = {"BERNOULLI", "SYSTEM"})
-+    public void testSampledScalarSubqueriesAreNotDeduplicated(String sampleType)
-+    {
-+        assertThat(countOfMatchingNodes(
-+                plan(
-+                        """
-+                        SELECT
-+                            (SELECT count(*) FROM nation TABLESAMPLE %s (50)),
-+                            (SELECT count(*) FROM nation TABLESAMPLE %s (50)),
-+                            (SELECT count(*) FROM nation TABLESAMPLE %s (50))
-+                        """.formatted(sampleType, sampleType, sampleType)),
-+                TableScanNode.class::isInstance)).isEqualTo(3);
-+        // a full sample of a sampled relation
-+        assertThat(countOfMatchingNodes(
-+                plan(
-+                        """
-+                        SELECT
-+                            (SELECT count(*) FROM (SELECT * FROM nation TABLESAMPLE %s (50)) TABLESAMPLE %s (100)),
-+                            (SELECT count(*) FROM (SELECT * FROM nation TABLESAMPLE %s (50)) TABLESAMPLE %s (100))
-+                        """.formatted(sampleType, sampleType, sampleType, sampleType)),
-+                TableScanNode.class::isInstance)).isEqualTo(2);
-+    }
-+
-+    @Test
-+    public void testSampledSubqueryPredicatesAreNotDeduplicated()
-+    {
-+        assertThat(countOfMatchingNodes(
-+                plan("SELECT EXISTS (SELECT 1 FROM nation TABLESAMPLE BERNOULLI (50)), EXISTS (SELECT 1 FROM nation TABLESAMPLE BERNOULLI (50))"),
-+                TableScanNode.class::isInstance)).isEqualTo(2);
-+        assertThat(countOfMatchingNodes(
-+                plan("SELECT 1 IN (SELECT nationkey FROM nation TABLESAMPLE BERNOULLI (50)), 1 IN (SELECT nationkey FROM nation TABLESAMPLE BERNOULLI (50))"),
-+                TableScanNode.class::isInstance)).isEqualTo(2);
-+        assertThat(countOfMatchingNodes(
-+                plan("SELECT 1 <= ALL (SELECT nationkey FROM nation TABLESAMPLE BERNOULLI (50)), 1 <= ALL (SELECT nationkey FROM nation TABLESAMPLE BERNOULLI (50))"),
-+                TableScanNode.class::isInstance)).isEqualTo(2);
-+    }
-+
-+    @ParameterizedTest
-+    @ValueSource(strings = {"BERNOULLI", "SYSTEM"})
-+    public void testFullSampleScalarSubqueryIsAppliedOnlyOnce(String sampleType)
-+    {
-+        assertThat(countOfMatchingNodes(
-+                plan(
-+                        """
-+                        SELECT
-+                            (SELECT count(*) FROM nation TABLESAMPLE %s (100)),
-+                            (SELECT count(*) FROM nation TABLESAMPLE %s (100))
-+                        """.formatted(sampleType, sampleType)),
-+                TableScanNode.class::isInstance)).isEqualTo(1);
-+    }
-+
-     @Test
-     public void testSameInSubqueryIsAppliedOnlyOnce()
-     {
 ```
 
 ---
 
-### Incident Patch 3: `fff6d9c4` (2026-10-31)
-**Commit Message**: Skip Faker dictionaries for columns with only nulls
+### Incident Patch 2: `55dd98e3` (2026-11-04)
+**Commit Message**: Bump the web-ui-dependencies group
 
-When a source column has only nulls, its number of distinct values is
-zero, so dictionary detection gave it an empty `allowed_values` list.
-Setting the `null_probability` table property in the CTAS keeps the
-column from becoming only nulls, so every query reading it failed with
-an internal error, because there is no value to generate.
+Bumps the web-ui-dependencies group in /core/trino-web-ui/src/main/resources/webapp with 19 updates:
 
-**File**: `plugin/trino-faker/src/main/java/io/trino/plugin/faker/FakerMetadata.java` (modified, +2/-1)
+| Package | From | To |
+| --- | --- | --- |
+| [@mui/icons-material](https://github.com/mui/material-ui/tree/HEAD/packages/mui-icons-material) | `9.4.0` | `9.5.0` |
+| [@mui/material](https://github.com/mui/material-ui/tree/HEAD/packages/mui-material) | `9.4.0` | `9.5.0` |
+| [react-router-dom](https://github.com/remix-run/react-router/tree/HEAD/packages/react-router-dom) | `7.18.4` | `7.18.5` |
+| [zustand](https://github.com/pmndrs/zustand) | `5.0.15` | `5.0.16` |
+| [@types/lodash](https://github.com/DefinitelyTyped/DefinitelyTyped/tree/HEAD/types/lodash) | `4.17.26` | `4.17.27` |
+| [@babel/helper-string-parser](https://github.com/babel/babel/tree/HEAD/packages/babel-helper-string-parser) | `7.29.7` | `7.29.11` |
+| [@babel/parser](https://github.com/babel/babel/tree/HEAD/packages/babel-parser) | `7.29.9` | `7.29.12` |
+| [@babel/types](https://github.com/babel/babel/tree/HEAD/packages/babel-types) | `7.29.8` | `7.29.11` |
+| [@mui/core-downloads-tracker](https://github.com/mui/material-ui/tree/HEAD/packages/mui-core-downloads-tracker) | `9.4.0` | `9.
+
+**File**: `core/trino-web-ui/src/main/resources/webapp/bun.lock` (modified, +39/-25)
 ```diff
-@@ -719,7 +719,8 @@ private Map<String, List<Object>> getColumnValues(SchemaTableName tableName, Tab
-             }
-         });
-         List<FakerColumnHandle> dictionaryColumns = distinctValues.entrySet().stream()
--                .filter(entry -> entry.getValue() <= MAX_DICTIONARY_SIZE)
-+                // columns with only nulls have no values to build a dictionary from
-+                .filter(entry -> entry.getValue() > 0 && entry.getValue() <= MAX_DICTIONARY_SIZE)
-                 .map(entry -> columnHandles.get(entry.getKey()))
-                 .filter(Objects::nonNull)
-                 .filter(column -> isRangeType(column.type()))
+@@ -10,8 +10,8 @@
+         "@emotion/styled": "^11.14.1",
+         "@fontsource/roboto": "^5.3.0",
+         "@monaco-editor/react": "^4.7.0",
+-        "@mui/icons-material": "^9.4.0",
+-        "@mui/material": "^9.4.0",
++        "@mui/icons-material": "^9.5.0",
++        "@mui/material": "^9.5.0",
+         "@mui/x-charts": "^9.15.0",
+         "@xyflow/react": "^12.12.0",
+         "axios": "^1.20.0",
+@@ -20,13 +20,13 @@
+         "react": "^19.3.1",
+         "react-calendar-timeline": "^0.30.0-beta.4",
+         "react-dom": "^19.3.1",
+-        "react-router-dom": "^7.18.4",
++        "react-router-dom": "^7.18.5",
+         "sass": "^1.105.2",
+-        "zustand": "^5.0.15",
++        "zustand": "^5.0.16",
+       },
+       "devDependencies": {
+         "@eslint/js": "^9.39.5",
+-        "@types/lodash": "^4.17.26",
++        "@types/lodash": "^4.17.27",
+         "@types/lodash.merge": "^4.6.9",
+         "@types/react": "^19.3.0",
+         "@types/react-dom": "^19.3.0",
+@@ -67,15 +67,15 @@
+ 
+     "@babel/helper-plugin-utils": ["@babel/helper-plugin-utils@7.29.7", "", {}, "sha512-G7sHYigPY17oO5SYWnfD/0MTBwVR781S/JI643e/JhUYgVgWE/61SoW3NH9KWUKyKq5LVh3npif99Wkt6j86Jw=="],
+ 
+-    "@babel/helper-string-parser": ["@babel/helper-string-parser@7.29.7", "", {}, "sha512-Pb5ijPrZ89GDH8223L4UP8i6QApWxs04RbPQJTeWDV0/keR2E36MeKnyr6LYmUUvqRRI+Iv87SuF1W6ErINzYw=="],
++    "@babel/helper-string-parser": ["@babel/helper-string-parser@7.29.11", "", {}, "sha512-snZbO7MEDOof+hvNa97EjEY7qD7h2kwvQr5AJC3ZhQudKW5dnej6k3kP9NQV88hJwaS8vDqRLFo9rivLEhle2g=="],
+ 
+     "@babel/helper-validator-identifier": ["@babel/helper-validator-identifier@7.29.7", "", {}, "sha512-qehxGkRj55h/ff8EMaJ+cYhyaKlHIxqYDn682wQD7RNp9UujOQsHog2uS0r2vzr4pW+sXf90NeeayjcNaX3fFg=="],
+ 
+     "@babel/helper-validator-option": ["@babel/helper-validator-option@7.29.7", "", {}, "sha512-N9ZErrD+yW5geCDtBqnOoxmR8+tNKiGuxKlDpuJxfsqpa2dFcexaziGAE/qoHLiDDreVNMupxGmSoNlyvsA3gw=="],
+ 
+     "@babel/helpers": ["@babel/helpers@7.29.10", "", { "dependencies": { "@babel/template": "^7.29.7", "@babel/types": "^7.29.8" } }, "sha512-EMCx3AGZ3WfAl6ht7AyQoPm2Lh+BGYEMdc4Q6Hf7uSCDOZFuLq44qNwL+iaim8VlyYhRAo4X43+weadK8ZB4Yg=="],
+ 
+-    "@babel/parser": ["@babel/parser@7.29.9", "", { "dependencies": { "@babel/types": "^7.29.8" }, "bin": "./bin/babel-parser.js" }, "sha512-CjXrNHTnvqBVqHgdBysY3vk2T8tpJHb5/RMeHJBTyVa9xgugCB0CJTx/3oO8RV2QRQP391RWpB7D6hLjm8V9uA=="],
++    "@babel/parser": ["@babel/parser@7.29.12", "", { "dependencies": { "@babel/types": "^7.29.11" }, "bin": "./bin/babel-parser.js" }, "sha512-WJ7JBp/Q4+z/ImydtI7jS6NVco5++632ExBemSX+Ysb+G1lCwQ5BVo3SY+jGGOcZXI4ZccbZSUSJLNBW6eEpJg=="],
+ 
+     "@babel/plugin-transform-react-jsx-self": ["@babel/plugin-transform-react-jsx-self@7.29.7", "", { "dependencies": { "@babel/helper-plugin-utils": "^7.29.7" }, "peerDependencies": { "@babel/core": "^7.0.0-0" } }, "sha512-TL0hMc9xzy86VD31nUiwzd5otRAcyEPcsegCxolO0PvcXuH1v0kECe/UIznYFihpkvU5wg/jk4v0TTEFfm53fw=="],
+ 
+@@ -87,7 +87,7 @@
+ 
+     "@babel/traverse": ["@babel/traverse@7.29.10", "", { "dependencies": { "@babel/code-frame": "^7.29.7", "@babel/generator": "^7.29.8", "@babel/helper-globals": "^7.29.7", "@babel/parser": "^7.29.9", "@babel/template": "^7.29.7", "@babel/types": "^7.29.8", "debug": "^4.3.1" } }, "sha512-B3lYAs2nkKskbgQ1nfy8Ma9ao9Q1rntTAQHrzzyDuj+TSO+X3le6PfWwqDvodsb+OumE10eMFfuMCTQSQ5iuIQ=="],
+ 
+-    "@babel/types": ["@babel/types@7.29.8", "", { "dependencies": { "@babel/helper-string-parser": "^7.29.7", "@babel/helper-validator-identifier": "^7.29.7" } }, "sha512-Vj1jF3cPfxg7OAfoI7QnVKLoILlm2JF9pnVHrX8qx7AHMiYWT+NDAA7jChlNgRS4WTLc/fD1lXLmPixluj+3Gg=="],
++    "@babel/types": ["@babel/types@7.29.11", "", { "dependencies": { "@babel/helper-string-parser": "^7.29.11", "@babel/helper-validator-identifier": "^7.29.7" } }, "sha512-WCsemW40Cpc6gouC1SrY6PBaZ+oLRlEVY9XBvZBI7il/HyUrb2nJ505wE1MHEFyDZNnrWDEuy4jL50WVHfTTSQ=="],
+ 
+     "@base-ui/utils": ["@base-ui/utils@0.4.0", "", { "dependencies": { "@babel/runtime": "^7.29.7", "@floating-ui/utils": "^0.2.12", "reselect": "^5.2.0", "use-sync-external-store": "^1.6.0" }, "peerDependencies": { "@types/react": "^17 || ^18 || ^19", "react": "^17 || ^18 || ^19", "react-dom": "^17 || ^18 || ^19" }, "optionalPeers": ["@types/react"] }, "sha512-bO9fz25kKtPf+aZVyfQrC0PDmJdmVni31W2hCS5/Owb+inwdIL3XU26pCPRPlt4LSxZrBgLwubXQXQlKaFEZzw=="],
+ 
+@@ -175,21 +175,21 @@
+ 
+     "@monaco-editor/react": ["@monaco-editor/react@4.7.0", "", { "dependencies": { "@monaco-editor/loader": "^1.5.0" }, "peerDependencies": { "monaco-editor": ">= 0.25.0 < 1", "react": "^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0", "react-dom": "^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0" } }, "sha512-cyzXQCtO47ydzxpQtCGSQGOC8Gk3ZUeBXFAxD+CWXYFo5OqZyZUonFl0DwUlTyAfRHntBfw2p3w4s9R6oe1eCA=="],
+ 
+-    "@mui/core-downloads-tracker": ["@mui/core-downloads-tracker@9.4.0", "", {}, "sha512-d+gIYM1raJP87yrVQcVg+Q3vycVMArMkgu/TjJLi2vTvO9FHKWNRR1xs9nnN4eLpM9nGxxm02UMvc9BrmcUKvQ=="],
++    "@mui/core-downloads-tracker": ["
 ```
 
-**File**: `plugin/trino-faker/src/test/java/io/trino/plugin/faker/TestFakerQueries.java` (modified, +7/-0)
+**File**: `core/trino-web-ui/src/main/resources/webapp/package.json` (modified, +5/-5)
 ```diff
-@@ -1506,6 +1506,13 @@ FROM TABLE(sequence(start => 0, stop => 1000, step => 1))
-             String createTable = (String) computeScalar("SHOW CREATE TABLE " + table.getName());
-             assertThat(createTable).containsPattern("nullable integer WITH \\(null_probability = 1E0\\)");
+@@ -22,8 +22,8 @@
+     "@emotion/styled": "^11.14.1",
+     "@fontsource/roboto": "^5.3.0",
+     "@monaco-editor/react": "^4.7.0",
+-    "@mui/icons-material": "^9.4.0",
+-    "@mui/material": "^9.4.0",
++    "@mui/icons-material": "^9.5.0",
++    "@mui/material": "^9.5.0",
+     "@mui/x-charts": "^9.15.0",
+     "@xyflow/react": "^12.12.0",
+     "axios": "^1.20.0",
+@@ -32,13 +32,13 @@
+     "react": "^19.3.1",
+     "react-calendar-timeline": "^0.30.0-beta.4",
+     "react-dom": "^19.3.1",
+-    "react-router-dom": "^7.18.4",
++    "react-router-dom": "^7.18.5",
+     "sass": "^1.105.2",
+-    "zustand": "^5.0.15"
++    "zustand": "^5.0.16"
+   },
+   "devDependencies": {
+     "@eslint/js": "^9.39.5",
+-    "@types/lodash": "^4.17.26",
++    "@types/lodash": "^4.17.27",
+     "@types/lodash.merge": "^4.6.9",
+     "@types/react": "^19.3.0",
+     "@types/react-dom": "^19.3.0",
+```
+
+**File**: `core/trino-web-ui/src/main/resources/webapp/src/components/SnackbarProvider.tsx` (modified, +1/-1)
+```diff
+@@ -35,7 +35,7 @@ export const SnackbarProvider: React.FC<{ children: ReactNode }> = ({ children }
+         setSnackbar({ open: true, message, severity })
+     }, [])
+ 
+-    const handleClose = (_event?: React.SyntheticEvent | Event, reason?: string) => {
++    const handleClose = (_event?: React.SyntheticEvent | Event | null, reason?: string) => {
+         if (reason === 'clickaway') {
+             return
          }
-+
-+        // the table property overrides the detected null probability, so the column generates values without having any in the source
-+        try (TestTable table = new TestTable(getQueryRunner()::execute, "only_nulls", "WITH (null_probability = 0.5) AS " + source)) {
-+            assertThat((Long) computeScalar("SELECT count(nullable) FROM " + table.getName())).isPositive();
-+            String createTable = (String) computeScalar("SHOW CREATE TABLE " + table.getName());
-+            assertThat(createTable).doesNotContain(ALLOWED_VALUES_PROPERTY);
-+        }
+```
+
+---
+
+### Incident Patch 3: `8675da45` (2026-10-28)
+**Commit Message**: Fix negative local exchange reservation after memory limit
+
+A rejected reservation left the memory managers counting bytes the pool
+never took, so releasing them later went below zero.
+
+**File**: `core/trino-main/src/main/java/io/trino/operator/exchange/LocalExchangeMemoryManager.java` (modified, +14/-4)
+```diff
+@@ -69,7 +69,16 @@ public void updateMemoryUsage(long bytesAdded)
+         long bufferedBytes = this.bufferedBytes.addAndGet(bytesAdded);
+         long reportedBytes = this.reportedBytes;
+         if (bufferedBytes > reportedBytes || bufferedBytes < reportedBytes - 2 * reportStepBytes) {
+-            reportMemoryUsage();
++            try {
++                reportMemoryUsage();
++            }
++            catch (RuntimeException e) {
++                // a page rejected by the memory pool is never buffered
++                if (bytesAdded > 0) {
++                    this.bufferedBytes.addAndGet(-bytesAdded);
++                }
++                throw e;
++            }
+         }
+         // detect the transition from above to below the full boundary
+         if (bufferedBytes <= maxBufferedBytes && (bufferedBytes - bytesAdded) > maxBufferedBytes) {
+@@ -94,9 +103,10 @@ private synchronized void reportMemoryUsage()
+         if (bufferedBytes <= reportedBytes && bufferedBytes >= reportedBytes - 2 * reportStepBytes) {
+             return;
+         }
+-        long previousReportedBytes = reportedBytes;
+-        reportedBytes = bufferedBytes + reportStepBytes;
+-        memoryReservation.updateMemoryUsage(reportedBytes - previousReportedBytes);
++        long newReportedBytes = bufferedBytes + reportStepBytes;
++        // publish the reported bytes only after the reservation accepts them
++        memoryReservation.updateMemoryUsage(newReportedBytes - reportedBytes);
++        reportedBytes = newReportedBytes;
      }
  
-     @Test
+     public ListenableFuture<Void> getNotFullFuture()
+```
+
+**File**: `core/trino-main/src/test/java/io/trino/operator/exchange/TestLocalExchangeMemoryReservation.java` (modified, +26/-0)
+```diff
+@@ -15,6 +15,7 @@
+ 
+ import com.google.common.util.concurrent.ListenableFuture;
+ import io.airlift.units.DataSize;
++import io.trino.ExceededMemoryLimitException;
+ import io.trino.memory.context.AggregatedMemoryContext;
+ import io.trino.memory.context.LocalMemoryContext;
+ import io.trino.operator.TaskContext;
+@@ -31,6 +32,7 @@
+ import static io.trino.testing.TestingSession.testSessionBuilder;
+ import static java.util.concurrent.Executors.newSingleThreadScheduledExecutor;
+ import static org.assertj.core.api.Assertions.assertThat;
++import static org.assertj.core.api.Assertions.assertThatThrownBy;
+ import static org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS;
+ 
+ @TestInstance(PER_CLASS)
+@@ -117,4 +119,28 @@ public void testMemoryFutureWaitsForMemoryPool()
+         reservation.close();
+         assertThat(taskContext.getQueryContext().getMemoryPool().getReservedBytes()).isEqualTo(0);
+     }
++
++    @Test
++    public void testReleaseAfterExceededMemoryLimit()
++    {
++        TaskContext taskContext = TestingTaskContext.builder(directExecutor(), scheduledExecutor, testSessionBuilder().build())
++                .setQueryMaxMemory(DataSize.ofBytes(1000))
++                .build();
++        LocalExchangeMemoryReservation reservation = new LocalExchangeMemoryReservation(taskContext.aggregateUserMemoryContext().newLocalMemoryContext("test"));
++        LocalExchangeMemoryManager memoryManager = new LocalExchangeMemoryManager(10_000, reservation, 50);
++
++        memoryManager.updateMemoryUsage(500);
++        assertThat(taskContext.getQueryContext().getMemoryPool().getReservedBytes()).isEqualTo(550);
++
++        assertThatThrownBy(() -> memoryManager.updateMemoryUsage(1000))
++                .isInstanceOf(ExceededMemoryLimitException.class);
++        assertThat(taskContext.getQueryContext().getMemoryPool().getReservedBytes()).isEqualTo(550);
++        assertThat(memoryManager.getBufferedBytes()).isEqualTo(500);
++
++        memoryManager.updateMemoryUsage(-500);
++        assertThat(taskContext.getQueryContext().getMemoryPool().getReservedBytes()).isEqualTo(50);
++
++        reservation.close();
++        assertThat(taskContext.getQueryContext().getMemoryPool().getReservedBytes()).isEqualTo(0);
++    }
+ }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #31984** (2026-11-04): Bump the web-ui-dependencies group in /core/trino-web-ui/src/main/resources/webapp with 19 updates (@dependabot[bot])
+- **PR #31983** (2026-11-04): Bump zizmorcore/zizmor-action from 0.7.1 to 0.8.0 (@dependabot[bot])
+- **PR #31977** (2026-11-03): Update netty to 4.2.20 (@wendigo)
 - **PR #31971** (2026-11-03): Upgrade ClickHouse server to supported version (@krvikash)
 - **PR #31970** (closed): Test: Run GCP CI (@ebyhr)
 - **PR #31969** (2026-11-03): Update ClickHouse driver to 0.11.0 (@ebyhr)
-- **PR #31967** (closed): Update ClickHouse driver to 0.11.0 (@ebyhr)
-- **PR #31965** (2026-11-02): Avoid retaining mutable S3 filesystem configuration (@electrum)
-- **PR #31963** (2026-11-02): Update project dependencies (@wendigo)
 
 ---
 
@@ -2144,46 +2158,39 @@ an internal error, because there is no value to generate.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. overflow in Faker long decimal sequences
+## X. Report local exchange memory growth only on additions
 
 **RULE**:
-When implementing operations in `plugin/trino-faker/src/main/java/io/trino/plugin/faker/FakerPageSource.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trinodb/trino. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `core/trino-main/src/main/java/io/trino/operator/exchange/LocalExchangeMemoryManager.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trinodb/trino. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `bdd23f55`: overflow in Faker long decimal sequences. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1e780aaf`: Report local exchange memory growth only on additions. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `plugin/trino-faker/src/main/java/io/trino/plugin/faker/FakerPageSource.java`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/trino-main/src/main/java/io/trino/operator/exchange/LocalExchangeMemoryManager.java`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-    private record Int128Range(Int128 low, Int128 high, Int128 step, long lastIndex)
-            // multiplying the step by an index after the last one that fits in the range can overflow, so such indexes are capped instead
-            long lastIndex = high.toBigInteger().subtract(BigInteger.ONE).subtract(low.toBigInteger())
-                    .divide(step.toBigInteger())
-                    .min(BigInteger.valueOf(Long.MAX_VALUE))
-                    .longValue();
-            return new Int128Range(low, high, step, lastIndex);
-            if (index > lastIndex) {
-                return Int128Math.subtract(high, Int128.ONE);
-            }
-            // decimals span almost twice the max value of Int128, so multiplying the step by the index can overflow,
-            // even if the result doesn't, but adding each half separately keeps every partial result in the range
-            long halfIndex = index / 2;
-            Int128 halfway = add(low, Int128Math.multiply(Int128.valueOf(halfIndex), step));
-            return add(halfway, Int128Math.multiply(Int128.valueOf(index - halfIndex), step));
+ * memory reservation shared with other managers between moves. Only adding
+ * pages reports growth, so removing pages never fails on the memory limit.
+        if ((bytesAdded > 0 && bufferedBytes > reportedBytes) || bufferedBytes < reportedBytes - 2 * reportStepBytes) {
+                reportMemoryUsage(bytesAdded > 0);
+    private synchronized void reportMemoryUsage(boolean reportGrowth)
+        // the thread that added the bytes reports the growth
+        if (bufferedBytes > reportedBytes && !reportGrowth) {
+            return;
+        }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Anti-pattern to NEVER write (induced failure mode):
-    private record Int128Range(Int128 low, Int128 high, Int128 step)
-            return new Int128Range(low, high, step);
-            Int128 nextValue = add(low, Int128Math.multiply(Int128.valueOf(index), step));
-            Int128 highInclusive = Int128Math.subtract(high, Int128.ONE);
-            return highInclusive.compareTo(nextValue) < 0 ? highInclusive : nextValue;
+ * memory reservation shared with other managers between moves.
+        if (bufferedBytes > reportedBytes || bufferedBytes < reportedBytes - 2 * reportStepBytes) {
+                reportMemoryUsage();
+    private synchronized void reportMemoryUsage()
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `bdd23f55` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1e780aaf` are properly handled with clean fallback behavior.

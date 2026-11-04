@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-04T10:05:42.226Z",
+  "last_updated": "2026-11-04T10:12:39.059Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4086,14 +4086,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-bee-san-ciphey",
-      "content_hash": "05a2800a251e980936b6fac6c1aa4c7e67e4737e87b334fd26d8e32286e5ebe4",
-      "verified_at": "2026-10-28T17:28:16.684Z",
+      "content_hash": "3605c59669503808ff14909f593cd796381d82c8d265c53121699906d38c71fd",
+      "verified_at": "2026-11-04T10:12:36.217Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T17:28:16.684Z"
+      "last_updated": "2026-11-04T10:12:36.217Z"
     },
     "pingcap/autoflow": {
       "repository": "pingcap/autoflow",
@@ -7731,14 +7731,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-trinodb-trino",
-      "content_hash": "a6f86025631bd0965fb5c7a3516acbca345df0134fad554daa424fa1e3eab685",
-      "verified_at": "2026-11-03T12:51:52.160Z",
+      "content_hash": "3c130a3170e5873012aa3ba8965d447c226a525352411cee578138bbf8f2e06d",
+      "verified_at": "2026-11-04T10:12:39.058Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T12:51:52.160Z"
+      "last_updated": "2026-11-04T10:12:39.058Z"
     },
     "pinterest/gestalt": {
       "repository": "pinterest/gestalt",
@@ -8811,14 +8811,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ntex-rs-ntex",
-      "content_hash": "d0dad18a545da7143f48a0ba451ed813093909e8b2de130df766b1548aea7686",
-      "verified_at": "2026-11-02T16:18:41.517Z",
+      "content_hash": "22f0dc33312c41a8cef607749eadd7b641631fed95af2cab0f9d9e6c338ca0cb",
+      "verified_at": "2026-11-04T10:12:25.286Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-02T16:18:41.517Z"
+      "last_updated": "2026-11-04T10:12:25.286Z"
     },
     "learnapollo/learnapollo": {
       "repository": "learnapollo/learnapollo",
@@ -10401,14 +10401,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-gardener-gardener",
-      "content_hash": "e171d3f5bbee3fd0b8eb0f4a6648e3a47d31809ad2c59ca21f0245b3a1c68c91",
-      "verified_at": "2026-11-03T16:09:17.892Z",
+      "content_hash": "e16ed959b909239f5124f3cc5eec10d749ed7fe519dcb84f2b49223a29f9fe61",
+      "verified_at": "2026-11-04T10:12:33.042Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T16:09:17.892Z"
+      "last_updated": "2026-11-04T10:12:33.042Z"
     },
     "NirDiamant/RAG_Techniques": {
       "repository": "NirDiamant/RAG_Techniques",

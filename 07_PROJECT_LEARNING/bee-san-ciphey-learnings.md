@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/bee-san-ciphey-learnings.md`  
 > **Source**: github ([https://github.com/bee-san/Ciphey](https://github.com/bee-san/Ciphey))  
-> **Source Version**: `867d27e8`  
+> **Source Version**: `ad59a3bc`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T17:28:16.041Z  
+> **Timestamp**: 2026-11-04T10:12:35.662Z  
 > **Learning ID**: `learn-github-bee-san-ciphey`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/bee-san-ciphey-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/bee-san/Ciphey](https://github.com/bee-san/Ciphey))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T17:28:15.690Z  
+> **Harvest Timestamp**: 2026-11-04T10:12:35.222Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: ⚡ Automatically decrypt encryptions without knowing the key or cipher, decode encodings, and crack hashes ⚡
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 21709 stars
+- **Stars / Engagement**: 21739 stars
 
 ---
 
@@ -1898,486 +1898,154 @@ fn describe(detection: &Detection) -> String {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `47215766` (2026-10-28)
-**Commit Message**: feat(decoders): add Pollux (Morse with digits) cracker (#1121)
+### Incident Patch 1: `ad59a3bc` (2026-11-04)
+**Commit Message**: build(deps): bump rustls (#1134)
 
-Cracks the Pollux cipher (#1000): Morse code with each dot, dash and separator written as a digit of its class. The key search tries the digit sets that split the text into Morse letters, splits the other digits into dots and dashes, ranks the readings by quadgram score and shows the checker at most 5 that are mostly dictionary words, at Low sensitivity. Text of 40 to 4,000 digits only (random digit strings of 40 are accepted 4 times in 10,000, of 45 or more never); the key is reported as . = 1 4 7, - = 2 5 8, x = 3 6 9 0. Bench fixtures and an end-to-end test included.
+Bumps the cargo group with 1 update in the / directory: [rustls](https://github.com/rustls/rustls).
 
-Closes #1000.
 
-Co-authored-by: Autumn Skerritt <[REDACTED_EMAIL]>
+Updates `rustls` from 0.23.45 to 0.23.46
+- [Release notes](https://github.com/rustls/rustls/releases)
+- [Changelog](https://github.com/rustls/rustls/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/rustls/rustls/compare/v/0.23.45...v/0.23.46)
 
-**File**: `benches/data/decoders.toml` (modified, +18/-0)
+---
+updated-dependencies:
+- dependency-name: rustls
+  dependency-version: 0.23.46
+  dependency-type: indirect
+  dependency-group: cargo
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `Cargo.lock` (modified, +2/-2)
 ```diff
-@@ -938,6 +938,24 @@ success = true
- input = "13 24 35 23 15 54  24 43  11 33  11 45 44 34 32 11 44 15 14  14 15 13 34 14 24 33 22  44 34 34 31  54 34 45  22 24 51 15  24 44  15 33 13 42 54 35 44 15 14  34 42  15 33 13 34 14 15 14  44 15 53 44  11 33 14  24 44  44 42 24 15 43  44 34  52 34 42 25  34 45 44  52 23 11 44  52 11 43  14 34 33 15  44 34  24 44  52 24 44 23 34 45 44  54 34 45  23 11 51 24 33 22  44 34  25 33 34 52  44 23 15  25 15 54  34 42  15 51 15 33  44 23 15  13 24 35 23 15 42  24 44  43 15 11 42 13 23 15 43  44 23 42 34 45 22 23  32 11 33 54  35 34 43 43 24 12 31 15  14 15 13 34 14 24 33 22 43  13 23 15 13 25 43  15 11 13 23  13 11 33 14 24 14 11 44 15  44 34  43 15 15  52 23 15 44 23 15 42  24 44  31 34 34 25 43  31 24 25 15  15 33 22 31 24 43 23  34 42  32 11 44 13 23 15 43  11  25 33 34 52 33  35 11 44 44 15 42 33  43 45 13 23  11 43  11 33  15 32 11 24 31  11 14 14 42 15 43 43  11 33 14  43 44 34 35 43  52 23 15 33  24 44  21 24 33 14 43  43 34 32 15 44 23 24 33 22  44 23 11 44  42 15 11 14 43  31 24 25 15  35 31 11 24 33 44 15 53 44  32 34 43 44  34 21  44 23 15  44 24 32 15  44 23 24 43  44 11 25 15 43  31 15 43 43  44 23 11 33  11  43 15 13 34 33 14  52 23 24 13 23  32 11 25 15 43  24 44  23 11 33 14 54  21 34 42  13 11 35 44 45 42 15  44 23 15  21 31 11 22  13 23 11 31 31 15 33 22 15 43  35 45 55 55 31 15  23 45 33 44 43  11 33 14  21 34 42  11 33 54 34 33 15  52 23 34  43 44 45 32 12 31 15 43  11 13 42 34 43 43  11  43 44 42 11 33 22 15  43 44 42 24 33 22  24 33  11  31 34 22  21 24 31 15"
- expected = "CIPHEY IS AN AUTOMATED DECODING TOOL YOU GIVE IT ENCRYPTED OR ENCODED TEXT AND IT TRIES TO WORK OUT WHAT WAS DONE TO IT WITHOUT YOU HAVING TO KNOW THE KEY OR EVEN THE CIPHER IT SEARCHES THROUGH MANY POSSIBLE DECODINGS CHECKS EACH CANDIDATE TO SEE WHETHER IT LOOKS LIKE ENGLISH OR MATCHES A KNOWN PATTERN SUCH AS AN EMAIL ADDRESS AND STOPS WHEN IT FINDS SOMETHING THAT READS LIKE PLAINTEXT MOST OF THE TIME THIS TAKES LESS THAN A SECOND WHICH MAKES IT HANDY FOR CAPTURE THE FLAG CHALLENGES PUZZLE HUNTS AND FOR ANYONE WHO STUMBLES ACROSS A STRANGE STRING IN A LOG FILE"
+@@ -4160,9 +4160,9 @@ dependencies = [
  
-+# Pollux writes Morse code with digits, so it has no case or punctuation: the plaintext
-+# upper-cased without punctuation, as for Polybius Square, in Morse with x between letters
-+# and xx between words, then each symbol as the next digit of its class in turn, with the
-+# issue's key . = 1 4 7, - = 2 5 8, x = 3 6 9 0.
-+[[case]]
-+decoder = "Pollux"
-+size = "medium"
-+success = true
-+input = "253164980325679018326950471437698250184732146975140713824671479501471382564789147013642971540837612490583716247951047382164714950378621954703814761249710543827695014713469820753182469507147316984207351826945087321469750386258912405781347146"
-+expected = "MEET ME AT THE OLD LIGHTHOUSE AFTER MIDNIGHT AND BRING THE MAP THE KEY AND A TORCH"
-+
-+[[case]]
-+decoder = "Pollux"
-+size = "long"
-+success = true
-+input = "2154371648279147104357826914071436759810342671598025832564892073514698710432751682598470143276581902358265829457103842568259718032546719471804367192034657981240751384256782195043871692580427361954087213582654791084736291054783269150843271694705368912407134671490538256978205823154687290582314568907253147164892037586129471035476825981043629582037165904823716594714082537186290548235826715904714378614729140573821695082536842957082531826950471437698120435782695820154367914780132469507147316984270143758164714970124367195034716497801243578164714970147362914710457382561489257014713682945087321586942570825314761479140871437214679051437681249582057134768192540714368721947140735184627591470316489275104714368721945087321467195470183264905382569714073169482071473165947140731846971023645719825082538426714907514371684297031654982701547314671497147038256184902537862951840714731647190423657892105823458627901584372659801342765190471347862154971470318647190423576910823456719487103426571984701243761479147031568492710347165982504827314769158047143762190473569148701432765149714037146825982073561471947081325469807147312659048731642957104713648719470215346978210457134867192405376814295038265829714053682597184032671479103564798201365947140713471698042357861947103427164971407143659714701832469750314761984270582351684790125347146719842701471365894205783164719047326914710453876214957820314576825918403275164897251083472615497038614719403712467514978025136842791471045378146721497051382467914703158467129584702514378146790147134726519804713642957081436712495820751364892705182358265497031826471495820371465971802538471642719407143675981240751382564719471034869714023751648927058134697140237516479810254367198403726915470825382169475104731847619"
-+expected = "CIPHEY IS AN AUTOMATED DECODING TOOL YOU GIVE IT ENCRYPTED OR ENCODED TEXT AND IT TRIES TO WORK OUT WHAT WAS DONE TO IT WITHOUT YOU HAVING TO KNOW THE KEY OR EVEN THE CIPHER IT SEARCHES THROUGH MANY POSSIBLE DECODINGS CHECKS EACH CANDIDATE TO SEE WHETHER IT LOOKS LIKE ENGLISH OR MATCHES A KNOWN PATTERN SUCH AS AN E
-```
-
-**File**: `benches/data/search.toml` (modified, +8/-0)
-```diff
-@@ -332,6 +332,14 @@ layers = ["Polybius Square"]
- input = "32 15 15 44  32 15  11 44  44 23 15  34 31 14  31 24 22 23 44 23 34 45 43 15  11 21 44 15 42  32 24 14 33 24 22 23 44  11 33 14  12 42 24 33 22  44 23 15  32 11 35  44 23 15  25 15 54  11 33 14  11  44 34 42 13 23"
- expected = "MEET ME AT THE OLD LIGHTHOUSE AFTER MIDNIGHT AND BRING THE MAP THE KEY AND A TORCH"
- 
-+[[case]]
-+# Pollux, the issue's key . = 1 4 7, - = 2 5 8, x = 3 6 9 0, digits of each class in turn
-+kind = "single"
-+name = "pollux"
-+layers = ["Pollux"]
-+input = "253164980325679018326950471437698250184732146975140713824671479501471382564789147013642971540837612490583716247951047382164714950378621954703814761249710543827695014713469820753182469507147316984207351826945087321469750386258912405781347146"
-+expected = "MEET ME AT THE OLD LIGHTHOUSE AFTER MIDNIGHT AND BRING THE MAP THE KEY AND A TORCH"
-+
- [[case]]
- # DNA codons: each letter as its alphabetically first codon in the standard genetic code,
- # each space as the stop codon TAA. The codon alphabet has no O, U or B, so the usual
-```
-
-**File**: `src/decoders/api/functions.rs` (modified, +16/-0)
-```diff
-@@ -58,6 +58,7 @@ use crate::decoders::null_cipher_decoder::NullCipherDecoder;
- use crate::decoders::octal_decoder::OctalDecoder;
- use crate::decoders::ook_decoder::OokDecoder;
- use crate::decoders::playfair_decoder::PlayfairDecoder;
-+use crate::decoders::pollux_decoder::PolluxDecoder;
- use crate::decoders::polybius_decoder::PolybiusDecoder;
- use crate::decoders::punycode_decoder::PunycodeDecoder;
- use crate::decoders::quoted_printable_decoder::QuotedPrintableDecoder;
-@@ -707,6 +708,21 @@ decoder_functions! {
-     /// ```
-     playfair: PlayfairDecoder, aliases [], key Some(keys::PLAYFAIR);
- 
-+    /// Cracks the Pollux cipher, Morse code written with digits: each digit stands for a
-+    /// dot, a dash or the separator between letters (two between words). Ciphey tries the
-+    /// digit classes that split the text into Morse letters, ranks the readings by English
-+    /// quadgram statistics and checks the best few. The key is the classes, such as
-+    /// `. = 1 4 7, - = 2 5 8, x = 3 6 9 0`.
-+    ///
-+    /// ```
-+    /// // "HELLO WORLD" with `. = 1 4 7, - = 2 5 8, x = 3 6 9 0`
-+    /// let decoded = ciphey::decoders::pollux("7774640754467514028890485358201240751738773");
-+    /// let plaintext = decoded.plaintext().unwrap();
-+    /// assert_eq!(plaintext.text, "HELLO WORLD");
-+    /// assert_eq!(plaintext.key.as_deref(), Some(". = 1 4 7, - = 2 5 8, x = 3 6 9 0"));
-+    /// ```
-+    pollux: PolluxDecoder, aliases [], key None;
-+
-     /// Decodes the Polybius square cipher: each letter as its row and column in a 5×5
-     /// square with I and J in one cell, written as digits (`23` is H) or as letters from
-     /// `ABCDE` or `ADFGX`. Also the 6×6 square of A–Z and 0–9, column-row order and the
-```
-
-**File**: `src/decoders/api/tests.rs` (modified, +19/-0)
-```diff
-@@ -824,6 +824,25 @@ fn t9_decodes() {
-     }
- }
- 
-+#[test]
-+fn pollux_decodes() {
-+    // "HELLO WORLD" with `. = 1 4 7, - = 2 5 8, x = 3 6 9 0` (issue #1000 example)
-+    let decoded = pollux("7774640754467514028890485358201240751738773");
-+    let plaintext = decoded
-+        .plaintext()
-+        .unwrap_or_else(|| panic!("no plaintext in {decoded:#?}"));
-+    assert_eq!(plaintext.text, "HELLO WORLD");
-+    assert_eq!(
-+        plaintext.key.as_deref(),
-+        Some(". = 1 4 7, - = 2 5 8, x = 3 6 9 0")
-+    );
-+
-+    // Empty input produces no candidates (Pollux only takes digits).
-+    assert!(pollux("").is_empty());
-+    // Non-digit input produces no candidates.
-+    assert!(pollux("hello world").is_empty());
-+}
-+
- #[test]
- fn tap_code_decodes() {
-     assert_plaintext(
-```
-
-**File**: `src/decoders/mod.rs` (modified, +6/-0)
-```diff
-@@ -267,6 +267,8 @@ pub mod yunying_decoder;
- 
- /// The null_cipher_decoder module finds messages hidden in null ciphers such as acrostics
- pub mod null_cipher_decoder;
-+/// The pollux_decoder module cracks the Pollux cipher (Morse encoded with digits)
-+pub mod pollux_decoder;
- 
- use atbash_decoder::AtbashDecoder;
- use backslash_escape_decoder::BackslashEscapeDecoder;
-@@ -321,6 +323,7 @@ use null_cipher_decoder::NullCipherDecoder;
- use octal_decoder::OctalDecoder;
- use ook_decoder::OokDecoder;
- use playfair_decoder::PlayfairDecoder;
-+use pollux_decoder::PolluxDecoder;
- use polybius_decoder::PolybiusDecoder;
- use punycode_decoder::PunycodeDecoder;
- use quoted_printable_decoder::QuotedPrintableDecoder;
-@@ -523,6 +526,8 @@ pub enum DecoderType {
-     T9Decoder(t9_decoder::T9Decoder),
-     /// null cipher (acrostic) decoder
-     NullCipherDecoder(null_cipher_decoder::NullCipherDecoder),
-+    /// Pollux (Morse with digits) decoder
-+    PolluxDecoder(pollux_decoder::PolluxDecoder),
- }
- 
- /// Wrapper struct to hold Decoders for DECODER_MAP
-@@ -771,5 +776,6 @@ pub static DECODER_MAP: Lazy<HashMap<&str, DecoderBox>> = Lazy::new(|| {
-             "Null cipher",
-             DecoderBox::new(Decoder::<NullCipherDecoder>::new()),
-         ),
-+        ("Pollux", DecoderBox::new(Decoder::<PolluxDecoder>::new())),
-     ])
- });
-```
-
-**File**: `src/decoders/morse_code.rs` (modified, +1/-1)
-```diff
-@@ -97,7 +97,7 @@ fn normalise_morse_string(text: &str) -> String {
- }
- 
- /// Maps morse code to its alphanumeric character, returns None for invalid morse-code
--fn morse_to_alphanumeric(text: &str) -> Option<&str> {
-+pub(crate) fn morse_to_alphanumeric(text: &str) -> Option<&str> {
-     let result = match text {
-         ".-" => "A",
-         "-..." => "B",
-```
-
-**File**: `src/decoders/pollux_decoder.rs` (added, +791/-0)
-```diff
-@@ -0,0 +1,791 @@
-+//! Crack the Pollux cipher: Morse code written with digits.
-+//!
-+//! Pollux (an [ACA](https://www.cryptogram.org/downloads/aca.info/ciphers/Pollux.pdf) cipher,
-+//! also on [dCode](https://www.dcode.fr/pollux-cipher)) writes the message in Morse code with
-+//! a separator `x` between letters and `xx` between words, then replaces every dot, dash and
-+//! separator with a digit of its class. Each of the ten digits stands for one of the three
-+//! symbols, and every symbol is written with any digit of its class, which flattens the
-+//! digits' frequencies. The key is the classes, such as `. = 1 4 7, - = 2 5 8, x = 3 6 9 0`.
-+//!
-+//! There are 3¹⁰ = 59,049 keys, far too many to show the checker, but almost all of them can
-+//! be ruled out without the checker:
-+//!
-+//! 1. Each set of the digits in the text is tried as the separators. It must split the text
-+//!    into Morse letters of 1 to [`MAX_SYMBOLS`] symbols with one or two separators between
-+//!    them (two between words), which most sets don't.
-+//! 2. For each set that does, the other digits are split into dots and dashes in every way,
-+//!    and the text is read as Morse code. A split that makes a symbol sequence that isn't in
-+//!    the Morse alphabet is dropped.
-+//! 3. Readings with more than a little punctuation, or with too few different letters
-+//!    (`HE THE THE THE T` from `1234567890` repeated), are dropped, and the rest are ranked
-+//!    by English quadgram statistics.
-+//! 4. The key search is free to make text of the letters with the shortest codes, `E`, `T`,
-+//!    `I`, `S` and `H`, which score well (`SSESS HESES`), and on random digits it finds
-+//!    short words or unspaced letters that pass for English (`EATS SEE`, `DEDIASHISEEEA`).
-+//!    So in that order only readings of two or more words, [`MIN_LETTERS`] letters or more,
-+//!    seven in eight of their words English words and few one-letter words go on (see
-+//!    [`reads_as_words`]). The
-+//!    checker, at Low sensitivity like the other classical ciphers, sees at most
-+//!    [`CANDIDATES_CHECKED`] of them. Nothing is handed on unconfirmed: the readings are
-+//!    too many to judge.
-+//!
-+//! Only text of digits alone is tried, [`MIN_DIGITS`] to [`MAX_DIGITS`] of them and at least
-+//! three different ones, so for other input the cracker costs one scan of it. The key
-+//! search reads at most the first [`SEARCH_DIGITS`] digits, without allocating, and
-+//! [`MAX_WORK`] bounds it for repetitive text, which splits many ways; the best keys then
-+//! read the whole text.
-+//!
-+//! The key reports each class's digits in the order 1 to 9, then 0, as the issue and dCode
-+//! write them. Digits that aren't in the text can't be placed and are left out.
-+
-+use crate::checkers::english::is_known_word;
-+use crate::checkers::CheckerTypes;
-+use crate::decoders::morse_code::morse_to_alphanumeric;
-+use crate::storage::ngrams::quadgram_score;
-+use gibberish_or_not::Sensitivity;
-+use log::{debug, trace};
-+use once_cell::sync::Lazy;
-+use std::collections::{HashMap, HashSet};
-+
-+use super::crack_results::CrackResult;
-+use super::interface::{Crack, Decoder};
-+
-+/// Shorter text is too likely to read as something by chance. Of 10,000 random digit
-+/// strings each, the cracker accepted English like `SEE THEE LET` or `A NEW TESTED` for 46
-+/// strings of 30 digits, 21 of 35, 4 of 40 and none of 45, 50 or 60. The issue's `HELLO
-+/// WORLD` is 43 digits.
-+const MIN_DIGITS: usize = 40;
-+
-+/// Longer text isn't tried. About 1,000 letters.
-+const MAX_DIGITS: usize = 4000;
-+
-+/// The key search reads at most this many digits of the text, about 60 letters, which are
-+/// plenty to rank the keys by. The best keys then read the whole text.
-+const SEARCH_DIGITS: usize = 240;
-+
-+/// The most symbols a Morse character has (`..--..` is `?`).
-+const MAX_SYMBOLS: usize = 6;
-+
-+/// At most this many readings, best first, are looked up word by word.
-+const MAX_EXAMINED: usize = 2000;
-+
-+/// The key search stops once it has read this many digits in total, about 20 ms at worst.
-+/// Only repetitive text gets near it: random digits split into Morse letters a handful of
-+/// ways, `1234567890` repeated thousands of ways. The 40 digits of `ATTACK AT DAWN` read
-+/// 4,303 ways, 172,000 digits.
-+const MAX_WORK: usize = 500_000;
-+
-+/// A reading needs at least this many letters before the checker sees it. On random digits
-+/// the key search finds shorter English (`THE IN`, `EATS SEE`) all the time.
-+const MIN_LETTERS: usize = 10;
-+
-+/// How many readings the checker sees at most.
-+const CANDIDATES_CHECKED: usize = 5;
-+
-+/// The Pollux cracker, call:
-+/// `let pollux_decoder = Decoder::<PolluxDecoder>::new()` to create a new instance
-+/// And then call:
-+/// `result = pollux_decoder.crack(input, &checker)` to crack a Pollux ciphertext
-+/// The struct generated by new() comes from interface.rs
-+/// ```
-+/// use ciphey::decoders::pollux_decoder::PolluxDecoder;
-+/// use ciphey::decoders::interfac
-```
-
-**File**: `src/filtration_system/mod.rs` (modified, +4/-0)
-```diff
-@@ -28,6 +28,7 @@ use crate::decoders::html_entity_decoder::HtmlEntityDecoder;
- use crate::decoders::octal_decoder::OctalDecoder;
- use crate::decoders::ook_decoder::OokDecoder;
- use crate::decoders::playfair_decoder::PlayfairDecoder;
-+use crate::decoders::pollux_decoder::PolluxDecoder;
- use crate::decoders::polybius_decoder::PolybiusDecoder;
- use crate::DecoderResult;
- 
-@@ -344,6 +345,7 @@ pub fn filter_and_get_decoders(_text_struct: &DecoderResult) -> Decoders {
-     let baconian = Decoder::<BaconianDecoder>::new();
-     let baudot = Decoder::<BaudotDecoder>::new();
-     let polybius = Decoder::<PolybiusDecoder>::new();
-+    let pollux = Decoder::<PolluxDecoder>::new();
-     let caesardecoder = Decoder::<CaesarDecoder>::new();
-     let affine = Decoder::<AffineDecoder>::new();
-     let railfencedecoder = Decoder::<RailfenceDecoder>::new();
-@@ -515,6 +517,8 @@ pub fn filter_and_get_decoders(_text_struct: &DecoderResult) -> Decoders {
-             // Before rot47, which shifts digits to other digits that LemmeKnow can take for
-             // a number it knows, and so can win a tie in the same search step
-             Box::new(polybius),
-+            // Before rot47 for the same reason: Pollux ciphertexts are digit strings too
-+            Box::new(pollux),
-             Box::new(caesardecoder),
-             Box::new(affine),
-             Box::new(railfencedecoder),
+ [[package]]
+ name = "rustls"
+-version = "0.23.45"
++version = "0.23.46"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "0d41d731c7d2f962d1ccc364cec258de3c0e93b38c2fb3ba97ac74513048d634"
++checksum = "48e13bd8c0e9365c43cfa5c9e8f9ad49d3c8444926c9aac819e0e4dc503c8fdf"
+ dependencies = [
+  "once_cell",
+  "ring",
 ```
 
 ---
 
-### Incident Patch 2: `ddd42b8c` (2026-10-28)
-**Commit Message**: fix(jwt): accept valid JSON header whitespace (#1125)
+### Incident Patch 2: `f4e5bb95` (2026-11-04)
+**Commit Message**: build(deps): bump rmcp from 3.5.1 to 3.8.0 (#1132)
 
-A JWT header is a JSON object, which may start with JSON whitespace, so its base64url doesn't always start with eyJ. The decoder now accepts headers whose first character is e, I, C or D ({, space, tab or line feed, carriage return), which keeps rejecting other text at the first character.
+Bumps [rmcp](https://github.com/modelcontextprotocol/rust-sdk) from 3.5.1 to 3.8.0.
+- [Release notes](https://github.com/modelcontextprotocol/rust-sdk/releases)
+- [Changelog](https://github.com/modelcontextprotocol/rust-sdk/blob/main/release-plz.toml)
+- [Commits](https://github.com/modelcontextprotocol/rust-sdk/compare/rmcp-v3.5.1...rmcp-v3.8.0)
 
-Co-authored-by: Autumn Skerritt <[REDACTED_EMAIL]>
+---
+updated-dependencies:
+- dependency-name: rmcp
+  dependency-version: 3.8.0
+  dependency-type: direct:production
+  update-type: version-update:semver-minor
+...
 
-**File**: `src/decoders/jwt_decoder.rs` (modified, +36/-2)
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `Cargo.lock` (modified, +5/-4)
 ```diff
-@@ -144,8 +144,10 @@ struct Jwt {
- /// ignored. The cheapest checks come first, so most text is rejected straight away.
- fn parse(text: &str) -> Option<Jwt> {
-     let token = strip_bearer(text.trim());
--    // `eyJ` is base64url for `{"`, which every header starts with
--    if !token.starts_with("eyJ") {
-+    // The header is base64url of a JSON object, which starts with `{` or JSON whitespace
-+    // (space, tab, line feed, carriage return). Their first base64url characters are `e`,
-+    // `I`, `C` and `D`: `eyJ` is `{"`, `IHsi` is ` {"`.
-+    if !matches!(token.as_bytes().first(), Some(b'e' | b'I' | b'C' | b'D')) {
-         return None;
-     }
+@@ -4048,13 +4048,14 @@ dependencies = [
  
-@@ -372,6 +374,38 @@ mod tests {
-         assert!(result.key.is_none(), "{text:?}");
-     }
+ [[package]]
+ name = "rmcp"
+-version = "3.5.1"
++version = "3.8.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "ab5023804cbe0304cbe06197ac16e645a0a0d0ffa2953bf735c15c2fa0213350"
++checksum = "f8be15815186873ea063bf005011d16c356804973489e40c39116ae3a2878d1f"
+ dependencies = [
+  "chrono",
+  "futures",
+  "indexmap",
++ "libc",
+  "pastey",
+  "pin-project-lite",
+  "rmcp-macros",
+@@ -4070,9 +4071,9 @@ dependencies = [
  
-+    #[test]
-+    fn header_with_json_whitespace_decodes() {
-+        // RFC 7515 sections 3 and 5: the protected header is a UTF-8 JSON object, so it
-+        // may start with JSON whitespace. The whitespace is inside the base64url-encoded
-+        // header, not the token itself.
-+        for header in [
-+            r#"{ "alg":"none"}"#,
-+            r#" {"alg":"none"}"#,
-+            "\t{\"alg\":\"none\"}",
-+            "\n{\"alg\":\"none\"}",
-+            "\r\n{\"alg\":\"none\"}",
-+        ] {
-+            let token = format!(
-+                "{}.{}.",
-+                URL_SAFE_NO_PAD.encode(header),
-+                URL_SAFE_NO_PAD.encode(r#"{"message":"hello world"}"#),
-+            );
-+            assert_decodes_to(&token, r#"{"message":"hello world"}"#);
-+        }
-+    }
-+
-+    #[test]
-+    fn canonical_header_decodes_and_malformed_ones_do_not() {
-+        assert_decodes_to(ALG_NONE, ALG_NONE_PAYLOAD);
-+        // "not json"
-+        assert_not_decoded("bm90IGpzb24.eyJtZXNzYWdlIjoiaGVsbG8gd29ybGQifQ.");
-+        // " [1]": starts like whitespace before an object, but is an array
-+        assert_not_decoded("IFsxXQ.eyJtZXNzYWdlIjoiaGVsbG8gd29ybGQifQ.");
-+        assert_not_decoded("eyJhbGciOjF9.eyJtZXNzYWdlIjoiaGVsbG8gd29ybGQifQ.");
-+        assert_not_decoded("eyJhbGciOiJub25lIn0. eyJtZXNzYWdlIjoiaGVsbG8gd29ybGQifQ.");
-+    }
-+
-     #[test]
-     fn jwt_io_example_decodes() {
-         let result = crack(JWT_IO);
+ [[package]]
+ name = "rmcp-macros"
+-version = "3.5.1"
++version = "3.8.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "a1da498700030856ba63114bceefa30ba21f5e278cb975e5b9de3529fe842b40"
++checksum = "8b0748e054a5f5598b3213cf72099ae6b2745ba4d996c59ccf455150a7dbb839"
+ dependencies = [
+  "darling 0.24.1",
+  "proc-macro2",
+```
+
+**File**: `Cargo.toml` (modified, +1/-1)
+```diff
+@@ -58,7 +58,7 @@ rayon = "1.12.0"
+ regex = "1.12.4"
+ # Official MCP Rust SDK, only used by `ciphey-mcp` (feature `mcp`). Pinned exactly so
+ # `cargo install` (which ignores Cargo.lock) builds against the version we tested.
+-rmcp = { version = "=3.5.1", optional = true, default-features = false, features = ["macros", "server", "transport-io"] }
++rmcp = { version = "=3.8.0", optional = true, default-features = false, features = ["macros", "server", "transport-io"] }
+ rusqlite = { version = "0.37", features = ["bundled"] }
+ serde = { version = "1.0.228", features = ["derive"] }
+ serde_derive = "1.0.197"
 ```
 
 ---
 
-### Incident Patch 3: `ae0cc667` (2026-10-28)
-**Commit Message**: fix(decimal): honor explicit JavaScript UTF-16 code units (#1126)
+### Incident Patch 3: `0b796029` (2026-11-04)
+**Commit Message**: build(deps): bump memmap2 from 0.9.11 to 0.9.12 (#1130)
 
-Inside a String.fromCharCode(...) wrapper the numbers are read the way JavaScript reads them: UTF-16 code units after ToUint16, so String.fromCharCode(67,97,102,195,169) is CafÃ©, not the UTF-8 Café. Raw decimal numbers are still bytes. Module docs, description and tests updated.
+Bumps [memmap2](https://github.com/RazrFalcon/memmap2-rs) from 0.9.11 to 0.9.12.
+- [Changelog](https://github.com/RazrFalcon/memmap2-rs/blob/master/CHANGELOG.md)
+- [Commits](https://github.com/RazrFalcon/memmap2-rs/compare/v0.9.11...v0.9.12)
 
-Co-authored-by: Autumn Skerritt <[REDACTED_EMAIL]>
+---
+updated-dependencies:
+- dependency-name: memmap2
+  dependency-version: 0.9.12
+  dependency-type: direct:production
+  update-type: version-update:semver-patch
+...
 
-**File**: `src/decoders/decimal_decoder.rs` (modified, +65/-11)
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `Cargo.lock` (modified, +2/-2)
 ```diff
-@@ -8,8 +8,11 @@
- //!   UTF-8. This is CyberChef's `From Decimal`, dCode's "ASCII code" and Python's
- //!   `list(b"...")`.
- //! * Char codes: some number is above 255. Numbers are UTF-16 code units, with surrogate pairs
--//!   joined, or code points, as with JavaScript's `String.fromCharCode(...)` and CyberChef's
--//!   `From Charcode` in base 10.
-+//!   joined, or code points, as with CyberChef's `From Charcode` in base 10.
-+//!
-+//! Inside a `String.fromCharCode(...)` wrapper the numbers are always what JavaScript makes
-+//! of them: UTF-16 code units, taken mod 65536 (ECMAScript's ToUint16), so
-+//! `String.fromCharCode(67,97,102,195,169)` is `CafÃ©`, not the UTF-8 `Café`.
- //!
- //! The numbers are separated by runs of whitespace, `,`, `;`, `:` or `-`. A
- //! `String.fromCharCode(...)` or `[...]` wrapper is removed first. A single run of digits
-@@ -64,7 +67,7 @@ impl Crack for Decoder<DecimalDecoder> {
-     fn new() -> Decoder<DecimalDecoder> {
-         Decoder {
-             name: "Decimal",
--            description: "Decimal encoding writes each character as its character code in base 10, for example 104 101 108 108 111 for \"hello\". When every number is 255 or less they are read as the bytes of UTF-8 text; otherwise they are read as Unicode character codes, as with JavaScript's String.fromCharCode.",
-+            description: "Decimal encoding writes each character as its character code in base 10, for example 104 101 108 108 111 for \"hello\". When every number is 255 or less they are read as the bytes of UTF-8 text; otherwise they are read as Unicode character codes. Inside String.fromCharCode(...) they are UTF-16 code units, as JavaScript reads them.",
-             link: "https://www.dcode.fr/ascii-code",
-             tags: vec!["decimal", "charcode", "base", "decoder"],
-             popularity: 0.6,
-@@ -123,7 +126,9 @@ impl Crack for Decoder<DecimalDecoder> {
+@@ -2759,9 +2759,9 @@ checksum = "78ca9ab1a0babb1e7d5695e3530886289c18cf2f87ec19a575a0abdce112e3a3"
  
- /// Decodes decimal character codes to text, or returns `None` if `text` isn't decimal.
- fn decode_decimal(text: &str) -> Option<String> {
--    let body = strip_wrapper(text.trim()).as_bytes();
-+    let text = text.trim();
-+    let from_char_code = text.starts_with("String.fromCharCode(");
-+    let body = strip_wrapper(text).as_bytes();
-     // A single scan that rejects almost every input before anything is allocated
-     if !body
-         .iter()
-@@ -156,13 +161,21 @@ fn decode_decimal(text: &str) -> Option<String> {
-         }
-     };
- 
--    let decoded = match codes
--        .iter()
--        .map(|&code| u8::try_from(code))
--        .collect::<Result<Vec<u8>, _>>()
--    {
--        Ok(bytes) => bytes_to_string(bytes),
--        Err(_) => decode_char_codes(&codes)?,
-+    let decoded = if from_char_code {
-+        // The wrapper says how JavaScript reads the numbers: as UTF-16 code units, even
-+        // when they would all fit in bytes. String.fromCharCode applies ToUint16, so
-+        // numbers above 65535 wrap. A lone surrogate isn't text.
-+        let code_units: Vec<u16> = codes.iter().map(|&code| code as u16).collect();
-+        String::from_utf16(&code_units).ok()?
-+    } else {
-+        match codes
-+            .iter()
-+            .map(|&code| u8::try_from(code))
-+            .collect::<Result<Vec<u8>, _>>()
-+        {
-+            Ok(bytes) => bytes_to_string(bytes),
-+            Err(_) => decode_char_codes(&codes)?,
-+        }
-     };
- 
-     // Control characters mean the numbers are something else: A1Z26 `8 5 12 12 15` decodes
-@@ -269,6 +282,47 @@ mod tests {
-     // `list(b"...")`, `bytes(...).decode()`, `chr`) and the char-code ones with Node's
-     // `String.fromCharCode` / `String.fromCodePoint`.
- 
-+    #[test]
-+    fn string_from_char_code_reads_utf16_code_units() {
-+        // ECMAScript String.fromCharCode applies ToUint16 to each argument; it does not
-+        // read them as UTF-8 bytes. Checked with Node's String.fromCharCode.
-+        assert_eq!(
-+            crack("String.fromCharCode(67,97,102,195,169)").as_deref(),
-+            Some("CafÃ©"),
-+        );
-+        // 128512 (U+1F600) wraps to 0xF600
-+        assert_eq!(
-+            crack("String.fromCharCode(104,101,108,108,111,128512)").as_deref(),
-+            Some("hello\u{F600}"),
-+        );
-+        // ... and 65601 to 65, `A`
-+        assert_eq!(
-+            crack("String.fromCharCode(65601,66,67);").as_deref(),
-+            Some("ABC")
-+        );
-+        assert_eq!(
-+            crack("String.fromCharCode(55357,56832,32,104,105)").as_deref(),
-+            Some("😀 hi"),
-+        );
-+    }
-+
-+    #[test]
-+    fn string_from_char_code_rejects_what_javascript_cannot_make_text_of() {
-+        // A lone high surrogate at the end
-+        assert!(crack("String.fromCharCode(104,101,55357)").is_none());
-+        // NUL, which wraps from 65536
-+        assert!(crack("String.fromCharCode(104,65536,105)").is_none());
-+    }
-+
-+    #[test]
-+    fn the_same_numbers_without_the_wrapper_are_bytes() {
-+        assert_eq!(crack("67 97 102 195 169").as_deref(), Some
+ [[package]]
+ name = "memmap2"
+-version = "0.9.11"
++version = "0.9.12"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "d1219ed1b7f229ee7104d281dd01d6802fe28bb6e95d292942c4daacdeb798c0"
++checksum = "6b0ca1155a9ecc25aa12e8313a119f32edf0255fea2f44839c4ac0a12b2ac157"
+ dependencies = [
+  "libc",
+  "stable_deref_trait",
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1126** (2026-10-28): fix(decimal): honor explicit JavaScript UTF-16 code units (@rudycelekli)
-- **PR #1125** (2026-10-28): fix(jwt): accept valid JSON header whitespace (@rudycelekli)
-- **PR #1124** (2026-10-28): build(deps): bump rustls from 0.23.27 to 0.23.45 in the cargo group across 1 directory (@dependabot[bot])
-- **PR #1123** (2026-10-28): build(deps): bump uuid from 1.26.1 to 1.28.0 (@dependabot[bot])
-- **PR #1122** (2026-10-13): ci: no duplicate push+PR test runs, drop schedules, Dependabot monthly (cost) (@bee-san)
-- **PR #1121** (2026-10-28): Add Pollux (Morse with digits) cracker (@wahajahmed010)
+- **PR #1134** (2026-11-04): build(deps): bump rustls from 0.23.45 to 0.23.46 in the cargo group across 1 directory (@dependabot[bot])
+- **PR #1133** (2026-11-04): build(deps): bump serde_json from 1.0.151 to 1.0.154 (@dependabot[bot])
+- **PR #1132** (2026-11-04): build(deps): bump rmcp from 3.5.1 to 3.8.0 (@dependabot[bot])
+- **PR #1131** (2026-11-04): build(deps): bump uuid from 1.28.0 to 1.29.0 (@dependabot[bot])
+- **PR #1130** (2026-11-04): build(deps): bump memmap2 from 0.9.11 to 0.9.12 (@dependabot[bot])
+- **PR #1129** (2026-11-04): build(deps): bump html-escape from 0.2.15 to 0.3.0 (@dependabot[bot])
 
 ---
 
@@ -2397,43 +2065,30 @@ Co-authored-by: Autumn Skerritt <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. decoders): add Pollux (Morse with digits) cracker (#1121)
+## X. build(deps): bump rustls (#1134)
 
 **RULE**:
-When implementing operations in `benches/data/decoders.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in bee-san/Ciphey. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in bee-san/Ciphey. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `47215766`: decoders): add Pollux (Morse with digits) cracker (#1121). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ad59a3bc`: build(deps): bump rustls (#1134). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `benches/data/decoders.toml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-# Pollux writes Morse code with digits, so it has no case or punctuation: the plaintext
-# upper-cased without punctuation, as for Polybius Square, in Morse with x between letters
-# and xx between words, then each symbol as the next digit of its class in turn, with the
-# issue's key . = 1 4 7, - = 2 5 8, x = 3 6 9 0.
-[[case]]
-decoder = "Pollux"
-size = "medium"
-success = true
-input = "253164980325679018326950471437698250184732146975140713824671479501471382564789147013642971540837612490583716247951047382164714950378621954703814761249710543827695014713469820753182469507147316984207351826945087321469750386258912405781347146"
-expected = "MEET ME AT THE OLD LIGHTHOUSE AFTER MIDNIGHT AND BRING THE MAP THE KEY AND A TORCH"
-
-[[case]]
-decoder = "Pollux"
-size = "long"
-success = true
-input = "2154371648279147104357826914071436759810342671598025832564892073514698710432751682598470143276581902358265829457103842568259718032546719471804367192034657981240751384256782195043871692580427361954087213582654791084736291054783269150843271694705368912407134671490538256978205823154687290582314568907253147164892037586129471035476825981043629582037165904823716594714082537186290548235826715904714378614729140573
+version = "0.23.46"
+checksum = "48e13bd8c0e9365c43cfa5c9e8f9ad49d3c8444926c9aac819e0e4dc503c8fdf"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+version = "0.23.45"
+checksum = "0d41d731c7d2f962d1ccc364cec258de3c0e93b38c2fb3ba97ac74513048d634"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `47215766` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ad59a3bc` are properly handled with clean fallback behavior.

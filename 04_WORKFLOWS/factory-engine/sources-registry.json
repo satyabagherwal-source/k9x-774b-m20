@@ -40,8 +40,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-04T10:05:44.762Z",
-    "lastVerified": "2026-11-04T10:05:44.762Z",
+    "lastChecked": "2026-11-04T10:12:41.605Z",
+    "lastVerified": "2026-11-04T10:12:41.605Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -356,9 +356,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-04T09:33:05.388Z",
+    "lastChecked": "2026-11-04T10:12:33.664Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-04T09:33:05.388Z"
+    "lastVerified": "2026-11-04T10:12:33.664Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -879,14 +879,14 @@
     "officialUrl": "https://github.com/gardener/gardener",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-03T16:09:16.193Z",
-    "lastVerified": "2026-11-03T16:09:16.193Z",
+    "lastChecked": "2026-11-04T10:12:32.207Z",
+    "lastVerified": "2026-11-04T10:12:32.207Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-gardener-gardener",
-    "contentHash": "e171d3f5bbee3fd0b8eb0f4a6648e3a47d31809ad2c59ca21f0245b3a1c68c91",
+    "contentHash": "e16ed959b909239f5124f3cc5eec10d749ed7fe519dcb84f2b49223a29f9fe61",
     "promotedRulesCount": 1,
-    "recentFixesCount": 3,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -964,22 +964,21 @@
     "lastVerified": "2026-11-03T16:16:05.020Z"
   },
   "bee-san-ciphey": {
-    "name": "Ciphey",
+    "name": "bee-san/Ciphey",
     "officialUrl": "https://github.com/bee-san/Ciphey",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-04T03:23:36.484Z",
-    "lastVerified": "2026-11-04T03:23:36.484Z",
+    "lastChecked": "2026-11-04T10:12:35.222Z",
+    "lastVerified": "2026-11-04T10:12:35.222Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bee-san-ciphey",
-    "contentHash": "05a2800a251e980936b6fac6c1aa4c7e67e4737e87b334fd26d8e32286e5ebe4",
+    "contentHash": "3605c59669503808ff14909f593cd796381d82c8d265c53121699906d38c71fd",
     "promotedRulesCount": 1,
-    "recentFixesCount": 4,
+    "recentFixesCount": 8,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "867d27e8"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "weaviate-weaviate": {
     "name": "weaviate/weaviate",
@@ -4404,9 +4403,9 @@
   "akveo-kittentricks": {
     "name": "kittenTricks",
     "officialUrl": "https://github.com/akveo/kittenTricks",
-    "lastChecked": "2026-10-31T07:27:52.549Z",
+    "lastChecked": "2026-11-04T10:12:23.673Z",
     "revisionIdentifier": "e9d81da3",
-    "lastVerified": "2026-10-31T07:27:52.549Z"
+    "lastVerified": "2026-11-04T10:12:23.673Z"
   },
   "kubeshop-botkube": {
     "name": "botkube",
@@ -5692,14 +5691,14 @@
     "officialUrl": "https://github.com/ntex-rs/ntex",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-02T16:18:39.682Z",
-    "lastVerified": "2026-11-02T16:18:39.682Z",
+    "lastChecked": "2026-11-04T10:12:23.478Z",
+    "lastVerified": "2026-11-04T10:12:23.478Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-ntex-rs-ntex",
-    "contentHash": "d0dad18a545da7143f48a0ba451ed813093909e8b2de130df766b1548aea7686",
-    "promotedRulesCount": 0,
-    "recentFixesCount": 0,
+    "contentHash": "22f0dc33312c41a8cef607749eadd7b641631fed95af2cab0f9d9e6c338ca0cb",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 1,
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -5939,12 +5938,12 @@
     "officialUrl": "https://github.com/trinodb/trino",
     "sourceType": "github",
     "technology": "Java",
-    "lastChecked": "2026-11-03T12:51:51.590Z",
-    "lastVerified": "2026-11-03T12:51:51.590Z",
+    "lastChecked": "2026-11-04T10:12:37.900Z",
+    "lastVerified": "2026-11-04T10:12:37.900Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-trinodb-trino",
-    "contentHash": "a6f86025631bd0965fb5c7a3516acbca345df0134fad554daa424fa1e3eab685",
+    "contentHash": "3c130a3170e5873012aa3ba8965d447c226a525352411cee578138bbf8f2e06d",
     "promotedRulesCount": 1,
     "recentFixesCount": 4,
     "closedIssuesCount": 2,
@@ -12307,9 +12306,9 @@
   "unjs-ufo": {
     "name": "ufo",
     "officialUrl": "https://github.com/unjs/ufo",
-    "lastChecked": "2026-10-30T23:44:40.640Z",
+    "lastChecked": "2026-11-04T10:12:21.176Z",
     "revisionIdentifier": "f06c800d",
-    "lastVerified": "2026-10-30T23:44:40.640Z"
+    "lastVerified": "2026-11-04T10:12:21.176Z"
   },
   "facebook-docusaurus": {
     "name": "meta/docusaurus",
