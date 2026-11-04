@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/rtk-ai-rtk-learnings.md`  
 > **Source**: github ([https://github.com/rtk-ai/rtk](https://github.com/rtk-ai/rtk))  
-> **Source Version**: `41e69122`  
+> **Source Version**: `63b8c3e2`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T17:50:10.378Z  
+> **Timestamp**: 2026-11-03T19:52:16.699Z  
 > **Learning ID**: `learn-github-rtk-ai-rtk`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/rtk-ai-rtk-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/rtk-ai/rtk](https://github.com/rtk-ai/rtk))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T17:50:10.371Z  
+> **Harvest Timestamp**: 2026-11-03T19:52:15.747Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: CLI proxy that reduces LLM token consumption by 60-90% on common dev commands. Single Rust binary, zero dependencies
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 85134 stars
+- **Stars / Engagement**: 85450 stars
 
 ---
 
@@ -1722,14 +1722,17 @@ mod tests {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #4833** (2026-10-30): **fix(ls): hold a bare listing to what ls prints, not to the long listing rtk asks for**
-  *Symptoms*: ## Summary  - `rtk ls` without `-l` printed a size after every file (`kubectl  57.9M`), which plain `ls` never prints: bare `rtk ls` cost more than `ls` itself (341 → 531 bytes in this repo's root). - The never-worse guard could not catch it: the runner compares against the child's stdout, and the child is the `ls -l` rtk injects (2067 bytes), not the `ls` the user typed (341 bytes). - Every listing, with or without `-l`, is now held through the shared `never_worse` to the output of `ls` run with the user's own arguments. A listing without `-l` prints names only. The same baseline replaces the two places the filter printed the long listing verbatim: an unparsable listing (`-T`/`-D` dates, `-@`/`-e` attribute lines) and a failed run (`ls src missing` printed 742 bytes of long listing for the 108 bytes `ls` printed). - When `ls` rejects the command line outright (non-zero exit, nothing on stdout, e.g. GNU `--all` on macOS) while rtk's own listing succeeds, there is no listing to hold to: rtk lists as master does, instead of printing nothing with exit 0.  Cost: one extra `ls` process per call. `rtk ls -la` 8.9 → 12.3 ms mean (+2.4 ms CPU) on macOS with hyperfine; bare `rtk ls` +≈2.6 ms CPU.  ### Before / after (bytes, rtk repo root, macOS)  | command | `ls` | master | this PR | |---|---|---|---| | `ls` | 341 | 531 | 341 | | `ls -a` | 466 | 634 | 466 | | `ls src` | 103 | 137 | 103 | | `ls -t` | 341 | 531 | 341 | | `ls -F` | 354 | 494 | 354 | | `ls src missing` (exit 1) | 108 | 74
-
-- **Issue #4782** (2026-10-25): **rtk hook rewrites rg/grep output and silently changes identifiers**
-  *Symptoms*: When the Claude Code hook rewrites `rg`/`grep`/`git grep` (and `sed -n` reads) through rtk, the digest edits the content of matched source lines, not just their volume. Seen in practice: `revision` came back as `ren`, `description` as `n`. Nothing in the output marks the change, so an agent reading the digest draws wrong conclusions about the code; the only workaround is `rtk proxy <cmd>`.  **Expected:** search output is either passed through or only collapsed (lines dropped/counted), never rewritten inside a line. Suggest search commands (rg, grep, git grep, ag) be exempt from the hook rewrite by default, or that any in-line abbreviation be opt-in and visibly marked.  **Local workaround in use:** a wrapper around `rtk hook claude` that passes rg/grep/git grep through untouched; git and other commands still rewrite.  Environment: rtk 1.0.1, macOS (Darwin 25.6), Claude Code PreToolUse hook.  Possibly related: #4207, #1436, #4618. 
+- **Issue #4870** (2026-10-31): **fix(git): point the show truncation hint at the unfiltered commit**
+  *Symptoms*: Fixes #4817.  The compacted `git show` output now replaces the generic `[full diff: rtk git diff --no-compact]` hint with `[full commit: rtk proxy git show ...]`, carrying the command's global args and dropping RTK's own `--no-compact`. Following the hint now prints the full commit.  Tests: `cargo test --lib show_recovery_hint`.
   **Post-Mortem & Fix Analysis**:
-  > > <img src="https://raw.githubusercontent.com/wshm-dev/wshm/main/assets/wizard-icon.png" width="48" height="48"> **wshm** · Automated triage by AI  ## 🔍 Automated Triage  | | | |---|---| | 🐛 **Category** | `bug` | | 🟠 **Priority** | `high` | | 🎯 **Confidence** | 88% |  ### Summary  rtk's search-command rewrite (rg/grep/git grep/sed -n) corrupts matched content, silently altering identifiers mid-line rather than just collapsing volume  <details> <summary>📁 Relevant files</summary>  - `src/hook/claude.rs` - `src/rewrite/grep.rs` - `src/filter/grep.rs`  </details>  ### Suggested Actions  1. Reproduce with the exact `rg`/`grep` pattern that turned 'revision' into 'ren' and isolate the abbreviation logic 1. Check #4695 — the hook-coverage doc mismatch may explain why this rewrite path isn't flagged as risky 1. Evaluate exempting rg/grep/git grep/ag from in-line rewriting by default per the issue's suggestion 1. Cross-check #4207, #1436, #4618 for shared root cause in the digest/abbrevi
-  > Closing — this was our error, not rtk. The commands were `rg -rn …`; in ripgrep `-r` is `--replace <text>`, so `-rn` rewrites every match to `n` (and `-rln` to `ln`). Reproduced with rtk bypassed (`rtk proxy rg -rn description f.txt` → `n here`). Sorry for the noise.
+  > [![CLA assistant check](https://cla-assistant.io/pull/badge/signed)](https://cla-assistant.io/rtk-ai/rtk?pullRequest=4870) <br/>All committers have signed the CLA.
+  > > <img src="https://raw.githubusercontent.com/wshm-dev/wshm/main/assets/wizard-icon.png" width="48" height="48"> **wshm** · Automated triage by AI  ## 📊 Automated PR Analysis  | | | |---|---| | 🐛 **Type** | `bug-fix` | | 🟢 **Risk** | `low` |  ### Summary  Fixes the recovery hint shown in compacted `git show` output so it points to `rtk proxy git show ...` with the original global args and object, rather than the generic `rtk git diff --no-compact` hint. This ensures following the hint actually prints the full commit instead of an unrelated diff command.  ### Review Checklist - [x] Tests present - [ ] Breaking change - [ ] Docs updated  **Linked issues:** #4817  --- *Analyzed automatically by [wshm](https://github.com/wshm-dev/wshm)* · This is an automated analysis, not a human review. <!-- wshm -->
+
+- **Issue #4868** (2026-10-31): **fix(pnpm): keep the child's stdout when install fails**
+  *Symptoms*: Fixes #4858.  On a non-zero `pnpm install` exit, print the child's stdout before stderr so policy gates and wrappers that explain the refusal on stdout are visible to the caller. The exit code is unchanged.  Tests: existing pnpm channel tests; failure path is a two-line output change.
+  **Post-Mortem & Fix Analysis**:
+  > [![CLA assistant check](https://cla-assistant.io/pull/badge/signed)](https://cla-assistant.io/rtk-ai/rtk?pullRequest=4868) <br/>All committers have signed the CLA.
+  > > <img src="https://raw.githubusercontent.com/wshm-dev/wshm/main/assets/wizard-icon.png" width="48" height="48"> **wshm** · Automated triage by AI  ## 📊 Automated PR Analysis  | | | |---|---| | 🐛 **Type** | `bug-fix` | | 🟢 **Risk** | `low` |  ### Summary  Fixes pnpm install failure handling so the child process's stdout is printed before stderr when the install exits non-zero, ensuring output from policy gates or wrappers that write refusal explanations to stdout is visible. Exit code behavior is unchanged.  ### Review Checklist - [ ] Tests present - [ ] Breaking change - [ ] Docs updated  **Linked issues:** #4858  --- *Analyzed automatically by [wshm](https://github.com/wshm-dev/wshm)* · This is an automated analysis, not a human review. <!-- wshm -->
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1746,652 +1749,528 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ffd9cbe8` (2026-10-31)
-**Commit Message**: fix(ruff): keep a leading `--` verbatim and read help/version first
+### Incident Patch 1: `380d2130` (2026-11-02)
+**Commit Message**: test(init): pin the builtin list and the dropped safety promise
 
-A `--` that no subcommand precedes is ruff's usage error (`ruff -- check`),
-so the router forwards it unchanged, as develop's ruff_double_dash_test
-expects. A help or version flag before any subcommand or check option is
-answered by ruff itself (`ruff -qh check`, `ruff --version --no-cache`), so
-the scan returns the top-level route there instead of after the loop.
+The prefix-rule test checked that each payload scopes the rule and has an
+exclusion paragraph, but a payload could drop `cd` from its list, or put
+"the prefix is always safe" back, and every test still passed. One shared
+assertion now covers the full awareness file, the legacy --claude-md block
+and the Copilot instructions: the nine builtins in the exclusion list,
+`env` in the same paragraph, and none of the three old promises in any
+case or line wrapping.
+
+The Cline, Windsurf and Kilo Code READMEs described the payload as the
+instruction to prefix every shell command; they now describe the scoped
+rule.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `src/cmds/python/ruff_cmd.rs` (modified, +86/-34)
+**File**: `hooks/cline/README.md` (modified, +1/-1)
 ```diff
-@@ -1,7 +1,7 @@
- //! Filters Ruff linter and formatter output.
+@@ -5,5 +5,5 @@
+ ## Specifics
  
- use crate::core::arg_tokenizer::{
--    Dialect, Token, TokenKind, ValueSpec, before_dashdash, tokenize_grammar,
-+    Dialect, Token, TokenKind, ValueSpec, before_dashdash, dashdash_index, tokenize_grammar,
- };
- use crate::core::args_utils;
- use crate::core::config;
-@@ -159,15 +159,26 @@ fn route_ruff_args(args: &[String]) -> RuffRoute {
-             }
-             return RuffRoute::Check { explicit_at: None };
-         }
-+        // ruff answers a help or version flag as soon as it reads one, before
-+        // a subcommand or a check option (`ruff -qh check`, `ruff -Vn`).
-+        if requests_top_level(*token) {
-+            return RuffRoute::TopLevel;
+ - Prompt-level guidance only (no programmatic hook) -- relies on Cline reading custom instructions
+-- Installs `../rtk-awareness-full.md` (shared, agent-neutral): the instruction to prefix every shell command with `rtk`, plus meta commands. No hook, so the `full` level is always used regardless of `awareness.level`
++- Installs `../rtk-awareness-full.md` (shared, agent-neutral): the instruction to prefix external programs with `rtk`, leaving shell builtins, keywords and the RTK-shadowed `env` unprefixed, plus meta commands. No hook, so the `full` level is always used regardless of `awareness.level`
+ - Installed to `.clinerules` (project-local) by `rtk init`
+```
+
+**File**: `hooks/kilocode/README.md` (modified, +1/-1)
+```diff
+@@ -5,5 +5,5 @@
+ ## Specifics
+ 
+ - Prompt-level guidance only (no programmatic hook) -- relies on Kilo Code reading custom instructions
+-- Installs `../rtk-awareness-full.md` (shared, agent-neutral): the instruction to prefix every shell command with `rtk`, plus meta commands. No hook, so the `full` level is always used regardless of `awareness.level`
++- Installs `../rtk-awareness-full.md` (shared, agent-neutral): the instruction to prefix external programs with `rtk`, leaving shell builtins, keywords and the RTK-shadowed `env` unprefixed, plus meta commands. No hook, so the `full` level is always used regardless of `awareness.level`
+ - Installed to `.kilocode/rules/rtk-rules.md` (project-local) by `rtk init --agent kilocode`
+```
+
+**File**: `hooks/windsurf/README.md` (modified, +1/-1)
+```diff
+@@ -5,5 +5,5 @@
+ ## Specifics
+ 
+ - Prompt-level guidance only (no programmatic hook) -- relies on Windsurf Cascade reading rules files
+-- Installs `../rtk-awareness-full.md` (shared, agent-neutral): the instruction to prefix every shell command with `rtk`, plus meta commands. No hook, so the `full` level is always used regardless of `awareness.level`
++- Installs `../rtk-awareness-full.md` (shared, agent-neutral): the instruction to prefix external programs with `rtk`, leaving shell builtins, keywords and the RTK-shadowed `env` unprefixed, plus meta commands. No hook, so the `full` level is always used regardless of `awareness.level`
+ - Installed to `.windsurfrules` (project-local, workspace-scoped) by `rtk init`
+```
+
+**File**: `src/hooks/init/copilot.rs` (modified, +4/-3)
+```diff
+@@ -331,9 +331,10 @@ mod tests {
+ 
+     #[test]
+     fn test_copilot_instructions_exclude_shell_builtins_from_prefix_rule() {
+-        assert!(COPILOT_INSTRUCTIONS.contains("Prefix external programs with `rtk`"));
+-        assert!(COPILOT_INSTRUCTIONS.contains("Do not prefix shell builtins or keywords"));
+-        assert!(!COPILOT_INSTRUCTIONS.contains("Always prefix shell commands with `rtk`"));
++        crate::hooks::init::tests::assert_prefix_rule_spares_builtins(
++            "copilot",
++            COPILOT_INSTRUCTIONS,
++        );
+     }
+ 
+     #[test]
+```
+
+**File**: `src/hooks/init/mod.rs` (modified, +46/-14)
+```diff
+@@ -2486,28 +2486,60 @@ level = "high"
+         assert!(RTK_AWARENESS_FULL.contains(ACTIVATION));
+     }
+ 
+-    #[test]
+-    fn test_agent_guidance_excludes_shell_builtins_from_prefix_rule() {
+-        for (name, content) in [
+-            ("awareness-full", RTK_AWARENESS_FULL),
+-            ("legacy", RTK_INSTRUCTIONS),
++    /// The prefix rule every payload that teaches it must carry: scoped to external programs,
++    /// naming the same builtins and RTK-shadowed names, and without the old promise that the
++    /// prefix is safe on anything. Shared with the Copilot payload's test so the three stay in
++    /// sync.
++    pub(super) fn assert_prefix_rule_spares_builtins(name: &str, content: &str) {
++        assert!(
++            content.contains("Prefix external programs with `rtk`"),
++            "{name} must scope the prefix rule to external programs"
++        );
++        let start = content
++            .find("Do not prefix shell builtins or keywords")
++            .unwrap_or_else(|| panic!("{name} must exclude shell builtins from the prefix rule"));
++        let paragraph = &content[start..];
++        let paragraph = &paragraph[..paragraph.find("\n\n").unwrap_or_else(|| {
++            panic!("{name}: the exclusion paragraph must end with a blank line")
++        })];
++        // The list itself is the first sentence; `env` is named in it or in the next one.
++        let list = &paragraph[..paragraph.find('.').unwrap_or(paragraph.len())];
++        for builtin in [
++            "test", "[", "read", "cd", "echo", "export", "eval", "source", "printf",
+         ] {
+             assert!(
+-                content.contains("Prefix external programs with `rtk`"),
+-                "{name} must scope the prefix rule to external programs"
+-            );
+-            assert!(
+-                content.contains("Do not prefix shell builtins or keywords"),
+-                "{name} must exclude shell builtins from the prefix rule"
++                list.contains(&format!("`{builtin}`")),
++                "{name} must list `{builtin}` among the commands left unprefixed"
+             );
 +        }
-         // A check-only option's value looks like a free positional to the
-         // tokenizer. Treat the whole invocation as the implicit-check form:
--        // nothing is removed and no later word is the subcommand. The `--`
--        // boundary is not an option: the scan never reads past it.
--        if token.kind != TokenKind::DashDash && !ruff_is_global_token(*token) {
-+        // nothing is removed and no later word is the subcommand.
-+        if !ruff_is_global_token(*token) {
-             return RuffRoute::Check { explicit_at: None };
++        assert!(
++            paragraph.contains("`env`"),
++            "{name} must name `env` in the paragraph that leaves commands unprefixed"
++        );
++        let words = content
++            .split_whitespace()
++            .collect::<Vec<_>>()
++            .join(" ")
++            .to_lowercase();
++        for promise in [
++            "always prefix shell commands with `rtk`",
++            "always prefix commands with `rtk`",
++            "prefix every shell command with `rtk`",
++            "always safe",
++        ] {
+             assert!(
+-                !content.contains("Always prefix shell commands with `rtk`")
+-                    && !content.contains("Prefix every shell command with `rtk`"),
+-                "{name} must not promise that every shell command is safe to prefix"
++                !words.contains(promise),
++                "{name} must not promise that every shell command is safe to prefix: {promise:?}"
+             );
          }
-     }
--    top_level_request(&tokens)
-+    // Only global options come before this `--`. ruff answers `ruff -- check`
-+    // with its usage error, and rtk forwards the call unchanged rather than
-+    // linting a file named `check`.
-+    if dashdash_index(&tokens).is_some() {
-+        return RuffRoute::TopLevel;
-+    }
-+    // Every other flags-only call (for example `--statistics`) is an implicit check.
-+    RuffRoute::Check { explicit_at: None }
- }
- 
- /// Whether `token` is one of ruff's own global options (`ruff --help`, 0.17).
-@@ -186,11 +197,13 @@ fn ruff_is_global_token(token: Token<'_>) -> bool {
- /// (`ruff --help`, 0.17: `--config` and `--color`).
- const RUFF_GLOBAL_VALUE_OPTIONS: &[&str] = &["config", "color"];
- 
--/// Ruff's global flags, as long names without the leading dashes.
--const RUFF_GLOBAL_FLAGS: &[&str] = &["isolated", "verbose", "quiet", "silent", "help", "version"];
-+/// Ruff's global flags, as long names without the leading dashes. Help and
-+/// version are global too, but the scan answers them first
-+/// (`requests_top_level`).
-+const RUFF_GLOBAL_FLAGS: &[&str] = &["isolated", "verbose", "quiet", "silent"];
- 
- /// The one-letter spellings of [`RUFF_GLOBAL_FLAGS`].
--const RUFF_GLOBAL_SHORT_FLAGS: &[&str] = &["v", "q", "s", "h", "V"];
-+const RUFF_GLOBAL_SHORT_FLAGS: &[&str] = &["v", "q", "s"];
- 
- fn ruff_takes_value(kind: TokenKind, name: &str) -> Option<ValueSpec> {
-     (kind == TokenKind::Long && RUFF_GLOBAL_VALUE_OPTIONS.contains(&name)).then(ValueSpec::value)
-@@ -204,25 +217,18 @@ enum RuffRoute {
-     Check { explicit_at: Option<usize> },
-     /// An explicit non-check subcommand at `at`; forwarded verbatim.
-     Subcommand { at: usize },
--    /// No subcommand and no path: a top-level request such as `--version`.
-+    /// Forwarded verbatim with its whole stdout: a help or version flag read
-+    /// before any subcommand, path or check-only option, or a `--` that only
-+    /// global options precede.
-     TopLevel,
- }
- 
--/// Flag-only invocations stay top-level for `--version`/`--help`; every other
--/// flags-only call (for example `--statistics`) is an implicit check. Read the
--/// tokens, not the raw args, so a cluster such as `-qh` is a help request.
--fn top_level_request(tokens: &[Token<'_>]) -> RuffRoute {
--    let requests_top_level = before_dashdash(tokens).iter().any(|token| {
--        matches!(
--            (token.kind, token.text),
--            (TokenKind::Long, "help" | "version") | (TokenKind::Short, "h" | "V")
--        )
--    });
--    if requests_top_level {
--        RuffRoute::TopLevel
--    } else {
--        RuffRoute::Check { explicit_at: None }
--    }
-+/// Whether `token` is ruff's `--help`/`--version`, in a cluster (`-qh`) or not.
-+fn requests_top_level(token: Token<'_>) -> bool {
-+    matches!(
-+        (token.kind, token.text),
-+        (TokenKind::Long, "help" | "version") | (TokenKind::Short, "h" | "V")
-+    )
- }
- 
- /// The complete argument vector rtk passes to ruff.
-@@ -966,10 +972,6 @@ Would reformat: tests/test_utils.py
-                 "clean.py",
-             ],
-         );
--        assert_plan(
--            &["--", "clean.py"],
--            &["check", "--output-format=json", "--", "clean.py"],
--        );
-     }
- 
-     /// A check-only option before the first free positional makes the call
-@@ -1029,23 +1031,73 @@ Would reformat: tests/test_utils.py
-         );
      }
  
 +    #[test]
-+    fn ruff_global_flags_keep_an_explicit_check() {
-+        for flag in [
-+            "--isolated",
-+            "--verbose",
-+            "--quiet",
-+            "--silent",
-+            "-v",
-+            "-q",
-+            "-s",
-+        ] {
-+            assert_plan(
-+                &[fl
++    fn test_agent_guidance_excludes_shell_builtins_from_prefix_rule() {
++        assert_prefix_rule_spares_builtins("awareness-full", RTK_AWARENESS_FULL);
++        assert_prefix_rule_spares_builtins("legacy", RTK_INSTRUCTIONS);
++    }
++
+     #[test]
+     fn test_awareness_meta_commands_present_above_default() {
+         for (name, content) in [
 ```
 
 ---
 
-### Incident Patch 2: `9b60314a` (2026-10-31)
-**Commit Message**: Merge pull request #4680 from Ehsan-hash/fix/settings-read-fail-closed
+### Incident Patch 2: `ccd334d3` (2026-11-01)
+**Commit Message**: Merge pull request #4697 from bercedev/fix/nextest-timeouts-and-retries
 
-fix(hooks): preserve host checks when settings cannot be loaded
+fix(cargo): keep nextest timeouts and retried failures
 
-**File**: `src/hooks/permissions.rs` (modified, +61/-26)
+**File**: `src/cmds/rust/cargo_cmd.rs` (modified, +439/-19)
 ```diff
-@@ -496,16 +496,36 @@ fn get_settings_paths_from(
-     paths
+@@ -630,11 +630,31 @@ fn flush_failure_block(header: &mut String, body: &mut Vec<String>, failures: &m
+     body.clear();
  }
  
--fn read_json(path: &std::path::Path) -> Option<Value> {
--    let content = std::fs::read_to_string(path).ok()?;
-+enum JsonRead {
-+    Missing,
-+    Parsed(Value),
-+    Error,
++/// A nextest status line without the `TRY n ` prefix nextest puts on each attempt of a retried test.
++fn nextest_status(trimmed: &str) -> &str {
++    match trimmed.strip_prefix("TRY ") {
++        Some(rest) => rest
++            .trim_start_matches(|c: char| c.is_ascii_digit())
++            .trim_start(),
++        None => trimmed,
++    }
 +}
 +
-+fn read_json(path: &std::path::Path) -> JsonRead {
-+    let content = match std::fs::read_to_string(path) {
-+        Ok(content) => content,
-+        Err(e) if e.kind() == std::io::ErrorKind::NotFound => return JsonRead::Missing,
-+        Err(e) => {
-+            eprintln!(
-+                "[rtk] warning: failed to read permissions from {}: {}",
-+                path.display(),
-+                e
-+            );
-+            return JsonRead::Error;
-+        }
-+    };
-+    if content.trim().is_empty() {
-+        return JsonRead::Missing;
-+    }
-     match crate::core::utils::from_json_str::<Value>(&content) {
--        Ok(v) => Some(v),
-+        Ok(v) => JsonRead::Parsed(v),
-         Err(_) => {
-             eprintln!(
-                 "[rtk] warning: failed to parse permissions from {}",
-                 path.display()
-             );
--            None
-+            JsonRead::Error
++/// The test a nextest status line or failure block names, e.g. `fx tests::hang` in
++/// `TRY 1 TMT [   2.003s] (───) fx tests::hang`. The `(1/2)` counter changes between attempts.
++fn nextest_test_name(block: &str) -> &str {
++    let line = block.lines().next().unwrap_or_default();
++    let name = line.split_once(']').map_or(line, |(_, rest)| rest).trim();
++    name.strip_prefix('(')
++        .and_then(|rest| rest.split_once(") "))
++        .map_or(name, |(_, name)| name)
++}
++
+ /// Filter cargo nextest output - show failures + compact summary
+ fn filter_cargo_nextest(output: &str) -> String {
+     // nextest annotates `passed` in place, e.g. `2 passed (1 slow), 1 failed`
+     let summary_re = regex::Regex::new(
+-        r"Summary \[\s*([\d.]+)s\]\s+(\d+) tests? run:\s+(\d+) passed(?:\s+\([^)]*\))?(?:,\s+(\d+) failed)?(?:,\s+(\d+) skipped)?"
++        r"Summary \[\s*([\d.]+)s\]\s+(\d+) tests? run:\s+(\d+) passed(?:\s+\([^)]*\))?(?:,\s+(\d+) failed)?(?:,\s+(\d+) exec failed)?(?:,\s+(\d+) timed out)?(?:,\s+(\d+) skipped)?"
+     ).expect("invalid nextest summary regex");
+ 
+     let starting_re = regex::Regex::new(r"Starting \d+ tests? across (\d+) binar(?:y|ies)")
+@@ -683,31 +703,31 @@ fn filter_cargo_nextest(output: &str) -> String {
+             continue;
          }
-     }
- }
-@@ -532,19 +552,25 @@ fn append_wrapped_rules(rules_value: Option<&Value>, prefixes: &[&str], target:
- // Global config only. RTK auto-allows only the globally-trusted subset; anything
- // else defers to the host, which applies its own project config and folder-trust.
- // This keeps RTK's allow set a subset of the host's — never more permissive.
--fn global_config(dir: &str, file: &str) -> Option<Value> {
--    read_json(&user_dirs::home()?.join(dir).join(file))
-+fn global_config(dir: &str, file: &str) -> JsonRead {
-+    let Some(home) = user_dirs::home() else {
-+        return JsonRead::Missing;
-+    };
-+    read_json(&home.join(dir).join(file))
- }
  
- fn load_cursor_rules() -> (Vec<String>, Vec<String>, Vec<String>) {
-     let mut deny = Vec::new();
-     let mut allow = Vec::new();
--    if let Some(perms) = global_config(CURSOR_DIR, "cli-config.json")
--        .as_ref()
--        .and_then(|j| j.get("permissions"))
--    {
--        append_wrapped_rules(perms.get("deny"), &["Shell("], &mut deny);
--        append_wrapped_rules(perms.get("allow"), &["Shell("], &mut allow);
-+    match global_config(CURSOR_DIR, "cli-config.json") {
-+        JsonRead::Error => deny.push("*".to_string()),
-+        JsonRead::Parsed(json) => {
-+            if let Some(perms) = json.get("permissions") {
-+                append_wrapped_rules(perms.get("deny"), &["Shell("], &mut deny);
-+                append_wrapped_rules(perms.get("allow"), &["Shell("], &mut allow);
+-        // Strip PASS lines
+-        if trimmed.starts_with("PASS") {
+-            if in_failure_block {
+-                flush_failure_block(
+-                    &mut current_failure_header,
+-                    &mut current_failure_body,
+-                    &mut failures,
+-                );
+-                in_failure_block = false;
+-            }
+-            continue;
+-        }
++        // A retried attempt reads `TRY 2 FAIL [...]`, a timeout `TIMEOUT [...]`, or `TRY 2 TMT [...]`
++        // when it is retried
++        let status = nextest_status(trimmed);
++        let is_failure = status.starts_with("FAIL")
++            || status.starts_with("TIMEOUT")
++            || status.starts_with("TMT");
+ 
+-        // Detect FAIL lines
+-        if trimmed.starts_with("FAIL") {
++        if is_failure || status.starts_with("PASS") {
+             // Close previous failure block if any
+             if in_failure_block {
+                 flush_failure_block(
+                     &mut current_failure_header,
+                     &mut current_failure_body,
+                     &mut failures,
+                 );
++                in_failure_block = false;
 +            }
++            // Only the last attempt of a test counts. Attempts of different tests interleave,
++            // so earlier ones are found by name, not by being the block still open.
++            let name = nextest_test_name(trimmed);
++            failures.retain(|block| nextest_test_name(block) != name);
++            if is_failure {
++                current_failure_header = trimmed.to_string();
++                in_failure_block = true;
+             }
+-            current_failure_header = trimmed.to_string();
+-            in_failure_block = true;
+             continue;
+         }
+ 
+@@ -763,18 +783,26 @@ fn filter_cargo_nextest(output: &str) -> String {
+             .get(4)
+             .and_then(|m| m.as_str().parse().ok())
+             .unwrap_or(0);
+-        let skipped: u32 = caps
++        let exec_failed: u32 = caps
+             .get(5)
+             .and_then(|m| m.as_str().parse().ok())
+             .unwrap_or(0);
++        let timed_out: u32 = caps
++            .get(6)
++            .and_then(|m| m.as_str().parse().ok())
++            .unwrap_or(0);
++        let skipped: u32 = caps
++            .get(7)
++            .and_then(|m| m.as_str().parse().ok())
++            .unwrap_or(0);
+ 
+         let binary_text = match binaries.cmp(&1) {
+             Ordering::Greater => format!("{} binaries", binaries),
+             Ordering::Equal => "1 binary".to_string(),
+             Ordering::Less => String::new(),
+         };
+ 
+-        if failed == 0 {
++        if failed + exec_failed + timed_out == 0 {
+             // All pass - compact single line
+             let mut parts = vec![format!("{} passed", passed)];
+             if skipped > 0 {
+@@ -804,6 +832,12 @@ fn filter_cargo_nextest(output: &str) -> String {
+         if failed > 0 {
+             summary_parts.push(format!("{} failed", failed));
+         }
++        if exec_failed > 0 {
++            summary_parts.push(format!("{} exec failed", exec_failed));
 +        }
-+        JsonRead::Missing => {}
-     }
-     (deny, Vec::new(), allow)
- }
-@@ -555,21 +581,27 @@ fn load_cursor_rules() -> (Vec<String>, Vec<String>, Vec<String>) {
- // untrusted → global, which is safe: never more permissive than the host).
- fn gemini_settings() -> Option<Value> {
-     let global = global_config(GEMINI_DIR, SETTINGS_JSON);
-+    let global_value = match &global {
-+        JsonRead::Parsed(value) => Some(value),
-+        JsonRead::Missing | JsonRead::Error => None,
-+    };
-     let trusted = user_env::var("GEMINI_CLI_TRUST_WORKSPACE").as_deref() == Some("true")
--        || !global
--            .as_ref()
-+        || !global_value
-             .and_then(|j| {
-                 j.pointer("/security/folderTrust/enabled")
-                     .and_then(Value::as_bool)
-             })
-             .unwrap_or(false);
-     if trusted
-         && let Some(root) = find_project_root()
--        && let Some(v) = read_json(&root.join(GEMINI_DIR).join(SETTINGS_JSON))
-+        && let JsonRead::Parsed(v) = read_json(&root.join(GEMINI_DIR).join(SETTINGS_JSON))
-     {
-         return Some(v);
-     }
--    global
-+    match global {
-+        JsonRead::Parsed(value) => Some(value),
-+        JsonRead::Missing | JsonRead::Error => None,
-+    }
- }
- 
- fn load_gemini_rules() -> (Vec<String>, Vec<String>, Vec<String>) {
-@@ -586,7 +618,7 @@ fn load_gemini_rules() -> (Vec<String>, Vec<String>, Vec<String>) {
- // All four Droid settings scopes: user (honoring $FACTORY_HOME_OVERRIDE) and
- // project `.factory/`, each with settings.json + settings.local.json
- // (docs.factory.ai/cli/configuration/settings). Missing files are skipped.
--fn droid_settings_scopes() -> Vec<Value> {
-+fn droid_settings_scopes() -> (Vec<Value>, bool) {
-     let mut dirs_to_read = Vec::new();
-     if let Some(home) = user_dirs::env_path(DROID_HOME_ENV)
-         .filter(|value| !value.is_empty())
-@@ -600,14 +632,17 @@ fn droid_settings_scopes() -> Vec<Value> {
-     }
- 
-     let mut scopes = Vec::new();
-+    let mut failed = false;
-     for dir in dirs_to_read {
-         for file in [DROID_SETTINGS_FILE, SETTINGS_LOCAL_JSON] {
--            if let Some(v) = read_json(&dir.join(file)) {
--                scopes.push(v);
-+            match read_json(&dir.join(file)) {
-+                JsonRead::Parsed(value) => scopes.push(value),
-+                JsonRead::M
-```
-
-**File**: `tests/hook_config_io_test.rs` (modified, +219/-0)
-```diff
-@@ -1,11 +1,115 @@
- //! Regression coverage for the shared hook configuration I/O.
-+use serde_json::Value;
- use std::fs;
- use std::io::Write;
-+use std::path::PathBuf;
- use std::process::Stdio;
- use tempfile::TempDir;
- 
- mod common;
- 
-+struct HookSandbox {
-+    _root: TempDir,
-+    home: PathBuf,
-+    project: PathBuf,
-+    factory_home: PathBuf,
-+}
-+
-+impl HookSandbox {
-+    fn new() -> Self {
-+        let root = TempDir::new().expect("tempdir");
-+        let home = root.path().join("home");
-+        let project = root.path().join("project");
-+        let factory_home = root.path().join("factory-home");
-+        fs::create_dir_all(home.join(".cursor")).expect("cursor dir");
-+        // The project-root walk is deliberately bounded inside this sandbox.
-+        fs::create_dir_all(project.join(".claude")).expect("claude dir");
-+        fs::create_dir_all(factory_home.join(".factory")).expect("factory home");
-+        fs::create_dir_all(project.join(".factory")).expect("factory project");
-+        Self {
-+            _root: root,
-+            home,
-+            project,
-+            factory_home,
++        if timed_out > 0 {
++            summary_parts.push(format!("{} timed out", timed_out));
 +        }
-+    }
-+
-+    fn run(&self, hook: &str, payload: Value) -> Value {
-+        let mut child = common::rtk_command()
-+            .args(["hook", hook])
-+            .current_dir(&self.project)
-+            .env("HOME", &self.home)
-+            .env("FACTORY_HOME_OVERRIDE", &self.factory_home)
-+            .env("CLAUDE_CONFIG_DIR", self.home.join("claude"))
-+            .env("XDG_CONFIG_HOME", self.home.join(".config"))
-+            .env("RTK_DB_PATH", self.project.join("rtk.db"))
-+            .stdin(Stdio::piped())
-+            .stdout(Stdio::piped())
-+            .stderr(Stdio::piped())
-+            .spawn()
-+            .expect("spawn hook");
-+        child
-+            .stdin
-+            .take()
-+            .expect("hook stdin")
-+            .write_all(payload.to_string().as_bytes())
-+            .expect("write hook payload");
-+        let output = child.wait_with_output().expect("wait hook");
-+        assert!(
-+            output.status.success(),
-+            "hook exited {:?}: {}",
-+            output.status.code(),
-+            String::from_utf8_lossy(&output.stderr)
-+        );
-+        let stdout = String::from_utf8_lossy(&output.stdout);
-+        if stdout.trim().is_empty() {
-+            // Droid's deny/step-aside protocol is an empty stdout response.
-+            return Value::Null;
-+        }
-+        serde_json::from_str(stdout.trim()).unwrap_or_else(|error| {
-+            panic!(
-+                "hook emitted invalid JSON ({error}): stdout={stdout:?}, stderr={:?}",
-+                String::from_utf8_lossy(&output.stderr)
-+            )
-+        })
-+    }
-+
-+    #[cfg(unix)]
-+    fn cursor(&self, command: &str) -> Value {
-+        self.run(
-+            "cursor",
-+            serde_json::json!({
-+                "tool_name": "Bash",
-+                "tool_input": {"command": command}
-+            }),
-+        )
-+    }
-+
-+    fn droid(&self, command: &str) -> Value {
-+        self.run(
-+            "droid",
-+            serde_json::json!({
-+                "tool_name": "Execute",
-+                "tool_input": {"command": command}
-+            }),
-+        )
-+    }
-+
-+    #[cfg(unix)]
-+    fn cursor_settings(&self) -> PathBuf {
-+        self.home.join(".cursor/cli-config.json")
-+    }
-+
-+    fn droid_settings(&self, scope: &str, file: &str) -> PathBuf {
-+        let root = match scope {
-+            "user" => self.factory_home.join(".factory"),
-+            "project" => self.project.join(".factory"),
-+            _ => panic!("unknown Droid scope: {scope}"),
-+        };
-+        root.join(file)
-+    }
-+}
-+
- #[test]
- fn copilot_cli_rewrite_preserves_vscode_tool_input() {
-     let temp = TempDir::new().unwrap();
-@@ -107,3 +211,118 @@ fn codex_status_handles_global_and_local_empty_bom_and_invalid_files() {
-     assert_eq!(fs::read_to_string(&global_path).unwrap(), "{broken");
-     assert_eq!(fs::read_to_string(&local_path).unwrap(), "{broken");
- }
-+
-+#[test]
-+// Cursor's settings live under the home directory, and dirs::home_dir uses the
-+// Windows Known Folder API, so HOME cannot point the hook at this sandbox there.
-+#[cfg(unix)]
-+fn cursor_settings_keep_missing_and_empty_behavior_but_step_aside_on_failures() {
-+    let sandbox = HookSandbox::new();
-+
-+    let missing = sandbox.cursor("git status");
-+    assert_eq!(missing["permission"], "ask");
-+    assert_eq!(missing["updated_input"]["command"], "rtk git status");
-+
-+    let settings = sandbox.cursor_settings();
-+    fs::write(&settings, "  \n").expect("write empty Cursor settings");
-+    let empty = sandbox.cursor("git status");
-+    assert_eq!(empty["permission"], "ask");
-+    assert_eq!(empty["updated_input"]["command"], "rtk git status");
-+
-+    fs::write(
-+        &settings,
-+        r#"{"permissions":{"deny":["Shell(git push *)"],"allow":["Shell(git status)"]}}"#,
-+    )
-+    .expect("write valid Cursor settings");
-+    let valid = sandb
+       
 ```
 
 ---
 
-### Incident Patch 3: `6b75e82d` (2026-10-31)
-**Commit Message**: Merge pull request #4152 from KuSh/fix/4117-followup-filtered-log-cap
+### Incident Patch 3: `4b4bc40d` (2026-11-01)
+**Commit Message**: Merge pull request #3833 from Hubujiu/fix/hermes-modify-directive
 
-fix(git): announce the cap on the filtered `git log` path
+fix(hermes): close the rewrite's stdin and make its timeout configurable
 
-**File**: `src/cmds/git/git_cmd.rs` (modified, +1368/-100)
+**File**: `hooks/README.md` (modified, +5/-2)
 ```diff
-@@ -12,6 +12,7 @@ use crate::core::stream::{
- use crate::core::tracking;
- use crate::core::truncate::{CAP_LIST, CAP_WARNINGS};
- use crate::core::user_dirs;
-+use crate::core::user_env;
- use crate::core::utils::{exit_code_from_status, join_with_overflow, resolved_command, strip_ansi};
- use anyhow::{Context, Result};
- use std::ffi::OsString;
-@@ -1526,7 +1527,41 @@ const REFUSAL_EXIT_CODE: i32 = 128;
- /// The two lengths `%H` can print, one per object format git has.
- const SHA1_NAME_LEN: usize = 40;
- const SHA256_NAME_LEN: usize = 64;
-+/// Closes every commit in the format RTK asks for when the user named none, which is what
-+/// lets the filtered path find commit boundaries in what git printed.
-+const LOG_ENTRY_MARKER: &str = "---END---";
-+/// Opens every commit of that format when RTK asks for one commit past its limit, in git's
-+/// spelling: the control character, the commit's `%m` mark, its full object name and a space.
-+/// What git prints after a commit's marker (a directory summary, a stat line) and what a file
-+/// or a message holds can start with the control character too, but not with the whole of
-+/// this, so it is what tells a commit from the rest. It is stripped before anything is
-+/// rendered, printed or tracked.
-+const LOG_ENTRY_START_SPEC: &str = "%x01%m%H ";
-+const LOG_ENTRY_START: char = '\u{1}';
-+/// What `%m` prints for a commit of a walk without `--boundary`: `<` and `>` for the two sides
-+/// of a symmetric difference (`>` when there is one side only), `=` for a commit whose patch
-+/// the other side has too and `^` for one outside the range.
-+const OPENING_MARKS: [char; 4] = ['<', '>', '=', '^'];
- const DEFAULT_LOG_LIMIT_ARG: &str = "-10";
-+/// The limit the filtered path allows a user-chosen format, which is counted in lines: a
-+/// compact shape fits many more commits in the same reading budget.
-+const COMPACT_LOG_LIMIT: usize = 50;
-+/// The width a log line is cut to when RTK set the limit.
-+const LOG_LINE_WIDTH: usize = 80;
-+
-+/// True when `exit_code` says git refused the command rather than ran it, which owes the user
-+/// nothing beyond git's own error. A negative code is a git that crashed: Windows reports the
-+/// NTSTATUS of the crash (-1073741819 for an access violation) as the exit code.
-+fn refused_by_git(exit_code: i32) -> bool {
-+    !(0..REFUSAL_EXIT_CODE).contains(&exit_code)
-+}
-+
-+/// The one wording for a cap RTK applied, so both paths say the same thing and name the same
-+/// escape. `unit` is what the cap took: commits, or the lines of a user format whose commits
-+/// RTK cannot tell apart.
-+fn cap_notice(limit: usize, unit: &str) -> String {
-+    format!("[rtk] capped at {limit} {unit}; pass -n <count> for more")
-+}
+@@ -306,10 +306,13 @@ if (tool === "bash" || tool === "shell") {
  
- /// `git log <args>` for the raw passthrough, carrying RTK's default limit unless the user named
- /// one. [`run_passthrough`] streams straight to the terminal, so the limit has to be in the args
-@@ -1829,6 +1864,535 @@ fn bounds_the_walk(tokens: &[Token<'_>]) -> bool {
-     })
- }
+ ### Hermes (Python Plugin)
  
-+/// True when `--output=<file>` sends the walk to a file instead of to RTK, which leaves RTK
-+/// with nothing to read it out of.
-+fn redirects_output(tokens: &[Token<'_>]) -> bool {
-+    tokens
-+        .iter()
-+        .any(|t| t.kind == TokenKind::Long && t.text == "output")
-+}
-+
-+/// True when the filtered path can ask git for one commit past its limit and drop it again,
-+/// which answers whether the cap cut without walking the history twice.
-+///
-+/// Five shapes cannot. `--output=<file>` puts the walk in the user's file, where the extra
-+/// commit would stay. `--reverse` flips the order *after* the limit has chosen the commits,
-+/// so the extra one arrives first and dropping the overflow would drop HEAD. `--boundary`
-+/// appends the commits just outside what the limit chose, which depend on the limit: asked
-+/// for one more, git names other boundary commits, and the walk shown is no longer the one
-+/// the user's limit gives. `--log-size` prints the size of each message as git rendered
-+/// it, which counts the opening that is stripped afterwards. And a run that prints text of
-+/// its own ahead of a commit's format output, see [`prints_ahead_of_a_commit`]: that text sits
-+/// between the last commit shown and the opening of the extra one, so it would stay in the
-+/// walk the user is shown.
-+fn fetches_one_past_the_limit(
-+    global_args: &[String],
-+    env: impl Fn(&str) -> Option<String>,
-+    tokens: &[Token<'_>],
-+) -> bool {
-+    !redirects_output(tokens)
-+        && !prints_ahead_of_a_commit(global_args, env, tokens)
-+        && !tokens.iter().any(|t| {
-+            t.kind == TokenKind::Long && matches!(t.text, "reverse" | "boundary" | "log-size")
-+        })
-+}
-+
-+/// True when the arguments or the environment make git print text ahead of a commit's format
-+/// output: the verdict on its signature (`--show-signature`, or `log.showSignature` given
-+/// with `-c` or in the environment) and the bar of `--show-linear-break`. Git writes it between
-+///
+-Mutates `args["command"]` in-place via the `pre_tool_call` hook:
++Mutates `args["command"]` in place and returns no directive, so on Hermes v2026.8.16 (0.20.2) and later another plugin's `modify` directive that sets `command` replaces the rewrite. The adapter uses a 5-second default rewrite timeout, configurable through `RTK_HERMES_TIMEOUT` (see [timeout limits](hermes/README.md#how-it-works)). Simplified success path:
+ 
+ ```python
+-result = subprocess.run(["rtk", "rewrite", command], capture_output=True, text=True, timeout=2)
++result = subprocess.run(
++    ["rtk", "rewrite", command], shell=False, stdin=subprocess.DEVNULL,
++    capture_output=True, text=True, timeout=_rewrite_timeout(),
++)
+ rewritten = result.stdout.strip()
+ if result.returncode in {0, 3} and rewritten and rewritten != command:
+     args["command"] = rewritten
 ```
 
-**File**: `src/cmds/system/pipe_cmd.rs` (modified, +1/-1)
+**File**: `hooks/hermes/README.md` (modified, +5/-3)
 ```diff
-@@ -49,7 +49,7 @@ fn git_status_wrapper(input: &str) -> String {
- }
+@@ -12,13 +12,15 @@ The installer writes the plugin to `~/.hermes/plugins/rtk-rewrite/` and enables
  
- fn git_log_wrapper(input: &str) -> String {
--    crate::cmds::git::git_cmd::filter_log_output(input, 50, false, false)
-+    crate::cmds::git::git_cmd::filter_log_output(input, 50, false)
- }
+ ## How it works
  
- fn git_diff_wrapper(input: &str) -> String {
+-Hermes loads plugins from Python, so the plugin entrypoint is Python. The Python code is only a thin Hermes adapter. It reads the Hermes terminal tool payload, calls `rtk rewrite` for the actual command decision, then mutates the terminal tool `command` before Hermes executes it.
++Hermes loads plugins from Python, so the plugin entrypoint is Python. The Python code is only a thin Hermes adapter. It reads the Hermes terminal tool payload, calls `rtk rewrite` for the actual command decision, then updates `command` in that payload, which Hermes executes. It returns no `modify` directive. On Hermes releases that apply `modify` directives (v2026.8.16, Hermes 0.20.2, and later), one from another plugin that sets `command` replaces the rewritten command; directives for other keys, such as `workdir`, leave the rewrite in place.
+ 
+ All rewrite rules stay in Rust inside `rtk rewrite`. When RTK adds or changes command rewrite behavior, the Hermes plugin picks up that behavior by delegating to the RTK binary.
+ 
++The rewrite subprocess has no standard input and defaults to a 5-second timeout. Set `RTK_HERMES_TIMEOUT` to a positive, finite number of seconds (for example, `RTK_HERMES_TIMEOUT=10`) to override it. Missing, malformed, non-positive, or non-finite values fall back to 5 seconds. This controls the rewrite step only, not the terminal command's own timeout. From v2026.8.27 (Hermes 0.20.6), keep it below Hermes' `plugins.hook_callback_timeout` (30 seconds by default): the host may block the tool call if its callback limit is reached. Earlier releases have no host callback limit. Extremely large values may exceed the platform subprocess timeout limit and cause a warning with no rewrite.
++
+ ## Fail-open behavior
+ 
+-The plugin does not block command execution. If anything goes wrong, Hermes runs the original command unchanged.
++The plugin itself does not request blocking. On rewrite failures it leaves the original command unchanged and returns no directive. From v2026.8.27 (Hermes 0.20.6), Hermes can still block execution if its own callback timeout is reached.
+ 
+ If rtk is not available in PATH when Hermes loads the plugin, the plugin prints a warning and skips hook registration.
+ 
+@@ -32,4 +34,4 @@ If rtk is not available in PATH when Hermes loads the plugin, the plugin prints
+ 
+ - Only Hermes `terminal` tool calls are rewritten.
+ - Commands skipped by `rtk rewrite` stay unchanged, including commands already prefixed with `rtk`, compound shell commands, heredocs, and commands without an RTK filter.
+-- Shell hooks are not used for Hermes command rewriting. The integration depends on Hermes loading Python plugins and passing a mutable terminal tool payload.
++- Shell hooks are not used for Hermes command rewriting. The integration depends on Hermes loading Python plugins and invoking `pre_tool_call` with the shared tool payload.
 ```
 
-**File**: `tests/git_log_cap_notice_test.rs` (modified, +2087/-12)
+**File**: `hooks/hermes/rtk-rewrite/__init__.py` (modified, +18/-2)
 ```diff
-@@ -1,13 +1,15 @@
--//! `rtk git log` in its raw-shape path injects RTK's default limit, so the walk it prints is
--//! bounded by RTK rather than by what the user asked for. This pins the one guarantee that
--//! makes that acceptable: the cap is never applied in silence.
-+//! Both of `rtk git log`'s paths bound the walk by RTK's own limit rather than by what the
-+//! user asked for. This pins the one guarantee that makes that acceptable: the cap is never
-+//! applied in silence, and never announced when it took nothing.
- //!
--//! An integration test rather than a unit one because the failure it guards lives in the
--//! interaction between the user's own output format and RTK's ability to see what it printed:
--//! `--oneline` leaves no commit header to count, `log.decorate` and `--graph` disfigure the
--//! one that exists, `-z` separates records with a NUL instead of a newline, and
--//! `--line-prefix` puts its own text in front of them. Every one of those once silenced the
--//! notice.
-+//! An integration test rather than a unit one because every failure it guards lives in the
-+//! gap between what RTK printed and what git actually walked, which only a real repository
-+//! shows. On the raw-shape path that gap is the output's shape: `--oneline` leaves no commit
-+//! header to count, `log.decorate` and `--graph` disfigure the one that exists, `-z` runs the
-+//! walk onto a single line, `--line-prefix` puts something in front of it. On the filtered
-+//! path it is the unit the cap is counted in -- commits where RTK chose the format, lines
-+//! where the user did -- along with what git prints after a commit that is not another one
-+//! and the `--no-merges` RTK adds to the command and must therefore also ask about.
- //!
- //! The shapes that narrow a walk by what its commits changed get their own tests, because
- //! those take a different probe: `--skip` is applied before a diff-based filter, so the cap
-@@ -60,16 +62,45 @@ struct Repo {
- }
+@@ -4,13 +4,16 @@
+ only bridges Hermes ``pre_tool_call`` payloads to that command and fails open.
+ """
  
- fn repo_with(commits: usize) -> Repo {
-+    repo_with_subjects(commits, |i| format!("commit {i}"))
-+}
-+
-+/// A history whose commit `i` has the subject `subject(i)`.
-+fn repo_with_subjects(commits: usize, subject: impl Fn(usize) -> String) -> Repo {
-+    repo_with_messages(commits, |i| vec![subject(i)])
-+}
-+
-+/// A history whose commit `i` carries the message paragraphs `message(i)`, the subject first.
-+fn repo_with_messages(commits: usize, message: impl Fn(usize) -> Vec<String>) -> Repo {
-+    repo_committing(commits, |_| vec!["f.txt".to_string()], message)
-+}
-+
-+/// A history whose commit `i` writes the files `files(i)` and carries the message paragraphs
-+/// `message(i)`, one `-m` each.
-+fn repo_committing(
-+    commits: usize,
-+    files: impl Fn(usize) -> Vec<String>,
-+    message: impl Fn(usize) -> Vec<String>,
-+) -> Repo {
-     let dir = tempfile::tempdir().expect("tempdir");
-     let path = dir.path().join("repo");
-     let home = dir.path().join("home");
-     std::fs::create_dir_all(&path).expect("mkdir repo");
-     std::fs::create_dir_all(&home).expect("mkdir home");
-     git_ok(&path, &home, &["init", "-q", "-b", "main"]);
-     for i in 0..commits {
--        std::fs::write(path.join("f.txt"), format!("content {i}\n")).expect("write");
--        git_ok(&path, &home, &["add", "f.txt"]);
--        git_ok(&path, &home, &["commit", "-qm", &format!("commit {i}")]);
-+        for file in files(i) {
-+            let target = path.join(&file);
-+            std::fs::create_dir_all(target.parent().expect("parent")).expect("mkdir");
-+            std::fs::write(target, format!("content {i}\n")).expect("write");
-+        }
-+        git_ok(&path, &home, &["add", "-A"]);
-+        let paragraphs = message(i);
-+        let mut args = vec!["commit", "-q"];
-+        for paragraph in &paragraphs {
-+            args.extend(["-m", paragraph.as_str()]);
-+        }
-+        git_ok(&path, &home, &args);
-     }
-     Repo {
-         _dir: dir,
-@@ -308,6 +339,17 @@ fn a_sha256_repo_announces_the_cap() {
-     let out = rtk_log(&path, &home, &["-p"]);
-     let stderr = String::from_utf8_lossy(&out.stderr);
-     assert!(stderr.contains(NOTICE), "sha256 repo: {stderr:?}");
-+
-+    // The filtered path reads the object name out of its own format, whatever length it has.
-+    for (range, owed) in [("HEAD~10..HEAD", false), ("HEAD~11..HEAD", true)] {
-+        let out = rtk_log(&path, &home, &[range]);
-+        assert!(out.status.success(), "rtk git log {range} failed");
-+        let stdout = String::from_utf8_lossy(&out.stdout);
-+        assert_eq!(filtered_entries(&stdout), 10, "{range}: {stdout:?}");
-+        assert!(!stdout.contains('\u{1}'), "{range}: {stdout:?}");
-+        let stderr = String::from_utf8_lossy(&out.stderr);
-+        assert_eq!(stderr.contains(NOTICE), owed, "{range}: {stderr:?}");
-+    }
- }
++import math
++import os
+ import shutil
+ import subprocess
+ import sys
  
- #[test]
-@@ -993,3 +1035,2036 @@ fn a_reversed_diff_selected_walk_is_still_measured_by_what_it_selects() {
-         );
-     }
- }
+ 
+ ACCEPTED_REWRITE_RETURN_CODES = {0, 3}
+ EXPECTED_PASSTHROUGH_RETURN_CODES = {1, 2}
++DEFAULT_REWRITE_TIMEOUT = 5
+ _rtk_available = None
+ _rtk_missing_warned = False
+ 
+@@ -37,8 +40,16 @@ def _check_rtk():
+     return _rtk_available
+ 
+ 
++def _rewrite_timeout():
++    try:
++        timeout = float(os.environ.get("RTK_HERMES_TIMEOUT", DEFAULT_REWRITE_TIMEOUT))
++    except ValueError:
++        return DEFAULT_REWRITE_TIMEOUT
++    return timeout if math.isfinite(timeout) and timeout > 0 else DEFAULT_REWRITE_TIMEOUT
 +
-+/// Entries in RTK's own log format: one header line per com
++
+ def _pre_tool_call(tool_name=None, args=None, **_kwargs):
+-    """Rewrite mutable Hermes terminal command args when RTK provides a change."""
++    """Update the shared payload without overriding other hooks' directives."""
+     try:
+         if tool_name != "terminal" or not isinstance(args, dict):
+             return
+@@ -51,7 +62,8 @@ def _pre_tool_call(tool_name=None, args=None, **_kwargs):
+             result = subprocess.run(
+                 ["rtk", "rewrite", command],
+                 shell=False,
+-                timeout=2,
++                stdin=subprocess.DEVNULL,
++                timeout=_rewrite_timeout(),
+                 capture_output=True,
+                 text=True,
+             )
+@@ -70,6 +82,10 @@ def _pre_tool_call(tool_name=None, args=None, **_kwargs):
+ 
+         rewritten = result.stdout.strip()
+         if rewritten and rewritten != command:
++            # Hermes executes this shared payload, including on releases before
++            # modify directives were supported. Newer releases then apply queued
++            # directives in hook order. Returning a command directive here would
++            # overwrite an earlier plugin's command that this hook cannot see.
+             args["command"] = rewritten
+     except Exception as e:
+         _warn(str(e))
+```
+
+**File**: `hooks/hermes/tests/test_rtk_rewrite_plugin.py` (modified, +109/-50)
+```diff
+@@ -59,6 +59,12 @@ def write_fake_rtk(bin_dir):
+ 
+ 
+ class RtkRewritePluginTest(unittest.TestCase):
++    def setUp(self):
++        environment = mock.patch.dict(os.environ)
++        environment.start()
++        self.addCleanup(environment.stop)
++        os.environ.pop("RTK_HERMES_TIMEOUT", None)
++
+     def load_callback(self):
+         module = load_plugin_module()
+         module._rtk_available = None
+@@ -124,44 +130,88 @@ def test_check_rtk_caches_result_across_calls(self):
+ 
+         which.assert_called_once_with("rtk")
+ 
+-    def test_rewrite_success_mutates_same_terminal_args_dict(self):
+-        module, callback = self.load_callback()
+-        args = {"command": "git status"}
+-
+-        with mock.patch.object(
+-            module.subprocess,
+-            "run",
+-            return_value=FakeCompletedProcess(stdout="rtk git status\n"),
+-        ):
+-            callback(tool_name="terminal", args=args)
+-
+-        self.assertEqual({"command": "rtk git status"}, args)
+-
+-    def test_rewrite_returncode_three_mutates_same_terminal_args_dict(self):
+-        module, callback = self.load_callback()
+-        args = {"command": "git status"}
+-
+-        with mock.patch.object(
+-            module.subprocess,
+-            "run",
+-            return_value=FakeCompletedProcess(returncode=3, stdout="rtk git status\n"),
+-        ):
+-            callback(tool_name="terminal", args=args)
+-
+-        self.assertEqual({"command": "rtk git status"}, args)
+-
+-    def test_rewrite_returncode_zero_mutates_when_rewrite_changes_command(self):
+-        module, callback = self.load_callback()
+-        args = {"command": "git status"}
++    def test_rewrite_updates_payload_without_returning_a_directive(self):
++        for returncode in (0, 3):
++            with self.subTest(returncode=returncode):
++                module, callback = self.load_callback()
++                args = {"command": "git status", "workdir": "/repo", "timeout": 30}
+ 
+-        with mock.patch.object(
+-            module.subprocess,
+-            "run",
+-            return_value=FakeCompletedProcess(stdout="rtk git status\n"),
++                with mock.patch.object(
++                    module.subprocess,
++                    "run",
++                    return_value=FakeCompletedProcess(
++                        returncode=returncode, stdout="rtk git status\n"
++                    ),
++                ) as run:
++                    directive = callback(tool_name="terminal", args=args)
++
++                run.assert_called_once_with(
++                    ["rtk", "rewrite", "git status"],
++                    shell=False,
++                    stdin=subprocess.DEVNULL,
++                    timeout=5,
++                    capture_output=True,
++                    text=True,
++                )
++                self.assertIsNone(directive)
++                self.assertEqual(
++                    {"command": "rtk git status", "workdir": "/repo", "timeout": 30}, args
++                )
++
++    def test_rewrite_preserves_earlier_plugins_command_and_workdir_directives(self):
++        for partial in (
++            {"command": "git status --porcelain"},
++            {"workdir": "/safe/repo"},
++            {"command": "git status --porcelain", "workdir": "/safe/repo"},
+         ):
+-            callback(tool_name="terminal", args=args)
+-
+-        self.assertEqual({"command": "rtk git status"}, args)
++            for returncode in (0, 3):
++                with self.subTest(partial=partial, returncode=returncode):
++                    module, callback = self.load_callback()
++                    args = {"command": "git status", "workdir": "/repo", "timeout": 30}
++                    # Hermes gives hooks the shared payload, then merges returned
++                    # modify directives in hook order, not before the next hook.
++                    directives = [{"action": "modify", "args": dict(partial)}]
++                    with mock.patch.object(
++                        module.subprocess,
++                        "run",
++                        return_value=FakeCompletedProcess(
++                            returncode=returncode, stdout="rtk git status\n"
++                        ),
++                    ):
++                        directives.append(callback(tool_name="terminal", args=args))
++
++                    effective_args = dict(args)
++                    for directive in directives:
++                        if isinstance(directive, dict) and directive.get("action") == "modify":
++                            effective_args.update(directive["args"])
++
++                    self.assertEqual(
++                        {"command": "rtk git status", "workdir": "/repo", "timeout": 30, **partial},
++                        effective_args,
++                    )
++
++    def test_rewrite_timeout_uses_positive_environment_override(self):
++        for value, expected in (("12", 12), ("0.25", 0.25), (" 7.5 ", 7.5)):
++            with self.subTest(value=value):
++                module, callbac
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4876** (closed): docs: make the rewrite coverage page verifiable (@alexrain)
+- **PR #4870** (closed): fix(git): point the show truncation hint at the unfiltered commit (@alexrain)
+- **PR #4868** (closed): fix(pnpm): keep the child's stdout when install fails (@alexrain)
 - **PR #4852** (2026-10-30): docs(root): add backlink to pro (@aeppling)
-- **PR #4833** (2026-10-30): fix(ls): hold a bare listing to what ls prints, not to the long listing rtk asks for (@aeppling)
-- **PR #4795** (2026-10-25): chore(master): release 1.1.0 (@rtk-release-bot[bot])
-- **PR #4740** (2026-10-30): fix(init): install the OpenCode plugin independently of agent setup (@TechWizard9999)
-- **PR #4739** (closed): fix(core): quote child arguments containing backslashes on Windows (fixes #4737) (@TechWizard9999)
-- **PR #4738** (2026-10-31): fix(hook): honour opt-outs inside a quoted script behind uv run (@ShryukGrandhi)
+- **PR #4846** (closed): fix(dotnet): count distinct projects in test/build summaries (@mrkayhyun)
+- **PR #4841** (closed): docs(agents): how a host without a tool hook delegates to rtk rewrite (@ismoss)
 
 ---
 
@@ -2411,69 +2290,28 @@ fix(git): announce the cap on the filtered `git log` path
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ruff): keep a leading `--` verbatim and read help/version first
+## X. test(init): pin the builtin list and the dropped safety promise
 
 **RULE**:
-When implementing operations in `src/cmds/python/ruff_cmd.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rtk-ai/rtk. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `hooks/cline/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rtk-ai/rtk. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ffd9cbe8`: ruff): keep a leading `--` verbatim and read help/version first. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `380d2130`: test(init): pin the builtin list and the dropped safety promise. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/cmds/python/ruff_cmd.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `hooks/cline/README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    Dialect, Token, TokenKind, ValueSpec, before_dashdash, dashdash_index, tokenize_grammar,
-        // ruff answers a help or version flag as soon as it reads one, before
-        // a subcommand or a check option (`ruff -qh check`, `ruff -Vn`).
-        if requests_top_level(*token) {
-            return RuffRoute::TopLevel;
-        }
-        // nothing is removed and no later word is the subcommand.
-        if !ruff_is_global_token(*token) {
-    // Only global options come before this `--`. ruff answers `ruff -- check`
-    // with its usage error, and rtk forwards the call unchanged rather than
-    // linting a file named `check`.
-    if dashdash_index(&tokens).is_some() {
-        return RuffRoute::TopLevel;
-    }
-    // Every other flags-only call (for example `--statistics`) is an implicit check.
-    RuffRoute::Check { explicit_at: None }
-/// Ruff's global flags, as long names without the leading dashes. Help and
-/// version are global too, but the scan answers them first
-/// (`requests_top_level`).
-const RUFF_GLOBAL_FLAGS: &[&str] = &["isolated", "verbose", "quiet", "silent"];
-const RUFF_GLOBAL_SHORT_FLAGS: &[&str] = &["v", "q", "s"];
-    /// Forwarded verbatim with its whole st
+- Installs `../rtk-awareness-full.md` (shared, agent-neutral): the instruction to prefix external programs with `rtk`, leaving shell builtins, keywords and the RTK-shadowed `env` unprefixed, plus meta commands. No hook, so the `full` level is always used regardless of `awareness.level`
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-    Dialect, Token, TokenKind, ValueSpec, before_dashdash, tokenize_grammar,
-        // nothing is removed and no later word is the subcommand. The `--`
-        // boundary is not an option: the scan never reads past it.
-        if token.kind != TokenKind::DashDash && !ruff_is_global_token(*token) {
-    top_level_request(&tokens)
-/// Ruff's global flags, as long names without the leading dashes.
-const RUFF_GLOBAL_FLAGS: &[&str] = &["isolated", "verbose", "quiet", "silent", "help", "version"];
-const RUFF_GLOBAL_SHORT_FLAGS: &[&str] = &["v", "q", "s", "h", "V"];
-    /// No subcommand and no path: a top-level request such as `--version`.
-/// Flag-only invocations stay top-level for `--version`/`--help`; every other
-/// flags-only call (for example `--statistics`) is an implicit check. Read the
-/// tokens, not the raw args, so a cluster such as `-qh` is a help request.
-fn top_level_request(tokens: &[Token<'_>]) -> RuffRoute {
-    let requests_top_level = before_dashdash(tokens).iter().any(|token| {
-        matches!(
-            (token.kind, token.text),
-            (TokenKind::Long, "help" | "version") | (TokenKind::Short, "h" | "V")
-        )
-    });
-    if requests_top_level {
-      
+- Installs `../rtk-awareness-full.md` (shared, agent-neutral): the instruction to prefix every shell command with `rtk`, plus meta commands. No hook, so the `full` level is always used regardless of `awareness.level`
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ffd9cbe8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `380d2130` are properly handled with clean fallback behavior.

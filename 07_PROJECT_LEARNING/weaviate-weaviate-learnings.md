@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/weaviate-weaviate-learnings.md`  
 > **Source**: github ([https://github.com/weaviate/weaviate](https://github.com/weaviate/weaviate))  
-> **Source Version**: `5ef8d0c3`  
+> **Source Version**: `f481da3f`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T06:45:28.509Z  
+> **Timestamp**: 2026-11-03T21:36:52.063Z  
 > **Learning ID**: `learn-github-weaviate-weaviate`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/weaviate-weaviate-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/weaviate/weaviate](https://github.com/weaviate/weaviate))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T06:45:28.502Z  
+> **Harvest Timestamp**: 2026-11-03T21:36:50.878Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1610,9 +1610,7 @@ type State struct {
 
 	// ReindexProvider is the local handle for the runtime-reindex
 	// distributed-task provider. Exposed here so the REST cancel handler
-	// can wait for a cancelled task's local goroutine to drain before
-	// triggering the on-disk state cleanup — see
-	// [db.ReindexProvider.WaitForLocalTaskDrain].
+	// can wait for a cancelled task's local goroutine to drain first.
 	ReindexProvider *db.ReindexProvider
 
 	// ReindexSubmitLocks serializes mutating REST operations on the same
@@ -1732,29 +1730,338 @@ func (s *State) SetGraphQLIfCurrent(gql graphql.GraphQL, gen uint64) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2c595a64` (2026-10-30)
-**Commit Message**: fix(test): match testShardWithSettings signature after v1.39 merge
+### Incident Patch 1: `87e00afc` (2026-11-02)
+**Commit Message**: Merge pull request #13646 from weaviate/fix/close-busy-http-servers
 
-**File**: `adapters/repos/db/shard_vector_search_missing_object_integration_test.go` (modified, +1/-1)
+fix(rest): close HTTP servers still busy at the graceful timeout before teardown
+
+**File**: `adapters/handlers/rest/configure_api.go` (modified, +3/-3)
 ```diff
-@@ -62,7 +62,7 @@ func TestObjectVectorSearch_MissingObjectKeepsDistancesAligned(t *testing.T) {
- 			ctx := context.Background()
- 			className := fmt.Sprintf("MissingObjRank%d", tc.missingRank)
- 			shard, index := testShardWithSettings(t, ctx, &models.Class{Class: className},
--				enthnsw.NewDefaultUserConfig(), false, false, false)
-+				enthnsw.NewDefaultUserConfig(), false, false)
- 			defer func() {
- 				require.NoError(t, index.drop())
- 			}()
+@@ -1607,9 +1607,9 @@ func configureAPI(api *operations.WeaviateAPI) http.Handler {
+ 
+ 	serverShutdown := func() {
+ 		// Leave announces the node's departure before internal infrastructure
+-		// closes. Public HTTP has stopped by now; it waits up to
+-		// GracefulTimeout. gRPC then gets up to 20s to stop. After that, gRPC
+-		// may still be stopping in the background (see shutdownHooks).
++		// closes. Public HTTP has drained by now, or been closed and its handlers
++		// awaited (see ServeAndShutdown). gRPC then gets up to 20s to stop. After
++		// that, gRPC may still be stopping in the background (see shutdownHooks).
+ 		if err := appState.Cluster.Leave(); err != nil {
+ 			appState.Logger.WithError(err).Error("leave node from cluster")
+ 		}
+```
+
+**File**: `adapters/handlers/rest/server_shutdown.go` (modified, +58/-5)
+```diff
+@@ -11,19 +11,72 @@
+ 
+ package rest
+ 
+-import "sync"
++import (
++	"net/http"
++	"sync"
++	"sync/atomic"
++	"time"
++)
+ 
+-// ServeAndShutdown runs Serve, then the api's ServerShutdown hook exactly once.
+-// The generated handleShutdown skips ServerShutdown when an HTTP server does not
+-// drain within GracefulTimeout, which would leave the cluster without a graceful
+-// departure and the database open. Call it after ConfigureAPI, which sets the hook.
++// ServeAndShutdown runs Serve, closes servers still busy past GracefulTimeout and waits
++// up to GracefulTimeout more for their handlers to return. It then runs ServerShutdown
++// once, which the generated handleShutdown skips after a timeout. Call it after ConfigureAPI.
+ func (s *Server) ServeAndShutdown() error {
+ 	serverShutdown := sync.OnceFunc(s.api.ServerShutdown)
+ 	s.api.ServerShutdown = serverShutdown
+ 
++	var tracked trackedServers
++	defer tracked.track()()
++
+ 	if err := s.Serve(); err != nil {
+ 		return err
+ 	}
++	if n := tracked.closeAndWait(s.GracefulTimeout, s.Logf); n > 0 {
++		s.Logf("%d HTTP handlers still running %s after their servers closed", n, s.GracefulTimeout)
++	}
+ 	serverShutdown()
+ 	return nil
+ }
++
++// trackedServers records the servers Serve configures and counts their running handlers.
++type trackedServers struct {
++	servers []*http.Server
++	running atomic.Int64
++}
++
++// track swaps in a wrapper for configureServer, the only hook into the
++// servers the generated Serve creates, and returns a func that puts it back.
++func (t *trackedServers) track() (restore func()) {
++	original := configureServer
++	configureServer = func(hs *http.Server, scheme, addr string) {
++		original(hs, scheme, addr)
++		// Count handlers so closeAndWait can wait for them.
++		inner := hs.Handler
++		hs.Handler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++			t.running.Add(1)
++			defer t.running.Add(-1)
++			inner.ServeHTTP(w, r)
++		})
++		t.servers = append(t.servers, hs)
++	}
++	return func() { configureServer = original }
++}
++
++// closeAndWait closes every server and waits up to timeout for their handlers, since one
++// woken by a failed read may still be using the database. It returns how many still run.
++func (t *trackedServers) closeAndWait(timeout time.Duration, logf func(string, ...any)) int64 {
++	for _, hs := range t.servers {
++		if err := hs.Close(); err != nil {
++			logf("HTTP server Close: %v", err)
++		}
++	}
++	// A handler can start after Close, which rules out a sync.WaitGroup.
++	deadline := time.Now().Add(timeout)
++	for {
++		n := t.running.Load()
++		if n == 0 || !time.Now().Before(deadline) {
++			return n
++		}
++		time.Sleep(10 * time.Millisecond)
++	}
++}
+```
+
+**File**: `adapters/handlers/rest/server_shutdown_test.go` (modified, +38/-3)
+```diff
+@@ -13,6 +13,8 @@ package rest
+ 
+ import (
+ 	"fmt"
++	"io"
++	"net"
+ 	"net/http"
+ 	"sync/atomic"
+ 	"testing"
+@@ -29,9 +31,11 @@ func TestServeAndShutdown(t *testing.T) {
+ 	tests := []struct {
+ 		name                 string
+ 		requestOutlivesDrain bool
++		stallBody            bool
+ 	}{
+ 		{name: "drained in time", requestOutlivesDrain: false},
+ 		{name: "request outlives the drain", requestOutlivesDrain: true},
++		{name: "client stalls mid-body", stallBody: true},
+ 	}
+ 
+ 	// configureAPI sets configureServer, and Serve calls it for every listener.
+@@ -42,19 +46,32 @@ func TestServeAndShutdown(t *testing.T) {
+ 	for _, tt := range tests {
+ 		t.Run(tt.name, func(t *testing.T) {
+ 			var serverShutdownCalls atomic.Int32
++			var handlerReturned, returnedBeforeServerShutdown atomic.Bool
+ 			s := NewServer(&operations.WeaviateAPI{
+ 				PreServerShutdown: func() {},
+-				ServerShutdown:    func() { serverShutdownCalls.Add(1) },
++				ServerShutdown: func() {
++					serverShutdownCalls.Add(1)
++					returnedBeforeServerShutdown.Store(handlerReturned.Load())
++				},
+ 			})
+ 			s.EnabledListeners = []string{schemeHTTP}
+ 			s.Host = "127.0.0.1"
+-			s.GracefulTimeout = 50 * time.Millisecond
++			s.GracefulTimeout = 200 * time.Millisecond
+ 
+ 			entered := make(chan struct{})
+ 			release := make(chan struct{})
+ 			t.Cleanup(func() { close(release) })
+-			s.SetHandler(http.HandlerFunc(func(http.ResponseWriter, *http.Request) {
++			readErr := make(chan error, 1)
++			s.SetHandler(http.HandlerFunc(func(_ http.ResponseWriter, r *http.Request) {
+ 				close(entered)
++				if tt.stallBody {
++					defer handlerReturned.Store(true)
++					_, err := io.ReadAll(r.Body)
++					readErr <- err
++					// Without the wait for handlers, ServerShutdown starts within this window.
++					time.Sleep(20 * time.Millisecond)
++					return
++				}
+ 				<-release
+ 			}))
+ 			require.NoError(t, s.Listen())
+@@ -71,10 +88,28 @@ func TestServeAndShutdown(t *testing.T) {
+ 				}()
+ 				<-entered
+ 			}
++			if tt.stallBody {
++				conn, err := net.Dial("tcp", fmt.Sprintf("127.0.0.1:%d", s.Port))
++				require.NoError(t, err)
++				t.Cleanup(func() { conn.Close() })
++				_, err = fmt.Fprint(conn, "POST / HTTP/1.1\r\nHost: test\r\nContent-Length: 64\r\n\r\npartial")
++				require.NoError(t, err)
++				<-entered
++			}
+ 
+ 			require.NoError(t, s.Shutdown())
+ 			require.NoError(t, <-served)
+ 			require.Equal(t, int32(1), serverShutdownCalls.Load())
++
++			if tt.stallBody {
++				select {
++				case err := <-readErr:
++					require.Error(t, err, "closing the server must fail the stalled body read")
++					require.True(t, returnedBeforeServerShutdown.Load(), "the woken handler must return before ServerShutdown")
++				case <-time.After(5 * time.Second):
++					t.Fatal("handler still blocked reading the stalled body")
++				}
++			}
+ 		})
+ 	}
+ }
+```
+
+---
+
+### Incident Patch 2: `9d722e64` (2026-11-03)
+**Commit Message**: chore: remove stale hfresh comments, fix schema test (#13727)
+
+**File**: `CLAUDE.md` (modified, +1/-1)
+```diff
+@@ -68,7 +68,7 @@ Data path DB → Index → Shard → Store:
+ - **Shard** is the unit of storage: an LSM store for objects and properties, vector index(es), and the inverted index.
+ - **LSM store** (`lsmkv`) bucket strategies: **Replace** (one value per key), **SetCollection** (unordered values per key), **MapCollection** (key-value pairs per key; legacy BM25 index), **RoaringSet** (bitmaps; filterable index), **RoaringSetRange** (range filters), **Inverted** (BM25 with BlockMax WAND).
+ 
+-Vector indexes (`adapters/repos/db/vector/`): **HNSW** (primary; PQ/BQ/SQ/RQ compression, multi-vector, tombstone cleanup), **Flat** (brute force for small datasets), **Dynamic** (switches between flat and HNSW based on data size), **HFresh** (SPFresh algorithm, work in progress).
++Vector indexes (`adapters/repos/db/vector/`): **HNSW** (primary; PQ/BQ/SQ/RQ compression, multi-vector, tombstone cleanup), **Flat** (brute force for small datasets), **Dynamic** (switches between flat and HNSW based on data size), **HFresh** (SPFresh algorithm, disk-resident postings).
+ 
+ Modules implement `Module` (`Name()`, `Init()`, `Type()`) and optionally provide HTTP handlers, vectorization, generative capabilities or reranking. `MakeAppState()` in `adapters/handlers/rest/configure_api.go` does all startup wiring: DB, schema manager, cluster/RAFT services, module registration, gRPC server and monitoring.
+ 
+```
+
+**File**: `adapters/repos/db/vector/hfresh/hfresh.go` (modified, +0/-1)
+```diff
+@@ -52,7 +52,6 @@ var _ common.VectorIndex = (*HFresh)(nil)
+ // HFresh is an implementation of a vector index using the SPFresh algorithm.
+ // It spawns background workers to handle split, merge, and reassign operations,
+ // while exposing a synchronous API for searching and updating vectors.
+-// Note: this is a work in progress and not all features are implemented yet.
+ type HFresh struct {
+ 	id               string
+ 	logger           logrus.FieldLogger
+```
+
+**File**: `cluster/schema/movement_guard.go` (modified, +14/-3)
+```diff
+@@ -20,6 +20,7 @@ import (
+ 	schemaConfig "github.com/weaviate/weaviate/entities/schema/config"
+ 	dynamicent "github.com/weaviate/weaviate/entities/vectorindex/dynamic"
+ 	flatent "github.com/weaviate/weaviate/entities/vectorindex/flat"
++	hfreshent "github.com/weaviate/weaviate/entities/vectorindex/hfresh"
+ 	hnswent "github.com/weaviate/weaviate/entities/vectorindex/hnsw"
+ )
+ 
+@@ -80,9 +81,8 @@ func vecDelta(name string, oldCfg, newCfg any) string {
+ 	no, normOk1 := normalizeVectorConfig(oldCfg)
+ 	nn, normOk2 := normalizeVectorConfig(newCfg)
+ 	if !normOk1 || !normOk2 {
+-		// Unknown config type (e.g. the experimental hfresh index, whose fields we don't yet
+-		// classify): we can't isolate its structural from its query-time fields, so fail closed on
+-		// any real change — but a no-op update changes nothing on disk and must pass.
++		// Unknown config type: we can't isolate its structural from its query-time fields, so fail
++		// closed on any real change — but a no-op update changes nothing on disk and must pass.
+ 		if reflect.DeepEqual(oldCfg, newCfg) {
+ 			return ""
+ 		}
+@@ -110,6 +110,8 @@ func normalizeVectorConfig(cfg any) (any, bool) {
+ 		// threshold is frozen at index construction so a user changing it does nothing
+ 		c.Threshold = 0
+ 		return c, true
++	case hfreshent.UserConfig:
++		return normalizeHFresh(c), true
+ 	default:
+ 		return nil, false
+ 	}
+@@ -152,6 +154,15 @@ func normalizeFlat(c flatent.UserConfig) flatent.UserConfig {
+ 	return c
+ }
+ 
++// normalizeHFresh zeroes the query-time-safe leaves of an hfresh config on a value copy. Only
++// searchProbe and rq.rescoreLimit are applied to a live index (HFresh.UpdateUserConfig); every
++// other leaf stays structural, so a change to it still blocks the move.
++func normalizeHFresh(c hfreshent.UserConfig) hfreshent.UserConfig {
++	c.SearchProbe = 0
++	c.RQ.RescoreLimit = 0
++	return c
++}
++
+ func findProp(c *models.Class, name string) *models.Property {
+ 	for _, p := range c.Properties {
+ 		if p.Name == name {
+```
+
+**File**: `cluster/schema/schema_test.go` (modified, +9/-3)
+```diff
+@@ -627,8 +627,7 @@ func Test_UpdateClass_MovementRejection(t *testing.T) {
+ 			{"named vector added", &models.Class{Class: className}, named(map[string]any{"v1": hnswent.UserConfig{}})},
+ 			{"named vector removed", named(map[string]any{"v1": hnswent.UserConfig{}}), &models.Class{Class: className}},
+ 			{"named vector structural change", named(map[string]any{"v1": hnswent.UserConfig{}}), named(map[string]any{"v1": hnswent.UserConfig{PQ: hnswent.PQConfig{Enabled: true}}})},
+-			// hfresh is an unclassified (experimental) index type: any real change fails closed.
+-			{"hfresh field change", legacy(hfreshent.UserConfig{MaxPostingSizeKB: 48}), legacy(hfreshent.UserConfig{MaxPostingSizeKB: 64})},
++			{"hfresh structural param", legacy(hfreshent.UserConfig{MaxPostingSizeKB: 48}), legacy(hfreshent.UserConfig{MaxPostingSizeKB: 64})},
+ 			{"hfresh distance change", legacy(hfreshent.UserConfig{Distance: "cosine"}), legacy(hfreshent.UserConfig{Distance: "l2-squared"})},
+ 		}
+ 		for _, tc := range cases {
+@@ -649,8 +648,9 @@ func Test_UpdateClass_MovementRejection(t *testing.T) {
+ 			// Test_vectorConfigClassificationComplete. dynamic-threshold and a deferred-safe field
+ 			// are kept explicitly because both are deliberate, contestable classifications.
+ 			{"no vector change", legacy(hnswent.UserConfig{Distance: "cosine"}), legacy(hnswent.UserConfig{Distance: "cosine"})},
+-			// A no-op update on an unclassified (hfresh) config must pass — nothing changed on disk.
+ 			{"hfresh no-op", legacy(hfreshent.UserConfig{MaxPostingSizeKB: 48, Distance: "cosine"}), legacy(hfreshent.UserConfig{MaxPostingSizeKB: 48, Distance: "cosine"})},
++			{"hfresh searchProbe", legacy(hfreshent.UserConfig{SearchProbe: 64}), legacy(hfreshent.UserConfig{SearchProbe: 256})},
++			{"hfresh rescoreLimit", legacy(hfreshent.UserConfig{RQ: hnswent.RQConfig{Enabled: true, Bits: 1, RescoreLimit: 350}}), legacy(hfreshent.UserConfig{RQ: hnswent.RQConfig{Enabled: true, Bits: 1, RescoreLimit: 500}})},
+ 			{"hnsw query-time knob", legacy(hnswent.UserConfig{EF: 10}), legacy(hnswent.UserConfig{EF: 20})},
+ 			{"hnsw deferred-safe field", legacy(hnswent.UserConfig{MaxConnections: 16}), legacy(hnswent.UserConfig{MaxConnections: 32})},
+ 			{"dynamic threshold", legacy(dynamicent.UserConfig{Threshold: 1000}), legacy(dynamicent.UserConfig{Threshold: 2000})},
+@@ -693,6 +693,7 @@ var (
+ 		"flat.VectorCacheMaxObjects", "flat.SkipDefaultQuantization", "flat.TrackDefaultQuantization",
+ 		"flat.PQ.RescoreLimit", "flat.PQ.Cache", "flat.BQ.RescoreLimit", "flat.BQ.Cache",
+ 		"flat.SQ.RescoreLimit", "flat.SQ.Cache", "flat.RQ.RescoreLimit", "flat.RQ.Cache", "dynamic.Threshold",
++		"hfresh.SearchProbe", "hfresh.RQ.RescoreLimit",
+ 	}
+ 	structuralLeaves = []string{
+ 		"hnsw.Distance", "hnsw.PQ.Enabled", "hnsw.PQ.BitCompression", "hnsw.PQ.Segments", "hnsw.PQ.Centroids",
+@@ -701,6 +702,10 @@ var (
+ 		"hnsw.RQ.Centering", "hnsw.RQ.TrainingLimit",
+ 		"flat.Distance", "flat.PQ.Enabled", "flat.BQ.Enabled", "flat.SQ.Enabled", "flat.RQ.Enabled", "flat.RQ.Bits",
+ 		"dynamic.Distance",
++		"hfresh.MaxPostingSizeKB", "hfresh.Replicas", "hfresh.Distance", "hfresh.RQ.Enabled", "hfresh.RQ.Bits",
++		"hfresh.RQ.Centering", "hfresh.RQ.TrainingLimit", "hfresh.Multivector.Enabled", "hfresh.Multivector.Aggregation",
++		"hfresh.Multivector.MuveraConfig.Enabled", "hfresh.Multivector.MuveraConfig.KSim",
++		"hfresh.Multivector.MuveraConfig.DProjections", "hfresh.Multivector.MuveraConfig.Repetitions",
+ 	}
+ )
+ 
+@@ -753,6 +758,7 @@ func Test_vectorConfigClassificationComplete(t *testing.T) {
+ 		{"hnsw", reflect.TypeOf(hnswent.UserConfig{})},
+ 		{"flat", reflect.TypeOf(flatent.UserConfig{})},
+ 		{"dynamic", reflect.TypeOf(dynamicent.UserConfig{})},
++		{"hfresh", reflect.TypeOf(hfreshent.UserConfig{})},
+ 	} {
+ 		filled := reflect.New(root.typ).Elem()
+ 		fillNonZero(filled)
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #13689** (2026-10-30): dtm: cap the ack error a node writes for many failing units or groups (@etiennedi)
-- **PR #13685** (2026-10-30): fix(reindex): limit the stale-state sweep to a task's tenants (@etiennedi)
-- **PR #13684** (2026-10-30): reindex: log the group's unit count instead of every unit ID (@etiennedi)
-- **PR #13683** (2026-10-30): Bound the task-list call in the backup reindex gate (@etiennedi)
-- **PR #13681** (2026-10-30): backup: tell operators how to get past a reindex refusal (@etiennedi)
-- **PR #13680** (2026-10-30): Reindex: report a frozen tenant in ?tenants= as frozen, not missing (@etiennedi)
+- **PR #13737** (closed): rerank: fail instead of panicking when a reranker returns the wrong number of scores (@jfrancoa)
+- **PR #13736** (closed): reranker clients: fail instead of panicking on a malformed provider response (@jfrancoa)
+- **PR #13735** (closed): reranker-contextualai: stop forwarding topN to the provider (@jfrancoa)
+- **PR #13732** (2026-11-03): Handle EC of collection creation in `TestReplicaMovementOneWriteExtraSlowFileCopy` (@tsmith023)
+- **PR #13731** (2026-11-03): Merge stable/v1.38 into stable/v1.39 (@antas-marcin)
+- **PR #13727** (2026-11-03): chore: remove stale hfresh comments, fix schema test (@trengrj)
 
 ---
 
@@ -1774,28 +2081,32 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. test): match testShardWithSettings signature after v1.39 merge
+## X. Merge pull request #13646 from weaviate/fix/close-busy-http-servers
 
 **RULE**:
-When implementing operations in `adapters/repos/db/shard_vector_search_missing_object_integration_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in weaviate/weaviate. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `adapters/handlers/rest/configure_api.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in weaviate/weaviate. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2c595a64`: test): match testShardWithSettings signature after v1.39 merge. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `87e00afc`: Merge pull request #13646 from weaviate/fix/close-busy-http-servers. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `adapters/repos/db/shard_vector_search_missing_object_integration_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `adapters/handlers/rest/configure_api.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-				enthnsw.NewDefaultUserConfig(), false, false)
+		// closes. Public HTTP has drained by now, or been closed and its handlers
+		// awaited (see ServeAndShutdown). gRPC then gets up to 20s to stop. After
+		// that, gRPC may still be stopping in the background (see shutdownHooks).
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-				enthnsw.NewDefaultUserConfig(), false, false, false)
+		// closes. Public HTTP has stopped by now; it waits up to
+		// GracefulTimeout. gRPC then gets up to 20s to stop. After that, gRPC
+		// may still be stopping in the background (see shutdownHooks).
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2c595a64` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `87e00afc` are properly handled with clean fallback behavior.

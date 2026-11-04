@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/metalbear-co-mirrord-learnings.md`  
 > **Source**: github ([https://github.com/metalbear-co/mirrord](https://github.com/metalbear-co/mirrord))  
-> **Source Version**: `c4bb0e3d`  
+> **Source Version**: `fbe27c3e`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T20:46:37.798Z  
+> **Timestamp**: 2026-11-03T23:20:12.435Z  
 > **Learning ID**: `learn-github-metalbear-co-mirrord`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/metalbear-co-mirrord-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/metalbear-co/mirrord](https://github.com/metalbear-co/mirrord))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T20:46:37.791Z  
+> **Harvest Timestamp**: 2026-11-03T23:20:10.913Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Run any process, on your machine or in an AI agent's environment, as if it were a pod in your Kubernetes cluster: real env vars, DNS, network, traffic.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 5396 stars
+- **Stars / Engagement**: 5401 stars
 
 ---
 
@@ -1535,177 +1535,58 @@ mod test {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c4bb0e3d` (2026-10-31)
-**Commit Message**: Merge pull request #5181 from metalbear-co/appleutil-v10
+### Incident Patch 1: `808c4a26` (2026-11-02)
+**Commit Message**: up custom modes branching: let built-in modes' queues follow incoming
 
-Use Apple util bundle v10
-
-**File**: `changelog.d/+apple-utils-v10.changed.md` (added, +1/-0)
+**File**: `mirrord/up/src/config.rs` (modified, +5/-14)
 ```diff
-@@ -0,0 +1 @@
-+Update the bundled apple-utils to `v10`.
-```
-
-**File**: `mirrord/sip/src/bundle.rs` (modified, +12/-1)
-```diff
-@@ -5,7 +5,7 @@ use crate::logger::SipLoggerGuard;
- /// Paths to system directories that are bundled in our SIP util bundle.
- ///
- /// If an executed binary is located in one of these, we try to find it in the bundle.
--pub const BUNDLED_DIRS: [&str; 4] = ["/bin", "/sbin", "/usr/bin", "/usr/sbin"];
-+pub const BUNDLED_DIRS: [&str; 5] = ["/bin", "/sbin", "/usr/bin", "/usr/sbin", "/usr/libexec"];
+@@ -223,18 +223,12 @@ impl ModeConfig {
+ }
  
- pub(super) fn lookup_suffix(binary: &Path) -> Option<&Path> {
-     BUNDLED_DIRS
-@@ -71,6 +71,11 @@ mod test {
-     ///     * /bin
-     ///         * /cat
-     ///     * /sbin
-+    ///     * /libexec
-+    ///         * /path_helper
-+    ///         * /cups
-+    ///             * /daemon
-+    ///                 * /cups-exec
-     fn make_bundle() -> TempDir {
-         let root = tempfile::tempdir().unwrap();
- 
-@@ -82,6 +87,9 @@ mod test {
-         std::fs::create_dir(root.path().join("usr/bin")).unwrap();
-         std::fs::write(root.path().join("usr/bin/cat"), []).unwrap();
-         std::fs::create_dir(root.path().join("usr/sbin")).unwrap();
-+        std::fs::create_dir_all(root.path().join("usr/libexec/cups/daemon")).unwrap();
-+        std::fs::write(root.path().join("usr/libexec/path_helper"), []).unwrap();
-+        std::fs::write(root.path().join("usr/libexec/cups/daemon/cups-exec"), []).unwrap();
- 
-         root
+ impl From<ServiceMode> for ModeConfig {
+-    /// The built-in mode as a custom one.
++    /// The built-in mode as a custom one: its queues follow `incoming`, as they do for a custom
++    /// mode without `queues`.
+     fn from(incoming: ServiceMode) -> Self {
+-        let queues = match incoming {
+-            ServiceMode::Split => Some(QueueSplitMode::Split),
+-            ServiceMode::Mirror => Some(QueueSplitMode::Mirror),
+-            // Replacing the target takes over its queues whole, so they aren't split.
+-            ServiceMode::Replace => None,
+-        };
+         Self {
+             incoming: Some(incoming),
+-            queues,
+-            db_branching: None,
++            ..Self::default()
+         }
      }
-@@ -94,6 +102,9 @@ mod test {
-     #[case(Path::new("/usr/sbin/ifconfig"), true)]
-     #[case(Path::new("/usr/sbin/mount"), false)]
-     #[case(Path::new("/sbin/ifconfig"), true)]
-+    #[case(Path::new("/usr/libexec/path_helper"), true)]
-+    #[case(Path::new("/usr/libexec/cups/daemon/cups-exec"), true)]
-+    #[case(Path::new("/usr/libexec/missing_helper"), false)]
-     #[test]
-     fn find_in_bundle(#[case] binary: &Path, #[case] expect_found: bool) {
-         let bundle = make_bundle();
-```
-
-**File**: `mirrord/sip/src/lib.rs` (modified, +1/-1)
-```diff
-@@ -104,7 +104,7 @@ mod main {
-     ///
-     /// Must be kept in sync with the version downloaded by `xtask` (see
-     /// `xtask/src/tasks/sip_binaries.rs`).
--    pub const APPLE_UTILS_VERSION: &str = "v9";
-+    pub const APPLE_UTILS_VERSION: &str = "v10";
- 
-     /// Set on the first patched process when SIP patching had to use an x86_64 system binary.
-     pub const MIRRORD_SIP_X64_FALLBACK_ENV: &str = "MIRRORD_SIP_X64_FALLBACK";
-```
-
-**File**: `xtask/src/tasks/sip_binaries.rs` (modified, +1/-1)
-```diff
-@@ -9,7 +9,7 @@ use anyhow::{Context, Result};
- ///
- /// Must be kept in sync with `mirrord_sip::APPLE_UTILS_VERSION`, which the CLI uses at runtime to
- /// decide whether the binaries already extracted to `~/.mirrord/binaries` match this release.
--const APPLE_UTILS_VERSION: &str = "v9";
-+const APPLE_UTILS_VERSION: &str = "v10";
- 
- /// Fetches the SIP utilities bundle once per workspace and reuses the cached archive afterwards.
- pub fn download() -> Result<PathBuf> {
-```
-
----
-
-### Incident Patch 2: `c9f62d2d` (2026-10-30)
-**Commit Message**: Use Apple util bundle v10
-
-**File**: `changelog.d/+apple-utils-v10.changed.md` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+Update the bundled apple-utils to `v10`.
-```
-
-**File**: `mirrord/sip/src/bundle.rs` (modified, +12/-1)
-```diff
-@@ -5,7 +5,7 @@ use crate::logger::SipLoggerGuard;
- /// Paths to system directories that are bundled in our SIP util bundle.
- ///
- /// If an executed binary is located in one of these, we try to find it in the bundle.
--pub const BUNDLED_DIRS: [&str; 4] = ["/bin", "/sbin", "/usr/bin", "/usr/sbin"];
-+pub const BUNDLED_DIRS: [&str; 5] = ["/bin", "/sbin", "/usr/bin", "/usr/sbin", "/usr/libexec"];
- 
- pub(super) fn lookup_suffix(binary: &Path) -> Option<&Path> {
-     BUNDLED_DIRS
-@@ -71,6 +71,11 @@ mod test {
-     ///     * /bin
-     ///         * /cat
-     ///     * /sbin
-+    ///     * /libexec
-+    ///         * /path_helper
-+    ///         * /cups
-+    ///             * /daemon
-+    ///                 * /cups-exec
-     fn make_bundle() -> TempDir {
-         let root = tempfile::tempdir().unwrap();
- 
-@@ -82,6 +87,9 @@ mod test {
-         std::fs::create_dir(root.path().join("usr/bin")).unwrap();
-         std::fs::write(root.path().join("usr/bin/cat"), []).unwrap();
-         std::fs::create_dir(root.path().join("usr/sbin")).unwrap();
-+        std::fs::create_dir_all(root.path().join("usr/libexec/cups/daemon")).unwrap();
-+        std::fs::write(root.path().join("usr/libexec/path_helper"), []).unwrap();
-+        std::fs::write(root.path().join("usr/libexec/cups/daemon/cups-exec"), []).unwrap();
- 
-         root
-     }
-@@ -94,6 +102,9 @@ mod test {
-     #[case(Path::new("/usr/sbin/ifconfig"), true)]
-     #[case(Path::new("/usr/sbin/mount"), false)]
-     #[case(Path::new("/sbin/ifconfig"), true)]
-+    #[case(Path::new("/usr/libexec/path_helper"), true)]
-+    #[case(Path::new("/usr/libexec/cups/daemon/cups-exec"), true)]
-+    #[case(Path::new("/usr/libexec/missing_helper"), false)]
-     #[test]
-     fn find_in_bundle(#[case] binary: &Path, #[case] expect_found: bool) {
-         let bundle = make_bundle();
-```
-
-**File**: `mirrord/sip/src/lib.rs` (modified, +1/-1)
-```diff
-@@ -104,7 +104,7 @@ mod main {
-     ///
-     /// Must be kept in sync with the version downloaded by `xtask` (see
-     /// `xtask/src/tasks/sip_binaries.rs`).
--    pub const APPLE_UTILS_VERSION: &str = "v9";
-+    pub const APPLE_UTILS_VERSION: &str = "v10";
- 
-     /// Set on the first patched process when SIP patching had to use an x86_64 system binary.
-     pub const MIRRORD_SIP_X64_FALLBACK_ENV: &str = "MIRRORD_SIP_X64_FALLBACK";
-```
-
-**File**: `xtask/src/tasks/sip_binaries.rs` (modified, +1/-1)
-```diff
-@@ -9,7 +9,7 @@ use anyhow::{Context, Result};
- ///
- /// Must be kept in sync with `mirrord_sip::APPLE_UTILS_VERSION`, which the CLI uses at runtime to
- /// decide whether the binaries already extracted to `~/.mirrord/binaries` match this release.
--const APPLE_UTILS_VERSION: &str = "v9";
-+const APPLE_UTILS_VERSION: &str = "v10";
- 
- /// Fetches the SIP utilities bundle once per workspace and reuses the cached archive afterwards.
- pub fn download() -> Result<PathBuf> {
+ }
+@@ -981,13 +975,10 @@ impl ServiceConfig {
+                     cfg.target.path,
+                     Some(Target::Deployment(_) | Target::Rollout(_) | Target::StatefulSet(_))
+                 ));
+-        // A built-in mode's `queues` is its own definition, not a line the user wrote: entries
+-        // named after one can't set it.
+-        let builtin = ServiceMode::from_name(&self.default_mode).is_some();
+         let queues_origin = match mode.queues {
+             _ if splits_queues.not() => RequestOrigin::Config,
+-            Some(_) if builtin.not() => RequestOrigin::ModeLine,
+-            _ => RequestOrigin::Default,
++            Some(_) => RequestOrigin::ModeLine,
++            None => RequestOrigin::Default,
+         };
+         if splits_queues {
+             // Without the line, queue messages are shared the way incoming traffic is.
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5181** (2026-10-31): Use Apple util bundle v10 (@0x00A5)
-- **PR #5179** (2026-10-30): Release 3.282.0 (@cubby-mb[bot])
-- **PR #5176** (closed): preview: push local code into preview pods through the operator (spike) (@iniw)
-- **PR #5173** (2026-10-29): Bump libz-sys to 1.1.31 for RUSTSEC-2026-0418 (@hank-metalbear)
-- **PR #5170** (2026-10-30): fix(tests): retain dirty iptables namespace through assertions (@meowjesty)
-- **PR #5169** (2026-10-28): Configurable agent http2 recv header limit (@0x00A5)
+- **PR #5190** (2026-11-02): Move intproxy connection to higher FD (@0x00A5)
+- **PR #5188** (2026-11-03): Add the share link port to the preview status (@skreborn)
+- **PR #5187** (closed): Keep the layer's proxy connection off fd 3 (COR-2129) (@linear-code[bot])
+- **PR #5186** (2026-11-02): Clear the pulldown-cmark and zip advisories (@skreborn)
+- **PR #5185** (2026-11-02): Release 3.284.0 (@cubby-mb[bot])
+- **PR #5184** (2026-11-01): Release 3.283.0 (@cubby-mb[bot])
 
 ---
 
@@ -1725,39 +1606,45 @@ Use Apple util bundle v10
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #5181 from metalbear-co/appleutil-v10
+## X. up custom modes branching: let built-in modes' queues follow incoming
 
 **RULE**:
-When implementing operations in `mirrord/sip/src/bundle.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in metalbear-co/mirrord. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `mirrord/up/src/config.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in metalbear-co/mirrord. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c4bb0e3d`: Merge pull request #5181 from metalbear-co/appleutil-v10. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `808c4a26`: up custom modes branching: let built-in modes' queues follow incoming. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `mirrord/sip/src/bundle.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `mirrord/up/src/config.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-pub const BUNDLED_DIRS: [&str; 5] = ["/bin", "/sbin", "/usr/bin", "/usr/sbin", "/usr/libexec"];
-    ///     * /libexec
-    ///         * /path_helper
-    ///         * /cups
-    ///             * /daemon
-    ///                 * /cups-exec
-        std::fs::create_dir_all(root.path().join("usr/libexec/cups/daemon")).unwrap();
-        std::fs::write(root.path().join("usr/libexec/path_helper"), []).unwrap();
-        std::fs::write(root.path().join("usr/libexec/cups/daemon/cups-exec"), []).unwrap();
-    #[case(Path::new("/usr/libexec/path_helper"), true)]
-    #[case(Path::new("/usr/libexec/cups/daemon/cups-exec"), true)]
-    #[case(Path::new("/usr/libexec/missing_helper"), false)]
+    /// The built-in mode as a custom one: its queues follow `incoming`, as they do for a custom
+    /// mode without `queues`.
+            ..Self::default()
+            Some(_) => RequestOrigin::ModeLine,
+            None => RequestOrigin::Default,
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-pub const BUNDLED_DIRS: [&str; 4] = ["/bin", "/sbin", "/usr/bin", "/usr/sbin"];
+    /// The built-in mode as a custom one.
+        let queues = match incoming {
+            ServiceMode::Split => Some(QueueSplitMode::Split),
+            ServiceMode::Mirror => Some(QueueSplitMode::Mirror),
+            // Replacing the target takes over its queues whole, so they aren't split.
+            ServiceMode::Replace => None,
+        };
+            queues,
+            db_branching: None,
+        // A built-in mode's `queues` is its own definition, not a line the user wrote: entries
+        // named after one can't set it.
+        let builtin = ServiceMode::from_name(&self.default_mode).is_some();
+            Some(_) if builtin.not() => RequestOrigin::ModeLine,
+            _ => RequestOrigin::Default,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c4bb0e3d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `808c4a26` are properly handled with clean fallback behavior.

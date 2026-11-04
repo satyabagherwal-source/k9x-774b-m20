@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/skyhook-io-radar-learnings.md`  
 > **Source**: github ([https://github.com/skyhook-io/radar](https://github.com/skyhook-io/radar))  
-> **Source Version**: `d9e73f40`  
+> **Source Version**: `2fa4ccf7`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-01T00:10:33.549Z  
+> **Timestamp**: 2026-11-03T21:44:52.159Z  
 > **Learning ID**: `learn-github-skyhook-io-radar`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/skyhook-io-radar-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/skyhook-io/radar](https://github.com/skyhook-io/radar))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-01T00:10:33.544Z  
+> **Harvest Timestamp**: 2026-11-03T21:44:50.604Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The missing open-source Kubernetes UI with a built-in MCP server for AI agents. See what's broken, why, and what changed. Issues, Topology, event timeline, Helm, GitOps, live service traffic, and cluster audits - all in one Go binary.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: package.json, go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 4000 stars
+- **Stars / Engagement**: 4026 stars
 
 ---
 
@@ -847,6 +847,290 @@ func Repository(image string) string {
 
 ```
 
+### Core Architecture Module: `internal/issues/admission_webhook_candidates.go`
+```
+package issues
+
+import (
+	"fmt"
+	"regexp"
+	"slices"
+	"sort"
+	"strings"
+	"time"
+
+	"github.com/skyhook-io/radar/internal/k8s"
+	"github.com/skyhook-io/radar/pkg/issuesapi"
+	"github.com/skyhook-io/radar/pkg/timeutil"
+	admissionv1 "k8s.io/api/admissionregistration/v1"
+	corev1 "k8s.io/api/core/v1"
+	networkingv1 "k8s.io/api/networking/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/labels"
+	"k8s.io/apimachinery/pkg/runtime"
+)
+
+// An admission rejection that names a webhook says which call failed but not
+// why; one that only says the create timed out names nothing. This pass adds
+// what the configuration and the backend's observed state show: failurePolicy,
+// timeoutSeconds, the backend Service's ready pods and, for a call that timed
+// out, NetworkPolicies that may keep the API server from reaching it.
+
+const (
+	factAdmissionWebhookCandidates = "admission_webhook_candidates"
+	maxAdmissionWebhookCandidates  = 5
+	// recentWebhookConfiguration is how new a configuration must be for its
+	// age to be stated and to rank it ahead of long-standing ones.
+	recentWebhookConfiguration = 24 * time.Hour
+)
+
+// admissionWebhookCallTimedOut matches a webhook call that waited out its
+// deadline rather than failing at once (refused, no endpoints, x509): the
+// shape a NetworkPolicy dropping the API server's packets produces.
+var admissionWebhookCallTimedOut = regexp.MustCompile(`(?i)context deadline exceeded|i/o timeout|Client\.Timeout|TLS handshake timeout`)
+
+// admissionPodCreators are the kinds whose FailedCreate is a Pod create.
+// A CronJob row is a Job's failure folded into its CronJob, unless the
+// CronJob controller failed creating the Job itself ("Error creating job:").
+var admissionPodCreators = map[string]string{
+	"ReplicaSet":  "apps",
+	"Deployment":  "apps",
+	"StatefulSet": "apps",
+	"DaemonSet":   "apps",
+	"Job":         "batch",
+	"CronJob":     "batch",
+}
+
+func isPodCreateAdmissionFailure(i Issue) bool {
+	if i.Category != issuesapi.CategoryAdmissionWebhookBlocking || (i.Reason != "WebhookUnavailable" && i.Reason != "CreateTimeout") ||
+		i.Namespace == "" || admissionPodCreators[i.Kind] != i.Group {
+		return false
+	}
+	if i.Kind == "CronJob" && strings.Contains(strings.ToLower(i.Message), "error creating job:") {
+		return false
+	}
+	// RelatedIssues composes (and so enriches) before grouping, and a grouped
+	// row can keep its representative's context.
+	return i.DiagnosticContext == nil || !slices.ContainsFunc(i.DiagnosticContext.Facts, func(f issuesapi.DiagnosticFact) bool {
+		return f.Type == factAdmissionWebhookCandidates
+	})
+}
+
+type admissionWebhookCandidateProvider interface {
+	admissionWebhookCandidatesFact(Issue, podTemplateAccess) *issuesapi.DiagnosticFact
+}
+
+func enrichAdmissionWebhookCandidates(shaped []Issue, p Provider, access podTemplateAccess) []Issue {
+	provider, ok := p.(admissionWebhookCandidateProvider)
+	if !ok {
+		return shaped
+	}
+	var out []Issue
+	for idx := range shaped {
+		i := shaped[idx]
+		if !isPodCreateAdmissionFailure(i) {
+			continue
+		}
+		fact := provider.admissionWebhookCandidatesFact(i, access)
+		if fact == nil {
+			continue
+		}
+		if out == nil {
+			out = append([]Issue(nil), shaped...)
+		}
+		ctx := issuesapi.DiagnosticContext{Role: issuesapi.DiagnosticRoleCandidate}
+		if i.DiagnosticContext != nil {
+			ctx = *i.DiagnosticContext
+			ctx.Role = issuesapi.DiagnosticRoleCandidate
+			ctx.Facts = slices.Clone(ctx.Facts)
+		}
+		ctx.Facts = append(ctx.Facts, *fact)
+		out[idx].DiagnosticContext = &ctx
+	}
+	if out == nil {
+		return shaped
+	}
+	return out
+}
+
+// admissionWebhook is one webhook's Pod CREATE scope and call settings.
+type admissionWebhook struct {
+	configuration   Ref
+	created         time.Time
+	name            string
+	mutating        bool
+	podCreate       bool
+	namespace       labels.Selector
+	objectSelector  bool
+	matchConditions bool
+	failurePolicy   string
+	timeoutSeconds  int32
+	service         *admissionv1.ServiceReference
+}
+
+type admissionWebhookSet struct {
+	webhooks []admissionWebhook
+	// unchecked names the configuration kinds that could not be inspected,
+	// with the reason.
+	unchecked []string
+}
+
+func (p *CacheProvider) admissionWebhooks(access podTemplateAccess) admissionWebhookSet {
+	var set admissionWebhookSet
+	for _, kind := range []string{"MutatingWebhookConfiguration", "ValidatingWebhookConfiguration"} {
+		const group = "admissionregistration.k8s.io"
+		if access.cluster != nil && !access.cluster(kind, group) {
+			set.unchecked = append(set.unchecked, kind+"s were not checked: the caller cannot list them.")
+			continue
+		}
+		if p.dynamic == nil || p.discovery == nil {
+			set.unchecked = append(set.unchecked, kind+"s were not checked: Radar has not cached them.")
+			continue
+		}
+		gvr, ok := p.discovery.GetGVRWithGroup(kind, group)
+		if !ok || !p.dynamic.IsClusterWideSynced(gvr) {
+			set.unchecked = append(set.unchecked, kind+"s were not checked: Radar has not cached them.")
+			continue
+		}
+		items, err := p.dynamic.ListWatched(gvr)
+		if err != nil {
+			set.unchecked = append(set.unchecked, kind+"s were not checked: Radar has not cached them.")
+			continue
+		}
+		unreadable := false
+		for _, item := range items {
+			ref := Ref{Group: group, Kind: kind, Name: item.GetName()}
+			if !access.canRead(ref) {
+				unreadable = true
+				continue
+			}
+			webhooks := compileAdmissionWebhooks(ref, item.Object)
+			for idx := range webhooks {
+				webhooks[idx].created = item.GetCreationTimestamp().Time
+			}
+			set.webhooks = append(set.webhooks, webhooks...)
+		}
+		if unreadable {
+			set.unchecked = append(set.unchecked, "Some "+kind+"s are not readable by the caller and were not checked.")
+		}
+	}
+	return set
+}
+
+func compileAdmissionWebhooks(ref Ref, obj map[string]any) []admissionWebhook {
+	type webhookSpec struct {
+		name              string
+		rules             []admissionv1.RuleWithOperations
+		namespaceSelector *metav1.LabelSelector
+		objectSelector    *metav1.LabelSelector
+		matchConditions   int
+		failurePolicy     *admissionv1.FailurePolicyType
+		timeoutSeconds    *int32
+		service           *admissionv1.ServiceReference
+	}
+	var specs []webhookSpec
+	if ref.Kind == "MutatingWebhookConfiguration" {
+		var config admissionv1.MutatingWebhookConfiguration
+		if runtime.DefaultUnstructuredConverter.FromUnstructured(obj, &config) != nil {
+			return nil
+		}
+		for _, w := range config.Webhooks {
+			specs = append(specs, webhookSpec{w.Name, w.Rules, w.NamespaceSelector, w.ObjectSelector, len(w.MatchConditions), w.FailurePolicy, w.TimeoutSeconds, w.ClientConfig.Service})
+		}
+	} else {
+		var config admissionv1.ValidatingWebhookConfiguration
+		if runtime.DefaultUnstructuredConverter.FromUnstructured(obj, &config) != nil {
+			return nil
+		}
+		for _, w := range config.Webhooks {
+			specs = append(specs, webhookSpec{w.Name, w.Rules, w.NamespaceSelector, w.ObjectSelector, len(w.MatchConditions), w.FailurePolicy, w.TimeoutSeconds, w.ClientConfig.Service})
+		}
+	}
+	out := make([]admissionWebhook, 0, len(specs))
+	for _, spec := range specs {
+		ns := labels.Everything()
+		if spec.namespaceSelector != nil {
+			selector, err := metav1.LabelSelectorAsSelector(spec.namespaceSelector)
+			if err != nil {
+				continue
+			}
+			ns = selector
+		}
+		// The API server defaults: failurePolicy Fail, timeoutSeconds 10.
+		failurePolicy := string(admissionv1.Fail)
+		if spec.failurePolicy != nil {
+			failurePolicy = string(*spec.failurePolicy)
+		}
+		timeout := int32(10)
+		if spec.timeoutSeconds != nil {
+			timeout = *spec.timeoutSeconds
+		}
+		create, _ := podRuleOperations(spec.rules)
+		out = append(out, admissionWebhook{
+			configuration: ref, name: spec.name, mutating: ref.Kind == "MutatingWebhookConfiguration",
+			podCreate: create, namespace: ns,
+			objectSelector:  spec.objectSelector != nil && (len(spec.objectSelector.MatchLabels) > 0 || len(spec.objectSelector.MatchExpressions) > 0),
+			matchConditions: spec.matchConditions > 0,
+			failurePolicy:   failurePolicy, timeoutSeconds: timeout, service: spec.service,
+		})
+	}
+	return out
+}
+
+func (p *CacheProvider) admissionWebhookCandidatesFact(issue Issue, access podTemplateAccess) *issuesapi.DiagnosticFact {
+	if p == nil || p.cache == nil {
+		return nil
+	}
+	if issue.Reason == "WebhookUnavailable" {
+		return p.namedWebhookFact(issue, access)
+	}
+	return p.createTimeoutFact(issue, access)
+}
+
+// namedWebhookFact describes the webhook a failed call names. The message
+// proves the call was made, so its scope is not re-checked.
+func (p *CacheProvider) namedWebhookFact(issue Issue, access podTemplateAccess) *issuesapi.DiagnosticFact {
+	blocker, ok := k8s.ParseAdmissionBlocker(issue.Message)
+	if !ok || blocker.WebhookName == "" {
+		return nil
+	}
+	timedOut := admissionWebhookCallTimedOut.MatchString(issue.Message)
+	var lines []string
+	var refs []Ref
+	for _, w := range p.admissionWebhooks(access).webhooks {
+		if w.name != blocker.WebhookName {
+			continue
+		}
+		line, lineRefs, _ := p.describeAdmissionWebhook(w, timedOut, false, access)
+		lines = append(lines, line)
+		refs = append(refs, lineRefs...)
+	}
+	if len(lines) == 0 {
+		return nil
+	}
+	return &issuesapi.DiagnosticFact{
+		Type:       factAdmissionWebhookCandidates,
+		Message:    namedWebhookMessage(blocker.WebhookName, lines),
+		Confidence: issuesapi.ConfidenceHigh,
+		Refs:       limitRefs(dedupeRefs(refs), maxDiagnosticRefs),
+	}
+}
+
+// namedWebhookMessage presents the named webhook. Webhook names are unique
+// only within a configuration, so when several declare the name the error
+// does not say which one was called.
+func namedWebhookMessage(name string, lines []string) string {
+	if len(lines) == 1 {
+		return "Failing call: " + lines[0] + "."
+	}
+	return fmt.Sprintf("The error names webhook %s, which %d configurations declare; it does not say which one was called: %s.", name, len(lines), strings.Join(lines, ". "))
+}
+
+// createTimeoutFact lists the webhooks that match Pod creation in the
+// issue's namespace. The timeout names no webhook, so they are candidates.
+func (p *CacheProvider) createTimeoutF
+```
+
 ### Core Architecture Module: `internal/k8s/connection_state.go`
 ```
 package k8s
@@ -1438,6 +1722,7 @@ func containerRestartLoop(cs *corev1.ContainerStatus, now time.Time) (restartLoo
 package search
 
 import (
+	"net/netip"
 	"strings"
 
 	"github.com/skyhook-io/radar/pkg/resourceid"
@@ -1473,6 +1758,7 @@ type candidate struct {
 	Labels      map[string]string
 	Annotations map[string]string
 	Images      []string
+	IPs         []ipField // addresses the object holds (Pod, Service, Node)
 	Content     []ContentField
 	// report is a Trivy Operator report's findings, matched in place by
 	// scoreToken rather than copied into Content, within findings' limits.
@@ -1506,7 +1792,15 @@ func match(q Query, c candidate) (int, []MatchedField, []MatchSnippet, bool) {
 	var matched []MatchedField
 	var snippets []MatchSnippet
 	for _, tok := range q.Tokens {
-		best, site, snippet, ok := scoreToken(tok, c)
+		var best int
+		var site string
+		var snippet *MatchSnippet
+		var ok bool
+		if addr, isIP := q.ips[tok]; isIP {
+			best, site, snippet, ok = scoreIPToken(tok, addr, c)
+		} else {
+			best, site, snippet, ok = scoreToken(tok, c)
+		}
 		if !ok {
 			return 0, nil, nil, false
 		}
@@ -1655,6 +1949,61 @@ func scoreToken(tok string, c candidate) (int, string, *MatchSnippet, bool) {
 	return best, bestSite, bestSnippet, true
 }
 
+// scoreIPToken matches an IP token: an address the object holds scores
+// highest, under site ip:<role>; otherwise the name, an image, a label,
+// annotation or content value must mention the address whole, so 10.0.1.2
+// never matches 10.0.1.23.
+func scoreIPToken(tok string, addr netip.Addr, c candidate) (int, string, *MatchSnippet, bool) {
+	for _, f := range c.IPs {
+		if f.Addr == addr {
+			return f.Score, "ip:" + f.Role, nil, true
+		}
+	}
+	v6 := addr.Is6()
+	best := 0
+	bestSite := ""
+	var bestSnippet *MatchSnippet
+	consider := func(score int, site string, snip *MatchSnippet) {
+		if score > best {
+			best, bestSite, bestSnippet = score, site, snip
+		}
+	}
+	// A name spelled as the address only mentions it, below any holder.
+	if strings.EqualFold(c.Name, tok) {
+		consider(scoreLabelValExact, "name", nil)
+	}
+	for _, img := range c.Images {
+		if indexIP(img, tok, v6) >= 0 {
+			consider(scoreImageSubstr, "image", nil)
+		}
+	}
+	for k, v := range c.Labels {
+		if indexIP(v, tok, v6) >= 0 {
+			consider(scoreLabelValSubstr, "label:"+k, nil)
+		}
+	}
+	for k, v := range c.Annotations {
+		if indexIP(v, tok, v6) >= 0 {
+			consider(scoreAnnoSubstr, "annotation:"+k, nil)
+		}
+	}
+	for _, cf := range c.Content {
+		at := indexIP(cf.Value, tok, v6)
+		if at < 0 {
+			continue
+		}
+		score := scoreContentSubstr
+		if strings.EqualFold(cf.Value, tok) {
+			score = scoreContentExact
+		}
+		consider(score, "content:"+cf.Path, &MatchSnippet{Token: tok, Path: cf.Path, Snippet: snippetAt(cf.Value, at)})
+	}
+	if best == 0 {
+		return 0, "", nil, false
+	}
+	return best, bestSite, bestSnippet, true
+}
+
 func snippetForToken(value, tok string) string {
 	runes := []rune(value)
 	if len(runes) <= maxSnippetRunes {
@@ -1665,6 +2014,15 @@ func snippetForToken(value, tok string) string {
 	byteIdx := strings.Index(valueLow, tokLow)
 	if byteIdx < 0 {
 		return string(runes[:maxSnippetRunes])
+	}
+	return snippetAt(value, byteIdx)
+}
+
+// snippetAt cuts a snippet of value centered on the byte offset byteIdx.
+func snippetAt(value string, byteIdx int) string {
+	runes := []rune(value)
+	if len(runes) <= maxSnippetRunes {
+		return value
 	}
 	prefixRunes := len([]rune(value[:byteIdx]))
 	half := maxSnippetRunes / 2
@@ -2099,108 +2457,6 @@ export function LogCore({
       const v = localStorage.getItem('radar-logs-export-format') as LogExport
 ```
 
-### Core Architecture Module: `packages/k8s-ui/src/components/resources/renderers/AWSMachineRenderer.tsx`
-```
-import { Cpu, Network, Cloud } from 'lucide-react'
-import { clsx } from 'clsx'
-import { Section, PropertyList, Property, ConditionsSection, AlertBanner, useOperationalIssuesShown} from '../../ui/drawer-components'
-import { getCAPIConditions } from '../resource-utils-capi'
-import { getAWSMachineStatus, getAWSMachineInstanceType, getAWSMachineInstanceState, getAWSMachineInstanceID } from '../resource-utils-aws-capi'
-
-interface Props {
-  data: any
-  onNavigate?: (ref: { kind: string; namespace: string; name: string; group?: string }) => void
-}
-
-export function AWSMachineRenderer({ data }: Props) {
-  const spec = data.spec || {}
-  const status = data.status || {}
-  const conditions = getCAPIConditions(data)
-
-  const machineStatus = getAWSMachineStatus(data)
-  const isFailed = machineStatus.level === 'unhealthy'
-  const operationalIssuesShown = useOperationalIssuesShown()
-  const readyCond = conditions.find((c: any) => c.type === 'Ready')
-
-  const instanceState = getAWSMachineInstanceState(data)
-  const addresses = status.addresses || []
-
-  return (
-    <>
-      {isFailed && !operationalIssuesShown && (
-        <AlertBanner
-          variant="error"
-          title="AWS Machine Not Ready"
-          message={readyCond?.message || 'AWSMachine is not ready.'}
-        />
-      )}
-
-      <Section title="Instance" icon={Cloud}>
-        <PropertyList>
-          <Property label="Instance Type" value={getAWSMachineInstanceType(data)} />
-          <Property label="Instance ID" value={
-            <span className="font-mono text-[11px]">{getAWSMachineInstanceID(data)}</span>
-          } />
-          <Property label="State" value={
-            <span className={clsx('badge badge-sm', instanceState === 'running'
-              ? 'status-healthy'
-              : instanceState === 'pending' || instanceState === 'stopping' || instanceState === 'stopped'
-              ? 'status-degraded'
-              : instanceState === 'terminated' || instanceState === 'shutting-down'
-              ? 'status-unhealthy'
-              : 'status-neutral'
-            )}>{instanceState}</span>
-          } />
-          {spec.providerID && spec.providerID !== '-' && (
-            <Property label="Provider ID" value={
-              <span className="font-mono text-[10px] break-all">{spec.providerID}</span>
-            } />
-          )}
-        </PropertyList>
-      </Section>
-
-      <Section title="Configuration" icon={Cpu}>
-        <PropertyList>
-          {spec.iamInstanceProfile && <Property label="IAM Profile" value={spec.iamInstanceProfile} />}
-          {spec.sshKeyName && <Property label="SSH Key" value={spec.sshKeyName} />}
-          {spec.subnet?.id && (
-            <Property label="Subnet" value={<span className="font-mono text-[11px]">{spec.subnet.id}</span>} />
-          )}
-          {spec.cloudInit?.secureSecretsBackend && (
-            <Property label="Secrets Backend" value={spec.cloudInit.secureSecretsBackend} />
-          )}
-        </PropertyList>
-      </Section>
-
-      {/* Addresses */}
-      {addresses.length > 0 && (
-        <Section title="Addresses" icon={Network}>
-          <table className="w-full text-xs">
-            <thead>
-              <tr className="text-theme-text-tertiary">
-                <th className="text-left font-medium py-1">Type</th>
-                <th className="text-left font-medium py-1">Address</th>
-              </tr>
-            </thead>
-            <tbody>
-              {addresses.map((addr: any, i: number) => (
-                <tr key={i} className="border-t border-theme-border">
-                  <td className="py-1 text-theme-text-secondary">{addr.type}</td>
-                  <td className="py-1 text-theme-text-secondary font-mono">{addr.address}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </Section>
-      )}
-
-      <ConditionsSection conditions={conditions} />
-    </>
-  )
-}
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -2210,8 +2466,8 @@ export function AWSMachineRenderer({ data }: Props) {
 - **Issue #2411** (2026-10-28): **The update from the app isn’t working**
   *Symptoms*: ## Describe the bug  The update from the app isn’t working.  ## To reproduce  Steps to reproduce the behavior:  1. Run radar.exe 2. Click on check for updates 3. See the error in the screenshot  ## Expected behavior  I expected the program to update and restart automatically.  ## Screenshots  <img width="381" height="148" alt="Image" src="https://github.com/user-attachments/assets/4f00f96d-72cc-4089-b580-08b1390ac980" /> 
 
-- **Issue #2302** (2026-10-25): **Issues flags completed Job/CronJob pods as a warning (“Controller reports a problem”: `Ready: PodCompleted`)**
-  *Symptoms*: ### What happens  Every pod created by a CronJob or Job shows up in Issues as a warning, "Controller reports a problem" (category `operator_condition_failed`), after it finishes successfully. The detail reads:  > Ready: PodCompleted > present since creation or first reconciliation  The pod is `Succeeded` and its Job is `Complete 1/1`. Nothing is wrong. A finished pod has `Ready=False` with reason `PodCompleted`, and the Issues engine treats that as a failed condition.  <img width="1538" height="436" alt="Image" src="https://github.com/user-attachments/assets/75fefb95-f9aa-4d7d-a6b1-814cc1676fc2" />  ### Why it's noisy  With a CronJob on a short schedule, this puts a fresh warning in the list every run, and it stays until the Job's TTL or history limit removes the pod. In my cluster an every-5-minutes CronJob keeps one or two of these showing at all times, which buries real issues.  ### Steps to reproduce  1. Create a CronJob whose container exits 0, for example `busybox` running `true`, on a `*/5 * * * *` schedule. 2. Wait for a run to finish. 3. Open Issues. The completed pod appears as a warning with `Ready: PodCompleted`.  ### Expected  Pods in phase `Succeeded` (or with Ready reason `PodCompleted`) should be skipped by the condition-based issue detection, since a Job pod ending in that state is the normal outcome. Failed Job pods (phase `Failed`, `BackoffLimitExceeded`, etc.) should still be reported.  ### Notes  - Radar already treats this as expected elsewhere. `package
+- **Issue #2346** (2026-11-01): **Statefulsets Workloads on GitOps view**
+  *Symptoms*: ## Describe the bug  I am not quite sure if this is a bug but i observed it on browser and on the App on macos & ubuntu: On GitOps view using argocd , statefulsets are not displayed as in argocd UI. For example i have kube-prometheus-stack deployed and this contains 2 statefulsets (alertmanager and prometheus itself) but they are not visible on gitops view, on resources view it's ok.  I haven't checked if same applies on other sts like postgres, redis etc.  ## To reproduce Deploy kube-prometheus-stack or any chart that contains statefulsets and check gitops view.  ## Expected behavior Statefulsets workload and its resources should appear as deployments, daemonsets etc.  ## Screenshots  On Argocd UI: <img width="1900" height="980" alt="Image" src="https://github.com/user-attachments/assets/31d28ce1-90cb-4423-8db0-5d29dfcf4351" />  On Radar Gitops (sts workloads missing): <img width="1705" height="946" alt="Image" src="https://github.com/user-attachments/assets/d1d03a6f-fabb-4d6a-9059-ffa1542ac399" />  
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2228,342 +2484,673 @@ export function AWSMachineRenderer({ data }: Props) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d9e73f40` (2026-10-31)
-**Commit Message**: Argo CD: working rollback, rollback outcome insights, and Argo 3 auto-sync state (#2060)
+### Incident Patch 1: `e7cc3ebc` (2026-11-02)
+**Commit Message**: Issues: name a RollingUpdate surge as the cause of a one-replica ReadWriteOnce rollout deadlock (#2494)
 
-## Why
+## Summary
 
-**Argo CD rollback in Radar is broken today.** Radar writes
-`operation.rollback` to the Application, a field the Application CRD
-doesn't have, so the API server drops it. Radar reports success, then
-Argo fails with *"Invalid operation request: no operation specified."*
-History entry #0 is also rejected outright, and Argo numbers history
-from 0.
+The most common way people run into ReadWriteOnce trouble is a
+single-replica Deployment that mounts a ReadWriteOnce PVC and uses the
+default RollingUpdate strategy (maxSurge 25%, which resolves to one
+surge pod). Here is how it plays out:
 
-Two related problems:
-- **Auto-sync state is misread.** Argo CD 3 can switch auto-sync off in
-place with `automated.enabled: false`. Radar sees an `automated` block
-and treats the Application as auto-syncing.
-- **Rollback has no follow-up.** After a rollback, nothing tells you
-what was deployed. Nothing warns you that pressing Sync will undo it.
+1. A rollout starts the new pod before stopping the old one.
+2. If the scheduler puts the new pod on a different node, it hangs on a
+Multi-Attach error ("Waiting for detach" on Kubernetes 1.37+), because
+the old pod still has the volume attached on its node.
+3. With maxUnavailable 25% (0 at one replica), the old pod is only
+removed once the new one is ready, so the rollout never finishes.
 
-## What changes
+Before this change:
+- The pod's `VolumeMultiAttach` / `VolumeMount` row had no Cause in this
+case. #2461 named a cause only for Deployments with 2+ replicas that
+share the claim.
+- After the progress deadline, the Deployment's "Rollout stuck" row said
+"Inspect the new pods (image, readiness probe, resources)". It also
+appended "Use strategy: Recreate, a ReadWriteMany volume, or per-replica
+volumes", which points to storage changes a 1-replica De
 
-**1. Rollback works the way argocd-server does it.** argocd-server
-implements rollback as a sync pinned to the history entry. Radar now
-writes the same `operation.sync`, carrying that entry's recorded source
-and revision (or its sources and revisions, for a multi-source app).
-Hooks don't run, the Application's current sync options apply, and prune
-stays off unless you ask for it. Histo
-
-**File**: `docs/gitops.md` (modified, +11/-5)
+**File**: `internal/k8s/detect.go` (modified, +9/-2)
 ```diff
-@@ -50,19 +50,21 @@ Per managed resource, in one row:
- - **Recent events** (5 most recent, namespace-RBAC-filtered) so `ImagePullBackOff`, `FailedScheduling`, webhook denials, PVC pending, etc. show up next to the resource that caused them
- - **Open** button — drops into the standard resource drawer
+@@ -362,7 +362,13 @@ func DetectProblemsInScope(cache *ResourceCache, namespace string, scope *Detect
  
-+Resource guidance helpers accept named `{ hazard?, rolledBack? }` context. A supplied sync hazard takes precedence over rollback advice for non-Synced Missing rows and OutOfSync/Missing status explanations, deferring to the sync warning above. A Missing row still reported Synced asks for a refresh.
-+
- OutOfSync alerts in the Issues band at the top of the page are clickable — they jump to the affected row and highlight it for ~4 seconds.
- 
- ### Activity tab
- 
--Operation history with deploy timestamps, the git revision deployed, who initiated the sync (human user or automation), an outcome chip per row, and per-revision **Rollback** buttons for Argo. In-progress operations pin to the top of the timeline.
-+Operation history with deploy timestamps, the git revision deployed, who initiated the sync (human user or automation), an outcome chip per row, and per-revision **Rollback** buttons for Argo. In-progress operations pin to the top of the timeline. History `rollbackable` only reports whether an entry has an ID and recorded source(s); auto-sync, lifecycle, in-flight operations and RBAC are separate checks.
- 
- ## Diagnosis pipeline
- 
- The Issues band at the top of the detail page surfaces seven classes of problems:
- 
- - **Operation failures** (Argo) — the parser recognizes known controller failures (annotation-too-large, label-too-long, hook failure, admission webhook denial, RBAC, conflict, immutable field, schema migration, connectivity, etc.) and rewrites each into a plain-English cause
--- **Stuck-drift loop** — when sync succeeded but the app is *still* OutOfSync with auto-sync on and a recent reconcile, something is mutating resources after each apply. The Issue calls out likely culprits (mutating webhook, sibling controller, schema migration)
--- **Manual drift without auto-sync** — drift exists but auto-sync is disabled. The Issue tells you "nothing will reconcile until you click Sync" so you stop waiting, unless a sync would be hazardous (see below)
-+- **Stuck-drift loop** — when sync succeeded at the current desired comparison’s sources and revisions but the app is *still* OutOfSync with auto-sync on and a recent reconcile, something is mutating resources after each apply. The Issue calls out likely culprits (mutating webhook, sibling controller, schema migration). An older successful apply or rollback against different desired sources/revisions remains ordinary pending drift, including after auto-sync is re-enabled behind a sync window. Missing apply/comparison evidence does not establish a loop
-+- **Manual drift without auto-sync** — drift exists but auto-sync is disabled. The Issue tells you "nothing will reconcile until you click Sync" so you stop waiting, unless a sync would be hazardous (see below). A rollback marker in the latest operation, if successful, instead gives an informational note naming the applied revision(s) and recorded initiator; resource rows explain that Sync can undo the rollback (a current sync hazard replaces that advice, since the hazard is the more urgent consequence), including Missing rows while the current comparison is Unknown. Rows use `summary.rollbackRevision`, the revision(s) deployed by the latest successful marked rollback, only while effective auto-sync is off, independently of the OutOfSync-only informational note. Its absence does not mean no rollback happened. This records the last rollback, not the current live state: later changes can also show as drift. Syncing or enabling auto-sync deploys the current revision and can undo the rollback. A marked, completed rollback whose result sources or revisions differ from the requested ones instead gives a warning in both detail and cluster Issues, even if the app is Synced. A known requested target with no recorded applied revisions warns that the rollback target could not be verified. This operation-outcome warning uses the shared diagnosis and remains stable while that operation is latest, independently of the manual-drift timer. It belongs to the GitOps operation-failure category, with a distinct issue identity so current sync errors, operation failures or drift loops do not absorb its warning and recovery advice. Cluster Issues retains its delayed manual-drift warning after a successful rollback, with guidance to fix or revert Git before syncing again, or keep auto-sync off. Dry runs and failed or pending operations do not qualify. A later operation, including a dry-run, replaces the rollback evidence even if it does not move the app; Radar then returns to ordinary diagnosis. Argo's native rollback and a sync to an older revision have indistinguishable durable operation records, so Radar does not infer a rollback fr
+ 			if stuck != nil && replicaFailure == nil {
+ 				message := stuck.Message
+-				if detail := rolloutRWOVolumeDetail(cache, d); detail != "" {
++				action := "Inspect the new pods (image, readiness probe, resources) — the rollout is waiting on them to become ready."
++				// The pod row's RollingUpdate Multi-Attach cause, when it holds,
++				// replaces the generic advice so both rows say the same thing.
++				cause := rolloutMultiAttachCause(cache, d)
++				if cause != "" {
++					action = rollingUpdateRWOFix
++				} else if detail := rolloutRWOVolumeDetail(cache, d); detail != "" {
+ 					if message != "" {
+ 						message += " " + detail
+ 					} else {
+@@ -396,7 +402,8 @@ func DetectProblemsInScope(cache *ResourceCache, namespace string, scope *Detect
+ 					Group:             "apps",
+ 					Severity:          "critical",
+ 					Reason:            "Rollout stuck",
+-					Action:            "Inspect the new pods (image, readiness probe, resources) — the rollout is waiting on them to become ready.",
++					Cause:             cause,
++					Action:            action,
+ 					Message:           message,
+ 					Age:               timeutil.FormatAgeShort(now.Sub(d.CreationTimestamp.Time)),
+ 					AgeSeconds:        int64(now.Sub(d.CreationTimestamp.Time).Seconds()),
 ```
 
-**File**: `docs/integrations.md` (modified, +1/-1)
+**File**: `internal/k8s/detect_postbind_attach_test.go` (modified, +191/-0)
 ```diff
-@@ -751,7 +751,7 @@ permits the reference or has produced an artifact.
- **Diagnosis**:
- - **Per-resource field diff** computed from each resource's `kubectl.kubernetes.io/last-applied-configuration` annotation vs live spec — works for any Argo client-side-applied resource without calling the Argo API
- - **Recent events** surfaced inline per managed resource (5 most recent, namespace-RBAC-filtered)
--- **Stuck-drift-loop detector** — flags `sync=OutOfSync ∧ opPhase=Succeeded ∧ auto-sync on ∧ reconciledAt<30min` with the likely cause (mutating webhook, sibling controller, schema migration)
-+- **Stuck-drift-loop detector** — flags `sync=OutOfSync ∧ opPhase=Succeeded ∧ applied sources/revisions match the desired comparison ∧ auto-sync on ∧ reconciledAt<30min` with the likely cause (mutating webhook, sibling controller, schema migration)
- - **Manual-drift detector** — calls out OutOfSync apps with auto-sync disabled
- - **Argo Application conditions** extracted to issues (ComparisonError, OrphanedResourceWarning, etc.) with type-aware severity and per-condition action text
- - **Operation-failure parser** recognizes 11 patterns: annotation-too-large, label-too-long, hook failure, admission webhook denial, RBAC, conflict, immutable field, schema migration, connectivity, etc.
-```
-
-**File**: `docs/mcp.md` (modified, +1/-1)
-```diff
-@@ -1281,7 +1281,7 @@ selector change.
- | `manage_workload` | Restart, scale, or rollback a Deployment, StatefulSet, DaemonSet, or Argo Rollout. Note: `scale` is not supported for DaemonSets. On a Rollout, `rollback` rewrites the pod template and therefore starts a **new** rollout that re-runs every canary step, pause, and analysis — use `manage_rollout` `abort` to revert traffic immediately, or follow the rollback with `promote-full`. | `action` (required: `restart`, `scale`, `rollback`), `kind` (required), `namespace` (required), `name` (required), `replicas` (for scale), `revision` (for rollback — enumerate with `get_resource include=revisions`) |
- | `manage_rollout` | Drive an Argo Rollout's progressive delivery — the verbs with no Deployment equivalent. `abort` reverts traffic to the last stable version at once without touching spec and stays aborted until retried (the incident-response verb); `retry` clears an abort; `promote` clears the current pause to advance one step; `promote-full` skips all remaining steps, pauses, and analysis (emergency hotfix) — it waits for the controller to observe the current pod template first, so straight after a rollback it may report that the controller has not caught up, which is safe to retry; `skip-step` advances exactly one canary step (canary only). Rollback / restart / scale go through `manage_workload` with `kind=rollout`. | `action` (required: `abort`, `retry`, `promote`, `promote-full`, `skip-step`), `namespace` (required), `name` (required) |
- | `manage_cronjob` | Trigger, suspend, or resume a CronJob | `action` (required: `trigger`, `suspend`, `resume`), `namespace` (required), `name` (required) |
--| `manage_gitops` | Manage ArgoCD and FluxCD resources — sync, refresh, terminate, suspend, resume, rollback (Argo), reconcile (Flux), reconcile-with-source (Flux) | `action` (required), `tool` (required: `argocd` or `fluxcd`), `namespace` (required), `name` (required), `kind` (FluxCD only). For `sync`: `revision`, `prune`, `dry_run`, `force`, `apply_only`, `sync_options`. For `rollback` (Argo only): `history_id` (required), `prune`, `dry_run`. Per-action input validation rejects flags that don't apply to the action (e.g. `force` on `suspend`) so callers fail loudly instead of silently. |
-+| `manage_gitops` | Manage ArgoCD and FluxCD resources — sync, refresh, terminate, suspend, resume, rollback (Argo), reconcile (Flux), reconcile-with-source (Flux) | `action` (required), `tool` (required: `argocd` or `fluxcd`), `namespace` (required), `name` (required), `kind` (FluxCD only). For `sync`: `revision`, `prune`, `dry_run`, `force`, `apply_only`, `sync_options`. For `rollback` (Argo only): `history_id` (required; the first history entry is 0), `prune`, `dry_run`; refused while the Application has auto-sync enabled; before Argo CD 2.12, rollback across a single-source/multi-source change or of a multi-source entry can deploy the wrong revisions or render nothing; with prune, it can delete resources. This warning applies when the current Application uses `spec.sources` too; Radar does not refuse on controller-version grounds. Per-action input validation rejects flags that don't apply to the action (e.g. `force` on `suspend`) so callers fail loudly instead of silently. |
- | `manage_node` | Cordon, uncordon, or drain a Kubernetes node. A drain waits by default until the evicted pods are deleted, and reports `outcome` as `complete`, `incomplete`, `unconfirmed` or `started`. Incomplete/unconfirmed results return `partial`: check `errors`, observed `pendingPods`, `unconfirmedPods` and `verificationError`. Expected DaemonSet, static and terminal exclusions are listed in `skippedPods` with `expectedSkip: true`; they do not prevent completion. Completion confirms required workload removal, not overall shutdown safety | `action` (required: `cordon`, `uncordon`, `drain`), `name` (required), `delete_empty_dir_data` (optional, default true), `force` (optional), `wait_for_deletion` (optional, default true), `timeout` (optional, seconds; default 2 minutes when waiting, 60 otherwise) |
- 
- Optional write tool (off by default):
-```
-
-**File**: `internal/issues/category.go` (modified, +1/-1)
-```diff
-@@ -407,7 +407,7 @@ func classifyGitOpsReason(reason string, fallback issuesapi.Category) issuesapi.
- 		return issuesapi.CategoryGitOpsRenderFailed
- 	case "InvalidSpecError":
- 		return issuesapi.CategoryGitOpsSpecInvalid
--	case "OperationFailed", "SyncError", "StuckDriftLoop":
-+	case "OperationFailed", "SyncError", "StuckDriftLoop", "RollbackRevisionMismatch":
- 		return issuesapi.CategoryGitOpsOperationFailed
- 	case "AutoSyncBlockedEmpty":
- 		return issuesapi.CategoryGitOpsSyncFailed
-```
-
-**File**: `internal/issues/category_test.go` (modified, +1/-0)
-```diff
-@@ -65,6 +65,7 @@ func TestClassify(t *testing.T) {
- 		{"argo controller stalled is gitops_stale", classifyInput{Source: SourceProblem, Kind: "StatefulSet", APIGroup: "apps", Reason: "GitOpsControllerStalled"}, issuesapi.CategoryGitOpsStale},
- 		{"argo comparisons stale rollup is gitops_stale", classifyInput{Source: SourceProblem, Kind: "StatefulSet", APIGroup: "apps", Reason: "GitOpsComparisonsStale"}, issuesapi.CategoryGitOpsStale},
- 		{"argo comparison stale per-app is gitops_stale", classifyInput{Source: SourceProblem, Kind: "Application", APIGroup: "argoproj.io", Reason: "ComparisonStale"}, issuesapi.CategoryGitOpsStale},
-+		{"argo rollback mismatch", classifyInput{Source: SourceProblem, Kind: "Application", APIGroup: "argoproj.io", Reason: "RollbackRevisionMismatch"}, issuesapi.CategoryGitOpsOperationFailed},
- 		{"argo operation failed", classifyInput{Source: SourceProblem, Kind: "Application", APIGroup: "argoproj.io", Reason: "OperationFailed"}, issuesapi.CategoryGitOpsOperationFailed},
- 		{"argo comparison error is render", classifyInput{Source: SourceProblem, Kind: "Application", APIGroup: "argoproj.io", Reason: "ComparisonError"}, issuesapi.CategoryGitOpsRenderFailed},
- 		{"argo invalid spec", classifyInput{Source: SourceProblem, Kind: "Application", APIGroup: "argoproj.io", Reason: "InvalidSpecError"}, issuesapi.CategoryGitOpsSpecInvalid},
-```
-
-**File**: `internal/issues/identity_test.go` (modified, +72/-0)
-```diff
-@@ -2,9 +2,15 @@ package issues
- 
- import (
- 	"testing"
-+	"time"
- 
-+	"github.com/skyhook-io/radar/internal/k8s"
- 	"github.com/skyhook-io/radar/pkg/issuesapi"
- 	"github.com/skyhook-io/radar/pkg/subject"
-+	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
-+	"k8s.io/apimachinery/pkg/runtime"
-+	"k8s.io/apimachinery/pkg/runtime/schema"
-+	dynamicfake "k8s.io/client-go/dynamic/fake"
+@@ -10,6 +10,7 @@ import (
+ 	storagev1 "k8s.io/api/storage/v1"
+ 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+ 	"k8s.io/apimachinery/pkg/runtime"
++	"k8s.io/apimachinery/pkg/util/intstr"
+ 	"k8s.io/client-go/kubernetes/fake"
  )
  
- // ScopeForKind + IssueID determinism/keying now live in (and are tested by)
-@@ -37,6 +43,72 @@ func TestEnrichIdentity_SubjectIsOwnerElseSelf(t *testing.T) {
+@@ -352,3 +353,193 @@ func TestDetectPostBindProblems_MultiAttachForeignHolderHasNoCause(t *testing.T)
+ 		t.Errorf("no cause expected for a foreign holder: %q / %q", p.Cause, p.Action)
  	}
  }
- 
-+func TestRollbackOutcomeKeepsDistinctIdentity(t *testing.T) {
-+	t.Cleanup(k8s.ResetTestDynamicState)
-+	now := time.Now().UTC().Truncate(time.Second)
-+	app := &unstructured.Unstructured{Object: map[string]any{
-+		"apiVersion": "argoproj.io/v1alpha1", "kind": "Application",
-+		"metadata": map[string]any{"name": "demo", "namespace": "argocd"},
-+		"status": map[string]any{
-+			"health": map[string]any{"status": "Healthy"},
-+			"sync":   map[string]any{"status": "Synced"},
-+			"operationState": map[string]any{
-+				"phase": "Succeeded", "finishedAt": now.Add(-time.Minute).Format(time.RFC3339),
-+				"operation": map[string]any{
-+					"info": []any{map[string]any{"name": "radarhq.io/rollback", "value": "true"}},
-+					"sync": map[string]any{"revision": "requested"},
-+				},
-+				"syncResult": map[string]any{"revision": "applied"},
-+			},
-+		},
-+	}}
-+	gvr := schema.GroupVersionResource{Group: "argoproj.io", Version: "v1alpha1", Resource: "applications"}
-+	client := dynamicfake.NewSimpleDynamicClientWithCustomListKinds(runtime.NewScheme(), map[schema.GroupVersionResource]string{gvr: "ApplicationList"}, app)
-+	if err := k8s.InitTestDynamicResourceCache(client, []k8s.APIResource{{Group: gvr.Group, Version: gvr.Version, Kind: "Application", Name: gvr.Resource, Namespaced: true, Verbs: []string{"list", "watch"}}}); err != nil {
-+		t.Fatal(err)
++
++// rolloutClaimDeployment is sharedClaimDeployment at one replica mid-rollout:
++// the holder web-a belongs to the old ReplicaSet web-0 (revision 1) and the
++// stuck web-b to the current web-1 (revision 2).
++func rolloutClaimDeployment(strategy appsv1.DeploymentStrategy) []runtime.Object {
++	controller := true
++	one := int32(1)
++	depOwner := []metav1.OwnerReference{{APIVersion: "apps/v1", Kind: "Deployment", Name: "web", UID: "web-uid", Controller: &controller}}
++	revision := func(rs *appsv1.ReplicaSet, hash, rev string) {
++		rs.OwnerReferences = depOwner
++		rs.Labels = map[string]string{appsv1.DefaultDeploymentUniqueLabelKey: hash}
++		rs.Annotations = map[string]string{"deployment.kubernetes.io/revision": rev}
 +	}
-+	cache := k8s.GetDynamicResourceCache()
-+	if err := cache.EnsureWatching(gvr); err != nil || !cache.WaitForSync(gvr, 2*time.Second) {
-+		t.Fatalf("Application cache did not sync: %v", err)
++	oldRS := &appsv1.ReplicaSet{ObjectMeta: metav1.ObjectMeta{Name: "web-0", Namespace: "redis"}}
++	revision(oldRS, "0", "1")
++	objs := sharedClaimDeployment(metav1.OwnerReference{APIVersion: "apps/v1", Kind: "ReplicaSet", Name: "web-0", Controller: &controller})
++	for _, o := range objs {
++		switch o := o.(type) {
++		case *appsv1.Deployment:
++			o.UID = "web-uid"
++			o.Spec.Replicas = &one
++			o.Spec.Strategy = strategy
++		case *appsv1.ReplicaSet:
++			revision(o, "1", "2")
++		case *corev1.Pod:
++			o.Labels = map[string]string{appsv1.DefaultDeploymentUniqueLabelKey: map[string]string{"web-a": "0", "web-b": "1"}[o.Name]}
++		}
 +	}
-+	detections := k8s.DetectGitOpsProblems(cache, k8s.GetResourceDiscovery(), "argocd")
-+	if len(detections) != 1 || detections[0].Reason != "RollbackRevisionMismatch" {
-+		t.Fatalf("want rollback mismatch detection, got %+v", detections)
-+	}
-+	rollback := fromProblem(detections[0], now, SourceProblem)
-+	if rollback.Category != issuesapi.CategoryGitOpsOperationFailed || rollback.Cause == "" || rollback.Action == "" {
-+		t.Fatalf("rollback category or diagnosis missing: %+v", rollback)
-+	}
-+	for _, reason := range []string{"SyncError", "StuckDriftLoop", "OperationFailed"} {
-+		t.Run(reason, func(t *testing.T) {
-+			current := fromProblem(k8s.Detection{
-+				Kind: "Application", Group: gvr.Group, Namespace: "argocd", Name: "demo",
-+				Reason: reason, Severity: "critical", Cause: "current failure", Action: "fix current failure",
-+			}, now, SourceProblem)
-+			if current.Category != rollback.Category {
-+				t.Fatalf("want same category, got %q / %q", current.Category, rollback.Category)
-+			}
-+			if current.ID == rollback.ID {
-+				t.Errorf("rollback and %s share issue ID %q", reason, rollback.ID)
-+			}
-+			grouped := GroupIssues([]Issue{rollback, current})
-+			if len(grouped) != 2 {
-+				t.Fatalf("rollback and %s collapsed into %d groups: %+v", reason, len(grouped), grouped)
-+			}
-+			for _, issue := range grouped {
-+				if issue.ID == rollback.ID && (issue.Reason != rollback.Reason || issue.Severity != SeverityWarning || issue.Cause != rollback.Cause || issue.Action != rollback.Action) {
-+					t.Errorf("grouping changed rollback warning or recovery advice: %+v", issue)
-+				}
-+			}
-+		})
-+	}
-+	later := k8s.DetectGitOpsProblems(cache, k8s.GetResourceDiscovery(), "argocd")
-+	if len(later) != 1 {
-+		t.Fatalf("want one rollback detection on next poll, got %+v", later)
-+	}
-+	assertSameID(t, rollback, fromProblem(later[0], now.Add(time.Hour), SourceProblem))
++	return append(objs, oldRS)
 +}
 +
- // TestEnrichIdentity_DistinctCausesDoNotCollapse pins that two distinct causes
- // on the same subject+category (a workload missing both a ConfigMap and a
- // Secret — both missing_config_ref) get DISTINCT ids via the stable
-```
-
-**File**: `internal/k8s/capabilities.go` (modified, +5/-0)
-```diff
-@@ -180,6 +180,11 @@ type FeatureCapabilities struct {
- 	TrafficRecords        bool `json:"trafficRecords"`        // GET /api/traffic/flows/records
- 	GitOpsWriteEvidence   bool `json:"gitopsWriteEvidence"`   // POST /api/gitops/write-evidence
- 	AgentSigninCheck      bool `json:"agentSigninCheck"`      // GET /api/agents/signin
-+	// POST /api/argo/applications/{namespace}/{name}/rollback starts a sync to
-+	// the history entry (id 0 included), and .../resume also clears
-+	// spec.syncPolicy.automated.enabled: false. An older Radar writes an
-+	// operation.rollback the API server prunes, and leaves enabled: false set.
-+	ArgoRollbackSync bool `json:"argoRollbackSync"`
- 	// PUT/DELETE /api/resources/{kind}/_/{name} and GET /api/audit/resource/{kind}/_/{name}
- 	// read "_" as a cluster-scoped resource.
- 	ClusterScopedPlaceholder bool `json:"clusterScopedPlaceholder"`
-```
-
-**File**: `internal/k8s/detect_gitops.go` (modified, +19/-19)
-```diff
-@@ -11,6 +11,7 @@ import (
- 	"github.com/skyhook-io/radar/pkg/conditions"
- 	"github.com/skyhook-io/radar/pkg/gitops"
- 	"github.com/skyhook-io/radar/pkg/gitops/diagnose"
-+	gitopsinsights "github.com/skyhook-io/radar/pkg/gitops/insights"
- 	"github.com/skyhook-io/radar/pkg/timeutil"
- 	corev1 "k8s.io/api/core/v1"
- 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-@@ -206,6 +207,7 @@ func gitopsProblem(now time.Time, kind, group, ns, name, severity, reason, messa
- // Failed operations with a message suppress only their parallel failed-attempt
- // condition. Independent errors and resource warnings retain their own rows;
- // Degraded health retains Argo's health message alongside error conditions.
-+// The latest rollback outcome is independent of the current health/drift row.
- func detectArgoAppProblems(apps []*unstructured.Unstructured, tracker *argoDriftTracker, now time.Time) []Detection {
- 	var out []Detection
- 	for _, app := range apps {
-@@ -225,7 +227,9 @@ func detectArgoAppProblems(apps []*unstructured.Unstructured, tracker *argoDrift
- 			return fallback
- 		}
- 
--		automated := argoIsAutomated(app)
-+		// An automated app is expected to self-heal, so OutOfSync/Missing is a
-+		// real failure rather than an operator who hasn't synced a manual app yet.
-+		automated := gitops.ArgoAutoSyncEnabled(app)
- 		outOfSync := strings.EqualFold(sync, "OutOfSync")
- 		// Track drift continuity for every app before any gate short-circuits the
- 		// loop, so a suspended-then-resumed or mid-degraded app that stays
-@@ -282,6 +286,15 @@ func detectArgoAppProblems(apps []*unstructured.Unstructured, tracker *argoDrift
- 			}
- 			out = append(out, d)
- 		}
-+		if mismatch := gitopsinsights.DetectArgoRollbackRevisionMismatch(app); mismatch != nil {
-+			d := gitopsProblem(now, "Application", argoGroup, ns, name, "warning", mismatch.Reason, mismatch.Message, createdAt)
-+			d.Fingerprint = "argo:rollback-revision-mismatch"
-+			d.Cause, d.Action = mismatch.Cause, mismatch.Action
-+			if transitionAt, ok := argoOperationIssueTime(app, now); ok {
-+				setDetectionOnset(&d, now, transitionAt)
-+			}
-+			out = append(out, d)
++func rolloutPod(objs []runtime.Object, name string) *corev1.Pod {
++	for _, o := range objs {
++		if pod, ok := o.(*corev1.Pod); ok && pod.Name == name {
++			return pod
 +		}
- 		if strings.EqualFold(health, "Suspended") && !operationFailed {
++	}
++	return nil
++}
++
++func rollingUpdate(surge, unavailable intstr.IntOrString) appsv1.DeploymentStrategy {
++	return appsv1.DeploymentStrategy{
++		Type:          appsv1.RollingUpdateDeploymentStrategyType,
++		RollingUpdate: &appsv1.RollingUpdateDeployment{MaxSurge: &surge, MaxUnavailable: &unavailable},
++	}
++}
++
++// The default strategy on one replica: the surge pod lands on another node
++// while the old pod holds the volume, and the old pod waits for it forever.
++func TestDetectPostBindProblems_MultiAttachNamesRollingUpdateSurge(t *testing.T) {
++	defer ResetTestState()
++	p := multiAttachProblem(t, rolloutClaimDeployment(rollingUpdate(intstr.FromString("25%"), intstr.FromString("25%"))))
++	for _, want := range []string{"Deployment web uses RollingUpdate with maxSurge 25%", "ReadWriteOnce PVC data", "rollout is stuck"} {
++		if !strings.Contains(p.Cause, want) {
++			t.Errorf("cause missing %q: %q", want, p.Cause)
++		}
++	}
++	if !strings.Contains(p.Action, "strategy: Recreate") || !strings.Contains(p.Action, "maxSurge: 0") {
++		t.Errorf("action = %q", p.Action)
++	}
++}
++
++// maxUnavailable 1 lets the old pod stop, so the attach clears on its own: the
++// surge is still the cause, but the rollout isn't called stuck.
++func TestDetectPostBindProblems_MultiAttachSurgeWithUnavailableNotStuck(t *testing.T) {
++	defer ResetTestState()
++	p := multiAttachProblem(t, rolloutClaimDeployment(rollingUpdate(intstr.FromInt32(1), intstr.FromInt32(1))))
++	if !strings.Contains(p.Cause, "maxSurge 1") || strings.Contains(p.Cause, "stuck") {
++		t.Errorf("cause = %q", p.Cause)
++	}
++}
++
++// The old pod is already terminating, so the rollout isn't waiting on it.
++func TestDetectPostBindProblems_MultiAttachTerminatingHolderNotStuck(t *testing.T) {
++	defer ResetTestState()
++	objs := rolloutClaimDeployment(rollingUpdate(intstr.FromString("25%"), intstr.FromString("25%")))
++	deleted := metav1.Now()
++	holder := rolloutPod(objs, "web-a")
++	holder.DeletionTimestamp = &deleted
++	holder.Finalizers = []string{"test/hold"}
++	p := multiAttachProblem(t, objs)
++	if !strings.Contains(p.Cause, "maxSurge 25%") || strings.Contains(p.Cause, "stuck") {
++		t.Errorf("cause = %q", p.Cause)
++	}
++}
++
++// Without surge the old pod is deleted first, so a holder still terminating is
++// not the rolling update's doing; a holder from the same ReplicaSet is not a
++// rollout; a Deployment scaled to zero has neither. None gets a cause.
++func TestDetectPostBindProblems_MultiAttachOneReplicaNoSurgeCause(t *testing.T) {
++	controller := true
++	for name, objs := range map[string][]runtime.Object{
++		"maxSurge 0": rolloutClaimDeployment(rollingUpdate(intstr.FromInt32(0), intstr.FromInt32(1))),
++		"recreate":   rolloutClaimDeployment(appsv1.DeploymentStrategy{Type: appsv1.RecreateDeploymentStrategyType}),
++		// Scaled to zero: no replicas share the claim, and no rollout runs.
++		"scaled to zero": func() []runtime.Object {
++			zero := int32(0)
++			objs := sharedClaimDeployment(metav1.OwnerReference{APIVersion: "apps/v1", 
+```
+
+**File**: `internal/k8s/detect_scheduling.go` (modified, +112/-16)
+```diff
+@@ -19,6 +19,7 @@ import (
+ 	"k8s.io/apimachinery/pkg/labels"
+ 	"k8s.io/apimachinery/pkg/runtime/schema"
+ 	"k8s.io/apimachinery/pkg/types"
++	"k8s.io/apimachinery/pkg/util/intstr"
+ 
+ 	capacitymodel "github.com/skyhook-io/radar/internal/capacity"
+ 	"github.com/skyhook-io/radar/pkg/gkedisk"
+@@ -1666,19 +1667,49 @@ func attachEventVolume(message string) string {
+ var multiAttachEventRE = regexp.MustCompile(`(?:Multi-Attach error|Waiting for detach) for volume "([^"]+)" Volume is already used by pod\(s\) (.+?)(?: and \d+ pod\(s\) in different namespaces)?$`)
+ 
+ // multiAttachSharedVolumeDiagnosis names the root cause of a Multi-Attach
+-// failure on a Deployment pod when the volume is a ReadWriteOnce claim the
+-// Deployment's replicas share and the pod holding it is another replica of the
+-// same Deployment on a different node. Returns "" otherwise: a holder from
+-// another workload, or a one-replica rollout surge (which the stuck-rollout
+-// row explains), is not this cause.
++// failure on a Deployment pod whose volume is a ReadWriteOnce claim the
++// Deployment mounts, when the pod holding it is another pod of the same
++// Deployment on a different node. With one replica, a holder from an older
++// revision means a RollingUpdate surge started the new pod before the old one
++// let go (see rolloutMultiAttachCause); with more, the replicas share the claim
++// across nodes. Returns "" otherwise: a holder from another workload is not
++// this cause.
+ func multiAttachSharedVolumeDiagnosis(cache *ResourceCache, pod *corev1.Pod, deployment, eventMessage string) (cause, action string) {
++	d, claim, holders := multiAttachDeploymentHolders(cache, pod, deployment, eventMessage)
++	if len(holders) == 0 {
++		return "", ""
++	}
++	replicas := schedDesiredReplicas(d.Spec.Replicas)
++	if replicas == 1 {
++		for _, holder := range holders {
++			if cause := rollingUpdateMultiAttachCause(cache, d, claim, pod, holder); cause != "" {
++				return cause, rollingUpdateRWOFix
++			}
++		}
++		return "", ""
++	}
++	if replicas < 2 {
++		return "", ""
++	}
++	// Pod and node names stay in the message: the cause must read the same
++	// for every blocked replica so grouping keeps it.
++	return fmt.Sprintf("Deployment %s runs %d replicas that share ReadWriteOnce PVC %s, which only one node can mount. A replica on another node holds it, so replicas on other nodes can't attach it.",
++			d.Name, replicas, claim.Name),
++		sharedRWOVolumeFix
++}
++
++// multiAttachDeploymentHolders resolves a Multi-Attach event on a pod of the
++// named Deployment: the Deployment, the ReadWriteOnce claim it mounts that the
++// event names, and the event's holder pods that belong to the same Deployment
++// and are still running on another node. Holders are nil when any of that doesn't hold.
++func multiAttachDeploymentHolders(cache *ResourceCache, pod *corev1.Pod, deployment, eventMessage string) (*appsv1.Deployment, *corev1.PersistentVolumeClaim, []*corev1.Pod) {
+ 	m := multiAttachEventRE.FindStringSubmatch(eventMessage)
+ 	if m == nil || cache == nil || cache.Deployments() == nil || cache.Pods() == nil {
+-		return "", ""
++		return nil, nil, nil
+ 	}
+ 	d, err := cache.Deployments().Deployments(pod.Namespace).Get(deployment)
+-	if err != nil || d == nil || schedDesiredReplicas(d.Spec.Replicas) < 2 {
+-		return "", ""
++	if err != nil || d == nil {
++		return nil, nil, nil
+ 	}
+ 	var claim *corev1.PersistentVolumeClaim
+ 	for _, pvc := range sharedRWOVolumeConflicts(cache, d) {
+@@ -1689,23 +1720,88 @@ func multiAttachSharedVolumeDiagnosis(cache *ResourceCache, pod *corev1.Pod, dep
+ 		}
+ 	}
+ 	if claim == nil {
+-		return "", ""
++		return nil, nil, nil
+ 	}
++	var holders []*corev1.Pod
+ 	for _, name := range strings.Split(m[2], ",") {
+ 		holder, err := cache.Pods().Pods(pod.Namespace).Get(strings.TrimSpace(name))
+-		if err != nil || holder == nil || holder.Spec.NodeName == "" || holder.Spec.NodeName == pod.Spec.NodeName {
++		// A finished pod no longer holds the volume, though an old event names it.
++		if err != nil || holder == nil || holder.Spec.NodeName == "" || holder.Spec.NodeName == pod.Spec.NodeName ||
++			holder.Status.Phase == corev1.PodSucceeded || holder.Status.Phase == corev1.PodFailed {
  			continue
  		}
-@@ -376,6 +389,10 @@ func detectArgoAppProblems(apps []*unstructured.Unstructured, tracker *argoDrift
- 				fmt.Sprintf("Application has been out of sync for %s and auto-sync is not enabled", timeutil.FormatAgeShort(manualDriftFor)), createdAt)
- 			setDetectionOnset(&dd, now, outOfSyncAt)
- 			dd.Action = "Review the drift in Changes, then Sync the application (or enable auto-sync) if the drift is unintended."
-+			if revision, _ := gitops.ArgoSuccessfulRollback(app); revision != "" {
-+				dd.Message = "Last rollback deployed " + revision + "; the live state differs from the desired state and auto-sync is off."
-+				dd.Action = "Syncing or enabling auto-sync applies the current source and can undo the rollback. Fix or revert the source first, or keep auto-sync off. Review Changes for later edits."
-+			}
- 			if hazard := argoSyncHazardAction(app); hazard != "" {
- 				dd.Action = hazard
- 				dd.Hazard = hazard
-@@ -564,7 +581,7 @@ func durationFromTimestamp(now time.Time, ts string) (time.Duration, bool) {
- // shouldn't-happen guard, not a swallowed error.
- func isArgoStuckDriftLoop(app *unstructured.Unstructured, now time.Time) bool {
- 	phase, _, _ := unstructured.NestedString(app.Object, "status", "operationState", "phase")
--	if !strings.EqualFold(phase, "Succeeded") {
-+	if !strings.EqualFold(phase, "Succeeded") || !gitops.ArgoAppliedCurrentComparison(app) {
- 		return false
+ 		if _, kind, owner := podOwnerKindName(cache, holder); kind != "Deployment" || owner != d.Name {
+ 			continue
+ 		}
+-		// Pod and node names stay in the message: the cause must read the same
+-		// for every blocked replica so grouping keeps it.
+-		return fmt.Sprintf("Deployment %s runs %d replicas that share ReadWriteOnce PVC %s, which only one node can mount. A replica on another node holds it, so replicas on other nodes can't attach it.",
+-				d.Name, schedDesiredReplicas(d.Spec.Replicas), claim.Name),
+-			sharedRWOVolumeFix
++		holders = append(holders, holder)
  	}
- 	reconciledAt, _, _ := unstructured.NestedString(app.Object, "status", "reconciledAt")
-@@ -581,23 +598,6 @@ func isArgoStuckDriftLoop(app *unstructured.Unstructured, now time.Time) bool {
- 	return now.Sub(t) <= 30*time.Minute
- }
- 
--// argoIsAutomated reports whether spec.syncPolicy.automated is present — i.e. the
--// app is expected to self-heal, so OutOfSync/Missing is a real failure rather
--// than an operator who simply hasn't synced a manual app yet.
--func argoIsAutomated(app *unstructured.Unstructured) bool {
--	automated, found, _ := unstructured.NestedMap(app.Object, "spec", "syncPolicy", "automated")
--	if !found {
--		return false
--	}
--	// Newer Argo CD can disable auto-sync without removing the block, via
--	// spec.syncPolicy.automated.enabled: false — treat that as manual so an
--	// intentionally-unsynced app isn't flagged for OutOfSync/Missing.
--	if enabled, ok, _ := unstructured.NestedBool(automated, "enabled"); ok && !enabled {
--		return false
--	}
--	return true
--}
--
- // argoErrorCondition returns the first status.conditions entry whose type names
- // an error (ComparisonError / InvalidSpecError / SyncError). Argo writes these
- // as {type, message} without a status field, so FindFalseCondition can't match
+-	return "", ""
++	return d, claim, holders
++}
++
++// rolloutMultiAttachCause returns the RollingUpdate cause for a stuck
++// Deployment rollout: one of its pending pods has a Multi-Attach event that the
++// pod's o
 ```
 
 ---
 
-### Incident Patch 2: `7ba9c400` (2026-10-31)
-**Commit Message**: README: restore the top-post Product Hunt badge (#2460)
+### Incident Patch 2: `3935aa78` (2026-11-01)
+**Commit Message**: AI investigations: a built-in example for people who haven't run one yet (#2486)
 
-The Oct 29 launch is over (finished #8 of the day). Removes the "on
-Product Hunt today" line and puts back the #3 Product of the Day badge
-from the May launch, reverting #2421.
+## What
 
-**File**: `README.md` (modified, +1/-3)
+Someone who has never run an AI investigation can now see what one
+produces before installing an agent or consenting to anything.
+
+While the investigation history is empty, the investigations panel
+offers **See an example investigation**:
+
+- in the panel's Home (the question composer or the "Choose an
+investigation" state), docked and on the full page;
+- in the history list's empty state when it opens as an overlay (on the
+full page the list sits beside Home, which already offers it);
+- on the agent setup step ("Set up AI investigations", the "not
+available right now" state and the broken `RADAR_AI_CLI_BIN` state),
+where no agent is installed and no history is fetched.
+
+After the user's first real run the link is gone. Only their own runs
+count: automatic runs and runs others shared with them (Radar Hub's
+Organization group) don't hide it. It is not offered while a start is
+waiting for the consent card. There is no dismiss control: it is a link
+in an empty state, not a banner.
+
+The example opens in the normal investigation view with an **Example**
+label at the top ("A sample investigation fro
+
+**File**: `docs/mcp.md` (modified, +2/-0)
 ```diff
-@@ -7,9 +7,7 @@
+@@ -516,6 +516,8 @@ The investigation's final JSON also carries the agent's case: `evidence` (up to
  
- Radar shows you what's broken in a Kubernetes cluster, why, and what changed: issues, topology, a timeline of events and resource changes, Helm, GitOps, traffic, audit, and upgrade impact. Your AI agent reads the same cluster data and relationships through Radar's MCP server, and Radar can run an AI investigation for you with the agent CLI you already use. It runs on your laptop as a `kubectl` plugin or desktop app, or in-cluster with Helm.
+ **Opening an investigation.** `POST /api/diagnose/runs` opens a run with a resource (`kind`, `group`, `namespace`, `name`), with the engineer's own description of a problem (`question`, at most 2000 characters, plus optional `namespaces` to start in and a `lookBack` of `15m`, `1h`, `6h` or `24h`), or with both. A backend that accepts a question says so with `questions: true` on each agent in `GET /api/agents`; the UI offers question entry only then. A question run is always a new run, never focused onto a live run for the same resource. Its opening turn uses `investigation.QuestionTaskPrompt` (no resource) or `investigation.TargetQuestionPrompt` (with a resource, whose health frame is context for the question rather than its agenda), under `investigation.QuestionSystemPrompt`; follow-ups, verification and explanations are unchanged, and the verdict and story contract below are the same. The namespaces are where the agent starts, not a boundary, and the look-back is relative to when the question was asked; every read stays live. A run that re-runs or narrows an earlier question passes that question's `askedAt` (RFC 3339, within the last 30 days) so its look-back still covers the same incident; the summary echoes `askedAt` when it differs from `createdAt`. A run with a question and no resource is read-only: an apply turn is refused, because a confirmed fix binds its writes to the run's resource — investigate the resource the fix changes, then apply it there. In the safeguarded profile that makes the run read-only end to end; a full-local agent keeps the mutation posture of its own configuration, as for any run.
  
--<a href="https://www.producthunt.com/products/radar-7?launch=radar-101&utm_source=github-readme&utm_medium=badge&utm_campaign=ph-launch-2026-10" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1295110&theme=neutral" alt="Radar - You don't need an AI SRE. Give your agent Radar. | Product Hunt" width="250" height="54" /></a>
--
--🚀 **We're on Product Hunt today** with Radar's upgraded MCP server and AI investigations. [Come say hi and drop us a comment](https://www.producthunt.com/products/radar-7?launch=radar-101&utm_source=github-readme&utm_medium=text&utm_campaign=ph-launch-2026-10).
-+<a href="https://www.producthunt.com/products/radar-7?embed=true&utm_source=badge-top-post-badge&utm_medium=badge&utm_campaign=badge-radar-42edb7b0-e388-4fa8-9ba5-4876c2c0d638" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/top-post-badge.svg?post_id=1130618&theme=neutral&period=daily" alt="Radar - The missing open-source Kubernetes UI | Product Hunt" width="250" height="54" /></a>
++**The example investigation.** Until someone has an investigation of their own, the investigations panel's empty state and the agent setup step link to a bundled example: a finished run recorded on a test cluster (an Argo CD-managed Deployment whose image was edited outside Git to a tag that does not exist), with its identifying values replaced. It opens at the reserved run id `example` (`/investigations/example`, or `?ai-run=example` in the drawer) and replays from the frontend bundle through the same view as a saved run, so it needs no server, endpoint or agent and renders the same against any Radar a host embeds. It is labelled as a sample and is read-only: no follow-up, Apply, status check, explanation, re-run, copy or continue-in-agent, and its evidence cards do not open resources, because those resources are not in the viewer's cluster. The transcript lives in `web/src/components/diagnose/exampleInvestigation.events.json`; its test rejects the values it was recorded with and checks that every citation still lands on a card.
++
+ **The story contract.** The last fenced `json` block in the reply that carries a verdict field (`summary`, `root_cause`, `healthy`, `inconclusive`, `steps`, `evidence` or `remediation`) is the verdict and a divider, so a patch or spec quoted in a `json` fence inside the story is never mistaken for it: prose after it is the story (`report`), prose before it the agent's evidence ledger (`notes`, kept in Activity and never shown in Findings); a reply with nothing after the block keeps the older shape, where the prose before it is the story. The story may place a Radar result with `[[radar:evidence=N]]` alone on a line — N is the 0-based index into `evidence` — or mention it inline, which places the card under that paragraph when no own-line marker places it and otherwise references the placed card (with an arrow saying where it is); `[[radar:evidence=N|compact]]` places the card with its header and role label, without the agent's note; log cards also retain the last two selected log lines, and metrics cards their chart, folded unless it is the cause or the symptom. Each evidence item may carry a `gap`: the agent's own statement of what that result does not cover, rendered under its note. Only a result that returned data can be cited: a call that errored, was denied, or was truncated leaves its item `unlinked`. An inline mention past the placement cap renders as a chip that reveals the card under Captured results. Findings renders the placed result's card at that position from Radar's own record; the agent never authors a card. A marker inside a code span (which may run across lines within a paragraph), a code block, an indented code line or a blockquote is literal text. The ledger's own form, `[[radar:evidence-ref=ev_…]]`, is not a placement: the parser rewrites one that names a cited item to its index, strips any marker from `summary` and `root_cause`, and the renderer shows an unresolvable one as a citation Radar cannot identify rather than as text. At most 6 results are placed; later placements become references; a marker Radar cannot resolve renders a visible note at the sentence rather than vanishing, naming why: "unknown citation" (no such item), "unverified" (the se
+```
+
+**File**: `web/src/components/diagnose/AIMarkdown.tsx` (modified, +3/-0)
+```diff
+@@ -2,10 +2,13 @@ import { useState, type ComponentProps } from "react";
+ import { AlertTriangle, Copy, Check } from "lucide-react";
+ import { Markdown } from "../ui/Markdown";
+ import { Tooltip } from "../ui/Tooltip";
++import { useInExampleInvestigation } from "./exampleInvestigation";
  
- [![CI](https://github.com/skyhook-io/radar/actions/workflows/ci.yml/badge.svg)](https://github.com/skyhook-io/radar/actions/workflows/ci.yml)
- [![CodeQL](https://github.com/skyhook-io/radar/actions/workflows/codeql.yml/badge.svg)](https://github.com/skyhook-io/radar/actions/workflows/codeql.yml)
+ export function CopyButton({ text, label }: { text: string; label: string }) {
+   const [state, setState] = useState<"idle" | "copied" | "failed">("idle");
++  const inExample = useInExampleInvestigation();
+   const copied = state === "copied";
++  if (inExample) return null;
+   return (
+     <Tooltip
+       content={
+```
+
+**File**: `web/src/components/diagnose/AgentSetupNotice.test.tsx` (modified, +17/-0)
+```diff
+@@ -55,4 +55,21 @@ describe("AgentSetupNotice", () => {
+     expect(html).not.toContain("Install one of these");
+     expect(html).toContain("Check again");
+   });
++
++  it("links to the example in every setup state that offers it", () => {
++    for (const state of ["needs-install", "needs-restart"] as const) {
++      expect(render(state)).not.toContain("See an example investigation");
++      const html = renderToStaticMarkup(
++        <AgentSetupNotice
++          setupState={state}
++          cliOverride={false}
++          checkingAgents={false}
++          agentsCheckFailed={false}
++          recheckAgents={async () => {}}
++          onOpenExample={() => {}}
++        />,
++      );
++      expect(html).toContain("See an example investigation");
++    }
++  });
+ });
+```
+
+**File**: `web/src/components/diagnose/AgentSetupNotice.tsx` (modified, +21/-3)
+```diff
+@@ -5,6 +5,7 @@ import { copyText } from "@skyhook-io/k8s-ui/utils/clipboard";
+ import { SUPPORTED_AGENTS, type AgentInstall } from "./agentCatalog";
+ import { type DiagnoseSetup } from "./DiagnoseContext";
+ import { openExternal } from "../../utils/navigation";
++import { ExampleInvestigationLink } from "./ExampleInvestigationLink";
+ 
+ const REPORT_URL =
+   "https://github.com/skyhook-io/radar/issues/new?labels=bug&template=bug_report.md";
+@@ -101,12 +102,15 @@ export function AgentSetupNotice({
+   checkingAgents,
+   agentsCheckFailed,
+   recheckAgents,
++  onOpenExample,
+ }: {
+   setupState: DiagnoseSetup;
+   cliOverride: boolean;
+   checkingAgents: boolean;
+   agentsCheckFailed: boolean;
+   recheckAgents: () => Promise<void>;
++  /** Shows what an investigation produces before anything is set up. */
++  onOpenExample?: () => void;
+ }) {
+   // The state the panel was in when a check started. "Still…" is only true when
+   // the finished check left it there.
+@@ -123,7 +127,10 @@ export function AgentSetupNotice({
+ 
+   if (cliOverride) {
+     return (
+-      <SetupFrame title="Radar can't run your RADAR_AI_CLI_BIN">
++      <SetupFrame
++        title="Radar can't run your RADAR_AI_CLI_BIN"
++        onOpenExample={onOpenExample}
++      >
+         <p className="mt-1 text-sm text-theme-text-secondary">
+           Fix the path, or remove it and restart Radar.
+         </p>
+@@ -139,7 +146,10 @@ export function AgentSetupNotice({
+   }
+   if (setupState === "needs-restart") {
+     return (
+-      <SetupFrame title="AI investigations aren't available right now">
++      <SetupFrame
++        title="AI investigations aren't available right now"
++        onOpenExample={onOpenExample}
++      >
+         <p className="mt-1 text-sm text-theme-text-secondary">
+           Try again in a moment.
+         </p>
+@@ -154,7 +164,7 @@ export function AgentSetupNotice({
+     );
+   }
+   return (
+-    <SetupFrame title="Set up AI investigations">
++    <SetupFrame title="Set up AI investigations" onOpenExample={onOpenExample}>
+       <p className="mt-1 text-sm text-theme-text-secondary">
+         Radar runs investigations through a coding agent CLI on your own
+         machine, with no Radar cloud and no API key. Install one of these:
+@@ -186,9 +196,11 @@ export function AgentSetupNotice({
+ function SetupFrame({
+   title,
+   children,
++  onOpenExample,
+ }: {
+   title: string;
+   children: ReactNode;
++  onOpenExample?: () => void;
+ }) {
+   return (
+     <div className="mx-auto max-w-md px-1 py-6">
+@@ -199,6 +211,12 @@ function SetupFrame({
+         {title}
+       </h3>
+       {children}
++      {onOpenExample && (
++        <p className="mt-4 text-sm text-theme-text-secondary">
++          Not sure yet?{" "}
++          <ExampleInvestigationLink onOpen={onOpenExample} />
++        </p>
++      )}
+       <p className="mt-4 text-xs text-theme-text-tertiary">
+         Your agent runs locally. Resource details and logs are sent to its model
+         provider under your account, not to Radar.
+```
+
+**File**: `web/src/components/diagnose/DiagnoseContext.tsx` (modified, +8/-1)
+```diff
+@@ -40,6 +40,7 @@ import {
+   type ExecutionProfile,
+ } from "../../api/diagnose";
+ import { isQuestionOnly, runTargetKey } from "./target";
++import { isExampleInvestigation } from "./exampleInvestigation";
+ import { knownKindForPluralWithGroup } from "../../utils/navigation";
+ 
+ export interface Target {
+@@ -755,7 +756,11 @@ function RoutedDiagnoseProvider({
+         : undefined;
+       if (focusedID && listedFocusedRun) {
+         unavailableRunIDsRef.current.delete(focusedID);
+-      } else if (focusedID && !unavailableRunIDsRef.current.has(focusedID)) {
++      } else if (
++        focusedID &&
++        !isExampleInvestigation(focusedID) &&
++        !unavailableRunIDsRef.current.has(focusedID)
++      ) {
+         try {
+           // A stable deep link can target a retained run older than the bounded
+           // history page. Refresh it directly too: its status and capabilities
+@@ -960,6 +965,7 @@ function RoutedDiagnoseProvider({
+       setView("investigation");
+       setOpen(true);
+       writeFocusedRunID(id, true);
++      if (isExampleInvestigation(id)) return;
+       // A Fleet issue can point at a retained automatic run older than the
+       // bounded history page. Resolve the exact id instead of waiting for list.
+       getRun(id)
+@@ -1054,6 +1060,7 @@ function RoutedDiagnoseProvider({
+     setActiveRunId(id);
+     setView("investigation");
+     setOpen(true);
++    if (isExampleInvestigation(id)) return;
+     getRun(id)
+       .then(updateRunSummary)
+       .catch((error) => {
+```
+
+**File**: `web/src/components/diagnose/DiagnoseSurface.tsx` (modified, +43/-4)
+```diff
+@@ -51,6 +51,12 @@ import {
+   statusWord,
+ } from "./Home";
+ import { AgentSetupNotice } from "./AgentSetupNotice";
++import {
++  EXAMPLE_INVESTIGATION_ID,
++  EXAMPLE_INVESTIGATION_RUN,
++  exampleInvestigationOffered,
++  isExampleInvestigation,
++} from "./exampleInvestigation";
+ import { AgentSigninNotice } from "./AgentSigninNotice";
+ import {
+   useAgentSignin,
+@@ -565,7 +571,18 @@ export function DiagnoseSurface({
+   const setupPending =
+     d.setupState === "needs-install" || d.setupState === "needs-restart";
+ 
+-  const activeRun = d.runs.find((r) => r.id === d.activeRunId) ?? null;
++  const exampleOpen = isExampleInvestigation(d.activeRunId);
++  const activeRun = exampleOpen
++    ? EXAMPLE_INVESTIGATION_RUN
++    : (d.runs.find((r) => r.id === d.activeRunId) ?? null);
++  const openExample = exampleInvestigationOffered({
++    runs: d.runs,
++    runsLoaded: d.runsLoaded,
++    setupPending,
++    needsConsent: d.needsConsent,
++  })
++    ? () => d.openRun(EXAMPLE_INVESTIGATION_ID)
++    : undefined;
+   // Consent replaces the detail pane even if goHome retained an older run id.
+   // Header identity and actions must describe what is actually visible.
+   const visibleRunDetail =
+@@ -642,9 +659,16 @@ export function DiagnoseSurface({
+       run={activeRun}
+       agentLabel={activeAgentLabel}
+       maximized={maximized}
+-      onOpenResource={onOpenResource ? openEvidenceResource : undefined}
+-      onOpenTimeline={onOpenTimeline ? openEvidenceTimeline : undefined}
++      // The example's resources are on a test cluster, not this one.
++      onOpenResource={
++        onOpenResource && !exampleOpen ? openEvidenceResource : undefined
++      }
++      onOpenTimeline={
++        onOpenTimeline && !exampleOpen ? openEvidenceTimeline : undefined
++      }
+       onRevealDestination={revealDestination}
++      example={exampleOpen}
++      onCloseExample={exampleOpen ? d.goHome : undefined}
+     />
+   ) : d.activeRunId && !d.runsLoaded ? (
+     // Deep-linked to a run before the list has ever loaded: show the load
+@@ -699,6 +723,7 @@ export function DiagnoseSurface({
+         checkingAgents={d.checkingAgents}
+         agentsCheckFailed={d.agentsCheckFailed}
+         recheckAgents={d.recheckAgents}
++        onOpenExample={openExample}
+       />
+     </div>
+   ) : (
+@@ -730,12 +755,14 @@ export function DiagnoseSurface({
+         checkingAgents={d.checkingAgents}
+         agentsCheckFailed={d.agentsCheckFailed}
+         recheckAgents={d.recheckAgents}
++        onOpenExample={openExample}
+       />
+     </div>
+   ) : (
+     <InvestigationHome
+       agentLabel={d.agentLabel}
+       questions={d.questions}
++      onOpenExample={openExample}
+       onBrowseIssues={
+         d.questions || (d.runsLoaded && d.runs.length === 0)
+           ? onBrowseIssues
+@@ -847,6 +874,7 @@ export function DiagnoseSurface({
+         <div className="flex shrink-0 items-center gap-1">
+           {activeRun &&
+             visibleRunDetail &&
++            !exampleOpen &&
+             canRerunInvestigation(d.view, activeRun, d.needsConsent) && (
+               <Tooltip
+                 content="Re-run this investigation from scratch"
+@@ -861,7 +889,9 @@ export function DiagnoseSurface({
+                 </button>
+               </Tooltip>
+             )}
+-          {visibleRunDetail && headerPresentation.runActionsClass !== null && (
++          {visibleRunDetail &&
++            !exampleOpen &&
++            headerPresentation.runActionsClass !== null && (
+             <div
+               className={`items-center gap-1 ${headerPresentation.runActionsClass || "flex"}`}
+             >
+@@ -946,6 +976,15 @@ export function DiagnoseSurface({
+               loadFailed={d.runsLoadFailed}
+               onRetry={d.refreshRuns}
+               questions={d.questions}
++              // Beside Home on the full page, Home already offers it.
++              onOpenExample={
++                persistentHistory || exampleOpen || !openExample
++                  ? undefined
++                  : () => {
++                      openExample();
++                      dismissHistory();
++                    }
++              }
+             />
+           </aside>
+         )}
+```
+
+**File**: `web/src/components/diagnose/ExampleInvestigationLink.tsx` (added, +20/-0)
+```diff
+@@ -0,0 +1,20 @@
++import { ArrowRight } from "lucide-react";
++
++export function ExampleInvestigationLink({
++  onOpen,
++  className = "",
++}: {
++  onOpen: () => void;
++  className?: string;
++}) {
++  return (
++    <button
++      type="button"
++      onClick={onOpen}
++      className={`inline-flex items-center gap-1 text-xs font-medium text-accent-text hover:underline ${className}`}
++    >
++      See an example investigation
++      <ArrowRight aria-hidden className="h-3 w-3" />
++    </button>
++  );
++}
+```
+
+**File**: `web/src/components/diagnose/Home.test.tsx` (modified, +26/-0)
+```diff
+@@ -352,6 +352,32 @@ describe("InvestigationHome", () => {
+     expect(text).toContain("Browse issues");
+     expect(html).not.toContain("textarea");
+   });
++
++  it("links to the example only when the surface offers it", () => {
++    const link = "See an example investigation";
++    expect(
++      visible(renderToStaticMarkup(<InvestigationHome agentLabel="Codex" />)),
++    ).not.toContain(link);
++    expect(
++      visible(
++        renderToStaticMarkup(
++          <InvestigationHome agentLabel="Codex" onOpenExample={() => {}} />,
++        ),
++      ),
++    ).toContain(link);
++    expect(
++      visible(
++        renderToStaticMarkup(
++          <RecentList
++            agentLabel="Codex"
++            runs={[]}
++            onSelect={() => {}}
++            onOpenExample={() => {}}
++          />,
++        ),
++      ),
++    ).toContain(link);
++  });
+ });
+ 
+ describe("RecentList question runs", () => {
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #2460** (2026-10-31): README: restore the top-post Product Hunt badge (@nadaverell)
-- **PR #2442** (2026-10-30): Accept groups sent as repeated headers in proxy mode (@hisco)
-- **PR #2441** (2026-10-30): Prerelease tags publish only the Docker image and Helm chart (@hisco)
-- **PR #2436** (2026-10-29): What's New: Radar v1.19.0 release notes (@nadaverell)
-- **PR #2433** (2026-10-29): README: give MCP and AI investigations equal footing with the UI (@nadaverell)
-- **PR #2432** (2026-10-29): Start an investigation from the Home cluster card (@nadaverell)
+- **PR #2523** (2026-11-03): Detect failed cert-manager renewals while certificates remain Ready (@nadaverell)
+- **PR #2510** (2026-11-03): feat: show NATS delivery and acknowledgement progress (@nadaverell)
+- **PR #2509** (2026-11-03): Show RabbitMQ resource measurements alongside alarm evidence (@nadaverell)
+- **PR #2508** (2026-11-03): Show Vault HA connection and cluster-removal evidence (@nadaverell)
+- **PR #2507** (2026-11-03): Show Strimzi connector task details and snapshot-aware status (@nadaverell)
+- **PR #2503** (2026-11-02): Give agents a PVC's volume and StorageClass, and a StorageClass's claims (@nadaverell)
 
 ---
 
@@ -2583,33 +3170,37 @@ from the May launch, reverting #2421.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Argo CD: working rollback, rollback outcome insights, and Argo 3 auto-sync state
+## X. Issues: name a RollingUpdate surge as the cause of a one-replica ReadWriteOnce r
 
 **RULE**:
-When implementing operations in `docs/gitops.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in skyhook-io/radar. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `internal/k8s/detect.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in skyhook-io/radar. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d9e73f40`: Argo CD: working rollback, rollback outcome insights, and Argo 3 auto-sync state (#2060). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e7cc3ebc`: Issues: name a RollingUpdate surge as the cause of a one-replica ReadWriteOnce rollout deadlock (#2494). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/gitops.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/k8s/detect.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-Resource guidance helpers accept named `{ hazard?, rolledBack? }` context. A supplied sync hazard takes precedence over rollback advice for non-Synced Missing rows and OutOfSync/Missing status explanations, deferring to the sync warning above. A Missing row still reported Synced asks for a refresh.
-
-Operation history with deploy timestamps, the git revision deployed, who initiated the sync (human user or automation), an outcome chip per row, and per-revision **Rollback** buttons for Argo. In-progress operations pin to the top of the timeline. History `rollbackable` only reports whether an entry has an ID and recorded source(s); auto-sync, lifecycle, in-flight operations and RBAC are separate checks.
-- **Stuck-drift loop** — when sync succeeded at the current desired comparison’s sources and revisions but the app is *still* OutOfSync with auto-sync on and a recent reconcile, something is mutating resources after each apply. The Issue calls out likely culprits (mutating webhook, sibling controller, schema migration). An older successful apply or rollback against different desired sources/revisions remains ordinary pending drift, including after auto-sync is re-enabled behind a sync w
+				action := "Inspect the new pods (image, readiness probe, resources) — the rollout is waiting on them to become ready."
+				// The pod row's RollingUpdate Multi-Attach cause, when it holds,
+				// replaces the generic advice so both rows say the same thing.
+				cause := rolloutMultiAttachCause(cache, d)
+				if cause != "" {
+					action = rollingUpdateRWOFix
+				} else if detail := rolloutRWOVolumeDetail(cache, d); detail != "" {
+					Cause:             cause,
+					Action:            action,
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-Operation history with deploy timestamps, the git revision deployed, who initiated the sync (human user or automation), an outcome chip per row, and per-revision **Rollback** buttons for Argo. In-progress operations pin to the top of the timeline.
-- **Stuck-drift loop** — when sync succeeded but the app is *still* OutOfSync with auto-sync on and a recent reconcile, something is mutating resources after each apply. The Issue calls out likely culprits (mutating webhook, sibling controller, schema migration)
-- **Manual drift without auto-sync** — drift exists but auto-sync is disabled. The Issue tells you "nothing will reconcile until you click Sync" so you stop waiting, unless a sync would be hazardous (see below)
+				if detail := rolloutRWOVolumeDetail(cache, d); detail != "" {
+					Action:            "Inspect the new pods (image, readiness probe, resources) — the rollout is waiting on them to become ready.",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d9e73f40` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e7cc3ebc` are properly handled with clean fallback behavior.

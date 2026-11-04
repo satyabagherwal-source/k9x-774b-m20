@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/facebook-folly-learnings.md`  
 > **Source**: github ([https://github.com/facebook/folly](https://github.com/facebook/folly))  
-> **Source Version**: `57ff303c`  
+> **Source Version**: `07758a25`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T17:14:11.687Z  
+> **Timestamp**: 2026-11-03T18:47:40.311Z  
 > **Learning ID**: `learn-github-meta-folly`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/facebook-folly-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/facebook/folly](https://github.com/facebook/folly))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T17:14:11.682Z  
+> **Harvest Timestamp**: 2026-11-03T18:47:40.065Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: An open-source C++ library developed and used at Facebook.
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 30553 stars
+- **Stars / Engagement**: 30557 stars
 
 ---
 
@@ -1059,8 +1059,8 @@ struct ConcurrentLazy {
 };
 
 template <class Func>
-ConcurrentLazy<remove_cvref_t<Func>> concurrent_lazy(Func&& func) {
-  return ConcurrentLazy<remove_cvref_t<Func>>(static_cast<Func&&>(func));
+ConcurrentLazy<std::remove_cvref_t<Func>> concurrent_lazy(Func&& func) {
+  return ConcurrentLazy<std::remove_cvref_t<Func>>(static_cast<Func&&>(func));
 }
 
 } // namespace folly
@@ -2368,347 +2368,484 @@ class WriteFileAtomicOptions {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `47c73354` (2026-10-30)
-**Commit Message**: cmake: match the cxx of edenfs-staticlib's workspace in the bridges of the eden/scm crates it builds
+### Incident Patch 1: `2dd4d58c` (2026-11-02)
+**Commit Message**: Catch OutOfMemory in IoUringBackend::isAvailable
 
 Summary:
-`rust_cxx_bridge()` and `rust_cxx_header()` generate C++ with the cxxbridge of the cxx version that `cargo tree` finds for the crate in the current source directory. `backingstore` and `edenfs_ffi` are in eden/scm's Cargo workspace, which takes cxx from crates.io, now 1.0.205. But their Rust builds into `rust_edenfs_staticlib`, in eden/fs's workspace, which patches cxx to facebookexperimental/cxx, at 1.0.198. cxx puts its version in the symbols that the C++ calls, so binaries that link these bridges fail with crates from crates.io, which GitHub's builds of meta/sapling use because it has no `Cargo.lock`. On macOS:
+`IoUringBackend::isAvailable()` probes ring setup and catches `NotAvailable`, but since D122351343 transient `ENOMEM` (exhausted `RLIMIT_MEMLOCK`) throws `OutOfMemory`, which is deliberately not a `NotAvailable`. The exception escapes the `call_once` probe and aborts the process, turning tests that gate on `isAvailable()` (e.g. `AsyncSocketProvidedBufferTest` via `IoUringTest::SetUp`) into `FATAL` flakes under CI host load.
 
-```
-Undefined symbols for architecture arm64:
-  "_sapling$cxxbridge1$205$sapling_flush_counters", referenced from:
-      sapling::sapling_flush_counters() in libbackingstore.a[2](ffi.rs.cc.o)
-```
+`isAvailable()` should answer whether io_uring is generally available to the process, looking through ephemeral resource crunches. Probe with a small ring so the probe itself is unlikely to trip a loaded host's memlock budget, and retry the probe a bounded number of times on `OutOfMemory` (at most ~80ms stall, once per process), reporting unavailable only if it never clears. Real backend-construction sites already retry `OutOfMemory` with a longer backoff, so the remaining use-time window needs a sustained outage to fail.
 
-while the static library has `_sapling$cxxbridge1$198$sapling_flush_counters`. The EdenFS Linux GitHub workflow fails the same way:
+Reviewed By: dtolnay
 
-```
-FAILED: [code=1] eden/fs/edenfs
-.../eden/scm/lib/backingstore/src/ffi.rs.cc:1545:(.text+0x3b4): undefined reference to `sapling$cxxb
+Differential Revision: D128517741
 
-**File**: `build/fbcode_builder/CMake/RustStaticLibrary.cmake` (modified, +26/-14)
+fbshipit-source-id: 87c1d226eaf2b26d8530690857c914071f8f956b
+
+**File**: `folly/io/async/IoUringBackend.cpp` (modified, +20/-6)
 ```diff
-@@ -395,7 +395,8 @@ endfunction()
- #   `${TARGET}` CMake library target.
- #
- # ```cmake
--# rust_cxx_bridge(<TARGET> <CXX_BRIDGE_FILE> [CRATE <CRATE_NAME>] [LIBS <LIBNAMES>])
-+# rust_cxx_bridge(<TARGET> <CXX_BRIDGE_FILE> [CRATE <CRATE_NAME>] [LIBS <LIBNAMES>]
-+#                 [CXX_VERSION_DIR <DIR>])
- # ```
- #
- # Parameters:
-@@ -408,17 +409,22 @@ endfunction()
- #   fallback to `${TARGET}`.
- # - LIBS <lib1> [<lib2> ...]:
- #   A list of libraries that this library depends on.
-+# - CXX_VERSION_DIR:
-+#   Directory of the crate whose version of cxx to match. This parameter is
-+#   optional, and defaults to the current source directory. A crate built into
-+#   the static library of another Cargo workspace links that workspace's cxx,
-+#   which can be another version.
- #
- function(rust_cxx_bridge TARGET CXX_BRIDGE_FILE)
--  fb_cmake_parse_args(ARG "" "CRATE" "LIBS" "${ARGN}")
-+  fb_cmake_parse_args(ARG "" "CRATE;CXX_VERSION_DIR" "LIBS" "${ARGN}")
+@@ -18,6 +18,8 @@
+ #include <folly/portability/SysResource.h>
  
-   if(DEFINED ARG_CRATE)
-     set(crate_name "${ARG_CRATE}")
-   else()
-     set(crate_name "${TARGET}")
-   endif()
+ #include <cerrno>
++#include <chrono>
++#include <thread>
  
--  _rust_cxxbridge(cxxbridge cxxbridge_target)
-+  _rust_cxxbridge(cxxbridge cxxbridge_target "${ARG_CXX_VERSION_DIR}")
+ #include <folly/Demangle.h>
+ #include <folly/FileUtil.h>
+@@ -666,12 +668,24 @@ bool IoUringBackend::isAvailable() {
  
-   add_library(${crate_name} STATIC)
-   target_include_directories(
-@@ -479,10 +485,10 @@ endfunction()
- # This function generates the `rust/cxx.h` header of the [cxx] crate for C++
- # code that uses cxx types, such as `rust::String`, without a bridge of its
- # own. The header matches the version of cxx that the crate in the current
--# source directory depends on.
-+# source directory, or in CXX_VERSION_DIR, depends on.
- #
- # ```cmake
--# rust_cxx_header(<TARGET> [LIBS <LIBNAMES>])
-+# rust_cxx_header(<TARGET> [LIBS <LIBNAMES>] [CXX_VERSION_DIR <DIR>])
- # ```
- #
- # Parameters:
-@@ -493,11 +499,13 @@ endfunction()
- # - LIBS <lib1> [<lib2> ...]:
- #   A list of libraries that this library depends on, such as the Rust static
- #   library that contains the cxx runtime.
-+# - CXX_VERSION_DIR:
-+#   As for rust_cxx_bridge().
- #
- function(rust_cxx_header TARGET)
--  fb_cmake_parse_args(ARG "" "" "LIBS" "${ARGN}")
-+  fb_cmake_parse_args(ARG "" "CXX_VERSION_DIR" "LIBS" "${ARGN}")
+   static folly::once_flag initFlag;
+   folly::call_once(initFlag, [&]() {
+-    try {
+-      Options options;
+-      options.setCapacity(1024);
+-      IoUringBackend backend(std::move(options));
+-    } catch (const NotAvailable&) {
+-      sAvailable = false;
++    static constexpr auto kRetryDelay = std::chrono::milliseconds(20);
++    static constexpr int kMaxAttempts = 5;
++    for (int attempt = 0;; ++attempt) {
++      try {
++        Options options;
++        options.setCapacity(16).setMaxSubmit(8);
++        IoUringBackend backend(std::move(options));
++        return;
++      } catch (const NotAvailable&) {
++        sAvailable = false;
++        return;
++      } catch (const OutOfMemory&) {
++        if (attempt + 1 >= kMaxAttempts) {
++          sAvailable = false;
++          return;
++        }
++        /* sleep override */ std::this_thread::sleep_for(kRetryDelay);
++      }
+     }
+   });
  
--  _rust_cxxbridge(cxxbridge cxxbridge_target)
-+  _rust_cxxbridge(cxxbridge cxxbridge_target "${ARG_CXX_VERSION_DIR}")
-   add_custom_target(
-     ${TARGET}.header
-     DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/rust/cxx.h"
-@@ -509,11 +517,15 @@ function(rust_cxx_header TARGET)
- endfunction()
- 
- # Sets <CXXBRIDGE_VAR> to a cxxbridge with the version of cxx that the crate in
--# the current source directory depends on, and <DEPENDS_VAR> to the target that
--# commands running it depend on, which runs `cargo install cxxbridge-cmd` when
--# no installed cxxbridge has that version. Also adds the rule that generates
--# `rust/cxx.h` in the current binary directory.
--function(_rust_cxxbridge CXXBRIDGE_VAR DEPENDS_VAR)
-+# <CXX_VERSION_DIR>, or else the current source directory, depends on, and
-+# <DEPENDS_VAR> to the target that commands running it depend on, which runs
-+# `cargo install cxxbridge-cmd` when no installed cxxbridge has that version.
-+# Also adds the rule that generates `rust/cxx.h` in the current binary
-+# directory.
-+function(_rust_cxxbridge CXXBRIDGE_VAR DEPENDS_VAR CXX_VERSION_DIR)
-+  if(NOT CXX_VERSION_DIR)
-+    set(CXX_VERSION_DIR "${CMAKE_CURRENT_SOURCE_DIR}")
-+  endif()
-   if(USE_CARGO_VENDOR)
-     set(extra_cargo_env "CARGO_HOME=${RUST_CARGO_HOME}")
-   endif()
-@@ -523,15 +535,15 @@ function(_rust_cxxbridge CXXBRIDGE_VAR DEPENDS_VAR)
-       "${CMAKE_COMMAND}" -E env
-       ${extra_cargo_env}
-       "${CARGO_COMMAND}" tree -i cxx --depth=0
--    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-+    WORKING_DIRECTORY "${CXX_VERSION_DIR}"
-     RESULT_VARIABLE cxx_version_result
-     OUTPUT_VARIABLE cxx_version_output
-   )
- 
-   if(NOT "${cxx_version_result}" EQUAL "0")
-     message(
-       FATAL_ERROR
--      "The crate in ${CMAKE_CURRENT_SOURCE_DIR} does not depend on cxx."
-+      "The crate in ${CXX_VERSION_DIR} does not depend on cxx."
-     )
-   endif()
-   if(cxx_version_output MATCHES "cxx v([0-9]+.[0-9]+.[0-9]+)")
 ```
 
 ---
 
-### Incident Patch 2: `592d1011` (2026-10-31)
-**Commit Message**: Add owning EventBase acquisition to IOExecutor
+### Incident Patch 2: `89eb23b9` (2026-11-02)
+**Commit Message**: Prepare the emergency signal stack before a crash
 
 Summary:
-Add `IOExecutor::getEventBaseKeepAlive()` and implement it across concrete providers, decorators, subclass overrides, and mocks. Keep the borrowed getter for incremental caller migration.
+Reserve and guard the emergency stack while constructing the fatal-signal printer, using ordinary intercepted `mmap` and `mprotect` so sanitizer bookkeeping runs before a crash. Resolve real-libc ucontext functions before handler installation and retain the sanitizer fiber hooks around a minimally uninstrumented trampoline. Use an unsymbolized fallback when setup fails or TSan makes the stack switch unsupported.
 
-The IO pool acquires the EventBase token under its selection lock. Mux gates acquisition against shutdown without holding the gate while draining references. RootExecutor retains its fixed EventBase and drains CPU roots before IO teardown. Forwarders preserve selection and subclass hooks.
+Keep libc loading and failure policy local to the symbolizer. Test quiet installation and fatal-signal output; the following diff adds the complete stack-trace binding assertion.
 
 Reviewed By: skrueger
 
-Differential Revision: D127598017
+Differential Revision: D127518600
 
-fbshipit-source-id: e6ad74ae7cdf1e744c2e47ffeb6d440e1d68b3be
+fbshipit-source-id: 5281d3e8ead6a313823dcae99f7fb9a0f91b7109
 
-**File**: `folly/executors/FiberIOExecutor.h` (modified, +5/-0)
+**File**: `folly/debugging/symbolizer/Symbolizer.cpp` (modified, +136/-67)
 ```diff
-@@ -44,6 +44,11 @@ class FiberIOExecutor : public IOExecutor {
-     return ioExecutor_->getEventBase();
-   }
+@@ -627,54 +627,62 @@ namespace {
+ // Size of mmap-allocated stack. Not to confuse with sigaltstack.
+ const size_t kMmapStackSize = 1 * 1024 * 1024;
  
-+  folly::Executor::KeepAlive<folly::EventBase> getEventBaseKeepAlive()
-+      override {
-+    return ioExecutor_->getEventBaseKeepAlive();
+-using MmapPtr = std::unique_ptr<char, void (*)(char*)>;
++constexpr bool kUseAllocatedStack = !kIsSanitizeThread;
+ 
+-MmapPtr getNull() {
+-  return MmapPtr(nullptr, [](char*) {});
++template <typename Function>
++Function resolve_libc_function(const char* name) {
++  auto* symbol = detail::get_libc_symbol(name);
++  return reinterpret_cast<Function>(symbol);
+ }
+ 
+-// Assign a mmap-allocated stack to oucp.
+-// Return a non-empty smart pointer on success.
+-MmapPtr allocateStack(ucontext_t* oucp, size_t pageSize) {
+-  MmapPtr p(
+-      (char*)mmap(
+-          nullptr,
+-          kMmapStackSize,
+-          PROT_WRITE | PROT_READ,
+-          MAP_ANONYMOUS | MAP_PRIVATE,
+-          /* fd */ -1,
+-          /* offset */ 0),
+-      [](char* addr) {
+-        // Usually runs inside a fatal signal handler.
+-        // Error handling is skipped.
+-        munmap(addr, kMmapStackSize);
+-      });
+-
+-  if (!p) {
+-    return getNull();
+-  }
+-
+-  // Prepare read-only guard pages on both ends
+-  if (pageSize * 2 >= kMmapStackSize) {
+-    return getNull();
+-  }
+-  size_t upperBound = ((kMmapStackSize - 1) / pageSize) * pageSize;
+-  if (mprotect(p.get(), pageSize, PROT_NONE) != 0) {
+-    return getNull();
+-  }
+-  if (mprotect(p.get() + upperBound, kMmapStackSize - upperBound, PROT_NONE) !=
+-      0) {
+-    return getNull();
+-  }
++} // namespace
+ 
+-  oucp->uc_stack.ss_sp = p.get() + pageSize;
+-  oucp->uc_stack.ss_size = upperBound - pageSize;
+-  oucp->uc_stack.ss_flags = 0;
++struct UnsafeSelfAllocateStackTracePrinter::AllocatedStack {
++  AllocatedStack() = default;
++  AllocatedStack(const AllocatedStack&) = delete;
++  AllocatedStack& operator=(const AllocatedStack&) = delete;
++  AllocatedStack(AllocatedStack&&) = delete;
++  AllocatedStack& operator=(AllocatedStack&&) = delete;
+ 
+-  return p;
+-}
++  ~AllocatedStack() {
++    if (mapping) {
++      munmap(mapping, kMmapStackSize);
++    }
++  }
+ 
+-} // namespace
++  char* mapping{nullptr};
++  void* bottom{nullptr};
++  size_t size{0};
++};
++
++struct UnsafeSelfAllocateStackTracePrinter::ContextFunctions {
++  ContextFunctions()
++      : getcontext(
++            resolve_libc_function<decltype(&::getcontext)>("getcontext")),
++        makecontext(
++            resolve_libc_function<decltype(&::makecontext)>("makecontext")),
++        swapcontext(
++            resolve_libc_function<decltype(&::swapcontext)>("swapcontext")) {}
++
++  explicit operator bool() const {
++    return getcontext && makecontext && swapcontext;
 +  }
 +
-  private:
-   std::shared_ptr<IOExecutor> ioExecutor_;
-   fibers::FiberManager::Options options_;
++  decltype(&::getcontext) getcontext;
++  decltype(&::makecontext) makecontext;
++  decltype(&::swapcontext) swapcontext;
++};
++
++#if __has_attribute(disable_sanitizer_instrumentation)
++#define FOLLY_DETAIL_SYMBOLIZER_RAW                  \
++  __attribute__((                                    \
++      noinline,                                      \
++      no_sanitize("address", "undefined", "thread"), \
++      disable_sanitizer_instrumentation))
++#else
++#define FOLLY_DETAIL_SYMBOLIZER_RAW \
++  __attribute__((noinline, no_sanitize("address", "undefined", "thread")))
++#endif
+ 
+ FOLLY_PUSH_WARNING
+ 
+@@ -683,54 +691,115 @@ FOLLY_PUSH_WARNING
+ FOLLY_GNU_DISABLE_WARNING("-Wdeprecated-declarations")
+ #endif
+ 
+-void UnsafeSelfAllocateStackTracePrinter::printSymbolizedStackTrace() {
+-  if (pageSizeUnchecked_ <= 0) {
+-    return;
++std::unique_ptr<UnsafeSelfAllocateStackTracePrinter::AllocatedStack>
++UnsafeSelfAllocateStackTracePrinter::allocateStack() {
++  const long pageSizeUnchecked = sysconf(_SC_PAGESIZE);
++  if (pageSizeUnchecked <= 0) {
++    return nullptr;
++  }
++  const auto pageSize = static_cast<size_t>(pageSizeUnchecked);
++  if (pageSize * 2 >= kMmapStackSize) {
++    return nullptr;
+   }
+ 
+-  ucontext_t cur;
+-  memset(&cur, 0, sizeof(cur));
+-  ucontext_t alt;
+-  memset(&alt, 0, sizeof(alt));
++  auto* mapping = static_cast<char*>(mmap(
++      nullptr,
++      kMmapStackSize,
++      PROT_WRITE | PROT_READ,
++      MAP_ANONYMOUS | MAP_PRIVATE,
++      /* fd */ -1,
++      /* offset */ 0));
++  if (mapping == MAP_FAILED) {
++    return nullptr;
++  }
++  auto rollback = makeGuard([&] { munmap(mapping, kMmapStackSize); });
++  auto stack = std::make_unique<AllocatedStack>();
++  stack->mapping = mapping;
++  rollback.dismiss();
++
++  const size_t upperBound = ((kMmapStackSize - 1) / pageSize) * pageSize;
++  if (mprotect(mapping, pageSize, PROT_NONE) != 0 ||
++      mprotect(mapping + upperBound, kMmapStackSize - upperBound, PROT_NONE) !=
++          0) {
++    return nullptr;
++  }
+ 
+-  if (getcontext(&alt) != 0) {
+-    return;
++  stack->bottom = mapping + pageSize;
++  stack->size = upperBound - pageSize;
++  return stack;
++}
++
++UnsafeSelfAllocateStackTracePrinter::UnsafeSelfAllocateStackTracePrinter(int fd)
++    : SafeStackTracePrinter(fd),
++      stack_(kUseAllocatedStack ? allocateStack() : nullptr),
++      contextFunctions_(
++          kUseAllocatedSta
 ```
 
-**File**: `folly/executors/IOExecutor.h` (modified, +10/-0)
+**File**: `folly/debugging/symbolizer/Symbolizer.h` (modified, +18/-1)
 ```diff
-@@ -40,7 +40,17 @@ namespace folly {
- class IOExecutor : public virtual folly::Executor {
-  public:
-   ~IOExecutor() override = default;
+@@ -380,9 +380,26 @@ inline std::string getStackTraceStr(
+  * Note it's still unsafe even with that.
+  */
+ class UnsafeSelfAllocateStackTracePrinter : public SafeStackTracePrinter {
++ public:
++  /// Reserve the emergency stack and eagerly resolve context-switch bindings.
++  /// Construct before installing handlers: binding resolution is not
++  /// async-signal-safe.
++  explicit UnsafeSelfAllocateStackTracePrinter(int fd = STDERR_FILENO);
++  ~UnsafeSelfAllocateStackTracePrinter() override;
 +
-+  // Returns a borrowed EventBase. Its lifetime must be coordinated with the
-+  // implementation's shutdown or resizing.
-   virtual folly::EventBase* getEventBase() = 0;
+  protected:
+   void printSymbolizedStackTrace() override;
+-  const long pageSizeUnchecked_ = sysconf(_SC_PAGESIZE);
 +
-+  // Returns an implementation-selected EventBase protected by the token, which
-+  // may delay shutdown or resizing. This does not retain the IOExecutor or
-+  // change EventBase thread-affinity requirements. An unavailable EventBase may
-+  // be represented by an empty token or an exception, as with getEventBase().
-+  virtual folly::Executor::KeepAlive<folly::EventBase>
-+  getEventBaseKeepAlive() = 0;
++ private:
++  struct AllocatedStack;
++  struct ContextFunctions;
++
++  static std::unique_ptr<AllocatedStack> allocateStack();
++  static void contextStart(UnsafeSelfAllocateStackTracePrinter* that);
++  bool runOnAllocatedStack();
++
++  const std::unique_ptr<AllocatedStack> stack_;
++  const std::unique_ptr<ContextFunctions> contextFunctions_;
  };
  
+ #endif // FOLLY_HAVE_SWAPCONTEXT
+```
+
+**File**: `folly/debugging/symbolizer/detail/BUCK` (modified, +1/-0)
+```diff
+@@ -10,5 +10,6 @@ fb_dirsync_cpp_library(
+     deps = [
+         "fbsource//third-party/glibc:dl",
+         "//folly:portability",
++        "//folly/system:libc",
+     ],
+ )
+```
+
+**File**: `folly/debugging/symbolizer/detail/CMakeLists.txt` (modified, +3/-1)
+```diff
+@@ -18,5 +18,7 @@ folly_add_library(
+   NAME debug
+   SRCS Debug.cpp
+   HEADERS Debug.h
+-  DEPS folly_portability
++  DEPS
++    folly_portability
++    folly_system_libc
+ )
+```
+
+**File**: `folly/debugging/symbolizer/detail/Debug.cpp` (modified, +27/-0)
+```diff
+@@ -17,6 +17,7 @@
+ #include <folly/debugging/symbolizer/detail/Debug.h>
+ 
+ #include <folly/Portability.h>
++#include <folly/system/libc.h>
+ 
+ #ifndef _WIN32
+ #include <dlfcn.h>
+@@ -34,6 +35,20 @@ namespace folly {
+ namespace symbolizer {
+ namespace detail {
+ 
++namespace {
++
++void* get_libc_handle() {
++#ifndef _WIN32
++  static void* const handle = dlopen(
++      folly::detail::libc_soname(), RTLD_LAZY | RTLD_LOCAL | RTLD_NOLOAD);
++  return handle;
++#else
++  return nullptr;
++#endif
++}
++
++} // namespace
++
+ #if FOLLY_DETAIL_HAS_R_DEBUG
+ 
+ /// There is a strong requirement of finding the true _r_debug in ld.so.
+@@ -79,6 +94,18 @@ struct r_debug* get_r_debug() {
+ #endif
+ }
+ 
++void* get_libc_symbol(const char* name) {
++  if (!name) {
++    return nullptr;
++  }
++#ifndef _WIN32
++  auto* handle = get_libc_handle();
++  return handle ? dlsym(handle, name) : nullptr;
++#else
++  return nullptr;
++#endif
++}
++
+ } // namespace detail
+ } // namespace symbolizer
  } // namespace folly
 ```
 
-**File**: `folly/executors/IOThreadPoolExecutor.cpp` (modified, +9/-0)
+**File**: `folly/debugging/symbolizer/detail/Debug.h` (modified, +1/-0)
 ```diff
-@@ -204,6 +204,15 @@ EventBase* IOThreadPoolExecutor::getEventBase() {
-   return pickThread()->eventBase;
- }
+@@ -23,6 +23,7 @@ namespace symbolizer {
+ namespace detail {
  
-+Executor::KeepAlive<EventBase> IOThreadPoolExecutor::getEventBaseKeepAlive() {
-+  ensureActiveThreads();
-+  std::shared_lock r{threadListLock_};
-+  if (threadList_.get().empty()) {
-+    throw std::runtime_error("No threads available");
-+  }
-+  return getKeepAliveToken(pickThread()->eventBase);
-+}
-+
- std::vector<Executor::KeepAlive<EventBase>>
- IOThreadPoolExecutor::getAllEventBases() {
-   ensureMaxActiveThreads();
+ struct r_debug* get_r_debug();
++void* get_libc_symbol(const char* name);
+ 
+ } // namespace detail
+ } // namespace symbolizer
 ```
 
-**File**: `folly/executors/IOThreadPoolExecutor.h` (modified, +1/-0)
+**File**: `folly/debugging/symbolizer/test/BUCK` (modified, +13/-0)
 ```diff
-@@ -134,6 +134,7 @@ class IOThreadPoolExecutor : public IOThreadPoolExecutorBase {
-       Func expireCallback = nullptr) override;
+@@ -6,6 +6,7 @@ load("@fbsource//tools/build_defs/dirsync:fb_dirsync_cpp_benchmark.bzl", "fb_dir
+ load("@fbsource//tools/build_defs/dirsync:fb_dirsync_cpp_binary.bzl", "fb_dirsync_cpp_binary")
+ load("@fbsource//tools/build_defs/dirsync:fb_dirsync_cpp_library.bzl", "fb_dirsync_cpp_library")
+ load("@fbsource//tools/build_defs/dirsync:fb_dirsync_cpp_unittest.bzl", "fb_dirsync_cpp_unittest")
++load("@fbsource//tools/build_defs/testinfra:network_access_utils.bzl", "network_access_utils")
+ load("../../../defs.bzl", "fbcode_ci_default_labels")
+ load(":validate_folly_symbolizer.bzl", "SPLIT_DWARF_FLAGS", "customized_unittest", "validate_folly_symbolizer", "validate_symbolizer_dwp")
  
-   folly::EventBase* getEventBase() override;
-+  folly::Executor::KeepAlive<folly::EventBase> getEventBaseKeepAlive() override;
- 
-   // Ensures that the maximum number of active threads is running and returns
-   // the EventBase associated with each thread.
-```
-
-**File**: `folly/executors/test/BUCK` (modified, +1/-0)
-```diff
-@@ -292,6 +292,7 @@ fb_dirsync_cpp_unittest(
+@@ -69,6 +70,7 @@ fb_dirsync_cpp_binary(
+     labels = fbcode_ci_default_labels(),
+     target_compatible_with = ["ovr_config//runtime:fbcode"],
      deps = [
-         ":IOThreadPoolExecutorBaseTestLib",
-         "//folly/executors:io_thread_pool_executor",
-+        "//folly/synchronization:baton",
++        "//folly:portability",
+         "//folly/debugging/symbolizer:symbolizer",
+     ],
+ )
+@@ -97,6 +99,17 @@ python_unittest(
      ],
  )
  
-```
-
-**File**: `folly/executors/test/FiberIOExecutorTest.cpp` (modified, +17/-0)
-```diff
-@@ -34,6 +34,23 @@ TEST_F(FiberIOExecutorTest, event_base) {
-   ASSERT_EQ(e.getEventBase(), tpe->getEventBase());
- }
- 
-+TEST_F(FiberIOExecutorTest, owning_event_base) {
-+  auto tpe = std::make_shared<folly::IOThreadPoolExecutor>(1);
-+  folly::FiberIOExecutor e(tpe);
-+  auto* expected = tpe->getEventBase();
-+  size_t baseline = 0;
-+  expected->runInEventBaseThreadAndWait([&] {
-+    baseline = expected->loopKeepAliveCount();
-+  });
-+  auto eventBase = static_cast<folly::IOExecutor&>(e).getEventBaseKeepAlive();
++python_unittest(
++    name = "small_sigaltstack_test",
++    srcs = ["small_sigaltstack_test.py"],
++    env = {
++        "SMALL_SIGALTSTACK_CRASH": "$(location :small_sigaltstack_crash)",
++    },
++    labels = fbcode_ci_default_labels(python = True),
++    network_access = network_access_utils.none(),
++    target_compatible_with = ["ovr_config//runtime:fbcode"],
++)
 +
-+  ASSERT_TRUE(eventBase);
-+  EXPECT_EQ(expected, eventBase.get());
-+  eventBase->runInEventBaseThreadAndWait([&] {
-+    EXPECT_EQ(baseline + 1, eventBase->loopKeepAliveCount());
-+  });
-+}
-+
- TEST_F(FiberIOExecutorTest, basic_execution) {
-   auto tpe = std::make_shared<folly::IOThreadPoolExecutor>(1);
-   folly::FiberIOExecutor e(tpe);
+ fb_dirsync_cpp_unittest(
+     name = "symbolized_frame_test",
+     srcs = ["SymbolizedFrameTest.cpp"],
 ```
 
-**File**: `folly/executors/test/GlobalExecutorTest.cpp` (modified, +3/-0)
+**File**: `folly/debugging/symbolizer/test/SmallSigAltStackCrash.cpp` (modified, +16/-3)
 ```diff
-@@ -94,6 +94,9 @@ TEST(GlobalExecutorTest, GlobalIOExecutor) {
-    public:
-     void add(Func) override { count++; }
-     folly::EventBase* getEventBase() override { return nullptr; }
-+    Executor::KeepAlive<EventBase> getEventBaseKeepAlive() override {
-+      return {};
-+    }
-     int count{0};
-   };
+@@ -16,20 +16,33 @@
  
-```
-
-**File**: `folly/executors/test/IOThreadPoolExecutorBaseTestLib.h` (modified, +8/-1)
-```diff
-@@ -80,16 +80,23 @@ TYPED_TEST_P(IOThreadPoolExecutorBaseTest, GetEventBaseFromEvb) {
+ #include <signal.h>
+ #include <array>
++#include <cstdio>
++#include <cstring>
  
-   for (auto ka : evbs) {
-     auto* evb = ka.get();
-+    Baton<> added;
-     // If called from the EventBase thread, getEventBase() and add() stick to
-     // the current EventBase.
-     evb->runInEventBaseThreadAndWait([&] {
-       EXPECT_EQ(evb, EventBaseManager::get()->getExistingEventBase());
-       EXPECT_EQ(evb, ex.getEventBase());
--      ex.add([&ex, evb] {
-+      EXPECT_EQ(
-+          evb, static_cast<IOExecutor&>(ex).getEventBaseKeepAlive().get());
-+      ex.add([&ex, evb, &added] {
-         EXPECT_EQ(evb, ex.getEventBase());
-+        EXPECT_EQ(
-+            evb, static_cast<IOExecutor&>(ex).getEventBaseKeepAlive().get());
-         EXPECT_EQ(evb, EventBaseManager::get()->getExistingEventBase());
-+        added.post();
-       });
-     });
-+    added.wait();
-   }
++#include <folly/Portability.h>
+ #include <folly/debugging/symbolizer/SignalHandler.h>
+ 
+ namespace {
++#if defined(__aarch64__)
++std::array<char, 32768> stack;
++#elif defined(FOLLY_SANITIZE_THREAD)
++std::array<char, 16384> stack;
++#else
+ std::array<char, 8192> stack;
+-}
++#endif
++} // namespace
+ 
+-int main() {
++int main(int argc, char** argv) {
+   stack_t ss;
+   ss.ss_sp = stack.data();
+   ss.ss_size = stack.size();
+   ss.ss_flags = 0;
+   sigaltstack(&ss, nullptr);
+ 
+   folly::symbolizer::installFatalSignalHandler();
+-  __builtin_trap();
++  if (argc == 2 && std::strcmp(argv[1], "--install-only") == 0) {
++    return 0;
++  }
++  std::fputs("crashing\n", stderr);
++  raise(SIGILL);
  }
- 
 ```
 
 ---
 
-### Incident Patch 3: `236495ff` (2026-10-31)
-**Commit Message**: Give IoUring ScheduledFnAt extra timeout tolerance
+### Incident Patch 3: `00b25d13` (2026-11-03)
+**Commit Message**: Give the debuglink crash helper a symbolization-capable stack
 
 Summary:
-ScheduledFnAt asserts 9/19/39ms timers fire within a 5ms tolerance on 10ms wheel ticks, leaving ~4ms of loop-latency margin. The IoUring backend delivers timer callbacks up to a loop iteration later than other backends, so on loaded hosts it lands just over the line (10% flaky, overshoots of 5-11ms observed). Allow 15ms for IoUring providers only; other backends keep the tight default.
+Install a 1-MiB altstack before the GNU-debuglink crash helper installs its fatal-signal handler. This keeps the helper on the full-symbolization path independently of the sanitizer runtime's default altstack size, so the existing source-line assertions work under TSAN as well. Preserve all debuglink checks and CI modes; no runtime skips or compatibility exclusions.
 
 ___
 
 landed-with-radar-review
 
-Differential Revision: D128818075
+Differential Revision: D129364192
 
-fbshipit-source-id: bec7b2084bc3d540c6ed7b3ba4f5a0b0915a4dab
+fbshipit-source-id: d547876d22aedcbb125d6db61ec74b3c8e212dd7
 
-**File**: `folly/io/async/test/EventBaseTestLib.h` (modified, +16/-5)
+**File**: `folly/debugging/symbolizer/test/Crash.cpp` (modified, +11/-0)
 ```diff
-@@ -1373,12 +1373,23 @@ TYPED_TEST_P(EventBaseTest, ScheduledFnAt) {
-   // Even though we asked to schedule the first function in the past,
-   // in practice it doesn't run until after 1 iteration of the HHWheelTimer tick
-   // interval.
--  T_CHECK_TIMEOUT(start, timestamp0, eb.timer().getTickInterval());
-+  // The IoUring backend can deliver timer callbacks up to a loop iteration
-+  // later than other backends (see the loopOnce() special-case above), so on
-+  // loaded hosts it can exceed the tight default tolerance. Allow it extra
-+  // room without weakening the check for other backends.
-+  auto timeoutTolerance = TypeParam::isIoUringBackend()
-+      ? std::chrono::milliseconds(15)
-+      : std::chrono::milliseconds(5);
-+  T_CHECK_TIMEOUT(
-+      start, timestamp0, eb.timer().getTickInterval(), timeoutTolerance);
+@@ -14,10 +14,21 @@
+  * limitations under the License.
+  */
  
--  T_CHECK_TIMEOUT(start, timestamp1, std::chrono::milliseconds(9));
--  T_CHECK_TIMEOUT(start, timestamp2, std::chrono::milliseconds(19));
--  T_CHECK_TIMEOUT(start, timestamp3, std::chrono::milliseconds(39));
--  T_CHECK_TIMEOUT(start, end, std::chrono::milliseconds(39));
-+  T_CHECK_TIMEOUT(
-+      start, timestamp1, std::chrono::milliseconds(9), timeoutTolerance);
-+  T_CHECK_TIMEOUT(
-+      start, timestamp2, std::chrono::milliseconds(19), timeoutTolerance);
-+  T_CHECK_TIMEOUT(
-+      start, timestamp3, std::chrono::milliseconds(39), timeoutTolerance);
-+  T_CHECK_TIMEOUT(start, end, std::chrono::milliseconds(39), timeoutTolerance);
++#include <signal.h>
++#include <array>
++#include <cstdio>
+ #include <cstdlib>
+ #include <folly/debugging/symbolizer/SignalHandler.h>
+ 
+ int main() {
++  alignas(16) static std::array<char, 1024 * 1024> stack{};
++  stack_t ss{};
++  ss.ss_sp = stack.data();
++  ss.ss_size = stack.size();
++  if (sigaltstack(&ss, nullptr) != 0) {
++    std::perror("sigaltstack");
++    return 1;
++  }
+   folly::symbolizer::installFatalSignalHandler();
+   std::abort();
  }
- 
- ///////////////////////////////////////////////////////////////////////////
 ```
 
 #### Recent Merged Pull Requests:
@@ -2737,61 +2874,52 @@ fbshipit-source-id: bec7b2084bc3d540c6ed7b3ba4f5a0b0915a4dab
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. cmake: match the cxx of edenfs-staticlib's workspace in the bridges of the eden/
+## X. Catch OutOfMemory in IoUringBackend::isAvailable
 
 **RULE**:
-When implementing operations in `build/fbcode_builder/CMake/RustStaticLibrary.cmake`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meta/folly. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `folly/io/async/IoUringBackend.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meta/folly. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `47c73354`: cmake: match the cxx of edenfs-staticlib's workspace in the bridges of the eden/scm crates it builds. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2dd4d58c`: Catch OutOfMemory in IoUringBackend::isAvailable. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `build/fbcode_builder/CMake/RustStaticLibrary.cmake`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `folly/io/async/IoUringBackend.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-# rust_cxx_bridge(<TARGET> <CXX_BRIDGE_FILE> [CRATE <CRATE_NAME>] [LIBS <LIBNAMES>]
-#                 [CXX_VERSION_DIR <DIR>])
-# - CXX_VERSION_DIR:
-#   Directory of the crate whose version of cxx to match. This parameter is
-#   optional, and defaults to the current source directory. A crate built into
-#   the static library of another Cargo workspace links that workspace's cxx,
-#   which can be another version.
-  fb_cmake_parse_args(ARG "" "CRATE;CXX_VERSION_DIR" "LIBS" "${ARGN}")
-  _rust_cxxbridge(cxxbridge cxxbridge_target "${ARG_CXX_VERSION_DIR}")
-# source directory, or in CXX_VERSION_DIR, depends on.
-# rust_cxx_header(<TARGET> [LIBS <LIBNAMES>] [CXX_VERSION_DIR <DIR>])
-# - CXX_VERSION_DIR:
-#   As for rust_cxx_bridge().
-  fb_cmake_parse_args(ARG "" "CXX_VERSION_DIR" "LIBS" "${ARGN}")
-  _rust_cxxbridge(cxxbridge cxxbridge_target "${ARG_CXX_VERSION_DIR}")
-# <CXX_VERSION_DIR>, or else the current source directory, depends on, and
-# <DEPENDS_VAR> to the target that commands running it depend on, which runs
-# `cargo install cxxbridge-cmd` when no installed cxxbridge has that version.
-# Also adds the rule that generates `rust/cxx.h` in the current binary
-# directory.
-function(_rust_cx
+#include <chrono>
+#include <thread>
+    static constexpr auto kRetryDelay = std::chrono::milliseconds(20);
+    static constexpr int kMaxAttempts = 5;
+    for (int attempt = 0;; ++attempt) {
+      try {
+        Options options;
+        options.setCapacity(16).setMaxSubmit(8);
+        IoUringBackend backend(std::move(options));
+        return;
+      } catch (const NotAvailable&) {
+        sAvailable = false;
+        return;
+      } catch (const OutOfMemory&) {
+        if (attempt + 1 >= kMaxAttempts) {
+          sAvailable = false;
+          return;
+        }
+        /* sleep override */ std::this_thread::sleep_for(kRetryDelay);
+      }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-# rust_cxx_bridge(<TARGET> <CXX_BRIDGE_FILE> [CRATE <CRATE_NAME>] [LIBS <LIBNAMES>])
-  fb_cmake_parse_args(ARG "" "CRATE" "LIBS" "${ARGN}")
-  _rust_cxxbridge(cxxbridge cxxbridge_target)
-# source directory depends on.
-# rust_cxx_header(<TARGET> [LIBS <LIBNAMES>])
-  fb_cmake_parse_args(ARG "" "" "LIBS" "${ARGN}")
-  _rust_cxxbridge(cxxbridge cxxbridge_target)
-# the current source directory depends on, and <DEPENDS_VAR> to the target that
-# commands running it depend on, which runs `cargo install cxxbridge-cmd` when
-# no installed cxxbridge has that version. Also adds the rule that generates
-# `rust/cxx.h` in the current binary directory.
-function(_rust_cxxbridge CXXBRIDGE_VAR DEPENDS_VAR)
-    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-      "The crate in ${CMAKE_CURRENT_SOURCE_DIR} does not depend on cxx."
+    try {
+      Options options;
+      options.setCapacity(1024);
+      IoUringBackend backend(std::move(options));
+    } catch (const NotAvailable&) {
+      sAvailable = false;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `47c73354` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2dd4d58c` are properly handled with clean fallback behavior.

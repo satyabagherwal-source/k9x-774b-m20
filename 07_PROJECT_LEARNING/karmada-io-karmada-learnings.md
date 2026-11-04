@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/karmada-io-karmada-learnings.md`  
 > **Source**: github ([https://github.com/karmada-io/karmada](https://github.com/karmada-io/karmada))  
-> **Source Version**: `653afb21`  
+> **Source Version**: `ca8a1dad`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T22:53:43.527Z  
+> **Timestamp**: 2026-11-03T19:52:24.131Z  
 > **Learning ID**: `learn-github-karmada-io-karmada`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/karmada-io-karmada-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/karmada-io/karmada](https://github.com/karmada-io/karmada))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T22:53:43.519Z  
+> **Harvest Timestamp**: 2026-11-03T19:52:23.941Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Open, Multi-Cloud, Multi-Cluster Kubernetes Orchestration
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 5751 stars
+- **Stars / Engagement**: 5754 stars
 
 ---
 
@@ -984,14 +984,13 @@ func (e *workloadInterpreter) responseWithExploreInterpretStatus(workload *workl
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #8009** (2026-10-31): **fix(util/proxy): return an error when the cluster CA bundle has no valid PEM certificate**
-  *Symptoms*: **What type of PR is this?**  /kind bug  **What this PR does / why we need it**:  `GetTLSConfigForCluster` ignored the return value of `AppendCertsFromPEM`. When the cluster secret's `caBundle` holds no parseable PEM certificate (for example a DER file, or a value that was base64-encoded twice), `RootCAs` ends up as an empty pool. The proxy then fails later with a generic `x509: certificate signed by unknown authority`, and nothing points at the secret.  The member cluster client (`pkg/util/membercluster_client.go`) already rejects this case, because client-go fails on unparseable `CAData`. With this change the proxy path returns an error that names the secret and the cluster. A missing `caBundle` keeps the current behavior (#4371).  **Which issue(s) this PR fixes**: Fixes #  None. I found this while reading the code.  **Special notes for your reviewer**:  Added `TestGetTLSConfigForCluster` with three cases: valid bundle, bundle not set, and a bundle with no valid PEM certificate. The last case fails on master and passes with this change.  - `go test ./pkg/util/proxy/` passes - `golangci-lint run ./pkg/util/proxy/...` reports 0 issues - `go vet` and `gofmt` are clean  I wrote this with help from an AI assistant and reviewed and tested it myself.  **Does this PR introduce a user-facing change?**: ```release-note `karmada-aggregated-apiserver`/`karmadactl`: Cluster proxy now returns a clear error when the cluster secret's caBundle contains no valid PEM certificate, instead of f
+- **Issue #8019** (2026-11-02): **build(deps): bump alpine from 3.24.2 to 3.24.3 in /cluster/images**
+  *Symptoms*: Bumps alpine from 3.24.2 to 3.24.3.   [![Dependabot compatibility score](https://dependabot-badges.githubapp.com/badges/compatibility_score?dependency-name=alpine&package-manager=docker&previous-version=3.24.2&new-version=3.24.3)](https://docs.github.com/en/github/managing-security-vulnerabilities/about-dependabot-security-updates#about-compatibility-scores)  Dependabot will resolve any conflicts with this PR as long as you don't alter it yourself. You can also trigger a rebase manually by commenting `@dependabot rebase`.  [//]: # (dependabot-automerge-start) [//]: # (dependabot-automerge-end)  ---  <details> <summary>Dependabot commands and options</summary> <br />  You can trigger Dependabot actions by commenting on this PR: - `@dependabot rebase` will rebase this PR - `@dependabot recreate` will recreate this PR, overwriting any edits that have been made to it - `@dependabot show <dependency name> ignore conditions` will show all of the ignore conditions of the specified dependency - `@dependabot ignore this major version` will close this PR and stop Dependabot creating any more for this major version (unless you reopen the PR or upgrade to it yourself) - `@dependabot ignore this minor version` will close this PR and stop Dependabot creating any more for this minor version (unless you reopen the PR or upgrade to it yourself) - `@dependabot ignore this dependency` will close this PR and stop Dependabot creating any more for this dependency (unless you 
 
-- **Issue #8008** (2026-10-31): **Automated cherry pick of #7950: Removed github workflow for releasing images to SWR**
-  *Symptoms*: Cherry pick of #7950 on release-1.19. #7950: Removed github workflow for releasing images to SWR For details on the cherry pick process, see the [cherry pick requests](https://karmada.io/docs/contributor/cherry-picks) page. ```release-note Images will no longer be published to the Huawei Cloud SWR registry (swr.ap-southeast-1.myhuaweicloud.com/karmada) starting from release-1.20. Please pull images from DockerHub (docker.io/karmada) instead. ```
+- **Issue #8018** (2026-11-02): **build(deps): bump alpine from 3.24.2 to 3.24.3 in /cluster/images**
+  *Symptoms*: Bumps alpine from 3.24.2 to 3.24.3.   [![Dependabot compatibility score](https://dependabot-badges.githubapp.com/badges/compatibility_score?dependency-name=alpine&package-manager=docker&previous-version=3.24.2&new-version=3.24.3)](https://docs.github.com/en/github/managing-security-vulnerabilities/about-dependabot-security-updates#about-compatibility-scores)  Dependabot will resolve any conflicts with this PR as long as you don't alter it yourself. You can also trigger a rebase manually by commenting `@dependabot rebase`.  [//]: # (dependabot-automerge-start) [//]: # (dependabot-automerge-end)  ---  <details> <summary>Dependabot commands and options</summary> <br />  You can trigger Dependabot actions by commenting on this PR: - `@dependabot rebase` will rebase this PR - `@dependabot recreate` will recreate this PR, overwriting any edits that have been made to it - `@dependabot show <dependency name> ignore conditions` will show all of the ignore conditions of the specified dependency - `@dependabot ignore this major version` will close this PR and stop Dependabot creating any more for this major version (unless you reopen the PR or upgrade to it yourself) - `@dependabot ignore this minor version` will close this PR and stop Dependabot creating any more for this minor version (unless you reopen the PR or upgrade to it yourself) - `@dependabot ignore this dependency` will close this PR and stop Dependabot creating any more for this dependency (unless you 
   **Post-Mortem & Fix Analysis**:
-  > :warning: Please install the !['codecov app svg image'](https://github.com/codecov/engineering-team/assets/152432831/e90313f4-9d3a-4b63-8b54-cfe14e7ec20d) to ensure uploads and comments are reliably processed by Codecov.  ## [Codecov](https://app.codecov.io/gh/karmada-io/karmada/pull/8008?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=karmada-io) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 42.47%. Comparing base ([`c64ba38`](https://app.codecov.io/gh/karmada-io/karmada/commit/c64ba38cf7083c99bedaeed6acbdd1a8597fded1?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=karmada-io)) to head ([`8465e2d`](https://app.codecov.io/gh/karmada-io/karmada/commit/8465e2d887dcb4c5e5c3da275d3a7a323df2082a?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comme
-  > [APPROVALNOTIFIER] This PR is **APPROVED**  This pull-request has been approved by: *<a href="https://github.com/karmada-io/karmada/pull/8008#pullrequestreview-5722227109" title="Approved">RainbowMango</a>*  The full list of commands accepted by this bot can be found [here](https://go.k8s.io/bot-commands?repo=karmada-io%2Fkarmada).  The pull request process is described [here](https://git.k8s.io/community/contributors/guide/owners.md#the-code-review-process)  <details > Needs approval from an approver in each of these files:  - ~~[OWNERS](https://github.com/karmada-io/karmada/blob/release-1.19/OWNERS)~~ [RainbowMango]  Approvers can indicate their approval by writing `/approve` in a comment Approvers can cancel approval by writing `/approve cancel` in a comment </details> <!-- META={"approvers":[]} -->
+  > [APPROVALNOTIFIER] This PR is **APPROVED**  This pull-request has been approved by: *<a href="https://github.com/karmada-io/karmada/pull/8018#pullrequestreview-5731267786" title="Approved">RainbowMango</a>*  The full list of commands accepted by this bot can be found [here](https://go.k8s.io/bot-commands?repo=karmada-io%2Fkarmada).  The pull request process is described [here](https://git.k8s.io/community/contributors/guide/owners.md#the-code-review-process)  <details > Needs approval from an approver in each of these files:  - ~~[OWNERS](https://github.com/karmada-io/karmada/blob/release-1.18/OWNERS)~~ [RainbowMango]  Approvers can indicate their approval by writing `/approve` in a comment Approvers can cancel approval by writing `/approve cancel` in a comment </details> <!-- META={"approvers":[]} -->
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1008,875 +1007,130 @@ func (e *workloadInterpreter) responseWithExploreInterpretStatus(workload *workl
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `653afb21` (2026-10-31)
-**Commit Message**: Merge pull request #8004 from zhzhuang-zju/releasenote-new
+### Incident Patch 1: `1c75cf38` (2026-11-02)
+**Commit Message**: Merge pull request #8015 from hnrydvd/docs/fix-interpreter-example-curl
 
-publish release note for v1.20.0-beta.0,v1.19.1,v1.18.4,v1.17.7
+docs: fix broken commands in customresourceinterpreter example
 
-**File**: `docs/CHANGELOG/CHANGELOG-1.17.md` (modified, +48/-27)
+**File**: `examples/customresourceinterpreter/README.md` (modified, +3/-3)
 ```diff
-@@ -2,42 +2,48 @@
- <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
- **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+@@ -305,7 +305,7 @@ kubectl --kubeconfig $HOME/.kube/karmada.config --context karmada-apiserver appl
+ You can get `ResourceBinding` to check if the `replicas` field is interpreted successfully.
  
--- [v1.17.6](#v1176)
--  - [Downloads for v1.17.6](#downloads-for-v1176)
--  - [Changelog since v1.17.5](#changelog-since-v1175)
-+- [v1.17.7](#v1177)
-+  - [Downloads for v1.17.7](#downloads-for-v1177)
-+  - [Changelog since v1.17.6](#changelog-since-v1176)
-     - [Changes by Kind](#changes-by-kind)
-       - [Bug Fixes](#bug-fixes)
-       - [Others](#others)
--- [v1.17.5](#v1175)
--  - [Downloads for v1.17.5](#downloads-for-v1175)
--  - [Changelog since v1.17.4](#changelog-since-v1174)
-+- [v1.17.6](#v1176)
-+  - [Downloads for v1.17.6](#downloads-for-v1176)
-+  - [Changelog since v1.17.5](#changelog-since-v1175)
-     - [Changes by Kind](#changes-by-kind-1)
-       - [Bug Fixes](#bug-fixes-1)
-       - [Others](#others-1)
--- [v1.17.4](#v1174)
--  - [Downloads for v1.17.4](#downloads-for-v1174)
--  - [Changelog since v1.17.3](#changelog-since-v1173)
-+- [v1.17.5](#v1175)
-+  - [Downloads for v1.17.5](#downloads-for-v1175)
-+  - [Changelog since v1.17.4](#changelog-since-v1174)
-     - [Changes by Kind](#changes-by-kind-2)
-       - [Bug Fixes](#bug-fixes-2)
-       - [Others](#others-2)
--- [v1.17.3](#v1173)
--  - [Downloads for v1.17.3](#downloads-for-v1173)
--  - [Changelog since v1.17.2](#changelog-since-v1172)
-+- [v1.17.4](#v1174)
-+  - [Downloads for v1.17.4](#downloads-for-v1174)
-+  - [Changelog since v1.17.3](#changelog-since-v1173)
-     - [Changes by Kind](#changes-by-kind-3)
-       - [Bug Fixes](#bug-fixes-3)
-       - [Others](#others-3)
--- [v1.17.2](#v1172)
--  - [Downloads for v1.17.2](#downloads-for-v1172)
--  - [Changelog since v1.17.1](#changelog-since-v1171)
-+- [v1.17.3](#v1173)
-+  - [Downloads for v1.17.3](#downloads-for-v1173)
-+  - [Changelog since v1.17.2](#changelog-since-v1172)
-     - [Changes by Kind](#changes-by-kind-4)
-       - [Bug Fixes](#bug-fixes-4)
-       - [Others](#others-4)
--- [v1.17.1](#v1171)
--  - [Downloads for v1.17.1](#downloads-for-v1171)
--  - [Changelog since v1.17.0](#changelog-since-v1170)
-+- [v1.17.2](#v1172)
-+  - [Downloads for v1.17.2](#downloads-for-v1172)
-+  - [Changelog since v1.17.1](#changelog-since-v1171)
-     - [Changes by Kind](#changes-by-kind-5)
-       - [Bug Fixes](#bug-fixes-5)
-       - [Others](#others-5)
-+- [v1.17.1](#v1171)
-+  - [Downloads for v1.17.1](#downloads-for-v1171)
-+  - [Changelog since v1.17.0](#changelog-since-v1170)
-+    - [Changes by Kind](#changes-by-kind-6)
-+      - [Bug Fixes](#bug-fixes-6)
-+      - [Others](#others-6)
- - [v1.17.0](#v1170)
-   - [Downloads for v1.17.0](#downloads-for-v1170)
-   - [Urgent Update Notes](#urgent-update-notes)
-@@ -50,7 +56,7 @@
-     - [API Changes](#api-changes)
-     - [Features & Enhancements](#features--enhancements)
-     - [Deprecation](#deprecation)
--    - [Bug Fixes](#bug-fixes-6)
-+    - [Bug Fixes](#bug-fixes-7)
-     - [Security](#security)
-   - [Other](#other)
-     - [Dependencies](#dependencies)
-@@ -62,11 +68,11 @@
-   - [Downloads for v1.17.0-rc.0](#downloads-for-v1170-rc0)
-   - [Changelog since v1.17.0-beta.0](#changelog-since-v1170-beta0)
-   - [Urgent Update Notes](#urgent-update-notes-1)
--  - [Changes by Kind](#changes-by-kind-6)
-+  - [Changes by Kind](#changes-by-kind-7)
-     - [API Changes](#api-changes-1)
-     - [Features & Enhancements](#features--enhancements-1)
-     - [Deprecation](#deprecation-1)
--    - [Bug Fixes](#bug-fixes-7)
-+    - [Bug Fixes](#bug-fixes-8)
-     - [Security](#security-1)
-   - [Other](#other-1)
-     - [Dependencies](#dependencies-1)
-@@ -77,11 +83,11 @@
-   - [Downloads for v1.17.0-beta.0](#downloads-for-v1170-beta0)
-   - [Changelog since v1.17.0-alpha.2](#changelog-since-v1170-alpha2)
-   - [Urgent Update Notes](#urgent-update-notes-2)
--  - [Changes by Kind](#changes-by-kind-7)
-+  - [Changes by Kind](#changes-by-kind-8)
-     - [API Changes](#api-changes-2)
-     - [Features & Enhancements](#features--enhancements-2)
-     - [Deprecation](#deprecation-2)
--    - [Bug Fixes](#bug-fixes-8)
-+    - [Bug Fixes](#bug-fixes-9)
-     - [Security](#security-2)
-   - [Other](#other-2)
-     - [Dependencies](#dependencies-2)
-@@ -92,11 +98,11 @@
-   - [Downloads for v1.17.0-alpha.2](#downloads-for-v1170-alpha2)
-   - [Changelog since v1.17.0-alpha.1](#changelog-since-v1170-alpha1)
-   - [Urgent Update Notes](#urgent-update-notes-3)
--  - [Changes by Kind](#changes-by-kind-8)
-+  - [Changes by Kind](#changes-by-kind-9)
-     - [API Changes](#api-changes-3)
-     - [Features & Enhancements](#features--enhancements-3)
-     - [Deprecation](#deprecation-3)
--    - [Bug Fixes](#bug-fixes-9)
-+    - [Bug Fixes](#bug-fixes-10)
-     - [Security](#security-3)
-   - [Other](#other-3)
-     - [Dependencies](#dependencies-3)
-@@ -107,11 +113,11 @@
-   - [Downloads for v1.17.0-alpha.1](#downloads-for-v1170-alpha1)
-   - [Changelog since v1.17.0-alpha.0](#changelog-since-v1170-alpha0)
-   - [Urgent Update Notes](#urgent-update-notes-4)
--  - [Changes by Kind](#changes-by-kind-9
-```
-
-**File**: `docs/CHANGELOG/CHANGELOG-1.18.md` (modified, +39/-18)
-```diff
-@@ -2,24 +2,30 @@
- <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
- **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+ ```bash
+-kubectl get rb nginx-workload -o yaml
++kubectl --kubeconfig $HOME/.kube/karmada.config --context karmada-apiserver get rb nginx-workload -o yaml
+ ```
  
--- [v1.18.3](#v1183)
--  - [Downloads for v1.18.3](#downloads-for-v1183)
--  - [Changelog since v1.18.2](#changelog-since-v1182)
-+- [v1.18.4](#v1184)
-+  - [Downloads for v1.18.4](#downloads-for-v1184)
-+  - [Changelog since v1.18.3](#changelog-since-v1183)
-     - [Changes by Kind](#changes-by-kind)
-       - [Bug Fixes](#bug-fixes)
-       - [Others](#others)
--- [v1.18.2](#v1182)
--  - [Downloads for v1.18.2](#downloads-for-v1182)
--  - [Changelog since v1.18.1](#changelog-since-v1181)
-+- [v1.18.3](#v1183)
-+  - [Downloads for v1.18.3](#downloads-for-v1183)
-+  - [Changelog since v1.18.2](#changelog-since-v1182)
-     - [Changes by Kind](#changes-by-kind-1)
-       - [Bug Fixes](#bug-fixes-1)
-       - [Others](#others-1)
--- [v1.18.1](#v1181)
--  - [Downloads for v1.18.1](#downloads-for-v1181)
--  - [Changelog since v1.18.0](#changelog-since-v1180)
-+- [v1.18.2](#v1182)
-+  - [Downloads for v1.18.2](#downloads-for-v1182)
-+  - [Changelog since v1.18.1](#changelog-since-v1181)
-     - [Changes by Kind](#changes-by-kind-2)
-       - [Bug Fixes](#bug-fixes-2)
-       - [Others](#others-2)
-+- [v1.18.1](#v1181)
-+  - [Downloads for v1.18.1](#downloads-for-v1181)
-+  - [Changelog since v1.18.0](#changelog-since-v1180)
-+    - [Changes by Kind](#changes-by-kind-3)
-+      - [Bug Fixes](#bug-fixes-3)
-+      - [Others](#others-3)
- - [v1.18.0](#v1180)
-   - [Downloads for v1.18.0](#downloads-for-v1180)
-   - [Urgent Update Notes](#urgent-update-notes)
-@@ -30,7 +36,7 @@
-     - [API Changes](#api-changes)
-     - [Features & Enhancements](#features--enhancements)
-     - [Deprecation](#deprecation)
--    - [Bug Fixes](#bug-fixes-3)
-+    - [Bug Fixes](#bug-fixes-4)
-     - [Security](#security)
-   - [Other](#other)
-     - [Dependencies](#dependencies)
-@@ -42,11 +48,11 @@
-   - [Downloads for v1.18.0-rc.0](#downloads-for-v1180-rc0)
-   - [Changelog since v1.18.0-beta.0](#changelog-since-v1180-beta0)
-   - [Urgent Update Notes](#urgent-update-notes-1)
--  - [Changes by Kind](#changes-by-kind-3)
-+  - [Changes by Kind](#changes-by-kind-4)
-     - [API Changes](#api-changes-1)
-     - [Features & Enhancements](#features--enhancements-1)
-     - [Deprecation](#deprecation-1)
--    - [Bug Fixes](#bug-fixes-4)
-+    - [Bug Fixes](#bug-fixes-5)
-     - [Security](#security-1)
-   - [Other](#other-1)
-     - [Dependencies](#dependencies-1)
-@@ -57,11 +63,11 @@
-   - [Downloads for v1.18.0-beta.0](#downloads-for-v1180-beta0)
-   - [Changelog since v1.18.0-alpha.2](#changelog-since-v1180-alpha2)
-   - [Urgent Update Notes](#urgent-update-notes-2)
--  - [Changes by Kind](#changes-by-kind-4)
-+  - [Changes by Kind](#changes-by-kind-5)
-     - [API Changes](#api-changes-2)
-     - [Features & Enhancements](#features--enhancements-2)
-     - [Deprecation](#deprecation-2)
--    - [Bug Fixes](#bug-fixes-5)
-+    - [Bug Fixes](#bug-fixes-6)
-     - [Security](#security-2)
-   - [Other](#other-2)
-     - [Dependencies](#dependencies-2)
-@@ -72,11 +78,11 @@
-   - [Downloads for v1.18.0-alpha.2](#downloads-for-v1180-alpha2)
-   - [Changelog since v1.18.0-alpha.1](#changelog-since-v1180-alpha1)
-   - [Urgent Update Notes](#urgent-update-notes-3)
--  - [Changes by Kind](#changes-by-kind-5)
-+  - [Changes by Kind](#changes-by-kind-6)
-     - [API Changes](#api-changes-3)
-     - [Features & Enhancements](#features--enhancements-3)
-     - [Deprecation](#deprecation-3)
--    - [Bug Fixes](#bug-fixes-6)
-+    - [Bug Fixes](#bug-fixes-7)
-     - [Security](#security-3)
-   - [Other](#other-3)
-     - [Dependencies](#dependencies-3)
-@@ -87,11 +93,11 @@
-   - [Downloads for v1.18.0-alpha.1](#downloads-for-v1180-alpha1)
-   - [Changelog since v1.18.0-alpha.0](#changelog-since-v1180-alpha0)
-   - [Urgent Update Notes](#urgent-update-notes-4)
--  - [Changes by Kind](#changes-by-kind-6)
-+  - [Changes by Kind](#changes-by-kind-7)
-     - [API Changes](#api-changes-4)
-     - [Features & Enhancements](#features--enhancements-4)
-     - [Deprecation](#deprecation-4)
--    - [Bug Fixes](#bug-fixes-7)
-+    - [Bug Fixes](#bug-fixes-8)
-     - [Security](#security-4)
-   - [Other](#other-4)
-     - [Dependencies](#dependencies-4)
-@@ -101,6 +107,21 @@
+ #### ReviseReplica
+@@ -335,8 +335,8 @@ There is no `Workload` controller deployed on member clusters, so in order to si
+ we will manually update `status.readyReplicas` of `Workload` object in member1 cluster to 1. 
  
- <!-- END doctoc generated TOC please keep comment here to allow auto update -->
+ ```bash
+-kubectl proxy --port=8001 &
+-curl  http://127.0.0.1:8001/apis/workload.example.io/v1alpha1/namespaces/default/workloads/nginx/status  -XPATCH -d'{"status":{"readyReplicas": 1}}' -H "Content-Type: application/merge-patch+json
++kubectl --kubeconfig $HOME/.kube/members.config --context member1 proxy --port=8001 &
++curl  http://127.0.0.1:8001/apis/workload.example.io/v1alpha1/namespaces/default/workloads/nginx/status  -XPATCH -d'{"status":{"readyReplicas": 1}}' -H "Content-Type: application/merge-patch+json"
+ ```
  
-+# v1.18.4
-+## Downloads for v1.18.4
-+
-+Download v1.18.4 in the [v1.18.4 release page](https://github.com/karmada-io/karmada/releases/tag/v1.18.4).
-+
-+## Changelog since v1.18.3
-+
-+### Changes by Kind
-+
-+#### Bug Fixes
-+None.
-+
-+#### Others
-+- `Karmada`: Upgraded the Alpine base image from `alpine:3.24.1` to `alpine:3.24.2` to address security concerns. ([#7915](https://github.com/karmada-io/karmada/pull/7915), @dependabot)
-+
- # v1.18.3
- ## Downloads for v1.18.3
- 
-```
-
-**File**: `docs/CHANGELOG/CHANGELOG-1.19.md` (modified, +28/-7)
-```diff
-@@ -2,6 +2,12 @@
- <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
- **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
- 
-+- [v1.19.1](#v1191)
-+  - [Downloads for v1.19.1](#downloads-for-v1191)
-+  - [Changelog since v1.19.0](#changelog-since-v1190)
-+    - [Changes by Kind](#changes-by-kind)
-+    - [Bug Fixes](#bug-fixes)
-+    - [Others](#others)
- - [v1.19.0](#v1190)
-   - [Downloads for v1.19.0](#downloads-for-v1190)
-   - [Urgent Update Notes](#urgent-update-notes)
-@@ -14,7 +20,7 @@
-     - [API Changes](#api-changes)
-     - [Features & Enhancements](#features--enhancements)
-     - [Deprecation](#deprecation)
--    - [Bug Fixes](#bug-fixes)
-+    - [Bug Fixes](#bug-fixes-1)
-     - [Security](#security)
-   - [Other](#other)
-     - [Dependencies](#dependencies)
-@@ -26,11 +32,11 @@
-   - [Downloads for v1.19.0-rc.0](#downloads-for-v1190-rc0)
-   - [Changelog since v1.19.0-beta.0](#changelog-since-v1190-beta0)
-   - [Urgent Update Notes](#urgent-update-notes-1)
--  - [Changes by Kind](#changes-by-kind)
-+  - [Changes by Kind](#changes-by-kind-1)
-     - [API Changes](#api-changes-1)
-     - [Features & Enhancements](#features--enhancements-1)
-     - [Deprecation](#deprecation-1)
--    - [Bug Fixes](#bug-fixes-1)
-+    - [Bug Fixes](#bug-fixes-2)
-     - [Security](#security-1)
-   - [Other](#other-1)
-     - [Dependencies](#dependencies-1)
-@@ -41,11 +47,11 @@
-   - [Downloads for v1.19.0-beta.0](#downloads-for-v1190-beta0)
-   - [Changelog since v1.19.0-alpha.1](#changelog-since-v1190-alpha1)
-   - [Urgent Update Notes](#urgent-update-notes-2)
--  - [Changes by Kind](#changes-by-kind-1)
-+  - [Changes by Kind](#changes-by-kind-2)
-     - [API Changes](#api-changes-2)
-     - [Features & Enhancements](#features--enhancements-2)
-     - [Deprecation](#deprecation-2)
--    - [Bug Fixes](#bug-fixes-2)
-+    - [Bug Fixes](#bug-fixes-3)
-     - [Security](#security-2)
-   - [Other](#other-2)
-     - [Dependencies](#dependencies-2)
-@@ -56,11 +62,11 @@
-   - [Downloads for v1.19.0-alpha.1](#downloads-for-v1190-alpha1)
-   - [Changelog since v1.19.0-alpha.0](#changelog-since-v1190-alpha0)
-   - [Urgent Update Notes](#urgent-update-notes-3)
--  - [Changes by Kind](#changes-by-kind-2)
-+  - [Changes by Kind](#changes-by-kind-3)
-     - [API Changes](#api-changes-3)
-     - [Features & Enhancements](#features--enhancements-3)
-     - [Deprecation](#deprecation-3)
--    - [Bug Fixes](#bug-fixes-3)
-+    - [Bug Fixes](#bug-fixes-4)
-     - [Security](#security-3)
-   - [Other](#other-3)
-     - [Dependencies](#dependencies-3)
-@@ -70,6 +76,21 @@
- 
- <!-- END doctoc generated TOC please keep comment here to allow auto update -->
- 
-+# v1.19.1
-+## Downloads for v1.19.1
-+
-+Download v1.19.1 in the [v1.19.1 release page](https://github.com/karmada-io/karmada/releases/tag/v1.19.1).
-+
-+## Changelog since v1.19.0
-+
-+### Changes by Kind
-+
-+### Bug Fixes
-+None.
-+
-+### Others
-+- `Karmada`: Upgraded the Alpine base image from `alpine:3.24.1` to `alpine:3.24.2` to address security concerns. ([#7916](https://github.com/karmada-io/karmada/pull/7916), @dependabot)
-+
- # v1.19.0
- ## Downloads for v1.19.0
- 
-```
-
-**File**: `docs/CHANGELOG/CHANGELOG-1.20.md` (modified, +69/-3)
-```diff
-@@ -2,9 +2,9 @@
- <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
- **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
- 
--- [v1.20.0-alpha.1](#v1200-alpha1)
--  - [Downloads for v1.20.0-alpha.1](#downloads-for-v1200-alpha1)
--  - [Changelog since v1.20.0-alpha.0](#changelog-since-v1200-alpha0)
-+- [v1.20.0-beta.0](#v1200-beta0)
-+  - [Downloads for v1.20.0-beta.0](#downloads-for-v1200-beta0)
-+  - [Changelog since v1.20.0-alpha.1](#changelog-since-v1200-alpha1)
-   - [Urgent Update Notes](#urgent-update-notes)
-   - [Changes by Kind](#changes-by-kind)
-     - [API Changes](#api-changes)
-@@ -17,9 +17,75 @@
-     - [Helm Charts](#helm-charts)
-     - [Instrumentation](#instrumentation)
-     - [Performance](#performance)
-+- [v1.20.0-alpha.1](#v1200-alpha1)
-+  - [Downloads for v1.20.0-alpha.1](#downloads-for-v1200-alpha1)
-+  - [Changelog since v1.20.0-alpha.0](#changelog-since-v1200-alpha0)
-+  - [Urgent Update Notes](#urgent-update-notes-1)
-+  - [Changes by Kind](#changes-by-kind-1)
-+    - [API Changes](#api-changes-1)
-+    - [Features & Enhancements](#features--enhancements-1)
-+    - [Deprecation](#deprecation-1)
-+    - [Bug Fixes](#bug-fixes-1)
-+    - [Security](#security-1)
-+  - [Other](#other-1)
-+    - [Dependencies](#dependencies-1)
-+    - [Helm Charts](#helm-charts-1)
-+    - [Instrumentation](#instrumentation-1)
-+    - [Performance](#performance-1)
- 
- <!-- END doctoc generated TOC please keep comment here to allow auto update -->
- 
-+# v1.20.0-beta.0
-+## Downloads for v1.20.0-beta.0
-+
-+Download v1.20.0-beta.0 in the [v1.20.0-beta.0 release page](https://github.com/karmada-io/karmada/releases/tag/v1.20.0-beta.0).
-+
-+## Changelog since v1.20.0-alpha.1
-+
-+## Urgent Update Notes
-+None.
-+
-+## Changes by Kind
-+
-+### API Changes
-+- `ResourceBinding`: Introduced `spec.schedulePriority.preemptionPolicy` to both the `ResourceBinding` and `ClusterResourceBinding` APIs to specify whether a binding may preempt lower-priority bindings. ([#7954](https://github.com/karmada-io/karmada/pull/7954), @RainbowMango)
-+
-+### Features & Enhancements
-+- `karmada-agent`: Introduced the `--enable-cluster-registration` flag (default `true`). When set to `false`, the agent skips self-registration and validates that the member cluster is already registered in Pull mode before running its controllers. Registration-only flags are rejected in this mode. ([#7821](https://github.com/karmada-io/karmada/pull/7821), @driegel1)
-+- `karmada-scheduler`: Added support for rescheduling multi-template workloads when component replicas change. ([#7830](https://github.com/karmada-io/karmada/pull/7830), @ranxi2001)
-+- `karmada-controller-manager`: Added propagation of the preemption policy from Kubernetes `PriorityClass` to `ResourceBinding` when priority-based preemptive scheduling is enabled. ([#7978](https://github.com/karmada-io/karmada/pull/7978), @asarj)
-+
-+### Deprecation
-+- `Karmada`: Image publication to the Huawei Cloud SWR registry (`swr.ap-southeast-1.myhuaweicloud.com/karmada`) has been discontinued starting with release 1.20. Users should pull images from DockerHub (`docker.io/karmada`) instead. ([#7950](https://github.com/karmada-io/karmada/pull/7950), @RainbowMango)
-+
-+### Bug Fixes
-+- `karmadactl`: Fixed the missing `ClusterTaintPolicy` validating webhook registration in installations created by `karmadactl init`. The webhook denies create and update requests for policies with a `NoExecute` taint unless `karmada-webhook` runs with `--allow-no-execute-taint-policy=true`; users managing these policies must set the flag before upgrading. ([#7963](https://github.com/karmada-io/karmada/pull/7963), @cmontemuino)
-+- `karmada-operator`: Fixed the missing `ClusterTaintPolicy` validating webhook registration in operator-managed installations. The webhook denies create and update requests for policies with a `NoExecute` taint unless `karmada-webhook` runs with `--allow-no-execute-taint-policy=true`; users managing these policies must set the flag before upgrading. ([#7963](https://github.com/karmada-io/karmada/pull/7963), @cmontemuino)
-+- `karmada-controller-manager`: Fixed an issue where the built-in `MPIJob` interpreter could return components in a different order for the same object. ([#7970](https://github.com/karmada-io/karmada/pull/7970), @Sarthak-Shreshtha01)
-+- `karmada-controller-manager`: Fixed a panic in `CronFederatedHPA` when `failedHistoryLimit` is 0 and a rule fails. ([#7971](https://github.com/karmada-io/karmada/pull/7971), @Sarthak-Shreshtha01)
-+
-+### Security
-+None.
-+
-+## Other
-+
-+### Dependencies
-+- `Karmada`: Upgraded the Go build toolchain to v1.26.9. ([#7932](https://github.com/karmada-io/karmada/pull/7932), @FengyuanYin)
-+- `Karmada`: Upgraded the Go build toolchain to v1.26.10. ([#7959](https://github.com/karmada-io/karmada/pull/7959), @FengyuanYin)
-+- `Karmada`: Upgraded the Alpine base image from `alpine:3.24.1` to `alpine:3.24.2` to address security concerns. ([#7912](https://githu
+ Then you can get `ResourceBinding` to check if the `status.aggregatedStatus[x].status` field is interpreted successfully.
 ```
 
 ---
 
-### Incident Patch 2: `0681cfbe` (2026-10-31)
-**Commit Message**: publish release note for v1.20.0-beta.0,v1.19.1,v1.18.4,v1.17.7
+### Incident Patch 2: `512212ad` (2026-11-01)
+**Commit Message**: docs: fix broken commands in customresourceinterpreter example
 
-Signed-off-by: zhzhuang-zju <[REDACTED_EMAIL]>
+The curl command in the InterpretStatus step was missing the closing
+quote on its Content-Type header, so pasting it left the shell waiting
+for more input.
 
-**File**: `docs/CHANGELOG/CHANGELOG-1.17.md` (modified, +48/-27)
+The kubectl proxy in the same step and the ResourceBinding check in the
+InterpretReplica step did not name a kubeconfig or context, unlike the
+surrounding commands in these steps. Point the proxy at member1, which
+the text says is being patched, and the get at karmada-apiserver, using
+the kubeconfig paths and context names set up by
+hack/local-up-karmada.sh.
+
+Signed-off-by: hd <[REDACTED_EMAIL]>
+
+**File**: `examples/customresourceinterpreter/README.md` (modified, +3/-3)
 ```diff
-@@ -2,42 +2,48 @@
- <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
- **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+@@ -305,7 +305,7 @@ kubectl --kubeconfig $HOME/.kube/karmada.config --context karmada-apiserver appl
+ You can get `ResourceBinding` to check if the `replicas` field is interpreted successfully.
  
--- [v1.17.6](#v1176)
--  - [Downloads for v1.17.6](#downloads-for-v1176)
--  - [Changelog since v1.17.5](#changelog-since-v1175)
-+- [v1.17.7](#v1177)
-+  - [Downloads for v1.17.7](#downloads-for-v1177)
-+  - [Changelog since v1.17.6](#changelog-since-v1176)
-     - [Changes by Kind](#changes-by-kind)
-       - [Bug Fixes](#bug-fixes)
-       - [Others](#others)
--- [v1.17.5](#v1175)
--  - [Downloads for v1.17.5](#downloads-for-v1175)
--  - [Changelog since v1.17.4](#changelog-since-v1174)
-+- [v1.17.6](#v1176)
-+  - [Downloads for v1.17.6](#downloads-for-v1176)
-+  - [Changelog since v1.17.5](#changelog-since-v1175)
-     - [Changes by Kind](#changes-by-kind-1)
-       - [Bug Fixes](#bug-fixes-1)
-       - [Others](#others-1)
--- [v1.17.4](#v1174)
--  - [Downloads for v1.17.4](#downloads-for-v1174)
--  - [Changelog since v1.17.3](#changelog-since-v1173)
-+- [v1.17.5](#v1175)
-+  - [Downloads for v1.17.5](#downloads-for-v1175)
-+  - [Changelog since v1.17.4](#changelog-since-v1174)
-     - [Changes by Kind](#changes-by-kind-2)
-       - [Bug Fixes](#bug-fixes-2)
-       - [Others](#others-2)
--- [v1.17.3](#v1173)
--  - [Downloads for v1.17.3](#downloads-for-v1173)
--  - [Changelog since v1.17.2](#changelog-since-v1172)
-+- [v1.17.4](#v1174)
-+  - [Downloads for v1.17.4](#downloads-for-v1174)
-+  - [Changelog since v1.17.3](#changelog-since-v1173)
-     - [Changes by Kind](#changes-by-kind-3)
-       - [Bug Fixes](#bug-fixes-3)
-       - [Others](#others-3)
--- [v1.17.2](#v1172)
--  - [Downloads for v1.17.2](#downloads-for-v1172)
--  - [Changelog since v1.17.1](#changelog-since-v1171)
-+- [v1.17.3](#v1173)
-+  - [Downloads for v1.17.3](#downloads-for-v1173)
-+  - [Changelog since v1.17.2](#changelog-since-v1172)
-     - [Changes by Kind](#changes-by-kind-4)
-       - [Bug Fixes](#bug-fixes-4)
-       - [Others](#others-4)
--- [v1.17.1](#v1171)
--  - [Downloads for v1.17.1](#downloads-for-v1171)
--  - [Changelog since v1.17.0](#changelog-since-v1170)
-+- [v1.17.2](#v1172)
-+  - [Downloads for v1.17.2](#downloads-for-v1172)
-+  - [Changelog since v1.17.1](#changelog-since-v1171)
-     - [Changes by Kind](#changes-by-kind-5)
-       - [Bug Fixes](#bug-fixes-5)
-       - [Others](#others-5)
-+- [v1.17.1](#v1171)
-+  - [Downloads for v1.17.1](#downloads-for-v1171)
-+  - [Changelog since v1.17.0](#changelog-since-v1170)
-+    - [Changes by Kind](#changes-by-kind-6)
-+      - [Bug Fixes](#bug-fixes-6)
-+      - [Others](#others-6)
- - [v1.17.0](#v1170)
-   - [Downloads for v1.17.0](#downloads-for-v1170)
-   - [Urgent Update Notes](#urgent-update-notes)
-@@ -50,7 +56,7 @@
-     - [API Changes](#api-changes)
-     - [Features & Enhancements](#features--enhancements)
-     - [Deprecation](#deprecation)
--    - [Bug Fixes](#bug-fixes-6)
-+    - [Bug Fixes](#bug-fixes-7)
-     - [Security](#security)
-   - [Other](#other)
-     - [Dependencies](#dependencies)
-@@ -62,11 +68,11 @@
-   - [Downloads for v1.17.0-rc.0](#downloads-for-v1170-rc0)
-   - [Changelog since v1.17.0-beta.0](#changelog-since-v1170-beta0)
-   - [Urgent Update Notes](#urgent-update-notes-1)
--  - [Changes by Kind](#changes-by-kind-6)
-+  - [Changes by Kind](#changes-by-kind-7)
-     - [API Changes](#api-changes-1)
-     - [Features & Enhancements](#features--enhancements-1)
-     - [Deprecation](#deprecation-1)
--    - [Bug Fixes](#bug-fixes-7)
-+    - [Bug Fixes](#bug-fixes-8)
-     - [Security](#security-1)
-   - [Other](#other-1)
-     - [Dependencies](#dependencies-1)
-@@ -77,11 +83,11 @@
-   - [Downloads for v1.17.0-beta.0](#downloads-for-v1170-beta0)
-   - [Changelog since v1.17.0-alpha.2](#changelog-since-v1170-alpha2)
-   - [Urgent Update Notes](#urgent-update-notes-2)
--  - [Changes by Kind](#changes-by-kind-7)
-+  - [Changes by Kind](#changes-by-kind-8)
-     - [API Changes](#api-changes-2)
-     - [Features & Enhancements](#features--enhancements-2)
-     - [Deprecation](#deprecation-2)
--    - [Bug Fixes](#bug-fixes-8)
-+    - [Bug Fixes](#bug-fixes-9)
-     - [Security](#security-2)
-   - [Other](#other-2)
-     - [Dependencies](#dependencies-2)
-@@ -92,11 +98,11 @@
-   - [Downloads for v1.17.0-alpha.2](#downloads-for-v1170-alpha2)
-   - [Changelog since v1.17.0-alpha.1](#changelog-since-v1170-alpha1)
-   - [Urgent Update Notes](#urgent-update-notes-3)
--  - [Changes by Kind](#changes-by-kind-8)
-+  - [Changes by Kind](#changes-by-kind-9)
-     - [API Changes](#api-changes-3)
-     - [Features & Enhancements](#features--enhancements-3)
-     - [Deprecation](#deprecation-3)
--    - [Bug Fixes](#bug-fixes-9)
-+    - [Bug Fixes](#bug-fixes-10)
-     - [Security](#security-3)
-   - [Other](#other-3)
-     - [Dependencies](#dependencies-3)
-@@ -107,11 +113,11 @@
-   - [Downloads for v1.17.0-alpha.1](#downloads-for-v1170-alpha1)
-   - [Changelog since v1.17.0-alpha.0](#changelog-since-v1170-alpha0)
-   - [Urgent Update Notes](#urgent-update-notes-4)
--  - [Changes by Kind](#changes-by-kind-9
+ ```bash
+-kubectl get rb nginx-workload -o yaml
++kubectl --kubeconfig $HOME/.kube/karmada.config --context karmada-apiserver get rb nginx-workload -o yaml
+ ```
+ 
+ #### ReviseReplica
+@@ -335,8 +335,8 @@ There is no `Workload` controller deployed on member clusters, so in order to si
+ we will manually update `status.readyReplicas` of `Workload` object in member1 cluster to 1. 
+ 
+ ```bash
+-kubectl proxy --port=8001 &
+-curl  http://127.0.0.1:8001/apis/workload.example.io/v1alpha1/namespaces/default/workloads/nginx/status  -XPATCH -d'{"status":{"readyReplicas": 1}}' -H "Content-Type: application/merge-patch+json
++kubectl --kubeconfig $HOME/.kube/members.config --context member1 proxy --port=8001 &
++curl  http://127.0.0.1:8001/apis/workload.example.io/v1alpha1/namespaces/default/workloads/nginx/status  -XPATCH -d'{"status":{"readyReplicas": 1}}' -H "Content-Type: application/merge-patch+json"
+ ```
+ 
+ Then you can get `ResourceBinding` to check if the `status.aggregatedStatus[x].status` field is interpreted successfully.
 ```
 
-**File**: `docs/CHANGELOG/CHANGELOG-1.18.md` (modified, +39/-18)
-```diff
-@@ -2,24 +2,30 @@
- <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
- **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
- 
--- [v1.18.3](#v1183)
--  - [Downloads for v1.18.3](#downloads-for-v1183)
--  - [Changelog since v1.18.2](#changelog-since-v1182)
-+- [v1.18.4](#v1184)
-+  - [Downloads for v1.18.4](#downloads-for-v1184)
-+  - [Changelog since v1.18.3](#changelog-since-v1183)
-     - [Changes by Kind](#changes-by-kind)
-       - [Bug Fixes](#bug-fixes)
-       - [Others](#others)
--- [v1.18.2](#v1182)
--  - [Downloads for v1.18.2](#downloads-for-v1182)
--  - [Changelog since v1.18.1](#changelog-since-v1181)
-+- [v1.18.3](#v1183)
-+  - [Downloads for v1.18.3](#downloads-for-v1183)
-+  - [Changelog since v1.18.2](#changelog-since-v1182)
-     - [Changes by Kind](#changes-by-kind-1)
-       - [Bug Fixes](#bug-fixes-1)
-       - [Others](#others-1)
--- [v1.18.1](#v1181)
--  - [Downloads for v1.18.1](#downloads-for-v1181)
--  - [Changelog since v1.18.0](#changelog-since-v1180)
-+- [v1.18.2](#v1182)
-+  - [Downloads for v1.18.2](#downloads-for-v1182)
-+  - [Changelog since v1.18.1](#changelog-since-v1181)
-     - [Changes by Kind](#changes-by-kind-2)
-       - [Bug Fixes](#bug-fixes-2)
-       - [Others](#others-2)
-+- [v1.18.1](#v1181)
-+  - [Downloads for v1.18.1](#downloads-for-v1181)
-+  - [Changelog since v1.18.0](#changelog-since-v1180)
-+    - [Changes by Kind](#changes-by-kind-3)
-+      - [Bug Fixes](#bug-fixes-3)
-+      - [Others](#others-3)
- - [v1.18.0](#v1180)
-   - [Downloads for v1.18.0](#downloads-for-v1180)
-   - [Urgent Update Notes](#urgent-update-notes)
-@@ -30,7 +36,7 @@
-     - [API Changes](#api-changes)
-     - [Features & Enhancements](#features--enhancements)
-     - [Deprecation](#deprecation)
--    - [Bug Fixes](#bug-fixes-3)
-+    - [Bug Fixes](#bug-fixes-4)
-     - [Security](#security)
-   - [Other](#other)
-     - [Dependencies](#dependencies)
-@@ -42,11 +48,11 @@
-   - [Downloads for v1.18.0-rc.0](#downloads-for-v1180-rc0)
-   - [Changelog since v1.18.0-beta.0](#changelog-since-v1180-beta0)
-   - [Urgent Update Notes](#urgent-update-notes-1)
--  - [Changes by Kind](#changes-by-kind-3)
-+  - [Changes by Kind](#changes-by-kind-4)
-     - [API Changes](#api-changes-1)
-     - [Features & Enhancements](#features--enhancements-1)
-     - [Deprecation](#deprecation-1)
--    - [Bug Fixes](#bug-fixes-4)
-+    - [Bug Fixes](#bug-fixes-5)
-     - [Security](#security-1)
-   - [Other](#other-1)
-     - [Dependencies](#dependencies-1)
-@@ -57,11 +63,11 @@
-   - [Downloads for v1.18.0-beta.0](#downloads-for-v1180-beta0)
-   - [Changelog since v1.18.0-alpha.2](#changelog-since-v1180-alpha2)
-   - [Urgent Update Notes](#urgent-update-notes-2)
--  - [Changes by Kind](#changes-by-kind-4)
-+  - [Changes by Kind](#changes-by-kind-5)
-     - [API Changes](#api-changes-2)
-     - [Features & Enhancements](#features--enhancements-2)
-     - [Deprecation](#deprecation-2)
--    - [Bug Fixes](#bug-fixes-5)
-+    - [Bug Fixes](#bug-fixes-6)
-     - [Security](#security-2)
-   - [Other](#other-2)
-     - [Dependencies](#dependencies-2)
-@@ -72,11 +78,11 @@
-   - [Downloads for v1.18.0-alpha.2](#downloads-for-v1180-alpha2)
-   - [Changelog since v1.18.0-alpha.1](#changelog-since-v1180-alpha1)
-   - [Urgent Update Notes](#urgent-update-notes-3)
--  - [Changes by Kind](#changes-by-kind-5)
-+  - [Changes by Kind](#changes-by-kind-6)
-     - [API Changes](#api-changes-3)
-     - [Features & Enhancements](#features--enhancements-3)
-     - [Deprecation](#deprecation-3)
--    - [Bug Fixes](#bug-fixes-6)
-+    - [Bug Fixes](#bug-fixes-7)
-     - [Security](#security-3)
-   - [Other](#other-3)
-     - [Dependencies](#dependencies-3)
-@@ -87,11 +93,11 @@
-   - [Downloads for v1.18.0-alpha.1](#downloads-for-v1180-alpha1)
-   - [Changelog since v1.18.0-alpha.0](#changelog-since-v1180-alpha0)
-   - [Urgent Update Notes](#urgent-update-notes-4)
--  - [Changes by Kind](#changes-by-kind-6)
-+  - [Changes by Kind](#changes-by-kind-7)
-     - [API Changes](#api-changes-4)
-     - [Features & Enhancements](#features--enhancements-4)
-     - [Deprecation](#deprecation-4)
--    - [Bug Fixes](#bug-fixes-7)
-+    - [Bug Fixes](#bug-fixes-8)
-     - [Security](#security-4)
-   - [Other](#other-4)
-     - [Dependencies](#dependencies-4)
-@@ -101,6 +107,21 @@
- 
- <!-- END doctoc generated TOC please keep comment here to allow auto update -->
- 
-+# v1.18.4
-+## Downloads for v1.18.4
-+
-+Download v1.18.4 in the [v1.18.4 release page](https://github.com/karmada-io/karmada/releases/tag/v1.18.4).
-+
-+## Changelog since v1.18.3
-+
-+### Changes by Kind
-+
-+#### Bug Fixes
-+None.
-+
-+#### Others
-+- `Karmada`: Upgraded the Alpine base image from `alpine:3.24.1` to `alpine:3.24.2` to address security concerns. ([#7915](https://github.com/karmada-io/karmada/pull/7915), @dependabot)
-+
- # v1.18.3
- ## Downloads for v1.18.3
- 
-```
+---
 
-**File**: `docs/CHANGELOG/CHANGELOG-1.19.md` (modified, +28/-7)
-```diff
-@@ -2,6 +2,12 @@
- <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
- **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
- 
-+- [v1.19.1](#v1191)
-+  - [Downloads for v1.19.1](#downloads-for-v1191)
-+  - [Changelog since v1.19.0](#changelog-since-v1190)
-+    - [Changes by Kind](#changes-by-kind)
-+    - [Bug Fixes](#bug-fixes)
-+    - [Others](#others)
- - [v1.19.0](#v1190)
-   - [Downloads for v1.19.0](#downloads-for-v1190)
-   - [Urgent Update Notes](#urgent-update-notes)
-@@ -14,7 +20,7 @@
-     - [API Changes](#api-changes)
-     - [Features & Enhancements](#features--enhancements)
-     - [Deprecation](#deprecation)
--    - [Bug Fixes](#bug-fixes)
-+    - [Bug Fixes](#bug-fixes-1)
-     - [Security](#security)
-   - [Other](#other)
-     - [Dependencies](#dependencies)
-@@ -26,11 +32,11 @@
-   - [Downloads for v1.19.0-rc.0](#downloads-for-v1190-rc0)
-   - [Changelog since v1.19.0-beta.0](#changelog-since-v1190-beta0)
-   - [Urgent Update Notes](#urgent-update-notes-1)
--  - [Changes by Kind](#changes-by-kind)
-+  - [Changes by Kind](#changes-by-kind-1)
-     - [API Changes](#api-changes-1)
-     - [Features & Enhancements](#features--enhancements-1)
-     - [Deprecation](#deprecation-1)
--    - [Bug Fixes](#bug-fixes-1)
-+    - [Bug Fixes](#bug-fixes-2)
-     - [Security](#security-1)
-   - [Other](#other-1)
-     - [Dependencies](#dependencies-1)
-@@ -41,11 +47,11 @@
-   - [Downloads for v1.19.0-beta.0](#downloads-for-v1190-beta0)
-   - [Changelog since v1.19.0-alpha.1](#changelog-since-v1190-alpha1)
-   - [Urgent Update Notes](#urgent-update-notes-2)
--  - [Changes by Kind](#changes-by-kind-1)
-+  - [Changes by Kind](#changes-by-kind-2)
-     - [API Changes](#api-changes-2)
-     - [Features & Enhancements](#features--enhancements-2)
-     - [Deprecation](#deprecation-2)
--    - [Bug Fixes](#bug-fixes-2)
-+    - [Bug Fixes](#bug-fixes-3)
-     - [Security](#security-2)
-   - [Other](#other-2)
-     - [Dependencies](#dependencies-2)
-@@ -56,11 +62,11 @@
-   - [Downloads for v1.19.0-alpha.1](#downloads-for-v1190-alpha1)
-   - [Changelog since v1.19.0-alpha.0](#changelog-since-v1190-alpha0)
-   - [Urgent Update Notes](#urgent-update-notes-3)
--  - [Changes by Kind](#changes-by-kind-2)
-+  - [Changes by Kind](#changes-by-kind-3)
-     - [API Changes](#api-changes-3)
-     - [Features & Enhancements](#features--enhancements-3)
-     - [Deprecation](#deprecation-3)
--    - [Bug Fixes](#bug-fixes-3)
-+    - [Bug Fixes](#bug-fixes-4)
-     - [Security](#security-3)
-   - [Other](#other-3)
-     - [Dependencies](#dependencies-3)
-@@ -70,6 +76,21 @@
- 
- <!-- END doctoc generated TOC please keep comment here to allow auto update -->
- 
-+# v1.19.1
-+## Downloads for v1.19.1
-+
-+Download v1.19.1 in the [v1.19.1 release page](https://github.com/karmada-io/karmada/releases/tag/v1.19.1).
-+
-+## Changelog since v1.19.0
-+
-+### Changes by Kind
-+
-+### Bug Fixes
-+None.
-+
-+### Others
-+- `Karmada`: Upgraded the Alpine base image from `alpine:3.24.1` to `alpine:3.24.2` to address security concerns. ([#7916](https://github.com/karmada-io/karmada/pull/7916), @dependabot)
-+
- # v1.19.0
- ## Downloads for v1.19.0
- 
-```
+### Incident Patch 3: `ca8a1dad` (2026-11-03)
+**Commit Message**: Merge pull request #8014 from AarohiSharma5/fix/helm-chart-fhpa-validating-webhooks
 
-**File**: `docs/CHANGELOG/CHANGELOG-1.20.md` (modified, +69/-3)
+fix(chart): register FederatedHPA and CronFederatedHPA validating web…
+
+**File**: `charts/karmada/templates/_karmada_webhook_configuration.tpl` (modified, +28/-0)
 ```diff
-@@ -2,9 +2,9 @@
- <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
- **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
- 
--- [v1.20.0-alpha.1](#v1200-alpha1)
--  - [Downloads for v1.20.0-alpha.1](#downloads-for-v1200-alpha1)
--  - [Changelog since v1.20.0-alpha.0](#changelog-since-v1200-alpha0)
-+- [v1.20.0-beta.0](#v1200-beta0)
-+  - [Downloads for v1.20.0-beta.0](#downloads-for-v1200-beta0)
-+  - [Changelog since v1.20.0-alpha.1](#changelog-since-v1200-alpha1)
-   - [Urgent Update Notes](#urgent-update-notes)
-   - [Changes by Kind](#changes-by-kind)
-     - [API Changes](#api-changes)
-@@ -17,9 +17,75 @@
-     - [Helm Charts](#helm-charts)
-     - [Instrumentation](#instrumentation)
-     - [Performance](#performance)
-+- [v1.20.0-alpha.1](#v1200-alpha1)
-+  - [Downloads for v1.20.0-alpha.1](#downloads-for-v1200-alpha1)
-+  - [Changelog since v1.20.0-alpha.0](#changelog-since-v1200-alpha0)
-+  - [Urgent Update Notes](#urgent-update-notes-1)
-+  - [Changes by Kind](#changes-by-kind-1)
-+    - [API Changes](#api-changes-1)
-+    - [Features & Enhancements](#features--enhancements-1)
-+    - [Deprecation](#deprecation-1)
-+    - [Bug Fixes](#bug-fixes-1)
-+    - [Security](#security-1)
-+  - [Other](#other-1)
-+    - [Dependencies](#dependencies-1)
-+    - [Helm Charts](#helm-charts-1)
-+    - [Instrumentation](#instrumentation-1)
-+    - [Performance](#performance-1)
- 
- <!-- END doctoc generated TOC please keep comment here to allow auto update -->
- 
-+# v1.20.0-beta.0
-+## Downloads for v1.20.0-beta.0
-+
-+Download v1.20.0-beta.0 in the [v1.20.0-beta.0 release page](https://github.com/karmada-io/karmada/releases/tag/v1.20.0-beta.0).
-+
-+## Changelog since v1.20.0-alpha.1
-+
-+## Urgent Update Notes
-+None.
-+
-+## Changes by Kind
-+
-+### API Changes
-+- `ResourceBinding`: Introduced `spec.schedulePriority.preemptionPolicy` to both the `ResourceBinding` and `ClusterResourceBinding` APIs to specify whether a binding may preempt lower-priority bindings. ([#7954](https://github.com/karmada-io/karmada/pull/7954), @RainbowMango)
-+
-+### Features & Enhancements
-+- `karmada-agent`: Introduced the `--enable-cluster-registration` flag (default `true`). When set to `false`, the agent skips self-registration and validates that the member cluster is already registered in Pull mode before running its controllers. Registration-only flags are rejected in this mode. ([#7821](https://github.com/karmada-io/karmada/pull/7821), @driegel1)
-+- `karmada-scheduler`: Added support for rescheduling multi-template workloads when component replicas change. ([#7830](https://github.com/karmada-io/karmada/pull/7830), @ranxi2001)
-+- `karmada-controller-manager`: Added propagation of the preemption policy from Kubernetes `PriorityClass` to `ResourceBinding` when priority-based preemptive scheduling is enabled. ([#7978](https://github.com/karmada-io/karmada/pull/7978), @asarj)
-+
-+### Deprecation
-+- `Karmada`: Image publication to the Huawei Cloud SWR registry (`swr.ap-southeast-1.myhuaweicloud.com/karmada`) has been discontinued starting with release 1.20. Users should pull images from DockerHub (`docker.io/karmada`) instead. ([#7950](https://github.com/karmada-io/karmada/pull/7950), @RainbowMango)
-+
-+### Bug Fixes
-+- `karmadactl`: Fixed the missing `ClusterTaintPolicy` validating webhook registration in installations created by `karmadactl init`. The webhook denies create and update requests for policies with a `NoExecute` taint unless `karmada-webhook` runs with `--allow-no-execute-taint-policy=true`; users managing these policies must set the flag before upgrading. ([#7963](https://github.com/karmada-io/karmada/pull/7963), @cmontemuino)
-+- `karmada-operator`: Fixed the missing `ClusterTaintPolicy` validating webhook registration in operator-managed installations. The webhook denies create and update requests for policies with a `NoExecute` taint unless `karmada-webhook` runs with `--allow-no-execute-taint-policy=true`; users managing these policies must set the flag before upgrading. ([#7963](https://github.com/karmada-io/karmada/pull/7963), @cmontemuino)
-+- `karmada-controller-manager`: Fixed an issue where the built-in `MPIJob` interpreter could return components in a different order for the same object. ([#7970](https://github.com/karmada-io/karmada/pull/7970), @Sarthak-Shreshtha01)
-+- `karmada-controller-manager`: Fixed a panic in `CronFederatedHPA` when `failedHistoryLimit` is 0 and a rule fails. ([#7971](https://github.com/karmada-io/karmada/pull/7971), @Sarthak-Shreshtha01)
-+
-+### Security
-+None.
-+
-+## Other
-+
-+### Dependencies
-+- `Karmada`: Upgraded the Go build toolchain to v1.26.9. ([#7932](https://github.com/karmada-io/karmada/pull/7932), @FengyuanYin)
-+- `Karmada`: Upgraded the Go build toolchain to v1.26.10. ([#7959](https://github.com/karmada-io/karmada/pull/7959), @FengyuanYin)
-+- `Karmada`: Upgraded the Alpine base image from `alpine:3.24.1` to `alpine:3.24.2` to address security concerns. ([#7912](https://githu
+@@ -243,6 +243,34 @@ webhooks:
+     sideEffects: None
+     admissionReviewVersions: ["v1"]
+     timeoutSeconds: 3
++  - name: federatedhpa.karmada.io
++    rules:
++      - operations: ["CREATE", "UPDATE"]
++        apiGroups: ["autoscaling.karmada.io"]
++        apiVersions: ["*"]
++        resources: ["federatedhpas"]
++        scope: "Namespaced"
++    clientConfig:
++      url: https://{{ $name }}-webhook.{{ $namespace }}.svc:443/validate-federatedhpa
++      {{- include "karmada.webhook.caBundle" . | nindent 6 }}
++    failurePolicy: Fail
++    sideEffects: None
++    admissionReviewVersions: [ "v1" ]
++    timeoutSeconds: 3
++  - name: cronfederatedhpa.karmada.io
++    rules:
++      - operations: ["CREATE", "UPDATE"]
++        apiGroups: ["autoscaling.karmada.io"]
++        apiVersions: ["*"]
++        resources: ["cronfederatedhpas"]
++        scope: "Namespaced"
++    clientConfig:
++      url: https://{{ $name }}-webhook.{{ $namespace }}.svc:443/validate-cronfederatedhpa
++      {{- include "karmada.webhook.caBundle" . | nindent 6 }}
++    failurePolicy: Fail
++    sideEffects: None
++    admissionReviewVersions: [ "v1" ]
++    timeoutSeconds: 3
+   - name: multiclusterservice.karmada.io
+     rules:
+       - operations: ["CREATE", "UPDATE"]
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #8009** (closed): fix(util/proxy): return an error when the cluster CA bundle has no valid PEM certificate (@sarankumar1325)
-- **PR #8008** (2026-10-31): Automated cherry pick of #7950: Removed github workflow for releasing images to SWR (@RainbowMango)
-- **PR #8007** (2026-10-31): Automated cherry pick of #7950: Removed github workflow for releasing images to SWR (@RainbowMango)
-- **PR #8006** (2026-10-31): Automated cherry pick of #7950: Removed github workflow for releasing images to SWR (@RainbowMango)
-- **PR #8004** (2026-10-31): publish release note for v1.20.0-beta.0,v1.19.1,v1.18.4,v1.17.7 (@zhzhuang-zju)
-- **PR #7997** (2026-10-30): chore(operator): bump default Kubernetes and etcd versions (@Arbaaz123676)
+- **PR #8019** (2026-11-02): build(deps): bump alpine from 3.24.2 to 3.24.3 in /cluster/images (@dependabot[bot])
+- **PR #8018** (2026-11-02): build(deps): bump alpine from 3.24.2 to 3.24.3 in /cluster/images (@dependabot[bot])
+- **PR #8017** (2026-11-02): build(deps): bump alpine from 3.24.2 to 3.24.3 in /cluster/images (@dependabot[bot])
+- **PR #8016** (2026-11-02): build(deps): bump alpine from 3.24.2 to 3.24.3 in /cluster/images (@dependabot[bot])
+- **PR #8015** (2026-11-02): docs: fix broken commands in customresourceinterpreter example (@hnrydvd)
+- **PR #8014** (2026-11-03): fix(chart): register FederatedHPA and CronFederatedHPA validating web… (@AarohiSharma5)
 
 ---
 
@@ -1896,83 +1150,32 @@ Signed-off-by: zhzhuang-zju <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #8004 from zhzhuang-zju/releasenote-new
+## X. Merge pull request #8015 from hnrydvd/docs/fix-interpreter-example-curl
 
 **RULE**:
-When implementing operations in `docs/CHANGELOG/CHANGELOG-1.17.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in karmada-io/karmada. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `examples/customresourceinterpreter/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in karmada-io/karmada. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `653afb21`: Merge pull request #8004 from zhzhuang-zju/releasenote-new. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1c75cf38`: Merge pull request #8015 from hnrydvd/docs/fix-interpreter-example-curl. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/CHANGELOG/CHANGELOG-1.17.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `examples/customresourceinterpreter/README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-- [v1.17.7](#v1177)
-  - [Downloads for v1.17.7](#downloads-for-v1177)
-  - [Changelog since v1.17.6](#changelog-since-v1176)
-- [v1.17.6](#v1176)
-  - [Downloads for v1.17.6](#downloads-for-v1176)
-  - [Changelog since v1.17.5](#changelog-since-v1175)
-- [v1.17.5](#v1175)
-  - [Downloads for v1.17.5](#downloads-for-v1175)
-  - [Changelog since v1.17.4](#changelog-since-v1174)
-- [v1.17.4](#v1174)
-  - [Downloads for v1.17.4](#downloads-for-v1174)
-  - [Changelog since v1.17.3](#changelog-since-v1173)
-- [v1.17.3](#v1173)
-  - [Downloads for v1.17.3](#downloads-for-v1173)
-  - [Changelog since v1.17.2](#changelog-since-v1172)
-- [v1.17.2](#v1172)
-  - [Downloads for v1.17.2](#downloads-for-v1172)
-  - [Changelog since v1.17.1](#changelog-since-v1171)
-- [v1.17.1](#v1171)
-  - [Downloads for v1.17.1](#downloads-for-v1171)
-  - [Changelog since v1.17.0](#changelog-since-v1170)
-    - [Changes by Kind](#changes-by-kind-6)
-      - [Bug Fixes](#bug-fixes-6)
-      - [Others](#others-6)
-    - [Bug Fixes](#bug-fixes-7)
-  - [Changes by Kind](#changes-by-kind-7)
-    - [Bug Fixes](#bug-fixes-8)
-  - [Changes by Kind](#changes-by-kind-8)
-    - [Bug Fixes](#bug-fixes-9)
-  - [Changes by Kind](#changes-by-kind-9)
-    
+kubectl --kubeconfig $HOME/.kube/karmada.config --context karmada-apiserver get rb nginx-workload -o yaml
+kubectl --kubeconfig $HOME/.kube/members.config --context member1 proxy --port=8001 &
+curl  http://127.0.0.1:8001/apis/workload.example.io/v1alpha1/namespaces/default/workloads/nginx/status  -XPATCH -d'{"status":{"readyReplicas": 1}}' -H "Content-Type: application/merge-patch+json"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-- [v1.17.6](#v1176)
-  - [Downloads for v1.17.6](#downloads-for-v1176)
-  - [Changelog since v1.17.5](#changelog-since-v1175)
-- [v1.17.5](#v1175)
-  - [Downloads for v1.17.5](#downloads-for-v1175)
-  - [Changelog since v1.17.4](#changelog-since-v1174)
-- [v1.17.4](#v1174)
-  - [Downloads for v1.17.4](#downloads-for-v1174)
-  - [Changelog since v1.17.3](#changelog-since-v1173)
-- [v1.17.3](#v1173)
-  - [Downloads for v1.17.3](#downloads-for-v1173)
-  - [Changelog since v1.17.2](#changelog-since-v1172)
-- [v1.17.2](#v1172)
-  - [Downloads for v1.17.2](#downloads-for-v1172)
-  - [Changelog since v1.17.1](#changelog-since-v1171)
-- [v1.17.1](#v1171)
-  - [Downloads for v1.17.1](#downloads-for-v1171)
-  - [Changelog since v1.17.0](#changelog-since-v1170)
-    - [Bug Fixes](#bug-fixes-6)
-  - [Changes by Kind](#changes-by-kind-6)
-    - [Bug Fixes](#bug-fixes-7)
-  - [Changes by Kind](#changes-by-kind-7)
-    - [Bug Fixes](#bug-fixes-8)
-  - [Changes by Kind](#changes-by-kind-8)
-    - [Bug Fixes](#bug-fixes-9)
-  - [Changes by Kind](#changes-by-kind-9
+kubectl get rb nginx-workload -o yaml
+kubectl proxy --port=8001 &
+curl  http://127.0.0.1:8001/apis/workload.example.io/v1alpha1/namespaces/default/workloads/nginx/status  -XPATCH -d'{"status":{"readyReplicas": 1}}' -H "Content-Type: application/merge-patch+json
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `653afb21` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1c75cf38` are properly handled with clean fallback behavior.

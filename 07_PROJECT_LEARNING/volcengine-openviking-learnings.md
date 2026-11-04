@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/volcengine-openviking-learnings.md`  
 > **Source**: github ([https://github.com/volcengine/OpenViking](https://github.com/volcengine/OpenViking))  
-> **Source Version**: `012e1f0c`  
+> **Source Version**: `5760af6f`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T21:46:12.558Z  
+> **Timestamp**: 2026-11-03T19:24:25.051Z  
 > **Learning ID**: `learn-github-volcengine-openviking`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/volcengine-openviking-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/volcengine/OpenViking](https://github.com/volcengine/OpenViking))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T21:46:12.552Z  
+> **Harvest Timestamp**: 2026-11-03T19:24:23.514Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Self-evolving Context Database for AI Agents. Unify Agent Memory, Knowledge RAG and Skills.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 41246 stars
+- **Stars / Engagement**: 41452 stars
 
 ---
 
@@ -1474,11 +1474,11 @@ class AsyncProgressTracker:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #6681** (2026-10-30): **[Bug]: Studio 双 key 连接模型难以理解：字段提示与实际行为不一致，凭证失效时无任何报错**
-  *Symptoms*: ### Issue Origin  Observed or reproduced in a real environment  ### Bug Description  Studio 的连接页要求填两个凭证（"用户 API 密钥" 和 "Root 或管理员 API 密钥"），但每个字段下方的提示与实际行为不符，且多个状态静默失败。用户无法判断：  1. 两把 key 是否都必须填； 2. 每把 key 到底授权什么（root 还是租户管理员 key）； 3. 可选的账号/用户字段是否需要手填； 4. 数据请求会静默回退到管理 key； 5. 界面显示 `default/default` 的真实含义是"已保存的凭证失效"，而不是"开发模式"。  结果：对自部署 `auth_mode=api_key` 的环境，引导过程变成反复试错；凭证被吊销后没有任何错误提示。  环境：OSS 部署，`/health` 返回 `version: v0.5.2`、`auth_mode: api_key`；单账号、一个 admin 角色用户；官方 Docker 镜像（Python 3.13.17，Debian 13）。  ### Steps to Reproduce  1. 部署 OpenViking OSS（v0.5.2，`auth_mode=api_key`），创建一个账号和一个 admin 角色用户。 2. 打开 Studio 引导页 `/studio/config` 第 2 步"连接服务"。 3. 两栏都留空点"验证连接"——校验失败并提示"新服务需要 API Key，请填写后重试"，但"用户 API 密钥"下方的提示写的是"填写服务提供的 API Key。开源开发模式无需填写。" 4. 展开"开源高级连接配置（选填）"——"账号""用户"两个输入框都显示 `default`，输入用户 key 后它们不会变化。 5. 填入用户 API key 并点"验证连接"——身份被解析并显示为 `<账号> / <用户>`；两个输入框变成下拉框，按钮变为"进入 Studio"。 6. 在"设置 → 连接设置 → 编辑配置"里，把租户 admin 角色的用户 key 填入"管理 API Key（选填）"并保存——侧边栏"用户与权限"页出现且可用（本租户用户列表正常、可改角色），全程没有 root key。 7. 用户 key 留空、管理栏放该租户 admin 用户 key，打开 `/studio/filesystem` 与 `/studio/retrieval`——均正常；但直接用空 key 调数据接口返回 401。 8. 用 admin 接口轮换（regenerate）该用户 key，使浏览器里保存的 key 失效，再刷新 Studio——界面仍能进入，连接标识显示 `default/default`，没有任何错误提示或重新认证引导。  ### Expected Behavior  字段提示应准确描述授权模型：  - root key：服务端级管理（服务端配置、跨租户、建删账号）； - 租户管理员 key：仅本租户管理（用户、角色、用户组）； - 用户 key：数据面身份（文件系统、检索、会话、记忆）。  文案要求应与实际行为一致：  - 若用户 key 确为数据访问必需，应去掉静默回退；若回退是设计意图，应在提示中写明； - 账号/用户字段不应看起来像可自由填写却一直停在 `default`，可以在从 key 派生之前隐藏，或明确标注"验证后自动识别"； - 对 `auth
+- **Issue #6928** (2026-11-03): **[Bug]: vikingbot gateway crashes with UnicodeEncodeError printing "✓" on Chinese Windows (GBK stdio)**
+  *Symptoms*: ### Issue Origin  Observed or reproduced in a real environment  ### Bug Description  On Chinese Windows (system ANSI code page 936 / GBK), vikingbot gateway crashes with UnicodeEncodeError: 'gbk' codec can't encode character '\u2713' when it prints the "✓" checkmark in console.print(f"[green]✓[/green] Gateway mode: ...") (bot/vikingbot/cli/commands.py:561). Root cause: rich's legacy Windows renderer (legacy_windows_render -> LegacyWindowsTerm -> _win32_console.write_text) writes through the locale-encoded sys.stdout. When vikingbot's output is redirected (piped to a file, a log collector, CI, or a service), Python uses the system encoding gbk on Chinese Windows, and gbk cannot encode U+2713 (✓). This does not reproduce in an interactive console because Python forces UTF-8 there (PEP 528).  ### Steps to Reproduce  1. On Chinese Windows (ANSI code page 936), ensure Python UTF-8 mode is off (no `PYTHONUTF8` / `PYTHONIOENCODING` environment variables). 2. Redirect vikingbot's output so stdout is not an interactive console: vikingbot gateway 2>&1 | Out-File gateway_test.txt 3. The process crashes when it prints "✓ Gateway mode: ...".  ### Expected Behavior  Gateway starts and prints "✓ Gateway mode: ..." normally, even when output is redirected.  ### Actual Behavior  UnicodeEncodeError: 'gbk' codec can't encode character '\u2713' in position 0: illegal multibyte sequence  ### Minimal Reproducible Example  ```python import sys sys.stdout.reconfigure(encoding="gbk")  # simulate redi
 
-- **Issue #6588** (2026-10-26): **[Bug]: # issue-v0.5.2-SDK漂移致镜像崩溃**
-  *Symptoms*: ### Issue Origin  Inferred by an AI agent and not observed or reproduced  ### Bug Description  # issue-v0.5.2-SDK漂移致镜像崩溃  > 上游 issue 稿件（待提交）：v0.5.2 发布管道把不含 ​`git_diff_paths` 的 SDK 0.1.15 打进镜像，server 调用不存在的方法导致崩溃。已回滚 v0.5.1.1 自用，本文档为完整 issue 稿，证据全部实测。  **同类事故**：#5928（0cdce969）、2da84464（10-13）之后第三轮 SDK 漂移。  ---  # [Bug] v0.5.2 release pipeline ships SDK 0.1.15 without ​`git_diff_paths` — server calls a method the installed SDK does not have  ## Environment  - Image: official ​`openviking`​ v0.5.2 (built from the ​`v0.5.2`​ tag via ​`build-docker-image.yml`) - Installed inside the image (verified by starting a throwaway container and inspecting):    - `openviking == 0.5.2`   - `openviking-sdk == 0.1.15`   - `hasattr(AsyncHTTPClient, "git_diff_paths") == False`  ## Symptom  Server code shipped in v0.5.2 calls ​`git_diff_paths`​, but neither the SDK version locked in ​`uv.lock`​ (0.1.15) nor the latest PyPI release (0.1.16) contains that method. The v0.5.2 image therefore crashes whenever the affected code paths run (compile / memory snapshot diffing). We had to roll back to v0.5.1.1, where the server does not call ​`git_diff_paths` and is self-consistent with SDK 0.1.15.  ## Evidence chain (all verified locally, nothing inferred)  1. **v0.5.2 tag server source calls** ​**​`git_diff_paths`​**​ **:**     - `service/compile_targets.py:1096`​ — ​`await self._fs._async_agfs.run("git_diff_paths", ...)`    - `storage/viking_fs/_snapshot.py:808`​ — ​`await self._async_agfs.run("git_diff_
+- **Issue #6872** (2026-11-02): **[Bug]: content write normalizes whitespace path segments to _ but read does not — edit on an existing memory forks a new file**
+  *Symptoms*: ### Issue Origin  Observed or reproduced in a real environment  ### Bug Description  # [Bug] content write normalizes whitespace path segments to `_` but read does not — `edit` on an existing memory forks a new file  **Version**: v0.5.2 (`openviking[bot]==0.5.2`, plugin `@openviking/opencode-plugin` 0.5.19)  The same applies to `write mode=replace` on any pre-existing whitespace path.  ## Scale (our deployment, read-only count)  ~11% of memory `.md` files (4,697 / 42,505) sit under a path segment containing a space.  ## Related  #5178 (`a09a9d20a`) lowercases `preferences` / `cases` / `experiences` / `trajectories` filenames (`{{ user|lower }}/...`), so one user's preferences now also split between `Jane Doe/` (pre-0.5) and `jane doe/` (new topics). Combined with this bug a single user can end up with `Jane Doe/`, `jane doe/` and `Jane_Doe/`.  ### Steps to Reproduce  ## Reproduce  Any memory file whose path has a space-containing segment; call the MCP `edit` tool on it with a valid `old_string`, then `read` the original URI and `ls` the parent.  ### Expected Behavior  ## Expected  Read and write resolve the same canonical URI. Options: apply the same normalization on read (with the existing `%20` fallback extended to the space→`_` form), or skip whitespace normalization for paths that already exist / for `memories/` targets, and make memory templates produce canonical segments up front.   ### Actual Behavior  ## What happens  Since #5328 (`d8f675445`), `ContentWriteService.wr
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1495,302 +1495,2060 @@ class AsyncProgressTracker:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3dedecc0` (2026-10-31)
-**Commit Message**: fix(snapshot): restore single files using commit IDs (#6840)
+### Incident Patch 1: `3a90bbb3` (2026-11-02)
+**Commit Message**: fix(pathlock): preserve independent holders across handoff and recovery (#6895)
 
-Co-authored-by: fujiajie.168 <[REDACTED_EMAIL]>
+Keep each lease independently renewable and releasable, and recover durable handoffs under their original owner without losing lock coverage.
 
-**File**: `docs/en/api/11-snapshot.md` (modified, +8/-13)
+**File**: `crates/ragfs-python/src/lib.rs` (modified, +33/-0)
 ```diff
-@@ -588,13 +588,11 @@ With `dry_run=true`, only the planned diff is returned and nothing is written. D
- 
- | Parameter | Type | Description |
- |-----------|------|-------------|
--| path | str | `viking://` URI of the Compile output file |
--| restore_version | str | UUID `version_id` of the historical version supplying the restored content |
--| current_version | str | UUID `version_id` of the current version observed by the caller; a mismatch returns `409 CONFLICT` with `error.details.resource: "VERSION_CONFLICT"` |
-+| path | str | Compile output file URI, also used as the path in the historical snapshot |
-+| restore_commit_id | str | Full commit ID supplying the content (40 lowercase hexadecimal characters) |
-+| current_commit_id | str | Full ID of the last commit changing this file on `main`, as observed by the caller; a mismatch returns `409 CONFLICT` with `error.details.resource: "VERSION_CONFLICT"` |
- 
--Call `GET /api/v1/snapshot/versions?uri=<file URI>` to obtain `current_version` and the version history before submitting a restore:
--
--Each version has a `version_id` (a full UUID4 hex string) and a positive integer `version_number`. Clients pass IDs unchanged for restore and pagination; use `version_number` to display labels such as `v1` and `v2`. Versions are returned newest first. Numbers increase within a file's lifecycle and remain unchanged across pages and history cleanup. A new version index starts numbering at 1; version IDs are not reused after deletion and recreation, so an old restore request cannot match the recreated file.
-+`GET /api/v1/snapshot/versions?uri=<file URI>` lists version history. Each version has a `version_id` (a full UUID4 hex string) and a positive integer `version_number`. Clients pass version IDs unchanged for pagination; use `version_number` to display labels such as `v1` and `v2`. Versions are returned newest first. Numbers increase within a file's lifecycle and remain unchanged across pages and history cleanup. A new version index starts numbering at 1; version IDs are not reused after deletion and recreation, so old version UUIDs cannot match the recreated file.
- 
- The response's `to` identifies the file's owning Compile target directory; use it with a version's `meta.operation_id` to query operation details. `total` counts all retained, queryable versions before applying `limit` or `before_version`; it is not the latest version number. Pass `next_before_version` unchanged as `before_version` to load older versions. Both this cursor and `current_version` contain UUID IDs; do not sort or derive display numbers from IDs or page positions.
- 
-@@ -604,17 +602,14 @@ curl -X POST "http://localhost:1933/api/v1/snapshot/restore" \
-   -H "X-API-Key: your-key" \
-   -d '{
-     "path": "viking://resources/wiki/entity/project.md",
--    "restore_version": "0334d9abe4ac4f25a3e59d0b401bb01c",
--    "current_version": "54c71fb7bf134b71a9b7ed604c21f5b4"
-+    "restore_commit_id": "0334d9abe4ac4f25a3e59d0b401bb01c12345678",
-+    "current_commit_id": "54c71fb7bf134b71a9b7ed604c21f5b412345678"
-   }'
- ```
- 
--For example, when version 2 is current and version 1 has different content, restoring version 1 creates version 3 and preserves both earlier versions. The response contains a new UUID `version_id`, `version_number: 3`, and `meta.restored_from` equal to version 1's UUID. Identical content returns the current ID and number with `result: "noop"` and `meta.restored_from: null`, without creating a version or incrementing its number.
--
--The current version is checked before looking up the historical version and again under the write lock before changing content. A stale `current_version` returns `409 CONFLICT` with `error.details.resource: "VERSION_CONFLICT"`, including after deletion and recreation; a missing historical version returns `404` when the current version matches.
--
--Only the specified file is restored; related Wiki pages and index content retain their current content. A running Compile on the target returns `409 CONFLICT` with `error.details.resource: "COMPILE_RUNNING"`. This mode does not provide a `dry_run` preview; directory restore preview options do not apply to single-file restore.
-+For example, when version 2 is current and version 1 has different content, restoring version 1 creates version 3 and preserves both earlier versions. The response contains a new UUID `version_id`, `version_number: 3`, and `meta.restored_from` equal to the source commit ID. Identical content returns the current ID and number with `result: "noop"` and `meta.restored_from: null`, without creating a version or incrementing its number.
- 
-+The last commit changing the file is checked before reading the same path in the historical commit and again under the write lock. A stale `current_commit_id` returns `409 VERSION_CONFLICT`; a missing historical commit or path returns `404` when the current commit matches. Restore does not follow moves or renames.
- ---
- 
- ## Ignore management
-```
-
-**File**: `docs/zh/api/11-snapshot.md` (modified, +8/-13)
-```diff
-@@ -588,13 +588,11 @@ ov snapshot restore 3f2a1b9c viking://resources/my_project -m "restore to v1" -o
- 
- | 参数 | 类型 | 说明 |
- |------|------|------|
--| path | str | Compile 产物文件的 `viking://` URI |
--| restore_version | str | 提供恢复内容的历史版本的 UUID `version_id` |
--| current_version | str | 调用方观察到的当前版本的 UUID `version_id`；不匹配时返回 `409 CONFLICT`，`error.details.resource` 为 `VERSION_CONFLICT` |
-+| path | str | Compile 产物文件的 `viking://` URI，也是历史快照中的读取路径 |
-+| restore_commit_id | str | 提供恢复内容的完整 commit ID（40 位小写十六进制） |
-+| current_commit_id | str | 调用方观察到的该文件在 `main` 上最后一次变更的完整 commit ID；不匹配时返回 `409 CONFLICT`，`error.details.resource` 为 `VERSION_CONFLICT` |
- 
--先调用 `GET /api/v1/snapshot/versions?uri=<文件 URI>` 获取 `current_version` 和历史版本列表，再提交恢复请求：
--
--每条版本记录包含 `version_id`（完整 UUID4 十六进制字符串）和正整数 `version_number`。客户端在恢复和分页时原样传递 ID，使用 `version_number` 展示 `v1`、`v2` 等编号。版本列表按从新到旧的顺序返回。编号在文件的一轮生命周期内递增，跨分页和历史清理保持不变。新版本索引从 1 开始编号；文件删除重建后版本 ID 不复用，旧恢复请求无法匹配重建文件。
-+`GET /api/v1/snapshot/versions?uri=<文件 URI>` 用于查询版本历史。每条版本记录包含 `version_id`（完整 UUID4 十六进制字符串）和正整数 `version_number`。客户端在分页时原样传递版本 ID，使用 `version_number` 展示 `v1`、`v2` 等编号。版本列表按从新到旧的顺序返回。编号在文件的一轮生命周期内递增，跨分页和历史清理保持不变。新版本索引从 1 开始编号；文件删除重建后版本 ID 不复用，旧版本 UUID 不会匹配重建文件。
- 
- 响应中的 `to` 是文件所属的 Compile 目标目录，可与版本记录的 `meta.operation_id` 一起用于查询操作详情。`total` 表示当前保留的可查询版本总数，不受 `limit`、`before_version` 影响，不等于最新版本编号。将 `next_before_version` 原样作为 `before_version` 传入可继续加载更旧版本。该游标和 `current_version` 都使用 UUID ID；不要根据 ID 或页面内位置排序或推算展示编号。
- 
-@@ -604,17 +602,14 @@ curl -X POST "http://localhost:1933/api/v1/snapshot/restore" \
-   -H "X-API-Key: your-key" \
-   -d '{
-     "path": "viking://resources/wiki/entity/project.md",
--    "restore_version": "0334d9abe4ac4f25a3e59d0b401bb01c",
--    "current_version": "54c71fb7bf134b71a9b7ed604c21f5b4"
-+    "restore_commit_id": "0334d9abe4ac4f25a3e59d0b401bb01c12345678",
-+    "current_commit_id": "54c71fb7bf134b71a9b7ed604c21f5b412345678"
-   }'
- ```
- 
--例如，当前为第 2 版且第 1 版内容不同时，恢复第 1 版会生成第 3 版，并保留前两版的历史。响应包含新的 UUID `version_id`、`version_number: 3`，`meta.restored_from` 为第 1 版的 UUID。内容相同时返回当前 ID 和编号，以及 `result: "noop"`、`meta.restored_from: null`，不新增版本，也不递增编号。
--
--恢复先检查当前版本，再查找历史版本，并在写入锁内、修改内容前再次检查当前版本。`current_version` 过期时返回 `409 CONFLICT`，`error.details.resource` 为 `VERSION_CONFLICT`，包括删除重建后的旧请求；当前版本匹配但历史版本不存在时返回 `404`。
--
--仅指定文件被恢复；相关 Wiki 页面和索引正文保持原内容。目标存在运行中的 Compile 时，返回 `409 CONFLICT`，`error.details.resource` 为 `COMPILE_RUNNING`。此模式不提供 `dry_run` 预演；目录恢复的预演参数不适用于单文件恢复。
-+例如，当前为第 2 版且第 1 版内容不同时，恢复第 1 版会生成第 3 版，并保留前两版的历史。响应包含新的 UUID `version_id`、`version_number: 3`，`meta.restored_from` 为来源 commit ID。内容相同时返回当前 ID 和编号，以及 `result: "noop"`、`meta.restored_from: null`，不新增版本，也不递增编号。
- 
-+恢复先校验该文件最新变更的 commit，再读取历史 commit 中的同一路径，并在写入锁内再次校验。`current_commit_id` 过期时返回 `409 VERSION_CONFLICT`；当前 commit 匹配但历史 commit 或路径不存在时返回 `404`。不自动追踪重命名或移动前的路径。
- ---
- 
- ## ignore 管理
-```
-
-**File**: `openviking/server/routers/snapshot.py` (modified, +9/-9)
-```diff
-@@ -117,11 +117,11 @@ class RestoreRequest(BaseModel):
-     project_dir: Optional[str] = None
-     source_commit: Optional[str] = None
-     path: Optional[str] = None
--    restore_version: Optional[str] = Field(
--        None, description="Historical version UUID supplying the restored content"
-+    restore_commit_id: Optional[str] = Field(
-+        None, pattern=r"^[0-9a-f]{40}$", description="Full commit ID supplying content at path"
-     )
--    current_version: Optional[str] = Field(
--        None, description="Required current version UUID; mismatch returns a conflict"
-+    current_commit_id: Optional[str] = Field(
-+        None, pattern=r"^[0-9a-f]{40}$", description="Expected last commit changing path"
-     )
-     branch: str = "main"
-     dry_run: bool = False
-@@ -134,8 +134,8 @@ def _one_mode(self) -> "RestoreRequest":
-         if self.path is not None:
-             if self.project_dir is not None or self.source_commit is not None:
-                 raise ValueError("path cannot be combined with project_dir or source_commit")
--            if not self.restore_version or not self.current_version:
--                raise ValueError("path requires restore_version and current_version")
-+            if not self.restore_commit_id or not self.current_commit_id:
-+                raise ValueError("path requires restore_commit_id and current_commit_id")
-         elif not self.source_commit:
-             raise ValueError("source_commit is required")
-         return self
-@@ -161,14 +161,14 @@ async def restore(
-     request: RestoreRequest = Body(...),
-     _ctx: RequestContext = Depends(get_request_context),
- ):
--    """Forward-commit restore: rebuild project_dir from source_commit on top of HEAD."""
-+    """Restore a directory or one file's historical content as a forward commit."""
-     service = get_service()
-     if request.path is not None:
-         path = validate_request_viking_uri(request.path, _ctx, field_name="path")
-         result = await service.compile.restore_file_version(
-             uri=path,
--            restore_version=request.restore_version,
--            current_version=request.current_version,
-+            restore_commit_id=request.restore_commit_id,
-+            current_commit_id=request.current_commit_id,
-             ctx=_ctx,
-         )
-         return Response(status="ok", result=result)
-```
-
-**File**: `openviking/service/compile_service.py` (modified, +4/-7)
-```diff
-@@ -838,12 +838,9 @@ async def file_versions(
-         )
- 
-     async def restore_file_version(
--        self, uri: str, restore_version: str, current_version: str, ctx: RequestContext
-+        self, uri: str, restore_commit_id: str, current_commit_id: str, ctx: RequestContext
-     ) -> dict[str, Any]:
--        """Restore a file version, retaining current metadata for memory files.
--
--        Return version metadata after refresh; mismatches or active Compile raise ConflictError.
--        """
-+        """Return restored version metadata; stale file commits or active Compile raise ConflictError."""
- 
-         async def write(content: bytes, commit_content: Any) -> None:
-             # Use normal refresh while recording a restore version.
-@@ -863,8 +860,8 @@ async def write(content: bytes, commit_content: Any) -> None:
- 
-         return await self._require_lifecycle().versions.restore(
-             uri=uri,
--            restore_version=restore_version,
--            current_version=current_version,
-+            restore_commit_id=restore_commit_id,
-+            current_commit_id=current_commit_id,
-             ctx=ctx,
-             write=write,
-         )
-```
-
-**File**: `openviking/service/compile_targets.py` (modified, +24/-23)
-```diff
-@@ -2690,25 +2690,30 @@ async def versions(
-     async def restore(
-         self,
-         uri: str,
--        restore_version: str,
--        current_version: str,
-+        restore_commit_id: str,
-+        current_commit_id: str,
-         ctx: RequestContext,
-         write: Callable[[bytes, Callable[..., Awaitable[Any]]], Awaitable[Any]],
-     ) -> Dict[str, Any]:
--        """Restore by UUID; reject stale current_version under lock and return metadata or noop."""
-+        """Restore URI from a commit; reject stale file commits under lock, returning metadata or noop."""
-         await self._fs._ensure_access(uri, ctx, action=AclAction.WRITE)
-         record = await self._managed(uri, ctx)
--        index = await self.load(ctx.account_id, record["to"], uri) or {"versions": []}
--        current = index["versions"][-1]["version_id"] if index["versions"] else None
--        if current != current_version:
--            raise ConflictError(
--                f"Current version is {current}, not {current_version}",
--                resource="VERSION_CONFLICT",
--            )
--        source = next((v for v in index["versions"] if v["version_id"] == restore_version), None)
--        if source is None:
--            raise NotFoundError(restore_version, "file version")
--        content = await self._fs.show(source["snapshot_id"], path=source["snapshot_path"], ctx=ctx)
-+
-+        async def check_current_commit() -> None:
-+            """Reject a stale file commit; unrelated paths do not cause conflicts."""
-+            history = await self._fs.log(paths=[uri], limit=1, ctx=ctx)
-+            current = history[0]["oid"] if history else None
-+            if current != current_commit_id:
-+                raise ConflictError(
-+                    f"Current file commit is {current}, not {current_commit_id}",
-+                    resource="VERSION_CONFLICT",
-+                )
-+
-+        await check_current_commit()
-+        try:
-+            content = await self._fs.show(restore_commit_id, path=uri, ctx=ctx)
-+        except AGFSNotFoundError as exc:
-+            raise NotFoundError(f"{restore_commit_id}:{uri}", "snapshot file") from exc
-         result: Dict[str, Any] = {}
- 
-         async def commit_restore(uris, *, lease_ref, write):
-@@ -2721,16 +2726,12 @@ async def commit_restore(uris, *, lease_ref, write):
-                     raise ConflictError("Compile is running", resource="COMPILE_RUNNING")
-                 index = await self.load(ctx.account_id, target_to, uri) or {"versions": []}
-                 current = index["versions"][-1]["version_id"] if index["versions"] else None
--                if current != current_version:
--                    raise ConflictError(
--                        f"Current version is {current}, not {current_version}",
--                        resource="VERSION_CONFLICT",
--                    )
-+                await check_current_commit()
-                 written = await self.record_write(
-                     uris, ctx, "restore", write=write, record_version=False
-                 )
-                 snapshot = await self._commit(
--                    uris, f"restore {uri} to {restore_version}", ctx, lease_ref=lease_ref
-+                    uris, f"restore {uri} to {restore_commit_id}", ctx, lease_ref=lease_ref
-                 )
-             if not snapshot or not await self._changed(ctx, target_to, uri, snapshot):
-                 result.update(
-@@ -2749,8 +2750,8 @@ async def commit_restore(uris, *, lease_ref, write):
-                     {
-                         "source": "restore",
-                         "actor": ctx.user.user_id,
--                        "meta": {"restored_from": restore_version},
--                        "provenance": dict(source.get("provenance") or {}),
-+                        "meta": {"restored_from": restore_commit_id},
-+                        "provenance": {"source_roots": [uri]},
-                     },
-                 )
-                 result.update(
-@@ -2771,7 +2772,7 @@ async def restore_content():
-             [uri],
-             ctx,
-             "restore",
--            {"restore_version": restore_version, "current_version": current_version},
-+            {"restore_commit_id": restore_commit_id, "current_commit_id": current_commit_id},
-             restore_content,
-         )
- 
-```
-
-**File**: `tests/server/test_compile_studio.py` (modified, +4/-4)
-```diff
-@@ -617,7 +617,7 @@ async def submit(payload, key):
-     )
-     assert {"execution", "skill_snapshot"}.isdisjoint(cancelled_operation["meta"])
- 
--    # Binary version restore is guarded by the version the caller last observed.
-+    # Binary restore is guarded by the last commit changing the file.
-     await service.fs.batch_write(
-         root_uri=target,
-         operations=[
-@@ -632,12 +632,12 @@ async def submit(payload, key):
-     assert versions["to"] == target
-     restore = {
-         "path": picture,
--        "restore_version": versions["versions"][-1]["version_id"],
--        "current_version": versions["current_version"],
-+        "restore_commit_id": versions["versions"][-1]["snapshot_id"],
-+        "current_commit_id": (await service.fs.log(ctx, paths=[picture], limit=1))[0]["oid"],
+@@ -1475,6 +1475,9 @@ fn extract_optional_owned_lease_ref(
+ /// Convert a PathLockHandoffRef to a Python dict.
+ fn handoff_ref_to_py_dict(py: Python<'_>, handoff: &PathLockHandoffRef) -> PyResult<Py<PyAny>> {
+     let dict = PyDict::new(py);
++    if let Some(holder_id) = &handoff.holder_id {
++        dict.set_item("holder_id", holder_id)?;
++    }
+     if let Some(lease_ref) = &handoff.lease_ref {
+         dict.set_item("lease_ref", lease_ref)?;
      }
-     restored = await client.post("/api/v1/snapshot/restore", json=restore)
-     assert restored.status_code == 200, restored.text
--    assert restored.json()["result"]["meta"]["restored_from"] == restore["restore_version"]
-+    assert restored.json()["result"]["meta"]["restored_from"] == restore["restore_commit_id"]
-     await service.resources.wait_processed()
-     assert await service.fs.read_file_bytes(picture, ctx) == png
-     assert (await client.post("/api/v1/snapshot/restore", json=restore)).status_code == 409
+@@ -2936,6 +2939,32 @@ impl RAGFSBindingClient {
+         })
+     }
+ 
++    /// Reacquire validated durable coverage under its original logical owner.
++    #[pyo3(signature = (ctx, requests, owner_id, timeout_secs=0.0))]
++    fn pathlock_reacquire_batch_async<'py>(
++        &self,
++        py: Python<'py>,
++        ctx: Option<HashMap<String, String>>,
++        requests: Vec<HashMap<String, String>>,
++        owner_id: String,
++        timeout_secs: f64,
++    ) -> PyResult<Bound<'py, PyAny>> {
++        let fs_ctx = build_fs_context(ctx);
++        let timeout = validate_timeout_secs(timeout_secs)?;
++        let requests = parse_pathlock_request_batch(&requests)?;
++        let manager = self.clone_pathlock_manager();
++        let task = self.rt.spawn(FS_CTX.scope(fs_ctx, async move {
++            manager.reacquire_batch(&requests, &owner_id, timeout).await
++        }));
++        pyo3_async_runtimes::tokio::future_into_py(py, async move {
++            let lease = task
++                .await
++                .map_err(|error| PyRuntimeError::new_err(error.to_string()))?
++                .map_err(pathlock_err_to_py)?;
++            Python::attach(|py| owned_lease_to_py_dict(py, &lease))
++        })
++    }
++
+     /// Create a borrowed view of an owned lease.
+     #[pyo3(signature = (ctx, owned_lease_ref))]
+     fn pathlock_as_borrowed(
+@@ -3176,6 +3205,10 @@ impl RAGFSBindingClient {
+             })
+             .transpose()?;
+         let handoff = PathLockHandoffRef {
++            holder_id: handoff_ref
++                .get("holder_id")
++                .map(|v| v.extract(py))
++                .transpose()?,
+             lease_ref,
+             handle_mode,
+             owner_id,
+```
+
+**File**: `crates/ragfs/benches/pathlock_perf.md` (modified, +21/-0)
+```diff
+@@ -1,5 +1,26 @@
+ # PathLock performance baselines
+ 
++Holder-lease comparison on 2026-11-01 (macOS arm64, release native binding,
++Python 3.13, local Redis, 200 unrelated live locks in the same namespace).
++Each provider used a fresh local workspace, 10 warmup cycles and 300 measured
++Exact/Tree acquire cycles; release pooled both kinds (600 samples). The comparison
++base was `main` at `f423d8e72`. Times include the synchronous Python binding.
++
++| Provider | Exact acquire P50, µs (main → holders) | Tree acquire P50, µs | Release P50, µs |
++| --- | --- | --- | --- |
++| Memory | 29.3 → 5.2 | 30.8 → 5.5 | 1.5 → 1.5 |
++| Filesystem on local disk | 1975.5 → 1849.6 | 2050.8 → 1931.0 | 329.7 → 334.4 |
++| SQLite on local disk | 82.2 → 66.1 | 88.2 → 67.8 | 54.1 → 54.7 |
++| Redis | 138.2 → 121.0 | 490.4 → 258.4 | 230.5 → 206.7 |
++
++Filesystem acquire P95 varied (Exact: 3060.6 → 3581.4 µs, Tree:
++3256.5 → 3506.3 µs); this small local sample does not establish tail-latency
++equivalence. No acquisition or release failed. Holder adoption performs a storage
++mutation even locally; its cost is no longer comparable to main's registry-only
++local adoption. Redis Tree acquisition still scans HASH fields, although unrelated
++holder decoding/cleanup is bounded. Run the concurrency benchmark below for
++database writer contention and multi-process behavior.
++
+ Run from the repository root:
+ 
+ ```sh
+```
+
+**File**: `crates/ragfs/src/lock/cache_provder.rs` (modified, +343/-46)
+```diff
+@@ -21,14 +21,16 @@ use super::provider::{
+     AcquisitionChange, AtomicAcquisition, AtomicAcquisitionResult, PathLockHandleMode,
+     PathLockProvider,
+ };
+-use super::types::{LockToken, PathLockError, PathLockKind, PathLockRequest, PathLockResult};
++use super::types::{
++    HandoffRecoveryReason, LockToken, PathLockError, PathLockKind, PathLockRequest, PathLockResult,
++};
+ 
+-const ACQUIRE_BATCH_ID: &str = "pathlock.acquire_batch.v2";
++const ACQUIRE_BATCH_ID: &str = "pathlock.acquire_batch.v4";
+ const ROLLBACK_BATCH_ID: &str = "pathlock.rollback_batch.v1";
+ const COMPARE_WRITE_ID: &str = "pathlock.compare_write.v1";
+ const COMPARE_REMOVE_ID: &str = "pathlock.compare_remove.v1";
+ const REFRESH_ID: &str = "pathlock.refresh.v1";
+-const REFRESH_BATCH_ID: &str = "pathlock.refresh_batch.v1";
++const REFRESH_BATCH_ID: &str = "pathlock.refresh_batch.v2";
+ // Bound each Lua execution so large leases do not monopolize Redis.
+ const REFRESH_BATCH_SIZE: usize = 256;
+ const IS_LOCKED_ID: &str = "pathlock.is_locked.v1";
+@@ -47,9 +49,13 @@ local function normalize_decimal(value)
+     if not value or not string.match(value, "^%d+$") then
+         return nil
+     end
+-    local normalized = string.gsub(value, "^0+", "")
+-    if normalized == "" then
+-        return "0"
++    -- Rust writes canonical decimals; skip the pattern scan in the common case.
++    local normalized = value
++    if string.byte(value, 1) == 48 then
++        normalized = string.gsub(value, "^0+", "")
++        if normalized == "" then
++            return "0"
++        end
+     end
+     if string.len(normalized) > string.len(u128_max)
+         or (string.len(normalized) == string.len(u128_max)
+@@ -70,7 +76,27 @@ local function decimal_less(left, right)
+     end
+     return left < right
+ end
+-local function decode_token(raw)
++local function decode_token(raw, stale_before)
++    if string.sub(raw, 1, 3) == "v2|" then
++        local owner, body = string.match(raw, "^v2|([^|:,]+)|(.+)$")
++        if not owner then return nil end
++        local token = { owner = owner, time_ns = "0", kind = "E", holders = {} }
++        local seen = {}
++        local count = 0
++        for item in string.gmatch(body .. ",", "(.-),") do
++            local id, kind, time = string.match(item, "^([^|:,]+):([ET]):(%d+)$")
++            if not id or seen[id] or not normalize_decimal(time) then return nil end
++            seen[id] = true
++            count = count + 1
++            if not stale_before or decimal_less(time, stale_before) ~= true then
++                table.insert(token.holders, { id = id, kind = kind, time_ns = time })
++                if kind == "T" then token.kind = "T" end
++                if decimal_less(token.time_ns, time) then token.time_ns = time end
++            end
++        end
++        if count == 0 then return nil end
++        return token
++    end
+     local p1 = string.find(raw, ":", 1, true)
+     local p2 = p1 and string.find(raw, ":", p1 + 1, true)
+     local p3 = p2 and string.find(raw, ":", p2 + 1, true)
+@@ -86,6 +112,9 @@ local function decode_token(raw)
+     end
+     return { owner = token_owner, time_ns = time_ns, kind = kind }
+ end
++local function holder_less(a, b)
++    return a.id < b.id
++end
+ local function is_normalized_path(path)
+     if not path or string.sub(path, 1, 1) ~= "/"
+         or (path ~= "/" and string.sub(path, -1) == "/")
+@@ -131,6 +160,13 @@ local owner = ARGV[1]
+ local now_ns = ARGV[2]
+ local stale_before_ns = ARGV[3]
+ local ttl_ms = tonumber(ARGV[4])
++-- The holder entrypoint supplies a versioned identity envelope. The legacy
++-- entrypoint remains available for reading/testing drained v1 deployments.
++local holder, source
++if string.sub(owner, 1, 3) == "v2|" then
++    owner, holder, source = string.match(owner, "^v2|([^|:,]+)|([^|:,]+)|([^|:,]*)$")
++    if not owner then return { "invalid_request", "invalid holder identity" } end
++end
+ local function is_descendant(path, root)
+     if root == "/" then
+         return path ~= "/"
+@@ -160,15 +196,40 @@ end
+ 
+ local records = {}
+ if includes_tree then
++    -- Decode every record that can conflict, plus a bounded sample of unrelated
++    -- records for opportunistic stale cleanup.
++    local unrelated_budget = 16
++    local related = {}
++    for _, request in ipairs(requests) do
++        related[request.path] = true
++        for _, ancestor in ipairs(ancestors(request.path)) do
++            related[ancestor] = true
++        end
++    end
+     local values = redis.call("HGETALL", key)
+     for index = 1, #values, 2 do
+         local path = values[index]
+-        local raw = values[index + 1]
+-        local token = decode_token(raw)
+-        if not token then
+-            return { "invalid_token", path, raw }
++        local relevant = related[path]
++        if not relevant then
++            for _, request in ipairs(requests) do
++                if request.kind == "T" and is_descendant(path, request.path) then
++                    relevant = true
++                    break
++              
+```
+
+**File**: `crates/ragfs/src/lock/cache_refresh_tests.rs` (modified, +98/-2)
+```diff
+@@ -185,7 +185,9 @@ async fn manager_uses_batch_for_manual_and_background_refresh() {
+     let observed = calls.clone();
+     let (runtime, provider) = mock_provider(move |request| match request.script_id.as_str() {
+         ACQUIRE_BATCH_ID => {
+-            let owner = std::str::from_utf8(&request.args[0]).unwrap();
++            let identity = std::str::from_utf8(&request.args[0]).unwrap();
++            let mut identity = identity.strip_prefix("v2|").unwrap().split('|');
++            let (owner, holder) = (identity.next().unwrap(), identity.next().unwrap());
+             let time = std::str::from_utf8(&request.args[1]).unwrap();
+             let mut results = vec![
+                 ScriptValue::Bytes(b"ok".to_vec()),
+@@ -197,7 +199,7 @@ async fn manager_uses_batch_for_manual_and_background_refresh() {
+                     ScriptValue::Bytes(pair[0].to_vec()),
+                     ScriptValue::Bytes(b"created".to_vec()),
+                     ScriptValue::Bytes(Vec::new()),
+-                    ScriptValue::Bytes(format!("{owner}:{time}:{kind}").into_bytes()),
++                    ScriptValue::Bytes(format!("v2|{owner}|{holder}:{kind}:{time}").into_bytes()),
+                 ]);
+             }
+             Ok(ScriptValue::Array(results))
+@@ -271,6 +273,7 @@ async fn redis_batch_preserves_kind_ownership_errors_and_hash_ttl() {
+                     owner_id: owner.to_string(),
+                     time_ns: 100,
+                     lock_type: kind,
++                    holders: Vec::new(),
+                 },
+             )
+             .await
+@@ -349,3 +352,96 @@ async fn redis_batch_preserves_kind_ownership_errors_and_hash_ttl() {
+     }
+     runtime.close().await.unwrap();
+ }
++
++#[tokio::test]
++async fn redis_holder_batch_preserves_ownership_kind_and_result_order() {
++    let Ok(endpoint) = std::env::var("REDIS_URL") else {
++        return;
++    };
++    let runtime = CacheRuntime::redis(crate::cache_runtime::RedisProviderConfig {
++        endpoints: vec![endpoint],
++        ..crate::cache_runtime::RedisProviderConfig::default()
++    })
++    .await
++    .unwrap();
++    let provider = RedisPathLockProvider::new(
++        runtime.clone(),
++        &format!("refresh-{}", uuid::Uuid::new_v4()),
++        30.0,
++    )
++    .unwrap();
++    let paths: Vec<_> = (0..300).map(|i| format!("/local/account/{i}")).collect();
++    for path in &paths {
++        provider
++            .try_create_token(
++                path,
++                &LockToken::held("owner", "holder", PathLockKind::Exact, 100),
++            )
++            .await
++            .unwrap();
++    }
++    let mut requests = paths.clone();
++    requests.extend(["/local/other/missing".into(), "/invalid".into()]);
++    let results = provider
++        .refresh_holders(&requests, "owner", "holder", 200, 0)
++        .await;
++    assert_eq!(results.len(), requests.len());
++    assert!(results[..300].iter().all(|r| matches!(r, Ok(true))));
++    assert!(matches!(results[300], Ok(false)));
++    assert!(matches!(
++        results[301],
++        Err(PathLockError::InvalidRequest(_))
++    ));
++    assert!(provider
++        .refresh_holders(&paths, "owner", "wrong-holder", 300, 0)
++        .await
++        .iter()
++        .all(|r| matches!(r, Ok(false))));
++    // A sibling's heartbeat cannot revive an expired Tree holder.
++    let path = "/local/account/mixed";
++    let mut token = LockToken::held("owner", "expired-tree", PathLockKind::Tree, 1);
++    token.add_holder("live-exact", PathLockKind::Exact, 100, 0, None);
++    provider.try_create_token(path, &token).await.unwrap();
++    assert!(matches!(
++        provider
++            .refresh_holders(&[path.into()], "owner", "expired-tree", 200, 50)
++            .await[0],
++        Ok(false)
++    ));
++    assert!(matches!(
++        provider
++            .refresh_holders(&[path.into()], "owner", "live-exact", 200, 50)
++            .await[0],
++        Ok(true)
++    ));
++    let current = provider.read_token(path).await.unwrap().unwrap();
++    assert_eq!(current.lock_type, PathLockKind::Exact);
++    assert!(!provider.refresh_token(path, "owner", 300).await.unwrap());
++    assert!(!provider.remove_token(path, "owner", true).await.unwrap());
++    // Prefix-related holder IDs must use the same canonical order as Rust CAS.
++    let prefix_path = "/local/account/prefix";
++    let mut prefix_token = LockToken::held("owner", "a", PathLockKind::Exact, 100);
++    prefix_token.add_holder("a-", PathLockKind::Exact, 100, 0, None);
++    provider
++        .try_create_token(prefix_path, &prefix_token)
++        .await
++        .unwrap();
++    assert!(matches!(
++        provider
++            .refresh_holders(&[prefix_path.into()], "owner", "a", 200, 0)
++            .await[0],
++        Ok(true)
++    ));
++    assert!(provider
++        .mutate_holder(prefix_path, "owner", "a", 200, 0, true)
++        .await
++        .unwrap());
++    assert!(provider
++        .mutate_holder(prefix_path, "owner", "a-", 200, 0, true)
++        .await
++        .unwrap()
+```
+
+**File**: `crates/ragfs/src/lock/codec.rs` (modified, +74/-9)
+```diff
+@@ -1,15 +1,27 @@
+ //! Lock token encoder/decoder.
+ //!
+-//! Wire format: `{owner_id}:{time_ns}:{lock_type}` where lock_type is `E` or `T`.
++//! Holder format: `v2|owner|holder:kind:time,...`. Legacy owner tokens remain readable.
+ 
+-use super::types::{LockToken, PathLockError, PathLockKind, PathLockResult};
++use super::types::{LockHolder, LockToken, PathLockError, PathLockKind, PathLockResult};
+ 
+-/// Encodes and decodes lock tokens in the `owner_id:time_ns:lock_type` text format.
++/// Encodes holder tokens and decodes holder or legacy token formats.
+ pub struct LockTokenCodec;
+ 
+ impl LockTokenCodec {
+     /// Encode a `LockToken` into its wire format.
+     pub fn encode(token: &LockToken) -> String {
++        if !token.holders.is_empty() {
++            return format!(
++                "v2|{}|{}",
++                token.owner_id,
++                token
++                    .holders
++                    .iter()
++                    .map(|h| format!("{}:{}:{}", h.id, h.kind.to_code(), h.time_ns))
++                    .collect::<Vec<_>>()
++                    .join(",")
++            );
++        }
+         format!(
+             "{}:{}:{}",
+             token.owner_id,
+@@ -21,22 +33,61 @@ impl LockTokenCodec {
+     /// Decode a raw token string into a `LockToken`.
+     /// Only accepts `E` (Exact) and `T` (Tree) lock type codes.
+     pub fn decode(raw: &str) -> PathLockResult<LockToken> {
++        if let Some(body) = raw.strip_prefix("v2|") {
++            let invalid = || PathLockError::InvalidToken(raw.into());
++            let (owner, refs) = body.split_once('|').ok_or_else(invalid)?;
++            if !Self::valid_id(owner) || refs.is_empty() {
++                return Err(invalid());
++            }
++            let mut token = LockToken {
++                owner_id: owner.into(),
++                time_ns: 0,
++                lock_type: PathLockKind::Exact,
++                holders: Vec::new(),
++            };
++            for item in refs.split(',') {
++                let parts: Vec<_> = item.split(':').collect();
++                if parts.len() != 3
++                    || !Self::valid_id(parts[0])
++                    || parts[1].len() != 1
++                    || parts[2].is_empty()
++                    || !parts[2].bytes().all(|b| b.is_ascii_digit())
++                    || token.holders.iter().any(|h| h.id == parts[0])
++                {
++                    return Err(invalid());
++                }
++                token.holders.push(LockHolder {
++                    id: parts[0].into(),
++                    kind: PathLockKind::from_code(parts[1].chars().next().unwrap())
++                        .ok_or_else(invalid)?,
++                    time_ns: parts[2].parse().map_err(|_| invalid())?,
++                });
++            }
++            token.recompute();
++            return Ok(token);
++        }
+         let (owner_id, rest) = raw
+             .split_once(':')
+             .ok_or_else(|| PathLockError::InvalidToken(format!("missing ':' in token: {raw}")))?;
+ 
+         let (time_ns_str, rest) = rest.split_once(':').ok_or_else(|| {
+             PathLockError::InvalidToken(format!("missing second ':' in token: {raw}"))
+         })?;
++        if !Self::valid_id(owner_id)
++            || time_ns_str.is_empty()
++            || !time_ns_str.bytes().all(|b| b.is_ascii_digit())
++        {
++            return Err(PathLockError::InvalidToken(raw.into()));
++        }
+ 
+-        let time_ns: u128 = time_ns_str.parse().map_err(|_| {
+-            PathLockError::InvalidToken(format!("invalid time_ns in token: {raw}"))
+-        })?;
++        let time_ns: u128 = time_ns_str
++            .parse()
++            .map_err(|_| PathLockError::InvalidToken(format!("invalid time_ns in token: {raw}")))?;
+ 
+         let mut lock_type_chars = rest.chars();
+-        let lock_type_char = lock_type_chars
+-            .next()
+-            .ok_or_else(|| PathLockError::InvalidToken(format!("empty lock type in token: {raw}")))?;
++        let lock_type_char = lock_type_chars.next().ok_or_else(|| {
++            PathLockError::InvalidToken(format!("empty lock type in token: {raw}"))
++        })?;
+         if lock_type_chars.next().is_some() {
+             return Err(PathLockError::InvalidToken(format!(
+                 "invalid lock type in token: {raw}"
+@@ -54,8 +105,14 @@ impl LockTokenCodec {
+             owner_id: owner_id.to_string(),
+             time_ns,
+             lock_type,
++            holders: Vec::new(),
+         })
+     }
++
++    /// Validate identities before placing them in the delimited wire format.
++    pub fn valid_id(id: &str) -> bool {
++        !id.is_empty() && !id.chars().any(|c| c.is_control() || ":|,".contains(c))
++    }
+ }
+ 
+ #[cfg(test)]
+@@ -66,11 +123,13 @@ mod tests {
+     fn roundtrip_supported_lock_types() {
+         for token in [
+             LockToken {
++                holders: Vec::new(),
+                 owner_id: "abc-123".to_string(),
+                 time_ns: 1700000000000000000,
+                 lock_t
+```
+
+**File**: `crates/ragfs/src/lock/lost_lease_tests.rs` (modified, +384/-82)
+```diff
+@@ -1,7 +1,9 @@
+ //! Lost lease authorization, renewal deadlines, and bounded cleanup regressions.
+ use super::*;
+ use crate::core::{FsContextInner, PathLockContext, WriteFlag, FS_CTX};
+-use crate::lock::provider::{FilesystemPathLockProvider, MemoryPathLockProvider};
++use crate::lock::provider::{
++    AtomicAcquisitionResult, FilesystemPathLockProvider, MemoryPathLockProvider,
++};
+ use crate::lock::wrapper::PathLockWrappedFS;
+ use crate::plugins::memfs::MemFileSystem;
+ use async_trait::async_trait;
+@@ -15,6 +17,12 @@ struct FaultProvider {
+     refresh_calls: AtomicUsize,
+     remove_calls: AtomicUsize,
+     delay: Duration,
++    /// Fail the next token write at this path with an I/O error.
++    fail_write: StdMutex<Option<String>>,
++    /// Bump a holder heartbeat just before the next token write.
++    race_write: AtomicBool,
++    /// Delete the source token immediately before CAS at this path.
++    lose_source_on_write: StdMutex<Option<String>>,
+ }
+ 
+ impl FaultProvider {
+@@ -26,6 +34,9 @@ impl FaultProvider {
+             refresh_calls: AtomicUsize::new(0),
+             remove_calls: AtomicUsize::new(0),
+             delay: Duration::ZERO,
++            fail_write: StdMutex::new(None),
++            race_write: AtomicBool::new(false),
++            lose_source_on_write: StdMutex::new(None),
+         }
+     }
+ }
+@@ -38,15 +49,54 @@ impl PathLockProvider for FaultProvider {
+     fn handle_mode(&self) -> PathLockHandleMode {
+         self.inner.handle_mode()
+     }
+-    async fn try_acquire_batch_atomic(
++    async fn try_acquire_holders_atomic(
+         &self,
+         requests: &[PathLockRequest],
+         owner: &str,
++        holder: &str,
+         now: u128,
+         stale: u128,
+-    ) -> PathLockResult<Option<Vec<AtomicAcquisition>>> {
++        source: Option<&str>,
++    ) -> PathLockResult<Option<AtomicAcquisitionResult>> {
+         self.inner
+-            .try_acquire_batch_atomic(requests, owner, now, stale)
++            .try_acquire_holders_atomic(requests, owner, holder, now, stale, source)
++            .await
++    }
++    async fn compare_and_remove_token(
++        &self,
++        path: &str,
++        expected: &LockToken,
++    ) -> PathLockResult<bool> {
++        self.inner.compare_and_remove_token(path, expected).await
++    }
++    async fn mutate_holder(
++        &self,
++        path: &str,
++        owner: &str,
++        holder: &str,
++        now: u128,
++        stale: u128,
++        release: bool,
++    ) -> PathLockResult<bool> {
++        if release {
++            self.remove_calls.fetch_add(1, Ordering::SeqCst);
++            if self.fail_remove.load(Ordering::SeqCst) {
++                return Err(PathLockError::Io("injected cleanup timeout".into()));
++            }
++        } else {
++            self.refresh_calls.fetch_add(1, Ordering::SeqCst);
++            if !self.delay.is_zero() {
++                tokio::time::sleep(self.delay).await;
++            }
++            let fault = self.failures.lock().unwrap().get(path).copied();
++            match fault {
++                Some(true) => return Err(PathLockError::Io("injected refresh timeout".into())),
++                Some(false) => return Ok(false),
++                None => {}
++            }
++        }
++        self.inner
++            .mutate_holder(path, owner, holder, now, stale, release)
+             .await
+     }
+     async fn read_token(&self, path: &str) -> PathLockResult<Option<LockToken>> {
+@@ -61,30 +111,43 @@ impl PathLockProvider for FaultProvider {
+         expected: &LockToken,
+         replacement: &LockToken,
+     ) -> PathLockResult<bool> {
++        if self
++            .fail_write
++            .lock()
++            .unwrap()
++            .take_if(|p| p == path)
++            .is_some()
++        {
++            return Err(PathLockError::Io("injected write failure".into()));
++        }
++        if self.race_write.swap(false, Ordering::SeqCst) {
++            let mut refreshed = expected.clone();
++            refreshed.holders[0].time_ns += 1;
++            refreshed.recompute();
++            assert!(
++                self.inner
++                    .compare_and_write_token(path, expected, &refreshed)
++                    .await?
++            );
++        }
++        let lose_source = self
++            .lose_source_on_write
++            .lock()
++            .unwrap()
++            .take_if(|p| p == path)
++            .is_some();
++        if lose_source {
++            assert!(self.inner.compare_and_remove_token(path, expected).await?);
++        }
+         self.inner
+             .compare_and_write_token(path, expected, replacement)
+             .await
+     }
+     async fn refresh_token(&self, path: &str, owner: &str, now: u128) -> PathLockResult<bool> {
+-        self.refresh_calls.fetch_add(1, Ordering::SeqCst);
+-        if !self.delay.is_zero() {
+-            tokio::time::sleep(self.delay).await;
+-        }
+-        let fault = self.failures.lock().unwrap().get(path).copied();
+-        match fault {
+-            Some(true) => Err(PathLockE
+```
+
+**File**: `crates/ragfs/src/lock/manager.rs` (modified, +432/-736)
+```diff
+@@ -18,12 +18,15 @@ use crate::core::{FileSystem, FsContextView};
+ 
+ use super::metrics::LockMetrics;
+ use super::path::normalize_logical_path;
+-use super::provider::{AcquisitionChange, AtomicAcquisition, PathLockHandleMode, PathLockProvider};
++use super::provider::{
++    validate_handoff_source, AcquisitionChange, AtomicAcquisition, PathLockHandleMode,
++    PathLockProvider,
++};
+ use super::resolver::{LockPathResolver, ResolvedExactPaths};
+ use super::types::{
+-    BorrowedPathLockLease, HandoffRecoveryReason, LockToken, OwnedPathLockLease, PathLockConflict,
+-    PathLockError, PathLockHandoffRef, PathLockKind, PathLockLease, PathLockObserveSnapshot,
+-    PathLockRequest, PathLockResult,
++    BorrowedPathLockLease, HandoffRecoveryReason, LockHolder, LockToken, OwnedPathLockLease,
++    PathLockConflict, PathLockError, PathLockHandoffRef, PathLockKind, PathLockLease,
++    PathLockObserveSnapshot, PathLockRequest, PathLockResult,
+ };
+ 
+ /// Configuration for the PathLockManager.
+@@ -66,6 +69,8 @@ const POLL_JITTER_PERCENT: u64 = 20;
+ const LEASE_VALIDITY_RATIO: f64 = 0.8;
+ /// Retry invalidated cleanup for six heartbeat intervals, then forget locally.
+ const CLEANUP_RETRY_INTERVALS: f64 = 6.0;
++/// CAS retries for one holder mutation before reporting retryable contention.
++const HOLDER_CAS_ATTEMPTS: usize = 16;
+ 
+ impl PathLockManager {
+     fn poll_interval_bounds(attempt: u32) -> (u64, u64) {
+@@ -162,22 +167,11 @@ struct TokenHealth {
+     consecutive_failures: u64,
+ }
+ 
+-#[derive(Debug)]
+-enum DowngradeTokenResult {
+-    Downgraded,
+-    AlreadyExact,
+-    Missing,
+-    OwnerLost,
+-    Changed,
+-}
+-
+ #[derive(Debug, Default)]
+ struct OwnerRegistry {
+     entries: HashMap<String, LeaseEntry>,
+     lock_refs: HashMap<String, usize>,
+     token_health: HashMap<String, TokenHealth>,
+-    // ponytail: grows with handoffs while this owner lives; encode generations if measured.
+-    consumed_handoff_refs: HashSet<String>,
+ }
+ 
+ impl OwnerRegistry {
+@@ -218,7 +212,7 @@ impl OwnerRegistry {
+             if unique_paths.insert(lock_path.clone()) {
+                 *self.lock_refs.entry(lock_path.clone()).or_default() += 1;
+                 self.token_health
+-                    .entry(lock_path.clone())
++                    .entry(format!("{lease_ref}\0{lock_path}"))
+                     .or_insert(TokenHealth {
+                         last_confirmed_at: confirmed_at,
+                         consecutive_failures: 0,
+@@ -247,6 +241,9 @@ impl OwnerRegistry {
+     /// Remove one newly inserted lease without touching provider state.
+     fn rollback_insert(&mut self, lease_ref: &str) -> Option<LeaseEntry> {
+         let entry = self.entries.remove(lease_ref)?;
++        for path in &entry.lease.lock_paths {
++            self.token_health.remove(&format!("{lease_ref}\0{path}"));
++        }
+         self.decrement_refs(&entry.lease.lock_paths);
+         Some(entry)
+     }
+@@ -262,21 +259,10 @@ impl OwnerRegistry {
+         })
+     }
+ 
+-    /// Return the strongest remaining kind after one lease drops a lock path.
+-    fn strongest_kind_excluding(&self, lease_ref: &str, lock_path: &str) -> Option<PathLockKind> {
+-        self.entries
+-            .iter()
+-            .filter(|(candidate_ref, _)| candidate_ref.as_str() != lease_ref)
+-            .filter(|(_, entry)| entry.invalidation.is_none())
+-            .filter_map(|(_, entry)| entry.lock_kinds.get(lock_path).copied())
+-            .max_by_key(|kind| match kind {
+-                PathLockKind::Exact => 0,
+-                PathLockKind::Tree => 1,
+-            })
+-    }
+-
+     /// Remove one committed lock path from a lease and its local reference count.
+     fn remove_path(&mut self, lease_ref: &str, lock_path: &str) {
++        self.token_health
++            .remove(&format!("{lease_ref}\0{lock_path}"));
+         let remove_entry = {
+             let Some(entry) = self.entries.get_mut(lease_ref) else {
+                 return;
+@@ -328,37 +314,6 @@ impl OwnerRegistry {
+         }
+     }
+ 
+-    /// Adopt a parked lease: migrate the entry to a fresh lease_ref key and rotate
+-    /// ownership_ref, permanently invalidating the producer's stale refs (both the
+-    /// lease_ref-only paths like borrow/auto-lock and the ownership_ref paths).
+-    /// Returns the refreshed owned lease. Errors when the entry is missing or not
+-    /// currently pending handoff.
+-    ///
+-    /// Re-keying entries does not change lock paths or reference counts.
+-    fn take_pending_handoff(
+-        &mut self,
+-        lease_ref: &str,
+-        new_lease_ref: String,
+-        new_ownership_ref: String,
+-    ) -> Option<OwnedPathLockLease> {
+-        if !self.entries.get(lease_ref)?.pending_handoff
+-            || self.entries.get(lease_ref)?.invalidation.is_some()
+-        {
+-            return None;
+-        }
+-        let mut entry = self.entries.remove(lease_ref)?;
+-        entry.pending_handoff = false;
+-        entry.ownership_ref = new_ownership_ref.clone();
+-        entry.lease.lease_ref
+```
+
+**File**: `crates/ragfs/src/lock/provider.rs` (modified, +465/-16)
+```diff
+@@ -3,7 +3,7 @@
+ //! The provider owns token storage. Backends with transactional storage may also
+ //! implement the optional atomic capabilities used by `PathLockManager`.
+ 
+-use std::collections::HashMap;
++use std::collections::BTreeMap;
+ use std::sync::Arc;
+ 
+ use async_trait::async_trait;
+@@ -14,7 +14,9 @@ use crate::core::FileSystem;
+ use crate::crypto;
+ 
+ use super::codec::LockTokenCodec;
+-use super::types::{LockToken, PathLockError, PathLockRequest, PathLockResult};
++use super::types::{
++    HandoffRecoveryReason, LockToken, PathLockError, PathLockKind, PathLockRequest, PathLockResult,
++};
+ 
+ /// Representation used for handles stored in a PathLock lease.
+ #[derive(Debug, Clone, Copy, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
+@@ -66,6 +68,85 @@ pub struct AtomicAcquisitionResult {
+ /// Storage abstraction for lock tokens. Only `PathLockManager` should call these methods.
+ #[async_trait]
+ pub trait PathLockProvider: Send + Sync {
++    /// Atomic conflict check plus holder insertion/replacement. A supplied source
++    /// must exist, be live and match the requested kind before any mutation.
++    /// None selects the filesystem CAS protocol; transactional backends override.
++    async fn try_acquire_holders_atomic(
++        &self,
++        _requests: &[PathLockRequest],
++        _owner: &str,
++        _holder: &str,
++        _now: u128,
++        _stale_before: u128,
++        _source: Option<&str>,
++    ) -> PathLockResult<Option<AtomicAcquisitionResult>> {
++        Ok(None)
++    }
++
++    /// Delete precisely the observed token, including its holder set.
++    async fn compare_and_remove_token(
++        &self,
++        _path: &str,
++        _expected: &LockToken,
++    ) -> PathLockResult<bool> {
++        Err(PathLockError::Internal(
++            "provider lacks conditional token deletion".into(),
++        ))
++    }
++
++    /// Refresh/release only the named reference. Missing and expired references
++    /// never revive, even when another live reference has the same owner.
++    async fn mutate_holder(
++        &self,
++        path: &str,
++        owner: &str,
++        holder: &str,
++        now: u128,
++        stale_before: u128,
++        release: bool,
++    ) -> PathLockResult<bool> {
++        for _ in 0..16 {
++            let Some(current) = self.read_token(path).await? else {
++                return Ok(false);
++            };
++            let Some(next) =
++                mutate_holder_record(&current, owner, holder, now, stale_before, release)
++            else {
++                return Ok(false);
++            };
++            let changed = if next.holders.is_empty() {
++                self.compare_and_remove_token(path, &current).await?
++            } else {
++                self.compare_and_write_token(path, &current, &next).await?
++            };
++            if changed {
++                return Ok(true);
++            }
++        }
++        Err(PathLockError::Busy {
++            lock_path: path.into(),
++            operation: "holder mutation".into(),
++        })
++    }
++
++    /// Renew one lease across its paths, preserving result order.
++    async fn refresh_holders(
++        &self,
++        paths: &[String],
++        owner: &str,
++        holder: &str,
++        now: u128,
++        stale_before: u128,
++    ) -> Vec<PathLockResult<bool>> {
++        let mut results = Vec::with_capacity(paths.len());
++        for path in paths {
++            results.push(
++                self.mutate_holder(path, owner, holder, now, stale_before, false)
++                    .await,
++            );
++        }
++        results
++    }
+     /// Add provider-owned observations to the manager's metrics snapshot.
+     fn update_metrics(&self, _metrics: &mut super::metrics::LockMetrics) {}
+ 
+@@ -77,7 +158,8 @@ pub trait PathLockProvider: Send + Sync {
+         PathLockHandleMode::LockPath
+     }
+ 
+-    /// Attempt one atomic batch acquisition when supported.
++    /// Legacy v1 token API, retained for storage compatibility tests. The manager
++    /// exclusively uses `try_acquire_holders_atomic`.
+     async fn try_acquire_batch_atomic(
+         &self,
+         _requests: &[PathLockRequest],
+@@ -106,7 +188,8 @@ pub trait PathLockProvider: Send + Sync {
+             }))
+     }
+ 
+-    /// Roll back one completed atomic acquisition when supported.
++    /// Legacy v1 rollback. Holder acquisitions roll back the individual holder
++    /// and handoff source through the manager.
+     async fn rollback_acquisitions_atomic(
+         &self,
+         _acquisitions: &[AtomicAcquisition],
+@@ -141,7 +224,7 @@ pub trait PathLockProvider: Send + Sync {
+         replacement: &LockToken,
+     ) -> PathLockResult<bool>;
+ 
+-    /// Refresh the timestamp of an existing token owned by `owner_id`.
++    /// Legacy v1 refresh; must refuse tokens containing holders.
+     /// Returns `true` if the token was refreshed, `false` if not found or wrong owner.
+     async fn refresh_token(
+         &self,
+@@ -166,7 +249,7 @@ pub trait PathLockProvid
+```
+
+---
+
+### Incident Patch 2: `aa153606` (2026-11-03)
+**Commit Message**: fix: 避免账户初始化与多写任务锁冲突 (#6958)
+
+* fix: 避免账户初始化与多写任务锁冲突
+
+账户创建在首次写入前统一持有 Tree 锁，并为 multiwrite 临时锁冲突增加有界指数退避，避免初始化失败和事件丢失。
+
+* fix: 隔离多写任务的账户重试
+
+避免单个账户的初始化锁冲突阻塞其他账户事件消费，同时保持原有退避上限和待处理计数语义。
+
+---------
+
+Co-authored-by: zhanghe.1216 <@bytedance.com>
+
+**File**: `crates/ragfs/src/multibackend/runtime.rs` (modified, +224/-13)
+```diff
+@@ -3,7 +3,7 @@
+ use std::collections::{HashMap, HashSet};
+ use std::sync::atomic::{AtomicBool, AtomicUsize, Ordering};
+ use std::sync::{Arc, Mutex as StdMutex};
+-use std::time::Duration;
++use std::time::{Duration, Instant};
+ 
+ use tokio::sync::{mpsc, watch};
+ use tokio::task::JoinHandle;
+@@ -12,6 +12,7 @@ use tracing::{debug, error};
+ use crate::core::context::{FsContextInner, FS_CTX};
+ use crate::core::errors::{Error, Result};
+ use crate::core::filesystem::FileSystem;
++use crate::lock::types::PathLockError;
+ use crate::multibackend::catch_up::{CatchUpTarget, CatchUpWorker};
+ use crate::multibackend::checkpoint::{CheckpointReader, CheckpointWorker};
+ use crate::multibackend::codec::{decode_segment, sha256_hex};
+@@ -26,6 +27,10 @@ use crate::multibackend::router::AccountRouter;
+ 
+ const CATCH_UP_INTERVAL_SECS: u64 = 300;
+ const CATCH_UP_FULL_SCAN_TICKS: usize = 6;
++const FLUSH_RETRY_INITIAL_DELAY: Duration = Duration::from_millis(100);
++const FLUSH_RETRY_MAX_DELAY: Duration = Duration::from_secs(10);
++const FLUSH_RETRY_MAX_ELAPSED: Duration = Duration::from_secs(180);
++const FLUSH_RETRY_MAX_ATTEMPTS: u32 = 32;
+ 
+ /// Read active account ids from the encrypted or plain primary registry.
+ pub(crate) async fn read_active_accounts(primary: &dyn FileSystem) -> Result<HashSet<String>> {
+@@ -319,6 +324,13 @@ pub struct FlushWorker {
+     metrics: Arc<MultiWriteMetricsSnapshot>,
+ }
+ 
++struct FlushRetryState {
++    events: Vec<PendingEvent>,
++    attempts: u32,
++    started_at: Instant,
++    retry_at: Instant,
++}
++
+ impl FlushWorker {
+     /// Create a worker using one metadata store and persistence provider.
+     pub(crate) fn new(
+@@ -349,20 +361,191 @@ impl FlushWorker {
+         mut receiver: mpsc::UnboundedReceiver<PendingEvent>,
+         pending_events: Arc<AtomicUsize>,
+     ) {
+-        while let Some(first) = receiver.recv().await {
+-            let mut batch = vec![first];
+-            while let Ok(event) = receiver.try_recv() {
+-                batch.push(event);
++        let mut retries = HashMap::<String, FlushRetryState>::new();
++        let mut receiver_open = true;
++        loop {
++            if retries.is_empty() {
++                if !receiver_open {
++                    break;
++                }
++                let Some(first) = receiver.recv().await else {
++                    receiver_open = false;
++                    continue;
++                };
++                let mut batch = vec![first];
++                while let Ok(event) = receiver.try_recv() {
++                    batch.push(event);
++                }
++                self.flush_fresh_events(batch, &mut retries, &pending_events)
++                    .await;
++                continue;
++            }
++
++            let (account, retry_at) = retries
++                .iter()
++                .min_by_key(|(_, state)| state.retry_at)
++                .map(|(account, state)| (account.clone(), state.retry_at))
++                .expect("retry map is not empty");
++            if receiver_open {
++                tokio::select! {
++                    event = receiver.recv() => {
++                        match event {
++                            Some(first) => {
++                                let mut batch = vec![first];
++                                while let Ok(event) = receiver.try_recv() {
++                                    batch.push(event);
++                                }
++                                self.flush_fresh_events(batch, &mut retries, &pending_events)
++                                    .await;
++                            }
++                            None => receiver_open = false,
++                        }
++                    }
++                    _ = tokio::time::sleep_until(tokio::time::Instant::from_std(retry_at)) => {
++                        let state = retries.remove(&account).expect("retry account exists");
++                        self.flush_retry(&account, state, &mut retries, &pending_events)
++                            .await;
++                    }
++                }
++            } else {
++                tokio::time::sleep_until(tokio::time::Instant::from_std(retry_at)).await;
++                let state = retries.remove(&account).expect("retry account exists");
++                self.flush_retry(&account, state, &mut retries, &pending_events)
++                    .await;
+             }
+-            let attempted = batch.len();
+-            self.flush_batch(batch).await;
+-            pending_events.fetch_sub(attempted, Ordering::Relaxed);
+         }
+     }
+ 
+-    /// Flush one batch while recording and dropping failed events.
+-    async fn flush_batch(&mut self, batch: Vec<PendingEvent>) {
++    async fn flush_fresh_events(
++        &mut self,
++        events: Vec<PendingEvent>,
++        retries: &mut HashMap<String, FlushRetryState>,
++        pending_events: &AtomicUsize,
++    ) {
++        let mut ready = Vec::new();
++        for event in events {
++            if let Some(state) = retries.get_mut(
+```
+
+**File**: `crates/ragfs/src/multibackend/tests/test_runtime.rs` (modified, +227/-1)
+```diff
+@@ -82,7 +82,7 @@ async fn delete_account_event_removes_backup_scope() {
+         metrics,
+     );
+ 
+-    worker
++    let retry = worker
+         .flush_batch(vec![PendingEvent {
+             operation_id: uuid::Uuid::from_u128(1),
+             account_id: "account".to_string(),
+@@ -92,10 +92,236 @@ async fn delete_account_event_removes_backup_scope() {
+             route_hint: None,
+         }])
+         .await;
++    assert!(retry.is_empty());
+     catch_up.run_once().await.unwrap();
+ 
+     assert!(matches!(
+         backup.stat("/account").await.unwrap_err(),
+         Error::NotFound(_)
+     ));
+ }
++
++/// Verifies account initialization contention preserves pending events until retry succeeds.
++#[tokio::test]
++async fn flush_worker_retries_account_initialization_after_tree_lock_release() {
++    let primary: Arc<dyn FileSystem> = Arc::new(MemFileSystem::new());
++    primary
++        .ensure_parent_dirs("/_system/accounts.json", 0o755)
++        .await
++        .unwrap();
++    primary
++        .write(
++            "/_system/accounts.json",
++            br#"{"accounts":{"account":{}}}"#,
++            0,
++            WriteFlag::Create,
++        )
++        .await
++        .unwrap();
++
++    let manager = Arc::new(PathLockManager::new(
++        primary.clone(),
++        Arc::new(MemoryPathLockProvider::new()),
++        PathLockConfig::default(),
++    ));
++    let tree_lease = manager
++        .acquire_tree("/local/account", Duration::ZERO, None)
++        .await
++        .unwrap();
++    let store = Arc::new(MetadataStore::new(primary.clone(), manager.clone(), "/local").unwrap());
++    let provider = Arc::new(FilesystemProvider::new(store.clone()));
++    let mut worker = FlushWorker::new(
++        store.clone(),
++        provider,
++        1,
++        Vec::new(),
++        Some(primary.clone()),
++        Vec::new(),
++        Arc::new(MultiWriteMetricsSnapshot::default()),
++    );
++    let retry = worker
++        .flush_batch(vec![PendingEvent {
++            operation_id: uuid::Uuid::from_u128(2),
++            account_id: "account".to_string(),
++            kind: PendingEventKind::Data(SegmentEventType::Remove),
++            path: "/local/account/file.md".to_string(),
++            destination_path: None,
++            route_hint: None,
++        }])
++        .await;
++    assert_eq!(retry.len(), 1);
++    assert_eq!(store.worker_error_count(MultiWriteWorker::Flush), 0);
++
++    let (sender, receiver) = mpsc::unbounded_channel();
++    let pending = Arc::new(AtomicUsize::new(1));
++    sender.send(retry.into_iter().next().unwrap()).unwrap();
++    drop(sender);
++    assert_eq!(pending.load(Ordering::Relaxed), 1);
++
++    manager.release(&tree_lease).await.unwrap();
++    let worker_task = tokio::spawn(worker.run(receiver, pending.clone()));
++    tokio::time::timeout(Duration::from_secs(3), worker_task)
++        .await
++        .unwrap()
++        .unwrap();
++    assert_eq!(pending.load(Ordering::Relaxed), 0);
++    let manifest = store.paths().account_manifest("account").unwrap().1;
++    assert!(primary.stat(&manifest).await.is_ok());
++}
++
++/// Verifies one account's initialization retry does not block another account.
++#[tokio::test]
++async fn flush_worker_processes_other_accounts_while_one_account_retries() {
++    let primary: Arc<dyn FileSystem> = Arc::new(MemFileSystem::new());
++    primary
++        .ensure_parent_dirs("/_system/accounts.json", 0o755)
++        .await
++        .unwrap();
++    primary
++        .write(
++            "/_system/accounts.json",
++            br#"{"accounts":{"blocked":{},"ready":{}}}"#,
++            0,
++            WriteFlag::Create,
++        )
++        .await
++        .unwrap();
++
++    let manager = Arc::new(PathLockManager::new(
++        primary.clone(),
++        Arc::new(MemoryPathLockProvider::new()),
++        PathLockConfig::default(),
++    ));
++    let tree_lease = manager
++        .acquire_tree("/local/blocked", Duration::ZERO, None)
++        .await
++        .unwrap();
++    let store = Arc::new(MetadataStore::new(primary.clone(), manager.clone(), "/local").unwrap());
++    let provider = Arc::new(FilesystemProvider::new(store.clone()));
++    let mut worker = FlushWorker::new(
++        store.clone(),
++        provider,
++        1,
++        Vec::new(),
++        Some(primary.clone()),
++        Vec::new(),
++        Arc::new(MultiWriteMetricsSnapshot::default()),
++    );
++    let blocked_event = PendingEvent {
++        operation_id: uuid::Uuid::from_u128(3),
++        account_id: "blocked".to_string(),
++        kind: PendingEventKind::Data(SegmentEventType::Remove),
++        path: "/local/blocked/file.md".to_string(),
++        destination_path: None,
++        route_hint: None,
++    };
++    let started_at = Instant::now();
++    let mut retries = HashMap::from([(
++        "blocked".to_string(),
++        FlushRetryState {
++            events: vec![blocked_event],
++            attempts: 1,
++            started_at,
++            retry_at: started_at + FLUSH_RETRY_INITIAL_DELAY,
++        },
++    )]);
++    l
+```
+
+**File**: `openviking/config/manager.py` (modified, +32/-5)
+```diff
+@@ -365,11 +365,23 @@ async def patch_cluster(self, patch: dict) -> ConfigChangeEvent:
+         return await run_to_completion(lambda: self._patch(scope, patch))
+ 
+     async def patch_account(
+-        self, account_id: str, patch: dict, *, creating: bool = False
++        self,
++        account_id: str,
++        patch: dict,
++        *,
++        creating: bool = False,
++        lease_ref: object | None = None,
+     ) -> ConfigChangeEvent:
+         """Apply a three-state PATCH to one Account configuration and publish."""
+         scope = ConfigScope.account(account_id)
+-        return await run_to_completion(lambda: self._patch(scope, patch, creating=creating))
++        return await run_to_completion(
++            lambda: self._patch(
++                scope,
++                patch,
++                creating=creating,
++                lease_ref=lease_ref,
++            )
++        )
+ 
+     async def delete_account(self, account_id: str) -> ConfigChangeEvent:
+         """Delete one Account configuration and evict all manager-owned state."""
+@@ -392,15 +404,25 @@ async def _delete_account(self, scope: ConfigScope) -> ConfigChangeEvent:
+         return event
+ 
+     async def _patch(
+-        self, scope: ConfigScope, patch: dict, *, creating: bool = False
++        self,
++        scope: ConfigScope,
++        patch: dict,
++        *,
++        creating: bool = False,
++        lease_ref: object | None = None,
+     ) -> ConfigChangeEvent:
+         # Phase 1: validate only the request boundary. Candidate validation
+         # happens after the current document has been merged.
+         self._validate_patch_request(scope, patch, creating)
+ 
+         # Phase 2: serialize the scope's read/merge/validate/write operation.
+         async with self._lock_for(scope):
+-            prepared = await self._persist_validated_patch(scope, patch, creating=creating)
++            prepared = await self._persist_validated_patch(
++                scope,
++                patch,
++                creating=creating,
++                lease_ref=lease_ref,
++            )
+ 
+             # Phase 3: publish only the already-built candidate. Account and
+             # Cluster publications are independent; a Cluster pointer change
+@@ -434,6 +456,7 @@ async def _persist_validated_patch(
+         patch: dict,
+         *,
+         creating: bool,
++        lease_ref: object | None = None,
+     ) -> _PreparedPatch:
+         """Prepare one candidate and persist its explicit scope document."""
+         prepared: Optional[_PreparedPatch] = None
+@@ -443,7 +466,11 @@ def mutate(current: Optional[dict]) -> dict:
+             prepared = self._prepare_patch(scope, current, patch, creating=creating)
+             return prepared.persisted_settings
+ 
+-        persisted_settings = await self._source.update(scope, mutate)
++        update_with_lease = getattr(self._source, "update_with_lease", None)
++        if lease_ref is not None and callable(update_with_lease):
++            persisted_settings = await update_with_lease(scope, mutate, lease_ref)
++        else:
++            persisted_settings = await self._source.update(scope, mutate)
+         if prepared is None:
+             raise RuntimeError("config source update did not invoke its mutate callback")
+         if prepared.persisted_settings is not persisted_settings:
+```
+
+**File**: `openviking/config/source/file_source.py` (modified, +40/-13)
+```diff
+@@ -124,31 +124,57 @@ async def load(self, scope: ConfigScope) -> Optional[dict]:
+         return override
+ 
+     async def update(self, scope: ConfigScope, mutate: Mutate) -> dict:
++        return await self._update(scope, mutate)
++
++    async def update_with_lease(
++        self,
++        scope: ConfigScope,
++        mutate: Mutate,
++        lease_ref: object,
++    ) -> dict:
++        """Update using an outer Tree lease owned by the provisioning caller."""
++        return await self._update(scope, mutate, lease_ref=lease_ref)
++
++    async def _update(
++        self,
++        scope: ConfigScope,
++        mutate: Mutate,
++        *,
++        lease_ref: object | None = None,
++    ) -> dict:
+         path = self._path(scope)
+-        try:
+-            lease = await self._client.pathlock_acquire_exact(
+-                path, timeout_secs=self._lock_timeout_secs
+-            )
+-        except LockAcquisitionError as exc:
+-            raise ResourceBusyError(
+-                "Another configuration update is in progress. Please retry.",
+-                uri=path,
+-                conflict_type="runtime_config_busy",
+-            ) from exc
++        lease = lease_ref
++        if lease is None:
++            try:
++                lease = await self._client.pathlock_acquire_exact(
++                    path, timeout_secs=self._lock_timeout_secs
++                )
++            except LockAcquisitionError as exc:
++                raise ResourceBusyError(
++                    "Another configuration update is in progress. Please retry.",
++                    uri=path,
++                    conflict_type="runtime_config_busy",
++                ) from exc
+         fs_ctx = _lease_fs_ctx(path, lease)
+         try:
+             current_raw, current = await self._read_override(scope)
+             new_override = mutate(current)
+             encoded = self._encode(new_override)
+ 
+             try:
+-                await self._client.ensure_parent_dirs(path)
++                if lease_ref is None:
++                    await self._client.ensure_parent_dirs(path)
++                else:
++                    await self._client.ensure_parent_dirs(path, fs_ctx=fs_ctx)
+             except AGFSAlreadyExistsError:
+                 pass
+ 
+             backup_path = self._backup_path(scope)
+             if backup_path is not None and current_raw is not None:
+-                await self._client.write(backup_path, current_raw)
++                if lease_ref is None:
++                    await self._client.write(backup_path, current_raw)
++                else:
++                    await self._client.write(backup_path, current_raw, fs_ctx=fs_ctx)
+ 
+             try:
+                 await self._client.write(path, encoded, fs_ctx=fs_ctx)
+@@ -165,7 +191,8 @@ async def update(self, scope: ConfigScope, mutate: Mutate) -> dict:
+                 raise
+             return new_override
+         finally:
+-            await self._client.pathlock_release(lease)
++            if lease_ref is None:
++                await self._client.pathlock_release(lease)
+ 
+     async def delete(self, scope: ConfigScope) -> None:
+         path = self._path(scope)
+```
+
+**File**: `openviking/server/account_stores/base.py` (modified, +4/-0)
+```diff
+@@ -34,6 +34,8 @@ async def create_account(
+         self,
+         account_id: str,
+         admin_user_id: str,
++        *,
++        lease_ref: object | None = None,
+     ) -> None: ...
+ 
+     @abstractmethod
+@@ -42,6 +44,8 @@ async def create_account_with_api_key(
+         account_id: str,
+         admin_user_id: str,
+         api_key: str,
++        *,
++        lease_ref: object | None = None,
+     ) -> None: ...
+ 
+     @abstractmethod
+```
+
+**File**: `openviking/server/account_stores/file.py` (modified, +35/-13)
+```diff
+@@ -384,6 +384,8 @@ async def _create_account_identity(
+         account_id: str,
+         admin_user_id: str,
+         api_key: str | None = None,
++        *,
++        lease_ref: object | None = None,
+     ) -> None:
+         """Create an account and its first admin, optionally with a credential."""
+         if error := validate_account_id(account_id):
+@@ -423,8 +425,9 @@ async def _create_account_identity(
+                 account_id,
+                 {admin_user_id: user_info},
+                 replace_existing=account_was_created,
++                lease_ref=lease_ref,
+             )
+-            await self._write_groups_json(account_id, {})
++            await self._write_groups_json(account_id, {}, lease_ref=lease_ref)
+         except Exception:
+             await self._rollback_create_account(
+                 account_id, account_was_created=account_was_created
+@@ -1322,17 +1325,22 @@ async def _save_users_json(
+         reject_existing_user_ids: set[str] | None = None,
+         replace_existing: bool = False,
+         expected_api_keys: dict[str, str] | None = None,
++        lease_ref: object | None = None,
+     ) -> None:
+         """Merge targeted user mutations, or initialize a newly created account."""
+         path = USERS_PATH_TEMPLATE.format(account_id=account_id)
+-        try:
+-            lease = await self._async_agfs.pathlock_acquire_exact(path, timeout_secs=10.0)
+-        except LockAcquisitionError as exc:
+-            raise ResourceBusyError(
+-                "Another user operation is in progress for this account. Please retry.",
+-                uri=path,
+-                conflict_type="user_registry_busy",
+-            ) from exc
++        lease = lease_ref
++        if lease is None:
++            try:
++                lease = await self._async_agfs.pathlock_acquire_exact(
++                    path, timeout_secs=10.0
++                )
++            except LockAcquisitionError as exc:
++                raise ResourceBusyError(
++                    "Another user operation is in progress for this account. Please retry.",
++                    uri=path,
++                    conflict_type="user_registry_busy",
++                ) from exc
+         try:
+             if replace_existing:
+                 users = copy.deepcopy(updated_users or {})
+@@ -1369,11 +1377,18 @@ async def _save_users_json(
+                 account.users = users
+                 self._account_key_indexes[account_id] = key_index
+         finally:
+-            await self._async_agfs.pathlock_release(lease)
++            if lease_ref is None:
++                await self._async_agfs.pathlock_release(lease)
+ 
+-    async def _write_groups_json(self, account_id: str, groups: dict) -> None:
++    async def _write_groups_json(
++        self,
++        account_id: str,
++        groups: dict,
++        *,
++        lease_ref: object | None = None,
++    ) -> None:
+         path = GROUPS_PATH_TEMPLATE.format(account_id=account_id)
+-        await self._write_json(path, {"groups": groups})
++        await self._write_json(path, {"groups": groups}, lease_ref=lease_ref)
+ 
+     def _watcher_running(self) -> bool:
+         return self._watch_task is not None and not self._watch_task.done()
+@@ -1461,23 +1476,30 @@ async def create_account_with_api_key(
+         account_id: str,
+         admin_user_id: str,
+         api_key: str,
++        *,
++        lease_ref: object | None = None,
+     ) -> None:
+         async with self._mutation_lock:
+             await self._refresh_accounts_for_management_read_unlocked()
+             await self._create_account_identity(
+                 account_id,
+                 admin_user_id,
+                 api_key,
++                lease_ref=lease_ref,
+             )
+ 
+     async def create_account(
+         self,
+         account_id: str,
+         admin_user_id: str,
++        *,
++        lease_ref: object | None = None,
+     ) -> None:
+         async with self._mutation_lock:
+             await self._refresh_accounts_for_management_read_unlocked()
+-            await self._create_account_identity(account_id, admin_user_id)
++            await self._create_account_identity(
++                account_id, admin_user_id, lease_ref=lease_ref
++            )
+ 
+     async def create_user(self, account_id: str, user_id: str, role: str) -> None:
+         async with self._mutation_lock:
+```
+
+**File**: `openviking/server/account_stores/mysql.py` (modified, +6/-0)
+```diff
+@@ -511,7 +511,10 @@ async def create_account(
+         self,
+         account_id: str,
+         admin_user_id: str,
++        *,
++        lease_ref: object | None = None,
+     ) -> None:
++        del lease_ref
+         _validate(account_id, validate_account_id, "account_id")
+         _validate(admin_user_id, validate_user_id, "admin_user_id")
+         try:
+@@ -536,7 +539,10 @@ async def create_account_with_api_key(
+         account_id: str,
+         admin_user_id: str,
+         api_key: str,
++        *,
++        lease_ref: object | None = None,
+     ) -> None:
++        del lease_ref
+         _validate(account_id, validate_account_id, "account_id")
+         _validate(admin_user_id, validate_user_id, "admin_user_id")
+         try:
+```
+
+**File**: `openviking/server/account_stores/redis_mysql.py` (modified, +6/-0)
+```diff
+@@ -773,7 +773,10 @@ async def create_account(
+         self,
+         account_id: str,
+         admin_user_id: str,
++        *,
++        lease_ref: object | None = None,
+     ) -> None:
++        del lease_ref
+         await self._mutate_account(
+             account_id,
+             lambda: self._mysql.create_account(account_id, admin_user_id),
+@@ -784,7 +787,10 @@ async def create_account_with_api_key(
+         account_id: str,
+         admin_user_id: str,
+         api_key: str,
++        *,
++        lease_ref: object | None = None,
+     ) -> None:
++        del lease_ref
+         await self._mutate_account(
+             account_id,
+             lambda: self._mysql.create_account_with_api_key(
+```
+
+---
+
+### Incident Patch 3: `50626052` (2026-11-03)
+**Commit Message**: fix(compile): preserve image evidence across verified VLM transports (#6951)
+
+* fix(compile): deliver image evidence through declared provider protocols
+
+Signed-off-by: lusendong.6789 <[REDACTED_EMAIL]>
+
+* test(compile): cover Doubao configuration and image evidence path
+
+Signed-off-by: lusendong.6789 <[REDACTED_EMAIL]>
+
+* fix(compile): preserve image evidence and text-route compatibility
+
+Signed-off-by: lusendong.6789 <[REDACTED_EMAIL]>
+
+* docs(compile): clarify image routes and configuration mismatches
+
+Signed-off-by: lusendong.6789 <[REDACTED_EMAIL]>
+
+* refactor(compile): simplify tests and image error messages
+
+Signed-off-by: lusendong.6789 <[REDACTED_EMAIL]>
+
+* refactor(compile): align image tests with existing contracts
+
+Signed-off-by: lusendong.6789 <[REDACTED_EMAIL]>
+
+* refactor(compile): consolidate media tests and shorten diagnostics
+
+Signed-off-by: lusendong.6789 <[REDACTED_EMAIL]>
+
+* docs(compile): remove implementation details from user guides
+
+Signed-off-by: lusendong.6789 <[REDACTED_EMAIL]>
+
+* refactor(compile): trim repetitive implementation commentary
+
+Signed-off-by: lusendong.6789 <[REDACTED_EMAIL]>
+
+* test(compile): retain distinct image regression contracts
+
+Sig
+
+**File**: `bot/tests/test_agent_loop_outcome.py` (modified, +35/-7)
+```diff
+@@ -330,8 +330,8 @@ async def test_context_build_messages_can_skip_system_prompt(temp_dir: Path):
+ 
+ 
+ @pytest.mark.asyncio
+-@pytest.mark.parametrize("supports_media", [False, True])
+-async def test_agent_loop_gates_multimodal_result_by_provider(make_loop, supports_media: bool):
++@pytest.mark.parametrize("scope", ["disabled", "native", "chat", "compile"])
++async def test_agent_loop_gates_multimodal_result_by_provider(make_loop, monkeypatch, scope):
+     content = [
+         {"type": "text", "text": "Source: viking://resources/image.png"},
+         {
+@@ -340,7 +340,29 @@ async def test_agent_loop_gates_multimodal_result_by_provider(make_loop, support
+         },
+     ]
+ 
+-    provider = _MediaProvider([[_image_call("call-1")]], supports_media=supports_media)
++    provider: LLMProvider
++    if scope in {"chat", "compile"}:
++        from vikingbot.compile.service import _CompileProvider
++        from vikingbot.integrations.langfuse import LangfuseClient
++        from vikingbot.providers.vlm_adapter import VLMProviderAdapter
++
++        from openviking.models.vlm import VLMFactory
++        from openviking.models.vlm.base import ToolCall, VLMResponse
++
++        vlm = VLMFactory.create({"provider": "kimi", "model": "kimi-k2"})
++        completion = AsyncMock(
++            side_effect=[
++                VLMResponse(tool_calls=[ToolCall("call-1", "read_image", {})]),
++                VLMResponse(content="done"),
++            ]
++        )
++        monkeypatch.setattr(vlm, "get_completion_async", completion)
++        adapter = VLMProviderAdapter(vlm, "kimi-k2", langfuse_client=LangfuseClient())
++        provider = (
++            _CompileProvider(adapter, asyncio.Semaphore(1)) if scope == "compile" else adapter
++        )
++    else:
++        provider = _MediaProvider([[_image_call("call-1")]], supports_media=scope == "native")
+     loop = make_loop(provider=provider, max_iterations=2)
+ 
+     final, _reasoning, tools_used, _usage, _iteration = await loop._run_agent_loop(
+@@ -351,12 +373,18 @@ async def test_agent_loop_gates_multimodal_result_by_provider(make_loop, support
+     )
+ 
+     assert final == "done"
+-    tool_message = next(message for message in provider.calls[1] if message["role"] == "tool")
+-    if supports_media:
++    sent = (
++        provider.calls[1]
++        if isinstance(provider, _MediaProvider)
++        else completion.await_args_list[-1].kwargs["messages"]
++    )
++    tool_message = next(message for message in sent if message["role"] == "tool")
++    assert bool(loop_module._inline_media_bytes(sent)) == (scope in {"native", "compile"})
++    if scope == "native":
+         assert tool_message["content"] == content
+-    else:
++    elif scope != "compile":
+         assert tool_message["content"].startswith("Image resource.")
+-        assert "does not support media in tool results" in tool_message["content"]
++        assert "tool-result media policy" in tool_message["content"]
+     assert tools_used[0]["result"] == "Image resource."
+ 
+ 
+```
+
+**File**: `bot/tests/test_bot_provider_thinking.py` (modified, +178/-42)
+```diff
+@@ -1,64 +1,200 @@
++import json
++from copy import deepcopy
+ from types import SimpleNamespace
+-from unittest.mock import MagicMock
++from typing import Any
++from unittest.mock import AsyncMock, MagicMock
+ 
++import litellm
+ import pytest
++from litellm.types.utils import LlmProviders
++from litellm.utils import ProviderConfigManager
++from vikingbot.integrations.langfuse import LangfuseClient
+ from vikingbot.providers.vlm_adapter import VLMProviderAdapter
+ 
++from openviking.models.model_error import ModelError, ModelErrorKind
++from openviking.models.vlm import FailoverVLM, MultiCredentialVLM, VLMFactory, VolcEngineVLM
+ from openviking.models.vlm.backends.litellm_vlm import (
+     LiteLLMVLMProvider as OpenVikingLiteLLMVLMProvider,
+ )
++from openviking.models.vlm.base import VLMResponse
+ 
+ 
+-def test_vlm_adapter_exposes_only_native_tool_result_media_backends():
+-    langfuse = SimpleNamespace()
++def test_provider_names_do_not_grant_undeclared_media_capabilities():
++    unknown = SimpleNamespace(provider="openai")
++    adapter = VLMProviderAdapter(unknown, "vision", langfuse_client=LangfuseClient())
++    assert adapter.supports_tool_result_media() is False
+ 
+-    codex = VLMProviderAdapter(
+-        SimpleNamespace(provider="openai-codex"),
+-        default_model="gpt-5.3-codex",
+-        langfuse_client=langfuse,
+-    )
+-    anthropic = VLMProviderAdapter(
+-        SimpleNamespace(provider="anthropic"),
+-        default_model="claude-sonnet",
+-        langfuse_client=langfuse,
+-    )
+-    openai = VLMProviderAdapter(
+-        SimpleNamespace(provider="openai"),
+-        default_model="gpt-4o",
+-        langfuse_client=langfuse,
++    primary = VLMFactory.create({"provider": "openai", "model": "gpt-4o"})
++    backup = OpenVikingLiteLLMVLMProvider({"provider": "litellm", "model": "sagemaker/custom"})
++    for chain in (
++        FailoverVLM(primary, backup),
++        MultiCredentialVLM([primary, backup], credential_ids=["primary", "backup"]),
++    ):
++        adapter = VLMProviderAdapter(chain, "vision", langfuse_client=LangfuseClient())
++        assert adapter.supports_tool_result_media() is False
++
++
++@pytest.mark.asyncio
++@pytest.mark.parametrize(
++    "model,mode",
++    [
++        ("openai/future-claude-vision", "user_message"),
++        ("azure/deployment", "user_message"),
++        ("dashscope/qwen3-vl-plus", "user_message"),
++        ("moonshot/kimi-k2.5", "user_message"),
++        ("zai/glm-4.6v", "user_message"),
++        ("openrouter/qwen/qwen3-vl-32b-instruct", "user_message"),
++        ("databricks/databricks-meta-llama-3-3-70b-instruct", "user_message"),
++        ("hosted_vllm/private-vision-model", "user_message"),
++        ("nvidia_nim/nvidia/llama-3.2-nv-vision-90b-v1", "user_message"),
++        ("gemini/gemini-2.5-flash", "user_message"),
++        ("vertex_ai/gemini-2.5-flash", "user_message"),
++        ("anthropic/claude-sonnet-4-5", "native"),
++        ("vertex_ai/claude-sonnet-4-5", "native"),
++        ("azure_ai/claude-sonnet-4-5", "native"),
++        ("bedrock/anthropic.claude-3-5-sonnet-20241022-v2:0", "user_message"),
++        ("ollama/llava", "user_message"),
++        ("ollama_chat/llama3.2-vision", "user_message"),
++        ("github_copilot/gpt-4o", "user_message"),
++        ("minimax/MiniMax-M3", "user_message"),
++        ("mistral/pixtral-large-latest", "user_message"),
++        ("cohere/command-a-vision-07-2025", "user_message"),
++        ("groq/meta-llama/llama-4-scout-17b-16e-instruct", "user_message"),
++        ("deepseek/deepseek-chat", None),
++        ("sambanova/model", None),
++        ("heroku/model", None),
++        ("docker_model_runner/model", None),
++        ("azure_text/deployment", None),
++        ("future-claude-vision", None),
++        ("custom/my-model", None),
++        ("gemini/future-claude-vision", None),
++    ],
++)
++async def test_litellm_declared_media_survives_actual_conversion(
++    monkeypatch, tmp_path, model, mode
++):
++    def no_auth(*args, **kwargs):
++        raise AssertionError("Capability checks must not resolve credentials or log in")
++
++    monkeypatch.setattr("litellm.get_llm_provider", no_auth)
++    monkeypatch.setattr(
++        "litellm.llms.github_copilot.authenticator.Authenticator.get_api_key", no_auth
+     )
++    monkeypatch.setenv("GITHUB_COPILOT_TOKEN_DIR", str(tmp_path))
++    vlm = OpenVikingLiteLLMVLMProvider({"provider": "litellm", "model": model})
++    assert vlm.tool_result_media_mode() == mode
++    if mode is None:
++        return
++
++    encoded = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+a5XsAAAAASUVORK5CYII="
++    image = {"type": "image_url", "image_url": {"url": f"data:image/png;base64,{encoded}"}}
++    tools = [
++        {
++            "type": "function",
++            "function": {"name": "read_image", "parameters": {"type": "object", "properties": {}}},
++        }
++    ]
++    messages: list[dict[str, Any]] = [
++        {"role": "user", "content": "Read the source image."},
++        {
++            "role": "
+```
+
+**File**: `bot/tests/test_bot_vlm_streaming.py` (modified, +8/-6)
+```diff
+@@ -100,13 +100,10 @@ async def test_vlm_adapter_streams_openai_content_deltas():
+     )
+     attach_client(vlm, completions)
+     provider = make_adapter(vlm, "gpt-test")
++    image = {"type": "image_url", "image_url": {"url": "data:image/png;base64,AA=="}}
++    messages = [{"role": "tool", "tool_call_id": "read", "content": [image]}]
+ 
+-    events = [
+-        event
+-        async for event in provider.chat_stream(
+-            messages=[{"role": "user", "content": "hi"}],
+-        )
+-    ]
++    events = [event async for event in provider.chat_stream(messages=messages)]
+ 
+     assert [event.type for event in events] == [
+         "content_delta",
+@@ -123,6 +120,11 @@ async def test_vlm_adapter_streams_openai_content_deltas():
+     assert completions.calls[0]["stream"] is True
+     assert completions.calls[0]["stream_options"] == {"include_usage": True}
+     assert "thinking" not in completions.calls[0]
++    sent = completions.calls[0]["messages"]
++    assert [m["role"] for m in sent] == ["tool", "user"]
++    assert isinstance(sent[0]["content"], str)
++    assert sent[1]["content"][-1] == image
++    assert messages[0]["content"] == [image]
+ 
+ 
+ @pytest.mark.asyncio
+```
+
+**File**: `bot/tests/test_compile_sources.py` (modified, +108/-0)
+```diff
+@@ -7,8 +7,10 @@
+ from dataclasses import asdict
+ from io import BytesIO
+ from types import SimpleNamespace
++from typing import Any
+ from unittest.mock import AsyncMock, Mock, call
+ 
++import httpx
+ import pytest
+ from PIL import Image, ImageDraw
+ from vikingbot.agent.loop import AgentLoop, _inline_media_bytes
+@@ -23,11 +25,14 @@
+ from vikingbot.compile.ops.common import pack, payload
+ from vikingbot.compile.pipeline import Pipeline
+ from vikingbot.compile.pipeline_agent import ChildProvider, complete_tool_result
++from vikingbot.compile.pipeline_io import ModelCallError
+ from vikingbot.compile.results import CombineResponse, FileResponse, RecordResponse
+ from vikingbot.compile.service import BotCompileService
+ from vikingbot.compile.skill_resources import EvidenceReader
+ from vikingbot.compile.sources import read_source, split_source
++from vikingbot.config import loader
+ from vikingbot.config.schema import Config, SessionKey
++from vikingbot.integrations.langfuse import LangfuseClient
+ from vikingbot.providers.base import LLMProvider, LLMResponse, ToolCallRequest
+ from vikingbot.sandbox.backends.direct import DirectBackend
+ from vikingbot.session.manager import SessionManager
+@@ -170,6 +175,109 @@ def respond(**kwargs):
+         assert result.files[0].inputs == [image.record_id]
+ 
+ 
++@pytest.mark.asyncio
++@pytest.mark.parametrize("backend,status", [("volcengine", 200), ("openai", 200), ("openai", 400)])
++async def test_compile_image_reaches_chat_completion_wire(
++    runtime, tmp_path, monkeypatch, backend, status
++):
++    """Load Bot configuration and serialize original PNG evidence through the SDK."""
++    from openai import AsyncOpenAI
++    from vikingbot.cli.commands import _make_provider
++    from volcenginesdkarkruntime import AsyncArk
++
++    pipeline, png = runtime
++    model = "doubao-seed-2.1-lite"
++    api_base = "https://ark.cn-beijing.volces.com/api/coding/v3"
++    selected = {
++        "provider": backend,
++        "model": model,
++        "api_base": api_base,
++        "api_key": "test-key",
++        "max_retries": 0,
++    }
++    config_path = tmp_path / "ov.conf"
++    config_path.write_text(json.dumps({"vlm": selected}))
++    monkeypatch.setattr(loader, "CONFIG_PATH", config_path)
++    monkeypatch.setenv("OPENVIKING_CONFIG_FILE", str(config_path))
++    pipeline.model.provider = _make_provider(loader.load_config(), langfuse_client=LangfuseClient())
++    pipeline.model.model = model
++    image = await seed(runtime)
++
++    call = {
++        "id": "read-image",
++        "type": "function",
++        "function": {
++            "name": "read_evidence",
++            "arguments": json.dumps({"source_range": image.record_id}),
++        },
++    }
++    files = [{"path": "image.md", "content": URI, "inputs": [image.record_id]}]
++    replies: list[dict[str, Any]] = [
++        {"role": "assistant", "content": None, "tool_calls": [call]},
++        {"role": "assistant", "content": json.dumps({"files": files})},
++    ]
++    requests = []
++
++    def handle(request):
++        body = json.loads(request.content)
++        assert str(request.url) == f"{api_base}/chat/completions" and body["model"] == model
++        requests.append(body)
++        if len(requests) == 2 and status == 400:
++            return httpx.Response(
++                400, json={"error": {"message": "Model does not support image inputs."}}
++            )
++        reply = replies[len(requests) - 1]
++        return httpx.Response(
++            200,
++            json={
++                "id": "compile-test",
++                "object": "chat.completion",
++                "created": 0,
++                "model": model,
++                "choices": [
++                    {
++                        "index": 0,
++                        "message": reply,
++                        "finish_reason": "tool_calls" if reply.get("tool_calls") else "stop",
++                    }
++                ],
++            },
++        )
++
++    vlm = pipeline.model.provider._vlm.inner
++    sdk_type = AsyncArk if backend == "volcengine" else AsyncOpenAI
++    async with (
++        httpx.AsyncClient(transport=httpx.MockTransport(handle)) as http,
++        sdk_type(
++            api_key=vlm.api_key, base_url=vlm.api_base, http_client=http, max_retries=0
++        ) as sdk,
++    ):
++        monkeypatch.setattr(vlm, "get_async_client", lambda: sdk)
++        response = pipeline.model.ask(
++            "compile",
++            "Inspect the image.",
++            {"inputs": [await payload(pipeline, image)]},
++            FileResponse,
++        )
++        if status == 400:
++            with pytest.raises(ModelCallError, match="does not support image"):
++                await response
++        else:
++            await response
++
++    sent = requests[-1]["messages"]
++    serialized = json.dumps(sent)
++    assert URI in serialized and serialized.count(base64.b64encode(png).decode()) == 1
++    images = [
++        base64.b64decode(p["image_url"]["url"].split(",", 1)[1])
++        for m in sent
++     
+```
+
+**File**: `bot/vikingbot/agent/loop.py` (modified, +3/-3)
+```diff
+@@ -2182,10 +2182,10 @@ async def execute_single_tool(
+                         )
+                     if isinstance(result, MultimodalToolResult):
+                         result_media_bytes = _inline_media_bytes([{"content": result.content}])
+-                        if not self.provider.supports_tool_result_media(self.model):
++                        if not self.provider.should_inline_tool_result_media(self.model):
+                             model_result = (
+-                                f"{result_text}\n\nMedia content was omitted because the configured "
+-                                "model provider does not support media in tool results."
++                                f"{result_text}\n\nMedia content was omitted by the configured "
++                                "tool-result media policy."
+                             )
+                         else:
+                             overflow = (
+```
+
+**File**: `bot/vikingbot/providers/base.py` (modified, +5/-1)
+```diff
+@@ -200,9 +200,13 @@ async def chat_stream(
+         yield LLMStreamEvent(type="response", response=response)
+ 
+     def supports_tool_result_media(self, model: str | None = None) -> bool:
+-        """Whether this provider can preserve media inside a tool result."""
++        """Whether this provider can deliver media returned by a tool to the model."""
+         return False
+ 
++    def should_inline_tool_result_media(self, model: str | None = None) -> bool:
++        """Agent Loop policy; scoped providers can opt into adapted image delivery."""
++        return self.supports_tool_result_media(model)
++
+     @abstractmethod
+     def get_default_model(self) -> str:
+         """Get the default model for this provider."""
+```
+
+**File**: `bot/vikingbot/providers/vlm_adapter.py` (modified, +20/-23)
+```diff
+@@ -17,6 +17,8 @@
+ 
+ from openviking.models.model_error import model_error_kind
+ from openviking.models.vlm.backends.volcengine_vlm import build_volcengine_request_headers
++from openviking.models.vlm.base import ToolResultMediaMode
++from openviking.utils.message_format import tool_images_as_user_messages
+ from openviking.utils.model_retry import effective_max_retries, retry_async
+ from openviking.utils.multimodal import redact_image_data_urls
+ from openviking_cli.utils import get_logger
+@@ -296,8 +298,13 @@ async def chat(
+                 if reasoning_effort is not None and self._vlm.provider == "volcengine"
+                 else {}
+             )
++            request_messages = (
++                tool_images_as_user_messages(messages)
++                if self._tool_result_media_mode(self._vlm) == "user_message"
++                else messages
++            )
+             result = await self._vlm.get_completion_async(
+-                messages=messages,
++                messages=request_messages,
+                 thinking=thinking if thinking is not None else getattr(self._vlm, "thinking", None),
+                 tools=response_tools,
+                 tool_choice="auto" if response_tools else None,
+@@ -556,6 +563,8 @@ def _build_stream_kwargs(
+         max_tokens: int | None,
+         temperature: float | None,
+     ) -> dict[str, Any]:
++        if self._tool_result_media_mode(vlm) == "user_message":
++            messages = tool_images_as_user_messages(messages)
+         provider = getattr(vlm, "provider", None)
+         configured_max_tokens = getattr(vlm, "max_tokens", None)
+         effective_max_tokens = max_tokens if max_tokens is not None else configured_max_tokens
+@@ -701,30 +710,18 @@ def get_default_model(self) -> str:
+         return self._default_model
+ 
+     def supports_tool_result_media(self, model: str | None = None) -> bool:
+-        """Return true only for backends with native rich tool-result support."""
+-        return self._backend_supports_tool_result_media(self._vlm)
+-
+-    @classmethod
+-    def _backend_supports_tool_result_media(cls, vlm: Any) -> bool:
+-        instances = getattr(vlm, "_vlm_instances", None)
+-        if instances is not None:
+-            return bool(instances) and all(
+-                cls._backend_supports_tool_result_media(item) for item in instances
+-            )
++        """Whether every configured backend can deliver image evidence from tools."""
++        return self._tool_result_media_mode(self._vlm) is not None
+ 
+-        primary = getattr(vlm, "primary", None)
+-        backup = getattr(vlm, "backup", None)
+-        if primary is not None and backup is not None:
+-            return cls._backend_supports_tool_result_media(
+-                primary
+-            ) and cls._backend_supports_tool_result_media(backup)
++    def should_inline_tool_result_media(self, model: str | None = None) -> bool:
++        """Keep ordinary chats native-only; Compile's scoped providers opt in."""
++        return self._tool_result_media_mode(self._vlm) == "native"
+ 
+-        resolve_provider = getattr(vlm, "resolved_provider", None)
+-        provider = (
+-            resolve_provider() if callable(resolve_provider) else getattr(vlm, "provider", "")
+-        )
+-        provider = str(provider or "").lower()
+-        return provider in {"anthropic", "openai-codex"}
++    @staticmethod
++    def _tool_result_media_mode(vlm: Any) -> ToolResultMediaMode | None:
++        capability = getattr(vlm, "tool_result_media_mode", None)
++        mode = capability() if callable(capability) else None
++        return mode if mode in ("native", "user_message") else None
+ 
+     # ------------------------------------------------------------------
+     # Langfuse helpers
+```
+
+**File**: `openviking/models/vlm/backends/codex_vlm.py` (modified, +6/-0)
+```diff
+@@ -22,6 +22,8 @@
+ from types import SimpleNamespace
+ from typing import Any, Dict
+ 
++from ..base import ToolResultMediaMode
++
+ try:
+     import openai
+ except ImportError:
+@@ -46,6 +48,10 @@ def __init__(self, config: Dict[str, Any]):
+         super().__init__(normalized)
+         self._async_client = None
+ 
++    def tool_result_media_mode(self) -> ToolResultMediaMode:
++        """The Responses adapter preserves images inside function-call outputs."""
++        return "native"
++
+     def _build_responses_client(self, api_key: str, api_base: str):
+         kwargs = _build_openai_client_kwargs(
+             "openai",
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #6855** (2026-10-31): fix(vika): make bundled CLIs discoverable in agent shells (@krsish)
-- **PR #6849** (2026-10-31): feat(vika): run agents on the pi-durable runtime (@nexw)
-- **PR #6843** (2026-10-31): fix(vika): wake on mentions in Feishu document comments (@krsish)
-- **PR #6841** (2026-10-31): fix(vika): name the Feishu account a bot needs as phone-registered, not "personal" (@krsish)
-- **PR #6840** (2026-10-31): fix(snapshot): restore single files using commit IDs (@FuJiaJie123)
-- **PR #6839** (2026-10-31): fix(vika): say when a Feishu account cannot run bots instead of aborting setup (@krsish)
+- **PR #6979** (2026-11-03): docs(react): require justified useEffect usage (@LaamGinghong)
+- **PR #6978** (2026-11-03): chore(frontend): add Rslint checks and upgrade to TypeScript 7 (@LaamGinghong)
+- **PR #6973** (2026-11-03): feat(auth): scope GLOBAL reads to owner policy (@MaojiaSheng)
+- **PR #6969** (2026-11-03): refactor(retrieval): unify keywords search scope filters (@ByteDanceLiuYang)
+- **PR #6958** (2026-11-03): fix: 避免账户初始化与多写任务锁冲突 (@hezhang-1216)
+- **PR #6954** (2026-11-03): feat(frontend): add component subpaths and scoped stylesheet entries (@LaamGinghong)
 
 ---
 
@@ -1810,42 +3568,53 @@ Co-authored-by: fujiajie.168 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. snapshot): restore single files using commit IDs (#6840)
+## X. pathlock): preserve independent holders across handoff and recovery (#6895)
 
 **RULE**:
-When implementing operations in `docs/en/api/11-snapshot.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in volcengine/OpenViking. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/ragfs-python/src/lib.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in volcengine/OpenViking. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3dedecc0`: snapshot): restore single files using commit IDs (#6840). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3a90bbb3`: pathlock): preserve independent holders across handoff and recovery (#6895). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/en/api/11-snapshot.md`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/ragfs-python/src/lib.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-| path | str | Compile output file URI, also used as the path in the historical snapshot |
-| restore_commit_id | str | Full commit ID supplying the content (40 lowercase hexadecimal characters) |
-| current_commit_id | str | Full ID of the last commit changing this file on `main`, as observed by the caller; a mismatch returns `409 CONFLICT` with `error.details.resource: "VERSION_CONFLICT"` |
-`GET /api/v1/snapshot/versions?uri=<file URI>` lists version history. Each version has a `version_id` (a full UUID4 hex string) and a positive integer `version_number`. Clients pass version IDs unchanged for pagination; use `version_number` to display labels such as `v1` and `v2`. Versions are returned newest first. Numbers increase within a file's lifecycle and remain unchanged across pages and history cleanup. A new version index starts numbering at 1; version IDs are not reused after deletion and recreation, so old version UUIDs cannot match the recreated file.
-    "restore_commit_id": "0334d9abe4ac4f25a3e59d0b401bb01c12345678",
-    "current_commit_id": "54c71fb7bf134b71a9b7ed604c21f5b412345678"
-For example, when version 2 is current and version 1 has different content, restoring version 1 cr
+    if let Some(holder_id) = &handoff.holder_id {
+        dict.set_item("holder_id", holder_id)?;
+    }
+    /// Reacquire validated durable coverage under its original logical owner.
+    #[pyo3(signature = (ctx, requests, owner_id, timeout_secs=0.0))]
+    fn pathlock_reacquire_batch_async<'py>(
+        &self,
+        py: Python<'py>,
+        ctx: Option<HashMap<String, String>>,
+        requests: Vec<HashMap<String, String>>,
+        owner_id: String,
+        timeout_secs: f64,
+    ) -> PyResult<Bound<'py, PyAny>> {
+        let fs_ctx = build_fs_context(ctx);
+        let timeout = validate_timeout_secs(timeout_secs)?;
+        let requests = parse_pathlock_request_batch(&requests)?;
+        let manager = self.clone_pathlock_manager();
+        let task = self.rt.spawn(FS_CTX.scope(fs_ctx, async move {
+            manager.reacquire_batch(&requests, &owner_id, timeout).await
+        }));
+        pyo3_async_runtimes::tokio::future_into_py(py, async move {
+            let lease = task
+                .await
+                .map_err(|error| PyRuntimeError::new_err(error.to_string()))?
+                .map_err(pathlock_err_to_py)?;
+            Python::attach(|py| owned_lease_to_py_dict(py,
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Anti-pattern to NEVER write (induced failure mode):
-| path | str | `viking://` URI of the Compile output file |
-| restore_version | str | UUID `version_id` of the historical version supplying the restored content |
-| current_version | str | UUID `version_id` of the current version observed by the caller; a mismatch returns `409 CONFLICT` with `error.details.resource: "VERSION_CONFLICT"` |
-Call `GET /api/v1/snapshot/versions?uri=<file URI>` to obtain `current_version` and the version history before submitting a restore:
-
-Each version has a `version_id` (a full UUID4 hex string) and a positive integer `version_number`. Clients pass IDs unchanged for restore and pagination; use `version_number` to display labels such as `v1` and `v2`. Versions are returned newest first. Numbers increase within a file's lifecycle and remain unchanged across pages and history cleanup. A new version index starts numbering at 1; version IDs are not reused after deletion and recreation, so an old restore request cannot match the recreated file.
-    "restore_version": "0334d9abe4ac4f25a3e59d0b401bb01c",
-    "current_version": "54c71fb7bf134b71a9b7ed604c21f5b4"
-For example, when version 2 is current and version 1 has different content, restoring version 1 cre
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3dedecc0` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3a90bbb3` are properly handled with clean fallback behavior.

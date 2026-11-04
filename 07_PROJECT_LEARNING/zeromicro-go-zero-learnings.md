@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zeromicro-go-zero-learnings.md`  
 > **Source**: github ([https://github.com/zeromicro/go-zero](https://github.com/zeromicro/go-zero))  
-> **Source Version**: `f3be7b00`  
+> **Source Version**: `f5663037`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T20:23:13.564Z  
+> **Timestamp**: 2026-11-03T16:58:56.467Z  
 > **Learning ID**: `learn-github-zeromicro-go-zero`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zeromicro-go-zero-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zeromicro/go-zero](https://github.com/zeromicro/go-zero))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T20:23:13.456Z  
+> **Harvest Timestamp**: 2026-11-03T16:58:48.904Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A cloud-native Go microservices framework with cli tool for productivity.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod
-- **Stars / Engagement**: 33419 stars
+- **Stars / Engagement**: 33420 stars
 
 ---
 
@@ -1305,283 +1305,523 @@ func Gunzip(bs []byte) ([]byte, error) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `963ae7ef` (2026-10-31)
-**Commit Message**: fix(rest): avoid unbounded gzip body dump on JWT auth failure (#5865)
+### Incident Patch 1: `f5663037` (2026-11-01)
+**Commit Message**: fix(security): zrpc Authenticator fails open: unknown app or any Redis error authenticates the caller (#5848)
 
-Co-authored-by: Copilot <[REDACTED_EMAIL]>
+Co-authored-by: OpenClaw BountyBot <[REDACTED_EMAIL]>
+Co-authored-by: kevin <[REDACTED_EMAIL]>
 
-**File**: `rest/handler/authhandler.go` (modified, +22/-0)
+**File**: `zrpc/config.go` (modified, +6/-5)
 ```diff
-@@ -1,8 +1,10 @@
- package handler
- 
- import (
-+	"bytes"
- 	"context"
- 	"errors"
-+	"io"
- 	"net/http"
- 	"net/http/httputil"
- 
-@@ -98,6 +100,26 @@ func WithUnauthorizedCallback(callback UnauthorizedCallback) AuthorizeOption {
- }
- 
- func detailAuthLog(r *http.Request, reason string) {
-+	// Cap the body read for the dump so that an attacker cannot force the
-+	// server to fully read/decompress (e.g. a gzip-encoded) request body
-+	// just by failing authentication. See GHSA-h4vj-585c-2r8x.
-+	if r.Body != nil {
-+		body := r.Body
-+		var prefix bytes.Buffer
-+		r.Body = io.NopCloser(io.LimitReader(io.TeeReader(body, &prefix), limitDetailedBodyBytes))
-+		// Replay only the bytes consumed for logging, then continue reading the
-+		// original body so unauthorized callbacks can still read the full request.
-+		defer func() {
-+			r.Body = struct {
-+				io.Reader
-+				io.Closer
-+			}{
-+				Reader: io.MultiReader(&prefix, body),
-+				Closer: body,
-+			}
-+		}()
-+	}
-+
- 	// discard dump error, only for debug purpose
- 	details, _ := httputil.DumpRequest(r, true)
- 	logc.Errorf(r.Context(), "authorize failed: %s\n=> %+v", reason, string(details))
+@@ -37,11 +37,12 @@ type (
+ 	// A RpcServerConf is a rpc server config.
+ 	RpcServerConf struct {
+ 		service.ServiceConf
+-		ListenOn      string
+-		Etcd          discov.EtcdConf    `json:",optional,inherit"`
+-		Auth          bool               `json:",optional"`
+-		Redis         redis.RedisKeyConf `json:",optional"`
+-		StrictControl bool               `json:",optional"`
++		ListenOn string
++		Etcd     discov.EtcdConf    `json:",optional,inherit"`
++		Auth     bool               `json:",optional"`
++		Redis    redis.RedisKeyConf `json:",optional"`
++		// Deprecated: authentication always fails closed on lookup errors, regardless of this value.
++		StrictControl bool `json:",optional"`
+ 		// setting 0 means no timeout
+ 		Timeout      int64 `json:",default=2000"`
+ 		CpuThreshold int64 `json:",default=900,range=[0:1000)"`
 ```
 
-**File**: `rest/handler/authhandler_test.go` (modified, +109/-0)
+**File**: `zrpc/internal/auth/auth.go` (modified, +8/-14)
 ```diff
-@@ -2,6 +2,9 @@ package handler
+@@ -15,24 +15,22 @@ const defaultExpiration = 5 * time.Minute
  
- import (
- 	"bufio"
-+	"bytes"
-+	"compress/gzip"
-+	"io"
- 	"net"
- 	"net/http"
- 	"net/http/httptest"
-@@ -31,6 +34,112 @@ func TestAuthHandlerFailed(t *testing.T) {
- 	assert.Equal(t, http.StatusUnauthorized, resp.Code)
+ // An Authenticator is used to authenticate the rpc requests.
+ type Authenticator struct {
+-	store  *redis.Redis
+-	key    string
+-	cache  *collection.Cache
+-	strict bool
++	store *redis.Redis
++	key   string
++	cache *collection.Cache
  }
  
-+type countingReadCloser struct {
-+	io.Reader
-+	total  int64
-+	closed bool
-+}
+ // NewAuthenticator returns an Authenticator.
+-func NewAuthenticator(store *redis.Redis, key string, strict bool) (*Authenticator, error) {
++func NewAuthenticator(store *redis.Redis, key string) (*Authenticator, error) {
+ 	cache, err := collection.NewCache(defaultExpiration)
+ 	if err != nil {
+ 		return nil, err
+ 	}
+ 
+ 	return &Authenticator{
+-		store:  store,
+-		key:    key,
+-		cache:  cache,
+-		strict: strict,
++		store: store,
++		key:   key,
++		cache: cache,
+ 	}, nil
+ }
+ 
+@@ -61,11 +59,7 @@ func (a *Authenticator) validate(app, token string) error {
+ 		return a.store.Hget(a.key, app)
+ 	})
+ 	if err != nil {
+-		if a.strict {
+-			return status.Error(codes.Internal, err.Error())
+-		}
+-
+-		return nil
++		return status.Error(codes.Unauthenticated, accessDenied)
+ 	}
+ 
+ 	if token != expect {
+```
+
+**File**: `zrpc/internal/auth/auth_test.go` (modified, +43/-13)
+```diff
+@@ -4,41 +4,36 @@ import (
+ 	"context"
+ 	"testing"
+ 
++	"github.com/alicebob/miniredis/v2"
+ 	"github.com/stretchr/testify/assert"
++	"github.com/zeromicro/go-zero/core/stores/redis"
+ 	"github.com/zeromicro/go-zero/core/stores/redis/redistest"
++	"google.golang.org/grpc/codes"
+ 	"google.golang.org/grpc/metadata"
++	"google.golang.org/grpc/status"
+ )
+ 
+ func TestAuthenticator(t *testing.T) {
+ 	tests := []struct {
+ 		name     string
+ 		app      string
+ 		token    string
+-		strict   bool
+ 		hasError bool
+ 	}{
+ 		{
+-			name:     "strict=false",
+-			strict:   false,
+-			hasError: false,
+-		},
+-		{
+-			name:     "strict=true",
+-			strict:   true,
++			name:     "unknown app",
+ 			hasError: true,
+ 		},
+ 		{
+-			name:     "strict=true,with token",
++			name:     "valid token",
+ 			app:      "foo",
+ 			token:    "bar",
+-			strict:   true,
+ 			hasError: false,
+ 		},
+ 		{
+-			name:     "strict=true,with error token",
++			name:     "wrong token",
+ 			app:      "foo",
+ 			token:    "error",
+-			strict:   true,
+ 			hasError: true,
+ 		},
+ 	}
+@@ -52,7 +47,7 @@ func TestAuthenticator(t *testing.T) {
+ 				defer store.Hdel("apps", test.app)
+ 			}
+ 
+-			authenticator, err := NewAuthenticator(store, "apps", test.strict)
++			authenticator, err := NewAuthenticator(store, "apps")
+ 			assert.Nil(t, err)
+ 			assert.NotNil(t, authenticator.Authenticate(context.Background()))
+ 			md := metadata.New(map[string]string{})
+@@ -78,3 +73,38 @@ func TestAuthenticator(t *testing.T) {
+ 		})
+ 	}
+ }
 +
-+func (c *countingReadCloser) Read(p []byte) (int, error) {
-+	n, err := c.Reader.Read(p)
-+	c.total += int64(n)
-+	return n, err
-+}
-+
-+func (c *countingReadCloser) Close() error {
-+	c.closed = true
-+	return nil
-+}
-+
-+func TestAuthHandlerUnauthorizedCallbackBody(t *testing.T) {
-+	for _, tc := range []struct {
-+		name string
-+		size int
-+	}{
-+		{name: "empty"},
-+		{name: "small", size: 128},
-+		{name: "limit", size: limitDetailedBodyBytes},
-+		{name: "large", size: limitDetailedBodyBytes * 2},
-+	} {
-+		t.Run(tc.name, func(t *testing.T) {
-+			for _, encoding := range []string{"plain", "gzip"} {
-+				t.Run(encoding, func(t *testing.T) {
-+					payload := bytes.Repeat([]byte("a"), tc.size)
-+					var packed bytes.Buffer
-+					var input io.Reader = bytes.NewReader(payload)
-+					if encoding == "gzip" {
-+						zw := gzip.NewWriter(&packed)
-+						_, err := zw.Write(payload)
-+						assert.NoError(t, err)
-+						assert.NoError(t, zw.Close())
-+						input = &packed
-+					}
-+
-+					body := &countingReadCloser{Reader: input}
-+					req := httptest.NewRequest(http.MethodPost, "http://localhost", nil)
-+					req.Body = body
-+					if encoding == "gzip" {
-+						req.Header.Set("Content-Encoding", "gzip")
-+					}
-+
-+					var called bool
-+					handler := GunzipHandler(Authorize("secret", WithUnauthorizedCallback(
-+						func(w http.ResponseWriter, r *http.Request, err error) {
-+							called = true
-+							assert.Error(t, err)
-+							assert.False(t, body.closed)
-+							got, readErr := io.ReadAll(r.Body)
-+							assert.NoError(t, readErr)
-+							assert.Equal(t, payload, got)
-+							assert.NoError(t, r.Body.Close())
-+							if encoding == "plain" {
-+								assert.True(t, body.closed)
-+							}
-+						}))(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-+						t.Error("unauthorized request reached the handler")
-+					})))
-+
-+					resp := httptest.NewRecorder()
-+					handler.ServeHTTP(resp, req)
-+					assert.True(t, called)
-+					assert.Equal(t, http.StatusUnauthorized, resp.Code)
-+				})
++func TestAuthenticatorFailClosed(t *testing.T) {
++	for _, scenario := range []string{"unknown", "backend_error", "wrong_type", "valid", "wrong_token", "empty_token"} {
++		t.Run(scenario, func(t *testing.T) {
++			mr := miniredis.RunT(t)
++			if scenario == "backend_error" {
++				mr.SetError("ERR injected backend failure")
++			} else if scenario == "wrong_type" {
++				mr.Set("apps", "not-a-hash")
++			} else if scenario != "unknown" {
++				mr.HSet("apps", "foo", "bar")
++			}
++			a, err := NewAuthenticator(redis.New(mr.Addr()), "apps")
++			if err != nil {
++				t.Fatal(err)
++			}
++			token := "bar"
++			if scenario == "wrong_token" {
++				token = "wrong"
++			}
++			if scenario == "empty_token" {
++				token = ""
++			}
++			ctx := metadata.NewIncomingContext(context.Background(), metadata.Pairs("app", "foo", "token", token))
++			err = a.Authenticate(ctx)
++			want := codes.Unauthenticated
++			if scenario == "valid" {
++				want = codes.OK
++			}
++			if got := status.Code(err); got != want {
++				t.Fatalf("got %v, want %v", got, want)
 +			}
 +		})
 +	}
 +}
-+
-+// TestAuthHandlerFailedWithGzipBody guards against GHSA-h4vj-585c-2r8x: a
-+// failed JWT authentication must not force the server to read/decompress
-+// the full (potentially huge) gzip-encoded request body just to log it.
-+func TestAuthHandlerFailedWithGzipBody(t *testing.T) {
-+	// highly compressible payload, so a small compressed input unpacks to
-+	// a payload far larger than the detailed-log limit.
-+	plain := bytes.Repeat([]byte("A"), 16<<20) // 16 MiB decompressed
-+	var packed bytes.Buffer
-+	zw := gzip.NewWriter(&packed)
-+	_, err := zw.Write(plain)
-+	assert.Nil(t, err)
-+	assert.Nil(t, zw.Close())
-+
-+	counter := &countingReadCloser{Reader: bytes.NewReader(packed.Bytes())}
-+	req := httptest.NewRequest(http.MethodPost, "http://localhost", nil)
-+	req.Body = counter
-+	req.Header.Set("Content-Encoding", "gzip")
-+
-+	handler := GunzipHandler(Authorize("B63F477D-BBA3-4E52-96D3-C0034C27694A")(
-+		http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-+			w.WriteHeader(http.StatusOK)
-+		})))
-+
-+	resp := httptest.NewRecorder()
-+	handler.ServeHTTP(resp, req)
-+	assert.Equal(t, http.StatusUnauthorized, resp.Code)
-+	// the compressed bytes actually consumed must stay far below the full
-+	// compressed payload size, proving the body wasn't fully decompressed.
-+	assert.Less(t, counter.total, int64(packed.Len()))
-+}
-+
- func TestAuthHandler(t *testing.T) {
- 	const key = "B63F477D-BBA3-4E52-96D3-C0034C27694A"
- 	req := httptest.NewRequest(http.MethodGet, "http://localhost", http.NoBody)
+```
+
+**File**: `zrpc/internal/serverinterceptors/authinterceptor_test.go` (modified, +68/-49)
+```diff
+@@ -2,45 +2,42 @@ package serverinterceptors
+ 
+ import (
+ 	"context"
++	"fmt"
+ 	"testing"
+ 
++	"github.com/alicebob/miniredis/v2"
+ 	"github.com/stretchr/testify/assert"
++	"github.com/stretchr/testify/require"
++	"github.com/zeromicro/go-zero/core/stores/redis"
+ 	"github.com/zeromicro/go-zero/core/stores/redis/redistest"
+ 	"github.com/zeromicro/go-zero/zrpc/internal/auth"
+ 	"google.golang.org/grpc"
++	"google.golang.org/grpc/codes"
+ 	"google.golang.org/grpc/metadata"
++	"google.golang.org/grpc/status"
+ )
+ 
+ func TestStreamAuthorizeInterceptor(t *testing.T) {
+ 	tests := []struct {
+ 		name     string
+ 		app      string
+ 		token    string
+-		strict   bool
+ 		hasError bool
+ 	}{
+ 		{
+-			name:     "strict=false",
+-			strict:   false,
+-			hasError: false,
+-		},
+-		{
+-			name:     "strict=true",
+-			strict:   true,
++			name:     "unknown app",
+ 			hasError: true,
+ 		},
+ 		{
+-			name:     "strict=true,with token",
++			name:     "valid token",
+ 			app:      "foo",
+ 			token:    "bar",
+-			strict:   true,
+ 			hasError: false,
+ 		},
+ 		{
+-			name:     "strict=true,with error token",
++			name:     "wrong token",
+ 			app:      "foo",
+ 			token:    "error",
+-			strict:   true,
+ 			hasError: true,
+ 		},
+ 	}
+@@ -54,7 +51,7 @@ func TestStreamAuthorizeInterceptor(t *testing.T) {
+ 				defer store.Hdel("apps", test.app)
+ 			}
+ 
+-			authenticator, err := auth.NewAuthenticator(store, "apps", test.strict)
++			authenticator, err := auth.NewAuthenticator(store, "apps")
+ 			assert.Nil(t, err)
+ 			interceptor := StreamAuthorizeInterceptor(authenticator)
+ 			md := metadata.New(map[string]string{
+@@ -63,9 +60,12 @@ func TestStreamAuthorizeInterceptor(t *testing.T) {
+ 			})
+ 			ctx := metadata.NewIncomingContext(context.Background(), md)
+ 			stream := mockedStream{ctx: ctx}
++			called := false
+ 			err = interceptor(nil, stream, nil, func(_ any, _ grpc.ServerStream) error {
++				called = true
+ 				return nil
+ 			})
++			assert.Equal(t, !test.hasError, called)
+ 			if test.hasError {
+ 				assert.NotNil(t, err)
+ 			} else {
+@@ -80,31 +80,22 @@ func TestUnaryAuthorizeInterceptor(t *testing.T) {
+ 		name     string
+ 		app      string
+ 		token    string
+-		strict   bool
+ 		hasError bool
+ 	}{
+ 		{
+-			name:     "strict=false",
+-			strict:   false,
+-			hasError: false,
+-		},
+-		{
+-			name:     "strict=true",
+-			strict:   true,
++			name:     "unknown app",
+ 			hasError: true,
+ 		},
+ 		{
+-			name:     "strict=true,with token",
++			name:     "valid token",
+ 			app:      "foo",
+ 			token:    "bar",
+-			strict:   true,
+ 			hasError: false,
+ 		},
+ 		{
+-			name:     "strict=true,with error token",
++			name:     "wrong token",
+ 			app:      "foo",
+ 			token:    "error",
+-			strict:   true,
+ 			hasError: true,
+ 		},
+ 	}
+@@ -118,49 +109,50 @@ func TestUnaryAuthorizeInterceptor(t *testing.T) {
+ 				defer store.Hdel("apps", test.app)
+ 			}
+ 
+-			authenticator, err := auth.NewAuthenticator(store, "apps", test.strict)
++			authenticator, err := auth.NewAuthenticator(store, "apps")
+ 			assert.Nil(t, err)
+ 			interceptor := UnaryAuthorizeInterceptor(authenticator)
+ 			md := metadata.New(map[string]string{
+ 				"app":   "foo",
+ 				"token": "bar",
+ 			})
+ 			ctx := metadata.NewIncomingContext(context.Background(), md)
++			called := false
+ 			_, err = interceptor(ctx, nil, nil,
+ 				func(ctx context.Context, req any) (any, error) {
++					called = true
+ 					return nil, nil
+ 				})
++			assert.Equal(t, !test.hasError, called)
+ 			if test.hasError {
+ 				assert.NotNil(t, err)
+ 			} else {
+ 				assert.Nil(t, err)
+ 			}
+-			if test.strict {
+-				_, err = interceptor(context.Background(), nil, nil,
+-					func(ctx context.Context, req any) (any, error) {
+-						return nil, nil
+-					})
+-				assert.NotNil(t, err)
++			_, err = interceptor(context.Background(), nil, nil,
++				func(ctx context.Context, req any) (any, error) {
++					return nil, nil
++				})
++			assert.NotNil(t, err)
+ 
+-				var md metadata.MD
+-				ctx := metadata.NewIncomingContext(context.Background(), md)
+-				_, err = interceptor(ctx, nil, nil,
+-					func(ctx context.Context, req any) (any, error) {
+-						return nil, nil
+-					})
+-				assert.NotNil(t, err)
++			md = nil
++			ctx = metadata.NewIncomingContext(context.Background(), md)
++			_, err = interceptor(ctx, nil, nil,
++				func(ctx context.Context, req any) (any, error) {
++					return nil, nil
++				})
++			assert.NotNil(t, err)
+ 
+-				md = metadata.New(map[string]string{
+-					"app":   "",
+-					"token": "",
++			md = metadata.New(map[string]string{
++				"app":   "",
++				"token": "",
++			})
++			ctx = metadata.NewIncomingContext(context.Background(), md)
++			_, err = interceptor(ctx, nil, nil,
++				func(ctx context.Context, req any) (any, error) {
++					return nil, nil
+ 				})
+-				ctx = metadata.NewIncomingContext(context.Background(), md)
+-				_, err = interceptor(ctx, nil, nil,
+-					func(ctx context.Context, req any) (any, error) {
+-						return nil, nil
+-					})
+-				assert.NotNil(t, err)
+-			}
++			assert.NotNil(t, err)
+ 		})
+ 	}
+ }
+@@ -191,3 +183,30 @@ func
+```
+
+**File**: `zrpc/server.go` (modified, +1/-1)
+```diff
+@@ -118,7 +118,7 @@ func setupAuthInterceptors(svr internal.Server, c RpcServerConf) error {
+ 		return err
+ 	}
+ 
+-	authenticator, err := auth.NewAuthenticator(rds, c.Redis.Key, c.StrictControl)
++	authenticator, err := auth.NewAuthenticator(rds, c.Redis.Key)
+ 	if err != nil {
+ 		return err
+ 	}
 ```
 
 ---
 
-### Incident Patch 2: `f3be7b00` (2026-10-31)
-**Commit Message**: fix: preserve YAML null values (#5816)
+### Incident Patch 2: `a48115b3` (2026-11-01)
+**Commit Message**: fix(goctl): track lines in block comments (#5826)
 
-**File**: `internal/encoding/encoding.go` (modified, +1/-1)
+**File**: `tools/goctl/pkg/parser/api/scanner/scanner.go` (modified, +4/-1)
 ```diff
-@@ -120,7 +120,7 @@ func toStringKeyMap(v any) any {
- 		return convertSlice(v)
- 	case map[any]any:
- 		return convertKeyToString(v)
--	case bool, string:
-+	case nil, bool, string:
- 		return v
- 	case int, uint, int8, uint8, int16, uint16, int32, uint32, int64, uint64, float32, float64:
- 		return convertNumberToJsonNumber(v)
+@@ -484,9 +484,12 @@ func (s *Scanner) scanLineComment() token.Token {
+ 
+ func (s *Scanner) scanDocument() (token.Token, error) {
+ 	position := s.position
++	tokenPosition := s.newPosition(position)
+ 	var documentMode = initMode
+ 	for {
+ 		switch s.ch {
++		case '\n':
++			s.lines = append(s.lines, s.position)
+ 		case '*':
+ 			switch documentMode {
+ 			case documentHalfOpen:
+@@ -516,7 +519,7 @@ func (s *Scanner) scanDocument() (token.Token, error) {
+ 				tok := token.Token{
+ 					Type:     token.DOCUMENT,
+ 					Text:     string(s.data[position:s.position]),
+-					Position: s.newPosition(position),
++					Position: tokenPosition,
+ 				}
+ 				return tok, nil
+ 			}
 ```
 
-**File**: `internal/encoding/encoding_test.go` (modified, +9/-0)
+**File**: `tools/goctl/pkg/parser/api/scanner/scanner_test.go` (modified, +17/-1)
 ```diff
-@@ -118,6 +118,15 @@ func TestYamlToJsonSlice(t *testing.T) {
- `, string(b))
+@@ -222,7 +222,7 @@ func TestScanner_NextToken_document(t *testing.T) {
+ 			Text: "/",
+ 			Position: token.Position{
+ 				Filename: "foo.api",
+-				Line:     5,
++				Line:     6,
+ 				Column:   1,
+ 			},
+ 		},
+@@ -238,6 +238,22 @@ func TestScanner_NextToken_document(t *testing.T) {
+ 	}
  }
  
-+func TestYamlToJsonNull(t *testing.T) {
-+	b, err := YamlToJson([]byte(`top: null
-+nested:
-+  value: ~
-+items: [null]`))
++func TestScanner_NextToken_afterMultilineDocument(t *testing.T) {
++	s, err := NewScanner("foo.api", "/* first\nsecond */\nservice")
 +	assert.NoError(t, err)
-+	assert.JSONEq(t, `{"top":null,"nested":{"value":null},"items":[null]}`, string(b))
++
++	_, err = s.NextToken()
++	assert.NoError(t, err)
++
++	actual, err := s.NextToken()
++	assert.NoError(t, err)
++	assert.Equal(t, token.Position{
++		Filename: "foo.api",
++		Line:     3,
++		Column:   1,
++	}, actual.Position)
 +}
 +
- func TestJson5ToJson(t *testing.T) {
- 	tests := []struct {
- 		name   string
+ func TestScanner_NextToken_invalid_document(t *testing.T) {
+ 	var testData = []string{
+ 		"/*",
 ```
 
 ---
 
-### Incident Patch 3: `5e318f9f` (2026-10-31)
-**Commit Message**: fix(iox): close redirected pipe on restore (#5827)
+### Incident Patch 3: `9dcf9508` (2026-11-01)
+**Commit Message**: fix(goctl/api/javagen): map int16 to a Java integer type (#5847)
 
 Co-authored-by: kevin <[REDACTED_EMAIL]>
 
-**File**: `core/iox/pipe.go` (modified, +2/-0)
+**File**: `tools/goctl/api/javagen/primitive_int16_test.go` (added, +35/-0)
 ```diff
-@@ -17,6 +17,8 @@ func RedirectInOut() (restore func(), err error) {
- 	restore = func() {
- 		os.Stdin = or
- 		os.Stdout = ow
-+		_ = r.Close()
-+		_ = w.Close()
- 	}
- 
- 	return
+@@ -0,0 +1,35 @@
++package javagen
++
++import (
++	"testing"
++
++	"github.com/zeromicro/go-zero/tools/goctl/api/spec"
++)
++
++func TestSpecTypeToJavaIntegerWidths(t *testing.T) {
++	for _, test := range []struct {
++		name string
++		want string
++	}{
++		{name: "int", want: "int"},
++		{name: "int8", want: "int"},
++		{name: "int16", want: "int"},
++		{name: "int32", want: "int"},
++		{name: "int64", want: "long"},
++		{name: "uint", want: "int"},
++		{name: "uint8", want: "int"},
++		{name: "uint16", want: "int"},
++		{name: "uint32", want: "int"},
++		{name: "uint64", want: "long"},
++	} {
++		t.Run(test.name, func(t *testing.T) {
++			got, err := specTypeToJava(spec.PrimitiveType{RawName: test.name})
++			if err != nil {
++				t.Fatal(err)
++			}
++			if got != test.want {
++				t.Errorf("specTypeToJava(%q) = %q, want %q", test.name, got, test.want)
++			}
++		})
++	}
++}
 ```
 
-**File**: `core/iox/pipe_test.go` (modified, +20/-2)
+**File**: `tools/goctl/api/javagen/util.go` (modified, +1/-1)
 ```diff
-@@ -1,13 +1,31 @@
- package iox
- 
- import (
-+	"os"
- 	"testing"
- 
- 	"github.com/stretchr/testify/assert"
-+	"github.com/stretchr/testify/require"
- )
- 
- func TestRedirectInOut(t *testing.T) {
-+	originalStdin, originalStdout := os.Stdin, os.Stdout
- 	restore, err := RedirectInOut()
--	assert.Nil(t, err)
--	defer restore()
-+	require.NoError(t, err)
-+
-+	stdin, stdout := os.Stdin, os.Stdout
-+	t.Cleanup(func() {
-+		restore()
-+		// Also clean up when testing an implementation that leaks the pipe.
-+		_ = stdin.Close()
-+		_ = stdout.Close()
-+	})
-+
-+	restore()
-+	assert.Same(t, originalStdin, os.Stdin)
-+	assert.Same(t, originalStdout, os.Stdout)
-+	_, err = stdin.Stat()
-+	assert.ErrorIs(t, err, os.ErrClosed)
-+	_, err = stdout.Stat()
-+	assert.ErrorIs(t, err, os.ErrClosed)
- }
+@@ -134,7 +134,7 @@ func primitiveType(tp string) (string, bool) {
+ 		return "String", true
+ 	case "int64", "uint64":
+ 		return "long", true
+-	case "int", "int8", "int32", "uint", "uint8", "uint16", "uint32":
++	case "int", "int8", "int16", "int32", "uint", "uint8", "uint16", "uint32":
+ 		return "int", true
+ 	case "float", "float32":
+ 		return "float", true
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5867** (2026-11-01): fix(rest): preserve CORS origin policy when adding headers (@kevwan)
 - **PR #5865** (2026-10-31): fix(rest): avoid unbounded gzip body dump on JWT auth failure (@kevwan)
 - **PR #5862** (2026-10-31): fix(deps): bump go.opentelemetry.io/otel/exporters/zipkin to v1.46.0 in tools/goctl (@kevwan)
 - **PR #5861** (closed): chore(deps): bump golang.org/x/net from 0.58.0 to 0.62.0 (@dependabot[bot])
 - **PR #5860** (closed): chore(deps): bump google.golang.org/grpc from 1.84.0 to 1.85.0 in /tools/goctl (@dependabot[bot])
 - **PR #5859** (closed): chore(deps): bump google.golang.org/grpc from 1.84.0 to 1.85.0 (@dependabot[bot])
-- **PR #5858** (2026-10-30): chore(deps): bump github.com/go-jose/go-jose/v4 from 4.1.4 to 4.1.6 in the go_modules group across 1 directory (@dependabot[bot])
 
 ---
 
@@ -1601,49 +1841,37 @@ Co-authored-by: kevin <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. rest): avoid unbounded gzip body dump on JWT auth failure (#5865)
+## X. security): zrpc Authenticator fails open: unknown app or any Redis error authent
 
 **RULE**:
-When implementing operations in `rest/handler/authhandler.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zeromicro/go-zero. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `zrpc/config.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zeromicro/go-zero. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `963ae7ef`: rest): avoid unbounded gzip body dump on JWT auth failure (#5865). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f5663037`: security): zrpc Authenticator fails open: unknown app or any Redis error authenticates the caller (#5848). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `rest/handler/authhandler.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `zrpc/config.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	"bytes"
-	"io"
-	// Cap the body read for the dump so that an attacker cannot force the
-	// server to fully read/decompress (e.g. a gzip-encoded) request body
-	// just by failing authentication. See GHSA-h4vj-585c-2r8x.
-	if r.Body != nil {
-		body := r.Body
-		var prefix bytes.Buffer
-		r.Body = io.NopCloser(io.LimitReader(io.TeeReader(body, &prefix), limitDetailedBodyBytes))
-		// Replay only the bytes consumed for logging, then continue reading the
-		// original body so unauthorized callbacks can still read the full request.
-		defer func() {
-			r.Body = struct {
-				io.Reader
-				io.Closer
-			}{
-				Reader: io.MultiReader(&prefix, body),
-				Closer: body,
-			}
-		}()
-	}
-
+		ListenOn string
+		Etcd     discov.EtcdConf    `json:",optional,inherit"`
+		Auth     bool               `json:",optional"`
+		Redis    redis.RedisKeyConf `json:",optional"`
+		// Deprecated: authentication always fails closed on lookup errors, regardless of this value.
+		StrictControl bool `json:",optional"`
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+		ListenOn      string
+		Etcd          discov.EtcdConf    `json:",optional,inherit"`
+		Auth          bool               `json:",optional"`
+		Redis         redis.RedisKeyConf `json:",optional"`
+		StrictControl bool               `json:",optional"`
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `963ae7ef` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f5663037` are properly handled with clean fallback behavior.

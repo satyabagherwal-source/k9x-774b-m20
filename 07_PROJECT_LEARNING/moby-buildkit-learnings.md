@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/moby-buildkit-learnings.md`  
 > **Source**: github ([https://github.com/moby/buildkit](https://github.com/moby/buildkit))  
-> **Source Version**: `c1cfdbd3`  
+> **Source Version**: `cbae181d`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T13:28:41.361Z  
+> **Timestamp**: 2026-11-03T17:53:49.177Z  
 > **Learning ID**: `learn-github-moby-buildkit`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/moby-buildkit-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/moby/buildkit](https://github.com/moby/buildkit))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T13:28:40.827Z  
+> **Harvest Timestamp**: 2026-11-03T17:53:48.969Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: concurrent, cache-efficient, and Dockerfile-agnostic builder toolkit
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 10350 stars
+- **Stars / Engagement**: 10356 stars
 
 ---
 
@@ -2299,11 +2299,11 @@ func isPathEscapesRootError(err error) bool {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #7338** (2026-10-30): **solver: fix race on merged edge secondary exporters**
-  *Symptoms*: When a job merged an edge into another, mergeTo appended the dependency cache keys to the target edge's secondaryExporters on the scheduler goroutine. Cache export reads the same slice through the exporter of a result loaded from that edge, and runs outside the scheduler, e.g. for build history provenance or cache export while another build is still running and merging into the shared edge.  Guard secondaryExporters with a mutex and let ExportTo iterate over a copy, so nested exports run without holding the lock.
+- **Issue #7359** (2026-11-03): **forward v0.34.2 patches**
+  *Symptoms*: 
 
-- **Issue #7336** (2026-10-30): **gateway: wait for frontend before HTTP/2 handshake**
-  *Symptoms*: If a low-powered machine is running out of resources, it may not be able to start up the frontend in 10 seconds. There is one 10 sec timeout in HTTP/2 stack so wait for container to respond before starting the HTTP/2 stack. Another timeout is in buildkit code that is increased to 15 sec in separate commit.
+- **Issue #7358** (2026-11-03): **source/git: test rejection of file-backed submodules**
+  *Symptoms*: relates to https://github.com/moby/moby/pull/52960  Verify that a permissive host Git config cannot enable file-backed submodules in a remote build context, with and without keeping `.git`. Confirm that an unrestricted Git checkout can fetch the same submodule so the test checks protocol enforcement rather than an invalid fixture.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2320,374 +2320,156 @@ func isPathEscapesRootError(err error) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b94ff2bc` (2026-10-28)
-**Commit Message**: solver: fix race on merged edge secondary exporters
+### Incident Patch 1: `38693ada` (2026-10-27)
+**Commit Message**: source/git: fix daemon panic on resolver cache poisoning
 
-When a job merged an edge into another, mergeTo appended the dependency
-cache keys to the target edge's secondaryExporters on the scheduler
-goroutine. Cache export reads the same slice through the exporter of a
-result loaded from that edge, and runs outside the scheduler, e.g. for
-build history provenance or cache export while another build is still
-running and merging into the shared edge.
+resolveMetadata stored its result into the resolver cache through
+release(v) where v was a *Metadata. On a failed resolve or a cache
+hit it set the pointer to nil, but passing a typed nil pointer as an
+interface stores a non-nil value, so a nil *Metadata was cached for
+that remote#ref. A later resolve of the same key read it back and
+dereferenced nil, crashing buildkitd. Because the cache is shared
+across the jobs on a solve state, an untrusted Dockerfile or frontend
+could crash the daemon, and one build could poison another's.
 
-Guard secondaryExporters with a mutex and let ExportTo iterate over a
-copy, so nested exports run without holding the lock.
+Store an untyped nil instead, matching the HTTP source, so only a
+successfully resolved Metadata is ever cached.
 
 Signed-off-by: Tonis Tiigi <[REDACTED_EMAIL]>
+(cherry picked from commit 4dd98355a71d79bdf93bd3456fda3a64847ce1de)
+(cherry picked from commit c1399f7266310397f5615f4751147f886afff6d2)
+(cherry picked from commit 16c68564326b4cae596c82f3940faa1315f0e9bb)
 
-**File**: `solver/edge.go` (modified, +4/-1)
+**File**: `client/client_git_source_test.go` (modified, +82/-0)
 ```diff
-@@ -69,7 +69,10 @@ type edge struct {
- 	keysDidChange bool
- 	index         *edgeIndex
+@@ -543,6 +543,88 @@ func testGitResolveMutatedSource(t *testing.T, sb integration.Sandbox) {
+ 	checkAllReleasable(t, c, sb, false)
+ }
  
--	secondaryExporters []expDep
-+	// secondaryExportersMu protects secondaryExporters, which the scheduler
-+	// appends to on merge while cache exporters read it from other goroutines
-+	secondaryExportersMu sync.Mutex
-+	secondaryExporters   []expDep
- 
- 	failedOnce sync.Once
- 	debug      bool
++// testGitResolveCacheAfterFailure resolves the same ref repeatedly in one
++// build after a failed and a cached resolve, so the resolver cache is read
++// after both have released their lock.
++func testGitResolveCacheAfterFailure(t *testing.T, sb integration.Sandbox) {
++	integration.SkipOnPlatform(t, "windows")
++	ctx := sb.Context()
++	c, err := New(ctx, sb.Address())
++	require.NoError(t, err)
++	defer c.Close()
++
++	gitDir := t.TempDir()
++	gitCommands := []string{
++		"git init",
++		"git config --local user.email test",
++		"git config --local user.name test",
++		"echo a > a",
++		"git add a",
++		"git commit -m a",
++		"git branch v1",
++		"echo b > b",
++		"git add b",
++		"git commit -m b",
++		"git update-server-info",
++	}
++	err = runInDir(gitDir, gitCommands...)
++	require.NoError(t, err)
++
++	cmd := exec.CommandContext(t.Context(), "git", "rev-parse", "v1")
++	cmd.Dir = gitDir
++	out, err := cmd.Output()
++	require.NoError(t, err)
++	commitV1 := strings.TrimSpace(string(out))
++
++	cmd = exec.CommandContext(t.Context(), "git", "rev-parse", "HEAD")
++	cmd.Dir = gitDir
++	out, err = cmd.Output()
++	require.NoError(t, err)
++	commitHead := strings.TrimSpace(string(out))
++
++	server := httptest.NewServer(http.FileServer(http.Dir(filepath.Clean(gitDir))))
++	defer server.Close()
++
++	_, err = c.Build(ctx, SolveOpt{}, "test", func(ctx context.Context, c gateway.Client) (*gateway.Result, error) {
++		resolve := func(checksum string) (*sourceresolver.MetaResponse, error) {
++			attrs := map[string]string{
++				"git.fullurl": server.URL + "/.git",
++			}
++			if checksum != "" {
++				attrs[pb.AttrGitChecksum] = checksum
++			}
++			return c.ResolveSourceMetadata(ctx, &pb.SourceOp{
++				Identifier: "git://" + strings.TrimPrefix(server.URL, "http://") + "/.git#v1",
++				Attrs:      attrs,
++			}, sourceresolver.Opt{})
++		}
++
++		// failed resolve
++		_, err := resolve(commitHead)
++		require.ErrorContains(t, err, "expected checksum to match")
++
++		md, err := resolve("")
++		require.NoError(t, err)
++		require.NotNil(t, md.Git)
++		require.Equal(t, commitV1, md.Git.Checksum)
++
++		// resolved from cache
++		md, err = resolve("")
++		require.NoError(t, err)
++		require.NotNil(t, md.Git)
++		require.Equal(t, commitV1, md.Git.Checksum)
++
++		// cached value does not match the checksum
++		_, err = resolve(commitHead)
++		require.ErrorContains(t, err, "expected checksum to match")
++
++		return gateway.NewResult(), nil
++	}, nil)
++	require.NoError(t, err)
++
++	checkAllReleasable(t, c, sb, false)
++}
++
+ func testGitResolveSourceMetadata(t *testing.T, sb integration.Sandbox) {
+ 	// TODO: remove once CI has Git for Windows >= 2.56.0.windows.2
+ 	// https://github.com/git-for-windows/git/issues/6449
 ```
 
-**File**: `solver/exporter.go` (modified, +4/-1)
+**File**: `client/client_test.go` (modified, +1/-0)
 ```diff
-@@ -246,7 +246,10 @@ func (e *exporter) ExportTo(ctx context.Context, t CacheExporterTarget, opt Cach
- 	}
+@@ -158,6 +158,7 @@ var allTests = []func(t *testing.T, sb integration.Sandbox){
+ 	testGitBundleRoundTrip,
+ 	testGitBundleRoundTripRegistry,
+ 	testGitResolveMutatedSource,
++	testGitResolveCacheAfterFailure,
+ 	testGitResolveSourceMetadata,
  
- 	if e.edge != nil {
--		for _, de := range e.edge.secondaryExporters {
-+		e.edge.secondaryExportersMu.Lock()
-+		secondaryExporters := slices.Clone(e.edge.secondaryExporters)
-+		e.edge.secondaryExportersMu.Unlock()
-+		for _, de := range secondaryExporters {
- 			recs, err := de.cacheKey.CacheKey.Exporter.ExportTo(mainCtx, t, opt)
- 			if err != nil {
- 				continue
+ 	// client_http_source_test.go
 ```
 
-**File**: `solver/scheduler.go` (modified, +7/-3)
+**File**: `source/git/source.go` (modified, +4/-3)
 ```diff
-@@ -309,19 +309,23 @@ func (s *scheduler) mergeTo(target, src *edge) bool {
- 	delete(s.outgoing, src)
- 	s.signal(target)
- 
-+	var exps []expDep
- 	for i, d := range src.deps {
- 		for _, k := range d.keys {
--			target.secondaryExporters = append(target.secondaryExporters, expDep{i, CacheKeyWithSelector{CacheKey: k, Selector: src.cacheMap.Deps[i].Selector}})
-+			exps = append(exps, expDep{i, CacheKeyWithSelector{CacheKey: k, Selector: src.cacheMap.Deps[i].Selector}})
- 		}
- 		if d.slowCacheKey != nil {
--			target.secondaryExporters = append(target.secondaryExporters, expDep{i, CacheKeyWithSelector{CacheKey: *d.slowCacheKey}})
-+			exps = append(exps, expDep{i, CacheKeyWithSelector{CacheKey: *d.slowCacheKey}})
- 		}
- 		if d.result != nil {
- 			for _, dk := range d.result.CacheKeys() {
--				target.secondaryExporters = append(target.secondaryExporters, expDep{i, CacheKeyWithSelector{CacheKey: dk, Selector: src.cacheMap.Deps[i].Selector}})
-+				exps = append(exps, expDep{i, CacheKeyWithSelector{CacheKey: dk, Selector: src.cacheMap.Deps[i].Selector}})
+@@ -600,9 +600,10 @@ func (gs *gitSourceHandler) resolveMetadata(ctx context.Context, jobCtx solver.J
  			}
- 		}
- 	}
-+	target.secondaryExportersMu.Lock()
-+	target.secondaryExporters = append(target.secondaryExporters, exps...)
-+	target.secondaryExportersMu.Unlock()
- 
- 	// TODO(tonistiigi): merge cache providers
- 
-```
-
-**File**: `solver/scheduler_test.go` (modified, +89/-0)
-```diff
-@@ -3226,6 +3226,95 @@ func TestCacheExportingMergedKey(t *testing.T) {
- 	require.Equal(t, 5, expTarget.numUniqueRecords())
- }
- 
-+// TestCacheExportDuringEdgeMerge exports a cache-loaded result while another
-+// job merges into its edge. Run with -race.
-+func TestCacheExportDuringEdgeMerge(t *testing.T) {
-+	t.Parallel()
-+	ctx := t.Context()
-+
-+	l := NewSolver(SolverOpt{
-+		ResolveOpFunc: testOpResolver,
-+		DefaultCache:  NewInMemoryCacheManager(),
-+	})
-+	defer l.Close()
-+
-+	// vertexes with the same cache key seed and input results share a slow
-+	// cache key, even with different inputs
-+	g := func(name, input string) Edge {
-+		return Edge{
-+			Vertex: vtx(vtxOpt{
-+				name:         name,
-+				cacheKeySeed: "seed1",
-+				value:        "result1",
-+				inputs: []Edge{{Vertex: vtx(vtxOpt{
-+					name:         input,
-+					cacheKeySeed: "seed-" + input,
-+					value:        "result2",
-+				})}},
-+				slowCacheCompute: map[int]ResultBasedCacheFunc{0: digestFromResult},
-+			}),
-+		}
-+	}
-+
-+	j0, err := l.NewJob("j0")
-+	require.NoError(t, err)
-+	defer func() {
-+		if j0 != nil {
-+			j0.Discard()
-+		}
-+	}()
-+	_, err = j0.Build(ctx, g("v1", "v2"))
-+	require.NoError(t, err)
-+	require.NoError(t, j0.Discard())
-+	j0 = nil
-+
-+	// j1 loads the result through the slow cache key, so its exporter
-+	// references the active edge
-+	j1, err := l.NewJob("j1")
-+	require.NoError(t, err)
-+	defer j1.Discard()
-+	res, err := j1.Build(ctx, g("v1", "v4"))
-+	require.NoError(t, err)
-+
-+	started := make(chan struct{})
-+	done := make(chan struct{})
-+	eg, egCtx := errgroup.WithContext(ctx)
-+	eg.Go(func() error {
-+		for i := 0; ; i++ {
-+			if i == 1 {
-+				close(started)
-+			}
-+			select {
-+			case <-done:
-+				return nil
-+			default:
-+			}
-+			if _, err := res.CacheKeys()[0].Exporter.ExportTo(egCtx, newTestExporterTarget(), testExporterOpts(true)); err != nil {
-+				return err
-+			}
-+		}
-+	})
-+	// keep exporting while j2 merges into the j1 edge
-+	select {
-+	case <-started:
-+	case <-egCtx.Done():
-+	}
-+
-+	j2, err := l.NewJob("j2")
-+	require.NoError(t, err)
-+	defer j2.Discard()
-+	_, err = j2.Build(ctx, g("v1-diff", "v3"))
-+	close(done)
-+	require.NoError(t, err)
-+	require.NoError(t, eg.Wait())
-+
-+	// the j2 edge was merged into the j1 edge
-+	e := res.CacheKeys()[0].Exporter.(*exporter).edge
-+	e.secondaryExportersMu.Lock()
-+	defer e.secondaryExportersMu.Unlock()
-+	require.NotEmpty(t, e.secondaryExporters)
-+}
-+
- // moby/buildkit#434
- func TestMergedEdgesLookup(t *testing.T) {
- 	t.Parallel()
-```
-
----
-
-### Incident Patch 2: `6f8e518a` (2026-10-29)
-**Commit Message**: runcexecutor: increase container start timeout to 15 seconds
-
-Signed-off-by: Tonis Tiigi <[REDACTED_EMAIL]>
-
-**File**: `executor/runcexecutor/executor.go` (modified, +3/-1)
-```diff
-@@ -40,6 +40,8 @@ import (
- 	"github.com/pkg/errors"
- )
- 
-+const runcStartTimeout = 15 * time.Second
-+
- type Opt struct {
- 	// root directory
- 	Root              string
-@@ -748,7 +750,7 @@ func (p *procHandle) WaitForReady(ctx context.Context) error {
- // callback is non-nil it will be called after receiving the pid.
- func (p *procHandle) WaitForStart(ctx context.Context, startedCh <-chan int, started func()) error {
- 	ctx, cancel := context.WithCancelCause(ctx)
--	ctx, _ = context.WithTimeoutCause(ctx, 10*time.Second, errors.WithStack(context.DeadlineExceeded)) //nolint:govet
-+	ctx, _ = context.WithTimeoutCause(ctx, runcStartTimeout, errors.WithStack(context.DeadlineExceeded)) //nolint:govet
- 	defer func() { cancel(errors.WithStack(context.Canceled)) }()
- 	select {
- 	case <-ctx.Done():
-```
-
----
-
-### Incident Patch 3: `248827b6` (2026-10-30)
-**Commit Message**: Merge pull request #7336 from tonistiigi/fix-gateway-wait
-
-gateway: wait for frontend before HTTP/2 handshake
-
-**File**: `executor/runcexecutor/executor.go` (modified, +3/-1)
-```diff
-@@ -40,6 +40,8 @@ import (
- 	"github.com/pkg/errors"
- )
- 
-+const runcStartTimeout = 15 * time.Second
-+
- type Opt struct {
- 	// root directory
- 	Root              string
-@@ -748,7 +750,7 @@ func (p *procHandle) WaitForReady(ctx context.Context) error {
- // callback is non-nil it will be called after receiving the pid.
- func (p *procHandle) WaitForStart(ctx context.Context, startedCh <-chan int, started func()) error {
- 	ctx, cancel := context.WithCancelCause(ctx)
--	ctx, _ = context.WithTimeoutCause(ctx, 10*time.Second, errors.WithStack(context.DeadlineExceeded)) //nolint:govet
-+	ctx, _ = context.WithTimeoutCause(ctx, runcStartTimeout, errors.WithStack(context.DeadlineExceeded)) //nolint:govet
- 	defer func() { cancel(errors.WithStack(context.Canceled)) }()
- 	select {
- 	case <-ctx.Done():
-```
-
-**File**: `frontend/gateway/gateway.go` (modified, +35/-9)
-```diff
-@@ -1,6 +1,7 @@
- package gateway
- 
- import (
-+	"bufio"
- 	"context"
- 	"encoding/json"
- 	"fmt"
-@@ -525,17 +526,27 @@ func newPipe() *pipe {
- 		Stdin:  pr1,
- 		Stdout: pw2,
- 		conn: &conn{
--			Reader: pr2,
--			Writer: pw1,
--			Closer: pw2,
-+			Reader:  pr2,
-+			Writer:  pw1,
-+			closers: []io.Closer{pr2, pw1, pr1, pw2},
- 		},
- 	}
- }
- 
- type conn struct {
- 	io.Reader
- 	io.Writer
--	io.Closer
-+	closers []io.Closer
-+}
-+
-+func (s *conn) Close() error {
-+	var err error
-+	for _, closer := range s.closers {
-+		if closeErr := closer.Close(); err == nil {
-+			err = closeErr
-+		}
-+	}
-+	return errors.WithStack(err)
- }
- 
- func (s *conn) LocalAddr() net.Addr {
-@@ -1869,13 +1880,28 @@ func (lbf *llbBridgeForwarder) cloneRef(id string) (solver.ResultProxy, error) {
- 	return s2, nil
- }
- 
-+type bufferedConn struct {
-+	net.Conn
-+	reader *bufio.Reader
-+}
-+
-+func (c *bufferedConn) Read(p []byte) (int, error) {
-+	return c.reader.Read(p)
-+}
-+
- func serve(ctx context.Context, grpcServer *grpc.Server, conn net.Conn) {
--	go func() {
--		<-ctx.Done()
--		conn.Close()
--	}()
-+	stop := context.AfterFunc(ctx, func() { conn.Close() })
-+	defer stop()
-+	defer conn.Close()
-+
-+	// The frontend container may take a while to start. Start HTTP/2's
-+	// client preface timeout only once the frontend begins communicating.
-+	reader := bufio.NewReader(conn)
-+	if _, err := reader.Peek(1); err != nil {
-+		return
-+	}
- 	bklog.G(ctx).Debugf("serving grpc connection")
--	(&http2.Server{}).ServeConn(conn, &http2.ServeConnOpts{Handler: grpcServer}) //nolint:staticcheck // This existing HTTP/2 connection is already established.
-+	(&http2.Server{}).ServeConn(&bufferedConn{Conn: conn, reader: reader}, &http2.ServeConnOpts{Handler: grpcServer}) //nolint:staticcheck // This existing HTTP/2 connection is already established.
- }
- 
- type markTypeFrontend struct{}
-```
-
-**File**: `frontend/gateway/serve_test.go` (added, +42/-0)
-```diff
-@@ -0,0 +1,42 @@
-+package gateway
-+
-+import (
-+	"context"
-+	"testing"
-+
-+	"github.com/pkg/errors"
-+	"github.com/stretchr/testify/require"
-+	"google.golang.org/grpc"
-+)
-+
-+func TestServeCancelBeforeFrontendStartup(t *testing.T) {
-+	t.Parallel()
-+	ctx, cancel := context.WithCancelCause(t.Context())
-+	defer cancel(errors.WithStack(context.Canceled))
-+	p := newPipe()
-+	t.Cleanup(func() { p.conn.Close() })
-+	server := grpc.NewServer()
-+	t.Cleanup(server.Stop)
-+	done := make(chan struct{})
-+	go func() {
-+		serve(ctx, server, p.conn)
-+		close(done)
-+	}()
-+	cancel(errors.WithStack(context.Canceled))
-+	receiveGatewayLifecycleTest(t, done, "server cancellation before frontend startup")
-+}
-+
-+func TestServeFrontendClosesBeforeStartup(t *testing.T) {
-+	t.Parallel()
-+	p := newPipe()
-+	t.Cleanup(func() { p.conn.Close() })
-+	server := grpc.NewServer()
-+	t.Cleanup(server.Stop)
-+	done := make(chan struct{})
-+	go func() {
-+		serve(t.Context(), server, p.conn)
-+		close(done)
-+	}()
-+	require.NoError(t, p.Stdout.Close())
-+	receiveGatewayLifecycleTest(t, done, "server shutdown on frontend EOF")
-+}
+ 			saveResolved := true
+ 			defer func() {
+-				v := md
+-				if retErr != nil || !saveResolved {
+-					v = nil
++				// untyped nil, a nil *Metadata would be stored as a value
++				var v any
++				if retErr == nil && saveResolved {
++					v = md
+ 				}
+ 				if err := release(v); err != nil {
+ 					bklog.G(ctx).Warnf("failed to release resolver cache lock for %s: %v", gs.remoteKey(), err)
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7338** (2026-10-30): solver: fix race on merged edge secondary exporters (@tonistiigi)
-- **PR #7336** (2026-10-30): gateway: wait for frontend before HTTP/2 handshake (@tonistiigi)
-- **PR #7332** (2026-10-28): cache: avoid losing finalize commit on cancel (@tonistiigi)
-- **PR #7331** (2026-10-28): vendor: update fsutil to ca65610c2295 (@tonistiigi)
-- **PR #7330** (2026-10-28): readme: improve the frontend overview (@crazy-max)
-- **PR #7328** (2026-10-30): vendor: github.com/containerd/stargz-snapshotter v0.19.1 (@thaJeztah)
+- **PR #7359** (2026-11-03): forward v0.34.2 patches (@crazy-max)
+- **PR #7358** (2026-11-03): source/git: test rejection of file-backed submodules (@crazy-max)
+- **PR #7357** (2026-11-03): [v0.34] picks for v0.34.2 (@crazy-max)
+- **PR #7356** (2026-11-03): vendor: github.com/klauspost/compress v1.20.2 (security) (@thaJeztah)
+- **PR #7349** (closed): Improve undefined ARG errors in FROM (@huong8373tt-beep)
+- **PR #7347** (closed): Snipereye365 cpu patch 1 (@snipereye365-cpu)
 
 ---
 
@@ -2707,31 +2489,67 @@ gateway: wait for frontend before HTTP/2 handshake
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. solver: fix race on merged edge secondary exporters
+## X. source/git: fix daemon panic on resolver cache poisoning
 
 **RULE**:
-When implementing operations in `solver/edge.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in moby/buildkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `client/client_git_source_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in moby/buildkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b94ff2bc`: solver: fix race on merged edge secondary exporters. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `38693ada`: source/git: fix daemon panic on resolver cache poisoning. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `solver/edge.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `client/client_git_source_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	// secondaryExportersMu protects secondaryExporters, which the scheduler
-	// appends to on merge while cache exporters read it from other goroutines
-	secondaryExportersMu sync.Mutex
-	secondaryExporters   []expDep
+// testGitResolveCacheAfterFailure resolves the same ref repeatedly in one
+// build after a failed and a cached resolve, so the resolver cache is read
+// after both have released their lock.
+func testGitResolveCacheAfterFailure(t *testing.T, sb integration.Sandbox) {
+	integration.SkipOnPlatform(t, "windows")
+	ctx := sb.Context()
+	c, err := New(ctx, sb.Address())
+	require.NoError(t, err)
+	defer c.Close()
+
+	gitDir := t.TempDir()
+	gitCommands := []string{
+		"git init",
+		"git config --local user.email test",
+		"git config --local user.name test",
+		"echo a > a",
+		"git add a",
+		"git commit -m a",
+		"git branch v1",
+		"echo b > b",
+		"git add b",
+		"git commit -m b",
+		"git update-server-info",
+	}
+	err = runInDir(gitDir, gitCommands...)
+	require.NoError(t, err)
+
+	cmd := exec.CommandContext(t.Context(), "git", "rev-parse", "v1")
+	cmd.Dir = gitDir
+	out, err := cmd.Output()
+	require.NoError(t, err)
+	commitV1 := strings.TrimSpace(string(out))
+
+	cmd = exec.CommandContext(t.Context(), "git", "rev-parse", "HEAD")
+	cmd.Dir = gitDir
+	out, err = cmd.Output()
+	require.NoError(t, err)
+	commitHead := strings.TrimSpace(string(out))
+
+	server := httptest.NewServer(http.FileServer(http.Dir(filepath.Cl
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	secondaryExporters []expDep
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b94ff2bc` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `38693ada` are properly handled with clean fallback behavior.

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/langchain4j-langchain4j-learnings.md`  
 > **Source**: github ([https://github.com/langchain4j/langchain4j](https://github.com/langchain4j/langchain4j))  
-> **Source Version**: `0be3cd1c`  
+> **Source Version**: `28f8ba4a`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T16:00:43.397Z  
+> **Timestamp**: 2026-11-03T23:13:18.616Z  
 > **Learning ID**: `learn-github-langchain4j-langchain4j`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/langchain4j-langchain4j-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/langchain4j/langchain4j](https://github.com/langchain4j/langchain4j))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T16:00:42.150Z  
+> **Harvest Timestamp**: 2026-11-03T23:13:18.407Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: LangChain4j is an idiomatic, open-source Java library for building LLM-powered applications on the JVM. It offers a unified API over popular LLM providers and vector stores, and makes implementing tool calling (including MCP support), agents and RAG easy. It integrates seamlessly with enterprise Java frameworks like Quarkus and Spring Boot.
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 13330 stars
+- **Stars / Engagement**: 13350 stars
 
 ---
 
@@ -817,11 +817,11 @@ public class TokenStreamToStringFlowAdapter : TokenStreamAdapter {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #6913** (2026-11-02): **[BUG] A listener that throws keeps the other composed agent listeners from being notified**
+  *Symptoms*: **Describe the bug**  `ComposedAgentListener` notifies its listeners in a plain loop with no per-listener guard, so a listener that throws keeps every listener after it from being notified. The listeners are kept in a `HashSet`, so which listeners get skipped depends on their identity hash codes. It changes from one JVM run to the next, and stays the same within a run.  `ListenerNotifierUtil` catches and logs the exception, but it wraps the *composed* listener as a whole, so the skipped listeners are never notified at all. #6360 mentions this side effect ("a listener that throws also prevents every listener after it in the set from being notified"), but its scope was the `AgentMonitor` failure itself.  It matters when another listener relies on the notification for more than recording. quarkus-flow's `FlowAgentContextListener` activates the caller's OpenTelemetry context on the agent's thread in `beforeAgentInvocation`. When a root agent extends `MonitoredAgent`, the `AgentMonitor` sits in the same composed listener, and for the sub-agents of a parallel workflow it throws `No ongoing parent invocation found` (#6885). In the runs where the monitor is iterated first, Flow's listener is skipped. Each parallel sub-agent then runs without the caller's context, and its AI service and model spans land in traces of their own.  **Log and Stack trace**  ``` ERROR [dev.langchain4j.agentic.observability.ListenerNotifierUtil] beforeAgentInvocation listener for agent assessClaimantSentimen
+
 - **Issue #6857** (2026-10-27): **[BUG] Concurrent invocations of the same agent in one AgenticScope overwrite each other's last response reported to listeners and monitors**
   *Symptoms*: <!-- Please provide as many details as possible, this will help us to deliver a fix as soon as possible. Thank you! -->  **Describe the bug**  Both AI agents and decision agents keep the response of their last model call in a map keyed by the memory id of the `AgenticScope`, so that `AgentInvoker.invoke` can hand it to the `AgentListener`s after the agent method returns. When the same agent instance runs several times at once in the same scope, the invocations share one entry and overwrite each other. The outputs of the agents are correct; only the data reported about the invocation can belong to another invocation, or be missing.  **Where**  - AI agents: `AgentInvocationHandler.lastResponses`, filled from the `AiServiceResponseReceivedEvent` under `agenticScope.memoryId()` and read through `ChatMessagesAccess` (`lastUserMessage`, `lastChatRequest`, `lastChatResponse`, `removeLastResponseEvent`), all keyed by the memory id of the scope. - Decision agents (#6820): `DecisionAgentInvocationHandler.lastResponses`, filled by `decide` under `agenticScope.memoryId()` and read through `DecisionResponseAccess` (`lastDecisionResponse`, `removeLastDecisionResponse`). - Consumers: `AgentInvoker.invoke`, which builds the `AgentResponse` passed to `afterAgentInvocation`, and `DefaultAgenticScope.registerContext`, which reads the last user message to build the context. Everything downstream shows the wrong data: `AgentResponse.chatRequest()/chatResponse()/decisionResponse()`, `AgentInvocati
-
-- **Issue #6763** (2026-10-21): **[BUG] Non-AI agents that are direct sub-agents of the root monitored agentic pattern are missing in the html execution report**
-  *Symptoms*: <!-- Please provide as many details as possible, this will help us to deliver a fix as soon as possible. Thank you! -->  **Describe the bug**  Non-AI agents that are direct sub-agents of the root monitored agentic pattern are missing in the generated html execution report. This happens because the monitor is an AgentListener on the root that sub-agents inherit when their parent is set. Three classes implement `setParent`: `AgentInvocationHandler` for AI agents and `PlannerBasedInvocationHandler` for composed agents both call `registerInheritedParentListener(parent.listener());` while `NonAiAgentInstance.setParent` only stores the parent. So a non-AI agent directly under the root never receives the root's monitor, and its invocations are never recorded. Nested non-AI agents are saved by a different path: when a composed agent receives an inherited listener, it propagates it to all its sub-agents. The root has no parent, so its direct children depend on `setParent` alone. The same applies to every inherited listener: the reviewer's progress listener never sees those agents either.  **Log and Stack trace** <!-- Please provide a log and a stack trace (with exception), if applicable. -->  **To Reproduce** <!-- Please provide a relevant code snippets to reproduce this bug. -->  **Expected behavior** <!-- A clear and concise description of what you expected to happen. -->  **Please complete the following information:** - LangChain4j version: main - LLM(s) used: any - Java version: J
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -838,1132 +838,1181 @@ public class TokenStreamToStringFlowAdapter : TokenStreamAdapter {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0ee59caf` (2026-10-29)
-**Commit Message**: fix(agentic): reject loop agents without subagents or with maxIterations below 1 (#6882)
+### Incident Patch 1: `5ce59cd7` (2026-11-03)
+**Commit Message**: fix(mcp): limit the size of messages received by the Streamable HTTP and WebSocket transports (#6954)
 
 ## Issue
-Closes #6881
+Part of
+https://github.com/langchain4j/langchain4j/security/advisories/GHSA-89ff-7rm6-783j
 
 ## Change
-`LoopAgentServiceImpl.build()` now throws an
-`AgenticSystemConfigurationException` when the loop agent:
-- has no subagents (`A loop agent requires at least one subagent.`), or
-- has `maxIterations` below 1 (`A loop agent requires maxIterations to
-be at least 1, but was 0.`).
+An MCP server could make the client buffer an unbounded amount of data
+by sending a message that never ends, until the client ran out of
+memory.
 
-Before this, `maxIterations(0)` or a negative value still ran the
-subagents once, and a loop without subagents failed at invocation with
-an `ArrayIndexOutOfBoundsException`. The check runs when the loop is
-built, the same way the parallel mapper validates its subagent count. It
-covers both the programmatic builder and `@LoopAgent`. `LoopPlanner` is
-unchanged.
+Both network transports now limit the size of a single message received
+from the server. The limit is set with the new `maxMessageSize` builder
+option and defaults to 20 MiB.
 
-`LoopAgentConfigurationTest` covers zero and negative `maxIterations`, a
-declarative `@LoopAgent(maxIterations = 0)`, a loop without subagents,
-and `maxIterations(1)` as the positive case.
+- `StreamableHttpMcpTransport`: the limit applies to the data of each
+SSE event (in responses and on the subsidiary channel) and to the whole
+body of any other response, such as a JSON response or the answer to a
+notification. The response parser passes lines longer than 64 KiB on in
+fragments, so the transport counts the bytes before it buffers them.
+When a message is too large, the transport closes the stream: the
+pending request fails and the subsidiary channel reconnects.
+- `WebSocketMcpTransport`: a larger message closes the connection with
+status 1009 (message too big), and all pending requests fail.
 
-## General checklist
-- [X] There are no breaking changes (API, behaviour)
-- [X] I have added unit and/or integration tests for my change
-- [X] The tests cover both positive and negative cases
-- [X] I have manually run all the unit and integration 
+The warning that is logged in this case does not 
 
-**File**: `langchain4j-agentic/src/main/java/dev/langchain4j/agentic/workflow/impl/LoopAgentServiceImpl.java` (modified, +8/-0)
+**File**: `docs/docs/tutorials/mcp.md` (modified, +12/-0)
 ```diff
-@@ -11,6 +11,7 @@
- import dev.langchain4j.agentic.declarative.ExitCondition;
- import dev.langchain4j.agentic.internal.AbstractServiceBuilder;
- import dev.langchain4j.agentic.internal.ResolvedParameters;
-+import dev.langchain4j.agentic.planner.AgenticSystemConfigurationException;
- import dev.langchain4j.agentic.scope.AgenticScope;
- import dev.langchain4j.agentic.workflow.LoopAgentService;
- import java.lang.reflect.Method;
-@@ -33,6 +34,13 @@ public LoopAgentServiceImpl(Class<T> agentServiceClass, Method agenticMethod) {
+@@ -75,6 +75,14 @@ With the modern protocol (2026-07-28), notifications are received via `subscript
+ It is disabled by default. If the server does not support it, the transport logs a warning and continues without it.
+ If the stream breaks after being established, the transport reconnects automatically (respecting the server's `retry` value, defaulting to 5 seconds).
  
-     @Override
-     public T build() {
-+        if (subagents.isEmpty()) {
-+            throw new AgenticSystemConfigurationException("A loop agent requires at least one subagent.");
-+        }
-+        if (maxIterations < 1) {
-+            throw new AgenticSystemConfigurationException(
-+                    "A loop agent requires maxIterations to be at least 1, but was " + maxIterations + ".");
-+        }
-         return build(() -> new LoopPlanner(maxIterations, testExitAtLoopEnd, exitCondition, exitConditionDescription));
-     }
++**_NOTE:_** A single message received from the server can be at most 20 MiB by default: the data of one event
++on an SSE stream (in a response or on the subsidiary channel), or the whole body of any other response, such as
++a JSON response. If the server sends a larger message, the transport closes the stream and drops the message:
++the pending request fails, and the subsidiary channel reconnects. This keeps a misbehaving server from filling
++the client's memory. The size is that of the JSON text, so binary content such as images, which is base64-encoded,
++takes about a third more than its raw size. To change the limit, set it on the builder, for example
++`.maxMessageSize(50 * 1024 * 1024)` for 50 MiB.
++
+ #### Custom HTTP client
  
+ By default, the Streamable HTTP transport sends its requests with the JDK HTTP client
+@@ -166,6 +174,10 @@ McpTransport transport = WebSocketMcpTransport.builder()
+         .build();
+ ```
+ 
++**_NOTE:_** As with the Streamable HTTP transport, a single message received from the server can be at most
++20 MiB by default. If the server sends a larger message, the transport closes the connection and all pending
++requests fail. To change the limit, set it on the builder, for example `.maxMessageSize(50 * 1024 * 1024)` for 50 MiB.
++
+ For the Docker stdio transport, you first need to add a module to your pom.xml:
+ 
+ ```xml
 ```
 
-**File**: `langchain4j-agentic/src/test/java/dev/langchain4j/agentic/LoopAgentConfigurationTest.java` (added, +106/-0)
+**File**: `langchain4j-mcp/src/main/java/dev/langchain4j/mcp/client/transport/http/McpResponseParser.java` (modified, +39/-2)
 ```diff
-@@ -0,0 +1,106 @@
-+package dev.langchain4j.agentic;
+@@ -19,9 +19,13 @@
+  * The transport handles JSON responses and retains its SSE field handling, including {@code id} and {@code retry},
+  * which would otherwise be lost when parsing with the default SSE parser.
+  * Line endings are retained separately so that non-SSE response bodies can be reconstructed without modification.
++ * A line longer than {@link #MAX_LINE_FRAGMENT_BYTES} is passed on in several {@linkplain Line#partial() partial}
++ * fragments, so that the transport, rather than this parser, decides how much of a line it is willing to buffer.
+  */
+ final class McpResponseParser implements ServerSentEventParser {
+ 
++    static final int MAX_LINE_FRAGMENT_BYTES = 64 * 1024;
++
+     @Override
+     public void parse(InputStream httpResponseBody, ServerSentEventListener listener) {
+         var handle = new DefaultServerSentEventParsingHandle(httpResponseBody);
+@@ -61,15 +65,36 @@ private static void emit(
+     static final class Line extends ServerSentEvent {
+ 
+         private final String ending;
++        private final boolean partial;
++        private final int byteLength;
+ 
+-        private Line(String data, String ending) {
++        private Line(String data, String ending, boolean partial, int byteLength) {
+             super(null, data);
+             this.ending = ending;
++            this.partial = partial;
++            this.byteLength = byteLength;
+         }
+ 
++        /**
++         * The line terminator, or an empty string for a partial fragment or a final line without a terminator.
++         */
+         String ending() {
+             return ending;
+         }
++
++        /**
++         * Whether this is a fragment of a longer line that continues in the next {@link Line}.
++         */
++        boolean partial() {
++            return partial;
++        }
++
++        /**
++         * The number of bytes received for this line or fragment, excluding the line terminator.
++         */
++        int byteLength() {
++            return byteLength;
++        }
+     }
+ 
+     private static final class LineParser implements Incremental {
+@@ -97,6 +122,12 @@ public List<ServerSentEvent> feed(ByteBuffer bytes) {
+                 } else {
+                     // UTF-8 continuation bytes cannot contain CR or LF. Decode only complete lines so that
+                     // multi-byte characters split across chunks remain intact, without rescanning buffered bytes.
++                    // A long line is split before a byte that starts a character, which keeps fragments decodable;
++                    // a run of continuation bytes longer than any valid character is invalid UTF-8 and split anyway.
++                    if (pending.size() >= MAX_LINE_FRAGMENT_BYTES
++                            && ((next & 0xC0) != 0x80 || pending.size() >= MAX_LINE_FRAGMENT_BYTES + 3)) {
++                        lines.add(fragment());
++                    }
+                     pending.write(next);
+                 }
+             }
+@@ -113,7 +144,13 @@ public List<ServerSentEvent> flush() {
+         }
+ 
+         private Line line(String ending) {
+-            var line = new Line(pending.toString(UTF_8), ending);
++            var line = new Line(pending.toString(UTF_8), ending, false, pending.size());
++            pending.reset();
++            return line;
++        }
++
++        private Line fragment() {
++            var line = new Line(pending.toString(UTF_8), "", true, pending.size());
+             pending.reset();
+             return line;
+         }
+```
+
+**File**: `langchain4j-mcp/src/main/java/dev/langchain4j/mcp/client/transport/http/StreamableHttpMcpTransport.java` (modified, +82/-4)
+```diff
+@@ -1,6 +1,7 @@
+ package dev.langchain4j.mcp.client.transport.http;
+ 
+ import static dev.langchain4j.internal.Utils.getOrDefault;
++import static dev.langchain4j.internal.ValidationUtils.ensureGreaterThanZero;
+ import static dev.langchain4j.internal.ValidationUtils.ensureNotNull;
+ 
+ import dev.langchain4j.Experimental;
+@@ -49,6 +50,8 @@
+ public class StreamableHttpMcpTransport implements McpTransport {
+     private static final Logger LOG = LoggerFactory.getLogger(StreamableHttpMcpTransport.class);
+     private static final long DEFAULT_SUBSIDIARY_RETRY_MS = 5000;
++    private static final int DEFAULT_MAX_MESSAGE_SIZE = 20 * 1024 * 1024;
++    private static final int SSE_DATA_FIELD_NAME_LENGTH = "data:".length();
+     private final String url;
+     private final McpHeadersSupplier customHeadersSupplier;
+     private final boolean logResponses;
+@@ -67,6 +70,7 @@ public class StreamableHttpMcpTransport implements McpTransport {
+ 
+     // Subsidiary SSE channel fields
+     private final boolean subsidiaryChannelEnabled;
++    private final int maxMessageSize;
+     private volatile Runnable onFailureCallback;
+     private volatile boolean subsidiaryChannelEstablished;
+     private final AtomicReference<String> subsidiaryLastEventId = new AtomicReference<>();
+@@ -85,6 +89,8 @@ public StreamableHttpMcpTransport(StreamableHttpMcpTransport.Builder builder) {
+         customHeadersSupplier = getOrDefault(builder.customHeadersSupplier, (i) -> Map.of());
+         sslContext = builder.sslContext;
+         subsidiaryChannelEnabled = builder.subsidiaryChannelEnabled;
++        maxMessageSize =
++                ensureGreaterThanZero(getOrDefault(builder.maxMessageSize, DEFAULT_MAX_MESSAGE_SIZE), "maxMessageSize");
+         executor = getOrDefault(builder.executor, DefaultExecutorProvider.getDefaultExecutor());
+         responseExecutor = builder.executor;
+         if (builder.httpClientBuilder != null && builder.httpClient != null) {
+@@ -544,8 +550,12 @@ private final class HttpExchange implements Flow.Subscriber<HttpStreamingEvent>
+         private final CapturedContext requestContext;
+         private final AtomicBoolean finished = new AtomicBoolean();
+         private final StringBuilder body = new StringBuilder();
++        private long bodyBytes;
+         private final StringBuilder sseData = new StringBuilder();
+         private boolean sseDataPresent;
++        private long sseDataBytes;
++        private final StringBuilder sseLine = new StringBuilder();
++        private long sseLineBytes;
+         private volatile Flow.Subscription subscription;
+         private boolean sseResponse;
+         private boolean responseReceived;
+@@ -611,9 +621,9 @@ private void handleNext(HttpStreamingEvent event) {
+                             errorResponse.statusCode(), "Unexpected status code: " + errorResponse.statusCode()));
+                 } else if (event instanceof McpResponseParser.Line line) {
+                     if (sseResponse) {
+-                        handleSseLine(line.data());
++                        handleSseFragment(line);
+                     } else {
+-                        body.append(line.data()).append(line.ending());
++                        handleBodyFragment(line);
+                     }
+                 }
+             } catch (RuntimeException e) {
+@@ -644,7 +654,50 @@ private void onResponse(SuccessfulHttpResponse response) {
+             }
+         }
+ 
+-        private void handleSseLine(String line) {
++        /**
++         * Buffers the body of a response that is not an SSE stream, failing the exchange once it exceeds
++         * {@code maxMessageSize}, so that a server cannot make the client buffer an unbounded amount of data.
++         */
++        private void handleBodyFragment(McpResponseParser.Line fragment) {
++            bodyBytes += fragment.byteLength() + fragment.ending().length();
++            if (bodyBytes > maxMessageSize) {
++                failMessageTooLarge();
++                return;
++            }
++            body.append(fragment.data()).append(fragment.ending());
++        }
++
++        /**
++         * Reassembles lines that the parser split into fragments, failing the exchange once the data of the
++         * current event and the line being read exceed {@code maxMessageSize}, so that a server cannot
++         * make the client buffer an unbounded amount of data. The line being read still contains its field name,
++         * so a {@code data:} line that carries exactly {@code maxMessageSize} bytes is accepted.
++         */
++        private void handleSseFragment(McpResponseParser.Line fragment) {
++            sseLineBytes += fragment.byteLength();
++            if (sseDataBytes + sseLineBytes > maxMessageSize + SSE_DATA_FIELD_NAME_LENGTH) {
++                failMessageTooLarge();
++                return;
++            }
++            sseLine.append(fragment.data());
++            if (fragment.partial()) {
++                return;
++            }
++            String line = sseLine.toString(
+```
+
+**File**: `langchain4j-mcp/src/main/java/dev/langchain4j/mcp/client/transport/websocket/WebSocketMcpListener.java` (modified, +59/-0)
+```diff
+@@ -1,33 +1,56 @@
+ package dev.langchain4j.mcp.client.transport.websocket;
+ 
++import static dev.langchain4j.internal.ValidationUtils.ensureGreaterThanZero;
++
+ import dev.langchain4j.mcp.client.transport.McpOperationHandler;
+ import org.slf4j.Logger;
+ import org.slf4j.LoggerFactory;
+ import java.net.http.WebSocket;
+ import java.nio.ByteBuffer;
+ import java.util.concurrent.CompletionStage;
++import java.util.concurrent.TimeUnit;
+ 
+ 
+ public class WebSocketMcpListener implements WebSocket.Listener {
+ 
++    private static final int MESSAGE_TOO_BIG = 1009;
++
+     private final McpOperationHandler operationHandler;
+     private final Logger trafficLogger;
+     private final boolean logResponses;
+     private final Runnable onCloseCallback;
+     private final Logger logger = LoggerFactory.getLogger(WebSocketMcpListener.class);
+     private final Runnable onFailureCallback;
++    private final int maxMessageSize;
+ 
+ 
+     public WebSocketMcpListener(McpOperationHandler operationHandler,
+                                 Logger trafficLogger,
+                                 boolean logResponses,
+                                 Runnable onCloseCallback,
+                                 Runnable onFailureCallback) {
++        this(operationHandler, trafficLogger, logResponses, onCloseCallback, onFailureCallback,
++                WebSocketMcpTransport.DEFAULT_MAX_MESSAGE_SIZE);
++    }
++
++    /**
++     * Creates a listener that closes the connection when a single message received from the server
++     * is larger than {@code maxMessageSize} bytes.
++     *
++     * @since 1.24.0
++     */
++    public WebSocketMcpListener(McpOperationHandler operationHandler,
++                                Logger trafficLogger,
++                                boolean logResponses,
++                                Runnable onCloseCallback,
++                                Runnable onFailureCallback,
++                                int maxMessageSize) {
+         this.operationHandler = operationHandler;
+         this.trafficLogger = trafficLogger;
+         this.logResponses = logResponses;
+         this.onCloseCallback = onCloseCallback;
+         this.onFailureCallback = onFailureCallback;
++        this.maxMessageSize = ensureGreaterThanZero(maxMessageSize, "maxMessageSize");
+     }
+ 
+     @Override
+@@ -37,13 +60,20 @@ public void onOpen(WebSocket webSocket) {
+     }
+ 
+     private volatile StringBuilder receivedMessage = new StringBuilder();
++    private long receivedMessageBytes;
+ 
+     @Override
+     public CompletionStage<?> onText(WebSocket webSocket, CharSequence data, boolean last) {
++        receivedMessageBytes += utf8Length(data);
++        if (receivedMessageBytes > maxMessageSize) {
++            closeBecauseMessageIsTooBig(webSocket);
++            return null;
++        }
+         receivedMessage.append(data);
+         if(last) {
+             String completeMessage = receivedMessage.toString();
+             receivedMessage = new StringBuilder();
++            receivedMessageBytes = 0;
+             if (logResponses) {
+                 trafficLogger.info("< " + completeMessage);
+             }
+@@ -57,6 +87,35 @@ public CompletionStage<?> onText(WebSocket webSocket, CharSequence data, boolean
+         return null;
+     }
+ 
++    private void closeBecauseMessageIsTooBig(WebSocket webSocket) {
++        receivedMessage = new StringBuilder();
++        receivedMessageBytes = 0;
++        String reason = "Message from the MCP server exceeds the maximum size of " + maxMessageSize
++                + " bytes; use WebSocketMcpTransport.Builder.maxMessageSize to raise the limit";
++        logger.warn("Closing the WebSocket connection: {}", reason);
++        operationHandler.cancelAllPendingOperations(reason);
++        onCloseCallback.run();
++        webSocket
++                .sendClose(MESSAGE_TOO_BIG, "Message too big")
++                .orTimeout(5, TimeUnit.SECONDS)
++                .whenComplete((ws, error) -> webSocket.abort());
++    }
++
++    private static long utf8Length(CharSequence text) {
++        long length = 0;
++        for (int i = 0; i < text.length(); i++) {
++            char c = text.charAt(i);
++            if (c < 0x80) {
++                length += 1;
++            } else if (c < 0x800 || Character.isSurrogate(c)) {
++                length += 2;
++            } else {
++                length += 3;
++            }
++        }
++        return length;
++    }
++
+     @Override
+     public CompletionStage<?> onClose(WebSocket webSocket, int statusCode, String reason) {
+         logger.debug("Websocket connection closed with status {} and reason: {}", statusCode, reason);
+```
+
+**File**: `langchain4j-mcp/src/main/java/dev/langchain4j/mcp/client/transport/websocket/WebSocketMcpTransport.java` (modified, +27/-1)
+```diff
+@@ -1,6 +1,7 @@
+ package dev.langchain4j.mcp.client.transport.websocket;
+ 
+ import static dev.langchain4j.internal.Utils.getOrDefault;
++import static dev.langchain4j.internal.ValidationUtils.ensureGreaterThanZero;
+ import static dev.langchain4j.internal.ValidationUtils.ensureNotNull;
+ 
+ import dev.langchain4j.mcp.client.McpCallContext;
+@@ -31,6 +32,7 @@
+ 
+ public class WebSocketMcpTransport implements McpTransport {
+     private static final Logger LOG = LoggerFactory.getLogger(WebSocketMcpTransport.class);
++    static final int DEFAULT_MAX_MESSAGE_SIZE = 20 * 1024 * 1024;
+     private final String url;
+     private final McpHeadersSupplier headersSupplier;
+     private final boolean logResponses;
+@@ -39,6 +41,7 @@ public class WebSocketMcpTransport implements McpTransport {
+     private volatile McpOperationHandler operationHandler;
+     private volatile McpInitializeRequest initializeRequest;
+     private final Duration connectTimeout;
++    private final int maxMessageSize;
+     private volatile SSLContext sslContext;
+     private volatile HttpClient httpClient;
+     private final Executor executor;
+@@ -52,6 +55,8 @@ public WebSocketMcpTransport(Builder builder) {
+         this.logRequests = builder.logRequests;
+         this.trafficLog = getOrDefault(builder.logger, McpLoggers.traffic());
+         this.connectTimeout = getOrDefault(builder.timeout, Duration.ofSeconds(60));
++        this.maxMessageSize =
++                ensureGreaterThanZero(getOrDefault(builder.maxMessageSize, DEFAULT_MAX_MESSAGE_SIZE), "maxMessageSize");
+         this.headersSupplier = getOrDefault(builder.headersSupplier, (i) -> Map.of());
+         this.executor = builder.executor;
+         this.sslContext = builder.sslContext;
+@@ -125,7 +130,8 @@ private synchronized CompletableFuture<WebSocket> startWebSocket() {
+                             // so all running operations were lost anyway.
+                             webSocketRef.set(null);
+                         },
+-                        actionOnFailure));
++                        actionOnFailure,
++                        maxMessageSize));
+         // if the initialize method was already called and we know the necessary data for initialization, schedule
+         // a new initialization right away
+         if (this.initializeRequest != null) {
+@@ -271,6 +277,7 @@ public static class Builder {
+         private Duration timeout;
+         private SSLContext sslContext;
+         private McpHeadersSupplier headersSupplier;
++        private Integer maxMessageSize;
+ 
+         public Builder logResponses(boolean logResponses) {
+             this.logResponses = logResponses;
+@@ -331,6 +338,25 @@ public Builder headersSupplier(McpHeadersSupplier headersSupplier) {
+             return this;
+         }
+ 
++        /**
++         * The maximum size, in bytes, of a single message received from the server.
++         * When a server sends a larger message, the transport closes the connection with status 1009
++         * (message too big) and all pending requests fail. This protects the client against servers that send
++         * an endless or huge message, which would otherwise be buffered in memory until it runs out.
++         * The size is that of the JSON text, so binary content such as images, which is base64-encoded,
++         * takes about a third more than its raw size.
++         * Defaults to 20 MiB.
++         *
++         * @param maxMessageSize the maximum message size in bytes, must be greater than zero;
++         *                       {@code null} means the default
++         * @return this builder
++         * @since 1.24.0
++         */
++        public Builder maxMessageSize(Integer maxMessageSize) {
++            this.maxMessageSize = maxMessageSize;
++            return this;
++        }
++
+         public WebSocketMcpTransport build() {
+             return new WebSocketMcpTransport(this);
+         }
+```
+
+**File**: `langchain4j-mcp/src/test/java/dev/langchain4j/mcp/client/transport/StreamableHttpMcpTransportMaxMessageSizeTest.java` (added, +261/-0)
+```diff
+@@ -0,0 +1,261 @@
++package dev.langchain4j.mcp.client.transport;
 +
 +import static org.assertj.core.api.Assertions.assertThat;
 +import static org.assertj.core.api.Assertions.assertThatThrownBy;
 +
-+import dev.langchain4j.agentic.declarative.LoopAgent;
-+import dev.langchain4j.agentic.planner.AgenticSystemConfigurationException;
-+import dev.langchain4j.data.message.AiMessage;
-+import dev.langchain4j.model.chat.ChatModel;
-+import dev.langchain4j.model.chat.request.ChatRequest;
-+import dev.langchain4j.model.chat.response.ChatResponse;
-+import dev.langchain4j.service.UserMessage;
-+import dev.langchain4j.service.V;
++import com.sun.net.httpserver.HttpExchange;
++import com.sun.net.httpserver.HttpServer;
++import dev.langchain4j.mcp.client.transport.http.StreamableHttpMcpTransport;
++import dev.langchain4j.mcp.protocol.McpListToolsRequest;
++import java.io.IOException;
++import java.io.OutputStream;
++import java.net.InetSocketAddress;
++import java.nio.charset.StandardCharsets;
++import java.util.Collections;
 +import java.util.Map;
-+import java.util.concurrent.atomic.AtomicInteger;
++import java.util.concurrent.CompletableFuture;
++import java.util.concurrent.ConcurrentHashMap;
++import java.util.concurrent.ExecutionException;
++import java.util.concurrent.TimeUnit;
++import org.junit.jupiter.api.AfterEach;
 +import org.junit.jupiter.api.Test;
++import org.junit.jupiter.params.ParameterizedTest;
++import org.junit.jupiter.params.provider.ValueSource;
 +
-+class LoopAgentConfigurationTest {
++/**
++ * A server must not be able to make the client buffer an unbounded amount of data
++ * by sending a message that never ends, neither as an SSE event nor as a JSON response.
++ */
++class StreamableHttpMcpTransportMaxMessageSizeTest {
 +
-+    static final ChatModel DUMMY_MODEL = new ChatModel() {
-+        @Override
-+        public ChatResponse chat(ChatRequest chatRequest) {
-+            return ChatResponse.builder()
-+                    .aiMessage(AiMessage.from("test-response"))
-+                    .build();
-+        }
-+    };
++    private static final int LIMIT = 256 * 1024;
++    private static final String RESPONSE_PREFIX =
++            "{\"jsonrpc\":\"2.0\",\"id\":7,\"result\":{\"tools\":[],\"padding\":\"";
++    private static final String RESPONSE_SUFFIX = "\"}}";
 +
-+    public static class CountingAgent {
++    private HttpServer server;
++    private StreamableHttpMcpTransport transport;
++    private final Map<Long, CompletableFuture<String>> pendingOperations = new ConcurrentHashMap<>();
 +
-+        static final AtomicInteger INVOCATIONS = new AtomicInteger();
-+
-+        @Agent(outputKey = "story")
-+        public String write(@V("topic") String topic) {
-+            INVOCATIONS.incrementAndGet();
-+            return "a story about " + topic;
-+        }
++    @FunctionalInterface
++    interface ResponseWriter {
++        void write(OutputStream out) throws IOException;
 +    }
 +
-+    public interface StoryAgent {
-+
-+        @UserMessage("Write a story about {{topic}}")
-+        @Agent(outputKey = "story")
-+        String write(@V("topic") String topic);
++    private void startServer(String contentType, ResponseWriter writer) throws IOException {
++        startServer(contentType, writer, LIMIT);
 +    }
 +
-+    public interface ZeroIterationsLoop {
-+
-+        @LoopAgent(
-+                outputKey = "story",
-+                maxIterations = 0,
-+                subAgents = {StoryAgent.class})
-+        String write(@V("topic") String topic);
-+    }
-+
-+    @Test
-+    void build_fails_when_max_iterations_is_zero() {
-+        assertThatThrownBy(() -> AgenticServices.loopBuilder()
-+                        .subAgents(new CountingAgent())
-+                        .maxIterations(0)
-+                        .build())
-+                .isInstanceOf(AgenticSystemConfigurationException.class)
-+                .hasMessageContaining("maxIterations")
-+                .hasMessageContaining("0");
-+    }
-+
-+    @Test
-+    void build_fails_when_max_iterations_is_negative() {
-+        assertThatThrownBy(() -> AgenticServices.loopBuilder()
-+                        .subAgents(new CountingAgent())
-+                        .maxIterations(-1)
-+                        .build())
-+                .isInstanceOf(AgenticSystemConfigurationException.class)
-+                .hasMessageContaining("maxIterations")
-+                .hasMessageContaining("-1");
-+    }
-+
-+    @Test
-+    void build_fails_when_declarative_loop_has_zero_max_iterations() {
-+        assertThatThrownBy(() -> AgenticServices.createAgenticSystem(ZeroIterationsLoop.class, DUMMY_MODEL))
-+                .isInstanceOf(AgenticSystemConfigurationException.class)
-+                .hasMessageContaining("maxIterations");
-+    }
-+
-+    @Test
-+    void build_fails_when_no_subagent() {
-+        assertThatThrownBy(() -> AgenticServices.loopBuilder().maxIterations(3).build())
-+                .isInstanceOf(AgenticSystemConfigurationException.class)
-+                .hasMessageContaining("at least one subagent");
-+    }
-+
-+    @Test
-+    void one_max_iteration_invokes_the_subagents_once() {
-+        CountingAgent.INVOCATIONS.set(0);
-+        UntypedAgent loop = AgenticServices.loopBuilder()
-+                .subAgents(new CountingAgent())
-+                .maxIterations(1)
-+                .outputKey("story")
++    private void startServer(String contentType, ResponseWriter writer, Integer maxMessageSize)
++            throws IOException {
++        server = HttpServer.create(new InetSocketAddress("localhost", 0), 0);
++        server.createContext("/mcp", exchange -> respond(exchange, contentType, writer));
++        server.start();
++        transport = StreamableHttpMcpTransport.builder()
++                .url("http://localhost:" + server.getAddress().getPort() + "/mcp")
++                .setHttpVersion1_1()
++                .maxMessageSize(maxMessageSize)
 +                .build();
-+
-+        Object result = loop.invoke(Map.of("topic", "dragons"));
-+
-+        assertThat(CountingAgent.INVOCATIONS).hasValue(1);
-+        assertThat(result).isEqualTo("a story about dragons");
-+    }
-+}
-```
-
----
-
-### Incident Patch 2: `0be3cd1c` (2026-10-30)
-**Commit Message**: pgvector: cast filter values of unmapped types to `text` instead of `null` (#6920)
-
-## Issue
-No issue. A filter with an enum value fails on pgvector with invalid
-SQL.
-
-## Change
-For each filter key, `PgVectorEmbeddingStore` writes a cast to an SQL
-type that is chosen by the Java type of the filter value. Value types
-that are not in this map, such as an enum, `LocalDate` or `Instant`,
-produced a cast to `null`:
-
-```sql
-(metadata->>'status')::null = ?
-```
-
-PostgreSQL rejects this with `syntax error at or near "null"`.
-
-Such value types now fall back to `text`, so the value is compared with
-the stored string:
-- an enum is compared by its `toString()`, which is its name unless the
-enum overrides it
-- `java.time` values are compared as their ISO text. Equality works, and
-so do range filters on values stored in the same ISO format. For offset
-and zoned date-times the order is text order, so it is not chronological
-across different offsets.
-
-The type map already had an `Object.class` → `text` "Default" entry for
-this, but the lookup never fell back to it. That entry is removed.
-
-## Tests
-- `PgVectorFilterMapperTest`: an enum and a `LocalDate` value give
-`::text` in both the JSON and the c
-
-**File**: `langchain4j-pgvector/src/main/java/dev/langchain4j/store/embedding/pgvector/ColumnFilterMapper.java` (modified, +1/-1)
-```diff
-@@ -15,7 +15,7 @@ class ColumnFilterMapper extends PgVectorFilterMapper {
-     private static final Pattern SAFE_IDENTIFIER = Pattern.compile("[a-zA-Z_][a-zA-Z0-9_]*");
- 
-     String formatKey(String key, Class<?> valueType) {
--        return String.format("%s::%s", validateIdentifier(key), SQL_TYPE_MAP.get(valueType));
-+        return String.format("%s::%s", validateIdentifier(key), sqlType(valueType));
-     }
- 
-     String formatKeyAsString(String key) {
-```
-
-**File**: `langchain4j-pgvector/src/main/java/dev/langchain4j/store/embedding/pgvector/JSONFilterMapper.java` (modified, +1/-1)
-```diff
-@@ -8,7 +8,7 @@ public JSONFilterMapper(String metadataColumn) {
-     }
- 
-     String formatKey(String key, Class<?> valueType) {
--        return String.format("(%s->>'%s')::%s", metadataColumn, escapeKey(key), SQL_TYPE_MAP.get(valueType));
-+        return String.format("(%s->>'%s')::%s", metadataColumn, escapeKey(key), sqlType(valueType));
-     }
- 
-     String formatKeyAsString(String key) {
-```
-
-**File**: `langchain4j-pgvector/src/main/java/dev/langchain4j/store/embedding/pgvector/PgVectorFilterMapper.java` (modified, +6/-4)
-```diff
-@@ -20,7 +20,7 @@
- 
- abstract class PgVectorFilterMapper {
- 
--    static final Map<Class<?>, String> SQL_TYPE_MAP = Stream.of(
-+    private static final Map<Class<?>, String> SQL_TYPE_MAP = Stream.of(
-                     new SimpleEntry<>(Integer.class, "int"),
-                     new SimpleEntry<>(Long.class, "bigint"),
-                     new SimpleEntry<>(Float.class, "float"),
-@@ -31,11 +31,13 @@ abstract class PgVectorFilterMapper {
-                     new SimpleEntry<>(BigDecimal.class, "numeric"),
-                     new SimpleEntry<>(String.class, "text"),
-                     new SimpleEntry<>(UUID.class, "uuid"),
--                    new SimpleEntry<>(Boolean.class, "boolean"),
--                    // Default
--                    new SimpleEntry<>(Object.class, "text"))
-+                    new SimpleEntry<>(Boolean.class, "boolean"))
-             .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
- 
-+    static String sqlType(Class<?> valueType) {
-+        return SQL_TYPE_MAP.getOrDefault(valueType, "text");
++        transport.start(new McpOperationHandler(
++                pendingOperations,
++                Collections::emptyList,
++                transport,
++                null,
++                () -> {},
++                null,
++                () -> {},
++                null,
++                null,
++                null,
++                null,
++                null,
++                null));
 +    }
 +
-     public WhereClause map(Filter filter) {
-         List<String> parameters = new ArrayList<>();
-         String sql = map(filter, parameters);
-```
-
-**File**: `langchain4j-pgvector/src/test/java/dev/langchain4j/store/embedding/pgvector/PgVectorEmbeddingStoreConfigIT.java` (modified, +30/-10)
-```diff
-@@ -16,11 +16,14 @@
- import dev.langchain4j.store.embedding.filter.Filter;
- import dev.langchain4j.store.embedding.filter.comparison.IsEqualTo;
- import dev.langchain4j.store.embedding.filter.comparison.IsGreaterThan;
-+import dev.langchain4j.store.embedding.filter.comparison.IsGreaterThanOrEqualTo;
- import dev.langchain4j.store.embedding.filter.comparison.IsIn;
- import dev.langchain4j.store.embedding.filter.comparison.IsLessThan;
-+import dev.langchain4j.store.embedding.filter.comparison.IsNotEqualTo;
- import java.math.BigDecimal;
- import java.math.BigInteger;
- import java.sql.SQLException;
-+import java.time.LocalDate;
- import java.util.Collection;
- import java.util.Collections;
- import java.util.List;
-@@ -36,6 +39,11 @@
- @Testcontainers
- abstract class PgVectorEmbeddingStoreConfigIT extends EmbeddingStoreWithFilteringIT {
- 
-+    enum Status {
-+        ACTIVE,
-+        INACTIVE
++    private static void respond(HttpExchange exchange, String contentType, ResponseWriter writer) throws IOException {
++        exchange.getRequestBody().readAllBytes();
++        exchange.getResponseHeaders().set("Content-Type", contentType);
++        exchange.sendResponseHeaders(200, 0);
++        try (OutputStream out = exchange.getResponseBody()) {
++            writer.write(out);
++        } catch (IOException e) {
++            // the client closed the stream
++        }
 +    }
 +
-     @Container
-     static PostgreSQLContainer<?> pgVector = new PostgreSQLContainer<>("pgvector/pgvector:pg16");
- 
-@@ -195,8 +203,7 @@ void should_bind_char_sequence_value_as_parameter__remove() {
-         addThreeTenants();
- 
-         embeddingStore().removeAll(unvalidatedIsIn("name", new StringBuilder("x') or 1=1 --")));
--        // there is no SQL type to cast the key to for a StringBuilder, so the database rejects this filter
--        removeAllIgnoringFailure(unvalidatedIsEqualTo("name", new StringBuilder("x') or 1=1 --")));
-+        embeddingStore().removeAll(unvalidatedIsEqualTo("name", new StringBuilder("x') or 1=1 --")));
- 
-         assertThat(getAllEmbeddings()).hasSize(3);
-     }
-@@ -247,6 +254,27 @@ void should_compare_byte_short_big_integer_and_big_decimal_values_with_stored_nu
-         assertThat(names(search(new IsEqualTo("age", new BigDecimal("2.5"))))).containsExactly("doc-2");
-     }
- 
-+    @Test
-+    void should_compare_enum_and_date_values_with_stored_strings() {
-+
-+        List<TextSegment> segments = Stream.of(
-+                        new Metadata().put("name", "doc-1").put("status", "ACTIVE").put("created_on", "2026-10-01"),
-+                        new Metadata().put("name", "doc-2").put("status", "INACTIVE").put("created_on", "2026-10-15"),
-+                        new Metadata().put("name", "doc-3").put("status", "ACTIVE").put("created_on", "2026-10-30"))
-+                .map(metadata -> TextSegment.from("text of " + metadata.getString("name"), metadata))
-+                .toList();
-+        embeddingStore().addAll(embeddingModel().embedAll(segments).content(), segments);
-+
-+        assertThat(names(search(new IsEqualTo("status", Status.ACTIVE)))).containsExactlyInAnyOrder("doc-1", "doc-3");
-+        assertThat(names(search(new IsNotEqualTo("status", Status.ACTIVE)))).containsExactly("doc-2");
-+        assertThat(names(search(new IsEqualTo("created_on", LocalDate.of(2026, 10, 15)))))
-+                .containsExactly("doc-2");
-+        assertThat(names(search(new IsGreaterThanOrEqualTo("created_on", LocalDate.of(2026, 10, 15)))))
-+                .containsExactlyInAnyOrder("doc-2", "doc-3");
-+        assertThat(names(search(new IsLessThan("created_on", LocalDate.of(2026, 10, 15)))))
-+                .containsExactly("doc-1");
++    /**
++     * Writes the given chunk until the client closes the connection (or a safety cap far above the limit is reached).
++     */
++    private static void writeEndlessly(OutputStream out, String chunk) throws IOException {
++        byte[] bytes = chunk.getBytes(StandardCharsets.UTF_8);
++        for (long written = 0; written < 64L * LIMIT; written += bytes.length) {
++            out.write(bytes);
++            out.flush();
++        }
 +    }
 +
-     private void addThreeTenants() {
-         List<TextSegment> segments = Stream.of("a", "b", "c")
-                 .map(tenant -> TextSegment.from(
-@@ -258,14 +286,6 @@ private void addThreeTenants() {
-         awaitUntilAsserted(() -> assertThat(getAllEmbeddings()).hasSize(3));
-     }
- 
--    private void removeAllIgnoringFailure(Filter filter) {
--        try {
--            embeddingStore().removeAll(filter);
--        } catch (Exception e) {
--            // the database may reject this filter; it must not remove anything either way
--        }
--    }
--
-     private List<EmbeddingMatch<TextSegment>> search(Filter filter) {
-         EmbeddingSearchRequest searchRequest = EmbeddingSearchRequest.builder()
-                 .queryEmbedding(embeddingModel().embed("text").content())
-```
-
-**File**: `langchain4j-pgvector/src/test/java/dev/langchain4j/store/embedding/pgvector/PgVectorEmbeddingStoreWithColumnsFilteringIT.java` (modified, +3/-1)
-```diff
-@@ -41,7 +41,9 @@ static void beforeAll() {
-                         "double_minus_1 float8 null",
-                         "double_0 float8 null",
-                         "double_1 float8 null",
--                        "double_123 float8 null"))
-+                        "double_123 float8 null",
-+                        "status varchar null",
-+                        "created_on varchar null"))
-                 .indexes(Arrays.asList("key", "name", "age"))
-                 .build();
-         PgVectorEmbeddingStoreConfigIT.configureStore(config);
-```
-
-**File**: `langchain4j-pgvector/src/test/java/dev/langchain4j/store/embedding/pgvector/PgVectorFilterMapperTest.java` (modified, +33/-2)
-```diff
-@@ -15,13 +15,18 @@
- import dev.langchain4j.store.embedding.filter.comparison.IsNotIn;
- import java.math.BigDecimal;
- import java.math.BigInteger;
-+import java.time.LocalDate;
- import java.util.Collection;
- import java.util.List;
- import java.util.Map;
- import org.junit.jupiter.api.Test;
- 
- class PgVectorFilterMapperTest {
- 
-+    enum Status {
-+        ACTIVE
-+    }
-+
-     private final JSONFilterMapper jsonMapper = new JSONFilterMapper("metadata");
-     private final ColumnFilterMapper columnMapper = new ColumnFilterMapper();
- 
-@@ -204,9 +209,8 @@ void mapValue_shouldBeBound_jsonMapper() {
- 
-         WhereClause whereClause = jsonMapper.map(filter);
- 
--        // there is no SQL type for a map, so the database rejects the cast; the value itself is only bound
-         assertThat(whereClause.sql())
--                .isEqualTo("(metadata->>'tenant')::null is not null and (metadata->>'tenant')::null = ?");
-+                .isEqualTo("(metadata->>'tenant')::text is not null and (metadata->>'tenant')::text = ?");
-         assertThat(whereClause.parameters()).containsExactly("{x') or 1=1 --=}");
-     }
- 
-@@ -247,6 +251,33 @@ void widenedNumberValues_shouldBeCastByKey_columnMapper() {
-         assertThat(whereClause.parameters()).containsExactly("18", "9.99", "7");
-     }
- 
-+    @Test
-+    void enumAndDateValues_shouldBeCastToText_jsonMapper() {
-+        Filter filter = new IsEqualTo("status", Status.ACTIVE)
-+                .and(new IsGreaterThanOrEqualTo("created_on", LocalDate.of(2026, 10, 30)));
-+
-+        WhereClause whereClause = jsonMapper.map(filter);
-+
-+        assertThat(whereClause.sql())
-+                .isEqualTo("(metadata->>'status')::text is not null and (metadata->>'status')::text = ?"
-+                        + " and (metadata->>'created_on')::text >= ?")
-+                .doesNotContain("::null");
-+        assertThat(whereClause.parameters()).containsExactly("ACTIVE", "2026-10-30");
++    @AfterEach
++    void tearDown() throws IOException {
++        if (transport != null) {
++            transport.close();
++        }
++        if (server != null) {
++            server.stop(0);
++        }
 +    }
 +
 +    @Test
-+    void enumAndDateValues_shouldBeCastToText_columnMapper() {
-+        Filter filter = new IsNotEqualTo("status", Status.ACTIVE)
-+                .and(new IsLessThan("created_on", LocalDate.of(2026, 10, 30)));
++    void delivers_a_message_spanning_several_line_fragments_below_the_limit() throws Exception {
++        String padding = "x".repeat(LIMIT / 2);
++        startServer(
++                "text/event-stream",
++                out -> out.write(("data:" + RESPONSE_PREFIX + padding + RESPONSE_SUFFIX + "\n\n")
++                        .getBytes(StandardCharsets.UTF_8)));
 +
-+        WhereClause whereClause = columnMapper.map(filter);
++        CompletableFuture<String> response = transport.sendRequest(new McpListToolsRequest(7L, null));
 +
-+        assertThat(whereClause.sql())
-+                .isEqualTo("(status::text is null or status::text != ?) and created_on::text < ?")
-+                .doesNotContain("::null");
-+        assertThat(whereClause.parameters()).containsExactly("ACTIVE", "2026-10-30");
++        assertThat(response.get(10, TimeUnit.SECONDS)).isEqualTo(RESPONSE_PREFIX + padding + RESPONSE_SUFFIX);
++    }
++
++    @Test
++    void fails_on_a_line_that_never_ends() throws Exception {
++        startServer("text/event-stream", out -> {
++            out.write("data: ".getBytes(StandardCharsets.UTF_8));
++            writeEndlessly(out, "x".repeat(8192));
++        });
++
++        CompletableFuture<String> response = transport.s
+```
+
+**File**: `langchain4j-mcp/src/test/java/dev/langchain4j/mcp/client/transport/StreamableHttpMcpTransportSpiTest.java` (modified, +46/-0)
+```diff
+@@ -604,6 +604,52 @@ void should_use_supplied_client_for_subsidiary_channel_and_resume_with_event_id(
+         assertThat(reconnect.isCancelled()).isTrue();
+     }
+ 
++    @Test
++    void should_reconnect_subsidiary_channel_when_a_message_exceeds_the_maximum_size() throws Exception {
++        start(builder().subsidiaryChannel(true).maxMessageSize(1024));
++        CompletableFuture<String> initialized = transport.sendInitializeRequest(new McpInitializeRequest(0L));
++        StreamExchange initialization = httpClient.nextExchange();
++        initialization.open(200, Map.of("Content-Type", List.of("application/json")));
++        initialization.body(INITIALIZE_RESULT);
++        initialization.complete();
++        StreamExchange notification = httpClient.nextExchange();
++        notification.open(202, Map.of());
++        notification.complete();
++
++        StreamExchange channel = httpClient.nextExchange();
++        channel.open(200, Map.of("Content-Type", List.of("text/event-stream")));
++        assertThat(initialized.get(5, TimeUnit.SECONDS)).isEqualTo(INITIALIZE_RESULT);
++        channel.body("retry: 0\n\ndata: " + "x".repeat(600) + "\n");
++        channel.body("data: " + "x".repeat(600) + "\n");
++
++        assertThat(channel.isCancelled()).isTrue();
++        StreamExchange reconnect = httpClient.nextExchange();
++        assertThat(reconnect.request().method()).isEqualTo(HttpMethod.GET);
++        transport.close();
++    }
++
++    @ParameterizedTest
++    @ValueSource(strings = {"text/event-stream", "application/json"})
++    void should_limit_the_response_to_a_notification(String contentType) throws Exception {
++        start(builder().maxMessageSize(1024));
++        CompletableFuture<String> initialized = transport.sendInitializeRequest(new McpInitializeRequest(0L));
++        StreamExchange initialization = httpClient.nextExchange();
++        initialization.open(200, Map.of("Content-Type", List.of("application/json")));
++        initialization.body(INITIALIZE_RESULT);
++        initialization.complete();
++        StreamExchange notification = httpClient.nextExchange();
++        notification.open(200, Map.of("Content-Type", List.of(contentType)));
++
++        notification.body(("data: " + "x".repeat(600) + "\n").repeat(2));
++
++        assertThat(notification.isCancelled()).isTrue();
++        assertThatThrownBy(() -> initialized.get(5, TimeUnit.SECONDS))
++                .isInstanceOf(ExecutionException.class)
++                .cause()
++                .isInstanceOf(IllegalStateException.class)
++                .hasMessageContaining("exceeds the maximum size of 1024 bytes");
 +    }
 +
      @Test
-     void parameters_shouldFollowPlaceholderOrder() {
-         Filter filter = metadataKey("a")
+     void should_handle_responses_from_supplied_client_on_configured_executor() throws Exception {
+         ExecutorService executor = Executors.newSingleThreadExecutor(task -> new Thread(task, "mcp-test-executor"));
+```
+
+**File**: `langchain4j-mcp/src/test/java/dev/langchain4j/mcp/client/transport/http/McpResponseParserTest.java` (modified, +48/-2)
+```diff
+@@ -11,6 +11,7 @@
+ import java.io.InputStream;
+ import java.nio.ByteBuffer;
+ import java.util.ArrayList;
++import java.util.Arrays;
+ import java.util.List;
+ import org.junit.jupiter.api.Test;
+ import org.junit.jupiter.params.ParameterizedTest;
+@@ -119,14 +120,59 @@ void incremental_handles_direct_buffers_and_large_unterminated_lines() {
+         String body = "x".repeat(100_000) + "🦋";
+         byte[] bytes = body.getBytes(UTF_8);
+         var incremental = parser.incremental();
++        List<ServerSentEvent> actual = new ArrayList<>();
+         for (int offset = 0; offset < bytes.length; offset += 31) {
+             var chunk = ByteBuffer.allocateDirect(Math.min(31, bytes.length - offset));
+             chunk.put(bytes, offset, chunk.capacity()).flip();
+-            assertThat(incremental.feed(chunk)).isEmpty();
++            actual.addAll(incremental.feed(chunk));
+             assertThat(chunk.hasRemaining()).isFalse();
+         }
++        actual.addAll(incremental.flush());
++
++        assertThat(actual).hasSize(2);
++        assertThat(((McpResponseParser.Line) actual.get(0)).partial()).isTrue();
++        assertThat(((McpResponseParser.Line) actual.get(1)).partial()).isFalse();
++        assertThat(reconstruct(actual)).isEqualTo(body);
++    }
+ 
+-        assertThat(incremental.flush()).extracting(ServerSentEvent::data).containsExactly(body);
++    @Test
++    void splits_long_lines_into_bounded_fragments_at_character_boundaries() {
++        int max = McpResponseParser.MAX_LINE_FRAGMENT_BYTES;
++        // two-byte characters, offset by one byte so that a fragment cannot end exactly at the limit
++        String line = "x" + "ž".repeat(max * 2);
++        String body = line + "\nnext\n";
++
++        List<ServerSentEvent> lines = parse(body);
++
++        assertThat(reconstruct(lines)).isEqualTo(body);
++        assertThat(lines).allSatisfy(event -> {
++            var fragment = (McpResponseParser.Line) event;
++            assertThat(fragment.byteLength()).isEqualTo(fragment.data().getBytes(UTF_8).length);
++            assertThat(fragment.byteLength()).isLessThanOrEqualTo(max + 3);
++        });
++        assertThat(lines)
++                .extracting(event -> ((McpResponseParser.Line) event).partial())
++                .containsExactly(true, true, true, false, false);
++        assertThat(lines).extracting(ServerSentEvent::data).last().isEqualTo("next");
++    }
++
++    @Test
++    void bounds_fragments_of_invalid_utf8() {
++        byte[] bytes = new byte[McpResponseParser.MAX_LINE_FRAGMENT_BYTES * 3];
++        Arrays.fill(bytes, (byte) 0x80);
++        var incremental = parser.incremental();
++
++        List<ServerSentEvent> lines = new ArrayList<>(incremental.feed(ByteBuffer.wrap(bytes)));
++        lines.addAll(incremental.flush());
++
++        assertThat(lines).hasSizeGreaterThan(1);
++        assertThat(lines)
++                .allSatisfy(event -> assertThat(((McpResponseParser.Line) event).byteLength())
++                        .isLessThanOrEqualTo(McpResponseParser.MAX_LINE_FRAGMENT_BYTES + 3));
++        assertThat(lines.stream()
++                        .mapToInt(event -> ((McpResponseParser.Line) event).byteLength())
++                        .sum())
++                .isEqualTo(bytes.length);
+     }
+ 
+     @Test
 ```
 
 ---
 
-### Incident Patch 3: `bd843f14` (2026-10-29)
-**Commit Message**: Milvus: fix `isNotEqualTo`, `isNotIn` and `not(...)` filters on Milvus 2.6.20+ and Zilliz Cloud (#6907)
+### Incident Patch 2: `2635ca0a` (2026-11-02)
+**Commit Message**: fix(agentic): honor @Agent(optional = true) on non-AI agents (#6924)
 
 ## Issue
-No linked issue. Found while investigating failing
-`MilvusEmbeddingStoreCloudIT` tests.
+
+Fixes #6921
 
 ## Change
-Since Milvus 2.6.20 (released 2026-07-14), a comparison on a missing
-JSON key evaluates to "unknown", as in SQL. Because of this,
-`isNotEqualTo`, `isNotIn` and every filter inside `not(...)` silently
-left out the entries that don't have the key. That goes against the
-documented `Filter` behaviour: a missing key matches `isNotEqualTo` and
-`isNotIn`, and `not(x)` matches whenever `x` doesn't. Zilliz Cloud
-behaves the same.
 
-Both `langchain4j-milvus` and `langchain4j-milvus-v2` now write:
-- `isNotEqualTo` / `isNotIn`: `((not exists K) or K != v)` / `((not
-exists K) or K not in [...])`
-- the other comparisons, but only inside `not(...)`: `((exists K) and
-...)`
+`@Agent(optional = true)` was only wired for AI agents:
+`AgentUtil.nonAiAgentToExecutor` never read `annotation.optional()`, and
+`NonAiAgentInstance` had no `optional` field, so a non-AI agent declared
+`optional = true` still failed the whole agentic system with
+`MissingArgumentException` when one of its arguments was missing from
+the scope, instead of being silently skipped.
 
-Outside `not(...)`, the other comparisons are written as before. The
-parentheses around `exists` are needed on Milvus versions before 2.5.8,
-which give `exists` the lowest precedence.
+The skip machinery in `AgentExecutor.internalExecute` is already shared
+by both kinds of agents, so this change only carries the flag from the
+`@Agent` annotation into `NonAiAgentInstance`: a new `optional` field
+with an `optional()` override, a constructor overload that takes it (the
+existing constructors default to `false`), and the flag threaded through
+the `AgentUtil.nonAiAgentInvoker` overloads. The `@HumanInTheLoop`
+creation path passes `false` explicitly, matching its annotation, which
+has no `optional` attribute.
 
-`containsString` with a backslash in the value: Milvus 3 needs one more
-level of escaping. The store reads the server version once, when
+Out of scope: the programmatic `AgentSpecsProvider` and
+`AgenticScopeFunction` APIs cannot declare an agent optional (they
+expose no `optional()` accessor); only the `@Agent` annotation pa
 
-**File**: `.github/workflows/nightly_milvus.yaml` (added, +139/-0)
+**File**: `langchain4j-agentic/src/main/java/dev/langchain4j/agentic/AgenticServices.java` (modified, +9/-7)
 ```diff
-@@ -0,0 +1,139 @@
-+name: Nightly Build Milvus
-+
-+# Milvus modules are tested separately, against a current Milvus 2.6 and 3.0 server,
-+# because they are too heavy to be mixed with other modules
-+
-+on:
-+  schedule:
-+    - cron: '30 6 * * *'  # daily at 06:30 UTC
-+  workflow_dispatch:
-+
-+permissions:
-+  contents: read
-+
-+# a manual run must not overlap with the nightly run, as both use the same Milvus Cloud collection
-+concurrency:
-+  group: ${{ github.workflow }}
-+  cancel-in-progress: false
-+
-+jobs:
-+  build:
-+    if: github.repository == 'langchain4j/langchain4j'
-+    runs-on: ubuntu-latest
-+    strategy:
-+      fail-fast: false
-+      matrix:
-+        include:
-+          - milvus_image: milvusdb/milvus:v2.6.26
-+            # the Milvus Cloud tests run in one entry only, so that two runs do not share the same cloud collection
-+            run_cloud_tests: true
-+          - milvus_image: milvusdb/milvus:v3.0.4
-+            run_cloud_tests: false
-+
-+    steps:
-+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
-+
-+      - name: Set up JDK 17
-+        uses: actions/setup-java@b6effb05e454b25005698d916606bdc6ffcbf961 # v5
-+        with:
-+          java-version: 17.0.21+9
-+          distribution: 'temurin'
-+          cache: 'maven'
-+
-+      - name: Build with JDK 17
-+        run: |
-+          ## compile and install the Milvus modules and their dependencies, so that the step below only tests the Milvus modules
-+          ## retried once, as a transient Maven Central failure would otherwise skip all tests of this job
-+          mvn -B -U -T8C -pl langchain4j-milvus,langchain4j-milvus-v2 -am -DskipTests -DskipITs -DembeddingsSkipCache install || mvn -B -U -T8C -pl langchain4j-milvus,langchain4j-milvus-v2 -am -DskipTests -DskipITs -DembeddingsSkipCache install
-+
-+      - name: Test Milvus modules with JDK 17
-+        run: |
-+          mvn -B -U verify \
-+            -pl langchain4j-milvus,langchain4j-milvus-v2 \
-+            --fail-at-end \
-+            -Dmilvus.image=${{ matrix.milvus_image }} \
-+            -Djunit.jupiter.extensions.autodetection.enabled=true \
-+            -DembeddingsSkipCache \
-+            -Dtinylog.writer.level=info
-+
-+        env:
-+          LC4J_GLOBAL_TEST_RETRY_ENABLED: true
-+          MILVUS_API_KEY: ${{ matrix.run_cloud_tests && secrets.MILVUS_API_KEY || '' }}
-+          MILVUS_URI: ${{ matrix.run_cloud_tests && secrets.MILVUS_URI || '' }}
-+
-+      - name: Clean Docker
-+        run: docker system prune -af || true
-+
-+      - name: Publish Test Summary
-+        if: always()
-+        run: |
-+          python3 << 'PYEOF'
-+          import xml.etree.ElementTree as ET
-+          import glob, os, re
-+
-+          files = glob.glob('**/target/*-reports/TEST-*.xml', recursive=True)
-+          total = failures = errors = skipped = 0
-+          failed_tests = []
-+
-+          for path in files:
-+              try:
-+                  root = ET.parse(path).getroot()
-+                  total += int(root.get('tests', 0))
-+                  failures += int(root.get('failures', 0))
-+                  errors += int(root.get('errors', 0))
-+                  skipped += int(root.get('skipped', 0))
-+                  for tc in root.findall('.//testcase'):
-+                      fail = tc.find('failure')
-+                      if fail is None:
-+                          fail = tc.find('error')
-+                      if fail is not None:
-+                          cls = tc.get('classname', '')
-+                          name = tc.get('name', '')
-+                          trace = fail.text or ''
-+                          m = re.search(r'\bat ' + re.escape(cls) + r'[.$][^\n(]*\(([^)]+\.java:\d+)\)', trace)
-+                          loc = f'`{m.group(1)}`' if m else ''
-+                          msg = (fail.get('message', '') or '').replace('\n', '<br>').replace('|', '\\|')
-+                          if len(msg) > 500:
-+                              msg = f"{msg[:500]}<details><summary>show more</summary>{msg[500:]}</details>"
-+                          failed_tests.append(f"| `{cls}` | `{name}` | {loc} | {msg} |")
-+              except Exception:
-+                  pass
-+
-+          passed = total - failures - errors - skipped
-+          summary = os.environ.get('GITHUB_STEP_SUMMARY', '/dev/null')
-+          with open(summary, 'a') as f:
-+              f.write('## Test Results (${{ matrix.milvus_image }})\n\n')
-+              if failures == 0 and errors == 0:
-+                  f.write(f':white_check_mark: **{passed} passed**, {skipped} skipped out of {total} tests\n')
-+              else:
-+                  f.write(f':x: **{failures} failed, {errors} errors**, {passed} passed, {skipped} skipped out of {total} tests\n')
-+              if failed_tests:
-+                  f.write('\n### Failures\n\n')
-+                  f.write('| Class | Test | Location | Error Message |\n')
-+                  f.write('|-------|------|----------|---------------|\n')
-+                  for line in fa
-```
-
-**File**: `docs/docs/integrations/embedding-stores/milvus.md` (modified, +13/-6)
-```diff
-@@ -11,13 +11,14 @@ sidebar_position: 14
- 
- There are currently **two** Milvus integration modules. They are independent and can be used side by side.
- 
--| Module | Milvus Java SDK | Capabilities | Status |
-+| Module | Milvus Java SDK client API | Capabilities | Status |
- |---|---|---|---|
--| `langchain4j-milvus` | v1 (`MilvusServiceClient`) | Dense vector search | Legacy. Built on the deprecated v1 SDK. |
--| `langchain4j-milvus-v2` | v2 (`MilvusClientV2`) | Dense **+ sparse + hybrid** search (incl. built-in BM25) | Current. Recommended for new projects. |
-+| `langchain4j-milvus` | `MilvusServiceClient` (v1 API) | Dense vector search | Legacy. Built on the older v1 client API. |
-+| `langchain4j-milvus-v2` | `MilvusClientV2` (v2 API) | Dense **+ sparse + hybrid** search (incl. built-in BM25) | Current. Recommended for new projects. |
- 
- :::note Transitional naming — this will change in LangChain4j 2.0
--The `-v2` suffix refers to the **Milvus SDK version**, not to a version of this module. It is temporary.
-+The `-v2` suffix refers to the `MilvusClientV2` API of the Milvus Java SDK, not to a version of this module
-+or of the Milvus server. It is temporary.
- 
- In **LangChain4j 2.0** the legacy `langchain4j-milvus` module will be **removed**, and `langchain4j-milvus-v2`
- will be **renamed to `langchain4j-milvus`** (the Maven artifact, the `...milvus.v2` package, and the `MilvusV2*`
-@@ -33,7 +34,7 @@ coordinates, imports, and class names. A migration guide will be provided with t
- 
- ## `langchain4j-milvus-v2` (recommended)
- 
--Built on the current Milvus Java SDK v2. Supports dense vector search, sparse vector search, and hybrid
-+Built on the `MilvusClientV2` API of the Milvus Java SDK. Supports dense vector search, sparse vector search, and hybrid
- (dense + sparse) search — including Milvus' built-in BM25 full-text sparse vectors.
- 
- ### Maven Dependency
-@@ -153,13 +154,15 @@ You can also pass your own `MilvusClientV2` instance via `.milvusClient(client)`
- ### Compatibility
- 
- - Milvus Server **2.5.x or later** is recommended (BM25 full-text search requires 2.5+; hybrid search requires 2.4+).
-+- Its integration tests run nightly against Milvus 2.6 and 3.x.
-+- The store reads the Milvus server version once, when it is created; restart the application after upgrading the Milvus server to a new major version.
- - Java 17+
- 
- ---
- 
- ## `langchain4j-milvus` (legacy)
- 
--Built on the Milvus Java SDK v1. Supports dense vector search only. It will be removed in LangChain4j 2.0
-+Built on the older `MilvusServiceClient` (v1) API of the Milvus Java SDK. Supports dense vector search only. It will be removed in LangChain4j 2.0
- (see the note above); new projects should prefer `langchain4j-milvus-v2`.
- 
- ### Maven Dependency
-@@ -228,6 +231,10 @@ MilvusEmbeddingStore store = MilvusEmbeddingStore.builder()
-     .build();
- ```
- 
-+### Compatibility
-+
-+- The store reads the Milvus server version once, when it is created; restart the application after upgrading the Milvus server to a new major version.
-+
- ---
- 
- ## Examples
-```
-
-**File**: `langchain4j-milvus-v2/src/main/java/dev/langchain4j/store/embedding/milvus/v2/CollectionRequestBuilder.java` (modified, +28/-20)
-```diff
-@@ -55,15 +55,16 @@ static SearchReq buildSearchRequest(
-             String collectionName,
-             FieldDefinition fieldDefinition,
-             IndexParam.MetricType metricType,
--            ConsistencyLevel consistencyLevel) {
-+            ConsistencyLevel consistencyLevel,
-+            MilvusServerVersion serverVersion) {
-         return createDenseSearchReq(
-                 collectionName,
-                 embeddingSearchRequest.queryEmbedding(),
-                 fieldDefinition,
-                 metricType,
-                 consistencyLevel,
-                 embeddingSearchRequest.maxResults(),
--                embeddingSearchRequest.filter());
-+                filterExpression(embeddingSearchRequest.filter(), fieldDefinition, serverVersion));
-     }
- 
-     static HybridSearchReq buildHybridSearchRequest(
-@@ -73,15 +74,16 @@ static HybridSearchReq buildHybridSearchRequest(
-             IndexParam.MetricType metricType,
-             IndexParam.MetricType sparseMetricType,
-             MilvusV2Ranker ranker,
--            ConsistencyLevel consistencyLevel) {
-+            ConsistencyLevel consistencyLevel,
-+            MilvusServerVersion serverVersion) {
-         return createHybridSearchReq(
-                 fieldDefinition,
-                 embeddingSearchRequest.queryEmbedding(),
-                 embeddingSearchRequest.sparseEmbedding(),
-                 embeddingSearchRequest.query(),
-                 metricType,
-                 sparseMetricType,
--                embeddingSearchRequest.filter(),
-+                filterExpression(embeddingSearchRequest.filter(), fieldDefinition, serverVersion),
-                 embeddingSearchRequest.maxResults(),
-                 collectionName,
-                 ranker,
-@@ -95,7 +97,7 @@ static SearchReq createDenseSearchReq(
-             IndexParam.MetricType metricType,
-             ConsistencyLevel consistencyLevel,
-             int maxResults,
--            Filter filter) {
-+            String filterExpression) {
-         SearchReq.SearchReqBuilder builder = SearchReq.builder()
-                 .collectionName(collectionName)
-                 .data(Collections.singletonList(new FloatVec(denseEmbedding.vectorAsList())))
-@@ -108,8 +110,8 @@ static SearchReq createDenseSearchReq(
-                         fieldDefinition.getTextFieldName(),
-                         fieldDefinition.getMetadataFieldName()));
- 
--        if (filter != null) {
--            builder.filter(MilvusV2MetadataFilterMapper.map(filter, fieldDefinition.getMetadataFieldName()));
-+        if (filterExpression != null) {
-+            builder.filter(filterExpression);
-         }
-         return builder.build();
-     }
-@@ -118,16 +120,16 @@ static AnnSearchReq createDenseAnnSearchReq(
-             FieldDefinition fieldDefinition,
-             Embedding queryEmbedding,
-             IndexParam.MetricType metricType,
--            Filter filter,
-+            String filterExpression,
-             int maxResults) {
-         AnnSearchReq.AnnSearchReqBuilder builder = AnnSearchReq.builder()
-                 .vectorFieldName(fieldDefinition.getVectorFieldName())
-                 .vectors(Collections.singletonList(new FloatVec(queryEmbedding.vectorAsList())))
-                 .metricType(metricType)
-                 .limit(maxResults);
- 
--        if (filter != null) {
--            builder.filter(MilvusV2MetadataFilterMapper.map(filter, fieldDefinition.getMetadataFieldName()));
-+        if (filterExpression != null) {
-+            builder.filter(filterExpression);
-         }
-         return builder.build();
-     }
-@@ -137,16 +139,16 @@ static AnnSearchReq createSparseAnnSearchReq(
-             FieldDefinition fieldDefinition,
-             SparseEmbedding sparseEmbedding,
-             IndexParam.MetricType metricType,
--            Filter filter,
-+            String filterExpression,
-             int maxResults) {
-         AnnSearchReq.AnnSearchReqBuilder builder = AnnSearchReq.builder()
-                 .vectorFieldName(fieldDefinition.getSparseVectorFieldName())
-                 .vectors(Collections.singletonList(new SparseFloatVec(sparseEmbedding.vectorAsSortedMap())))
-                 .metricType(metricType)
-                 .limit(maxResults);
- 
--        if (filter != null) {
--            builder.filter(MilvusV2MetadataFilterMapper.map(filter, fieldDefinition.getMetadataFieldName()));
-+        if (filterExpression != null) {
-+            builder.filter(filterExpression);
-         }
-         return builder.build();
-     }
-@@ -156,7 +158,7 @@ static AnnSearchReq createSparseAnnSearchReq(
-             FieldDefinition fieldDefinition,
-             String queryText,
-             IndexParam.MetricType metricType,
--            Filter filter,
-+            String filterExpression,
-             int maxResults) {
-         if (metricType != IndexParam.MetricType.BM25) {
-             throw new IllegalArgumentException(
-@@ -172,8 +174,8 @@ static AnnSearchReq createSparseAnnSearchReq(
-                 .metricType(met
-```
-
-**File**: `langchain4j-milvus-v2/src/main/java/dev/langchain4j/store/embedding/milvus/v2/MilvusServerVersion.java` (added, +51/-0)
-```diff
-@@ -0,0 +1,51 @@
-+package dev.langchain4j.store.embedding.milvus.v2;
-+
-+import io.milvus.v2.client.MilvusClientV2;
-+import java.util.regex.Matcher;
-+import java.util.regex.Pattern;
-+import org.slf4j.Logger;
-+import org.slf4j.LoggerFactory;
-+
-+/**
-+ * The version of the Milvus server, read once when an embedding store is created.
-+ */
-+record MilvusServerVersion(int majorVersion) {
-+
-+    /**
-+     * Used when the server version cannot be read or parsed: it behaves like Milvus 2.
-+     */
-+    static final MilvusServerVersion DEFAULT = new MilvusServerVersion(2);
-+
-+    private static final Logger log = LoggerFactory.getLogger(MilvusServerVersion.class);
-+
-+    // e.g. "2.5.10", "v2.5.10", "pkg/v2.5.4", "3.0.4" or "2.6-20261023-b8d2ca4240"
-+    private static final Pattern MAJOR_VERSION = Pattern.compile("(?:pkg/)?v?(\\d{1,4})(?:[.-].*)?");
-+
-+    static MilvusServerVersion from(MilvusClientV2 milvusClient) {
-+        String version = null;
-+        try {
-+            version = milvusClient.getServerVersion();
-+        } catch (RuntimeException e) {
-+            log.debug("Could not read the Milvus server version", e);
-+        }
-+        return from(version);
-+    }
-+
-+    static MilvusServerVersion from(String version) {
-+        Matcher matcher = MAJOR_VERSION.matcher(version == null ? "" : version.trim());
-+        if (matcher.matches()) {
-+            return new MilvusServerVersion(Integer.parseInt(matcher.group(1)));
-+        }
-+        log.debug("Unknown Milvus server version '{}', using the behavior of Milvus 2", version);
-+        return DEFAULT;
-+    }
-+
-+    /**
-+     * Milvus 3 resolves a backslash before any character of a LIKE pattern, while Milvus 2.5.10 to 2.6 resolve it
-+     * only before {@code %} and {@code _}. A backslash that is part of a value therefore needs one more level of
-+     * escaping on Milvus 3.
-+     */
-+    boolean likePatternNeedsExtraBackslash() {
-+        return majorVersion >= 3;
-+    }
-+}
-```
-
-**File**: `langchain4j-milvus-v2/src/main/java/dev/langchain4j/store/embedding/milvus/v2/MilvusV2EmbeddingStore.java` (modified, +13/-3)
-```diff
-@@ -60,6 +60,7 @@ public class MilvusV2EmbeddingStore implements EmbeddingStore<TextSegment> {
-     private static final String DEFAULT_SPARSE_VECTOR_FIELD_NAME = "sparse_vector";
- 
-     private final MilvusClientV2 milvusClientV2;
-+    private final MilvusServerVersion serverVersion;
-     private final String collectionName;
-     private final IndexParam.MetricType metricType;
-     private final IndexParam.MetricType sparseMetricType;
-@@ -85,6 +86,7 @@ private MilvusV2EmbeddingStore(Builder builder) {
-                         builder.databaseName);
- 
-         this.milvusClientV2 = ensureNotNull(client, "milvusClientV2");
-+        this.serverVersion = MilvusServerVersion.from(this.milvusClientV2);
-         this.collectionName = getOrDefault(builder.collectionName, "default");
-         this.metricType = getOrDefault(builder.metricType, IndexParam.MetricType.COSINE);
-         this.sparseMode = getOrDefault(builder.sparseMode, MilvusSparseMode.BM25);
-@@ -246,11 +248,17 @@ public EmbeddingSearchResult<TextSegment> search(MilvusV2EmbeddingSearchRequest
-                     metricType,
-                     sparseMetricType,
-                     ranker,
--                    consistencyLevel);
-+                    consistencyLevel,
-+                    serverVersion);
-             searchResp = CollectionOperationsExecutor.search(milvusClientV2, hybridSearchReq);
-         } else {
-             SearchReq searchReq = buildSearchRequest(
--                    embeddingSearchRequest, collectionName, fieldDefinition, metricType, consistencyLevel);
-+                    embeddingSearchRequest,
-+                    collectionName,
-+                    fieldDefinition,
-+                    metricType,
-+                    consistencyLevel,
-+                    serverVersion);
-             searchResp = CollectionOperationsExecutor.search(milvusClientV2, searchReq);
-         }
- 
-@@ -433,7 +441,9 @@ public void removeAll(Collection<String> ids) {
-     public void removeAll(Filter filter) {
-         ensureNotNull(filter, "filter");
-         removeForVector(
--                this.milvusClientV2, this.collectionName, map(filter, this.fieldDefinition.getMetadataFieldName()));
-+                this.milvusClientV2,
-+                this.collectionName,
-+                map(filter, this.fieldDefinition.getMetadataFieldName(), this.serverVersion));
+@@ -322,7 +322,7 @@ public static A2AClientBuilder<UntypedAgent> a2aBuilder(String a2aServerUrl, Str
+      * @return a new A2AClientBuilder instance
+      */
+     public static <T> A2AClientBuilder<T> a2aBuilder(String a2aServerUrl, Class<T> agentServiceClass) {
+-        return A2AService.get().a2aBuilder(a2aServerUrl,null, agentServiceClass);
++        return A2AService.get().a2aBuilder(a2aServerUrl, null, agentServiceClass);
      }
  
      /**
+@@ -874,10 +874,12 @@ private static AgentExecutor createA2AClientAgent(Class<?> agentServiceClass, Me
+ 
+     private static AgentExecutor createRegistryAgent(Class<?> agentServiceClass, Method registryMethod) {
+         if (activationCondition(agentServiceClass) != null) {
+-            throw new AgenticSystemConfigurationException("An @ActivationCondition is not supported on the @RegistryAgent "
+-                    + agentServiceClass.getName() + ", because its agent is taken already built from the registry. "
+-                    + "Set the activation condition when building the agent registered as '"
+-                    + registryMethod.getAnnotation(RegistryAgent.class).value() + "'.");
++            throw new AgenticSystemConfigurationException(
++                    "An @ActivationCondition is not supported on the @RegistryAgent "
++                            + agentServiceClass.getName()
++                            + ", because its agent is taken already built from the registry. "
++                            + "Set the activation condition when building the agent registered as '"
++                            + registryMethod.getAnnotation(RegistryAgent.class).value() + "'.");
+         }
+         String registryName = registryMethod.getAnnotation(RegistryAgent.class).value();
+         AgentInstance agent = AgentsRegistry.get().getAgent(registryName);
+@@ -943,8 +945,7 @@ private static AgentExecutor createMcpClientAgent(Class<?> agentServiceClass, Me
+         var mcpAgent = mcpMethod.getAnnotation(McpClientAgent.class);
+ 
+         Object mcpClient = selectMethod(
+-                        agentServiceClass,
+-                        method -> method.isAnnotationPresent(McpClientSupplier.class))
++                        agentServiceClass, method -> method.isAnnotationPresent(McpClientSupplier.class))
+                 .map(method -> {
+                     checkReturnType(method, Object.class);
+                     return invokeSupplierWithResolvers(agentServiceClass, method, Object.class);
+@@ -1008,6 +1009,7 @@ private static AgentExecutor createHumanInTheLoopAgent(Class<?> agentServiceClas
+                 humanInTheLoop.description(),
+                 humanInTheLoop.outputKey(),
+                 humanInTheLoop.async(),
++                false,
+                 activationCondition(agentServiceClass));
+         return new AgentExecutor(agentInvoker, humanInTheLoopBuilder.build());
+     }
 ```
 
-**File**: `langchain4j-milvus-v2/src/main/java/dev/langchain4j/store/embedding/milvus/v2/MilvusV2MetadataFilterMapper.java` (modified, +68/-27)
+**File**: `langchain4j-agentic/src/main/java/dev/langchain4j/agentic/internal/AgentUtil.java` (modified, +17/-3)
 ```diff
-@@ -16,45 +16,71 @@
+@@ -139,11 +139,19 @@ public static AgentExecutor nonAiAgentToExecutor(Object agent, Method agenticMet
+         String description = isNullOrBlank(annotation.description()) ? annotation.value() : annotation.description();
+         String outputKey = AgentUtil.outputKey(annotation.outputKey(), annotation.typedOutputKey());
+         return new AgentExecutor(
+-                nonAiAgentInvoker(agent, agenticMethod, name, description, outputKey, annotation.async()), agent);
++                nonAiAgentInvoker(
++                        agent, agenticMethod, name, description, outputKey, annotation.async(), annotation.optional()),
++                agent);
+     }
  
- class MilvusV2MetadataFilterMapper {
+     private static AgentInvoker nonAiAgentInvoker(
+-            Object agent, Method agenticMethod, String name, String description, String outputKey, boolean async) {
++            Object agent,
++            Method agenticMethod,
++            String name,
++            String description,
++            String outputKey,
++            boolean async,
++            boolean optional) {
+         if (agent instanceof AgentSpecsProvider spec) {
+             return AgentInvoker.fromSpec(spec, agenticMethod, name);
+         }
+@@ -156,6 +164,7 @@ private static AgentInvoker nonAiAgentInvoker(
+                     description,
+                     outputKey,
+                     async,
++                    optional,
+                     DeclarativeUtil.activationCondition(agentClass));
+         }
+         // the parameters of an agent passed as an instance are not provided by a SupplierParameterResolver
+@@ -165,12 +174,13 @@ private static AgentInvoker nonAiAgentInvoker(
+                 description,
+                 outputKey,
+                 async,
++                optional,
+                 DeclarativeUtil.activationCondition(agent.getClass()));
+     }
  
--    static String map(Filter filter, String metadataFieldName) {
-+    static String map(Filter filter, String metadataFieldName, MilvusServerVersion serverVersion) {
-+        return map(filter, metadataFieldName, serverVersion, false);
+     public static AgentInvoker nonAiAgentInvoker(
+             Method agenticMethod, String name, String description, String outputKey, boolean async) {
+-        return nonAiAgentInvoker(agenticMethod, name, description, outputKey, async, null);
++        return nonAiAgentInvoker(agenticMethod, name, description, outputKey, async, false, null);
+     }
+ 
+     public static AgentInvoker nonAiAgentInvoker(
+@@ -179,6 +189,7 @@ public static AgentInvoker nonAiAgentInvoker(
+             String description,
+             String outputKey,
+             boolean async,
++            boolean optional,
+             AgentCondition activationCondition) {
+         return AgentInvoker.fromMethod(
+                 new NonAiAgentInstance(
+@@ -188,6 +199,7 @@ public static AgentInvoker nonAiAgentInvoker(
+                         agenticMethod.getGenericReturnType(),
+                         outputKey,
+                         async,
++                        optional,
+                         argumentsFromMethod(agenticMethod),
+                         null,
+                         activationCondition),
+@@ -205,6 +217,7 @@ public static AgentInvoker nonAiAgentInvoker(
+             String description,
+             String outputKey,
+             boolean async,
++            boolean optional,
+             AgentCondition activationCondition) {
+         Method agenticMethod = parameters.method();
+         NonAiAgentInstance agentInstance = new NonAiAgentInstance(
+@@ -214,6 +227,7 @@ public static AgentInvoker nonAiAgentInvoker(
+                 agenticMethod.getGenericReturnType(),
+                 outputKey,
+                 async,
++                optional,
+                 parameters.frameworkArguments(),
+                 null,
+                 activationCondition);
+```
+
+**File**: `langchain4j-agentic/src/main/java/dev/langchain4j/agentic/internal/NonAiAgentInstance.java` (modified, +82/-32)
+```diff
+@@ -1,5 +1,7 @@
+ package dev.langchain4j.agentic.internal;
+ 
++import static dev.langchain4j.agentic.observability.ComposedAgentListener.composeWithInherited;
++
+ import dev.langchain4j.agentic.observability.AgentListener;
+ import dev.langchain4j.agentic.observability.ComposedAgentListener;
+ import dev.langchain4j.agentic.planner.AgentArgument;
+@@ -12,15 +14,14 @@
+ import java.util.List;
+ import java.util.Objects;
+ 
+-import static dev.langchain4j.agentic.observability.ComposedAgentListener.composeWithInherited;
+-
+ public class NonAiAgentInstance implements AgentInstance, InternalAgent {
+     private final Class<?> type;
+     private final String name;
+     private final String description;
+     private final Type outputType;
+     private final String outputKey;
+     private final boolean async;
++    private final boolean optional;
+     private final List<AgentArgument> arguments;
+     private final AgentCondition activationCondition;
+ 
+@@ -29,22 +30,50 @@ public class NonAiAgentInstance implements AgentInstance, InternalAgent {
+     private InternalAgent parent;
+     private String agentId;
+ 
+-    public NonAiAgentInstance(Class<?> type, String name, String description,
+-            Type outputType, String outputKey, boolean async, List<AgentArgument> arguments,
++    public NonAiAgentInstance(
++            Class<?> type,
++            String name,
++            String description,
++            Type outputType,
++            String outputKey,
++            boolean async,
++            List<AgentArgument> arguments,
+             AgentListener listener) {
+-        this(type, name, description, outputType, outputKey, async, arguments, listener, null);
+-    }
+-
+-    public NonAiAgentInstance(Class<?> type, String name, String description,
+-            Type outputType, String outputKey, boolean async, List<AgentArgument> arguments,
+-            AgentListener listener, AgentCondition activationCondition) {
++        this(type, name, description, outputType, outputKey, async, false, arguments, listener, null);
 +    }
 +
-+    private static String map(Filter filter, String metadataFieldName, MilvusServerVersion serverVersion, boolean insideNot) {
-         if (filter instanceof ContainsString containsString) {
--            return mapContains(containsString, metadataFieldName);
-+            return requireKeyIfInsideNot(
-+                    insideNot,
-+                    containsString.key(),
-+                    metadataFieldName,
-+                    mapContains(containsString, metadataFieldName, serverVersion));
-         } else if (filter instanceof IsEqualTo isEqualTo) {
--            return mapEqual(isEqualTo, metadataFieldName);
-+            return requireKeyIfInsideNot(
-+                    insideNot, isEqualTo.key(), metadataFieldName, mapEqual(isEqualTo, metadataFieldName));
-         } else if (filter instanceof IsNotEqualTo isNotEqualTo) {
--            return mapNotEqual(isNotEqualTo, metadataFieldName);
-+            return keyMissingOr(isNotEqualTo.key(), metadataFieldName, mapNotEqual(isNotEqualTo, metadataFieldName));
-         } else if (filter instanceof IsGreaterThan isGreaterThan) {
--            return mapGreaterThan(isGreaterThan, metadataFieldName);
-+            return requireKeyIfInsideNot(
-+                    insideNot, isGreaterThan.key(), metadataFieldName, mapGreaterThan(isGreaterThan, metadataFieldName));
-         } else if (filter instanceof IsGreaterThanOrEqualTo isGreaterThanOrEqualTo) {
--            return mapGreaterThanOrEqual(isGreaterThanOrEqualTo, metadataFieldName);
-+            return requireKeyIfInsideNot(
-+                    insideNot,
-+                    isGreaterThanOrEqualTo.key(),
-+                    metadataFieldName,
-+                    mapGreaterThanOrEqual(isGreaterThanOrEqualTo, metadataFieldName));
-         } else if (filter instanceof IsLessThan isLessThan) {
--            return mapLessThan(isLessThan, metadataFieldName);
-+            return requireKeyIfInsideNot(
-+                    insideNot, isLessThan.key(), metadataFieldName, mapLessThan(isLessThan, metadataFieldName));
-         } else if (filter instanceof IsLessThanOrEqualTo isLessThanOrEqualTo) {
--            return mapLessThanOrEqual(isLessThanOrEqualTo, metadataFieldName);
-+            return requireKeyIfInsideNot(
-+                    insideNot,
-+                    isLessThanOrEqualTo.key(),
-+                    metadataFieldName,
-+                    mapLessThanOrEqual(isLessThanOrEqualTo, metadataFieldName));
-         } else if (filter instanceof IsIn isIn) {
--            return mapIn(isIn, metadataFieldName);
-+            return requireKeyIfInsideNot(insideNot, isIn.key(), metadataFieldName, mapIn(isIn, metadataFieldName));
-         } else if (filter instanceof IsNotIn isNotIn) {
--            return mapNotIn(isNotIn, metadataFieldName);
-+            return keyMissingOr(isNotIn.key(), metadataFieldName, mapNotIn(isNotIn, metadataFieldName));
-         } else if (filter instanceof And and) {
--            return mapAnd(and, metadataFieldName);
-+            return format(
-+                    "%s and %s",
-+                    map(and.left(), metadataFieldName, serverVersion, insideNot),
-+                    map(and.right(), metadataFieldName, serverVersion, insideNot));
-         } else if (filter instanceof Not not) {
--            return mapNot(not, metadataFieldName);
-+            return format("not(%s)", map(not.expression(), metadataFieldName, serverVersion, true));
-         } else if (filter instanceof Or or) {
--            return mapOr(or, metadataFieldName);
-+            return format(
-+                    "(%s or %s)",
-+                    map(or.left(), metadataFieldName, serverVersion, insideNot),
-+                    map(or.right(), metadataFieldName, serverVersion, insideNot));
-         } else {
-             throw new UnsupportedOperationException(
-                     "Unsupported filter type: " + filter.getClass().getName());
++    public NonAiAgentInstance(
++            Class<?> type,
++            String name,
++            String description,
++            Type outputType,
++            String outputKey,
++            boolean async,
++            List<AgentArgument> arguments,
++            AgentListener listener,
++            AgentCondition activationCondition) {
++        this(type, name, description, outputType, outputKey, async, false, arguments, listener, activationCondition);
++    }
++
++    public NonAiAgentInstance(
++            Class<?> type,
++            String name,
++            String description,
++            Type outputType,
++            String outputKey,
++            boolean async,
++            boolean optional,
++            List<AgentArgument> arguments,
++            AgentListener listener,
++            AgentCondition activationCondition) {
+         this.type = type;
+         this.name = name;
+         this.agentId = name;
+         this.description = description;
+         this.outputType = outputType;
+         this.outputKey = outputKey;
+         this.async = async;
++        this.optional = optional;
+         this.arguments = arguments;
+         this.listener = listener;
+         this.activationCondition = activationCondition;
+@@ -67,7 +96,9 @@ public List<AgentInstance> subagents() {
+ 
+     @Override
+     public AgenticSystemTopology topology() {
+-        return type == HumanInTheLoop.class ? AgenticSystemTopology.HUMAN_IN_THE_LOOP : AgenticSystemTopology.NON_AI_AGENT;
++        return type == HumanInTheLoop.class
++                ? AgenticSystemTopology.HUMAN_IN_THE_LOOP
++                : AgenticSystemTopology.NON_AI_AGENT;
+     }
+ 
+     @Override
+@@ -105,6 +136,11 @@ public boolean async() {
+         return async;
+     }
+ 
++    @Override
++    public boolean optional() {
++        return optional;
++    }
++
+     @Override
+     public List<AgentArgument> arguments() {
+         return arguments;
+@@ -122,7 +158,9 @@ public AgentListener listener() {
+ 
+     @Override
+     public void registerInheritedParentListener(AgentListener parentListener) {
+-        if (parentListener != null && parentListener.inheritedBySubagents() && isNewListener(listener, parentListener)) {
++        if (parentListener != null
++                && parentListener.inheritedBySubagents()
++                && isNewListener(listener, parentListener)) {
+             listener = composeWithInherited(listener(), parentListener);
          }
      }
- 
--    private static String mapContains(ContainsString containsString, String metadataFieldName) {
-+    private static String mapContains(
-+            ContainsString containsString, String metadataFieldName, MilvusServerVersion serverVersion) {
-         // ContainsString is a literal substring match (see Filter / ContainsString#test, which uses
-         // String#contains). Milvus LIKE treats % and _ as wildcards, so any % or _ in the user-supplied
-         // value must be escaped to be matched literally; only the surrounding % we add are real wildcards.
-         return format(
-                 "%s LIKE %s",
-                 formatKey(containsString.key(), metadataFieldName),
--                formatLikePattern(containsString.comparisonValue()));
-+          
+@@ -142,34 +180,46 @@ public boolean equals(Object obj) {
+         if (obj == this) return true;
+         if (obj == null || obj.getClass() != this.getClass()) return false;
+         var that = (NonAiAgentInstance) obj;
+-        return Objects.equals(this.type, that.type) &&
+-                Objects.equals(this.name, that.name) &&
+-                Objects.equals(this.description, that.description) &&
+-                Objects.equals(this.outputType, that.outputType) &&
+-                Objects.equals(this.outputKey, tha
 ```
 
-**File**: `langchain4j-milvus-v2/src/test/java/dev/langchain4j/store/embedding/milvus/v2/CollectionRequestBuilderTest.java` (modified, +62/-5)
+**File**: `langchain4j-agentic/src/test/java/dev/langchain4j/agentic/NonAiOptionalAgentTest.java` (added, +109/-0)
 ```diff
-@@ -1,5 +1,6 @@
- package dev.langchain4j.store.embedding.milvus.v2;
- 
-+import static dev.langchain4j.store.embedding.filter.MetadataFilterBuilder.metadataKey;
- import static dev.langchain4j.store.embedding.milvus.v2.CollectionRequestBuilder.buildHybridSearchRequest;
- import static dev.langchain4j.store.embedding.milvus.v2.CollectionRequestBuilder.buildQueryRequest;
- import static dev.langchain4j.store.embedding.milvus.v2.CollectionRequestBuilder.buildSearchRequest;
-@@ -9,8 +10,10 @@
- import static dev.langchain4j.store.embedding.milvus.v2.CollectionRequestBuilder.createSparseAnnSearchReq;
- 
- import dev.langchain4j.data.embedding.Embedding;
-+import dev.langchain4j.store.embedding.filter.Filter;
- import io.milvus.v2.common.ConsistencyLevel;
- import io.milvus.v2.common.IndexParam;
-+import io.milvus.v2.service.vector.request.AnnSearchReq;
- import io.milvus.v2.service.vector.request.HybridSearchReq;
- import io.milvus.v2.service.vector.request.QueryReq;
- import io.milvus.v2.service.vector.request.SearchReq;
-@@ -25,6 +28,15 @@ class CollectionRequestBuilderTest implements WithAssertions {
-     private static final FieldDefinition FIELD_DEFINITION =
-             new FieldDefinition("id", "text", "metadata", "vector", "sparse_vector");
- 
-+    private static final MilvusServerVersion MILVUS_2 = MilvusServerVersion.from("2.6.26");
-+    private static final MilvusServerVersion MILVUS_3 = MilvusServerVersion.from("3.0.4");
-+
-+    private static final Filter FILTER = Filter.not(metadataKey("k").containsString("a\\b"));
-+
-+    // Milvus 3 needs one more level of escaping for the backslash in the LIKE pattern
-+    private static final String FILTER_EXPRESSION_FOR_MILVUS_3 =
-+            "not(((exists metadata[\"k\"]) and metadata[\"k\"] LIKE \"%a\\\\\\\\b%\"))";
-+
-     @Test
-     void should_build_vector_search_request() {
-         // given
-@@ -41,7 +53,8 @@ void should_build_vector_search_request() {
-                 COLLECTION_NAME,
-                 FIELD_DEFINITION,
-                 IndexParam.MetricType.COSINE,
--                ConsistencyLevel.STRONG);
-+                ConsistencyLevel.STRONG,
-+                MILVUS_2);
- 
-         // then
-         assertThat(result.getCollectionName()).isEqualTo(COLLECTION_NAME);
-@@ -85,7 +98,8 @@ void should_build_hybrid_search_request() {
-                 IndexParam.MetricType.COSINE,
-                 IndexParam.MetricType.IP,
-                 ranker,
--                ConsistencyLevel.STRONG);
-+                ConsistencyLevel.STRONG,
-+                MILVUS_2);
- 
-         // then
-         assertThat(result.getCollectionName()).isEqualTo(COLLECTION_NAME);
-@@ -144,7 +158,7 @@ void should_create_hybrid_search_request_with_ann_search_reqs() {
-                 null,
-                 IndexParam.MetricType.COSINE,
-                 IndexParam.MetricType.IP,
--                null, // filter
-+                null, // filter expression
-                 20,
-                 COLLECTION_NAME,
-                 ranker,
-@@ -179,7 +193,7 @@ void should_create_dense_ann_search_request() {
-                 FIELD_DEFINITION,
-                 queryEmbedding,
-                 IndexParam.MetricType.COSINE,
--                null, // filter
-+                null, // filter expression
-                 5);
- 
-         // then
-@@ -198,12 +212,55 @@ void should_create_sparse_ann_search_request() {
-                 FIELD_DEFINITION,
-                 sparseEmbedding,
-                 IndexParam.MetricType.IP,
--                null, // filter
-+                null, // filter expression
-                 10);
- 
-         // then
-         assertThat(result.getVectorFieldName()).isEqualTo("sparse_vector");
-         assertThat(result.getMetricType()).isEqualTo(IndexParam.MetricType.IP);
-         assertThat(result.getLimit()).isEqualTo(10);
-     }
-+
-+    @Test
-+    void should_put_the_filter_expression_on_the_search_request() {
-+        MilvusV2EmbeddingSearchRequest searchRequest = MilvusV2EmbeddingSearchRequest.milvusBuilder()
-+                .queryEmbedding(Embedding.from(Arrays.asList(1.0f, 2.0f, 3.0f)))
-+                .filter(FILTER)
-+                .maxResults(5)
-+                .build();
-+
-+        SearchReq result = buildSearchRequest(
-+                searchRequest,
-+                COLLECTION_NAME,
-+                FIELD_DEFINITION,
-+                IndexParam.MetricType.COSINE,
-+                ConsistencyLevel.STRONG,
-+                MILVUS_3);
-+
-+        assertThat(result.getFilter()).isEqualTo(FILTER_EXPRESSION_FOR_MILVUS_3);
-+    }
-+
-+    @Test
-+    void should_put_the_filter_expression_on_every_ann_search_request_of_a_hybrid_search() {
-+        MilvusV2EmbeddingSearchRequest searchRequest = MilvusV2EmbeddingSearchRequest.milvusBuilder()
-+                .queryEmbedding(Embedding.from(Arrays.asList(1.0f, 2.0f, 3.0f)))
-+                .sparseEmbedding(new SparseEmbedding(new long[] {1L}, new float[] {0.1f}))
-+                .filter(FILTER)
-+                .maxResults(5)
-+                .build();
-+
-```
-
-**File**: `langchain4j-milvus-v2/src/test/java/dev/langchain4j/store/embedding/milvus/v2/MilvusServerVersionTest.java` (added, +51/-0)
-```diff
-@@ -0,0 +1,51 @@
-+package dev.langchain4j.store.embedding.milvus.v2;
+@@ -0,0 +1,109 @@
++package dev.langchain4j.agentic;
 +
 +import static org.assertj.core.api.Assertions.assertThat;
-+import static org.mockito.Mockito.mock;
-+import static org.mockito.Mockito.when;
++import static org.junit.jupiter.api.Assertions.assertThrows;
 +
-+import io.milvus.v2.client.MilvusClientV2;
++import dev.langchain4j.agentic.agent.MissingArgumentException;
++import dev.langchain4j.agentic.declarative.SequenceAgent;
++import dev.langchain4j.agentic.scope.ResultWithAgenticScope;
++import dev.langchain4j.service.V;
++import java.util.Map;
++import java.util.concurrent.atomic.AtomicInteger;
++import org.junit.jupiter.api.BeforeEach;
 +import org.junit.jupiter.api.Test;
-+import org.junit.jupiter.params.ParameterizedTest;
-+import org.junit.jupiter.params.provider.CsvSource;
-+import org.junit.jupiter.params.provider.NullAndEmptySource;
-+import org.junit.jupiter.params.provider.ValueSource;
 +
-+class MilvusServerVersionTest {
++/**
++ * The {@code optional} attribute of {@code @Agent} is honored for non-AI agents: when one of its
++ * arguments is missing from the agentic scope, the agent is skipped instead of failing the whole
++ * agentic system.
++ */
++class NonAiOptionalAgentTest {
 +
-+    @ParameterizedTest
-+    @CsvSource({"2.5.10, 2", "v2.5.10, 2", "pkg/v2.5.4, 2", "2.6.26, 2", "2.6-20261023-b8d2ca4240, 2", "3.0.4, 3", "v3.0.4, 3", "10.1, 10"})
-+    void should_parse_major_version(String version, int expectedMajorVersion) {
-+        assertThat(MilvusServerVersion.from(version).majorVersion()).isEqualTo(expectedMajorVersion);
++    static final AtomicInteger FIX_INVOCATIONS = new AtomicInteger();
++
++    public static class Analyzer {
++
++        @Agent(description = "Analyzes the request", outputKey = "analysis")
++        public static String analyze(@V("request") String request) {
++            return "analysis of " + request;
++        }
 +    }
 +
-+    @ParameterizedTest
-+    @NullAndEmptySource
-+    @ValueSource(strings = {"unknown", "Zilliz Cloud", "x2.5.10", "99999.0"})
-+    void should_use_milvus_2_when_version_is_unknown(String version) {
-+        assertThat(MilvusServerVersion.from(version)).isEqualTo(MilvusServerVersion.DEFAULT);
++    public static class FixDelegator {
++
++        @Agent(description = "Delegates the fix to a remote service", outputKey = "fix", optional = true)
++        public static String applyFix(@V("repoUrl") String repoUrl) {
++            FIX_INVOCATIONS.incrementAndGet();
++            return "fixed " + repoUrl;
++        }
++    }
++
++    public static class MandatoryFixDelegator {
++
++        @Agent(description = "Delegates the fix to a remote service", outputKey = "fix")
++        public static String applyFix(@V("repoUrl") String repoUrl) {
++            FIX_INVOCATIONS.incrementAndGet();
++            return "fixed " + repoUrl;
++        }
++    }
++
++    public interface Pipeline {
++
++        @SequenceAgent(
++                outputKey = "analysis",
++                subAgents = {Analyzer.class, FixDelegator.class})
++        ResultWithAgenticScope<String> process(@V("request") String request);
++    }
++
++    @BeforeEach
++    void resetInvocations() {
++        FIX_INVOCATIONS.set(0);
 +    }
 +
 +    @Test
-+    void should_read_the_major_version_from_the_client() {
-+        MilvusClientV2 client = mock(MilvusClientV2.class);
-+        when(client.getServerVersion()).thenReturn("3.0.4");
++    void optional_non_ai_agent_is_skipped_when_its_argument_is_missing() {
++        UntypedAgent workflow = AgenticServices.sequenceBuilder()
++                .subAgents(Analyzer.class, FixDelegator.class)
++                .outputKey("analysis")
++                .build();
 +
-+        assertThat(MilvusServerVersion.from(client)).isEqualTo(MilvusServerVersion.from("3.0.4"));
++        assertThat(workflow.invoke(Map.of("request", "the request"))).isEqualTo("analysis of the request");
++        assertThat(FIX_INVOCATIONS).hasValue(0);
 +    }
 +
 +    @Test
-+    void should_use_milvus_2_when_reading_the_version_throws() {
-+        MilvusClientV2 client = mock(MilvusClientV2.class);
-+        when(client.getServerVersion()).thenThrow(new RuntimeException("unavailable"));
++    void optional_non_ai_agent_runs_when_its_argument_is_present() {
++        UntypedAgent workflow = AgenticServices.sequenceBuilder()
++                .subAgents(Analyzer.class, FixDelegator.class)
++                .outputKey("fix")
++                .build();
 +
-+        assertThat(MilvusServerVersion.from(client)).isEqualTo(MilvusServerVersion.DEFAULT);
++        assertThat(workflow.invoke(Map.of("request", "the request", "repoUrl", "http://repo")))
++                .isEqualTo("fixed http://repo");
++        assertThat(FIX_INVOCATIONS).hasValue(1);
 +    }
 +
 +    @Test
-+    void only_milvus_3_needs_an_extra_backslash_in_like_patterns() {
-+        assertThat(MilvusServerVersion.DEFAULT.likePatternNeedsExtraBackslash()).isFalse();
-+        assertThat(MilvusServerVersion.from("2.6.26").likePatternNeedsExtraBackslash()).isFalse();
-+        assertThat(MilvusServerVersion.from("3.0.4").likePatternNeedsExtraBackslash()).isTrue();
++    void non_optional_non_ai_agent_fails_when_its_argument_is_missing() {
++        UntypedAgent workflow = AgenticServices.sequenceBuilder()
++                .subAgents(Analyzer.class, MandatoryFixDelegator.class)
++                .outputKey("analysis")
++                .build();
++
++        assertThat(assertThrows(
++                        MissingArgumentException.class, () -> workflow.invoke(Map.of("request", "the request"))))
++                .hasMessageContaining("repoUrl");
++    }
++
++    @Test
++    void declarative_optional_non_ai_agent_is_skipped_in_a_sequence() {
++        Pipeline pipeline = AgenticServices.createAgenticSystem(Pipeline.class);
++
++        ResultWithAgenticScope<String> result = pipeline.process("the request");
++
++        assertThat(result.result()).isEqualTo("analysis of the request");
++        assertThat(result.agenticScope().readState("fix")).isNull();
++        assertThat(result.agenticScope().readState("analysis")).isEqualTo("analysis of the request");
++        assertThat(FIX_INVOCATIONS).hasValue(0);
 +    }
 +}
 ```
 
+---
+
+### Incident Patch 3: `ee159440` (2026-11-03)
+**Commit Message**: fix(deps): update dependency com.google.code.gson:gson to v2.15.0 (#6949)
+
+This PR contains the following updates:
+
+| Package | Change |
+[Age](https://docs.renovatebot.com/merge-confidence/) |
+[Confidence](https://docs.renovatebot.com/merge-confidence/) |
+|---|---|---|---|
+| [com.google.code.gson:gson](https://redirect.github.com/google/gson) |
+`2.14.0` → `2.15.0` |
+![age](https://developer.mend.io/api/mc/badges/age/maven/com.google.code.gson:gson/2.15.0?slim=true)
+|
+![confidence](https://developer.mend.io/api/mc/badges/confidence/maven/com.google.code.gson:gson/2.14.0/2.15.0?slim=true)
+|
+
+---
+
+> [!WARNING]
+> Some dependencies could not be looked up. Check the [Dependency
+Dashboard](../issues/2069) for more information.
+
+---
+
+### Configuration
+
+📅 **Schedule**: (UTC)
+
+- Branch creation
+  - At any time (no schedule defined)
+- Automerge
+  - At any time (no schedule defined)
+
+🚦 **Automerge**: Disabled by config. Please merge this manually once you
+are satisfied.
+
+♻ **Rebasing**: Whenever PR becomes conflicted, or you tick the
+rebase/retry checkbox.
+
+🔕 **Ignore**: Close this PR and you won't be reminded about this update
+again.
+
+---
+
+- [ ] <!-- rebase-check -->If you want to rebase/r
+
+**File**: `langchain4j-agentic-a2a/pom.xml` (modified, +1/-1)
+```diff
+@@ -28,7 +28,7 @@
+             <dependency>
+                 <groupId>com.google.code.gson</groupId>
+                 <artifactId>gson</artifactId>
+-                <version>2.14.0</version>
++                <version>2.15.0</version>
+             </dependency>
+             <dependency>
+                 <groupId>com.google.errorprone</groupId>
+```
+
 #### Recent Merged Pull Requests:
-- **PR #6920** (2026-10-30): pgvector: cast filter values of unmapped types to `text` instead of `null` (@dliubarskyi)
-- **PR #6919** (2026-10-30): Renovate: wait 3 days before proposing a new Milvus image (@dliubarskyi)
-- **PR #6911** (2026-10-29): Upgrade the Milvus Java SDK to 2.6.27 (@dliubarskyi)
-- **PR #6907** (2026-10-29): Milvus: fix `isNotEqualTo`, `isNotIn` and `not(...)` filters on Milvus 2.6.20+ and Zilliz Cloud (@dliubarskyi)
-- **PR #6896** (2026-10-28): Validate the types of metadata filter comparison values (@dliubarskyi)
-- **PR #6895** (2026-10-28): Bind metadata filter values as parameters (pgvector, MariaDB) and map them strictly (Milvus, MongoDB Atlas, Chroma) (@dliubarskyi)
+- **PR #6959** (2026-11-03): Add ScoringModelListener to observe scoring (re-ranking) model calls (@dliubarskyi)
+- **PR #6954** (2026-11-03): fix(mcp): limit the size of messages received by the Streamable HTTP and WebSocket transports (@jmartisk)
+- **PR #6949** (2026-11-03): fix(deps): update dependency com.google.code.gson:gson to v2.15.0 (@renovate[bot])
+- **PR #6945** (2026-11-02): pgvector: reject `java.util.Date` and `java.sql.Timestamp` filter values with a clear message (@dliubarskyi)
+- **PR #6944** (2026-11-03): chore(deps): update dependency com.diffplug.spotless:spotless-maven-plugin to v2.46.1 (@renovate[bot])
+- **PR #6943** (2026-11-03): fix(deps): update dependency com.couchbase.client:java-client to v3.13.0 (@renovate[bot])
 
 ---
 
@@ -1983,28 +2032,32 @@ level of escaping. The store reads the server version once, when
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. agentic): reject loop agents without subagents or with maxIterations below 1 (#6
+## X. mcp): limit the size of messages received by the Streamable HTTP and WebSocket t
 
 **RULE**:
-When implementing operations in `langchain4j-agentic/src/main/java/dev/langchain4j/agentic/workflow/impl/LoopAgentServiceImpl.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in langchain4j/langchain4j. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/docs/tutorials/mcp.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in langchain4j/langchain4j. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0ee59caf`: agentic): reject loop agents without subagents or with maxIterations below 1 (#6882). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5ce59cd7`: mcp): limit the size of messages received by the Streamable HTTP and WebSocket transports (#6954). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `langchain4j-agentic/src/main/java/dev/langchain4j/agentic/workflow/impl/LoopAgentServiceImpl.java`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/docs/tutorials/mcp.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-import dev.langchain4j.agentic.planner.AgenticSystemConfigurationException;
-        if (subagents.isEmpty()) {
-            throw new AgenticSystemConfigurationException("A loop agent requires at least one subagent.");
-        }
-        if (maxIterations < 1) {
-            throw new AgenticSystemConfigurationException(
-                    "A loop agent requires maxIterations to be at least 1, but was " + maxIterations + ".");
-        }
+**_NOTE:_** A single message received from the server can be at most 20 MiB by default: the data of one event
+on an SSE stream (in a response or on the subsidiary channel), or the whole body of any other response, such as
+a JSON response. If the server sends a larger message, the transport closes the stream and drops the message:
+the pending request fails, and the subsidiary channel reconnects. This keeps a misbehaving server from filling
+the client's memory. The size is that of the JSON text, so binary content such as images, which is base64-encoded,
+takes about a third more than its raw size. To change the limit, set it on the builder, for example
+`.maxMessageSize(50 * 1024 * 1024)` for 50 MiB.
+
+**_NOTE:_** As with the Streamable HTTP transport, a single message received from the server can be at most
+20 MiB by default. If the server sends a larger message, the transport closes the connection and all pending
+requests fail. To change the limit, set it on the builder, for example `.maxMessageSize(50 * 1024 * 1024)` for 50 MiB.
+
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2014,4 +2067,4 @@ import dev.langchain4j.agentic.planner.AgenticSystemConfigurationException;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0ee59caf` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5ce59cd7` are properly handled with clean fallback behavior.

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/appwrite-appwrite-learnings.md`  
 > **Source**: github ([https://github.com/appwrite/appwrite](https://github.com/appwrite/appwrite))  
-> **Source Version**: `b805c0a5`  
+> **Source Version**: `8f4601d2`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T23:44:48.673Z  
+> **Timestamp**: 2026-11-04T00:10:48.872Z  
 > **Learning ID**: `learn-github-appwrite-appwrite`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/appwrite-appwrite-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/appwrite/appwrite](https://github.com/appwrite/appwrite))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T23:44:48.666Z  
+> **Harvest Timestamp**: 2026-11-04T00:10:48.362Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The open-source cloud for agents & devs. Including Auth, Databases, Storage, Functions, Messaging, Hosting, Realtime, WAF and more
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md, Dockerfile
-- **Stars / Engagement**: 57800 stars
+- **Stars / Engagement**: 57861 stars
 
 ---
 
@@ -1926,310 +1926,355 @@ export function DomainsEmptyState({
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `222fcc4a` (2026-10-30)
-**Commit Message**: docs(functions): tighten email trigger docs and render docs arrow links
+### Incident Patch 1: `e38d4cfc` (2026-11-03)
+**Commit Message**: docs(blog): add Firewall screenshots and fix Free-plan rule advice
 
-Move screenshots under their headings, list the built-in address
-details as bullets, link the execute page Email section to the email
-triggers docs, and simplify the changelog entry. The docs ArrowLink
-component only rendered a title attribute that no page sets, so every
-docs arrow link was empty; render its link text with an arrow.
+Phone OTP is not on the Free plan, so the OTP rule moves to the Pro section.
+The sign-in limit becomes 10 per 600 seconds, which is stricter than the
+built-in failed-login limit. The two Free rules now depend on where users
+sign in: client SDK, server code on Sites, or server code elsewhere.
 
-**File**: `apps/console/src/components/pages/docs/docs-markdoc-render.tsx` (modified, +16/-2)
+**File**: `apps/console/src/content/blog/posts/add-your-first-appwrite-firewall-rules.markdoc` (modified, +177/-79)
 ```diff
-@@ -2,6 +2,7 @@
- 
- import Markdoc from '@markdoc/markdoc'
- import React from 'react'
-+import { ArrowRight } from 'lucide-react'
- import { docsMarkdocConfig } from '@/lib/docs/markdoc-config'
- import { useDocsPrompt } from '@/components/pages/docs/DocsPromptContext'
- import { Cards, CardsItem } from './markdoc/Cards'
-@@ -60,8 +61,21 @@ const baseMarkdocComponents = {
-   MarkdocTableHead,
-   MarkdocTableCell,
-   Section: () => null,
--  ArrowLink: ({ href, title }: { href?: string; title?: string }) => (
--    <DocsLink href={href}>{title}</DocsLink>
-+  ArrowLink: ({
-+    href,
-+    title,
-+    children,
-+  }: {
-+    href?: string
-+    title?: string
-+    children?: React.ReactNode
-+  }) => (
-+    <div className="my-4 [&_p]:m-0 [&_p]:inline">
-+      <DocsLink href={href}>
-+        {title ?? children}
-+        <ArrowRight className="ms-1 inline size-3.5 align-[-2px]" aria-hidden />
-+      </DocsLink>
-+    </div>
-   ),
-   CallToAction: ({ href, title }: { href?: string; title?: string }) => (
-     <div className="not-prose my-6">
-```
-
-**File**: `apps/console/src/content/blog/posts/announcing-function-email-triggers.markdoc` (modified, +4/-4)
-```diff
-@@ -46,16 +46,18 @@ When your function returns an error, Appwrite still confirms the email, and the
- 
- # Receive email at the built-in address
- 
-+![Email card with Email trigger turned on and the built-in address under Default address](/images/blog/announcing-function-email-triggers/built-in-address.avif)
-+
- Each function has a built-in email domain, `<FUNCTION_ID>-<PROJECT_ID>.appwrite.email`, and it does not need DNS records.
- 
- Any name before the `@` works. For example, `support@<FUNCTION_ID>-<PROJECT_ID>.appwrite.email` and `billing@<FUNCTION_ID>-<PROJECT_ID>.appwrite.email` both execute the same function. The function reads the address that received the email from `envelope.to`.
- 
- To turn on the trigger, open your function in the Appwrite Console, go to **Settings** > **Executions**, turn on **Email trigger** in the **Email** card, and click **Update**. The card shows an address of the function under **Default address**.
- 
--![Email card with Email trigger turned on and the built-in address under Default address](/images/blog/announcing-function-email-triggers/built-in-address.avif)
--
- # Connect a custom domain
- 
-+![Verify email domain screen with the MX and TXT records for mail.example.com](/images/blog/announcing-function-email-triggers/custom-domain.avif)
-+
- You can connect a domain that you own, such as `mail.example.com`. Every email sent to that domain goes to your function, so use a domain that you don't use for any other email.
- 
- Turn on the email trigger first. Then open the **Domains** tab of your function, click **Add domain**, select the **Email** type, enter the domain, and click **Add**. The Console shows two DNS records to add at your DNS provider:
-@@ -65,8 +67,6 @@ Turn on the email trigger first. Then open the **Domains** tab of your function,
- 
- After you add the records, click **Verify**.
- 
--![Verify email domain screen with the MX and TXT records for mail.example.com](/images/blog/announcing-function-email-triggers/custom-domain.avif)
--
- {% info title="Domains with a CNAME record" %}
- DNS does not allow an `MX` record on a name that has a `CNAME` record. If `support.example.com` already points to a site with a `CNAME` record, receive email on another subdomain, such as `mail.example.com`.
- {% /info %}
-```
-
-**File**: `apps/console/src/content/changelog/entries/2026-10-30.markdoc` (modified, +2/-2)
-```diff
-@@ -6,9 +6,9 @@ cover: /images/blog/announcing-function-email-triggers/cover.avif
- tags: functions
+@@ -1,7 +1,7 @@
+ ---
+ layout: post
+ title: "Add your first Appwrite Firewall rules to a new project"
+-description: "Pick your first Appwrite Firewall rules for a new project: rate limit sign-in, challenge bots, preview impact, and fit them inside the Free plan's two rules."
++description: "Pick the two Appwrite Firewall rules a new Free project needs: rate limit sign-in, cap API traffic or challenge sign-ups, test them, and watch what they do."
+ date: 2026-11-03
+ cover: /images/blog/add-your-first-appwrite-firewall-rules/cover.avif
+ timeToRead: 9
+@@ -12,27 +12,26 @@ faqs:
+   - question: "How many Firewall rules can I create on the Appwrite Free plan?"
+     answer: "Free organizations can create 2 Firewall rules per project, and Pro and Scale organizations can create 50. Disabled rules count toward the limit, every rule a preset creates counts, and the rule Attack mode creates keeps counting after you turn Attack mode off. See [Plan limits](/docs/products/firewall/rules#plan-limits)."
+   - question: "Which two Firewall rules should a new project on the Free plan add?"
+-    answer: "Spend the first slot on a rate limit for sign-in: an API rule on **Path** **Starts with** `/v1/account/sessions` and **Method** **Equals** `POST`, at 10 requests per 60 seconds per IP address. If your server signs users in with an API key, put the limit on your site's login route instead. If your frontend runs on Appwrite Sites, spend the second on a challenge rule for your sign-up page. Otherwise, use the **Rate limit project API** preset and give it priority `200` so the sign-in rule runs first."
++    answer: "If users sign in from the browser or a mobile app with an Appwrite client SDK, add an API rate limit on **Path** **Starts with** `/v1/account/sessions` and **Method** **Equals** `POST` at 10 requests per 600 seconds per IP address, then the **Rate limit project API** preset at priority `200`. If server code on Appwrite Sites signs users in, put both rules on the site: a rate limit on the login route and a challenge on the sign-up page. If server code hosted elsewhere signs users in, limit sign-in in that code, because Firewall sees only your server's address."
+   - question: "What does Appwrite protect without any Firewall rules?"
+-    answer: "Every Appwrite Cloud plan includes always-on [DDoS mitigation](/docs/products/network/ddos) on layers 3, 4, and 7, and blocked attack traffic does not count toward your usage. Appwrite also applies built-in [rate limits](/docs/advanced/security/rate-limits) to sensitive endpoints such as sign-in, but only to client SDK traffic, and you cannot change their values."
++    answer: "Every Appwrite Cloud plan includes always-on [DDoS mitigation](/docs/products/network/ddos), and blocked attack traffic does not count toward your usage. Appwrite also applies built-in [rate limits](/docs/advanced/security/rate-limits) to sensitive endpoints. Sign-in, for example, blocks an address after 100 failed attempts in an hour and an email address after 10. These limits apply only to client SDK traffic, and you cannot change them."
+   - question: "Why does my Appwrite Firewall rate limit block all my users at once?"
+-    answer: "Your server probably creates sessions with an API key, so Appwrite sees your server's IP address for every user and counts them all as one client. API keys skip Appwrite's built-in rate limits, but Firewall rules still apply to them. Limit the login route on your Appwrite Site instead, or limit sign-in attempts in your server code."
++    answer: "Your server probably calls Appwrite with an API key, so Appwrite sees your server's IP address for every user and counts them all as one client. API keys skip Appwrite's built-in rate limits, but Firewall rules still apply to them. Put the limit on your Appwrite Site's login route instead, or limit sign-in attempts in your server code."
+   - question: "Can an Appwrite Firewall rule lock me out of the Console?"
+     answer: "No. Firewall never blocks the Appwrite Console, so you can always disable a rule that is too strict. Your own SDK calls and API key requests do go through your rules, and a challenge on a Site, including Attack mode, challenges you too."
+   - question: "How do I know which Firewall rule blocked a request?"
+-    answer: "When a rule stops a request, the response includes `X-Appwrite-WAF-Rule` with the rule ID and `X-Appwrite-WAF-Action` with the action, such as `deny` or `rateLimit`. A `429` response without these headers came from Appwrite's built-in rate limits, not from your Firewall rules."
++    answer: "Read the response headers. `X-Appwrite-WAF-Rule` holds the rule ID and `X-Appwrite-WAF-Action` holds the action, such as `deny` or `rateLimit`. API rules add them to every request they match, even ones they let through. A `429` that carries `X-RateLimit-*` headers and no Firewall headers came from Appwrite's built-in rate limits."
  ---
  
--Appwrite Functions on Appwrite Cloud can now execute when an email arrives. Turn on the **Email trigger** of a function, and any address at its built-in domain, `<FUNCTION_ID>-<PROJECT_ID>.appwrite.email`, executes it. You can also connect a domain that you own with an `MX` record and a `TXT` record.
-+Appwrite Functions on Appwrite Cloud can now execute when an email arrives. Turn on the **Email trigger** of a function, and an email sent to an address such as `support@<FUNCTION_ID>-<PROJECT_ID>.appwrite.email` executes it. You can also connect a domain that you own with an MX record and a TXT record.
- 
--Your function receives the email as JSON and each attachment as a file in one `multipart/form-data` request, together with a spam score that it can use to decide what to keep. Appwrite does not store the email.
-+Your function receives the email as JSON and each attachment as a file in one `multipart/form-data` request, together with a spam score that it can use to decide what to keep.
- 
- {% arrow_link href="/blog/post/announcing-function-email-triggers" %}
- Read the announcement
+-A new Appwrite Cloud project is not wide open, but none of its built-in pr
 ```
 
-**File**: `apps/console/src/content/docs/products/functions/email/index.markdoc` (modified, +20/-21)
+**File**: `apps/console/src/lib/blog/generated/manifest.ts` (modified, +1/-1)
 ```diff
-@@ -9,7 +9,6 @@ readtime: 7
- An email trigger executes your function when an email arrives at one of the function's addresses.
- Each function has a [built-in address](#built-in-address), and you can also connect a [custom domain](#custom-domain).
- Appwrite receives the email and executes your function with the email and its attachments in the request body.
--Appwrite does not store the email.
- Your function can save the email to a table, reply to the sender, or send the content to another service.
- 
- Email triggers are available on Appwrite Cloud, and they only receive email.
-@@ -33,6 +32,13 @@ The [execute access](/docs/products/functions/functions#execution-access) of the
- 
- # Turn on the email trigger {% #turn-on %}
- 
-+{% only_dark %}
-+![Email card with Email trigger turned on and the built-in address under Default address](/images/docs/functions/email/dark/built-in-address.avif)
-+{% /only_dark %}
-+{% only_light %}
-+![Email card with Email trigger turned on and the built-in address under Default address](/images/docs/functions/email/built-in-address.avif)
-+{% /only_light %}
-+
- Turn on the email trigger of a function before it can receive email at its built-in address or at a custom domain.
- 
- 1. In the Appwrite Console's sidebar, click **Functions**.
-@@ -41,22 +47,15 @@ Turn on the email trigger of a function before it can receive email at its built
- 1. In the **Email** card, turn on **Email trigger**.
- 1. Click **Update**.
- 
--{% only_dark %}
--![Email card with Email trigger turned on and the built-in address under Default address](/images/docs/functions/email/dark/built-in-address.avif)
--{% /only_dark %}
--{% only_light %}
--![Email card with Email trigger turned on and the built-in address under Default address](/images/docs/functions/email/built-in-address.avif)
--{% /only_light %}
--
- # Built-in address {% #built-in-address %}
- 
--Each function has its own email domain, `<FUNCTION_ID>-<PROJECT_ID>.appwrite.email`.
--The Console shows `contact@<FUNCTION_ID>-<PROJECT_ID>.appwrite.email` as **Default address** in the **Email** card, but any name before the `@` works.
--For example, `support@<FUNCTION_ID>-<PROJECT_ID>.appwrite.email` and `billing@<FUNCTION_ID>-<PROJECT_ID>.appwrite.email` both execute the same function.
--The function reads which address received the email from [`envelope.to`](#request-body).
--You do not need to configure DNS records for the built-in address.
-+Each function has a built-in address that does not need DNS records.
-+
-+- **Domain:** `<FUNCTION_ID>-<PROJECT_ID>.appwrite.email`, with the function ID in lowercase.
-+- **Default address:** the **Email** card in the Console shows `contact@<FUNCTION_ID>-<PROJECT_ID>.appwrite.email`.
-+- **Other addresses:** any name before the `@` works. For example, `support@<FUNCTION_ID>-<PROJECT_ID>.appwrite.email` and `billing@<FUNCTION_ID>-<PROJECT_ID>.appwrite.email` both execute the same function.
-+- **Receiving address:** the function reads which address received the email from [`envelope.to`](#request-body).
- 
--The domain contains the function ID in lowercase.
- A function does not have a built-in address when:
- 
- - The function ID contains a `.` or a `_`.
-@@ -67,6 +66,13 @@ To receive email for such a function, connect a [custom domain](#custom-domain).
- 
- # Custom domain {% #custom-domain %}
- 
-+{% only_dark %}
-+![Verify email domain screen with the MX and TXT records for mail.example.com](/images/docs/functions/email/dark/custom-domain.avif)
-+{% /only_dark %}
-+{% only_light %}
-+![Verify email domain screen with the MX and TXT records for mail.example.com](/images/docs/functions/email/custom-domain.avif)
-+{% /only_light %}
-+
- You can connect a domain that you own, such as `mail.example.com`, to your function.
- Every email sent to that domain goes to your function, so use a domain that you don't use for any other email.
- 
-@@ -95,13 +101,6 @@ To connect a domain:
- 1. At your DNS provider, add the `MX` and `TXT` records that the Console shows.
- 1. Click **Verify**.
- 
--{% only_dark %}
--![Verify email domain screen with the MX and TXT records for mail.example.com](/images/docs/functions/email/dark/custom-domain.avif)
--{% /only_dark %}
--{% only_light %}
--![Verify email domain screen with the MX and TXT records for mail.example.com](/images/docs/functions/email/custom-domain.avif)
--{% /only_light %}
--
- If the records have not propagated yet, the domain stays unverified.
- To verify it later, under the **Domains** tab, click **Retry** next to the domain. Then click **Verify**.
- 
-```
-
-**File**: `apps/console/src/content/docs/products/functions/execute/index.markdoc` (modified, +1/-1)
-```diff
-@@ -1146,7 +1146,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
- 
- # Email {% #email %}
- 
--On Appwrite Cloud, after you turn on the email trigger of a function, the function executes when an email arrives at its built-in address or at an address on a custom domain that you connect.
-+On Appwrite Cloud, after you turn on the [email trigger](/docs/products/functions/email) of a function, the function executes when an email arrives at its [built-in address](/docs/products/functions/email#built-in-address) or at an address on a [custom domain](/docs/products/functions/email#custom-domain) that you connect.
- The execution receives the email and its attachments in a `multipart/form-data` request body, and the `x-appwrite-trigger` header is `email`.
- Appwrite executes the function while the sending mail server waits, and accepts the email after the function finishes.
- 
-```
-
-**File**: `apps/console/src/lib/docs/generated/search-index.ts` (modified, +1/-1)
-```diff
-@@ -4728,7 +4728,7 @@ export const DOCS_SEARCH_INDEX: DocsSearchEntry[] = [
-     "slug": "products/functions/email",
-     "title": "Email triggers",
-     "description": "Execute an Appwrite Function when an email arrives at its address. Use the built-in address of the function or connect a custom domain.",
--    "excerpt": "An email trigger executes your function when an email arrives at one of the function's addresses. Each function has a built-in address, and you can also connect a custom domain. Appwrite receives the email and executes your function with the email and its attachments in the request body. Appwrite does not store the email. Your function can save the email to a table, reply to the sender, or send the content to another service. Email triggers are available on Appwrite…",
-+    "excerpt": "An email trigger executes your function when an email arrives at one of the function's addresses. Each function has a built-in address, and you can also connect a custom domain. Appwrite receives the email and executes your function with the email and its attachments in the request body. Your function can save the email to a table, reply to the sender, or send the content to another service. Email triggers are available on Appwrite Cloud, and they only receive email.…",
-     "breadcrumbs": [
-       "Functions",
-       "Guides",
+@@ -6,7 +6,7 @@ export const BLOG_POSTS: BlogPostMeta[] = [
+     "slug": "add-your-first-appwrite-firewall-rules",
+     "href": "/blog/post/add-your-first-appwrite-firewall-rules",
+     "title": "Add your first Appwrite Firewall rules to a new project",
+-    "description": "Pick your first Appwrite Firewall rules for a new project: rate limit sign-in, challenge bots, preview impact, and fit them inside the Free plan's two rules.",
++    "description": "Pick the two Appwrite Firewall rules a new Free project needs: rate limit sign-in, cap API traffic or challenge sign-ups, test them, and watch what they do.",
+     "date": "2026-11-03",
+     "lastUpdated": "2026-11-03",
+     "timeToRead": 9,
 ```
 
 ---
 
-### Incident Patch 2: `b805c0a5` (2026-10-30)
-**Commit Message**: fix(console): drop the Everything in Pro line from the Enterprise pricing card
+### Incident Patch 2: `8f4601d2` (2026-11-03)
+**Commit Message**: Merge pull request #15268 from appwrite/fix/migrations-export-link-scope
 
-The card already lists enterprise-only features, so the intro was redundant.
+fix(migrations): hide the export download link from a data-blind key
 
-Co-authored-by: Cursor <[REDACTED_EMAIL]>
-
-**File**: `apps/console/src/lib/i18n/dictionaries/he/pricing.ts` (modified, +0/-1)
+**File**: `src/Appwrite/Platform/Modules/Migrations/Http/Migrations/Action.php` (modified, +35/-0)
 ```diff
-@@ -184,7 +184,6 @@ export const hePricingDictionary: Record<string, string> = {
-   'DocumentsDB, VectorsDB,\nPostgreSQL, MySQL,\nor upgraded TablesDB':
-     'DocumentsDB, VectorsDB,\nPostgreSQL, MySQL,\nאו TablesDB משודרג',
-   'Email support': 'תמיכה באימייל',
--  'Everything in Pro, plus:': 'כל מה שיש ב-Pro, ובנוסף:',
-   'Fewer systems to integrate, secure, and maintain':
-     'פחות מערכות לשלב, לאבטח ולתחזק',
-   'Firewall': 'Firewall',
+@@ -121,6 +121,41 @@ protected function authorize(Request $request, array $resources, array $required
+         return \array_values($scopes);
+     }
+ 
++    /**
++     * An export's download link streams the full collection, so a read that cannot read that collection's
++     * data must not receive it: the creation gate is otherwise reached through links other callers left on
++     * export migrations. The scope demanded is the one the family's creation gate demands, so a read grant
++     * for one database family does not expose another's dump. A console session carries no API key on the
++     * request and keeps the link.
++     */
++    protected function redactExportLink(Document $migration, Request $request): Document
++    {
++        if ($request->getHeaderLine('x-appwrite-key') === '') {
++            return $migration;
++        }
++
++        $options = $migration->getAttribute('options', []);
++
++        if (!isset($options['downloadUrl'])) {
++            return $migration;
++        }
++
++        $dataRead = match ($migration->getAttribute('parentResourceType')) {
++            Resource::TYPE_DATABASE_DOCUMENTSDB => ['documentsdb.documents.read'],
++            Resource::TYPE_DATABASE_VECTORSDB => ['vectorsdb.documents.read'],
++            default => ['rows.read', 'documents.read'],
++        };
++
++        if (!empty(\array_intersect($dataRead, $request->getScopes()))) {
++            return $migration;
++        }
++
++        unset($options['downloadUrl']);
++        $migration->setAttribute('options', $options);
++
++        return $migration;
++    }
++
+     protected static function transferGroupForDatabaseType(string $databaseType): string
+     {
+         return match ($databaseType) {
 ```
 
-**File**: `apps/console/src/lib/i18n/dictionaries/ja/pricing.ts` (modified, +0/-1)
+**File**: `src/Appwrite/Platform/Modules/Migrations/Http/Migrations/Get.php` (modified, +4/-6)
 ```diff
-@@ -176,7 +176,6 @@ export const jaPricingDictionary: Record<string, string> = {
-   'Private WHOIS': 'プライベート WHOIS',
-   '50': '50',
-   'Email support': 'メールサポート',
--  'Everything in Pro, plus:': 'Pro のすべてに加えて:',
-   'Firewall': 'Firewall',
-   'Firewall rules': 'ファイアウォールルール',
-   'From $0.05 per 1M tokens': '1M トークンあたり $0.05 から',
+@@ -6,16 +6,13 @@
+ use Appwrite\SDK\AuthType;
+ use Appwrite\SDK\Method;
+ use Appwrite\SDK\Response as SDKResponse;
++use Appwrite\Utopia\Request;
+ use Appwrite\Utopia\Response;
+ use Utopia\Database\Database;
+ use Utopia\Database\Validator\UID;
+-use Utopia\Platform\Action;
+-use Utopia\Platform\Scope\HTTP;
+ 
+ class Get extends Action
+ {
+-    use HTTP;
+-
+     public static function getName(): string
+     {
+         return 'getMigration';
+@@ -43,19 +40,20 @@ public function __construct()
+                 ]
+             ))
+             ->param('migrationId', '', fn (Database $dbForProject) => new UID($dbForProject->getMaxUidLength()), 'Migration unique ID.', false, ['dbForProject'])
++            ->inject('request')
+             ->inject('response')
+             ->inject('dbForProject')
+             ->callback($this->action(...));
+     }
+ 
+-    public function action(string $migrationId, Response $response, Database $dbForProject): void
++    public function action(string $migrationId, Request $request, Response $response, Database $dbForProject): void
+     {
+         $migration = $dbForProject->getDocument('migrations', $migrationId);
+ 
+         if ($migration->isEmpty()) {
+             throw new Exception(Exception::MIGRATION_NOT_FOUND);
+         }
+ 
+-        $response->dynamic($migration, Response::MODEL_MIGRATION);
++        $response->dynamic($this->redactExportLink($migration, $request), Response::MODEL_MIGRATION);
+     }
+ }
 ```
 
-**File**: `apps/console/src/lib/pricing/plans.ts` (modified, +0/-1)
+**File**: `src/Appwrite/Platform/Modules/Migrations/Http/Migrations/XList.php` (modified, +5/-5)
 ```diff
-@@ -62,7 +62,6 @@ export const pricingPlans: readonly PricingPlan[] = [
-     price: 'Custom',
-     description:
-       'For enterprises that need more power, premium support, and advanced security features.',
--    featuresIntro: 'Everything in Pro, plus:',
-     features: [
-       'Uptime SLAs',
-       'Success manager',
+@@ -7,22 +7,19 @@
+ use Appwrite\SDK\Method;
+ use Appwrite\SDK\Response as SDKResponse;
+ use Appwrite\Utopia\Database\Validator\Queries\Migrations;
++use Appwrite\Utopia\Request;
+ use Appwrite\Utopia\Response;
+ use Utopia\Database\Database;
+ use Utopia\Database\Document;
+ use Utopia\Database\Exception\Order as OrderException;
+ use Utopia\Database\Exception\Query as QueryException;
+ use Utopia\Database\Query;
+ use Utopia\Database\Validator\Query\Cursor;
+-use Utopia\Platform\Action;
+-use Utopia\Platform\Scope\HTTP;
+ use Utopia\Validator\Boolean;
+ use Utopia\Validator\Text;
+ 
+ class XList extends Action
+ {
+-    use HTTP;
+-
+     public static function getName(): string
+     {
+         return 'listMigrations';
+@@ -52,12 +49,13 @@ public function __construct()
+             ->param('queries', [], new Migrations(), 'Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/databases#querying-documents). Maximum of ' . APP_LIMIT_ARRAY_PARAMS_SIZE . ' queries are allowed, each ' . APP_LIMIT_ARRAY_ELEMENT_SIZE . ' characters long. You may filter on the following attributes: ' . implode(', ', Migrations::ALLOWED_ATTRIBUTES), true)
+             ->param('search', '', new Text(256), 'Search term to filter your list results. Max length: 256 chars.', true)
+             ->param('total', true, new Boolean(true), 'When set to false, the total count returned will be 0 and will not be calculated.', true)
++            ->inject('request')
+             ->inject('response')
+             ->inject('dbForProject')
+             ->callback($this->action(...));
+     }
+ 
+-    public function action(array $queries, string $search, bool $includeTotal, Response $response, Database $dbForProject): void
++    public function action(array $queries, string $search, bool $includeTotal, Request $request, Response $response, Database $dbForProject): void
+     {
+         try {
+             $queries = Query::parseQueries($queries);
+@@ -96,6 +94,8 @@ public function action(array $queries, string $search, bool $includeTotal, Respo
+             throw new Exception(Exception::DATABASE_QUERY_ORDER_NULL, "The order attribute '{$e->getAttribute()}' had a null value. Cursor pagination requires all documents order attribute values are non-null.");
+         }
+ 
++        $migrations = \array_map(fn (Document $migration): Document => $this->redactExportLink($migration, $request), $migrations);
++
+         $response->dynamic(new Document([
+             'migrations' => $migrations,
+             'total' => $total,
+```
+
+**File**: `tests/e2e/Services/Migrations/MigrationsBase.php` (modified, +67/-0)
+```diff
+@@ -8241,6 +8241,73 @@ public function testCreateJSONExport(): void
+         $this->assertArrayHasKey('email', $decoded[0], 'JSON documents should contain email field');
+         $this->assertStringContainsString('Test User', $decoded[0]['name'], 'JSON should contain test data');
+ 
++        // The download link streams the whole collection, so a key that cannot read the data must not
++        // receive it, even though the export already exists (it was created by the full project key above).
++        $migrationsOnly = $this->client->call(Client::METHOD_GET, '/migrations/' . $migrationId, [
++            'content-type' => 'application/json',
++            'x-appwrite-project' => $this->getProject()['$id'],
++            'x-appwrite-key' => $this->getNewKey(['migrations.read', 'migrations.write']),
++        ]);
++        $this->assertEquals(200, $migrationsOnly['headers']['status-code']);
++        $this->assertEquals('completed', $migrationsOnly['body']['status']);
++        $this->assertArrayNotHasKey('downloadUrl', (array) $migrationsOnly['body']['options']);
++
++        // A key that can read the collection's data still receives the link.
++        $dataReader = $this->client->call(Client::METHOD_GET, '/migrations/' . $migrationId, [
++            'content-type' => 'application/json',
++            'x-appwrite-project' => $this->getProject()['$id'],
++            'x-appwrite-key' => $this->getNewKey(['migrations.read', 'documents.read', 'rows.read']),
++        ]);
++        $this->assertEquals(200, $dataReader['headers']['status-code']);
++        $this->assertArrayHasKey('downloadUrl', (array) $dataReader['body']['options']);
++
++        // A read grant for another database family must not expose this family's dump: the gate
++        // demands the scope its own family's export creation demanded, not any data read scope.
++        $otherFamily = $this->client->call(Client::METHOD_GET, '/migrations/' . $migrationId, [
++            'content-type' => 'application/json',
++            'x-appwrite-project' => $this->getProject()['$id'],
++            'x-appwrite-key' => $this->getNewKey(['migrations.read', 'documentsdb.documents.read']),
++        ]);
++        $this->assertEquals(200, $otherFamily['headers']['status-code']);
++        $this->assertArrayNotHasKey('downloadUrl', (array) $otherFamily['body']['options']);
++
++        // The list endpoint redacts on the same rule as the single read.
++        $listAsMigrationsOnly = $this->client->call(Client::METHOD_GET, '/migrations', [
++            'content-type' => 'application/json',
++            'x-appwrite-project' => $this->getProject()['$id'],
++            'x-appwrite-key' => $this->getNewKey(['migrations.read']),
++        ], [
++            'queries' => [Query::limit(100)->toString()],
++        ]);
++        $this->assertEquals(200, $listAsMigrationsOnly['headers']['status-code']);
++        $listed = null;
++        foreach ($listAsMigrationsOnly['body']['migrations'] as $candidate) {
++            if ($candidate['$id'] === $migrationId) {
++                $listed = $candidate;
++                break;
++            }
++        }
++        $this->assertNotNull($listed);
++        $this->assertArrayNotHasKey('downloadUrl', (array) $listed['options']);
++
++        $listAsDataReader = $this->client->call(Client::METHOD_GET, '/migrations', [
++            'content-type' => 'application/json',
++            'x-appwrite-project' => $this->getProject()['$id'],
++            'x-appwrite-key' => $this->getNewKey(['migrations.read', 'documents.read', 'rows.read']),
++        ], [
++            'queries' => [Query::limit(100)->toString()],
++        ]);
++        $this->assertEquals(200, $listAsDataReader['headers']['status-code']);
++        $listedForReader = null;
++        foreach ($listAsDataReader['body']['migrations'] as $candidate) {
++            if ($candidate['$id'] === $migrationId) {
++                $listedForReader = $candidate;
++                break;
++            }
++        }
++        $this->assertNotNull($listedForReader);
++        $this->assertArrayHasKey('downloadUrl', (array) $listedForReader['options']);
++
+         // Cleanup
+         $this->client->call(Client::METHOD_DELETE, '/databases/' . $databaseId, [
+             'x-appwrite-project' => $this->getProject()['$id'],
 ```
 
 ---
 
-### Incident Patch 3: `ace0f441` (2026-10-30)
-**Commit Message**: fix(console): stop function card charts flashing on first load
+### Incident Patch 3: `579ba961` (2026-11-03)
+**Commit Message**: Merge pull request #15259 from appwrite/fix/schedule-strip-ephemeral-credentials
 
-Gate chart points and totals on both usage queries resolving, matching
-DatabaseOperationsChartPreview, so the card fades in once instead of
-rendering executions, remounting, and fading in again.
+fix(functions): keep server credentials out of client-readable schedules
 
-Co-authored-by: Cursor <[REDACTED_EMAIL]>
-
-**File**: `apps/console/src/components/pages/projects/$projectId/functions/_components/FunctionExecutionsChartPreview.tsx` (modified, +13/-6)
+**File**: `src/Appwrite/Platform/Modules/Functions/Http/Executions/Create.php` (modified, +10/-1)
 ```diff
-@@ -231,8 +231,19 @@ export function FunctionExecutionsChartPreview({
-     enabled,
-   )
- 
--  const executionsPoints = executionsQuery.data?.chartPoints ?? []
--  const gbHoursPoints = gbHoursQuery.data?.chartPoints ?? []
-+  const usageReady =
-+    !enabled ||
-+    ((executionsQuery.isFetched || executionsQuery.isError) &&
-+      (gbHoursQuery.isFetched || gbHoursQuery.isError))
+@@ -327,8 +327,17 @@ functionId: $function->getId(),
+                     method: $method,
+                 ));
+             } else {
++                // The worker re-mints every reserved header when the schedule fires, so the ephemeral API key and
++                // user JWT must not sit in the client-readable schedule. Keep the client IP, the one it reads back.
++                $storedHeaders = \array_filter(
++                    $headers,
++                    fn (string $name): bool => \strtolower($name) === 'x-appwrite-client-ip'
++                        || !\str_starts_with(\strtolower($name), 'x-appwrite-'),
++                    ARRAY_FILTER_USE_KEY
++                );
 +
-+  const executionsPoints = useMemo(
-+    () => (usageReady ? (executionsQuery.data?.chartPoints ?? []) : []),
-+    [executionsQuery.data?.chartPoints, usageReady],
-+  )
-+  const gbHoursPoints = useMemo(
-+    () => (usageReady ? (gbHoursQuery.data?.chartPoints ?? []) : []),
-+    [gbHoursQuery.data?.chartPoints, usageReady],
-+  )
-   const hasPoints = executionsPoints.length > 0 || gbHoursPoints.length > 0
+                 $data = [
+-                    'headers' => $headers,
++                    'headers' => $storedHeaders,
+                     'path' => $path,
+                     'method' => $method,
+                     'body' => $body,
+```
+
+**File**: `tests/e2e/Services/FunctionsSchedule/FunctionsScheduleTest.php` (modified, +19/-0)
+```diff
+@@ -367,6 +367,25 @@ public function testCreateScheduledAtExecution(): void
+         $this->assertEquals('x-appwrite-client-ip', $execution['body']['requestHeaders'][0]['name']);
+         $this->assertNotEmpty($execution['body']['requestHeaders'][0]['value']);
  
-   const chartData = useMemo((): ChartPoint[] => {
-@@ -276,10 +287,6 @@ export function FunctionExecutionsChartPreview({
-     [gbHoursPoints],
-   )
- 
--  const usageReady =
--    !enabled ||
--    ((executionsQuery.isFetched || executionsQuery.isError) &&
--      (gbHoursQuery.isFetched || gbHoursQuery.isError))
-   const fadeKey = usageReady ? 'data' : 'loading'
-   const fadeClassName = usageReady && enabled && USAGE_CHART_FADE_IN_CLASS_NAME
++        // The stored schedule is client-readable, so it must not carry the server-minted ephemeral API key or
++        // user JWT. The worker re-mints both when the schedule fires; only the client IP is kept.
++        $schedules = $this->client->call(Client::METHOD_GET, '/projects/' . $this->getProject()['$id'] . '/schedules', [
++            'content-type' => 'application/json',
++            'x-appwrite-project' => 'console',
++            'cookie' => 'a_session_console=' . $this->getRoot()['session'],
++        ]);
++        $this->assertEquals(200, $schedules['headers']['status-code']);
++        $scheduled = \array_values(\array_filter(
++            $schedules['body']['schedules'],
++            fn (array $schedule): bool => ($schedule['resourceId'] ?? '') === $executionId,
++        ));
++        $this->assertCount(1, $scheduled);
++        $storedHeaders = $scheduled[0]['data']['headers'] ?? [];
++        $this->assertArrayNotHasKey('x-appwrite-key', $storedHeaders);
++        $this->assertArrayNotHasKey('x-appwrite-user-jwt', $storedHeaders);
++        $this->assertArrayHasKey('x-appwrite-client-ip', $storedHeaders);
++        $this->assertEquals('custom-value', $storedHeaders['x-custom-header'] ?? null);
++
+         $this->assertEventually(function () use ($functionId, $executionId) {
+             $execution = $this->getExecution($functionId, $executionId);
  
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #15138** (2026-10-30): feat(console): show Enterprise prompts to Pro organizations (@eldadfux)
-- **PR #15133** (2026-10-30): docs(console): update the Stripe subscriptions tutorial for the current dashboards (@adityaoberai)
-- **PR #15127** (2026-10-30): feat(console): reorder, colors, banner and a creation wizard for project environments (@Meldiron)
-- **PR #15126** (closed): test(alerts): regression tests without the fix (do not merge) (@ChiragAgg5k)
-- **PR #15124** (2026-10-30): chore(locale): move the locale controller to a module (@HarshMN2345)
-- **PR #15122** (2026-10-30): fix(deletes): retire deployments in small batches to stop worker OOMs (@ChiragAgg5k)
+- **PR #15271** (2026-11-03): feat(sites): stream and compress site responses by default (@HarshMN2345)
+- **PR #15269** (2026-11-03): Carry the run's usage on the agents structured output exception (@TorstenDittmann)
+- **PR #15268** (2026-11-03): fix(migrations): hide the export download link from a data-blind key (@ChiragAgg5k)
+- **PR #15267** (2026-11-03): docs(blog): add six welcome-series onboarding guides (@atharvadeosthale)
+- **PR #15264** (2026-11-03): feat(alerts): push alerts to Android devices through FCM (@ChiragAgg5k)
+- **PR #15262** (2026-11-03): fix(certificates): keep retrying a failed renewal (@ChiragAgg5k)
 
 ---
 
@@ -2249,44 +2294,33 @@ Co-authored-by: Cursor <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs(functions): tighten email trigger docs and render docs arrow links
+## X. docs(blog): add Firewall screenshots and fix Free-plan rule advice
 
 **RULE**:
-When implementing operations in `apps/console/src/components/pages/docs/docs-markdoc-render.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in appwrite/appwrite. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `apps/console/src/content/blog/posts/add-your-first-appwrite-firewall-rules.markdoc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in appwrite/appwrite. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `222fcc4a`: docs(functions): tighten email trigger docs and render docs arrow links. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e38d4cfc`: docs(blog): add Firewall screenshots and fix Free-plan rule advice. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/console/src/components/pages/docs/docs-markdoc-render.tsx`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/console/src/content/blog/posts/add-your-first-appwrite-firewall-rules.markdoc`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-import { ArrowRight } from 'lucide-react'
-  ArrowLink: ({
-    href,
-    title,
-    children,
-  }: {
-    href?: string
-    title?: string
-    children?: React.ReactNode
-  }) => (
-    <div className="my-4 [&_p]:m-0 [&_p]:inline">
-      <DocsLink href={href}>
-        {title ?? children}
-        <ArrowRight className="ms-1 inline size-3.5 align-[-2px]" aria-hidden />
-      </DocsLink>
-    </div>
+description: "Pick the two Appwrite Firewall rules a new Free project needs: rate limit sign-in, cap API traffic or challenge sign-ups, test them, and watch what they do."
+    answer: "If users sign in from the browser or a mobile app with an Appwrite client SDK, add an API rate limit on **Path** **Starts with** `/v1/account/sessions` and **Method** **Equals** `POST` at 10 requests per 600 seconds per IP address, then the **Rate limit project API** preset at priority `200`. If server code on Appwrite Sites signs users in, put both rules on the site: a rate limit on the login route and a challenge on the sign-up page. If server code hosted elsewhere signs users in, limit sign-in in that code, because Firewall sees only your server's address."
+    answer: "Every Appwrite Cloud plan includes always-on [DDoS mitigation](/docs/products/network/ddos), and blocked attack traffic does not count toward your usage. Appwrite also applies built-in [rate limits](/docs/advanced/security/rate-limits) to sensitive endpoints. Sign-in, for example, blocks an address after 100 failed attempts in an hour and an email address after 10. These limits apply only to client SDK traffic, and you cannot chang
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-  ArrowLink: ({ href, title }: { href?: string; title?: string }) => (
-    <DocsLink href={href}>{title}</DocsLink>
+description: "Pick your first Appwrite Firewall rules for a new project: rate limit sign-in, challenge bots, preview impact, and fit them inside the Free plan's two rules."
+    answer: "Spend the first slot on a rate limit for sign-in: an API rule on **Path** **Starts with** `/v1/account/sessions` and **Method** **Equals** `POST`, at 10 requests per 60 seconds per IP address. If your server signs users in with an API key, put the limit on your site's login route instead. If your frontend runs on Appwrite Sites, spend the second on a challenge rule for your sign-up page. Otherwise, use the **Rate limit project API** preset and give it priority `200` so the sign-in rule runs first."
+    answer: "Every Appwrite Cloud plan includes always-on [DDoS mitigation](/docs/products/network/ddos) on layers 3, 4, and 7, and blocked attack traffic does not count toward your usage. Appwrite also applies built-in [rate limits](/docs/advanced/security/rate-limits) to sensitive endpoints such as sign-in, but only to client SDK traffic, and you cannot change their values."
+    answer: "Your server probably creates sessions with an API key, so Appwrite sees your server's IP address for every user and c
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `222fcc4a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e38d4cfc` are properly handled with clean fallback behavior.

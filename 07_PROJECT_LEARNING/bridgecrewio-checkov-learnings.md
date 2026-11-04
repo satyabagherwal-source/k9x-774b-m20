@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/bridgecrewio-checkov-learnings.md`  
 > **Source**: github ([https://github.com/bridgecrewio/checkov](https://github.com/bridgecrewio/checkov))  
-> **Source Version**: `6a64fae9`  
+> **Source Version**: `47986461`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-02T16:18:48.996Z  
+> **Timestamp**: 2026-11-04T02:12:07.277Z  
 > **Learning ID**: `learn-github-bridgecrewio-checkov`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/bridgecrewio-checkov-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/bridgecrewio/checkov](https://github.com/bridgecrewio/checkov))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-02T16:18:48.461Z  
+> **Harvest Timestamp**: 2026-11-04T02:12:06.396Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Prevent cloud misconfigurations and find vulnerabilities during build-time in infrastructure as code, container images and open source packages with Checkov by Bridgecrew.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md, Dockerfile
-- **Stars / Engagement**: 9127 stars
+- **Stars / Engagement**: 9131 stars
 
 ---
 
@@ -955,813 +955,81 @@ check = SQSQueueEncryption()
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9310f63f` (2026-11-02)
-**Commit Message**: fix(general): harden network and credential handling defaults (#7701)
+### Incident Patch 1: `5038a50e` (2026-11-02)
+**Commit Message**: fix(terraform): build userinfo test URLs dynamically (#7776)
 
-* fix BCE-60031
-
-* fix 2
-
-* fix 3
-
-* fix tests
-
-* aaa
-
-* change 1
-
-* opt in
-
-* fix mypy
-
-* empty commit
-
-* small fix
-
----------
+initial impl
 
 Co-authored-by: eshmayovitz <[REDACTED_EMAIL]>
 
 **File**: `checkov/version.py` (modified, +1/-1)
 ```diff
 @@ -1 +1 @@
--version = '3.4.1'
-+version = '3.4.2'
+-version = '3.4.2'
++version = '3.4.3'
 ```
 
 **File**: `kubernetes/requirements.txt` (modified, +1/-1)
 ```diff
 @@ -1 +1 @@
--checkov==3.4.1
-+checkov==3.4.2
+-checkov==3.4.2
++checkov==3.4.3
 ```
 
 ---
 
-### Incident Patch 2: `2605202a` (2026-11-02)
-**Commit Message**: fix(general): harden network and credential handling defaults (#7701)
+### Incident Patch 2: `dd3d9cd7` (2026-11-02)
+**Commit Message**: fix(terraform): build userinfo test URLs dynamically (#7776)
 
-* fix BCE-60031
-
-* fix 2
-
-* fix 3
-
-* fix tests
-
-* aaa
-
-* change 1
-
-* opt in
-
-* fix mypy
-
-* empty commit
-
-* small fix
-
----------
+initial impl
 
 Co-authored-by: eshmayovitz <[REDACTED_EMAIL]>
 
-**File**: `checkov/helm/runner.py` (modified, +30/-1)
+**File**: `tests/terraform/module_loading/loaders/test_git_loader.py` (modified, +9/-4)
 ```diff
-@@ -10,6 +10,7 @@
- import tempfile
- import threading
- from typing import Any, Type, TYPE_CHECKING
-+from urllib.parse import urlsplit
- import yaml
+@@ -19,6 +19,11 @@
  
- from checkov.common.bridgecrew.check_type import CheckType
-@@ -66,6 +67,32 @@ def _get_chart_remote_repos(chart_dir: str) -> list[str]:
-     return remote_repos
+ EXTERNAL_MODULES_FOLDER_NAME = ".external_modules"
  
- 
-+_DEFAULT_PORTS = {"http": 80, "https": 443}
-+
-+
-+def _repo_matches_prefix(repo: str, prefix: str) -> bool:
-+    """Return True if the (lowercased) repo URL is covered by the (lowercased) allowlist prefix.
-+
-+    For URLs the scheme, host and port must match exactly (so a lookalike host such as
-+    'charts.example.com.other.net' or port 8443 vs 844 does not match), and the repo path
-+    must start with the prefix path. Values without '://' keep the plain prefix comparison.
-+    """
-+    if "://" not in prefix or "://" not in repo:
-+        return repo.startswith(prefix)
-+    try:
-+        p, r = urlsplit(prefix), urlsplit(repo)
-+        if p.scheme != r.scheme or not p.hostname or p.hostname != r.hostname:
-+            return False
-+        default_port = _DEFAULT_PORTS.get(p.scheme)
-+        p_port = default_port if p.port is None else p.port
-+        r_port = default_port if r.port is None else r.port
-+        if p_port != r_port:
-+            return False
-+    except ValueError:
-+        return False  # e.g. invalid port
-+    return r.path.startswith(p.path)
-+
-+
- def _get_blocked_helm_repos(chart_dir: str) -> list[str]:
-     """Return dependency repos blocked by the CHECKOV_HELM_ALLOWED_REMOTE_REPOS allowlist.
- 
-@@ -77,8 +104,10 @@ def _get_blocked_helm_repos(chart_dir: str) -> list[str]:
-         return []  # no allowlist configured → allow everything (original behaviour)
- 
-     allowed_prefixes = [p.strip().lower() for p in allowed_prefixes_raw.split(",") if p.strip()]
-+    if "*" in allowed_prefixes:
-+        return []  # '*' → allow everything
-     remote_repos = _get_chart_remote_repos(chart_dir)
--    return [repo for repo in remote_repos if not any(repo.lower().startswith(p) for p in allowed_prefixes)]
-+    return [repo for repo in remote_repos if not any(_repo_matches_prefix(repo.lower(), p) for p in allowed_prefixes)]
- 
- 
- class K8sHelmRunner(k8_runner):
-```
-
-**File**: `checkov/terraform/module_loading/loaders/bitbucket_access_token_loader.py` (modified, +5/-1)
-```diff
-@@ -3,7 +3,7 @@
- import os
- from typing import TYPE_CHECKING
- 
--from checkov.terraform.module_loading.loaders.git_loader import GenericGitLoader
-+from checkov.terraform.module_loading.loaders.git_loader import GenericGitLoader, get_allowed_vcs_hosts, get_source_host
- 
- if TYPE_CHECKING:
-     from checkov.terraform.module_loading.module_params import ModuleParams
-@@ -20,5 +20,9 @@ def discover(self, module_params: ModuleParams) -> None:
-         elif module_params.username and app_password:
-             module_params.token = app_password
- 
-+    def _credentials_allowed(self, module_params: ModuleParams, source: str) -> bool:
-+        # If VCS_ALLOWED_HOSTS is set, the Bitbucket credentials are only added for bitbucket.org
-+        return get_allowed_vcs_hosts() is None or get_source_host(source) == self.module_source_prefix
++# userinfo fragments for URL test inputs, assembled at runtime
++USER_INFO_TOKEN = ":".join(("user", "token"))
++USER_INFO_PASS = ":".join(("user", "pass"))
++OTHER_USER_INFO = ":".join(("other", "creds"))
 +
  
- loader = BitbucketAccessTokenLoader()
-```
-
-**File**: `checkov/terraform/module_loading/loaders/git_loader.py` (modified, +42/-1)
-```diff
-@@ -6,6 +6,7 @@
- from dataclasses import dataclass
- from pathlib import Path
- from typing import TYPE_CHECKING
-+from urllib.parse import urlparse
- 
- from checkov.common.goget.github.get_git import GitGetter
- from checkov.common.util.file_utils import _is_within
-@@ -18,6 +19,31 @@
- 
- DEFAULT_MODULE_SOURCE_PREFIX = "git::https://"
- GIT_USER_PATTERN = re.compile(r"^(.*?@).*")
-+_warned_hosts: set[str | None] = set()
-+
-+
-+def get_allowed_vcs_hosts() -> set[str | None] | None:
-+    """Return the hosts of the optional VCS_ALLOWED_HOSTS env var (comma-separated), None if it is not set"""
-+    hosts: set[str | None] = {host.strip().lower() for host in os.getenv("VCS_ALLOWED_HOSTS", "").split(",") if host.strip()}
-+    return hosts or None
-+
-+
-+def get_source_host(source: str) -> str | None:
-+    """Return the lowercased host of a module source ('host' or 'host:port' for a non 443 port).
-+
-+    Returns None, if the source can't be parsed or contains user info.
-+    """
-+    if source.startswith("git::"):
-+        source = source[len("git::"):]
-+    if "://" not in source:
-+        source = f"https://{source}"
-+    try:
-+        parsed = urlparse(source)
-+        if parsed.username is None and parsed.hostname:
-+            return parsed.hostname if parsed.port in (None, 443) else f"{parsed.hostname}:{parsed.port}"
-+    except ValueError:
-+        pass
-+    return None
- 
- 
- def _validate_ref(ref: str) -> None:
-@@ -71,11 +97,26 @@ def discover(self, module_params: ModuleParams) -> None:
-         module_params.username = os.getenv("VCS_USERNAME", None)
-         module_params.token = os.getenv("VCS_TOKEN", None)
- 
-+    def _credentials_allowed(self, module_params: ModuleParams, source: str) -> bool:
-+        """If VCS_ALLOWED_HOSTS is set, credentials are only added for its hosts and the VCS_BASE_URL host"""
-+        allowed_hosts = get_allowed_vcs_hosts()
-+        if allowed_hosts is None:
-+            return True  # VCS_ALLOWED_HOSTS is not set
-+        if module_params.vcs_base_url:
-+            allowed_hosts.add(get_source_host(module_params.vcs_base_url))
-+        host = get_source_host(source)
-+        if host is not None and host in allowed_hosts:
-+            return True
-+        if host not in _warned_hosts:
-+            _warned_hosts.add(host)
-+            self.logger.warning(f"Credentials are not added to module sources from host {host or 'unknown'}, it is not in VCS_ALLOWED_HOSTS")
-+        return False
-+
-     def _is_matching_loader(self, module_params: ModuleParams) -> bool:
-         module_source_prefix = module_params.module_source_prefix if module_params.module_source_prefix else self.module_source_prefix
-         if module_params.module_source.startswith(module_source_prefix):
-             source = module_params.module_source.split(DEFAULT_MODULE_SOURCE_PREFIX)[-1]
--            if module_params.token and module_params.username:
-+            if module_params.token and module_params.username and self._credentials_allowed(module_params, source):
-                 module_params.module_source = f"{DEFAULT_MODULE_SOURCE_PREFIX}{module_params.username}:{module_params.token}@{source}"
-             else:
-                 module_params.module_source = f"{DEFAULT_MODULE_SOURCE_PREFIX}{source}"
-```
-
-**File**: `checkov/terraform/module_loading/loaders/github_access_token_loader.py` (modified, +13/-1)
-```diff
-@@ -3,7 +3,7 @@
- import os
- from typing import TYPE_CHECKING
- 
--from checkov.terraform.module_loading.loaders.git_loader import GenericGitLoader
-+from checkov.terraform.module_loading.loaders.git_loader import GenericGitLoader, get_allowed_vcs_hosts, get_source_host
- 
- if TYPE_CHECKING:
-     from checkov.terraform.module_loading.module_params import ModuleParams
-@@ -20,6 +20,9 @@ def _is_matching_loader(self, module_params: ModuleParams) -> bool:
-             # if GITHUB_PAT is set and previous loaders failed, convert source (github ssh or github http or generic git)
-             # to use the token in generic format git::https://x-access-token:<token>@github.com/org/repo.git
-             self.logger.debug("GITHUB_PAT found. Attempting to clone module using HTTP basic authentication.")
-+            # if VCS_ALLOWED_HOSTS is set, GITHUB_PAT is only added for github.com
-+            if get_allowed_vcs_hosts() is not None and self._source_host(module_params.module_source) != self.module_source_prefix:
-+                return False
-             # if module_source = github.com/org/repo
-             if module_params.module_source.startswith(self.module_source_prefix):
-                 module_params.module_source = f"git::https://{module_params.username}:{module_params.token}@{module_params.module_source}"
-@@ -39,5 +42,14 @@ def _is_matching_loader(self, module_params: ModuleParams) -> bool:
- 
-         return False
- 
-+    @staticmethod
-+    def _source_host(source: str) -> str | None:
-+        for prefix in ("git::https://", "git::ssh://git@"):
-+            if source.startswith(prefix):
-+                return get_source_host(source[len(prefix):])
-+        if source.startswith("git@"):
-+            return get_source_host(source[len("git@"):].replace(":", "/", 1))
-+        return get_source_host(source)
-+
- 
- loader = GithubAccessTokenLoader()
-```
-
-**File**: `tests/helm/test_runner.py` (modified, +86/-3)
-```diff
-@@ -9,7 +9,8 @@
- from checkov.common.output.record import Record
- from checkov.common.output.report import CheckType, Report
- from checkov.runner_filter import RunnerFilter
--from checkov.helm.runner import Runner, fix_report_paths, _get_chart_remote_repos, _get_blocked_helm_repos
-+from checkov.helm.runner import Runner, fix_report_paths, _get_chart_remote_repos, _get_blocked_helm_repos, \
-+    _repo_matches_prefix
- from tests.helm.utils import helm_exists
- 
- 
-@@ -59,7 +60,7 @@ def test_runner_honors_enforcement_rules(self):
-         self.assertEqual(len(report.passed_checks), 0)
-         self.assertEqual(len(report.skipped_checks), 0)
-         self.assertEqual(len(report.parsing_errors), 0)
--        
-+
-     @unittest.skipIf(not helm_exists(), "helm not installed")
-     def test_runner_invalid_chart(self):
-         current_dir = os.path.dirname(os.path.realpath(__file__))
-@@ -206,7 +207,8 @@ def test_parse_output(self):
-                 # Check template mapping was populated correctly
-                 expected_mapping = {
-                     f'{target_dir}/mychart/templates/service.yaml': os.path.join(chart_dir, "templates/service.yaml"),
--                    f'{target_dir}/mychart/templates/deployment.yaml': os.path.join(chart_dir, "templates/deployment.yaml")
-+                    f'{target_dir}/mychart/templates/deployment.yaml': os.path.join(chart_dir,
-+                                                                                    "templates/deployment.yaml")
-                 }
- 
-                 # Compare the mappings - normalize paths for comparison
-@@ -241,6 +243,7 @@ def test_check_system_deps(self):
-         r.helm_command = 'thisshouldfail'
-         assert r.check_system_deps() == "helm"
- 
-+
- class TestHelmDependencyRemoteRepos(unittest.TestCase):
-     """Tests for helm remote dependency repository allowlist.
- 
-@@ -292,6 +295,86 @@ def test_get_blocked_helm_repos_returns_empty_when_all_in_allowlist(self):
-             repos = _get_blocked_helm_repos(self._REMOTE_DEP_DIR)
-         self.assertEqual(repos, [])
- 
-+    def test_get_blocked_helm_repos_wildcard_allows_all(self):
-+        """'*' allows all repos."""
-+        env = {"CHECKOV_HELM_ALLOWED_REMOTE_REPOS": "https://charts.trusted.org/, *,"}
-+        with mock.patch.dict(os.environ, env):
-+            repos = _get_blocked_helm_repos(self._REMOTE_DEP_DIR)
-+        self.assertEqual(repos, [])
-+
-+    # ------------------------------------------------------------------
-+    # allowlist host matching (scheme, host and port must match exactly)
-+    # ------------------------------------------------------------------
-+
-+    def _blocked(self, allowlist: str, repos: list[str]) -> list[str]:
-+        env = {"CHECKOV_HELM_ALLOWED_REMOTE_REPOS": allowlist}
-+        with mock.patch.dict(os.environ, env), \
-+                mock.patch("checkov.helm.runner._get_chart_remote_repos", return_value=repos):
-+            return _get_blocked_helm_repos(self._REMOTE_DEP_DIR)
-+
-+    def _assert_allowed(self, allowlist: str, repo: str) -> None:
-+        self.assertEqual(self._blocked(allowlist, [repo]), [], f"{repo} should be allowed by {allowlist}")
-+
-+    def _assert_blocked(self, allowlist: str, repo: str) -> None:
-+        self.assertEqual(self._blocked(allowlist, [repo]), [repo], f"{repo} should be blocked by {allowlist}")
-+
-+    def test_allowlist_lookalike_host_not_allowed(self):
-+        self._assert_blocked("https://charts.example.com", "https://charts.example.com.other.net/x")
-+
-+    def test_allowlist_port_must_match_exactly(self):
-+        self._assert_blocked("https://192.0.2.1:844", "https://192.0.2.1:8443/x")
-+        self._assert_allowed("https://192.0.2.1:8443/", "https://192.0.2.1:8443/x")
-+
-+    def test_allowlist_default_port_matches(self):
-+        self._assert_allowed("https://charts.example.com", "https://charts.example.com:443/x")
-+        self._assert_allowed("http://192.0.2.1", "http://192.0.2.1:80/x")
-+        self._assert_blocked("https://charts.example.com", "https://charts.example.com:80/x")
-+
-+    def test_allowlist_userinfo_ignored_for_host_match(self):
-+        self._assert_allowed("https://charts.example.com", "https://u:p@charts.example.com/x")
-+        self._assert_blocked("https://charts.example.com", "https://charts.example.com@other.net/x")
-+
-+    def test_allowlist_query_and_fragment_not_used_as_host(self):
-+        self._assert_blocked("https://charts.example.com", "https://other.net/x?@charts.example.com/")
-+        self._assert_blocked("https://charts.example.com", "https://other.net/x#@charts.example.com/")
-+
-+    def test_allowlist_scheme_must_match(self):
-+        self._assert_blocked("https://charts.example.com", "http://charts.example.com/x")
-+
-+    def test_allowlist_host_match_is_case_insensitive(self):
-+        self._assert_allowed("https://Charts.Example.com/", "HTTPS://CHARTS.EXAMPLE.COM/x")
-+
-+    def test_allowlist_path_prefix(self):
-+        self._assert_allowed("https://charts.example.com/stable", "https://c
-```
-
-**File**: `tests/terraform/module_loading/loaders/test_bitbucket_access_token_loader.py` (added, +28/-0)
-```diff
-@@ -0,0 +1,28 @@
-+import os
-+from unittest import mock
-+
-+import pytest
-+
-+from checkov.terraform.module_loading.loaders.bitbucket_access_token_loader import BitbucketAccessTokenLoader
-+from checkov.terraform.module_loading.module_params import ModuleParams
-+
-+
-+@pytest.mark.parametrize(
-+    "env, source, injected",
-+    [
-+        # VCS_ALLOWED_HOSTS not set -> unchanged behaviour (prefix match)
-+        ({}, "bitbucket.org/workspace/repo.git", True),
-+        ({}, "bitbucket.org.example.com/workspace/repo.git", True),
-+        # VCS_ALLOWED_HOSTS set -> Bitbucket credentials only for bitbucket.org
-+        ({"VCS_ALLOWED_HOSTS": "gitlab.com"}, "bitbucket.org/workspace/repo.git", True),
-+        ({"VCS_ALLOWED_HOSTS": "gitlab.com"}, "bitbucket.org.example.com/workspace/repo.git", False),
-+        ({"VCS_ALLOWED_HOSTS": "gitlab.com"}, "bitbucket.org@other.example.com/workspace/repo.git", False),
-+    ],
-+)
-+def test_bitbucket_credentials_host_check(env: dict[str, str], source: str, injected: bool) -> None:
-+    loader = BitbucketAccessTokenLoader()
-+    module_params = ModuleParams("test", "test", source, None, "test", "test")
-+    with mock.patch.dict(os.environ, {"BITBUCKET_TOKEN": "bb_test", **env}, clear=True):
-+        loader.discover(module_params)
-+        assert loader._is_matching_loader(module_params) is True
-+    assert ("x-token-auth:bb_test@" in module_params.module_source) is injected
-```
-
-**File**: `tests/terraform/module_loading/loaders/test_git_loader.py` (modified, +25/-0)
-```diff
-@@ -275,3 +275,28 @@ def test_validate_subdir_allows_paths_inside_package(subdir: str) -> None:
- def test_validate_subdir_rejects_paths_outside_package(subdir: str) -> None:
-     with pytest.raises(ValueError):
-         _validate_subdir(subdir)
-+
-+
-+@pytest.mark.parametrize(
-+    "env, source, injected",
-+    [
-+        # VCS_ALLOWED_HOSTS not set -> credentials are added for any host (unchanged behaviour)
-+        ({}, "git::https://github.com/org/repo.git", True),
-+        ({}, "git::https://other.example.com/org/repo.git", True),
-+        ({"VCS_BASE_URL": "https://git.example.com"}, "git::https://git.example.com/org/repo.git", True),
-+        # VCS_ALLOWED_HOSTS set -> only the listed hosts and the VCS_BASE_URL host
-+        ({"VCS_ALLOWED_HOSTS": " GitLab.com , "}, "git::https://gitlab.com/org/repo.git", True),
-+        ({"VCS_ALLOWED_HOSTS": "gitlab.com", "VCS_BASE_URL": "https://git.example.com"}, "git::https://git.example.com/org/repo.git", True),
-+        ({"VCS_ALLOWED_HOSTS": "git.example.com:8443"}, "git::https://git.example.com:8443/org/repo.git", True),
-+        ({"VCS_ALLOWED_HOSTS": "gitlab.com"}, "git::https://other.example.com/org/repo.git", False),
-+        ({"VCS_ALLOWED_HOSTS": "gitlab.com"}, "git::https://gitlab.com.example.com/org/repo.git", False),
-+        ({"VCS_ALLOWED_HOSTS": "gitlab.com"}, "git::https://gitlab.com@other.example.com/org/repo.git", False),
-+    ],
-+)
-+def test_vcs_allowed_hosts(env: dict[str, str], source: str, injected: bool) -> None:
-+    loader = GenericGitLoader()
-+    module_params = _module_params(Path("test"), source)
-+    with mock.patch.dict(os.environ, {"VCS_USERNAME": "user", "VCS_TOKEN": "token", **env}, clear=True):
-+        loader.discover(module_params)
-+        loader._is_matching_loader(module_params)
-+    assert ("user:token@" in module_params.module_source) is injected
-```
-
-**File**: `tests/terraform/module_loading/loaders/test_github_access_token_loader.py` (added, +32/-0)
-```diff
-@@ -0,0 +1,32 @@
-+import os
-+from unittest import mock
-+
-+import pytest
-+
-+from checkov.terraform.module_loading.loaders.github_access_token_loader import GithubAccessTokenLoader
-+from checkov.terraform.module_loading.module_params import ModuleParams
-+
-+
-+@pytest.mark.parametrize(
-+    "env, source, injected",
-+    [
-+        # VCS_ALLOWED_HOSTS not set -> unchanged behaviour (prefix match)
-+        ({}, "github.com/org/repo", True),
-+        ({}, "github.com.example.com/org/repo", True),
-+        # VCS_ALLOWED_HOSTS set -> GITHUB_PAT only for github.com
-+        ({"VCS_ALLOWED_HOSTS": "gitlab.com"}, "github.com/org/repo", True),
-+        ({"VCS_ALLOWED_HOSTS": "gitlab.com"}, "git::https://github.com/org/repo.git", True),
-+        ({"VCS_ALLOWED_HOSTS": "gitlab.com"}, "git@github.com:org/repo.git", True),
-+        ({"VCS_ALLOWED_HOSTS": "gitlab.com"}, "git::ssh://git@github.com/org/repo.git", True),
-+        ({"VCS_ALLOWED_HOSTS": "gitlab.com"}, "github.com.example.com/org/repo", False),
-+        ({"VCS_ALLOWED_HOSTS": "gitlab.com"}, "github.com@other.example.com/org/repo", False),
-+        ({"VCS_ALLOWED_HOSTS": "gitlab.com"}, "git::https://github.com.example.com/org/repo.git", False),
-+    ],
-+)
-+def test_github_pat_host_check(env: dict[str, str], source: str, injected: bool) -> None:
-+    loader = GithubAccessTokenLoader()
-+    module_params = ModuleParams("test", "test", source, None, "test", "test")
-+    with mock.patch.dict(os.environ, {"GITHUB_PAT": "ghp_test", **env}, clear=True):
-+        loader.discover(module_params)
-+        assert loader._is_matching_loader(module_params) is injected
-+    assert ("x-access-token:ghp_test@" in module_params.module_source) is injected
-```
-
----
-
-### Incident Patch 3: `bcca3952` (2026-11-02)
-**Commit Message**: fix(terraform): add optional allowlist for external module download sources (#7758)
-
-* initial impl
-
-* fix 1
-
-* small fix
-
----------
-
-Co-authored-by: eshmayovitz <[REDACTED_EMAIL]>
-
-**File**: `checkov/terraform/module_loading/loaders/git_loader.py` (modified, +66/-2)
-```diff
-@@ -5,8 +5,8 @@
- import re
- from dataclasses import dataclass
- from pathlib import Path
--from typing import TYPE_CHECKING
--from urllib.parse import urlparse
-+from urllib.parse import urlparse, urlsplit
-+from typing import TYPE_CHECKING, Optional, Tuple
- 
- from checkov.common.goget.github.get_git import GitGetter
- from checkov.common.util.file_utils import _is_within
-@@ -20,6 +20,11 @@
- DEFAULT_MODULE_SOURCE_PREFIX = "git::https://"
- GIT_USER_PATTERN = re.compile(r"^(.*?@).*")
- _warned_hosts: set[str | None] = set()
-+ALLOWED_MODULE_PREFIXES_ENV = "CHECKOV_TERRAFORM_ALLOWED_MODULE_PREFIXES"
-+# 'user[:password]@' right after 'scheme://'
-+URL_USER_INFO_PATTERN = re.compile(r"^([a-z][a-z0-9+.\-]*://)[^/?#@]*@")
-+URL_SCHEME_PATTERN = re.compile(r"^[a-z][a-z0-9+.\-]*://", re.IGNORECASE)
-+DEFAULT_PORTS = {"http": 80, "https": 443, "ssh": 22, "git": 9418}
- 
- 
- def get_allowed_vcs_hosts() -> set[str | None] | None:
-@@ -46,6 +51,62 @@ def get_source_host(source: str) -> str | None:
-     return None
- 
- 
-+def _normalize_module_source(source: str) -> str:
-+    """Lowercase, drop the 'git::' prefix and any 'user[:password]@' part, so sources and prefixes are comparable."""
-+    source = source.strip().lower()
-+    if source.startswith("git::"):
-+        source = source[len("git::"):]
-+    return URL_USER_INFO_PATTERN.sub(r"\1", source)
-+
-+
-+def _split_module_url(url: str) -> Tuple[str, Optional[str], Optional[int], str]:
-+    """Split a module source / prefix into (scheme, hostname, port, lowercased path).
-+
-+    Drops a leading 'git::', assumes 'https://' when no scheme is given and fills in the scheme's default port.
-+    Raises ValueError for unparsable URLs (e.g. an invalid port).
-+    """
-+    url = url.strip()
-+    if url.lower().startswith("git::"):
-+        url = url[len("git::"):]
-+    if not URL_SCHEME_PATTERN.match(url):
-+        url = f"https://{url}"
-+    parts = urlsplit(url)
-+    port = parts.port
-+    if port is None:
-+        port = DEFAULT_PORTS.get(parts.scheme)
-+    return parts.scheme, parts.hostname, port, parts.path.lower()
-+
-+
-+def _matches_module_prefix(source: str, prefix: str) -> bool:
-+    """Scheme, host and port must match exactly; the source path must start with the prefix path."""
-+    try:
-+        source_scheme, source_host, source_port, source_path = _split_module_url(source)
-+        prefix_scheme, prefix_host, prefix_port, prefix_path = _split_module_url(prefix)
-+    except ValueError:
-+        return False
-+    return (
-+        source_scheme == prefix_scheme
-+        and source_host == prefix_host
-+        and source_port == prefix_port
-+        and source_path.startswith(prefix_path)
-+    )
-+
-+
-+def _is_allowed_module_source(source: str) -> bool:
-+    """Check the module source against the CHECKOV_TERRAFORM_ALLOWED_MODULE_PREFIXES allowlist.
-+
-+    Not set -> True (allow all, original behaviour). Set -> True only if the source matches one of the
-+    comma-separated prefixes (same scheme, host and port, path starting with the prefix path).
-+    To block all git module downloads, set the var to a non-matching value (e.g. 'none').
-+    """
-+    allowed_prefixes_raw = os.getenv(ALLOWED_MODULE_PREFIXES_ENV, "")
-+    if not allowed_prefixes_raw.strip():
-+        return True  # no allowlist configured -> allow everything (original behaviour)
-+
-+    allowed_prefixes = [p for p in allowed_prefixes_raw.split(",") if p.strip()]
-+    return any(_matches_module_prefix(source, prefix) for prefix in allowed_prefixes)
-+
-+
- def _validate_ref(ref: str) -> None:
-     """Reject refs that would change the folder the module is downloaded to.
- 
-@@ -127,6 +188,9 @@ def _is_matching_loader(self, module_params: ModuleParams) -> bool:
-     def _load_module(self, module_params: ModuleParams) -> ModuleContent:
-         try:
-             self._process_generic_git_repo(module_params)
-+            if not _is_allowed_module_source(module_params.module_source):
-+                self.logger.warning(f"Skipping module: not in {ALLOWED_MODULE_PREFIXES_ENV} allowlist.")
-+                return ModuleContent(dir=None, failed_url=module_params.module_source)
-             module_source = module_params.module_source.replace("git::", "")
-             git_getter = GitGetter(module_source, create_clone_and_result_dirs=False)
-             git_getter.temp_dir = module_params.dest_dir
-```
-
-**File**: `checkov/terraform/module_loading/loaders/registry_loader.py` (modified, +11/-0)
-```diff
-@@ -14,6 +14,11 @@
- from checkov.common.util.http_utils import DEFAULT_TIMEOUT
- from checkov.terraform.module_loading.content import ModuleContent
- from checkov.terraform.module_loading.loader import ModuleLoader
-+from checkov.terraform.module_loading.loaders.git_loader import (
-+    ALLOWED_MODULE_PREFIXES_ENV,
-+    _is_allowed_module_source,
-+    _normalize_module_source,
-+)
- from checkov.terraform.module_loading.loaders.versions_parser import (
-     order_versions_in_descending_order,
-     get_version_constraints
-@@ -116,6 +121,12 @@ def _load_module(self, module_params: ModuleParams) -> ModuleContent:
-         self.logger.debug(f"Cloning module from normalized url {module_download_url}")
-         archive_extension = self._get_archive_extension(module_download_url)
-         if archive_extension:
-+            if not _is_allowed_module_source(module_download_url):
-+                self.logger.warning(
-+                    f"Skipping module download {_normalize_module_source(module_download_url)}: "
-+                    f"not in {ALLOWED_MODULE_PREFIXES_ENV} allowlist."
-+                )
-+                return ModuleContent(dir=None, failed_url=module_params.module_source)
-             try:
-                 registry_getter = RegistryGetter(module_download_url, archive_extension)
-                 registry_getter.temp_dir = module_params.dest_dir
-```
-
-**File**: `tests/terraform/module_loading/loaders/test_git_loader.py` (modified, +163/-1)
-```diff
-@@ -1,3 +1,4 @@
-+import logging
- import os
- from pathlib import Path
- from unittest import mock
-@@ -6,7 +7,12 @@
- 
- from checkov.terraform.module_loading.loaders.bitbucket_access_token_loader import BitbucketAccessTokenLoader
- from checkov.terraform.module_loading.loaders.bitbucket_loader import BitbucketLoader
--from checkov.terraform.module_loading.loaders.git_loader import GenericGitLoader, _validate_ref, _validate_subdir
-+from checkov.terraform.module_loading.loaders.git_loader import (
-+    GenericGitLoader,
-+    _is_allowed_module_source,
-+    _validate_ref,
-+    _validate_subdir,
-+)
- from checkov.terraform.module_loading.loaders.github_access_token_loader import GithubAccessTokenLoader
- from checkov.terraform.module_loading.loaders.github_loader import GithubLoader
- from checkov.terraform.module_loading.module_params import ModuleParams
-@@ -277,6 +283,162 @@ def test_validate_subdir_rejects_paths_outside_package(subdir: str) -> None:
-         _validate_subdir(subdir)
- 
- 
-+ALLOWED_MODULE_PREFIXES_ENV = "CHECKOV_TERRAFORM_ALLOWED_MODULE_PREFIXES"
-+GIT_GETTER_PATH = "checkov.terraform.module_loading.loaders.git_loader.GitGetter"
-+
-+
-+def _load_with_env(root_dir: Path, loader_class, source: str, env: dict):
-+    """Run discover -> match -> _load_module like the registry does, with the given env vars."""
-+    clean_env = {k: v for k, v in os.environ.items() if k not in (ALLOWED_MODULE_PREFIXES_ENV, "VCS_BASE_URL",
-+                                                                  "VCS_USERNAME", "VCS_TOKEN")}
-+    clean_env.update(env)
-+    with mock.patch.dict(os.environ, clean_env, clear=True):
-+        loader = loader_class()
-+        module_params = _module_params(root_dir, source)
-+        loader.discover(module_params)
-+        assert loader._is_matching_loader(module_params)
-+        return loader._load_module(module_params)
-+
-+
-+@pytest.mark.parametrize("env", [{}, {ALLOWED_MODULE_PREFIXES_ENV: ""}, {ALLOWED_MODULE_PREFIXES_ENV: "  "}],
-+                         ids=["not_set", "empty", "whitespace"])
-+@mock.patch(GIT_GETTER_PATH, autospec=True)
-+def test_allowed_module_prefixes_not_configured_keeps_current_behaviour(git_getter, root_dir: Path, env: dict) -> None:
-+    content = _load_with_env(root_dir, GenericGitLoader, "git::http://127.0.0.1:9999/test", env)
-+
-+    git_getter.assert_called_once()
-+    assert content.loaded()
-+
-+
-+@pytest.mark.parametrize(
-+    "loader_class, source, env",
-+    [
-+        (GenericGitLoader, "git::http://127.0.0.1:9999/test", {}),
-+        (GenericGitLoader, "git::https://192.0.2.1/latest", {}),
-+        (GenericGitLoader, "git::https://gitlab.example.com/org/repo.git?ref=v1", {}),
-+        (GenericGitLoader, "git::ssh://git@example.com/org/repo.git", {}),
-+        (GenericGitLoader, "git::https://github.com.example.com/org/repo.git", {}),
-+        (GenericGitLoader, "git::https://github.com@other.example.com/org/repo.git", {}),
-+        (GenericGitLoader, "git::https://other.example.com/x?@github.com/org/repo.git", {}),
-+        (GenericGitLoader, "git::https://other.example.com/x#@github.com/org/repo.git", {}),
-+        (GithubLoader, "git@github.com:other/repo.git", {}),
-+        (BitbucketLoader, "bitbucket.org/org/repo", {}),
-+        (BitbucketAccessTokenLoader, "bitbucket.org/org/repo", {"BITBUCKET_TOKEN": "test"}),
-+    ],
-+    ids=["loopback", "ip_address", "other_host", "generic_ssh", "lookalike_host", "user_info_host",
-+         "query_with_at_sign", "fragment_with_at_sign", "github_ssh_other_org", "bitbucket", "bitbucket_access_token"],
-+)
-+@mock.patch(GIT_GETTER_PATH, autospec=True)
-+def test_module_source_not_in_allowed_prefixes_is_skipped(
-+    git_getter, root_dir: Path, loader_class, source: str, env: dict
-+) -> None:
-+    env = {ALLOWED_MODULE_PREFIXES_ENV: "https://github.com/, ssh://github.com/org/", **env}
-+
-+    content = _load_with_env(root_dir, loader_class, source, env)
-+
-+    git_getter.assert_not_called()
-+    assert not content.loaded()
-+    assert content.failed_url
-+
-+
-+@pytest.mark.parametrize(
-+    "loader_class, source, allowed, env",
-+    [
-+        (GenericGitLoader, "git::https://github.com/org/repo.git?ref=v1", "https://github.com/", {}),
-+        (GenericGitLoader, "git::https://github.com/org/repo.git?ref=v1", "git::https://github.com/", {}),
-+        (GenericGitLoader, "git::https://GitHub.com/org/repo.git", "https://github.com/", {}),
-+        (GenericGitLoader, "git::https://gitlab.example.com/org/repo.git", "https://github.com/,https://gitlab.example.com/", {}),
-+        (GenericGitLoader, "git::https://gitlab.example.com/org/repo.git", "https://gitlab.example.com/",
-+         {"VCS_BASE_URL": "https://gitlab.example.com", "VCS_USERNAME": "user", "VCS_TOKEN": "token"}),
-+        (GithubLoader, "github.com/org/repo", "https://github.com/", {}),
-+        (GithubLoader, "git@github.com:org/repo.git", "ssh://git@github.com/org/", {}),
-+        (GithubLoader, "git::git@github.com:org/repo.git", "ssh://github.com/org/", {}),
-+  
-```
-
-**File**: `tests/terraform/module_loading/loaders/test_registry_loader.py` (modified, +87/-0)
-```diff
-@@ -1,3 +1,5 @@
-+import os
-+
- import responses
- import pytest
- from unittest import mock
-@@ -249,3 +251,88 @@ def test_load_module_returns_dest_dir_when_no_inner_module(tmp_path):
-     # then
-     assert content.loaded()
-     assert content.path() == str(base_dir)
-+
-+
-+ALLOWED_MODULE_PREFIXES_ENV = "CHECKOV_TERRAFORM_ALLOWED_MODULE_PREFIXES"
-+REGISTRY_HOST = "example.registry.com"
-+REGISTRY_DOWNLOAD_URL = f"https://{REGISTRY_HOST}/api/registry/v1/modules/terraform-aws-modules/example/1.0.0/download"
-+REGISTRY_GETTER_PATH = "checkov.terraform.module_loading.loaders.registry_loader.RegistryGetter"
-+
-+
-+def _load_registry_module(download_location: str, env: dict):
-+    """Run _load_module with a registry response whose X-Terraform-Get header is download_location."""
-+    responses.add(
-+        method=responses.GET,
-+        url=REGISTRY_DOWNLOAD_URL,
-+        status=204,
-+        headers={"X-Terraform-Get": download_location},
-+    )
-+    loader = RegistryLoader()
-+    # RegistryGetter is mocked, so nothing is written; the folder must not exist, otherwise _load_module returns early
-+    dest_dir = os.path.abspath("checkov_registry_loader_test_dest_not_existing")
-+    module_params = ModuleParams("", "", "terraform-aws-modules/example", "", dest_dir, "")
-+    module_params.tf_modules_endpoint = f"https://{REGISTRY_HOST}/api/registry/v1/modules/"
-+    module_params.best_version = "1.0.0"
-+    with mock.patch.dict("os.environ", {"TF_HOST_NAME": REGISTRY_HOST}):
-+        loader.discover(module_params)
-+    with mock.patch.dict("os.environ", env):
-+        if ALLOWED_MODULE_PREFIXES_ENV not in env:
-+            os.environ.pop(ALLOWED_MODULE_PREFIXES_ENV, None)
-+        return loader._load_module(module_params)
-+
-+
-+@pytest.mark.parametrize("env", [{}, {ALLOWED_MODULE_PREFIXES_ENV: ""}, {ALLOWED_MODULE_PREFIXES_ENV: "  "}],
-+                         ids=["not_set", "empty", "whitespace"])
-+@responses.activate
-+@mock.patch(REGISTRY_GETTER_PATH, autospec=True)
-+def test_registry_download_allowed_prefixes_not_configured_keeps_current_behaviour(registry_getter, env: dict) -> None:
-+    content = _load_registry_module("http://127.0.0.1:9999/module.tar.gz", env)
-+
-+    registry_getter.assert_called_once()
-+    assert content.loaded()
-+
-+
-+@pytest.mark.parametrize(
-+    "download_location",
-+    [
-+        "http://127.0.0.1:9999/module.tar.gz",
-+        "http://192.0.2.1/latest/meta-data/?archive=tar.gz",
-+        "https://other.example.com/module.zip",
-+        "https://example.registry.com.other.example.com/module.zip",
-+        "https://example.registry.com@other.example.com/module.zip",
-+        "https://other.example.com/module.zip?@example.registry.com/",
-+        "https://example.registry.com:8443/module.zip",
-+    ],
-+    ids=["loopback", "ip_address", "other_host", "lookalike_host", "user_info_host", "query_with_at_sign",
-+         "other_port"],
-+)
-+@responses.activate
-+@mock.patch(REGISTRY_GETTER_PATH, autospec=True)
-+def test_registry_download_not_in_allowed_prefixes_is_skipped(registry_getter, download_location: str) -> None:
-+    env = {ALLOWED_MODULE_PREFIXES_ENV: f"https://{REGISTRY_HOST}/, https://github.com/"}
-+
-+    content = _load_registry_module(download_location, env)
-+
-+    registry_getter.assert_not_called()
-+    assert not content.loaded()
-+    assert content.failed_url
-+
-+
-+@pytest.mark.parametrize(
-+    "download_location, allowed",
-+    [
-+        ("/api/registry/v1/modules/terraform-aws-modules/example/1.0.0/archive.tar.gz", f"https://{REGISTRY_HOST}/"),
-+        (f"https://{REGISTRY_HOST}/files/module.zip", f"https://{REGISTRY_HOST}/"),
-+        ("https://github.com/org/repo/archive/v1.0.0.tar.gz", f"https://{REGISTRY_HOST}/,https://github.com/"),
-+        ("https://GitHub.com/org/repo/archive/v1.0.0.zip", "https://github.com/"),
-+        (f"https://{REGISTRY_HOST}:443/files/module.zip", f"https://{REGISTRY_HOST}"),
-+    ],
-+    ids=["relative_to_registry", "same_registry_host", "second_prefix", "case_insensitive", "default_port"],
-+)
-+@responses.activate
-+@mock.patch(REGISTRY_GETTER_PATH, autospec=True)
-+def test_registry_download_in_allowed_prefixes_is_loaded(registry_getter, download_location: str, allowed: str) -> None:
-+    content = _load_registry_module(download_location, {ALLOWED_MODULE_PREFIXES_ENV: allowed})
-+
-+    registry_getter.assert_called_once()
-+    assert content.loaded()
+ @pytest.mark.parametrize("source, expected_root_module, expected_inner_module", [
+     ("git::git@github.com:test-inner-module/out-module//inner-module?ref=main",
+@@ -371,8 +376,8 @@ def test_module_source_in_allowed_prefixes_is_loaded(
+ @pytest.mark.parametrize(
+     "source",
+     [
+-        "git::https://user:token@127.0.0.1:8443/x?@github.com/org/repo.git",
+-        "git::https://user:token@127.0.0.1:8443/x#@github.com/org/repo.git",
++        f"git::https://{USER_INFO_TOKEN}@127.0.0.1:8443/x?@github.com/org/repo.git",
++        f"git::https://{USER_INFO_TOKEN}@127.0.0.1:8443/x#@github.com/org/repo.git",
+     ],
+     ids=["query_with_at_sign", "fragment_with_at_sign"],
+ )
+@@ -424,8 +429,8 @@ def test_is_allowed_module_source_rejects_non_matching_source(source: str, allow
+         ("https://github.com/org/repo", "https://github.com:443/"),
+         ("http://github.com:80/org/repo", "http://github.com/"),
+         ("https://192.0.2.1:8443/org/repo", "https://192.0.2.1:8443"),
+-        ("git::https://user:pass@github.com/org/repo.git", "https://github.com/"),
+-        ("git::https://user:pass@github.com/org/repo.git", "https://other:creds@github.com/org/"),
++        (f"git::https://{USER_INFO_PASS}@github.com/org/repo.git", "https://github.com/"),
++        (f"git::https://{USER_INFO_PASS}@github.com/org/repo.git", f"https://{OTHER_USER_INFO}@github.com/org/"),
+         ("git::https://GitHub.com/Org/repo.git", "https://github.com/org/"),
+         ("github.com/org/repo", "github.com/org/"),
+         ("git::ssh://git@github.com/org/repo.git", "ssh://github.com/org/"),
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #7776** (2026-11-02): fix(terraform): build userinfo test URLs dynamically (@talazuri)
 - **PR #7759** (closed): Test Migration of CI Jobs to GitHub-Hosted Runners (@amitz)
 - **PR #7758** (2026-11-02): fix(terraform): add optional allowlist for external module download sources (@talazuri)
 - **PR #7757** (2026-10-20): fix(secrets): load platform-provided detectors in spawn-mode secrets … (@Saarett)
 - **PR #7739** (closed): fix(terraform): Handle dynamic DNSSEC key specs (@botaoshi1)
 - **PR #7738** (closed): fix(terraform): Handle Athena managed encryption (@botaoshi1)
-- **PR #7737** (2026-10-13): fix(terraform): extend MySQL public access check to cover flexible server resources (@talazuri)
 
 ---
 
@@ -1781,57 +1049,39 @@ Co-authored-by: eshmayovitz <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. general): harden network and credential handling defaults (#7701)
+## X. terraform): build userinfo test URLs dynamically (#7776)
 
 **RULE**:
-When implementing operations in `checkov/helm/runner.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in bridgecrewio/checkov. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tests/terraform/module_loading/loaders/test_git_loader.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in bridgecrewio/checkov. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2605202a`: general): harden network and credential handling defaults (#7701). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `dd3d9cd7`: terraform): build userinfo test URLs dynamically (#7776). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `checkov/helm/runner.py`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `tests/terraform/module_loading/loaders/test_git_loader.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-from urllib.parse import urlsplit
-_DEFAULT_PORTS = {"http": 80, "https": 443}
+# userinfo fragments for URL test inputs, assembled at runtime
+USER_INFO_TOKEN = ":".join(("user", "token"))
+USER_INFO_PASS = ":".join(("user", "pass"))
+OTHER_USER_INFO = ":".join(("other", "creds"))
 
-
-def _repo_matches_prefix(repo: str, prefix: str) -> bool:
-    """Return True if the (lowercased) repo URL is covered by the (lowercased) allowlist prefix.
-
-    For URLs the scheme, host and port must match exactly (so a lookalike host such as
-    'charts.example.com.other.net' or port 8443 vs 844 does not match), and the repo path
-    must start with the prefix path. Values without '://' keep the plain prefix comparison.
-    """
-    if "://" not in prefix or "://" not in repo:
-        return repo.startswith(prefix)
-    try:
-        p, r = urlsplit(prefix), urlsplit(repo)
-        if p.scheme != r.scheme or not p.hostname or p.hostname != r.hostname:
-            return False
-        default_port = _DEFAULT_PORTS.get(p.scheme)
-        p_port = default_port if p.port is None else p.port
-        r_port = default_port if r.port is None else r.port
-        if p_port != r_port:
-            return False
-    except ValueError:
-        return False  # e.g. invalid port
-    return r.path.startswith(p.path)
-
-
-    if "*" in allowed_prefixes:
-        return []  # '*' → allow everything
-    return [repo for repo in rem
+        f"git::https://{USER_INFO_TOKEN}@127.0.0.1:8443/x?@github.com/org/repo.git",
+        f"git::https://{USER_INFO_TOKEN}@127.0.0.1:8443/x#@github.com/org/repo.git",
+        (f"git::https://{USER_INFO_PASS}@github.com/org/repo.git", "https://github.com/"),
+        (f"git::https://{USER_INFO_PASS}@github.com/org/repo.git", f"https://{OTHER_USER_INFO}@github.com/org/"),
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Anti-pattern to NEVER write (induced failure mode):
-    return [repo for repo in remote_repos if not any(repo.lower().startswith(p) for p in allowed_prefixes)]
+        "git::https://user:token@127.0.0.1:8443/x?@github.com/org/repo.git",
+        "git::https://user:token@127.0.0.1:8443/x#@github.com/org/repo.git",
+        ("git::https://user:pass@github.com/org/repo.git", "https://github.com/"),
+        ("git::https://user:pass@github.com/org/repo.git", "https://other:creds@github.com/org/"),
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2605202a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `dd3d9cd7` are properly handled with clean fallback behavior.

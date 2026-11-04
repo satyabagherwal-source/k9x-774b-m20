@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/databendlabs-databend-learnings.md`  
 > **Source**: github ([https://github.com/databendlabs/databend](https://github.com/databendlabs/databend))  
-> **Source Version**: `1bb45751`  
+> **Source Version**: `61e6a768`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T17:06:08.225Z  
+> **Timestamp**: 2026-11-03T23:59:31.575Z  
 > **Learning ID**: `learn-github-databendlabs-databend`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/databendlabs-databend-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/databendlabs/databend](https://github.com/databendlabs/databend))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T17:06:07.297Z  
+> **Harvest Timestamp**: 2026-11-03T23:59:23.944Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Data Agent Ready Warehouse : One for  Analytics, Search, AI, Python Sandbox.  — rebuilt from scratch. Unified architecture on your S3.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 9488 stars
+- **Stars / Engagement**: 9490 stars
 
 ---
 
@@ -1196,11 +1196,11 @@ unsafe impl<T: BitChunk> TrustedLen for BitChunks<'_, T> {}
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #20897** (2026-10-30): **fix(query): exact float-to-decimal casts and decimal quantile_cont**
-  *Symptoms*: I hereby agree to the terms of the CLA available at: https://docs.databend.com/dev/policies/cla/  ## Summary  - fixes: #20781 - Float to decimal casts computed `value * 10^scale` in f64, so the product was already rounded at larger scales: `415210.34::DOUBLE::DECIMAL(38,10)` gave `415210.3400000001`. `Decimal::from_float` now takes the target size and rounding mode and scales the exact binary value (significand × 5^scale, then one binary shift that truncates or rounds half away from zero). It uses native u64/u128 products when they fit and widens otherwise. `CAST`/`TRY_CAST`, `INSERT`, `MODIFY COLUMN` and Float64 inside `VARIANT` all go through it. - Decimal statistics bounds travel as the nearest f64, and truncating its exact value could exclude the original decimal (0.3 → 0.2999… → 0.2) and let partition pruning drop matching data. `Domain::from_bounds` now recovers the decimal by nearest rounding when the float is finer than the scale, and otherwise widens the bound one step past the neighbouring float. - Decimal `quantile_cont`/`median` multiplied by `from_float(frac)`, which truncated to 0, so they always returned the lower neighbour. They now interpolate exactly in BigInt and round once to the input scale, without overflowing on `upper - lower`. - Behavior changes:   - Casting NaN to decimal now errors (`TRY_CAST` returns NULL) instead of returning 0.   - Decimal median/quantile results change, e.g. the median of 1.00..4.00 becomes 2.50 instead of 2.00.   - The last dig
+- **Issue #20955** (2026-11-03): **fix(query): evaluate stream status in private task conditions**
+  *Symptoms*: I hereby agree to the terms of the CLA available at: https://docs.databend.com/dev/policies/cla/  ## Summary  - Fix private tasks using the documented `WHEN STREAM_STATUS('db.stream')` syntax. The scheduler previously executed `SELECT STREAM_STATUS(...)`, but `STREAM_STATUS` is registered only as a table function. - Rewrite scalar `STREAM_STATUS` calls in task conditions to `(SELECT has_data FROM STREAM_STATUS(...))` using the parsed AST. Preserve boolean composition, casts, existing subqueries, and escaped string literals. Reject invalid scalar-call arguments and modifiers with an actionable error. Do not register a general scalar function or change ordinary SQL, Cloud task execution, or manual `EXECUTE TASK` behavior. No migration or configuration change is needed. - Add four unit tests covering both SQL dialects, composition/casts, existing expressions and table-function subqueries, invalid calls, and quoted string contents. Extend the private-task integration script with scheduled empty-stream skips, consumption of one inserted row, and repeated visible failures for an invalid stream reference. - Validation passed: `cargo test -p databend-query-task-support --lib when_condition -- --nocapture` (4 tests), `cargo clippy -p databend-query-task-support -p databend-query --lib -- -D warnings`, targeted `rustfmt --check`, `bash -n tests/task/test-private-task.sh`, formatting of the added shell block, and `git diff --check`. - The private-task end-to-end script was not run local
 
-- **Issue #20894** (2026-10-30): **fix(query): decode each segment once in row fetch**
-  *Symptoms*: I hereby agree to the terms of the CLA available at: https://docs.databend.com/dev/policies/cla/  ## Summary  Row fetch (the lazy read after TopN, and the row fetch of mutations) decoded the block metas of a whole segment once for every 10-block window it fetched rows from. `ParquetRowsFetcher::fetch_metadata` called `CompactSegmentInfo::block_metas()`, which decompresses and deserializes the metas of every block of the segment, then kept the metadata of only the 10 blocks around the target block. Rows from blocks in different windows decoded the segment again, so the cost grew with the size of the segment: on a segment of 192 blocks, `SELECT * ... ORDER BY k LIMIT 100` spent 148 ms in RowFetch, against 10 ms when the same blocks are split into segments of 8.  Changes in `parquet_rows_fetcher.rs`: - `RowFetchSegmentCache`: each fetcher keeps the decoded block metas of up to 16 segments (LRU, by segment index in the snapshot), so a segment is decoded once per fetcher. - The row fetch metadata is built for the target block only, on each call. The 10-block window and the per-block metadata cache (`block_meta_lru_cache`) are removed: building the metadata of one block is cheap next to reading it, and a block is looked up once per batch. - `ColumnNodes` of the table schema are built once per fetcher, not on every metadata build. - The unused `RowsFetchMetadataImpl::block_bytes` and `ParquetRowsFetcher::schema` fields are removed.  **Benchmark**: 1M rows, 25 columns (`k BIGINT` and
+- **Issue #20954** (2026-11-03): **feat(storage): prune segments using learned snapshot layouts**
+  *Symptoms*: I hereby agree to the terms of the CLA available at: https://docs.databend.com/dev/policies/cla/  ## Summary  - Reduce repeated FUSE segment metadata scans by learning at most 128 ordered runs during normal reads. Use existing range pruning and binary summary probes within verified runs; unread gaps fall back to scanning. No ANALYZE, persistent range index, or block rewrites. - Include `snapshot_segment_layout_probe.py`: with 9,028 ordered segments and 43 matching segments, the model counts 68 summary reads (25 probes + 43 candidates), versus 9,028. This is a cache-disabled algorithm simulation, not a database latency benchmark; cold queries still need to learn the layout. - Skip observation for ineligible scans and reuse one snapshot lookup per pruner. Allocate the bounded directory before cache admission and charge its actual capacity; disabled layouts retain that capacity until snapshot eviction. - Add focused Rust/SQL regressions. Local validation passed: both previously failing cache accounting tests, both layout unit tests, Fuse clippy (`-D warnings`), formatting/diff checks, and the Python model/Ruff. Full CI is rerunning; two earlier SQL jobs lost their runners.  ## Tests  - [x] Unit Test - [x] Logic Test - [ ] Benchmark Test - [ ] No Test - _Explain why_  ## Type of change  - [ ] Bug Fix (non-breaking change which fixes an issue) - [ ] New Feature (non-breaking change which adds functionality) - [ ] Breaking Change (fix or feature that could cause existing functional
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1217,924 +1217,1197 @@ unsafe impl<T: BitChunk> TrustedLen for BitChunks<'_, T> {}
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `23e080ae` (2026-10-30)
-**Commit Message**: fix(query): dedup in-flight cascades group tasks (#20883)
+### Incident Patch 1: `1aedf8a9` (2026-11-03)
+**Commit Message**: fix(query): remove experimental privilege check settings (#20933)
 
-* fix(query): dedup in-flight cascades group tasks
+* fix(query): remove experimental privilege check settings
 
-OptimizeExprTask scheduled an OptimizeGroupTask for every child whose
-(group, required_prop) had no best cost yet. Tasks run breadth-first,
-so a group requested through several parent expressions got one task
-per request, and each UnionAll level doubled the work in distributed
-mode. A 40-branch UNION ALL exhausted DEFAULT_TASK_LIMIT and fell back
-to the heuristic plan.
+Remove enable_experimental_rbac_check,
+enable_experimental_connection_privilege_check and
+enable_experimental_sequence_privilege_check. They could be changed per
+session, statement or HTTP request, which made stage, UDF, connection
+and sequence authorization optional for the caller. Checks, visibility
+filters and ownership maintenance now always run; the removed names are
+handled like other unknown settings.
 
-Track in-flight OptimizeGroupTasks by (group_index, required_prop) and
-attach later requests as waiters. Enforcer self-references keep a
-private task. TaskManager::run errors out when all queued tasks are
-blocked instead of spinning, so a wait cycle falls back to the
-heuristic plan. Expose scheduler stats for tests.
+- Connections and sequences: remove the SUPER bypass. CREATE requires
+  CREATE CONNECTION / CREATE SEQUENCE on the user or the current role;
+  access requires ACCESS CONNECTION / ACCESS SEQUENCE or ownership.
+- Stages, UDFs, connections and sequences write metadata and ownership
+  in one Meta transaction on CREATE and DROP. CREATE [IF NOT EXISTS]
+  keeps an existing object and its owner (also for tables), and replaces
+  a stale ownership left under the name.
+- Ownership lives only in its own key: drop the cleanup of ownership
+  privileges that older versions stored in role records.
+- Cache the sequence visibility checker per query: nextval now checks
+ 
 
-Backport of release commit N38 dfc0b28a4c.
-
-* test(query): update eager_q0 goldens for cascades task dedup
-
-Both join alternatives for orders x customer cost 0 in this fixture,
-and Group::update_best_cost keeps the first one on a tie. Deduplicated
-tasks finish in a different order, so (Any, Broadcast) now wins over
-(Hash, Hash). The new plan drops a redundant hash shuffle of orders
-under a broa
-
-**File**: `src/query/sql/src/planner/optimizer/optimizers/cascades/cascade.rs` (modified, +14/-1)
+**File**: `src/meta/api/src/api_impl/sequence_api_impl.rs` (modified, +17/-14)
 ```diff
-@@ -31,6 +31,7 @@ use crate::optimizer::optimizers::cascades::cost::DefaultCostModel;
- use crate::optimizer::optimizers::cascades::rule::StrategyFactory;
- use crate::optimizer::optimizers::cascades::tasks::DEFAULT_TASK_LIMIT;
- use crate::optimizer::optimizers::cascades::tasks::OptimizeGroupTask;
-+use crate::optimizer::optimizers::cascades::tasks::SchedulerStat;
- use crate::optimizer::optimizers::cascades::tasks::Task;
- use crate::optimizer::optimizers::cascades::tasks::TaskManager;
- use crate::optimizer::optimizers::distributed::DistributedOptimizer;
-@@ -47,6 +48,8 @@ pub struct CascadesOptimizer {
-     pub(crate) memo: Memo,
-     pub(crate) cost_model: Box<dyn CostModel>,
-     pub(crate) explore_rule_set: RuleSet,
-+    /// Scheduler statistics of the last search, for diagnostics and tests.
-+    scheduler_stat: Option<SchedulerStat>,
- }
+@@ -17,6 +17,7 @@ use databend_common_meta_app::app_error::AppError;
+ use databend_common_meta_app::app_error::SequenceError;
+ use databend_common_meta_app::app_error::UnsupportedSequenceStorageVersion;
+ use databend_common_meta_app::app_error::WrongSequenceCount;
++use databend_common_meta_app::principal::OwnershipObject;
+ use databend_common_meta_app::schema::CreateSequenceReply;
+ use databend_common_meta_app::schema::CreateSequenceReq;
+ use databend_common_meta_app::schema::DropSequenceReply;
+@@ -42,10 +43,10 @@ use log::debug;
  
- impl CascadesOptimizer {
-@@ -74,13 +77,20 @@ impl CascadesOptimizer {
-             memo,
-             cost_model,
-             explore_rule_set,
-+            scheduler_stat: None,
-         })
-     }
+ use super::sequence_nextval_impl::NextVal;
+ use crate::SequenceApi;
++use crate::crud::create_owned_object;
+ use crate::kv_app_error::KVAppError;
+ use crate::kv_pb_api::KVPbApi;
+ use crate::txn_backoff::txn_backoff;
+-use crate::txn_condition_util::txn_cond_eq_seq;
+ use crate::txn_condition_util::txn_cond_seq;
+ use crate::txn_core_util::send_txn;
+ use crate::txn_del;
+@@ -65,20 +66,22 @@ impl<KV: kvapi::KVApi<Error = MetaError> + ?Sized> SequenceApi for KV {
+         let storage_ident = SequenceStorageIdent::new_from(req.ident.clone());
+         let storage_value = ValueId::<SequenceStorageValue>::new(req.start);
  
-     pub fn memo(&self) -> &Memo {
-         &self.memo
-     }
- 
-+    /// Statistics of the task scheduler collected by the last search, for
-+    /// diagnostics and tests.
-+    pub fn scheduler_stat(&self) -> Option<&SchedulerStat> {
-+        self.scheduler_stat.as_ref()
-+    }
+-        let conditions = if req.override_existing {
+-            vec![]
+-        } else {
+-            vec![txn_cond_eq_seq(&req.ident, 0)]
++        // An existing sequence is not an error here; callers report it themselves.
++        let object = OwnershipObject::Sequence {
++            name: req.ident.name().to_string(),
+         };
+-
+-        let txn = TxnRequest::new(conditions, vec![
+-            txn_put_pb(&req.ident, &meta),
+-            txn_put_pb(&storage_ident, &storage_value),
+-        ]);
+-
+-        let (succ, _response) = send_txn(self, txn).await?;
+-
+-        Ok(CreateSequenceReply { success: succ })
++        let success = create_owned_object(
++            self,
++            &req.ident,
++            &meta,
++            req.override_existing,
++            &object,
++            req.owner_role.as_deref(),
++            &[txn_put_pb(&storage_ident, &storage_value)],
++        )
++        .await?;
 +
-     pub(crate) fn enforce_distribution(&self) -> bool {
-         self.opt_ctx.get_enable_distributed_optimization()
++        Ok(CreateSequenceReply { success })
      }
-@@ -123,6 +133,7 @@ impl CascadesOptimizer {
-                     let mut local_optimizer = CascadesOptimizer::new(opt_ctx)?;
-                     let local_expr = local_optimizer.optimize_without_staging(&s_expr)?;
-                     self.memo = local_optimizer.memo;
-+                    self.scheduler_stat = local_optimizer.scheduler_stat;
-                     return Ok(local_expr);
-                 }
-             }
-@@ -213,7 +224,9 @@ impl CascadesOptimizer {
  
-         let mut scheduler = TaskManager::new().with_task_limit(task_limit);
-         scheduler.add_task(Task::OptimizeGroup(root_task));
--        scheduler.run(self)?;
-+        let run_result = scheduler.run(self);
-+        self.scheduler_stat = Some(scheduler.into_stat());
-+        run_result?;
- 
-         debug!("Memo:\n{}", self.memo.display()?);
- 
+     async fn get_sequence(
 ```
 
-**File**: `src/query/sql/src/planner/optimizer/optimizers/cascades/mod.rs` (modified, +2/-0)
+**File**: `src/meta/api/src/kv/crud/mod.rs` (modified, +70/-0)
 ```diff
-@@ -18,3 +18,5 @@ pub mod rule;
- pub mod tasks;
- 
- pub use cascade::CascadesOptimizer;
-+pub use tasks::DEFAULT_TASK_LIMIT;
-+pub use tasks::SchedulerStat;
-```
-
-**File**: `src/query/sql/src/planner/optimizer/optimizers/cascades/tasks/mod.rs` (modified, +2/-0)
-```diff
-@@ -28,4 +28,6 @@ pub use optimize_group::OptimizeGroupTask;
- pub use task::SharedCounter;
- pub use task::Task;
- pub use task_manager::DEFAULT_TASK_LIMIT;
-+pub use task_manager::OptimizeGroupWaiters;
-+pub use task_manager::SchedulerStat;
- pub use task_manager::TaskManager;
-```
-
-**File**: `src/query/sql/src/planner/optimizer/optimizers/cascades/tasks/optimize_expr.rs` (modified, +31/-8)
-```diff
-@@ -235,14 +235,37 @@ impl OptimizeExprTask {
- 
-             let group = optimizer.memo.group(m_expr.children[child_index])?;
-             if group.best_prop(&required_prop).is_none() {
--                let task = OptimizeGroupTask::new(
--                    self.ctx.clone(),
--                    Some((self.group_index, self.m_expr_index)),
--                    group.group_index,
--                    required_prop.clone(),
--                )
--                .with_parent(self.ref_count.clone());
--                scheduler.add_task(Task::OptimizeGroup(task));
-+                let child_group_index = group.group_index;
-+                // An in-flight task for the same `(group, required_prop)` computes exactly
-+                // the result we need, so wait for it instead of scheduling a duplicate.
-+                //
-+                // Enforcer expressions (e.g. `Exchange`) have their own group as child and
-+                // rely on `owner_expr` to skip themselves; those requests keep a private
-+                // task so that the skip stays tied to the requesting expression.
-+                let shareable = child_group_index != self.group_index;
-+                let attached = shareable
-+                    && scheduler.attach_optimize_group_waiter(
-+                        child_group_index,
-+                        &required_prop,
-+                        &self.ref_count,
-+                    );
-+                if !attached {
-+                    let task = OptimizeGroupTask::new(
-+                        self.ctx.clone(),
-+                        Some((self.group_index, self.m_expr_index)),
-+                        child_group_index,
-+                        required_prop.clone(),
-+                    )
-+                    .with_parent(self.ref_count.clone());
-+                    if shareable {
-+                        scheduler.register_optimize_group(
-+                            child_group_index,
-+                            required_prop.clone(),
-+                            task.waiters.clone(),
-+                        );
-+                    }
-+                    scheduler.add_task(Task::OptimizeGroup(task));
-+                }
-             }
- 
-             self.last_optimized_child_index = Some(child_index + 1);
-```
-
-**File**: `src/query/sql/src/planner/optimizer/optimizers/cascades/tasks/optimize_group.rs` (modified, +23/-0)
-```diff
-@@ -12,6 +12,8 @@
- // See the License for the specific language governing permissions and
- // limitations under the License.
- 
-+use std::cell::RefCell;
-+use std::rc::Rc;
+@@ -19,6 +19,10 @@ use std::marker::PhantomData;
  use std::sync::Arc;
+ use std::time::Duration;
  
- use databend_common_catalog::table_context::TableContext;
-@@ -26,6 +28,7 @@ use crate::optimizer::ir::RelExpr;
- use crate::optimizer::ir::RequiredProperty;
- use crate::optimizer::optimizers::cascades::CascadesOptimizer;
- use crate::optimizer::optimizers::cascades::tasks::ExploreGroupTask;
-+use crate::optimizer::optimizers::cascades::tasks::OptimizeGroupWaiters;
- use crate::optimizer::optimizers::cascades::tasks::SharedCounter;
- use crate::optimizer::optimizers::cascades::tasks::TaskManager;
- use crate::plans::Operator;
-@@ -60,6 +63,20 @@ pub struct OptimizeGroupTask {
++use databend_common_meta_app::KeyWithTenant;
++use databend_common_meta_app::principal::OwnershipInfo;
++use databend_common_meta_app::principal::OwnershipObject;
++use databend_common_meta_app::principal::TenantOwnershipObjectIdent;
+ use databend_common_meta_app::schema::CreateOption;
+ use databend_common_meta_app::tenant::Tenant;
+ use databend_common_meta_app::tenant_key::errors::ExistError;
+@@ -34,6 +38,8 @@ use databend_meta_client::types::MatchSeq;
+ use databend_meta_client::types::MatchSeqExt;
+ use databend_meta_client::types::MetaError;
+ use databend_meta_client::types::SeqV;
++use databend_meta_client::types::TxnOp;
++use databend_meta_client::types::TxnRequest;
+ use databend_meta_client::types::With;
+ pub use errors::CrudError;
+ use futures::TryStreamExt;
+@@ -42,6 +48,10 @@ use seq_marked::SeqValue;
  
-     pub ref_count: SharedCounter,
-     pub parent: Option<SharedCounter>,
-+
-+    /// Tasks that requested the same `(group_index, required_prop)` while this task was
-+    /// in flight, see `TaskManager::attach_optimize_group_waiter`. Released when this
-+    /// task is dropped.
-+    #[educe(Debug(ignore))]
-+    pub waiters: OptimizeGroupWaiters,
-+}
-+
-+impl Drop for OptimizeGroupTask {
-+    fn drop(&mut self) {
-+        // The scheduler may still hold a handle to the list, so release the waiters
-+        // explicitly instead of relying on the last `Rc` going away.
-+        self.waiters.borrow_mut().clear();
+ use crate::kv_pb_api::KVPbApi;
+ use crate::kv_pb_api::UpsertPB;
++use crate::send_txn;
++use crate::txn_cond_eq_seq;
++use crate::txn_del;
++use crate::txn_put_pb;
+ 
+ /// A generic CRUD interface for meta data operations.
+ ///
+@@ -130,6 +140,28 @@ where
+         Ok(())
+     }
+ 
++    /// Writes the record and its owner in one transaction; returns whether it was written.
++    #[async_backtrace::framed]
++    #[fastrace::trace]
++    pub async fn add_with_ownership(
++        &self,
++        value: ValueOf<R>,
++        replace: bool,
++        object: OwnershipObject,
++        owner: Option<&str>,
++    ) -> Result<bool, MetaError> {
++        create_owned_object(
++            self.kv_api.as_ref(),
++            &self.ident(value.name()),
++            &value,
++            replace,
++            &object,
++            owner,
++            &[],
++        )
++        .await
 +    }
++
+     #[async_backtrace::framed]
+     #[fastrace::trace]
+     pub async fn update(
+@@ -272,3 +304,41 @@ where
+         Ok(values)
+     }
+ }
++
++/// Writes an object, `extra_ops` and its owner in one transaction; returns whether it was written.
++///
++/// A new object never inherits an ownership left under its name by a dropped object.
++/// An existing object is overwritten only with `replace`; with no `owner` it keeps its owner.
++pub async fn create_owned_object<K>(
++    kv: &(impl kvapi::KVApi<Error = MetaError> + ?Sized),
++    key: &K,
++    value: &K::ValueType,
++    replace: bool,
++    object: &OwnershipObject,
++    owner: Option<&str>,
++    extra_ops: &[TxnOp],
++) -> Result<bool, MetaError>
++where
++    K: kvapi::Key + KeyWithTenant,
++    K::ValueType: FromToProto + 'static,
++{
++    let ownership = TenantOwnershipObjectIdent::new(key.tenant(), object.clone());
++    let set_owner = owner.map(|role| {
++        txn_put_pb(&ownership, &OwnershipInfo {
++            object: object.clone(),
++            role: role.to_string(),
++        })
++    });
++    let mut write = vec![txn_put_pb(key, value)];
++    write.extend(extra_ops.iter().cloned());
++
++    let mut txn = TxnRequest::new(vec![txn_cond_eq_seq(key, 0)], write.clone());
++    txn.if_then
++        .push(set_owner.clone().unwrap_or_else(|| txn_del(&ownership)));
++    if replace {
++        txn.else_then = write;
++        txn.else_then.extend(set_owner);
++    }
++    let (absent, _) = send_txn(kv, txn).await?;
++    Ok(absent || replace)
++}
+```
+
+**File**: `src/meta/app/src/schema/sequence.rs` (modified, +3/-0)
+```diff
+@@ -73,6 +73,9 @@ pub struct CreateSequenceReq {
+ 
+     /// See: [`SequenceMeta::storage_version`]
+     pub storage_version: u64,
++
++    /// Owner written in the same transaction as the sequence; see `create_owned_object`.
++    pub owner_role: Option<String>,
  }
  
- impl OptimizeGroupTask {
-@@ -78,6 +95,7 @@ impl OptimizeGroupTask {
-             ref_count: SharedCounter::new(),
-             parent: None,
-             owner_expr,
-+            waiters: Rc::new(RefCell::new(Vec::new())),
+ #[derive(Clone, Debug, PartialEq, Eq)]
+```
+
+**File**: `src/meta/schema-api-test-suite/src/schema_api_test_suite.rs` (modified, +4/-0)
+```diff
+@@ -8305,6 +8305,7 @@ impl SchemaApiTestSuite {
+                 increment: 1,
+                 comment: Some("seq".to_string()),
+                 storage_version,
++                owner_role: None,
+             };
+ 
+             let resp = mt.create_sequence(req).await?;
+@@ -8321,6 +8322,7 @@ impl SchemaApiTestSuite {
+                 increment: 2,
+                 comment: Some("seq2".to_string()),
+                 storage_version,
++                owner_role: None,
+             };
+ 
+             let resp = mt.create_sequence(req).await?;
+@@ -8346,6 +8348,7 @@ impl SchemaApiTestSuite {
+                 increment: 1,
+                 comment: Some("seq1".to_string()),
+                 storage_version,
++                owner_role: None,
+             };
+ 
+             let resp = mt.create_sequence(req).await?;
+@@ -8398,6 +8401,7 @@ impl SchemaApiTestSuite {
+                 increment: 1,
+                 comment: Some("seq1".to_string()),
+                 storage_version,
++                owner_role: None,
+             };
+ 
+             let resp = mt.create_sequence(req).await?;
+```
+
+**File**: `src/query/ee/src/storages/fuse/operations/storage_class_tests.rs` (modified, +2/-2)
+```diff
+@@ -24,7 +24,6 @@ mod real_s3 {
+     use databend_common_catalog::table::Table;
+     use databend_common_catalog::table_context::TableContextTableAccess;
+     use databend_common_meta_app::principal::UserDefinedConnection;
+-    use databend_common_meta_app::schema::CreateOption;
+     use databend_common_meta_app::storage::S3StorageClass;
+     use databend_common_meta_app::storage::StorageParams;
+     use databend_common_meta_app::storage::StorageS3Config;
+@@ -263,7 +262,8 @@ mod real_s3 {
+                 .add_connection(
+                     &fixture.default_tenant(),
+                     UserDefinedConnection::new("storage_class_s3", "s3".to_owned(), params),
+-                    &CreateOption::Create,
++                    false,
++                    None,
+                 )
+                 .await?;
+             let case = AwsCase {
+```
+
+**File**: `src/query/management/src/stage/stage_api.rs` (modified, +7/-3)
+```diff
+@@ -15,12 +15,16 @@
+ use databend_common_exception::Result;
+ use databend_common_meta_app::principal::StageFile;
+ use databend_common_meta_app::principal::StageInfo;
+-use databend_common_meta_app::schema::CreateOption;
+ 
+ #[async_trait::async_trait]
+ pub trait StageApi: Sync + Send {
+-    // Add a stage info to /tenant/stage-name.
+-    async fn add_stage(&self, stage: StageInfo, create_option: &CreateOption) -> Result<()>;
++    /// Writes the stage and its owner in one transaction; returns whether it was written.
++    async fn add_stage_with_owner(
++        &self,
++        stage: StageInfo,
++        replace: bool,
++        owner: Option<&str>,
++    ) -> Result<bool>;
+ 
+     async fn get_stage(&self, name: &str) -> Result<(u64, StageInfo)>;
+ 
+```
+
+**File**: `src/query/management/src/stage/stage_mgr.rs` (modified, +22/-25)
+```diff
+@@ -16,31 +16,29 @@ use std::sync::Arc;
+ 
+ use databend_common_exception::ErrorCode;
+ use databend_common_exception::Result;
++use databend_common_meta_api::crud::create_owned_object;
+ use databend_common_meta_api::kv_pb_api::KVPbApi;
+-use databend_common_meta_api::kv_pb_api::UpsertPB;
+ use databend_common_meta_api::reply::unpack_txn_reply;
+ use databend_common_meta_api::txn_cond_eq_seq;
+ use databend_common_meta_api::txn_cond_seq;
+ use databend_common_meta_api::txn_del;
+ use databend_common_meta_api::txn_put_pb;
+ use databend_common_meta_app::app_error::TxnRetryMaxTimes;
++use databend_common_meta_app::principal::OwnershipObject;
+ use databend_common_meta_app::principal::StageFile;
+ use databend_common_meta_app::principal::StageFileIdent;
+ use databend_common_meta_app::principal::StageIdent;
+ use databend_common_meta_app::principal::StageInfo;
+-use databend_common_meta_app::schema::CreateOption;
+ use databend_common_meta_app::tenant::Tenant;
+ use databend_meta_client::kvapi;
+ use databend_meta_client::kvapi::DirName;
+ use databend_meta_client::kvapi::KvApiExt;
+ use databend_meta_client::kvapi::ListOptions;
+ use databend_meta_client::kvapi::StructKey;
+ use databend_meta_client::types::ConditionResult::Eq;
+-use databend_meta_client::types::MatchSeq;
+ use databend_meta_client::types::MetaError;
+ use databend_meta_client::types::TxnOp;
+ use databend_meta_client::types::TxnRequest;
+-use databend_meta_client::types::With;
+ use futures::TryStreamExt;
+ 
+ use crate::errors::meta_service_error;
+@@ -82,27 +80,26 @@ impl StageMgr {
+ impl StageApi for StageMgr {
+     #[async_backtrace::framed]
+     #[fastrace::trace]
+-    async fn add_stage(&self, info: StageInfo, create_option: &CreateOption) -> Result<()> {
+-        let ident = self.stage_ident(&info.stage_name);
+-        let seq = MatchSeq::from(*create_option);
+-        let upsert = UpsertPB::update(ident, info.clone()).with(seq);
+-
+-        let res = self
+-            .kv_api
+-            .upsert_pb(&upsert)
+-            .await
+-            .map_err(meta_service_error)?;
+-
+-        if let CreateOption::Create = create_option {
+-            if res.prev.is_some() {
+-                return Err(ErrorCode::StageAlreadyExists(format!(
+-                    "Stage '{}' already exists.",
+-                    info.stage_name
+-                )));
+-            }
+-        }
+-
+-        Ok(())
++    async fn add_stage_with_owner(
++        &self,
++        info: StageInfo,
++        replace: bool,
++        owner: Option<&str>,
++    ) -> Result<bool> {
++        let object = OwnershipObject::Stage {
++            name: info.stage_name.clone(),
++        };
++        create_owned_object(
++            self.kv_api.as_ref(),
++            &self.stage_ident(&info.stage_name),
++            &info,
++            replace,
++            &object,
++            owner,
++            &[],
++        )
++        .await
++        .map_err(meta_service_error)
+     }
+ 
+     #[async_backtrace::framed]
+```
+
+**File**: `src/query/management/src/udf/udf_mgr.rs` (modified, +20/-21)
+```diff
+@@ -16,11 +16,12 @@ use std::sync::Arc;
+ 
+ use databend_common_exception::ErrorCode;
+ use databend_common_functions::is_builtin_function;
++use databend_common_meta_api::crud::create_owned_object;
+ use databend_common_meta_api::kv_pb_api::KVPbApi;
+ use databend_common_meta_api::kv_pb_api::UpsertPB;
++use databend_common_meta_app::principal::OwnershipObject;
+ use databend_common_meta_app::principal::UdfIdent;
+ use databend_common_meta_app::principal::UserDefinedFunction;
+-use databend_common_meta_app::schema::CreateOption;
+ use databend_common_meta_app::tenant::Tenant;
+ use databend_meta_client::kvapi;
+ use databend_meta_client::kvapi::DirName;
+@@ -48,36 +49,34 @@ impl UdfMgr {
          }
      }
  
-@@ -120,6 +138,11 @@ impl OptimizeGroupTask {
-             (OptimizeGroupState::Explored, OptimizeGroupEvent::Optimizing) => {}
-             (OptimizeGroupState::Explored, OptimizeGroupEvent::Optimized) => {
-                 self.state = OptimizeGroupState::Optimized;
-+                scheduler.unregister_optimize_group(
-+                    self.group_index,
-+                    &self.required_prop,
-+                    &self.waiters,
-+                );
-             }
-             _ => Err(ErrorCode::Internal(format!(
-                 "Invalid transition from {:?} with {:?}",
-```
-
-**File**: `src/query/sql/src/planner/optimizer/optimizers/cascades/tasks/task_manager.rs` (modified, +174/-1)
-```diff
-@@ -12,20 +12,36 @@
- // See the License for the specific language governing permissions and
- // limitations under the License.
+-    /// Add a UDF to /tenant/udf-name.
++    /// Writes the UDF and its owner in one transaction; returns whether it was written.
+     #[async_backtrace::framed]
+     #[fastrace::trace]
+-    pub async fn add_udf(
++    pub async fn add_udf_with_owner(
+         &self,
+         info: UserDefinedFunction,
+-        create_option: &CreateOption,
++        replace: bool,
++        owner: Option<&str>,
+     ) -> Result<Result<bool, UdfError>, UdfApiError> {
+         if let Err(e) = self.ensure_non_builtin(info.name.as_str()) {
+             return Ok(Err(e));
+         }
  
-+use std::cell::RefCell;
-+use std::collections::HashMap;
- use std::collections::VecDeque;
-+use std::rc::Rc;
- use std::time::Duration;
+-        let seq = MatchSeq::from(*create_option);
+-
+         let key = UdfIdent::new(&self.tenant, &info.name);
+-        let req = UpsertPB::insert(key, info.clone()).with(seq);
+-        let res = self.kv_api.upsert_pb(&req).await?;
+-
+-        if let CreateOption::Create = create_option {
+-            if res.prev.is_some() {
+-                let err = UdfError::Exists {
+-                    tenant: self.tenant.tenant_name().to_string(),
+-                    name: info.name.to_string(),
+-                    reason: "".to_string(),
+-                };
+-                return Ok(Err(err));
+-            }
+-        }
+-
+-        Ok(Ok(res.is_changed()))
++        let object = OwnershipObject::UDF {
++            name: info.name.clone(),
++        };
++        let written = create_owned_object(
++            self.kv_api.as_ref(),
++            &key,
++            &info,
++            replace,
++            &object,
++            owner,
++            &[],
++        )
++        .await?;
++        Ok(Ok(written))
+     }
  
-+use databend_common_exception::ErrorCode;
- use databend_common_exception::Result;
- use log::info;
- 
-+use crate::IndexType;
-+use crate::optimizer::ir::RequiredProperty;
- use crate::optimizer::optimizers::CascadesOptimizer;
-+use crate::optimizer::optimizers::cascades::tasks::SharedCounter;
- use crate::optimizer::optimizers::cascades::tasks::Task;
- 
-+/// Extra waiters of an in-flight `OptimizeGroupTask`.
-+///
-+/// The task owns one handle and the scheduler keeps another one in
-+/// `TaskManager::in_flight_optimize_groups`. Every `SharedCounter` stored here is a
-+/// clone of the `ref_count` of a task that is blocked on the in-flight task; clearing
-+/// the list (when the in-flight task is dropped) releases all of them at once.
-+pub type OptimizeGroupWaiters = Rc<RefCell<Vec<SharedCounter>>>;
-+
- /// It will cost about 4000ns to execute a task in average,
- /// so the default task limit is 1,250,000 which means the
- /// optimizer will cost at most 5s to optimize a query.
- pub const DEFAULT_TASK_LIMIT: u64 = 1_250_000;
- 
-+#[derive(Debug, Clone)]
- pub struct SchedulerStat {
-     pub scheduled_task_count: u64,
-     pub explore_task_count: u64,
-@@ -37,6 +53,9 @@ pub struct SchedulerStat {
-     pub optimize_group_prune_count: u64,
-     pub optimize_group_expr_count: u64,
-     pub optimize_group_expr_prune_count: u64,
-+    /// Requests that attached to an in-flight `OptimizeGroupTask` instead of
-+    /// scheduling a duplicate one.
-+    pub optimize_group_wait_count: u64,
- }
- 
- pub struct TaskManager {
-@@ -49,6 +68,18 @@ pub struct TaskManager {
- 
-     /// Statistics of the scheduler.
-     pub(super) stat: SchedulerStat,
-+
-+    /// `OptimizeGroupTask`s that have been scheduled but not finished yet, keyed by
-+    /// `(group_index, required_prop)`.
-+    ///
-+    /// Tasks are scheduled breadth-first, so a group that is reachable through several
-+    /// parent expressions (e.g. every level of a deep `UNION ALL` chain enumerates two
-+    /// required distributions for its children) would otherwise get one
-+    /// `OptimizeGroupTask` per request before any of them finishes and populates
-+    /// `Group::best_prop`. That doubles the work at every level and blows up
-+    /// exponentially with plan depth. Requests for an in-flight task attach to it as an
-+    /// extra waiter instead of scheduling a duplicate.
-+    in_flight_optimize_groups: HashMap<(IndexType, RequiredProperty), OptimizeGroupWaiters>,
- }
- 
- impl TaskManager {
-@@ -66,7 +97,68 @@ impl TaskManager {
-                 optimize_group_prune_count: 0,
-                 optimize_group_expr_count: 0,
-                 optimize_group_expr_prune_count: 0,
-+                optimize_group_wait_count: 0,
-             },
-+            in_flight_optimize_groups: HashMap::new(),
-+        }
-+    }
-+
-+    /// Attach `waiter` to the in-flight `OptimizeGroupTask` of `(group_index, required_prop)`.
-+    ///
-+    /// Returns `false` if there is no such task, in which case the caller must schedule
-+    /// one (and register it with [`Self::register_optimize_group`]).
-+    pub fn attach_optimize_group_waiter(
-+        &mut self,
-+        group_index: IndexType,
-+        required_prop: &RequiredProperty,
-+        waiter: &SharedCounter,
-+    ) -> bool {
-+        let key = (group_index, required_prop.clone());
-+        match self.in_flight_optimize_groups.get(&key) {
-+            // The task still holds its handle, so it is alive and will release the
-+            // waiters when it is dropped.
-+            Some(waiters) if Rc::strong_count(waiters) > 1 => {
-+                waiters.borrow_mut().push(waiter.clone());
-+                self.stat.optimize_group_wait_count += 1;
-+                true
-+            }
-+            // Stale entry: the task has already been dropped without unregistering
-+            // itself. Never attach to it, the waiter would block forever.
-+            Some(_) => {
-+                self.in_flight_optimize_groups.remove(&key);
-+                false
-+            }
-+            None => false,
-+        }
-+    }
-+
-+    pub fn register_optimize_group(
-+        &mut self,
-+        group_index: IndexType,
-+        required_prop: RequiredProperty,
-+        waiters: OptimizeGroupWaiters,
-+    ) {
-+        self.in_flight_optimize_groups
-+            .insert((group_index, required_prop), waiters);
-+    }
-+
-+    /// Remove the registration of a finished `OptimizeGroupTask`.
-+    ///
-+    /// Only removes the entry if it still refers to `waiters`, so a task never
-+    /// unregisters a newer task for the same key.
-+    pub fn unregister_optimize_group(
-+        &mut self,
-+        group_index: IndexType,
-+        required_prop: &RequiredProperty,
-+        waiters: &OptimizeGroupWaiters,
-+    ) {
-+        let 
-```
-
-**File**: `src/query/sql/src/planner/optimizer/optimizers/mod.rs` (modified, +2/-0)
-```diff
-@@ -22,6 +22,8 @@ pub mod operator;
- pub mod recursive;
- pub mod rule;
- pub use cascades::CascadesOptimizer;
-+pub use cascades::DEFAULT_TASK_LIMIT;
-+pub use cascades::SchedulerStat;
- pub use cse::CommonSubexpressionOptimizer;
- pub use cte_filter_pushdown::CTEFilterPushdownOptimizer;
- pub use eliminate_self_join::EliminateSelfJoinOptimizer;
-```
-
-**File**: `src/query/sql/test-support/data/results/eager_aggregation/eager_q0_optimized.txt` (modified, +5/-7)
-```diff
-@@ -35,11 +35,9 @@ Sort
-                                 │       ├── filters: [eq(customer.c_mktsegment (#15), 'BUILDING')]
-                                 │       ├── order by: []
-                                 │       └── limit: NONE
--                                └── Exchange(Hash)
--                                    ├── Exchange(Hash): keys: [orders.o_custkey (#1)]
--                                    └── Scan
--                                        ├── table: default.orders (#0)
--                                        ├── filters: [lt(orders.o_orderdate (#4), '1995-03-15')]
--                                        ├── order by: []
--                                        └── limit: NONE
-+                                └── Scan
-+                                    ├── table: default.orders (#0)
-+                                    ├── filters: [lt(orders.o_orderdate (#4), '1995-03-15')]
-+                                    ├── order by: []
-+                                    └── limit: NONE
- 
+     /// Update a UDF to /tenant/udf-name.
 ```
 
 ---
 
-### Incident Patch 2: `619aa314` (2026-10-30)
-**Commit Message**: fix(query): keep hash shuffle sender running after its output finishes (#20893)
+### Incident Patch 2: `61e6a768` (2026-11-03)
+**Commit Message**: fix(query): speed up lazy prune pipeline, keep prune cache under LIMIT (#20884)
 
-* fix(query): keep hash shuffle sender running after its output finishes
+* fix(query): speed up lazy prune pipeline, keep prune cache under LIMIT
 
-HashSendTransform hands its own partition to its direct output when
-`can_push()` is true. `OutputPort::can_push()` does not check
-IS_FINISHED, so it stays true when the receiver finishes the port after
-it asked for data, e.g. when a downstream LIMIT is reached. The sender
-then pushed its own partition into the finished port and returned
-NeedConsume. Nothing consumes that block, so the processor was never
-scheduled again: it stopped pulling its input, never released its
-channels, and the other nodes waited forever for EOF.
+Backport of release commits fe5f15720a, d6d7be1932 and d524a7024a.
 
-The guard against a finished output was lost in the refactor of #20778.
-Check `is_finished()` before handing the partition to the output.
+- Prune segments in the lazy prune pipeline with
+  max(max_threads, max_storage_io_requests) concurrency, like the
+  non-pipeline pruner, and go back to max_threads for block pruning.
+- Trim per-scan overhead: create the PruningContext runtime on first
+  use, hand the lazy segments to the pipeline synchronously from
+  on_init instead of spawning a runtime per scan, and cap the pipeline
+  width by the number of segments on the node.
+- Keep the prune result cache when only a runtime LIMIT filter is
+  registered. SendPartInfoSink marks the result incomplete when the
+  filter stops pruning early or drops a block, so truncated results
+  are never cached. A runtime TopN filter still disables the cache.
 
-* fix(query): release exchange queue quota when receivers are dropped
+* fix(query): retain pruned parts only when a prune cache key exists
 
-Exchange queues are drained only by an explicit `close()`. An aborted query
-(KILL, timeout or error) drops its pipeline without calling it, so the
-queued items keep their receive quota. The producers waiting for that quota
-keep the queue alive in turn:
+* refactor(query): simplify prune pipeline widths (fable review round 1)
 
-- The router of an inbound connection stays parked i
+---------
 
-**File**: `src/query/service/src/servers/flight/v1/exchange/hash_send_transform.rs` (modified, +5/-1)
+Co-authored-by: Winter Zhang <[REDACTED_EMAIL]>
+
+**File**: `src/query/service/tests/it/storages/fuse/pruning_column_oriented_segment.rs` (modified, +1/-0)
 ```diff
-@@ -92,7 +92,11 @@ impl Processor for HashSendTransform {
- 
-             let budget_reached = self.writer.add_block(data_block)?;
-             if budget_reached {
--                let own = self.output.can_push().then_some(self.local_pos);
-+                // `can_push` stays true on a port finished while it needed data. A
-+                // block pushed there is never consumed, and this processor would
-+                // wait for that consumption instead of pulling its input again.
-+                let own = (!self.output.is_finished() && self.output.can_push())
-+                    .then_some(self.local_pos);
-                 let (own_block, sends_pending) = self.writer.flush(own)?;
-                 let pushed = if let Some(block) = own_block {
-                     self.output.push_data(Ok(block));
+@@ -99,6 +99,7 @@ async fn apply_snapshot_pruning(
+         cache_key,
+         schema.clone(),
+         HashSet::new(),
++        segment_locs.len(),
+     )?;
+     prune_pipeline.set_max_threads(1);
+     prune_pipeline.set_on_init(move || {
 ```
 
-**File**: `src/query/service/src/servers/flight/v1/exchange/hash_shuffle_tests.rs` (modified, +65/-50)
+**File**: `src/query/service/tests/it/storages/fuse/pruning_pipeline.rs` (modified, +262/-12)
 ```diff
-@@ -483,59 +483,74 @@ fn test_hash_senders_flush_tail_and_release_channels_before_processor_drop() ->
+@@ -18,11 +18,15 @@ use std::sync::Arc;
+ use databend_common_ast::ast::Engine;
+ use databend_common_base::runtime::GlobalIORuntime;
+ use databend_common_base::runtime::Runtime;
++use databend_common_catalog::plan::DataSourcePlan;
+ use databend_common_catalog::plan::PartInfoPtr;
++use databend_common_catalog::plan::PartInfoType;
+ use databend_common_catalog::plan::PartStatistics;
+ use databend_common_catalog::plan::PushDownInfo;
+ use databend_common_catalog::plan::ReadPartitionsPruningMode;
+ use databend_common_catalog::query_kind::QueryKind;
++use databend_common_catalog::runtime_filter_info::RuntimeLimitFilter;
++use databend_common_catalog::table::Table;
+ use databend_common_exception::ErrorCode;
+ use databend_common_exception::Result;
+ use databend_common_expression::DataBlock;
+@@ -39,6 +43,7 @@ use databend_common_expression::types::number::UInt64Type;
+ use databend_common_meta_app::schema::CreateOption;
+ use databend_common_pipeline::core::Pipeline;
+ use databend_common_sql::BloomIndexColumns;
++use databend_common_sql::executor::table_read_plan::ToReadDataSourcePlan;
+ use databend_common_sql::parse_to_filters;
+ use databend_common_sql::plans::CreateTablePlan;
+ use databend_common_storages_fuse::FuseBlockPartInfo;
+@@ -55,6 +60,8 @@ use databend_query::sessions::QueryContext;
+ use databend_query::sessions::TableContext;
+ use databend_query::sessions::TableContextPartitionStats;
+ use databend_query::sessions::TableContextQueryIdentity;
++use databend_query::sessions::TableContextRuntimeFilter;
++use databend_query::sessions::TableContextSettings;
+ use databend_query::sessions::TableContextTableAccess;
+ use databend_query::storages::fuse::FUSE_OPT_KEY_BLOCK_PER_SEGMENT;
+ use databend_query::storages::fuse::FUSE_OPT_KEY_ROW_PER_BLOCK;
+@@ -152,21 +159,21 @@ async fn apply_snapshot_pruning(
+     Ok((got, stats))
+ }
+ 
+-#[tokio::test(flavor = "multi_thread")]
+-async fn test_snapshot_pruner() -> anyhow::Result<()> {
+-    let fixture = TestFixture::setup().await?;
+-    let ctx = fixture.new_query_ctx().await?;
+-
+-    fixture.create_default_database().await?;
+-
+-    let test_tbl_name = "test_index_helper";
++/// Creates `test_tbl_name` with columns `a`, `b` and appends `num_blocks`
++/// blocks of `row_per_block` rows, one block per segment. Column `a` is
++/// always 1; column `b` equals the block index.
++async fn create_test_table(
++    fixture: &TestFixture,
++    ctx: Arc<QueryContext>,
++    test_tbl_name: &str,
++    num_blocks: usize,
++    row_per_block: usize,
++) -> Result<Arc<dyn Table>> {
+     let test_schema = TableSchemaRefExt::create(vec![
+         TableField::new("a", TableDataType::Number(NumberDataType::UInt64)),
+         TableField::new("b", TableDataType::Number(NumberDataType::UInt64)),
+     ]);
+ 
+-    let num_blocks = 10;
+-    let row_per_block = 10;
+     let num_blocks_opt = row_per_block.to_string();
+ 
+     // create test table
+@@ -237,13 +244,32 @@ async fn test_snapshot_pruner() -> anyhow::Result<()> {
+         .await?;
+ 
+     // get the latest tbl
+-    let table = catalog
++    catalog
+         .get_table(
+             &fixture.default_tenant(),
+             fixture.default_db_name().as_str(),
+             test_tbl_name,
+         )
+-        .await?;
++        .await
++}
++
++#[tokio::test(flavor = "multi_thread")]
++async fn test_snapshot_pruner() -> anyhow::Result<()> {
++    let fixture = TestFixture::setup().await?;
++    let ctx = fixture.new_query_ctx().await?;
++
++    fixture.create_default_database().await?;
++
++    let num_blocks = 10;
++    let row_per_block = 10;
++    let table = create_test_table(
++        &fixture,
++        ctx.clone(),
++        "test_index_helper",
++        num_blocks,
++        row_per_block,
++    )
++    .await?;
+ 
+     let fuse_table = FuseTable::try_from_table(table.as_ref())?;
+ 
+@@ -411,6 +437,230 @@ async fn test_snapshot_pruner() -> anyhow::Result<()> {
      Ok(())
  }
  
-+/// The receiver may finish the direct output after it asked for data, which
-+/// leaves `can_push` true. The sender must keep pulling its input and sending the
-+/// other partitions instead of waiting on a block pushed to the finished port.
- #[test]
- fn test_hash_transform_closed_output_keeps_sending_other_partitions() -> Result<()> {
--    let channels = ExchangeReceiveChannels::new(2);
--    let receivers = channels.receivers.clone();
--    let nodes = vec![ShuffleNode {
--        partitions: 0..2,
--        dispatcher: HashShuffleDispatcher::local(create_local_block_senders(&channels)),
--    }];
--    drop(channels);
--    let scatter: Arc<Box<dyn FlightScatter>> = Arc::new(Box::new(KeyScatter { num_partitions: 2 }));
--    let item = HashSendTransform::create_item(0, 0, scatter, nodes, ExecutorWaker::create(), 1);
--    let upstream = OutputPort::create();
--    let downstream = InputPort::create();
--    // Ports are connected before use; this test alone drives the processor sequentially.
--    unsafe {
--        connect(&item.inputs_port[0], &upstream);
--        connect(&downstream, &item.outputs_port[0]);
-+    for need_data_before_finish in [false, true] {
-+        let channels = ExchangeReceiveChannels::new(2);
-+        let receivers = channels.receivers.clone();
-+        let nodes = vec![ShuffleNode {
-+            partitions: 0..2,
-+            dispatcher: HashShuffleDispatcher::local(create_local_block_senders(&channels)),
-+        }];
-+        drop(channels);
-+        let scatter: Arc<Box<dyn FlightScatter>> =
-+            Arc::new(Box::new(KeyScatter { num_partitions: 2 }));
-+        let item = HashSendTransform::create_item(0, 0, scatter, nodes, ExecutorWaker::create(), 1);
-+        let upstream = OutputPort::create();
-+        let downstream = InputPort::create();
-+        // Ports are connected before use; this test alone drives the processor sequentially.
-+        unsafe {
-+            connect(&item.inputs_port[0], &upstream);
-+            connect(&downstream, &item.outputs_port[0]);
-+        }
-+        if need_data_before_finish {
-+            downstream.set_need_data();
-+        }
-+        downstream.finish();
-+        assert!(matches!(
-+            unsafe { item.processor.event(EventCause::Output(0))? },
-+            Event::NeedData
-+        ));
-+        assert!(receivers[0].is_closed());
-+        assert!(!receivers[1].is_closed());
++/// Runs a lazy prune pipeline built by `build_prune_pipeline` and returns the
++/// parts it produced.
++///
++/// The pipeline runs to completion before the receiver is drained, so it only
++/// works while the parts produced fit into the part channel created by
++/// `do_build_prune_pipeline` (capacity `max(max_threads,
++/// max_storage_io_requests)`, 8 in the tests below). Callers keep `num_blocks`
++/// of `create_test_table` at or below that setting; with more parts the sink
++/// blocks on `send` and the test hangs instead of failing.
++async fn execute_lazy_prune_pipeline(
++    ctx: Arc<QueryContext>,
++    fuse_table: &FuseTable,
++    prune_pipeline: Pipeline,
++) -> Result<Vec<PartInfoPtr>> {
++    let rx = fuse_table.pruned_result_receiver.lock().clone().unwrap();
++    let executor =
++        QueryPipelineExecutor::create(prune_pipeline, ExecutorSettings::try_create(ctx)?)?;
++    executor.execute()?;
++    let mut parts = Vec::new();
++    while let Ok(Ok(part)) = rx.recv().await {
++        parts.push(part);
++    }
++    Ok(parts)
++}
 +
-+        for keys in [vec![0, 1, 2, 3], vec![4, 5, 6, 7]] {
-+            upstream.push_data(Ok(DataBlock::new_from_columns(vec![
-+                UInt64Type::from_data(keys.clone()),
-+            ])));
-+            assert!(matches!(
-+                unsafe { item.processor.event(EventCause::Input(0))? },
-+                Event::NeedData
-+            ));
-+            assert!(!item.outputs_port[0].has_data());
-+            let QueueItem::LocalData(data) = receivers[1].try_recv().unwrap() else {
-+                panic!("expected local data");
-+            };
-+            let column = data.into_data().get_by_offset(0).to_column();
-+            let received = UInt64Type::try_downcast_column(&column).unwrap();
-+            assert_eq!(
-+                received.iter().copied().collect::<Vec<_>>(),
-+                keys.into_iter().filter(|x| x % 2 == 1).collect::<Vec<_>>()
-+            );
-+        }
-+        assert!(matches!(
-+            receivers[0].try_recv(),
-+            Err(async_channel::TryRecvError::Closed)
-+        ));
-+
-+        upstream.finish();
-+        assert!(matches!(
-+            unsafe { item.processor.event(EventCause::Input(0))? },
-+            Event::Finished
-+        ));
-+        assert!(matches!(
-+            receivers[1].try_recv(),
-+            Err(async_channel::TryRecvError::Closed)
-+        ));
-     }
--    downstream.finish();
--    assert!(matches!(
--        unsafe { item.processor.event(EventCause::Output(0))? },
--        Event::NeedData
--    ));
--    assert!(receivers[0].is_closed());
--    assert!(!receivers[1].is_closed());
--
--    upstream.push_data(Ok(DataBlock::new_from_columns(vec![
--        UInt64Type::from_data(vec![0, 1, 2, 3]),
--    ])));
--    assert!(matches!(
--        unsafe { item.processor.event(EventCause::Input(0))? },
--        Event::NeedData
--    ));
--    let QueueItem::LocalData(data) = receivers[1].try_recv().unwrap() else {
--        panic!("expected local data");
--    };
--    let column = data.into_data().get_by_offset(0).to_column();
--    let keys = UInt64Type::try_downcast_column(&column).unwrap();
--    assert_eq!(keys.iter().copied().collect::<Vec<_>>(), vec![1, 3]);
--    assert!(matches!(
--        receivers[0].try_recv(),
--        Err(async_channel::TryRecvError::Closed)
--    ));
--
--    upstream.finish();
--    assert!(matches!(
--        unsafe { item.processor.event(EventCause::Input(0))? },
--        Event::Finished
--    ));
--    assert!(matches!(
--        receivers[1].try_recv(),
--        Err(async_channe
++fn block_locations(parts: &[PartInfoPtr]) -> Vec<String> {
++    let mut locati
 ```
 
-**File**: `src/query/service/src/servers/flight/v1/network/inbound/exchange_queue.rs` (modified, +108/-3)
+**File**: `src/query/storages/fuse/src/operations/read_partitions.rs` (modified, +61/-23)
 ```diff
-@@ -44,6 +44,28 @@ impl ExchangeReceiveChannels {
-     }
- }
+@@ -456,7 +456,12 @@ impl FuseTable {
+         let pruner =
+             Arc::new(self.build_fuse_pruner(ctx.clone(), push_downs, table_schema.clone(), dal)?);
  
-+impl Drop for ExchangeReceiveChannels {
-+    /// A query aborted before its pipelines took the receivers leaves this
-+    /// collection as their last owner: release what was already queued for them.
-+    fn drop(&mut self) {
-+        for receiver in &self.receivers {
-+            if receiver.receiver_count() == 1 {
-+                close_queue(receiver);
-+            }
-+        }
-+    }
-+}
-+
-+/// Stop producers and discard queued items, releasing their quota.
-+///
-+/// Producers wait for the quota of queued items, and keep the queue alive while
-+/// they wait, so a queue left by its last receiver must be drained explicitly.
-+fn close_queue(receiver: &Receiver<QueueItem>) {
-+    receiver.close();
-+
-+    while receiver.try_recv().is_ok() {}
-+}
-+
- /// Received encoded data holding receive quota until dequeued for decoding.
- pub struct RemoteQueueItem {
-     pub data: FlightData,
-@@ -107,9 +129,7 @@ impl ExchangeQueueReceiver {
+-        let (segment_tx, segment_rx) = async_channel::bounded(max_io_requests);
++        // The channel holds every lazy segment location at once, so the whole
++        // list can be handed over synchronously when the pipeline is initialized.
++        // The locations are already materialized in `lazy_init_segments`; this
++        // only moves them, and avoids a dedicated runtime (and its threads) per
++        // table scan just to feed a bounded channel.
++        let (segment_tx, segment_rx) = async_channel::bounded(lazy_init_segments.len());
  
-     /// Stop producers and discard queued items, releasing their quota.
-     pub fn close(&self) {
--        self.receiver.close();
+         match segment_format {
+             FuseSegmentFormat::Row => {
+@@ -483,29 +488,22 @@ impl FuseTable {
+                     derterministic_cache_key.clone(),
+                     table_schema.clone(),
+                     internal_column_names.clone(),
++                    lazy_init_segments.len(),
+                 )?;
+             }
+         }
+         prune_pipeline.set_on_init(move || {
+-            // We cannot use the runtime associated with the query to avoid increasing its lifetime.
+-            GlobalIORuntime::instance().spawn(async move {
+-                // avoid block global io runtime
+-                let runtime = Runtime::with_worker_threads(2, Some("prune-pipeline".to_string()))?;
+-                let join_handler = runtime.spawn(async move {
+-                    for segment in lazy_init_segments {
+-                        // the sql may be killed or early stop, ignore the error
+-                        if let Err(_e) = segment_tx.send(segment).await {
+-                            break;
+-                        }
+-                    }
+-                    Ok::<_, ErrorCode>(())
+-                });
 -
--        while self.receiver.try_recv().is_ok() {}
-+        close_queue(&self.receiver);
-     }
+-                if let Err(cause) = join_handler.await {
+-                    log::warn!("Join error in prune pipeline: {:?}", cause);
++            for segment in lazy_init_segments {
++                // Capacity equals the number of segments and this is the only
++                // sender, so the channel is never full here. Closed means the
++                // receivers are gone (query killed or early stopped).
++                if segment_tx.try_send(segment).is_err() {
++                    break;
+                 }
+-                Ok::<_, ErrorCode>(())
+-            });
++            }
++            // Dropping the last sender closes the channel; buffered segments
++            // are still delivered before the sources observe the close.
++            drop(segment_tx);
+             Ok(())
+         });
  
-     /// Whether no queued blocks remain and no more can arrive.
-@@ -134,15 +154,100 @@ impl ExchangeQueueReceiver {
+@@ -678,7 +676,11 @@ impl FuseTable {
+         partitions_total: usize,
+         plan_id: u32,
+     ) -> Result<()> {
+-        let max_threads = ctx.get_settings().get_max_threads()? as usize;
++        // Every stage of this pipeline works on whole segments, so there is no
++        // point in having more processors than segments to prune on this node
++        // (`partitions_total` is the number of lazy segments handed to it): the
++        // surplus would only add processors to the executor graph.
++        let (max_threads, max_io_requests) = self.prune_pipeline_widths(&ctx, partitions_total)?;
+         prune_pipeline.add_source(
+             |output| LazySegmentReceiverSource::create(ctx.clone(), segment_rx.clone(), output),
+             max_threads,
+@@ -689,6 +691,11 @@ impl FuseTable {
+             Default::default(),
+         )?;
+ 
++        // Segment pruning is dominated by fetching segment files from storage, so
++        // give it the same I/O concurrency as the non-pipeline pruner
++        // (`max_storage_io_requests`) instead of `max_threads`. With a cold
++        // cache and many segments this is otherwise several times slower.
++        prune_pipeline.try_resize(max_io_requests)?;
+         prune_pipeline.add_transform(|input, output| {
+             SegmentPruneTransform::<PrunedCompactSegmentMeta>::create(
+                 input,
+@@ -697,6 +704,8 @@ impl FuseTable {
+                 pruner.pruning_ctx.clone(),
+             )
+         })?;
++        // Block-level pruning below is CPU bound; go back to `max_threads`.
++        prune_pipeline.try_resize(max_threads)?;
+ 
+         // Under runtime TopN (`enable_top_n`), schedule the most promising
+         // segments first so the shared boundary converges early.
+@@ -805,9 +814,20 @@ impl FuseTable {
+             .as_ref()
+             .filter(|p| p.order_by.is_empty() && p.filters.is_none() && p.secure_filters.is_none())
+             .and_then(|p| p.limit);
+-        let enable_prune_cache = enable_prune_cache_for_query(&ctx)?
++        // A runtime `LIMIT` scan filter does not by itself make the pruning
++        // result plan-dependent: a point lookup under `LIMIT n` prunes exactly
++        // like the plain query as long as the limit is never reached. The sink
++        // records whether the filter cut the result short and
+```
+
+**File**: `src/query/storages/fuse/src/operations/recluster/recluster_table.rs` (modified, +2/-1)
+```diff
+@@ -571,6 +571,7 @@ impl FuseTable {
+         // Keep segment metadata pruning bounded for large snapshot ranges. Results are accumulated
+         // in input order so strategy tie-breaking remains deterministic across pruning waves.
+         let wave_size = max_concurrency.saturating_mul(4).max(1);
++        let pruning_runtime = pruning_ctx.pruning_runtime()?;
+         let mut metas = Vec::new();
+         let mut segment_locs = segment_locs.into_iter();
+         loop {
+@@ -582,7 +583,7 @@ impl FuseTable {
+             let worker_count = max_concurrency.min(wave.len()).max(1);
+             let batch_size = wave.len().div_ceil(worker_count);
+             let works = wave.chunks(batch_size).map(|batch| {
+-                pruning_ctx.pruning_runtime.spawn({
++                pruning_runtime.spawn({
+                     let segment_pruner = segment_pruner.clone();
+                     let batch = batch.to_vec();
+                     async move {
+```
+
+**File**: `src/query/storages/fuse/src/pruning/block_pruner.rs` (modified, +2/-2)
+```diff
+@@ -97,7 +97,7 @@ impl BlockPruner {
+             return Ok(block_metas);
+         }
+ 
+-        let pruning_runtime = &self.pruning_ctx.pruning_runtime;
++        let pruning_runtime = self.pruning_ctx.pruning_runtime()?;
+         let pruning_semaphore = &self.pruning_ctx.pruning_semaphore;
+         let pruning_ctx = self.pruning_ctx.clone();
+ 
+@@ -191,7 +191,7 @@ impl BlockPruner {
+     ) -> Result<Vec<(BlockMetaIndex, Arc<BlockMeta>)>> {
+         let pruning_stats = self.pruning_ctx.pruning_stats.clone();
+         let pruning_cost = self.pruning_ctx.pruning_cost.clone();
+-        let pruning_runtime = &self.pruning_ctx.pruning_runtime;
++        let pruning_runtime = self.pruning_ctx.pruning_runtime()?;
+         let pruning_semaphore = &self.pruning_ctx.pruning_semaphore;
+         let limit_pruner = self.pruning_ctx.limit_pruner.clone();
+         let range_pruner = self.pruning_ctx.range_pruner.clone();
+```
+
+**File**: `src/query/storages/fuse/src/pruning/fuse_pruner.rs` (modified, +30/-9)
+```diff
+@@ -54,6 +54,7 @@ use databend_storages_common_table_meta::meta::VirtualSegmentSchema;
+ use log::info;
+ use log::warn;
+ use opendal::Operator;
++use parking_lot::Mutex;
+ use rand::distributions::Bernoulli;
+ use rand::distributions::Distribution;
+ use rand::prelude::SliceRandom;
+@@ -85,7 +86,15 @@ use databend_common_catalog::plan::VirtualPredicateRef;
+ pub struct PruningContext {
+     pub ctx: Arc<dyn TableContext>,
+     pub dal: Operator,
+-    pub pruning_runtime: Arc<Runtime>,
++    /// Dedicated runtime for the batch pruning paths (`FusePruner::pruning`,
++    /// bloom / inverted / vector index block pruning, recluster).
++    ///
++    /// It is created on first use: the pipeline based pruning without index
++    /// pruners never touches it, and spawning (and later joining) a
++    /// `max_threads` worker runtime for every table scan is a measurable cost
++    /// on the query critical path.
++    pruning_runtime: Mutex<Option<Arc<Runtime>>>,
++    pruning_runtime_threads: usize,
+     pub pruning_semaphore: Arc<Semaphore>,
+ 
+     pub limit_pruner: Arc<dyn Limiter + Send + Sync>,
+@@ -271,16 +280,12 @@ impl PruningContext {
+         // Constraint the degree of parallelism
+         let max_threads = ctx.get_settings().get_max_threads()? as usize;
+ 
+-        // Pruning runtime.
+-        let pruning_runtime = Arc::new(Runtime::with_worker_threads(
+-            max_threads,
+-            Some("pruning-worker".to_owned()),
+-        )?);
+         let pruning_semaphore = Arc::new(Semaphore::new(max_concurrency));
+         let pruning_ctx = Arc::new(PruningContext {
+             ctx: ctx.clone(),
+             dal,
+-            pruning_runtime,
++            pruning_runtime: Mutex::new(None),
++            pruning_runtime_threads: max_threads,
+             pruning_semaphore,
+             limit_pruner,
+             range_pruner,
+@@ -297,6 +302,20 @@ impl PruningContext {
+         });
+         Ok(pruning_ctx)
      }
++
++    /// The pruning runtime, created on first use.
++    pub fn pruning_runtime(&self) -> Result<Arc<Runtime>> {
++        let mut guard = self.pruning_runtime.lock();
++        if let Some(runtime) = guard.as_ref() {
++            return Ok(runtime.clone());
++        }
++        let runtime = Arc::new(Runtime::with_worker_threads(
++            self.pruning_runtime_threads,
++            Some("pruning-worker".to_owned()),
++        )?);
++        *guard = Some(runtime.clone());
++        Ok(runtime)
++    }
  }
  
-+impl Drop for ExchangeQueueReceiver {
-+    /// An aborted pipeline drops its receivers without closing them. Their queued
-+    /// items would keep the quota a connection's router waits for: the router would
-+    /// never answer again, and its sender would wait for that answer forever.
-+    fn drop(&mut self) {
-+        self.close();
-+    }
-+}
-+
- #[cfg(test)]
- mod tests {
-+    use std::task::Poll;
-+
-     use databend_common_expression::DataSchema;
-+    use databend_common_expression::FromData;
-+    use databend_common_expression::types::UInt64Type;
-     use futures::FutureExt;
+ pub struct FusePruner {
+@@ -418,6 +437,7 @@ impl FusePruner {
+             Default::default(),
+         )?;
+         let block_pruner = Arc::new(BlockPruner::create(self.pruning_ctx.clone())?);
++        let pruning_runtime = self.pruning_ctx.pruning_runtime()?;
  
-     use super::*;
-     use crate::servers::flight::v1::network::inbound::ExchangeFrameRouter;
-     use crate::servers::flight::v1::network::outbound::BlockSender;
-+    use crate::servers::flight::v1::network::outbound::LOCAL_CHANNEL_MAX_BYTES;
-     use crate::servers::flight::v1::network::outbound::create_local_block_senders;
-+    use crate::servers::flight::v1::network::wire_format::flight_data_size;
-+
-+    fn receiver(queues: &ExchangeReceiveChannels) -> Arc<ExchangeQueueReceiver> {
-+        ExchangeQueueReceiver::create(&Arc::new(DataSchema::empty()), queues.receivers[0].clone())
-+    }
-+
-+    /// A router waiting for connection quota held by queued items must be released
-+    /// when the queue loses its last receiver without `close`, as on abort: either
-+    /// a pipeline's receiver, or the collection when no pipeline took it yet.
-+    #[test]
-+    fn test_dropped_receiver_releases_connection_quota() {
-+        futures::executor::block_on(async {
-+            for pipeline_built in [true, false] {
-+                let frame = || FlightData {
-+                    app_metadata: 0u16.to_le_bytes().to_vec().into(),
-+                    data_body: vec![42; 8].into(),
-+                    ..FlightData::default()
-+                };
-+                let queues = ExchangeReceiveChannels::new(1);
-+                let router = ExchangeFrameRouter::new(&queues, flight_data_size(&frame()));
-+                let receiver = pipeline_built.then(|| receiver(&queues));
-+                let queues = match pipeline_built {
-+                    true => {
-+                        drop(queues);
-+                        None
-+                    }
-+                    false => Some(queues),
-+                };
-+
-+                router.route_frame(frame()).await.unwrap();
-+                let mut pending = Box::pin(router.route_frame(frame()));
-+                assert!(futures::poll!(pending.as_mut()).is_pending());
-+
-+                drop(receiver);
-+                drop(queues);
-+                assert!(matches!(
-+                    futures::poll!(pending.as_mut()),
-+                    Poll::Ready(Err(()))
-+                ));
-+            }
-+        });
-+    }
-+
-+    /// The same for a local sender waiting for the node's local quota.
-+    #[test]
-+    fn test_dropped_receiver_releases_local_quota() {
-+        futures::executor::block_on(async {
-+            let queues = ExchangeReceiveChannels::new(1);
-+            let senders = create_local_block_senders(&queues);
-+            let receiver = receiver(&queues);
-+            drop(queues);
-+
-+            let block = |rows: usize| {
-+                DataBlock::new_from_columns(vec![UInt64Type::from_data(vec![0u64; rows])])
-+            };
-+            // Takes the whole local quota.
-+            senders[0]
-+                .send_block(block(LOCAL_CHANNEL_MAX_BYTES / 8))
-+                .await
-+                .unwrap();
-+            let mut pending = senders[0].send_block(block(1));
-+            assert!(futures::poll!(pending.as_mut()).is_pending());
-+
-+  
+         let mut remain = segment_locs.len() % self.max_concurrency;
+         let batch_size = segment_locs.len() / self.max_concurrency;
+@@ -430,7 +450,7 @@ impl FusePruner {
+ 
+             let mut batch = segment_locs.drain(0..batch_size).collect::<Vec<_>>();
+             let inverse_range_index = self.get_inverse_range_index();
+-            works.push(self.pruning_ctx.pruning_runtime.spawn({
++            works.push(pruning_runtime.spawn({
+                 let block_pruner = block_pruner.clone();
+                 let segment_pruner = segment_pruner.clone();
+                 let pruning_ctx = self.pruning_ctx.clone();
+@@ -584,6 +604,7 @@ impl FusePruner {
+         let batch_size = block_metas.len() / self.max_concurrency;
+         let mut works = Vec::with_capacity(self.max_concurrency);
+         let block_pruner = Arc::new(BlockPruner::create(self.pruning_ctx.clone())?);
++        let pruning_runtime = self.pruning_ctx.pruning_runtime()?;
+         let mut segment_idx = 0;
+ 
+         while !block_metas.is_empty() {
+@@ -592,7 +613,7 @@ impl FusePruner {
+             remain -= gap_size;
+ 
+             let batch = block_metas.drain(0..batch_size).collect::<Vec<_>>();
+-            works.push(self.pruning_ctx.pruning_runtime.spawn({
++            works.push(pruning_runtime.spawn({
+                 let block_pruner = block_pruner.clone();
+                 async move {
+                     // Build pruning tasks.
+```
+
+**File**: `src/query/storages/fuse/src/pruning/vector_index_pruner.rs` (modified, +1/-1)
+```diff
+@@ -517,7 +517,7 @@ impl VectorIndexPruner {
+ 
+         let handles = self
+             .pruning_ctx
+-            .pruning_runtime
++            .pruning_runtime()?
+             .try_spawn_batch_with_owned_semaphore(self.pruning_ctx.pruning_semaphore.clone(), tasks)
+             .await?;
+         future::try_join_all(handles)
+```
+
+**File**: `src/query/storages/fuse/src/pruning_pipeline/column_oriented_block_prune.rs` (modified, +1/-1)
+```diff
+@@ -132,7 +132,7 @@ impl AsyncSink for ColumnOrientedBlockPruneSink {
+         let block_size_col = segment.block_size_col();
+         let row_count_col = segment.row_count_col();
+ 
+-        let pruning_runtime = &self.block_pruner.pruning_ctx.pruning_runtime;
++        let pruning_runtime = self.block_pruner.pruning_ctx.pruning_runtime()?;
+         let pruning_semaphore = &self.block_pruner.pruning_ctx.pruning_semaphore;
+ 
+         let mut pruning_tasks = Vec::with_capacity(block_num);
 ```
 
 ---
 
-### Incident Patch 3: `e02aacb0` (2026-10-29)
-**Commit Message**: fix(query): reject spilling blocks without columns (#20855)
+### Incident Patch 3: `d548f3cc` (2026-11-03)
+**Commit Message**: fix(query): scan only the vector TopN rows instead of whole blocks (#20931)
 
-A hash join without keys whose sides output no columns (e.g. count(*) over
-a LEFT JOIN or EXISTS with a non-equi condition) could switch to grace
-spill and write zero-column blocks. Parquet derives a row group's row count
-from its column writers, so these blocks were written as row groups with
-num_rows = 0; restore then read no batch and panicked on unwrap.
+* fix(query): scan only the vector TopN rows instead of whole blocks
 
-- Hybrid hash join no longer switches to grace mode when the join has no
-  keys: every row hashes to the same partition, so spilling cannot shrink
-  the working set. Zero-column join blocks can only appear without keys.
-- SpillsDataWriter returns an error for blocks without columns instead of
-  silently losing their rows, and SpillsDataReader reports a missing batch
-  as an error instead of panicking.
-- Add a forced-spill sqllogictest covering join, aggregate and materialized
-  CTE spill with minimal columns, and a unit test for the writer check.
+* topn only deterministic order by
 
-**File**: `src/query/service/src/pipelines/processors/transforms/new_hash_join/hybrid/hybrid_join.rs` (modified, +4/-0)
+* add topn block metas test
+
+* fix
+
+* fix
+
+* remove unused deps
+
+* fix comment
+
+**File**: `Cargo.lock` (modified, +0/-2)
 ```diff
-@@ -194,7 +194,11 @@ impl Join for HybridHashJoin {
-             HybridJoinMode::Memory(memory_join) => {
-                 memory_join.add_block(data)?;
+@@ -3155,7 +3155,6 @@ dependencies = [
+  "foreign_vec",
+  "hex",
+  "log",
+- "match-template",
+  "num-traits",
+  "proptest",
+  "serde",
+@@ -3880,7 +3879,6 @@ dependencies = [
+  "prost-build 0.14.3",
+  "semver",
+  "tonic",
+- "tonic-prost",
+  "tonic-prost-build",
+ ]
  
-+                // Grace partitions rows by join keys. Without keys every row lands in the same
-+                // partition, so spilling cannot shrink the working set and would only round-trip
-+                // both sides (possibly blocks without any columns) through storage.
-                 if self.state.can_next_layer_join()
-+                    && !self.desc.build_keys.is_empty()
-                     && (self.memory_settings.check_spill() || self.state.check_spilled())
-                 {
-                     self.switch_to_grace_mode(finished)?;
 ```
 
-**File**: `src/query/service/src/spillers/async_buffer.rs` (modified, +59/-1)
+**File**: `Cargo.toml` (modified, +0/-3)
 ```diff
-@@ -436,6 +436,15 @@ impl SpillsDataWriter {
+@@ -324,7 +324,6 @@ jsonb = "0.5.6"
+ jsonwebtoken = "9.3.1"
+ jwt-simple = { version = "0.12.12", default-features = false, features = ["pure-rust"] }
+ lenient_semver = "0.4.2"
+-levenshtein_automata = "0.2.1"
+ lexical-core = "1"
+ libc = { version = "0.2.158" }
+ libm = "0.2.6"
+@@ -465,15 +464,13 @@ sys-info = "0.9"
+ sysinfo = "0.34.2"
+ tantivy = { version = "0.26.2", features = ["quickwit"] }
+ tantivy-common = "0.11.0"
+-tantivy-fst = "0.5"
+ tantivy-jieba = "0.20.0"
+ tantivy-query-grammar = "0.26.0"
+ temp-env = "0.3.0"
+ tempfile = "3.4.0"
+ terminal_size = "0.4.2"
+ test-harness = "0.3.0"
+ testcontainers = "0.23"
+-testcontainers-modules = { version = "0.11.5", features = ["mysql", "redis"] }
+ thiserror = { version = "1" }
+ thrift = "0.17.0"
+ tikv-jemalloc-ctl = { version = "0.6.0", features = ["use_std", "stats"] }
+```
+
+**File**: `src/common/column/Cargo.toml` (modified, +0/-1)
+```diff
+@@ -31,7 +31,6 @@ ethnum = { workspace = true }
+ foreign_vec = { workspace = true }
+ hex = { workspace = true }
+ log = { workspace = true }
+-match-template = { workspace = true }
+ num-traits = { workspace = true }
+ serde = { workspace = true, optional = true }
+ serde_derive = { workspace = true, optional = true }
+```
+
+**File**: `src/meta/protos/Cargo.toml` (modified, +0/-1)
+```diff
+@@ -11,7 +11,6 @@ num-derive = { workspace = true }
+ num-traits = { workspace = true }
+ prost = { workspace = true }
+ tonic = { workspace = true }
+-tonic-prost = { workspace = true }
+ 
+ [build-dependencies]
+ lenient_semver = { workspace = true }
+```
+
+**File**: `src/query/catalog/src/plan/internal_column.rs` (modified, +12/-15)
+```diff
+@@ -125,8 +125,8 @@ pub struct InternalColumnMeta {
+     pub matched_rows: Option<Vec<usize>>,
+     // Optional scores for the matched rows.
+     pub matched_scores: Option<Vec<F32>>,
+-    // The vector topn rows and scores in the block.
+-    pub vector_scores: Option<Vec<(usize, F32)>>,
++    /// The vector scores of the output rows, in order.
++    pub vector_scores: Option<Vec<F32>>,
+ }
+ 
+ #[typetag::serde(name = "internal_column_meta")]
+@@ -385,19 +385,16 @@ impl InternalColumn {
+                 Float32Type::from_data(scores).into()
+             }
+             InternalColumnType::VectorScore => {
+-                assert!(meta.vector_scores.is_some());
+-                let vector_scores = meta.vector_scores.as_ref().unwrap();
+-
+-                // The smaller the score, the closer the distance.
+-                // Fill other rows with the maximum value and they will be filtered out.
+-                let mut scores = vec![F32::from(f32::MAX); num_rows];
+-                for (idx, score) in vector_scores.iter() {
+-                    debug_assert!(*idx < scores.len());
+-                    if let Some(val) = scores.get_mut(*idx) {
+-                        *val = *score;
+-                    }
+-                }
+-                Float32Type::from_data(scores).into()
++                let scores = meta
++                    .vector_scores
++                    .as_ref()
++                    .filter(|scores| scores.len() == num_rows)
++                    .ok_or_else(|| {
++                        ErrorCode::Internal(
++                            "vector scores are missing or do not match the block rows",
++                        )
++                    })?;
++                Float32Type::from_data(scores.clone()).into()
+             }
+             InternalColumnType::FileName
+             | InternalColumnType::FileRowNumber
+```
+
+**File**: `src/query/service/tests/it/indexes/vector_index/pruning.rs` (modified, +57/-6)
+```diff
+@@ -62,6 +62,7 @@ use databend_query::storages::fuse::FUSE_OPT_KEY_BLOCK_PER_SEGMENT;
+ use databend_query::storages::fuse::FUSE_OPT_KEY_ROW_PER_BLOCK;
+ use databend_query::test_kits::*;
+ use databend_storages_common_pruner::BlockMetaIndex;
++use databend_storages_common_pruner::VectorScores;
+ use databend_storages_common_table_meta::meta::BlockMeta;
+ use databend_storages_common_table_meta::meta::TableSnapshot;
+ use databend_storages_common_table_meta::table::OPT_KEY_DATABASE_ID;
+@@ -792,7 +793,7 @@ async fn test_block_pruner() -> anyhow::Result<()> {
+             vector_index: Some(vector_index),
+             ..Default::default()
+         };
+-        extras.push((Some(extra), result));
++        extras.push((Some(extra), result, false));
      }
  
-     pub fn write(&mut self, block: DataBlock) -> Result<()> {
-+        // Parquet takes a row group's row count from its column writers, so a block
-+        // without columns would be written as an empty row group and lose its rows.
-+        if block.num_columns() == 0 {
-+            return Err(ErrorCode::Internal(format!(
-+                "Cannot spill a block without columns ({} rows)",
-+                block.num_rows()
-+            )));
-+        }
-+
-         match self {
-             SpillsDataWriter::Uninitialize {
-                 writer,
-@@ -624,7 +633,12 @@ impl SpillsDataReader {
-             num_rows,
-             None,
-         )?;
--        let batch = reader.next().transpose()?.unwrap();
-+        let Some(batch) = reader.next().transpose()? else {
-+            return Err(ErrorCode::Internal(format!(
-+                "Spilled row group with {} rows returned no record batch",
-+                num_rows
-+            )));
+     // Add a filter to test filter pushdown
+@@ -1009,10 +1010,18 @@ async fn test_block_pruner() -> anyhow::Result<()> {
+             vector_index: Some(vector_index),
+             ..Default::default()
+         };
+-        extras.push((Some(extra), result));
++        extras.push((Some(extra), result, true));
+     }
+ 
+-    for (extra, expected_results) in extras {
++    for (extra, expected_results, filtered) in extras {
++        // The expected results of filtered queries are the scores of all rows of
++        // the blocks. Once the rows that pass the filter fill the limit, the pruner
++        // keeps only the TopN rows: the 5 lowest scores above 2.0.
++        let expected_results = if filtered {
++            filtered_topn(expected_results, |score| score > 2.0, 5)
++        } else {
++            expected_results
 +        };
-         debug_assert!(reader.next().is_none());
-         record_read_profile(self.target, start.elapsed(), fetched.read_bytes);
-         Ok(Some(DataBlock::from_record_batch_keep_null_const(
-@@ -855,6 +869,8 @@ mod tests {
-     use std::sync::atomic::Ordering;
+         let block_metas = apply_block_pruning(
+             snapshot.clone(),
+             table.get_table_info().schema(),
+@@ -1027,10 +1036,21 @@ async fn test_block_pruner() -> anyhow::Result<()> {
+         for ((block_meta_index, _), expected_scores) in
+             block_metas.iter().zip(expected_results.iter())
+         {
+-            assert!(block_meta_index.vector_scores.is_some());
+-            let vector_scores = block_meta_index.vector_scores.clone().unwrap();
++            // The pruner attaches the TopN rows (`TopN`) or the scores of all rows
++            // (`All`); compare them in row order.
++            let mut vector_scores: Vec<(usize, F32)> = match &block_meta_index.vector_scores {
++                Some(VectorScores::TopN(scores)) => scores
++                    .iter()
++                    .map(|&(row, score)| (row as usize, score))
++                    .collect(),
++                Some(VectorScores::All(scores)) => scores.iter().copied().enumerate().collect(),
++                None => panic!("missing vector scores"),
++            };
++            vector_scores.sort_by_key(|(row, _)| *row);
++            let mut expected_scores = expected_scores.clone();
++            expected_scores.sort_by_key(|expected| expected.vector_idx);
+             assert_eq!(vector_scores.len(), expected_scores.len());
+-            for (vector_score, expected_score) in vector_scores.iter().zip(expected_scores) {
++            for (vector_score, expected_score) in vector_scores.iter().zip(&expected_scores) {
+                 assert_eq!(block_meta_index.segment_idx, expected_score.segment_idx);
+                 assert_eq!(block_meta_index.block_idx, expected_score.block_idx);
+                 assert_eq!(vector_score.0, expected_score.vector_idx);
+@@ -1042,6 +1062,37 @@ async fn test_block_pruner() -> anyhow::Result<()> {
+     Ok(())
+ }
  
-     use databend_common_base::runtime::spawn;
-+    use databend_common_expression::FromData;
-+    use databend_common_expression::types::Int32Type;
-     use opendal::Operator;
- 
-     use super::*;
-@@ -1023,6 +1039,48 @@ mod tests {
-         assert!(metadata.content_length() > 0);
-     }
- 
-+    #[tokio::test(flavor = "multi_thread")]
-+    async fn test_spill_rejects_blocks_without_columns() {
-+        let pool = SpillsBufferPool::create(1).unwrap();
-+        let operator = create_test_operator().unwrap();
-+
-+        // Rejected as the first block, before the parquet schema is inferred.
-+        let mut writer = pool
-+            .writer(
-+                operator.clone(),
-+                "zero_column_first_block".to_string(),
-+                CHUNK_SIZE,
-+                SpillTarget::Local,
-+            )
-+            .unwrap();
-+        assert!(writer.write(DataBlock::new(vec![], 5)).is_err());
-+        writer.close().unwrap();
-+
-+        // Rejected after the writer is initialized by a block with columns.
-+        let mut writer = pool
-+            .writer(
-+                operator,
-+                "zero_column_later_block".to_string(),
-+                CHUNK_SIZE,
-+                SpillTarget::Local,
-+            )
-+            .unwrap();
-+        writer
-+            .write(DataBlock::new_from_columns(vec![Int32Type::from_data(
-+                vec![1, 2, 3],
-+            )]))
-+            .unwrap();
-+        assert!(writer.write(DataBlock::new(vec![], 5)).is_err());
-+        let (_, row_groups) = writer.close().unwrap();
-+        assert_eq!(
-+            row_groups
-+                .iter()
-+                .map(|rg| rg.num_rows())
-+                .collect::<Vec<_>>(),
-+            vec![3]
-+        );
++/// The rows of `blocks` among the `limit` lowest scores that pass `filter`, if
++/// they fill the limit; otherwise `blocks` unchanged. Blocks without such rows
++/// are removed.
++fn filtered_topn(
++    blocks: Vec<Vec<VectorScoreResult>>,
++    filter: impl Fn(f32) -> bool,
++    limit: usize,
++) -> Vec<Vec<VectorScoreResult>> {
++    let mut passed: Vec<f32> = blocks
++        .iter()
++        .flatten()
++        .map(|result| result.score)
++        .filter(|&score| filter(score))
++        .collect();
++    if passed.len() < limit {
++        return blocks;
 +    }
++    passed.sort_by(f32::total_cmp);
++    let last = passed[limit - 1];
++    blocks
++        .into_iter()
++        .map(|block| {
++            block
++                .into_iter()
++                .filter(|result| filter(result.score) && result.score <= last)
++                .collect::<Vec<_>>()
++        })
++        .filter(|block| !block.is_empty())
++        .collect()
++}
 +
-     #[tokio::test(flavor = "multi_thread")]
-     async fn test_concurrent_writers() {
-         let pool = SpillsBufferPool::create(4).unwrap();
+ #[derive(Debug, Clone)]
+ struct VectorScoreResult {
+     segment_idx: usize,
 ```
 
-**File**: `tests/sqllogictests/suites/query/spill_without_columns.test` (added, +87/-0)
+**File**: `src/query/service/tests/it/storages/fuse/operations/internal_column.rs` (modified, +2/-1)
 ```diff
-@@ -0,0 +1,87 @@
-+# Spill writers reject blocks without columns, since parquet would drop their
-+# row counts. Every operator that spills must keep such blocks in memory, so
-+# force each spill path with queries whose inputs carry as few columns as possible.
-+# Window partitions always carry their partition keys, see window_partition_spill.test.
+@@ -67,7 +67,8 @@ fn expected_data_block(
+             inner: None,
+             matched_rows: block_meta.matched_rows.clone(),
+             matched_scores: block_meta.matched_scores.clone(),
+-            vector_scores: block_meta.vector_scores.clone(),
++            // The table has no vector index.
++            vector_scores: None,
+         };
+         let block = DataBlock::empty_with_rows(num_rows);
+         for internal_column in internal_columns {
+```
+
+**File**: `src/query/storages/common/pruner/src/block_meta.rs` (modified, +13/-2)
+```diff
+@@ -27,6 +27,17 @@ use databend_common_expression::types::DataType;
+ use databend_common_expression::types::number::F32;
+ use databend_storages_common_table_meta::meta::ColumnStatistics;
+ 
++/// Vector scores of a block, attached by vector pruning.
++#[derive(serde::Serialize, serde::Deserialize, Clone, Debug, PartialEq, Eq)]
++pub enum VectorScores {
++    /// The rows of a vector TopN and their scores, as (row, score): the scan
++    /// outputs only these rows.
++    TopN(Vec<(u32, F32)>),
++    /// The score of every row, in row order: the scan outputs every row. Rows
++    /// without a score, such as NULL vectors, hold the placeholder `f32::MAX`.
++    All(Vec<F32>),
++}
 +
-+statement ok
-+create or replace table t_spill_no_cols_l as select number % 10 as k from numbers(100);
-+
-+statement ok
-+create or replace table t_spill_no_cols_r as select number % 10 as k from numbers(100);
-+
-+# Hash join without keys, where neither side outputs any column.
-+statement ok
-+set force_join_data_spill = 1;
-+
-+query I
-+select count(*) from t_spill_no_cols_l left join t_spill_no_cols_r on t_spill_no_cols_l.k > 5;
-+----
-+4060
-+
-+query I
-+select count(*) from t_spill_no_cols_r right join t_spill_no_cols_l on t_spill_no_cols_l.k > 5;
-+----
-+4060
-+
-+query I
-+select count(*) from t_spill_no_cols_l where exists (select 1 from t_spill_no_cols_r where t_spill_no_cols_l.k > 5);
-+----
-+40
-+
-+query I
-+select count(*) from t_spill_no_cols_l where not exists (select 1 from t_spill_no_cols_r where t_spill_no_cols_l.k > 5);
-+----
-+60
-+
-+query I
-+select count(*) from t_spill_no_cols_l inner join t_spill_no_cols_r on t_spill_no_cols_l.k = t_spill_no_cols_r.k;
-+----
-+1000
-+
-+statement ok
-+unset force_join_data_spill;
-+
-+# Aggregate with only group keys or only aggregate states.
-+statement ok
-+set force_aggregate_data_spill = 1;
-+
-+query I
-+select count(*) from (select k from t_spill_no_cols_l group by k);
-+----
-+10
-+
-+query I
-+select count(*) from (select count(*) from t_spill_no_cols_l group by k);
-+----
-+10
-+
-+query I
-+select count(*) from t_spill_no_cols_l group by 'a';
-+----
-+100
-+
-+statement ok
-+unset force_aggregate_data_spill;
-+
-+# Materialized CTE, with and without referenced columns.
-+statement ok
-+set force_materialized_cte_spill = 1;
-+
-+query I
-+with c as materialized (select k from t_spill_no_cols_l) select count(*) from c;
-+----
-+100
-+
-+query I
-+with c as materialized (select k from t_spill_no_cols_l) select count(*) from c x, c y where x.k = y.k;
-+----
-+1000
-+
-+statement ok
-+unset force_materialized_cte_spill;
-+
-+statement ok
-+drop table t_spill_no_cols_l;
-+
-+statement ok
-+drop table t_spill_no_cols_r;
+ #[derive(serde::Serialize, serde::Deserialize, Clone, Debug, Default, PartialEq, Eq)]
+ pub struct BlockMetaIndex {
+     /// {segment|block}_id is used in `InternalColumnMeta` to generate internal column data,
+@@ -43,8 +54,8 @@ pub struct BlockMetaIndex {
+     pub matched_rows: Option<Vec<usize>>,
+     // Optional scores for the matched rows.
+     pub matched_scores: Option<Vec<F32>>,
+-    // The vector topn rows and scores in the block.
+-    pub vector_scores: Option<Vec<(usize, F32)>>,
++    /// The vector scores of the rows the scan outputs.
++    pub vector_scores: Option<VectorScores>,
+     // The optional meta of virtual columns.
+     pub virtual_block_meta: Option<VirtualBlockMetaIndex>,
+ }
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #20897** (2026-10-30): fix(query): exact float-to-decimal casts and decimal quantile_cont (@forsaken628)
-- **PR #20894** (2026-10-30): fix(query): decode each segment once in row fetch (@b41sh)
-- **PR #20893** (2026-10-30): fix(query): keep hash shuffle sender running after its output finishes (@dqhl76)
-- **PR #20890** (closed): chore(query): cover empty-build probe skip for all join types (@SkyFan2002)
-- **PR #20883** (2026-10-30): fix(query): dedup in-flight cascades group tasks (@SkyFan2002)
-- **PR #20882** (2026-10-29): chore(settings): disable enable_recluster_multiway_merge by default (@zhang2014)
+- **PR #20955** (closed): fix(query): evaluate stream status in private task conditions (@KKould)
+- **PR #20954** (closed): feat(storage): prune segments using learned snapshot layouts (@KKould)
+- **PR #20951** (2026-11-03): refactor(query): copy runs of consecutive rows in take kernels (@SkyFan2002)
+- **PR #20949** (2026-11-03): feat(http): support catalog in /v1/session/login (@youngsofun)
+- **PR #20933** (2026-11-03): fix(query): remove experimental privilege check settings (@TCeason)
+- **PR #20932** (2026-11-03): fix(query): keep rows that tie with the last vector TopN row (@b41sh)
 
 ---
 
@@ -2154,41 +2427,57 @@ num_rows = 0; restore then read no batch and panicked on unwrap.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. query): dedup in-flight cascades group tasks (#20883)
+## X. query): remove experimental privilege check settings (#20933)
 
 **RULE**:
-When implementing operations in `src/query/sql/src/planner/optimizer/optimizers/cascades/cascade.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in databendlabs/databend. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/meta/api/src/api_impl/sequence_api_impl.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in databendlabs/databend. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `23e080ae`: query): dedup in-flight cascades group tasks (#20883). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1aedf8a9`: query): remove experimental privilege check settings (#20933). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/query/sql/src/planner/optimizer/optimizers/cascades/cascade.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/meta/api/src/api_impl/sequence_api_impl.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-use crate::optimizer::optimizers::cascades::tasks::SchedulerStat;
-    /// Scheduler statistics of the last search, for diagnostics and tests.
-    scheduler_stat: Option<SchedulerStat>,
-            scheduler_stat: None,
-    /// Statistics of the task scheduler collected by the last search, for
-    /// diagnostics and tests.
-    pub fn scheduler_stat(&self) -> Option<&SchedulerStat> {
-        self.scheduler_stat.as_ref()
-    }
+use databend_common_meta_app::principal::OwnershipObject;
+use crate::crud::create_owned_object;
+        // An existing sequence is not an error here; callers report it themselves.
+        let object = OwnershipObject::Sequence {
+            name: req.ident.name().to_string(),
+        let success = create_owned_object(
+            self,
+            &req.ident,
+            &meta,
+            req.override_existing,
+            &object,
+            req.owner_role.as_deref(),
+            &[txn_put_pb(&storage_ident, &storage_value)],
+        )
+        .await?;
 
-                    self.scheduler_stat = local_optimizer.scheduler_stat;
-        let run_result = scheduler.run(self);
-        self.scheduler_stat = Some(scheduler.into_stat());
-        run_result?;
+        Ok(CreateSequenceReply { success })
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-        scheduler.run(self)?;
+use crate::txn_condition_util::txn_cond_eq_seq;
+        let conditions = if req.override_existing {
+            vec![]
+        } else {
+            vec![txn_cond_eq_seq(&req.ident, 0)]
+
+        let txn = TxnRequest::new(conditions, vec![
+            txn_put_pb(&req.ident, &meta),
+            txn_put_pb(&storage_ident, &storage_value),
+        ]);
+
+        let (succ, _response) = send_txn(self, txn).await?;
+
+        Ok(CreateSequenceReply { success: succ })
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `23e080ae` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1aedf8a9` are properly handled with clean fallback behavior.

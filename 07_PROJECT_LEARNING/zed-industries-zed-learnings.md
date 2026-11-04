@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zed-industries-zed-learnings.md`  
 > **Source**: github ([https://github.com/zed-industries/zed](https://github.com/zed-industries/zed))  
-> **Source Version**: `ba63a022`  
+> **Source Version**: `8a47b351`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T15:56:41.305Z  
+> **Timestamp**: 2026-11-03T17:38:16.742Z  
 > **Learning ID**: `learn-github-zed-industries-zed`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zed-industries-zed-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zed-industries/zed](https://github.com/zed-industries/zed))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T15:56:41.005Z  
+> **Harvest Timestamp**: 2026-11-03T17:38:14.572Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Code at the speed of thought – Zed is a high-performance, multiplayer code editor from the creators of Atom and Tree-sitter.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 92455 stars
+- **Stars / Engagement**: 92627 stars
 
 ---
 
@@ -282,7 +282,7 @@ use std::{ops::Range, sync::Arc};
 
 use acp_thread::{AcpThread, AgentThreadEntry, AssistantMessageChunk, ToolCall};
 use agent::ThreadStore;
-use agent_client_protocol::schema::v2 as acp_v2;
+use agent_client_protocol::v2::schema as acp_v2;
 use agent_settings::AgentSettings;
 use collections::{HashMap, HashSet};
 use editor::{
@@ -2334,59 +2334,617 @@ fn score_against_expected_patch(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ba63a022` (2026-10-31)
-**Commit Message**: recent_projects: Show remote picker scrollbar (#63909)
+### Incident Patch 1: `b41a8b60` (2026-11-02)
+**Commit Message**: Fix Windows shell detection for uppercase executable names (#66387)
 
-Make overflowing remote lists discoverable and size the scrollbar
-accurately from the first layout, matching the Recent Projects picker.
+## Summary
 
-Closes #63856.
+Zed was detecting `CMD.EXE` as PowerShell because the filename check was
+case-sensitive. This fixes shell detection on Windows while keeping Unix
+behavior unchanged.
 
-## Self-Review Checklist:
+## Testing
 
-- [x] I've reviewed my own diff for quality, security, and reliability
-- [ ] Unsafe blocks (if any) have justifying comments
-- [ ] The content adheres to Zed's UI standards
-([UX/UI](https://github.com/zed-industries/zed/blob/main/CONTRIBUTING.md#uiux-checklist)
-and
-[icon](https://github.com/zed-industries/zed/blob/main/crates/icons/README.md)
-guidelines)
-- [ ] Tests cover the new/changed behavior
-- [x] Performance impact has been considered and is acceptable (the
-impact on [large remote
-lists](https://github.com/zed-industries/zed/blob/84d9a73c1957a8181c8ae017e703d1d56a18426a/crates/gpui/src/elements/list.rs#L196-L201)
-was not tested)
+- Built and ran Zed on Windows. A task using `"shell": {"program":
+"CMD.EXE"}` and `"command": "echo zed-shell-case-probe"` printed
+`zed-shell-case-probe`.
+- Added regression tests covering 22 Windows and Unix cases.
+- `cargo fmt --all -- --check` and `./script/clippy.ps1 -p util
+--locked` passed.
+- `cargo test -p util --locked`: 128 unit tests and 2 doctests passed; 1
+doctest ignored.
+- Workspace doctests: 150 passed, 22 ignored.
+- Full Windows workspace suite: 10,809 tests run, 26 skipped. Initially
+10,798 passed, 3 failed, and 8 timed out. Nine setup-related cases
+passed on retry after preparing the extension fixture, fetching the
+remaining locked dependencies, and setting `CRITERION_HOME` to avoid
+Criterion's runtime Cargo metadata lookup.
+
+Two failures remain in unchanged tests, so the full suite is not
+entirely green locally:
+
+-
+`extensions_ui::extension_suggestions::tests::test_suggestion_returns_after_failed_install`:
+
+
+**File**: `crates/util/src/shell.rs` (modified, +43/-0)
+```diff
+@@ -208,6 +208,11 @@ impl ShellKind {
+             .file_stem()
+             .unwrap_or_else(|| program.as_os_str())
+             .to_string_lossy();
++        let program = if is_windows {
++            Cow::Owned(program.to_ascii_lowercase())
++        } else {
++            program
++        };
+ 
+         match &*program {
+             "powershell" => ShellKind::PowerShell,
+@@ -778,6 +783,44 @@ mod tests {
+     #[cfg(unix)]
+     use crate::shell_builder::ShellBuilder;
+ 
++    #[test]
++    fn test_shell_kind_windows_case_insensitive() {
++        for (program, expected) in [
++            ("CMD.EXE", ShellKind::Cmd),
++            ("PowerShell.exe", ShellKind::PowerShell),
++            ("PwSh.ExE", ShellKind::Pwsh),
++            ("NU.EXE", ShellKind::Nushell),
++            ("FISH.EXE", ShellKind::Fish),
++            ("CSH.EXE", ShellKind::Csh),
++            ("TCSH.EXE", ShellKind::Tcsh),
++            ("RC.EXE", ShellKind::Rc),
++            ("XONSH.EXE", ShellKind::Xonsh),
++            ("ELVISH.EXE", ShellKind::Elvish),
++            ("SH.EXE", ShellKind::Posix),
++            ("BASH.EXE", ShellKind::Posix),
++            ("ZSH.EXE", ShellKind::Posix),
++            ("C:/Windows/System32/CMD.EXE", ShellKind::Cmd),
++            ("C:/Program Files/PowerShell/7/PWSH.EXE", ShellKind::Pwsh),
++            ("unknown.exe", ShellKind::PowerShell),
++        ] {
++            assert_eq!(ShellKind::new(program, true), expected, "{program}");
++        }
++    }
++
++    #[test]
++    fn test_shell_kind_unix_case_sensitive() {
++        for (program, expected) in [
++            ("/bin/nu", ShellKind::Nushell),
++            ("/bin/NU", ShellKind::Posix),
++            ("/bin/pwsh", ShellKind::Pwsh),
++            ("/bin/PWSH", ShellKind::Posix),
++            ("/bin/bash", ShellKind::Posix),
++            ("/bin/unknown", ShellKind::Posix),
++        ] {
++            assert_eq!(ShellKind::new(program, false), expected, "{program}");
++        }
++    }
++
+     // Examples
+     // WSL
+     // wsl.exe --distribution NixOS --cd /home/user -- /usr/bin/zsh -c "echo hello"
+```
 
 ---
 
+### Incident Patch 2: `0967dd02` (2026-11-02)
+**Commit Message**: Fix C++ lambda specifier highlighting (#66406)
+
+## Summary
+Closes #66169
+
+Fixed missing syntax highlighting for C++ lambda specifiers and the
+defined preprocessor operator.
+
+- Added lambda_specifier to the C++ keyword captures so mutable and
+static lambda specifiers are highlighted correctly
+- Highlighted defined as a preprocessor keyword
+- Highlighted the identifier inside defined(...) as a macro constant
+- Add a regression test to verify that all four tokens receive the
+expected captures.
+
+## Testing
+
+- cargo test -p languages: 109 passed, 0 failed
+- cargo test -p languages
+test_cpp_highlights_query_captures_lambda_and_defined_keywords: passed
+- cargo fmt --all -- --check: passed.
+
+Manually tested on Windows using a locally built Zed instance:
+<img width="512" height="471" alt="zed_test"
+src="https://github.com/user-attachments/assets/f4ae3b5b-5e3e-4eb9-9d96-caf8923a37a0"
+/>
+
+## Self-review
+
+- [X] I've reviewed my diff for quality, security, reliability, and
+performance.
+- [X] UI changes follow the
+[checklist](https://zed.dev/docs/development/ui-checklist).
+- [X] Tests cover the new or changed behavior.
+
 Release Notes:
 
-- Fixed a missing scrollbar in the Open Remote picker, making additional
-remote servers easier to discover
+- Fixed missing syntax highlighting for C++ lambda specifier
 
-**File**: `crates/recent_projects/src/remote_servers.rs` (modified, +4/-1)
+**File**: `crates/grammars/src/cpp/highlights.scm` (modified, +7/-0)
 ```diff
-@@ -1501,7 +1501,10 @@ impl RemoteServerProjects {
-                 true,
-                 cx,
-             );
--            Picker::list(delegate, window, cx).embedded()
-+            Picker::list(delegate, window, cx)
-+                .list_measure_all()
-+                .show_scrollbar(true)
-+                .embedded()
+@@ -161,6 +161,7 @@ type: (primitive_type) @type.builtin
+   "virtual"
+   (storage_class_specifier)
+   (type_qualifier)
++  (lambda_specifier)
+ ] @keyword
+ 
+ [
+@@ -198,6 +199,12 @@ type: (primitive_type) @type.builtin
+   (preproc_directive)
+ ] @keyword.preproc @preproc
+ 
++(preproc_defined
++  "defined" @keyword.preproc)
++
++(preproc_defined
++  (identifier) @constant.macro)
++
+ (comment) @comment
+ 
+ [
+```
+
+**File**: `crates/languages/src/cpp.rs` (modified, +42/-0)
+```diff
+@@ -14,6 +14,7 @@ mod tests {
+     use language::{AutoindentMode, Buffer};
+     use settings::SettingsStore;
+     use std::num::NonZeroU32;
++    use tree_sitter::StreamingIterator;
+     use unindent::Unindent;
+ 
+     #[gpui::test]
+@@ -649,4 +650,45 @@ mod tests {
+             buffer
          });
-         let mut read_ssh_config = RemoteSettings::get_global(cx).read_ssh_config;
-         let ssh_config_updates = if read_ssh_config {
+     }
++
++    #[test]
++    fn test_cpp_highlights_query_captures_lambda_and_defined_keywords() {
++        let language: tree_sitter::Language = tree_sitter_cpp::LANGUAGE.into();
++        let query_source = include_str!("../../grammars/src/cpp/highlights.scm");
++
++        let query = tree_sitter::Query::new(&language, query_source)
++            .expect("C++ highlights query should compile");
++
++        let source = r#"
++            auto mutable_lambda = []() mutable {};
++            auto static_lambda = []() static {};
++
++            #if defined(MY_MACRO)
++            #endif
++        "#;
++
++        let mut parser = tree_sitter::Parser::new();
++        parser.set_language(&language).unwrap();
++
++        let tree = parser.parse(source, None).expect("C++ source should parse");
++
++        let mut cursor = tree_sitter::QueryCursor::new();
++        let mut matches = cursor.matches(&query, tree.root_node(), source.as_bytes());
++
++        let mut captures = Vec::new();
++
++        while let Some(query_match) = matches.next() {
++            for capture in query_match.captures() {
++                let capture_name = query.capture_names()[capture.index as usize];
++                let captured_text = &source[capture.node.byte_range()];
++
++                captures.push((captured_text.to_owned(), capture_name.to_owned()));
++            }
++        }
++
++        assert!(captures.contains(&("mutable".into(), "keyword".into())));
++        assert!(captures.contains(&("static".into(), "keyword".into())));
++        assert!(captures.contains(&("defined".into(), "keyword.preproc".into())));
++        assert!(captures.contains(&("MY_MACRO".into(), "constant.macro".into())));
++    }
+ }
+```
+
+---
+
+### Incident Patch 3: `1d76f828` (2026-11-02)
+**Commit Message**: Fix SVG images in remote Markdown previews (#66404)
+
+## Summary
+
+<img width="3024" height="1898" alt="zed-svg-ssh-after"
+src="https://github.com/user-attachments/assets/d35454cc-9d27-4165-900a-00990f483e4e"
+/>
+
+Closes #64517
+
+Fixes SVG images failing to display in remote Markdown previews by
+adding content-based SVG support to ImageStore and using the existing
+GPUI renderer.
+
+## Testing
+
+- Integration tests and Clippy passed.
+- Manually verified with a macOS client connected to a Linux SSH
+project.
+- To verify: open a remote Markdown file containing `![](image.svg)` and
+confirm the SVG displays in the preview.
+
+## Self-review
+
+- [x] I've reviewed my diff for quality, security, reliability, and
+performance.
+- [x] UI changes follow the
+[checklist](https://zed.dev/docs/development/ui-checklist).
+- [x] Tests cover the new or changed behavior.
+
+Release Notes:
+
+- Fixed SVG images failing to render in Markdown previews for remote
+projects.
+
+**File**: `Cargo.lock` (modified, +1/-0)
+```diff
+@@ -13911,6 +13911,7 @@ dependencies = [
+  "tracing",
+  "unindent",
+  "url",
++ "usvg",
+  "util",
+  "watch",
+  "wax",
+```
+
+**File**: `crates/image_viewer/src/image_info.rs` (modified, +13/-10)
+```diff
+@@ -1,5 +1,5 @@
+ use gpui::{App, Context, Entity, IntoElement, ParentElement, Render, Subscription, div};
+-use project::image_store::{ImageFormat, ImageMetadata};
++use project::image_store::{ImageFormat, ImageMetadata, RasterImageFormat};
+ use settings::Settings;
+ use ui::prelude::*;
+ use util::size::format_file_size;
+@@ -64,15 +64,18 @@ impl Render for ImageInfo {
+ 
+         components.push(
+             match metadata.format {
+-                ImageFormat::Png => "PNG",
+-                ImageFormat::Jpeg => "JPEG",
+-                ImageFormat::Gif => "GIF",
+-                ImageFormat::WebP => "WebP",
+-                ImageFormat::Tiff => "TIFF",
+-                ImageFormat::Bmp => "BMP",
+-                ImageFormat::Ico => "ICO",
+-                ImageFormat::Avif => "Avif",
+-                _ => "Unknown",
++                ImageFormat::Svg => "SVG",
++                ImageFormat::Raster(format) => match format {
++                    RasterImageFormat::Png => "PNG",
++                    RasterImageFormat::Jpeg => "JPEG",
++                    RasterImageFormat::Gif => "GIF",
++                    RasterImageFormat::WebP => "WebP",
++                    RasterImageFormat::Tiff => "TIFF",
++                    RasterImageFormat::Bmp => "BMP",
++                    RasterImageFormat::Ico => "ICO",
++                    RasterImageFormat::Avif => "Avif",
++                    _ => "Unknown",
++                },
+             }
+             .to_string(),
+         );
+```
+
+**File**: `crates/project/Cargo.toml` (modified, +1/-0)
+```diff
+@@ -99,6 +99,7 @@ text.workspace = true
+ toml.workspace = true
+ tracing.workspace = true
+ url.workspace = true
++usvg.workspace = true
+ util.workspace = true
+ watch.workspace = true
+ wax.workspace = true
+```
+
+**File**: `crates/project/src/image_store.rs` (modified, +32/-4)
+```diff
+@@ -9,7 +9,7 @@ use gpui::{
+     App, Asset, AssetLogger, AsyncApp, Context, Entity, EventEmitter, ImageCacheError, ImageSource,
+     Img, RenderImage, Subscription, Task, WeakEntity, prelude::*,
+ };
+-pub use image::ImageFormat;
++pub use image::ImageFormat as RasterImageFormat;
+ use image::{ExtendedColorType, GenericImageView, ImageReader};
+ use language::{DiskState, File};
+ use rpc::{AnyProtoClient, ErrorExt as _, TypedEnvelope, proto};
+@@ -57,6 +57,12 @@ pub enum ImageStoreEvent {
+ 
+ impl EventEmitter<ImageStoreEvent> for ImageStore {}
+ 
++#[derive(Debug, Clone, Copy, PartialEq, Eq)]
++pub enum ImageFormat {
++    Raster(RasterImageFormat),
++    Svg,
++}
++
+ #[derive(Debug, Clone, Copy)]
+ pub struct ImageMetadata {
+     pub width: u32,
+@@ -150,7 +156,20 @@ pub fn project_image_source(project: WeakEntity<Project>, path: ProjectPath) ->
+ 
+ impl ImageItem {
+     pub fn compute_metadata_from_bytes(image_bytes: &[u8]) -> Result<ImageMetadata> {
+-        let image_format = image::guess_format(image_bytes)?;
++        let image_format = match image::guess_format(image_bytes) {
++            Ok(format) => format,
++            Err(_) => {
++                let svg = usvg::Tree::from_data(image_bytes, &usvg::Options::default())?;
++                let size = svg.size().to_int_size();
++                return Ok(ImageMetadata {
++                    width: size.width(),
++                    height: size.height(),
++                    file_size: image_bytes.len() as u64,
++                    format: ImageFormat::Svg,
++                    colors: None,
++                });
++            }
++        };
+ 
+         let mut image_reader = ImageReader::new(std::io::Cursor::new(image_bytes));
+         image_reader.set_format(image_format);
+@@ -162,7 +181,7 @@ impl ImageItem {
+             width,
+             height,
+             file_size: image_bytes.len() as u64,
+-            format: image_format,
++            format: ImageFormat::Raster(image_format),
+             colors: ImageColorInfo::from_color_type(image.color()),
+         })
+     }
+@@ -932,7 +951,16 @@ impl LocalImageStore {
+ }
+ 
+ fn create_gpui_image(content: Vec<u8>) -> anyhow::Result<Arc<gpui::Image>> {
+-    let format = image::guess_format(&content)?;
++    let format = match image::guess_format(&content) {
++        Ok(format) => format,
++        Err(_) => {
++            usvg::Tree::from_data(&content, &usvg::Options::default())?;
++            return Ok(Arc::new(gpui::Image::from_bytes(
++                gpui::ImageFormat::Svg,
++                content,
++            )));
++        }
++    };
+ 
+     Ok(Arc::new(gpui::Image::from_bytes(
+         match format {
+```
+
+**File**: `crates/project/tests/integration/image_store.rs` (modified, +94/-1)
+```diff
+@@ -73,6 +73,99 @@ fn test_compute_metadata_from_bytes() {
+     assert_eq!(metadata.width, 1);
+     assert_eq!(metadata.height, 1);
+     assert_eq!(metadata.file_size, png_bytes.len() as u64);
+-    assert_eq!(metadata.format, image::ImageFormat::Png);
++    assert_eq!(
++        metadata.format,
++        ImageFormat::Raster(image::ImageFormat::Png)
++    );
+     assert!(metadata.colors.is_some());
+ }
++
++#[test]
++fn test_svg_metadata_from_contents() {
++    for prefix in [
++        "",
++        "<?xml version=\"1.0\"?>\n",
++        "\u{feff}",
++        "<!-- image -->\n",
++    ] {
++        let content = format!(
++            "{prefix}<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 200 100\"><rect width=\"200\" height=\"100\" fill=\"red\"/></svg>"
++        );
++        let metadata = ImageItem::compute_metadata_from_bytes(content.as_bytes())
++            .expect("SVG metadata should load regardless of the XML prefix");
++        assert_eq!(metadata.format, ImageFormat::Svg);
++        assert_eq!((metadata.width, metadata.height), (200, 100));
++        assert_eq!(metadata.file_size, content.len() as u64);
++        assert!(metadata.colors.is_none());
++    }
++}
++
++#[test]
++fn test_invalid_svg_metadata() {
++    for content in [
++        "",
++        "not an image",
++        "<svg",
++        "<html><body>SVG</body></html>",
++        "<!-- <svg xmlns=\"http://www.w3.org/2000/svg\"/> -->",
++    ] {
++        assert!(ImageItem::compute_metadata_from_bytes(content.as_bytes()).is_err());
++    }
++}
++
++#[gpui::test]
++async fn test_open_svg_image_by_contents(cx: &mut TestAppContext) {
++    init_test(cx);
++    let fs = FakeFs::new(cx.executor());
++    fs.insert_tree(
++        "/root",
++        json!({
++            "image.bin": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"10\"/>",
++            "broken.svg": "<svg",
++            "html.svg": "<html><body>not an SVG</body></html>"
++        }),
++    )
++    .await;
++    let project = Project::test(fs, ["/root".as_ref()], cx).await;
++    let worktree_id = project.read_with(cx, |project, cx| {
++        project
++            .worktrees(cx)
++            .next()
++            .expect("worktree")
++            .read(cx)
++            .id()
++    });
++    let image = project
++        .update(cx, |project, cx| {
++            project.open_image(
++                ProjectPath {
++                    worktree_id,
++                    path: rel_path("image.bin").into(),
++                },
++                cx,
++            )
++        })
++        .await
++        .expect("ImageStore should identify SVG by contents");
++    image.read_with(cx, |image, _| {
++        assert_eq!(image.image.format(), gpui::ImageFormat::Svg);
++        let metadata = image.image_metadata.expect("SVG should have metadata");
++        assert_eq!(metadata.format, ImageFormat::Svg);
++        assert_eq!((metadata.width, metadata.height), (20, 10));
++    });
++
++    for image_path in ["broken.svg", "html.svg"] {
++        let result = project
++            .update(cx, |project, cx| {
++                project.open_image(
++                    ProjectPath {
++                        worktree_id,
++                        path: rel_path(image_path).into(),
++                    },
++                    cx,
++                )
++            })
++            .await;
++        assert!(result.is_err(), "{image_path}");
++    }
++}
+```
+
+**File**: `crates/remote_server/src/remote_editing_tests.rs` (modified, +43/-40)
+```diff
+@@ -674,7 +674,11 @@ async fn test_remote_project_image_source(cx: &mut TestAppContext, server_cx: &m
+         json!({
+             "project": {
+                 "docs": {
+-                    "image.ppm": "P3\n1 1\n255\n255 0 0\n"
++                    "image.ppm": "P3\n1 1\n255\n255 0 0\n",
++                    "image.svg": r#"<?xml version="1.0"?>
++                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1">
++                            <rect width="1" height="1" fill="red"/>
++                        </svg>"#
+                 }
+             }
+         }),
+@@ -689,48 +693,47 @@ async fn test_remote_project_image_source(cx: &mut TestAppContext, server_cx: &m
+         .await
+         .expect("remote worktree should open");
+     let worktree_id = worktree.read_with(cx, |worktree, _cx| worktree.id());
+-    let source = image_store::project_image_source(
+-        project.downgrade(),
+-        ProjectPath {
+-            worktree_id,
+-            path: rel_path("docs/image.ppm").into(),
+-        },
+-    );
+-    let ImageSource::Custom(load_image) = source else {
+-        panic!("expected a project-backed image source");
+-    };
+-    let loaded_bytes = Arc::new(std::sync::Mutex::new(None));
+-    let observed_source = ImageSource::from({
+-        let loaded_bytes = loaded_bytes.clone();
+-        move |window: &mut gpui::Window, cx: &mut gpui::App| {
+-            let result = load_image(window, cx);
+-            if let Some(Ok(image)) = &result {
+-                *loaded_bytes.lock().expect("loaded image mutex poisoned") =
+-                    image.as_bytes(0).map(ToOwned::to_owned);
++    for image_path in ["docs/image.ppm", "docs/image.svg"] {
++        let source = image_store::project_image_source(
++            project.downgrade(),
++            ProjectPath {
++                worktree_id,
++                path: rel_path(image_path).into(),
++            },
++        );
++        let ImageSource::Custom(load_image) = source else {
++            panic!("expected a project-backed image source");
++        };
++        let loaded_bytes = Arc::new(std::sync::Mutex::new(None));
++        let observed_source = ImageSource::from({
++            let loaded_bytes = loaded_bytes.clone();
++            move |window: &mut gpui::Window, cx: &mut gpui::App| {
++                let result = load_image(window, cx);
++                if let Some(Ok(image)) = &result {
++                    *loaded_bytes.lock().expect("loaded image mutex poisoned") =
++                        image.as_bytes(0).map(ToOwned::to_owned);
++                }
++                result
+             }
+-            result
+-        }
+-    });
++        });
+ 
+-    let (view, cx) = cx.add_window_view(|_window, _cx| RemoteImageTestView {
+-        source: observed_source,
+-    });
+-    cx.draw(Default::default(), size(px(10.), px(10.)), {
+-        let view = view.clone();
+-        move |_, _| view.into_any_element()
+-    });
+-    cx.run_until_parked();
+-    cx.draw(Default::default(), size(px(10.), px(10.)), move |_, _| {
+-        view.into_any_element()
+-    });
++        let (view, cx) = cx.add_window_view(|_window, _cx| RemoteImageTestView {
++            source: observed_source,
++        });
++        cx.draw(Default::default(), size(px(10.), px(10.)), {
++            let view = view.clone();
++            move |_, _| view.into_any_element()
++        });
++        cx.run_until_parked();
++        cx.draw(Default::default(), size(px(10.), px(10.)), move |_, _| {
++            view.into_any_element()
++        });
+ 
+-    assert_eq!(
+-        loaded_bytes
+-            .lock()
+-            .expect("loaded image mutex poisoned")
+-            .as_deref(),
+-        Some([0, 0, 255, 255].as_slice())
+-    );
++        let loaded_bytes = loaded_bytes.lock().expect("loaded image mutex poisoned");
++        let bytes = loaded_bytes.as_ref().expect("remote image should render");
++        let pixel_count = if image_path.ends_with(".ppm") { 1 } else { 4 };
++        assert_eq!(bytes, &[0, 0, 255, 255].repeat(pixel_count), "{image_path}");
++    }
+ }
+ 
+ #[gpui::test]
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #66351** (closed): Make external-agent model catalog app-wide and preload on startup (@riso-tech)
-- **PR #66337** (closed): settings_ui: Add external agent models to profile Default Model picker (@riso-tech)
-- **PR #66326** (closed): project + agent_ui: Add external-agent model catalog (@riso-tech)
-- **PR #66321** (closed): settings_ui: Add Agent Profiles page (@riso-tech)
-- **PR #66317** (2026-10-30): gpui: Time animations with the executor clock (@Anthony-Eid)
-- **PR #66311** (closed): docx_viewer: Add DOCX document viewer (@lm2000)
+- **PR #66481** (2026-11-03): Do not panic on wrong grammar results (#66474) (cherry-pick to stable) (@zed-zippy[bot])
+- **PR #66480** (2026-11-03): Do not panic on wrong grammar results (#66474) (cherry-pick to preview) (@zed-zippy[bot])
+- **PR #66474** (2026-11-03): Do not panic on wrong grammar results (@SomeoneToIgnore)
+- **PR #66468** (2026-11-03): gpui_windows: Preserve native tab advances (@Veykril)
+- **PR #66461** (2026-11-03): ui: Support embedded views in context menu submenus (@smitbarmase)
+- **PR #66455** (closed): gpui_windows: give tab characters a width (@leafyoung)
 
 ---
 
@@ -2406,31 +2964,60 @@ remote servers easier to discover
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. recent_projects: Show remote picker scrollbar (#63909)
+## X. Windows shell detection for uppercase executable names (#66387)
 
 **RULE**:
-When implementing operations in `crates/recent_projects/src/remote_servers.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zed-industries/zed. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/util/src/shell.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zed-industries/zed. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ba63a022`: recent_projects: Show remote picker scrollbar (#63909). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b41a8b60`: Windows shell detection for uppercase executable names (#66387). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/recent_projects/src/remote_servers.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/util/src/shell.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-            Picker::list(delegate, window, cx)
-                .list_measure_all()
-                .show_scrollbar(true)
-                .embedded()
+        let program = if is_windows {
+            Cow::Owned(program.to_ascii_lowercase())
+        } else {
+            program
+        };
+    #[test]
+    fn test_shell_kind_windows_case_insensitive() {
+        for (program, expected) in [
+            ("CMD.EXE", ShellKind::Cmd),
+            ("PowerShell.exe", ShellKind::PowerShell),
+            ("PwSh.ExE", ShellKind::Pwsh),
+            ("NU.EXE", ShellKind::Nushell),
+            ("FISH.EXE", ShellKind::Fish),
+            ("CSH.EXE", ShellKind::Csh),
+            ("TCSH.EXE", ShellKind::Tcsh),
+            ("RC.EXE", ShellKind::Rc),
+            ("XONSH.EXE", ShellKind::Xonsh),
+            ("ELVISH.EXE", ShellKind::Elvish),
+            ("SH.EXE", ShellKind::Posix),
+            ("BASH.EXE", ShellKind::Posix),
+            ("ZSH.EXE", ShellKind::Posix),
+            ("C:/Windows/System32/CMD.EXE", ShellKind::Cmd),
+            ("C:/Program Files/PowerShell/7/PWSH.EXE", ShellKind::Pwsh),
+            ("unknown.exe", ShellKind::PowerShell),
+        ] {
+            assert_eq!(ShellKind::new(program, true), expected, "{program}");
+        }
+    }
+
+    #[test]
+    fn test_shell_kind_unix_case_sensitive() {
+        for (program, expected) in [
+ 
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-            Picker::list(delegate, window, cx).embedded()
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ba63a022` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b41a8b60` are properly handled with clean fallback behavior.

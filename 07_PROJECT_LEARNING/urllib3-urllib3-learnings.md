@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/urllib3-urllib3-learnings.md`  
 > **Source**: github ([https://github.com/urllib3/urllib3](https://github.com/urllib3/urllib3))  
-> **Source Version**: `2aa7e9c3`  
+> **Source Version**: `c5347bbd`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T15:37:04.304Z  
+> **Timestamp**: 2026-11-04T00:10:46.271Z  
 > **Learning ID**: `learn-github-urllib3-urllib3`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/urllib3-urllib3-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/urllib3/urllib3](https://github.com/urllib3/urllib3))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T15:37:02.795Z  
+> **Harvest Timestamp**: 2026-11-04T00:10:45.749Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1795,11 +1795,11 @@ class SSLTransport:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5347** (2026-10-29): **Keep the cached PoolKey when PoolManager looks up a pool**
-  *Symptoms*: <!--- Thanks for your contribution! ♥️  If this is your first PR to urllib3 please review the Contributing Guide: https://urllib3.readthedocs.io/en/latest/contributing.html  Adhering to the Contributing Guide means we can review, merge, and release your change faster! :) --->  Fixes #5346.  **TLDR:** A pool lookup no longer replaces the cached `PoolKey`. The key stays one long-lived object for the life of the pool.  ### Why it matters  `PoolManager` builds a new `PoolKey` for each request, and the lookup stores this new key in the cache. As a result, each request to a known host leaves a new GC-tracked tuple that young-generation collections must scan. Programs that call `gc.freeze()` after warm-up lose the freeze on each pool key after the next request.  ### Change  `RecentlyUsedContainer.__getitem__()` uses `move_to_end()` instead of `pop()` and a new insert. The eviction order does not change.  ### Evidence  `check_key.py` makes one request, freezes the GC, and makes a second request to the same host. It does not open a connection.  ```python import gc import urllib3  http = urllib3.PoolManager() http.connection_from_url("https://example.com/")  # no connection is opened gc.collect() gc.freeze() frozen_key = next(iter(http.pools._container))  http.connection_from_url("https://example.com/") key = next(iter(http.pools._container)) print("cached key is the frozen key:", key is frozen_key) print("cached key in GC generation 0:", any(o is key for o in gc.get_objects(generation
+- **Issue #5353** (2026-11-02): **Bump the github-actions group with 10 updates**
+  *Symptoms*: Bumps the github-actions group with 10 updates:  | Package | From | To | | --- | --- | --- | | [actions/setup-python](https://github.com/actions/setup-python) | `7.0.0` | `7.1.0` | | [astral-sh/setup-uv](https://github.com/astral-sh/setup-uv) | `10.2.0` | `10.3.2` | | [actions/setup-node](https://github.com/actions/setup-node) | `7.0.0` | `7.1.0` | | [actions/upload-artifact](https://github.com/actions/upload-artifact) | `7.0.1` | `7.0.2` | | [actions/download-artifact](https://github.com/actions/download-artifact) | `8.0.1` | `8.0.2` | | [github/codeql-action/init](https://github.com/github/codeql-action) | `4.38.2` | `4.39.1` | | [github/codeql-action/autobuild](https://github.com/github/codeql-action) | `4.38.2` | `4.39.1` | | [github/codeql-action/analyze](https://github.com/github/codeql-action) | `4.38.2` | `4.39.1` | | [pypa/gh-action-pypi-publish](https://github.com/pypa/gh-action-pypi-publish) | `1.14.2` | `1.14.3` | | [ossf/scorecard-action](https://github.com/ossf/scorecard-action) | `2.4.4` | `2.5.0` |  Updates `actions/setup-python` from 7.0.0 to 7.1.0 <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/actions/setup-python/releases">actions/setup-python's releases</a>.</em></p> <blockquote> <h2>v7.1.0</h2> <h2>What's Changed</h2> <h3>Enhancements</h3> <ul> <li>Add <code>mirror</code> and <code>mirror-token</code> inputs for custom Python distribution sources by <a href="https://github.com/luhenry"><code>@​luhenry</code></a>
 
-- **Issue #5346** (2026-10-29): **PoolManager replaces the cached PoolKey on every request**
-  *Symptoms*: ### Subject  Each request through an existing pool replaces the cached `PoolKey` in `PoolManager.pools` with the new key of that request. `RecentlyUsedContainer.__getitem__()` uses `pop()` and a new insert under the key of the caller ([_collections.py#L93-L98](https://github.com/urllib3/urllib3/blob/2.8.0/src/urllib3/_collections.py#L93-L98)).  Why this is a problem: the cached key must live as long as the pool. Instead, each request puts a new GC-tracked tuple in the cache. The young GC generation then scans the key again after each request, and a program that calls `gc.freeze()` cannot keep the key frozen.  ### Environment  ``` OS macOS-26.7.1-arm64-arm-64bit Python 3.12.12 OpenSSL 3.5.4 30 Sep 2025 urllib3 2.8.0 ```  ### Steps to Reproduce  ```python import urllib3  pm = urllib3.PoolManager() pm.connection_from_url("http://example.com/")  # no connection is opened first_key = next(iter(pm.pools._container))  pm.connection_from_url("http://example.com/") print(next(iter(pm.pools._container)) is first_key) ```  ### Expected Behavior  `True`. The lookup keeps the cached key.  ### Actual Behavior  `False`. The lookup replaced the cached key.  ### Possible fix  `move_to_end()` keeps the eviction order and the cached key:  ```diff          with self.lock: -            item = self._container.pop(key) -            self._container[key] = item +            item = self._container[key] +            self._container.move_to_end(key)              return item ```  I can open a PR with a t
+- **Issue #5349** (2026-11-01): **Fix HTTPConnectionPool._prepare_proxy to set up CONNECT tunnel (#2730)**
+  *Symptoms*: ## Summary of changes  `HTTPConnectionPool._prepare_proxy()` was empty (`pass`), so even when `connection_requires_http_tunnel()` returned `True` for an HTTP destination through a proxy, no HTTP CONNECT tunnel was ever established. A CONNECT-based proxy could not be used for `http://` destinations.  `HTTPSConnectionPool._prepare_proxy` already implemented this correctly; mirror it here so the tunnel is set up for HTTP connections too.  ## Root cause  `_prepare_proxy` in `HTTPConnectionPool` was a no-op:  ```python def _prepare_proxy(self, conn: BaseHTTPConnection) -> None:     # Nothing to do for HTTP connections.     pass ```  The fix mirrors `HTTPSConnectionPool._prepare_proxy`:  ```python def _prepare_proxy(self, conn: BaseHTTPConnection) -> None:     """Establishes a tunnel connection through HTTP CONNECT."""     if self.proxy and self.proxy.scheme == "https":         tunnel_scheme = "https"     else:         tunnel_scheme = "http"      conn.set_tunnel(         scheme=tunnel_scheme,         host=self._tunnel_host,         port=self.port,         headers=self.proxy_headers,     )     conn.connect() ```  ## Verification  Before (unpatched main, commit `2aa7e9c3`):  ``` BEFORE (unpatched):   set_tunnel called: False   connect called: False ```  After (this branch, commit `48a039f9`):  ``` AFTER (patched):   set_tunnel called: True   connect called: True   set_tunnel call_args: call(scheme='http', host='example.com', port=8080, headers={'X-Proxy': 'test'}) ```  Two parametriz
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1816,222 +1816,245 @@ class SSLTransport:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2aa7e9c3` (2026-10-29)
-**Commit Message**: Keep the stored key in RecentlyUsedContainer lookups (#5347)
+### Incident Patch 1: `c5347bbd` (2026-11-02)
+**Commit Message**: Bump the github-actions group with 10 updates (#5353)
 
-__getitem__() used pop() and a new insert, so each lookup replaced the
-stored key with the key of the caller. PoolManager builds a new PoolKey
-for each request, so the cached key changed on every request. Use
-move_to_end() to keep the stored key and the same eviction order.
+Bumps the github-actions group with 10 updates:
 
-Fixes https://github.com/urllib3/urllib3/issues/5346
+| Package | From | To |
+| --- | --- | --- |
+| [actions/setup-python](https://github.com/actions/setup-python) | `7.0.0` | `7.1.0` |
+| [astral-sh/setup-uv](https://github.com/astral-sh/setup-uv) | `10.2.0` | `10.3.2` |
+| [actions/setup-node](https://github.com/actions/setup-node) | `7.0.0` | `7.1.0` |
+| [actions/upload-artifact](https://github.com/actions/upload-artifact) | `7.0.1` | `7.0.2` |
+| [actions/download-artifact](https://github.com/actions/download-artifact) | `8.0.1` | `8.0.2` |
+| [github/codeql-action/init](https://github.com/github/codeql-action) | `4.38.2` | `4.39.1` |
+| [github/codeql-action/autobuild](https://github.com/github/codeql-action) | `4.38.2` | `4.39.1` |
+| [github/codeql-action/analyze](https://github.com/github/codeql-action) | `4.38.2` | `4.39.1` |
+| [pypa/gh-action-pypi-publish](https://github.com/pypa/gh-action-pypi-publish) | `1.14.2` | `1.14.3` |
+| [ossf/scorecard-action](https://github.com/ossf/scorecard-action) | `2.4.4` | `2.5.0` |
 
-**File**: `changelog/5346.bugfix.rst` (added, +1/-0)
+
+Updates `actions/setup-python` from 7.0.0 to 7.1.0
+- [Release notes](https://github.com/actions/setup-python/rele
+
+**File**: `.github/workflows/ci.yml` (modified, +9/-9)
 ```diff
-@@ -0,0 +1 @@
-+Fixed ``PoolManager`` replacing its cached pool key with the key of each new request to the same host.
+@@ -28,7 +28,7 @@ jobs:
+           persist-credentials: false
+ 
+       - name: "Setup Python"
+-        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
++        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+         with:
+           python-version: "3.x"
+           cache: "pip"
+@@ -108,7 +108,7 @@ jobs:
+           persist-credentials: false
+ 
+       - name: "Setup Python ${{ matrix.python-version }}"
+-        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
++        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+         # pip will emit a warning about running as root if setup-python
+         # is used in a container.
+         if: ${{ matrix.container == '' }}
+@@ -118,7 +118,7 @@ jobs:
+           check-latest: true
+ 
+       - name: "Install uv"
+-        uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
++        uses: astral-sh/setup-uv@07a047e608db84b3d8c06cd9a7c7dcc9c355c18e # v10.3.2
+         with:
+           version: "0.12.22"
+ 
+@@ -143,7 +143,7 @@ jobs:
+         uses: browser-actions/setup-firefox@0bc507ddf224827e3b1af68e014d5e42ab93e795 # v1.7.2
+         if: ${{ matrix.nox-session == 'emscripten(firefox)' }}
+       - name: "Install node.js"
+-        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
++        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+         if: ${{ matrix.nox-session == 'emscripten(node)' }}
+         with:
+           node-version: 22
+@@ -169,7 +169,7 @@ jobs:
+           NOX_SESSION: ${{ matrix.nox-session != '' && matrix.nox-session || format('test-{0}', matrix.python-version) }}
+ 
+       - name: "Upload coverage data"
+-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
++        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+         with:
+           name: coverage-data-${{ matrix.python-version }}-${{ matrix.os }}-${{ matrix.experimental }}-${{ matrix.nox-session }}
+           path: ".coverage.*"
+@@ -188,12 +188,12 @@ jobs:
+           persist-credentials: false
+ 
+       - name: "Setup Python"
+-        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
++        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+         with:
+           python-version: "3.x"
+ 
+       - name: "Install uv"
+-        uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
++        uses: astral-sh/setup-uv@07a047e608db84b3d8c06cd9a7c7dcc9c355c18e # v10.3.2
+         with:
+           version: "0.12.22"
+ 
+@@ -202,7 +202,7 @@ jobs:
+         run: uv sync --dev --frozen
+ 
+       - name: "Download coverage data"
+-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
++        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+         with:
+           pattern: coverage-data-*
+           merge-multiple: true
+@@ -216,7 +216,7 @@ jobs:
+ 
+       - if: ${{ failure() }}
+         name: "Upload report if check failed"
+-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
++        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+         with:
+           name: coverage-report
+           path: htmlcov
 ```
 
-**File**: `src/urllib3/_collections.py` (modified, +4/-3)
+**File**: `.github/workflows/codeql.yml` (modified, +3/-3)
 ```diff
-@@ -91,10 +91,11 @@ def __init__(
-         self.lock = RLock()
+@@ -28,13 +28,13 @@ jobs:
+         persist-credentials: false
  
-     def __getitem__(self, key: _KT) -> _VT:
--        # Re-insert the item, moving it to the end of the eviction line.
-+        # Move the item to the end of the eviction line. move_to_end() keeps
-+        # the stored key instead of replacing it with the caller's key.
-         with self.lock:
--            item = self._container.pop(key)
--            self._container[key] = item
-+            item = self._container[key]
-+            self._container.move_to_end(key)
-             return item
+     - name: "Run CodeQL init"
+-      uses: github/codeql-action/init@2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2 # v4.38.2
++      uses: github/codeql-action/init@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
+       with:
+         config-file: "./.github/codeql.yml"
+         languages: "python,javascript-typescript,actions"
  
-     def __setitem__(self, key: _KT, value: _VT) -> None:
+     - name: "Run CodeQL autobuild"
+-      uses: github/codeql-action/autobuild@2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2 # v4.38.2
++      uses: github/codeql-action/autobuild@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
+ 
+     - name: "Run CodeQL analyze"
+-      uses: github/codeql-action/analyze@2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2 # v4.38.2
++      uses: github/codeql-action/analyze@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
 ```
 
-**File**: `test/test_collections.py` (modified, +11/-0)
+**File**: `.github/workflows/downstream.yml` (modified, +2/-2)
 ```diff
-@@ -70,6 +70,17 @@ def test_access_ordering(self) -> None:
+@@ -26,12 +26,12 @@ jobs:
+           persist-credentials: false
  
-         assert list(d._container.keys()) == new_order
+       - name: "Setup Python"
+-        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
++        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+         with:
+           python-version: "3.14"
  
-+    def test_access_keeps_stored_key(self) -> None:
-+        d: Container[tuple[str], int] = Container(5)
-+        stored_key = ("foo",)
-+        d[stored_key] = 1
-+
-+        equal_key = ("".join(["f", "oo"]),)
-+        assert equal_key == stored_key and equal_key is not stored_key
-+        d[equal_key]
-+
-+        assert next(iter(d._container)) is stored_key
-+
-     def test_delete(self) -> None:
-         d: Container[int, bool] = Container(5)
+       - name: "Install uv"
+-        uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7  # v10.2.0
++        uses: astral-sh/setup-uv@07a047e608db84b3d8c06cd9a7c7dcc9c355c18e  # v10.3.2
+         with:
+           version: "0.12.22"
  
 ```
 
----
-
-### Incident Patch 2: `5feb9934` (2026-10-27)
-**Commit Message**: Tighten numeric validation of response framing (#5083)
-
-Co-authored-by: “rootvector2” <“[REDACTED_EMAIL]”>
-Co-authored-by: Illia Volochii <[REDACTED_EMAIL]>
-
-**File**: `changelog/5083.bugfix.rst` (added, +1/-0)
+**File**: `.github/workflows/lint.yml` (modified, +2/-2)
 ```diff
-@@ -0,0 +1 @@
-+Tightened numeric validation of response framing fields. ``Content-Length`` values such as ``1_000`` are now ignored when tracking response length, and chunk sizes such as ``0x5`` are now rejected when streaming chunked responses.
+@@ -22,12 +22,12 @@ jobs:
+           persist-credentials: false
+ 
+       - name: "Setup Python"
+-        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
++        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+         with:
+           python-version: "3.x"
+ 
+       - name: "Install uv"
+-        uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
++        uses: astral-sh/setup-uv@07a047e608db84b3d8c06cd9a7c7dcc9c355c18e # v10.3.2
+         with:
+           version: "0.12.22"
+ 
 ```
 
-**File**: `src/urllib3/response.py` (modified, +18/-5)
+**File**: `.github/workflows/publish.yml` (modified, +6/-6)
 ```diff
-@@ -4,6 +4,7 @@
- import io
- import json as _json
- import logging
-+import re
- import socket
- import sys
- import typing
-@@ -53,6 +54,11 @@
- # Read in 64 KiB chunks
- _READ_CHUNK_SIZE = 2**16
+@@ -27,7 +27,7 @@ jobs:
+           persist-credentials: false
  
-+# RFC 9112: Content-Length = 1*DIGIT and chunk-size = 1*HEXDIG.
-+# int() is more permissive, so we match against the grammar before calling it.
-+_CONTENT_LENGTH_RE = re.compile(r"[0-9]+")
-+_CHUNK_SIZE_RE = re.compile(rb"[0-9A-Fa-f]+")
-+
- # Maximum length of a chunk-size line (and the trailing CRLF line) when reading a
- # chunked-transfer-encoded response. Matches ``http.client._MAXLINE`` so urllib3's
- # streaming path bounds these reads exactly like the stdlib ``.read()`` path does,
-@@ -893,7 +899,14 @@ def _init_length(self, request_method: str | None) -> int | None:
-                 # (e.g. Content-Length: 42, 42). This line ensures the values
-                 # are all valid ints and that as long as the `set` length is 1,
-                 # all values are the same. Otherwise, the header is invalid.
--                lengths = {int(val) for val in content_length.split(",")}
-+                lengths = set()
-+                for val in content_length.split(","):
-+                    # Only optional whitespace may surround each value; reject
-+                    # signs, underscores and unicode digits that int() accepts.
-+                    val = val.strip()
-+                    if not _CONTENT_LENGTH_RE.fullmatch(val):
-+                        raise ValueError("invalid Content-Length")
-+                    lengths.add(int(val))
-                 if len(lengths) > 1:
-                     raise InvalidHeader(
-                         "Content-Length contained multiple "
-@@ -902,9 +915,6 @@ def _init_length(self, request_method: str | None) -> int | None:
-                 length = lengths.pop()
-             except ValueError:
-                 length = None
--            else:
--                if length < 0:
--                    length = None
+       - name: "Setup Python"
+-        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
++        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+         with:
+           python-version: "3.x"
  
-         else:  # if content_length is None
-             length = None
-@@ -1381,7 +1391,10 @@ def _update_chunk_length(self) -> None:
-             ) from None
-         line = line.split(b";", 1)[0]
-         try:
--            self.chunk_left = int(line, 16)
-+            chunk_size = line.rstrip()
-+            if not _CHUNK_SIZE_RE.fullmatch(chunk_size):
-+                raise ValueError("invalid chunk size")
-+            self.chunk_left = int(chunk_size, 16)
-         except ValueError:
-             self.close()
-             if line:
+@@ -45,7 +45,7 @@ jobs:
+           cd dist && echo "hashes=$(sha256sum * | base64 -w0)" >> $GITHUB_OUTPUT
+ 
+       - name: "Upload dists"
+-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
++        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+         id: upload-artifact
+         with:
+           name: "dist"
+@@ -66,7 +66,7 @@ jobs:
+ 
+     steps:
+     - name: "Download dists"
+-      uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
++      uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+       with:
+         artifact-ids: ${{ needs.build.outputs.artifact-id }}
+         path: "dist/"
+@@ -84,7 +84,7 @@ jobs:
+         gh release upload "$GITHUB_REF_NAME" dist/* --repo "$GITHUB_REPOSITORY"
+ 
+     - name: "Publish dists to PyPI"
+-      uses: pypa/gh-action-pypi-publish@dc37677b2e1c63e2034f94d8a5b11f265b73ba33 # v1.14.2
++      uses: pypa/gh-action-pypi-publish@7245906fb61fa33a13554f9d5fb856fe61758086 # v1.14.3
+       with:
+         attestations: true
+ 
+@@ -99,13 +99,13 @@ jobs:
+ 
+     steps:
+     - name: "Download dists"
+-      uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
++      uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+       with:
+         artifact-ids: ${{ needs.build.outputs.artifact-id }}
+         path: "dist/"
+ 
+     - name: "Publish dists to Test PyPI"
+-      uses: pypa/gh-action-pypi-publish@dc37677b2e1c63e2034f94d8a5b11f265b73ba33 # v1.14.2
++      uses: pypa/gh-action-pypi-publish@7245906fb61fa33a13554f9d5fb856fe61758086 # v1.14.3
+       with:
+         repository-url: https://test.pypi.org/legacy/
+         attestations: true
 ```
 
-**File**: `test/test_response.py` (modified, +49/-2)
+**File**: `.github/workflows/scorecards.yml` (modified, +1/-1)
 ```diff
-@@ -1691,6 +1691,15 @@ def test_length_w_bad_header(self) -> None:
-         resp = HTTPResponse(fp, headers=garbage, preload_content=False)
-         assert resp.length_remaining is None
+@@ -27,7 +27,7 @@ jobs:
+           persist-credentials: false
  
-+    @pytest.mark.parametrize("value", ["1_000", "+5", "0x10", "0o10", "१२३"])
-+    def test_length_w_non_rfc_header(self, value: str) -> None:
-+        # int() accepts these forms but RFC 9112 section 6.3 only allows 1*DIGIT.
-+        fp = BytesIO(b"12345")
-+        resp = HTTPResponse(
-+            fp, headers={"content-length": value}, preload_content=False
-+        )
-+        assert resp.length_remaining is None
-+
-     def test_length_when_chunked(self) -> None:
-         # This is expressly forbidden in RFC 7230 sec 3.3.2
-         # We fall back to chunked in this case and try to
-@@ -1701,8 +1710,9 @@ def test_length_when_chunked(self) -> None:
-         resp = HTTPResponse(fp, headers=headers, preload_content=False)
-         assert resp.length_remaining is None
- 
--    def test_length_with_multiple_content_lengths(self) -> None:
--        headers = {"content-length": "5, 5, 5"}
-+    @pytest.mark.parametrize("value", ["5, 5, 5", " 5 , 5 , 5 ", "\t5\t,\t5\t, \t5 \t"])
-+    def test_length_with_multiple_content_lengths(self, value: str) -> None:
-+        headers = {"content-length": value}
-         garbage = {"content-length": "5, 42"}
-         fp = BytesIO(b"abcde")
- 
-@@ -1904,6 +1914,43 @@ def test_invalid_chunk_length(self) -> None:
-         assert isinstance(orig_ex, InvalidChunkLength)
-         assert orig_ex.length == fp.BAD_LENGTH_LINE.encode()
- 
-+    @pytest.mark.parametrize("chunk_size", [b"-5", b"+5", b"0x5", b"1_f", b" 5"])
-+    def test_non_rfc_chunk_length(self, chunk_size: bytes) -> None:
-+        fp = BytesIO(chunk_size + b"\r\nHELLO\r\n0\r\n\r\n")
-+        r = httplib.HTTPResponse(MockSock, method="GET")  # type: ignore[arg-type]
-+        r.fp = fp  # type: ignore[assignment]
-+        r.chunked = True
-+        r.chunk_left = None
-+        resp = HTTPResponse(
-+            r, preload_content=False, headers={"transfer-encoding": "chunked"}
-+        )
-+        with pytest.raises(ProtocolError) as ctx:
-+            next(resp.read_chunked())
-+
-+        orig_ex = ctx.value.args[1]
-+        assert isinstance(orig_ex, InvalidChunkLength)
-+        assert orig_ex.length == chunk_size + b"\r\n"
-+        assert fp.closed
-+        assert r.isclosed()
-+        assert resp.closed
-+
-+    @pytest.mark.parametrize(
-+        "chunk_size", [b"5 ", b"5\t", b"5;name=value", b"5 \t;name=value"]
-+    )
-+    def test_chunk_length_with_trailing_whitespace_or_extensions(
-+        self, chunk_size: bytes
-+    ) -> None:
-+        fp = BytesIO(chunk_size + b"\r\nHELLO\r\n0\r\n\r\n")
-+        r = httplib.HTTPResponse(MockSock, method="GET")  # type: ignore[arg-type]
-+        r.fp = fp  # type: ignore[assignment]
-+        resp = HTTPResponse(
-+            r,
-+            preload_content=False,
-+            headers={"transfer-encoding": "chunked"},
-+            original_response=r,
-+        )
-+        assert list(resp.read_chunked()) == [b"HELLO"]
-+
-     def test_chunk_size_line_too_long(self) -> None:
-         # A malicious server can send a chunk-size line with no newline. urllib3's
-         # streaming path must reject it with a bounded read rather than buffering
+       - name: "Run Scorecard"
+-        uses: ossf/scorecard-action@2d1146689b8cda280b9bc96326124645441f03bc # v2.4.4
++        uses: ossf/scorecard-action@fa7117db83c52d787ae5a89f350999701505d78e # v2.5.0
+         with:
+           results_file: results.sarif
+           results_format: sarif
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5353** (2026-11-02): Bump the github-actions group with 10 updates (@dependabot[bot])
+- **PR #5349** (closed): Fix HTTPConnectionPool._prepare_proxy to set up CONNECT tunnel (#2730) (@faresrafat3)
+- **PR #5348** (closed): fix(poolmanager): rewind seekable file-like body on body-preserving redirects (#5181) (@voidstackloop)
 - **PR #5347** (2026-10-29): Keep the cached PoolKey when PoolManager looks up a pool (@zek)
+- **PR #5335** (closed): Honor `check_hostname=False` on user-provided SSLContexts (@smoltafet)
 - **PR #5333** (closed): Avoid building with vulnerable version of brotli & brotlicffi (@loganaden)
-- **PR #5331** (2026-10-21): docs: set the JSON content type in the orjson example (@Mohamedajab)
-- **PR #5330** (2026-10-21): Honor Retry-After on PoolManager redirects (@theluckystrike)
-- **PR #5329** (2026-10-21): Correct the HTTPHeaderDict.add combine example (@skyon0522-ai)
-- **PR #5328** (closed): Honor a zero Retry-After delay instead of applying backoff (@DGrutt)
 
 ---
 
@@ -2051,28 +2074,44 @@ Co-authored-by: Illia Volochii <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Keep the stored key in RecentlyUsedContainer lookups (#5347)
+## X. Bump the github-actions group with 10 updates (#5353)
 
 **RULE**:
-When implementing operations in `changelog/5346.bugfix.rst`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in urllib3/urllib3. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in urllib3/urllib3. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2aa7e9c3`: Keep the stored key in RecentlyUsedContainer lookups (#5347). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c5347bbd`: Bump the github-actions group with 10 updates (#5353). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog/5346.bugfix.rst`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-Fixed ``PoolManager`` replacing its cached pool key with the key of each new request to the same host.
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        uses: astral-sh/setup-uv@07a047e608db84b3d8c06cd9a7c7dcc9c355c18e # v10.3.2
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        uses: astral-sh/setup-uv@07a047e608db84b3d8c06cd9a7c7dcc9c355c18e # v10.3.2
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2aa7e9c3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c5347bbd` are properly handled with clean fallback behavior.

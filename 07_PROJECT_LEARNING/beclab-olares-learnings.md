@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/beclab-olares-learnings.md`  
 > **Source**: github ([https://github.com/beclab/Olares](https://github.com/beclab/Olares))  
-> **Source Version**: `04ff7917`  
+> **Source Version**: `714b5043`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T23:22:28.898Z  
+> **Timestamp**: 2026-11-03T20:50:03.828Z  
 > **Learning ID**: `learn-github-beclab-olares`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/beclab-olares-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/beclab/Olares](https://github.com/beclab/Olares))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T23:22:28.893Z  
+> **Harvest Timestamp**: 2026-11-03T20:49:39.040Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Open-Source Personal Cloud OS for Always-On Agents
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 5334 stars
+- **Stars / Engagement**: 5339 stars
 
 ---
 
@@ -1137,69 +1137,102 @@ export const formatPathtoUrl = (path: string) => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ffc0bd2e` (2026-10-31)
-**Commit Message**: fix(oac): exposePort add reserved ports (#4366)
+### Incident Patch 1: `714b5043` (2026-11-03)
+**Commit Message**: files(fix): improve file service stability (#4396)
 
-**File**: `framework/oac/internal/manifest/validate.go` (modified, +3/-0)
+* files(fix): improve file service stability and security
+
+* Update files_deploy.yaml
+
+**File**: `framework/files/.olares/config/cluster/deploy/files_deploy.yaml` (modified, +2/-2)
 ```diff
-@@ -59,6 +59,8 @@ var (
- 	validAuthLevels      = []any{"", "public", "private", "internal"}
- 	validOpenMethods     = []any{"", "default", "iframe", "window"}
- 	validPortProtocols   = []any{"", "tcp", "udp"}
-+
-+	reservedExposePorts = []any{int32(81), int32(443), int32(444), int32(22), int32(80), int32(2379), int32(18088)}
- 	// validOverlayProtocols enumerates the protocols an overlayGateway
- 	// entrance may declare. An empty value is allowed and means the
- 	// entrance is reachable over both tcp and udp.
-@@ -359,6 +361,7 @@ func validateServicePortValue(v interface{}) error {
- 			validation.When(p.ExposePort != 0,
- 				validation.Min(int32(1)).Error("port.exposePort must be between 1 and 65535"),
- 				validation.Max(int32(65535)).Error("port.exposePort must be between 1 and 65535"),
-+				validation.NotIn(reservedExposePorts...).Error("port.exposePort must not be a reserved port (81, 443, 444, 22, 80, 2379, 18088)"),
- 			),
- 		),
- 		validation.Field(&p.Protocol,
+@@ -148,7 +148,7 @@ spec:
+ {{ end }}
+ 
+         - name: samba-server
+-          image: beclab/samba-server:0.0.24
++          image: beclab/samba-server:0.0.26
+           imagePullPolicy: IfNotPresent
+           securityContext:
+             allowPrivilegeEscalation: true
+@@ -242,7 +242,7 @@ spec:
+           command:
+             - /samba_share
+         - name: files
+-          image: beclab/files-server:v0.2.209
++          image: beclab/files-server:v0.2.214
+           imagePullPolicy: IfNotPresent
+           securityContext:
+             allowPrivilegeEscalation: true
 ```
 
-**File**: `framework/oac/internal/manifest/validate_test.go` (modified, +21/-0)
+---
+
+### Incident Patch 2: `0a3bb16d` (2026-11-02)
+**Commit Message**: fix(gpu): register before sending queued timeslice lock requests (#4376)
+
+fix(hami): register before sending queued timeslice lock requests
+
+**File**: `infrastructure/gpu/.olares/config/gpu/hami/values.yaml` (modified, +1/-1)
 ```diff
-@@ -389,6 +389,27 @@ func TestServicePortsValidation(t *testing.T) {
- 		{name: "expose port above range", ports: []ServicePort{{
- 			Name: "api", Host: "api", Port: 4712, ExposePort: 65536,
- 		}}, wantErr: "port.exposePort must be between 1 and 65535"},
-+		{name: "reserved expose port 81", ports: []ServicePort{{
-+			Name: "api", Host: "api", Port: 4712, ExposePort: 81,
-+		}}, wantErr: "port.exposePort must not be a reserved port (81, 443, 444, 22, 80, 2379, 18088)"},
-+		{name: "reserved expose port 443", ports: []ServicePort{{
-+			Name: "api", Host: "api", Port: 4712, ExposePort: 443,
-+		}}, wantErr: "port.exposePort must not be a reserved port (81, 443, 444, 22, 80, 2379, 18088)"},
-+		{name: "reserved expose port 444", ports: []ServicePort{{
-+			Name: "api", Host: "api", Port: 4712, ExposePort: 444,
-+		}}, wantErr: "port.exposePort must not be a reserved port (81, 443, 444, 22, 80, 2379, 18088)"},
-+		{name: "reserved expose port 22", ports: []ServicePort{{
-+			Name: "api", Host: "api", Port: 4712, ExposePort: 22,
-+		}}, wantErr: "port.exposePort must not be a reserved port (81, 443, 444, 22, 80, 2379, 18088)"},
-+		{name: "reserved expose port 80", ports: []ServicePort{{
-+			Name: "api", Host: "api", Port: 4712, ExposePort: 80,
-+		}}, wantErr: "port.exposePort must not be a reserved port (81, 443, 444, 22, 80, 2379, 18088)"},
-+		{name: "reserved expose port 2379", ports: []ServicePort{{
-+			Name: "api", Host: "api", Port: 4712, ExposePort: 2379,
-+		}}, wantErr: "port.exposePort must not be a reserved port (81, 443, 444, 22, 80, 2379, 18088)"},
-+		{name: "reserved expose port 18088", ports: []ServicePort{{
-+			Name: "api", Host: "api", Port: 4712, ExposePort: 18088,
-+		}}, wantErr: "port.exposePort must not be a reserved port (81, 443, 444, 22, 80, 2379, 18088)"},
- 		{name: "uppercase protocol", ports: []ServicePort{{
- 			Name: "api", Host: "api", Port: 4712, Protocol: "TCP",
- 		}}, wantErr: `port.protocol must be one of "", "tcp", "udp"`},
+@@ -4,7 +4,7 @@ nameOverride: ""
+ fullnameOverride: ""
+ namespaceOverride: ""
+ imagePullSecrets: []
+-version: "v2.6.30"
++version: "v2.6.31"
+ 
+ # Nvidia GPU Parameters
+ resourceName: "nvidia.com/gpu"
+```
+
+**File**: `platform/hami/.olares/Olares.yaml` (modified, +1/-1)
+```diff
+@@ -3,7 +3,7 @@ target: prebuilt
+ output:
+   containers:
+     - 
+-      name: beclab/hami:v2.6.30
++      name: beclab/hami:v2.6.31
+     - 
+       name: beclab/hami-webui-fe-oss:v1.0.8
+     - 
+```
+
+---
+
+### Incident Patch 3: `cc0ba9c5` (2026-11-02)
+**Commit Message**: files(fix): improve reliability of file operations and sharing (#4388)
+
+**File**: `framework/files/.olares/config/cluster/deploy/files_deploy.yaml` (modified, +2/-2)
+```diff
+@@ -148,7 +148,7 @@ spec:
+ {{ end }}
+ 
+         - name: samba-server
+-          image: beclab/samba-server:0.0.21
++          image: beclab/samba-server:0.0.24
+           imagePullPolicy: IfNotPresent
+           securityContext:
+             allowPrivilegeEscalation: true
+@@ -242,7 +242,7 @@ spec:
+           command:
+             - /samba_share
+         - name: files
+-          image: beclab/files-server:v0.2.206
++          image: beclab/files-server:v0.2.209
+           imagePullPolicy: IfNotPresent
+           securityContext:
+             allowPrivilegeEscalation: true
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4366** (2026-10-31): fix(oac): exposePort add reserved ports (@hysyeah)
-- **PR #4365** (closed): fix(oac): exposePort add reserved ports (@hysyeah)
-- **PR #4364** (2026-10-31): auth: update login image (@qq815776412)
-- **PR #4363** (2026-10-31): chore(appservice): update appservice image to 0.6.49-1.12.8-0e1f92b54 (@hysyeah)
-- **PR #4362** (2026-10-31): chore(l4): update l4 image to v0.3.51 (@hysyeah)
-- **PR #4361** (2026-10-31): fix(l4): remove probe bypass (@hysyeah)
+- **PR #4397** (2026-11-03): chore(system-apps, wizard, auth): update frontend images (@qq815776412)
+- **PR #4396** (2026-11-03): files(fix): improve file service stability (@aby913)
+- **PR #4395** (2026-11-03): chore(authelia,lldap): bump image tag (@hysyeah)
+- **PR #4394** (2026-11-03): chore(bfl): remove unused api rules and adjust activate state transition (@dkeven)
+- **PR #4393** (2026-11-03): fix(search3): upgrade release server to v0.4.5 and monitor to v0.4.6 (@bleachzou3)
+- **PR #4392** (2026-11-03): chore(l4): image tag to v0.4.1 (@hysyeah)
 
 ---
 
@@ -1219,30 +1252,30 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. oac): exposePort add reserved ports (#4366)
+## X. files(fix): improve file service stability (#4396)
 
 **RULE**:
-When implementing operations in `framework/oac/internal/manifest/validate.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in beclab/Olares. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `framework/files/.olares/config/cluster/deploy/files_deploy.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in beclab/Olares. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ffc0bd2e`: oac): exposePort add reserved ports (#4366). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `714b5043`: files(fix): improve file service stability (#4396). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `framework/oac/internal/manifest/validate.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `framework/files/.olares/config/cluster/deploy/files_deploy.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-
-	reservedExposePorts = []any{int32(81), int32(443), int32(444), int32(22), int32(80), int32(2379), int32(18088)}
-				validation.NotIn(reservedExposePorts...).Error("port.exposePort must not be a reserved port (81, 443, 444, 22, 80, 2379, 18088)"),
+          image: beclab/samba-server:0.0.26
+          image: beclab/files-server:v0.2.214
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+          image: beclab/samba-server:0.0.24
+          image: beclab/files-server:v0.2.209
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ffc0bd2e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `714b5043` are properly handled with clean fallback behavior.

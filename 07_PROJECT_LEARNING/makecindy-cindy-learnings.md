@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/makecindy-cindy-learnings.md`  
 > **Source**: github ([https://github.com/makecindy/cindy](https://github.com/makecindy/cindy))  
-> **Source Version**: `a9030276`  
+> **Source Version**: `ac785430`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T22:41:00.992Z  
+> **Timestamp**: 2026-11-03T22:59:08.165Z  
 > **Learning ID**: `learn-github-makecindy-cindy`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/makecindy-cindy-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/makecindy/cindy](https://github.com/makecindy/cindy))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T22:40:59.260Z  
+> **Harvest Timestamp**: 2026-11-03T22:59:07.339Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Consider it done. The open-source AI agent that works out of the box · 想到，就能做到。开源、开箱即用的 AI Agent。
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 8706 stars
+- **Stars / Engagement**: 9152 stars
 
 ---
 
@@ -161,7 +161,7 @@ module.exports = { run };
 
 ```
 
-### Core Architecture Module: `apps/desktop/resources/bot-packages/engineer-bot/0.5.1/skills/engineer-bot-evidence/scripts/evidence_check.py`
+### Core Architecture Module: `apps/desktop/resources/bot-packages/engineer-bot/0.5.2/skills/engineer-bot-evidence/scripts/evidence_check.py`
 ```
 #!/usr/bin/env python3
 """Original offline helper; Python 3.10+ standard library, stdin/stdout only."""
@@ -250,7 +250,7 @@ if __name__ == "__main__":
 
 ```
 
-### Core Architecture Module: `apps/desktop/resources/bot-packages/nightly-audit-engineer/0.5.1/skills/nightly-audit-engineer-evidence/scripts/finding_keys.py`
+### Core Architecture Module: `apps/desktop/resources/bot-packages/nightly-audit-engineer/0.5.2/skills/nightly-audit-engineer-evidence/scripts/finding_keys.py`
 ```
 #!/usr/bin/env python3
 """Original offline helper; Python 3.10+ standard library, stdin/stdout only."""
@@ -1216,16 +1216,14 @@ process.exitCode = resultExitCode;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #8005** (2026-10-30): **导入的 Codex 对话继续使用时，同一条回复会显示两份**
-  *Symptoms*: **提交人**: 匿名 **客户端版本**: 0.1.120  ---  从本机 Codex 历史导入一个对话后，在 Cindy 里继续使用该对话时，同一轮回复会成对出现。  可复现情况：  1. 在设置的 Session Import 中导入一条本机 Codex 对话。 2. 打开导入后的任务，继续发消息让 Codex 回复。 3. 每轮结束后，聊天记录里出现两条几乎相同的助手回复。一条是当场回复；另一条是导入副本，通常晚几秒，末尾可能多一段记忆引用。过程说明也会这样成对显示。  这不是模型把同一件事又推理了一遍。两份正文相同，导入副本没有新结论。当前没有开关可以关掉这种重复显示，也没有批量删除已有副本的入口。逐条删除只能清掉已经写入的那一条，后续回复仍可能再出现一份。  期望：导入后继续使用的 Codex 对话，每轮只显示一份回复。与当场回复对应的导入副本应自动合并或跳过，即使导入副本多了记忆引用，或导入时间和当场回复略有差别。  实际出现问题的引擎是 Codex。具体对话标题、项目路径和业务内容未公开。 --- ## 提交时的任务环境  仅代表提交时快照,不一定是故障环境。OS 来自提交客户端本机,不含 SSH 远端主机;Harness / 模型来自当前任务。与运行环境无关的反馈可忽略本段。 **OS**: win32 x64 (10.0.19045) **Harness**: Pi **Model ID**: ` grok-4.7 ` **界面语言**: zh-CN
-  **Post-Mortem & Fix Analysis**:
-  > ### 更新与判断  更新：导入的本机 Codex 对话在 Cindy 中续聊时保持单份回复呈现并同步清理旧副本是符合预期的交互体验。针对提报的成对回复与存量副本残留，DavidShenXD 已提交修复 PR #8025，统一了实时消息与 rollout 导入记录的匹配逻辑，支持末尾记忆引用剥离、原生消息 ID/阶段匹配、存量副本软隐藏与多端删除通知。  当前桌面端本地数据库已具备针对文件引用（`:codex-file-citation`）的去重能力，真正缺少的是对 Codex rollout 追写的末尾记忆引用（memory citation）以及过程说明（commentary）的规范化与多端同步处理。随着 PR #8025 的提交，工作重点已从根因定位转向解决代码审查指出的代码围栏误判等边界缺陷，并在真实模型环境中完成实机验收。  ### 行动  1. **解决代码审查反馈（建议由 PR 作者 DavidShenXD 接续）**：    - **精确围栏识别**：修改 `apps/desktop/src/main/localDb/worker/opHandlers/tx.ts` 及 `WorkerThreadTransport.ts` 中的代码围栏检查，由当前的全文反引号/波浪线计数改为按行匹配围栏字符与长度，避免当回复包含代码块示例（如四反引号包裹三反引号）时被误判为未闭合，导致末尾记忆引用剥离失败并再次产生双份回复。    - **补全实时行广播**：在事务为实时消息行补上记忆引用与阶段信息后，复用消息行完整广播通知，确保已打开的各端不仅能删除旧副本，还能同步更新实时行的引用展示。    - **优化导入检查开销**：评估并采用版本标识代替每次导入检查时对本地历史全量序列化与哈希的做法，降低长会话翻页时的内存与延迟开销。  2. **原场景端到端验收**：    - 在包含修复的构建中，导入真实本机 Codex 对话并发起多轮续聊（覆盖普通文本、含过程说明 commentary、带代码块示例及产生末尾记忆引用的场景）。    - 验证当场助手回复与过程说明均仅展示一份；已打开的客户端（桌面及移动端）在收到删除广播后平滑移除旧导入副本；已回退的消息不会因历史文件重读而再次导入。    - **完成条件**：PR #8025 修复上述边界缺陷并通过 CI，且在真
-  > 已提交修复 PR：https://github.com/makecindy/cindy/pull/8025  修复 Codex 导入历史后续聊时，实时消息与带记忆引用的历史副本重复显示的问题；补齐已有副本的删除通知，让桌面和手机同步移除，并保留回退后的去重约束。  相关回归与导入测试共 1,080 项通过，Desktop/Mobile 类型检查通过。导入测试使用隔离的真实 rollout 文件和 SQLite；真实模型续聊与跨设备实机界面尚未验收。
+- **Issue #8571** (2026-11-03): **bug: Windows 缺少 VC++ 运行库时覆盖安装失败，卸载钩子误报“无法停止远程桌面服务”**
+  *Symptoms*: ### 问题描述 / What happened  在未安装 Microsoft Visual C++ x64 运行库的 Windows 上，用完整安装包覆盖安装 Cindy 会失败：  1. 安装进度中连续 5 次弹出「Cindy 解除安装」：    > Could not stop the Cindy remote desktop service. Run the uninstaller as administrator and try again. 2. 随后弹出「Cindy 无法关闭。请手动关闭它，然后单击重试以继续。」 3. 选择「取消」后提示 `Failed to uninstall old application files. Please try running the installer again.: 2`，安装器退出。  机器上并没有注册任何 Cindy 远程桌面服务。实际原因是卸载钩子调用的 `cindy-windows-desktop-host.exe` 缺少 `VCRUNTIME140.dll`，无法启动。补装 VC++ x64 运行库后，同一安装包可以正常覆盖安装。  期望行为：缺少 VC++ 运行库不应阻断覆盖安装或卸载；即使失败，提示也应指向真实原因，而不是让用户以管理员身份重试。  该问题最初来自用户反馈：选择「为所有用户安装」覆盖安装时出现同一弹窗；另有一例出现在安装 0.1.115 时。下面是在 Windows Sandbox 中的复现结果。  ### 环境 / Environment  - Cindy 版本或 commit：0.2.119（相关卸载逻辑自 v0.1.78-beta 起存在，当前 `main` 未变） - 平台与版本：Windows Sandbox，Windows build 26100，x64；未安装 VC++ x64 运行库（没有 `System32\vcruntime140.dll`，也没有 `HKLM\SOFTWARE\Microsoft\VisualStudio\14.0\VC\Runtimes\x64`） - 安装方式：完整安装包，「仅为我安装」，默认目录  ### 复现步骤 / Steps to reproduce  1. 在未安装 VC++ x64 运行库的 Windows 上运行 0.2.119 安装包，选择「仅为我安装」。首次安装成功，没有弹窗。 2. 不启动 Cindy，再次运行同一安装包，仍选择「仅为我安装」覆盖安装。 3. 出现上述弹窗；选择「取消」后安装失败。  对照：安装微软官方 `VC_redist.x64.exe`（14.44.35211.0）后重复第 2 步，没有弹窗，安装完成。  ### 日志与截图 / Logs & screenshots  | 检查项 | 未装运行库 | 补装运行库后 | | --- | --- | --- | | `resources\tools\remote-desktop\cindy-windows-desktop-host.exe --status` | 系统提示找不到 `VCRUNTIME140.dll`，退出码 `-1073741515`（`0xC0000135`） | 输出 `missing`，退出码 `0` | | 覆盖安装 | 失败，安装器退出码 `2` | 成功，安装器退出码 `0` | | `CindyRemoteDesktop-*` 服务 | 无 | 无 |  **1. 未装运行库时，直接运行 helper：找
 
-- **Issue #7906** (2026-10-30): **Nova 模型工具调用失败重试后反复报 Duplicate function_call_output 400 错误**
-  *Symptoms*: **提交人**: taogecool yi **客户端版本**: 0.1.120  ---  ## 现象  使用 Amazon Nova 系列模型（经 OpenRouter / litellm 路由）时，会话中发生一次工具调用失败并重试后，后续每次请求都会返回 400，模型无法再回复。该问题反复出现，只能新开会话绕开。  ## 报错  ``` litellm.BadRequestError: OpenrouterException - NovaException "Duplicate function_call_output for call_id '...'. Each function_call must have exactly one matching function_call_output" code: 400 ```  ## 复现路径  1. 会话中触发一次工具调用（例如生成 PDF），该次调用失败。 2. 助手重试 / 换方式继续。 3. 之后继续对话，模型请求即报上述 400，且反复出现；换会话后才恢复。  ## 推测原因  发送给 Nova 的历史里出现了两个 `function_call_output` 对应同一个 `call_id`。Nova 对工具调用的一一映射校验很严格，重复即硬报 400。疑似在工具结果去重 / 会话历史重建（重试或上下文重建）时未保证 `call_id` 唯一。  ## 影响  该会话被彻底卡死，无法继续回复，只能新开会话绕开。 --- ## 提交时的任务环境  仅代表提交时快照,不一定是故障环境。OS 来自提交客户端本机,不含 SSH 远端主机;Harness / 模型来自当前任务。与运行环境无关的反馈可忽略本段。 **OS**: win32 x64 (10.0.19045) **Harness**: Pi **Model ID**: ` deepseek/deepseek-v4-pro ` **界面语言**: en
+- **Issue #8549** (2026-11-03): **用 /cindy:learn 触发 Learn 时报错 "Pinned Claude Skill does not match the user invocation."**
+  *Symptoms*: **提交人**: halftrue **客户端版本**: 0.1.121  ---  ## 现象  在 Claude Code 引擎的任务里，输入 `/cindy:learn`（不论是否带参数）并发送，回复立即结束，界面显示「回复未完成」，错误详情：  ``` Pinned Claude Skill does not match the user invocation. ```  连续试了 3 次（1 次不带参数，2 次带说明文字），每次都在约 1 ms 内失败，模型请求还没发出去，Learn 也没有启动。  ## 复现步骤  1. 打开一个使用 Claude Code 引擎的任务 2. 在输入框输入 `/cindy:learn`，后面可以跟任意说明文字，也可以不跟 3. 发送  **期望**：启动 Learn 流程。 **实际**：报上述错误，Learn 没有启动。  ## 排查结果  - 从本地消息记录看，输入框把 `/cindy:learn` 识别成了 slash 命令（`slashCommandRanges` 覆盖了 `/cindy:learn`），给消息附上了 `cindyLearnInvocation`，固定的是内置的 `learn/SKILL.md`（frontmatter `name: learn`）。 - 主进程的 `preparePinnedClaudeSkillInvocation` 用下面这个正则校验用户输入：   ```js   new RegExp(`^/(?:skill:)?${escapeRegExp(name)}(?:\\s+([\\s\\S]*))?$`, "i")   ```   它只接受 `/learn` 和 `/skill:learn`，不接受 `cindy:` 插件命名空间前缀，所以抛出了这个错误。 - 也就是说，输入框接受并识别的写法（`/cindy:learn`）和主进程校验允许的写法不一致。Claude Code 引擎的 Skill 列表里，这个 Skill 显示为 `cindy:learn`，用户很容易照这个名字输入。  ## 临时绕过  手动输入 `/learn …`，去掉 `cindy:` 前缀。  ## 可能的修复方向  - 主进程校验也接受 `cindy:` 命名空间前缀；或者 - 输入框只把 `/learn` 识别成 Learn 命令，不把 `/cindy:learn` 当作已固定的 Learn 调用。  ## 出问题时的环境  - Cindy 0.1.121 - 任务引擎：Claude Code --- ## 提交时的任务环境  仅代表提交时快照,不一定是故障环境。OS 来自提交客户端本机,不含 SSH 远端主机;Harness / 模型来自当前任务。与运行环境无关的反馈可忽略本段。 **OS**: darwin arm64 (27.2.0) **Harness**: Claude Code **Model ID**: ` claude-opus-5-5 ` **界面语言**: zh-CN
   **Post-Mortem & Fix Analysis**:
-  > ### 判断  在工具调用失败并重试的场景下保障会话可持续推进，是多模型协作与工具调用的重要基础能力。进一步检查发现，当前系统在 Anthropic Messages 协议层（`packages/model-compat/src/cindy/proxy/transform.ts`）已具备成熟的 `dedupeDuplicateToolUseIds` 唯一化与 `createDuplicateToolUseIdRecoveryRule` 400 透明重试机制，但在 OpenAI Responses 协议（`codex-proxy-host.ts` 与 `@cindy/model-compat`）的出站处理中，尚未对 `call_id` 的跨轮重复或多次输出建立类似保护。Amazon Nova 经 OpenRouter 路由至 AWS Bedrock Converse API 时，上游对全会话上下文中的工具调用 ID 执行严格的唯一性与 1:1 配对校验，历史中一旦出现重复的 `call_id` 或多余的 `function_call_output` 即判定非法并硬报 400。由于该错误历史随会话上下文持续重放，导致后续每轮请求均确定性失败，会话被永久卡死。此问题值得推进修复。  ### 关键证据与技术依据  1. **协议层校验差异**：在 Amazon Bedrock Converse API 及其经 OpenRouter 转换的 Responses API 规范中，整个会话历史中的 `toolUseId` / `call_id` 必须严格全局唯一，且每个调用必须且只能对应一个结果。当模型重试或历史重放时生成或带入相同的 `call_id`，上游即直接返回 `400: Duplicate function_call_output for call_id '...'. Each function_call must have exactly one matching function_call_output`。 2. **现有防护范围不对称**：Cindy 在 `packages/model-compat/src/cindy/proxy/transform.ts` 中针对 Anthropic 协议已实现了 `dedupeDuplicateToolUseIdsInMes
+  > ### 判断  更新：@DavidShenXD 已针对本缺陷提交了修复 PR #8609，接替并扩展了此前在途 PR #7448 的范围，覆盖 Claude Code 与 Pi 引擎对 `/cindy:learn` 命名空间调用的完整支持、宿主环境说明旁路以及切换引擎后的交接文本延迟处理。  支持通过 `/cindy:learn` 显式调用内置 Learn 技能是既定的命名空间设计，用于明确指定官方技能并防止同名覆盖。目前 PR #8609 已统一 Claude Code 校验正则、Pi 运行时命令匹配、环境说明与 `pendingHandoff` 旁路逻辑，并通过了 496 项定向单测/集成测试与 6 项 mock 验证（Codex 评审已无残留意见）；真实模型完整端到端流程待随新构建进一步验证。  ### 行动  1. **首要步骤（Maintainer / Reviewer）**：评审并合并修复 PR #8609。关注全量 CI 门禁结果，重点核对 commit `0906869577` 中针对交接前缀延后消费的事务处理逻辑，确认与既有持久消费状态保持一致。 2. **后续验收（QA / 提报人）**：仅当包含 #8609 修复的构建发布后，在 Claude Code（及 Pi）任务中分别输入无参数 `/cindy:learn`、带说明文本以及 `hub:market:<slug>` 参数进行原场景复测，确认 Learn 流程正常启动且未报 `Pinned Claude Skill does not match the user invocation.`。 3. **临时规避**：在包含修复的版本发布前，桌面端非机器人会话可直接输入无前缀的 `/learn …` 正常唤起。  ### 技术依据与基线核查  - **核查基线**：主干最新快照 `d832a087878d36f48b9ea3b779254d660c1f4d32`。 - **校验与派发链路缺口**：   - `packages/maker-core/src/agents/claude-code/pinned-skill-invocation.ts` 中校验正则原仅接受 `/learn` 与 `/skill:learn`，未涵盖 `cindy:` 前缀；   - `apps/desktop/src/m
+  > 已提交修复 PR：https://github.com/makecindy/cindy/pull/8609。  修复包含 Claude Code 和 Pi 的 /cindy:learn 调用，并补齐宿主发送链的环境说明旁路。403 项定向测试、相关类型检查和 6/6 mock 验收通过；真实模型完整 Learn 工作流未验收。  PR 已登记 PRwatch，后续评审与 CI 反馈由当前任务跟进。  <!-- pr-watch:submit:makecindy/cindy#8609 -->
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1242,773 +1240,857 @@ process.exitCode = resultExitCode;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0f724deb` (2026-10-30)
-**Commit Message**: fix(ci): raise brand terminology guard git ls-files maxBuffer
+### Incident Patch 1: `4f2d83c7` (2026-11-03)
+**Commit Message**: Merge pull request #7766 from fancyboi999/fix/7748-mcp-app-tool-timeout
 
-git ls-files -z exceeds Node's default 1 MiB spawnSync maxBuffer, so the
-child is killed and check:brand-terminology fails with exit null.
+fix(mcp-apps): relay progress for bounded long tool calls
 
-Signed-off-by: Cursor Agent <[REDACTED_EMAIL]>
-Co-authored-by: Chris Zhang <[REDACTED_EMAIL]>
-
-**File**: `scripts/brand-terminology-guard.mjs` (modified, +1/-0)
+**File**: `apps/desktop/src/main/mcp-apps/__tests__/interop.test.ts` (modified, +201/-2)
 ```diff
-@@ -78,6 +78,7 @@ function fail(message) {
- 
- const listed = spawnSync('git', ['ls-files', '-z'], {
-   encoding: 'buffer',
-+  maxBuffer: 64 * 1024 * 1024,
- });
- 
- if (listed.status !== 0) {
-```
-
----
-
-### Incident Patch 2: `a9030276` (2026-10-30)
-**Commit Message**: Merge pull request #5194 from lengjingxu/fix/provider-connection-save-feedback
-
-fix(providers): 保存时不再静默丢弃空 runtime 上的协议选择
-
-**File**: `apps/desktop/src/renderer/components/settings/ProviderConnectionDialog.tsx` (modified, +35/-1)
-```diff
-@@ -299,6 +299,24 @@ function emptyRuntime(agent: DialogAgentKind): RuntimeFields {
+@@ -4,10 +4,13 @@ import { App } from '@modelcontextprotocol/ext-apps';
+ import type { Transport } from '@modelcontextprotocol/sdk/shared/transport.js';
+ import { Client } from '@modelcontextprotocol/sdk/client/index.js';
+ import { InMemoryTransport } from '@modelcontextprotocol/sdk/inMemory.js';
++import type { RequestHandlerExtra } from '@modelcontextprotocol/sdk/shared/protocol.js';
+ import {
+   CallToolResultSchema,
+   type CallToolResult,
+   type JSONRPCMessage,
++  type ServerRequest,
++  type ServerNotification,
+ } from '@modelcontextprotocol/sdk/types.js';
+ import {
+   createMockAppServer,
+@@ -92,11 +95,13 @@ async function fixture(
+     appModes?: ('inline' | 'fullscreen')[];
+     duringResource?: 'result' | 'cancelled' | 'clear' | 'server';
+     revisionKey?: () => string;
++    source?: typeof endpoint;
+   } = {},
+ ) {
+   const config = {
+     id: 'example',
+-    url: transport === 'http' ? endpoint.url : endpoint.sseUrl,
++    url:
++      transport === 'http' ? (options.source ?? endpoint).url : (options.source ?? endpoint).sseUrl,
+     transport,
+   };
+   let owner: object = {};
+@@ -188,14 +193,16 @@ async function fixture(
+   app.onteardown = teardown;
+   const viewTransport = new TestViewTransport(host, document.viewId, 'renderer:1', openLink);
+   await app.connect(viewTransport);
++  const apps = [app];
+   cleanups.push(async () => {
+     await host.reset();
+-    await app.close();
++    await Promise.all(apps.map((view) => view.close()));
+     await connection.close();
+   });
+   return {
+     host,
+     app,
++    apps,
+     viewTransport,
+     client,
+     card,
+@@ -222,7 +229,199 @@ async function fixture(
    };
  }
  
-+/**
-+ * 这个 runtime 上是否存在「保存时会悄悄丢掉」的协议选择。
-+ *
-+ * 未填写 baseUrl 的 runtime 会被保存逻辑整段跳过（视为未配置）。对打开时就没有端点的
-+ * runtime，跳过等于丢掉用户刚点选的协议——按钮已高亮、保存返回成功、重开却回到默认。
-+ * 这种草稿必须报错拦下。
-+ *
-+ * 但清空 baseUrl 也是用户移除一个已配置 runtime 的方式；此时丢弃是用户的意图，不能拦。
-+ * 两者的分界是打开时该 runtime 有没有端点。
-+ */
-+function runtimeHasUnsavedProtocolChoice(
-+  agent: DialogAgentKind,
-+  runtime: RuntimeFields,
-+  hadConfiguredEndpoint: boolean,
-+): boolean {
-+  return !hadConfiguredEndpoint && runtime.wireProtocol !== defaultWireFor(agent);
++/** Real SDK requests with server completion controlled independently of the Host clock. */
++async function controlledToolFixture(transport: 'http' | 'sse' = 'http') {
++  const calls: {
++    extra: RequestHandlerExtra<ServerRequest, ServerNotification>;
++    resolve(result: CallToolResult): void;
++  }[] = [];
++  const source = await startMockAppServer({
++    createServer: () => {
++      const server = createMockAppServer();
++      server.registerTool(
++        'controlled_tool',
++        { inputSchema: {}, _meta: { ui: { visibility: ['app'] } } },
++        async (_args, extra) =>
++          new Promise<CallToolResult>((resolve) => calls.push({ extra, resolve })),
++      );
++      return server;
++    },
++  });
++  cleanups.push(async () => {
++    calls.forEach(({ resolve }) => resolve({ content: [] }));
++    await source.close();
++  });
++  return { f: await fixture(transport, { source }), calls };
 +}
 +
- function initRuntimes(initial?: CustomProviderConfig): Record<DialogAgentKind, RuntimeFields> {
-   const out: Record<DialogAgentKind, RuntimeFields> = {
-     'claude-code': emptyRuntime('claude-code'),
-@@ -1908,9 +1926,25 @@ export function ProviderConnectionDialog({
-     const keys: RuntimeKeys = {};
-     for (const a of VISIBLE_AGENTS) {
-       const rf = rt[a];
-+      // 上游规则：pi 目录预选时，仍跟随默认连接、未独立配置的 runtime 整段跳过。
-       if (simpleAdding && activeTab === 'pi' && !rt.pi.catalogPresetId && a !== 'pi'
-         && (!draft?.config.runtimes[a] || followsDefaultConnection(a, rf, rt.pi))) continue;
--      if (!rf.baseUrl.trim()) continue; // 该 runtime 未配置
-+      if (!rf.baseUrl.trim()) {
-+        // 未配置的 runtime 整段跳过。但用户若已在这里选过协议，跳过即静默丢弃该选择；
-+        // 要求补全基础 URL，让「改了协议却没保存上」变成一个看得见的错误。
-+        if (
-+          runtimeHasUnsavedProtocolChoice(
-+            a,
-+            rf,
-+            Boolean(initial?.runtimes[a]?.baseUrl.trim()),
-+          )
-+        ) {
-+          setActiveTab(a);
-+          reportFieldError(`${a}:baseUrl`, t('settings.providers.custom.errors.baseUrlRequired'));
-+          return;
-+        }
-+        continue; // 该 runtime 未配置
-+      }
-       try {
-         const u = new URL(rf.baseUrl.trim());
-         if (u.protocol !== 'http:' && u.protocol !== 'https:') {
-```
-
-**File**: `apps/desktop/src/renderer/components/settings/__tests__/CustomProviderDialogAccessibility.test.tsx` (modified, +91/-0)
-```diff
-@@ -2075,6 +2075,97 @@ it('saves OpenRouter OAuth connections that leave scopes empty for provider defa
-   });
- });
- 
-+it('blocks a save that would silently drop a protocol picked on an unconfigured runtime', async () => {
-+  // 只在未配置的 runtime 上选了协议、没填基础 URL：保存逻辑过去会整段跳过该 runtime，
-+  // 按钮已高亮、保存返回成功、重开却回到默认协议。这类草稿必须报错拦下。
-+  const user = userEvent.setup();
-+  renderExpandedConnection(
-+    <ProviderConnectionDialog
-+      initial={{
-+        id: 'command', name: 'command', auth: { method: 'apiKey' },
-+        runtimes: { 'claude-code': {
-+          baseUrl: 'https://api.commandcode.ai/provider/v1/',
-+          wireProtocol: 'openai-chat',
-+          models: [{ id: 'gpt-5.2-codex', name: 'GPT-5.2 Codex' }],
-+        } },
-+      }}
-+      focusAgent="codex"
-+      onSaved={vi.fn()}
-+      onClose={vi.fn()}
-+    />,
-+  );
-+  await waitForInitialDialogFocus();
-+  // 上游重构后协议按钮前多了一个折叠区里的空 aria-pressed 按钮，按 label 定位更稳。
-+  const chatProtocol = screen.getByRole('button', { name: 'settings.providers.custom.wireProtocol.chat' });
-+  await user.click(chatProtocol);
-+  await user.click(screen.getByRole('button', { name: 'settings.providers.custom.save' }));
-+
-+  expect(customProviderMocks.updateCustomProvider).not.toHaveBeenCalled();
-+  const error = document.querySelector('[id$="baseUrl-error"]');
-+  expect(error?.textContent).toBe('settings.providers.custom.errors.baseUrlRequired');
-+  expect(document.activeElement?.id).toBe(error?.id?.replace('-error', ''));
-+});
-+
-+it('still saves when an unconfigured runtime keeps its default protocol', async () => {
-+  const user = userEvent.setup();
-+  render(
-+    <ProviderConnectionDialog
-+      initial={{
-+        id: 'command', name: 'command', auth: { method: 'apiKey' },
-+        runtimes: { 'claude-code': {
-+          baseUrl: 'https://api.commandcode.ai/provider/v1/',
-+          wireProtocol: 'openai-chat',
-+          models: [{ id: 'gpt-5.2-codex', name: 'GPT-5.2 Codex' }],
-+        } },
-+      }}
-+      focusAgent="claude-code"
-+      onSaved={vi.fn()}
-+      onClose={vi.fn()}
-+    />,
-+  );
-+  await waitForInitialDialogFocus();
-+  await user.click(screen.getByRole('button', { name: 'settings.providers.custom.save' }));
-+
-+  await waitFor(() => expect(customProviderMocks.updateCustomProvider).toHaveBeenCalledOnce());
-+  expect(Object.keys(customProviderMocks.updateCustomProvider.mock.calls[0][0].runtimes)).toEqual([
-+    'claude-code',
-+  ]);
-+});
-+
-+it('still lets an endpoint-less runtime be removed by clearing its base URL', async () => {
-+  // 清空baseUrl 是移除一个已配置 runtime 的方式。丢弃它的协议是用户意图，不能被上面的
-+  // 守卫拦下——两者的分界是该 runtime 打开时有没有端点。
-+  const user = userEvent.setup();
-+  render(
-+    <ProviderConnectionDialog
-+      initial={{
-+        id: 'two-runtime', name: 'Two runtime', auth: { method: 'apiKey' },
-+        runtimes: {
-+          'claude-code': {
-+            baseUrl: 'https://a.example.test/v1', models: [{ id: 'm', name: 'M' }],
-+          },
-+          codex: {
-+            baseUrl: 'https://a.example.test/v2',
-+            wireProtocol: 'openai-chat',
-+            models: [{ id: 'm', name: 'M' }],
-+          },
+ describe('official MCP Apps interoperability', () => {
++  it.each(['http', 'sse'] as const)(
++    'routes concurrent %s View progress by request, preserving its values',
++    async (transport) => {
++      const { f, calls } = await controlledToolFixture(transport);
++      const document = await f.host.open('renderer:2', 'task', 'card', { platform: 'desktop' });
++      const second = new App({ name: 'Second View', version: '1' }, {}, { autoResize: false });
++      second.onteardown = async () => ({});
++      f.apps.push(second);
++      await second.connect(new TestViewTransport(f.host, document.viewId, 'renderer:2'));
++      const firstProgress = vi.fn(),
++        secondProgress = vi.fn();
++      const firstResult = f.app.callServerTool(
++        { name: 'controlled_tool', arguments: {}, _meta: { requestLabel: 'first' } },
++        { onprogress: firstProgress },
++      );
++      const secondResult = second.callServerTool(
++        { name: 'controlled_tool', arguments: {}, _meta: { requestLabel: 'second' } },
++        { onprogress: secondProgress },
++      );
++      const results = Promise.allSettled([firstResult, secondResult]);
++      await vi.waitFor(() => expect(calls).toHaveLength(2));
++      const first = calls.find((call) => call.extra._meta?.requestLabel === 'first')!;
++      const other = calls.find((call) => call.extra._meta?.requestLabel === 'second')!;
++      expect(first.extra._meta?.progressToken).not.toBe(other.extra._meta?.progressToken);
++      await other.extra.sendNotification({
++        method: 'notifications/progress',
++        params: {
++          progressToken: other.extra._meta!.progressToken!,
++          progress: 2.5,
++          total: 10,
++          message: 'second',
 +        },
-+      }}
-+      focusAgent="codex"
-+      onSaved={vi.fn()}
-+      onClose={vi.fn()}
-+    />,
++      });
++      await vi.waitFor(() =>
++        expect(secondProgress).toHaveBeenCalledWith({
++          progress: 2.5,
++          total: 10,
++          message: 'second',
++        }),
++      );
++      expect(firstProgress).not.toHaveBeenCalled();
++      first.resolve({ content: [{ type: 'text', text: 'first' }] });
++      other.resolve({ content: [{ type: 'text', text: 'second' }] });
++      expect(await results).toEqual([
++        { status: 'fulfilled', value: { content: [{ type: 'text', text: 'first' }] } },
++        { status: 'fulfilled', value: { content: [{ type: 'text', text: 'second' }] } },
++      ]);
++    },
 +  );
-+  await waitForInitialDialogFocus();
-+  await user.clear(screen.getByLabelText('settings.providers.custom.fields.baseUrl'));
-+  await user.click(screen.getByRole('button', { name: 'settings.providers.custom.save' }));
 +
-+  await waitFor(() => expect(customProviderMocks.updateCustomProvider).toHaveBeenCalledOnce());
-+  expect(Object.keys(customProviderMocks.updateCustomProvider.mock.calls[0][0].runtimes)).toEqual([
-+    'claude-code',
-+  ]);
-+});
++  it.each([true, false])(
++    'finishes a 90-second tool
+```
+
+**File**: `apps/desktop/src/main/mcp-apps/__tests__/viewAuthorization.test.ts` (modified, +74/-12)
+```diff
+@@ -7,6 +7,7 @@ import { GhostPipeDispatcher } from '../../cindy-brain/pipeDispatcher.js';
+ import type { InstalledGhost } from '../../../shared/ghost.js';
+ import { afterEach, describe, expect, it, vi } from 'vitest';
+ import { AppBridge } from '@modelcontextprotocol/ext-apps/app-bridge';
++import type { RequestOptions } from '@modelcontextprotocol/sdk/shared/protocol.js';
+ import type { JSONRPCMessage, Notification } from '@modelcontextprotocol/sdk/types.js';
+ import type { McpAppRecord } from '../../../shared/mcpApps.js';
+ import { AppConnection, type AppServerConfig } from '../connection.js';
+@@ -188,14 +189,18 @@ async function fixture(caller = 'renderer:1', plugin = false, html = '<p>Form</p
+         appCapabilities: {},
+       },
+     });
+-    await vi.waitFor(() =>
+-      expect(outgoing).toContainEqual(expect.objectContaining({ id: 1, result: expect.anything() })),
++    await vi.waitFor(
++      () =>
++        expect(outgoing).toContainEqual(expect.objectContaining({ id: 1, result: expect.anything() })),
++      { interval: 1 },
+     );
+     await dispatch({ jsonrpc: '2.0', method: 'ui/notifications/initialized' });
+-    await vi.waitFor(() =>
+-      expect(outgoing).toContainEqual(
+-        expect.objectContaining({ method: 'ui/notifications/tool-input' }),
+-      ),
++    await vi.waitFor(
++      () =>
++        expect(outgoing).toContainEqual(
++          expect.objectContaining({ method: 'ui/notifications/tool-input' }),
++        ),
++      { interval: 1 },
+     );
+     outgoing.length = 0;
+   }
+@@ -490,25 +495,82 @@ describe('MCP App upstream result authorization', () => {
+     expect(f.methods.tools).toHaveBeenCalledOnce();
+   });
+ 
++  it('retains the latest tool progress while the card authorization read is pending', async () => {
++    const f = await fixture();
++    const result = deferred<unknown>();
++    f.methods.callTool.mockReturnValueOnce(result.promise);
++    await f.dispatch({
++      jsonrpc: '2.0',
++      id: 2,
++      method: 'tools/call',
++      params: { ...requests[0][1], _meta: { progressToken: 'view-local-token' } },
++    });
++    await vi.waitFor(() => expect(f.methods.callTool).toHaveBeenCalledOnce());
++    const options = f.methods.callTool.mock.calls[0][2] as RequestOptions;
++    const authorization = deferred<McpAppRecord>();
++    f.readCard.mockReturnValueOnce(authorization.promise);
++    options.onprogress?.({ progress: 1 });
++    await vi.waitFor(() => expect(f.readCard.mock.results.at(-1)?.value).toBe(authorization.promise));
++    options.onprogress?.({ progress: 2 });
++    options.onprogress?.({ progress: 3, total: 10, message: 'latest' });
++    authorization.resolve(await f.readCard());
++    await vi.waitFor(() =>
++      expect(f.outgoing).toContainEqual({
++        jsonrpc: '2.0',
++        method: 'notifications/progress',
++        params: { progressToken: 'view-local-token', progress: 3, total: 10, message: 'latest' },
++      }),
++    );
++    expect(
++      f.outgoing.filter(
++        (message) => 'method' in message && message.method === 'notifications/progress',
++      ),
++    ).toHaveLength(1);
++    result.resolve(requests[0][3]);
++    await vi.waitFor(() =>
++      expect(f.outgoing).toContainEqual(expect.objectContaining({ id: 2, result: requests[0][3] })),
++    );
++  });
 +
- it('main provider form contains Tab and blocks dismissal only during the actual save', async () => {
-   let finish!: () => void;
-   customProviderMocks.readCustomProviderKey.mockResolvedValue(null);
+   it.each(['card', 'owner', 'server', 'config'] as const)(
+-    'discards a completed App tool result after %s revocation without replaying it',
++    'discards App tool progress and results after %s revocation without replaying it',
+     async (revocation) => {
+       const f = await fixture();
+       const pending = deferred<unknown>();
+       f.methods.callTool.mockReturnValueOnce(pending.promise);
+-      await f.dispatch({ jsonrpc: '2.0', id: 2, method: 'tools/call', params: requests[0][1] });
++      await f.dispatch({
++        jsonrpc: '2.0',
++        id: 2,
++        method: 'tools/call',
++        params: { ...requests[0][1], _meta: { progressToken: 'view-local-token' } },
++      });
+       await vi.waitFor(() => expect(f.methods.callTool).toHaveBeenCalledOnce());
++      const options = f.methods.callTool.mock.calls[0][2] as RequestOptions;
++      options.onprogress?.({ progress: 1, total: 2, message: 'authorized progress' });
++      await vi.waitFor(() =>
++        expect(f.outgoing).toContainEqual({
++          jsonrpc: '2.0',
++          method: 'notifications/progress',
++          params: {
++            progressToken: 'view-local-token',
++            progress: 1,
++            total: 2,
++            message: 'authorized progress',
++          },
++        }),
++      );
++      f.outgoing.length = 0;
+       f.revoke(revocation);
++      options.onprogress?.({ progress: 2, total: 2, message: marker });
++      await new Promise<void>((resolve) => setImmediate(resolve));
++      expect(JSON.stringify(f.outgoing)).not.toContain(marker);
+       pending.resolve(requests[0][3]);
+       await vi.waitFor(() => expect(f.outgoing).toContainEqual(expect.objectContaining({ id: 2 })));
+-      expect(f.outgoing).
 ```
 
-**File**: `apps/desktop/src/renderer/i18n/locales/en/common.json` (modified, +1/-0)
+**File**: `apps/desktop/src/main/mcp-apps/host.ts` (modified, +58/-1)
 ```diff
-@@ -3634,6 +3634,7 @@
-           "nameRequired": "Display name is required",
-           "runtimeRequired": "Configure at least one runtime (its base URL and models)",
-           "baseUrlInvalid": "Base URL must be a valid http(s) address",
-+          "baseUrlRequired": "Enter this runtime's Base URL, or switch its protocol back to the default",
-           "contextWindowInvalid": "Context window must be a valid positive integer (separators allowed between digit groups)",
-           "requestPathInvalid": "Begin the exact request path with a single /. Do not use fragments or . and .. path segments; percent-encode spaces and unsafe characters.",
-           "modelRequired": "Add at least one model",
+@@ -18,6 +18,8 @@ import {
+   type JSONRPCMessage,
+   type Tool,
+   type CallToolResult,
++  type Progress,
++  type ProgressNotification,
+ } from '@modelcontextprotocol/sdk/types.js';
+ import type { McpAppRecord, McpAppDocument } from '../../shared/mcpApps.js';
+ import { hasExecutionComputerFile, MCP_APP_LINK_GRANT_MS, type McpAppLinkAuthorization } from '../../shared/mcpApps.js';
+@@ -34,6 +36,10 @@ import {
+   MCP_APPS_MAX_REMOTE_BYTES,
+ } from './protocol.js';
+ 
++// A fixed total budget: server progress may renew the View's idle timer, but
++// must not keep a Main-owned tool request alive indefinitely.
++const MCP_APP_TOOL_TIMEOUT_MS = 30 * 60_000;
++
+ export interface McpAppsHostDeps {
+   pluginFiles?: PluginFileAccess;
+   owner(): object | undefined;
+@@ -557,10 +563,61 @@ export class McpAppsHost {
+           // The one-use ticket below binds identity; it does not grant approval.
+           await this.deps.authorizeTool(sessionId, target, params.arguments ?? {}, extra.signal, { clientId, serverId: record.serverId, title: record.tool.title ?? record.tool.name });
+           const client = await currentClient(extra.signal);
++          if (!config.plugin) {
++            const token = params._meta?.progressToken;
++            let active = true;
++            let forwarding = false;
++            let pendingProgress: Progress | undefined;
++            try {
++              return (await currentResult(
++                client.callTool(params, CallToolResultSchema, {
++                  signal: extra.signal,
++                  timeout: MCP_APP_TOOL_TIMEOUT_MS,
++                  // The SDK allocates a connection-scoped token when onprogress is
++                  // registered. View-local tokens can collide on this shared client.
++                  onprogress:
++                    token === undefined
++                      ? undefined
++                      : (update) => {
++                          if (!active || extra.signal.aborted) return;
++                          pendingProgress = update;
++                          if (forwarding) return;
++                          forwarding = true;
++                          // Retain only the latest update while authorization is
++                          // checked, rather than queueing unbounded server progress.
++                          void (async () => {
++                            try {
++                              while (active && !extra.signal.aborted && pendingProgress) {
++                                await assertCurrent();
++                                if (!active || extra.signal.aborted) return;
++                                const latest = pendingProgress;
++                                pendingProgress = undefined;
++                                const notification: ProgressNotification = {
++                                  method: 'notifications/progress',
++                                  params: { ...latest, progressToken: token },
++                                };
++                                // AppBridge 1.7's helper type omits core MCP progress.
++                                await scopedTransport.send({ jsonrpc: '2.0', ...notification });
++                              }
++                            } catch {
++                              // Revoked Views must not receive late progress.
++                              pendingProgress = undefined;
++                            } finally {
++                              forwarding = false;
++                            }
++                          })();
++                        },
++                }),
++                extra.signal,
++              )) as CallToolResult;
++            } finally {
++              active = false;
++              pendingProgress = undefined;
++            }
++          }
+           const invoke = (ticket?: string) => currentResult(client.callTool({ ...params,
+             ...(ticket ? { _meta: { ...params._meta, [PLUGIN_PAGE_TICKET]: ticket } } : {}),
+           }, CallToolResultSchema, { signal: extra.signal, ...(config.plugin ? { timeout: GHOST_PIPE_CALL_MAX_TOTAL_MS } : {}) }), extra.signal) as Promise<CallToolResult>;
+-          if (!config.plugin) return invoke();
+           const token = params._meta?.progressToken;
+           const progress = createPageProgressRelay(async (value, progressSignal) => {
+             await assertCurrent();
 ```
 
-**File**: `apps/desktop/src/renderer/i18n/locales/ja/common.json` (modified, +1/-0)
+**File**: `docs/mcp-apps.md` (modified, +11/-0)
 ```diff
-@@ -3604,6 +3604,7 @@
-           "nameRequired": "表示名を入力してください",
-           "runtimeRequired": "Runtime を 1 つ以上設定してください（ベース URL とモデル）",
-           "baseUrlInvalid": "ベース URL は有効な http(s) アドレスである必要があります",
-+          "baseUrlRequired": "この Runtime のベース URL を入力するか、プロトコルを既定に戻してください",
-           "contextWindowInvalid": "コンテキストウィンドウは有効な正の整数である必要があります（数字グループの間に区切り記号を使用できます）",
-           "requestPathInvalid": "正確なリクエストパスは 1 つの / で始め、フラグメントや .、.. のパスセグメントを含めないでください。空白や安全でない文字はパーセントエンコードしてください。",
-           "modelRequired": "モデルを 1 つ以上追加してください",
-```
-
-**File**: `apps/desktop/src/renderer/i18n/locales/ko/common.json` (modified, +1/-0)
-```diff
-@@ -3604,6 +3604,7 @@
-           "nameRequired": "표시 이름을 입력하세요",
-           "runtimeRequired": "Runtime을 하나 이상 구성하세요(기본 URL과 모델)",
-           "baseUrlInvalid": "기본 URL은 유효한 http(s) 주소여야 합니다",
-+          "baseUrlRequired": "이 Runtime의 기본 URL을 입력하거나 프로토콜을 기본값으로 되돌리세요",
-           "contextWindowInvalid": "컨텍스트 윈도우는 유효한 양의 정수여야 합니다(숫자 그룹 사이에 구분 기호 사용 가능)",
-           "requestPathInvalid": "정확한 요청 경로는 단일 /로 시작해야 하며 프래그먼트나 . 또는 .. 경로 세그먼트를 포함하면 안 됩니다. 공백과 안전하지 않은 문자는 퍼센트 인코딩하세요.",
-           "modelRequired": "모델을 하나 이상 추가하세요",
-```
-
-**File**: `apps/desktop/src/renderer/i18n/locales/zh-CN/common.json` (modified, +1/-0)
-```diff
-@@ -3604,6 +3604,7 @@
-           "nameRequired": "请填写显示名称",
-           "runtimeRequired": "请至少配置一个 Runtime（填写它的基础 URL 和模型）",
-           "baseUrlInvalid": "基础 URL 必须是合法的 http(s) 地址",
-+          "baseUrlRequired": "请填写该 Runtime 的基础 URL，或把协议改回默认",
-           "contextWindowInvalid": "上下文窗口必须是合法的正整数（数字组之间可用分隔符）",
-           "requestPathInvalid": "精确请求路径需以单个 / 开头，不含片段标识或 .、.. 路径段；空格和不安全字符请使用百分号编码",
-           "modelRequired": "请至少添加一个模型",
-```
-
-**File**: `apps/desktop/src/renderer/i18n/locales/zh-TW/common.json` (modified, +1/-0)
-```diff
-@@ -3604,6 +3604,7 @@
-           "nameRequired": "請填寫顯示名稱",
-           "runtimeRequired": "請至少配置一個 Runtime（填寫它的基礎 URL 和模型）",
-           "baseUrlInvalid": "基礎 URL 必須是合法的 http(s) 地址",
-+          "baseUrlRequired": "請填寫該 Runtime 的基礎 URL，或把協議改回預設",
-           "contextWindowInvalid": "上下文視窗必須是合法的正整數（數字組之間可用分隔符）",
-           "requestPathInvalid": "精確請求路徑需以單個 / 開頭，不含片段標識或 .、.. 路徑段；空格和不安全字元請使用百分號編碼",
-           "modelRequired": "請至少新增一個模型",
+@@ -178,6 +178,17 @@ iOS 另保留显式顶层请求拦截；可信 proxy 同时检查实际 `event.o
+ 凭证留在 Main 的现有密钥存储中，不进入 iframe。Claude Code、Codex、Pi 都通过同一
+ Host facade 调用自定义 MCP；支持 Apps 的工具执行时生成独立卡片，历史卡片可重新连接。
+ 不支持 UI 扩展的普通 MCP 保持文本工具使用方式。
++
++App 发起的 `tools/call` 在 Host 到 MCP server 这一段有 30 分钟总时限；服务端进度不会
++延长这个总时限。Host 按单次请求映射进度 token，再将原始进度值、总量与消息转发给
++发起的 View。不同 View 可以使用相同的本地 token，不会互相接收进度。
++检查归属期间积压的进度只保留最新一条，避免高频上报造成无界队列。
++`@modelcontextprotocol/ext-apps@1.7.5` 的 `app.callServerTool(params, options)` 默认注册
++进度回调并启用 `resetTimeoutOnProgress`，因此服务端持续报告进度时，App 的默认
++60 秒等待时限会续期。服务端不报告进度时，App 应通过 `options.timeout` 显式设置
++所需等待时间（单位为毫秒）；App 自己的超时或取消仍会传递给对应的上游请求。
++Host 不生成虚构的服务端进度，也不自动重放超时的工具调用。
++
+ 模型侧 facade 继承下游 harness 实际声明的 client capabilities（含其他 extensions），
+ 再追加 Apps extension；roots、sampling、elicitation 与普通服务器回调只返回产生该
+ 连接的 harness，客户端通知（如 roots/list_changed）沿同一连接转发。回调返回前
 ```
 
 ---
 
-### Incident Patch 3: `cf8d2e79` (2026-10-30)
-**Commit Message**: Merge remote-tracking branch 'upstream/main' into fix/provider-connection-save-feedback
+### Incident Patch 2: `ac785430` (2026-11-03)
+**Commit Message**: Merge pull request #8630 from makecindy/dash/mobile-swiftui-host-containment
 
-**File**: `apps/desktop/help-knowledge/voice-input.md` (modified, +1/-1)
+fix(mobile): 推迟 SwiftUI 宿主的控制器挂接，修复 iOS 安全区更新时闪退
+
+**File**: `dependency-patches/README.md` (modified, +1/-0)
 ```diff
-@@ -18,7 +18,7 @@ Voice input lets you dictate instead of typing. The recognized text goes into th
- 
- - **Service source → Voice service** — **Cindy official service** (default; uses your Cindy sign-in) or **Custom voice service** (choose a recognition model that uses its own credentials, or **Custom realtime ASR** with your own WebSocket URL, model, and API key; **Test connection** checks it). When you're not signed in, use a custom service.
- - **Basics:**
--  - **Language** — **Auto** (default) / Simplified Chinese / Traditional Chinese / English / Japanese / Korean. The China edition defaults to Simplified Chinese. There's no free-form locale field.
-+  - **Language** — **Auto** (default) / Simplified Chinese / Traditional Chinese / English / Japanese / Korean / Spanish. The China edition defaults to Simplified Chinese. There's no free-form locale field.
-   - **Microphone** — **Auto** (system default) or a specific device.
-   - **Shortcut** — click to record a new one: a key combination, a standalone F1–F24 key, or (macOS) holding Left/Right Command, Option, Control, or Fn. **Clear** removes it. Cindy rejects shortcuts that conflict with system or common editing shortcuts.
- - **Refinement:**
+@@ -11,6 +11,7 @@
+ | 依赖 | 用途 |
+ | --- | --- |
+ | `expo-image-manipulator@57.0.14` | 修复 iOS HDR / 10-bit HEIC 图片在方向归一化时因原生 `CGContext` 参数不兼容而抛出 `ERR_IMAGE_CONTEXT_LOST`；正常方向直接复用原图，其余方向交给 `UIGraphicsImageRenderer`。同类问题与真机验证见 [`tloncorp/tlon-apps#5951`](https://github.com/tloncorp/tlon-apps/pull/5951)，待 Expo 上游提供等价修复后移除。 |
++| `expo-modules-core@57.0.18` | 修复 iOS 偶发闪退（`NSFastEnumerationMutation`，栈在 `-[UIViewController _recursiveUpdateContentOverlayInsetsFromParentIfNecessary]`，无 App 帧）。SwiftUI 宿主视图（`@expo/ui` 的 `Host`）挂上 / 卸下窗口时会同步 `addChild` / `removeFromParent`；而 UIKit 在状态栏或安全区变化时正遍历父控制器的子控制器，若此时有 `unstable_Immediate` 状态提交让 Fabric 当场挂载，子控制器列表就在遍历中被改动。远程桌面叠层渲染在导航栈外，它的 SwiftUI 宿主直接挂在根控制器下，画中画期间一直在。补丁让视图仍同步挂上 / 卸下，控制器的父子关系改到下一轮主线程再同步，并沿用上游对「父控制器视图不包含宿主」时跳过 containment 的判断。同一机制见 [`react-native-screens#4811`](https://github.com/software-mansion/react-native-screens/issues/4811)、[`#4168`](https://github.com/software-mansion/react-native-screens/issues/4168)。改变 iOS 原生指纹，需随冷更发版；升级 expo-modules-core 时核查上游是否已有等价修复。 |
+ | `expo-paste-input@0.2.2` | 优化移动端粘贴图片的处理时序，将耗时的解码、压缩和写盘移出 UI 线程，并补充加载中与失败事件。 |
+ | `expo-router@57.0.17` | `Stack.Toolbar.Menu` 子菜单透传 `subtitle`，让 iOS 顶栏菜单的一级行在标题下显示当前值（如「任务信息」下显示已选项）。配合下方 `react-native-screens` 补丁生效。 |
+ | `harmonyos-sans-sc-webfont-splitted` | 移除依赖按语言全局覆盖 `font-family` 的规则，由 Cindy 自己决定界面字体。 |
 ```
 
-**File**: `apps/desktop/scripts/fixtures/companion-message-actions/fixture.tsx` (added, +186/-0)
+**File**: `dependency-patches/expo-modules-core@57.0.18.patch` (added, +101/-0)
 ```diff
-@@ -0,0 +1,186 @@
-+import { useState, type ComponentProps } from 'react';
-+import { mountPage, subscription } from '../../ui-page/harness';
-+import { ChatInput } from '../../../src/renderer/components/new-chat/ChatInput';
-+import { getDefaultVoiceInputSettings } from '../../../src/shared/voiceInputData';
+@@ -0,0 +1,101 @@
++diff --git a/ios/Core/Views/SwiftUI/SwiftUIHostingView.swift b/ios/Core/Views/SwiftUI/SwiftUIHostingView.swift
++index cdaa69f6667fc2969302b89bb194d38ab6c2e841..0cc13f37b6742e640c725dbf7570b423cf08bc53 100644
++--- a/ios/Core/Views/SwiftUI/SwiftUIHostingView.swift
+++++ b/ios/Core/Views/SwiftUI/SwiftUIHostingView.swift
++@@ -222,27 +222,84 @@ extension ExpoSwiftUI {
++       }
++       #endif
++ 
+++      #if os(iOS) || os(tvOS)
+++      // Cindy patch: Fabric can mount inline while UIKit is enumerating a parent's
+++      // childViewControllers (an `unstable_Immediate` state commit during safe area / status bar
+++      // propagation). Changing containment there aborts the app with NSFastEnumerationMutation,
+++      // so the view moves now and the controller containment follows on the next main-queue turn.
+++      if window != nil {
+++        addSubview(hostingController.view)
+++        setupHostingViewConstraints()
+++      } else {
+++        hostingController.view.removeFromSuperview()
+++      }
+++      scheduleContainmentSync()
+++      #else
++       if window != nil, let parentController = reactViewController() {
++-        #if !os(macOS)
++-        if parentController as? UINavigationController == nil && parentController as? UITabBarController == nil {
++-          // Swift automatically adds the hostingController in the correct place when the parentController
++-          // is UINavigationController, since it's children are supposed to be only screens.
++-          // Similarly, for UITabBarController we expect its children to be only tabs.
++-          parentController.addChild(hostingController)
++-        }
++-        #else
++         parentController.addChild(hostingController)
++-        #endif
++         addSubview(hostingController.view)
++-        #if os(iOS) || os(tvOS)
++-        hostingController.didMove(toParent: parentController)
++-        #endif
++         setupHostingViewConstraints()
++       } else {
++         hostingController.view.removeFromSuperview()
++         hostingController.removeFromParent()
++       }
+++      #endif
+++    }
+++
+++    #if os(iOS) || os(tvOS)
+++    private var containmentSyncScheduled = false
+++
+++    private func scheduleContainmentSync() {
+++      guard !containmentSyncScheduled else {
+++        return
+++      }
+++      containmentSyncScheduled = true
+++      // Capture the controller strongly: if this view is released before the block runs, the
+++      // controller must still leave its parent instead of staying behind as a stale child.
+++      let controller = hostingController
+++      DispatchQueue.main.async { [weak self] in
+++        guard let self else {
+++          Self.moveHostingController(controller, to: nil)
+++          return
+++        }
+++        self.containmentSyncScheduled = false
+++        Self.moveHostingController(controller, to: self.containmentParent())
+++      }
+++    }
+++
+++    /**
+++     The controller that should contain the hosting controller right now, or `nil` when the view is
+++     off-window or UIKit manages containment itself (navigation and tab bar controllers only take
+++     screens and tabs as children).
+++     */
+++    private func containmentParent() -> UIViewController? {
+++      guard window != nil, let parentController = reactViewController() else {
+++        return nil
+++      }
+++      if parentController is UINavigationController || parentController is UITabBarController {
+++        return nil
+++      }
+++      // UIKit throws when a child controller's view is outside its parent's view.
+++      guard parentController.viewIfLoaded.map({ isDescendant(of: $0) }) ?? false else {
+++        return nil
+++      }
+++      return parentController
+++    }
+++
+++    private static func moveHostingController(_ controller: UIViewController, to parent: UIViewController?) {
+++      if controller.parent === parent {
+++        return
+++      }
+++      if controller.parent != nil {
+++        controller.willMove(toParent: nil)
+++        controller.removeFromParent()
+++      }
+++      if let parent {
+++        parent.addChild(controller)
+++        controller.didMove(toParent: parent)
+++      }
++     }
+++    #endif
++ 
++ #if os(macOS)
++     public override func reactViewController() -> NSViewController? {
+```
+
+**File**: `package.json` (modified, +2/-1)
+```diff
+@@ -69,7 +69,8 @@
+       "@expo/cli@57.0.25": "dependency-patches/@expo__cli@57.0.25.patch",
+       "react-native-screens@4.26.2": "dependency-patches/react-native-screens@4.26.2.patch",
+       "expo-router@57.0.17": "dependency-patches/expo-router@57.0.17.patch",
+-      "react-native-gesture-handler@2.32.0": "dependency-patches/react-native-gesture-handler@2.32.0.patch"
++      "react-native-gesture-handler@2.32.0": "dependency-patches/react-native-gesture-handler@2.32.0.patch",
++      "expo-modules-core@57.0.18": "dependency-patches/expo-modules-core@57.0.18.patch"
+     },
+     "allowUnusedPatches": true
+   },
+```
+
+**File**: `pnpm-lock.yaml` (modified, +14/-11)
+```diff
+@@ -25,6 +25,9 @@ patchedDependencies:
+   expo-image-manipulator@57.0.14:
+     hash: 78594ca2235bdbbee2665f37b86d4e1e892733c4f9bd38fa7085338b90486e2b
+     path: dependency-patches/expo-image-manipulator@57.0.14.patch
++  expo-modules-core@57.0.18:
++    hash: b74a771fc7f42cfafdb72af6b5a791bb93ea041bce1488dbbde2b88f2c674dcc
++    path: dependency-patches/expo-modules-core@57.0.18.patch
+   expo-paste-input@0.2.2:
+     hash: 53be555646735a171c1624f074ef30e5ca897a7b8893724bc2d0d51682f769d8
+     path: dependency-patches/expo-paste-input@0.2.2.patch
+@@ -842,7 +845,7 @@ importers:
+         version: file:apps/mobile/modules/xdt-ios-action-sheet
+       xdt-ios-app-distribution:
+         specifier: file:./modules/xdt-ios-app-distribution
+-        version: file:apps/mobile/modules/xdt-ios-app-distribution(expo-modules-core@57.0.18(react-native-worklets@0.10.1(@babel/core@7.29.7)(@react-native/metro-config@0.86.3(@babel/core@7.29.7))(react-native@0.86.3(@babel/core@7.29.7)(@react-native/metro-config@0.86.3(@babel/core@7.29.7))(@types/react@19.2.17)(react@19.2.3))(react@19.2.3))(react-native@0.86.3(@babel/core@7.29.7)(@react-native/metro-config@0.86.3(@babel/core@7.29.7))(@types/react@19.2.17)(react@19.2.3))(react@19.2.3))(expo@57.0.23)
++        version: file:apps/mobile/modules/xdt-ios-app-distribution(expo-modules-core@57.0.18(patch_hash=b74a771fc7f42cfafdb72af6b5a791bb93ea041bce1488dbbde2b88f2c674dcc)(react-native-worklets@0.10.1(@babel/core@7.29.7)(@react-native/metro-config@0.86.3(@babel/core@7.29.7))(react-native@0.86.3(@babel/core@7.29.7)(@react-native/metro-config@0.86.3(@babel/core@7.29.7))(@types/react@19.2.17)(react@19.2.3))(react@19.2.3))(react-native@0.86.3(@babel/core@7.29.7)(@react-native/metro-config@0.86.3(@babel/core@7.29.7))(@types/react@19.2.17)(react@19.2.3))(react@19.2.3))(expo@57.0.23)
+       xdt-mobile-realtime-audio:
+         specifier: file:./modules/xdt-mobile-realtime-audio
+         version: file:apps/mobile/modules/xdt-mobile-realtime-audio
+@@ -851,10 +854,10 @@ importers:
+         version: file:apps/mobile/modules/xdt-screenshot-monitor
+       xdt-tapdb:
+         specifier: file:./modules/xdt-tapdb
+-        version: file:apps/mobile/modules/xdt-tapdb(expo-modules-core@57.0.18(react-native-worklets@0.10.1(@babel/core@7.29.7)(@react-native/metro-config@0.86.3(@babel/core@7.29.7))(react-native@0.86.3(@babel/core@7.29.7)(@react-native/metro-config@0.86.3(@babel/core@7.29.7))(@types/react@19.2.17)(react@19.2.3))(react@19.2.3))(react-native@0.86.3(@babel/core@7.29.7)(@react-native/metro-config@0.86.3(@babel/core@7.29.7))(@types/react@19.2.17)(react@19.2.3))(react@19.2.3))(expo@57.0.23)
++        version: file:apps/mobile/modules/xdt-tapdb(expo-modules-core@57.0.18(patch_hash=b74a771fc7f42cfafdb72af6b5a791bb93ea041bce1488dbbde2b88f2c674dcc)(react-native-worklets@0.10.1(@babel/core@7.29.7)(@react-native/metro-config@0.86.3(@babel/core@7.29.7))(react-native@0.86.3(@babel/core@7.29.7)(@react-native/metro-config@0.86.3(@babel/core@7.29.7))(@types/react@19.2.17)(react@19.2.3))(react@19.2.3))(react-native@0.86.3(@babel/core@7.29.7)(@react-native/metro-config@0.86.3(@babel/core@7.29.7))(@types/react@19.2.17)(react@19.2.3))(react@19.2.3))(expo@57.0.23)
+       xdt-wechat-login:
+         specifier: file:./modules/xdt-wechat-login
+-        version: file:apps/mobile/modules/xdt-wechat-login(expo-modules-core@57.0.18(react-native-worklets@0.10.1(@babel/core@7.29.7)(@react-native/metro-config@0.86.3(@babel/core@7.29.7))(react-native@0.86.3(@babel/core@7.29.7)(@react-native/metro-config@0.86.3(@babel/core@7.29.7))(@types/react@19.2.17)(react@19.2.3))(react@19.2.3))(react-native@0.86.3(@babel/core@7.29.7)(@react-native/metro-config@0.86.3(@babel/core@7.29.7))(@types/react@19.2.17)(react@19.2.3))(react@19.2.3))(expo@57.0.23)
++        version: file:apps/mobile/modules/xdt-wechat-login(expo-modules-core@57.0.18(patch_hash=b74a771fc7f42cfafdb72af6b5a791bb93ea041bce1488dbbde2b88f2c674dcc)(react-native-worklets@0.10.1(@babel/core@7.29.7)(@react-native/metro-config@0.86.3(@babel/core@7.29.7))(react-native@0.86.3(@babel/core@7.29.7)(@react-native/metro-config@0.86.3(@babel/core@7.29.7))(@types/react@19.2.17)(react@19.2.3))(react@19.2.3))(react-native@0.86.3(@babel/core@7.29.7)(@react-native/metro-config@0.86.3(@babel/core@7.29.7))(@types/react@19.2.17)(react@19.2.3))(react@19.2.3))(expo@57.0.23)
+     devDependencies:
+       '@types/react':
+         specifier: ~19.2.0
+@@ -18135,7 +18138,7 @@ snapshots:
+       - supports-color
+       - typescript
+ 
+-  expo-modules-core@57.0.18(react-native-worklets@0.10.1(@babel/core@7.29.7)(@react-native/metro-config@0.86.3(@babel/core@7.29.7))(react-native@0.86.3(@babel/core@7.29.7)(@react-native/metro-config@0.86.3(@babel/core@7.29.7))(@types/react@19.2.17)(react@19.2.3))(react@19.2.3))(react-native@0.86.3(@babel/core@7.29.7)(@react-native/metro-config@0.86.3(@babel/core@7.29.7))(@types/react@19.2.17)(react@19.2.3))(react@19.2.3):
++  expo-modules-core@57.0.18(patch_hash=b74a771fc7f42cfafdb7
+```
+
+---
+
+### Incident Patch 3: `592b6f85` (2026-11-03)
+**Commit Message**: Merge pull request #8408 from yan-xdt/fix/direct-peer-capacity-recovery
+
+fix(device-link): 扩展直连容量并完善恢复机制
+
+**File**: `apps/desktop/src/main/device-link/__tests__/directLink.test.ts` (modified, +26/-0)
+```diff
+@@ -56,6 +56,32 @@ it('does not create a late session after the authenticated owner was suspended d
+   expect(fake.commands).toHaveLength(0);
+ });
+ 
++// Capacity regression, unit tier: the lazy Desktop adapter must expose one shared
++// pool and claim a released slot synchronously when an admission callback runs.
++// The shared-package bridge tests cannot catch a wrapper dropping those hooks.
++it('uses the desktop budget and synchronously claims a released native slot', async () => {
++  const before = fake.starts, sessions = [];
++  let replacement: ReturnType<typeof desktopDirectRuntime.create> | undefined;
++  let opening: Promise<string> | undefined;
++  let cancel: (() => void) | undefined;
++  try {
++    for (let i = 0; i < 64; i++) {
++      const session = desktopDirectRuntime.create(`capacity-${i}`, events(), { kind: i < 8 ? 'device' : 'share' });
++      sessions.push(session); await session.offer();
++    }
++    expect(fake.starts).toBe(before + 1);
++    expect(() => desktopDirectRuntime.create('overflow', events(), { kind: 'share' })).toThrow('DIRECT_CAPACITY_FULL');
++    cancel = desktopDirectRuntime.capacity!.wait('share', () => {
++      replacement = desktopDirectRuntime.create('replacement', events(), { kind: 'share' });
++      opening = replacement.offer();
++    });
++    sessions[8].close();
++    await Promise.resolve();
++    expect(desktopDirectRuntime.capacity!.snapshot()).toMatchObject({ active: 64, queued: 0 });
++    await expect(opening).resolves.toBe('fixture-sdp');
++  } finally { cancel?.(); replacement?.close(); sessions.forEach(session => session.close()); }
++});
 +
-+// The fixture's custom origin lacks secure-context randomUUID. These IDs only
-+// identify in-memory send snapshots; production uses Chromium's secure implementation.
-+if (!crypto.randomUUID) {
-+  let sequence = 0;
-+  crypto.randomUUID = () => `00000000-0000-4000-8000-${String(++sequence).padStart(12, '0')}`;
+ it('releases active paths after a renderer crash and bounds automatic process restarts', async () => {
+   vi.useFakeTimers();
+   const observer = events(), session = desktopDirectRuntime.create('one', observer);
+```
+
+**File**: `apps/desktop/src/main/device-link/__tests__/dispatchWeakNetwork.test.ts` (modified, +85/-2)
+```diff
+@@ -14,6 +14,8 @@ import { sharedTaskGuestPeer } from '@cindy/device-link';
+ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+ import {
+   DeviceLinkClient,
++  createDirectRuntimeBridge,
++  createDirectRuntimeHost,
+   SHARED_TASK_CAPABILITY,
+   DeviceLinkError,
+   DEVICE_LINK_CAPABILITY_HISTORY_VIEW_V1,
+@@ -25,6 +27,8 @@ import {
+   TASK_MIGRATION_ESTIMATE_TIMEOUT_MS,
+   resolveRemoteInvokeTimeoutMs,
+   type Envelope,
++  type DirectRuntime,
++  type DirectRuntimeEvents,
+ } from '@cindy/device-link';
+ 
+ vi.mock('electron', () => ({
+@@ -76,7 +80,9 @@ import {
+   setOrdinaryPeerLinkAcceptedListener,
+   setDispatchPresenceOfflineCheck,
+   wireInboundDispatch,
++  hasRemoteInvokeWorkForPeer,
+ } from '../dispatch';
++import { __testing as invokeRegistry } from '../invoke-registry';
+ import * as subscriptions from '../subscriptions';
+ import { tapWindowBroadcast, tapRemoteModelCatalogChange } from '../broadcast-tap';
+ import { remoteDesktop } from '../../remote-desktop';
+@@ -152,6 +158,7 @@ class DispatchTestWs {
+ }
+ 
+ class DispatchTestRelay {
++  constructor(private readonly asyncDelivery = false) {}
+   private readonly sockets = new Map<string, DispatchTestWs>();
+   private holdPredicate: ((senderId: string, envelope: Envelope) => boolean) | null = null;
+   private readonly held: Array<{ senderId: string; envelope: Envelope }> = [];
+@@ -179,6 +186,7 @@ class DispatchTestRelay {
+   }
+ 
+   route(senderId: string, socket: DispatchTestWs, envelope: Envelope): void {
++    if (envelope.kind === 'ping') { socket.push({ v: PROTOCOL_VERSION, kind: 'pong' }); return; }
+     if (envelope.kind === 'hello') {
+       socket.push({
+         v: PROTOCOL_VERSION,
+@@ -215,12 +223,16 @@ class DispatchTestRelay {
+   private deliver(senderId: string, envelope: Envelope): void {
+     const destination = envelope.dst ? this.sockets.get(envelope.dst) : undefined;
+     if (!destination) return;
+-    destination.push({ ...envelope, src: senderId });
++    const deliver = () => destination.push({ ...envelope, src: senderId });
++    if (this.asyncDelivery) queueMicrotask(deliver);
++    else deliver();
+   }
+ }
+ 
+-function makeDispatchTestClient(relay: DispatchTestRelay, deviceId: string): DeviceLinkClient {
++function makeDispatchTestClient(relay: DispatchTestRelay, deviceId: string,
++  options: Pick<ConstructorParameters<typeof DeviceLinkClient>[0], 'directRuntime' | 'isPeerBusy'> = {}): DeviceLinkClient {
+   return new DeviceLinkClient({
++    ...options,
+     getWsUrl: () => 'ws://test/api/device-link/ws',
+     getToken: async () => 'jwt-token',
+     getHello: () => ({
+@@ -500,6 +512,8 @@ describe('[2] outbox 离线不自旋,上线事件驱动投递', () => {
+     ).toBe(true);
+     expect(__testing.remoteInvokeResultOutboxSize()).toBe(1);
+     expect(sendInvokeResult).toHaveBeenCalledTimes(1);
++    expect(hasRemoteInvokeWorkForPeer('ctrl-a')).toBe(true);
++    expect(hasRemoteInvokeWorkForPeer('ctrl-other')).toBe(false);
+ 
+     // 离线期间多轮慢扫描:不再尝试发送(无 NOT_CONNECTED 自旋)
+     vi.advanceTimersByTime(20_000);
+@@ -512,6 +526,7 @@ describe('[2] outbox 离线不自旋,上线事件驱动投递', () => {
+     expect(sendInvokeResult).toHaveBeenCalledTimes(2);
+     expect(__testing.remoteInvokeResultOutboxSize()).toBe(0);
+     expect(diagnosticLog.warn).toHaveBeenCalledWith(expect.stringContaining('request=req-1 queueMessages=1'));
++    expect(hasRemoteInvokeWorkForPeer('ctrl-a')).toBe(false);
+     expect(diagnosticLog.info).toHaveBeenCalledWith(expect.stringContaining('request=req-1 queuedMs=20000'));
+     expect(JSON.stringify(diagnosticLog.warn.mock.calls)).not.toContain('PRIVATE_RESPONSE_BODY');
+     expect(JSON.stringify(diagnosticLog.info.mock.calls)).not.toContain('PRIVATE_RESPONSE_BODY');
+@@ -782,6 +797,74 @@ describe('[5] orphan 截止时间按 channel 收窄', () => {
+ });
+ 
+ describe('[6] active controller 生命周期与故障半径', () => {
++  // Unit, #8408 idle-retirement contract: transport ACKs do not cover the lifetime
++  // of fire-and-forget host execution. Previous RTC tests returned handler promises
++  // to transport, hiding this gap. One >5-minute compact, one idle neighbor and one
++  // waiter must retire only the idle neighbor; the active result stays on direct.
++  it('protects a long-running inbound dispatch while reclaiming an idle neighbor for a waiter', async () => {
++    const pairs = new Map<string, Array<{ events: DirectRuntimeEvents; closed: boolean }>>();
++    const runtime = (maxPeers = 16): DirectRuntime => {
++      const bridge = createDirectRuntimeBridge({ maxPeers });
++      const native: DirectRuntime = { create(id, events) {
++        const row = { events, closed: false }, pair = pairs.get(id) ?? [];
++        pairs.set(id, pair); pair.push(row);
++        return { offer: async () => id, accept: async () => id,
++          answer: async () => { queueMicrotask(() => pair.forEach(p => { if (!p.closed) p.events.open(); })); },
++          send: text => { queueMicrotask(() => { const other = pair.find(p => p !== row && !p.closed); other?.events.message(text); }); },
++          bu
+```
+
+**File**: `apps/desktop/src/main/device-link/directLink.ts` (modified, +8/-5)
+```diff
+@@ -1,12 +1,13 @@
+ import { ipcMain } from 'electron';
+ import { createDirectRuntimeBridge, type DirectRuntime, type DirectRuntimeSession,
+-  type DirectRuntimeEvents } from '@cindy/device-link';
++  type DirectRuntimeEvents, DIRECT_LINK_DESKTOP_MAX_PEERS, DIRECT_LINK_DESKTOP_RESERVED_PEERS } from '@cindy/device-link';
+ import { DIRECT_LINK_LOCAL } from '../../shared/directLink';
+ import { DesktopCaptureWindow } from '../remote-desktop/captureWindow';
+ import { createLogger } from '../logger';
+ 
+ const log = createLogger('device-link:direct');
+-const bridge = createDirectRuntimeBridge();
++const bridge = createDirectRuntimeBridge({ maxPeers: DIRECT_LINK_DESKTOP_MAX_PEERS,
++  reservedPeers: DIRECT_LINK_DESKTOP_RESERVED_PEERS });
+ let detach: (() => void) | undefined;
+ let starting: Promise<void> | undefined;
+ let epoch = 0;
+@@ -61,14 +62,16 @@ function ensureStarted(): Promise<void> {
+ 
+ /** Startup is deferred until a capable, authorized peer actually needs a LAN path. */
+ export const desktopDirectRuntime: DirectRuntime = {
+-  create(id: string, events: DirectRuntimeEvents): DirectRuntimeSession {
++  capacity: bridge.runtime.capacity,
++  create(id: string, events: DirectRuntimeEvents, options): DirectRuntimeSession {
+     const generation = epoch;
+-    let session: DirectRuntimeSession | undefined;
++    // Capacity wake callbacks synchronously claim their slot once the process exists.
++    let session: DirectRuntimeSession | undefined = detach ? bridge.runtime.create(id, events, options) : undefined;
+     let closed = false;
+     const get = async () => {
+       await ensureStarted();
+       if (closed || generation !== epoch) throw new Error('DIRECT_RUNTIME_CLOSED');
+-      return session ??= bridge.runtime.create(id, events);
++      return session ??= bridge.runtime.create(id, events, options);
+     };
+     return {
+       offer: async () => (await get()).offer(),
+```
+
+**File**: `apps/desktop/src/main/device-link/dispatch.ts` (modified, +5/-0)
+```diff
+@@ -3324,6 +3324,11 @@ function remoteInvokeAdmissionState(src: string): { messages: number; bytes: num
+   return { messages, bytes };
+ }
+ 
++/** Host work outlives the reliable frame ACK, including replies waiting in outbox. */
++export function hasRemoteInvokeWorkForPeer(src: string): boolean {
++  return remoteInvokeAdmissionState(src).messages > 0;
 +}
 +
-+import { AssistantMessage } from '../../../src/renderer/components/chat/AssistantMessage';
-+import { UserMessage } from '../../../src/renderer/components/chat/UserMessage';
-+import { BotChatQuoteProvider } from '../../../src/renderer/features/bots/botChatQuoteContext';
-+import { BotChatQuoteComposerPreview } from '../../../src/renderer/features/bots/BotChatQuoteViews';
-+import {
-+  setPendingBotReplyQuote,
-+  usePendingBotReplyQuote,
-+} from '../../../src/renderer/features/bots/botDmQuote';
-+import { BotDmThreadsProvider } from '../../../src/renderer/features/bots/botDmThreadsContext';
-+import { BotDmThreadPanel } from '../../../src/renderer/features/bots/BotDmThreadViews';
-+const rootSessionId = 'fixture-companion';
-+const bot = { id: 'fixture-bot', name: 'Aster', avatar: null };
-+const messages = [
-+  { clientId: 'owner', role: 'user', content: '请帮我核对消息下的操作。', images: [], files: [] },
-+  {
-+    clientId: 'answer',
-+    role: 'assistant',
-+    content: '已沿用现有组件。正文可以直接选择，引用后也可以继续编辑草稿。',
-+    images: [],
-+    files: [],
-+  },
-+];
-+const getMessage = (id: string) => messages.find((m) => m.clientId === id) as any;
-+const names = { owner: 'Chris', companion: 'Aster' };
-+const noop = () => {};
-+function Fixture({ kind }: { kind: string }) {
-+  const quote = usePendingBotReplyQuote(rootSessionId);
-+  const [topic, setTopic] = useState<string | null>(null);
-+  const thread: any = {
-+    rootClientId: 'answer',
-+    replyCount: 3,
-+    lastReplyAt: Date.now() - 120000,
-+    lastAssistantAt: Date.now() - 120000,
-+    sessionId: 'fixture-topic',
-+  };
-+  const quoteContext = {
-+    sessionId: rootSessionId,
-+    names,
-+    getMessage,
-+    isFirstReplyFor: () => false,
-+    showReplyTargets: false,
-+    quote: (q: any) => setPendingBotReplyQuote(rootSessionId, q),
-+    locate: noop,
-+  };
-+  const threads = {
-+    botId: bot.id,
-+    botName: bot.name,
-+    bot,
-+    rootSessionId,
-+    threads: new Map(kind === 'default' ? [] : [['answer', thread]]),
-+    openRootClientId: topic,
-+    isUnread: () => kind === 'unread',
-+    openThread: setTopic,
-+  };
-+  const files: ComponentProps<typeof ChatInput>['attachmentState'] = {
-+    attachments: [],
-+    hasAttachments: false,
-+    addFiles: async () => {},
-+    addClipboardImage: async () => {},
-+    rejections: [],
-+    dismissRejection: noop,
-+    clearRejections: noop,
-+    addFolderPath: noop,
-+    pendingFoldersVersion: 0,
-+    consumePendingFolders: () => [],
-+    addFileMention: noop,
-+    pendingFileMentionsVersion: 0,
-+    consumePendingFileMentions: () => [],
-+    removeFile: noop,
-+    updateFile: noop,
-+    discardFiles: noop,
-+    clearFiles: noop,
-+    restoreFiles: (files) => [...files],
-+  };
-+  return (
-+    <BotChatQuoteProvider value={quoteContext}>
-+      <BotDmThreadsProvider value={threads}>
-+        <main className="flex h-screen bg-[var(--surface)] text-[var(--text-primary)]">
-+          <div className="mx-auto flex w-full min-w-0 max-w-[1014px] flex-col gap-6 overflow-y-auto px-[50px] py-6">
-+            <div data-owner>
-+              <UserMessage
-+                workingDir="/fixture"
-+                content={messages[0].content}
-+                images={[]}
-+                files={[]}
-+                sessionId={rootSessionId}
-+                messageClientId="owner"
-+                simplifiedBotConversation
-+              />
-+            </div>
-+            <div data-answer>
-+              <AssistantMessage
-+                workingDir="/fixture"
-+                content={messages[1].content}
-+                isStreaming={false}
-+                currentSessionId={rootSessionId}
-+                messageClientId="answer"
-+                showActionBar
-+                simplifiedBotConversation
-+              />
-+            </div>
-+            <div data-fixture-composer>
-+              <ChatInput
-+                sessionId="fixture-companion"
-+                focusRequest={quote}
-+                topSlot={
-+                  quote ? (
-+                    <BotChatQuoteComposerPreview
-+                      sessionId={rootSessionId}
-+                      quote={quote}
-+                      getMessage={getMessage}
-+                      names={names}
-+                    />
-+                  ) : undefined
-+                }
-+                initialWorkingDir="/fixture"
-+                runtimeAgentKind="codex"
-+               
+ function sendRequestIdReuseError(
+   client: DeviceLinkClient,
+   src: string,
 ```
 
-**File**: `apps/desktop/scripts/fixtures/companion-message-actions/ui-page.mjs` (added, +108/-0)
+**File**: `apps/desktop/src/main/device-link/index.ts` (modified, +2/-0)
 ```diff
-@@ -0,0 +1,108 @@
-+import assert from 'node:assert/strict';
-+import composer from '../companion-composer/ui-page.mjs';
-+const stubs = { ...composer.stubs };
-+delete stubs['src/renderer/components/new-chat/ExtraDirsButton'];
-+export default {
-+  name: 'companion-message-actions',
-+  entry: './fixture.tsx',
-+  viewport: { width: 1000, height: 650 },
-+  real: 'AssistantMessage, UserMessage, MessageActionBar, BotDmThreadPreview/Panel, BotChatQuoteComposerPreview, ChatInput, original menus and themes',
-+  notCovered:
-+    'Live model/server persistence and OS clipboard. The isolated host denies clipboard; a recorder verifies requested text and feedback. Topic panel uses real failed state with sample data; native mobile tested separately.',
-+  stubs: {
-+    ...stubs,
-+    'src/renderer/components/chat/GhostToolCard':
-+      'export const GhostToolCard=()=>{throw new Error("No plugin cards in this fixture")};',
-+
-+    'src/renderer/features/cc-agent/CCAgentSessionView':
-+      'export const CCAgentSessionView=()=>{throw new Error("No ready runtime in this fixture")};',
-+    'src/renderer/lib/makerChatStore': {
-+      partial:
-+        'export const makerChatStore={subscribe:()=>()=>{},getSnapshot:()=>window.__threadRoot,getAgentSwitchIntent:()=>null,getAgentSwitchIntentRev:()=>0};',
-+    },
-+    'src/renderer/voice-input/workletUrl':
-+      'export const getVoiceInputWorkletUrl=()=>{throw new Error("not covered")};',
-+  },
-+  cases: {
-+    default: { about: 'No topic: quote/copy always visible, create topic in More' },
-+    read: { about: 'Original topic entry with count/time' },
-+    unread: { about: 'Original topic entry with unread indicator' },
-+  },
-+  async ready(page) {
-+    await page.locator('[contenteditable=true]').waitFor();
-+    await page.evaluate(() =>
-+      Object.defineProperty(navigator, 'clipboard', {
-+        configurable: true,
-+        value: {
-+          writeText: async (text) => {
-+            window.__copiedText = text;
-+          },
-+        },
-+      }),
-+    );
-+  },
-+  async check(page, ui) {
-+    const reply = page
-+      .locator('[data-answer]')
-+      .getByRole('button', { name: await ui.t('chat.messageActionBar.reply'), exact: true });
-+    assert(await reply.isVisible());
-+    const before = await reply.boundingBox();
-+    assert.equal(before.width, 32);
-+    assert.equal(before.height, 32);
-+    const editor = page.locator('[contenteditable=true]');
-+    await editor.fill('Keep this draft');
-+    await reply.click();
-+    await page.getByTestId('bot-group-quote-preview').waitFor();
-+    assert((await editor.innerText()).includes('Keep this draft'));
-+    await ui.capture('quote');
-+    await page
-+      .getByRole('button', { name: await ui.t('bots.groupChat.quote.remove'), exact: true })
-+      .click();
-+    assert((await editor.innerText()).includes('Keep this draft'));
-+    assert.equal(await page.getByTestId('bot-group-quote-preview').count(), 0);
-+    const copy = page
-+      .locator('[data-answer]')
-+      .getByRole('button', { name: await ui.t('chat.messageActionBar.copy'), exact: true });
-+    // Let the existing hover-enter reset commit before testing the next copy feedback.
-+    await copy.hover();
-+    await page.evaluate(
-+      () => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))),
-+    );
-+    await copy.click();
-+    await page.locator('[data-answer] .lucide-check').waitFor({ timeout: 3000 });
-+    assert.equal(
-+      await page.evaluate(() => window.__copiedText),
-+      '已沿用现有组件。正文可以直接选择，引用后也可以继续编辑草稿。',
-+    );
-+    const more = page
-+      .locator('[data-answer]')
-+      .getByRole('button', { name: await ui.t('chat.messageActionBar.moreActions'), exact: true });
-+    await more.click();
-+    const label = await ui.t(
-+      ui.case === 'default'
-+        ? 'bots.groupChat.server.startTopic'
-+        : 'bots.groupChat.server.openTopic',
-+      { count: 3 },
-+    );
-+    await page.getByRole('menuitem', { name: label, exact: true }).waitFor();
-+    await ui.capture('more');
-+    await page.getByRole('menuitem', { name: label, exact: true }).click();
-+    await page.locator('[data-dm-thread-panel]').waitFor();
-+    assert.equal(await page.getByRole('menu').count(), 0);
-+    await ui.capture('topic');
-+    await page.getByRole('button', { name: await ui.t('bots.close'), exact: true }).click();
-+    await page.locator('[data-dm-thread-panel]').waitFor({ state: 'detached' });
-+    assert.equal(
-+      await page.locator('[data-dm-thread-preview]').count(),
-+      ui.case === 'default' ? 0 : 1,
-+    );
-+    const p = page.locator('[data-answer] [data-bot-reply-bubble] p').first();
-+    await p.evaluate((el) => {
-+      const r = document.createRange();
-+      r.selectNodeContents(el);
-+      getSelection().removeAllRanges();
-+      getSelection().addRange(r);
-+    });
-+    assert((await page.evaluate(() => getSelection().toString())).length > 5);
-+  },
-+};
+@@ -98,6 +98,7 @@ import { MAKER_PUSH } from '../maker-ipc/channels.js';
+ import { createDnsFallbackLookup } from './dnsFallbackLookup';
+ import {
+   wireInboundDispatch,
++  hasRemoteInvokeWorkForPeer,
+   setControllersChangedListener,
+   setOrdinaryPeerLinkAcceptedListener,
+   setRemoteInvokeBusyChangedListener,
+@@ -773,6 +774,7 @@ export function initDeviceLinkService(options: DeviceLinkServiceOptions = {}): v
+   client = new RoutedDeviceLinkClient({
+     ...connectionOptions,
+     directRuntime: desktopDirectRuntime,
++    isPeerBusy: hasRemoteInvokeWorkForPeer,
+     getWsUrl: wsUrl,
+     // 自建中转用中转凭证(CindyRelay),官方中转用账号 token(Bearer);两者每次建连前同一轮取值。
+     authorizationScheme: () => (activeSelfHostedRelay() ? 'CindyRelay' : 'Bearer'),
 ```
 
-**File**: `apps/desktop/scripts/fixtures/group-control/group-control-fixture.tsx` (modified, +2/-0)
+**File**: `apps/desktop/src/main/device-link/providerShareCrossRegion.ts` (modified, +2/-1)
 ```diff
-@@ -18,6 +18,7 @@ if (!crypto.randomUUID) {
- interface GroupData {
-   /** Controlled receipts for the real renderer send/settle layout regression. */
-   sendStatus?: boolean;
-+  sharePending?: boolean;
-   workState?: 'thinking' | 'reading-file' | 'testing' | 'waiting' | 'stopping' | 'unknown';
-   workRemote?: boolean;
-   workParallel?: boolean;
-@@ -351,6 +352,7 @@ void mountPage({
-           ownedBots: async () => ({ ok: true, bots: [] }),
-           manage: forbid('maker.chatServer.manage'),
-           ...(data.threadPanel ? { thread, followThread } : {}),
-+          ...(data.sharePending ? { shareToMain: () => new Promise(() => {}) } : {}),
-         },
-         updateBotGroup: forbid('maker.updateBotGroup'),
-       },
+@@ -304,7 +304,8 @@ function createClient(rt: Runtime, state: RegionState): DeviceLinkClient {
+   const client = new DeviceLinkClient({
+     // The capture process is shared with the local-region client. A cross-region
+     // socket closing must only close its own sessions, never suspend that process.
+-    directRuntime: { create: (id, events) => desktopDirectRuntime.create(id, events) },
++    directRuntime: { capacity: desktopDirectRuntime.capacity,
++      create: (id, events, options) => desktopDirectRuntime.create(id, events, options) },
+     getWsUrl: () => wsUrl,
+     authorizationScheme: 'ProviderShareGuest',
+     getToken: async () => {
 ```
 
-**File**: `apps/desktop/scripts/fixtures/group-control/ui-page.mjs` (modified, +18/-1)
+**File**: `apps/mobile/src/__tests__/textColorDiscipline.test.ts` (modified, +8/-0)
 ```diff
-@@ -31,8 +31,12 @@ export default {
-   viewport: { width: 1280, height: 800 },
-   real: 'BotGroupChatView (timeline, composer, send button, header registration), ControlledBanner, ContentHeader shell, Markdown, theme, fonts and translations',
-   notCovered:
--    'Real IPC/network sending (send-status controls host receipts), round control, real device-link control and revocation, answering pending interactions, plans and attachments; the bubbles case shows a task snapshot, not a live task; the sidebar is an empty frame',
-+    'Real IPC/network sending (send-status/share-pending control host receipts), round control, real device-link control and revocation, answering pending owner interactions, plans and attachment IO; the bubbles case shows a task snapshot, not a live task; the sidebar is an empty frame',
-   cases: {
-+    'share-pending': {
-+      about: 'Pending topic copy appears in the main chat while the host receipt is unresolved',
-+      data: { ...base, bubbles: true, threadPanel: true, sharePending: true },
-+    },
-     'send-status': {
-       about: 'Mac send flicker regression: real composer/outbox/timeline, controlled slow receipt; row geometry stays stable and failed sends remain retryable',
-       data: { ...base, messages: 40, sendStatus: true },
-@@ -132,6 +136,19 @@ export default {
-   },
-   async check(page, ui) {
-     const definition = this.cases[ui.case];
-+    if (ui.case === 'share-pending') {
-+      await page.locator('[data-bot-group-message-id="a1"] [data-thread-preview]').click();
-+      const source = page.locator('aside [data-bot-group-message-id="r1"]');
-+      await source.hover();
-+      await source.getByRole('button', { name: await ui.t('chat.messageActionBar.moreActions'), exact: true }).click();
-+      await page.getByRole('menuitem', { name: await ui.t('bots.groupChat.server.thread.postToMain'), exact: true }).click();
-+      const pending = page.locator('[data-testid="bot-group-timeline"] [data-bot-group-message-id="pending:share:r1"]');
-+      await pending.waitFor({ timeout: 1500 });
-+      assert.equal(await pending.locator('article').getAttribute('aria-busy'), 'true');
-+      await pending.scrollIntoViewIfNeeded();
-+      await ui.capture('share-pending');
-+      return;
-+    }
-     if (ui.case === 'send-status') {
-       // Renderer integration: jsdom's send tests cannot measure the 600ms layout jump.
-       const input = page.locator('textarea');
-```
-
-**File**: `apps/desktop/src/main/maker-host/__tests__/codexProxyHost.test.ts` (modified, +80/-3)
-```diff
-@@ -808,6 +808,81 @@ describe('chatBridgeCapabilitiesForRoute', () => {
-     expect(capabilities.passthroughFields).not.toContain('top_logprobs');
-   });
+@@ -231,6 +231,14 @@ function reconcile(found: Map<string, number>, debt: Map<string, number>, fix: s
+ }
  
-+  // #7906: first 400 repairs the persisted history pair, then only that thread is pre-cleaned.
-+  it('recovers duplicate Responses call IDs and keeps later turns from repeating the 400', async () => {
-+    const host = await freshCodexProxyHost(true);
-+    const actual = await vi.importActual<typeof import('@cindy/anthropic-compat-proxy')>('@cindy/anthropic-compat-proxy');
-+    const requests: Array<Record<string, unknown>> = [];
-+    const upstream = createServer(async (req, res) => {
-+      const chunks: Buffer[] = [];
-+      for await (const chunk of req) chunks.push(Buffer.from(chunk));
-+      const body = JSON.parse(Buffer.concat(chunks).toString('utf8')) as Record<string, unknown>;
-+      requests.push(body);
-+      const input = body.input as Array<Record<string, unknown>>;
-+      const callIds = input.filter(item => item.type === 'function_call' || item.type === 'custom_tool_call').map(item => item.call_id);
-+      const outputIds = input.filter(item => item.type === 'function_call_output' || item.type === 'custom_tool_call_output').map(item => item.call_id);
-+      const hasDuplicateCall = new Set(callIds).size !== callIds.length;
-+      const hasDuplicateOutput = new Set(outputIds).size !== outputIds.length;
-+      if (hasDuplicateCall || hasDuplicateOutput) {
-+        res.writeHead(400, { 'content-type': 'application/json' });
-+        res.end(JSON.stringify({ error: { message: "Duplicate function_call_output for call_id 'call_retry'. Each function_call must have exactly one matching function_call_output" } }));
-+        return;
-+      }
-+      res.writeHead(200, { 'content-type': 'application/json' });
-+      res.end(JSON.stringify({ output: [] }));
-+    });
-+    await new Promise<void>(resolve => upstream.listen(0, '127.0.0.1', resolve));
-+    const upstreamUrl = `http://127.0.0.1:${(upstream.address() as AddressInfo).port}`;
-+    mockState.createAnthropicCompatProxy.mockImplementation((opts: Parameters<typeof actual.createAnthropicCompatProxy>[0]) =>
-+      actual.createAnthropicCompatProxy({
-+        ...opts,
-+        upstream: upstreamUrl,
-+        resolveOutboundProxy: () => null,
-+        routingTransform: async (body, ctx) => ({ ...(await opts.routingTransform?.(body, ctx)), upstreamOverride: upstreamUrl }),
-+      }),
-+    );
-+    const input = [
-+      { type: 'function_call', id: 'fc_1', call_id: 'call_retry', name: 'write', arguments: '{}' },
-+      { type: 'function_call_output', id: 'fco_1', call_id: 'call_retry', output: 'failed' },
-+      { type: 'function_call', id: 'fc_2', call_id: 'call_retry', name: 'write', arguments: '{}' },
-+      { type: 'function_call_output', id: 'fco_2', call_id: 'call_retry', output: 'succeeded' },
-+    ];
-+    const post = () => new Promise<number | undefined>((resolve, reject) => {
-+      const req = httpRequest(host.getCodexProxyEndpoint() + '/v1/responses', {
-+        method: 'POST',
-+        headers: { 'content-type': 'application/json', 'thread-id': 'thread-7906' },
-+      }, res => {
-+        res.resume();
-+        res.once('end', () => resolve(res.statusCode));
-+      });
-+      req.once('error', reject);
-+      req.end(JSON.stringify({ model: 'amazon/nova-pro-v1', input }));
-+    });
-+
-+    try {
-+      await host.ensureCodexProxyReady();
-+      expect(await post()).toBe(200);
-+      expect(requests).toHaveLength(2);
-+      expect(requests[1]?.input).toEqual([
-+        input[0], input[1],
-+        { ...input[2], call_id: 'call_retry__cindy_dup_2' },
-+        { ...input[3], call_id: 'call_retry__cindy_dup_2' },
-+      ]);
-+
-+      expect(await post()).toBe(200);
-+      expect(requests).toHaveLength(3);
-+      expect(requests[2]?.input).toEqual(requests[1]?.input);
-+    } finally {
-+      host.unregister('session-7906');
-+      const { responsesToolCallHistoryStripController } = await import('../thread-strip-controllers.js');
-+      responsesToolCallHistoryStripController.clear('thread-7906');
-+      await host.disposeCodexProxy();
-+      upstream.closeAllConnections();
-+      await new Promise<void>(resolve => upstream.close(() => resolve()));
-+      mockState.realStripTransforms = false;
-+    }
+ describe('text color discipline', () => {
++  // Guard regression: encoded document assets contain long word runs. Restarting
++  // the named-style matcher at every character exhausted CI's normal 5s budget.
++  // Keep scanning the whole input and still report the text token after the asset.
++  it('scans text colors after a long encoded asset within the normal guard deadline', () => {
++    const source = `const asset = "${'A'.repeat(160_000)}";\nconst ink = colors.border;\n<Text style={{ color: ink }} />`;
++    expect(scanTextColors(source)).toEqual([{ where: 'inline', token: 'border' }]);
 +  });
 +
-   it.each([
-     'https://api.moonshot.cn/v1',
-     'https://api.moonshot.ai/v1/',
-@@ -2787,15 +2862,15 @@ describe('codex proxy host', () => {
-         // upstream 是函数形态(每请求现取,model-access 下发可运行期换 endpoint);
-         // 断言其当前求值 = 网关 base + /v1
-         upstream: expect.any(Function),
--        // [armed HTTP recovery strip(WS 错误后落回 HTTP 即激活对应 strip), encrypted activeStrip, image generation activeStrip, provider-aware Guardian reviewer, locked Subagent route, instructions 注入, locked Subagent exec guard, Gateway 原生 web_search, 跨来源压缩块兼容, xAI ModelInput activeStrip, responses item id activeStrip(#4738), responses item id length activeStrip(#4227), exec function adapter, strict gateway history
+   it('scans style arrays, conditional branches, bare theme paths and named styles used on <Text>', () => {
+     const tokens = (src: string) => scanTextColors(src).map((f) => f.token);
+     expect(tokens('<Text style={[styles.label, { color: colors.border }]} />')).toEqual(['border']);
 ```
 
-**File**: `apps/desktop/src/main/maker-host/codex-proxy-host.ts` (modified, +24/-1)
+**File**: `docs/dev-rules/protocol-compatibility.md` (modified, +34/-0)
 ```diff
-@@ -25,7 +25,7 @@ import {
- } from '@cindy/model-providers';
- import { reconcileOutboundReasoningEffort } from './outbound-reasoning-effort.js';
- import { createPiProviderFetch, handlePiProviderRequest, invocationModelRecord, nativeBridgeApiKey, readBoundedResponseText, requiresNativeProviderAuth } from './pi-provider-transport.js';
--import { normalizeProviderRequest, normalizeMiniMaxResponsesReasoning } from '@cindy/model-compat';
-+import { normalizeProviderRequest, normalizeMiniMaxResponsesReasoning, normalizeRepeatedResponseToolCallIdsFromBody } from '@cindy/model-compat';
- import { createCodexResponsesCompatibilityAdapter, sanitizeXaiTools, hasCacheOnlySearchProhibition, sanitizeByteDanceSeedTools, normalizeByteDanceSeedInput, sanitizeByteDanceSeedReasoning, normalizeStrictGatewayHistory, sanitizeDeepSeekV4CustomTools } from '@cindy/model-compat';
- import { peekGrokAccessToken } from './grok-oauth-login.js';
- import { bearerAccessTokenFromHeaders } from './chatgpt-bridge-auth-invalidation.js';
-@@ -77,6 +77,7 @@ import {
-   type RequestTransformCtx,
-   type RoutingDecision,
-   type RoutingTransform,
-+  type RecoveryRule,
- } from '@cindy/anthropic-compat-proxy';
- import { buildVisionBridgeProxyTransform } from '../vision-bridge/vision-bridge-controller.js';
- import {
-@@ -142,6 +143,7 @@ import {
-   responsesItemIdStripController,
-   responsesItemIdLengthStripController,
-   responsesReasoningContentStripController,
-+  responsesToolCallHistoryStripController,
-   xaiModelInputStripController,
- } from './thread-strip-controllers.js';
- import { createMakerLogger } from './logger-adapter.js';
-@@ -246,6 +248,19 @@ const responsesItemIdLengthRecoveryRule = createResponsesItemIdLengthRecoveryRul
- const responsesReasoningContentRecoveryRule = createResponsesReasoningContentRecoveryRule({
-   onRetry: (threadId, model) => responsesReasoningContentStripController.markActive(threadId, model),
- });
-+const duplicateResponsesToolCallRecoveryRule: RecoveryRule = {
-+  id: 'duplicate_responses_tool_call',
-+  enabled: () => true,
-+  matches: (errorText) => /duplicate\s+function_call_output\s+for\s+call_id/i.test(errorText),
-+  strip: normalizeRepeatedResponseToolCallIdsFromBody,
-+  onRetry: (threadId, model) => responsesToolCallHistoryStripController.markActive(threadId, model),
-+  useUpstreamModel: true,
-+  applyOnUnmatchedRetry: false,
-+  // 只修重复的工具 ID。这条规则的判据绑在「上游明确说 call_id 重复」上,不能顺带
-+  // 叠洗别的 strip:encrypted-content 那条会在同一次透明重试里删掉上游从未拒绝过的
-+  // 加密/reasoning 内容,并把删除带进后续轮次(与 responses_reasoning_content 同处理)。
-+  allowExtraRules: false,
-+};
- const xaiModelInputRecoveryRule = createXaiModelInputRecoveryRule({
-   onRetry: (threadId, model) => xaiModelInputStripController.markActive(threadId, model),
- });
-@@ -256,6 +271,7 @@ const CODEX_BODY_RECOVERY_RULES = [
-   responsesItemIdPrefixRecoveryRule,
-   responsesItemIdLengthRecoveryRule,
-   responsesReasoningContentRecoveryRule,
-+  duplicateResponsesToolCallRecoveryRule,
-   xaiModelInputRecoveryRule,
-   vllmResponsesCompatibilityRule,
- ] as const;
-@@ -3311,6 +3327,11 @@ function createTransformRequestChain(
-     // Run after every provider dialect rewrite: xAI can also turn custom calls into functions.
-     // This covers native-custom routes and tool-less /responses/compact without changing call_id.
-     normalizeResponsesToolItemIds,
-+    createActiveStripTransform({
-+      controller: responsesToolCallHistoryStripController,
-+      enabled: () => true,
-+      strip: normalizeRepeatedResponseToolCallIdsFromBody,
-+    }),
-     stripNonAnthropicFields,
-   ];
-   if (process.env.XDT_CODEX_PROXY_DUMP_TRANSFORMED_BODY === '1') {
-@@ -4041,6 +4062,7 @@ function clearSessionThreads(sessionId: string): string[] {
-       httpRecoveryReasonByThread.delete(threadId);
-       pendingHttpRecoveryStripByThread.delete(threadId);
-       responsesReasoningContentStripController.clear(threadId);
-+      responsesToolCallHistoryStripController.clear(threadId);
-     }
-   }
-   return threadIds;
-@@ -4079,6 +4101,7 @@ export async function disposeCodexProxy(): Promise<void> {
-   for (const threadId of threadToSession.keys()) {
-     registry.delete(threadId);
-     responsesReasoningContentStripController.clear(threadId);
-+    responsesToolCallHistoryStripController.clear(threadId);
-   }
-   sessionToThread.clear();
-   sessionToThreads.clear();
-```
-
-**File**: `apps/desktop/src/main/maker-host/thread-strip-controllers.ts` (modified, +3/-0)
-```diff
-@@ -22,6 +22,9 @@ export const responsesItemIdLengthStripController = createThreadStripController(
- // Raw reasoning content rejected after a provider switch; marked only by its own recovery rule.
- export const responsesReasoningContentStripController = createThreadStripController();
+@@ -485,6 +485,40 @@ stream 匹配后才处理；信令不进入业务可靠 FIFO，也不走直连
+ 区间随机错峰（含 60 秒封顶档），避免多个 peer 同时失败后集中重新协商。平均间隔约为
+ 原固定档位的 90%；稳定连接满 60 秒后重置退避，撤权、断链或停止时仍取消待重试。
  
-+// Responses tool call IDs rejected by strict gateways; after recovery, pre-clean later turns.
-+export const responsesToolCallHistoryStripController = createThreadStripController();
++直连容量是本机传输资源预算，独立于供应商组的执行并发上限。Desktop 一个数据进程的所有
++客户端（含跨区域连接）合计最多 64 个实际协商中／已打开的 peer；同账号设备与供应商分享
++各保留 8 个名额，余下 48 个共享，因此单类最多 56 个。Mobile 维持原有 16 个、不设分类预留。
++分类不赋予权限：分享仍须通过原有 capability、可靠握手和许可检查，见
++[`provider-sharing-direct-execution.md`](../product-rules/provider-sharing-direct-execution.md)。
++`directCapacity.ts` 是预算与排队判据正本，Main/WebView bridge 与生成的浏览器 runtime
++同步支持桌面硬上限；平台只能选择不超过它的预算，不增能力位、不改 relay 信令格式。
 +
- // 空 thinking 块主动剥离 —— always-on(删空块零成本)。必须与上面是独立实例。
- export const emptyThinkingStripController = createThreadStripController();
- 
++满额时业务继续走 relay；有界等待队列按类内 FIFO、类间轮转补建，不驱逐健康通道。
++释放名额后自动唤醒等待者，再次核验当前授权与 stream；入站 offer 最多保留 15 秒，
++撤权／换代／过期后不得补建。失败尝试立即释放物理名额，重试状态不占直连容量。
++每个客户端最多保留 256 个候选、同一数据进程最多 256 个等待者；无业务活动的失败／等待状态
++在 5 分钟后回收（正在进行的请求例外），新业务可以再触发尝试。有等待者时每分钟检查长期
++空闲通道：至少 5 分钟无收发、没有在途请求、接收处理或缓冲时才让出名额。无压力时保留已建立
++的通道，分享许可续期不因本机空闲策略而换通道。
++Desktop 还通过 `isPeerBusy` 接入 dispatch 的执行中请求和待发回包，不能把可靠帧已 ACK
++误当作宿主业务已完成；这只阻止空闲回收，不延后 ACK 或阻塞后续 stop／steer／push。
++
++匿名诊断仅记录固定 reason、kind、active/limit/queued、分类占用与预留数，以及完整 peer key 的 SHA-256 前 16 位；
++每个 peer 的同一 reason 每分钟最多一次，不输出原始 scoped key、SDP、IP 或错误对象。
++旧 Mobile 宿主没有 WebCrypto 时记 `peerHash=unavailable`，不退回明文 ID。容量满、队列满、
++协商超时、网络失败、runtime 故障与空闲让出分别记录；不会把 `channel-closed` 猜成网络失败。
++自建中转沿用已有签名 push 的不透明转发，不需改服务端；共享客户端测试、relay 测试和
++`pnpm --filter @cindy/device-link-relay run interop` 同时验证。
++
++本地容量／吞吐复现：`node scripts/direct-link-smoke.mjs <Chrome路径> --capacity`。
++64 是本机浏览器压测后的初始桌面预算，不等于跨机器、长时间高负载或手机真机验收；
++单 peer 帧／缓冲上限保持不变，更多 PeerConnection 会增加 CPU、内存和网络资源占用。
++2026-11-02 的 Windows / Node 22.22.3 本机 Chromium 记录：64 条通道建立 541ms，
++8 轮合计 52 MiB UTF-8 正文传输 3466ms，20ms 定时探针观察到最大延迟 78ms；第 65 条
++释放后补建，其余 63 条保留原通道。这些是一次本机 fixture 测量，不作为生产性能保证。
++另已通过共享客户端全套、桌面适配器与跨区域测试、自建 relay 测试／互通、两个独立
++Electron 进程的 IPC/WebRTC smoke，以及 Desktop、Mobile 和共享包类型检查；真机长时压测待补。
++
+ 数据通道 `device-link-v1` 只使用可靠有序 SCTP；同一完整 envelope 拆为不超过 16 KiB 的
+ 二进制片，首字节 0/1 表示续片/末片，剩余字节是 UTF-8。单条最多 `MAX_FRAME_BYTES`，
+ 重组有字节、分片数和超时边界；在原可靠层接收之前重组，序号、去重与 ACK 语义不变。
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #8147** (2026-10-30): fix(chat): 消除桌面和手机重复错误提示 (@zqchris)
-- **PR #8144** (2026-10-30): fix(ci): brand terminology guard git ls-files maxBuffer (@zqchris)
-- **PR #8140** (2026-10-30): fix(chat): 缩短话题回复与贴回群聊等待 (@xd-bobo)
-- **PR #8116** (2026-10-30): feat(x): 支持原视频分块上传与浏览器视频发帖 (@MagicLizi)
-- **PR #8112** (2026-10-30): fix: allow group companions from other devices (@zqchris)
-- **PR #8104** (2026-10-30): feat(voice-input): 语音输入识别语言新增西班牙语 (@techsaurabh-394)
+- **PR #8633** (closed): fix(agent-island): 隐藏指令不进入任务活动预览 (@zqchris)
+- **PR #8630** (2026-11-03): fix(mobile): 推迟 SwiftUI 宿主的控制器挂接，修复 iOS 安全区更新时闪退 (@dashhuang)
+- **PR #8627** (2026-11-03): fix(quota): 费用明细不再把额度卡片撑宽 (@dashhuang)
+- **PR #8621** (2026-11-03): fix(desktop): 静态链接 Windows 远程桌面组件运行库 (@DavidShenXD)
+- **PR #8614** (2026-11-03): fix(desktop): 补齐排队消息落库前授权拒绝的原因日志 (@zcinta0514)
+- **PR #8613** (2026-11-03): fix(desktop): 动态壁纸中断时保留静态背景并恢复播放 (@zcinta0514)
 
 ---
 
@@ -2028,28 +2110,60 @@ fix(providers): 保存时不再静默丢弃空 runtime 上的协议选择
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ci): raise brand terminology guard git ls-files maxBuffer
+## X. Merge pull request #7766 from fancyboi999/fix/7748-mcp-app-tool-timeout
 
 **RULE**:
-When implementing operations in `scripts/brand-terminology-guard.mjs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in makecindy/cindy. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `apps/desktop/src/main/mcp-apps/__tests__/interop.test.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in makecindy/cindy. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0f724deb`: ci): raise brand terminology guard git ls-files maxBuffer. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4f2d83c7`: Merge pull request #7766 from fancyboi999/fix/7748-mcp-app-tool-timeout. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `scripts/brand-terminology-guard.mjs`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/desktop/src/main/mcp-apps/__tests__/interop.test.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-  maxBuffer: 64 * 1024 * 1024,
+import type { RequestHandlerExtra } from '@modelcontextprotocol/sdk/shared/protocol.js';
+  type ServerRequest,
+  type ServerNotification,
+    source?: typeof endpoint;
+    url:
+      transport === 'http' ? (options.source ?? endpoint).url : (options.source ?? endpoint).sseUrl,
+  const apps = [app];
+    await Promise.all(apps.map((view) => view.close()));
+    apps,
+/** Real SDK requests with server completion controlled independently of the Host clock. */
+async function controlledToolFixture(transport: 'http' | 'sse' = 'http') {
+  const calls: {
+    extra: RequestHandlerExtra<ServerRequest, ServerNotification>;
+    resolve(result: CallToolResult): void;
+  }[] = [];
+  const source = await startMockAppServer({
+    createServer: () => {
+      const server = createMockAppServer();
+      server.registerTool(
+        'controlled_tool',
+        { inputSchema: {}, _meta: { ui: { visibility: ['app'] } } },
+        async (_args, extra) =>
+          new Promise<CallToolResult>((resolve) => calls.push({ extra, resolve })),
+      );
+      return server;
+    },
+  });
+  cleanups.push(async () => {
+    calls.forEach(({ resolve }) => resolve({ content: [] }));
+    await source.close();
+  });
+  retur
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+    url: transport === 'http' ? endpoint.url : endpoint.sseUrl,
+    await app.close();
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0f724deb` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4f2d83c7` are properly handled with clean fallback behavior.

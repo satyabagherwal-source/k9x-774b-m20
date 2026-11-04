@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tursodatabase-turso-learnings.md`  
 > **Source**: github ([https://github.com/tursodatabase/turso](https://github.com/tursodatabase/turso))  
-> **Source Version**: `31315b3d`  
+> **Source Version**: `f9446abf`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T23:49:58.610Z  
+> **Timestamp**: 2026-11-03T22:15:28.696Z  
 > **Learning ID**: `learn-github-tursodatabase-turso`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tursodatabase-turso-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tursodatabase/turso](https://github.com/tursodatabase/turso))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T23:49:58.602Z  
+> **Harvest Timestamp**: 2026-11-03T22:15:27.488Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A SQL database in Rust: SQLite-compatible, now also speaking Postgres (experimental). The LLVM of databases.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md
-- **Stars / Engagement**: 25108 stars
+- **Stars / Engagement**: 25137 stars
 
 ---
 
@@ -1376,13 +1376,14 @@ async fn main() -> Result<(), Error> {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #11194** (2026-10-31): **postgres: yield during deferred cleanup and transaction rollback**
-  *Symptoms*: # NOTICE:  This PR uses a branch in the same repository; maintainers with write access can edit it.  ## Description  Add a cooperative PostgreSQL cleanup API, resumable aborted-transaction rollback, and schema-based preparation checks.  - Expose `Statement::cleanup_nonblock()` so callers can drive deferred cleanup before reset or drop. - Retain rollback state across I/O completions and preserve the original execution error and PostgreSQL transaction state. - Replace blocking catalog queries used for index naming, DROP VIEW validation, and COPY TO STDOUT preparation with connection-schema lookups.  `reset()` and `Drop` retain synchronous fallbacks. Core statement reset, COPY file loading, and server-side COPY export execution are not made nonblocking by this change.  ## Motivation and context  Deferred execution already yields, but preparation checks and transaction cleanup could still execute SQL synchronously inside that path. Callers need an explicit way to finish PostgreSQL cleanup cooperatively without losing rollback progress or reporting success before cleanup completes.  Follow-up to #11190 and #11191.  Thread: https://ampcode.com/threads/T-28890b5f-9c6b-4688-9cfe-d58e60c893ee  ## Description of AI Usage  Amp implemented the changes and performed local validation under the author's direction. The linked thread contains the investigation, implementation decisions, and remaining blocking-path limitations. 
+- **Issue #11319** (2026-11-03): **Add tests that show races when threads share one connection**
+  *Symptoms*: ## Description  Adds tests that show that two threads can use one connection at the same time in unsafe ways, with only public API calls. The tests fail on purpose. This PR does not fix the bugs.  `turso::Connection` is `Clone + Send + Sync`, and all clones use one pager, one page cache, and the same page buffers. sdk-kit lets only one `step()` at a time run on a connection (`ConcurrentGuard`), but `reset()`, the drop of a statement, and `Connection::cacheflush()` do not take that check. The Rust crate calls `reset()` at the start of each `Statement::query()` and `Statement::execute()`.  The tests show two problems:  - **A data race on page buffers.** One thread updates a blob in place (`BTreeCursor::overwrite_content`). Another thread calls `cacheflush()`, which copies the same page buffer into a WAL frame (`WalFile::prepare_transformed_frame`). ThreadSanitizer reports a data race on the `ArenaBuffer` memory, and the WAL file gets page images that never existed: half old bytes, half new bytes. `COMMIT` writes the page again, so SQL readers did not see these frames in our runs. - **Panics when `reset()` runs during `step()`.** A reset of an unfinished statement calls `abort()`, which changes the transaction state, the WAL locks, and the cursors of the connection while a statement on another thread is in `step()`. Then `turso_assert!` checks fail, for example `must have a read transaction to begin a write transaction`, `write lock already held by this connection`, `dirty pages
 
-- **Issue #11191** (2026-10-31): **postgres: reuse yielding execution for deferred session statements**
-  *Symptoms*: # NOTICE:  This branch is in the main repository, so maintainers with repository write access can edit it directly.  ## Description  Remove deferred callbacks and reuse the prerequisite execution state machine for session statements. Schema operations and COPY database work retain their active statement across yields and return I/O completions to the caller through the existing nonblocking runners.  Schema creation and cascading drops use savepoint cleanup so failure or cancellation before commit rolls back the complete operation. COPY file reading and parsing, and reset/drop cleanup, remain synchronous.  ## Motivation and context  Builds on #11190. The prerequisite runner already supports resumable execution, but the remaining deferred callbacks still execute database work synchronously. Sharing that runner removes the separate callback path and preserves progress, interruption handling, and cleanup across yields.  ## Description of AI Usage  Amp implemented and verified this change under the author’s direction. The author requested removal of Callback and reuse of the existing prerequisite execution logic.  Thread: https://ampcode.com/threads/T-28890b5f-9c6b-4688-9cfe-d58e60c893ee
+- **Issue #11308** (2026-11-03): **core: refuse non-deterministic and NULL results in custom types and persisted expressions**
+  *Symptoms*: ## Summary  Step 1 of the custom type comparison redesign (plan in `docs/internals/custom-type-comparisons/`). Replaces #11143.  ### A CHECK that reads the clock is an error, as in SQLite  Whether a stored row satisfies such a CHECK depends on the date.  ```sql CREATE TABLE booking(d TEXT CHECK (d > date('now'))); INSERT INTO booking VALUES ('2030-01-01'); -- main: stored; after 2030 the same INSERT fails the CHECK -- now:  non-deterministic use of date() in a CHECK constraint   (same as sqlite3) ```  ### An index on `date(ts)` refuses a row whose `ts` is `'now'`, as in SQLite  `date(ts)` reads the clock only when the value of `ts` is `'now'`, so this can only be checked when the row is written. That is why each function call now records where it is compiled (CHECK, index, generated column or DECODE): the date functions check it at run time and name it in the error.  ```sql CREATE TABLE log(ts TEXT); CREATE INDEX d ON log(date(ts)); INSERT INTO log VALUES ('now'); -- main: stored; the index entry holds today's date, which the expression no longer gives tomorrow -- now:  non-deterministic use of date() in an index   (same as sqlite3) ```  ### Date functions that don't read the clock work in indexes and generated columns  Main refused date functions at CREATE time even when they never read the clock.  ```sql CREATE TABLE log(ts TEXT); CREATE INDEX recent ON log(ts) WHERE date(ts) > '2020-01-01'; -- main: cannot use aggregate, window functions or reference other tables in WHERE 
   **Post-Mortem & Fix Analysis**:
-  > <!-- __CODSPEED_PERFORMANCE_REPORT_COMMENT__ --> ## Merging this PR will **not alter performance**  <details> <summary><b>2 warnings, 1 note</b></summary>  > :warning: **Unable to measure the execution of 1 benchmark** > > This benchmark measured no execution time, so its result is not comparable and counts as unchanged. This usually happens when the compiler removes the code under test. > > [Prevent compiler optimizations](https://codspeed.io/docs/troubleshooting?utm_source=github&utm_medium=comment-v2&utm_content=optimized_out#optimized-out-benchmarks) > > [See affected benchmarks](https://app.codspeed.io/tursodatabase/turso/branches/fix%2Fpg-deferred-callbacks?q=has%3Aoptimized_out&utm_source=github&utm_medium=comment-v2&utm_content=affected_benchmarks)  > :warning: **83 benchmarks are dominated by system calls** > > System calls cannot be simulated consistently and are left out of the measure. The reported value understates the real cost. Switch to the Walltime instrument to measur
+  > ### Autofixer review <sub>🔄 Autofixer updates this comment while the review runs.</sub>  Review cancelled: the pull request was closed. 
+  > <!-- __CODSPEED_PERFORMANCE_REPORT_COMMENT__ --> ## Merging this PR will **improve performance by 21.47%**  <details> <summary><b>3 warnings, 1 note</b></summary>  > :warning: **Unable to measure the execution of 1 benchmark** > > This benchmark measured no execution time, so its result is not comparable and counts as unchanged. This usually happens when the compiler removes the code under test. > > [Prevent compiler optimizations](https://codspeed.io/docs/troubleshooting?utm_source=github&utm_medium=comment-v2&utm_content=optimized_out#optimized-out-benchmarks) > > [See affected benchmarks](https://app.codspeed.io/tursodatabase/turso/branches/custom-types-compare-redesign?q=has%3Aoptimized_out&utm_source=github&utm_medium=comment-v2&utm_content=affected_benchmarks)  > :warning: **95 benchmarks are dominated by system calls** > > System calls cannot be simulated consistently and are left out of the measure. The reported value understates the real cost. Switch to the Walltime instrument
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1399,742 +1400,554 @@ async fn main() -> Result<(), Error> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `01cddb12` (2026-10-31)
-**Commit Message**: Merge 'core/translate: skip sqlite_sequence rows with a NULL name' from app/turso-github-handyman
+### Incident Patch 1: `35d01f9e` (2026-10-28)
+**Commit Message**: core/security: Add role catalog
+
+Core has no notion of roles, so a SQL frontend that wants roles has
+nowhere to keep them and nothing to check privileges against.
+
+Add the security::roles module with RoleId, Role, and RoleCatalog.
+Two role ids are built in: RoleId::SUPERUSER, which every connection
+starts as and which passes every privilege check, and RoleId::PUBLIC,
+which every role is a member of and no session may switch to. Core
+gives them no names, and the catalog has no entry for them. The catalog
+holds the roles stored in the roles table, and RoleCatalog::new()
+builds it from their rows. Each role can be a superuser. The catalog
+also says whether a role is a superuser, and whether one role may
+switch to another.
+
+Statements need to look up roles when they are prepared, and reading
+the roles table for every statement would be slow, so each schema
+keeps a role catalog. Schema copies share it, so taking a copy of the
+schema does not copy the roles.
+
+Tests: security::roles unit tests, schema_clones_share_the_role_catalog
+
+**File**: `core/lib.rs` (modified, +1/-0)
+```diff
+@@ -36,6 +36,7 @@ pub mod native_ext;
+ #[cfg(any(feature = "fuzz", feature = "bench"))]
+ pub mod numeric;
+ pub mod schema;
++pub mod security;
+ pub mod skiplist;
+ pub mod state_machine;
+ pub mod storage;
+```
+
+**File**: `core/schema.rs` (modified, +15/-0)
+```diff
+@@ -112,6 +112,7 @@ impl Trigger {
+     }
+ }
+ 
++use crate::security::roles::RoleCatalog;
+ use crate::storage::btree::{BTreeCursor, CursorTrait};
+ use crate::sync::Arc;
+ use crate::sync::Mutex;
+@@ -1103,6 +1104,9 @@ pub struct Schema {
+     /// The materialized views met before the names of the namespaces were
+     /// loaded, built once they are.
+     pending_materialized_views: Option<PendingMaterializedViews>,
++
++    /// The roles of the database. Copies of the schema share them.
++    pub roles: Arc<RoleCatalog>,
+ }
+ 
+ /// Materialized views the loader read before the names of the namespaces,
+@@ -1299,6 +1303,7 @@ impl Schema {
+             default_namespaces: dialect.default_namespaces(),
+             namespace_names_loaded: !dialect.supports_namespaces(),
+             pending_materialized_views: None,
++            roles: Arc::default(),
+         };
+         dialect.register_catalog(&mut schema, enable_custom_types)?;
+         Ok(schema)
+@@ -4581,6 +4586,7 @@ impl TryClone for Schema {
+             default_namespaces: self.default_namespaces,
+             namespace_names_loaded: self.namespace_names_loaded,
+             pending_materialized_views: self.pending_materialized_views.clone(),
++            roles: self.roles.clone(),
+             dropped_root_pages: self.dropped_root_pages.try_clone()?,
+             type_registry: self.type_registry.try_clone()?,
+             custom_types_enabled: self.custom_types_enabled,
+@@ -8711,6 +8717,15 @@ mod tests {
+ 
+     use crate::alloc::vec;
+ 
++    #[test]
++    fn schema_clones_share_the_role_catalog() {
++        let schema = Schema::new();
++
++        let clone = schema.try_clone().unwrap();
++
++        assert!(Arc::ptr_eq(&schema.roles, &clone.roles));
++    }
++
+     #[test]
+     fn test_column_definition_flag_conversion() {
+         for bits in 0..=u8::MAX {
+```
+
+**File**: `core/security/mod.rs` (added, +1/-0)
+```diff
+@@ -0,0 +1 @@
++pub mod roles;
+```
+
+**File**: `core/security/roles.rs` (added, +211/-0)
+```diff
+@@ -0,0 +1,211 @@
++//! Roles for access control.
++//!
++//! A role is an identity that owns objects and holds privileges. Two role ids
++//! are built in: [RoleId::SUPERUSER], which every connection starts as, and
++//! [RoleId::PUBLIC], which every role is a member of. Core gives them no
++//! names; a frontend names them as its users expect. Roles created with
++//! `CREATE ROLE` are stored in the `__turso_internal_roles` table, which is
++//! created together with the first such role.
++//!
++//! Each schema holds a [`RoleCatalog`], an in-memory copy of the stored roles. It is
++//! loaded together with the schema, and a statement that changes roles bumps
++//! the schema cookie so that other connections load the change. Looking up a
++//! role therefore never reads the database.
++//!
++//! Core does not add SQL syntax for roles. Each SQL frontend decides how roles
++//! are exposed. The SQLite frontend does not expose them at all.
++
++use std::collections::{BTreeMap, HashMap};
++
++use crate::numeric::Numeric;
++use crate::{LimboError, Result, Value};
++
++pub const ROLES_TABLE_NAME: &str = "__turso_internal_roles";
++
++pub const CREATE_ROLES_TABLE_SQL: &str = "CREATE TABLE __turso_internal_roles (\
++    id INTEGER PRIMARY KEY, \
++    name TEXT NOT NULL, \
++    superuser INTEGER NOT NULL)";
++
++pub const SELECT_ROLES_SQL: &str = "SELECT id, name, superuser FROM __turso_internal_roles";
++
++#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
++pub struct RoleId(i64);
++
++impl RoleId {
++    /// The superuser that every connection starts as. It passes every
++    /// privilege check. Roles stored in the roles table have positive ids, so
++    /// this id is never used by another role.
++    pub const SUPERUSER: RoleId = RoleId(0);
++    /// The built-in role that every role is a member of. No connection can
++    /// run as it.
++    pub const PUBLIC: RoleId = RoleId(-1);
++
++    pub fn get(self) -> i64 {
++        self.0
++    }
++
++    pub(crate) fn from_rowid(rowid: i64) -> Self {
++        assert!(rowid > 0, "role rowid must be positive, got {rowid}");
++        RoleId(rowid)
++    }
++}
++
++#[derive(Debug, Clone, PartialEq, Eq)]
++pub struct Role {
++    pub id: RoleId,
++    pub name: String,
++    /// A superuser passes every privilege check.
++    pub superuser: bool,
++}
++
++/// The roles stored in the roles table of a database. The built-in role ids
++/// have no entry.
++#[derive(Debug, Clone, Default)]
++pub struct RoleCatalog {
++    roles: BTreeMap<RoleId, Role>,
++    ids_by_name: HashMap<String, RoleId>,
++}
++
++impl RoleCatalog {
++    /// Returns a catalog of the roles read from the roles table. Each row is
++    /// `(id, name, superuser)`.
++    pub fn new(rows: &[Vec<Value>]) -> Result<Self> {
++        let mut catalog = Self::default();
++        for row in rows {
++            let role = role_from_row(row)?;
++            if catalog.roles.contains_key(&role.id) || catalog.ids_by_name.contains_key(&role.name)
++            {
++                return Err(LimboError::Corrupt(format!(
++                    "{ROLES_TABLE_NAME} has a duplicate role: {role:?}"
++                )));
++            }
++            catalog.add(role);
++        }
++        Ok(catalog)
++    }
++
++    pub fn get(&self, id: RoleId) -> Option<&Role> {
++        self.roles.get(&id)
++    }
++
++    /// Role names are case-sensitive.
++    pub fn get_by_name(&self, name: &str) -> Option<&Role> {
++        self.ids_by_name.get(name).and_then(|id| self.roles.get(id))
++    }
++
++    /// Returns all roles in the order of their ids.
++    pub fn iter(&self) -> impl Iterator<Item = &Role> {
++        self.roles.values()
++    }
++
++    /// [RoleId::SUPERUSER] is a superuser. Any other role that is not in the
++    /// catalog is not.
++    pub fn is_superuser(&self, id: RoleId) -> bool {
++        id == RoleId::SUPERUSER || self.get(id).is_some_and(|role| role.superuser)
++    }
++
++    /// Whether a session whose login role is `member` may switch to `role`
++    /// with `SET ROLE`. Role membership does not exist yet, so only a
++    /// superuser may switch to another role. No session may switch to
++    /// `public`.
++    pub fn can_set_role(&self, member: RoleId, role: RoleId) -> bool {
++        role != RoleId::PUBLIC && (member == role || self.is_superuser(member))
++    }
++
++    pub fn add(&mut self, role: Role) {
++        assert!(
++            !self.roles.contains_key(&role.id),
++            "role id {:?} is already in use",
++            role.id
++        );
++        let previous = self.ids_by_name.insert(role.name.clone(), role.id);
++        assert!(previous.is_none(), "role {} already exists", role.name);
++        self.roles.insert(role.id, role);
++    }
++}
++
++fn role_from_row(row: &[Value]) -> Result<Role> {
++    let [id, name, superuser] = row else {
++        return Err(corrupt_row(row));
++    };
++    match (id, name, superuser) {
++        (
++            Value::Numeric(Numeric::Integer(id)),
++            Value::Text(name),
++            Value::Numeric(Numeric::Integer(superuser @ (0 | 
+```
+
+---
+
+### Incident Patch 2: `a39fff80` (2026-11-03)
+**Commit Message**: Merge 'bindings/dotnet: add opt-in binary Guid binding' from Marc-André Moreau
 
 ## Problem
 
-```sql
-CREATE TABLE t1(i INTEGER PRIMARY KEY AUTOINCREMENT);
-CREATE TABLE t2(i INTEGER PRIMARY KEY AUTOINCREMENT);
-CREATE TABLE t3(i INTEGER PRIMARY KEY AUTOINCREMENT);
-INSERT INTO t1 VALUES(NULL);
-INSERT INTO t2 VALUES(NULL);
-INSERT INTO t3 VALUES(NULL);
-UPDATE sqlite_sequence SET name=NULL WHERE name='t2';
-INSERT INTO t3 VALUES(NULL);
-SELECT rowid, name, seq FROM sqlite_sequence ORDER BY rowid;
--- Turso (main):      SQLite:
--- 1|t1|1             1|t1|1
--- 2||2               2||1     // t3's counter written into the NULL row
--- 3|t3|1             3|t3|2
-```
+Both .NET providers bind a `System.Guid` parameter as 36-character TEXT,
+which matches Microsoft.Data.Sqlite. Applications that store Guids as
+16-byte BLOBs (`Guid.ToByteArray()`) have no way to bind them that way
+without converting every parameter by hand, and that layout is common:
+it is the System.Data.SQLite default.
 
-The same thing happens with other statements:
-- `ALTER TABLE t3 RENAME TO t4` also renames the NULL row, so there are
-two `t4` rows.
-- `DROP TABLE t3` also deletes the NULL row.
-- In MVCC (multi-version concurrency control) mode, an INSERT deletes
-the NULL row.
-
-The loops that find a table's `sqlite_sequence` row compare names with
-`Insn::Ne` without the jump-if-NULL flag. `Ne` falls through when an
-operand is NULL, so a row with a NULL name counts as a match.
+- `Turso.Data.Sqlite` already parses the System.Data.SQLite `BinaryGUID`
+keyword, but ignores it, and its builder reports `True`.
+- `TursoConnection` has no such option, and `TursoParameter` ignores
+`DbType`.
 
 ## Fix
 
-The flag is now `CmpInsFlags::default().jump_if_n
+TEXT stays the default everywhere. `BinaryGUID=True` opts an untyped
+`Guid` parameter into a 16-byte BLOB.
 
-**File**: `core/translate/alter.rs` (modified, +2/-2)
-```diff
-@@ -322,7 +322,7 @@ fn emit_rename_sqlite_sequence_entry(
-             lhs: sequence_name_reg,
-             rhs: row_name_to_replace_reg,
-             target_pc: continue_loop_label,
--            flags: CmpInsFlags::default(),
-+            flags: CmpInsFlags::default().jump_if_null(),
-             collation: CollationSeq::for_internal_values(),
-         });
- 
-@@ -402,7 +402,7 @@ fn emit_delete_sqlite_sequence_entry(
-             lhs: sequence_name_reg,
-             rhs: row_name_to_delete_reg,
-             target_pc: continue_loop_label,
--            flags: CmpInsFlags::default(),
-+            flags: CmpInsFlags::default().jump_if_null(),
-             collation: CollationSeq::for_internal_values(),
-         });
- 
-```
+1. **`Turso.Data.Sqlite`.** `BinaryGUID` now defaults to `False` and is
+honored by local, remote and embedded-replica commands. A parameter
+typed as `DbType.Guid` or `SqliteType.Text`, which is what EF Core
+sends, stays TEXT either way, so EF Core's Guid storage does not change.
+2. **`TursoConnection`.** New `Binary GUID` keyword (alias `BinaryGUID`;
+keywords are case-insensitive) with the same meaning, for local, replica
+and remote commands: a `TursoPar
 
-**File**: `core/translate/insert.rs` (modified, +1/-1)
+**File**: `bindings/dotnet/Readme.md` (modified, +5/-0)
 ```diff
-@@ -1850,7 +1850,7 @@ fn reload_autoincrement_state(program: &mut ProgramBuilder, meta: AutoincMeta) {
-         lhs: table_name_reg,
-         rhs: name_col_reg,
-         target_pc: found_label,
--        flags: Default::default(),
-+        flags: CmpInsFlags::default().jump_if_null(),
-         collation: super::collate::CollationSeq::NOCASE,
-     });
-     program.emit_insn(Insn::Copy {
-```
-
-**File**: `core/translate/schema.rs` (modified, +1/-1)
-```diff
-@@ -2748,7 +2748,7 @@ pub fn translate_drop_table(
-             lhs: seq_table_name_reg,
-             rhs: dropped_table_name_reg,
-             target_pc: continue_loop_label,
--            flags: CmpInsFlags::default(),
-+            flags: CmpInsFlags::default().jump_if_null(),
-             collation: CollationSeq::NOCASE,
-         });
- 
-```
-
-**File**: `core/translate/sequence.rs` (modified, +1/-1)
-```diff
-@@ -758,7 +758,7 @@ pub(crate) fn emit_sqlite_sequence_sync(
-         lhs: col_name_reg,
-         rhs: name_reg,
-         target_pc: skip_delete_label,
--        flags: CmpInsFlags::default(),
-+        flags: CmpInsFlags::default().jump_if_null(),
-         collation: CollationSeq::for_internal_values(),
-     });
-     program.emit_insn(Insn::Delete {
-```
-
-**File**: `sqlite/conformance/sqlite-sqltests/autoincr.sqltest` (modified, +55/-0)
-```diff
-@@ -618,3 +618,58 @@ expect {
- 	2|second
- 	a"b|2
- }
+@@ -268,6 +268,11 @@ Supported common connection string keywords include:
+ | `Read Your Writes` | Keeps the remote Hrana session baton across commands. Defaults to `True`. Set `False` for stateless one-shot remote requests. |
+ | `Sync Interval` | Embedded replica automatic pull interval in seconds. `0` disables automatic sync. |
+ | `Tls` | Optional override for `libsql://` development URLs. Conflicting values with explicit `http://` or `https://` schemes fail early. |
++| `BinaryGUID` | Defaults to `False`: a `Guid` parameter binds as 36-character uppercase TEXT, as in Microsoft.Data.Sqlite. Set `True` to bind an untyped `Guid` as a 16-byte BLOB (`Guid.ToByteArray()`). A parameter typed as `DbType.Guid` or `SqliteType.Text`, which is what EF Core sends, binds as TEXT either way. `GetGuid` reads both forms. |
 +
-+# A sqlite_sequence row with a NULL name belongs to no table: INSERT,
-+# ALTER TABLE RENAME and DROP TABLE must leave it alone.
-+@cross-check-integrity
-+test autoinc-insert-skips-null-name-sequence-row {
-+	CREATE TABLE t1(i INTEGER PRIMARY KEY AUTOINCREMENT);
-+	CREATE TABLE t2(i INTEGER PRIMARY KEY AUTOINCREMENT);
-+	CREATE TABLE t3(i INTEGER PRIMARY KEY AUTOINCREMENT);
-+	INSERT INTO t1 VALUES(NULL);
-+	INSERT INTO t2 VALUES(NULL);
-+	INSERT INTO t3 VALUES(NULL);
-+	UPDATE sqlite_sequence SET name=NULL WHERE name='t2';
-+	INSERT INTO t3 VALUES(NULL);
-+	SELECT rowid, name, seq FROM sqlite_sequence ORDER BY rowid;
-+}
-+expect {
-+	1|t1|1
-+	2||1
-+	3|t3|2
-+}
-+
-+@cross-check-integrity
-+test autoinc-rename-skips-null-name-sequence-row {
-+	CREATE TABLE t1(i INTEGER PRIMARY KEY AUTOINCREMENT);
-+	CREATE TABLE t2(i INTEGER PRIMARY KEY AUTOINCREMENT);
-+	CREATE TABLE t3(i INTEGER PRIMARY KEY AUTOINCREMENT);
-+	INSERT INTO t1 VALUES(NULL);
-+	INSERT INTO t2 VALUES(NULL);
-+	INSERT INTO t3 VALUES(NULL);
-+	UPDATE sqlite_sequence SET name=NULL WHERE name='t2';
-+	ALTER TABLE t3 RENAME TO t4;
-+	SELECT rowid, name, seq FROM sqlite_sequence ORDER BY rowid;
-+}
-+expect {
-+	1|t1|1
-+	2||1
-+	3|t4|1
-+}
-+
-+@cross-check-integrity
-+test autoinc-drop-skips-null-name-sequence-row {
-+	CREATE TABLE t1(i INTEGER PRIMARY KEY AUTOINCREMENT);
-+	CREATE TABLE t2(i INTEGER PRIMARY KEY AUTOINCREMENT);
-+	CREATE TABLE t3(i INTEGER PRIMARY KEY AUTOINCREMENT);
-+	INSERT INTO t1 VALUES(NULL);
-+	INSERT INTO t2 VALUES(NULL);
-+	INSERT INTO t3 VALUES(NULL);
-+	UPDATE sqlite_sequence SET name=NULL WHERE name='t2';
-+	DROP TABLE t3;
-+	SELECT rowid, name, seq FROM sqlite_sequence ORDER BY rowid;
-+}
-+expect {
-+	1|t1|1
-+	2||1
-+}
++`TursoConnection` accepts the same `BinaryGUID=True` opt-in, and a `TursoParameter` typed as `DbType.Guid` stays TEXT
++there too. `TursoParameter` has no untyped state, so its default `DbType.String` counts as untyped. A `TursoParameter`
++whose `DbType` is `DbType.Binary` binds a `Guid` as a BLOB without the option.
+ 
+ ## SQLite-compatible facade coverage
+ 
 ```
 
-**File**: `sqlite/conformance/turso-sqltests/mvcc_sequence.sqltest` (modified, +18/-0)
+**File**: `bindings/dotnet/src/Turso.Data.Sqlite/SqliteCommand.cs` (modified, +2/-2)
 ```diff
-@@ -505,3 +505,21 @@ expect {
-     6
-     6
- }
-+
-+# A sqlite_sequence row with a NULL name belongs to no table, so the MVCC
-+# sqlite_sequence sync must not delete it.
-+test mvcc-autoincrement-keeps-null-name-sequence-row {
-+    PRAGMA journal_mode = 'mvcc';
-+    CREATE TABLE t1 (i INTEGER PRIMARY KEY AUTOINCREMENT);
-+    CREATE TABLE t2 (i INTEGER PRIMARY KEY AUTOINCREMENT);
-+    INSERT INTO t1 VALUES (NULL);
-+    INSERT INTO t2 VALUES (NULL);
-+    UPDATE sqlite_sequence SET name = NULL WHERE name = 't1';
-+    INSERT INTO t2 VALUES (NULL);
-+    SELECT name, seq FROM sqlite_sequence ORDER BY name;
-+}
-+expect {
-+    mvcc
-+    |1
-+    t2|2
-+}
-```
-
----
-
-### Incident Patch 2: `5b3a3267` (2026-10-31)
-**Commit Message**: postgres: yield while executing statement prerequisites
-
-Deferred prerequisite execution must return pending I/O to callers instead of driving it synchronously inside nonblocking statement methods.
-
-Use the existing nonblocking runners and retain each active statement across yields. Keep savepoint cleanup resumable during execution and preserve the caller's original transaction state. Reset and drop retain synchronous cleanup semantics.
-
-Tests: cargo test -p turso_pg -p turso_pg_tests; cargo clippy -p turso_pg --all-targets --no-deps -- --deny=warnings; cargo fmt --all -- --check
-
-Amp-Thread-ID: https://ampcode.com/threads/T-28890b5f-9c6b-4688-9cfe-d58e60c893ee
-Co-authored-by: pedro muniz <[REDACTED_EMAIL]>
-
-**File**: `Cargo.lock` (modified, +1/-0)
-```diff
-@@ -7282,6 +7282,7 @@ dependencies = [
-  "serde_json",
-  "strum",
-  "tempfile",
-+ "tracing",
-  "turso_core",
-  "turso_ext",
-  "turso_parser",
-```
-
-**File**: `postgres/frontend/Cargo.toml` (modified, +2/-1)
-```diff
-@@ -19,6 +19,7 @@ rustc-hash = "2.0"
- serde_json = { workspace = true }
- strum = { workspace = true }
- tempfile = { workspace = true }
-+tracing = { workspace = true }
- turso_core = { workspace = true, default-features = true, features = [
-     "conn_raw_api",
- ] }
-@@ -28,7 +29,7 @@ turso_pg_parser = { workspace = true }
- uuid = "1.11.0"
+@@ -569,7 +569,7 @@ internal void AddManagedParameters(
+             if (!mapped.TryGetValue(parameterName, out var parameter))
+                 throw new InvalidOperationException(Properties.Resources.MissingParameters(parameterName));
  
- [dev-dependencies]
--turso_core = { workspace = true, features = ["io_memory_yield"] }
-+turso_core = { workspace = true, features = ["io_memory_yield", "test_helper"] }
- 
- [lints]
- workspace = true
-```
-
-**File**: `postgres/frontend/session.rs` (modified, +218/-55)
-```diff
-@@ -3,14 +3,17 @@ use std::borrow::Cow;
- use std::num::NonZero;
- use std::str;
- use std::sync::Arc;
-+use std::task::Waker;
- 
- use crate::catalog::{self, PostgresDialect};
- use crate::error::{in_failed_sql_transaction_error, sqlstate_error};
- use crate::functions::{find_parameter, ConfigParameter, Parameter};
- use crate::settings::{ConnectionSettings, PgSessionState, SettingScope};
- use crate::statement::{PgTxState, PostRunFn, TxRole};
- use turso_core::schema::{Table, SEQ_BACKING_TABLE_PREFIX};
--use turso_core::{Connection, LimboError, Qualifier, Result, Statement, Value};
-+use turso_core::{
-+    Connection, IOResult, LimboError, Qualifier, Result, Statement, StepResult, Value,
-+};
- use turso_parser::ast::{self};
- use turso_pg_parser::foreign_key_tables;
- use turso_pg_parser::sqlstate::{
-@@ -447,14 +450,22 @@ fn prepare_statement_inner(
-         .conn
-         .prepare_translated_cmd(cmd.clone(), &sql)
-         .map_err(schema_error)?;
--    let pg_conn = Arc::clone(pg_conn);
--    let prereqs = translated.prereqs;
--    let sql_owned = sql.into_owned();
--    Ok(crate::Statement::with_deferred(
-+    Ok(crate::Statement::with_prerequisites(
-         inner,
--        Box::new(move |inner| {
--            execute_cmd_with_prereqs(&pg_conn, &prereqs, &cmd, &sql_owned, inner)
--        }),
-+        PrerequisiteExecution {
-+            pg_conn: Arc::clone(pg_conn),
-+            prereqs: translated.prereqs,
-+            cmd,
-+            sql: sql.into_owned(),
-+            phase: PrerequisitePhase::Start,
-+            active: None,
-+            io_completions: None,
-+            was_in_tx: None,
-+            savepoint_open: false,
-+            target_exists: false,
-+            error: None,
-+            interrupted: false,
-+        },
-     )
-     .with_tx_tracking(conn, tx, role)
-     .with_query_start_marking(marks_query_start)
-@@ -559,65 +570,221 @@ fn tx_role(stmt: &ast::Stmt) -> TxRole {
- 
- const PG_STMT_SAVEPOINT: &str = "__turso_pg_stmt";
- 
--fn execute_cmd_with_prereqs(
--    pg_conn: &Arc<PgConnectionInner>,
--    prereqs: &[ast::Stmt],
--    cmd: &ast::Cmd,
--    sql: &str,
--    inner: &mut Statement,
--) -> Result<()> {
--    let conn = &pg_conn.conn;
--    if create_table_if_not_exists_target_present(conn, cmd)? {
--        *inner = conn
--            .prepare_translated_cmd(cmd.clone(), sql)
--            .map_err(schema_error)?;
--        return inner.run_ignore_rows();
-+#[derive(Clone, Copy, PartialEq, Eq)]
-+enum PrerequisitePhase {
-+    Start,
-+    CheckTarget,
-+    Savepoint,
-+    Prerequisite(usize),
-+    Main,
-+    Release,
-+    Rollback,
-+    RollbackRelease,
-+    Done,
-+}
-+
-+pub(crate) struct PrerequisiteExecution {
-+    pg_conn: Arc<PgConnectionInner>,
-+    prereqs: Vec<ast::Stmt>,
-+    cmd: ast::Cmd,
-+    sql: String,
-+    phase: PrerequisitePhase,
-+    active: Option<Statement>,
-+    pub(crate) io_completions: Option<turso_core::types::IOCompletions>,
-+    pub(crate) was_in_tx: Option<bool>,
-+    savepoint_open: bool,
-+    target_exists: bool,
-+    error: Option<LimboError>,
-+    pub(crate) interrupted: bool,
-+}
-+
-+impl PrerequisiteExecution {
-+    pub(crate) fn step(
-+        &mut self,
-+        inner: &mut Statement,
-+        waker: Option<&Waker>,
-+    ) -> Result<StepResult> {
-+        self.io_completions = None;
-+        loop {
-+            if self.phase == PrerequisitePhase::Done {
-+                return self.error.clone().map_or(Ok(StepResult::Done), Err);
-+            }
-+            match self.run_phase_nonblock(inner) {
-+                Ok(IOResult::Done(())) => continue,
-+                Ok(IOResult::IO(io)) => {
-+                    io.set_waker(waker);
-+                    let result = if io.is_explicit_yield() {
-+                        StepResult::Yield
-+                    } else {
-+                        StepResult::IO
-+                    };
-+                    self.io_completions = Some(io);
-+                    return Ok(result);
-+                }
-+                Err(error) => self.fail(error),
-+            }
-+        }
-     }
- 
--    let started_in_autocommit = conn.get_auto_commit();
--    let begin_sp = format!("SAVEPOINT \"{PG_STMT_SAVEPOINT}\"");
--    let release_sp = format!("RELEASE SAVEPOINT \"{PG_STMT_SAVEPOINT}\"");
--    execute_sqlite(conn, begin_sp)?;
--    let result = (|| {
--        for prereq in prereqs {
--            let input = prereq.to_string();
--            let mut stmt = conn
--                .prepare_translated_stmt(prereq.clone(), &input)
--                .map_err(schema_error)?;
--            stmt.run_ignore_rows()?;
-+    fn run_phase_nonblock(&mut self, inner: &mut Statement) -> Result<IOResult<()>> {
-+        use PrerequisitePhase::*;
-+
-+        let conn = &self.pg_conn.conn;
-+        if self.phase == Start {
-+            self.was_in_tx = Some(!conn.get_auto_commit());
-+            self.active = prepare_create_table_target_check(conn, &self.cmd)?;
-+            self.phase = if self.active.is_some() {
-+                CheckTarget
-+            } else {
-+              
-```
-
-**File**: `postgres/frontend/statement.rs` (modified, +77/-51)
-```diff
-@@ -12,14 +12,15 @@ use turso_core::{
- };
- 
- use crate::error::in_failed_sql_transaction_error;
-+use crate::session::PrerequisiteExecution;
- use crate::Result;
- 
- pub(crate) type DeferredExec =
-     Box<dyn FnMut(&mut turso_core::Statement) -> turso_core::Result<()> + Send + Sync>;
- 
--struct DeferredState {
--    exec: DeferredExec,
--    completed: bool,
-+enum DeferredState {
-+    Callback { exec: DeferredExec, completed: bool },
-+    Prerequisites(Box<PrerequisiteExecution>),
- }
- 
- /// How a statement interacts with PostgreSQL's aborted-transaction state.
-@@ -191,13 +192,22 @@ impl Statement {
- 
-     pub(crate) fn with_deferred(inner: turso_core::Statement, exec: DeferredExec) -> Self {
-         let mut stmt = Self::new(inner);
--        stmt.deferred = Some(DeferredState {
-+        stmt.deferred = Some(DeferredState::Callback {
-             exec,
-             completed: false,
-         });
-         stmt
-     }
- 
-+    pub(crate) fn with_prerequisites(
-+        inner: turso_core::Statement,
-+        exec: PrerequisiteExecution,
-+    ) -> Self {
-+        let mut stmt = Self::new(inner);
-+        stmt.deferred = Some(DeferredState::Prerequisites(Box::new(exec)));
-+        stmt
-+    }
-+
-     pub(crate) fn with_tx_tracking(
-         mut self,
-         conn: Arc<Connection>,
-@@ -289,44 +299,46 @@ impl Statement {
+-            command.Parameters.Add(parameter.ToManagedParameter(parameterName));
++            command.Parameters.Add(parameter.ToManagedParameter(parameterName, Connection!.BinaryGuid));
          }
      }
  
--    fn execute_deferred(&mut self, was_in_tx: bool) -> Result<()> {
--        let Some(deferred) = self.deferred.as_mut() else {
--            return Ok(());
--        };
--        if !deferred.completed {
--            let result: Result<()> = (deferred.exec)(&mut self.inner).map_err(Into::into);
--            if result.is_err() {
--                self.note_execution_error(was_in_tx);
--                return result;
--            }
--            deferred.completed = true;
--        }
--        Ok(())
--    }
--
-     pub fn step(&mut self) -> Result<StepResult> {
--        let Some(was_in_tx) = self.tx_gate()? else {
--            return Ok(StepResult::Done);
--        };
--        self.mark_query_start();
--        if self.deferred.is_some() {
--            self.execute_deferred(was_in_tx)?;
--            return Ok(StepResult::Done);
--        }
--        let result = self.inner.step().map_err(Into::into);
--        self.finish_step(result, was_in_tx)
-+        self.step_inner(None)
+@@ -659,7 +659,7 @@ private void BindParameters(TursoStatementHandle statement)
+             if (parameterIndex == 0)
+                 continue;
+ 
+-            TursoBindings.BindParameter(statement, parameterIndex, parameter.ToTursoValue());
++            TursoBindings.BindParameter(statement, parameterIndex, parameter.ToTursoValue(Connection!.BinaryGuid));
+             boundParameters[parameterIndex] = true;
+         }
+ 
+```
+
+**File**: `bindings/dotnet/src/Turso.Data.Sqlite/SqliteConnection.cs` (modified, +2/-0)
+```diff
+@@ -116,6 +116,8 @@ public int DefaultTimeout
+ 
+     internal bool IsSharedCache => _connectionOptions.Cache == SqliteCacheMode.Shared;
+ 
++    internal bool BinaryGuid => _connectionOptions.BinaryGUID;
++
+     internal bool IsManagedConnection => _managedConnection is not null;
+ 
+     private bool HasNativeCallbackHandle =>
+```
+
+**File**: `bindings/dotnet/src/Turso.Data.Sqlite/SqliteConnectionStringBuilder.cs` (modified, +7/-2)
+```diff
+@@ -342,9 +342,14 @@ public string DateTimeFormat
+         set => SetString("DateTimeFormat", value);
      }
  
-     pub fn step_with_waker(&mut self, waker: &Waker) -> Result<StepResult> {
--        let Some(was_in_tx) = self.tx_gate()? else {
--            return Ok(StepResult::Done);
-+        self.step_inner(Some(waker))
-+    }
-+
-+    fn step_inner(&mut self, waker: Option<&Waker>) -> Result<StepResult> {
-+        let saved_tx = match &self.deferred {
-+            Some(DeferredState::Prerequisites(exec)) => exec.was_in_tx,
-+            _ => None,
++    /// <summary>
++    ///     Binds untyped <see cref="Guid" /> parameters as 16-byte BLOBs (<see cref="Guid.ToByteArray()" />)
++    ///     instead of 36-character TEXT, which is what Microsoft.Data.Sqlite does. Defaults to
++    ///     <see langword="false" />.
++    /// </summary>
+     public bool BinaryGUID
+     {
+-        get => GetBool("BinaryGUID", true);
++        get => GetBool("BinaryGUID", false);
+         set => this["BinaryGUID"] = value;
+     }
+ 
+@@ -590,7 +595,7 @@ private void SetNullable<T>(string keyword, T? value)
+             "Tls" => null!,
+             "DateTimeKind" => System.DateTimeKind.Unspecified,
+             "DateTimeFormat" => string.Empty,
+-            "BinaryGUID" => true,
++            "BinaryGUID" => false,
+             "Version" => 3,
+             _ => throw new ArgumentException(Properties.Resources.KeywordNotSupported(keyword)),
          };
--        self.mark_query_start();
--        if self.deferred.is_some() {
--            self.execute_deferred(was_in_tx)?;
-+        let tx = match saved_tx {
-+            Some(was_in_tx) => Some(was_in_tx),
-+            None => self.tx_gate()?,
-+        };
-+        let Some(was_in_tx) = tx else {
-             return Ok(StepResult::Done);
-+        };
-+        if saved_tx.is_none() {
-+            self.mark_query_start();
-         }
--        let result = self.inner.step_with_waker(waker).map_err(Into::into);
-+        let result = match &mut self.deferred {
-+            Some(DeferredState::Callback { exec, completed }) => {
-+                if *completed {
-+                    return Ok(StepResult::Done);
-+                }
-+                exec(&mut self.inner).map(|()| {
-+                    *completed = true;
-+                    StepResult::Done
-+                })
-+            }
-+            Some(DeferredState::Prerequisites(exec)) => exec.step(&mut self.inner, waker),
-+            None => match waker {
-+                Some(waker) => self.inner.step_with_waker(waker),
-+                None => self.inner.step(),
-+            },
-+        }
-+        .map_err(Into::into);
-         self.finish_step(result, was_in_tx)
-     }
+```
+
+**File**: `bindings/dotnet/src/Turso.Data.Sqlite/SqliteParameter.cs` (modified, +7/-3)
+```diff
+@@ -143,10 +143,14 @@ public virtual void ResetSqliteType()
  
-@@ -357,8 +369,10 @@ impl Statement {
-     }
+     internal bool HasValue => _hasValue;
  
-     pub fn reset(&mut self) -> Result<()> {
--        if let Some(deferred) = self.deferred.as_mut() {
--            deferred.completed = false;
-+        match &mut self.deferred {
-+            Some(DeferredState::Callback { completed, .. }) => *completed = false,
-+            Some(DeferredState::Prerequisites(exec)) => exec.reset()?,
-+            None => {}
-         }
-         self.commit_became_rollback = false;
-         self.inner.reset().map_err(Into::into)
-@@ -386,26 +400,26 @@ impl Statement {
-     }
+-    internal TursoValue ToTursoValue()
++    // An untyped Guid binds as 36-character TEXT, as in Microsoft.Data.Sqlite, unless the connection
++    // sets BinaryGUID=True. An explicit SqliteType or DbType wins either way.
++    internal TursoValue ToTursoValue(bool binaryGuid = false)
+     {
+         if (Value is null || Value == DBNull.Value)
+             return TursoValue.Null();
++        if (Value is Guid guid && _sqliteType is null && binaryGuid)
++            return TursoValue.Blob(guid.ToByteArray());
  
-     pub fn run_ignore_rows(&mut self) -> Result<()> {
-+        if self.deferred.is_some() {
-+            return self.run_with_row_callback(|_| Ok(()));
-+        }
-         let Some(was_in_tx) = self.tx_gate()? else {
-             return Ok(());
+         return SqliteType switch
+         {
+@@ -158,9 +162,9 @@ internal TursoValue ToTursoValue()
          };
-         self.mark_query_start();
--        if self.deferred.is_some() {
--            return self.execute_deferred(was_in_tx);
--        }
-         let resu
-```
-
-**File**: `postgres/frontend/tests/embedded_errors.rs` (modified, +383/-0)
-```diff
-@@ -999,6 +999,389 @@ fn transaction_rolled_back_by_the_core_still_reports_aborted() {
-     conn1.execute("COMMIT").unwrap();
- }
+     }
  
-+#[test]
-+fn serial_prerequisites_yield_to_the_caller() {
-+    use turso_core::{IOResult, IO};
-+
-+    for method in 0..4 {
-+        let io = Arc::new(CountedYieldIO::default());
-+        let db = turso_pg::open_database_with_io(
-+            io.clone(),
-+            "serial-yield.db",
-+            OpenFlags::default(),
-+            DatabaseOpts::new(),
-+        )
-+        .unwrap();
-+        let conn = Connection::connect(&db).unwrap();
-+        let mut stmt = conn
-+            .prepare("CREATE TABLE t (a SERIAL, b SERIAL, payload INT)")
-+            .unwrap();
-+        conn.inner()
-+            .set_yield_injector(Some(Arc::new(NthYield::new(4))));
-+        let wakes = Arc::new(WakeCounter::default());
-+        let waker = std::task::Waker::from(wakes.clone());
-+        let mut yields = 0;
-+        let mut explicit_yields = 0;
-+        loop {
-+            let before = io.steps.load(std::sync::atomic::Ordering::Relaxed);
-+            let result = match method {
-+                0 => stmt.step(),
-+                1 => stmt.step_with_waker(&waker),
-+                2 | 3 => {
-+                    let result = if method == 2 {
-+                        stmt.run_ignore_rows_nonblock()
-+                    } else {
-+                        stmt.run_with_row_callback_nonblock(|_| panic!("DDL returned a row"))
-+                    };
-+                    result.map(|result| match result {
-+                        IOResult::Done(()) => StepResult::Done,
-+                        IOResult::IO(completion) => {
-+                            assert!(completion.is_explicit_yield() || !completion.finished());
-+                            if completion.is_explicit_yield() {
-+                                StepResult::Yield
-+                            } else {
-+                                StepResult::IO
-+                            }
-+                        }
-+                    })
-+                }
-+                _ => unreachable!(),
-+            };
-+            assert_eq!(
-+                io.steps.load(std::sync::atomic::Ordering::Relaxed),
-+                before,
-+                "method {method} pumped I/O inside the nonblocking call"
-+            );
-+            let result = result.unwrap();
-+            match result {
-+                StepResult::Done => break,
-+                StepResult::IO | StepResult::Yield | StepResult::Sleep { .. } => {
-+                    yields += 1;
-+                    if method < 2 {
-+                        let completion = stmt.take_io_completions().unwrap();
-+                        assert!(completion.is_explicit_yield() || !completion.finished());
-+                    }
-+                    if matches!(result, StepResult::Yield) {
-+                        explicit_yields += 1;
-+                    }
-+                    let before_wake = wakes.0.load(std::sync::atomic::Ordering::Relaxed);
-+                    io.step().unwrap();
-+                    if method == 1 && matches!(result, StepResult::IO) {
-+                        assert!(wakes.0.load(std::sync::atomic::Ordering::Relaxed) > before_wake);
-+                    }
-+                }
-+                other => panic!("unexpected result: {other:?}"),
-+            }
-+        }
-+        assert!(yields > 0);
-+        assert!(explicit_yields > 0);
-+        conn.inner().set_yield_injector(None);
-+        assert_eq!(conn.transaction_state(), TransactionState::Idle);
-+        conn.execute("INSERT INTO t (payload) VALUES (42)").unwrap();
-+        assert_eq!(
-+            conn.prepare("SELECT a, b FROM t")
-+                .unwrap()
-+                .run_collect_rows()
-+                .unwrap(),
-+            vec![vec![Value::from_i64(1), Value::from_i64(1)]]
-+        );
-+        assert_eq!(
-+            conn.prepare("SELECT sequencename FROM pg_sequences ORDER BY sequencename")
-+                .unwrap()
-+                .run_collect_rows()
-+                .unwrap(),
-+            vec![
-+                vec![Value::build_text("t_a_seq")],
-+                vec![Value::build_text("t_b_seq")]
-+            ]
-+        );
-+    }
-+}
-+
-+#[test]
-+fn serial_prerequisites_clean_up_when_abandoned() {
-+    use turso_core::IO;
-+
-+    for action in 0..3 {
-+        for pause_at in 1..200 {
-+            let io = Arc::new(CountedYieldIO::default());
-+            let db = turso_pg::open_database_with_io(
-+                io.clone(),
-+                "abandoned.db",
-+                OpenFlags::default(),
-+                DatabaseOpts::new(),
-+            )
-+            .unwrap();
-+            let conn = Connection::connect(&db).unwrap();
-+            conn.execute(
-+                "CREATE TABLE kept (v INT); BEGIN; INSERT INTO kept VALUES (42); SAVEPOINT user_sp",
-+            )
-+            .unwrap();
-+            let mut stmt = conn.prepare("CREATE TABLE t (a SERIAL, b SERIAL)").unwrap();
-+            let injector =
+-    internal global::Turso.TursoParameter ToManagedParameter(string parameterName)
++    internal global::Turso.TursoParameter ToManagedParameter(string parameterName, bool binaryGuid = false)
+     {
+-        var value = ToTursoValue();
++        var value = ToTursoValue(binaryGuid);
+         return new global::Turso.TursoParameter(parameterName, value.ValueType switch
+         {
+             TursoValueType.Null or TursoValueType.Empty => DBNull.Value,
 ```
 
----
-
-### Incident Patch 3: `0fc3ce83` (2026-10-31)
-**Commit Message**: postgres: extract prerequisite phase SQL generation
-
-Keep phase SQL generation separate from preparation while preserving translated AST preparation and lazy execution.
-
-Amp-Thread-ID: https://ampcode.com/threads/T-28890b5f-9c6b-4688-9cfe-d58e60c893ee
-Co-authored-by: pedro muniz <[REDACTED_EMAIL]>
-
-**File**: `postgres/frontend/session.rs` (modified, +22/-10)
+**File**: `bindings/dotnet/src/Turso.Data/TursoCommand.cs` (modified, +2/-2)
 ```diff
-@@ -640,23 +640,17 @@ impl PrerequisiteExecution {
-             };
-         }
-         if self.active.is_none() {
-+            let sql = self.phase_sql();
-             self.active = Some(match self.phase {
--                Savepoint => conn.prepare_sqlite(format!("SAVEPOINT \"{PG_STMT_SAVEPOINT}\""))?,
-                 Prerequisite(index) => {
-                     let stmt = &self.prereqs[index];
--                    conn.prepare_translated_stmt(stmt.clone(), &stmt.to_string())
-+                    conn.prepare_translated_stmt(stmt.clone(), &sql)
-                         .map_err(schema_error)?
+@@ -181,7 +181,7 @@ private void PrepareCore()
+ 
+                 if (!string.IsNullOrEmpty(parameter.ParameterName))
+                 {
+-                    var parameterIndex = TursoBindings.BindNamedParameter(preparedStatement, parameter.ParameterName, parameter.ToValue());
++                    var parameterIndex = TursoBindings.BindNamedParameter(preparedStatement, parameter.ParameterName, parameter.ToValue(_connection.BinaryGuid));
+                     if (parameterIndex == 0)
+                         throw new InvalidOperationException($"Parameter {parameter.ParameterName} was not found in the SQL statement.");
+ 
+@@ -193,7 +193,7 @@ private void PrepareCore()
+                     if (parameterIndex > parameterCount)
+                         throw new InvalidOperationException($"Parameter at position {parameterIndex} was not found in the SQL statement.");
+ 
+-                    TursoBindings.BindParameter(preparedStatement, parameterIndex, parameter.ToValue());
++                    TursoBindings.BindParameter(preparedStatement, parameterIndex, parameter.ToValue(_connection.BinaryGuid));
+                     boundParameters[parameterIndex] = true;
                  }
-                 Main => conn
--                    .prepare_translated_cmd(self.cmd.clone(), &self.sql)
-+                    .prepare_translated_cmd(self.cmd.clone(), &sql)
-                     .map_err(schema_error)?,
--                Release | RollbackRelease => {
--                    conn.prepare_sqlite(format!("RELEASE SAVEPOINT \"{PG_STMT_SAVEPOINT}\""))?
--                }
--                Rollback if self.was_in_tx == Some(true) => {
--                    conn.prepare_sqlite(format!("ROLLBACK TO SAVEPOINT \"{PG_STMT_SAVEPOINT}\""))?
--                }
--                Rollback => conn.prepare_sqlite("ROLLBACK")?,
-+                Savepoint | Release | Rollback | RollbackRelease => conn.prepare_sqlite(&sql)?,
-                 Start | CheckTarget | Done => unreachable!(),
-             });
-         }
-@@ -710,6 +704,24 @@ impl PrerequisiteExecution {
-         Ok(IOResult::Done(()))
+             }
+```
+
+**File**: `bindings/dotnet/src/Turso.Data/TursoConnection.cs` (modified, +9/-1)
+```diff
+@@ -48,6 +48,8 @@ public override string ConnectionString
+ 
+     public override string DataSource => _connectionOptions["Data Source"] ?? "";
+ 
++    internal bool BinaryGuid => _connectionOptions.BinaryGuid;
++
+     public override string ServerVersion => typeof(TursoConnection).Assembly.GetName().Version?.ToString() ?? "0.0.0";
+ 
+     public override ConnectionState State => _turso is not null || _remoteClient is not null
+@@ -475,11 +477,17 @@ private void OpenRemote()
+         var handler = RemoteMessageHandlerFactory?.Invoke();
+         _remoteClient = handler is null
+             ? new TursoRemoteClient(_connectionOptions.GetRemoteUri(), _connectionOptions.AuthToken)
++            {
++                BinaryGuid = _connectionOptions.BinaryGuid,
++            }
+             : new TursoRemoteClient(
+                 new HttpClient(handler),
+                 _connectionOptions.GetRemoteUri(),
+                 _connectionOptions.AuthToken,
+-                disposeHttpClient: true);
++                disposeHttpClient: true)
++            {
++                BinaryGuid = _connectionOptions.BinaryGuid,
++            };
      }
  
-+    fn phase_sql(&self) -> Cow<'_, str> {
-+        use PrerequisitePhase::*;
+     private void OpenReplica()
+```
+
+**File**: `bindings/dotnet/src/Turso.Data/TursoConnectionOptions.cs` (modified, +2/-0)
+```diff
+@@ -26,6 +26,8 @@ public string? this[string keyword]
+ 
+     public bool Pooling => _builder.Pooling;
+ 
++    public bool BinaryGuid => _builder.BinaryGuid;
 +
-+        match self.phase {
-+            Savepoint => format!("SAVEPOINT \"{PG_STMT_SAVEPOINT}\"").into(),
-+            Prerequisite(index) => self.prereqs[index].to_string().into(),
-+            Main => Cow::Borrowed(&self.sql),
-+            Release | RollbackRelease => {
-+                format!("RELEASE SAVEPOINT \"{PG_STMT_SAVEPOINT}\"").into()
-+            }
-+            Rollback if self.was_in_tx == Some(true) => {
-+                format!("ROLLBACK TO SAVEPOINT \"{PG_STMT_SAVEPOINT}\"").into()
-+            }
-+            Rollback => Cow::Borrowed("ROLLBACK"),
-+            Start | CheckTarget | Done => unreachable!(),
-+        }
+     public string DataSource => _builder.DataSource;
+ 
+     public string AuthToken => _builder.AuthToken;
+```
+
+---
+
+### Incident Patch 3: `fd44cda2` (2026-11-02)
+**Commit Message**: postgres: report a missing role from current_user instead of panicking
+
+current_user and session_user looked the connection's role up in the
+role catalog and panicked when it was not there. The role is there today
+because no statement can drop a role yet, but once DROP ROLE exists a
+connection can outlive its role, and a SQL statement must not be able to
+crash the server. Report the role as an undefined object, as PostgreSQL
+does for a role OID that no longer exists.
+
+Tests: a unit test looks a role up in a catalog that does not have it.
+
+**File**: `postgres/frontend/functions.rs` (modified, +42/-8)
+```diff
+@@ -4,7 +4,7 @@ use crate::settings::{find_parameter, Parameter, SettingScope};
+ use chrono::{Datelike, NaiveDate, NaiveDateTime, NaiveTime, TimeDelta, Timelike, Utc};
+ use std::{fmt, sync::Arc};
+ use turso_core::native_ext::{FunctionArity, ReturnType, ScalarCall, ScalarFunction, ScalarReturn};
+-use turso_core::security::roles::RoleId;
++use turso_core::security::roles::{RoleCatalog, RoleId};
+ use turso_core::types::IOResultOr;
+ use turso_core::{
+     Connection, ExternalFunc, IOResult, LimboError, Numeric, OpenOptions, Register, Result, Value,
+@@ -101,10 +101,10 @@ pub(crate) fn register_functions(options: OpenOptions) -> OpenOptions {
+             exec_current_schemas(connection, args[0].get_value())?
+         },
+         "current_user" | "current_role" | "user"(FunctionArity::Exact(0), false) => {
+-            role_name(connection, connection.current_role())
++            role_name(connection, connection.current_role())?
+         },
+         "session_user"(FunctionArity::Exact(0), false) => {
+-            role_name(connection, connection.session_role())
++            role_name(connection, connection.session_role())?
+         },
+         "pg_backend_pid"(FunctionArity::Exact(0), true) => std::process::id() as i64,
+         // Temporary pg_dump compatibility: "t" means true, not actual recovery state.
+@@ -651,11 +651,20 @@ fn exec_pg_limit_value(args: &[Register]) -> Result<Option<i64>> {
+     Ok(Some(value))
+ }
+ 
+-fn role_name(conn: &Connection, role: RoleId) -> String {
+-    crate::catalog::postgres_roles(&conn.role_catalog())
+-        .find(|found| found.id == role)
+-        .expect("the role of a connection is in its role catalog")
+-        .name
++fn role_name(conn: &Connection, role: RoleId) -> Result<String> {
++    role_name_in(&conn.role_catalog(), role)
++}
++
++/// The role of a connection is normally in the catalog, but it may have been
++/// dropped by another connection since the connection was opened.
++fn role_name_in(roles: &RoleCatalog, role: RoleId) -> Result<String> {
++    match crate::catalog::postgres_roles(roles).find(|found| found.id == role) {
++        Some(role) => Ok(role.name),
++        None => Err(sqlstate_error(
++            SQLSTATE_UNDEFINED_OBJECT,
++            format!("invalid role OID: {}", crate::catalog::role_oid(role)),
++        )),
 +    }
+ }
+ 
+ fn exec_pg_get_user_by_id(conn: &Connection, oid: i64) -> String {
+@@ -1577,3 +1586,28 @@ fn pg_to_char_numeric(num: f64, format: &str) -> String {
+ 
+     result
+ }
 +
-     fn fail(&mut self, error: LimboError) {
-         let cleaning_up = matches!(
-             self.phase,
++#[cfg(test)]
++mod tests {
++    use super::*;
++
++    #[test]
++    fn role_name_of_a_role_that_is_not_in_the_catalog_is_an_error() {
++        let with_alice = RoleCatalog::new(&[vec![
++            Value::from_i64(1),
++            Value::build_text("alice"),
++            Value::from_i64(0),
++        ]])
++        .unwrap();
++        let without_alice = RoleCatalog::new(&[]).unwrap();
++        let alice = with_alice.get_by_name("alice").unwrap().id;
++        assert_eq!(role_name_in(&with_alice, alice).unwrap(), "alice");
++
++        let error = role_name_in(&without_alice, alice).unwrap_err();
++        assert_eq!(error.to_string(), "invalid role OID: 16385");
++        assert_eq!(
++            role_name_in(&without_alice, RoleId::SUPERUSER).unwrap(),
++            "postgres"
++        );
++    }
++}
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #11194** (2026-10-31): postgres: yield during deferred cleanup and transaction rollback (@pedrocarlo)
-- **PR #11191** (2026-10-31): postgres: reuse yielding execution for deferred session statements (@pedrocarlo)
-- **PR #11190** (2026-10-31): postgres: yield while executing statement prerequisites (@pedrocarlo)
-- **PR #11182** (closed): tursopg: accept non-UTF-8 bind parameters as blobs (@k-park)
-- **PR #11179** (2026-10-31): tools/dbhash: add --cipher and --hexkey to hash encrypted databases (@turso-github-handyman[bot])
-- **PR #11170** (2026-10-31): core: fix two virtual generated column bugs (DELETE RETURNING, ALTER TABLE on STRICT tables) (@glommer)
+- **PR #11319** (closed): Add tests that show races when threads share one connection (@LeMikaelF)
+- **PR #11308** (closed): core: refuse non-deterministic and NULL results in custom types and persisted expressions (@jussisaurio)
+- **PR #11305** (2026-11-03): testing/conformance/javascript: override minimatch to 11.0.4 (@penberg)
+- **PR #11299** (2026-11-03): build(deps-dev): bump node-forge from 1.4.0 to 1.4.2 in /bindings/react-native (@dependabot[bot])
+- **PR #11294** (2026-11-03): core/translate: let subqueries that run per group read the group's columns (@Raviikumar001)
+- **PR #11282** (2026-11-03): Initial pass at Postgres role support (@penberg)
 
 ---
 
@@ -2154,30 +1967,28 @@ Co-authored-by: pedro muniz <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge 'core/translate: skip sqlite_sequence rows with a NULL name' from app/turs
+## X. core/security: Add role catalog
 
 **RULE**:
-When implementing operations in `core/translate/alter.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tursodatabase/turso. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `core/lib.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tursodatabase/turso. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `01cddb12`: Merge 'core/translate: skip sqlite_sequence rows with a NULL name' from app/turso-github-handyman. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `35d01f9e`: core/security: Add role catalog. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/translate/alter.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/lib.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-            flags: CmpInsFlags::default().jump_if_null(),
-            flags: CmpInsFlags::default().jump_if_null(),
+pub mod security;
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-            flags: CmpInsFlags::default(),
-            flags: CmpInsFlags::default(),
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `01cddb12` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `35d01f9e` are properly handled with clean fallback behavior.

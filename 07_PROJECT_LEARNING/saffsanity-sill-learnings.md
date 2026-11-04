@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/saffsanity-sill-learnings.md`  
 > **Source**: github ([https://github.com/Saffsanity/sill](https://github.com/Saffsanity/sill))  
-> **Source Version**: `e4d30349`  
+> **Source Version**: `41e8cb88`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T22:20:20.785Z  
+> **Timestamp**: 2026-11-03T22:32:01.198Z  
 > **Learning ID**: `learn-github-saffsanity-sill`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/saffsanity-sill-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Saffsanity/sill](https://github.com/Saffsanity/sill))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T22:20:19.768Z  
+> **Harvest Timestamp**: 2026-11-03T22:31:59.380Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Any window from your Mac, live on your iPhone or iPad. Touch, Apple Pencil, trackpad and keys. Free, open source, no servers.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 4275 stars
+- **Stars / Engagement**: 4445 stars
 
 ---
 
@@ -1641,838 +1641,361 @@ enum VolumeIcon {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `541c18ff` (2026-10-30)
-**Commit Message**: Merge origin/firewall-executable-block into integrate-security
+### Incident Patch 1: `241aa1a2` (2026-10-31)
+**Commit Message**: The plan, CLAUDE.md and the guides: a locked Mac after the review, its results and Noah's steps
 
-Co-Authored-By: Claude Fable 5.1 <[REDACTED_EMAIL]>
+The review's findings 5 and 11, and the record of the rest. docs/locked-mac-plan.md: Noah's test of
+2026-10-31 read again (it ran main's Sill.app 0.5.5 (1232), not this branch; the blocked-main-actor
+diagnosis was wrong; the second login screen is macOS's own lock), the rule as built (three readings, the
+witnesses, the settle, the gate, what each reading allows, the requests, the stream, the device), the review
+and what was done for each finding, the open questions with the default taken for each, the results (what a
+test host proved, what was only read) and Noah's steps. CLAUDE.md: the entry, the Layout, Build and run, the
+harness's -SillMacLocked, and the compatibility floor's line (the fields; a device that knows them says why;
+a locked host sends no picture of the Mac, a placeholder frame at most). docs/DEVELOPMENT.md's "A locked
+Mac" and its test hooks; Tests/checks/README.md's row and the check's header.
 
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-
----
-
-### Incident Patch 2: `bc0e5a8c` (2026-10-30)
-**Commit Message**: Merge remote-tracking branch 'origin/firewall-executable-block' into test-security
-
-# Conflicts:
-#	.github/workflows/ci.yml
-#	CLAUDE.md
-
-**File**: `.github/workflows/ci.yml` (modified, +1/-1)
+**File**: `CLAUDE.md` (modified, +134/-84)
 ```diff
-@@ -134,7 +134,7 @@ jobs:
-     strategy:
-       fail-fast: false
-       matrix:
--        check: [addresses, ask-limits, audio-codec, audio-packetizer, audio-playout, away-copy, away-quality, away-wire, cable-link, capture-scale, clientlink, clipboard, compatibility, connection-list, device-gate, display-wake, dmg-layout, door-policy, duo, encoder-mailbox, encoder-slowstate, fence, gesture-chords, gestures, goodbye, hardware-keyboard, home-device, home-model, home-records, home-txt, installed-apps, key-strokes, keychain, keyframe-recovery, ledger, link-judge, menu-state, menus, message-reader, origin, pairing-address, pairing-sharing, phone-portrait, pointer-control, pointer-presence, pointer-watch, policy, protocol, remote-rules, settings-window, stream-zoom, test-host, text-composition, tour, update-policy, viewport-bounds, virtual-display-api, window-restore]
-+        check: [addresses, ask-limits, audio-codec, audio-packetizer, audio-playout, away-copy, away-quality, away-wire, cable-link, capture-scale, clientlink, clipboard, compatibility, connection-list, device-gate, display-wake, dmg-layout, door-policy, duo, encoder-mailbox, encoder-slowstate, fence, firewall, gesture-chords, gestures, goodbye, hardware-keyboard, home-device, home-model, home-records, home-txt, installed-apps, key-strokes, keychain, keyframe-recovery, ledger, link-judge, menu-state, menus, message-reader, origin, pairing-address, pairing-sharing, phone-portrait, pointer-control, pointer-presence, pointer-watch, policy, protocol, remote-rules, settings-window, stream-zoom, test-host, text-composition, tour, update-policy, viewport-bounds, virtual-display-api, window-restore]
-     steps:
-       - name: Check out
-         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-```
-
-**File**: `CLAUDE.md` (modified, +75/-2)
-```diff
-@@ -165,6 +165,68 @@ wire change, nothing on the device.
-   drag a window with the iPad's trackpad and click Remove mid-drag: the drag ends, and another device's
-   pointer then moves without dragging; choose a menu item from the iPad's Menus in a slow app and click
-   Remove at once: the item is not chosen (Sill.log: "Menu from … refused: …: the Mac no longer serves it").
-+**The macOS firewall that blocks Sill's executable (2026-10-29, branch `firewall-executable-block` from main
-+at 150479b5; PR #250; the security batch, Noah's go of 2026-10-29).** A user's report: the firewall keeps a
-+rule per path, and a Mac held `/Applications/Sill.app` allowed and `…/Contents/MacOS/Sill` blocked
-+(`socketfilterfw --listapps`): nothing reached Sill from the network, System Settings showed it allowed, and
-+`--getappblocked` on the bundle said "permitted"; `sudo socketfilterfw --unblockapp` on the executable fixed it.
-+No wire change.
-+- `FirewallCheck` asks `/usr/libexec/ApplicationFirewall/socketfilterfw` `--getglobalstate`, then only while it is
-+  on (`asksRules`) `--getblockall`, `--getappblocked` for the running executable (`proc_pidpath`) and its bundle,
-+  and `--listapps`: a process each with 2 s (then SIGTERM, SIGKILL a second later), read-only, no privileges
-+  (macOS 27.0.1: 4–8 ms each, no prompt, no Full Disk Access needed; asked in one run the tool is killed, 137,
-+  when `--getstealthmode` or `--getallowsigned` follows `--getappblocked`, or `--listapps` follows it with a
-+  bundle's path; no `com.apple.alf.plist` there). At launch, when the listener comes up, when Sill.app's status
-+  menu opens (the glyph at once, its item from the next opening), when its General opens or Sill becomes active
-+  over it, and when a device gets in from the network while the verdict says none can (`asksAgain`); never on a
-+  timer.
-+- `FirewallRule` (pure, `Tests/checks/firewall`, 390 checks, 69 mutants): off, allows (only once `--listapps`
-+  was read), `blocks(executable:bundle:)` (its own answer or its rule in the list, either enough), `blocksAll`,
-+  unknown (with why, in the log).
-+  While it blocks: General's line in the Permissions style with `sudo …/socketfilterfw --unblockapp <the running
-+  executable's path>` (a line per option; Copy copies one line), for Block all where to turn it off; the menu's
-+  "Devices Can’t Connect — The macOS firewall blocks Sill’s executable." (opens General); one log line per change
-+  ("Firewall: …"; none for a first verdict that blocks nothing). Sill never runs the command. support.html's
-+  "Your Mac isn’t listed" gains the case (Sill's own line marked `<!-- Firewall`). TEST ONLY
-+  `SILL_TEST_FIREWALL=executable|bundle|both|all|off|allowed|unreadable` or a file holding one, test hosts only;
-+  the previews are the rule's verdicts on those answers; `-SillPrintMenuAfter` prints General's line.
-+- Verified: the check and mutants; `run-all.sh`, all 57; a clean release build (the CaptureProbe warning
-+  only); main's CLI output identical masked and sorted, idle and with a client; previews main's but the 16 new
-+  files, menu.txt's two samples and General's path; live on loopback, blocked → allowed → Block all →
-+  unreadable, a VPN-origin client clearing a stale verdict, the bare app's menu and line, this Mac's real
-+  firewall "none (allows)". Not built: an Unblock button with the admin password (`osascript` off the main
-+  thread, or a privileged helper), Noah's call.
-+- The review (2026-10-29, three lenses; each finding reproduced first, then fixed in a commit of its own;
-+  sill-handoff's `triage/2026-10-29-security/firewall-line-report.md`, "The review"): a block that came after
-+  launch (a Deny in the firewall's own prompt, Block all turned on) went unsaid until General opened or the
-+  listener was replaced, as `asksAgain` can only clear one (on loopback, the canned answer blocked from 2 s: a
-+  client at 3.6 s and the bare app's menu at 4 and 7 s said nothing): the status menu asks again as it opens
-+  (bd18d96b); with `--listapps` unread the verdict took the executable's own "permitted" for allowed and dropped
-+  why: unknown, with why, unless an answer blocks (3d10ea95); the check's usage stand-in had no "apps", so a
-+  reading that took any mention of apps for a list passed (56d3f3a3); the docs had the tool die whenever
-+  `--listapps` followed `--getappblocked` in one run (the docs commit, af3283d1; the second review measured which
-+  options do, below). Re-run: the check 340 and 67 of 67 mutants (64 of 64 before; two extra mutants had
-+  survived); `run-all.sh`, all 57; the release build, the CaptureProbe warning only; main's CLI masked and sorted,
-+  idle (8 lines) and with a client (three passes, as main against main); previews 162 files; on loopback a device
-+  in from a VPN re-asking without clearing a block that holds, and clearing a stale one.
-+- The second review (2026-10-29, after af3283d1; the report's "The second review"): two findings, each reproduced
-+  first 
-```
-
-**File**: `Sources/SillHost/FirewallCheck.swift` (added, +153/-0)
-```diff
-@@ -0,0 +1,153 @@
-+import Darwin
-+import Foundation
-+
-+/// Asks the macOS Application Firewall what it holds for this process, read-only and without
-+/// privileges; FirewallRule decides what that means. Five questions to `socketfilterfw`, each in a
-+/// process of its own and given 2 s (then stopped: SIGTERM, and SIGKILL a second later):
-+/// `--getglobalstate` (nothing else is asked unless the firewall is on: off, Block all and a state
-+/// that doesn't read decide alone, FirewallRule.asksRules), `--getblockall`, `--getappblocked` for
-+/// the executable and for its bundle, and `--listapps`. Never a question that changes anything,
-+/// never sudo.
-+///
-+/// Measured on macOS 27.0.1 (2026-10-29), as an ordinary user with no privileges and no Full Disk
-+/// Access (Sill.app has none): each question answers in 4–8 ms, exit status 0, no prompt. Asked in
-+/// one run, the tool was killed (status 137, nothing printed) when some options followed
-+/// `--getappblocked`: `--getstealthmode` or `--getallowsigned` after either path, `--listapps` after
-+/// an app bundle's path (3 runs of 3 each; all five questions in one run, 133). `--getglobalstate`,
-+/// `--getblockall` and another `--getappblocked` after it, `--listapps` after an executable's path,
-+/// and each question alone answered every time: hence a process for each. The plist older Macs
-+/// kept, /Library/Preferences/com.apple.alf.plist, does not exist there (only the tool's own
-+/// defaults in /usr/libexec/ApplicationFirewall), so nothing is read from a file.
-+///
-+/// The coordinator asks at launch, whenever the listener comes up, when Sill.app's status menu or
-+/// Settings › General opens, and when a device gets in from the network while the verdict says none
-+/// can (FirewallRule.asksAgain); nothing asks on a timer.
-+package enum FirewallCheck {
-+    /// This process's executable as the kernel has it, symbolic links resolved (the firewall's rules
-+    /// name real paths: /private/tmp, not /tmp); the bundle's idea of it when the kernel will not say.
-+    package static func executablePath() -> String {
-+        var buffer = [CChar](repeating: 0, count: 4 * Int(MAXPATHLEN))
-+        if proc_pidpath(getpid(), &buffer, UInt32(buffer.count)) > 0 {
-+            let path = String(cString: buffer)
-+            if !path.isEmpty { return path }
-+        }
-+        return Bundle.main.executablePath ?? CommandLine.arguments.first ?? ""
-+    }
-+
-+    /// The firewall's answers, asked off the caller's thread, or the TEST ONLY hook's.
-+    package static func read(_ paths: FirewallRule.Paths, hook: TestHook?) async -> FirewallRule.Raw {
-+        if let hook { return hook.answers(paths) }
-+        return await withCheckedContinuation { continuation in
-+            DispatchQueue.global(qos: .utility).async { continuation.resume(returning: readNow(paths)) }
-+        }
-+    }
-+
-+    /// The five questions, one after another (blocking: a utility queue's).
-+    static func readNow(_ paths: FirewallRule.Paths) -> FirewallRule.Raw {
-+        let tool = FirewallRule.Copy.tool
-+        guard FileManager.default.isExecutableFile(atPath: tool) else {
-+            return FirewallRule.Raw(problem: "\(tool) isn’t there")
-+        }
-+        var raw = FirewallRule.Raw()
-+        var problems: [String] = []
-+        func ask(_ arguments: [String]) -> String? {
-+            switch run(tool, arguments) {
-+            case .answer(let text): return text
-+            case .failed(let why): problems.append(why); return nil
-+            }
-+        }
-+        raw.globalState = ask(["--getglobalstate"])
-+        // Off, Block all, or no state that reads: the verdict is decided (FirewallRule.asksRules), so
-+        // nothing more is asked, and a tool that doesn't answer costs one question's wait, not five.
-+        guard FirewallRule.asksRules(afterState: raw.globalState) else {
-+            raw.problem = problems.first
-+            return raw
-+        }
-+        raw.blockAll = ask(["--getblockall"])
-+        raw.executable = ask(["--getappblocked", paths.executable])
-+        if let bundle = paths.bundle { raw.bundle = ask(["--getappblocked", bundle]) }
-+        raw.listApps = ask(["--listapps"])
-+        raw.problem = problems.first
-+        return raw
-+    }
-+
-+    private enum Outcome { case answer(String), failed(String) }
-+
-+    /// Runs `tool` with `arguments`, its standard output and error read together, for at most
-+    /// `timeout` seconds (then it is stopped, SIGTERM and a second later SIGKILL: a question has
-+    /// nothing to undo).
-+    private static func run(_ tool: String, _ arguments: [String], timeout: TimeInterval = 2) -> Outcome {
-+        let process = Process()
-+        process.executableURL = URL(fileURLWithPath: tool)
-+        process.arguments = arguments
-+        process.standardInput = FileHandle.nullDevice
-+        let pipe = Pipe()
-+        process.standardOutput = pipe
-+        process.standardError = pipe
-+        let exited = DispatchSemaphore(value: 0)
-```
-
-**File**: `Sources/SillHost/FirewallRule.swift` (added, +471/-0)
-```diff
-@@ -0,0 +1,471 @@
-+import Foundation
-+
-+/// The macOS Application Firewall and Sill (a user's report, 2026-10-29). The firewall keeps a rule
-+/// per path, and a Mac held "/Applications/Sill.app" allowed and "/Applications/Sill.app/Contents/
-+/// MacOS/Sill" blocked at once (`socketfilterfw --listapps`): Sill's port took nothing from the
-+/// network while the Mac itself connected fine, System Settings showed Sill allowed, and
-+/// `--getappblocked` on the bundle said "permitted". `sudo socketfilterfw --unblockapp` on the
-+/// executable's path fixed it.
-+///
-+/// This turns what `socketfilterfw` answers, asked read-only and without privileges (FirewallCheck),
-+/// into a verdict and its words: the line in Sill.app's Settings › General with the Terminal command
-+/// that unblocks Sill, the status menu's "Devices Can’t Connect", the log's lines. A rule that blocks
-+/// the running executable or its bundle counts while the firewall is on, and so does Block all
-+/// incoming connections, which leaves no app's own rule any say. Pure: Foundation alone, checked by
-+/// Tests/checks/firewall.
-+package enum FirewallRule {
-+    /// The firewall's global state (`--getglobalstate`).
-+    package enum State: Equatable, Sendable {
-+        case off, on
-+        /// Block all incoming connections: only essential services (DHCP, Bonjour, IPsec) get in.
-+        case blockAll
-+        /// No answer, or one this build does not know (bootstrap mode, an undefined state).
-+        case unknown
-+    }
-+
-+    /// One path's answer (`--getappblocked <path>`).
-+    package enum AppAnswer: Equatable, Sendable { case blocked, permitted, unknown }
-+
-+    /// One rule of `--listapps`: its path (or whatever the line names) and whether it blocks incoming
-+    /// connections; nil when no state line followed it.
-+    package struct Listed: Equatable, Sendable {
-+        package var path: String
-+        package var blocks: Bool?
-+        package init(path: String, blocks: Bool?) { self.path = path; self.blocks = blocks }
-+    }
-+
-+    /// The paths a rule may name for this process: its executable, as the kernel has it (the
-+    /// firewall's rules name real paths, /private/tmp rather than /tmp), and, for an app bundle's
-+    /// main executable, the bundle.
-+    package struct Paths: Equatable, Sendable {
-+        package var executable: String
-+        package var bundle: String?
-+        package init(executable: String, bundle: String?) { self.executable = executable; self.bundle = bundle }
-+    }
-+
-+    /// What `socketfilterfw` printed for each question, nil for one not asked or not answered;
-+    /// `problem`, why the first that went unanswered did (the log says it when nothing can be told).
-+    package struct Raw: Equatable, Sendable {
-+        package var globalState: String?
-+        package var blockAll: String?
-+        package var executable: String?
-+        package var bundle: String?
-+        package var listApps: String?
-+        package var problem: String?
-+        package init(globalState: String? = nil, blockAll: String? = nil, executable: String? = nil, bundle: String? = nil,
-+                     listApps: String? = nil, problem: String? = nil) {
-+            self.globalState = globalState; self.blockAll = blockAll; self.executable = executable; self.bundle = bundle
-+            self.listApps = listApps; self.problem = problem
-+        }
-+    }
-+
-+    /// The answers, read.
-+    package struct Answers: Equatable, Sendable {
-+        package var state: State
-+        /// `--getblockall`: true while Block all incoming connections is on; nil without an answer.
-+        package var blockAll: Bool?
-+        package var executable: AppAnswer
-+        package var bundle: AppAnswer
-+        /// Every rule `--listapps` printed; nil when it printed no list.
-+        package var listed: [Listed]?
-+        package var problem: String?
-+        package init(state: State, blockAll: Bool? = nil, executable: AppAnswer = .unknown, bundle: AppAnswer = .unknown,
-+                     listed: [Listed]? = nil, problem: String? = nil) {
-+            self.state = state; self.blockAll = blockAll; self.executable = executable; self.bundle = bundle
-+            self.listed = listed; self.problem = problem
-+        }
-+    }
-+
-+    /// What the firewall does to devices that connect to this process.
-+    package enum Verdict: Equatable, Sendable {
-+        /// The firewall is off.
-+        case off
-+        /// It is on, its rules were read (`--listapps`), and none blocks the executable or its bundle.
-+        case allows
-+        /// It is on, and a rule blocks these paths (at least one is set): devices on the network
-+        /// cannot connect, whatever the other path's rule says.
-+        case blocks(executable: String?, bundle: String?)
-+        /// Block all incoming connections is on.
-+        case blocksAll
-+        /// Its answers could not be read, and why.
-+        case unknown(String)
-+
-+        /// Devices on the network cannot c
-```
-
-**File**: `Sources/SillHost/HostStatus.swift` (modified, +6/-0)
-```diff
-@@ -135,6 +135,12 @@ package struct HostStatusSnapshot: Equatable {
-     /// The Mac's sound while it is wanted (Send Audio on, something streams, a device plays it); nil
-     /// otherwise.
-     package var audio: Audio?
-+    /// What the macOS firewall does to devices connecting to this host (FirewallRule), as last asked:
-+    /// at launch, when the listener comes up, when Sill.app's menu or Settings › General opens, when a
-+    /// device gets in while it said none could. Nil before the first answer. While it blocks them,
-+    /// Settings › General shows why with the Terminal command that unblocks Sill, and the menu says
-+    /// "Devices Can’t Connect".
-+    package var firewall: FirewallRule.Verdict?
- 
-     /// The Mac's sound as the menu's card and Settings show it.
-     package struct Audio: Equatable {
-```
-
-**File**: `Sources/SillHost/StreamCoordinator.swift` (modified, +52/-3)
-```diff
-@@ -69,9 +69,16 @@ package final class StreamCoordinator {
-     /// encoder, the launch probe never runs and the re-check never starts, so no test touches the
-     /// Mac's one hardware encoder while Noah streams (PointerTestHooks).
-     private let softwareOnly: Bool
--    /// The TEST ONLY hooks' lines (PointerTestHooks, InputInjector.testInputLog, `keyframeIgnoreHook`),
--    /// printed as `start` begins; empty without them.
-+    /// The TEST ONLY hooks' lines (PointerTestHooks, InputInjector.testInputLog, `keyframeIgnoreHook`,
-+    /// FirewallCheck.TestHook), printed as `start` begins; empty without them.
-     private let testHookLines: [String]
-+    /// The macOS firewall (FirewallRule, a user's report of 2026-10-29): the paths a rule may name
-+    /// for this process, the TEST ONLY answers a test host takes instead of asking, and one check at
-+    /// a time (`checkFirewall`), with one more after it when asked meanwhile.
-+    private let firewallPaths: FirewallRule.Paths
-+    private let firewallHook: FirewallCheck.TestHook?
-+    private var firewallChecking = false
-+    private var firewallAgain = false
-     /// A picked window streams from its own HiDPI display (see VirtualStage): the CLI's
-     /// `--virtual-display`, or the app's setting. Every branch this adds is behind this flag;
-     /// without it the coordinator behaves as before. It changes only inside `select` (`adopt`).
-@@ -352,7 +359,13 @@ package final class StreamCoordinator {
-         let userActive = DisplayWake.userActive(environment: env, testHost: synthetic)
-         displayActivity = DisplayActivity(remote: userActive.remote)
-         keyframeRequestsToIgnore = keyframeIgnore.count
--        testHookLines = [path.line, software.line, inputLog.line, userActive.line, keyframeIgnore.line, noScreen.line].compactMap { $0 }
-+        // The firewall's TEST ONLY answers, for a test host alone (StreamServer's own rule).
-+        let firewallTest = FirewallCheck.TestHook.read(testHost: DoorPolicy.isTestHost(advertises: !synthetic, bundled: !testHooks),
-+                                                       environment: env)
-+        firewallHook = firewallTest.hook
-+        firewallPaths = FirewallRule.paths(executable: FirewallCheck.executablePath())
-+        testHookLines = [path.line, software.line, inputLog.line, userActive.line, keyframeIgnore.line, noScreen.line,
-+                         firewallTest.line].compactMap { $0 }
-         status = HostStatus()
-         var home = StreamServer.HomeDoorMode.plain
-         if homePairing, let remote {
-@@ -446,6 +459,11 @@ package final class StreamCoordinator {
-                     let words = route.label ?? Self.homeRouteWords(route, link: link)
-                     self.remote?.sessionStarted(fingerprint: fp, route: words, cableDevice: route.cableDevice)
-                 }
-+                // A device got in from the network while the firewall's verdict said none could:
-+                // that verdict is stale (FirewallRule.asksAgain).
-+                if FirewallRule.asksAgain(after: self.status.snapshot.firewall, fromLoopback: route.origin == .loopback) {
-+                    self.checkFirewall()
-+                }
-                 // Home or away before its catalog: its settings state says which quality it sets.
-                 self.routesChanged(joined: id, endpoint: "\(connection.endpoint)")
-                 // A sleeping display gives black frames: the session's start wakes it, as a key would.
-@@ -649,6 +667,9 @@ package final class StreamCoordinator {
-                 $0.network = .registering
-             }
-         }
-+        // The listener is up, at launch or replaced (Direct Wireless): whether the macOS firewall
-+        // lets devices reach it.
-+        if network == .registering { checkFirewall() }
-     }
- 
-     /// Bonjour registered this name (nil: the registration went away, to come back).
-@@ -662,6 +683,33 @@ package final class StreamCoordinator {
-         }
-     }
- 
-+    // MARK: The macOS firewall
-+
-+    /// Asks the macOS firewall, read-only, whether it blocks this process (FirewallCheck, then
-+    /// FirewallRule's verdict into the status: Sill.app's Settings › General and its menu say so), and
-+    /// prints one line when the verdict changes (none for a first one that blocks nothing). At launch,
-+    /// whenever the listener comes up, when Sill.app's status menu opens (a block that came after
-+    /// launch; the menu is built before the answer, so its item shows from the next opening), when
-+    /// its Settings › General opens or Sill becomes active over it, and when a device gets in from
-+    /// the network while the verdict says none can; never on a timer. One check at a time: one asked
-+    /// for meanwhile runs once more after it, so its answer is never older than the request.
-+    package func checkFirewall() {
-+        guard !firewallChecking else { firewallAgain = true; return }
-+        firewallChecking = true
-+        let paths = firewallPaths, 
-```
-
-**File**: `Sources/SillMenuBar/DebugHooks.swift` (modified, +58/-3)
-```diff
-@@ -37,7 +37,10 @@ import StreamProtocol
- ///     -SillMenuAfter '<s>[; <s> …]'            print the status menu as menu.txt shows it, one
- ///                                              "SillMenuAfter <s> s: " line per line, s seconds
- ///                                              after launch (the "‹device› Wants to Pair",
--///                                              older-device and "Devices Can’t Connect" items)
-+///                                              older-device and "Devices Can’t Connect" items);
-+///                                              the macOS firewall is asked again first, as the
-+///                                              menu does when it opens, its answer shown by the
-+///                                              next print
- ///     -SillQuitAfter <s>                       Quit (NSApp.terminate) s seconds after launch
- ///     -SillUpdateFeed <url>                    the update check asks this feed instead of GitHub:
- ///                                              a feed on this Mac only (http or https to
-@@ -52,7 +55,8 @@ import StreamProtocol
- ///                                              s; no jitter)
- ///     -SillPrintMenuAfter <s>                  print the status menu as it would open (as menu.txt
- ///                                              draws it, "menu: " before each line) and Settings ›
--///                                              General's update line, s seconds after launch
-+///                                              General's update and firewall lines, s seconds after
-+///                                              launch
- ///     -SillSettingsAfter '<s> <tab>[; <s> <tab> …]'
- ///                                              open Settings on that tab s seconds after launch,
- ///                                              as the menu does, and 0.6 s later print the window's
-@@ -72,7 +76,9 @@ import StreamProtocol
- ///                                              (title bar, toolbar, pane) to <dir>/settings-<s>s-<tab>.png
- ///     -SillRenderPreviews <dir>                write the Settings panes (the Devices and Remote
- ///                                              Access panes in each of their states, General's
--///                                              update section in each of its), the pairing
-+///                                              update section in each of its, General with the
-+///                                              macOS firewall's line and that line alone in each
-+///                                              of its verdicts), the pairing
- ///                                              window's states and the cable notice,
- ///                                              status cards, glyphs and menu.txt to <dir>, then
- ///                                              exit (no Screen Recording needed: views render
-@@ -219,6 +225,7 @@ enum DebugHooks {
-         for delay in times(defaults.string(forKey: "SillMenuAfter")) {
-             after(delay) {
-                 model.permissions.refresh()
-+                model.coordinator?.checkFirewall()   // as the menu does when it opens; the answer shows at the next
-                 for line in MenuBuilder.dump(MenuBuilder.entries(for: model), card: model.presentation).split(separator: "\n") {
-                     print("SillMenuAfter \(delay) s: \(line)")
-                 }
-@@ -229,10 +236,18 @@ enum DebugHooks {
-             after(printAfter) {
-                 model.permissions.refresh()
-                 model.loginItem.refresh()
-+                model.coordinator?.checkFirewall()   // as the menu does when it opens
-                 print("SillPrintMenuAfter \(printAfter) s:")
-                 let text = MenuBuilder.dump(MenuBuilder.entries(for: model), card: model.presentation)
-                 for line in text.split(separator: "\n", omittingEmptySubsequences: false) where !line.isEmpty { print("menu: \(line)") }
-                 print("Settings › General's update line: \(model.updates.pane.line)")
-+                // The macOS firewall's line as the pane shows it (FirewallRule), with its command.
-+                let firewall = model.coordinator?.status.snapshot.firewall
-+                if let firewall, let line = FirewallRule.Copy.paneLine(firewall) {
-+                    print("Settings › General's firewall line: \(line)\(FirewallRule.Copy.command(firewall).map { " \($0)" } ?? "")")
-+                } else {
-+                    print("Settings › General's firewall line: none (\(firewall.map { String(describing: $0) } ?? "not asked yet"))")
-+                }
-             }
-         }
-         let shots = defaults.string(forKey: "SillSettingsShot").flatMap { $0.isEmpty ? nil : $0 }
-@@ -394,6 +409,23 @@ enum DebugHooks {
-                 render(pane, appearance: appearance, to: out.appendingPathComponent("pane-devices-\(sample.name)-\(name).png"))
-             }
-         }
-+        // General while the macOS firewall block
-```
-
-**File**: `Sources/SillMenuBar/SettingsPanes.swift` (modified, +66/-1)
-```diff
-@@ -14,12 +14,14 @@ struct SettingsPane: View {
-     var previewUpdates: UpdatePolicy.Pane?
-     /// …and its clipboard section with macOS's answer as given, never read from this Mac.
-     var previewClipboardAccess: ClipboardPolicy.MacAccess?
-+    /// …and what the macOS firewall does as given (FirewallRule), never asked.
-+    var previewFirewall: FirewallRule.Verdict?
- 
-     var body: some View {
-         Group {
-             switch tab {
-             case .general: GeneralPane(model: model, settings: model.settings, previewUpdates: previewUpdates,
--                                       previewClipboardAccess: previewClipboardAccess)
-+                                       previewClipboardAccess: previewClipboardAccess, previewFirewall: previewFirewall)
-             case .devices: LiveDevicesPane(model: model, settings: model.settings)
-             case .streaming: StreamingPane(model: model, settings: model.settings)
-             case .virtualDisplay: VirtualDisplayPane(model: model, settings: model.settings)
-@@ -34,6 +36,8 @@ struct SettingsPane: View {
-         // idle Sill with Settings closed wakes for nothing. The Devices and Remote Access panes
-         // follow the host's status, which is pushed, so they poll nothing.
-         .task(id: model.visibleSettingsTab == tab) {
-+            // General on screen: whether the macOS firewall blocks Sill, asked again (FirewallCheck).
-+            if model.visibleSettingsTab == tab, tab == .general { model.coordinator?.checkFirewall() }
-             guard model.visibleSettingsTab == tab, tab != .streaming, tab != .devices, tab != .remoteAccess else { return }
-             while !Task.isCancelled {
-                 model.permissions.refresh()
-@@ -44,6 +48,8 @@ struct SettingsPane: View {
-         .onReceive(NotificationCenter.default.publisher(for: NSApplication.didBecomeActiveNotification)) { _ in
-             model.permissions.refresh()
-             model.loginItem.refresh()
-+            // Back from Terminal with the command run: General's firewall line follows.
-+            if model.visibleSettingsTab == tab, tab == .general { model.coordinator?.checkFirewall() }
-         }
-     }
- }
-@@ -84,6 +90,7 @@ private struct GeneralPane: View {
-     @Bindable var settings: HostSettings
-     var previewUpdates: UpdatePolicy.Pane?
-     var previewClipboardAccess: ClipboardPolicy.MacAccess?
-+    var previewFirewall: FirewallRule.Verdict?
- 
-     private static let runsFromApplications = Bundle.main.bundlePath.hasPrefix("/Applications/")
- 
-@@ -133,6 +140,11 @@ private struct GeneralPane: View {
-                     Spacer(minLength: 0)
-                 }
-             }
-+            // Beside the name devices see: the macOS firewall keeping them out (FirewallRule), only
-+            // while it does.
-+            if let firewall = previewFirewall ?? model.coordinator?.status.snapshot.firewall, firewall.blocksDevices {
-+                FirewallSection(verdict: firewall)
-+            }
-             // How devices reach this Mac, so beside its name on the network. Applies at once without
-             // restarting the stream (the listener is replaced); enabled in test pattern mode too,
-             // where it is saved and changes only the listener.
-@@ -184,6 +196,59 @@ private struct GeneralPane: View {
-     }
- }
- 
-+// MARK: Firewall
-+
-+/// The macOS firewall keeps devices out (FirewallRule; a user's report of 2026-10-29), in the
-+/// Permissions pane's style: what it blocks and why that matters, then the Terminal command that
-+/// unblocks Sill, the running executable's path in it, with Copy; or, for Block all incoming
-+/// connections, where to turn it off. Nothing while the firewall lets devices in. Sill never runs the
-+/// command itself (it needs an administrator). Drawn alone in the previews in each verdict.
-+struct FirewallSection: View {
-+    let verdict: FirewallRule.Verdict
-+    @State private var copied = false
-+
-+    var body: some View {
-+        if let line = FirewallRule.Copy.paneLine(verdict) {
-+            let command = FirewallRule.Copy.command(verdict)
-+            Section {
-+                LabeledContent {
-+                    HStack(spacing: 6) {
-+                        Image(systemName: "exclamationmark.triangle.fill")
-+                            .foregroundStyle(.orange)
-+                        if let command {
-+                            Button(copied ? "Copied" : "Copy") { copy(command) }
-+                                .help("Copies the command, to paste into Terminal")
-+                        }
-+                    }
-+                } label: {
-+                    Text("Firewall")
-+                    Text(line)
-+                }
-+                if let lines = FirewallRule.Copy.commandLines(verdict) {
-+                    // A line for the tool and one for each option, never "--" over "unblockapp".
-+                    Text(verbatim: lines.joined(separator: "\n"))
-+                        .font(.system(.callout, design: .monospaced))
-
-```
-
----
-
-### Incident Patch 3: `e4d30349` (2026-10-30)
-**Commit Message**: Merge pull request #262 from Saffsanity/integrate-security
-
-Integration: the seven security pull requests tested together on 2026-10-30 (#249 #250 #251 #252 #253 #254 #255)
-
-**File**: `.github/workflows/ci.yml` (modified, +1/-1)
-```diff
-@@ -134,7 +134,7 @@ jobs:
-     strategy:
-       fail-fast: false
-       matrix:
--        check: [addresses, ask-limits, audio-codec, audio-packetizer, audio-playout, away-copy, away-quality, away-wire, cable-link, capture-scale, catalog-look, clientlink, clipboard, compatibility, connection-list, device-gate, display-wake, dmg-layout, door-policy, duo, encoder-mailbox, encoder-slowstate, fence, gesture-chords, gestures, goodbye, hardware-keyboard, home-device, home-model, home-records, home-txt, installed-apps, key-repeat, key-strokes, keychain, keyframe-recovery, ledger, link-judge, menu-state, menus, message-reader, origin, pairing-address, pairing-sharing, phone-portrait, pointer-control, pointer-presence, pointer-watch, policy, protocol, remote-rules, settings-window, stream-zoom, text-composition, thumbnail-hold, tour, update-policy, virtual-display-api, window-restore]
-+        check: [addresses, ask-limits, audio-codec, audio-packetizer, audio-playout, away-copy, away-quality, away-wire, cable-link, capture-scale, catalog-look, clientlink, clipboard, compatibility, connection-list, device-gate, display-wake, dmg-layout, door-policy, duo, encoder-mailbox, encoder-slowstate, fence, firewall, gesture-chords, gestures, goodbye, hardware-keyboard, home-device, home-model, home-records, home-txt, installed-apps, key-repeat, key-strokes, keychain, keyframe-recovery, ledger, link-judge, menu-state, menus, message-reader, origin, pairing-address, pairing-sharing, phone-portrait, pointer-control, pointer-presence, pointer-watch, policy, protocol, remote-rules, settings-window, stream-zoom, test-host, text-composition, thumbnail-hold, tour, update-policy, viewport-bounds, virtual-display-api, window-restore]
-     steps:
-       - name: Check out
-         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-```
-
-**File**: `CLAUDE.md` (modified, +588/-23)
-```diff
-@@ -8,6 +8,225 @@ Formerly winstream; the folder still carries the old name.
+@@ -8,63 +8,81 @@ Formerly winstream; the folder still carries the old name.
  
  ## Current step
  
-+**The door's waiting places (2026-10-29, branch `sec-door-pending` from main at 150479b5, PR #252; finding 9 of the
-+security scan of 2026-10-18, Low; Noah's go of 2026-10-29).** A TLS door (the remote one, and the home one of
-+Sill.app and `SillHost --pairing`) held 8 connections waiting for admission, 2 per address, 10 s each, and backed an
-+address off only for its own refusals: four addresses closing each connection at 9.9 s kept every place full for good
-+and a paired device got "limit". Host only, no wire change. `DoorPolicy.Places` (pure) owns the places, `Door` runs
-+it on a monotonic clock: a connection that ends unadmitted, and a pairing connection's kind 19, costs its address a
-+tenth of a failure, a tenth for each second it waited at least, one more for every 2 s beyond the first 2 (counted to
-+its deadline at most), at least one when refused (5 in 60 s: 300 s, as before; a paired key at `.ready` clears its
-+address); the TLS handshake has 4 s (Network.framework does not say when a ClientHello arrives, so the whole
-+handshake rather than its first bytes; 10 s from a known address), a pairing connection's kind 19 4 s after `.ready`,
-+10 s in all; an IPv6 address answers for its /64 too (a link-local one's on its interface): 2 waiting places per /64
-+for addresses not known, and 12 failures in 300 s from those back the /64 off, an address counting 6 at most (so it
-+takes two); 2 places beyond the 8 for addresses that proved a paired key within a day (known: never refused for nor
-+charged to their /64, and they pay for what they hold as an address not known does, so someone at a paired device's
-+address is backed off with it within 30 s: nothing tells them apart before TLS). One line a minute per door, "Home
-+door backed off 10.128.0.34 for 300 s: its connections waited without being admitted, or were refused."
-+`AskLimits.quietKey`: the quiet after the Mac's Cancel or a stop covers the asker's IPv6 /64. Checks: `door-policy`
-+254 (the scan's attack modelled against the rule before and this one: before, every place held and the paired device
-+refused at all 60 tries in 2 minutes; now the four backed off 12 s in, the paired device admitted at every try, one
-+not yet known in at 13 s; closing at 1.9 s, 26.6 s; IPv6 churn in a /64, the /64 at 61 s, holding one place at 120 s)
-+and 109 of 109 mutants; `ask-limits` 43 and 24 of 24. Live on loopback synthetic `--pairing` hosts (sources
-+127.0.0.1, en0's 10.128.0.34, en13's 10.128.0.148 and en14's 169.254.219.184, whose connections to 127.0.0.1 stay on
-+lo0; 127.0.0.2–5 cannot be bound without a root alias): main's build refused the paired client at all 30 tries in 90
-+s ("… 27 over the limit."), backing nobody off; this one cut the four at 4.2 s and backed them off at 12.6 s ("Home
-+door backed off 10.128.0.34 for 300 s: …", the client at 127.0.0.1 with them); a scratch build with 6 shared places
-+(three addresses filling them as four fill 8) served a known client at all 20 tries and an unknown one from 13 s; one
-+address cycling at 1.9 s held 2 places for good on main and was backed off at 47.9 s here. Plan's "What stays open"
-+updated (an address keeps about 4/5 of a place, so ten IPv4 addresses taking turns fill the shared places; the
-+co-located address; a device not yet paired in a backed-off /64, which a stranger in it keeps backed off with a dozen
-+refused handshakes as each 5 minutes end; a routed IPv6 prefix from the internet at the remote door).
-+- The review (2026-10-29; the report's "The review", f9-pending-slots-report.md in sill-handoff's
-+  triage/2026-10-29-security): three findings, each reproduced live on 7929c539 first and fixed in a commit of its own.
-+  A kind 19 left its place for nothing, and the home door's verify block takes `sill-pair/1` with any key: a holder
-+  doing TLS on it 3 s in and a kind 19 (`v` 2, answered `closed`, nothing shown) 3.5 s later held all 8 places for
-+  90 s from four addresses (112 kind 19s), nobody backed off, an unknown paired client refused at all 30 tries; now
-+  `Places.End.request` pays as a connection that ended then (fd0a58c5): the same holder backed off at 13.07 s. The
-+  wait counted from accept on CLOCK_MONOTONIC, which runs on through a sleep while the deadline's timer does not: one
-+  connection waiting across a 20 s SIGSTOP of the host (a sleep's stand-in) backed 127.0.0.1 off at the continue and
-+  the known client was refused at all 13 tries; now a wait counts to its place's deadline at most (0b457e48): no
-+  backoff, 13 of 13 served. A known address was charged for all of its 10 s (a cut 4.1, its device's own let-go at
-+  5 s 1.6, where main charged 1 and nothing): a known device's reconnect whose dials stalled was backed off at 40.06 s
-+  and refused at all 6 tries after; now it pays as an address not known (1.1 at most for a handshake, 3.1 for a
-+  pairing connection; 8e0148a0): no backof
+-**A locked Mac shows its lock screen (2026-10-31, branch `locked-mac` from main at e4d30349; Noah's finding of
+-2026-10-31, a security fix: no public issue; the rule, the open questions with the default taken for each, the
+-results and Noah's steps are in `docs/locked-mac-plan.md`).** Sill read the console's lock (SessionLock) only for
+-the pairing ask and the cable's pairing: with the screen locked, or another user selected at the login screen
+-while Noah's session ran in the background, a paired device (and at a door that lets any device in, an unpaired
+-one) could still pick a window and see it (window capture ignores what covers it, and the virtual display's app
+-filter leaves the lock screen out), see every thumbnail, launch apps (Noah saw it), use the Mac's menus, gestures,
+-sound and clipboard, and any session typed into the password field. Now as Screen Sharing: the lock screen and
+-nothing else, and only a paired device types. Host, wire (additive) and device.
+-- The rule (`LockPolicy`, pure, Sources/SillHost/LockPolicy.swift; `Tests/checks/lock-policy`): while locked a
+-  window picked, an app launched, kind 15, kinds 27 with an id and 25 ("The Mac is locked."), kind 28 and a
+-  device's clipboard text are refused; input lands from a paired session (`sessionPaired`, PR #253's), from any
+-  other only the up of a key or a button it holds down (`letGo`, where the pointer is); the menus' and the
+-  clipboard's subscriptions, settings, the viewport, a keyframe and Pair This iPad… as ever. Shown: the Desktop
+-  alone (the lock screen, or the login window); the list with no windows, no `clipboard` and `locked`; no
+-  thumbnail, icon or installed app; the menus with no app; no sound; the pasteboard neither read nor written.
+-  One line at each change ("Locked: this Mac's screen is locked; devices see the lock screen until it is
+-  unlocked." / "Unlocked: …") and one a minute at most per refused kind (RefusalSummary); Stats `lock.refused`
+-  and `in.locked`. Unlocked: nothing changes, nothing prints.
+-- Host (StreamCoordinator's `readLock`, `lockChanged`, `enforceLock`, `afterUnlock`, `lockedMidSwitch`,
+-  `lockDecision`): the lock read once a second while a device is connected, as a device connects (before its
+-  catalog), before each request the lock may refuse and at each select, and in Sill.app at once on
+-  `com.apple.screenIsLocked`/`Unlocked` and NSWorkspace's session switches (`SessionLock.onChange`). At the lock
+-  a window that streams goes home (the stage's way, WindowRestore's) and the Desktop streams, the window
+-  remembered (`LockPolicy.State`); while locked `select` turns any window into the Desktop (a restart, a launched
+-  app's first window, a pick queued before the lock), and a switch to a window that finds the Mac locked before
+-  its pipeline starts streams none of it; at the unlock the catalog is looked at afresh, the withheld icons and
+-  apps go out (all of them to a device that connected while locked; WindowCatalog.takeWithheld), every
+-  thumbnail is taken again, and the window comes back as a restart (nothing comes forward) if still listed, the
+-  Desktop still streams and a device is connected; a pick made after the unlock, or the last device leaving,
+-  forgets it. WindowCatalog.locked (no thumbnail, icon or apps sent), HostClipboard.setLocked (no look, no
+-  write, subscriptions kept, what was copied meanwhile never sent), MenuMirror.refuse, the held key's repeat
+-  stopped, held input and queued gestures judged by the lock too; a refused message wakes no display.
+-- Wire: `WindowList.locked` (Switcher.swift; true while locked, left out otherwise: an unlocked list is byte for
+-  byte what it was), and StreamProtocol's `LockedMac.line` for the device. The compatibility floor has its line.
+-- Device: `StreamClient.macLocked`; the Apps drawer shows "‹Mac› is locked. Unlock it to see its windows." in place
+-  of its search field and lists, the Settings panel's header under its readout, each read by VoiceOver; nothing
+-  else changes (no `clipboard`: no Paste; an empty top level: no Menus button). DEBUG `-SillMacLocked 1` (the mock).
+-- TEST ONLY: `SILL_TEST_LOCKED_FILE=<path>` (locked while the file holds 1, read at each reading; a test host
+-  only, TestHooks lists it; "Test lock: …" at start); `SILL_TEST_LOCKED=1` as before. sillclient: `locked=1` on the
+-  list's line, `--raw7` (a launch, only for a bundle under `me.saffer.sill.test.`) and `--raw15`.
+-- Verified (the plan's Results): `lock-policy` 141 checks and 57 of 57 mutants (13 scenarios and 5,000 random
+-  sessions of the glue; the model found the switch under way at the lock, fixed by `lockedMidSwitch` before the
+-  first host commit); `run-all.sh`, all 63; `swift build -c release` from `git archive`, only the CaptureProbe
+-  warning; the iOS app Debug and Release for the simulator and Debug for a device, only the known `
 ```
 
-**File**: `SECURITY.md` (modified, +20/-1)
+**File**: `Tests/checks/README.md` (modified, +1/-1)
 ```diff
-@@ -24,17 +24,36 @@ who has it, and the newest iPhone and iPad app.
- - Remote Access's connection, and pairing, at home and away: the QR code, the
-   typed code, `sill://pair` links, a USB cable's automatic pairing, Require
-   pairing, and the paired devices and keys Sill for Mac keeps in the keychain.
-+- What another app on the Mac can make Sill for Mac do by starting it, or a
-+  copy of it, with arguments and an environment of its own: it then runs with
-+  Sill's Screen Recording and Accessibility permissions.
- - The update check, which asks GitHub's releases feed about once a day and
-   downloads nothing.
- - The website, getsill.app.
+@@ -106,7 +106,7 @@ exit status is the number of checks that failed. Binaries, data and logs go to
+ | `keyframe-recovery` | `iOSClient/KeyframeRecovery.swift` alone (`swiftc`) | when the device asks the Mac for a keyframe (kind 44) after its picture was interrupted (issue #101): one ask per interruption while its keyframe is due, asked again when none came within its wait (4 s, or four round trips), so a Mac that never answers is asked after 4, 8 and 16 s, then every 32 s; a keyframe the layer's flush threw away as the picture back and lost again; a trip to the background owing the ask again and starting the spacing at 2 s, keyframes shown while away never repeats; only while Sill is active and something streams; 2 s apart at least, an ask held back going at the time it is due (not a rounding later); a picture that fails again within 10 s of its keyframe waiting 4, 8, 16, then 32 s; a keyframe with nothing open and a clock gone back; then 20,000 random sessions against a model of the event history (never stuck while open, active and streaming) | 95 and 20,000 sessions | 39 |
+ | `ledger` | `iOSClient/HostSettingsLedger.swift`, `Sources/StreamProtocol/HostSettings.swift` | the device's settings ledger against a model host, scenarios and 5,000 random runs (some against a host without sound: Send Audio never sent there; some against a host from the sound's beta, which refuses a device's Send Audio: the switch goes back; some against a host from before 2026-10-29, which takes Direct Wireless from any session). Rule 10 (2026-10-29): Direct Wireless never sent on a session the Mac says is not paired (`sessionPaired` false), on or off, the rest of a pick still sent; sent as before to a Mac that does not say; each connection's own state, devices paired during their session and removed, and a test client's pick refused and answered with the Mac's value | 116 | 16 |
+ | `link-judge` | `Sources/SillHost/LinkJudge.swift` with StreamProtocol's `HostSettings.swift` (`build.sh`) | each device's link as the host judges it once a second: a short second, behind at 3 short of 5 and fine after 5 clean, stalled after 3 s with bytes waiting, none taken and nothing heard, a restart's reset and which restarts judge afresh (another bitrate, rate or resolution, or no stream; never one that keeps the quality), the carried rate (a mean of the measured seconds) and when it is reported again, the suggestion at 60 and 120 fps, the host's lines; a model against 20,000 random runs | 82 | 26 |
+-| `lock-policy` | `Sources/SillHost/LockPolicy.swift` with `Sources/StreamProtocol` (`module.txt`) | a locked Mac (docs/locked-mac-plan.md, Noah's finding of 2026-10-31): every request locked and unlocked, paired and not (a window picked, an app launched, a window's buttons, a menu, a gesture, a clipboard text refused; an unpaired session's input only as the up of what it holds down); the window list (no windows, no clipboard, `locked`) and its JSON both ways, an older reader's; what else is shown; the TEST ONLY file's words; the State's readings, select gate and the window that comes back at the unlock; the lines; the device's line (StreamProtocol's `LockedMac`); a copy of the coordinator's glue through 13 directed scenarios and 5,000 random sessions (no window starts streaming while locked, none streams once settled locked, the remembered window comes back) | 141 | 57 |
++| `lock-policy` | `Sources/SillHost/LockPolicy.swift` with `Sources/StreamProtocol` (`module.txt`; AppKit for NSWorkspace's names) | a locked Mac (docs/locked-mac-plan.md, Noah's finding of 2026-10-31): the three readings and every combination of the witnesses (unknown counts as locked), what each notification sets (and AppKit's own names), the settle (an unlock only after 2 s and a session read since; the flap of a return to the console), 4,000 random witness sequences, when SessionLock reads, what each reading allows, what the server's gate withholds by kind and picture, each request at each reading paired and not (judged at the more restrictive of its arrival and now), the list (`locked`, `offConsole`) and its JSON both ways, the placeholder's size, reconciling coalesced changes, the window that comes back, the TEST ONLY hooks' words, the lines, LockGate, the device's words and cover (StreamProtocol's `LockedMac`, 2,000 random sessions of lists and frames), and a copy of the coordinator's glue through 15 directed scenarios and 5,000 random sessions (no window or display starts while the gate reads locked, a locked Mac settles on the placeholder, the remembered window comes back) | 531 | 137 |
+ | `menu-state` | `iOSClient/MacMenuState.swift` with `Sources/StreamProtocol` (`build.sh`) | the device's view of the Mac's menus (docs/menu-bar-plan.md §7.2): the top level, fetches joined, answered, refused, timed out, a new tree and a move's hand-over, choices and their refusals, stale menus, a bar menu built from an older top level keeping its id only while the menu there has its title (
+```
+
+**File**: `Tests/checks/lock-policy/run.sh` (modified, +7/-4)
+```diff
+@@ -1,8 +1,11 @@
+ #!/bin/bash
+-# LockPolicy (Sources/SillHost/LockPolicy.swift; docs/locked-mac-plan.md): what a locked Mac shows and what
+-# a device may do at it. Each request locked and unlocked, paired and not; the window list (no windows, no
+-# clipboard, `locked`) and its JSON both ways; what else is shown; the TEST ONLY file's words; the State's
+-# readings, the select gate, the window that comes back at the unlock; the lines; the device's line
++# LockPolicy (Sources/SillHost/LockPolicy.swift; docs/locked-mac-plan.md): a locked Mac. The three readings
++# and every combination of the witnesses (unknown counts as locked); what each notification sets; the settle
++# before an unlock (the flap of a return to the console; random witness sequences); when SessionLock reads;
++# what each reading allows; what the server's gate withholds by kind and picture; each request at each
++# reading, paired and not, judged at the more restrictive of its arrival and now; the window list
++# (`locked`, `offConsole`) and its JSON both ways; the placeholder's size; `reconciles`; the window that comes
++# back (`Restore`); the TEST ONLY hooks' words; the lines; LockGate; the device's words and cover
+ # (StreamProtocol's LockedMac); and a copy of the coordinator's glue run through directed and random
+ # sessions against the rule's invariants.
+ # Compiled with the files in module.txt as one module (../module.py drops their `import StreamProtocol`).
+```
+
+**File**: `docs/DEVELOPMENT.md` (modified, +57/-25)
+```diff
+@@ -1239,33 +1239,65 @@ picture.
  
- Known, and by design: with Require pairing off (Settings › Devices), any
- device on the Mac's own networks, one nearby while Direct Wireless Connection
- is on, and any app on the Mac itself connect without pairing, still
--encrypted. With Show the pairing window to screen sharing on (Settings ›
-+encrypted. An iPhone or iPad that connects that way takes whatever key
-+answers when its row is tapped, so another Mac on the network that takes the
-+Mac's name could answer that tap; its automatic reconnect goes back only to
-+the key it connected to, and a paired device checks the Mac's key every
-+time. With Show the pairing window to screen sharing on (Settings ›
-+encrypted; only a paired device can turn Direct Wireless Connection on or off
-+from its settings panel. With Show the pairing window to screen sharing on (Settings ›
- Devices, off by default), Screen Sharing and other remote desktop apps show the
- pairing window, so anyone who can see the Mac's screen remotely can read its
- code. `SillHost`, the command-line host for development, keeps a plain
- home door, with no pairing and no encryption, unless it runs with
- `--pairing`. Sill for Mac 0.3.1 and earlier had no pairing and no encryption
- at home: update to the newest release.
+ ## A locked Mac
+ 
+-While the Mac's screen is locked, or another user is selected at the login
+-screen while your session runs in the background, a device sees the lock screen
+-and nothing else, as with Screen Sharing (docs/locked-mac-plan.md): the Desktop
+-alone streams, and it shows the lock screen or the login window; the window
+-list is empty (the Apps drawer and the Settings panel's header say "Mac mini is
+-locked. Unlock it to see its windows."), no thumbnail is taken, no icon or
+-installed app is sent, a window picked, an app launched, a window's traffic
+-lights, the Mac's menus and trackpad gestures are refused, the clipboard waits
+-(nothing read or written, no Paste offered), and no sound is captured. Only a
+-paired device types at a locked Mac, so you can type its password from the
+-iPad or iPhone; a device at a door that lets any device in (Require pairing
+-off, or the command-line host's plain door) types nothing then. A window that
+-streamed when the lock began goes home and comes back once the Mac is unlocked,
+-unless something else was picked meanwhile. Sill.log says "Locked: …" and
++While the Mac's screen is locked, or it is switched to another user (or to the
++login window) while your session runs in the background, a device sees none of
++it (docs/locked-mac-plan.md). The host streams a placeholder, a black still with
++no capture at all, in place of the window or the Desktop; the window list is
++empty and says `locked` (and `offConsole` while another user is on the
++console); no thumbnail is taken, no icon, installed app, sound, clipboard,
++pointer or cursor shape goes out; a window picked, an app launched, a window's
++traffic lights, the Mac's menus and trackpad gestures are refused; no virtual
++display is made, and the display is not woken from a switched-out session. The
++device covers its picture: "Mac mini is locked" (a paired iPad or iPhone is told
++it can type the Mac's password there) or "Mac mini is switched to another user",
++and the Apps drawer and the Settings panel's header say the same in one line.
++Only a paired device's keys and taps reach a locked screen; while the Mac is
++switched to another user nothing does, but the up of a key or a button held
++down. A window that streamed when the lock began goes home and comes back once
++the Mac is unlocked, unless something else was picked meanwhile; the unlock
++counts only after every witness has said so for 2 s (macOS locks itself again a
++second after each return to the console). Sill.log says "Locked: …" and
+ "Unlocked: …", and at most one line a minute for each kind of request it
+-refused. The CLI reads the lock once a second while a device is connected;
+-Sill.app also hears it at once.
+-
+-Testing it headless: `SILL_TEST_LOCKED=1` makes a test host (`--synthetic`, as
+-the pairing hooks) locked for the run, and `SILL_TEST_LOCKED_FILE=<path>`
+-locked while that file holds `1`, read every second, so `echo 1 > $F` and
+-`echo 0 > $F` lock and unlock a running host. Sill.app ignores both, with a
+-line. `sillclient.py`'s window list line ends in `locked=1` while the host says
+-it is locked; `--raw7` (an app launch, for a bundle under
++refused.
 +
-+The development builds made from source, `SillHost` and the bare `SillMenuBar`
-+binary that `swift build` makes, take test settings that change who gets in
-+and what pairing needs (`SILL_TEST_…` variables, and the bare binary's
-+`-Sill…After` arguments and `-requirePairing`). Sill for Mac takes none of
-+them, whatever its folder is called and however it is started (a renamed copy,
-+a link to its executable): it knows itself by its code signature and its
-+bundle. Sill for Mac 0.4.0 to 0.5.1, and the nightly builds before the next
-+release, knew themselves by their folder's name and take them from a renamed
-+copy or a link: update to the newest release.
++The host reads the lock on a queue of its own, never on the main actor: the
++console's user (the dynamic store), the screen's lock state (notify(3)'s
++`com.apple.sessionagent.screenIsLocked`), both watched, and the session
++dictionary, bounded, read at start and to confirm an unlock; Sill.app also hears loginwindow's and
++NSWorkspace's notifications, delivered at once whether it is active or not. The
++server drops everything of the Mac the moment the reading says locked, whatever
++the main actor is doing. Anything it cannot read counts as locked.
++
++Testing it headless (test hosts only: `--synthetic`, as the pairing hooks;
++Sill.app ignores each with a line):
++
++- `SILL_TEST_LOCKED=1`: the screen locked for the run.
++- `SILL_TEST_LOCKED_FILE=<path>`: read at each look, once a second while a
++  device is connected: `1` the screen locked, `2` switched to another user,
++  anything else nothing. `echo 1 > $F`, `echo 2 > $F`, `echo 0 > $F` lock,
++  switch and unlock a running host.
++- `SILL_TEST_LOCK_NOTIFY=<name>`: the screen's lock state from a notify name of
++  your own, under `me.saffer.sill.test.`; set it with `notify_set_state` and
++  `notify_post` (Python's ctypes has both) for the immediate path the CLI has.
++- `SILL_TEST_LOCK_NOTE='<s> <name>[; <s> <name>]'`: a notification delivered
++  to the host's handler s seconds after it starts (`screenIsLocked`,
++  `screenIsUnlocked`, `sessionDidMoveOffConsole`, `sessionDidMoveOnConsole`,
++  `sessionDidResignActive`, `sessionDidBecomeActive`, or their full names), as
++  it would be: nothing is posted, so no other app hears it.
++- `SILL_TEST_LOCK_LOG=1`: each look's witnesses and reading.
++
++`sillclient.py`'s window list line ends in `locked=1` (and `offConsole=1`)
++while the host says so; `--dump=DIR` saves what ar
 ```
 
-**File**: `Scripts/audio/build.sh` (modified, +2/-2)
+**File**: `docs/locked-mac-plan.md` (modified, +344/-226)
 ```diff
-@@ -17,8 +17,8 @@ here="$(cd "$(dirname "$0")" && pwd)"
- root="$(cd "$here/../.." && pwd)"
- out="$root/.build/audio"
- cd "$root"
--host_files=(StreamServer CableLink ClientLink DeviceGate Door DoorPolicy HostIdentity HostLog InterfaceSnapshot LinkJudge
--            OriginPolicy PairingWindow PointerControl PointerWatch RefusalSummary Stats
-+host_files=(StreamServer CableLink ClientLink DeviceGate Door DoorPolicy HostIdentity HostLog InterfaceSnapshot KeyStrokes
-+            LinkJudge OriginPolicy PairingWindow PointerControl PointerWatch RefusalSummary Stats
-             AudioPipeline AudioPacketizer AudioEncoder SyntheticAudio TestTone)
+@@ -1,253 +1,371 @@
+-# A locked Mac shows its lock screen: the plan
++# A locked Mac shows nothing of itself: the plan
  
- put() {   # put DEST: stdin to DEST, only if it differs
-```
-
-**File**: `Scripts/menu-check/mirror.swift` (modified, +29/-5)
-```diff
-@@ -1,11 +1,13 @@
- // Scripts/menu-check/run.sh mirror: MenuMirror end to end against the fixture, with no host, network
- // or encoder: the real MenuMirror, MenuReader, MenuPolicy, MenuFormat and StreamProtocol, with stubs
- // for the server's send, a connection's state, Stats and print (all recorded). It drives the mirror
--// as the coordinator does (fetch, press, setTarget, catalogPolled, clientLeft, clientStats) and checks
--// each kind 24 and log line (docs/menu-bar-plan.md §4.4, §4.7; H4–H8's and H10's logic, and the
--// review's: only subscribers served, a request past its device's wait not read, one top-level read
--// a second, and the tree changed in place under a version). Presses go only to the fixture whose pid
--// is given; a /bin/sleep it starts stands for an app whose top level cannot be read. usage
-+// as the coordinator does (fetch, press, setTarget, catalogPolled, clientLeft, clientRevoked,
-+// clientStats) and checks each kind 24 and log line (docs/menu-bar-plan.md §4.4, §4.7; H4–H8's and
-+// H10's logic, and the review's: only subscribers served, a request past its device's wait not read,
-+// one top-level read a second, and the tree changed in place under a version; and a device the Mac
-+// stops serving, whose waiting fetch and choice are neither read nor made: security scan finding 10).
-+// Presses go only to the fixture whose pid is given; a /bin/sleep it starts stands for an app whose
-+// top level cannot be read. usage
- // (fixture.py runs it): mirror PID FIXTURE_LOG FIXTURE_BIN
- import Foundation
- import ApplicationServices
-@@ -292,6 +294,28 @@ func dynamic(_ m: MacMenu?) -> Int { Int(m?.items?.compactMap { $0.title }.first
-     mirror.prepare = { true }
-     B.state = .ready
-     _ = await fetch(B, nil, nil)
-+    // A device the Mac stops serving (security scan finding 10, the review of PR #254: Remove, Require
-+    // pairing): D, a subscriber, is cut off while its fetch and its choice wait behind A's slow
-+    // activation: neither is prepared, read or made, unlike B's choice above, and the host says why.
-+    await sleep(1.1)
-+    let D = FakeConnection("D")
-+    _ = await fetch(D, nil, nil)
-+    prepares = 0
-+    let cbEditD = fixture().filter { $0.contains("menuNeedsUpdate 'Edit'") }.count
-+    mirror.prepare = { prepares += 1; try? await Task.sleep(for: .seconds(0.6)); return true }
-+    let tA3 = next(); mirror.fetch(FetchMenu(version: vF, id: "2", title: "File", token: tA3), from: A, who: "A")
-+    mirror.fetch(FetchMenu(version: vF, id: "3", title: "Edit", token: next()), from: D, who: "D")
-+    mirror.press(PressMenuItem(version: vF, id: "4.0", title: "Set Label A", token: next()), from: D, who: "D")
-+    await sleep(0.05)
-+    n = Lines.shared.all().count
-+    mirror.clientRevoked(ObjectIdentifier(D))
-+    _ = await answer(A, tA3)
-+    await sleep(1.0)
-+    check(prepares == 1 && label() == "B" && fixture().filter { $0.contains("menuNeedsUpdate 'Edit'") }.count == cbEditD
-+          && lines(since: n).contains("Menu from D refused: 4.0: the Mac no longer serves it"),
-+          "D cut off before its turn: its fetch neither prepared nor read, its choice not made (\(prepares) activations: A's; the label \(label()))")
-+    D.state = .cancelled; mirror.clientLeft(D)
-+    mirror.prepare = { true }
-     // A request past its device's wait: a fetch queued behind a 4.2 s activation is not read, and a
-     // choice behind it is refused as late.
-     await sleep(1.1)
-```
-
-**File**: `Scripts/pacing/build.sh` (modified, +4/-3)
-```diff
-@@ -19,9 +19,10 @@ git rev-parse --verify --quiet "$base^{commit}" > /dev/null || { echo "build.sh:
- # needed it, the build says so). Since pairing at home (PR #37) StreamServer's TLS home door is a
- # `Door`, which brings DoorPolicy, HostIdentity's trust snapshot, CableLink and PairingWindow's
- # AskLimits; the harness never builds one (its own door serves every session). Since away from home
--# (PR #39) it judges each device's link (LinkJudge).
--host_files=(StreamServer CableLink ClientLink DeviceGate Door DoorPolicy HostIdentity HostLog InterfaceSnapshot LinkJudge
--            OriginPolicy PairingWindow PointerControl PointerWatch RefusalSummary Stats)
-+# (PR #39) it judges each device's link (LinkJudge). Since a revoked session's receive loop hands on
-+# only what lets go of a key or a button (security scan finding 10), it reads RevokedInput (KeyStrokes).
-+host_files=(StreamServer CableLink ClientLink DeviceGate Door DoorPolicy HostIdentity HostLog InterfaceSnapshot KeyStrokes
-+            LinkJudge OriginPolicy PairingWindow PointerControl PointerWatch RefusalSummary Stats)
- # The Mac's sound (docs/audio-plan.md H6): where a side has these, they are compiled in with SILL_AUDIO
- # defined, and main.swift's --audio runs the test tone through the real pipeline and send path.
- audio_files=(AudioPipeline AudioPacketizer AudioEncoder SyntheticAudio TestTone)
-```
-
-**File**: `Scripts/sillclient.py` (modified, +24/-12)
-```diff
-@@ -12,11 +12,14 @@
-                      in send order. Keys: maxFPS, bitrate, captureScale, prioritizeSpeed,
-                      virtualDisplay, directWireless, sendAudio; booleans accept 1/0/true/false/on/off
-   --raw17=JSON@T     send this literal kind 17 payload T seconds in (split on the last @)
-+  --raw9=JSON@T      send this literal kind 9 payload (a viewport) T seconds in (split on the last @);
-+                     a host refuses one outside 1 to 16384 points a side or 0.25 to 4 for its scale,
-+                     and one that does not decode, with a "Viewport from … refused" line
-   --pick=SRC@T       a timed selectSource: none, desktop or window:ID
-   --stats            send ClientStats (kind 12) once a second as device "sillclient", so the host
-                      logs a name for this client
--  --expect=K=V[,...] at exit, compare the last kind 16's settings (and its top-level persistent
--                     and virtualDisplayAvailable; away from home, docs/remote-bundle-plan.md: its
-+  --expect=K=V[,...] at exit, compare the last kind 16's settings (and its top-level persistent,
-+                     virtualDisplayAvailable and sessionPaired; away from home, docs/remote-bundle-plan.md: its
-                      away's homeBitrate, homeCaptureScale, awayBitrate, awayCaptureScale,
-                      thisConnectionAway and awayRunning, missing when the host sent no away; and
-                      linkState, its link's state, "fine" when it sent none): prints EXPECT ok or
-@@ -136,26 +139,28 @@
- Once a second it prints the frames, their payload in kB (the encoder's output), ticks, cursor
- shapes and the last ping's round trip. Every kind 16 (host settings) is printed on one line with
- its arrival time; dw= is Direct Wireless
--(1, 0, or - when the host did not report it: an older host); away= (only when the host sent it) is
-+(1, 0, or - when the host did not report it: an older host); paired= is sessionPaired, whether this
-+session's key is on the Mac's trust list, the one kind of session it takes Direct Wireless from (1, 0,
-+or - from a host before 2026-10-29); away= (only when the host sent it) is
- h:HOME_BITRATE/SCALE,a:AWAY_BITRATE/SCALE,this=1|0,run=1|0, and link= (only while the host reports
- the link behind or stalled) STATE,withheld=N,bitrate=B,carried=KBPS|-,suggested=B/SCALE|-. Flags may come in any
- order after the positional arguments. Everything is checked before connecting: an unknown flag, a
- --set or --expect key that is not one of theirs, or a value that does not parse stops the script
--with status 2 (--raw17 and --input go out as written). Find PORT with: lsof -nP -iTCP -sTCP:LISTEN -a -p <pid>.
-+with status 2 (--raw17, --raw9 and --input go out as written). Find PORT with: lsof -nP -iTCP -sTCP:LISTEN -a -p <pid>.
- The --synthetic hosts do not advertise over Bonjour, so this is the only way to reach them."""
- import json, re, socket, struct, sys, time
+ Branch `locked-mac` from main at e4d30349. Noah's finding of 2026-10-31, a security fix: no public
+-issue.
++issue. Noah's rule, the same morning: "When the user is locked, it should only show the lock screen, no
++virtual desktop, no desktop, no apps, nothing other than the login screen." And: "make sure this fixes
++it for good!"
  
- KIND = {0:"ps",1:"frame",2:"list",3:"thumb",4:"icon",5:"apps",11:"pong",13:"tick",14:"cursor",16:"settings",18:"macinfo",20:"pairresult",22:"goodbye",24:"menu",26:"pointer",32:"clipboard",43:"audio"}
- BOOL = {"1": True, "0": False, "true": True, "false": False, "on": True, "off": False, "yes": True, "no": False}
- BOOL_KEYS = {"prioritizeSpeed", "virtualDisplay", "directWireless", "sendAudio", "persistent", "virtualDisplayAvailable",
--             "thisConnectionAway", "awayRunning"}
-+             "thisConnectionAway", "awayRunning", "sessionPaired"}
- # What --set may send: HostSettingsChange's seven fields. The host drops any other key without a
- # word, so a misspelt one would only show up as an unchanged answer.
- SET_KEYS = {"maxFPS", "bitrate", "captureScale", "prioritizeSpeed", "virtualDisplay", "directWireless", "sendAudio"}
- # Away from home (docs/remote-bundle-plan.md): read from the state's `away`, and its `link`'s state.
- AWAY_KEYS = {"homeBitrate", "homeCaptureScale", "awayBitrate", "awayCaptureScale", "thisConnectionAway", "awayRunning"}
--EXPECT_KEYS = SET_KEYS | {"persistent", "virtualDisplayAvailable", "linkState", "clipboard"} | AWAY_KEYS
--TIMED = ("set", "raw17", "pick", "fps-after", "stop-ping", "stop-read", "pairing-wanted", "keyframe", "fetch", "press", "raw25",
-+EXPECT_KEYS = SET_KEYS | {"persistent", "virtualDisplayAvailable", "sessionPaired", "linkState", "clipboard"} | AWAY_KEYS
-+TIMED = ("set", "raw17", "raw9", "pick", "fps-after", "stop-ping", "stop-read", "pairing-wanted", "keyframe", "fetch", "press", "raw25",
-          "raw27", "move", "tap", "key", "input", "gesture", "raw28", "copy", "copy-bytes", "raw32")
- INPUT = ("move", "tap", "key", "input")
- # What --gesture may send: TrackpadGesture's six names (Gesture.swift). Anything else goes with --raw28.
-@@ -602,7 +607,8 @@ def valued(name, default=None):
- mac_pin = None
- if pair_hold is not None:
-     # A pairing connection still pending: TLS up (ALPN sill-pair/1), then silence. The host's
--    # admission deadline (10 s) or a Direct Wireless chang
+ ## The finding
+ 
+-Sill.app asks whether this Mac's console is unlocked (`Sources/SillHost/SessionLock.swift`:
+-`CGSessionCopyCurrentDictionary`'s `kCGSSessionOnConsoleKey` and `CGSSessionScreenIsLocked`, and in
+-Sill.app the `com.apple.screenIsLocked` and `com.apple.screenIsUnlocked` notifications; TEST ONLY
+-`SILL_TEST_LOCKED=1` on a test host) for two things only: the pairing ask rule (`DoorPolicy.ask`'s
+-step 1) and the cable's automatic pairing. Everything else ignores the lock. With the screen locked,
+-or with another user selected at the login screen while Noah's session runs in the background, a
+-paired device (and, at a door that lets any device in, an unpaired one) can still:
++Sill asked whether this Mac's console was unlocked (`SessionLock`) for two things only: the pairing
++ask rule (`DoorPolicy.ask`'s step 1) and the cable's automatic pairing. Everything else ignored the
++lock. With the screen locked, or with another user selected at the login screen while Noah's session
++ran in the background, a paired device (and, at a door that lets any device in, an unpaired one) could
++still:
+ 
+ - pick a window and see its content: window capture (`SCContentFilter(desktopIndependentWindow:)`)
+   draws the window whatever covers it, and the virtual display's app filter
+-  (`SCContentFilter(display:including:)`) leaves the lock screen, which is on the main display, out;
+-- see every window's thumbnail (the catalog's poll takes them every 2 to 6 s while a device is
+-  connected), the icons of the running apps and the installed apps;
+-- launch apps from the Apps drawer (Noah saw these, with another user selected at the login screen),
+-  press a window's traffic lights, read the streamed app's menus and choose items in them (Open
+-  Recent lists file names), post trackpad gestures, and read and write the clipboard;
+-- hear the Mac's sound;
+-- type, an unpaired device too, which at a locked Mac types into its password field.
+-
+-Expected: what Screen Sharing does. A locked Mac shows its lock screen and nothing else until it is
+-unlocked, and only its owner types at it: here, a paired device.
++  (`SCContentFilter(display:including:)`) leaves the lock screen out;
++- stream the Desktop, which off console is this session's own desktop, not the login window (main's
++  build streamed it on 2026-10-30 and 31, below);
++- see every window's thumbnail, the running apps' icons and the installed apps;
++- launch apps (Noah saw it, another user selected at the login screen), press a window's traffic
++  lights, read and choose the streamed app's menus, post trackpad gestures, read and write the
++  clipboard, hear the Mac's sound, see the Mac's pointer and cursor shape;
++- type and click: off console into another session's world, at a locked screen into its password
++  field, an unpaired device too;
++- wake the console's display (DisplayWake's activity), and make a virtual display that joins the
++  console's display set.
++
++### Noah's test of 2026-10-31, read again
++
++The Sill.app that ran through Noah's fast user switch (04:25:36 to 04:26:57 local) was main's, 0.5.5
++(1232), running since 2026-10-30 01:47 (1232 is `git rev-list --count e4d30349`). This branch's first
++build, 1245 (b1404215), started at 04:27:23, 26 s after his unlock, and has seen no lock or switch since
++(loginwindow's notifications, checked to 05:11). So what he saw ("I could see a desktop when I switched
++users", "could still launch apps") was main's behaviour, and the missing "Locked:" lines say nothing of
++this branch: it was not running. The diagnosis given the review that morning, a main actor blocked in
++WindowServer calls, was wrong: build 1232's main actor printed all through the switched-out minutes
++(the catalog, "Desktop: display 147 → 151", "Selecting window 12882 Calculator", the virtual display's
++fallback, clicks, "Window 12882 close: done", "Capture started"). No main-actor heartbeat gate was
++built. The second login screen Noah saw is macOS's own: this Mac locks itself 1 to 1.6 s after every
++return to the console (loginwindow: sessionDidMoveOnConsole, then screenIsLocked; also on 2026-10-28
++and 29 with no device connected), and Sill posted no input then. **Noah's next test is the first one of
++this fix.**
++
++What build 1232 showed off console, from its log and the system's: ScreenCaptureKit's display and
++window captures deliver frames (40, 41, 20, 18 and 52 complete frames a second of this session's own
++display, while the login window drew the same panel as display 0x9a); CGVirtualDisplay neve
 ```
 
-**File**: `Sources/SillHost/CaptureScale.swift` (modified, +24/-0)
+---
+
+### Incident Patch 2: `148ea9c5` (2026-10-31)
+**Commit Message**: The icons and the apps that raced the lock go out at the unlock
+
+Found re-reading the gate: the coordinator reads the gate, then sends a device's icons and the installed
+apps (its catalog at connect, a new app's icon), and the network queue reads the gate again as it sends.
+A lock between the two dropped them there while the coordinator counted them sent, so after the unlock
+that device had no icons until it reconnected. StreamServer now reports an icon or the app list it
+withheld (`onCatalogWithheld`: the connection, or every one for a broadcast), and the unlock sends that
+device every icon and the apps (`sendWithheldAppsAndIcons`). Nothing more of the Mac goes out: only
+what the unlock would send anyway, after it.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `Sources/SillHost/StreamCoordinator.swift` (modified, +8/-0)
 ```diff
-@@ -164,6 +164,30 @@ enum VirtualDisplaySize {
-         let side = ceil(max(panel.width, panel.height) / 0.5)
-         return clamp(CGSize(width: side, height: side))
+@@ -451,6 +451,14 @@ package final class StreamCoordinator {
+         // first reading the gate reads off console.
+         let gate = lockGate
+         server.lockGate = gate
++        // An icon or the apps that raced the lock (the gate withheld them on the network queue after this
++        // side had sent them): the device they were for gets every icon and the apps at the unlock.
++        server.onCatalogWithheld = { [weak self] id in
++            Task { @MainActor in
++                guard let self else { return }
++                if let id { self.appsAndIconsSent.remove(id) } else { self.appsAndIconsSent.removeAll() }
++            }
++        }
+         catalog.isLocked = { gate.locked }
+         clipboard.isLocked = { gate.locked }
+         menus.isLocked = { gate.locked }
+```
+
+**File**: `Sources/SillHost/StreamServer.swift` (modified, +15/-4)
+```diff
+@@ -172,6 +172,10 @@ final class StreamServer {
+     /// icon, app list, sound, clipboard, pointer or cursor shape (`LockPolicy.withheld`), whatever the main
+     /// actor is doing; and the Mac's pointer is not even read. The default never locks (the harnesses).
+     var lockGate = LockGate()
++    /// An icon or the installed apps the gate withheld: a send that left the coordinator just before the
++    /// Mac read locked. The connection it was for, nil for a broadcast's (every device): the unlock sends
++    /// that device every icon and the apps again. Called on the network queue.
++    var onCatalogWithheld: ((ObjectIdentifier?) -> Void)?
+     /// A client fell behind and lost a delta frame; the encoder should produce a keyframe now
+     /// rather than in up to 4 s. Called on the network queue.
+     var onKeyframeNeeded: (() -> Void)?
+@@ -1410,7 +1414,7 @@ final class StreamServer {
+         queue.async { [self] in
+             for (id, kind, data) in items {
+                 guard let client = clients[id], client.connection.state == .ready else { continue }
+-                if lockGate.withholds(kind) { Stats.shared.bump("lock.withheld"); continue }   // a locked Mac (LockPolicy)
++                if lockGate.withholds(kind) { withheld(kind, for: id); continue }   // a locked Mac (LockPolicy)
+                 send(data, to: client)
+             }
+         }
+@@ -1425,11 +1429,18 @@ final class StreamServer {
+                 print("send: no client for \(connection.endpoint) (\(clients.count) known)")
+                 return
+             }
+-            if lockGate.withholds(kind) { Stats.shared.bump("lock.withheld"); return }   // a locked Mac (LockPolicy)
++            if lockGate.withholds(kind) { withheld(kind, for: ObjectIdentifier(connection)); return }   // a locked Mac (LockPolicy)
+             send(data, to: client)
+         }
      }
-+
-+    /// The most a window is asked for on the virtual display, a side: the largest viewport a host takes,
-+    /// 16384 points at a text scale of 0.25 (ViewportBounds), so the hold changes no size a host asked
-+    /// for before. Not the display's `maxSide`: the placement fits the window to the display anyway
-+    /// (VirtualStage.prepare's `dest`), and a full-screen window's crop takes the shape of this size,
-+    /// which is the panel's only while no side is held. Held at 4096, a 2560×1400 panel at 0.5x (an iPad's
-+    /// Stage Manager window on a large display) was asked 4096×2800, and a full-screen window's crop came
-+    /// out 1.46:1 for a 1.83:1 panel, black bars on the device (the review of finding 4, 2026-10-29).
-+    static let maxWindowSide: CGFloat = 65536
-+
-+    /// The size a window should have on the virtual display, in Mac points: a device's panel of `panel`
-+    /// points divided by its text scale (none, or one that is not a positive number, counts as 1), each
-+    /// side held to 1…`maxWindowSide` (VirtualStage.windowSize). Until 2026-10-29 nothing held it: a
-+    /// viewport of 1e300 points, or a scale of 1e-300, gave a side no Int holds, and the "insists on …"
-+    /// line's Int() trapped (security scan, finding 4; hosts now refuse such a viewport, ViewportBounds,
-+    /// and the line prints through ViewportBounds.whole). Every viewport a host takes is asked for as
-+    /// before, but for a side under half a point, now 1 rather than 0. No panel, or one whose sides are
-+    /// not positive numbers: the window's own size, as before.
-+    static func windowSize(panel: CGSize?, scale: CGFloat?, own: CGSize) -> CGSize {
-+        guard let panel, panel.width.isFinite, panel.height.isFinite, panel.width > 0, panel.height > 0 else { return own }
-+        let s = scale.flatMap { $0.isFinite && $0 > 0 ? $0 : nil } ?? 1
-+        return CGSize(width: min(max((panel.width / s).rounded(), 1), maxWindowSide),
-+                      height: min(max((panel.height / s).rounded(), 1), maxWindowSide))
-+    }
- }
  
- /// HEVC wants even sides: a capture's size in pixels rounded down to even. Every capture's rule until
++    /// A message the gate withheld (LockPolicy): counted, and an icon's or the apps' reported
++    /// (`onCatalogWithheld`). On the network queue.
++    private func withheld(_ kind: StreamMessageKind, for id: ObjectIdentifier?) {
++        Stats.shared.bump("lock.withheld")
++        if kind == .appIcon || kind == .appList { onCatalogWithheld?(id) }
++    }
++
+     /// Client → host messages share the same framing. Small and rare, so read them one at a time.
+     private func receiveLoop(_ client: Client) {
+         let c = client.connection
+@@ -1557,7 +1568,7 @@ final class StreamServer {
+     func broadcast(_ message: StreamMessage, picture: LockPolicy.Picture? = nil) {
+         let data = message.serialized()
+         queue.async { [self] in
+-            if lockGate.withholds(message.kind, picture: picture) { Stats.shared.bump("lock.withheld"); return }
++            if lockGate.withholds(message.kind, picture: picture) { withheld(message.kind, for: nil); return }
+             if message.kind == .parameterSets { lastParameterSets = data }
+             if message.kind == .frame, message.isKeyframe { lastKeyframeAt = Date().timeIntervalSince1970 }
+             var wantKeyframe = false
+@@ -1639,7 +1650,7 @@ final class StreamServer {
+     /// has `audioCap` messages untaken. None while the Mac reads locked (LockPolicy). Thread-safe.
+     func broadcastAudio(packets: Data, epoch: Int) {
+         queue.async { [self] in
+-            if lockGate.withholds(.audio) { Stats.shared.bump("lock.withheld"); return }
++            if lockGate.withholds(.audio) { withheld(.audio, for: nil); return }
+             for client in clients.values where client.audioCodec == AudioCodec.aacELD && client.connection.state == .ready {
+                 if client.audioEpochSent != epoch {
+                     guard let format = audioFormat, format.epoch == epoch else { continue }
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #262** (2026-10-30): Integration: the seven security pull requests tested together on 2026-10-30 (#249 #250 #251 #252 #253 #254 #255) (@Saffsanity)
-- **PR #259** (2026-10-30): Integration: the eight pull requests tested together on 2026-10-30 (#241 #239 #240 #217 #224 #181 #248 #242) (@Saffsanity)
-- **PR #255** (2026-10-30): Security: the reconnect to an unpaired open door pins the key its session saw (scan finding 3) (@Saffsanity)
-- **PR #254** (2026-10-30): A device the Mac stops serving lands no more input (security scan finding 10) (@Saffsanity)
-- **PR #253** (2026-10-30): Direct Wireless only from a paired device (security scan finding 8) (@Saffsanity)
-- **PR #252** (2026-10-30): Door: waiting for admission costs its source (security scan, finding 9) (@Saffsanity)
+- **PR #299** (2026-11-03): Site: a contribute page, getsill.app/contribute (@Saffsanity)
+- **PR #290** (closed): Audio: Play on the Mac too, the choice of where the sound plays (on top of #288) (@addhumal)
+- **PR #288** (closed): Audio: a quiet Mac while devices play its sound (Core Audio process tap) (@addhumal)
+- **PR #286** (2026-11-02): Version 0.6.1 for both apps (merge right after 0.6.0's App Store approval) (@Saffsanity)
+- **PR #285** (2026-11-02): Docs: the 0.6.0 release (@Saffsanity)
+- **PR #274** (2026-11-02): Sill 0.6.0: the tour once more, and a locked Mac shows only its lock screen (@Saffsanity)
 
 ---
 
@@ -2486,34 +2009,3 @@ Integration: the seven security pull requests tested together on 2026-10-30 (#24
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. Merge remote-tracking branch 'origin/firewall-executable-block' into test-securi
-
-**RULE**:
-When implementing operations in `.github/workflows/ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Saffsanity/sill. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `bc0e5a8c`: Merge remote-tracking branch 'origin/firewall-executable-block' into test-security. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci.yml`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```swift
-// Verified production-grade fix pattern:
-        check: [addresses, ask-limits, audio-codec, audio-packetizer, audio-playout, away-copy, away-quality, away-wire, cable-link, capture-scale, clientlink, clipboard, compatibility, connection-list, device-gate, display-wake, dmg-layout, door-policy, duo, encoder-mailbox, encoder-slowstate, fence, firewall, gesture-chords, gestures, goodbye, hardware-keyboard, home-device, home-model, home-records, home-txt, installed-apps, key-strokes, keychain, keyframe-recovery, ledger, link-judge, menu-state, menus, message-reader, origin, pairing-address, pairing-sharing, phone-portrait, pointer-control, pointer-presence, pointer-watch, policy, protocol, remote-rules, settings-window, stream-zoom, test-host, text-composition, tour, update-policy, viewport-bounds, virtual-display-api, window-restore]
-```
-
-**NEGATIVE CONSTRAINT**:
-```swift
-// Anti-pattern to NEVER write (induced failure mode):
-        check: [addresses, ask-limits, audio-codec, audio-packetizer, audio-playout, away-copy, away-quality, away-wire, cable-link, capture-scale, clientlink, clipboard, compatibility, connection-list, device-gate, display-wake, dmg-layout, door-policy, duo, encoder-mailbox, encoder-slowstate, fence, gesture-chords, gestures, goodbye, hardware-keyboard, home-device, home-model, home-records, home-txt, installed-apps, key-strokes, keychain, keyframe-recovery, ledger, link-judge, menu-state, menus, message-reader, origin, pairing-address, pairing-sharing, phone-portrait, pointer-control, pointer-presence, pointer-watch, policy, protocol, remote-rules, settings-window, stream-zoom, test-host, text-composition, tour, update-policy, viewport-bounds, virtual-display-api, window-restore]
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `bc0e5a8c` are properly handled with clean fallback behavior.

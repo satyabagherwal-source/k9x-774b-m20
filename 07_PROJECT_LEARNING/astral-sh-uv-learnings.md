@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/astral-sh-uv-learnings.md`  
 > **Source**: github ([https://github.com/astral-sh/uv](https://github.com/astral-sh/uv))  
-> **Source Version**: `564a2074`  
+> **Source Version**: `28c23b0e`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T16:50:25.806Z  
+> **Timestamp**: 2026-11-03T18:11:17.601Z  
 > **Learning ID**: `learn-github-astral-sh-uv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/astral-sh-uv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/astral-sh/uv](https://github.com/astral-sh/uv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T16:50:24.467Z  
+> **Harvest Timestamp**: 2026-11-03T18:11:16.341Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: An extremely fast Python package and project manager, written in Rust.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 91394 stars
+- **Stars / Engagement**: 91500 stars
 
 ---
 
@@ -1496,11 +1496,14 @@ mod types;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #23012** (2026-10-30): **Allow an empty inline sources table in uv remove**
-  *Symptoms*: ## Summary  With the following configuration, `uv add anyio` and `uv lock --check` succeed, but `uv remove anyio` fails with “Sources in `pyproject.toml` are malformed”.  ```toml [tool.uv] sources = {} ```  Source cleanup tries to open the empty inline table as a regular table. We now skip that lookup when the inline table is empty. Removing the dependency leaves `sources = {}` in place. 
+- **Issue #23074** (2026-11-03): **Incorrect checksum for `uv-x86_64-pc-windows-msvc.zip`?**
+  *Symptoms*: ### Summary  This checksum seems to be incorrect: https://github.com/astral-sh/uv/releases/download/0.13.7/uv-x86_64-pc-windows-msvc.zip.sha256 Fine in `sha256.sum`.  ### Platform  Windows  ### Version  0.13.7  ### Python version  _No response_
+  **Post-Mortem & Fix Analysis**:
+  > The checksum is correct. My mistake.
+  > Can be closed.
 
-- **Issue #23008** (2026-10-30): **Escape literal paths when adding workspace members**
-  *Symptoms*: ## Summary  When `uv init '[v2]/api'` adds the project to a workspace, it writes `[v2]/api` directly into `tool.uv.workspace.members`. That field accepts globs, so `uv lock` can silently lock a different project at `v/api` or omit the new project entirely.  We escape glob metacharacters when `uv init` or `uv add` writes a concrete member path. For this example, the generated entry is `[[]v2[]]/api`, which matches the literal directory. 
+- **Issue #23013** (2026-11-02): **Fix `uvx` on CPython builds with local versions**
+  *Symptoms*: ## Summary  With a CPython development build, `uvx` installs the tool successfully, then fails to launch it:  ```console $ ./python --version Python 3.16.0a1+dev $ uvx --python ./python pycowsay hello error: Failed to spawn: pycowsay   cause: No such file or directory (os error 2) ```  We write `3.16.0a1+dev` to `pyvenv.cfg`, but the reader rejects the local version and discards the rest of the file. The installed entry point then refers to the temporary interpreter path, which disappears when we move the environment into the cache.  We now read the recorded version as a PEP 440 version and compare it at the precision the creator recorded.  Closes https://github.com/astral-sh/uv/issues/22989.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1517,301 +1520,227 @@ mod types;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `564a2074` (2026-10-31)
-**Commit Message**: Consistently use`[expected]` table for packse (#23025)
+### Incident Patch 1: `4fdd4e24` (2026-11-02)
+**Commit Message**: Keep older CI reruns from canceling the current PR build (#22982)
 
-Use an explicit `[expected]` table in the static provider order test to
-match the other Packse fixtures.
+Retrying the Windows shard for an older commit on astral-sh/uv#22964
+canceled the macOS smoke test and two benchmarks that were still running
+on its new head. Both workflow runs had the same PR concurrency group.
+[Windows
+retry](https://github.com/astral-sh/uv/actions/runs/40639515561/job/122835758231)
+· [Canceled
+jobs](https://github.com/astral-sh/uv/actions/runs/40692593757/attempts/1)
 
-**File**: `crates/uv/tests/pip_install/wheel_variant_compatibility.rs` (modified, +3/-1)
+Group first attempts by PR number so a new push supersedes the previous
+build. Use the commit SHA for reruns so an older retry can finish
+alongside checks for the current head.
+
+**File**: `.github/workflows/ci.yml` (modified, +2/-1)
 ```diff
-@@ -115,7 +115,9 @@ fn select_variant_by_static_provider_order() -> Result<()> {
-     let server = PackseServer::from_toml(indoc! {r#"
-         name = "static-provider-order"
-         root = {}
--        expected.satisfiable = true
-+
-+        [expected]
-+        satisfiable = true
+@@ -10,7 +10,8 @@ permissions:
+   contents: read
  
-         [packages.ok.versions."1.0.0"]
-         wheel = false
+ concurrency:
+-  group: ${{ github.workflow }}-${{ github.ref_name }}-${{ github.event.pull_request.number || github.sha }}
++  # An older commit's rerun must not cancel the latest push to the same PR.
++  group: ${{ github.workflow }}-${{ github.ref_name }}-${{ github.run_attempt == 1 && github.event.pull_request.number || github.sha }}
+   cancel-in-progress: true
+ 
+ env:
 ```
 
 ---
 
-### Incident Patch 2: `01959f80` (2026-10-31)
-**Commit Message**: Handle project names starting with a digit in `uv init` (#23022)
+### Incident Patch 2: `e7d1ea4c` (2026-11-03)
+**Commit Message**: Clarify the shell requirement for GitLab job images (#23078)
+
+The distroless example in the GitLab guide fails before the job's
+`script` runs. Clearing the image's entrypoint lets GitLab Runner invoke
+`sh` directly, but the distroless image has no shell. Remove that
+example and explain why the guide uses a Debian-based image.
+
+Refs astral-sh/uv#23065.
+
+Co-authored-by: zaniebot <[REDACTED_EMAIL]>
+
+**File**: `docs/guides/integration/gitlab.md` (modified, +2/-12)
+```diff
+@@ -9,7 +9,8 @@ description: A guide to using uv in GitLab CI/CD, including installation, settin
+ ## Using the uv image
+ 
+ Astral provides [Docker images](docker.md#available-images) with uv preinstalled.
+-Select a variant that is suitable for your workflow.
++Use a variant with a shell, such as the Debian-based image below, so GitLab Runner can execute the
++job's `script`.
+ 
+ ```yaml title=".gitlab-ci.yml"
+ variables:
+@@ -26,17 +27,6 @@ uv:
+     # your `uv` commands
+ ```
+ 
+-!!! note
+-
+-    If you are using a distroless image, you have to specify the entrypoint:
+-    ```yaml
+-    uv:
+-      image:
+-        name: ghcr.io/astral-sh/uv:$UV_VERSION
+-        entrypoint: [""]
+-      # ...
+-    ```
+-
+ ## Caching
+ 
+ Persisting the uv cache between workflow runs can improve performance.
+```
+
+---
+
+### Incident Patch 3: `516effbc` (2026-11-02)
+**Commit Message**: Fix `uvx` on CPython builds with local versions (#23013)
 
 ## Summary
 
-`uv init --package 3d-print` generates a launcher containing `from
-3d_print import main`. The project builds and installs, but running the
-command fails because a Python identifier cannot start with a digit.
+With a CPython development build, `uvx` installs the tool successfully,
+then fails to launch it:
 
 ```console
-$ uv init --package 3d-print
-$ cd 3d-print
-$ uv run 3d-print
-  ...
-    from 3d_print import main
-         ^
-SyntaxError: invalid decimal literal
+$ ./python --version
+Python 3.16.0a1+dev
+$ uvx --python ./python pycowsay hello
+error: Failed to spawn: pycowsay
+  cause: No such file or directory (os error 2)
 ```
 
-We now generate `src/_3d_print/` and point the `3d-print` entry point at
-`_3d_print:main`. For backends that infer the module name from the
-distribution name, we also configure the module to include in the wheel.
+We write `3.16.0a1+dev` to `pyvenv.cfg`, but the reader rejects the
+local version and discards the rest of the file. The installed entry
+point then refers to the temporary interpreter path, which disappears
+when we move the environment into the cache.
 
-**File**: `crates/uv-project-commands/src/init.rs` (modified, +86/-36)
+We now read the recorded version as a PEP 440 version and compare it at
+the precision the creator recorded.
+
+Closes https://github.com/astral-sh/uv/issues/22989.
+
+**File**: `crates/uv-python-interpreter/src/environment.rs` (modified, +6/-7)
 ```diff
-@@ -1,3 +1,4 @@
-+use std::borrow::Cow;
- use std::fmt::Write;
- use std::iter;
- use std::path::{Path, PathBuf};
-@@ -829,21 +830,31 @@ fn init_project_kind(
-             // Add a build system
-             let build_backend = build_backend.unwrap_or(ProjectBuildBackend::Uv);
-             pyproject.push('\n');
--            pyproject.push_str(&pyproject_build_system(name, build_backend));
-+            pyproject.push_str(&pyproject_build_system(
-+                &name.as_dist_info_name(),
-+                build_backend,
-+            ));
-         }
--        InitProjectKind::ApplicationWithLibrary => {
--            // Since it'll be packaged, we can add a `[project.scripts]` entry
--            pyproject.push('\n');
--            pyproject.push_str(&pyproject_project_scripts(name, name.as_str(), "main"));
--
--            // Add a build system
-+        InitProjectKind::ApplicationWithLibrary | InitProjectKind::Library => {
-             let build_backend = build_backend.unwrap_or(ProjectBuildBackend::Uv);
--            pyproject.push('\n');
--            pyproject.push_str(&pyproject_build_system(name, build_backend));
--            pyproject_build_backend_prerequisites(name, path, build_backend)?;
-+            let module = InitModuleName::from_package(name);
-+            let module_name = module.as_str();
-+            let is_lib = matches!(project_kind, InitProjectKind::Library);
-+
-+            if !is_lib {
-+                pyproject.push_str(&indoc::formatdoc! {r#"
+@@ -349,16 +349,15 @@ impl PythonEnvironment {
+     /// versions do not match, returns a tuple of the `pyvenv.cfg` and interpreter's Python versions
+     /// for display.
+     pub fn get_pyvenv_version_conflict(&self) -> Option<(Version, Version)> {
+-        let cfg = self.cfg().ok()?;
+-        let cfg_version = cfg.version?.into_version();
++        let cfg_version = self.cfg().ok()?.version?;
  
--            // Generate `src` files with app-style `main()` in `__init__.py`
--            generate_package_scripts(name, path, build_backend, false)?;
-+                    [project.scripts]
-+                    {name} = "{module_name}:main"
-+                "#});
-+            }
-+            if let Some(explicit) = module.explicit.as_deref() {
-+                pyproject.push_str(&pyproject_module_override(explicit, build_backend));
-+            }
-+            pyproject.push('\n');
-+            pyproject.push_str(&pyproject_build_system(module_name, build_backend));
-+            pyproject_build_backend_prerequisites(&module, path, build_backend)?;
-+            generate_package_scripts(name, module_name, path, build_backend, is_lib)?;
-         }
-         InitProjectKind::Application => {
-             let main_contents = indoc::formatdoc! {r#"
-@@ -863,15 +874,6 @@ fn init_project_kind(
-                 fs_err::write(path.join("main.py"), main_contents)?;
+-        // Determine if we should be checking for patch or pre-release equality
+-        let exe_version = if cfg_version.release().get(2).is_none() {
++        // Compare at the precision recorded in pyvenv.cfg, including any version suffix.
++        let exe_version = if cfg_version != cfg_version.only_release() {
++            self.interpreter().python_version().clone()
++        } else if cfg_version.release().get(2).is_none() {
+             self.interpreter().python_minor_version()
+-        } else if cfg_version.pre().is_none() {
+-            self.interpreter().python_patch_version()
+         } else {
+-            self.interpreter().python_version().clone()
++            self.interpreter().python_patch_version()
+         };
+ 
+         (cfg_version != exe_version).then_some((cfg_version, exe_version))
+```
+
+**File**: `crates/uv-python-interpreter/src/virtualenv.rs` (modified, +4/-7)
+```diff
+@@ -8,10 +8,9 @@ use std::{
+ use fs_err as fs;
+ use thiserror::Error;
+ 
++use uv_pep440::Version;
+ use uv_pypi_types::Scheme;
+ 
+-use uv_python_types::PythonVersion;
+-
+ /// The layout of a virtual environment.
+ #[derive(Debug)]
+ pub struct VirtualEnvironment {
+@@ -45,7 +44,7 @@ pub struct PyVenvConfiguration {
+     /// Should the virtual environment include system site packages?
+     pub(super) include_system_site_packages: bool,
+     /// The Python version the virtual environment was created with
+-    pub(super) version: Option<PythonVersion>,
++    pub(super) version: Option<Version>,
+ }
+ 
+ #[derive(Debug, Error)]
+@@ -141,10 +140,8 @@ impl PyVenvConfiguration {
+                     include_system_site_packages = value.trim().to_lowercase() == "true";
+                 }
+                 "version" | "version_info" => {
+-                    version = Some(
+-                        PythonVersion::from_str(value.trim())
+-                            .map_err(|e| io::Error::new(std::io::ErrorKind::InvalidData, e))?,
+-                    );
++                    // An unrecognized version only prevents checking the interpreter version.
++                    version = Version::from_str(value.trim()).ok();
+                 }
+                 _ => {}
              }
-         }
--        InitProjectKind::Library => {
--            let build_backend = build_backend.unwrap_or(ProjectBuildBackend::Uv);
--            pyproject.push('\n');
--            pyproject.push_str(&pyproject_build_system(name, build_backend));
--            pyproject_build_backend_prerequisites(name, path, build_backend)?;
--
--            // Generate `src` files
--            generate_package_scripts(name, path, build_backend, true)?;
--        }
-     }
-     fs_err::write(path.join("pyproject.toml"), pyproject)?;
-     Ok(())
-@@ -934,8 +936,7 @@ fn pyproject_project(
- 
- /// Generate the `[build-system]` section of a `pyproject.toml`.
- /// Generate the `[tool.]` section of a `pyproject.toml` where applicable.
--fn pyproject_build_system(package: &PackageName, build_backend: ProjectBuildBackend) -> String {
--    let module_name = package.as_dist_info_name();
-+fn pyproject_build_system(module_name: &str, build_backend: ProjectBuildBackend) -> String {
-     match build_backend {
-         ProjectBuildBackend::Uv => {
-             // Limit to the stable version range.
-@@ -1018,24 +1019,70 @@ fn pyproject_build_system(package: &PackageName, build_backend: ProjectBuildBack
-     }
- }
- 
--/// Generate the `[project.scripts]` section of a `pyproject.toml`.
--fn pyproject_project_scripts(package: &PackageName, executable_name: &str, target: &str) -> String {
--    let module_name = package.as_dist_info_name();
--    indoc::formatdoc! {r#"
--        [project.scripts]
--        {executable_name} = "{module_name}:{target}"
--    "#}
-+/// The module name inferred from a distribution and any override needed by the scaffold.
-+struct InitModuleName<'a> {
-+    inferred: Cow<'a, str>,
-+    explicit: Option<String>,
-+}
-+
-+impl<'a> InitModuleName<'a> {
-+    fn from_package(package: &'a PackageName) -> Self {
-+        let inferred = package.as_dist_info_name();
-+        // Distribution names can start with a digit, but Python identifiers cannot.
-+        let explicit = inferred
-+            .starts_with(|c: char| c.is_ascii_digit())
-+            .then(|| format!("_{inferred}"));
-+        Self { inferred, explicit }
-+    }
-+
-+    fn as_str(&self) -> &str {
-+        self.explicit.as_deref().unwrap_or(&self.inferred)
-+    }
-+}
-+
-+/// Configure build backends that discover packages by their distribution name.
-+fn pyproject_module_override(module_name: &str, build_backend: ProjectBuildBackend) -> String {
-+    match build_backend {
-+        ProjectBuildBackend::Uv => indoc::formatdoc! {r#"
-+
-+            [tool.uv.build-backend]
-+      
 ```
 
-**File**: `crates/uv/tests/project/init.rs` (modified, +106/-0)
+**File**: `crates/uv/tests/pip_install/pip_install.rs` (modified, +9/-0)
 ```diff
-@@ -625,6 +625,55 @@ fn init_package() -> Result<()> {
-     Ok(())
- }
+@@ -28,6 +28,7 @@ use wiremock::{
+ use uv_extract::dirhash::{DirectoryDigest, dirhash_path};
+ use uv_fs::{PortablePath, Simplified};
+ use uv_install_wheel::validate_and_heal_record;
++use uv_python_interpreter::PyVenvConfiguration;
+ use uv_redacted::SafeUrl;
+ use uv_static::EnvVars;
+ use uv_test::archive::{generate_source_archive, write_tar_gz};
+@@ -11574,6 +11575,14 @@ fn install_relocatable() -> Result<()> {
+         .assert()
+         .success();
  
-+/// A launcher for a digit-prefixed distribution must use a valid module name in its import.
-+#[test]
-+fn init_package_leading_digit() {
-+    let context = uv_test::test_context!("3.12");
++    // CPython development builds record a local version in pyvenv.cfg.
++    let pyvenv_cfg = context.venv.child("pyvenv.cfg");
++    pyvenv_cfg.write_str(&PyVenvConfiguration::set(
++        &context.read(&pyvenv_cfg),
++        "version_info",
++        "3.12.0+dev",
++    ))?;
 +
-+    uv_snapshot!(context.filters(), context.init().arg("--package").arg("3d-print"), @"
-+    exit_code: 0 (success)
-+    ----- stderr -----
-+    Initialized project `3d-print` at `[TEMP_DIR]/3d-print`
-+    ");
-+
-+    insta::with_settings!({ filters => context.filters() }, {
-+        assert_snapshot!(context.read("3d-print/pyproject.toml"), @r#"
-+        [project]
-+        name = "3d-print"
-+        version = "0.1.0"
-+        description = "Add your description here"
-+        readme = "README.md"
-+        requires-python = ">=3.12"
-+        dependencies = []
-+
-+        [project.scripts]
-+        3d-print = "_3d_print:main"
-+
-+        [tool.uv.build-backend]
-+        module-name = "_3d_print"
-+
-+        [build-system]
-+        requires = ["uv_build>=[CURRENT_VERSION],<[NEXT_BREAKING]"]
-+        build-backend = "uv_build"
-+        "#);
-+    });
-+
-+    let child = context.temp_dir.child("3d-print");
-+    uv_snapshot!(context.filters(), context.run().current_dir(&child).env_remove(EnvVars::VIRTUAL_ENV).arg("3d-print"), @"
-+    exit_code: 0 (success)
-+    ----- stdout -----
-+    Hello from 3d-print!
-+
-+    ----- stderr -----
-+    Using CPython 3.12.[X] interpreter at: [PYTHON-3.12]
-+    Creating virtual environment at: .venv
-+    Resolved 1 package in [TIME]
-+    Prepared 1 package in [TIME]
-+    Installed 1 package in [TIME]
-+     + 3d-print==0.1.0 (from file://[TEMP_DIR]/3d-print)
-+    ");
-+}
-+
- #[test]
- fn init_bare_lib() {
-     let context = uv_test::test_context!("3.12");
-@@ -3756,6 +3805,63 @@ fn init_app_build_backend_scikit() -> Result<()> {
-     Ok(())
- }
+     // Install a package with a hello-world console script entrypoint.
+     // (we use black_editable because it's convenient, but we don't actually install it as editable)
+     context
+```
+
+**File**: `hawk.toml` (modified, +0/-8)
+```diff
+@@ -332,14 +332,6 @@ kind = "inherent_method"
+ level = "expect"
+ reason = "retained as part of the PyVenvConfiguration accessors"
  
-+/// Scikit must install the native extension into the package imported by the launcher.
-+#[test]
-+fn init_app_build_backend_scikit_leading_digit() {
-+    let context = uv_test::test_context!("3.12");
-+
-+    uv_snapshot!(context.filters(), context.init().args(["--package", "--build-backend", "scikit", "3d-print"]), @"
-+    exit_code: 0 (success)
-+    ----- stderr -----
-+    Initialized project `3d-print` at `[TEMP_DIR]/3d-print`
-+    ");
-+
-+    assert_snapshot!(context.read("3d-print/pyproject.toml"), @r#"
-+    [project]
-+    name = "3d-print"
-+    version = "0.1.0"
-+    description = "Add your description here"
-+    readme = "README.md"
-+    requires-python = ">=3.12"
-+    dependencies = []
-+
-+    [project.scripts]
-+    3d-print = "_3d_print:main"
-+
-+    [tool.scikit-build.wheel]
-+    packages = ["src/_3d_print"]
-+
-+    [tool.scikit-build]
-+    minimum-version = "build-system.requires"
-+    build-dir = "build/{wheel_tag}"
-+
-+    [tool.uv]
-+    cache-keys = [{ file = "pyproject.toml" }, { file = "src/**/*.{h,c,hpp,cpp}" }, { file = "CMakeLists.txt" }]
-+
-+    [build-system]
-+    requires = ["scikit-build-core>=0.12", "pybind11>=3"]
-+    build-backend = "scikit_build_core.build"
-+    "#);
-+
-+    assert_snapshot!(context.read("3d-print/src/_3d_print/__init__.py"), @"
-+    from _3d_print._core import hello_from_bin
-+
-+
-+    def main() -> None:
-+        print(hello_from_bin())
-+    ");
-+
-+    assert_snapshot!(context.read("3d-print/CMakeLists.txt"), @"
-+    cmake_minimum_required(VERSION 3.15...4.0)
-+    project(${SKBUILD_PROJECT_NAME} LANGUAGES CXX)
-+
-+    find_package(pybind11 CONFIG REQUIRED)
-+
-+    pybind11_add_module(_core MODULE src/main.cpp)
-+    install(TARGETS _core DESTINATION _3d_print)
-+    ");
-+}
-+
- /// Run `uv init --lib --build-backend maturin` to create a packaged application project
- #[test]
- #[cfg(feature = "test-crates-io")]
+-[[override]]
+-lint = "hawk::unnecessary_public"
+-crate = "uv_python_interpreter"
+-item = "virtualenv::PyVenvConfiguration::set"
+-kind = "inherent_method"
+-level = "expect"
+-reason = "retained as a public pyvenv.cfg editing helper"
+-
+ # Keep wheel variant component APIs consistent.
+ 
+ [[override]]
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #23027** (closed): feat(export): include license information in CycloneDX export (#21617) (@omid-io)
-- **PR #23025** (2026-10-31): Consistently use`[expected]` table for packse (@konstin)
-- **PR #23022** (2026-10-31): Handle project names starting with a digit in `uv init` (@charliermarsh)
-- **PR #23021** (2026-10-30): Add `PackseServer::from_toml` convenience constructor (@konstin)
-- **PR #23019** (closed): fix: Annotated-tag object id given as a git rev fails with "Exact Git revision does not match precise commit" (@xixi-box)
-- **PR #23017** (2026-10-30): Preserve inline comments when updating an existing dependency group (@charliermarsh)
+- **PR #23079** (2026-11-03): Limit Depot cache writes on pull requests (@astral-automations-bot[bot])
+- **PR #23078** (2026-11-03): Clarify the shell requirement for GitLab job images (@astral-automations-bot[bot])
+- **PR #23068** (2026-11-03): Bump version to 0.13.7 (@astral-automations-bot[bot])
+- **PR #23066** (2026-11-03): Add a vendored TPU wheel variant provider (@konstin)
+- **PR #23061** (2026-11-02): Make tracing-durations-export optional in uv-dev (@konstin)
+- **PR #23052** (2026-11-03): Update Rust crate uuid to v1.27.0 (@renovate[bot])
 
 ---
 
@@ -1831,30 +1760,29 @@ distribution name, we also configure the module to include in the wheel.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Consistently use`[expected]` table for packse (#23025)
+## X. Keep older CI reruns from canceling the current PR build (#22982)
 
 **RULE**:
-When implementing operations in `crates/uv/tests/pip_install/wheel_variant_compatibility.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in astral-sh/uv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in astral-sh/uv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `564a2074`: Consistently use`[expected]` table for packse (#23025). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4fdd4e24`: Keep older CI reruns from canceling the current PR build (#22982). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/uv/tests/pip_install/wheel_variant_compatibility.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-
-        [expected]
-        satisfiable = true
+  # An older commit's rerun must not cancel the latest push to the same PR.
+  group: ${{ github.workflow }}-${{ github.ref_name }}-${{ github.run_attempt == 1 && github.event.pull_request.number || github.sha }}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-        expected.satisfiable = true
+  group: ${{ github.workflow }}-${{ github.ref_name }}-${{ github.event.pull_request.number || github.sha }}
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `564a2074` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4fdd4e24` are properly handled with clean fallback behavior.

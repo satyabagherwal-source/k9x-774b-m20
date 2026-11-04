@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/mitmproxy-mitmproxy-learnings.md`  
 > **Source**: github ([https://github.com/mitmproxy/mitmproxy](https://github.com/mitmproxy/mitmproxy))  
-> **Source Version**: `b08148b3`  
+> **Source Version**: `2f682f3a`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T16:00:38.960Z  
+> **Timestamp**: 2026-11-03T17:38:23.684Z  
 > **Learning ID**: `learn-github-mitmproxy-mitmproxy`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/mitmproxy-mitmproxy-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/mitmproxy/mitmproxy](https://github.com/mitmproxy/mitmproxy))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T16:00:38.265Z  
+> **Harvest Timestamp**: 2026-11-03T17:38:22.632Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: An interactive TLS-capable intercepting HTTP proxy for penetration testers and software developers.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 46491 stars
+- **Stars / Engagement**: 46604 stars
 
 ---
 
@@ -1308,13 +1308,11 @@ class QuicStartServerHook(commands.StartHook):
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #8547** (2026-10-30): **Fix tests that never assert their comparisons**
-  *Symptoms*: #### Description  Two tests had comparisons that never ran as assertions: `test_encode` had a bare `assert b"..."` (always truthy) instead of checking `in content`, and `test_cutspec` compared `b.parse(...) == [...]` without `assert`. Both now assert, and both pass.  #### Checklist   - [x] I have updated tests where applicable.  - [ ] I have added an entry to the CHANGELOG. (N/A, test-only change) 
+- **Issue #8558** (2026-11-03): **build(deps): bump the github-actions group with 5 updates**
+  *Symptoms*: Bumps the github-actions group with 5 updates:  | Package | From | To | | --- | --- | --- | | [actions/setup-node](https://github.com/actions/setup-node) | `7.0.0` | `7.1.0` | | [apple-actions/import-codesign-certs](https://github.com/apple-actions/import-codesign-certs) | `7.0.0` | `7.1.0` | | [actions/upload-artifact](https://github.com/actions/upload-artifact) | `7.0.1` | `7.0.2` | | [actions/download-artifact](https://github.com/actions/download-artifact) | `8.0.1` | `8.0.2` | | [docker/login-action](https://github.com/docker/login-action) | `4.6.0` | `4.7.0` |  Updates `actions/setup-node` from 7.0.0 to 7.1.0 <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/actions/setup-node/releases">actions/setup-node's releases</a>.</em></p> <blockquote> <h2>v7.1.0</h2> <h2>What's Changed</h2> <h3>Enhancements:</h3> <ul> <li>Add support for mise.toml file by <a href="https://github.com/gperdomor"><code>@​gperdomor</code></a> in <a href="https://redirect.github.com/actions/setup-node/pull/1421">actions/setup-node#1421</a></li> <li>Support absolute paths in node-version-file by <a href="https://github.com/v-mahabaleshwars"><code>@​v-mahabaleshwars</code></a> in <a href="https://redirect.github.com/actions/setup-node/pull/1633">actions/setup-node#1633</a></li> </ul> <h3>Bug fixes:</h3> <ul> <li>Add Node version validation and manifest fetch retry by <a href="https://github.com/v-jitenderpalsingh"><code>@​v-jitenderpalsingh</code></a> in <a href=
 
-- **Issue #8545** (2026-10-29): **Fix #8056: Intercept option from CLI does not works.**
-  *Symptoms*: Closes #8056.  ## What changed - `mitmproxy/options.py` (+8/-0) - `test/test_options_issue_8056.py` (+75/-0)  ## Tests - New regression test `test/test_options_issue_8056.py`: fails on the current code, passes with this change. - Package test suite: 2017 passed, 0 failed (`docker (docker.io/library/python:3.12.12-slim-bookworm@sha256:593bd06efe90efa80dc4eee3948be7c0fde4134606dd40d8dd8dbcade98e669c, --network=none): python -m pytest -p no:cacheprovider --tb=short -W igno`).  --- AI note: this change was prepared with AI assistance (implementer: meta/muse-glimmer; reviews: qwen/qwen3.6-35b-a3b, qwen3-coder-30b-a3b-instruct-keep120) and checked by me before opening this pull request.
-  **Post-Mortem & Fix Analysis**:
-  > Closing this: the change isn't needed. The intercept addon already sets intercept_active when intercept is set (and clears it when intercept is cleared) in its configure(), so adding the same logic to Options.update duplicates it. The new test only failed before because it loads the addon without calling configure(), which doesn't happen in a running mitmproxy. Sorry for the noise.
+- **Issue #8557** (2026-11-03): **build(deps): update urwid requirement from <=4.0.13,>=2.6.14 to >=2.6.14,<=4.2.5**
+  *Symptoms*: Updates the requirements on [urwid](https://github.com/urwid/urwid) to permit the latest version. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/urwid/urwid/releases">urwid's releases</a>.</em></p> <blockquote> <h2>4.2.5</h2> <h2>What's Changed</h2> <h3>Deprecations ⚡</h3> <ul> <li>Deprecate non-integer index in deque insert() by <a href="https://github.com/penguinolog"><code>@​penguinolog</code></a> in <a href="https://redirect.github.com/urwid/urwid/pull/1399">urwid/urwid#1399</a></li> <li>⚡🕷 Deprecate the unused <code>_sigcont_handler</code> (removal in 5.0); also a bug fix, see &quot;Major bug fixes&quot; below: Do terminal signal work in the input loop, not in handlers by <a href="https://github.com/penguinolog"><code>@​penguinolog</code></a> in <a href="https://redirect.github.com/urwid/urwid/pull/1369">urwid/urwid#1369</a></li> </ul> <h3>Security fixes 🛡</h3> <ul> <li>Replace C1 control characters (U+0080-U+009F) in raw display output, so displayed text cannot inject terminal escape sequences such as OSC 52 clipboard writes by <a href="https://github.com/penguinolog"><code>@​penguinolog</code></a> in <a href="https://redirect.github.com/urwid/urwid/pull/1367">urwid/urwid#1367</a></li> <li>Stop crafted terminal input (a paste with about 1000 ESC bytes, malformed mouse reports, an ESC before a terminal report) from crashing the input parser and ending the main loop by <a href="https://github.com/penguinolog"><code>@​penguinol
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1331,93 +1329,226 @@ class QuicStartServerHook(commands.StartHook):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b08148b3` (2026-10-30)
-**Commit Message**: Expand ~ in the hardump option (#8541)
+### Incident Patch 1: `2f682f3a` (2026-11-03)
+**Commit Message**: build(deps): update asgiref requirement from <=3.12.1,>=3.2.10 to >=3.2.10,<=3.13.0 (#8554)
 
-* Expand ~ in the hardump option
+* build(deps): update asgiref requirement
 
-The hardump option is passed to open() as is when mitmproxy shuts down,
-so a value like ~/flows.har fails with FileNotFoundError and all flows
-that were kept in memory for the HAR export are lost. The save.har
-command and the other file options (save_stream_file, rfile, ...)
-already expand ~.
+Updates the requirements on [asgiref](https://github.com/django/asgiref) to permit the latest version.
+- [Changelog](https://github.com/django/asgiref/blob/main/CHANGELOG.txt)
+- [Commits](https://github.com/django/asgiref/compare/3.2.10...3.13.0)
 
-* Test ~ expansion for hardump
+---
+updated-dependencies:
+- dependency-name: asgiref
+  dependency-version: 3.13.0
+  dependency-type: direct:production
+...
 
-* Add changelog entry for hardump ~ expansion
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 
 * [autofix.ci] apply automated fixes
 
 ---------
 
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 Co-authored-by: autofix-ci[bot] <114827586+autofix-ci[bot]@users.noreply.github.com>
 
-**File**: `CHANGELOG.md` (modified, +3/-0)
+**File**: `pyproject.toml` (modified, +1/-1)
 ```diff
-@@ -7,6 +7,9 @@
- 
- ## Unreleased: mitmproxy next
- 
-+- Expand `~` in the `hardump` option, like other file path options. Previously, the HAR file
-+  could not be written on exit and the collected flows were lost.
-+  ([#8541](https://github.com/mitmproxy/mitmproxy/pull/8541), @memx13)
- - Fix filter expressions where a filter without an argument is followed by a closing bracket,
-   e.g. `!(~s)` or `(~q & ~s)`, which were rejected as invalid.
-   ([#8537](https://github.com/mitmproxy/mitmproxy/pull/8537), @qodelicious)
+@@ -34,7 +34,7 @@ classifiers = [
+ dependencies = [
+     "aioquic>=1.2.0,<=1.2.0",
+     "argon2-cffi>=23.1.0,<=25.1.0",
+-    "asgiref>=3.2.10,<=3.12.1",
++    "asgiref>=3.2.10,<=3.13.0",
+     "backports.zstd>=1.7.0,<=1.7.0 ; python_version<'3.14'",
+     "bcrypt>=5.0.0,<=5.0.0",
+     "Brotli>=1.2.1,<=1.2.1",
 ```
 
-**File**: `mitmproxy/addons/savehar.py` (modified, +2/-1)
+**File**: `uv.lock` (modified, +1/-1)
 ```diff
-@@ -3,6 +3,7 @@
- import base64
- import json
- import logging
-+import os
- import zlib
- from collections.abc import Sequence
- from datetime import datetime
-@@ -125,7 +126,7 @@ def done(self):
-                 har = self.make_har(self.flows)
-                 print(json.dumps(har, indent=4))
-             else:
--                self.export_har(self.flows, ctx.options.hardump)
-+                self.export_har(self.flows, os.path.expanduser(ctx.options.hardump))
- 
-     def flow_entry(self, flow: http.HTTPFlow, servers_seen: set[Server]) -> dict:
-         """Creates HAR entry from flow"""
+@@ -1138,7 +1138,7 @@ tox = [
+ requires-dist = [
+     { name = "aioquic", specifier = "<=1.2.0,>=1.2.0" },
+     { name = "argon2-cffi", specifier = ">=23.1.0,<=25.1.0" },
+-    { name = "asgiref", specifier = ">=3.2.10,<=3.12.1" },
++    { name = "asgiref", specifier = ">=3.2.10,<=3.13.0" },
+     { name = "backports-zstd", marker = "python_full_version < '3.14'", specifier = "<=1.7.0,>=1.7.0" },
+     { name = "bcrypt", specifier = "<=5.0.0,>=5.0.0" },
+     { name = "brotli", specifier = "<=1.2.1,>=1.2.1" },
 ```
 
-**File**: `test/mitmproxy/addons/test_savehar.py` (modified, +13/-0)
+---
+
+### Incident Patch 2: `3e0b6505` (2026-11-03)
+**Commit Message**: build(deps-dev): bump pyinstaller-hooks-contrib from 2026.7 to 2026.9 in the pyinstaller group (#8552)
+
+* build(deps-dev): bump pyinstaller-hooks-contrib
+
+Bumps the pyinstaller group with 1 update: [pyinstaller-hooks-contrib](https://github.com/pyinstaller/pyinstaller-hooks-contrib).
+
+
+Updates `pyinstaller-hooks-contrib` from 2026.7 to 2026.9
+- [Release notes](https://github.com/pyinstaller/pyinstaller-hooks-contrib/releases)
+- [Changelog](https://github.com/pyinstaller/pyinstaller-hooks-contrib/blob/master/CHANGELOG.rst)
+- [Commits](https://github.com/pyinstaller/pyinstaller-hooks-contrib/compare/v2026.7...v2026.9)
+
+---
+updated-dependencies:
+- dependency-name: pyinstaller-hooks-contrib
+  dependency-version: '2026.9'
+  dependency-type: direct:development
+  update-type: version-update:semver-minor
+  dependency-group: pyinstaller
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+
+* [autofix.ci] apply automated fixes
+
+---------
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+Co-authored-by: autofix-ci[bot] <114827586+autofix-ci[bot]@users.noreply.github.com>
+
+**File**: `pyproject.toml` (modified, +1/-1)
 ```diff
-@@ -239,6 +239,19 @@ def test_compressed(self, tmp_path):
-             out = json.loads(zlib.decompress((tmp_path / "out.zhar").read_bytes()))
-             assert len(out["log"]["entries"]) == 1
+@@ -67,7 +67,7 @@ dev = [
+     "maturin==1.15.0",
+     "pdoc==16.0.0",
+     "pyinstaller==6.22.3",
+-    "pyinstaller-hooks-contrib==2026.7",
++    "pyinstaller-hooks-contrib==2026.9",
+     "pytest-asyncio==1.2.0",
+     "pytest-cov==7.0.0",
+     "pytest-timeout==2.4.0",
+```
+
+**File**: `uv.lock` (modified, +4/-4)
+```diff
+@@ -1177,7 +1177,7 @@ dev = [
+     { name = "mypy", specifier = "==1.20.2" },
+     { name = "pdoc", specifier = "==16.0.0" },
+     { name = "pyinstaller", specifier = "==6.22.3" },
+-    { name = "pyinstaller-hooks-contrib", specifier = "==2026.7" },
++    { name = "pyinstaller-hooks-contrib", specifier = "==2026.9" },
+     { name = "pytest", specifier = "==8.4.2" },
+     { name = "pytest-asyncio", specifier = "==1.2.0" },
+     { name = "pytest-cov", specifier = "==7.0.0" },
+@@ -1480,14 +1480,14 @@ wheels = [
  
-+    def test_expanduser(self, tmp_path, monkeypatch):
-+        monkeypatch.setenv("HOME", str(tmp_path))
-+        monkeypatch.setenv("USERPROFILE", str(tmp_path))
-+        s = SaveHar()
-+        with taddons.context(s, Save()) as tctx:
-+            tctx.configure(s, hardump="~/out.har")
-+
-+            s.response(tflow.tflow())
-+            s.done()
-+
-+            out = json.loads((tmp_path / "out.har").read_bytes())
-+            assert len(out["log"]["entries"]) == 1
-+
+ [[package]]
+ name = "pyinstaller-hooks-contrib"
+-version = "2026.7"
++version = "2026.9"
+ source = { registry = "https://pypi.org/simple" }
+ dependencies = [
+     { name = "packaging" },
+ ]
+-sdist = { url = "https://files.pythonhosted.org/packages/26/60/d881fa1ba8c160c18d8e6f782bb16ec4640c08bc08fc50f704c368ad4f9e/pyinstaller_hooks_contrib-2026.7.tar.gz", hash = "sha256:5fbcaacb22c4f4aac869a127dce283f67a4b4cfcc37d496f2446603e6d68aefa", size = 175992, upload-time = "2026-08-24T21:26:58.713Z" }
++sdist = { url = "https://files.pythonhosted.org/packages/96/25/e47c6188228281372be7e9911a93931e01ec8798c02c93abd680b9b9521f/pyinstaller_hooks_contrib-2026.9.tar.gz", hash = "sha256:2748767901acb5cecd1304652b6c7add5bffcff1d71d01207fe24a5d42942a56", size = 180783, upload-time = "2026-10-20T15:43:54Z" }
+ wheels = [
+-    { url = "https://files.pythonhosted.org/packages/0a/67/350377af7b50416344ab8792756d414eef7629c618a73e9a0b13bb1552d9/pyinstaller_hooks_contrib-2026.7-py3-none-any.whl", hash = "sha256:24257a04c7a5a7a034cf28e39dcee20fbeeb9f043076729480f2e1b69904408a", size = 459445, upload-time = "2026-08-24T21:26:57.274Z" },
++    { url = "https://files.pythonhosted.org/packages/93/fe/ded0e20de0580257d97dbabb4db7ab4d96ad8ade7d41149e66308057cf52/pyinstaller_hooks_contrib-2026.9-py3-none-any.whl", hash = "sha256:fb3e67dd64122561724c48ad0366ac9e8c16e638b63bf7d85de03bf3fdbf06c3", size = 462931, upload-time = "2026-10-20T15:43:52.632Z" },
+ ]
  
- def test_content_raises():
-     flow = tflow.tflow(
+ [[package]]
+```
+
+---
+
+### Incident Patch 3: `9eaaf786` (2026-11-03)
+**Commit Message**: build(deps-dev): bump ruff from 0.16.9 to 0.17.2 (#8556)
+
+* build(deps-dev): bump ruff from 0.16.9 to 0.17.2
+
+Bumps [ruff](https://github.com/astral-sh/ruff) from 0.16.9 to 0.17.2.
+- [Release notes](https://github.com/astral-sh/ruff/releases)
+- [Changelog](https://github.com/astral-sh/ruff/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/astral-sh/ruff/compare/0.16.9...0.17.2)
+
+---
+updated-dependencies:
+- dependency-name: ruff
+  dependency-version: 0.17.2
+  dependency-type: direct:development
+  update-type: version-update:semver-minor
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+
+* [autofix.ci] apply automated fixes
+
+---------
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+Co-authored-by: autofix-ci[bot] <114827586+autofix-ci[bot]@users.noreply.github.com>
+
+**File**: `pyproject.toml` (modified, +1/-1)
+```diff
+@@ -86,7 +86,7 @@ tox = [
+     "tox-uv==1.35.2",
+ ]
+ ruff = [
+-    "ruff==0.16.9",
++    "ruff==0.17.2",
+ ]
+ deploy = [
+     "awscli==1.46.1",
+```
+
+**File**: `uv.lock` (modified, +23/-23)
+```diff
+@@ -1184,13 +1184,13 @@ dev = [
+     { name = "pytest-timeout", specifier = "==2.4.0" },
+     { name = "pytest-xdist", specifier = "==3.8.0" },
+     { name = "requests", specifier = "==2.34.2" },
+-    { name = "ruff", specifier = "==0.16.9" },
++    { name = "ruff", specifier = "==0.17.2" },
+     { name = "tox", specifier = "==4.55.1" },
+     { name = "tox-uv", specifier = "==1.35.2" },
+     { name = "types-requests", specifier = "==2.33.0.20260408" },
+     { name = "wheel", specifier = "==0.48.0" },
+ ]
+-ruff = [{ name = "ruff", specifier = "==0.16.9" }]
++ruff = [{ name = "ruff", specifier = "==0.17.2" }]
+ tox = [
+     { name = "tox", specifier = "==4.55.1" },
+     { name = "tox-uv", specifier = "==1.35.2" },
+@@ -1795,27 +1795,27 @@ wheels = [
+ 
+ [[package]]
+ name = "ruff"
+-version = "0.16.9"
+-source = { registry = "https://pypi.org/simple" }
+-sdist = { url = "https://files.pythonhosted.org/packages/96/bf/c935ca98e73fe8ce65b87ef08a280c0c1e85295d569228c15e87d8fdfaf1/ruff-0.16.9.tar.gz", hash = "sha256:12b625c6cfba78d285d9f48eda5f053374f1e53cb10ef17342a383750db99161", size = 4948764, upload-time = "2026-09-24T20:37:49.416Z" }
+-wheels = [
+-    { url = "https://files.pythonhosted.org/packages/0d/26/df51322b52ee1ada7eff2d071ea09d11d5c2d1dcc9f02594f5785c4d1635/ruff-0.16.9-py3-none-linux_armv6l.whl", hash = "sha256:95e6f022090368ab3b824c36276839c53b2adf1a3f4c09fefc33dfc400f6da96", size = 10082922, upload-time = "2026-09-24T20:37:13.045Z" },
+-    { url = "https://files.pythonhosted.org/packages/a5/27/7bf51f5a7aa375e9f339280a303aab44ca75dc1525f1cdc5991761685b0f/ruff-0.16.9-py3-none-macosx_10_12_x86_64.whl", hash = "sha256:a5f27be168556594a86d2f415db0cf43f5291917849318f873c7e2791f7a8c67", size = 10236360, upload-time = "2026-09-24T20:37:16.049Z" },
+-    { url = "https://files.pythonhosted.org/packages/b6/63/09659283f92f02dff45809da194a70da2f688d87c55d8875c4fae3536072/ruff-0.16.9-py3-none-macosx_11_0_arm64.whl", hash = "sha256:1632eb1d6197f33bd00b1acbc5b71009e89a8895c158e2d2b03a834fac964ab6", size = 9892940, upload-time = "2026-09-24T20:37:17.957Z" },
+-    { url = "https://files.pythonhosted.org/packages/24/58/98de1b72ec172f5f8f1731236fe21585b3998bf7dfe9fcc44ae9ba626012/ruff-0.16.9-py3-none-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:b3f951b14d865d5952c89d40a5ca07e87abe24fa5453299878411e127748fb1c", size = 10032114, upload-time = "2026-09-24T20:37:19.942Z" },
+-    { url = "https://files.pythonhosted.org/packages/c8/7d/f1e17c54ab59d4bad1dce8ee3e22a7a1d0ef4745240decacdcf3832b5bb2/ruff-0.16.9-py3-none-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:447fc07e1573afff7cb02803462b12b6c8ece7cf10e2cd78565fa6d7a1c0bf8d", size = 9910227, upload-time = "2026-09-24T20:37:21.872Z" },
+-    { url = "https://files.pythonhosted.org/packages/34/19/436f647a65075bbd3bab2668b3bdaa5120559b294694018cdcefabbbf30b/ruff-0.16.9-py3-none-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:8a3e039a6a40ed976c491722b60e0ae4a4aa1a86057f540ee7a37a5d19ae9120", size = 10547484, upload-time = "2026-09-24T20:37:24.229Z" },
+-    { url = "https://files.pythonhosted.org/packages/03/59/38430a6bc2f6d8095447ac39625cf8b6e9344a47e6c26225c8ba1bff3ffb/ruff-0.16.9-py3-none-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:4684dded7db60aa57cb118fa158630f5feade4af5782903b6053484bdf9bd129", size = 11412367, upload-time = "2026-09-24T20:37:26.307Z" },
+-    { url = "https://files.pythonhosted.org/packages/c8/bd/bbb6d7fc7f208c8b8c50dd5dc8206e4cfdb1e7a8fb852606a3adf370c880/ruff-0.16.9-py3-none-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:d29c934357e45642fda2f34c0b1f4025b4a6c01e15e4bf0016879d60078a142c", size = 10869787, upload-time = "2026-09-24T20:37:28.35Z" },
+-    { url = "https://files.pythonhosted.org/packages/bc/b8/9c543074918061abbefc3bd139bee22de35abedb00dde0f2d27288838962/ruff-0.16.9-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:a21713e629d3e5bdb2f5c2def1cc7f04f47fa8e1a7eb0571b4a28e1da64bc728", size = 10406494, upload-time = "2026-09-24T20:37:30.624Z" },
+-    { url = "https://files.pythonhosted.org/packages/35/7a/5a8851bd146e7ccf8fd4b003f6c75c11f8fbdb0e60673b45097986b6bf41/ruff-0.16.9-py3-none-manylinux_2_31_riscv64.whl", hash = "sha256:7baa24ef5fc8e77aa93879e1d3f43754a01ae488e869f1ae30cf431afd4d2452", size = 10590083, upload-time = "2026-09-24T20:37:32.439Z" },
+-    { url = "https://files.pythonhosted.org/packages/87/f0/4c3467188f23f806960b46fa76575a7cd0514c9ba90562650b71efc96980/ruff-0.16.9-py3-none-musllinux_1_2_aarch64.whl", hash = "sha256:a41aac6230aadfaa133bdfa1614488531ffa3e0837567ae04c0da2058a9c0f9e", size = 10119151, upload-time = "2026-09-24T20:37:34.581Z" },
+-    { url = "https://files.pythonhosted.org/packages/15/34/5a4def5adea572ce6aea0bb64f21f928ee317b80e0db747d7979b01d7261/ruff-0.16.9-py3-none-musllinux_1_2_armv7l.whl", hash = "sha256:c2529fb5896d49115b0e9aa8f887490b34bbe76baf879ec2264ac59406869ce7", size = 9911544, upload-time = "2026-09-24T20:3
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #8547** (2026-10-30): Fix tests that never assert their comparisons (@guirguispierre)
-- **PR #8545** (closed): Fix #8056: Intercept option from CLI does not works. (@nabilhaloom)
-- **PR #8541** (2026-10-30): Expand ~ in the hardump option (@memx13)
-- **PR #8537** (2026-10-27): Fix filters like !(~s) being rejected as invalid (@qodelicious)
-- **PR #8532** (2026-10-25): update dependencies (@mhils)
-- **PR #8530** (2026-10-25): Update cryptography (@mhils)
+- **PR #8558** (2026-11-03): build(deps): bump the github-actions group with 5 updates (@dependabot[bot])
+- **PR #8557** (2026-11-03): build(deps): update urwid requirement from <=4.0.13,>=2.6.14 to >=2.6.14,<=4.2.5 (@dependabot[bot])
+- **PR #8556** (2026-11-03): build(deps-dev): bump ruff from 0.16.9 to 0.17.2 (@dependabot[bot])
+- **PR #8554** (2026-11-03): build(deps): update asgiref requirement from <=3.12.1,>=3.2.10 to >=3.2.10,<=3.13.0 (@dependabot[bot])
+- **PR #8553** (2026-11-03): build(deps-dev): bump awscli from 1.46.1 to 1.46.2 in the deploy group (@dependabot[bot])
+- **PR #8552** (2026-11-03): build(deps-dev): bump pyinstaller-hooks-contrib from 2026.7 to 2026.9 in the pyinstaller group (@dependabot[bot])
 
 ---
 
@@ -1437,30 +1568,28 @@ Co-authored-by: autofix-ci[bot] <114827586+autofix-ci[bot]@users.noreply.github.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Expand ~ in the hardump option (#8541)
+## X. build(deps): update asgiref requirement from <=3.12.1,>=3.2.10 to >=3.2.10,<=3.1
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mitmproxy/mitmproxy. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pyproject.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mitmproxy/mitmproxy. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b08148b3`: Expand ~ in the hardump option (#8541). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2f682f3a`: build(deps): update asgiref requirement from <=3.12.1,>=3.2.10 to >=3.2.10,<=3.13.0 (#8554). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `pyproject.toml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-- Expand `~` in the `hardump` option, like other file path options. Previously, the HAR file
-  could not be written on exit and the collected flows were lost.
-  ([#8541](https://github.com/mitmproxy/mitmproxy/pull/8541), @memx13)
+    "asgiref>=3.2.10,<=3.13.0",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+    "asgiref>=3.2.10,<=3.12.1",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b08148b3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2f682f3a` are properly handled with clean fallback behavior.

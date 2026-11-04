@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md`  
 > **Source**: github ([https://github.com/ydb-platform/ydb](https://github.com/ydb-platform/ydb))  
-> **Source Version**: `a762d016`  
+> **Source Version**: `fc82aedd`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T18:29:13.437Z  
+> **Timestamp**: 2026-11-03T16:18:05.442Z  
 > **Learning ID**: `learn-github-ydb-platform-ydb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ydb-platform/ydb](https://github.com/ydb-platform/ydb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T18:29:13.430Z  
+> **Harvest Timestamp**: 2026-11-03T16:16:20.011Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: YDB is an open source Distributed SQL Database that combines high availability and scalability with strong consistency and ACID transactions
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 4782 stars
+- **Stars / Engagement**: 4783 stars
 
 ---
 
@@ -2067,924 +2067,642 @@ impl Remappable for noncontiguous::NFA {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a762d016` (2026-10-31)
-**Commit Message**: Enable core/base tests in open-source builds (#57764)
+### Incident Patch 1: `49f5c348` (2026-11-03)
+**Commit Message**: REQUIREMENTS(cpu) from real usage — Security (#57899)
+
+**File**: `ydb/core/security/ldap_auth_provider/ut/ya.make` (modified, +1/-1)
+```diff
+@@ -6,7 +6,7 @@ SIZE(MEDIUM)
+ IF (SANITIZER_TYPE)
+     REQUIREMENTS(cpu:2)
+ ELSE()
+-    REQUIREMENTS(cpu:2)
++    REQUIREMENTS(cpu:1)
+ ENDIF()
+ 
+ PEERDIR(
+```
+
+**File**: `ydb/core/security/ut/ya.make` (modified, +1/-1)
+```diff
+@@ -3,7 +3,7 @@ UNITTEST_FOR(ydb/core/security)
+ FORK_SUBTESTS()
+ 
+ SIZE(MEDIUM)
+-REQUIREMENTS(cpu:2)
++REQUIREMENTS(cpu:1)
+ 
+ IF (SANITIZER_TYPE)
+     SUPPRESSIONS(tsan.supp)
+```
+
+**File**: `ydb/services/scheme_secret/ut/fast/ya.make` (modified, +1/-1)
+```diff
+@@ -4,7 +4,7 @@ SIZE(MEDIUM)
+ IF (SANITIZER_TYPE)
+     REQUIREMENTS(cpu:2)
+ ELSE()
+-    REQUIREMENTS(cpu:2)
++    REQUIREMENTS(cpu:1)
+ ENDIF()
+ 
+ PEERDIR(
+```
+
+---
+
+### Incident Patch 2: `c69ce13c` (2026-11-03)
+**Commit Message**: REQUIREMENTS(cpu) from real usage — fq (#57895)
+
+Co-authored-by: Cursor <[REDACTED_EMAIL]>
+
+**File**: `ydb/core/kqp/runtime/streaming/ut/ya.make` (modified, +1/-1)
+```diff
+@@ -3,7 +3,7 @@ UNITTEST_FOR(ydb/core/kqp/runtime/streaming)
+ FORK_SUBTESTS()
+ 
+ SIZE(MEDIUM)
+-REQUIREMENTS(cpu:4)
++REQUIREMENTS(cpu:1)
+ 
+ SRCS(
+     kqp_streaming_aggregation_ut.cpp
+```
+
+**File**: `ydb/core/kqp/script_executions/table_queries/ut/ya.make` (modified, +1/-1)
+```diff
+@@ -6,7 +6,7 @@ SIZE(MEDIUM)
+ IF (SANITIZER_TYPE)
+     REQUIREMENTS(cpu:4)
+ ELSE()
+-    REQUIREMENTS(cpu:2)
++    REQUIREMENTS(cpu:1)
+ ENDIF()
+ 
+ SRCS(
+```
+
+**File**: `ydb/core/kqp/ut/federated_query/datastreams/ya.make` (modified, +1/-1)
+```diff
+@@ -3,7 +3,7 @@ UNITTEST_FOR(ydb/core/kqp)
+ FORK_SUBTESTS()
+ SPLIT_FACTOR(60)
+ 
+-REQUIREMENTS(cpu:2)
++REQUIREMENTS(cpu:1)
+ 
+ IF (SANITIZER_TYPE)
+     SIZE(LARGE)
+```
+
+**File**: `ydb/core/kqp/ut/federated_query/s3/ya.make` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ UNITTEST_FOR(ydb/core/kqp)
+ 
+-REQUIREMENTS(cpu:2)
++REQUIREMENTS(cpu:1)
+ 
+ IF (SANITIZER_TYPE)
+     SIZE(LARGE)
+```
+
+**File**: `ydb/core/kqp/ut/federated_query/scheme/ya.make` (modified, +1/-1)
+```diff
+@@ -7,7 +7,7 @@ SIZE(MEDIUM)
+ IF (SANITIZER_TYPE)
+     REQUIREMENTS(cpu:4)
+ ELSE()
+-    REQUIREMENTS(cpu:2)
++    REQUIREMENTS(cpu:1)
+ ENDIF()
+ 
+ SRCS(
+```
+
+**File**: `ydb/core/kqp/ut/federated_query/ydb_external/ya.make` (modified, +1/-0)
+```diff
+@@ -20,4 +20,5 @@ PEERDIR(
+ 
+ YQL_LAST_ABI_VERSION()
+ 
++REQUIREMENTS(cpu:1)
+ END()
+```
+
+**File**: `ydb/core/local_proxy/local_pq_client/ut/ya.make` (modified, +1/-1)
+```diff
+@@ -2,7 +2,7 @@ UNITTEST_FOR(ydb/core/local_proxy/local_pq_client)
+ 
+ FORK_SUBTESTS()
+ 
+-REQUIREMENTS(cpu:2)
++REQUIREMENTS(cpu:1)
+ SIZE(MEDIUM)
+ 
+ SRCS(
+```
+
+**File**: `ydb/services/fq/ut_integration/ya.make` (modified, +1/-1)
+```diff
+@@ -3,7 +3,7 @@ UNITTEST_FOR(ydb/services/fq)
+ FORK_SUBTESTS()
+ 
+ SIZE(MEDIUM)
+-REQUIREMENTS(cpu:2)
++REQUIREMENTS(cpu:1)
+ 
+ SRCS(
+     ut_utils.cpp
+```
+
+---
+
+### Incident Patch 3: `3bb03d9b` (2026-11-03)
+**Commit Message**: Fix OLAP Allure descriptions for sanitized HTML (#57994)
 
 Co-authored-by: iddqdex <[REDACTED_EMAIL]>
 
-**File**: `ydb/core/base/statestorage_ut.cpp` (modified, +1/-2)
+**File**: `ydb/tests/olap/lib/allure-html-plugin/README.md` (added, +131/-0)
 ```diff
-@@ -17,8 +17,7 @@ Y_UNIT_TEST_SUITE(TStateStorageEventScopes) {
-     bool Passes(ui32 type, const TScopeId& origin, const TScopeId& local) {
-         auto filter = std::make_shared<TEventFilter>();
-         RegisterStateStorageEventScopes(filter);
--        IEventHandle ev(type, 0, TActorId(), TActorId(), nullptr, 0);
--        ev.OriginScopeId = origin;
-+        IEventHandle ev(TActorId(), type, 0, TActorId(), TActorId(), nullptr, 0, origin, {});
-         return filter->CheckIncomingEvent(ev, local);
-     }
- 
+@@ -0,0 +1,131 @@
++# YDB Allure description styles
++
++Restore table borders, spacing, headings, lists, code fonts and cell backgrounds
++in OLAP test descriptions generated by Allure 2.46.1.
++
++Allure sanitizes description HTML and removes inline styles, classes and
++`details`/`summary`. The report theme also resets the default formatting of
++HTML elements. This directory provides two ways to apply an external stylesheet:
++a postprocessing script and an Allure CSS plugin.
++
++## After `ya make --allure`
++
++Run from the repository root, after the report has been generated and before
++publishing it:
++
++```bash
++python3 ydb/tests/olap/lib/allure-html-plugin/style_report.py /path/to/allure
++```
++
++The argument is the generated report directory containing `index.html`.
++Python 3.8 or newer is sufficient; no third-party Python packages are needed.
++
++The script copies `static/styles.css` to `ydb-description.css` in the report
++and inserts a stylesheet link into `index.html`. It does not change test results
++or attachments. Repeated execution updates the CSS without duplicating the link.
++A missing report or invalid style markers cause a nonzero exit.
++
++Run the script again after every report regeneration. Publish the whole report
++directory, including `ydb-description.css`.
++
++The ordinary `ya make --allure /path/to/allure` invocation does not load this
++plugin automatically.
++
++## As an Allure CSS plugin
++
++Use this route when invoking `allure generate` separately. It requires Java,
++the raw Allure results and a configuration that includes this plugin.
++
++The plugin consists of:
++
++```text
++allure-plugin.yml
++static/
++    styles.css
++```
++
++Preserve the standard plugin list when creating a custom configuration. From
++the repository root, this example copies the installed configuration and adds
++the absolute path to this directory:
++
++```bash
++PLUGIN_DIR="$(pwd)/ydb/tests/olap/lib/allure-html-plugin"
++ALLURE_BIN="$(./ya tool --print-path allure)"
++JAVA_BIN="$(./ya tool --print-path java)"
++export JAVA_HOME="$(dirname "$(dirname "$JAVA_BIN")")"
++
++cp "$(dirname "$ALLURE_BIN")/../config/allure.yml" /tmp/ydb-allure.yml
++printf '  - %s\n' "$PLUGIN_DIR" >> /tmp/ydb-allure.yml
++
++./ya tool allure generate /path/to/allure-results \
++    --config /tmp/ydb-allure.yml \
++    -o /path/to/new-report
++```
++
++The input is a directory of raw `*-result.json`, container and attachment files,
++not an already generated HTML report. Saved `allure.tar` results can be extracted
++into a separate input directory before generation.
++
++Allure copies the stylesheet into `plugin/ydb-description/styles.css` in the
++generated report and adds the link itself. The plugin directory and custom
++configuration are needed during generation; the resulting report is standalone.
++The postprocessing script is not needed for this route.
++
++## Cell backgrounds and `abbr`
++
++Before passing the description to Allure, `allure_utils.py` copies the background
++color of each `td`/`th` into an attribute such as `abbr="bg-ccffcc"`.
++Unlike `style` and `class`, `abbr` survives Allure sanitization.
++
++A cell's own background takes precedence over its row's background. Row colors
++are propagated to each cell, including header cells. Nested tables are handled
++separately. Original inline styles remain available in the `description.html`
++attachment.
++
++The stylesheet maps the markers to the original colors:
++
++| Background | Marker |
++| --- | --- |
++| `#90EE90` | `bg-90ee90` |
++| `#ccffcc` | `bg-ccffcc` |
++| `#e0f0e0` | `bg-e0f0e0` |
++| `#eeffcc` | `bg-eeffcc` |
++| `#f0f0f0` | `bg-f0f0f0` |
++| `#f5f5f5` | `bg-f5f5f5` |
++| `#FA8072` | `bg-fa8072` |
++| `#ffcccc` | `bg-ffcccc` |
++| `#ffffcc` | `bg-ffffcc` |
++
++These are the fixed cell colors currently used under `ydb/tests/olap/lib` and
++`ydb/tests/olap/load`. Add matching rules for both `td` and `th` when introducing
++another color.
++
++The common `ydb/tests/olap/lib` library embeds the stylesheet with
++`RESOURCE_FILES`. Load and scenario tests receive the resource transitively;
++no per-test `DATA` declarations or source-tree access are required.
++
++During test execution, background colors are checked against the embedded
++stylesheet. Each color must have matching `abbr` selectors for both `td` and
++`th`. An unknown color raises `ValueError` and fails the test while generating
++its description. Short hex colors, named colors and RGB functions also fail;
++use a six-digit `#RRGGBB` value. A missing resource is an error as well.
++
++When adding a color, update `static/styles.css` in the same change and rebuild
++the test binary. Generate and publish the report using the stylesheet from the
++same revision as the test binary; the runtime check cannot validate a stylesheet
++supplied later by a different checkout.
++
++## Collapsible content and attachments
++
++External CSS cannot restore tags removed by Allure. Log-retrieval commands are
++therefore shown as text steps inside the collapsible `Артефакты` step in
++`Test body`. They ar
 ```
 
-**File**: `ydb/core/base/ut_http_database_param/http_database_param_ut.cpp` (modified, +4/-2)
+**File**: `ydb/tests/olap/lib/allure-html-plugin/allure-plugin.yml` (added, +5/-0)
 ```diff
-@@ -58,9 +58,11 @@ Y_UNIT_TEST(PostWithEmptyContentTypeAndJsonBody) {
-         "db-from-body");
- }
- 
--Y_UNIT_TEST(PostWithFormUrlEncodedContentTypeIsIgnored) {
-+Y_UNIT_TEST(PostWithFormUrlEncodedContentTypeIsParsed) {
-     TCgiParameters params;
--    UNIT_ASSERT(ExtractHttpDatabaseParam(params, "POST", "database=db", "application/x-www-form-urlencoded").empty());
-+    UNIT_ASSERT_VALUES_EQUAL(
-+        ExtractHttpDatabaseParam(params, "POST", "database=db", "application/x-www-form-urlencoded"),
-+        "db");
- }
- 
- Y_UNIT_TEST(QueryParamHasPriorityOverPostBodyWithContentType) {
+@@ -0,0 +1,5 @@
++id: ydb-description
++name: YDB test description styles
++description: Restore readable tables and text formatting in YDB test descriptions
++cssFiles:
++  - styles.css
 ```
 
----
-
-### Incident Patch 2: `c8849250` (2026-10-31)
-**Commit Message**: DQ-169 support upload prefix and upload cluster in dq clique (#57436)
-
-**File**: `ydb/library/yql/providers/dq/actors/executer_actor.cpp` (modified, +12/-9)
+**File**: `ydb/tests/olap/lib/allure-html-plugin/static/styles.css` (added, +113/-0)
 ```diff
-@@ -145,14 +145,15 @@ class TDqExecuter: public TRichActor<TDqExecuter>, NYql::TCounters {
-         });
-         ControlId = NActors::ActorIdFromProto(ev->Get()->Record.GetControlId());
-         ResultId = NActors::ActorIdFromProto(ev->Get()->Record.GetResultId());
--        if (ev->Get()->Record.GetRequest().GetStatsMode() != NYql::NDqProto::EDqStatsMode::DQ_STATS_MODE_UNSPECIFIED) {
--            StatsMode = ev->Get()->Record.GetRequest().GetStatsMode();
-+        const auto& request = ev->Get()->Record.GetRequest();
-+        if (request.GetStatsMode() != NYql::NDqProto::EDqStatsMode::DQ_STATS_MODE_UNSPECIFIED) {
-+            StatsMode = request.GetStatsMode();
-         }
-         // These actors will be killed at exit.
-         AddChild(ControlId);
-         AddChild(ResultId);
- 
--        int workerCount = ev->Get()->Record.GetRequest().GetTask().size();
-+        int workerCount = request.GetTask().size();
-         const bool enableComputeActor = Settings->EnableComputeActor.Get().GetOrElse(false);
-         YQL_CLOG(INFO, ProviderDq) << (TStringBuilder() << "Trying to allocate " << workerCount << " workers [EnableComputeActor=" << enableComputeActor << "]");
- 
-@@ -166,12 +167,12 @@ class TDqExecuter: public TRichActor<TDqExecuter>, NYql::TCounters {
-                 files.emplace(f.GetObjectId(), f);
-             }
- 
--            if (ev->Get()->Record.GetRequest().GetSecureParams().size() > 0) {
--                *taskMeta.MutableSecureParams() = ev->Get()->Record.GetRequest().GetSecureParams();
-+            if (request.GetSecureParams().size() > 0) {
-+                *taskMeta.MutableSecureParams() = request.GetSecureParams();
-             }
- 
--            if (ev->Get()->Record.GetRequest().GetCommonTaskParams().size() > 0) {
--                taskMeta.MutableTaskParams()->insert(ev->Get()->Record.GetRequest().GetCommonTaskParams().begin(), ev->Get()->Record.GetRequest().GetCommonTaskParams().end());
-+            if (request.GetCommonTaskParams().size() > 0) {
-+                taskMeta.MutableTaskParams()->insert(request.GetCommonTaskParams().begin(), request.GetCommonTaskParams().end());
-             }
- 
-             Settings->Save(taskMeta);
-@@ -185,8 +186,8 @@ class TDqExecuter: public TRichActor<TDqExecuter>, NYql::TCounters {
- 
-         ExecutionPlanner = THolder<IDqsExecutionPlanner>(new TGraphExecutionPlanner(
-             tasks,
--            ev->Get()->Record.GetRequest().GetSourceId(),
--            ev->Get()->Record.GetRequest().GetResultType(),
-+            request.GetSourceId(),
-+            request.GetResultType(),
-             SelfId(), ResultId));
- 
- 
-@@ -202,6 +203,8 @@ class TDqExecuter: public TRichActor<TDqExecuter>, NYql::TCounters {
-             StatsMode));
-         auto allocateRequest = MakeHolder<TEvAllocateWorkersRequest>(workerCount, Username);
-         allocateRequest->Record.SetTraceId(TraceId);
-+        allocateRequest->Record.SetUploadPrefix(request.GetUploadPrefix());
-+        allocateRequest->Record.SetUploadClusterAddress(request.GetUploadClusterAddress());
-         allocateRequest->Record.SetCreateComputeActor(enableComputeActor);
-         allocateRequest->Record.SetComputeActorType(computeActorType);
-         allocateRequest->Record.SetStatsMode(StatsMode);
-```
-
-**File**: `ydb/library/yql/providers/dq/api/protos/dqs.proto` (modified, +2/-0)
-```diff
-@@ -40,6 +40,8 @@ message TAllocateWorkersRequest {
-     NYql.NDqProto.EDqStatsMode StatsMode = 16;
-     reserved 17;
-     string Scheduler = 18;
-+    string UploadPrefix = 19;
-+    string UploadClusterAddress = 20;
- }
- 
- message TWorkerGroup {
-```
-
-**File**: `ydb/library/yql/providers/dq/api/protos/service.proto` (modified, +11/-0)
-```diff
-@@ -46,6 +46,12 @@ message TFile {
-     string ContentMd5 = 7;
- }
- 
-+message TDownloadGroup {
-+    string UploadPrefix = 1;
-+    string UploadClusterAddress = 2;
-+    repeated TFile Files = 3;
+@@ -0,0 +1,113 @@
++.description__text {
++  line-height: 1.5;
++  overflow-x: auto;
 +}
 +
- message TWorkerInfo {
-     // TGuid Guid = 1; // reserved
-     uint32 NodeId = 2;
-@@ -94,6 +100,8 @@ message ExecuteGraphRequest {
-     NYql.NDqProto.EDqStatsMode StatsMode = 17;
-     uint64 ExecutionTimeout = 18; // in milliseconds
-     uint64 QuerySeqNo = 19;
-+    string UploadPrefix = 20;
-+    string UploadClusterAddress = 21;
- }
- 
- message ExecuteGraphResponse {
-@@ -204,6 +212,8 @@ message RegisterNodeRequest {
- 
-     bool Full = 23; // If Full == false only Guid? present
-     uint32 Pid = 24;
-+
-+    repeated TDownloadGroup DownloadGroups = 27;
- }
- 
- message RegisterNodeResponse {
-@@ -218,6 +228,7 @@ message RegisterNodeResponse {
-     repeated TFile DownloadList = 3;
- 
-     string Revision = 4;
-+    repeated TDownloadGroup DownloadGroups = 5;
- }
- 
- message JobStopRequest {
-```
-
-**File**: `ydb/library/yql/providers/dq/planner/execution_planner.h` (modified, +6/-4)
-```diff
-@@ -18,6 +18,8 @@ namespace NYql::NDqs {
-         TVector<NDqProto::TDqTask> Tasks;
-         NActors::TActorId SourceID;
-         TString ResultType;
-+        TString UploadPrefix;
-+        TString UploadClusterAddress;
-     };
- 
-     class IDqsExecutionPlanner {
-@@ -29,10 +31,10 @@ namespace NYql::NDqs {
-         virtual TString GetResultType() const = 0;
- 
-         TPlan GetPlan() {
--            return TPlan {
--                GetTasks(),
--                GetSourceID(),
--                GetResultType()
-+            return TPlan{
-+                .Tasks = GetTasks(),
-+                .SourceID = GetSourceID(),
-+                .ResultType = GetResultType(),
-             };
-         }
-     };
-```
-
-**File**: `ydb/library/yql/providers/dq/worker_manager/interface/worker_info.cpp` (modified, +21/-19)
-```diff
-@@ -8,18 +8,18 @@ namespace NYql::NDqs {
-         : InflightLimit(inflightLimit) {
-     }
- 
--    bool TInflightLimiter::CanDownload(const TString& id) {
-+    bool TInflightLimiter::CanDownload(const TDownloadKey& id) {
-         return !InflightResources.contains(id) || InflightResources.find(id)->second < InflightLimit;
-     }
- 
--    void TInflightLimiter::MarkDownloadStarted(const TString& id) {
-+    void TInflightLimiter::MarkDownloadStarted(const TDownloadKey& id) {
-         if (!InflightResources.contains(id)) {
-             InflightResources.emplace(id, 0);
-         }
-         InflightResources.find(id)->second++;
-     }
- 
--    void TInflightLimiter::MarkDownloadFinished(const TString& id) {
-+    void TInflightLimiter::MarkDownloadFinished(const TDownloadKey& id) {
-         auto it = InflightResources.find(id);
-         if (it != InflightResources.end() && it->second > 0) {
-             it->second--;
-@@ -206,8 +206,11 @@ namespace NYql::NDqs {
-         *UsedDiskSizeSum += (request.GetUsedDiskSize() - UsedDiskSize);
-         UsedDiskSize = request.GetUsedDiskSize();
- 
--        for (auto md5: Resources) {
--            RemoveFromDownloadList(md5);
-+        for (auto it = DownloadList.begin(); it != DownloadList.end();) {
-+            const auto key = (it++)->first;
-+            if (Resources.contains(key.ObjectId)) {
-+                RemoveFromDownloadList(key);
-+            }
-         }
- 
-         if (*FilesCountMax < static_cast<i64>(Resources.size())) {
-@@ -223,36 +226,35 @@ namespace NYql::NDqs {
-         return needResume;
-     }
- 
--    void TWorkerInfo::RemoveFromDownloadList(const TString& objectId) {
--        auto delta = DownloadList.erase(objectId);
--        if (delta) {
--            InflightLimiter->MarkDownloadFinished(objectId);
--            *ActiveDownloadsSum -= ActiveDownloads.erase(objectId);
-+    void TWorkerInfo::RemoveFromDownloadList(const TDownloadKey& key) {
-+        if (ActiveDownloads.erase(key)) {
-+            InflightLimiter->MarkDownloadFinished(key);
-+            *ActiveDownloadsSum -= 1;
-         }
--        *CurrentDownloadsSum -= delta;
-+        *CurrentDownloadsSum -= DownloadList.erase(key);
-     }
- 
--    void TWorkerInfo::AddToDownloadList(const THashMap<TString, TFileResource>& downloadList) {
--        for (const auto& [k, v] : downloadList) {
--            AddToDownloadList(k, v);
-+    void TWorkerInfo::AddToDownloadList(const TDownloadList& downloadList) {
-+        for (const auto& [_, resource] : downloadList) {
-+            AddToDownloadList(resource);
-         }
-     }
- 
--    bool TWorkerInfo::AddToDownloadList(const TString& key, const TFileResource& value) {
--        if (!Resources.contains(key) && DownloadList.insert({key, value}).second) {
-+    bool TWorkerInfo::AddToDownloadList(const TDownloadResource& value) {
-+        if (!Resources.contains(value.File.GetObjectId()) && DownloadList.emplace(value.GetKey(), value).second) {
-             *CurrentDownloadsSum += 1;
-             return true;
-         }
-         return false;
-     }
- 
--    const THashMap<TString, TWorkerInfo::TFileResource>& TWorkerInfo::GetDownloadList() {
-+    const TWorkerInfo::TDownloadList& TWorkerInfo::GetDownloadList() {
-         return DownloadList;
-     }
- 
--    THashMap<TString, TWorkerInfo::TFileResource> TWorkerInfo::GetResourcesForDownloading() {
-+    TWorkerInfo::TDownloadList TWorkerInfo::GetResourcesForDownloading() {
-         for (const auto& it : DownloadList) {
--            TString id = it.first;
-+            const auto& id = it.first;
-             if (InflightLimiter->CanDownload(id) && !ActiveDownloads.contains(id)) {
-                 ActiveDownloads.emplace(id, it.second);
-                 *ActiveDownloadsSum += 1;
-```
-
-**File**: `ydb/library/yql/providers/dq/worker_manager/interface/worker_info.h` (modified, +42/-11)
-```diff
-@@ -1,6 +1,7 @@
- #pragma once
- 
- #include <utility>
-+#include <util/digest/multi.h>
- #include <util/generic/hash.h>
- #include <util/generic/guid.h>
- #include <util/generic/hash_set.h>
-@@ -11,17 +12,31 @@
- 
- namespace NYql::NDqs {
- 
-+struct TDownloadKey {
-+    TString ObjectId;
-+    TString UploadPrefix;
-+    TString UploadClusterAddress;
-+
-+    bool operator==(const TDownloadKey&) const = default;
-+};
-+
-+struct TDownloadKeyHash {
-+    size_t operator()(const TDownloadKey& key) const {
-+        return MultiHash(key.ObjectId, key.UploadPrefix, key.UploadClusterAddress);
-+    }
-+};
-+
- class TInflightLimiter: public TThrRefBase {
- public:
-     using TPtr = TIntrusivePtr<TInflightLimiter>;
- 
-     TInflightLimiter(i32 inflightLimit);
--    bool CanDownload(const TString& id);
--    void MarkDownloadStarted(const TString& id);
--    void MarkDownloadFinished(const TString& id);
-+    bool CanDownload(const TDownloadKey& key);
-+    void MarkDownloadStarted(const TDownloadKey& key);
-+    void MarkDownloadFinished(const TDownloadKey& key);
- 
- private:
--    THashMap<TString, i32> InflightResources;
-+    THashMap<TDownloadKey, i32, TDownloadKeyHash> InflightResources;
-     i32 InflightLimit;
- };
- 
-@@ -97,6 +112,22 @@ struct TWorkerInfo: public TThrRefBase {
-     using TPtr = TIntrusivePtr<TWorkerInfo>;
-     using TFileResource = Yql::DqsProto::TFile;
- 
-+    struct TDownloadResource {
-+        TFileResource File;
-+        TString UploadPrefix;
-+        TString UploadClusterAddress;
-+
-+        TDownloadKey GetKey() const {
-+            return {
-+                .ObjectId = File.GetObjectId(),
-+                .UploadPrefix = UploadPrefix,
-+                .UploadClusterAddress = UploadClusterAddress,
-+            };
-+        }
-+    };
-+
-+    using TDownloadList = THashMap<TDownloadKey, TDownloadResource, TDownloadKeyHash>;
-+
-     const ui32 NodeId;
-     const TGUID WorkerId;
-     TInstant LastPingTime;
-@@ -148,15 +179,15 @@ struct TWorkerInfo: public TThrRefBase {
- 
-     bool Update(const Yql::DqsProto::RegisterNodeRequest& request);
- 
--    void RemoveFromDownloadList(const TString& objectId);
-+    void RemoveFromDownloadList(const TDownloadKey& key);
- 
--    void AddToDownloadList(const THashMap<TString, TFileResource>& downloadList);
-+    void AddToDownloadList(const TDownloadList& downloadList);
- 
--    bool AddToDownloadList(const TString& key, const TFileResource& value);
-+    bool AddToDownloadList(const TDownloadResource& value);
- 
--    const THashMap<TString, TFileResource>& GetDownloadList();
-+    const TDownloadList& GetDownloadList();
- 
--    THashMap<TString, TFileResource> GetResourcesForDownloading();
-+    TDownloadList GetResourcesForDownloading();
- 
-     const THashSet<TString>& GetResources();
- 
-@@ -177,11 +208,11 @@ struct TWorkerInfo: public TThrRefBase {
- private:
-     THashSet<TString> Resources;
-     google::protobuf::RepeatedPtrField<::Yql::DqsProto::RegisterNodeRequest_LocalFile> ResourcesOrdered;
--    THashMap<TString, TFileResource> DownloadList;
-+    TDownloadList DownloadList;
-     TSensorsGroupPtr Metrics;
-     TInflightLimiter::TPtr InflightLimiter;
-     TClusterResources ClusterResources;
--    THashMap<TString, TFileResource> ActiveDownloads;
-+    TDownloadList ActiveDownloads;
- 
-     TSensorCounterPtr CurrentDownloadsSum;
-     TSensorCounterPtr CurrentDownloadsMax;
-```
-
----
-
-### Incident Patch 3: `f61f98dd` (2026-10-31)
-**Commit Message**: Fix BSC rollback compatibility for PDisk filters (#57702)
-
-**File**: `ydb/core/mind/bscontroller/config.cpp` (modified, +57/-0)
-```diff
-@@ -651,6 +651,11 @@ namespace NKikimr::NBsController {
-             }
-             if (state.StoragePools.Changed()) {
-                 MakeTableMerger<Schema::BoxStoragePool>(&StoragePools, &state.StoragePools.Get(), this)(txc);
-+                for (const auto& [previous, current] : Diff(&StoragePools, &state.StoragePools.Get())) {
-+                    TStoragePoolInfo::UpdatePDiskFilters(txc.DB,
-+                        previous ? &previous->second.PDiskFilters : nullptr,
-+                        current ? &current->second.PDiskFilters : nullptr);
-+                }
-             }
-             if (state.Nodes.Changed()) {
-                 MakeTableMerger<Schema::Node>(&Nodes, &state.Nodes.Get(), this)(txc);
-@@ -1364,6 +1369,58 @@ namespace NKikimr::NBsController {
-             }
-         }
- 
-+        bool TBlobStorageController::TStoragePoolInfo::LoadPDiskFilters(NIceDb::TNiceDb& db,
-+                const TBoxStoragePoolId& id) {
-+            PDiskFilters.clear();
-+            auto load = [&]<typename T>() {
-+                auto rows = db.Table<T>().Range(std::get<0>(id), std::get<1>(id)).Select();
-+                if (!rows.IsReady()) {
-+                    return false;
-+                }
-+                while (rows.IsValid()) {
-+                    if constexpr (std::is_same_v<T, Schema::BoxStoragePoolPDiskFilter>) {
-+                        PDiskFilters.insert(TPDiskFilter::CreateFromRowset(rows));
-+                    } else {
-+                        PDiskFilters.insert(TPDiskFilter::Parse(std::get<0>(id), std::get<1>(id),
-+                            rows.template GetValue<typename T::Filter>()));
-+                    }
-+                    if (!rows.Next()) {
-+                        return false;
-+                    }
-+                }
-+                return true;
-+            };
-+            return load.template operator()<Schema::BoxStoragePoolPDiskFilter>()
-+                && load.template operator()<Schema::BoxStoragePoolPDiskFilterV2>();
-+        }
-+
-+        void TBlobStorageController::TStoragePoolInfo::UpdatePDiskFilters(NTable::TDatabase& db,
-+                const TPDiskFilters* previous, const TPDiskFilters* current) {
-+            for (const auto& [prev, cur] : Diff(previous, current)) {
-+                if (prev && cur) {
-+                    continue;
-+                }
-+                const auto op = cur ? NTable::ERowOp::Upsert : NTable::ERowOp::Erase;
-+                const auto& filter = cur ? *cur : *prev;
-+                auto update = [&]<typename T>(const auto& key) {
-+                    auto keyTuple = NTableAdapter::PrepareKeyTuple<T>(&key);
-+                    TStackVec<TRawTypeValue, std::tuple_size_v<decltype(keyTuple)>> rawKey;
-+                    NTableAdapter::MapKey<T>(&keyTuple, rawKey);
-+                    db.Update(T::TableId, op, rawKey, {});
-+                };
-+                if (filter.Location) {
-+                    // Serialize the parsed filter in a fixed property order: request ordering
-+                    // must not change its persistent identity, including when deleting a row.
-+                    NKikimrBlobStorage::TPDiskFilter proto;
-+                    Serialize(&proto, filter);
-+                    update.template operator()<Schema::BoxStoragePoolPDiskFilterV2>(
-+                        std::make_tuple(filter.BoxId, filter.StoragePoolId, proto.SerializeAsString()));
-+                } else {
-+                    update.template operator()<Schema::BoxStoragePoolPDiskFilter>(filter.GetLegacyKey());
-+                }
-+            }
-+        }
-+
-         TBlobStorageController::TStoragePoolInfo::TPDiskFilter
-         TBlobStorageController::TStoragePoolInfo::TPDiskFilter::Parse(ui64 boxId, ui64 storagePoolId,
-                 const NKikimrBlobStorage::TPDiskFilter& proto) {
-```
-
-**File**: `ydb/core/mind/bscontroller/impl.h` (modified, +13/-10)
-```diff
-@@ -1266,7 +1266,7 @@ class TBlobStorageController : public TActor<TBlobStorageController>, public TTa
-             TMaybe<Schema::BoxStoragePoolPDiskFilter::SharedWithOs::Type> SharedWithOs;
-             TMaybe<Schema::BoxStoragePoolPDiskFilter::ReadCentric::Type> ReadCentric;
-             TMaybe<Schema::BoxStoragePoolPDiskFilter::Kind::Type> Kind;
--            TMaybe<Schema::BoxStoragePoolPDiskFilter::Location::Type> Location; // set only through SetLocation
-+            TMaybe<TString> Location; // set only through SetLocation
-             std::shared_ptr<const TNodeLocation> RequiredLocation; // parsed Location, kept for matching
- 
-             void SetLocation(const TString& serialized) {
-@@ -1294,9 +1294,6 @@ class TBlobStorageController : public TActor<TBlobStorageController>, public TTa
-                 if (rowset.template HaveValue<T::Kind>()) {
-                     result.Kind = rowset.template GetValue<T::Kind>();
-                 }
--                if (rowset.template HaveValue<T::Location>()) {
--                    result.SetLocation(rowset.template GetValue<T::Location>());
--                }
-                 return result;
-             }
- 
-@@ -1352,8 +1349,12 @@ class TBlobStorageController : public TActor<TBlobStorageController>, public TTa
-                 return s.Str();
-             }
- 
-+            auto GetLegacyKey() const {
-+                return std::tie(BoxId, StoragePoolId, Type, SharedWithOs, ReadCentric, Kind);
-+            }
-+
-             auto GetKey() const {
--                return std::tie(BoxId, StoragePoolId, Type, SharedWithOs, ReadCentric, Kind, Location);
-+                return std::tuple_cat(GetLegacyKey(), std::tie(Location));
-             }
- 
-             friend bool operator <(const TPDiskFilter &x, const TPDiskFilter &y) {
-@@ -1365,7 +1366,7 @@ class TBlobStorageController : public TActor<TBlobStorageController>, public TTa
-             }
- 
-             void Load(IInputStream* s) {
--                TMaybe<Schema::BoxStoragePoolPDiskFilter::Location::Type> location;
-+                TMaybe<TString> location;
-                 ::LoadMany(s, Type, SharedWithOs, ReadCentric, Kind, location);
-                 Location.Clear();
-                 RequiredLocation.reset();
-@@ -1489,6 +1490,10 @@ class TBlobStorageController : public TActor<TBlobStorageController>, public TTa
-         TUserIds UserIds;
-         TPDiskFilters PDiskFilters;
- 
-+        bool LoadPDiskFilters(NIceDb::TNiceDb& db, const TBoxStoragePoolId& id);
-+        static void UpdatePDiskFilters(NTable::TDatabase& db, const TPDiskFilters* previous,
-+            const TPDiskFilters* current);
-+
-         template<typename T>
-         static void Apply(TBlobStorageController* /*controller*/, T&& callback) {
-             static TTableAdapter<Table, TStoragePoolInfo,
-@@ -1520,8 +1525,7 @@ class TBlobStorageController : public TActor<TBlobStorageController>, public TTa
-                     Table::DDisk,
-                     Table::VDiskHeapAllocatorNumLeadingDisks,
-                     Table::PersistentBufferAllocationMode,
--                    TInlineTable<TUserIds, Schema::BoxStoragePoolUser>,
--                    TInlineTable<TPDiskFilters, Schema::BoxStoragePoolPDiskFilter>
-+                    TInlineTable<TUserIds, Schema::BoxStoragePoolUser>
-                 > adapter(
-                     &TStoragePoolInfo::Name,
-                     &TStoragePoolInfo::ErasureSpecies,
-@@ -1551,8 +1555,7 @@ class TBlobStorageController : public TActor<TBlobStorageController>, public TTa
-                     &TStoragePoolInfo::DDisk,
-                     &TStoragePoolInfo::VDiskHeapAllocatorNumLeadingDisks,
-                     &TStoragePoolInfo::PersistentBufferAllocationMode,
--                    &TStoragePoolInfo::UserIds,
--                    &TStoragePoolInfo::PDiskFilters
-+                    &TStoragePoolInfo::UserIds
-                 );
-             callback(&adapter);
-         }
-```
-
-**File**: `ydb/core/mind/bscontroller/load_everything.cpp` (modified, +6/-1)
-```diff
-@@ -44,6 +44,7 @@ class TBlobStorageController::TTxLoadEverything : public TTransactionBase<TBlobS
-             auto boxStoragePool = db.Table<Schema::BoxStoragePool>().Range().Select();
-             auto boxStoragePoolUser = db.Table<Schema::BoxStoragePoolUser>().Range().Select();
-             auto boxStoragePoolPDiskFilter = db.Table<Schema::BoxStoragePoolPDiskFilter>().Range().Select();
-+            auto boxStoragePoolPDiskFilterV2 = db.Table<Schema::BoxStoragePoolPDiskFilterV2>().Range().Select();
-             auto groupStoragePool = db.Table<Schema::GroupStoragePool>().Range().Select();
-             auto groupLatencies = db.Table<Schema::GroupLatencies>().Select();
-             auto scrubState = db.Table<Schema::ScrubState>().Select();
-@@ -66,6 +67,7 @@ class TBlobStorageController::TTxLoadEverything : public TTransactionBase<TBlobS
-                     || !boxStoragePool.IsReady()
-                     || !boxStoragePoolUser.IsReady()
-                     || !boxStoragePoolPDiskFilter.IsReady()
-+                    || !boxStoragePoolPDiskFilterV2.IsReady()
-                     || !groupStoragePool.IsReady()
-                     || !groupLatencies.IsReady()
-                     || !scrubState.IsReady()
-@@ -306,7 +308,10 @@ class TBlobStorageController::TTxLoadEverything : public TTransactionBase<TBlobS
-                 || !NTableAdapter::FetchTable<Schema::BlobDepotDeleteQueue>(db, Self, Self->BlobDepotDeleteQueue)) {
-             return false;
-         }
--        for (const auto& [storagePoolId, storagePool] : Self->StoragePools) {
-+        for (auto& [storagePoolId, storagePool] : Self->StoragePools) {
-+            if (!storagePool.LoadPDiskFilters(db, storagePoolId)) {
-+                return false;
-+            }
-             Self->SysViewChangedStoragePools.insert(storagePoolId);
-         }
- 
-```
-
-**File**: `ydb/core/mind/bscontroller/scheme.h` (modified, +15/-6)
-```diff
-@@ -376,11 +376,9 @@ struct Schema : NIceDb::Schema {
-         struct ReadCentric : Column<5, HostConfigDrive::ReadCentric::ColumnType> {};
-         struct Kind : Column<6, HostConfigDrive::Kind::ColumnType> {};
- 
--        // Serialized TNodeLocation; null preserves filters written before location support.
--        struct Location : Column<7, NScheme::NTypeIds::String> {};
--
--        using TKey = TableKey<BoxId, StoragePoolId, TypeCol, SharedWithOs, ReadCentric, Kind, Location>;
--        using TColumns = TableColumns<BoxId, StoragePoolId, TypeCol, SharedWithOs, ReadCentric, Kind, Location>;
-+        // Keep the legacy key unchanged: older controllers use its length for prefix scans.
-+        using TKey = TableKey<BoxId, StoragePoolId, TypeCol, SharedWithOs, ReadCentric, Kind>;
-+        using TColumns = TableColumns<BoxId, StoragePoolId, TypeCol, SharedWithOs, ReadCentric, Kind>;
-     };
- 
-     struct GroupStoragePool : Table<123> {
-@@ -519,6 +517,16 @@ struct Schema : NIceDb::Schema {
-         using TColumns = TableColumns<BoxId, StoragePoolId>;
-     };
- 
-+    struct BoxStoragePoolPDiskFilterV2 : Table<136> {
-+        using BoxId = BoxStoragePoolPDiskFilter::BoxId;
-+        using StoragePoolId = BoxStoragePoolPDiskFilter::StoragePoolId;
-+        // A protobuf key allows adding filter properties without extending the table key.
-+        struct Filter : Column<3, NScheme::NTypeIds::String> { using Type = NKikimrBlobStorage::TPDiskFilter; };
-+
-+        using TKey = TableKey<BoxId, StoragePoolId, Filter>;
-+        using TColumns = TableColumns<BoxId, StoragePoolId, Filter>;
-+    };
-+
- 
-     using TTables = SchemaTables<
-         Node,
-@@ -547,7 +555,8 @@ struct Schema : NIceDb::Schema {
-         BridgeSyncState,
-         DirectBlockGroupTabletState,
-         DirectBlockGroupClaims,
--        DatabaseSpaceExhaustedPool
-+        DatabaseSpaceExhaustedPool,
-+        BoxStoragePoolPDiskFilterV2
-     >;
- 
-     using TSettings = SchemaSettings<
-```
-
-**File**: `ydb/core/mind/bscontroller/ut_bscontroller/main.cpp` (modified, +40/-0)
-```diff
-@@ -1352,6 +1352,46 @@ Y_UNIT_TEST_SUITE(BsControllerConfig) {
-         UNIT_ASSERT_C(response.GetSuccess(), response.DebugString());
-         checkPlacement(1, "1", 2);
-         checkPlacement(2, "2", 1);
-+
-+        // Exercise persistence through configuration commits when filters move
-+        // between the legacy and location tables, including mixed filter sets.
-+        const auto plainPool = readPool(3);
-+        pool = plainPool;
-+        location(pool.MutablePDiskFilter(0))->SetDataCenter("1");
-+        *pool.AddPDiskFilter() = plainPool.GetPDiskFilter(0);
-+        response = definePool(pool);
-+        UNIT_ASSERT_C(response.GetSuccess(), response.DebugString());
-+        RebootTablet(*env.Runtime, env.TabletId, env.Runtime->AllocateEdgeActor());
-+        UNIT_ASSERT_VALUES_EQUAL(readPool(3).PDiskFilterSize(), 2);
-+
-+        pool = readPool(3);
-+        pool.ClearPDiskFilter();
-+        *pool.AddPDiskFilter() = plainPool.GetPDiskFilter(0);
-+        response = definePool(pool);
-+        UNIT_ASSERT_C(response.GetSuccess(), response.DebugString());
-+        RebootTablet(*env.Runtime, env.TabletId, env.Runtime->AllocateEdgeActor());
-+        UNIT_ASSERT_VALUES_EQUAL(readPool(3).PDiskFilterSize(), 1);
-+        UNIT_ASSERT_VALUES_EQUAL(readPool(3).GetPDiskFilter(0).PropertySize(), 2);
-+
-+        pool = readPool(3);
-+        location(pool.MutablePDiskFilter(0))->SetDataCenter("2");
-+        response = definePool(pool);
-+        UNIT_ASSERT_C(response.GetSuccess(), response.DebugString());
-+        request.Clear();
-+        auto* remove = request.AddCommand()->MutableDeleteStoragePool();
-+        remove->SetBoxId(1);
-+        remove->SetStoragePoolId(3);
-+        remove->SetItemConfigGeneration(readPool(3).GetItemConfigGeneration());
-+        response = env.Invoke(request);
-+        UNIT_ASSERT_C(response.GetSuccess(), response.DebugString());
-+
-+        pool = plainPool;
-+        pool.SetItemConfigGeneration(0);
-+        response = definePool(pool);
-+        UNIT_ASSERT_C(response.GetSuccess(), response.DebugString());
-+        RebootTablet(*env.Runtime, env.TabletId, env.Runtime->AllocateEdgeActor());
-+        UNIT_ASSERT_VALUES_EQUAL(readPool(3).PDiskFilterSize(), 1);
-+        UNIT_ASSERT_VALUES_EQUAL(readPool(3).GetPDiskFilter(0).PropertySize(), 2);
-     }
- 
-     Y_UNIT_TEST(Basic) {
-```
-
-**File**: `ydb/core/mind/bscontroller/ut_bscontroller/pdisk_filter_compatibility_ut.cpp` (added, +215/-0)
-```diff
-@@ -0,0 +1,215 @@
-+#include <ydb/core/mind/bscontroller/impl.h>
-+#include <ydb/core/tablet_flat/test/libs/table/test_dummy.h>
-+
-+#include <library/cpp/testing/unittest/registar.h>
-+
-+namespace NKikimr::NBsController {
-+namespace {
-+
-+// Frozen stable-26-3-1 definition. Do not inherit the current schema: this reader
-+// must keep constructing six-column lower bounds after the schema is upgraded.
-+struct TLegacySchema : NIceDb::Schema {
-+    struct BoxStoragePoolPDiskFilter : Table<122> {
-+        struct BoxId : Column<1, NScheme::NTypeIds::Uint64> {};
-+        struct StoragePoolId : Column<2, NScheme::NTypeIds::Uint64> {};
-+        struct TypeCol : Column<3, NScheme::NTypeIds::Int32> {
-+            static TString GetColumnName(const TString&) { return "Type"; }
-+        };
-+        struct SharedWithOs : Column<4, NScheme::NTypeIds::Bool> {};
-+        struct ReadCentric : Column<5, NScheme::NTypeIds::Bool> {};
-+        struct Kind : Column<6, NScheme::NTypeIds::Uint64> {};
-+
-+        using TKey = TableKey<BoxId, StoragePoolId, TypeCol, SharedWithOs, ReadCentric, Kind>;
-+        using TColumns = TableColumns<BoxId, StoragePoolId, TypeCol, SharedWithOs, ReadCentric, Kind>;
-+    };
-+
-+    using TTables = SchemaTables<BoxStoragePoolPDiskFilter>;
-+};
-+
-+using TPool = TBlobStorageController::TStoragePoolInfo;
-+using TFilter = TPool::TPDiskFilter;
-+using TFilters = TPool::TPDiskFilters;
-+using TLegacyTable = TLegacySchema::BoxStoragePoolPDiskFilter;
-+
-+struct TFixture {
-+    NTable::TDatabase Database;
-+    NTable::TDummyEnv Env;
-+    NIceDb::TNiceDb Db{Database};
-+    ui64 Stamp = 0;
-+
-+    template<typename TCallback>
-+    void Transaction(TCallback&& callback) {
-+        Database.Begin(++Stamp, Env);
-+        callback();
-+        Database.Commit(Stamp, true);
-+    }
-+
-+    TFilters Load(ui64 boxId, ui64 poolId) {
-+        TPool pool;
-+        Transaction([&] {
-+            UNIT_ASSERT(pool.LoadPDiskFilters(Db, {boxId, poolId}));
-+        });
-+        return std::move(pool.PDiskFilters);
-+    }
-+
-+    void Update(const TFilters& previous, const TFilters& current) {
-+        Transaction([&] {
-+            TPool::UpdatePDiskFilters(Database, &previous, &current);
-+        });
-+    }
-+
-+    template<typename T>
-+    size_t Count(ui64 boxId, ui64 poolId) {
-+        size_t count = 0;
-+        Transaction([&] {
-+            auto rows = Db.Table<T>().Range(boxId, poolId).Select();
-+            UNIT_ASSERT(rows.IsReady());
-+            while (rows.IsValid()) {
-+                ++count;
-+                UNIT_ASSERT(rows.Next());
-+            }
-+        });
-+        return count;
-+    }
-+};
-+
-+TFilter MakeFilter(NKikimrBlobStorage::EPDiskType type, TMaybe<TString> dataCenter = {}) {
-+    NKikimrBlobStorage::TPDiskFilter proto;
-+    proto.AddProperty()->SetType(type);
-+    if (dataCenter) {
-+        proto.AddProperty()->MutableLocation()->SetDataCenter(*dataCenter);
-+    }
-+    return TFilter::Parse(7, 11, proto);
++.description__text strong,
++.description__text b {
++  font-weight: 600;
 +}
 +
-+void CheckFilters(const TFilters& actual, const TFilters& expected) {
-+    UNIT_ASSERT_VALUES_EQUAL(actual.size(), expected.size());
-+    auto a = actual.begin();
-+    auto e = expected.begin();
-+    for (; a != actual.end(); ++a, ++e) {
-+        UNIT_ASSERT(a->GetKey() == e->GetKey());
-+        UNIT_ASSERT_VALUES_EQUAL(bool(a->RequiredLocation), bool(a->Location));
-+    }
++.description__text h3,
++.description__text h4 {
++  font-weight: 600;
++  margin: 1em 0 0.5em;
 +}
 +
-+} // namespace
++.description__text ul,
++.description__text ol {
++  margin: 0.5em 0;
++  padding-inline-start: 1.5em;
++}
 +
-+Y_UNIT_TEST_SUITE(BsControllerPDiskFilterCompatibility) {
-+    Y_UNIT_TEST(LegacyReadAndWriteAfterUpgrade) {
-+        TFixture f;
-+        f.Transaction([&] {
-+            f.Db.Materialize<TLegacySchema>();
-+            f.Db.Table<TLegacyTable>().Key(7, 11, i32(NKikimrBlobStorage::ROT), false, true, 3).Update();
-+        });
-+        f.Transaction([&] {
-+            f.Db.Materialize<Schema>();
-+        });
-+        UNIT_ASSERT_VALUES_EQUAL(f.Database.GetScheme().GetTableInfo(122)->KeyColumns.size(), 6);
++.description__text ul {
++  list-style: disc;
++}
 +
-+        auto original = MakeFilter(NKikimrBlobStorage::ROT);
-+        original.SharedWithOs = false;
-+        original.ReadCentric = true;
-+        original.Kind = 3;
-+        const TFilters oldFilters{original};
-+        CheckFilters(f.Load(7, 11), oldFilters);
++.description__text ol {
++  list-style: decimal;
++}
 +
-+        // A current controller writes a filter with nullable key fields. The old
-+        // reader must see it, and its prefix scan must not abort after upgrade.
-+        const auto added = MakeFilter(NKikimrBlobStorage::SSD);
-+        const TFilters newFilters{original, added};
-+        f.Update(oldFilters, newFilters);
-+        f.Transaction([&] {
-+            f.Db.Materialize<TLegacySchema>();
-+        });
-+        UNIT_ASSERT_VALUES_EQUAL(f.Count<TLegacyTable>(7, 11), 2);
-+        UNIT_ASSERT_VALUES_EQUAL(f.Count<Schema::BoxStoragePoolPDiskFilterV2>(7, 11), 0);
++.description__text table {
++  border-collapse: collapse;
++  margin: 0.75em 0;
++}
 +
-+        // Stable can change the filters after downgrade; a subsequent upgrade
-+        // must read those changes, rather than resurrecting a separate copy.
-+        f.Transaction([&] {
-+            f.Db.Table<TLegacyTable>().Key(7, 11, i32(NKikimrBlobStorage::ROT), false, true, 3).Delet
++.description__text th,
++.description__text td {
++  border: 1px solid var(--color-border-subtle, currentColor);
++  padding: 0.4em 0.65em;
++  text-align: start;
++  vertical-align: top;
++}
++
++.description__text th {
++  background-color: color-mix(in srgb, currentColor 6%, transparent);
++  font-weight: 600;
++}
++
++.description__text pre,
++.description__text code {
++  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
++}
++
++.description__text pre {
++  overflow-x: auto;
++  white-space: pre;
++}
++
++/* Cell colors are carried by abbr because Allure removes style and class. */
++
++.description__text td[abbr="bg-ccffcc"],
++.description__text th[abbr="bg-ccffcc"] {
++  background-color: #ccffcc;
++  color: #16202a;
++}
++
++.description__text td[abbr="bg-ffcccc"],
++.description__text th[abbr="bg-ffcccc"] {
++  background-color: #ffcccc;
++  color: #16202a;
++}
++
++.description__text td[abbr="bg-ffffcc"],
++.description__text th[abbr="bg-ffffcc"] {
++  background-color: #ffffcc;
++  color: #16202a;
++}
++
++.description__text td[abbr="bg-f0f0f0"],
++.description__text th[abbr="bg-f0f0f0"] {
++  background-color: #f0f0f0;
++  color: #16202a;
++}
++
++.description__text td[abbr="bg-e0f0e0"],
++.description__text th[abbr="bg-e0f0e0"] {
++  background-color: #e0f0e0;
++  color: #16202a;
++}
++
++.description__text td[abbr="bg-90ee90"],
++.description__text th[abbr="bg-90ee90"] {
++  background-color: #90ee90;
++  color: #16202a;
++}
++
++.description__text td[abbr="bg-fa8072"],
++.description__text th[abbr="bg-fa8072"] {
++  background-color: #fa8072;
++  color: #16202a;
++}
++
++.description__text td[abbr="bg-eeffcc"],
++.description__text th[abbr="bg-eeffcc"] {
++  background-color: #eeffcc;
++  color: #16202a;
++}
++
++.description__text td[abbr="bg-f5f5f5"],
++.description__text th[abbr="bg-f5f5f5"] {
++  background-color: #f5f5f5;
++  color: #16202a;
++}
 ```
 
-**File**: `ydb/core/mind/bscontroller/ut_bscontroller/ya.make` (modified, +2/-0)
+**File**: `ydb/tests/olap/lib/allure-html-plugin/style_report.py` (added, +60/-0)
 ```diff
-@@ -11,6 +11,7 @@ ENDIF()
- 
- SRCS(
-     main.cpp
-+    pdisk_filter_compatibility_ut.cpp
- )
- 
- PEERDIR(
-@@ -20,6 +21,7 @@ PEERDIR(
-     ydb/core/blobstorage/dsproxy/mock
-     ydb/core/mind/bscontroller
-     ydb/core/protos
-+    ydb/core/tablet_flat/test/libs/table
-     ydb/core/testlib/default
-     ydb/core/testlib/basics
- )
+@@ -0,0 +1,60 @@
++#!/usr/bin/env python3
++"""Apply YDB description styles to a report generated by ya make --allure.
++
++Usage: python3 style_report.py /path/to/allure
++Run this after each report generation and before publishing the report.
++Only the report index and a separate CSS file are changed.
++"""
++
++import argparse
++import re
++from pathlib import Path
++
++
++STYLE_FILE = "ydb-description.css"
++START = "<!-- ydb-description-styles:start -->"
++END = "<!-- ydb-description-styles:end -->"
++
++
++def style_report(report_dir: Path) -> None:
++    index_path = report_dir / "index.html"
++    html = index_path.read_text(encoding="utf-8")
++    css = (Path(__file__).resolve().parent / "static" / "styles.css").read_bytes()
++    block = (
++        START + "\n"
++        + '<link rel="stylesheet" href="' + STYLE_FILE + '">\n'
++        + END
++    )
++    if START in html or END in html:
++        pattern = re.compile(re.escape(START) + r".*?" + re.escape(END), re.DOTALL)
++        if html.count(START) != 1 or html.count(END) != 1:
++            raise ValueError("Report has incomplete or duplicate YDB style markers")
++        updated, count = pattern.subn(lambda _: block, html)
++        if count != 1:
++            raise ValueError("Report has invalid YDB style markers")
++    else:
++        head_end = re.search(r"</head\s*>", html, re.IGNORECASE)
++        if head_end is None:
++            raise ValueError("Report index.html has no closing head tag")
++        updated = html[:head_end.start()] + block + "\n" + html[head_end.start():]
++
++    css_path = report_dir / STYLE_FILE
++    if not css_path.is_file() or css_path.read_bytes() != css:
++        css_path.write_bytes(css)
++    if updated != html:
++        index_path.write_text(updated, encoding="utf-8")
++
++
++def main() -> None:
++    parser = argparse.ArgumentParser(description=__doc__)
++    parser.add_argument("report_dir", type=Path, help="Generated Allure report directory")
++    args = parser.parse_args()
++    try:
++        style_report(args.report_dir)
++    except (OSError, ValueError) as error:
++        parser.exit(1, f"Cannot style report: {error}\n")
++    print(f"YDB description styles applied to {args.report_dir}")
++
++
++if __name__ == "__main__":
++    main()
 ```
 
-**File**: `ydb/tests/functional/scheme_tests/canondata/tablet_scheme_tests.TestTabletSchemes.test_tablet_schemes_flat_bs_controller_/flat_bs_controller.schema` (modified, +53/-8)
+**File**: `ydb/tests/olap/lib/allure_utils.py` (modified, +114/-2)
 ```diff
-@@ -1090,15 +1090,9 @@
-             3,
-             4,
-             5,
--            6,
--            7
-+            6
-         ],
-         "ColumnsAdded": [
--            {
--                "ColumnId": 7,
--                "ColumnName": "Location",
--                "ColumnType": "String"
--            },
-             {
-                 "ColumnId": 1,
-                 "ColumnName": "BoxId",
-@@ -1134,7 +1128,6 @@
-         "ColumnFamilies": {
-             "0": {
-                 "Columns": [
--                    7,
-                     1,
-                     2,
-                     3,
-@@ -2250,5 +2243,57 @@
-                 ]
-             }
-         }
-+    },
-+    {
-+        "TableId": 136,
-+        "TableName": "BoxStoragePoolPDiskFilterV2",
-+        "TableKey": [
-+            1,
-+            2,
-+            3
-+        ],
-+        "ColumnsAdded": [
-+            {
-+                "ColumnId": 1,
-+                "ColumnName": "BoxId",
-+                "ColumnType": "Uint64"
-+            },
-+            {
-+                "ColumnId": 2,
-+                "ColumnName": "StoragePoolId",
-+                "ColumnType": "Uint64"
-+            },
-+            {
-+                "ColumnId": 3,
-+                "ColumnName": "Filter",
-+                "ColumnType": "String"
-+            }
-+        ],
-+        "ColumnsDropped": [],
-+        "ColumnFamilies": {
-+            "0": {
-+                "Columns": [
-+                    1,
-+                    2,
-+                    3
-+                ],
-+                "RoomID": 0,
-+                "Codec": 0,
-+                "InMemory": false,
-+                "Cache": 0,
-+                "Small": 4294967295,
-+                "Large": 4294967295
-+            }
-+        },
-+        "Rooms": {
-+            "0": {
-+                "Main": 1,
-+                "Outer": 1,
-+                "Blobs": 1,
-+                "ExternalBlobs": [
-+                    1
-+                ]
-+            }
-+        }
-     }
- ]
-\ No newline at end of file
+@@ -1,5 +1,10 @@
+ from __future__ import annotations
+ from collections import defaultdict
++from html import escape
++from html.parser import HTMLParser
++from functools import lru_cache
++from library.python.resource import resfs_read
++import re
+ import allure
+ from ydb.tests.olap.lib.ydb_cluster import YdbCluster
+ from ydb.tests.olap.lib.results_processor import ResultsProcessor
+@@ -14,6 +19,99 @@
+ import logging
+ 
+ 
++_DESCRIPTION_CSS_RESOURCE = 'ydb/tests/olap/lib/allure-html-plugin/static/styles.css'
++
++
++@lru_cache(maxsize=1)
++def _description_cell_colors() -> frozenset[str]:
++    css = resfs_read(_DESCRIPTION_CSS_RESOURCE)
++    if css is None:
++        raise RuntimeError(f'Missing embedded Allure stylesheet: {_DESCRIPTION_CSS_RESOURCE}')
++    css = re.sub(r'/\*.*?\*/', '', css.decode('utf-8'), flags=re.DOTALL)
++    selectors = re.findall(r'\b(td|th)\[abbr="bg-([0-9a-fA-F]{6})"\]', css)
++    by_tag = {
++        tag: {'#' + color.lower() for cell_tag, color in selectors if cell_tag == tag}
++        for tag in ('td', 'th')
++    }
++    colors = frozenset(by_tag['td'] & by_tag['th'])
++    if not colors:
++        raise ValueError(f'No cell background rules found in {_DESCRIPTION_CSS_RESOURCE}')
++    return colors
++
++
++class _CellColorMarkers(HTMLParser):
++    """Keep cell backgrounds through Allure sanitization using allowed abbr attributes."""
++
++    def __init__(self):
++        super().__init__(convert_charrefs=False)
++        self.output = []
++        self.row_color = None
++        self.table_rows = []
++
++    @staticmethod
++    def _background(attrs):
++        attrs = dict(attrs)
++        backgrounds = re.findall(
++            r'(?:^|;)\s*background(?:-color)?\s*:\s*([^;]*)(?=;|$)',
++            attrs.get('style') or '',
++            flags=re.IGNORECASE,
++        )
++        color = backgrounds[-1] if backgrounds else attrs.get('bgcolor') or ''
++        color = color.strip().lower()
++        if not color:
++            return None
++        if not re.fullmatch(r'#[0-9a-f]{6}', color):
++            raise ValueError(f'Unsupported Allure cell background {color!r}; use #RRGGBB')
++        if color not in _description_cell_colors():
++            raise ValueError(
++                f'Allure cell background {color!r} has no td/th rules in '
++                f'{_DESCRIPTION_CSS_RESOURCE}; add matching abbr selectors to the stylesheet'
++            )
++        return color
++
++    def handle_starttag(self, tag, attrs):
++        text = self.get_starttag_text()
++        if tag == 'table':
++            self.table_rows.append(self.row_color)
++            self.row_color = None
++        elif tag == 'tr':
++            self.row_color = self._background(attrs)
++        elif tag in ('td', 'th'):
++            color = self._background(attrs) or self.row_color
++            if color and 'abbr' not in dict(attrs):
++                text = text[:-1] + f' abbr="bg-{color[1:]}">'
++        self.output.append(text)
++
++    def handle_endtag(self, tag):
++        self.output.append(f'</{tag}>')
++        if tag == 'tr':
++            self.row_color = None
++        elif tag == 'table':
++            self.row_color = self.table_rows.pop() if self.table_rows else None
++
++    def handle_startendtag(self, tag, attrs):
++        self.output.append(self.get_starttag_text())
++
++    def handle_data(self, data):
++        self.output.append(data)
++
++    def handle_entityref(self, name):
++        self.output.append(f'&{name};')
++
++    def handle_charref(self, name):
++        self.output.append(f'&#{name};')
++
++    def handle_comment(self, data):
++        self.output.append(f'<!--{data}-->')
++
++
++def _mark_cell_colors(html: str) -> str:
++    parser = _CellColorMarkers()
++    parser.feed(html)
++    parser.close()
++    return ''.join(parser.output)
++
++
+ class NodeErrors:
+     def __init__(self, node: YdbCluster.Node, message: str):
+         self.node = node
+@@ -124,7 +222,7 @@ def _produce_verify_report(verify_errors) -> str:
+         html += f'<details style="margin-bottom: 15px"><summary style="display: list-item">{verify}</summary>'
+         html += '<table border="1" cellpadding="2px" style="margin-top: 5px"><tr><th>Node</th><th>VERIFY failed times</th></tr>'
+         for host, triggered_times in verify_info['hosts_count'].items():
+-            html += f'<tr bgcolor="{'  # 90EE90' if triggered_times == 0 else '#FA8072'}"><td>{host}</td><td>{triggered_times}</td></tr>'
++            html += f'<tr bgcolor="{'#90EE90' if triggered_times == 0 else '#FA8072'}"><td>{host}</td><td>{triggered_times}</td></tr>'
+         html += f'</table><br/><code>{''.join(verify_info['full_trace']).replace('\n', '<br/>')}</code></details>'
+     return html
+ 
+@@ -953,6 +1051,7 @@ def _pretty_str(s):
+         </tbody></table>
+     '''
+ 
++    description_body_start = len(html)
+     html += _set_node_errors(node_errors)
+     html += _produce_verify_report(verify_errors)
+     logs_in_html = external_param_is_true('save_san_logs_in_html')
+@@ -973,5 +1072,18 @@ def _pretty_str(s):
+     else:
+ 
+```
+
+**File**: `ydb/tests/olap/lib/ya.make` (modified, +6/-0)
+```diff
+@@ -13,7 +13,13 @@ PY3_LIBRARY()
+         ydb_cli.py
+     )
+ 
++    RESOURCE_FILES(
++        PREFIX ydb/tests/olap/lib/
++        allure-html-plugin/static/styles.css
++    )
++
+     PEERDIR(
++        library/python/resource
+         contrib/python/allure-pytest
+         contrib/python/allure-python-commons
+         contrib/python/PyYAML
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #57768** (2026-10-31): Update muted_ya (release-asan) in stable-26-4-1 (@ydbot)
-- **PR #57766** (2026-10-31): Update muted_ya (relwithdebinfo) in main (@ydbot)
-- **PR #57765** (2026-10-31): Update muted_ya (release-asan) in stable-26-4-1 (@ydbot)
-- **PR #57764** (2026-10-31): Enable core/base tests in open-source builds (@iddqdex)
-- **PR #57762** (2026-10-31): Update muted_ya (relwithdebinfo) in stable-26-4-1 (@ydbot)
-- **PR #57761** (2026-10-31): Update muted_ya (release-asan) in stable-26-4-1 (@ydbot)
+- **PR #58019** (2026-11-03): Make YDB test data paths independent of repository layout (@iddqdex)
+- **PR #58005** (2026-11-03): Update muted_ya (relwithdebinfo) in main (@ydbot)
+- **PR #58003** (2026-11-03): Add missing recurse for relative database test recipe (@iddqdex)
+- **PR #58000** (2026-11-03): Stabilize Console handshake tests against background proposals (@CyberROFL)
+- **PR #57997** (2026-11-03): Update muted_ya (relwithdebinfo) in stable-26-4-1 (@ydbot)
+- **PR #57996** (2026-11-03): [Backport stable-26-2] Document feature flags and experimental functionality (@nataliaboldyreva)
 
 ---
 
@@ -3004,29 +2722,28 @@ Co-authored-by: iddqdex <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Enable core/base tests in open-source builds (#57764)
+## X. REQUIREMENTS(cpu) from real usage — Security (#57899)
 
 **RULE**:
-When implementing operations in `ydb/core/base/statestorage_ut.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ydb-platform/ydb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `ydb/core/security/ldap_auth_provider/ut/ya.make`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ydb-platform/ydb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a762d016`: Enable core/base tests in open-source builds (#57764). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `49f5c348`: REQUIREMENTS(cpu) from real usage — Security (#57899). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `ydb/core/base/statestorage_ut.cpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `ydb/core/security/ldap_auth_provider/ut/ya.make`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-        IEventHandle ev(TActorId(), type, 0, TActorId(), TActorId(), nullptr, 0, origin, {});
+    REQUIREMENTS(cpu:1)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-        IEventHandle ev(type, 0, TActorId(), TActorId(), nullptr, 0);
-        ev.OriginScopeId = origin;
+    REQUIREMENTS(cpu:2)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a762d016` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `49f5c348` are properly handled with clean fallback behavior.

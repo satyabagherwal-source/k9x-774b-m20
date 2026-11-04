@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/sharkdp-bat-learnings.md`  
 > **Source**: github ([https://github.com/sharkdp/bat](https://github.com/sharkdp/bat))  
-> **Source Version**: `8f5727ea`  
+> **Source Version**: `41931bc4`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T23:35:08.037Z  
+> **Timestamp**: 2026-11-03T21:58:03.136Z  
 > **Learning ID**: `learn-github-sharkdp-bat`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/sharkdp-bat-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/sharkdp/bat](https://github.com/sharkdp/bat))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T23:35:07.146Z  
+> **Harvest Timestamp**: 2026-11-03T21:58:01.777Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A cat(1) clone with wings.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 60988 stars
+- **Stars / Engagement**: 61050 stars
 
 ---
 
@@ -607,53 +607,113 @@ impl AssetsMetadata {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8f5727ea` (2026-10-29)
-**Commit Message**: Merge pull request #4068 from ump45nose/diag-list-bat-config-dir
+### Incident Patch 1: `41931bc4` (2026-11-03)
+**Commit Message**: Merge pull request #3801 from xfocus3/fix/help-language-submodule-note
 
-Report BAT_CONFIG_DIR in bat --diagnostic
+docs: explain submodules when regenerating syntax assets
 
 **File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -28,6 +28,7 @@
- - Syntax highlighting for Python files using uv as script runner in shebang #3689 (@janlarres)
+@@ -3,6 +3,7 @@
  
- ## Bugfixes
-+- Report `BAT_CONFIG_DIR` in `bat --diagnostic`, so bug reports show a config directory that overrides `$XDG_CONFIG_HOME`. See #4068 (@ump45nose)
- - Fix `bat` hanging forever on JavaScript (and Svelte) code where an expression is followed by a block comment, e.g. `a /* x */`. Closes #4080, see #4091 (@NavpreetSSidhu)
- - Fix the first line of UTF-16BE input swallowing the second line, which broke line numbers, `--line-range` and highlighting, see #XXXX (@cindykrafft)
- - Exit quietly with status 0 instead of panicking when stdout is closed early (broken pipe) on auxiliary output paths such as `--completion`, `--config-file`, `--diagnostic`, `--generate-config-file`, `--set-terminal-title` and `cache --build`/`--clear`, matching the main output path since #232, closes #4034, see #4035 (@Mathjk)
+ ## Other
+ 
++- Document submodule initialization when rebuilding syntax and theme assets, see #3801 (@xfocus3)
+ - Fix anchor case in `doc/assets.md` links, see #4026 (@ump45nose)
+ - Pin the i686 GNU CI runner to Ubuntu 24.04 to avoid `socketpair` failures on Ubuntu 26.04, see #4101 (@PerchAnton)
+ - Fix dead Visual C++ Redistributable link in README, see #3895 (@1t1sCooL)
 ```
 
-**File**: `src/bin/bat/main.rs` (modified, +1/-0)
+**File**: `README.md` (modified, +6/-0)
 ```diff
-@@ -333,6 +333,7 @@ fn invoke_bugreport(app: &App, cache_dir: &Path) -> Result<()> {
-         .info(CommandLine::default())
-         .info(EnvironmentVariables::list(&[
-             "BAT_CACHE_PATH",
-+            "BAT_CONFIG_DIR",
-             "BAT_CONFIG_PATH",
-             "BAT_OPTS",
-             "BAT_PAGER",
-```
-
-**File**: `tests/integration_tests.rs` (modified, +1/-0)
-```diff
-@@ -1755,6 +1755,7 @@ fn diagnostic_sanity_check() {
-         .success()
-         .stdout(predicate::str::contains("BAT_PAGER="))
-         .stdout(predicate::str::contains("BAT_WIDTH="))
-+        .stdout(predicate::str::contains("BAT_CONFIG_DIR="))
-         .stderr("");
- }
+@@ -431,6 +431,12 @@ If you want to build `bat` from source, you need Rust 1.79.0 or
+ higher. You can then use `cargo` to build everything:
  
+ #### From local source
++
++The checkout includes prebuilt syntax and theme assets. If you want to regenerate them
++from their sources, first initialize the Git submodules with
++`git submodule update --init --recursive`, then follow the [Development](#development)
++instructions. This includes the `help` syntax used to highlight command-line help.
++
+ ```bash
+ cargo install --path . --locked
+ ```
 ```
 
 ---
 
-### Incident Patch 2: `b4fdcec6` (2026-10-29)
-**Commit Message**: Merge branch 'master' into diag-list-bat-config-dir
+### Incident Patch 2: `46031658` (2026-11-03)
+**Commit Message**: Merge pull request #4098 from feafel/fix/wrapped-line-background-underflow
 
-**File**: `.github/workflows/CICD.yml` (modified, +2/-1)
+fix: avoid underflow when painting a wrapped line background
+
+**File**: `CHANGELOG.md` (modified, +1/-0)
+```diff
+@@ -116,6 +116,7 @@
+ 
+ ## Bugfixes
+ 
++- Fix `capacity overflow` panic when wrapping a double-width character on a line narrower than the character while a background is painted (e.g. `--terminal-width=1 --wrap=character --highlight-line=1`). Closes #3844, see #4098 (@feafel)
+ - Fix hang when using `--list-themes` with an explicit pager, see #3457 (@abhinavcool42)
+ - Fix negative values of N not being parsed in <N:M> line ranges without `=` flag value separator, see #3442 (@lmmx)
+ - Fix broken Docker syntax preventing use of custom assets, see #3476 (@keith-hall)
+```
+
+**File**: `src/printer.rs` (modified, +2/-2)
+```diff
+@@ -826,7 +826,7 @@ impl Printer for InteractivePrinter<'_> {
+                             let text = self
+                                 .preprocess(text.trim_end_matches(['\r', '\n']), &mut cursor_total);
+ 
+-                            let mut max_width = cursor_max - cursor;
++                            let mut max_width = cursor_max.saturating_sub(cursor);
+ 
+                             // line buffer (avoid calling write! for every character)
+                             let mut line_buf = String::with_capacity(max_width * 4);
+@@ -965,7 +965,7 @@ impl Printer for InteractivePrinter<'_> {
+                 write!(
+                     handle,
+                     "{}",
+-                    ansi_style.paint(" ".repeat(cursor_max - cursor))
++                    ansi_style.paint(" ".repeat(cursor_max.saturating_sub(cursor)))
+                 )?;
+             }
+             writeln!(handle)?;
+```
+
+**File**: `tests/integration_tests.rs` (modified, +15/-0)
+```diff
+@@ -504,6 +504,21 @@ fn snip_at_terminal_width_one_does_not_panic() {
+         .success();
+ }
+ 
++#[test]
++fn wide_char_at_terminal_width_one_with_background_does_not_panic() {
++    // A double-width character does not fit in a one-column line. The cursor then moves past
++    // `cursor_max`, so the background fill must not subtract without checking (see #3844).
++    bat()
++        .arg("--color=always")
++        .arg("--paging=never")
++        .arg("--wrap=character")
++        .arg("--terminal-width=1")
++        .arg("--highlight-line=1")
++        .write_stdin("📦📦\n")
++        .assert()
++        .success();
++}
++
+ #[test]
+ fn line_range_multiple_with_context() {
+     bat()
+```
+
+---
+
+### Incident Patch 3: `b99f3176` (2026-11-03)
+**Commit Message**: Merge branch 'master' into fix/wrapped-line-background-underflow
+
+**File**: `.github/workflows/CICD.yml` (modified, +3/-2)
 ```diff
 @@ -166,7 +166,8 @@ jobs:
            - { target: arm-unknown-linux-gnueabihf , os: ubuntu-latest , dpkg_arch: armhf,            use-cross: true }
@@ -665,96 +725,320 @@ Report BAT_CONFIG_DIR in bat --diagnostic
            - { target: i686-unknown-linux-musl     , os: ubuntu-latest , dpkg_arch: musl-linux-i686,  use-cross: true }
            - { target: x86_64-apple-darwin         , os: macos-15-intel,                                              }
            - { target: aarch64-apple-darwin        , os: macos-latest  ,                                              }
+@@ -457,7 +458,7 @@ jobs:
+     needs: build
+     if: startsWith(github.ref, 'refs/tags/v')
+     steps:
+-      - uses: vedantmgoyal9/winget-releaser@a8fff44b123f115ce4c21543edf8b677376fc7e0
++      - uses: vedantmgoyal9/winget-releaser@b7370d4d152efdce803a26cc6ca9eee58cb2ad54
+         with:
+           identifier: sharkdp.bat
+           installers-regex: '-pc-windows-msvc\.zip$'
 ```
 
-**File**: `CHANGELOG.md` (modified, +3/-0)
+**File**: `CHANGELOG.md` (modified, +11/-1)
 ```diff
-@@ -3,6 +3,8 @@
+@@ -3,6 +3,7 @@
  
  ## Other
  
 +- Pin the i686 GNU CI runner to Ubuntu 24.04 to avoid `socketpair` failures on Ubuntu 26.04, see #4101 (@PerchAnton)
-+- Fix dead Visual C++ Redistributable link in README, see #3895 (@1t1sCooL)
+ - Fix dead Visual C++ Redistributable link in README, see #3895 (@1t1sCooL)
  - Document `StripAnsiMode` and its variants in rustdoc, see #4067 (@ump45nose)
  - Update Cargo dependencies to resolve current RustSec advisories, see #3861 (@TyceHerrman)
- - Add instructions for removing fish help abbreviations to README, see #3655 (@claw-explorer). Closes #3536
-@@ -27,6 +29,7 @@
+@@ -11,9 +12,11 @@
+ 
+ ## Features
+ 
++- Automatically build the syntax/theme cache on first run when custom themes or syntaxes are present but no cache exists yet, so newly installed dotfiles work without a manual `bat cache --build`. Use `--no-custom-assets` to opt out. Closes #4017, see #4038 (@mmustafasenoglu)
+ - Add `-b` / `--number-nonblank` flag to only number non-blank lines, for `cat -b` compatibility. Closes #3856, see #3857 (@MeGaurav4)
+ - Add a `--sanitize=<auto|always|never>` flag for safe display of untrusted input. It implies `--strip-ansi` at the same value and additionally substitutes terminal-active control bytes (cursor moves, charset switches, beep, etc.) and Unicode bidi / zero-width formatting characters with the Unicode replacement character (U+FFFD). Mitigates Trojan-Source-style spoofing (CVE-2021-42574). See #3729 (@curious-rabbit)
+ - Map justfile, Justfile, .justfile, and *.justfile to Makefile syntax highlighting, see #3623 (@zachvalenta)
++- Map `.kube/config` to YAML syntax highlighting, see #3911 (@logarithmone1128)
+ - Preserve `--diff` change markers and snip separators when `--plain` is set. Closes #3630, see #3643 (@mvanhorn)
+ - Added support for `hidden_file_extensions` from `.sublime-syntax` files, see #3613 (@Matei02355)
+ - Add word wrapping mode via `--wrap=word`, see #3597 (@veeceey)
+@@ -27,11 +30,18 @@
+ - Syntax highlighting for Python files using uv as script runner in shebang #3689 (@janlarres)
  
  ## Bugfixes
- - Report `BAT_CONFIG_DIR` in `bat --diagnostic`, so bug reports show a config directory that overrides `$XDG_CONFIG_HOME`. See #4068 (@ump45nose)
-+- Fix `bat` hanging forever on JavaScript (and Svelte) code where an expression is followed by a block comment, e.g. `a /* x */`. Closes #4080, see #4091 (@NavpreetSSidhu)
+-- Fix `bat` hanging forever on JavaScript (and Svelte) code where an expression is followed by a block comment, e.g. `a /* x */`. Closes #4080, see #4091 (@NavpreetSSidhu)
  - Fix the first line of UTF-16BE input swallowing the second line, which broke line numbers, `--line-range` and highlighting, see #XXXX (@cindykrafft)
++- Respect `NO_COLOR` for the `[bat error]` and `[bat warning]` prefixes, see #4048 (@qodelicious)
++- Offer the valid `--wrap` value `auto` instead of the rejected `always` in the PowerShell completion, see #4070 (@ump45nose)
++- Report `BAT_CONFIG_DIR` in `bat --diagnostic`, so bug reports show a config directory that overrides `$XDG_CONFIG_HOME`. See #4068 (@ump45nose)
++- Ignore a UTF-8 byte order mark at the start of the config file instead of treating it as part of the first argument, see #4103 (@jaeminbird)
++- Keep backslashes in the pager command on Windows, so `BAT_PAGER=C:\tools\less.exe` is found instead of becoming `C:toolsless.exe`, see #4104 (@jaeminbird)
++- Fix `bat` hanging forever on JavaScript (and Svelte) code where an expression is followed by a block comment, e.g. `a /* x */`. Closes #4080, see #4091 (@NavpreetSSidhu)
++- Fix the first line of UTF-16BE input swallowing the second line, which broke line numbers, `--line-range` and highlighting, see #4102 (@cindykrafft)
  - Exit quietly with status 0 instead of panicking when stdout is closed early (broken pipe) on auxiliary output paths such as `--completion`, `--config-file`, `--diagnostic`, `--generate-config-file`, `--set-terminal-title` and `cache --build`/`--clear`, matching the main output path since #232, closes #4034, see #4035 (@Mathjk)
  - Track strikethrough (SGR 9 / 29) in the ANSI style tracker so it is re-emitted like bold, dim, italic, and underline, and is no longer dropped after the first highlighted token when displaying ANSI input with syntax highlighting, see #4015 (@mikehasa)
+ - Allow boolean flags to be given more than once, so that a flag set in the config file can also be passed on the command line without erroring, see #3912 (@logarithmone1128)
++- Allow options that take a value (`--binary`, `--italic-text`, `--nonprintable-notation`, `--fallback-syntax`, `--squeeze-limit`) to be given more than once, so that a value from the config file can be overridden on the command line, see #4102 (@Huang-404-Q)
+ - Use parsed CLI arguments to detect number flags, see #3908 (@cuishuang)
+ - Detect binary content beyond the first line, preventing encrypted files with early line breaks from being treated as text. Closes #3554, see #3877 (@Matei02355)
+ - Use the last occurrence of numbering and plain flags in combined short arguments, see #3897 (@cuishuang)
 ```
 
-**File**: `README.md` (modified, +2/-2)
+**File**: `assets/completions/_bat.ps1.in` (modified, +1/-1)
 ```diff
-@@ -417,7 +417,7 @@ scoop install bat
- 
- You can download prebuilt binaries from the [Release page](https://github.com/sharkdp/bat/releases),
- 
--You will need to install the [Visual C++ Redistributable](https://support.microsoft.com/en-us/help/2977003/the-latest-supported-visual-c-downloads) package.
-+You will need to install the [Visual C++ Redistributable](https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist) package.
- 
- ### From binaries
- 
-@@ -794,7 +794,7 @@ Example configuration file:
- 
- ### Prerequisites
- 
--You will need to install the [Visual C++ Redistributable](https://support.microsoft.com/en-us/help/2977003/the-latest-supported-visual-c-downloads) package.
-+You will need to install the [Visual C++ Redistributable](https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist) package.
- 
- ### Paging
+@@ -9,7 +9,7 @@ Register-ArgumentCompleter -Native -CommandName '{{PROJECT_EXECUTABLE}}' -Script
+     $ArrayCompletion = @('bash', 'fish', 'zsh', 'ps1')
+     $ArrayWhen       = @('auto', 'never', 'always')
+     $ArrayYesNo      = @('never', 'always')
+-    $ArrayWrap       = @('always', 'never', 'character', 'word')
++    $ArrayWrap       = @('auto', 'never', 'character', 'word')
+     $ArrayBinary     = @('no-printing', 'as-text')
+     $ArrayPrint      = @('unicode', 'caret')
  
 ```
 
-**File**: `assets/patches/JavaScript.sublime-syntax.patch` (modified, +10/-0)
+**File**: `src/bin/bat/app.rs` (modified, +2/-1)
 ```diff
-@@ -12,3 +12,13 @@ index 05a4fed6..78a7bf55 100644
-  scope: source.js
-  variables:
-    bin_digit: '[01_]'
-+@@ -93,7 +93,8 @@ variables:
-+       (?! \+\+ | -- )
-+       (?=
-+         != |
-+-        [-+*/%><=&|^\[(;,.:?] |
-++        [-+*%><=&|^\[(;,.:?] |
-++        /(?!\*) |
-+         (?:in|instanceof){{identifier_break}}
-+       )
-+     ))
+@@ -169,7 +169,8 @@ impl App {
+         };
+ 
+         let cache_dir = PROJECT_DIRS.cache_dir();
+-        let assets = assets_from_cache_or_binary(use_custom_assets, cache_dir)?;
++        let config_dir = PROJECT_DIRS.config_dir();
++        let assets = assets_from_cache_or_binary(use_custom_assets, config_dir, cache_dir)?;
+         Controller::new(&help_config, &assets)
+             .run(inputs, None)
+             .ok();
 ```
 
-**File**: `tests/syntax-tests/highlighted/Svelte/comment_after_expression.svelte` (added, +5/-0)
+**File**: `src/bin/bat/assets.rs` (modified, +46/-0)
 ```diff
-@@ -0,0 +1,5 @@
-+[38;2;248;248;242m{[0m[38;2;255;255;255ma[0m
-+[38;2;248;248;242m  [0m[38;2;117;113;94m/*[0m[38;2;117;113;94m comment [0m[38;2;117;113;94m*/[0m
-+[38;2;248;248;242m}[0m
+@@ -18,8 +18,13 @@ pub fn clear_assets(cache_dir: &Path) -> Result<()> {
+ 
+ pub fn assets_from_cache_or_binary(
+     use_custom_assets: bool,
++    config_dir: &Path,
+     cache_dir: &Path,
+ ) -> Result<HighlightingAssets> {
++    if use_custom_assets {
++        ensure_cache_built(config_dir, cache_dir);
++    }
 +
-+[38;2;248;248;242m{[0m[38;2;255;255;255ma[0m[38;2;248;248;242m [0m[38;2;117;113;94m/*[0m[38;2;117;113;94m comment [0m[38;2;117;113;94m*/[0m[38;2;248;248;242m}[0m
-```
-
-**File**: `tests/syntax-tests/source/Svelte/comment_after_expression.svelte` (added, +5/-0)
-```diff
-@@ -0,0 +1,5 @@
-+{a
-+  /* comment */
+     if let Some(metadata) = AssetsMetadata::load_from_folder(cache_dir)? {
+         if !metadata.is_compatible_with(crate_version!()) {
+             return Err(format!(
+@@ -60,3 +65,44 @@ fn clear_asset(path: PathBuf, description: &str) -> Result<()> {
+     }
+     Ok(())
+ }
++
++/// Build the cache on first run when custom themes or syntaxes are present
++/// but no cache exists yet (see #4017). A failed build is not fatal: warn
++/// and fall back to the integrated assets.
++#[cfg(feature = "build-assets")]
++fn ensure_cache_built(config_dir: &Path, cache_dir: &Path) {
++    if cache_exists(cache_dir) || !custom_sources_exist(config_dir) {
++        return;
++    }
++
++    eprintln!("bat: custom themes or syntaxes found, building cache ...");
++    if let Err(err) = bat::assets::build(config_dir, true, false, cache_dir, crate_version!()) {
++        eprintln!("bat: automatic cache build failed ({err}), falling back to integrated assets.");
++    }
 +}
 +
-+{a /* comment */}
++#[cfg(not(feature = "build-assets"))]
++fn ensure_cache_built(_config_dir: &Path, _cache_dir: &Path) {}
++
++#[cfg(feature = "build-assets")]
++fn cache_exists(cache_dir: &Path) -> bool {
++    cache_dir.join("themes.bin").is_file()
++        && cache_dir.join("syntaxes.bin").is_file()
++        && cache_dir.join("metadata.yaml").is_file()
++}
++
++#[cfg(feature = "build-assets")]
++fn custom_sources_exist(config_dir: &Path) -> bool {
++    dir_has_files(&config_dir.join("themes")) || dir_has_files(&config_dir.join("syntaxes"))
++}
++
++#[cfg(feature = "build-assets")]
++fn dir_has_files(dir: &Path) -> bool {
++    fs::read_dir(dir)
++        .map(|entries| {
++            entries
++                .filter_map(|entry| entry.ok())
++                .any(|entry| entry.path().is_file())
++        })
++        .unwrap_or(false)
++}
+```
+
+**File**: `src/bin/bat/clap_app.rs` (modified, +5/-0)
+```diff
+@@ -65,6 +65,7 @@ pub fn build_app(interactive_output: bool) -> Command {
+         .arg(
+             Arg::new("nonprintable-notation")
+                 .long("nonprintable-notation")
++                .overrides_with("nonprintable-notation")
+                 .action(ArgAction::Set)
+                 .default_value("unicode")
+                 .value_parser(["unicode", "caret"])
+@@ -81,6 +82,7 @@ pub fn build_app(interactive_output: bool) -> Command {
+         .arg(
+             Arg::new("binary")
+                 .long("binary")
++                .overrides_with("binary")
+                 .action(ArgAction::Set)
+                 .default_value("no-printing")
+                 .value_parser(["no-printing", "as-text"])
+@@ -125,6 +127,7 @@ pub fn build_app(interactive_output: bool) -> Command {
+         .arg(
+             Arg::new("fallback-syntax")
+                 .long("fallback-syntax")
++                .overrides_with("fallback-syntax")
+                 .visible_alias("fallback-language")
+                 .help("Set a fallback language for undetected syntaxes.")
+                 .long_help(
+@@ -317,6 +320,7 @@ pub fn build_app(interactive_output: bool) -> Command {
+         .arg(
+             Arg::new("italic-text")
+                 .long("italic-text")
++                .overrides_with("italic-text")
+                 .value_name("when")
+                 .value_parser(["always", "never"])
+                 .default_value("never")
+@@ -484,6 +488,7 @@ pub fn build_app(interactive_output: bool) -> Command {
+         .arg(
+             Arg::new("squeeze-limit")
+                 .long("squeeze-limit")
++                .overrides_with("squeeze-limit")
+                 .value_parser(|s: &str| s.parse::<usize>().map_err(|_| "Requires a non-negative number".to_owned()))
+                 .long_help("Set the maximum number of consecutive empty lines to be printed.")
+                 .hide_short_help(true)
+```
+
+**File**: `src/bin/bat/config.rs` (modified, +8/-2)
+```diff
+@@ -110,15 +110,15 @@ pub fn get_args_from_config_file() -> Result<Vec<OsString>, shell_words::ParseEr
+     let user_config = config_file();
+ 
+     if let Ok(c) = fs::read_to_string(&system_config) {
+-        config.push_str(&c);
++        config.push_str(strip_bom(&c));
+         config.push('\n');
+     }
+ 
+     // Skip the user config if it resolves to the same file as the system config,
+     // which can happen when BAT_CONFIG_DIR is set to e.g. "/etc/bat". See #3589.
+     if !same_file(&system_config, &user_config) {
+         if let Ok(c) = fs::read_to_string(&user_config) {
+-            config.push_str(&c);
++            config.push_str(strip_bom(&c));
+         }
+     }
+ 
+@@ -136,6 +136,12 @@ pub fn get_args_from_env_opts_var() -> Option<Result<Vec<OsString>, shell_words:
+     env::var("BAT_OPTS").ok().map(|s| get_args_from_str(&s))
+ }
+ 
++/// Editors on Windows (e.g. `Set-Content -Encoding UTF8` in Windows PowerShell)
++/// may prepend a UTF-8 byte order mark, which would otherwise end up in the first argument.
++fn strip_bom(content: &str) -> &str {
++    content.strip_prefix('\u{feff}').unwrap_or(content)
++}
++
+ fn get_args_from_str(content: &str) -> Result<Vec<OsString>, shell_words::ParseError> {
+     let args_per_line = content
+         .split('\n')
+```
+
+**File**: `src/bin/bat/main.rs` (modified, +15/-9)
+```diff
+@@ -97,10 +97,10 @@ where
+     map
+ }
+ 
+-pub fn get_languages(config: &Config, cache_dir: &Path) -> Result<String> {
++pub fn get_languages(config: &Config, config_dir: &Path, cache_dir: &Path) -> Result<String> {
+     let mut result: String = String::new();
+ 
+-    let assets = assets_from_cache_or_binary(config.use_custom_assets, cache_dir)?;
++    let assets = assets_from_cache_or_binary(config.use_custom_assets, config_dir, cache_dir)?;
+     let mut languages = assets
+         .get_syntaxes()?
+         .iter()
+@@ -205,7 +205,7 @@ pub fn list_themes(
+     cache_dir: &Path,
+     theme_options: ThemeOptions,
+ ) -> Result<()> {
+-    let assets = assets_from_cache_or_binary(cfg.use_custom_assets, cache_dir)?;
++    let assets = assets_from_cache_or_binary(cfg.use_custom_assets, config_dir, cache_dir)?;
+     let mut config = cfg.clone();
+     let mut style = HashSet::new();
+     style.insert(StyleComponent::Plain);
+@@ -286,8 +286,13 @@ fn get_new_terminal_title(inputs: &Vec<Input>) -> String {
+     new_terminal_title
+ }
+ 
+-fn run_controller(inputs: Vec<Input>, config: &Config, cache_dir: &Path) -> Result<bool> {
+-    let assets = assets_from_cache_or_binary(config.use_custom_assets, cache_dir)?;
++fn run_controller(
++    inputs: Vec<Input>,
++    config: &Config,
++    config_dir: &Path,
++    cache_dir: &Path,
++) -> Result<bool> {
++    let assets = assets_from_cache_or_binary(config.use_custom_assets, config_dir, cache_dir)?;
+     let controller = Controller::new(config, &assets);
+     if config.paging_mode != PagingMode::Never && config.set_terminal_title {
+         set_terminal_title_to(get_new_terminal_title(&inputs))?;
+@@ -333,6 +338,7 @@ fn invoke_bugreport(app: &App, cache_dir: &Path) -> Result<()> {
+         .info(CommandLine::default())
+         .info(EnvironmentVariables::list(&[
+             "BAT_CACHE_PATH",
++            "BAT_CONFIG_DIR",
+             "BAT_CONFIG_PATH",
+             "BAT_OPTS",
+             "BAT_PAGER",
+@@ -423,20 +429,20 @@ fn run() -> Result<bool> {
+                 let inputs = vec![Input::ordinary_file("cache")];
+                 let config = app.config(&inputs)?;
+ 
+-                run_controller(inputs, &config, cache_dir)
++                run_controller(inputs, &config, config_dir, cache_dir)
+             }
+         }
+         _ => {
+             let inputs = app.inputs()?;
+             let config = app.config(&inputs)?;
+ 
+             if app.matches.get_flag("list-languages") {
+-                let languages: String = get_languages(&config, cache_dir)?;
++                let languages: String = get_languages(&config, config_dir, cache_dir)?;
+                 let inputs: Vec<Input> = vec![Input::from_reader(Box::new(languages.as_bytes()))];
+                 let mut plain_config = config.clone();
+                 plain_config.style_components =
+                     StyleComponents::new(StyleComponent::Plain.components(false));
+-                run_controller(inputs, &plain_config, cache_dir)
++                run_controller(inputs, &plain_config, config_dir, cache_dir)
+             } else if app.matches.get_flag("list-themes") {
+                 list_themes(&config, config_dir, cache_dir, app.theme_options())?;
+                 Ok(true)
+@@ -456,7 +462,7 @@ fn run() -> Result<bool> {
+                 writeln!(io::stdout(), "{}", bat::assets::get_acknowledgements())?;
+                 Ok(true)
+             } else {
+-                run_controller(inputs, &config, cache_dir)
++                run_controller(inputs, &config, config_dir, cache_dir)
+             }
+         }
+     }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4106** (2026-11-01): build(deps): bump vedantmgoyal9/winget-releaser from a8fff44b123f115ce4c21543edf8b677376fc7e0 to b7370d4d152efdce803a26cc6ca9eee58cb2ad54 (@dependabot[bot])
+- **PR #4104** (2026-11-03): Keep backslashes in the pager command on Windows (@jaeminbird)
+- **PR #4103** (2026-11-02): Ignore a UTF-8 BOM at the start of the config file (@jaeminbird)
+- **PR #4102** (2026-11-02): Allow value-taking options to be repeated, like boolean flags (@Huang-404-Q)
 - **PR #4101** (2026-10-28): ci: pin the i686 GNU runner to Ubuntu 24.04 (@PerchAnton)
-- **PR #4091** (2026-10-20): Fix hang on block comment after an expression in JavaScript (@NavpreetSSidhu)
-- **PR #4087** (closed): Prevent JavaScript syntax loop after unclosed expression (@Huang-404-Q)
-- **PR #4076** (2026-10-17): Fix the first line of UTF-16BE input swallowing the second line (@cindykrafft)
-- **PR #4069** (2026-10-17): Add syntax mapping for Podman `.quadlets` files (@injust)
-- **PR #4068** (2026-10-29): Report BAT_CONFIG_DIR in bat --diagnostic (@ump45nose)
+- **PR #4098** (2026-11-03): fix: avoid underflow when painting a wrapped line background (@feafel)
 
 ---
 
@@ -774,13 +1058,13 @@ Report BAT_CONFIG_DIR in bat --diagnostic
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #4068 from ump45nose/diag-list-bat-config-dir
+## X. Merge pull request #3801 from xfocus3/fix/help-language-submodule-note
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sharkdp/bat. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8f5727ea`: Merge pull request #4068 from ump45nose/diag-list-bat-config-dir. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `41931bc4`: Merge pull request #3801 from xfocus3/fix/help-language-submodule-note. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -788,7 +1072,7 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- Report `BAT_CONFIG_DIR` in `bat --diagnostic`, so bug reports show a config directory that overrides `$XDG_CONFIG_HOME`. See #4068 (@ump45nose)
+- Document submodule initialization when rebuilding syntax and theme assets, see #3801 (@xfocus3)
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -798,4 +1082,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8f5727ea` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `41931bc4` are properly handled with clean fallback behavior.

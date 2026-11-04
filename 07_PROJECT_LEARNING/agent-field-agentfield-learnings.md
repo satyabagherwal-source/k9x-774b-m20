@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/agent-field-agentfield-learnings.md`  
 > **Source**: github ([https://github.com/Agent-Field/agentfield](https://github.com/Agent-Field/agentfield))  
-> **Source Version**: `d4c963ba`  
+> **Source Version**: `6bb987c8`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-01T02:00:52.582Z  
+> **Timestamp**: 2026-11-03T23:46:11.149Z  
 > **Learning ID**: `learn-github-agent-field-agentfield`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/agent-field-agentfield-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Agent-Field/agentfield](https://github.com/Agent-Field/agentfield))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-01T02:00:52.576Z  
+> **Harvest Timestamp**: 2026-11-03T23:46:11.144Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Build, run and scale AI agents like API and microservices
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 2635 stars
+- **Stars / Engagement**: 2643 stars
 
 ---
 
@@ -1418,819 +1418,283 @@ func (ds *DefaultDevService) GetDevStatus(path string) (*domain.DevStatus, error
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d4c963ba` (2026-10-31)
-**Commit Message**: chore(release): v0.1.146-rc.10 [skip ci]
+### Incident Patch 1: `0dc65cd7` (2026-11-03)
+**Commit Message**: fix(sdk/go): don't cut active streams with Client.Timeout (#1147)
 
-**File**: `CHANGELOG.md` (modified, +166/-0)
+StreamComplete used the shared http.Client, whose Timeout also covers
+reading the body, so any stream longer than Timeout failed with
+'decode stream: context deadline exceeded'. Bound only the wait for the
+response headers instead.
+
+**File**: `sdk/go/ai/client.go` (modified, +21/-1)
 ```diff
-@@ -6,6 +6,172 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
+@@ -9,6 +9,7 @@ import (
+ 	"net/http"
+ 	"net/url"
+ 	"strings"
++	"time"
+ )
  
- <!-- changelog:entries -->
+ // Client provides AI/LLM capabilities using OpenAI or OpenRouter API.
+@@ -283,8 +284,27 @@ func (c *Client) StreamComplete(ctx context.Context, prompt string, opts ...Opti
+ 			applyInfronAttributionHeaders(httpReq.Header, c.config.SiteURL, c.config.SiteName)
+ 		}
  
-+## [0.1.146-rc.10] - 2026-10-31
++		// http.Client.Timeout covers reading the whole body, which would cut off
++		// a stream that is still delivering chunks. Bound only the wait for the
++		// response headers with the same duration instead.
++		streamClient := c.httpClient
++		var headerTimer *time.Timer
++		if headerTimeout := c.httpClient.Timeout; headerTimeout > 0 {
++			clone := *c.httpClient
++			clone.Timeout = 0
++			streamClient = &clone
 +
++			reqCtx, cancel := context.WithCancel(ctx)
++			defer cancel()
++			headerTimer = time.AfterFunc(headerTimeout, cancel)
++			httpReq = httpReq.WithContext(reqCtx)
++		}
 +
-+### Chores
-+
-+- Chore(deps): bump the npm_and_yarn group across 6 directories with 7 updates (#1139)
-+
-+* chore(deps): bump the npm_and_yarn group across 6 directories with 7 updates
-+
-+Bumps the npm_and_yarn group with 2 updates in the /control-plane/web/client directory: [zod](https://github.com/colinhacks/zod) and [vite](https://github.com/vitejs/vite/tree/HEAD/packages/vite).
-+Bumps the npm_and_yarn group with 3 updates in the /desktop directory: [vite](https://github.com/vitejs/vite/tree/HEAD/packages/vite), [@vitest/mocker](https://github.com/vitest-dev/vitest/tree/HEAD/packages/mocker) and [electron](https://github.com/electron/electron).
-+Bumps the npm_and_yarn group with 3 updates in the /examples/benchmarks/100k-scale/mastra-bench directory: [zod](https://github.com/colinhacks/zod), [undici](https://github.com/nodejs/undici) and [ip-address](https://github.com/beaugunderson/ip-address).
-+Bumps the npm_and_yarn group with 1 update in the /examples/python_agent_nodes/rag_evaluation/ui directory: [next](https://github.com/vercel/next.js).
-+Bumps the npm_and_yarn group with 1 update in the /examples/ts-node-examples/init-example directory: [zod](https://github.com/colinhacks/zod).
-+Bumps the npm_and_yarn group with 4 updates in the /sdk/typescript directory: [zod](https://github.com/colinhacks/zod), [vite](https://github.com/vitejs/vite/tree/HEAD/packages/vite), [undici](https://github.com/nodejs/undici) and [ip-address](https://github.com/beaugunderson/ip-address).
-+
-+
-+Updates `zod` from 4.1.12 to 4.6.6
-+- [Release notes](https://github.com/colinhacks/zod/releases)
-+- [Commits](https://github.com/colinhacks/zod/compare/v4.1.12...v4.6.6)
-+
-+Updates `vite` from 8.0.16 to 8.3.5
-+- [Release notes](https://github.com/vitejs/vite/releases)
-+- [Changelog](https://github.com/vitejs/vite/blob/main/packages/vite/CHANGELOG.md)
-+- [Commits](https://github.com/vitejs/vite/commits/v8.3.5/packages/vite)
-+
-+Updates `vite` from 6.4.3 to 6.4.5
-+- [Release notes](https://github.com/vitejs/vite/releases)
-+- [Changelog](https://github.com/vitejs/vite/blob/main/packages/vite/CHANGELOG.md)
-+- [Commits](https://github.com/vitejs/vite/commits/v8.3.5/packages/vite)
-+
-+Updates `@vitest/mocker` from 4.1.11 to 4.1.12
-+- [Release notes](https://github.com/vitest-dev/vitest/releases)
-+- [Changelog](https://github.com/vitest-dev/vitest/blob/main/docs/releases.md)
-+- [Commits](https://github.com/vitest-dev/vitest/commits/v4.1.12/packages/mocker)
-+
-+Updates `electron` from 42.10.0 to 42.11.16
-+- [Release notes](https://github.com/electron/electron/releases)
-+- [Commits](https://github.com/electron/electron/compare/v42.10.0...v42.11.16)
-+
-+Updates `zod` from 3.25.76 to 4.6.7
-+- [Release notes](https://github.com/colinhacks/zod/releases)
-+- [Commits](https://github.com/colinhacks/zod/compare/v4.1.12...v4.6.6)
-+
-+Updates `zod` from 4.4.3 to 4.6.7
-+- [Release notes](https://github.com/colinhacks/zod/releases)
-+- [Commits](https://github.com/colinhacks/zod/compare/v4.1.12...v4.6.6)
-+
-+Updates `undici` from 6.29.0 to 6.29.1
-+- [Release notes](https://github.com/nodejs/undici/releases)
-+- [Commits](https://github.com/nodejs/undici/compare/v6.29.0...v6.29.1)
-+
-+Updates `ip-address` from 10.7.2 to 10.7.5
-+- [Release notes](https://github.com/beaugunderson/ip-address/releases)
-+- [Commits](https://github.com/beaugunderson/ip-address/compare/v10.7.2...v10.7.5)
-+
-+Updates `next` from 15.5.27 to 15.5.28
-+- [Release notes](https://github.com/vercel/next.js/releases)
-+- [Commits](https://github.com/vercel/next.js/compare/v15.5.27...v15.5.28)
-+
-+Updates `zod` from 3.25.76 to 4.6.7
-+- [Release notes](https://github.com/colinhacks/zod/releases)
-+- [Commits](https://github.com/colinhacks/zod/compare/v4.1.12...v4.6.6)
-+
-+Updates `zod` from 3.25.76 to 4.6.7
-+- [Release notes](https://github.com/colinhacks/zod/releases)
-+- [Commits](https://github.com/colinhacks/zod/compare/v4.1.12...v4.6.6)
-+
-+Updates `vite` from 8.0.16 to 8.3.5
-+- [Release notes](https://github.com/vitejs/vite/releases)
-+- [Changelog](https://github.com/vitejs/vite/blob/main/packages/vite/CHANGELOG.md)
-+- [Commits](https://github.com/vitejs/vite/commits/v8.3.5/packages/vite)
-+
-+Updates `undici` from 6.29.0 to 6.29.1
-+- [Release notes](https://github.com/nodejs/undici/releases)
-+- [Commits](https://github.com/nodejs/undici/compare/v6.29.0...v6.29.1)
-+
-+Updates `ip-address` from 10.7.2 to 10.7.5
-+- [Release notes](https://github.com/beaugunderson/ip-address/releases)
-+- [Commits](https://github.com/beaugunderson/ip-address/compare/v10.7.2...v10.7.5)
-+
-+---
-+updated-dependencies:
-+- dependency-name: zod
-+  dependency-version: 4.6.6
-+  dependency-type: direct:production
-+  dependency-group: npm_and_yarn
-+- dependency-name: vite
-+  dependency-version: 8.3.5
-+  dependency-type: direct:development
-+  dependency-group: npm_and_y
+ 		// Execute request
+-		httpResp, err := c.httpClient.Do(httpReq)
++		httpResp, err := streamClient.Do(httpReq)
++		if headerTimer != nil {
++			headerTimer.Stop()
++		}
+ 		if err != nil {
+ 			errCh <- fmt.Errorf("execute request: %w", err)
+ 			return
 ```
 
-**File**: `VERSION` (modified, +1/-1)
+**File**: `sdk/go/ai/client_test.go` (modified, +62/-0)
 ```diff
-@@ -1 +1 @@
--0.1.146-rc.9
-+0.1.146-rc.10
-```
-
-**File**: `control-plane/internal/templates/go/go.mod.tmpl` (modified, +1/-1)
-```diff
-@@ -2,4 +2,4 @@ module {{.GoModule}}
- 
- go 1.23
- 
--require github.com/Agent-Field/agentfield/sdk/go v0.1.146-rc.9
-+require github.com/Agent-Field/agentfield/sdk/go v0.1.146-rc.10
-```
-
-**File**: `sdk/python/agentfield/__init__.py` (modified, +1/-1)
-```diff
-@@ -197,4 +197,4 @@
-     "reasoner",
- ]
- 
--__version__ = "0.1.146-rc.9"
-+__version__ = "0.1.146-rc.10"
-```
-
-**File**: `sdk/python/pyproject.toml` (modified, +1/-1)
-```diff
-@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
- 
- [project]
- name = "agentfield"
--version = "0.1.146-rc.9"
-+version = "0.1.146-rc.10"
- description = "Python SDK for the AgentField control plane"
- readme = "README.md"
- license = {text = "Apache-2.0"}
-```
-
-**File**: `sdk/python/uv.lock` (modified, +1/-1)
-```diff
-@@ -8,7 +8,7 @@ resolution-markers = [
- 
- [[package]]
- name = "agentfield"
--version = "0.1.146rc9"
-+version = "0.1.146rc10"
- source = { editable = "." }
- dependencies = [
-     { name = "aiohttp" },
-```
-
-**File**: `sdk/typescript/package.json` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- {
-   "name": "@agentfield/sdk",
--  "version": "0.1.146-rc.9",
-+  "version": "0.1.146-rc.10",
-   "description": "AgentField TypeScript SDK",
-   "type": "module",
-   "main": "dist/index.js",
+@@ -707,3 +707,65 @@ func TestStructuredAI(t *testing.T) {
+ 	// This test requires a valid config, so we'll skip it in unit tests
+ 	t.Skip("Requires actual API key or extensive mocking")
+ }
++
++func collectStream(chunks <-chan StreamChunk, errs <-chan error) ([]StreamChunk, error) {
++	var got []StreamChunk
++	for chunk := range chunks {
++		got = append(got, chunk)
++	}
++	select {
++	case err := <-errs:
++		return got, err
++	case <-time.After(time.Second):
++		return got, nil
++	}
++}
++
++// The configured Timeout bounds how long we wait for the server to start
++// responding; it must not cut off a stream that is still delivering chunks.
++func TestStreamComplete_TimeoutDoesNotCutActiveStream(t *testing.T) {
++	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++		w.Header().Set("Content-Type", "text/event-stream")
++		w.WriteHeader(http.StatusOK)
++		for i := 0; i < 4; i++ {
++			_, _ = w.Write([]byte(`data: {"id":"chatcmpl-123","choices":[{"delta":{"content":"x"}}]}` + "\n\n"))
++			w.(http.Flusher).Flush()
++			time.Sleep(150 * time.Millisecond)
++		}
++		_, _ = w.Write([]byte("data: [DONE]\n\n"))
++		w.(http.Flusher).Flush()
++	}))
++	defer server.Close()
++
++	client, err := NewClient(&Config{APIKey: "k", BaseURL: server.URL, Model: "m", Timeout: 300 * time.Millisecond})
++	require.NoError(t, err)
++
++	chunks, errs := client.StreamComplete(context.Background(), "hi")
++	got, streamErr := collectStream(chunks, errs)
++
++	assert.NoError(t, streamErr)
++	assert.Len(t, got, 4)
++}
++
++// A server that never starts responding must still be bounded by Timeout.
++func TestStreamComplete_TimeoutAppliesWhileWaitingForResponse(t *testing.T) {
++	release := make(chan struct{})
++	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++		select {
++		case <-release:
++		case <-r.Context().Done():
++		}
++	}))
++	defer server.Close()
++	defer close(release)
++
++	client, err := NewClient(&Config{APIKey: "k", BaseURL: server.URL, Model: "m", Timeout: 200 * time.Millisecond})
++	require.NoError(t, err)
++
++	start := time.Now()
++	chunks, errs := client.StreamComplete(context.Background(), "hi")
++	_, streamErr := collectStream(chunks, errs)
++
++	assert.Error(t, streamErr)
++	assert.Less(t, time.Since(start), 2*time.Second)
++}
 ```
 
 ---
 
-### Incident Patch 2: `799ffc09` (2026-10-31)
-**Commit Message**: chore(deps): bump the npm_and_yarn group across 6 directories with 7 updates (#1139)
+### Incident Patch 2: `addbec51` (2026-11-02)
+**Commit Message**: fix(doctor): recommend current Anthropic and Google models (#1133)
 
-* chore(deps): bump the npm_and_yarn group across 6 directories with 7 updates
+* fix(doctor): recommend current Anthropic and Google models
 
-Bumps the npm_and_yarn group with 2 updates in the /control-plane/web/client directory: [zod](https://github.com/colinhacks/zod) and [vite](https://github.com/vitejs/vite/tree/HEAD/packages/vite).
-Bumps the npm_and_yarn group with 3 updates in the /desktop directory: [vite](https://github.com/vitejs/vite/tree/HEAD/packages/vite), [@vitest/mocker](https://github.com/vitest-dev/vitest/tree/HEAD/packages/mocker) and [electron](https://github.com/electron/electron).
-Bumps the npm_and_yarn group with 3 updates in the /examples/benchmarks/100k-scale/mastra-bench directory: [zod](https://github.com/colinhacks/zod), [undici](https://github.com/nodejs/undici) and [ip-address](https://github.com/beaugunderson/ip-address).
-Bumps the npm_and_yarn group with 1 update in the /examples/python_agent_nodes/rag_evaluation/ui directory: [next](https://github.com/vercel/next.js).
-Bumps the npm_and_yarn group with 1 update in the /examples/ts-node-examples/init-example directory: [zod](https://github.com/colinhacks/zod).
-Bumps the npm_and_
+af doctor suggested claude-3-5-sonnet-20241022 and gemini-1.5-pro as the
+AI_MODEL for an Anthropic or Google key; both models are retired, so a
+scaffold that follows the recommendation fails on its first call. Recommend
+claude-sonnet-5-5 and gemini-3.8-flash, and update the commented examples in
+the docker .env template.
 
-**File**: `control-plane/web/client/package-lock.json` (modified, +175/-211)
+Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+
+* fix(init): use a current model in the --default-model help example
+
+Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+
+---------
+
+Co-authored-by: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+
+**File**: `control-plane/internal/cli/doctor.go` (modified, +2/-2)
 ```diff
-@@ -53,7 +53,7 @@
-                 "tailwind-merge": "^3.3.1",
-                 "tailwindcss-animate": "^1.0.7",
-                 "vaul": "^1.1.2",
--                "zod": "^4.1.12"
-+                "zod": "^4.6.6"
-             },
-             "devDependencies": {
-                 "@eslint/js": "^9.25.0",
-@@ -76,7 +76,7 @@
-                 "tailwindcss-cli": "^0.1.2",
-                 "typescript": "~5.8.3",
-                 "typescript-eslint": "^8.30.1",
--                "vite": "^8.0.16",
-+                "vite": "^8.3.5",
-                 "vitest": "^4.1.11"
-             }
-         },
-@@ -495,40 +495,6 @@
-                 "@luma.gl/core": "~9.2.6"
-             }
-         },
--        "node_modules/@emnapi/core": {
--            "version": "1.10.0",
--            "resolved": "https://registry.npmjs.org/@emnapi/core/-/core-1.10.0.tgz",
--            "integrity": "sha512-yq6OkJ4p82CAfPl0u9mQebQHKPJkY7WrIuk205cTYnYe+k2Z8YBh11FrbRG/H6ihirqcacOgl2BIO8oyMQLeXw==",
--            "dev": true,
--            "license": "MIT",
--            "optional": true,
--            "dependencies": {
--                "@emnapi/wasi-threads": "1.2.1",
--                "tslib": "^2.4.0"
--            }
--        },
--        "node_modules/@emnapi/runtime": {
--            "version": "1.10.0",
--            "resolved": "https://registry.npmjs.org/@emnapi/runtime/-/runtime-1.10.0.tgz",
--            "integrity": "sha512-ewvYlk86xUoGI0zQRNq/mC+16R1QeDlKQy21Ki3oSYXNgLb45GV1P6A0M+/s6nyCuNDqe5VpaY84BzXGwVbwFA==",
--            "dev": true,
--            "license": "MIT",
--            "optional": true,
--            "dependencies": {
--                "tslib": "^2.4.0"
--            }
--        },
--        "node_modules/@emnapi/wasi-threads": {
--            "version": "1.2.1",
--            "resolved": "https://registry.npmjs.org/@emnapi/wasi-threads/-/wasi-threads-1.2.1.tgz",
--            "integrity": "sha512-uTII7OYF+/Mes/MrcIOYp5yOtSMLBWSIoLPpcgwipoiKbli6k322tcoFsxoIIxPDqW01SQGAgko4EzZi2BNv2w==",
--            "dev": true,
--            "license": "MIT",
--            "optional": true,
--            "dependencies": {
--                "tslib": "^2.4.0"
--            }
--        },
-         "node_modules/@esbuild/aix-ppc64": {
-             "version": "0.28.1",
-             "resolved": "https://registry.npmjs.org/@esbuild/aix-ppc64/-/aix-ppc64-0.28.1.tgz",
-@@ -1467,25 +1433,6 @@
-                 "@math.gl/core": "4.1.0"
-             }
-         },
--        "node_modules/@napi-rs/wasm-runtime": {
--            "version": "1.1.5",
--            "resolved": "https://registry.npmjs.org/@napi-rs/wasm-runtime/-/wasm-runtime-1.1.5.tgz",
--            "integrity": "sha512-AWPoBRJ9tsnVhor4sjO7rkni+7p+2IAEFj6cx06UgP10jkQHqay/36uRV/bFkgrh18D9vb4cr8Q0Pthskgzy+Q==",
--            "dev": true,
--            "license": "MIT",
--            "optional": true,
--            "dependencies": {
--                "@tybys/wasm-util": "^0.10.2"
--            },
--            "funding": {
--                "type": "github",
--                "url": "https://github.com/sponsors/Brooooooklyn"
--            },
--            "peerDependencies": {
--                "@emnapi/core": "^1.7.1",
--                "@emnapi/runtime": "^1.7.1"
--            }
--        },
-         "node_modules/@nodelib/fs.scandir": {
-             "version": "2.1.5",
-             "resolved": "https://registry.npmjs.org/@nodelib/fs.scandir/-/fs.scandir-2.1.5.tgz",
-@@ -1522,13 +1469,13 @@
-             }
-         },
-         "node_modules/@oxc-project/types": {
--            "version": "0.133.0",
--            "resolved": "https://registry.npmjs.org/@oxc-project/types/-/types-0.133.0.tgz",
--            "integrity": "sha512-KzkdCd6Uxqnf6l3HOw1xfatAlUURA0g14cvBYFyJ5SaNOQbOUvBr9PKArcPcrNIeRsBdgcUzOGrhKveVpvOIGA==",
-+            "version": "0.155.0",
-+            "resolved": "https://registry.npmjs.org/@oxc-project/types/-/types-0.155.0.tgz",
-+            "integrity": "sha512-SeE8JPwW1xs1tHeNycjUtUBdhorRa8o4jlvjwk49R7/Z291i+4DQa7JJIgOm/TaYQZx+QrPQbVJ/9c8dMIZN8Q==",
-             "dev": true,
-             "license": "MIT",
-             "funding": {
--                "url": "https://github.com/sponsors/Boshen"
-+                "url": "https://github.com/sponsors/oxc-project"
-             }
-         },
-         "node_modules/@phosphor-icons/react": {
-@@ -2849,10 +2796,27 @@
-             "integrity": "sha512-HPwpGIzkl28mWyZqG52jiqDJ12waP11Pa1lGoiyUkIEuMLBP0oeK/C89esbXrxsky5we7dfd8U58nm0SgAWpVw==",
-             "license": "MIT"
-         },
-+        "node_modules/@rolldown/binding-android-arm-eabi": {
-+            "version": "1.2.15",
-+            "resolved": "https://registry.npmjs.org/@rolldown/binding-android-arm-eabi/-/binding-android-arm-eabi-1.2.15.tgz",
-+            "integrity": "sha512-aLcgK9gIJ3YRvrrtfSBbRa27F5WrpiTaPulnFpsHPxpUHgFlSgnU4854MHwoRGEBhfRJDWCS2WQ7lIjskE9Olw==",
-+            "cpu": [
-+                "arm"
-+            ],
-+            "dev": true,
-+            "license": "MIT",
-+            "optional": true,
-+            "os": [
+@@ -74,9 +74,9 @@ var providerEnvVars = []struct {
+ 	Model  string // suggested default model when this provider is the chosen one
+ }{
+ 	{Name: "openrouter", EnvVar: "OPENROUTER_API_KEY", Model: "openrouter/google/gemini-2.5-flash"},
+-	{Name: "anthropic", EnvVar: "ANTHROPIC_API_KEY", Model: "claude-3-5-sonnet-20241022"},
++	{Name: "anthropic", EnvVar: "ANTHROPIC_API_KEY", Model: "claude-sonnet-5-5"},
+ 	{Name: "openai", EnvVar: "OPENAI_API_KEY", Model: "gpt-4o"},
+-	{Name: "google", EnvVar: "GOOGLE_API_KEY", Model: "gemini-1.5-pro"},
++	{Name: "google", EnvVar: "GOOGLE_API_KEY", Model: "gemini-3.8-flash"},
+ }
+ 
+ // doctorHarnessProvider describes one CLI `app.harness()` knows how to drive,
+```
+
+**File**: `control-plane/internal/cli/doctor_additional_test.go` (modified, +22/-0)
+```diff
+@@ -32,6 +32,28 @@ func TestDoctorHelpersAndCommand(t *testing.T) {
+ 		require.Equal(t, "OPENAI_API_KEY", report.ProviderKeys["openai"].EnvVar)
+ 	})
+ 
++	t.Run("recommended models are not retired ones", func(t *testing.T) {
++		for _, tc := range []struct {
++			provider string
++			envVar   string
++			model    string
++		}{
++			{"anthropic", "ANTHROPIC_API_KEY", "claude-sonnet-5-5"},
++			{"google", "GOOGLE_API_KEY", "gemini-3.8-flash"},
++		} {
++			t.Run(tc.provider, func(t *testing.T) {
++				for _, p := range providerEnvVars {
++					t.Setenv(p.EnvVar, "")
++				}
++				t.Setenv(tc.envVar, "key")
 +
++				report := buildDoctorReport("http://127.0.0.1:1")
++				require.Equal(t, tc.provider, report.Recommendation.Provider)
++				require.Equal(t, tc.model, report.Recommendation.AIModel)
++			})
++		}
++	})
++
+ 	t.Run("tool and control plane checks cover success and failure", func(t *testing.T) {
+ 		tool := checkTool("go", "version")
+ 		require.True(t, tool.Available)
 ```
 
-**File**: `control-plane/web/client/package.json` (modified, +2/-2)
+**File**: `control-plane/internal/cli/init.go` (modified, +1/-1)
 ```diff
-@@ -58,7 +58,7 @@
-         "tailwind-merge": "^3.3.1",
-         "tailwindcss-animate": "^1.0.7",
-         "vaul": "^1.1.2",
--        "zod": "^4.1.12"
-+        "zod": "^4.6.6"
-     },
-     "devDependencies": {
-         "@eslint/js": "^9.25.0",
-@@ -81,7 +81,7 @@
-         "tailwindcss-cli": "^0.1.2",
-         "typescript": "~5.8.3",
-         "typescript-eslint": "^8.30.1",
--        "vite": "^8.0.16",
-+        "vite": "^8.3.5",
-         "vitest": "^4.1.11"
-     },
-     "overrides": {
-```
-
-**File**: `control-plane/web/client/pnpm-lock.yaml` (modified, +460/-515)
-```diff
-@@ -4,20 +4,6 @@ settings:
-   autoInstallPeers: true
-   excludeLinksFromLockfile: false
+@@ -493,7 +493,7 @@ Example:
+ 	// and README.md are intentionally NOT generated — the skill produces them
+ 	// after the agent has written real reasoners.
+ 	cmd.Flags().BoolVar(&withDocker, "docker", false, "Also generate a Docker scaffold (Dockerfile, docker-compose.yml, .env.example, .dockerignore)")
+-	cmd.Flags().StringVar(&defaultModel, "default-model", "openrouter/google/gemini-2.5-flash", "Default AI_MODEL string baked into the docker scaffold (LiteLLM-style, e.g. gpt-4o, anthropic/claude-3-5-sonnet-20241022)")
++	cmd.Flags().StringVar(&defaultModel, "default-model", "openrouter/google/gemini-2.5-flash", "Default AI_MODEL string baked into the docker scaffold (LiteLLM-style, e.g. gpt-4o, anthropic/claude-sonnet-5-5)")
  
--overrides:
--  js-yaml: 4.3.2
--  browserslist: 4.28.9
--  baseline-browser-mapping: 2.11.23
--  nanoid: 3.3.18
--  esbuild: 0.28.1
--  ws: 8.21.0
--  brace-expansion@1: 1.1.21
--  brace-expansion@2: 2.1.7
--  postcss: 8.5.25
--  '@humanfs/node': 0.16.8
--  postcss-selector-parser: 7.1.6
--  source-map-js: 1.2.2
--
- importers:
+ 	// Hidden flags — sensible defaults; only set when you have a real reason.
+ 	cmd.Flags().StringVar(&controlPlaneImage, "control-plane-image", "agentfield/control-plane:latest", "")
+```
+
+**File**: `control-plane/internal/templates/docker/.env.example.tmpl` (modified, +2/-2)
+```diff
+@@ -15,8 +15,8 @@ OPENROUTER_API_KEY=sk-or-v1-...
+ # Must match the provider above. LiteLLM-style model strings.
+ AI_MODEL={{.DefaultModel}}
+ # AI_MODEL=gpt-4o
+-# AI_MODEL=anthropic/claude-3-5-sonnet-20241022
+-# AI_MODEL=gemini/gemini-1.5-pro
++# AI_MODEL=anthropic/claude-sonnet-5-5
++# AI_MODEL=gemini/gemini-3.8-flash
  
-   .:
-@@ -27,10 +13,10 @@ importers:
-         version: 4.0.0(@hookform/resolvers@3.10.0(react-hook-form@7.72.1(react@19.2.8)))(react-hook-form@7.72.1(react@19.2.8))(react@19.2.8)
-       '@autoform/shadcn':
-         specifier: ^1.0.1
--        version: 1.0.1(@types/react-dom@19.1.9(@types/react@19.1.13))(@types/react@19.1.13)(jiti@1.21.7)(postcss@8.5.25)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(tailwindcss@3.4.17)(typescript@5.8.3)(yaml@2.8.3)
-+        version: 1.0.1(@types/react-dom@19.1.9(@types/react@19.1.13))(@types/react@19.1.13)(jiti@1.21.7)(postcss@8.5.32)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(supports-color@7.2.0)(tailwindcss@3.4.17)(typescript@5.8.3)(yaml@2.8.3)
-       '@autoform/zod':
-         specifier: ^5.0.0
--        version: 5.0.0(zod@4.3.6)
-+        version: 5.0.0(zod@4.6.6)
-       '@deck.gl/core':
-         specifier: ^9.2.0
-         version: 9.2.11
-@@ -135,7 +121,7 @@ importers:
-         version: 5.6.0(react@19.2.8)
-       react-markdown:
-         specifier: ^10.1.0
--        version: 10.1.0(@types/react@19.1.13)(react@19.2.8)
-+        version: 10.1.0(@types/react@19.1.13)(react@19.2.8)(supports-color@7.2.0)
-       react-router:
-         specifier: ^8.3.0
-         version: 8.3.0(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
-@@ -144,7 +130,7 @@ importers:
-         version: 2.15.4(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
-       remark-gfm:
-         specifier: ^4.0.1
--        version: 4.0.1
-+        version: 4.0.1(supports-color@7.2.0)
-       sonner:
-         specifier: ^2.0.7
-         version: 2.0.7(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
-@@ -158,8 +144,8 @@ importers:
-         specifier: ^1.1.2
-         version: 1.1.2(@types/react-dom@19.1.9(@types/react@19.1.13))(@types/react@19.1.13)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
-       zod:
--        specifier: ^4.1.12
--        version: 4.3.6
-+        specifier: ^4.6.6
-+        version: 4.6.6
-     devDependencies:
-       '@eslint/js':
-         specifier: ^9.25.0
-@@ -184,31 +170,31 @@ importers:
-         version: 19.1.9(@types/react@19.1.13)
-       '@vitejs/plugin-react':
-         specifier: ^6.0.1
--        version: 6.0.1(vite@8.0.16(@types/node@24.5.2)(esbuild@0.28.1)(jiti@1.21.7)(yaml@2.8.3))
-+        version: 6.0.1(vite@8.3.5(@types/node@24.5.2)(esbuild@0.27.7)(jiti@1.21.7)(yaml@2.8.3))
-       '@vitest/coverage-v8':
-         specifier: ^4.1.11
-         version: 4.1.11(vitest@4.1.11)
-       autoprefixer:
-         specifier: ^10.4.21
--        version: 10.4.21(postcss@8.5.25)
-+        version: 10.4.21(postcss@8.5.32)
-       eslint:
-         specifier: ^9.25.0
--        version: 9.36.0(jiti@1.21.7)
-+        version: 9.36.0(jiti@1.21.7)(supports-color@7.2.0)
-       eslint-plugin-react-hooks:
-         specifier: ^5.2.0
--        version: 5.2.0(eslint@9.36.0(jiti@1.21.7))
-+        version: 5.2.0(eslint@9.36.0(jiti@1.21.7)(supports-color@7.2.0))
-       eslint-plugin-react-refresh:
-         specifier: ^0.4.19
--        version: 0.4.20(eslint@9.36.0(jiti@1.21.7))
-+        version: 0.4.20(eslint@9.36.0(jiti@1.21.7)(supports-color@7.2.0))
-       globals:
-         specifier: ^16.0.0
-         version: 16.4.0
-       jsdom:
-         specifier: ^26.1.0
--        version: 26.1.0
-+        version: 26.1.0(supports-color@7.2.0)
-       postcss:
--        specifier: 8.5.25
--        version: 8.5.25
-+        specifier: ^8.5.25
-+        version: 8.5.32
-       tailwindcss:
-         specifier: ^3.4.17
-         version: 3.4.17
-@@ -220,13 +206,13 @@ importers:
-         version: 5.8.3
-       typescript-eslint:
-         specifier: ^8.30.1
--        version: 8.44.0(eslint@9.36.0(jiti@1.21.7))(typescript@5.8.3)
-+        version: 8.44.0(eslint@9.36.0(jiti@1.21.7)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@5.8.3)
-       vite:
--        specifier: ^8.0.16
--        version: 8.0.16(@types/node@24.5.2)(esbuild@0.28.1)(jiti@1.21.7)(yaml@2.8.3)
-+        specifier: ^8.3.5
-+        version: 8.3.5(@types/node@24.5.2)(esbuild@0.27.7)(jiti@1.21.7)(yaml@2.8.3)
-       vitest:
-         specifier: ^4.1.11
--        version: 4.1.11(@types/node@24.5.2)(@vitest/coverage-v8@4.1.11)(jsdom@26.1.0)(vite@8.0.16(@types/node@24.5.2)(esbuild@0.28.1)(jiti@1.21.7)(yaml@2.8.3))
-+        version: 4.1.11(@types/node@24.5.2)(@vitest/coverage-v8@4.1.11)(jsdom@26.1.0(supports-color@7.2.0))(vite@8.3.5(@types/node@24.5.2)(esbuild@0.27.7)(jiti@1.21.7)(yaml@2.8.3))
+ # --- Optional overrides ---
+ AGENT_NODE_ID={{.NodeID}}
+```
+
+---
+
+### Incident Patch 3: `75d8f2a3` (2026-11-03)
+**Commit Message**: fix(python-sdk): preserve Unicode separators in harness JSONL (#1148)
+
+Signed-off-by: Steven Huang <[REDACTED_EMAIL]>
+
+**File**: `sdk/python/agentfield/harness/_cli.py` (modified, +2/-1)
+```diff
+@@ -447,7 +447,8 @@ def _kill_group() -> None:
+ def parse_jsonl(text: str) -> List[Dict[str, Any]]:
+     """Parse JSONL (newline-delimited JSON) output. Skips invalid lines."""
+     events = []
+-    for line in text.strip().splitlines():
++    # JSONL uses LF delimiters; Unicode line separators may occur inside strings.
++    for line in text.strip().split("\n"):
+         line = line.strip()
+         if not line:
+             continue
+```
+
+**File**: `sdk/python/tests/test_harness_cli.py` (modified, +12/-0)
+```diff
+@@ -3,6 +3,7 @@
+ from __future__ import annotations
  
- packages:
+ import asyncio
++import json
+ import sys
+ from unittest.mock import AsyncMock, MagicMock, patch
  
-@@ -350,167 +336,158 @@ packages:
-       '@deck.gl/core': ~9.2.0
-       '@luma.gl/core': ~9.2.6
+@@ -239,6 +240,17 @@ async def never_ready(_n):
+     process.wait.assert_awaited()
  
--  '@emnapi/core@1.10.0':
--    resolution: {integrity: sha512-yq6OkJ4p82CAfPl0u9mQebQHKPJkY7WrIuk205cTYnYe+k2Z8
-```
-
-**File**: `desktop/package-lock.json` (modified, +59/-59)
-```diff
-@@ -18,14 +18,14 @@
-         "@types/react": "^18.3.12",
-         "@types/react-dom": "^18.3.1",
-         "@vitejs/plugin-react": "^4.3.4",
--        "electron": "^42.10.0",
-+        "electron": "^42.11.16",
-         "electron-builder": "^26.15.3",
-         "electron-vite": "^3.1.0",
-         "react": "^18.3.1",
-         "react-dom": "^18.3.1",
-         "typescript": "^5.7.2",
--        "vite": "^6.0.5",
--        "vitest": "4.1.11"
-+        "vite": "^6.4.5",
-+        "vitest": "4.1.12"
-       }
-     },
-     "node_modules/@babel/code-frame": {
-@@ -2036,16 +2036,16 @@
-       }
-     },
-     "node_modules/@vitest/expect": {
--      "version": "4.1.11",
--      "resolved": "https://registry.npmjs.org/@vitest/expect/-/expect-4.1.11.tgz",
--      "integrity": "sha512-VX2x5vNJXET47KAFzwERI+KRMtTTCSWTfSMKsW7JsUsXV4psq++e3DvZpuTDOpHcxytiDs6p2nhVb2tVDiiUYw==",
-+      "version": "4.1.12",
-+      "resolved": "https://registry.npmjs.org/@vitest/expect/-/expect-4.1.12.tgz",
-+      "integrity": "sha512-vFlTt+YEu9WBpNjdGayNmlMVzrWPi1+sv853/7t2FU7hpO5gAFBKHzQmkCq5Xjpr+evegF2994LQT3hF3mRlqQ==",
-       "dev": true,
-       "license": "MIT",
-       "dependencies": {
-         "@standard-schema/spec": "^1.1.0",
-         "@types/chai": "^5.2.2",
--        "@vitest/spy": "4.1.11",
--        "@vitest/utils": "4.1.11",
-+        "@vitest/spy": "4.1.12",
-+        "@vitest/utils": "4.1.12",
-         "chai": "^6.2.2",
-         "tinyrainbow": "^3.1.0"
-       },
-@@ -2054,13 +2054,13 @@
-       }
-     },
-     "node_modules/@vitest/mocker": {
--      "version": "4.1.11",
--      "resolved": "https://registry.npmjs.org/@vitest/mocker/-/mocker-4.1.11.tgz",
--      "integrity": "sha512-2XJVD55d1o5AZous5CCGKS74g/riOj9odEt2bQpCVZeblHyHdnMeFl4jl0XjU21stf4mbjUkew2eXQZt65g5CQ==",
-+      "version": "4.1.12",
-+      "resolved": "https://registry.npmjs.org/@vitest/mocker/-/mocker-4.1.12.tgz",
-+      "integrity": "sha512-fKShNpKZzupWZuY0z7egydvL0sqW4INEZBEExMBMAa6izlENEVHwoXgdaTCaBZ5fwlr4xf2o1wXC83n9RpO+NA==",
-       "dev": true,
-       "license": "MIT",
-       "dependencies": {
--        "@vitest/spy": "4.1.11",
-+        "@vitest/spy": "4.1.12",
-         "estree-walker": "^3.0.3",
-         "magic-string": "^0.30.21"
-       },
-@@ -2081,9 +2081,9 @@
-       }
-     },
-     "node_modules/@vitest/pretty-format": {
--      "version": "4.1.11",
--      "resolved": "https://registry.npmjs.org/@vitest/pretty-format/-/pretty-format-4.1.11.tgz",
--      "integrity": "sha512-yiZzPbGTS9Sr/JpFl8zHrcIkAofNbFV6k21vIgQN/cY/oxZeXhJv5sc/MBJ5jFKWmWs+oJHw0UXLZjmf931+Vw==",
-+      "version": "4.1.12",
-+      "resolved": "https://registry.npmjs.org/@vitest/pretty-format/-/pretty-format-4.1.12.tgz",
-+      "integrity": "sha512-XW9O8+Mxx4VpCtkYdMJLZQQwsVryP9wk7cPKDxtXFfwSak6yRh5+2fep/Y0XF/ElBvJHq8bcYdi6aeuai0opZA==",
-       "dev": true,
-       "license": "MIT",
-       "dependencies": {
-@@ -2094,28 +2094,28 @@
-       }
-     },
-     "node_modules/@vitest/runner": {
--      "version": "4.1.11",
--      "resolved": "https://registry.npmjs.org/@vitest/runner/-/runner-4.1.11.tgz",
--      "integrity": "sha512-LztvUgdwMNJMIkj3hQnnxiC2Xy1zNxq928W/xhjCLaNCzqTZOudjwbQf6v9IntZGPw132i2Lq2rgTRZHD3JHNw==",
-+      "version": "4.1.12",
-+      "resolved": "https://registry.npmjs.org/@vitest/runner/-/runner-4.1.12.tgz",
-+      "integrity": "sha512-NKlVKCr5QnCe8jijdMnmkpHHU+WTqiLFR6G0pHji9uRjXK9xJl1k1nTw6F3pOOj2PDcsDt2GKQMI7wIsaT491w==",
-       "dev": true,
-       "license": "MIT",
-       "dependencies": {
--        "@vitest/utils": "4.1.11",
-+        "@vitest/utils": "4.1.12",
-         "pathe": "^2.0.3"
-       },
-       "funding": {
-         "url": "https://opencollective.com/vitest"
-       }
-     },
-     "node_modules/@vitest/snapshot": {
--      "version": "4.1.11",
--      "resolved": "https://registry.npmjs.org/@vitest/snapshot/-/snapshot-4.1.11.tgz",
--      "integrity": "sha512-pN7ikn1ON7h8ee4gIAp4AzyK+zBtJPzVbqOgu5LCEh4VaJVbPQcgYQYJIMGQPXVeJJq1fnfazis7a5pFNPahog==",
-+      "version": "4.1.12",
-+      "resolved": "https://registry.npmjs.org/@vitest/snapshot/-/snapshot-4.1.12.tgz",
-+      "integrity": "sha512-ko1y1Qgb/slzQ9mr+b89Cuqud8WG1TKtsPD8r7ZUBdvVOGt85Af2HwCqHujrhwJq95hs/9RM7fcAPg57o1vlzw==",
-       "dev": true,
-       "license": "MIT",
-       "dependencies": {
--        "@vitest/pretty-format": "4.1.11",
--        "@vitest/utils": "4.1.11",
-+        "@vitest/pretty-format": "4.1.12",
-+        "@vitest/utils": "4.1.12",
-         "magic-string": "^0.30.21",
-         "pathe": "^2.0.3"
-       },
-@@ -2124,23 +2124,23 @@
-       }
-     },
-     "node_modules/@vitest/spy": {
--      "version": "4.1.11",
--      "resolved": "https://registry.npmjs.org/@vitest/spy/-/spy-4.1.11.tgz",
--      "integrity": "sha512-apNa/prQy2qCeywhnixOHPRCgGNhvg7T4Dapfl1GahLp/R+uhBm5cPyFoNVyqsNd2h1nJxL6BqqdIjiABL60YA==",
-+      "version": "4.1.12",
-+      "resolved": "https://registry.npmjs.org/@vitest/spy/-/spy-4.1.12.tgz",
-+      "integrity": "sha512-RGq9x4JNGNTZHEJxvN0oSiJjeSCExm0n2gZKKJZHY9cX5AVA6M7VJILBT3ZJ/tJ/0J9uWT7fETV9/btoi//vSg==",
-
-```
-
-**File**: `desktop/package.json` (modified, +3/-3)
-```diff
-@@ -84,14 +84,14 @@
-     "@types/react": "^18.3.12",
-     "@types/react-dom": "^18.3.1",
-     "@vitejs/plugin-react": "^4.3.4",
--    "electron": "^42.10.0",
-+    "electron": "^42.11.16",
-     "electron-builder": "^26.15.3",
-     "electron-vite": "^3.1.0",
-     "react": "^18.3.1",
-     "react-dom": "^18.3.1",
-     "typescript": "^5.7.2",
--    "vite": "^6.0.5",
--    "vitest": "4.1.11"
-+    "vite": "^6.4.5",
-+    "vitest": "4.1.12"
-   },
-   "overrides": {
-     "fast-uri": "3.1.8",
-```
-
-**File**: `examples/benchmarks/100k-scale/mastra-bench/package-lock.json` (modified, +14/-14)
-```diff
-@@ -9,7 +9,7 @@
-       "version": "1.0.0",
-       "dependencies": {
-         "@mastra/core": "^1.23.0",
--        "zod": "^3.22.0"
-+        "zod": "^4.6.7"
-       },
-       "devDependencies": {
-         "@types/node": "^20.0.0",
-@@ -1707,9 +1707,9 @@
-       "license": "ISC"
-     },
-     "node_modules/ip-address": {
--      "version": "10.7.2",
--      "resolved": "https://registry.npmjs.org/ip-address/-/ip-address-10.7.2.tgz",
--      "integrity": "sha512-7H/2gFSIitxc0hG3nOI1glS8QLo/EHBFFLk8vEUjXY/xu0AdL8jZ9U1IzO2PUm0d2D/ofQcAifb0g6OBkt8U7w==",
-+      "version": "10.7.5",
-+      "resolved": "https://registry.npmjs.org/ip-address/-/ip-address-10.7.5.tgz",
-+      "integrity": "sha512-t2v0rkILYv9WXmSL7TpAaU3HXgaFYOPUcH3QHgwQ++gpJuH3bqyMy4Fvt/DJCTKwzH3Cf+bAp5W/mFL39KPLzA==",
-       "license": "MIT",
-       "engines": {
-         "node": ">= 12"
-@@ -3332,9 +3332,9 @@
-       }
-     },
-     "node_modules/undici": {
--      "version": "6.29.0",
--      "resolved": "https://registry.npmjs.org/undici/-/undici-6.29.0.tgz",
--      "integrity": "sha512-R+RODBqp6i2pPflGdq+xIOUkl+RNfGgHwoinecKu/JCuf2uO06cOKoDbI2P7Dn6KcswdKwrczbU6IYJ6K8X+wg==",
-+      "version": "6.29.1",
-+      "resolved": "https://registry.npmjs.org/undici/-/undici-6.29.1.tgz",
-+      "integrity": "sha512-EvRlUt/QqAEvXdQeRMYUfwOQsfzpDztykrG2owGEE/rBOBoYv9uF39ZzsNDh4lTFHhTr2XOZjKkYgueD12ZmGA==",
-       "license": "MIT",
-       "engines": {
-         "node": ">=18.17"
-@@ -3553,9 +3553,9 @@
-       }
-     },
-     "node_modules/zod": {
--      "version": "3.25.76",
--      "resolved": "https://registry.npmjs.org/zod/-/zod-3.25.76.tgz",
--      "integrity": "sha512-gzUt/qt81nXsFGKIFcC3YnfEAx5NkunCfnDlvuBSSFS02bcXu4Lmea0AFIUwbLWxWPx3d9p8S5QoaujKcNQxcQ==",
-+      "version": "4.6.7",
-+      "resolved": "https://registry.npmjs.org/zod/-/zod-4.6.7.tgz",
-+      "integrity": "sha512-g8W2D2kU6a8untc053fX1uVBKzM7yqAxW/3zwk83+6RyF2+SKOuV+c0wBDhUwzV1PaGapmZH+rmcUzPf+3CGwg==",
-       "license": "MIT",
-       "funding": {
-         "url": "https://github.com/sponsors/colinhacks"
-@@ -3580,10 +3580,10 @@
-         "zod": "^3.24.2"
-       }
-     },
--    "node_modules/zod-from-json-schema/node_modules/zod": {
--      "version": "4.4.3",
--      "resolved": "https://registry.npmjs.org/zod/-/zod-4.4.3.tgz",
--      "integrity": "sha512-ytENFjIJFl2UwYglde2jchW2Hwm4GJFLDiSXWdTrJQBIN9Fcyp7n4DhxJEiWNAJMV1/BqWfW/kkg71UDcHJyTQ==",
-+    "node_modules/zod-from-json-schema-v3/node_modules/zod": {
-+      "version": "3.25.76",
-+      "resolved": "https://registry.npmjs.org/zod/-/zod-3.25.76.tgz",
-+      "integrity": "sha512-gzUt/qt81nXsFGKIFcC3YnfEAx5NkunCfnDlvuBSSFS02bcXu4Lmea0AFIUwbLWxWPx3d9p8S5QoaujKcNQxcQ==",
-       "license": "MIT",
-       "funding": {
-         "url": "https://github.com/sponsors/colinhacks"
-```
-
-**File**: `examples/benchmarks/100k-scale/mastra-bench/package.json` (modified, +1/-1)
-```diff
-@@ -8,7 +8,7 @@
-   },
-   "dependencies": {
-     "@mastra/core": "^1.23.0",
--    "zod": "^3.22.0"
-+    "zod": "^4.6.7"
-   },
-   "devDependencies": {
-     "tsx": "^4.7.0",
-```
-
-**File**: `examples/python_agent_nodes/rag_evaluation/ui/package-lock.json` (modified, +53/-41)
-```diff
-@@ -22,7 +22,7 @@
-         "clsx": "^2.1.1",
-         "framer-motion": "^11.11.9",
-         "lucide-react": "^0.453.0",
--        "next": "15.5.27",
-+        "next": "15.5.28",
-         "react": "^18.3.1",
-         "react-dom": "^18.3.1",
-         "react-markdown": "^10.1.0",
-@@ -637,15 +637,15 @@
-       }
-     },
-     "node_modules/@next/env": {
--      "version": "15.5.27",
--      "resolved": "https://registry.npmjs.org/@next/env/-/env-15.5.27.tgz",
--      "integrity": "sha512-WC5hvVqiuFOcRyz6gKPeJkiVvSMf3scNeAV49CdWtVqxmUlzh8UKR6YHt9yiNkh8LngtzqSlVz07/Ma3ZAzchA==",
-+      "version": "15.5.28",
-+      "resolved": "https://registry.npmjs.org/@next/env/-/env-15.5.28.tgz",
-+      "integrity": "sha512-xxW5EBI8fMPuVTPBW7LL980IRbuDXlbkUAwp9DDhtb4Lnich3nJ13uYpvrX4VE74hWPf6AvHHAMmGCidcHjbfg==",
-       "license": "MIT"
-     },
-     "node_modules/@next/swc-darwin-arm64": {
--      "version": "15.5.27",
--      "resolved": "https://registry.npmjs.org/@next/swc-darwin-arm64/-/swc-darwin-arm64-15.5.27.tgz",
--      "integrity": "sha512-fBA9QurmK4+uj4wNhmRTuO5zMVRaBHCvp6H93zTG/5i6Yi6TewbvbesXB8YQNj8T99Cwrow87hHiFV6wL/hyMA==",
-+      "version": "15.5.28",
-+      "resolved": "https://registry.npmjs.org/@next/swc-darwin-arm64/-/swc-darwin-arm64-15.5.28.tgz",
-+      "integrity": "sha512-dPoQYXcfSIqx5o+TOXVXO7kONK5qbtNRDeiTfII0bT3puGIT6VF5e0QwmxNZfEZ5Zety5f3m9P/p4xqwfiLlPg==",
-       "cpu": [
-         "arm64"
-       ],
-@@ -659,9 +659,9 @@
-       }
-     },
-     "node_modules/@next/swc-darwin-x64": {
--      "version": "15.5.27",
--      "resolved": "https://registry.npmjs.org/@next/swc-darwin-x64/-/swc-darwin-x64-15.5.27.tgz",
--      "integrity": "sha512-FGZwJwry8qZNHxD/nfwrCwCHHrqx6epqItkkxbYcBQEQ2uw5S43bY83fQB5zbAsZE7TELMjoYkbhsQ4oKM7wwg==",
-+      "version": "15.5.28",
-+      "resolved": "https://registry.npmjs.org/@next/swc-darwin-x64/-/swc-darwin-x64-15.5.28.tgz",
-+      "integrity": "sha512-RgCJ7buBivTH+6sddqaVm+/v8kwMHlFkobvdt3DfETutws5HrxnToMIWSN9X3MZ3aAi7BbKrGZZWUDQLEycXqw==",
-       "cpu": [
-         "x64"
-       ],
-@@ -675,12 +675,15 @@
-       }
-     },
-     "node_modules/@next/swc-linux-arm64-gnu": {
--      "version": "15.5.27",
--      "resolved": "https://registry.npmjs.org/@next/swc-linux-arm64-gnu/-/swc-linux-arm64-gnu-15.5.27.tgz",
--      "integrity": "sha512-GQulAaJYNF1RYuatlsw9/uzbKz4if2V7Ic9nVO+P0ljYPm4yBRTFIl6g5YkKTw40lMLbpy9edLoH44g3jSHMYA==",
-+      "version": "15.5.28",
-+      "resolved": "https://registry.npmjs.org/@next/swc-linux-arm64-gnu/-/swc-linux-arm64-gnu-15.5.28.tgz",
-+      "integrity": "sha512-OHXQe13olE59aKe++zHavGcJPh5SLHXi6Anret3BBeq1+qhSuOJDNAli/EDDfxs6UTqA4Qddo4uyYry2slyjiQ==",
-       "cpu": [
-         "arm64"
-       ],
-+      "libc": [
-+        "glibc"
-+      ],
-       "license": "MIT",
-       "optional": true,
-       "os": [
-@@ -691,12 +694,15 @@
-       }
-     },
-     "node_modules/@next/swc-linux-arm64-musl": {
--      "version": "15.5.27",
--      "resolved": "https://registry.npmjs.org/@next/swc-linux-arm64-musl/-/swc-linux-arm64-musl-15.5.27.tgz",
--      "integrity": "sha512-URFFsUmu8Pi0/1qdnUI7tx7keZw1Mt5zHfrIX1RfDG9Nih8DYxK54WZsDJUX2ZTlii1jgotL7qcbwKnSAES6xQ==",
-+      "version": "15.5.28",
-+      "resolved": "https://registry.npmjs.org/@next/swc-linux-arm64-musl/-/swc-linux-arm64-musl-15.5.28.tgz",
-+      "integrity": "sha512-nTB7bB6vfn4ezCJNYP43ukt2o8L3+WxKF/sTcTxepdXsJh3SM9RhlU7wrZYbH7L4HO5M87dqDTwm8587vAkCiw==",
-       "cpu": [
-         "arm64"
-       ],
-+      "libc": [
-+        "musl"
-+      ],
-       "license": "MIT",
-       "optional": true,
-       "os": [
-@@ -707,12 +713,15 @@
-       }
-     },
-     "node_modules/@next/swc-linux-x64-gnu": {
--      "version": "15.5.27",
--      "resolved": "https://registry.npmjs.org/@next/swc-linux-x64-gnu/-/swc-linux-x64-gnu-15.5.27.tgz",
--      "integrity": "sha512-aJp74z7uvU5jQhyH7lyk+4qSRcTdKbKT9NQE3jiO9kWYkoHZjKi0zzHDbCoZ+v2sJDEiJ/z58R0UlWMGWNF3HA==",
-+      "version": "15.5.28",
-+      "resolved": "https://registry.npmjs.org/@next/swc-linux-x64-gnu/-/swc-linux-x64-gnu-15.5.28.tgz",
-+      "integrity": "sha512-WXCfVI32rW3xCusoUX1RpZKtyChWU2Zwe27JUDmM3KrXwcDNc9vV4zEq0GKFAURnuQ/Ouo/XqPvB0yh445XZCg==",
-       "cpu": [
-         "x64"
-       ],
-+      "libc": [
-+        "glibc"
-+      ],
-       "license": "MIT",
-       "optional": true,
-       "os": [
-@@ -723,12 +732,15 @@
-       }
-     },
-     "node_modules/@next/swc-linux-x64-musl": {
--      "version": "15.5.27",
--      "resolved": "https://registry.npmjs.org/@next/swc-linux-x64-musl/-/swc-linux-x64-musl-15.5.27.tgz",
--      "integrity": "sha512-ILl2bQ8MbpvyMpY8AXljb3BXs0MJSC8HXZ6QV5AWpVS7ZELqNPtrHvhUk+SNarvjvICXX8bCS287TCi+gUFVYg==",
-+      "version": "15.5.28",
-+      "resolved": "https://registry.npmjs.org/@next/swc-linux-x64-musl/-/swc-linux-x64-musl-15.5.28.tgz",
-+      "integrity": "sha512-Miq+NDb/HWsXuxseYxMM6fuEOQXgTziarkKIRpVKCn8W69cEfhQaQr+90pO+u4q2CbJR2wzXmUuCFyZaJs/Nng==",
-       "cpu": [
-         "x64"
-       ],
-+      "libc": [
-+        "musl"
-+      ],
-       "license": "MIT",
-   
+ 
++@pytest.mark.parametrize("separator", ["\u0085", "\u2028", "\u2029"])
++@pytest.mark.parametrize("line_ending", ["\n", "\r\n"])
++def test_parse_jsonl_preserves_unicode_separators(separator, line_ending):
++    event = {"type": "result", "result": f"first{separator}second"}
++    stream = line_ending.join(
++        [json.dumps(event, ensure_ascii=False), '{"type":"done"}']
++    )
++
++    assert parse_jsonl(stream) == [event, {"type": "done"}]
++
++
+ def test_parse_jsonl_skips_invalid():
+     events = parse_jsonl('{"type":"a"}\nnot-json\n{"type":"b"}')
+ 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1141** (2026-10-30): fix(build): format Go packages without recursive overlap (@remote-controlled-man)
-- **PR #1140** (2026-10-30): test(control-plane): drain accepted MCP work between tests (@remote-controlled-man)
-- **PR #1139** (2026-10-31): chore(deps): bump the npm_and_yarn group across 6 directories with 7 updates (@dependabot[bot])
-- **PR #1138** (2026-10-30): chore(deps): bump msgpack from 1.2.1 to 1.2.3 in /sdk/python in the uv group across 1 directory (@dependabot[bot])
-- **PR #1137** (2026-10-30): fix(python): URL-encode memory subscription filters (@remote-controlled-man)
-- **PR #1136** (2026-10-29): fix(python): match memory subscription keys literally (@remote-controlled-man)
+- **PR #1149** (2026-11-03): feat(sdk/go/ai): support the Runcrate provider (@heydryft)
+- **PR #1148** (2026-11-03): fix(python-sdk): preserve Unicode separators in harness JSONL (@remote-controlled-man)
+- **PR #1147** (2026-11-03): fix(sdk/go): don't cut active streams with Client.Timeout (@pcbeingused333)
+- **PR #1146** (2026-11-02): fix(sdk/go): omit temperature for models that reject it (@pcbeingused333)
+- **PR #1145** (2026-11-02): fix(python): retain memory event filters across reconnects (@remote-controlled-man)
+- **PR #1144** (closed): chore(deps): bump esbuild from 0.25.12 to removed in /control-plane/web/client in the npm_and_yarn group across 1 directory (@dependabot[bot])
 
 ---
 
@@ -2250,41 +1714,48 @@ Bumps the npm_and_
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. release): v0.1.146-rc.10 [skip ci]
+## X. sdk/go): don't cut active streams with Client.Timeout (#1147)
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Agent-Field/agentfield. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `sdk/go/ai/client.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Agent-Field/agentfield. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d4c963ba`: release): v0.1.146-rc.10 [skip ci]. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0dc65cd7`: sdk/go): don't cut active streams with Client.Timeout (#1147). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `sdk/go/ai/client.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-## [0.1.146-rc.10] - 2026-10-31
+	"time"
+		// http.Client.Timeout covers reading the whole body, which would cut off
+		// a stream that is still delivering chunks. Bound only the wait for the
+		// response headers with the same duration instead.
+		streamClient := c.httpClient
+		var headerTimer *time.Timer
+		if headerTimeout := c.httpClient.Timeout; headerTimeout > 0 {
+			clone := *c.httpClient
+			clone.Timeout = 0
+			streamClient = &clone
 
+			reqCtx, cancel := context.WithCancel(ctx)
+			defer cancel()
+			headerTimer = time.AfterFunc(headerTimeout, cancel)
+			httpReq = httpReq.WithContext(reqCtx)
+		}
 
-### Chores
-
-- Chore(deps): bump the npm_and_yarn group across 6 directories with 7 updates (#1139)
-
-* chore(deps): bump the npm_and_yarn group across 6 directories with 7 updates
-
-Bumps the npm_and_yarn group with 2 updates in the /control-plane/web/client directory: [zod](https://github.com/colinhacks/zod) and [vite](https://github.com/vitejs/vite/tree/HEAD/packages/vite).
-Bumps the npm_and_yarn group with 3 updates in the /desktop directory: [vite](https://github.com/vitejs/vite/tree/HEAD/packages/vite), [@vitest/mocker](https://github.com/vitest-dev/vitest/tree/HEAD/packages/mocker) and [electron](https://github.com/electron/electron).
-Bumps the npm_and_yarn group with 3 updates in the /examples/benchmarks/100k-scale/mastra-bench directory: [zod](https://github.com/colinhacks/zod), [undici](https://github.com/nodejs/undici) and [ip-address](https://github.com/beaugunderson/ip-address).
-Bumps the npm_and_yarn group with 1 update in the /examples/python_agent_nodes/rag_evaluation/ui directory: [next](https://github.com/vercel/next.js).
-Bumps the npm_and_yarn group with 1 update in the /examples/ts-node-examples/init-example directory: [zod](https:
+		httpResp, err := streamClient.Do(httpReq)
+		if headerTimer != nil {
+			headerTimer.Stop()
+		}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+		httpResp, err := c.httpClient.Do(httpReq)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d4c963ba` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0dc65cd7` are properly handled with clean fallback behavior.

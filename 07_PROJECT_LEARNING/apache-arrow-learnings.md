@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/apache-arrow-learnings.md`  
 > **Source**: github ([https://github.com/apache/arrow](https://github.com/apache/arrow))  
-> **Source Version**: `b4a98b73`  
+> **Source Version**: `0ab78e2d`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T17:03:45.025Z  
+> **Timestamp**: 2026-11-03T18:30:15.263Z  
 > **Learning ID**: `learn-github-apache-arrow`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/apache-arrow-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/apache/arrow](https://github.com/apache/arrow))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T17:03:44.543Z  
+> **Harvest Timestamp**: 2026-11-03T18:30:13.991Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Apache Arrow is the universal columnar format and multi-language toolbox for fast data interchange and in-memory analytics
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 17264 stars
+- **Stars / Engagement**: 17274 stars
 
 ---
 
@@ -1377,11 +1377,14 @@ std::vector<ArrayVector> RechunkArraysConsistently(const std::vector<ArrayVector
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #55337** (2026-10-31): **GH-55335: [CI][R] Run R nightly binary upload later**
-  *Symptoms*: ### Rationale for this change  Job failing for a while as job it's dependent on keeps running later  ### What changes are included in this PR?  Shift it back 4 hours  ### Are these changes tested?  No  ### Are there any user-facing changes?  No  ### Was AI used for this PR?  In accordance to the [AI generation guidelines](https://arrow.apache.org/docs/dev/developers/overview.html#ai-generated-code), please disclose below whether and how AI was used in this PR.  **PR code and description written by:**  - [x] Human - [ ] AI  **Reviewed before submission by:**  - [x] Human - [ ] AI - [ ] Not reviewed  * GitHub Issue: #55335
+- **Issue #55378** (2026-11-03): **GH-55377: [R][CI] Windows Rtools40 jobs fail since 2026-10-30: setup-r hard-codes a cran.rstudio.com URL for Rtools40 that now 404s**
+  *Symptoms*: ### Rationale for this change  Nightly builds failing due to a change in RTools URL and problem with job  ### What changes are included in this PR?  Don't pass in rtools version, as this can be inferred anyway  ### Are these changes tested?  No  ### Are there any user-facing changes?  No  **PR code and description written by:**  - [ ] Human - [x] AI  **Reviewed before submission by:**  - [x] Human - [x] AI - [ ] Not reviewed  * GitHub Issue: #55377
+  **Post-Mortem & Fix Analysis**:
+  > @github-actions crossbow submit r-binary-packages
+  > Revision: aa34f471018cf48d32551ef3225a3d04fd0e3859  Submitted crossbow builds: [ursacomputing/crossbow @ actions-35b8a75a67](https://github.com/ursacomputing/crossbow/branches/all?query=actions-35b8a75a67)  |Task|Status| |----|------| |r-binary-packages|[![GitHub Actions](https://github.com/ursacomputing/crossbow/actions/workflows/crossbow.yml/badge.svg?branch=actions-35b8a75a67-github-r-binary-packages)](https://github.com/ursacomputing/crossbow/actions/runs/41627722512/job/125889585262)|
 
-- **Issue #55331** (2026-10-30): **MINOR: [R] Update backwards compatibility matrix for 26.0.0 release**
-  *Symptoms*: ### Rationale for this change  Standard release task.  ### What changes are included in this PR?  Add the previous CRAN version (25.0.1) to the backwards compatibility matrix.  ### Are these changes tested?  Nope.  ### Are there any user-facing changes?  No.  ### Was AI used for this PR?  In accordance to the [AI generation guidelines](https://arrow.apache.org/docs/dev/developers/overview.html#ai-generated-code), please disclose below whether and how AI was used in this PR.  **PR code and description written by:**  - [ ] Human - [x] AI  **Reviewed before submission by:**  - [x] Human - [ ] AI - [ ] Not reviewed
+- **Issue #55377** (2026-11-03): **[R][CI] Windows Rtools40 jobs fail since 2026-10-30: setup-r hard-codes a cran.rstudio.com URL for Rtools40 that now 404s**
+  *Symptoms*: Since 2026-10-30 both jobs that build the Windows libarrow binary with Rtools40 fail at the Rtools download in `r-lib/actions/setup-r`:      Downloading https://cran.rstudio.com/bin/windows/Rtools/rtools40-x86_64.exe...     ##[error]Failed to get R 4.1: Failed to get R 4.1.3: Failed to download version [object Object]: Error: Unexpected HTTP response: 404  CRAN moved Rtools40 and the Windows installers for R < 4.2 to `cran-archive.r-project.org` on 2026-10-30. `setup-r` normally gets download URLs from the r-hub rversions API, which was updated the same day, but when `rtools-version` is passed explicitly it uses a hard-coded URL table that still points at `cran.rstudio.com`. We pass `rtools-version: 40` in both places. r-lib/actions#1120 contained a fix for that table but was closed unmerged, and the current `v2` release (v2.14.0) still has the old URL.  Affected jobs: - `C++ Binary Windows RTools (40 only)` in the r-binary-packages crossbow task. This produces the single Windows libarrow binary used by every R version, so when it fails `Upload artifacts` is skipped and the R nightly upload (`r_nightly.yml`) has had nothing to publish since 2026-10-30. https://github.com/apache/arrow/blob/aae29bf6d4e85bafa7b9bd2bc45d8ab0b0b48373/dev/tasks/r/github.packages.yml#L174-L187 - `AMD64 Windows C++ RTools 40 ucrt64` in the R workflow, failing on every push to main. https://github.com/apache/arrow/blob/aae29bf6d4e85bafa7b9bd2bc45d8ab0b0b48373/.github/workflows/r.yml#L230-L236  Example
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1398,81 +1401,190 @@ std::vector<ArrayVector> RechunkArraysConsistently(const std::vector<ArrayVector
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b4a98b73` (2026-10-31)
-**Commit Message**: GH-55335: [CI][R] Run R nightly binary upload later (#55337)
+### Incident Patch 1: `67625df7` (2026-11-03)
+**Commit Message**: GH-55374: [CI][Packaging] Fix homebrew-cpp nightly by syncing formulae to homebrew-core (#55375)
 
 ### Rationale for this change
-
-Job failing for a while as job it's dependent on keeps running later
+Fix #55374, homebrew-cpp nightly job failing with 'apache-arrow contains conflicting version recursive dependencies: openssl@ 4, openssl@ 3'
+Formula last synced in #45460 Feb 2025 to this version of https://github.com/Homebrew/homebrew-core/blob/1cbc034a0ac723b88cc097b20a8d055871acf58f/Formula/a/apache-arrow.rb
 
 ### What changes are included in this PR?
-
-Shift it back 4 hours
+Sync both `dev/tasks/homebrew-formulae/apache-arrow.rb` and `dev/tasks/homebrew-formulae/apache-arrow-glib.rb`
+to current homebrew-core formulae [apache-arrow.rb](https://github.com/Homebrew/homebrew-core/blob/21ae7db95e31f05d0bde4acd9d48ce3d23c72988/Formula/a/apache-arrow.rb) and [apache-arrow-glib.rb](https://github.com/Homebrew/homebrew-core/blob/4b1bf942c798d35b6307d4f1c5c805902bd4ea9e/Formula/a/apache-arrow-glib.rb)
 
 ### Are these changes tested?
-
-No
+Yes
 
 ### Are there any user-facing changes?
-
 No
 
 ### Was AI used for this PR?
 
-In accordance to the [AI generation
-guidelines](https://arrow.apache.org/docs/dev/developers/overview.html#ai-generated-code),
-please disclose below whether and how AI was used in this PR.
-
 **PR code and description written by:**
 
-- [x] Human
+- [X] Human
 - [ ] AI
 
 **Reviewed before submission by:**
 
-- [x] Human
+- [X] Human
 - [ ] AI
 - [ ] Not reviewed
 
-* GitHub Issue: #55335
+* GitHub Issue: #55374
 
-**File**: `.github/workflows/r_nightly.yml` (modified, +1/-1)
+Authored-by: Tadej
+
+**File**: `dev/tasks/homebrew-formulae/apache-arrow-glib.rb` (modified, +2/-0)
 ```diff
-@@ -34,7 +34,7 @@ on:
+@@ -45,6 +45,8 @@ class ApacheArrowGlib < Formula
+   depends_on "apache-arrow"
+   depends_on "glib"
  
-   schedule:
-     #Crossbow packaging runs at 0 8 * * *
--    - cron: '0 14 * * *'
-+    - cron: '0 18 * * *'
++  deny_network_access!
++
+   def install
+     system "meson", "setup", "build", "c_glib", *std_meson_args
+     system "meson", "compile", "-C", "build", "--verbose"
+```
+
+**File**: `dev/tasks/homebrew-formulae/apache-arrow.rb` (modified, +13/-14)
+```diff
+@@ -46,9 +46,10 @@ class ApacheArrow < Formula
+   depends_on "grpc"
+   depends_on "llvm"
+   depends_on "lz4"
+-  depends_on "openssl@3"
++  depends_on "openssl@4"
+   depends_on "protobuf"
+   depends_on "re2"
++  depends_on "simdjson"
+   depends_on "snappy"
+   depends_on "thrift"
+   depends_on "uriparser"
+@@ -57,18 +58,19 @@ class ApacheArrow < Formula
  
- permissions:
-   contents: read
+   uses_from_macos "python" => :build
+   uses_from_macos "bzip2"
+-  uses_from_macos "zlib"
+ 
+-  # Issue ref: https://github.com/protocolbuffers/protobuf/issues/19447
++  on_linux do
++    depends_on "zlib-ng-compat"
++  end
++
+   fails_with :gcc do
+     version "12"
+-    cause "Protobuf 29+ generated code with visibility and deprecated attributes needs GCC 13+"
++    cause "fails handling PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED"
+   end
+ 
+   def install
+-    ENV.llvm_clang if OS.linux?
++    ENV.runtime_cpu_detection
+ 
+-    # We set `ARROW_ORC=OFF` because it fails to build with Protobuf 27.0
+     args = %W[
+       -DCMAKE_INSTALL_RPATH=#{rpath}
+       -DLLVM_ROOT=#{formula_opt_prefix("llvm")}
+@@ -97,24 +99,21 @@ def install
+       -DARROW_INSTALL_NAME_RPATH=OFF
+       -DPARQUET_BUILD_EXECUTABLES=ON
+     ]
+-    args << "-DARROW_MIMALLOC=ON" unless Hardware::CPU.arm?
+-    # Reduce overlinking. Can remove on Linux if GCC 11 issue is fixed
+-    args << "-DCMAKE_SHARED_LINKER_FLAGS=-Wl,#{OS.mac? ? "-dead_strip_dylibs" : "--as-needed"}"
++    args << "-DCMAKE_SHARED_LINKER_FLAGS=-Wl,-dead_strip_dylibs" if OS.mac? # Reduce overlinking
++
+     # ARROW_SIMD_LEVEL sets the minimum required SIMD. Since this defaults to
+     # SSE4.2 on x86_64, we need to reduce level to match oldest supported CPU.
+     # Ref: https://arrow.apache.org/docs/cpp/env_vars.html#envvar-ARROW_USER_SIMD_LEVEL
+-    if build.bottle? && Hardware::CPU.intel? && (!OS.mac? || !MacOS.version.requires_sse42?)
+-      args << "-DARROW_SIMD_LEVEL=NONE"
+-    end
++    #
++    # NOTE: Do not remove this while Core 2 is oldest supported CPU
++    args << "-DARROW_SIMD_LEVEL=NONE" if Hardware::CPU.intel?
+ 
+     system "cmake", "-S", "cpp", "-B", "build", *args, *std_cmake_args
+     system "cmake", "--build", "build"
+     system "cmake", "--install", "build"
+   end
+ 
+   test do
+-    ENV.method(DevelopmentTools.default_compiler).call if OS.linux?
+-
+     (testpath/"test.cpp").write <<~CPP
+       #include "arrow/api.h"
+       int main(void) {
 ```
 
 ---
 
-### Incident Patch 2: `340bf45c` (2026-10-31)
-**Commit Message**: GH-53945: [C++] std::bit_width in ALP compression fails to compile with CRAN's macOS 11.3 SDK (#53946)
+### Incident Patch 2: `d9a0ab4b` (2026-10-31)
+**Commit Message**: MINOR: [C++] Fix C++ Format (#55353)
 
 ### Rationale for this change
-
-CI failures for CRAN macOS
+Lint C++ format fail on main
 
 ### What changes are included in this PR?
-
-Use helper function which works on CRAN macOS in new code + refactor existing stuff
+Minor lint C++ format fix
 
 ### Are these changes tested?
-
-Yup
-
+yes
 ### Are there any user-facing changes?
-
-Nope
+no
 
 ### Was AI used for this PR?
 
-I generated the code with Claude Fable 5.1 and did adversarial reviews with Opus 5.5 and also asked some questions about why we were moving things into different files and if we had too many tests, resulting in trimming them down. 
+**PR code and description written by:**
+
+- [X] Human
+
+**Reviewed before submission by:**
+
+- [X] Human
+
+Authored-by: Tadeja Kadunc <[REDACTED_EMAIL]>
+Signed-off-by: Rok Mihevc <[REDACTED_EMAIL]>
+
+**File**: `cpp/src/arrow/util/bit_util.h` (modified, +1/-3)
+```diff
+@@ -168,9 +168,7 @@ constexpr bool HasSingleBit(T x) noexcept {
+ }
+ 
+ // Returns ceil(log2(x)).
+-static inline int Log2(uint64_t x) {
+-  return BitWidth(x - 1);
+-}
++static inline int Log2(uint64_t x) { return BitWidth(x - 1); }
+ 
+ //
+ // Utilities for reading and writing individual bits by their index
+```
+
+---
+
+### Incident Patch 3: `907f6c1a` (2026-11-03)
+**Commit Message**: GH-55332: [CI][R] Remove clang-22 install from test-r-linux-as-cran (#55336)
+
+### Rationale for this change
+
+Workaround to install clang-22 no longer relevant, breaks CI
+
+### What changes are included in this PR?
+
+Remove it
+
+### Are these changes tested?
+
+Will run CI
+
+### Are there any user-facing changes?
+
+### Was AI used for this PR?
+
+In accordance to the [AI generation guidelines](https://arrow.apache.org/docs/dev/developers/overview.html#ai-generated-code), please disclose below whether and how AI was used in this PR.
 
 **PR code and description written by:**
 
@@ -1485,254 +1597,96 @@ I generated the code with Claude Fable 5.1 and did adversarial reviews with Opus
 - [x] AI
 - [ ] Not reviewed
 
-* GitHub Issue: #53945
+* GitHub Issue: #55332
 
-Authored-by: Nic Crane <[REDACTED_EMAIL]>
+Lead-authored-by: Nic Crane <[REDACTED_EMAIL]>
+Co-authored-by: Jonathan Keane <[REDACTED_EMAIL]>
 Signed-off-by: Nic Crane <[REDACTED_EMAIL]>
 
-**File**: `cpp/src/arrow/util/align_util.h` (modified, +1/-10)
+**File**: `ci/docker/linux-r.dockerfile` (modified, +0/-3)
 ```diff
-@@ -18,7 +18,6 @@
- #pragma once
+@@ -33,9 +33,6 @@ ENV R_PRUNE_DEPS=${r_prune_deps}
+ ARG r_custom_ccache=false
+ ENV R_CUSTOM_CCACHE=${r_custom_ccache}
  
- #include <algorithm>
--#include <bit>
+-ARG r_update_clang=false
+-ENV R_UPDATE_CLANG=${r_update_clang}
+-
+ ARG tz="UTC"
+ ENV TZ=${tz}
  
- #include "arrow/memory_pool.h"
- #include "arrow/type_fwd.h"
-@@ -44,16 +43,8 @@ struct BitmapWordAlignParams {
- template <uint64_t ALIGN_IN_BYTES>
- inline BitmapWordAlignParams BitmapWordAlign(const uint8_t* data, int64_t bit_offset,
-                                              int64_t length) {
--  // TODO: We can remove this condition once CRAN upgrades its macOS
--  // SDK from 11.3.
--  // __apple_build_version__ should be defined only on Apple clang
--#if defined(__apple_build_version__) && !defined(__cpp_lib_bitops)
--  static_assert((ALIGN_IN_BYTES != 0) && ((ALIGN_IN_BYTES & (ALIGN_IN_BYTES - 1)) == 0),
-+  static_assert(bit_util::HasSingleBit(ALIGN_IN_BYTES),
-                 "ALIGN_IN_BYTES should be a positive power of two");
--#else
--  static_assert(std::has_single_bit(ALIGN_IN_BYTES),
--                "ALIGN_IN_BYTES should be a positive power of two");
--#endif
-   constexpr uint64_t ALIGN_IN_BITS = ALIGN_IN_BYTES * 8;
- 
-   BitmapWordAlignParams p;
 ```
 
-**File**: `cpp/src/arrow/util/alp/alp_codec.cc` (modified, +1/-1)
+**File**: `ci/scripts/r_docker_configure.sh` (modified, +0/-18)
 ```diff
-@@ -136,7 +136,7 @@ Status ValidateEncodingPreset(const AlpEncodingPreset& preset) {
- Status ValidateVectorSize(int32_t vector_size) {
-   constexpr int32_t kMin = 1 << AlpFormatConstants::kMinLogVectorSize;
-   constexpr int32_t kMax = 1 << AlpFormatConstants::kMaxLogVectorSize;
--  if (vector_size <= 0 || !std::has_single_bit(static_cast<uint32_t>(vector_size))) {
-+  if (vector_size <= 0 || !bit_util::HasSingleBit(static_cast<uint32_t>(vector_size))) {
-     return Status::Invalid("ALP vector_size must be a positive power of 2, got ",
-                            vector_size);
-   }
+@@ -90,23 +90,5 @@ if [ "$PACKAGE_MANAGER" = "apt-get" ] && apt-cache show tzdata-legacy > /dev/nul
+   apt-get install -y tzdata-legacy
+ fi
+ 
+-
+-# Update clang version to latest available.
+-# The rhub/ubuntu-clang image ships clang-15 but CRAN's debian-clang now uses
+-# clang 22. Install clang-22 from LLVM's apt repos to match.
+-if [ "$R_UPDATE_CLANG" = true ]; then
+-  apt-get update -y --allow-releaseinfo-change
+-  apt-get install -y gnupg
+-  curl -fsSL https://apt.llvm.org/llvm-snapshot.gpg.key | gpg --dearmor -o /etc/apt/trusted.gpg.d/llvm.gpg
+-  echo "deb https://apt.llvm.org/jammy/ llvm-toolchain-jammy-22 main" > /etc/apt/sources.list.d/llvm22.list
+-  apt-get update -y --allow-releaseinfo-change
+-  apt-get install -y clang-22 lld-22
+-  # The rhub image hardcodes clang-15/clang++-15 in R's Makeconf, so installing
+-  # clang-22 alone isn't enough: point R at the new compilers.
+-  sed -i 's/clang++-15/clang++-22/g; s/clang-15/clang-22/g' "$(R RHOME)/etc/Makeconf"
+-  echo "R is now using CC=$(R CMD config CC) CXX=$(R CMD config CXX)"
+-  clang-22 --version
+-fi
+-
+ # Workaround for html help install failure; see https://github.com/r-lib/devtools/issues/2084#issuecomment-530912786
+ Rscript -e 'x <- file.path(R.home("doc"), "html"); if (!file.exists(x)) {dir.create(x, recursive=TRUE); file.copy(system.file("html/R.css", package="stats"), x)}'
 ```
 
-**File**: `cpp/src/arrow/util/alp/alp_compression.cc` (modified, +2/-3)
+**File**: `compose.yaml` (modified, +0/-1)
 ```diff
-@@ -18,7 +18,6 @@
- #include "arrow/util/alp/alp_compression_internal.h"
- 
- #include <algorithm>
--#include <bit>
- #include <cmath>
- #include <cstring>
- #include <limits>
-@@ -200,7 +199,7 @@ std::optional<int64_t> EstimateCompressedSizeBits(
-   const EncodedUnsigned delta = (static_cast<EncodedUnsigned>(max_encoded_value) -
-                                  static_cast<EncodedUnsigned>(min_encoded_value));
- 
--  const int32_t estimated_bits_per_value = static_cast<int32_t>(std::bit_width(delta));
-+  const int32_t estimated_bits_per_value = bit_util::BitWidth(delta);
-   int64_t estimated_compression_size =
-       static_cast<int64_t>(inputs.size()) * estimated_bits_per_value;
-   estimated_compression_size +=
-@@ -445,7 +444,7 @@ typename AlpCompression<T>::BitPackingResult AlpCompression<T>::BitPackIntegers(
-   uint8_t bit_width = 0;
- 
-   if (min_max_diff > 0) {
--    bit_width = static_cast<uint8_t>(std::bit_width(min_max_diff));
-+    bit_width = static_cast<uint8_t>(bit_util::BitWidth(min_max_diff));
-   }
-   const int32_t bit_packed_size = static_cast<int32_t>(
-       bit_util::BytesForBits(bit_width * static_cast<int64_t>(for_deltas.size())));
+@@ -1686,7 +1686,6 @@ services:
+         tz: ${TZ}
+         r_prune_deps: ${R_PRUNE_DEPS}
+         r_custom_ccache: ${R_CUSTOM_CCACHE}
+-        r_update_clang: ${R_UPDATE_CLANG}
+     shm_size: *shm-size
+     environment:
+       <<: [*common, *sccache]
 ```
 
-**File**: `cpp/src/arrow/util/bit_util.h` (modified, +28/-8)
+**File**: `dev/tasks/r/github.linux.cran.yml` (modified, +2/-3)
 ```diff
-@@ -138,20 +138,40 @@ static inline uint64_t TrailingBits(uint64_t v, int num_bits) {
-   return (v << n) >> n;
- }
- 
--// Returns ceil(log2(x)).
--static inline int Log2(uint64_t x) {
--  // DCHECK_GT(x, 0);
-+// Returns the number of bits needed to represent x, i.e. std::bit_width(x).
-+//
-+// The libc++ in the macOS 11.3 SDK used by CRAN only has the pre-standard
-+// name std::log2p1. __apple_build_version__ should be defined only on Apple
-+// clang.
-+// TODO: We can remove this condition once CRAN upgrades its macOS SDK from 11.3.
-+template <typename T>
-+constexpr int BitWidth(T x) noexcept {
-+  static_assert(std::is_unsigned_v<T>, "BitWidth requires an unsigned integer type");
-+#if defined(__apple_build_version__) && !defined(__cpp_lib_bitops)
-+  return static_cast<int>(std::log2p1(x));
-+#else
-+  return static_cast<int>(std::bit_width(x));
-+#endif
-+}
- 
--// TODO: We can remove this condition once CRAN upgrades its macOS
--// SDK from 11.3.
--// __apple_build_version__ should be defined only on Apple clang
-+// Returns true if x is a power of two, i.e. std::has_single_bit(x).
-+// See the note on BitWidth: the macOS 11.3 SDK only has the pre-standard
-+// name std::ispow2.
-+template <typename T>
-+constexpr bool HasSingleBit(T x) noexcept {
-+  static_assert(std::is_unsigned_v<T>, "HasSingleBit requires an unsigned integer type");
- #if defined(__apple_build_version__) && !defined(__cpp_lib_bitops)
--  return std::log2p1(x - 1);
-+  return std::ispow2(x);
- #else
--  return std::bit_width(x - 1);
-+  return std::has_single_bit(x);
- #endif
- }
- 
-+// Returns ceil(log2(x)).
-+static inline int Log2(uint64_t x) {
-+  return BitWidth(x - 1);
-+}
-+
- //
- // Utilities for reading and writing individual bits by their index
- // in a memory area.
-```
-
-**File**: `cpp/src/arrow/util/bit_util_test.cc` (modified, +20/-0)
-```diff
-@@ -1108,4 +1108,24 @@ TEST(BitUtil, CopyBits) {
-                 0b01011010);
- }
- 
-+TEST(BitUtil, BitWidth) {
-+  EXPECT_EQ(bit_util::BitWidth(uint8_t{0}), 0);
-+  EXPECT_EQ(bit_util::BitWidth(uint8_t{1}), 1);
-+  EXPECT_EQ(bit_util::BitWidth(uint32_t{1} << 20), 21);
-+  EXPECT_EQ(bit_util::BitWidth((uint32_t{1} << 20) - 1), 20);
-+  EXPECT_EQ(bit_util::BitWidth(std::numeric_limits<uint64_t>::max()), 64);
-+  // constexpr-evaluable.
-+  static_assert(bit_util::BitWidth(uint16_t{0x0100}) == 9);
-+}
-+
-+TEST(BitUtil, HasSingleBit) {
-+  EXPECT_FALSE(bit_util::HasSingleBit(uint8_t{0}));
-+  EXPECT_TRUE(bit_util::HasSingleBit(uint8_t{1}));
-+  EXPECT_TRUE(bit_util::HasSingleBit(uint32_t{1} << 20));
-+  EXPECT_FALSE(bit_util::HasSingleBit((uint32_t{1} << 20) + 1));
-+  EXPECT_FALSE(bit_util::HasSingleBit(std::numeric_limits<uint64_t>::max()));
-+  // constexpr-evaluable.
-+  static_assert(bit_util::HasSingleBit(uint16_t{0x0100}));
-+}
-+
- }  // namespace arrow
-```
-
-**File**: `cpp/src/arrow/util/rle_encoding_test.cc` (modified, +1/-9)
-```diff
-@@ -18,7 +18,6 @@
- // From Apache Impala (incubating) as of 2016-01-29
- 
- #include <algorithm>
--#include <bit>
- #include <cstdint>
- #include <cstring>
- #include <random>
-@@ -942,14 +941,7 @@ TEST(BitRle, Random) {
-       }
-       parity = !parity;
-     }
--    // TODO: We can remove this condition once CRAN upgrades its macOS
--    // SDK from 11.3.
--    // __apple_build_version__ should be defined only on Apple clang
--#if defined(__apple_build_version__) && !defined(__cpp_lib_bitops)
--    if (!CheckRoundTrip(values, std::log2p1(values.size()))) {
--#else
--    if (!CheckRoundTrip(values, std::bit_width(values.size()))) {
--#endif
-+    if (!CheckRoundTrip(values, bit_util::BitWidth(values.size()))) {
-       FAIL() << "failing seed: " << seed;
-     }
-   }
-```
-
-**File**: `cpp/src/parquet/chunker_internal.cc` (modified, +2/-10)
-```diff
-@@ -17,7 +17,6 @@
- 
- #include "parquet/chunker_internal.h"
- 
--#include <bit>
- #include <cstdint>
- #include <iterator>
- #include <string>
-@@ -87,15 +86,8 @@ uint64_t CalculateMask(int64_t min_chunk_size, int64_t max_chunk_size, int norm_
- 
-   // assuming that the gear hash has a uniform distribution, we can calculate the mask
-   // by taking the floor(log2(target_size))
--  // TODO: We can remove this condition once CRAN upgrades its macOS
--  // SDK from 11.3.
--  // __apple_build_version__ should be defined only on Apple clang
--#if defined(__apple_build_version__) && !defined(__cpp_lib_bitops)
--  auto target_bits = std::log2p1(static_cast<uint64_t>(target_size));
--#else
--  auto target_bits = std::bit_width(static_cast<uint64_t>(target_size));
--#endif
--  int mask_bits = target_bits == 0 ? 0 : static_cast<int>(target_bits - 1);
-+  auto target_bits = ::arrow::bit_util::BitWidth(static_cast<uint64_t>(target_size));
-+  int mask_bits = target_bits == 0 ? 0 : target_bits - 1;
- 
-   // a user defined `norm_level` can be used to adjust the mask size, hence the matching
-   // probability, by increasing the norm_level we increase the probability of matching
-```
-
-**File**: `cpp/src/parquet/encoder.cc` (modified, +2/-10)
-```diff
-@@ -1261,16 +1261,8 @@ void DeltaBitPackEncoder<DType>::FlushBlock() {
- 
-     // The minimum number of bits required to write any of values in deltas_ vector.
-     // See overflow comment above.
--    // TODO: We can remove this condition once CRAN upgrades its macOS
--    // SDK from 11.3.
--    // __apple_build_version__ should be defined only on Apple clang
--#if defined(__apple_build_version__) && !defined(__cpp_lib_bitops)
--    const auto bit_width = bit_width_data[i] =
--        std::log2p1(static_cast<UT>(max_delta) - static_cast<UT>(min_delta));
--#else
--    const auto bit_width = bit_width_data[i] =
--        std::bit_width(static_cast<UT>(max_delta) - static_cast<UT>(min_delta));
--#endif
-+    const auto bit_width = bit_width_data[i] = ::arrow::bit_util::BitWidth(
-+        static_cast<UT>(max_delta) - static_cast<UT>(min_delta));
- 
-     for (uint32_t j = start; j < start + values_current_mini_block; j++) {
-       // Convert delta to frame of reference. See overflow comment above.
+@@ -35,16 +35,15 @@ jobs:
+         config:
+           # See https://r-hub.github.io/containers/
+           - { r_image: "ubuntu-gcc12" }  # ~ r-devel-linux-x86_64-debian-gcc
+-          - { r_image: "ubuntu-clang", r_update_clang: true }  # ~ r-devel-linux-x86_64-debian-clang
++          - { r_image: "ubuntu-clang" }  # ~ r-devel-linux-x86_64-debian-clang
+           - { r_image: "ubuntu-next" }  # ~ r-patched-linux-x86_64
+           - { r_image: "ubuntu-release" }  # ~ r-release-linux-x86_64
+-          - { r_image: "clang22", skip_vignettes: true }  # ~ r-devel-linux-x86_64-fedora-clang
++          - { r_image: "clang23", skip_vignettes: true }  # ~ r-devel-linux-x86_64-fedora-clang
+     env:
+       R_ORG: "rhub"
+       R_IMAGE: {{ '${{ matrix.config.r_image }}' }}
+       R_TAG: "latest"
+       ARROW_R_DEV: "FALSE"
+-      R_UPDATE_CLANG: {{ '${{ matrix.config.r_update_clang }}' }}
+     steps:
+       {{ macros.github_checkout_arrow()|indent }}
+       {{ macros.github_install_archery()|indent }}
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #55337** (2026-10-31): GH-55335: [CI][R] Run R nightly binary upload later (@thisisnic)
-- **PR #55331** (2026-10-30): MINOR: [R] Update backwards compatibility matrix for 26.0.0 release (@thisisnic)
-- **PR #55330** (2026-10-30): MINOR: [C++] Remove undefined variable reference in substrait test link libraries (@kou)
-- **PR #55320** (2026-10-30): MINOR: [C++][FlightRPC][CI][ODBC] Increase nuget timeout for vcpkg upload (@alinaliBQ)
-- **PR #55317** (2026-10-30): GH-55316: [CI][FlightRPC][ODBC] Apply ports.patch in Windows build (@amoeba)
-- **PR #55311** (closed): WIP: [Release] Verify release-26.0.1-rc0 (@raulcd)
+- **PR #55378** (2026-11-03): GH-55377: [R][CI] Windows Rtools40 jobs fail since 2026-10-30: setup-r hard-codes a cran.rstudio.com URL for Rtools40 that now 404s (@thisisnic)
+- **PR #55375** (2026-11-03): GH-55374: [CI][Packaging] Fix homebrew-cpp nightly by syncing formulae to homebrew-core (@tadeja)
+- **PR #55365** (2026-11-02): GH-55364: [CI][Release] Stop hardcoding PyArrow site-packages installation path on Windows verification (@raulcd)
+- **PR #55355** (closed): GH-55354: [C++][Parquet] Reject nested schemas in StreamReader and StreamWriter (@mardgez)
+- **PR #55353** (2026-10-31): MINOR: [C++] Fix C++ Format (@tadeja)
+- **PR #55343** (closed): GH-55342: [C++][Parquet] Fix rows dropped after a data page without values (@kszucs)
 
 ---
 
@@ -1752,28 +1706,29 @@ Signed-off-by: Nic Crane <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. GH-55335: [CI][R] Run R nightly binary upload later (#55337)
+## X. GH-55374: [CI][Packaging] Fix homebrew-cpp nightly by syncing formulae to homebr
 
 **RULE**:
-When implementing operations in `.github/workflows/r_nightly.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/arrow. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `dev/tasks/homebrew-formulae/apache-arrow-glib.rb`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/arrow. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b4a98b73`: GH-55335: [CI][R] Run R nightly binary upload later (#55337). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `67625df7`: GH-55374: [CI][Packaging] Fix homebrew-cpp nightly by syncing formulae to homebrew-core (#55375). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/r_nightly.yml`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `dev/tasks/homebrew-formulae/apache-arrow-glib.rb`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-    - cron: '0 18 * * *'
+  deny_network_access!
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-    - cron: '0 14 * * *'
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b4a98b73` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `67625df7` are properly handled with clean fallback behavior.

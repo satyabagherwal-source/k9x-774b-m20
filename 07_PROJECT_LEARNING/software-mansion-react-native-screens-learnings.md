@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/software-mansion-react-native-screens-learnings.md`  
 > **Source**: github ([https://github.com/software-mansion/react-native-screens](https://github.com/software-mansion/react-native-screens))  
-> **Source Version**: `ec16f25b`  
+> **Source Version**: `5390e472`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T21:34:21.584Z  
+> **Timestamp**: 2026-11-03T21:44:49.303Z  
 > **Learning ID**: `learn-github-software-mansion-react-native-screens`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/software-mansion-react-native-screens-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/software-mansion/react-native-screens](https://github.com/software-mansion/react-native-screens))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T21:29:58.060Z  
+> **Harvest Timestamp**: 2026-11-03T21:44:48.919Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -364,11 +364,13 @@ interface SafeAreaProvider {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5115** (2026-10-30): **[iOS, iPhone Duo] Native tab bar missing on a cold start in landscape until the device rotates**
-  *Symptoms*: ### Description  On the iPhone Duo simulator (iOS 27.1), an app that uses native tabs (expo-router `NativeTabs`, which renders `react-native-screens` `TabsHost`) shows no tab bar at all when it cold-starts with the Duo open in landscape. In that posture iOS places the tab bar as a floating rail on the system rail's edge (the right edge). The rail never appears. The tab screens render and work, but there is no way to switch tabs.  The rail appears as soon as the device rotates (to portrait and back, or any rotation), and from then on it behaves correctly.  Other cases work:  - Cold start with the Duo open in **portrait**: the floating bar shows at the bottom from the first frame. - Rotating from portrait to landscape with the app running: the rail shows on the right edge. - Folded Duo and split view, entered with the app running: the rail shows on the expected edge.  **Expected:** on a cold start in landscape, the rail shows from the first screen, as it does after a rotation.  **What we found while working around it (may help locate the cause):**  - Rendering `<NativeTabs hidden>` at mount and switching to `hidden={false}` on the next animation frame does **not** bring the rail back. - Switching to `hidden={false}` **500 ms** after mount does, on every cold start we tried.  This makes us think the tab bar needs a layout pass after `RNSTabsHostComponentView` adds the `UITabBarController` to the window (`didMoveToWindow` → `RNSContainerHelpers addChildViewController`). Showing i
+- **Issue #5134** (2026-11-03): **[iOS] Large title drops into place on the first push onto a stack whose root hides its header**
+  *Symptoms*: ### Description  On iOS, the first push of a `headerLargeTitle` screen onto a native stack whose root screen has `headerShown: false` animates the large title from the collapsed bar state instead of the expanded one. For the whole push the inline (small) title is visible next to the back button and fades out, while the large title starts about 20pt too high and slides down into place. Every later push onto the same stack is correct.  Measured on the minimal repro below from a 60 fps screen recording (top of the large title in points from the top of the screen):  | | large title at push start | large title at rest | inline title | |---|---|---|---| | first push | about 46 | about 69 | visible, fades out over about 0.5s | | second push | about 69 | about 69 | not visible |  Instrumenting `-[RNSScreenStackView setPushViewControllers:]` (same setup, iOS 27.0) shows the navigation bar right before the first push is hidden (`navigationBarHidden == YES`, frame `{{0, -116}, {402, 54}}`) and `prefersLargeTitles == NO`. Right before the second push the bar has already been laid out at its large-title height (`{{402, 62}, {402, 106}}`, `prefersLargeTitles == YES`).  #### Root cause  Line numbers are for 4.30.1.   1. `prefersLargeTitles` and the bar's visibility are applied to the pushed screen only in `+[RNSScreenStackHeaderConfig updateViewController:withConfig:animated:]`, which for a push runs from `navigationController:willShowViewController:animated:` (`ios/RNSScreenStack.mm:340`),
 
-- **Issue #5114** (2026-10-29): **iOS, Fabric: `measureInWindow` on a view inside a `formSheet` / `pageSheet` screen returns coordinates missing the sheet's on-screen origin**
-  *Symptoms*: ### Description  On iOS with the New Architecture, `measureInWindow` on a view inside a native-stack screen presented as `formSheet` or `pageSheet` returns coordinates relative to the sheet, not the window. `y` is too small by the sheet's on-screen top: 62 pt for a `pageSheet`, and 368 pt for a `formSheet` at `sheetAllowedDetents: [0.6]`. On iOS 27 the formSheet's inset and scale are also missing (x 16 / w 370 measured, vs 23.36 / 355.27 on screen). Headers are hidden in the repro to rule out #2539.  A native window-frame read of the same view (UIKit `convertRect:toView:nil`) is correct, so the shadow-tree computation seems not to include the sheet container's position. Expected: `measureInWindow` returns window coordinates, matching UIKit's.  (This corrects my first description, which said "46–62 pt": that range only holds for near-full sheets.)  ### Steps to reproduce  1. In an Expo SDK 57 app with `@react-navigation/native` 7.5.1 and `@react-navigation/native-stack` 7.21.0, replace `App.tsx` with the file under "Snack or a link to a repository" and run it on iOS (Expo Go or a dev build). 2. Tap "Open pageSheet", then "Measure". The log reads target-box y=736; on screen it's at y=798. 3. Swipe the sheet down. Tap "Open formSheet", then "Measure". The log reads y=424.67; on screen it's at y=793.02. 4. Compare against Accessibility Inspector or a screenshot.  ### Snack or a link to a repository  Snack only offers Expo SDK 50–55, so it can't run these versions. The repro is on
+- **Issue #5130** (2026-11-03): **fix(example): Allow undefined for optional SettingsSwitch props**
+  *Symptoms*: ## Description  The root `tsconfig.json` enables `exactOptionalPropertyTypes`, so passing a `string | undefined` value to `SettingsSwitch`'s `testID` prop (e.g. from a helper that forwards an optional `testID`) fails to type-check:  ``` error TS2375: Type '{ label: string; testID: string | undefined; ... }' is not assignable to type 'Props' with 'exactOptionalPropertyTypes: true'. ```  This widens the optional `testID` and `style` props to explicitly accept `undefined`, matching the `?: T | undefined` convention used across the codebase.  Spotted during review of #4624.  ## Changes  - `apps/src/shared/SettingsSwitch.tsx`: `style?: ViewStyle | undefined`, `testID?: string | undefined`  ## Test plan  - `cd apps && npx tsc --noEmit -p tsconfig.json --ignoreDeprecations 6.0` no longer reports the `SettingsSwitch` error for `test-stack-header-item-appearance-ios` - `yarn check-types`, eslint, prettier pass  ## Checklist  - [x] Included code example that can be used to test this change. - [ ] For visual changes, included screenshots / GIFs / recordings documenting the change. - [ ] For API changes, updated relevant public types. - [ ] Ensured that CI passes  🤖 Generated with [Claude Code](https://claude.com/claude-code) 
+  **Post-Mortem & Fix Analysis**:
+  > <!-- coderabbit-ai-generated:v1 -->  <!-- This is an auto-generated comment: summarize by coderabbit.ai --> <!-- review_stack_entry_start -->  <a href="https://app.coderabbit.ai/change-stack/software-mansion/react-native-screens/pull/5130?scope=ghh_OusAJGA4HG8ljoOV0wJvVx8NmnZIjc2DdjmxOu0xZWA&amp;cs_source=review_comment"><picture><source media="(prefers-color-scheme: dark)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-in-coderabbit-ui-dark.svg?v=3"><source media="(prefers-color-scheme: light)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-in-coderabbit-ui.svg?v=3"><img src="https://storage.googleapis.com/coderabbit_public_assets/review-stack-in-coderabbit-ui.svg?v=3" alt="Review in Change Stack →" height="32"></picture></a>  <!-- review_stack_entry_end --> <!-- recent_review_status_start -->  No actionable comments were generated in the recent review.  <!-- recent_review_status_end --> <!-- walkthrough_start -->  <details> 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -385,647 +387,147 @@ interface SafeAreaProvider {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2efecf83` (2026-10-27)
-**Commit Message**: fix(iOS, Stack v4): restore navigation bar alpha after a cancelled zoom dismissal (#5055)
+### Incident Patch 1: `1f9b45ea` (2026-11-03)
+**Commit Message**: fix(example): Allow undefined for optional SettingsSwitch props (#5130)
 
 ## Description
 
-When a screen is pushed with UIKit's zoom transition
-(`preferredTransition = .zoom(...)`, iOS 18+ — what expo-router's
-`Link.AppleZoom` sets) and the screen below it hides the header,
-cancelling the interactive dismissal leaves the navigation bar with
-`alpha == 0`. The screen that stays on top looks like it lost its back
-button and bar button items.
+The root `tsconfig.json` enables `exactOptionalPropertyTypes`, so
+passing a `string | undefined` value to `SettingsSwitch`'s `testID` prop
+(e.g. from a helper that forwards an optional `testID`) fails to
+type-check:
 
-Sequence (from breakpoints on `-[UINavigationController
-setNavigationBarHidden:animated:]` and `-[UIView setAlpha:]` on the
-bar):
-
-1. The dismissal starts. `willShowViewController` for the screen below
-calls `setNavigationBarHidden:YES animated:YES`.
-2. Inside the zoom transition, UIKit hides the bar with an alongside
-animation (`_positionNavigationBarHidden:edge:`) that sets
-`navigationBar.alpha = 0`.
-3. The dismissal is cancelled. UIKit restores `navigationBarHidden` to
-`NO`, but not the alpha. RNScreens then calls `setNavigationBarHidden:NO
-animated:NO` for the screen that stays, which is a no-op because the bar
-is already not hidden.
-
-The "show" branch of `updateViewController:withConfig:animated:` already
-handles a cancelled 
-
-**File**: `ios/legacy/RNSScreenStackHeaderConfig.mm` (modified, +69/-0)
-```diff
-@@ -8,6 +8,7 @@
- #import <React/RCTMountingTransactionObserving.h>
- #import <React/UIView+React.h>
- #import <ReactCommon/TurboModuleUtils.h>
-+#import <objc/runtime.h>
- #import <react/renderer/components/image/ImageProps.h>
- #import <react/renderer/components/rnscreens/ComponentDescriptors.h>
- #import <react/renderer/components/rnscreens/EventEmitters.h>
-@@ -509,6 +510,67 @@ + (UINavigationBarAppearance *)buildAppearance:(UIViewController *)vc withConfig
-   return appearance;
- }
- 
-+#if RNS_IPHONE_OS_VERSION_AVAILABLE(18_0) && !TARGET_OS_TV && !TARGET_OS_VISION
-+// Workaround for a UIKit bug: https://github.com/software-mansion/react-native-screens/issues/5054
-+// Seen on iOS 26.5 and 27.0, not reproduced on 18.6. A zoom transition (iOS 18+) hides the navigation bar by animating
-+// its alpha. When the transition is cancelled, UIKit restores `navigationBarHidden`, but not the alpha. The
-+// `setNavigationBarHidden:` call made by the staying screen's update afterwards is then a no-op, so its visible bar
-+// stays at alpha 0. We restore the alpha the bar had before the transition, animated along with the rest of the cancel
-+// animation. Remove once Apple fixes it.
-++ (void)restoreNavigationBarAlphaIfTransitionIsCancelled:(UINavigationController *)navctr
-+                                                animated:(BOOL)animated
-+                                               wasHidden:(BOOL)wasHidden
-+                                              shouldHide:(BOOL)shouldHide
-+{
-+  if (@available(iOS 18.0, *)) {
-+    id<UIViewControllerTransitionCoordinator> coordinator = navctr.transitionCoordinator;
-+    // Only a transition that hides a visible bar needs this: when one that shows the bar is cancelled, the bar ends up
-+    // hidden again.
-+    if (!animated || wasHidden || !shouldHide || coordinator == nil ||
-+        coordinator.presentationStyle != UIModalPresentationNone) {
-+      return;
-+    }
-+
-+    // Scoped to zoom transitions, the only ones known to leave the bar faded. The zoom is set with
-+    // `preferredTransition` on the screen being pushed or popped; the from screen stays on the stack during a push,
-+    // but not during a pop.
-+    UIViewController *fromVC = [coordinator viewControllerForKey:UITransitionContextFromViewControllerKey];
-+    UIViewController *toVC = [coordinator viewControllerForKey:UITransitionContextToViewControllerKey];
-+    UIViewController *transitioningVC = [navctr.viewControllers containsObject:fromVC] ? toVC : fromVC;
-+    if (transitioningVC.preferredTransition == nil) {
-+      return;
-+    }
-+
-+    // Header config updates call this method repeatedly while the transition is in progress. Register the handler only
-+    // once per transition, so that a later call cannot capture an alpha the transition has already lowered.
-+    static char handlerRegisteredKey;
-+    if (objc_getAssociatedObject(coordinator, &handlerRegisteredKey) != nil) {
-+      return;
-+    }
-+    objc_setAssociatedObject(coordinator, &handlerRegisteredKey, @YES, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-+
-+    UINavigationBar *navigationBar = navctr.navigationBar;
-+    CGFloat alphaBeforeTransition = navigationBar.alpha;
-+
-+    // Only interactive transitions can be cancelled, and this block is called when one is.
-+    [coordinator
-+        notifyWhenInteractionChangesUsingBlock:^(id<UIViewControllerTransitionCoordinatorContext> _Nonnull context) {
-+          if (!context.isCancelled) {
-+            return;
-+          }
-+          // The cancel animation takes the transition back from `percentComplete` to 0.
-+          [UIView animateWithDuration:context.transitionDuration * context.percentComplete
-+                                delay:0
-+                              options:UIViewAnimationOptionBeginFromCurrentState
-+                           animations:^{
-+                             navigationBar.alpha = alphaBeforeTransition;
-+                           }
-+                           completion:nil];
-+        }];
-+  }
-+}
-+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(18_0) && !TARGET_OS_TV && !TARGET_OS_VISION
-+
- + (void)updateViewController:(UIViewController *)vc
-                   withConfig:(RNSScreenStackHeaderConfig *)config
-                     animated:(BOOL)animated
-@@ -546,6 +608,13 @@ + (void)updateViewController:(UIViewController *)vc
- 
-   [config applySemanticContentAttributeIfNeededToNavCtrl:navctr];
- 
-+#if RNS_IPHONE_OS_VERSION_AVAILABLE(18_0) && !TARGET_OS_TV && !TARGET_OS_VISION
-+  [self restoreNavigationBarAlphaIfTransitionIsCancelled:navctr
-+                                                animated:animated
-+                                               wasHidden:wasHidden
-+                                              shouldHide:shouldHide];
-+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(18_0) && !TARGET_OS_TV && !TARGET_OS_VISION
-+
-   if (shouldHide) {
-     navitem.title = config.title;
- 
+```
+error TS2375: Type '{ label: string; testID: string | undefined; ... }' is not assignable to type 'Props' with 'exactOptionalPropertyTypes: true'.
 ```
 
----
+This widens the optional `testID` and `style` props to explicitly accept
+`undefined`, matching the `?: T | undefined` convention used across the
+codebase.
 
-### Incident Patch 2: `aa0b7280` (2026-10-30)
-**Commit Message**: fix(Android, Stack v4): don't drag form sheet after list scrolls to top (#5100)
-
-## Description
-
-On Android, a form sheet can hold a nested-scrolling `ScrollView`. If the list is scrolled down by less than the length of one downward drag, that drag first scrolls the list to its top. `BottomSheetBehavior` then hands the rest of the same drag to the sheet. A single-detent sheet skips its collapsed state and can be hidden, so it is dismissed mid-gesture. A multi-detent sheet drops to a lower detent.
-
-This change makes Android match iOS. Whether a downward drag may move the sheet is decided once, when the touch nested scroll starts:
-
-- A drag that starts on a scrolled list scrolls the list and stops at its top.
-- A drag that starts with the list already at its top moves the sheet, as before.
-
-Material's `setDraggableOnNestedScroll(false)` doesn't cover this case. It only blocks the sheet while the list can still scroll up, so the sheet starts moving once the list reaches its top.
-
-Based on the patch by @yoctokarthikeyan from #5092. Their commits keep their original authorship.
-
-Closes #5092.
-
-### Notes for reviewers
-
-- This conflicts with #4995, which installs its own `BottomSheetBehav
-
-**File**: `android/src/main/java/com/swmansion/rnscreens/legacy/ScreenStackFragment.kt` (modified, +2/-1)
-```diff
-@@ -33,6 +33,7 @@ import com.swmansion.rnscreens.core.utils.recycle
- import com.swmansion.rnscreens.legacy.bottomsheet.BottomSheetTransitionCoordinator
- import com.swmansion.rnscreens.legacy.bottomsheet.BottomSheetWindowInsetListenerChain
- import com.swmansion.rnscreens.legacy.bottomsheet.DimmingViewManager
-+import com.swmansion.rnscreens.legacy.bottomsheet.ScrollStopsAtTopBottomSheetBehavior
- import com.swmansion.rnscreens.legacy.bottomsheet.SheetDelegate
- import com.swmansion.rnscreens.legacy.bottomsheet.usesFormSheetPresentation
- import com.swmansion.rnscreens.legacy.events.ScreenDismissedEvent
-@@ -399,7 +400,7 @@ class ScreenStackFragment :
-         return sheetDelegate.createSheetExitAnimator(sheetAnimationContext)
-     }
- 
--    private fun createBottomSheetBehaviour(): BottomSheetBehavior<Screen> = BottomSheetBehavior<Screen>()
-+    private fun createBottomSheetBehaviour(): BottomSheetBehavior<Screen> = ScrollStopsAtTopBottomSheetBehavior()
- 
-     private fun resolveBackgroundColor(screen: Screen): Int? {
-         val screenColor =
-```
-
-**File**: `android/src/main/java/com/swmansion/rnscreens/legacy/bottomsheet/ScrollStopsAtTopBottomSheetBehavior.kt` (added, +64/-0)
-```diff
-@@ -0,0 +1,64 @@
-+package com.swmansion.rnscreens.legacy.bottomsheet
-+
-+import android.view.View
-+import androidx.coordinatorlayout.widget.CoordinatorLayout
-+import androidx.core.view.ViewCompat
-+import com.google.android.material.bottomsheet.BottomSheetBehavior
-+import com.swmansion.rnscreens.legacy.Screen
-+
-+/**
-+ * A drag that starts on a scrolled list scrolls the list and stops at its top.
-+ *
-+ * `BottomSheetBehavior` hands the rest of such a drag to the sheet as soon as the list reaches
-+ * its top, so a sheet with a single detent is dismissed mid-gesture: a list scrolled down by less
-+ * than the length of one drag can't be scrolled back up without closing the sheet. A drag that
-+ * starts with the list already at its top moves the sheet as before.
-+ */
-+internal class ScrollStopsAtTopBottomSheetBehavior : BottomSheetBehavior<Screen>() {
-+    // Whether the ongoing touch nested scroll started with its target scrolled away from its top.
-+    // Set when this behavior accepts a touch nested scroll and cleared when it stops; in between
-+    // `CoordinatorLayout` dispatches the nested scroll callbacks of that type to this behavior only.
-+    private var nestedScrollStartedScrolled = false
-+
-+    override fun onStartNestedScroll(
-+        coordinatorLayout: CoordinatorLayout,
-+        child: Screen,
-+        directTargetChild: View,
-+        target: View,
-+        axes: Int,
-+        type: Int,
-+    ): Boolean {
-+        val accepted = super.onStartNestedScroll(coordinatorLayout, child, directTargetChild, target, axes, type)
-+        if (accepted && type == ViewCompat.TYPE_TOUCH) {
-+            nestedScrollStartedScrolled = target.canScrollVertically(-1)
-+        }
-+        return accepted
-+    }
-+
-+    override fun onNestedPreScroll(
-+        coordinatorLayout: CoordinatorLayout,
-+        child: Screen,
-+        target: View,
-+        dx: Int,
-+        dy: Int,
-+        consumed: IntArray,
-+        type: Int,
-+    ) {
-+        if (nestedScrollStartedScrolled && dy < 0 && !target.canScrollVertically(-1)) {
-+            return
-+        }
-+        super.onNestedPreScroll(coordinatorLayout, child, target, dx, dy, consumed, type)
-+    }
-+
-+    override fun onStopNestedScroll(
-+        coordinatorLayout: CoordinatorLayout,
-+        child: Screen,
-+        target: View,
-+        type: Int,
-+    ) {
-+        if (type == ViewCompat.TYPE_TOUCH) {
-+            nestedScrollStartedScrolled = false
-+        }
-+        super.onStopNestedScroll(coordinatorLayout, child, target, type)
-+    }
-+}
-```
-
-**File**: `apps/src/tests/issue-tests/Test5092.tsx` (added, +111/-0)
-```diff
-@@ -0,0 +1,111 @@
-+import React from 'react';
-+import { ScrollView, StyleSheet, Text, View } from 'react-native';
-+import { NavigationContainer } from '@react-navigation/native';
-+import {
-+  createNativeStackNavigator,
-+  type NativeStackScreenProps,
-+} from '@react-navigation/native-stack';
-+import { Button } from '@apps/shared';
-+import { Colors } from '@apps/shared/styling';
-+
-+const ROW_COUNT = 40;
-+
-+type ParamList = {
-+  Home: undefined;
-+  SingleDetentSheet: undefined;
-+  TwoDetentsSheet: undefined;
-+};
-+
-+function HomeScreen({ navigation }: NativeStackScreenProps<ParamList, 'Home'>) {
-+  return (
-+    <View style={styles.home}>
-+      <Text style={styles.text}>
-+        In the sheet, scroll the list down a little, then drag it back down in
-+        one gesture, past its top, without lifting the finger. The list should
-+        stop at its top and the sheet should stay in place. A drag that starts
-+        with the list at its top should move the sheet.
-+      </Text>
-+      <Button
-+        title="Open sheet (detents: [1])"
-+        onPress={() => navigation.navigate('SingleDetentSheet')}
-+      />
-+      <Button
-+        title="Open sheet (detents: [0.5, 1])"
-+        onPress={() => navigation.navigate('TwoDetentsSheet')}
-+      />
-+    </View>
-+  );
-+}
-+
-+function SheetScreen({
-+  navigation,
-+}: NativeStackScreenProps<ParamList, 'SingleDetentSheet' | 'TwoDetentsSheet'>) {
-+  return (
-+    <ScrollView nestedScrollEnabled contentContainerStyle={styles.content}>
-+      <Text style={styles.title}>Top of the list</Text>
-+      <Button title="Close" onPress={() => navigation.goBack()} />
-+      {Array.from({ length: ROW_COUNT }, (_, index) => (
-+        <Text key={index} style={styles.row}>
-+          Row {index + 1}
-+        </Text>
-+      ))}
-+    </ScrollView>
-+  );
-+}
-+
-+const Stack = createNativeStackNavigator<ParamList>();
-+
-+export default function Test5092() {
-+  return (
-+    <NavigationContainer>
-+      <Stack.Navigator>
-+        <Stack.Screen name="Home" component={HomeScreen} />
-+        <Stack.Screen
-+          name="SingleDetentSheet"
-+          component={SheetScreen}
-+          options={{
-+            presentation: 'formSheet',
-+            sheetAllowedDetents: [1],
-+            headerShown: false,
-+            contentStyle: styles.sheet,
-+          }}
-+        />
-+        <Stack.Screen
-+          name="TwoDetentsSheet"
-+          component={SheetScreen}
-+          options={{
-+            presentation: 'formSheet',
-+            sheetAllowedDetents: [0.5, 1],
-+            sheetInitialDetentIndex: 1,
-+            headerShown: false,
-+            contentStyle: styles.sheet,
-+          }}
-+        />
-+      </Stack.Navigator>
-+    </NavigationContainer>
-+  );
-+}
-+
-+const styles = StyleSheet.create({
-+  home: {
-+    padding: 16,
-+    gap: 12,
-+  },
-+  text: {
-+    fontSize: 15,
-+  },
-+  sheet: {
-+    backgroundColor: Colors.cardBackground,
-+  },
-+  content: {
-+    padding: 16,
-+  },
-+  title: {
-+    fontSize: 17,
-+    fontWeight: 'bold',
-+    paddingVertical: 12,
-+  },
-+  row: {
-+    paddingVertical: 14,
-+  },
-+});
-```
-
-**File**: `apps/src/tests/issue-tests/index.ts` (modified, +1/-0)
-```diff
-@@ -230,6 +230,7 @@ export { default as Test4863 } from './Test4863';
- export { default as Test4872 } from './Test4872';
- export { default as Test4989 } from './Test4989'; // [E2E skipped]: needs an iPhone Duo cold-launched unfolded
- export { default as Test5015 } from './Test5015'; // [E2E skipped]: truncated tab bar titles can't be checked
-+export { default as Test5092 } from './Test5092';
- export { default as TestScreenAnimation } from './TestScreenAnimation';
- // The following test was meant to demo the "go back" gesture using Reanimated
- // but the associated PR in react-navigation is currently put on hold
-```
-
----
-
-### Incident Patch 3: `409fe4f4` (2026-10-28)
-**Commit Message**: fix(Android, Stack v4): observe window insets from a view we own instead of the decor view listener slot (#5008)
-
-## Description
-
-Closes #4863.
-
-On Android, once another library had replaced the decor view's
-`OnApplyWindowInsetsListener`, every `formSheet` opened afterwards was
-laid out under the status bar (`sheetAllowedDetents: [1.0]`) and no
-longer expanded when the keyboard showed up.
-`react-native-keyboard-controller` replaces that listener on every
-configuration change (the system theme switch from the issue),
-reanimated's `useAnimatedKeyboard` on subscribe / unsubscribe.
-
-A view keeps a single `OnApplyWindowInsetsListener` and offers no way to
-read it back. `InsetsObserverProxy` set ours on the activity's decor
-view once (`hasBeenRegistered`), so whoever wrote the slot next silently
-detached it, and `SheetDelegate` stopped receiving insets for the rest
-of the process: its cached top inset stayed `0` (sheet height = full
-container height) and the keyboard-driven reconfiguration never ran. We
-detached the other library's listener the same way when the first sheet
-opened.
+Spotted during review of #4624.
 
 ## Changes
 
-- `InsetsObserverView` (new): an invisible, zero-sized view attached as
-the first child of the
+- `apps/src/shared/SettingsSwitch.tsx`: `style?: ViewStyle | undefined`,
+`testID?: string | undefined`
 
-**File**: `android/src/main/java/com/swmansion/rnscreens/legacy/InsetsObserverProxy.kt` (modified, +11/-5)
+## Test plan
+
+- `cd apps && npx tsc --noEmit -p tsconfig.json --ignoreDeprecations
+6.0` no longer reports the `SettingsSwitch` error for
+`test-stack-header-item-appearance-ios`
+- `yarn check-types`, eslint, prettier pass
+
+## Checklist
+
+- [x] Included code example that can be used to test this change.
+- [ ] For visual changes, included screenshots / GIFs / recordings
+documenting the change.
+- [ ] For API changes, updated relevant 
+
+**File**: `apps/src/shared/SettingsSwitch.tsx` (modified, +2/-2)
 ```diff
-@@ -2,6 +2,7 @@ package com.swmansion.rnscreens.legacy
+@@ -7,8 +7,8 @@ type Props = {
+   label: string;
+   value: boolean;
+   onValueChange: (value: boolean) => void;
+-  style?: ViewStyle;
+-  testID?: string;
++  style?: ViewStyle | undefined;
++  testID?: string | undefined;
+ };
  
- import android.util.Log
- import android.view.View
-+import android.view.ViewGroup
- import androidx.core.view.OnApplyWindowInsetsListener
- import androidx.core.view.ViewCompat
- import androidx.core.view.WindowInsetsCompat
-@@ -11,7 +12,7 @@ import java.lang.ref.WeakReference
+ export const SettingsSwitch = ({
+```
+
+---
+
+### Incident Patch 2: `b352be65` (2026-11-03)
+**Commit Message**: fix(iOS): tolerate sub-pixel drift in the ContainedModal containment check (#5087)
+
+## Description
+
+The DEBUG containment check of `ContainedModal` compared the
+presentation container's frame with the provider's bounds exactly. The
+bounds come from Fabric's float layout metrics while UIKit autoresizes
+the container in double precision, so a rotation into a width that is
+not exactly representable (e.g. 85% of 874pt on iPhone 17) tripped the
+check on every layout pass while a modal was open, although the two were
+visually identical.
+
+## Changes
+
+- Compare the two rects within one physical pixel
+(`react::floatEquality` with a `1 / screen scale` epsilon).
+
+## Test plan
+
+
+`apps/src/tests/single-feature-tests/contained-modal/test-contained-modal-comprehensive-ios`,
+rotation step with the modal open, iPhone 17 / iOS 27.0: no redbox,
+container still tracks the provider.
+
+## Checklist
+
+- [x] Included code example that can be used to test this change.
+- [ ] For visual changes, included screenshots / GIFs / recordings
+documenting the change.
+- [ ] For API changes, updated relevant public types.
+- [ ] Ensured that CI passes
+
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
+
+Co-a
+
+**File**: `ios/react/modals/contained-modal/RNSContainedModalHostComponentView.mm` (modified, +15/-1)
+```diff
+@@ -13,6 +13,7 @@
+ #import <React/RCTSurfaceTouchHandler.h>
+ #import <react/renderer/components/rnscreens/Props.h>
+ #import <react/renderer/components/rnscreens/RNSContainedModalHostComponentDescriptor.h>
++#import <react/utils/FloatComparison.h>
  
- object InsetsObserverProxy : OnApplyWindowInsetsListener, LifecycleEventListener {
-     private val listeners: HashSet<OnApplyWindowInsetsListener> = hashSetOf()
--    private var eventSourceView: WeakReference<View> = WeakReference(null)
-+    private var eventSourceView: WeakReference<InsetsObserverView> = WeakReference(null)
+ namespace react = facebook::react;
  
-     // Please note semantics of this property. This is not `isRegistered`, because somebody, could unregister
-     // us, without our knowledge, e.g. reanimated or different 3rd party library. This holds only information
-@@ -67,6 +68,7 @@ object InsetsObserverProxy : OnApplyWindowInsetsListener, LifecycleEventListener
-         val observedView = getObservedView()
-         if (hasBeenRegistered && observedView != null) {
-             ViewCompat.setOnApplyWindowInsetsListener(observedView, null)
-+            observedView.detach()
-             hasBeenRegistered = false
-             eventSourceView.clear()
-         }
-@@ -82,12 +84,15 @@ object InsetsObserverProxy : OnApplyWindowInsetsListener, LifecycleEventListener
-     }
- 
-     /**
--     * @return boolean whether the proxy registered as a listener on a view
-+     * @param view the decor view to observe
-+     * @return boolean whether the proxy registered as a listener under the view
-      */
-     fun registerOnView(view: View): Boolean {
-         if (allowRegistration) {
--            ViewCompat.setOnApplyWindowInsetsListener(view, this)
--            eventSourceView = WeakReference(view)
-+            val observer = InsetsObserverView(view.context)
-+            ViewCompat.setOnApplyWindowInsetsListener(observer, this)
-+            observer.attachTo(view as ViewGroup)
-+            eventSourceView = WeakReference(observer)
-             hasBeenRegistered = true
-             return true
-         }
-@@ -97,8 +102,9 @@ object InsetsObserverProxy : OnApplyWindowInsetsListener, LifecycleEventListener
-     fun unregister() {
-         getObservedView()?.takeIf { hasBeenRegistered }?.let {
-             ViewCompat.setOnApplyWindowInsetsListener(it, null)
-+            it.detach()
-         }
-     }
- 
--    private fun getObservedView(): View? = eventSourceView.get()
-+    private fun getObservedView(): InsetsObserverView? = eventSourceView.get()
+@@ -122,6 +123,15 @@ - (void)modalControllerViewDidLayoutSubviews:(RNSContainedModalContentController
  }
-```
-
-**File**: `android/src/main/java/com/swmansion/rnscreens/legacy/InsetsObserverView.kt` (added, +28/-0)
-```diff
-@@ -0,0 +1,28 @@
-+package com.swmansion.rnscreens.legacy
-+
-+import android.content.Context
-+import android.view.View
-+import android.view.ViewGroup
-+
-+/**
-+ * Invisible, zero-sized view through which [InsetsObserverProxy] observes window insets.
-+ *
-+ * A view keeps a single `OnApplyWindowInsetsListener`, so a child we own receives the same insets without competing
-+ * for the decor view's listener with other libraries.
-+ */
-+internal class InsetsObserverView(
-+    context: Context,
-+) : View(context) {
-+    init {
-+        visibility = INVISIBLE
-+        importantForAccessibility = IMPORTANT_FOR_ACCESSIBILITY_NO
-+    }
-+
-+    fun attachTo(decorView: ViewGroup) {
-+        decorView.addView(this, 0, ViewGroup.LayoutParams(0, 0))
-+    }
-+
-+    fun detach() {
-+        (parent as? ViewGroup)?.removeView(this)
-+    }
-+}
-```
-
-**File**: `apps/src/tests/issue-tests/Test4863.tsx` (added, +129/-0)
-```diff
-@@ -0,0 +1,129 @@
-+import React, { useState } from 'react';
-+import { Button, StyleSheet, Text, TextInput, View } from 'react-native';
-+import { NavigationContainer } from '@react-navigation/native';
-+import {
-+  createNativeStackNavigator,
-+  type NativeStackScreenProps,
-+} from '@react-navigation/native-stack';
-+import { useAnimatedKeyboard } from 'react-native-reanimated';
-+
-+type Routes = { Home: undefined; Sheet: undefined; KeyboardSheet: undefined };
-+
-+const Stack = createNativeStackNavigator<Routes>();
-+
-+function KeyboardProbe() {
-+  useAnimatedKeyboard();
-+  return <View style={styles.probeBar} />;
+ 
+ #if DEBUG
++static BOOL RNSRectsEqualWithinPixel(CGRect lhs, CGRect rhs, CGFloat screenScale)
++{
++  const CGFloat tolerance = 1.0 / MAX(screenScale, 1.0);
++  return react::floatEquality(lhs.origin.x, rhs.origin.x, tolerance) &&
++      react::floatEquality(lhs.origin.y, rhs.origin.y, tolerance) &&
++      react::floatEquality(lhs.size.width, rhs.size.width, tolerance) &&
++      react::floatEquality(lhs.size.height, rhs.size.height, tolerance);
 +}
 +
-+function Home({ navigation }: NativeStackScreenProps<Routes, 'Home'>) {
-+  const [probeMounted, setProbeMounted] = useState(false);
-+  return (
-+    <View style={styles.home}>
-+      {probeMounted && <KeyboardProbe />}
-+      <Text style={styles.instructions}>
-+        1. Open sheet: the sheet must sit below the status bar. Close it.{'\n'}
-+        2. Mount, then unmount the keyboard probe.{'\n'}
-+        3. Open sheet again: before the fix it is laid out under the status bar.
-+        Open keyboard sheet: before the fix it stays at the half detent although
-+        the keyboard is visible.
-+      </Text>
-+      <Button title="Open sheet" onPress={() => navigation.navigate('Sheet')} />
-+      <Button
-+        title="Open keyboard sheet"
-+        onPress={() => navigation.navigate('KeyboardSheet')}
-+      />
-+      <Button
-+        title={probeMounted ? 'Unmount keyboard probe' : 'Mount keyboard probe'}
-+        onPress={() => setProbeMounted(mounted => !mounted)}
-+      />
-+    </View>
-+  );
-+}
-+
-+function Sheet({ navigation }: NativeStackScreenProps<Routes, 'Sheet'>) {
-+  return (
-+    <View style={styles.sheet}>
-+      <Text style={styles.marker}>TOP OF THE SHEET</Text>
-+      <Text>The sheet must stay below the status bar.</Text>
-+      <Button title="Close" onPress={() => navigation.goBack()} />
-+    </View>
-+  );
-+}
-+
-+function KeyboardSheet({
-+  navigation,
-+}: NativeStackScreenProps<Routes, 'KeyboardSheet'>) {
-+  return (
-+    <View style={styles.sheet}>
-+      <Text style={styles.marker}>TOP OF THE SHEET</Text>
-+      <TextInput autoFocus placeholder="Focus me" style={styles.input} />
-+      <Button title="Close" onPress={() => navigation.goBack()} />
-+    </View>
-+  );
-+}
-+
-+export default function App() {
-+  return (
-+    <NavigationContainer>
-+      <Stack.Navigator>
-+        <Stack.Screen name="Home" component={Home} />
-+        <Stack.Screen
-+          name="Sheet"
-+          component={Sheet}
-+          options={{
-+            presentation: 'formSheet',
-+            headerShown: false,
-+            sheetAllowedDetents: [1.0],
-+            sheetCornerRadius: 24,
-+          }}
-+        />
-+        <Stack.Screen
-+          name="KeyboardSheet"
-+          component={KeyboardSheet}
-+          options={{
-+            presentation: 'formSheet',
-+            headerShown: false,
-+            sheetAllowedDetents: [0.5, 1.0],
-+            sheetCornerRadius: 24,
-+          }}
-+        />
-+      </Stack.Navigator>
-+    </NavigationContainer>
-+  );
-+}
-+
-+const styles = StyleSheet.create({
-+  home: {
-+    flex: 1,
-+    alignItems: 'center',
-+    justifyContent: 'center',
-+    gap: 12,
-+    padding: 16,
-+  },
-+  instructions: {
-+    textAlign: 'left',
-+  },
-+  probeBar: {
-+    position: 'absolute',
-+    top: 0,
-+    left: 0,
-+    right: 0,
-+    height: 8,
-+    backgroundColor: 'red',
-+  },
-+  sheet: {
-+    flex: 1,
-+    padding: 24,
-+    gap: 12,
-+    backgroundColor: '#cfe8ff',
-+  },
-+  marker: {
-+    fontSize: 28,
-+    fontWeight: '700',
-+  },
-+  input: {
-+    borderWidth: 1,
-+    padding: 8,
-+  },
-+});
-```
-
-**File**: `apps/src/tests/issue-tests/index.ts` (modified, +1/-0)
-```diff
-@@ -226,6 +226,7 @@ export { default as Test4757 } from './Test4757';
- export { default as Test4785 } from './Test4785';
- export { default as Test4811 } from './Test4811';
- export { default as Test4857 } from './Test4857';
-+export { default as Test4863 } from './Test4863';
- export { default as Test4872 } from './Test4872';
- export { default as Test4989 } from './Test4989'; // [E2E skipped]: needs an iPhone Duo cold-launched unfolded
- export { default as Test5015 } from './Test5015'; // [E2E skipped]: truncated tab bar titles can't be checked
+ // The attach point is observed, not documented, UIKit behavior, and the
+ // container's bounds are the modal's touch-blocking area - an escaped
+ // container means dead touch zones, not just a misplaced view. Detection
+@@ -138,7 +148,11 @@ - (void)validateContainmentIntegrity
+     return;
+   }
+ 
+-  if (containerView.superview != providerView || !CGRectEqualToRect(containerView.frame, providerView.bounds)) {
++  // The wrapper's bounds come from Fabric's float layout metrics while UIKit
++  // autoresizes the container in double precision, so after a rotation the two
++  // can differ by a sub-pixel fraction. Compare on the pixel grid.
++  if (containerView.superview != providerView ||
++      !RNSRectsEqualWithinPixel(containerView.frame, providerView.bounds, providerView.window.screen.scale)) {
+     RCTLogError(
+         @"[RNScreens] ContainedModal presentation container escaped its provider (container: %@ in %@, provider bounds: %@). UIKit's context attach-point contract may have changed on this OS version.",
+         NSStringFromCGRect(containerView.frame),
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5130** (2026-11-03): fix(example): Allow undefined for optional SettingsSwitch props (@kmichalikk)
+- **PR #5124** (2026-11-02): feat(iOS, Split): support native column hiding (@t0maboro)
 - **PR #5111** (2026-10-30): feat(iOS, FormSheet v5): add `backgroundEffect` prop (@t0maboro)
+- **PR #5110** (2026-11-02): refactor(v5): migrate platform icon types to the docs conventions (@Loloekk)
+- **PR #5109** (2026-11-02): refactor(v5): migrate common types and entry points to the docs conventions (@Loloekk)
 - **PR #5101** (2026-10-28): release: 4.30.1 (@t0maboro)
-- **PR #5100** (2026-10-30): fix(Android, Stack v4): don't drag form sheet after list scrolls to top (@kkafar)
-- **PR #5099** (2026-10-28): fix: Correct example after backporting (@t0maboro)
-- **PR #5098** (2026-10-28): release: 4.30.1 (@t0maboro)
-- **PR #5097** (2026-10-28): feat(SplitView, iOS): enable large titles by default for column navigation bars (#5081) (@t0maboro)
 
 ---
 
@@ -1045,43 +547,30 @@ the first child of the
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. iOS, Stack v4): restore navigation bar alpha after a cancelled zoom dismissal (#
+## X. example): Allow undefined for optional SettingsSwitch props (#5130)
 
 **RULE**:
-When implementing operations in `ios/legacy/RNSScreenStackHeaderConfig.mm`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in software-mansion/react-native-screens. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `apps/src/shared/SettingsSwitch.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in software-mansion/react-native-screens. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2efecf83`: iOS, Stack v4): restore navigation bar alpha after a cancelled zoom dismissal (#5055). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1f9b45ea`: example): Allow undefined for optional SettingsSwitch props (#5130). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `ios/legacy/RNSScreenStackHeaderConfig.mm`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/src/shared/SettingsSwitch.tsx`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-#import <objc/runtime.h>
-#if RNS_IPHONE_OS_VERSION_AVAILABLE(18_0) && !TARGET_OS_TV && !TARGET_OS_VISION
-// Workaround for a UIKit bug: https://github.com/software-mansion/react-native-screens/issues/5054
-// Seen on iOS 26.5 and 27.0, not reproduced on 18.6. A zoom transition (iOS 18+) hides the navigation bar by animating
-// its alpha. When the transition is cancelled, UIKit restores `navigationBarHidden`, but not the alpha. The
-// `setNavigationBarHidden:` call made by the staying screen's update afterwards is then a no-op, so its visible bar
-// stays at alpha 0. We restore the alpha the bar had before the transition, animated along with the rest of the cancel
-// animation. Remove once Apple fixes it.
-+ (void)restoreNavigationBarAlphaIfTransitionIsCancelled:(UINavigationController *)navctr
-                                                animated:(BOOL)animated
-                                               wasHidden:(BOOL)wasHidden
-                                              shouldHide:(BOOL)shouldHide
-{
-  if (@available(iOS 18.0, *)) {
-    id<UIViewControllerTransitionCoordinator> coordinator = navctr.transitionCoordinator;
-    // Only a transition that hides a visible bar nee
+  style?: ViewStyle | undefined;
+  testID?: string | undefined;
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+  style?: ViewStyle;
+  testID?: string;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2efecf83` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1f9b45ea` are properly handled with clean fallback behavior.

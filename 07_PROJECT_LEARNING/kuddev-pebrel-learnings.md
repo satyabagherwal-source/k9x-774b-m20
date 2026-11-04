@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kuddev-pebrel-learnings.md`  
 > **Source**: github ([https://github.com/Kuddev/pebrel](https://github.com/Kuddev/pebrel))  
-> **Source Version**: `9d8db55f`  
+> **Source Version**: `937b7ae6`  
 > **License**: GPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T21:37:32.726Z  
+> **Timestamp**: 2026-11-04T00:24:19.808Z  
 > **Learning ID**: `learn-github-kuddev-pebrel`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kuddev-pebrel-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Kuddev/pebrel](https://github.com/Kuddev/pebrel))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T21:37:32.121Z  
+> **Harvest Timestamp**: 2026-11-04T00:24:18.328Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: AI-native, GPU-accelerated terminal emulator for Windows with SSH, persistent sessions, split panes, and first-class AI CLI workflows.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3663 stars
+- **Stars / Engagement**: 3704 stars
 
 ---
 
@@ -1458,11 +1458,11 @@ export function register(on) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #839** (2026-10-31): **[Bug] Windows 下 Shift+Enter 在未协商扩展键盘协议的应用里退化为普通回车（CodeBuddy Code 无法换行）**
+  *Symptoms*: ### Operating system / 操作系统  Windows  ### OS version and display / 系统版本与显示  Windows 11 专业版 25H2，Build 26300，单显示器，100% 缩放  ### Pebrel version / 版本号  2.3.1 (7311e07)  ### How did you install Pebrel? / 安装方式  GitHub Release (.exe / .zip / .dmg / .AppImage / .deb)  ### Shell in the affected pane / 出问题的面板用的 Shell  PowerShell 7 (pwsh)  ### Program running in the pane / 面板里正在跑的程序  Gemini CLI / other AI agent — 其他 AI agent  ### Connection type / 连接方式  Local terminal / 本地终端  ### Affected area / 影响范围  Keyboard / IME / mouse / shortcuts / clipboard — 键盘、输入法、鼠标、快捷键、剪贴板  ### Did it work in a previous version? / 旧版本是否正常？  Not sure / 不确定  ### Can you reproduce it? / 复现概率  Always (100%) / 必现  ### Steps to reproduce / 复现步骤  1. 新开一个标签页，在 PowerShell 7 里运行下面的探针脚本，它会把 stdin 收到的原始字节写入 keyhex.txt 2. 运行 `pebrel ctl run --pane <id> --command "node <探针脚本路径>"` 3. 运行 `pebrel ctl send-key --pane <id> --key enter --shift` 4. 读取 keyhex.txt，得到 `0d`（普通回车）；对照组 `pebrel ctl send-key --pane <id> --key j --control` 得到 `0a` 5. 同一台机器、同一个 CLI，在 Windows Terminal 里配置终端级键位后 Shift+Enter 正常换行  探针脚本：  ```js const fs = require('fs'); fs.writeFileSync('keyhex.txt', 'start\n'); process.stdin.setRawMode(true); process.stdin.resume(); process.stdin.on('data', b => fs.appendFileSync('keyhex.txt', Buffer.from(b).toString('hex') + '\n')); setTimeout(() => process.exit(0), 12000); ```   ### Expected behavior / 期望结果  应用应该收到可区分的 Shift+Enter 输入（xterm 惯例是 `ESC CR`，即 `\x1b\r`），从而插入换行而不是提交。  建议修复（任选其一）：  1. 当 pane 内的应用未启用 9001 / kitty 键盘
+
 - **Issue #821** (2026-10-31): **[Bug] Settings search ignores the UI language: Japanese queries find nothing except section names**
   *Symptoms*: ### Operating system / 操作系统  Windows  ### OS version and display / 系统版本与显示  Windows 11 25H2  ### Pebrel version / 版本号  2.3.1 (release). The same code is on current `main`.  ### How did you install Pebrel? / 安装方式  GitHub Release (.exe / .zip / .dmg / .AppImage / .deb)  ### Shell in the affected pane / 出问题的面板用的 Shell  Not sure / 不确定  ### Program running in the pane / 面板里正在跑的程序  Nothing, plain shell prompt / 什么都没跑  ### Connection type / 连接方式  Local terminal / 本地终端  ### Affected area / 影响范围  Settings / theme / layout / blur — 设置页、主题、布局、模糊背景  ### Did it work in a previous version? / 旧版本是否正常？  Not sure / 不确定  ### Can you reproduce it? / 复现概率  Always (100%) / 必现  ### Steps to reproduce / 复现步骤  1. Set the UI language to Japanese. 2. Open Settings and type フォント (font), 不透明度 (opacity), プロキシ (proxy) or ショートカット (shortcut) in the settings search box. 3. Open the keymap page and type the Japanese name of an action shown in the list, for example コピー (copy).  ### Expected behavior / 期望结果  The search goes to the page that owns the setting (Appearance for フォント, Network for プロキシ, and so on), like "font" in English or "字体" in Chinese. On the keymap page, the rows whose Japanese action label matches are shown.  ### Actual behavior / 实际结果  Settings search does not work in Japanese. A Japanese query only matches the page names shown in the navigation (for example 外観). Words for the settings on a page are not matched. A few queries match by accident because Japanese and Chinese share the kanji (背景, 
-
-- **Issue #797** (2026-10-31): **[Bug] 右键 在pebrel中打开时 会弹出几十个终端选项卡**
-  *Symptoms*: ### Operating system / 操作系统  Windows  ### OS version and display / 系统版本与显示  Windows 11 专业工作站版 Windows 11 专业工作站版  ### Pebrel version / 版本号  v2.3.1  ### How did you install Pebrel? / 安装方式  GitHub Release (.exe / .zip / .dmg / .AppImage / .deb)  ### Shell in the affected pane / 出问题的面板用的 Shell  PowerShell 7 (pwsh)  ### Program running in the pane / 面板里正在跑的程序  Other / 其他  ### Connection type / 连接方式  Local terminal / 本地终端  ### Affected area / 影响范围  Startup crash / hang / cannot exit — 启动崩溃、卡死、无法退出, Terminal rendering / scrolling / selection / garbled text — 终端渲染、滚动、选区、乱码  ### Did it work in a previous version? / 旧版本是否正常？  Not sure / 不确定  ### Can you reproduce it? / 复现概率  Always (100%) / 必现  ### Steps to reproduce / 复现步骤  <img width="241" height="1094" alt="Image" src="https://github.com/user-attachments/assets/68466ab2-7aa8-4be4-b39c-b7eb37632c9c" /> 打开一个后 在从文件夹右键点击 在pebrel中打开时 时 就会弹出几十个同样的终端弹窗 百分百复现 很难受  ### Expected behavior / 期望结果  fix it  ### Actual behavior / 实际结果  弹出42个选项卡后 就会新建一个进程  这个进程只有一个  ### Logs / screenshots / 日志或截图  <img width="518" height="1082" alt="Image" src="https://github.com/user-attachments/assets/f4339bf5-7060-42e6-8df0-6a0f0b0fd008" />  ### Non-default settings / 改过的设置  _No response_  ### Before submitting / 提交前确认  - [x] I searched existing issues and did not find a duplicate / 已搜索，无重复 - [x] I tested with the latest release / 已用最新版本试过 - [x] I removed passwords, private keys, tokens and other secrets / 已删除敏感信息
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1479,415 +1479,256 @@ export function register(on) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9d8db55f` (2026-10-31)
-**Commit Message**: Merge pull request #850 from Kuddev/fix/technical-protocol-name-check-20261101
+### Incident Patch 1: `33deff48` (2026-11-02)
+**Commit Message**: Show AI task names without duplicate spinner prefixes (#863)
 
-fix: preserve protocol names and real process fixtures in naming checks
+* Show native AI task titles in terminal tabs
 
-**File**: `architecture/notes/scripts/check_prohibited_names/2026-11-01-protocol-and-process-fixtures.md` (added, +71/-0)
+* Hide Braille spinner prefixes in AI task titles
+
+---------
+
+Co-authored-by: Kuddev <[REDACTED_EMAIL]>
+
+**File**: `nebula_app/src/gpui_shell/terminal/view/runtime.rs` (modified, +5/-0)
 ```diff
-@@ -0,0 +1,71 @@
-+# Graphics protocol and real process fixtures in naming checks
-+
-+## Status
-+
-+Prepared for maintainer review under the task's explicit instruction to retain
-+necessary technical terms. This is a scoped governance correction, separate from
-+the release candidate and its behavior fixes.
-+
-+## Context
-+
-+The naming gate preserves compatibility interfaces while rejecting incidental
-+product mentions. Release documentation needs the proper graphics protocol name.
-+Terminal activity regressions must use the real executable identity consumed by
-+the implementation, including a terminal multiplexer with an agent inside it.
-+
-+## Evidence
-+
-+PR #849 failed the range check in run `41242096322`. The reported additions mix
-+two legitimate interfaces with incidental comments, a hook fixture identifier,
-+and a commit-message mention. Treating every reported line alike would either
-+break meaningful tests or admit unrelated prose.
-+
-+Two new regression methods reproduce four failed positive subcases against the
-+previous checker: English and Chinese protocol names and two executable fixtures.
-+The incidental prose and fixture label deliberately remain negative examples.
-+
-+## Decision
-+
-+Recognize the complete English and Chinese graphics protocol names alongside
-+the existing keyboard protocol forms. In the owning activity test source only,
-+recognize the actual process assignment and the two-program fixture loop.
-+Remove only those exact fragments, then scan all remaining text as before.
-+
-+Do not add a file, directory, commit or accepted subject to exemptions. Keep the
-+per-commit range scan, including added-then-deleted content. Commit messages,
-+comments, arbitrary strings and test labels retain their existing restrictions;
-+the original failing candidate range is not expected to pass unchanged.
-+
-+## Rejected alternatives
-+
-+- Encode, concatenate or rename the real executable to evade the checker: this
-+  conceals the compatibility interface and weakens the regression.
-+- Admit every literal or comment in test files: this hides unrelated comparisons
-+  and promotional URLs beside valid fixtures.
-+- Exempt historical commits or switch to a final-tree-only scan: this loses the
-+  existing contract for content added and later removed.
-+- Broaden commit-message exceptions: process fixtures do not require that change.
-+
-+## Consequences
-+
-+Real process identity and proper protocol names remain readable. Incidental
-+comments, hook labels and commit prose must be cleaned in a normal replacement
-+branch; published branches do not need to be force-pushed. Runtime behavior and
-+the prohibited product-name list are unchanged.
-+
-+## Validation
-+
-+The naming and architecture-governance suites pass: 43 tests. Positive fixtures
-+are paired with wrong-path, arbitrary-string, appended-comparison and appended-URL
-+negative cases. The old checker fails all four new positive subcases. Existing
-+staged, message, push/range, Unicode and merge-resolution coverage remains intact.
-+
-+## Supersedes
-+
-+None. Extends exact compatibility recognition while retaining the editorial
-+boundary in `2026-10-22-remote-control-references.md`.
-+
-+## Revisit when
-+
-+The protocol terminology or the owning process-identity fixtures change. Supply
-+both a real false positive and out-of-scope counterexamples before extending it.
+@@ -140,6 +140,11 @@ impl TerminalView {
+         self.answers.close();
+         let program_changed = self.running_program.take().is_some();
+         let title_changed = self.ai_session.take().is_some() || program_changed;
++        if title_changed {
++            // A later agent must not inherit the preceding task before its
++            // first native title arrives.
++            self.title = "shell".to_owned();
++        }
+         if !self.recovery.preparing() {
+             self.invalidate_ai_session_probe();
+         }
 ```
 
-**File**: `scripts/check_prohibited_names.py` (modified, +6/-0)
+**File**: `nebula_app/src/gpui_shell/terminal/view/startup_tests.rs` (modified, +43/-8)
 ```diff
-@@ -86,6 +86,7 @@
-     re.compile(r"\bsource\s*=\s*[\"']git\+https?://[^\"']+[\"']", re.IGNORECASE),
- )
- PROTOCOL_COMPATIBILITY_PATTERNS = (
-+    re.compile(r"\bkitty\s+(?:graphics\s+protocol\b|图形协议)", re.IGNORECASE),
-     re.compile(r"\bKITTY_[A-Z0-9_]+\b"),
-     re.compile(r"\bkitty_(?:keyboard|seq|event|release|escape|input)[A-Za-z0-9_]*\b", re.IGNORECASE),
-     re.compile(r"\b(?:kitty|tmux)/(?:legacy|style|protocol)\b", re.IGNORECASE),
-@@ -250,6 +251,11 @@ def source_without_allowed_occurrences(path: str, text: str) -> str:
-         text = text.replace(r"/\/tmux$/", "").replace(r"\/tmux\)$/", "")
-     if path == "nebula_app/src/ssh_session/resume/tests.rs":
-         text = re.sub(r'(?<=\\n)[0-9]+ pts/[0-9]+ tmux: client(?=\\n)', "", text)
-+    if path == "nebula_app/src/gpui_shell/terminal/view/activity_tests.rs":
-+        # These fixtures exercise actual process identity. Labels and explanatory
-+        # prose are not interfaces, and appended text must remain checked.
-+        text = text.replace('view.running_program = Some("tmux".into())', "")
-+        text = text.replace('for program in ["tmux", "screen"]', "")
-     return mobile_reference_remainder(path, text)
- 
- 
-```
-
-**File**: `scripts/tests/test_prohibited_names.py` (modified, +33/-0)
-```diff
-@@ -21,6 +21,39 @@ def run_git(repository: Path, *args: str) -> None:
- 
- 
- class ProhibitedNamesTests(unittest.TestCase):
-+    def test_graphics_protocol_names_preserve_the_exact_technical_reference(self) -> None:
-+        for text in ("Support the Kitty graphics protocol.", "支持 Kitty 图形协议。"):
-+            with self.subTest(text=text):
-+                self.assertFalse(check_prohibited_names.prohibited_source_line("CHANGELOG.md", text))
-+                self.assertTrue(check_prohibited_names.prohibited_source_line(
-+                    "CHANGELOG.md", text + " Compare with Kitty."
-+                ))
-+                self.assertTrue(check_prohibited_names.prohibited_source_line(
-+                    "CHANGELOG.md", text + " https://example.invalid/kitty"
-+                ))
-+        for text in ("Kitty graphics are beautiful", "Kitty 图像", "Use Kitty instead",
-+                     "Kitty graphics protocol_adapter"):
-+            self.assertTrue(check_prohibited_names.prohibited_source_line("CHANGELOG.md", text))
-+
-+    def test_activity_fixtures_preserve_real_process_names_without_exempting_prose(self) -> None:
-+        path = "nebula_app/src/gpui_shell/terminal/view/activity_tests.rs"
-+        cases = ('view.running_program = Some("tmux".into());',
-+                 'for program in ["tmux", "screen"] {')
-+        for text in cases:
-+            with self.subTest(text=text):
-+                self.assertFalse(check_prohibited_names.prohibited_source_line(path, text))
-+                self.assertTrue(check_prohibited_names.prohibited_source_line("README.md", text))
-+                self.assertTrue(check_prohibited_names.prohibited_source_line(
-+                    path.replace("activity_tests", "other_tests"), text
-+                ))
-+                self.assertTrue(check_prohibited_names.prohibited_source_line(path, text + " // use tmux"))
-+                self.assertTrue(check_prohibited_names.prohibited_source_line(
-+                    path, text + " // https://example.invalid/tmux"
-+                ))
-+        for text in ('let label = "tmux";', '// tmux 里的 Agent 经 hook 报告回合',
-+                     'hook("inside-tmux", "UserPromptSubmit", 1)', 'println!("tmux");'):
-+            self.assertTrue(check_prohibited_names.prohibited_source_line(path, text))
-+
-     def test_desktop_endpoint_protocol_references_do_not_allow_prose(self) -> None:
-         cases = (
-             ("resume.rs", 'Self { executable: "tmux".into(), socket: String::new() }'),
-```
-
----
-
-### Incident Patch 2: `7b09d5e4` (2026-10-31)
-**Commit Message**: fix: preserve technical protocol and process fixture references
-
-**File**: `architecture/notes/scripts/check_prohibited_names/2026-11-01-protocol-and-process-fixtures.md` (added, +71/-0)
-```diff
-@@ -0,0 +1,71 @@
-+# Graphics protocol and real process fixtures in naming checks
-+
-+## Status
-+
-+Prepared for maintainer review under the task's explicit instruction to retain
-+necessary technical terms. This is a scoped governance correction, separate from
-+the release candidate and its behavior fixes.
-+
-+## Context
-+
-+The naming gate preserves compatibility interfaces while rejecting incidental
-+product mentions. Release documentation needs the proper graphics protocol name.
-+Terminal activity regressions must use the real executable identity consumed by
-+the implementation, including a terminal multiplexer with an agent inside it.
-+
-+## Evidence
-+
-+PR #849 failed the range check in run `41242096322`. The reported additions mix
-+two legitimate interfaces with incidental comments, a hook fixture identifier,
-+and a commit-message mention. Treating every reported line alike would either
-+break meaningful tests or admit unrelated prose.
-+
-+Two new regression methods reproduce four failed positive subcases against the
-+previous checker: English and Chinese protocol names and two executable fixtures.
-+The incidental prose and fixture label deliberately remain negative examples.
-+
-+## Decision
-+
-+Recognize the complete English and Chinese graphics protocol names alongside
-+the existing keyboard protocol forms. In the owning activity test source only,
-+recognize the actual process assignment and the two-program fixture loop.
-+Remove only those exact fragments, then scan all remaining text as before.
-+
-+Do not add a file, directory, commit or accepted subject to exemptions. Keep the
-+per-commit range scan, including added-then-deleted content. Commit messages,
-+comments, arbitrary strings and test labels retain their existing restrictions;
-+the original failing candidate range is not expected to pass unchanged.
-+
-+## Rejected alternatives
-+
-+- Encode, concatenate or rename the real executable to evade the checker: this
-+  conceals the compatibility interface and weakens the regression.
-+- Admit every literal or comment in test files: this hides unrelated comparisons
-+  and promotional URLs beside valid fixtures.
-+- Exempt historical commits or switch to a final-tree-only scan: this loses the
-+  existing contract for content added and later removed.
-+- Broaden commit-message exceptions: process fixtures do not require that change.
-+
-+## Consequences
-+
-+Real process identity and proper protocol names remain readable. Incidental
-+comments, hook labels and commit prose must be cleaned in a normal replacement
-+branch; published branches do not need to be force-pushed. Runtime behavior and
-+the prohibited product-name list are unchanged.
-+
-+## Validation
-+
-+The naming and architecture-governance suites pass: 43 tests. Positive fixtures
-+are paired with wrong-path, arbitrary-string, appended-comparison and appended-URL
-+negative cases. The old checker fails all four new positive subcases. Existing
-+staged, message, push/range, Unicode and merge-resolution coverage remains intact.
-+
-+## Supersedes
-+
-+None. Extends exact compatibility recognition while retaining the editorial
-+boundary in `2026-10-22-remote-control-references.md`.
-+
-+## Revisit when
-+
-+The protocol terminology or the owning process-identity fixtures change. Supply
-+both a real false positive and out-of-scope counterexamples before extending it.
-```
-
-**File**: `scripts/check_prohibited_names.py` (modified, +6/-0)
-```diff
-@@ -86,6 +86,7 @@
-     re.compile(r"\bsource\s*=\s*[\"']git\+https?://[^\"']+[\"']", re.IGNORECASE),
- )
- PROTOCOL_COMPATIBILITY_PATTERNS = (
-+    re.compile(r"\bkitty\s+(?:graphics\s+protocol\b|图形协议)", re.IGNORECASE),
-     re.compile(r"\bKITTY_[A-Z0-9_]+\b"),
-     re.compile(r"\bkitty_(?:keyboard|seq|event|release|escape|input)[A-Za-z0-9_]*\b", re.IGNORECASE),
-     re.compile(r"\b(?:kitty|tmux)/(?:legacy|style|protocol)\b", re.IGNORECASE),
-@@ -250,6 +251,11 @@ def source_without_allowed_occurrences(path: str, text: str) -> str:
-         text = text.replace(r"/\/tmux$/", "").replace(r"\/tmux\)$/", "")
-     if path == "nebula_app/src/ssh_session/resume/tests.rs":
-         text = re.sub(r'(?<=\\n)[0-9]+ pts/[0-9]+ tmux: client(?=\\n)', "", text)
-+    if path == "nebula_app/src/gpui_shell/terminal/view/activity_tests.rs":
-+        # These fixtures exercise actual process identity. Labels and explanatory
-+        # prose are not interfaces, and appended text must remain checked.
-+        text = text.replace('view.running_program = Some("tmux".into())', "")
-+        text = text.replace('for program in ["tmux", "screen"]', "")
-     return mobile_reference_remainder(path, text)
- 
- 
-```
-
-**File**: `scripts/tests/test_prohibited_names.py` (modified, +33/-0)
-```diff
-@@ -21,6 +21,39 @@ def run_git(repository: Path, *args: str) -> None:
- 
- 
- class ProhibitedNamesTests(unittest.TestCase):
-+    def test_graphics_protocol_names_preserve_the_exact_technical_reference(self) -> None:
-+        for text in ("Support the Kitty graphics protocol.", "支持 Kitty 图形协议。"):
-+            with self.subTest(text=text):
-+                self.assertFalse(check_prohibited_names.prohibited_source_line("CHANGELOG.md", text))
-+                self.assertTrue(check_prohibited_names.prohibited_source_line(
-+                    "CHANGELOG.md", text + " Compare with Kitty."
-+                ))
-+                self.assertTrue(check_prohibited_names.prohibited_source_line(
-+                    "CHANGELOG.md", text + " https://example.invalid/kitty"
-+                ))
-+        for text in ("Kitty graphics are beautiful", "Kitty 图像", "Use Kitty instead",
-+                     "Kitty graphics protocol_adapter"):
-+            self.assertTrue(check_prohibited_names.prohibited_source_line("CHANGELOG.md", text))
-+
-+    def test_activity_fixtures_preserve_real_process_names_without_exempting_prose(self) -> None:
-+        path = "nebula_app/src/gpui_shell/terminal/view/activity_tests.rs"
-+        cases = ('view.running_program = Some("tmux".into());',
-+                 'for program in ["tmux", "screen"] {')
-+        for text in cases:
-+            with self.subTest(text=text):
-+                self.assertFalse(check_prohibited_names.prohibited_source_line(path, text))
-+                self.assertTrue(check_prohibited_names.prohibited_source_line("README.md", text))
-+                self.assertTrue(check_prohibited_names.prohibited_source_line(
-+                    path.replace("activity_tests", "other_tests"), text
-+                ))
-+                self.assertTrue(check_prohibited_names.prohibited_source_line(path, text + " // use tmux"))
-+                self.assertTrue(check_prohibited_names.prohibited_source_line(
-+                    path, text + " // https://example.invalid/tmux"
-+                ))
-+        for text in ('let label = "tmux";', '// tmux 里的 Agent 经 hook 报告回合',
-+                     'hook("inside-tmux", "UserPromptSubmit", 1)', 'println!("tmux");'):
-+            self.assertTrue(check_prohibited_names.prohibited_source_line(path, text))
-+
-     def test_desktop_endpoint_protocol_references_do_not_allow_prose(self) -> None:
-         cases = (
-             ("resume.rs", 'Self { executable: "tmux".into(), socket: String::new() }'),
-```
-
----
-
-### Incident Patch 3: `234dfdf9` (2026-10-31)
-**Commit Message**: Merge pull request #804 from M1nt-Ch0c0/fix/fish-welcome
-
-Fix welcome command for fish shells
-
-**File**: `nebula_app/src/window_context/welcome.rs` (modified, +63/-2)
-```diff
-@@ -182,6 +182,12 @@ fn powershell_single_quoted_path(path: &std::path::Path) -> String {
-     format!("'{}'", path.to_string_lossy().replace('\'', "''"))
+@@ -905,18 +905,53 @@ fn ssh_tab_name_and_hover_preserve_host_identity_across_remote_titles(cx: &mut T
  }
  
-+// The interactive shell may be fish (including when launched through WSL).
-+// Keep the outer command portable and let sh interpret the POSIX script.
-+fn unix_intro_command() -> Vec<u8> {
-+    b"sh -c 'clear; if command -v fastfetch >/dev/null 2>&1; then fastfetch; else printf \"\\033[36mPebrel\\033[0m\\n\"; uname -a; fi'\n".to_vec()
+ #[gpui::test]
+-fn ai_tab_hover_shows_full_directory_and_reported_task_but_not_stale_task(cx: &mut TestAppContext) {
++fn ai_tab_name_shows_reported_task_and_restores_directory_on_exit(cx: &mut TestAppContext) {
+     let (view, window, _) = open(cx);
+     view.update(window, |view, cx| {
+         view.process_event(Event::CwdReport("/home/test/很长的项目目录".into()), cx);
+-        view.running_program = Some("codex".into());
+-        view.process_event(Event::Title("修复 SSH 标签名称".into()), cx);
+-        assert_eq!(view.tab_label(), "很长的项目目录");
+-        let hover = view.tab_tooltip(&view.tab_label());
+-        assert!(hover.contains("/home/test/很长的项目目录"));
+-        assert!(hover.contains("修复 SSH 标签名称"));
++        for program in ["codex", "claude", "pi", "opencode", "qoder"] {
++            view.running_program = Some(program.into());
++            assert_eq!(
++                view.tab_label(),
++                "很长的项目目录",
++                "a new task must not inherit an old title"
++            );
++            view.process_event(Event::Title("修复 SSH 标签名称".into()), cx);
++            assert_eq!(view.tab_label(), "修复 SSH 标签名称", "{program}");
++            let hover = view.tab_tooltip(&view.tab_label());
++            assert!(hover.contains("/home/test/很长的项目目录"));
++            assert!(hover.contains("修复 SSH 标签名称"));
++            view.process_event(Event::CommandDone { exit_code: Some(0) }, cx);
++            assert_eq!(view.tab_label(), "很长的项目目录");
++            assert!(!view.tab_tooltip(&view.tab_label()).contains("修复 SSH 标签名称"));
++        }
++    });
 +}
 +
- /// Bytes to send to a freshly spawned shell so it prints the Nebula intro.
- #[cfg(windows)]
- pub(super) fn nebula_fastfetch_intro_command() -> Vec<u8> {
-@@ -195,7 +201,7 @@ pub(super) fn nebula_fastfetch_intro_command() -> Vec<u8> {
- #[cfg(windows)]
- pub(crate) fn nebula_fastfetch_intro_command_for(columns: usize, shell: NebulaShell) -> Vec<u8> {
-     if shell == NebulaShell::Bash {
--        return b"clear; if command -v fastfetch >/dev/null 2>&1; then fastfetch; else printf '\\033[36mPebrel\\033[0m\\n'; uname -a; fi\n".to_vec();
-+        return unix_intro_command();
-     }
- 
-     // 新 tab 必须秒出：所有系统信息在 Rust 侧一次性缓存；交给 PowerShell 的
-@@ -212,7 +218,7 @@ pub(crate) fn nebula_fastfetch_intro_command_for(columns: usize, shell: NebulaSh
- /// Bytes to send to a freshly spawned shell so it prints the Nebula intro.
- #[cfg(not(windows))]
- pub(super) fn nebula_fastfetch_intro_command() -> Vec<u8> {
--    b"clear; if command -v fastfetch >/dev/null 2>&1; then fastfetch; else printf '\\033[36mPebrel\\033[0m\\n'; uname -a; fi\n".to_vec()
-+    unix_intro_command()
++#[gpui::test]
++fn ai_task_name_preserves_remote_identity_in_hover_and_shell_fallback(cx: &mut TestAppContext) {
++    let (view, window, _) = open(cx);
++    view.update(window, |view, cx| {
++        view.ssh_destination = Some("root@192.0.2.10:2222".into());
++        view.ssh_label = Some("SG-1 新加坡".into());
++        view.cwd = "/srv/project".into();
++        view.running_program = Some("claude".into());
++        for title in ["", "shell", "claude", "Claude Code", "/srv/project", "root@192.0.2.10:2222"]
++        {
++            view.process_event(Event::Title(title.into()), cx);
++            assert_eq!(view.tab_label(), "SG-1 新加坡", "{title}");
++        }
++        view.process_event(Event::Title("修复登录失败".into()), cx);
++        assert_eq!(view.tab_label(), "修复登录失败");
++        assert_eq!(
++            view.tab_tooltip(&view.tab_label()),
++            "修复登录失败\nSG-1 新加坡\nroot@192.0.2.10:2222\n/srv/project\nclaude · 修复登录失败"
++        );
+         view.process_event(Event::CommandDone { exit_code: Some(0) }, cx);
+-        assert!(!view.tab_tooltip(&view.tab_label()).contains("修复 SSH 标签名称"));
++        assert_eq!(view.tab_label(), "SG-1 新加坡");
++        view.running_program = Some("htop".into());
++        view.process_event(Event::Title("ordinary application title".into()), cx);
++        assert_eq!(view.tab_label(), "SG-1 新加坡");
+     });
  }
  
- /// Width-aware variant; the Unix intro delegates to fastfetch, which already
-@@ -233,6 +239,61 @@ mod tests {
+```
+
+**File**: `nebula_app/src/gpui_shell/terminal/view/tab_identity.rs` (modified, +37/-14)
+```diff
+@@ -54,9 +54,12 @@ impl TerminalView {
+             ssh_label(self.ssh_destination.as_deref(), &crate::display::nebula_data_dir());
+     }
  
-     use super::*;
+-    /// A remote directory or OSC title must never replace a saved host name.
+-    /// Local tabs continue to use their working directory, not program titles.
++    /// Native AI task titles name the focused pane; ordinary shells retain their
++    /// directory or saved SSH host name. Workspace manual names take precedence.
+     pub fn tab_label(&self) -> String {
++        if let Some(task) = self.reported_ai_task() {
++            return task.to_owned();
++        }
+         if let Some(destination) = &self.ssh_destination {
+             return self.ssh_label.as_ref().unwrap_or(destination).clone();
+         }
+@@ -69,6 +72,35 @@ impl TerminalView {
+             .unwrap_or_else(|| ".".to_owned())
+     }
  
-+    #[cfg(unix)]
-+    #[test]
-+    fn unix_intro_runs_in_fish_and_posix_shells_with_or_without_fastfetch() {
-+        use std::os::unix::fs::{PermissionsExt, symlink};
-+        use std::process::Command;
-+
-+        let root = tempfile::tempdir().unwrap();
-+        symlink("/bin/sh", root.path().join("sh")).unwrap();
-+        for (name, body) in [("clear", "exit 0"), ("uname", "echo FALLBACK")] {
-+            let path = root.path().join(name);
-+            fs::write(&path, format!("#!/bin/sh\n{body}\n")).unwrap();
-+            fs::set_permissions(path, fs::Permissions::from_mode(0o755)).unwrap();
++    fn reported_ai_task(&self) -> Option<&str> {
++        if self.exited.is_some()
++            || matches!(self.ssh_stage, Some(crate::ssh_session::SshStage::Failed(_)))
++        {
++            return None;
 +        }
-+        let command = String::from_utf8(unix_intro_command()).unwrap();
-+        let search_path = std::env::var_os("PATH").unwrap();
-+        for shell in ["sh", "bash", "fish"] {
-+            let Some(executable) = std::env::split_paths(&search_path)
-+                .map(|directory| directory.join(shell))
-+                .find(|path| path.is_file())
-+            else {
-+                assert_ne!(shell, "sh", "sh is required for the welcome command");
-+                continue;
-+            };
-+            for fastfetch in [false, true] {
-+                let fastfetch_path = root.path().join("fastfetch");
-+                if fastfetch {
-+                    fs::write(&fastfetch_path, "#!/bin/sh\necho FASTFETCH\n").unwrap();
-+                    fs::set_permissions(&fastfetch_path, fs::Permissions::from_mode(0o755))
-+                        .unwrap();
-+                } else if fastfetch_path.exists() {
-+                    fs::remove_file(&fastfetch_path).unwrap();
-+                }
-+                let output = Command::new(&executable)
-+                    .args(["-c", &command])
-+                    .env("PATH", root.path())
-+                    .output()
-+                    .unwrap();
-+                assert!(
-+                    output.status.success(),
-+                    "{shell}: {}",
-+                    String::from_utf8_lossy(&output.stderr)
-+                );
-+                let stdout = String::from_utf8(output.stdout).unwrap();
-+                if fastfetch {
-+                    assert_eq!(stdout, "FASTFETCH\n");
-+                } else {
-+                    assert!(
-+                        stdout.contains("Pebrel") && stdout.contains("FALLBACK"),
-+                        "{shell}: {stdout:?}"
-+                    );
-+                }
-+            }
-+        }
++        let program = self
++            .running_program
++            .as_deref()
++            .or_else(|| self.ai_session.as_ref().map(|session| session.source.as_str()))?;
++        let agent = crate::ai_agents::AgentKind::parse(program)?;
++        // Native Braille spinners duplicate the tab's own activity indicator.
++        let title = self
++            .title
++            .trim_start_matches(|ch: char| {
++                ch.is_whitespace() || matches!(ch, '\u{2800}'..='\u{28ff}')
++            })
++            .trim_end();
++        (!title.is_empty()
++            && title != "shell"
++            && title != program
++            && title != agent.label()
++            && title != agent.display_name()
++            && title != self.cwd
++            && Some(title) != self.ssh_destination.as_deref()
++            && !title.starts_with("NEBULA|"))
++        .then_some(title)
 +    }
 +
-     #[test]
-     fn deleted_scripts_are_recreated_for_both_layouts() {
-         let root = tempfile::tempdir().unwrap();
+     /// Hover uses only already observed state: no filesystem scans, SSH calls,
+     /// or process enumeration on the render path.
+     pub(crate) fn tab_tooltip(&self, tab_name: &str) -> String {
+@@ -94,18 +126,9 @@ impl TerminalView {
+                 .as_deref()
+                 .or_else(|| self.ai_session.as_ref().map(|session| session.source.as_str()));
+             if let Some(program) = program {
+-                let agent = crate::ai_agents::AgentKind::parse(program);
+-                let name = agent.map_or(program, |agent| agent.label());
+-                let title = self.title.trim();
+-                let task = (!title.is_empty()
+-                    && title != "shell"
+-                    && title != program
+-                    && title != name
+-                    && title != self.cwd
+-                    && Some(title) != self.ssh_destination.as_deref()
+-                    && !title.starts_with("NEBULA|"))
+-                .then_some(title);
+-                let detail = match task.filter(|_| agent.is_some()) {
++                let name = crate::ai_agents::AgentKind::parse(program)
++                    .map_or(program, |agent| agent.label());
++                let detail = match self.reported_ai_task() {
+                     Some(task) => format!("{name} · {task}"),
+                     None => name.to_owned(),
+                 };
+```
+
+**File**: `nebula_app/src/gpui_shell/workspace/rename/tests.rs` (modified, +38/-0)
+```diff
+@@ -161,6 +161,44 @@ fn redo(cx: &mut VisualTestContext) {
+     });
+ }
+ 
++#[gpui::test]
++fn automatic_task_titles_follow_clicked_panes_and_preserve_manual_tab_names(
++    cx: &mut TestAppContext,
++) {
++    use nebula_terminal::event::Event;
++
++    let (fixture, mut cx) = RenameFixture::open(cx);
++    fixture.workspace.update(&mut cx, |workspace, cx| {
++        let WorkspaceTab::Terminal { panes, .. } = &workspace.tabs[0] else { panic!() };
++        for (pane, task) in panes.iter().zip(["修复前端登录", "验证后端接口"]) {
++            pane.view.update(cx, |view, cx| {
++                let _receiver = view.install_completion_test_session();
++                for event in
++                    [Event::Title("NEBULA|/srv/project||codex".into()), Event::Title(task.into())]
++                {
++                    view.remote_files_test_event(event, cx);
++                }
++            });
++        }
++        assert_eq!(workspace.tab_title(0, cx), "group-title");
++        apply_commit_rename(&mut workspace.tab_meta[0], "");
++        assert_eq!(workspace.tab_title(0, cx), "修复前端登录");
++        assert_eq!(workspace.tab_presentation(0, cx, true).title, "修复前端登录");
++        cx.notify();
++    });
++    settle(&mut cx);
++    let target = cx.debug_bounds(fixture.headers[1]).unwrap().center();
++    cx.simulate_click(target, Modifiers::default());
++    settle(&mut cx);
++    fixture.workspace.update(&mut cx, |workspace, cx| {
++        assert_eq!(workspace.tab_title(0, cx), "验证后端接口");
++        assert_eq!(workspace.tab_presentation(0, cx, false).title, "验证后端接口");
++        apply_commit_rename(&mut workspace.tab_meta[0], "我的工作区");
++        assert_eq!(workspace.tab_title(0, cx), "我的工作区");
++        assert_eq!(workspace.tab_presentation(0, cx, true).title, "我的工作区");
++    });
++}
++
+ #[gpui::test]
+ fn saved_names_undo_redo_then_typing_uses_native_history(cx: &mut TestAppContext) {
+     let (fixture, mut cx) = RenameFixture::open(cx);
+```
+
+**File**: `nebula_app/src/gpui_shell/workspace/tab_presentation.rs` (modified, +3/-3)
+```diff
+@@ -10,7 +10,7 @@ use super::*;
+ #[derive(Clone, Debug, Default)]
+ pub(super) struct TabMeta {
+     pub(super) runtime_id: crate::runtime_api::tabs::TabId,
+-    /// 用户重命名过的标签名；`None` = 跟着 cwd/文件名自动走。
++    /// 用户重命名过的标签名；`None` = 跟着任务、目录或文件名自动走。
+     pub(super) custom_name: Option<String>,
+     /// 色标（右键菜单的标签颜色）；`None` = 不画色条。
+     pub(super) color: Option<Rgb>,
+@@ -61,8 +61,8 @@ impl NebulaWorkspace {
+             WorkspaceTab::Document { view, .. } => view.read(cx).tab_title().into(),
+             WorkspaceTab::Code { view, .. } => view.read(cx).tab_title(cx).into(),
+             tab @ WorkspaceTab::Terminal { .. } => {
+-                // 标签 = 聚焦 pane 的 cwd 末级目录名（旧壳 chrome_tab_label
+-                // 规则）。分屏计数**不拼在这里**：这份字符串还要喂给 runtime
++                // 标签跟随聚焦 pane 的原生 AI 任务名，普通 shell 回退到目录或主机。
++                // 分屏计数**不拼在这里**：这份字符串还要喂给 runtime
+                 // API 的 tab label、跨窗拖拽标题和重命名预填，掺进 "⊞2" 会
+                 // 一路泄漏，而且长标题下会被 truncate_tab_label 截掉、被
+                 // custom_name 整条顶掉。计数改由 TabPresentation::pane_count
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #867** (2026-11-04): docs: show the 1molchuan wordmark in acknowledgements (@Kuddev)
+- **PR #866** (2026-11-03): docs: thank 1molchuan in the README acknowledgements (@Kuddev)
+- **PR #865** (closed): 上游 pull (@ventupx)
+- **PR #863** (2026-11-02): Show AI task names without duplicate spinner prefixes (@Kuddev)
+- **PR #851** (2026-10-31): fix: complete 2.3.2 issue sweep and prepare Windows candidate (@Kuddev)
 - **PR #850** (2026-10-31): fix: preserve protocol names and real process fixtures in naming checks (@Kuddev)
-- **PR #849** (closed): fix: complete reviewed issue fixes and prepare 2.3.2 candidate (@Kuddev)
-- **PR #838** (2026-10-31): feat(shell): add undo-safe native PSReadLine pointer edits (@Kuddev)
-- **PR #837** (2026-10-31): feat(shell): support native Bash and Zsh pointer editing (@Kuddev)
-- **PR #836** (2026-10-31): feat(predictions): connect native adapters to runtime and settings (@Kuddev)
-- **PR #835** (2026-10-31): feat(predictions): add native Pi and OpenCode adapters (@Kuddev)
 
 ---
 
@@ -1907,49 +1748,25 @@ Fix welcome command for fish shells
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #850 from Kuddev/fix/technical-protocol-name-check-20261101
+## X. Show AI task names without duplicate spinner prefixes (#863)
 
 **RULE**:
-When implementing operations in `architecture/notes/scripts/check_prohibited_names/2026-11-01-protocol-and-process-fixtures.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Kuddev/pebrel. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `nebula_app/src/gpui_shell/terminal/view/runtime.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Kuddev/pebrel. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9d8db55f`: Merge pull request #850 from Kuddev/fix/technical-protocol-name-check-20261101. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `33deff48`: Show AI task names without duplicate spinner prefixes (#863). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `architecture/notes/scripts/check_prohibited_names/2026-11-01-protocol-and-process-fixtures.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `nebula_app/src/gpui_shell/terminal/view/runtime.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-# Graphics protocol and real process fixtures in naming checks
-
-## Status
-
-Prepared for maintainer review under the task's explicit instruction to retain
-necessary technical terms. This is a scoped governance correction, separate from
-the release candidate and its behavior fixes.
-
-## Context
-
-The naming gate preserves compatibility interfaces while rejecting incidental
-product mentions. Release documentation needs the proper graphics protocol name.
-Terminal activity regressions must use the real executable identity consumed by
-the implementation, including a terminal multiplexer with an agent inside it.
-
-## Evidence
-
-PR #849 failed the range check in run `41242096322`. The reported additions mix
-two legitimate interfaces with incidental comments, a hook fixture identifier,
-and a commit-message mention. Treating every reported line alike would either
-break meaningful tests or admit unrelated prose.
-
-Two new regression methods reproduce four failed positive subcases against the
-previous checker: English and Chinese protocol names and two executable fixtures.
-The incidental prose and fixture label deliberately remain negative examples.
-
-## Decision
-
-Recognize the complete English and 
+        if title_changed {
+            // A later agent must not inherit the preceding task before its
+            // first native title arrives.
+            self.title = "shell".to_owned();
+        }
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1959,4 +1776,4 @@ Recognize the complete English and
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9d8db55f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `33deff48` are properly handled with clean fallback behavior.

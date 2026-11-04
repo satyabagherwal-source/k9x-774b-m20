@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/gitoxidelabs-gitoxide-learnings.md`  
 > **Source**: github ([https://github.com/GitoxideLabs/gitoxide](https://github.com/GitoxideLabs/gitoxide))  
-> **Source Version**: `95194788`  
+> **Source Version**: `2baa819b`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T23:16:01.017Z  
+> **Timestamp**: 2026-11-04T01:58:19.976Z  
 > **Learning ID**: `learn-github-gitoxidelabs-gitoxide`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/gitoxidelabs-gitoxide-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/GitoxideLabs/gitoxide](https://github.com/GitoxideLabs/gitoxide))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T23:16:01.008Z  
+> **Harvest Timestamp**: 2026-11-04T01:58:17.910Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A tasteful, lean, fast & safe pure Rust implementation of Git
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 12094 stars
+- **Stars / Engagement**: 12099 stars
 
 ---
 
@@ -1612,13 +1612,13 @@ where
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #3142** (2026-10-31): **fast ci**
-  *Symptoms*: faster CI? 
-
-- **Issue #3141** (2026-10-31): **fast ci**
-  *Symptoms*: CI performance improvements, and better local quality evaluation 
+- **Issue #3152** (2026-11-03): **even faster qa**
+  *Symptoms*: ### Tasks  * [x] windows improvements * [x] refackiew 
   **Post-Mortem & Fix Analysis**:
-  > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":"0472e4ca564e1d01ee931f67c8a92b10684a034b","has_any_findings":false,"has_unresolved_findings":false,"status":"completed"},"security_review":{"commit_sha":null,"has_any_findings":null,"has_unresolved_findings":null,"status":null}} -->  ## Codex Review Summary  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 📝 **Code Review** | ✅ **Completed** <relative-time datetime="2026-10-31T10:06:41.246953Z">2026-10-31T10:06:41.246953Z</relative-time> | `0472e4c` | PR opened |    <details> <summary>ℹ️ About Codex in GitHub</summary> <br/>  [Your team has set up Codex to review pull requests in this repo](https://chatgpt.com/codex/cloud/settings/general). Reviews are triggered when you - Open a pull request for review - Mark a draft as ready - Comment "@codex review" or "@codex security review".  Codex 
+  > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":"19ff6a69569cf678ed7750d84fa749bb9840d9cd","has_any_findings":false,"has_unresolved_findings":false,"status":"completed"},"security_review":{"commit_sha":null,"has_any_findings":null,"has_unresolved_findings":null,"status":null}} -->  ## Codex Review Summary  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 📝 **Code Review** | ✅ **Completed** <relative-time datetime="2026-11-03T10:30:12.047230Z">2026-11-03T10:30:12.047230Z</relative-time> | `19ff6a6` | Draft marked ready |    <details> <summary>ℹ️ About Codex in GitHub</summary> <br/>  [Your team has set up Codex to review pull requests in this repo](https://chatgpt.com/codex/cloud/settings/general). Reviews are triggered when you - Open a pull request for review - Mark a draft as ready - Comment "@codex review" or "@codex security review"
+
+- **Issue #3150** (2026-11-03): **Remove the last `unsafe` block from `gix-revision` and forbid `unsafe` there**
+  *Symptoms*: **AI disclosure:** Claude Code, an AI agent, wrote this description, the patch and the test, and is speaking through the `b84330808` account. The commit carries a `Co-Authored-By` trailer for the same reason.  ### Motivation  The account holder asked me to look for `unsafe` in gitoxide's OSS-Fuzz-fuzzed parsers that can be removed without a performance cost, as security hardening. This is also meant for Google's Patch Rewards program, which rewards removing `unsafe` from Rust crates in OSS-Fuzz projects. `gix-revision` was the smallest case: one `unsafe` block, and safe code is faster there.  ### Change  For rev-specs that look like `git describe` output, such as `v1.0-12-g3bee7fb`, `long_describe_prefix()` computes the length of the anchor's reference name. It did this with `<*const u8>::offset_from()` on two pointers into `name`. That was the only `unsafe` block in `gix-revision`.  - Compute the length as the distance between the address where `name` starts and the address where the   last anchor token ends. This is safe Rust. If the computation were ever wrong, the bounds-checked   `name[..len]` would panic. It could not cause undefined behaviour. - Drop the `next_back()` call. It only located the first token for `offset_from()`. - Switch the crate from `#![deny(unsafe_code)]` to `#![forbid(unsafe_code)]`. Then a local   `#[allow(unsafe_code)]` or `#[expect(unsafe_code)]` can't bring `unsafe` back. - Extend `full_format_parses_hash_portion_as_prefix` with `foo--bar-12-g3be
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1635,637 +1635,1033 @@ where
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `dd59ccde` (2026-10-30)
-**Commit Message**: fix(gix-dir): keep all conflict stages tracked (#3134)
+### Incident Patch 1: `0c6c639c` (2026-11-03)
+**Commit Message**: Share generated fixtures between exhaustive native QA passes
 
-Removed some gitoxide-core tests, which only have tests for `organize` right now.
+The archived and generated native passes use separate source snapshots,
+so scripts without portable archives used to regenerate identical fixtures
+within one CI job. Allocate one fresh generated-fixture cache for the two
+passes and tell `gix-testtools` which source snapshot each replay uses.
+Archive extraction and source-integrity checks remain separate.
+
+Keep every producer snapshot and the cache alive until both replays finish.
+Retain them together if a source copy changes. Scrub inherited cache settings
+and allocate nothing for fast mode, whose single replay already shares its
+local fixture cache. Feature/hash variants keep their existing shared
+snapshot; no checks, fixture modes or failure gates are removed.
+
+A controlled Windows multi-round fetch benchmark, using the same compiled
+test binary and identical scripts, measured two passes at 45.212s without
+sharing and 23.998s with sharing (46.9% faster). The shared second pass took
+1.685s, and both passes used one generated fixture at the same absolute path.
+
+All 39 QA tests pass, including fresh cache ownership, normal cleanup,
+retention after source mutation, and the
+
+**File**: `DEVELOPMENT.md` (modified, +6/-1)
+```diff
+@@ -352,7 +352,12 @@ when an archive is absent or stale. This avoids repeated expensive Git subproces
+ comparisons against freshly generated Git baselines still run in exhaustive QA. Linux and macOS
+ fast tests use freshly generated fixtures. Exhaustive native tests compile/list once,
+ then reuse the same nextest binaries for archived and generated fixtures in separate temporary
+-source copies. Feature/hash variants also run in an isolated copy, sharing compatible fixture
++source copies. The native passes share a fresh cache of generated read-only scripted fixtures.
++When no archive is available, the archived pass can generate a fixture once for both passes;
++the shared cache never substitutes extracted archives for generated fixtures. Fixtures that write archives or require
++execution in a writable destination keep their existing behavior. The cache and its source
++copies remain alive until both passes finish, and are retained together if a source copy changes.
++Feature/hash variants also run in an isolated copy, sharing compatible fixture
+ caches within their task and continuing after individual failures. Their fixture caches cannot
+ reuse a previous local run's extracted archives. Archive changes cause
+ a failure and retain the changed copy for inspection. Explicit archive-only fixtures keep
+```
+
+**File**: `gix-archive/Cargo.toml` (modified, +1/-0)
+```diff
+@@ -48,6 +48,7 @@ document-features = { version = "0.2.0", optional = true }
+ 
+ [dev-dependencies]
+ gix-testtools = { path = "../tests/tools" }
++gix-path = { path = "../gix-path" }
+ gix-odb = { path = "../gix-odb", features = ["sha1", "sha256"] }
+ gix-worktree = { path = "../gix-worktree", default-features = false, features = [
+     "attributes",
+```
+
+**File**: `gix-archive/tests/archive.rs` (modified, +22/-11)
+```diff
+@@ -59,7 +59,8 @@ mod from_tree {
+ 
+     #[test]
+     fn basic_usage_internal() -> TestResult {
+-        Ok(basic_usage(Format::InternalTransientNonPersistable, |buf| {
++        let format = Format::InternalTransientNonPersistable;
++        Ok(basic_usage(format, |buf, link_target| {
+             #[cfg(target_pointer_width = "64")]
+             let expected_buffer_length = match gix_testtools::object_hash() {
+                 gix_hash::Kind::Sha1 => 551,
+@@ -72,14 +73,20 @@ mod from_tree {
+                 gix_hash::Kind::Sha256 => todo!("let the test fail on CI and add the value here"),
+                 _ => unimplemented!(),
+             };
+-            assert_eq!(buf.len(), expected_buffer_length);
++            assert_eq!(
++                buf.len(),
++                expected_buffer_length - b"../extra-file".len() + link_target.len()
++            );
+ 
+             let mut stream = gix_worktree_stream::Stream::from_read(std::io::Cursor::new(buf));
+             let mut paths_and_modes = Vec::new();
+             while let Some(mut entry) = stream.next_entry().expect("entry retrieval does not fail") {
+                 paths_and_modes.push((entry.relative_path().to_owned(), entry.mode.kind(), entry.id));
+                 let mut buf = Vec::new();
+                 entry.read_to_end(&mut buf).expect("stream can always be read");
++                if entry.relative_path() == "extra-dir/symlink-to-extra" {
++                    assert_eq!(buf.as_bstr(), link_target, "the symlink target is preserved");
++                }
+             }
+ 
+             assert_eq!(
+@@ -143,7 +150,7 @@ mod from_tree {
+     #[test]
+     #[cfg(feature = "tar")]
+     fn basic_usage_tar() -> TestResult {
+-        Ok(basic_usage(Format::Tar, |buf| {
++        Ok(basic_usage(Format::Tar, |buf, _link_target| {
+             use tar::EntryType;
+             let mut ar = tar::Archive::new(buf.as_slice());
+             let mut out = Vec::new();
+@@ -197,10 +204,11 @@ mod from_tree {
+             Format::TarGz {
+                 compression_level: Some(9),
+             },
+-            |buf| {
++            |buf, link_target| {
++                let limit = 340 - b"../extra-file".len() + link_target.len();
+                 assert!(
+-                    buf.len() < 340,
+-                    "quite a bit smaller than uncompressed: {} < 340",
++                    buf.len() < limit,
++                    "quite a bit smaller than uncompressed: {} < {limit}",
+                     buf.len()
+                 );
+                 Ok(())
+@@ -215,10 +223,11 @@ mod from_tree {
+             Format::Zip {
+                 compression_level: Some(9),
+             },
+-            |buf| {
++            |buf, link_target| {
++                let limit = 1400 - b"../extra-file".len() + link_target.len();
+                 assert!(
+-                    buf.len() < 1400,
+-                    "much bigger than uncompressed for some reason (565): {} < 1400",
++                    buf.len() < limit,
++                    "ZIP metadata overhead stays bounded: {} < {limit}",
+                     buf.len()
+                 );
+                 let ar = rawzip::ZipArchive::from_slice(buf.as_slice())?;
+@@ -275,9 +284,11 @@ mod from_tree {
+ 
+     fn basic_usage(
+         format: gix_archive::Format,
+-        make_assertion: impl FnOnce(Vec<u8>) -> gix_testtools::Result,
++        make_assertion: impl FnOnce(Vec<u8>, &gix_testtools::bstr::BStr) -> gix_testtools::Result,
+     ) -> gix_testtools::Result {
+         let (dir, head_tree, odb, mut cache) = basic()?;
++        // Windows can report an absolute target for this MSYS-created relative symlink.
++        let link_target = gix_path::into_bstr(std::fs::read_link(dir.join("extra-dir/symlink-to-extra"))?)?;
+         let mut stream = gix_worktree_stream::from_tree(
+             head_tree,
+             odb.clone(),
+@@ -328,7 +339,7 @@ mod from_tree {
+                 "stream is exhausted, all written to buf"
+             );
+         }
+-        make_assertion(buf).expect("all tests pass");
++        make_assertion(buf, link_target.as_ref()).expect("all tests pass");
+         Ok(())
+     }
+ 
+```
+
+**File**: `gix-worktree-stream/tests/stream.rs` (modified, +6/-1)
+```diff
+@@ -137,6 +137,8 @@ mod from_tree {
+     #[test]
+     fn will_provide_all_information_and_respect_export_ignore() -> gix_testtools::TestResult {
+         let (dir, head_tree, odb, mut cache) = basic()?;
++        // Windows can report an absolute target for this MSYS-created relative symlink.
++        let link_target = gix_path::into_bstr(std::fs::read_link(dir.join("extra-dir/symlink-to-extra"))?)?;
+         let mut stream = gix_worktree_stream::from_tree(
+             head_tree,
+             odb.clone(),
+@@ -168,6 +170,9 @@ mod from_tree {
+             paths_and_modes.push((entry.relative_path().to_owned(), entry.mode.kind(), entry.id));
+             let mut buf = Vec::new();
+             entry.read_to_end(&mut buf)?;
++            if entry.relative_path() == "extra-dir/symlink-to-extra" {
++                assert_eq!(buf.as_bstr(), link_target.as_ref(), "the symlink target is preserved");
++            }
+             if !buf.is_empty() && entry.mode.is_blob() {
+                 if entry.relative_path().contains_str("extra") {
+                     assert!(
+@@ -285,7 +290,7 @@ mod from_tree {
+ 
+         assert_eq!(
+             copy.lock().len(),
+-            expected_buffer_length,
++            expected_buffer_length - b"../extra-file".len() + link_target.len(),
+             "keep track of file size changes of the streaming format"
+         );
+ 
+```
+
+**File**: `tests/it/src/qa/native_tests.rs` (modified, +129/-13)
+```diff
+@@ -7,7 +7,7 @@ use std::{
+ use gix_error::{OptionExt, Result, ResultExt, bail, message};
+ 
+ use super::{
+-    ops::{Snapshot, SourceState, checked, git, output, source_snapshot, source_state},
++    ops::{Snapshot, SourceState, checked, empty_snapshot, git, output, source_snapshot, source_state},
+     run,
+ };
+ 
+@@ -17,6 +17,36 @@ enum Fixtures {
+     Generated,
+ }
+ 
++struct NativeSnapshots {
++    sources: Vec<(Snapshot, SourceState)>,
++    // Only generated fixtures use this cache; extracted archives stay in their source snapshot.
++    cache: Option<Snapshot>,
++}
++
++impl NativeSnapshots {
++    fn new(root: &Path, count: usize) -> Result<Self> {
++        Ok(Self {
++            sources: (0..count).map(|_| snapshot(root)).collect::<Result<_>>()?,
++            cache: (count > 1).then(empty_snapshot).transpose()?,
++        })
++    }
++
++    fn check(self, index: usize) -> Result<Self> {
++        let (snapshot, before) = &self.sources[index];
++        if let Err(error) = unchanged(&snapshot.path, before) {
++            for (snapshot, _) in &self.sources {
++                eprintln!("Retained native test snapshot at {}", snapshot.path.display());
++            }
++            if let Some(cache) = &self.cache {
++                eprintln!("Retained native fixture cache at {}", cache.path.display());
++            }
++            std::mem::forget(self);
++            return Err(error);
++        }
++        Ok(self)
++    }
++}
++
+ fn fixture_modes(mode: &str, windows: bool) -> Result<&'static [Fixtures]> {
+     match mode {
+         "fast" if windows => Ok(&[Fixtures::Archived]),
+@@ -46,6 +76,7 @@ fn test_command(
+     metadata: &Path,
+     binaries: &Path,
+     snapshot: &Path,
++    cache: Option<&Path>,
+     fixtures: Fixtures,
+     windows_arm: bool,
+ ) -> Result<Command> {
+@@ -55,6 +86,11 @@ fn test_command(
+         .args(["--no-tests", "pass"])
+         .env_remove("GIX_TEST_IGNORE_ARCHIVES")
+         .env_remove("GIX_TEST_CREATE_ARCHIVES_EVEN_ON_CI");
++    if let Some(cache) = cache {
++        command
++            .env("GIX_TEST_FIXTURE_CACHE", cache)
++            .env("GIX_TEST_FIXTURE_SOURCE_ROOT", snapshot);
++    }
+     command.env(
+         match fixtures {
+             Fixtures::Archived => "GIX_TEST_CREATE_ARCHIVES_EVEN_ON_CI",
+@@ -101,32 +137,26 @@ fn run(root: &Path, args: &[String], modes: &[Fixtures]) -> Result<()> {
+             .args(args)
+             .stderr(Stdio::inherit()),
+     )?;
+-    let mut snapshots = Vec::new();
+-    for _ in modes {
+-        snapshots.push(snapshot(root)?);
+-    }
++    let mut snapshots = NativeSnapshots::new(root, modes.len())?;
+     // Keep metadata beside the first snapshot's index, outside fixture status checks.
+-    let state = snapshots[0].0.path.join(".git");
+-    let metadata_path = save_metadata(root, &snapshots[0].0.path)?;
++    let state = snapshots.sources[0].0.path.join(".git");
++    let metadata_path = save_metadata(root, &snapshots.sources[0].0.path)?;
+     let binaries_path = state.join("binaries-metadata.json");
+     fs::write(&binaries_path, binaries).or_raise(|| message("Save nextest binaries for native tests"))?;
+     let mut result = Ok(());
+     for (index, fixtures) in modes.iter().enumerate() {
+-        let (snapshot, state) = &snapshots[index];
++        let (snapshot, _) = &snapshots.sources[index];
+         eprintln!("Native tests with {fixtures:?} fixtures in {}", snapshot.path.display());
+         let test_result = checked(&mut test_command(
+             root,
+             &metadata_path,
+             &binaries_path,
+             &snapshot.path,
++            snapshots.cache.as_ref().map(|cache| cache.path.as_path()),
+             *fixtures,
+             cfg!(all(windows, target_arch = "aarch64")),
+         )?);
+-        if let Err(error) = unchanged(&snapshot.path, state) {
+-            eprintln!("Retained native test snapshot at {}", snapshot.path.display());
+-            std::mem::forget(snapshots.remove(index));
+-            return Err(error);
+-        }
++        snapshots = snapshots.check(index)?;
+         if test_result.is_err() {
+             result = test_result;
+         }
+@@ -262,6 +292,80 @@ mod tests {
+ 
+     use super::*;
+ 
++    #[test]
++    fn native_cache_is_fresh_and_retained_with_changed_snapshots() -> gix_error::TestResult {
++        let source = empty_snapshot()?;
++        checked(git(&source.path)?.args(["init", "--quiet"]))?;
++        fs::write(source.path.join("input"), "original")?;
++        checked(git(&source.path)?.args(["add", "input"]))?;
++        assert!(
++            NativeSnapshots::new(&source.path, 1)?.cache.is_none(),
++            "fast mode's single replay already shares its local fixture cache"
++        );
++        let mut previous_cache = PathBuf::new();
++        for changed in [false, true] {
++            let snapshots = NativeSnapshots::new(&source.path, 2)?;
++            let cache = snapshots
++                .cache
++                .as_ref()
++                .expect("two replays share generated fixtures")
++   
+```
+
+**File**: `tests/it/src/qa/ops.rs` (modified, +9/-3)
+```diff
+@@ -311,17 +311,23 @@ pub(super) fn source_snapshot(root: &Path) -> Result<Snapshot> {
+     snapshot_files(root, &files)
+ }
+ 
+-fn snapshot_files(root: &Path, files: &[u8]) -> Result<Snapshot> {
++pub(super) fn empty_snapshot() -> Result<Snapshot> {
+     let stamp = SystemTime::now()
+         .duration_since(UNIX_EPOCH)
+         .or_raise(|| message("Read time for QA snapshot"))?
+         .as_nanos();
+     // Git for Windows still limits some repository paths even with core.longpaths enabled.
+     let mut id = DefaultHasher::new();
+     (std::process::id(), stamp).hash(&mut id);
+-    let path = std::env::temp_dir().join(format!("qa-{:x}", id.finish()));
++    let path = std::path::absolute(std::env::temp_dir())
++        .or_raise(|| message("Resolve QA temporary directory"))?
++        .join(format!("qa-{:x}", id.finish()));
+     fs::create_dir(&path).or_raise(|| message!("Create QA snapshot {}", path.display()))?;
+-    let snapshot = Snapshot { path };
++    Ok(Snapshot { path })
++}
++
++fn snapshot_files(root: &Path, files: &[u8]) -> Result<Snapshot> {
++    let snapshot = empty_snapshot()?;
+     for path in source_paths(files)? {
+         let source = root.join(&path);
+         let Some(metadata) = source_metadata(root, &path)? else {
+```
+
+**File**: `tests/it/src/qa/run.rs` (modified, +4/-0)
+```diff
+@@ -383,6 +383,8 @@ pub(super) fn process(root: &Path, command: &Command) -> Result<process::Command
+         "GIX_TEST_IGNORE_ARCHIVES",
+         "GIX_TEST_CREATE_ARCHIVES_EVEN_ON_CI",
+         "GIX_TEST_FIXTURE_HASH",
++        "GIX_TEST_FIXTURE_CACHE",
++        "GIX_TEST_FIXTURE_SOURCE_ROOT",
+         "GIX_MERGE_UPDATE_CARTESIAN_BASELINE",
+         "GIX_MERGE_UPDATE_BASELINE",
+         "INSTA_FORCE_UPDATE",
+@@ -565,6 +567,8 @@ mod tests {
+             ("INSTA_FORCE_PASS", Some("0")),
+             ("RUSTUP_TOOLCHAIN", Some("1.99.0")),
+             ("GIX_TEST_FIXTURE_HASH", Some("sha256")),
++            ("GIX_TEST_FIXTURE_CACHE", None),
++            ("GIX_TEST_FIXTURE_SOURCE_ROOT", None),
+             ("INSTA_FORCE_UPDATE", None),
+             ("INSTA_FORCE_UPDATE_SNAPSHOTS", None),
+             ("TRYBUILD", None),
+```
+
+---
+
+### Incident Patch 2: `a6fbf76b` (2026-11-03)
+**Commit Message**: Reduce Linux QA serialization and debug artifacts
+
+The one-file histogram optimization in `gix-imara-diff` exposed a 24m09s
+Linux feature job in CI run 41510500602. Its 103 compilation checks took
+7m18s, and 98 feature-test builds took 12m22s, while test execution took
+only 2m58s. The conservative reverse-dependency closure selects 65 of 71
+crates; keep that coverage intact rather than pruning configurations
+without accounting for Cargo feature activation and unification.
+
+Run feature tests in their own Linux job so compilation checks no longer
+precede them. Each test variant already builds its own binaries and
+creates its own fixture snapshot. Keep exhaustive feature contracts with
+compilation checks, and extend the partition regression to verify exact
+ownership and test-only provisioning in fast and exhaustive plans.
+
+Use `CARGO_PROFILE_DEV_DEBUG=line-tables-only` for Linux CI runner builds,
+including downstream checks, before cache lookup. The test and QA profiles
+inherit it, preserving assertions, overflow checks and source-location
+backtraces while omitting full debugger variable/type information.
+
+The missing feature cache had been restored with the exact same key by an
+earli
+
+**File**: `.github/workflows/ci.yml` (modified, +8/-0)
+```diff
+@@ -25,6 +25,8 @@ jobs:
+   plan:
+     name: Select QA work
+     runs-on: ubuntu-latest
++    env:
++      CARGO_PROFILE_DEV_DEBUG: line-tables-only
+     outputs:
+       matrix: ${{ steps.plan.outputs.matrix }}
+       plan: ${{ steps.plan.outputs.plan }}
+@@ -141,6 +143,10 @@ jobs:
+         if: matrix.just
+         with:
+           just-version: ${{ matrix.just_version }} # zizmor: ignore[unpinned-tools] Exact version in Cargo.toml's workspace.metadata.qa.tool-versions.
++      - name: Reduce Linux debug artifacts while retaining backtraces
++        if: runner.os == 'Linux'
++        shell: bash
++        run: echo 'CARGO_PROFILE_DEV_DEBUG=line-tables-only' >> "$GITHUB_ENV"
+       - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2.9.3
+         with:
+           shared-key: ${{ matrix.cache || matrix.id }}
+@@ -177,6 +183,8 @@ jobs:
+       matrix: ${{ fromJSON(needs.plan.outputs.downstream) }}
+     continue-on-error: true
+     runs-on: ubuntu-latest
++    env:
++      CARGO_PROFILE_DEV_DEBUG: line-tables-only
+     steps:
+       - name: Check out the gix version under test
+         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+```
+
+**File**: `DEVELOPMENT.md` (modified, +11/-0)
+```diff
+@@ -262,6 +262,17 @@ runs the constrained pure-Rust Docker check. Journey tests require Unix. CI also
+ Windows baseline doctests and MSRV builds. `--all-platforms` shows these exact assignments;
+ a local run never attempts another host's native checks.
+ 
++Linux feature compilation checks and feature tests run in separate jobs, retaining every
++selected configuration. Linux CI runner builds use `CARGO_PROFILE_DEV_DEBUG=line-tables-only` (also inherited
++by the test and QA profiles) to reduce compilation and cache storage costs while preserving
++debug assertions, overflow checks, and file/line backtraces. Full debugger variable and type
++information is omitted. Reproduce this setting locally by exporting the same variable.
++
++Rust caches are saved by `main` runs and restored by PRs. They retain downloaded dependencies
++and their build artifacts; workspace crates are rebuilt. Job caches compete for the repository's
++storage allowance, so a correct key can still miss after eviction. Changes to the Cargo profile
++environment produce new cache keys that need a `main` run to populate.
++
+ | Stage | Checks |
+ | --- | --- |
+ | `self-test` | Lightweight planner/runner tests; CI runs these once in the planning gate |
+```
+
+**File**: `tests/it/src/qa/catalog.rs` (modified, +31/-5)
+```diff
+@@ -270,7 +270,7 @@ pub fn tasks(metadata: &Value, selection: &Value, platform: &str) -> Result<Vec<
+     }
+     let variants = core("variants")?;
+     if !variants.is_empty() {
+-        out.push(Task::new("feature-tests", "features", &["tests"], variants));
++        out.push(Task::new("feature-tests", "feature-tests", &["tests"], variants));
+     }
+     for (id, stage) in [
+         ("default-doctests", "default-doctests"),
+@@ -806,13 +806,39 @@ mod tests {
+ 
+     #[test]
+     fn ci_jobs_partition_the_same_local_tasks() -> gix_error::TestResult {
++        let mut metadata = metadata();
++        metadata["packages"][0]["metadata"]["qa"]["checks"] = json!([{"args":["--all-features"]}]);
++        metadata["packages"][0]["metadata"]["qa"]["tests"] = json!([{"args":["--all-features"], "requires":["xz"]}]);
+         for mode in ["fast", "exhaustive"] {
+             let selection = json!({"mode":mode, "packages":["gix-path","gitoxide","internal-tools"]});
+-            let plan = plan(&metadata(), &selection, "linux-x86_64", true)?;
++            let plan = plan(&metadata, &selection, "linux-x86_64", true)?;
++            let jobs = plan["jobs"].as_array().expect("plan jobs");
++            let owner = |task| {
++                jobs.iter()
++                    .find(|job| job["tasks"].as_array().expect("job tasks").contains(&json!(task)))
++                    .expect("feature task has a CI job")
++            };
++            let builds = owner("feature-builds");
++            let tests = owner("feature-tests");
++            assert_ne!(
++                builds["id"], tests["id"],
++                "feature builds and tests can run concurrently"
++            );
++            assert_eq!(builds["tools"], json!([]), "build checks do not need nextest");
++            assert_eq!(tests["tools"], json!(["cargo-nextest@0.9.122"]));
++            assert_eq!(builds["xz"], false, "test-only requirements stay with the tests");
++            assert_eq!(tests["xz"], true);
++            if mode == "exhaustive" {
++                assert_eq!(
++                    owner("feature-contracts")["id"],
++                    builds["id"],
++                    "feature contracts remain with compilation checks"
++                );
++            }
+             let mut seen = BTreeSet::new();
+-            for job in plan["jobs"].as_array().expect("plan jobs") {
++            for job in jobs {
+                 let platform = job["platform"].as_str().expect("job platform");
+-                let local = tasks(&metadata(), &selection, platform)?;
++                let local = tasks(&metadata, &selection, platform)?;
+                 for id in job["tasks"].as_array().expect("job task IDs") {
+                     let id = id.as_str().expect("task ID");
+                     assert!(
+@@ -826,7 +852,7 @@ mod tests {
+                 }
+             }
+             for platform in CI_PLATFORMS {
+-                for task in tasks(&metadata(), &selection, platform)? {
++                for task in tasks(&metadata, &selection, platform)? {
+                     assert_eq!(
+                         seen.contains(&(*platform, task.id)),
+                         assigned(&task, platform, mode == "exhaustive"),
+```
+
+---
+
+### Incident Patch 3: `cd9b3ad4` (2026-11-03)
+**Commit Message**: feat(gix-testtools): share generated scripted fixtures within a test run
+
+I looked at this in detail and changed a thing or two. The tests I left
+untouched, they are quite insane but I presume they are correctly reflecting
+how this feature is going to be used.
 
 <!-- agent -->
-Callers of `Repository::status()` reported a deleted-by-us conflict twice:
-once as a conflict and once as an untracked file. They had to filter those
-duplicates themselves. The same directory walk also misclassifies added-by-them
-and both-deleted conflicts, and can apply ignore rules to these tracked paths.
+Exhaustive native QA uses separate source snapshots for archived and
+freshly generated fixtures. Scripts without portable archives therefore
+run twice even when their output is read-only and identical. Expensive
+remote histories made this visible in Windows CI.
 
-The stage-0/ours lookup is appropriate for consumers reading index content,
-but membership must include any conflict stage. Use the existing path-stage
-range lookup in the directory walk, preferring ours for type information and
-otherwise the highest available stage. Use any-stage membership lookups in
-`gix exclude query` and the fixture archive exclusion helper as well. Leave the
-public index lookup API unchanged.
+Add an opt-in generated fixture cache using `GIX_TEST_FIXTURE_CACHE` and
+`GIX_TEST_FIXTURE_SOURCE_ROOT`. Equivalent snapshots share a stable
+absolute fixture directory, keyed by source namespace, exact script
+contents and invocation spelling, arguments, object hash and post-process
+version. An absolute lock and atomic completion record prevent concurrent
+or failed generators from publishing partial fixtures. Generation stays
+at its final path so embedded alternates and worktree links remain valid.
 
-When a directory on disk also has a conflicting file entry, check for indexed
-children before treating it as only that file. Otherwise an ignore rule can
-hide the children and make `gix clean` remove a directory containing tracked
-files. Keep these directories tracked so traversal and collapsing preserve
-their inde
+Only normal read-only fixtures with ignored or absent archives participate,
+and only when archive writing is disabled or excluded. Existing archives
+retain 
 
-**File**: `gitoxide-core/src/repository/exclude.rs` (modified, +12/-4)
+**File**: `gix-diff/tests/diff/blob/slider.rs` (modified, +6/-2)
 ```diff
-@@ -56,7 +56,7 @@ pub fn query(
-             .metadata()
-             .ok()
-             .map(|m| is_dir_to_mode(m.is_dir()))
--            .or_else(|| path.ends_with(b"/").then_some(gix::index::entry::Mode::DIR));
-+            .or_else(|| is_directory_query(path.as_bstr()).then_some(gix::index::entry::Mode::DIR));
-         let query_path = repo.normalize_path(&path)?;
-         let entry = cache.at_entry(query_path.as_bstr(), mode)?;
-         let match_ = entry
-@@ -72,19 +72,27 @@ pub fn query(
+@@ -128,7 +128,11 @@ fn read_fixture(
+     let baseline_path = worktree_path.join(&file_name);
+     let baseline = std::fs::read(&baseline_path)?;
+     let baseline = crate::blob::skip_header_and_fold_to_unidiff(&baseline);
+-    let baseline_path = crate_root.join(&baseline_path).strip_prefix(project_root)?.to_owned();
++    let baseline_path = crate_root.join(&baseline_path);
++    let baseline_path = baseline_path
++        .strip_prefix(project_root)
++        .unwrap_or(&baseline_path)
++        .to_owned();
+     let git_no_indent_heuristic = if read_no_indent {
+         read_no_indent_baseline(worktree_path, &file_name)?
+     } else {
+@@ -166,7 +170,7 @@ fn cases_from_fixture(fixture: &str, read_no_indent: bool) -> gix_testtools::Res
+ 
+ struct Case {
+     file_name: String,
+-    /// Location of the generated baseline, relative to the workspace root.
++    /// Location of the generated baseline, relative to the workspace root when possible.
+     baseline_path: PathBuf,
+     algorithm: Algorithm,
+     /// The primary Git baseline, generated with `--indent-heuristic` and used for the pass/fail comparison.
+```
+
+**File**: `gix-discover/tests/discover/upwards/ceiling_dirs.rs` (modified, +31/-21)
+```diff
+@@ -142,22 +142,24 @@ fn more_restrictive_ceiling_dirs_overrule_less_restrictive_ones() -> TestResult
+ }
+ 
+ #[test]
+-fn ceiling_dirs_are_not_processed_differently_than_the_git_dir_candidate() -> TestResult {
+-    let work_dir = repo_path()?;
+-    let dir = work_dir.join("some/very/deeply/nested/subdir/../../../../../..");
++fn nonmatching_relative_ceiling_is_ignored_after_resolving_start_path() -> TestResult {
++    let outer = gix_testtools::scripted_fixture_read_only("make_nested_repos.sh")?;
++    let inner = std::env::current_dir()?.join(outer).join("inner");
++    let dir = Path::new("some/very/deeply/nested/subdir/../../../../../..");
+     let (repo_path, _trust) = gix_discover::upwards_opts(
+-        &dir,
++        dir,
+         Options {
++            current_dir: Some(&inner),
+             match_ceiling_dir_or_error: false,
+             ceiling_dirs: vec![Path::new("./some").into()],
+             ..Default::default()
+         },
+     )?;
+ 
+-    assert_ne!(
+-        &repo_path.as_ref().canonicalize()?,
+-        &work_dir,
+-        "a relative path that climbs above the test repo should yield the gitoxide repo"
++    assert_eq!(
++        repo_path.into_repository_and_work_tree_directories().1.as_deref(),
++        Some(Path::new("..")),
++        "the start path resolves to the outer fixture; the relative ceiling does not contain it and is ignored"
+     );
+ 
+     Ok(())
+@@ -186,30 +188,38 @@ fn no_matching_ceiling_dirs_errors_by_default() -> TestResult {
+ 
+ #[test]
+ fn ceilings_are_adjusted_to_match_search_dir() -> TestResult {
+-    let relative_work_dir = repo_path()?;
+-    let cwd = std::env::current_dir()?;
+-    let absolute_ceiling_dir = gix_path::realpath_opts(&relative_work_dir, &cwd, 8)?;
+-    let dir = relative_work_dir.join("some");
+-    assert!(dir.is_relative());
++    // This test changes the process-wide CWD to resolve relative search and ceiling paths against the fixture.
++    // Restoring it afterward does not prevent races with other tests, so run the body in an isolated child.
++    if gix_testtools::run_in_isolated_process()? {
++        return Ok(());
++    }
++    let work_dir = std::env::current_dir()?.join(repo_path()?);
++    let _cwd = gix_testtools::set_current_dir(&work_dir)?;
+     let (repo_path, _trust) = gix_discover::upwards_opts(
+-        &dir,
++        Path::new("some"),
+         Options {
+-            ceiling_dirs: vec![absolute_ceiling_dir],
++            ceiling_dirs: vec![work_dir.clone()],
+             ..Default::default()
+         },
+     )?;
+-    assert_repo_is_current_workdir(repo_path, &relative_work_dir);
++    assert_eq!(
++        repo_path.into_repository_and_work_tree_directories().1.as_deref(),
++        Some(Path::new(".")),
++        "an absolute ceiling matches the relative search and preserves its relative result"
++    );
+ 
+-    assert!(relative_work_dir.is_relative());
+-    let absolute_dir = gix_path::realpath_opts(relative_work_dir.join("some").as_ref(), &cwd, 8)?;
+     let (repo_path, _trust) = gix_discover::upwards_opts(
+-        &absolute_dir,
++        &work_dir.join("some"),
+         Options {
+-            ceiling_dirs: vec![relative_work_dir.clone()],
++            ceiling_dirs: vec![Path::new(".").into()],
+             ..Default::default()
+         },
+     )?;
+-    assert_repo_is_current_workdir(repo_path, &relative_work_dir);
++    assert_eq!(
++        repo_path.into_repository_and_work_tree_directories().1.as_deref(),
++        Some(work_dir.as_path()),
++        "a relative ceiling matches the absolute search and preserves its absolute result"
++    );
      Ok(())
  }
  
-+fn is_directory_query(path: &BStr) -> bool {
-+    path.ends_with(b"/") || path.ends_with(b"/.")
+```
+
+**File**: `tests/tools/src/fixture_cache.rs` (added, +245/-0)
+```diff
+@@ -0,0 +1,245 @@
++use std::{
++    collections::hash_map::DefaultHasher,
++    env, fs,
++    hash::Hasher,
++    io::Write,
++    path::{Component, Path, PathBuf},
++    time::Duration,
++};
++
++use gix_error::{Error, Result, ResultExt, bail};
++
++use crate::{FixtureState, PostResult};
++
++/// A handle to one entry in a caller-owned cache of generated fixtures.
++/// Equivalent requests select the same entry, even through separate handles. Archives never populate it.
++pub(super) struct Cache {
++    /// Absolute entry directory selected by the identity hash, containing `identity` and `completed` files
++    /// alongside `fixture-*` generation-attempt directories, rather than the fixture payload directly.
++    /// For example, `/tmp/qa-run-123/fixture-cache/<identity-hash>`, with the payload in a child
++    /// directory such as `fixture-AbCd12/`. A successful attempt's random name is recorded in `completed`
++    /// and reused by later requests; a new suffix is chosen only when starting a generation attempt.
++    directory: PathBuf,
++    /// Serialized cache-key inputs, hashed to select `directory` and persisted there in full.
++    /// Comparing these bytes before reuse detects hash collisions instead of accepting the wrong fixture.
++    identity: Vec<u8>,
 +}
 +
- fn print_match_unless_tracked(
-     match_: Option<gix::ignore::search::Match<'_>>,
-     index: &gix::index::State,
-     query_path: &BStr,
-     display_path: &BStr,
-     out: impl std::io::Write,
- ) -> std::io::Result<()> {
--    print_match(match_.filter(|_| !is_tracked(index, query_path)), display_path, out)
-+    print_match(
-+        match_.filter(|_| !is_tracked(index, query_path, is_directory_query(display_path))),
-+        display_path,
-+        out,
-+    )
- }
- 
--fn is_tracked(index: &gix::index::State, path: &BStr) -> bool {
-+fn is_tracked(index: &gix::index::State, path: &BStr, is_directory_query: bool) -> bool {
-     let path = path.trim_end_with(|b| b == '/').as_bstr();
--    index.entry_by_path(path).is_some() || index.path_is_directory(path)
-+    (!is_directory_query && index.entry_index_by_path(path).is_ok()) || index.path_is_directory(path)
- }
- 
- fn print_match(
-```
-
-**File**: `gitoxide-core/src/repository/status.rs` (modified, +2/-14)
-```diff
-@@ -6,7 +6,7 @@ use gix::{
-     error::{ResultExt, bail, unsupported},
-     status::{self, index_worktree},
- };
--use gix_status::index_as_worktree::{Change, Conflict, EntryStatus};
-+use gix_status::index_as_worktree::{Change, EntryStatus};
- 
- use crate::OutputFormat;
- 
-@@ -228,7 +228,7 @@ fn print_index_entry_status(
- ) -> std::io::Result<()> {
-     let char_storage;
-     let status = match status {
--        EntryStatus::Conflict { summary, entries: _ } => as_str(summary),
-+        EntryStatus::Conflict { summary, entries: _ } => summary.as_str(),
-         EntryStatus::Change(change) => {
-             char_storage = change_to_char(&change);
-             std::str::from_utf8(std::slice::from_ref(&char_storage)).expect("valid ASCII")
-@@ -244,18 +244,6 @@ fn print_index_entry_status(
-     writeln!(out, "{status: >3} {}", display_path.display())
- }
- 
--fn as_str(c: Conflict) -> &'static str {
--    match c {
--        Conflict::BothDeleted => "DD",
--        Conflict::AddedByUs => "AU",
--        Conflict::DeletedByThem => "UD",
--        Conflict::AddedByThem => "UA",
--        Conflict::DeletedByUs => "DU",
--        Conflict::BothAdded => "AA",
--        Conflict::BothModified => "UU",
--    }
--}
--
- fn change_to_char(change: &Change<(), gix::submodule::Status>) -> u8 {
-     // Known status letters: https://github.com/git/git/blob/6807fcfedab84bc8cd0fbf721bc13c4e68cda9ae/diff.h#L613
-     match change {
-```
-
-**File**: `gix-dir/src/walk/classify.rs` (modified, +26/-3)
-```diff
-@@ -192,12 +192,27 @@ pub fn path(
-         return Ok(out.with_status(entry::Status::Pruned));
-     }
- 
--    let (uptodate_index_kind, index_kind, property) = resolve_file_type_with_index(
-+    let (uptodate_index_kind, mut index_kind, property) = resolve_file_type_with_index(
-         rela_path,
-         ctx.index,
-         ctx.ignore_case_index_lookup.filter(|_| ignore_case),
-     );
-     let mut kind = uptodate_index_kind.or(disk_kind).or_else(on_demand_disk_kind);
-+    if kind == Some(entry::Kind::Directory) && index_kind.is_some_and(|kind| !kind.is_dir()) {
-+        // A conflict can index both a file and its children; keep the directory tracked.
-+        let has_indexed_children = if let Some(lookup) = ctx.ignore_case_index_lookup.filter(|_| ignore_case) {
-+            ctx.index
-+                .path_is_directory_icase(rela_path.as_bstr(), ignore_case, lookup)
-+        } else {
-+            rela_path.push(b'/');
-+            let has_children = ctx.index.prefixed_entries_range(rela_path.as_bstr()).is_some();
-+            rela_path.pop();
-+            has_children
++impl Cache {
++    /// Whether either cache environment variable is set, requesting shared caching.
++    /// Partial configuration counts as a request so [`Self::from_env()`] can report it as invalid.
++    pub(super) fn is_requested_from_env() -> bool {
++        env::var_os("GIX_TEST_FIXTURE_CACHE").is_some() || env::var_os("GIX_TEST_FIXTURE_SOURCE_ROOT").is_some()
++    }
++
++    pub(super) fn from_env(
++        script: &Path,
++        args: &[String],
++        object_hash: gix_hash::Kind,
++        script_identity: u32,
++        post_version: Option<u32>,
++    ) -> Result<Option<Self>> {
++        let Some((directory, source_root)) = Self::paths_from_env()? else {
++            return Ok(None);
 +        };
-+        if has_indexed_children {
-+            index_kind = Some(entry::Kind::Directory);
-+        }
++        let Some(mut identity) = source_identity(script, &source_root, object_hash)? else {
++            return Ok(None);
++        };
++        fs::create_dir_all(&directory).or_error()?;
++        let directory = fixture_realpath(&directory)?;
++        append_invocation_identity(&mut identity, args, script_identity, post_version);
++        let mut hash = DefaultHasher::new();
++        hash.write(&identity);
++        Ok(Some(Self {
++            directory: directory.join(format!("{:016x}", hash.finish())),
++            identity,
++        }))
 +    }
- 
-     // We always check the pathspec to have the value filled in reliably.
-     out.pathspec_match = ctx
-@@ -423,7 +438,8 @@ fn resolve_file_type_with_index(
-             }
-         }
-     } else {
--        match index.entry_by_path(rela_path.as_bstr()) {
-+        // Prefer our side's type, but conflicts without ours are tracked as well.
-+        match index.entry_range(rela_path.as_bstr()) {
-             None => {
-                 rela_path.push(b'/');
-                 let res = index.prefixed_entries_range(rela_path.as_bstr());
-@@ -459,7 +475,14 @@ fn resolve_file_type_with_index(
-                 }
-                 (kind, is_tracked.then_some(entry::Kind::Directory))
-             }
--            Some(entry) => entry_to_kinds(entry),
-+            Some(range) => {
-+                let entries = &index.entries()[range];
-+                let entry = entries
-+                    .iter()
-+                    .find(|entry| entry.stage() == gix_index::entry::Stage::Ours)
-+                    .unwrap_or_else(|| &entries[entries.len() - 1]);
-+                entry_to_kinds(entry)
-+            }
-         }
-     };
-     (uptodate_kind, index_kind, special_property)
-```
-
-**File**: `gix-dir/tests/dir/walk.rs` (modified, +126/-0)
-```diff
-@@ -20,6 +20,132 @@ use crate::walk_utils::{
-     try_collect_filtered_opts, try_collect_filtered_opts_collect, try_collect_filtered_opts_collect_with_root,
- };
- 
-+#[test]
-+fn conflict_paths_at_any_stage_stay_tracked_like_git() -> TestResult {
-+    let root = gix_testtools::scripted_fixture_read_only("conflicts.sh")?;
-+    assert_eq!(
-+        std::fs::read_to_string(root.join(".git/baseline-clean"))?,
-+        "",
-+        "Git preserves an ignored directory with an indexed conflict child"
-+    );
-+    for ignore_case in [false, true] {
-+        let baseline = std::fs::read_to_string(root.join(format!(".git/baseline-untracked-{ignore_case}")))?;
-+        assert_eq!(
-+            baseline,
-+            "nested/untracked
-+untracked
-+",
-+            "Git excludes every conflict-stage combination from untracked files"
-+        );
-+        for emit_untracked in [Matching, CollapseDirectory] {
-+            let ((_, _), entries) = try_collect_filtered_opts_collect(
-+                &root,
-+                None,
-+                |keep, ctx| {
-+                    walk(
-+                        &root,
-+                        ctx,
-+                        walk::Options {
-+                            ignore_case,
-+                            emit_untracked,
-+                            emit_ignored: Some(Matching),
-+                            for_deletion: Some(ForDeletionMode::IgnoredDirectoriesCanHideNestedRepositories),
-+                            ..options()
-+                        },
-+                        keep,
-+                    )
-+                },
-+                None::<&str>,
-+                Options {
-+                    fresh_index: false,
-+                    ..Default::default()
-+                },
-+            )?;
-+            assert_eq!(
-+                entries,
-+                &[
-+                    entry("nested/untracked", Untracked, File),
-+                    entry("untracked", Untracked, File)
-+                ],
-+                "conflicts are neither untracked nor ignored, including when directories collapse (ignore_case={ignore_case})"
-+            );
-+        }
-+    }
-+    assert!(
-+        std::fs::read_to_string(root.join(".git/baseline-stages"))?
-+            .lines()
-+            .any(|line| line.starts_with("120000 ") && line.split_whitespace().nth(2) == Some("2")),
-+        "Git's index records a symlink on our side of the mixed-type conflict"
-+    );
-+    let ((_, _), entries) = try_collect_filtered_opts_collect(
-+        &root,
-+        None,
-+        |keep, ctx| {
-+            walk(
-+                &root,
-+                ctx,
-+                walk::Options {
-+                    emit_tracked: true,
-+                    ..options()
-+                },
-+                keep,
-+            )
-+        },
-+        Some("nested/UU.txt"),
-+        Options {
-+            fresh_index: false,
-+            ..Default::default()
-+        },
-+    )?;
-+    assert_eq!(entries.len(), 1, "the pathspec selects the mixed-type conflict");
-+    assert_eq!(
-+        entries[0].0.index_kind,
-+        Some(Symlink),
-+        "case-sensitive classification still prefers our side's type"
-+    );
-+    Ok(())
-+}
 +
-+#[test]
-+fn conflict_children_with_different_casing_stay_tracked_like_git() -> TestResult {
-+    let root = gix_testtools::scripted_fixture_read_only("conflicts-ignore-case.sh")?;
-+    assert_eq!(
-+        std::fs::read_to_string(root.join(".git/baseline-clean"))?,
-+        "",
-+        "Git preserves conflict children when core.ignoreCase is enabled"
-+    );
-+    for emit in [Matching, CollapseDirectory] {
-+        let ((_, _), entries) = try_collect_filtered_opts_collect(
-+            &root,
++    pub(super) fn obtain<T>(
++        self,
++        make_fixture: impl FnOnce(FixtureState<'_>) -> PostResult<T>,
++    ) -> Result<(PathBuf, T)> {
++        let _lock = self.lock_entry()?;
++        self.create_entry_and_verify_identity()?;
++        if let Some(path) = self.read_completed_fixture()? {
++            let value = make_fixture(FixtureState::Fresh(&path)).map_err(Error::from_boxed)?;
++            return Ok((path, value));
++        }
++
++        let path = self.create_generation_directory()?;
++        let value = make_fixture(FixtureState::Uninitialized(&path))
++            .inspect_err(|_| {
++                eprintln!("Retained incomplete generated fixture at {}", path.display());
++            })
++            .map_err(Error::from_boxed)?;
++        self.publish_completed_fixture(&path)?;
++        Ok((path, value))
++    }
++
++    fn paths_from_env() -> Result<Option<(PathBuf, PathBuf)>> {
++        let (directory, source_root) = match (
++            env::var_os("GIX_TEST_FIXTURE_CACHE"),
++            env::var_os("GIX_TEST_FIXTURE_SOURCE_ROOT"),
++        ) {
++            (None, None) => return Ok(None),
++            (Some(directory), Some(source_root)) => (PathBuf::from(directory), PathBuf::from(source_root)),
++            _ => bail!("GIX_TEST_FIXTURE_CACHE and GIX_TEST_FIXTURE_SOURCE_ROOT must be set together"),
++        };
++        if !directory.is_absolute() || !source_root.is_absolute() {
++            bail!("GIX_TEST_FIXTURE_CACHE and GIX_TEST_FIXTURE_SOURCE_ROOT must be absolute paths");
++        }
++        Ok(Some((directory, source_root)))
++    }
++
++    fn lock_entry(&self) -> Result<gix_lock::Marker> {
++        fs::create_dir_all(self.directory.parent().expect("cache entries have a parent")).or_error()?;
++        gix_lock::Marker::acquire_to_hold_resource(
++            &self.directory,
++            gix_lock::acquire::Fail::AfterDurationWithBackoff(Duration::from_secs(6 * 60)),
 +            None,
-+            |keep, ctx| {
-+                walk(
-+                    &root,
-+                    ctx,
-+                    walk::Options {
-+                        ignore_case: true,
-+                        emit_untracked: emit,
-+                        emit_ignored: Some(emit),
-+                        for_deletion: Some(ForDeletionMode::IgnoredDirectoriesCanHideNestedRepositories),
-+                        ..options()
-+                    },
-+                    keep,
-+                )
-+            },
-+            None::<&str>,
-+            Options {
-+                fresh_index: false,
-+                ..Default::default()
-+            },
-+        )?;
-+        assert!(
-+            entries.is_empty(),
-+            "case-insensitive cleanup cannot emit tracked conflict children or their parents: {entries:?}"
-+        );
++            0,
++        )
++        .or_error()
 +    }
++
++    fn create_entry_and_verify_identity(&self) -> Result<()> {
++        fs::create_dir_all(&self.directory).or_error()?;
++        let identity_path = self.directory.join("identity");
++        match fs::read(&identity_path) {
++            Ok(identity) if identity == self.identity => {}
++            Ok(_) => bail!("Fixture cache identity mismatch at {}", self.directory.display()),
++            Err(err) if err.kind() == std::io::ErrorKind::NotFound => {
++    
+```
+
+**File**: `tests/tools/src/lib.rs` (modified, +86/-47)
+```diff
+@@ -8,6 +8,30 @@
+ //! Valid values are the names of hash functions supported by `gix_hash::Kind` (e.g., `sha1`, `sha256`).
+ //! If not set, the default hash function via `gix_hash::Kind::default()` is used.
+ //!
++//! ### `GIX_TEST_FIXTURE_CACHE` and `GIX_TEST_FIXTURE_SOURCE_ROOT`
++//!
++//! Set both to absolute paths to share generated read-only scripted fixtures across equivalent source
++//! snapshots within one owned test run.
++//!
++//! A source snapshot is a source tree kept at a fixed revision or working-tree state for testing, such
++//! as a checkout or an exported copy of the workspace. It contains the crates, fixture scripts and their
++//! inputs, not the generated fixtures. Equivalent snapshots can live at different absolute paths.
++//!
++//! - `GIX_TEST_FIXTURE_SOURCE_ROOT` names the current snapshot's workspace root, for example
++//!   `/tmp/qa-run-123/snapshot-a`, not a crate directory or its `tests/fixtures` directory.
++//!   An example fixture script would be at
++//!   `/tmp/qa-run-123/snapshot-a/gix-discover/tests/fixtures/make_nested_repos.sh`.
++//! - `GIX_TEST_FIXTURE_CACHE` names the shared output directory, for example
++//!   `/tmp/qa-run-123/fixture-cache`. Use a fresh cache namespace for each owned test run.
++//!   When shared caching applies, that script's generated test files are under
++//!   `/tmp/qa-run-123/fixture-cache/<key>/fixture-<suffix>/`, including `.git/HEAD` and
++//!   `inner/.git/HEAD`. Here `<key>` is the fixture-identity hash and `<suffix>` is a random directory suffix.
++//!
++//! Tests in a second equivalent snapshot at `/tmp/qa-run-123/snapshot-b` use that path for
++//! `GIX_TEST_FIXTURE_SOURCE_ROOT` but keep `GIX_TEST_FIXTURE_CACHE` pointing to the same
++//! `/tmp/qa-run-123/fixture-cache`. Crate and script paths are keyed relative to the source root, allowing
++//! equivalent requests from both snapshots to reuse a generated fixture despite their different roots.
++//!
+ //! ## Script Isolation
+ //!
+ //! Fixture scripts and [`git()`] use `GIT_CONFIG_PARAMETERS` to disable signing and automatic maintenance
+@@ -53,6 +77,8 @@ pub mod signature;
+ /// Capture complete, stable repository state for integration-test assertions.
+ pub mod repository;
+ 
++mod fixture_cache;
++
+ const ARCHIVE_DIR_NAME: &str = "generated-archives";
+ const BASH_FIXTURE_PRELUDE: &str = include_str!("scripted_fixture_prelude.sh");
+ 
+@@ -1848,48 +1874,47 @@ where
+         &script_identity,
+         archive_policy.cache_variant(),
+     );
+-    let _marker = marker_if_needed(destination_dir, script_basename)?;
+-
+     let script_identity_for_archive = match args_in_hash {
+         ArgsInHash::Yes => script_identity,
+         ArgsInHash::No => 0,
+     };
+     let script_absolute_path = env::current_dir()?.join(&script_path);
++    let shared_cache = if !force_run
++        && archive_policy == ArchivePolicy::Normal
++        && fixture_cache::Cache::is_requested_from_env()
++        && (env::var_os("GIX_TEST_IGNORE_ARCHIVES").is_some() || !archive_file_path.try_exists()?)
++        && (should_skip_all_archive_creation() || excludes.is_excluded(&archive_file_path))
++    {
++        fixture_cache::Cache::from_env(&script_path, &args, object_hash, script_identity, post_version)?
++    } else {
++        None
++    };
+     let post_process_closure = post_process.map(|(_, f)| f);
+-
+-    let res = run_fixture_generator_with_marker_handling(
+-        &archive_file_path,
+-        &script_result_directory,
+-        script_identity_for_archive,
+-        force_run,
+-        archive_policy,
+-        excludes,
+-        &format!("using script \"{}\"", script_location.display()),
+-        |fixture_state| {
+-            if let FixtureState::Uninitialized(dir) = fixture_state {
+-                // Bash 3.2 loses BASH_SOURCE after calling functions defined by `-c`. Sourcing a
+-                // temporary prelude file preserves script context without exporting functions.
+-                let prelude_file = if is_bash_fixture {
+-                    let mut file = tempfile::NamedTempFile::new()?;
+-                    std::io::Write::write_all(file.as_file_mut(), BASH_FIXTURE_PRELUDE.as_bytes())?;
+-                    Some(file)
+-                } else {
+-                    None
+-                };
+-                let mut cmd = if let Some(file) = prelude_file.as_ref() {
+-                    let mut cmd = command_with_environment_snapshot(bash_program());
+-                    let prelude_path = gix_path::from_bstring(
+-                        gix_path::to_unix_separators_on_windows(gix_path::into_bstr(file.path())?).into_owned(),
+-                    )?;
+-                    cmd.arg("-c")
+-                        .arg("source \"$1\" || exit; shift; source \"$0\" \"$@\"")
+-                        .arg(&script_absolute_path)
+-                        .arg(prelude_path);
+-                    cmd
+-                } else {
+-                    command_with_environment_snapshot(&script_absolute_path)
+-                };
+-                let outpu
+```
+
+**File**: `tests/tools/tests/tools/fixture_cache.rs` (added, +653/-0)
+```diff
+@@ -0,0 +1,653 @@
++use std::{
++    path::{Path, PathBuf},
++    process::{Child, Command, Stdio},
++};
++
++use gix_testtools::TestResult;
++
++const SCRIPT: &str = r#"#!/usr/bin/env bash
++set -eu -o pipefail
++printf 'run\n' >> "$FIXTURE_CACHE_RUNS"
++printf 'generated\n' > origin
++pwd -W 2>/dev/null > generation-path || pwd > generation-path
++printf '%s\n' "$@" > arguments
++if test -n "${FIXTURE_CACHE_FAIL:-}"; then exit 1; fi
++"#;
++
++#[cfg(windows)]
++#[test]
++fn short_cache_paths_match_paths_recorded_by_git_and_the_shell() -> TestResult {
++    if gix_testtools::run_in_isolated_process()? {
++        return Ok(());
++    }
++    let mut fixture = Cache::new()?;
++    fixture.cache = fixture.directory.path().join("long-cache-directory");
++    std::fs::create_dir(&fixture.cache)?;
++    let root = fixture.snapshot("source", "crate", SCRIPT)?;
++    let output = Command::new(gix_testtools::bash_program())
++        .args(["-c", "cygpath -d \"$1\"", "short-cache-path"])
++        .arg(&fixture.cache)
++        .output()?;
++    assert!(output.status.success(), "Git Bash can resolve the cache's short path");
++    let short_path = PathBuf::from(std::str::from_utf8(&output.stdout)?.trim());
++    assert_ne!(short_path, fixture.cache, "the regression exercises a short path alias");
++    let mut request = fixture.invocation(&root, "crate", true)?;
++    request.command.env("GIX_TEST_FIXTURE_CACHE", short_path);
++    let generated = request.run()?;
++    assert_eq!(
++        generated,
++        fixture.invocation(&root, "crate", true)?.run()?,
++        "short and long cache paths share the same fixture"
++    );
++    let mut request = fixture.invocation(&root, "crate", true)?;
++    request
++        .command
++        .env("GIX_TEST_FIXTURE_CACHE", fixture.cache.canonicalize()?);
++    assert_eq!(
++        request.run()?,
++        generated,
++        "verbatim cache paths reuse an ordinary fixture path"
++    );
++    assert_eq!(fixture.runs()?, 1, "path aliases do not regenerate fixtures");
 +    Ok(())
 +}
 +
- #[cfg(windows)]
- #[test]
- fn invalid_directory_names_return_errors_for_entries_and_traversal_roots() -> TestResult {
-```
-
-**File**: `gix-dir/tests/fixtures/conflicts-ignore-case.sh` (added, +20/-0)
-```diff
-@@ -0,0 +1,20 @@
-+#!/usr/bin/env bash
-+set -eu -o pipefail
-+
-+# The on-disk directories differ in case from both their indexed ancestor file
-+# and child. Case-insensitive cleanup must still descend to the tracked child.
-+git init -q
-+printf 'file-dir-*/\n' >.gitignore
-+git add .gitignore
-+blob_id=$(printf 'content\n' | git hash-object -w --stdin)
-+for stage in 1 2 3; do
-+  child_stage=3
-+  if [[ "$stage" == 3 ]]; then
-+    child_stage=2
-+  fi
-+  mkdir "file-dir-$stage"
-+  printf 'content\n' >"file-dir-$stage/bar"
-+  printf '100644 %s %s\tFILE-DIR-%s\n100644 %s %s\tFILE-DIR-%s/bar\n' \
-+    "$blob_id" "$stage" "$stage" "$blob_id" "$child_stage" "$stage"
-+done | git update-index --index-info
-+git -c core.ignoreCase=true clean -ndx >.git/baseline-clean
-```
-
-**File**: `gix-dir/tests/fixtures/conflicts.sh` (added, +49/-0)
-```diff
-@@ -0,0 +1,49 @@
-+#!/usr/bin/env bash
-+set -eu -o pipefail
-+
-+# Populate every nonempty combination of conflict stages, at the root, nested,
-+# and under an ignore rule. Files remain on disk even for DD: any index stage
-+# must keep them tracked regardless of ignore rules or directory collapsing.
-+# The nested UU path has a symlink at stage 2 to check our side's type preference.
-+git init -q
-+printf 'ignored/*.txt\n*.txt/\nfile-dir-*/\n' >.gitignore
-+git add .gitignore
-+git commit -qm init
-+mkdir nested ignored
-+blob_id=$(printf 'content\n' | git hash-object -w --stdin)
-+for prefix in '' nested/ ignored/; do
-+  for conflict in 'DD:1' 'AU:2' 'UA:3' 'UD:1 2' 'DU:1 3' 'AA:2 3' 'UU:1 2 3'; do
-+    path="${prefix}${conflict%%:*}.txt"
-+    printf 'content\n' >"$path"
-+    for stage in ${conflict#*:}; do
-+      mode=100644
-+      if [[ "$path" == nested/UU.txt && "$stage" == 2 ]]; then
-+        mode=120000
-+      fi
-+      printf '%s %s %s\t%s\n' "$mode" "$blob_id" "$stage" "$path"
-+    done
-+  done
-+done | git update-index --index-info
-+
-+# A file/directory conflict can index both the directory's name and its child.
-+# Ignoring the directory must never hide the indexed child from a cleanup walk.
-+for conflict in 'file-dir-base:1' 'file-dir-ours:2' 'file-dir-theirs:3'; do
-+  path=${conflict%:*}
-+  stage=${conflict#*:}
-+  child_stage=3
-+  if [[ "$stage" == 3 ]]; then
-+    child_stage=2
-+  fi
-+  mkdir "$path"
-+  printf 'content\n' >"$path/bar"
-+  printf '100644 %s %s\t%s\n100644 %s %s\t%s/bar\n' \
-+    "$blob_id" "$stage" "$path" "$blob_id" "$child_stage" "$path"
-+done | git update-index --index-info
-+touch untracked nested/untracked
-+
-+# Keep Git's baselines outside the walked worktree so they cannot affect the results.
-+git -c core.ignoreCase=false clean -ndx -- 'file-dir-*' >.git/baseline-clean
-+for ignore_case in false true; do
-+  git -c core.ignoreCase="$ignore_case" ls-files --others --exclude-standard >".git/baseline-untracked-$ignore_case"
-+done
-+git ls-files --stage -- nested/UU.txt >.git/baseline-stages
-```
-
-**File**: `gix-index/src/access/mod.rs` (modified, +5/-1)
-```diff
-@@ -381,6 +381,7 @@ impl State {
-     /// Return the slice of entries which all share the same `prefix`, or `None` if there isn't a single such entry.
-     ///
-     /// The `prefix` must use the repository-relative, slash-separated [`State`] path format.
-+    /// See [`prefixed_entries_range()`][Self::prefixed_entries_range()] for matching rules and directory prefixes.
-     ///
-     /// If `prefix` is empty, all entries are returned.
-     pub fn prefixed_entries(&self, prefix: &BStr) -> Option<&[Entry]> {
-@@ -389,7 +390,10 @@ impl State {
- 
-     /// Return the range of entries which all share the same `prefix`, or `None` if there isn't a single such entry.
-     ///
--    /// The `prefix` must use the repository-relative, slash-separated [`State`] path format.
-+    /// The `prefix` must use the repository-relative, slash-separated [`State`] path format, without a leading `/` or `./`.
-+    /// Matching is case-sensitive and compares literal bytes without path normalization or glob interpretation.
-+    /// The prefix may end within a path component: `dir` also matches `dirname/file` and `dir.txt`.
-+    /// To match only entries inside a directory, include the trailing slash, for example `dir/`.
-     ///
-     /// If `prefix` is empty, the range will include all entries.
-     pub fn prefixed_entries_range(&self, prefix: &BStr) -> Option<Range<usize>> {
-```
-
-**File**: `gix-status/src/index_as_worktree/function.rs` (modified, +13/-0)
-```diff
-@@ -659,6 +659,19 @@ impl<'a, T> Iterator for OffsetIter<'a, T> {
- }
- 
- impl Conflict {
-+    /// Return the two-letter unmerged status code used by `git status --short` and `--porcelain=v1`.
-+    pub const fn as_str(&self) -> &'static str {
-+        match self {
-+            Conflict::BothDeleted => "DD",
-+            Conflict::AddedByUs => "AU",
-+            Conflict::DeletedByThem => "UD",
-+            Conflict::AddedByThem => "UA",
-+            Conflict::DeletedByUs => "DU",
-+            Conflict::BothAdded => "AA",
-+            Conflict::BothModified => "UU",
-+        }
++#[cfg(unix)]
++#[test]
++fn symlinked_cache_roots_return_physical_fixture_paths() -> TestResult {
++    if gix_testtools::run_in_isolated_process()? {
++        return Ok(());
 +    }
++    let fixture = Cache::new()?;
++    let root = fixture.snapshot("source", "crate", SCRIPT)?;
++    let alias = fixture.directory.path().join("cache-alias");
++    std::os::unix::fs::symlink(&fixture.cache, &alias)?;
++    let mut request = fixture.invocation(&root, "crate", true)?;
++    request.command.env("GIX_TEST_FIXTURE_CACHE", &alias);
++    let path = request.run()?;
++    assert_eq!(
++        path,
++        path.canonicalize()?,
++        "fixture paths match the physical paths recorded by Git and the shell"
++    );
++    assert_eq!(fixture.invocation(&root, "crate", true)?.run()?, path);
++    assert_eq!(fixture.runs()?, 1, "cache aliases reuse the same generated fixture");
++    Ok(())
++}
 +
-     /// Given `entries` and `path_backing` obtained from an [index](gix_index::State), inspect up to three consecutive
-     /// conflict-stage entries starting at `start_index` whose path equals `entry_path`.
-     ///
++#[test]
++fn missing_archive_generation_is_reused_across_snapshots_and_modes() -> TestResult {
++    if gix_testtools::run_in_isolated_process()? {
++        return Ok(());
++    }
++    let fixture = Cache::new()?;
++    let first = fixture.snapshot("archived", "crate", SCRIPT)?;
++    let second = fixture.snapshot("generated", "crate", SCRIPT)?;
++    let archived = fixture.invocation(&first, "crate", false)?.run()?;
++    let generated = fixture.invocation(&second, "crate", true)?.run()?;
++    assert_eq!(
++        archived, generated,
++        "a missing archive generates one stable fixture shared by later generated-mode snapshots"
++    );
++    assert_eq!(
++        generated
++            .parent()
++            .and_then(Path::parent)
++            .map(Path::canonicalize)
++            .transpose()?,
++        Some(fixture.cache.canonicalize()?),
++        "hash-keyed fixture entries live directly under the job cache root"
++    );
++    assert_eq!(fixture.runs()?, 1, "equivalent snapshots execute the script only once");
++    assert_eq!(std::fs::read(generated.join("origin"))?, b"generated\n");
++    let generation_path = PathBuf::from(std::fs::read_to_string(generated.join("generation-path"))?.trim());
++    assert_eq!(
++        generation_path.canonicalize()?,
++        generated.canonicalize()?,
++        "absolute paths recorded by the script remain valid after publication"
++    );
++    let mut entries = std::fs::read_dir(&generated)?
++        .map(|entry| entry.map(|entry| entry.file_name()))
++        .collect::<Result<Vec<_>, _>>()?;
++    entries.sort();
++    assert_eq!(
++        entries,
++        ["arguments", "generation-path", "origin"],
++        "cache metadata stays outside the fixture payload"
++    );
++    Ok(())
++}
++
++#[test]
++fn archives_remain_local_and_never_supply_generated_mode() -> TestResult {
++    if gix_testtools::run_in_isolated_process()? {
++        return Ok(());
++    }
++    let fixture = Cache::new()?;
++    let first = fixture.snapshot("first", "crate", SCRIPT)?;
++    let second = fixture.snapshot("second", "crate", SCRIPT)?;
++    fixture.archive(&first, 0)?;
++
 ```
 
----
-
-### Incident Patch 2: `251322d4` (2026-10-30)
-**Commit Message**: fix(gix): resolve rename modes and limits independently (#3133)
-
-Removed the elaborate tests for this trivial change, as I don't expect it
-to regress. And before that has a chance to happen, tests can always be regenerated.
-
-<!-- agent -->
-While investigating status configuration for #3133, edited staged renames
-showed that correcting the section names was insufficient: a standalone
-`status.renameLimit` was still ignored. A status-specific mode also
-prevented falling back to `diff.renameLimit`. The shared resolver had the
-same problem for diff and merge limits, silently ignoring their limits
-unless a corresponding `renames` key was also set.
-
-Resolve rename mode and limit independently in the existing shared helper.
-Unset status/merge keys each fall back to the corresponding diff key.
-A configured limit uses the default rename mode when no mode is set.
-Retain explicit disabling, strict/lenient validation, copy settings, and
-the public helper's empty-configuration signal. Remove redundant whole-
-configuration fallback from the status and merge callers.
-
-Git 2.54.0 is the executed baseline. Git's
-`builtin/commit.c::git_status_config()` resolves status mode and limit
-separately, and `
-
-**File**: `gix/src/diff.rs` (modified, +25/-14)
+**File**: `tests/tools/tests/tools/main.rs` (modified, +2/-0)
 ```diff
-@@ -130,39 +130,50 @@ pub(crate) mod utils {
-     };
+@@ -1,6 +1,8 @@
+ #[cfg(all(feature = "worktree-exclusions", not(windows)))]
+ mod archive_regeneration;
  
-     /// Create an instance by reading all relevant information from the `config`uration, while being `lenient` or not.
--    /// Returns `Ok((None, false))` if nothing is configured, or `Ok((None, true))` if it's configured and disabled.
-+    /// Returns `Ok((None, false))` if neither rename mode nor limit is configured, or `Ok((None, true))` if disabled.
-     ///
-     /// Note that missing values will be defaulted similar to what git does.
-     pub fn new_rewrites(config: &gix_config::File, lenient: bool) -> Result<(Option<Rewrites>, bool)> {
-         new_rewrites_inner(config, lenient, &Diff::RENAMES, &Diff::RENAME_LIMIT)
-     }
++mod fixture_cache;
++
+ mod isolation {
+     use gix_testtools::{Creation, TestResult, redact_debug_snapshot, redact_display_snapshot};
  
-+    /// Resolve rename mode and limit independently, falling back to their `diff` keys when unset.
-     pub(crate) fn new_rewrites_inner(
-         config: &gix_config::File,
-         lenient: bool,
-         renames: &'static crate::config::tree::diff::Renames,
-         rename_limit: &'static crate::config::tree::keys::UnsignedInteger,
-     ) -> Result<(Option<Rewrites>, bool)> {
--        let copies = match renames
-+        let mut tracking = renames
-             .try_into_renames(config.boolean(renames))
--            .with_leniency(lenient)?
--        {
--            Some(renames) => match renames {
--                Tracking::Disabled => return Ok((None, true)),
--                Tracking::Renames => None,
--                Tracking::RenamesAndCopies => Some(Copies::default()),
--            },
--            None => return Ok((None, false)),
-+            .with_leniency(lenient)?;
-+        if tracking.is_none() {
-+            tracking = Diff::RENAMES
-+                .try_into_renames(config.boolean(Diff::RENAMES))
-+                .with_leniency(lenient)?;
-+        }
-+        let copies = match tracking {
-+            Some(Tracking::Disabled) => return Ok((None, true)),
-+            Some(Tracking::RenamesAndCopies) => Some(Copies::default()),
-+            _ => None,
-         };
-+        let mut limit = rename_limit
-+            .try_into_usize(config.integer(rename_limit))
-+            .with_leniency(lenient)?;
-+        if limit.is_none() {
-+            limit = Diff::RENAME_LIMIT
-+                .try_into_usize(config.integer(Diff::RENAME_LIMIT))
-+                .with_leniency(lenient)?;
-+        }
-+        if tracking.is_none() && limit.is_none() {
-+            return Ok((None, false));
-+        }
- 
-         let default = Rewrites::default();
-         Ok((
-             Rewrites {
-                 copies,
--                limit: rename_limit
--                    .try_into_usize(config.integer(rename_limit))
--                    .with_leniency(lenient)?
--                    .unwrap_or(default.limit),
-+                limit: limit.unwrap_or(default.limit),
-                 ..default
-             }
-             .into(),
-```
-
-**File**: `gix/src/repository/merge.rs` (modified, +1/-5)
-```diff
-@@ -82,16 +82,12 @@ impl Repository {
- 
-     /// Read all relevant configuration options to instantiate options for use in [`merge_trees()`](Self::merge_trees).
-     pub fn tree_merge_options(&self) -> Result<crate::merge::tree::Options> {
--        let (mut rewrites, mut is_configured) = crate::diff::utils::new_rewrites_inner(
-+        let (mut rewrites, is_configured) = crate::diff::utils::new_rewrites_inner(
-             &self.config.resolved,
-             self.config.lenient_config,
-             &tree::Merge::RENAMES,
-             &tree::Merge::RENAME_LIMIT,
-         )?;
--        if !is_configured {
--            (rewrites, is_configured) =
--                crate::diff::utils::new_rewrites(&self.config.resolved, self.config.lenient_config)?;
--        }
-         if !is_configured {
-             rewrites = Some(Default::default());
-         }
-```
-
-**File**: `gix/src/status/tree_index.rs` (modified, +3/-7)
-```diff
-@@ -3,8 +3,8 @@ use crate::{Repository, Result, config::tree};
- /// Specify how to perform rewrite tracking [Repository::tree_index_status()].
- #[derive(Default, Debug, Copy, Clone)]
- pub enum TrackRenames {
--    /// Check `status.renames` and then `diff.renames` if the former isn't set. Otherwise, default to performing rewrites if nothing
--    /// is set.
-+    /// Check `status.renames` and `status.renameLimit`, independently falling back to `diff.renames` and
-+    /// `diff.renameLimit` when unset. Default to performing rewrites if nothing is set.
-     #[default]
-     AsConfigured,
-     /// Track renames according ot the given configuration.
-@@ -54,16 +54,12 @@ impl Repository {
-         let tree_index: gix_index::State = self.index_from_tree(tree_id)?.into();
-         let rewrites = match renames {
-             TrackRenames::AsConfigured => {
--                let (mut rewrites, mut is_configured) = crate::diff::utils::new_rewrites_inner(
-+                let (mut rewrites, is_configured) = crate::diff::utils::new_rewrites_inner(
-                     &self.config.resolved,
-                     self.config.lenient_config,
-                     &tree::Status::RENAMES,
-                     &tree::Status::RENAME_LIMIT,
-                 )?;
--                if !is_configured {
--                    (rewrites, is_configured) =
--                        crate::diff::utils::new_rewrites(&self.config.resolved, self.config.lenient_config)?;
--                }
-                 if !is_configured {
-                     rewrites = Some(Default::default());
-                 }
-```
-
----
-
-### Incident Patch 3: `7e48cb03` (2026-10-30)
-**Commit Message**: fix(gix): read status rename keys from the status section (#3133)
-
-Removed the test as this is a trivial change. While it's now defintely
-untested, I found it overkill.
-
-<!-- agent -->
-Consumers of `Repository::status()` reported that `status.renames=false`
-still paired staged renames, while unrelated `merge.renames` settings
-changed status results. They had to resolve configuration themselves and
-pass explicit rename options as a workaround.
-
-Both `Status::RENAMES` and `Status::RENAME_LIMIT` were accidentally attached
-to the `merge` section. Attach them to `status`, preserving the existing
-fallback to `diff.renames` when status rename tracking is unset.
-
-Assisted-by: GPT 6.1 Sol
-Co-authored-by: GPT 6.1 Sol <[REDACTED_EMAIL]>
-
-**File**: `gix/src/config/tree/sections/status.rs` (modified, +2/-2)
-```diff
-@@ -13,13 +13,13 @@ impl Status {
-     /// The `status.renameLimit` key.
-     pub const RENAME_LIMIT: keys::UnsignedInteger = keys::UnsignedInteger::new_unsigned_integer(
-         "renameLimit",
--        &config::Tree::MERGE,
-+        &config::Tree::STATUS,
-     )
-     .with_note(
-         "The limit is actually squared, so 1000 stands for up to 1 million diffs if fuzzy rename tracking is enabled",
-     );
-     /// The `status.renames` key.
--    pub const RENAMES: super::diff::Renames = super::diff::Renames::new_renames("renames", &config::Tree::MERGE);
-+    pub const RENAMES: super::diff::Renames = super::diff::Renames::new_renames("renames", &config::Tree::STATUS);
- }
- 
- /// The `status.showUntrackedFiles` key.
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #3142** (2026-10-31): fast ci (@Byron)
-- **PR #3141** (closed): fast ci (@Byron)
-- **PR #3140** (2026-10-31): fix(gix): handle conflict paths and status rename configuration (@Byron)
-- **PR #3139** (2026-10-29): Preserve Cargo.lock in dependency checks (@EliahKagan)
-- **PR #3138** (2026-10-30): fix(gix): reject symlinks in configured submodule paths (@Byron)
-- **PR #3137** (2026-10-29): Restore transitive soundness advisory reporting (@EliahKagan)
+- **PR #3152** (2026-11-03): even faster qa (@Byron)
+- **PR #3150** (2026-11-03): Remove the last `unsafe` block from `gix-revision` and forbid `unsafe` there (@b84330808)
+- **PR #3149** (2026-11-03): Enforce allocation limits for pack traversal metadata (@Byron)
+- **PR #3148** (2026-11-02): faster qa (@Byron)
+- **PR #3146** (2026-11-02): Release gix-macros v0.2.1 (@Byron)
+- **PR #3144** (2026-11-01): Bump the github-actions group with 7 updates (@dependabot[bot])
 
 ---
 
@@ -2285,42 +2681,33 @@ Co-authored-by: GPT 6.1 Sol <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. gix-dir): keep all conflict stages tracked (#3134)
+## X. Share generated fixtures between exhaustive native QA passes
 
 **RULE**:
-When implementing operations in `gitoxide-core/src/repository/exclude.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in GitoxideLabs/gitoxide. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `DEVELOPMENT.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in GitoxideLabs/gitoxide. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `dd59ccde`: gix-dir): keep all conflict stages tracked (#3134). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0c6c639c`: Share generated fixtures between exhaustive native QA passes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `gitoxide-core/src/repository/exclude.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `DEVELOPMENT.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-            .or_else(|| is_directory_query(path.as_bstr()).then_some(gix::index::entry::Mode::DIR));
-fn is_directory_query(path: &BStr) -> bool {
-    path.ends_with(b"/") || path.ends_with(b"/.")
-}
-
-    print_match(
-        match_.filter(|_| !is_tracked(index, query_path, is_directory_query(display_path))),
-        display_path,
-        out,
-    )
-fn is_tracked(index: &gix::index::State, path: &BStr, is_directory_query: bool) -> bool {
-    (!is_directory_query && index.entry_index_by_path(path).is_ok()) || index.path_is_directory(path)
+source copies. The native passes share a fresh cache of generated read-only scripted fixtures.
+When no archive is available, the archived pass can generate a fixture once for both passes;
+the shared cache never substitutes extracted archives for generated fixtures. Fixtures that write archives or require
+execution in a writable destination keep their existing behavior. The cache and its source
+copies remain alive until both passes finish, and are retained together if a source copy changes.
+Feature/hash variants also run in an isolated copy, sharing compatible fixture
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-            .or_else(|| path.ends_with(b"/").then_some(gix::index::entry::Mode::DIR));
-    print_match(match_.filter(|_| !is_tracked(index, query_path)), display_path, out)
-fn is_tracked(index: &gix::index::State, path: &BStr) -> bool {
-    index.entry_by_path(path).is_some() || index.path_is_directory(path)
+source copies. Feature/hash variants also run in an isolated copy, sharing compatible fixture
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `dd59ccde` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0c6c639c` are properly handled with clean fallback behavior.

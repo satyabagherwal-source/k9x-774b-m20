@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/digitalbazaar-pyld-learnings.md`  
 > **Source**: github ([https://github.com/digitalbazaar/pyld](https://github.com/digitalbazaar/pyld))  
-> **Source Version**: `470edbc3`  
+> **Source Version**: `bcdc7103`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-22T21:48:01.609Z  
+> **Timestamp**: 2026-11-04T01:07:33.068Z  
 > **Learning ID**: `learn-github-digitalbazaar-pyld`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/digitalbazaar-pyld-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/digitalbazaar/pyld](https://github.com/digitalbazaar/pyld))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-22T21:48:01.605Z  
+> **Harvest Timestamp**: 2026-11-04T01:07:32.875Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: JSON-LD processor written in Python
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 687 stars
+- **Stars / Engagement**: 688 stars
 
 ---
 
@@ -993,43 +993,62 @@ def main(args: list[str] | None = None) -> None:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `470edbc3` (2026-10-19)
-**Commit Message**: Bump specifications/json-ld-api from `ffdb326` to `5551473`
+### Incident Patch 1: `bcdc7103` (2026-11-02)
+**Commit Message**: Bump ruff from 0.16.10 to 0.17.2
 
-Bumps [specifications/json-ld-api](https://github.com/w3c/json-ld-api) from `ffdb326` to `5551473`.
-- [Commits](https://github.com/w3c/json-ld-api/compare/ffdb326121ea89b7b8280e76a5caea923834bcef...55514738d854e56bb8bad4c53cda2f0e23be4a50)
+Bumps [ruff](https://github.com/astral-sh/ruff) from 0.16.10 to 0.17.2.
+- [Release notes](https://github.com/astral-sh/ruff/releases)
+- [Changelog](https://github.com/astral-sh/ruff/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/astral-sh/ruff/compare/0.16.10...0.17.2)
 
 ---
 updated-dependencies:
-- dependency-name: specifications/json-ld-api
-  dependency-version: 55514738d854e56bb8bad4c53cda2f0e23be4a50
-  dependency-type: direct:production
+- dependency-name: ruff
+  dependency-version: 0.17.2
+  dependency-type: direct:development
+  update-type: version-update:semver-minor
 ...
 
 Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 
-**File**: `specifications/json-ld-api` (modified, +1/-1)
+**File**: `uv.lock` (modified, +21/-21)
 ```diff
-@@ -1 +1 @@
--Subproject commit ffdb326121ea89b7b8280e76a5caea923834bcef
-+Subproject commit 55514738d854e56bb8bad4c53cda2f0e23be4a50
+@@ -2168,27 +2168,27 @@ wheels = [
+ 
+ [[package]]
+ name = "ruff"
+-version = "0.16.10"
+-source = { registry = "https://pypi.org/simple" }
+-sdist = { url = "https://files.pythonhosted.org/packages/c4/49/23802c45f093eb14bde54b141d2b2f058edfa63a06db7beed047308cc08f/ruff-0.16.10.tar.gz", hash = "sha256:eff4728c4eaae93f0955cd264d24b2ab348e74bf59986ccf282ba6dc16b3b017", size = 4958724, upload-time = "2026-10-01T18:03:21.697Z" }
+-wheels = [
+-    { url = "https://files.pythonhosted.org/packages/2f/21/ebce22e1d90cdb2cd691026b9c6e9bec6499f0b396089481755b5d49efff/ruff-0.16.10-py3-none-linux_armv6l.whl", hash = "sha256:488b0fe3f3574210e5cf80d9f59b9e3ab17a127a8155de3f307b392589cfb511", size = 10095557, upload-time = "2026-10-01T18:02:36.072Z" },
+-    { url = "https://files.pythonhosted.org/packages/cb/98/a54de85876a8b2612bfa0d84c7b9abfb39c6a3354aee7800b09c1649b9e3/ruff-0.16.10-py3-none-macosx_10_12_x86_64.whl", hash = "sha256:e748ff95c934c4e978783b8e687bc174e7bd84e8ad24e3243e1ecfcda5e0282d", size = 10340577, upload-time = "2026-10-01T18:02:39.258Z" },
+-    { url = "https://files.pythonhosted.org/packages/9f/16/1a5a4a2657effe4806110f2b907313802f1367fcdbb29e8122766e407fab/ruff-0.16.10-py3-none-macosx_11_0_arm64.whl", hash = "sha256:3031a4a2e8e7b8a46f70be45f198c35a11ece509a94b80334d8d397a33c67550", size = 9774282, upload-time = "2026-10-01T18:02:41.79Z" },
+-    { url = "https://files.pythonhosted.org/packages/6e/fb/470085af734da396e68cd80fb0a3e7c109a459716ae59588c0f6fab8a17d/ruff-0.16.10-py3-none-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:494401c86df4c4c25f69b9419605d944467ee98c42fb6ad405ef4fa40b8fb67d", size = 9920895, upload-time = "2026-10-01T18:02:44.458Z" },
+-    { url = "https://files.pythonhosted.org/packages/57/de/f10cffe4f88a37ea6615ec460f01bf76f0bc1477737a35d9ee61a630a78b/ruff-0.16.10-py3-none-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:d203abc0ff2b773ee33d00ab8df0bb67046fbc7c07b119332f08b9b345cf8221", size = 9902707, upload-time = "2026-10-01T18:02:47.041Z" },
+-    { url = "https://files.pythonhosted.org/packages/ff/44/3fdcedf83ae60ef837dd239170e480dce606a9142cfa2db911afdf855fd9/ruff-0.16.10-py3-none-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:bd83d1235a5258d318477bc5b576303974cbdef5df0c01a1bff14efcc23bd12a", size = 10619287, upload-time = "2026-10-01T18:02:49.485Z" },
+-    { url = "https://files.pythonhosted.org/packages/c1/62/02e76a5574002153618eafbb70e159468addc72a5d2c488e65cbb4639d2d/ruff-0.16.10-py3-none-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:bc2610fb269fa56dd8a68669ae470fa6272902668c0fc2ebc3aa112b2633d5b8", size = 11339942, upload-time = "2026-10-01T18:02:52.008Z" },
+-    { url = "https://files.pythonhosted.org/packages/6b/c4/cde27d47ad8d4126c587e608c67c46e7feac11763f606d261a1bc8a489e6/ruff-0.16.10-py3-none-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:3e70175e29cc94c26ea296c80e470180b744b7419026898e58f520c6ab32578e", size = 10934316, upload-time = "2026-10-01T18:02:54.811Z" },
+-    { url = "https://files.pythonhosted.org/packages/e4/03/17234145f302a645a123e8c3bb2411ecf4669fbc350de3b0d803230a1729/ruff-0.16.10-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:f33f43a864a8483eebd160e713336c8bab02c934feaff0a33cf5ccb41546d09a", size = 10387968, upload-time = "2026-10-01T18:02:57.497Z" },
+-    { url = "https://files.pythonhosted.org/packages/71/29/2493af60240ee7644b38a4b821f5f9c3b5a4fa3178770fe1d0c685217395/ruff-0.16.10-py3-none-manylinux_2_31_riscv64.whl", hash = "sha256:1dfc6f0088149fb6a362c1c446bcbb3fd2157b3852fe2fa68409276eab9ad9b3", size = 10537906, upload-time = "2026-10-01T18:03:00.006Z" },
+-    { url = "https://files.pythonhosted.org/packages/2e/9a/f56b28f3b143bb9e518c34fb89ab191b626bca8b70dbf8af0d2e2d473572/ruff-0.16.10-py3-none-musllinux_1_2_aarch64.whl", hash = "sha256:6553498afc35f580f036030795810b9e6bcea31604b0fd9e8d352795473042e3", size = 10012938, upload-time = "2026-10-01T18:03:03.006Z" },
+-    { url = "https://files.pythonhosted.org/packages/c2/c4/fca37362848ea4d4d80712df13632e645e7c7cfb1bdedf140699ac7a090b/ruff-0.16.10-py3-none-musllinux_1_2_armv7l.whl", hash = "sha256:a3b8471dea115d37f123882be852bed13403746d3a76c11de4a19ec5f9ff5a03", size = 9897945, upload-time = "2026-10-01T18:03:05.818Z" },
+-    { url = "https://files.pythonhosted.org/packages/7d/c7/e0bc57664d6e0c61fd22f620af260fe9662d7e1ddb320ea7f160e76ef165/ruff-0.16.10-py3-none-musllinux_1_2_i686.whl", hash = "sha256:92e59a70bcbd9d3a5483656da906ec28edfdacfce00afd99edb8b4e9d15644be", size = 10333134, upload-time = "2026-10-01T18:03:08.25Z" },
+-    { url = "https://files.pythonhosted.org/packages/21/aa/5c9f3b68737c0e4a33a1db5dfab44f7b786d96ca91a7233112ddab1e6dc2/ruff-0.16.10-py3-none-musllinux_1_2_x86_64.whl", hash = "sha256:7ae7375f803b5520dc9f546bed7e3a0acb70b91812e9bb4b19927de22f25b77d", size = 10741702, upload-time = "2026-10-01T18:03:10.775Z" },
+-    { url = "https://files.pythonhosted.org/packages/78/fa/0f9c2020
 ```
 
 ---
 
-### Incident Patch 2: `117b2373` (2026-10-13)
-**Commit Message**: Bump multidict from 6.9.0 to 6.9.1
-
-Bumps [multidict](https://github.com/aio-libs/multidict) from 6.9.0 to 6.9.1.
-- [Release notes](https://github.com/aio-libs/multidict/releases)
-- [Changelog](https://github.com/aio-libs/multidict/blob/master/CHANGES.rst)
-- [Commits](https://github.com/aio-libs/multidict/compare/v6.9.0...v6.9.1)
+### Incident Patch 2: `f6b08c68` (2026-11-02)
+**Commit Message**: Bump aiohttp from 3.14.4 to 3.14.5
 
 ---
 updated-dependencies:
-- dependency-name: multidict
-  dependency-version: 6.9.1
-  dependency-type: indirect
+- dependency-name: aiohttp
+  dependency-version: 3.14.5
+  dependency-type: direct:development
+  update-type: version-update:semver-patch
 ...
 
 Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
@@ -1037,12 +1056,12 @@ Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 
 
 #### Recent Merged Pull Requests:
+- **PR #367** (2026-11-02): Bump cachetools from 7.2.1 to 7.2.5 (@dependabot[bot])
+- **PR #366** (2026-11-02): Bump aiohttp from 3.14.4 to 3.14.5 (@dependabot[bot])
+- **PR #365** (2026-11-02): Bump ruff from 0.16.10 to 0.17.2 (@dependabot[bot])
+- **PR #356** (2026-11-01): Bump certifi from 2026.7.22 to 2026.10.19 (@dependabot[bot])
 - **PR #355** (2026-10-20): Bump specifications/json-ld-api from `ffdb326` to `5551473` (@dependabot[bot])
-- **PR #350** (closed): Bump specifications/json-ld-api from `ffdb326` to `3399869` (@dependabot[bot])
-- **PR #349** (2026-10-20): Bump multidict from 6.9.0 to 6.9.1 (@dependabot[bot])
-- **PR #348** (2026-10-13): Bump ruff from 0.16.8 to 0.16.9 (@dependabot[bot])
-- **PR #347** (closed): Add mypy and configuration to typecheck (@mielvds)
-- **PR #346** (2026-09-22): Skip the coverage PR comment on fork pull requests (@anatoly-scherbakov)
+- **PR #354** (2026-11-01): Bump cachetools from 7.2.0 to 7.2.1 (@dependabot[bot])
 
 ---
 
@@ -1056,34 +1075,3 @@ Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. Bump specifications/json-ld-api from `ffdb326` to `5551473`
-
-**RULE**:
-When implementing operations in `specifications/json-ld-api`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in digitalbazaar/pyld. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `470edbc3`: Bump specifications/json-ld-api from `ffdb326` to `5551473`. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `specifications/json-ld-api`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```python
-// Verified production-grade fix pattern:
-Subproject commit 55514738d854e56bb8bad4c53cda2f0e23be4a50
-```
-
-**NEGATIVE CONSTRAINT**:
-```python
-// Anti-pattern to NEVER write (induced failure mode):
-Subproject commit ffdb326121ea89b7b8280e76a5caea923834bcef
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `470edbc3` are properly handled with clean fallback behavior.

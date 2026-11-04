@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kirillzyusko-react-native-keyboard-controller-learnings.md`  
 > **Source**: github ([https://github.com/kirillzyusko/react-native-keyboard-controller](https://github.com/kirillzyusko/react-native-keyboard-controller))  
-> **Source Version**: `43032b5a`  
+> **Source Version**: `7bcadd29`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T23:05:20.605Z  
+> **Timestamp**: 2026-11-03T23:20:18.202Z  
 > **Learning ID**: `learn-github-kirillzyusko-react-native-keyboard-controller`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kirillzyusko-react-native-keyboard-controller-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/kirillzyusko/react-native-keyboard-controller](https://github.com/kirillzyusko/react-native-keyboard-controller))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T23:05:19.854Z  
+> **Harvest Timestamp**: 2026-11-03T23:20:17.835Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: ⌨️ Keyboard manager which works in identical way on both iOS and Android
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 3754 stars
+- **Stars / Engagement**: 3758 stars
 
 ---
 
@@ -348,11 +348,14 @@ using KeyboardBackgroundViewShadowNode = ConcreteViewShadowNode<
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1729** (2026-10-29): **docs: fix broken trusted by icons**
-  *Symptoms*: ## 📜 Description  Fix broken icons in the homepage's Trusted by section while keeping the images remotely hosted.  ## 💡 Motivation and Context  On the [unfixed homepage](https://github.com/kirillzyusko/react-native-keyboard-controller/blob/505d7132310cf8ddb98b415fba934408f3d26512/docs/src/pages/index.tsx#L31-L193), scroll to **Trusted by** on an affected connection. The six `play-lh.googleusercontent.com` requests fail with `net::ERR_CERT_COMMON_NAME_INVALID`, so the browser shows broken-image placeholders instead of the app icons.  Minimal browser reproduction: save this snippet as an HTML file and open it on the affected connection:  ```html <img   src="https://play-lh.googleusercontent.com/VsgCCgW-ct98JhgVoQzndWCAaXxlP6uMwcjzINYPmeja8cCNISsJDqDFNQrF2IRq9xM=w200-h480-rw"   alt="Bluesky mobile app"   width="100"   height="100" /> ```  The same image paths work on `lh3.googleusercontent.com`. Changing only the hostname restores Bluesky, Pixelfed, Trezor Suite, PocketPal AI, Drakula, and Kwibo. All six requests returned HTTP 200 and decoded successfully after the change; the existing GitHub-hosted icons also loaded. Local copies were considered, but the alternate host keeps the requested remote hosting without adding image assets.  The local docs type-check is blocked by the existing missing `@tsconfig/docusaurus/tsconfig.json`.  ## 📢 Changelog  ### Docs  - `docs/src/pages/index.tsx`: change the six Google-hosted icon URLs from `play-lh.googleusercontent.com` to `lh3.google
+- **Issue #1742** (2026-11-03): **fix: keyboard flash after a launch from Spotlight with preload**
+  *Symptoms*: ## 📜 Description  `preloadKeyboardIfNeeded` resigns its hidden `UITextField` inside `UIView.performWithoutAnimation` and skips the preload when something is already the first responder. Launching the app from Spotlight with the Spotlight keyboard open no longer shows the keyboard sliding away over the first screen, and an `autoFocus` input keeps its focus.  ## 💡 Motivation and Context  Fixes #1077  ### 1️⃣ Keyboard flashes after a launch from Spotlight  Steps (iPhone 16 Pro, iOS 26.6.1, **system** keyboard active, app not running): open Spotlight, type the app name, keep the keyboard open and tap the app in the results. Observed: the full keyboard is drawn over the app's first screen and slides down for 0.38 s. Expected: nothing keyboard-related is visible, exactly what happens without `preload`.  When an app is launched while a keyboard is already on screen, UIKit hands that keyboard over to the new app's first responder instead of creating a new one. If the preload runs at that moment, its hidden field receives the Spotlight keyboard (`UIKeyboardDidShow` with duration `0` arrives before `WillShow`) and the following `resignFirstResponder` hides it with the regular animated transition, rendered on top of the app. In every other situation the show and the hide run in the same run-loop turn, nothing is committed and the preload stays invisible.  The handover only happens if the preload runs after the scene became active and before the launch transition is over (on this devic
 
-- **Issue #1728** (2026-10-29): **fix: prevent first-drag overscroll with Android keyboard insets**
-  *Symptoms*: ## 📜 Description  Limit Android's temporary padding-scroll workaround to drag initiation so short content stops at its real end on the first gesture. Preserve scrolling from the content area when keyboard insets or `blankSpace` make otherwise short content scrollable.  ## 💡 Motivation and Context  Closes #1727.  ### First drag scrolls beyond the real range  In the [reported reproduction at 4030e68](https://github.com/itsramiel/KeyboardControllerOverscroll/tree/4030e68):  1. Select **insets / short** and tap **Field 1**. 2. After the keyboard opens, drag slowly upward and keep the finger down after reaching the end. 3. Release, then repeat the drag.  The first drag keeps moving the form past the NEXT button and leaves empty space below it. Releasing snaps the form back; the second drag stops correctly. Both gestures should stop with NEXT above the keyboard.  Captured on Android 16 / API 36 with FabricExample, RN 0.87.1 / Fabric / Hermes, using the reproduction's form geometry. The reporter's Expo SDK 58 / RN 0.88 environment was not run.  Native measurements explain the visible difference:  ```text content height: 1662px viewport height: 1986px bottom padding: 883px real maximum: 1662 + 883 - 1986 = 559px  before: first drag reaches 861px, then returns to 559px on release after:  first and second drags stop at 559px ```  The included [ClippingScrollViewDecoratorViewTest.kt](https://github.com/kirillzyusko/react-native-keyboard-controller/blob/e6fbc39eb041814846b403d009b217a5
+- **Issue #1739** (2026-11-03): **refactor: always decorate KeyboardAwareScrollView**
+  *Symptoms*: ## 📜 Description  Always render `KeyboardAwareScrollView` through `ScrollViewWithBottomPadding`, so `layout` mode also disables native `scrollRectToVisible:animated:` on iOS. Keep the spacer in `layout` mode and pass zero dynamic inset to the decorator.  ## 💡 Motivation and Context  `layout` mode returned the scroll view directly, bypassing the decorator's iOS scroll override. Switching between `layout` and `insets` also replaced the scroll view subtree, clearing child state and dismissing the keyboard. A shared wrapper keeps the scroll view mounted in both modes.  <details> <summary>Runnable example — replace FabricExample/index.js</summary>  ```jsx import React, { useState } from "react"; import { AppRegistry, Button, Keyboard, TextInput, View } from "react-native"; import { KeyboardAwareScrollView, KeyboardProvider } from "react-native-keyboard-controller"; import { name } from "./app.json";  const inputStyle = { borderWidth: 1, padding: 12, margin: 16 };  function Draft() {   const [value, setValue] = useState("");   return <TextInput placeholder="Draft message" style={inputStyle} value={value} onChangeText={setValue} />; }  function App() {   const [mode, setMode] = useState("layout");   return (     <KeyboardProvider>       <View style={{ flex: 1, paddingTop: 64 }}>         <Button title="Layout" onPress={() => setMode("layout")} />         <Button title="Insets" onPress={() => setMode("insets")} />         <Button title="Dismiss" onPres
+  **Post-Mortem & Fix Analysis**:
+  > ### 📊 Package size report | Current size | Target Size | Difference | | ------------- | ------------- | ------------------------ | | 353657 bytes | 353939 bytes | -282 bytes 📉 | <!-- Sticky Pull Request Comment -->
+  > LGTM <!-- Sticky Pull Request Commentai-review -->
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -369,468 +372,653 @@ using KeyboardBackgroundViewShadowNode = ConcreteViewShadowNode<
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f8023c5e` (2026-10-29)
-**Commit Message**: fix: prevent first-drag overscroll with Android `contentInsets` (#1728)
+### Incident Patch 1: `a69842d1` (2026-10-31)
+**Commit Message**: fix: refresh iOS selection geometry after input layout changes (#1736)
 
 ## 📜 Description
 
-Limit Android's temporary padding-scroll workaround to drag initiation
-so short content stops at its real end on the first gesture. Preserve
-scrolling from the content area when keyboard insets or `blankSpace`
-make otherwise short content scrollable.
+Refresh iOS caret geometry after the focused input changes layout so
+`KeyboardAwareScrollView` follows the new line immediately. Deduplicate
+identical selection events and reset the cache on blur.
 
 ## 💡 Motivation and Context
 
-Closes #1727.
+Addresses the growing-input case from #1129. With a controlled multiline
+`TextInput`, Return can advance the selection index before RN resizes
+the input. The event reports position `834` with the previous line's
+`end.y=367.7`; the input then grows `379 → 400`, but KASV still uses
+that old caret. The scroll stays at `33.7` until another character
+produces fresh geometry.
 
-### First drag scrolls beyond the real range
+The existing deferred layout observer now reads selection again after
+updating the layout. This sends the corrected `834@388.7` and scrolls to
+`54.7` without another keystroke. Comparing the complete
+target/selection payload preserves that correction while suppressing
+identical repeats; resetting the cache lets the same selection be
+reported on refocus.
 
-In the [reported reproduction at
-4030e68](https://github.com/itsramiel/KeyboardControllerOverscroll/tree/4030e68):
+The same case also reproduces with #1734 (`b44ddfd`): its one-frame
+delay can still run before the resize. A temporary 100 ms delay made the
+repro pas
 
-1. Select **insets / short** and tap **Field 1**.
-2. After the keyboard opens, drag slowly upward and keep the finger down
-after reaching the end.
-3. Release, then repeat the drag.
-
-The first drag keeps moving the form past the NEXT button and leaves
-empty space below it. Releasing snaps the form back; the second drag
-stops correctly. Both gestures should stop with NEXT above the keyboard.
-
-Captured on Android 16 / API 36 with FabricExample, RN 0.87.1 / Fabric /
-Hermes, using the reproduction's form geometry. The reporter's Expo SDK
-58 / RN 0.88 environment was not run.
-
-Native measurements explain the visible difference:
-
-```text
-content he
-
-**File**: `android/src/main/java/com/reactnativekeyboardcontroller/views/ClippingScrollViewDecoratorView.kt` (modified, +23/-0)
+**File**: `.github/workflows/verify-ios.yml` (modified, +2/-2)
 ```diff
-@@ -19,6 +19,9 @@ class ClippingScrollViewDecoratorView(
-   private var insetTop = 0.0
-   private var appliedTopInsetPx = 0
-   private var paddingScrollWorkaroundActive = false
-+  private var expandedContentView: View? = null
-+  private var contentBottomBeforeExpansion = 0
-+  private var expansionTouchAction = MotionEvent.ACTION_CANCEL
+@@ -29,7 +29,7 @@ jobs:
+         env:
+           WORKING_DIRECTORY: ios
+   format:
+-    runs-on: macOS-14
++    runs-on: macOS-15
+     name: 📚 Swift Format
+     defaults:
+       run:
+@@ -46,7 +46,7 @@ jobs:
+       - name: Verify that the formatted code hasn't been changed
+         run: git diff --exit-code HEAD
+   objc-lint:
+-    runs-on: macOS-14
++    runs-on: macOS-15
+     name: 🔎 ObjC Lint
+     steps:
+       - uses: actions/checkout@v4
+```
+
+**File**: `android/src/main/java/com/reactnativekeyboardcontroller/listeners/FocusedInputObserver.kt` (modified, +6/-6)
+```diff
+@@ -47,7 +47,7 @@ class FocusedInputObserver(
  
-   override fun onAttachedToWindow() {
-     super.onAttachedToWindow()
-@@ -35,6 +38,10 @@ class ClippingScrollViewDecoratorView(
+   // state variables
+   private var lastFocusedInput: EditText? = null
+-  private var lastEventDispatched: FocusedInputLayoutChangedEventData = noFocusedInputEvent
++  private var lastLayoutEventDispatched: FocusedInputLayoutChangedEventData = noFocusedInputEvent
+   private var textWatcher: TextWatcher? = null
+   private var selectionSubscription: (() -> Unit)? = null
  
-     if (event.actionMasked == MotionEvent.ACTION_DOWN) {
-       paddingScrollWorkaroundActive = shouldUsePaddingScrollWorkaround(scrollView, event)
-+    } else if (scrollView.scrollY != 0) {
-+      // Only expand the range to start the drag. Once scrolling begins, use the
-+      // real content bounds so padding does not keep extending the drag range.
-+      paddingScrollWorkaroundActive = false
+@@ -124,7 +124,7 @@ class FocusedInputObserver(
+       }
+       // unfocused
+       if (newFocus == null) {
+-        dispatchEventToJS(noFocusedInputEvent)
++        dispatchLayoutEventToJS(noFocusedInputEvent)
+       }
      }
  
-     val handled =
-@@ -54,6 +61,17 @@ class ClippingScrollViewDecoratorView(
-     return handled
+@@ -148,7 +148,7 @@ class FocusedInputObserver(
+         parentScrollViewTarget = input.parentScrollViewTarget,
+       )
+ 
+-    dispatchEventToJS(event)
++    dispatchLayoutEventToJS(event)
    }
  
-+  override fun requestDisallowInterceptTouchEvent(disallowIntercept: Boolean) {
-+    if (disallowIntercept && expansionTouchAction == MotionEvent.ACTION_MOVE) {
-+      // ScrollView has taken the drag. Restore the bounds before onTouchEvent
-+      // calculates its range, including on the first movement of a tiny range.
-+      paddingScrollWorkaroundActive = false
-+      expandedContentView?.bottom = contentBottomBeforeExpansion
+   fun destroy() {
+@@ -176,9 +176,9 @@ class FocusedInputObserver(
+     unsubscribeFromSelectionChanges?.invoke()
+   }
+ 
+-  private fun dispatchEventToJS(event: FocusedInputLayoutChangedEventData) {
+-    if (event != lastEventDispatched) {
+-      lastEventDispatched = event
++  private fun dispatchLayoutEventToJS(event: FocusedInputLayoutChangedEventData) {
++    if (event != lastLayoutEventDispatched) {
++      lastLayoutEventDispatched = event
+       context.dispatchEvent(
+         eventPropagationView.id,
+         FocusedInputLayoutChangedEvent(
+```
+
+**File**: `ios/delegates/KCTextInputCompositeDelegate.swift` (modified, +3/-5)
+```diff
+@@ -98,11 +98,9 @@ class KCTextInputCompositeDelegate: NSObject, UITextViewDelegate, UITextFieldDel
+     if #available(iOS 13.0, *) {
+       // rely on textFieldDidChangeSelection
+       observedTextFieldForSelection = nil
+-    } else {
+-      if let realTextField = textField {
+-        addSelectionRangeObserver(to: realTextField)
+-        observedTextFieldForSelection = realTextField
+-      }
++    } else if let realTextField = textField {
++      addSelectionRangeObserver(to: realTextField)
++      observedTextFieldForSelection = realTextField
+     }
+   }
+ 
+```
+
+**File**: `ios/extensions/UITextInput.swift` (modified, +2/-3)
+```diff
+@@ -19,9 +19,8 @@ public extension UITextInput {
+       return false
+     }
+ 
+-    guard let selectedRange = selectedTextRange else { return false }
+-
+-    guard let range = textRange(from: selectedRange.start, to: selectedRange.end) else { return false }
++    guard let selectedRange = selectedTextRange,
++          let range = textRange(from: selectedRange.start, to: selectedRange.end) else { return false }
+     let rect = firstRect(for: range)
+ 
+     return rect.origin.x.isFinite && rect.origin.y.isFinite
+```
+
+**File**: `ios/observers/FocusedInputObserver.swift` (modified, +35/-16)
+```diff
+@@ -22,6 +22,8 @@ let noFocusedInputEvent: [String: Any] = [
+   ],
+ ]
+ 
++let noFocusedInputSelectionEvent: [AnyHashable: Any] = [:]
++
+ @objc(FocusedInputObserver)
+ public class FocusedInputObserver: NSObject {
+   // class members
+@@ -38,7 +40,8 @@ public class FocusedInputObserver: NSObject {
+   private var currentInput: UIView?
+   private var currentResponder: UIView?
+   private var observation: NSKeyValueObservation?
+-  private var lastEventDispatched: [AnyHashable: Any] = noFocusedInputEvent
++  private var lastLayoutEventDispatched: [AnyHashable: Any] = noFocusedInputEvent
++  private var lastSelectionEventDispatched: [AnyHashable: Any] = noFocusedInputSelectionEvent
+ 
+   @objc public init(
+     onLayoutChangedHandler: @escaping (NSDictionary) -> Void,
+@@ -148,10 +151,8 @@ public class FocusedInputObserver: NSObject {
+ 
+     setupObservers()
+     // dispatch onSelectionChange on focus
+-    if let textInput = responder as? UITextInput {
+-      DispatchQueue.main.async {
+-        updateSelectionPosition(textInput: textInput, sendEvent: self.onSelectionChange)
+-      }
++    DispatchQueue.main.async {
++      self.syncUpSelection()
+     }
+ 
+     syncUpLayout()
+@@ -172,7 +173,8 @@ public class FocusedInputObserver: NSObject {
+     removeObservers(newResponder: nil)
+     currentInput = nil
+     currentResponder = nil
+-    dispatchEventToJS(data: noFocusedInputEvent)
++    lastSelectionEventDispatched = noFocusedInputSelectionEvent
++    dispatchLayoutEventToJS(data: noFocusedInputEvent)
+   }
+ 
+   @objc public func syncUpLayout() {
+@@ -195,7 +197,12 @@ public class FocusedInputObserver: NSObject {
+       ],
+     ]
+ 
+-    dispatchEventToJS(data: data)
++    dispatchLayoutEventToJS(data: data)
++  }
++
++  private func syncUpSelection() {
++    guard let textInput = currentResponder as? UITextInput else { return }
++    updateSelectionPosition(textInput: textInput, sendEvent: onSelectionChange)
+   }
+ 
+   private func onTextChanged(text: String?) {
+@@ -206,15 +213,24 @@ public class FocusedInputObserver: NSObject {
+     }
+   }
+ 
+-  private func dispatchEventToJS(data: [String: Any]) {
+-    if NSDictionary(dictionary: data).isEqual(to: lastEventDispatched) {
++  private func dispatchLayoutEventToJS(data: [String: Any]) {
++    if NSDictionary(dictionary: data).isEqual(to: lastLayoutEventDispatched) {
+       return
+     }
+ 
+-    lastEventDispatched = data
++    lastLayoutEventDispatched = data
+     onLayoutChangedHandler(data as NSDictionary)
+   }
+ 
++  private func dispatchSelectionEventToJS(data: [String: Any]) {
++    if NSDictionary(dictionary: data).isEqual(to: lastSelectionEventDispatched) {
++      return
 +    }
 +
-+    super.requestDisallowInterceptTouchEvent(disallowIntercept)
++    lastSelectionEventDispatched = data
++    onSelectionChangedHandler(data as NSDictionary)
 +  }
 +
-   fun setContentInsetBottom(value: Double) {
-     insetBottom = value
-     decorateScrollView()
-@@ -129,10 +147,15 @@ class ClippingScrollViewDecoratorView(
-     }
- 
-     return try {
-+      expandedContentView = contentView
-+      contentBottomBeforeExpansion = originalBottom
-+      expansionTouchAction = event.actionMasked
-       contentView.bottom = expandedBottom
-       super.dispatchTouchEvent(event)
-     } finally {
-       contentView.bottom = originalBottom
-+      expandedContentView = null
-+      expansionTouchAction = MotionEvent.ACTION_CANCEL
+   private func setupObservers() {
+     if observation != nil {
+       return
+@@ -255,11 +271,9 @@ public class FocusedInputObserver: NSObject {
+         delegate.setTextFieldDelegate(delegate: textField.delegate, textField: textField)
+         textField.setForceDelegate(delegate)
+       }
+-    } else if let textView = input as? UITextView {
+-      if !(textView.delegate is KCTextInputCompositeDelegate) {
+-        delegate.setTextViewDelegate(delegate: textView.delegate)
+-        textView.setForceDelegate(delegate)
+-      }
++    } else if let textView = input as? UITextView, !(textView.delegate is KCTextInputCompositeDelegate) {
++      delegate.setTextViewDelegate(delegate: textView.delegate)
++      textView.setForceDelegate(delegate)
      }
    }
  
-```
-
-**File**: `android/src/test/java/com/reactnativekeyboardcontroller/views/ClippingScrollViewDecoratorViewTest.kt` (added, +193/-0)
-```diff
-@@ -0,0 +1,193 @@
-+package com.reactnativekeyboardcontroller.views
+@@ -282,6 +296,11 @@ public class FocusedInputObserver: NSObject {
+     // layout values
+     DispatchQueue.main.async {
+       self.syncUpLayout()
 +
-+import android.content.Context
-+import android.os.SystemClock
-+import android.view.MotionEvent
-+import android.view.View
-+import android.view.ViewConfiguration
-+import android.widget.FrameLayout
-+import android.widget.ScrollView
-+import androidx.core.widget.NestedScrollView
-+import androidx.test.core.app.ApplicationProvider
-+import com.facebook.react.bridge.BridgeReactContext
-+import com.facebook.react.uimanager.ThemedReactContext
-+import org.junit.Assert.assertEquals
-+import org.junit.Assert.assertFalse
-+import org.junit.Assert.assertTrue
-+import org.junit.Test
-+import org.junit.runner.RunWith
-+import org.robolectric.RobolectricTestRunner
-+import org.robolectric.annotation.Config
-+
-+@RunWith(RobolectricTestRunner::class)
-+@Config(sdk = [33], manifest = Config.NONE)
-+class ClippingScrollViewDecoratorViewTest {
-+  @Test
-+  fun `first drag on short clickable content scrolls without exceeding the padded range`() {
-+    val (decorator, scrollView) = createScrollView(contentHeight = 600, paddingBottom = 400)
-+
-+    // This is why the interception workaround is needed in the first place.
-+    assertFalse(scrollView.canScrollVertically(1))
-+
-+    val offsets = dragUp(decorator, scrollView)
-+
-+    assertTrue("A drag starting on the child must scroll", offsets.max() > 0)
-+    assertTrue("The first drag must respect the real range", offsets.all { it in 0..200 })
-+    assertEquals(200, scrollView.scrollY)
-+    assertEquals(600, scrollView.getChildAt(0).height)
-+  }
-+
-+  @Test
-+  fun `short content without a padding-created range stays still`() {
-+    val (decorator, scrollView) = createScrollView(contentHeight = 600, paddingBottom = 0)
-+
-+    assertTrue(dragUp(decorator, scrollView).all { it == 0 })
-+    assertEquals(600, scrollView.getChildAt(0).height)
-+  }
-+
-+  @Test
-+  fun `nested scroll view also starts a padding-only drag and respects its real range`() {
-+    val (decorator, scrollView) = createScrollView(contentHeight = 600, paddingBottom = 400, nested = true)
-+
-+    val offsets = dragUp(decorator, scrollView)
-+
-+    assertTrue("A nested drag starting on the child must scroll", offsets.max() > 0)
-+    assertTrue("The nested drag must respect the real range", offsets.all { it in 0..200 })
-+    assertEquals(200, scrollView.scrollY)
-+    assertEquals(600, scrollView.getChildAt(0).height)
-+  }
-+
-+  @Test
-+  fun `content that already overflows keeps its normal scroll range`() {
-+    val (decorator, scrollView) = createScrollView(contentHeight = 1200, paddingBottom = 400)
-+
-+    assertTrue(scrollView.canScrollVertically(1))
-+    assertTrue(dragUp(decorator, scrollView).all { it in 0..800 })
-+    assertTrue(scrollView.scrollY > 0)
-+    assertEquals(1200, scrollView.getChildAt(0).height)
-+  }
-+
-+  @Test
-+  fun `a second drag from offset 10 consumes only the remaining 90 pixels`() {
-+    assertInterruptedDrag(nested = false)
-+  }
-+
-+  @Test
-+  fun `a nested second drag from offset 10 consumes only the remaining 90 pixels`() {
-+    assertInterruptedDrag(nested = true)
-+  }
-+
-+  @Test
-+  fun `a new drag after returning to zero can bootstrap again`() {
-+    val (decorator, scrollView) = createScrollView(contentHeight = 200, paddingBottom = 700)
-+    dragTenPixels(decorator, scrollView)
-+    assertEquals(10, scrollView.scrollY)
-+    dragUp(decorator, scrollView, listOf(100, 110, 120, 130, 130))
-+    assertEquals(0, scrollView.scrollY)
-+
-+    val offsets = dragUp(decorator, scrollView, listOf(180) + (170 downTo -30 step 10) + -30)
-+
-+    assertTrue(offsets.all { it in 0..100 })
-+    assertEquals(100, scrollView.scrollY)
-+  }
-+
-+  @Test
-+  fun `a one pixel padding-created range cannot be exceeded on the first move`() {
-+    val (decorator, scrollView) = createScrollView(contentHeight = 200, paddingBottom = 601)
-+
-+    val offsets = dragUp(decorator, scrollView, listOf(180) + (170 downTo -30 step 10) + -30)
-+
-+    assertTrue("The real scroll range is only one pixel", offsets.all { it in 0..1 })
-+    assertEquals(1, scrollView.scrollY)
-+  }
-+
-+  @Test
-+  fun `a drag without a clickable child also respects a one pixel range`() {
-+    val (decorator, scrollView) = createScrollView(contentHeight = 200, paddingBottom = 601, clickable = false)
-+
-+    val offsets = dragUp(decorator, scrollView, listOf(180, 100, 0, 0))
-+
-+    assertTrue("Even a large first movement must use the real range", offsets.all { it in 0..1 })
-+    assertEquals(1, scrollView.scrollY)
-+  }
-+
-+  private fun assertInterruptedDrag(nested: Boolean) {
-+    val (decorator, scrollView) = createScrollView(contentHeight = 200, paddingBottom = 700, nested = nested)
-+
-+    dragTenPixels(decorator, scrollView)
-+    assertEquals("The first gesture stops at exactly 10 pixels", 10, scrollView.scrollY)
-+
-+    val offsets = dragUp(decorator, scrollView, listOf(180) + (170 downTo -30 step 10) + -30)
-+
-+    assertTrue("The second gesture stays within the original 100-pixel range", offsets.all { it in 10..100 })
-```
-
----
-
-### Incident Patch 2: `00b09bcf` (2026-10-29)
-**Commit Message**: docs: fix broken trusted by icons (#1729)
-
-## 📜 Description
-
-Fix broken icons in the homepage's Trusted by section while keeping the
-images remotely hosted.
-
-## 💡 Motivation and Context
-
-On the [unfixed
-homepage](https://github.com/kirillzyusko/react-native-keyboard-controller/blob/505d7132310cf8ddb98b415fba934408f3d26512/docs/src/pages/index.tsx#L31-L193),
-scroll to **Trusted by** on an affected connection. The six
-`play-lh.googleusercontent.com` requests fail with
-`net::ERR_CERT_COMMON_NAME_INVALID`, so the browser shows broken-image
-placeholders instead of the app icons.
-
-Minimal browser reproduction: save this snippet as an HTML file and open
-it on the affected connection:
-
-```html
-<img
-  src="https://play-lh.googleusercontent.com/VsgCCgW-ct98JhgVoQzndWCAaXxlP6uMwcjzINYPmeja8cCNISsJDqDFNQrF2IRq9xM=w200-h480-rw"
-  alt="Bluesky mobile app"
-  width="100"
-  height="100"
-/>
-```
-
-The same image paths work on `lh3.googleusercontent.com`. Changing only
-the hostname restores Bluesky, Pixelfed, Trezor Suite, PocketPal AI,
-Drakula, and Kwibo. All six requests returned HTTP 200 and decoded
-successfully after the change; the existing GitHub-hosted icons also
-loaded. Local copies were cons
-
-**File**: `docs/src/pages/index.tsx` (modified, +6/-6)
-```diff
-@@ -42,7 +42,7 @@ const trustedBy = [
-     name: "Expensify",
-   },
-   {
--    img: "https://play-lh.googleusercontent.com/VsgCCgW-ct98JhgVoQzndWCAaXxlP6uMwcjzINYPmeja8cCNISsJDqDFNQrF2IRq9xM=w200-h480-rw",
-+    img: "https://lh3.googleusercontent.com/VsgCCgW-ct98JhgVoQzndWCAaXxlP6uMwcjzINYPmeja8cCNISsJDqDFNQrF2IRq9xM=w200-h480-rw",
-     alt: "Bluesky mobile app",
-     link: "https://github.com/bluesky-social/social-app",
-     name: "Bluesky",
-@@ -150,19 +150,19 @@ const trustedBy = [
-     name: "Edge",
-   },
-   {
--    img: "https://play-lh.googleusercontent.com/4G1ZS2y5ekD1eRgpOahOj6v_vq1UlN0VVNcmHFFIS2SFGotr3vbZStS_6RZU8l4G7Ryy=w200-h480-rw",
-+    img: "https://lh3.googleusercontent.com/4G1ZS2y5ekD1eRgpOahOj6v_vq1UlN0VVNcmHFFIS2SFGotr3vbZStS_6RZU8l4G7Ryy=w200-h480-rw",
-     alt: "Pixelfed App",
-     link: "https://github.com/pixelfed/pixelfed-rn",
-     name: "Pixelfed",
-   },
-   {
--    img: "https://play-lh.googleusercontent.com/xs4ZUIOATV_bGfdl2yd0mWev9bcK2_a4ofnUEIIQe2_BecUqOVQ7YmtXu41Ereg0Kg=w200-h480-rw",
-+    img: "https://lh3.googleusercontent.com/xs4ZUIOATV_bGfdl2yd0mWev9bcK2_a4ofnUEIIQe2_BecUqOVQ7YmtXu41Ereg0Kg=w200-h480-rw",
-     alt: "Trezor Suite App",
-     link: "https://github.com/trezor/trezor-suite",
-     name: "Trezor Suite",
-   },
-   {
--    img: "https://play-lh.googleusercontent.com/BFYQT9Pugt8shdo75MjFZh5F_IMn7btSj8mXknbvSfmVV6JASCKQqcLcERvGdD0iN8A=w200-h480-rw",
-+    img: "https://lh3.googleusercontent.com/BFYQT9Pugt8shdo75MjFZh5F_IMn7btSj8mXknbvSfmVV6JASCKQqcLcERvGdD0iN8A=w200-h480-rw",
-     alt: "PocketPal AI App",
-     link: "https://github.com/a-ghorbani/pocketpal-ai",
-     name: "PocketPal AI",
-@@ -174,7 +174,7 @@ const trustedBy = [
-     name: "Juno",
-   },
-   {
--    img: "https://play-lh.googleusercontent.com/KsXljWMtBXw131OcLT44ByxwznfdgM1a-2gZVYNBzPBKz9gqOCxEIhC83IpS35OIZQc=w200-h480-rw",
-+    img: "https://lh3.googleusercontent.com/KsXljWMtBXw131OcLT44ByxwznfdgM1a-2gZVYNBzPBKz9gqOCxEIhC83IpS35OIZQc=w200-h480-rw",
-     alt: "Drakula: Watch Videos App",
-     link: "https://play.google.com/store/apps/details?id=app.drakula",
-     name: "Drakula",
-@@ -186,7 +186,7 @@ const trustedBy = [
-     name: "Swan",
-   },
-   {
--    img: "https://play-lh.googleusercontent.com/N2Rh_iRbYkX4a5l4u3kMqFu6n5Wk7KkVQnWwXh0MmSGdAfau4IiGFlLmzVU_oeoV9Lo=w240-h480-rw",
-+    img: "https://lh3.googleusercontent.com/N2Rh_iRbYkX4a5l4u3kMqFu6n5Wk7KkVQnWwXh0MmSGdAfau4IiGFlLmzVU_oeoV9Lo=w240-h480-rw",
-     alt: "Kwibo: Fast Kwai HD Videos Downloader",
-     link: "https://play.google.com/store/apps/details?id=com.kwai.video.downloader.nowatermark",
-     name: "Kwibo",
-```
-
----
-
-### Incident Patch 3: `43032b5a` (2026-10-29)
-**Commit Message**: fix: inverted `KeyboardChatScrollView` can not be scrolled at the beginning (#1637)
-
-## 📜 Description
-
-Allow an inverted `KeyboardChatScrollView` to start scrolling from
-translated content while the keyboard is open on Android.
-
-## 💡 Motivation and Context
-
-Closes
-https://github.com/kirillzyusko/react-native-keyboard-controller/issues/1553.
-
-In the existing [Chat Kit
-example](https://github.com/kirillzyusko/react-native-keyboard-controller/blob/505d7132310cf8ddb98b415fba934408f3d26512/FabricExample/src/screens/Examples/KeyboardChatScrollView/index.tsx),
-select **FlashList**, enable **inverted**, and set lifting mode to
-**whenAtEnd**. Open the keyboard, scroll to the beginning of the
-conversation, then swipe up from the top of the visible messages. Before
-this change, the gesture dismisses the keyboard instead of scrolling the
-conversation. After this change, the same gesture scrolls the messages
-with the keyboard open.
-
-Android's `ScrollView.inChild()` checks the direct child's layout bounds
-without its `translationY`. The top inset translates that child, leaving
-visible content outside the initial hit area. Temporarily extend the
-child's bottom during `ACTION_DOWN`, then restore
-
-**File**: `android/src/main/java/com/reactnativekeyboardcontroller/views/ClippingScrollViewDecoratorView.kt` (modified, +36/-4)
-```diff
-@@ -44,11 +44,22 @@ class ClippingScrollViewDecoratorView(
-       paddingScrollWorkaroundActive = false
++      // iOS can report selection before the input resizes, leaving stale caret coordinates.
++      // Re-read selection after layout to dispatch updated coordinates even when
++      // the selection range has not changed.
++      self.syncUpSelection()
      }
+   }
  
-+    // ScrollView.inChild() ignores its direct child's translationY when it
-+    // initializes a gesture. contentInsetTop is represented by translating
-+    // that child, so the translated portion is visible but cannot start a
-+    // scroll (the gap appears at the top once the ScrollView is inverted).
-+    // Include the translated visual range only while dispatching ACTION_DOWN;
-+    // subsequent events use the real bounds after ScrollView has initialized
-+    // the gesture.
-+    val translatedContentNeedsExpandedHitRange =
-+      event.actionMasked == MotionEvent.ACTION_DOWN && appliedTopInsetPx > 0
-+
-     val handled =
--      if (paddingScrollWorkaroundActive) {
--        dispatchWithExpandedContentRange(scrollView, event)
--      } else {
--        super.dispatchTouchEvent(event)
-+      when {
-+        paddingScrollWorkaroundActive -> dispatchWithExpandedContentRange(scrollView, event)
-+        translatedContentNeedsExpandedHitRange ->
-+          dispatchWithTranslatedContentRange(scrollView, event)
-+        else -> super.dispatchTouchEvent(event)
+@@ -299,6 +318,6 @@ public class FocusedInputObserver: NSObject {
+ 
+     let data = target.merging(eventDict) { _, new in new }
+ 
+-    onSelectionChangedHandler(data as NSDictionary)
++    dispatchSelectionEventToJS(data: data)
+   }
+ }
+```
+
+**File**: `ios/traversal/ViewHierarchyNavigator.swift` (modified, +1/-1)
+```diff
+@@ -51,7 +51,7 @@ public class ViewHierarchyNavigator: NSObject {
+ 
+     let isGroupRoot = isGroupView(rootView)
+ 
+-    /// Helper function to recursively search for TextInput views
++    // Helper function to recursively search for TextInput views
+     func findTextInputs(in view: UIView?) {
+       guard let view = view else { return }
+ 
+```
+
+---
+
+### Incident Patch 2: `ac3f3df2` (2026-11-02)
+**Commit Message**: fix: detect caret hidden above `KeyboardAwareScrollView` via ScrollView content coordinates (#1738)
+
+## 📜 Description
+
+`KeyboardAwareScrollView` no longer measures its own position on the
+screen to detect that the caret is hidden above the top edge. Instead
+the native focused-input layout event carries the position of the input
+**inside the content of the parent `ScrollView`**
+(`layout.contentX`/`layout.contentY`), and the check becomes `contentY +
+height < scrollOffset`.
+
+> [!IMPORTANT]
+> Human note: **theoretically**, we can use `viewPositionInWindow` +
+`absoluteY` - this is correct Math calculations. The problem is that
+`viewPositionInWindow` may capture element during the animation and we
+don't have a reliable way to detect when we can make correct
+measurement. This particular fix/changes in this PR is working for
+`KeyboardAwareScrollView`, but the problem with `viewPositionInWindow`
+is still actual for `KeyboardAvoidingView`. I don't have a good solution
+at the moment for `viewPositionInWindow` timing issue, this is why I'm
+merging this fix. The problem with `KeyboardAvoidingView` stays open
+🤷‍♂️
+
+`contentY` is measured in the same native pass as the rest of the layout
+(iOS:
+
+**File**: `android/src/main/java/com/reactnativekeyboardcontroller/events/FocusedInputLayoutChangedEvent.kt` (modified, +4/-0)
+```diff
+@@ -11,6 +11,8 @@ data class FocusedInputLayoutChangedEventData(
+   val height: Double,
+   val absoluteX: Double,
+   val absoluteY: Double,
++  val contentX: Double,
++  val contentY: Double,
+   val target: Int,
+   val parentScrollViewTarget: Int,
+ )
+@@ -38,6 +40,8 @@ class FocusedInputLayoutChangedEvent(
+           putDouble("height", event.height)
+           putDouble("absoluteX", event.absoluteX)
+           putDouble("absoluteY", event.absoluteY)
++          putDouble("contentX", event.contentX)
++          putDouble("contentY", event.contentY)
+         },
+       )
+     }
+```
+
+**File**: `android/src/main/java/com/reactnativekeyboardcontroller/extensions/EditText.kt` (modified, +4/-4)
+```diff
+@@ -97,24 +97,24 @@ fun EditText.addOnTextChangedListener(action: (String) -> Unit): TextWatcher {
+   return listener
+ }
+ 
+-val EditText.parentScrollViewTarget: Int
++val EditText.parentScrollView: View?
+   get() {
+     var currentView: View? = this
+ 
+     while (currentView != null) {
+       val parentView = currentView.parent as? View
+ 
+       if (parentView != null && parentView.isEnabledReactScrollView()) {
+-        // If the parent is a vertical, scrollable ScrollView - return its id
+-        return parentView.id
++        // If the parent is a vertical, scrollable ScrollView - return it
++        return parentView
        }
  
-     if (
-@@ -142,6 +153,27 @@ class ClippingScrollViewDecoratorView(
-     val expandedBottom =
-       max(originalBottom, scrollView.height + scrollView.scrollY + MIN_SCROLL_RANGE_PX)
- 
-+    return dispatchWithTemporaryContentBottom(contentView, event, expandedBottom)
-+  }
-+
-+  private fun dispatchWithTranslatedContentRange(
-+    scrollView: ViewGroup,
-+    event: MotionEvent,
-+  ): Boolean {
-+    val contentView = scrollView.getChildAt(0)
-+    val originalBottom = contentView?.bottom ?: 0
-+    val translatedBottom = originalBottom + appliedTopInsetPx + MIN_SCROLL_RANGE_PX
-+
-+    return dispatchWithTemporaryContentBottom(contentView, event, translatedBottom)
-+  }
-+
-+  private fun dispatchWithTemporaryContentBottom(
-+    contentView: View?,
-+    event: MotionEvent,
-+    expandedBottom: Int,
-+  ): Boolean {
-+    val originalBottom = contentView?.bottom ?: 0
-+
-     if (contentView == null || expandedBottom == originalBottom) {
-       return super.dispatchTouchEvent(event)
+       // Move to the next parent view
+       currentView = parentView
      }
-```
-
-**File**: `android/src/test/java/com/reactnativekeyboardcontroller/views/ClippingScrollViewDecoratorViewTest.kt` (modified, +27/-1)
-```diff
-@@ -1,6 +1,7 @@
- package com.reactnativekeyboardcontroller.views
  
- import android.content.Context
-+import android.content.res.Resources
- import android.os.SystemClock
- import android.view.MotionEvent
- import android.view.View
-@@ -111,6 +112,31 @@ class ClippingScrollViewDecoratorViewTest {
-     assertEquals(1, scrollView.scrollY)
+     // ScrollView was not found
+-    return -1
++    return null
    }
  
-+  @Test
-+  fun `visible translated content in an inverted scroll view can start a drag`() {
-+    assertTranslatedContentCanScroll(nested = false)
-+  }
-+
-+  @Test
-+  fun `visible translated content in an inverted nested scroll view can start a drag`() {
-+    assertTranslatedContentCanScroll(nested = true)
-+  }
-+
-+  private fun assertTranslatedContentCanScroll(nested: Boolean) {
-+    val (decorator, scrollView) = createScrollView(contentHeight = 200, paddingBottom = 0, nested = nested)
-+
-+    // Inversion maps the translated content onto the top 200 pixels of the screen.
-+    scrollView.scaleY = -1f
-+    decorator.setContentInsetTop(700.0 / Resources.getSystem().displayMetrics.density)
-+    scrollView.scrollTo(0, 100)
-+    val offsetBeforeDrag = scrollView.scrollY
-+
-+    val offsets = dragUp(decorator, scrollView, listOf(100, 90, 80, 70, 60, 50, 50))
-+
-+    assertTrue("The message must move from $offsetBeforeDrag; observed $offsets", scrollView.scrollY < offsetBeforeDrag)
-+    assertTrue("The drag must stay inside the real scroll range", offsets.all { it in 0..100 })
-+  }
-+
-   private fun assertInterruptedDrag(nested: Boolean) {
-     val (decorator, scrollView) = createScrollView(contentHeight = 200, paddingBottom = 700, nested = nested)
+ fun EditText?.focus() {
+```
+
+**File**: `android/src/main/java/com/reactnativekeyboardcontroller/extensions/View.kt` (modified, +21/-0)
+```diff
+@@ -55,6 +55,27 @@ fun View.copyBoundsInWindow(rect: Rect) {
+   }
+ }
  
-@@ -142,7 +168,7 @@ class ClippingScrollViewDecoratorViewTest {
-     val themedContext = ThemedReactContext(BridgeReactContext(context), context)
-     val decorator = ClippingScrollViewDecoratorView(themedContext)
-     val scrollView = if (nested) NestedScrollView(context) else ScrollView(context)
--    val content = View(context).apply { isClickable = clickable }
-+    val content = FrameLayout(context).apply { isClickable = clickable }
++/**
++ * React tag of the view, or `-1` when there is no view.
++ */
++val View?.reactViewTag: Int
++  get() = this?.id ?: -1
++
++/**
++ * Location of the view inside the content of the given `ScrollView`, so it depends neither on the
++ * scroll position nor on where the `ScrollView` is on the screen. `(0, 0)` when there is no `ScrollView`.
++ */
++fun View.locationInScrollView(scrollView: View?): IntArray {
++  if (scrollView == null) {
++    return intArrayOf(0, 0)
++  }
++
++  val (x, y) = screenLocation
++  val (scrollViewX, scrollViewY) = scrollView.screenLocation
++
++  return intArrayOf(x - scrollViewX + scrollView.scrollX, y - scrollViewY + scrollView.scrollY)
++}
++
+ val View.screenLocation get(): IntArray {
+   val point = IntArray(2)
+   getLocationOnScreen(point)
+```
+
+**File**: `android/src/main/java/com/reactnativekeyboardcontroller/listeners/FocusedInputObserver.kt` (modified, +10/-2)
+```diff
+@@ -19,7 +19,9 @@ import com.reactnativekeyboardcontroller.extensions.addOnTextChangedListener
+ import com.reactnativekeyboardcontroller.extensions.dispatchEvent
+ import com.reactnativekeyboardcontroller.extensions.dp
+ import com.reactnativekeyboardcontroller.extensions.emitEvent
+-import com.reactnativekeyboardcontroller.extensions.parentScrollViewTarget
++import com.reactnativekeyboardcontroller.extensions.locationInScrollView
++import com.reactnativekeyboardcontroller.extensions.parentScrollView
++import com.reactnativekeyboardcontroller.extensions.reactViewTag
+ import com.reactnativekeyboardcontroller.extensions.rootView
+ import com.reactnativekeyboardcontroller.extensions.screenLocation
+ import com.reactnativekeyboardcontroller.traversal.FocusedInputHolder
+@@ -33,6 +35,8 @@ val noFocusedInputEvent =
+     height = 0.0,
+     absoluteX = 0.0,
+     absoluteY = 0.0,
++    contentX = 0.0,
++    contentY = 0.0,
+     target = -1,
+     parentScrollViewTarget = -1,
+   )
+@@ -136,6 +140,8 @@ class FocusedInputObserver(
+     val input = lastFocusedInput ?: return
  
-     scrollView.overScrollMode = View.OVER_SCROLL_NEVER
-     scrollView.clipToPadding = false
+     val (x, y) = input.screenLocation
++    val parentScrollView = input.parentScrollView
++    val (contentX, contentY) = input.locationInScrollView(parentScrollView)
+     val event =
+       FocusedInputLayoutChangedEventData(
+         x = input.x.dp,
+@@ -144,8 +150,10 @@ class FocusedInputObserver(
+         height = input.height.toFloat().dp,
+         absoluteX = x.toFloat().dp,
+         absoluteY = y.toFloat().dp,
++        contentX = contentX.toFloat().dp,
++        contentY = contentY.toFloat().dp,
+         target = input.id,
+-        parentScrollViewTarget = input.parentScrollViewTarget,
++        parentScrollViewTarget = parentScrollView.reactViewTag,
+       )
+ 
+     dispatchLayoutEventToJS(event)
+```
+
+**File**: `docs/docs/api/hooks/input/use-reanimated-focused-input.md` (modified, +2/-0)
+```diff
+@@ -45,6 +45,8 @@ type FocusedInputLayoutChangedEvent = {
+     height: number; // `height` of the TextInput
+     absoluteX: number; // `x` coordinate on the screen
+     absoluteY: number; // `y` coordinate on the screen
++    contentX: number; // `x` coordinate inside the content of the parent `ScrollView` (`0` if there is no parent `ScrollView`)
++    contentY: number; // `y` coordinate inside the content of the `ScrollView`, doesn't depend on the scroll offset (`0` if there is no parent `ScrollView`)
+   };
+ };
+ ```
+```
+
+**File**: `ios/extensions/UIResponder.swift` (modified, +5/-5)
+```diff
+@@ -17,7 +17,7 @@ public extension UIResponder {
+   }
+ }
+ 
+-public extension Optional where Wrapped == UIResponder {
++public extension Optional where Wrapped: UIResponder {
+   var reactViewTag: NSNumber {
+     return ((self as? UIView)?.superview).reactNativeTag
+   }
+@@ -34,25 +34,25 @@ public extension Optional where Wrapped == UIResponder {
+ }
+ 
+ public extension Optional where Wrapped: UIResponder {
+-  var parentScrollViewTarget: NSNumber {
++  var parentScrollView: UIScrollView? {
+     var currentResponder: UIResponder? = self
+ 
+     while let currentView = currentResponder {
+-      // If the current responder is a vertical, scrollable UIScrollView (excluding UITextView), return its tag
++      // If the current responder is a vertical, scrollable UIScrollView (excluding UITextView), return it
+       if let scrollView = currentView as? UIScrollView,
+          !(currentView is UITextView),
+          scrollView.frame.width >= scrollView.contentSize.width,
+          scrollView.isScrollEnabled
+       {
+-        return scrollView.reactViewTag
++        return scrollView
+       }
+ 
+       // Move to the next responder in the chain
+       currentResponder = currentView.next
+     }
+ 
+     // UIScrollView is not found
+-    return -1
++    return nil
+   }
+ }
+ 
+```
+
+**File**: `ios/extensions/UIView.swift` (modified, +9/-0)
+```diff
+@@ -19,6 +19,15 @@ public extension UIView {
+     return superview?.convert(frame, to: rootView)
+   }
+ 
++  /// Location of the view inside the content of the given `UIScrollView` (the coordinate system of
++  /// a `UIScrollView` is its content space), so it depends neither on the scroll position nor on
++  /// where the `UIScrollView` is on the screen. `.zero` when there is no `UIScrollView`.
++  func locationInScrollView(_ scrollView: UIScrollView?) -> CGPoint {
++    guard let scrollView = scrollView else { return .zero }
++
++    return convert(bounds.origin, to: scrollView)
++  }
++
+   func isVisibleInHierarchy(initial: Bool = true) -> Bool {
+     guard let window = window else {
+       return false
+```
+
+**File**: `ios/observers/FocusedInputObserver.swift` (modified, +8/-1)
+```diff
+@@ -15,6 +15,8 @@ let noFocusedInputEvent: [String: Any] = [
+   "layout": [
+     "absoluteX": 0,
+     "absoluteY": 0,
++    "contentX": 0,
++    "contentY": 0,
+     "width": 0,
+     "height": 0,
+     "x": 0,
+@@ -184,12 +186,17 @@ public class FocusedInputObserver: NSObject {
+ 
+     guard let frame = globalFrame, let input = focusedInput else { return }
+ 
++    let parentScrollView = responder.parentScrollView
++    let location = input.locationInScrollView(parentScrollView)
++
+     let data: [String: Any] = [
+       "target": responder.reactViewTag,
+-      "parentScrollViewTarget": responder.parentScrollViewTarget,
++      "parentScrollViewTarget": parentScrollView.reactViewTag,
+       "layout": [
+         "absoluteX": frame.origin.x,
+         "absoluteY": frame.origin.y,
++        "contentX": location.x,
++        "contentY": location.y,
+         "width": input.frame.width,
+         "height": input.frame.height,
+         "x": input.frame.origin.x,
+```
+
+---
+
+### Incident Patch 3: `6866d7dd` (2026-11-01)
+**Commit Message**: fix: read iOS caret geometry once UIKit has finished the edit (#1734)
+
+## 📜 Description
+
+Fixed `KeyboardAwareScrollView` jumping to the top when Enter is pressed
+in the middle of a paragraph of a multiline `TextInput` on iOS.
+`KCTextInputCompositeDelegate` no longer asks the layout whether the
+selection is ready (`canSelectionFitIntoLayout`); every selection change
+is read once, one frame later, from a coalesced work item. As a result
+`onSelectionChange` of `useFocusedInputHandler` arrives one frame after
+RN's own `onChangeText`/`onSelectionChange` for every selection change,
+not only when the input grows.
+
+## 💡 Motivation and Context
+
+Reproduction from
+https://github.com/kirillzyusko/react-native-keyboard-controller/issues/1593#issuecomment-5241048572:
+a prefilled multiline input inside `KeyboardAwareScrollView`, long-press
+to put the caret into `22222|22222`, press Enter. The scroll view jumps
+to `y=0` instead of staying on the caret. Fabric (RN 0.87.1) and Paper
+(RN 0.81.4), iOS 26.2.
+
+Events below are written as `position@end.y` of the native selection
+event: `39@434.7` is the caret after character 39 with its bottom edge
+434.7 pt from the top of the input.
+
+### 1️⃣ Who scrol
+
+**File**: `ios/delegates/KCTextInputCompositeDelegate.swift` (modified, +14/-8)
+```diff
+@@ -64,6 +64,8 @@ class KCTextInputCompositeDelegate: NSObject, UITextViewDelegate, UITextFieldDel
+   /// Keep track of which textField we’re observing (iOS < 13 only)
+   private weak var observedTextFieldForSelection: UITextField?
+ 
++  private var pendingSelectionUpdate = DispatchWorkItem {}
++
+   init(
+     onSelectionChange: @escaping (_ event: NSDictionary) -> Void,
+     onTextChange: @escaping (_ text: String?) -> Void
+@@ -113,15 +115,19 @@ class KCTextInputCompositeDelegate: NSObject, UITextViewDelegate, UITextFieldDel
+ 
+   func textViewDidChangeSelection(_ textView: UITextView) {
+     textViewDelegate?.textViewDidChangeSelection?(textView)
+-    if textView.canSelectionFitIntoLayout {
+-      updateSelectionPosition(textInput: textView, sendEvent: onSelectionChange)
+-    } else {
+-      // when multiline input grows we need to wait for layout to be updated
+-      // otherwise start/end positions will be incorrect (0/-1)
+-      DispatchQueue.main.asyncAfter(deadline: .now() + UIUtils.nextFrame) {
+-        updateSelectionPosition(textInput: textView, sendEvent: self.onSelectionChange)
+-      }
++
++    // The selection is reported before UIKit lays out the edit, and asking the layout whether it is ready
++    // (`firstRect`) is what broke the split paragraph in #1593, so every read waits a frame; a growing
++    // input needs that frame anyway (#489). The delay also replaces the old `_comingFromJS` check: RN
++    // re-applying the text from JS moves the selection to the end and restores it within one call, and a
++    // read a frame later sees only the restored selection (#1148).
++    pendingSelectionUpdate.cancel()
++    pendingSelectionUpdate = DispatchWorkItem { [weak self, weak textView] in
++      guard let self = self, let textView = textView,
++            textView.isFirstResponder, textView.delegate === self else { return }
++      updateSelectionPosition(textInput: textView, sendEvent: self.onSelectionChange)
+     }
++    DispatchQueue.main.asyncAfter(deadline: .now() + UIUtils.nextFrame, execute: pendingSelectionUpdate)
+   }
+ 
+   func textViewDidChange(_ textView: UITextView) {
+```
+
+**File**: `ios/extensions/UITextInput.swift` (removed, +0/-28)
+```diff
+@@ -1,28 +0,0 @@
+-//
+-//  UITextInput.swift
+-//  KeyboardController
+-//
+-//  Created by Kiryl Ziusko on 04/07/2024.
+-//  Copyright © 2024 Facebook. All rights reserved.
+-//
+-
+-import Foundation
+-import UIKit
+-
+-public extension UITextInput {
+-  var canSelectionFitIntoLayout: Bool {
+-    if let selfObj = self as? NSObject,
+-       let delegate = selfObj.safeValue(forKey: "textInputDelegate") as? NSObject,
+-       let comingFromJS = delegate.safeValue(forKey: "_comingFromJS") as? Bool,
+-       comingFromJS
+-    {
+-      return false
+-    }
+-
+-    guard let selectedRange = selectedTextRange,
+-          let range = textRange(from: selectedRange.start, to: selectedRange.end) else { return false }
+-    let rect = firstRect(for: range)
+-
+-    return rect.origin.x.isFinite && rect.origin.y.isFinite
+-  }
+-}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1742** (2026-11-03): fix: keyboard flash after a launch from Spotlight with preload (@kirillzyusko)
+- **PR #1739** (2026-11-03): refactor: always decorate KeyboardAwareScrollView (@kirillzyusko)
+- **PR #1738** (2026-11-02): fix: detect caret hidden above `KeyboardAwareScrollView` via ScrollView content coordinates (@kirillzyusko)
+- **PR #1736** (2026-10-31): fix: refresh iOS selection geometry after input layout changes (@kirillzyusko)
+- **PR #1734** (2026-11-01): fix: read iOS caret geometry once UIKit has finished the edit (@kirillzyusko)
 - **PR #1729** (2026-10-29): docs: fix broken trusted by icons (@kirillzyusko)
-- **PR #1728** (2026-10-29): fix: prevent first-drag overscroll with Android keyboard insets (@kirillzyusko)
-- **PR #1722** (2026-10-27): fix: make prepare portable across platforms (@kirillzyusko)
-- **PR #1719** (2026-10-26): fix: restore iOS build caches before codegen (@kirillzyusko)
-- **PR #1718** (2026-10-26): chore: release 1.22.9 (@kirillzyusko)
-- **PR #1717** (2026-10-26): fix: support `View` style props on `KeyboardToolbar.Group` on Android with fabric (@RodSarhan)
 
 ---
 
@@ -850,50 +1038,30 @@ child's bottom during `ACTION_DOWN`, then restore
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. prevent first-drag overscroll with Android `contentInsets` (#1728)
+## X. refresh iOS selection geometry after input layout changes (#1736)
 
 **RULE**:
-When implementing operations in `android/src/main/java/com/reactnativekeyboardcontroller/views/ClippingScrollViewDecoratorView.kt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kirillzyusko/react-native-keyboard-controller. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/verify-ios.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kirillzyusko/react-native-keyboard-controller. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f8023c5e`: prevent first-drag overscroll with Android `contentInsets` (#1728). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a69842d1`: refresh iOS selection geometry after input layout changes (#1736). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `android/src/main/java/com/reactnativekeyboardcontroller/views/ClippingScrollViewDecoratorView.kt`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/verify-ios.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-  private var expandedContentView: View? = null
-  private var contentBottomBeforeExpansion = 0
-  private var expansionTouchAction = MotionEvent.ACTION_CANCEL
-    } else if (scrollView.scrollY != 0) {
-      // Only expand the range to start the drag. Once scrolling begins, use the
-      // real content bounds so padding does not keep extending the drag range.
-      paddingScrollWorkaroundActive = false
-  override fun requestDisallowInterceptTouchEvent(disallowIntercept: Boolean) {
-    if (disallowIntercept && expansionTouchAction == MotionEvent.ACTION_MOVE) {
-      // ScrollView has taken the drag. Restore the bounds before onTouchEvent
-      // calculates its range, including on the first movement of a tiny range.
-      paddingScrollWorkaroundActive = false
-      expandedContentView?.bottom = contentBottomBeforeExpansion
-    }
-
-    super.requestDisallowInterceptTouchEvent(disallowIntercept)
-  }
-
-      expandedContentView = contentView
-      contentBottomBeforeExpansion = originalBottom
-      expansionTouchAction = event.actionMasked
-      expandedContentView = null
-      expansionTouchAction = MotionEvent.ACTION_CANCEL
+    runs-on: macOS-15
+    runs-on: macOS-15
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+    runs-on: macOS-14
+    runs-on: macOS-14
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f8023c5e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a69842d1` are properly handled with clean fallback behavior.

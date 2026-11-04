@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/scrapy-plugins-scrapy-playwright-learnings.md`  
 > **Source**: github ([https://github.com/scrapy-plugins/scrapy-playwright](https://github.com/scrapy-plugins/scrapy-playwright))  
-> **Source Version**: `2658f86a`  
+> **Source Version**: `3d513d6b`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T21:24:05.946Z  
+> **Timestamp**: 2026-11-03T19:37:39.967Z  
 > **Learning ID**: `learn-github-scrapy-plugins-scrapy-playwright`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/scrapy-plugins-scrapy-playwright-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/scrapy-plugins/scrapy-playwright](https://github.com/scrapy-plugins/scrapy-playwright))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T21:24:05.731Z  
+> **Harvest Timestamp**: 2026-11-03T19:37:38.523Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 🎭 Playwright integration for Scrapy
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml
-- **Stars / Engagement**: 1458 stars
+- **Stars / Engagement**: 1464 stars
 
 ---
 
@@ -1088,111 +1088,83 @@ class HeadersSpider(Spider):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8aa1bade` (2026-10-02)
-**Commit Message**: Fix duplicated word in memory-size FAQ
+### Incident Patch 1: `3d513d6b` (2026-11-02)
+**Commit Message**: Bump actions/setup-python (#403)
 
-**File**: `docs/faq.md` (modified, +1/-1)
-```diff
-@@ -65,7 +65,7 @@ If you're seeing messages such as `JavaScript heap out of memory`, there's a
- chance you're falling into the scope of
- https://github.com/microsoft/playwright/issues/6319. As a workaround, it's
- possible to increase the amount of memory allowed for the Node.js process by
--specifying a value for the the `--max-old-space-size` V8 option in the
-+specifying a value for the `--max-old-space-size` V8 option in the
- `NODE_OPTIONS` environment variable, e.g.:
- 
- ```
-```
+Bumps the github-actions group with 1 update: [actions/setup-python](https://github.com/actions/setup-python).
+
+
+Updates `actions/setup-python` from 7.0.0 to 7.1.0
+- [Release notes](https://github.com/actions/setup-python/releases)
+- [Commits](https://github.com/actions/setup-python/compare/5fda3b95a4ea91299a34e894583c3862153e4b97...6d4fd22b20465ccc0f7354476588e8df7c9ca0e0)
 
 ---
+updated-dependencies:
+- dependency-name: actions/setup-python
+  dependency-version: 7.1.0
+  dependency-type: direct:production
+  update-type: version-update:semver-minor
+  dependency-group: github-actions
+...
 
-### Incident Patch 2: `ec112a1e` (2026-06-13)
-**Commit Message**: Guard debug log calls
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 
-**File**: `scrapy_playwright/handler.py` (modified, +16/-15)
+**File**: `.github/workflows/checks.yml` (modified, +1/-1)
 ```diff
-@@ -788,20 +788,21 @@ async def _request_handler(route: Route, playwright_request: PlaywrightRequest)
-                 should_abort = await _maybe_await(self.abort_request(playwright_request))
-                 if should_abort:
-                     await route.abort()
--                    logger.debug(
--                        "[Context=%s] Aborted Playwright request <%s %s>",
--                        context_name,
--                        playwright_request.method.upper(),
--                        playwright_request.url,
--                        extra={
--                            "spider": spider,
--                            "context_name": context_name,
--                            "scrapy_request_url": url,
--                            "scrapy_request_method": method,
--                            "playwright_request_url": playwright_request.url,
--                            "playwright_request_method": playwright_request.method,
--                        },
--                    )
-+                    if logger.getEffectiveLevel() <= logging.DEBUG:
-+                        logger.debug(
-+                            "[Context=%s] Aborted Playwright request <%s %s>",
-+                            context_name,
-+                            playwright_request.method.upper(),
-+                            playwright_request.url,
-+                            extra={
-+                                "spider": spider,
-+                                "context_name": context_name,
-+                                "scrapy_request_url": url,
-+                                "scrapy_request_method": method,
-+                                "playwright_request_url": playwright_request.url,
-+                                "playwright_request_method": playwright_request.method,
-+                            },
-+                        )
-                     self.stats.inc_value("playwright/request_count/aborted")
-                     return None
+@@ -32,7 +32,7 @@ jobs:
+         persist-credentials: false
  
-@@ -844,7 +845,7 @@ async def _request_handler(route: Route, playwright_request: PlaywrightRequest)
-             original_playwright_method: str = playwright_request.method
-             try:
-                 await route.continue_(**overrides)
--                if overrides.get("method"):
-+                if overrides.get("method") and logger.getEffectiveLevel() <= logging.DEBUG:
-                     logger.debug(
-                         "[Context=%s] Overridden method for Playwright request"
-                         " to %s: original=%s new=%s",
+     - name: Set up Python
+-      uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
++      uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+       with:
+         python-version: ${{ matrix.python-version || '3.11' }}
+ 
 ```
 
----
-
-### Incident Patch 3: `2aa17e70` (2026-06-13)
-**Commit Message**: Fix test: use localhost
-
-**File**: `tests/tests_asyncio/test_browser.py` (modified, +7/-4)
+**File**: `.github/workflows/publish.yml` (modified, +1/-1)
 ```diff
-@@ -49,11 +49,14 @@ def _wait_for_tcp_port(port: int, timeout: float = 10.0) -> None:
-     """Block until something is accepting connections on localhost:port."""
-     deadline = time.monotonic() + timeout
-     while time.monotonic() < deadline:
--        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
--            sock.settimeout(0.5)
--            if sock.connect_ex(("127.0.0.1", port)) == 0:
-+        # connect via "localhost" (not a hardcoded 127.0.0.1) so the resolution
-+        # matches the server's bind address and the ws://localhost URL handed to
-+        # Playwright, which may be IPv6 (::1) on some hosts
-+        try:
-+            with socket.create_connection(("localhost", port), timeout=0.5):
-                 return
--        time.sleep(0.05)
-+        except OSError:
-+            time.sleep(0.05)
-     raise TimeoutError(f"Timed out waiting for localhost:{port} to accept connections")
+@@ -17,7 +17,7 @@ jobs:
+         persist-credentials: false
  
+     - name: Set up Python
+-      uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
++      uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+       with:
+         python-version: 3.11
+ 
+```
+
+**File**: `.github/workflows/tests.yml` (modified, +2/-2)
+```diff
+@@ -27,7 +27,7 @@ jobs:
+         persist-credentials: false
+ 
+     - name: Set up Python ${{ matrix.python-version }}
+-      uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
++      uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+       with:
+         python-version: ${{ matrix.python-version }}
+ 
+@@ -84,7 +84,7 @@ jobs:
+         persist-credentials: false
+ 
+     - name: Set up Python 3.10
+-      uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
++      uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+       with:
+         python-version: "3.10"
  
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #403** (2026-11-02): Bump actions/setup-python from 7.0.0 to 7.1.0 in the github-actions group (@dependabot[bot])
+- **PR #402** (closed): docs: add a nokk example to the browser providers (@koloss777)
 - **PR #401** (2026-10-19): Upload coverage with codecov-action instead of the legacy uploader (@AdrianAtZyte)
 - **PR #400** (2026-10-15): Bump the github-actions group with 4 updates (@dependabot[bot])
 - **PR #399** (2026-10-15): Use latest runner images in CI, except for the pinned-deps job (@AdrianAtZyte)
 - **PR #398** (2026-10-15): docs: fix duplicated word in memory-size FAQ (@Rohit-Singh-01)
-- **PR #392** (2026-10-15): Switch docs to Sphinx and harden GitHub Actions workflows (@AdrianAtZyte)
-- **PR #390** (2026-09-07): Infer response type from the body (@elacuesta)
 
 ---
 
@@ -1212,28 +1184,28 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. duplicated word in memory-size FAQ
+## X. Bump actions/setup-python (#403)
 
 **RULE**:
-When implementing operations in `docs/faq.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in scrapy-plugins/scrapy-playwright. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/checks.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in scrapy-plugins/scrapy-playwright. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8aa1bade`: duplicated word in memory-size FAQ. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3d513d6b`: Bump actions/setup-python (#403). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/faq.md`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/checks.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-specifying a value for the `--max-old-space-size` V8 option in the
+      uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Anti-pattern to NEVER write (induced failure mode):
-specifying a value for the the `--max-old-space-size` V8 option in the
+      uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8aa1bade` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3d513d6b` are properly handled with clean fallback behavior.

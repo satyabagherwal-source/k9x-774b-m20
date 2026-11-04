@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md`  
 > **Source**: github ([https://github.com/projectdiscovery/nuclei](https://github.com/projectdiscovery/nuclei))  
-> **Source Version**: `d465cc82`  
+> **Source Version**: `46fbc92a`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T10:45:51.125Z  
+> **Timestamp**: 2026-11-03T21:58:11.915Z  
 > **Learning ID**: `learn-github-projectdiscovery-nuclei`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/projectdiscovery/nuclei](https://github.com/projectdiscovery/nuclei))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T10:45:50.651Z  
+> **Harvest Timestamp**: 2026-11-03T21:58:11.638Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Nuclei is a fast, customizable vulnerability scanner powered by the global security community and built on a simple YAML-based DSL, enabling collaboration to tackle trending vulnerabilities on the internet. It helps you find vulnerabilities in your applications, APIs, networks, DNS, and cloud configurations.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 32560 stars
+- **Stars / Engagement**: 32570 stars
 
 ---
 
@@ -1446,411 +1446,219 @@ func isEmptyDir(dir string) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1fc87e6b` (2026-11-02)
-**Commit Message**: Merge pull request #7998 from 0xABCD01/fix/bump-panicking-deps
+### Incident Patch 1: `36d0adba` (2026-11-03)
+**Commit Message**: Merge pull request #8024 from projectdiscovery/fix/headless-exclude-lock
 
-fix: bump govaluate and antchfx/xpath so malformed expressions error instead of panicking
+Read headless excludes under the dialer lock
 
-**File**: `go.mod` (modified, +3/-3)
+**File**: `pkg/protocols/common/protocolstate/exclude_race_test.go` (added, +46/-0)
 ```diff
-@@ -20,9 +20,9 @@ require (
- 	github.com/alitto/pond v1.9.2
- 	github.com/andybalholm/brotli v1.2.0
- 	github.com/andygrunwald/go-jira v1.16.1
--	github.com/antchfx/htmlquery v1.3.5
-+	github.com/antchfx/htmlquery v1.3.7
- 	github.com/antchfx/xmlquery v1.4.4
--	github.com/antchfx/xpath v1.3.6
-+	github.com/antchfx/xpath v1.3.9
- 	github.com/aws/aws-sdk-go-v2 v1.41.5
- 	github.com/aws/aws-sdk-go-v2/config v1.31.16
- 	github.com/aws/aws-sdk-go-v2/credentials v1.18.20
-@@ -88,7 +88,7 @@ require (
- 	github.com/projectdiscovery/goja_nodejs v0.0.0-20260618132410-8519f75f703d
- 	github.com/projectdiscovery/gologger v1.1.73
- 	github.com/projectdiscovery/gostruct v0.0.2
--	github.com/projectdiscovery/govaluate v0.0.0-20260615100919-5ee2581bbf7e
-+	github.com/projectdiscovery/govaluate v0.0.0-20261102102118-9294133b15a2
- 	github.com/projectdiscovery/gozero v0.1.1-0.20260530071156-fa1dad563d76
- 	github.com/projectdiscovery/hmap v0.0.102
- 	github.com/projectdiscovery/httpx v1.12.0
-```
-
-**File**: `go.sum` (modified, +8/-7)
-```diff
-@@ -180,14 +180,13 @@ github.com/andygrunwald/go-jira v1.16.1 h1:WoQEar5XoDRAibOgKzTFELlPNlKAtnfWr296R
- github.com/andygrunwald/go-jira v1.16.1/go.mod h1:UQH4IBVxIYWbgagc0LF/k9FRs9xjIiQ8hIcC6HfLwFU=
- github.com/anmitsu/go-shlex v0.0.0-20200514113438-38f4b401e2be h1:9AeTilPcZAjCFIImctFaOjnTIavg87rW78vTPkQqLI8=
- github.com/anmitsu/go-shlex v0.0.0-20200514113438-38f4b401e2be/go.mod h1:ySMOLuWl6zY27l47sB3qLNK6tF2fkHG55UZxx8oIVo4=
--github.com/antchfx/htmlquery v1.3.5 h1:aYthDDClnG2a2xePf6tys/UyyM/kRcsFRm+ifhFKoU0=
--github.com/antchfx/htmlquery v1.3.5/go.mod h1:5oyIPIa3ovYGtLqMPNjBF2Uf25NPCKsMjCnQ8lvjaoA=
-+github.com/antchfx/htmlquery v1.3.7 h1:KCUklE1EO/xm6iS3CWx6iatFlcnENBk4I4UYa2pBmLU=
-+github.com/antchfx/htmlquery v1.3.7/go.mod h1:/uBTMnFEl6LaBlIgw3KZ+c061tAQdlfbCXObZoxwQf4=
- github.com/antchfx/xmlquery v1.4.4 h1:mxMEkdYP3pjKSftxss4nUHfjBhnMk4imGoR96FRY2dg=
- github.com/antchfx/xmlquery v1.4.4/go.mod h1:AEPEEPYE9GnA2mj5Ur2L5Q5/2PycJ0N9Fusrx9b12fc=
- github.com/antchfx/xpath v1.3.3/go.mod h1:i54GszH55fYfBmoZXapTHN8T8tkcHfRgLyVwwqzXNcs=
--github.com/antchfx/xpath v1.3.5/go.mod h1:i54GszH55fYfBmoZXapTHN8T8tkcHfRgLyVwwqzXNcs=
--github.com/antchfx/xpath v1.3.6 h1:s0y+ElRRtTQdfHP609qFu0+c6bglDv20pqOViQjjdPI=
--github.com/antchfx/xpath v1.3.6/go.mod h1:i54GszH55fYfBmoZXapTHN8T8tkcHfRgLyVwwqzXNcs=
-+github.com/antchfx/xpath v1.3.9 h1:muXJSod6jRzhsiUjvduNSxsRSptFZ2GOJ1oMD1QkPSA=
-+github.com/antchfx/xpath v1.3.9/go.mod h1:i54GszH55fYfBmoZXapTHN8T8tkcHfRgLyVwwqzXNcs=
- github.com/armon/go-socks5 v0.0.0-20160902184237-e75332964ef5 h1:0CwZNZbxp69SHPdPJAN/hZIm0C4OItdklCFmMRWYpio=
- github.com/armon/go-socks5 v0.0.0-20160902184237-e75332964ef5/go.mod h1:wHh0iHkYZB8zMSxRWpUBQtwG5a7fFgvEO+odwuTv2gs=
- github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2 h1:DklsrG3dyBCFEj5IhUbnKptjxatkF07cF2ak3yi77so=
-@@ -957,8 +956,10 @@ github.com/projectdiscovery/gologger v1.1.73 h1:WX2nzq29cL7HdvOHqIttacoid/5lMwap
- github.com/projectdiscovery/gologger v1.1.73/go.mod h1:mJwODZcFDg70ihINpOvZevmBtgvpP8H9/l8Y+OPhZPY=
- github.com/projectdiscovery/gostruct v0.0.2 h1:s8gP8ApugGM4go1pA+sVlPDXaWqNP5BBDDSv7VEdG1M=
- github.com/projectdiscovery/gostruct v0.0.2/go.mod h1:H86peL4HKwMXcQQtEa6lmC8FuD9XFt6gkNR0B/Mu5PE=
--github.com/projectdiscovery/govaluate v0.0.0-20260615100919-5ee2581bbf7e h1:vxzgQlz2Cy/YvizYDQx9OhucBcmBotfDhbQ4yCY2vfA=
--github.com/projectdiscovery/govaluate v0.0.0-20260615100919-5ee2581bbf7e/go.mod h1:xH7bPwHxUlz1yx9UlVeTF+UVCUaKhTnZgaxHb5z362E=
-+github.com/projectdiscovery/govaluate v0.0.0-20260729205521-4c61bf19382e h1:0vaevfTiQeRCkX2xbY/mR38422kHAxGzpVV8FQJVfoc=
-+github.com/projectdiscovery/govaluate v0.0.0-20260729205521-4c61bf19382e/go.mod h1:Z3VjpUJV1pnXDwvAddA8aZ4e839SoeftB7CSdZntAVI=
-+github.com/projectdiscovery/govaluate v0.0.0-20261102102118-9294133b15a2 h1:aSLbDvrJQPlp4HvojU+bTU5XV8xdAVCjoc5gX1Wfbw4=
-+github.com/projectdiscovery/govaluate v0.0.0-20261102102118-9294133b15a2/go.mod h1:Z3VjpUJV1pnXDwvAddA8aZ4e839SoeftB7CSdZntAVI=
- github.com/projectdiscovery/gozero v0.1.1-0.20260530071156-fa1dad563d76 h1:AN70bbi6BBs7KpIM9w0LxygUN7uzT/oH+owDIQ+Fz/k=
- github.com/projectdiscovery/gozero v0.1.1-0.20260530071156-fa1dad563d76/go.mod h1:cWHYnRXoYWHtTpOYyAp5laGYX8GH8ITUhgQaP8G/8FA=
- github.com/projectdiscovery/hmap v0.0.102 h1:ybPuf7UQvuOLiHLOUbVMvd+PSlItQU5iQpP1Erl8kaU=
-```
-
-**File**: `pkg/operators/extractors/compile_test.go` (modified, +9/-0)
-```diff
-@@ -130,3 +130,12 @@ func TestCompileExtractorsIgnoresXPathOnOtherTypes(t *testing.T) {
- 	}
- 	require.NoError(t, e.CompileExtractors())
- }
+@@ -0,0 +1,46 @@
++package protocolstate
 +
-+func TestCompileExtractorsXPathUndeclaredVariable(t *testing.T) {
-+	// Regression test: this expression used to compile and then panic
-+	// with a nil pointer dereference inside antchfx/xpath when the
-+	// first response was evaluated. It must fail at compile time.
-+	var operator Extractor
-+	require.NoError(t, yaml.Unmarshal([]byte("type: xpath\nxpath:\n  - \"******$A\"\n"), &operator))
-+	require.ErrorContains(t, operator.CompileExtractors(), "undeclared variable")
-+}
-```
-
-**File**: `pkg/operators/matchers/compile_test.go` (modified, +9/-0)
-```diff
-@@ -53,3 +53,12 @@ func TestCompileMatchersAllowsEmptyStringValue(t *testing.T) {
- 	matched, _ := m.MatchWords("body", nil)
- 	require.True(t, matched)
- }
++import (
++	"sync"
++	"testing"
 +
-+func TestCompileMatchersDSLTrailingBackslash(t *testing.T) {
-+	// Regression test: a DSL expression whose string literal ends in a
-+	// backslash used to panic the govaluate lexer (index out of range)
-+	// while a template was loading. It must surface as a compile error.
-+	var operator Matcher
-+	require.NoError(t, yaml.Unmarshal([]byte("type: dsl\ndsl:\n  - \"body == 'x\\\\'\"\n"), &operator))
-+	require.ErrorContains(t, operator.CompileMatchers(), "Unclosed string literal")
-+}
-```
-
----
-
-### Incident Patch 2: `be678d9d` (2026-11-02)
-**Commit Message**: fix(templates): keep -eid exclusions independent of -etags
-
-NewTagFilter added an -eid value to the excluded IDs only when -etags
-did not list the same value. The check came from the tag loops in
-#1448, which changed the map it writes but not the map it reads. With
--eid dup -etags dup, the filter excluded nothing by ID. Workflow steps
-still go through this filter, so a workflow ran the template that a -t
-scan with the same flags excluded.
-
-Build each filter set from its own flag with one helper, so no set
-reads another flag's values. The insert-if-absent checks go too:
-writing an existing map key is a no-op, and the one check that changed
-anything was the wrong one. -itags stops deleting from the -etags set,
-because Match already lets an included tag override its exclusion.
-
-Fixes: #8004
-Signed-off-by: Dwi Siswanto <[REDACTED_EMAIL]>
-
-**File**: `pkg/templates/compile_test.go` (modified, +57/-0)
-```diff
-@@ -617,6 +617,63 @@ func (w *warningRecorder) contain(parts ...string) bool {
- 	})
- }
- 
-+func Test_ParseWorkflowExcludesIdListedInExcludeTags(t *testing.T) {
-+	dir := t.TempDir()
-+	templatePath := filepath.Join(dir, "dup.yaml")
-+	err := os.WriteFile(templatePath, []byte(`id: dup
++	"github.com/projectdiscovery/networkpolicy"
++	"github.com/stretchr/testify/require"
++)
 +
-+info:
-+  name: dup
-+  author: pdteam
-+  severity: info
-+
-+http:
-+  - method: GET
-+    path:
-+      - "{{BaseURL}}"
-+`), 0o600)
++func TestIsHostAllowedRacesExcludeUpdate(t *testing.T) {
++	np, err := networkpolicy.New(networkpolicy.Options{DenyList: []string{"127.0.0.0/8"}})
 +	require.NoError(t, err)
 +
-+	workflowPath := filepath.Join(dir, "workflow.yaml")
-+	err = os.WriteFile(workflowPath, fmt.Appendf(nil, `id: wf
-+
-+info:
-+  name: wf
-+  author: pdteam
-+
-+workflows:
-+  - template: %q
-+`, templatePath), 0o600)
++	const executionID = "exclude-race"
++	entry := &Dialers{NetworkPolicy: np, ExcludeTargets: []string{"192.0.2.1"}}
++	err = dialers.Set(executionID, entry)
 +	require.NoError(t, err)
++	t.Cleanup(func() { dialers.Delete(executionID) })
 +
-+	tests := []struct {
-+		name        string
-+		excludeTags []string
-+	}{
-+		{name: "exclude id"},
-+		{name: "exclude id and same tag", excludeTags: []string{"dup"}},
-+	}
-+	for _, tc := range tests {
-+		t.Run(tc.name, func(t *testing.T) {
-+			setup()
-+
-+			options := executerOpts.Options.Copy()
-+			options.ExcludeIds, options.ExcludeTags = []string{"dup"}, tc.excludeTags
-+			executerOpts.Options = options
-+			workflowLoader, err := workflow.NewLoader(executerOpts)
-+			require.NoError(t, err)
-+
-+			executerOpts.WorkflowLoader = workflowLoader
-+
-+			got, err := templates.Parse(workflowPath, nil, executerOpts)
-+			require.NoError(t, err)
-+			require.NotNil(t, got.CompiledWorkflow)
-+			require.Len(t, got.CompiledWorkflow.Workflows, 1)
-+			require.Empty(t, got.CompiledWorkflow.Workflows[0].Executers)
-+		})
-+	}
-+}
-+
- func Test_ParseWorkflowLoadsTemplateWithUnknownMatcherCondition(t *testing.T) {
- 	setup()
- 	dir := t.TempDir()
-```
-
-**File**: `pkg/templates/tag_filter.go` (modified, +30/-82)
-```diff
-@@ -366,85 +366,20 @@ type TagFilterConfig struct {
- // It takes into account Tags, Severities, ExcludeSeverities, Authors, IncludeTags, ExcludeTags, Conditions.
- func NewTagFilter(config *TagFilterConfig) (*TagFilter, error) {
- 	filter := &TagFilter{
--		allowedTags:       make(map[string]struct{}),
--		authors:           make(map[string]struct{}),
--		severities:        make(map[severity.Severity]struct{}),
--		excludeSeverities: make(map[severity.Severity]struct{}),
--		block:             make(map[string]struct{}),
--		matchAllows:       make(map[string]struct{}),
--		types:             make(map[types.ProtocolType]struct{}),
--		excludeTypes:      make(map[types.ProtocolType]struct{}),
--		allowedIds:        make(map[string]struct{}),
--		excludeIds:        make(map[string]struct{}),
-+		allowedTags:       splitCommaTrimSet(config.Tags),
-+		authors:           splitCommaTrimSet(config.Authors),
-+		severities:        toMap(config.Severities),
-+		excludeSeverities: toMap(config.ExcludeSeverities),
-+		block:             splitCommaTrimSet(config.ExcludeTags),
-+		matchAllows:       splitCommaTrimSet(config.IncludeTags),
-+		types:             toMap(config.Protocols),
-+		excludeTypes:      toMap(config.ExcludeProtocols),
-+		// an included ID does not lift its exclusion: exclusions apply
-+		// however a template is selected
-+		allowedIds:        splitCommaTrimSet(config.IncludeIds),
-+		excludeIds:        splitCommaTrimSet(config.ExcludeIds),
- 		includeConditions: make(map[string]*govaluate.EvaluableExpression),
- 	}
--	for _, tag := range config.ExcludeTags {
--		for _, val := range splitCommaTrim(tag) {
--			if _, ok := filter.block[val]; !ok {
--				filter.block[val] = struct{}{}
--			}
--		}
--	}
--	for _, tag := range config.Severities {
--		if _, ok := filter.severities[tag]; !ok {
--			filter.severities[tag] = struct{}{}
--		}
--	}
--	for _, tag := range config.ExcludeSeverities {
--		if _, ok := filter.excludeSeverities[tag]; !ok {
--			filter.excludeSeverities[tag] = struct{}{}
--		}
--	}
--	for _, tag := range config.Authors {
--		for _, val := range splitCommaTrim(tag) {
--			if _, ok := filter.authors[val]; !ok {
--				filter.authors[val] = struct{}{}
--			}
--		}
--	}
--	for _, tag := range config.Tags {
--		for _, val := range splitCommaTrim(tag) {
--			if _, ok := filter.allowedTags[val]; !ok {
--				filter.allowedTags[val] = struct{}{}
--			}
--			// Note: only tags specified in IncludeTags should be removed from the block list
--			// not normal tags like config.Tags
--		}
--	}
--	for _, tag := range config.IncludeTags {
--		for _, val := range splitCommaTrim(tag) {
--			if _, ok := filter.matchAllows[val]; !ok {
--				filter.matchAllows[val] = struct{}{}
--			}
--			delete(filter.block, val)
--		}
--	}
--	for _, tag := range config.Protocols {
--		if _, ok := filter.types[tag]; !ok {
--			filter.types[tag] = struct{}{}
--		}
--	}
--	for _, tag := range config.ExcludeProtocols {
--		if _, ok := filter.excludeTypes[tag]; !ok {
--			filter.excludeTypes[tag] = struct{}{}
--		}
--	}
--	for _, id := range config.ExcludeIds {
--		for _, val := range splitCommaTrim(id) {
--			if _, ok := filter.block[val]; !ok {
--				filter.excludeIds[val] = struct{}{}
--			}
--		}
--	}
--	// an included id does not lift its exclusion: exclusions apply however a
--	// template is selected
--	for _, id := range config.IncludeIds {
--		for _, val := range splitCommaTrim(id) {
--			if _, ok := filter.allowedIds[val]; !ok {
--				filter.allowedIds[val] = struct{}{}
--			}
--		}
--	}
- 	for _, includeCondition := range config.IncludeConditions {
- 		compiled, err := govaluate.NewEvaluableExpressionWithFunctions(includeCondition, dsl.HelperFunctions)
- 		if err != nil {
-@@ -472,12 +407,25 @@ func splitCommaTrim(value string) []string {
- 	return final
- }
- 
--func toMap(slice []string) map[string]struct{} {
--	result := make(map[string]struct{}, len(slice))
--	for _, value := range slice {
--		if _, ok := result[value]; !ok {
--			result[value] = struct{}{}
-+// splitCommaTrimSet returns the set of values, each split by splitCommaTrim.
-+func splitCommaTrimSet(values []string) map[string]struct{} {
-+	set := make(map[string]struct{}, len(values))
-+
-+	for _, value := range values {
-+		for _, val := range splitCommaTrim(value) {
-+			set[val] = struct{}{}
- 		}
- 	}
-+
-+	return set
-+}
-+
-+func toMap[T comparable](slice []T) map[T]struct{} {
-+	result := make(map[T]struct{}, len(slice))
-+
-+	for _, value := range slice {
-+		result[value] = struct{}{}
-+	}
-+
- 	return result
- }
-```
-
-**File**: `pkg/templates/tag_filter_test.go` (modified, +11/-0)
-```diff
-@@ -195,6 +195,17 @@ func TestTagBasedFilter(t *testing.T) {
- 		matched, _ := filter.Match(dummyTemplate, nil)
- 		require.False(t, matched, "an excluded id must not match when it is also included")
- 	})
-+	t.Run("match-exclude-id-also-excluded-as-tag", func(t *testing.T) {
-+		filter, err := NewTagFilter(&TagFilterConfig{
-+			ExcludeTags: []string{"dup"},
-+			ExcludeIds:  []string{"dup"},
-+		})
-+		require.NoError(t, err)
-+
-+		dummyTemplate := newDummyTemplate("dup", nil, []string{"pdteam"}, severity.Info, types.HTTPProtocol)
-+		matched, _ := filter.Match(dummyTemplate, nil)
-+		require.False(t, matched, "could not get correct match")
-+	})
- 	t.Run("match-exclude-type", func(t *testing.T) {
- 		filter, err := NewTagFilter(&TagFilterConfig{
- 			ExcludeProtocols: []types.ProtocolType{types.HTTPProtocol},
-```
-
----
-
-### Incident Patch 3: `6903f2d5` (2026-11-02)
-**Commit Message**: websocket: reject CR/LF in subprotocols; require negotiation in test
-
-Address review feedback:
-- Skip Sec-WebSocket-Protocol values containing CR or LF before negotiating
-  them, since gobwas/ws writes subprotocols into the handshake request line and
-  a line break could smuggle extra handshake headers.
-- Tighten the test server to reject the upgrade unless the client offers the
-  vite-hmr subprotocol, so the test fails if negotiation does not happen.
-
-Co-Authored-By: Claude Opus 4.8 <[REDACTED_EMAIL]>
-
-**File**: `pkg/protocols/websocket/websocket.go` (modified, +4/-1)
-```diff
-@@ -216,7 +216,10 @@ func (request *Request) executeRequestWithPayloads(target *contextargs.Context,
- 
- 		if http.CanonicalHeaderKey(key) == "Sec-Websocket-Protocol" {
- 			for _, proto := range strings.Split(result.Text, ",") {
--				if trimmed := strings.TrimSpace(proto); trimmed != "" {
-+				// Subprotocol values are written into the handshake request line by
-+				// gobwas/ws, so a CR or LF would smuggle extra handshake headers;
-+				// reject any such value instead of negotiating it.
-+				if trimmed := strings.TrimSpace(proto); trimmed != "" && !strings.ContainsAny(trimmed, "\r\n") {
- 					subprotocols = append(subprotocols, trimmed)
- 				}
- 			}
-```
-
-**File**: `pkg/protocols/websocket/websocket_test.go` (modified, +13/-0)
-```diff
-@@ -515,6 +515,19 @@ func requireWebsocketDurationField(t *testing.T, event output.InternalEvent, key
- // rejects the server-echoed protocol and the handshake fails.
- func TestWebSocketSubprotocolNegotiation(t *testing.T) {
- 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-+		// Require the client to offer the vite-hmr subprotocol: reject the upgrade
-+		// otherwise, so the test fails if the subprotocol is not negotiated.
-+		offered := false
-+		for _, proto := range strings.Split(r.Header.Get("Sec-WebSocket-Protocol"), ",") {
-+			if strings.TrimSpace(proto) == "vite-hmr" {
-+				offered = true
-+				break
++	stop := make(chan struct{})
++	var wg sync.WaitGroup
++	wg.Add(1)
++	go func() {
++		defer wg.Done()
++		lists := [][]string{{"192.0.2.1"}, {"192.0.2.2", "192.0.2.3"}}
++		i := 0
++		for {
++			select {
++			case <-stop:
++				return
++			default:
 +			}
++			entry.Lock()
++			entry.ExcludeTargets = lists[i%2]
++			entry.Unlock()
++			i++
 +		}
-+		if !offered {
-+			http.Error(w, "vite-hmr subprotocol required", http.StatusBadRequest)
-+			return
-+		}
- 		upgrader := ws.HTTPUpgrader{
- 			Protocol: func(p string) bool { return p == "vite-hmr" },
- 		}
++	}()
++
++	for i := 0; i < 2000; i++ {
++		_ = IsHostAllowed(executionID, "http://192.0.2.1")
++	}
++	close(stop)
++	wg.Wait()
++}
+```
+
+**File**: `pkg/protocols/common/protocolstate/headless.go` (modified, +5/-2)
+```diff
+@@ -138,11 +138,14 @@ func CanonicalizeHost(host string) string {
+ // IsHostAllowed checks if the host is allowed by network policy
+ func IsHostAllowed(executionId string, targetUrl string) bool {
+ 	dialers, ok := dialers.Get(executionId)
+-	if !ok {
++	if !ok || dialers == nil {
+ 		return true
+ 	}
+ 
++	dialers.Lock()
+ 	np := dialers.NetworkPolicy
++	excludedTargets := append([]string(nil), dialers.ExcludeTargets...)
++	dialers.Unlock()
+ 	if np == nil {
+ 		// no policy present: deny rather than allow.
+ 		return false
+@@ -174,7 +177,7 @@ func IsHostAllowed(executionId string, targetUrl string) bool {
+ 	canonHost := CanonicalizeHost(host)
+ 
+ 	// Check explicit ExcludeTargets against raw, host, and canonical host
+-	for _, excluded := range dialers.ExcludeTargets {
++	for _, excluded := range excludedTargets {
+ 		ex := CanonicalizeHost(strings.TrimSpace(excluded))
+ 		if ex != "" {
+ 			if strings.EqualFold(canonHost, ex) || strings.EqualFold(host, ex) || strings.EqualFold(rawTarget, ex) {
+```
+
+---
+
+### Incident Patch 2: `46fbc92a` (2026-11-03)
+**Commit Message**: Merge pull request #8023 from projectdiscovery/fix/dns-resolver-client
+
+Give each scan its own DNS resolvers
+
+**File**: `pkg/protocols/dns/dnsclientpool/clientpool.go` (modified, +28/-19)
+```diff
+@@ -26,33 +26,42 @@ var defaultResolvers = []string{
+ 	"8.8.4.4:53", // Google
+ }
+ 
+-// Init initializes the client pool implementation
++// Init initializes the client pool implementation.
++// Each resolver list gets its own client, so a later scan is not stuck with the first scan's resolvers.
+ func Init(options *types.Options) error {
+-	m.Lock()
+-	defer m.Unlock()
+-
+-	// Don't create clients if already created in the past.
+-	if normalClient != nil {
+-		return nil
+-	}
+-	clientPool = mapsutil.NewSyncLockMap[string, *retryabledns.Client]()
+-
+-	resolvers := defaultResolvers
+-	if len(options.InternalResolversList) > 0 {
+-		resolvers = options.InternalResolversList
+-	}
+-	var err error
+-	normalClient, err = retryabledns.New(resolvers, 1)
++	client, err := cachedClient(resolversFor(options))
+ 	if err != nil {
+ 		return errors.Wrap(err, "could not create dns client")
+ 	}
++	m.Lock()
++	normalClient = client
++	m.Unlock()
+ 	return nil
+ }
+ 
+-func getNormalClient() *retryabledns.Client {
++func resolversFor(options *types.Options) []string {
++	if options != nil && len(options.InternalResolversList) > 0 {
++		return options.InternalResolversList
++	}
++	return defaultResolvers
++}
++
++func cachedClient(resolvers []string) (*retryabledns.Client, error) {
+ 	m.Lock()
+ 	defer m.Unlock()
+-	return normalClient
++	if clientPool == nil {
++		clientPool = mapsutil.NewSyncLockMap[string, *retryabledns.Client]()
++	}
++	key := strings.Join(resolvers, ",")
++	if client, ok := clientPool.Get(key); ok {
++		return client, nil
++	}
++	client, err := retryabledns.New(resolvers, 1)
++	if err != nil {
++		return nil, err
++	}
++	_ = clientPool.Set(key, client)
++	return client, nil
+ }
+ 
+ // Configuration contains the custom configuration options for a client
+@@ -81,7 +90,7 @@ func (c *Configuration) Hash() string {
+ // Get creates or gets a client for the protocol based on custom configuration
+ func Get(options *types.Options, configuration *Configuration) (*retryabledns.Client, error) {
+ 	if (configuration.Retries <= 1) && len(configuration.Resolvers) == 0 {
+-		return getNormalClient(), nil
++		return cachedClient(resolversFor(options))
+ 	}
+ 	hash := configuration.Hash()
+ 	if client, ok := clientPool.Get(hash); ok {
+```
+
+**File**: `pkg/protocols/dns/dnsclientpool/clientpool_test.go` (added, +35/-0)
+```diff
+@@ -0,0 +1,35 @@
++package dnsclientpool
++
++import (
++	"testing"
++
++	"github.com/projectdiscovery/nuclei/v3/pkg/types"
++	"github.com/stretchr/testify/require"
++)
++
++func TestClientsFollowResolverList(t *testing.T) {
++	previousClient := normalClient
++	previousPool := clientPool
++	t.Cleanup(func() {
++		normalClient = previousClient
++		clientPool = previousPool
++	})
++	normalClient = nil
++	clientPool = nil
++
++	firstOptions := &types.Options{InternalResolversList: []string{"192.0.2.1:53"}}
++	secondOptions := &types.Options{InternalResolversList: []string{"192.0.2.2:53"}}
++
++	require.NoError(t, Init(firstOptions))
++	require.NoError(t, Init(secondOptions))
++
++	first, err := Get(firstOptions, &Configuration{})
++	require.NoError(t, err)
++	second, err := Get(secondOptions, &Configuration{})
++	require.NoError(t, err)
++	require.NotSame(t, first, second)
++
++	again, err := Get(firstOptions, &Configuration{})
++	require.NoError(t, err)
++	require.Same(t, first, again)
++}
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #8010** (2026-11-02): websocket: negotiate Sec-WebSocket-Protocol via the dialer (@Ayham970)
-- **PR #8009** (2026-11-02): fix(templates): keep -eid exclusions independent of -etags (@dwisiswant0)
-- **PR #8006** (2026-11-02): fix(workflow): keep exclusions from silently emptying workflows (@dwisiswant0)
-- **PR #8005** (2026-11-02): fix(workflow)!: load tags steps when a subtemplate passes the filters (@dwisiswant0)
-- **PR #8003** (2026-11-02): add har input mode (@dogancanbakir)
-- **PR #8000** (2026-11-02): honour -jsonl in -tl and drop the listing banner from json output (@dogancanbakir)
+- **PR #8024** (2026-11-03): Read headless excludes under the dialer lock (@Mzack9999)
+- **PR #8023** (2026-11-03): Give each scan its own DNS resolvers (@Mzack9999)
+- **PR #8019** (closed): fix(headless): prevent nil pointer dereference on invalid URL in cookie jar (#8015) (@TassioSales)
+- **PR #8018** (2026-11-03): use jev for llm matchers when -llm-provider jev (@dogancanbakir)
+- **PR #8016** (2026-11-03): fix(headless): fail requests whose URL net/url cannot parse (@dwisiswant0)
+- **PR #8014** (2026-11-03): fix(headless): normalize IPv4-mapped IPv6 host forms for -exclude-hosts and -lna (#7982) (@TassioSales)
 
 ---
 
@@ -1870,32 +1678,73 @@ Co-Authored-By: Claude Opus 4.8 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #7998 from 0xABCD01/fix/bump-panicking-deps
+## X. Merge pull request #8024 from projectdiscovery/fix/headless-exclude-lock
 
 **RULE**:
-When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in projectdiscovery/nuclei. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/protocols/common/protocolstate/exclude_race_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in projectdiscovery/nuclei. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1fc87e6b`: Merge pull request #7998 from 0xABCD01/fix/bump-panicking-deps. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `36d0adba`: Merge pull request #8024 from projectdiscovery/fix/headless-exclude-lock. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/protocols/common/protocolstate/exclude_race_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	github.com/antchfx/htmlquery v1.3.7
-	github.com/antchfx/xpath v1.3.9
-	github.com/projectdiscovery/govaluate v0.0.0-20261102102118-9294133b15a2
+package protocolstate
+
+import (
+	"sync"
+	"testing"
+
+	"github.com/projectdiscovery/networkpolicy"
+	"github.com/stretchr/testify/require"
+)
+
+func TestIsHostAllowedRacesExcludeUpdate(t *testing.T) {
+	np, err := networkpolicy.New(networkpolicy.Options{DenyList: []string{"127.0.0.0/8"}})
+	require.NoError(t, err)
+
+	const executionID = "exclude-race"
+	entry := &Dialers{NetworkPolicy: np, ExcludeTargets: []string{"192.0.2.1"}}
+	err = dialers.Set(executionID, entry)
+	require.NoError(t, err)
+	t.Cleanup(func() { dialers.Delete(executionID) })
+
+	stop := make(chan struct{})
+	var wg sync.WaitGroup
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		lists := [][]string{{"192.0.2.1"}, {"192.0.2.2", "192.0.2.3"}}
+		i := 0
+		for {
+			select {
+			case <-stop:
+				return
+			default:
+			}
+			entry.Lock()
+			entry.ExcludeTargets = lists[i%2]
+			entry.Unlock()
+			i++
+		}
+	}()
+
+	for i := 0; i < 2000; i++ {
+		_ = IsHostAllowed(executionID, "http://192.0.2.1")
+	}
+	close(stop)
+	wg.Wait()
+}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	github.com/antchfx/htmlquery v1.3.5
-	github.com/antchfx/xpath v1.3.6
-	github.com/projectdiscovery/govaluate v0.0.0-20260615100919-5ee2581bbf7e
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1fc87e6b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `36d0adba` are properly handled with clean fallback behavior.

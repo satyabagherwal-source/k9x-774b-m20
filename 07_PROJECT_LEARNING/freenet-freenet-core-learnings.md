@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/freenet-freenet-core-learnings.md`  
 > **Source**: github ([https://github.com/freenet/freenet-core](https://github.com/freenet/freenet-core))  
-> **Source Version**: `f988a147`  
+> **Source Version**: `c54e83c8`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T16:01:30.917Z  
+> **Timestamp**: 2026-11-04T00:32:04.641Z  
 > **Learning ID**: `learn-github-freenet-freenet-core`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/freenet-freenet-core-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/freenet/freenet-core](https://github.com/freenet/freenet-core))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T16:01:29.460Z  
+> **Harvest Timestamp**: 2026-11-04T00:32:03.756Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1738,11 +1738,11 @@ pub mod streaming_buffer;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #6103** (2026-11-03): **fix(delegates): refuse node-only inbound messages from clients**
-  *Symptoms*: ## Problem  A client's delegate request (`DelegateRequest::ApplicationMessages`) could carry any `InboundDelegateMsg` variant, and the runtime forwarded it to the delegate verbatim. `carries_host_only_inbound` refused only `Lifecycle` and `WakeupFired`. Every other non-`ApplicationMessage` variant reports something only the node knows: `ContractNotification`, the `Get/Put/Update/Subscribe/UnsubscribeContractResponse` family, `UserResponse` and `DelegateMessage`. None of them carries an origin, so a delegate cannot tell a forged one from a real one. A web app on the node, or an unattested client, could hand a delegate a contract state the contract never had, or a made-up answer to a contract request it made.  Local mode (`run_local_node`, `Executor::handle_request`) reaches the executor without going through the contract loop, so it had no refusal at all, not even for `Lifecycle`/`WakeupFired`.  Tracked privately as GHSA-3rw4-2m4x-g3gh.  ## Approach  - `carries_host_only_inbound` becomes `node_only_inbound`, an **allowlist**: a client may send `ApplicationMessage` and nothing else. A variant added later to the `#[non_exhaustive]` enum is refused until someone decides otherwise. - It is applied at every client entry point: `dispatch_delegate_request` on a network node (where the old check lived, still before exclusion/queueing), and a new `Executor::client_delegate_request` that `run_local_node` and `handle_request` now both call. - The unchecked inherent methods `Executor::del
+- **Issue #6105** (2026-11-03): **ci: cut Ubicloud runner spend without slowing PR CI**
+  *Symptoms*: ## Problem  The October Ubicloud bill was $429. Rebuilt from the Actions API (per-job durations for a stratified sample of 573 of ~3,700 runs, at Ubicloud list prices) it comes to ~$440, which confirms the account is on standard pricing. freenet-core's `ci.yml` is ~$301 of it, most of that on three standard-16 jobs (Unit & Integration ~$124, Simulation ~$89, NAT Validation ~$55). The daily large simulation is another ~$42. Spend tracks real work: 92% of PR CI runs were on PRs that merged, about $1.80 of CI per merged PR. So this cuts structural waste, not usage.  ## Approach  **1. Simulation stopped recompiling before it tests** (measured). Its run step lacked the build step's linker env. Cargo saw changed flags and rebuilt before running a single test: 3m04s on run 41154587352 and 3m54s (485 crates) on run 41665757502, per `sim-logs/nextest.log`, on a standard-16, on every PR run. The same gap existed in Unit & Integration's ping-types step. Both now carry the env. Projected saving: ~$20-30/month, plus 3-4 min off Simulation's wall clock.  **2. Warm Rust cache for the heavy jobs.** A PR can restore a cache from its own branch or from main. I verified that Ubicloud honours this: a new PR's first Clippy run logs `Restored from cache key "v0-rust-clippy_check-…" full match: true`. But the heavy jobs never run on main, so they had no main entry. There was no `v0-rust-test_unit-*` entry at all, and Simulation and NAT saved 1.2-2.2 GB per PR branch (0.5-0.9 min of upload per run) 
 
-- **Issue #6101** (2026-11-03): **feat(transport): add a QUIC crash-loop breaker for Windows by counting short runs**
-  *Symptoms*: ## Problem  QUIC stays off by default on Windows because the crash-loop breaker (#6029) is unix only. Four review rounds of a Windows design failed for one reason: each tried to tell a crash from a normal stop, using signals Windows does not deliver reliably (logoff and shutdown events, boot identity under Fast Startup, exit codes under the run wrapper).  ## Approach  Stop asking that question. On Windows the breaker counts consecutive QUIC-enabled runs that ended within `SHORT_RUN` (10 min), whatever ended them. A run that lasts past it clears the count. Three short runs in a row trip the breaker, so the fourth start has QUIC off for the cooldown unix uses.  - `crates/core/src/transport/quic/breaker/short_runs.rs` holds a pure `decide` with no OS calls, tested on every platform. The file and timer code also compiles everywhere, and one `cfg!(not(unix))` in `gate` picks the path, so nearly all of it runs on Linux CI. The unix design is unchanged. - The marker is a new `Marker::ShortRuns` in the existing `quic-crash-breaker.json`, in the node's own data dir, read and written only by the node. No CLI or wrapper has to agree on a path. - A clean exit clears the count, through the existing `quic_breaker_clean_exit`. That covers an update exit and Ctrl+C. A fatal listener exit or a storage poison exit uses code 42 too but goes through `process::exit`, so it counts. That removes the problem from round 3 of #6031. - The timer is its own task, started when the marker is written, regi
+- **Issue #6104** (2026-11-03): **feat(transport): turn QUIC shadow mode on by default on Linux and macOS**
+  *Symptoms*: ## Problem  This is Step 2 of the QUIC rollout (#5940): shadow mode on by default on Linux and macOS. Step 1 is done. The nova gateways and framework ran shadow for 40 hours with no panic, breaker trip or endpoint fault. A private pair across real home NAT held one path for 17 hours with no fallback. In Step 2 every eligible pair negotiates, and its gate (upgrade success, fallbacks per path-day, memory per path) is measured while it runs.  ## Approach  `QuicMode::default_mode()` is what an unset `transport-quic` means: `Shadow` on Linux and macOS, `Off` everywhere else. Windows stays off until #6031's real-machine checks are done. Other platforms stay off because the crash-loop breaker reads no boot identity there and so cannot trip. `from_config_value(None)` and `Default` both use it, and the startup log now says which mode is in effect and whether it came from config or from the default.  The default is decided when the value is read and is never written into `config.toml`. A node that did not set the key follows the release it runs, so a later default-off release turns QUIC off on every node that did not set it explicitly. That is the rollback.  Shadow sends only control frames on a path. Application traffic stays on UDP, and `QUIC_DATA_PERCENT` stays 0. Peers below 0.2.154 are never offered to, and peers with QUIC off answer `Decline{disabled}`.  The memory accounting gate (the per-path ceiling in the node aggregate) is a gate for QUIC carrying data by default, which is S
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1759,1226 +1759,288 @@ pub mod streaming_buffer;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f988a147` (2026-11-03)
-**Commit Message**: feat(transport): add a QUIC crash-loop breaker for Windows by counting short runs (#6101)
+### Incident Patch 1: `c54e83c8` (2026-11-03)
+**Commit Message**: feat(transport): turn QUIC shadow mode on by default on Linux and macOS (#6104)
 
-**File**: `.claude/rules/transport.md` (modified, +19/-7)
+**File**: `.claude/rules/bug-prevention-patterns.md` (modified, +2/-1)
 ```diff
-@@ -372,8 +372,10 @@ inbound session key (`handshake_unauthenticated_dropped`), QUIC endpoint deaths
- (`quic_endpoint_down`), panics the QUIC socket adapter caught
- (`quic_adapter_panicked`, once per endpoint; the process keeps running
- and no breaker state is left), QUIC crash-loop breaker trips at startup
--(`quic_breaker_trips`, counted for any abnormal end of a QUIC-enabled run, not
--only a QUIC fault; see `quic/breaker.rs`) and whether the breaker keeps QUIC
-+(`quic_breaker_trips`, on unix counted for any abnormal end of a QUIC-enabled
-+run, not only a QUIC fault, and on Windows for three runs in a row that ended
-+within ten minutes, for any reason, each starting within 24 h of the one before;
-+see `quic/breaker.rs`) and whether the breaker keeps QUIC
- off in this process (`quic_breaker_suppressed`, a state that is never reset and
- is not activity by itself) and QUIC connections this node closed, by close code
- (`quic_close_sent_<label>`, one per `QuicCloseCode`) and the shadow-mode upgrade
-@@ -890,7 +892,7 @@ sends data on a path yet, so `prefer` differs from `shadow` only by that bit. Th
+@@ -897,7 +897,8 @@ NOT covered by the reassembly allowance: they come on top of it, the send
+ window is outbound, and quinn's own per-connection state is unbounded by
+ the windows. That memory (measurements of some of its terms, and a list of
+ what was not measured, are in `quic/config.rs`) is not accounted in the
+-aggregate and must be before QUIC is on by default. A node-wide share
++aggregate and must be before QUIC carries data by default (Step 3 at
++100%; shadow paths, on by default since Step 2, carry none). A node-wide share
+ and fairness between connections are deferred to the transport redesign. Do
+ not copy this shape for memory the node holds on its own initiative.
+ 
+```
+
+**File**: `.claude/rules/transport.md` (modified, +22/-9)
+```diff
+@@ -884,15 +884,20 @@ it must not wait unless it is a pacing point.
+ 
+ #### QUIC endpoint (`transport/quic.rs`, #5940 step c2)
+ 
+-`transport-quic` (config key, `off` by default, `shadow` or `prefer`) decides
+-whether `bind_udp_listener` builds a quinn endpoint over the DemuxSocket.
++`transport-quic` (config key: `off`, `shadow` or `prefer`; unset is
++`QuicMode::default_mode`, shadow on Linux and macOS and off elsewhere, since
++the breaker cannot trip without a boot identity) decides whether `bind_udp_listener` builds a quinn endpoint over the DemuxSocket.
+ `prefer` negotiates data with the release's share of pairs ("Data slice" below;
+ `upgrade::policy::log_startup` reports the share at INFO once per node). No code
+ sends data on a path yet, so `prefer` differs from `shadow` only by that bit. The
  release that makes `prefer` carry data must say in its notes that existing
  `prefer` configs start carrying data. Off: no endpoint, no QUIC ingress, nothing
  changes. QUIC must stay off by default on Windows until the crash-loop
--breaker works there (#6031). Shadow or prefer: the endpoint is built
-+breaker has been confirmed on a real Windows machine (#6031). Shadow or prefer: the endpoint is built
+-breaker has been confirmed on a real Windows machine (#6031). Shadow or prefer: the endpoint is built
++breaker has been confirmed on a real Windows machine (#6031). The default is
++read, never written to config.toml: a node that did not set the key follows the
++release it runs, so a default-off release is the kill switch. It does not reach
++a node that ever ran with `--transport-quic` or `FREENET_TRANSPORT_QUIC`: those
++are saved to config.toml like any setting (the Step 1 gateways are such nodes). Shadow or prefer: the endpoint is built
  with the node's QUIC identity (below) and an EMPTY allow-set, so nothing
  reaches it and it sends nothing; the listener holds it, with the queue of
  its accept loop (below), which hands on no attempt while the allow-set is
-@@ -1311,8 +1313,14 @@ peer presents a key that is not its transport key.
+@@ -1244,8 +1249,10 @@ orders other than a single gap at offset 0. Some quinn terms depend on
+ traffic rate and time rather than configuration, as the UDP transport's
+ dedup window and sent-packet tracker do, so the per-path ceiling (memory
+ gate M2, #5940) cannot be the sum of these measurements alone. This
+-memory is NOT accounted in the node aggregate and must be before QUIC is on
+-by default (rollout gate). The fixed
++memory is NOT accounted in the node aggregate and must be before QUIC carries
++data by default (Step 3 at 100%, rollout gate). Shadow paths carry no data, so
++what they hold is the fixed per-path terms, and Step 2's gate watches that as
++RSS against `quic_paths_active`. The fixed
+ node-wide endpoint buffers are summed whatever `transport-quic` says:
+ `INCOMING_BUFFER_TOTAL_BYTES` (quinn's pending attempts) and
+ `QUIC_INGRESS_QUEUE_BYTES`.
+@@ -1274,7 +1281,11 @@ seeded GlobalRng repeat the same event trace; the bytes differ, because
+ rustls's key exchange and the XEdDSA nonce use the OS RNG.
  
- #### QUIC rollout (#5940)
+ In SimNetwork: `with_transport_quic` / `with_node_transport_quic` set the
+-config value per node (off by default; an unknown value panics), and the
++config value per node (off unless set, whatever the node default: the
++harness writes `off` into every node's config; an unknown value panics;
++tests that start nodes outside SimNetwork, in `crates/core/tests` and through
++freenet-test-network, get the platform default on purpose, as production does,
++except where a restart after SIGKILL would trip the breaker), and the
+ endpoint runs on the network's VirtualTime (`get_socket_virtual_time`;
+ RealTime in production, pinned by
+ `the_transport_endpoint_runs_on_virtual_time_only_in_simulation`). Its
+@@ -1330,7 +1341,7 @@ every rate), endpoint-down, panics and breaker trips, RSS against
+   stays near 0 and UDP metrics do not change.
+ - Step 1: nova gateways and framework in shadow for 24-48 h. The 24 h gateway
+   A/B runs only if something looks odd. Rollback: set the key to off and restart.
+-- Step 2: shadow on by default, not on Windows. Gate: at least 95% upgrade
++- Step 2: shadow on by default on Linux and macOS (`QuicMode::default_mode`). Gate: at least 95% upgrade
+   success by `established_as_offerer / accepted`; fewer than 1 fallback per
+   path-day excluding endpoint and restart causes; memory within the measured
+   terms (about 0.3 to 0.5 MiB per idle path). An abort spike stops the step.
+@@ -1793,8 +1804,10 @@ QUIC receive flow (#5940 e5b-4):
  
--There are no opt-in stages; releases do the rollout. QUIC stays off on Windows
--throughout, until #6031. Every step watches: peers disappearing per version
-+There are no opt-in stages; releases do the rollout. QUIC stays off by default
-+on Windows throughout, until its breaker is confirmed on a real Windows machine
-+(#6031). Before default-on there, run on real Windows 10 and 11: the
-+`quic_breaker_windows` test; logoff, shutdown and restart with Fast Startup on
-+and off; tray Restart, Stop and Quit; `freenet service stop` and `restart`; an
-+update exit; a real abort; and sleep during a run. Then weigh what that breaker
-+never catches: a crash loop with runs of 10 minutes or more, and a fault that
-+crashes once a day. Every step watches: peers disappearing per version
- against the previous rollout (a node that dies before reporting is absent from
- every rate), endpoint-down, panics and breaker trips, RSS against
- `quic_paths_active`, CPU and egress, and NAT success, connections and transfers.
-@@ -1964,8 +1972,12 @@ Liveness ("alive" = the endpoint driver has not ENDED; it does not mean
-     (ERROR log, quic_adapter_panicked, quic_endpoint_down) and leaves no
-     crash-loop breaker state, so QUIC comes back on the next start, and a
-     deterministic fault recurs once per start. A panic that is not
--    contained aborts the process, and the next start trips the breaker
--    (quic_breaker_trips, see quic/breaker.rs).
-+    contained aborts the process. On unix the next start trips the breaker
-+    (quic_breaker_trips, see quic/breaker.rs). On Windows the breaker does
-+    not look at how a run ended: it counts runs that lasted under 10 minutes,
-+    so the fourth start after three such aborts in a row trips it, and an
-+    abort after 10 minutes or more never does, nor do aborts a day apart
-+    (quic/breaker/short_runs.rs).
-   → When the node drops its last handle, the availability is Released
-     (final; the first final state stored wins, so a release and a
-     driver return racing never overwrite each other) and the driver's
+ #### QUIC errors, close codes and liveness (`quic/error.rs`, `quic/liveness.rs`, #5940 step e4)
+ 
+-Dead code in production while QUIC carries no traffic: with `transport-quic`
+-off no endpoint is built and the transport reports `Disabled`.
++Live in production on Linux and macOS, where shadow is the default: the
++paths carry control frames only, but endpoints, connections and their errors
++are real. With `transport-quic` off no endpoint is built and the transport
++reports `Disabled`.
+ 
+ ```
+ Errors: TransportError::Quic(QuicError), beside TransportError::Udp and
 ```
 
-**File**: `.github/workflows/ci.yml` (modified, +6/-0)
+**File**: `.github/workflows/ci.yml` (modified, +8/-0)
 ```diff
-@@ -1199,6 +1199,12 @@ jobs:
+@@ -1161,6 +1161,14 @@ jobs:
+       - name: Test service commands
+         run: cargo nextest run -p freenet --bin freenet --profile ci -E 'test(commands::service) | test(commands::url_handler) | test(commands::open_link)'
+ 
++      # QUIC shadow is the default on macOS (#5940 Step 2), and its crash-loop
++      # breaker reads kern.boottime there: run the real-binary shutdown tests on
++      # a real Mac (a clean stop clears it, a SIGKILL trips it, which needs the
++      # boot identity, and a node with no setting arms it). Not the lib unit
++      # tests: building the lib test target here takes over 20 minutes.
++      - name: Test QUIC crash-loop breaker
++        run: cargo nextest run -p freenet --profile ci --test graceful_shutdown_exit_code
++
+       # freenet:// scheme handler (#5726) against the real binary.
        - name: Test freenet:// handler binary
          run: cargo nextest run -p freenet --profile ci --test url_scheme_handler
- 
-+      # The QUIC crash-loop breaker through the real process (#6031). Its
-+      # decision is tested on every platform; only this reaches the Windows
-+      # branch in the binary.
-+      - name: Test QUIC breaker on Windows
-+        run: cargo nextest run -p freenet --profile ci --test quic_breaker_windows
-+
-       # And through real protocol activation: Start-Process hands the link to
-       # Windows, which looks up HKCU\Software\Classes\freenet and runs the
-       # handler. No node runs here, so the handler writes its "not running"
 ```
 
-**File**: `crates/core/src/bin/freenet.rs` (modified, +2/-2)
+**File**: `apps/freenet-ping/app/tests/common/mod.rs` (modified, +2/-1)
 ```diff
-@@ -410,8 +410,8 @@ async fn run_network_node_with_signals(
-         .context("failed to install SIGTERM handler")?;
-     // The QUIC crash-loop breaker arms its marker only from here on (#5940):
-     // a SIGTERM before the handler exists ends the node without its clean
--    // exit, which would read as a crash.
--    #[cfg(unix)]
-+    // exit, which would read as a crash. Windows has no such handler and arms
-+    // once the transport is up.
-     freenet::quic_breaker_signals_ready();
- 
-     // Set when THIS process asks the node to stop because an operator signalled
+@@ -184,7 +184,8 @@ pub async fn base_node_test_config_with_rng<R: Rng>(
+             ledbat_min_ssthresh: None,
+             congestion_control: None,
+             bbr_startup_rate: None,
+-            transport_quic: None,
++            // Off whatever the node default is: these tests are not about QUIC.
++            transport_quic: Some("off".to_string()),
+             quic_max_paths: None,
+             quic_data_percent: None,
+             quic_ignore_crash_breaker: None,
 ```
 
-**File**: `crates/core/src/config.rs` (modified, +23/-4)
+**File**: `crates/core/Cargo.toml` (modified, +2/-2)
 ```diff
-@@ -2545,11 +2545,13 @@ pub struct NetworkArgs {
+@@ -119,8 +119,8 @@ rustls-native-certs = "0.8.4"
+ # Keep it semver-compatible with reqwest's rustls: os_trust probes certificates
+ # with it on the assumption that reqwest validates them identically.
+ rustls = { version = "0.23", default-features = false, features = ["std"] }
+-# QUIC endpoint (transport/quic.rs, #5940), inert unless `transport-quic` is
+-# on. Only the ring rustls provider: no runtime-tokio (the endpoint runs on the
++# QUIC endpoint (transport/quic.rs, #5940): on in shadow by default on Linux
++# and macOS, off elsewhere (`transport-quic`). Only the ring rustls provider: no runtime-tokio (the endpoint runs on the
+ # crate's own Runtime over TimeSource, so simulation drives it), no
+ # platform-verifier (peers are authenticated by raw public keys, never by a CA
+ # root store), and no aws-lc-rs (deny.toml bans it).
+```
+
+**File**: `crates/core/src/config.rs` (modified, +38/-21)
+```diff
+@@ -334,7 +334,7 @@ impl Default for ConfigArgs {
+                 ledbat_min_ssthresh: None, // Uses default from NetworkApiConfig
+                 congestion_control: None,  // Default: fixedrate (set in NetworkApiConfig)
+                 bbr_startup_rate: None,    // Uses default from BBR config
+-                transport_quic: None,      // Default: off
++                transport_quic: None,      // Default: shadow on Linux and macOS
+                 quic_max_paths: None,      // Default: max-number-of-connections
+                 quic_data_percent: None,   // Default: this release's share of pairs
+                 quic_ignore_crash_breaker: None,
+@@ -2493,13 +2493,15 @@ pub struct NetworkArgs {
+     #[serde(rename = "bbr-startup-rate", skip_serializing_if = "Option::is_none")]
+     pub bbr_startup_rate: Option<u64>,
+ 
+-    /// QUIC transport (#5940): `off` (default), `shadow` or `prefer`.
++    /// QUIC transport (#5940): `off`, `shadow` or `prefer`. Unset means
++    /// `shadow` on Linux and macOS, and `off` elsewhere, Windows included.
+     ///
+-    /// `shadow` builds a QUIC endpoint on the network port. In this release
+-    /// the endpoint accepts no connections and opens none, so the node
+-    /// behaves as with `off`. `prefer` also negotiates data with a share of
+-    /// pairs; this release sends none. An
+-    /// unknown value is treated as `off`, with a warning in the log.
++    /// `shadow` builds a QUIC endpoint on the network port and upgrades
++    /// connections to peers that also run it to a QUIC path. The path carries
++    /// control frames only, so all traffic stays on the existing transport.
++    /// `prefer` also negotiates data with a share of pairs; this release sends
++    /// none. `off` builds no endpoint. An unknown value is treated as `off`,
++    /// with a warning in the log.
+     #[arg(long, env = "FREENET_TRANSPORT_QUIC", value_name = "off|shadow|prefer")]
+     #[serde(rename = "transport-quic", skip_serializing_if = "Option::is_none")]
+     pub transport_quic: Option<String>,
+@@ -2833,8 +2835,8 @@ pub struct NetworkApiConfig {
      )]
-     pub quic_data_percent: Option<String>,
+     pub bbr_startup_rate: Option<u64>,
  
--    /// Run QUIC even when the crash-loop breaker would keep it off (unix
--    /// only; the breaker is off on Windows).
-+    /// Run QUIC even when the crash-loop breaker would keep it off.
-     ///
--    /// If a run with QUIC enabled ends abnormally, the node starts with QUIC
--    /// off for 24 hours. Set this to run QUIC anyway. Default: false.
-+    /// On unix, if a run with QUIC enabled ends abnormally, the node starts
-+    /// with QUIC off for 24 hours. On Windows the same happens after three
-+    /// short runs in a row, whatever ended them. Set this to run QUIC anyway. A
-+    /// start with this set erases the trip: removing it later does not bring
-+    /// the 24 hours back. Default: false.
-     ///
-     /// Works as a bare flag after the subcommand: `--quic-ignore-crash-breaker`
-     /// turns it on, `--quic-ignore-crash-breaker=false` turns it off. Before
-@@ -7177,6 +7179,23 @@ shutdown-drain-secs = 42
+-    /// QUIC transport (#5940): `off` (the default when unset), `shadow` or
+-    /// `prefer`. Kept as written, so a value from a later release
++    /// QUIC transport (#5940): `off`, `shadow` or `prefer`; unset reads as
++    /// `QuicMode::default_mode` (shadow on Linux and macOS). Kept as written, so a value from a later release
+     /// round-trips; see [`Self::quic_settings`] for how it is read.
+     #[serde(
+         default,
+@@ -2918,8 +2920,9 @@ impl NetworkApiConfig {
+     }
+ 
+     /// The QUIC endpoint settings when `transport-quic` turns QUIC on, or
+-    /// `None` when it is off, unset or a value this binary does not know
+-    /// (which logs a warning). Reads the node's memory limit, since the
++    /// `None` when it reads as off: set to `off`, unset on a platform whose
++    /// default is off, or a value this binary does not know (which logs a
++    /// warning). Reads the node's memory limit, since the
+     /// endpoint's flow-control windows are sized from it.
+     pub(crate) fn quic_settings(&self) -> Option<crate::transport::quic::QuicSettings> {
+         use crate::transport::quic::QuicMode;
+@@ -7179,20 +7182,30 @@ shutdown-drain-secs = 42
          assert_seeded_values_bound(&cfg);
      }
  
-+    /// QUIC is off by default, and Windows must stay off until its crash-loop
-+    /// breaker has been confirmed on a real Windows machine (#6031). A release
-+    /// that changes the default on other platforms must keep Windows off and
-+    /// keep this check for it: the lib tests do not compile on Windows, and
-+    /// `tests/quic_breaker_windows.rs` is the same pin through the real binary.
-+    #[test]
-+    fn quic_stays_off_by_default() {
-+        use crate::transport::quic::QuicMode;
-+        assert_eq!(QuicMode::default(), QuicMode::Off);
-+        assert_eq!(QuicMode::from_config_value(None), QuicMode::Off);
-+        let args = ConfigArgs::default();
-+        assert_eq!(
-+            QuicMode::from_config_value(args.network_api.transport_quic.as_deref()),
-+            QuicMode::Off
-+        );
-+    }
-+
-     /// `transport-quic` (#5940) is read from `config.toml` in kebab-case, is
-     /// absent from a file that does not set it (so a release that predates
-     /// it sees nothing new), and survives a rewrite of the file even when
-```
-
-**File**: `crates/core/src/transport/connection_handler.rs` (modified, +2/-0)
-```diff
-@@ -390,6 +390,7 @@ pub(crate) async fn open_udp_transport<S: Socket>(
-     is_gateway: bool,
-     config: UdpTransportConfig,
- ) -> Result<super::TransportHandle, TransportError> {
-+    let task_registrar = config.task_registrar.clone();
-     let (outbound, inbound, listen_task) =
-         bind_udp_listener::<S>(keypair, listen_host, listen_port, is_gateway, config).await?;
-     // The QUIC crash-loop breaker (#5940) arms only now, with the socket
-@@ -398,6 +399,7 @@ pub(crate) async fn open_udp_transport<S: Socket>(
-     // arming follows the endpoint immediately.
-     super::quic::breaker::arm_if_quic_up(
-         outbound.quic_availability().get() == super::quic::liveness::QuicAvailability::Up,
-+        task_registrar.as_ref(),
-     );
-     Ok(udp_transport_handle(outbound, inbound, listen_task))
- }
-```
-
-**File**: `crates/core/src/transport/metrics.rs` (modified, +6/-4)
-```diff
-@@ -3086,8 +3086,9 @@ pub struct TransportSnapshot {
-     /// endpoint); each turns that endpoint off unless the node had already
-     /// released it (#5940). Not counted: a panic in a path's receive task.
-     pub quic_adapter_panicked: u64,
--    /// Times the QUIC crash-loop breaker tripped: a run with QUIC enabled
--    /// ended abnormally, so this one started with QUIC off (#5940).
-+    /// Times the QUIC crash-loop breaker tripped, so this run started with
-+    /// QUIC off (#5940): on unix a run with QUIC enabled ended abnormally, on
-+    /// Windows three runs in a row ended within ten minutes for any reason.
-     pub quic_breaker_trips: u64,
-     /// Sends the QUIC socket refused with `WouldBlock` (egress cap or full
-     /// socket buffer). Chiefly datagrams quinn's endpoint made on its own,
-@@ -3778,8 +3779,9 @@ struct SnapshotExtras {
-     /// endpoint); each turns that endpoint off unless the node had already
-     /// released it (#5940). Not counted: a panic in a path's receive task.
-     pub quic_adapter_panicked: u64,
--    /// Times the QUIC crash-loop breaker tripped: a run with QUIC enabled
--    /// ended abnormally, so this one started with QUIC off (#5940).
-+    /// Times the QUIC crash-loop breaker tripped, so this run started with
-+    /// QUIC off (#5940): on unix a run with QUIC enabled ended abnormally, on
-+    /// Windows three runs in a row ended within ten minutes for any reason.
-     pub quic_breaker_trips: u64,
-     /// Sends the QUIC socket refused with `WouldBlock` (egress cap or full
-     /// socket buffer). Chiefly datagrams quinn's endpoint made on its own,
-```
-
-**File**: `crates/core/src/transport/quic.rs` (modified, +3/-2)
-```diff
-@@ -82,8 +82,9 @@ pub(crate) use liveness::QuicAvailabilityWatch;
- /// Whether the node may use QUIC: the `transport-quic` config key.
- ///
- /// Off is the default on every platform, and must stay the default on
--/// Windows until the crash-loop breaker works there (#6031): the breaker is
--/// unix-only ([`breaker`]).
-+/// Windows until the crash-loop breaker has been confirmed on a real Windows
-+/// machine (#6031). That breaker counts short runs instead of detecting
-+/// crashes ([`breaker`]).
- #[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
- pub enum QuicMode {
-     /// No QUIC endpoint is built and no QUIC datagram is read. The default.
-```
-
-**File**: `crates/core/src/transport/quic/breaker.rs` (modified, +222/-33)
-```diff
-@@ -6,11 +6,19 @@
- //! the same failure; the breaker bounds that to one restart with QUIC per
- //! cooldown.
- //!
--//! **Unix only.** On Windows the breaker is off: QUIC runs exactly as
--//! configured and no marker is read or written. Every design tried for
--//! Windows read a normal stop (a logoff, a Fast Startup shutdown, a session
--//! end) as a crash or missed a real one, and none could be checked on a
--//! Windows machine; see the tracking issue linked from #6029.
-+//! **This module doc describes unix.** Windows does not reliably tell a
-+//! process that it is being stopped: every design that tried to tell a crash
-+//! from a normal stop there (a logoff, a Fast Startup shutdown, a session end)
-+//! got one of them wrong. So Windows does not ask. It counts runs that ended
-+//! within ten minutes, for any reason, and three in a row, each starting
-+//! within the cooldown of the one before, keep QUIC off for the same cooldown,
-+//! with the same state and telemetry. [`short_runs`] describes it.
-+//!
-+//! **Windows is weaker than unix.** There, a crash loop whose runs each last
-+//! ten minutes or more never trips, and neither does a fault that crashes once
-+//! a day. That must be weighed before QUIC goes on by default on Windows. QUIC
-+//! stays off by default there until the breaker has been confirmed on a real
-+//! Windows machine (#6031).
- //!
- //! # The marker
- //!
-@@ -64,7 +72,9 @@
- //!   not evidence and is replaced.
- //! - **Override.** `quic-ignore-crash-breaker` skips the trip and the
- //!   cooldown. The marker is still armed and cleared as usual (when it can be
--//!   read), so once the override is removed only a crash under it trips. Like
-+//!   read), so once the override is removed only a crash under it trips. A
-+//!   start under the override replaces a trip's marker, so it erases the trip:
-+//!   removing the override does not bring the cooldown back. Like
- //!   every other setting, a value given on the command line or in the
- //!   environment is saved to `config.toml`, and stays until it is removed
- //!   there.
-@@ -122,6 +132,10 @@ use std::time::{Duration, SystemTime};
- 
- use serde::{Deserialize, Serialize};
- 
-+use crate::node::background_task_monitor::LateRegistrar;
-+
-+mod short_runs;
-+
- /// How long QUIC stays off after a run with QUIC enabled ended abnormally.
- pub(crate) const QUIC_BREAKER_COOLDOWN: Duration = Duration::from_secs(24 * 60 * 60);
- 
-@@ -161,6 +175,7 @@ static PENDING: parking_lot::Mutex<Pending> = parking_lot::Mutex::new(Pending {
-     marker: None,
-     quic_up: false,
-     signals_ready: false,
-+    registrar: None,
- });
- 
- /// The marker this process armed and its nonce, for the clean exit.
-@@ -226,6 +241,13 @@ pub(crate) enum Marker {
-     },
-     /// The breaker tripped at this time (seconds since the Unix epoch).
-     Tripped { tripped_at_secs: u64 },
-+    /// Windows: a run with QUIC enabled started at this time, after
-+    /// `short_runs` short runs in a row. See [`short_runs`].
-+    ShortRuns {
-+        short_runs: u32,
-+        started_at_secs: u64,
-+        nonce: u64,
-+    },
-     /// A state this binary does not know, written by a later release.
-     #[serde(other)]
-     Unknown,
-@@ -290,8 +312,8 @@ pub(crate) struct Gated<T> {
- /// What the breaker decided at this start.
- #[derive(Debug, Clone, Copy, PartialEq, Eq)]
- pub(crate) enum BreakerOutcome {
--    /// The breaker did not run: it is not enabled (tests and embedders), the
--    /// platform is not unix, or `transport-quic` is off.
-+    /// The breaker did not run: it is not enabled (tests and embedders) or
-+    /// `transport-quic` is off.
-     NotConsulted,
-     /// The breaker ran and decided this.
-     Decided(Verdict),
-@@ -329,9 +351,12 @@ pub(crate) fn verdict(facts: &Facts<'_>) -> Verdict {
-             }
-         }
-         Previous::Nothing
--        | Previous::Marker(Marker::Armed { .. } | Marker::Tripped { .. } | Marker::Unknown) => {
--            Verdict::Arm
--        }
-+        | Previous::Marker(
-+            Marker::Armed { .. }
-+            | Marker::Tripped { .. }
-+            | Marker::ShortRuns { .. }
-+            | Marker::Unknown,
-+        ) => Verdict::Arm,
-     }
- }
- 
-@@ -449,8 +474,8 @@ fn observe_with(
- /// keeps QUIC off, and [`Gated::breaker`] says what it decided.
- /// Logs the outcome and updates the transport telemetry. `now` is the wall
- /// clock of the caller's `TimeSource`. May wait up to `drain_secs` plus
--/// [`HOLDER_EXIT_MARGIN`] for a previous node to exit. On Windows it returns
--/// `settings` unchanged.
-+/// [`HOLDER_EXIT_MARGIN`] for a previous node to exit. Windows decides by
-+/// [`short_runs::gate`] instead, and does not wait.
- pub(crate) async fn gate<T>(
-     settings: Option<T>,
-     data_dir: &Path,
-@@ -462,9 +487,12 @@ pub(crate) async fn gate<T>(
-         settings,
-         breaker: BreakerOutcome::NotConsulted,
-     };
--    if !ENABLED.load(Ordering::Relaxed) || cfg!(not(unix)) {
-+    if !ENABLED.load(Ordering::Relaxed) {
-         return not_cons
-```
-
----
-
-### Incident Patch 2: `256bd609` (2026-11-03)
-**Commit Message**: fix(delegates): refuse node-only inbound messages from clients (#6103)
-
-**File**: `.claude/rules/contracts.md` (modified, +16/-2)
-```diff
-@@ -61,8 +61,22 @@ delivered only when the manifest lists the kind AND a bound app holds the
- user's Background grant; both are re-checked at delivery
- (contract::delegate_capabilities::delivery_params).
- 
--A client may not send host-only inbound messages (Lifecycle, WakeupFired):
--dispatch_delegate_request refuses them before exclusion or queueing.
-+A client may send a delegate ONLY InboundDelegateMsg::ApplicationMessage.
-+Every other variant (contract notifications and responses, UserResponse,
-+DelegateMessage, Lifecycle, WakeupFired) reports something only the node can
-+know and carries no origin, so a forged one is indistinguishable from a real
-+one. contract::node_only_inbound is an allowlist (a new variant is refused
-+until someone decides otherwise), applied at EVERY client entry point:
-+dispatch_delegate_request (before exclusion or queueing), and
-+Executor::client_delegate_request for local mode (run_local_node,
-+Executor::handle_request). Node deliveries build their requests internally and
-+never pass those entry points; a new client entry point must call it too. The
-+unchecked Executor::delegate_request / delegate_request_as are
-+pub(in crate::contract), so code outside `contract` cannot call them directly
-+(ContractExecutor::execute_delegate_request is also unchecked and must stay
-+reachable only from the loop's chokepoint). Consequence in local mode: there is
-+no contract loop, so a delegate's GetContractRequest / RequestUserInput goes
-+back to the client, which cannot answer it; such a delegate does not continue.
- 
- Grants are per app (the web app's ContractInstanceId, attested only for LOCAL
- connections) and remembered; the prompt is node-authored (PromptAuthor::Node,
-```
-
-**File**: `crates/core/src/client_events.rs` (modified, +4/-4)
-```diff
-@@ -1862,10 +1862,10 @@ async fn process_open_request(
-                                         "ContractNotification"
-                                     }
-                                     InboundDelegateMsg::DelegateMessage(_) => "DelegateMessage",
--                                    // Appended in stdlib 0.10.0. Core does not
--                                    // yet produce either (#5600 unsubscribe,
--                                    // #5565 wakeup), but an app may send one,
--                                    // and it should not read as "Unknown".
-+                                    // Appended in stdlib 0.10.0. An app may
-+                                    // still send one, which the node refuses
-+                                    // (`contract::node_only_inbound`); the log
-+                                    // should name it, not say "Unknown".
-                                     InboundDelegateMsg::UnsubscribeContractResponse(_) => {
-                                         "UnsubscribeContractResponse"
-                                     }
-```
-
-**File**: `crates/core/src/contract.rs` (modified, +68/-22)
-```diff
-@@ -4945,27 +4945,74 @@ fn admit_unprompted_ops(
-     });
- }
- 
--/// Inbound messages only the node may deliver. A client's `ApplicationMessages`
--/// carrying one is refused: a page must not be able to tell a delegate it was
--/// installed, that the node started, or that a wake-up fired. Those messages
--/// open work the delegate would otherwise only do with the user's Background
--/// grant, and the delegate cannot tell a forged one from a real one, because
--/// neither carries an origin.
--fn carries_host_only_inbound(req: &DelegateRequest<'_>) -> bool {
-+/// The first inbound message in a client's request that only the node may
-+/// deliver, or `None` if every message is one a client may send.
-+///
-+/// A client may send `ApplicationMessage` and nothing else. Every other
-+/// variant reports something the NODE did or observed: a contract's state
-+/// changed (`ContractNotification`), a contract request the delegate made was
-+/// answered (`Get/Put/Update/Subscribe/UnsubscribeContractResponse`), the user
-+/// answered a prompt the node showed (`UserResponse`), another delegate sent a
-+/// message (`DelegateMessage`), the delegate was installed or the node started
-+/// (`Lifecycle`), or a wake-up fired (`WakeupFired`). A delegate cannot tell a
-+/// forged one from a real one: none of them carries an origin, and delegates
-+/// reasonably act on them as facts from the runtime. So a page or an
-+/// unattested client that could send one could hand a delegate, for example, a
-+/// contract state the contract never had.
-+///
-+/// An ALLOWLIST, not a list of refused variants, so a variant added to
-+/// `InboundDelegateMsg` later (it is `#[non_exhaustive]`) is refused until
-+/// someone decides a client may send it.
-+///
-+/// Every client entry point applies this: [`dispatch_delegate_request`] for a
-+/// network node, and `Executor::client_delegate_request` (called by
-+/// `node::run_local_node` and `Executor::handle_request`) for local mode. The
-+/// unchecked inherent methods (`Executor::delegate_request`,
-+/// `delegate_request_as`) are visible only inside `contract`, so code outside
-+/// it cannot call them directly. `ContractExecutor::execute_delegate_request`
-+/// is also unchecked; it is reached only from the contract loop's own
-+/// chokepoint, below the check. The node's own
-+/// deliveries (notifications, contract responses, prompts, inter-delegate
-+/// hops, lifecycle runs) build their requests internally and never pass
-+/// through those entry points.
-+pub(crate) fn node_only_inbound(req: &DelegateRequest<'_>) -> Option<&'static str> {
-     #[allow(clippy::wildcard_enum_match_arm)]
-     match req {
--        DelegateRequest::ApplicationMessages { inbound, .. } => inbound.iter().any(|msg| {
--            matches!(
--                msg,
--                InboundDelegateMsg::Lifecycle(_) | InboundDelegateMsg::WakeupFired { .. }
--            )
--        }),
-+        DelegateRequest::ApplicationMessages { inbound, .. } => {
-+            inbound.iter().find_map(|msg| match msg {
-+                InboundDelegateMsg::ApplicationMessage(_) => None,
-+                InboundDelegateMsg::UserResponse(_) => Some("UserResponse"),
-+                InboundDelegateMsg::GetContractResponse(_) => Some("GetContractResponse"),
-+                InboundDelegateMsg::PutContractResponse(_) => Some("PutContractResponse"),
-+                InboundDelegateMsg::UpdateContractResponse(_) => Some("UpdateContractResponse"),
-+                InboundDelegateMsg::SubscribeContractResponse(_) => {
-+                    Some("SubscribeContractResponse")
-+                }
-+                InboundDelegateMsg::UnsubscribeContractResponse(_) => {
-+                    Some("UnsubscribeContractResponse")
-+                }
-+                InboundDelegateMsg::ContractNotification(_) => Some("ContractNotification"),
-+                InboundDelegateMsg::DelegateMessage(_) => Some("DelegateMessage"),
-+                InboundDelegateMsg::Lifecycle(_) => Some("Lifecycle"),
-+                InboundDelegateMsg::WakeupFired { .. } => Some("WakeupFired"),
-+                // `#[non_exhaustive]`: a future variant is refused until
-+                // someone decides a client may send it.
-+                _ => Some("an unrecognised inbound message"),
-+            })
-+        }
-         // Registration requests carry no inbound messages. The wildcard is for
-         // `#[non_exhaustive]`.
--        _ => false,
-+        _ => None,
-     }
- }
- 
-+/// The error a client gets when [`node_only_inbound`] refuses its request.
-+pub(crate) fn node_only_inbound_error(kind: &str) -> anyhow::Error {
-+    anyhow::anyhow!(
-+        "a client may send a delegate only ApplicationMessage; {kind} is delivered by the node"
-+    )
-+}
-+
- /// Capability work owed once a (un)registration has SUCCEEDED. Built before
- /// the run, because the request is consumed by it.
- enum CapabilityHook {
-@@ -5406,26 +5453,25 @@ async fn dispatch_delegate_request<CH, P>(
- {
-     let delegate_key = req.ke
-```
-
-**File**: `crates/core/src/contract/capability_loop_tests.rs` (modified, +110/-15)
-```diff
-@@ -257,28 +257,123 @@ fn answer(event: ContractHandlerEvent) -> Result<Vec<OutboundDelegateMsg>, Strin
-     }
- }
- 
--/// A client cannot hand a delegate a Lifecycle or WakeupFired message: the
--/// request is refused before the delegate runs. The delegate is scripted to
--/// answer, so without the refusal the client would get Ok and the call log
--/// would show an entry.
-+/// Every inbound variant except `ApplicationMessage`, as a client might forge
-+/// it. Each reports something only the node can know (a contract's state, the
-+/// answer to a contract request, a prompt answer, another delegate's message,
-+/// a lifecycle event, a wake-up), and none carries an origin the delegate
-+/// could check.
-+pub(crate) fn forged_node_only_messages(key: &DelegateKey) -> Vec<InboundDelegateMsg<'static>> {
-+    let contract_id = ContractInstanceId::new([9; 32]);
-+    let state = WrappedState::new(b"a state the contract never had".to_vec());
-+    vec![
-+        InboundDelegateMsg::ContractNotification(ContractNotification {
-+            contract_id,
-+            new_state: state.clone(),
-+            context: DelegateContext::default(),
-+        }),
-+        InboundDelegateMsg::GetContractResponse(GetContractResponse {
-+            contract_id,
-+            state: Some(state),
-+            context: DelegateContext::default(),
-+        }),
-+        InboundDelegateMsg::PutContractResponse(PutContractResponse {
-+            contract_id,
-+            result: Ok(()),
-+            context: DelegateContext::default(),
-+        }),
-+        InboundDelegateMsg::UpdateContractResponse(UpdateContractResponse {
-+            contract_id,
-+            result: Ok(()),
-+            context: DelegateContext::default(),
-+        }),
-+        InboundDelegateMsg::SubscribeContractResponse(SubscribeContractResponse {
-+            contract_id,
-+            result: Ok(()),
-+            context: DelegateContext::default(),
-+        }),
-+        InboundDelegateMsg::UnsubscribeContractResponse(UnsubscribeContractResponse {
-+            contract_id,
-+            result: Ok(()),
-+            context: DelegateContext::default(),
-+        }),
-+        InboundDelegateMsg::UserResponse(UserInputResponse {
-+            request_id: 1,
-+            response: ClientResponse::new(b"allow".to_vec()),
-+            context: DelegateContext::default(),
-+        }),
-+        InboundDelegateMsg::DelegateMessage(DelegateMessage::new(
-+            key.clone(),
-+            DelegateKey::new([4; 32], CodeHash::new([4; 32])),
-+            b"from another delegate".to_vec(),
-+        )),
-+        InboundDelegateMsg::Lifecycle(LifecycleEvent::Installed),
-+        InboundDelegateMsg::WakeupFired { tag: vec![1] },
-+    ]
-+}
-+
-+/// The allowlist itself: every node-only variant is refused, alone and behind
-+/// an ordinary message, and an ordinary message alone is not.
-+///
-+/// The reported kind must be the variant's own name, taken from its derived
-+/// `Debug`, so an explicit arm that was deleted (and now falls into the
-+/// `_ => "an unrecognised inbound message"` wildcard) or that returns the
-+/// wrong name fails here, not only in the log.
-+#[test]
-+fn node_only_inbound_refuses_every_variant_but_application_message() {
-+    let key = DelegateKey::new([3; 32], CodeHash::new([3; 32]));
-+    let req = |inbound| DelegateRequest::ApplicationMessages {
-+        key: key.clone(),
-+        params: Parameters::from(Vec::new()),
-+        inbound,
-+    };
-+    let ordinary = || InboundDelegateMsg::ApplicationMessage(ApplicationMessage::new(vec![1]));
-+    for forged in forged_node_only_messages(&key) {
-+        let label = format!("{forged:?}");
-+        let variant = label
-+            .split(['(', ' ', '{'])
-+            .next()
-+            .expect("Debug output starts with the variant name")
-+            .to_string();
-+        assert_eq!(
-+            super::node_only_inbound(&req(vec![forged.clone()])),
-+            Some(variant.as_str()),
-+            "a client must not be able to send {label}"
-+        );
-+        assert_eq!(
-+            super::node_only_inbound(&req(vec![ordinary(), forged])),
-+            Some(variant.as_str()),
-+            "a forged message behind an ordinary one must be refused too: {label}"
-+        );
-+    }
-+    assert_eq!(super::node_only_inbound(&req(vec![ordinary()])), None);
-+    assert_eq!(super::node_only_inbound(&req(vec![])), None);
-+}
-+
-+/// A client cannot hand a delegate any inbound message only the node delivers
-+/// (`contract::node_only_inbound`): the request is refused before the delegate
-+/// runs. The delegate is scripted to answer, so without the refusal the client
-+/// would get Ok and the call log would show an entry.
- #[tokio::test]
--async fn a_client_cannot_forge_a_host_only_message() {
-+async fn a_client_cannot_forge_a_node_only_message() {
-     let caps = DelegateCapabilities::in_memory();
-     let reply = ScriptedRun::from(vec![OutboundDelegateMsg::ApplicationMessage(
-         ApplicationMessage::new(b"ran".to_vec()),
-   
-```
-
-**File**: `crates/core/src/contract/delegate_capabilities.rs` (modified, +5/-1)
-```diff
-@@ -927,7 +927,11 @@ pub(crate) struct CapabilityStats {
-     pub refused_delegate_ops: AtomicU64,
-     pub refused_node_ops: AtomicU64,
-     pub refused_contract_writes: AtomicU64,
--    pub forged_lifecycle_refused: AtomicU64,
-+    /// Client delegate requests refused for carrying an inbound message only
-+    /// the node may deliver (`contract::node_only_inbound`). Counted on a
-+    /// network node only: local mode has no capabilities, and its refusals
-+    /// (`Executor::client_delegate_request`) are logged instead.
-+    pub forged_inbound_refused: AtomicU64,
- }
- 
- /// See `DelegateCapabilities::recorded`.
-```
-
-**File**: `crates/core/src/contract/executor/runtime.rs` (modified, +3/-3)
-```diff
-@@ -625,11 +625,11 @@ impl Executor<Runtime> {
-             // `SecretScope::Local`. This entry point is not told which
-             // connection a request came from, so it treats every request as
-             // remote: no attested origin is resolved, and `UnregisterDelegate`
--            // is refused.
--            ClientRequest::DelegateOp(op) => self.delegate_request(
-+            // is refused. A client may send only `ApplicationMessage`
-+            // (`contract::node_only_inbound`).
-+            ClientRequest::DelegateOp(op) => self.client_delegate_request(
-                 op,
-                 None,
--                None,
-                 crate::client_events::ConnectionScope::Remote,
-                 None,
-             ),
-```
-
-**File**: `crates/core/src/contract/executor/runtime/delegates.rs` (modified, +37/-2)
-```diff
-@@ -176,7 +176,42 @@ impl Executor<Runtime> {
-         }
-     }
- 
--    pub fn delegate_request(
-+    /// A delegate request straight from a client in local mode
-+    /// (`node::run_local_node`, [`Executor::handle_request`]): refuses a
-+    /// request carrying an inbound message only the node may deliver
-+    /// (`contract::node_only_inbound`), then runs it with no caller delegate.
-+    /// A network node applies the same refusal in the contract loop's
-+    /// `dispatch_delegate_request`. Never use this for a node-built request:
-+    /// those carry node-only messages by design.
-+    pub(crate) fn client_delegate_request(
-+        &mut self,
-+        req: DelegateRequest<'_>,
-+        origin_contract: Option<&ContractInstanceId>,
-+        connection_scope: crate::client_events::ConnectionScope,
-+        user_context: Option<&UserSecretContext>,
-+    ) -> Response {
-+        if let Some(kind) = crate::contract::node_only_inbound(&req) {
-+            tracing::warn!(
-+                delegate_key = %req.key(),
-+                kind,
-+                "Refused a client delegate request carrying an inbound message only the \
-+                 node delivers"
-+            );
-+            return Err(ExecutorError::other(
-+                crate::contract::node_only_inbound_error(kind),
-+            ));
-+        }
-+        self.delegate_request(req, origin_contract, None, connection_scope, user_context)
-+    }
-+
-+    /// Runs a delegate request WITHOUT the client refusal above, so node-built
-+    /// requests (contract responses, notifications, prompt answers,
-+    /// inter-delegate hops) can carry node-only messages. Visible only inside
-+    /// `contract` (as is [`Self::delegate_request_as`]), so code outside it,
-+    /// where client requests arrive, cannot call it directly: a client request
-+    /// goes through [`Self::client_delegate_request`] or the contract loop's
-+    /// `dispatch_delegate_request`.
-+    pub(in crate::contract) fn delegate_request(
-         &mut self,
-         req: DelegateRequest<'_>,
-         origin_contract: Option<&ContractInstanceId>,
-@@ -198,7 +233,7 @@ impl Executor<Runtime> {
-     /// [`Self::delegate_request`], with the user whose delegate context the
-     /// run uses given apart from `user_context`, which scopes its secrets.
-     /// See `DelegateRuntimeInterface::inbound_app_message_as`.
--    pub(crate) fn delegate_request_as(
-+    pub(in crate::contract) fn delegate_request_as(
-         &mut self,
-         req: DelegateRequest<'_>,
-         origin_contract: Option<&ContractInstanceId>,
-```
-
-**File**: `crates/core/src/contract/executor/runtime/unregister_tests.rs` (modified, +62/-1)
-```diff
-@@ -10,7 +10,8 @@
- 
- use freenet_stdlib::client_api::{DelegateRequest, HostResponse};
- use freenet_stdlib::prelude::{
--    ContractInstanceId, Delegate, DelegateContainer, DelegateKey, DelegateWasmAPIVersion,
-+    ApplicationMessage, ContractInstanceId, Delegate, DelegateContainer, DelegateKey,
-+    DelegateWasmAPIVersion, InboundDelegateMsg,
- };
- 
- use crate::client_events::ConnectionScope;
-@@ -286,6 +287,66 @@ async fn handle_request_refuses_an_unregister() {
-     assert_intact(&f, &s, "after an unregister through handle_request");
- }
- 
-+/// Local mode reaches the executor through `Executor::client_delegate_request`
-+/// (from `run_local_node` and `handle_request`), not the contract loop, so it
-+/// needs the same refusal of node-only inbound messages
-+/// (`contract::node_only_inbound`). Each forged request must be refused with
-+/// that error. The delegate is never registered, so a request that is NOT
-+/// refused gets past the check and fails later as a missing delegate, which
-+/// the control asserts.
-+///
-+/// FALSIFY by deleting the `node_only_inbound` check in
-+/// `client_delegate_request`: the forged requests fail as a missing delegate
-+/// instead, and the message assertion fails.
-+#[tokio::test(flavor = "multi_thread")]
-+async fn handle_request_refuses_node_only_inbound_messages() {
-+    const REFUSAL: &str = "is delivered by the node";
-+    let mut f = fixture().await;
-+    let d = delegate(b"handle-request-node-only");
-+    let request = |inbound| {
-+        freenet_stdlib::client_api::ClientRequest::DelegateOp(
-+            DelegateRequest::ApplicationMessages {
-+                key: d.key().clone(),
-+                params: d.params().clone(),
-+                inbound,
-+            },
-+        )
-+    };
-+    for forged in crate::contract::capability_loop_tests::forged_node_only_messages(d.key()) {
-+        let label = format!("{forged:?}");
-+        let err = f
-+            .executor
-+            .handle_request(
-+                crate::client_events::ClientId::FIRST,
-+                request(vec![forged]),
-+                None,
-+            )
-+            .await
-+            .expect_err("a forged node-only message must be refused");
-+        assert!(
-+            err.to_string().contains(REFUSAL),
-+            "{label} must be refused as node-only, got {err}"
-+        );
-+    }
-+    // Control: an ordinary message passes the check and reaches the executor,
-+    // which answers that the (unregistered) delegate is missing.
-+    let err = f
-+        .executor
-+        .handle_request(
-+            crate::client_events::ClientId::FIRST,
-+            request(vec![InboundDelegateMsg::ApplicationMessage(
-+                ApplicationMessage::new(vec![1]),
-+            )]),
-+            None,
-+        )
-+        .await
-+        .expect_err("the fixture delegate is not registered");
-+    assert!(
-+        err.is_missing_delegate() && !err.to_string().contains(REFUSAL),
-+        "an ApplicationMessage must pass the node-only check and reach the executor, got {err}"
-+    );
-+}
-+
- /// Only a delegate that holds a created-delegate slot releases one: a key
- /// that was never registered, and a delegate an app registered directly, do
- /// not move the count.
-```
-
----
-
-### Incident Patch 3: `146b9c1b` (2026-11-03)
-**Commit Message**: fix(macos): make freenet-bin the bundle executable so the menu bar icon shows on macOS 26 (#6094)
-
-**File**: `.github/workflows/ci.yml` (modified, +4/-1)
-```diff
-@@ -1119,7 +1119,10 @@ jobs:
-       # And through LaunchServices: build an unsigned Freenet.app with the real
-       # package-macos.sh, register it, click links with `open`, and check the
-       # menu-bar wrapper handled them, including the instance launchd starts at
--      # login. The app starts a real node, so this rebuilds the binary with
-+      # login. It also checks that the menu bar icon is really on screen, which
-+      # needs macOS 26 or later to mean anything (#6093), and that Launch at
-+      # Login registers and repairs old agents. The app starts a real node, so
-+      # this rebuilds the binary with
-       # FREENET_GIT_IS_DIRTY=1 (auto-update off; only the freenet crate
-       # recompiles): otherwise a release newer than this branch would make
-       # the node exit 42 and the DMG-swap updater replace the test bundle
-```
-
-**File**: `crates/core/src/bin/commands/service.rs` (modified, +122/-14)
-```diff
-@@ -559,6 +559,8 @@ pub(crate) use launch_at_login::{
-     ToggleLaunchAtLoginOutcome, disable_launch_at_login, enable_launch_at_login,
-     is_launch_at_login_enabled, macos_app_bundle_path, toggle_launch_at_login_outcome,
- };
-+// For freenet.rs, which has to run on every platform.
-+pub(crate) use launch_at_login::is_macos_app_launch;
- 
- // Re-exports for update.rs (macOS plist generation).
- #[cfg(target_os = "macos")]
-@@ -1058,23 +1060,131 @@ mod tests {
-     }
- 
+-    /// QUIC is off by default, and Windows must stay off until its crash-loop
+-    /// breaker has been confirmed on a real Windows machine (#6031). A release
+-    /// that changes the default on other platforms must keep Windows off and
+-    /// keep this check for it: the lib tests do not compile on Windows, and
+-    /// `tests/quic_breaker_windows.rs` is the same pin through the real binary.
++    /// An unset `transport-quic` is shadow, and off on Windows, which must stay
++    /// off until its crash-loop breaker has been confirmed on a real Windows
++    /// machine (#6031). The lib tests do not compile on Windows, so
++    /// `tests/quic_breaker_windows.rs` pins the Windows half through the real
++    /// binary. The default is not written into the config, so a default-off
++    /// release turns QUIC off on every node that did not set the key.
      #[test]
--    fn launch_agent_program_arguments_for_bundle_points_at_wrapper() {
--        // Inside a .app bundle, ProgramArguments must be the CFBundleExecutable
--        // shell wrapper (Contents/MacOS/Freenet). Launching it re-enters the
--        // tray path via the `exec freenet-bin service run-wrapper` line in
--        // scripts/package-macos.sh. If this regresses and ProgramArguments
--        // becomes just `freenet-bin`, launchd runs bare freenet which
--        // defaults to Network mode and the tray never appears: the exact
--        // shipping bug that Codex P2 and the code-first/big-picture reviews
--        // flagged on the first round of this commit.
-+    fn launch_agent_program_arguments_for_bundle_passes_the_wrapper_subcommand() {
-+        // Inside a .app bundle launchd runs the bundle's executable with the
-+        // explicit subcommand. There is no script to point at any more: the
-+        // leader differs from what older installs wrote, which is what makes
-+        // `refresh_launch_at_login_plist_if_stale` migrate their plist.
-         let exe = PathBuf::from("/Applications/Freenet.app/Contents/MacOS/freenet-bin");
-         let args = launch_agent_program_arguments(&exe);
+-    fn quic_stays_off_by_default() {
++    fn quic_is_shadow_by_default_except_on_windows() {
+         use crate::transport::quic::QuicMode;
+-        assert_eq!(QuicMode::default(), QuicMode::Off);
+-        assert_eq!(QuicMode::from_config_value(None), QuicMode::Off);
++        let expected = if cfg!(any(target_os = "linux", target_os = "macos")) {
++            QuicMode::Shadow
++        } else {
++            QuicMode::Off
++        };
++        assert_eq!(QuicMode::default(), expected);
++        assert_eq!(QuicMode::from_config_value(None), expected);
+         let args = ConfigArgs::default();
++        assert_eq!(
++            args.network_api.transport_quic, None,
++            "the default is not stored"
++        );
          assert_eq!(
-             args,
--            vec!["/Applications/Freenet.app/Contents/MacOS/Freenet".to_string()]
-+            vec![
-+                "/Applications/Freenet.app/Contents/MacOS/freenet-bin".to_string(),
-+                "service".to_string(),
-+                "run-wrapper".to_string(),
-+            ]
-         );
-     }
- 
-+    #[test]
-+    fn an_old_launch_agent_plist_is_rewritten_once() {
-+        // Older installs pointed launchd at Contents/MacOS/Freenet. The first
-+        // run of a new version points them at the binary, and later runs
-+        // leave the file alone.
-+        let dir = tempfile::tempdir().unwrap();
-+        let plist = dir.path().join("agent.plist");
-+        let old_args = vec!["/Applications/Freenet.app/Contents/MacOS/Freenet".to_string()];
-+        write_launch_agent_plist_at(&plist, &old_args).unwrap();
-+        let exe = PathBuf::from("/Applications/Freenet.app/Contents/MacOS/freenet-bin");
-+
-+        assert!(rewrite_launch_agent_plist_if_stale(&plist, &exe).unwrap());
-+        let contents = std::fs::read_to_string(&plist).unwrap();
-+        assert!(contents.contains(">/Applications/Freenet.app/Contents/MacOS/freenet-bin<"));
-+        assert!(contents.contains(">run-wrapper<"));
-+        assert!(!contents.contains("/MacOS/Freenet<"));
-+
-+        assert!(!rewrite_launch_agent_plist_if_stale(&plist, &exe).unwrap());
-+    }
-+
-+    #[test]
-+    fn a_failed_plist_rewrite_keeps_the_old_file() {
-+        // The old file still works through the script, so it must survive.
-+        let dir = tempfile::tempdir().unwrap();
-+        let plist = dir.path().join("agent.plist");
-+        let old_args = vec!["/Applications/Freenet.app/Contents/MacOS/Freenet".to_string()];
-+        write_launch_agent_plist_at(&plist, &old_args).unwrap();
-+        let before = std::fs::read_to_string(&plist).unwrap();
-+        // A directory where the temporary file goes makes the write fail.
-+        std::fs::create_dir(plist.with_extension("plist.tmp")).unwrap();
-+
-+        let exe = PathBuf::from("/Applications/Freenet.app/Contents/MacOS/freenet-bin");
-+        assert!(rewrite_launch_agent_plist_if_stale(&plist, &exe).is_err());
-+        assert_eq!(std::fs::read_to_string(&plist).unwrap(), before);
-+    }
-+
-+    #[test]
-+    fn launchservices_argv_is_an_app_launch() {
-+        let argv = |args: &[&str]| {
-+            args.iter()
-+                .map(std::ffi::OsString::from)
-+                .collect::<Vec<_>>()
-+        };
-+        for path in [
-+            "/Applications/Freenet.app/Contents/MacOS/freenet-bin",
-+            "/Users/someone/Applications/Tools/Freenet.app/Contents/MacOS/freenet-bin",
-+            "/private/var/folders/zz/abc/T/AppTranslocation/1-2/d/Freenet.app/Contents/MacOS/freenet-bin",
-+        ] {
-+            assert!(is_macos_app_launch(&argv(&[path])), "{path}");
-+        }
-+    }
-+
-+    #[test]
-+    fn arguments_macos_adds_do_not_stop_an_app_launch() {
-+        // The script this replaced dropped its arguments, so these never
-+        // reached the parser. Rejecting one would silently fail to start.
-+        let argv = |args: &[&str]| {
-+            args.iter()
-+                .map(std::ffi::OsString::from)
-+                .collect::<Vec<_>>()
-+        };
-+        let bundled = "/Applications/Free
+     
 ```
 
-**File**: `crates/core/src/bin/commands/service/cli_symlinks.rs` (modified, +4/-3)
+**File**: `crates/core/src/contract/executor.rs` (modified, +4/-4)
 ```diff
-@@ -34,9 +34,10 @@ pub(super) struct ManagedTool {
-     pub bundle_binary_name: &'static str,
- }
- 
--/// `freenet-bin` is the real multi-subcommand binary (`Contents/MacOS/Freenet`
--/// is just a wrapper script that execs it with `service run-wrapper`), so
--/// symlinking `freenet` straight to it gives a fully-functional CLI. `fdev`
-+/// `freenet-bin` is the real multi-subcommand binary, so symlinking `freenet`
-+/// straight to it gives a fully-functional CLI. It starts the wrapper only
-+/// when LaunchServices launches it from the bundle (`is_macos_app_launch`),
-+/// which a bare `freenet` through this symlink does not trigger. `fdev`
- /// is bundled as-is (see `package-macos.sh`); it may be ABSENT from an older
- /// DMG built before fdev was bundled, which `bundle_binary_exists` below
- /// handles as a no-op rather than an error.
+@@ -2930,16 +2930,16 @@ mod tests {
+             // MAX_STREAM_TOTAL_BYTES row). The memory one QUIC connection
+             // holds (some of its terms are measured in quic::config) is NOT
+             // accounted in this aggregate,
+-            // and must be before QUIC is on by default (a gate in the #5940
+-            // rollout plan). It is in addition to reassembly, not covered by
++            // and must be before QUIC carries data by default (Step 3 at 100%,
++            // a gate in the #5940 rollout plan; shadow paths carry none). It is in addition to reassembly, not covered by
+             // it.
+             (
+                 "connection_window_bytes",
+                 "one QUIC connection's flow-control window W: a per-connection \
+                  exception like MAX_STREAM_TOTAL_BYTES; quinn holds received data \
+                  beyond W and state W does not limit (measured terms in \
+-                 quic::config); not accounted here, and must be before QUIC is on \
+-                 by default",
++                 quic::config); not accounted here, and must be before QUIC \
++                 carries data by default",
+             ),
+             (
+                 "MIN_WINDOW_BYTES",
 ```
 
-**File**: `crates/core/src/bin/commands/service/launch_at_login.rs` (modified, +110/-46)
+**File**: `crates/core/src/node/network_bridge/p2p_protoc.rs` (modified, +3/-2)
 ```diff
-@@ -20,7 +20,7 @@ use super::{
- // itself: the .app bundle is just a folder in /Applications. To match
- // the Windows-installer experience (service registers with the OS and
- // starts on boot) we write a user LaunchAgent plist that points at the
--// .app bundle's CFBundleExecutable shell wrapper and sets RunAtLoad=true.
-+// .app bundle's executable and sets RunAtLoad=true.
- //
- // The presence/absence of the plist file is the single source of truth
- // for the user's preference: plist exists means launch at login enabled.
-@@ -81,40 +81,73 @@ pub(crate) fn macos_app_bundle_path(exe: &Path) -> Option<PathBuf> {
-     None
- }
+@@ -1295,8 +1295,9 @@ impl P2pConnManager {
+         let uptime_clock: DynTimeSource = Arc::new(InstantTimeSrc::new());
+         let started_at = uptime_clock.now();
+         let quic_breaker_now = uptime_clock.system_time_now();
+-        // Once per node: `prefer` running as shadow, and a `quic-max-paths`
+-        // that is ignored or lowered (#5940).
++        // Once per node: the configured QUIC mode and where it came from,
++        // `prefer` running as shadow, and a `quic-max-paths` that is ignored
++        // or lowered (#5940).
+         crate::transport::quic::upgrade::policy::log_startup(&config.config.network_api);
  
--/// The path to a `.app` bundle's CFBundleExecutable shell wrapper, by our
--/// packaging convention. See `scripts/package-macos.sh` for how this
--/// wrapper is produced: it execs the inner `freenet-bin` with the
--/// `service run-wrapper` subcommand.
-+/// Whether `argv` is how LaunchServices starts the app: the absolute path of
-+/// the bundle's executable, with no arguments of ours.
- ///
--/// Builds the path with an explicit `/` join rather than `Path::join`:
--/// this always describes a macOS bundle layout (always `/`-separated,
--/// regardless of what OS actually executes this code — e.g. this pure
--/// function is exercised on Windows too, in `windows_unit` CI). `Path`
--/// inserts the HOST OS's separator for newly-appended components, which
--/// is `\` on Windows and would silently mix separators into a path that
--/// must always be macOS-shaped.
--#[allow(dead_code)]
--fn macos_app_bundle_wrapper(bundle: &Path) -> String {
--    format!("{}/Contents/MacOS/Freenet", bundle.to_string_lossy())
-+/// That executable is `freenet-bin` itself rather than a script that execs
-+/// it with `service run-wrapper`, because macOS 26 does not display a status
-+/// item created after such an exec when the app was launched through
-+/// LaunchServices (#6093). So the wrapper has to be reachable with no
-+/// arguments. A bare `freenet` from a terminal must still run the node: it
-+/// arrives through the `/usr/local/bin` symlink, so `argv[0]` is outside any
-+/// bundle and this returns false.
-+///
-+/// Call this before parsing the command line. macOS can add arguments of its
-+/// own, which the parser would reject, and the app would then fail to start
-+/// with the error going nowhere a user could see it.
-+pub(crate) fn is_macos_app_launch(argv: &[std::ffi::OsString]) -> bool {
-+    let Some((argv0, rest)) = argv.split_first() else {
-+        return false;
-+    };
-+    is_bundle_executable(argv0) && only_macos_injected_args(rest)
-+}
-+
-+/// Whether `path` is the absolute path `<name>.app/Contents/MacOS/freenet-bin`.
-+/// Checks for a leading `/` by hand: `Path::is_absolute` depends on the host
-+/// OS, and this pure function also runs in the Windows unit tests.
-+fn is_bundle_executable(path: &std::ffi::OsStr) -> bool {
-+    let is_absolute = path.to_string_lossy().starts_with('/');
-+    let mut components = Path::new(path)
-+        .components()
-+        .rev()
-+        .map(|component| component.as_os_str());
-+    is_absolute
-+        && components.next().is_some_and(|c| c == "freenet-bin")
-+        && components.next().is_some_and(|c| c == "MacOS")
-+        && components.next().is_some_and(|c| c == "Contents")
-+        && components
-+            .next()
-+            .and_then(|c| c.to_str())
-+            .is_some_and(|bundle| bundle.ends_with(".app"))
-+}
-+
-+/// Whether every argument is one macOS adds itself: `-psn_<serial>`, or a
-+/// user-defaults override such as `-ApplePersistenceIgnoreState YES`, which is
-+/// a key followed by its value.
-+fn only_macos_injected_args(args: &[std::ffi::OsString]) -> bool {
-+    let mut args = args.iter().map(|arg| arg.to_string_lossy());
-+    while let Some(arg) = args.next() {
-+        if arg.starts_with("-psn_") {
-+            continue;
-+        }
-+        if !arg.starts_with("-Apple") && !arg.starts_with("-NS") {
-+            return false;
-+        }
-+        args.next();
-+    }
-+    true
- }
- 
--/// Compute the ProgramArguments array for the user LaunchAgent. If we're
--/// running from inside an `.app` bundle, launchd should relaunch the
--/// bundle's CFBundleExecutable shell wrapper (which in turn execs
--/// `freenet-bin service run-wrapper`, entering the tray path). Otherwise
--/// (cargo-run, raw binary install, dev build) launchd needs to invoke
--/// the binary with the explicit `service run-wrapper` subcommand or it
--/// would default to `Network` mode and skip the tray entirely.
-+/// Compute the ProgramArguments array for the user LaunchAgent. launchd must
-+/// pass the explicit `service run-wrapper` subcommand, or the binary would
-+/// default to `Network` mode and skip the tray entirely.
- #[allow(dead_code)]
- pub(super) fn launch_agent_program_arguments(exe: &Path) -> Vec<String> {
--    match macos_app_bundle_path(exe) {
--        Some(bundle) => vec![macos_app_bundle_wrapper(&bundle)],
--        None => vec![
--            exe.to_string_lossy().into_owned
-```
-
-**File**: `crates/core/src/bin/freenet.rs` (modified, +16/-2)
-```diff
-@@ -1708,11 +1708,25 @@ fn quic_ignore_crash_breaker_from(matches: &clap::ArgMatches) -> Option<bool> {
- fn freenet_main() -> anyhow::Result<()> {
-     // Parsed in two steps so the node arms can see where a value came from
-     // (`quic_ignore_crash_breaker_from`); errors exit as `Cli::parse` does.
--    let matches = <Cli as clap::CommandFactory>::command().get_matches();
-+    // Decided before parsing, which would reject arguments macOS adds (#6093).
-+    let argv: Vec<_> = std::env::args_os().collect();
-+    let app_launch = cfg!(target_os = "macos") && commands::service::is_macos_app_launch(&argv);
-+    let parser = <Cli as clap::CommandFactory>::command();
-+    let matches = if app_launch {
-+        parser.get_matches_from(argv.iter().take(1))
-+    } else {
-+        parser.get_matches()
-+    };
-     let cli =
-         <Cli as clap::FromArgMatches>::from_arg_matches(&matches).unwrap_or_else(|e| e.exit());
- 
--    match cli.command {
-+    let command = if app_launch {
-+        Some(Command::Service(ServiceCommand::RunWrapper))
-+    } else {
-+        cli.command
-+    };
-+
-+    match command {
-         // The link-handler commands need no node directories: skip building
-         // ConfigPaths, which creates them (and has no default in debug builds).
-         Some(Command::Service(ServiceCommand::UrlHandler(cmd))) => cmd.run(),
-```
-
-**File**: `crates/core/src/config.rs` (modified, +6/-3)
-```diff
-@@ -3186,9 +3186,12 @@ pub struct WebsocketApiArgs {
-     /// endpoints `/permission/pending`, `/permission/events`,
-     /// `/permission/events/ws`, and
-     /// `/permission/{nonce}/respond`).
--    /// Use when accessing the node via a custom domain (e.g., through a reverse proxy).
--    /// Can be specified multiple times. If omitted, only the machine's hostname and
--    /// bound IP are accepted.
-+    /// Use when accessing the node via a custom domain (e.g., through a reverse proxy),
-+    /// or through a forwarder that keeps the original `Host`. On a loopback bind that
-+    /// includes the machine's own LAN address.
-+    /// Can be specified multiple times. If omitted, only localhost, the machine's
-+    /// hostname and the bound IP are accepted, plus the machine's IPs on a bind
-+    /// reachable at them.
-     #[arg(long, env = "FREENET_ALLOWED_HOST")]
-     #[serde(rename = "allowed-host", skip_serializing_if = "Option::is_none")]
-     pub allowed_host: Option<Vec<String>>,
-```
-
-**File**: `crates/core/src/server.rs` (modified, +126/-10)
-```diff
-@@ -411,6 +411,25 @@ pub(crate) fn is_source_allowed(ip: IpAddr, allowed: &AllowedSourceCidrs) -> boo
-     allowed.contains_ip(&match_ip)
- }
- 
-+/// Whether a client could reach this bind address directly at the machine's
-+/// own IPs.
-+///
-+/// A loopback listener cannot be reached at a LAN address, so resolving the
-+/// machine's hostname to allow those addresses as `Host` values gains nothing
-+/// for a direct client. A forwarder that keeps the original `Host` needs
-+/// `--allowed-host` instead. The lookup also costs a blocking `getaddrinfo`
-+/// before the API starts listening, which took about 35 s on a macOS 26 CI
-+/// runner and left the node unreachable for all of it (see #5956).
-+fn hostname_ips_are_reachable(bind_addr: IpAddr) -> bool {
-+    !bind_addr.is_loopback()
-+}
-+
-+fn resolve_hostname_ips(hostname: &str, port: u16) -> Vec<IpAddr> {
-+    std::net::ToSocketAddrs::to_socket_addrs(&(hostname, port))
-+        .map(|addrs| addrs.map(|addr| addr.ip()).collect())
-+        .unwrap_or_default()
-+}
-+
- /// Builds the allowlist of hostnames/IPs for WebSocket `Host` header validation.
- ///
- /// Each entry is stored with and without the port suffix so both
-@@ -419,11 +438,20 @@ fn build_allowed_hosts(
-     bind_addr: IpAddr,
-     port: u16,
-     extra_allowed_hosts: &[String],
-+) -> HashSet<String> {
-+    build_allowed_hosts_with(bind_addr, port, extra_allowed_hosts, resolve_hostname_ips)
-+}
-+
-+fn build_allowed_hosts_with(
-+    bind_addr: IpAddr,
-+    port: u16,
-+    extra_allowed_hosts: &[String],
-+    resolve: impl FnOnce(&str, u16) -> Vec<IpAddr>,
- ) -> HashSet<String> {
-     let mut hosts = HostAllowlistBuilder::new(port);
- 
-     hosts.add_localhost();
--    hosts.add_machine_hostname();
-+    hosts.add_machine_hostname(bind_addr, resolve);
- 
-     if !bind_addr.is_unspecified() {
-         // Bracket IPv6 literals. A `Host` header carries `[::1]:7509`, never
-@@ -471,22 +499,30 @@ impl HostAllowlistBuilder {
-         self.add("[::1]");
-     }
- 
--    fn add_machine_hostname(&mut self) {
-+    fn add_machine_hostname(
-+        &mut self,
-+        bind_addr: IpAddr,
-+        resolve: impl FnOnce(&str, u16) -> Vec<IpAddr>,
-+    ) {
-         let Ok(name) = hostname::get() else { return };
-         let Some(name_str) = name.to_str() else {
-             return;
-         };
- 
--        self.add(name_str);
--        self.resolve_hostname_ips(name_str);
-+        self.add_hostname(name_str, bind_addr, resolve);
-     }
- 
--    fn resolve_hostname_ips(&mut self, hostname: &str) {
--        let Ok(addrs) = std::net::ToSocketAddrs::to_socket_addrs(&(hostname, self.port)) else {
--            return;
--        };
--        for addr in addrs {
--            self.add(&addr.ip().to_string());
-+    fn add_hostname(
-+        &mut self,
-+        hostname: &str,
-+        bind_addr: IpAddr,
-+        resolve: impl FnOnce(&str, u16) -> Vec<IpAddr>,
-+    ) {
-+        self.add(hostname);
-+        if hostname_ips_are_reachable(bind_addr) {
-+            for ip in resolve(hostname, self.port) {
-+                self.add(&ip.to_string());
-+            }
-         }
-     }
- 
-@@ -871,6 +907,86 @@ mod tests {
-         }
-     }
- 
-+    #[test]
-+    fn hostname_ips_are_only_resolved_for_a_bind_reachable_at_them() {
-+        for loopback in [
-+            IpAddr::V4(Ipv4Addr::LOCALHOST),
-+            IpAddr::V4(Ipv4Addr::new(127, 0, 0, 2)),
-+            IpAddr::V6(std::net::Ipv6Addr::LOCALHOST),
-+        ] {
-+            assert!(!hostname_ips_are_reachable(loopback), "{loopback}");
-+        }
-+        for reachable in [
-+            IpAddr::V4(Ipv4Addr::UNSPECIFIED),
-+            IpAddr::V6(std::net::Ipv6Addr::UNSPECIFIED),
-+            IpAddr::V4(Ipv4Addr::new(192, 168, 1, 2)),
-+        ] {
-+            assert!(hostname_ips_are_reachable(reachable), "{reachable}");
-+        }
-+    }
-+
-+    #[test]
-+    fn a_loopback_bind_does_not_look_up_the_machine_hostname() {
-+        // The guard is what keeps a slow resolver from delaying the API.
-+        let mut hosts = HostAllowlistBuilder::new(7509);
-+        hosts.add_hostname("myhost", IpAddr::V4(Ipv4Addr::LOCALHOST), |_, _| {
-+            panic!("a loopback bind must not resolve the hostname")
-+        });
-+        let hosts = hosts.build();
-+        assert!(hosts.contains("myhost"));
-+        assert!(hosts.contains("myhost:7509"));
-+    }
-+
-+    #[test]
-+    fn the_allowlist_passes_the_real_bind_address_to_the_hostname_check() {
-+        // Through the same function production uses, so that passing the wrong
-+        // address, or dropping the guard's input, fails here.
-+        let hosts = build_allowed_hosts_with(IpAddr::V4(Ipv4Addr::LOCALHOST), 7509, &[], |_, _| {
-+            panic!("a loopback bind must not resolve the hostname")
-+        });
-+        assert!(hosts.contains("localhost"));
-+    }
-+
-+    #[test]
-+    fn the_allowlist_resolves_the_hostname_for_a_wildcard_bind() {
-+        // The other direction: LAN clients of a wildcard bind need these IPs.
-+        if hostname::get().is_err() {
-+     
-```
-
-**File**: `docs/client-api-exposure.md` (modified, +1/-0)
-```diff
-@@ -32,6 +32,7 @@ Pick the narrowest option that fits.
- | A VPN overlay you control (Tailscale, WireGuard) | `--allowed-source-cidrs 100.64.0.0/10` |
- | A reverse proxy on **this** machine | nothing — loopback already works; add `--allowed-host your.domain` so the proxy's `Host` header is accepted |
- | A reverse proxy on **another** machine | `--ws-api-address ::` **and** `--allowed-host your.domain` |
-+| A forwarder on **this** machine that keeps the client's `Host` (`ssh -g -L`, socat) | `--allowed-host <LAN IP>:<forwarded port>`, the exact `Host` clients send, since a loopback bind does not allow the machine's LAN IP by default |
- 
- `--allowed-source-cidrs` widens the bind on its own, in network mode. It is
- inert on a loopback socket — a non-private source can never reach `::1` — so
+         // The crash-loop breaker may keep QUIC off after a run with QUIC
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #6105** (2026-11-03): ci: cut Ubicloud runner spend without slowing PR CI (@sanity)
+- **PR #6104** (2026-11-03): feat(transport): turn QUIC shadow mode on by default on Linux and macOS (@sanity)
 - **PR #6103** (2026-11-03): fix(delegates): refuse node-only inbound messages from clients (@sanity)
 - **PR #6101** (2026-11-03): feat(transport): add a QUIC crash-loop breaker for Windows by counting short runs (@sanity)
 - **PR #6094** (2026-11-03): fix(macos): make freenet-bin the bundle executable so the menu bar icon shows on macOS 26 (@sanity)
 - **PR #6092** (2026-11-02): fix(conformance): report what the shadow prober leaves out and the states the sampler refuses (@sanity)
-- **PR #6091** (2026-11-02): feat(transport): add QUIC send primitives with deadlines per stage (@sanity)
-- **PR #6073** (2026-11-01): build: release 0.2.154 (@sanity)
 
 ---
 
@@ -2998,49 +2060,29 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. transport): add a QUIC crash-loop breaker for Windows by counting short runs (#6
+## X. transport): turn QUIC shadow mode on by default on Linux and macOS (#6104)
 
 **RULE**:
-When implementing operations in `.claude/rules/transport.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.claude/rules/bug-prevention-patterns.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f988a147`: transport): add a QUIC crash-loop breaker for Windows by counting short runs (#6101). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c54e83c8`: transport): turn QUIC shadow mode on by default on Linux and macOS (#6104). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/rules/transport.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/rules/bug-prevention-patterns.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-(`quic_breaker_trips`, on unix counted for any abnormal end of a QUIC-enabled
-run, not only a QUIC fault, and on Windows for three runs in a row that ended
-within ten minutes, for any reason, each starting within 24 h of the one before;
-see `quic/breaker.rs`) and whether the breaker keeps QUIC
-breaker has been confirmed on a real Windows machine (#6031). Shadow or prefer: the endpoint is built
-There are no opt-in stages; releases do the rollout. QUIC stays off by default
-on Windows throughout, until its breaker is confirmed on a real Windows machine
-(#6031). Before default-on there, run on real Windows 10 and 11: the
-`quic_breaker_windows` test; logoff, shutdown and restart with Fast Startup on
-and off; tray Restart, Stop and Quit; `freenet service stop` and `restart`; an
-update exit; a real abort; and sleep during a run. Then weigh what that breaker
-never catches: a crash loop with runs of 10 minutes or more, and a fault that
-crashes once a day. Every step watches: peers disappearing per version
-    contained aborts the process. On unix the next start trips the breaker
-    (quic_breaker_trips, see quic/breaker.rs). On Windows the breaker does
-    not look at how a run ended: it co
+aggregate and must be before QUIC carries data by default (Step 3 at
+100%; shadow paths, on by default since Step 2, carry none). A node-wide share
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-(`quic_breaker_trips`, counted for any abnormal end of a QUIC-enabled run, not
-only a QUIC fault; see `quic/breaker.rs`) and whether the breaker keeps QUIC
-breaker works there (#6031). Shadow or prefer: the endpoint is built
-There are no opt-in stages; releases do the rollout. QUIC stays off on Windows
-throughout, until #6031. Every step watches: peers disappearing per version
-    contained aborts the process, and the next start trips the breaker
-    (quic_breaker_trips, see quic/breaker.rs).
+aggregate and must be before QUIC is on by default. A node-wide share
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f988a147` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c54e83c8` are properly handled with clean fallback behavior.

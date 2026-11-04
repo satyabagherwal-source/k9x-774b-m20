@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/typewhisper-typewhisper-mac-learnings.md`  
 > **Source**: github ([https://github.com/TypeWhisper/typewhisper-mac](https://github.com/TypeWhisper/typewhisper-mac))  
-> **Source Version**: `4620bb59`  
+> **Source Version**: `bff57fd2`  
 > **License**: GPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T20:15:13.674Z  
+> **Timestamp**: 2026-11-03T20:13:00.725Z  
 > **Learning ID**: `learn-github-typewhisper-typewhisper-mac`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/typewhisper-typewhisper-mac-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/TypeWhisper/typewhisper-mac](https://github.com/TypeWhisper/typewhisper-mac))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T20:15:13.668Z  
+> **Harvest Timestamp**: 2026-11-03T20:11:07.571Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Local speech-to-text for macOS  on-device AI, fully private, optional cloud
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 1891 stars
+- **Stars / Engagement**: 1904 stars
 
 ---
 
@@ -1969,13 +1969,11 @@ final class AppStoreICloudMirror: PremiumICloudBridging, @unchecked Sendable {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #1791** (2026-10-31): **Apple SpeechAnalyzer: Hong Kong Cantonese (zh-HK, Traditional) can't be selected — "Cantonese" always loads yue-CN (Simplified)**
+  *Symptoms*: ### Platform  macOS  ### Description  With the Apple SpeechAnalyzer engine, Hong Kong users who speak Cantonese can only get Simplified Chinese output. Apple provides a Hong Kong Cantonese model that outputs Traditional Chinese (`zh-HK`), but TypeWhisper offers no way to select it from the UI.  On my Mac, `SpeechTranscriber.supportedLocales` returns these Chinese locales:  | Locale | Spoken language | Output script | |---|---|---| | `yue-CN` | Cantonese | Simplified | | `zh-HK` | Cantonese (Hong Kong) | Traditional | | `zh-TW` | Mandarin (Taiwan) | Traditional | | `zh-CN` | Mandarin | Simplified |  Apple's Hong Kong Cantonese model uses the identifier `zh-HK`, whose language code is `zh`, not `yue`.  `SpeechAnalyzerPlugin.supportedLanguages` reduces each locale to its language code:  ```swift return Locale(identifier: localeId).language.languageCode?.identifier ```  So the language picker only gets `yue` (which maps to `yue-CN`) and `zh` (which `AppleSpeechModelSelection.preferredModelId` resolves to one of `zh-CN` / `zh-TW` / `zh-HK`, depending on fallback order). A user who picks "Cantonese" always gets `speechanalyzer-yue_CN`, which produces Simplified Chinese.  ### Workaround (confirmed working)  Quit TypeWhisper, then:  ```bash defaults write com.typewhisper.mac selectedLanguage -string "zh-HK" defaults write com.typewhisper.mac plugin.com.typewhisper.speechanalyzer.loadedModel -string "speechanalyzer-zh_HK" ```  After relaunching, Cantonese dictation outputs Traditional
+
 - **Issue #1778** (2026-10-28): **Google Meet calls at meet.google.com/meet/<code> are not detected**
   *Symptoms*: Follow-up to #1700: a Google Meet call in Chrome Beta is again not recorded automatically, because Google now serves the meeting at `https://meet.google.com/meet/<code>`.  **What happened** - 27.10, 23:31 MSK: TypeWhisper 1.8.1-rc1, macOS 27.0.1 (26A434), Apple M4, Chrome Beta. Ad-hoc meeting detection on, Google Meet enabled. - I joined a Meet call. The tab URL was `https://meet.google.com/meet/fpk-vsmc-dju` (AppleScript `URL of active tab`). - The Recorder did not start within 2 minutes. My own fallback script started it at 23:33:15. - The same evening a Teams call was picked up 7 s after joining, so ad-hoc detection itself works.  **Why** (main as of today) - `MeetingLinkParser.parseGoogleMeetLink` takes `parts[0]` as the meeting code and matches `^[a-z]{3}-[a-z]{4}-[a-z]{3}$`. - For `/meet/fpk-vsmc-dju`, `parts[0]` is `meet`. The link is rejected, so `meetingLinks(in:)` is empty and no browser activity is created. - Calendar-matched Meet calls are probably affected too: the event holds `meet.google.com/<code>`, but the open tab never parses.  **How common** Chrome Beta history (Default profile), Meet call URLs: | first seen | URL shape | |---|---| | 23.09, 16.10 | `meet.google.com/<code>?…&adhoc=1` | | 22.10 | both: `meet/ujf-urwz-eyi?pli=1`, then `ujf-urwz-eyi` | | 27.10 | only `meet/fpk-vsmc-dju`, `meet/rby-hohw-jss` (2 of 2 calls) |  **Side note, minor** The first tab query timed out: macOS checked the Automation permission from 23:31:14.368 to 16.994 (2.6 s), over the
-
-- **Issue #1771** (2026-10-29): **Microsoft AI live preview uploads about 3x the audio of a dictation**
-  *Symptoms*: ### Platform  macOS · TypeWhisper 1.8.1-rc1 · Microsoft AI plugin, MAI-Transcribe-2, live preview on  ### Problem  The live preview re-uploads a growing chunk of audio (up to about 10 s) every ~3.5 s. A 29 s dictation sent 8 preview uploads (~2.3 MB) plus a 945 KB final upload, about 3× the audio. That is extra traffic and provider cost on every dictation, and it hurts most on a weak connection.  #1622 / #1624 fixed the same pattern for OpenAI Compatible Batch profiles only.  Drafted with help from Claude Code; sizes are from CFNetwork summaries in the unified log. 
-  **Post-Mortem & Fix Analysis**:
-  > Setup for tracing: macOS 27.0.1 (26A434), Apple M4, TypeWhisper 1.8.1-rc1 direct download, Microsoft AI plugin 1.0.1 at the time (now 1.0.2), dictation engine MAI-Transcribe-2. Times are MSK (UTC+3) on Oct 27; History and unified-log lines available if useful.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1992,481 +1990,179 @@ final class AppStoreICloudMirror: PremiumICloudBridging, @unchecked Sendable {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5a63c037` (2026-10-27)
-**Commit Message**: Parakeet 1.6.1: fix per-request model switches and pad Nemotron batch transcriptions (#1748)
+### Incident Patch 1: `2007bc99` (2026-11-02)
+**Commit Message**: Queue daily release runs so a late scheduled run skips instead of rebuilding the day's tag (#1821)
 
-* Keep per-request Parakeet model switches from failing
+* Queue daily release runs so a late scheduled run skips instead of rebuilding the day's tag
 
-The host switches models for a request with selectModel and transcribes as
-soon as the plugin reports the requested model as selected and configured.
-Two races broke this for the local API, the CLI's --model and workflows:
+* Keep every waiting daily run so a scheduled run never cancels a manual one
 
-- selectModel set the new selection at once but unloaded the previous model
-  in a task. Meanwhile the previous model still counted as configured, so the
-  host transcribed without waiting and failed with "Cloud provider not
-  configured" once the task unloaded it. The previous model is now unloaded
-  synchronously, so the host waits for the new one.
-- A load that was already running, such as the host restoring the user's
-  model after the previous request, finished after the switch and replaced
-  the new selection, so the host failed with "The plugin restored a different
-  model". Selections, restores of a model and loads from the settings are now
-  numbered requests. A load for an older request, or a passive load while a
-  request is pending, of another model is dropped when it finishes, and a
-  dropped restore 
-
-**File**: `TypeWhisperPluginSDK/Plugins/ParakeetPlugin/ParakeetPlugin.swift` (modified, +100/-14)
+**File**: `.github/workflows/release.yml` (modified, +10/-0)
 ```diff
-@@ -158,6 +158,12 @@ final class ParakeetPlugin: NSObject, DictionaryTermHintSourceProgressTranscript
-     /// `_selectedModelId` and `selectedVersion` follow it while it lasts.
-     let transientSelection = PluginTransientModelSelection()
-     private var versionBeforeTransientSelection: ParakeetVersion?
-+    /// The newest explicit model request: a selection, a restore of a model or a load from the
-+    /// settings. A load for an older request, or a passive load while this one is pending, of
-+    /// another model is dropped when it finishes: the host would otherwise see that model as
-+    /// ready, with the newer selection, and fail the request it waits for.
-+    private var latestModelRequest: (id: Int, modelId: String, isPending: Bool)?
-+    private var modelRequestCount = 0
+@@ -21,6 +21,16 @@ env:
+ permissions:
+   contents: read
  
-     func requestPassiveModelRestore() {
-         passiveRestoreController.request { [weak self] in
-@@ -198,6 +204,7 @@ final class ParakeetPlugin: NSObject, DictionaryTermHintSourceProgressTranscript
-     func deactivate() {
-         transientSelection.end()
-         versionBeforeTransientSelection = nil
-+        latestModelRequest = nil
-         passiveRestoreController.cancel()
-         modelPrewarm.cancel()
-         clearVocabularyBoostingState(resetModelState: true)
-@@ -285,18 +292,23 @@ final class ParakeetPlugin: NSObject, DictionaryTermHintSourceProgressTranscript
-         _selectedModelId = modelId
-         host?.setUserDefault(modelId, forKey: "selectedModel")
-         if version == selectedVersion && loadedModelId == modelId { return }
-+        // Unload at once: while the previous model stayed loaded, the host saw the new
-+        // selection as configured, transcribed without waiting for the load and failed
-+        // once the previous model was gone.
-+        if loadedModelId != nil, loadedModelId != modelId {
-+            unloadModel(clearPersistence: false)
-+        }
-+        selectedVersion = version
-+        host?.setUserDefault(version.rawValue, forKey: "selectedVersion")
-+        let request = beginModelRequest(modelId)
-         Task {
-             // A transient selection that began meanwhile keeps its model in use.
-             guard transientSelection.revision == revision else {
-+                endModelRequest(request)
-                 saveUserSelection(version)
-                 return
-             }
--            unloadModel(clearPersistence: false)
--            selectedVersion = version
--            _selectedModelId = modelId
--            host?.setUserDefault(modelId, forKey: "selectedModel")
--            host?.setUserDefault(version.rawValue, forKey: "selectedVersion")
--            await loadModel(requestedAt: revision)
-+            await loadModel(version: version, requestedAt: revision, request: request)
-         }
-     }
- 
-@@ -528,6 +540,10 @@ final class ParakeetPlugin: NSObject, DictionaryTermHintSourceProgressTranscript
-     /// Feeds the recording through a fresh Nemotron stream, in blocks so a long file
-     /// reports its progress and stops soon after cancellation. FluidAudio reports no token
-     /// confidence for Nemotron, so the short-clip confidence gate does not apply.
-+    ///
-+    /// The stream drops the first word and the last syllables of a tightly cut clip, so the
-+    /// recording is surrounded by `nemotronBatchPaddingSamples` of silence on each side. Word
-+    /// timings are moved back to the recording. Live sessions get no padding.
-     private func transcribeWithNemotron(
-         audio: AudioData,
-         streams: ParakeetNemotronStreamFactory,
-@@ -539,6 +555,8 @@ final class ParakeetPlugin: NSObject, DictionaryTermHintSourceProgressTranscript
-         let samples = audio.samples
-         let totalDuration = Double(samples.count) / 16_000
-         var reportsSourceProgress = Self.shouldObserveSourceProgress(sampleCount: samples.count)
-+        let silence = [Float](repeating: 0, count: Self.nemotronBatchPaddingSamples)
-+        try await stream.process(silence)
-         var offset = 0
-         while offset < samples.count {
-             try Task.checkCancellation()
-@@ -554,18 +572,40 @@ final class ParakeetPlugin: NSObject, DictionaryTermHintSourceProgressTranscript
-             }
-         }
-         try Task.checkCancellation()
--        let result = Self.nemotronResult(from: try await stream.finish())
-+        try await stream.process(silence)
-+        try Task.checkCancellation()
-+        let result = Self.nemotronResult(
-+            from: try await stream.finish(),
-+            leadingPadding: Double(Self.nemotronBatchPaddingSamples) / 16_000,
-+            duration: totalDuration
-+        )
-         _ = onProgress(result.text)
-         return result
-     }
- 
-     /// 10 seconds of 16 kHz audio per Nemotron call during batch transcription.
-     private static let nemotronBlockSampleCount = 160_000
- 
-+    /// One second of 16 kHz silence before and after a batch transcription. In the ASR
-+    /// benchmark it brought back the words at the edges of tightly cut clips an
-```
-
-**File**: `TypeWhisperPluginSDK/Plugins/ParakeetPlugin/Tests/ParakeetNemotronStreamingTests.swift` (modified, +41/-5)
-```diff
-@@ -350,7 +350,7 @@ final class ParakeetNemotronStreamingTests: XCTestCase {
-         )
- 
-         let stream = try XCTUnwrap(streams.opened.first)
--        XCTAssertEqual(stream.samples.map(\.count), [160_000, 160_000, 80_000])
-+        XCTAssertEqual(stream.samples.map(\.count), [16_000, 160_000, 160_000, 80_000, 16_000], "One second of silence on each side")
-         XCTAssertEqual(stream.languagePrompt, "en-US")
-         XCTAssertTrue(stream.didFinish)
-         XCTAssertEqual(result.text, "Long recording.")
-@@ -363,6 +363,39 @@ final class ParakeetNemotronStreamingTests: XCTestCase {
-         XCTAssertNil(streams.opened[1].languagePrompt)
-     }
- 
-+    func testBatchTranscriptionPadsTheClipWithSilenceAndKeepsWordTimesInTheClip() async throws {
-+        // Times as the stream reports them, including the leading second of silence.
-+        let timings = [
-+            TokenTiming(token: "\u{2581}Ich", tokenId: 1, startTime: 1.1, endTime: 1.3, confidence: 1),
-+            TokenTiming(token: "\u{2581}muss", tokenId: 2, startTime: 1.4, endTime: 1.7, confidence: 1),
-+            TokenTiming(token: "\u{2581}los.", tokenId: 3, startTime: 2.4, endTime: 2.9, confidence: 1),
-+        ]
-+        let streams = StreamRecorder(
-+            output: ParakeetNemotronStreamOutput(text: "Ich muss los.", tokenTimings: timings, detectedLanguage: "de-DE"),
-+            partials: []
-+        )
-+        let plugin = try await loadedNemotronPlugin(streams: streams)
-+        defer { plugin.deactivate() }
-+        let clip: [Float] = (0..<24_000).map { _ in 0.25 }
-+        let audio = AudioData(samples: clip, wavData: Data(), duration: 1.5)
++# GitHub often starts the schedule hours late, sometimes while a manually started daily is
++# still building the same tag. Daily runs therefore wait for each other; the later one then
++# finds the day's tag and skips. Every waiting run is kept (queue: max), so a scheduled run
++# never cancels a manual one. Tag pushes and runs for an explicit tag queue by tag and do not
++# wait for a daily.
++concurrency:
++  group: ${{ github.workflow }}-${{ github.event_name == 'push' && github.ref_name || inputs.release_tag || 'daily' }}
++  cancel-in-progress: false
++  queue: max
 +
-+        let collector = PluginWordTimingCollector()
-+        let result = try await PluginWordTimings.$collector.withValue(collector) {
-+            try await plugin.transcribe(audio: audio, language: "de", translate: false, prompt: nil)
-+        }
-+
-+        let fed = try XCTUnwrap(streams.opened.first).samples.flatMap { $0 }
-+        XCTAssertEqual(fed, [Float](repeating: 0, count: 16_000) + clip + [Float](repeating: 0, count: 16_000))
-+        let words = collector.words
-+        XCTAssertEqual(words.map(\.text), ["Ich", "muss", "los."])
-+        for (word, expected) in zip(words, [(0.1, 0.3), (0.4, 0.7), (1.4, 1.5)]) {
-+            XCTAssertEqual(word.start, expected.0, accuracy: 1e-9, word.text)
-+            XCTAssertEqual(word.end, expected.1, accuracy: 1e-9, "\(word.text) ends within the clip")
-+        }
-+        XCTAssertEqual(result.segments.first?.start ?? -1, 0.1, accuracy: 1e-9)
-+        XCTAssertEqual(result.segments.last?.end ?? -1, 1.5, accuracy: 1e-9)
-+    }
-+
-     func testBatchTranscriptionStopsWhenCancelled() async throws {
-         let streams = StreamRecorder(output: Self.output(text: "never", tag: nil), partials: [])
-         streams.processGate = BlockingGate()
-@@ -440,11 +473,14 @@ final class ParakeetNemotronStreamingTests: XCTestCase {
-             prompt: nil,
-             onProgress: { progress.append($0); return true }
-         )
--        // 100 ms of audio per call, as the host appends while recording.
-+        // 100 ms of audio per call, as the host appends while recording, with the silence
-+        // the batch transcription adds around the recording.
-+        let silence = [Float](repeating: 0, count: ParakeetPlugin.nemotronBatchPaddingSamples)
-+        let recording = silence + samples + silence
-         var offset = 0
--        while offset < samples.count {
--            let end = min(offset + 1_600, samples.count)
--            try await session.appendAudio(samples: Array(samples[offset..<end]))
-+        while offset < recording.count {
-+            let end = min(offset + 1_600, recording.count)
-+            try await session.appendAudio(samples: Array(recording[offset..<end]))
-             offset = end
-         }
-         let live = try await session.finish()
-```
-
-**File**: `TypeWhisperPluginSDK/Plugins/ParakeetPlugin/Tests/ParakeetPluginTests.swift` (modified, +126/-0)
-```diff
-@@ -850,6 +850,105 @@ final class ParakeetPluginTests: XCTestCase {
-         XCTAssertEqual(versions, [.v3])
-     }
- 
-+    /// The host switches models per request with `selectModel` and transcribes as soon as the
-+    /// plugin reports the new selection as configured. The previous model must not count.
-+    func testSelectingAnotherModelUnloadsTheLoadedOneImmediately() async throws {
-+        let host = try PluginTestHostServices(
-+            defaults: ["selectedModel": "parakeet-ultra", "selectedVersion": "ultra"],
-+            shouldRestoreLoadedModelsPassively: false
-+        )
-+        let plugin = makePlugin()
-+        let loaded = LoadedVersions()
-+        plugin.asrModelLoadOverrideForTests = { version in await loaded.append(version) }
-+        plugin.activate(host: host)
-+        defer { plugin.deactivate() }
-+        await plugin.loadModel()
-+        XCTAssertEqual(plugin.loadedModelId, "parakeet-ultra")
-+
-+        plugin.selectModel("parakeet-tdt-0.6b-v3")
-+
-+        XCTAssertEqual(plugin.selectedModelId, "parakeet-tdt-0.6b-v3")
-+        XCTAssertFalse(plugin.isConfigured)
-+        XCTAssertNil(plugin.loadedModelId)
-+        XCTAssertEqual(plugin.supportedLanguages, ParakeetVersion.v3.supportedLanguages)
-+        XCTAssertEqual(host.userDefault(forKey: "selectedVersion") as? String, "v3")
-+
-+        for _ in 0..<200 where plugin.loadedModelId == nil {
-+            try await Task.sleep(for: .milliseconds(10))
-+        }
-+        XCTAssertEqual(plugin.loadedModelId, "parakeet-tdt-0.6b-v3")
-+        XCTAssertTrue(plugin.isConfigured)
-+        let versions = await loaded.versions
-+        XCTAssertEqual(versions, [.ultra, .v3])
-+    }
-+
-+    /// A model that finishes loading after another was selected must not become the loaded
-+    /// one: the host, waiting for the new model, would see the old one ready and fail.
-+    func testLoadThatFinishesAfterAnotherModelWasSelectedIsDropped() async throws {
-+        let host = try PluginTestHostServices(
-+            defaults: ["selectedModel": "parakeet-ultra", "selectedVersion": "ultra"],
-+            shouldRestoreLoadedModelsPassively: false
-+        )
-+        let plugin = makePlugin()
-+        let loads = HeldLoads()
-+        plugin.asrModelLoadOverrideForTests = { version in await loads.load(version) }
-+        plugin.activate(host: host)
-+        defer { plugin.deactivate() }
-+        // The host restores Ultra, as after a request that used another model.
-+        plugin.triggerRestoreModel(forModel: "parakeet-ultra" as NSString)
-+        await loads.waitForLoads(1)
-+
-+        plugin.selectModel("parakeet-tdt-0.6b-v3")
-+        await loads.releaseNext()
-+        await loads.waitForLoads(2)
-+
-+        XCTAssertNil(plugin.loadedModelId, "Ultra finished loading after v3 was selected")
-+        XCTAssertFalse(plugin.isConfigured)
-+        XCTAssertEqual(plugin.selectedModelId, "parakeet-tdt-0.6b-v3")
-+
-+        await loads.releaseNext()
-+        for _ in 0..<200 where plugin.loadedModelId == nil {
-+            try await Task.sleep(for: .milliseconds(10))
-+        }
-+        XCTAssertEqual(plugin.loadedModelId, "parakeet-tdt-0.6b-v3")
-+        XCTAssertEqual(plugin.selectedModelId, "parakeet-tdt-0.6b-v3")
-+        XCTAssertEqual(host.userDefault(forKey: "loadedModel") as? String, "parakeet-tdt-0.6b-v3")
-+        let versions = await loads.versions
-+        XCTAssertEqual(versions, [.ultra, .v3])
-+    }
-+
-+    func testLoadForAnOlderSelectionDoesNotReplaceTheNewestOne() async throws {
-+        let host = try PluginTestHostServices(
-+            defaults: ["selectedModel": "parakeet-ultra", "selectedVersion": "ultra"],
-+            shouldRestoreLoadedModelsPassively: false
-+        )
-+        let plugin = makePlugin()
-+        let loads = HeldLoads()
-+        plugin.asrModelLoadOverrideForTests = { version in await loads.load(version) }
-+        plugin.activate(host: host)
-+        defer { plugin.deactivate() }
-+        let ultraLoad = Task { await plugin.loadModel() }
-+        await loads.waitForLoads(1)
-+
-+        plugin.selectModel("parakeet-tdt-0.6b-v3")
-+        plugin.selectModel("parakeet-ultra")
-+        await loads.releaseNext()
-+        await ultraLoad.value
-+        XCTAssertEqual(plugin.loadedModelId, "parakeet-ultra", "Ultra is the newest selection")
-+
-+        // The v3 selection's load still runs but must not install v3, so Ultra needs no reload.
-+        for _ in 0..<20 {
-+            await loads.releaseNext()
-+            try await Task.sleep(for: .milliseconds(10))
-+        }
-+        await plugin.loadModel(version: .ultra)
-+        XCTAssertEqual(plugin.loadedModelId, "parakeet-ultra")
-+        XCTAssertEqual(plugin.selectedModelId, "parakeet-ultra")
-+        XCTAssertEqual(host.userDefault(forKey: "loadedModel") as? String, "parakeet-ultra")
-+        let versions = await loads.versions
-+        XCTAssertEqual(versions, [.ultra, .v3])
-+    }
-+
-     // MARK: - Unknown tokens
- 
-     func testUnknownTokensBecomeAmpersandsBetweenCapitalsAndAr
-```
-
-**File**: `TypeWhisperPluginSDK/Plugins/ParakeetPlugin/manifest.json` (modified, +1/-1)
-```diff
-@@ -1,7 +1,7 @@
- {
-     "id": "com.typewhisper.parakeet",
-     "name": "Parakeet",
--    "version": "1.6.0",
-+    "version": "1.6.1",
-     "minHostVersion": "1.8.0",
-     "sdkCompatibilityVersion": "v1",
-     "minOSVersion": "14.0",
-```
-
-**File**: `docs/release-notes/unreleased.md` (modified, +1/-0)
-```diff
-@@ -8,5 +8,6 @@
- - Local LLM (MLX) 1.0.6: The model list recommends a model for this Mac based on its memory, describes each Gemma 4 model, and warns when a model needs more memory than the Mac has. On a fresh install the recommended model is preselected. Gemma 4 E4B (8-bit) is no longer experimental. Gemma 4 26B-A4B stays experimental because it does not load yet, and its load error no longer suggests deleting the downloaded model.
- - Language Detection (new plugin): When you select several spoken languages and the engine accepts only one, such as Parakeet, WhisperKit, Qwen3 or Groq, the plugin detects which of them you speak instead of always using the first one. It runs on your Mac in about 15 ms per transcription, and the audio never leaves it. Install it from Discover plugins; the App Store edition includes it. Live previews still use the first selected language.
- - Canary, Cohere Transcribe (Local) and Google Cloud STT 1.1.0: These engines cannot detect the spoken language themselves. With Auto-detect all languages and the Language Detection plugin enabled, the plugin now picks the language among theirs. Until now Canary and Cohere Transcribe stopped with an error, and Google Cloud STT used its default language code. When the plugin is unsure, or you speak a language the engine does not support, the engine behaves as before. Dictation settings explain this under Auto-detect all languages.
-+- Parakeet 1.6.1: Using another Parakeet model for a single transcription, as the local API's `model`, the CLI's `--model` or a workflow with its own Parakeet model do, now waits for that model to load. Until now it failed with "Cloud provider not configured. Please set an API key." Nemotron 3.5 ASR Streaming no longer drops the first and last words of files and other recordings it transcribes after they end; live dictation stays as fast as before.
- - Dictation: Dictating into GNU Emacs or a remote desktop client such as Parsec no longer ends with "No text field detected". These apps draw their own content and report only their window to Accessibility, so TypeWhisper cannot tell whether the text arrived and no longer warns there.
- - Dictation: Dictating into a new message in Apple Mail no longer ends with "No text field detected" although the text arrived. The same applies to other editors where the whole web page is editable. Accessibility does not show their text changing, so TypeWhisper no longer takes that as a missed text field. Web pages without a text field still get the warning.
-```
-
----
-
-### Incident Patch 2: `6aa769c1` (2026-10-27)
-**Commit Message**: Skip the macOS build and test jobs for documentation-only pull requests (#1763)
-
-Release notes and other documentation never reach the app build or its
-tests, yet every such pull request waited for release-build, app-tests
-and appstore on the macOS runner. The changes job now also reports
-whether anything outside docs/ and root-level Markdown changed; those
-three jobs run only then, and CI ok accepts them as skipped for
-documentation-only pull requests.
-
-**File**: `.github/workflows/build.yml` (modified, +26/-1)
-```diff
-@@ -45,11 +45,14 @@ jobs:
-           ruby scripts/test_dependency_coverage.rb
- 
-   # Pull requests that leave the Plugin SDK package alone skip its macOS test job.
-+  # Pull requests that only touch documentation (docs/ and Markdown files at the
-+  # repository root) skip the macOS build and test jobs.
-   changes:
+ jobs:
+   prepare:
      runs-on: ubuntu-latest
-     timeout-minutes: 5
-     outputs:
-       plugin_sdk: ${{ steps.diff.outputs.plugin_sdk }}
-+      app: ${{ steps.diff.outputs.app }}
-     steps:
-       - name: Checkout
-         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-@@ -76,7 +79,22 @@ jobs:
-           fi
-           echo "plugin_sdk=$plugin_sdk" | tee -a "$GITHUB_OUTPUT"
+```
+
+**File**: `scripts/test_release_tooling.py` (modified, +8/-0)
+```diff
+@@ -256,6 +256,14 @@ def test_homebrew_update_goes_through_a_pull_request(self):
+         self.assertTrue(merged)
+         self.assertLess(log.index("pr checks"), log.index("pr merge"))
  
-+          app=true
-+          if [ "$EVENT_NAME" = "pull_request" ]; then
-+            # In glob magic, * does not cross directories, so only root-level Markdown counts.
-+            status=0
-+            git diff --quiet HEAD^1 HEAD -- . ':(exclude)docs/' ':(exclude,glob)*.md' || status=$?
-+            case "$status" in
-+              0) app=false ;;
-+              1) ;;
-+              *) echo "::error::git diff failed with exit code $status"; exit "$status" ;;
-+            esac
-+          fi
-+          echo "app=$app" | tee -a "$GITHUB_OUTPUT"
++    def test_daily_runs_wait_for_each_other(self):
++        # A late scheduled daily must not build the day's tag while a manual daily is running.
++        self.assertEqual(self.workflow["concurrency"], {
++            "group": "${{ github.workflow }}-${{ github.event_name == 'push' && github.ref_name"
++                     " || inputs.release_tag || 'daily' }}",
++            "cancel-in-progress": False,
++            "queue": "max"})
 +
-   release-build:
-+    needs: changes
-+    if: needs.changes.outputs.app == 'true'
-     runs-on: xcode-27
-     steps:
-       - name: Checkout
-@@ -187,6 +205,8 @@ jobs:
-           retention-days: 14
- 
-   app-tests:
-+    needs: changes
-+    if: needs.changes.outputs.app == 'true'
-     runs-on: xcode-27
-     steps:
-       - name: Checkout
-@@ -290,6 +310,8 @@ jobs:
-   # A Debug arm64 build keeps pull requests fast; the nightly TestFlight workflow
-   # builds the universal Release binary and audits it. See docs/appstore/README.md.
-   appstore:
-+    needs: changes
-+    if: needs.changes.outputs.app == 'true'
-     runs-on: xcode-27
-     timeout-minutes: 60
-     env:
-@@ -363,12 +385,15 @@ jobs:
-         env:
-           NEEDS: ${{ toJSON(needs) }}
-         run: |
--          # plugin-sdk-tests may be skipped only when the changes job ruled it out.
-+          # A job may be skipped only when the changes job ruled it out: plugin-sdk-tests when
-+          # the Plugin SDK is unchanged, the macOS build and test jobs for documentation-only changes.
-           failed="$(jq -r '
-             (.changes.outputs.plugin_sdk == "false") as $sdk_unchanged
-+            | (.changes.outputs.app == "false") as $docs_only
-             | to_entries[]
-             | select(.value.result != "success")
-             | select((.key == "plugin-sdk-tests" and .value.result == "skipped" and $sdk_unchanged) | not)
-+            | select((.key as $k | ["release-build", "app-tests", "appstore"] | index($k)) and .value.result == "skipped" and $docs_only | not)
-             | "\(.key): \(.value.result)"' <<<"$NEEDS")"
-           if [ -n "$failed" ]; then
-             echo "::error::Not every CI job succeeded"
+     def test_homebrew_updates_for_one_release_never_overlap(self):
+         concurrency = self.workflow["jobs"]["update-homebrew"]["concurrency"]
+         self.assertEqual(concurrency, {"group": "homebrew-tap-${{ needs.prepare.outputs.tag }}",
 ```
 
 ---
 
-### Incident Patch 3: `d58debc0` (2026-10-27)
-**Commit Message**: Require TypeWhisper 1.8.1 for Parakeet 1.6.1 (#1759)
+### Incident Patch 2: `901a3865` (2026-11-01)
+**Commit Message**: Show the release channel in the About panel of Daily and Release Candidate builds (#1816)
 
-* Require TypeWhisper 1.8.1 for Parakeet 1.6.1
+* Show the release channel in the About panel of Daily and Release Candidate builds
 
-Parakeet 1.6 adopts LiveTranscriptionModelSupportProviding, which hosts
-before 1.8.1 do not export. The plugin release check against the 1.8.0
-host failed on the missing protocol descriptor, so the manifest has to
-declare the first host that provides it.
+* Compare the About panel version with the localized channel names
 
-* Name Parakeet in the host requirement note
-
-* Expect Parakeet to require TypeWhisper 1.8.1 in the manifest test
-
-**File**: `TypeWhisperPluginSDK/Plugins/ParakeetPlugin/manifest.json` (modified, +1/-1)
+**File**: `TypeWhisper/App/AppConstants.swift` (modified, +12/-0)
 ```diff
-@@ -2,7 +2,7 @@
-     "id": "com.typewhisper.parakeet",
-     "name": "Parakeet",
-     "version": "1.6.1",
--    "minHostVersion": "1.8.0",
-+    "minHostVersion": "1.8.1",
-     "sdkCompatibilityVersion": "v1",
-     "minOSVersion": "14.0",
-     "supportedArchitectures": [
-```
-
-**File**: `TypeWhisperTests/PluginManifestValidationTests.swift` (modified, +1/-1)
-```diff
-@@ -155,7 +155,7 @@ final class PluginManifestValidationTests: XCTestCase {
-     func testSourceFootageProgressPluginsDeclareCapability() throws {
-         let manifestExpectations = [
-             ("TypeWhisperPluginSDK/Plugins/WhisperKitPlugin/manifest.json", "1.8.0"),
--            ("TypeWhisperPluginSDK/Plugins/ParakeetPlugin/manifest.json", "1.8.0"),
-+            ("TypeWhisperPluginSDK/Plugins/ParakeetPlugin/manifest.json", "1.8.1"),
-             ("TypeWhisperPluginSDK/Plugins/SonioxPlugin/manifest.json", "1.8.0"),
-         ]
+@@ -292,6 +292,18 @@ enum AppConstants {
+         return channel
+     }
  
++    /// Version for the standard About panel. Daily and Release Candidate builds share the
++    /// marketing version with the stable release, so they add their channel ("1.8.2 Daily").
++    static func aboutPanelApplicationVersion(
++        infoDictionary: [String: Any]? = Bundle.main.infoDictionary
++    ) -> String {
++        let version = infoDictionary?["CFBundleShortVersionString"] as? String ?? "0.0.0"
++        guard let channel = bundledReleaseChannel(infoDictionary: infoDictionary).versionDisplayName else {
++            return version
++        }
++        return "\(version) \(channel)"
++    }
++
+     static func bundledPreviewRelease(
+         infoDictionary: [String: Any]? = Bundle.main.infoDictionary
+     ) -> PreviewRelease? {
 ```
 
-**File**: `docs/release-notes/unreleased.md` (modified, +1/-1)
+**File**: `TypeWhisper/App/TypeWhisperApp.swift` (modified, +10/-0)
 ```diff
-@@ -9,7 +9,7 @@
- - Language Detection (new plugin): When you select several spoken languages and the engine accepts only one, such as Parakeet, WhisperKit, Qwen3 or Groq, the plugin detects which of them you speak instead of always using the first one. It runs on your Mac in about 15 ms per transcription, and the audio never leaves it. Install it from Discover plugins; the App Store edition includes it. Live previews still use the first selected language.
- - Canary, Cohere Transcribe (Local) and Google Cloud STT 1.1.0: These engines cannot detect the spoken language themselves. With Auto-detect all languages and the Language Detection plugin enabled, the plugin now picks the language among theirs. Until now Canary and Cohere Transcribe stopped with an error, and Google Cloud STT used its default language code. Dictation settings explain this under Auto-detect all languages.
- - Canary and Cohere Transcribe (Local): With Auto-detect all languages, these engines no longer stop with an error when nothing picks the language, for example when the Language Detection plugin is unsure on a short dictation, is not enabled, or hears a language the engine does not support. They now use the first of your preferred languages in System Settings > General > Language & Region that they support, and only stop with the error when they support none of them. Google Cloud STT 1.1.1 keeps using its default language code in these cases.
--- Parakeet 1.6.1: Using another Parakeet model for a single transcription, as the local API's `model`, the CLI's `--model` or a workflow with its own Parakeet model do, now waits for that model to load. Until now it failed with "Cloud provider not configured. Please set an API key." Nemotron 3.5 ASR Streaming no longer drops the first and last words of files and other recordings it transcribes after they end; live dictation stays as fast as before.
-+- Parakeet 1.6.1: Using another Parakeet model for a single transcription, as the local API's `model`, the CLI's `--model` or a workflow with its own Parakeet model do, now waits for that model to load. Until now it failed with "Cloud provider not configured. Please set an API key." Nemotron 3.5 ASR Streaming no longer drops the first and last words of files and other recordings it transcribes after they end; live dictation stays as fast as before. Parakeet 1.6.1 requires TypeWhisper 1.8.1 or later.
- - Dictation: Dictating into GNU Emacs or a remote desktop client such as Parsec no longer ends with "No text field detected". These apps draw their own content and report only their window to Accessibility, so TypeWhisper cannot tell whether the text arrived and no longer warns there.
- - Dictation: Dictating into a new message in Apple Mail no longer ends with "No text field detected" although the text arrived. The same applies to other editors where the whole web page is editable. Accessibility does not show their text changing, so TypeWhisper no longer takes that as a missed text field. Web pages without a text field still get the warning.
- - Granite Speech 1.0.16: Translation now works while dictionary terms are active. Until now Granite received the terms as its whole instruction and transcribed instead of translating. The terms are now passed as keywords after the transcribe or translate instruction, as the model expects.
+@@ -486,6 +486,16 @@ struct TypeWhisperApp<WindowConfiguration: ManagedAppWindowSceneConfiguration>:
+         }
+         .menuBarExtraStyle(.menu)
+         .commands {
++            // The standard About panel shows only the marketing version, which Daily and
++            // Release Candidate builds share with the stable release; add their channel.
++            CommandGroup(replacing: .appInfo) {
++                Button(String(localized: "About TypeWhisper")) {
++                    NSApp.orderFrontStandardAboutPanel(options: [
++                        .applicationVersion: AppConstants.aboutPanelApplicationVersion()
++                    ])
++                    NSApp.activate()
++                }
++            }
+             CommandGroup(after: .appInfo) {
+                 ManagedWindowOpenerRegistrar()
+             }
+```
+
+**File**: `TypeWhisper/Resources/Localizable.xcstrings` (modified, +28/-0)
+```diff
+@@ -14870,6 +14870,34 @@
+         }
+       }
+     },
++    "About TypeWhisper" : {
++      "localizations" : {
++        "de" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "Über TypeWhisper"
++          }
++        },
++        "es" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "Acerca de TypeWhisper"
++          }
++        },
++        "ja" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "TypeWhisperについて"
++          }
++        },
++        "zh-Hans" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "关于 TypeWhisper"
++          }
++        }
++      }
++    },
+     "Accessibility" : {
+       "localizations" : {
+         "de" : {
+```
+
+**File**: `TypeWhisperTests/AppFormatterServiceTests.swift` (modified, +16/-0)
+```diff
+@@ -45,6 +45,22 @@ final class AppFormatterServiceTests: XCTestCase {
+         XCTAssertEqual(channel, .releaseCandidate)
+     }
+ 
++    func testAboutPanelVersionNamesTheChannelOfPreviewBuilds() throws {
++        func version(_ channel: AppConstants.ReleaseChannel) -> String {
++            AppConstants.aboutPanelApplicationVersion(infoDictionary: [
++                "CFBundleShortVersionString": "1.8.2",
++                "TypeWhisperReleaseChannel": channel.rawValue,
++            ])
++        }
++
++        // The channel names are localized; compare with them, not with English text.
++        let daily = try XCTUnwrap(AppConstants.ReleaseChannel.daily.versionDisplayName)
++        let releaseCandidate = try XCTUnwrap(AppConstants.ReleaseChannel.releaseCandidate.versionDisplayName)
++        XCTAssertEqual(version(.stable), "1.8.2")
++        XCTAssertEqual(version(.daily), "1.8.2 \(daily)")
++        XCTAssertEqual(version(.releaseCandidate), "1.8.2 \(releaseCandidate)")
++    }
++
+     func testBundledPreviewReleaseUsesDailyTagAndURL() throws {
+         let release = try XCTUnwrap(AppConstants.bundledPreviewRelease(
+             infoDictionary: [
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1800** (2026-10-29): Give the stalled live session in the early-stop test enough time on slow runners (@SeoFood)
-- **PR #1799** (2026-10-29): Keep the update highlights in front of Settings with a single Continue button (@SeoFood)
-- **PR #1798** (2026-10-29): Start the 1.8.2 development line (@SeoFood)
-- **PR #1797** (2026-10-29): Import your own Parakeet models converted to Core ML (@SeoFood)
-- **PR #1796** (2026-10-29): Do not report a missed text field when a terminal has not echoed the paste yet (@SeoFood)
-- **PR #1794** (closed): Stop showing a missed text field warning when dictating into kitty (@SeoFood)
+- **PR #1833** (2026-11-03): Stop toggle dictations sooner when the speaker finished a thought, with Reson8's turn detection (@SeoFood)
+- **PR #1824** (2026-11-03): Move the Soniox plugin to STT v6 and refresh model lists saved before it (1.2.15) (@SeoFood)
+- **PR #1823** (2026-11-03): Offer Rumble-2-Flash, live dictation, a dictionary custom model, pattern sets, filler words and speaker labels in Reson8 (1.1.0) (@yvos)
+- **PR #1821** (2026-11-02): Queue daily release runs so a late scheduled run skips instead of rebuilding the day's tag (@SeoFood)
+- **PR #1820** (2026-11-02): Record short clips for pull requests whose change shows in motion (@SeoFood)
+- **PR #1819** (2026-11-02): Keep live text-field updates in Telegram when its AX write reports an error (#1818) (@SeoFood)
 
 ---
 
@@ -2486,53 +2182,37 @@ declare the first host that provides it.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Parakeet 1.6.1: fix per-request model switches and pad Nemotron batch transcript
+## X. Queue daily release runs so a late scheduled run skips instead of rebuilding the
 
 **RULE**:
-When implementing operations in `TypeWhisperPluginSDK/Plugins/ParakeetPlugin/ParakeetPlugin.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in TypeWhisper/typewhisper-mac. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/release.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in TypeWhisper/typewhisper-mac. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5a63c037`: Parakeet 1.6.1: fix per-request model switches and pad Nemotron batch transcriptions (#1748). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2007bc99`: Queue daily release runs so a late scheduled run skips instead of rebuilding the day's tag (#1821). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `TypeWhisperPluginSDK/Plugins/ParakeetPlugin/ParakeetPlugin.swift`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/release.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-    /// The newest explicit model request: a selection, a restore of a model or a load from the
-    /// settings. A load for an older request, or a passive load while this one is pending, of
-    /// another model is dropped when it finishes: the host would otherwise see that model as
-    /// ready, with the newer selection, and fail the request it waits for.
-    private var latestModelRequest: (id: Int, modelId: String, isPending: Bool)?
-    private var modelRequestCount = 0
-        latestModelRequest = nil
-        // Unload at once: while the previous model stayed loaded, the host saw the new
-        // selection as configured, transcribed without waiting for the load and failed
-        // once the previous model was gone.
-        if loadedModelId != nil, loadedModelId != modelId {
-            unloadModel(clearPersistence: false)
-        }
-        selectedVersion = version
-        host?.setUserDefault(version.rawValue, forKey: "selectedVersion")
-        let request = beginModelRequest(modelId)
-                endModelRequest(request)
-            await loadModel(version: version, requestedAt: revision, request: request)
-    ///
-    /// The stream drops the first word and the last s
+# GitHub often starts the schedule hours late, sometimes while a manually started daily is
+# still building the same tag. Daily runs therefore wait for each other; the later one then
+# finds the day's tag and skips. Every waiting run is kept (queue: max), so a scheduled run
+# never cancels a manual one. Tag pushes and runs for an explicit tag queue by tag and do not
+# wait for a daily.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name == 'push' && github.ref_name || inputs.release_tag || 'daily' }}
+  cancel-in-progress: false
+  queue: max
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Anti-pattern to NEVER write (induced failure mode):
-            unloadModel(clearPersistence: false)
-            selectedVersion = version
-            _selectedModelId = modelId
-            host?.setUserDefault(modelId, forKey: "selectedModel")
-            host?.setUserDefault(version.rawValue, forKey: "selectedVersion")
-            await loadModel(requestedAt: revision)
-        let result = Self.nemotronResult(from: try await stream.finish())
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5a63c037` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2007bc99` are properly handled with clean fallback behavior.

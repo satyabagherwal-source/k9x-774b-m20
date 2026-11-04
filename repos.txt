@@ -4798,3 +4798,27 @@ https://github.com/nduckmink/arkon
 # --- Automatically Discovered by AI Scout Engine [2026-11-03T15:34:23.778Z] ---
 # [AI-AGENTS] seleniumbase/SeleniumBase (7369 score) - 📊 APIs for Web Scraping, Browser Automation, and E2E Testing. CDP Mode bypasses
 https://github.com/seleniumbase/SeleniumBase
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-03T19:14:40.626Z] ---
+# [HUGGINGFACE-AI-MODELS] unsloth/DeepSeek-V4.1-Flash-1017-GGUF (5240 score) - Verified Hugging Face Model: unsloth/DeepSeek-V4.1-Flash-1017-GGUF (324 likes, 5
+https://huggingface.co/unsloth/DeepSeek-V4.1-Flash-1017-GGUF
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-03T21:08:46.217Z] ---
+# [AI-AGENTS] kortix-ai/CompanyOS (11559 score) - Kortix CompanyOS – the open-source operating system for your company. Multiplaye
+https://github.com/kortix-ai/CompanyOS
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-03T22:06:22.802Z] ---
+# [HUGGINGFACE-AI-MODELS] divagr1925/Qwen3.5-4B-Qwenputer (2739 score) - Verified Hugging Face Model: divagr1925/Qwen3.5-4B-Qwenputer (151 likes, 1229 do
+https://huggingface.co/divagr1925/Qwen3.5-4B-Qwenputer
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-04T00:10:31.167Z] ---
+# [HUGGINGFACE-AI-MODELS] abenzerps/Qwen-Image-2.1-Turbo-Quantized (58220 score) - Verified Hugging Face Model: abenzerps/Qwen-Image-2.1-Turbo-Quantized (5622 like
+https://huggingface.co/abenzerps/Qwen-Image-2.1-Turbo-Quantized
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-04T01:07:21.008Z] ---
+# [AI-AGENTS] agentlas-ai/Agentlas-OS (1084 score) - Desktop AI agent that hires a specialist for each task, works in your real apps 
+https://github.com/agentlas-ai/Agentlas-OS
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-04T02:04:28.378Z] ---
+# [HUGGINGFACE-AI-MODELS] microsoft/Mage-VL-Cowork (3101 score) - Verified Hugging Face Model: microsoft/Mage-VL-Cowork (156 likes, 1541 downloads
+https://huggingface.co/microsoft/Mage-VL-Cowork

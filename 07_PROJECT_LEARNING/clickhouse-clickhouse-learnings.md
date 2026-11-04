@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md`  
 > **Source**: github ([https://github.com/ClickHouse/ClickHouse](https://github.com/ClickHouse/ClickHouse))  
-> **Source Version**: `52529f0c`  
+> **Source Version**: `18430ef4`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T20:53:23.461Z  
+> **Timestamp**: 2026-11-03T18:22:49.967Z  
 > **Learning ID**: `learn-github-clickhouse-clickhouse`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ClickHouse/ClickHouse](https://github.com/ClickHouse/ClickHouse))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T20:53:23.457Z  
+> **Harvest Timestamp**: 2026-11-03T18:22:48.603Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: ClickHouse® is a real-time analytics database management system
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 50694 stars
+- **Stars / Engagement**: 50735 stars
 
 ---
 
@@ -1317,11 +1317,11 @@ private:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #127270** (2026-10-22): **Wrong result: `DateTime64 < DateTime` skips parts and granules whose rows lie in the boundary second**
-  *Symptoms*: ### Describe what's wrong  When a `DateTime64` column in the partition key or sorting key is compared with a strict `<` against a `DateTime` value, the min-max and primary-key analysis rounds the bound to whole seconds and turns `ts < X` into `ts in (-Inf, X-1]`. A part or granule whose rows all lie in the second `[X-1, X)` (for example `23:59:59.250`) is then skipped, though every row in it satisfies the predicate. The query returns fewer rows without any error. The same filter with a `DateTime64` bound, or with index analysis disabled, returns the right rows. `>` against a `DateTime` bound behaves the same way at the low end.  ### Does it reproduce on the most recent release?  Yes: 26.8.1.1184 (clickhouse-local, official build) and 26.3.17.4 (server).  ### How to reproduce  ```sql CREATE TABLE t (ts DateTime64(3, 'UTC'), k UInt8) ENGINE = MergeTree PARTITION BY toYYYYMMDD(ts) ORDER BY (k, ts);  SYSTEM STOP MERGES t; INSERT INTO t VALUES ('2026-10-10 12:00:00.000', 1); INSERT INTO t VALUES ('2026-10-10 23:59:59.250', 1), ('2026-10-10 23:59:59.750', 1);  -- Every row is before 2026-10-11 00:00:00, so each query should return 3. SELECT count() FROM t WHERE ts < toDateTime('2026-10-11 00:00:00', 'UTC');            -- 1 SELECT count() FROM t WHERE ts < toDateTime64('2026-10-11 00:00:00', 3, 'UTC');        -- 3 SELECT count() FROM t WHERE ts < toDateTime('2026-10-11 00:00:00', 'UTC') SETTINGS use_primary_key = 0, use_partition_pruning = 0;                               -- 3 SELEC
+- **Issue #129022** (2026-11-03): **Merges of Wide parts issue a prefetch for every column stream, ignoring `filesystem_prefetches_limit`**
+  *Symptoms*: During a merge, `MergeTreeReaderWide::readRows` calls `prefetchForAllColumns`, which calls `prefetch` on every `.bin` stream of every column in every source part. The only check is `remote_filesystem_read_prefetch` (default 1), which merges get from the global context.  `SELECT` queries skip these prefetches when the number of columns exceeds `filesystem_prefetches_limit` (default 200). Merges don't have this limit: `MergeTreeReaderSettings::createForMergeMutation` does not copy `filesystem_prefetches_limit`, so it stays 0 (unlimited).  This happens in horizontal merges too, where `MergeTask` passes `prefetch=false`, because the per-column `prefetch` in `readRows` doesn't depend on that flag.  ### Proposal  Apply `filesystem_prefetches_limit` (or a separate MergeTree setting) to merges and mutations in `createForMergeMutation`, or disable the per-column `prefetch` in `readRows` for merges. The next-column prefetch in vertical merges (`vertical_merge_remote_filesystem_prefetch`) is a separate mechanism and should stay as is.
 
-- **Issue #127233** (2026-10-24): **A single `EIO` while reading `checksums.txt` / `columns.txt` / `count.txt` at start-up detaches the whole part as `broken-on-start`; its rows silently disappear from the table**
-  *Symptoms*: ### Company or project name  _No response_  ### Describe what's wrong   While a MergeTree table is loaded at server start, one failed read (`EIO`) of one small part metadata file treats the part like a corrupted one. A failed read means the read errored, not that the content is wrong. The server logs "is broken and needs manual correction" and renames the part to `detached/broken-on-start_<name>`. The table then starts without it:  - `SELECT` returns the remaining rows (0 of 300 below) with no error and no warning to the client. - The decision is not undone when the I/O error goes away. The data stays in `detached/` until an administrator notices it in `system.detached_parts` or the server log, renames the directory back by hand (`ATTACH PART 'broken-on-start_all_1_1_0'` fails with `BAD_DATA_PART_NAME`) and attaches it. - The `max_suspicious_broken_parts` / `max_suspicious_broken_parts_bytes` guards do not stop this for small parts or for a few of them.  The same result occurs for the first read of `checksums.txt`, `columns.txt`, `count.txt` and `serialization.json`. The other files of the part (`data.bin`, ...) are intact, and without the injected fault the same part loads with all its rows. `isRetryableException` (used in `loadDataPart` to decide between "rethrow" and "mark broken") already treats `ErrnoException` with `EMFILE`/`ENOMEM`, network errors and S3/Azure retryable errors as not-a-corruption, but not `EIO`.   ### Does it reproduce on the most recent release?  Yes 
+- **Issue #128635** (2026-11-03): **Avro: an out-of-range union index is not checked: `std::out_of_range` for a Variant (abort on debug), wrong results for a nullable union**
+  *Symptoms*: 🕵️  When an Avro union is read into a `Variant` (the type that schema inference picks for a union of several non-null types), the union index read from the data is looked up with `discriminators_map.at(union_index)` without being checked against the number of branches. An index past the last branch throws `std::out_of_range`:  - release builds: `Code: 1001. DB::Exception: std::out_of_range: map::at:  key not found. (STD_EXCEPTION)` - debug and sanitizer builds: the exception formatter treats the `std::logic_error` as a failed assertion and aborts the process (`abortOnFailedAssertion` from `getCurrentExceptionMessageAndPattern`).  `src/Processors/Formats/Impl/AvroRowInputFormat.cpp`, in the `target.isVariant()` branch of `AvroDeserializer::createDeserializeFn`:  ```cpp const AvroUnionIndex union_index = decoder.decodeUnionIndex(); const auto global_discriminator = discriminators_map.at(union_index); ... deserializers[union_index](variant, decoder); ```  ### Does it reproduce on the most recent release?  Yes, on master (26.11.1.1058, `1df150bae26`), as a release build (`STD_EXCEPTION`) and as a debug build (abort). A 26.8.1.1 debug build also aborts, so it isn't a recent regression: the lookup comes from the Avro union support in #69712.  ### How to reproduce  A valid one-row file with a `["null", "int", "string"]` field, where one byte changes the union index of the row from 2 to 10:  ```python import fastavro, io schema = {"type": "record", "name": "row", "fields": [{"name":
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1338,641 +1338,495 @@ private:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `52529f0c` (2026-10-31)
-**Commit Message**: Merge pull request #127678 from ClickHouse/fix/materialized-postgresql-consumer-backoff-on-exception
+### Incident Patch 1: `0a379d29` (2026-11-03)
+**Commit Message**: Merge pull request #127836 from ClickHouse/revert-124816
 
-Back off the `MaterializedPostgreSQL` consumer after an exception
+Revert "Avoid building stream names and substreams cache keys for every block in MergeTreeReaderWide"
 
-**File**: `src/Storages/PostgreSQL/PostgreSQLReplicationHandler.cpp` (modified, +5/-0)
+**File**: `src/DataTypes/Serializations/ISerialization.cpp` (modified, +50/-90)
 ```diff
-@@ -825,6 +825,11 @@ void PostgreSQLReplicationHandler::consumerFunc()
-     catch (...)
+@@ -5,7 +5,6 @@
+ #include <Columns/IColumn.h>
+ #include <Compression/CompressionFactory.h>
+ #include <Common/Exception.h>
+-#include <Common/SipHash.h>
+ #include <DataTypes/NestedUtils.h>
+ #include <DataTypes/Serializations/ISerialization.h>
+ #include <DataTypes/Serializations/SerializationObjectPool.h>
+@@ -300,13 +299,10 @@ namespace
+ 
+ using SubstreamIterator = ISerialization::SubstreamPath::const_iterator;
+ 
+-/// Renders the substream path by passing its pieces to `append` in order, so the same rendering can either
+-/// be materialized into a string or fed into a hash without building the string.
+ /// encode_for_cache_key renders the parts that exist in cache keys only: the sparse elements, the identity element
+ /// of a SHARED path of Object and the keyword in front of a path name of Object.
+-template <typename Append>
+-void appendNameForSubstreamPath(
+-    Append && append,
++String getNameForSubstreamPath(
++    String stream_name,
+     SubstreamIterator begin,
+     SubstreamIterator end,
+     bool escape_for_file_name,
+@@ -320,150 +316,120 @@ void appendNameForSubstreamPath(
+     for (auto it = begin; it != end; ++it)
      {
-         tryLogCurrentException(log);
-+        /// Back off after a failure (for example, when `syncTables` cannot flush a buffered table), the
-+        /// same way `consume` does for the errors it handles itself. Rescheduling immediately would retry
-+        /// the failing operation in a tight loop and could starve `deactivate` of this task, which is
-+        /// called by `DETACH TABLE`, `ATTACH TABLE` and shutdown, for an unbounded time.
-+        schedule_now = false;
+         if (it->type == Substream::NullMap || it->type == Substream::SparseNullMap || it->type == Substream::NullMapHidden)
+-            append(".null");
++            stream_name += ".null";
+         else if (it->type == Substream::ArraySizes)
+-        {
+-            append(".size");
+-            append(toString(array_level));
+-        }
++            stream_name += ".size" + toString(array_level);
+         else if (it->type == Substream::ArrayElements)
+             ++array_level;
+         else if (it->type == Substream::StringSizes || it->type == Substream::InlinedStringSizes)
+-            append(".size");
++            stream_name += ".size";
+         else if (it->type == Substream::DictionaryKeys)
+-            append(".dict");
++            stream_name += ".dict";
+         else if (it->type == Substream::DictionaryKeysPrefix)
+-            append(".dict_prefix");
++            stream_name += ".dict_prefix";
+         else if (it->type == Substream::SparseElements && encode_for_cache_key)
+-            append(".sparse");
++            stream_name += ".sparse";
+         else if (it->type == Substream::SparseOffsets)
+-            append(".sparse.idx");
++            stream_name += ".sparse.idx";
+         else if (it->type == Substream::ReplicatedElements)
+-            append(".repl");
++            stream_name += ".repl";
+         else if (it->type == Substream::ReplicatedIndexes)
+-            append(".repl.idx");
++            stream_name += ".repl.idx";
+         else if (Substream::named_types.contains(it->type))
+         {
++            auto substream_name = "." + it->name_of_substream;
++
+             /// For compatibility reasons, we use %2E (escaped dot) instead of dot.
+             /// Because nested data may be represented not by Array of Tuple,
+             /// but by separate Array columns with names in a form of a.b,
+             /// and name is encoded as a whole.
+             if (it->type == Substream::TupleElement && escape_for_file_name)
+-                append(escapeForFileName("." + it->name_of_substream));
++                stream_name += escapeForFileName(substream_name);
+             else
+-            {
+-                append(".");
+-                append(it->name_of_substream);
+-            }
++                stream_name += substream_name;
+         }
+         else if (it->type == Substream::VariantDiscriminators)
+-            append(".variant_discr");
++            stream_name += ".variant_discr";
+         else if (it->type == Substream::VariantDiscriminatorsPrefix)
+-            append(".variant_discr_prefix");
++            stream_name += ".variant_discr_prefix";
+         else if (it->type == Substream::VariantOffsets)
+-            append(".variant_offsets");
++            stream_name += ".variant_offsets";
+         else if (it->type == Substream::VariantElement)
+         {
+-            append(".");
+             if (escape_for_file_name && escape_variant_substreams)
+-                append(escapeForFileName(it->variant_element_name));
++                stream_name += "." + escapeForFileName(it->variant_element_name);
+             else
+-                append(it->variant_element_name);
++                stream_name += "." + it->variant_element_name;
+         }
+         else if (it->type == Substream::VariantElementNullMap)
+         {
+-            append(".");
+             if (escape_for_file_name && escape_variant_substreams)
+-                append(escapeForFileName(it->variant_element_name));
++                stream_name += "." + escapeForFileName(it->variant_element_name) + ".null";
+             else
+-                append(it->variant_element_name);
+-            append(".null");
++                stream_name += "." + it->variant_element_name + ".null";
+         }
+         else if (it->type == SubstreamType::DynamicStructure)
+-            append(".dynamic_structure");
++       
+```
+
+**File**: `src/DataTypes/Serializations/ISerialization.h` (modified, +3/-9)
+```diff
+@@ -400,13 +400,7 @@ class ISerialization : private boost::noncopyable, public std::enable_shared_fro
+         virtual ~ISubstreamsCacheElement() = default;
+     };
+ 
+-    /// Keys of the substreams caches are hashes of the substream paths, see `getSubstreamsCacheKeyForStream`.
+-    struct SubstreamsCacheKeyHash
+-    {
+-        size_t operator()(const UInt128 & key) const { return static_cast<size_t>(key.items[0]); }
+-    };
+-
+-    using SubstreamsCache = std::unordered_map<UInt128, std::unique_ptr<ISubstreamsCacheElement>, SubstreamsCacheKeyHash>;
++    using SubstreamsCache = std::unordered_map<String, std::unique_ptr<ISubstreamsCacheElement>>;
+ 
+     using StreamCallback = std::function<void(const SubstreamPath &)>;
+ 
+@@ -655,7 +649,7 @@ class ISerialization : private boost::noncopyable, public std::enable_shared_fro
+         SerializeBinaryBulkSettings & /*settings*/,
+         SerializeBinaryBulkStatePtr & /*state*/) const {}
+ 
+-    using SubstreamsDeserializeStatesCache = std::unordered_map<UInt128, DeserializeBinaryBulkStatePtr, SubstreamsCacheKeyHash>;
++    using SubstreamsDeserializeStatesCache = std::unordered_map<String, DeserializeBinaryBulkStatePtr>;
+ 
+     /// Call before before deserializeBinaryBulkWithMultipleStreams chain to get DeserializeBinaryBulkStatePtr.
+     virtual void deserializeBinaryBulkStatePrefix(
+@@ -808,7 +802,7 @@ class ISerialization : private boost::noncopyable, public std::enable_shared_fro
+     static String getSubcolumnNameForStream(const SubstreamPath & path, bool) = delete;
+ 
+     /// Key of a stream in SubstreamsCache and SubstreamsDeserializeStatesCache.
+-    static UInt128 getSubstreamsCacheKeyForStream(const SubstreamPath & path);
++    static String getSubstreamsCacheKeyForStream(const SubstreamPath & path);
+ 
+     static void addColumnWithNumReadRowsToSubstreamsCache(SubstreamsCache * cache, const SubstreamPath & path, ColumnPtr column, size_t num_read_rows);
+     static std::optional<std::pair<ColumnPtr, size_t>> getColumnWithNumReadRowsFromSubstreamsCache(SubstreamsCache * cache, const SubstreamPath & path);
+```
+
+**File**: `src/Storages/MergeTree/MergeTreeReaderWide.cpp` (modified, +31/-111)
+```diff
+@@ -12,7 +12,6 @@
+ #include <Storages/MergeTree/MergeTreeDataPartWide.h>
+ #include <Storages/MergeTree/checkDataPart.h>
+ #include <Common/escapeForFileName.h>
+-#include <Common/HashTable/Hash.h>
+ #include <Common/FailPoint.h>
+ #include <Common/ProfileEvents.h>
+ #include <Core/UUID.h>
+@@ -366,10 +365,7 @@ size_t MergeTreeReaderWide::readSegmentFromDisk(
      }
  
-     if (stop_synchronization)
+     streams.clearPrefetched();
+-
+-    /// Clear the caches but keep the per-column entries, so they are not allocated again on every read.
+-    for (auto & [_, cache] : caches)
+-        cache.clear();
++    caches.clear();
+ 
+     return read_rows;
+ }
+@@ -966,7 +962,7 @@ void MergeTreeReaderWide::addStreams(
+             return;
+         }
+ 
+-        const auto & stream_name = getStreamName(name_and_type, substream_path);
++        auto stream_name = IMergeTreeDataPart::getStreamNameForColumn(name_and_type, substream_path, ".bin", data_part_info_for_read->getChecksums(), storage_settings);
+ 
+         /** If data file is missing then we will not try to open it.
+           * It is necessary since it allows to add new column to structure of the table without creating new files for old parts.
+@@ -1118,92 +1114,10 @@ MergeTreeReaderStream & MergeTreeReaderWide::getOrAddStream(const ISerialization
+     });
+ }
+ 
+-namespace
+-{
+-
+-UInt64 hashStreamKey(const NameAndTypePair & name_and_type, const ISerialization::SubstreamPath & substream_path)
+-{
+-    UInt64 hash = std::hash<std::string_view>{}(name_and_type.name);
+-    auto combine = [&](UInt64 value) { hash = intHash64(hash ^ value); };
+-    auto combine_string = [&](const String & str)
+-    {
+-        if (!str.empty())
+-            combine(std::hash<std::string_view>{}(str));
+-    };
+-
+-    for (const auto & substream : substream_path)
+-    {
+-        combine(static_cast<UInt64>(substream.type));
+-        combine_string(substream.variant_element_name);
+-        combine_string(substream.name_of_substream);
+-        combine_string(substream.object_path_name);
+-        combine(substream.bucket);
+-    }
+-    return hash;
+-}
+-
+-}
+-
+-MergeTreeReaderWide::StreamInfo & MergeTreeReaderWide::getStreamInfo(const NameAndTypePair & name_and_type, const ISerialization::SubstreamPath & substream_path)
+-{
+-    /// The checksums and the settings, which the name also depends on, are the same for the whole reader.
+-    /// Every field of the substreams is compared, even the ones that don't affect the name: it only costs extra entries.
+-    auto matches = [&](const StreamInfoEntry & entry)
+-    {
+-        if (entry.column_name != name_and_type.name || entry.substream_path.size() != substream_path.size())
+-            return false;
+-
+-        for (size_t i = 0; i < substream_path.size(); ++i)
+-        {
+-            const auto & key = entry.substream_path[i];
+-            const auto & substream = substream_path[i];
+-            if (key.type != substream.type || key.bucket != substream.bucket
+-                || key.variant_element_name != substream.variant_element_name
+-                || key.name_of_substream != substream.name_of_substream
+-                || key.object_path_name != substream.object_path_name)
+-                return false;
+-        }
+-        return true;
+-    };
+-
+-    const UInt64 hash = hashStreamKey(name_and_type, substream_path);
+-
+-    {
+-        std::lock_guard lock(streams_info_mutex);
+-        for (auto [it, end] = streams_info.equal_range(hash); it != end; ++it)
+-            if (matches(it->second))
+-                return it->second.info;
+-    }
+-
+-    StreamInfoEntry entry;
+-    entry.column_name = name_and_type.name;
+-    for (const auto & substream : substream_path)
+-        entry.substream_path.push_back({substream.type, substream.variant_element_name, substream.name_of_substream, substream.object_path_name, substream.bucket});
+-    entry.info.name = IMergeTreeDataPart::getStreamNameForColumn(
+-        name_and_type, substream_path, DATA_FILE_EXTENSION, data_part_info_for_read->getChecksums(), storage_settings);
+-
+-    std::lock_guard lock(streams_info_mutex);
+-    /// Another thread may have added the same entry while the mutex was released.
+-    for (auto [it, end] = streams_info.equal_range(hash); it != end; ++it)
+-        if (matches(it->second))
+-            return it->second.info;
+-
+-    return streams_info.emplace(hash, std::move(entry))->second.info;
+-}
+-
+-double & MergeTreeReaderWide::getAvgValueSizeHint(StreamInfo & stream_info)
+-{
+-    chassert(stream_info.name);
+-    /// Elements of `std::map` are never moved, and nothing is erased from `avg_value_size_hints`.
+-    if (!stream_info.avg_value_size_hint)
+-        stream_info.avg_value_size_hint = &avg_value_size_hints[*stream_info.name];
+-    return *stream_info.avg_value_size_hint;
+-}
+-
+ ReadBuffer * MergeTreeReaderWide::getStream(
+     bool seek_to_start,
+     const ISerialization::SubstreamPath & substream_path,
+-    const std::optional<String> & stream_name,
++    const MergeTreeDataPartChecksums & checksums,
+     const NameAndTypePa
 ```
 
-**File**: `tests/integration/test_postgresql_replica_database_engine/test_3.py` (modified, +23/-10)
+**File**: `src/Storages/MergeTree/MergeTreeReaderWide.h` (modified, +1/-42)
 ```diff
-@@ -2366,6 +2366,10 @@ def test_detach_table_with_pending_buffer(started_cluster):
-     # throw on every insert: `syncTables()` then fails to flush the buffered row, so the table stays
-     # in `tables_to_sync` and the consumer retries. `DETACH` removes its storage while that stale
-     # entry remains - the exact precondition for the crash.
-+    #
-+    # The consumer must also back off between these failed retries instead of rescheduling itself
-+    # immediately: retrying in a tight loop kept re-acquiring the task's mutex and could starve
-+    # `DETACH TABLE` (which deactivates the task) for minutes.
-     cursor = pg_manager.get_db_cursor()
-     cursor.execute("DROP TABLE IF EXISTS test_detach_stuck")
-     cursor.execute("DROP TABLE IF EXISTS test_detach_healthy")
-@@ -2379,8 +2383,8 @@ def test_detach_table_with_pending_buffer(started_cluster):
-         port=started_cluster.postgres_port,
-         settings=[
-             "materialized_postgresql_tables_list = 'test_detach_stuck,test_detach_healthy'",
--            "materialized_postgresql_backoff_min_ms = 100",
--            "materialized_postgresql_backoff_max_ms = 100",
-+            "materialized_postgresql_backoff_min_ms = 1000",
-+            "materialized_postgresql_backoff_max_ms = 1000",
-         ],
-     )
-     # The initial snapshot must synchronize for both tables.
-@@ -2392,19 +2396,28 @@ def test_detach_table_with_pending_buffer(started_cluster):
-     )
+@@ -95,37 +95,6 @@ class MergeTreeReaderWide : public IMergeTreeReader
  
-     # A materialized view that always throws on insert. It is created without POPULATE, so it only
--    # affects rows replicated from now on (not the already-synchronized snapshot row).
--    instance.query("DROP VIEW IF EXISTS poison_mv")
-+    # affects rows replicated from now on (not the already-synchronized snapshot row). Its name is
-+    # unique, so that the log lines below cannot match the lines of an earlier run of this test.
-+    poison_mv = f"poison_mv_{uuid.uuid4().hex}"
-     instance.query(
--        "CREATE MATERIALIZED VIEW poison_mv ENGINE = MergeTree ORDER BY tuple() AS "
-+        f"CREATE MATERIALIZED VIEW {poison_mv} ENGINE = MergeTree ORDER BY tuple() AS "
-         "SELECT throwIf(value >= 0, 'poison') AS x FROM test_database.test_detach_stuck"
-     )
+     FileStreams streams;
  
-     # This row cannot be flushed: the MV throws inside syncTables(), so test_detach_stuck stays queued
--    # in tables_to_sync and the consumer keeps retrying it. Wait for the actual push failure (a real
--    # progress signal that the sync was attempted and failed) - not the substring "poison" alone, which
--    # would also match the logged text of the CREATE MATERIALIZED VIEW query above and fire prematurely.
-+    # in tables_to_sync and the consumer keeps retrying it. Wait for several actual push failures (a
-+    # real progress signal that the sync was attempted and failed) - not the substring "poison" alone,
-+    # which would also match the logged text of the CREATE MATERIALIZED VIEW query above.
-+    start_time = time.time()
-     cursor.execute("INSERT INTO test_detach_stuck VALUES (2, 2)")
--    instance.wait_for_log_line("while pushing to view default.poison_mv", timeout=60)
-+    instance.wait_for_log_line(
-+        f"while pushing to view default.{poison_mv}", timeout=60, repetitions=6
-+    )
-+    # With a fixed backoff of 1000 ms, six log lines (at most two per failed attempt) take at least
-+    # two backoff intervals. Without the backoff the consumer retried back-to-back, producing these
-+    # lines in a small fraction of a second.
-+    elapsed = time.time() - start_time
-+    assert elapsed >= 1.5, f"failed synchronization was retried without a backoff: {elapsed:.3f} s"
+-    struct StreamInfo
+-    {
+-        /// The name of the stream, or `std::nullopt` if the part doesn't have it.
+-        std::optional<String> name;
+-        /// The element of `avg_value_size_hints` for the stream, found on first use.
+-        double * avg_value_size_hint = nullptr;
+-    };
+-
+-    /// The fields of a substream that the name of its stream may depend on.
+-    struct SubstreamKey
+-    {
+-        ISerialization::Substream::Type type;
+-        String variant_element_name;
+-        String name_of_substream;
+-        String object_path_name;
+-        size_t bucket;
+-    };
+-
+-    struct StreamInfoEntry
+-    {
+-        String column_name;
+-        std::vector<SubstreamKey> substream_path;
+-        StreamInfo info;
+-    };
+-
+-    /// Guards `streams_info`: substreams of a single column can be deserialized in parallel.
+-    std::mutex streams_info_mutex;
+-    /// Keyed by a hash of the column name and the substream path, the entries are compared exactly.
+-    /// The elements are never moved or erased, so references to them stay valid.
+-    std::unordered_multimap<UInt64, StreamInfoEntry> streams_info;
+-
+     /// Which columns a read of the part touches, and whether their streams continue from where the
+     /// previous read left them or seek to the mark. Returns nothing for a column that is not read.
+     using ColumnReadSelector = std::function<std::optional<bool>(size_t pos)>;
+@@ -151,24 +120,14 @@ class MergeTreeReaderWide : public IMergeTreeReader
+     ReadBuffer * getStream(
+         bool seek_to_start,
+         const ISerialization::SubstreamPath & substream_path,
+-        const std::optional<String> & stream_name,
++        const MergeTreeDataPartChecksums & checksums,
+         const NameAndTypePair & name_and_type,
+         size_t from_mark,
+         bool seek_to_mark,
+         ISerialization::SubstreamsCache & cache);
  
-     # Before the fix this crashed the server (SIGSEGV in MaterializedPostgreSQLConsumer::syncTables()),
-     # because DETACH removed the storage while the table was still queued in tables_to_sync.
-@@ -2425,7 +2438,7 @@ def test_detach_table_with_pending_buffer(started_cluster):
-     # a crashed `clickhouse-server`.
-     assert "1" == instance.query("SELECT 1").strip()
+     MergeTreeReaderStream & getOrAddStream(const ISerialization::SubstreamPath & substream_path, const String & stream_name);
  
--    instance.query("DROP VIEW IF EXISTS poison_mv")
-+    instance.query(f"DROP VIEW IF EXISTS {poison_mv}")
-     pg_manager.drop_materialized_db()
-     cursor.execute("DROP TABLE IF EXISTS test_detach_stuck")
-     cursor.execute("DROP TABLE IF EXISTS test_detach_healthy")
+-    /// Returns the information about the stream for the substream of the column.
+-    /// Building the name of a stream is expensive (escaping, splitting of nested names, lookups in checksums) and the name is
+-    /// requested several times for every substream on every read, so the results are memoized for the lifetime of the reader.
+-    StreamInfo & getStreamInfo(const NameAndTypePair & name_and_type, const ISerialization::SubstreamPath & substream_path);
+-    const std::optional<String> & getStreamName(const NameAndTypePair & name_and_type, const ISerialization::SubstreamPath & substream_path)
+-    {
+-        return getStreamInfo(name_and_type, substream_path).name;
+-    }
+-    double & getAvgValueSizeHint(StreamInfo & stream_info);
+-
+     void readData(
+         const NameAndTypePair & name_and_type,
+         const SerializationPtr & serialization,
+```
+
+**File**: `tests/performance/merge_tree_small_blocks.xml` (removed, +0/-24)
+```diff
+@@ -1,24 +0,0 @@
+-<test>
+-    <!-- The constant overhead of reading a block from a MergeTree table and processing it. -->
+-    <!-- A filter would round the blocks up to whole granules, so the queries don't have one. -->
+-    <create_query>
+-        CREATE TABLE merge_tree_small_blocks (key UInt64, value UInt64, str String, sparse UInt8, arr Array(UInt32))
+-        ENGINE = MergeTree ORDER BY key
+-        SETTINGS ratio_of_defaults_for_sparse_serialization = 0.9
+-    </create_query>
+-
+-    <fill_query>
+-        INSERT INTO merge_tree_small_blocks
+-        SELECT number, cityHash64(number), toString(number % 1000), number % 100 = 0, range(number % 3)
+-        FROM numbers_mt(1000000)
+-    </fill_query>
+-    <fill_query>OPTIMIZE TABLE merge_tree_small_blocks FINAL</fill_query>
+-
+-    <query>SELECT sum(value) FROM merge_tree_small_blocks SETTINGS max_block_size = 16, max_threads = 1</query>
+-    <query>SELECT sum(sparse) FROM merge_tree_small_blocks SETTINGS max_block_size = 16, max_threads = 1</query>
+-    <query>SELECT sum(length(str)) FROM merge_tree_small_blocks SETTINGS max_block_size = 16, max_threads = 1</query>
+-    <query>SELECT sum(length(arr)) FROM merge_tree_small_blocks SETTINGS max_block_size = 16, max_threads = 1</query>
+-    <query>SELECT str, count() FROM merge_tree_small_blocks GROUP BY str FORMAT Null SETTINGS max_block_size = 16, max_threads = 1</query>
+-
+-    <drop_query>DROP TABLE IF EXISTS merge_tree_small_blocks</drop_query>
+-</test>
 ```
 
 ---
 
-### Incident Patch 2: `f81af4a0` (2026-10-31)
-**Commit Message**: Merge pull request #127876 from groeneai/fix-relabel-aggregate-state-replicated-column
+### Incident Patch 2: `18430ef4` (2026-11-03)
+**Commit Message**: Merge pull request #128901 from ClickHouse/fix/relocation-headroom-upstream-label
 
-Fix a crash when relabelling the state version of a lazily replicated `AggregateFunction` column
+Honour the upstream `ci-relocation-headroom-ok` label in private sync PRs
 
-**File**: `src/DataTypes/DataTypeAggregateFunction.cpp` (modified, +5/-0)
+**File**: `ci/jobs/scripts/relocation_headroom.py` (modified, +5/-1)
 ```diff
-@@ -3,6 +3,7 @@
- 
- #include <Columns/ColumnAggregateFunction.h>
- #include <Columns/ColumnConst.h>
-+#include <Columns/ColumnReplicated.h>
- #include <Columns/ColumnSparse.h>
- #include <Core/ProtocolDefines.h>
- 
-@@ -583,6 +584,10 @@ ColumnPtr relabelAggregateStateVersions(const ColumnPtr & column, const DataType
-     if (const auto * const_column = typeid_cast<const ColumnConst *>(column.get()))
-         return ColumnConst::create(relabelAggregateStateVersions(const_column->getDataColumnPtr(), type), column->size());
- 
-+    if (const auto * replicated_column = typeid_cast<const ColumnReplicated *>(column.get()))
-+        return ColumnReplicated::create(
-+            relabelAggregateStateVersions(replicated_column->getNestedColumn(), type), replicated_column->getIndexesColumn());
-+
-     auto relabelled_column = type->createColumn();
-     relabelled_column->insertRangeFrom(*recursiveRemoveSparse(column), 0, column->size());
-     return relabelled_column;
-```
-
-**File**: `tests/queries/0_stateless/05452_aggregate_state_version_relabel_replicated_column.reference` (added, +3/-0)
-```diff
-@@ -0,0 +1,3 @@
-+1000	3	[1000,1000,1000]
-+1000	3	[1000,1000,1000]
-+1000	3	[1000,1000,1000]
-```
-
-**File**: `tests/queries/0_stateless/05452_aggregate_state_version_relabel_replicated_column.sql` (added, +26/-0)
-```diff
-@@ -0,0 +1,26 @@
-+-- A versioned aggregate state column that arrives lazily replicated from a shard (here after `ARRAY JOIN`)
-+-- is relabelled to the version of the header without losing its replicated rows. `groupArray` passes the
-+-- states through an arena, which reads them back with the version of the header.
-+DROP TABLE IF EXISTS uniq_legacy;
-+CREATE TABLE uniq_legacy (state AggregateFunction(0, uniq, UInt64)) ENGINE = MergeTree ORDER BY tuple();
-+INSERT INTO uniq_legacy SELECT uniqState(number) FROM numbers(1000);
-+
-+SELECT uniqMerge(state), count(), arrayMap(x -> finalizeAggregation(x), groupArray(state))
-+FROM (SELECT state FROM remote('127.0.0.2', currentDatabase(), uniq_legacy) ARRAY JOIN [1, 2, 3] AS x)
-+SETTINGS prefer_localhost_replica = 0, enable_lazy_columns_replication = 1;
-+
-+DROP TABLE uniq_legacy;
-+
-+DROP TABLE IF EXISTS uniq_legacy_nested;
-+CREATE TABLE uniq_legacy_nested (s Array(AggregateFunction(0, uniq, UInt64)), t Tuple(AggregateFunction(0, uniq, UInt64), UInt8)) ENGINE = MergeTree ORDER BY tuple();
-+INSERT INTO uniq_legacy_nested SELECT [uniqState(number)], tuple(uniqState(number), 1) FROM numbers(1000);
-+
-+SELECT uniqMerge(arrayJoin(s)), count(), arrayMap(x -> finalizeAggregation(x), groupArray(arrayJoin(s)))
-+FROM (SELECT s FROM remote('127.0.0.2', currentDatabase(), uniq_legacy_nested) ARRAY JOIN [1, 2, 3] AS x)
-+SETTINGS prefer_localhost_replica = 0, enable_lazy_columns_replication = 1;
-+
-+SELECT uniqMerge(t.1), count(), arrayMap(x -> finalizeAggregation(x), groupArray(t.1))
-+FROM (SELECT t FROM remote('127.0.0.2', currentDatabase(), uniq_legacy_nested) ARRAY JOIN [1, 2, 3] AS x)
-+SETTINGS prefer_localhost_replica = 0, enable_lazy_columns_replication = 1;
-+
-+DROP TABLE uniq_legacy_nested;
+@@ -125,7 +125,11 @@ def check(build_dir, info):
+         decrease, binary, name = max(decreases)
+         lines.append(f"{binary} ({name}) decreased by {decrease / MIB:.2f} MiB, more than {MAX_DECREASE_MIB} MiB")
+         if info.pr_number > 0:
+-            allowed = ALLOW_DECREASE_LABEL in info.pr_labels
++            # A sync pull request in the private repository carries the labels of the upstream pull request it
++            # mirrors as `upstream_pr_labels`, not as its own labels.
++            allowed = ALLOW_DECREASE_LABEL in info.pr_labels or ALLOW_DECREASE_LABEL in (
++                info.get_kv_data("upstream_pr_labels") or []
++            )
+             status = Result.Status.OK if allowed else Result.Status.FAIL
+             lines.append(
+                 f"Allowed by the `{ALLOW_DECREASE_LABEL}` label"
 ```
 
 ---
 
-### Incident Patch 3: `20cc310e` (2026-10-31)
-**Commit Message**: Merge pull request #123674 from groeneai/fix-fuzzer-dictionaries-123660
+### Incident Patch 3: `e13cf58b` (2026-11-03)
+**Commit Message**: Merge pull request #128871 from groeneai/fix-postgresqlwire-append-non-empty-file
 
-Make the codec, binary type and WASM fuzzer dictionaries loadable by libFuzzer
+Fix crash when appending `PostgreSQLWire` output to a non-empty file
 
-**File**: `CMakeLists.txt` (modified, +5/-2)
+**File**: `src/Processors/Formats/Impl/PostgreSQLOutputFormat.cpp` (modified, +7/-2)
 ```diff
-@@ -943,11 +943,14 @@ if (FUZZER)
-         OUTPUT_VARIABLE FUZZER_SOURCE_DICT_OUTPUT
-         ERROR_VARIABLE FUZZER_SOURCE_DICT_OUTPUT)
-     string (STRIP "${FUZZER_SOURCE_DICT_OUTPUT}" FUZZER_SOURCE_DICT_OUTPUT)
--    # Fail loudly: a missing dictionary makes a consumer's `cp tests/fuzz/*.dict`
--    # abort on an unmatched glob far from here.
-+    # Fail here: consumers copy tests/fuzz/*.dict, a glob the committed
-+    # per-target dictionaries satisfy even when all.dict is missing.
-     if (NOT FUZZER_SOURCE_DICT_RESULT EQUAL 0)
-         message (FATAL_ERROR "Failed to generate tests/fuzz/all.dict: ${FUZZER_SOURCE_DICT_OUTPUT}")
-     endif()
-+    if (NOT EXISTS "${CMAKE_SOURCE_DIR}/tests/fuzz/all.dict")
-+        message (FATAL_ERROR "tests/fuzz/all.dict is missing after generation")
-+    endif()
-     message (STATUS "${FUZZER_SOURCE_DICT_OUTPUT}")
+@@ -34,12 +34,18 @@ PostgreSQLOutputFormat::PostgreSQLOutputFormat(WriteBuffer & out_, SharedHeader
+     // PostgreSQL uses 't' and 'f' for boolean values
+     format_settings.bool_true_representation = "t";
+     format_settings.bool_false_representation = "f";
++
++    /// Not in writePrefix: it is skipped when appending to a non-empty file.
++    const auto & header = getPort(PortKind::Main).getHeader();
++    data_types = header.getDataTypes();
++    serializations.reserve(data_types.size());
++    for (const auto & type : data_types)
++        serializations.emplace_back(type->getDefaultSerialization());
+ }
  
-     # Bundle fuzzers target
-```
-
-**File**: `ci/defs/defs.py` (modified, +1/-1)
-```diff
-@@ -888,7 +888,7 @@ class ArtifactConfigs:
-         path=[
-             f"{TEMP_DIR}/build/programs/*_fuzzer",
-             f"{TEMP_DIR}/build/programs/*_fuzzer.options",
--            f"{TEMP_DIR}/build/programs/all.dict",
-+            f"{TEMP_DIR}/build/programs/*.dict",
-         ],
-     )
-     fuzzers_corpus = Artifact.Config(
-```
-
-**File**: `src/DataTypes/fuzzers/decode_data_type_fuzzer.cpp` (modified, +1/-1)
-```diff
-@@ -69,7 +69,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t * data, size_t size)
-         ///
-         /// The fuzzer can be run as follows:
-         ///   ../../../build_asan_fuzz/src/DataTypes/fuzzers/decode_data_type_fuzzer corpus \
--        ///       -dict=../../../tests/fuzz/dictionaries/binary_types.dict -jobs=8
-+        ///       -dict=../../../tests/fuzz/binary_types.dict -jobs=8
+ void PostgreSQLOutputFormat::writePrefix()
+ {
+     const auto & header = getPort(PortKind::Main).getHeader();
+-    data_types = header.getDataTypes();
  
-         if (size < 1)
-             return 0;
+     if (header.columns())
+     {
+@@ -50,7 +56,6 @@ void PostgreSQLOutputFormat::writePrefix()
+         {
+             const auto & column_name = header.getColumnsWithTypeAndName()[i].name;
+             columns.emplace_back(column_name, data_types[i]);
+-            serializations.emplace_back(data_types[i]->getDefaultSerialization());
+         }
+         message_transport.send(PostgreSQLProtocol::Messaging::RowDescription(columns));
+     }
 ```
 
-**File**: `tests/fuzz/binary_types.dict` (added, +138/-0)
+**File**: `tests/queries/0_stateless/05493_postgresqlwire_append_to_non_empty_file.reference` (added, +4/-0)
 ```diff
-@@ -0,0 +1,138 @@
-+# BinaryTypeIndex values from DataTypesBinaryEncoding.h
-+# Each entry is a single-byte type index for the binary type encoding format.
-+
-+# Scalar types
-+# Nothing
-+"\x00"
-+# UInt8
-+"\x01"
-+# UInt16
-+"\x02"
-+# UInt32
-+"\x03"
-+# UInt64
-+"\x04"
-+# UInt128
-+"\x05"
-+# UInt256
-+"\x06"
-+# Int8
-+"\x07"
-+# Int16
-+"\x08"
-+# Int32
-+"\x09"
-+# Int64
-+"\x0A"
-+# Int128
-+"\x0B"
-+# Int256
-+"\x0C"
-+# Float32
-+"\x0D"
-+# Float64
-+"\x0E"
-+# Date
-+"\x0F"
-+# Date32
-+"\x10"
-+# DateTime (no timezone)
-+"\x11"
-+# DateTime (with timezone)
-+"\x12"
-+# DateTime64(P)
-+"\x13"
-+# DateTime64(P, timezone)
-+"\x14"
-+# String
-+"\x15"
-+# FixedString(N)
-+"\x16"
-+# Enum8
-+"\x17"
-+# Enum16
-+"\x18"
-+# Decimal32(P, S)
-+"\x19"
-+# Decimal64(P, S)
-+"\x1A"
-+# Decimal128(P, S)
-+"\x1B"
-+# Decimal256(P, S)
-+"\x1C"
-+# UUID
-+"\x1D"
-+# Array(T)
-+"\x1E"
-+# Tuple (unnamed)
-+"\x1F"
-+# Tuple (named)
-+"\x20"
-+# Set
-+"\x21"
-+# Interval
-+"\x22"
-+# Nullable(T)
-+"\x23"
-+# Function
-+"\x24"
-+# AggregateFunction
-+"\x25"
-+# LowCardinality(T)
-+"\x26"
-+# Map(K, V)
-+"\x27"
-+# IPv4
-+"\x28"
-+# IPv6
-+"\x29"
-+# Variant
-+"\x2A"
-+# Dynamic
-+"\x2B"
-+# Custom type
-+"\x2C"
-+# Bool
-+"\x2D"
-+# SimpleAggregateFunction
-+"\x2E"
-+# Nested
-+"\x2F"
-+# JSON
-+"\x30"
-+# BFloat16
-+"\x31"
-+# Time
-+"\x32"
-+# Time64(P)
-+"\x34"
-+# QBit(T, N)
-+"\x36"
-+# QBit(T, N, stride)
-+"\x37"
-+
-+# VarUInt encodings for small counts (1-byte encoding for values 0-127)
-+# count = 0
-+"\x00"
-+# count = 1
-+"\x01"
-+# count = 2
-+"\x02"
-+# count = 3
-+"\x03"
-+# count = 8
-+"\x08"
-+# count = 16
-+"\x10"
-+# count = 127
-+"\x7F"
-+
-+# Interval kind bytes
-+# Second
-+"\x03"
-+# Minute
-+"\x04"
-+# Hour
-+"\x05"
-+# Day
-+"\x06"
+@@ -0,0 +1,4 @@
++-- INTO OUTFILE APPEND
++equal
++-- INSERT INTO FUNCTION file
++1
 ```
 
-**File**: `tests/fuzz/build.sh` (modified, +0/-1)
+**File**: `tests/queries/0_stateless/05493_postgresqlwire_append_to_non_empty_file.sh` (added, +27/-0)
 ```diff
-@@ -9,7 +9,6 @@
- # generating a second one.
- cp $SRC/tests/fuzz/*.dict $OUT/
- cp $SRC/tests/fuzz/*.options $OUT/
--cp $SRC/tests/fuzz/dictionaries/*.dict $OUT/
- 
- # prepare corpus dirs
- mkdir -p $BIN/tests/fuzz/lexer_fuzzer.in/
-```
-
-**File**: `tests/fuzz/compression.dict` (added, +107/-0)
-```diff
-@@ -0,0 +1,107 @@
-+# Compression codec method bytes and common header patterns.
-+# Values from CompressionInfo.h CompressionMethodByte enum.
+@@ -0,0 +1,27 @@
++#!/usr/bin/env bash
 +
-+# CompressionMethodByte values (keep in sync with the enum).
-+# NONE
-+"\x02"
-+# LZ4
-+"\x82"
-+# ZSTD
-+"\x90"
-+# Multiple (attacker-controlled codec chain)
-+"\x91"
-+# Delta
-+"\x92"
-+# T64
-+"\x93"
-+# DoubleDelta
-+"\x94"
-+# Gorilla
-+"\x95"
-+# AES_128_GCM_SIV
-+"\x96"
-+# AES_256_GCM_SIV
-+"\x97"
-+# FPC
-+"\x98"
-+# GCD
-+"\x9A"
-+# ALP
-+"\x9C"
-+# SZ3
-+"\x9D"
-+# Quantized
-+"\x9E"
-+# ZXC
-+"\x9F"
-+# 0x99 (DeflateQpl) and 0x9B (ZSTD_QPL) were removed from the enum and are
-+# rejected by `CompressionCodecFactory::get` before any codec code runs, so they
-+# are deliberately not listed here.
++CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
++# shellcheck source=../shell_config.sh
++. "$CUR_DIR"/../shell_config.sh
 +
-+# Common data_bytes_size values for Delta/GCD/Gorilla (1, 2, 4, 8)
-+# 1-byte elements
-+"\x01"
-+# 2-byte elements
-+"\x02"
-+# 4-byte elements
-+"\x04"
-+# 8-byte elements
-+"\x08"
++# Appending to a non-empty file skips the RowDescription prefix: the file must equal one export of all rows.
 +
-+# Gorilla/T64 compressed block header patterns
-+# data_bytes_size=1, bytes_to_skip=0
-+"\x01\x00"
-+# data_bytes_size=2, bytes_to_skip=0
-+"\x02\x00"
-+# data_bytes_size=4, bytes_to_skip=0
-+"\x04\x00"
-+# data_bytes_size=8, bytes_to_skip=0
-+"\x08\x00"
++WORK_DIR="${CLICKHOUSE_TMP:?}/pgwire_append_${CLICKHOUSE_DATABASE:?}"
++rm -rf "${WORK_DIR}"
++mkdir -p "${WORK_DIR}"
 +
-+# T64 cookie byte: top bit = Variant (0=Byte, 1=Bit), lower 7 bits = TypeIndex
-+# Byte variant, Int8
-+"\x01"
-+# Byte variant, Int16
-+"\x02"
-+# Byte variant, Int32
-+"\x03"
-+# Byte variant, Int64
-+"\x04"
-+# Byte variant, UInt8
-+"\x05"
-+# Byte variant, UInt16
-+"\x06"
-+# Byte variant, UInt32
-+"\x07"
-+# Bit variant, Int8
-+"\x81"
-+# Bit variant, Int64
-+"\x84"
++echo '-- INTO OUTFILE APPEND'
++${CLICKHOUSE_CLIENT} -q "SELECT number AS x, range(number) AS a FROM numbers(3) INTO OUTFILE '${WORK_DIR}/appended.bin' FORMAT PostgreSQLWire"
++${CLICKHOUSE_CLIENT} -q "SELECT number + 3 AS x, range(number + 3) AS a FROM numbers(3) INTO OUTFILE '${WORK_DIR}/appended.bin' APPEND FORMAT PostgreSQLWire"
++${CLICKHOUSE_CLIENT} -q "SELECT number AS x, range(number) AS a FROM numbers(6) INTO OUTFILE '${WORK_DIR}/single.bin' FORMAT PostgreSQLWire"
++cmp -s "${WORK_DIR}/appended.bin" "${WORK_DIR}/single.bin" && echo 'equal'
 +
-+# FPC header (2 bytes): [0]=float_width, [1]=compression_level
-+# float32, level 12 (default)
-+"\x04\x0C"
-+# float64, level 12 (default)
-+"\x08\x0C"
-+# float32, level 1
-+"\x04\x01"
-+# float64, level 28 (max)
-+"\x08\x1C"
++echo '-- INSERT INTO FUNCTION file'
++FILE_DIR="${CLICKHOUSE_TEST_UNIQUE_NAME:?}"
++STRUCTURE='x UInt64, a Array(UInt8)'
++${CLICKHOUSE_CLIENT} -q "INSERT INTO FUNCTION file('${FILE_DIR}/appended.bin', 'PostgreSQLWire', '${STRUCTURE}') SELECT number, range(number) FROM numbers(3) SETTINGS engine_file_truncate_on_insert = 1"
++${CLICKHOUSE_CLIENT} -q "INSERT INTO FUNCTION file('${FILE_DIR}/appended.bin', 'PostgreSQLWire', '${STRUCTURE}') SELECT number + 3, range(number + 3) FROM numbers(3)"
++${CLICKHOUSE_CLIENT} -q "INSERT INTO FUNCTION file('${FILE_DIR}/single.bin', 'PostgreSQLWire', '${STRUCTURE}') SELECT number, range(number) FROM numbers(6) SETTINGS engine_file_truncate_on_insert = 1"
++${CLICKHOUSE_CLIENT} -q "SELECT (SELECT raw_blob FROM file('${FILE_DIR}/appended.bin', 'RawBLOB')) = (SELECT raw_blob FROM file('${FILE_DIR}/single.bin', 'RawBLOB'))"
 +
-+# Multiple codec chain patterns: [0]=chain_length, [1..N]=codec bytes
-+# 1 codec: LZ4
-+"\x01\x82"
-+# 1 codec: Delta
-+"\x01\x92"
-+# 2 codecs: Delta + LZ4
-+"\x02\x92\x82"
-+# 2 codecs: T64 + LZ4
-+"\x02\x93\x82"
-+# 2 codecs: Gorilla + LZ4
-+"\x02\x95\x82"
-+# 3 codecs: Delta + DoubleDelta + LZ4
-+"\x03\x92\x94\x82"
-+
-+# Compressed block header magic (9 bytes: checksum(8) + method(1))
-+# zero checksum prefix
-+"\x00\x00\x00\x00\x00\x00\x00\x00"
-```
-
-**File**: `tests/fuzz/dictionaries/binary_types.dict` (removed, +0/-73)
-```diff
-@@ -1,73 +0,0 @@
--# BinaryTypeIndex values from DataTypesBinaryEncoding.h
--# Each entry is a single-byte type index for the binary type encoding format.
--
--# Scalar types
--"\x00"  # Nothing
--"\x01"  # UInt8
--"\x02"  # UInt16
--"\x03"  # UInt32
--"\x04"  # UInt64
--"\x05"  # UInt128
--"\x06"  # UInt256
--"\x07"  # Int8
--"\x08"  # Int16
--"\x09"  # Int32
--"\x0A"  # Int64
--"\x0B"  # Int128
--"\x0C"  # Int256
--"\x0D"  # Float32
--"\x0E"  # Float64
--"\x0F"  # Date
--"\x10"  # Date32
--"\x11"  # DateTime (no timezone)
--"\x12"  # DateTime (with timezone)
--"\x13"  # DateTime64(P)
--"\x14"  # DateTime64(P, timezone)
--"\x15"  # String
--"\x16"  # FixedString(N)
--"\x17"  # Enum8
--"\x18"  # Enum16
--"\x19"  # Decimal32(P, S)
--"\x1A"  # Decimal64(P, S)
--"\x1B"  # Decimal128(P, S)
--"\x1C"  # Decimal256(P, S)
--"\x1D"  # UUID
--"\x1E"  # Array(T)
--"\x1F"  # Tuple (unnamed)
--"\x20"  # Tuple (named)
--"\x21"  # Set
--"\x22"  # Interval
--"\x23"  # Nullable(T)
--"\x24"  # Function
--"\x25"  # AggregateFunction
--"\x26"  # LowCardinality(T)
--"\x27"  # Map(K, V)
--"\x28"  # IPv4
--"\x29"  # IPv6
--"\x2A"  # Variant
--"\x2B"  # Dynamic
--"\x2C"  # Custom type
--"\x2D"  # Bool
--"\x2E"  # SimpleAggregateFunction
--"\x2F"  # Nested
--"\x30"  # JSON
--"\x31"  # BFloat16
--"\x32"  # Time
--"\x34"  # Time64(P)
--"\x36"  # QBit(T, N)
--"\x37"  # QBit(T, N, stride)
--
--# VarUInt encodings for small counts (1-byte encoding for values 0-127)
--"\x00"  # count = 0
--"\x01"  # count = 1
--"\x02"  # count = 2
--"\x03"  # count = 3
--"\x08"  # count = 8
--"\x10"  # count = 16
--"\x7F"  # count = 127
--
--# Interval kind bytes
--"\x03"  # Second
--"\x04"  # Minute
--"\x05"  # Hour
--"\x06"  # Day
-```
-
-**File**: `tests/fuzz/dictionaries/compression.dict` (removed, +0/-63)
-```diff
-@@ -1,63 +0,0 @@
--# Compression codec method bytes and common header patterns.
--# Values from CompressionInfo.h CompressionMethodByte enum.
--
--# CompressionMethodByte values (keep in sync with the enum).
--"\x02"  # NONE
--"\x82"  # LZ4
--"\x90"  # ZSTD
--"\x91"  # Multiple (attacker-controlled codec chain)
--"\x92"  # Delta
--"\x93"  # T64
--"\x94"  # DoubleDelta
--"\x95"  # Gorilla
--"\x96"  # AES_128_GCM_SIV
--"\x97"  # AES_256_GCM_SIV
--"\x98"  # FPC
--"\x9A"  # GCD
--"\x9C"  # ALP
--"\x9D"  # SZ3
--"\x9E"  # Quantized
--"\x9F"  # ZXC
--# 0x99 (DeflateQpl) and 0x9B (ZSTD_QPL) were removed from the enum and are
--# rejected by `CompressionCodecFactory::get` before any codec code runs, so they
--# are deliberately not listed here.
--
--# Common data_bytes_size values for Delta/GCD/Gorilla (1, 2, 4, 8)
--"\x01"  # 1-byte elements
--"\x02"  # 2-byte elements
--"\x04"  # 4-byte elements
--"\x08"  # 8-byte elements
--
--# Gorilla/T64 compressed block header patterns
--"\x01\x00"  # data_bytes_size=1, bytes_to_skip=0
--"\x02\x00"  # data_bytes_size=2, bytes_to_skip=0
--"\x04\x00"  # data_bytes_size=4, bytes_to_skip=0
--"\x08\x00"  # data_bytes_size=8, bytes_to_skip=0
--
--# T64 cookie byte: top bit = Variant (0=Byte, 1=Bit), lower 7 bits = TypeIndex
--"\x01"  # Byte variant, Int8
--"\x02"  # Byte variant, Int16
--"\x03"  # Byte variant, Int32
--"\x04"  # Byte variant, Int64
--"\x05"  # Byte variant, UInt8
--"\x06"  # Byte variant, UInt16
--"\x07"  # Byte variant, UInt32
--"\x81"  # Bit variant, Int8
--"\x84"  # Bit variant, Int64
--
--# FPC header (2 bytes): [0]=float_width, [1]=compression_level
--"\x04\x0C"  # float32, level 12 (default)
--"\x08\x0C"  # float64, level 12 (default)
--"\x04\x01"  # float32, level 1
--"\x08\x1C"  # float64, level 28 (max)
--
--# Multiple codec chain patterns: [0]=chain_length, [1..N]=codec bytes
--"\x01\x82"  # 1 codec: LZ4
--"\x01\x92"  # 1 codec: Delta
--"\x02\x92\x82"  # 2 codecs: Delta + LZ4
--"\x02\x93\x82"  # 2 codecs: T64 + LZ4
--"\x02\x95\x82"  # 2 codecs: Gorilla + LZ4
--"\x03\x92\x94\x82"  # 3 codecs: Delta + DoubleDelta + LZ4
--
--# Compressed block header magic (9 bytes: checksum(8) + method(1))
--"\x00\x00\x00\x00\x00\x00\x00\x00"  # zero checksum prefix
++rm -rf "${WORK_DIR}" "${CLICKHOUSE_USER_FILES_UNIQUE:?}"
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #128382** (2026-10-31): Backport #127876 to 26.10: Fix a crash when relabelling the state version of a lazily replicated `AggregateFunction` column (@robot-clickhouse)
-- **PR #128380** (2026-10-31): Backport #128048 to 26.10: Restore JSONExtract DateTime parsing under old compatibility (@robot-ch-test-poll3)
-- **PR #128367** (2026-10-31): Read the input of the `Variant` and `Dynamic` serialization fuzzers as untrusted `Native` data (@groeneai)
-- **PR #128366** (2026-10-31): Read `LowCardinality` dictionary keys in batches instead of allocating for the key count read from the stream (@groeneai)
-- **PR #128363** (2026-10-31): Reject truncated sparse values in native protocol input with `INCORRECT_DATA` (@groeneai)
-- **PR #128361** (2026-10-31): [26.10] Record the #122484 settings changes under 26.10 (@george-larionov)
+- **PR #129035** (2026-11-03): Backport #127836 to 26.10: Revert "Avoid building stream names and substreams cache keys for every block in MergeTreeReaderWide" (@robot-clickhouse-ci-2)
+- **PR #128994** (2026-11-03): Backport #128525 to 26.10: Fix Iceberg `ADD COLUMN` reusing a nested field id when `last-column-id` is too small (@robot-clickhouse-ci-2)
+- **PR #128993** (2026-11-03): Backport #128525 to 26.9: Fix Iceberg `ADD COLUMN` reusing a nested field id when `last-column-id` is too small (@robot-clickhouse-ci-2)
+- **PR #128991** (2026-11-03): Backport #128525 to 26.8: Fix Iceberg `ADD COLUMN` reusing a nested field id when `last-column-id` is too small (@robot-clickhouse-ci-2)
+- **PR #128988** (2026-11-03): Backport #123651 to 26.10: Hide Azure credentials that were logged in clear in `system.query_log` (@robot-ch-test-poll4)
+- **PR #128987** (2026-11-03): Cherry pick #123651 to 26.9: Hide Azure credentials that were logged in clear in `system.query_log` (@robot-ch-test-poll4)
 
 ---
 
@@ -1992,32 +1846,81 @@ Make the codec, binary type and WASM fuzzer dictionaries loadable by libFuzzer
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #127678 from ClickHouse/fix/materialized-postgresql-consumer-
+## X. Merge pull request #127836 from ClickHouse/revert-124816
 
 **RULE**:
-When implementing operations in `src/Storages/PostgreSQL/PostgreSQLReplicationHandler.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ClickHouse/ClickHouse. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/DataTypes/Serializations/ISerialization.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ClickHouse/ClickHouse. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `52529f0c`: Merge pull request #127678 from ClickHouse/fix/materialized-postgresql-consumer-backoff-on-exception. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0a379d29`: Merge pull request #127836 from ClickHouse/revert-124816. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/Storages/PostgreSQL/PostgreSQLReplicationHandler.cpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/DataTypes/Serializations/ISerialization.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-        /// Back off after a failure (for example, when `syncTables` cannot flush a buffered table), the
-        /// same way `consume` does for the errors it handles itself. Rescheduling immediately would retry
-        /// the failing operation in a tight loop and could starve `deactivate` of this task, which is
-        /// called by `DETACH TABLE`, `ATTACH TABLE` and shutdown, for an unbounded time.
-        schedule_now = false;
+String getNameForSubstreamPath(
+    String stream_name,
+            stream_name += ".null";
+            stream_name += ".size" + toString(array_level);
+            stream_name += ".size";
+            stream_name += ".dict";
+            stream_name += ".dict_prefix";
+            stream_name += ".sparse";
+            stream_name += ".sparse.idx";
+            stream_name += ".repl";
+            stream_name += ".repl.idx";
+            auto substream_name = "." + it->name_of_substream;
+
+                stream_name += escapeForFileName(substream_name);
+                stream_name += substream_name;
+            stream_name += ".variant_discr";
+            stream_name += ".variant_discr_prefix";
+            stream_name += ".variant_offsets";
+                stream_name += "." + escapeForFileName(it->variant_element_name);
+                stream_name += "." + it->variant_element_name;
+                stream_name += "." + escapeForFileName(it->variant_element_name) + ".null";
+                stream_name += "." + it->variant_element_name + ".null";
+       
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+#include <Common/SipHash.h>
+/// Renders the substream path by passing its pieces to `append` in order, so the same rendering can either
+/// be materialized into a string or fed into a hash without building the string.
+template <typename Append>
+void appendNameForSubstreamPath(
+    Append && append,
+            append(".null");
+        {
+            append(".size");
+            append(toString(array_level));
+        }
+            append(".size");
+            append(".dict");
+            append(".dict_prefix");
+            append(".sparse");
+            append(".sparse.idx");
+            append(".repl");
+            append(".repl.idx");
+                append(escapeForFileName("." + it->name_of_substream));
+            {
+                append(".");
+                append(it->name_of_substream);
+            }
+            append(".variant_discr");
+            append(".variant_discr_prefix");
+            append(".variant_offsets");
+            append(".");
+                append(escapeForFileName(it->variant_element_name));
+                append(it->variant_element_name);
+            append(".");
+                append(escapeForFileName(it->variant_element_name));
+                appe
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `52529f0c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0a379d29` are properly handled with clean fallback behavior.

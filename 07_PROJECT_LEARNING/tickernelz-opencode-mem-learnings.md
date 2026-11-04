@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tickernelz-opencode-mem-learnings.md`  
 > **Source**: github ([https://github.com/tickernelz/opencode-mem](https://github.com/tickernelz/opencode-mem))  
-> **Source Version**: `9086c659`  
+> **Source Version**: `f2163b51`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T21:26:56.779Z  
+> **Timestamp**: 2026-11-03T19:06:07.082Z  
 > **Learning ID**: `learn-github-tickernelz-opencode-mem`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tickernelz-opencode-mem-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tickernelz/opencode-mem](https://github.com/tickernelz/opencode-mem))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T21:26:55.781Z  
+> **Harvest Timestamp**: 2026-11-03T19:06:06.287Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: OpenCode plugin that gives coding agents persistent memory using local vector database
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 1807 stars
+- **Stars / Engagement**: 1816 stars
 
 ---
 
@@ -1017,329 +1017,899 @@ export function removeFromSet<T>(set: Set<T>, value: T): Set<T> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `237a0e63` (2026-10-31)
-**Commit Message**: fix(embedding): harden transformers resolve for OpenCode nested installs (#467)
+### Incident Patch 1: `0ae29188` (2026-11-02)
+**Commit Message**: fix: harden cleanup vacuum and dreaming run feedback (#480)
 
-Fall back to Bun.resolveSync and a node_modules walk when createRequire
-cannot see @huggingface/transformers (#463).
+* fix: harden cleanup vacuum and dreaming run feedback
 
-**File**: `src/services/embedding.ts` (modified, +14/-18)
+Enable Turso experimental vacuum, treat IdxDelete as idempotent during cleanup, and surface dreaming concurrency/failures without raw English error toasts.
+
+* fix: tighten IdxDelete and dreaming failure handling
+
+Only treat IdxDelete as success when the row is gone, soft-skip provider gaps in maybeRun, abort after auth failures, and avoid advancing lastRunAt on total dreaming failure.
+
+* fix: count aborted dreaming groups and quarantine IdxDelete rows
+
+Provider early-abort now marks remaining groups failed and skips lastRunAt; IdxDelete on active memories soft-deletes to stop cleanup retry loops.
+
+* fix(turso): make deleteVector report hard-delete success
+
+Return false on IdxDelete orphans so callers skip vector-count decrements and trash purge stops retry-spamming stuck soft-deleted rows.
+
+* fix(turso): stop IdxDelete orphan log spam on trash purge
+
+Soft-deleted rows that cannot be hard-purged already return false; drop the per-run log so cleanup stays quiet until REINDEX is possible.
+
+* test(turso): expect vacuum in connection open experimental flags
+
+* fix(test): 
+
+**File**: `src/services/api-handlers.ts` (modified, +7/-0)
 ```diff
-@@ -7,6 +7,10 @@ import {
-   prepareOnnxruntimeForTransformers,
- } from "./onnxruntime-resolve.js";
- import { createRuntimeRequire } from "./runtime-require.js";
-+import {
-+  getTransformersPackageSpecifier,
-+  resolveTransformersCjsEntry,
-+} from "./transformers-resolve.js";
- 
- const requireFromHere = createRuntimeRequire(import.meta);
- 
-@@ -194,17 +198,10 @@ let _transformers: {
-   env: HfTransformers["env"];
- } | null = null;
- 
--function getTransformersPackageSpecifier(): string {
--  // Keep this non-literal so OpenCode/Bun plugin-loader bundling does not eagerly
--  // traverse @huggingface/transformers internals during plugin startup. The package
--  // is only needed for the local embedding backend, and should stay lazy.
--  return ["@huggingface", "transformers"].join("/");
--}
--
- async function ensureTransformersLoaded(): Promise<NonNullable<typeof _transformers>> {
-   if (_transformers !== null) return _transformers;
-   // Pin onnxruntime-node (+ common) to our direct 1.30.0 stack before transformers
--  // resolves them (#184 / #210 / #225). Load the CJS export so Module._resolveFilename
-+  // resolves them (#184 / #210 / #225 / #463). Load the CJS export so Module._resolveFilename
-   // shim applies — the ESM entry's static import bypasses it under OpenCode nested installs.
-   //
-   // Critical ordering for OpenCode's Bun --compile host (#210 follow-up):
-@@ -213,17 +210,16 @@ async function ensureTransformersLoaded(): Promise<NonNullable<typeof _transform
-   // `Cannot find module '@huggingface/transformers' from ''` even though the package
-   // exists. Loading via the pre-resolved absolute path keeps the onnx pin shim active
-   // for transformers' nested requires without needing a post-shim package resolve.
-+  //
-+  // #463: OpenCode nested npm/Bun cache layouts can make createRequire(packageName)
-+  // fail even when the package is on disk — fall back to Bun.resolveSync + node_modules walk.
-   const transformersSpecifier = getTransformersPackageSpecifier();
--  let transformersEntry: string;
--  try {
--    transformersEntry = requireFromHere.resolve(transformersSpecifier);
--  } catch (error) {
--    throw new Error(
--      `Cannot resolve ${transformersSpecifier} before installing the onnxruntime pin shim. ` +
--        `Original error: ${error instanceof Error ? error.message : String(error)}`,
--      { cause: error }
--    );
--  }
-+  const meta = import.meta as ImportMeta & { path?: string; dirname?: string; dir?: string };
-+  const transformersEntry = resolveTransformersCjsEntry({
-+    requireFn: requireFromHere,
-+    specifier: transformersSpecifier,
-+    startPaths: [meta.url, meta.path, meta.dirname, meta.dir, process.cwd()],
-+  });
- 
-   prepareOnnxruntimeForTransformers();
-   const mod = requireFromHere(transformersEntry) as HfTransformers;
+@@ -1067,6 +1067,13 @@ export async function handleRunDreaming(
+     const result = await dreamingService.run(directory);
+     return { success: true, data: result };
+   } catch (error) {
++    const message = error instanceof Error ? error.message : String(error);
++    if (message.includes("already running")) {
++      return { success: false, error: "already_running" };
++    }
++    if (message === "dreaming_provider_unavailable") {
++      return { success: false, error: "dreaming_provider_unavailable" };
++    }
+     log("handleRunDreaming: error", { error: String(error) });
+     return { success: false, error: String(error) };
+   }
 ```
 
-**File**: `src/services/transformers-resolve.ts` (added, +163/-0)
+**File**: `src/services/cleanup-service.ts` (modified, +80/-20)
 ```diff
-@@ -0,0 +1,163 @@
-+/**
-+ * Resolve the CJS entry of `@huggingface/transformers` for OpenCode hosts (#463).
-+ *
-+ * OpenCode nested installs (Bun linker / npm cache layouts) sometimes make
-+ * Node's createRequire(packageName) fail even when the package exists on disk.
-+ * Walk node_modules and prefer Bun.resolveSync, then load the package's
-+ * `exports.node.require` entry so the onnxruntime pin shim still applies.
-+ */
-+import { existsSync, readFileSync } from "node:fs";
-+import { dirname, join, sep } from "node:path";
-+import { fileURLToPath, pathToFileURL } from "node:url";
+@@ -1,6 +1,7 @@
+ import { tursoShardManager } from "./turso/shard-manager.js";
+ import { tursoVectorSearch } from "./turso/vector-search.js";
+ import { tursoConnectionManager } from "./turso/connection-manager.js";
++import { isVacuumUnsupportedError } from "./turso/error-classifiers.js";
+ import { ensureTursoReady } from "./turso/ready.js";
+ import { CONFIG } from "../config.js";
+ import { log } from "./logger.js";
+@@ -16,6 +17,9 @@ interface CleanupResult {
+   aiSessionsDeleted: number;
+ }
+ 
++/** Process-lifetime: Turso rejected VACUUM; do not retry every cleanup. */
++let vacuumUnsupported = false;
 +
-+export const TRANSFORMERS_PACKAGE = ["@huggingface", "transformers"].join("/");
-+
-+/** Non-literal specifier so plugin bundlers do not eagerly traverse transformers. */
-+export function getTransformersPackageSpecifier(): string {
-+  return TRANSFORMERS_PACKAGE;
-+}
-+
-+type PackageJsonExports = {
-+  node?: {
-+    require?: { default?: string } | string;
-+    import?: { default?: string } | string;
-+  };
-+  require?: { default?: string } | string;
-+  default?: { default?: string } | string;
-+};
-+
-+function readJson(path: string): Record<string, unknown> | null {
-+  try {
-+    return JSON.parse(readFileSync(path, "utf8")) as Record<string, unknown>;
-+  } catch {
-+    return null;
-+  }
-+}
-+
-+function asExportPath(value: unknown): string | null {
-+  if (typeof value === "string" && value.length > 0) return value;
-+  if (
-+    value &&
-+    typeof value === "object" &&
-+    typeof (value as { default?: unknown }).default === "string"
-+  ) {
-+    return (value as { default: string }).default;
-+  }
-+  return null;
-+}
-+
-+/** Pick the Node CJS entry from a transformers package.json. */
-+export function cjsEntryFromPackageJson(pkgJsonPath: string): string {
-+  const pkg = readJson(pkgJsonPath);
-+  if (!pkg) throw new Error(`Unable to read ${pkgJsonPath}`);
-+  const exportsField = pkg.exports as PackageJsonExports | undefined;
-+  const relative =
-+    asExportPath(exportsField?.node?.require) ||
-+    asExportPath(exportsField?.require) ||
-+    (typeof pkg.main === "string" ? pkg.main : null) ||
-+    "./dist/transformers.node.cjs";
-+  return join(dirname(pkgJsonPath), relative);
-+}
-+
-+function packageJsonCandidates(startDir: string, packageName: string): string[] {
-+  const parts = packageName.split("/");
-+  const out: string[] = [];
-+  let dir = startDir;
-+  for (let i = 0; i < 16; i++) {
-+    out.push(join(dir, "node_modules", ...parts, "package.json"));
-+    const parent = dirname(dir);
-+    if (parent === dir) break;
-+    dir = parent;
-+  }
-+  return out;
-+}
-+
-+function normalizeStartPath(value: string): string {
-+  if (value.startsWith("file:")) {
-+    try {
-+      return fileURLToPath(value);
-+    } catch {
-+      return value;
-+    }
-+  }
-+  return value;
-+}
-+
-+/**
-+ * Resolve Bun's install layout when Node createRequire cannot see the package.
-+ */
-+export function resolveWithBun(specifier: string, fromPath: string): string | null {
-+  const bun = (globalThis as { Bun?: { resolveSync?: (id: string, root: string) => string } }).Bun;
-+  if (typeof bun?.resolveSync !== "function") return null;
-+  try {
-+    const fromDir = fromPath.endsWith(sep) ? fromPath : dirname(fromPath);
-+    return bun.resolveSync(specifier, fromDir);
-+  } catch {
-+    return null;
-+  }
-+}
-+
-+export function resolveTransformersCjsEntry(options: {
-+  requireFn: NodeRequire;
-+  startPaths?: Array<string | undefined | null>;
-+  specifier?: string;
-+}): string {
-+  const specifier = options.specifier ?? TRANSFORMERS_PACKAGE;
-+  const errors: string[] = [];
-+
-+  try {
-+    return options.requireFn.resolve(specifier);
-+  } catch (error) {
-+    errors.push(`require.resolve: ${error instanceof Error ? error.message : String(error)}`);
-+  }
-+
-+  const starts = (options.startPaths ?? [])
-+    .filter((p): p is string => typeof p === "string" && p.trim().length > 0)
-+    .map(normalizeStartPath);
-+
-+  for (const start of starts) {
-+    const bunResolved = resolveWithBun(specifier, start);
-+    if (bunResolved) {
-+      // Bun may return the ESM entry; normalize to CJS via package.json.
-+      let dir = dirname(bunResolved);
-+      for (let i = 0; i < 6; i++) {
-+        const pkgJson = join(dir, "package.json");
-+        if (existsSync(pkgJson)) {
-+          const pkg = readJson(pkgJson);
-+          if (pkg?.name === specifier) return cjsEntryFromPackageJson(pkgJson);
-+        }
-+        const parent = dirname(dir);
-+        if (parent === dir) break;
-+        dir = parent;
-+      }
-+      if (bunResolved.endsWith(".cjs") || bunResolved.endsWith(".js")) return bunResolved;
-+      errors.push(`Bun.resolveSync returned non-CJS entry: ${bunResolved}`);
-+    }
-+
-+    for (const candidate of packageJsonCandidates(dirname(start), specifier)) {
-+      if (!existsSync(candidate)) continue;
+ export class CleanupService {
+   private lastCleanupTime: number = 0;
+   private isRunning: boolean = false;
+@@ -46,18 +50,36 @@ export class CleanupService {
+       await ensureTursoReady();
+       const cutoffTime = Date.now() - CONFIG.autoCleanupRetentionDays * 24 * 60 * 60 * 1000;
+ 
+-      const userShards = await tursoShardManager.getAllShards("user", "");
+-      const projectShards = await tursoShardManager.getAllShards("project", "");
+-      const allShards = [...userShards, ...projectShards];
++      let allShards: Awaited<ReturnType<typeof tursoShardManager.getAllShards>> = [];
 +      try {
-+        return cjsEntryFromPackageJson(candidate);
++        const userShards = await tursoShardManager.getAllShards("user", "");
++        const projectShards = await tursoShardManager.getAllShards("project", "");
++        allShards = [...userShards, ...projectShards];
 +      } catch (error) {
-+        errors.push(`${candidate}: ${error instanceof Error ? error.message : String(error)}`);
++        log("Cleanup: step failed", { step: "list-shards", error: String(error) });
 +      }
-+   
+ 
+       const pinnedMemoryIds = new Set<string>();
+       for (const shard of allShards) {
+-        const db = await tursoConnectionManager.getConnection(shard.dbPath);
+-        const pinned = await db.all(`SELECT id FROM memories WHERE is_pinned = 1`);
+-        pinned.forEach((row) => pinnedMemoryIds.add(String(row.id)));
++        try {
++          const db = await tursoConnectionManager.getConnection(shard.dbPath);
++          const pinned = await db.all(`SELECT id FROM memories WHERE is_pinned = 1`);
++          pinned.forEach((row) => pinnedMemoryIds.add(String(row.id)));
++        } catch (error) {
++          log("Cleanup: step failed", {
++            step: "pins",
++            shardId: shard.id,
++            error: String(error),
++          });
++        }
+       }
+ 
+-      const promptCleanupResult = await userPromptManager.deleteOldPrompts(cutoffTime);
++      let promptCleanupResult = { deleted: 0, linkedMemoryIds: [] as string[] };
++      try {
++        promptCleanupResult = await userPromptManager.deleteOldPrompts(cutoffTime);
++      } catch (error) {
++        log("Cleanup: step failed", { step: "deleteOldPrompts", error: String(error) });
++      }
+       const linkedMemoryIds = new Set(promptCleanupResult.linkedMemoryIds);
+       const protectedMemoryIds = new Set([...pinnedMemoryIds, ...linkedMemoryIds]);
+ 
+@@ -68,16 +90,36 @@ export class CleanupService {
+       let pinnedSkipped = 0;
+ 
+       for (const shard of allShards) {
+-        const db = await tursoConnectionManager.getConnection(shard.dbPath);
+-        // Ensure deleted_at (v3) exists before filtering on it.
+-        await tursoShardManager.ensureShardSchema(db);
+-        const oldMemories = await db.all(
+-          `
++        let db;
++        try {
++          db = await tursoConnectionManager.getConnection(shard.dbPath);
++          await tursoShardManager.ensureShardSchema(db);
++        } catch (error) {
++          log("Cleanup: step failed", {
++            step: "shard-schema",
++            shardId: shard.id,
++            error: String(error),
++          });
++          continue;
++        }
++
++        let oldMemories: Array<Record<string, unknown>> = [];
++        try {
++          oldMemories = await db.all(
++            `
+           SELECT id, container_tag, is_pinned FROM memories
+           WHERE updated_at < ? AND deleted_at IS NULL
+         `,
+-          [cutoffTime]
+-        );
++            [cutoffTime]
++          );
++        } catch (error) {
++          log("Cleanup: step failed", {
++            step: "age-select",
++            shardId: shard.id,
++            error: String(error),
++          });
++          continue;
++        }
+ 
+         for (const memory of oldMemories) {
+           try {
+@@ -90,7 +132,11 @@ export class CleanupService {
+               continue;
+             }
+ 
+-            await tursoVectorSearch.deleteVector(db, String(memory.id));
++            const hardDeleted = await tursoVectorSearch.deleteVector(db, String(memory.id));
++            if (!hardDeleted) {
++              // IdxDelete quarantine (soft-delete) — do not count as hard-deleted.
++              continue;
++            }
+             await tursoShardManager.decrementVectorCount(shard.id);
+             totalDeleted++;
+ 
+@@ -122,11 +168,20 @@ export class CleanupService {
+ 
+       const promptsDeleted = promptCleanupResult.deleted - linkedMemoryIds.size;
+ 
+-      try {
+-        await userPromptManager.vacuum();
+-        log("Cleanup:
 ```
 
-**File**: `tests/transformers-resolve.test.ts` (added, +95/-0)
+**File**: `src/services/client.ts` (modified, +4/-1)
 ```diff
-@@ -0,0 +1,95 @@
+@@ -115,7 +115,10 @@ export class LocalMemoryClient {
+     const closed = await releasePluginTurso();
+     if (closed) {
+       // Process-wide like the pool: only the last instance may drop the model.
+-      await embeddingService.dispose("client-close");
++      // Optional: test stubs for embeddingService may omit dispose.
++      if (typeof embeddingService.dispose === "function") {
++        await embeddingService.dispose("client-close");
++      }
+       this.reset();
+     }
+   }
+```
+
+**File**: `src/services/deduplication-service.ts` (modified, +2/-1)
+```diff
+@@ -70,7 +70,8 @@ export class DeduplicationService {
+ 
+             for (const dup of toDelete) {
+               try {
+-                await tursoVectorSearch.deleteVector(db, String(dup.id));
++                const hardDeleted = await tursoVectorSearch.deleteVector(db, String(dup.id));
++                if (!hardDeleted) continue;
+                 await tursoShardManager.decrementVectorCount(shard.id);
+                 exactDeleted++;
+               } catch (error) {
+```
+
+**File**: `src/services/dreaming-service.ts` (modified, +38/-5)
+```diff
+@@ -110,6 +110,7 @@ export interface DreamingRunResult {
+   groupsConsidered: number;
+   groupsMerged: number;
+   groupsSkipped: number;
++  groupsFailed: number;
+   groupsFlagged: number;
+   memoriesSoftDeleted: number;
+ }
+@@ -288,6 +289,10 @@ export class DreamingService {
+         log("dreaming: skipped due to lock contention", { error: message });
+         return null;
+       }
++      if (message === "dreaming_provider_unavailable") {
++        log("dreaming: skipped (provider unavailable)", { error: message });
++        return null;
++      }
+       throw error;
+     }
+   }
+@@ -306,6 +311,7 @@ export class DreamingService {
+       groupsConsidered: 0,
+       groupsMerged: 0,
+       groupsSkipped: 0,
++      groupsFailed: 0,
+       groupsFlagged: 0,
+       memoriesSoftDeleted: 0,
+     };
+@@ -324,10 +330,11 @@ export class DreamingService {
+       const v2Client = getV2Client();
+       if (!v2Client || !CONFIG.opencodeProvider || !CONFIG.opencodeModel) {
+         log("dreaming: skipped (no opencode structured-output client)");
+-        return result;
++        throw new Error("dreaming_provider_unavailable");
+       }
+ 
+       const { generateStructuredOutput } = await import("./ai/opencode-provider.js");
++      let abortedForProvider = false;
+ 
+       for (const group of batch) {
+         try {
+@@ -402,13 +409,39 @@ export class DreamingService {
+             result.groupsSkipped++;
+           }
+         } catch (error) {
+-          result.groupsSkipped++;
+-          log("dreaming: group failed", { error: String(error) });
++          result.groupsFailed++;
++          const errMsg = error instanceof Error ? error.message : String(error);
++          log("dreaming: group failed", { error: errMsg });
++          // Auth / provider outages will fail every remaining group the same way.
++          if (/ProviderRequestError|API_KEY is not set|401|Unauthorized/i.test(errMsg)) {
++            const processed =
++              result.groupsMerged +
++              result.groupsSkipped +
++              result.groupsFlagged +
++              result.groupsFailed;
++            const remaining = Math.max(0, result.groupsConsidered - processed);
++            result.groupsFailed += remaining;
++            abortedForProvider = true;
++            log("dreaming: aborting remaining groups after provider failure", { remaining });
++            break;
++          }
+         }
+       }
+ 
+-      writeState({ lastRunAt: Date.now() });
+-      log("dreaming: run complete", result);
++      const onlyFailures =
++        result.groupsConsidered > 0 &&
++        result.groupsMerged === 0 &&
++        result.groupsFlagged === 0 &&
++        result.groupsSkipped === 0 &&
++        result.groupsFailed > 0 &&
++        (abortedForProvider || result.groupsFailed === result.groupsConsidered);
++      if (onlyFailures) {
++        // Do not advance the schedule when nothing could be processed.
++        log("dreaming: run complete with only failures; not advancing lastRunAt", result);
++      } else {
++        writeState({ lastRunAt: Date.now() });
++        log("dreaming: run complete", result);
++      }
+       return result;
+     } finally {
+       this.isRunning = false;
+```
+
+**File**: `src/services/markdown/reconcile.ts` (modified, +2/-1)
+```diff
+@@ -68,7 +68,8 @@ async function deleteMemoryById(id: string): Promise<boolean> {
+   const found = await findMemoryAcrossShards(id);
+   if (!found) return false;
+   const db = await tursoConnectionManager.getConnection(found.dbPath);
+-  await tursoVectorSearch.deleteVector(db, id);
++  const hardDeleted = await tursoVectorSearch.deleteVector(db, id);
++  if (!hardDeleted) return false;
+   await tursoShardManager.decrementVectorCount(found.shardId);
+   return true;
+ }
+```
+
+**File**: `src/services/turso/connection-manager.ts` (modified, +1/-1)
+```diff
+@@ -16,7 +16,7 @@ import {
+ export type ConnectFactory = (path: string, opts?: DatabaseOpts) => Promise<Database>;
+ 
+ /** Always-on experimental flags for every Turso open. */
+-export const TURSO_BASE_EXPERIMENTAL_FEATURES = ["encryption"] as const;
++export const TURSO_BASE_EXPERIMENTAL_FEATURES = ["encryption", "vacuum"] as const;
+ 
+ /**
+  * Multiprocess WAL is Unix-only. On Windows/WASM/32-bit the flag is accepted but
+```
+
+**File**: `src/services/turso/error-classifiers.ts` (added, +23/-0)
+```diff
+@@ -0,0 +1,23 @@
++/** Turso rejects VACUUM unless the experimental `vacuum` feature is enabled. */
++const VACUUM_UNSUPPORTED_PATTERNS = [/VACUUM is an experimental feature/i, /experimental-vacuum/i];
++
++/** DiskANN / index delete when the index entry is already gone (row may still exist). */
++const IDX_DELETE_MISMATCH_PATTERNS = [
++  /IdxDelete:\s*no matching index entry/i,
++  /no matching index entry found for key/i,
++];
++
++function errorMessage(error: unknown): string {
++  return error instanceof Error ? error.message : String(error);
++}
++
++export function isVacuumUnsupportedError(error: unknown): boolean {
++  const message = errorMessage(error);
++  return VACUUM_UNSUPPORTED_PATTERNS.some((pattern) => pattern.test(message));
++}
++
++/** Only IdxDelete mismatch — not every `Corrupt database:*` error. */
++export function isIdxDeleteMismatchError(error: unknown): boolean {
++  const message = errorMessage(error);
++  return IDX_DELETE_MISMATCH_PATTERNS.some((pattern) => pattern.test(message));
++}
+```
+
+---
+
+### Incident Patch 2: `6d22833f` (2026-11-02)
+**Commit Message**: fix(web): bound Memory Trash list scroll inside the dialog (#471)
+
+TrashDialog is a custom overlay, so the shared dialog height cap from
+#430 does not apply. Make the panel a flex column and give the list
+min-h-0 flex-1 overflow-y-auto so many trashed items scroll inside the
+dialog and Restore stays reachable.
+
+Co-authored-by: Oscar <[REDACTED_EMAIL]>
+
+**File**: `web/src/lib/components/explorer/TrashDialog.svelte` (modified, +3/-3)
+```diff
+@@ -45,15 +45,15 @@
+   >
+     <div
+       class={cn(
+-        "bg-background max-h-[80vh] w-full max-w-2xl overflow-hidden rounded-lg border shadow-lg",
++        "bg-background flex max-h-[80vh] w-full max-w-2xl flex-col overflow-hidden rounded-lg border shadow-lg",
+         STACK
+       )}
+     >
+-      <div class={cn("flex items-center justify-between border-b px-4 py-3", GAP)}>
++      <div class={cn("flex shrink-0 items-center justify-between border-b px-4 py-3", GAP)}>
+         <h2 id="trash-dialog-title" class="text-lg font-semibold">{i18n.t("modal-trash-title")}</h2>
+         <Button type="button" variant="outline" onclick={close}>{i18n.t("btn-cancel")}</Button>
+       </div>
+-      <div class="overflow-y-auto px-4 py-3">
++      <div class="min-h-0 flex-1 overflow-y-auto px-4 py-3">
+         {#if loading}
+           <p class="text-muted-foreground text-sm">{i18n.t("loading-trash")}</p>
+         {:else if items.length === 0}
+```
+
+---
+
+### Incident Patch 3: `a66d349f` (2026-11-02)
+**Commit Message**: fix(recall): fall back to recent memories when semantic search fails (#482)
+
+**File**: `README.md` (modified, +8/-1)
+```diff
+@@ -280,13 +280,20 @@ memories do not consume slots that could hold eligible memories. Setting
+ the user profile to be injected when enabled.
+ 
+ Injected memory tags identify `selection="recent"` or `selection="semantic"`.
+-Recent selections (including missing-query fallback and recent fill in `both`) have no
++Recent selections (including fallback and recent fill in `both`) have no
+ numeric score. Semantic selections carry a finite `retrieval_score` when available;
+ this is a ranking signal that can include the current-project boost, not a probability
+ of relevance or factual correctness. Missing or invalid scores are omitted. This
+ replaces the former `relevance="...%"` prompt attribute without changing memory
+ selection, ordering, content, or provenance. Compaction retains its existing format.
+ 
++When semantic recall fails (for example, embedding is unavailable), `relevant` and
++`both` fall back to the existing recent listing with the same scope, count, session,
++and age restrictions. A successful search with no eligible matches stays empty in
++`relevant`; `both` still fills from recent as usual. Partial-shard warnings do not
++trigger failure fallback. If recent fallback also fails, recall remains empty and
++nonfatal. Missing-query fallback and per-turn refresh behavior are unchanged.
++
+ ### Update-on-capture (optional)
+ 
+ Opt-in path that keeps memories current as facts change. When `updateOnCaptureEnabled` is
+```
+
+**File**: `src/services/memory-recall.ts` (modified, +29/-10)
+```diff
+@@ -156,7 +156,8 @@ export interface LoadRecallOptions {
+ /**
+  * Select memories for chat auto-injection according to chatMessage.recall.
+  * Falls back to recent listing when relevant/both is requested but no query text
+- * is available (e.g. V2 context rehydrate without a fresh prompt).
++ * is available (e.g. V2 context rehydrate without a fresh prompt), or semantic
++ * search fails. Successful searches with no eligible matches are not failures.
+  */
+ export async function loadRecallMemories(opts: LoadRecallOptions): Promise<RecallMemory[]> {
+   const scope = resolveRecallScope(opts.recallScope, opts.defaultScope);
+@@ -189,15 +190,21 @@ export async function loadRecallMemories(opts: LoadRecallOptions): Promise<Recal
+     return listResult.memories.map(listRowToRecall);
+   };
+ 
+-  const loadRelevant = async (): Promise<RecallMemory[]> => {
++  const loadRelevant = async (): Promise<RecallMemory[] | null> => {
+     const query = opts.queryText!.trim();
+     // Over-fetch so session/age filters and project boost can still fill the slot budget.
+     const fetchLimit = Math.max(opts.maxMemories * 3, opts.maxMemories);
+-    const searchRes = await memoryClient.searchMemories(query, opts.containerTag, scope, {
+-      limit: fetchLimit,
+-      similarityThreshold: opts.similarityThreshold,
+-    });
+-    if (!searchRes.success) return [];
++    let searchRes;
++    try {
++      searchRes = await memoryClient.searchMemories(query, opts.containerTag, scope, {
++        limit: fetchLimit,
++        similarityThreshold: opts.similarityThreshold,
++      });
++    } catch {
++      return null;
++    }
++    // Partial-shard warnings remain successful searches, even with no matches.
++    if (!searchRes.success) return null;
+     let results = searchRes.results.map(searchResultToRecall);
+     results = filterRecallResults(results, filters);
+     if (scope === "all-projects") {
+@@ -212,12 +219,24 @@ export async function loadRecallMemories(opts: LoadRecallOptions): Promise<Recal
+     return loadRecent();
+   }
+ 
+-  if (mode === "relevant") {
+-    return loadRelevant();
++  const relevant = await loadRelevant();
++  if (relevant === null) {
++    log("memory recall: semantic search failed, falling back to recent", {
++      sessionID: opts.sessionID,
++      requested: mode,
++    });
++    // Return directly so both mode never repeats a short or failed recent load.
++    try {
++      return await loadRecent();
++    } catch {
++      log("memory recall: recent fallback failed", { sessionID: opts.sessionID });
++      return [];
++    }
+   }
+ 
++  if (mode === "relevant") return relevant;
++
+   // both
+-  const relevant = await loadRelevant();
+   if (relevant.length >= opts.maxMemories) return relevant.slice(0, opts.maxMemories);
+   const recent = await loadRecent();
+   return mergeBoth(relevant, recent, opts.maxMemories);
+```
+
+**File**: `tests/fixtures/memory-injection-eligibility.mjs` (modified, +35/-1)
+```diff
+@@ -39,9 +39,18 @@ mock.module(moduleUrl("config"), () => ({
+   initConfig() {},
+   isConfigured: () => true,
+ }));
++let failedSearchCalls = 0;
+ mock.module(moduleUrl("services/embedding"), () => ({
+   EmbeddingService: class {},
+-  embeddingService: { isWarmedUp: true, warmup: async () => {}, dispose: async () => {} },
++  embeddingService: {
++    isWarmedUp: true,
++    warmup: async () => {},
++    dispose: async () => {},
++    embedWithTimeout: async () => {
++      failedSearchCalls++;
++      throw new Error("synthetic semantic embedding outage");
++    },
++  },
+ }));
+ mock.module(moduleUrl("services/turso/ready"), () => ({
+   ensureTursoReady: async () => {},
+@@ -166,6 +175,23 @@ const result = {
+   ),
+   readSizes: [...readSizes],
+ };
++// The real V1 injection and V2 shared loader must both recover via the real
++// client/database recent path when semantic retrieval is unavailable.
++const originalSearch = memoryClient.searchMemories;
++config.chatMessage.recall = "relevant";
++result.failedRecallLoaded = await plugin.memoryContext.load(sessionID);
++const failureMessage = {
++  message: { id: "fixture-failure-message" },
++  parts: [{ type: "text", text: "A fresh real user request" }],
++};
++await plugin["chat.message"]({ sessionID }, failureMessage);
++result.failedRecallV1 = failureMessage.parts
++  .filter((part) => part.synthetic)
++  .map((part) => part.text)
++  .join("\n");
++result.failedRecallSearchCalls = failedSearchCalls;
++config.chatMessage.recall = "recent";
++memoryClient.searchMemories = originalSearch;
+ result.ordinaryList = (await memoryClient.listMemories(projectTag, 3)).memories.map((m) => m.id);
+ config.chatMessage.excludeCurrentSession = false;
+ result.unfiltered = ids(await plugin.memoryContext.load(sessionID));
+@@ -183,6 +209,14 @@ await add("eligible-c", 200, undefined, 1);
+ await add("eligible-d", 400, undefined, 1);
+ result.multishard = ids(await plugin.memoryContext.load(sessionID));
+ result.multishardReadSizes = [...readSizes];
++config.chatMessage.recall = "relevant";
++memoryClient.searchMemories = async () => {
++  throw new Error("synthetic semantic transport outage");
++};
++result.thrownRecallEligible = ids(await plugin.memoryContext.load(sessionID));
++result.thrownRecallOtherSession = ids(await plugin.memoryContext.load("different-session"));
++config.chatMessage.recall = "recent";
++memoryClient.searchMemories = originalSearch;
+ 
+ // Preserve the strict age cutoff, even when an older pinned row is ahead of it.
+ await clear();
+```
+
+**File**: `tests/fixtures/recall-failure-fallback.mjs` (added, +117/-0)
+```diff
+@@ -0,0 +1,117 @@
++import { mock } from "bun:test";
++const moduleUrl = (path) => new URL("../../src/" + path + ".js", import.meta.url).href;
++mock.module(moduleUrl("config"), () => ({ CONFIG: { injectProfile: false } }));
++mock.module(moduleUrl("services/logger"), () => ({ log() {} }));
++mock.module(moduleUrl("services/user-profile/profile-context"), () => ({
++  getUserProfileContext: async () => "",
++}));
++const now = Date.UTC(2026, 10, 2);
++Date.now = () => now;
++const recent = [
++  {
++    id: "recent",
++    summary: "recent body",
++    createdAt: "2026-11-01",
++    projectName: "project",
++    metadata: { sessionID: "previous" },
++  },
++];
++const semantic = {
++  id: "semantic",
++  memory: "semantic body",
++  similarity: 0.75,
++  createdAt: now,
++  containerTag: "project",
++};
++let scenario;
++let calls;
++mock.module(moduleUrl("services/client"), () => ({
++  memoryClient: {
++    listMemories: async (...args) => {
++      calls.list.push(args);
++      if (scenario.list === "throw") throw new Error("recent client unavailable");
++      if (scenario.list === "failure")
++        return { success: false, error: "recent client unavailable" };
++      return { success: true, memories: scenario.list === "empty" ? [] : recent };
++    },
++    searchMemories: async (...args) => {
++      calls.search.push(args);
++      if (scenario.search === "throw") throw new Error("semantic client unavailable");
++      if (scenario.search === "failure")
++        return { success: false, error: "semantic client unavailable" };
++      const results =
++        scenario.search === "filtered"
++          ? [
++              { ...semantic, sessionId: "session" },
++              { ...semantic, id: "old", createdAt: now - 10 * 86400000 },
++            ]
++          : scenario.search === "empty"
++            ? []
++            : [semantic];
++      return {
++        success: true,
++        results,
++        ...(scenario.warning ? { warnings: ["One shard could not be searched"] } : {}),
++      };
++    },
++  },
++}));
++globalThis.fetch = () => {
++  throw new Error("Network forbidden in fixture");
++};
++const { loadRecallMemories } = await import(moduleUrl("services/memory-recall"));
++const { formatContextForPrompt } = await import(moduleUrl("services/context"));
++const defaults = {
++  containerTag: "project",
++  sessionID: "session",
++  queryText: " query ",
++  maxMemories: 3,
++  recall: "relevant",
++  recallScope: "default",
++  defaultScope: "project",
++  excludeCurrentSession: true,
++  maxAgeDays: 2,
++  similarityThreshold: 0.6,
++};
++const scenarios = {
++  failed: { search: "failure" },
++  thrown: { search: "throw" },
++  bothFailed: { search: "failure", recall: "both" },
++  bothThrown: { search: "throw", recall: "both" },
++  bothFailedEmpty: { search: "failure", recall: "both", list: "empty" },
++  empty: { search: "empty" },
++  filtered: { search: "filtered" },
++  partial: { warning: true },
++  partialEmpty: { search: "empty", warning: true },
++  fallbackFailed: { search: "failure", list: "failure" },
++  fallbackThrown: { search: "failure", list: "throw" },
++  bothFallbackThrown: { search: "throw", recall: "both", list: "throw" },
++  recent: { recall: "recent", search: "throw" },
++  missingQuery: { queryText: null, search: "throw" },
++  bothMissingQuery: { recall: "both", queryText: " ", search: "throw" },
++  bothEmpty: { recall: "both", search: "empty" },
++  bothSuccess: { recall: "both" },
++  full: { recall: "both", maxMemories: 1 },
++  zero: { maxMemories: 0, search: "throw" },
++  zeroBoth: { recall: "both", maxMemories: 0, search: "throw" },
++  zeroRecent: { recall: "recent", maxMemories: 0 },
++  allProjects: { search: "failure", defaultScope: "all-projects" },
++  explicitProject: { search: "failure", defaultScope: "all-projects", recallScope: "project" },
++  disabledFilters: { search: "failure", excludeCurrentSession: false, maxAgeDays: 0 },
++};
++const output = {};
++for (const [name, value] of Object.entries(scenarios)) {
++  scenario = value;
++  calls = { search: [], list: [] };
++  try {
++    const memories = await loadRecallMemories({ ...defaults, ...value });
++    output[name] = {
++      memories,
++      calls,
++      context: await formatContextForPrompt(null, { results: memories }),
++    };
++  } catch (error) {
++    output[name] = { error: String(error), calls };
++  }
++}
++console.log(JSON.stringify(output));
+```
+
+**File**: `tests/fixtures/v2-memory-context.mjs` (modified, +36/-0)
+```diff
+@@ -24,6 +24,8 @@ let configured = true;
+ let memories = [{ summary: "original project knowledge", createdAt: new Date().toISOString() }];
+ let failLookup = false;
+ let lookupCount = 0;
++let searchCount = 0;
++let failSearch = true;
+ const captures = [];
+ const histories = new Map();
+ const titles = new Map();
+@@ -34,6 +36,12 @@ mock.module(moduleUrl("config"), () => ({
+ }));
+ mock.module(moduleUrl("services/client"), () => ({
+   memoryClient: {
++    searchMemories: async () => {
++      searchCount++;
++      return failSearch
++        ? { success: false, error: "synthetic semantic outage", results: [], total: 0 }
++        : { success: true, results: [], total: 0 };
++    },
+     warmup: async () => {},
+     close: async () => {},
+     listMemories: async (_tag, limit, _scope, filters = {}) => {
+@@ -225,6 +233,34 @@ const later = {
+ };
+ await plugin["chat.message"]({ sessionID: "v1" }, later);
+ output.v1Later = later.parts;
++// Relevant-mode failure fallback uses the same per-turn cache as semantic recall.
++config.chatMessage.recall = "relevant";
++const lookupsBeforeFallback = lookupCount;
++memories = [
++  { id: "fallback-a", summary: "fallback session A", createdAt: new Date().toISOString() },
++];
++await host.prompt("fallback-a", "first fallback prompt", "msg-fallback-a1");
++output.fallbackFirst = await host.context("fallback-a");
++output.fallbackModelStep = await host.context("fallback-a");
++output.fallbackInitialCounts = { search: searchCount, list: lookupCount - lookupsBeforeFallback };
++memories = [
++  { id: "fallback-b", summary: "fallback session B", createdAt: new Date().toISOString() },
++];
++await host.prompt("fallback-b", "another session prompt", "msg-fallback-b1");
++output.fallbackOtherSession = await host.context("fallback-b");
++output.fallbackOriginalSession = await host.context("fallback-a");
++memories = [
++  { id: "fallback-new", summary: "fresh fallback A", createdAt: new Date().toISOString() },
++];
++await host.prompt("fallback-a", "next authored prompt retries", "msg-fallback-a2");
++output.fallbackNextTurn = await host.context("fallback-a");
++output.fallbackNextStep = await host.context("fallback-a");
++output.fallbackNextCounts = { search: searchCount, list: lookupCount - lookupsBeforeFallback };
++failSearch = false;
++await host.prompt("fallback-a", "successful empty retrieval", "msg-fallback-a3");
++output.fallbackRecoveredEmpty = await host.context("fallback-a");
++output.fallbackOtherAfterRecovery = await host.context("fallback-b");
++output.fallbackFinalCounts = { search: searchCount, list: lookupCount - lookupsBeforeFallback };
+ await host.cleanup();
+ await plugin.dispose();
+ console.log(JSON.stringify(output));
+```
+
+**File**: `tests/memory-injection-eligibility.test.ts` (modified, +21/-0)
+```diff
+@@ -7,6 +7,11 @@ import { fileURLToPath } from "node:url";
+ const directory = mkdtempSync(join(tmpdir(), "opencode-mem-injection-eligibility-"));
+ let result: {
+   loaded: string[];
++  failedRecallLoaded: string;
++  failedRecallV1: string;
++  failedRecallSearchCalls: number;
++  thrownRecallEligible: string[];
++  thrownRecallOtherSession: string[];
+   v1: string[];
+   readSizes: number[];
+   ordinaryList: string[];
+@@ -45,6 +50,22 @@ describe("memory injection eligibility", () => {
+     expect(result.v1).toEqual(["eligible-0", "eligible-1", "eligible-2"]);
+   });
+ 
++  it("recovers V1 and the V2 shared loader through real eligible recent listing", () => {
++    for (const context of [result.failedRecallLoaded, result.failedRecallV1]) {
++      expect(context).toContain('selection="recent" id="eligible-0"');
++      expect(context).toContain('selection="recent" id="eligible-1"');
++      expect(context).toContain('selection="recent" id="eligible-2"');
++      expect(context).not.toContain('id="excluded-');
++      expect(context).not.toContain("retrieval_score=");
++    }
++    expect(result.failedRecallSearchCalls).toBe(2);
++  });
++
++  it("preserves project, age, and session isolation after a thrown semantic failure", () => {
++    expect(result.thrownRecallEligible).toEqual(["eligible-a", "eligible-c", "eligible-b"]);
++    expect(result.thrownRecallOtherSession).toEqual(["current-pinned", "eligible-a", "eligible-c"]);
++  });
++
+   it("leaves ordinary listing and disabled session exclusion unchanged", () => {
+     expect(result.ordinaryList).toEqual(["excluded-0", "excluded-1", "excluded-2"]);
+     expect(result.unfiltered).toEqual(result.ordinaryList);
+```
+
+**File**: `tests/recall-failure-fallback.test.ts` (added, +87/-0)
+```diff
+@@ -0,0 +1,87 @@
 +import { describe, expect, it } from "bun:test";
-+import { mkdirSync, mkdtempSync, writeFileSync } from "node:fs";
-+import { createRequire } from "node:module";
-+import { tmpdir } from "node:os";
-+import { join } from "node:path";
-+import {
-+  cjsEntryFromPackageJson,
-+  resolveTransformersCjsEntry,
-+  TRANSFORMERS_PACKAGE,
-+} from "../src/services/transformers-resolve.js";
++import { fileURLToPath } from "node:url";
 +
-+const requireFromHere = createRequire(import.meta.url);
++const child = Bun.spawnSync([
++  process.execPath,
++  fileURLToPath(new URL("./fixtures/recall-failure-fallback.mjs", import.meta.url)),
++]);
++if (child.exitCode !== 0) throw new Error(child.stderr.toString());
++const result = JSON.parse(child.stdout.toString());
++const ids = (name: string) => result[name].memories?.map((memory: { id: string }) => memory.id);
 +
-+describe("transformers-resolve (#463)", () => {
-+  it("resolves the real installed CJS entry via require", () => {
-+    const entry = resolveTransformersCjsEntry({
-+      requireFn: requireFromHere,
-+      startPaths: [import.meta.url],
++describe("semantic recall failure fallback", () => {
++  for (const name of ["failed", "thrown", "bothFailed", "bothThrown"]) {
++    it(`uses recent exactly once for ${name}`, () => {
++      expect(ids(name)).toEqual(["recent"]);
++      expect(result[name].calls.search).toHaveLength(1);
++      expect(result[name].calls.list).toHaveLength(1);
++      expect(result[name].memories[0].selection).toBe("recent");
++      expect(result[name].memories[0].similarity).toBeUndefined();
++      expect(result[name].memories[0].sessionId).toBe("previous");
++      expect(result[name].context).toContain(
++        'selection="recent" id="recent" created="2026-11-01" project="project"'
++      );
++      expect(result[name].context).not.toContain("retrieval_score=");
 +    });
-+    expect(entry.replaceAll("\\", "/")).toContain("@huggingface/transformers");
-+    expect(entry.endsWith(".cjs") || entry.endsWith(".js")).toBe(true);
-+  });
-+
-+  it("reads CJS export path from package.json", () => {
-+    const dir = mkdtempSync(join(tmpdir(), "transformers-pkg-"));
-+    const pkgJson = join(dir, "package.json");
-+    writeFileSync(
-+      pkgJson,
-+      JSON.stringify({
-+        name: TRANSFORMERS_PACKAGE,
-+        main: "./dist/transformers.node.cjs",
-+        exports: {
-+          node: {
-+            require: { default: "./dist/transformers.node.cjs" },
-+            import: { default: "./dist/transformers.node.mjs" },
-+          },
-+        },
-+      })
-+    );
-+    expect(cjsEntryFromPackageJson(pkgJson).replaceAll("\\", "/")).toMatch(
-+      /dist\/transformers\.node\.cjs$/
-+    );
-+  });
-+
-+  it("finds a hoisted package by walking node_modules when require.resolve fails", () => {
-+    const root = mkdtempSync(join(tmpdir(), "transformers-hoist-"));
-+    const pluginDir = join(root, "node_modules", "opencode-mem", "dist", "services");
-+    const pkgDir = join(root, "node_modules", "@huggingface", "transformers");
-+    mkdirSync(pluginDir, { recursive: true });
-+    mkdirSync(join(pkgDir, "dist"), { recursive: true });
-+    writeFileSync(
-+      join(pkgDir, "package.json"),
-+      JSON.stringify({
-+        name: TRANSFORMERS_PACKAGE,
-+        exports: {
-+          node: { require: { default: "./dist/transformers.node.cjs" } },
-+        },
-+      })
-+    );
-+    writeFileSync(join(pkgDir, "dist", "transformers.node.cjs"), "module.exports = {}");
-+
-+    const fakeRequire = ((id: string) => {
-+      throw new Error(`Cannot find module '${id}'`);
-+    }) as NodeRequire;
-+    fakeRequire.resolve = ((_id: string) => {
-+      throw new Error(`Cannot find module '${_id}'`);
-+    }) as NodeRequire["resolve"];
-+
-+    const start = join(pluginDir, "embedding.js");
-+    writeFileSync(start, "");
-+    const entry = resolveTransformersCjsEntry({
-+      requireFn: fakeRequire,
-+      startPaths: [start],
++  }
++  for (const name of ["empty", "filtered", "partialEmpty"]) {
++    it(`does not replace a successful ${name} semantic result`, () => {
++      expect(ids(name)).toEqual([]);
++      expect(result[name].calls.list).toHaveLength(0);
 +    });
-+    expect(entry.replaceAll("\\", "/")).toMatch(
-+      /node_modules\/@huggingface\/transformers\/dist\/transformers\.node\.cjs$/
-+    );
++  }
++  it("retains partial-shard semantic results and scores", () => {
++    expect(ids("partial")).toEqual(["semantic"]);
++    expect(result.partial.memories[0].similarity).toBe(0.75);
++    expect(result.partial.memories[0].selection).toBe("semantic");
++    expect(result.partial.calls.list).toHaveLength(0);
 +  });
-+
-+  it("mentions cache clear / remote embeddings when unresolved", () => {
-+    const fakeRequire = ((id: string) => {
-+      throw new Error(`Cannot find module '${id}'`);
-+    }) as NodeRequire;
-+    fakeRequire.resolve = ((_id: string) => {
-+      throw new Error(`Cannot find module '${_id}'`);
-+    }) as NodeRequire["resolve"];
-+
-+    expect(() =>
-+      resolveTransformersCjsEntry({
-+        requireFn: fakeRequire,
-+        startPaths: [join(tmpdir(), "empty-start", "embedding.js")],
-+      })
-+    ).toThrow(/#463|embeddingApiUrl|plugin cache/i);
++  for (const name of [
++    "fallbackFailed",
++    "fallbackThrown",
++    "bothFallbackThrown",
++    "bothFailedEmpty",
++  ]) {
++    it(`keeps ${name} nonfatal without retrying the recent loader`, () => {
++      expect(result[name].error).toBeUndefined();
++      expect(ids(name)).toEqual([]);
++      expect(result[name].calls.list).toHaveLength(1);
++    });
++  }
++  for (const name of ["recent", "missingQuery", "bothMissingQuery"]) {
++    it(`preserves ${name} without semantic search`, () => {
++      expect(ids(name)).toEqual(["recent"]);
++      expect(result[name].calls.search).toHaveLength(0);
++      expect(result[name].calls.list).toHaveLength(1);
++    });
++  }
++  it("preserves successful both fill and full-budget behavior", () => {
++    expect(ids("bothEmpty")).toEqual(["recent"]);
++    expect(ids("bothSuccess")).toEqual(["semantic", "recent"]);
++    expect(ids("full")).toEqual(["semantic"]);
++    expect(result.full.calls.list).toHaveLength(0);
++  });
++  for (const name of ["zero", "zeroBoth", "zeroRecent"]) {
++    it(`does not load either source for ${name}`, () => {
++      expect(ids(name)).toEqual([]);
++      expect(result[name].calls).toEqual({ search: [], list: [] });
++    });
++  }
++  it("passes the same count, scope, session, and age eligibility into fallback", () => {
++    expect(result.failed.calls.search[0]).toEqual([
++      "query",
++      "project",
++      "project",
++      { limit: 9, similarityThreshold: 0.6 },
++    ]);
++    expect(result.failed.calls.list[0]).toEqual([
++      "project",
++      3,
++      "project",
++      { excludeSessionId: "session", createdAfter: Date.UTC(2026, 9, 31) },
++    ]);
++    expect(result.allProjects.calls.list[0][2]).toBe("all-projects");
++    expect(result.explicitProject.calls.list[0][2]).toBe("project");
++    expect(result.disabledFilters.calls.list[0][3]).toEqual({});
 +  });
 +});
 ```
 
+**File**: `tests/v2-memory-context.test.ts` (modified, +14/-0)
+```diff
+@@ -80,6 +80,20 @@ describe("v2 memory context lifecycle", () => {
+     expect(result.authored).toBe("authored first prompt");
+   });
+ 
++  it("caches failed-semantic recent fallback for model steps and retries on authored turns", () => {
++    expect(result.fallbackFirst).toEqual(context("fallback session A"));
++    expect(result.fallbackModelStep).toEqual(result.fallbackFirst);
++    expect(result.fallbackInitialCounts).toEqual({ search: 1, list: 1 });
++    expect(result.fallbackOtherSession).toEqual(context("fallback session B"));
++    expect(result.fallbackOriginalSession).toEqual(result.fallbackFirst);
++    expect(result.fallbackNextTurn).toEqual(context("fresh fallback A"));
++    expect(result.fallbackNextStep).toEqual(result.fallbackNextTurn);
++    expect(result.fallbackNextCounts).toEqual({ search: 3, list: 3 });
++    expect(result.fallbackRecoveredEmpty).toEqual([]);
++    expect(result.fallbackOtherAfterRecovery).toEqual(result.fallbackOtherSession);
++    expect(result.fallbackFinalCounts).toEqual({ search: 4, list: 3 });
++  });
++
+   it("preserves V1 synthetic-part injection and first-turn history policy", () => {
+     expect(result.v1First).toHaveLength(2);
+     expect(result.v1First[0].synthetic).toBe(true);
+```
+
 #### Recent Merged Pull Requests:
-- **PR #468** (2026-10-31): chore(release): release v2.39.0 (@EyJunge1)
-- **PR #467** (2026-10-31): fix(embedding): harden transformers resolve for OpenCode nested installs (@EyJunge1)
-- **PR #466** (2026-10-31): feat(dreaming): related-threshold consolidation with supersede and flag (@EyJunge1)
-- **PR #465** (2026-10-31): feat(capture): optional update-on-capture for similar memories (@EyJunge1)
-- **PR #462** (2026-10-30): chore(release): release v2.38.0 (@EyJunge1)
-- **PR #461** (2026-10-30): feat(memory): add relevance-based auto-recall and opt-in dreaming (@EyJunge1)
+- **PR #483** (2026-11-03): fix(privacy): redact credentials at capture and memory-write boundaries (@Phototonic)
+- **PR #482** (2026-11-02): fix(recall): fall back to recent memories when semantic search fails (@Phototonic)
+- **PR #481** (2026-11-02): chore(release): release v2.40.0 (@EyJunge1)
+- **PR #480** (2026-11-02): fix: harden cleanup vacuum and dreaming run feedback (@EyJunge1)
+- **PR #479** (2026-11-02): fix(capture): preserve pending evidence across session deletion (@Phototonic)
+- **PR #478** (2026-11-02): chore(deps-dev): bump tailwind-variants from 3.3.1 to 4.0.0 in /web (@dependabot[bot])
 
 ---
 
@@ -1359,58 +1929,34 @@ cannot see @huggingface/transformers (#463).
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. embedding): harden transformers resolve for OpenCode nested installs (#467)
+## X. harden cleanup vacuum and dreaming run feedback (#480)
 
 **RULE**:
-When implementing operations in `src/services/embedding.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tickernelz/opencode-mem. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/services/api-handlers.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tickernelz/opencode-mem. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `237a0e63`: embedding): harden transformers resolve for OpenCode nested installs (#467). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0ae29188`: harden cleanup vacuum and dreaming run feedback (#480). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/services/embedding.ts`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/services/api-handlers.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-import {
-  getTransformersPackageSpecifier,
-  resolveTransformersCjsEntry,
-} from "./transformers-resolve.js";
-  // resolves them (#184 / #210 / #225 / #463). Load the CJS export so Module._resolveFilename
-  //
-  // #463: OpenCode nested npm/Bun cache layouts can make createRequire(packageName)
-  // fail even when the package is on disk — fall back to Bun.resolveSync + node_modules walk.
-  const meta = import.meta as ImportMeta & { path?: string; dirname?: string; dir?: string };
-  const transformersEntry = resolveTransformersCjsEntry({
-    requireFn: requireFromHere,
-    specifier: transformersSpecifier,
-    startPaths: [meta.url, meta.path, meta.dirname, meta.dir, process.cwd()],
-  });
+    const message = error instanceof Error ? error.message : String(error);
+    if (message.includes("already running")) {
+      return { success: false, error: "already_running" };
+    }
+    if (message === "dreaming_provider_unavailable") {
+      return { success: false, error: "dreaming_provider_unavailable" };
+    }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-function getTransformersPackageSpecifier(): string {
-  // Keep this non-literal so OpenCode/Bun plugin-loader bundling does not eagerly
-  // traverse @huggingface/transformers internals during plugin startup. The package
-  // is only needed for the local embedding backend, and should stay lazy.
-  return ["@huggingface", "transformers"].join("/");
-}
-
-  // resolves them (#184 / #210 / #225). Load the CJS export so Module._resolveFilename
-  let transformersEntry: string;
-  try {
-    transformersEntry = requireFromHere.resolve(transformersSpecifier);
-  } catch (error) {
-    throw new Error(
-      `Cannot resolve ${transformersSpecifier} before installing the onnxruntime pin shim. ` +
-        `Original error: ${error instanceof Error ? error.message : String(error)}`,
-      { cause: error }
-    );
-  }
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `237a0e63` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0ae29188` are properly handled with clean fallback behavior.

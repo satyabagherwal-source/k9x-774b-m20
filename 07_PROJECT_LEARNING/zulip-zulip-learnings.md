@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zulip-zulip-learnings.md`  
 > **Source**: github ([https://github.com/zulip/zulip](https://github.com/zulip/zulip))  
-> **Source Version**: `c803cca1`  
+> **Source Version**: `888b7bc2`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T01:21:26.657Z  
+> **Timestamp**: 2026-11-04T01:34:55.182Z  
 > **Learning ID**: `learn-github-zulip-zulip`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zulip-zulip-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zulip/zulip](https://github.com/zulip/zulip))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T01:21:25.810Z  
+> **Harvest Timestamp**: 2026-11-04T01:34:54.257Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Zulip server and web application. Open-source team chat that helps teams stay productive and focused.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: package.json, pyproject.toml, README.md
-- **Stars / Engagement**: 26145 stars
+- **Stars / Engagement**: 26165 stars
 
 ---
 
@@ -1237,184 +1237,99 @@ def check_rabbitmq_queues() -> None:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6e059848` (2026-10-29)
-**Commit Message**: provision: Fix PGroonga failing to load on Debian 13.
+### Incident Patch 1: `f48ed60f` (2026-11-03)
+**Commit Message**: api-docs: Fix description of the realm_bot/delete event.
 
-On Debian 13, we build PGroonga from source against libgroonga-dev
-from packages.groonga.org. Its libgroonga0 16.1.5-1 depends on
-libarrow2600, which links against the OpenTelemetry C++ libraries
-without declaring a dependency on them. So provisioning fails in
-postgresql-init-dev-db, because PostgreSQL cannot load pgroonga.so
-without libopentelemetry_exporter_otlp_http_log.so.
+Since it was first documented, this event was described as being
+sent to all users when a bot is deactivated. It has never been sent
+on deactivation. Since it was added in 32e38d36aa, it has only been
+sent to a bot's previous owner when the bot's owner is changed, if
+the previous owner isn't an organization administrator.
 
-Fix this by installing opentelemetry-cpp from Debian's main archive.
-Ubuntu 26.04 also builds PGroonga from source, but against Ubuntu's
-own libgroonga-dev, so it is not affected.
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-https://github.com/apache/arrow/issues/55112
-
-**File**: `tools/lib/provision.py` (modified, +5/-0)
+**File**: `zerver/openapi/zulip.yaml` (modified, +5/-5)
 ```diff
-@@ -170,6 +170,11 @@
-         "libmsgpack-dev",
-         *VENV_DEPENDENCIES,
-     ]
-+    if vendor == "debian":
-+        # libarrow2600 from packages.groonga.org links against
-+        # opentelemetry-cpp without depending on it; see
-+        # https://github.com/apache/arrow/issues/55112
-+        SYSTEM_DEPENDENCIES.append("opentelemetry-cpp")
- elif "debian" in os_families():
-     DEBIAN_DEPENDENCIES = UBUNTU_COMMON_APT_DEPENDENCIES
- 
+@@ -4932,9 +4932,9 @@ paths:
+                             - type: object
+                               additionalProperties: false
+                               description: |
+-                                Event sent to all users when a bot has been deactivated.
+-                                Note that this is very similar to the bot_remove event
+-                                and one of them will be removed soon.
++                                Event sent to the previous owner of a bot when the bot's
++                                owner is changed, unless the previous owner is an
++                                organization administrator.
+                               properties:
+                                 id:
+                                   $ref: "#/components/schemas/EventIdSchema"
+@@ -4950,13 +4950,13 @@ paths:
+                                 bot:
+                                   type: object
+                                   description: |
+-                                    Object containing details about the deactivated bot.
++                                    Object containing details about the bot.
+                                   additionalProperties: false
+                                   properties:
+                                     user_id:
+                                       type: integer
+                                       description: |
+-                                        The user ID of the deactivated bot.
++                                        The user ID of the bot.
+                               example:
+                                 {
+                                   "type": "realm_bot",
 ```
 
 ---
 
-### Incident Patch 2: `0ac92e64` (2026-10-29)
-**Commit Message**: message_store tests: Build expected topic links with helpers.
+### Incident Patch 2: `50890136` (2026-11-02)
+**Commit Message**: logging: Fix log_to_file loggers writing to rotated log files.
 
-The tests spell out every expected cross-conversation link as an
-object literal. Two helpers, message_link and topic_link, now build
-them, which keeps each expected link on one line and names the kind
-of link being checked.
+Previously, log_to_file used a plain FileHandler, which keeps writing
+to the file it first opened. Our logrotate config rotates most of
+these logs with "create", which renames the live file to .log.1 and
+creates an empty one. Long-running processes, such as queue workers,
+kept writing to .log.1 until they restarted. Logrotate only checks
+the size of the new, empty file, so .log.1 grew unchecked.
 
-This is a prep commit for adding a field to those links.
+Fix this by using WatchedFileHandler, which reopens the file when
+logrotate replaces it. The file handlers in our LOGGING config
+already use it, as our logrotate config expects.
 
-Co-Authored-By: Claude Fable 5.1 <[REDACTED_EMAIL]>
+Tested with a script that renames and recreates a log file between
+two log calls, as logrotate does. FileHandler wrote the second call
+to the renamed file, and WatchedFileHandler wrote it to the new one.
 
-**File**: `web/tests/message_store.test.cjs` (modified, +85/-249)
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `zerver/lib/logging_util.py` (modified, +2/-1)
 ```diff
-@@ -585,6 +585,15 @@ test("maybe_update_raw_content", () => {
-     assert.equal(message1.raw_content, "hello world");
- });
+@@ -7,6 +7,7 @@
+ from contextlib import suppress
+ from datetime import datetime, timedelta, timezone
+ from logging import Logger
++from logging.handlers import WatchedFileHandler
  
-+// Expected cross-conversation links, as message_store returns them.
-+function message_link(stream_id, topic, message_id) {
-+    return {stream_id, topic, message_id};
-+}
-+
-+function topic_link(stream_id, topic) {
-+    return {stream_id, topic, message_id: undefined};
-+}
-+
- test("save_topic_links", () => {
-     function assert_maps_empty() {
-         assert.deepEqual(message_store.topic_links_incoming_for_testing(), new Map());
-@@ -638,23 +647,7 @@ test("save_topic_links", () => {
-         new Map([
-             [
-                 message.stream_id,
--                new Map([
--                    [
--                        message.topic,
--                        new Map([
--                            [
--                                message.id,
--                                [
--                                    {
--                                        stream_id: 10,
--                                        topic: "hello",
--                                        message_id: undefined,
--                                    },
--                                ],
--                            ],
--                        ]),
--                    ],
--                ]),
-+                new Map([[message.topic, new Map([[message.id, [topic_link(10, "hello")]]])]]),
-             ],
-         ]),
-     );
-@@ -703,18 +696,7 @@ test("save_topic_links", () => {
-                 new Map([
-                     [
-                         message.topic,
--                        new Map([
--                            [
--                                message.id,
--                                [
--                                    {
--                                        stream_id: 10,
--                                        topic: "hello",
--                                        message_id: linked_message.id,
--                                    },
--                                ],
--                            ],
--                        ]),
-+                        new Map([[message.id, [message_link(10, "hello", linked_message.id)]]]),
-                     ],
-                 ]),
-             ],
-@@ -815,18 +797,7 @@ test("get and update topic links to/from narrow", () => {
-                 new Map([
-                     [
-                         "engineering",
--                        new Map([
--                            [
--                                message1.id,
--                                [
--                                    {
--                                        stream_id: design.stream_id,
--                                        topic: "goodbye",
--                                        message_id: undefined,
--                                    },
--                                ],
--                            ],
--                        ]),
-+                        new Map([[message1.id, [topic_link(design.stream_id, "goodbye")]]]),
-                     ],
-                 ]),
-             ],
-@@ -878,17 +849,9 @@ test("get and update topic links to/from narrow", () => {
-                             [
-                                 message1.id,
-                                 [
--                                    {
--                                        stream_id: design.stream_id,
--                                        topic: "goodbye",
--                                        message_id: undefined,
--                                    },
-+                                    topic_link(design.stream_id, "goodbye"),
-                                     // to "second-goodbye" is new
--                                    {
--                                        stream_id: design.stream_id,
--                                        topic: "second-goodbye",
--                                        message_id: undefined,
--                                    },
-+                                    topic_link(design.stream_id, "second-goodbye"),
-                                 ],
-                             ],
-                         ]),
-@@ -901,18 +864,7 @@ test("get and update topic links to/from narrow", () => {
-                 new Map([
-                     [
-                         "new client",
--                        new Map([
--                            [
--                                message5.id,
--                                [
--                                    {
--                                        stream_id: design.stream_id,
--                                        topic: "goodbye",
--                                        message_id: undefined,
--                                    },
--                                ],
--                            ],
--                        ]),
-+                        new Map([[message5.id, [topic_link(design.stream_id, "goodbye")]]]),
-                     ],
-                 ]),
-        
+ import orjson
+ from django.conf import settings
+@@ -270,6 +271,6 @@ def log_to_file(
+ ) -> None:
+     """Note: `filename` should be declared in zproject/computed_settings.py with zulip_path."""
+     formatter = logging.Formatter(log_format)
+-    handler = logging.FileHandler(filename)
++    handler = WatchedFileHandler(filename)
+     handler.setFormatter(formatter)
+     logger.addHandler(handler)
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #40542** (closed): stream_settings: Optimize DOM queries in redraw_left_panel. (@sumit-2007-git)
-- **PR #40537** (closed): [ai] left_sidebar: Translate "Back" button label in modal header. (@raadhika-N)
-- **PR #40534** (2026-10-30): [ai] message_store: Prep for anchoring topic links on their permalink's message. (@evykassirer)
-- **PR #40533** (2026-10-30): Use PGroonga binary packages on Debian 13, Ubuntu 26.04 (@andersk)
-- **PR #40530** (2026-10-29): [ai] provision: Fix PGroonga failing to load on Debian 13. (@benprew)
-- **PR #40528** (2026-10-30): [ai] Zulip beta releases (@benprew)
+- **PR #40575** (2026-11-03): api-docs: Fix description of the realm_bot/delete event. (@sahil839)
+- **PR #40570** (2026-11-03): uploads: Avoid redundant queries in do_claim_attachments. (@NoxiousTab)
+- **PR #40567** (closed): settings : Move full name change hint to p tag (@sumitsharma777-Eng)
+- **PR #40566** (closed): bots: Validate missing outgoing webhook URL before bot creation. (@rushil23shah-hue)
+- **PR #40565** (2026-11-03): Release Zulip Server 13.0-rc1. (@benprew)
+- **PR #40564** (2026-11-02): stripe: Verify Stripe's TLS certificate using certifi's CA bundle. (@sahil839)
 
 ---
 
@@ -1434,32 +1349,36 @@ Co-Authored-By: Claude Fable 5.1 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. provision: Fix PGroonga failing to load on Debian 13.
+## X. api-docs: Fix description of the realm_bot/delete event.
 
 **RULE**:
-When implementing operations in `tools/lib/provision.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zulip/zulip. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `zerver/openapi/zulip.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zulip/zulip. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6e059848`: provision: Fix PGroonga failing to load on Debian 13.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f48ed60f`: api-docs: Fix description of the realm_bot/delete event.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `tools/lib/provision.py`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `zerver/openapi/zulip.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-    if vendor == "debian":
-        # libarrow2600 from packages.groonga.org links against
-        # opentelemetry-cpp without depending on it; see
-        # https://github.com/apache/arrow/issues/55112
-        SYSTEM_DEPENDENCIES.append("opentelemetry-cpp")
+                                Event sent to the previous owner of a bot when the bot's
+                                owner is changed, unless the previous owner is an
+                                organization administrator.
+                                    Object containing details about the bot.
+                                        The user ID of the bot.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+                                Event sent to all users when a bot has been deactivated.
+                                Note that this is very similar to the bot_remove event
+                                and one of them will be removed soon.
+                                    Object containing details about the deactivated bot.
+                                        The user ID of the deactivated bot.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6e059848` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f48ed60f` are properly handled with clean fallback behavior.

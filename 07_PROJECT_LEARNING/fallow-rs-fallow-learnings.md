@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md`  
 > **Source**: github ([https://github.com/fallow-rs/fallow](https://github.com/fallow-rs/fallow))  
-> **Source Version**: `500709f1`  
+> **Source Version**: `7cead47b`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T20:59:36.385Z  
+> **Timestamp**: 2026-11-03T23:39:17.614Z  
 > **Learning ID**: `learn-github-fallow-rs-fallow`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/fallow-rs/fallow](https://github.com/fallow-rs/fallow))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T20:59:35.915Z  
+> **Harvest Timestamp**: 2026-11-03T23:39:15.685Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Codebase intelligence for TypeScript and JavaScript. Health, complexity hotspots, duplication, architecture boundaries, circular dependencies, design-system drift, and unused code, from one graph. CLI, GitHub Action, LSP, MCP, and VS Code. Rust, MIT licensed.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 5285 stars
+- **Stars / Engagement**: 5296 stars
 
 ---
 
@@ -586,6 +586,7 @@ fn create_guard_fixture() -> GuardFixture {
             kind: RulePackRuleKind::BannedEffect,
             callees: Vec::new(),
             specifiers: Vec::new(),
+            allow_names: Vec::new(),
             effects: vec![EffectKind::Network],
             exports: Vec::new(),
             allowed_files: Vec::new(),
@@ -733,7 +734,7 @@ fn create_suppression_inventory_fixture() -> WarmEngineFixture {
     }
 }
 
-fn suppression_inventory_json(fixture: &WarmEngineFixture) -> serde_json::Value 
+fn suppression_inventory_json(fixture: &War
 ```
 
 ### Core Architecture Module: `crates/cli/src/agent_install/hooks.rs`
@@ -877,6 +878,7 @@ fn routing_block_step(ctx: &Ctx, harness: Harness, block: &AgentsBlockReport) ->
 use std::io::{Read, Write};
 use std::process::ExitCode;
 
+use crate::exit_codes::exit_invalid_input;
 use serde::Deserialize;
 use serde_json::Value;
 
@@ -913,7 +915,7 @@ pub fn run(operation: Operation) -> ExitCode {
         Ok(()) => ExitCode::SUCCESS,
         Err(error) => {
             let _ = writeln!(std::io::stderr().lock(), "fallow-gate: {error}");
-            ExitCode::from(2)
+            exit_invalid_input()
         }
     }
 }
@@ -1448,682 +1450,741 @@ pub use fallow_types::path_util::{
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `93d80b0e` (2026-10-31)
-**Commit Message**: fix(cloud): time limit on keychain calls and locked credentials file changes (#4042)
+### Incident Patch 1: `7cead47b` (2026-11-03)
+**Commit Message**: fix(resolve): credit an uninstalled package for a Vite asset query import (#4181)
 
-Fixes #4003, Fixes #4004
+* fix(resolve): credit an uninstalled package for a Vite asset query import
 
-**File**: `changelog.d/fix-cloud-credentials-hardening.md` (added, +15/-0)
+A bare import with a Vite asset query, for example `pkg/dist/a.wasm?url`,
+failed the package name check because of the `?`. Before the package was
+installed, the import was an unresolved import and the package did not
+count as used. The same subpath without a query credits the package.
+
+The resolver now strips a query that holds only Vite asset parameters
+(`url`, `raw`, `worker`, `sharedworker`, `inline`, `no-inline`, `init`)
+when the package is not installed, and classifies the path the same as
+the plain subpath. A file that is missing from an installed package stays
+an unresolved import with the full specifier. An unknown query also stays
+unresolved.
+
+The graph cache version changes, because a cache from an earlier run
+replays the old classification on an unchanged tree.
+
+Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
+
+* fix(resolve): credit workspace source and key the cache on installs
+
+A Vite asset query import of a linked workspace package now runs the workspace and alias fallbacks before the install check. The res
+
+**File**: `changelog.d/fix-vite-asset-query-imports.md` (added, +3/-0)
 ```diff
-@@ -0,0 +1,15 @@
+@@ -0,0 +1,3 @@
 +### Fixed
 +
-+- **`fallow inspect --cloud` no longer waits for a locked keychain.** The
-+  keychain read (`security` on macOS, `secret-tool` on Linux) now has a time
-+  limit of 1 second. At the limit, Fallow stops the tool, reads the
-+  credentials file, and reports `no_key` when no key is stored. In
-+  `fallow cloud login` and `fallow cloud logout`, each keychain call has a
-+  limit of 60 seconds, so a person can answer an unlock prompt.
-+  (Closes [#4003](https://github.com/fallow-rs/fallow/issues/4003))
-+- **`fallow cloud login` and `logout` no longer lose keys in the credentials
-+  file.** A change to the file now holds an advisory lock on
-+  `credentials.lock` in the same directory, so two logins at the same time
-+  for two API URLs keep both keys. When the file does not parse, the command
-+  stops with a message that names the file and does not change the file.
-+  (Closes [#4004](https://github.com/fallow-rs/fallow/issues/4004))
++- **`fallow dead-code` no longer reports a package import with a Vite asset query as unresolved when the package is not installed.** An import such as `pkg/dist/engine.wasm?url` or `pkg/build/worker.mjs?worker&inline` was an unresolved import before `node_modules` existed, and the package did not count as used. Fallow now treats the import the same as the plain subpath: the package counts as used and no finding appears. The supported query parameters are `url`, `raw`, `worker`, `sharedworker`, `inline`, `no-inline` and `init`. A query import of a workspace package credits the workspace source file, with or without the `node_modules` link. A file that is missing from an installed package is still an unresolved import. The graph cache now records whether `node_modules` exists at the project root and at each workspace root, so an install after a cached run does not replay the old result. The graph cache version changed, so a graph cache from an earlier run does not replay the old result.
 ```
 
-**File**: `crates/cli/src/coverage/credentials.rs` (modified, +286/-85)
+**File**: `crates/core/src/resolution_inputs.rs` (modified, +25/-0)
 ```diff
-@@ -17,10 +17,20 @@
- //! `FALLOW_CREDENTIAL_STORE=file` turns the keychain off for one process, and
- //! `FALLOW_CREDENTIAL_STORE=none` turns both stores off, for example on a
- //! shared CI runner or in a test.
-+//!
-+//! A locked keychain can show an unlock prompt and block the keychain tool.
-+//! So each keychain call has a time limit: a short one for a read, and a
-+//! longer one in `fallow cloud login` and `logout`, where a person can answer
-+//! the prompt. At the limit, the tool is stopped and the call fails.
-+//!
-+//! A change to the credentials file holds an advisory lock on
-+//! `credentials.lock` in the same directory, so two logins at the same time
-+//! keep both keys. A change never replaces a file that does not parse.
- 
--use std::io::Write as _;
-+use std::io::{Read as _, Write as _};
- use std::path::{Path, PathBuf};
--use std::process::{Command, Stdio};
-+use std::process::{Command, Output, Stdio};
-+use std::time::{Duration, Instant};
- 
- use serde::{Deserialize, Serialize};
- 
-@@ -34,6 +44,16 @@ pub const API_KEY_ENV: &str = "FALLOW_API_KEY";
- const KEYCHAIN_LABEL: &str = "Fallow Cloud API key";
- /// Format version of the credentials file.
- const CREDENTIALS_VERSION: u32 = 1;
-+/// Name of the lock file next to the credentials file.
-+const LOCK_FILE_NAME: &str = "credentials.lock";
-+/// Time limit of a keychain read in a command that a person does not watch,
-+/// for example an editor hook that runs `fallow inspect --cloud`.
-+const KEYCHAIN_READ_LIMIT: Duration = Duration::from_secs(1);
-+/// Time limit of each keychain call in `fallow cloud login` and `logout`.
-+/// It is longer, because a person can answer an unlock prompt there.
-+const KEYCHAIN_INTERACTIVE_LIMIT: Duration = Duration::from_secs(60);
-+/// Interval between two checks for the exit of a keychain tool.
-+const KEYCHAIN_POLL_INTERVAL: Duration = Duration::from_millis(10);
- 
- /// Where a resolved key came from.
- #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-@@ -140,7 +160,8 @@ pub fn stored_api_key(base_url: &str) -> Option<ResolvedKey> {
-     if store_mode() == StoreMode::None {
-         return None;
+@@ -65,9 +65,34 @@ pub fn resolution_inputs_hash(
+         target.hash(&mut hasher);
      }
--    if let Some(key) = keychain().and_then(|keychain| keychain.read(base_url)) {
-+    if let Some(key) = keychain().and_then(|keychain| keychain.read(base_url, KEYCHAIN_READ_LIMIT))
-+    {
-         return Some(ResolvedKey {
-             key,
-             source: KeySource::Keychain,
-@@ -169,7 +190,7 @@ pub fn store_api_key(base_url: &str, key: &str) -> Result<KeySource, String> {
-         return Err(format!("{CREDENTIAL_STORE_ENV}=none turns key storage off"));
-     }
-     if let Some(keychain) = keychain()
--        && keychain.write(base_url, key)
-+        && keychain.write(base_url, key, KEYCHAIN_INTERACTIVE_LIMIT)
-     {
-         // A stale file entry must not outlive a newer keychain entry.
-         if let Some(path) = credentials_path() {
-@@ -196,7 +217,8 @@ pub struct Removed {
- ///
- /// Returns a message when the credentials file cannot be rewritten.
- pub fn remove_api_key(base_url: &str) -> Result<Removed, String> {
--    let keychain = keychain().is_some_and(|keychain| keychain.delete(base_url));
-+    let keychain =
-+        keychain().is_some_and(|keychain| keychain.delete(base_url, KEYCHAIN_INTERACTIVE_LIMIT));
-     let file = match credentials_path() {
-         Some(path) => remove_from_file(&path, base_url)?,
-         None => false,
-@@ -223,15 +245,55 @@ struct CredentialsFile {
-     keys: std::collections::BTreeMap<String, String>,
- }
  
-+/// Read the file for a key lookup. A file that is missing or does not parse
-+/// has no keys.
- fn read_credentials(path: &Path) -> CredentialsFile {
--    std::fs::read_to_string(path)
--        .ok()
--        .and_then(|text| serde_json::from_str(&text).ok())
--        .unwrap_or_default()
-+    read_credentials_for_change(path).unwrap_or_default()
-+}
-+
-+/// Read the file before a change. A missing or empty file has no keys. A file
-+/// that does not parse is an error, so that a change cannot drop the keys of
-+/// other API URLs.
-+fn read_credentials_for_change(path: &Path) -> Result<CredentialsFile, String> {
-+    let text = match std::fs::read_to_string(path) {
-+        Ok(text) => text,
-+        Err(err) if err.kind() == std::io::ErrorKind::NotFound => {
-+            return Ok(CredentialsFile::default());
-+        }
-+        Err(err) => return Err(format!("failed to read {}: {err}", path.display())),
-+    };
-+    if text.trim().is_empty() {
-+        return Ok(CredentialsFile::default());
++    let mut install_states = node_modules_states(root, workspaces);
++    install_states.sort_unstable();
++    install_states.len().hash(&mut hasher);
++    for state in &install_states {
++        state.hash(&mut hasher);
 +    }
-+    serde_json::from_str(&text).map_err(|err| {
-+        format!(
-+            "{} does not parse as a credentials file ({err}). Fallow did not change it. \
-+             Repair or remove the file, then try again",
-+            path.display()
-+        )
-+    })
++
+     hasher.finish()
+ }
+ 
++/// Return `(path, exists)` for the `node_modules` directory of the project
++/// root and of each workspace root.
++///
++/// The resolver reports a bare import with a Vite asset query as unresolved
++/// only when the package is installed, so an install changes the result
++/// without an edit to a source file or a manifest. Only the existence keys the
++/// mode: a modification time changes on every fresh install in CI and would
++/// make each restored cache miss.
++fn node_modules_states(root: &Path, workspaces: &[WorkspaceInfo]) -> Vec<(String, bool)> {
++    std::iter::once(root)
++        .chain(workspaces.iter().map(|ws| ws.root.as_path()))
++        .map(|dir| {
++            let path = dir.join("node_modules");
++            (portable_key(root, &path), path.is_dir())
++        })
++        .collect()
 +}
 +
-+/// Take an exclusive advisory lock on the lock file next to `path`. The lock
-+/// stays until the returned file is dropped. Every process that changes the
-+/// credentials file takes it, so two changes cannot overlap.
-+fn lock_crede
+ /// `package.json` fields whose paths the resolver follows for a package
+ /// import. `exports` is read separately because it nests.
+ const PACKAGE_ENTRY_FIELDS: &[&str] = &["main", "module", "types", "typings"];
 ```
 
-**File**: `crates/cli/tests/integration/inspect_cloud_tests.rs` (modified, +97/-0)
+**File**: `crates/core/tests/integration_test.rs` (modified, +2/-0)
 ```diff
-@@ -127,6 +127,17 @@ struct Env<'a> {
- }
+@@ -490,6 +490,8 @@ mod scoped_used_class_members;
+ mod scss_partials;
+ #[path = "integration_test/super_method_calls.rs"]
+ mod super_method_calls;
++#[path = "integration_test/vite_asset_query_imports.rs"]
++mod vite_asset_query_imports;
+ #[path = "integration_test/vite_sass_crediting.rs"]
+ mod vite_sass_crediting;
  
- fn run(args: &[&str], root: &Path, env: &Env<'_>) -> CommandOutput {
-+    run_with(args, root, env, |_| {})
+```
+
+**File**: `crates/core/tests/integration_test/vite_asset_query_imports.rs` (added, +253/-0)
+```diff
+@@ -0,0 +1,253 @@
++use super::common::{create_config, create_config_with_cache};
++use std::path::Path;
++
++const PACKAGE_JSON: &str = r#"{"name":"vite-asset-queries","private":true,"dependencies":{"plain-pkg":"1.0.0","@scope/mapped-pkg":"1.0.0"},"devDependencies":{"vite":"*"}}"#;
++
++fn write(root: &Path, path: &str, source: &str) {
++    let path = root.join(path);
++    std::fs::create_dir_all(path.parent().expect("parent")).expect("directory");
++    std::fs::write(path, source).expect("fixture file");
 +}
 +
-+/// [`run`] with a last change to the command, for example to give it a
-+/// keychain.
-+fn run_with(
-+    args: &[&str],
-+    root: &Path,
-+    env: &Env<'_>,
-+    customize: impl FnOnce(&mut Command),
-+) -> CommandOutput {
-     let mut command = Command::new(fallow_bin());
-     command
-         .args(args)
-@@ -150,6 +161,7 @@ fn run(args: &[&str], root: &Path, env: &Env<'_>) -> CommandOutput {
-         Some(key) => command.env("FALLOW_API_KEY", key),
-         None => command.env_remove("FALLOW_API_KEY"),
-     };
-+    customize(&mut command);
-     let output = command.output().expect("run fallow");
-     CommandOutput {
-         stdout: String::from_utf8_lossy(&output.stdout).into_owned(),
-@@ -281,6 +293,91 @@ fn inspect_cloud_without_a_key_reports_no_key_and_succeeds() {
-     assert!(cloud["functions"].as_array().unwrap().is_empty());
- }
- 
-+/// Give the command a keychain: a fake `secret-tool` that never answers, as a
-+/// locked keychain does while it shows an unlock prompt. Linux only, because
-+/// on macOS the keychain tool has a fixed path.
-+#[cfg(target_os = "linux")]
-+fn hanging_keychain(tools: &Path) -> impl FnOnce(&mut Command) {
-+    use std::os::unix::fs::PermissionsExt as _;
-+    let tool = tools.join("secret-tool");
-+    std::fs::write(&tool, "#!/bin/sh\nexec sleep 60\n").unwrap();
-+    std::fs::set_permissions(&tool, std::fs::Permissions::from_mode(0o755)).unwrap();
-+    let path = std::env::join_paths(
-+        std::iter::once(tools.to_path_buf())
-+            .chain(std::env::split_paths(&std::env::var_os("PATH").unwrap())),
-+    )
-+    .unwrap();
-+    move |command: &mut Command| {
-+        command
-+            .env_remove("FALLOW_CREDENTIAL_STORE")
-+            .env("DBUS_SESSION_BUS_ADDRESS", "unix:path=/nonexistent")
-+            .env("PATH", path);
++fn project(entry: &str, installed: bool) -> tempfile::TempDir {
++    let dir = tempfile::tempdir().expect("project");
++    let root = dir.path();
++    write(root, "package.json", PACKAGE_JSON);
++    write(root, "src/index.ts", entry);
++    if installed {
++        write(
++            root,
++            "node_modules/plain-pkg/package.json",
++            r#"{"name":"plain-pkg","version":"1.0.0","main":"index.js"}"#,
++        );
++        write(
++            root,
++            "node_modules/plain-pkg/index.js",
++            "module.exports = {};",
++        );
++        write(
++            root,
++            "node_modules/plain-pkg/build/worker.min.mjs",
++            "self.onmessage = () => {};",
++        );
++        write(
++            root,
++            "node_modules/@scope/mapped-pkg/package.json",
++            r#"{"name":"@scope/mapped-pkg","version":"1.0.0","exports":{".":"./dist/index.js","./dist/*":"./dist/*"}}"#,
++        );
++        write(
++            root,
++            "node_modules/@scope/mapped-pkg/dist/index.js",
++            "export {};",
++        );
++        write(root, "node_modules/@scope/mapped-pkg/dist/engine.wasm", "");
++        write(
++            root,
++            "node_modules/@scope/mapped-pkg/dist/worker.js",
++            "export {};",
++        );
++    }
++    dir
++}
++
++struct Findings {
++    unresolved: Vec<String>,
++    unused_dependencies: Vec<String>,
++}
++
++fn analyze(root: &Path) -> Findings {
++    let mut config = create_config(root.to_path_buf());
++    config.entry_patterns = vec!["src/index.ts".to_string()];
++    let results = fallow_core::analyze(&config).expect("analysis");
++    Findings {
++        unresolved: results
++            .unresolved_imports
++            .iter()
++            .map(|finding| finding.import.specifier.clone())
++            .collect(),
++        unused_dependencies: results
++            .unused_dependencies
++            .iter()
++            .map(|finding| finding.dep.package_name.clone())
++            .collect(),
 +    }
 +}
 +
-+/// The keychain read has a time limit of about one second. The bound here is
-+/// far below the 60 s of the fake tool and leaves room for a slow CI runner.
-+#[cfg(target_os = "linux")]
-+const HUNG_KEYCHAIN_BOUND: std::time::Duration = std::time::Duration::from_secs(20);
++const QUERY_IMPORTS: &str = "\
++import a from 'plain-pkg/build/worker.min.mjs?url';
++import b from 'plain-pkg/build/worker.min.mjs?raw';
++import c from 'plain-pkg/build/worker.min.mjs?worker&inline';
++import d from '@scope/mapped-pkg/dist/engine.wasm?url';
++import e from '@scope/mapped-pkg/dist/engine.wasm?init';
++import f from '@scope/mapped-pkg/dist/worker.js?sharedworker';
++import g from '@scope/mapped-pkg/dist/engine.wasm?url&no-inline';
++console.log(a, b, c, d, e, f, g);
++";
 +
-+#[cfg(target_os = "linux")]
 +#[test]
-+fn inspect_cloud_with_a_hanging_keychain_reports_no_key_within_the_limit() {
-+    let (dir, home) = project();
-+    let tools = tempdir().unwrap();
-+    let start = std::time::Instant::now();
-+    let output = run_with(
-+        INSPECT_JSON,
-+        dir.path(),
-+        &Env {
-+            api_url: Some("http://127.0.0.1:9"),
-+            api_key: None,
-+            home: home.path(),
-+        },
-+        hanging_keychain(tools.path()),
-+    );
-+    let elapsed = start.elapsed();
-+    assert!(elapsed < HUNG_KEYCHAIN_BOUND, "took {elapsed:?}");
-+    assert_eq!(output.code, 0, "stderr={}", output.stderr);
-+    assert_eq!(parse_json(&output)["evidence"]["cloud"]["status"], "no_key");
-+}
-+
-+#[cfg(target_os = "linux")]
-+#[test]
-+fn inspect_cloud_with_a_hanging_keychain_uses_the_credentials_file() {
-+    let (dir, home) = project();
-+    let tools = tempdir().unwrap();
-+    let (endpoint, captured, handle) = serve(vec![(200, file_context_body())]);
-+    let config = home.path().join(".config").join("fallow");
-+    std::fs::create_dir_all(&config).unwrap();
-+    std::fs::write(
-+        config.join("credentials"),
-+        format!(r#"{{"version":1,"keys":{{"{endpoint}":"fallow_read_k1_fromfile"}}}}"#),
-+    )
-+    .unwrap();
-+    let start = std::time::Instant::now();
-+    let output = run_with(
-+        INSPECT_JSON,
-+        dir.path(),
-+        &Env {
-+            api_url: Some(&endpoint),
-+            api_key: None,
-+            home: home.path(),
-+        },
-+        hanging_keychain(tools.path()),
-+    );
-+    handle.join().expect("server joins");
-+    let elapsed = start.elapsed();
-+    assert!(elapsed < HUNG_KEYCHAIN_BOUND, "took {elapsed:?}");
-+    assert_eq!(output.code, 0, "stderr={}", output.stderr);
-+    assert_eq!(parse_json(&output)["evidence"]["cloud"]["status"], "ok");
-+    let request = captured.lock().unwrap()[0].to_ascii_lowercase();
++fn query_imports_of_an_installed_package_resolve_and_credit_it() {
++    let dir = project(QUERY_IMPORTS, true);
++    let findings = analyze(dir.path());
++    assert!(findings.unresolved.is_empty(), "{:?}", findings.unresolved);
 +    assert!(
-+        request.contains("authorization: bearer fallow_read_k1_fromfile"),
-+        "the key of the credentials file is sent: {request}"
++        findings.unused_dependencies.is_empty(),
++        "{:?}",
++        findings.unused_dependencies
 +    );
 +}
 +
- #[test]
- fn inspect_cloud_maps_the_tier_gate_to_plan_required() {
-     let (dir, home) = project();
++#[test]
++fn query_imports_of_an_uninstalled_package_credit_it() {
++    let dir = project(QUERY_IMPORTS, false);
++    let findings = analyze(dir.path());
++    assert!(
++        findings.unresolved.is_empty(),
++        "an uninstalled package cannot prove the file is missing: {:?}",
++        findings.unresolved
++    );
++    assert!(
++        findings.unused_dependencies.is_empty(),
++        "both packages must count as used: {:?}",
++        findings.unused_dependencies
++    );
++}
++
++#[test]
++fn missing_file_of_an_installed_package_with_query_stays_unresolved() {
++    let dir = project(
++        "import a from 'plain-pkg/build/missing.mjs?url';\nimport b from '@scope/mapped-pkg/dist/missing.wasm?raw';\nconsole.log(a, b);\n",
++        true,
++    );
++    assert_eq!(
++        analyze(dir.path()).unresolved,
++        vec![
++            "plain-pkg/build/missing.mjs?url".to_string(),
++            "@scope/mapped-pkg/dist/missing.wasm?raw".to_string(),
++        ]
++    );
++}
++
++#[test]
++fn unknown_query_on_an_uninstalled_package_stays_unresolved() {
++    let dir = project(
++        "import a from 'plain-pkg/build/worker.min.mjs?custom';\nconsole.log(a);\n",
++        false,
++    );
++    assert_eq!(
++        analyze(dir.path()).unresolved,
++        vec!["plain-pkg/build/worker.min.mjs?custom".to_string()]
++    );
++}
++
++/// Build a workspace project whose `ui` package exports its `dist` output,
++/// but has only source files.
++fn workspace_project() -> tempfile::TempDir {
++    let dir = tempfile::tempdir().expect("project");
++    let root = dir.path();
++    write(
++        root,
++        "package.json",
++   
+```
+
+**File**: `crates/graph/src/cache/mod.rs` (modified, +1/-1)
+```diff
+@@ -40,7 +40,7 @@ pub use store::{GRAPH_CACHE_FILE, GraphCacheStore};
+ /// Never reuse a version number that a published build wrote, even from a
+ /// development commit. Git history and the CHANGELOG record the reason for
+ /// each bump.
+-pub const GRAPH_CACHE_VERSION: u32 = 99;
++pub const GRAPH_CACHE_VERSION: u32 = 100;
+ 
+ /// Cached form of a resolved target.
+ ///
+```
+
+**File**: `crates/graph/src/resolve/mod.rs` (modified, +1/-0)
+```diff
+@@ -35,6 +35,7 @@ mod tests;
+ mod tsconfig_scope;
+ mod types;
+ mod upgrades;
++mod url_suffix;
+ mod work;
+ mod workspace_alias;
+ 
+```
+
+**File**: `crates/graph/src/resolve/specifier.rs` (modified, +14/-24)
+```diff
+@@ -33,6 +33,9 @@ use super::path_info::{
+ use super::react_native::{build_condition_names, build_extensions};
+ use super::tsconfig_scope::{glob_values_match, resolve_tsconfig_relative_path};
+ use super::types::{DenoImportMapEntry, ResolveContext, ResolveResult};
++use super::url_suffix::{
++    resolve_failed_bare_asset_query_specifier, strip_url_suffix, strip_vite_asset_query,
++};
+ use super::workspace_alias::{
+     resolve_failed_bare_package_specifier, try_aliased_workspace_package_fallback,
+ };
+@@ -471,12 +474,6 @@ fn specifier_matches_alias_prefix(specifier: &str, prefix: &str) -> bool {
+     remainder.is_empty() || prefix.ends_with('/') || remainder.starts_with('/')
+ }
+ 
+-fn strip_url_suffix(specifier: &str) -> &str {
+-    specifier
+-        .find(['?', '#'])
+-        .map_or(specifier, |idx| &specifier[..idx])
+-}
+-
+ fn static_mount_url_path(specifier: &str) -> Option<String> {
+     let lookup = strip_url_suffix(specifier);
+     if lookup.starts_with("../") {
+@@ -1893,6 +1890,16 @@ fn resolve_failed_regular_specifier(
+     if is_plain_css_file(from_file) && is_bare_style_subpath(specifier) {
+         return ResolveResult::Unresolvable(specifier.to_string());
+     }
++    if is_bare && let Some(base) = strip_vite_asset_query(specifier) {
++        return resolve_failed_bare_asset_query_specifier(
++            ctx,
++            from_file,
++            specifier,
++            base,
++            from_style || is_style_file(from_file),
++            matches_tsconfig_path_alias,
++        );
++    }
+     if is_bare && is_valid_package_name(specifier) {
+         return resolve_failed_bare_package_specifier(
+             ctx,
+@@ -2050,7 +2057,7 @@ mod tests {
+         resolve_tsconfig_extends_candidate, resolve_tsconfig_extends_path,
+         resolve_tsconfig_reference_path, serves_static_dir_mounts,
+         should_preserve_node_modules_style_file, specifier_matches_alias_prefix,
+-        static_dir_relative_path, static_mount_url_path, strip_url_suffix, tsconfig_extends_values,
++        static_dir_relative_path, static_mount_url_path, tsconfig_extends_values,
+         with_appended_extension, with_exact_extension,
+     };
+ 
+@@ -2369,23 +2376,6 @@ mod tests {
+         );
+     }
+ 
+-    // ---- strip_url_suffix (lines 419-423) ----
+-
+-    #[test]
+-    fn strip_url_suffix_removes_query_string() {
+-        assert_eq!(strip_url_suffix("./style.css?inline"), "./style.css");
+-    }
+-
+-    #[test]
+-    fn strip_url_suffix_removes_hash_fragment() {
+-        assert_eq!(strip_url_suffix("./page.html#section"), "./page.html");
+-    }
+-
+-    #[test]
+-    fn strip_url_suffix_passes_through_plain_specifier() {
+-        assert_eq!(strip_url_suffix("react"), "react");
+-    }
+-
+     // ---- static_mount_url_path ----
+ 
+     #[test]
+```
+
+**File**: `crates/graph/src/resolve/url_suffix.rs` (added, +131/-0)
+```diff
+@@ -0,0 +1,131 @@
++//! Query and fragment suffixes of import specifiers (`./a.css?inline`,
++//! `pkg/a.wasm?url`, `./page.html#top`).
++
++use std::path::Path;
++
++use super::path_info::is_valid_package_name;
++use super::types::{ResolveContext, ResolveResult};
++use super::workspace_alias::resolve_failed_bare_package_specifier;
++
++/// Return the specifier without its query string or hash fragment.
++pub(super) fn strip_url_suffix(specifier: &str) -> &str {
++    specifier
++        .find(['?', '#'])
++        .map_or(specifier, |idx| &specifier[..idx])
++}
++
++/// Vite asset query parameters that the bundler strips before it resolves
++/// the path (`?url`, `?raw`, `?worker&inline`, and similar).
++const VITE_ASSET_QUERY_PARAMS: &[&str] = &[
++    "url",
++    "raw",
++    "worker",
++    "sharedworker",
++    "inline",
++    "no-inline",
++    "init",
++];
++
++/// Return the path part of a specifier whose query holds only Vite asset
++/// query parameters.
++pub(super) fn strip_vite_asset_query(specifier: &str) -> Option<&str> {
++    let (base, query) = specifier.split_once('?')?;
++    (!base.is_empty()
++        && query
++            .split('&')
++            .all(|param| VITE_ASSET_QUERY_PARAMS.contains(&param)))
++    .then_some(base)
++}
++
++/// Classify a bare package subpath with a Vite asset query that the resolver
++/// could not resolve.
++///
++/// The workspace and alias fallbacks run first, the same as for the plain
++/// subpath, so a workspace package gets the same result with or without its
++/// `node_modules` link. The resolver strips the query, so an installed
++/// external package means the file is really missing. When the package is not
++/// installed, the import cannot be checked, so it credits the package the
++/// same as the plain subpath does. An unresolved result keeps the full
++/// specifier, so the report and `ignoreUnresolvedImports` match the text in
++/// the source file.
++pub(super) fn resolve_failed_bare_asset_query_specifier(
++    ctx: &ResolveContext<'_>,
++    from_file: &Path,
++    specifier: &str,
++    base: &str,
++    style_context: bool,
++    matches_tsconfig_path_alias: bool,
++) -> ResolveResult {
++    if !is_valid_package_name(base) {
++        return ResolveResult::Unresolvable(specifier.to_string());
++    }
++    match resolve_failed_bare_package_specifier(
++        ctx,
++        from_file,
++        base,
++        style_context,
++        matches_tsconfig_path_alias,
++    ) {
++        ResolveResult::Unresolvable(_) => ResolveResult::Unresolvable(specifier.to_string()),
++        ResolveResult::NpmPackage(package_name)
++            if is_package_installed(from_file, &package_name) =>
++        {
++            ResolveResult::Unresolvable(specifier.to_string())
++        }
++        resolved => resolved,
++    }
++}
++
++/// True when a `node_modules` directory in an ancestor of `from_file` holds
++/// the package, which is the lookup that Node and the resolver do.
++fn is_package_installed(from_file: &Path, package_name: &str) -> bool {
++    from_file
++        .ancestors()
++        .skip(1)
++        .any(|dir| dir.join("node_modules").join(package_name).is_dir())
++}
++
++#[cfg(test)]
++mod tests {
++    use super::{is_package_installed, strip_url_suffix, strip_vite_asset_query};
++
++    #[test]
++    fn strip_url_suffix_removes_query_string() {
++        assert_eq!(strip_url_suffix("./style.css?inline"), "./style.css");
++    }
++
++    #[test]
++    fn strip_url_suffix_removes_hash_fragment() {
++        assert_eq!(strip_url_suffix("./page.html#section"), "./page.html");
++    }
++
++    #[test]
++    fn strip_url_suffix_passes_through_plain_specifier() {
++        assert_eq!(strip_url_suffix("react"), "react");
++    }
++
++    #[test]
++    fn strip_vite_asset_query_accepts_known_params_only() {
++        assert_eq!(strip_vite_asset_query("pkg/a.wasm?url"), Some("pkg/a.wasm"));
++        assert_eq!(
++            strip_vite_asset_query("pkg/w.js?worker&inline"),
++            Some("pkg/w.js")
++        );
++        assert_eq!(strip_vite_asset_query("pkg/a.js"), None);
++        assert_eq!(strip_vite_asset_query("pkg/a.js?url&custom"), None);
++        assert_eq!(strip_vite_asset_query("pkg/a.js?"), None);
++        assert_eq!(strip_vite_asset_query("?url"), None);
++    }
++
++    #[test]
++    #[cfg_attr(miri, ignore)]
++    fn installed_package_is_found_in_an_ancestor_node_modules() {
++        let dir = tempfile::tempdir().expect("project");
++        let root = dir.path();
++        std::fs::create_dir_all(root.join("node_modules/@scope/pkg")).expect("package");
++        std::fs::create_dir_all(root.join("apps/web/src")).expect("source");
++        let importer = root.join("apps/web/src/index.ts");
++        assert!(is_package_installed(&importer, "@scope/pkg"));
++        assert!(!is_package_installed(&importer, "other-pkg"));
++    }
++}
 ```
 
 ---
 
-### Incident Patch 2: `0b961143` (2026-10-31)
-**Commit Message**: fix(nextjs): credit generateStaticParams in metadata routes (#4038)
+### Incident Patch 2: `4040f972` (2026-11-03)
+**Commit Message**: fix(vscode): keep sidebar groups open after a refresh (#4161)
 
-* fix(nextjs): credit generateStaticParams in metadata routes
+VS Code makes the id of a tree item from its label when the item has no id. The group labels show a count, for example "Unused Component Inputs (13)". When a refresh changes the count, the id changes and VS Code closes the group.
 
-Next.js calls generateStaticParams from a metadata route under a
-dynamic segment, such as app/blog/[slug]/opengraph-image.tsx, to
-prerender it. The shared metadata route export list credited the route
-segment config exports but not generateStaticParams, so dead-code
-reported it as unused in opengraph-image, twitter-image, icon,
-apple-icon, sitemap, manifest and robots.
+Each group item in the Unused Code, Health, Security and Runtime Coverage views now sets a stable id. VS Code then keeps the expansion state across refreshes.
 
-Add generateStaticParams to the shared list. dynamicParams and
-unrelated helper exports stay reportable.
+Closes #4090
 
-Signed-off-by: Vladimir Pirotskiy <[REDACTED_EMAIL]>
+Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
 
-* docs(nextjs): correct robots and manifest wording for generateStaticParams
+**File**: `changelog.d/fix-vscode-tree-keep-expanded.md` (added, +8/-0)
+```diff
+@@ -0,0 +1,8 @@
++### Fixed
++
++- **The VS Code sidebar keeps an open group open after a refresh.** Before, a
++  group such as `Unused Component Inputs (13)` closed when a refresh changed
++  the count in its label. Each group in the Unused Code, Health, Security and
++  Runtime Coverage views now has a stable id, so VS Code keeps the expansion
++  state.
++  (Closes [#4090](https://github.com/fallow-rs/fallow/issues/4090))
+```
 
-Next.js matches robots and manifest only at the app root, so these routes never sit under a dynamic segment. The changelog fragment and the code comment now say that the export is credited on every metadata route, and name only the routes that can be dynamic.
+**File**: `editors/vscode/src/coverageView.ts` (modified, +2/-0)
+```diff
+@@ -20,6 +20,8 @@ class CoverageGroupItem extends vscode.TreeItem {
+     readonly children: ReadonlyArray<CoverageLeafItem>,
+   ) {
+     super(`${label} (${children.length})`, vscode.TreeItemCollapsibleState.Collapsed);
++    // A stable id keeps the expansion state when a refresh changes the count in the label.
++    this.id = `coverageGroup:${label}`;
+     this.contextValue = "coverageGroup";
+     this.iconPath = new vscode.ThemeIcon(icon);
+   }
+```
+
+**File**: `editors/vscode/src/healthTreeView.ts` (modified, +2/-0)
+```diff
+@@ -34,6 +34,8 @@ class HealthSectionItem extends vscode.TreeItem {
+   ) {
+     const base = HEALTH_SECTION_LABELS[section];
+     super(count > 0 ? `${base} (${count})` : base, vscode.TreeItemCollapsibleState.Collapsed);
++    // A stable id keeps the expansion state when a refresh changes the count in the label.
++    this.id = `healthSection:${section}`;
+     this.contextValue = `healthSection.${section}`;
+     this.iconPath = new vscode.ThemeIcon(HEALTH_SECTION_ICONS[section]);
+   }
+```
+
+**File**: `editors/vscode/src/securityTreeView.ts` (modified, +2/-0)
+```diff
+@@ -62,6 +62,8 @@ class SecurityGroupItem extends vscode.TreeItem {
+     findings: ReadonlyArray<SecurityFindingItem>,
+   ) {
+     super(`${groupLabel} (${findings.length})`, vscode.TreeItemCollapsibleState.Collapsed);
++    // A stable id keeps the expansion state when a refresh changes the count in the label.
++    this.id = `securityGroup:${groupLabel}`;
+     this.findings = findings;
+     this.description = "security candidates to verify";
+     this.tooltip = [CANDIDATE_TOOLTIP_PREFIX, "", `${groupLabel}: ${findings.length}`].join("\n");
+```
+
+**File**: `editors/vscode/src/treeView.ts` (modified, +2/-0)
+```diff
+@@ -104,6 +104,8 @@ class CategoryItem extends vscode.TreeItem {
+       `${ISSUE_CATEGORY_LABELS[category]} (${issues.length})`,
+       vscode.TreeItemCollapsibleState.Collapsed,
+     );
++    // A stable id keeps the expansion state when a refresh changes the count in the label.
++    this.id = `category:${category}`;
+     this.issues = issues;
+     this.contextValue = "category";
+     this.iconPath = new vscode.ThemeIcon(CATEGORY_ICONS[category] ?? "warning");
+```
+
+**File**: `editors/vscode/test/coverageView.test.ts` (added, +38/-0)
+```diff
+@@ -0,0 +1,38 @@
++import { describe, expect, it, vi } from "vitest";
++
++vi.mock("vscode", async () => {
++  const { createTreeViewVscodeMock } = await import("./vscodeTreeMock.js");
++  return createTreeViewVscodeMock("/workspace");
++});
++
++import type { TestTreeItem } from "./vscodeTreeMock.js";
++import { RuntimeCoverageTreeProvider } from "../src/coverageView.js";
++import type { RuntimeCoverageHotPath, RuntimeCoverageReport } from "../src/types.js";
++
++const hotPath = (name: string): RuntimeCoverageHotPath => ({
++  id: `fallow:hot:${name}`,
++  path: "src/a.ts",
++  function: name,
++  line: 1,
++  end_line: 0,
++  invocations: 1,
++  percentile: 0,
++});
++
++const report = (hotPaths: ReadonlyArray<RuntimeCoverageHotPath>): RuntimeCoverageReport =>
++  ({ hot_paths: hotPaths, findings: [] }) as unknown as RuntimeCoverageReport;
++
++describe("RuntimeCoverageTreeProvider", () => {
++  it("keeps a stable group id when the group count changes", () => {
++    const provider = new RuntimeCoverageTreeProvider();
++    provider.update(report([hotPath("a")]));
++    const before = (provider.getChildren() as TestTreeItem[])[0];
++
++    provider.update(report([hotPath("a"), hotPath("b")]));
++    const after = (provider.getChildren() as TestTreeItem[])[0];
++
++    expect(after?.label).toBe("Hot Paths (2)");
++    expect(before?.id).toBeDefined();
++    expect(after?.id).toBe(before?.id);
++  });
++});
+```
+
+**File**: `editors/vscode/test/healthTreeView.test.ts` (modified, +19/-0)
+```diff
+@@ -247,3 +247,22 @@ describe("HealthTreeProvider file-length findings", () => {
+     expect(complexityTargetOf(row as never)).toBeUndefined();
+   });
+ });
++
++describe("HealthTreeProvider section ids", () => {
++  it("keeps a stable section id when the section count changes", () => {
++    const provider = new HealthTreeProvider();
++    provider.update(hiddenCouplingReport());
++    const before = (provider.getChildren() as TestTreeItem[])[0];
++
++    const report = hiddenCouplingReport() as unknown as {
++      change_coupling: { total_pairs: number };
++    };
++    report.change_coupling.total_pairs = 4;
++    provider.update(report as unknown as HealthOutput);
++    const after = (provider.getChildren() as TestTreeItem[])[0];
++
++    expect(after?.label).toBe("Hidden Change Coupling (4)");
++    expect(before?.id).toBeDefined();
++    expect(after?.id).toBe(before?.id);
++  });
++});
+```
+
+**File**: `editors/vscode/test/securityTreeView.test.ts` (modified, +24/-0)
+```diff
+@@ -263,4 +263,28 @@ describe("SecurityTreeProvider", () => {
+ 
+     expect(provider.getChildren()).toEqual([]);
+   });
++
++  it("keeps a stable group id when the finding count changes", () => {
++    const sink = (line: number): SecurityFindingInput => ({
++      kind: "tainted-sink",
++      category: "dangerous-html",
++      cwe: 79,
++      path: "src/app.tsx",
++      line,
++      col: 4,
++      evidence: "innerHTML reaches req.query.html",
++      trace: [],
++      actions: [],
++    });
++    const provider = new SecurityTreeProvider();
++    provider.update(result([sink(1)]));
++    const before = (provider.getChildren() as TestTreeItem[])[0];
++
++    provider.update(result([sink(1), sink(2)]));
++    const after = (provider.getChildren() as TestTreeItem[])[0];
++
++    expect(after?.label).toBe("dangerous-html (CWE-79) (2)");
++    expect(before?.id).toBeDefined();
++    expect(after?.id).toBe(before?.id);
++  });
+ });
+```
+
+---
+
+### Incident Patch 3: `0b835ae9` (2026-11-03)
+**Commit Message**: fix(audit): count @effect/vitest tests in weakened-tests (#4167)
+
+* fix(audit): count @effect/vitest tests in weakened-tests
+
+The removed-tests check counted it.effect(...) as zero tests, so a move from it(...) to it.effect(...) gave a false finding.
+
+Closes #4095
+
+Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
+
+* test(audit): check that effect members need a test root
 
 Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
 
 ---------
 
-Signed-off-by: Vladimir Pirotskiy <[REDACTED_EMAIL]>
 Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
-Co-authored-by: Bart Waardenb
 
-**File**: `changelog.d/fix-nextjs-metadata-route-generate-static-params.md` (added, +3/-0)
+**File**: `changelog.d/fix-effect-vitest-test-cases.md` (added, +4/-0)
 ```diff
-@@ -0,0 +1,3 @@
+@@ -0,0 +1,4 @@
 +### Fixed
 +
-+- **`fallow dead-code` no longer reports `generateStaticParams` in a Next.js metadata route as an unused export.** Next.js calls it to prerender an `opengraph-image`, `twitter-image`, `icon`, `apple-icon` or `sitemap` route under a dynamic segment, such as `app/blog/[slug]/opengraph-image.tsx`. It is now credited on every metadata route, together with the route segment config exports (`dynamic`, `revalidate`, `fetchCache`, `runtime`, `preferredRegion`, `maxDuration`). `dynamicParams` and unrelated helper exports stay reportable.
++- **`fallow audit` counts `@effect/vitest` tests.** The `weakened-tests (removed-tests)` check now counts `it.effect`, `it.live`, `it.scoped`, `it.scopedLive` and `it.prop` as test cases. It also counts chains such as `it.effect.skip`, `it.effect.each` and `it.effect.prop`. A move from `it(...)` to `it.effect(...)` no longer gives a removed-tests finding. `it.layer` and `it.flakyTest` do not register a test, so the check does not count them.
++  (Closes [#4095](https://github.com/fallow-rs/fallow/issues/4095))
 ```
 
-**File**: `crates/core/src/plugins/nextjs.rs` (modified, +7/-0)
+**File**: `crates/api/src/diff_risk/text.rs` (modified, +20/-0)
 ```diff
-@@ -86,10 +86,16 @@ const INSTRUMENTATION_EXPORTS: &[&str] = &["register", "onRequestError"];
- const INSTRUMENTATION_CLIENT_EXPORTS: &[&str] = &["onRouterTransitionStart"];
- const MDX_COMPONENT_EXPORTS: &[&str] = &["useMDXComponents"];
- 
-+// Exports Next.js re-exports from every metadata route into the generated route
-+// handler. `generateStaticParams` prerenders a route under a dynamic segment,
-+// such as `app/blog/[slug]/opengraph-image.tsx`. Next.js matches `robots` and
-+// `manifest` only at the app root, so there the export has no effect, but
-+// crediting it is still safe. The rest is route segment config.
- macro_rules! metadata_route_exports {
-     ($($export:literal),* $(,)?) => {
-         &[
-             $($export,)*
-+            "generateStaticParams",
-             "dynamic",
-             "revalidate",
-             "fetchCache",
-@@ -579,6 +585,7 @@ mod tests {
-                 "runtime",
-                 "preferredRegion",
-                 "maxDuration",
-+                "generateStaticParams",
-             ] {
-                 assert!(
-                     used.contains(&config_export),
-```
-
-**File**: `crates/core/tests/integration_test/frameworks.rs` (modified, +51/-0)
-```diff
-@@ -173,6 +173,57 @@ fn nextjs_special_file_exports_are_not_flagged() {
+@@ -34,6 +34,14 @@ const TEST_CASE_MEMBERS: &[&str] = &[
+     "fixme",
+     "skipIf",
+     "runIf",
++    // `@effect/vitest`: `it.effect`, `it.live`, `it.scoped`, `it.scopedLive`
++    // and the property test `it.prop`. `it.layer` and `it.flakyTest` do not
++    // register a test, so they stay out.
++    "effect",
++    "live",
++    "scoped",
++    "scopedLive",
++    "prop",
+ ];
+ /// Members of `expect` that are an assertion (`expect.soft(x)`).
+ const EXPECT_ASSERTION_MEMBERS: &[&str] = &["soft", "poll"];
+@@ -662,6 +670,18 @@ mod tests {
+         assert_eq!(test_case_count(src), 3);
      }
- }
  
-+/// Next.js re-exports every named export of a metadata image route into the
-+/// generated route handler, so a `generateStaticParams` next to the image
-+/// default export is read by the framework when the route sits under a dynamic
-+/// segment. Only the unrelated helper stays reportable.
-+#[test]
-+fn nextjs_metadata_image_route_generate_static_params_is_not_flagged() {
-+    let root = fixture_path("nextjs-project");
-+    let config = create_config(root.clone());
-+    let results = fallow_core::analyze(&config).expect("analysis should succeed");
-+
-+    let unused_exports: Vec<(String, String)> = results
-+        .unused_exports
-+        .iter()
-+        .map(|e| {
-+            (
-+                e.export
-+                    .path
-+                    .strip_prefix(&root)
-+                    .unwrap_or(&e.export.path)
-+                    .to_string_lossy()
-+                    .replace('\\', "/"),
-+                e.export.export_name.clone(),
-+            )
-+        })
-+        .collect();
-+
-+    for file in [
-+        "src/app/blog/[slug]/opengraph-image.tsx",
-+        "src/app/blog/[slug]/twitter-image.tsx",
-+        "src/app/blog/[slug]/icon.tsx",
-+        "src/app/blog/[slug]/apple-icon.tsx",
-+    ] {
-+        for export in ["default", "size", "contentType", "generateStaticParams"] {
-+            assert!(
-+                !unused_exports
-+                    .iter()
-+                    .any(|(unused_file, unused_export)| unused_file == file
-+                        && unused_export == export),
-+                "{file}:{export} should be treated as framework-used, found: {unused_exports:?}"
-+            );
-+        }
-+        assert!(
-+            unused_exports
-+                .iter()
-+                .any(|(unused_file, unused_export)| unused_file == file
-+                    && unused_export == "unusedImageHelper"),
-+            "{file}:unusedImageHelper should still be reported, found: {unused_exports:?}"
-+        );
++    #[test]
++    fn test_case_count_counts_effect_vitest_members() {
++        let src = "it.effect('a', f);\nit.live('b', f);\nit.scoped('c', f);\nit.scopedLive('d', f);\nit.prop('e', arbs, f);\nit.effect.skip('f', f);\nit.effect.each([1])('g', f);\nit.effect.prop('h', arbs, f);\nit.layer(Live)('i', f);\nit.flakyTest(eff);\n";
++        assert_eq!(test_case_count(src), 8);
 +    }
-+}
 +
- #[test]
- fn nextjs_config_referenced_dependencies_are_not_flagged_unused() {
-     let root = fixture_path("nextjs-config-deps");
-```
-
-**File**: `tests/fixtures/nextjs-project/src/app/blog/[slug]/apple-icon.tsx` (added, +12/-0)
-```diff
-@@ -0,0 +1,12 @@
-+export const size = { width: 32, height: 32 };
-+export const contentType = "image/png";
++    #[test]
++    fn test_case_count_needs_a_test_root_for_effect_vitest_members() {
++        let src = "foo.live('a', f);\ndescribe.scoped('b', f);\nlayer.effect('c', f);\n";
++        assert_eq!(test_case_count(src), 0);
++    }
 +
-+export function generateStaticParams() {
-+  return [{ slug: "a" }];
-+}
-+
-+export const unusedImageHelper = "unused";
-+
-+export default function Icon() {
-+  return new Response("icon");
-+}
-```
-
-**File**: `tests/fixtures/nextjs-project/src/app/blog/[slug]/icon.tsx` (added, +12/-0)
-```diff
-@@ -0,0 +1,12 @@
-+export const size = { width: 32, height: 32 };
-+export const contentType = "image/png";
-+
-+export function generateStaticParams() {
-+  return [{ slug: "a" }];
-+}
-+
-+export const unusedImageHelper = "unused";
-+
-+export default function Icon() {
-+  return new Response("icon");
-+}
-```
-
-**File**: `tests/fixtures/nextjs-project/src/app/blog/[slug]/opengraph-image.tsx` (added, +13/-0)
-```diff
-@@ -0,0 +1,13 @@
-+export const alt = "Blog post";
-+export const size = { width: 1200, height: 630 };
-+export const contentType = "image/png";
-+
-+export function generateStaticParams() {
-+  return [{ slug: "a" }];
-+}
-+
-+export const unusedImageHelper = "unused";
-+
-+export default function Image() {
-+  return new Response("image");
-+}
-```
-
-**File**: `tests/fixtures/nextjs-project/src/app/blog/[slug]/twitter-image.tsx` (added, +13/-0)
-```diff
-@@ -0,0 +1,13 @@
-+export const alt = "Blog post";
-+export const size = { width: 1200, height: 630 };
-+export const contentType = "image/png";
-+
-+export function generateStaticParams() {
-+  return [{ slug: "a" }];
-+}
-+
-+export const unusedImageHelper = "unused";
-+
-+export default function Image() {
-+  return new Response("image");
-+}
-```
-
----
-
-### Incident Patch 3: `8082fffe` (2026-10-31)
-**Commit Message**: fix(ship): stop the PR wait when a fork run waits for approval (#4052)
-
-GitHub does not start the workflows of some pull requests from a fork until a maintainer approves them. Such a run is complete with the conclusion action_required and registers no checks. ship-wait-checks --pr skipped completed runs, so it reported all checks passed on the few workflows that ran, while CI never started.
-
-A run that waits for approval is now an approval check. The wait stops at once with exit code 5 and lists each run with its link. A failed check still wins. The ship skill says to read the code before the approval and to approve again after each push of the fork.
-
-Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
-
-**File**: `.agents/skills/ship/SKILL.md` (modified, +8/-0)
-```diff
-@@ -191,6 +191,14 @@ Use these scripts for each pull request, one at a time:
-    conflicts with its base. The script then stops with exit code 3.
-    Update the branch, push, and wait again.
- 
-+   GitHub does not start the workflows of some pull requests from a fork
-+   until a maintainer approves them. Pinned auto-merge then never merges,
-+   and the few checks that ran can look complete. The script stops with
-+   exit code 5 and lists each run. Read all of the code of the pull request
-+   first, because the approved runs execute it. Then approve each listed
-+   run with `gh api -X POST repos/<owner>/<repo>/actions/runs/<run id>/approve`,
-+   and wait again. Each new push of the fork needs a new approval.
-+
-    The script compares each failed check with the same check name on the
-    newest completed run of `main`. A check that also fails on `main` gets
-    the line `FAIL (also on main <sha>)`. When all failed checks also fail
-```
-
-**File**: `.claude/skills/ship/SKILL.md` (modified, +8/-0)
-```diff
-@@ -192,6 +192,14 @@ Use these scripts for each pull request, one at a time:
-    conflicts with its base. The script then stops with exit code 3.
-    Update the branch, push, and wait again.
- 
-+   GitHub does not start the workflows of some pull requests from a fork
-+   until a maintainer approves them. Pinned auto-merge then never merges,
-+   and the few checks that ran can look complete. The script stops with
-+   exit code 5 and lists each run. Read all of the code of the pull request
-+   first, because the approved runs execute it. Then approve each listed
-+   run with `gh api -X POST repos/<owner>/<repo>/actions/runs/<run id>/approve`,
-+   and wait again. Each new push of the fork needs a new approval.
-+
-    The script compares each failed check with the same check name on the
-    newest completed run of `main`. A check that also fails on `main` gets
-    the line `FAIL (also on main <sha>)`. When all failed checks also fail
-```
-
-**File**: `scripts/ship-wait-checks.mjs` (modified, +45/-5)
-```diff
-@@ -14,6 +14,10 @@
- // commit of origin/main when that commit contains the given commit. With
- // --pr, a failed check that also fails on main gets its own exit code, so a
- // ship step can wait for the fix on main instead of a fix on the branch.
-+// GitHub does not start the workflows of a pull request from a fork until a
-+// maintainer approves them. Such a run is complete with the conclusion
-+// action_required and has no checks, so with --pr the wait stops at once
-+// instead of a pass on the checks of the other workflows.
- 
- import { spawnSync } from "node:child_process";
- import { resolve } from "node:path";
-@@ -72,6 +76,9 @@ const SETTLE_MS = 10 * MINUTE;
- // right after a push the only check can be a skip, before ci.yml registers
- // its jobs.
- const PASS_BUCKET = "pass";
-+// A pull-request workflow run that waits for maintainer approval.
-+const APPROVAL_BUCKET = "approval";
-+const APPROVAL_CONCLUSION = "action_required";
- // GitHub creates all push runs of a commit together, and a new run is pending.
- // So a complete set of runs contains all push runs. The short settle time catches a
- // run that a completed run starts, for example through workflow_run.
-@@ -139,6 +146,10 @@ With --pr, path filters can start fewer checks than --min-checks. When the
- checks stay complete and unchanged for ${SETTLE_MS / MINUTE} minutes, the wait ends below the
- count.
- 
-+With --pr, the wait stops when a workflow run waits for maintainer approval,
-+which GitHub requires for some pull requests from a fork. No wait ends this
-+state: read the code of the pull request, approve the runs, and wait again.
-+
- With --pr, a set of checks without a passed check is not complete. Some
- workflows skip at once on each pull request, before the CI workflow starts
- its jobs. Such a set never passes. When it stays unchanged for ${SETTLE_MS / MINUTE} minutes,
-@@ -154,7 +165,7 @@ cancelled, or when --follow-main reaches the maximum count of moves, 2 for
- invalid input, failed reads for the full --error-window, a timeout, a failed read
- of ${FOLLOW_REF}, or an ${FOLLOW_REF} that does not contain the given commit,
- 3 when the pull request conflicts with its base branch, 4 when each failed
--check also fails on ${FOLLOW_BRANCH}.
-+check also fails on ${FOLLOW_BRANCH}, 5 when a workflow run waits for maintainer approval.
- 
- With --pr, the script compares each failed check with the newest completed
- run of the same check name on the newest ${MAIN_COMMIT_LIMIT} commits of ${FOLLOW_BRANCH}. A check that
-@@ -212,6 +223,9 @@ const countedStatus = (checks, unchangedMs, { requirePass, stableMs }) => {
-  * `unchangedMs` is the time since the check set last changed.
-  */
- const completedStatus = (checks, unchangedMs, options) => {
-+  if (hasBucket(checks, APPROVAL_BUCKET)) {
-+    return hasFailure(checks) ? "fail" : "approval";
-+  }
-   if (hasBucket(checks, "pending")) {
-     return null;
-   }
-@@ -240,8 +254,11 @@ const completedStatus = (checks, unchangedMs, options) => {
-  * can only end `settled` through `settleMs`. With `stableMs`, a complete set
-  * passes only after it stays unchanged for that time. A failed check fails
-  * the wait at once.
-+ * A check in the `approval` bucket ends the wait at once with the status
-+ * `approval`, because only a maintainer can start that run. A failed check
-+ * still wins.
-  * Returns `{ status, checks }` where `status` is `pass`, `settled`, `fail`,
-- * `conflict`, `timeout` or `error`. After a failed read of the checks, the
-+ * `approval`, `conflict`, `timeout` or `error`. After a failed read of the checks, the
-  * delay to the next read doubles from `intervalMs` up to `READ_RETRY_MAX_MS`.
-  * The status is `error` (with `readErrors` and `errorMs`) when the planned
-  * delays of the failed reads reach `errorWindowMs`, or when the deadline
-@@ -873,7 +890,7 @@ const readPrWorkflows = ({ head, repo }) => {
-     "--limit",
-     String(RUN_LIST_LIMIT),
-     "--json",
--    "databaseId,workflowDatabaseId,workflowName,status,url,headSha,event",
-+    "databaseId,workflowDatabaseId,workflowName,status,conclusion,url,headSha,event",
-   ];
-   if (repo !== null) args.push("--repo", repo);
-   const read = parseGhApi(spawnSync("gh", args, { encoding: "utf8" }));
-@@ -921,11 +938,23 @@ const requiredWorkflowSelector = ({ checks, registered, readRun, head }) => {
-   };
- };
- 
--/** Keep unregistered jobs pending without adding completed passes to the check count. */
-+/**
-+ * Keep unregistered jobs pending without adding completed passes to the check
-+ * count. A run that waits for approval registers no checks, so it counts in
-+ * every mode.
-+ */
- const pendingWorkflowChecks = (runs, { names, ...context }) => {
-   const selectRequired = requiredWorkflowSelector(context);
-   const checks = [];
-   for (const run of runs) {
-+    if (run.status === "completed" && run.conclusion === APPROVAL_CONCLUSION) {
-+      checks.push({
-+        name: `${run.workflowName} workflow (${run.databaseId})`,
-+        bucket: APPROVAL_BUCKET,
-+        lin
-```
-
-**File**: `scripts/ship-wait-checks.test.mjs` (modified, +45/-0)
-```diff
-@@ -377,6 +377,33 @@ test("a pull request that conflicts with its base stops the wait with exit code
-   assert.match(lines[0], /no pull_request workflows/u);
- });
- 
-+test("a workflow run that waits for maintainer approval stops the wait with exit code 5", async () => {
-+  const approval = check("CI workflow (300)", "approval");
-+  const script = scripted([
-+    { ok: true, checks: [check("Commitlint", "pass"), check("lint", "pending"), approval] },
-+  ]);
-+
-+  const result = await wait(script, { minChecks: 3 });
-+  const lines = [];
-+  const code = reportChecks(result, { label: "PR 7", minChecks: 3 }, (line) => lines.push(line));
-+
-+  assert.equal(result.status, "approval");
-+  assert.equal(script.reads(), 1);
-+  assert.equal(code, 5);
-+  assert.match(lines[0], /^PR 7: 1 workflow run waits for maintainer approval/u);
-+  assert.match(lines[1], /APPROVAL: CI workflow \(300\) https:\/\/example\.invalid\//u);
-+});
-+
-+test("a failed check wins over a run that waits for approval", async () => {
-+  const script = scripted([
-+    { ok: true, checks: [check("lint", "fail"), check("CI workflow (300)", "approval")] },
-+  ]);
-+
-+  const result = await wait(script);
-+
-+  assert.equal(result.status, "fail");
-+});
-+
- test("an unknown or mergeable state keeps the wait going", async () => {
-   const script = scripted([
-     { ok: true, checks: [] },
-@@ -743,6 +770,24 @@ test("the CLI waits for a queued PR workflow before its checks exist", fakeGhOpt
-   }
- });
- 
-+test("the CLI stops when a fork PR workflow waits for approval", fakeGhOptions, () => {
-+  for (const cliArgs of [[], ["--required"]]) {
-+    const result = runWithFakeGh(
-+      {
-+        selected: [check("CI", "pass")],
-+        rollups: [{ statusCheckRollup: [checkRun("Commitlint", "COMPLETED", "SUCCESS")] }],
-+        prRuns: [[prWorkflow({ status: "completed", conclusion: "action_required" })]],
-+      },
-+      cliArgs,
-+    );
-+
-+    assert.equal(result.status, 5, result.stdout + result.stderr);
-+    assert.match(result.stdout, /waits for maintainer approval/u);
-+    assert.match(result.stdout, new RegExp(`${RUN_URL}/300`, "u"));
-+    assert.equal(rollupReads(result.calls).length, 1);
-+  }
-+});
-+
- test("a PR with no check rollup waits for its queued workflow", fakeGhOptions, () => {
-   const result = runWithFakeGh({
-     selected: [],
+     #[test]
+     fn assertion_count_counts_expect_assert_and_should() {
+         let src = "expect(a).toBe(1);\nexpect.soft(b).toBe(2);\nassert.equal(c, 3);\nassert(d);\nx.should.equal(4);\nexpect.assertions(2);\n// expect(e)\n";
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4055** (2026-10-31): fix(mutation): skip a PATH file that cannot run (@BartWaardenburg)
-- **PR #4054** (2026-10-31): ci: run the fallow-graph Miri tests as three parallel shards (@BartWaardenburg)
-- **PR #4053** (2026-10-31): fix(mutation): look up a bare --runtime name on PATH (@BartWaardenburg)
-- **PR #4052** (2026-10-31): fix(ship): stop the PR wait when a fork run waits for approval (@BartWaardenburg)
-- **PR #4051** (2026-10-31): feat(mcp): add cloud section and compact text to inspect_target (@BartWaardenburg)
-- **PR #4050** (2026-10-31): fix(mutation): keep the test error of a failed dry-run test (@BartWaardenburg)
+- **PR #4181** (2026-11-03): fix(resolve): credit an uninstalled package for a Vite asset query import (@BartWaardenburg)
+- **PR #4167** (2026-11-03): fix(audit): count @effect/vitest tests in weakened-tests (@BartWaardenburg)
+- **PR #4166** (2026-11-03): refactor(report-protocol): share the gate map and the exit code constants (@BartWaardenburg)
+- **PR #4165** (2026-11-03): feat(mutation): check named tests with --kill-matrix-for (@BartWaardenburg)
+- **PR #4164** (2026-11-03): chore: check long .mjs and .ts files with fallow audit (@BartWaardenburg)
+- **PR #4163** (2026-11-03): fix(mutation): give the Vitest mutant to Node child processes (@BartWaardenburg)
 
 ---
 
@@ -2143,35 +2204,23 @@ Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. cloud): time limit on keychain calls and locked credentials file changes (#4042)
+## X. resolve): credit an uninstalled package for a Vite asset query import (#4181)
 
 **RULE**:
-When implementing operations in `changelog.d/fix-cloud-credentials-hardening.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in fallow-rs/fallow. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `changelog.d/fix-vite-asset-query-imports.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in fallow-rs/fallow. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `93d80b0e`: cloud): time limit on keychain calls and locked credentials file changes (#4042). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7cead47b`: resolve): credit an uninstalled package for a Vite asset query import (#4181). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog.d/fix-cloud-credentials-hardening.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog.d/fix-vite-asset-query-imports.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
 ### Fixed
 
-- **`fallow inspect --cloud` no longer waits for a locked keychain.** The
-  keychain read (`security` on macOS, `secret-tool` on Linux) now has a time
-  limit of 1 second. At the limit, Fallow stops the tool, reads the
-  credentials file, and reports `no_key` when no key is stored. In
-  `fallow cloud login` and `fallow cloud logout`, each keychain call has a
-  limit of 60 seconds, so a person can answer an unlock prompt.
-  (Closes [#4003](https://github.com/fallow-rs/fallow/issues/4003))
-- **`fallow cloud login` and `logout` no longer lose keys in the credentials
-  file.** A change to the file now holds an advisory lock on
-  `credentials.lock` in the same directory, so two logins at the same time
-  for two API URLs keep both keys. When the file does not parse, the command
-  stops with a message that names the file and does not change the file.
-  (Closes [#4004](https://github.com/fallow-rs/fallow/issues/4004))
+- **`fallow dead-code` no longer reports a package import with a Vite asset query as unresolved when the package is not installed.** An import such as `pkg/dist/engine.wasm?url` or `pkg/build/worker.mjs?worker&inline` was an unresolved import before `node_modules` existed, and the package did not count as used. Fallow now treats the import the same as the plain subpath: the package counts as used and no finding appears. The supported query parameters are `url`, `raw`, `worker`, `sharedworker`, `inline`, `no-inline` and `init`. A query import of a workspace package credits the workspace source file, with or without the `node_modules` link. A file that is missing from an installed package is still an unresolved import. The graph cache now records whether `node_modules` exists at the project root and at each workspace root, so an install after a cached run does not replay the old result. The graph cache version changed, so a graph cache from an earlier run does not replay the old result.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2181,4 +2230,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `93d80b0e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7cead47b` are properly handled with clean fallback behavior.

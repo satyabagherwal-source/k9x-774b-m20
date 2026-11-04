@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md`  
 > **Source**: github ([https://github.com/dragonflydb/dragonfly](https://github.com/dragonflydb/dragonfly))  
-> **Source Version**: `1d2c21aa`  
+> **Source Version**: `505d8729`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T03:59:08.457Z  
+> **Timestamp**: 2026-11-03T18:02:35.855Z  
 > **Learning ID**: `learn-github-dragonflydb-dragonfly`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dragonflydb/dragonfly](https://github.com/dragonflydb/dragonfly))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T03:59:07.614Z  
+> **Harvest Timestamp**: 2026-11-03T18:02:35.428Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A modern replacement for Redis and Memcached
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 31835 stars
+- **Stars / Engagement**: 31842 stars
 
 ---
 
@@ -2321,765 +2321,865 @@ class Segment {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1d2c21aa` (2026-10-30)
-**Commit Message**: feat: cancel save op if loading starts (#8505)
+### Incident Patch 1: `98a439dc` (2026-11-02)
+**Commit Message**: fix(tiering): fix small-bins leak and stash-cancellation on failure (#8636)
 
-* feat: cancel save op if loading starts
+- SmallBins::Delete now erases a pending bin once its last key is
+  deleted, instead of leaving an empty map behind. Those empty entries
+  were never reclaimed (the cancelled IO skips NotifyStashed) and also
+  slowed the linear scan in Delete.
+- StashPrimeValue: when a filled small bin fails PrepareAndStash before
+  it is serialized, recover its keys via the new ReportStashFailed
+  instead of ReportStashAborted, which would extract() a bin id that
+  SmallBins never tracked as pending (undefined behavior).
+- Add ReportStashFailed and guard ReportStashAborted against empty nodes.
+- Deduplicate the key-draining loop shared by ReportStashAborted and
+  ReportStashFailed into a DrainKeys helper.
+- Expose pending_bins_cnt in SmallBins::Stats and add unit tests.
 
-**File**: `.github/actions/lint-test-chart/action.yml` (modified, +1/-1)
+**File**: `src/server/tiered_storage.cc` (modified, +10/-2)
 ```diff
-@@ -14,7 +14,7 @@ runs:
-         with:
-           version: "v3.21.0"
+@@ -530,13 +530,14 @@ void TieredStorage::StashPrimeValue(DbIndex dbid, string_view key, const StashDe
+   DCHECK_GT(est_size, 0u);
  
--      - uses: actions/setup-python@v5
-+      - uses: actions/setup-python@v7
-         with:
-           python-version: "3.12"
-           check-latest: true
-```
-
-**File**: `helio` (modified, +1/-1)
-```diff
-@@ -1 +1 @@
--Subproject commit 961a34da652ef91ec5ced9c43b70af24473d5478
-+Subproject commit 0007fdb8a94bd3bf2a9f92a1fa8e5c647a1eb151
-```
-
-**File**: `src/server/detail/save_stages_controller.cc` (modified, +41/-15)
-```diff
-@@ -59,6 +59,18 @@ void ExtendDfsFilenameWithShard(int shard, string_view extension, fs::path* file
-   SetExtension(absl::Dec(shard, absl::kZeroPad4), extension, filename);
- }
- 
-+// Closing a cloud file publishes it, so abort the upload if the save failed or Close() fails.
-+error_code CloseCloudFile(io::WriteFile* file, ExecutionState* cntx) {
-+  error_code ec = cntx->IsRunning() ? file->Close() : make_error_code(errc::operation_canceled);
-+  if (ec) {
-+    // Abort can yield, so stop other snapshots before starting cleanup.
-+    cntx->ReportError(ec);
-+    error_code abort_ec = file->Abort();
-+    LOG_IF(WARNING, abort_ec) << "Failed to abort snapshot upload: " << abort_ec.message();
-+  }
-+  return ec;
-+}
-+
- }  // namespace
- 
- GenericError ValidateFilename(const fs::path& filename, bool new_version) {
-@@ -119,11 +131,16 @@ GenericError RdbSnapshot::Start(SaveMode save_mode, const std::string& path,
-   saver_.reset(
-       new RdbSaver(io_sink_.get(), save_mode, align_writes, snapshot_id, DflyVersion::CURRENT_VER));
- 
--  return saver_->SaveHeader(std::move(glob_data));
-+  auto ec = saver_->SaveHeader(std::move(glob_data));
-+  if (ec) {
-+    cntx_->ReportError(ec);
-+    Close();  // Aborts the cloud upload because the save has failed.
-+  }
-+  return ec;
- }
- 
- error_code RdbSnapshot::SaveBody() {
--  return saver_->SaveBody(cntx_);
-+  return saver_->SaveBody(*cntx_);
- }
- 
- error_code RdbSnapshot::WaitSnapshotInShard(EngineShard* shard) {
-@@ -152,18 +169,19 @@ error_code RdbSnapshot::Close() {
- #endif
- 
+   tiering::OpManager::PendingId id;
++  std::optional<tiering::SmallBins::FilledBin> bin;
    error_code ec;
-+  auto* file = static_cast<io::WriteFile*>(io_sink_.get());
  
-   // S3 implementation is stack hungry. We use a fiber to close the file to
-   // avoid wasting stack space.
-   auto fb = ProactorBase::me()->LaunchFiber(
-       fb2::Launch::post, boost::context::fixedsize_stack{40 * 1024}, "write_file_close",
--      [&] { ec = static_cast<io::WriteFile*>(io_sink_.get())->Close(); });
-+      [&] { ec = snapshot_storage_->IsCloud() ? CloseCloudFile(file, cntx_) : file->Close(); });
-   fb.Join();
-   return ec;
- }
- 
- void RdbSnapshot::StartInShard(EngineShard* shard) {
--  saver_->StartSnapshotInShard(false, &cntx_, shard);
-+  saver_->StartSnapshotInShard(false, cntx_, shard);
-   started_shards_.fetch_add(1, memory_order_relaxed);
- }
- 
-@@ -182,13 +200,13 @@ SaveStagesController::~SaveStagesController() {
- 
- std::optional<SaveInfo> SaveStagesController::Init() {
-   if (auto err = BuildFullPath(); err) {
--    shared_err_ = err;
-+    cntx_.ReportError(err);
-     return GetSaveInfo();
-   }
- 
-   snapshots_.resize(use_dfs_format_ ? shard_set->size() + 1 : 1);
-   for (auto& [snapshot, _] : snapshots_)
--    snapshot = make_unique<RdbSnapshot>(fq_threadpool_, snapshot_storage_.get());
-+    snapshot = make_unique<RdbSnapshot>(snapshot_storage_.get(), &cntx_);
- 
-   return {};
- }
-@@ -200,6 +218,11 @@ void SaveStagesController::Start() {
-     SaveRdb();
- }
- 
-+void SaveStagesController::Cancel() {
-+  cntx_.ReportError(make_error_code(errc::operation_canceled),
-+                    "Snapshot saving cancelled because server is loading");
-+}
-+
- void SaveStagesController::WaitAllSnapshots() {
-   if (use_dfs_format_) {
-     shard_set->RunBlockingInParallel([&](EngineShard* shard) { WaitSnapshotInShard(shard); });
-@@ -213,7 +236,7 @@ SaveInfo SaveStagesController::Finalize() {
-   RunStage(&SaveStagesController::CloseCb);
- 
-   if (auto err = FinalizeFileMovement(); err) {
--    shared_err_ = err;
-+    cntx_.ReportError(err);
-   }
- 
-   return GetSaveInfo();
-@@ -303,7 +326,7 @@ void SaveStagesController::SaveDfsSingle(EngineShard* shard, const std::string&
-   auto glob_data = RdbSaver::GetGlobalData(service_, is_summary);
- 
-   if (auto err = snapshot->Start(mode, filename, glob_data, snapshot_id); err) {
--    shared_err_ = err;
-+    cntx_.ReportError(err);
-     snapshot.reset();
+   if (OccupiesWholePages(est_size)) {  // large enough for own page
+     id = KeyRef(dbid, key);
+     auto serialize = absl::bind_front(&StashDescriptor::Serialize, &blobs);
+     ec = op_manager_->PrepareAndStash(id, est_size, serialize);
+-  } else if (auto bin = bins_->Stash(dbid, key, SerializeToString(blobs)); bin) {
++  } else if (bin = bins_->Stash(dbid, key, SerializeToString(blobs)); bin) {
+     id = bin->id;
+     auto serialize = absl::bind_front(&tiering::SmallBins::SerializeBin, bins_.get(), &*bin);
+     ec = op_manager_->PrepareAndStash(id, 4_KB, serialize);
+@@ -551,7 +552,14 @@ void TieredStorage::StashPrimeValue(DbIndex dbid, string_view key, const StashDe
+     bool to_log = ec != errc::file_too_large && ec != errc::operation_would_block &&
+                   ec != errc::operation_in_progress;
+     LOG_IF(ERROR, to_log) << "Stash failed: " << ec.message();
+-    visit([this](auto id) { op_manager_->ClearStashPending(id); }, id);
++    if (bin) {
++      // The bin filled up but PrepareAndStash failed before serializing it, so SmallBins never
++      // tracked it as pending. Recover its keys directly to clear their stash-pending flags.
++      for (const auto& bin_key : bins_->ReportStashFailed(std::move(*bin)))
++        op_manager_->ClearStashPending(bin_key);
++    } else {
++      visit([this](auto id) { op_manager_->ClearStashPending(id); }, id);
++    }
      return;
    }
-@@ -326,6 +349,7 @@ void SaveStagesController::SaveRdb() {
-   if (auto err =
-           snapshot->Start(SaveMode::RDB, filename, RdbSaver::GetGlobalData(service_, true), "");
-       err) {
-+    cntx_.ReportError(err);
-     snapshot.reset();
-     return;
-   }
-@@ -346,8 +370,8 @@ SaveInfo SaveStagesController::GetSaveInfo() {
-   info.save_time = start_time_;
-   info.duration_sec = GetCurrentSaveDuration();
  
--  if (shared_err_) {
--    info.error = *shared_err_;
-+  if (auto err = cntx_.GetError(); err) {
-+    info.error = err;
-     return info;
-   }
- 
-@@ -376,8 +400,7 @@ GenericError SaveStagesController::FinalizeFileMovement() {
-     return {};
-   DVLOG(1) << "FinalizeFileMovement start";
- 
--  // If the shared_err is set, the snapshot saving failed
--  bool has_error = bool(shared_err_);
-+  bool has_error = bool(cntx_.GetError());
- 
-   std::error_code ec;
-   for (const auto& [_, filename] : snapshots_) {
-@@ -428,20 +451,23 @@ GenericError SaveStagesController::BuildFullPath() {
- void SaveStagesController::SaveBody(unsigned index) {
-   CHECK(!use_dfs_format_ || index == shard_set->size());  // used in rdb and df summary file
-   if (auto
 ```
 
-**File**: `src/server/detail/save_stages_controller.h` (modified, +7/-5)
+**File**: `src/server/tiering/small_bins.cc` (modified, +28/-10)
 ```diff
-@@ -33,16 +33,15 @@ struct SaveStagesInputs {
-   std::string_view basename_;
-   Transaction* trans_;
-   Service* service_;
--  util::fb2::FiberQueueThreadPool* fq_threadpool_;
-   std::shared_ptr<SnapshotStorage> snapshot_storage_;
-   // true if the command that triggered this flow is bgsave. false otherwise.
-   bool is_bg_save_;
- };
+@@ -26,6 +26,15 @@ size_t StashedValueSize(string_view value) {
+   return SmallBins::kEntryHeaderSize + value.size();
+ }
  
- class RdbSnapshot {
-  public:
--  RdbSnapshot(util::fb2::FiberQueueThreadPool* fq_tp, SnapshotStorage* snapshot_storage)
--      : snapshot_storage_{snapshot_storage} {
-+  RdbSnapshot(SnapshotStorage* snapshot_storage, ExecutionState* cntx)
-+      : snapshot_storage_{snapshot_storage}, cntx_{cntx} {
-   }
- 
-   GenericError Start(SaveMode save_mode, const string& path, const RdbSaver::GlobalData& glob_data,
-@@ -76,7 +75,7 @@ class RdbSnapshot {
-   unique_ptr<RdbSaver> saver_;
-   RdbTypeFreqMap freq_map_;
- 
--  ExecutionState cntx_{};
-+  ExecutionState* cntx_;
- };
- 
- struct SaveStagesController : public SaveStagesInputs {
-@@ -88,6 +87,9 @@ struct SaveStagesController : public SaveStagesInputs {
-   std::optional<SaveInfo> Init();
-   void Start();
- 
-+  // Stops serialization even if initialization is still in progress. Thread safe.
-+  void Cancel();
++// Move all keys out of an entry map, emptying it.
++template <typename T> std::vector<DbKeyId> DrainKeys(EntryMap<T>& entries) {
++  std::vector<DbKeyId> out;
++  out.reserve(entries.size());
++  while (!entries.empty())
++    out.emplace_back(std::move(entries.extract(entries.begin()).key()));
++  return out;
++}
 +
-   ~SaveStagesController();
+ // The biggest a single entry (value + fixed header) can ever be.
+ constexpr size_t kMaxEntrySize = (2_KB - 1) + SmallBins::kEntryHeaderSize;
  
-   // Safe to call and no locks required
-@@ -134,7 +136,7 @@ struct SaveStagesController : public SaveStagesInputs {
-   time_t start_time_;
-   std::filesystem::path full_path_;
+@@ -122,14 +131,17 @@ SmallBins::KeySegmentList SmallBins::ReportStashed(BinId id, DiskSegment segment
+ }
  
--  AggregateGenericError shared_err_;
-+  ExecutionState cntx_;
-   std::vector<std::pair<std::unique_ptr<RdbSnapshot>, std::filesystem::path>> snapshots_;
- 
-   absl::flat_hash_map<string_view, size_t> rdb_name_map_;
-```
-
-**File**: `src/server/execution_state.h` (modified, +0/-3)
-```diff
-@@ -75,9 +75,6 @@ class GenericError {
-   std::string details_;
- };
- 
--// Thread safe utility to store the first non null generic error.
--using AggregateGenericError = AggregateValue<GenericError>;
+ std::vector<std::pair<DbIndex, std::string>> SmallBins::ReportStashAborted(BinId id) {
+-  std::vector<std::pair<DbIndex, std::string>> out;
 -
- // ExecutionState is a thread-safe utility for managing error reporting and cancellation for complex
- // tasks. There are 3 states: RUN, CANCELLED, ERROR RUN and CANCELLED are just a state without any
- // actions When report an error, only the first is stored, the next ones will be ignored. Then a
-```
-
-**File**: `src/server/main_service.cc` (modified, +6/-0)
-```diff
-@@ -2971,6 +2971,12 @@ GlobalState Service::SwitchState(GlobalState from, GlobalState to) {
-       DCHECK(db.IsLoadRefCountZero());
-     }
-   });
-+  if (to == GlobalState::LOADING) {
-+    // Cancel before client traversal can yield and let an overlapping save publish its files.
-+    server_family_.CancelSave();
-+    // Unblocking waits for in-flight connection migrations, so it can't run in Await() above.
-+    server_family_.UnblockAllClients();
-+  }
-   return prev;
- }
+   auto node = pending_bins_.extract(id);
+-  auto& entries = node.mapped();
+-  while (!entries.empty())
+-    out.emplace_back(std::move(entries.extract(entries.begin()).key()));
++  DCHECK(!node.empty()) << id;
++  if (node.empty())
++    return {};
  
-```
-
-**File**: `src/server/rdb_test.cc` (modified, +153/-0)
-```diff
-@@ -26,6 +26,8 @@ extern "C" {
- #include "facade/facade_test.h"  // needed to find operator== for RespExpr.
- #include "io/file.h"
- #include "io/file_util.h"
-+#include "server/detail/save_stages_controller.h"
-+#include "server/detail/snapshot_storage.h"
- #include "server/engine_shard_set.h"
- #include "server/error.h"
- #include "server/journal/serializer.h"
-@@ -609,6 +611,157 @@ TEST_F(RdbTest, SaveFlush) {
-   EXPECT_EQ(500000, k_v.second);
- }
- 
-+class SnapshotLoadingTest : public RdbTest, public WithParamInterface<pair<bool, bool>> {};
-+
-+TEST_P(SnapshotLoadingTest, CancelSave) {
-+  const auto [use_dfs_format, bg_save] = GetParam();
-+  const string_view format = use_dfs_format ? "DF" : "RDB";
-+  absl::FlagSaver flags;
-+  SetTestFlag("background_snapshotting", "true");
-+
-+  // Cancellation must preserve the previous successful snapshot and its metadata.
-+  ASSERT_EQ(Run({"SET", "original", "value"}), "OK");
-+  ASSERT_EQ(Run({"SAVE", format}), "OK");
-+  const auto previous_save = service_->server_family().GetLastSaveInfo();
-+  Run({"DEBUG", "POPULATE", "50000", "key", "256"});
-+
-+  const string basename = StrCat(absl::GetFlag(FLAGS_dbfilename), "_cancelled");
-+  RespExpr save_response;
-+  auto save_fb = pp_->at(1)->LaunchFiber([&] {
-+    save_response = Run({bg_save ? "BGSAVE" : "SAVE", format, basename});
-+  });
-+
-+  EXPECT_TRUE(WaitUntilCondition([&] { return service_->server_family().TEST_IsSaving(); },
-+                                 chrono::seconds(10)));
-+  EXPECT_EQ(service_->SwitchState(GlobalState::ACTIVE, GlobalState::LOADING), GlobalState::ACTIVE);
-+  EXPECT_THAT(Run({"SAVE", format}), ErrArg("LOADING Dragonfly is loading the dataset in memory"));
-+  // Returning to ACTIVE must not revive a save that was cancelled by the transition.
-+  EXPECT_EQ(service_->SwitchState(GlobalState::LOADING, GlobalState::ACTIVE), GlobalState::LOADING);
-+  save_fb.Join();
-+
-+  EXPECT_TRUE(WaitUntilCondition(
-+      [&] { return bool(service_->server_family().GetLastSaveInfo().last_error); },
-+      chrono::seconds(10)));
-+  const auto save_info = service_->server_family().GetLastSaveInfo();
-+  EXPECT_EQ(static_cast<error_code>(save_info.last_error),
-+            make_error_code(errc::operation_canceled));
-+  EXPECT_EQ(save_info.save_time, previous_save.save_time);
-+  EXPECT_EQ(save_info.file_name, previous_save.file_name);
-+  EXPECT_EQ(save_info.freq_map, previous_save.freq_map);
-+  EXPECT_FALSE(service_->server_family().TEST_IsSaving());
-+  if (bg_save) {
-+    EXPECT_EQ(save_response, "OK");
-+    EXPECT_FALSE(save_info.bgsave_in_progress);
-+    EXPECT_FALSE(save_info.last_bgsave_status);
-+  } else {
-+    EXPECT_THAT(save_response, ArgType(RespExpr::ERROR));
-+    EXPECT_THAT(save_response.GetString(), HasSubstr("Snapshot saving cancelled"));
-+  }
-+
-+  auto files = io::StatFiles(StrCat(basename, "*"));
-+  ASSERT_TRUE(files);
-+  EXPECT_TRUE(files->empty());
-+  EXPECT_TRUE(filesystem::exists(previous_save.file_name));
-+  // A subsequent save must be able to use the cancelled save's name.
-+  EXPECT_EQ(Run({"SAVE", format, basename}), "OK");
+-  return out;
++  return DrainKeys(node.mapped());
 +}
 +
-+INSTANTIATE_TEST_SUITE_P(SaveModes, SnapshotLoadingTest,
-+                         Values(pair{false, false}, pair{false, true}, pair{true, false},
-+                                pair{true, true}));
-+
-+namespace {
-+
-+// Cloud storage that counts the uploads it opened, published with Close() and aborted.
-+class TestCloudStorage : public detail::FileSnapshotStorage {
-+ public:
-+  enum Failure { kNone, kCancel, kOpenSummary, kWrite, kClose };
-+
-+  explicit TestCloudStorage(Failure failure) : FileSnapshotStorage(nullptr), failure_(failure) {
-+  }
-+
-+  io::Result<pair<io::Sink*, uint8_t>, GenericError> OpenWriteFile(const string& path) override {
-+    if (failure_ == kOpenSummary && path.find("summary") != string::npos)
-+      return nonstd::make_unexpected(GenericError(make_error_code(errc::io_error)));
-+    ++opened;
-+    return pair<io::Sink*, uint8_t>{new File(this), detail::FileType::CLOUD};
-+  }
-+
-+  bool IsCloud() const override {
-+    return true;
-+  }
-+
-+  atomic_uint opened = 0, published = 0, aborted = 0;
-+
-+ private:
-+  class File : public io::WriteFile {
-+   public:
-+    explicit File(TestCloudStorage* storage) : WriteFile(""), storage_(storage) {
-+    }
-+
-+    io::Result<size_t> WriteSome(const iovec* v, uint32_t len) override {
-+      if (storage_->failure_ == kWrite)
-+        return nonstd::make_unexpected(make_error_code(errc::io_error));
-+      size_t written = 0;
-+      for (uint32_t i = 0; i < len; ++i)
-+        written += v[i].iov_len;
-+      return written;
-+    }
-+
-+    error_code Close() override {
-+      if (storage_->failure_ == kClose)
-+        return make_error_code(errc::io_error);
-+      ++storage_->published;
-+      return {};
-+    }
-+
-+    error_code Abort() override {
-+      ++storage_->aborted;
-+      return {};
-+    }
-+
-+   private:
-+    TestCloudStorage* storage_;
-+  };
-+
-+  Failure failure_;
-+};
-+
-+}  // namespace
-+
-+// A failed or cancelled clou
-```
-
-**File**: `src/server/server_family.cc` (modified, +24/-11)
-```diff
-@@ -2095,21 +2095,30 @@ GenericError ServerFamily::DoSave(bool ignore_state) {
-                 ignore_state);
++std::vector<std::pair<DbIndex, std::string>> SmallBins::ReportStashFailed(FilledBin bin) {
++  DCHECK(!pending_bins_.contains(bin.id));
++  return DrainKeys(bin.entries_);
  }
  
-+void ServerFamily::CancelSave() {
-+  // Holding save_mu_ keeps cancellation from interleaving with Finalize() closing the files.
-+  util::fb2::LockGuard lk(save_mu_);
-+  if (save_controller_)
-+    save_controller_->Cancel();
-+}
-+
- GenericError ServerFamily::DoSaveCheckAndStart(const SaveCmdOptions& save_cmd_opts,
-                                                Transaction* trans, DoSaveCheckAndStartOpts opts) {
-   // TODO(#8410): with --aof, a save to the base's name overwrites the base.
-   auto [ignore_state, bg_save] = opts;
--  auto state = ServerState::tlocal()->gstate();
--
--  // In some cases we want to create a snapshot even if server is not active, f.e in takeover
--  if (!ignore_state && (state != GlobalState::ACTIVE && state != GlobalState::SHUTTING_DOWN)) {
--    return GenericError{make_error_code(errc::operation_in_progress),
--                        StrCat(GlobalStateName(state), " - can not save database")};
--  }
- 
-   std::shared_ptr<SaveStagesController> controller;
-   {
-     util::fb2::LockGuard lk(save_mu_);
-+    // Check under save_mu_, so a concurrent switch to LOADING either rejects this save here or
-+    // cancels it in CancelSave().
-+    auto state = ServerState::tlocal()->gstate();
-+
-+    // In some cases we want to create a snapshot even if server is not active, f.e in takeover
-+    if (!ignore_state && (state != GlobalState::ACTIVE && state != GlobalState::SHUTTING_DOWN)) {
-+      return GenericError{make_error_code(errc::operation_in_progress),
-+                          StrCat(GlobalStateName(state), " - can not save database")};
-+    }
-     if (save_controller_) {
-       return GenericError{make_error_code(errc::operation_in_progress),
-                           "SAVING - can not save database"};
-@@ -2127,7 +2136,7 @@ GenericError ServerFamily::DoSaveCheckAndStart(const SaveCmdOptions& save_cmd_op
- 
-     controller = make_shared<SaveStagesController>(detail::SaveStagesInputs{
-         save_cmd_opts.new_version, save_cmd_opts.cloud_uri, save_cmd_opts.basename, trans,
--        &service_, fq_threadpool_.get(), snapshot_storage, opts.bg_save});
-+        &service_, snapshot_storage, opts.bg_save});
-     save_controller_ = controller;
+ std::optional<SmallBins::BinId> SmallBins::Delete(DbIndex dbid, std::string_view key) {
+@@ -143,9 +155,14 @@ std::optional<SmallBins::BinId> SmallBins::Delete(DbIndex dbid, std::string_view
+     return std::nullopt;
    }
  
-@@ -2287,6 +2296,12 @@ void ServerFamily::CancelBlockingOnThread(std::function<OpStatus(ArgSlice)> stat
+-  for (auto& [id, keys] : pending_bins_) {
+-    if (keys.erase(make_pair(dbid, key)))
+-      return keys.empty() ? std::make_optional(id) : std::nullopt;
++  for (auto it = pending_bins_.begin(); it != pending_bins_.end(); ++it) {
++    if (it->second.erase(make_pair(dbid, key))) {
++      if (!it->second.empty())
++        return std::nullopt;
++      BinId id = it->first;
++      pending_bins_.erase(it);  // don't leave the drained bin behind
++      return id;
++    }
    }
+   return std::nullopt;
+ }
+@@ -187,7 +204,8 @@ SmallBins::Stats SmallBins::GetStats() const {
+                .stashed_entries_cnt = stats_.stashed_entries_cnt,
+                .stashed_entries_bytes = stats_.stashed_entries_bytes,
+                .current_bin_bytes = current_bin_.bytes_,
+-               .current_entries_cnt = current_bin_.entries_.size()};
++               .current_entries_cnt = current_bin_.entries_.size(),
++               .pending_bins_cnt = pending_bins_.size()};
  }
  
-+void ServerFamily::UnblockAllClients() {
-+  shard_set->pool()->AwaitFiberOnAll([this](util::ProactorBase*) {
-+    CancelBlockingOnThread([](ArgSlice) { return OpStatus::UNBLOCKED; });
-+  });
+ SmallBins::KeyHashDbList SmallBins::DeleteBin(DiskSegment segment, std::string_view value) {
+```
+
+**File**: `src/server/tiering/small_bins.h` (modified, +5/-0)
+```diff
+@@ -33,6 +33,7 @@ class SmallBins {
+     size_t stashed_entries_bytes = 0;
+     size_t current_bin_bytes = 0;
+     size_t current_entries_cnt = 0;
++    size_t pending_bins_cnt = 0;
+   };
+ 
+   using BinId = unsigned;
+@@ -76,6 +77,10 @@ class SmallBins {
+   // Report that a stash was aborted. Returns list of keys that the entry contained.
+   std::vector<std::pair<DbIndex, std::string>> ReportStashAborted(BinId id);
+ 
++  // Report that a filled bin could not be stashed before it was serialized.
++  // Returns list of keys that the bin contained.
++  std::vector<std::pair<DbIndex, std::string>> ReportStashFailed(FilledBin bin);
++
+   // Delete a key with pending io. Returns entry id if needs to be deleted.
+   std::optional<BinId> Delete(DbIndex dbid, std::string_view key);
+ 
+```
+
+**File**: `src/server/tiering/small_bins_test.cc` (modified, +48/-0)
+```diff
+@@ -159,4 +159,52 @@ TEST_F(SmallBinsTest, StashedEntriesBytes) {
+   EXPECT_EQ(bins_.GetStats().stashed_entries_cnt, 0u);
+ }
+ 
++TEST_F(SmallBinsTest, DeleteAllPendingKeysReleasesBin) {
++  // Fill a single bin and move it to the pending (in-flight) state via SerializeBin.
++  std::optional<SmallBins::FilledBin> bin;
++  unsigned i = 0;
++  for (; !bin; i++)
++    bin = bins_.Stash(0, absl::StrCat("k", i), absl::StrCat("v", i));
++  auto [id, data] = Serialize(*bin);
++
++  EXPECT_EQ(bins_.GetStats().pending_bins_cnt, 1u);
++
++  // Delete every key of the in-flight bin. Only the final delete should report the bin id.
++  std::optional<SmallBins::BinId> reported;
++  for (unsigned j = 0; j < i; j++) {
++    auto res = bins_.Delete(0, absl::StrCat("k", j));
++    if (res) {
++      EXPECT_FALSE(reported) << "bin id reported more than once";
++      reported = res;
++    }
++  }
++
++  ASSERT_TRUE(reported);
++  EXPECT_EQ(*reported, id);
++  // The now-empty pending entry must be released, otherwise empty maps pile up forever.
++  EXPECT_EQ(bins_.GetStats().pending_bins_cnt, 0u);
 +}
 +
- string GetPassword() {
-   string flag = GetFlag(FLAGS_requirepass);
-   if (!flag.empty()) {
-@@ -3808,9 +3823,7 @@ void ServerFamily::ReplicaOfInternal(facade::ParsedArgs args, CommandContext* cm
-   replica_ = new_replica;
-   SetMasterFlagOnAllThreads(false);
-   // Blocked writers would otherwise consume elements applied from the replication stream.
--  shard_set->pool()->AwaitFiberOnAll([this](util::ProactorBase*) {
--    CancelBlockingOnThread([](ArgSlice) { return OpStatus::UNBLOCKED; });
--  });
-+  UnblockAllClients();
- 
-   if (on_error == ActionOnConnectionFail::kReturnOnError) {
-     replica_->StartMainReplicationFiber(last_master_data);
++TEST_F(SmallBinsTest, ReportStashFailedReturnsAllKeys) {
++  // A bin that filled up but failed to stash before serialization is never tracked as pending.
++  std::optional<SmallBins::FilledBin> bin;
++  unsigned i = 0;
++  for (; !bin; i++)
++    bin = bins_.Stash(0, absl::StrCat("k", i), absl::StrCat("v", i));
++
++  EXPECT_EQ(bins_.GetStats().pending_bins_cnt, 0u);  // not serialized yet
++
++  auto keys = bins_.ReportStashFailed(std::move(*bin));
++  sort(keys.begin(), keys.end());
++
++  // The key that triggers the fill opens a new current bin, so the filled bin holds k0..k(i-2).
++  EXPECT_EQ(keys.size(), i - 1);
++  for (unsigned j = 0; j + 1 < i; j++) {
++    std::pair<DbIndex, std::string> needle{0, absl::StrCat("k", j)};
++    EXPECT_TRUE(binary_search(keys.begin(), keys.end(), needle)) << j;
++  }
++  // Recovering a failed bin must not register it as pending.
++  EXPECT_EQ(bins_.GetStats().pending_bins_cnt, 0u);
++}
++
+ }  // namespace dfly::tiering
 ```
 
 ---
 
-### Incident Patch 2: `df32b01a` (2026-10-30)
-**Commit Message**: refactor: improve GetSlotInfo performance (#8715)
+### Incident Patch 2: `71dcd511` (2026-11-03)
+**Commit Message**: fix(ci-dashboard): add private repo links (#8640)
 
-* refactor: improve GetSlotInfo performance
+- Fetch and link issues from dragonflydb/dataplane-private alongside the
+public issues and PRs from dragonflydb/dragonfly.
 
-**File**: `src/server/cluster/cluster_family.cc` (modified, +60/-46)
+- Remove the 500-record limit so closed issues and PRs cover the full
+180 days. Fetch all open records and show progress while fetching.
+
+- Show each link's repository and make the test column narrower so issue
+and PR links have more room.
+
+- Use a token that can read both repositories and remove the workflow
+artifact. The dashboard is published to the private GCS bucket.
+
+- Add tests for both repositories, private issue details, issue number
+  matching, and fetching more than 500 records.
+
+Fixes #8608
+
+Signed-off-by: Gil Levkovich <[REDACTED_EMAIL]>
+
+**File**: `.github/workflows/ci-test-dashboard.yml` (modified, +9/-9)
 ```diff
-@@ -8,6 +8,7 @@
- #include <absl/strings/ascii.h>
- #include <absl/strings/str_cat.h>
+@@ -91,18 +91,18 @@ jobs:
+             "${DASHBOARD_ROOT}/site/data"
  
-+#include <algorithm>
- #include <memory>
- #include <mutex>
- #include <string>
-@@ -651,17 +652,20 @@ void ClusterFamily::DflyClusterGetSlotInfo(CmdArgParser parser, CommandContext*
- 
-   RETURN_ON_PARSE_ERROR(parser, cmd_cntx);
- 
--  vector<std::pair<SlotId, SlotStats>> slots_stats;
-+  // Keep the requested ranges unexpanded, so memory does not grow with the reply size.
-+  vector<SlotRange> ranges;
-+  size_t total_slots = 0;
-   while (parser.HasNext()) {
-     auto arg = parser.Next<std::string_view>();
-+    uint32_t start_slot, end_slot;
-+
-     // Check if argument contains a dash for range notation (e.g., "1-100")
-     size_t dash_pos = arg.find('-');
-     if (dash_pos != std::string_view::npos && dash_pos > 0) {
-       // Parse as range: start-end
-       std::string_view start_str = arg.substr(0, dash_pos);
-       std::string_view end_str = arg.substr(dash_pos + 1);
- 
--      uint32_t start_slot, end_slot;
-       if (!absl::SimpleAtoi(start_str, &start_slot) || !absl::SimpleAtoi(end_str, &end_slot)) {
-         return cmd_cntx->SendError("Invalid slot range format");
-       }
-@@ -674,65 +678,75 @@ void ClusterFamily::DflyClusterGetSlotInfo(CmdArgParser parser, CommandContext*
-       if (start_slot > end_slot) {
-         std::swap(start_slot, end_slot);
-       }
+       # Create data/issue-links.json containing related issue/PR/assignee lookup data.
++      # CI_DASHBOARD_GITHUB_TOKEN must read issues in both repos and PRs in dragonfly.
+       - name: Link tests to GitHub issues and pull requests
+         shell: bash
+         env:
+-          GITHUB_TOKEN: ${{ github.token }}
+-        run: python3 "${DASHBOARD_ROOT}/sync_issue_links.py" "${DASHBOARD_ROOT}/site/data"
 -
--      for (uint32_t sid = start_slot; sid <= end_slot; ++sid) {
--        slots_stats.emplace_back(sid, SlotStats{});
--      }
-     } else {
-       // Parse as single slot id
--      uint32_t sid;
--      if (!absl::SimpleAtoi(arg, &sid)) {
-+      if (!absl::SimpleAtoi(arg, &start_slot)) {
-         return cmd_cntx->SendError(kInvalidIntErr);
-       }
--      if (sid > kMaxSlotNum) {
-+      if (start_slot > kMaxSlotNum) {
-         return cmd_cntx->SendError("Invalid slot id");
-       }
--      slots_stats.emplace_back(sid, SlotStats{});
-+      end_slot = start_slot;
-     }
-+    ranges.push_back({SlotId(start_slot), SlotId(end_slot)});
-+    total_slots += end_slot - start_slot + 1;
-   }
+-      - name: Upload dashboard artifact
+-        uses: actions/upload-artifact@v7
+-        with:
+-          name: ci-test-dashboard
+-          path: ${{ env.DASHBOARD_ROOT }}/site
+-          if-no-files-found: error
++          GITHUB_TOKEN: ${{ secrets.CI_DASHBOARD_GITHUB_TOKEN }}
++        run: |
++          set -euo pipefail
++          test -n "${GITHUB_TOKEN}" || {
++            echo "CI_DASHBOARD_GITHUB_TOKEN is required to read dragonflydb/dataplane-private" >&2
++            false
++          }
++          python3 "${DASHBOARD_ROOT}/sync_issue_links.py" "${DASHBOARD_ROOT}/site/data"
  
--  if (slots_stats.empty()) {
-+  if (ranges.empty()) {
-     return cmd_cntx->SendError(kSyntaxErr);
-   }
- 
--  fb2::Mutex mu;
--
--  auto cb = [&](auto*) ABSL_LOCKS_EXCLUDED(mu) {
--    EngineShard* shard = EngineShard::tlocal();
--    if (shard == nullptr)
--      return;
-+  // Collect in rounds of up to all slots, which bounds memory however many slots are requested.
-+  // Waking up a shard thread costs more than reading its stats, so every round visits each shard
-+  // once. The shards add their stats one after another, which needs no locking.
-+  const size_t round_size = std::min<size_t>(total_slots, kMaxSlotNum + 1);
-+  vector<SlotId> round_slots(round_size);
-+  vector<SlotStats> round_stats;
-+
-+  // Reply strings are literals, so they remain valid while waiting for the shards.
-+  SinkReplyBuilder::ReplyScope scope(rb);
-+  rb->StartArray(total_slots);
-+
-+  auto range = ranges.begin();
-+  SlotId next_slot = range->start;
-+  while (range != ranges.end()) {
-+    size_t count = 0;
-+    for (; count < round_size && range != ranges.end(); ++count) {
-+      round_slots[count] = next_slot;
-+      if (next_slot++ == range->end && ++range != ranges.end())
-+        next_slot = range->start;
-+    }
- 
--    util::fb2::LockGuard lk(mu);
--    for (auto& [slot, data] : slots_stats) {
--      data += namespaces->GetDefaultNamespace().GetDbSlice(shard->shard_id()).GetSlotStats(slot);
-+    round_stats.assign(count, SlotStats{});
-+    for (ShardId sid = 0; sid < shard_set->size(); ++sid) {
-+      shard_set->pool()->at(sid)->AwaitBrief([&] {
-+        const auto& db_slice = namespaces->GetDefaultNamespace().GetDbSlice(sid);
-+        db_slice.AddSlotStats({round_slots.data(), count}, absl::MakeSpan(round_stats));
-+      });
-     }
--  };
- 
--  shard_set->pool()->AwaitFiberOnAll(std::move(cb));
--
--  rb->StartArray(slots_stats.size());
--
--  for (const auto& slot_data : slots_stats) {
--    rb->StartArray(slot_data.second.tiered_bytes > 0 ? 11 : 9);
--    rb->SendLong(slot_data.first);
--    rb->SendBulkString("key_count");
--    rb->SendLong(slot_data.second.key_count);
--    rb->SendBulkString("total_reads");
--    rb->SendLong(slot_data.second.total_reads);
--    rb->SendBulkString("total_writes");
--    rb->SendLong(slot_data.second.total_writes);
--
--    // Account for both the values and the table space of the entries.
--    // Each entry is comprised from CompactObj for key and CompactObj for value.
--    // Sometimes the values are very small and table space becomes significant.
--    rb->SendBulkString("memory_bytes");
--    rb->SendLong(slot_data.second.memory_bytes +
--                 slot_data.second.key_count * sizeof(CompactObj) * 2);
--
--    // Disk bytes held by the slot's offloaded entries; reported only when non-zero.
--    if (slot_data.second.tiered_bytes > 0) {
--      rb->SendBulkString("tiered_bytes");
--      rb->SendLong(slot_data.second.tiered_bytes);
-+    for (size_t i = 0; i < count; ++i) {
-+      const Slot
+       - name: Authenticate to GCP
+         uses: google-github-actions/auth@v3
 ```
 
-**File**: `src/server/cluster/cluster_family_test.cc` (modified, +55/-26)
+**File**: `tools/ci_test_dashboard/site/app.js` (modified, +25/-11)
 ```diff
-@@ -8,6 +8,7 @@
- #include <gtest/gtest-matchers.h>
- 
- #include <atomic>
-+#include <iterator>
- #include <string>
- #include <string_view>
- 
-@@ -531,23 +532,35 @@ TEST_F(ClusterFamilyTest, ClusterGetSlotInfo) {
+@@ -346,6 +346,24 @@ function linksFor(test) {
+   return state.issueLinks?.links?.[test.id] ?? null;
  }
  
- TEST_F(ClusterFamilyTest, GetSlotStatsAcrossDatabases) {
--  shard_set->Await(0, [] {
--    auto& ns = namespaces->GetDefaultNamespace();
--    auto& db_slice = ns.GetCurrentDbSlice();
--    uint64_t memory_bytes = 0;
--
--    for (DbIndex db_index : {0, 2}) {
--      db_slice.ActivateDb(db_index);
--      DbContext cntx{&ns, db_index, GetCurrentTimeMs()};
--      PrimeValue value;
--      value.SetString(string(1'000, '#'));
--      memory_bytes += value.MallocUsed();
--      ASSERT_TRUE(db_slice.AddOrUpdate(cntx, "key", std::move(value), 0).ok());
--      ASSERT_TRUE(IsValid(db_slice.FindReadOnly(cntx, "key")));
--    }
-+  ConfigSingleNodeCluster(GetMyId());
-+  uint64_t memory_bytes = 0;
-+  for (ShardId sid = 0; sid < shard_set->size(); ++sid) {
-+    memory_bytes += shard_set->Await(sid, [] {
-+      auto& ns = namespaces->GetDefaultNamespace();
-+      auto& db_slice = ns.GetCurrentDbSlice();
-+      uint64_t memory_bytes = 0;
-+
-+      for (DbIndex db_index : {0, 2}) {
-+        db_slice.ActivateDb(db_index);
-+        DbContext cntx{&ns, db_index, GetCurrentTimeMs()};
-+        PrimeValue value;
-+        value.SetString(string(1'000, '#'));
-+        memory_bytes += value.MallocUsed();
-+        EXPECT_TRUE(db_slice.AddOrUpdate(cntx, "key", std::move(value), 0).ok());
-+        EXPECT_TRUE(IsValid(db_slice.FindReadOnly(cntx, "key")));
-+      }
- 
--    EXPECT_THAT(db_slice.GetSlotStats(KeySlot("key")), FieldsAre(2, 2, 2, memory_bytes, 0));
--  });
-+      EXPECT_THAT(db_slice.GetSlotStats(KeySlot("key")), FieldsAre(2, 2, 2, memory_bytes, 0));
-+      return memory_bytes;
-+    });
-+  }
-+
-+  const uint64_t key_count = 2 * shard_set->size();
-+  EXPECT_THAT(RunPrivileged({"dflycluster", "getslotinfo", "slots", absl::StrCat(KeySlot("key"))}),
-+              RespElementsAre(RespElementsAre(
-+                  IntArg(KeySlot("key")), "key_count", IntArg(key_count), "total_reads",
-+                  IntArg(key_count), "total_writes", IntArg(key_count), "memory_bytes",
-+                  IntArg(memory_bytes + key_count * sizeof(CompactObj) * 2))));
- }
- 
- TEST_F(ClusterFamilyTest, ClusterGetSlotInfoRanges) {
-@@ -642,18 +655,34 @@ TEST_F(ClusterFamilyTest, FragmentedSlotsReplyIsBatched) {
- TEST_F(ClusterFamilyTest, ClusterSlotsPopulate) {
-   ConfigSingleNodeCluster(GetMyId());
- 
--  Run({"debug", "populate", "10000", "key", "4", "SLOTS", "0", "1000"});
-+  constexpr int64_t kKeys = 10'000;
-+  Run({"debug", "populate", absl::StrCat(kKeys), "key", "4", "SLOTS", "0", "1000"});
- 
--  for (int i = 0; i <= 1'000; ++i) {
--    EXPECT_THAT(RunPrivileged({"dflycluster", "getslotinfo", "slots", absl::StrCat(i)}),
--                RespElementsAre(RespArray(
--                    ElementsAre(IntArg(i), "key_count", Not(IntArg(0)), _, _, _, _, _, _))));
-+  auto writes = [this] { return GetMetrics().facade_stats.reply_stats.io_write_calls; };
-+  const uint64_t writes_before = writes();
-+
-+  // Collected in two rounds; the second one is partial and spans several ranges.
-+  auto result = RunPrivileged({"dflycluster", "getslotinfo", "slots", "0-16383", "16383", "2-0"});
-+
-+  // Flushing the reply per slot would take more than 16K writes.
-+  EXPECT_LT(writes() - writes_before, 1000u);
-+
-+  // Every slot sums the stats of all shards, in request order and with duplicates.
-+  constexpr SlotId kTail[] = {16383, 0, 1, 2};
-+  ASSERT_THAT(result, ArrLen(kMaxSlotNum + 1 + std::size(kTail)));
-+  const auto& reply = result.GetVec();
-+  auto key_count = [&](size_t i) { return *reply[i].GetVec()[2].GetInt(); };
-+  int64_t total_keys = 0;
-+  for (SlotId slot = 0; slot <= kMaxSlotNum; ++slot) {
-+    ASSERT_THAT(reply[slot], RespElementsAre(IntArg(slot), "key_count", _, _, _, _, _, _, _));
-+    EXPECT_EQ(key_count(slot) > 0, slot <= 1000) << slot;
-+    total_keys += key_count(slot);
-   }
--
--  for (int i = 1'001; i <= 16'383; ++i) {
--    EXPECT_THAT(RunPrivileged({"dflycluster", "getslotinfo", "slots", absl::StrCat(i)}),
--                RespElementsAre(
--                    RespArray(ElementsAre(IntArg(i), "key_count", IntArg(0), _, _, _, _, _, _))));
-+  EXPECT_EQ(total_keys, kKeys);
-+  for (size_t i = 0; i < std::size(kTail); ++i) {
-+    EXPECT_THAT(reply[kMaxSlotNum + 1 + i],
-+                RespElementsAre(IntArg(kTail[i]), "key_count", IntArg(key_count(kTail[i])), _, _, _,
-+                                _, _, _));
-   }
- }
- 
-```
-
-**File**: `src/server/db_slice.cc` (modified, +10/-3)
-```diff
-@@ -549,12 +549,19 @@ auto DbSlice::GetStats() const -> Stats {
- 
- SlotStats DbSlice::GetSlotStats(SlotId sid) const {
-   SlotStats stats;
-+  AddSlotStats({&sid, 1}, {&stats, 1});
-+  return stats;
++function linkReference(record) {
++  const repository = record.repository ?? state.issueLinks?.repository;
++  return repository ? `${repository}#${record.number}` : `#${record.number}`;
 +}
 +
-+void DbSlice::AddSlotStats(absl::Span<const SlotId> slots, absl::Span<SlotStats> dest) const {
-+  DCHECK_EQ(slots.size(), dest.size());
-   for (const auto& db : db_arr_) {
-     // slots_stats is null outside real cluster mode.
--    if (db && db->slots_stats)
--      stats += db->slots_stats[sid];
-+    if (db && db->slots_stats) {
-+      for (size_t i = 0; i < slots.size(); ++i)
-+        dest[i] += db->slots_stats[slots[i]];
-+    }
++function relatedLinkHtml(record, kind) {
++  const label = escapeHtml(linkReference(record));
++  const url = record.url ??
++      (record.repository ? `https://github.com/${record.repository}/${kind}/${record.number}` :
++                           null);
++  if (!url) {
++    return label;
++  }
++  const title = record.title ? ` title="${escapeHtml(record.title)}"` : '';
++  return `<a href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer"${title}>${
++      label}</a>`;
++}
++
+ // Chooses the label when related issues or pull requests are unavailable or absent.
+ function unavailableLinkValue(test) {
+   if (state.issueLinksStatus === 'loading') {
+@@ -369,11 +387,9 @@ function issueLinksHtml(test) {
+             const assignees = issue.eligible_for_assignee && issue.assignees?.length ?
+                 `, assigned: ${issue.assignees.join(', ')}` :
+                 '';
+-            return `<a href="${
+-                escapeHtml(issue.url)}" target="_blank" rel="noopener noreferrer" title="${
+-                escapeHtml(
+-                    issue.title)}">#${escapeHtml(issue.number)}</a><span class="link-state"> (${
+-                escapeHtml(issue.state)}${escapeHtml(assignees)})</span>`;
++            const state =
++                issue.state ? ` (${escapeHtml(issue.state)}${escapeHtml(assignees)})` : '';
++            return `${relatedLinkHtml(issue, 'issues')}<span class="link-state">${state}</span>`;
+           })
+           .join(', ')}</span>`;
+ }
+@@ -390,7 +406,8 @@ function assigneesHtml(test) {
+     return '<span class="unavailable">N/A</span>';
    }
--  return stats;
+   const assignees = dedicatedIssues.flatMap(
+-      (issue) => (issue.assignees ?? []).map((assignee) => `${assignee} (#${issue.number})`));
++      (issue) =>
++          (issue.assignees ?? []).map((assignee) => `${assignee} (${linkReference(issue)})`));
+   return assignees.length ? escapeHtml(assignees.join(', ')) :
+                             '<span class="unavailable">Unassigned</span>';
+ }
+@@ -404,11 +421,8 @@ function pullRequestsHtml(test) {
+   return `<span class="related-links">${
+       links.pull_requests
+           .map(
+-              (pullRequest) => `<a href="${
+-                  escapeHtml(pullRequest.url)}" target="_blank" rel="noopener noreferrer" title="${
+-                  escapeHtml(pullRequest.title)}">#${
+-                  escapeHtml(pullRequest.number)}</a><span class="link-state"> (${
+-                  escapeHtml(pullRequest.state)})</span>`)
++              (pullRequest) => `${relatedLinkHtml(pullRequest, 'pull')}<span class="link-state">${
++                  pullRequest.state ? ` (${escapeHtml(pullRequest.state)})` : ''}</span>`)
+           .join(', ')}</span>`;
  }
  
- DbSlice::AutoUpdater::AutoUpdater() {
 ```
 
-**File**: `src/server/db_slice.h` (modified, +5/-0)
+**File**: `tools/ci_test_dashboard/site/styles.css` (modified, +15/-6)
 ```diff
-@@ -290,6 +290,11 @@ class DbSlice {
-   // Returns slot statistics summed across all active databases.
-   SlotStats GetSlotStats(SlotId sid) const;
+@@ -247,7 +247,8 @@ select {
+ table {
+   border-collapse: collapse;
+   font-size: 12px;
+-  min-width: 1100px;
++  min-width: 1200px;
++  table-layout: fixed;
+   width: 100%;
+ }
  
-+  // Adds the statistics of each slot in `slots`, summed across all active databases, to the
-+  // respective entry of `dest`. Cheaper than calling GetSlotStats per slot, which repeats the call
-+  // and the walk over the databases for every slot.
-+  void AddSlotStats(absl::Span<const SlotId> slots, absl::Span<SlotStats> dest) const;
+@@ -281,6 +282,11 @@ td:nth-child(2) {
+   width: 64px;
+ }
+ 
++th:first-child,
++td:first-child {
++  width: 220px;
++}
 +
-   void UpdateMemoryParams(int64_t budget, size_t bytes_per_object) {
-     memory_budget_ = budget;
-     bytes_per_object_ = bytes_per_object;
+ th:nth-child(3),
+ td:nth-child(3),
+ th:nth-child(7),
+@@ -296,7 +302,7 @@ th:nth-child(4),
+ td:nth-child(4),
+ th:nth-child(5),
+ td:nth-child(5) {
+-  width: 88px;
++  width: 130px;
+ }
+ 
+ th:nth-child(6),
+@@ -306,11 +312,14 @@ td:nth-child(6) {
+ 
+ th:nth-child(10),
+ td:nth-child(10),
+-th:nth-child(11),
+-td:nth-child(11),
+ th:nth-child(12),
+ td:nth-child(12) {
+-  width: 78px;
++  width: 150px;
++}
++
++th:nth-child(11),
++td:nth-child(11) {
++  width: 100px;
+ }
+ 
+ th {
+@@ -336,7 +345,7 @@ tbody tr.selected {
+ .test-name {
+   display: grid;
+   gap: 4px;
+-  min-width: 220px;
++  min-width: 0;
+ }
+ 
+ .test-name strong {
+```
+
+**File**: `tools/ci_test_dashboard/sync_issue_links.py` (modified, +113/-52)
+```diff
+@@ -1,5 +1,5 @@
+ #!/usr/bin/env python3
+-"""Create deterministic public issue and pull request links for dashboard tests."""
++"""Create deterministic issue and pull request links for dashboard tests."""
+ 
+ from __future__ import annotations
+ 
+@@ -16,10 +16,11 @@
+ 
+ SCHEMA_VERSION = 3
+ DEFAULT_REPOSITORY = "dragonflydb/dragonfly"
++PRIVATE_ISSUES_REPOSITORY = "dragonflydb/dataplane-private"
++DEFAULT_REPOSITORIES = (DEFAULT_REPOSITORY, PRIVATE_ISSUES_REPOSITORY)
+ NAME_ONLY_MIN_LENGTH = 12
+ MIN_ALIAS_LENGTH = 8
+ CLOSED_HISTORY_DAYS = 180
+-MAX_CLOSED_HISTORY_RECORDS = 500
+ 
+ 
+ def github_api(url: str, token: str) -> Any:
+@@ -46,22 +47,25 @@ def github_pages(endpoint: str, token: str) -> list[dict[str, Any]]:
+     page = 1
+     while True:
+         separator = "&" if "?" in endpoint else "?"
++        print(f"Fetching {endpoint}, page {page}", flush=True)
+         page_items = github_api(f"{endpoint}{separator}per_page=100&page={page}", token)
+         if not isinstance(page_items, list):
+             raise RuntimeError(f"Unexpected GitHub API response from {endpoint}")
+         items.extend(page_items)
++        print(f"Received {len(page_items)} records; {len(items)} total", flush=True)
+         if len(page_items) < 100:
+             return items
+         page += 1
+ 
+ 
+ def github_recent_pages(
+-    endpoint: str, token: str, cutoff: datetime, maximum: int, include: Any = lambda item: True
++    endpoint: str, token: str, cutoff: datetime, include: Any = lambda item: True
+ ) -> list[dict[str, Any]]:
+     items: list[dict[str, Any]] = []
+     page = 1
+     while True:
+         separator = "&" if "?" in endpoint else "?"
++        print(f"Fetching {endpoint}, page {page}", flush=True)
+         page_items = github_api(
+             f"{endpoint}{separator}per_page=100&page={page}&sort=updated&direction=desc", token
+         )
+@@ -78,8 +82,10 @@ def github_recent_pages(
+             if closed_at >= cutoff and include(item):
+                 recent_items.append(item)
+         items.extend(recent_items)
+-        if len(items) >= maximum:
+-            return items[:maximum]
++        print(
++            f"Received {len(page_items)} records; {len(items)} within the cutoff",
++            flush=True,
++        )
+         if len(page_items) < 100 or reached_cutoff:
+             return items
+         page += 1
+@@ -185,14 +191,13 @@ def pull_request_references_issue(
+ ) -> bool:
+     text = record_text(pull_request)
+     escaped_repository = re.escape(repository)
+-    return any(
+-        re.search(pattern, text) is not None
+-        for pattern in (
+-            rf"(?<![\w/])#{issue_number}\b",
+-            rf"(?<![\w/]){escaped_repository}#{issue_number}\b",
+-            rf"https?://github\.com/{escaped_repository}/issues/{issue_number}\b",
+-        )
+-    )
++    patterns = [
++        rf"(?<![\w/]){escaped_repository}#{issue_number}\b",
++        rf"https?://github\.com/{escaped_repository}/issues/{issue_number}\b",
++    ]
++    if pull_request.get("repository", DEFAULT_REPOSITORY) == repository:
++        patterns.append(rf"(?<![\w/])#{issue_number}\b")
++    return any(re.search(pattern, text) is not None for pattern in patterns)
+ 
+ 
+ def record_state(record: dict[str, Any]) -> str:
+@@ -201,6 +206,21 @@ def record_state(record: dict[str, Any]) -> str:
+     return record.get("state", "closed")
+ 
+ 
++def record_repository(record: dict[str, Any], fallback: str) -> str:
++    return record.get("repository", fallback)
++
++
++def link_record(record: dict[str, Any], fallback: str) -> dict[str, Any]:
++    source_repository = record_repository(record, fallback)
++    return {
++        "number": record["number"],
++        "repository": source_repository,
++        "url": record["html_url"],
++        "title": record["title"],
++        "state": record_state(record),
++    }
++
++
+ def build_links(
+     tests: list[dict[str, Any]],
+     issues: list[dict[str, Any]],
+@@ -212,39 +232,36 @@ def build_links(
+     pull_request_records = [
+         (pull_request, record_text(pull_request)) for pull_request in pull_requests
+     ]
+-    for test in tests:
++    for index, test in enumerate(tests, 1):
++        if index == 1 or index % 25 == 0:
++            print(f"Matching dashboard tests: {index}/{len(tests)}", flush=True)
+         aliases = aliases_for_test(test)
+         matched_issues = []
+         for issue, text in issue_records:
+             match = match_aliases(aliases, text)
+             if match:
+-                matched_issues.append(
++                issue_link = link_record(issue, repository)
++                issue_link.update(
+                     {
+-                        "number": issue["number"],
+-                        "url": issue["html_url"],
+-                        "title": issue["title"],
+-                        "state": record_state(issue),
+                         "match": match,
+                         "eligible_for_assignee": record_state(issue) == "open"
+                         and match in {"exact", "parameterized"},
+          
+```
+
+**File**: `tools/ci_test_dashboard/test_sync_issue_links.py` (modified, +232/-3)
+```diff
+@@ -6,6 +6,9 @@
+ import sys
+ import tempfile
+ import unittest
++import json
++import io
++from contextlib import redirect_stdout
+ from datetime import datetime, timezone
+ from pathlib import Path
+ from unittest.mock import patch
+@@ -226,6 +229,124 @@ def test_build_links_includes_dedicated_assignee_and_referencing_open_pr(self):
+         self.assertTrue(match["issues"][0]["eligible_for_assignee"])
+         self.assertEqual(match["pull_requests"][0]["number"], 456)
+ 
++    def test_build_links_keeps_sources_for_same_numbered_records(self):
++        """Keep same-numbered records from both source repositories distinct."""
++        primary = links.DEFAULT_REPOSITORY
++        private = "dragonflydb/dataplane-private"
++        primary_issue = {**self.issue, "repository": primary}
++        private_issue = {
++            **self.issue,
++            "repository": private,
++            "html_url": "https://github.com/dragonflydb/dataplane-private/issues/123",
++        }
++        pull_requests = [
++            {
++                "number": 456,
++                "repository": primary,
++                "html_url": "https://github.com/dragonflydb/dragonfly/pull/456",
++                "title": "Fixes #123",
++                "body": "",
++                "state": "open",
++            },
++            {
++                "number": 456,
++                "repository": private,
++                "html_url": "https://github.com/dragonflydb/dataplane-private/pull/456",
++                "title": "Fixes #123",
++                "body": "",
++                "state": "open",
++            },
++        ]
++        result = links.build_links([self.test], [primary_issue, private_issue], pull_requests)
++        match = result[self.test["id"]]
++        self.assertEqual(
++            {(issue["repository"], issue["number"]) for issue in match["issues"]},
++            {(primary, 123), (private, 123)},
++        )
++        self.assertEqual(
++            {
++                (pull_request["repository"], pull_request["number"])
++                for pull_request in match["pull_requests"]
++            },
++            {(primary, 456), (private, 456)},
++        )
++
++    def test_bare_pr_issue_reference_stays_with_its_source_repository(self):
++        """Do not link a bare issue reference to an equal number in another repository."""
++        primary = links.DEFAULT_REPOSITORY
++        private = "dragonflydb/dataplane-private"
++        primary_issue = {
++            **self.issue,
++            "repository": primary,
++            "title": "Unrelated test failure",
++            "body": "",
++        }
++        private_issue = {
++            **self.issue,
++            "repository": private,
++            "html_url": "https://github.com/dragonflydb/dataplane-private/issues/123",
++        }
++        pull_request = {
++            "number": 456,
++            "repository": primary,
++            "html_url": "https://github.com/dragonflydb/dragonfly/pull/456",
++            "title": "Fixes #123",
++            "body": "",
++            "state": "open",
++        }
++        result = links.build_links([self.test], [primary_issue, private_issue], [pull_request])
++        match = result[self.test["id"]]
++        self.assertEqual(
++            [(issue["repository"], issue["number"]) for issue in match["issues"]],
++            [(private, 123)],
++        )
++        self.assertEqual(match["pull_requests"], [])
++
++    def test_private_links_include_metadata(self):
++        """Include private issue and PR details for the private dashboard."""
++        private_issue = {
++            **self.issue,
++            "repository": "dragonflydb/dataplane-private",
++            "html_url": "https://github.com/dragonflydb/dataplane-private/issues/123",
++        }
++        private_pr = {
++            "number": 456,
++            "repository": "dragonflydb/dataplane-private",
++            "html_url": "https://github.com/dragonflydb/dataplane-private/pull/456",
++            "title": "Fixes #123",
++            "body": "",
++            "state": "closed",
++            "merged_at": "2026-10-18T00:00:00Z",
++        }
++        result = links.build_links([self.test], [private_issue], [private_pr])[self.test["id"]]
++        self.assertEqual(
++            result["issues"],
++            [
++                {
++                    "number": 123,
++                    "repository": "dragonflydb/dataplane-private",
++                    "url": private_issue["html_url"],
++                    "title": private_issue["title"],
++                    "state": "open",
++                    "match": "exact",
++                    "eligible_for_assignee": True,
++                    "assignees": ["dragonfly-user"],
++                }
++            ],
++        )
++        self.assertEqual(
++            result["pull_requests"],
++            [
++                {
++                    "number": 456,
++                    "repository": "dragonflydb/dataplane-private",
++                    "url": private_pr["html_url"],
++                    "title
+```
+
+---
+
+### Incident Patch 3: `26f97c50` (2026-11-02)
+**Commit Message**: fix(server): Skip forced snapshot serialization for redundant writes with second replica, add support for expire (#8112)
+
+* fix(server): Extend journal omits to omit only on-change, add support for ttl for omits
+
+Signed-off-by: Vlad <[REDACTED_EMAIL]>
+
+**File**: `src/server/db_slice.cc` (modified, +23/-17)
+```diff
+@@ -445,7 +445,7 @@ DbStats& DbStats::operator+=(const DbStats& o) {
+ }
+ 
+ SliceEvents& SliceEvents::operator+=(const SliceEvents& o) {
+-  static_assert(sizeof(SliceEvents) == 112, "You should update this function with new fields");
++  static_assert(sizeof(SliceEvents) == 120, "You should update this function with new fields");
+ 
+   ADD(hard_evictions);
+   ADD(garbage_collected);
+@@ -461,6 +461,7 @@ SliceEvents& SliceEvents::operator+=(const SliceEvents& o) {
+   ADD(ram_cool_hits);
+   ADD(ram_misses);
+   ADD(journal_omit);
++  ADD(serialize_skip);
+   return *this;
+ }
+ 
+@@ -698,8 +699,8 @@ OpResult<DbSlice::ItAndUpdater> DbSlice::FindMutableInternal(const Context& cntx
+ 
+   auto it = Iterator(*res, StringOrView::FromView(key));
+ 
+-  bool omitted = IsOmittableWrite(cntx, ChangeReq{it.GetInnerIt()});
+-  if (!omitted)
++  auto omit = DetermineOmitPossibility(cntx, ChangeReq{it.GetInnerIt()});
++  if (!omit.skip_serialize)
+     PreUpdateBlocking(cntx.db_index, it);
+ 
+   // PreUpdate() might have caused a deletion of `it`
+@@ -709,7 +710,7 @@ OpResult<DbSlice::ItAndUpdater> DbSlice::FindMutableInternal(const Context& cntx
+     return {{.it = it,
+              .post_updater = AutoUpdater{cntx.db_index, key, it, this},
+              .is_new = false,
+-             .omitted_journal = omitted}};
++             .omitted_journal = omit.omit_journal}};
+   }
+ 
+   return OpStatus::KEY_NOTFOUND;
+@@ -842,6 +843,7 @@ OpResult<DbSlice::ItAndUpdater> DbSlice::AddOrFind(const Context& cntx, string_v
+   CHECK(res.status() == OpStatus::KEY_NOTFOUND) << res.status();
+ 
+   // Call change callbacks on the computed set of buckets that can be affected by the insert
++  bool skip_serialize = false;
+   bool omit_journal = false;
+   DbTable& db = *db_arr_[cntx.db_index];
+ 
+@@ -850,8 +852,11 @@ OpResult<DbSlice::ItAndUpdater> DbSlice::AddOrFind(const Context& cntx, string_v
+       auto bucket_set = db.prime.CVCUponInsert(key);
+ 
+       // We skip calling callbacks, so the bucket set is consistent and we break
+-      if (omit_journal = IsOmittableWrite(cntx, bucket_set); omit_journal)
++      if (auto omit = DetermineOmitPossibility(cntx, bucket_set); omit.skip_serialize) {
++        skip_serialize = true;
++        omit_journal = omit.omit_journal;
+         break;
++      }
+ 
+       CallChangeCallbacks(cntx.db_index, bucket_set);
+ 
+@@ -935,7 +940,7 @@ OpResult<DbSlice::ItAndUpdater> DbSlice::AddOrFind(const Context& cntx, string_v
+ 
+   DCHECK_EQ(it->second.MallocUsed(), 0UL);  // Make sure accounting is no-op
+ 
+-  if (!omit_journal)
++  if (!skip_serialize)
+     it.SetVersion(NextVersion());
+ 
+   TouchTopKeysIfNeeded(key, db.sample_top_keys);
+@@ -2244,31 +2249,32 @@ void DbSlice::CallChangeCallbacks(DbIndex id, const ChangeReq& cr) const {
+     cb->OnChange(id, cr);
+ }
+ 
+-// We can omit the journal write if:
++// We can skip the forced snapshot serialization if:
+ // 1. it supports mutation hints and uses only a single key
+ // 2. there is a single eventually-consistent snapshot (i.e. replica full sync)
+-// 3. there are no other journal consumers
+-// 4. the snapshot did not reach the bucket yet
+-bool DbSlice::IsOmittableWrite(const Context& cntx, const ChangeReq& req) {
++// 3. the snapshot did not reach the bucket yet
++// The journal write is additionally omitted only when the snapshot is the sole journal consumer.
++DbSlice::OmitDecision DbSlice::DetermineOmitPossibility(const Context& cntx, const ChangeReq& req) {
+   if (!journal_omit_redundant_writes_)
+-    return false;
++    return {};
+ 
+   // Stash entries can be moved backwards relative to the cursor by TryMoveFromStash,
+   // breaking our reachability assumption. We must serialize now
+   if (req.ContainsStashBucket())
+-    return false;
++    return {};
+ 
+-  bool omit_update = false;
++  OmitDecision res;
+   if (cntx.is_omittable_operation && change_cb_.size() == 1) {
+     auto gv = [](PrimeTable::bucket_iterator it) { return it.GetVersion(); };
+     uint64_t max_version = std::ranges::max(req.buckets(), {}, gv).GetVersion();
+ 
+     auto* cb = change_cb_.front();
+-    omit_update = cb->eventually_consistent_ && max_version < cb->snapshot_version_ &&
+-                  journal::GetCallbackCount() == 1;
+-    events_.journal_omit += unsigned(omit_update);
++    res.skip_serialize = cb->eventually_consistent_ && max_version < cb->snapshot_version_;
++    res.omit_journal = res.skip_serialize && journal::GetCallbackCount() == 1;
++    events_.serialize_skip += unsigned(res.skip_serialize);
++    events_.journal_omit += unsigned(res.omit_journal);
+   }
+-  return omit_update;
++  return res;
+ }
+ 
+ }  // namespace dfly
+```
+
+**File**: `src/server/db_slice.h` (modified, +15/-2)
+```diff
+@@ -87,6 +87,9 @@ struct SliceEvents {
+   // how many journal omit optimizations were performed
+   size_t journal_omit = 0;
+ 
++  // how many times the forced snapshot serialization was skipped (superset of journal_omit)
++  size_t serialize_skip = 0;
++
+   SliceEvents& operator+=(const SliceEvents& o);
+ };
+ 
+@@ -677,8 +680,18 @@ class DbSlice {
+ 
+   void CreateDb(DbIndex index);
+ 
+-  // Returns true if this write could be ignored during replication without losing consistency
+-  bool IsOmittableWrite(const Context& cntx, const ChangeReq& req);
++  // Describes what events caused by a write during ongoing serialization can be safely skipped.
++  struct OmitDecision {
++    bool skip_serialize = false;  // Skip bucket serialization caused by on-change consumers
++    bool omit_journal = false;    // Skip emitting journal event
++  };
++
++  // Decides whether the forced snapshot serialization and/or the journal write can be skipped.
++  // In general, we serialize buckets just before a modification, even if the modified value is
++  // completely overwritten - this is wasteful. If the snapshot traversal loop has not yet reached
++  // the targets bucket, we can skip forced serialization, as it will be eventually serialized with
++  // the new value
++  OmitDecision DetermineOmitPossibility(const Context& cntx, const ChangeReq& req);
+ 
+   enum class LookupMode : uint8_t {
+     kReadOnly,
+```
+
+**File**: `src/server/generic_family.cc` (modified, +6/-2)
+```diff
+@@ -887,8 +887,10 @@ uint64_t RmGeneric(uint64_t cursor, const ScanOpts& scan_opts, uint32_t* deleted
+   return cursor;
+ }
+ 
+-OpStatus OpExpire(const OpArgs& op_args, string_view key, const DbSlice::ExpireParams& params) {
++OpStatus OpExpire(OpArgs op_args, string_view key, const DbSlice::ExpireParams& params) {
+   auto& db_slice = op_args.GetDbSlice();
++  op_args.db_cntx.is_omittable_operation = true;  // See DbSlice::DetermineOmitPossibility
++
+   auto find_res = db_slice.FindMutable(op_args.db_cntx, key);
+   if (!IsValid(find_res.it)) {
+     return OpStatus::KEY_NOTFOUND;
+@@ -900,7 +902,9 @@ OpStatus OpExpire(const OpArgs& op_args, string_view key, const DbSlice::ExpireP
+   // If the value was deleted, replicate as DEL.
+   // Else, replicate as PEXPIREAT with exact time.
+   if (op_args.shard->journal() && res.ok()) {
+-    if (res.value() == -1) {
++    if (find_res.omitted_journal) {
++      journal::ClearBuffer();
++    } else if (res.value() == -1) {
+       RecordJournal(op_args, "DEL"sv, ArgSlice{key});
+     } else {
+       auto time = absl::StrCat(res.value());
+```
+
+**File**: `src/server/server_family.cc` (modified, +1/-0)
+```diff
+@@ -3188,6 +3188,7 @@ string ServerFamily::FormatInfoMetrics(
+     append("lua_gc_duration_total_sec", m.lua_stats.gc_duration_ns * 1e-9);
+ 
+     append("total_journal_omits", m.events.journal_omit);
++    append("total_serialize_skips", m.events.serialize_skip);
+   };
+ 
+   auto add_tiered_info = [&] {
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #8718** (2026-10-30): feat: add throttling to slot flushes after migration (#8641) (@BorysTheDev)
-- **PR #8717** (closed): fix: SlotMigrationStreamer::Cancel() waits for Run finish (#8473) (@BorysTheDev)
-- **PR #8716** (2026-10-30): test: disable tiered_storage_test (@BorysTheDev)
-- **PR #8715** (2026-10-30): refactor: improve GetSlotInfo performance (@BorysTheDev)
-- **PR #8712** (2026-10-28): fix(server): reply to TIME with bulk strings (@vyavdoshenko)
-- **PR #8702** (2026-10-28): chore(search): Propagate error if index dropped during search (@abhijat)
+- **PR #8737** (2026-11-03): refactor: MRMW mutex for HNSW index (@BorysTheDev)
+- **PR #8736** (2026-11-03): chore(search): Only collect vector range nodes once (@abhijat)
+- **PR #8734** (closed): fix(server): Unify key expiry capping and fix GETEX replies (@vyavdoshenko)
+- **PR #8733** (2026-11-03): feat: allow listpack usage during borrow mode for HNSW (@BorysTheDev)
+- **PR #8732** (2026-11-02): fix(tiering): Avoid double counting list node memory in AutoUpdater (@dranikpg)
+- **PR #8731** (closed): fix: bump helio to stop leaking DNS lookup results (@vyavdoshenko)
 
 ---
 
@@ -3099,28 +3199,38 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. cancel save op if loading starts (#8505)
+## X. tiering): fix small-bins leak and stash-cancellation on failure (#8636)
 
 **RULE**:
-When implementing operations in `.github/actions/lint-test-chart/action.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dragonflydb/dragonfly. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/server/tiered_storage.cc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dragonflydb/dragonfly. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1d2c21aa`: cancel save op if loading starts (#8505). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `98a439dc`: tiering): fix small-bins leak and stash-cancellation on failure (#8636). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/actions/lint-test-chart/action.yml`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/server/tiered_storage.cc`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-      - uses: actions/setup-python@v7
+  std::optional<tiering::SmallBins::FilledBin> bin;
+  } else if (bin = bins_->Stash(dbid, key, SerializeToString(blobs)); bin) {
+    if (bin) {
+      // The bin filled up but PrepareAndStash failed before serializing it, so SmallBins never
+      // tracked it as pending. Recover its keys directly to clear their stash-pending flags.
+      for (const auto& bin_key : bins_->ReportStashFailed(std::move(*bin)))
+        op_manager_->ClearStashPending(bin_key);
+    } else {
+      visit([this](auto id) { op_manager_->ClearStashPending(id); }, id);
+    }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-      - uses: actions/setup-python@v5
+  } else if (auto bin = bins_->Stash(dbid, key, SerializeToString(blobs)); bin) {
+    visit([this](auto id) { op_manager_->ClearStashPending(id); }, id);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1d2c21aa` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `98a439dc` are properly handled with clean fallback behavior.

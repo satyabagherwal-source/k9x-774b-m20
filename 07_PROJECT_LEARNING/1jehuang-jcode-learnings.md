@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/1jehuang-jcode-learnings.md`  
 > **Source**: github ([https://github.com/1jehuang/jcode](https://github.com/1jehuang/jcode))  
-> **Source Version**: `f74bb39c`  
+> **Source Version**: `378f4494`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T22:12:05.036Z  
+> **Timestamp**: 2026-11-04T00:53:17.357Z  
 > **Learning ID**: `learn-github-1jehuang-jcode`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/1jehuang-jcode-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/1jehuang/jcode](https://github.com/1jehuang/jcode))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T22:12:05.025Z  
+> **Harvest Timestamp**: 2026-11-04T00:53:15.973Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: High performance coding agent harness written in Rust, built for heavy multi-agent dev workflows
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 21371 stars
+- **Stars / Engagement**: 21443 stars
 
 ---
 
@@ -60,10 +60,13 @@ mod status;
 mod streaming;
 #[cfg(test)]
 mod swarm_reminder_tests;
-mod tool_markup_recovery;
 mod tools;
 mod turn_execution;
 mod turn_loops;
+mod turn_ownership;
+pub(crate) use turn_ownership::{
+    RuntimeMutationLease, TurnLease, TurnObserver, TurnPublicationPin,
+};
 mod turn_streaming_mpsc;
 mod utils;
 
@@ -90,7 +93,6 @@ use crate::tool::{Registry, ToolContext, ToolExecutionMode};
 use anyhow::Result;
 use futures::StreamExt;
 use std::collections::{HashMap, HashSet};
-use std::hash::{Hash, Hasher};
 use std::io::{self, Write};
 use std::path::PathBuf;
 use std::sync::{Arc, LazyLock, Mutex as StdMutex};
@@ -104,8 +106,6 @@ pub use jcode_agent_runtime::{
 };
 
 const JCODE_NATIVE_TOOLS: &[&str] = &["selfdev", "desktop_selfdev", "communicate"];
-static RECOVERED_TEXT_WRAPPED_TOOL_CALLS: std::sync::atomic::AtomicU64 =
-    std::sync::atomic::AtomicU64::new(0);
 static JCODE_REPO_SOURCE_STATE: LazyLock<(Option<String>, Option<bool>)> = LazyLock::new(|| {
     crate::build::get_repo_dir()
         .map(|repo_dir| {
@@ -120,63 +120,9 @@ static WORKING_GIT_STATE_CACHE: LazyLock<StdMutex<HashMap<PathBuf, Option<GitSta
     LazyLock::new(|| StdMutex::new(HashMap::new()));
 const STREAM_KEEPALIVE_PONG_ID: u64 = 0;
 
-fn stable_hash_str(value: &str) -> u64 {
-    let mut hasher = std::collections::hash_map::DefaultHasher::new();
-    value.hash(&mut hasher);
-    hasher.finish()
-}
-
-fn stable_hash_json<T: serde::Serialize + ?Sized>(value: &T) -> u64 {
-    let encoded = serde_json::to_string(value).unwrap_or_default();
-    stable_hash_str(&encoded)
-}
-
-fn stable_json_len<T: serde::Serialize + ?Sized>(value: &T) -> usize {
-    serde_json::to_string(value)
-        .map(|encoded| encoded.len())
-        .unwrap_or_default()
-}
-
-fn message_hashes(messages: &[Message]) -> Vec<u64> {
-    // Hash the cache-relevant projection, not the raw Message. Raw hashing
-    // keys off non-transmitted metadata (timestamp, tool_duration_ms,
-    // ReasoningTrace blocks, cache_control markers), which triggers spurious
-    // harness:_prefix_changed KV-cache miss reports when the same message is
-    // re-serialized with backfilled metadata on the next turn.
-    crate::message::cache_relevant_message_hashes(messages)
-}
-
-fn kv_cache_request_event(
-    messages: &[Message],
-    tools: &[ToolDefinition],
-    system_static: &str,
-    ephemeral_messages: &[Message],
-) -> ServerEvent {
-    // Provider-native deferred definitions are outside the cached prefix.
-    // Late MCP discovery must not look like a harness-induced tools change
-    // when the provider reports a cache miss for some unrelated reason.
-    // Borrow definitions rather than cloning potentially large MCP schemas.
-    let eager_tools: Vec<_> = tools.iter().filter(|tool| !tool.defer_loading).collect();
-    let ephemeral_hash = if ephemeral_messages.is_empty() {
-        None
-    } else {
-        Some(stable_hash_json(ephemeral_messages))
-    };
-    ServerEvent::KvCacheRequest {
-        system_static_hash: stable_hash_str(system_static),
-        tools_hash: stable_hash_json(&eager_tools),
-        messages_hash: stable_hash_json(&crate::message::cache_relevant_messages(messages)),
-        message_hashes: message_hashes(messages),
-        message_count: messages.len(),
-        tool_count: eager_tools.len(),
-        system_static_chars: system_static.chars().count(),
-        tools_json_chars: stable_json_len(&eager_tools),
-        messages_json_chars: stable_json_len(messages),
-        ephemeral_hash,
-        ephemeral_chars: stable_json_len(ephemeral_messages),
-        ephemeral_message_count: ephemeral_messages.len(),
-    }
-}
+#[path = "agent/cache_request.rs"]
+mod cache_request;
+use cache_request::kv_cache_request_event;
 
 impl Agent {
     /// Provider identity used for cache retention lookups. Generic OpenAI is
@@ -308,7 +254,139 @@ fn log_agent_provider_stream_lifecycle(
     phase: &str,
     api_start: Instant,
     fields: Vec<(&str, String)>,
-)
+) {
+    let mut owned = vec![
+        ("phase".to_string(), phase.to_string()),
+        ("provider".to_string(), agent.provider.name().to_string()),
+        ("model".to_string(), agent.provider.model()),
+        ("session_id".to_string(), agent.session.id.clone()),
+        (
+            "provider_session_id".to_string(),
+            agent
+                .provider_session_id
+                .clone()
+                .unwrap_or_else(|| "none".to_string()),
+        ),
+        (
+            "connection_type".to_string(),
+            agent
+                .last_connection_type
+                .clone()
+                .unwrap_or_else(|| "unknown".to_string()),
+        ),
+        (
+            "elapsed_ms".to_string(),
+            api_start.elapsed().as_millis().to_string(),
+        ),
+    ];
+    owned.extend(
+        fields
+            .into_iter()
+            .map(|(key, value)| (key.to_string(), value)),
+    );
+    logging::event(level, "AGENT_PROVIDER_STREAM_LIFECYCLE", owned);
+}
+
+/// Token usage from the last API request
+#[derive(Debug, Clone, Default, serde::Serialize)]
+pub struct TokenUsage {
+    pub input_tokens: u64,
+    pub output_tokens: u64,
+    pub cache_read_input_tokens: Option<u64>,
+    pub cache_creation_input_tokens: Option<u64>,
+}
+
+#[derive(Debug, Clone)]
+struct RewindUndoSnapshot {
+    messages: Vec<StoredMessage>,
+    provider_session_id: Option<String>,
+    session_provider_session_id: Option<String>,
+    visible_message_count: usize,
+}
+
+pub struct Agent {
+    turn_ownership: turn_ownership::TurnOwnership,
+    provider: Arc<dyn Provider>,
+    registry: Registry,
+    skills: Arc<SkillRegistry>,
+    session: Session,
+    active_skill: Option<String>,
+    allowed_tools: Option<HashSet<String>>,
+    disabled_tools: HashSet<String>,
+    /// Generation-scoped ownership of this Agent's global tool-policy entry.
+    _tool_policy_registration: crate::tool::SessionToolPolicyRegistration,
+    /// MCP top-level definition exposure policy captured when the session starts.
+    mcp_tools_mode: crate::config::McpToolsMode,
+    /// Provider-specific session ID for conversation resume (e.g., Claude Code CLI session)
+    provider_session_id: Option<String>,
+    /// Last upstream provider (OpenRouter) observed for this session
+    last_upstream_provider: Option<String>,
+    /// Last observed tran
+```
+
+### Core Architecture Module: `crates/jcode-app-core/src/agent/cache_request.rs`
+```
+use super::*;
+use std::hash::{Hash, Hasher};
+
+pub(super) fn stable_hash_str(value: &str) -> u64 {
+    let mut hasher = std::collections::hash_map::DefaultHasher::new();
+    value.hash(&mut hasher);
+    hasher.finish()
+}
+
+pub(super) fn stable_hash_json<T: serde::Serialize + ?Sized>(value: &T) -> u64 {
+    let encoded = serde_json::to_string(value).unwrap_or_default();
+    stable_hash_str(&encoded)
+}
+
+pub(super) fn stable_json_len<T: serde::Serialize + ?Sized>(value: &T) -> usize {
+    serde_json::to_string(value)
+        .map(|encoded| encoded.len())
+        .unwrap_or_default()
+}
+
+pub(super) fn message_hashes(messages: &[Message]) -> Vec<u64> {
+    // Hash the cache-relevant projection, not the raw Message. Raw hashing
+    // keys off non-transmitted metadata (timestamp, tool_duration_ms,
+    // ReasoningTrace blocks, cache_control markers), which triggers spurious
+    // harness:_prefix_changed KV-cache miss reports when the same message is
+    // re-serialized with backfilled metadata on the next turn.
+    crate::message::cache_relevant_message_hashes(messages)
+}
+
+pub(super) fn kv_cache_request_event(
+    messages: &[Message],
+    tools: &[ToolDefinition],
+    system_static: &str,
+    ephemeral_messages: &[Message],
+) -> ServerEvent {
+    // Provider-native deferred definitions are outside the cached prefix.
+    // Late MCP discovery must not look like a harness-induced tools change
+    // when the provider reports a cache miss for some unrelated reason.
+    // Borrow definitions rather than cloning potentially large MCP schemas.
+    let eager_tools: Vec<_> = tools.iter().filter(|tool| !tool.defer_loading).collect();
+    let ephemeral_hash = if ephemeral_messages.is_empty() {
+        None
+    } else {
+        Some(stable_hash_json(ephemeral_messages))
+    };
+    ServerEvent::KvCacheRequest {
+        system_static_hash: stable_hash_str(system_static),
+        tools_hash: stable_hash_json(&eager_tools),
+        messages_hash: stable_hash_json(&crate::message::cache_relevant_messages(messages)),
+        message_hashes: message_hashes(messages),
+        message_count: messages.len(),
+        tool_count: eager_tools.len(),
+        system_static_chars: system_static.chars().count(),
+        tools_json_chars: stable_json_len(&eager_tools),
+        messages_json_chars: stable_json_len(messages),
+        ephemeral_hash,
+        ephemeral_chars: stable_json_len(ephemeral_messages),
+        ephemeral_message_count: ephemeral_messages.len(),
+    }
+}
+
 ```
 
 ### Core Architecture Module: `crates/jcode-app-core/src/agent/compaction.rs`
@@ -2184,290 +2262,17 @@ impl Agent {
 
 ```
 
-### Core Architecture Module: `crates/jcode-app-core/src/agent/provider.rs`
-```
-use super::*;
-
-impl Agent {
-    pub fn set_premium_mode(&self, mode: crate::provider::copilot::PremiumMode) {
-        self.provider.set_premium_mode(mode);
-    }
-
-    pub fn premium_mode(&self) -> crate::provider::copilot::PremiumMode {
-        self.provider.premium_mode()
-    }
-
-    pub fn provider_fork(&self) -> Arc<dyn Provider> {
-        self.provider.fork()
-    }
-
-    pub fn provider_handle(&self) -> Arc<dyn Provider> {
-        Arc::clone(&self.provider)
-    }
-
-    pub fn available_models(&self) -> Vec<&'static str> {
-        self.provider.available_models()
-    }
-
-    pub fn available_models_for_switching(&self) -> Vec<String> {
-        self.provider.available_models_for_switching()
-    }
-
-    pub fn available_models_display(&self) -> Vec<String> {
-        self.provider.available_models_display()
-    }
-
-    pub fn model_routes(&self) -> Vec<crate::provider::ModelRoute> {
-        let mut routes = self.provider.model_routes();
-        crate::model_usage::enrich_routes(&mut routes);
-        routes
-    }
-
-    pub(super) fn begin_model_usage_turn(&mut self, message_id: &str) {
-        self.session.model_usage_turn_id = Some(format!("{}:{}", self.session.id, message_id));
-    }
-
-    pub(super) fn model_usage_turn_id(&mut self) -> String {
-        if let Some(id) = &self.session.model_usage_turn_id {
-            return id.clone();
-        }
-        // Old sessions and direct loop callers have no durable anchor yet.
-        // Internal reminders and tool-result rows do not start a logical turn.
-        let message_id = self
-            .session
-            .visible_conversation_messages()
-            .into_iter()
-            .rev()
-            .find(|message| {
-                message.role == Role::User
-                    && message.content.iter().any(|block| {
-                        matches!(block, ContentBlock::Text { text, .. }
-                    if !text.trim().is_empty() && !text.starts_with("[System reminder:"))
-                            || matches!(block, ContentBlock::Image { .. })
-                    })
-            })
-            .map(|message| message.id.clone())
-            .unwrap_or_else(|| "initial".to_string());
-        self.begin_model_usage_turn(&message_id);
-        self.session.model_usage_turn_id.clone().unwrap()
-    }
-
-    pub(super) fn sync_bound_account_route(&mut self) {
-        let Some(label) = self.provider.oauth_account_label() else {
-            return;
-        };
-        if self
-            .session
-            .route_api_method
-            .as_deref()
-            .and_then(jcode_provider_core::oauth_account_label)
-            .is_some_and(|selected| selected != label)
-        {
-            logging::warn(
-                "Refusing to replace an explicit saved-account route with a different observed account",
-            );
-            return;
-        }
-        let method = match self.provider.name().to_ascii_lowercase().as_str() {
-            "openai" => "openai-oauth",
-            "claude" | "anthropic" => "claude-oauth",
-            _ => return,
-        };
-        let route = format!("{method}@{label}");
-        if self.session.route_api_method.as_deref() == Some(route.as_str()) {
-            return;
-        }
-        self.session.route_api_method = Some(route);
-        self.session.provider_key = Some(method.to_string());
-        self.session.model = Some(self.provider_model());
-        self.persist_session_best_effort("observed saved account route");
-    }
-
-    pub(super) fn record_failed_account_route(&mut self, error: &str) {
-        self.sync_bound_account_route();
-        if !jcode_provider_core::classify_failover_error_message(error)
-            .should_mark_provider_unavailable()
-        {
-            return;
-        }
-        let provider = self.provider.name().to_ascii_lowercase();
-        let provider = match provider.as_str() {
-            "openai" => "openai",
-            "claude" | "anthropic" => "claude",
-            _ => return,
-        };
-        let label = self.provider.oauth_account_label();
-        let (key, label) = match (
-            provider,
-            self.provider.active_resolved_credential(),
-            label.as_deref(),
-        ) {
-            (_, Some(jcode_provider_core::ResolvedCredential::Oauth), Some(label)) => {
-                (provider, Some(label))
-            }
-            ("openai", Some(jcode_provider_core::ResolvedCredential::ApiKey), _) => {
-                ("openai-api", None)
-            }
-            ("claude", Some(jcode_provider_core::ResolvedCredential::ApiKey), _) => {
-                ("anthropic-api", None)
-            }
-            _ => return,
-        };
-        if crate::provider::provider_unavailability_detail_for_account_label(key, label).is_none() {
-            crate::provider::record_provider_unavailable_for_account_label(key, label, error);
-        }
-    }
-
-    pub(super) fn record_model_turn_usage(&mut self, turn_id: &str) {
-        self.sync_bound_account_route();
-        if self.session.is_debug {
-            return;
-        }
-        let Some(mut route) = crate::model_usage::serving_route(
-            self.provider.as_ref(),
-            self.session.route_api_method.as_deref(),
-        ) else {
-            return;
-        };
-        match crate::model_usage::record_turn(turn_id, &route) {
-            Ok(usage) => {
-                route.usage = Some(usage);
-                Bus::global().publish(BusEvent::ModelUsageUpdated(route));
-            }
-            Err(error) => logging::warn(&format!("Could not record model turn usage: {error}")),
-        }
-    }
-
-    pub fn model_catalog_snapshot(&self) -> jcode_provider_core::ModelCatalogSnapshot {
-        jcode_provider_core::ModelCatalogSnapshot::new(
-            Some(self.provider_name()),
-            Some(self.provider_model()),
-            self.available_models_display(),
-            self.model_routes(),
-        )
-    }
-
-    pub fn registry(&self) -> Registry {
-        self.registry.clone()
-    }
-
-    pub async fn compaction_mode(&self) -> crate::config::CompactionMode {
-        self.registry.compaction().read().await.mode()
-    }
-
-    pub async fn set_compaction_mode(&self, mode: crate::config::CompactionMode) -> Result<()> {
-        let compaction = self.registry.compaction();
-        let mut manager = compaction.write().await;
-        manager.set_mode(mode);
-        Ok(())
-    }
-
-    /// Resolve the current model window and live global/session ceiling.
-    pub async fn effective_context_budget(&self) -> usize {
-        let compaction = self.registry.compaction();
-        let mut manager = compaction.write().await;
-        manager.set_budget(self.provider.context_window());
-        manager.token_budget()
-    }
-
-    /// Set this session's compaction ceiling without changing daemon config.
-    pub async fn set_context_cap(&mut self, max_context_tokens: Option<usize>) -> Result<usize> {
-        let cap = max_context_tokens.filter(|cap| *cap > 0);
-        let compaction = self.registry.compaction();
-        let mut manager = compaction.write().await;
-        let previous = self.session.context_cap;
-        self.session.context_cap = cap;
-        if let Err(error) = self.persist_session_now() {
-            self.session.context_cap = previous;
-            return Err(error);
-        }
-        manager.set_context_cap_override(cap);
-        manager.set_budget(self.provider.context_window());
-        Ok(manager.token_budget())
-    }
-
-    fn refresh_compaction_budget(&self) {
-        let compaction = self.registry.compaction();
-        match compaction.try_write() {
-            Ok(mut manager) => manager.set_budget(self.provider.context_window()),
-            Err(_) => crate::logging::warn(
-                "Could not refresh compaction token budget after provider change: compaction manager is busy",
-            ),
-        }
-    }
-
-    /// The context window the server resolves for the active route.
-    ///
-    /// Sent to clients on `ModelChanged` so a remote panel does not have to
-    /// derive it from its own inert provider, which carries no model catalog and
-    /// therefore always answers the generic default.
-    pub fn provider_context_window(&self) -> usize {
-        self.provider.context_window()
-    }
-
-    #[cfg(test)]
-    pub(crate) async fn compaction_token_budget(&self) -> usize {
-        self.registry.compaction().read().await.token_budget()
-    }
-
-    pub fn provider_messages(&mut self) -> Vec<Message> {
-        self.session.messages_for_provider()
-    }
-
-    pub fn set_model(&mut self, model: &str) -> Result<()> {
-        self.set_model_from_provider_state_event(
-            model,
-            crate::provider::ProviderModelSelectionSource::User,
-        )
-    }
-
-    pub fn set_route_selection(
-        &mut self,
-        selection: &crate::provider::RouteSelection,
-    ) -> Result<()> {
-        self.set_route_selection_from_provider_state_event(
-            selection,
-            crate::provider::ProviderModelSelectionSource::User,
-        )
-    }
-
-    pub(crate) fn set_route_selection_from_auth(
-        &mut self,
-        selection: &crate::provider::RouteSelection,
-    ) -> Result<()> {
-        self.set_route_selection_from_provider_state_event(
-            selection,
-            crate::provider::ProviderModelSelectionSource::Auth,
-        )
-    }
-
-    fn set_route_selection_from_provider_state_event(
-        &mut self,
-        selection: &crate::provider::RouteSelection,
-        source: crate::provider::ProviderModelSelectionSource,
-    ) -> Result<()> {
-        self.provider.set_route_selection(selection)?;
-        let resolved_model = self.provider.model();
-        self.session.provider_key = Some(selection.runtime_key.stable_id());
-        self.session.route_api_method = Some(selection.api_method.clone());
-        self.session.model = Some(self.provider_model());
-        let event = crate::provider::ProviderStateEvent::selected_model(source, resolved_model);
-        self.provider_runtime_state.apply(event);
-        self.refresh_compaction_budget();
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #2013** (2026-10-30): **Native edit tool schema permits incomplete arguments, causing failed first-attempt edits**
-  *Symptoms*: **Title:** Native `edit` tool schema permits incomplete arguments, causing failed first-attempt edits  **Version:** JCode 0.99.0-dev   **Platform:** macOS Apple Silicon   **Model:** Qwen3-Coder 30B via an OpenAI-compatible local gateway  ### Problem  The native `edit` tool advertises a JSON schema requiring only `file_path`, while the executor requires either:  - A nonempty `edits` array containing `old_string` and `new_string` for every entry, or - Both `old_string` and `new_string` as single-edit shorthand.  This mismatch permits incomplete tool calls that fail during execution.  ### Reproduction  Request a simple replacement in an existing text file.  Observed tool-call sequence:  1. `{"file_path":"...","edit_type":"replace","content":"EDIT_AFTER"}` — fails. 2. `{"file_path":"...","edit_type":"replace","old_string":"EDIT_BEFORE","content":"EDIT_AFTER"}` — fails. 3. `{"file_path":"...","edits":[{"old_string":"EDIT_BEFORE","new_string":"EDIT_AFTER"}]}` — succeeds.  ### Root cause  File: `crates/jcode-app-core/src/tool/edit.rs`  The `parameters_schema()` implementation declares:  `"required": ["file_path"]`  However, `EditInput::operations()` rejects calls without a complete replacement operation.  ### Proposed fix  Advertise `edits` as the required canonical format, with `minItems: 1` and both replacement strings required per item.  Retain legacy single-edit shorthand internally for backward compatibility.  ### Local validation  A local patch changing the required fields to 
+- **Issue #2054** (2026-11-02): **Fresh sessions pin spent/lower-tier pool logins when default_model binds an OAuth account (post #1901)**
+  *Symptoms*: ### Summary  Since #1901 was fixed in 5e7e0457c, a successfully applied `default_model` is preserved unconditionally on fresh sessions. That protection also covers defaults that bind an OAuth account the pool owns, so a spent or lower-tier login stays pinned for every new session instead of letting the account pool rotate it.  Related refinement in PR #2026.  ### Steps to reproduce  1. Log in with multiple pool accounts, with one spent or lower-priority (or make it spent mid-way). 2. Set `default_model` in config.toml to a bare model of a pool-owned OAuth login (e.g. an OpenAI or Claude pool model, no provider prefix). 3. Start a fresh session (no provider override). 4. The session binds the login the default resolved to, even when a ready higher-priority account could serve the same pool.  ### Expected  A default that binds a pool-owned OAuth login keeps pool selection in charge of which login serves the session (same rotation as the no-default case). A default that routes to a named profile, API key, or non-pool provider is preserved as a deliberate routing choice.  ### Actual  The successfully applied default always wins, including pool-owned OAuth logins. Rotation to ready accounts does not happen for those sessions.  ### Proposed fix  Classify the applied default in `provider_init` (`crates/jcode-base/src/provider/startup.rs`): pool-owned OAuth-account bindings keep `select_fresh_session_pool_route` active, everything else preserves the default. PR #2026 carries this cla
 
-- **Issue #2010** (2026-10-30): **patch / apply_patch (unified diff) rejects every edit to a CRLF file**
-  *Symptoms*: Since 9d22cbb8e (v0.99.1), `patch`, and `apply_patch` when given a unified diff, fail on any CRLF file even when the hunk matches exactly:      f: context mismatch at old line 1; stale coordinates, regenerate patch against current contents; no files changed  Repro: a file containing `anchor\r\nold\r\n` and the patch      --- a/f     +++ b/f     @@ -1,2 +1,2 @@      anchor     -old     +new  `render_patch` splits the file with `split_terminator('\n')`, so its lines keep `\r`; `parse_patch` uses `str::lines()`, which drops it, so every line mismatches. Before 9d22cbb8e the file was read with `.lines()` too, so these edits applied (written back as LF). This hits every Windows checkout of jcode itself (`* text=auto`).  Expected: the hunk applies and the file stays CRLF. I have a small fix with tests. 
+- **Issue #2043** (2026-11-02): **Composer does not auto-scroll while drag-selecting with the mouse**
+  *Symptoms*: ## Problem When selecting text inside the composer with a mouse drag, the view does not auto-scroll when the pointer reaches the top/bottom edge of the composer pane.  ## Steps to reproduce 1. Paste/type a long multi-line prompt so the composer content overflows the visible composer area. 2. Click at the top of the composer and drag the selection toward the bottom edge (or vice versa). 3. Hold the pointer at the edge.  ## Actual behavior The selection stops at the last visible row; rows outside the view cannot be included in the selection. The view only jumps after release (caret-follow), so the copied selection silently misses the invisible part.  ## Expected behavior Like any text editor: holding the drag at the pane edge scrolls the composer and keeps extending the selection into the newly revealed rows, so the copied text matches what was visually swept. Click-to-move-caret inside the composer must keep working exactly as before.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2484,396 +2289,757 @@ impl Agent {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `acebecf0` (2026-10-31)
-**Commit Message**: fix(tui): keep resume search work off the input thread
+### Incident Patch 1: `e877a4ec` (2026-11-03)
+**Commit Message**: security: upgrade native SSH crypto stack and preserve strict pinning
 
-**File**: `crates/jcode-tui/src/tui/session_picker/filter.rs` (modified, +11/-7)
+**File**: `Cargo.lock` (modified, +552/-389)
 ```diff
-@@ -50,17 +50,20 @@ impl SessionPicker {
-             return self.all_session_refs();
-         }
+@@ -19,12 +19,12 @@ dependencies = [
  
--        // Fuzzy matches are not monotonic: adding a character can increase the
--        // error budget or turn a short literal query into a typo-tolerant one.
--        // Reconsider every session rather than narrowing the previous results.
-+        // Keep literal matches immediate. Expensive typo-tolerant matching is
-+        // debounced in the worker alongside transcript search, not performed
-+        // on every keypress. Reconsider all sessions for new worker results.
-         let candidates = self.all_session_refs();
--        let fuzzy = jcode_fuzzy::PreparedTokenQuery::new(&normalized);
-+        let tokens = loading::search_query_tokens(&normalized);
+ [[package]]
+ name = "aead"
+-version = "0.5.2"
++version = "0.6.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "d122413f284cf2d62fb1b7db97e02edb8cda96d769b16e443a4f6195e35662b0"
++checksum = "1973cfbc1a2daf9cf550e74e1f088c28e7f7d8c1e1418fb6c9dc5184b7e84c99"
+ dependencies = [
+- "crypto-common 0.1.7",
+- "generic-array",
++ "crypto-common 0.2.2",
++ "inout 0.2.5",
+ ]
  
-         let matches = candidates
-             .into_iter()
-             .filter(|session_ref| {
-                 self.session_by_ref(*session_ref).is_some_and(|session| {
--                    fuzzy.matches_search_text(&session.search_index)
-+                    (!self.transcript_search.defers_metadata()
-+                        && tokens
-+                            .iter()
-+                            .all(|token| session.search_index.contains(token)))
-                         || self.transcript_search.contains(&session.id)
-                 })
-             })
-@@ -121,8 +124,9 @@ impl SessionPicker {
-         if !self.search_query.trim().is_empty() {
-             filtered.sort_by_cached_key(|session_ref| {
-                 !self.session_by_ref(*session_ref).is_some_and(|session| {
--                    Self::session_matches_search(session, &self.search_query)
--                        || self.transcript_search.contains(&session.id)
-+                    (!self.transcript_search.defers_metadata()
-+                        && Self::session_matches_search(session, &self.search_query))
-+                        || self.transcript_search.contains_literal(&session.id)
-                 })
-             });
-         }
+ [[package]]
+@@ -34,22 +34,35 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "b169f7a6d4742236a0a00c541b845991d0ac43e546831af1249753ab4c3aa3a0"
+ dependencies = [
+  "cfg-if",
+- "cipher",
++ "cipher 0.4.4",
+  "cpufeatures 0.2.17",
+ ]
+ 
++[[package]]
++name = "aes"
++version = "0.9.4"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "fc0fc36d7440d015b45468ba08a21e80e056ebbd014c611c6298bb7503e04bd1"
++dependencies = [
++ "cipher 0.5.2",
++ "cpubits",
++ "cpufeatures 0.3.0",
++ "zeroize",
++]
++
+ [[package]]
+ name = "aes-gcm"
+-version = "0.10.3"
++version = "0.11.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "831010a0f742e1209b3bcea8fab6a8e149051ba6099432c8cb2cc117dec3ead1"
++checksum = "7f2b8006a0c83f52b62ba44a97b58bf76fe2f70a329e588f67f89691d93d498f"
+ dependencies = [
+  "aead",
+- "aes",
+- "cipher",
++ "aes 0.9.4",
++ "cipher 0.5.2",
+  "ctr",
++ "ctutils",
+  "ghash",
+- "subtle",
++ "zeroize",
+ ]
+ 
+ [[package]]
+@@ -226,13 +239,13 @@ dependencies = [
+ 
+ [[package]]
+ name = "argon2"
+-version = "0.5.3"
++version = "0.6.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "3c3610892ee6e0cbce8ae2700349fcf8f98adb0dbfbee85aec3c9179d29cc072"
++checksum = "134c52ddac6d63c576bef8168db10c83c49c26444ecbc68060fef078925a901c"
+ dependencies = [
+  "base64ct",
+  "blake2",
+- "cpufeatures 0.2.17",
++ "cpufeatures 0.3.0",
+  "password-hash",
+ ]
+ 
+@@ -457,7 +470,7 @@ dependencies = [
+  "fastrand",
+  "hex",
+  "http 1.4.0",
+- "sha1",
++ "sha1 0.10.6",
+  "time",
+  "tokio",
+  "tracing",
+@@ -674,7 +687,7 @@ dependencies = [
+  "bytes",
+  "form_urlencoded",
+  "hex",
+- "hmac 0.13.0",
++ "hmac",
+  "http 0.2.12",
+  "http 1.4.0",
+  "percent-encoding",
+@@ -954,9 +967,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "base16ct"
+-version = "0.2.0"
++version = "1.0.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "4c7f02d4ea65f2c1853089ffd8d2787bdbc63de2f0d29dedbcf8ccdfa0ccd4cf"
++checksum = "fd307490d624467aa6f74b0eabb77633d1f758a7b25f12bceb0b22e08d9726f6"
+ 
+ [[package]]
+ name = "base64"
+@@ -988,19 +1001,19 @@ dependencies = [
+ 
+ [[package]]
+ name = "base64ct"
+-version = "1.6.0"
++version = "1.8.3"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "8c3c1a368f70d6cf7302d78f8f7093da241fb8e8807c05cc9e51a125895a6d5b"
++checksum = "2af50177e190e07a26ab74f8b1efbfe2ef87da2116221318cb1c2e82baf7de06"
+ 
+ [[package]]
+ name = "bcrypt-pbkdf"
+-version = "0.10.0"
++version = "0.11.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "6aeac2e1fe888769f34f05ac343bbef98b14d1ffb292ab69d4608b3abc86f2a2"
++checksum = "144e573728da132683b9488acd528274c790e07fc06ff81ee29f9d8f8b1041e0"
+ dependencies = [
+  "blowfish",
+  "pbkdf2",
+- "sha2 0.10.9",
++ "sha2 0.11.0",
+ ]
+ 
+ [[package]]
+@@ -1107,11 +1120,11 @@ dependencies = [
+ 
+ [[package]]
+ name = "blake2"
+-version = "0.10.6"
++version = "0.11.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "46502ad458c9a52b69d4d4d32775c788b7a1b85e8bc9d482d92250fc0e3f8efe"
++checksum = "5b5d4d889834ee8ecfc0f8426ad30faf7cdcb10f741a8e6d7224d95325479f6f"
+ dependencies = [
+- "digest 0.10.7",
++ "digest 0.11.3",
+ ]
+ 
+ [[package]]
+@@ -1120,7 +1133,7 @@ version = "0.10.4"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "3078c7629b62d3f0439517fa394996acacc5cbc91c5a20d8c658e77abd503a71"
+ dependencies = [
+- "generic-array",
++ "generic-array 0.14.7",
+ ]
+ 
+ [[package]]
+@@ -1130,6 +1143,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "cdd35008169921d80bc60d3d0ab416eecb028c4cd653352907921d95084790be"
+ dependencies = [
+  "hybrid-array",
++ "zeroize",
+ ]
+ 
+ [[package]]
+@@ -1138,7 +1152,16 @@ version = "0.3.3"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "a8894febbff9f758034a5b8e12d87918f56dfc64a8e1fe757d65e29041538d93"
+ dependencies = [
+- "generic-array",
++ "generic-array 0.14.7",
++]
++
++[[package]]
++name = "block-padding"
++version = "0.4.2"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "710f1dd022ef4e93f8a438b4ba958de7f64308434fa6a87104481645cc30068b"
++dependencies = [
++ "hybrid-array",
+ ]
+ 
+ [[package]]
+@@ -1165,12 +1188,12 @@ dependencies = [
+ 
+ [[package]]
+ name = "blowfish"
+-version = "0.9.1"
++version = "0.10.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "e412e2cd0f2b2d93e02543ceae7917b3c70331573df19ee046bcbc35e45e87d7"
++checksum = "62ce3946557b35e71d1bbe07ec
 ```
 
-**File**: `crates/jcode-tui/src/tui/session_picker/transcript_search.rs` (modified, +118/-19)
+**File**: `crates/jcode-sdk/Cargo.toml` (modified, +5/-3)
 ```diff
-@@ -1,4 +1,5 @@
--//! Cancellable full-transcript search. Never reads transcript files on the UI thread.
-+//! Debounced fuzzy and full-transcript search. Only cheap literal metadata
-+//! matching runs on the UI thread, never fuzzy DP or transcript file reads.
- use super::loading::search_query_tokens;
- use super::{ResumeTarget, SessionInfo};
- use serde::de::{DeserializeSeed, IgnoredAny, MapAccess, SeqAccess, Visitor};
-@@ -13,10 +14,12 @@ use std::sync::{
- use std::time::{Duration, Instant};
+@@ -23,15 +23,17 @@ uuid = { version = "1", features = ["v4"] }
+ # Jcode Cloud control plane (feature `cloud`).
+ ureq = { version = "3", features = ["json"], optional = true }
+ # In-process SSH (feature `ssh-native`), for platforms without an `ssh` binary.
+-russh = { version = "0.54", default-features = false, features = ["ring"], optional = true }
+-rand_core = { version = "0.6", features = ["getrandom"], optional = true }
++# Keep RSA disabled: native SSH generates Ed25519 keys and uses pinned host keys.
++# russh 0.65 migrates the elliptic-curve stack to patched crypto-bigint 0.7.
++russh = { version = "0.65", default-features = false, features = ["ring"], optional = true }
++rand = { version = "0.10", optional = true }
+ tokio = { version = "1", features = ["rt", "sync", "time", "net", "io-util", "macros"], optional = true }
  
- const DEBOUNCE: Duration = Duration::from_millis(150);
-+const IMMEDIATE_METADATA_BYTES: usize = 1024 * 1024;
+ [features]
+ default = []
+ # Account sign-in (email code, browser/device flow) and host wake/provision.
+ cloud = ["dep:ureq"]
+ # Pure-Rust SSH transport with pinned host keys; also enables `cloud::connect`.
+-ssh-native = ["cloud", "dep:russh", "dep:rand_core", "dep:tokio"]
++ssh-native = ["cloud", "dep:russh", "dep:rand", "dep:tokio"]
  
- struct Candidate {
-     id: String,
-     paths: Vec<PathBuf>,
-+    search_index: String,
-     missing_tokens: Vec<String>,
- }
- 
-@@ -25,9 +28,11 @@ pub(super) struct TranscriptSearch {
-     query: String,
-     candidates: Vec<Candidate>,
-     started_at: Option<Instant>,
--    receiver: Option<mpsc::Receiver<String>>,
-+    receiver: Option<mpsc::Receiver<(String, bool)>>,
-     cancel: Arc<AtomicBool>,
-     matches: HashSet<String>,
-+    literal_matches: HashSet<String>,
-+    defer_metadata: bool,
- }
- 
- impl Drop for TranscriptSearch {
-@@ -51,26 +56,30 @@ impl TranscriptSearch {
-             return;
-         }
-         let tokens = search_query_tokens(query);
-+        let sessions: Vec<_> = sessions.collect();
-+        self.defer_metadata = sessions
-+            .iter()
-+            .map(|session| session.search_index.len())
-+            .sum::<usize>()
-+            > IMMEDIATE_METADATA_BYTES;
-         for session in sessions {
-             let missing_tokens: Vec<_> = tokens
-                 .iter()
-                 .filter(|token| {
--                    !jcode_fuzzy::PreparedTokenQuery::new(token)
--                        .matches_search_text(&session.search_index)
-+                    self.defer_metadata || !session.search_index.contains(token.as_str())
-                 })
-                 .cloned()
-                 .collect();
-             if missing_tokens.is_empty() {
-                 continue;
-             }
-             let paths = transcript_paths(session);
--            if !paths.is_empty() {
--                self.candidates.push(Candidate {
--                    id: session.id.clone(),
--                    paths,
--                    missing_tokens,
--                });
--            }
-+            self.candidates.push(Candidate {
-+                id: session.id.clone(),
-+                paths,
-+                search_index: session.search_index.clone(),
-+                missing_tokens,
-+            });
-         }
-         if !self.candidates.is_empty() {
-             self.started_at = Some(Instant::now());
-@@ -81,6 +90,14 @@ impl TranscriptSearch {
-         self.matches.contains(id)
-     }
- 
-+    pub(super) fn contains_literal(&self, id: &str) -> bool {
-+        self.literal_matches.contains(id)
-+    }
-+
-+    pub(super) fn defers_metadata(&self) -> bool {
-+        self.defer_metadata
-+    }
-+
-     pub(super) fn pending(&self) -> bool {
-         self.started_at.is_some() || self.receiver.is_some()
-     }
-@@ -98,14 +115,73 @@ impl TranscriptSearch {
-             match std::thread::Builder::new()
-                 .name("jcode-transcript-search".into())
-                 .spawn(move || {
--                    for candidate in candidates {
-+                    // Finish the in-memory fuzzy pass before opening any large
-+                    // transcripts. Neither DP matching nor disk scans belong
-+                    // on the keystroke/render thread.
-+                    let mut fuzzy_candidates = Vec::new();
-+                    for mut candidate in candidates {
-                         if cancel.load(Ordering::Relaxed) {
--                            break;
-+                            return;
-+                        }
-+                        candidate
-+                            .missing_tokens
-+                            .retain(|token| !candidate.search_index.contains(token.as_str()));
-+                        if candidate.missing_tokens.is_empty() {
-+                            if sender.send((candidate.id, true)).is_err() {
-+                                return;
-+                            }
-+                            continue;
-                         }
--                        if paths_match(&candidate.paths, &candidate.missing_tokens, &cancel)
--                            && sender.send(candidate.id).is_err()
-+                        fuzzy_candidates.push(candidate);
-+                    }
-+                    let mut transcripts = Vec::new();
-+                    for mut candidate in fuzzy_candidates {
-+                        if cancel.load(Ordering::Relaxed) {
-+                            return;
-+                        }
-+                        let mut fuzzy_missing = candidate.missing_tokens.clone();
-+                        fuzzy_missing.retain(|token| {
-+                            !jcode_fuzzy::PreparedTokenQuery::new(token)
-+                                .matches_search_text(&can
+ [dev-dependencies]
 ```
 
-**File**: `crates/jcode-tui/src/tui/session_picker/transcript_search_tests.rs` (modified, +105/-0)
+**File**: `crates/jcode-sdk/src/native_ssh.rs` (modified, +148/-4)
 ```diff
-@@ -1,5 +1,6 @@
- use super::super::{SessionPicker, SessionSource, SessionStatus};
- use super::*;
-+use crossterm::event::{KeyCode, KeyModifiers};
+@@ -33,7 +33,7 @@ impl NativeSshKey {
+     /// A fresh ed25519 key. `comment` ends up in the OpenSSH public key line.
+     pub fn generate(comment: &str) -> Result<Self> {
+         let private =
+-            russh::keys::PrivateKey::random(&mut rand_core::OsRng, russh::keys::Algorithm::Ed25519)
++            russh::keys::PrivateKey::random(&mut rand::rng(), russh::keys::Algorithm::Ed25519)
+                 .map_err(|e| {
+                     Error::new(
+                         ErrorKind::ConnectFailed,
+@@ -143,9 +143,16 @@ impl russh::client::Handler for PinnedHost {
+     type Error = russh::Error;
+     async fn check_server_key(
+         &mut self,
+-        key: &russh::keys::PublicKey,
++        key: &russh::keys::PublicKeyOrCertificate,
+     ) -> std::result::Result<bool, Self::Error> {
+-        let ok = self.keys.iter().any(|k| k.key_data() == key.key_data());
++        // Only raw pinned keys are trusted. Certificates must not silently
++        // become a new trust path when upgrading russh's handler API.
++        let ok = match key {
++            russh::keys::PublicKeyOrCertificate::PublicKey { key, .. } => {
++                self.keys.iter().any(|k| k.key_data() == key.key_data())
++            }
++            russh::keys::PublicKeyOrCertificate::Certificate(_) => false,
++        };
+         if !ok {
+             self.mismatch.store(true, Ordering::Relaxed);
+         }
+@@ -412,6 +419,118 @@ impl JcodeClient {
+ mod tests {
+     use super::*;
  
- fn external_session(id: &str, path: &Path) -> SessionInfo {
-     let now = chrono::Utc::now();
-@@ -185,6 +186,110 @@ fn typing_debounces_disk_work_and_metadata_search_stays_immediate() {
-     assert!(!picker.transcript_search.pending());
- }
- 
-+#[test]
-+fn fuzzy_metadata_matching_is_debounced_and_never_runs_on_keystroke() {
-+    let temp = tempfile::tempdir().unwrap();
-+    let mut session = external_session("one", &temp.path().join("absent.jsonl"));
-+    session.search_index = "config deploy".into();
-+    let mut picker = SessionPicker::new(vec![session]);
-+    picker.search_query = "conifg".into();
-+    picker.rebuild_items();
-+    assert!(picker.visible_sessions.is_empty());
-+    assert!(picker.transcript_search.receiver.is_none());
-+    assert_eq!(picker.transcript_search.candidates.len(), 1);
-+    assert_eq!(
-+        picker.transcript_search.candidates[0].missing_tokens,
-+        ["conifg"]
-+    );
-+    wait_for_search(&mut picker);
-+    assert_eq!(picker.selected_session().unwrap().id, "one");
-+    assert!(!picker.transcript_search.contains_literal("one"));
-+}
++    struct TestSshServer {
++        authorized: russh::keys::PublicKey,
++    }
 +
-+#[test]
-+#[ignore = "manual typing latency benchmark, prints old synchronous matching versus key handling"]
-+fn benchmark_resume_search_keystroke_latency() {
-+    let temp = tempfile::tempdir().unwrap();
-+    let sessions: Vec<_> = (0..100)
-+        .map(|i| {
-+            let mut session =
-+                external_session(&format!("bench-{i}"), &temp.path().join("absent.jsonl"));
-+            session.search_index =
-+                "deployment performance synchronization throughput ".repeat(1400);
-+            session
-+        })
-+        .collect();
-+    let baseline = Instant::now();
-+    let tokens = search_query_tokens("modal cli");
-+    let fuzzy = jcode_fuzzy::PreparedTokenQuery::new("modal cli");
-+    for session in &sessions {
-+        for token in &tokens {
-+            std::hint::black_box(
-+                jcode_fuzzy::PreparedTokenQuery::new(token)
-+                    .matches_search_text(&session.search_index),
-+            );
++    impl russh::server::Handler for TestSshServer {
++        type Error = russh::Error;
++
++        async fn auth_publickey(
++            &mut self,
++            user: &str,
++            key: russh::server::VerifiedPublicKey<'_>,
++        ) -> std::result::Result<russh::server::Auth, Self::Error> {
++            Ok(
++                if user == "test" && key.public_key.key_data() == self.authorized.key_data() {
++                    russh::server::Auth::Accept
++                } else {
++                    russh::server::Auth::reject()
++                },
++            )
 +        }
-+        std::hint::black_box(fuzzy.matches_search_text(&session.search_index));
++
++        async fn channel_open_session(
++            &mut self,
++            _channel: russh::Channel<russh::server::Msg>,
++            reply: russh::server::ChannelOpenHandle,
++            _session: &mut russh::server::Session,
++        ) -> std::result::Result<(), Self::Error> {
++            reply.accept().await;
++            Ok(())
++        }
++
++        async fn exec_request(
++            &mut self,
++            channel: russh::ChannelId,
++            command: &[u8],
++            session: &mut russh::server::Session,
++        ) -> std::result::Result<(), Self::Error> {
++            assert!(String::from_utf8_lossy(command).ends_with("api --stdio"));
++            session.channel_success(channel)?;
++            session.data(channel, b"encrypted SSH channel ready\n".to_vec())?;
++            Ok(())
++        }
 +    }
-+    let baseline = baseline.elapsed();
-+    let mut picker = SessionPicker::new(sessions);
-+    picker.search_active = true;
-+    picker.search_query = "modal cl".into();
-+    let start = Instant::now();
-+    picker
-+        .handle_search_key(KeyCode::Char('i'), KeyModifiers::NONE)
-+        .unwrap();
-+    let elapsed = start.elapsed();
-+    assert_eq!(picker.search_query, "modal cli");
-+    assert!(picker.transcript_search.receiver.is_none());
-+    eprintln!(
-+        "100 sessions x 64 KiB: old synchronous matching {baseline:?}, new full key handler {elapsed:?}"
++
++    #[tokio::test]
++    async fn ed25519_handshake_auth_exec_and_wrong_pin() {
++        let host = NativeSshKey::generate("host").unwrap();
++        let client = NativeSshKey::generate("client").unwrap();
++        let config = Arc::new(russh::server::Config {
++            keys: vec![(*host.private).clone()],
++            ..Default::default()
++        });
++        for correct_pin in [true, false] {
++            let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
++            let addr = listener.local_addr().unwrap();
++            let config = Arc::clone(&config);
++            let authorized = client.private.public_key().clone();
++            let server = tokio::spawn(async move {
++                let (stream, _) = listener.accept().await.unwrap();
++                if let Ok(session) =
++                    russh::server::run_stream(config, stream, TestSshServer { authorized }).await
++                {
++                    let _ = session.await;
++                }
++            });
++            let options = NativeSshOptions::new(
++                CloudTarget {
++                    address: addr.ip(),
++                    port: addr.port(),
++                    user: "test".into(),
++                    host_keys: vec![host.public_openssh().into()],
++                },
++                client.clone(),
++            );
++            let pinned = if correct_pin { &host } else { &client };
++            let mismatch = Arc::new(AtomicBool::new(false));
++            let result = tokio::time::timeout(
++                Duration::from_secs(10),
++                open(
++                    &options,
++                    vec![pinned.private.public_key().clone()],
++                    Arc::clone(&mismatch),
++                    &options.remote_command().unwrap(),
++                ),
++            )
++            .await
++            .unwrap();
++            if correct_pin {
++                let (session, mut channel) = result.unwrap();
++                let data = tokio::time::timeout(Duration::fr
+```
+
+**File**: `docs/SECURITY_DEPENDENCIES.md` (modified, +26/-1)
+```diff
+@@ -1,6 +1,6 @@
+ # Dependency Security Triage
+ 
+-Last reviewed: 2026-05-14
++Last reviewed: 2026-11-03
+ 
+ This file tracks the current `cargo audit` findings for jcode and the intended remediation path.
+ It is not an allowlist. It is a triage record so advisories are visible and actionable.
+@@ -21,6 +21,31 @@ It is not an allowlist. It is a triage record so advisories are visible and acti
+ | `RUSTSEC-2026-0187` | `lopdf` | `jcode-pdf -> pdf-extract 0.8.2 -> lopdf 0.34` | PDF text extraction (`/pdf`, image/PDF reads) | Stack overflow parsing deeply nested PDF objects. Only reached when extracting text from a (potentially malicious) PDF the user opens; not in the auth/provider/network path. `pdf-extract 0.8.2` pins `lopdf 0.34`, so it cannot be bumped to the fixed `>=0.42` without an upstream `pdf-extract` release. | Upgrade once `pdf-extract` ships a release depending on `lopdf >=0.42`; remove the ignore then. |
+ | `RUSTSEC-2023-0086` | `lexical-core` | `imap -> imap-proto -> lexical-core` | Gmail/IMAP support path | Old unsound transitive dependency in the mail stack. Higher priority than the UI-only findings because it touches network-parsed data. | Investigate upgrading or replacing `imap` / `imap-proto`. If no maintained path exists, isolate or remove the IMAP dependency. |
+ 
++## Resolved native SSH advisories (2026-11-03)
++
++- Upgraded `jcode-sdk`'s optional native SSH transport from `russh 0.54.5`
++  to `0.65.0`. The lockfile now selects `russh-cryptovec 0.62.0` and
++  `crypto-bigint 0.7.10`, above the patched thresholds for
++  `RUSTSEC-2026-0154`, `RUSTSEC-2026-0153`, and `RUSTSEC-2026-0387`.
++- `rsa` and `internal-russh-forked-ssh-key` are no longer in the lockfile,
++  removing `RUSTSEC-2023-0071` rather than suppressing it. Keep russh default
++  features disabled and enable only `ring`. Native SSH already generates
++  Ed25519 authentication keys, and CloudTarget accepts only Ed25519 and P-256
++  host keys. RSA-only native SSH endpoints are not supported, and the external
++  OpenSSH transport is unchanged.
++- Migrated key generation to `rand 0.10`'s cryptographically secure thread RNG.
++  The new certificate-aware host-key callback explicitly rejects certificates,
++  preserving raw pinned-key verification with no TOFU or CA trust fallback.
++- Regression coverage includes a real loopback encrypted SSH handshake,
++  Ed25519 public-key authentication, session exec/data, and wrong-pin rejection.
++  Run `justrust check -p jcode-sdk --all-features` and
++  `justrust test -p jcode-sdk --all-features` on hosted infrastructure.
++- `cargo audit --json` reports zero vulnerabilities with advisory database
++  commit `263a4d951a0867d4bddc29dddd6d59427c78f9a7` (updated 2026-11-02).
++  All four repaired advisory IDs are absent. Unmaintained, unsound, and yanked
++  dependency warnings remain. `scripts/security_preflight.sh --strict` passes
++  with its existing, unchanged triage list.
++
+ ## Priority order
+ 
+ 1. `rustls-webpki` TLS advisories via rustls stack
+```
+
+---
+
+### Incident Patch 2: `25f686a7` (2026-11-03)
+**Commit Message**: fix(tui): make preview fallback failures observable and panic-free
+
+**File**: `crates/jcode-tui/src/tui/app/run_shell.rs` (modified, +7/-4)
+```diff
+@@ -6,8 +6,12 @@ fn report_reload_interaction_gap() {
+         return;
+     };
+     crate::env::remove_var("JCODE_RELOAD_GAP_STARTED_MS");
+-    let Some(started_ms) = started.parse::<u128>().ok() else {
+-        return;
++    let started_ms = match started.parse::<u128>() {
++        Ok(started) => started,
++        Err(error) => {
++            crate::logging::debug(&format!("Invalid reload interaction timestamp: {error}"));
++            return;
++        }
+     };
+     let Ok(now) = std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH) else {
+         return;
+@@ -52,8 +56,7 @@ pub(crate) fn refresh_preview_redraw_timer(
+         && state.session_picker_overlay().is_some_and(|picker| {
+             picker
+                 .try_borrow()
+-                .ok()
+-                .is_some_and(|picker| picker.has_pending_preview_work())
++                .is_ok_and(|picker| picker.has_pending_preview_work())
+         });
+     if pending {
+         let desired = crate::tui::redraw_interval(state);
+```
+
+**File**: `crates/jcode-tui/src/tui/redraw_schedule.rs` (modified, +2/-4)
+```diff
+@@ -316,8 +316,7 @@ fn session_picker_spinner_redraw_active(state: &dyn TuiState) -> bool {
+         && state.session_picker_overlay().is_some_and(|picker| {
+             picker
+                 .try_borrow()
+-                .ok()
+-                .is_some_and(|picker| picker.has_visible_running_sessions())
++                .is_ok_and(|picker| picker.has_visible_running_sessions())
+         })
+ }
+ 
+@@ -328,8 +327,7 @@ fn session_picker_preview_redraw_active(state: &dyn TuiState) -> bool {
+         && state.session_picker_overlay().is_some_and(|picker| {
+             picker
+                 .try_borrow()
+-                .ok()
+-                .is_some_and(|picker| picker.has_pending_preview_work())
++                .is_ok_and(|picker| picker.has_pending_preview_work())
+         })
+ }
+ 
+```
+
+**File**: `crates/jcode-tui/src/tui/session_picker.rs` (modified, +7/-1)
+```diff
+@@ -49,6 +49,8 @@ mod performance;
+ #[cfg(test)]
+ mod performance_tests;
+ mod preview_chrome;
++mod preview_io;
++use preview_io::preview_result;
+ mod preview_metadata;
+ mod preview_refresh;
+ mod progressive_preview;
+@@ -1159,7 +1161,7 @@ impl SessionPicker {
+         let (tx, rx) = std::sync::mpsc::channel();
+         let (workspace_tx, workspace_rx) = std::sync::mpsc::channel();
+         let thread_session_id = cache_session_id.clone();
+-        let _ = std::thread::Builder::new()
++        let worker = std::thread::Builder::new()
+             .name("jcode-session-preview-loader".to_string())
+             .spawn(move || {
+                 let session_id = match &resume_target {
+@@ -1176,6 +1178,10 @@ impl SessionPicker {
+                     preview_metadata::hydrate_workspace(data, &target);
+                 });
+             });
++        if preview_result(worker, "loader worker startup").is_none() {
++            self.preview_load_failures.insert(cache_session_id);
++            return;
++        }
+         self.pending_workspace_load = Some(progressive_preview::PendingWorkspaceLoad {
+             session_id: cache_session_id,
+             receiver: workspace_rx,
+```
+
+**File**: `crates/jcode-tui/src/tui/session_picker/cloud_preview.rs` (modified, +10/-2)
+```diff
+@@ -60,12 +60,13 @@ fn load_cached_or_fetch(
+         {
+             let path = path.to_owned();
+             let id = session_id.to_owned();
+-            let _ = std::thread::Builder::new()
++            let refresh = std::thread::Builder::new()
+                 .name("jcode-cloud-preview-refresh".into())
+                 .spawn(move || {
+                     let _guard = guard;
+                     fetch_and_cache(&id, Some(&path), fetch);
+                 });
++            preview_result(refresh, "cloud refresh worker");
+         }
+         return Some(snapshot);
+     }
+@@ -149,7 +150,14 @@ fn parse_preview(
+         .position(|b| *b == 0)
+         .map(|offset| first + 1 + offset);
+     let session = parse_transcript(&bytes[..second.unwrap_or(bytes.len())])?;
+-    let telemetry = second.and_then(|split| serde_json::from_slice(&bytes[split + 1..]).ok());
++    let telemetry = second.and_then(|split| {
++        let bytes = &bytes[split + 1..];
++        if bytes.is_empty() {
++            None
++        } else {
++            preview_result(serde_json::from_slice(bytes), "remote telemetry decoding")
++        }
++    });
+     Some((session, telemetry))
+ }
+ 
+```
+
+**File**: `crates/jcode-tui/src/tui/session_picker/cloud_preview/cache.rs` (modified, +17/-11)
+```diff
+@@ -12,7 +12,7 @@ const CACHE_BUDGET: u64 = 256 * 1024 * 1024;
+ const TTL: Duration = Duration::from_secs(15);
+ 
+ pub(super) fn path(session_id: &str, host: &str, epoch: u64) -> Option<PathBuf> {
+-    let root = crate::storage::jcode_dir().ok()?;
++    let root = super::super::preview_result(crate::storage::jcode_dir(), "cache directory")?;
+     Some(key_path(&root, session_id, host, epoch))
+ }
+ 
+@@ -27,24 +27,30 @@ fn key_path(root: &Path, session_id: &str, host: &str, epoch: u64) -> PathBuf {
+ }
+ 
+ pub(super) fn read(path: &Path) -> Option<Vec<u8>> {
+-    let file = File::open(path).ok()?;
+-    if file.metadata().ok()?.len() > MAX_BYTES as u64 {
++    let file = match File::open(path) {
++        Ok(file) => file,
++        Err(error) if error.kind() == io::ErrorKind::NotFound => return None,
++        Err(error) => return super::super::preview_result(Err::<Vec<u8>, _>(error), "cache open"),
++    };
++    if super::super::preview_result(file.metadata(), "cache metadata")?.len() > MAX_BYTES as u64 {
+         return None;
+     }
+     // Do not trust metadata for allocation or bounds: the file can grow concurrently.
+     let mut bytes = Vec::new();
+-    file.take(MAX_BYTES as u64 + 1)
+-        .read_to_end(&mut bytes)
+-        .ok()?;
++    super::super::preview_result(
++        file.take(MAX_BYTES as u64 + 1).read_to_end(&mut bytes),
++        "cache read",
++    )?;
+     (bytes.len() <= MAX_BYTES).then_some(bytes)
+ }
+ 
+ pub(super) fn fresh(path: &Path) -> bool {
+-    fs::metadata(path)
+-        .and_then(|metadata| metadata.modified())
+-        .ok()
+-        .and_then(|modified| modified.elapsed().ok())
+-        .is_some_and(|age| age < TTL)
++    super::super::preview_result(
++        fs::metadata(path).and_then(|metadata| metadata.modified()),
++        "cache freshness",
++    )
++    .and_then(|modified| super::super::preview_result(modified.elapsed(), "cache timestamp"))
++    .is_some_and(|age| age < TTL)
+ }
+ 
+ pub(super) fn write(path: &Path, bytes: &[u8]) -> io::Result<()> {
+```
+
+**File**: `crates/jcode-tui/src/tui/session_picker/loading.rs` (modified, +1/-1)
+```diff
+@@ -1378,7 +1378,7 @@ impl<'de> Visitor<'de> for SessionMessageSummaryVisitor {
+                     token_usage = map.next_value()?;
+                 }
+                 _ => {
+-                    let _ = map.next_value::<IgnoredAny>()?;
++                    map.next_value::<IgnoredAny>()?;
+                 }
+             }
+         }
+```
+
+**File**: `crates/jcode-tui/src/tui/session_picker/preview_chrome.rs` (modified, +4/-4)
+```diff
+@@ -19,10 +19,10 @@ pub(super) fn persisted_info_from_snapshot(
+     // A session may have switched routes since that message. Only a snapshot
+     // with exact route and compaction identity is eligible for context chrome.
+     let context_tokens = snapshot.as_ref().map(|s| s.context_tokens);
+-    let (auth_method, usage_info) = snapshot
+-        .as_ref()
+-        .map(snapshot_account_info)
+-        .unwrap_or_default();
++    let (auth_method, usage_info) = snapshot.as_ref().map_or(
++        (info_widget::AuthMethod::Unknown, None),
++        snapshot_account_info,
 +    );
+     InfoWidgetData {
+         auth_method,
+         usage_info,
+```
+
+**File**: `crates/jcode-tui/src/tui/session_picker/preview_io.rs` (added, +14/-0)
+```diff
+@@ -0,0 +1,14 @@
++//! Read-only preview failures fall back to uncached/streaming paths.
++
++pub(super) fn preview_result<T, E: std::fmt::Display>(
++    result: Result<T, E>,
++    operation: &str,
++) -> Option<T> {
++    match result {
++        Ok(value) => Some(value),
++        Err(error) => {
++            crate::logging::debug(&format!("Session preview {operation} unavailable: {error}"));
++            None
++        }
++    }
 +}
+```
+
+---
+
+### Incident Patch 3: `2f636d14` (2026-11-03)
+**Commit Message**: Isolate provider reload regression within test size budget
+
+**File**: `crates/jcode-base/src/config_tests.rs` (modified, +2/-47)
+```diff
+@@ -1705,53 +1705,8 @@ fn cli_config_save_round_trips_desktop_tables() {
+     Config::invalidate_cache();
+ }
+ 
+-#[test]
+-fn external_default_edit_syncs_pool_without_reordering_on_unrelated_reload() {
+-    let _guard = crate::storage::lock_test_env();
+-    let prev_home = std::env::var_os("JCODE_HOME");
+-    let dir = tempfile::TempDir::new().unwrap();
+-    crate::env::set_var("JCODE_HOME", dir.path());
+-    Config::invalidate_cache();
+-    let path = Config::path().unwrap();
+-    std::fs::write(&path, "[provider]\ndefault_provider = 'openai-oauth'\n").unwrap();
+-    assert_eq!(
+-        crate::config::config().provider.default_provider.as_deref(),
+-        Some("openai-oauth")
+-    );
+-    let mut pool = crate::auth::account_pool::AccountPool::default();
+-    pool.members = vec!["openai:work".into(), "claude:personal".into()];
+-    pool.save().unwrap();
+-
+-    // A raw file edit, not the preference setter, must synchronize startup.
+-    std::fs::write(
+-        &path,
+-        "[provider]\ndefault_provider = 'claude'\ndefault_model = 'claude-opus-5-5'\n",
+-    )
+-    .unwrap();
+-    Config::invalidate_cache();
+-    assert_eq!(
+-        crate::config::config().provider.default_provider.as_deref(),
+-        Some("claude")
+-    );
+-    assert_eq!(
+-        crate::auth::account_pool::AccountPool::load().members[0],
+-        "claude:personal"
+-    );
+-
+-    pool.save().unwrap();
+-    std::fs::write(&path, "[provider]\ndefault_provider = 'claude'\ndefault_model = 'claude-opus-5-5'\nanthropic_reasoning_effort = 'low'\n").unwrap();
+-    Config::invalidate_cache();
+-    assert_eq!(
+-        crate::config::config()
+-            .provider
+-            .anthropic_reasoning_effort
+-            .as_deref(),
+-        Some("low")
+-    );
+-    assert_eq!(crate::auth::account_pool::AccountPool::load(), pool);
+-    restore_env_var("JCODE_HOME", prev_home);
+-    Config::invalidate_cache();
+-}
++#[path = "config_tests/default_provider.rs"]
++mod default_provider;
+ 
+ /// `display.overscroll_status` was removed; configs that still set it (users
+ /// had `"on"` written by older versions) must load without losing settings.
+```
+
+**File**: `crates/jcode-base/src/config_tests/default_provider.rs` (added, +51/-0)
+```diff
+@@ -0,0 +1,51 @@
++//! Synchronization of externally edited provider preferences and account pools.
++
++use super::*;
 +
 +#[test]
-+fn large_history_defers_even_literal_metadata_matching() {
-+    let temp = tempfile::tempdir().unwrap();
-+    let mut session = external_session("large", &temp.path().join("absent.jsonl"));
-+    session.search_index = format!("{} modal cli", "x".repeat(IMMEDIATE_METADATA_BYTES + 1));
-+    let mut picker = SessionPicker::new(vec![session]);
-+    picker.search_query = "modal cli".into();
-+    picker.rebuild_items();
-+    assert!(picker.transcript_search.defers_metadata());
-+    assert!(picker.visible_sessions.is_empty());
++fn external_default_edit_syncs_pool_without_reordering_on_unrelated_reload() {
++    let _guard = crate::storage::lock_test_env();
++    let prev_home = std::env::var_os("JCODE_HOME");
++    let dir = tempfile::TempDir::new().unwrap();
++    crate::env::set_var("JCODE_HOME", dir.path());
++    Config::invalidate_cache();
++    let path = Config::path().unwrap();
++    std::fs::write(&path, "[provider]\ndefault_provider = 'openai-oauth'\n").unwrap();
 +    assert_eq!(
-+        picker.transcript_search.candidates[0].missing_tokens,
-+        ["modal", "cli"]
++        crate::config::config().provider.default_provider.as_deref(),
++        Some("openai-oauth")
 +    );
-+    wait_for_search(&mut picker);
-+    assert_eq!(picker.selected_session().unwrap().id, "large");
-+    assert!(picker.transcript_search.contains_literal("large"));
-+}
++    let mut pool = crate::auth::account_pool::AccountPool::default();
++    pool.members = vec!["openai:work".into(), "claude:personal".into()];
++    pool.save().unwrap();
 +
-+#[test]
-+fn literal_transcript_hit_outranks_newer_fuzzy_metadata_hit() {
-+    let temp = tempfile::tempdir().unwrap();
-+    let path = temp.path().join("transcript.jsonl");
++    // A raw file edit, not the preference setter, must synchronize startup.
 +    std::fs::write(
 +        &path,
-+        r#"{"text":"optimizing muse kernels with modal cli"}"#,
++        "[provider]\ndefault_provider = 'claude'\ndefault_model = 'claude-opus-5-5'\n",
 +    )
 +    .unwrap();
-+    let exact = external_session("kernels", &path);
-+    let mut fuzzy = external_session("unrelated", &temp.path().join("absent.jsonl"));
-+    fuzzy.search_index = "model cli".into();
-+    fuzzy.last_message_time = exact.last_message_time + chrono::Duration::seconds(10);
-+    let mut picker = SessionPicker::new(vec![fuzzy, exact]);
-+    picker.search_query = "modal cli".into();
-+    picker.rebuild_items();
-+    wait_for_search(&mut picker);
-+    assert_eq!(picker.visible_sessions.len(), 2);
-+    let first = picker.session_by_ref(picker.visible_sessions[0]).unwrap();
-+    assert_eq!(first.id, "kernels");
-+    assert!(picker.transcript_search.contains_literal("kernels"));
-+    assert!(!picker.transcript_search.contains_literal("unrelated"));
++    Config::invalidate_cache();
++    assert_eq!(
++        crate::config::config().provider.default_provider.as_deref(),
++        Some("claude")
++    );
++    assert_eq!(
++        crate::auth::account_pool::AccountPool::load().members[0],
++        "claude:personal"
++    );
++
++    pool.save().unwrap();
++    std::fs::write(&path, "[provider]\ndefault_provider = 'claude'\ndefault_model = 'claude-opus-5-5'\nanthropic_reasoning_effort = 'low'\n").unwrap();
++    Config::invalidate_cache();
++    assert_eq!(
++        crate::config::config()
++            .provider
++            .anthropic_reasoning_effort
++            .as_deref(),
++        Some("low")
++    );
++    assert_eq!(crate::auth::account_pool::AccountPool::load(), pool);
++    restore_env_var("JCODE_HOME", prev_home);
++    Config::invalidate_cache();
 +}
-+
- #[test]
- fn session_refresh_restarts_search_for_new_transcript_paths() {
-     let temp = tempfile::tempdir().unwrap();
-```
-
-**File**: `crates/jcode-tui/src/tui/session_picker_tests.rs` (modified, +12/-0)
-```diff
-@@ -1116,12 +1116,23 @@ fn resume_search_recovers_matches_as_typo_query_grows() {
-         picker.search_query = query.into();
-         picker.rebuild_items();
-     }
-+    wait_for_picker_search(&mut picker);
-     assert_eq!(picker.visible_sessions.len(), 1);
-     picker.search_query = "deply conifg".into();
-     picker.rebuild_items();
-+    wait_for_picker_search(&mut picker);
-     assert_eq!(picker.visible_sessions.len(), 1);
- }
- 
-+fn wait_for_picker_search(picker: &mut SessionPicker) {
-+    let deadline = std::time::Instant::now() + std::time::Duration::from_secs(5);
-+    while picker.transcript_search.pending() {
-+        assert!(std::time::Instant::now() < deadline, "search timed out");
-+        picker.poll_transcript_search();
-+        std::thread::sleep(std::time::Duration::from_millis(1));
-+    }
-+}
-+
- #[test]
- fn resume_search_ranks_literal_matches_before_newer_typo_matches() {
-     let mut exact = make_session("literal", "literal", false, SessionStatus::Closed);
-@@ -1132,6 +1143,7 @@ fn resume_search_ranks_literal_matches_before_newer_typo_matches() {
-     let mut picker = SessionPicker::new(vec![typo, exact]);
-     picker.search_query = "config".into();
-     picker.rebuild_items();
-+    wait_for_picker_search(&mut picker);
-     assert_eq!(picker.visible_sessions.len(), 2);
-     assert_eq!(
-         picker
-```
-
-**File**: `docs/benchmarks/resume-search-input-2026-10-30.md` (added, +47/-0)
-```diff
-@@ -0,0 +1,47 @@
-+# Resume search input latency, October 30, 2026
-+
-+## Change
-+
-+Fuzzy metadata matching previously ran twice on the input thread for each search
-+edit: once to choose transcript candidates and again to filter visible sessions.
-+Transcript file reads were asynchronous, but this matching was not. Large literal
-+index scans also contributed measurable input latency.
-+
-+The picker now performs fuzzy matching in its cancellable, 150 ms debounced
-+worker. Literal metadata matching remains immediate only when the total search
-+index is at most 1 MiB. Larger indexes use the worker for literal matching too.
-+Literal background hits retain a separate ranking tier above fuzzy hits. All
-+literal transcript scans finish before fuzzy transcript fallback scans begin.
-+Native JSONL journals are searched before their snapshot fallback.
-+
-+## Measurements
-+
-+Hosted Rust manual benchmark, 100 sessions with approximately 64 KiB indexes and
-+a nonmatching `modal cli` query:
-+
-+- Equivalent old synchronous matching work: 188.49 ms.
-+- New complete search key handler: 1.61 ms.
-+- Command: `justrust test -p jcode-tui --lib benchmark_resume_search_keystroke_latency -- --ignored --nocapture`.
-+- Hosted run: `20261030-232109807-2794365`.
-+
-+Local real-terminal smoke test against the actual session store, using isolated
-+120-column by 40-row PTYs and typing `modal cli` one character at a time:
-+
-+| Binary | Key to next terminal write, milliseconds |
-+| --- | --- |
-+| Baseline `238464fe0` | 46.58, 39.34, 44.91, 144.63, 333.90, 151.51, 329.88, 335.63, 323.24 |
-+| Candidate | 9.96, 7.35, 7.52, 8.18, 8.46, 0.78, 7.38, 5.83, 5.77 |
-+
-+The PTY timings measure the next terminal write, not a parsed query-specific
-+frame. Background redraws can affect this proxy. Neither test selected a session
-+or changed the shared daemon. These are single-run observations, not percentile
-+claims.
-+
-+## Correctness
-+
-+`justrust test -p jcode-tui --lib session_picker -- --nocapture` passed 163 tests
-+(10 ignored), hosted run `20261030-232058378-2795113`. Coverage includes deferred
-+fuzzy matching, deferred literal matching for large indexes, query cancellation,
-+metadata plus transcript token matching, progressive preview-scroll preservation,
-+and an exact `modal cli` transcript hit ranking ahead of newer `model cli`
-+fuzzy metadata.
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2026** (closed): fix: keep pool rotation for OAuth-bound config defaults on fresh sessions (@alecuba16)
 - **PR #2025** (closed): Add interactive /config settings wizard to the TUI (@remedialchaos)
 - **PR #2011** (closed): fix(patch): apply unified hunks to CRLF files (@jaeminbird)
+- **PR #2005** (closed): fix: close provider profile and emoji copy review gaps (@SiavZ)
 - **PR #2001** (closed): Never auto-background the ask_user chooser (@alecuba16)
-- **PR #1975** (closed): fix(tui): update the existing tmux config (@aphelion31)
-- **PR #1967** (closed): feat: per-session env for tool-spawned processes (@johnnyfish)
-- **PR #1965** (closed): chore(ci): refresh ratchet budgets for post-v0.99.1 growth (@ianalitis)
+- **PR #1996** (closed): feat: extend plugins, rewind, and agent workflows (@SiavZ)
 
 ---
 
@@ -2893,44 +3059,97 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. tui): keep resume search work off the input thread
+## X. security: upgrade native SSH crypto stack and preserve strict pinning
 
 **RULE**:
-When implementing operations in `crates/jcode-tui/src/tui/session_picker/filter.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in 1jehuang/jcode. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in 1jehuang/jcode. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `acebecf0`: tui): keep resume search work off the input thread. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e877a4ec`: security: upgrade native SSH crypto stack and preserve strict pinning. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/jcode-tui/src/tui/session_picker/filter.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        // Keep literal matches immediate. Expensive typo-tolerant matching is
-        // debounced in the worker alongside transcript search, not performed
-        // on every keypress. Reconsider all sessions for new worker results.
-        let tokens = loading::search_query_tokens(&normalized);
-                    (!self.transcript_search.defers_metadata()
-                        && tokens
-                            .iter()
-                            .all(|token| session.search_index.contains(token)))
-                    (!self.transcript_search.defers_metadata()
-                        && Self::session_matches_search(session, &self.search_query))
-                        || self.transcript_search.contains_literal(&session.id)
+version = "0.6.1"
+checksum = "1973cfbc1a2daf9cf550e74e1f088c28e7f7d8c1e1418fb6c9dc5184b7e84c99"
+ "crypto-common 0.2.2",
+ "inout 0.2.5",
+ "cipher 0.4.4",
+[[package]]
+name = "aes"
+version = "0.9.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "fc0fc36d7440d015b45468ba08a21e80e056ebbd014c611c6298bb7503e04bd1"
+dependencies = [
+ "cipher 0.5.2",
+ "cpubits",
+ "cpufeatures 0.3.0",
+ "zeroize",
+]
+
+version = "0.11.1"
+checksum = "7f2b8006a0c83f52b62ba44a97b58bf76fe2f70a329e588f67f89691d93d498f"
+ "aes 0.9.4",
+ "cipher 0.5.2",
+ "ctutils",
+ "zeroize",
+version = "0.6.0"
+checksum = "134c52ddac6d63c576bef8168db10c83c49c26444ecbc68060fef078925a901c"
+ "cpufeatures 0.3.0",
+ "sha1 0.10.6",
+ "hmac",
+version = "1.0.0"
+checksum = "fd307490d624467aa6f74b0eabb77633d1f758a7b25f12bceb0b22e08d9726f6"
+version = "1.8.3"
+checksum = "2af50177e190e07a26ab74f8b1efbfe2ef87da2116221318cb1c2e82baf7de06"
+version = "0.11.0"
+checksum = "144e573728da132683b9488acd528274c790e07fc06ff81ee29f9d8f8b1041e0"
+ "sha2 0.11.0",
+version = "0.11.0"
+checksum = "5b5d4d889834ee8ecfc0f8426ad30faf7cdcb10f741a8e6d7224d95325479f6f"
+ "digest 0.11.3",
+ "generic-array 0.14.7",
+ "zeroize",
+ "generic-array 0.14.7",
+]
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-        // Fuzzy matches are not monotonic: adding a character can increase the
-        // error budget or turn a short literal query into a typo-tolerant one.
-        // Reconsider every session rather than narrowing the previous results.
-        let fuzzy = jcode_fuzzy::PreparedTokenQuery::new(&normalized);
-                    fuzzy.matches_search_text(&session.search_index)
-                    Self::session_matches_search(session, &self.search_query)
-                        || self.transcript_search.contains(&session.id)
+version = "0.5.2"
+checksum = "d122413f284cf2d62fb1b7db97e02edb8cda96d769b16e443a4f6195e35662b0"
+ "crypto-common 0.1.7",
+ "generic-array",
+ "cipher",
+version = "0.10.3"
+checksum = "831010a0f742e1209b3bcea8fab6a8e149051ba6099432c8cb2cc117dec3ead1"
+ "aes",
+ "cipher",
+ "subtle",
+version = "0.5.3"
+checksum = "3c3610892ee6e0cbce8ae2700349fcf8f98adb0dbfbee85aec3c9179d29cc072"
+ "cpufeatures 0.2.17",
+ "sha1",
+ "hmac 0.13.0",
+version = "0.2.0"
+checksum = "4c7f02d4ea65f2c1853089ffd8d2787bdbc63de2f0d29dedbcf8ccdfa0ccd4cf"
+version = "1.6.0"
+checksum = "8c3c1a368f70d6cf7302d78f8f7093da241fb8e8807c05cc9e51a125895a6d5b"
+version = "0.10.0"
+checksum = "6aeac2e1fe888769f34f05ac343bbef98b14d1ffb292ab69d4608b3abc86f2a2"
+ "sha2 0.10.9",
+version = "0.10.6"
+checksum = "46502ad458c9a52b69d4d4d32775c788b7a1b85e8bc9d482d92250fc0e3f8efe"
+ "digest 0.10.7",
+ "generic-array",
+ "generic-array",
+version = "0.9.1"
+checksum = "e412e2cd0f2b2d93e02543ceae7917b3c70331573df19ee046bcbc35e45e87d7"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `acebecf0` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e877a4ec` are properly handled with clean fallback behavior.

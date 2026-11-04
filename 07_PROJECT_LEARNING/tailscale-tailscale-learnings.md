@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source**: github ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
-> **Source Version**: `f5d37847`  
+> **Source Version**: `4290c03d`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T10:59:49.769Z  
+> **Timestamp**: 2026-11-04T01:51:22.217Z  
 > **Learning ID**: `learn-github-tailscale-tailscale`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T10:59:49.318Z  
+> **Harvest Timestamp**: 2026-11-04T01:51:21.873Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The easiest, most secure way to use WireGuard and 2FA.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 38566 stars
+- **Stars / Engagement**: 38587 stars
 
 ---
 
@@ -800,11 +800,11 @@ export const sessionStateStorage: IPNStateStorage = {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #22041** (2026-10-31): **k8s-operator: renewals fail for unstamped certs with a shared ACME account**
-  *Symptoms*: With a shared ACME account (#20493), kubestore only puts the ARI `replaces` field on a renewal when the current account key matches the `acme-account-fingerprint` stamped on the cert Secret. Cert Secrets from before v1.104 have no stamp. For those, kubestore assumes the current key issued the cert unless the Pod started with a per-pod key that differs from the shared one.  If an ingress ProxyGroup is recreated while an older Ingress cert Secret is kept, and that ProxyGroup then fills `tailscale-acme-accounts` with its new key or adopts a shared key that didn't issue the cert, the renewal still names the old cert in `replaces`. Let's Encrypt then rejects every renewal until the cert is deleted:  ``` 403 urn:ietf:params:acme:error:unauthorized: Could not validate ARI 'replaces' field :: requester account did not request the certificate being replaced by this order ```  It reproduces on main against Let's Encrypt staging. Issue a cert for an HA Ingress, remove `acme-account-fingerprint` from its Secret, recreate the ProxyGroup, set `tailscale.com/share-acme-account: "true"` on it, then renew.  This is the shared-account case of #18251.
+- **Issue #22144** (2026-11-03): **iPadOS 27.2: "MagicSock function not running" after device restart, tunnel shows connected but passes no traffic or DNS**
+  *Symptoms*: ### What is the issue?  On an iPad Air M4 (iPadOS 27.2), Tailscale repeatedly enters a state where the app shows "Connected" but displays the warning "MagicSock function not running". While in this state, no traffic passes through the tunnel: DNS (MagicDNS, global nameserver on a tailnet node) does not resolve, so Safari and all apps fail to load anything. Turning Tailscale off immediately restores internet access.  An iPhone (iOS 27.2) on the same Wi-Fi network, behind the same router and the same egress path, does not show the problem.  ### Steps to reproduce  Occurrences: - 2026-10-31: right after the iPadOS 27.2 update (which includes a restart). Fixed by deleting the VPN profile. - 2026-11-02: device fully powered off while away, powered on back at home; issue appeared immediately. Fixed by toggling Tailscale off and on. Bug report attached below (generated while the error was showing).  ### Are there any recent changes that introduced the issue?  Yes: the device was updated to iPadOS 27.2 on 2026-10-31, the same day the first occurrence happened.  ### OS  iOS  ### OS version  iPadOS 27.2  ### Tailscale version  1.104.4  ### Other software  Home router routes this device's traffic through a commercial OpenVPN tunnel (NordVPN). The admin console shows "Varies: Yes" (endpoint-dependent NAT) for this node, and its DERP home is New York. The iPhone that works correctly uses the same router tunnel.  ### Bug report  BUG-94caa859c8a9ae8eeb5f1189b7d83c8a95c44b839742f90c53a33a52f
 
-- **Issue #22020** (2026-10-31): **Funnel: no public DNS record for renamed node (NXDOMAIN), persists after re-creating the node**
-  *Symptoms*: ### What is the issue?  Funnel is enabled on a Linux node and works locally, but no public DNS record is ever published for the node's name. `titan.tail9b66b7.ts.net` returns NXDOMAIN from Google (8.8.8.8) and Cloudflare (1.1.1.1) DoH, so Funnel is unreachable from the internet. The name resolves normally inside the tailnet. This looks like the same problem as #21698 and #21502 (still on 1.104.2), with one extra detail: it started with a node rename, and it persists after re-creating the node from scratch.  Timeline (UTC): - 2026-10-27: node renamed from `compute` to `titan` (OS hostname changed too). Until then `compute.tail9b66b7.ts.net` resolved publicly to Funnel ingress IPs (176.58.88.82, 176.58.88.108, 176.58.92.199). - 2026-10-27 20:17: Funnel restarted on the node. `tailscaled` logged an ACME dns-01 flow (`did SetDNS for _acme-challenge.titan...`, `got cert`), so the certificate was issued fine. - By 2026-10-28 06:37: `compute.tail9b66b7.ts.net` also returns NXDOMAIN. The old record was removed, but no record was created for `titan`. - 2026-10-28: tried the `nodeAttrs` policy toggle, `tailscale funnel reset` (several times), Funnel off/on, `tailscale up --force-reauth --hostname=titan`, and finally logout, deleting the machine in the admin console, wiping the local state and registering again as a brand-new node (`tailscale up` without `--hostname`). New Tailscale IP 100.70.196.92. Still NXDOMAIN about 1 hour after the re-registration, and about 22 hours after the fir
+- **Issue #22135** (2026-11-04): **Disable Multipath TCP on listeners by default (CVE-2026-98432)**
+  *Symptoms*: ### What are you trying to do?  Since Go 1.24 the `multipathtcp` GODEBUG defaults to `2`, so on Linux every listener that doesn't call `SetMultipathTCP` explicitly is opened as `IPPROTO_MPTCP`. The official v1.104.4 binaries (go1.27.3) carry no `multipathtcp` entry in `DefaultGODEBUG`, and the tailscale/go fork keeps the upstream default. In `tailscaled` that covers the peerapi and serve listeners on the Tailscale IP, the SOCKS5/HTTP outbound proxy, and the `--debug` server. `tailscale web --listen` is affected too.  The publicly demonstrated unauthenticated remote root exploit for **CVE-2026-98432** (Linux IPv4 TCP use-after-free) needs the target to expose an MPTCP listener. Ubuntu, RHEL and their derivatives had no fixed kernel as of 2026-10-30.  ### How should we solve this?  Add `//go:debug multipathtcp=0` to the main packages that ship as binaries or images: `cmd/tailscaled`, `cmd/tailscale`, `cmd/derper`, `cmd/containerboot`, `cmd/k8s-operator`, `cmd/k8s-proxy` and `cmd/tsidp`. A `godebug` line in `go.mod` wouldn't be enough, because it is ignored when the binary is built as a versioned module, for example with `go install tailscale.com/cmd/derper@latest`. Users can opt back in with `GODEBUG=multipathtcp=2`.  This follows #15063, which already disabled MPTCP on the derper listeners because it's incompatible with `TCP_USER_TIMEOUT`.  ### What is the impact of not solving this?  Linux nodes expose MPTCP listeners they never use. Exposure is limited (peerapi and serve bin
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -821,251 +821,110 @@ export const sessionStateStorage: IPNStateStorage = {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f5d37847` (2026-11-03)
-**Commit Message**: cmd/k8s-operator: grant dnsconfigs/finalizers so the nameserver provisions on OpenShift (#21276)
+### Incident Patch 1: `e7f595b4` (2026-11-01)
+**Commit Message**: ipn/ipnserver, ipn/localapi: require root to serve a path or Unix socket
 
-* cmd/k8s-operator: grant dnsconfigs/finalizers so the nameserver provisions on OpenShift
+The operator user could serve a path or Unix socket if tailscaled
+found a sudo rule for them, but the check used the GECOS display name
+and so failed for most users with a 401. The check cannot be repaired
+safely: listing another user's sudo rules never prompts, so it proves
+a rule exists, not that the user has authenticated. An operator who
+had not entered their sudo password could serve any root-readable file
+or root-only socket. Require root instead and say so in the error.
 
-The nameserver ServiceAccount, Deployment, Service and ConfigMap are created
-with an ownerReference to the cluster-scoped DNSConfig and
-blockOwnerDeletion: true. Clusters running the
-OwnerReferencesPermissionEnforcement admission plugin - which OpenShift enables
-by default and upstream Kubernetes does not - require the creating identity to
-hold update on the owner finalizers subresource before accepting such a child.
+Fixes #21204
+Fixes #21985
+Fixes #21988
 
-The operator ClusterRole grants dnsconfigs and dnsconfigs/status but no rule on
-any finalizers subresource, so every nameserver reconcile is rejected:
+Signed-off-by: Brendan Creane <[REDACTED_EMAIL]>
 
-  serviceaccounts "nameserver" is forbidden: cannot set blockOwnerDeletion if
-  an ownerReference refers to a resource you cannot set finalizers on
-
-It retries forever, the DNSConfig never gets a status, and dns-records-reconciler
-waits indefinitely. Granting the rule lets the reconcile succeed on the next
-attempt; it is inert where the admission plugin is not enabled.
-
-Static manifest regenerated with ./tool/go run ./cmd/k8s-operato
-
-**File**: `cmd/k8s-operator/deploy/chart/templates/operator-rbac.yaml` (modified, +11/-0)
+**File**: `ipn/ipnauth/actor.go` (modified, +5/-3)
 ```diff
-@@ -41,6 +41,17 @@ rules:
- - apiGroups: ["tailscale.com"]
-   resources: ["dnsconfigs", "dnsconfigs/status"]
-   verbs: ["get", "list", "watch", "update"]
-+# Child resources are created with an ownerReference to their owner and
-+# blockOwnerDeletion: true. Clusters that enable the OwnerReferencesPermissionEnforcement
-+# admission plugin (OpenShift does by default) then require update on the owner's
-+# finalizers subresource, otherwise every such create is rejected and the owner never
-+# reconciles. Inert where the plugin is not enabled.
-+- apiGroups: ["tailscale.com"]
-+  resources: ["dnsconfigs/finalizers", "proxygroups/finalizers", "recorders/finalizers"]
-+  verbs: ["update"]
-+- apiGroups: [""]
-+  resources: ["services/finalizers"]
-+  verbs: ["update"]
- - apiGroups: ["tailscale.com"]
-   resources: ["tailnets", "tailnets/status"]
-   verbs: ["get", "list", "watch", "update"]
+@@ -55,9 +55,11 @@ type Actor interface {
+ 	// IsLocalAdmin reports whether the actor has administrative access to the
+ 	// local machine, for whatever that means with respect to the current OS.
+ 	//
+-	// The operatorUID is only used on Unix-like platforms and specifies the ID
+-	// of a local user (in the os/user.User.Uid string form) who is allowed to
+-	// operate tailscaled without being root or using sudo.
++	// The operatorUID specifies the ID of a local user (in the
++	// os/user.User.Uid string form) who is allowed to operate tailscaled
++	// without being root. No implementation currently consults it: on
++	// Unix-like platforms only root is a local admin, and on Windows the
++	// check is whether the caller's token is elevated.
+ 	//
+ 	// Deprecated: this method exists for compatibility with the current (as of 2024-08-27)
+ 	// permission model and will be removed as we progress on tailscale/corp#18342.
 ```
 
-**File**: `cmd/k8s-operator/deploy/manifests/operator.yaml` (modified, +14/-0)
+**File**: `ipn/ipnserver/actor.go` (modified, +4/-24)
 ```diff
-@@ -6663,6 +6663,20 @@ rules:
-         - list
-         - watch
-         - update
-+    - apiGroups:
-+        - tailscale.com
-+      resources:
-+        - dnsconfigs/finalizers
-+        - proxygroups/finalizers
-+        - recorders/finalizers
-+      verbs:
-+        - update
-+    - apiGroups:
-+        - ""
-+      resources:
-+        - services/finalizers
-+      verbs:
-+        - update
-     - apiGroups:
-         - tailscale.com
-       resources:
+@@ -8,9 +8,7 @@ import (
+ 	"errors"
+ 	"fmt"
+ 	"net"
+-	"os/exec"
+ 	"runtime"
+-	"time"
+ 
+ 	"tailscale.com/feature/buildfeatures"
+ 	"tailscale.com/ipn"
+@@ -243,29 +241,11 @@ func connIsLocalAdmin(logf logger.Logf, ci *ipnauth.ConnIdentity, operatorUID st
+ 			// is omitted for the build.
+ 			return true
+ 		}
++		// Only root is a local admin. The operator user is not, even if
++		// they could run "sudo tailscale": tailscaled cannot tell whether
++		// they have authenticated to sudo, only that a rule exists.
+ 		uid, ok := ci.Creds().UserID()
+-		if !ok {
+-			return false
+-		}
+-		// root is always admin.
+-		if uid == "0" {
+-			return true
+-		}
+-		// if non-root, must be operator AND able to execute "sudo tailscale".
+-		if operatorUID != "" && uid != operatorUID {
+-			return false
+-		}
+-		u, err := osuser.LookupByUID(uid)
+-		if err != nil {
+-			return false
+-		}
+-		// Short timeout just in case sudo hangs for some reason.
+-		ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+-		defer cancel()
+-		if err := exec.CommandContext(ctx, "sudo", "--other-user="+u.Name, "--list", "tailscale").Run(); err != nil {
+-			return false
+-		}
+-		return true
++		return ok && uid == "0"
+ 
+ 	default:
+ 		return false
 ```
 
----
-
-### Incident Patch 2: `1db86dac` (2026-11-03)
-**Commit Message**: cmd/k8s-operator/e2e: add IP family tests for ingress (#22091)
-
-Restructure the L3, L3 HA and L7 ingress e2e tests into IP family subtests
-to cover IPv4 and IPv6, plus DualStack for ProxyGroup.
-
-Updates tailscale/corp#38029
-
-Signed-off-by: Becky Pauley <[REDACTED_EMAIL]>
-
-**File**: `cmd/k8s-operator/e2e/ingress_test.go` (modified, +273/-190)
+**File**: `ipn/localapi/serve.go` (modified, +1/-1)
 ```diff
-@@ -37,80 +37,93 @@ func TestL3Ingress(t *testing.T) {
- 	// Apply nginx
- 	nginx := nginxDeployment(ns)
- 	createAndCleanup(t, kubeClient, nginx)
--	// Apply service to expose it as ingress
--	svc := &corev1.Service{
--		ObjectMeta: metav1.ObjectMeta{
--			Name:      generateName("test-ingress"),
--			Namespace: ns,
--			Annotations: map[string]string{
--				"tailscale.com/expose": "true",
--			},
--		},
--		Spec: corev1.ServiceSpec{
--			Selector: map[string]string{
--				"app.kubernetes.io/name": nginx.Name,
--			},
--			Ports: []corev1.ServicePort{
--				{
--					Name:     "http",
--					Protocol: "TCP",
--					Port:     80,
--				},
--			},
--		},
--	}
--	createAndCleanup(t, kubeClient, svc)
- 
--	if err := tstest.WaitFor(time.Minute, func() error {
--		maybeReadySvc := &corev1.Service{ObjectMeta: objectMeta(ns, svc.Name)}
--		if err := get(t.Context(), kubeClient, maybeReadySvc); err != nil {
--			return err
--		}
--		isReady := kube.SvcIsReady(maybeReadySvc)
--		if isReady {
--			t.Log("Service is ready")
--			return nil
--		}
--		return fmt.Errorf("Service is not ready yet")
--	}); err != nil {
--		t.Fatalf("error waiting for the Service to become Ready: %v", err)
--	}
-+	// Singleton ingress proxy forwards only the Service's primary ClusterIP family,
-+	// Dualstack isn't supported. See https://github.com/tailscale/tailscale/issues/22138.
-+	for _, tc := range []struct {
-+		name     string
-+		families []corev1.IPFamily
-+	}{
-+		{"IPv4", []corev1.IPFamily{corev1.IPv4Protocol}},
-+		{"IPv6", []corev1.IPFamily{corev1.IPv6Protocol}},
-+	} {
-+		t.Run(tc.name, func(t *testing.T) {
-+			skipIfUnsupportedFamilies(t, tc.families)
-+			// Apply service to expose it as ingress
-+			svc := &corev1.Service{
-+				ObjectMeta: metav1.ObjectMeta{
-+					Name:      generateName("test-ingress"),
-+					Namespace: ns,
-+					Annotations: map[string]string{
-+						"tailscale.com/expose": "true",
-+					},
-+				},
-+				Spec: corev1.ServiceSpec{
-+					IPFamilyPolicy: new(ipFamilyPolicy(tc.families)),
-+					IPFamilies:     tc.families,
-+					Selector: map[string]string{
-+						"app.kubernetes.io/name": nginx.Name,
-+					},
-+					Ports: []corev1.ServicePort{
-+						{
-+							Name:     "http",
-+							Protocol: "TCP",
-+							Port:     80,
-+						},
-+					},
-+				},
-+			}
-+			createAndCleanup(t, kubeClient, svc)
- 
--	// Get a matching-family Tailscale IP for the Service from the associated Secret.
--	var proxyIP string
--	if err := tstest.WaitFor(time.Minute, func() error {
--		var secrets corev1.SecretList
--		if err := kubeClient.List(t.Context(), &secrets,
--			client.InNamespace("tailscale"),
--			client.MatchingLabels{
--				"tailscale.com/parent-resource":    svc.Name,
--				"tailscale.com/parent-resource-ns": ns,
--			},
--		); err != nil {
--			return err
--		}
--		if len(secrets.Items) == 0 {
--			return fmt.Errorf("Service not ready yet")
--		}
--		var deviceIPs []string
--		if err := json.Unmarshal(secrets.Items[0].Data[kubetypes.KeyDeviceIPs], &deviceIPs); err != nil {
--			return fmt.Errorf("decoding device IPs: %w", err)
--		}
--		currentSvc := &corev1.Service{ObjectMeta: objectMeta(ns, svc.Name)}
--		if err := get(t.Context(), kubeClient, currentSvc); err != nil {
--			return err
--		}
--		proxyIP = ipMatchingFamily(deviceIPs, currentSvc.Spec.ClusterIP)
--		if proxyIP == "" {
--			return fmt.Errorf("device has no IP matching Service ClusterIP family")
--		}
--		return nil
--	}); err != nil {
--		t.Fatalf("error waiting for matching-family IP for Service: %v", err)
--	}
-+			if err := tstest.WaitFor(time.Minute, func() error {
-+				maybeReadySvc := &corev1.Service{ObjectMeta: objectMeta(ns, svc.Name)}
-+				if err := get(t.Context(), kubeClient, maybeReadySvc); err != nil {
-+					return err
-+				}
-+				if kube.SvcIsReady(maybeReadySvc) {
-+					return nil
-+				}
-+				return fmt.Errorf("Service is not ready yet")
-+			}); err != nil {
-+				t.Fatalf("error waiting for the Service to become Ready: %v", err)
-+			}
- 
--	if err := testIngressIsReachable(t, newHTTPClient(tnClient), "http://"+net.JoinHostPort(proxyIP, "80")); err != nil {
--		t.Fatal(err)
-+			// Get matching-family Tailscale IPs for the Service from the associated Secret.
-+			var proxyIP string
-+			if err := tstest.WaitFor(time.Minute, func() error {
-+				var secrets corev1.SecretList
-+				if err := kubeClient.List(t.Context(), &secrets,
-+					client.InNamespace("tailscale"),
-+					client.MatchingLabels{
-+						"tailscale.com/parent-resource":    svc.Name,
-+						"tailscale.com/parent-resource-ns": ns,
-+					},
-+				); err != nil {
-+					return err
-+				}
-+				if len(secrets.Items) == 0 {
-+					return fmt.Errorf("Service not ready yet")
-+				}
-+				var deviceIPs []string
-+				if err := json.Unmarshal(secrets.Items[0].Data[kubetypes.KeyDeviceIPs], &deviceIPs); err != nil {
-+					return fmt.Errorf("decoding device IPs: %w", err)
-+				}
-+				currentSvc := &corev1.Service{ObjectMeta: objectMeta(ns, svc.Name)}
-+				if err := get(t.Context(), kubeClient, currentSvc); err != nil {
-+					return err
-+				}
-+				proxyIP = ipMatchingFamily(deviceIPs, c
+@@ -100,7 +100,7 @@ func authorizeServeConfigForGOOSAndUserContext(goos string, configIn *ipn.ServeC
+ 	case "windows":
+ 		return errors.New("must be a Windows local admin to serve a path or Unix socket")
+ 	case "linux", "darwin", "illumos", "solaris":
+-		return errors.New("must be root, or be an operator and able to run 'sudo tailscale' to serve a path or Unix socket")
++		return errors.New("must be root to serve a path or Unix socket")
+ 	default:
+ 		// We filter goos at the start of the func, this default case
+ 		// should never happen.
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #22167** (2026-11-04): appc: add test for AppDNSRoutes ignoring subnet mode apps (@tendstofortytwo)
+- **PR #22163** (2026-11-03): types/appctype: remove Conn25Attr type (@tendstofortytwo)
+- **PR #22161** (2026-11-03): cmd/pgproxy: delete, leave README stub (@bradfitz)
+- **PR #22160** (2026-11-03): ssh/tailssh: accept an empty --groups= in the incubator (@philiptaron)
 - **PR #22151** (2026-11-02): go.mod: bump wireguard-go (@jwhited)
 - **PR #22150** (2026-11-02): ipn/ipnlocal: remove wireguard peers on profile switch (@cmol)
-- **PR #22148** (closed): Proposed picks for 1.104.5 (@raggi)
-- **PR #22147** (2026-11-02): feature/conn25: block destinations inside the magic and transit IP pools (@mazdakn)
-- **PR #22146** (2026-11-02): magicsock: handle UDP read feedback (@illotum)
-- **PR #22143** (2026-11-02): ipn/ipnlocal,cmd/tsnet-proxy: strip underscore variants of identity headers (@andrew-d)
 
 ---
 
@@ -1085,38 +944,34 @@ Signed-off-by: Becky Pauley <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. cmd/k8s-operator: grant dnsconfigs/finalizers so the nameserver provisions on Op
+## X. ipn/ipnserver, ipn/localapi: require root to serve a path or Unix socket
 
 **RULE**:
-When implementing operations in `cmd/k8s-operator/deploy/chart/templates/operator-rbac.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `ipn/ipnauth/actor.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f5d37847`: cmd/k8s-operator: grant dnsconfigs/finalizers so the nameserver provisions on OpenShift (#21276). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e7f595b4`: ipn/ipnserver, ipn/localapi: require root to serve a path or Unix socket. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cmd/k8s-operator/deploy/chart/templates/operator-rbac.yaml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `ipn/ipnauth/actor.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-# Child resources are created with an ownerReference to their owner and
-# blockOwnerDeletion: true. Clusters that enable the OwnerReferencesPermissionEnforcement
-# admission plugin (OpenShift does by default) then require update on the owner's
-# finalizers subresource, otherwise every such create is rejected and the owner never
-# reconciles. Inert where the plugin is not enabled.
-- apiGroups: ["tailscale.com"]
-  resources: ["dnsconfigs/finalizers", "proxygroups/finalizers", "recorders/finalizers"]
-  verbs: ["update"]
-- apiGroups: [""]
-  resources: ["services/finalizers"]
-  verbs: ["update"]
+	// The operatorUID specifies the ID of a local user (in the
+	// os/user.User.Uid string form) who is allowed to operate tailscaled
+	// without being root. No implementation currently consults it: on
+	// Unix-like platforms only root is a local admin, and on Windows the
+	// check is whether the caller's token is elevated.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+	// The operatorUID is only used on Unix-like platforms and specifies the ID
+	// of a local user (in the os/user.User.Uid string form) who is allowed to
+	// operate tailscaled without being root or using sudo.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f5d37847` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e7f595b4` are properly handled with clean fallback behavior.

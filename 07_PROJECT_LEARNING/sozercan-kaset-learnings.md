@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/sozercan-kaset-learnings.md`  
 > **Source**: github ([https://github.com/sozercan/kaset](https://github.com/sozercan/kaset))  
-> **Source Version**: `4c59ff25`  
+> **Source Version**: `6a20e60c`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-22T19:09:46.097Z  
+> **Timestamp**: 2026-11-03T17:30:12.089Z  
 > **Learning ID**: `learn-github-sozercan-kaset`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/sozercan-kaset-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/sozercan/kaset](https://github.com/sozercan/kaset))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-22T19:09:45.482Z  
+> **Harvest Timestamp**: 2026-11-03T17:30:11.276Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 📼 The missing YouTube and YouTube Music macOS app
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 2453 stars
+- **Stars / Engagement**: 2498 stars
 
 ---
 
@@ -1359,266 +1359,462 @@ extension PlayerService {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4c59ff25` (2026-10-22)
-**Commit Message**: feat: add App Intents for Shortcuts, Siri, and Spotlight (#551)
+### Incident Patch 1: `2258e5cd` (2026-10-31)
+**Commit Message**: docs(agents): tune AGENTS.md and skills for current Claude prompting guidance (#567)
 
 Signed-off-by: Sertac Ozercan <[REDACTED_EMAIL]>
 
-**File**: `.github/workflows/dev-build.yml` (modified, +1/-0)
+**File**: `.agents/skills/api-exploration/SKILL.md` (modified, +6/-12)
 ```diff
-@@ -61,6 +61,7 @@ jobs:
+@@ -7,21 +7,15 @@ metadata:
  
-       - name: Build app
-         env:
-+          # Ad-hoc builds list App Intents in Shortcuts but macOS will not run them.
-           KASET_SIGNING: adhoc
-           ARCHES: "arm64 x86_64"
-         run: |
+ # API Exploration
+ 
+-Use this skill when a task needs a new or modified YouTube Music API call, response parser validation, authenticated endpoint investigation, or fixture capture.
+-
+-## Guardrails
+-
+-- Always enhance `Sources/APIExplorer/main.swift`; do not write one-off scripts for endpoint exploration.
+-- Never commit real cookies, SAPISID values, tokens, or account identifiers. Redact anything sensitive in notes, fixtures, and examples.
+-- Prefer API endpoints over WebView whenever the functionality already exists in `YTMusicClient`.
+-
+ ## Workflow
+ 
+-1. Start with `swift run api-explorer auth` if the task touches sign-in-backed endpoints.
++1. Run `swift run api-explorer auth` if the task touches sign-in-backed endpoints.
+ 2. Check what already exists with `swift run api-explorer list`.
+-3. Probe the endpoint with `browse`, `action`, or `continuation` before touching production code.
+-4. Save representative payloads with `-o` when parser work or regression tests need fixtures.
+-5. Update `docs/api-discovery.md` if you confirm a new endpoint, parameter, or auth constraint.
++3. Probe the endpoint with `browse`, `action`, or `continuation` before touching production code. If the explorer can't express the request you need, add that capability to `Sources/APIExplorer/main.swift`.
++4. Save representative payloads with `-o` when parser work or regression tests need fixtures. `-o` and `-v` emit the raw response, which can include account names, emails, and channel IDs: write captures outside the repo, and redact them before they go into `Tests/KasetTests/Fixtures/` or get quoted in your output.
++5. Update `docs/api-discovery.md` when you confirm a new endpoint, parameter, or auth constraint.
++
++`action` sends a real request as the signed-in user. Read-only actions such as `search` are fine; for anything that changes account data (likes, playlist edits, subscriptions), prefer a captured, sanitized response or a disposable resource, and get explicit approval from the human before sending it live.
+ 
+ ## Common Commands
+ 
 ```
 
-**File**: `.github/workflows/release.yml` (modified, +1/-0)
+**File**: `.agents/skills/autoreview/README.md` (added, +53/-0)
 ```diff
-@@ -103,6 +103,7 @@ jobs:
- 
-             echo "WARN: $reason" >&2
-             echo "WARN: Falling back to ad-hoc signing. The release will not be notarized and macOS Gatekeeper may warn users." >&2
-+            echo "::warning::Ad-hoc signed release: Shortcuts, Siri, and Spotlight actions (App Intents) will not run without a team-signed build."
-             echo "identity=" >> "$GITHUB_OUTPUT"
-             echo "signing_mode=adhoc" >> "$GITHUB_OUTPUT"
-           }
+@@ -0,0 +1,53 @@
++# Autoreview
++
++This directory tracks the OpenClaw `autoreview` runtime with three narrow downstream behavior overrides.
++
++## Upstream
++
++- Repository: [`openclaw/agent-skills`](https://github.com/openclaw/agent-skills)
++- Source snapshot: [`skills/autoreview` at commit `bae9b204f937991b45c3fd68d5c9dcafb23b9159`](https://github.com/openclaw/agent-skills/tree/bae9b204f937991b45c3fd68d5c9dcafb23b9159/skills/autoreview)
++- Commit: [`bae9b204f937991b45c3fd68d5c9dcafb23b9159`](https://github.com/openclaw/agent-skills/commit/bae9b204f937991b45c3fd68d5c9dcafb23b9159)
++
++The vendored runtime starts from that snapshot and carries only the behavior overrides below.
++`AGENTS.md` records the downstream sync policy.
++
++## Local differences
++
++- Codex defaults to `gpt-6.1-sol` with `xhigh` reasoning instead of upstream's `high` reasoning.
++- Claude defaults to `claude-opus-5-5` with `xhigh` reasoning instead of upstream's `claude-fable-5` default.
++- Codex preserves `openai_base_url` from an external `CODEX_HOME/config.toml`, passes it through an internal OpenAI-compatible provider because isolated runs use `--ignore-user-config`, and disables WebSocket transport for that provider.
++- `references/repository-entrypoint.md` is omitted; it is a template for repositories that consume the shared install, and this directory vendors the runtime.
++
++No other runtime behavior is intentionally changed.
++
++## Packaging
++
++The upstream test suites, fixtures, and optional `scripts/test-review-harness*` live-provider smoke wrappers are omitted. `scripts/autoreview` does not depend on them. A small downstream test covers only the three local behavior overrides.
++
++## Upstream license
++
++OpenClaw's work is used under the MIT License:
++
++```text
++MIT License
++
++Copyright (c) 2026 openclaw
++
++Permission is hereby granted, free of charge, to any person obtaining a copy
++of this software and associated documentation files (the "Software"), to deal
++in the Software without restriction, including without limitation the rights
++to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
++copies of the Software, and to permit persons to whom the Software is
++furnished to do so, subject to the following conditions:
++
++The above copyright notice and this permission notice shall be included in all
++copies or substantial portions of the Software.
++
++THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
++IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
++FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
++AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
++LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
++OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
++SOFTWARE.
++```
 ```
 
-**File**: `AGENTS.md` (modified, +1/-0)
+**File**: `.agents/skills/autoreview/SKILL.md` (modified, +315/-169)
 ```diff
-@@ -47,6 +47,7 @@ Default local workflow is CLI-first: use the commands above for day-to-day verif
+@@ -1,210 +1,356 @@
+ ---
+ name: autoreview
+-description: "Run a structured code review (Codex default, Claude optional) as a closeout check on a local or PR branch before commit or ship."
++description: "Structured code review when explicitly requested, preferring OpenAI/Codex before Claude."
+ ---
  
- - When adding localization keys or changing translations, update the catalog first and update the corresponding checked-in `.lproj/Localizable.strings` files in the same change. Never update only one side.
- - Run `swift test --skip KasetUITests --filter LocalizationCatalogParityTests` after localization changes.
-+- Siri phrases for App Shortcuts live in `Sources/Kaset/Resources/AppShortcuts.xcstrings` (no `.lproj` mirror). `Scripts/build-app.sh` fails if it drifts from `KasetShortcuts`, so update it whenever a phrase changes.
- - When adding a locale, also register its `.lproj` in `Package.swift`, add the `SettingsManager.ContentLanguage` case, and extend localization tests.
+ # Auto Review
  
- ## Debugging & Measurement
+-Run the bundled structured review helper as a closeout check. This is code review, not Guardian `auto_review` approval routing.
+-
+-Codex review is the default when no engine is set. It usually delivers the best review results and should remain the normal final closeout engine.
+-
+-Use when:
+-
+-- user asks for Codex review / Claude review / autoreview / second-model review
+-- after non-trivial code edits, before final/commit/ship
+-- reviewing a local branch or PR branch after fixes
+-
+-## Contract
+-
+-- Treat review output as advisory. Never blindly apply it.
+-- Verify every finding by reading the real code path and adjacent files.
+-- Read dependency docs/source/types when the finding depends on external behavior.
+-- Reject unrealistic edge cases, speculative risks, broad rewrites, and fixes that over-complicate the codebase.
+-- Prefer small fixes at the right ownership boundary; no refactor unless it clearly improves the bug class.
+-- When an accepted finding shows a bug class or repeated pattern, inspect the current PR scope for sibling instances before fixing.
+-- Fix the scoped bug class at once when practical; stop at touched surfaces, owner boundaries, and clear follow-up territory.
+-- Keep going until structured review returns no accepted/actionable findings.
+-- If a review-triggered fix changes code, rerun focused tests and rerun the structured review helper.
+-- For security-audit suppression changes, verify accepted findings remain auditable: suppressed findings stay in structured output, active output keeps an unsuppressible suppression notice, and aggregate findings cannot hide unrelated active risk.
+-- Never switch or override the requested review engine/model. If the review hits model capacity, retry the same command a few times with the same engine/model.
+-- Be patient with large bundles. Structured review can take up to 30 minutes while the model call is active, especially with Codex tools or web search.
+-- Treat heartbeat lines like `review still running: ... elapsed=... pid=...` as healthy progress, not a hang. Let the helper continue while heartbeats are advancing. Pass `--stream-engine-output` when live engine text is useful; Codex and Claude filter tool/file chatter, other engines pass raw output through.
+-- Do not kill a review just because it has been quiet for 2-5 minutes, or because it is still running under the 30-minute window. Inspect the process only after missing multiple expected heartbeats, after 30 minutes, or after an obviously failed subprocess; prefer letting the same helper command finish.
+-- Tools are useful in review mode. The helper allows read-only inspection tools and web search by default so reviewers can check dependency contracts, upstream docs, and current behavior from a sanitized review workspace, not the real checkout.
+-- Security perspective is always included, but it should not cripple legitimate functionality. Report security findings only when the change creates a concrete, actionable risk or removes an important safety check.
+-- For regression provenance, keep roles separate: blamed code author, blamed PR author, PR merger/committer, current PR author, and PR/date. If no blamed PR is traceable, use the blamed commit as the provenance: commit SHA, date, and author username. Do not guess a merger or frame missing PR metadata as a separate finding.
+-- If the blamed PR was merged by `clawsweeper[bot]` or another automation, identify the human trigger when practical. Check timeline/comments first; if rate-limited, use gitcrawl/cache or public PR HTML. Look for maintainer commands such as `@clawsweeper automerge`, `/landpr`, or labels/status comments that armed automerge. Report `automerge triggered by @login`; if not found, say trigger unknown.
+-- Do not invoke built-in `codex review`, nested reviewers, or reviewer panels from inside the review. The helper builds one bundle, calls one selected engine, validates one structured result, and stops.
+-- Stop as soon as the helper exits 0 with no accepted/actionable findings. Do not run an extra review just to get a nicer "clean" line, a second opinion, or clearer closeout wording.
+-- Treat the helper's successful exit plus absence of actionable findings as the clean review result, even if the underlying Codex CLI output is terse.
+-- Multi-reviewer panels are opt-in only. Use them when explicitly requested or when risk justifies the extra spend; the main agent still verifies every accepted finding before fixing.
+-- If rejecting a finding as intentional/not worth fixing, add a brief inline code comment only when it explains a real invariant or ownership decision that future reviewers should know.
+-- If `gh`/Git
 ```
 
-**File**: `Package.swift` (modified, +3/-0)
+**File**: `.agents/skills/autoreview/references/diagnostics-and-results.md` (added, +128/-0)
 ```diff
-@@ -37,6 +37,9 @@ let package = Package(
-                 // resources. build-app.sh compiles the source catalog for the
-                 // packaged app to avoid duplicate .strings outputs in SwiftPM.
-                 "Resources/Localizable.xcstrings",
-+                // App Shortcut phrases belong in the main bundle, which only
-+                // build-app.sh assembles; it compiles this catalog there.
-+                "Resources/AppShortcuts.xcstrings",
-             ],
-             resources: [
-                 .process("Resources/Assets.xcassets"),
+@@ -0,0 +1,128 @@
++# Diagnostic and result guidance
++
++## Local stage diagnostic
++
++Use `--engine-stage-dir /outside/repo/fresh-private-directory` with
++`--stream-engine-output` to observe the first streamed Codex process. The caller
++must create and exclusively hold a fresh directory with mode `0700` on responsive
++local POSIX storage. The helper never creates the directory or overwrites an
++existing `engine-stage.json`. The option has no environment-variable activation
++and produces no observation for other engines, buffered output or dry runs.
++
++The separate sidecar contains only closed booleans and enums, at most 4096 bytes.
++It reports local launch, read, parser and display observations plus that first
++process's terminal state. Later retries and passes do not update it. Its terminal
++can differ from the overall review outcome. `spoofable` is always true;
++`provider_receipt` and `acceptance` are always false. Missing or false observations
++mean unknown. They never prove provider activity, native initialization or review
++acceptance. The normal redaction wrapper conservatively leaves flushed-display
++observations unknown, even when visible output succeeds.
++
++Ordinary observation and persistence failures preserve the primary result.
++Persistence rejects repository paths, symlinks, unsafe ownership and permissions,
++and publishes without overwriting existing names. Failed name cleanup can leave
++a private `.engine-stage.partial`; failed descriptor closure can remain unresolved.
++Ambiguous closes are not retried. Cancellation still propagates, and a new cleanup
++cancellation can replace a pending exception after remaining cleanup attempts.
++The contract assumes ordinary descriptor acquisition and assignment, trusted
++caller custody and responsive local storage. It does not cover hostile same-user
++interference, concurrent descriptor reuse, arbitrary instruction interruption,
++stalled or network filesystems, or crash durability. Keep custody when clearing a
++failed partial file. This diagnostic does not change reports, usage, deadlines,
++exit codes or reviewer isolation.
++
++## Results
++
++`--output`, `--json-output`, and `--status-output` paths must be outside the
++reviewed repository, both for the final directory entry after resolving parent
++symlinks and for the resolved referent. Without `--status-output`, `--output` and
++`--json-output` must name different final directory entries after resolving parent
++symlinks. Distinct final symlinks or hardlinks may share an existing referent because
++publication replaces their separate entries. With `--status-output`, all output
++paths must have distinct resolved referents; hardlink aliases are refused too.
++Case-only and Unicode normalization aliases at the applicable boundary are
++conservatively refused on every platform, even when the filesystem would permit
++distinct files.
++Tilde and relative destinations are expanded once before validation and remain
++anchored to the invocation directory. Atomic report writes replace a final
++symlink instead of modifying its target.
++
++For event-stream results, the last terminal event is authoritative. An invalid
++final result fails the review, even if an earlier event or review pass contained
++a valid report; earlier reports are never published as a partial clean result.
++A non-null `structured_output` must contain the report object; only an absent
++or null field permits using the event's `result` instead.
++
++| Exit | Meaning                                                                            |
++| ---- | ---------------------------------------------------------------------------------- |
++| `0`  | `scoped-clean`, or a correct verdict with only filtered lower-priority findings    |
++| `1`  | Accepted findings, an incorrect provider verdict, or a failed review attempt       |
++| `2`  | Unfinished assessment, incomplete scope/attribution, or a missing required finding |
++
++Treat `scoped-clean` as clean only for the selected target and requested priority.
++`filtered` is not clean; resolve `incomplete` before claiming completion.
++Verify findings against the actual code and task before changing anything.
++No extra review rounds for a nicer verdict; follow the owning workflow after fixes.
++
++Use `--status-output /outside/repo/status.json` for a separate, versioned
++machine-readable outcome. It preserves the existing exit codes and
++`--json-output` validated-report format. Completed reviews report `scoped-clean`,
++`findings`, `filtered`, `incorrect`, or `incomplete`; a launched reviewer that
++fails or returns an invalid report reports `reviewer_unavailable` with exit 1.
++A failed later pass never publishes a partial review report.
++
++Codex runs collect usage with live display on or off. The final report, status
++sidecar, and terminal summary include `usage`: process attempts, reported,
++unknown and partial attempt counts, `complete`, and observed token totals.
++Each fresh attempt contributes its last valid cumulative snapsh
 ```
 
-**File**: `README.md` (modified, +1/-0)
+**File**: `.agents/skills/autoreview/scripts/autoreview.ps1` (added, +34/-0)
 ```diff
-@@ -55,6 +55,7 @@
- 
- - 🧩 **[Extensions](docs/extensions.md)** — Load WebKit Web Extensions, including [uBlock Origin Lite](https://github.com/uBlockOrigin/uBOL-home) and [SponsorBlock](https://github.com/ajayyy/SponsorBlock)
- - 🔗 **[URL Scheme](docs/url-scheme.md)** — Open songs directly with `kaset://play?v=VIDEO_ID`; app-targeted YouTube watch and `youtu.be` links play in YouTube mode
-+- ⚡️ **[Shortcuts, Siri & Spotlight](docs/shortcuts.md)** — Native actions to play music, playlists, and albums, control playback, and rate songs; Siri phrases; Library playlists and albums in Spotlight
- - 🤖 **[AppleScript Support](docs/applescript.md)** — Automate playback with scripts, Raycast, Alfred, and Shortcuts
- 
- ## Requirements
-```
-
-**File**: `Scripts/app-intents-const-protocols.json` (added, +21/-0)
-```diff
-@@ -0,0 +1,21 @@
-+[
-+  "AnyResolverProviding",
-+  "AppEntity",
-+  "AppEnum",
-+  "AppExtension",
-+  "AppIntent",
-+  "AppIntentsPackage",
-+  "AppShortcutProviding",
-+  "AppShortcutsProvider",
-+  "AppUnionValue",
-+  "AppUnionValueCasesProviding",
-+  "DynamicOptionsProvider",
-+  "EntityQuery",
-+  "ExtensionPointDefining",
-+  "IntentValueQuery",
-+  "Resolver",
-+  "TransientEntity",
-+  "_AssistantIntentsProvider",
-+  "_GenerativeFunctionExtractable",
-+  "_IntentValueRepresentable"
-+]
-```
-
-**File**: `Scripts/build-app.sh` (modified, +174/-1)
-```diff
-@@ -23,9 +23,22 @@ else
-   BUNDLE_ID="$RELEASE_BUNDLE_ID"
- fi
- DEVELOPMENT_LOCALIZATION="en"
-+MIN_MACOS_VERSION="15.4"
- BUILD_DIR="$ROOT/.build/app"
- APP_BUNDLE="$BUILD_DIR/$APP_NAME.app"
- 
-+# App Intents: the compiler records the intents, entities, and App Shortcuts it sees as
-+# "const values", which appintentsmetadataprocessor turns into Metadata.appintents.
-+APP_INTENTS_PROTOCOLS="$ROOT/Scripts/app-intents-const-protocols.json"
-+# The protocol list goes to the frontend: Swift 6.2 (Xcode 26) has no driver-level
-+# -const-gather-protocols-list, while every supported compiler accepts the frontend flag.
-+APP_INTENTS_SWIFT_FLAGS=(
-+  -Xswiftc -emit-const-values
-+  -Xswiftc -Xfrontend -Xswiftc -const-gather-protocols-file
-+  -Xswiftc -Xfrontend -Xswiftc "$APP_INTENTS_PROTOCOLS"
+@@ -0,0 +1,34 @@
++$ErrorActionPreference = 'Stop'
++
++$Helper = Join-Path $PSScriptRoot 'autoreview'
++$ForwardedArgs = $args
++$Candidates = @(
++    @{ Name = 'py'; Arguments = @('-3') },
++    @{ Name = 'python3'; Arguments = @() },
++    @{ Name = 'python'; Arguments = @() }
 +)
-+APP_SHORTCUTS_CATALOG="$ROOT/Sources/Kaset/Resources/AppShortcuts.xcstrings"
 +
- # Build for host architecture by default; allow overriding via ARCHES (e.g., "arm64 x86_64" for universal).
- ARCH_LIST=( ${ARCHES:-} )
- if [[ ${#ARCH_LIST[@]} -eq 0 ]]; then
-@@ -117,6 +130,154 @@ stage_arch_product() {
-   chmod +x "$dest_dir/$name"
- }
- 
-+# Copies the app module's const values for one architecture next to its staged binary.
-+# Swift Build (Xcode 27+) writes them under .build/out/Intermediates.noindex; the native
-+# SwiftPM build system (Xcode 26) writes them next to the module's objects.
-+stage_app_intents_const_values() {
-+  local arch="$1"
-+  local dest_dir
-+  local search_patterns=()
-+  local dir_name
-+  local file
-+  local name
-+  local source_names
-+  local count=0
++foreach ($Candidate in $Candidates) {
++    $Command = Get-Command $Candidate.Name -CommandType Application -ErrorAction SilentlyContinue |
++        Select-Object -First 1
++    if ($null -eq $Command) {
++        continue
++    }
 +
-+  dest_dir="$(arch_staging_dir "$arch")/const-values"
-+  rm -rf "$dest_dir"
-+  mkdir -p "$dest_dir"
++    $LauncherArgs = $Candidate.Arguments
++    try {
++        & $Command.Source @LauncherArgs -c 'import sys; raise SystemExit(0 if sys.version_info >= (3, 10) else 1)' *> $null
++    }
++    catch {
++        continue
++    }
++    if ($LASTEXITCODE -ne 0) {
++        continue
++    }
 +
-+  while IFS= read -r dir_name; do
-+    search_patterns+=(-o -path "*/${dir_name}/${APP_NAME}-p.build/Objects-normal/${arch}/*.swiftconstvalues")
-+    search_patterns+=(-o -path "*/${arch}-apple-macosx/${dir_name}/${APP_NAME}.build/*.swiftconstvalues")
-+  done < <(build_config_dir_names)
-+
-+  # Debug builds emit one file per source (Foo.swiftconstvalues with Swift Build,
-+  # Foo.swift.swiftconstvalues natively); skip leftovers from deleted sources.
-+  source_names=" $(find "$ROOT/Sources/$APP_NAME" -name '*.swift' -exec basename {} .swift \; | tr '\n' ' ') "
-+
-+  while IFS= read -r file; do
-+    name=$(basename "$file" .swiftconstvalues)
-+    name="${name%.swift}"
-+    case "$name" in
-+      "$APP_NAME" | "$APP_NAME-primary") ;;
-+      *) [[ "$source_names" == *" $name "* ]] || continue ;;
-+    esac
-+    cp "$file" "$dest_dir/"
-+    count=$((count + 1))
-+  done < <(find .build \( -false "${search_patterns[@]}" \) -type f 2>/dev/null)
-+
-+  if [[ $count -eq 0 ]]; then
-+    echo "ERROR: No App Intents const values found for ${APP_NAME} (${arch})." >&2
-+    echo "       swift build must run with: ${APP_INTENTS_SWIFT_FLAGS[*]}" >&2
-+    exit 1
-+  fi
++    & $Command.Source @LauncherArgs $Helper @ForwardedArgs
++    exit $LASTEXITCODE
 +}
 +
-+# Generates Contents/Resources/Metadata.appintents, which Shortcuts, Siri, and Spotlight
-+# read to discover the app's intents. Xcode does this in an "Extract App Intents Metadata"
-+# build phase that SwiftPM lacks, so run the same tool with the flags Xcode passes.
-+generate_app_intents_metadata() {
-+  local arch="${ARCH_LIST[0]}"
-+  local work_dir="$BUILD_DIR/app-intents"
-+  local const_dir
-+  local swiftc_path
-+  local toolchain_dir
-+  local sdk_root
-+  local xcode_build
-+
-+  if ! xcrun --find appintentsmetadataprocessor &>/dev/null; then
-+    echo "ERROR: appintentsmetadataprocessor not found. Select a full Xcode with xcode-select." >&2
-+    exit 1
-+  fi
-+
-+  const_dir="$(arch_staging_dir "$arch")/const-values"
-+  mkdir -p "$work_dir"
-+  find "$const_dir" -name '*.swiftconstvalues' | LC_ALL=C sort > "$work_dir/const-values.list"
-+  find "$ROOT/Sources/$APP_NAME" -name '*.swift' | LC_ALL=C sort > "$work_dir/sources.list"
-+
-+  swiftc_path=$(xcrun --find swiftc)
-+  toolchain_dir=$(cd "$(dirname "$swiftc_path")/../.." && pwd)
-+  sdk_root=$(xcrun --sdk macosx --show-sdk-path)
-+  xcode_build=$(xcodebuild -version | awk '/Build version/ { print $3 }')
-+
-+  # The staged thin binary matches the const values' architecture.
-+  xcrun appintentsmetadataprocessor \
-+    --toolchain-dir "$toolchain_dir" \
-+    --module-name "$APP_NAME" \
-+    --sdk-root "$sdk_root" \
-+    --xcode-version "$xcode_build" \
-+    --platform-family macOS \
-+    --deployment-target "$MIN_MACOS_VERSION" \
-+    --bundle-identifier "$BUNDLE_ID" \
-+    --output "$APP_BUNDLE/Contents/Resources" \
-+    --target-triple "${arch}-apple-macos${MIN_MACOS_VERSION}" \
-+    --binary-file "$(build_product_path "$APP_NAME" "$arch")" \
-+    --source-file-list "$work_dir/sources.list" \
-+    --swift-const-vals-list "$work_dir/const-values.list" \
-+    --stringsdata-file "$work_dir/ExtractedAppShortcutsMetadata.stringsdata" \
-+    --compile-time-extraction \
-+    --deployment-aware-processing \
-+    --force
-+
-+  if [[ ! -f "$APP_BUNDLE/Contents/Resources/Metadata.appintents/extract.actionsdata" ]]; then
-+    echo "ERROR: appintentsmetadataprocessor did not write Metadata.app
++[Console]::Error.WriteLine('Python 3.10 or newer is required to run autoreview.')
++exit 127
 ```
 
-**File**: `Scripts/verify-release-app.sh` (modified, +12/-0)
+**File**: `.agents/skills/autoreview/scripts/autoreview.test.py` (removed, +0/-337)
 ```diff
-@@ -28,6 +28,7 @@ Checks:
-   - Info.plist contains Sparkle's sandboxed installer launcher key
-   - sandbox entitlements include Sparkle's installer/status mach lookups
-   - Sparkle Installer.xpc is embedded
-+  - App Intents metadata and App Shortcut phrases are embedded
-   - codesign verification succeeds
-   - optional Developer ID Application signing identity is used
- USAGE
-@@ -61,6 +62,7 @@ plutil -lint "$ENTITLEMENTS_PLIST" >/dev/null
- codesign -dv --verbose=4 "$APP_PATH" >"$CODESIGN_DETAILS" 2>&1 || fail "Could not read code signature details"
- 
- python3 - "$APP_PATH" "$INFO_PLIST" "$ENTITLEMENTS_PLIST" "$EXPECTED_BUNDLE_ID" <<'PY'
-+import json
- import plistlib
- import sys
- from pathlib import Path
-@@ -87,6 +89,16 @@ installer_xpc = app_path / "Contents/Frameworks/Sparkle.framework/Versions/B/XPC
- if not installer_xpc.exists():
-     errors.append(f"Sparkle Installer.xpc is missing at {installer_xpc}")
- 
-+# Shortcuts, Siri, and Spotlight discover App Intents only from this generated metadata.
-+app_intents_metadata = app_path / "Contents/Resources/Metadata.appintents/extract.actionsdata"
-+if not app_intents_metadata.exists():
-+    errors.append(f"App Intents metadata is missing at {app_intents_metadata}")
-+elif not json.loads(app_intents_metadata.read_text(encoding="utf-8")).get("actions"):
-+    errors.append("App Intents metadata declares no actions")
-+app_shortcut_phrases = app_path / "Contents/Resources/en.lproj/AppShortcuts.strings"
-+if not app_shortcut_phrases.exists():
-+    errors.append(f"App Shortcut phrases are missing at {app_shortcut_phrases}")
-+
- if entitlements.get("com.apple.security.app-sandbox") is True:
-     expected_mach_services = {
-         f"{expected_bundle_id}-spks",
+@@ -1,337 +0,0 @@
+-#!/usr/bin/env python3
+-from __future__ import annotations
+-
+-import subprocess
+-import tempfile
+-import unittest
+-from importlib.machinery import SourceFileLoader
+-from importlib.util import module_from_spec, spec_from_loader
+-from pathlib import Path
+-
+-
+-SCRIPT = Path(__file__).with_name("autoreview")
+-LOADER = SourceFileLoader("autoreview_helper", str(SCRIPT))
+-SPEC = spec_from_loader(LOADER.name, LOADER)
+-assert SPEC is not None
+-autoreview = module_from_spec(SPEC)
+-LOADER.exec_module(autoreview)
+-
+-
+-def run(args: list[str], cwd: Path) -> str:
+-    result = subprocess.run(args, cwd=cwd, check=True, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+-    return result.stdout
+-
+-
+-class AutoReviewHelperTests(unittest.TestCase):
+-    def test_redacts_quoted_secret_values_with_spaces(self) -> None:
+-        output = autoreview.redact_review_text('PASSWORD="mock secret phrase value"')
+-
+-        self.assertIn("[REDACTED_ENV_SECRET]", output)
+-        self.assertNotIn("mock secret phrase value", output)
+-        self.assertNotIn("phrase value", output)
+-
+-    def test_keeps_call_expression_secret_assignments(self) -> None:
+-        output = autoreview.redact_review_text("let password = getPassword()")
+-        multiline_assignment = "let pass" "word = getPassword()\nnext line"
+-        multiline_output = autoreview.redact_review_text(multiline_assignment)
+-
+-        self.assertEqual("let password = getPassword()", output)
+-        self.assertIn("next line", multiline_output)
+-
+-    def test_rejects_call_expression_secret_literal_arguments(self) -> None:
+-        assignment = "let pass" 'word = getPassword("actual-secret-123")'
+-        fallback_assignment = "let pass" 'word = getPassword() || "actual-secret-123"'
+-        template_assignment = "let pass" "word = getPassword(`actual-secret-123`)"
+-        bare_argument_assignment = "let pass" "word = getPassword(actual-secret-123)"
+-        secret_identifier_call = "let to" "ken = actualSecret123()"
+-        prefixed_secret_identifier_call = "let to" "ken = getActualSecret123()"
+-        with self.assertRaises(SystemExit):
+-            autoreview.redact_review_text(assignment)
+-        with self.assertRaises(SystemExit):
+-            autoreview.redact_review_text(fallback_assignment)
+-        with self.assertRaises(SystemExit):
+-            autoreview.redact_review_text(template_assignment)
+-        with self.assertRaises(SystemExit):
+-            autoreview.redact_review_text(bare_argument_assignment)
+-        with self.assertRaises(SystemExit):
+-            autoreview.redact_review_text(secret_identifier_call)
+-        with self.assertRaises(SystemExit):
+-            autoreview.redact_review_text(prefixed_secret_identifier_call)
+-
+-    def test_redacts_colon_style_quoted_secret_values_with_spaces(self) -> None:
+-        output = autoreview.redact_review_text('password: "mock secret phrase value"\n{"api_key": "mock api key value"}')
+-
+-        self.assertIn("[REDACTED_FIELD_SECRET]", output)
+-        self.assertNotIn("mock secret phrase value", output)
+-        self.assertNotIn("mock api key value", output)
+-        self.assertNotIn("phrase value", output)
+-
+-    def test_redacts_short_unquoted_secret_fields(self) -> None:
+-        output = autoreview.redact_review_text('password: abc123\n{"api_key": x9}')
+-
+-        self.assertEqual("[REDACTED_FIELD_SECRET]\n{[REDACTED_FIELD_SECRET]}", output)
+-        self.assertNotIn("abc123", output)
+-        self.assertNotIn("x9", output)
+-
+-    def test_keeps_common_short_secret_field_literals(self) -> None:
+-        text = "password: false\ntoken: null\napiKey: test\nsecret: 2"
+-
+-        output = autoreview.redact_review_text(text)
+-
+-        self.assertEqual(text, output)
+-
+-    def test_keeps_code_references_with_secret_like_property_names(self) -> None:
+-        output = autoreview.redact_review_text("return { password: user.passwordHash, apiKey: config.apiKey };")
+-
+-        self.assertEqual("return { password: user.passwordHash, apiKey: config.apiKey };", output)
+-
+-    def test_redacts_credential_urls_with_email_style_usernames(self) -> None:
+-        output = autoreview.redact_review_text(
+-            "DATABASE_URL=postgres://user@example.com:mock-password@db.example.test/app"
+-        )
+-
+-        self.assertIn("[REDACTED_CREDENTIAL_URL]", output)
+-        self.assertNotIn("mock-password", output)
+-        self.assertNotIn("db.example.test", output)
+-
+-    def test_redacts_oauth_fragment_urls(self) -> None:
+-        output = autoreview.redact_review_text("https://accounts.example.test/callback#code=mock-code-123456")
+-
+-        self.assertEqual("[REDACTED_AUTH_URL]", output)
+-
+-    def test_redacts_generic_session_cookies(self) -> None:
+-        output = autoreview.redact_review_text("SESSIONID=abcdef1234567890")
+-
+-        self.assertEqual("[REDACTED_COOKIE]", output)
+-
+-    def test_redacts_quoted_cookie_assignments(self) -> None:
+-        output = autoreview.redact_review_text(
+```
+
+**File**: `.agents/skills/autoreview/scripts/test-review-harness` (removed, +0/-16)
+```diff
+@@ -1,16 +0,0 @@
+-#!/usr/bin/env bash
+-set -euo pipefail
+-
+-script_dir=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+-harness="$script_dir/test-review-harness.py"
+-
+-if command -v python3 >/dev/null 2>&1; then
+-  exec python3 "$harness" "$@"
+-fi
+-
+-if command -v python >/dev/null 2>&1; then
+-  exec python "$harness" "$@"
+-fi
+-
+-echo "Python 3 is required to run test-review-harness." >&2
+-exit 127
+```
+
+**File**: `.agents/skills/autoreview/scripts/test-review-harness.ps1` (removed, +0/-45)
+```diff
+@@ -1,45 +0,0 @@
+-[CmdletBinding()]
+-param(
+-    [ValidateSet('malicious', 'benign')]
+-    [string] $Fixture,
+-
+-    [ValidateSet('codex', 'claude', 'droid', 'copilot')]
+-    [string[]] $Engine,
+-
+-    [Alias('h')]
+-    [switch] $Help
+-)
+-
+-$ErrorActionPreference = 'Stop'
+-
+-$Harness = Join-Path $PSScriptRoot 'test-review-harness.py'
+-$ForwardedArgs = @()
+-
+-if ($Help) {
+-    $ForwardedArgs += '--help'
+-}
+-
+-if ($PSBoundParameters.ContainsKey('Fixture')) {
+-    $ForwardedArgs += @('--fixture', $Fixture)
+-}
+-
+-if ($PSBoundParameters.ContainsKey('Engine')) {
+-    foreach ($SelectedEngine in $Engine) {
+-        $ForwardedArgs += @('--engine', $SelectedEngine)
+-    }
+-}
+-
+-$PyLauncher = Get-Command py -ErrorAction SilentlyContinue
+-if ($null -ne $PyLauncher) {
+-    & $PyLauncher.Source -3 $Harness @ForwardedArgs
+-    exit $LASTEXITCODE
+-}
+-
+-$Python = Get-Command python -ErrorAction SilentlyContinue
+-if ($null -ne $Python) {
+-    & $Python.Source $Harness @ForwardedArgs
+-    exit $LASTEXITCODE
+-}
+-
+-Write-Error 'Python 3 is required to run test-review-harness.'
+-exit 127
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #567** (2026-10-31): docs(agents): tune AGENTS.md and skills for current Claude prompting guidance (@sozercan)
+- **PR #565** (2026-10-31): feat(player): add a full screen Now Playing view (@GeneralKoski)
 - **PR #551** (2026-10-22): feat: add App Intents for Shortcuts, Siri, and Spotlight (@sozercan)
 - **PR #550** (2026-10-19): perf(player): keep progress ticks out of PlayerBar and MiniPlayerWindow bodies (@friedtori)
 - **PR #545** (2026-10-12): fix(ui): keep collapsed sidebar collapsed when window regains focus (@sozercan)
 - **PR #543** (2026-10-12): chore(deps): bump actions/upload-artifact from 7.0.1 to 7.0.2 in the github-actions group (@dependabot[bot])
-- **PR #542** (2026-10-12): fix(auth): stop recoverable cookie gaps from signing users out (@sozercan)
-- **PR #541** (2026-10-11): Update appcast to v0.14.2 (@github-actions[bot])
 
 ---
 
@@ -1638,28 +1834,44 @@ Signed-off-by: Sertac Ozercan <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. add App Intents for Shortcuts, Siri, and Spotlight (#551)
+## X. docs(agents): tune AGENTS.md and skills for current Claude prompting guidance (#
 
 **RULE**:
-When implementing operations in `.github/workflows/dev-build.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sozercan/kaset. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.agents/skills/api-exploration/SKILL.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sozercan/kaset. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4c59ff25`: add App Intents for Shortcuts, Siri, and Spotlight (#551). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2258e5cd`: docs(agents): tune AGENTS.md and skills for current Claude prompting guidance (#567). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/dev-build.yml`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `.agents/skills/api-exploration/SKILL.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-          # Ad-hoc builds list App Intents in Shortcuts but macOS will not run them.
+1. Run `swift run api-explorer auth` if the task touches sign-in-backed endpoints.
+3. Probe the endpoint with `browse`, `action`, or `continuation` before touching production code. If the explorer can't express the request you need, add that capability to `Sources/APIExplorer/main.swift`.
+4. Save representative payloads with `-o` when parser work or regression tests need fixtures. `-o` and `-v` emit the raw response, which can include account names, emails, and channel IDs: write captures outside the repo, and redact them before they go into `Tests/KasetTests/Fixtures/` or get quoted in your output.
+5. Update `docs/api-discovery.md` when you confirm a new endpoint, parameter, or auth constraint.
+
+`action` sends a real request as the signed-in user. Read-only actions such as `search` are fine; for anything that changes account data (likes, playlist edits, subscriptions), prefer a captured, sanitized response or a disposable resource, and get explicit approval from the human before sending it live.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+Use this skill when a task needs a new or modified YouTube Music API call, response parser validation, authenticated endpoint investigation, or fixture capture.
+
+## Guardrails
+
+- Always enhance `Sources/APIExplorer/main.swift`; do not write one-off scripts for endpoint exploration.
+- Never commit real cookies, SAPISID values, tokens, or account identifiers. Redact anything sensitive in notes, fixtures, and examples.
+- Prefer API endpoints over WebView whenever the functionality already exists in `YTMusicClient`.
+
+1. Start with `swift run api-explorer auth` if the task touches sign-in-backed endpoints.
+3. Probe the endpoint with `browse`, `action`, or `continuation` before touching production code.
+4. Save representative payloads with `-o` when parser work or regression tests need fixtures.
+5. Update `docs/api-discovery.md` if you confirm a new endpoint, parameter, or auth constraint.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4c59ff25` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2258e5cd` are properly handled with clean fallback behavior.

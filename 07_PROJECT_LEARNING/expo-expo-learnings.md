@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/expo-expo-learnings.md`  
 > **Source**: github ([https://github.com/expo/expo](https://github.com/expo/expo))  
-> **Source Version**: `48362988`  
+> **Source Version**: `3dfa4626`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T23:58:41.472Z  
+> **Timestamp**: 2026-11-04T00:24:25.186Z  
 > **Learning ID**: `learn-github-expo-expo`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/expo-expo-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/expo/expo](https://github.com/expo/expo))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T23:58:40.947Z  
+> **Harvest Timestamp**: 2026-11-04T00:24:24.683Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: An open-source framework for making universal native apps with React. Expo runs on Android, iOS, and the web.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 53230 stars
+- **Stars / Engagement**: 53326 stars
 
 ---
 
@@ -674,1291 +674,745 @@ object AsyncCondition {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `cfbedb28` (2026-10-30)
-**Commit Message**: [docs] Add Agentic workflows section with four quick start guides (#52087)
+### Incident Patch 1: `931df666` (2026-11-03)
+**Commit Message**: [docs] Land reviewed external-contributor docs fixes (#52842)
 
 # Why
 
-Fix ENG-28469. Readers have no guide that connects EAS Workflows, a
-coding agent, and Expo Simulators into one automated loop.
+Consolidates the open external-contributor docs PRs that should land
+into one PR, with review fixes applied and conflicts with `main`
+resolved. Each original PR is one commit authored by its contributor.
+The commits after them apply review fixes and suggestions.
 
 # How
 
-- Add an **Agentic workflows** section to the Home tab, after AI. It has
-six pages in `pages/agentic-workflows/`:
-- **Introduction**: the four workflows and how they use EAS Workflows
-and Expo Simulators.
-- **Project setup**: the one-time setup that each guide links to. It has
-eight steps: build profile, GitHub connection, robot token, EAS
-environment variables, agent runner (Claude Code, Codex, Cursor, and
-Grok), device controller (agent-device and Argent), push, and GitHub
-token. It also has a manual test, monorepo changes, and "What the agent
-can do".
-- **Agentic CI**: an agent tests each pull request on a cloud simulator
-and comments with a verdict and a screenshot.
-- **Issue to PR**: an `agent` label on an issue makes an agent open a
-pull request.
-- **Bug triage**: an agent tries to reproduce a TestFlight feedback
-report or an issue.
-- **QA Swarm**: several agents test one flow each, on their own
-simulators, at the same time.
-- Each guide has an `AgentPrompt` tha
+| PR | Change | Edits made here |
+| --- | --- | --- |
+| expo/expo#52032 | Keyboard guide: set a `KeyboardAvoidingView`
+`behavior` on Android too (edge-to-edge stops `adjustResize`) |
+Shortened the paragraph; follow-up sentence now describes `padding`.
+Says Expo apps are edge-to-edge on every Android version, not only
+Android 15 and later. Removes the advice to set
+`softwareKeyboardLayoutMode` to `pan` for bottom tabs, warns against
+`pan` with `padding`, and points to `useHeaderHeight()` for
+`keyboardVerticalOffset` |
+| expo/expo#52691 | Vercel guide: fix pnpm 12 lockfile parsing | Removes
+the `@vercel/node@5.1.8` runtime pin instead of pinning newer
+`@vercel/node` and `VERCEL_CLI_VERSION`, so the hosted CLI's own builder
+is used |
+| expo/expo#52751 | SDK 58 router migration: `CommonActions.reset` needs
+complete state | Reduced to a link to the exi
 
-**File**: `docs/.vale/writing-styles/expo-docs/HeadingCase.yml` (modified, +3/-0)
+**File**: `docs/pages/config-plugins/development-and-debugging.mdx` (modified, +1/-1)
 ```diff
-@@ -29,6 +29,7 @@ exceptions:
-   - '.*web.*'
-   - '.*AASA.*'
-   - '.*AES.*'
-+  - '.*Agentic CI.*'
-   - '.*AGENTS\.md.*'
-   - '.*\bAI\b.*'
-   - '.*API.*'
-@@ -62,6 +63,7 @@ exceptions:
-   - '.*Babel.*'
-   - '.*babel\.config\.js.*'
-   - '.*Beta App Review.*'
-+  - '.*Bug triage.*'
-   - '.*Bundler.*'
-   - '.*Cache-Control.*'
-   - '.*Can I pay.*'
-@@ -190,6 +192,7 @@ exceptions:
-   - '.*PWA.*'
-   - '.*package\.json.*'
-   - '.*props.*'
-+  - '.*QA Swarm.*'
-   - '.*QR.*'
-   - '.*RTL.*'
-   - '.*React.*'
+@@ -498,7 +498,7 @@ The Expo CLI `npx expo prebuild` command uses [`@expo/prebuild-config`](https://
+ 
+ For example, say you wanted to add support for managing the `ios/*/AppDelegate.h` file, you could do this by adding a `ios.appDelegateHeader` modifier.
+ 
+-> This example uses `tsx` for simple local TypeScript support, this isn't strictly necessary. See [using TypeScript with `app.config.js`](/guides/typescript/#appconfigjs).
++> This example uses `tsx` for simple local TypeScript support, but `tsx` isn't strictly necessary. See [using TypeScript with app config](/guides/typescript/#app-config).
+ 
+ ```ts withAppDelegateHeaderBaseMod.ts
+ import { ConfigPlugin, IOSConfig, Mod, withMod, BaseMods } from 'expo/config-plugins';
 ```
 
-**File**: `docs/constants/navigation.js` (modified, +9/-0)
+**File**: `docs/pages/guides/keyboard-handling.mdx` (modified, +6/-16)
 ```diff
-@@ -21,6 +21,7 @@ const homeDirectories = [
-   'review',
-   'monitoring',
-   'agents',
-+  'agentic-workflows',
- ];
- /** Manual list of directories to categorize as "Learn" */
- const learnDirectories = ['tutorial', 'additional-resources'];
-@@ -94,6 +95,14 @@ export const home = [
-     ),
-     makePage('llms.mdx'),
-   ]),
-+  makeSection('Agentic workflows', [
-+    makePage('agentic-workflows/introduction.mdx'),
-+    makePage('agentic-workflows/setup.mdx'),
-+    makePage('agentic-workflows/agentic-ci.mdx'),
-+    makePage('agentic-workflows/issue-to-pr.mdx'),
-+    makePage('agentic-workflows/bug-triage.mdx'),
-+    makePage('agentic-workflows/qa-swarm.mdx'),
-+  ]),
-   makeSection('Develop', [
-     makePage('develop/tools.mdx'),
-     makePage('develop/app-navigation.mdx'),
+@@ -31,35 +31,25 @@ The following sections explain how to handle keyboard interactions with common A
+ 
+ The `KeyboardAvoidingView` is a component that automatically adjusts a view's height, position, or bottom padding based on the keyboard height to remain visible while it is displayed.
+ 
+-Android and iOS interact with the `behavior` property differently. On iOS, `padding` is usually what works best, and for Android, just having the `KeyboardAvoidingView` prevents covering the input. This is why the following example uses `undefined` for Android. Playing around with the `behavior` is a good practice since a different option could work best for your app.
++Set a `behavior` on both platforms. On Android, Expo apps are edge-to-edge, so the window no longer resizes for the keyboard. A view without a `behavior` stays under the keyboard. On iOS, the keyboard covers the app. `padding` usually works best. If the view is under a navigation header, pass `useHeaderHeight()` from `expo-router/react-navigation` as `keyboardVerticalOffset`. The value includes the status bar height.
+ 
+ ```tsx home-screen.tsx
+ import { KeyboardAvoidingView, TextInput } from 'react-native';
+ 
+ export default function HomeScreen() {
+   return (
+-    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
++    <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
+       <TextInput placeholder="Type here..." />
+-    </KeyboardAvoidingView>;
++    </KeyboardAvoidingView>
+   );
+ }
+ ```
+ 
+-In the above example, the height of the `KeyboardAvoidingView` automatically adjusts based on the device's keyboard height, which ensures that the input is always visible.
++In the above example, the `KeyboardAvoidingView` adds bottom padding equal to the keyboard height, which keeps the input visible.
+ 
+-When using a Bottom Tab navigator on Android, you might notice that focusing on an input field causes the bottom tabs to be pushed above the keyboard. To address this issue, add the `softwareKeyboardLayoutMode` property to your Android configuration in [app config](/workflow/configuration/) and set it to `pan`.
++On Android, do not set `softwareKeyboardLayoutMode` to `pan` with `behavior="padding"`. The window pans and the view adds padding, so the input moves up twice.
+ 
+-```json app.json
+-"expo" {
+-  "android": {
+-    "softwareKeyboardLayoutMode": "pan"
+-  }
+-}
+-```
+-
+-After adding this property, restart the development server and reload your app to apply the changes.
+-
+-It's also possible to hide the bottom tab when the keyboard opens using [`tabBarHideOnKeyboard`](https://reactnavigation.org/docs/bottom-tab-navigator/#tabbarhideonkeyboard). It is an option with the Bottom Tab Navigator. If set to `true`, it will hide the bar when the keyboard opens.
++To hide the bottom tab bar while the keyboard is open, set the Bottom Tab Navigator's [`tabBarHideOnKeyboard`](https://reactnavigation.org/docs/bottom-tab-navigator/#tabbarhideonkeyboard) option to `true`.
+ 
+ ```tsx src/app/_layout.tsx
+ import { Tabs } from 'expo-router';
 ```
 
-**File**: `docs/pages/agentic-workflows/agentic-ci.mdx` (added, +394/-0)
+**File**: `docs/pages/guides/typescript.mdx` (modified, +27/-32)
 ```diff
-@@ -0,0 +1,394 @@
-+---
-+title: Test pull requests with an AI agent
-+sidebar_title: Agentic CI
-+description: Add an agentic workflow in which a coding agent tests each pull request on an Expo Simulators session and posts a verdict with evidence.
-+---
+@@ -220,9 +220,23 @@ Some Expo libraries provide both static types and type generation capabilities.
+ 
+ ## TypeScript for project's config files
+ 
+-Additional setup is required to use TypeScript for configuration files such as **metro.config.js** or **app.config.js**.
++### Metro config
+ 
+-Install [`tsx`](https://tsx.is/) as a dev dependency and utilize its [`tsx/cjs` require hook](https://tsx.is/dev-api/entry-point#commonjs-mode-only) to import TypeScript files within your JS configuration file. This hook allows TypeScript imports while keeping the root file as JavaScript. The command below adds `tsx` so `import 'tsx/cjs'` works in the following sub-section examples.
++In SDK 57 and later, Expo CLI loads **metro.config.ts** without extra setup. Rename **metro.config.js** to **metro.config.ts**, because Expo CLI uses **metro.config.js** when both exist:
 +
-+import { Cloud01Icon } from '@expo/styleguide-icons/outline/Cloud01Icon';
-+import { Star06Icon } from '@expo/styleguide-icons/outline/Star06Icon';
++```ts metro.config.ts
++import { getDefaultConfig } from 'expo/metro-config';
 +
-+import { AgentPrompt } from '~/ui/components/AgentPrompt';
-+import { BoxLink } from '~/ui/components/BoxLink';
-+import { ContentSpotlight } from '~/ui/components/ContentSpotlight';
-+import { Terminal } from '~/ui/components/Snippet';
-+import { Step } from '~/ui/components/Step';
-+import { Tab, Tabs } from '~/ui/components/Tabs';
++const config = getDefaultConfig(import.meta.dirname);
 +
-+> **important** **Expo Simulators is a limited-access preview.** It is not included with paid or free plans and is currently available only to select partners. [Join the waitlist](https://expo.dev/services/simulators) if you are interested in trying it.
-+
-+Agentic CI is an automated workflow in which a coding agent tests a pull request (PR) on a remote Android Emulator or iOS Simulator. The agent tests the change that the PR describes. Then it reports back on the PR with a verdict and evidence.
-+
-+## How Agentic CI works
-+
-+When a person opens a PR to `main`, the Agentic CI workflow does these steps:
-+
-+1. It finds a build of the app with the same native code, or it creates one. Then it adds the JavaScript of the PR to the build.
-+2. It starts an Expo Simulators session with the build.
-+3. A coding agent reads the PR, tests the change in the app, and writes a verdict.
-+4. The workflow posts the verdict on the PR. The comment links to the session recording, the screenshots, and a browser preview of the build.
-+
-+Agentic CI does not replace your scripted tests. It tests the behavior that a PR describes, even when no script covers it. To learn how the parts work together, see [Introduction to agentic workflows](/agentic-workflows/introduction/).
-+
-+The following screenshot shows an Agentic CI comment with a `PASS` verdict:
-+
-+<ContentSpotlight
-+  alt="Agentic CI comment on a GitHub pull request with a PASS verdict and links to the session recording, the agent report, and a browser preview"
-+  src="/static/images/eas-workflows/agentic-ci-comment.webp"
-+  darkSrc="/static/images/eas-workflows/agentic-ci-comment-dark.webp"
-+/>
-+
-+<AgentPrompt
-+  title="Add Agentic CI with an AI agent"
-+  description="Paste this into Claude, Cursor, Codex, or another agent.">
-+
-+```text wrap
-+Add the Agentic CI workflow to my Expo project. Use https://docs.expo.dev/agentic-workflows/agentic-ci.md as the source for each step and each file.
-+
-+1. Check each step on https://docs.expo.dev/agentic-workflows/setup.md, except the GitHub token step. Do each step that is not done. Use the version of .eas/agents/run-agent.sh for the agent that I name, and the version of .eas/agents/start-session.sh for the controller that I name: agent-device or Argent.
-+2. Create each file that the page shows, at the same path and with the same content.
-+3. When a step needs a token, an account, or a choice, stop and ask me. Do not print or save a token.
-+4. Run `eas workflow:validate` on each workflow file that you added.
-+5. Commit the files, but do not push them. Tell me which files you added.
++export default config;
 +```
 +
-+</AgentPrompt>
++### App config
 +
-+## Set up your project
++**app.config.ts** works without extra setup. However, it doesn't support external TypeScript modules or **tsconfig.json** customization.
 +
-+Follow [Set up a project for agentic workflows](/agentic-workflows/setup/) one time for your project. Agentic CI does not need the GitHub token step. See [What the agent can do](/agentic-workflows/setup/#what-the-agent-can-do) to learn which limits apply to the agent.
++For a more comprehensive TypeScript setup, install [`tsx`](https://tsx.is/) as a dev dependency:
+ 
+ <Tabs>
+ 
+@@ -254,25 +268,22 @@ Install [`tsx`](https://tsx.is/) as a dev dependency and utilize its [`tsx/cjs`
+ 
+ </Tabs>
+ 
+-### metro.config.js
++Then utilize its [`tsx/cjs` require hook](https://tsx.is/dev-api/entry-point#commonjs-mode-only) in your app config to enable importing external TypeScript modules.
+ 
+-Update **metro.config.js** to require **metro.config.ts** file:
+-
+-```js metro.config.js
+-require('tsx/cjs'); // Add this to import TypeScript files
+-module.exports = require('./metro.config.ts');
+-```
+-
+-Update **metro.config.ts** file with your project's metro configuration:
+-
+-```ts metro.config.ts
+-import { getDefaultConfig } from 'expo/metro-config';
++```ts app.config.ts
++import 'tsx/cjs'; // Add this to import TypeScript files
++import { ExpoConfig } from 'expo/config';
+ 
+-const config = getDefaultConfig(__dirname);
++const config: ExpoConfig = {
++  name: 'my-app',
++  slug: 'my-app',
++};
+ 
+-module.exports = config;
++export default config;
+ ```
+ 
++### Webpack config
 +
-+## Add the Agentic CI workflow
+ <Collapsible summary="Deprecated: webpack.config.js">
+ 
+ Install the `@expo/webpack-config` package.
+@@ -295,22 +306,6 @@ module.exports = async function (env: Environment, argv: Arguments) {
+ 
+ </Collapsible>
+ 
+-### app.config.js
+-
+-**app.config.ts** is supported by default. However, it doesn't support external TypeScript modules, or **tsconfig.json** customization. You can use the following approach to get a more comprehensive TypeScript setup:
+-
+-```ts app.config.ts
+-import 'tsx/cjs'; // Add this to import TypeScript files
+-import { ExpoConfig } from 'expo/config';
+-
+-const config: ExpoConfig = {
+-  name: 'my-app',
+-  slug: 'my-app',
+-};
+-
+-export default config;
+-```
+-
+ ## Other TypeScript features
+ 
+ Some language features may require additional configuration. For example, if you want to use decorators you'll need to add the `experimentalDecorators` option. For more information on the available properties see the [TypeScript compiler options](https://www.typescriptlang.org/docs/handbook/compiler-options.html) documentation.
+```
+
+**File**: `docs/pages/router/migrate/sdk-57-to-58.mdx` (modified, +1/-1)
+```diff
+@@ -490,7 +490,7 @@ Dispatch functions are no longer supported. Read the state first, compute an act
+ 
+ The read and deferred dispatch are not atomic. Use `dispatchSync(action)` deliberately if other navigation work cannot happen between them.
+ 
+-`CommonActions.reset` now requires a complete navigation state. A partial payload, such as `{ index: 0, routes: [...] }`, is no longer completed during render and the reset is silently ignored in production (development builds log a warning). Spread `navigation.getState()` into the payload, as in the diff above, whenever you reset.
++`CommonActions.reset` needs a state with `stale: false` and the navigator's current `routeNames`. See [Include `routeKeySeq` in complete state](#include-routekeyseq-in-complete-state).
+ 
+ ### Replace `navigationKey`
+ 
+```
+
+**File**: `docs/pages/router/web/api-routes.mdx` (modified, +0/-1)
+```diff
+@@ -918,7 +918,6 @@ Create a Vercel configuration file (**vercel.json**) at the root of your project
+   "outputDirectory": "dist/client",
+   "functions": {
+     "api/index.ts": {
+-      "runtime": "@vercel/node@5.1.8",
+       "includeFiles": "dist/server/**"
+     }
+   },
+```
+
+**File**: `docs/pages/tutorial/add-navigation.mdx` (modified, +2/-0)
+```diff
+@@ -271,6 +271,8 @@ export default function TabLayout() {
+ 
+ Native tabs don't add a header to the screens, so the Home and About screens no longer have one. On web, the tabs appear as a list of labels at the top of the page.
+ 
++> **info** On web, the browser console may log a hydration error ("A tree hydrated but some attributes of the server rendered HTML didn't match the client properties"). This is a known Expo Router issue with server rendering ([expo/expo#52249](https://github.com/expo/expo/issues/52249)), not a problem in the tutorial code. The tabs still work.
 +
-+<Step label="1">
+ Let's take a look at our app now to see the new bottom tabs:
+ 
+ <ContentSpotlight
+```
+
+**File**: `docs/pages/versions/unversioned/sdk/filesystem.mdx` (modified, +7/-5)
+```diff
+@@ -143,8 +143,10 @@ Using the built-in `pickFileAsync` or `pickDirectoryAsync` method on Android:
+ import { File } from 'expo-file-system';
+ 
+ try {
+-  const file = new File.pickFileAsync();
+-  console.log(file.textSync());
++  const result = await File.pickFileAsync();
++  if (!result.canceled) {
++    console.log(result.result.textSync());
++  }
+ } catch (error) {
+   console.error(error);
+ }
+@@ -303,11 +305,11 @@ try {
+   file.create();
+   console.log(file.uri); // '${documentDirectory}/example.txt'
+   const copiedFile = new File(Paths.cache, 'example-copy.txt');
+-  file.copy(copiedFile);
++  await file.copy(copiedFile); // or `file.copySync(copiedFile);` for synchronous call
+   console.log(copiedFile.uri); // '${cacheDirectory}/example-copy.txt'
+-  file.move(Paths.cache);
++  await file.move(Paths.cache); // or `file.moveSync(Paths.cache);` for synchronous call
+   console.log(file.uri); // '${cacheDirectory}/example.txt'
+-  file.move(new Directory(Paths.cache, 'newFolder'));
++  await file.move(new Directory(Paths.cache, 'newFolder'));
+   console.log(file.uri); // '${cacheDirectory}/newFolder/example.txt'
+ } catch (error) {
+   console.error(error);
+```
+
+**File**: `docs/pages/versions/unversioned/sdk/map-view.mdx` (modified, +66/-4)
+```diff
+@@ -108,7 +108,13 @@ const styles = StyleSheet.create({
+ <Step label="4">
+ #### Add the API key to your project
+ 
+-Since you are using Google as the map provider, you need to add the API key to the `react-native-maps` [config plugin](/config-plugins/introduction/). Copy your **API Key** into your project to either a **.env** file or copy it directly and then add it to your app config under the `plugins.react-native-maps.androidGoogleMapsApiKey` field like:
++Since you are using Google as the map provider, add the API key to the `react-native-maps` [config plugin](/config-plugins/introduction/) under `plugins.react-native-maps.androidGoogleMapsApiKey`.
 +
-+### Add the workflow
-+
-+Use the file for the platform that you test.
++Paste the key into **app.json**, or store it in a **.env** file and read it from **app.config.js**. **app.json** cannot read environment variables, so a value such as `"process.env.GOOGLE_MAPS_API_KEY"` reaches the native project as that literal string.
 +
 +<Tabs>
 +
-+<Tab label="Android">
++<Tab label="app.json">
+ 
+ ```json app.json
+ {
+@@ -117,14 +123,39 @@ Since you are using Google as the map provider, you need to add the API key to t
+       [
+         "react-native-maps",
+         {
+-          "androidGoogleMapsApiKey": "process.env.YOUR_GOOGLE_MAPS_API_KEY"
++          "androidGoogleMapsApiKey": "YOUR_GOOGLE_MAPS_API_KEY"
+         }
+       ]
+     ]
+   }
+ }
+ ```
+ 
++</Tab>
 +
-+```yaml .eas/workflows/agentic-ci.yml
-+name: Agentic CI (Android)
++<Tab label="app.config.js">
 +
-+on:
-+  pull_request:
-+    branches: ['main']
-+    types: ['opened', 'reopened', 'synchronize', 'ready_for_review']
-+    if: ${{ !github.event.pull_request.draft }}
-+
-+jobs:
-+  fingerprint:
-+    type: fingerprint
-+    environment: preview
-+
-+  get_build:
-+    type: get-build
-+    needs: [fingerprint]
-+    params:
-+      platform: android
-+      profile: preview
-+      fingerprint_hash: ${{ needs.fingerprint.outputs.android_fingerprint_hash }}
-+      wait_for_in_progress: true
-+
-+  build:
-+    type: build
-+    needs: [get_build]
-+    if: ${{ !needs.get_build.outputs.build_id }}
-+    params:
-+      platform: android
-+      profile: preview
-+
-+  repack:
-+    type: repack
-+    needs: [get_build]
-+    if: ${{ needs.get_build.outputs.build_id }}
-+    params:
-+      build_id: ${{ needs.get_build.outputs.build_id }}
-+      profile: preview
-+
-+  check:
-+    needs: [get_build]
-+    after: [build, repack]
-+    environment: preview
-+    env:
-+      BUILD_ID: ${{ after.build.outputs.build_id || after.repack.outputs.build_id }}
-+      PR_TITLE: ${{ github.event.pull_request.title }}
-+      PR_BODY: ${{ github.eve
-```
-
-**File**: `docs/pages/agentic-workflows/bug-triage.mdx` (added, +571/-0)
-```diff
-@@ -0,0 +1,571 @@
-+---
-+title: Triage a bug report with an AI agent
-+sidebar_title: Bug triage
-+description: Add an agentic workflow in which a coding agent reproduces a bug from a GitHub issue or TestFlight feedback on a remote Android Emulator or iOS Simulator.
-+---
-+
-+import { Star06Icon } from '@expo/styleguide-icons/outline/Star06Icon';
-+
-+import { AgentPrompt } from '~/ui/components/AgentPrompt';
-+import { BoxLink } from '~/ui/components/BoxLink';
-+import { Terminal } from '~/ui/components/Snippet';
-+import { Step } from '~/ui/components/Step';
-+import { Tab, Tabs } from '~/ui/components/Tabs';
-+
-+import { BugTriageDiagram } from '~/scenes/eas/agentic-workflows/AgenticWorkflowDiagram';
-+
-+> **important** **Expo Simulators is a limited-access preview.** It is not included with paid or free plans and is currently available only to select partners. [Join the waitlist](https://expo.dev/services/simulators) if you are interested in trying it.
-+
-+Bug triage is an automated workflow in which a coding agent tries to reproduce a bug report on a remote Android Emulator or iOS Simulator. The report comes from a GitHub issue or from TestFlight feedback. When the agent sees the bug, a person reads the report and adds the `agent` label. Then [Issue to PR](/agentic-workflows/issue-to-pr/) opens a pull request (PR) with a fix, and [Agentic CI](/agentic-workflows/agentic-ci/) tests the fix.
-+
-+## How Bug triage works
-+
-+The highlighted steps run on EAS Workflows and Expo Simulators:
-+
-+<BugTriageDiagram />
-+
-+1. Each bug report starts as a GitHub issue. For TestFlight feedback, the workflow creates the issue with the comment of the tester, the device, and links to the screenshots.
-+2. The workflow starts an Expo Simulators session with a build of the default branch.
-+3. A coding agent follows the steps in the report and writes a verdict: `REPLICATED` or `NOT-REPLICATED`.
-+4. The workflow posts the verdict on the issue. For a `REPLICATED` bug, a person reads the report and adds the `agent` label, which starts Issue to PR.
-+
-+The agent tests a build of the default branch, not the build that the tester used.
-+
-+<AgentPrompt
-+  title="Add Bug triage with an AI agent"
-+  description="Paste this into Claude, Cursor, Codex, or another agent.">
-+
-+```text wrap
-+Add the Bug triage workflow to my Expo project. Use https://docs.expo.dev/agentic-workflows/bug-triage.md as the source for each step and each file.
-+
-+1. Check each step on https://docs.expo.dev/agentic-workflows/setup.md. Check that the Agentic CI workflow from https://docs.expo.dev/agentic-workflows/agentic-ci.md and the Issue to PR workflow from https://docs.expo.dev/agentic-workflows/issue-to-pr.md are in the project. Do each step that is not done. Use the version of .eas/agents/run-agent.sh for the agent that I name, and the version of .eas/agents/start-session.sh for the controller that I name: agent-device or Argent.
-+2. Create each file that the page shows, at the same path and with the same content.
-+3. When a step needs a token, an account, or a choice, stop and ask me. Do not print or save a token.
-+4. Run `eas workflow:validate` on each workflow file that you added.
-+5. Commit the files, but do not push them. Tell me which files you added and which commands I must run.
++```js app.config.js
++export default ({ config }) => ({
++  ...config,
++  plugins: [
++    ...(config.plugins ?? []),
++    [
++      'react-native-maps',
++      {
++        androidGoogleMapsApiKey: process.env.GOOGLE_MAPS_API_KEY,
++      },
++    ],
++  ],
++});
 +```
 +
-+</AgentPrompt>
++The `config` argument holds the values from **app.json**. If **app.json** already lists `react-native-maps`, remove that entry.
 +
-+## Set up your project
++</Tab>
 +
-+Follow [Set up a project for agentic workflows](/agentic-workflows/setup/) one time for your project, including [Add a GitHub token to EAS](/agentic-workflows/setup/#add-a-github-token-to-eas). See [What the agent can do](/agentic-workflows/setup/#what-the-agent-can-do) to learn which limits apply to the agent.
++</Tabs>
 +
-+Bug triage needs [Agentic CI](/agentic-workflows/agentic-ci/) and [Issue to PR](/agentic-workflows/issue-to-pr/), because they fix a replicated bug and test the fix. Add them first.
+ > **info** If Expo Build does not pick up the API key, make sure your project contains a [.easignore](/build-reference/easignore/) file. This file should mirror your **.gitignore** but must not exclude **.env**, so that Expo Build can access your environment variables.
+ 
+ - In your code, import `{ PROVIDER_GOOGLE }` from `react-native-maps` and add the property `provider={PROVIDER_GOOGLE}` to your `<MapView>`. This property works on both Android and iOS.
+@@ -159,7 +190,13 @@ Since you are using Google as the map provider, you need to add the API key to t
+ <Step label="3">
+ #### Add the API key to your project
+ 
+-Since you are using Google as the map provider, you need to add the API key to the `react-native-maps` [config plugin](/config-plugins/introduction/). Copy your **API Key** into your project to either a **.env** file or copy it directly and then add it to your app config under the `plugins.react-native-maps.iosGoogleMapsApiKey` field like:
++Since you are using Google as the map provider, add the API key to the `react-native-maps` [config plugin](/config-plugins/introduction/) under `plugins.react-native-maps.iosGoogleMapsApiKey`.
 +
-+## Add the Bug triage workflow
++Paste the key into **app.json**, or store it in a **.env** file and read it from **app.config.js**. **app.json** cannot read environment variables, so a value such as `"process.env.GOOGLE_MAPS_API_KEY"` reaches the native project as that literal string.
 +
-+<Step label="1">
++<Tabs>
 +
-+### Update the GitHub helper
++<Tab label="app.json">
+ 
+ ```json app.json
+ {
+@@ -168,14 +205,39 @@ Since you are using Google as the map provider, you need to add the API key to t
+       [
+         "react-native-maps",
+         {
+-          "iosGoogleMapsApiKey": "process.env.YOUR_GOOGLE_MAPS_API_KEY"
++          "iosGoogleMapsApiKey": "YOUR_GOOGLE_MAPS_API_KEY"
+         }
+       ]
+     ]
+   }
+ }
+ ```
+ 
++</Tab>
 +
-+This version of **.eas/agents/github.mjs** adds the `create-issue` command to the version from Issue to PR. Replace the file:
++<Tab label="app.config.js">
 +
-+```js .eas/agents/github.mjs
-+import { readFile } from 'node:fs/promises';
-+
-+const repository = process.env.GITHUB_REPOSITORY;
-+const token = process.env.GITHUB_TOKEN;
-+
-+if (!repository || !token) {
-+  console.error(
-+    'GITHUB_REPOSITORY or GITHUB_TOKEN is not set. Add both to the preview environment of the EAS project.'
-+  );
-+  process.exit(1);
-+}
-+
-+async function request(method, path, body) {
-+  const response = await fetch(`https://api.github.com${path}`, {
-+    method,
-+    headers: {
-+      accept: 'application/vnd.github+json',
-+      authorization: `Bearer ${token}`,
-+      'content-type': 'application/json',
-+      'x-github-api-version': '2022-11-28',
-+    },
-+    body: body ? JSON.stringify(body) : undefined,
-+  });
-+  if (!response.ok) {
-+    throw new Error(
-+      `GitHub returned ${response.status} for ${method} ${path}: ${await response.text()}\nCheck that GITHUB_TOKEN can read and write contents, issues, and pull re
-```
-
-**File**: `docs/pages/agentic-workflows/introduction.mdx` (added, +100/-0)
-```diff
-@@ -0,0 +1,100 @@
-+---
-+title: Introduction to agentic workflows
-+sidebar_title: Introduction
-+description: Learn how a coding agent can test your app on a cloud simulator and return evidence for you to review.
-+---
-+
-+import { Star06Icon } from '@expo/styleguide-icons/outline/Star06Icon';
-+
-+import { BoxLink } from '~/ui/components/BoxLink';
-+import { ContentSpotlight } from '~/ui/components/ContentSpotlight';
-+
-+import { AgenticWorkflowDiagram } from '~/scenes/eas/agentic-workflows/AgenticWorkflowDiagram';
-+
-+> **important** **Expo Simulators is a limited-access preview.** It is not included with paid or free plans and is currently available only to select partners. [Join the waitlist](https://expo.dev/services/simulators) if you are interested in trying it.
-+
-+You may already use a [coding agent](/agents/), such as Claude Code, Codex, or Cursor, on your computer. You ask the agent to change your code. Then you open the app to check that it functions as expected.
-+
-+An agentic workflow runs a coding agent for you, in the cloud. The workflow starts when something happens in your project, for example, when a teammate opens a pull request (PR). The agent tests the change in your app on a cloud simulator. Then the workflow posts the result on the PR. A person reads the result and decides what to do next.
-+
-+This section has four guides. Each guide adds one agentic workflow to your project.
-+
-+## How an agentic workflow works
-+
-+Each agentic workflow has three parts:
-+
-+- **A workflow** starts the work. In these guides, [EAS Workflows](/eas/workflows/introduction/) runs the jobs in the cloud. A PR, TestFlight feedback, a GitHub Action, or a manual run starts a workflow.
-+- **A coding agent** does the task, such as a test of a change, a new feature, or a bug fix. In a workflow, the agent runs from the command line, without a person.
-+- **An Expo Simulators session** gives the agent a running app on a cloud Android Emulator or iOS Simulator. The agent uses the app as a person does and saves evidence.
-+
-+The following diagram shows one run of an agentic workflow. The highlighted steps run on EAS Workflows and Expo Simulators:
-+
-+<AgenticWorkflowDiagram />
-+
-+## Why the agent needs a simulator
-+
-+A coding agent can read and change code, but it cannot see if the app functions as expected. To see the app, the agent needs a device that runs it.
-+
-+With [Expo Simulators](/preview/simulators/introduction/), your workflows can use Android Emulators and iOS Simulators on EAS cloud infrastructure. A job in the workflow starts a session. Then the agent uses a controller, [agent-device](/agents/agent-device/) or [Argent](/agents/argent/), to tap, type, and scroll in the app.
-+
-+## What the agent returns
-+
-+The agent does not merge or ship a change. It returns evidence for a person to review:
-+
-+- A verdict, such as `PASS` or `FAIL`, with a report of each check.
-+- The screenshots that the agent saved.
-+- The screen recording of the session, on the session page on the EAS dashboard.
-+- A link that opens the build in a browser preview.
-+
-+For example, Agentic CI posts this evidence in a comment on the PR:
-+
-+<ContentSpotlight
-+  alt="Agentic CI comment on a GitHub pull request with a PASS verdict and links to the session recording, the agent report, and a browser preview"
-+  src="/static/images/eas-workflows/agentic-ci-comment.webp"
-+  darkSrc="/static/images/eas-workflows/agentic-ci-comment-dark.webp"
-+/>
-+
-+[What the agent can do](/agentic-workflows/setup/#what-the-agent-can-do) explains the limits of the agent in these workflows.
-+
-+## Before you start
-+
-+Agentic workflows build on other Expo tools. If you are new to them, set them up in this order:
-+
-+1. [Create a project](/get-started/create-a-project/) and push it to a GitHub repository.
-+2. [Get started with EAS Workflows](/eas/workflows/get-started/) and run your first workflow.
-+3. [Set up a coding agent](/agents/) on your computer and try it on your project.
-+4. Check that your Expo account has [Expo Simulators](/preview/simulators/introduction/) access.
-+
-+Then follow [Set up a project for agentic workflows](/agentic-workflows/setup/) one time for your project. Each guide uses this setup.
-+
-+## Agentic workflow guides
-+
-+See the following guides for use cases of agentic workflows with Expo Simulators. Each guide adds a workflow and the files of its agent:
-+
-+<BoxLink
-+  title="Test pull requests with an AI agent"
-+  description="Agentic CI: a coding agent tests each pull request on a remote Android Emulator or iOS Simulator and posts a verdict with evidence."
-+  href="/agentic-workflows/agentic-ci/"
-+  Icon={Star06Icon}
-+/>
-+
-+<BoxLink
-+  title="Build a feature from an issue with an AI agent"
-+  description="Issue to PR: a coding agent writes the change for a GitHub issue and opens a pull request, and Agentic CI tests it."
-+  href="/agentic-workflows/issue-to-pr/"
-+  Icon={Star06Icon}
-+/>
-+
-+<BoxLink
-+  title="Triage a bug report with an AI agent"
-+  description="B
-```
-
-**File**: `docs/pages/agentic-workflows/issue-to-pr.mdx` (added, +420/-0)
-```diff
-@@ -0,0 +1,420 @@
-+---
-+title: Build a feature from an issue with an AI agent
-+sidebar_title: Issue to PR
-+description: Add an agentic workflow in which a coding agent builds what a GitHub issue asks for and opens a pull request that Agentic CI tests.
-+---
-+
-+import { Cloud01Icon } from '@expo/styleguide-icons/outline/Cloud01Icon';
-+import { Star06Icon } from '@expo/styleguide-icons/outline/Star06Icon';
-+
-+import { AgentPrompt } from '~/ui/components/AgentPrompt';
-+import { BoxLink } from '~/ui/components/BoxLink';
-+import { Terminal } from '~/ui/components/Snippet';
-+import { Step } from '~/ui/components/Step';
-+
-+import { IssueToPrDiagram } from '~/scenes/eas/agentic-workflows/AgenticWorkflowDiagram';
-+
-+> **important** **Expo Simulators is a limited-access preview.** It is not included with paid or free plans and is currently available only to select partners. [Join the waitlist](https://expo.dev/services/simulators) if you are interested in trying it.
-+
-+Issue to PR is an automated workflow in which a coding agent changes your code for a GitHub issue and opens a pull request (PR). Then [Agentic CI](/agentic-workflows/agentic-ci/) tests the PR on a remote Android Emulator or iOS Simulator. You review a PR that has a verdict and evidence.
-+
-+## How Issue to PR works
-+
-+When a person adds the `agent` label to an issue, these steps run. The highlighted steps run on EAS Workflows and Expo Simulators:
-+
-+<IssueToPrDiagram />
-+
-+1. A GitHub Action starts the Issue to PR workflow on EAS.
-+2. A coding agent reads the issue and its comments, and changes the code.
-+3. The workflow pushes the change to the branch `agent/issue-<number>`, and opens a PR that closes the issue.
-+4. Agentic CI tests the PR on an Expo Simulators session, and posts the verdict on the PR.
-+
-+Only people who can add labels to issues can start the agent. Read each issue before you add the label, because the agent follows the text of the issue.
-+
-+<AgentPrompt
-+  title="Add Issue to PR with an AI agent"
-+  description="Paste this into Claude, Cursor, Codex, or another agent.">
-+
-+```text wrap
-+Add the Issue to PR workflow to my Expo project. Use https://docs.expo.dev/agentic-workflows/issue-to-pr.md as the source for each step and each file.
-+
-+1. Check each step on https://docs.expo.dev/agentic-workflows/setup.md, and check that the Agentic CI workflow from https://docs.expo.dev/agentic-workflows/agentic-ci.md is in the project. Do each step that is not done. Use the version of .eas/agents/run-agent.sh for the agent that I name.
-+2. Create each file that the page shows, at the same path and with the same content.
-+3. When a step needs a token, an account, or a choice, stop and ask me. Do not print or save a token.
-+4. Run `eas workflow:validate .eas/workflows/issue-to-pr.yml`.
-+5. Commit the files, but do not push them. Tell me which files you added and which commands I must run.
++```js app.config.js
++export default ({ config }) => ({
++  ...config,
++  plugins: [
++    ...(config.plugins ?? []),
++    [
++      'react-native-maps',
++      {
++        iosGoogleMapsApiKey: process.env.GOOGLE_MAPS_API_KEY,
++      },
++    ],
++  ],
++});
 +```
 +
-+</AgentPrompt>
++The `config` argument holds the values from **app.json**. If **app.json** already lists `react-native-maps`, remove that entry.
 +
-+## Set up your project
++</Tab>
 +
-+Follow [Set up a project for agentic workflows](/agentic-workflows/setup/) one time for your project, including [Add a GitHub token to EAS](/agentic-workflows/setup/#add-a-github-token-to-eas). See [What the agent can do](/agentic-workflows/setup/#what-the-agent-can-do) to learn which limits apply to the agent.
++</Tabs>
 +
-+Issue to PR needs [Agentic CI](/agentic-workflows/agentic-ci/), because Agentic CI tests each PR that the agent opens. Add Agentic CI first.
+ - In your code, import `{ PROVIDER_GOOGLE }` from `react-native-maps` and add the property `provider={PROVIDER_GOOGLE}` to your `<MapView>`. This property works on both Android and iOS.
+ - Rebuild the app binary. An easy way to test if the configuration was successful is to do a [simulator build](/develop/development-builds/introduction/#how-would-you-like-to-build-your-development-build).
+ 
+```
+
+---
+
+### Incident Patch 2: `75c68093` (2026-11-03)
+**Commit Message**: [ios][router] Fix crash when NativeTabs.Trigger role changes to or from search (#52816)
+
+# Why
+
+Fixes https://github.com/expo/expo/issues/52654
+
+`react-native-screens` does not accept changes to `role` starting from
+`4.30.0` and iOS 27.
+
+This should not affect many apps, since tabs should not change when they
+are visible according to HIG. The same already happens when someone
+wants to show/hide tab dynamically.
+
+# How
+
+Remount the tab (change the `key`), when the role changes from or to
+`search`.
+
+# Test Plan
+
+<!--
+Say what you ran, on which device or simulator, and the result.
+If this pull request has no automated test, give the steps a reviewer
+can repeat.
+If you did not run a test, say that and mark the pull request as a
+draft.
+Delete this comment when you fill the section.
+-->
+
+# Screenshots
+
+<!--
+If this change affects what a person sees, copy the shape below out of
+this comment.
+Add one Before and After pair for each platform the change affects:
+Android, iOS, or web.
+An Android-only change needs Android screenshots. Do the same for an
+iOS-only or web-only change.
+Shared code needs a pair for every platform that runs it. That can be
+Android, iOS, and web.
+Do not use an iOS Sim
+
+**File**: `.changeset/native-tabs-role-remount.md` (added, +5/-0)
+```diff
+@@ -0,0 +1,5 @@
++---
++'expo-router': patch
++---
 +
-+## Add the Issue to PR workflow
++[iOS] Fix a crash when a `NativeTabs.Trigger` `role` changes to or from `"search"` on a mounted tab.
+```
+
+**File**: `docs/pages/router/advanced/native-tabs.mdx` (modified, +2/-0)
+```diff
+@@ -1057,6 +1057,8 @@ export default function TabLayout() {
+ }
+ ```
+ 
++> **warning** If `role` changes to or from `"search"` while the tab is rendered, Expo Router remounts the tab and resets its local state.
 +
-+<Step label="1">
+ </Tab>
+ 
+ <Tab label="SDK 55–57">
+```
+
+**File**: `docs/pages/router/migrate/sdk-57-to-58.mdx` (modified, +2/-0)
+```diff
+@@ -456,6 +456,8 @@ export default function TabLayout() {
+ 
+ On iOS 27, this prop also removes the separate placement of the search tab.
+ 
++> **warning** If `role` changes to or from `"search"` while the tab is rendered, Expo Router remounts the tab and resets its local state.
 +
-+### Add the GitHub helper
+ ## Advanced migrations
+ 
+ ### Update `navigation.dispatch`
+```
+
+**File**: `packages/expo-router/src/native-tabs/NativeTabsView.ios.tsx` (modified, +2/-1)
+```diff
+@@ -79,8 +79,9 @@ export function NativeTabsView(props: NativeTabsViewProps) {
+   }
+ 
+   const children = tabs.map((tab, index) => (
++    // react-native-screens picks UISearchTab vs UITab once at creation, so remount when the search role changes.
+     <Screen
+-      key={tab.name}
++      key={tab.options.role === 'search' ? `${tab.name}:search` : tab.name}
+       name={tab.name}
+       routeKey={tab.routeKey}
+       options={tab.options}
+```
+
+**File**: `packages/expo-router/src/native-tabs/__tests__/render.test.ios.tsx` (modified, +51/-0)
+```diff
+@@ -166,6 +166,57 @@ it('does not remount the focused screen while preloading other tabs after a deep
+   expect(unmount).not.toHaveBeenCalled();
+ });
+ 
++it('remounts a tab\'s screen when its role toggles to and from "search"', async () => {
++  const mount = jest.fn();
++  const unmount = jest.fn();
 +
-+The job script uses this file to read the issue, open the PR, and add comments:
++  function Probe() {
++    React.useEffect(() => {
++      mount();
++      return unmount;
++    }, []);
 +
-+```js .eas/agents/github.mjs
-+import { readFile } from 'node:fs/promises';
++    return <View testID="index" />;
++  }
 +
-+const repository = process.env.GITHUB_REPOSITORY;
-+const token = process.env.GITHUB_TOKEN;
-+
-+if (!repository || !token) {
-+  console.error(
-+    'GITHUB_REPOSITORY or GITHUB_TOKEN is not set. Add both to the preview environment of the EAS project.'
-+  );
-+  process.exit(1);
-+}
-+
-+async function request(method, path, body) {
-+  const response = await fetch(`https://api.github.com${path}`, {
-+    method,
-+    headers: {
-+      accept: 'application/vnd.github+json',
-+      authorization: `Bearer ${token}`,
-+      'content-type': 'application/json',
-+      'x-github-api-version': '2022-11-28',
-+    },
-+    body: body ? JSON.stringify(body) : undefined,
-+  });
-+  if (!response.ok) {
-+    throw new Error(
-+      `GitHub returned ${response.status} for ${method} ${path}: ${await response.text()}\nCheck that GITHUB_TOKEN can read and write contents, issues, and pull requests in ${repository}.`
++  function Layout() {
++    const [isSearch, setIsSearch] = React.useState(false);
++    return (
++      <>
++        <Button
++          title="toggle role"
++          testID="toggle-role"
++          onPress={() => setIsSearch((value) => !value)}
++        />
++        <NativeTabs>
++          <NativeTabs.Trigger name="index" role={isSearch ? 'search' : undefined} />
++        </NativeTabs>
++      </>
 +    );
 +  }
-+  return response.json();
-+}
 +
-+const repo = `/repos/${repository}`;
-+const [command, ...args] = process.argv.slice(2);
-+
-+switch (command) {
-+  case 'issue': {
-+    const issue = await request('GET', `${repo}/issues/${args[0]}`);
-+    const comments = await request('GET', `${repo}/issues/${args[0]}/comments?per_page=50`);
-+    console.log(
-+      JSON.stringify(
-+        {
-+          title: issue.title,
-+          body: issue.
-```
-
-**File**: `docs/pages/agentic-workflows/qa-swarm.mdx` (added, +453/-0)
-```diff
-@@ -0,0 +1,453 @@
-+---
-+title: Test your app with a swarm of AI agents
-+sidebar_title: QA Swarm
-+description: Add an agentic workflow in which several coding agents test your app at the same time, each with one flow on its own cloud simulator, and return one report with evidence.
-+---
-+
-+import { Star06Icon } from '@expo/styleguide-icons/outline/Star06Icon';
-+
-+import { AgentPrompt } from '~/ui/components/AgentPrompt';
-+import { BoxLink } from '~/ui/components/BoxLink';
-+import { Terminal } from '~/ui/components/Snippet';
-+import { Step } from '~/ui/components/Step';
-+
-+import { QaSwarmDiagram } from '~/scenes/eas/agentic-workflows/AgenticWorkflowDiagram';
-+
-+> **important** **Expo Simulators is a limited-access preview.** It is not included with paid or free plans and is currently available only to select partners. [Join the waitlist](https://expo.dev/services/simulators) if you are interested in trying it.
-+
-+QA Swarm is an automated workflow in which several coding agents test your app at the same time. Each agent gets its own cloud simulator and one short test flow. So a full pass takes as long as the slowest flow, not as long as all the flows in a row. Each verdict comes with screenshots and an evidence site.
-+
-+## How QA Swarm works
-+
-+The highlighted steps run on EAS Workflows, Expo Simulators, and EAS Hosting:
-+
-+<QaSwarmDiagram />
-+
-+1. You start the workflow. You can give it the number of a pull request (PR) to report on.
-+2. The workflow finds a build for each platform with the same native code, or it creates one. Then it adds the current JavaScript to the build.
-+3. Each lane starts its own Expo Simulators session. A coding agent in the lane follows one flow and saves screenshots.
-+4. Each lane deploys an evidence site with the verdict, the screenshots, and the session recording. The job of the lane fails when the verdict is not `PASS`.
-+5. The workflow shows one report with the verdict of each lane. For a run with a PR number, it also posts the report on the PR.
-+
-+A flow is a short Markdown file. You write one flow for each part of the app that you want to test.
-+
-+<AgentPrompt
-+  title="Add QA Swarm with an AI agent"
-+  description="Paste this into Claude, Cursor, Codex, or another agent.">
-+
-+```text wrap
-+Add the QA Swarm workflow to my Expo project. Use https://docs.expo.dev/agentic-workflows/qa-swarm.md as the source for each step and each file.
-+
-+1. Check each step on https://docs.expo.dev/agentic-workflows/setup.md, except the GitHub token step. Do each step that is not done. Use the version of .eas/agents/run-agent.sh for the agent that I name, and the version of .eas/agents/start-session.sh for the controller that I name: agent-device or Argent.
-+2. Create each file that the page shows, at the same path and with the same content.
-+3. Read my app and write two flows in .eas/qa-flows/ for its most important screens, in the same format as the example flows.
-+4. When a step needs a token, an account, or a choice, stop and ask me. Do not print or save a token.
-+5. Run `eas workflow:validate .eas/workflows/qa-swarm.yml`.
-+6. Commit the files, but do not push them. Tell me which files you added and which commands I must run.
-+```
-+
-+</AgentPrompt>
-+
-+## Set up your project
-+
-+Follow [Set up a project for agentic workflows](/agentic-workflows/setup/) one time for your project. QA Swarm needs the GitHub token step only to post its report on a PR. See [What the agent can do](/agentic-workflows/setup/#what-the-agent-can-do) to learn which limits apply to the agent.
-+
-+## Add the QA Swarm workflow
-+
-+<Step label="1">
-+
-+### Add the flows
-+
-+Each lane runs one flow. Add a flow as a Markdown file in **.eas/qa-flows**. These two example flows work for most apps:
-+
-+```md .eas/qa-flows/launch.md|wrap
-+Check that the app starts.
-+
-+1. The app opens on its first screen. Save a screenshot.
-+2. Check that the screen shows content, and no error, warning, or empty screen.
-+
-+Out of scope for this lane: do not tap any element, and do not sign in.
-+
-+Pass condition: the first screen shows content and no error.
-+```
-+
-+```md .eas/qa-flows/navigation.md|wrap
-+Check that each main screen opens.
-+
-+1. The app opens on its first screen. Find the tab bar or the main menu.
-+2. Open each tab or main screen one time. Save a screenshot of each one.
-+3. Check that each screen shows content, and no error.
-+
-+Out of scope for this lane: do not change data. Do not add, edit, or delete items, and do not sign out.
-+
-+Pass condition: each main screen opens and shows content without an error.
-+```
-+
-+Then write flows for the important parts of your app. Keep each flow short, and give it these parts:
-+
-+- **Steps:** what a user does, in order, with the text that the user sees on the screen.
-+- **Out of scope:** what the agent must not touch. Each lane has its own simulator, so the lanes do not share the data on the device. If your app saves data on a server, a flow that changes that data can break another flow that runs at th
-```
-
-**File**: `docs/pages/agentic-workflows/setup.mdx` (added, +580/-0)
-```diff
-@@ -0,0 +1,580 @@
-+---
-+title: Set up a project for agentic workflows
-+sidebar_title: Project setup
-+description: Set up an Expo project one time for the agentic workflow guides, with a build profile, tokens, an agent runner, and a device controller.
-+---
-+
-+import { Prerequisites, Requirement } from '~/ui/components/Prerequisites';
-+import { Terminal } from '~/ui/components/Snippet';
-+import { Step } from '~/ui/components/Step';
-+import { Tab, Tabs } from '~/ui/components/Tabs';
-+
-+> **important** **Expo Simulators is a limited-access preview.** It is not included with paid or free plans and is currently available only to select partners. [Join the waitlist](https://expo.dev/services/simulators) if you are interested in trying it.
-+
-+Each agentic workflow guide uses the same project setup. Do the steps on this page one time for your project. Then add the workflows from the guides.
-+
-+Agentic CI and QA Swarm need the steps from [Add a build profile for the remote device](#add-a-build-profile-for-the-remote-device) to [Push the files](#push-the-files). Issue to PR and Bug triage also need [Add a GitHub token to EAS](#add-a-github-token-to-eas).
-+
-+<Prerequisites>
-+  <Requirement title="An Expo project in a GitHub repository">
-+    The project must use [Continuous Native Generation
-+    (CNG)](/workflow/continuous-native-generation/), so the repository does not include the
-+    **android** and **ios** directories. The app config must set the app ID for the platform that you test. A new project does not set it. Add it to **app.json**:
-+
-+    <Tabs>
-+
-+    <Tab label="Android">
-+
-+    ```json app.json
-+    {
-+      "expo": {
-+        "android": {
-+          "package": "com.yourcompany.yourapp"
-+        }
-+      }
-+    }
-+    ```
-+
-+    </Tab>
-+
-+    <Tab label="iOS">
-+
-+    ```json app.json
-+    {
-+      "expo": {
-+        "ios": {
-+          "bundleIdentifier": "com.yourcompany.yourapp"
-+        }
-+      }
-+    }
-+    ```
-+
-+    </Tab>
-+
-+    </Tabs>
-+
-+  </Requirement>
-+  <Requirement title="EAS CLI">
-+    Install EAS CLI:
-+
-+    <Terminal
-+      cmd={{
-+        npm: ['$ npm install --global eas-cli'],
-+        yarn: ['$ yarn global add eas-cli'],
-+        pnpm: ['$ pnpm add --global eas-cli'],
-+        bun: ['$ bun add --global eas-cli'],
-+      }}
-+    />
-+
-+  </Requirement>
-+  <Requirement title="GitHub CLI">
-+    Issue to PR and Bug triage use [GitHub CLI](https://cli.github.com/) to add a repository secret,
-+    a label, and an issue. Install it, then sign in:
-+
-+    <Terminal cmd={['$ gh auth login']} />
-+
-+  </Requirement>
-+  <Requirement title="Expo Simulators access">
-+    The account that owns the project needs Expo Simulators access. In your project directory, link
-+    the project to EAS and check the access:
-+
-+    <Terminal cmd={['$ eas login', '$ eas init', '$ eas simulator:availability --json']} />
-+
-+    An account with access returns `"available": true`. If the value is `false`, [join the
-+    waitlist](https://expo.dev/services/simulators) to request access.
-+
-+  </Requirement>
-+  <Requirement title="A coding agent that can run in CI">
-+    The workflows run the agent from the command line, without a person. You can use any coding agent
-+    that has this mode and a key that works without a browser login. [Add the agent
-+    runner](#add-the-agent-runner) has a ready-made runner for Claude Code, Codex, Cursor, and Grok.
-+    Create the key for your agent:
-+
-+    | Agent       | How to get the key                                                                                                  |
-+    | ----------- | ------------------------------------------------------------------------------------------------------------------- |
-+    | Claude Code | Run `claude setup-token`. The token requires a Pro, Max, Team, or Enterprise plan. An Anthropic API key also works. |
-+    | Codex       | Create an OpenAI API key. The Codex docs recommend an API key for CI jobs.                                          |
-+    | Cursor      | In the Cursor dashboard, open **API Keys**.                                                                         |
-+    | Grok        | Create an xAI API key on [console.x.ai](https://console.x.ai).                                                      |
-+
-+  </Requirement>
-+</Prerequisites>
-+
-+<Step label="1">
-+
-+## Add a build profile for the remote device
-+
-+The workflows install a build from the `preview` profile on each session. Merge these keys into the `preview` profile in **eas.json**, or add the profile if it does not exist:
-+
-+<Tabs>
-+
-+<Tab label="Android">
-+
-+An Android Emulator session runs an APK:
-+
-+```json eas.json
-+{
-+  "build": {
-+    "preview": {
-+      "distribution": "internal",
-+      "environment": "preview",
-+      "android": {
-+        "buildType": "apk"
-+      }
-+    }
-+  }
-+}
-+```
-+
-+EAS signs the APK with an Android keystore. If the project has no Android keystore yet, create one before the first run. Run this command, select the `preview` pr
-```
-
----
-
-### Incident Patch 2: `d7204cc9` (2026-10-30)
-**Commit Message**: [ui] Preserve null selections in the Android DateTimePicker (#52609)
-
-# Why
-
-On Android, incomplete or invalid date input makes the Jetpack Compose
-`DateTimePicker` report January 1, 1970.
-
-Native sends `selectedDateMillis` as a nullable timestamp. The
-JavaScript wrapper declares the payload as `Date` and passes `null` to
-`new Date`, which creates the Unix epoch date.
-
-# How
-
-Reuse `convertTimestampToDate`, which already preserves null selections
-for `DateRangePicker`. Declare the native payload as `number | null`.
-Change the public `onDateSelected` callback to `(date: Date | null) =>
-void` and document incomplete and invalid input. Consumers must handle
-`null` before using `Date` methods.
-
-This adds a null check and avoids allocating a `Date` for an empty
-selection. It adds no views, state, or native calls. All Android devices
-use this wrapper, so the fix applies to all of them.
-
-Keep the community picker callback types unchanged. Ignore incomplete
-selections in its internal callback before converting the selected day
-to local time. Update the Android example and documentation examples to
-handle null selections. Add regression tests and an `@expo/ui` patch
-changeset. Regenerate th
-
-**File**: `.changeset/fix-android-datepicker-null-selection.md` (added, +5/-0)
-```diff
-@@ -0,0 +1,5 @@
-+---
-+'@expo/ui': patch
-+---
-+
-+Preserve null selections in the Jetpack Compose `DateTimePicker` instead of reporting January 1, 1970. The `onDateSelected` callback now accepts `Date | null`. Handle `null` before using `Date` methods when date input is incomplete or invalid.
-```
-
-**File**: `apps/native-component-list/src/screens/UI/DateTimePickerScreen.android.tsx` (modified, +22/-4)
-```diff
-@@ -17,9 +17,11 @@ import { Page, Section } from '../../components/Page';
- const today = new Date();
- const fiveDaysAgo = new Date(today.getTime() - 5 * 24 * 60 * 60 * 1000);
- const thirtyDaysFromNow = new Date(today.getTime() + 30 * 24 * 60 * 60 * 1000);
-+const initialInputDate = today.toISOString();
- 
- export default function DatePickerScreen() {
-   const [selectedDate, setSelectedDate] = React.useState(new Date());
-+  const [inputDate, setInputDate] = React.useState<Date | null>(today);
- 
-   const displayOptions = ['picker', 'input'];
-   const [selectedIndex, setSelectedIndex] = React.useState(0);
-@@ -48,6 +50,16 @@ export default function DatePickerScreen() {
-   return (
-     <ScrollView>
-       <Page>
-+        <Section title="Date input selection">
-+          <Text>{inputDate?.toISOString() ?? 'No date selected'}</Text>
-+          <Host matchContents={{ vertical: true }}>
-+            <DateTimePicker
-+              variant="input"
-+              initialDate={initialInputDate}
-+              onDateSelected={setInputDate}
-+            />
-+          </Host>
-+        </Section>
-         <Section title="24-mode">
-           <Switch value={is24Hour} onValueChange={setIs24Hour} />
-         </Section>
-@@ -95,7 +107,7 @@ export default function DatePickerScreen() {
- 
-               <DateTimePicker
-                 onDateSelected={(date) => {
--                  setSelectedDate(date);
-+                  if (date) setSelectedDate(date);
-                 }}
-                 displayedComponents={
-                   typeOptions[typeIndex] as DateTimePickerProps['displayedComponents']
-@@ -112,7 +124,9 @@ export default function DatePickerScreen() {
-         <Section title="With selectableDates (-5d … +30d)">
-           <Host matchContents={{ vertical: true }}>
-             <DateTimePicker
--              onDateSelected={(date) => setSelectedDate(date)}
-+              onDateSelected={(date) => {
-+                if (date) setSelectedDate(date);
-+              }}
-               displayedComponents="date"
-               initialDate={selectedDate.toISOString()}
-               selectableDates={{ start: fiveDaysAgo, end: thirtyDaysFromNow }}
-@@ -123,7 +137,9 @@ export default function DatePickerScreen() {
-         <Section title="Without title and headline">
-           <Host matchContents={{ vertical: true }}>
-             <DateTimePicker
--              onDateSelected={(date) => setSelectedDate(date)}
-+              onDateSelected={(date) => {
-+                if (date) setSelectedDate(date);
-+              }}
-               displayedComponents="date"
-               initialDate={selectedDate.toISOString()}
-               showVariantToggle={false}
-@@ -184,7 +200,9 @@ export default function DatePickerScreen() {
-         <Section title="Colored date picker">
-           <Host matchContents={{ vertical: true }}>
-             <DateTimePicker
--              onDateSelected={(date) => setSelectedDate(date)}
-+              onDateSelected={(date) => {
-+                if (date) setSelectedDate(date);
-+              }}
-               displayedComponents="date"
-               initialDate={selectedDate.toISOString()}
-               color="#E040FB"
-```
-
-**File**: `docs/pages/versions/unversioned/sdk/ui/jetpack-compose/datetimepicker.mdx` (modified, +14/-4)
-```diff
-@@ -52,7 +52,9 @@ export default function DatePickerExample() {
-       style={{ width: '100%' }}>
-       <DateTimePicker
-         onDateSelected={date => {
--          setSelectedDate(date);
-+          if (date !== null) {
-+            setSelectedDate(date);
-+          }
-         }}
-         displayedComponents="date"
-         initialDate={selectedDate.toISOString()}
-@@ -86,7 +88,9 @@ export default function TimePickerExample() {
-       style={{ width: '100%' }}>
-       <DateTimePicker
-         onDateSelected={date => {
--          setSelectedDate(date);
-+          if (date !== null) {
-+            setSelectedDate(date);
-+          }
-         }}
-         displayedComponents="hourAndMinute"
-         initialDate={selectedDate.toISOString()}
-@@ -103,6 +107,8 @@ export default function TimePickerExample() {
- 
- Use `variant="input"` to display the picker as a text input field instead of the default picker UI.
- 
-+`onDateSelected` receives `null` when the date input is incomplete or invalid. Handle `null` before calling `Date` methods. The following example keeps the last valid date.
-+
- <ComponentExample
-   title="InputVariantExample.tsx"
-   src="/static/images/expo-ui/examples/datetimepicker-input-android-light.webp"
-@@ -122,7 +128,9 @@ export default function InputVariantExample() {
-       style={{ width: '100%' }}>
-       <DateTimePicker
-         onDateSelected={date => {
--          setSelectedDate(date);
-+          if (date !== null) {
-+            setSelectedDate(date);
-+          }
-         }}
-         displayedComponents="date"
-         initialDate={selectedDate.toISOString()}
-@@ -152,7 +160,9 @@ export default function CalendarOnlyExample() {
-       style={{ width: '100%' }}>
-       <DateTimePicker
-         onDateSelected={date => {
--          setSelectedDate(date);
-+          if (date !== null) {
-+            setSelectedDate(date);
-+          }
-         }}
-         displayedComponents="date"
-         initialDate={selectedDate.toISOString()}
-```
-
-**File**: `docs/pages/versions/v58.0.0/sdk/ui/jetpack-compose/datetimepicker.mdx` (modified, +14/-4)
-```diff
-@@ -52,7 +52,9 @@ export default function DatePickerExample() {
-       style={{ width: '100%' }}>
-       <DateTimePicker
-         onDateSelected={date => {
--          setSelectedDate(date);
-+          if (date !== null) {
-+            setSelectedDate(date);
-+          }
-         }}
-         displayedComponents="date"
-         initialDate={selectedDate.toISOString()}
-@@ -86,7 +88,9 @@ export default function TimePickerExample() {
-       style={{ width: '100%' }}>
-       <DateTimePicker
-         onDateSelected={date => {
--          setSelectedDate(date);
-+          if (date !== null) {
-+            setSelectedDate(date);
-+          }
-         }}
-         displayedComponents="hourAndMinute"
-         initialDate={selectedDate.toISOString()}
-@@ -103,6 +107,8 @@ export default function TimePickerExample() {
- 
- Use `variant="input"` to display the picker as a text input field instead of the default picker UI.
- 
-+`onDateSelected` receives `null` when the date input is incomplete or invalid. Handle `null` before calling `Date` methods. The following example keeps the last valid date.
-+
- <ComponentExample
-   title="InputVariantExample.tsx"
-   src="/static/images/expo-ui/examples/datetimepicker-input-android-light.webp"
-@@ -122,7 +128,9 @@ export default function InputVariantExample() {
-       style={{ width: '100%' }}>
-       <DateTimePicker
-         onDateSelected={date => {
--          setSelectedDate(date);
-+          if (date !== null) {
-+            setSelectedDate(date);
-+          }
-         }}
-         displayedComponents="date"
-         initialDate={selectedDate.toISOString()}
-@@ -152,7 +160,9 @@ export default function CalendarOnlyExample() {
-       style={{ width: '100%' }}>
-       <DateTimePicker
-         onDateSelected={date => {
--          setSelectedDate(date);
-+          if (date !== null) {
-+            setSelectedDate(date);
-+          }
-         }}
-         displayedComponents="date"
-         initialDate={selectedDate.toISOString()}
-```
-
-**File**: `docs/public/static/data/unversioned/expo-ui/jetpack-compose/datetimepicker.json` (modified, +1/-1)
-```diff
-@@ -1 +1 @@
--{"schemaVersion":"2.0","name":"expo-ui/jetpack-compose/datetimepicker","variant":"project","kind":1,"children":[{"name":"DatePickerDialogProps","variant":"declaration","kind":256,"children":[{"name":"color","variant":"declaration","kind":1024,"flags":{"isOptional":true},"type":{"type":"reference","target":{"packageName":"react-native","packagePath":"types_DEPRECATED/Libraries/StyleSheet/StyleSheet.d.ts","qualifiedName":"ColorValue"},"name":"ColorValue","package":"react-native"}},{"name":"confirmButtonLabel","variant":"declaration","kind":1024,"flags":{"isOptional":true},"type":{"type":"intrinsic","name":"string"}},{"name":"dismissButtonLabel","variant":"declaration","kind":1024,"flags":{"isOptional":true},"type":{"type":"intrinsic","name":"string"}},{"name":"elementColors","variant":"declaration","kind":1024,"flags":{"isOptional":true},"type":{"type":"intersection","types":[{"type":"reference","name":"DatePickerElementColors","package":"@expo/ui"},{"type":"reference","name":"TimePickerElementColors","package":"@expo/ui"}]}},{"name":"initialDate","variant":"declaration","kind":1024,"flags":{"isOptional":true},"comment":{"summary":[{"kind":"text","text":"The initially selected date. When omitted, the dialog opens on the current month with no\nselection and the confirm button stays disabled until a date is picked."}]},"type":{"type":"union","types":[{"type":"intrinsic","name":"string"},{"type":"literal","value":null}]}},{"name":"onDateSelected","variant":"declaration","kind":1024,"flags":{"isOptional":true},"type":{"type":"reflection","declaration":{"name":"__type","variant":"declaration","kind":65536,"signatures":[{"name":"__type","variant":"signature","kind":4096,"parameters":[{"name":"date","variant":"param","kind":32768,"type":{"type":"reference","target":{"packageName":"typescript","packagePath":"lib/lib.es5.d.ts","qualifiedName":"Date"},"name":"Date","package":"typescript"}}],"type":{"type":"intrinsic","name":"void"}}]}}},{"name":"onDismissRequest","variant":"declaration","kind":1024,"type":{"type":"reflection","declaration":{"name":"__type","variant":"declaration","kind":65536,"signatures":[{"name":"__type","variant":"signature","kind":4096,"type":{"type":"intrinsic","name":"void"}}]}}},{"name":"selectableDates","variant":"declaration","kind":1024,"flags":{"isOptional":true},"type":{"type":"reflection","declaration":{"name":"__type","variant":"declaration","kind":65536,"children":[{"name":"end","variant":"declaration","kind":1024,"flags":{"isOptional":true},"type":{"type":"reference","target":{"packageName":"typescript","packagePath":"lib/lib.es5.d.ts","qualifiedName":"Date"},"name":"Date","package":"typescript"}},{"name":"start","variant":"declaration","kind":1024,"flags":{"isOptional":true},"type":{"type":"reference","target":{"packageName":"typescript","packagePath":"lib/lib.es5.d.ts","qualifiedName":"Date"},"name":"Date","package":"typescript"}}]}}},{"name":"showHeadline","variant":"declaration","kind":1024,"flags":{"isOptional":true},"comment":{"summary":[{"kind":"text","text":"Whether the picker shows its headline, which displays the current selection. When "},{"kind":"code","text":"`false`"},{"kind":"text","text":",\nthe picker passes "},{"kind":"code","text":"`null`"},{"kind":"text","text":" to Material 3's "},{"kind":"code","text":"`headline`"},{"kind":"text","text":" slot."}],"blockTags":[{"tag":"@default","content":[{"kind":"text","text":"true"}]}]},"type":{"type":"intrinsic","name":"boolean"}},{"name":"showTitle","variant":"declaration","kind":1024,"flags":{"isOptional":true},"comment":{"summary":[{"kind":"text","text":"Whether the picker shows its title, such as \"Select date\". When "},{"kind":"code","text":"`false`"},{"kind":"text","text":", the picker passes\n"},{"kind":"code","text":"`null`"},{"kind":"text","text":" to Material 3's "},{"kind":"code","text":"`title`"},{"kind":"text","text":" slot."}],"blockTags":[{"tag":"@default","content":[{"kind":"text","text":"true"}]}]},"type":{"type":"intrinsic","name":"boolean"}},{"name":"showVariantToggle","variant":"declaration","kind":1024,"flags":{"isOptional":true},"type":{"type":"intrinsic","name":"boolean"}},{"name":"variant","variant":"declaration","kind":1024,"flags":{"isOptional":true},"type":{"type":"reference","name":"AndroidVariant","package":"@expo/ui"}}]},{"name":"DateRangePickerDialogProps","variant":"declaration","kind":256,"children":[{"name":"color","variant":"declaration","kind":1024,"flags":{"isOptional":true},"comment":{"summary":[{"kind":"text","text":"The tint color to use on the picker elements and dialog buttons."}]},"type":{"type":"reference","target":{"packageName":"react-native","packagePath":"types_DEPRECATED/Libraries/StyleSheet/StyleSheet.d.ts","qualifiedName":"ColorValue"},"name":"ColorValue","package":"react-native"},"overwrites":{"type":"reference","name":"Omit.color","package":"@expo/ui","qualifiedName":"DateRangePickerProps.color"}},{"name":"confirmButtonLabel","variant":"declaration","kind":1024,"
-```
-
-**File**: `docs/public/static/data/v58.0.0/expo-ui/jetpack-compose/datetimepicker.json` (modified, +1/-1)
-```diff
-@@ -1 +1 @@
--{"schemaVersion":"2.0","name":"expo-ui/jetpack-compose/datetimepicker","variant":"project","kind":1,"children":[{"name":"DatePickerDialogProps","variant":"declaration","kind":256,"children":[{"name":"color","variant":"declaration","kind":1024,"flags":{"isOptional":true},"type":{"type":"reference","target":{"packageName":"react-native","packagePath":"types_DEPRECATED/Libraries/StyleSheet/StyleSheet.d.ts","qualifiedName":"ColorValue"},"name":"ColorValue","package":"react-native"}},{"name":"confirmButtonLabel","variant":"declaration","kind":1024,"flags":{"isOptional":true},"type":{"type":"intrinsic","name":"string"}},{"name":"dismissButtonLabel","variant":"declaration","kind":1024,"flags":{"isOptional":true},"type":{"type":"intrinsic","name":"string"}},{"name":"elementColors","variant":"declaration","kind":1024,"flags":{"isOptional":true},"type":{"type":"intersection","types":[{"type":"reference","name":"DatePickerElementColors","package":"@expo/ui"},{"type":"reference","name":"TimePickerElementColors","package":"@expo/ui"}]}},{"name":"initialDate","variant":"declaration","kind":1024,"flags":{"isOptional":true},"comment":{"summary":[{"kind":"text","text":"The initially selected date. When omitted, the dialog opens on the current month with no\nselection and the confirm button stays disabled until a date is picked."}]},"type":{"type":"union","types":[{"type":"intrinsic","name":"string"},{"type":"literal","value":null}]}},{"name":"onDateSelected","variant":"declaration","kind":1024,"flags":{"isOptional":true},"type":{"type":"reflection","declaration":{"name":"__type","variant":"declaration","kind":65536,"signatures":[{"name":"__type","variant":"signature","kind":4096,"parameters":[{"name":"date","variant":"param","kind":32768,"type":{"type":"reference","target":{"packageName":"typescript","packagePath":"lib/lib.es5.d.ts","qualifiedName":"Date"},"name":"Date","package":"typescript"}}],"type":{"type":"intrinsic","name":"void"}}]}}},{"name":"onDismissRequest","variant":"declaration","kind":1024,"type":{"type":"reflection","declaration":{"name":"__type","variant":"declaration","kind":65536,"signatures":[{"name":"__type","variant":"signature","kind":4096,"type":{"type":"intrinsic","name":"void"}}]}}},{"name":"selectableDates","variant":"declaration","kind":1024,"flags":{"isOptional":true},"type":{"type":"reflection","declaration":{"name":"__type","variant":"declaration","kind":65536,"children":[{"name":"end","variant":"declaration","kind":1024,"flags":{"isOptional":true},"type":{"type":"reference","target":{"packageName":"typescript","packagePath":"lib/lib.es5.d.ts","qualifiedName":"Date"},"name":"Date","package":"typescript"}},{"name":"start","variant":"declaration","kind":1024,"flags":{"isOptional":true},"type":{"type":"reference","target":{"packageName":"typescript","packagePath":"lib/lib.es5.d.ts","qualifiedName":"Date"},"name":"Date","package":"typescript"}}]}}},{"name":"showHeadline","variant":"declaration","kind":1024,"flags":{"isOptional":true},"comment":{"summary":[{"kind":"text","text":"Whether the picker shows its headline, which displays the current selection. When "},{"kind":"code","text":"`false`"},{"kind":"text","text":",\nthe picker passes "},{"kind":"code","text":"`null`"},{"kind":"text","text":" to Material 3's "},{"kind":"code","text":"`headline`"},{"kind":"text","text":" slot."}],"blockTags":[{"tag":"@default","content":[{"kind":"text","text":"true"}]}]},"type":{"type":"intrinsic","name":"boolean"}},{"name":"showTitle","variant":"declaration","kind":1024,"flags":{"isOptional":true},"comment":{"summary":[{"kind":"text","text":"Whether the picker shows its title, such as \"Select date\". When "},{"kind":"code","text":"`false`"},{"kind":"text","text":", the picker passes\n"},{"kind":"code","text":"`null`"},{"kind":"text","text":" to Material 3's "},{"kind":"code","text":"`title`"},{"kind":"text","text":" slot."}],"blockTags":[{"tag":"@default","content":[{"kind":"text","text":"true"}]}]},"type":{"type":"intrinsic","name":"boolean"}},{"name":"showVariantToggle","variant":"declaration","kind":1024,"flags":{"isOptional":true},"type":{"type":"intrinsic","name":"boolean"}},{"name":"variant","variant":"declaration","kind":1024,"flags":{"isOptional":true},"type":{"type":"reference","name":"AndroidVariant","package":"@expo/ui"}}]},{"name":"DateRangePickerDialogProps","variant":"declaration","kind":256,"children":[{"name":"color","variant":"declaration","kind":1024,"flags":{"isOptional":true},"comment":{"summary":[{"kind":"text","text":"The tint color to use on the picker elements and dialog buttons."}]},"type":{"type":"reference","target":{"packageName":"react-native","packagePath":"types_DEPRECATED/Libraries/StyleSheet/StyleSheet.d.ts","qualifiedName":"ColorValue"},"name":"ColorValue","package":"react-native"},"overwrites":{"type":"reference","name":"Omit.color","package":"@expo/ui","qualifiedName":"DateRangePickerProps.color"}},{"name":"confirmButtonLabel","variant":"declaration","kind":1024,"
-```
-
-**File**: `packages/expo-ui/src/__tests__/DateTimePicker-test.tsx` (added, +33/-0)
-```diff
-@@ -0,0 +1,33 @@
-+import { DateTimePicker as CommunityDateTimePicker } from '../community/datetime-picker/DateTimePicker.android';
-+import { DateTimePicker } from '../jetpack-compose/DatePicker';
-+
-+jest.mock('expo');
-+
-+describe('DateTimePicker', () => {
-+  it('preserves null selections and converts timestamps, including zero, to dates', () => {
-+    const onDateSelected = jest.fn();
-+    const timestamp = Date.UTC(2026, 9, 30);
-+
-+    const nativeProps = DateTimePicker({ variant: 'input', onDateSelected }).props;
-+    for (const date of [timestamp, null, 0]) {
-+      nativeProps.onDateSelected({ nativeEvent: { date } });
-+    }
-+
-+    expect(onDateSelected.mock.calls).toEqual([[new Date(timestamp)], [null], [new Date(0)]]);
++  await renderRouter({
++    _layout: Layout,
++    index: Probe,
 +  });
 +
-+  it('does not report an incomplete selection through the community date picker', () => {
-+    const onValueChange = jest.fn();
-+    const value = new Date('2026-10-30T12:00:00.000Z');
++  expect(screen.getByTestId('index')).toBeVisible();
++  expect(mount).toHaveBeenCalledTimes(1);
++  expect(unmount).not.toHaveBeenCalled();
++  jest.clearAllMocks();
 +
-+    const picker = CommunityDateTimePicker({
-+      value,
-+      presentation: 'inline',
-+      mode: 'date',
-+      onValueChange,
-+    }).props.children;
-+    picker.type(picker.props).props.onDateSelected({ nativeEvent: { date: null } });
++  await act(() => fireEvent.press(screen.getByTestId('toggle-role')));
 +
-+    expect(onValueChange).not.toHaveBeenCalled();
-+  });
++  expect(unmount).toHaveBeenCalledTimes(1);
++  expect(mount).toHaveBeenCalledTimes(1);
++  jest.clearAllMocks();
++
++  await act(() => fireEvent.press(screen.getByTestId('toggle-role')));
++
++  expect(unmount).toHaveBeenCalledTimes(1);
++  expect(mount).toHaveBeenCalledTimes(1);
 +});
++
+ describe('Tabs visibility', () => {
+   it('does not render tab, when not specified', async () => {
+     await renderRouter({
 ```
 
-**File**: `packages/expo-ui/src/community/datetime-picker/DateTimePicker.android.tsx` (modified, +2/-1)
+**File**: `packages/expo-router/src/native-tabs/types.ts` (modified, +1/-1)
 ```diff
-@@ -79,7 +79,8 @@ export function DateTimePicker(props: DateTimePickerProps) {
-     }
-   };
- 
--  const onDateSelected = (date: Date) => {
-+  const onDateSelected = (date: Date | null) => {
-+    if (date === null) return;
-     const selected = usesDateComponents ? utcDayToLocalDate(date, value) : date;
-     if (onValueChange) {
-       onValueChange(buildChangeEvent(selected), selected);
+@@ -716,7 +716,7 @@ export interface NativeTabTriggerProps {
+    *
+    * The `"search"` role makes this tab the system search tab
+    * ([`UISearchTab`](https://developer.apple.com/documentation/uikit/uisearchtab)) on iOS 26.1 and later.
+-   * Do not change `role` after the tab renders.
++   * Changing `role` to or from `"search"` remounts the tab and resets its state.
+    *
+    * @see The supported values correspond to the official [Apple documentation](https://developer.apple.com/documentation/uikit/uitabbaritem/systemitem).
+    * @platform ios
 ```
 
 ---
 
-### Incident Patch 3: `30aed46f` (2026-10-30)
-**Commit Message**: [ui] Add accessibilityLabel support to universal TextInput (#52606)
+### Incident Patch 3: `703cedf8` (2026-11-03)
+**Commit Message**: [observe] Add `errorSampleRate` to sample errors and crashes separately (#51930)
 
 # Why
 
-The universal `TextInput` does not accept `accessibilityLabel`. Callers
-cannot give the field a screen reader name that stays available when the
-placeholder disappears.
-
-The shared props omit the label. The iOS, Android, and web adapters do
-not forward it.
+To allow people to report all errors, while only sending portion of logs
 
 # How
 
-Add the React Native-style `accessibilityLabel` prop to the universal
-API.
+1. Add `errorSampleRate` property
+2. When app falls under `errorSampleRate`, but not under `sampleRate`,
+only send the error logs
+3. When `errorSampleRate` is lower then `sampleRate`, use `sampleRate`
+for all logs and display a warning
 
-On iOS, reuse the SwiftUI `accessibilityLabel` modifier for both
-`TextField` and `SecureField`. On Android, put `contentDescription` on
-the existing decoration box. Keep autofill `contentType` on the editable
-field. This lets accessibility text navigation use the entered text and
-preserve selection extension. On web, forward the label to React Native
-`TextInput`.
+# Test Plan
 
-This reuses the existing native APIs. It adds one modifier when a label
-is provided. It adds no views, state, or extra imperative native calls.
-It applies to all supported platforms because each adapter omits the
-same universal prop. The direct SwiftUI and Compose APIs continue to use
-native modifiers.
+1. CI
+2. Observe-tester - limited testing possible - sampleRate: 0,
+errorSampleRate: 1
 
-Add regression tests for empty and populated text, secure fields, and
-Android autofill semantics. Add a patch c
+# Screenshots
 
-**File**: `.changeset/fix-universal-textinput-accessibility-label.md` (added, +5/-0)
+<!--
+If this change affects what a person sees, copy the shape below out of
+this comment.
+Add one Before and After pair for each platform the change affects:
+Android, iOS, or web.
+An Android-only change needs Android screenshots. Do the same for an
+iOS-only or web-only change.
+Shared code needs a pair for every platform that runs it. That can be
+Android, iOS, and web.
+Do not use an iOS Simulator screenshot for a platform you did not run.
+Take the before screenshot first. Then make the change. Then take the
+after screenshot.
+Put each image under its heading. Name the device, simulator, or browser
+on the next line.
+Use a full-width image. Do not put the images in a table
+
+**File**: `.changeset/app-metrics-exception-log-names.md` (added, +5/-0)
 ```diff
 @@ -0,0 +1,5 @@
 +---
-+'@expo/ui': patch
++'expo-app-metrics': patch
 +---
 +
-+Support accessibilityLabel on universal TextInput fields.
++[Internal] Export the `js.exception` and `native.exception` log names as constants.
 ```
 
-**File**: `apps/native-component-list/src/screens/UIUniversal/TextInputScreen.tsx` (modified, +1/-0)
+**File**: `.changeset/observe-error-sample-rate.md` (added, +5/-0)
 ```diff
-@@ -116,6 +116,7 @@ export default function TextInputScreen() {
-               ref={inputRef}
-               value={text}
-               placeholder="Type here..."
-+              accessibilityLabel={secureTextEntry ? 'Example password' : 'Example text'}
-               editable={editable}
-               multiline={multiline}
-               keyboardType={keyboardType}
-```
-
-**File**: `docs/pages/versions/unversioned/sdk/ui/universal/textinput.mdx` (modified, +13/-0)
-```diff
-@@ -184,6 +184,19 @@ export default function PhoneMaskExample() {
- 
- </ComponentExample>
- 
-+### Accessibility
+@@ -0,0 +1,5 @@
++---
++'expo-observe': patch
++---
 +
-+Use [`accessibilityLabel`](#accessibilitylabel) to give the field a name for screen readers. The label remains available when the field contains text and when [`secureTextEntry`](#securetextentry) is enabled. Set [`autoComplete`](#autocomplete) separately to provide an autofill hint.
++Add the `errorSampleRate` config option. It sets the fraction of installations that dispatch errors and crash reports separately from `sampleRate`.
+```
+
+**File**: `apps/observe-tester/app/_layout.tsx` (modified, +2/-0)
+```diff
+@@ -8,6 +8,8 @@ Observe.configure({
+   environment: 'custom-env',
+   dispatchingEnabled: true,
+   dispatchInDebug: true,
++  sampleRate: 1,
++  errorSampleRate: 1,
+   integrations: {
+     'expo-router': { filteredParams: ['accountId', 'firstName'] },
+     'expo-image': {
+```
+
+**File**: `docs/pages/eas/observe/configuration.mdx` (modified, +17/-1)
+```diff
+@@ -29,6 +29,22 @@ A few details worth knowing:
+ - Out-of-sample devices drop pending metrics rather than accumulating them. Lowering the rate later does not retroactively send earlier sessions.
+ - Sampling depends on [`dispatchingEnabled`](/versions/latest/sdk/observe/#observeconfig). If `dispatchingEnabled` is `false`, nothing is dispatched regardless of `sampleRate`.
+ 
++### Sample errors separately
++
++To keep more errors than other events, set `errorSampleRate`. Errors include unhandled JavaScript errors, errors from `reportError` and `ObserveErrorBoundary`, and native crash reports. All other events follow `sampleRate`:
 +
 +```tsx
-+<TextInput
-+  accessibilityLabel="Password"
-+  placeholder="Enter your password"
-+  secureTextEntry
-+  autoComplete="password"
-+/>
++import { Observe } from 'expo-observe';
++
++// Dispatch metrics from ~3% of installations, and errors from all installations.
++Observe.configure({
++  sampleRate: 0.03,
++  errorSampleRate: 1,
++});
 +```
 +
- ## Unsupported React Native props
++`errorSampleRate` is a minimum. Installations in-sample for `sampleRate` always send errors. A lower value has no effect, and `configure()` prints a warning. An unset `sampleRate` counts as `1`.
++
+ ## Enable metrics in development
  
- Some React Native `TextInput` props are not supported, because Compose's `TextField` or SwiftUI's `TextField` does not expose an equivalent, or because the prop is replaced by a different mechanism. See the [API](#api) section below for the supported props. If a missing prop blocks your use case, [open an issue](https://github.com/expo/expo/issues/new/choose) so it can be prioritized.
+ By default, metrics collected from debug builds are not dispatched. To dispatch them anyway (for example, while testing your Expo Observe integration), set `dispatchInDebug` to `true` when calling `configure()`:
+@@ -43,7 +59,7 @@ Observe.configure({
+ 
+ A build is treated as a debug build if either the native app is a debug build or the JS bundle is a development bundle (`__DEV__` is `true`). This detection is independent of the `environment` value (see [Environments](#environments)).
+ 
+-`dispatchInDebug` has no effect on release builds, which always dispatch (subject to [`dispatchingEnabled`](/versions/latest/sdk/observe/#observeconfig) and [`sampleRate`](#sampling)). If `dispatchingEnabled` is `false` or this installation is out-of-sample, nothing dispatches regardless of `dispatchInDebug`.
++`dispatchInDebug` has no effect on release builds, which always dispatch (subject to [`dispatchingEnabled`](/versions/latest/sdk/observe/#observeconfig) and [`sampleRate`](#sampling)). If `dispatchingEnabled` is `false`, nothing dispatches regardless of `dispatchInDebug`. `sampleRate` and `errorSampleRate` also apply in debug builds.
+ 
+ > **warning** Enable this only when testing your Expo Observe integration. Development/debug performance differs significantly from production, so collecting development/debug metrics may distort the results shown in your dashboard.
+ 
 ```
 
-**File**: `docs/public/static/data/unversioned/expo-ui/universal/textinput.json` (modified, +1/-1)
+**File**: `packages/expo-app-metrics/android/src/main/java/expo/modules/appmetrics/crashreporting/CrashReport.kt` (modified, +3/-1)
 ```diff
-@@ -1 +1 @@
--{"schemaVersion":"2.0","name":"expo-ui/universal/textinput","variant":"project","kind":1,"children":[{"name":"TextInputProps","variant":"declaration","kind":256,"comment":{"summary":[{"kind":"text","text":"Props for the "},{"kind":"code","text":"`TextInput`"},{"kind":"text","text":" component."}]},"children":[{"name":"autoCapitalize","variant":"declaration","kind":1024,"flags":{"isOptional":true},"comment":{"summary":[{"kind":"text","text":"Controls automatic capitalization of input."}],"blockTags":[{"tag":"@default","content":[{"kind":"text","text":"'sentences'"}]}]},"type":{"type":"union","types":[{"type":"literal","value":"none"},{"type":"literal","value":"words"},{"type":"literal","value":"sentences"},{"type":"literal","value":"characters"}]}},{"name":"autoComplete","variant":"declaration","kind":1024,"flags":{"isOptional":true},"comment":{"summary":[{"kind":"text","text":"Autofill hint. iOS maps to "},{"kind":"code","text":"`textContentType`"},{"kind":"text","text":"; Android maps to Compose's\n"},{"kind":"code","text":"`Modifier.semantics { contentType = ... }`"},{"kind":"text","text":"."}]},"type":{"type":"reference","target":{"packageName":"@expo/ui","packagePath":"src/universal/TextInput/utils.ts","qualifiedName":"AutoComplete"},"name":"AutoComplete","package":"@expo/ui"}},{"name":"autoCorrect","variant":"declaration","kind":1024,"flags":{"isOptional":true},"comment":{"summary":[{"kind":"text","text":"If false, disables autocorrect / spellcheck suggestions."}],"blockTags":[{"tag":"@default","content":[{"kind":"text","text":"true"}]}]},"type":{"type":"intrinsic","name":"boolean"}},{"name":"autoFocus","variant":"declaration","kind":1024,"flags":{"isOptional":true},"comment":{"summary":[{"kind":"text","text":"If true, focuses the input on mount."}],"blockTags":[{"tag":"@default","content":[{"kind":"text","text":"false"}]}]},"type":{"type":"intrinsic","name":"boolean"}},{"name":"caretHidden","variant":"declaration","kind":1024,"flags":{"isOptional":true},"comment":{"summary":[{"kind":"text","text":"If true, the cursor is hidden.\n\nOn iOS, this is implemented via "},{"kind":"code","text":"`tint('transparent')`"},{"kind":"text","text":", which also makes\nthe selection highlight invisible. If you set both "},{"kind":"code","text":"`caretHidden`"},{"kind":"text","text":" and\n"},{"kind":"code","text":"`selectionColor`"},{"kind":"text","text":", the caret-hide wins on iOS."}]},"type":{"type":"intrinsic","name":"boolean"}},{"name":"cursorColor","variant":"declaration","kind":1024,"flags":{"isOptional":true},"comment":{"summary":[{"kind":"text","text":"Color of the text cursor."}]},"type":{"type":"reference","target":{"packageName":"react-native","packagePath":"Libraries/StyleSheet/StyleSheet.d.ts","qualifiedName":"ColorValue"},"name":"ColorValue","package":"react-native"}},{"name":"defaultValue","variant":"declaration","kind":1024,"flags":{"isOptional":true},"comment":{"summary":[{"kind":"text","text":"Initial text shown when the input mounts and "},{"kind":"code","text":"`value`"},{"kind":"text","text":" is not provided.\nIgnored once the user starts typing or if "},{"kind":"code","text":"`value`"},{"kind":"text","text":" is set."}]},"type":{"type":"intrinsic","name":"string"}},{"name":"editable","variant":"declaration","kind":1024,"flags":{"isOptional":true},"comment":{"summary":[{"kind":"text","text":"If false, the input cannot be edited. Selection is still allowed so the\nuser can copy text out of the field."}],"blockTags":[{"tag":"@default","content":[{"kind":"text","text":"true"}]}]},"type":{"type":"intrinsic","name":"boolean"}},{"name":"enterKeyHint","variant":"declaration","kind":1024,"flags":{"isOptional":true},"comment":{"summary":[{"kind":"text","text":"HTML-style hint for the keyboard return key. Maps to "},{"kind":"code","text":"`returnKeyType`"},{"kind":"text","text":".\nWhen both are set, "},{"kind":"code","text":"`returnKeyType`"},{"kind":"text","text":" wins."}]},"type":{"type":"reference","target":{"packageName":"@expo/ui","packagePath":"src/universal/TextInput/utils.ts","qualifiedName":"EnterKeyHint"},"name":"EnterKeyHint","package":"@expo/ui"}},{"name":"inputMode","variant":"declaration","kind":1024,"flags":{"isOptional":true},"comment":{"summary":[{"kind":"text","text":"HTML-style hint for the keyboard variant. Maps to "},{"kind":"code","text":"`keyboardType`"},{"kind":"text","text":". When\nboth are set, "},{"kind":"code","text":"`keyboardType`"},{"kind":"text","text":" wins."}]},"type":{"type":"reference","target":{"packageName":"@expo/ui","packagePath":"src/universal/TextInput/utils.ts","qualifiedName":"InputMode"},"name":"InputMode","package":"@expo/ui"}},{"name":"keyboardType","variant":"declaration","kind":1024,"flags":{"isOptional":true},"comment":{"summary":[{"kind":"text","text":"Determines which keyboard variant is shown.\n\nLacking native support:\n- iOS: "},{"kind":"code","text":"`'visible-password'`"},{"kind":"text","text":" falls back to the default keyboard.
+@@ -8,6 +8,8 @@ import kotlinx.serialization.Serializable
+ import kotlinx.serialization.encodeToString
+ import kotlinx.serialization.json.Json
+ 
++const val NATIVE_EXCEPTION_LOG_NAME = "native.exception"
++
+ @Serializable
+ data class CrashReport(
+   /** Unix signal number (e.g. SIGSEGV = 11), from `ApplicationExitInfo.getStatus()` for native crashes. */
+@@ -48,7 +50,7 @@ data class CrashReport(
+     return LogRecord(
+       sessionId = sessionId,
+       timestamp = timestampBegin,
+-      name = "native.exception",
++      name = NATIVE_EXCEPTION_LOG_NAME,
+       severity = Severity.FATAL.rawValue,
+       attributes = JsonAny.encodeMapToJsonString(attributes)
+     )
 ```
 
-**File**: `packages/expo-ui/src/__tests__/TextInput-test.android.tsx` (added, +43/-0)
+**File**: `packages/expo-app-metrics/android/src/main/java/expo/modules/appmetrics/jserrors/ErrorReport.kt` (modified, +3/-1)
 ```diff
-@@ -0,0 +1,43 @@
-+import { render } from '@testing-library/react-native';
+@@ -9,6 +9,8 @@ import expo.modules.kotlin.records.Record
+ import expo.modules.kotlin.types.Enumerable
+ import expo.modules.kotlin.types.OptimizedRecord
+ 
++const val JS_EXCEPTION_LOG_NAME = "js.exception"
 +
-+import { findNativeViewProps, renderedNativeViews } from '../__mocks__/expo';
-+import { TextInput } from '../universal/TextInput/index.android';
-+
-+jest.mock('expo', () => jest.requireActual('../__mocks__/expo'));
-+jest.mock('../State', () => ({
-+  useNativeState: (value: string) => ({ value }),
-+  useWorkletProp: () => null,
-+  getStateId: () => undefined,
-+}));
-+
-+describe('TextInput accessibilityLabel', () => {
-+  it.each([
-+    [false, '', undefined],
-+    [false, 'hello', 'username'],
-+    [true, '', 'password'],
-+    [true, 'secret', 'password'],
-+  ] as const)(
-+    'labels the field with secureTextEntry=%s, text=%s, and autoComplete=%s',
-+    async (secureTextEntry, text, autoComplete) => {
-+      await render(
-+        <TextInput
-+          accessibilityLabel="Account"
-+          defaultValue={text}
-+          secureTextEntry={secureTextEntry}
-+          autoComplete={autoComplete}
-+        />
-+      );
-+
-+      const fieldModifiers = findNativeViewProps('BasicTextFieldView')?.modifiers ?? [];
-+      const decorationModifiers = findNativeViewProps('BoxView')?.modifiers ?? [];
-+      expect(renderedNativeViews.mock.calls.map(([name]) => name)).toContain('BasicTextFieldView');
-+      expect(
-+        fieldModifiers.filter((modifier: { $type: string }) => modifier.$type === 'semantics')
-+      ).toEqual(autoComplete ? [{ $type: 'semantics', contentType: autoComplete }] : []);
-+      expect(decorationModifiers).toContainEqual({
-+        $type: 'semantics',
-+        contentDescription: 'Account',
-+      });
-+    }
-+  );
-+});
+ /**
+  * An unhandled JavaScript error forwarded from the JS-side `global.ErrorUtils` handler. Recorded as
+  * a `js.exception` log event following OpenTelemetry's exception conventions.
+@@ -110,7 +112,7 @@ private fun makeExceptionLogRecord(
+   return LogRecord(
+     sessionId = sessionId,
+     timestamp = timestamp,
+-    name = "js.exception",
++    name = JS_EXCEPTION_LOG_NAME,
+     severity = (
+       if (isFatal) {
+         Severity.FATAL
 ```
 
-**File**: `packages/expo-ui/src/__tests__/TextInput-test.ios.tsx` (added, +40/-0)
+**File**: `packages/expo-app-metrics/ios/CrashReporting/CrashReport.swift` (modified, +3/-1)
 ```diff
-@@ -0,0 +1,40 @@
-+import { render } from '@testing-library/react-native';
+@@ -1,5 +1,7 @@
+ // Copyright 2025-present 650 Industries. All rights reserved.
+ 
++public let nativeExceptionLogName = "native.exception"
 +
-+import { findNativeViewProps, renderedNativeViews } from '../__mocks__/expo';
-+import { TextInput } from '../universal/TextInput/index.ios';
-+
-+jest.mock('expo', () => jest.requireActual('../__mocks__/expo'));
-+jest.mock('../State', () => ({
-+  useNativeState: (value: string) => ({ value }),
-+  useWorkletProp: () => null,
-+  getStateId: () => undefined,
-+}));
-+
-+describe('TextInput accessibilityLabel', () => {
-+  it.each([
-+    [false, ''],
-+    [false, 'hello'],
-+    [true, ''],
-+    [true, 'secret'],
-+  ] as const)(
-+    'labels the field with secureTextEntry=%s and text=%s',
-+    async (secureTextEntry, text) => {
-+      await render(
-+        <TextInput
-+          accessibilityLabel="Account"
-+          defaultValue={text}
-+          secureTextEntry={secureTextEntry}
-+          placeholder="Type here"
-+          placeholderTextColor="blue"
-+        />
-+      );
-+
-+      const viewName = secureTextEntry ? 'SecureFieldView' : 'TextFieldView';
-+      expect(renderedNativeViews.mock.calls.map(([name]) => name)).toContain(viewName);
-+      expect(findNativeViewProps(viewName)?.modifiers ?? []).toContainEqual({
-+        $type: 'accessibilityLabel',
-+        label: 'Account',
-+      });
-+    }
-+  );
-+});
+ /// Structured crash report extracted from MetricKit's `MXCrashDiagnostic`.
+ ///
+ /// This is the native-crash shape: a Mach exception, signal, and native call-stack tree over a
+@@ -141,7 +143,7 @@ public struct CrashReport: Codable, Sendable {
+       }
+     }
+     return LogRecord(
+-      name: "native.exception",
++      name: nativeExceptionLogName,
+       attributes: attributes,
+       severity: .fatal,
+       // MetricKit gives a time window; its end is the tightest crash-time bound and matches Android.
 ```
 
-**File**: `packages/expo-ui/src/__tests__/TextInput-test.web.tsx` (added, +34/-0)
+**File**: `packages/expo-app-metrics/ios/LogEvents/ErrorReport.swift` (modified, +3/-1)
 ```diff
-@@ -0,0 +1,34 @@
-+/**
-+ * @jest-environment jsdom
-+ */
+@@ -2,6 +2,8 @@
+ 
+ import ExpoModulesCore
+ 
++public let jsExceptionLogName = "js.exception"
 +
-+import { fireEvent, render, screen } from '@testing-library/react';
-+
-+import { TextInput } from '../universal/TextInput';
-+
-+describe('TextInput accessibilityLabel', () => {
-+  it.each([false, true])(
-+    'keeps the label after editing with secureTextEntry=%s',
-+    (secureTextEntry) => {
-+      render(
-+        <TextInput
-+          accessibilityLabel="Account"
-+          placeholder="Type here"
-+          secureTextEntry={secureTextEntry}
-+        />
-+      );
-+
-+      const input = screen.getByLabelText('Account') as HTMLInputElement;
-+      expect(input.value).toBe('');
-+      expect(input.type).toBe(secureTextEntry ? 'password' : 'text');
-+
-+      fireEvent.change(input, { target: { value: 'hello' } });
-+      expect(screen.getByLabelText('Account')).toBe(input);
-+      expect(input.value).toBe('hello');
-+
-+      fireEvent.change(input, { target: { value: '' } });
-+      expect(screen.getByLabelText('Account')).toBe(input);
-+      expect(input.value).toBe('');
-+    }
-+  );
-+});
-```
-
-**File**: `packages/expo-ui/src/universal/TextInput/index.android.tsx` (modified, +7/-1)
-```diff
-@@ -70,6 +70,7 @@ export function TextInput({
-   value,
-   onChangeText,
-   placeholder,
-+  accessibilityLabel,
-   autoFocus,
-   editable: editableProp,
-   multiline,
-@@ -218,7 +219,12 @@ export function TextInput({
-       onSelectionChange={onSelectionChange}>
-       <BasicTextField.DecorationBox>
-         <Box
--          modifiers={[fillMaxWidth()]}
-+          modifiers={[
-+            fillMaxWidth(),
-+            ...(accessibilityLabel !== undefined
-+              ? [semantics({ contentDescription: accessibilityLabel })]
-+              : []),
-+          ]}
-           contentAlignment={
-             textAlign === 'center' ? 'topCenter' : textAlign === 'right' ? 'topEnd' : undefined
-           }>
+ /// An unhandled JavaScript error forwarded from the JS-side `global.ErrorUtils` handler. Recorded as
+ /// a `js.exception` log event following OpenTelemetry's exception conventions.
+ @Record
+@@ -95,7 +97,7 @@ private func makeExceptionLogRecord(
+     attributes["expo.error.component_stack"] = componentStack
+   }
+   return LogRecord(
+-    name: "js.exception",
++    name: jsExceptionLogName,
+     attributes: attributes,
+     severity: isFatal ? .fatal : .error,
+     timestamp: timestamp
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #52667** (2026-10-30): fix(dev-menu): Port the onboarding sheet height fix from Expo Go (@ramonclaudio)
-- **PR #52663** (closed): [docs] Document Simulator session error reasons (@gwdp)
-- **PR #52659** (2026-10-30): [docs] Add doc for protected credentials (@wschurman)
-- **PR #52658** (2026-10-30): [docs] Add documentation for scoped personal access tokens (@wschurman)
-- **PR #52644** (closed): [expo-audio] Make stop() settle when it runs again or before the recorder starts (@ystolzenburg)
-- **PR #52631** (2026-10-30): fix(core): Fix Swift 6.4.2 compiler crash (@ramonclaudio)
+- **PR #52891** (2026-11-03): [docs] Sync Japanese tutorial translations (@expo-bot)
+- **PR #52882** (2026-11-03): [docs] Add ignored metrics and events to Expo Observe configuration (@Ubax)
+- **PR #52877** (2026-11-03): [observe] Fix flaky `cold_ttr` test in expo-router integration (@tsapeta)
+- **PR #52858** (closed): chore(deps): bump glob from 13.0.6 to 14.0.2 (@dependabot[bot])
+- **PR #52857** (closed): chore(deps): bump minimatch from 10.2.5 to 11.0.1 (@dependabot[bot])
+- **PR #52856** (closed): chore(deps): bump node-forge from 1.4.0 to 1.4.1 (@dependabot[bot])
 
 ---
 
@@ -1978,30 +1432,28 @@ Android autofill semantics. Add a patch c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [docs] Add Agentic workflows section with four quick start guides (#52087)
+## X. [docs] Land reviewed external-contributor docs fixes (#52842)
 
 **RULE**:
-When implementing operations in `docs/.vale/writing-styles/expo-docs/HeadingCase.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in expo/expo. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/pages/config-plugins/development-and-debugging.mdx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in expo/expo. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `cfbedb28`: [docs] Add Agentic workflows section with four quick start guides (#52087). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `931df666`: [docs] Land reviewed external-contributor docs fixes (#52842). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/.vale/writing-styles/expo-docs/HeadingCase.yml`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/pages/config-plugins/development-and-debugging.mdx`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-  - '.*Agentic CI.*'
-  - '.*Bug triage.*'
-  - '.*QA Swarm.*'
+> This example uses `tsx` for simple local TypeScript support, but `tsx` isn't strictly necessary. See [using TypeScript with app config](/guides/typescript/#app-config).
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+> This example uses `tsx` for simple local TypeScript support, this isn't strictly necessary. See [using TypeScript with `app.config.js`](/guides/typescript/#appconfigjs).
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `cfbedb28` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `931df666` are properly handled with clean fallback behavior.

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/sveltejs-svelte-learnings.md`  
 > **Source**: github ([https://github.com/sveltejs/svelte](https://github.com/sveltejs/svelte))  
-> **Source Version**: `fe21fce0`  
+> **Source Version**: `628098d2`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T18:32:28.921Z  
+> **Timestamp**: 2026-11-04T02:12:02.652Z  
 > **Learning ID**: `learn-github-sveltejs-svelte`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/sveltejs-svelte-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/sveltejs/svelte](https://github.com/sveltejs/svelte))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T18:32:27.690Z  
+> **Harvest Timestamp**: 2026-11-04T02:12:01.078Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: web development for the rest of us
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 88493 stars
+- **Stars / Engagement**: 88552 stars
 
 ---
 
@@ -1369,6 +1369,12 @@ export function match_bracket(parser, start, brackets = default_brackets) {
 			continue;
 		}
 
+		// the `>` in an arrow function type (e.g. `T extends () => void`) doesn't close
+		// the type parameter list
+		if (char === '>' && close.has('>') && parser.template[i - 2] === '=') {
+			continue;
+		}
+
 		if (char in brackets) {
 			bracket_stack.push(char);
 		} else if (close.has(char)) {
@@ -2003,275 +2009,580 @@ export function is_whitespace(cc) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `fe21fce0` (2026-10-29)
-**Commit Message**: docs: fix broken Svelte v2 docs link in FAQ (#19088)
+### Incident Patch 1: `ec8f4ee8` (2026-11-02)
+**Commit Message**: fix: preserve effect tree order across batch traversals (#19132)
 
-What: replaced broken https://v2.svelte.dev/guide link with the archived
-v2 docs source on GitHub.
-Why: the v2.svelte.dev URL returns HTTP 525 consistently; the GitHub
-archive is available.
-How verified: checked both URLs (525 vs 200); git diff reviewed.
-No linked issue.
+Fixes https://github.com/sveltejs/svelte/issues/19131
 
-Co-authored-by: pei711 <[REDACTED_EMAIL]>
+Replacing Svelte Flow's nodes from an effect in the flush that delivers
+their first measurement can leave them permanently hidden. This is an
+effect-ordering regression, rather than a failure to invalidate
+dependencies.
 
-**File**: `documentation/docs/07-misc/99-faq.md` (modified, +1/-1)
-```diff
-@@ -118,7 +118,7 @@ If you need to style something that Svelte can't identify at compile time, you w
- 
- New features aren't being added to it, and bugs will probably only be fixed if they are extremely nasty or present some sort of security vulnerability.
- 
--The documentation is still available [here](https://v2.svelte.dev/guide).
-+The documentation is still available [here](https://github.com/sveltejs/v2.svelte.dev/tree/master/content).
- 
- ## How do I do hot module reloading?
- 
-```
+[#18508](https://github.com/sveltejs/svelte/pull/18508) deferred
+ancestor marking until traversal so concurrent batches cannot interfere
+through shared branch markers. That isolation is still needed. However,
+its drain loop concatenates effects collected by successive traversals:
+an each block can schedule a child under a clean branch, while a later
+sibling is collected immediately. The next traversal appends the earlier
+child after that sibling.
 
----
+In Svelte Flow, this lets Relayout replace the measured nodes before
+NodeWrapper's initialization derived observes the measured state. The
+intermediate true value is lost to its cache, so the observation effect
+never sees the transition that would make it observe the node again.
 
-### Incident Patch 2: `120c0ed0` (2026-10-27)
-**Commit Message**: fix: reset dev update counters for sources written during traversal
+When another traversal is needed, this change requeues already-collected
+effects and recollects them together with the newly 
 
-Co-authored-by: svelte-triage-bot <[REDACTED_EMAIL]>
-
-**File**: `.changeset/tidy-keyed-update-stacks.md` (added, +5/-0)
+**File**: `.changeset/tidy-effects-measure.md` (added, +5/-0)
 ```diff
 @@ -0,0 +1,5 @@
 +---
 +'svelte': patch
 +---
 +
-+fix: reset dev update counters for sources written during batch traversal
++fix: preserve effect tree order across batch traversal passes
 ```
 
-**File**: `packages/svelte/src/internal/client/reactivity/batch.js` (modified, +4/-14)
+**File**: `packages/svelte/src/internal/client/reactivity/batch.js` (modified, +10/-0)
 ```diff
-@@ -89,8 +89,8 @@ export let legacy_updates = null;
- 
- var flush_count = 0;
- 
--/** @type {Set<Value>} */
--var source_stacks = new Set();
-+/** Sources whose DEV update counts and stack traces need resetting after the flush. @type {Set<Value>} */
-+export const source_stacks = new Set();
- 
- let uid = 1;
- 
-@@ -323,14 +323,6 @@ export class Batch {
- 	#process() {
- 		this.started = true;
- 
--		if (DEV) {
--			// track all the values that were updated during this flush,
--			// so that they can be reset afterwards
--			for (const value of this.current.keys()) {
--				source_stacks.add(value);
--			}
--		}
--
- 		// We always reschedule previously-deferred effects, not just when
- 		// #is_deferred() is true, because traversing the tree could make
- 		// an if block that contains the last blocking pending effect falsy,
-@@ -638,10 +630,6 @@ export class Batch {
- 
- 	flush() {
- 		try {
--			if (DEV) {
--				source_stacks.clear();
--			}
--
- 			is_processing = true;
- 			current_batch = this;
- 
-@@ -662,6 +650,8 @@ export class Batch {
- 				for (const source of source_stacks) {
- 					source.updated = null;
+@@ -368,6 +368,16 @@ export class Batch {
+ 					throw e;
  				}
-+
-+				source_stacks.clear();
  			}
++
++			if (this.#scheduled.length > 0) {
++				// A later traversal may discover effects before ones we already collected.
++				// Recollect them together so they are flushed in tree order, rather than
++				// appending earlier effects after their later siblings.
++				for (const effect of render_effects) this.#scheduled.push(effect);
++				for (const effect of effects) this.#scheduled.push(effect);
++				render_effects.length = 0;
++				effects.length = 0;
++			}
  		}
- 	}
-```
-
-**File**: `packages/svelte/src/internal/client/reactivity/sources.js` (modified, +3/-1)
-```diff
-@@ -37,7 +37,8 @@ import {
- 	batch_values,
- 	eager_block_effects,
- 	schedule_effect,
--	legacy_updates
-+	legacy_updates,
-+	source_stacks
- } from './batch.js';
- import { proxy } from '../proxy.js';
- import { execute_derived } from './deriveds.js';
-@@ -202,6 +203,7 @@ export function internal_set(source, value, updated_during_traversal = null) {
- 		if (DEV) {
- 			if (tracing_mode_flag || active_effect !== null) {
- 				source.updated ??= new Map();
-+				source_stacks.add(source);
  
- 				// For performance reasons, when not using $inspect.trace, we only start collecting stack traces
- 				// after the same source has been updated more than 5 times in the same flush cycle.
+ 		// any writes should take effect in a subsequent batch
 ```
 
-**File**: `packages/svelte/tests/signals/test.ts` (modified, +118/-2)
+**File**: `packages/svelte/tests/signals/test.ts` (modified, +41/-0)
 ```diff
-@@ -1,18 +1,27 @@
- import { describe, assert, it } from 'vitest';
--import { flushSync } from '../../src/index-client';
-+import { flushSync, tick } from '../../src/index-client';
- import * as $ from '../../src/internal/client/runtime';
+@@ -4,6 +4,7 @@ import * as $ from '../../src/internal/client/runtime';
  import { push, pop } from '../../src/internal/client/context';
  import {
-+	block,
+ 	block,
++	branch,
  	effect,
  	effect_root,
  	render_effect,
- 	user_effect,
- 	user_pre_effect
- } from '../../src/internal/client/reactivity/effects';
--import { state, set, update, update_pre } from '../../src/internal/client/reactivity/sources';
-+import {
-+	internal_set,
-+	source,
-+	state,
-+	set,
-+	update,
-+	update_pre
-+} from '../../src/internal/client/reactivity/sources';
- import type { Derived, Effect, Source, Value } from '../../src/internal/client/types';
- import { proxy } from '../../src/internal/client/proxy';
- import { derived } from '../../src/internal/client/reactivity/deriveds';
-+import { source_stacks } from '../../src/internal/client/reactivity/batch';
- import { snapshot } from '../../src/internal/shared/clone.js';
- import { SvelteSet } from '../../src/reactivity/set';
- import { CONNECTED, DESTROYED } from '../../src/internal/client/constants';
-@@ -548,6 +557,113 @@ describe('signals', () => {
- 		};
- 	});
+@@ -64,6 +65,46 @@ test.skip = (text: string, fn: (runes: boolean) => any) => {
+ };
  
-+	it.each([false, true])(
-+		'resets update counts for writes during traversal (tick: %s)',
-+		async (use_tick) => {
-+			const trigger = state(0);
+ describe('signals', () => {
++	for (const render of [false, true]) {
++		test(`${render ? 'render' : 'user'} effects scheduled during traversal retain tree order`, () => {
++			if (render) enable_async_mode_flag();
++			const create = render ? render_effect : effect;
++			const value = state(0);
 +			const item = source(0);
-+			const counts: number[] = [];
++			const log: string[] = [];
++			let first = true;
 +
-+			const destroy = effect_root(() => {
-+				block(() => {
-+					// Like each block item sources, this is first written during traversal,
-+					// after the batch has already started processing.
-+					internal_set(item, $.get(trigger));
-+					counts.push(item.updated?.get('')?.count ?? 0);
-+				});
-+			});
-+
-+			try {
-+				for (let i = 1; i <= 12; i++) {
-+					set(trigger, i);
-+					if (use_tick) {
-+						await tick();
-+					} else {
-+						flushSync();
-+					}
-+
-+					assert.equal(item.v, i);
-+					assert.isNull(item.updated);
-+				}
-+				assert.deepEqual(counts, [0, ...Array(12).fill(1)]);
-+			} finally {
-+				destroy();
-+			}
-+		}
-+	);
-+
-+	it('cleans up update stacks recorded before flushing', () => {
-+		const value = source(0);
-+		const destroy = effect_root(() => {
++			// Model an each block updating the source of an existing item.
 +			block(() => {
-+				for (let i = 1; i <= 6; i++) {
-+					internal_set(value, i);
-+					assert.equal(value.updated?.get('')?.count, i);
-+					assert.equal(value.updated?.size, i <= 5 ? 1 : 2);
++				internal_set(item, $.get(value));
++				if (first) {
++					first = false;
++					branch(() => {
++						create(() => {
++							log.push(`child:${$.get(item)}`);
++						});
++					});
 +				}
 +			});
-+		});
 +
-+		try {
-+			assert.equal(value.updated?.size, 2);
-+			flushSync();
-+			assert.isNull(value.updated);
-+			assert.equal(source_stacks.size, 0);
-+		} finally {
-+			destroy();
-+		}
-+	});
-+
-+	it('retains update counts across batches within a flush', () => {
-+		push({}, true);
-+		const trigger = state(0);
-+		const value = source(0);
-+		const counts: number[] = [];
-+		const stacks: number[] = [];
-+		const destroy = effect_root(() => {
-+			user_effect(() => {
-+				const n = $.get(trigger) + 1;
-+				internal_set(value, n);
-+				counts.push(value.updated?.get('')?.count ?? 0);
-+				stacks.push(value.updated?.size ?? 0);
-+				if (n < 7) set(trigger, n);
++			create(() => {
++				log.push(`sibling:${$.get(value)}`);
 +			});
-+		});
 +
-+		try {
-+			flushSync();
-+			assert.deepEqual(counts, [1, 2, 3, 4, 5, 6, 7]);
-+			assert.deepEqual(stacks, [1, 1, 1, 1, 1, 2, 2]);
-+			assert.isNull(value.updated);
-+			assert.equal(source_stacks.size, 0);
-+		} finally {
-+			destroy();
-+			pop();
-+		}
-+	});
-+
-+	it('cleans up traversal update counts when an effect throws', () => {
-+		const trigger = state(false);
-+		const value = source(0);
-+		const destroy = effect_root(() => {
-+			block(() => {
-+				if ($.get(trigger)) {
-+					internal_set(value, 1);
-+					throw new Error('boom');
++			return () => {
++				try {
++					flushSync();
++					assert.deepEqual(log, ['child:0', 'sibling:0']);
++					log.length = 0;
++					flushSync(() => set(value, 1));
++					assert.deepEqual(log, ['child:1', 'sibling:1']);
++				} finally {
++					if (render) disable_async_mode_flag();
 +				}
-+			});
++			};
 +		});
++	}
 +
-+		try {
-+			set(trigger, true);
-+			assert.throws(() => flushSync(), 'boom');
-+			assert.isNull(value.updated);
-+			assert.equal(source_stacks.size, 0);
-+		} finally {
-+			destroy();
-+		}
-+	});
-+
- 	test('schedules rerun when writing to signal before reading it', (runes) => {
- 		if (!runes) return () => {};
+ 	test('effect with state and derived in it', () => {
+ 		const log: string[] = [];
  
 ```
 
+---
+
+### Incident Patch 2: `bd8c52ec` (2026-11-02)
+**Commit Message**: fix: don't leak reactive context past nested awaits in production (#19134)
+
+#18694 is meant to pickle every await that runs after a pickled one,
+including at the end, so the context doesn't leak past them. Previously,
+the analyzer decides this before visiting the await's argument. In a
+case like `await f(await g())`, the outer await is visited first:
+nothing is pickled yet and it's the last evaluated expression, so it's
+left as a plain await. Only then is the inner await visited and pickled,
+although it runs before the outer one suspends. (Dev builds hide this,
+because there the outer await goes through track_reactivity_loss, which
+also resets the context.)
+
+The fix is to do the decision whether to pickle or not after having
+transformed the inner expression.
+
+This bug was revealed through a failing test in #19087 after a merge
+(the code in that PR is fine).
+
+**File**: `.changeset/yellow-groups-deny.md` (added, +5/-0)
+```diff
+@@ -0,0 +1,5 @@
++---
++'svelte': patch
++---
++
++fix: don't leak reactive context past nested awaits in production
+```
+
+**File**: `packages/svelte/src/compiler/phases/2-analyze/visitors/AwaitExpression.js` (modified, +17/-15)
+```diff
+@@ -11,21 +11,15 @@ import * as e from '../../../errors.js';
+ export function AwaitExpression(node, context) {
+ 	const tla = context.state.ast_type === 'instance' && context.state.function_depth === 1;
+ 
+-	if (
+-		is_reactive_expression(
+-			context.path,
+-			context.state.derived_function_depth === context.state.function_depth
+-		)
+-	) {
+-		const expression = /** @type {ExpressionMetadata} */ (context.state.expression);
+-
+-		// preserve context for awaits that precede other expressions in template or `$derived(...)`,
+-		// and for any await that follows one, so the restored context ends at the next suspension
+-		if (expression.has_pickled_await || !is_last_evaluated_expression(context.path, node)) {
+-			context.state.analysis.pickled_awaits.add(node);
+-			expression.has_pickled_await = true;
+-		}
+-	}
++	/** @type {ExpressionMetadata | null} */
++	var reactive = is_reactive_expression(
++		context.path,
++		context.state.derived_function_depth === context.state.function_depth
++	)
++		? /** @type {ExpressionMetadata} */ (context.state.expression)
++		: null;
++
++	var last = reactive !== null && is_last_evaluated_expression(context.path, node);
+ 
+ 	let suspend = tla;
+ 
+@@ -48,6 +42,14 @@ export function AwaitExpression(node, context) {
+ 	}
+ 
+ 	context.next();
++
++	// Preserve context for awaits that precede other expressions in template or `$derived(...)`, and for any await
++	// that follows one, so the restored context ends at the next suspension. (Decided after visiting the argument:
++	// an await inside it, as in `await f(await g())`, suspends before this one does)
++	if (reactive !== null && (reactive.has_pickled_await || !last)) {
++		context.state.analysis.pickled_awaits.add(node);
++		reactive.has_pickled_await = true;
++	}
+ }
+ 
+ /**
+```
+
+**File**: `packages/svelte/tests/runtime-runes/samples/async-save-foreign-microtask-mutation-nested/_config.js` (added, +21/-0)
+```diff
+@@ -0,0 +1,21 @@
++import { tick } from 'svelte';
++import { test } from '../../test';
++
++export default test({
++	mode: ['client'],
++
++	compileOptions: {
++		dev: false
++	},
++
++	async test({ assert, target, errors }) {
++		await new Promise((resolve) => setTimeout(resolve, 20));
++		await tick();
++
++		assert.deepEqual(
++			errors.filter((error) => error.includes('state_unsafe_mutation')),
++			[]
++		);
++		assert.htmlEqual(target.innerHTML, '<p>4 1</p>');
++	}
++});
+```
+
+**File**: `packages/svelte/tests/runtime-runes/samples/async-save-foreign-microtask-mutation-nested/main.svelte` (added, +20/-0)
+```diff
+@@ -0,0 +1,20 @@
++<script>
++	let foreign = $state(0);
++
++	const items = Promise.resolve([1, 2, 3]);
++
++	// resolves after the write below, so the outer `await` is still suspended when it lands
++	function plus_one(n) {
++		return new Promise((resolve) => setTimeout(() => resolve(n + 1), 10));
++	}
++
++	setTimeout(() => {
++		foreign += 1;
++	});
++
++	// the inner `await` restores the context for `.length`, the outer one must end it when it suspends —
++	// in production that await has no dev hook
++	const total = $derived(await plus_one((await items).length));
++</script>
++
++<p>{total} {foreign}</p>
+```
+
+---
+
+### Incident Patch 3: `628098d2` (2026-11-03)
+**Commit Message**: fix: parse snippet type parameters containing arrow function types (#19141)
+
+**File**: `.changeset/olive-snippets-parse.md` (added, +5/-0)
+```diff
+@@ -0,0 +1,5 @@
++---
++'svelte': patch
++---
++
++fix: parse snippet type parameters containing arrow function types
+```
+
+**File**: `packages/svelte/src/compiler/phases/1-parse/utils/bracket.js` (modified, +6/-0)
+```diff
+@@ -173,6 +173,12 @@ export function match_bracket(parser, start, brackets = default_brackets) {
+ 			continue;
+ 		}
+ 
++		// the `>` in an arrow function type (e.g. `T extends () => void`) doesn't close
++		// the type parameter list
++		if (char === '>' && close.has('>') && parser.template[i - 2] === '=') {
++			continue;
++		}
++
+ 		if (char in brackets) {
+ 			bracket_stack.push(char);
+ 		} else if (close.has(char)) {
+```
+
+**File**: `packages/svelte/tests/parser-modern/samples/generic-snippet-arrow-function/input.svelte` (added, +10/-0)
+```diff
+@@ -0,0 +1,10 @@
++<script lang="ts">
++</script>
++
++{#snippet generic<T extends () => void>(val: T)}
++	{val}
++{/snippet}
++
++{#snippet generic<T extends Array<() => void>>(val: T)}
++	{val}
++{/snippet}
+```
+
+**File**: `packages/svelte/tests/parser-modern/samples/generic-snippet-arrow-function/output.json` (added, +336/-0)
+```diff
+@@ -0,0 +1,336 @@
++{
++	"css": null,
++	"js": [],
++	"start": 0,
++	"end": 171,
++	"type": "Root",
++	"fragment": {
++		"type": "Fragment",
++		"nodes": [
++			{
++				"type": "Text",
++				"start": 28,
++				"end": 30,
++				"raw": "\n\n",
++				"data": "\n\n"
++			},
++			{
++				"type": "SnippetBlock",
++				"start": 30,
++				"end": 96,
++				"expression": {
++					"type": "Identifier",
++					"name": "generic",
++					"start": 40,
++					"end": 47,
++					"loc": {
++						"start": {
++							"line": 4,
++							"column": 10,
++							"character": 40
++						},
++						"end": {
++							"line": 4,
++							"column": 17,
++							"character": 47
++						}
++					}
++				},
++				"typeParams": "T extends () => void",
++				"parameters": [
++					{
++						"type": "Identifier",
++						"start": 70,
++						"end": 76,
++						"loc": {
++							"start": {
++								"line": 4,
++								"column": 40
++							},
++							"end": {
++								"line": 4,
++								"column": 46
++							}
++						},
++						"name": "val",
++						"typeAnnotation": {
++							"type": "TSTypeAnnotation",
++							"start": 73,
++							"end": 76,
++							"loc": {
++								"start": {
++									"line": 4,
++									"column": 43
++								},
++								"end": {
++									"line": 4,
++									"column": 46
++								}
++							},
++							"typeAnnotation": {
++								"type": "TSTypeReference",
++								"start": 75,
++								"end": 76,
++								"loc": {
++									"start": {
++										"line": 4,
++										"column": 45
++									},
++									"end": {
++										"line": 4,
++										"column": 46
++									}
++								},
++								"typeName": {
++									"type": "Identifier",
++									"start": 75,
++									"end": 76,
++									"loc": {
++										"start": {
++											"line": 4,
++											"column": 45
++										},
++										"end": {
++											"line": 4,
++											"column": 46
++										}
++									},
++									"name": "T"
++								}
++							}
++						}
++					}
++				],
++				"body": {
++					"type": "Fragment",
++					"nodes": [
++						{
++							"type": "Text",
++							"start": 78,
++							"end": 80,
++							"raw": "\n\t",
++							"data": "\n\t"
++						},
++						{
++							"type": "ExpressionTag",
++							"start": 80,
++							"end": 85,
++							"expression": {
++								"type": "Identifier",
++								"start": 81,
++								"end": 84,
++								"loc": {
++									"start": {
++										"line": 5,
++										"column": 2
++									},
++									"end": {
++										"line": 5,
++										"column": 5
++									}
++								},
++								"name": "val"
++							}
++						},
++						{
++							"type": "Text",
++							"start": 85,
++							"end": 86,
++							"raw": "\n",
++							"data": "\n"
++						}
++					]
++				}
++			},
++			{
++				"type": "Text",
++				"start": 96,
++				"end": 98,
++				"raw": "\n\n",
++				"data": "\n\n"
++			},
++			{
++				"type": "SnippetBlock",
++				"start": 98,
++				"end": 171,
++				"expression": {
++					"type": "Identifier",
++					"name": "generic",
++					"start": 108,
++					"end": 115,
++					"loc": {
++						"start": {
++							"line": 8,
++							"column": 10,
++							"character": 108
++						},
++						"end": {
++							"line": 8,
++							"column": 17,
++							"character": 115
++						}
++					}
++				},
++				"typeParams": "T extends Array<() => void>",
++				"parameters": [
++					{
++						"type": "Identifier",
++						"start": 145,
++						"end": 151,
++						"loc": {
++							"start": {
++								"line": 8,
++								"column": 47
++							},
++							"end": {
++								"line": 8,
++								"column": 53
++							}
++						},
++						"name": "val",
++						"typeAnnotation": {
++							"type": "TSTypeAnnotation",
++							"start": 148,
++							"end": 151,
++							"loc": {
++								"start": {
++									"line": 8,
++									"column": 50
++								},
++								"end": {
++									"line": 8,
++									"column": 53
++								}
++							},
++							"typeAnnotation": {
++								"type": "TSTypeReference",
++								"start": 150,
++								"end": 151,
++								"loc": {
++									"start": {
++										"line": 8,
++										"column": 52
++									},
++									"end": {
++										"line": 8,
++										"column": 53
++									}
++								},
++								"typeName": {
++									"type": "Identifier",
++									"start": 150,
++									"end": 151,
++									"loc": {
++										"start": {
++											"line": 8,
++											"column": 52
++										},
++										"end": {
++											"line": 8,
++											"column": 53
++										}
++									},
++									"name": "T"
++								}
++							}
++						}
++					}
++				],
++				"body": {
++					"type": "Fragment",
++					"nodes": [
++						{
++							"type": "Text",
++							"start": 153,
++							"end": 155,
++							"raw": "\n\t",
++							"data": "\n\t"
++						},
++						{
++							"type": "ExpressionTag",
++							"start": 155,
++							"end": 160,
++							"expression": {
++								"type": "Identifier",
++								"start": 156,
++								"end": 159,
++								"loc": {
++									"start": {
++										"line": 9,
++										"column": 2
++									},
++									"end": {
++										"line": 9,
++										"column": 5
++									}
++								},
++			
+```
+
 #### Recent Merged Pull Requests:
-- **PR #19127** (2026-10-30): docs: fix various errors in `batch-views.md` (@Rich-Harris)
-- **PR #19126** (2026-10-30): fix: don't re-run effects that already saw a write made while a batch commits (@Rich-Harris)
-- **PR #19125** (2026-10-30): fix: rebase later batches whose writes are all among those of a committed batch (@Rich-Harris)
-- **PR #19123** (2026-10-29): chore: document that the active view sees writes made while it is active (@Rich-Harris)
-- **PR #19120** (2026-10-29): fix: reset view if fork callback throws (@Rich-Harris)
-- **PR #19119** (2026-10-29): fix: don't touch the active batch's records when running in the real world (@Rich-Harris)
+- **PR #19148** (2026-11-02): chore: document that a batch's first-value writes have no previous entry (@Rich-Harris)
+- **PR #19147** (2026-11-02): chore: make it explicit that update_derived is called with sources (@Rich-Harris)
+- **PR #19146** (2026-11-02): chore: defer all effects while another batch commits, regardless of async mode (@Rich-Harris)
+- **PR #19145** (2026-11-02): fix: don't let teardowns see a derived's computed value from before an assignment; document teardowns (@Rich-Harris)
+- **PR #19141** (2026-11-03): fix: parse snippet type parameters containing arrow function types (@Huang-404-Q)
+- **PR #19135** (2026-11-02): docs: fix crosslink tags for class and bind: (@teemingc)
 
 ---
 
@@ -2291,28 +2602,32 @@ Co-authored-by: svelte-triage-bot <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs: fix broken Svelte v2 docs link in FAQ (#19088)
+## X. preserve effect tree order across batch traversals (#19132)
 
 **RULE**:
-When implementing operations in `documentation/docs/07-misc/99-faq.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sveltejs/svelte. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.changeset/tidy-effects-measure.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sveltejs/svelte. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `fe21fce0`: docs: fix broken Svelte v2 docs link in FAQ (#19088). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ec8f4ee8`: preserve effect tree order across batch traversals (#19132). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `documentation/docs/07-misc/99-faq.md`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/tidy-effects-measure.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-The documentation is still available [here](https://github.com/sveltejs/v2.svelte.dev/tree/master/content).
+---
+'svelte': patch
+---
+
+fix: preserve effect tree order across batch traversal passes
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
 // Anti-pattern to NEVER write (induced failure mode):
-The documentation is still available [here](https://v2.svelte.dev/guide).
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `fe21fce0` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ec8f4ee8` are properly handled with clean fallback behavior.

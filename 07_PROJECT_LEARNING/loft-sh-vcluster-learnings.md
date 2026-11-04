@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/loft-sh-vcluster-learnings.md`  
 > **Source**: github ([https://github.com/loft-sh/vcluster](https://github.com/loft-sh/vcluster))  
-> **Source Version**: `8bd47ad6`  
+> **Source Version**: `71592e74`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T20:59:40.396Z  
+> **Timestamp**: 2026-11-03T17:38:23.605Z  
 > **Learning ID**: `learn-github-loft-sh-vcluster`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/loft-sh-vcluster-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/loft-sh/vcluster](https://github.com/loft-sh/vcluster))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T20:59:40.391Z  
+> **Harvest Timestamp**: 2026-11-03T17:38:21.844Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1474,170 +1474,1127 @@ func ResumeVCluster(ctx context.Context, kubeClient *kubernetes.Clientset, name,
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8bd47ad6` (2026-10-31)
-**Commit Message**: fix(coredns): add a default case to the node address switch for the exhaustive linter
+### Incident Patch 1: `c54eb304` (2026-11-03)
+**Commit Message**: fix(deps): security updates for main (#2663)
 
-Co-Authored-By: Claude Fable 5.1 <[REDACTED_EMAIL]>
-Monorepo-Commit: c1506a89bcb35a2fd6c6c06ff659c6cf42fc561a
+* fix(deps): bump golang.org/x/net to v0.62.0
 
-**File**: `pkg/controllers/coredns/nodehosts.go` (modified, +2/-0)
+* fix(deps): bump github.com/klauspost/compress to v1.20.2
+
+* fix(deps): bump github.com/go-jose/go-jose/v4 to v4.1.6
+
+---------
+
+Co-authored-by: vcluster-security-bot[bot] <349382719+vcluster-security-bot[bot]@users.noreply.github.com>
+Monorepo-Commit: ed71a63ba2c9c111394a95445f6a03d0b4a60692
+
+**File**: `go.mod` (modified, +9/-9)
 ```diff
-@@ -88,6 +88,8 @@ func (r *NodeHostsReconciler) compileNodeHosts(ctx context.Context) (string, err
+@@ -49,7 +49,7 @@ require (
+ 	go.etcd.io/etcd/server/v3 v3.6.8
+ 	go.uber.org/atomic v1.11.0
+ 	golang.org/x/mod v0.41.0
+-	golang.org/x/sync v0.23.0
++	golang.org/x/sync v0.24.0
+ 	google.golang.org/grpc v1.83.2
+ 	google.golang.org/protobuf v1.36.12
+ 	gopkg.in/yaml.v3 v3.0.1
+@@ -132,7 +132,7 @@ require (
+ 	github.com/fatih/color v1.15.0 // indirect
+ 	github.com/frankban/quicktest v1.14.5 // indirect
+ 	github.com/fxamacker/cbor/v2 v2.9.2 // indirect
+-	github.com/go-jose/go-jose/v4 v4.1.4 // indirect
++	github.com/go-jose/go-jose/v4 v4.1.6 // indirect
+ 	github.com/go-logr/stdr v1.2.2 // indirect
+ 	github.com/go-openapi/swag/cmdutils v0.26.0 // indirect
+ 	github.com/go-openapi/swag/conv v0.28.0 // indirect
+@@ -157,7 +157,7 @@ require (
+ 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.29.0 // indirect
+ 	github.com/hashicorp/yamux v0.1.2 // indirect
+ 	github.com/k0kubun/go-ansi v0.0.0-20180517002512-3bf9e2903213 // indirect
+-	github.com/klauspost/compress v1.18.5 // indirect
++	github.com/klauspost/compress v1.20.2 // indirect
+ 	github.com/klauspost/pgzip v1.2.6 // indirect
+ 	github.com/kylelemons/godebug v1.1.0 // indirect
+ 	github.com/lithammer/dedent v1.1.0 // indirect
+@@ -283,15 +283,15 @@ require (
+ 	go.opentelemetry.io/proto/otlp v1.10.0 // indirect
+ 	go.uber.org/multierr v1.11.0 // indirect
+ 	go.uber.org/zap v1.27.1
+-	golang.org/x/crypto v0.57.0 // indirect
++	golang.org/x/crypto v0.58.0 // indirect
+ 	golang.org/x/exp v0.0.0-20260908205506-85c1c2202aba
+-	golang.org/x/net v0.59.0 // indirect
++	golang.org/x/net v0.62.0 // indirect
+ 	golang.org/x/oauth2 v0.36.0
+-	golang.org/x/sys v0.48.0 // indirect
+-	golang.org/x/term v0.46.0 // indirect
+-	golang.org/x/text v0.42.0 // indirect
++	golang.org/x/sys v0.49.0 // indirect
++	golang.org/x/term v0.47.0 // indirect
++	golang.org/x/text v0.43.0 // indirect
+ 	golang.org/x/time v0.15.0 // indirect
+-	golang.org/x/tools v0.50.0 // indirect
++	golang.org/x/tools v0.51.0 // indirect
+ 	gomodules.xyz/jsonpatch/v2 v2.4.0 // indirect
+ 	gopkg.in/inf.v0 v0.9.1 // indirect
+ 	gopkg.in/natefinch/lumberjack.v2 v2.2.1 // indirect
+```
+
+**File**: `go.sum` (modified, +18/-18)
+```diff
+@@ -187,8 +187,8 @@ github.com/gkampitakis/go-snaps v0.5.15 h1:amyJrvM1D33cPHwVrjo9jQxX8g/7E2wYdZ+01
+ github.com/gkampitakis/go-snaps v0.5.15/go.mod h1:HNpx/9GoKisdhw9AFOBT1N7DBs9DiHo/hGheFGBZ+mc=
+ github.com/go-errors/errors v1.4.2 h1:J6MZopCL4uSllY1OfXM374weqZFFItUbrImctkmUxIA=
+ github.com/go-errors/errors v1.4.2/go.mod h1:sIVyrIiJhuEF+Pj9Ebtd6P/rEYROXFi3BopGUQ5a5Og=
+-github.com/go-jose/go-jose/v4 v4.1.4 h1:moDMcTHmvE6Groj34emNPLs/qtYXRVcd6S7NHbHz3kA=
+-github.com/go-jose/go-jose/v4 v4.1.4/go.mod h1:x4oUasVrzR7071A4TnHLGSPpNOm2a21K9Kf04k1rs08=
++github.com/go-jose/go-jose/v4 v4.1.6 h1:sNRkftxFJxwsILiQukqp5z83QBSmntVwmgRY7AqBDO4=
++github.com/go-jose/go-jose/v4 v4.1.6/go.mod h1:x4oUasVrzR7071A4TnHLGSPpNOm2a21K9Kf04k1rs08=
+ github.com/go-logr/logr v1.2.2/go.mod h1:jdQByPbusPIv2/zmleS9BjJVeZ6kBagPoEUsqbVz/1A=
+ github.com/go-logr/logr v1.4.4 h1:tG4xh9yMsRCAiodLVTxyrkzSZ9+o0L1Kg/+cPVcbP/8=
+ github.com/go-logr/logr v1.4.4/go.mod h1:9T104GzyrTigFIr8wt5mBrctHMim0Nb2HLGrmQ40KvY=
+@@ -326,8 +326,8 @@ github.com/keybase/go-keychain v0.0.1 h1:way+bWYa6lDppZoZcgMbYsvC7GxljxrskdNInRt
+ github.com/keybase/go-keychain v0.0.1/go.mod h1:PdEILRW3i9D8JcdM+FmY6RwkHGnhHxXwkPPMeUgOK1k=
+ github.com/kisielk/errcheck v1.5.0/go.mod h1:pFxgyoBC7bSaBwPgfKdkLd5X25qrDl4LWUI2bnpBCr8=
+ github.com/kisielk/gotool v1.0.0/go.mod h1:XhKaO+MFFWcvkIS/tQcRk01m1F5IRFswLeQ+oQHNcck=
+-github.com/klauspost/compress v1.18.5 h1:/h1gH5Ce+VWNLSWqPzOVn6XBO+vJbCNGvjoaGBFW2IE=
+-github.com/klauspost/compress v1.18.5/go.mod h1:cwPg85FWrGar70rWktvGQj8/hthj3wpl0PGDogxkrSQ=
++github.com/klauspost/compress v1.20.2 h1:v5tiZvm1KGLyg5d5oXdXe3lsSPrbEUiKoXGia//I7Qo=
++github.com/klauspost/compress v1.20.2/go.mod h1:LUdAzn7YLVvxLpc7y3V1m40wESHTgc1422pwwBSKYuI=
+ github.com/klauspost/pgzip v1.2.6 h1:8RXeL5crjEUFnR2/Sn6GJNWtSQ3Dk8pq4CL3jvdDyjU=
+ github.com/klauspost/pgzip v1.2.6/go.mod h1:Ch1tH69qFZu15pkjo5kYi6mth2Zzwzt50oCQKQE9RUs=
+ github.com/konsorten/go-windows-terminal-sequences v1.0.1/go.mod h1:T0+1ngSBFLxvqU3pZ+m/2kptfBszLMUkC4ZK/EgS/cQ=
+@@ -605,8 +605,8 @@ golang.org/x/crypto v0.13.0/go.mod h1:y6Z2r+Rw4iayiXXAIxJIDAJ1zMW4yaTpebo8fPOliY
+ golang.org/x/crypto v0.19.0/go.mod h1:Iy9bg/ha4yyC70EfRS8jz+B6ybOBKMaSxLj6P6oBDfU=
+ golang.org/x/crypto v0.23.0/go.mod h1:CKFgDieR+mRhux2Lsu27y0fO304Db0wZe70UKqHu0v8=
+ golang.org/x/crypto v0.30.0/go.mod h1:kDsLvtWBEx7MV9tJOj9bnXsPbxwJQ6csT/x4KIN4Ssk=
+-golang.org/x/crypto v0.57.0 h1:3ZVCjf8Ggz7zneR/EHRVx68Ctf+2pmIMP2UFhh9cC6M=
+-golang.org/x/crypto v0.57.0/go.mod h1:Fdz0i5U6CoizGwLda9DttjSk6qlZo25zYNtR+ycvuZA=
++golang.org/x/crypto v0.58.0 h1:COkYLr4k7nDI4r6QtMML2AfzeIswWHAJthLS6K/M/54=
++golang.org/x/crypto v0.58.0/go.mod h1:Xh+kl5A+M0gMiWDytH2Hhr5Z7WbNCpv/eB/EFgfSk+w=
+ golang.org/x/exp v0.0.0-20260908205506-85c1c2202aba h1:Ck8QetSgk912qxWLMCKxd0in+aiyBQyDSMae6e/xmpU=
+ golang.org/x/exp v0.0.0-20260908205506-85c1c2202aba/go.mod h1:50RgIsmK7OwqzTTeqcSXQW8SswW0o8fRcDxmqGluJ8E=
+ golang.org/x/mod v0.2.0/go.mod h1:s0Qsj1ACt9ePp/hMypM3fl4fZqREWJwdYDEqhRiZZUA=
+@@ -634,8 +634,8 @@ golang.org/x/net v0.10.0/go.mod h1:0qNGK6F8kojg2nk9dLZ2mShWaEBan6FAoqfSigmmuDg=
+ golang.org/x/net v0.15.0/go.mod h1:idbUs1IY1+zTqbi8yxTbhexhEEk5ur9LInksu6HrEpk=
+ golang.org/x/net v0.21.0/go.mod h1:bIjVDfnllIU7BJ2DNgfnXvpSvtn8VRwhlsaeUTyUS44=
+ golang.org/x/net v0.25.0/go.mod h1:JkAGAh7GEvH74S6FOH42FLoXpXbE/aqXSrIQjXgsiwM=
+-golang.org/x/net v0.59.0 h1:5zfYln+w5XCxwrnMMJPufRgNoXEaGxl0wo5GqPXyues=
+-golang.org/x/net v0.59.0/go.mod h1:2DA/G1UfVbCpQPeWTmMPGY7Cs2PkBkwu743bVX5PIVg=
++golang.org/x/net v0.62.0 h1:18ELalfM5+XNRwzM2nYqXsZQ9ByS1uhj2O/U7+5jqRY=
++golang.org/x/net v0.62.0/go.mod h1:WgDCOTH8iwtB66T4/GfI94AHo/hhdb7Hah9NDseQfiI=
+ golang.org/x/oauth2 v0.0.0-20180821212333-d2e6202438be/go.mod h1:N/0e6XlmueqKjAGxoOufVs8QHGRruUQn6yWY3a++T0U=
+ golang.org/x/oauth2 v0.0.0-20181106182150-f42d05182288/go.mod h1:N/0e6XlmueqKjAGxoOufVs8QHGRruUQn6yWY3a++T0U=
+ golang.org/x/oauth2 v0.36.0 h1:peZ/1z27fi9hUOFCAZaHyrpWG5lwe0RJEEEeH0ThlIs=
+@@ -650,8 +650,8 @@ golang.org/x/sync v0.3.0/go.mod h1:FU7BRWz2tNW+3quACPkgCx/L+uEAv1htQ0V83Z9Rj+Y=
+ golang.org/x/sync v0.6.0/go.mod h1:Czt+wKu1gCyEFDUtn0jG5QVvpJ6rzVqr5aXyt9drQfk=
+ golang.org/x/sync v0.7.0/go.mod h1:Czt+wKu1gCyEFDUtn0jG5QVvpJ6rzVqr5aXyt9drQfk=
+ golang.org/x/sync v0.10.0/go.mod h1:Czt+wKu1gCyEFDUtn0jG5QVvpJ6rzVqr5aXyt9drQfk=
+-golang.org/x/sync v0.23.0 h1:KameEIfc1IkluZyXWLn39Wd4tURc6GbCiISGiZm2bQk=
+-golang.org/x/sync v0.23.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
++golang.org/x/sync v0.24.0 h1:iqiDrGoDgyuvAKrhLQthUEzU/R378N78gXbBjxed7oA=
++golang.org/x/sync v0.24.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
+ golang.org/x/sys v0.0.0-20180909124046-d0be0721c37e/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
+ golang.org/x/sys v0.0.0-20190215142949-d0b11bdaac8a/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
+ golang.org/x/sys v0.0.0-20190222072716-a9d3bda3a223/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
+@@ -680,8 +680,8 @@ golang.org/x/sys v0.12.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdG
+```
+
+**File**: `vendor/github.com/go-jose/go-jose/v4/asymmetric.go` (modified, +18/-8)
+```diff
+@@ -21,6 +21,7 @@ import (
+ 	"crypto/aes"
+ 	"crypto/ecdsa"
+ 	"crypto/ed25519"
++	"crypto/elliptic"
+ 	"crypto/rand"
+ 	"crypto/rsa"
+ 	"crypto/sha1"
+@@ -195,11 +196,11 @@ func (ctx rsaEncrypterVerifier) encryptKey(cek []byte, alg KeyAlgorithm) (recipi
+ func (ctx rsaEncrypterVerifier) encrypt(cek []byte, alg KeyAlgorithm) ([]byte, error) {
+ 	switch alg {
+ 	case RSA1_5:
+-		return rsa.EncryptPKCS1v15(RandReader, ctx.publicKey, cek)
++		return rsa.EncryptPKCS1v15(randReader, ctx.publicKey, cek)
+ 	case RSA_OAEP:
+-		return rsa.EncryptOAEP(sha1.New(), RandReader, ctx.publicKey, cek, []byte{})
++		return rsa.EncryptOAEP(sha1.New(), randReader, ctx.publicKey, cek, []byte{})
+ 	case RSA_OAEP_256:
+-		return rsa.EncryptOAEP(sha256.New(), RandReader, ctx.publicKey, cek, []byte{})
++		return rsa.EncryptOAEP(sha256.New(), randReader, ctx.publicKey, cek, []byte{})
+ 	}
+ 
+ 	return nil, ErrUnsupportedAlgorithm
+@@ -288,9 +289,9 @@ func (ctx rsaDecrypterSigner) signPayload(payload []byte, alg SignatureAlgorithm
+ 		// TODO(https://github.com/go-jose/go-jose/issues/40): As of go1.20, the
+ 		// random parameter is legacy and ignored, and it can be nil.
+ 		// https://cs.opensource.google/go/go/+/refs/tags/go1.20:src/crypto/rsa/pkcs1v15.go;l=263;bpv=0;bpt=1
+-		out, err = rsa.SignPKCS1v15(RandReader, ctx.privateKey, hash, hashed)
++		out, err = rsa.SignPKCS1v15(randReader, ctx.privateKey, hash, hashed)
+ 	case PS256, PS384, PS512:
+-		out, err = rsa.SignPSS(RandReader, ctx.privateKey, hash, hashed, &rsa.PSSOptions{
++		out, err = rsa.SignPSS(randReader, ctx.privateKey, hash, hashed, &rsa.PSSOptions{
+ 			SaltLength: rsa.PSSSaltLengthEqualsHash,
+ 		})
+ 	}
+@@ -391,7 +392,7 @@ func (ctx ecKeyGenerator) keySize() int {
+ 
+ // Get a content encryption key for ECDH-ES
+ func (ctx ecKeyGenerator) genKey() ([]byte, rawHeader, error) {
+-	priv, err := ecdsa.GenerateKey(ctx.publicKey.Curve, RandReader)
++	priv, err := ecdsa.GenerateKey(ctx.publicKey.Curve, randReader)
+ 	if err != nil {
+ 		return nil, rawHeader{}, err
+ 	}
+@@ -483,7 +484,7 @@ func (ctx edDecrypterSigner) signPayload(payload []byte, alg SignatureAlgorithm)
+ 		return Signature{}, ErrUnsupportedAlgorithm
+ 	}
+ 
+-	sig, err := ctx.privateKey.Sign(RandReader, payload, crypto.Hash(0))
++	sig, err := ctx.privateKey.Sign(randReader, payload, crypto.Hash(0))
+ 	if err != nil {
+ 		return Signature{}, err
+ 	}
+@@ -533,7 +534,7 @@ func (ctx ecDecrypterSigner) signPayload(payload []byte, alg SignatureAlgorithm)
+ 	_, _ = hasher.Write(payload)
+ 	hashed := hasher.Sum(nil)
+ 
+-	r, s, err := ecdsa.Sign(RandReader, ctx.privateKey, hashed)
++	r, s, err := ecdsa.Sign(randReader, ctx.privateKey, hashed)
+ 	if err != nil {
+ 		return Signature{}, err
+ 	}
+@@ -571,12 +572,21 @@ func (ctx ecEncrypterVerifier) verifyPayload(payload []byte, signature []byte, a
+ 	case ES256:
+ 		keySize = 32
+ 		hash = crypto.SHA256
++		if ctx.publicKey.Curve != elliptic.P256() {
++			return fmt.Errorf("go-jose/go-jose: signature uses different algorithm than public key")
++		}
+ 	case ES384:
+ 		keySize = 48
+ 		hash = crypto.SHA384
++		if ctx.publicKey.Curve != elliptic.P384() {
++			return fmt.Errorf("go-jose/go-jose: signature uses different algorithm than public key")
++		}
+ 	case ES512:
+ 		keySize = 66
+ 		hash = crypto.SHA512
++		if ctx.publicKey.Curve != elliptic.P521() {
++			return fmt.Errorf("go-jose/go-jose: signature uses different algorithm than public key")
++		}
+ 	default:
+ 		return ErrUnsupportedAlgorithm
+ 	}
+```
+
+**File**: `vendor/github.com/go-jose/go-jose/v4/cipher/cbc_hmac.go` (modified, +5/-1)
+```diff
+@@ -51,6 +51,8 @@ func NewCBCHMAC(key []byte, newBlockCipher func([]byte) (cipher.Block, error)) (
+ 		hash = sha512.New384
+ 	case 32:
+ 		hash = sha512.New
++	default:
++		return nil, errors.New("go-jose/go-jose: invalid key size for CBC-HMAC")
+ 	}
+ 
+ 	return &cbcAEAD{
+@@ -176,7 +178,9 @@ func padBuffer(buffer []byte, blockSize int) []byte {
+ 
+ // Remove padding
+ func unpadBuffer(buffer []byte, blockSize int) ([]byte, error) {
+-	if len(buffer)%blockSize != 0 {
++	// A padded buffer can't be empty because an empty input is padded with
++	// `blockSize` bytes, resulting in a non-empty ciphertext.
++	if len(buffer) == 0 || len(buffer)%blockSize != 0 {
+ 		return nil, errors.New("go-jose/go-jose: invalid padding")
+ 	}
+ 
+```
+
+**File**: `vendor/github.com/go-jose/go-jose/v4/crypter.go` (modified, +71/-30)
+```diff
+@@ -258,6 +258,10 @@ func (ctx *genericEncrypter) addRecipient(recipient Recipient) (err error) {
+ 	}
+ 
+ 	recipientInfo, err = makeJWERecipient(recipient.Algorithm, recipient.Key)
++	if err != nil {
++		return err
++	}
++
+ 	if recipient.KeyID != "" {
+ 		recipientInfo.keyID = recipient.KeyID
+ 	}
+@@ -270,10 +274,8 @@ func (ctx *genericEncrypter) addRecipient(recipient Recipient) (err error) {
+ 		}
+ 	}
+ 
+-	if err == nil {
+-		ctx.recipients = append(ctx.recipients, recipientInfo)
+-	}
+-	return err
++	ctx.recipients = append(ctx.recipients, recipientInfo)
++	return nil
+ }
+ 
+ func makeJWERecipient(alg KeyAlgorithm, encryptionKey interface{}) (recipientKeyInfo, error) {
+@@ -426,6 +428,13 @@ func (ctx *genericEncrypter) Options() EncrypterOptions {
+ 	}
+ }
+ 
++func validateContentEncryptionKeySize(cek []byte, cipher contentCipher) error {
++	if len(cek) != cipher.keySize() {
++		return ErrInvalidKeySize
++	}
++	return nil
++}
++
+ // Decrypt and validate the object and return the plaintext. This
+ // function does not support multi-recipient. If you desire multi-recipient
+ // decryption use DecryptMulti instead.
+@@ -490,21 +499,23 @@ func (obj JSONWebEncryption) Decrypt(decryptionKey interface{}) ([]byte, error)
+ 	recipientHeaders := obj.mergedHeaders(&recipient)
+ 
+ 	cek, err := decrypter.decryptKey(recipientHeaders, &recipient, generator)
+-	if err == nil {
+-		// Found a valid CEK -- let's try to decrypt.
+-		plaintext, err = cipher.decrypt(cek, authData, parts)
++	if err != nil {
++		return nil, ErrCryptoFailure
++	}
++	err = validateContentEncryptionKeySize(cek, cipher)
++	if err != nil {
++		return nil, ErrCryptoFailure
+ 	}
+ 
+-	if plaintext == nil {
++	// Found a valid CEK -- let's try to decrypt.
++	plaintext, err = cipher.decrypt(cek, authData, parts)
++	if err != nil {
+ 		return nil, ErrCryptoFailure
+ 	}
+ 
+-	// The "zip" header parameter may only be present in the protected header.
+-	if comp := obj.protected.getCompression(); comp != "" {
+-		plaintext, err = decompress(comp, plaintext)
+-		if err != nil {
+-			return nil, fmt.Errorf("go-jose/go-jose: failed to decompress plaintext: %v", err)
+-		}
++	plaintext, err = obj.decompress(plaintext)
++	if err != nil {
++		return nil, err
+ 	}
+ 
+ 	return plaintext, nil
+@@ -559,31 +570,42 @@ func (obj JSONWebEncryption) DecryptMulti(decryptionKey interface{}) (int, Heade
+ 	var plaintext []byte
+ 	var headers rawHeader
+ 
++	if len(obj.recipients) == 0 {
++		return -1, Header{}, nil, errors.New("go-jose/go-jose: no recipients")
++	}
++
++	// Loop sets `err` in the function scope; don't shadow it.
+ 	for i, recipient := range obj.recipients {
+ 		recipientHeaders := obj.mergedHeaders(&recipient)
+ 
+-		cek, err := decrypter.decryptKey(recipientHeaders, &recipient, generator)
+-		if err == nil {
+-			// Found a valid CEK -- let's try to decrypt.
+-			plaintext, err = cipher.decrypt(cek, authData, parts)
+-			if err == nil {
+-				index = i
+-				headers = recipientHeaders
+-				break
+-			}
++		var cek []byte
++		cek, err = decrypter.decryptKey(recipientHeaders, &recipient, generator)
++		if err != nil {
++			continue
+ 		}
++		err = validateContentEncryptionKeySize(cek, cipher)
++		if err != nil {
++			continue
++		}
++
++		// Found a valid CEK -- let's try to decrypt.
++		plaintext, err = cipher.decrypt(cek, authData, parts)
++		if err != nil {
++			continue
++		}
++
++		index = i
++		headers = recipientHeaders
++		break
+ 	}
+ 
+-	if plaintext == nil {
++	if err != nil {
+ 		return -1, Header{}, nil, ErrCryptoFailure
+ 	}
+ 
+-	// The "zip" header parameter may only be present in the protected header.
+-	if comp := obj.protected.getCompression(); comp != "" {
+-		plaintext, err = decompress(comp, plaintext)
+-		if err != nil {
+-			return -1, Header{}, nil, fmt.Errorf("go-jose/go-jose: failed to decompress plaintext: %v", err)
+-		}
++	plaintext, err = obj.decompress(plaintext)
++	if err != nil {
++		return -1, Header{}, nil, err
+ 	}
+ 
+ 	sanitized, err := headers.sanitized()
+@@ -593,3 +615,22 @@ func (obj JSONWebEncryption) DecryptMulti(decryptionKey interface{}) (int, Heade
+ 
+ 	return index, sanitized, plaintext, err
+ }
++
++// decompress decompresses plaintext using the protected "zip" header, if present.
++// It returns plaintext unchanged when there is no protected header or "zip" value.
++func (obj JSONWebEncryption) decompress(plaintext []byte) ([]byte, error) {
++	if obj.protected == nil {
++		return plaintext, nil
++	}
++
++	comp := obj.protected.getCompression()
++	if comp == "" {
++		return plaintext, nil
++	}
++
++	plaintext, err := decompress(comp, plaintext)
++	if err != nil {
++		return nil, fmt.Errorf("go-jose/go-jose: failed to decompress plaintext: %v", err)
++	}
++	return plaintext, nil
++}
+```
+
+**File**: `vendor/github.com/go-jose/go-jose/v4/json/scanner.go` (modified, +13/-6)
+```diff
+@@ -140,6 +140,10 @@ const (
+ 	parseArrayValue         // parsing array value
+ )
+ 
++// This limits the max nesting depth to prevent stack overflow.
++// This is permitted by https://tools.ietf.org/html/rfc7159#section-9
++const maxNestingDepth = 10000
++
+ // reset prepares the scanner for use.
+ // It must be called before calling s.step.
+ func (s *scanner) reset() {
+@@ -170,8 +174,13 @@ func (s *scanner) eof() int {
+ }
+ 
+ // pushParseState pushes a new parse state p onto the parse stack.
+-func (s *scanner) pushParseState(p int) {
+-	s.parseState = append(s.parseState, p)
++// an error state is returned if maxNestingDepth was exceeded, otherwise successState is returned.
++func (s *scanner) pushParseState(c byte, newParseState int, successState int) int {
++	s.parseState = append(s.parseState, newParseState)
++	if len(s.parseState) <= maxNestingDepth {
++		return successState
++	}
++	return s.error(c, "exceeded max depth")
+ }
+ 
+ // popParseState pops a parse state (already obtained) off the stack
+@@ -211,12 +220,10 @@ func stateBeginValue(s *scanner, c byte) int {
+ 	switch c {
+ 	case '{':
+ 		s.step = stateBeginStringOrEmpty
+-		s.pushParseState(parseObjectKey)
+-		return scanBeginObject
++		return s.pushParseState(c, parseObjectKey, scanBeginObject)
+ 	case '[':
+ 		s.step = stateBeginValueOrEmpty
+-		s.pushParseState(parseArrayValue)
+-		return scanBeginArray
++		return s.pushParseState(c, parseArrayValue, scanBeginArray)
+ 	case '"':
+ 		s.step = stateInString
+ 		return scanBeginLiteral
+```
+
+**File**: `vendor/github.com/go-jose/go-jose/v4/jwe.go` (modified, +17/-9)
+```diff
+@@ -153,6 +153,10 @@ func ParseEncryptedJSON(
+ 	keyEncryptionAlgorithms []KeyAlgorithm,
+ 	contentEncryption []ContentEncryption,
+ ) (*JSONWebEncryption, error) {
++	if len(input) == 0 {
++		return nil, errEmptyInput
++	}
++
+ 	var parsed rawJSONWebEncryption
+ 	err := json.Unmarshal([]byte(input), &parsed)
+ 	if err != nil {
+@@ -198,15 +202,6 @@ func (parsed *rawJSONWebEncryption) sanitized(
+ 		}
+ 	}
+ 
+-	// Note: this must be called _after_ we parse the protected header,
+-	// otherwise fields from the protected header will not get picked up.
+-	var err error
+-	mergedHeaders := obj.mergedHeaders(nil)
+-	obj.Header, err = mergedHeaders.sanitized()
+-	if err != nil {
+-		return nil, fmt.Errorf("go-jose/go-jose: cannot sanitize merged headers: %v (%v)", err, mergedHeaders)
+-	}
+-
+ 	if len(parsed.Recipients) == 0 {
+ 		obj.recipients = []recipientInfo{
+ 			{
+@@ -260,6 +255,15 @@ func (parsed *rawJSONWebEncryption) sanitized(
+ 		}
+ 	}
+ 
++	// Note: this must be called _after_ we parse the protected header,
++	// otherwise fields from the protected header will not get picked up.
++	mergedHeaders := obj.mergedHeaders(nil)
++	var err error
++	obj.Header, err = mergedHeaders.sanitized()
++	if err != nil {
++		return nil, fmt.Errorf("go-jose/go-jose: cannot sanitize merged headers: %w", err)
++	}
++
+ 	obj.iv = parsed.Iv.bytes()
+ 	obj.ciphertext = parsed.Ciphertext.bytes()
+ 	obj.tag = parsed.Tag.bytes()
+@@ -291,6 +295,10 @@ func ParseEncryptedCompact(
+ 	var parts [5]string
+ 	var ok bool
+ 
++	if len(input) == 0 {
++		return nil, errEmptyInput
++	}
++
+ 	for i := range 4 {
+ 		parts[i], input, ok = strings.Cut(input, ".")
+ 		if !ok {
+```
+
+**File**: `vendor/github.com/go-jose/go-jose/v4/jwk.go` (modified, +217/-47)
+```diff
+@@ -107,7 +107,7 @@ func (k JSONWebKey) MarshalJSON() ([]byte, error) {
+ 
+ 	switch key := k.Key.(type) {
+ 	case ed25519.PublicKey:
+-		raw = fromEdPublicKey(key)
++		raw, err = fromEdPublicKey(key)
+ 	case *ecdsa.PublicKey:
+ 		raw, err = fromEcPublicKey(key)
+ 	case *rsa.PublicKey:
+@@ -177,13 +177,29 @@ func (k JSONWebKey) MarshalJSON() ([]byte, error) {
+ // UnmarshalJSON reads a key from its JSON representation.
+ //
+ // Returns ErrUnsupportedKeyType for unrecognized or unsupported "kty" header values.
+-func (k *JSONWebKey) UnmarshalJSON(data []byte) (err error) {
++//
++// Directly unmarshaling a JWK is not safe for untrusted input.
++func (k *JSONWebKey) UnmarshalJSON(data []byte) error {
++	return k.unmarshalJSON(data, true)
++}
++
++// unmarshalJSON reads a key from its JSON representation.
++//
++// If allowPrivate is false, a JWK with private key material is rejected and the
++// function is safe for use against untrusted input.
++func (k *JSONWebKey) unmarshalJSON(data []byte, allowPrivate bool) (err error) {
+ 	var raw rawJSONWebKey
+ 	err = json.Unmarshal(data, &raw)
+ 	if err != nil {
+ 		return err
+ 	}
+ 
++	if !allowPrivate &&
++		(raw.K != nil || raw.D != nil || raw.P != nil || raw.Q != nil ||
++			raw.Dp != nil || raw.Dq != nil || raw.Qi != nil) {
++		return errors.New("go-jose/go-jose: JWK contains private parameters")
++	}
++
+ 	certs, err := parseCertificateChain(raw.X5c)
+ 	if err != nil {
+ 		return fmt.Errorf("go-jose/go-jose: failed to unmarshal x5c field: %s", err)
+@@ -207,47 +223,58 @@ func (k *JSONWebKey) UnmarshalJSON(data []byte) (err error) {
+ 	case "EC":
+ 		if raw.D != nil {
+ 			key, err = raw.ecPrivateKey()
+-			if err == nil {
+-				keyPub = key.(*ecdsa.PrivateKey).Public()
++			if err != nil {
++				return err
+ 			}
++			keyPub = key.(*ecdsa.PrivateKey).Public()
+ 		} else {
+ 			key, err = raw.ecPublicKey()
++			if err != nil {
++				return err
++			}
+ 			keyPub = key
+ 		}
+ 	case "RSA":
+ 		if raw.D != nil {
+ 			key, err = raw.rsaPrivateKey()
+-			if err == nil {
+-				keyPub = key.(*rsa.PrivateKey).Public()
++			if err != nil {
++				return err
+ 			}
++			keyPub = key.(*rsa.PrivateKey).Public()
+ 		} else {
+ 			key, err = raw.rsaPublicKey()
++			if err != nil {
++				return err
++			}
+ 			keyPub = key
+ 		}
+ 	case "oct":
+ 		if certPub != nil {
+ 			return errors.New("go-jose/go-jose: invalid JWK, found 'oct' (symmetric) key with cert chain")
+ 		}
+ 		key, err = raw.symmetricKey()
++		if err != nil {
++			return err
++		}
+ 	case "OKP":
+ 		if raw.Crv == "Ed25519" {
+ 			if raw.D != nil {
+ 				key, err = raw.edPrivateKey()
+-				if err == nil {
+-					keyPub = key.(ed25519.PrivateKey).Public()
++				if err != nil {
++					return err
  				}
- 			case corev1.NodeHostName:
- 				nodeHostname = address.Address
-+			default:
-+				// external IPs and DNS names are not written to NodeHosts
++				keyPub = key.(ed25519.PrivateKey).Public()
+ 			} else {
+ 				key, err = raw.edPublicKey()
++				if err != nil {
++					return err
++				}
+ 				keyPub = key
  			}
  		}
- 		for _, nodeAddress := range nodeAddresses {
+ 	case "":
+ 		// kty MUST be present
+-		err = fmt.Errorf("go-jose/go-jose: missing json web key type")
+-	}
+-
+-	if err != nil {
+-		return
++		return fmt.Errorf("go-jose/go-jose: missing json web key type")
+ 	}
+ 
+ 	if key == nil {
+@@ -388,11 +415,12 @@ func rsaThumbprintInput(n *big.Int, e int) (string, error) {
+ 
+ func edThumbprintInput(ed ed25519.PublicKey) (string, error) {
+ 	crv := "Ed25519"
+-	if len(ed) > 32 {
+-		return "", errors.New("go-jose/go-jose: invalid elliptic key (too large)")
++	err := validateEd25519PublicKey(ed)
++	if err != nil {
++		return "", err
+ 	}
+ 	return fmt.Sprintf(edThumbprintTemplate, crv,
+-		newFixedSizeBuffer(ed, 32).base64()), nil
++		newFixedSizeBuffer(ed, ed25519.PublicKeySize).base64()), nil
+ }
+ 
+ // Thumbprint computes the JWK Thumbprint of a key using the
+@@ -493,23 +521,39 @@ func (k *JSONWebKey) Valid() bool {
+ 	return true
+ }
+ 
++// MaxRSAModulusBits is the largest RSA modulus size, in bits, that will be
++// accepted when parsing a JWK. Applications that need larger keys can raise
++// this limit.
++//
++// If modifying MaxRSAModulusBits, do it before any parsing occurs.
++var MaxRSAModulusBits = 4096
++
+ func (key rawJSONWebKey) rsaPublicKey() (*rsa.PublicKey, error) {
+ 	if key.N == nil || key.E == nil {
+ 		return nil, fmt.Errorf("go-jose/go-jose: invalid RSA key, missing n/e values")
+ 	}
+ 
++	n := key.N.bigInt()
++	if n.BitLen() > MaxRSAModulusBits {
++		return nil, fmt.Errorf("go-jose/go-jose: invalid RSA key, modulus too large")
++	}
++
+ 	return &rsa.PublicKey{
+-		N: key.N.bigInt(),
++		N: n,
+ 		E: key.E.toInt(),
+ 	}, nil
+ }
+ 
+-func fromEdPublicKey(pub ed25519.PublicKey) *rawJSONWebKey {
++func fromEdPublicKey(pub ed25519.PublicKey) (*rawJSONWebKey, error) {
++	err := validateEd25519PublicKey(pub)
++	if err != nil {
++		return nil, err
++	}
+ 	return &rawJSONWebKey{
+ 		Kty: "OKP",
+ 		Crv: "Ed25519",
+ 		X:   newBuffer(pub),
+-	}
++	}, nil
+ }
+ 
+ func fromRsaPublicKey(pub *rsa.PublicKey) *rawJSONWebKey {
+@@ -604,21 +648,36 @@ func (key rawJSONWebKey) edPrivateKey() (ed25519.PrivateKey, error) {
+ 		return nil, fmt.Errorf("go-jose/go-jose: invalid Ed25519 private key, missing %s value(s)", strings.Join(missing, ", "))
+ 	}
+ 
 ```
 
 ---
 
-### Incident Patch 2: `bdc44d0f` (2026-10-31)
-**Commit Message**: fix(coredns): write a nodehosts line for every node internal ip
+### Incident Patch 2: `b8bbb98a` (2026-11-03)
+**Commit Message**: fix(servicesync): avoid invalid load balancer status sync (#4155)
 
-compileNodeHosts kept only the last InternalIP of each node, so a node
-registered with a dual-stack --node-ip mapped its hostname to one address
-family only and the CoreDNS hosts plugin answered A (or AAAA) queries for it
-with an empty NOERROR. Write one hosts line per non-empty InternalIP and skip
-nodes that have no InternalIP yet.
+* fix(servicesync): avoid invalid load balancer status sync
 
-Closes ENGCP-1880
+* fix(servicesync): suppress expected legacy endpoints deprecation in test
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Monorepo-Commit: 216dc32fd0476b1a16bebab2d199cc4c4256c4a8
+* test(servicesync): avoid deprecated endpoint assertion types
 
-**File**: `pkg/controllers/coredns/nodehosts.go` (modified, +12/-5)
+* test(servicesync): use native Go checks for load balancer regression
+
+---------
+
+Co-authored-by: Shiqi <[REDACTED_EMAIL]>
+Co-authored-by: Shiqi Yang <[REDACTED_EMAIL]>
+
+**File**: `pkg/controllers/servicesync/servicesync.go` (modified, +3/-1)
 ```diff
-@@ -76,16 +76,23 @@ func (r *NodeHostsReconciler) compileNodeHosts(ctx context.Context) (string, err
- 		return "", err
+@@ -237,7 +237,9 @@ func (e *ServiceSyncer) syncServiceAndEndpoints(ctx context.Context, fromService
  	}
- 	for _, node := range nodes.Items {
--		var nodeAddress string
-+		// a dual-stack node reports one InternalIP per IP family; write a hosts
-+		// line for each so both A and AAAA lookups of the node hostname resolve
-+		var nodeAddresses []string
- 		nodeHostname := node.Name
- 		for _, address := range node.Status.Addresses {
--			if address.Type == corev1.NodeInternalIP {
--				nodeAddress = address.Address
--			} else if address.Type == corev1.NodeHostName {
-+			switch address.Type {
-+			case corev1.NodeInternalIP:
-+				if address.Address != "" {
-+					nodeAddresses = append(nodeAddresses, address.Address)
-+				}
-+			case corev1.NodeHostName:
- 				nodeHostname = address.Address
- 			}
- 		}
--		nodehosts = append(nodehosts, fmt.Sprintf("%s %s", nodeAddress, nodeHostname))
-+		for _, nodeAddress := range nodeAddresses {
-+			nodehosts = append(nodehosts, fmt.Sprintf("%s %s", nodeAddress, nodeHostname))
-+		}
- 	}
- 	sort.Strings(nodehosts)
- 	return strings.Join(nodehosts, "\n"), nil
+ 
+ 	// sync the loadbalancer status
+-	if fromService.Spec.Type == corev1.ServiceTypeLoadBalancer && !apiequality.Semantic.DeepEqual(fromService.Status.LoadBalancer, toService.Status.LoadBalancer) {
++	if fromService.Spec.Type == corev1.ServiceTypeLoadBalancer &&
++		toService.Spec.Type == corev1.ServiceTypeLoadBalancer &&
++		!apiequality.Semantic.DeepEqual(fromService.Status.LoadBalancer, toService.Status.LoadBalancer) {
+ 		e.Log.Infof("Update target service %s/%s because the loadbalancer status changed", to.Namespace, to.Name)
+ 		toService.Status.LoadBalancer = fromService.Status.LoadBalancer
+ 		return ctrl.Result{}, e.To.GetClient().Status().Update(ctx, toService)
 ```
 
-**File**: `pkg/controllers/coredns/nodehosts_test.go` (added, +93/-0)
+**File**: `pkg/controllers/servicesync/servicesync_test.go` (modified, +116/-0)
 ```diff
-@@ -0,0 +1,93 @@
-+package coredns
+@@ -1,6 +1,7 @@
+ package servicesync
+ 
+ import (
++	"reflect"
+ 	"testing"
+ 
+ 	"github.com/loft-sh/vcluster/pkg/scheme"
+@@ -186,3 +187,118 @@ func TestFromHostReconcile(t *testing.T) {
+ 		})
+ 	}
+ }
++
++func TestFromHostReconcileLoadBalancerCreatesEndpoints(t *testing.T) {
++	name := "test-map-host-service-syncer"
++	hostService := &corev1.Service{
++		ObjectMeta: metav1.ObjectMeta{
++			Namespace: "host-namespace",
++			Name:      "host-service",
++		},
++		Spec: corev1.ServiceSpec{
++			Type:      corev1.ServiceTypeLoadBalancer,
++			ClusterIP: "10.0.0.1",
++			Ports: []corev1.ServicePort{
++				{
++					Name:     "http",
++					Port:     8080,
++					Protocol: corev1.ProtocolTCP,
++				},
++			},
++		},
++		Status: corev1.ServiceStatus{
++			LoadBalancer: corev1.LoadBalancerStatus{
++				Ingress: []corev1.LoadBalancerIngress{
++					{
++						IP: "10.0.0.2",
++					},
++				},
++			},
++		},
++	}
++	virtualService := &corev1.Service{
++		ObjectMeta: metav1.ObjectMeta{
++			Namespace: "virtual-namespace",
++			Name:      "virtual-service",
++			Labels: map[string]string{
++				translate.ControllerLabel: "vcluster",
++			},
++		},
++		Spec: corev1.ServiceSpec{
++			ClusterIP: corev1.ClusterIPNone,
++			Ports:     hostService.Spec.Ports,
++		},
++	}
++
++	pClient := testingutil.NewFakeClient(scheme.Scheme, hostService)
++	vClient := testingutil.NewFakeClient(scheme.Scheme, virtualService)
++	fakeConfig := testingutil.NewFakeConfig()
++	fakeContext := syncertesting.NewFakeRegisterContext(fakeConfig, pClient, vClient)
++	serviceSyncer := &ServiceSyncer{
++		Name:        name,
++		SyncContext: fakeContext.ToSyncContext(name),
++		SyncServices: map[string]types.NamespacedName{
++			"host-namespace/host-service": {
++				Namespace: "virtual-namespace",
++				Name:      "virtual-service",
++			},
++		},
++		CreateNamespace:       true,
++		CreateEndpoints:       true,
++		From:                  fakeContext.HostManager,
++		IsVirtualToHostSyncer: false,
++		To:                    fakeContext.VirtualManager,
++		Log:                   loghelper.New(name),
++	}
++
++	_, err := serviceSyncer.Reconcile(fakeContext, ctrl.Request{
++		NamespacedName: types.NamespacedName{
++			Namespace: hostService.Namespace,
++			Name:      hostService.Name,
++		},
++	})
++	if err != nil {
++		t.Fatalf("Reconcile() error = %v", err)
++	}
++
++	actualVirtualService := &corev1.Service{}
++	err = vClient.Get(fakeContext, types.NamespacedName{
++		Namespace: virtualService.Namespace,
++		Name:      virtualService.Name,
++	}, actualVirtualService)
++	if err != nil {
++		t.Fatalf("Get virtual Service: %v", err)
++	}
++	if got := actualVirtualService.Status.LoadBalancer.Ingress; len(got) != 0 {
++		t.Errorf("virtual Service load balancer ingress = %+v, want empty", got)
++	}
++
++	//nolint:staticcheck // SA1019: corev1.Endpoints is deprecated, but still required for compatibility
++	virtualEndpoints := &corev1.Endpoints{}
++	err = vClient.Get(fakeContext, types.NamespacedName{
++		Namespace: virtualService.Namespace,
++		Name:      virtualService.Name,
++	}, virtualEndpoints)
++	if err != nil {
++		t.Fatalf("Get virtual Endpoints: %v", err)
++	}
++	//nolint:staticcheck // SA1019: corev1.EndpointSubset is deprecated, but still required for compatibility
++	if want := []corev1.EndpointSubset{
++		{
++			Addresses: []corev1.EndpointAddress{
++				{
++					IP: hostService.Spec.ClusterIP,
++				},
++			},
++			Ports: []corev1.EndpointPort{
++				{
++					Name:     "http",
++					Port:     8080,
++					Protocol: corev1.ProtocolTCP,
++				},
++			},
++		},
++	}; !reflect.DeepEqual(virtualEndpoints.Subsets, want) {
++		t.Errorf("virtual Endpoints subsets = %#v, want %#v", virtualEndpoints.Subsets, want)
++	}
++}
+```
+
+---
+
+### Incident Patch 3: `71592e74` (2026-11-03)
+**Commit Message**: fix(chart): allow DNS egress to CoreDNS on vCluster Standalone (#2560)
+
+* fix(chart): allow DNS egress to CoreDNS on vCluster Standalone
+
+* test(e2e): check DNS egress to vcluster-kube-dns CoreDNS at runtime
+
+* test(e2e): keep the control plane DNS spec out of the pro lane
+
+Monorepo-Commit: bdf0c9401a2c0640889930e40da035d0eb0fb988
+
+**File**: `chart/templates/networkpolicy.yaml` (modified, +24/-9)
+```diff
+@@ -86,14 +86,19 @@ spec:
+     - Egress
+     - Ingress
+   egress:
+-    # Allow egress to host kube-dns.
++    # Allow egress to host kube-dns. CoreDNS deployed by vCluster, for example on
++    # vCluster Standalone, is labeled k8s-app=vcluster-kube-dns instead.
+     - to:
+         - namespaceSelector:
+             matchLabels:
+               kubernetes.io/metadata.name: 'kube-system'
+           podSelector:
+-            matchLabels:
+-              k8s-app: kube-dns
++            matchExpressions:
++              - key: k8s-app
++                operator: In
++                values:
++                  - kube-dns
++                  - vcluster-kube-dns
+ 
+     # Allow egress to host control plane.
+     - ports:
+@@ -188,14 +193,19 @@ spec:
+     - Egress
+     - Ingress
+   egress:
+-    # Allow egress to host kube-dns.
++    # Allow egress to host kube-dns. CoreDNS deployed by vCluster, for example on
++    # vCluster Standalone, is labeled k8s-app=vcluster-kube-dns instead.
+     - to:
+         - namespaceSelector:
+             matchLabels:
+               kubernetes.io/metadata.name: 'kube-system'
+           podSelector:
+-            matchLabels:
+-              k8s-app: kube-dns
++            matchExpressions:
++              - key: k8s-app
++                operator: In
++                values:
++                  - kube-dns
++                  - vcluster-kube-dns
+ 
+     # Allow egress to vcluster control plane.
+     - ports:
+@@ -240,14 +250,19 @@ spec:
+             matchLabels:
+               release: {{ .Release.Name | quote }}
+ 
+-    # Allow egress to host kube-dns.
++    # Allow egress to host kube-dns. CoreDNS deployed by vCluster, for example on
++    # vCluster Standalone, is labeled k8s-app=vcluster-kube-dns instead.
+     - to:
+         - namespaceSelector:
+             matchLabels:
+               kubernetes.io/metadata.name: 'kube-system'
+           podSelector:
+-            matchLabels:
+-              k8s-app: kube-dns
++            matchExpressions:
++              - key: k8s-app
++                operator: In
++                values:
++                  - kube-dns
++                  - vcluster-kube-dns
+ 
+     # Allow egress to host control plane.
+     - ports:
+```
+
+**File**: `chart/tests/networkpolicy_test.yaml` (modified, +42/-0)
+```diff
+@@ -195,6 +195,48 @@ tests:
+         isNull:
+           path: spec.ingress[0].from
+ 
++  - it: should allow DNS egress to CoreDNS labeled kube-dns or vcluster-kube-dns
++    release:
++      name: my-release
++      namespace: my-namespace
++    set:
++      policies:
++        networkPolicy:
++          enabled: true
++    asserts:
++      # CoreDNS is labeled k8s-app=kube-dns on most control plane clusters and
++      # k8s-app=vcluster-kube-dns on vCluster Standalone, so every policy that
++      # allows DNS egress must match both labels.
++      - documentSelector:
++          path: metadata.name
++          value: vc-cp-my-release
++        contains:
++          path: spec.egress
++          content: &kubeDNSEgress
++            to:
++              - namespaceSelector:
++                  matchLabels:
++                    kubernetes.io/metadata.name: kube-system
++                podSelector:
++                  matchExpressions:
++                    - key: k8s-app
++                      operator: In
++                      values:
++                        - kube-dns
++                        - vcluster-kube-dns
++      - documentSelector:
++          path: metadata.name
++          value: vc-kube-dns-my-release
++        contains:
++          path: spec.egress
++          content: *kubeDNSEgress
++      - documentSelector:
++          path: metadata.name
++          value: vc-snapshot-my-release
++        contains:
++          path: spec.egress
++          content: *kubeDNSEgress
++
+   - it: should not create workload or dns policy when privateNodes enabled
+     release:
+       name: my-release
+```
+
+**File**: `e2e/suite_isolation_mode_test.go` (modified, +2/-1)
+```diff
+@@ -1,5 +1,5 @@
+ // Suite: isolation-mode-vcluster
+-// vCluster: podSecurityStandard, resourceQuota, limitRange.
++// vCluster: podSecurityStandard, resourceQuota, limitRange, networkPolicy.
+ // Run:      just run-e2e 'isolation'
+ package e2e
+ 
+@@ -34,6 +34,7 @@ func suiteIsolationModeVCluster() {
+ 			})
+ 
+ 			isolation.IsolationModeSpec()
++			isolation.ControlPlaneDNSSpec()
+ 			coredns.CoreDNSSpec()
+ 			test_core.PodSyncSpec()
+ 			test_core.PVCSyncSpec()
+```
+
+**File**: `e2e/test_security/isolation/test_control_plane_dns.go` (added, +195/-0)
+```diff
+@@ -0,0 +1,195 @@
++package isolation
 +
 +import (
 +	"context"
-+	"testing"
++	"fmt"
 +
-+	"github.com/loft-sh/vcluster/pkg/util/loghelper"
-+	"gotest.tools/v3/assert"
++	"github.com/loft-sh/e2e-framework/pkg/setup/cluster"
++	"github.com/loft-sh/vcluster/e2e/constants"
++	"github.com/loft-sh/vcluster/e2e/labels"
++	pkgconstants "github.com/loft-sh/vcluster/pkg/constants"
++	"github.com/loft-sh/vcluster/pkg/util/podhelper"
++	"github.com/loft-sh/vcluster/pkg/util/random"
++	. "github.com/onsi/ginkgo/v2"
++	. "github.com/onsi/gomega"
 +	corev1 "k8s.io/api/core/v1"
++	kerrors "k8s.io/apimachinery/pkg/api/errors"
 +	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-+	"k8s.io/apimachinery/pkg/runtime"
-+	"sigs.k8s.io/controller-runtime/pkg/client"
-+	"sigs.k8s.io/controller-runtime/pkg/client/fake"
++	"k8s.io/apimachinery/pkg/types"
++	"k8s.io/apimachinery/pkg/util/intstr"
++	"k8s.io/client-go/kubernetes"
++	"k8s.io/client-go/rest"
++	"k8s.io/utils/ptr"
 +)
 +
-+func testNode(name string, addresses ...corev1.NodeAddress) *corev1.Node {
-+	return &corev1.Node{
-+		ObjectMeta: metav1.ObjectMeta{Name: name},
-+		Status:     corev1.NodeStatus{Addresses: addresses},
-+	}
-+}
++// ControlPlaneDNSSpec registers a test that the control plane NetworkPolicy lets the
++// control plane resolve names through CoreDNS labeled k8s-app=vcluster-kube-dns.
++// The tenant cluster must have policies.networkPolicy enabled. Register it only in
++// suites that install the chart from this tree, because it tests a rule that chart renders.
++func ControlPlaneDNSSpec() {
++	Describe("Control plane DNS egress",
++		labels.PR,
++		labels.Security,
++		func() {
++			var (
++				hostClient        kubernetes.Interface
++				hostConfig        *rest.Config
++				vClusterName      string
++				vClusterNamespace string
++			)
 +
-+func internalIP(ip string) corev1.NodeAddress {
-+	return corev1.NodeAddress{Type: corev1.NodeInternalIP, Address: ip}
-+}
++			BeforeEach(func(ctx context.Context) {
++				hostClient = cluster.KubeClientFrom(ctx, constants.GetHostClusterName())
++				Expect(hostClient).NotTo(BeNil())
++				hostConfig = cluster.From(ctx, constants.GetHostClusterName()).KubernetesRestConfig()
++				Expect(hostConfig).NotTo(BeNil())
++				vClusterName = cluster.CurrentClusterNameFrom(ctx)
++				// vcluster create installs into "vcluster-<name>" unless told otherwise.
++				vClusterNamespace = "vcluster-" + vClusterName
++			})
 +
-+func hostname(name string) corev1.NodeAddress {
-+	return corev1.NodeAddress{Type: corev1.NodeHostName, Address: name}
-+}
++			It("lets the control plane resolve names through CoreDNS labeled vcluster-kube-dns", func(ctx context.Context) {
++				// vCluster Standalone runs its own CoreDNS in kube-system, labeled
++				// k8s-app=vcluster-kube-dns instead of kube-dns. Run one next to the kind
++				// CoreDNS and resolve through it from the control plane pod, whose egress
++				// the vc-cp NetworkPolicy controls.
++				const (
++					recordName  = "netpol-dns.vcluster-e2e.test"
++					recordIP    = "192.0.2.53"
++					selectorKey = "e2e.vcluster.loft.sh/netpol-dns"
++				)
++				suffix := random.String(6)
++				dnsName := "netpol-dns-" + suffix
 +
-+func TestCompileNodeHosts(t *testing.T) {
-+	tests := []struct {
-+		name     string
-+		nodes    []*corev1.Node
-+		expected string
-+	}{
-+		{
-+			name:     "single-stack node",
-+			nodes:    []*corev1.Node{testNode("node-a", internalIP("10.0.0.1"), hostname("node-a"))},
-+			expected: "10.0.0.1 node-a",
-+		},
-+		{
-+			name: "dual-stack node gets one line per family",
-+			nodes: []*corev1.Node{
-+				testNode("node-a", internalIP("172.25.10.26"), internalIP("fd20:14d:70d:1014::1a"), hostname("node-a")),
-+			},
-+			expected: "172.25.10.26 node-a\nfd20:14d:70d:1014::1a node-a",
-+		},
-+		{
-+			name: "dual-stack node with IPv6 listed first",
-+			nodes: []*corev1.Node{
-+				testNode("node-a", internalIP("fd20:14d:70d:1014::1a"), internalIP("172.25.10.26"), hostname("node-a")),
-+			},
-+			expected: "172.25.10.26 node-a\nfd20:14d:70d:1014::1a node-a",
-+		},
-+		{
-+			name:     "hostname address overrides node name",
-+			nodes:    []*corev1.Node{testNode("node-a", internalIP("10.0.0.1"), hostname("host-a"))},
-+			expected: "10.0.0.1 host-a",
-+		},
-+		{
-+			name: "node without an InternalIP is skipped",
-+			nodes: []*corev1.Node{
-+				testNode("node-a", hostname("node-a")),
-+				testNode("node-b", internalIP("10.0.0.2"), hostname("node-b")),
-+			},
-+			expected: "10.0.0.2 node-b",
-+		},
-+		{
-+			name:     "no nodes",
-+			expected: "",
-+		},
-+	}
++				var serviceIP, controlPlanePod string
++				lookup := func(ctx context.Context) (string, error) {
++					execCtx, cancel := context.WithTimeout(ctx, constants.PollingTimeoutShort)
++					defer cancel()
++					stdout, _, err := podhelper.ExecBuffered(execCtx, hostConfig, vClusterNamespace, controlPlanePod, "syncer",
++						[]string{"nslookup", recordName, serviceIP}, nil)
++					return string(stdout), err
++				}
 +
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			scheme := runtime.NewScheme()
-+			assert.NilError(t, corev1.AddToScheme(scheme))
-+			objects := make([]client.Object, 0, len(tt.nodes))
-+			for _, node := range tt.nodes {
-+				objects = append(objects, node)
-+			}
-+			r := &NodeHostsReconciler{
-+				Client: fake.NewClientBuilder().WithScheme(scheme).WithObjects(objects...).Build(),
-+				Log:    loghelper.New("test"),
-+			}
++				By("Running a CoreDNS server labeled vcluster-kube-dns in the control plane cluster's kube-system namespace", func() {
++					hostCoreDNS, err := hostClient.AppsV1().Deployments(metav1.NamespaceSystem).Get(ctx, "coredns", metav1.GetOptions{})
++					Expect(err).To(Succeed(), "failed to get the kind CoreDNS deployment to reuse its image")
++					Expect(hostCoreDNS.Spec.Template.Spec.Containers).NotTo(BeEmpty())
 +
-+			nodehosts, err := r.compileNodeHosts(context.Background())
-+			assert.NilError(t, err)
-+			assert.Equal(t, nodehosts, tt.expected)
-+		})
-+	}
-+}
++					_, err = hostClient.CoreV1().ConfigMaps(metav1.NamespaceSystem).Create(ctx, &corev1.ConfigMap{
++						ObjectMeta: metav1.ObjectMeta{Name: dnsName},
++						Data: map[string]string{
++							"Corefile": fmt.Sprintf(".:1053 {\n    errors\n    hosts {\n        %s %s\n    }\n}\n", recordIP, recordName),
++						},
++					}, metav1.CreateOptions{})
++					Expect(err).To(Succeed())
++					DeferCleanup(func(ctx context.Context) {
++						err := hostClient.CoreV1().ConfigMaps(metav1.NamespaceSystem).Delete(ctx, dnsName, metav1.DeleteOptions{})
++						if !kerrors.IsNotFound(err) {
++							Expect(err).To(Succeed())
++						}
++					})
++
++					_, err = hostClient.CoreV1().Pods(metav1.NamespaceSystem).Create(ctx, &corev1.Pod{
++						ObjectMeta: metav1.ObjectMeta{
++							Name: dnsName,
++							Labels: map[string]string{
++								pkgconstants.CoreDNSLabelKey: pkgconstants.CoreDNSLabelValue,
++								selectorKey:                  suffix,
++							},
++						},
++						Spec: corev1.PodSpec{
++							TerminationGracePeriodSeconds: ptr.To(int64(1)),
++							Containers: []corev1.Container{
++								{
++									Name:            "coredns",
++									Image:           hostCoreDNS.Spec.Template.Spec.Containers[0].Image,
++									ImagePullPolicy: corev1.PullIfNotPresent,
++									Args:            []string{"-conf", "/etc/coredns/Corefile"},
++									ReadinessProbe: &corev1.Probe{
++										ProbeHandler: corev1.ProbeHandler{
++											TCPSocket: &corev1.TCPSocketAction{Port: intstr.FromInt32(1053)},
++										},
++									},
++									VolumeMounts: []corev1.VolumeMount{{Name: "config", MountPath: "/etc/coredns", ReadOnly: true}},
++								},
++							},
++							Volumes: []corev1.Volume{
++								{
++									Name: "
 ```
 
 #### Recent Merged Pull Requests:
@@ -1666,29 +2623,44 @@ Monorepo-Commit: 216dc32fd0476b1a16bebab2d199cc4c4256c4a8
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. coredns): add a default case to the node address switch for the exhaustive linte
+## X. deps): security updates for main (#2663)
 
 **RULE**:
-When implementing operations in `pkg/controllers/coredns/nodehosts.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in loft-sh/vcluster. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in loft-sh/vcluster. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8bd47ad6`: coredns): add a default case to the node address switch for the exhaustive linter. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c54eb304`: deps): security updates for main (#2663). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/controllers/coredns/nodehosts.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-			default:
-				// external IPs and DNS names are not written to NodeHosts
+	golang.org/x/sync v0.24.0
+	github.com/go-jose/go-jose/v4 v4.1.6 // indirect
+	github.com/klauspost/compress v1.20.2 // indirect
+	golang.org/x/crypto v0.58.0 // indirect
+	golang.org/x/net v0.62.0 // indirect
+	golang.org/x/sys v0.49.0 // indirect
+	golang.org/x/term v0.47.0 // indirect
+	golang.org/x/text v0.43.0 // indirect
+	golang.org/x/tools v0.51.0 // indirect
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+	golang.org/x/sync v0.23.0
+	github.com/go-jose/go-jose/v4 v4.1.4 // indirect
+	github.com/klauspost/compress v1.18.5 // indirect
+	golang.org/x/crypto v0.57.0 // indirect
+	golang.org/x/net v0.59.0 // indirect
+	golang.org/x/sys v0.48.0 // indirect
+	golang.org/x/term v0.46.0 // indirect
+	golang.org/x/text v0.42.0 // indirect
+	golang.org/x/tools v0.50.0 // indirect
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8bd47ad6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c54eb304` are properly handled with clean fallback behavior.

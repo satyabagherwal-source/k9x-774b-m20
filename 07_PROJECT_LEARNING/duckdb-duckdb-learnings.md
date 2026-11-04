@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/duckdb-duckdb-learnings.md`  
 > **Source**: github ([https://github.com/duckdb/duckdb](https://github.com/duckdb/duckdb))  
-> **Source Version**: `71f47d41`  
+> **Source Version**: `c96ae32c`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T04:09:42.345Z  
+> **Timestamp**: 2026-11-03T18:11:29.069Z  
 > **Learning ID**: `learn-github-duckdb-duckdb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/duckdb-duckdb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/duckdb/duckdb](https://github.com/duckdb/duckdb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T04:09:40.413Z  
+> **Harvest Timestamp**: 2026-11-03T18:11:28.884Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: DuckDB is a high-performance analytical database system
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 42701 stars
+- **Stars / Engagement**: 42778 stars
 
 ---
 
@@ -826,7 +826,7 @@ struct ApproxTopKOperation {
 			return;
 		}
 		source.Verify();
-		auto min_source = source.values.back().get().count;
+		auto min_source = source.values.size() < source.capacity ? 0 : source.values.back().get().count;
 		idx_t min_target;
 		if (target.values.empty()) {
 			min_target = 0;
@@ -836,7 +836,7 @@ struct ApproxTopKOperation {
 				throw NotImplementedException("Approx Top K - cannot combine approx_top_K with different k values. "
 				                              "K values must be the same for all entries within the same group");
 			}
-			min_target = target.values.back().get().count;
+			min_target = target.values.size() < target.capacity ? 0 : target.values.back().get().count;
 		}
 		// for all entries in target
 		// check if they are tracked in source
@@ -870,12 +870,7 @@ struct ApproxTopKOperation {
 				// target already has capacity values
 				// check if we should insert this entry
 				if (new_count <= current_min) {
-					// if we do not we can skip this entry
-					continue;
-				}
-				increment = new_count - current_min;
-			} else {
-				// targe
+					// if we do not we can skip this en
 ```
 
 ### Core Architecture Module: `extension/core_functions/aggregate/holistic/approximate_quantile.cpp`
@@ -2003,13 +1998,11 @@ struct ModeState {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #28169** (2026-10-30): **Use VARIANT automatically for inferred JSON objects and complex columns**
-  *Symptoms*: ### Motivation  JSON documents are semi-structured: the shape of an object field often varies from row to row. The JSON reader currently has to pin that down at bind time, so a field holding objects is inferred as a `STRUCT` (a fixed set of keys), as a `MAP` (when keys vary), or as the `JSON` type (when the values are heterogeneous). All three choices bake in a decision that the data usually does not support:  - `STRUCT` inference drops or refuses data whose key set differs from the first rows that were sampled, and every key becomes a separate column even when most rows only have a few of them. - `JSON` keeps the data intact but leaves it as an opaque blob of text, so everything downstream has to re-parse it. - In practice this surfaces as schema drift / `Mismatch Type Error` surprises on large, heterogeneous inputs, and as wide, mostly-`NULL` struct schemas.  `VARIANT` is the type that actually models this: it is designed for semi-structured values without a fixed schema, it stores typed values natively (no text round-trip), and it has shredded storage so extraction stays cheap.  ### Desired behavior  When reading JSON, a column (or nested field) that holds objects / complex values should come back as `VARIANT` instead of being forced into `STRUCT`, `MAP` or `JSON`.  The expectation is that this happens **automatically** — i.e. that reading a file whose field is an object yields a `VARIANT` column without the user having to spell out the schema — so that the common "just re
+- **Issue #28325** (2026-11-03): **Altertable v2.0-cyanoptera**
+  *Symptoms*: 
 
-- **Issue #28147** (2026-10-31): **  Distinguish C API aggregates sharing callbacks in deduplication**
-  *Symptoms*: Fixes #28132  C API v2 aggregates all share the same generic callbacks, and the user's callbacks are kept in the function info. `BoundAggregateFunction::operator==` compared neither the name nor the function info. So the binder deduplicated two aggregates with the same signature into one, and the second returned the first one's result.  `BoundAggregateFunction::operator==` now also compares the function name and the function info, matching the scalar function check.  Added a C API v2 test with two same-signature aggregates in one query. 
-  **Post-Mortem & Fix Analysis**:
-  > Superseded by #28118, which fixes the same issue in the C API layer.
+- **Issue #28306** (2026-11-03): **round: round halfway cases away from zero without std::round**
+  *Symptoms*:  Please backport to v2.0-cyanoptera.  `round` of a DOUBLE rounded through `std::round`, both with a precision (`RoundHalfAwayFromZero::Nearest`) and without one (`RoundOperator`). The MinGW C runtime's `round` rounds 0.49999999999999994, the largest double below 0.5, up to 1, so on the MinGW build `round(-0.49999999999999994::DOUBLE, 0)` returns `-1.0` and `round(0.049999999999999996::DOUBLE, 1)` returns `0.1`. `test/sql/function/numeric/test_round_double_exact_midpoint.test`, added in #28019, fails on MinGW for that reason ([job](https://github.com/duckdb/duckdb/actions/runs/41624429032/job/125890377678)); `round_even` in the same query is right, because it goes through `RoundToNearestEven` instead.  This adds `RoundToNearestAwayFromZero` to `numeric_utils.hpp`, next to `RoundToNearestEven` and built the same way from `std::trunc` and the fraction, and uses it in both places. The v2.0-cyanoptera branch rounds through the same `std::round` calls, so it has the same wrong results on MinGW, only without a test that shows them.  **Tests**  - `test/common/test_numeric_utils.cpp`: halfway cases, the largest double and float below a half, the sign of zero and non-finite values, under every rounding mode the platform supports. - `test_round_double_exact_midpoint.test`: `round` without a precision of values just below a half. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2026,1027 +2019,812 @@ struct ModeState {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5e74f7cc` (2026-10-30)
-**Commit Message**: Fix range threads, cross product dictionaries, sequence limits and jemalloc arena fallback (#27767)
+### Incident Patch 1: `94be654e` (2026-11-03)
+**Commit Message**: Pull in upstream Brotli decoder fix (CVE-2026-111497) (#27791)
 
-Fixes execution and allocator problems: `range` and `generate_series`
-called per row using all threads, cross products that flattened global
-dictionaries, the last value of the int64 range of a sequence, and
-jemalloc arenas and tcaches failing under memory limits.
+## Pull in the upstream Brotli decoder fix for CVE-2026-111497 (closes
+#27660)
 
-Combines the PRs labeled `Ready To Merge` in
-https://github.com/duckdb-bot/duckdb/pulls below, on top of the current
-head of `main`. The changes of each PR are applied as one squashed
-commit.
+Ports
+[google/brotli@0ed4268a](https://github.com/google/brotli/commit/0ed4268a4401abcb4472096340477cf4af7d1a2b)
+("Detect and report invalid stream earlier", shipped in v1.2.1) into the
+vendored `third_party/brotli` (currently 1.1.0).
 
-## Changes applied (4 PRs)
+### What the fix does
 
-- duckdb-bot/duckdb#209: range and generate_series called per row run on
-all threads
-- duckdb-bot/duckdb#15: Keep a global dictionary column a dictionary
-when a cross product repeats one of its rows
-- duckdb-bot/duckdb#17: Return the last value of the int64 range from a
-sequence that does not cycle
-- duckdb-bot/duckdb#122: Fall back to arena 0 and run without a tcache
-when jemalloc lacks memory for them
+`DecodeBlockTypeAndLength` used to collapse two distinct conditions — a
+*format error* on an invalid block switch and *need-more-input* — into a
+single `BROTLI_FALSE`, and the `BROTLI_SAFE` fast path discarded the
+return value entirely. A malformed stream that declares a single block
+type but reaches a block-switch point therefore kept decoding with stale
+block-type state (stale `htree_command` / distance-tree index), which is
+the out-of-bounds write from
+[CVE-2026-111497](https://nodejs.org/en/blog/vulnerability/october-2026-security-releases)
+(Node.js advisory 2026-10-21).
 
-## Original descriptions
+Because the vendored copy carries DuckDB modifications (namespace,
+allocator, header renames), this is a faithful semantic port rather than
+a file replacement:
+- `DecodeBlockTypeAndLength` + the literal/command/dis
 
-<details><summary>duckdb-bot/duckdb#209: range and generate_series
-called per row run on all threads</summary>
-
-Queries that call `range` or `generate_series` for each input row,
-
-**File**: `.github/regression/micro.csv` (modified, +1/-0)
+**File**: `third_party/brotli/dec/decode.cpp` (modified, +54/-30)
 ```diff
-@@ -50,6 +50,7 @@ benchmark/micro/aggregate/min_double.benchmark
- benchmark/micro/aggregate/max_double.benchmark
- benchmark/micro/pushdown/view_filter_below_delim_join.benchmark
- benchmark/micro/string/lpad.benchmark
-+benchmark/micro/table_function/lateral_generate_series.benchmark
- benchmark/micro/insert/bulk_insert_commit_batch.benchmark
- benchmark/micro/insert/bulk_insert_commit_parallel.benchmark
- benchmark/micro/insert/bulk_insert_commit_in_memory.benchmark
-```
-
-**File**: `benchmark/micro/join/blockwise_nl_join_global_dictionary.benchmark` (added, +22/-0)
-```diff
-@@ -0,0 +1,22 @@
-+# name: benchmark/micro/join/blockwise_nl_join_global_dictionary.benchmark
-+# description: Blockwise NL join whose left side carries a global dictionary column from a hash join
-+# group: [join]
-+
-+name Blockwise NL join over a global dictionary
-+group join
-+
-+load
-+CREATE TABLE dim AS SELECT range AS d_sk, 'day_' || range AS d_name FROM range(400);
-+CREATE TABLE inv AS SELECT range % 400 AS inv_date_sk, range % 1000 AS inv_item_sk FROM range(3000);
-+CREATE TABLE fact AS SELECT range % 1000 AS item_sk, range % 400 AS sold_date_sk, range % 50 AS q FROM range(10000);
-+CREATE TABLE ret AS SELECT range % 1000 AS r_item_sk, (range * 7) % 400 AS r_date_sk FROM range(1500);
-+
-+run
-+SELECT count(*), max(d.d_name), sum(f.q)
-+FROM inv i
-+JOIN dim d ON i.inv_date_sk = d.d_sk
-+LEFT JOIN fact f ON i.inv_item_sk = f.item_sk AND f.sold_date_sk = i.inv_date_sk
-+LEFT JOIN ret r ON i.inv_item_sk = r.r_item_sk OR r.r_date_sk >= 0;
-+
-+result III
-+22500000	day_99	551250000
-```
-
-**File**: `benchmark/micro/table_function/lateral_generate_series.benchmark` (added, +16/-0)
-```diff
-@@ -0,0 +1,16 @@
-+# name: benchmark/micro/table_function/lateral_generate_series.benchmark
-+# description: generate_series called per row of a table uses all threads
-+# group: [table_function]
-+
-+name Lateral generate_series
-+group table_function
-+
-+load
-+set threads=4;
-+CREATE TABLE t AS SELECT i AS val1 FROM range(1, 2000001) t(i);
-+
-+run
-+SELECT count(*), sum(series) FROM t CROSS JOIN generate_series(1, CASE WHEN t.val1 % 10 = 0 THEN 0 WHEN t.val1 % 100 = 71 THEN 2 ELSE 1 END) AS g(series);
-+
-+result II
-+1820000	1840000
-```
-
-**File**: `extension/icu/icu-table-range.cpp` (modified, +7/-0)
-```diff
-@@ -72,6 +72,11 @@ struct ICUTableRange {
- 			end.store(end_p.value, std::memory_order_relaxed);
- 			current.store(start_p.value, std::memory_order_relaxed);
- 		}
-+
-+		//! Input rows are independent, so an in-out call can use all threads
-+		idx_t MaxThreads() const override {
-+			return GlobalTableFunctionState::MAX_THREADS;
-+		}
- 	};
+@@ -1072,15 +1072,15 @@ static BrotliDecoderErrorCode DecodeContextMap(brotli_reg_t context_map_size, br
  
- 	struct ICURangeLocalState : public LocalTableFunctionState {
-@@ -113,6 +118,8 @@ struct ICUTableRange {
- 	template <bool GENERATE_SERIES>
- 	static void GenerateRangeDateTimeParameters(DataChunk &input, idx_t row_id, ICURangeLocalState &result) {
- 		input.Flatten();
-+		// the local state is reused for every input row
-+		result.empty_range = false;
- 		for (idx_t c = 0; c < input.ColumnCount(); c++) {
- 			if (FlatVector::IsNull(input.data[c], row_id)) {
- 				result.start = timestamp_tz_t::epoch();
-```
-
-**File**: `src/catalog/catalog_entry/sequence_catalog_entry.cpp` (modified, +31/-2)
-```diff
-@@ -7,6 +7,7 @@
- #include "duckdb/catalog/dependency_manager.hpp"
- #include "duckdb/common/operator/add.hpp"
- #include "duckdb/common/operator/subtract.hpp"
-+#include "duckdb/storage/storage_manager.hpp"
- #include "duckdb/transaction/duck_transaction.hpp"
+ /* Decodes a command or literal and updates block type ring-buffer.
+    Reads 3..54 bits. */
+-static BROTLI_INLINE BROTLI_BOOL DecodeBlockTypeAndLength(int safe, BrotliDecoderState *s, int tree_type) {
++static BROTLI_INLINE BrotliDecoderErrorCode DecodeBlockTypeAndLength(int safe, BrotliDecoderState *s, int tree_type) {
+ 	brotli_reg_t max_block_type = s->num_block_types[tree_type];
+ 	const HuffmanCode *type_tree = &s->block_type_trees[tree_type * BROTLI_HUFFMAN_MAX_SIZE_258];
+ 	const HuffmanCode *len_tree = &s->block_len_trees[tree_type * BROTLI_HUFFMAN_MAX_SIZE_26];
+ 	BrotliBitReader *br = &s->br;
+ 	brotli_reg_t *ringbuffer = &s->block_type_rb[tree_type * 2];
+ 	brotli_reg_t block_type;
+ 	if (max_block_type <= 1) {
+-		return BROTLI_FALSE;
++		return BROTLI_DECODER_ERROR_FORMAT_BLOCK_SWITCH;
+ 	}
  
- #include <algorithm>
-@@ -70,11 +71,22 @@ int64_t SequenceCatalogEntry::NextValue(DuckTransaction &transaction) {
- 			next_counter = state->data.min_value;
- 		}
+ 	/* Read 0..15 + 3..39 bits. */
+@@ -1090,12 +1090,13 @@ static BROTLI_INLINE BROTLI_BOOL DecodeBlockTypeAndLength(int safe, BrotliDecode
  	} else {
--		if (result < state->data.min_value || (overflow && state->data.increment < 0)) {
-+		// an exhausted sequence keeps a counter outside of its range
-+		bool exhausted = result < state->data.min_value || result > state->data.max_value;
-+		if (!exhausted && overflow) {
-+			// the next value does not fit in an int64, so the counter moves to an int64 outside of the range
-+			auto exhausted_counter = GetExhaustedCounter();
-+			if (exhausted_counter) {
-+				next_counter = exhausted_counter.value();
-+			} else {
-+				exhausted = true;
-+			}
+ 		BrotliBitReaderState memento;
+ 		BrotliBitReaderSaveState(br, &memento);
+-		if (!SafeReadSymbol(type_tree, br, &block_type))
+-			return BROTLI_FALSE;
++		if (!SafeReadSymbol(type_tree, br, &block_type)) {
++			return BROTLI_DECODER_NEEDS_MORE_INPUT;
 +		}
-+		if (exhausted && state->data.increment < 0) {
- 			throw SequenceException("nextval: reached minimum value of sequence %s (%lld)", name,
- 			                        state->data.min_value);
+ 		if (!SafeReadBlockLength(s, &s->block_length[tree_type], len_tree, br)) {
+ 			s->substate_read_block_length = BROTLI_STATE_READ_BLOCK_LENGTH_NONE;
+ 			BrotliBitReaderRestoreState(br, &memento);
+-			return BROTLI_FALSE;
++			return BROTLI_DECODER_NEEDS_MORE_INPUT;
  		}
--		if (result > state->data.max_value || overflow) {
-+		if (exhausted) {
- 			throw SequenceException("nextval: reached maximum value of sequence %s (%lld)", name,
- 			                        state->data.max_value);
- 		}
-@@ -118,6 +130,23 @@ void SequenceCatalogEntry::ReplayValue(uint64_t v_usage_count, int64_t v_counter
  	}
+ 
+@@ -1111,7 +1112,7 @@ static BROTLI_INLINE BROTLI_BOOL DecodeBlockTypeAndLength(int safe, BrotliDecode
+ 	}
+ 	ringbuffer[0] = ringbuffer[1];
+ 	ringbuffer[1] = block_type;
+-	return BROTLI_TRUE;
++	return BROTLI_DECODER_SUCCESS;
  }
  
-+optional<int64_t> SequenceCatalogEntry::GetExhaustedCounter() const {
-+	if (!temporary) {
-+		// storage versions prior to v2.0.0 derive the last value from the counter, which this counter does not allow
-+		auto &storage_manager = StorageManager::Get(catalog);
-+		if (storage_manager.HasStorageVersion() &&
-+		    StorageManager::IsPriorToVersion(StorageVersion::V2_0_0, storage_manager.GetStorageVersion())) {
-+			return nullopt;
-+		}
-+	}
-+	for (auto counter : {NumericLimits<int64_t>::Maximum(), NumericLimits<int64_t>::Minimum()}) {
-+		if (counter < state->data.min_value || counter > state->data.max_value) {
-+			return counter;
-+		}
-+	}
-+	return nullopt;
-+}
-+
- void SequenceCatalogEntry::DeriveLastValue() {
- 	lock_guard<mutex> seqlock(state->lock);
- 	if (state->data.last_value || state->data.usage_count == 0) {
+ static BROTLI_INLINE void DetectTrivialLiteralBlockTypes(BrotliDecoderState *s) {
+@@ -1148,56 +1149,59 @@ static BROTLI_INLINE void PrepareLiteralDecoding(BrotliDecoderState *s) {
+ 
+ /* Decodes the block type and updates the state for literal context.
+    Reads 3..54 bits. */
+-static BROTLI_INLINE BROTLI_BOOL DecodeLiteralBlockSwitchInternal(int safe, BrotliDecoderState *s) {
+-	if (!DecodeBlockTypeAndLength(safe, s, 0)) {
+-		return BROTLI_FALSE;
++static BROTLI_INLINE BrotliDecoderErrorCode DecodeLiteralBlockSwitchInternal(int safe, BrotliDecoderState *s) {
++	BrotliDecoderErrorCode result = DecodeBlockTypeAndLength(safe, s, 0);
++	if (result != BROTLI_DECODER_SUCCESS) {
++		return result;
+ 	}
+ 	PrepareLiteralDecoding(s);
+-	return BROTLI_TRUE;
++	return BROTLI_DECODER_SUCCESS;
+ }
+ 
+-static void BROTLI_NOINLINE DecodeLiteralBlockSwitch(BrotliDecoderState *s) {
+-	DecodeLiteralBlockSwitchInternal(0, s);
++static BROTLI_NOINLINE BrotliDecoderErrorCode DecodeLiteralBlockSwitch(BrotliDecoderState *s) {
++	return DecodeLiteralBlockSwitchInternal(0, s);
+ }
+ 
+-static BROTLI_BOOL BROTLI_NOINLINE SafeDecodeLiteralBlockSwitch(BrotliDecoderState *s) {
++static BROTLI_NOINLINE BrotliDecoderErrorCode SafeDecodeLiteralBlockSwitch(BrotliDecoderState *s) {
+ 	return DecodeLiteralBlockSwitchInternal(1, s);
+ }
+ 
+ /* Block switch for insert/copy length.
+    Reads 3..54 bits. */
+-static BROTLI_INLINE BROTLI_BOOL DecodeCommandBlockSwitchInternal(int safe, BrotliDecoderState *s) {
+-	if (!DecodeBlockTypeAndLength(safe, s, 1)) {
+-		return BROTLI_FALSE;
++static BROTLI_INLINE BrotliDecoderErrorCode DecodeCommandBlockSwitchInternal(int safe, BrotliDecoderState *s) {
++	BrotliDecoderErrorCode result = DecodeBlockTypeAndLength(safe, s, 1);
++	if (result != BROTLI_DECODER_SUCCESS) {
++		return result;
+ 	}
+ 	s->htree_command = s->insert_copy_hgroup.htrees[s->block_type_rb[3]];
+-	return BROTLI_TRUE;
++	return BROTLI_DECODER_SUCCESS;
+ }
+ 
+-static void BROTLI_NOINLINE DecodeCommandBlockSwitch(BrotliDecoderState *s) {
+-	DecodeCommandBlockSwitchInternal(0, s);
++static BROTLI_NOINLINE BrotliDecoderErrorCode DecodeCommandBlockSwitch(BrotliDecoderState *s) {
++	return DecodeCommandBlockSwitchInternal(0, s);
+ }
+ 
+-static BROTLI_BOOL BROTLI_NOINLINE SafeDecodeCommandBlockSwitch(BrotliDecoderState *s) {
++static BROTLI_NOINLINE BrotliDecoderErrorCode SafeDecodeCommandBlockSwitch(BrotliDecoderState *s) {
+ 	return DecodeCommandBlockSwitchInternal(1, s);
+ }
+ 
+ /* Block switch for distance codes.
+    Reads 3..54 bits. */
+-static BROTLI_INLINE BROTLI_BOOL DecodeDistanceBlockSwitchInternal(int safe, BrotliDecoderState *s) {
+-	if (!DecodeBlockTypeAndLength(safe, s, 2)) {
+-		return BROTLI_FALSE;
++static BROTLI_INLINE BrotliDecoderErrorCode DecodeDistanceBlockSwitchInternal(int safe, BrotliDecoderState *s) {
++	BrotliDecoderErrorCode result = DecodeBlockTypeAndLength(safe, s, 2);
++	if (result != BROTLI_DECODER_SUCCESS) {
++		return result;
+ 	}
+ 	s->dist_context_map_slice = s->dist_context_map + (s->block_type_rb[5] << BROTLI_DISTANCE_CONTEXT_BITS);
+ 	s->dist_htree_index = s->dist_context_map_slice[s->distance_context];
+-	return BROTLI_TRUE;
++	return BROTLI_DECODER_SUCCESS;
+ }
+ 
+-stat
 ```
 
-**File**: `src/common/allocator/allocator_jemalloc.cpp` (modified, +12/-2)
+**File**: `third_party/brotli/include/brotli/decode.h` (modified, +1/-3)
 ```diff
-@@ -92,6 +92,16 @@ optional_idx Allocator::GetMappedMemory() const {
- 	return optional_idx(mapped);
- }
- 
-+//! A thread runs without a tcache when jemalloc had no memory for one, and flushing it then fails
-+static void FlushThreadCache() {
-+	bool enabled = false;
-+	size_t enabled_size = sizeof(enabled);
-+	if (duckdb_je_mallctl("thread.tcache.enabled", &enabled, &enabled_size, nullptr, 0) != 0 || !enabled) {
-+		return;
-+	}
-+	SetJemallocCTL("thread.tcache.flush");
-+}
-+
- bool Allocator::SupportsFlush() {
- 	return true;
- }
-@@ -109,7 +119,7 @@ void Allocator::ThreadFlush(bool allocator_background_threads, idx_t threshold,
- 		}
- 
- 		// Flush thread-local cache
--		SetJemallocCTL("thread.tcache.flush");
-+		FlushThreadCache();
- 
- 		// Reset the peak after flushing
- 		SetJemallocCTL("thread.peak.reset");
-@@ -126,7 +136,7 @@ void Allocator::ThreadIdle() {
- 
- void Allocator::FlushAll() {
- 	// Flush thread-local cache
--	SetJemallocCTL("thread.tcache.flush");
-+	FlushThreadCache();
- 
- 	// Flush all arenas
- 	const auto purge_arena = PurgeArenaString(MALLCTL_ARENAS_ALL);
-```
-
-**File**: `src/execution/operator/join/physical_cross_product.cpp` (modified, +10/-2)
-```diff
-@@ -4,6 +4,7 @@
- #include "duckdb/common/vector_operations/vector_operations.hpp"
- #include "duckdb/execution/operator/join/physical_join.hpp"
- #include "duckdb/common/vector/constant_vector.hpp"
-+#include "duckdb/common/vector/dictionary_vector.hpp"
- 
- namespace duckdb {
- 
-@@ -154,8 +155,15 @@ OperatorResultType CrossProductExecutor::Execute(const DataChunk &input, DataChu
- 	col_count = scan.ColumnCount();
- 	col_offset = scan_input_chunk ? 0 : input.ColumnCount();
- 	for (idx_t i = 0; i < col_count; i++) {
--		ConstantVector::Reference(output.data[col_offset + i], count_t(output.size()), scan.data[i], position_in_chunk,
--		                          scan.size());
-+		auto &source = scan.data[i];
-+		auto &target = output.data[col_offset + i];
-+		if (DictionaryVector::IsGlobalDictionary(source)) {
-+			// repeat the row within the global dictionary, which its consumers expect in every chunk
-+			target.Slice(source, position_in_chunk, position_in_chunk + 1);
-+			target.Slice(*ConstantVector::ZeroSelectionVector(), output.size());
-+			continue;
-+		}
-+		ConstantVector::Reference(target, count_t(output.size()), source, position_in_chunk, scan.size());
- 	}
- 	return OperatorResultType::HAVE_MORE_OUTPUT;
- }
-```
-
-**File**: `src/function/table/range.cpp` (modified, +10/-0)
-```diff
-@@ -75,6 +75,11 @@ struct RangeFunctionGlobalState : public GlobalTableFunctionState {
- 	//! The number of values of the input rows, and the number of values that were generated
- 	atomic<idx_t> total_values {0};
- 	atomic<idx_t> generated_values {0};
-+
-+	//! Input rows are independent, so an in-out call can use all threads
-+	idx_t MaxThreads() const override {
-+		return GlobalTableFunctionState::MAX_THREADS;
-+	}
- };
- 
- static unique_ptr<GlobalTableFunctionState> RangeFunctionGlobalInit(ClientContext &context,
-@@ -304,6 +309,11 @@ struct RangeDateTimeGlobalState : public GlobalTableFunctionState {
- 		end.store(end_p.value, std::memory_order_relaxed);
- 		current.store(start_p.value, std::memory_order_relaxed);
- 	}
-+
-+	//! Input rows are independent, so an in-out call can use all threads
-+	idx_t MaxThreads() const override {
-+		return GlobalTableFunctionState::MAX_THREADS;
-+	}
- };
- 
- static unique_ptr<GlobalTableFunctionState> RangeDateTimeGlobalInit(ClientContext &context,
+@@ -83,9 +83,7 @@ typedef enum {
+   BROTLI_ERROR_CODE(_ERROR_FORMAT_, PADDING_1, -14) SEPARATOR              \
+   BROTLI_ERROR_CODE(_ERROR_FORMAT_, PADDING_2, -15) SEPARATOR              \
+   BROTLI_ERROR_CODE(_ERROR_FORMAT_, DISTANCE, -16) SEPARATOR               \
+-                                                                           \
+-  /* -17 code is reserved */                                               \
+-                                                                           \
++  BROTLI_ERROR_CODE(_ERROR_FORMAT_, BLOCK_SWITCH, -17) SEPARATOR           \
+   BROTLI_ERROR_CODE(_ERROR_, COMPOUND_DICTIONARY, -18) SEPARATOR           \
+   BROTLI_ERROR_CODE(_ERROR_, DICTIONARY_NOT_SET, -19) SEPARATOR            \
+   BROTLI_ERROR_CODE(_ERROR_, INVALID_ARGUMENTS, -20) SEPARATOR             \
 ```
 
 ---
 
-### Incident Patch 2: `32de60b0` (2026-10-30)
-**Commit Message**: Let a sort go external after a thread finished its run in memory (#28003)
+### Incident Patch 2: `a5748954` (2026-11-03)
+**Commit Message**: Fix missed borrow in UHUGEINT subtraction overflow check (#28283)
 
-## Summary
+## What a user sees
 
-Lets a sort switch to external (spilling) mode even after a thread has
-already finished its run in memory, fixing out-of-memory errors at
-memory limits where spilling would have succeeded.
+Subtracting a large `UHUGEINT` from a small one silently returns a
+wrapped value instead of an error:
 
-Fixes duckdblabs/bot-issue-tracker#595
-
-Source: duckdb-bot/duckdb#270 (labeled `Ready To Merge`, applied as one
-squashed commit on top of `main`; split from the other batches because
-it is labeled `Feature Release`).
-
-## The problem
-
-In duckdblabs/bot-issue-tracker#595, a sort after a join ran out of
-memory with 4 threads at limits of 1280-1536 MB, although the same query
-completed at 1 GB. The sort stayed in memory instead of spilling.
-
-`TryIncreaseReservation` could only make the sort external while
-`any_combined` was false. At 1280 MB, one thread finished its in-memory
-run first, so the next refused reservation could no longer trigger
-spilling.
-
-## The change
-
-- Remove `any_combined`, so the sort can go external at any time.
-- `GoExternal` reorders the in-memory runs of already-finished threads,
-with one `MakeExternal` task per run on a `TaskExecutor`.
-- `AddSortedRun` reorders runs that were sorted in memo
-
-**File**: `.github/regression/micro.csv` (modified, +1/-0)
-```diff
-@@ -54,4 +54,5 @@ benchmark/micro/table_function/lateral_generate_series.benchmark
- benchmark/micro/insert/bulk_insert_commit_batch.benchmark
- benchmark/micro/insert/bulk_insert_commit_parallel.benchmark
- benchmark/micro/insert/bulk_insert_commit_in_memory.benchmark
-+benchmark/micro/order/order_external_after_early_finish.benchmark
- benchmark/micro/json/lateral_json_each.benchmark
+```sql
+SELECT 0::UHUGEINT - 340282366920938463463374607431768211455::UHUGEINT;
+-- 1        (expected: Out of Range Error)
+SELECT 7::UHUGEINT - 340282366920938463463374607431768211455::UHUGEINT;
+-- 8
 ```
 
-**File**: `benchmark/micro/order/order_external_after_early_finish.benchmark` (added, +31/-0)
-```diff
-@@ -0,0 +1,31 @@
-+# name: benchmark/micro/order/order_external_after_early_finish.benchmark
-+# description: Sort that goes external while the thread scanning the last, wide row group sinks, after the other threads finished their runs in memory
-+# group: [order]
-+
-+name Order By (external after early finish)
-+group micro
-+subgroup order
-+
-+cache order_external_after_early_finish.duckdb
-+
-+load
-+CREATE TABLE t AS
-+SELECT hash(i) AS k,
-+       CASE WHEN i < 64 * 122880
-+            THEN md5(i::VARCHAR) || md5((i + 1)::VARCHAR) || md5((i + 2)::VARCHAR) || md5((i + 3)::VARCHAR)
-+            ELSE repeat(md5(i::VARCHAR), 200)
-+       END AS p
-+FROM range(65 * 122880) r(i);
-+
-+init
-+set threads=8;
-+set temp_directory='${BENCHMARK_DIR}/order_external_after_early_finish.duckdb.tmp';
-+set memory_limit='4GB';
-+
-+run
-+SELECT k, strlen(p) FROM (SELECT k, p FROM t ORDER BY k LIMIT 3 OFFSET 7987197)
-+
-+result II
-+18446740747662269625	128
-+18446741099613652814	128
-+18446742070018747821	128
+`0::UHUGEINT - 1::UHUGEINT` does raise the error, so this only affects
+the pairs where the right-hand side's upper 64 bits are large enough for
+the wrapped upper half to land at or below the left-hand side's upper
+half.
+
+Because the same helper is used to derive the statistics of `a - b` from
+`min(a) - max(b)`, a table can also get a wrong minimum for the
+expression, and the optimizer then prunes filters that every row
+satisfies:
+
+```sql
+CREATE TABLE t(a UHUGEINT, b UHUGEINT);
+INSERT INTO t VALUES (0, 0), (340282366920938463463374607431768211455, 340282366920938463463374607431768211455);
+SELECT a - b FROM t;                   -- 0, 0 (correct)
+SELECT count(*) FROM t WHERE a - b = 0; -- 0   (expected 2)
+SELECT count(*) FROM t WHERE a - b < 1; -- 0   (expected 2)
 ```
 
-**File**: `src/common/sort/sort.cpp` (modified, +47/-16)
-```diff
-@@ -11,6 +11,7 @@
- #include "duckdb/common/types/row/tuple_data_collection.hpp"
- #include "duckdb/function/create_sort_key.hpp"
- #include "duckdb/function/function_binder.hpp"
-+#include "duckdb/parallel/task_executor.hpp"
- #include "duckdb/planner/expression/bound_constant_expression.hpp"
- #include "duckdb/planner/expression/bound_reference_expression.hpp"
- #include "duckdb/storage/temporary_memory_manager.hpp"
-@@ -137,13 +138,32 @@ class SortLocalSinkState : public LocalSinkState {
- 	DataChunk payload;
- };
- 
-+//! Physically reorders a run that was sorted in memory before the sort went external
-+class SortedRunMakeExternalTask : public BaseExecutorTask {
-+public:
-+	SortedRunMakeExternalTask(TaskExecutor &executor, SortedRun &sorted_run_p)
-+	    : BaseExecutorTask(executor), sorted_run(sorted_run_p) {
-+	}
-+
-+	void ExecuteTask() override {
-+		sorted_run.MakeExternal();
-+	}
-+
-+	string TaskType() const override {
-+		return "SortedRunMakeExternalTask";
-+	}
-+
-+private:
-+	SortedRun &sorted_run;
-+};
-+
- class SortGlobalSinkState : public GlobalSinkState {
- public:
- 	explicit SortGlobalSinkState(ClientContext &context)
- 	    : num_threads(TaskScheduler::GetScheduler(context).NumberOfThreads()),
- 	      temporary_memory_state(TemporaryMemoryManager::Get(context).Register(context)), sorted_tuples(0),
--	      sunk_tuples(0), external(Settings::Get<DebugForceExternalSetting>(context)), any_combined(false),
--	      total_count(0), partition_size(0) {
-+	      sunk_tuples(0), external(Settings::Get<DebugForceExternalSetting>(context)), total_count(0),
-+	      partition_size(0) {
- 	}
- 
- public:
-@@ -158,9 +178,7 @@ class SortGlobalSinkState : public GlobalSinkState {
- 
- 		// If we already got less than we requested last time, have to go external
- 		if (temporary_memory_state->GetReservation() < temporary_memory_state->GetRemainingSize()) {
--			if (!any_combined) {
--				external = true;
--			}
-+			GoExternal(context);
- 			return;
- 		}
- 
-@@ -179,14 +197,34 @@ class SortGlobalSinkState : public GlobalSinkState {
- 
- 		// If we got less than we required, we have to go external
- 		if (temporary_memory_state->GetReservation() < required) {
--			if (!any_combined) {
--				external = true;
--			}
-+			GoExternal(context);
- 		}
- 	}
- 
-+	//! Go external, reordering in parallel the runs that threads that finished early sorted in memory
-+	void GoExternal(ClientContext &context) {
-+		external = true;
-+		if (sorted_runs.empty()) {
-+			return;
-+		}
-+		TaskExecutor executor(context);
-+		vector<unique_ptr<BaseExecutorTask>> tasks;
-+		tasks.reserve(sorted_runs.size());
-+		for (auto &sorted_run : sorted_runs) {
-+			tasks.push_back(make_uniq<SortedRunMakeExternalTask>(executor, *sorted_run));
-+		}
-+		executor.ScheduleTasks(std::move(tasks));
-+		executor.WorkOnTasks();
-+	}
-+
- 	void AddSortedRun(SortLocalSinkState &lstate) {
--		const lock_guard<mutex> guard(lock);
-+		unique_lock<mutex> guard(lock);
-+		if (external && !lstate.sorted_run->external) {
-+			// Reorder a run that was sorted in memory before the sort went external, without holding the lock
-+			guard.unlock();
-+			lstate.sorted_run->MakeExternal();
-+			guard.lock();
-+		}
- 		sorted_runs.push_back(std::move(lstate.sorted_run));
- 		sorted_tuples += sorted_runs.back()->Count();
- 	}
-@@ -207,8 +245,6 @@ class SortGlobalSinkState : public GlobalSinkState {
- 
- 	//! Whether this is an external sort
- 	atomic<bool> external;
--	//! Whether any thread has called Combine yet
--	bool any_combined;
- 
- 	//! Total count (for the source phase)
- 	idx_t total_count;
-@@ -298,11 +334,6 @@ SinkCombineResultType Sort::Combine(ExecutionContext &context, OperatorSinkCombi
- 		return SinkCombineResultType::FINISHED;
- 	}
- 
--	// Set any_combined under lock
--	unique_lock<mutex> guard {gstate.lock};
--	gstate.any_combined = true;
--	guard.unlock();
--
- 	// Do the final local sort (lock-free)
- 	lstate.sorted_run->Finalize(gstate.external);
- 
-```
+With `SET debug_verify_stats
 
-**File**: `src/common/sort/sorted_run.cpp` (modified, +21/-8)
+**File**: `src/common/types/uhugeint.cpp` (modified, +7/-3)
 ```diff
-@@ -554,19 +554,32 @@ void SortedRun::Finalize(bool external) {
- 	SortSwitch(context, *key_data, is_index_sort);
- 
- 	if (external) {
--		// Reorder variable-size portion of keys and/or payload data (if necessary)
--		const auto sort_key_type = key_data->GetLayout().GetSortKeyType();
--		if (!SortKeyUtils::IsConstantSize(sort_key_type) || SortKeyUtils::HasPayload(sort_key_type)) {
--			Reorder(context, key_data, payload_data);
--		} else {
--			// This ensures keys are unpinned even if they are constant size and have no payload
--			key_data->Unpin();
--		}
-+		ReorderForExternal();
- 	}
- 
- 	finalized = true;
+@@ -317,9 +317,13 @@ bool Uhugeint::TryAddInPlace(uhugeint_t &lhs, uhugeint_t rhs) {
  }
  
-+void SortedRun::MakeExternal() {
-+	D_ASSERT(finalized);
-+	if (!external) {
-+		ReorderForExternal();
-+	}
-+}
-+
-+void SortedRun::ReorderForExternal() {
-+	D_ASSERT(!external);
-+	// Reorder variable-size portion of keys and/or payload data (if necessary)
-+	const auto sort_key_type = key_data->GetLayout().GetSortKeyType();
-+	if (!SortKeyUtils::IsConstantSize(sort_key_type) || SortKeyUtils::HasPayload(sort_key_type)) {
-+		Reorder(context, key_data, payload_data);
-+	} else {
-+		// This ensures keys are unpinned even if they are constant size and have no payload
-+		key_data->Unpin();
-+	}
-+	external = true;
-+}
-+
- static void DestroyData(TupleDataCollection &data, const idx_t tuple_idx_begin, const idx_t tuple_idx_end) {
- 	if (tuple_idx_begin == tuple_idx_end) {
- 		return;
+ bool Uhugeint::TrySubtractInPlace(uhugeint_t &lhs, uhugeint_t rhs) {
+-	uint64_t new_upper = lhs.upper - rhs.upper - ((lhs.lower - rhs.lower) > lhs.lower);
+-	bool no_overflow = !(new_upper > lhs.upper);
+-	lhs.lower -= rhs.lower;
++	uint64_t new_lower = lhs.lower - rhs.lower;
++	uint64_t borrow = new_lower > lhs.lower;
++	uint64_t new_upper = lhs.upper - rhs.upper - borrow;
++	// the result is out of range exactly when rhs > lhs, i.e. when the upper half underflows
++	// either directly or through the borrow of the lower half
++	bool no_overflow = !(rhs.upper > lhs.upper || (rhs.upper == lhs.upper && borrow));
++	lhs.lower = new_lower;
+ 	lhs.upper = new_upper;
+ 	return no_overflow;
+ }
 ```
 
-**File**: `src/include/duckdb/common/sorting/sorted_run.hpp` (modified, +8/-0)
+**File**: `test/sql/types/uhugeint/uhugeint_subtract_overflow.test` (added, +94/-0)
 ```diff
-@@ -52,6 +52,8 @@ class SortedRun {
- 	void Sink(DataChunk &key, DataChunk &payload);
- 	//! Sorts the data (physically reorder data if external)
- 	void Finalize(bool external);
-+	//! Physically reorders the data of a run that was finalized for an in-memory sort, as an external sort needs
-+	void MakeExternal();
- 	//! Destroy keys/payload between these tuple indices
- 	void DestroyKeyData(idx_t tuple_idx_begin, idx_t tuple_idx_end);
- 	void DestroyPayloadData(idx_t tuple_idx_begin, idx_t tuple_idx_end);
-@@ -81,6 +83,12 @@ class SortedRun {
+@@ -0,0 +1,94 @@
++# name: test/sql/types/uhugeint/uhugeint_subtract_overflow.test
++# description: UHUGEINT subtraction must detect the borrow out of the lower 64 bits
++# group: [uhugeint]
++
++# a negative result is out of range, also when the borrow from the lower half
++# brings the upper half back to the left operand's upper half
++statement error
++SELECT 0::UHUGEINT - 340282366920938463463374607431768211455::UHUGEINT
++----
++Out of Range Error
++
++statement error
++SELECT 1::UHUGEINT - 340282366920938463463374607431768211455::UHUGEINT
++----
++Out of Range Error
++
++statement error
++SELECT 7::UHUGEINT - 340282366920938463463374607431768211455::UHUGEINT
++----
++Out of Range Error
++
++statement error
++SELECT 18446744073709551615::UHUGEINT - 18446744073709551616::UHUGEINT
++----
++Out of Range Error
++
++statement error
++SELECT 18446744073709551616::UHUGEINT - 340282366920938463463374607431768211455::UHUGEINT
++----
++Out of Range Error
++
++statement error
++SELECT 340282366920938463463374607431768211454::UHUGEINT - 340282366920938463463374607431768211455::UHUGEINT
++----
++Out of Range Error
++
++query I
++SELECT TRY(0::UHUGEINT - 340282366920938463463374607431768211455::UHUGEINT)
++----
++NULL
++
++# results that are in range, with and without a borrow
++query IIII
++SELECT 340282366920938463463374607431768211455::UHUGEINT - 340282366920938463463374607431768211455::UHUGEINT,
++       340282366920938463463374607431768211455::UHUGEINT - 7::UHUGEINT,
++       18446744073709551616::UHUGEINT - 1::UHUGEINT,
++       340282366920938463463374607431768211455::UHUGEINT - 18446744073709551616::UHUGEINT
++----
++0	340282366920938463463374607431768211448	18446744073709551615	340282366920938463444927863358058659839
++
++# subtraction over a table: the statistics of a - b are derived from min(a) - max(b),
++# and a missed overflow there used to give the column a wrong minimum
++statement ok
++CREATE TABLE t(a UHUGEINT, b UHUGEINT);
++
++statement ok
++INSERT INTO t VALUES (0, 0), (340282366920938463463374607431768211455, 340282366920938463463374607431768211455);
++
++query I
++SELECT a - b FROM t
++----
++0
++0
++
++query I
++SELECT a - b FROM t WHERE a - b = 0
++----
++0
++0
++
++query I
++SELECT count(*) FROM t WHERE a - b < 1
++----
++2
++
++query I
++SELECT count(*) FROM t WHERE a - b >= 1
++----
++0
++
++statement ok
++INSERT INTO t VALUES (7, 340282366920938463463374607431768211455);
++
++statement error
++SELECT a - b FROM t
++----
++Out of Range Error
++
++query I
++SELECT TRY(a - b) FROM t ORDER BY ALL
++----
++0
++0
++NULL
+```
+
+---
+
+### Incident Patch 3: `1a703fdb` (2026-11-03)
+**Commit Message**: Fix/dict fsst size estimate (#25785)
+
+## Problem
+
+`DictFSSTAnalyzeState::FinalAnalyze()` was a single line:
+
+```cpp
+return LossyNumericCast<idx_t>((double)total_string_length / 2.0);
+```
+
+DICT_FSST reported "half the raw bytes" for any input — never looking at
+the cardinality of the data, never accounting for the dictionary being
+rebuilt for every block, not even using `total_count`. Compression
+selection picks the method with the **lowest** estimate, so DICT_FSST
+could win with a size it cannot deliver.
+
+Two shapes of data hit this:
+
+- **Duplicates spread further apart than one block's dictionary can
+reach.** Every block re-stores the values it sees, so almost nothing is
+deduplicated.
+- **Large unique values.** Only one or two fit per block, so each block
+is mostly empty.
+
+Both end up needing far more blocks than the estimate suggests, and a
+block a large dictionary leaves mostly empty still costs a full block. A
+ratio of the raw size cannot express that. The dictionary compression
+this superseded could: it charges `segment_count * block_size`.
+
+## Reproduction
+
+300k rows, 300 distinct values of 5760 bytes, scattered, 16KB block
+size:
+
+```sql
+ATTACH 'repro.db' AS db (BLOCK_SIZE 16
+
+**File**: `benchmark/micro/compression/dictionary/dict_fsst_analyze_large_dictionary.benchmark` (added, +17/-0)
+```diff
+@@ -0,0 +1,17 @@
++# name: benchmark/micro/compression/dictionary/dict_fsst_analyze_large_dictionary.benchmark
++# description: Storing short strings with tens of thousands of distinct values, so every block holds a large dictionary
++# group: [dictionary]
++
++name Dictionary Compression Write
++group dictionary
++storage persistent v1.4.0
++require_reinit
++
++load
++PRAGMA force_compression='dict_fsst';
++DROP TABLE IF EXISTS test;
++CREATE OR REPLACE TABLE src AS SELECT (hash(i) % 50_000)::VARCHAR AS i FROM range(0, 50_000_000) tbl(i);
++
++run
++CREATE TABLE test AS SELECT * FROM src;
++checkpoint;
+```
+
+**File**: `benchmark/micro/compression/dictionary/dict_fsst_analyze_large_scattered.benchmark` (added, +21/-0)
+```diff
+@@ -0,0 +1,21 @@
++# name: benchmark/micro/compression/dictionary/dict_fsst_analyze_large_scattered.benchmark
++# description: Storing large values whose duplicates are spread further apart than one block's dictionary
++# group: [dictionary]
++
++name Dictionary Compression Write
++group dictionary
++storage persistent v1.4.0
++require_reinit
++
++load
++PRAGMA force_compression='dict_fsst';
++DROP TABLE IF EXISTS test;
++CREATE OR REPLACE TABLE vals AS
++	SELECT g AS grp, (SELECT string_agg(md5(g::VARCHAR || '-' || x::VARCHAR), '') FROM range(180) x) AS txt
++	FROM range(300) t(g);
++CREATE OR REPLACE TABLE src AS
++	SELECT vals.txt AS i FROM (SELECT (hash(i) % 300) AS grp FROM range(0, 100_000) tbl(i)) t JOIN vals USING (grp);
++
++run
++CREATE TABLE test AS SELECT * FROM src;
++checkpoint;
+```
+
+**File**: `benchmark/micro/compression/dictionary/dict_fsst_analyze_small_blocks.benchmark` (added, +16/-0)
+```diff
+@@ -0,0 +1,16 @@
++# name: benchmark/micro/compression/dictionary/dict_fsst_analyze_small_blocks.benchmark
++# description: Storing short strings with 16KB blocks, so the block-local dictionary is rebuilt often
++# group: [dictionary]
++
++name Dictionary Compression Write
++group dictionary
++require_reinit
++
++load
++ATTACH ':memory:' AS small_blocks (BLOCK_SIZE 16384);
++PRAGMA force_compression='dict_fsst';
++CREATE OR REPLACE TABLE small_blocks.src AS SELECT (100 + (i%1000))::VARCHAR AS i FROM range(0, 20_000_000) tbl(i);
++
++run
++CREATE TABLE small_blocks.test AS SELECT * FROM small_blocks.src;
++CHECKPOINT small_blocks;
+```
+
+**File**: `benchmark/micro/compression/dictionary/dict_fsst_selection_small_blocks.benchmark` (added, +18/-0)
+```diff
+@@ -0,0 +1,18 @@
++# name: benchmark/micro/compression/dictionary/dict_fsst_selection_small_blocks.benchmark
++# description: Storing large scattered duplicates with 16KB blocks, leaving the compression choice to the size estimates
++# group: [dictionary]
++
++name Dictionary Compression Write
++group dictionary
++require_reinit
++
++load
++ATTACH ':memory:' AS small_blocks (BLOCK_SIZE 16384);
++CREATE OR REPLACE TABLE small_blocks.vals AS
++	SELECT g AS grp, (SELECT string_agg(md5(g::VARCHAR || '-' || x::VARCHAR), '') FROM range(180) x) AS txt
++	FROM range(300) t(g);
++
++run
++CREATE TABLE small_blocks.test AS
++	SELECT vals.txt AS i FROM (SELECT (hash(i) % 300) AS grp FROM range(0, 300_000) tbl(i)) t JOIN small_blocks.vals vals USING (grp);
++CHECKPOINT small_blocks;
+```
+
+**File**: `src/include/duckdb/common/primitive_dictionary.hpp` (modified, +40/-5)
+```diff
+@@ -9,8 +9,10 @@
+ #pragma once
  
- 	//! Whether this run has been finalized
- 	bool finalized;
-+	//! Whether its data has been physically reordered for an external sort
-+	bool external = false;
+ #include "duckdb/common/types/string_type.hpp"
++#include "duckdb/common/types/hash.hpp"
+ #include "duckdb/common/allocator.hpp"
+ #include "duckdb/common/serializer/memory_stream.hpp"
++#include "duckdb/common/vector.hpp"
+ 
+ namespace duckdb {
+ 
+@@ -40,6 +42,8 @@ template <class SRC, class TGT = SRC, class OP = PrimitiveCastOperator>
+ class PrimitiveDictionary {
+ private:
+ 	static constexpr idx_t LOAD_FACTOR = 2;
++	//! Clear sweeps every slot once the occupied slots exceed this fraction of the capacity
++	static constexpr idx_t CLEAR_SWEEP_FACTOR = 8;
+ 
+ 	static constexpr uint32_t INVALID_INDEX = static_cast<uint32_t>(-1);
+ 	struct primitive_dictionary_entry_t {
+@@ -66,24 +70,35 @@ class PrimitiveDictionary {
+ 	                                              : capacity * sizeof(TGT))),
+ 	      target_stream(allocated_target.get(), allocated_target.GetSize()),
+ 	      dictionary(reinterpret_cast<primitive_dictionary_entry_t *>(allocated_dictionary.get())), full(false) {
+-		Clear();
++		ClearAllSlots();
+ 	}
+ 
+ public:
+ 	//! Insert value into dictionary (if not full)
+ 	template <bool ADD_TO_TARGET = false>
+ 	void Insert(SRC value) {
+ 		if (full) {
++			// nothing can be inserted anymore, so do not pay for the hash
+ 			return;
+ 		}
+-		auto &entry = Lookup(value);
++		Insert<ADD_TO_TARGET>(value, Hash(value));
++	}
++
++	//! Insert value into dictionary (if not full), reusing the hash a Lookup computed for it
++	template <bool ADD_TO_TARGET = false>
++	void Insert(SRC value, hash_t hash) {
++		if (full) {
++			return;
++		}
++		auto &entry = Lookup(value, hash);
+ 		if (entry.IsEmpty()) {
+ 			if (size + 1 > maximum_size || (ADD_TO_TARGET && !AddToTarget(value))) {
+ 				full = true;
+ 				return;
+ 			}
+ 			entry.value = value;
+ 			entry.index = size++;
++			occupied.push_back(UnsafeNumericCast<uint32_t>(&entry - dictionary));
+ 		}
+ 	}
+ 
+@@ -148,25 +163,43 @@ class PrimitiveDictionary {
+ 	void Reset() {
+ 		allocated_dictionary.Reset();
+ 		allocated_target.Reset();
++		occupied = vector<uint32_t>();
+ 	}
+ 
++	//! Empty the dictionary, in time proportional to the entries it holds rather than to its capacity
+ 	void Clear() {
+-		for (idx_t i = 0; i < capacity; i++) {
+-			dictionary[i].index = INVALID_INDEX;
++		if (occupied.size() * CLEAR_SWEEP_FACTOR < capacity) {
++			for (auto offset : occupied) {
++				dictionary[offset].index = INVALID_INDEX;
++			}
++		} else {
++			ClearAllSlots();
+ 		}
++		occupied.clear();
+ 		size = 0;
+ 		full = false;
+ 	}
+ 	//! Look up a value in the dictionary using linear probing
+ 	primitive_dictionary_entry_t &Lookup(const SRC &value) const {
+-		auto offset = Hash(value) & capacity_mask;
++		return Lookup(value, Hash(value));
++	}
++
++	//! Look up a value with its precomputed hash
++	primitive_dictionary_entry_t &Lookup(const SRC &value, hash_t hash) const {
++		auto offset = hash & capacity_mask;
+ 		while (!dictionary[offset].IsEmpty() && dictionary[offset].value != value) {
+ 			++offset &= capacity_mask;
+ 		}
+ 		return dictionary[offset];
+ 	}
+ 
+ private:
++	void ClearAllSlots() {
++		for (idx_t i = 0; i < capacity; i++) {
++			dictionary[i].index = INVALID_INDEX;
++		}
++	}
++
+ 	//! Write a value to the target data (if source is not string)
+ 	template <typename S = SRC, typename std::enable_if<!std::is_same<S, string_t>::value, int>::type = 0>
+ 	bool AddToTarget(const SRC &src_value) {
+@@ -251,6 +284,8 @@ class PrimitiveDictionary {
+ 
+ 	//! Pointers to allocated regions for convenience
+ 	primitive_dictionary_entry_t *const dictionary;
++	//! Offsets of the filled slots, so Clear does not have to sweep the whole capacity
++	vector<uint32_t> occupied;
+ 
+ 	//! More values inserted than possible
+ 	bool full;
+```
+
+**File**: `src/include/duckdb/storage/compression/dict_fsst/analyze.hpp` (modified, +89/-1)
+```diff
+@@ -1,6 +1,10 @@
+ #pragma once
+ 
++#include "duckdb/common/bitpacking.hpp"
++#include "duckdb/common/primitive_dictionary.hpp"
++#include "duckdb/common/types/string_heap.hpp"
+ #include "duckdb/function/compression_function.hpp"
++#include "duckdb/storage/compression/dict_fsst/common.hpp"
+ 
+ namespace duckdb {
+ 
+@@ -10,13 +14,61 @@ namespace dict_fsst {
+ // Analyze
+ //===--------------------------------------------------------------------===//
+ struct DictFSSTAnalyzeState : public AnalyzeState {
++public:
++	//! Distinct values the set of a simulated block starts out with, and the factor it grows by when it fills up
++	static constexpr idx_t INITIAL_SET_SIZE = 1024;
++	static constexpr idx_t SET_GROWTH_FACTOR = 4;
++	//! Fixed point scale of 'fsst_ratio'
++	static constexpr idx_t FSST_RATIO_SCALE = 1024;
++	//! Bytes beyond twice the input length that FSST needs in its output buffer, as specified in fsst.h
++	static constexpr idx_t FSST_OUTPUT_SLACK = 7;
++	//! Amount of the dictionary of a block that is encoded to measure the ratio, which is what FSST trains on
++	static constexpr idx_t FSST_MEASURE_SIZE = 16384;
++	//! Number of times a full block considers encoding its dictionary between two measurements
++	static constexpr idx_t FSST_MEASURE_INTERVAL = 4;
++
+ public:
+ 	explicit DictFSSTAnalyzeState(BlockManager &block_manager);
+ 
+ public:
+ 	bool Analyze(const Vector &input);
+ 	idx_t FinalAnalyze();
+ 
++	//! Space one block with an unencoded dictionary needs to hold the given amount of tuples and dictionary entries
++	static idx_t RequiredSpace(idx_t tuple_count, idx_t unique_count, idx_t dict_size, idx_t max_string_length);
++	//! Same for the layout of the given mode, where an encoded dictionary also stores the symbol table
++	static idx_t RequiredSpace(DictionaryAppendState mode, idx_t tuple_count, idx_t unique_count, idx_t dict_size,
++	                           idx_t max_string_length, idx_t symbol_table_size);
 +
 +private:
-+	//! Reorder the variable-size portion of the sorted keys and the payload, and unpin the data
-+	void ReorderForExternal();
++	//! Account for a tuple that reuses a dictionary index (NULL or a repeated value); false if the block is full, or
++	//! if it decided to store every value, in which case the tuple has to be stored like a new value
++	bool TryAddIndexOnlyTuple();
++	//! Account for a value the current block has not seen, flushing the block first if it does not fit. The hash is
++	//! only passed when the caller had to compute it, a block that stores every value does not need one.
++	void AddNewString(const string_t &str, optional_idx hash);
++	void FlushSimulatedBlock();
++	//! Space a flushed segment of the given size takes on disk: the partial block manager packs small segments
++	//! together, but a segment above its limit gets a block of its own
++	idx_t SegmentCharge(idx_t required_space) const;
++	unique_ptr<PrimitiveDictionary<string_t>> MakeSet(idx_t size) const;
++	void GrowSet();
++
++	//! Space the current block can use: it reserves room for a symbol table until it is known to not need one
++	idx_t AvailableSpace() const;
++	//! Space the current block needs for the given contents, in the mode and with the symbol table it has
++	idx_t BlockRequiredSpace(idx_t tuple_count, idx_t unique_count, idx_t dict_size, idx_t max_string_length) const;
++	//! Length of a value of the given length once FSST encoded, according to the measured ratio
++	idx_t EncodedLength(idx_t length) const;
++	//! Length a value takes in the dictionary of the current block
++	idx_t StoredLength(idx_t length) const;
++	//! The block is full for an unencoded dictionary: decide how to continue, the way the writer does when it is
++	//! full (DictFSSTCompressionState::TryEncode)
++	void SwitchFromRegular();
++	DictionaryAppendState ChooseEncoding();
++	//! FSST encode the dictionary of the current block, to learn how well values compress and how big the table is
++	void MeasureFSST();
++
+ public:
+ 	idx_t max_string_length = 0;
+ 	bool contains_nulls = false;
+@@ -26,8 +78,44 @@ struct DictFSSTAnalyzeState : public AnalyzeState {
+ 	idx_t fsst_string_size_limit = 0;
+ 	//! Flag which disables the usage of FSST if worst-case encoding blowup does not fit the block size.
+ 	bool disable_fsst = false;
+-	idx_t total_string_length = 0;
+ 	idx_t total_count = 0;
++
++	//! The dictionary is block-local, so the size estimate has to simulate how values pack into blocks:
++	//! duplicates that end up in different blocks are stored once per block, not once in total.
++	//! Space charged for the simulated blocks flushed so far, see SegmentCharge
++	idx_t simulated_space = 0;
++	//! How the current simulated block stores its values, which changes when it fills up (see SwitchFromRegular)
++	DictionaryAppendState current_mode = DictionaryAppendState::REGULAR;
++	idx_t current_tuple_count = 0;
++	idx_t current_unique_count = 0;
++	//! Size of the dictionary and of its longest entry, as stored in the mode of the block
++	idx_t current_dict_size = 0;
++	idx_t current_max_string_length = 0;
++	//! Size of the symbol table of the block, 0 as long as its dictionary is not encoded
++	idx_t current_symbol_tabl
+```
+
+**File**: `src/include/duckdb/storage/compression/dict_fsst/common.hpp` (modified, +6/-0)
+```diff
+@@ -37,8 +37,14 @@ struct DictFSSTCompression {
+ 	//! Dictionary header size at the beginning of the string segment (offset + length)
+ 	static constexpr uint16_t DICTIONARY_HEADER_SIZE = sizeof(dict_fsst_compression_header_t);
+ 	static constexpr idx_t STRING_SIZE_LIMIT = 16384;
++	//! Dictionary size from which the writer considers FSST encoding it, and the saving it has to achieve
++	static constexpr idx_t DICTIONARY_ENCODE_THRESHOLD = 4096;
  };
+ 
++static inline bool IsEncoded(DictionaryAppendState state) {
++	return state == DictionaryAppendState::ENCODED || state == DictionaryAppendState::ENCODED_ALL_UNIQUE;
++}
++
+ } // namespace dict_fsst
  
  } // namespace duckdb
 ```
 
-**File**: `test/sql/sort/sort_external_after_early_finish.test_slow` (added, +161/-0)
+**File**: `src/storage/compression/dict_fsst/analyze.cpp` (modified, +332/-2)
 ```diff
-@@ -0,0 +1,161 @@
-+# name: test/sql/sort/sort_external_after_early_finish.test_slow
-+# description: A sort whose threads finish at different times goes external when its memory runs short after one of them finished (duckdblabs/bot-issue-tracker#595)
-+# group: [sort]
-+
-+require noforcestorage
-+
-+statement ok
-+ATTACH '{TEST_DIR}/sort_external_after_early_finish.db' AS store
-+
-+statement ok
-+USE store
-+
-+statement ok
-+CREATE TABLE specimen AS
-+SELECT i AS id, (i * 7919) % 70000 AS sample_id, (i % 40) + 1 AS n, substr(md5(i::VARCHAR || 'f'), 1, 8) AS field_number
-+FROM range(394493) t(i)
-+
-+statement ok
-+CREATE TABLE link AS SELECT id AS wide_id, sample_id, n FROM specimen
-+
-+statement ok
-+CREATE TABLE wide AS
-+SELECT i AS id,
-+  CASE WHEN i % 3 = 0 THEN NULL ELSE substr(md5(i::VARCHAR || 'l0'), 1, 9) END AS c0,
-+  CASE WHEN i % 4 = 0 THEN NULL ELSE substr(md5(i::VARCHAR || 'l1'), 1, 9) END AS c1,
-+  CASE WHEN i % 5 = 0 THEN NULL ELSE substr(md5(i::VARCHAR || 'l2'), 1, 8) END AS c2,
-+  CASE WHEN i % 6 = 0 THEN NULL ELSE substr(md5(i::VARCHAR || 'l3'), 1, 15) END AS c3,
-+  CASE WHEN i % 7 = 0 THEN NULL ELSE substr(md5(i::VARCHAR || 'l4'), 1, 45) END AS c4,
-+  CASE WHEN i % 3 = 0 THEN NULL ELSE substr(md5(i::VARCHAR || 'l5'), 1, 6) END AS c5,
-+  CASE WHEN i % 4 = 0 THEN NULL ELSE substr(md5(i::VARCHAR || 'l6'), 1, 9) END AS c6,
-+  CASE WHEN i % 5 = 0 THEN NULL ELSE substr(md5(i::VARCHAR || 'l7'), 1, 6) END AS c7,
-+  CASE WHEN i % 6 = 0 THEN NULL ELSE substr(md5(i::VARCHAR || 'l8'), 1, 2) END AS c8,
-+  CASE WHEN i % 7 = 0 THEN NULL ELSE substr(md5(i::VARCHAR || 'l9'), 1, 8) END AS c9,
-+  CASE WHEN i % 3 = 0 THEN NULL ELSE substr(md5(i::VARCHAR || 'l10'), 1, 15) END AS c10,
-+  CASE WHEN i % 4 = 0 THEN NULL ELSE substr(md5(i::VARCHAR || 'l11'), 1, 2) END AS c11,
-+  CASE WHEN i % 5 = 0 THEN NULL ELSE substr(md5(i::VARCHAR || 'l12'), 1, 1) END AS c12,
-+  CASE WHEN i % 6 = 0 THEN NULL ELSE substr(md5(i::VARCHAR || 'l13'), 1, 10) END AS c13,
-+  CASE WHEN i % 7 = 0 THEN NULL ELSE substr(md5(i::VARCHAR || 'l14'), 1, 3) END AS c14,
-+  CASE WHEN i % 3 = 0 THEN NULL ELSE substr(md5(i::VARCHAR || 'l15'), 1, 2) END AS c15,
-+  CASE WHEN i % 4 = 0 THEN NULL ELSE substr(md5(i::VARCHAR || 'l16'), 1, 6) END AS c16,
-+  CASE WHEN i % 5 = 0 THEN NULL ELSE substr(md5(i::VARCHAR || 'l17'), 1, 10) END AS c17,
-+  CASE WHEN i % 6 = 0 THEN NULL ELSE substr(md5(i::VARCHAR || 'l18'), 1, 3) END AS c18,
-+  CASE WHEN i % 7 = 0 THEN NULL ELSE substr(md5(i::VARCHAR || 'l19'), 1, 7) END AS c19,
-+  CASE WHEN i % 3 = 0 THEN NULL ELSE substr(md5(i::VARCHAR || 'l20'), 1, 9) END AS c20,
-+  CASE WHEN i % 4 = 0 THEN NULL ELSE substr(md5(i::VARCHAR || 'l21'), 1, 1) END AS c21,
-+  CASE WHEN i % 5 = 0 THEN NULL ELSE substr(md5(i::VARCHAR || 'l22'), 1, 6) END AS c22,
-+  CASE WHEN i % 6 = 0 THEN NULL ELSE substr(md5(i::VARCHAR || 'l23'), 1, 10) END AS c23,
-+  CASE WHEN i % 7 = 0 THEN NULL ELSE substr(md5(i::VARCHAR || 'l24'), 1, 16) END AS c24,
-+  CASE WHEN i % 3 = 0 THEN NULL ELSE substr(md5(i::VARCHAR || 'l25'), 1, 45) END AS c25,
-+  CASE WHEN i % 4 = 0 THEN NULL ELSE substr(md5(i::VARCHAR || 'l26'), 1, 36) END AS c26,
-+  CASE WHEN i % 5 = 0 THEN NULL ELSE substr(md5(i::VARCHAR || 'l27'), 1, 17) END AS c27,
-+  CASE WHEN i % 6 = 0 THEN NULL ELSE substr(md5(i::VARCHAR || 'l28'), 1, 12) END AS c28,
-+  CASE WHEN i % 7 = 0 THEN NULL ELSE substr(md5(i::VARCHAR || 'l29'), 1, 9) END AS c29,
-+  CASE WHEN i % 3 = 0 THEN NULL ELSE substr(md5(i::VARCHAR || 'l30'), 1, 10) END AS c30,
-+  CASE WHEN i % 4 = 0 THEN NULL ELSE substr(md5(i::VARCHAR || 'l31'), 1, 9) END AS c31,
-+  CASE WHEN i % 5 = 0 THEN NULL ELSE substr(md5(i::VARCHAR || 'l32'), 1, 18) END AS c32,
-+  CASE WHEN i % 6 = 0 THEN NULL ELSE substr(md5(i::VARCHAR || 'l33'), 1, 7) END AS c33,
-+  CASE WHEN i % 7 = 0 THEN NULL ELSE substr(md5(i::VARCHAR || 'l34'), 1, 50) END AS c34,
-+  CASE WHEN i % 3 = 0 THEN NULL ELSE substr(md5(i::VARCHAR || 'l35'), 1, 10) END AS c35,
-+  CASE WHEN i % 4 = 0 THEN NULL ELSE substr(md5(i::VARCHAR || 'l36'), 1, 7) END AS c36,
-+  CASE WHEN i % 5 = 0 THEN NULL ELSE substr(md5(i::VARCHAR || 'l37'), 1, 11) END AS c37,
-+  CASE WHEN i % 6 = 0 THEN NULL ELSE substr(md5(i::VARCHAR || 'l38'), 1, 9) END AS c38,
-+  CASE WHEN i % 7 = 0 THEN NULL ELSE substr(md5(i::VARCHAR || 'l39'), 1, 8) END AS c39,
-+  CASE WHEN i % 3 = 0 THEN NULL ELSE substr(md5(i::VARCHAR || 'l40'), 1, 14) END AS c40,
-+  CASE WHEN i % 4 = 0 THEN NULL ELSE substr(md5(i::VARCHAR || 'l41'), 1, 9) END AS c41,
-+  CASE WHEN i % 5 = 0 THEN NULL ELSE substr(md5(i::VARCHAR || 'l42'), 1, 11) END AS c42,
-+  CASE WHEN i % 6 = 0 THEN NULL ELSE substr(md5(i::VARCHAR || 'l43'), 1, 14) END AS c43
-+FROM range(394493) t(i)
-+
-+statement ok
-+CHECKPOINT
-+
-+statement ok
-+CHECKPOINT store
-+
-+statement ok
-+USE memory
-+
-+statement ok
-+DETACH store
-+
-+statement ok
-+SET threads = 4
-+
-+statement ok
-+ATTACH '{TEST_DIR}/sort_external_after_early_finish.db' AS store
-+
-+statement ok
-+USE store
-+
-+statement ok
-+SET memory_limit = '1280MB'
-+
-+statement ok
-+COPY
-```
-
-**File**: `test/sql/sort/sort_external_reorder_finished_runs.test_slow` (added, +80/-0)
-```diff
-@@ -0,0 +1,80 @@
-+# name: test/sql/sort/sort_external_reorder_finished_runs.test_slow
-+# description: A sort that goes external while one thread still sinks reorders the runs that the other threads sorted in memory
-+# group: [sort]
-+
-+require noforcestorage
-+
-+statement ok
-+CREATE TEMP MACRO payload(i, light_rows) AS CASE WHEN i < light_rows
-+	THEN md5(i::VARCHAR) || md5((i + 1)::VARCHAR) || md5((i + 2)::VARCHAR) || md5((i + 3)::VARCHAR)
-+	ELSE repeat(md5(i::VARCHAR), 25) END
-+
-+statement ok
-+ATTACH '{TEST_DIR}/sort_external_reorder_finished_runs.db' AS store
-+
-+statement ok
-+USE store
-+
-+# one row group per thread, the last one with a wide payload
-+statement ok
-+CREATE TABLE one_group_each AS SELECT i, hash(i) AS k, payload(i, 3 * 122880) AS p FROM range(4 * 122880) r(i)
-+
-+# two row groups per thread, then one with a wide payload
-+statement ok
-+CREATE TABLE two_groups_each AS SELECT i, hash(i) AS k, payload(i, 8 * 122880) AS p FROM range(9 * 122880) r(i)
-+
-+statement ok
-+CHECKPOINT store
-+
-+statement ok
-+USE memory
-+
-+statement ok
-+DETACH store
-+
-+statement ok
-+SET threads = 4
-+
-+statement ok
-+ATTACH '{TEST_DIR}/sort_external_reorder_finished_runs.db' AS store
-+
-+statement ok
-+USE store
-+
-+statement ok
-+SET memory_limit = '384MB'
-+
-+statement ok
-+COPY (SELECT k, i, p FROM one_group_each ORDER BY k) TO '{TEST_DIR}/one_group_each.csv' (FORMAT csv)
-+
-+statement ok
-+SET memory_limit = '512MB'
-+
-+statement ok
-+COPY (SELECT k, i, p FROM two_groups_each ORDER BY k) TO '{TEST_DIR}/two_groups_each.csv' (FORMAT csv)
-+
-+statement ok
-+SET memory_limit = '4GB'
-+
-+# every row once, with its own payload, in the order of the sort key
-+query IIII
-+SELECT count(*), count(DISTINCT i), count(*) FILTER (WHERE k < previous), count(*) FILTER (WHERE k IS DISTINCT FROM hash(i) OR p IS DISTINCT FROM payload(i, 3 * 122880))
-+FROM (SELECT k, i, p, lag(k) OVER (ORDER BY rn) AS previous
-+      FROM (SELECT k, i, p, row_number() OVER () AS rn
-+            FROM read_csv('{TEST_DIR}/one_group_each.csv', header = true, columns = {'k': 'UBIGINT', 'i': 'BIGINT', 'p': 'VARCHAR'})))
-+----
-+491520	491520	0	0
-+
-+query IIII
-+SELECT count(*), count(DISTINCT i), count(*) FILTER (WHERE k < previous), count(*) FILTER (WHERE k IS DISTINCT FROM hash(i) OR p IS DISTINCT FROM payload(i, 8 * 122880))
-+FROM (SELECT k, i, p, lag(k) OVER (ORDER BY rn) AS previous
-+      FROM (SELECT k, i, p, row_number() OVER () AS rn
-+            FROM read_csv('{TEST_DIR}/two_groups_each.csv', header = true, columns = {'k': 'UBIGINT', 'i': 'BIGINT', 'p': 'VARCHAR'})))
-+----
-+1105920	1105920	0	0
-+
-+statement ok
-+USE memory
-+
-+statement ok
-+DETACH store
-```
-
----
-
-### Incident Patch 3: `dfb1fe63` (2026-10-30)
-**Commit Message**: Fix nested schema lookups, constraint metadata, struct field defaults and index keys (#27998)
-
-Fixes how nested schemas, views and catalog metadata resolve names, and
-rejects index keys that depend on session settings: nested schema
-lookups for views, defaults and column types, `duckdb_constraints`,
-struct field defaults, `pg_attribute` type oids and `list_sort` indexes.
-
-Combines the PRs labeled `Ready To Merge` in
-https://github.com/duckdb-bot/duckdb/pulls below, on top of the current
-head of `main`. The changes of each PR are applied as one squashed
-commit.
-
-## Changes applied (8 PRs)
-
-- duckdb-bot/duckdb#233: Look names up in the full path of a nested
-schema for its views, defaults and column types
-- duckdb-bot/duckdb#286: Resolve the nested schema of a function in a
-view of an attached database through the binder's retriever
-- duckdb-bot/duckdb#287: Keep the nested schema path of a function when
-a view strips its own catalog
-- duckdb-bot/duckdb#284: Name the columns of a CHECK in
-duckdb_constraints as the CHECK binder resolves them
-- duckdb-bot/duckdb#256: Add the field default to the column default
-when adding a struct field
-- duckdb-bot/duckdb#266: Give atttypid the oids of 
-
-**File**: `extension/core_functions/scalar/list/list_sort.cpp` (modified, +11/-4)
-```diff
-@@ -26,6 +26,7 @@ struct ListSortBindData : public FunctionData {
- 	ListSortBindData(OrderType order_type_p, OrderByNullType null_order_p, bool is_grade_up,
- 	                 const LogicalType &return_type_p, const LogicalType &child_type_p, ClientContext &context_p,
- 	                 unique_ptr<Expression> sort_key_p = nullptr, optional<string> default_collation_p = {});
-+	ListSortBindData(const ListSortBindData &other);
- 	~ListSortBindData() override;
+@@ -1,7 +1,10 @@
+ #include "duckdb/storage/compression/dict_fsst/analyze.hpp"
  
- 	OrderType order_type;
-@@ -39,7 +40,8 @@ struct ListSortBindData : public FunctionData {
- 	ClientContext &context;
- 	unique_ptr<Expression> sort_key;
- 	optional<string> default_collation;
--	unique_ptr<Sort> sort;
-+	//! Shared by the copies, building it again needs a catalog lookup in a transaction of the context
-+	shared_ptr<Sort> sort;
+ #include "duckdb/common/bitpacking.hpp"
++#include "duckdb/common/types/hash.hpp"
+ #include "duckdb/common/types/vector.hpp"
++#include "duckdb/storage/block_manager.hpp"
++#include "duckdb/storage/buffer_manager.hpp"
+ #include "duckdb/storage/compression/dict_fsst/common.hpp"
  
- public:
- 	bool Equals(const FunctionData &other_p) const override;
-@@ -79,12 +81,17 @@ ListSortBindData::ListSortBindData(OrderType order_type_p, OrderByNullType null_
- 	orders.emplace_back(OrderType::ASCENDING, OrderByNullType::ORDER_DEFAULT, std::move(idx_col_expr));
- 	orders.emplace_back(order_type, null_order, std::move(sort_key_p));
- 	sort =
--	    unique_ptr<Sort>(new Sort(context, orders, {LogicalType::USMALLINT, child_type, LogicalType::UINTEGER}, {2}));
-+	    shared_ptr<Sort>(new Sort(context, orders, {LogicalType::USMALLINT, child_type, LogicalType::UINTEGER}, {2}));
+ namespace duckdb {
+@@ -53,17 +56,311 @@ DictFSSTAnalyzeState::DictFSSTAnalyzeState(BlockManager &block_manager) : Analyz
+ 
+ 	string_size_limit = GetStringSizeLimit(block_size, false);
+ 	fsst_string_size_limit = GetStringSizeLimit(block_size, true);
++
++	// a block cannot hold more distinct strings than half its size in bytes, matching the compression state
++	max_set_size = block_size / 2;
++	// most blocks hold few distinct values, so start small and grow the set only when it runs out of room
++	current_set_size = MinValue(INITIAL_SET_SIZE, max_set_size);
++	current_set = MakeSet(current_set_size);
++	current_required_space = BlockRequiredSpace(0, 0, 0, 0);
 +}
 +
-+ListSortBindData::ListSortBindData(const ListSortBindData &other)
-+    : FunctionData(other), order_type(other.order_type), null_order(other.null_order), return_type(other.return_type),
-+      child_type(other.child_type), is_grade_up(other.is_grade_up), types(other.types), context(other.context),
-+      sort_key(other.sort_key->Copy()), default_collation(other.default_collation), sort(other.sort) {
- }
- 
- unique_ptr<FunctionData> ListSortBindData::Copy() const {
--	return make_uniq<ListSortBindData>(order_type, null_order, is_grade_up, return_type, child_type, context,
--	                                   sort_key->Copy(), default_collation);
-+	return make_uniq<ListSortBindData>(*this);
- }
- 
- bool ListSortBindData::Equals(const FunctionData &other_p) const {
-```
-
-**File**: `extension/icu/icu-dateadd.cpp` (modified, +5/-0)
-```diff
-@@ -269,6 +269,7 @@ struct ICUDateAdd : public ICUDateFunc {
- 		set.AddFunction(interval_tstz_fun);
- 		// throws for dates that overflow the timestamp range
- 		set.SetFallible();
-+		set.SetStability(FunctionStability::CONSISTENT_WITHIN_QUERY);
- 		loader.RegisterFunction(set);
- 	}
- 
-@@ -299,6 +300,7 @@ struct ICUDateAdd : public ICUDateFunc {
- 		set.AddFunction(tstz_tstz_fun);
- 		// throws for dates that overflow the timestamp range
- 		set.SetFallible();
-+		set.SetStability(FunctionStability::CONSISTENT_WITHIN_QUERY);
- 		loader.RegisterFunction(set);
- 	}
- 
-@@ -309,9 +311,12 @@ struct ICUDateAdd : public ICUDateFunc {
- 		    LogicalType::TIMESTAMP_TZ, LogicalType::TIMESTAMP_TZ);
- 		binary_fun.GetSignature().GetParameter(0).SetName("timestamp1");
- 		binary_fun.GetSignature().GetParameter(1).SetName("timestamp2");
-+		binary_fun.SetStability(FunctionStability::CONSISTENT_WITHIN_QUERY);
- 		set.AddFunction(binary_fun);
- 		auto unary_fun = GetUnaryAgeFunction<timestamp_tz_t, ICUCalendarAge>(LogicalType::TIMESTAMP_TZ);
- 		unary_fun.GetSignature().GetParameter(0).SetName("timestamp");
-+		// the age is taken at the start of the transaction
-+		unary_fun.SetStability(FunctionStability::CONSISTENT_WITHIN_QUERY);
- 		set.AddFunction(unary_fun);
- 		// throws for dates that overflow the timestamp range
- 		set.SetFallible();
-```
-
-**File**: `extension/icu/icu-datefunc.cpp` (modified, +5/-0)
-```diff
-@@ -48,6 +48,11 @@ unique_ptr<FunctionData> ICUDateFunc::Bind(BindScalarFunctionInput &input) {
- 	return make_uniq<BindData>(input.GetClientContext());
- }
- 
-+unique_ptr<ICUDateFunc::CastData> ICUDateFunc::BindCastData(BindCastInput &input) {
-+	input.stability = FunctionStability::CONSISTENT_WITHIN_QUERY;
-+	return make_uniq<CastData>(make_uniq<BindData>(*input.context));
++unique_ptr<PrimitiveDictionary<string_t>> DictFSSTAnalyzeState::MakeSet(idx_t size) const {
++	auto &allocator = info.GetBlockManager().buffer_manager.GetBufferAllocator();
++	return make_uniq<PrimitiveDictionary<string_t>>(allocator, size, 1);
 +}
 +
- const ICUDateFunc::CalendarCacheState::CacheEntry &ICUDateFunc::CalendarCacheState::GetEntry(const string_t &tz_id) {
- 	if (last && last->first.size() == tz_id.GetSize() &&
- 	    memcmp(last->first.data(), tz_id.GetData(), tz_id.GetSize()) == 0) {
-```
-
-**File**: `extension/icu/icu-datepart.cpp` (modified, +23/-0)
-```diff
-@@ -502,6 +502,22 @@ struct ICUDatePart : public ICUDateFunc {
- 		return BindAdapter<data_t>(context, bound_function, arguments, nullptr);
- 	}
- 
-+	//! The epoch is read from the instant itself, every other part from the calendar of the settings
-+	static FunctionStability PartCodeStability(DatePartSpecifier part_code) {
-+		return part_code == DatePartSpecifier::EPOCH ? FunctionStability::CONSISTENT
-+		                                             : FunctionStability::CONSISTENT_WITHIN_QUERY;
-+	}
++void DictFSSTAnalyzeState::GrowSet() {
++	D_ASSERT(current_set_size < max_set_size);
++	current_set_size = MinValue(current_set_size * SET_GROWTH_FACTOR, max_set_size);
++	auto grown = MakeSet(current_set_size);
++	// the strings live in 'heap', so the entries carry over as they are
++	current_set->IterateValues([&](const string_t &value, const string_t &) { grown->Insert(value); });
++	current_set = std::move(grown);
++}
 +
-+	static void SetPartCodesStability(BoundScalarFunction &bound_function,
-+	                                  const vector<DatePartSpecifier> &part_codes) {
-+		for (auto part_code : part_codes) {
-+			if (PartCodeStability(part_code) != FunctionStability::CONSISTENT) {
-+				return;
-+			}
-+		}
-+		bound_function.SetStability(FunctionStability::CONSISTENT);
-+	}
++idx_t DictFSSTAnalyzeState::RequiredSpace(idx_t tuple_count, idx_t unique_count, idx_t dict_size,
++                                          idx_t max_string_length) {
++	return RequiredSpace(DictionaryAppendState::NOT_ENCODED, tuple_count, unique_count, dict_size, max_string_length,
++	                     0);
++}
 +
- 	static duckdb::unique_ptr<FunctionData> BindStruct(BindScalarFunctionInput &input) {
- 		auto &bound_function = input.GetBoundFunction();
- 		auto &context = input.GetClientContext();
-@@ -543,6 +559,7 @@ struct ICUDatePart : public ICUDateFunc {
- 		}
- 
- 		bound_function.SetReturnType(LogicalType::STRUCT(std::move(struct_children)));
-+		SetPartCodesStability(bound_function, part_codes);
- 		return make_uniq<BindStructData>(context, std::move(part_codes));
- 	}
- 
-@@ -560,6 +577,7 @@ struct ICUDatePart : public ICUDateFunc {
- 		auto tz_setting = deserializer.ReadProperty<string>(100, "tz_setting");
- 		auto cal_setting = deserializer.ReadProperty<string>(101, "cal_setting");
- 		auto part_codes = deserializer.ReadProperty<vector<DatePartSpecifier>>(102, "part_codes");
-+		SetPartCodesStability(bound_function, part_codes);
- 		return make_uniq<BindStructData>(tz_setting, cal_setting, std::move(part_codes));
- 	}
- 
-@@ -580,6 +598,7 @@ struct ICUDatePart : public ICUDateFunc {
- 		set.AddFunction(
- 		    GetUnaryPartCodeFunction<timestamp_tz_ns_t, RESULT_TYPE>(LogicalType::TIMESTAMP_TZ_NS, result_type));
- 		set.SetFallible();
-+		set.SetStability(PartCodeStability(GetDatePartSpecifier(name.GetIdentifierName())));
- 		set.SetUnaryArgProperties(unary_arg0_props);
- 		if (IsKnownMonotonic(unary_arg0_props.monotonicity)) {
- 			set.SetStatisticsCallback(StatisticsPropagator::PropagateFiniteMonotoneBounds);
-@@ -613,6 +632,7 @@ struct ICUDatePart : public ICUDateFunc {
- 		set.AddFunction(GetBinaryPartCodeFunction<timestamp_tz_ns_t, double>(LogicalType::TIMESTAMP_TZ_NS));
- 		set.AddFunction(GetStructFunction<timestamp_tz_ns_t>(LogicalType::TIMESTAMP_TZ_NS));
- 		set.SetFallible();
-+		set.SetStability(FunctionStability::CONSISTENT_WITHIN_QUERY);
- 		loader.RegisterFunction(set);
- 	}
- 
-@@ -636,6 +656,7 @@ struct ICUDatePart : public ICUDateFunc {
- 		set.AddFunction(GetLastDayFunction<timestamp_tz_t>(LogicalType::TIMESTAMP_TZ));
- 		set.AddFunction(GetLastDayFunction<timestamp_tz_ns_t>(LogicalType::TIMESTAMP_TZ_NS));
- 		set.SetFallible();
-+		set.SetStability(FunctionStability::CONSISTENT_WITHIN_QUERY);
- 		loader.RegisterFunction(set);
- 	}
- 
-@@ -658,6 +679,7 @@ struct ICUDatePart : public ICUDateFunc {
- 		set.AddFunction(GetMonthNameFunction<timestamp_tz_t>(LogicalType::TIMESTAMP_TZ));
- 		set.AddFunction(GetMonthNameFunction<timestamp_tz_ns_t>(LogicalType::TIMESTAMP_TZ_NS));
- 		set.SetFallible();
-+		set.SetStability(FunctionStability::CONSISTENT_WITHIN_QUERY);
- 		loader.RegisterFunction(set);
- 	}
- 
-@@ -680,6 +702,7 @@ struct ICUDatePart : public ICUDateFunc {
- 		set.AddFunction(GetDayNameFunction<timestamp_tz_t>(LogicalType::TIMESTAMP_TZ));
- 		set.AddFunction(GetDayNameFunction<timestamp_tz_ns_t>(LogicalType::TIMESTAMP_TZ_NS));
- 		set.SetFallible();
-+		set.SetStability(FunctionStability::CONSISTENT_WITHIN_QUERY);
- 		loader.RegisterFunction(set);
- 	}
- };
-```
-
-**File**: `extension/icu/icu-datesub.cpp` (modified, +2/-0)
-```diff
-@@ -167,6 +167,7 @@ struct ICUCalendarSub : public ICUDateFunc {
- 		set.AddFunction(GetFunction<timestamp_tz_t>(LogicalType::TIMESTAMP_TZ));
- 		// throws for unrecognized part specifiers and for dates that overflow the timestamp range
- 		set.SetFallible();
-+		set.SetStability(FunctionStability::CONSISTENT_WITHIN_QUERY);
- 		set.SetArgProperties(1, ArgProperties().NonIncreasing());
- 		set.SetArgProperties(2, ArgProperties().NonDecreasing());
- 		set.SetStatisticsCallback(StatisticsPropagator::PropagateFiniteMonotoneBounds);
-@@ -352,6 +353,7 @@ struct ICUCalendarDiff : public ICUDateFunc {
- 		set.AddFunction(GetFunction<timestamp_tz_ns_t>(LogicalType::TIMESTAMP_TZ_NS));
- 		// throws for unrecognized part specifiers and for dates that overflow the timestamp range
- 		set.SetFallible();
-+		set.SetStability(FunctionStability::CONSISTENT_WITHIN_QUERY);
- 		set.SetArgProperties(1, ArgProperties().NonIncreasing());
- 		set.SetArgProperties(2, ArgProperties().NonDecreasing());
- 		set.SetStatisticsCallback(StatisticsPropagator::PropagateFiniteMonotoneBounds);
-```
-
-**File**: `extension/icu/icu-datetrunc.cpp` (modified, +1/-0)
-```diff
-@@ -192,6 +192,7 @@ struct ICUDateTrunc : public ICUDateFunc {
- 		set.AddFunction(GetDateTruncFunction<timestamp_tz_ns_t>(LogicalType::TIMESTAMP_TZ_NS));
- 		// throws for unrecognized part specifiers and for dates that overflow the timestamp range
- 		set.SetFallible();
-+		set.SetStability(FunctionStability::CONSISTENT_WITHIN_QUERY);
- 		set.SetArgProperties(1, ArgProperties().NonDecreasing());
- 		loader.RegisterFunction(set);
- 	}
-```
-
-**File**: `extension/icu/icu-list-range.cpp` (modified, +2/-0)
-```diff
-@@ -162,6 +162,7 @@ struct ICUListRange : public ICUDateFunc {
- 		range.AddFunction(range_fun);
- 		// throws for infinite or mixed-sign intervals
- 		range.SetFallible();
-+		range.SetStability(FunctionStability::CONSISTENT_WITHIN_QUERY);
- 		loader.RegisterFunction(range);
- 
- 		// generate_series: similar to range, but inclusive instead of exclusive bounds on the RHS
-@@ -176,6 +177,7 @@ struct ICUListRange : public ICUDateFunc {
- 
- 		// throws for infinite or mixed-sign intervals
- 		generate_series.SetFallible();
-+		generate_series.SetStability(FunctionStability::CONSISTENT_WITHIN_QUERY);
- 		loader.RegisterFunction(generate_series);
- 	}
- };
-```
-
-**File**: `extension/icu/icu-makedate.cpp` (modified, +3/-1)
-```diff
-@@ -79,7 +79,7 @@ static unique_ptr<ICUDateFunc::CastData> BindCastToDateData(BindCastInput &input
- 		throw BinderException("Casting from TIMESTAMP WITH TIME ZONE to DATE without an explicit time zone "
- 		                      "has been disabled  - use \"AT TIME ZONE ...\"");
- 	}
--	return make_uniq<ICUDateFunc::CastData>(make_uniq<ICUDateFunc::BindData>(*input.context));
-+	return ICUDateFunc::BindCastData(input);
- }
- 
- BoundCastInfo ICUMakeDate::BindCastToDate(BindCastInput &input, const LogicalType &source, const LogicalType &target) {
-@@ -176,6 +176,7 @@ struct ICUMakeTimestampTZFunc : public ICUDateFunc {
- 		    .AddParameter("minute", type)
- 		    .AddParameter("seconds", LogicalType::DOUBLE);
- 		function.SetFallible();
-+		function.SetStability(FunctionStability::CONSISTENT_WITHIN_QUERY);
- 		function.SetInitStateCallback(InitCalendarCache);
- 		return function;
- 	}
-@@ -192,6 +193,7 @@ struct ICUMakeTimestampTZFunc : public ICUDateFunc {
- 		    .AddParameter("seconds", LogicalType::DOUBLE)
- 		    .AddParameter("timezone", LogicalType::VARCHAR);
- 		function.SetFallible();
-+		function.SetStability(FunctionStability::CONSISTENT_WITHIN_QUERY);
- 		function.SetInitStateCallback(InitCalendarCache);
- 		return function;
- 	}
++idx_t DictFSSTAnalyzeState::RequiredSpace(DictionaryAppendState mode, idx_t tuple_count, idx_t unique_count,
++                                          idx_t dict_size, idx_t max_string_length, idx_t symbol_table_size) {
++	// index 0 of the dictionary is reserved for NULL
++	const idx_t dict_count = unique_count + 1;
++
++	const auto string_lengths_width = BitpackingPrimitives::MinimumBitWidth(max_string_length);
++	const auto string_lengths_space = BitpackingPrimitives::GetRequiredSize(dict_count, string_lengths_width);
++
++	idx_t required_space = AlignValue<idx_t>(sizeof(dict_fsst_compression_header_t));
++	required_space += dict_size;
++	required_space = AlignValue<idx_t>(required_space);
++	if (IsEncoded(mode)) {
++		required_space += symbol_table_size;
++		required_space = AlignValue<idx_t>(required_space);
++	}
++	required_space += string_lengths_space;
++	required_space = AlignValue<idx_t>(required_space);
++	if (mode != DictionaryAppendState::ENCODED_ALL_UNIQUE) {
++		// when every value is stored there is no selection buffer
++		const auto dictionary_indices_width = BitpackingPrimitives::MinimumBitWidth(dict_count - 1);
++		required_space += BitpackingPrimitives::GetRequiredSize(tuple_count, dictionary_indices_width);
++	}
++	return required_space;
++}
++
++idx_t DictFSSTAnalyzeState::BlockRequiredSpace(idx_t tuple_count, idx_t unique_count, idx_t dict_size,
++                                               idx_t max_string_length) const {
++	return RequiredSpace(current_mode, tuple_count, unique_count, dict_size, max_string_length,
++	                     current_symbol_table_size);
++}
++
++idx_t DictFSSTAnalyzeState::AvailableSpace() const {
++	if (current_mode == DictionaryAppendState::REGULAR) {
++		return info.GetBlockSize() - DictFSSTCompression::FSST_SYMBOL_TABLE_SIZE;
++	}
++	return info.GetBlockSize();
++}
++
++idx_t DictFSSTAnalyzeState::EncodedLength(idx_t length) const {
++	if (!length) {
++		return 0;
++	}
++	return MaxValue<idx_t>((length * fsst_ratio + FSST_RATIO_SCALE - 1) / FSST_RATIO_SCALE, 1);
++}
++
++idx_t DictFSSTAnalyzeState::StoredLength(idx_t length) const {
++	return IsEncoded(current_mode) ? EncodedLength(length) : length;
++}
++
++idx_t DictFSSTAnalyzeState::SegmentCharge(idx_t required_space) const {
++	// a segment above the limit is written to a block of its own whose remainder is lost, a smaller one is packed
++	// with other segments, see PartialBlockManager::RetainOrFlush
++	if (required_space > info.GetCompactionFlushLimit()) {
++		return info.GetBlockSize();
++	}
++	return AlignValue<idx_t>(required_space);
++}
++
++void DictFSSTAnalyzeState::MeasureFSST() {
++	// The writer trains the symbol table on the dictionary of the block. FSST only looks at a sample of what it is
++	// given, so the first values of the block are enough to tell how well the dictionary compresses.
++	vector<unsigned char> dictionary;
++	vector<size_t> lengths;
++	dictionary.reserve(measure_sample_size);
++	lengths.reserve(measure_sample.size());
++	for (auto &value : measure_s
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #28147** (closed):   Distinguish C API aggregates sharing callbacks in deduplication (@fastio)
-- **PR #28133** (2026-10-30): Stop IssuesCloseStale from handling PRs (@DinosL)
-- **PR #28129** (2026-10-30): Free a segment's buffer once its data is copied into a partial block (@ywelsch)
-- **PR #28128** (closed): [v2.0-cyanoptera] Backport #27943: size partitioned COPY batches from the written columns (@h4nsmuller)
-- **PR #28127** (2026-10-30): Scope projection pullup to binding-barrier subtrees (@kryonix)
-- **PR #28126** (2026-10-30): Reset recurring state for every recursive invocation (@kryonix)
+- **PR #28325** (closed): Altertable v2.0-cyanoptera (@redox)
+- **PR #28306** (closed): round: round halfway cases away from zero without std::round (@louie-duck)
+- **PR #28304** (closed): Batch the Ready To Merge fixes for wrong results and parsing (@Robinho-MR)
+- **PR #28303** (closed): Batch the Ready To Merge fixes for crashes and INTERNAL errors (@Robinho-MR)
+- **PR #28296** (closed): Expose the VARIANT layout through the v2 C API vector child accessors (@h4nsmuller)
+- **PR #28295** (2026-11-03): Make async_task_synchronous_batch layout deterministic (@Robinho-MR)
 
 ---
 
@@ -3066,28 +2844,70 @@ when adding a struct field
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. range threads, cross product dictionaries, sequence limits and jemalloc arena fa
+## X. Pull in upstream Brotli decoder fix (CVE-2026-111497) (#27791)
 
 **RULE**:
-When implementing operations in `.github/regression/micro.csv`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in duckdb/duckdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `third_party/brotli/dec/decode.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in duckdb/duckdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5e74f7cc`: range threads, cross product dictionaries, sequence limits and jemalloc arena fallback (#27767). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `94be654e`: Pull in upstream Brotli decoder fix (CVE-2026-111497) (#27791). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/regression/micro.csv`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `third_party/brotli/dec/decode.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-benchmark/micro/table_function/lateral_generate_series.benchmark
+static BROTLI_INLINE BrotliDecoderErrorCode DecodeBlockTypeAndLength(int safe, BrotliDecoderState *s, int tree_type) {
+		return BROTLI_DECODER_ERROR_FORMAT_BLOCK_SWITCH;
+		if (!SafeReadSymbol(type_tree, br, &block_type)) {
+			return BROTLI_DECODER_NEEDS_MORE_INPUT;
+		}
+			return BROTLI_DECODER_NEEDS_MORE_INPUT;
+	return BROTLI_DECODER_SUCCESS;
+static BROTLI_INLINE BrotliDecoderErrorCode DecodeLiteralBlockSwitchInternal(int safe, BrotliDecoderState *s) {
+	BrotliDecoderErrorCode result = DecodeBlockTypeAndLength(safe, s, 0);
+	if (result != BROTLI_DECODER_SUCCESS) {
+		return result;
+	return BROTLI_DECODER_SUCCESS;
+static BROTLI_NOINLINE BrotliDecoderErrorCode DecodeLiteralBlockSwitch(BrotliDecoderState *s) {
+	return DecodeLiteralBlockSwitchInternal(0, s);
+static BROTLI_NOINLINE BrotliDecoderErrorCode SafeDecodeLiteralBlockSwitch(BrotliDecoderState *s) {
+static BROTLI_INLINE BrotliDecoderErrorCode DecodeCommandBlockSwitchInternal(int safe, BrotliDecoderState *s) {
+	BrotliDecoderErrorCode result = DecodeBlockTypeAndLength(safe, s, 1);
+	if (result != BROTLI_DECODER_SUCCESS) {
+		return result;
+	return BROTLI_DECODER_SUCCESS;
+static BROTLI_NOINLINE BrotliDecoderErrorCode DecodeCommandBlockS
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+static BROTLI_INLINE BROTLI_BOOL DecodeBlockTypeAndLength(int safe, BrotliDecoderState *s, int tree_type) {
+		return BROTLI_FALSE;
+		if (!SafeReadSymbol(type_tree, br, &block_type))
+			return BROTLI_FALSE;
+			return BROTLI_FALSE;
+	return BROTLI_TRUE;
+static BROTLI_INLINE BROTLI_BOOL DecodeLiteralBlockSwitchInternal(int safe, BrotliDecoderState *s) {
+	if (!DecodeBlockTypeAndLength(safe, s, 0)) {
+		return BROTLI_FALSE;
+	return BROTLI_TRUE;
+static void BROTLI_NOINLINE DecodeLiteralBlockSwitch(BrotliDecoderState *s) {
+	DecodeLiteralBlockSwitchInternal(0, s);
+static BROTLI_BOOL BROTLI_NOINLINE SafeDecodeLiteralBlockSwitch(BrotliDecoderState *s) {
+static BROTLI_INLINE BROTLI_BOOL DecodeCommandBlockSwitchInternal(int safe, BrotliDecoderState *s) {
+	if (!DecodeBlockTypeAndLength(safe, s, 1)) {
+		return BROTLI_FALSE;
+	return BROTLI_TRUE;
+static void BROTLI_NOINLINE DecodeCommandBlockSwitch(BrotliDecoderState *s) {
+	DecodeCommandBlockSwitchInternal(0, s);
+static BROTLI_BOOL BROTLI_NOINLINE SafeDecodeCommandBlockSwitch(BrotliDecoderState *s) {
+static BROTLI_INLINE BROTLI_BOOL DecodeDistanceBlockSwitchInternal(int safe, BrotliDecoderState *s) {
+	if (!DecodeBlockTypeAndLength(safe, s, 2)) {
+		r
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5e74f7cc` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `94be654e` are properly handled with clean fallback behavior.

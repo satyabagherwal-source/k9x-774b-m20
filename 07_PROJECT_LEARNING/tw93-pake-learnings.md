@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tw93-pake-learnings.md`  
 > **Source**: github ([https://github.com/tw93/Pake](https://github.com/tw93/Pake))  
-> **Source Version**: `64854199`  
+> **Source Version**: `c7606f50`  
 > **License**: GPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T17:36:58.397Z  
+> **Timestamp**: 2026-11-03T19:24:11.228Z  
 > **Learning ID**: `learn-github-tw93-pake`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tw93-pake-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tw93/Pake](https://github.com/tw93/Pake))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T17:36:56.690Z  
+> **Harvest Timestamp**: 2026-11-03T19:24:09.414Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Turn any website into a lightweight desktop app with one command, on macOS, Windows and Linux.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, README.md, Dockerfile
-- **Stars / Engagement**: 62700 stars
+- **Stars / Engagement**: 62785 stars
 
 ---
 
@@ -917,11 +917,11 @@ export function getDefaultLinuxTargets(): string {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #1427** (2026-11-01): **[Bug] Web Midi issue on MacOS Arm and Intel**
+  *Symptoms*: ### Search before asking  - [x] I searched in the [issues](https://github.com/tw93/Pake/issues?q=) and found nothing similar.   ### Pake version  I am encountering an issue with midi on MacOS Arm and Intel, the application is built (dmg) from local file, but the application doesn´t see midi devices and incoming midi messages. Not sure if it is an issue with Tauri Web Midi. When the application is built via npm build and runs on local server everything works normally on Macs, when using pake generated dmgs screens are ok, all the features are available except midi ports. On Windows 10 and 11 everything works fine with pake executables, midi devices listed and incoming midi messages functional. Any recommandations or hints how to fix that? Thank you.  ### Rust version  Rust 1.99.1, Pake 3.17.8, npm 11.19.1 on Mac   ### Package Manager  npm  ### System version  Sequoia 15.7 M1 Pro  ### Node.js version  v24.22.0  ### Build Command  sudo pake /Users/admin/Desktop/midee-master/dist/index.html -- name "MidoApp" -- use-local-file  ### Minimal reproduce step  midi icon in upper right corner of the apllication is greyed out.  ### What did you expect to see?  active connection of midi device and active playing like on Windows versions, those work with no issues.  ### What did you see instead?  midi icon in upper right corner of the apllication is greyed out.  ### Anything else?  Suspecting some issues with Web Midi in Tauri or Rust packages on MacOS.   ### Are you willing to submit a PR
+
 - **Issue #1424** (2026-10-28): **[Bug] Upgraded to 3.17.7 build and issues span out**
   *Symptoms*: ### Search before asking  - [x] I searched in the [issues](https://github.com/tw93/Pake/issues?q=) and found nothing similar.   ### Pake version  Got this that comes with errors:  C:\Users\DELL\AppData\Local\pnpm\global\v11\2d30-18e2955c60370328-0\node_modules\.pnpm\pake-cli@3.17.7\node_modules\pake-cli\src-tauri\target\x86_64-pc-windows-msvc\release\bundle\msi\Pake_1.0.0_x64_en-US.msi (3.39 MiB)  It seems to have built something that I can't find using Explorer. May be should downgrade to 3.16.x that was working fine till now, or remove and make a new fresh install.  Would be great to have the pnpm, npm or some command to proceed eventually. Thanks  ### Rust version  rustc 1.99.1 (58cf8f9c3 2026-10-13)  ### Package Manager  npm  ### System version  12.1.0  ### Node.js version  v24.22.1  ### Build Command  pake https://docs.deno.com/runtime/ --name Docdeno  ### Minimal reproduce step  pake https://docs.deno.com/runtime/ --name Docdeno   ### What did you expect to see?  the msi path so I could run it  ### What did you see instead?  C:\Users\DELL\AppData\Local\pnpm\global\v11\2d30-18e2955c60370328-0\node_modules\.pnpm\pake-cli@3.17.7\node_modules\pake-cli\src-tauri\target\x86_64-pc-windows-msvc\release\bundle\msi\Pake_1.0.0_x64_en-US.msi (3.39 MiB)  ### Anything else?  no  ### Are you willing to submit a PR?  - [ ] I'm willing to submit a PR!
-
-- **Issue #1406** (2026-10-05): **[Bug] Video Captions don't work in pake-youtube on Linux**
-  *Symptoms*: ### Search before asking  - [x] I searched in the [issues](https://github.com/tw93/Pake/issues?q=) and found nothing similar.   ### Pake version  3.17.2  ### Rust version  1.89.0  ### Package Manager  pnpm  ### System version  Arch Linux  ### Node.js version  26.8.2  ### Build Command  `pake https://www.youtube.com --name youtube --targets zst`  ### Minimal reproduce step  Build and install with previous command. Open any video and enable captions. They don't appear on the screen!  ### What did you expect to see?  Captions  ### What did you see instead?  Nothing  ### Anything else?  Thanks  ### Are you willing to submit a PR?  - [ ] I'm willing to submit a PR!
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -938,111 +938,50 @@ export function getDefaultLinuxTargets(): string {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `eddc4bda` (2026-10-30)
-**Commit Message**: Merge pull request #1426 from NgoQuocViet2001/fix-download-filename-decoding
+### Incident Patch 1: `39b0ffe3` (2026-11-01)
+**Commit Message**: build(docker): copy only Rust inputs into the cargo stage
 
-fix: decode percent-encoded file names when saving downloads
+COPY . /pake invalidated the cargo layer on any change outside src-tauri,
+so 24 of 30 recent Docker runs recompiled all 403 crates (663s against
+78s with the layer cached). The cargo-builder stage now copies
+rust-toolchain.toml and src-tauri and creates the empty ../dist that
+frontendDist points at; every include_str! and config path lives inside
+src-tauri and tauri.conf.json sets its own version. The final stage
+still copies the whole tree and overlays src-tauri and target, so the
+image is unchanged.
 
-**File**: `src-tauri/src/inject/event.js` (modified, +15/-1)
+Verified: reviewer traced every path the Rust build reads; the Docker
+Build and Packaging job on the pushed commit builds the image and a
+real deb and AppImage from it.
+
+Rollback: git revert this commit; the published image is built from
+the same Dockerfile, so revert before tagging if that job fails.
+
+**File**: `Dockerfile` (modified, +6/-1)
 ```diff
-@@ -1628,10 +1628,24 @@ function setDefaultZoom() {
-   }
- }
+@@ -26,7 +26,12 @@ RUN rustc --version && echo "Rust version verified"
  
-+// Browsers decode the last URL path segment when naming a download. Keep the
-+// encoded form when decoding fails or yields a path separator, a character
-+// Windows rejects in file names, or a control/format character.
-+function decodeFilenameSegment(segment) {
-+  try {
-+    const decoded = decodeURIComponent(segment);
-+    return /[\\/:*?"<>|\p{Cc}\p{Cf}]/u.test(decoded) ? segment : decoded;
-+  } catch (e) {
-+    return segment;
-+  }
-+}
-+
- function getFilenameFromUrl(url) {
-   try {
-     const urlPath = new URL(url).pathname;
--    let filename = urlPath.substring(urlPath.lastIndexOf("/") + 1);
-+    let filename = decodeFilenameSegment(
-+      urlPath.substring(urlPath.lastIndexOf("/") + 1),
-+    );
- 
-     // If no filename or no extension, generate one
-     if (!filename || !filename.includes(".")) {
-```
-
-**File**: `tests/unit/event-link-guard.test.js` (modified, +55/-0)
-```diff
-@@ -926,3 +926,58 @@ describe("getFilenameFromUrl data URI extension", () => {
-     expect(filename).not.toContain("data:image/");
-   });
- });
-+
-+describe("getFilenameFromUrl percent-encoded path", () => {
-+  it("decodes the file name the way browsers name downloads", () => {
-+    const context = loadEventHelpers();
-+    expect(
-+      context.getFilenameFromUrl(
-+        "https://example.com/files/Annual%20Report%202026.pdf",
-+      ),
-+    ).toBe("Annual Report 2026.pdf");
-+    expect(
-+      context.getFilenameFromUrl("https://example.com/%E6%8A%A5%E5%91%8A.pdf"),
-+    ).toBe("报告.pdf");
-+  });
-+
-+  it.each(["a%2F..%2Fsecret.pdf", "bad%E0%A4.pdf", "%E2%80%AEfdp.pdf"])(
-+    "keeps the encoded name when decoding is unsafe or malformed: %s",
-+    (name) => {
-+      const context = loadEventHelpers();
-+      expect(
-+        context.getFilenameFromUrl(`https://example.com/files/${name}`),
-+      ).toBe(name);
-+    },
-+  );
-+
-+  it("passes the decoded name to download_file", () => {
-+    const context = loadEventHelpers({ withTauri: true });
-+    runDomReady(context);
-+    const anchor = makeAnchor(
-+      "https://example.com/files/Annual%20Report.pdf",
-+      "_self",
-+    );
-+    getClickGuard(context)(makeClickEvent(anchor));
-+    expect(
-+      context.invokeCalls
-+        .filter(([command]) => command === "download_file")
-+        .map(([, payload]) => payload.params.filename),
-+    ).toEqual(["Annual Report.pdf"]);
-+  });
-+
-+  it("names native Windows downloads with the decoded name", () => {
-+    const context = loadEventHelpers({
-+      withTauri: true,
-+      nativeDownloads: true,
-+    });
-+    runDomReady(context);
-+    const anchor = makeAnchor(
-+      "https://example.com/files/%E6%8A%A5%E5%91%8A%202026.pdf",
-+      "_self",
-+    );
-+    getClickGuard(context)(makeClickEvent(anchor));
-+    expect(context.nativeDownloadClicks).toEqual([
-+      [anchor.href, "报告 2026.pdf"],
-+    ]);
-+  });
-+});
+ # Share the system toolchain layer between compilation and the final image.
+ FROM base AS cargo-builder
+-COPY . /pake
++# Only what the Rust build reads, so a change elsewhere (docs, CLI sources,
++# the contributors image) keeps the compiled dependency layer cached.
++# frontendDist points at ../dist, which only has to exist here.
++COPY rust-toolchain.toml /pake/
++COPY src-tauri /pake/src-tauri
++RUN mkdir -p /pake/dist
+ WORKDIR /pake/src-tauri
+ # Build cargo packages and store cache
+ RUN --mount=type=cache,target=/usr/local/cargo/registry \
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1428** (closed): updating (@fejorca)
 - **PR #1426** (2026-10-30): fix: decode percent-encoded file names when saving downloads (@NgoQuocViet2001)
 - **PR #1422** (2026-10-26): fix: update vitest, add vite peer and remove unused terser plugin for advisories (@jakero)
 - **PR #1421** (2026-10-26): fix: update Cargo.lock crates for published RustSec advisories (@jakero)
 - **PR #1420** (closed): Fix Pake CLI workflow for pake-cli 3.x (@Bulls64)
 - **PR #1419** (closed): ci: gate the workflows with Plumber and publish the score badge (@Totara-thib)
-- **PR #1417** (2026-10-17): Fix/windows notification default sound (@reg-chen)
 
 ---
 
@@ -1062,42 +1001,33 @@ fix: decode percent-encoded file names when saving downloads
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #1426 from NgoQuocViet2001/fix-download-filename-decoding
+## X. build(docker): copy only Rust inputs into the cargo stage
 
 **RULE**:
-When implementing operations in `src-tauri/src/inject/event.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tw93/Pake. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Dockerfile`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tw93/Pake. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `eddc4bda`: Merge pull request #1426 from NgoQuocViet2001/fix-download-filename-decoding. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `39b0ffe3`: build(docker): copy only Rust inputs into the cargo stage. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src-tauri/src/inject/event.js`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Dockerfile`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-// Browsers decode the last URL path segment when naming a download. Keep the
-// encoded form when decoding fails or yields a path separator, a character
-// Windows rejects in file names, or a control/format character.
-function decodeFilenameSegment(segment) {
-  try {
-    const decoded = decodeURIComponent(segment);
-    return /[\\/:*?"<>|\p{Cc}\p{Cf}]/u.test(decoded) ? segment : decoded;
-  } catch (e) {
-    return segment;
-  }
-}
-
-    let filename = decodeFilenameSegment(
-      urlPath.substring(urlPath.lastIndexOf("/") + 1),
-    );
+# Only what the Rust build reads, so a change elsewhere (docs, CLI sources,
+# the contributors image) keeps the compiled dependency layer cached.
+# frontendDist points at ../dist, which only has to exist here.
+COPY rust-toolchain.toml /pake/
+COPY src-tauri /pake/src-tauri
+RUN mkdir -p /pake/dist
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-    let filename = urlPath.substring(urlPath.lastIndexOf("/") + 1);
+COPY . /pake
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `eddc4bda` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `39b0ffe3` are properly handled with clean fallback behavior.

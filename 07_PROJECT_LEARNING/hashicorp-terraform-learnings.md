@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hashicorp-terraform-learnings.md`  
 > **Source**: github ([https://github.com/hashicorp/terraform](https://github.com/hashicorp/terraform))  
-> **Source Version**: `89fa8797`  
+> **Source Version**: `6e64dc15`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-02T15:08:18.314Z  
+> **Timestamp**: 2026-11-04T01:07:38.032Z  
 > **Learning ID**: `learn-github-hashicorp-terraform`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hashicorp-terraform-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/hashicorp/terraform](https://github.com/hashicorp/terraform))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-02T15:08:16.956Z  
+> **Harvest Timestamp**: 2026-11-04T01:07:37.797Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Terraform enables you to safely and predictably create, change, and improve infrastructure. It is a source-available tool that codifies APIs into declarative configuration files that can be shared amongst team members, treated as code, edited, reviewed, and versioned.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 50348 stars
+- **Stars / Engagement**: 50122 stars
 
 ---
 
@@ -2260,11 +2260,11 @@ func (c *RemoteClient) getLockInfo() (*statemgr.LockInfo, error) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #39468** (2026-11-03): **terraform show of a saved plan fails with "Module source has changed" when a const variable comes from a var-file**
+  *Symptoms*: ### Terraform Version  ```shell Terraform v1.16.7 on darwin_arm64 ```  ### Terraform Configuration Files  ```terraform # main.tf variable "ref" {   type    = string   const   = true   default = "a" }  module "m" {   source = "./mod_${var.ref}" }  output "n" {   value = module.m.n } ```  ```terraform # mod_a/main.tf output "n" { value = "a" }  # mod_b/main.tf output "n" { value = "b" } ```  ```terraform # dev.tfvars ref = "b" ```    ### Debug Output  ``` 2026-10-28T13:13:26.360-0400 [INFO]  Terraform version: 1.16.7 2026-10-28T13:13:26.360-0400 [DEBUG] using github.com/hashicorp/go-tfe v1.110.0 2026-10-28T13:13:26.360-0400 [DEBUG] using github.com/hashicorp/hcl/v2 v2.24.0 2026-10-28T13:13:26.360-0400 [DEBUG] using github.com/hashicorp/terraform-svchost v0.2.1 2026-10-28T13:13:26.360-0400 [DEBUG] using github.com/zclconf/go-cty v1.18.1 2026-10-28T13:13:26.360-0400 [INFO]  Go runtime version: go1.26.10 2026-10-28T13:13:26.360-0400 [INFO]  CLI args: []string{"terraform", "show", "-json", "p.bin"} 2026-10-28T13:13:26.360-0400 [TRACE] Stdout is not a terminal 2026-10-28T13:13:26.360-0400 [TRACE] Stderr is not a terminal 2026-10-28T13:13:26.360-0400 [TRACE] Stdin is not a terminal 2026-10-28T13:13:26.360-0400 [INFO]  Checkpoint disabled. Not running. 2026-10-28T13:13:26.360-0400 [INFO]  CLI command args: []string{"show", "-json", "p.bin"} 2026-10-28T13:13:26.361-0400 [TRACE] terraform.NewContext: starting 2026-10-28T13:13:26.361-0400 [TRACE] terraform.NewContext: complete 2026-10-28
+
 - **Issue #39444** (2026-10-26): **backend/s3: trim download buffer to bytes written to fix trailing NUL padding**
   *Symptoms*: Fixes #39440.  ### What  `RemoteClient.get` in `internal/backend/remote-state/s3/client.go` sizes its buffer from the `HeadObject` `ContentLength`, then fills it with `manager.Downloader`. If the object is overwritten by a **smaller** one between the HEAD and the download, the buffer is larger than the downloaded content, so `w.Bytes()` returns the new content followed by `\x00` padding. The byte count returned by `Download` was discarded.  The padded buffer then fails to parse:  ``` Error: Unsupported state file format The state file could not be parsed as JSON: syntax error at byte offset <newsize+1>. ```  This hits any `terraform_remote_state` read of an S3 state while another run applies a smaller version of that state.  ### Fix  Slice the buffer to the number of bytes `Download` reports it wrote before computing the MD5 and building the payload.  ### Tests  Added `TestRemoteClientGet_objectShrinksBetweenHeadAndDownload` (no AWS account needed): a local fake S3 endpoint serves a >5 MiB object, then swaps in a smaller one right after answering the HEAD, so the multipart download fills only part of the pre-sized buffer. The test asserts the returned payload is valid JSON and exactly the downloaded object's length.  Validation (go1.26.10, linux/amd64), run in `internal/backend/remote-state/s3`:  ``` # with the fix $ go test -run TestRemoteClientGet_objectShrinksBetweenHeadAndDownload ./ -count=1 ok  github.com/hashicorp/terraform/internal/backend/remote-state/s3  0.224s  # w
-
-- **Issue #39434** (2026-10-23): **Provider archives downloaded by terraform init are left in the temporary directory on Windows**
-  *Symptoms*: ### Terraform Version  ```shell Terraform v1.11.3 on windows_amd64 ```  Also reproduced with a local build of `main` at cdbff3e.  ### Terraform Configuration Files  ```terraform terraform {   required_providers {     null = {       source  = "hashicorp/null"       version = "3.2.1"     }   } } ```  ### Debug Output  Not applicable: nothing is logged, because the error from the failed delete is discarded.  ### Expected Behavior  After `terraform init` installs a provider downloaded from a registry, the downloaded archive is deleted from the temporary directory.  ### Actual Behavior  The archive stays behind as `%TEMP%\terraform-provider<random>`: one file for every provider package downloaded, on every init (4.7 MB for `hashicorp/null` 3.2.1, about 180 MB for `hashicorp/aws`). `terraform providers lock` leaves one per provider per requested platform. On one workstation 1,764 of these files (195 GB) built up in ten days and filled the system drive.  ### Steps to Reproduce  PowerShell, in an empty directory:  1. Save the configuration above as `work\main.tf`. 2. `mkdir tmp; $env:TMP = "$PWD\tmp"; $env:TEMP = "$PWD\tmp"` 3. `terraform -chdir=work init` 4. `Get-ChildItem tmp` lists `terraform-provider<N>`.  ### Additional Context  `installFromHTTPURL` in `internal/providercache/package_install.go`:  ```go f, err := os.CreateTemp("", "terraform-provider") // ... defer f.Close() defer os.Remove(f.Name()) ```  Deferred calls run last-in, first-out, so `os.Remove` runs while `f` is st
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2281,42 +2281,566 @@ func (c *RemoteClient) getLockInfo() (*statemgr.LockInfo, error) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a48fc909` (2026-10-31)
-**Commit Message**: fix: Enable colorizer in a views.View to handle [purple] tags (#39477)
+### Incident Patch 1: `6e64dc15` (2026-11-03)
+**Commit Message**: refactor: Make `state` subcommands use diagnostics to report errors to users (#39486)
 
-See: https://github.com/hashicorp/terraform/commit/4b97411890909e9b3ad9f72ac2c4ddd13ee1fcd5
+* fix: Stop errors due to module address conflict being reported as data persistence errors
 
-**File**: `internal/command/views/view.go` (modified, +6/-1)
+* refactor: Replace use of errors from `state rm` subcommand with error diagnostics specific to `state replace-provider`
+
+* refactor: Make `state rm` return error diagnostics when it fails to write changes to the state file
+
+* refactor: Make `state mv` return error diagnostics when it fails to write changes to the state file(s)
+
+* fix: Remove unused constant
+
+* Add change file
+
+**File**: `.changes/v1.18/NOTES-20261103-141726.yaml` (added, +5/-0)
 ```diff
-@@ -5,6 +5,7 @@ package views
- 
- import (
- 	"fmt"
-+	"maps"
- 	"strings"
- 
- 	"github.com/mitchellh/colorstring"
-@@ -43,10 +44,14 @@ type View struct {
- // Initialize a View with the given streams, a disabled colorize object, and a
- // no-op configSources callback.
- func NewView(streams *terminal.Streams) *View {
-+	colors := make(map[string]string, (len(colorstring.DefaultColors) + 1))
-+	maps.Copy(colors, colorstring.DefaultColors)
-+	colors["purple"] = "38;5;57" // Add purple color used in `login`'s MOTD from HCP Terraform
-+
- 	return &View{
- 		streams: streams,
- 		colorize: &colorstring.Colorize{
--			Colors:  colorstring.DefaultColors,
-+			Colors:  colors,
- 			Disable: true,
- 			Reset:   true,
- 		},
+@@ -0,0 +1,5 @@
++kind: NOTES
++body: 'state: Error output from `mv`, `replace-provider` and `rm` subcommands has been updated with different wording and formatting.'
++time: 2026-11-03T14:17:26.833636Z
++custom:
++    Issue: "39486"
 ```
 
-**File**: `internal/command/views/view_test.go` (added, +53/-0)
+**File**: `internal/command/state_mv.go` (modified, +36/-8)
 ```diff
-@@ -0,0 +1,53 @@
+@@ -218,7 +218,12 @@ func (c *StateMvCommand) Run(args []string) int {
+ 			}
+ 
+ 			if stateTo.Module(addrTo) != nil {
+-				c.Ui.Error(fmt.Sprintf(errStateMv, "destination module already exists"))
++				diags = diags.Append(tfdiags.Sourceless(
++					tfdiags.Error,
++					msgInvalidTarget,
++					fmt.Sprintf("Cannot move to %s: the destination module already exists at that address in the current state.", addrTo),
++				))
++				c.showDiagnostics(diags)
+ 				return 1
+ 			}
+ 
+@@ -427,22 +432,26 @@ func (c *StateMvCommand) Run(args []string) int {
+ 
+ 	// Write the new state
+ 	if err := stateToMgr.WriteState(stateTo); err != nil {
+-		c.Ui.Error(fmt.Sprintf(errStateRmPersist, err))
++		diags = diags.Append(stateMvPersistErrDiag(err))
++		c.showDiagnostics(diags)
+ 		return 1
+ 	}
+ 	if err := stateToMgr.PersistState(schemas); err != nil {
+-		c.Ui.Error(fmt.Sprintf(errStateRmPersist, err))
++		diags = diags.Append(stateMvPersistErrDiag(err))
++		c.showDiagnostics(diags)
+ 		return 1
+ 	}
+ 
+ 	// Write the old state if it is different
+ 	if stateTo != stateFrom {
+ 		if err := stateFromMgr.WriteState(stateFrom); err != nil {
+-			c.Ui.Error(fmt.Sprintf(errStateRmPersist, err))
++			diags = diags.Append(stateMvPersistSourceStateErrDiag(err))
++			c.showDiagnostics(diags)
+ 			return 1
+ 		}
+ 		if err := stateFromMgr.PersistState(schemas); err != nil {
+-			c.Ui.Error(fmt.Sprintf(errStateRmPersist, err))
++			diags = diags.Append(stateMvPersistSourceStateErrDiag(err))
++			c.showDiagnostics(diags)
+ 			return 1
+ 		}
+ 	}
+@@ -591,7 +600,26 @@ func (c *StateMvCommand) Synopsis() string {
+ 	return "Move an item in the state"
+ }
+ 
+-const errStateMv = `Error moving state: %s
++func stateMvPersistErrDiag(err error) tfdiags.Diagnostic {
++	return tfdiags.Sourceless(
++		tfdiags.Error,
++		"Failed to save the state",
++		fmt.Sprintf(`Terraform encountered an error when saving state: %s
+ 
+-Please ensure your addresses and state paths are valid. No
+-state was persisted. Your existing states are untouched.`
++The state was not saved. No items were moved within the persisted state.
++Please resolve the issue above and try again.`, err),
++	)
++}
++
++// This is only relevant if the -state-out and -state options are both used.
++func stateMvPersistSourceStateErrDiag(err error) tfdiags.Diagnostic {
++	return tfdiags.Sourceless(
++		tfdiags.Error,
++		"Failed to save the state",
++		fmt.Sprintf(`Terraform encountered an error when saving state: %s
++
++The destination state provided using -state-out was updated, but an error occurred when performing the
++paired update of the source state provided using -state. The source state may still contain any items
++that were intended to be moved. Please resolve the issue above and try again.`, err),
++	)
++}
+```
+
+**File**: `internal/command/state_replace_provider.go` (modified, +15/-2)
+```diff
+@@ -192,11 +192,13 @@ func (c *StateReplaceProviderCommand) Run(args []string) int {
+ 
+ 	// Write the updated state
+ 	if err := stateMgr.WriteState(state); err != nil {
+-		c.Ui.Error(fmt.Sprintf(errStateRmPersist, err))
++		diags = diags.Append(stateReplaceProviderPersistErrDiag(err))
++		c.showDiagnostics(diags)
+ 		return 1
+ 	}
+ 	if err := stateMgr.PersistState(schemas); err != nil {
+-		c.Ui.Error(fmt.Sprintf(errStateRmPersist, err))
++		diags = diags.Append(stateReplaceProviderPersistErrDiag(err))
++		c.showDiagnostics(diags)
+ 		return 1
+ 	}
+ 
+@@ -243,3 +245,14 @@ Options:
+ func (c *StateReplaceProviderCommand) Synopsis() string {
+ 	return "Replace provider in the state"
+ }
++
++func stateReplaceProviderPersistErrDiag(err error) tfdiags.Diagnostic {
++	return tfdiags.Sourceless(
++		tfdiags.Error,
++		"Failed to save the state",
++		fmt.Sprintf(`Terraform encountered an error when saving state: %s
++
++The state was not saved. No items were changed in the persisted
++state. Please resolve the issue above and try again.`, err),
++	)
++}
+```
+
+**File**: `internal/command/state_rm.go` (modified, +12/-5)
+```diff
+@@ -140,11 +140,13 @@ func (c *StateRmCommand) Run(args []string) int {
+ 	}
+ 
+ 	if err := stateMgr.WriteState(state); err != nil {
+-		c.Ui.Error(fmt.Sprintf(errStateRmPersist, err))
++		diags = diags.Append(stateRmPersistErrDiag(err))
++		c.showDiagnostics(diags)
+ 		return 1
+ 	}
+ 	if err := stateMgr.PersistState(schemas); err != nil {
+-		c.Ui.Error(fmt.Sprintf(errStateRmPersist, err))
++		diags = diags.Append(stateRmPersistErrDiag(err))
++		c.showDiagnostics(diags)
+ 		return 1
+ 	}
+ 
+@@ -224,8 +226,13 @@ func (c *StateRmCommand) Synopsis() string {
+ 	return "Remove instances from the state"
+ }
+ 
+-const errStateRmPersist = `Error saving the state: %s
++func stateRmPersistErrDiag(err error) tfdiags.Diagnostic {
++	return tfdiags.Sourceless(
++		tfdiags.Error,
++		"Failed to save the state",
++		fmt.Sprintf(`Terraform encountered an error when saving state: %s
+ 
+ The state was not saved. No items were removed from the persisted
+-state. No backup was created since no modification occurred. Please
+-resolve the issue above and try again.`
++state. Please resolve the issue above and try again.`, err),
++	)
++}
+```
+
+---
+
+### Incident Patch 2: `c5d2c43d` (2026-11-03)
+**Commit Message**: command/unlock: Refactor to use `views` (#39472)
+
+This change:
+
+* Makes the `arguments` package control the selected view type for `unlock`
+* Implements human and JSON views for the `unlock` command
+* Refactors the `unlock` command to use views to prepare and print output
+* Makes declining the unlock process an error diagnostic
+
+**File**: `internal/command/arguments/unlock.go` (modified, +5/-1)
+```diff
+@@ -11,11 +11,15 @@ import (
+ type Unlock struct {
+ 	Force  bool
+ 	LockID string
++
++	ViewType ViewType
+ }
+ 
+ func ParseUnlock(args []string) (*Unlock, tfdiags.Diagnostics) {
+ 	var diags tfdiags.Diagnostics
+-	ret := &Unlock{}
++	ret := &Unlock{
++		ViewType: ViewHuman,
++	}
+ 
+ 	cmdFlags := defaultFlagSet("force-unlock")
+ 	cmdFlags.BoolVar(&ret.Force, "force", false, "force")
+```
+
+**File**: `internal/command/arguments/unlock_test.go` (modified, +12/-6)
+```diff
+@@ -18,14 +18,16 @@ func TestParseUnlock_valid(t *testing.T) {
+ 		"defaults with lock ID": {
+ 			[]string{"foobar12345"},
+ 			&Unlock{
+-				LockID: "foobar12345",
++				LockID:   "foobar12345",
++				ViewType: ViewHuman,
+ 			},
+ 		},
+ 		"force unlock": {
+ 			[]string{"-force", "foobar12345"},
+ 			&Unlock{
+-				LockID: "foobar12345",
+-				Force:  true,
++				LockID:   "foobar12345",
++				Force:    true,
++				ViewType: ViewHuman,
+ 			},
+ 		},
+ 	}
+@@ -51,7 +53,9 @@ func TestParseUnlock_invalid(t *testing.T) {
+ 	}{
+ 		"missing lock id": {
+ 			[]string{},
+-			&Unlock{},
++			&Unlock{
++				ViewType: ViewHuman,
++			},
+ 			tfdiags.Diagnostics{
+ 				tfdiags.Sourceless(
+ 					tfdiags.Error,
+@@ -63,7 +67,8 @@ func TestParseUnlock_invalid(t *testing.T) {
+ 		"unknown flag": {
+ 			[]string{"-unknown", "foobar12345"},
+ 			&Unlock{
+-				LockID: "foobar12345",
++				LockID:   "foobar12345",
++				ViewType: ViewHuman,
+ 			},
+ 			tfdiags.Diagnostics{
+ 				tfdiags.Sourceless(
+@@ -76,7 +81,8 @@ func TestParseUnlock_invalid(t *testing.T) {
+ 		"too many arguments": {
+ 			[]string{"foobar12345", "fizzbuzz12345"},
+ 			&Unlock{
+-				LockID: "",
++				LockID:   "",
++				ViewType: ViewHuman,
+ 			},
+ 			tfdiags.Diagnostics{
+ 				tfdiags.Sourceless(
+```
+
+**File**: `internal/command/unlock.go` (modified, +56/-19)
+```diff
+@@ -9,6 +9,7 @@ import (
+ 	"strings"
+ 
+ 	"github.com/hashicorp/terraform/internal/command/arguments"
++	"github.com/hashicorp/terraform/internal/command/views"
+ 	"github.com/hashicorp/terraform/internal/states/statemgr"
+ 
+ 	"github.com/hashicorp/terraform/internal/terraform"
+@@ -23,22 +24,36 @@ type UnlockCommand struct {
+ 
+ func (c *UnlockCommand) Run(rawArgs []string) int {
+ 	var diags tfdiags.Diagnostics
+-	rawArgs = c.Meta.process(rawArgs)
+ 
++	// Parse and apply global view arguments
++	common, rawArgs := arguments.ParseView(rawArgs)
++	c.View.Configure(common)
++
++	// Process command-specific arguments.
+ 	args, argDiags := arguments.ParseUnlock(rawArgs)
++	diags = diags.Append(argDiags)
++
++	// Prepare the view
++	view := views.NewUnlock(args.ViewType, c.View)
++
++	// Now the view is ready, process any error diagnostics from parsing arguments.
++	if diags.HasErrors() {
++		view.Diagnostics(diags)
++		return 1
++	}
++
+ 	diags = diags.Append(argDiags)
+ 	if argDiags.HasErrors() {
+-		c.showDiagnostics(diags)
++		view.Diagnostics(diags)
+ 		return 1
+ 	}
+ 
+ 	// Load the backend
+-	view := arguments.ViewHuman
+ 	configPath := c.WorkingDir.RootModuleDir()
+-	b, backendDiags := c.backend(configPath, view)
++	b, backendDiags := c.backend(configPath, args.ViewType)
+ 	diags = diags.Append(backendDiags)
+ 	if backendDiags.HasErrors() {
+-		c.showDiagnostics(diags)
++		view.Diagnostics(diags)
+ 		return 1
+ 	}
+ 
+@@ -47,12 +62,22 @@ func (c *UnlockCommand) Run(rawArgs []string) int {
+ 
+ 	env, err := c.Workspace()
+ 	if err != nil {
+-		c.Ui.Error(fmt.Sprintf("Error selecting workspace: %s", err))
++		diags = diags.Append(tfdiags.Sourceless(
++			tfdiags.Error,
++			"Failed to determine the current workspace",
++			err.Error(),
++		))
++		view.Diagnostics(diags)
+ 		return 1
+ 	}
+ 	stateMgr, sDiags := b.StateMgr(env)
+ 	if sDiags.HasErrors() {
+-		c.Ui.Error(fmt.Sprintf("Failed to load state: %s", sDiags.Err()))
++		diags = diags.Append(tfdiags.Sourceless(
++			tfdiags.Error,
++			"Failed to access state",
++			fmt.Sprintf("Failed to access state: %s", sDiags.Err()),
++		))
++		view.Diagnostics(diags)
+ 		return 1
+ 	}
+ 
+@@ -62,7 +87,11 @@ func (c *UnlockCommand) Run(rawArgs []string) int {
+ 		// Forcing this doesn't do anything, but doesn't break anything either,
+ 		// and allows us to run the basic command test too.
+ 		if isLocal {
+-			c.Ui.Error("Local state cannot be unlocked by another process")
++			diags = diags.Append(tfdiags.Sourceless(
++				tfdiags.Error,
++				"Failed to unlock local state",
++				"Local state cannot be unlocked by another process"))
++			view.Diagnostics(diags)
+ 			return 1
+ 		}
+ 
+@@ -76,21 +105,36 @@ func (c *UnlockCommand) Run(rawArgs []string) int {
+ 			Description: desc,
+ 		})
+ 		if err != nil {
+-			c.Ui.Error(fmt.Sprintf("Error asking for confirmation: %s", err))
++			diags = diags.Append(tfdiags.Sourceless(
++				tfdiags.Error,
++				"Failed to confirm forced unlock",
++				fmt.Sprintf("Error asking for confirmation: %s", err),
++			))
++			view.Diagnostics(diags)
+ 			return 1
+ 		}
+ 		if v != "yes" {
+-			c.Ui.Output("force-unlock cancelled.")
++			diags = diags.Append(tfdiags.Sourceless(
++				tfdiags.Error,
++				"Unlock cancelled",
++				"User did not confirm to proceed with the forced unlock",
++			))
++			view.Diagnostics(diags)
+ 			return 1
+ 		}
+ 	}
+ 
+ 	if err := stateMgr.Unlock(args.LockID); err != nil {
+-		c.Ui.Error(fmt.Sprintf("Failed to unlock state: %s", err))
++		diags = diags.Append(tfdiags.Sourceless(
++			tfdiags.Error,
++			"Failed to unlock state",
++			fmt.Sprintf("Failed to unlock state: %s", err),
++		))
++		view.Diagnostics(diags)
+ 		return 1
+ 	}
+ 
+-	c.Ui.Output(c.Colorize().Color(strings.TrimSpace(outputUnlockSuccess)))
++	view.UnlockSuccessful(diags)
+ 	return 0
+ }
+ 
+@@ -115,10 +159,3 @@ Options:
+ func (c *UnlockCommand) Synopsis() string {
+ 	return "Release a stuck lock on the current workspace"
+ }
+-
+-const outputUnlockSuccess = `
+-[reset][bold][green]Terraform state has been successfully unlocked![reset][green]
+-
+-The state has been unlocked, and Terraform commands should now be able to
+-obtain a new lock on the remote state.
+-`
+```
+
+**File**: `internal/command/unlock_test.go` (modified, +14/-15)
+```diff
+@@ -32,12 +32,10 @@ func TestUnlock(t *testing.T) {
+ 	}
+ 
+ 	p := testProvider()
+-	ui := testUiWrapped(t)
+-	view, _ := testView(t)
++	view, done := testView(t)
+ 	c := &UnlockCommand{
+ 		Meta: Meta{
+ 			testingOverrides: metaOverridesForProvider(p),
+-			Ui:               ui,
+ 			View:             view,
+ 			WorkingDir:       td,
+ 		},
+@@ -49,7 +47,8 @@ func TestUnlock(t *testing.T) {
+ 	}
+ 
+ 	if code := c.Run(args); code != 1 {
+-		t.Fatalf("bad: %d\n%s\n%s", code, ui.OutputWriter.String(), ui.ErrorWriter.String())
++		output := done(t)
++		t.Fatalf("bad: %d\n%s\n%s", code, output.Stdout(), output.Stderr())
+ 	}
+ 
+ 	// make sure we don't crash with arguments in the wrong order
+@@ -59,7 +58,8 @@ func TestUnlock(t *testing.T) {
+ 	}
+ 
+ 	if code := c.Run(args); code == 0 {
+-		t.Fatalf("bad: %d\n%s\n%s", code, ui.OutputWriter.String(), ui.ErrorWriter.String())
++		output := done(t)
++		t.Fatalf("bad: %d\n%s\n%s", code, output.Stdout(), output.Stderr())
+ 	}
+ }
+ 
+@@ -71,23 +71,21 @@ func TestUnlock_inmemBackend(t *testing.T) {
+ 	defer inmem.Reset()
+ 
+ 	// init backend
+-	ui := testUiWrapped(t)
+-	view, _ := testView(t)
++	view, done := testView(t)
+ 	ci := &InitCommand{
+ 		Meta: Meta{
+-			Ui:         ui,
+ 			View:       view,
+ 			WorkingDir: td,
+ 		},
+ 	}
+ 	if code := ci.Run(nil); code != 0 {
+-		t.Fatalf("bad: %d\n%s", code, ui.ErrorWriter)
++		output := done(t)
++		t.Fatalf("bad: %d\n%s\n%s", code, output.Stdout(), output.Stderr())
+ 	}
+ 
+-	ui = testUiWrapped(t)
++	view, done = testView(t)
+ 	c := &UnlockCommand{
+ 		Meta: Meta{
+-			Ui:         ui,
+ 			View:       view,
+ 			WorkingDir: td,
+ 		},
+@@ -100,13 +98,13 @@ func TestUnlock_inmemBackend(t *testing.T) {
+ 	}
+ 
+ 	if code := c.Run(args); code == 0 {
+-		t.Fatalf("bad: %d\n%s\n%s", code, ui.OutputWriter.String(), ui.ErrorWriter.String())
++		output := done(t)
++		t.Fatalf("bad: %d\n%s\n%s", code, output.Stdout(), output.Stderr())
+ 	}
+ 
+-	ui = testUiWrapped(t)
++	view, done = testView(t)
+ 	c = &UnlockCommand{
+ 		Meta: Meta{
+-			Ui:         ui,
+ 			View:       view,
+ 			WorkingDir: td,
+ 		},
+@@ -115,6 +113,7 @@ func TestUnlock_inmemBackend(t *testing.T) {
+ 	// lockID set in the test fixture
+ 	args[1] = "2b6a6738-5dd5-50d6-c0ae-f6352977666b"
+ 	if code := c.Run(args); code != 0 {
+-		t.Fatalf("bad: %d\n%s\n%s", code, ui.OutputWriter.String(), ui.ErrorWriter.String())
++		output := done(t)
++		t.Fatalf("bad: %d\n%s\n%s", code, output.Stdout(), output.Stderr())
+ 	}
+ }
+```
+
+**File**: `internal/command/views/unlock.go` (added, +52/-0)
+```diff
+@@ -0,0 +1,52 @@
++// Copyright IBM Corp. 2014, 2026
++// SPDX-License-Identifier: BUSL-1.1
++
++package views
++
++import (
++	"strings"
++
++	"github.com/hashicorp/terraform/internal/command/arguments"
++	"github.com/hashicorp/terraform/internal/tfdiags"
++)
++
++// Unlock is the view used for the `unlock` command.
++type Unlock interface {
++	// The unlock was attempted and succeeded.
++	// This may be after user confirmation, or when using the -force flag.
++	UnlockSuccessful(diags tfdiags.Diagnostics)
++
++	Diagnostics(diags tfdiags.Diagnostics)
++}
++
++func NewUnlock(viewType arguments.ViewType, view *View) Unlock {
++	switch viewType {
++	case arguments.ViewHuman:
++		return &UnlockHuman{view: view}
++	default:
++		panic("unsupported view type: " + string(viewType))
++	}
++}
++
++type UnlockHuman struct {
++	view *View
++}
++
++var _ Unlock = (*UnlockHuman)(nil)
++
++func (v *UnlockHuman) Diagnostics(diags tfdiags.Diagnostics) {
++	v.view.Diagnostics(diags)
++}
++
++func (v *UnlockHuman) UnlockSuccessful(diags tfdiags.Diagnostics) {
++	v.view.Diagnostics(diags)
++
++	outputUnlockSuccess := `
++[reset][bold][green]Terraform state has been successfully unlocked![reset][green]
++
++The state has been unlocked, and Terraform commands should now be able to
++obtain a new lock on the remote state.
++`
++
++	v.view.streams.Println(v.view.colorize.Color(strings.TrimSpace(outputUnlockSuccess)))
++}
+```
+
+**File**: `internal/command/views/unlock_test.go` (added, +86/-0)
+```diff
+@@ -0,0 +1,86 @@
 +// Copyright IBM Corp. 2014, 2026
 +// SPDX-License-Identifier: BUSL-1.1
 +
@@ -2326,59 +2850,92 @@ See: https://github.com/hashicorp/terraform/commit/4b97411890909e9b3ad9f72ac2c4d
 +	"strings"
 +	"testing"
 +
++	"github.com/google/go-cmp/cmp"
++	"github.com/hashicorp/terraform/internal/command/arguments"
 +	"github.com/hashicorp/terraform/internal/terminal"
++	"github.com/hashicorp/terraform/internal/tfdiags"
 +)
 +
-+func TestNewView_canProducePurpleColor(t *testing.T) {
++func TestUnlockHuman_UnlockSuccessful(t *testing.T) {
++	message := "Terraform state has been successfully unlocked!\n\nThe state has been unlocked, and Terraform commands should now be able to\nobtain a new lock on the remote state."
++
++	cases := map[string]struct {
++		diags          tfdiags.Diagnostics
++		expectedStdout string
++	}{
++		"basic": {
++			diags:          tfdiags.Diagnostics{},
++			expectedStdout: message,
++		},
++		"with warning": {
++			diags: tfdiags.Diagnostics{
++				tfdiags.Sourceless(
++					tfdiags.Warning,
++					"Example warning.",
++					"This is an example warning detail.",
++				),
++			},
++			expectedStdout: "Warning: Example warning.\n\nThis is an example warning detail.\n" +
++				message,
++		},
++	}
++
++	for name, tc := range cases {
++		t.Run(name, func(t *testing.T) {
++			streams, done := terminal.StreamsForTesting(t)
++			view := NewView(streams)
++			view.Configure(&arguments.View{NoColor: true})
++			v := NewUnlock(arguments.ViewHuman, view)
++
++			v.UnlockSuccessful(tc.diags)
++
++			output := done(t)
++			expectedStdout := tc.expectedStdout
++			if diff := cmp.Diff(expectedStdout, strings.TrimSpace(output.Stdout())); diff != "" {
++				t.Fatalf("unexpected stdout diff:\n%s", diff)
++			}
++			expectedStderr := ""
++			if diff := cmp.Diff(expectedStderr, strings.TrimSpace(output.Stderr())); diff != "" {
++				t.Fatalf("unexpected stderr diff:\n%s", diff)
++			}
++		})
++	}
++}
++
++func TestUnlockHuman_Diagnostics(t *testing.T) {
 +	streams, done := terminal.StreamsForTesting(t)
-+	v := NewView(streams)
++	view := NewView(streams)
++	view.Configure(&arguments.View{NoColor: true})
++	v := NewUnlock(arguments.ViewHuman, view)
 +
-+	if v == nil {
-+		t.Fatal("expected NewView to return a non-nil view")
++	diags := tfdiags.Diagnostics{
++		tfdiags.Sourceless(
++			tfdiags.Error,
++			"Example error.",
++			"This is an example error detail.",
++		),
 +	}
++	v.Diagnostics(diags)
 +
-+	if _, ok := v.colorize.Colors["purple"]; !ok {
-+		t.Fatal("expected colorizer colors to include purple color")
-+	}
-+
-+	message := `
-+                                          [purple]-                                [reset]
-+                                          [purple]-----                           -[reset]
-+                                          [purple]---------                      --[reset]
-+                                          [purple]---------  -                -----[reset]
-+                                           [purple]---------  ------        -------[reset]
-+                                             [purple]-------  ---------  ----------[reset]
-+                                                [purple]----  ---------- ----------[reset]
-+                                                  [purple]--  ---------- ----------[reset]
-+   [bold]Welcome to HCP Terraform![reset]                       [purple]-  ---------- -------[reset]
-+                                                      [purple]---  ----- ---[reset]
-+   [bold]Documentation:[reset] terraform.io/docs/cloud             [purple]--------   -[reset]
-+                                                      [purple]----------[reset]
-+                                                      [purple]----------[reset]
-+                                                       [purple]---------[reset]
-+                                                           [purple]-----[reset]
-+                                                               [purple]-[reset]`
-+
-+	v.streams.Print(
-+		v.colorize.Color(message),
-+	)
 +	output := done(t)
-+
-+	t.Logf("output:\n%s", output.Stdout())
-+
-+	if strings.Contains(output.Stdout(), "[purple]") {
-+		t.Fatal("expected output to not contain raw [purple] tags")
++	expectedStdout := ""
++	if diff := cmp.Diff(expectedStdout, strings.TrimSpace(output.Stdout())); diff != "" {
++		t.Fatalf("unexpected stdout diff:\n%s", diff)
++	}
++	expectedStderr := "Error: Example error.\n\nThis is an example error detail."
++	if diff := cmp.Diff(expectedStderr, strings.TrimSpace(output.Stderr())); diff != "" {
++		t.Fatalf("unexpected stderr diff:\n%s", diff)
 +	}
 +}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #39486** (2026-11-03): refactor: Make `state` subcommands use diagnostics to report errors to users (@SarahFrench)
+- **PR #39485** (closed): backend/remote-state/s3: trim state download to bytes actually read (@zichen0116)
 - **PR #39481** (2026-11-02): chore(deps): Bump the github-actions-backward-compatible group with 4 updates (@dependabot[bot])
+- **PR #39480** (closed): 🤖🤖🤖 dag: mark cycle edges in their real direction (@PerryLink)
+- **PR #39479** (closed): 🤖🤖🤖 graph: keep cycle edges in the resource graph (@PerryLink)
 - **PR #39477** (2026-10-31): views: Enable colorizer in a `views.View` to handle [purple] tags (@SarahFrench)
-- **PR #39473** (2026-10-30): stacks: Fix "missing required provider" error when component state requires a provider that the configuration does not (@austinvalle)
-- **PR #39471** (2026-10-29): command/providers schema: Refactor to use views (@SarahFrench)
-- **PR #39469** (2026-10-28): Cleanup after 1.17.1 release (@hc-github-team-tf-core)
-- **PR #39467** (2026-10-28): Prepare for 1.17.1 release (@hc-github-team-tf-core)
 
 ---
 
@@ -2398,33 +2955,32 @@ See: https://github.com/hashicorp/terraform/commit/4b97411890909e9b3ad9f72ac2c4d
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Enable colorizer in a views.View to handle [purple] tags (#39477)
+## X. Make `state` subcommands use diagnostics to report errors to users (#39486)
 
 **RULE**:
-When implementing operations in `internal/command/views/view.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in hashicorp/terraform. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.changes/v1.18/NOTES-20261103-141726.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in hashicorp/terraform. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a48fc909`: Enable colorizer in a views.View to handle [purple] tags (#39477). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6e64dc15`: Make `state` subcommands use diagnostics to report errors to users (#39486). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/command/views/view.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changes/v1.18/NOTES-20261103-141726.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	"maps"
-	colors := make(map[string]string, (len(colorstring.DefaultColors) + 1))
-	maps.Copy(colors, colorstring.DefaultColors)
-	colors["purple"] = "38;5;57" // Add purple color used in `login`'s MOTD from HCP Terraform
-
-			Colors:  colors,
+kind: NOTES
+body: 'state: Error output from `mv`, `replace-provider` and `rm` subcommands has been updated with different wording and formatting.'
+time: 2026-11-03T14:17:26.833636Z
+custom:
+    Issue: "39486"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-			Colors:  colorstring.DefaultColors,
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a48fc909` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6e64dc15` are properly handled with clean fallback behavior.

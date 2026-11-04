@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-03T12:18:33.483Z",
+  "last_updated": "2026-11-04T01:44:35.605Z",
   "directives": [
     {
       "id": "CD-001",
@@ -3687,6 +3687,72 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Generic header title rejected",
       "learning_id": "learn-github-crate-ci-typos"
+    },
+    {
+      "id": "CD-R0LZ",
+      "directive_title": "docs(agents): tune AGENTS.md and skills for current Claude prompting guidance (#",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "sozercan/kaset",
+      "source_commit": "6a20e60c",
+      "date_staged": "2026-11-03",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **VERIFICATION METHOD** automated verification protocol",
+      "learning_id": "learn-github-sozercan-kaset"
+    },
+    {
+      "id": "CD-HQ5D",
+      "directive_title": "Data-Only Repository Integrity & Metadata Consistency",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "unsloth/DeepSeek-V4.1-Flash-1017-GGUF",
+      "source_commit": "hf-unsloth-d",
+      "date_staged": "2026-11-03",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-huggingface-unsloth-deepseek-v4-1-flash-1017-gguf"
+    },
+    {
+      "id": "CD-0163",
+      "directive_title": "Simplify SPONSORS.md to remove public individual listing",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "Michael-A-Kuykendall/shimmy",
+      "source_commit": "fc792f3a",
+      "date_staged": "2026-11-03",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **VERIFICATION METHOD** automated verification protocol",
+      "learning_id": "learn-github-michael-a-kuykendall-shimmy"
+    },
+    {
+      "id": "CD-ULEA",
+      "directive_title": "Empirical Invariant Guard in store.go",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "openyurtio/openyurt",
+      "source_commit": "077652c5",
+      "date_staged": "2026-11-04",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Generic header title rejected",
+      "learning_id": "learn-github-openyurtio-openyurt"
+    },
+    {
+      "id": "CD-T41T",
+      "directive_title": "update version to 0.9.6.1 and enhance CHANGELOG with SSRF fixes and new features",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "AndyTheFactory/newspaper4k",
+      "source_commit": "22a4be5c",
+      "date_staged": "2026-11-04",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-andythefactory-newspaper4k"
+    },
+    {
+      "id": "CD-ESYD",
+      "directive_title": "Merge pull request #571 from Cimo-Yu/fix/rivermemo-rrf-score-contract",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "lioensky/VCPToolBox",
+      "source_commit": "018cd7fa",
+      "date_staged": "2026-11-04",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-lioensky-vcptoolbox"
     }
   ]
 }

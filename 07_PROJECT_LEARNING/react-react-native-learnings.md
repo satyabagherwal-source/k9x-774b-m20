@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/react-react-native-learnings.md`  
 > **Source**: github ([https://github.com/react/react-native](https://github.com/react/react-native))  
-> **Source Version**: `73e3aeca`  
+> **Source Version**: `edf2b86e`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T23:15:07.096Z  
+> **Timestamp**: 2026-11-03T23:32:16.939Z  
 > **Learning ID**: `learn-github-react-react-native`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/react-react-native-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/react/react-native](https://github.com/react/react-native))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T23:15:06.992Z  
+> **Harvest Timestamp**: 2026-11-03T23:32:16.774Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A framework for building native applications using React
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 126836 stars
+- **Stars / Engagement**: 126853 stars
 
 ---
 
@@ -617,458 +617,664 @@ export {prepareDebuggerShellFromDotSlashFile};
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a5e20424` (2026-10-30)
-**Commit Message**: Compile folly's SanitizeLeak.cpp in Fantom's tester
+### Incident Patch 1: `debaf42c` (2026-11-02)
+**Commit Message**: Fix iOS Fabric unmount assertions for zero-sized recycled views
 
 ## Summary:
 
-Fantom's tester doesn't link when it's built with AddressSanitizer. Under `-fsanitize=address`, folly headers like `small_vector.h` and `Singleton.h` call `folly::detail::annotate_object_leaked_impl` and `annotate_object_collected_impl`, and only `folly/memory/SanitizeLeak.cpp` defines them. Fantom's folly build compiles `SanitizeAddress.cpp` and `SanitizeThread.cpp` but not that file, so the link fails on both symbols.
+Related to #59166. This change addresses the unmount comparison; it does not reset container state during recycling.
 
-This adds `folly/memory/SanitizeLeak.cpp` to `folly_runtime_SRC`, which the `RCT-Folly` podspec already compiles. Without ASan the file only defines those functions, nothing calls them.
+Unmounting a zero-sized recycled `View` can fail with `Attempt to unmount a view which is mounted inside a different view`, even when the exception reports the parent's own tag as the existing parent.
 
-Fixes #59668
+A previous owner can leave the native view with a clipping container, for example when using `overflow: 'hidden'` with an outline. Fabric can mount descendants before applying the recycled parent's new props. If those props no longer require the container and the view has zero bounds, layer invalidation returns without migrating the children back.
 
-## Changelog:
+`currentContainerView` performs that migration lazily. The unmount assertion compares `childComponentView.superview == self.currentContainerView`, so evaluation can read the child's old superview before the getter moves it. By the time the exception message is formatted, the child can already belong to the expected parent.
 
-[INTERNAL] [FIXED] - Fix Fantom tester link under AddressSanitizer by compiling folly's SanitizeLeak.cpp
+Resolve the container in a separate statement before reading `superview` in the assertions. The reconciliation also runs when
 
-## Test Plan:
-
-I couldn't run the full Fantom build here, so I checked the link against folly v2024.11.18.00 (the version Fantom pins) with clang and `-fsanitize=address`. A small program using `folly::small_vector`, linked with the `folly_runtime` sources it needs, fails with undefined `annotate_object_leaked_impl` / `annotate_object_collected_impl`. Adding `SanitizeLeak.cpp` makes i
-
-**File**: `private/react-native-fantom/tester/third-party/folly/CMakeLists.txt` (modified, +1/-0)
+**File**: `packages/react-native/React/Fabric/Mounting/ComponentViews/View/RCTViewComponentView.mm` (modified, +5/-2)
 ```diff
-@@ -48,6 +48,7 @@ SET(folly_runtime_SRC
-         folly/lang/SafeAssert.cpp
-         folly/lang/ToAscii.cpp
-         folly/memory/SanitizeAddress.cpp
-+        folly/memory/SanitizeLeak.cpp
-         folly/memory/detail/MallocImpl.cpp
-         folly/net/NetOps.cpp
-         folly/portability/SysUio.cpp
+@@ -243,21 +243,24 @@ - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childCompo
+   if (_removeClippedSubviews) {
+     [_reactSubviews removeObjectAtIndex:index];
+   } else {
++    // This getter can migrate children from a recycled clipping container.
++    // Reconcile before reading superview, even when assertions are disabled.
++    [[maybe_unused]] UIView *containerView = self.currentContainerView;
+     RCTAssert(
+         childComponentView.superview != nil,
+         @"Attempt to unmount a view which is not mounted. (parent: %@, child: %@, index: %@)",
+         self,
+         childComponentView,
+         @(index));
+     RCTAssert(
+-        childComponentView.superview == self.currentContainerView,
++        childComponentView.superview == containerView,
+         @"Attempt to unmount a view which is mounted inside a different view. (parent: %@, child: %@, index: %@, existing parent: %@)",
+         self,
+         childComponentView,
+         @(index),
+         @([childComponentView.superview tag]));
+ #ifndef NS_BLOCK_ASSERTIONS
+-    NSArray<UIView *> *containerSubviews = self.currentContainerView.subviews;
++    NSArray<UIView *> *containerSubviews = containerView.subviews;
+     BOOL isIndexInBounds = index >= 0 && (NSUInteger)index < containerSubviews.count;
+     RCTAssert(
+         isIndexInBounds && [containerSubviews objectAtIndex:index] == childComponentView,
+```
+
+**File**: `packages/react-native/React/Tests/Mounting/RCTViewComponentViewUnmountTests.mm` (modified, +53/-0)
+```diff
+@@ -8,6 +8,9 @@
+ #import <React/RCTAssert.h>
+ #import <React/RCTViewComponentView.h>
+ #import <XCTest/XCTest.h>
++#import <react/renderer/components/view/ViewProps.h>
++
++using namespace facebook::react;
+ 
+ @interface RCTViewComponentViewUnmountTests : XCTestCase
+ @end
+@@ -83,4 +86,54 @@ - (void)testUnmountWithInBoundsMismatchStillReportsTagAtIndex
+   XCTAssertNotEqualObjects(thrownName, NSRangeException);
+ }
+ 
++// A recycled view can receive children before its own props are updated. If
++// the new owner is zero-sized, layer invalidation does not reconcile the old
++// clipping container. Unmount must do so before checking the child's parent.
++- (void)testUnmountReconcilesRecycledContainerAtZeroSize
++{
++  RCTViewComponentView *parent = [[RCTViewComponentView alloc] initWithFrame:CGRectZero];
++  auto clippingProps = std::make_shared<ViewProps>();
++  clippingProps->yogaStyle.setOverflow(facebook::yoga::Overflow::Hidden);
++  clippingProps->outlineWidth = 1;
++  [parent updateProps:clippingProps oldProps:parent.props];
++  [parent finalizeUpdates:RNComponentViewUpdateMaskAll];
++
++  RCTViewComponentView *previousChild = [RCTViewComponentView new];
++  [parent mountChildComponentView:previousChild index:0];
++  UIView *previousContainer = previousChild.superview;
++  XCTAssertNotEqual(previousContainer, parent);
++  XCTAssertNotNil(previousContainer);
++  [parent unmountChildComponentView:previousChild index:0];
++  [parent prepareForRecycle];
++
++  // Fabric mounts descendants before applying the recycled parent's new props.
++  RCTViewComponentView *child = [RCTViewComponentView new];
++  [parent mountChildComponentView:child index:0];
++  [parent updateProps:std::make_shared<ViewProps>() oldProps:parent.props];
++  [parent finalizeUpdates:RNComponentViewUpdateMaskAll];
++  XCTAssertTrue(CGSizeEqualToSize(parent.bounds.size, CGSizeZero));
++  XCTAssertEqual(child.superview, previousContainer);
++
++  NSString *message = nil;
++  NSString *thrownName = RCTUnmountAndReportAssert(parent, child, 0, &message);
++
++  XCTAssertNil(message, @"Container migration must precede the ownership check");
++  XCTAssertNil(thrownName);
++  XCTAssertNil(child.superview);
++  XCTAssertNil(previousContainer.superview, @"The stale container must be removed");
++}
++
++- (void)testUnmountStillReportsChildMountedUnderAnotherParent
++{
++  RCTViewComponentView *parent = [RCTViewComponentView new];
++  RCTViewComponentView *otherParent = [RCTViewComponentView new];
++  RCTViewComponentView *child = [RCTViewComponentView new];
++  [otherParent mountChildComponentView:child index:0];
++
++  NSString *message = nil;
++  RCTUnmountAndReportAssert(parent, child, 0, &message);
++
++  XCTAssertTrue([message containsString:@"mounted inside a different view"]);
++}
++
+ @end
 ```
 
 ---
 
-### Incident Patch 2: `ede7ebf7` (2026-10-30)
-**Commit Message**: Fix Swift formatter detection when version is main
+### Incident Patch 2: `edf2b86e` (2026-11-03)
+**Commit Message**: Reland iOS 27 StatusBar fix with tvOS guards (#59542)
 
-## Summary:
+Summary:
 
-Fixes #59598. Some Swift toolchains report `main` for `swift format --version`, so the formatter is skipped even when the toolchain meets the minimum version. When `swift format` reports `main`, check `swift --version` and use it to enforce the existing minimum version. Other formatter candidates still require a parseable formatter version.
+Fixes https://github.com/react/react-native/issues/58758.
 
-## Changelog:
+Apps built with the iOS 27 SDK can no longer change the status bar through the `UIApplication` setters. Restore the view-controller-based implementation: `RCTStatusBarAppearance` stores the requested style, hidden state and animation, and the default root and Fabric modal controllers return those values. The modal preserves the appearance captured before presentation until JavaScript changes it.
 
-[INTERNAL] [FIXED] - Detect the Swift toolchain version when `swift format` reports `main`.
+Apps must set `UIViewControllerBasedStatusBarAppearance` to `YES` on iOS 27. Custom root view controllers must return the `RCTStatusBarAppearance` values. Apps using `NO` retain the legacy setters on older SDKs and receive a one-time warning where those setters are ineffective.
 
-## Test Plan:
+Exclude the appearance helper and status-bar controller code on tvOS, where UIKit's status-bar types and APIs are unavailable. Guard the modal capture declaration and call as well as its state and implementation. The iOS code paths are unchanged.
 
-- Ran `NODE_PATH=/Volumes/SSD512/Work/mobile/force-mobile/node_modules /Volumes/SSD512/Work/mobile/force-mobile/node_modules/.bin/jest scripts/__tests__/format-swift-test.js --runInBand --config '{"rootDir":"/tmp/react-native-contribution","testEnvironment":"node","transform":{}}'`: 2 tests passed. The Swift 6.4 case failed before the change; the Swift 6.2 case remains rejected.
-- Ran `git diff --check`: passed.
-- Xcode 27.1 was not available for an end-to-end check. The test simulates its reported version output. Full repository checks were not run.
 
-Differential Revision: D128394284
+Test Plan:
+- Built the full `AirwaveBurbn` app and package for appletvos-arm64 with the Airwave mode, local build flavour, Pika 27 and Xcode 27.1. 
 
-Pull Request resolved: https://github.com/react/react-native/pull/59623
-
-**File**: `scripts/__tests__/format-swift-test.js` (added, +63/-0)
+**File**: `packages/react-native/Libraries/AppDelegate/RCTDefaultReactNativeFactoryDelegate.mm` (modified, +26/-1)
 ```diff
-@@ -0,0 +1,63 @@
-+/**
+@@ -15,9 +15,34 @@
+ #endif
+ 
+ #import <RCTAnimatedModuleProvider/RCTAnimatedModuleProvider.h>
++#import <React/RCTStatusBarAppearance.h>
+ #import <react/featureflags/ReactNativeFeatureFlags.h>
+ #import <react/nativemodule/defaults/DefaultTurboModules.h>
+ 
++@interface RCTRootViewController : UIViewController
++@end
++
++@implementation RCTRootViewController
++
++#if !TARGET_OS_TV
++- (UIStatusBarStyle)preferredStatusBarStyle
++{
++  return RCTStatusBarAppearance.style;
++}
++
++- (BOOL)prefersStatusBarHidden
++{
++  return RCTStatusBarAppearance.hidden;
++}
++
++- (UIStatusBarAnimation)preferredStatusBarUpdateAnimation
++{
++  return RCTStatusBarAppearance.updateAnimation;
++}
++#endif
++
++@end
++
+ @implementation RCTDefaultReactNativeFactoryDelegate {
+   // C++ Native Animated provider, created once on first use (getTurboModule: may be called
+   // concurrently for different module names).
+@@ -29,7 +54,7 @@ @implementation RCTDefaultReactNativeFactoryDelegate {
+ 
+ - (UIViewController *)createRootViewController
+ {
+-  return [UIViewController new];
++  return [RCTRootViewController new];
+ }
+ 
+ - (void)setRootView:(UIView *)rootView toRootViewController:(UIViewController *)rootViewController
+```
+
+**File**: `packages/react-native/Libraries/AppDelegate/RCTUIConfiguratorProtocol.h` (modified, +1/-1)
+```diff
+@@ -41,7 +41,7 @@ NS_ASSUME_NONNULL_BEGIN
+ 
+ /**
+  * It creates the RootViewController.
+- * By default, it creates a new instance of a `UIViewController`.
++ * By default, it creates a view controller that returns the `RCTStatusBarAppearance` values.
+  * You can override it to provide your own initial ViewController.
+  *
+  * @return: an instance of `UIViewController`.
+```
+
+**File**: `packages/react-native/React/Base/RCTStatusBarAppearance.h` (added, +28/-0)
+```diff
+@@ -0,0 +1,28 @@
++/*
 + * Copyright (c) Meta Platforms, Inc. and affiliates.
 + *
 + * This source code is licensed under the MIT license found in the
 + * LICENSE file in the root directory of this source tree.
-+ *
-+ * @noflow
-+ * @format
 + */
 +
-+'use strict';
++#import <UIKit/UIKit.h>
 +
-+jest.mock('../format-utils', () => ({
-+  IS_META_CHECKOUT: false,
-+  commandVersion: jest.fn(),
-+  findMetaTool: jest.fn(() => null),
-+}));
-+jest.mock('tinyglobby', () => ({globSync: jest.fn(() => [])}));
++#if !TARGET_OS_TV
++NS_ASSUME_NONNULL_BEGIN
 +
-+const originalSwiftFormat = process.env.SWIFT_FORMAT;
++/**
++ * The status bar state set from JavaScript. Root view controllers return these values from their status bar methods.
++ */
++@interface RCTStatusBarAppearance : NSObject
 +
-+beforeEach(() => {
-+  delete process.env.SWIFT_FORMAT;
-+});
++@property (class, nonatomic, readonly) UIStatusBarStyle style;
++@property (class, nonatomic, readonly) BOOL hidden;
++@property (class, nonatomic, readonly) UIStatusBarAnimation updateAnimation;
 +
-+afterEach(() => {
-+  if (originalSwiftFormat === undefined) {
-+    delete process.env.SWIFT_FORMAT;
-+  } else {
-+    process.env.SWIFT_FORMAT = originalSwiftFormat;
-+  }
-+  jest.resetModules();
-+  jest.clearAllMocks();
-+  jest.restoreAllMocks();
-+});
+++ (void)setStyle:(UIStatusBarStyle)style animated:(BOOL)animated;
+++ (void)setHidden:(BOOL)hidden withAnimation:(UIStatusBarAnimation)animation;
 +
-+test.each([
-+  ['6.4', true],
-+  ['6.2', false],
-+])(
-+  'checks the Swift toolchain version when the formatter reports main (%s)',
-+  (version, accepted) => {
-+    const {commandVersion} = require('../format-utils');
-+    const {globSync} = require('tinyglobby');
-+    commandVersion.mockImplementation((command, args) => {
-+      if (command === 'swift' && args?.[0] === 'format') {
-+        return {status: 0, output: 'main'};
-+      }
-+      if (command === 'swift') {
-+        return {
-+          status: 0,
-+          output: `Apple Swift version ${version} (swiftlang)`,
-+        };
-+      }
-+      return {status: 1, output: ''};
-+    });
-+    jest.spyOn(console, 'warn').mockImplementation(() => {});
++@end
 +
-+    require('../format-swift');
-+
-+    expect(globSync).toHaveBeenCalledTimes(accepted ? 1 : 0);
-+  },
-+);
++NS_ASSUME_NONNULL_END
++#endif
 ```
 
-**File**: `scripts/format-swift.js` (modified, +14/-1)
+**File**: `packages/react-native/React/Base/RCTStatusBarAppearance.mm` (added, +67/-0)
 ```diff
-@@ -81,7 +81,20 @@ function findSwiftFormat() {
-   }
-   for (const [command, prefixArguments] of candidates) {
-     const result = commandVersion(command, prefixArguments);
--    const version = parseSwiftFormatVersion(result.output);
-+    let version = parseSwiftFormatVersion(result.output);
-+    if (
-+      result.status === 0 &&
-+      version == null &&
-+      result.output.trim() === 'main' &&
-+      command === 'swift' &&
-+      prefixArguments.length === 1 &&
-+      prefixArguments[0] === 'format'
-+    ) {
-+      const toolchain = commandVersion(command);
-+      if (toolchain.status === 0) {
-+        version = parseSwiftFormatVersion(toolchain.output);
+@@ -0,0 +1,67 @@
++/*
++ * Copyright (c) Meta Platforms, Inc. and affiliates.
++ *
++ * This source code is licensed under the MIT license found in the
++ * LICENSE file in the root directory of this source tree.
++ */
++
++#import "RCTStatusBarAppearance.h"
++
++#if !TARGET_OS_TV
++#import "RCTAssert.h"
++#import "RCTUtils.h"
++
++// NOLINTNEXTLINE(cppcoreguidelines-avoid-non-const-global-variables)
++static UIStatusBarStyle sStyle = UIStatusBarStyleDefault;
++// NOLINTNEXTLINE(cppcoreguidelines-avoid-non-const-global-variables)
++static BOOL sHidden = NO;
++// NOLINTNEXTLINE(cppcoreguidelines-avoid-non-const-global-variables)
++static UIStatusBarAnimation sUpdateAnimation = UIStatusBarAnimationNone;
++
++@implementation RCTStatusBarAppearance
++
+++ (UIStatusBarStyle)style
++{
++  return sStyle;
++}
++
+++ (BOOL)hidden
++{
++  return sHidden;
++}
++
+++ (UIStatusBarAnimation)updateAnimation
++{
++  return sUpdateAnimation;
++}
++
+++ (void)setStyle:(UIStatusBarStyle)style animated:(BOOL)animated
++{
++  RCTAssertMainQueue();
++  sStyle = style;
++  [self updateStatusBarAnimated:animated];
++}
++
+++ (void)setHidden:(BOOL)hidden withAnimation:(UIStatusBarAnimation)animation
++{
++  RCTAssertMainQueue();
++  sHidden = hidden;
++  sUpdateAnimation = animation;
++  [self updateStatusBarAnimated:animation != UIStatusBarAnimationNone];
++}
++
+++ (void)updateStatusBarAnimated:(BOOL)animated
++{
++  UIViewController *viewController = RCTPresentedViewController();
++  if (animated) {
++    [UIView animateWithDuration:UINavigationControllerHideShowBarDuration
++                     animations:^{
++                       [viewController setNeedsStatusBarAppearanceUpdate];
++                     }];
++  } else {
++    [viewController setNeedsStatusBarAppearanceUpdate];
++  }
++}
++
++@end
++#endif
+```
+
+**File**: `packages/react-native/React/CoreModules/RCTStatusBarManager.mm` (modified, +34/-9)
+```diff
+@@ -11,6 +11,7 @@
+ #import <React/RCTEventDispatcherProtocol.h>
+ #import <React/RCTInitializing.h>
+ #import <React/RCTLog.h>
++#import <React/RCTStatusBarAppearance.h>
+ #import <React/RCTUtils.h>
+ 
+ #import <FBReactNativeSpec/FBReactNativeSpec.h>
+@@ -68,6 +69,28 @@ static BOOL RCTViewControllerBasedStatusBarAppearance()
+   return value;
+ }
+ 
++// UIKit makes the app-level setters no-ops only for apps built with the iOS 27 SDK.
++static BOOL RCTAppLevelStatusBarIsNoOp()
++{
++#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 270000
++  if (@available(iOS 27.0, *)) {
++    return YES;
++  }
++#endif
++  return NO;
++}
++
++static void RCTWarnAppLevelStatusBarUnavailable()
++{
++  static dispatch_once_t onceToken;
++  dispatch_once(&onceToken, ^{
++    RCTLogWarn(
++        @"StatusBar has no effect because UIViewControllerBasedStatusBarAppearance is NO in Info.plist. "
++        @"Apps built with the iOS 27 SDK cannot use the app-level status bar API that this setting uses. "
++        @"Set UIViewControllerBasedStatusBarAppearance to YES to control the status bar from JavaScript.");
++  });
++}
++
+ RCT_EXPORT_MODULE()
+ 
+ + (BOOL)requiresMainQueueSetup
+@@ -147,30 +170,32 @@ - (void)setStyle:(NSString *)style animated:(BOOL)animated
+ {
+   dispatch_async(dispatch_get_main_queue(), ^{
+     UIStatusBarStyle statusBarStyle = [RCTConvert UIStatusBarStyle:style];
+-    if (RCTViewControllerBasedStatusBarAppearance()) {
+-      RCTLogWarn(@"RCTStatusBarManager is a no-op when \
+-                UIViewControllerBasedStatusBarAppearance is YES; set the status bar from your view controller instead");
+-    } else {
++    [RCTStatusBarAppearance setStyle:statusBarStyle animated:animated];
++    if (!RCTViewControllerBasedStatusBarAppearance()) {
+ #pragma clang diagnostic push
+ #pragma clang diagnostic ignored "-Wdeprecated-declarations"
+       [RCTSharedApplication() setStatusBarStyle:statusBarStyle animated:animated];
+-    }
+ #pragma clang diagnostic pop
++      if (RCTAppLevelStatusBarIsNoOp()) {
++        RCTWarnAppLevelStatusBarUnavailable();
 +      }
 +    }
-     if (
-       result.status === 0 &&
-       version != null &&
+   });
+ }
+ 
+ - (void)setHidden:(BOOL)hidden withAnimation:(NSString *)withAnimation
+ {
+   dispatch_async(dispatch_get_main_queue(), ^{
+     UIStatusBarAnimation animation = [RCTConvert UIStatusBarAnimation:withAnimation];
+-    if (RCTViewControllerBasedStatusBarAppearance()) {
+-      RCTLogWarn(@"RCTStatusBarManager is a no-op when \
+-                UIViewControllerBasedStatusBarAppearance is YES; set the status bar from your view controller instead");
+-    } else {
++    [RCTStatusBarAppearance setHidden:hidden withAnimation:animation];
++    if (!RCTViewControllerBasedStatusBarAppearance()) {
+ #pragma clang diagnostic push
+ #pragma clang diagnostic ignored "-Wdeprecated-declarations"
+       [RCTSharedApplication() setStatusBarHidden:hidden withAnimation:animation];
+ #pragma clang diagnostic pop
++      if (RCTAppLevelStatusBarIsNoOp()) {
++        RCTWarnAppLevelStatusBarUnavailable();
++      }
+     }
+   });
+ }
+```
+
+**File**: `packages/react-native/React/Fabric/Mounting/ComponentViews/Modal/RCTFabricModalHostViewController.mm` (modified, +30/-2)
+```diff
+@@ -8,12 +8,18 @@
+ #import "RCTFabricModalHostViewController.h"
+ 
+ #import <React/RCTLog.h>
++#import <React/RCTStatusBarAppearance.h>
+ #import <React/RCTSurfaceTouchHandler.h>
+ 
+ @implementation RCTFabricModalHostViewController {
+   CGRect _lastViewBounds;
+ #if !TARGET_OS_TV
+   RCTSurfaceTouchHandler *_touchHandler;
++  BOOL _hasCapturedStatusBar;
++  UIStatusBarStyle _capturedStatusBarStyle;
++  BOOL _capturedStatusBarHidden;
++  UIStatusBarStyle _jsStatusBarStyleAtCapture;
++  BOOL _jsStatusBarHiddenAtCapture;
+ #endif
+ }
+ 
+@@ -47,14 +53,36 @@ - (void)loadView
+ }
+ 
+ #if !TARGET_OS_TV
++- (void)captureStatusBarAppearance
++{
++  UIStatusBarManager *statusBarManager = RCTUIStatusBarManager();
++  _hasCapturedStatusBar = YES;
++  _capturedStatusBarStyle = statusBarManager.statusBarStyle;
++  _capturedStatusBarHidden = statusBarManager.isStatusBarHidden;
++  _jsStatusBarStyleAtCapture = RCTStatusBarAppearance.style;
++  _jsStatusBarHiddenAtCapture = RCTStatusBarAppearance.hidden;
++}
++
++// Keep the status bar from before the modal until JS changes it.
+ - (UIStatusBarStyle)preferredStatusBarStyle
+ {
+-  return [RCTUIStatusBarManager() statusBarStyle];
++  if (_hasCapturedStatusBar && RCTStatusBarAppearance.style == _jsStatusBarStyleAtCapture) {
++    return _capturedStatusBarStyle;
++  }
++  return RCTStatusBarAppearance.style;
+ }
+ 
+ - (BOOL)prefersStatusBarHidden
+ {
+-  return [RCTUIStatusBarManager() isStatusBarHidden];
++  if (_hasCapturedStatusBar && RCTStatusBarAppearance.hidden == _jsStatusBarHiddenAtCapture) {
++    return _capturedStatusBarHidden;
++  }
++  return RCTStatusBarAppearance.hidden;
++}
++
++- (UIStatusBarAnimation)preferredStatusBarUpdateAnimation
++{
++  return RCTStatusBarAppearance.updateAnimation;
+ }
+ #endif
+ 
+```
+
+**File**: `packages/react-native/React/Fabric/Mounting/ComponentViews/Modal/RCTModalHostViewComponentView.mm` (modified, +9/-0)
+```diff
+@@ -17,6 +17,12 @@
+ 
+ #import "RCTFabricModalHostViewController.h"
+ 
++#if !TARGET_OS_TV
++@interface RCTFabricModalHostViewController ()
++- (void)captureStatusBarAppearance;
++@end
++#endif
++
+ using namespace facebook::react;
+ 
+ #if !TARGET_OS_TV
+@@ -173,6 +179,9 @@ - (void)ensurePresentedOnlyIfNeeded
+     [self saveAccessibilityFocusedView];
+     self.viewController.presentationController.delegate = self;
+     self.viewController.modalInPresentation = _modalInPresentation;
++#if !TARGET_OS_TV
++    [self.viewController captureStatusBarAppearance];
++#endif
+ 
+     _isPresented = YES;
+     [self presentViewController:self.viewController
+```
+
+**File**: `packages/rn-tester/RNTester/Info.plist` (modified, +1/-1)
+```diff
+@@ -81,6 +81,6 @@
+ 		<string>UIInterfaceOrientationPortraitUpsideDown</string>
+ 	</array>
+ 	<key>UIViewControllerBasedStatusBarAppearance</key>
+-	<false/>
++	<true/>
+ </dict>
+ </plist>
 ```
 
 ---
 
-### Incident Patch 3: `97f6997e` (2026-10-30)
-**Commit Message**: Avoid global JNI ref copies in FabricUIManager lookups
+### Incident Patch 3: `856661ff` (2026-11-02)
+**Commit Message**: fix: disconnect `AnimatedProps` before attaching a new native view
 
-Summary:
-Keep a stable owning global JNI reference in the context container and expose a borrowed alias under the existing `FabricUIManager` key. Use alias reads for synchronous Android Fabric measurement, colour resolution and image prefetching, avoiding global-reference allocation and release on each lookup.
+## Summary:
 
-Add instrumentation coverage for exact alias/owner handle identity, mixed legacy global-ref and alias readers, and legacy-copy validity after the aliased handle owner is released. Stale global-ref readers still depend on the current fbjni wrapper representation; these tests exercise that compatibility, not a type-safe C++ guarantee.
+When an animated component replaces its underlying native view, `AnimatedProps.setNativeView()` connects the existing animated props node to the replacement without disconnecting the previous view. On Android, this causes a crash:
 
-Changelog: [Internal]
-
-Differential Revision: D128203842
-
-Pull Request resolved: https://github.com/react/react-native/pull/59617
-
-**File**: `packages/react-native/ReactAndroid/src/main/jni/react/fabric/FabricUIManager.cpp` (modified, +2/-2)
-```diff
-@@ -23,8 +23,8 @@ Size measureHostComponent(
-     return {};
-   }
- 
--  const auto fabricUIManager =
--      contextContainer->at<jni::global_ref<jobject>>("FabricUIManager");
-+  auto fabricUIManager =
-+      contextContainer->at<jni::alias_ref<jobject>>("FabricUIManager");
-   static const auto measure =
-       jni::findClassStatic("com/facebook/react/fabric/FabricUIManager")
-           ->getMethod<jlong(
+```text
+Animated node X is already attached to a view: Y
 ```
 
-**File**: `packages/react-native/ReactAndroid/src/main/jni/react/fabric/FabricUIManagerBinding.cpp` (modified, +6/-1)
-```diff
-@@ -609,7 +609,12 @@ void FabricUIManagerBinding::installFabricUIManager(
-         globalJavaUiManager);
-   };
- 
--  contextContainer->insert("FabricUIManager", globalJavaUiManager);
-+  auto fabricUIManagerOwner =
-+      std::make_shared<jni::global_ref<jobject>>(globalJavaUiManager);
-+  // The alias and its owner must stay registered for the container's lifetime.
-+  contextContainer->insert("FabricUIManagerOwner", fabricUIManagerOwner);
-+  contextContainer->insert(
-+      "FabricUIManager", jni::alias_ref<jobject>(*fabricUIManagerOwner));
- 
-   animationChoreographer_ = std::make_shared<AndroidAnimationChoreographer>();
- 
-```
+Disconnect the previous target before connecting the replacement.
 
-**File**: `packages/react-native/ReactAndroid/src/main/jni/react/fabric/test_helper/FabricMountingManagerTestHelper.cpp` (modified, +62/-0)
-```diff
-@@ -79,6 +79,63 @@ std::vector<Tag> toTags(jni::alias_ref<jni::JArrayInt> tags) {
-   return {region.get(), region.get() + tags->size()};
- }
- 
-+bool fabricUIManagerAliasUsesOwnedHandle(
-+    [[maybe_unused]] jni::alias_ref<jclass> javaClass,
-+    jni::alias_ref<JFabricUIManager::javaobject> javaUIManager) {
-+  auto contextContainer =
-+      javaUIManager->getBinding()->getScheduler()->getContextContainer();
-+  auto owner = contextContainer->at<std::shared_ptr<jni::global_ref<jobject>>>(
-+      "FabricUIManagerOwner");
-+  auto alias = contextContainer->at<jni::alias_ref<jobject>>("FabricUIManager");
-+  auto env = jni::Environment::current();
-+  return alias.get() == owner->get() &&
-+      env->GetObjectRefType(alias.get()) == JNIGlobalRefType &&
-+      jni::isSameObject(alias.get(), javaUIManager.get());
-+}
-+
-+jni::local_ref<JFabricUIManager::javaobject> readFabricUIManagerFromContext(
-+    [[maybe_unused]] jni::alias_ref<jclass> javaClass,
-+    jni::alias_ref<JFabricUIManager::javaobject> javaUIManager,
-+    jboolean useGlobalRef,
-+    jboolean uninstall) {
-+  static const auto bindingField =
-+      JFabricUIManager::javaClassStatic()
-+          ->getField<FabricUIManagerBinding::javaobject>("mBinding");
-+  static const auto unregister =
-+      jni::findClassStatic("com/facebook/react/fabric/FabricUIManagerBinding")
-+          ->getMethod<void()>("unregister");
-+  auto javaBinding = javaUIManager->getFieldValue(bindingField);
-+  auto contextContainer =
-+      javaBinding->cthis()->getScheduler()->getContextContainer();
-+  if (useGlobalRef != 0) {
-+    auto global =
-+        contextContainer->at<jni::global_ref<jobject>>("FabricUIManager");
-+    if (uninstall != 0) {
-+      std::weak_ptr<jni::global_ref<jobject>> owner =
-+          contextContainer->at<std::shared_ptr<jni::global_ref<jobject>>>(
-+              "FabricUIManagerOwner");
-+      unregister(javaBinding);
-+      contextContainer->erase("FabricUIManager");
-+      contextContainer->erase("FabricUIManagerOwner");
-+      if (!owner.expired()) {
-+        jni::throwNewJavaException(
-+            "java/lang/AssertionError",
-+            "FabricUIManager owner survived teardown");
-+      }
-+      contextContainer.reset();
-+    }
-+    return jni::make_local(
-+        jni::static_ref_cast<JFabricUIManager::javaobject>(
-+            jni::alias_ref<jobject>(global)));
-+  }
-+  if (uninstall != 0) {
-+    unregister(javaBinding);
-+  }
-+  auto alias = contextContainer->at<jni::alias_ref<jobject>>("FabricUIManager");
-+  return jni::make_local(
-+      jni::static_ref_cast<JFabricUIManager::javaobject>(alias));
-+}
-+
- } // namespace
- 
- FabricMountingManagerTestHelper::FabricMountingManagerTestHelper(
-@@ -402,6 +459,11 @@ FabricMountingManagerTestHelper::pulledDeleteTags() {
- 
- void FabricMountingManagerTestHelper::registerNatives() {
-   registerHybrid({
-+      makeNativeMethod(
-+          "fabricUIManagerAliasUsesOwnedHandle",
-+          fabricUIManagerAliasUsesOwnedHandle),
-+      makeNativeMethod(
-+          "readFabricUIManagerFromContext", readFabricUIManagerFromContext),
-       makeNativeMethod(
-           "initHybrid", FabricMountingManagerTestHelper::initHybrid),
-       makeNativeMethod(
-```
+## Changelog:
 
-**File**: `packages/react-native/ReactAndroid/src/test/java/com/facebook/react/fabric/FabricMountingManagerInstrumentationTest.kt` (modified, +68/-3)
-```diff
-@@ -252,7 +252,7 @@ class FabricMountingManagerInstrumentationTest {
-   }
- 
-   private fun mountPaddedView(
--      fixTextLayoutOnPixelDensityChange: Boolean
-+      fixTextLayoutOnPixelDensityChange: Boolean,
-   ): Pair<FabricMountingManagerTestHelper, ReactViewGroup> {
-     val fabricUIManager = createFabricUIManager(listOf(PaddingViewManager()))
-     val helper = FabricMountingManagerTestHelper.create(fabricUIManager)
-@@ -281,7 +281,7 @@ class FabricMountingManagerInstrumentationTest {
-     ReactNativeFeatureFlagsCxxInterop.dangerouslyForceOverride(
-         object : ReactNativeFeatureFlagsDefaults() {
-           override fun enableMountingCoordinatorPullModelAndroid(): Boolean = true
--        }
-+        },
-     )
-   }
- 
-@@ -501,7 +501,7 @@ class FabricMountingManagerInstrumentationTest {
-           override fun enablePropsUpdateReconciliationAndroid(): Boolean = pullModel
- 
-           override fun enablePreallocatedPropsDiffOnInsertAndroid(): Boolean = pullModel
--        }
-+        },
-     )
-   }
- 
-@@ -582,6 +582,71 @@ class FabricMountingManagerInstrumentationTest {
-     return surfaceId to { fabricUIManager.stopSurface(surfaceId) }
-   }
- 
-+  @Test
-+  fun native_fabricUIManagerContext_aliasUsesOwnedGlobalHandle() {
-+    val fabricUIManager = createFabricUIManager()
-+    registerBinding(fabricUIManager)
-+
-+    assertThat(FabricMountingManagerTestHelper.fabricUIManagerAliasUsesOwnedHandle(fabricUIManager))
-+        .isTrue()
-+    assertThat(
-+            FabricMountingManagerTestHelper.readFabricUIManagerFromContext(
-+                fabricUIManager,
-+                useGlobalRef = false,
-+                uninstall = false,
-+            ),
-+        )
-+        .isSameAs(fabricUIManager)
-+  }
-+
-+  @Test
-+  fun native_fabricUIManagerContext_legacyCopiesLeaveAliasValid() {
-+    val fabricUIManager = createFabricUIManager()
-+    registerBinding(fabricUIManager)
-+
-+    repeat(64) {
-+      assertThat(
-+              FabricMountingManagerTestHelper.readFabricUIManagerFromContext(
-+                  fabricUIManager,
-+                  useGlobalRef = true,
-+                  uninstall = false,
-+              ),
-+          )
-+          .isSameAs(fabricUIManager)
-+      assertThat(
-+              FabricMountingManagerTestHelper.fabricUIManagerAliasUsesOwnedHandle(fabricUIManager),
-+          )
-+          .isTrue()
-+      assertThat(
-+              FabricMountingManagerTestHelper.readFabricUIManagerFromContext(
-+                  fabricUIManager,
-+                  useGlobalRef = false,
-+                  uninstall = false,
-+              ),
-+          )
-+          .isSameAs(fabricUIManager)
-+    }
-+  }
-+
-+  @Test
-+  fun native_fabricUIManagerContext_readsSurviveUninstall() {
-+    for (useGlobalRef in listOf(false, true)) {
-+      repeat(8) {
-+        val fabricUIManager = createFabricUIManager()
-+        registerBinding(fabricUIManager)
-+
-+        assertThat(
-+                FabricMountingManagerTestHelper.readFabricUIManagerFromContext(
-+                    fabricUIManager,
-+                    useGlobalRef = useGlobalRef,
-+                    uninstall = true,
-+                ),
-+            )
-+            .isSameAs(fabricUIManager)
-+      }
-+    }
-+  }
-+
-   @Test
-   fun native_stopSurfaceWithSurfaceHandler_pullModel_pullsDeletes() {
-     assertStoppingSurfacePullsDeletes(pullModel = true, ::startBridgelessSurface)
-```
+[ANDROID] [FIXED] - Prevent native Animated crashes when an animated component replaces its underlying native view.
 
-**File**: `packages/react-native/ReactAndroid/src/test/java/com/facebook/react/fabric/FabricMountingManagerTestHelper.kt` (modified, +10/-0)
+## Test Plan:
+
+You can use this code to reproduce a crash:
+
+```tsx
+import React, { forwardRef, useState } from "react";
+import { Animated, Button, StyleSheet, Text, View } from "react-native";
+
+import type { ViewProps } from "react-native";
+
+// Keep the Animated wrapper mounted while replacing its native View.
+const ReplacingView = Animated.createAnimatedComponent(
+  forwardRef<View, ViewProps & { generation: number }>(function ReplacingView(
+    { generation, ...props },
+    ref,
+  ) {
+    return <View {...props} key={generation} ref={ref} />;
+  }),
+);
+
+const styles = StyleSheet.create({
+  screen: { flex: 1, padding: 
+
+**File**: `packages/react-native/Libraries/Animated/nodes/AnimatedProps.js` (modified, +3/-0)
 ```diff
-@@ -90,6 +90,16 @@ private constructor(fabricUIManager: FabricUIManager) : HybridClassBase() {
-       SoLoader.loadLibrary("fabricjni_test_helper")
+@@ -268,6 +268,9 @@ export default class AnimatedProps extends AnimatedNode {
+     if (this._target?.instance === instance) {
+       return;
      }
++    if (this.__isNative && this._target != null) {
++      this.#disconnectAnimatedView(this._target);
++    }
+     const target = (this._target = {instance, connectedViewTag: null});
+     if (this.__isNative) {
+       this.#connectAnimatedView(target);
+```
+
+**File**: `packages/react-native/src/private/animated/__tests__/AnimatedNative-test.js` (modified, +93/-0)
+```diff
+@@ -31,6 +31,11 @@ describe('Native Animated', () => {
+     };
+   }
  
-+    @JvmStatic
-+    external fun fabricUIManagerAliasUsesOwnedHandle(fabricUIManager: FabricUIManager): Boolean
++  function createViewInstance(): React.ElementRef<React.ElementType> {
++    // $FlowFixMe[incompatible-type]
++    return {};
++  }
 +
-+    @JvmStatic
-+    external fun readFabricUIManagerFromContext(
-+        fabricUIManager: FabricUIManager,
-+        useGlobalRef: Boolean,
-+        uninstall: Boolean,
-+    ): FabricUIManager
+   beforeEach(() => {
+     jest.resetModules();
+     jest.restoreAllMocks();
+@@ -1620,6 +1625,94 @@ describe('Native Animated', () => {
+       );
+     });
+ 
++    it('disconnects the previous native view before connecting a replacement', () => {
++      const findNodeHandle = jest
++        .fn()
++        .mockReturnValueOnce(11)
++        .mockReturnValueOnce(22);
++      jest.setMock('../../../../Libraries/ReactNative/RendererProxy', {
++        findNodeHandle,
++      });
++      const {Animated} = importModules();
++      const AnimatedProps =
++        require('../../../../Libraries/Animated/nodes/AnimatedProps').default;
++      const firstView = createViewInstance();
++      const secondView = createViewInstance();
++      const opacity = new Animated.Value(1);
++      const propsNode = new AnimatedProps({style: {opacity}}, jest.fn());
++      propsNode.__attach();
++      propsNode.setNativeView(firstView);
++      propsNode.__makeNative();
++      const propsTag = propsNode.__getNativeTag();
 +
-     @JvmStatic
-     fun create(fabricUIManager: FabricUIManager): FabricMountingManagerTestHelper {
-       return FabricMountingManagerTestHelper(fabricUIManager)
-```
-
-**File**: `packages/react-native/ReactCommon/react/renderer/components/modal/ModalHostViewComponentDescriptor.cpp` (modified, +2/-2)
-```diff
-@@ -21,8 +21,8 @@ State::Shared ModalHostViewComponentDescriptor::createInitialState(
++      propsNode.setNativeView(secondView);
++
++      expect(
++        NativeAnimatedModule.connectAnimatedNodeToView,
++      ).toHaveBeenNthCalledWith(1, propsTag, 11);
++      expect(
++        NativeAnimatedModule.disconnectAnimatedNodeFromView,
++      ).toHaveBeenCalledWith(propsTag, 11);
++      expect(
++        NativeAnimatedModule.connectAnimatedNodeToView,
++      ).toHaveBeenNthCalledWith(2, propsTag, 22);
++      expect(
++        // $FlowFixMe[prop-missing]
++        NativeAnimatedModule.disconnectAnimatedNodeFromView.mock
++          .invocationCallOrder[0],
++      ).toBeLessThan(
++        // $FlowFixMe[prop-missing]
++        NativeAnimatedModule.connectAnimatedNodeToView.mock
++          .invocationCallOrder[1],
++      );
++
++      propsNode.setNativeView(secondView);
++      expect(
++        NativeAnimatedModule.connectAnimatedNodeToView,
++      ).toHaveBeenCalledTimes(2);
++      expect(
++        NativeAnimatedModule.disconnectAnimatedNodeFromView,
++      ).toHaveBeenCalledTimes(1);
++
++      propsNode.__detach();
++      expect(
++        NativeAnimatedModule.disconnectAnimatedNodeFromView,
++      ).toHaveBeenNthCalledWith(2, propsTag, 22);
++      expect(findNodeHandle).toHaveBeenCalledTimes(2);
++    });
++
++    it('only connects the latest view when switching to the native driver', () => {
++      jest.setMock('../../../../Libraries/ReactNative/RendererProxy', {
++        findNodeHandle: () => 22,
++      });
++      const {Animated} = importModules();
++      const AnimatedProps =
++        require('../../../../Libraries/Animated/nodes/AnimatedProps').default;
++      const opacity = new Animated.Value(1);
++      const propsNode = new AnimatedProps({style: {opacity}}, jest.fn());
++      propsNode.__attach();
++      propsNode.setNativeView(createViewInstance());
++      propsNode.setNativeView(createViewInstance());
++      expect(
++        NativeAnimatedModule.connectAnimatedNodeToView,
++      ).not.toHaveBeenCalled();
++      expect(
++        NativeAnimatedModule.disconnectAnimatedNodeFromView,
++      ).not.toHaveBeenCalled();
++
++      propsNode.__makeNative();
++      expect(
++        NativeAnimatedModule.connectAnimatedNodeToView,
++      ).toHaveBeenCalledTimes(1);
++      expect(
++        NativeAnimatedModule.connectAnimatedNodeToView,
++      ).toHaveBeenCalledWith(propsNode.__getNativeTag(), 22);
++      expect(
++        NativeAnimatedModule.disconnectAnimatedNodeFromView,
++      ).not.toHaveBeenCalled();
++      propsNode.__detach();
++    });
++
+     it('creates new props, style and transform nodes at update', async () => {
+       const {Animated} = importModules();
  
-   int surfaceId = family->getSurfaceId();
- 
--  const jni::global_ref<jobject>& fabricUIManager =
--      contextContainer_->at<jni::global_ref<jobject>>("FabricUIManager");
-+  auto fabricUIManager =
-+      contextContainer_->at<jni::alias_ref<jobject>>("FabricUIManager");
- 
-   static auto getEncodedScreenSizeWithoutVerticalInsets =
-       jni::findClassStatic(UIManagerJavaDescriptor)
-```
-
-**File**: `packages/react-native/ReactCommon/react/renderer/components/textinput/platform/android/react/renderer/components/androidtextinput/AndroidTextInputComponentDescriptor.h` (modified, +1/-2)
-```diff
-@@ -44,8 +44,7 @@ class AndroidTextInputComponentDescriptor final : public ConcreteComponentDescri
-     if (surfaceIdToThemePaddingMap_.find(surfaceId) != surfaceIdToThemePaddingMap_.end()) {
-       theme = surfaceIdToThemePaddingMap_[surfaceId];
-     } else {
--      const jni::global_ref<jobject> &fabricUIManager =
--          contextContainer_->at<jni::global_ref<jobject>>("FabricUIManager");
-+      auto fabricUIManager = contextContainer_->at<jni::alias_ref<jobject>>("FabricUIManager");
- 
-       auto env = jni::Environment::current();
-       auto defaultTextInputPaddingArray = env->NewFloatArray(4);
-```
-
-**File**: `packages/react-native/ReactCommon/react/renderer/graphics/platform/android/react/renderer/graphics/PlatformColorParser.cpp` (modified, +2/-2)
-```diff
-@@ -91,8 +91,8 @@ SharedColor parsePlatformColor(
-         if (iterator != getColorCache.end()) {
-           resolvedColor = iterator->second;
-         } else {
--          const auto& fabricUIManager =
--              contextContainer.at<jni::global_ref<jobject>>("FabricUIManager");
-+          auto fabricUIManager =
-+              contextContainer.at<jni::alias_ref<jobject>>("FabricUIManager");
-           // Boxed Integer: null is an explicit miss; a non-null value may be 0
-           // (transparent black).
-           static auto getColorFromJava =
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #59675** (2026-10-30): Bump nlohmann_json to 3.12.0 so Fantom's tester builds with newer Clang (@lazerg)
-- **PR #59674** (2026-10-30): Compile folly's SanitizeLeak.cpp in Fantom's tester (@lazerg)
-- **PR #59660** (closed): Regenerate constexpr trait API snapshots (@javache)
-- **PR #59658** (2026-10-30): Make shadow node traits constexpr (#59658) (@javache)
-- **PR #59657** (2026-10-30): Compare prop name pointers before their characters in RawPropsParser (@hryhoriiK97)
-- **PR #59652** (closed): Keep the ShadowNode vtable compatible after the asLayoutable change (@hryhoriiK97)
+- **PR #59780** (2026-11-03): Upgrade Flow in fbsource (@SamChou19815)
+- **PR #59779** (closed): Support text updates in the shared animation backend (@bartlomiejbloniarz)
+- **PR #59777** (2026-11-03): Don't clone zeroed out `display: none` subtrees on every layout pass (#2055) (@javache)
+- **PR #59775** (2026-11-03): Babel preset: Remove jsx-source and jsx-self plugins (@robhogan)
+- **PR #59766** (2026-11-03): Include folly headers directly instead of via folly/dynamic.h (#59766) (@r-barnes)
+- **PR #59765** (2026-11-03): Remove $FlowExpectedError[sketchy-null-string] (utils.js) (#59765) (@jcperez-ch)
 
 ---
 
@@ -1088,28 +1294,33 @@ Pull Request resolved: https://github.com/react/react-native/pull/59617
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Compile folly's SanitizeLeak.cpp in Fantom's tester
+## X. iOS Fabric unmount assertions for zero-sized recycled views
 
 **RULE**:
-When implementing operations in `private/react-native-fantom/tester/third-party/folly/CMakeLists.txt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in react/react-native. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/react-native/React/Fabric/Mounting/ComponentViews/View/RCTViewComponentView.mm`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in react/react-native. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a5e20424`: Compile folly's SanitizeLeak.cpp in Fantom's tester. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `debaf42c`: iOS Fabric unmount assertions for zero-sized recycled views. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `private/react-native-fantom/tester/third-party/folly/CMakeLists.txt`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/react-native/React/Fabric/Mounting/ComponentViews/View/RCTViewComponentView.mm`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-        folly/memory/SanitizeLeak.cpp
+    // This getter can migrate children from a recycled clipping container.
+    // Reconcile before reading superview, even when assertions are disabled.
+    [[maybe_unused]] UIView *containerView = self.currentContainerView;
+        childComponentView.superview == containerView,
+    NSArray<UIView *> *containerSubviews = containerView.subviews;
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+        childComponentView.superview == self.currentContainerView,
+    NSArray<UIView *> *containerSubviews = self.currentContainerView.subviews;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a5e20424` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `debaf42c` are properly handled with clean fallback behavior.

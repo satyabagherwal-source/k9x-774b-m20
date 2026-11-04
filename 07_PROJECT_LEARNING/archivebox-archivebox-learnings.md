@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/archivebox-archivebox-learnings.md`  
 > **Source**: github ([https://github.com/ArchiveBox/ArchiveBox](https://github.com/ArchiveBox/ArchiveBox))  
-> **Source Version**: `d46ed799`  
+> **Source Version**: `ee80665d`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T10:40:52.601Z  
+> **Timestamp**: 2026-11-03T21:28:32.281Z  
 > **Learning ID**: `learn-github-archivebox-archivebox`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/archivebox-archivebox-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ArchiveBox/ArchiveBox](https://github.com/ArchiveBox/ArchiveBox))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T10:40:50.995Z  
+> **Harvest Timestamp**: 2026-11-03T21:28:31.685Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 🗃 Open source self-hosted web archiving. Takes URLs/browser history/bookmarks/Pocket/Pinboard/etc., saves HTML, JS, PDFs, media, and more...
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md, Dockerfile
-- **Stars / Engagement**: 28901 stars
+- **Stars / Engagement**: 28941 stars
 
 ---
 
@@ -77,6 +77,7 @@ from archivebox.api.auth import authenticated_user_from_request
 from archivebox.config.common import get_config
 from archivebox.core.routes_util import build_snapshot_detail_url, build_web_url
 from archivebox.misc.util import equivalent_urls, filter_queryset_by_uuid_substring, validate_url_length
+from archivebox.misc.serve_static import RangedFileReader, _is_asgi_request, _stream_ranged_file_async
 from archivebox.core.tag_util import (
     add_snapshot_counts,
     build_tag_cards,
@@ -297,11 +298,7 @@ def _uuid_ref_query(field_name: str, ref: str) -> Q:
             query |= Q(**{f"{field_name}__icontains": normalized_ref})
         return query
     # An exact UUID cannot need a substring fallback. OR-ing it with LIKE
-    # prevents an indexed lookup and made Cabbage metadata reads take seconds.
-    return Q(**{field_name: parsed_uuid})
-
-
-@router.get("/archivere
+    # prevents an indexed lookup and made C
 ```
 
 ### Core Architecture Module: `archivebox/api/webhooks.py`
@@ -1648,8 +1645,8 @@ def register_admin(admin_site):
 - **Issue #1930** (2026-10-23): **Bug: Security: public snapshot detail page leaks metadata (full UUID, owner, size) of private/unlisted snapshots of the same URL**
   *Symptoms*: ### Provide a screenshot and describe the bug  This issue affects anonymous (non-logged-in) users on the default configuration. Per SECURITY.md: "Any reports related to non-logged-in users will be prioritized as this is a surface we care a lot about hardening."  Snapshot.get_html_details_context() (core/models.py:3866-3884) builds the "other captures of this URL" list with:      type(self).objects.filter(url=self.url).exclude(id=self.id)  and applies no permission filtering. templates/core/snapshot.html:1268 renders url_snapshots unconditionally, and snapshot_capture_list.html outputs {% snapshot_detail_url capture %} links containing the full UUID, owner username, and date, plus capture.url and output_size.  As a result, any anonymous visitor to a public snapshot detail page can read metadata of private/unlisted snapshots of the same URL, including: - full snapshot UUID - owner username - capture timestamp - output size - original URL  This is not a new design requirement: memento/views.py:23-30 already applies public_snapshots_queryset for the same kind of public discovery, with an explicit comment about not leaking unlisted snapshots. The related_snapshots path appears to be missing the same permission filter.  Suggested classification: CWE-639 (Authorization Bypass Through User-Controlled Key), related CWE-200 (Exposure of Sensitive Information). OWASP A01:2021 Broken Access Control.  ### Steps to reproduce  ```markdown 1. Start ArchiveBox dev 0.9.74rc338 (commit c55089ea
 
-- **Issue #1926** (2026-10-18): **docs: mark sonic as the SEARCH_BACKEND_ENGINE default**
-  *Symptoms*: In `docs/Configuration.md`, the `SEARCH_BACKEND_ENGINE` entry contradicts itself. The "Possible Values" line brackets `ripgrep` as the default (`[`ripgrep`]/`sqlite`/`sonic``), while the bullet list just below says "**`sonic`** *(default)*". The code default is `sonic`:  ```python # archivebox/config/common.py SEARCH_BACKEND_ENGINE: str = Field(default="sonic", json_schema_extra={"scope": _SCOPE_CRAWL_EXECUTION}) ```  The Dockerfile and docker-compose.yml don't override it. `ripgrep` is only the runtime fallback when Sonic isn't available (`search/config.py`), which the ripgrep bullet already explains. This changes the line to `[`sonic`]/`ripgrep`/`sqlite``.  I checked the other 49 bracketed defaults on the page against the `Field(default=...)` values in `archivebox/config` and the abx-plugins `config.json` schemas, and they all match.  This change was written with an AI coding assistant (Claude Code).  🤖 Generated with [Claude Code](https://claude.com/claude-code)   <!-- This is an auto-generated description by cubic. --> --- ## Summary by cubic Fixes the `SEARCH_BACKEND_ENGINE` doc so the "Possible Values" line marks `sonic` as the default, matching the code default and the bullet list below it.  <sup>Written for commit d2e3c6b3dd23cf06d0f87cf3bd1aba9392e74b13. Summary will update on new commits.</sup>  <a href="https://cubic.dev/pr/ArchiveBox/ArchiveBox/pull/1926?utm_source=github" target="_blank" rel="noopener noreferrer" data-no-image-dialog="true"><picture><source medi
+- **Issue #1929** (2026-10-30): **Bug: Security: anonymous UUID prefix on /archive/<path> leaks full UUID and allows reading unlisted snapshots**
+  *Symptoms*: ### Provide a screenshot and describe the bug  Both issues below affect anonymous (non-logged-in) users on the default config. Per SECURITY.md: "Any reports related to non-logged-in users will be prioritized as this is a surface we care a lot about hardening."  Anonymous GET /archive/<path> resolves snapshot IDs by prefix matching (id__istartswith / id__iendswith in SnapshotView.find_snapshots_for_id, misc/util.py:50) and filters the result only through direct_snapshots_queryset (anonymous sees public + unlisted). It never sets matched_by_prefix, then 302-redirects to the canonical snapshot path containing the full UUID.  Snapshot primary keys are UUIDv7, so the ID prefix is a linear function of creation time and can be enumerated without any credentials. This allows reading every unlisted snapshot, and a shared-prefix hit additionally renders a "Multiple Snapshots match" page that leaks UUIDs, timestamps and URLs in bulk.  Importantly, core/views.py:160-162 already sets matched_by_prefix = True for ID prefix hits and can_view_snapshot() rejects access based on it — that protection exists but is bypassed on this anonymous route.  ### Steps to reproduce  ```markdown 1. Start ArchiveBox dev 0.9.74rc38 (commit c55089eaefcacf3439322eec897763f518588f37) with default config (SERVER_SECURITY_MODE=auto, PUBLIC_INDEX=True). Have one user (carol) snapshot https://secret.example.org/ with permissions=unlisted, and note the snapshot UUID. 2. Take the first 12 hex characters of the UUIDv7
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1666,310 +1663,104 @@ def register_admin(admin_site):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `31c7cd20` (2026-10-29)
-**Commit Message**: Require patched Autobahn WebSocket decompression
+### Incident Patch 1: `27536512` (2026-11-02)
+**Commit Message**: Verify directory ZIP downloads retain bounded ASGI memory
 
-Raise the security floor to 26.10.1 and lock 26.10.2. Express the existing psycopg PyPy binary exclusion with the same marker used by Autobahn so uv can resolve the universal lock without reducing supported environments.
-
-**File**: `pyproject.toml` (modified, +6/-1)
+**File**: `archivebox/tests/test_zip_download_lifecycle.py` (modified, +62/-18)
 ```diff
-@@ -41,9 +41,14 @@ dependencies = [
-     ### Django libraries
-     "setuptools>=84.1.0",   # for: django 5 on python >=3.12, distutils is no longer in stdlib but django 5.1 expects distutils (TODO: check if this can be removed eventually)
-     "django>=6.1.2",
--    "psycopg[binary]>=3.2",  # for: PostgreSQL database backend (ARCHIVEBOX_DATABASE_ENGINE=postgres)
-+    # Psycopg's binary extra already excludes PyPy. Express that split with the
-+    # same marker as Autobahn/cbor2 so uv does not combine incompatible PyPy and
-+    # CPython branches when resolving the universal lock (uv 0.13.5/0.13.6).
-+    "psycopg[binary]>=3.2; platform_python_implementation != 'PyPy'",
-+    "psycopg>=3.2; platform_python_implementation == 'PyPy'",  # PostgreSQL backend
-     "uvicorn[standard]>=0.54.0",  # production ASGI transport with bounded send buffers
-     "daphne>=4.2.1",  # retain ASGI runserver/WebSockets for --debug; removing its app makes runserver WSGI
-+    "autobahn>=26.10.1",  # Daphne WebSocket security floor: GHSA-pjh6-c8mg-3x7m
-     "twisted>=26.10.0rc1",  # published security fixes for Daphne's HTTP runtime
-     "django-ninja>=1.5.1",
-     "django-extensions>=3.2.3",
-```
-
-**File**: `uv.lock` (modified, +59/-19)
-```diff
-@@ -2,10 +2,14 @@ version = 1
- revision = 5
- requires-python = ">=3.13"
- resolution-markers = [
--    "python_full_version >= '3.14' and sys_platform == 'darwin'",
--    "python_full_version >= '3.14' and sys_platform == 'linux'",
--    "python_full_version < '3.14' and sys_platform == 'darwin'",
--    "python_full_version < '3.14' and sys_platform == 'linux'",
-+    "python_full_version >= '3.14' and platform_python_implementation != 'PyPy' and sys_platform == 'darwin'",
-+    "python_full_version >= '3.14' and platform_python_implementation == 'PyPy' and sys_platform == 'darwin'",
-+    "python_full_version >= '3.14' and platform_python_implementation != 'PyPy' and sys_platform == 'linux'",
-+    "python_full_version >= '3.14' and platform_python_implementation == 'PyPy' and sys_platform == 'linux'",
-+    "python_full_version < '3.14' and platform_python_implementation != 'PyPy' and sys_platform == 'darwin'",
-+    "python_full_version < '3.14' and platform_python_implementation == 'PyPy' and sys_platform == 'darwin'",
-+    "python_full_version < '3.14' and platform_python_implementation != 'PyPy' and sys_platform == 'linux'",
-+    "python_full_version < '3.14' and platform_python_implementation == 'PyPy' and sys_platform == 'linux'",
- ]
- supported-markers = [
-     "sys_platform == 'darwin'",
-@@ -142,6 +146,7 @@ dependencies = [
-     { name = "abxbus" },
-     { name = "abxpkg" },
-     { name = "atomicwrites" },
-+    { name = "autobahn" },
-     { name = "base32-crockford" },
-     { name = "bleach" },
-     { name = "browser-cookie3" },
-@@ -160,7 +165,8 @@ dependencies = [
-     { name = "markdown" },
-     { name = "platformdirs" },
-     { name = "psutil" },
--    { name = "psycopg", extra = ["binary"] },
-+    { name = "psycopg" },
-+    { name = "psycopg", extra = ["binary"], marker = "platform_python_implementation != 'PyPy'" },
-     { name = "py-machineid" },
-     { name = "pydantic" },
-     { name = "pydantic-settings" },
-@@ -244,6 +250,7 @@ requires-dist = [
-     { name = "abxpkg", specifier = "==1.13.77" },
-     { name = "archivebox", extras = ["sonic", "ldap", "debug"], marker = "extra == 'all'" },
-     { name = "atomicwrites", specifier = "==1.4.1" },
-+    { name = "autobahn", specifier = ">=26.10.1" },
-     { name = "base32-crockford", specifier = ">=0.3.0" },
-     { name = "bleach", specifier = ">=6.2.0" },
-     { name = "browser-cookie3", specifier = ">=0.20.1" },
-@@ -267,7 +274,8 @@ requires-dist = [
-     { name = "markdown", specifier = ">=3.7" },
-     { name = "platformdirs", specifier = ">=4.3.6" },
-     { name = "psutil", specifier = ">=6.0.0" },
--    { name = "psycopg", extras = ["binary"], specifier = ">=3.2" },
-+    { name = "psycopg", marker = "platform_python_implementation == 'PyPy'", specifier = ">=3.2" },
-+    { name = "psycopg", extras = ["binary"], marker = "platform_python_implementation != 'PyPy'", specifier = ">=3.2" },
-     { name = "py-machineid", specifier = ">=0.6.0" },
-     { name = "pydantic", specifier = ">=2.8.0" },
-     { name = "pydantic-settings", specifier = ">=2.5.2" },
-@@ -368,10 +376,11 @@ wheels = [
+@@ -1,7 +1,9 @@
+ """Directory ZIPs release their real file handles when HTTP clients leave."""
  
- [[package]]
- name = "autobahn"
--version = "26.7.1"
-+version = "26.10.2"
- source = { registry = "https://pypi.org/simple" }
- dependencies = [
--    { name = "cbor2" },
-+    { name = "cbor2", version = "5.9.0", source = { registry = "https://pypi.org/simple" }, marker = "platform_python_implementation == 'PyPy'" },
-+    { name = "cbor2", version = "6.1.5", source = { registry = "https://pypi.org/simple" }, marker = "platform_python_implementation != 'PyPy'" },
-     { name = "cffi" },
-     { name = "cryptography" },
-     { name = "hyperlink" },
-@@ -380,18 +389,18 @@ dependencies = [
-     { name = "u-msgpack-python", marker = "platform_python_implementation != 'CPython'" },
-     { name = "ujson" },
- ]
--sdist = { url = "https://files.pythonhosted.org/packages/de/73/f109f563c27e048e45d135d81af19e6ca391e24905550b06bd1c9d674c57/autobahn-26.7.1.tar.gz", hash = "sha256:c6949a2c6eb95fb1c218837dbda0a59abbbebafb8b11098551c01a7061dfd245", size = 14056542, upload-time = "2026-07-15T19:14:01.246Z" }
-+sdist = { url = "https://files.pythonhosted.org/packages/e5/84/8ea0607facb3c97a3beae3c767213fc716f9ab2f157570dc5aeba1174730/autobahn-26.10.2.tar.gz", hash = "sha256:6c69fca89106567060941c5568e67a5369738813d883db4e3d62b76f0a2c497e", size = 14327659, upload-time = "2026-10-21T01:26:41.3Z" }
- wheels = [
--    { url = "https://files.pythonhosted.org/packages/36/92/2f6e57d9f9e6b86b9db362f58aaa6cfeadc2f3a6901ec95aab27ef232b5c/autobahn-26.7.1-cp313-cp313-macosx_15_0_arm64.whl", hash = "sha256:2ce48214b28f73338fabe0c7fd13d222cfab9e1dd2ef11660293522f64e76727", size = 1987052, upload-time = "2026-07-15T19:13:38.543Z" },
--    { url = "https://files.pythonhosted.org/packages/38/6d/f170134468e276fa9ea57eb1ae41f9cc0dcd0228e9d501f370fa50c0ee31/autobahn-26.7.1-cp313-cp313-manylinux_2_24_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:a5f285dce9b3dff3eb2ef6c818ac8ede24d96bd1edac340855170fc9825c38a9", size = 2082
-```
-
----
-
-### Incident Patch 2: `b30d2e83` (2026-10-29)
-**Commit Message**: Keep cancelled archive reads from blocking the web event loop
-
-**File**: `archivebox/misc/serve_static.py` (modified, +5/-1)
-```diff
-@@ -534,7 +534,11 @@ async def _stream_ranged_file_async(ranged_file: "RangedFileReader"):
-                 break
-             yield chunk
-     finally:
--        ranged_file.close()
-+        # Cancelling to_thread does not interrupt its filesystem read. Closing
-+        # a BufferedReader waits for that read's lock (potentially remote FUSE
-+        # I/O), so cleanup must also stay off the event loop. Otherwise one
-+        # disconnected download can freeze every request, including health.
-+        await asyncio.to_thread(ranged_file.close)
- 
- 
- def _render_directory_index(request, path: str, fullpath: Path, document_root: Path) -> HttpResponse:
-```
-
-**File**: `archivebox/tests/test_server_streaming_memory.py` (modified, +57/-0)
-```diff
-@@ -2,7 +2,9 @@
- 
- import hashlib
- import asyncio
-+import io
++import hashlib
  import os
-+import threading
  import time
++import zipfile
+ from pathlib import Path
  
  import psutil
-@@ -15,6 +17,61 @@
- from archivebox.tests.test_orm_helpers import use_archivebox_db
+@@ -17,7 +19,7 @@
  
  
-+def test_async_file_stream_close_does_not_block_event_loop_during_pending_read():
-+    from archivebox.misc.serve_static import _stream_ranged_file_async
+ @pytest.mark.django_db(transaction=True)
+-def test_uvicorn_zip_disconnect_releases_source_file(archivebox_daemon_server):
++def test_uvicorn_zip_has_bounded_memory_and_releases_source_file(archivebox_daemon_server, tmp_path):
+     server = archivebox_daemon_server(SEARCH_BACKEND_ENGINE="sqlite", BASE_URL="http://archivebox.localhost")
+     state = server.wait_for_workers(("worker_uvicorn",))
+     uvicorn = psutil.Process(state["worker_uvicorn"]["pid"])
+@@ -33,28 +35,70 @@ def test_uvicorn_zip_disconnect_releases_source_file(archivebox_daemon_server):
+         snapshot_id = str(snapshot.id)
+         payload = snapshot.output_dir / "staticfile" / "payload.bin"
+     payload.parent.mkdir(parents=True)
+-    # Exceed socket buffers so the server is still compressing when we close.
++    # Incompressible bytes exceed both socket buffers and the memory allowance;
++    # compressible input would hide whole-ZIP buffering under ASGI.
++    digest = hashlib.sha256()
+     with payload.open("wb") as output:
+-        for _ in range(32):
+-            output.write(os.urandom(1024 * 1024))
++        for _ in range(64):
++            chunk = os.urandom(1024 * 1024)
++            output.write(chunk)
++            digest.update(chunk)
+     host = get_snapshot_host(snapshot_id, overrides={"BASE_URL": "http://archivebox.localhost"})
+     url = f"http://127.0.0.1:{server.port}/staticfile/?download=zip"
+-    for _ in range(3):
+-        with requests.get(url, headers={"Host": host}, stream=True, timeout=15) as response:
++    with requests.Session() as client:
++        client.trust_env = False
++        warm = client.get(
++            f"{url.removesuffix('?download=zip')}payload.bin?raw=1",
++            headers={"Host": host, "Range": "bytes=0-65535"},
++            timeout=15,
++        )
++        assert warm.status_code == 206
++        with payload.open("rb") as source:
++            assert warm.content == source.read(65536)
++        baseline = uvicorn.memory_info().rss
++        peak_growth = 0
++        for _ in range(3):
++            with client.get(url, headers={"Host": host}, stream=True, timeout=15) as response:
++                assert response.status_code == 200
++                assert response.headers["Content-Type"] == "application/zip"
++                # Keep the generator alive: discarding it closes urllib3's socket
++                # immediately, before we can observe the server's open source file.
++                chunks = response.iter_content(64 * 1024)
++                assert next(chunks).startswith(b"PK")
++                assert not response.raw.closed, "ZIP connection closed before the deliberate disconnect"
++                # A stalled real TCP reader must not make Django consume the
++                # entire synchronous ZIP iterator. Use the raw-download test's
++                # 16 MiB fixed-overhead allowance for this 64 MiB payload.
++                deadline = time.monotonic() + 3
++                while time.monotonic() < deadline:
++                    peak_growth = max(peak_growth, uvicorn.memory_info().rss - baseline)
++                    assert peak_growth < 16 * 1024 * 1024
++                    time.sleep(0.05)
++                assert str(payload) in {entry.path for entry in uvicorn.open_files()}
++                health = client.get(f"http://127.0.0.1:{server.port}/health/", timeout=5)
++                assert health.status_code == 200
++                assert health.content == b"OK"
++            chunks.close()
++            deadline = time.monotonic() + 5
++            while str(payload) in {entry.path for entry in uvicorn.open_files()}:
++                assert time.monotonic() < deadline, "Disconnected ZIP download kept its source file open"
++                time.sleep(0.05)
 +
-+    read_fd, write_fd = os.pipe()
-+    # A real buffered pipe exercises the helper's iterable/close protocol while
-+    # the kernel blocks next(); the timer bounds the regression on old code.
-+    source = io.BufferedReader(os.fdopen(read_fd, "rb", buffering=0))
-+    iterator = _stream_ranged_file_async(source)
-+    release = threading.Event()
-+    release_at = []
-+    timer_started = False
-+
-+    def release_read():
-+        release_at.append(time.monotonic())
-+        os.write(write_fd, b"second\n")
-+        os.close(write_fd)
-+        release.set()
-+
-+    timer = threading.Timer(2, release_read)
-+
-+    async def check_cancellation():
-+        nonlocal timer_started
-+        os.write(write_fd, b"first\n")
-+        assert await anext(iterator) == b"first\n"
-+        pending_read = asyncio.create_task(anext(iterator))
-+        # Let the real executor thread enter BufferedReader's blocking pipe read.
-+        await asyncio.sleep(0.1)
-+        timer.start()
-+        timer_started = True
-+
-+        heartbeat_at = []
-+
-+        async def heartbeat():
-+            await asyncio.sleep(0.1)
-+            heartbeat_at.append(time.monotonic())
-+
-+        heartbeat_task = asyncio.create_task(heartbeat())
-+        pending_read.cancel()
-+        with pytest.raises(asyncio.CancelledError):
-+            await pending_read
-+        await heartbeat_task
-+        assert heartbeat_at[0] < release_at[0]
-+        assert source.closed
-+
-+    try:
-+        asyncio.run(check_cancellation())
-+    finally:
-+        if timer_started:
-+            timer.join(timeout=3)
-+        if not source.closed:
-+            source.close()
-+        if not release.is_set():
-+            os.close(write_fd)
-+
-+
- def test_server_accepts_authenticated_chunked_output_upload(archivebox_daemon_server):
-     from django.core.files.uploadedfile import SimpleUploadedFile
-     from django.test.client import BOUNDARY, MULTIPART_CONTENT, encode_multipart
-```
-
----
-
-### Incident Patch 3: `145fd0a3` (2026-10-28)
-**Commit Message**: Use Playwright trace for staging replay failures
-
-**File**: `bin/check-staging-deployment.py` (modified, +15/-70)
-```diff
-@@ -10,7 +10,7 @@
- import time
- import tomllib
- from pathlib import Path
--from urllib.parse import urljoin, urlsplit, urlunsplit
-+from urllib.parse import urljoin
- 
- from playwright.sync_api import expect, sync_playwright
- 
-@@ -101,39 +101,17 @@ def remote(operation):
- 
-     with sync_playwright() as playwright:
-         browser = playwright.chromium.launch(executable_path=os.environ["CHROME_BINARY"])
--        page = browser.new_page(viewport={"width": 1440, "height": 1000})
--        browser_messages = []
--
--        def record_browser_message(message, source):
--            if len(browser_messages) >= 20:
--                return
--            text = message.text if hasattr(message, "text") else str(message)
--            text = re.sub(r"https?://[^\s\"'<>]+", lambda match: safe_url(match.group(0)), text)
--            browser_messages.append({"source": source, "message": text[:300]})
--
--        def record_console(message):
--            if message.type == "error":
--                record_browser_message(message, "console")
--
--        def record_page_error(error):
--            record_browser_message(error, "pageerror")
--
--        def safe_url(value):
--            parts = urlsplit(value)
--            if parts.scheme and not parts.netloc:
--                return f"{parts.scheme}:<opaque>"
--            if not parts.netloc:
--                return urlunsplit(("", "", parts.path[:300], "", ""))
--            return urlunsplit((parts.scheme, parts.netloc, parts.path[:300], "", ""))
--
--        page.on("console", record_console)
--        page.on("pageerror", record_page_error)
-+        context = browser.new_context(viewport={"width": 1440, "height": 1000})
-+        # The staging browser uses only public acceptance URLs and a fresh
-+        # anonymous context; retain the full frame/network timeline on failure.
-+        context.tracing.start(screenshots=True, snapshots=True, sources=False)
-+        page = context.new_page()
-         for snapshot in report["snapshots"]:
--            browser_messages.clear()
--            response = page.goto(snapshot["replay_url"], wait_until="domcontentloaded")
--            assert response and response.ok, snapshot["replay_url"]
--            page.locator('.thumb-card[data-plugin-name="screenshot"]').wait_for(state="attached")
-+            context.tracing.start_chunk(title=f"staging replay {snapshot['id']}")
-             try:
-+                response = page.goto(snapshot["replay_url"], wait_until="domcontentloaded")
-+                assert response and response.ok, snapshot["replay_url"]
-+                page.locator('.thumb-card[data-plugin-name="screenshot"]').wait_for(state="attached")
-                 # The shell creates an about:blank iframe before replay starts.
-                 # Its presence previously accepted blank screenshots as proof of
-                 # replay. Exercise the default viewer and its real captured page,
-@@ -180,52 +158,19 @@ def safe_url(value):
-                 else:
-                     raise AssertionError(f"Captured URL {snapshot['url']!r} not found in replay frames: {frame_titles}")
-             except BaseException:
--                # Keep failure evidence bounded and avoid recording URL query
--                # values, which may contain private capture parameters.
-                 try:
--                    diagnostics = page.evaluate(
--                        """() => ({
--                            iframes: [...document.querySelectorAll('iframe')].slice(0, 10).map(frame => ({
--                                id: frame.id.slice(0, 100),
--                                src: frame.getAttribute('src') || '',
--                                replayPainted: frame.dataset.replayPainted || '',
--                            })),
--                        })""",
--                    )
--                    diagnostics["iframes"] = [{**frame, "src": safe_url(frame["src"])} for frame in diagnostics["iframes"]]
--                    diagnostics["frames"] = []
--                    for frame in page.frames[:10]:
--                        entry = {"name": frame.name[:100], "url": safe_url(frame.url)}
--                        try:
--                            entry.update(
--                                frame.evaluate(
--                                    """() => ({
--                                        readyState: document.readyState,
--                                        replayRoot: (() => {
--                                            const root = document.querySelector('#replay-root');
--                                            return root ? {present: true, dataUrl: root.dataset.url || '', dataReplaybase: root.dataset.replaybase || ''} : {present: false};
--                                        })(),
--                                    })""",
--                                ),
--                            )
--                            entry["replayRoot"]["dataUrl"] = safe_url(entry["replayRoot"].get("dataUrl", ""))
--                            entry["replayR
++        saved_zip = tmp_path / "download.zip"
++        with client.get(url, headers={"Host": host}, stream=True, timeout=15) as response, saved_zip.open("wb") as output:
+             assert response.status_code == 200
+             assert response.headers["Content-Type"] == "application/zip"
+-            # Keep the generator alive: discarding it closes urllib3's socket
+-            # immediately, before we can observe the server's open source file.
+-            chunks = response.iter_content(64 * 1024)
+-            assert next(chunks).startswith(b"PK")
+-            assert not response.raw.closed, "ZIP connection closed before the deliberate disconnect"
+-            assert str(payload) in {entry.path for entry in uvicorn.open_files()}
+-        chunks.close()
+-        deadline = time.monotonic() + 5
+-        while str(payload) in {entry.path for entry in uvicorn.open_files()}:
+-            assert time.monotonic() < deadline, "Disconnected ZIP download kept its source file open"
+-            time.sleep(0.05)
+-    assert requests.get(f"
 ```
 
 #### Recent Merged Pull Requests:
@@ -1977,8 +1768,8 @@ Raise the security floor to 26.10.1 and lock 26.10.2. Express the existing psyco
 - **PR #1925** (2026-10-18): Add RepoCloud one-click deploy option (@cosark)
 - **PR #1924** (2026-10-16): Report importer CLI failures and honor selected sources (@pirate)
 - **PR #1923** (2026-10-16): Report capture attempt failures without starving remaining work (@pirate)
+- **PR #1922** (closed): fix(admin): keep bulk crawl resume scheduling set-based (@anirudhqwerty)
 - **PR #1921** (2026-10-15): Add Pethost as a paid hosting option (@sadfun)
-- **PR #1920** (closed): Add regression test for YOUTUBEDL_ARGS/YTDLP_EXTRA_ARGS env aliases (#1613) (@Eugeo-Agent)
 
 ---
 
@@ -1998,33 +1789,71 @@ Raise the security floor to 26.10.1 and lock 26.10.2. Express the existing psyco
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Require patched Autobahn WebSocket decompression
+## X. Verify directory ZIP downloads retain bounded ASGI memory
 
 **RULE**:
-When implementing operations in `pyproject.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ArchiveBox/ArchiveBox. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `archivebox/tests/test_zip_download_lifecycle.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ArchiveBox/ArchiveBox. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `31c7cd20`: Require patched Autobahn WebSocket decompression. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `27536512`: Verify directory ZIP downloads retain bounded ASGI memory. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `pyproject.toml`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `archivebox/tests/test_zip_download_lifecycle.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-    # Psycopg's binary extra already excludes PyPy. Express that split with the
-    # same marker as Autobahn/cbor2 so uv does not combine incompatible PyPy and
-    # CPython branches when resolving the universal lock (uv 0.13.5/0.13.6).
-    "psycopg[binary]>=3.2; platform_python_implementation != 'PyPy'",
-    "psycopg>=3.2; platform_python_implementation == 'PyPy'",  # PostgreSQL backend
-    "autobahn>=26.10.1",  # Daphne WebSocket security floor: GHSA-pjh6-c8mg-3x7m
+import hashlib
+import zipfile
+def test_uvicorn_zip_has_bounded_memory_and_releases_source_file(archivebox_daemon_server, tmp_path):
+    # Incompressible bytes exceed both socket buffers and the memory allowance;
+    # compressible input would hide whole-ZIP buffering under ASGI.
+    digest = hashlib.sha256()
+        for _ in range(64):
+            chunk = os.urandom(1024 * 1024)
+            output.write(chunk)
+            digest.update(chunk)
+    with requests.Session() as client:
+        client.trust_env = False
+        warm = client.get(
+            f"{url.removesuffix('?download=zip')}payload.bin?raw=1",
+            headers={"Host": host, "Range": "bytes=0-65535"},
+            timeout=15,
+        )
+        assert warm.status_code == 206
+        with payload.open("rb") as source:
+            assert warm.content == source.read(65536)
+        baseline = uvicorn.memory_info().rss
+        peak_growth = 0
+        for _ in range(3):
+            with client.get(url, headers={"Host": host}, stream=True, timeout=15) as response:
+                assert response.status_code == 200
+                assert response.headers["Content-Type"] == "application/zip"
+                # Keep the generat
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Anti-pattern to NEVER write (induced failure mode):
-    "psycopg[binary]>=3.2",  # for: PostgreSQL database backend (ARCHIVEBOX_DATABASE_ENGINE=postgres)
+def test_uvicorn_zip_disconnect_releases_source_file(archivebox_daemon_server):
+    # Exceed socket buffers so the server is still compressing when we close.
+        for _ in range(32):
+            output.write(os.urandom(1024 * 1024))
+    for _ in range(3):
+        with requests.get(url, headers={"Host": host}, stream=True, timeout=15) as response:
+            # Keep the generator alive: discarding it closes urllib3's socket
+            # immediately, before we can observe the server's open source file.
+            chunks = response.iter_content(64 * 1024)
+            assert next(chunks).startswith(b"PK")
+            assert not response.raw.closed, "ZIP connection closed before the deliberate disconnect"
+            assert str(payload) in {entry.path for entry in uvicorn.open_files()}
+        chunks.close()
+        deadline = time.monotonic() + 5
+        while str(payload) in {entry.path for entry in uvicorn.open_files()}:
+            assert time.monotonic() < deadline, "Disconnected ZIP download kept its source file open"
+            time.sleep(0.05)
+    assert requests.get(f"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `31c7cd20` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `27536512` are properly handled with clean fallback behavior.

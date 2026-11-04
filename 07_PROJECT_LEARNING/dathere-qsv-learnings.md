@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source**: github ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
-> **Source Version**: `e38898bf`  
+> **Source Version**: `31be4133`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T10:59:54.828Z  
+> **Timestamp**: 2026-11-03T20:27:38.158Z  
 > **Learning ID**: `learn-github-dathere-qsv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T10:59:53.915Z  
+> **Harvest Timestamp**: 2026-11-03T20:27:36.622Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2203,184 +2203,93 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e38898bf` (2026-11-03)
-**Commit Message**: deps: update lock file
+### Incident Patch 1: `31be4133` (2026-11-03)
+**Commit Message**: bench: pin exact row counts in the joinp benchmarks' --verify checks (#4997)
 
-**File**: `Cargo.lock` (modified, +37/-26)
+* bench: pin exact row counts in the joinp benchmarks' --verify checks
+
+joinp, joinp_streaming and joinp_left only checked that the join produced
+at least one row, and joinp_left_anti had no check. A partial result (e.g.
+NULL or mismatched-dtype keys silently dropped) still passed and would be
+published as a speedup.
+
+Each joinp benchmark now checks its exact row count on the fixed benchmark
+data: inner and --streaming 883,470; --left = the data's rowcount
+($QSVBM_ROWCOUNT; community_board is unique in communityboards.csv);
+--left-anti 116,530. The counts are cross-checked with `qsv join` and
+DuckDB, and inner + left-anti = 1,000,000. bm_version 10.1.1.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* docs: CHANGELOG entry for the joinp benchmark row-count checks (#4997)
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+---------
+
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -2021,9 +2021,9 @@ dependencies = [
+@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ - **docs: "Statistics at a Glance" in [`docs/STATS_DEFINITIONS.md`](docs/STATS_DEFINITIONS.md)**: qsv compiles 159 statistic columns across `stats` (48), `moarstats` (76 + 14 bivariate), `pragmastat` (18) and `frequency` (3). A new test checks the table against real output, so the counts can't go stale silently ([#4996](https://github.com/dathere/qsv/pull/4996)).
  
- [[package]]
- name = "ctutils"
--version = "0.4.7"
-+version = "0.4.8"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "a2376ffd6f96d8a9db59875b4b6b0237d6900b5baf64279714e05493ce64828a"
-+checksum = "261af4dc7a06ea8a527a8717d8cbba3417530d6ea14e1edb3de6b67806be474f"
- dependencies = [
-  "cmov",
- ]
-@@ -4150,9 +4150,9 @@ dependencies = [
+ ### Changed
++- **`scripts/benchmarks.sh` 10.1.1: the `joinp` benchmarks check their exact row counts** ([#4997](https://github.com/dathere/qsv/pull/4997)). Before, three of them only checked for at least one output row and `joinp_left_anti` had no check, so a partial join could be published as a speedup. Now inner and `--streaming` must return 883,470 rows, `--left` all 1,000,000, and `--left-anti` 116,530 (cross-checked with `qsv join` and DuckDB).
+ - **deps: Polars bumped to upstream rev [`0b47007`](https://github.com/pola-rs/polars/commit/0b47007ab65f0efd39ddc4d5abd5b2e44097a009)** (from `py-2.1.0`, 126 commits, [#4993](https://github.com/dathere/qsv/pull/4993)). Crates stay 0.55.1; it moves to zstd 0.14 ([#30316](https://github.com/pola-rs/polars/pull/30316)), so the 13 zstd "unsound" advisory ignores (#4930–#4942) are dropped from `.cargo/audit.toml`. Some `sqlp` results that already worked change:
+   - **`IS DISTINCT FROM` binds tighter than `AND`/`OR`** ([#30367](https://github.com/pola-rs/polars/pull/30367)). `a IS DISTINCT FROM b AND c OR d` is now `((a IS DISTINCT FROM b) AND c) OR d`; before, the `AND`/`OR` became part of the right operand.
+   - **`POSITION`/`STRPOS` of a NULL string is NULL**, not `0` ([#30493](https://github.com/pola-rs/polars/pull/30493)). String length, position and date-part functions also return Int64.
+```
+
+**File**: `scripts/benchmarks.sh` (modified, +15/-8)
+```diff
+@@ -44,7 +44,7 @@
+ arg_pat="$1"
  
- [[package]]
- name = "jiff"
--version = "0.2.38"
-+version = "0.2.39"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "b2b005715dcbeb0089a3c0dab99f2ff1cc3b2525323552703d648585d342a383"
-+checksum = "3ac703058abac89e5c39b0b879dce2b6b14a4ba36600c7e7e3d0c60a6883ef3c"
- dependencies = [
-  "defmt",
-  "jiff-core",
-@@ -4167,19 +4167,19 @@ dependencies = [
+ # the version of this script
+-bm_version=10.1.0
++bm_version=10.1.1
  
- [[package]]
- name = "jiff-core"
--version = "0.1.1"
-+version = "0.1.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "5e52fe76043ccecc9005d2305ebaadf7d7fc0cc89ca6baa10a94d6bc68c7128c"
-+checksum = "aee43309eb53bafb8c36d35d6e444769c8f8e6206a9fbf7546f5db9d7d4a0e93"
- dependencies = [
-  "defmt",
-  "log",
- ]
- 
- [[package]]
- name = "jiff-static"
--version = "0.2.38"
-+version = "0.2.39"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "2cc9817253cf7c7ee4684451bd327e88d6f3658014e54a29198625590650695c"
-+checksum = "6dc32470c67eb7d0e9ccb74303fa925313dc04cecb1aa048beaa6f391e36a93d"
- dependencies = [
-  "jiff-core",
-  "proc-macro2",
-@@ -4708,9 +4708,9 @@ checksum = "e20f57f9918e5bd7bc58c22cdd70a6afc7375d4dd9683af5f2b34bd3d2bba619"
- 
- [[package]]
- name = "lzma-rust2"
--version = "0.23.0"
-+version = "0.24.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "f1c46f3fcd2e888afdb01a07efc071cb21300e07c68d32c3e8b01b5c8cb1fcaa"
-+checksum = "490750560fa7851fbbf5d3ab1a8750f09350ed361ed8aed85b1e1e40587812ee"
- dependencies = [
-  "sha2 0.11.1",
- ]
-@@ -5715,46 +5715,57 @@ checksum = "9b4f627cb1b25917193a259e49bdad08f671f8d9708acfd5fe0a8c1455d87220"
- 
- [[package]]
- name = "pest"
--version = "2.9.2"
-+version = "2.9.5"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "45d3aca230fad2e6f6317ca0a72724338c4960cb97168a85cdee66df4a9a21a8"
-+checksum = "a8db75153506001cb36ed924f08cadc862eb3f8c4d0d534139f29074769d7660"
- dependencies = [
-  "memchr",
-+ "pest_stack_guard",
-  "ucd-trie",
- ]
- 
- [[package]]
- name = "pest_derive"
--version = "2.9.2"
-+version = "2.9.5"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "284b60557f2c4a2e72ad3f2d34d42685a2fa4a6a61d0d2a10c0ae2a5e916c2cf"
-+checksum = "20aa17e11fb35664b67d5214a0afac57a360d231b6ec53d6eba0700b27d933b4"
- dependencies = [
-  "pest",
-  "pest_generator",
- ]
- 
- [[package]]
- name = "pest_generator"
--version = "2.9.2"
-+version = "2.9.5"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "1d9d1f08a115309ee99268cf85e5228e0e56aa9caf8841ec12866b6be07c3109"
-+checksum = "626ec5afccf44ccbfeb2b232316510bb55b4bf34d891afcb0fb07d2b17d7fe9d"
- dependencies = [
-  "pest",
-  "pest_meta",
-  "proc-macro2",
-  "quote",
-- "syn 2.0.119",
-+ "syn 3.0.9",
- ]
- 
- [[package]]
- name = "pest_meta"
--version = "2.9.2"
-+version = "2.9.5"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "ed93ba1a9ffcca32130a5188701c81c0c49cf00d4b7c5007d5148951d743adcb"
-+checksum = "b3f45b6caa65c1b08186832745159c2529994146340a7bf44168095469720f5d"
- dependencies = [
-  "pest",
- ]
- 
-+[[package]]
-+name = "pest_stack_guard"
-+version = "1.0.1"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "9ac6154fd4418b8f0b82532c59c26f303f9ca59a64c883e8ce3971fd82733439"
-+dependencies = [
-+ "psm",
-+ "stacker",
-+]
-+
- [[package]]
- name = "petgraph"
- version = "0.8.3"
-@@ -9911,9 +9922,9 @@ checksum = "6d49784317cd0d1ee7ec5c716dd598ec5b4483ea832a2dced265471cc0f690ae"
- 
- [[package]]
- name = "ureq"
--version = "3.5.0"
-+version = "3.5.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "cde93ff05758a36a851a398a772b0b79a82fbe3c186a46f2696baaeaf84c966b"
-+checksum = "e7be76686bdf7198002062423ca0d8cf9b75a27c8e1de804513b97e97b555d9d"
- dependencies = [
-  "base64 0.23.1",
-  "cookie_store",
-@@ -9932,9 +9943,9 @@ dependencies = [
- 
- [[package]]
- name = "ureq-proto"
--version = "0.6.5"
-+version = "0.7.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "841583fc36089d7d59419568ae157f43a5a03a2e5a81ba87c77d1596ef46e922"
-+checksum = "622dce33c252115466d83f63e9744a18f12b4406aae51a01c15ad8fcf1185eb3"
- dependencies = [
-  "base64 0.23.1",
-  "http 1.5.0",
-@@ -10969,9 +10980,9 @@ dependencies = [
- 
- [[package]]
- name = "zip"
--version = "9.2.2"
-+version = "9.3.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "e408c6cc4699dd017d53dc080cd51c2cea2b5354af57a1479bd265ed42911487"
-+checksum = "eaeb7f16d2605b49aef586996ded29e65642fab7259a3077e537351df6d80426"
- dependencies = [
-  "aes",
-  "bzip2",
-@@ -10983,7 +10994,7 @@ dependen
+ # runs of a benchmark whose means are within this percentage of each other tie in the rank
+ # column (see the delta & rank comments near the end)
+@@ -1588,14 +1588,21 @@ run json "$qsv_bin" json benchmark_data.json
+ run json_jaq "$qsv_bin" json "--jaq 'map(select(.Borough == \"BROOKLYN\"))'" benchmark_data.json
+ run join "$qsv_bin" join \'Community Board\' "$data" community_board communityboards.csv
+ run join_casei "$qsv_bin" join \'Community Board\' "$data" community_board --ignore-case communityboards.csv
+-# --verify: the join must produce rows. A schema/dtype problem can leave joinp with an empty
+-# result while still exiting 0, which times as a big speedup.
++# --verify: each join must produce exactly the expected number of rows. A schema/dtype problem can
++# leave joinp with an empty or partial result while still exiting 0, which times as a big speedup.
++# The counts are for the fixed benchmark data and communityboards.csv, cross-checked with `qsv
++# join` and DuckDB. community_board is unique in communityboards.csv, so a left join keeps every
++# row, and inner + left-anti = rowcount.
+ # shellcheck disable=SC2016 # expanded later, by the bash -c that runs the check
+-verify_has_rows='test "$("$QSVBM_QSV" count "$QSVBM_STDOUT")" -gt 0'
+-run --verify "$verify_has_rows" joinp "$qsv_bin" joinp \'Community Board\' "$data" community_board communityboards.csv
+-run --verify "$verify_has_rows" joinp_streaming "$qsv_bin" joinp \'Community Board\' "$data" community_board communityboards.csv --streaming
+-run --verify "$verify_has_rows" joinp_left "$qsv_bin" joinp \'Community Board\' "$data" community_board communityboards.csv --left
+-run joinp_left_anti "$qsv_bin" joinp \'Community Board\' "$data" community_board communityboards.csv --left-anti
++verify_joinp_inner='test "$("$QSVBM_QSV" count "$QSVBM_STDOUT")" = 883470'
++# shellcheck disable=SC2016
++verify_joinp_left='test "$("$QSVBM_QSV" count "$QSVBM_STDOUT")" = "$QSVBM_ROWCOUNT"'
++# shellcheck disable=SC2016
++verify_joinp_left_anti='test "$("$QSVBM_QSV" count "$QSVBM_STDOUT")" = 116530'
++run --verify "$verify_joinp_inner" joinp "$qsv_bin" joinp \'Community Board\' "$data" community_board communityboards.csv
++run --verify "$verify_joinp_inner" joinp_streaming "$qsv_bin" joinp \'Community Board\' "$data" community_board communityboards.csv --streaming
++run --verify "$verify_joinp_left" joinp_left "$qsv_bin" joinp \'Community Board\' "$data" community_board communityboards.csv --left
++run --verify "$verify_joinp_left_anti" joinp_left_anti "$qsv_bin" joinp \'Community Board\' "$data" community_board communityboards.csv --left-anti
+ run jsonl "$qsv_bin" jsonl benchmark_data.jsonl
+ run jsonl_batchall "$qsv_bin" jsonl benchmark_data.jsonl --batch 0
+ run jsonl_j1 "$qsv_bin" jsonl -j 1 benchmark_data.jsonl
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4997** (2026-11-03): bench: pin exact row counts in the joinp benchmarks' --verify checks (@jqnatividad)
 - **PR #4996** (2026-11-03): docs: Statistics at a Glance (159 statistic columns) in STATS_DEFINITIONS, with a count test (@jqnatividad)
 - **PR #4995** (2026-11-03): build(deps): bump anthropics/claude-code-action from 1.0.265 to 1.0.266 (@dependabot[bot])
 - **PR #4994** (2026-11-02): bench: regenerate Benchmarks Data Schematic for the 28.0.0 run (@jqnatividad)
 - **PR #4993** (2026-11-02): deps: bump Polars to upstream rev 0b47007 (@jqnatividad)
 - **PR #4992** (2026-11-02): build(deps): bump anthropics/claude-code-action from 1.0.264 to 1.0.265 (@dependabot[bot])
-- **PR #4990** (2026-11-02): refactor: fix nightly clippy::perf warnings (@jqnatividad)
 
 ---
 
@@ -2400,83 +2309,28 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps: update lock file
+## X. bench: pin exact row counts in the joinp benchmarks' --verify checks (#4997)
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e38898bf`: deps: update lock file. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `31be4133`: bench: pin exact row counts in the joinp benchmarks' --verify checks (#4997). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-version = "0.4.8"
-checksum = "261af4dc7a06ea8a527a8717d8cbba3417530d6ea14e1edb3de6b67806be474f"
-version = "0.2.39"
-checksum = "3ac703058abac89e5c39b0b879dce2b6b14a4ba36600c7e7e3d0c60a6883ef3c"
-version = "0.1.2"
-checksum = "aee43309eb53bafb8c36d35d6e444769c8f8e6206a9fbf7546f5db9d7d4a0e93"
-version = "0.2.39"
-checksum = "6dc32470c67eb7d0e9ccb74303fa925313dc04cecb1aa048beaa6f391e36a93d"
-version = "0.24.0"
-checksum = "490750560fa7851fbbf5d3ab1a8750f09350ed361ed8aed85b1e1e40587812ee"
-version = "2.9.5"
-checksum = "a8db75153506001cb36ed924f08cadc862eb3f8c4d0d534139f29074769d7660"
- "pest_stack_guard",
-version = "2.9.5"
-checksum = "20aa17e11fb35664b67d5214a0afac57a360d231b6ec53d6eba0700b27d933b4"
-version = "2.9.5"
-checksum = "626ec5afccf44ccbfeb2b232316510bb55b4bf34d891afcb0fb07d2b17d7fe9d"
- "syn 3.0.9",
-version = "2.9.5"
-checksum = "b3f45b6caa65c1b08186832745159c2529994146340a7bf44168095469720f5d"
-[[package]]
-name = "pest_stack_guard"
-version = "1.0.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9ac6154fd4418b8f0b82532c59c26f303f9ca59a64c883e8ce3971fd82733439"
-dependencies = [
- "psm",
- "stacker",
-]
-
-version = "3.5.1"
-checksum = "e7be76686bdf7198002062423ca0d
+- **`scripts/benchmarks.sh` 10.1.1: the `joinp` benchmarks check their exact row counts** ([#4997](https://github.com/dathere/qsv/pull/4997)). Before, three of them only checked for at least one output row and `joinp_left_anti` had no check, so a partial join could be published as a speedup. Now inner and `--streaming` must return 883,470 rows, `--left` all 1,000,000, and `--left-anti` 116,530 (cross-checked with `qsv join` and DuckDB).
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-version = "0.4.7"
-checksum = "a2376ffd6f96d8a9db59875b4b6b0237d6900b5baf64279714e05493ce64828a"
-version = "0.2.38"
-checksum = "b2b005715dcbeb0089a3c0dab99f2ff1cc3b2525323552703d648585d342a383"
-version = "0.1.1"
-checksum = "5e52fe76043ccecc9005d2305ebaadf7d7fc0cc89ca6baa10a94d6bc68c7128c"
-version = "0.2.38"
-checksum = "2cc9817253cf7c7ee4684451bd327e88d6f3658014e54a29198625590650695c"
-version = "0.23.0"
-checksum = "f1c46f3fcd2e888afdb01a07efc071cb21300e07c68d32c3e8b01b5c8cb1fcaa"
-version = "2.9.2"
-checksum = "45d3aca230fad2e6f6317ca0a72724338c4960cb97168a85cdee66df4a9a21a8"
-version = "2.9.2"
-checksum = "284b60557f2c4a2e72ad3f2d34d42685a2fa4a6a61d0d2a10c0ae2a5e916c2cf"
-version = "2.9.2"
-checksum = "1d9d1f08a115309ee99268cf85e5228e0e56aa9caf8841ec12866b6be07c3109"
- "syn 2.0.119",
-version = "2.9.2"
-checksum = "ed93ba1a9ffcca32130a5188701c81c0c49cf00d4b7c5007d5148951d743adcb"
-version = "3.5.0"
-checksum = "cde93ff05758a36a851a398a772b0b79a82fbe3c186a46f2696baaeaf84c966b"
-version = "0.6.5"
-checksum = "841583fc36089d7d59419568ae157f43a5a03a2e5a81ba87c77d1596ef46e922"
-version = "9.2.2"
-checksum = "e408c6cc4699dd017d53dc080cd51c2cea2b5354af57a1479bd265ed42911487"
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e38898bf` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `31be4133` are properly handled with clean fallback behavior.

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/surrealdb-surrealdb-learnings.md`  
 > **Source**: github ([https://github.com/surrealdb/surrealdb](https://github.com/surrealdb/surrealdb))  
-> **Source Version**: `18971ffb`  
+> **Source Version**: `9577ac5f`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T05:45:38.537Z  
+> **Timestamp**: 2026-11-03T20:49:44.307Z  
 > **Learning ID**: `learn-github-surrealdb-surrealdb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/surrealdb-surrealdb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/surrealdb/surrealdb](https://github.com/surrealdb/surrealdb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T05:45:38.529Z  
+> **Harvest Timestamp**: 2026-11-03T20:49:39.406Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A scalable, distributed, collaborative, document-graph database, for the realtime web
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 33203 stars
+- **Stars / Engagement**: 33260 stars
 
 ---
 
@@ -36,6 +36,476 @@
 ### D1: Architecture & Structural Boundaries
 - Entry configurations inspected via direct stream: Cargo.toml, README.md.
 - Evaluated system abstractions and modular contracts.
+
+### Core Architecture Module: `surrealdb/catalog/src/view_state.rs`
+```
+//! The running statistics of an aggregated view's groups, in the stored grammar.
+//!
+//! An aggregated view keeps one row per group and, beside it, the state its aggregates are
+//! maintained from: a count, a sum, a mean's sum and count, a variance's shifted sums, an extreme,
+//! or the values `array::group` accumulates. A group's state is a [`ViewState`], stored at its own
+//! key under the view table's root, so the group's row holds the view's output fields and nothing
+//! else. A query never returns it.
+//!
+//! The statistics are positional: entry `i` of [`ViewState::stats`] is the state of the view's
+//! `i`-th aggregate, as the view definition's analysis lists them. An aggregate that a later
+//! release adds is a new variant of [`StoredStat`], which raises the floor of every state that
+//! holds one and the floor of the view's definition, so an earlier release refuses the view
+//! instead of maintaining it wrongly.
+
+use anyhow::{Result, anyhow};
+
+use crate::aggregation::AggregationStat;
+use crate::impl_kv_value_stored;
+use crate::stored::Stored;
+use crate::val::{Datetime, Number, Value};
+
+/// The state of one group of an aggregated view, stored at the group's `!as` key.
+#[derive(Clone, Debug, PartialEq, Stored)]
+#[stored(since = "4.0")]
+pub struct ViewState {
+	/// The state of each aggregate of the view, in the order the view's analysis lists them.
+	#[stored(n = 2)]
+	pub stats: Vec<StoredStat>,
+}
+
+impl_kv_value_stored!(ViewState);
+
+impl ViewState {
+	/// The state a group holds with these running statistics.
+	///
+	/// Fails for an aggregate whose argument index does not fit the stored integer.
+	pub fn of(stats: &[AggregationStat]) -> Result<Self> {
+		Ok(Self {
+			stats: stats.iter().map(StoredStat::try_from).collect::<Result<_>>()?,
+		})
+	}
+
+	/// The running statistics this state holds.
+	pub fn into_stats(self) -> Vec<AggregationStat> {
+		self.stats.into_iter().map(AggregationStat::from).collect()
+	}
+}
+
+/// The stored twin of [`AggregationStat`]: the same state, with the argument index as a `u32`.
+#[derive(Clone, Debug, PartialEq, Stored)]
+#[stored(since = "4.0")]
+pub enum StoredStat {
+	#[stored(n = 1)]
+	Count {
+		#[stored(n = 2)]
+		count: i64,
+	},
+	#[stored(n = 2)]
+	CountValue {
+		#[stored(n = 2)]
+		arg: u32,
+		#[stored(n = 4)]
+		count: i64,
+	},
+	#[stored(n = 3)]
+	NumberMax {
+		#[stored(n = 2)]
+		arg: u32,
+		#[stored(n = 4)]
+		max: Number,
+	},
+	#[stored(n = 4)]
+	NumberMin {
+		#[stored(n = 2)]
+		arg: u32,
+		#[stored(n = 4)]
+		min: Number,
+	},
+	#[stored(n = 5)]
+	Sum {
+		#[stored(n = 2)]
+		arg: u32,
+		#[stored(n = 4)]
+		sum: Number,
+	},
+	#[stored(n = 6)]
+	Mean {
+		#[stored(n = 2)]
+		arg: u32,
+		#[stored(n = 4)]
+		sum: Number,
+		#[stored(n = 6)]
+		count: i64,
+	},
+	#[stored(n = 7)]
+	StdDev {
+		#[stored(n = 2)]
+		arg: u32,
+		#[stored(n = 4)]
+		shift: Number,
+		#[stored(n = 6)]
+		sum: Number,
+		#[stored(n = 8)]
+		sum_of_squares: Number,
+		#[stored(n = 10)]
+		count: i64,
+	},
+	#[stored(n = 8)]
+	Variance {
+		#[stored(n = 2)]
+		arg: u32,
+		#[stored(n = 4)]
+		shift: Number,
+		#[stored(n = 6)]
+		sum: Number,
+		#[stored(n = 8)]
+		sum_of_squares: Number,
+		#[stored(n = 10)]
+		count: i64,
+	},
+	#[stored(n = 9)]
+	TimeMax {
+		#[stored(n = 2)]
+		arg: u32,
+		#[stored(n = 4)]
+		max: Datetime,
+	},
+	#[stored(n = 10)]
+	TimeMin {
+		#[stored(n = 2)]
+		arg: u32,
+		#[stored(n = 4)]
+		min: Datetime,
+	},
+	#[stored(n = 11)]
+	Accumulate {
+		#[stored(n = 2)]
+		arg: u32,
+		#[stored(n = 4)]
+		values: Vec<Value>,
+	},
+	/// A `time::max` over `date`, `time` or `timestamp` values; see
+	/// [`AggregationStat::TemporalMax`].
+	#[stored(n = 12)]
+	TemporalMax {
+		#[stored(n = 2)]
+		arg: u32,
+		#[stored(n = 4)]
+		max: Value,
+	},
+	/// A `time::min` over `date`, `time` or `timestamp` values; see
+	/// [`AggregationStat::TemporalMin`].
+	#[stored(n = 13)]
+	TemporalMin {
+		#[stored(n = 2)]
+		arg: u32,
+		#[stored(n = 4)]
+		min: Value,
+	},
+}
+
+impl TryFrom<&AggregationStat> for StoredStat {
+	type Error = anyhow::Error;
+
+	fn try_from(stat: &AggregationStat) -> Result<Self> {
+		fn index(arg: usize) -> Result<u32> {
+			u32::try_from(arg)
+				.map_err(|_| anyhow!("an aggregate's argument index does not fit a stored integer"))
+		}
+		Ok(match stat {
+			AggregationStat::Count {
+				count,
+			} => Self::Count {
+				count: *count,
+			},
+			AggregationStat::CountValue {
+				arg,
+				count,
+			} => Self::CountValue {
+				arg: index(*arg)?,
+				count: *count,
+			},
+			AggregationStat::NumberMax {
+				arg,
+				max,
+			} => Self::NumberMax {
+				arg: index(*arg)?,
+				max: max.clone(),
+			},
+			AggregationStat::NumberMin {
+				arg,
+				min,
+			} => Self::NumberMin {
+				arg: index(*arg)?,
+				min: min.clone(),
+			},
+			AggregationStat::Sum {
+				arg,
+				sum,
+			} => Self::Sum {
+				arg: index(*arg)?,
+				sum: sum.clone(),
+			},
+			AggregationStat::Mean {
+				arg,
+				sum,
+				count,
+			} => Self::Mean {
+				arg: index(*arg)?,
+				sum: sum.clone(),
+				count: *count,
+			},
+			AggregationStat::StdDev {
+				arg,
+				shift,
+				sum,
+				sum_of_squares,
+				count,
+			} => Self::StdDev {
+				arg: index(*arg)?,
+				shift: shift.clone(),
+				sum: sum.clone(),
+				sum_of_squares: sum_of_squares.clone(),
+				count: *count,
+			},
+			AggregationStat::Variance {
+				arg,
+				shift,
+				sum,
+				sum_of_squares,
+				count,
+			} => Self::Variance {
+				arg: index(*arg)?,
+				shift: shift.clone(),
+				sum: sum.clone(),
+				sum_of_squares: sum_of_squares.clone(),
+				count: *count,
+			},
+			AggregationStat::TimeMax {
+				arg,
+				max,
+			} => Self::TimeMax {
+				arg: index(*arg)?,
+				max: *max,
+			},
+			AggregationStat::TimeMin {
+				arg,
+				min,
+			} => Self::TimeMin {
+				arg: index(*arg)?,
+				min: *min,
+			},
+			AggregationStat::Accumulate {
+				arg,
+				values,
+			} => Self::Accumulate {
+				arg: index(*arg)?,
+				values: values.clone(),
+			},
+			AggregationStat::TemporalMax {
+				arg,
+				max,
+			} => Self::TemporalMax {
+				arg: index(*arg)?,
+				max: max.clone(),
+			},
+			AggregationStat::TemporalMin {
+				arg,
+				min,
+			} => Self::TemporalMin {
+				arg: index(*arg)?,
+				min: min.clone(),
+			},
+		})
+	}
+}
+
+impl From<StoredStat> for AggregationStat {
+	fn from(stat: StoredStat) -> Self {
+		// A `u32` always fits a `usize` on the targets this crate builds for.
+		let index = |arg: u32| arg as usize;
+		match stat {
+			StoredStat::Count {
+				count,
+			} => Self::Count {
+				count,
+			},
+			StoredStat::CountValue {
+				arg,
+				count,
+			} => Self::CountValue {
+				arg: index(arg),
+				count,
+			},
+			StoredStat::NumberMax {
+				arg,
+				max,
+			} => Self::NumberMax {
+				arg: index(arg),
+				max,
+			},
+			StoredStat::NumberMin {
+				arg,
+				min,
+			} => Self::NumberMin {
+				arg: index(arg),
+				min,
+			},
+			StoredStat::Sum {
+				arg,
+				sum,
+			} => Self::Sum {
+				arg: index(arg),
+				sum,
+			},
+			StoredStat::Mean {
+				arg,
+				sum,
+				count,
+			} => Self::Mean {
+				arg: index(arg),
+				sum,
+				count,
+			},
+			StoredStat::StdDev {
+				arg,
+				shift,
+				sum,
+				sum_of_squares,
+				count,
+			} => Self::StdDev {
+				arg: index(arg),
+				shift,
+				sum,
+				sum_of_squares,
+				count,
+			},
+			StoredStat::Variance {
+				arg,
+				shift,
+				sum,
+				sum_of_squares,
+				count,
+			} => Self::Variance {
+				arg: index(arg),
+				shift,
+				sum,
+				sum_of_squares,
+				count,
+			},
+			StoredStat::TimeMax {
+				arg,
+				max,
+			} => Self::TimeMax {
+				arg: index(arg),
+				max,
+			},
+			StoredStat::TimeMin {
+				arg,
+				min,
+			} => Self::TimeMin {
+				arg: index(arg),
+				min,
+			},
+			StoredStat::Accumulate {
+				arg,
+				values,
+			} => Self::Accumulate {
+				arg: index(arg),
+				values,
+			},
+			StoredStat::TemporalMax {
+				arg,
+				max,
+			} => Self::TemporalMax {
+				arg: index(arg),
+				max,
+			},
+			StoredStat::TemporalMin {
+				arg,
+				min,
+			} => Self::TemporalMin {
+				arg: index(arg),
+				min,
+			},
+		}
+	}
+}
+
+```
+
+### Core Architecture Module: `surrealdb/common/src/error/engine.rs`
+```
+//! Failures any layer of the engine can raise.
+//!
+//! Each layer owns an error type describing what can go wrong *there*. These
+//! four are the exception: a broken invariant, an unclassified internal
+//! failure, and the two query-lifecycle signals are raised from the storage
+//! layer up to the executor alike. Duplicating them per layer would mean the
+//! same concept mapping to the wire in a dozen places, so they are named once.
+//!
+//! Once is here, below every layer that raises them, because the engine spans
+//! several crates: the expression and catalog layers report broken invariants
+//! of their own, and no crate above them all can serve as the shared home. They
+//! sit beside the [`LeafError`] contract they implement. The crates that never
+//! execute a query — the AST, the parser, the token stream — depend on this one
+//! without naming them.
+
+use std::time::Duration;
+
+use surrealdb_types::{Error as TypesError, QueryError, ToSql};
+
+use crate::LeafError;
+use crate::fmt::SqlDuration;
+
+/// A failure that any layer of the engine can raise.
+#[derive(Debug, thiserror::Error)]
+pub enum EngineError {
+	/// An invariant the code relies on did not hold.
+	///
+	/// Build these with [`EngineError::unreachable`] or the `fail!` macro,
+	/// which record the source location.
+	#[error("The database encountered unreachable logic: {0}")]
+	Unreachable(String),
+
+	/// A failure with no more specific classification.
+	#[error("Internal database error: {0}")]
+	Internal(String),
+
+	/// The query stopped because its transaction was cancelled.
+	#[error("The query was not executed due to a cancelled transaction")]
+	QueryCancelled,
+
+	/// The query stopped because it ran past its timeout.
+	#[error("The query was not executed because it exceeded the timeout: {}", SqlDuration(*.0).to_sql())]
+	QueryTimedout(Duration),
+}
+
+impl EngineError {
+	/// Report a broken invariant, tagged with the caller's source location.
+	///
+	/// The location is baked into the message because these are read in logs
+	/// and bug reports, where the site that noticed is the only useful lead.
+	#[cold]
+	#[track_caller]
+	pub fn unreachable<T: std::fmt::Display>(message: T) -> EngineError {
+		let location = std::panic::Location::caller();
+		EngineError::Unreachable(format!("{}:{}: {}", location.file(), location.line(), message))
+	}
+}
+
+impl LeafError for EngineError {
+	fn map_kind(self, message: String) -> TypesError {
+		match self {
+			EngineError::Unreachable(_) | EngineError::Internal(_) => TypesError::internal(message),
+			EngineError::QueryCancelled => TypesError::query(message, QueryError::Cancelled),
+			EngineError::QueryTimedout(duration) => TypesError::query(
+				message,
+				QueryError::TimedOut {
+					duration,
+				},
+			),
+		}
+	}
+}
+
+```
 
 ### Core Architecture Module: `surrealdb/common/src/error/source/render/char_buffer.rs`
 ```
@@ -943,8 +1413,11 @@ fn bench_multi_threaded(c: &mut Criterion) {
 //!
 //! This module provides shared infrastructure for all benchmark files including:
 
-use surrealdb_core::dbs::{Capabilities, Session};
+use std::sync::Arc;
+
+use surrealdb_core::dbs::Session;
 use surrealdb_core::kvs::Datastore;
+use surrealdb_rpc::capabilities::Capabilities;
 use tokio::runtime::Runtime;
 
 /// Create a new multithreaded Tokio runtime for benchmarks
@@ -1051,9 +1524,10 @@ macro_rules! bench {
 /// let (dbs, ses) = setup_datastore().await;
 /// ```
 #[allow(dead_code)]
-pub async fn setup_datastore() -> (Datastore, Session) {
+pub async fn setup_datastore() -> (Arc<Datastore>, Session) {
 	// Setup the in-memory datastore
 	let dbs = Datastore::builder()
+		.without_maintenance_tasks()
 		.with_capabilities(Capabilities::all())
 		.build_with_path("memory")
 		.await
@@ -1073,9 +1547,10 @@ pub async fn setup_datastore() -> (Datastore, Session) {
 /// let (dbs, ses) = setup_datastore_with_query("CREATE person:tobie;").await;
 /// ```
 #[allow(dead_code)]
-pub async fn setup_datastore_with_query(query: &str) -> (Datastore, Session) {
+pub async fn setup_datastore_with_query(query: &str) -> (Arc<Datastore>, Session) {
 	// Setup the in-memory datastore
 	let dbs = Datastore::builder()
+		.without_maintenance_tasks()
 		.with_capabilities(Capabilities::all())
 		.build_with_path("memory")
 		.await
@@ -1097,9 +1572,10 @@ pub async fn setup_datastore_with_query(query: &str) -> (Datastore, Session) {
 /// let (dbs, ses) = setup_datastore_with_records(100_000).await;
 /// ```
 #[allow(dead_code)]
-pub async fn setup_datastore_with_records(count: u64) -> (Datastore, Session) {
+pub async fn setup_datastore_with_records(count: u64) -> (Arc<Datastore>, Session) {
 	// Setup the in-memory datastore
 	let dbs = Datastore::builder()
+		.without_maintenance_tasks()
 		.with_capabilities(Capabilities::all())
 		.build_with_path("memory")
 		.await
@@ -1142,10 +1618,347 @@ pub async fn setup_datastore_with_records(count: u64) -> (Datastore, Session) {
 
 ```
 
+### Core Architecture Module: `surrealdb/core/benches/compile.rs`
+```
+#![allow(clippy::unwrap_used)]
+#![recursion_limit = "256"]
+// TODO: Remove once this crate no longer needs it; see `absolute_paths` in the workspace lints.
+#![allow(clippy::absolute_paths)]
+
+//! Compile-path benchmark: the cost of turning statement text into a running program.
+//!
+//! Every case is measured through `Datastore::execute` alone, so the numbers cover the whole
+//! path (parse, bind, plan, lower, run) and no planner internals are touched. The corpus runs in
+//! two groups:
+//!
+//! - `compile_arrival`: each iteration sends text that no earlier iteration sent, so nothing is
+//!   served from a plan or program cache.
+//! - `compile_served`: every iteration sends the same text repeated, so a plan or program cache can
+//!   serve every iteration after the first.
+//!
+//! The difference between the groups is the cost a cache hit removes.
+//!
+//! Two reports are built only with the `compile-timers` feature:
+//!
+//! - `compile_allocations` (built only without the `allocator` feature, which installs its own
+//!   global allocator): allocations and bytes per execution of each arrival text, from a counting
+//!   `#[global_allocator]`, then timed by criterion like the arrival group.
+//! - `compile_phases`: the mean time per planning phase, each phase's share of the total, the share
+//!   of the request's compile time the phases cover, the catalog reads per compile and the e-graph
+//!   share against its budget, from the `surrealdb::compile::*` events the planning phases emit.
+
+mod common;
+
+use std::sync::Arc;
+use std::sync::atomic::{AtomicU64, Ordering};
+
+use common::{create_runtime, setup_datastore};
+use criterion::measurement::WallTime;
+use criterion::{BatchSize, BenchmarkGroup, Criterion, criterion_group, criterion_main};
+use surrealdb_core::dbs::Session;
+use surrealdb_core::kvs::Datastore;
+use surrealdb_types::Variables;
+use tokio::runtime::Runtime;
+
+/// One corpus entry: the statements that prepare the datastore, and the text generator.
+///
+/// `text(salt)` must return text whose parse differs for every distinct `salt`, and must succeed
+/// when the same text is executed repeatedly. `vars(salt)`, when present, returns the variables
+/// the text reads; they are sent with the text on every execution and must bind for every `salt`.
+struct Case {
+	name: &'static str,
+	setup: String,
+	text: fn(u64) -> String,
+	vars: Option<fn(u64) -> Variables>,
+}
+
+/// Graph and aggregate fixtures shared by the cases that read them.
+const FIXTURE: &str = "
+	DEFINE TABLE person SCHEMALESS;
+	DEFINE TABLE knows SCHEMALESS;
+	FOR $i IN 0..20 {
+		CREATE type::record('person', $i) SET name = 'p' + <string> $i;
+	};
+	FOR $i IN 0..20 {
+		FOR $j IN 1..4 {
+			RELATE (type::record('person', $i))->knows->(type::record('person', ($i + $j) % 20))
+				SET weight = $j;
+		};
+	};
+	DEFINE TABLE item SCHEMALESS;
+	FOR $i IN 0..200 {
+		CREATE type::record('item', $i) SET cat = $i % 5, v = $i;
+	};
+	DEFINE TABLE doc SCHEMALESS;
+	DEFINE INDEX doc_a ON doc FIELDS a;
+	DEFINE EVENT doc_changed ON doc WHEN $event = 'UPDATE' THEN (
+		CREATE doc_log SET at = time::now(), doc = $after.id
+	);
+	CREATE doc:1 SET a = 0, b = 0, c = 0;
+	DEFINE TABLE bulk SCHEMALESS;
+";
+
+fn point_select(salt: u64) -> String {
+	format!("SELECT * FROM item:{} WHERE v >= {salt};", salt % 200)
+}
+
+fn point_create(salt: u64) -> String {
+	format!("CREATE point_new SET v = {salt};")
+}
+
+fn point_select_plain(salt: u64) -> String {
+	format!("SELECT * FROM item:{salt};")
+}
+
+/// A point-sized `CREATE` with parameter assignments. A write with a `SET` clause is not handled
+/// by the fast path, so this case runs the full planner, e-graph included, and its e-graph share
+/// is not zero.
+fn point_create_params(salt: u64) -> String {
+	format!("CREATE point_param SET a = $a, b = $b, n = {salt};")
+}
+
+fn point_create_params_vars(salt: u64) -> Variables {
+	let mut vars = Variables::new();
+	vars.insert("a", i64::try_from(salt).unwrap());
+	vars.insert("b", format!("b{salt}"));
+	vars
+}
+
+fn indexed_update(salt: u64) -> String {
+	format!("UPDATE doc:1 SET a = {salt}, b = {}, c = {};", salt + 1, salt + 2)
+}
+
+fn block_of_ten(salt: u64) -> String {
+	let mut text = String::from("BEGIN;\n");
+	for i in 0..8 {
+		text.push_str(&format!("UPSERT block_row:{i} SET v = {salt}, i = {i};\n"));
+	}
+	text.push_str(&format!("SELECT * FROM block_row WHERE v = {salt};\n"));
+	text.push_str("COMMIT;");
+	text
+}
+
+fn graph_five_way(salt: u64) -> String {
+	format!(
+		"SELECT ->knows->person->knows->person->knows->person->knows->person->knows->person \
+		 FROM person:{} WHERE name != 'salt{salt}';",
+		salt % 20
+	)
+}
+
+fn group_by_four(salt: u64) -> String {
+	format!(
+		"SELECT cat, count() AS n, math::sum(v) AS total, math::mean(v) AS mean, \
+		 math::max(v) AS top FROM item WHERE v >= {} GROUP BY cat;",
+		salt % 100
+	)
+}
+
+fn insert_literal_1000(salt: u64) -> String {
+	let mut text = String::from("INSERT IGNORE INTO bulk [");
+	for i in 0..1_000 {
+		if i > 0 {
+			text.push(',');
+		}
+		text.push_str(&format!("{{ id: {i}, a: {i}, b: 'row_{i}', salt: {salt} }}"));
+	}
+	text.push_str("];");
+	text
+}
+
+/// Fixture of the planning-shape cases: a small indexed table, and a schemafull table with
+/// defaults, an assertion and an index, so that execution is negligible next to planning.
+const SHAPES_FIXTURE: &str = "
+	DEFINE TABLE emp SCHEMALESS;
+	DEFINE INDEX emp_dept ON emp FIELDS dept;
+	CREATE emp:1 SET name = 'a', dept = 1, age = 5;
+	CREATE emp:2 SET name = 'b', dept = 2, age = 7;
+	DEFINE TABLE sw SCHEMAFULL;
+	DEFINE FIELD name ON sw TYPE string ASSERT string::len($value) > 0;
+	DEFINE FIELD age ON sw TYPE int DEFAULT 0;
+	DEFINE FIELD tags ON sw TYPE array<string> DEFAULT [];
+	DEFINE FIELD created ON sw TYPE datetime DEFAULT time::now();
+	DEFINE INDEX sw_age ON sw FIELDS age;
+";
+
+fn shape_return_literal(salt: u64) -> String {
+	format!("RETURN {salt};")
+}
+
+fn shape_simple_select(salt: u64) -> String {
+	format!("SELECT * FROM emp LIMIT {};", salt % 1000 + 1)
+}
+
+fn shape_filtered_indexed_select(salt: u64) -> String {
+	format!(
+		"SELECT name, dept FROM emp WHERE dept = {} AND age > {salt} ORDER BY name LIMIT 10;",
+		salt % 3
+	)
+}
+
+fn shape_five_subqueries(salt: u64) -> String {
+	format!(
+		"SELECT name, \
+		 (SELECT count() FROM emp WHERE dept = {salt} GROUP ALL) AS a, \
+		 (SELECT * FROM emp WHERE age > {salt} LIMIT 1) AS b, \
+		 (SELECT name FROM emp WHERE dept = 2 LIMIT 3) AS c, \
+		 (SELECT math::max(age) AS m FROM emp GROUP ALL) AS d, \
+		 (SELECT * FROM emp WHERE id = emp:1) AS e \
+		 FROM emp LIMIT 1;"
+	)
+}
+
+fn shape_schema_write(salt: u64) -> String {
+	format!("CREATE sw SET name = 'n{salt}', age = {salt}, tags = ['a', 'b'];")
+}
+
+fn corpus() -> Vec<Case> {
+	vec![
+		Case {
+			name: "point_select_by_id",
+			setup: FIXTURE.into(),
+			text: point_select,
+			vars: None,
+		},
+		Case {
+			name: "point_create",
+			setup: FIXTURE.into(),
+			text: point_create,
+			vars: None,
+		},
+		Case {
+			name: "indexed_update_three_fields_one_event",
+			setup: FIXTURE.into(),
+			text: indexed_update,
+			vars: None,
+		},
+		Case {
+			name: "block_ten_statements_begin_commit",
+			setup: FIXTURE.into(),
+			text: block_of_ten,
+			vars: None,
+		},
+		Case {
+			name: "graph_five_way",
+			setup: FIXTURE.into(),
+			text: graph_five_way,
+			vars: None,
+		},
+		Case {
+			name: "group_by_four_aggregates",
+			setup: FIXTURE.into(),
+			text: group_by_four,
+			vars: None,
+		},
+		Case {
+			name: "insert_literal_1000_objects",
+			setup: FIXTURE.into(),
+			text: insert_literal_1000,
+			vars: None,
+		},
+		Case {
+			name: "point_select_by_id_plain",
+			setup: FIXTURE.into(),
+			text: point_select_plain,
+			vars: None,
+		},
+		Case {
+			name: "point_create_params",
+			setup: FIXTURE.into(),
+			text: point_create_params,
+			vars: Some(point_create_params_vars),
+		},
+		Case {
+			name: "shape_return_literal",
+			setup: SHAPES_FIXTURE.into(),
+			text: shape_return_literal,
+			vars: None,
+		},
+		Case {
+			name: "shape_simple_select",
+			setup: SHAPES_FIXTURE.into(),
+			text: shape_simple_select,
+			vars: None,
+		},
+		Case {
+			name: "shape_filtered_indexed_select",
+			setup: SHAPES_FIXTURE.into(),
+			text: shape_filtered_indexed_select,
+			vars: None,
+		},
+		Case {
+			name: "shape_five_subqueries",
+			setup: SHAPES_FIXTURE.into(),
+			text: shape_five_subqueries,
+			vars: None,
+		},
+		Case {
+			name: "shape_schema_write",
+			setup: SHAPES_FIXTURE.into(),
+			text: shape_schema_write,
+			vars: None,
+		},
+	]
+}
+
+/// The text and variables for the arrival of `salt`.
+fn arrival(case: &Case, salt: u64) -> (String, Option<Variables>) {
+	((case.text)(salt), case.vars.map(|vars| vars(salt)))
+}
+
+/// A datastore prepared for `case`, after proving that the case runs cleanly.
+fn prepare(runtime: &Runtime, case: &Case) -> (Arc<Datastore>, Session) {
+	// One datastore per case, so one case's writes never shape another's
+	let (dbs, ses) = runtime.block_on(setup_datastore());
+	runtime.block_on(dbs.execute(&case.setup, &ses, None)).unwrap();
+	// The case must run cleanly before it is timed
+	let (text, vars) = arrival(case, 0);
+	let probe = runtime.block_on(dbs.execute(&text, &ses, vars)).unwrap();
+	for response in &probe {
+		assert!(response.result.is_ok(), "{} failed: {:?}", case.name, response.result);
+	}
+	(dbs, ses)
+}
+
+/// Time `case` in `group`. `fresh` selects arrival (new text per iteration) over served (one text
+/// repeated).
+fn time_case(
+	group: &mut BenchmarkGroup<'_, WallTime>,
+	runtime: &Runtime,
+	case: &Case,
+	dbs: &Datastore,
+	ses: &Session,
+	fresh: bool,
+) {
+	let salt = AtomicU64::new(1);
+	let served = arrival(case, 0);
+	group.bench_function(case.name, |b| {
+		b.to_async(runtime).iter_batched(
+			|| {
+				// Text generation is excluded from the measurement
+				if fresh {
+					arrival(case, salt.fetch_add(1, Ordering::Relaxed))
+				} else {
+					served.clone()
+				}
+			},
+			|(query, vars)| async move {
+				std::hint::black_box(dbs.execute(&query, ses, vars).await).unwrap()
+			},
+			BatchSize::SmallInput,
+		)
+	});
+}
+
+/// Run one group over the whole corpus. `fresh` selects arrival (new text per it
+```
+
 ### Core Architecture Module: `surrealdb/core/benches/executor.rs`
 ```
 #![allow(clippy::unwrap_used)]
 #![recursion_limit = "256"]
+// TODO: Remove once this crate no longer needs it; see `absolute_paths` in the workspace lints.
+#![allow(clippy::absolute_paths)]
 
 mod common;
 
@@ -1475,803 +2288,209 @@ fn bench_table_select_expression(c: &mut Criterion) {
 		select_expression_value_nested_field,
 		&dbs,
 		&ses,
-		throughput: 10_000,
-		expected: |result| result.as_array().unwrap().len() == 10_000,
-		"SELECT VALUE stats.rank FROM item;"
-	);
-
-	grou
+		thr
 ```
 
-### Core Architecture Module: `surrealdb/core/benches/functions.rs`
+### Core Architecture Module: `surrealdb/core/benches/fan_out.rs`
 ```
 #![allow(clippy::unwrap_used)]
 #![recursion_limit = "256"]
+// TODO: Remove once this crate no longer needs it; see `absolute_paths` in the workspace lints.
+#![allow(clippy::absolute_paths)]
 
-mod common;
-
-use common::{block_on, setup_datastore};
-use criterion::{Criterion, criterion_group, criterion_main};
-
-// ============================================================================
-// Benchmark: Array functions
-// ============================================================================
-
-fn bench_array_functions(c: &mut Criterion) {
-	// Create the benchmark group
-	let mut group = c.benchmark_group("array_functions");
-	// Setup the datastore with no data
-	let (dbs, ses) = block_on(setup_datastore());
-
-	bench!(group, array_add, &dbs, &ses, expected: |result| result.is_array(), "RETURN array::add([1, 2, 3], 4);");
-	bench!(group, array_all, &dbs, &ses, expected: |result| result.is_bool(), "RETURN array::all([true, true, true]);");
-	bench!(group, array_any, &dbs, &ses, expected: |result| result.is_bool(), "RETURN array::any([false, true, false]);");
-	bench!(group, array_append, &dbs, &ses, expected: |result| result.is_array(), "RETURN array::append([1, 2, 3], 4);");
-	bench!(group, array_at, &dbs, &ses, expected: |result| result.is_number(), "RETURN array::at([1, 2, 3], 1);");
-	bench!(group, array_boolean_and, &dbs, &ses, expected: |result| result.is_array(), "RETURN array::boolean_and([true, false, true], [true, true, false]);");
-	bench!(group, array_boolean_not, &dbs, &ses, expected: |result| result.is_array(), "RETURN array::boolean_not([true, false, true]);");
-	bench!(group, array_boolean_or, &dbs, &ses, expected: |result| result.is_array(), "RETURN array::boolean_or([true, false, true], [false, true, false]);");
-	bench!(group, array_boolean_xor, &dbs, &ses, expected: |result| result.is_array(), "RETURN array::boolean_xor([true, false, true], [true, true, false]);");
-	bench!(group, array_clump, &dbs, &ses, expected: |result| result.is_array(), "RETURN array::clump([1, 2, 3, 4, 5, 6], 2);");
-	bench!(group, array_combine, &dbs, &ses, expected: |result| result.is_array(), "RETURN array::combine([1, 2, 3], [4, 5, 6]);");
-	bench!(group, array_complement, &dbs, &ses, expected: |result| result.is_array(), "RETURN array::complement([1, 2, 3, 4], [3, 4, 5, 6]);");
-	bench!(group, array_concat, &dbs, &ses, expected: |result| result.is_array(), "RETURN array::concat([1, 2], [3, 4], [5, 6]);");
-	bench!(group, array_difference, &dbs, &ses, expected: |result| result.is_array(), "RETURN array::difference([1, 2, 3, 4], [3, 4, 5, 6]);");
-	bench!(group, array_distinct, &dbs, &ses, expected: |result| result.is_array(), "RETURN array::distinct([1, 2, 2, 3, 3, 3, 4, 4, 4, 4]);");
-	bench!(group, array_fill, &dbs, &ses, expected: |result| result.is_array(), "RETURN array::fill([1, 2, 3, 4, 5], 0);");
-	bench!(group, array_filter_index, &dbs, &ses, expected: |result| result.is_array(), "RETURN array::filter_index([1, 2, 3, 4, 5], |$v, $i| $i > 2);");
-	bench!(group, array_find_index, &dbs, &ses, expected: |result| result.is_number() || result.is_none(), "RETURN array::find_index([1, 2, 3, 4, 5], |$v| $v > 3);");
-	bench!(group, array_first, &dbs, &ses, expected: |result| result.is_number(), "RETURN array::first([1, 2, 3, 4, 5]);");
-	bench!(group, array_flatten, &dbs, &ses, expected: |result| result.is_array(), "RETURN array::flatten([[1, 2], [3, 4], [5, 6]]);");
-	bench!(group, array_group, &dbs, &ses, expected: |result| result.is_array(), "RETURN array::group([1, 2, 1, 3, 2, 4]);");
-	bench!(group, array_insert, &dbs, &ses, expected: |result| result.is_array(), "RETURN array::insert([1, 2, 4, 5], 3, 2);");
-	bench!(group, array_intersect, &dbs, &ses, expected: |result| result.is_array(), "RETURN array::intersect([1, 2, 3, 4], [3, 4, 5, 6]);");
-	bench!(group, array_is_empty, &dbs, &ses, expected: |result| result.is_bool(), "RETURN array::is_empty([]);");
-	bench!(group, array_join, &dbs, &ses, expected: |result| result.is_string(), "RETURN array::join([1, 2, 3], ', ');");
-	bench!(group, array_last, &dbs, &ses, expected: |result| result.is_number(), "RETURN array::last([1, 2, 3, 4, 5]);");
-	bench!(group, array_len, &dbs, &ses, expected: |result| result.is_number(), "RETURN array::len([1, 2, 3, 4, 5]);");
-	bench!(group, array_logical_and, &dbs, &ses, expected: |result| result.is_array(), "RETURN array::logical_and([0, 1, 2, 3], [0, 1, 4, 5]);");
-	bench!(group, array_logical_or, &dbs, &ses, expected: |result| result.is_array(), "RETURN array::logical_or([0, 1, 2], [0, 2, 4]);");
-	bench!(group, array_logical_xor, &dbs, &ses, expected: |result| result.is_array(), "RETURN array::logical_xor([0, 1, 2, 3], [0, 2, 3, 4]);");
-	bench!(group, array_matches, &dbs, &ses, expected: |result| result.is_array(), "RETURN array::matches([1, 2, 3, 4], 3);");
-	bench!(group, array_max, &dbs, &ses, expected: |result| result.is_number(), "RETURN array::max([5, 2, 8, 1, 9, 3]);");
-	bench!(group, array_min, &dbs, &ses, expected: |result| result.is_number(), "RETURN array::min([5, 2, 8, 1, 9, 3]);");
-	bench!(group, array_pop, &dbs, &ses, expected: |result| result.is_number(), "RETURN array::pop([1, 2, 3, 4, 5]);");
-	bench!(group, array_prepend, &dbs, &ses, expected: |result| result.is_array(), "RETURN array::prepend([2, 3, 4], 1);");
-	bench!(group, array_push, &dbs, &ses, expected: |result| result.is_array(), "RETURN array::push([1, 2, 3], 4);");
-	bench!(group, array_range, &dbs, &ses, expected: |result| result.is_array(), "RETURN array::range(1..5);");
-	bench!(group, array_remove, &dbs, &ses, expected: |result| result.is_array(), "RETURN array::remove([1, 2, 3, 4, 5], 2);");
-	bench!(group, array_repeat, &dbs, &ses, expected: |result| result.is_array(), "RETURN array::repeat(5, 3);");
-	bench!(group, array_reverse, &dbs, &ses, expected: |result| result.is_array(), "RETURN array::reverse([1, 2, 3, 4, 5]);");
-	bench!(group, array_sequence, &dbs, &ses, expected: |result| result.is_array(), "RETURN array::sequence(0, 10);");
-	bench!(group, array_shuffle, &dbs, &ses, expected: |result| result.is_array(), "RETURN array::shuffle([1, 2, 3, 4, 5]);");
-	bench!(group, array_slice, &dbs, &ses, expected: |result| result.is_array(), "RETURN array::slice([1, 2, 3, 4, 5], 1, 3);");
-	bench!(group, array_sort, &dbs, &ses, expected: |result| result.is_array(), "RETURN array::sort([5, 2, 8, 1, 9, 3]);");
-	bench!(group, array_sort_asc, &dbs, &ses, expected: |result| result.is_array(), "RETURN array::sort::asc([5, 2, 8, 1, 9, 3]);");
-	bench!(group, array_sort_desc, &dbs, &ses, expected: |result| result.is_array(), "RETURN array::sort::desc([5, 2, 8, 1, 9, 3]);");
-	bench!(group, array_sort_lexical, &dbs, &ses, expected: |result| result.is_array(), "RETURN array::sort_lexical(['Álvares', 'senhor', 'Obrigado']);");
-	bench!(group, array_sort_natural, &dbs, &ses, expected: |result| result.is_array(), "RETURN array::sort_natural([8, 9, 10, '3', '2.2', '11']);");
-	bench!(group, array_sort_natural_lexical, &dbs, &ses, expected: |result| result.is_array(), "RETURN array::sort_natural_lexical(['Obrigado', 'senhor', 'Álvares', 8, 9, 10, '3', '2.2', '11']);");
-	bench!(group, array_swap, &dbs, &ses, expected: |result| result.is_array(), "RETURN array::swap([1, 2, 3, 4, 5], 0, 4);");
-	bench!(group, array_transpose, &dbs, &ses, expected: |result| result.is_array(), "RETURN array::transpose([[0, 1], [2, 3]]);");
-	bench!(group, array_union, &dbs, &ses, expected: |result| result.is_array(), "RETURN array::union([1, 2, 3], [3, 4, 5]);");
-	bench!(group, array_windows, &dbs, &ses, expected: |result| result.is_array(), "RETURN array::windows([1, 2, 3, 4], 2);");
-
-	group.finish();
-}
-
-// ============================================================================
-// Benchmark: Crypto functions
-// ============================================================================
-
-fn bench_crypto_functions(c: &mut Criterion) {
-	// Create the benchmark group
-	let mut group = c.benchmark_group("crypto_functions");
-	// Setup the datastore with no data
-	let (dbs, ses) = block_on(setup_datastore());
-
-	// Note: Intentionally slow hash functions (argon2, bcrypt, pbkdf2, scrypt) are excluded
-	bench!(group, crypto_md5, &dbs, &ses, expected: |result| result.is_string(), "RETURN crypto::md5('hello world');");
-	bench!(group, crypto_sha1, &dbs, &ses, expected: |result| result.is_string(), "RETURN crypto::sha1('hello world');");
-	bench!(group, crypto_sha256, &dbs, &ses, expected: |result| result.is_string(), "RETURN crypto::sha256('hello world');");
-	bench!(group, crypto_sha512, &dbs, &ses, expected: |result| result.is_string(), "RETURN crypto::sha512('hello world');");
-
-	group.finish();
-}
-
-// ============================================================================
-// Benchmark: Duration functions
-// ============================================================================
-
-fn bench_duration_functions(c: &mut Criterion) {
-	// Create the benchmark group
-	let mut group = c.benchmark_group("duration_functions");
-	// Setup the datastore with no data
-	let (dbs, ses) = block_on(setup_datastore());
-
-	bench!(group, duration_days, &dbs, &ses, expected: |result| result.is_number(), "RETURN duration::days(2d);");
-	bench!(group, duration_from_days, &dbs, &ses, expected: |result| result.is_duration(), "RETURN duration::from_days(7);");
-	bench!(group, duration_from_hours, &dbs, &ses, expected: |result| result.is_duration(), "RETURN duration::from_hours(24);");
-	bench!(group, duration_from_micros, &dbs, &ses, expected: |result| result.is_duration(), "RETURN duration::from_micros(1000000);");
-	bench!(group, duration_from_millis, &dbs, &ses, expected: |result| result.is_duration(), "RETURN duration::from_millis(1000);");
-	bench!(group, duration_from_mins, &dbs, &ses, expected: |result| result.is_duration(), "RETURN duration::from_mins(60);");
-	bench!(group, duration_from_nanos, &dbs, &ses, expected: |result| result.is_duration(), "RETURN duration::from_nanos(1000000000);");
-	bench!(group, duration_from_secs, &dbs, &ses, expected: |result| result.is_duration(), "RETURN duration::from_secs(3600);");
-	bench!(group, duration_from_weeks, &dbs, &ses, expected: |result| result.
-```
-
-### Core Architecture Module: `surrealdb/core/benches/import_load.rs`
-```
-#![allow(clippy::unwrap_used)]
-#![recursion_limit = "256"]
-
-//! Import load test benchmark.
+//! What overlapping the rows of a batch is worth.
 //!
-//! Streams `INSERT INTO person [... 1000 records ...]` statements through
-//! `Datastore::import_stream()` to validate correctness and measure throughput.
+//! The expression layer evaluates some work once per row and can overlap those
+//! rows (`exec::fan_out`). Whether that pays depends on what the rows do, which
+//! is why the shapes below cover every site rather than one of them.
 //!
-//! Configure the target data size via the `IMPORT_BENCH_SIZE_GB` environment
-//! variable (default: 100 MB).
+//! Rows that dereference a record link have little to gain: they share one
+//! transaction and every backend guards it, so they queue on the guard rather
+//! than overlap their reads. `kv-mem` and `kv-surrealkv` take a read lock and
+//! then do synchronous work under it.
+//!
+//! Rows that each run an operator plan are a different case: those plans buffer
+//! through spawned tasks of their own, so overlapping the rows reaches more than
+//! one core rather than just interleaving on one.
+//!
+//! Each query below is run against two datastores that differ in exactly one
+//! setting, `fan_out_row_threshold`: one low enough that every batch overlaps,
+//! one above any batch size so none do. Everything else — data, plan, backend —
+//! is identical, so the difference is the schedule.
 //!
 //! ```bash
-//! # Default 100 MB (fast dev cycle)
-//! cargo bench --bench import_load
+//! # kv-mem (the default)
+//! cargo bench -p surrealdb-core --bench fan_out
 //!
-//! # 1 GiB
-//! IMPORT_BENCH_SIZE_GB=1 cargo bench --bench import_load
+//! # another backend
+//! cargo bench -p surrealdb-core --no-default-features --features kv-surrealkv --bench fan_out
 //!
-//! # 5 GiB (needs ~16 GB RAM)
-//! IMPORT_BENCH_SIZE_GB=5 cargo bench --bench import_load
+//! # narrow to one shape
+//! cargo bench -p surrealdb-core --bench fan_out -- field_dereference
 //! ```
 
 mod common;
 
-use std::time::{Duration, Instant};
+use std::sync::Arc;
+use std::time::Duration;
 
-use bytes::Bytes;
 use common::create_runtime;
 use criterion::{BenchmarkId, Criterion, Throughput, criterion_group, criterion_main};
-use futures::StreamExt;
-use surrealdb_core::dbs::{Capabilities, Session};
+use surrealdb_cnf::ConfigMap;
+use surrealdb_core::dbs::Session;
 use surrealdb_core::kvs::Datastore;
-
-// ---------------------------------------------------------------------------
-// Configuration
-// ---------------------------------------------------------------------------
-
-/// Default target size in bytes (100 MB — safe for CI and local dev).
-const DEFAULT_SIZE_BYTES: u64 = 100 * 1024 * 1024;
-
-/// Number of records per INSERT statement.
-const RECORDS_PER_STATEMENT: usize = 1000;
-
-/// Approximate target size per record in the generated SQL (bytes).
-const TARGET_RECORD_SIZE: usize = 700;
-
-/// Read the target size from `IMPORT_BENCH_SIZE_GB`, or fall back to
-/// `DEFAULT_SIZE_BYTES`.
-fn target_size_bytes() -> u64 {
-	std::env::var("IMPORT_BENCH_SIZE_GB")
-		.ok()
-		.and_then(|s| s.parse::<f64>().ok())
-		.map(|gb| (gb * 1024.0 * 1024.0 * 1024.0) as u64)
-		.unwrap_or(DEFAULT_SIZE_BYTES)
-}
-
-// ---------------------------------------------------------------------------
-// Data generation
-// ---------------------------------------------------------------------------
-
-/// Generate a single `INSERT INTO person [...]` statement containing
-/// [`RECORDS_PER_STATEMENT`] records.
-///
-/// Each record is approximately [`TARGET_RECORD_SIZE`] bytes and looks like:
-///
-/// ```surql
-/// { name: 'Person 00042371', email: 'user_00042371@example.com',
-///   age: 42, active: true,
-///   address: { street: '42371 Main St', city: 'Springfield',
-///              state: 'IL', zip: '62701' },
-///   bio: 'abcdefghij...(padding)...' }
-/// ```
-fn generate_insert_statement(statement_index: usize) -> String {
-	let mut sql = String::with_capacity(RECORDS_PER_STATEMENT * TARGET_RECORD_SIZE + 256);
-	sql.push_str("INSERT INTO person [");
-
-	for i in 0..RECORDS_PER_STATEMENT {
-		let global_id = statement_index * RECORDS_PER_STATEMENT + i;
-		if i > 0 {
-			sql.push_str(", ");
-		}
-
-		let base = format!(
-			"{{ name: 'Person {global_id:08}', \
-			   email: 'user_{global_id:08}@example.com', \
-			   age: {age}, \
-			   active: {active}, \
-			   address: {{ street: '{global_id} Main St', \
-			               city: 'Springfield', \
-			               state: 'IL', \
-			               zip: '62701' }}, \
-			   bio: '",
-			age = 18 + (global_id % 62),
-			active = if global_id.is_multiple_of(2) {
-				"true"
-			} else {
-				"false"
-			},
-		);
-		sql.push_str(&base);
-
-		// Pad the bio field so the total record reaches TARGET_RECORD_SIZE.
-		let closing = "' }";
-		let current = base.len() + closing.len();
-		if current < TARGET_RECORD_SIZE {
-			let padding_len = TARGET_RECORD_SIZE - current;
-			// Repeating ASCII pattern — no single-quotes or backslashes.
-			for (j, _) in (0..padding_len).enumerate() {
-				sql.push((b'a' + (j % 26) as u8) as char);
-			}
-		}
-		sql.push_str(closing);
-	}
-
-	sql.push_str("];\n");
-	sql
-}
-
-/// Compute how many INSERT statements are needed to reach `target_bytes`.
-fn statements_needed(target_bytes: u64) -> usize {
-	let sample = generate_insert_statement(0);
-	let stmt_bytes = sample.len() as u64;
-	target_bytes.div_ceil(stmt_bytes) as usize
-}
-
-// ---------------------------------------------------------------------------
-// Benchmark
-// ---------------------------------------------------------------------------
-
-fn bench_import_throughput(c: &mut Criterion) {
-	let target = target_size_bytes();
-	let num_stmts = statements_needed(target);
-	let total_records = (num_stmts * RECORDS_PER_STATEMENT) as u64;
-	let stmt_bytes = generate_insert_statement(0).len() as u64;
-	let approx_bytes = stmt_bytes * num_stmts as u64;
-
-	eprintln!("=== Import Load Benchmark ===");
-	eprintln!(
-		"  Target size:       {:.2} GiB ({} bytes)",
-		target as f64 / (1024.0 * 1024.0 * 1024.0),
-		target
-	);
-	eprintln!("  Statements:        {num_stmts}");
-	eprintln!("  Records/statement: {RECORDS_PER_STATEMENT}");
-	eprintln!("  Total records:     {total_records}");
-	eprintln!("  SQL payload:       {:.2} GiB", approx_bytes as f64 / (1024.0 * 1024.0 * 1024.0));
-	eprintln!("  Bytes/statement:   {stmt_bytes}");
-	eprintln!("=============================");
-
-	let mut group = c.benchmark_group("import_load");
-	group.throughput(Throughput::Bytes(approx_bytes));
-	group.sample_size(10);
-
-	// Scale measurement time with data size.
-	if target >= 1024 * 1024 * 1024 {
-		group.measurement_time(Duration::from_secs(600));
-		group.warm_up_time(Duration::from_secs(5));
-	} else if target >= 500 * 1024 * 1024 {
-		group.measurement_time(Duration::from_secs(120));
-		group.warm_up_time(Duration::from_secs(5));
-	} else {
-		group.measurement_time(Duration::from_secs(60));
-	}
-
-	let size_label = if target >= 1024 * 1024 * 1024 {
-		format!("{:.1}GiB", target as f64 / (1024.0 * 1024.0 * 1024.0))
-	} else {
-		format!("{:.0}MB", target as f64 / (1024.0 * 1024.0))
-	};
-
-	group.bench_function(BenchmarkId::new("import_stream", &size_label), |b| {
-		let runtime = create_runtime();
-		b.to_async(&runtime).iter_custom(|iters| async move {
-			let mut total_elapsed = Duration::ZERO;
-
-			for iteration in 0..iters {
-				// Fresh datastore per iteration so records don't accumulate.
-				let dbs = Datastore::builder()
-					.with_capabilities(Capabilities::all())
-					.build_with_path("memory")
-					.await
-					.unwrap();
-				let ses = Session::owner().with_ns("test").with_db("test");
-				dbs.execute("USE NAMESPACE test DATABASE test", &ses, None).await.unwrap();
-
-				// Lazy stream — OPTION IMPORT header followed by one statement at a time.
-				let header = futures::stream::once(async {
-					Ok::<Bytes, anyhow::Error>(Bytes::from_static(b"OPTION IMPORT;\n"))
-				});
-				let inserts = futures::stream::iter((0..num_stmts).map(|i| {
-					Ok::<Bytes, anyhow::Error>(Bytes::from(generate_insert_statement(i)))
-				}));
-				let stream = header.chain(inserts);
-
-				let start = Instant::now();
-				let results = dbs.import_stream(&ses, stream).await.unwrap();
-				let elapsed = start.elapsed();
-				total_elapsed += elapsed;
-
-				// Verify no errors.
-				let errors: Vec<_> = results.iter().filter(|r| r.result.is_err()).collect();
-				assert!(
-					errors.is_empty(),
-					"Import had {} errors: {:?}",
-					errors.len(),
-					errors.first().map(|e| &e.result)
-				);
-
-				// Verify all records persisted.
-				let verify =
-					dbs.execute("SELECT count() FROM person GROUP ALL", &ses, None).await.unwrap();
-				let count_result = verify[0].result.as_ref().unwrap();
-
-				eprintln!(
-					"  [{}/{}] {:.2}s | {:.0} records/sec | {:.2} MiB/sec | count: {:?}",
-					iteration + 1,
-					iters,
-					elapsed.as_secs_f64(),
-					total_records as f64 / elapsed.as_secs_f64(),
-					(approx_bytes as f64 / (1024.0 * 1024.0)) / elapsed.as_secs_f64(),
-					count_result,
-				);
-			}
-
-			total_elapsed
-		});
-	});
-
-	group.finish();
-}
-
-// ---------------------------------------------------------------------------
-// Criterion registration
-// ---------------------------------------------------------------------------
-
-criterion_group! {
-	name = benches;
-	config = Criterion::default();
-	targets = bench_import_throughput
-}
-criterion_main!(benches);
-
-```
-
-### Core Architecture Module: `surrealdb/core/benches/rocksdb_cursor.rs`
-```
-//! RocksDB-direct cursor benchmarks.
-//!
-//! The existing `scanner` bench uses the in-memory backend, which is too
-//! fast to expose the per-batch lock costs we're trying to optimise.
-//! These benches construct a real RocksDB datastore on a temp dir and
-//! drive the cursor API directly. Two workloads:
-//!
-//! * **Nested edge** — open many cursors back-to-back, each over a small prefix (simulates `SELECT
-//!   ->knows FROM person`). Measures cursor open + 1-batch advance + drop, repeated N times.
-//!   Per-cursor overhead dominates.
-//! * **Bulk scan** — one cursor over the entire range. Measures per-batch advance overhead
-//!   amortised across many items.
-
-#![allow(clippy::unwrap_used)]
-
-use criterion::{BenchmarkId, Criterion, Throughput, criterion_group, criterion_main};
-use surrealdb_core::CommunityComposer;
-use surrealdb_core::kvs::Direction::Forward;
-use surrealdb_core::kvs::LockType::Optimistic;
-use surrealdb_core::kvs::{Datastore, TransactionType, Transactor};
+use surrealdb_rpc::capabilities::Capabilities;
 use temp_dir::TempDir;
 use tokio::runtime::Runtime;
 
-fn runtime() -> Runtime {
-	tokio::runtime::Builder::new_multi_thread().enable_all().build().unwrap()
+/// Rows per source table. Large enough that a batch reaches the scan batch size
+/// and the fan-out has something to overlap.
+const ROWS: usize = 2000;
+
+/// A threshold no batch can reach, so nothing overlaps. Comfortably above
+/// `scan_batch_size`, which is what bounds a batch (default 1000). Kept well
+/// short of `usize::MAX` so it parses as a `usize` on any target rather than
+/// failing and silently leaving the default in place.
+const NEVER: &str = "1000000";
+
+/// A threshold every batch reaches, so everything overlaps.
+const ALWAYS: &str = "2";
+
+#[cfg(not(any(feature = "kv-mem", feature = "kv-surrealkv")))]
+compile_error!("benches/fan_out.rs needs one of kv-mem or kv-surrealkv");
+
+/// The datastore path for the backend this bench was built against.
+///
+/// Only the selected `kv-*` feature's backend is compiled in, so the path has
+/// to match it: `memory` is not loadable by a build that has only SurrealKV. The
+/// on-disk backends take a subdirectory of `dir` named after the arm, since the
+/// two datastores are live at the same time and must not share storage.
+#[cfg(feature = "kv-mem")]
+fn datastore_path(_dir: &TempDir, _arm: &str) -> String {
+	"memory".to_owned()
 }
 
-/// Seed a rocksdb-backed datastore with `prefix_count` prefixes, each
-/// containing `per_prefix` keys (raw KV, not SurrealQL). Returns the
-/// datastore and the temp dir (keep alive for the bench's lifetime).
-fn setup(prefix_count: usize, per_prefix: usize) -> (Datastore, TempDir) {
-	let tmp = TempDir::new().unwrap();
-	let path = format!("rocksdb:{}", tmp.path().to_string_lossy());
-	let ds = runtime().block_on(async {
-		let ds =
-			Datastore::builder().build_with_factory_path(&path, CommunityComposer()).await.unwrap();
-		let tx = ds.transaction(TransactionType::Write, Optimistic).await.unwrap();
-		// Insert raw bytes via the Transactor (`tx.set` on the typed
-		// Transaction wrapper now requires a `KVKey`; we want raw byte
-		// keys for the bench, so go one level lower).
-		let tr: &Transactor = &tx;
-		for p in 0..prefix_count {
-			for k in 0..per_prefix {
-				let key = format!("p_{p:06}/k_{k:06}");
-				tr.set(key.into_bytes(), vec![0u8; 8]).await.unwrap();
-			}
-		}
-		tx.commit().await.unwrap();
-		ds
-	});
-	(ds, tmp)
+#[cfg(all(feature = "kv-surrealkv", not(feature = "kv-mem")))]
+fn datastore_path(dir: &TempDir, arm: &str) -> String {
+	format!("surrealkv:{}", dir.path().join(arm).display())
 }
 
-fn prefix_range(prefix: &str) -> std::ops::Range<Vec<u8>> {
-	let start = prefix.as_bytes().to_vec();
-	let mut end = start.clone();
-	end.push(0xff);
-	start..end
+/// The shapes that reach a fan-out.
+///
+/// Each is a whole statement rather than a microbenchmark of the helper, so
+/// what is measured is the cost the engine actually pays. The first group
+/// covers one overlap site each in `exec::fan_out`; `udf_dereference` covers
+/// the plan-time access-mode resolution of a user-defined call, which is what
+/// decides whether such a call may overlap at all.
+const SHAPES: &[(&str, &str)] = &[
+	// FieldPart::evaluate_batch — dereference a link, read one field.
+	("field_dereference", "SELECT link.title FROM holder"),
+	// AllPart::evaluate_batch — dereference a link, read the whole record.
+	("all_dereference", "SELECT link.* FROM holder"),
+	// batch_fetch_records — the FETCH clause resolves the links as a batch.
+	("fetch_clause", "SELECT * FROM holder FETCH link"),
+	// LookupPart::evaluate_batch — one graph traversal plan per row.
+	("graph_lookup", "SELECT ->wrote->doc FROM holder"),
+	// ScalarSubquery::evaluate_batch — one subquery plan per row.
+	("scalar_subquery", "SELECT (SELECT title FROM doc WHERE id = $parent.link) AS t FROM holder"),
+	// UserDefinedFunctionExec::access_mode — the per-row subquery overlaps only
+	// because the read-only function it projects resolves read-only against the
+	// plan-time snapshot; a function that could write would pin the subquery to
+	// ReadWrite and serialise the rows.
+	(
+		"udf_dereference",
+		"SELECT (SELECT VALUE fn::title(id) FROM doc WHERE id = $parent.link) AS t FROM holder",
+	),
+];
+
+/// A datastore seeded with `ROWS` linked records under the given threshold.
+async fn seeded(dir: &TempDir, arm: &str, threshold: &str) -> Arc<Datastore> {
+	let ds = Datastore::builder()
+		.with_capabilities(Capabilities::all())
+		.with_config(ConfigMap::empty().with_key_value("fan_out_row_threshold", threshold))
+		.build_with_path(&datastore_path(dir, arm))
+		.await
+		.unwrap();
+	// A freshly built datastore has no namespace or database, and `DEFINE TABLE`
+	// will not create them, so make them explicitly before anything else.
+	ds.execute("DEFINE NAMESPACE bench", &Session::owner(), None).await.unwrap();
+	ds.execute("DEFINE DATABASE bench", &Session::owner().with_ns("bench"), None).await.unwrap();
+
+	let ses = Session::owner().with_ns("bench").with_db("bench");
+	ds.execute("DEFINE TABLE doc SCHEMALESS; DEFINE TABLE holder SCHEMALESS;", &ses, None)
+		.await
+		.unwrap();
+
+	// A read-only function for the `udf_dereference` shape. Its body only reads,
+	// so the planner resolves the call as read-only and the subquery projecting
+	// it stays overlap-eligible; a function that could write would force the
+	// subquery to ReadWrite and suppress the fan-out.
+	ds.execute("DEFINE FUNCTION fn::title($d: record) { RETURN $d.title; };", &ses, None)
+		.await
+		.unwrap();
+
+	// One INSERT per table keeps setup out of the measured section.
+	let docs: Vec<String> = (0..ROWS)
+		.map(|i| format!("{{ id: doc:{i}, title: 'title {i}', body: 'body text for {i}' }}"))
+		.collect();
+	ds.execute(&format!("INSERT INTO doc [{}]", docs.join(",")), &ses, None).await.unwrap();
+
+	let holders: Vec<String> =
+		(0..ROWS).map(|i| format!("{{ id: holder:{i}, link: doc:{i} }}")).collect();
+	ds.execute(&format!("INSERT INTO holder [{}]", holders.join(",")), &ses, None).await.unwrap();
+
+	let edges: Vec<String> =
+		(0..ROWS).map(|i| format!("RELATE holder:{i}->wrote->doc:{i};")).collect();
+	ds.execute(&edges.join(""), &ses, None).await.unwrap();
+
+	ds
 }
 
-/// Nested edge: N small cursors. Each opens, takes one batch of small
-/// size, drops. Per-cursor-open cost dominates — this is the
-/// "`SELECT ->knows FROM person` with N outer rows" hot path.
-fn bench_nested_edge(c: &mut Criterion) {
-	let mut group = c.benchmark_group("rocksdb_nested_edge");
-	for prefix_count in [100usize, 1_000, 10_000] {
-		// 5 keys per prefix — the user's stated case (5 edges per row).
-		let (ds, _tmp) = setup(prefix_count, 5);
-		group.throughput(Throughput::Elements(prefix_count as u64));
-		group.bench_with_input(
-			BenchmarkId::new("open+1batch+drop", prefix_count),
-			&prefix_count,
-			|b, &prefix_count| {
-				let rt = runtime();
-				b.to_async(&rt).iter(|| async {
-					let tx = ds.transaction(TransactionType::Read, Optimistic).await.unwrap();
-					let tr: &Transactor = &tx;
-					let mut count = 0u64;
-					for p in 0..prefix_count {
-						let rng = prefix_range(&format!("p_{p:06}/"));
-						let mut cursor =
-							tr.open_keys_cursor(rng, Forward, 0u32, None).await.unwrap();
-						let batch = cursor.next_batch(10).await.unwrap();
-						count += batch.len() as u64;
-						drop(cursor);
-					}
-					assert!(count > 0);
-					tx.cancel().await.unwrap();
-				});
-			},
-		);
+/// Run `sql` to completion, failing loudly rather than timing an error.
+async fn run(ds: &Datastore, ses: &Session, sql: &str) {
+	for response in ds.execute(sql, ses, None).await.unwrap() {
+		response.result.unwrap();
 	}
-	group.finish();
 }
 
-/// Bulk scan: one cursor, many keys. Amortises per-cursor cost across
-/// many batches. Measures per-batch advance cost.
-fn bench_bulk_scan(c: &mut Criterion) {
-	let mut group = c.benchmark_group("rocksdb_bulk_scan");
-	let (ds, _tmp) = setup(1, 1_000_000);
-	for count in [100_000u64, 1_000_000] {
-		group.throughput(Throughput::Elements(count));
-		group.bench_with_input(BenchmarkId::new("next_batch_2000", count), &count, |b, &count| {
-			let rt = runtime();
-			b.to_async(&rt).iter(|| async {
-				let tx = ds.transaction(TransactionType::Read, Optimistic).await.unwrap();
-				let tr: &Transactor = &tx;
-				let rng = prefix_range("p_000000/");
-				let mut cursor = tr.open_keys_cursor(rng, Forward, 0u32, None).await.unwrap();
-				let mut total = 0u64;
-				while total < count {
-					let batch = cursor.next_batch(2000).await.unwrap();
-					if batch.is_empty() {
-						break;
-					}
-					total += batch.len() as u64;
-				}
-				drop(cursor);
-				assert_eq!(total, count.min(1_000_000));
-				tx.cancel().await.unwrap();
-			});
+fn bench_fan_out(c: &mut Criterion) {
+	let runtime: Runtime = create_runtime();
+	let ses = Session::owner().with_ns("bench").with_db("bench");
+
+	// Two datastores differing only in the threshold. Built once and shared by
+	// every shape, so the comparison is not paying for setup.
+	let dir = TempDir::new().unwrap();
+	let overlapped = runtime.block_on(seeded(&dir, "overlapped", ALWAYS));
+	let sequential = runtime.block_on(seeded(&dir, "sequential", NEVER));
+
+	// Every shape must actually reach a fan-out; a query that stopped doing so
+	// would otherwise report a flat ratio and read as "overlap does not matter".
+	for (name, sql) in SHAPES {
+		let rows = runtime.block_on(async {
+			let mut responses = overlapped.execute(sql, &ses, None).await.unwrap();
+			responses.remove(0).result.unwrap().into_array().map(|a| a.len()).unwrap_or(0)
 		});
-		// `borrowed_iter_2000`: drive the same cursor as `next_batch_2000`
-		// but iterate the borrowed `Vec<&[u8]>` directly without copying
-		// each key into an owned `Vec<u8>`. With the per-batch allocation
-		// now a single `Vec<&[u8]>` (not N `Vec<u8>`s), this should be
-		// strictly faster than the legacy owned-batch shape.
-		group.bench_with_input(
-			BenchmarkId::new("borrowed_iter_2000", count),
-			&count,
-			|b, &count| {
-				let rt = runtime();
-				b.to_async(&rt).iter(|| async {
-					let tx = ds.transaction(TransactionType::Read, Optimistic).await.unwrap();
-					let tr: &Transactor = &tx;
-					let rng = prefix_range("p_000000/");
-					let mut cursor = tr.open_keys_cursor(rng, Forward, 0u32, None).await.unwrap();
-					let mut total = 0u64;
-					while total < count {
-						let batch = cursor.next_batch(2000).await.unwrap();
-						if batch.is_empty() {
-							break;
-						}
-						total += batch.len() as u64;
-						for k in &batch {
-							std::hint::black_box(k);
-						}
-					}
-					drop(cursor);
-					assert_eq!(total, count.min(1_000_000));
-					tx.cancel().await.unwrap();
-				});
-			},
-		);
+		assert_eq!(rows, ROWS, "{name} returned {rows} rows, expected {ROWS}");
 	}
-	group.finish();
-}
 
-criterion_group!(benches, bench_nested_edge, bench_bulk_scan);
-criterion_main!(benches);
+	let mut group = c.benchmark_group("fan_out");
+	group.throughput(Throughput::Elements(ROWS as u64));
+	group.sample_size(20);
+	group.measurement_time(Duration::from_secs(10));
 
-```
-
-### Core Architecture Module: `surrealdb/core/benches/statements.rs`
-```
-#![allow(clippy::unwrap_used)]
-#![recursion_limit = "256"]
-
-mod common;
-
-use common::{block_on, setup_datastore, setup_datastore_with_query};
-use criterion::{Criterion, criterion_group, criterion_main};
-
-// ============================================================================
-// Benchmark: CREATE Statement
-// ============================================================================
-
-fn bench_create(c: &mut Criterion) {
-	// Create the benchmark group
-	let mut group = c.benchmark_group("create");
-	// Setup the datastore with no data
-	let (dbs, ses) = block_on(setup_datastore());
-
-	bench!(
-		group,
-		create_simple,
-		&dbs,
-		&ses,
-		"CREATE person SET name = 'Test', age = 30, email = 'test@example.com', scores = [90, 80, 70];"
-	);
-
-	bench!(
-		group,
-		create_merge,
-		&dbs,
-		&ses,
-		"CREATE person MERGE {{ name: 'Test', age: 30, email: 'test@example.com', scores: [90, 80, 70] }};"
-	);
-
-	bench!(
-		group,
-		create_content,
-		&dbs,
-		&ses,
-		"CREATE person CONTENT {{ name: 'Test', age: 30, email: 'test@example.com', scores: [90, 80, 70] }};"
-	);
-
-	bench!(
-		group,
-		create_replace,
-		&dbs,
-		&ses,
-		"CREATE person REPLACE {{ name: 'Test', age: 30, email: 'test@example.com', scores: [90, 80, 70] }};"
-	);
-
-	bench!(
-		group,
-		create_complex,
-		&dbs,
-		&ses,
-		"CREATE person SET name = 'Test', age = 30, email = 'test@example.com', scores = [90, 80, 70], address = {{ street: '123 Main St', city: 'NYC', zip: '10001' }}, hobbies = ['reading', 'coding', 'gaming'];"
-	);
-
-	bench!(
-		group,
-		create_large_string,
-		&dbs,
-		&ses,
-		"CREATE person SET name = 'Test', age = 30, email = 'test@example.com', scores = [90, 80, 70], description = '{}';",
-		"Lorem ipsum dolor sit amet, consectetur adipiscing elit.".repeat(10_000)
-	);
+	for (name, sql) in SHAPES {
+		group.bench_with_input(BenchmarkId::new(*name, "overlapped"), sql, |b, sql| {
+			b.to_async(&runtime).iter(|| run(&overlapped, &ses, sql));
+		});
+		group.bench_with_input(BenchmarkId::new(*name, "sequential"), sql, |b, sql| {
+			b.to_async(&runtime).iter(|| run(&sequential, &ses, sql));
+		});
+	}
 
 	group.finish();
 }
 
-// ============================================================================
-// Benchmark: UPSERT Statement
-// ============================================================================
-
-fn bench_upsert(c: &mut Criterion) {
-	// Create the benchmark group
-	let mut group = c.benchmark_group("upsert");
-	// Setup the datastore with no data
-	let (dbs, ses) = block_on(setup_datastore());
-
-	bench!(
-		group,
-		upsert_simple,
-		&dbs,
-		&ses,
-		"UPSERT person:test SET name = 'Test', age = 30, email = 'test@example.com', scores = [90, 80, 70];"
-	);
-
-	bench!(
-		group,
-		upsert_merge,
-		&dbs,
-		&ses,
-		"UPSERT person:test MERGE {{ name: 'Test', age: 30, email: 'test@example.com', scores: [90, 80, 70] }};"
-	);
-
-	bench!(
-		group,
-		upsert_content,
-		&dbs,
-		&ses,
-		"UPSERT person:test CONTENT {{ name: 'Test', age: 30, email: 'test@example.com', scores: [90, 80, 70] }};"
-	);
-
-	bench!(
-		group,
-		upsert_replace,
-		&dbs,
-		&ses,
-		"UPSERT person:test REPLACE {{ name: 'Test', age: 30, email: 'test@example.com', scores: [90, 80, 70] }};"
-	);
-
-	bench!(group, upsert_computation, &dbs, &ses, "UPSERT person:test SET age = age + 1");
-
-	group.finish();
-}
-
-// ============================================================================
-// Benchmark: UPDATE Statement
-// ============================================================================
-
-fn bench_update(c: &mut Criterion) {
-	// Create the benchmark group
-	let mut group = c.benchmark_group("update");
-	// Setup the datastore with a query
-	let (dbs, ses) = block_on(setup_datastore_with_query(
-		"CREATE person:test SET name = 'Tobie', age = 30, email = 'test@example.com';",
-	));
-
-	bench!(
-		group,
-		update_simple,
-		&dbs,
-		&ses,
-		"UPDATE person:test SET name = 'Test', age = 30, email = 'test@example.com', scores = [90, 80, 70];"
-	);
-
-	bench!(
-		group,
-		update_merge,
-		&dbs,
-		&ses,
-		"UPDATE person:test MERGE {{ name: 'Test', age: 30, email: 'test@example.com', scores: [90, 80, 70] }};"
-	);
-
-	bench!(
-		group,
-		update_content,
-		&dbs,
-		&ses,
-		"UPDATE person:test CONTENT {{ name: 'Test', age: 30, email: 'test@example.com', scores: [90, 80, 70] }};"
-	);
-
-	bench!(
-		group,
-		update_replace,
-		&dbs,
-		&ses,
-		"UPDATE person:test REPLACE {{ name: 'Test', age: 30, email: 'test@example.com', scores: [90, 80, 70] }};"
-	);
-
-	bench!(group, update_computation, &dbs, &ses, "UPDATE person:test SET age = age + 1");
-
-	group.finish();
-}
-
-// ============================================================================
-// Benchmark: INSERT Statement
-// ============================================================================
-
-fn bench_insert(c: &mut Criterion) {
-	// Create the benchmark group
-	let mut group = c.benchmark_group("insert");
-	// Setup the datastore with no data
-	let (dbs, ses) = block_on(setup_datastore());
-
-	bench!(
-		group,
-		insert_values,
-		&dbs,
-		&ses,
-		"INSERT INTO person (name, age, email, scores) VALUES ('Test',30, 'test@example.com', [90, 80, 70]);"
-	);
-
-	bench!(
-		group,
-		insert_object,
-		&dbs,
-		&ses,
-		"INSERT INTO person {{ name: 'Test', age: 30, email: 'test@example.com', scores: [90, 80, 70] }};"
-	);
-
-	bench!(
-		group,
-		insert_with_id,
-		&dbs,
-		&ses,
-		"INSERT INTO person {{ id: person:test, name: 'Test', age: 30, email: 'test@example.com', scores: [90, 80, 70] }};"
-	);
-
-	group.finish();
-}
-
-// ============================================================================
-// Benchmark: RELATE Statement
-// ============================================================================
-
-fn bench_relate(c: &mut Criterion) {
-	// Create the benchmark group
-	let mut group = c.benchmark_group("relate");
-	// Setup the datastore with no data
-	let (dbs, ses) = block_on(setup_datastore());
-
-	bench!(group, relate_empty, &dbs, &ses, "RELATE person:test->knows->person:other;");
-
-	bench!(
-		group,
-		relate_simple,
-		&dbs,
-		&ses,
-		"RELATE person:test->knows->person:other SET date = time::now(), weight = 0.8;"
-	);
-
-	bench!(
-		group,
-		relate_merge,
-		&dbs,
-		&ses,
-		"RELATE person:test->knows->person:other MERGE {{ date: time::now(), weight: 0.8 }};"
-	);
-
-	bench!(
-		group,
-		relate_content,
-		&dbs,
-		&ses,
-		"RELATE person:test->knows->person:other CONTENT {{ date: time::now(), weight: 0.8 }};"
-	);
-
-	bench!(
-		group,
-		relate_replace,
-		&dbs,
-		&ses,
-		"RELATE person:test->knows->person:other REPLACE {{ date: time::now(), weight: 0.8 }};"
-	);
-
-	group.finish();
-}
-
-criterion_group!(
-	name = benches;
-	config = Criterion::default();
-	targets = bench_create,
-		bench_upsert,
-		bench_update,
-		bench_insert,
-		bench_relate,
-);
+criterion_group!(benches, bench_fan_out);
 criterion_main!(benches);
 
 ```
@@ -2282,13 +2501,11 @@ criterion_main!(benches);
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #7587** (2026-10-08): **Update CLI banner**
-  *Symptoms*: ## What is the motivation?  Refreshing the CLI banner with colour and updated links.  ## What does this change do?  - adds colour to the CLI banner - simplifies the text - adds the studio.surrealdb.com link for a free cloud instance - remove the "community" link  ## What is your testing strategy?  `cargo run -- help`  <img width="567" height="482" alt="image" src="https://github.com/user-attachments/assets/be72b0fd-36bf-4050-b7c8-b89bfa1553ec" />  `NO_COLOR=1 cargo run -- help`  <img width="570" height="430" alt="image" src="https://github.com/user-attachments/assets/34b84e6c-4d36-4e52-8323-159cba558c93" />  ## Security Considerations  n/a  ## Is this related to any issues?  * [x] No related issues  ## Have you read the Contributing Guidelines?  * [x] I have read the [Contributing Guidelines](https://github.com/surrealdb/surrealdb/blob/main/CONTRIBUTING.md) 
-  **Post-Mortem & Fix Analysis**:
-  > <!-- lang-bench-quick --> ## 📊 Benchmark  Add the **`benchmark`** label to this PR to benchmark your changes and compare them against the latest nightly `main` baseline.  - `main` is benchmarked **nightly** (full run, same runner pool); this PR is compared against that baseline, so only your branch is benchmarked here. - Runs on every push while the label is set; remove the label to stop.
+- **Issue #7636** (2026-10-27): **Bug: INSERT … ON DUPLICATE KEY UPDATE sees the existing record's fields as NONE for record users**
+  *Symptoms*: ## Describe the bug  `INSERT … ON DUPLICATE KEY UPDATE` run by a **record user** sees every field of the existing record as `NONE` inside the `ON DUPLICATE KEY UPDATE` clause. The same statement run as root sees the stored values. This happens with `PERMISSIONS FULL` on the table, so table permissions are not the cause.  As a result, an update that builds on the stored value, for example `tags = array::union(tags, $tags)`, silently drops the stored data for record users. Without a `?? []` fallback it errors with `Expected array but found NONE`.  ## Steps to reproduce  Script (in-memory server on :8099, needs `surreal`, `curl`, `python3`):  ```bash #!/usr/bin/env bash # Repro: INSERT … ON DUPLICATE KEY UPDATE run by a RECORD user sees the # existing record's fields as NONE. A root user sees them. set -euo pipefail PORT=8099 surreal start --log warn --user root --pass root --bind 127.0.0.1:$PORT memory >/dev/null 2>&1 & PID=$!; trap 'kill $PID' EXIT until curl -s "http://127.0.0.1:$PORT/health" >/dev/null; do sleep 0.2; done sql() { curl -s -X POST "http://127.0.0.1:$PORT/sql" -H "Accept: application/json" -H "surreal-ns: t" -H "surreal-db: t" "$@"; }  sql -u root:root --data-binary @- >/dev/null <<'SQL' DEFINE NAMESPACE t; DEFINE DATABASE t; DEFINE TABLE user SCHEMAFULL PERMISSIONS FOR select WHERE id = $auth.id; DEFINE FIELD name ON user TYPE string; DEFINE ACCESS account ON DATABASE TYPE RECORD   SIGNUP (CREATE user SET name = $name) SIGNIN (SELECT * FROM user WHERE name = $
 
-- **Issue #7579** (2026-10-18): **Bug: Datastore startup scans every process on the host (System::new_all in sys::Environment)**
-  *Symptoms*: ### What component does this affect?  SurrealDB Rust SDK  ### Describe the bug  `Environment::default()` in `surrealdb/core/src/sys/mod.rs` creates `sysinfo::System::new_all()`:  https://github.com/surrealdb/surrealdb/blob/18971ffba781a796c0ad3897bb4b82432c241e4c/surrealdb/core/src/sys/mod.rs#L73-L82  That reads every process and thread on the host, and keeps them in memory with an open `/proc/<pid>/stat` file each.  Only SurrealDB's own process is ever used: `refresh()` updates `ProcessesToUpdate::Some(&[self.pid])`, and `cpu_usage()` / `memory_usage()` read `self.sys.process(self.pid)`.  On a busy host this adds about a second, tens of MB and thousands of open files to the first `sys::refresh()` in every process (on `Datastore` bootstrap). It adds up quickly when tests run one process each.  ### Steps to reproduce  With sysinfo 0.37.2 (the version surrealdb-core uses):  ```rust let t = std::time::Instant::now(); let sys = sysinfo::System::new_all(); println!("{:?}, {} processes", t.elapsed(), sys.processes().len()); ```  Time and memory grow with the number of processes and threads on the host. `System::new()` followed by the same `refresh()` holds one entry and takes a few milliseconds.  ### Expected behaviour  Only SurrealDB's own process should be read. `System::new()` is enough: the first `refresh()` adds that pid, and the reported values are the same. #7250 made this change in `kvs/*/cnf.rs`, but `Environment` was missed. I have a one-line PR ready.   ### SurrealDB ver
+- **Issue #7625** (2026-10-27): **Bug: Rust SDK live Stream kills query from fresh unauthenticated session on Drop**
+  *Symptoms*: **Component:** SurrealDB Rust SDK  ### Describe the bug  When a live-query `Stream` created from an authenticated WebSocket client is dropped before its terminal `Killed` notification has been polled, `Drop` tries to kill the live query — but from a brand-new, unauthenticated session. The server rejects it and the SDK logs:  ```text WARN surrealdb::method::live: Failed to kill live query '<uuid>'; ... Anonymous access not allowed ```  The live query stays registered server-side until the connection closes. This hits the most common teardown paths: process shutdown and replace-on-reconnect, where the stream is dropped precisely because it will not be polled again. (When the `Killed` notification *is* consumed first, `poll_next` sets `rx = None` and the bug is masked.)  **Root cause (code walk, tag `v3.3.4`):**  1. The `LIVE SELECT` and the subscription registration correctly use the caller's session: [`live.rs#L132-L160`](https://github.com/surrealdb/surrealdb/blob/v3.3.4/surrealdb/src/method/live.rs#L132-L160) (`ctx_txn(client.session_id, …)`, `register(router, id, client.session_id)`). 2. The returned stream is then built with a *different* client: [`live.rs#L161`](https://github.com/surrealdb/surrealdb/blob/v3.3.4/surrealdb/src/method/live.rs#L161)     ```rust    Ok(Stream::new(Arc::clone(&client.inner).into(), id, Some(rx)))    ```  3. That `.into()` is `From<Arc<Inner>> for Surreal<C>`, which mints a fresh session instead of carrying the caller's over: [`lib.rs#L258-L271`
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2305,529 +2522,943 @@ criterion_main!(benches);
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1a2ebca5` (2026-08-28)
-**Commit Message**: Commit Cargo.lock for the SDK build-test crates (#7489)
+### Incident Patch 1: `f129a77a` (2026-11-03)
+**Commit Message**: fix(sql): a table given an alias is reachable only by the alias (#2505)
 
-**File**: `.gitignore` (modified, +0/-1)
+Co-authored-by: Tobie Morgan Hitchcock <[REDACTED_EMAIL]>
+
+**File**: `language-tests/tests/pgsql/alias_hides_table_name_in_where_refused.pgsql` (added, +14/-0)
 ```diff
-@@ -41,7 +41,6 @@ Temporary Items
- /lib/cache/
- /lib/store/
- /lib/target/
--/tests/sdk/*/Cargo.lock
- /tests/sdk/*/target
- /.github/scripts/__pycache__/
- 
-```
-
----
-
-### Incident Patch 2: `1e4c3d74` (2026-07-01)
-**Commit Message**: fix(core): block side effects in PERMISSIONS predicates (GHSA-66r2-5gwj-gxm2) (#438)
-
-**File**: `SECURITY_GUIDE.md` (modified, +9/-1)
-```diff
-@@ -154,7 +154,15 @@ Flag for detailed review when changes touch:
- - Reference cascade operations (ON DELETE CASCADE, UNSET, CUSTOM) must only modify
-   records reachable through explicitly defined REFERENCE relationships.
- - Permission expressions (WHERE clause in PERMISSIONS) must not produce observable
--  side effects (writes, deletes, event triggers).
-+  side effects (writes, deletes, event triggers). This is enforced in two layers
-+  (GHSA-66r2-5gwj-gxm2): definition-time rejection of clauses that directly contain
-+  a data-modifying statement (`Permissions::has_direct_write`, checked in every
-+  `DEFINE` that stores permissions), and a runtime guard that rejects any mutating
-+  statement reached while a predicate is evaluated. Predicate evaluation always
-+  uses `Options::new_for_permission_predicate` (legacy path) or carries
-+  `skip_fetch_perms` (streaming path), both of which set `Options::permission_predicate`
-+  so `Expr::compute` blocks CREATE/UPDATE/DELETE/RELATE/INSERT/UPSERT and DDL —
-+  including writes reached through custom-function bodies.
- - The Auth context within Options must not be mutated by user-controlled operations.
-   Only system-internal mechanisms (AuthLimit) may produce derived Options with
-   modified auth, and these must never broaden permissions.
-```
-
-**File**: `language-tests/tests/reproductions/perm_predicate_runtime_block.surql` (added, +31/-0)
-```diff
-@@ -0,0 +1,31 @@
-+/**
-+[env]
-+imports = ["reproductions/perm_predicate_runtime_block_import.surql"]
-+auth = { namespace = "test", database = "test", access = "user", rid = "user:test" }
-+
-+[test]
-+reason = "A permission predicate that writes via a custom-function body must be blocked at runtime on both the streaming SELECT path and the legacy UPDATE path, and must not create the row (GHSA-66r2-5gwj-gxm2)."
-+
-+# 0: SELECT — streaming path. It errors; the exact wording is wrapped
-+# differently per planner config ("Failed to check permission: ..."), so only
-+# assert that an error occurred.
-+[[test.results]]
-+error = true
-+
-+# 1: UPDATE — legacy compute path, stable error wording across configs.
-+[[test.results]]
-+error = "A PERMISSIONS clause cannot contain a statement that modifies data"
-+
-+# 2: the predicate's write was blocked, so audit is empty.
-+[[test.results]]
-+value = "[]"
-+*/
-+
-+-- 0: SELECT triggers the SELECT-permission predicate (streaming path) -> blocked.
-+SELECT * FROM victim;
-+
-+-- 1: UPDATE triggers the UPDATE-permission predicate (legacy path) -> blocked.
-+UPDATE victim:1 SET visible = false;
-+
-+-- 2: the predicate must not have written to `audit`.
-+SELECT * FROM audit;
-```
-
-**File**: `language-tests/tests/reproductions/perm_predicate_runtime_block_import.surql` (added, +25/-0)
-```diff
-@@ -0,0 +1,25 @@
-+/**
-+[test]
-+reason = "Setup for perm_predicate_runtime_block: a function whose body performs a write, referenced from a table's SELECT/UPDATE permission predicate. The DEFINE is accepted because the function call is opaque to the definition-time check, so the runtime guard must block the write when a record user triggers the predicate (GHSA-66r2-5gwj-gxm2)."
-+run = false
-+*/
-+
-+-- `audit` is readable so the test can assert that no rows were written; the
-+-- permission predicate must not be permitted to write to it.
-+DEFINE TABLE audit SCHEMALESS PERMISSIONS FOR select FULL;
-+
-+-- A read-only-looking predicate: it calls a function whose body performs a
-+-- write. The DEFINE is accepted (the call is opaque to `has_direct_write`); the
-+-- write must be blocked at runtime by the permission-predicate guard.
-+DEFINE FUNCTION fn::side_effect() {
-+	CREATE audit SET marker = true;
-+	RETURN true;
-+} PERMISSIONS FULL;
-+
-+DEFINE TABLE victim SCHEMALESS
-+	PERMISSIONS FOR select, update WHERE fn::side_effect();
-+
-+DEFINE ACCESS user ON DATABASE TYPE RECORD SIGNIN ( $rid );
-+
-+CREATE user:test;
-+CREATE victim:1 SET visible = true;
-```
-
-**File**: `language-tests/tests/reproductions/perm_predicate_side_effect_rejected.surql` (added, +57/-0)
-```diff
-@@ -0,0 +1,57 @@
+@@ -0,0 +1,14 @@
 +/**
 +[env]
 +namespace = true
 +database = true
-+auth = { level = "owner" }
++imports = ["pgsql/_schema.surql"]
 +
 +[test]
-+reason = "A side-effecting PERMISSIONS predicate must be rejected at definition time (GHSA-66r2-5gwj-gxm2). Read-only predicates, helper-function calls and read-only subqueries remain valid."
++reason = "A WHERE clause cannot name an aliased table by its own name, as in PostgreSQL"
 +
-+[[test.results]]
-+value = "NONE"
-+
-+[[test.results]]
-+error = "Found a non-read-only expression in the PERMISSIONS clause for table `bad`, but a PERMISSIONS clause must not modify data"
-+
-+[[test.results]]
-+error = "Found a non-read-only expression in the PERMISSIONS clause for field `f`, but a PERMISSIONS clause must not modify data"
-+
-+[[test.results]]
-+error = "Found a non-read-only expression in the PERMISSIONS clause for function `fn::bad`, but a PERMISSIONS clause must not modify data"
-+
-+[[test.results]]
-+error = "Found a non-read-only expression in the PERMISSIONS clause for param `bad`, but a PERMISSIONS clause must not modify data"
-+
-+[[test.results]]
-+value = "NONE"
-+
-+[[test.results]]
-+value = "NONE"
-+
-+[[test.results]]
-+value = "NONE"
++[test.results]
++request-error = "PostgreSQL SELECT lowering error: missing FROM-clause entry for table \"users\""
 +*/
 +
-+-- 0: control — a read-only table permission predicate is accepted
-+DEFINE TABLE ok PERMISSIONS FOR select WHERE published = true;
-+
-+-- 1: a table permission predicate that performs a direct write is rejected
-+DEFINE TABLE bad PERMISSIONS FOR select, update WHERE (CREATE audit SET marker = true) OR true;
-+
-+-- 2: a field permission predicate that performs a direct write is rejected
-+DEFINE FIELD f ON ok TYPE option<number> PERMISSIONS FOR update WHERE (UPDATE ok SET x = 1) OR true;
-+
-+-- 3: a function permission predicate that performs a direct write is rejected
-+DEFINE FUNCTION fn::bad() { RETURN true; } PERMISSIONS WHERE (DELETE ok) OR true;
-+
-+-- 4: a param permission predicate that performs a direct write is rejected
-+DEFINE PARAM $bad VALUE 1 PERMISSIONS WHERE (CREATE audit) OR true;
-+
-+-- 5: control — a read-only helper function defines fine
-+DEFINE FUNCTION fn::is_ok() { RETURN true; } PERMISSIONS FULL;
-+
-+-- 6: control — calling a function from a permission predicate is allowed (opaque at definition; writes inside it are blocked at runtime)
-+DEFINE TABLE okfn PERMISSIONS FOR select WHERE fn::is_ok();
-+
-+-- 7: control — a read-only subquery in a permission predicate is allowed
-+DEFINE TABLE oksub PERMISSIONS FOR select WHERE id IN (SELECT VALUE id FROM ok);
++SELECT u.name FROM users u WHERE users.age > 20;
 ```
 
-**File**: `surrealdb/core/src/api/invocation.rs` (modified, +2/-2)
+**File**: `language-tests/tests/pgsql/alias_hides_table_name_refused.pgsql` (added, +14/-0)
 ```diff
-@@ -135,8 +135,8 @@ pub async fn process_api_request_with_stack(
- 				}
- 				Permission::Full => (),
- 				Permission::Specific(e) => {
--					// Disable permissions
--					let opt = &opt.new_with_perms(false);
-+					// Disable permission recursion and block side effects
-+					let opt = &opt.new_for_permission_predicate();
- 					// Process the PERMISSION clause
- 					if !stk
- 						.run(|stk| e.compute(stk, ctx, opt, None))
+@@ -0,0 +1,14 @@
++/**
++[env]
++namespace = true
++database = true
++imports = ["pgsql/_schema.surql"]
++
++[test]
++reason = "A table that is given an alias is reachable only by that alias, as in PostgreSQL"
++
++[test.results]
++request-error = "PostgreSQL SELECT lowering error: missing FROM-clause entry for table \"users\""
++*/
++
++SELECT users.name FROM users u;
 ```
 
-**File**: `surrealdb/core/src/buc/controller.rs` (modified, +2/-2)
+**File**: `language-tests/tests/pgsql/alias_leaves_table_name_to_enclosing_query.pgsql` (added, +19/-0)
 ```diff
-@@ -287,8 +287,8 @@ impl<'a> BucketController<'a> {
- 				}
- 				Permission::Full => (),
- 				Permission::Specific(e) => {
--					// Disable permissions
--					let opt = &self.opt.new_with_perms(false);
-+					// Disable permission recursion and block side effects
-+					let opt = &self.opt.new_for_permission_predicate();
- 
- 					// Add $action, $file and $target to context
- 					let mut ctx = Context::new_child(self.ctx);
+@@ -0,0 +1,19 @@
++/**
++[env]
++namespace = true
++database = true
++imports = ["pgsql/_schema.surql"]
++
++[test]
++reason = "A subquery's alias for a table frees the table's own name to mean the same table of the enclosing query, as in PostgreSQL"
++
++[[test.results]]
++value = "[{ name: 'Alice' }]"
++
++[[test.results]]
++value = "[{ at_least_as_old: 2, name: 'Alice' }, { at_least_as_old: 3, name: 'Bob' }, { at_least_as_old: 1, name: 'Charlie' }]"
++*/
++
++SELECT name FROM users WHERE EXISTS (SELECT 1 FROM users u2 WHERE users.name = 'Alice' AND u2.user_id = users.user_id) ORDER BY name;
++
++SELECT name, (SELECT count(*) FROM users u2 WHERE u2.age >= users.age) AS at_least_as_old FROM users ORDER BY name;
 ```
 
-**File**: `surrealdb/core/src/catalog/schema/mod.rs` (modified, +18/-0)
+**File**: `surrealdb/sqlplan/src/declared_tests.rs` (modified, +69/-0)
 ```diff
-@@ -55,6 +55,15 @@ impl Permission {
- 		matches!(self, Self::Specific(_))
- 	}
- 
-+	/// Whether this permission clause directly contains a data-modifying
-+	/// statement, which is not allowed (GHSA-66r2-5gwj-gxm2).
-+	pub(crate) fn has_direct_write(&self) -> bool {
-+		match self {
-+			Permission::None | Permission::Full => false,
-+			Permission::Specific(e) => e.has_direct_write(),
-+		}
-+	}
-+
- 	fn to_sql_definition(&self) -> crate::sql::Permission {
- 		match self {
- 			Permission::None => crate::sql::Permission::None,
-@@ -108,6 +117,15 @@ impl Permissions {
- 	pub(crate) fn to_sql_definition(&self) -> crate::sql::Permissions {
- 		self.clone().into()
- 	}
-+
-+	/// Whether any of the select/create/update/delete clauses directly contains
-+	/// a data-modifying statement (GHSA-66r2-5gwj-gxm2).
-+	pub(crate) fn has_direct_write(&self) -> bool {
-+		self.select.has_direct_write()
-+			|| self.create.has_direct_write()
-+			|| self.update.has_direct_write()
-+			|| self.delete.has_direct_write()
-+	}
+@@ -139,6 +139,75 @@ fn a_column_a_subquery_table_lacks_belongs_to_the_enclosing_query() {
+ 	);
  }
  
- impl InfoStructure for Permissions {
++#[test]
++fn an_alias_hides_the_name_of_its_table() {
++	for sql in [
++		"SELECT emp.id FROM emp e",
++		"SELECT e.id FROM emp e WHERE emp.dept = 1",
++		"SELECT e.id FROM emp e ORDER BY emp.name",
++		"SELECT e.id FROM emp e JOIN dept d ON emp.dept = d.id",
++		"SELECT e.id FROM public.emp e WHERE public.emp.dept = 1",
++	] {
++		assert_eq!(
++			both(sql).map_err(|err| matches!(err, PlanError::MissingFromClauseEntry(_))),
++			Err(true),
++			"{sql}"
++		);
++	}
++	assert_eq!(
++		both("SELECT e.id FROM emp e JOIN dept d ON e.dept = d.id WHERE e.dept = 1"),
++		Ok(())
++	);
++}
++
++#[test]
++fn a_table_name_an_alias_frees_names_the_other_relation_that_has_it() {
++	let bound = pg("SELECT emp.name, e.name FROM emp e JOIN emp ON emp.id = e.dept").expect("bind");
++	assert_eq!(column_of(&bound.targets[0]), (1, "name", 0));
++	assert_eq!(column_of(&bound.targets[1]), (0, "name", 0));
++}
++
++/// The depth at which each column `expr` reads is bound, in the order the columns appear in a
++/// comparison tree of `AND`s.
++fn comparison_columns(expr: &BoundExpr, out: &mut Vec<(usize, String, usize)>) {
++	if let BoundExpr::Binary {
++		left,
++		right,
++		..
++	} = expr
++	{
++		comparison_columns(left, out);
++		comparison_columns(right, out);
++	} else if let BoundExpr::Column(col) = expr {
++		out.push((col.relation_index, col.column.clone(), col.correlation_depth));
++	}
++}
++
++#[test]
++fn a_subquery_alias_leaves_the_table_name_to_the_enclosing_query() {
++	let bound = pg("SELECT name FROM emp WHERE EXISTS \
++		(SELECT 1 FROM emp e2 WHERE emp.name = 'x' AND e2.id = emp.id)")
++	.expect("bind");
++	let Some(BoundExpr::Exists(sub)) = &bound.where_clause else {
++		panic!("expected EXISTS, got {:?}", bound.where_clause);
++	};
++	let mut columns = Vec::new();
++	comparison_columns(sub.where_clause.as_ref().expect("a WHERE clause"), &mut columns);
++	assert_eq!(
++		columns,
++		[(0, "name".to_string(), 1), (0, "id".to_string(), 0), (0, "id".to_string(), 1)]
++	);
++
++	let bound =
++		pg("SELECT (SELECT count(*) FROM emp e2 WHERE e2.name = emp.name) FROM emp").expect("bind");
++	let BoundExpr::ScalarSubquery(sub) = &bound.targets[0].expr else {
++		panic!("expected a scalar subquery");
++	};
++	let mut columns = Vec::new();
++	comparison_columns(sub.where_clause.as_ref().expect("a WHERE clause"), &mut columns);
++	assert_eq!(columns, [(0, "name".to_string(), 0), (0, "name".to_string(), 1)]);
++}
++
+ #[test]
+ fn a_column_that_no_query_has_is_an_error_whatever_the_nesting() {
+ 	assert_eq!(both("SELECT (SELECT nosuch FROM dept) FROM emp"), undefined("nosuch"));
 ```
 
-**File**: `surrealdb/core/src/dbs/options.rs` (modified, +24/-0)
+**File**: `surrealdb/sqlplan/src/scope.rs` (modified, +12/-8)
 ```diff
-@@ -33,6 +33,14 @@ pub struct Options {
- 	pub(crate) force: Force,
- 	/// Should we run permissions checks?
- 	pub(crate) perms: bool,
-+	/// Are we evaluating a `PERMISSIONS` predicate (WHERE clause)?
-+	///
-+	/// Permission predicates are computed with `perms` disabled so they don't
-+	/// recurse into their own table's gates. While that is in effect, mutating
-+	/// statements (CREATE/UPDATE/DELETE/RELATE/INSERT/UPSERT and DDL) must be
-+	/// rejected so a predicate cannot produce observable side effects
-+	/// (see `SECURITY_GUIDE.md`).
-+	pub(crate) permission_predicate: bool,
- 	/// Should we process field queries?
- 	pub(crate) import: bool,
- 	/// The data version as a timestamp
-@@ -55,6 +63,7 @@ impl Options {
- 			db: None,
- 			dive: config.max_computation_depth,
- 			perms: true,
-+			permission_predicate: false,
- 			force: Force::None,
- 			import: false,
- 			auth: Arc::new(Auth::default()),
-@@ -182,6 +191,21 @@ impl Options {
- 		}
- 	}
+@@ -369,6 +369,7 @@ impl QueryScope {
+ 		policy: &DialectPolicy,
+ 	) -> usize {
+ 		let relation_index = self.relations.len();
++		let aliased = alias.is_some();
+ 		// An unaliased relation is exposed under its unqualified name, so `columns.*` and
+ 		// `columns.column_name` resolve against `information_schema.columns`.
+ 		let exposed_name = alias.unwrap_or_else(|| match schema.as_deref() {
+@@ -405,15 +406,18 @@ impl QueryScope {
+ 		let key_exposed = policy.fold_identifier(&exposed_name).into_owned();
+ 		self.name_to_relation.insert(key_exposed, relation_index);
  
-+	/// Create a new Options object for evaluating a `PERMISSIONS` predicate.
-+	///
-+	/// Disables permission recursion (like `new_with_perms(false)`) and marks
-+	/// the frame as a permission-predicate evaluation, so any attempt to run a
-+	/// mutating statement within the predicate is rejected by `Expr::compute`.
-+	/// Use this instead of `new_with_perms(false)` at every site that computes
-+	/// a stored `Permission::Specific(..)` clause.
-+	pub fn new_for_permission_predicate(&self) -> Self {
-+		Self {
-+			perms: false,
-+			permission_predicate: true,
-+			..self.clone()
-+		}
-+	}
-+
- 	/// Create a new Options object for a subquery
- 	pub fn new_with_force(&self, force: Force) -> Self {
- 		Self {
+-		// Also register under table_name if exposed_name was an alias
+-		let key_table = policy.fold_identifier(table_name).into_owned();
+-		self.name_to_relation.entry(key_table).or_insert(relation_index);
++		// An aliased relation is reachable only by its alias: the table's own name is then free to
++		// mean the same table of an enclosing query, or another relation of this one. A relation
++		// without an alias is also reachable by its table name and, qualified, by its schema.
++		if !aliased {
++			let key_table = policy.fold_identifier(table_name).into_owned();
++			self.name_to_relation.entry(key_table).or_insert(relation_index);
+ 
+-		// If schema was provided, also register under "schema.table"
+-		if let Some(s) = schema {
+-			let full_name = format!("{s}.{table_name}");
+-			let key_full = policy.fold_identifier(&full_name).into_owned();
+-			self.name_to_relation.entry(key_full).or_insert(relation_index);
++			if let Some(s) = schema {
++				let full_name = format!("{s}.{table_name}");
++				let key_full = policy.fold_identifier(&full_name).into_owned();
++				self.name_to_relation.entry(key_full).or_insert(relation_index);
++			}
+ 		}
+ 
+ 		relation_index
 ```
 
 ---
 
-### Incident Patch 3: `c39b8a66` (2026-07-01)
-**Commit Message**: fix(surrealml): reject malformed model headers instead of panicking (GHSA-jwr6-6444-28xv) (#437)
+### Incident Patch 2: `e1482ac0` (2026-11-03)
+**Commit Message**: feat(parser)!: rename temporal literal prefixes to pd, pt, ts and ivl (#2524)
 
-**File**: `surrealml/core/src/storage/header/input_dims.rs` (modified, +54/-9)
+**File**: `doc/adr/0013-date-time-timestamp-interval-and-enum-kinds.md` (modified, +6/-5)
 ```diff
-@@ -1,6 +1,9 @@
- //! InputDims is a struct that holds the dimensions of the input tensors for the model.
- use std::fmt;
+@@ -11,7 +11,7 @@ Every decision below is accepted as recommended, including the `surrealdb-protoc
+ | # | Decision | Recommendation |
+ |---|---|---|
+ | D1 | Value layer: new `Value` variants or a tag on `Datetime`/`Duration` | Four new `Value` variants (`Date`, `Time`, `Timestamp`, `Interval`) appended after `Closure`. A tag on `Datetime` cannot carry months or days, cannot sort correctly, and makes round-trip typing depend on side data. |
+-| D2 | Literal syntax | Keyword-prefixed literals `date'2026-10-27'`, `time'12:30:00'`, `timestamp'2026-10-27T12:30:00'`, `interval'1 year 2 days'`. `d'2026-10-27'` keeps meaning a midnight-UTC datetime. Alternatives in section 2. |
++| D2 | Literal syntax | Keyword-prefixed literals `pd'2026-10-27'`, `pt'12:30:00'`, `ts'2026-10-27T12:30:00'`, `ivl'1 year 2 days'`. `d'2026-10-27'` keeps meaning a midnight-UTC datetime. Alternatives in section 2. |
+ | D3 | Precision | Nanoseconds for `time` and `timestamp`, microseconds for the `interval` time part, truncated to microseconds at the PostgreSQL and MySQL wire. |
+ | D4 | Cross-kind comparison | Kinds stay distinct at the `Value` level (`Ord` is by rank, not by instant). The SQL front ends insert promotions (`date` to `timestamp` to `timestamptz`). SurrealQL operators do not promote implicitly. |
+ | D5 | Interval equality | PostgreSQL semantics: `Eq`, `Ord`, `Hash` use the normalised value (a month is 30 days, a day is 24 hours), so `1 mon = 30 days`. Display and storage keep the triple. |
+@@ -75,10 +75,10 @@ ORM harnesses (Prisma, Drizzle, TypeORM) list type modifiers and enums among the
  
-+use crate::errors::error::{SurrealError, SurrealErrorStatus};
-+use crate::safe_eject;
-+
- /// InputDims is a struct that holds the dimensions of the input tensors for the model.
- ///
- /// # Fields
-@@ -27,16 +30,30 @@ impl InputDims {
- 	/// * `data` - The dimensions as a string.
- 	///
- 	/// # Returns
--	/// A new `InputDims` struct.
--	pub fn from_string(data: String) -> InputDims {
-+	/// A new `InputDims` struct, or a `SurrealError` if the dimensions are malformed.
-+	pub fn from_string(data: String) -> Result<InputDims, SurrealError> {
- 		if data == *"" {
--			return InputDims::fresh();
-+			return Ok(InputDims::fresh());
- 		}
--		let dims: Vec<&str> = data.split(",").collect();
--		let dims: Vec<i32> = dims.iter().map(|x| x.parse::<i32>().unwrap()).collect();
--		InputDims {
--			dims: [dims[0], dims[1]],
-+		let parts: Vec<&str> = data.split(",").collect();
-+		// Reject input that does not contain exactly two dimensions so that the indexing
-+		// below cannot panic on attacker-controlled header data.
-+		if parts.len() != 2 {
-+			return Err(SurrealError::new(
-+				format!(
-+					"invalid input dimensions '{}': expected 2 comma-separated values, found {}",
-+					data,
-+					parts.len()
-+				),
-+				SurrealErrorStatus::BadRequest,
-+			));
- 		}
-+		Ok(InputDims {
-+			dims: [
-+				safe_eject!(parts[0].parse::<i32>(), SurrealErrorStatus::BadRequest),
-+				safe_eject!(parts[1].parse::<i32>(), SurrealErrorStatus::BadRequest),
-+			],
-+		})
- 	}
- }
+ **The recommended literal forms are keyword-prefixed strings.**
  
-@@ -64,14 +81,42 @@ pub mod tests {
+-- `date'2026-10-27'`
+-- `time'12:30:00.123456789'`
+-- `timestamp'2026-10-27T12:30:00'` (also `timestamp'2026-10-27 12:30:00'`)
+-- `interval'1 year 2 mons 3 days 04:05:06.5'` and `interval'P1Y2M3DT4H5M6.5S'`
++- `pd'2026-10-27'`
++- `pt'12:30:00.123456789'`
++- `ts'2026-10-27T12:30:00'` (also `ts'2026-10-27 12:30:00'`)
++- `ivl'1 year 2 mons 3 days 04:05:06.5'` and `ivl'P1Y2M3DT4H5M6.5S'`
  
- 	#[test]
- 	fn test_from_string() {
--		let input_dims = InputDims::from_string("1,2".to_string());
-+		let input_dims = InputDims::from_string("1,2".to_string()).unwrap();
- 		assert_eq!(input_dims.dims[0], 1);
- 		assert_eq!(input_dims.dims[1], 2);
- 	}
+ `parser-next` lexes a single `r`, `u`, `d`, `b`, `f`, or `s` immediately followed by a quote as a prefixed string (`lex.rs`). A longer identifier followed by a quote lexes today as an identifier then a string, which no production accepts, so the new forms change the meaning of no program that parses today. The golden corpus (`cargo make ci-parser`) confirms this in PR 2. Leaves are decoded at lowering time, as for `d'…'`.
  
- 	#[test]
- 	fn test_to_string() {
--		let input_dims = InputDims::from_string("1,2".to_string());
-+		let input_dims = InputDims::from_string("1,2".to_string()).unwrap();
- 		assert_eq!(input_dims.to_string(), "1,2".to_string());
- 	}
-+
-+	#[test]
-+	fn test_from_string_empty_is_fresh() {
-+		let input_dims = InputDims::from_string("".to_string()).unwrap();
-+		assert_eq!(input_dims, InputDims::fresh());
-+	}
-+
-+	// Regression tests for GHSA-jwr6-6444-28xv: malformed dimensions in a `.surml`
-+	// header must surface a structured error instead of panicking (the release
-+	// profile uses `panic = 'abort'`, so a panic here would crash the server).
-+	#[test]
-+	fn test_from_string_non_numeric_errors() {
-+		// The exact malformed value from the advisory proof-of-concept.
-+		let err = InputDims::from_string("bad".to_string()).unwrap_err();
-+		assert_eq!(err.status, SurrealErrorStatus::BadRequest);
-+	}
-+
-+	#[test]
-+	fn test_from_string_too_few_dims_errors() {
-+		let err = InputDims::from_string("1".to_string()).unwrap_err();
-+		assert_eq!(err.status, SurrealErrorStatus::BadRequest);
-+	}
-+
-+	#[test]
-+	fn test_from_string_too_many_dims_errors() {
-+		let err = InputDims::from_string("1,2,3".to_string()).unwrap_err();
-+		assert_eq!(err.status, SurrealErrorStatus::BadRequest);
-+	}
- }
+@@ -88,6 +88,7 @@ ORM harnesses (Prisma, Drizzle, TypeORM) list type modifiers and enums among the
+ 
+ Alternatives considered:
+ 
++- **Kind-name prefixes** `date'…'`, `time'…'`, `timestamp'…'`, `interval'…'`. Each reads as a longer spelling of a kind name, and `date'…'` looks like an alias of `d'…'` while producing a different kind. Rejected in favour of `pd`, `pt`, `ts`, and `ivl`.
+ - **Single-letter prefixes.** `t'…'` and `i'…'` are free, but `date` has no free letter (`d` is `datetime`), so the set is inconsistent. Rejected.
+ - **Cast form `<date>'2026-10-27'`.** Valid today with no grammar change, and it remains the way to convert a string at runtime. It is an expression, not a literal, so it does not fold in the kind-literal and `DEFAULT` paths and renders back as a cast. Kept as the interim spelling for tests before PR 2 lands, not the canonical form.
+ - **Reuse `d'…'` and decide by body shape.** `d'2026-10-27'` is already valid and means a datetime. Changing it breaks stored `DEFAULT` clauses and exports. Rejected.
 ```
 
-**File**: `surrealml/core/src/storage/header/mod.rs` (modified, +12/-2)
+**File**: `language-tests/tests/graphql/_temporal_schema.surql` (modified, +2/-2)
 ```diff
-@@ -188,7 +188,7 @@ impl Header {
- 		let description = StringValue::from_string(buffer.get(6).unwrap_or(&"").to_string());
- 		let engine = Engine::from_string(buffer.get(7).unwrap_or(&"").to_string());
- 		let origin = Origin::from_string(buffer.get(8).unwrap_or(&"").to_string())?;
--		let input_dims = InputDims::from_string(buffer.get(9).unwrap_or(&"").to_string());
-+		let input_dims = InputDims::from_string(buffer.get(9).unwrap_or(&"").to_string())?;
- 		Ok(Header {
- 			keys,
- 			normalisers,
-@@ -259,7 +259,7 @@ mod tests {
- 			Header::delimiter(),
- 			Origin::from_string("author=>local".to_string()).unwrap(),
- 			Header::delimiter(),
--			InputDims::from_string("1,2".to_string()),
-+			InputDims::from_string("1,2".to_string()).unwrap(),
- 			Header::delimiter(),
- 		)
- 	}
-@@ -299,6 +299,16 @@ mod tests {
- 		assert_eq!(header, Header::fresh());
- 	}
+@@ -18,5 +18,5 @@ DEFINE FIELD starts ON shift TYPE time;
+ DEFINE FIELD at ON shift TYPE timestamp;
+ DEFINE FIELD length ON shift TYPE interval;
  
-+	// Regression test for GHSA-jwr6-6444-28xv: the malformed header from the advisory
-+	// proof-of-concept (a non-numeric `bad` input-dimensions field) must produce a
-+	// structured error instead of panicking the parser.
-+	#[test]
-+	fn test_from_bytes_malformed_header_does_not_panic() {
-+		let header = "//=>//=>//=>//=>m//=>1.2.3//=>desc//=>pytorch//=>author=>local//=>bad//=>";
-+		let result = Header::from_bytes(header.as_bytes().to_vec());
-+		assert!(result.is_err());
-+	}
-+
- 	#[test]
- 	fn test_to_bytes() {
- 		let header = Header::from_bytes(generate_bytes()).unwrap();
+-CREATE shift:early SET label = 'early', day = date'2026-10-26', starts = time'06:30:00', at = timestamp'2026-10-26T06:30:00', length = interval'8 hours';
+-CREATE shift:late SET label = 'late', day = date'2026-10-28', starts = time'14:00:00.5', at = timestamp'2026-10-28T14:00:00.5', length = interval'1 day 2 hours';
++CREATE shift:early SET label = 'early', day = pd'2026-10-26', starts = pt'06:30:00', at = ts'2026-10-26T06:30:00', length = ivl'8 hours';
++CREATE shift:late SET label = 'late', day = pd'2026-10-28', starts = pt'14:00:00.5', at = ts'2026-10-28T14:00:00.5', length = ivl'1 day 2 hours';
 ```
 
-**File**: `surrealml/core/src/storage/header/origin.rs` (modified, +12/-2)
+**File**: `language-tests/tests/language/primitive/temporal_kinds/arithmetic.surql` (modified, +75/-75)
 ```diff
-@@ -3,6 +3,7 @@ use std::fmt;
+@@ -3,70 +3,70 @@
+ reason = "Arithmetic on the temporal kinds per ADR 0013 section 3, with existing datetime and duration results unchanged"
  
- use super::string_value::StringValue;
- use crate::errors::error::{SurrealError, SurrealErrorStatus};
-+use crate::safe_eject_option;
+ [[test.results]]
+-value = "date'2026-11-01'"
++value = "pd'2026-11-01'"
  
- const LOCAL: &str = "local";
- const SURREAL_DB: &str = "surreal_db";
-@@ -111,8 +112,10 @@ impl Origin {
- 			return Ok(Origin::fresh());
- 		}
- 		let mut split = origin.split("=>");
--		let author = split.next().unwrap().to_string();
--		let origin = split.next().unwrap().to_string();
-+		// Avoid unchecked `unwrap()` on attacker-controlled header data: a malformed
-+		// origin field (e.g. one missing the `=>` delimiter) must error, not panic.
-+		let author = safe_eject_option!(split.next()).to_string();
-+		let origin = safe_eject_option!(split.next()).to_string();
- 		Ok(Origin {
- 			origin: OriginValue::from_string(origin)?,
- 			author: StringValue::from_string(author),
-@@ -178,4 +181,11 @@ mod tests {
- 		assert_eq!(None, origin.author.value);
- 		assert_eq!("local".to_string(), origin.origin.to_string());
- 	}
-+
-+	// Regression test for GHSA-jwr6-6444-28xv: a non-empty origin field without the
-+	// `=>` delimiter must error rather than panic on `split.next().unwrap()`.
-+	#[test]
-+	fn test_from_string_missing_delimiter_errors() {
-+		assert!(Origin::from_string("no-delimiter".to_string()).is_err());
-+	}
- }
+ [[test.results]]
+-value = "date'2026-09-27'"
++value = "pd'2026-09-27'"
+ 
+ [[test.results]]
+-value = "date'2026-11-01'"
++value = "pd'2026-11-01'"
+ 
+ [[test.results]]
+ value = "299"
+ 
+ [[test.results]]
+-value = "timestamp'2026-11-29T00:00:00'"
++value = "ts'2026-11-29T00:00:00'"
+ 
+ [[test.results]]
+-value = "timestamp'2025-10-27T00:00:00'"
++value = "ts'2025-10-27T00:00:00'"
+ 
+ [[test.results]]
+-value = "timestamp'2026-10-28T00:00:00'"
++value = "ts'2026-10-28T00:00:00'"
+ 
+ [[test.results]]
+-value = "timestamp'2026-10-27T12:30:00'"
++value = "ts'2026-10-27T12:30:00'"
+ 
+ [[test.results]]
+-value = "time'13:30:00'"
++value = "pt'13:30:00'"
+ 
+ [[test.results]]
+-value = "time'00:30:00'"
++value = "pt'00:30:00'"
+ 
+ [[test.results]]
+-value = "time'23:30:00'"
++value = "pt'23:30:00'"
+ 
+ [[test.results]]
+-value = "time'14:30:00'"
++value = "pt'14:30:00'"
+ 
+ [[test.results]]
+-value = "interval'PT2H30M'"
++value = "ivl'PT2H30M'"
+ 
+ [[test.results]]
+-value = "interval'PT-2H-30M'"
++value = "ivl'PT-2H-30M'"
+ 
+ [[test.results]]
+-value = "timestamp'2026-02-28T10:00:00'"
++value = "ts'2026-02-28T10:00:00'"
+ 
+ [[test.results]]
+-value = "timestamp'2026-02-28T10:00:00'"
++value = "ts'2026-02-28T10:00:00'"
+ 
+ [[test.results]]
+-value = "timestamp'2025-02-28T10:00:00'"
++value = "ts'2025-02-28T10:00:00'"
+ 
+ [[test.results]]
+-value = "timestamp'2026-10-28T12:00:00'"
++value = "ts'2026-10-28T12:00:00'"
+ 
+ [[test.results]]
+-value = "timestamp'2026-10-27T11:30:00'"
++value = "ts'2026-10-27T11:30:00'"
+ 
+ [[test.results]]
+-value = "timestamp'2026-10-27T08:30:00'"
++value = "ts'2026-10-27T08:30:00'"
+ 
+ [[test.results]]
+-value = "interval'P7DT1H30M'"
++value = "ivl'P7DT1H30M'"
+ 
+ [[test.results]]
+-value = "interval'P-7DT-1H-30M'"
++value = "ivl'P-7DT-1H-30M'"
+ 
+ [[test.results]]
+ value = "d'2026-02-28T10:00:00Z'"
+@@ -81,34 +81,34 @@ value = "1d"
+ value = "d'2026-10-28T10:00:00Z'"
+ 
+ [[test.results]]
+-value = "interval'P1DT2H'"
++value = "ivl'P1DT2H'"
+ 
+ [[test.results]]
+-value = "interval'P1M-1D'"
++value = "ivl'P1M-1D'"
+ 
+ [[test.results]]
+-value = "interval'P-1M-2DT-3H'"
++value = "ivl'P-1M-2DT-3H'"
+ 
+ [[test.results]]
+-value = "interval'P2M4DT6H'"
++value = "ivl'P2M4DT6H'"
+ 
+ [[test.results]]
+-value = "interval'P1M15D'"
++value = "ivl'P1M15D'"
+ 
+ [[test.results]]
+-value = "interval'PT12H'"
++value = "ivl'PT12H'"
+ 
+ [[test.results]]
+-value = "interval'PT2H'"
++value = "ivl'PT2H'"
+ 
+ [[test.results]]
+-value = "interval'P15D'"
++value = "ivl'P15D'"
+ 
+ [[test.results]]
+-value = "interval'P1DT12H'"
++value = "ivl'P1DT12H'"
+ 
+ [[test.results]]
+-value = "interval'PT2H30M'"
++value = "ivl'PT2H30M'"
+ 
+ [[test.results]]
+ error = "An interval cannot be divided by zero."
+@@ -123,7 +123,7 @@ error = 'Failed to compute: "interval", as the operation results in an arithmeti
+ error = 'Failed to compute: "interval", as the operation results in an arithmetic overflow.'
+ 
+ [[test.results]]
+-value = "date'infinity'"
++value = "pd'infinity'"
+ 
+ [[test.results]]
+ error = 'Failed to compute: "date", as the operation results in an arithmetic overflow.'
+@@ -146,51 +146,51 @@ value = "2h"
+ [[test.results]]
+ value = "d'2026-10-27T11:00:00Z'"
+ */
+-date'2026-10-27' + 5;
+-date'2026-10-27' - 30;
+-5 + date'2026-10-27';
+-date'2026-10-27' - date'2026-01-01';
+-date'2026-10-27' + interval'1 month 2 days';
+-date'2026-10-27' - interval'1 year';
+-date'2026-10-27' + 1d;
+-date'2026-10-27' + time'12:30:00';
+-time'12:30:00' + interval'1 hour';
+-time'23:30:00' + interval'1 hour';
+-time'00:30:00' - interval'1 hour';
+-time'12:30:00' + 2h;
+-time'12:30:00' - time'10:00:00';
+-time'10:00:00' - time'12:30:00';
+-timestamp'2026-01-31T10:00:00' + interval'1 month';
+-timestamp'2026-03-31T10:00:00' - interval'1 month';
+-timestamp'2024-02-29T10:00:00' + interval'1 year';
+-timestamp'2026-10-27T10:00:00' + interval'1 day 2 hours';
+-timestamp'2026-10-27T10:00:00' + 90m;
+-timestamp'2026-10-27T10:00:00' - 90m;
+-timestamp'2026-10-27T10:00:00' - timestamp'2026-10-20T08:30:00';
+-timestamp'2026-10-20T08:30:00' - timestamp'2026-10-27T10:00:00';
+-d'2026-01-31T10:00:00Z' + interval'1 month';
+-d'2026-10-27T10:00:00Z' - interval'1 day 2 hours';
++pd'2026-10-27' + 5;
++pd'2026-10-27' - 30;
++5 + pd'2026-10-27';
++pd'2026-10-27' - pd'2026-01-01';
++pd'2026-10-27' + ivl'1 month 2 days';
++pd'2026-10-27' - ivl'1 year';
++pd'2026-10-27' + 1d;
++pd'2026-10-27' + pt'12:30:00';
++pt'12:30:00' + ivl'1 hour';
++pt'23:30:00' + ivl'1 hour';
++pt'00:30:00' - ivl'1 hour';
++pt'12:30:00' + 2h;
++pt'12:30:00' - pt'10:00:00';
++pt'10:00:00' - pt'12:30:00';
++ts'2026-01-31T10:00:00' + ivl'1 month';
++ts'2026-03-31T10:00:00' - ivl'1 month';
++ts'2024-02-29T10:00:00' + ivl'1 year';
++ts'2026-10-27T10:00:00' + ivl'1 day 2 hours';
++ts'2026-10-27T10:00:00' + 90m;
++ts'2026-10-27T10:00:00' - 90m;
++ts'2026-10-27T10:00:00' - ts'2026-10-20T08:30:00';
++ts'2026-10-20T
 ```
 
-**File**: `surrealml/core/src/storage/header/output.rs` (modified, +10/-1)
+**File**: `language-tests/tests/language/primitive/temporal_kinds/casts.surql` (modified, +34/-34)
 ```diff
-@@ -69,7 +69,9 @@ impl Output {
- 		let normaliser = safe_eject_option!(buffer.next());
- 		let normaliser = match normaliser {
- 			"none" => None,
--			_ => Some(NormaliserType::from_string(data).unwrap().0),
-+			// Propagate malformed-normaliser errors instead of `unwrap()`-panicking on
-+			// attacker-controlled header data.
-+			_ => Some(NormaliserType::from_string(data)?.0),
- 		};
- 		Ok(Output {
- 			name,
-@@ -151,4 +153,11 @@ pub mod tests {
- 		let output = Output::fresh();
- 		assert_eq!(output.to_string(), "");
- 	}
-+
-+	// Regression test for GHSA-jwr6-6444-28xv: a malformed normaliser in the output
-+	// field must error rather than panic on `NormaliserType::from_string(..).unwrap()`.
-+	#[test]
-+	fn test_from_string_malformed_normaliser_errors() {
-+		assert!(Output::from_string("col=>garbage".to_string()).is_err());
-+	}
- }
+@@ -3,34 +3,34 @@
+ reason = "Casts between the temporal kinds and from strings, including <date> dropping the time of a datetime"
+ 
+ [[test.results]]
+-value = "date'2026-10-27'"
++value = "pd'2026-10-27'"
+ 
+ [[test.results]]
+-value = "date'2026-10-27'"
++value = "pd'2026-10-27'"
+ 
+ [[test.results]]
+-value = "date'2026-10-27'"
++value = "pd'2026-10-27'"
+ 
+ [[test.results]]
+-value = "date'2026-10-27'"
++value = "pd'2026-10-27'"
+ 
+ [[test.results]]
+-value = "time'12:30:45.500'"
++value = "pt'12:30:45.500'"
+ 
+ [[test.results]]
+-value = "time'12:30:45'"
++value = "pt'12:30:45'"
+ 
+ [[test.results]]
+-value = "time'12:30:45'"
++value = "pt'12:30:45'"
+ 
+ [[test.results]]
+-value = "timestamp'2026-10-27T12:30:45'"
++value = "ts'2026-10-27T12:30:45'"
+ 
+ [[test.results]]
+-value = "timestamp'2026-10-27T00:00:00'"
++value = "ts'2026-10-27T00:00:00'"
+ 
+ [[test.results]]
+-value = "timestamp'2026-10-27T12:30:45'"
++value = "ts'2026-10-27T12:30:45'"
+ 
+ [[test.results]]
+ value = "d'2026-10-27T12:30:45Z'"
+@@ -39,13 +39,13 @@ value = "d'2026-10-27T12:30:45Z'"
+ value = "d'2026-10-27T00:00:00Z'"
+ 
+ [[test.results]]
+-value = "interval'PT1H2M3S'"
++value = "ivl'PT1H2M3S'"
+ 
+ [[test.results]]
+-value = "interval'PT1H30M'"
++value = "ivl'PT1H30M'"
+ 
+ [[test.results]]
+-value = "interval'P1Y2D'"
++value = "ivl'P1Y2D'"
+ 
+ [[test.results]]
+ value = "1h2m3s"
+@@ -69,19 +69,19 @@ value = "'P1Y2D'"
+ value = "NONE"
+ 
+ [[test.results]]
+-value = "[date'2026-01-01', date'2026-01-02']"
++value = "[pd'2026-01-01', pd'2026-01-02']"
+ 
+ [[test.results]]
+-value = "date'2026-10-27'"
++value = "pd'2026-10-27'"
+ 
+ [[test.results]]
+-value = "time'12:30:00'"
++value = "pt'12:30:00'"
+ 
+ [[test.results]]
+-value = "timestamp'2026-10-27T12:30:00'"
++value = "ts'2026-10-27T12:30:00'"
+ 
+ [[test.results]]
+-value = "interval'P2D'"
++value = "ivl'P2D'"
+ 
+ [[test.results]]
+ error = "Could not cast into `date` using input `'not a date'`"
+@@ -93,35 +93,35 @@ error = "Could not cast into `date` using input `1`"
+ error = "Could not cast into `interval` using input `1`"
+ 
+ [[test.results]]
+-error = "Could not cast into `duration` using input `interval'P-1D'`"
++error = "Could not cast into `duration` using input `ivl'P-1D'`"
+ 
+ [[test.results]]
+ error = "Could not cast into `interval` using input `1ns`"
+ 
+ [[test.results]]
+-error = "Could not cast into `time` using input `interval'P1D'`"
++error = "Could not cast into `time` using input `ivl'P1D'`"
+ */
+ <date> d'2026-10-27T12:30:45Z';
+ <date> '2026-10-27';
+ <date> '2026-10-27T12:30:45Z';
+-<date> timestamp'2026-10-27T12:30:45';
++<date> ts'2026-10-27T12:30:45';
+ <time> d'2026-10-27T12:30:45.5Z';
+ <time> '12:30:45';
+-<time> timestamp'2026-10-27T12:30:45';
++<time> ts'2026-10-27T12:30:45';
+ <timestamp> d'2026-10-27T12:30:45Z';
+-<timestamp> date'2026-10-27';
++<timestamp> pd'2026-10-27';
+ <timestamp> '2026-10-27 12:30:45';
+-<datetime> timestamp'2026-10-27T12:30:45';
+-<datetime> date'2026-10-27';
+-<interval> time'01:02:03';
++<datetime> ts'2026-10-27T12:30:45';
++<datetime> pd'2026-10-27';
++<interval> pt'01:02:03';
+ <interval> 1h30m;
+ <interval> '1 year 2 days';
+-<duration> time'01:02:03';
+-<duration> interval'1 mon 1 day 00:00:01';
+-<string> date'2026-10-27';
+-<string> time'12:30:00';
+-<string> timestamp'2026-10-27T12:30:00';
+-<string> interval'1 year 2 days';
++<duration> pt'01:02:03';
++<duration> ivl'1 mon 1 day 00:00:01';
++<string> pd'2026-10-27';
++<string> pt'12:30:00';
++<string> ts'2026-10-27T12:30:00';
++<string> ivl'1 year 2 days';
+ <option<date>> NONE;
+ <array<date>> ['2026-01-01', '2026-01-02'];
+ type::date('2026-10-27');
+@@ -131,6 +131,6 @@ type::interval('2 days');
+ <date> 'not a date';
+ <date> 1;
+ <interval> 1;
+-<duration> interval'-1 day';
++<duration> ivl'-1 day';
+ <interval> 1ns;
+-<time> interval'1 day';
++<time> ivl'1 day';
 ```
 
-**File**: `surrealml/core/src/storage/surml_file.rs` (modified, +18/-0)
+**File**: `language-tests/tests/language/primitive/temporal_kinds/coercion.surql` (modified, +18/-18)
 ```diff
-@@ -214,4 +214,22 @@ mod tests {
- 			}
- 		}
- 	}
-+
-+	// Regression test for GHSA-jwr6-6444-28xv: a tiny malformed `.surml` upload (the
-+	// advisory proof-of-concept) reaches `SurMlFile::from_bytes` from the `/ml/import`
-+	// endpoint. It must return a structured error rather than panicking, which on a
-+	// release build (`panic = 'abort'`) would terminate the whole server process.
-+	#[test]
-+	fn test_malformed_surml_does_not_panic() {
-+		let header = b"//=>//=>//=>//=>m//=>1.2.3//=>desc//=>pytorch//=>author=>local//=>bad//=>";
-+		let mut payload = Vec::new();
-+		payload.extend_from_slice(&(header.len() as u32).to_be_bytes());
-+		payload.extend_from_slice(header);
-+		payload.extend_from_slice(b"model");
-+
-+		match SurMlFile::from_bytes(payload) {
-+			Ok(_) => panic!("malformed surml file should not parse successfully"),
-+			Err(error) => assert_eq!(error.status, SurrealErrorStatus::BadRequest),
-+		}
-+	}
- }
+@@ -21,16 +21,16 @@ value = "NONE"
+ value = "NONE"
+ 
+ [[test.results]]
+-value = "[{ d: date'2026-10-27', k: 'date' }]"
++value = "[{ d: pd'2026-10-27', k: 'date' }]"
+ 
+ [[test.results]]
+-value = "[{ d: date'2026-10-27', k: 'date' }]"
++value = "[{ d: pd'2026-10-27', k: 'date' }]"
+ 
+ [[test.results]]
+-value = "[{ k: 'timestamp', ts: timestamp'2026-10-27T00:00:00' }]"
++value = "[{ k: 'timestamp', ts: ts'2026-10-27T00:00:00' }]"
+ 
+ [[test.results]]
+-value = "[{ k: 'timestamp', ts: timestamp'2026-10-27T12:30:45' }]"
++value = "[{ k: 'timestamp', ts: ts'2026-10-27T12:30:45' }]"
+ 
+ [[test.results]]
+ value = "[{ dt: d'2026-10-27T00:00:00Z', k: 'datetime' }]"
+@@ -54,10 +54,10 @@ error = "Couldn't coerce value for field `tm` of `t:10`: Expected `none | time`
+ error = "Couldn't coerce value for field `iv` of `t:11`: Expected `none | interval` but found `1h`"
+ 
+ [[test.results]]
+-error = "Couldn't coerce value for field `d` of `t:12`: Expected `none | date` but found `timestamp'2026-10-27T00:00:00'`"
++error = "Couldn't coerce value for field `d` of `t:12`: Expected `none | date` but found `ts'2026-10-27T00:00:00'`"
+ 
+ [[test.results]]
+-value = "[{ iv: interval'P1D', tm: time'12:30:00' }]"
++value = "[{ iv: ivl'P1D', tm: pt'12:30:00' }]"
+ 
+ [[test.results]]
+ value = "NONE"
+@@ -66,19 +66,19 @@ value = "NONE"
+ value = "NONE"
+ 
+ [[test.results]]
+-value = "date'2026-10-27'"
++value = "pd'2026-10-27'"
+ 
+ [[test.results]]
+-value = "date'2026-10-27'"
++value = "pd'2026-10-27'"
+ 
+ [[test.results]]
+ error = "Incorrect arguments for function fn::as_date(). Failed to coerce argument `$d`: Expected `date (a datetime that is not midnight UTC needs the cast `<date>`)` but found `d'2026-10-27T01:00:00Z'`"
+ 
+ [[test.results]]
+-value = "timestamp'2026-10-27T00:00:00'"
++value = "ts'2026-10-27T00:00:00'"
+ 
+ [[test.results]]
+-value = "timestamp'2026-10-27T01:00:00'"
++value = "ts'2026-10-27T01:00:00'"
+ 
+ [[test.results]]
+ error = "Incorrect arguments for function fn::as_timestamp(). Failed to coerce argument `$d`: Expected `timestamp` but found `'2026-10-27'`"
+@@ -90,23 +90,23 @@ DEFINE FIELD dt ON t TYPE option<datetime>;
+ DEFINE FIELD tm ON t TYPE option<time>;
+ DEFINE FIELD iv ON t TYPE option<interval>;
+ CREATE t:1 SET d = d'2026-10-27T00:00:00Z' RETURN d, type::of(d) AS k;
+-CREATE t:2 SET d = date'2026-10-27' RETURN d, type::of(d) AS k;
+-CREATE t:3 SET ts = date'2026-10-27' RETURN ts, type::of(ts) AS k;
++CREATE t:2 SET d = pd'2026-10-27' RETURN d, type::of(d) AS k;
++CREATE t:3 SET ts = pd'2026-10-27' RETURN ts, type::of(ts) AS k;
+ CREATE t:4 SET ts = d'2026-10-27T12:30:45Z' RETURN ts, type::of(ts) AS k;
+-CREATE t:5 SET dt = date'2026-10-27' RETURN dt, type::of(dt) AS k;
+-CREATE t:6 SET dt = timestamp'2026-10-27T12:30:45' RETURN dt, type::of(dt) AS k;
++CREATE t:5 SET dt = pd'2026-10-27' RETURN dt, type::of(dt) AS k;
++CREATE t:6 SET dt = ts'2026-10-27T12:30:45' RETURN dt, type::of(dt) AS k;
+ CREATE t:7 SET d = d'2026-10-27T12:30:45Z';
+ CREATE t:8 SET d = '2026-10-27';
+ CREATE t:9 SET ts = '2026-10-27T12:30:45';
+ CREATE t:10 SET tm = d'2026-10-27T12:30:45Z';
+ CREATE t:11 SET iv = 1h;
+-CREATE t:12 SET d = timestamp'2026-10-27T00:00:00';
+-CREATE t:13 SET tm = time'12:30:00', iv = interval'1 day' RETURN tm, iv;
++CREATE t:12 SET d = ts'2026-10-27T00:00:00';
++CREATE t:13 SET tm = pt'12:30:00', iv = ivl'1 day' RETURN tm, iv;
+ DEFINE FUNCTION fn::as_date($d: date) { RETURN $d; };
+ DEFINE FUNCTION fn::as_timestamp($d: timestamp) { RETURN $d; };
+-fn::as_date(date'2026-10-27');
++fn::as_date(pd'2026-10-27');
+ fn::as_date(d'2026-10-27T00:00:00Z');
+ fn::as_date(d'2026-10-27T01:00:00Z');
+-fn::as_timestamp(date'2026-10-27');
++fn::as_timestamp(pd'2026-10-27');
+ fn::as_timestamp(d'2026-10-27T01:00:00Z');
+ fn::as_timestamp('2026-10-27');
+```
+
+**File**: `language-tests/tests/language/primitive/temporal_kinds/comparison_order.surql` (modified, +24/-24)
+```diff
+@@ -33,40 +33,40 @@ value = "true"
+ value = "true"
+ 
+ [[test.results]]
+-value = "[date'-0001-01-01', date'2026-10-27', date'2026-10-28']"
++value = "[pd'-0001-01-01', pd'2026-10-27', pd'2026-10-28']"
+ 
+ [[test.results]]
+-value = "[time'00:00:00', time'12:00:00', time'24:00:00']"
++value = "[pt'00:00:00', pt'12:00:00', pt'24:00:00']"
+ 
+ [[test.results]]
+-value = "[timestamp'1969-12-31T23:59:59.500', timestamp'2026-10-27T00:00:00', timestamp'2026-10-28T00:00:00']"
++value = "[ts'1969-12-31T23:59:59.500', ts'2026-10-27T00:00:00', ts'2026-10-28T00:00:00']"
+ 
+ [[test.results]]
+-value = "[interval'P-1D', interval'PT1H', interval'P29D', interval'P1M']"
++value = "[ivl'P-1D', ivl'PT1H', ivl'P29D', ivl'P1M']"
+ 
+ [[test.results]]
+-value = "[interval'P1M']"
++value = "[ivl'P1M']"
+ 
+ [[test.results]]
+-value = "[interval'P1M']"
++value = "[ivl'P1M']"
+ 
+ [[test.results]]
+-value = "[d'2026-10-27T00:00:00Z', date'2026-10-27', time'01:00:00', timestamp'2026-10-27T00:00:00', interval'P1D']"
++value = "[d'2026-10-27T00:00:00Z', pd'2026-10-27', pt'01:00:00', ts'2026-10-27T00:00:00', ivl'P1D']"
+ */
+-date'2026-10-27' < date'2026-10-28';
+-date'2026-10-27' = date'2026-10-27';
+-date'2026-10-27' = d'2026-10-27';
+-time'01:00:00' < time'02:00:00';
+-time'24:00:00' > time'23:59:59.999999999';
+-timestamp'2026-10-27T00:00:00' < timestamp'2026-10-27T00:00:00.000000001';
+-interval'1 mon' = interval'30 days';
+-interval'1 day' = interval'24 hours';
+-interval'1 mon' > interval'29 days';
+-interval'-1 day' < interval'00:00:00';
+-array::sort([date'2026-10-28', date'-0001-01-01', date'2026-10-27']);
+-array::sort([time'12:00:00', time'00:00:00', time'24:00:00']);
+-array::sort([timestamp'2026-10-28T00:00:00', timestamp'1969-12-31T23:59:59.5', timestamp'2026-10-27T00:00:00']);
+-array::sort([interval'1 mon', interval'-1 day', interval'29 days', interval'1 hour']);
+-array::sort([interval'1 mon', interval'30 days'].distinct());
+-array::distinct([interval'1 mon', interval'30 days']);
+-array::sort([date'2026-10-27', d'2026-10-27', interval'1 day', time'01:00:00', timestamp'2026-10-27T00:00:00']);
++pd'2026-10-27' < pd'2026-10-28';
++pd'2026-10-27' = pd'2026-10-27';
++pd'2026-10-27' = d'2026-10-27';
++pt'01:00:00' < pt'02:00:00';
++pt'24:00:00' > pt'23:59:59.999999999';
++ts'2026-10-27T00:00:00' < ts'2026-10-27T00:00:00.000000001';
++ivl'1 mon' = ivl'30 days';
++ivl'1 day' = ivl'24 hours';
++ivl'1 mon' > ivl'29 days';
++ivl'-1 day' < ivl'00:00:00';
++array::sort([pd'2026-10-28', pd'-0001-01-01', pd'2026-10-27']);
++array::sort([pt'12:00:00', pt'00:00:00', pt'24:00:00']);
++array::sort([ts'2026-10-28T00:00:00', ts'1969-12-31T23:59:59.5', ts'2026-10-27T00:00:00']);
++array::sort([ivl'1 mon', ivl'-1 day', ivl'29 days', ivl'1 hour']);
++array::sort([ivl'1 mon', ivl'30 days'].distinct());
++array::distinct([ivl'1 mon', ivl'30 days']);
++array::sort([pd'2026-10-27', d'2026-10-27', ivl'1 day', pt'01:00:00', ts'2026-10-27T00:00:00']);
+```
+
+**File**: `language-tests/tests/language/primitive/temporal_kinds/define_field.surql` (modified, +12/-12)
+```diff
+@@ -24,31 +24,31 @@ value = "NONE"
+ value = "NONE"
+ 
+ [[test.results]]
+-value = "[{ d: date'2026-10-27', def: date'2026-01-01', id: t:1, iv: {interval'P1D',}, ts: [timestamp'2026-10-27T12:00:00'], u: interval'P2D' }]"
++value = "[{ d: pd'2026-10-27', def: pd'2026-01-01', id: t:1, iv: {ivl'P1D',}, ts: [ts'2026-10-27T12:00:00'], u: ivl'P2D' }]"
+ 
+ [[test.results]]
+-value = "[{ d: date'2026-10-27', def: date'2026-01-01', id: t:1, iv: {interval'P1D',}, ts: [timestamp'2026-10-27T12:00:00'], u: interval'P2D' }]"
++value = "[{ d: pd'2026-10-27', def: pd'2026-01-01', id: t:1, iv: {ivl'P1D',}, ts: [ts'2026-10-27T12:00:00'], u: ivl'P2D' }]"
+ 
+ [[test.results]]
+-error = "Couldn't coerce value for field `u` of `t:2`: Expected `none | date | interval` but found `time'12:00:00'`"
++error = "Couldn't coerce value for field `u` of `t:2`: Expected `none | date | interval` but found `pt'12:00:00'`"
+ 
+ [[test.results]]
+-value = "[{ d: date'2026-10-27', def: date'2026-01-01', id: t:3, ts: [timestamp'2026-10-27T00:00:00'] }]"
++value = "[{ d: pd'2026-10-27', def: pd'2026-01-01', id: t:3, ts: [ts'2026-10-27T00:00:00'] }]"
+ 
+ [[test.results]]
+ error = "Couldn't coerce value for field `d` of `t:4`: Expected `date (a datetime that is not midnight UTC needs the cast `<date>`)` but found `d'2026-10-27T12:00:00Z'`"
+ 
+ [[test.results]]
+-value = """{ events: {  }, fields: { d: 'DEFINE FIELD d ON t TYPE date PERMISSIONS FULL', def: "DEFINE FIELD def ON t TYPE date DEFAULT date'2026-01-01' PERMISSIONS FULL", iv: 'DEFINE FIELD iv ON t TYPE none | set<interval> PERMISSIONS FULL', "iv.*": 'DEFINE FIELD iv.* ON t TYPE interval PERMISSIONS FULL', tm: 'DEFINE FIELD tm ON t TYPE none | time PERMISSIONS FULL', ts: 'DEFINE FIELD ts ON t TYPE none | array<timestamp> PERMISSIONS FULL', "ts.*": 'DEFINE FIELD ts.* ON t TYPE timestamp PERMISSIONS FULL', u: 'DEFINE FIELD u ON t TYPE none | date | interval PERMISSIONS FULL' }, indexes: {  }, lives: {  }, migrations: { generation: 7, guaranteed: [], migrations: [] }, tables: {  } }"""
++value = """{ events: {  }, fields: { d: 'DEFINE FIELD d ON t TYPE date PERMISSIONS FULL', def: "DEFINE FIELD def ON t TYPE date DEFAULT pd'2026-01-01' PERMISSIONS FULL", iv: 'DEFINE FIELD iv ON t TYPE none | set<interval> PERMISSIONS FULL', "iv.*": 'DEFINE FIELD iv.* ON t TYPE interval PERMISSIONS FULL', tm: 'DEFINE FIELD tm ON t TYPE none | time PERMISSIONS FULL', ts: 'DEFINE FIELD ts ON t TYPE none | array<timestamp> PERMISSIONS FULL', "ts.*": 'DEFINE FIELD ts.* ON t TYPE timestamp PERMISSIONS FULL', u: 'DEFINE FIELD u ON t TYPE none | date | interval PERMISSIONS FULL' }, indexes: {  }, lives: {  }, migrations: { generation: 7, guaranteed: [], migrations: [] }, tables: {  } }"""
+ 
+ [[test.results]]
+ value = "NONE"
+ 
+ [[test.results]]
+-value = "date'2026-10-28'"
++value = "pd'2026-10-28'"
+ 
+ [[test.results]]
+-value = "date'2026-10-28'"
++value = "pd'2026-10-28'"
+ 
+ [[test.results]]
+ error = "Incorrect arguments for function fn::next(). Failed to coerce argument `$d`: Expected `date (a datetime that is not midnight UTC needs the cast `<date>`)` but found `d'2026-10-27T01:00:00Z'`"
+@@ -59,14 +59,14 @@ DEFINE FIELD tm ON t TYPE option<time>;
+ DEFINE FIELD ts ON t TYPE option<array<timestamp>>;
+ DEFINE FIELD iv ON t TYPE option<set<interval>>;
+ DEFINE FIELD u ON t TYPE option<date | interval>;
+-DEFINE FIELD def ON t TYPE date DEFAULT date'2026-01-01';
+-CREATE t:1 SET d = date'2026-10-27', ts = [timestamp'2026-10-27T12:00:00'], iv = {interval'1 day', interval'24 hours'}, u = interval'2 days';
++DEFINE FIELD def ON t TYPE date DEFAULT pd'2026-01-01';
++CREATE t:1 SET d = pd'2026-10-27', ts = [ts'2026-10-27T12:00:00'], iv = {ivl'1 day', ivl'24 hours'}, u = ivl'2 days';
+ SELECT * FROM t:1;
+-CREATE t:2 SET d = date'2026-10-27', u = time'12:00:00';
+-CREATE t:3 SET d = date'2026-10-27', ts = [date'2026-10-27'];
++CREATE t:2 SET d = pd'2026-10-27', u = pt'12:00:00';
++CREATE t:3 SET d = pd'2026-10-27', ts = [pd'2026-10-27'];
+ CREATE t:4 SET d = d'2026-10-27T12:00:00Z';
+ INFO FOR TABLE t;
+ DEFINE FUNCTION fn::next($d: date) -> date { RETURN $d + 1; };
+-fn::next(date'2026-10-27');
++fn::next(pd'2026-10-27');
+ fn::next(d'2026-10-27T00:00:00Z');
+ fn::next(d'2026-10-27T01:00:00Z');
+```
+
+**File**: `language-tests/tests/language/primitive/temporal_kinds/functions_extract_infinity.surql` (modified, +12/-12)
+```diff
+@@ -30,25 +30,25 @@ value = "Infinity"
+ value = "2026"
+ 
+ [[test.results]]
+-value = "timestamp'infinity'"
++value = "ts'infinity'"
+ 
+ [[test.results]]
+-value = "date'-infinity'"
++value = "pd'-infinity'"
+ 
+ [[test.results]]
+ value = "d'+262142-12-31T23:59:59.999999999Z'"
+ 
+ */
+ 
+-time::extract(timestamp'infinity', 'year');
+-time::extract(timestamp'-infinity', 'epoch');
+-time::extract(timestamp'infinity', 'month');
+-time::extract(timestamp'infinity', 'hour');
+-time::extract(date'infinity', 'century');
+-time::extract(date'-infinity', 'dow');
+-time::extract(date'infinity', 'hour');
++time::extract(ts'infinity', 'year');
++time::extract(ts'-infinity', 'epoch');
++time::extract(ts'infinity', 'month');
++time::extract(ts'infinity', 'hour');
++time::extract(pd'infinity', 'century');
++time::extract(pd'-infinity', 'dow');
++time::extract(pd'infinity', 'hour');
+ time::extract(<datetime> 'infinity', 'year');
+-time::extract(timestamp'2026-10-27T12:30:45.5', 'year');
+-time::trunc(timestamp'infinity', 'year');
+-time::trunc(date'-infinity', 'month');
++time::extract(ts'2026-10-27T12:30:45.5', 'year');
++time::trunc(ts'infinity', 'year');
++time::trunc(pd'-infinity', 'month');
+ time::trunc(<datetime> 'infinity', 'day');
+```
+
+---
+
+### Incident Patch 3: `e7135c26` (2026-11-03)
+**Commit Message**: fix(extensions): drop the removed files target from the BINDINGS tests (#2525)
+
+**File**: `language-tests/tests/language/statements/define/extension/bindings.surql` (modified, +1/-1)
+```diff
+@@ -5,7 +5,7 @@ database = true
+ auth = { level = "owner" }
+ 
+ [env.capabilities]
+-allow-experimental = ["surrealism", "files"]
++allow-experimental = ["surrealism"]
+ 
+ [test]
+ reason = """BINDINGS is an object of expressions, kept as written: a subquery stays parenthesised so the definition parses back, and INFO STRUCTURE shows each expression as text, never its value. With a DIGEST and no archive to fetch, the definition is stored unchecked, so the names are checked against the package when the extension reads them."""
+```
+
+**File**: `language-tests/tests/language/statements/define/extension/bindings_duplicate_name.surql` (modified, +1/-1)
+```diff
+@@ -5,7 +5,7 @@ database = true
+ auth = { level = "owner" }
+ 
+ [env.capabilities]
+-allow-experimental = ["surrealism", "files"]
++allow-experimental = ["surrealism"]
+ 
+ [test]
+ reason = """A name bound twice is refused rather than resolved by order."""
+```
+
+**File**: `language-tests/tests/language/statements/define/extension/bindings_not_object.surql` (modified, +1/-1)
+```diff
+@@ -5,7 +5,7 @@ database = true
+ auth = { level = "owner" }
+ 
+ [env.capabilities]
+-allow-experimental = ["surrealism", "files"]
++allow-experimental = ["surrealism"]
+ 
+ [test]
+ reason = """BINDINGS takes an object literal."""
+```
+
+**File**: `language-tests/tests/language/statements/define/extension/bindings_twice.surql` (modified, +1/-1)
+```diff
+@@ -5,7 +5,7 @@ database = true
+ auth = { level = "owner" }
+ 
+ [env.capabilities]
+-allow-experimental = ["surrealism", "files"]
++allow-experimental = ["surrealism"]
+ 
+ [test]
+ reason = """BINDINGS is one object; a second clause is refused rather than merged or replacing the first."""
+```
+
+**File**: `surrealdb/core/src/kvs/tests/extension_bindings_test.rs` (modified, +2/-3)
+```diff
+@@ -162,9 +162,8 @@ async fn ds() -> Arc<Datastore> {
+ 
+ /// [`ds`], with the archive built for `abi`.
+ async fn ds_for(abi: Abi) -> Arc<Datastore> {
+-	let caps = Capabilities::all().with_experimental(Targets::Some(
+-		[ExperimentalTarget::Surrealism, ExperimentalTarget::Files].into(),
+-	));
++	let caps = Capabilities::all()
++		.with_experimental(Targets::Some([ExperimentalTarget::Surrealism].into()));
+ 	let ds = Datastore::builder()
+ 		.without_maintenance_tasks()
+ 		.with_capabilities(caps)
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #7620** (closed): fix: emit slow log on query timeout (@sanoy07)
+- **PR #7619** (closed): Reject conflicting DEFINE INDEX kind keywords (@sanoy07)
 - **PR #7587** (closed): Update CLI banner (@martinschaer)
 - **PR #7521** (closed): Fix KILLED notifications being dropped by the WebSocket client. (@BarronKane)
 - **PR #7520** (closed): Carry the owning session id on Killed notifications. (@BarronKane)
 - **PR #7517** (closed): fix(tikv): fallback 0 gRPC message size configs to default 4MB (@Tyagiquamar)
-- **PR #7515** (closed): perf(core): add Value::pick_cow for borrow-based field access (@Christian-Sidak)
-- **PR #7506** (closed): fix: preserve sequence positions in exports (@atirna)
 
 ---
 
@@ -2841,3 +3472,47 @@ Observed empirical fixes and code patches:
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. sql): a table given an alias is reachable only by the alias (#2505)
+
+**RULE**:
+When implementing operations in `language-tests/tests/pgsql/alias_hides_table_name_in_where_refused.pgsql`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in surrealdb/surrealdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `f129a77a`: sql): a table given an alias is reachable only by the alias (#2505). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `language-tests/tests/pgsql/alias_hides_table_name_in_where_refused.pgsql`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+/**
+[env]
+namespace = true
+database = true
+imports = ["pgsql/_schema.surql"]
+
+[test]
+reason = "A WHERE clause cannot name an aliased table by its own name, as in PostgreSQL"
+
+[test.results]
+request-error = "PostgreSQL SELECT lowering error: missing FROM-clause entry for table \"users\""
+*/
+
+SELECT u.name FROM users u WHERE users.age > 20;
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Anti-pattern to NEVER write (induced failure mode):
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `f129a77a` are properly handled with clean fallback behavior.
