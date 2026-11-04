@@ -7199,3 +7199,6 @@ Every entry in this ledger must capture:
 | `learn-github-fastapi-fastapi` | `https://github.com/tiangolo/fastapi` | `5cb6272e` | Multi-dimensional audit evidence | 2026-11-04T09:04:26.049Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `a4d4c4a7` | Multi-dimensional audit evidence | 2026-11-04T09:04:33.863Z |
 | `learn-github-feder-cr-jobs_applier_ai_agent_aihawk` | `https://github.com/feder-cr/Jobs_Applier_AI_Agent_AIHawk` | `da1c7ff1` | Multi-dimensional audit evidence | 2026-11-04T09:17:50.718Z |
+| `learn-github-fastify-fastify` | `https://github.com/fastify/fastify` | `8c0f6991` | Multi-dimensional audit evidence | 2026-11-04T09:25:08.990Z |
+| `learn-github-wcandillon-react-native-skia` | `https://github.com/Shopify/react-native-skia` | `280986c1` | Multi-dimensional audit evidence | 2026-11-04T09:25:13.487Z |
+| `learn-github-nginx-kubernetes-ingress` | `https://github.com/nginx/kubernetes-ingress` | `311c58a2` | Multi-dimensional audit evidence | 2026-11-04T09:25:13.780Z |

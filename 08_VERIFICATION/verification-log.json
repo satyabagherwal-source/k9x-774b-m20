@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261031-3FPC",
-    "timestamp": "2026-10-31T19:40:49.344Z",
-    "repository": "codewhale-hq/Codewhale",
-    "learningId": "learn-github-codewhale-hq-codewhale",
-    "contentHash": "751c388b0c2e39067a5a8f31068c4cdbcb5f622c130a49e60d438a9f195a53d0",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261031-3LR0",
-    "timestamp": "2026-10-31T19:40:57.180Z",
-    "repository": "Bingsu/adetailer",
-    "learningId": "learn-huggingface-bingsu-adetailer",
-    "contentHash": "5b337a87cbc53dc021f018ec0b50406da8dfdfa305f872af1754d8a4d0ff4db2",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261031-3PYB",
-    "timestamp": "2026-10-31T19:41:02.627Z",
-    "repository": "Bitterbot-AI/bitterbot-desktop",
-    "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
-    "contentHash": "e5861136d21c074511af7b5ed96ed5468da046a5d6b11503c19708018e3d688f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261031-F4YS",
     "timestamp": "2026-10-31T19:49:55.300Z",
     "repository": "MariaDB/server",
@@ -7490,6 +7445,51 @@
     "repository": "feder-cr/Jobs_Applier_AI_Agent_AIHawk",
     "learningId": "learn-github-feder-cr-jobs_applier_ai_agent_aihawk",
     "contentHash": "8f98a805db1533e30ee4884e6f338f4d2e24d99f6833118b79313950ea45263d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-V30A",
+    "timestamp": "2026-11-04T09:25:08.986Z",
+    "repository": "fastify/fastify",
+    "learningId": "learn-github-fastify-fastify",
+    "contentHash": "d9c89422c03dac6a4d1c203f1c4b729d2396fc283d72804732f3b86dbfcec066",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-V6H7",
+    "timestamp": "2026-11-04T09:25:13.483Z",
+    "repository": "wcandillon/react-native-skia",
+    "learningId": "learn-github-wcandillon-react-native-skia",
+    "contentHash": "9f275870034ff0264b47b671dd59c940e8ef645c0f6d39e81391fc2ccf1d5872",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-V6PC",
+    "timestamp": "2026-11-04T09:25:13.776Z",
+    "repository": "nginx/kubernetes-ingress",
+    "learningId": "learn-github-nginx-kubernetes-ingress",
+    "contentHash": "fa951e075f475600f1969681e829f3b934d6d46e2a61bba05cd6d0e247e04399",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

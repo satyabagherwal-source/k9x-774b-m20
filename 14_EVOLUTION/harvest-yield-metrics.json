@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-04T09:17:50.724Z",
-  "total_cycles_completed": 7167,
-  "total_learnings_persisted": 7167,
-  "total_rules_promoted": 6814,
+  "last_updated": "2026-11-04T09:25:13.786Z",
+  "total_cycles_completed": 7170,
+  "total_learnings_persisted": 7170,
+  "total_rules_promoted": 6817,
   "history": [
-    {
-      "timestamp": "2026-11-03T19:52:35.678Z",
-      "repository": "meilisearch/meilisearch",
-      "learningId": "learn-github-meilisearch-meilisearch",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-03T20:00:47.070Z",
-      "repository": "sxyazi/yazi",
-      "learningId": "learn-github-sxyazi-yazi",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-03T20:00:55.668Z",
-      "repository": "kgateway-dev/kgateway",
-      "learningId": "learn-github-kgateway-dev-kgateway",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-03T20:01:00.169Z",
       "repository": "aleo-labs-protocol/snarkOS",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-04T09:17:50.724Z",
       "repository": "feder-cr/Jobs_Applier_AI_Agent_AIHawk",
       "learningId": "learn-github-feder-cr-jobs_applier_ai_agent_aihawk",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T09:25:08.996Z",
+      "repository": "fastify/fastify",
+      "learningId": "learn-github-fastify-fastify",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T09:25:13.494Z",
+      "repository": "wcandillon/react-native-skia",
+      "learningId": "learn-github-wcandillon-react-native-skia",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T09:25:13.786Z",
+      "repository": "nginx/kubernetes-ingress",
+      "learningId": "learn-github-nginx-kubernetes-ingress",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

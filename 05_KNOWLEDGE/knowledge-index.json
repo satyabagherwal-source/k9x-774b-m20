@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-04T09:17:50.630Z",
+  "last_updated": "2026-11-04T09:25:13.688Z",
   "total_verified_learnings": 1206,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -43322,8 +43322,8 @@
       "slug": "nginx-kubernetes-ingress",
       "platform": "github",
       "source_url": "https://github.com/nginx/kubernetes-ingress",
-      "source_version": "289622a5",
-      "content_hash": "e84efc2b83afe16957c128a4a28b408ba56b29f77c544f2c0086829025787547",
+      "source_version": "311c58a2",
+      "content_hash": "fa951e075f475600f1969681e829f3b934d6d46e2a61bba05cd6d0e247e04399",
       "dossier_path": "07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md",
       "promoted_rules": [
@@ -43386,6 +43386,11 @@
           "number": 6527,
           "title": "generateLocation() and call sites (#11296)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6791,
+          "title": "Update github actions (main) (#11306)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -43393,7 +43398,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T13:05:09.433Z",
+      "verified_at": "2026-11-04T09:25:13.664Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -59971,13 +59976,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "wcandillon/react-native-skia",
       "repository": "wcandillon/react-native-skia",
-      "slug": "wcandillon-react-native-skia",
+      "slug": "shopify-react-native-skia",
       "platform": "github",
-      "source_url": "https://github.com/wcandillon/react-native-skia",
+      "source_url": "https://github.com/Shopify/react-native-skia",
       "source_version": "280986c1",
-      "content_hash": "23f543c85fee35943bd6cb366266e802c6e7d10e70d59ab76727affc6fe2c58b",
-      "dossier_path": "07_PROJECT_LEARNING/wcandillon-react-native-skia-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/wcandillon-react-native-skia-learnings.md",
+      "content_hash": "9f275870034ff0264b47b671dd59c940e8ef645c0f6d39e81391fc2ccf1d5872",
+      "dossier_path": "07_PROJECT_LEARNING/shopify-react-native-skia-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/shopify-react-native-skia-learnings.md",
       "promoted_rules": [
         {
           "number": 2002,
@@ -60027,7 +60032,7 @@
         {
           "number": 6619,
           "title": "🤖): post main-thread tasks without calling into Java (#4364)",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -60035,7 +60040,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T21:29:05.424Z",
+      "verified_at": "2026-11-04T09:25:13.362Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -97496,8 +97501,8 @@
       "slug": "fastify-fastify",
       "platform": "github",
       "source_url": "https://github.com/fastify/fastify",
-      "source_version": "5df959f3",
-      "content_hash": "68686cc77fd7887aeb2e755b13eb02254e81dea2267b7496595508ab03d98c35",
+      "source_version": "8c0f6991",
+      "content_hash": "d9c89422c03dac6a4d1c203f1c4b729d2396fc283d72804732f3b86dbfcec066",
       "dossier_path": "07_PROJECT_LEARNING/fastify-fastify-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/fastify-fastify-learnings.md",
       "promoted_rules": [
@@ -97520,6 +97525,11 @@
           "number": 5076,
           "title": "docs: fix syntax errors in code examples (#7159)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6790,
+          "title": "test: make handlerTimeout ended-but-not-finished test deterministic",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -97527,7 +97537,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T00:40:10.498Z",
+      "verified_at": "2026-11-04T09:25:08.874Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -171276,14 +171286,14 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 6619,
       "title": "🤖): post main-thread tasks without calling into Java (#4364)",
-      "source_url": "https://github.com/wcandillon/react-native-skia",
+      "source_url": "https://github.com/Shopify/react-native-skia",
       "source_version": "280986c1",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-03T21:29:05.424Z"
+      "verified_at": "2026-11-04T09:25:13.362Z"
     },
     "rule-6620": {
       "learning_id": "rule-6620",
@@ -173888,6 +173898,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-04T09:17:50.607Z"
+    },
+    "rule-6790": {
+      "learning_id": "rule-6790",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6790,
+      "title": "test: make handlerTimeout ended-but-not-finished test deterministic",
+      "source_url": "https://github.com/fastify/fastify",
+      "source_version": "8c0f6991",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T09:25:08.874Z"
+    },
+    "rule-6791": {
+      "learning_id": "rule-6791",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6791,
+      "title": "Update github actions (main) (#11306)",
+      "source_url": "https://github.com/nginx/kubernetes-ingress",
+      "source_version": "311c58a2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T09:25:13.664Z"
     }
   },
   "aliases": {

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-04T09:17:50.728Z",
+  "last_updated": "2026-11-04T09:25:13.793Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3141,14 +3141,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-fastify-fastify",
-      "content_hash": "68686cc77fd7887aeb2e755b13eb02254e81dea2267b7496595508ab03d98c35",
-      "verified_at": "2026-10-28T00:40:10.634Z",
+      "content_hash": "d9c89422c03dac6a4d1c203f1c4b729d2396fc283d72804732f3b86dbfcec066",
+      "verified_at": "2026-11-04T09:25:09.000Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T00:40:10.634Z"
+      "last_updated": "2026-11-04T09:25:09.000Z"
     },
     "expressjs/express": {
       "repository": "expressjs/express",
@@ -7251,14 +7251,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-wcandillon-react-native-skia",
-      "content_hash": "23f543c85fee35943bd6cb366266e802c6e7d10e70d59ab76727affc6fe2c58b",
-      "verified_at": "2026-11-03T21:29:05.544Z",
+      "content_hash": "9f275870034ff0264b47b671dd59c940e8ef645c0f6d39e81391fc2ccf1d5872",
+      "verified_at": "2026-11-04T09:25:13.498Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T21:29:05.544Z"
+      "last_updated": "2026-11-04T09:25:13.498Z"
     },
     "saltstack/salt": {
       "repository": "saltstack/salt",
@@ -10056,14 +10056,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nginx-kubernetes-ingress",
-      "content_hash": "e84efc2b83afe16957c128a4a28b408ba56b29f77c544f2c0086829025787547",
-      "verified_at": "2026-11-03T13:05:09.529Z",
+      "content_hash": "fa951e075f475600f1969681e829f3b934d6d46e2a61bba05cd6d0e247e04399",
+      "verified_at": "2026-11-04T09:25:13.792Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T13:05:09.529Z"
+      "last_updated": "2026-11-04T09:25:13.792Z"
     },
     "milvus-io/milvus": {
       "repository": "milvus-io/milvus",

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md`  
 > **Source**: github ([https://github.com/nginx/kubernetes-ingress](https://github.com/nginx/kubernetes-ingress))  
-> **Source Version**: `289622a5`  
+> **Source Version**: `311c58a2`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T13:05:08.885Z  
+> **Timestamp**: 2026-11-04T09:25:12.977Z  
 > **Learning ID**: `learn-github-nginx-kubernetes-ingress`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/nginx/kubernetes-ingress](https://github.com/nginx/kubernetes-ingress))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T13:05:07.569Z  
+> **Harvest Timestamp**: 2026-11-04T09:25:12.566Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1288,662 +1288,162 @@ NIC prints a startup warning when set. Requires -plm-storage-url.`)
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `289622a5` (2026-11-03)
-**Commit Message**: Refactor generateLocation() and call sites (#11296)
+### Incident Patch 1: `311c58a2` (2026-11-03)
+**Commit Message**: Update github actions (main) (#11306)
 
-**File**: `internal/configs/virtualserver.go` (modified, +88/-151)
+Update github actions
+
+| datasource  | package                     | from    | to      |
+| ----------- | --------------------------- | ------- | ------- |
+| github-tags | docker/scout-action         | v1.27.0 | v1.29.0 |
+| github-tags | lucacome/draft-release      | v2.2.2  | v2.2.3  |
+| github-tags | reviewdog/action-actionlint | v1.80.6 | v1.81.1 |
+
+Signed-off-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
+Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
+
+**File**: `.github/workflows/build-oss.yml` (modified, +1/-1)
 ```diff
-@@ -849,24 +849,21 @@ func (vsc *virtualServerConfigurator) GenerateVirtualServerConfig(
+@@ -251,7 +251,7 @@ jobs:
  
- 		dosRouteCfg := generateDosCfg(dosResources[r.Path])
- 
-+		rc := locationContext{
-+			upstreamNamer:  virtualServerUpstreamNamer,
-+			crUpstreams:    crUpstreams,
-+			cfgParams:      vsc.cfgParams,
-+			errorPages:     errorPages,
-+			originalPath:   r.Path,
-+			locSnippets:    vsLocSnippets,
-+			enableSnippets: vsc.enableSnippets,
-+			isVSR:          isVSR,
-+			warnings:       vsc.warnings,
-+		}
-+
- 		if len(r.Matches) > 0 {
--			cfg := generateMatchesConfig(
--				r,
--				virtualServerUpstreamNamer,
--				crUpstreams,
--				VariableNamer,
--				matchesRoutes,
--				len(splitClients),
--				vsc.cfgParams,
--				errorPages,
--				vsLocSnippets,
--				vsc.enableSnippets,
--				len(returnLocations),
--				isVSR,
--				"", "",
--				vsc.warnings,
--				vsc.DynamicWeightChangesReload,
--			)
-+			cfg := generateMatchesConfig(rc, r, VariableNamer, matchesRoutes, len(splitClients), len(returnLocations),
-+				vsc.DynamicWeightChangesReload)
- 			addPoliciesCfgToLocations(routePoliciesCfg, cfg.Locations)
- 			addDosConfigToLocations(dosRouteCfg, cfg.Locations)
- 			addAddHeaderInheritToLocations(r.AddHeaderInherit, cfg.Locations)
-@@ -881,8 +878,7 @@ func (vsc *virtualServerConfigurator) GenerateVirtualServerConfig(
- 			twoWaySplitClients = append(twoWaySplitClients, cfg.TwoWaySplitClients...)
- 			matchesRoutes++
- 		} else if len(r.Splits) > 0 {
--			cfg := generateDefaultSplitsConfig(r, virtualServerUpstreamNamer, crUpstreams, VariableNamer, len(splitClients),
--				vsc.cfgParams, errorPages, r.Path, vsLocSnippets, vsc.enableSnippets, len(returnLocations), isVSR, "", "", vsc.warnings, vsc.DynamicWeightChangesReload)
-+			cfg := generateDefaultSplitsConfig(rc, r, VariableNamer, len(splitClients), len(returnLocations), vsc.DynamicWeightChangesReload)
- 			addPoliciesCfgToLocations(routePoliciesCfg, cfg.Locations)
- 			addDosConfigToLocations(dosRouteCfg, cfg.Locations)
- 			addAddHeaderInheritToLocations(r.AddHeaderInherit, cfg.Locations)
-@@ -895,14 +891,7 @@ func (vsc *virtualServerConfigurator) GenerateVirtualServerConfig(
- 			keyVals = append(keyVals, cfg.KeyVals...)
- 			twoWaySplitClients = append(twoWaySplitClients, cfg.TwoWaySplitClients...)
- 		} else {
--			upstreamName := virtualServerUpstreamNamer.GetNameForUpstreamFromAction(r.Action)
--			upstream := crUpstreams[upstreamName]
--
--			serviceNamespace, serviceName := ParseServiceReference(upstream.Service, vsEx.VirtualServer.Namespace)
--			proxySSLName := generateProxySSLName(serviceName, serviceNamespace)
--
--			loc, returnLoc := generateLocation(r.Path, upstreamName, upstream, r.Action, vsc.cfgParams, errorPages, false,
--				proxySSLName, r.Path, vsLocSnippets, vsc.enableSnippets, len(returnLocations), isVSR, "", "", vsc.warnings)
-+			loc, returnLoc := generateLocation(rc, r.Path, r.Action, false, len(returnLocations))
- 			addPoliciesCfgToLocation(routePoliciesCfg, &loc)
- 			loc.Dos = dosRouteCfg
- 			loc.AddHeaderInherit = r.AddHeaderInherit
-@@ -1083,25 +1072,23 @@ func (vsc *virtualServerConfigurator) GenerateVirtualServerConfig(
- 
- 			dosRouteCfg := generateDosCfg(dosResources[r.Path])
- 
-+			rc := locationContext{
-+				upstreamNamer:  upstreamNamer,
-+				crUpstreams:    crUpstreams,
-+				cfgParams:      vsc.cfgParams,
-+				errorPages:     errorPages,
-+				originalPath:   r.Path,
-+				locSnippets:    locSnippets,
-+				enableSnippets: vsc.enableSnippets,
-+				isVSR:          isVSR,
-+				vsrName:        vsr.Name,
-+				vsrNamespace:   vsr.Namespace,
-+				warnings:       vsc.warnings,
-+			}
-+
- 			if len(r.Matches) > 0 {
--				cfg := generateMatchesConfig(
--					r,
--					upstreamNamer,
--					crUpstreams,
--					VariableNamer,
--					matchesRoutes,
--					len(splitClients),
--					vsc.cfgParams,
--					errorPages,
--					locSnippets,
--					vsc.enableSnippets,
--					len(returnLocations),
--					isVSR,
--					vsr.Name,
--					vsr.Namespace,
--					vsc.warnings,
--					vsc.DynamicWeightChangesReload,
--				)
-+				cfg := generateMatchesConfig(rc, r, VariableNamer, matchesRoutes, len(splitClients), len(returnLocations),
-+					vsc.DynamicWeightChangesReload)
- 				addPoliciesCfgToLocations(routePoliciesCfg, cfg.Locations)
- 				addDosConfigToLocations(dosRouteCfg, cfg.Locations)
- 				addAddHeaderInheritToLocations(addHeaderInherit, cfg.Locations)
-@@ -1116,8 +1103,7 @@ func (vsc *virtualServerConfigurator) GenerateVirtualServerConfig(
- 				twoWaySplitClients = append(twoWaySplitClients, cfg.TwoWaySplitClients...)
- 				matchesRoutes++
- 			} else if len(r.Splits) > 0 {
--				cfg := generateDefaultSplitsConfig(r, upstreamNamer, crUpstreams, VariableNamer, len(splitClients), vsc.cfgParams,
--					errorPages, r.Path, locSnippets, vsc.enableSnippets, len(returnLocations), isVSR, vsr.Name, vsr.Namespace, vsc.warnings, vsc.DynamicWeightChangesReload)
-+				cfg := generateDefaultSplitsConfig(rc, r, VariableNamer, len(splitClients), len(returnLocations), vsc.DynamicWeightChangesReload)
- 				addPoliciesCfgToLocations(routePoliciesCfg, cf
+       - name: Run Docker Scout vulnerability scanner
+         id: docker-scout
+-        uses: docker/scout-action@a4119c5a8c5076236a54e4ce99531f7e4dd2ef84 # v1.27.0
++        uses: docker/scout-action@e7e2a72bf1485d10a58f30696b6c513b261ce4fa # v1.29.0
+         with:
+           command: cves
+           image: ${{ steps.meta.outputs.tags }}
 ```
 
-**File**: `internal/configs/virtualserver_routing_test.go` (modified, +57/-44)
+**File**: `.github/workflows/build-plus.yml` (modified, +1/-1)
 ```diff
-@@ -1826,21 +1826,23 @@ func TestGenerateSplits(t *testing.T) {
- 	for _, test := range tests {
- 		t.Run(test.msg, func(t *testing.T) {
- 			resultSplitClients, resultLocations, resultReturnLocations, _, _, _, _ := generateSplits(
-+				locationContext{
-+					upstreamNamer:  upstreamNamer,
-+					crUpstreams:    crUpstreams,
-+					cfgParams:      &cfgParams,
-+					errorPages:     errorPageDetails,
-+					originalPath:   originalPath,
-+					locSnippets:    locSnippet,
-+					enableSnippets: enableSnippets,
-+					isVSR:          true,
-+					vsrName:        "coffee",
-+					vsrNamespace:   "default",
-+					warnings:       vsc.warnings,
-+				},
- 				test.splits,
--				upstreamNamer,
--				crUpstreams,
- 				variableNamer,
- 				scIndex,
--				&cfgParams,
--				errorPageDetails,
--				originalPath,
--				locSnippet,
--				enableSnippets,
- 				returnLocationIndex,
--				true,
--				"coffee",
--				"default",
--				vsc.warnings,
- 				vsc.DynamicWeightChangesReload,
- 			)
+@@ -273,7 +273,7 @@ jobs:
  
-@@ -3497,21 +3499,21 @@ func TestGenerateSplitsWeightChangesDynamicReload(t *testing.T) {
- 	for _, test := range tests {
- 		t.Run(test.msg, func(t *testing.T) {
- 			resultSplitClients, resultLocations, _, resultMaps, resultKeyValZones, resultKeyVals, resultTwoWaySplitClients := generateSplits(
-+				locationContext{
-+					upstreamNamer:  upstreamNamer,
-+					crUpstreams:    crUpstreams,
-+					cfgParams:      &cfgParams,
-+					originalPath:   originalPath,
-+					enableSnippets: enableSnippets,
-+					isVSR:          true,
-+					vsrName:        "coffee",
-+					vsrNamespace:   "default",
-+					warnings:       vsc.warnings,
-+				},
- 				test.splits,
--				upstreamNamer,
--				crUpstreams,
- 				variableNamer,
- 				scIndex,
--				&cfgParams,
--				errorPageDetails{},
--				originalPath,
--				"",
--				enableSnippets,
- 				returnLocationIndex,
--				true,
--				"coffee",
--				"default",
--				vsc.warnings,
- 				vsc.DynamicWeightChangesReload,
- 			)
+       - name: Run Docker Scout vulnerability scanner
+         id: docker-scout
+-        uses: docker/scout-action@a4119c5a8c5076236a54e4ce99531f7e4dd2ef84 # v1.27.0
++        uses: docker/scout-action@e7e2a72bf1485d10a58f30696b6c513b261ce4fa # v1.29.0
+         with:
+           command: cves
+           image: ${{ steps.meta.outputs.tags }}
+```
+
+**File**: `.github/workflows/image-promotion.yml` (modified, +4/-4)
+```diff
+@@ -404,7 +404,7 @@ jobs:
  
-@@ -3644,8 +3646,18 @@ func TestGenerateDefaultSplitsConfig(t *testing.T) {
- 		owner: nil,
- 	}
+       - name: Run Docker Scout vulnerability scanner
+         id: docker-scout
+-        uses: docker/scout-action@a4119c5a8c5076236a54e4ce99531f7e4dd2ef84 # v1.27.0
++        uses: docker/scout-action@e7e2a72bf1485d10a58f30696b6c513b261ce4fa # v1.29.0
+         with:
+           command: cves
+           image: ${{ steps.meta.outputs.tags }}
+@@ -504,7 +504,7 @@ jobs:
  
--	result := generateDefaultSplitsConfig(route, upstreamNamer, crUpstreams, variableNamer, index, &cfgParams,
--		errorPageDetails, "", locSnippet, enableSnippets, 0, true, "coffee", "default", Warnings{}, weightChangesDynamicReload)
-+	result := generateDefaultSplitsConfig(locationContext{
-+		upstreamNamer:  upstreamNamer,
-+		crUpstreams:    crUpstreams,
-+		cfgParams:      &cfgParams,
-+		errorPages:     errorPageDetails,
-+		locSnippets:    locSnippet,
-+		enableSnippets: enableSnippets,
-+		isVSR:          true,
-+		vsrName:        "coffee",
-+		vsrNamespace:   "default",
-+		warnings:       Warnings{},
-+	}, route, variableNamer, index, 0, weightChangesDynamicReload)
- 	if !reflect.DeepEqual(result, expected) {
- 		t.Errorf("generateDefaultSplitsConfig() returned \n%+v but expected \n%+v", result, expected)
- 	}
-@@ -4044,21 +4056,20 @@ func TestGenerateMatchesConfig(t *testing.T) {
- 	}
+       - name: Run Docker Scout vulnerability scanner
+         id: docker-scout
+-        uses: docker/scout-action@a4119c5a8c5076236a54e4ce99531f7e4dd2ef84 # v1.27.0
++        uses: docker/scout-action@e7e2a72bf1485d10a58f30696b6c513b261ce4fa # v1.29.0
+         with:
+           command: cves
+           image: ${{ steps.meta.outputs.tags }}
+@@ -604,7 +604,7 @@ jobs:
  
- 	result := generateMatchesConfig(
-+		locationContext{
-+			upstreamNamer:  upstreamNamer,
-+			crUpstreams:    crUpstreams,
-+			cfgParams:      &cfgParams,
-+			errorPages:     errorPageDetails,
-+			locSnippets:    locSnippets,
-+			enableSnippets: enableSnippets,
-+			warnings:       Warnings{},
-+		},
- 		route,
--		upstreamNamer,
--		crUpstreams,
- 		variableNamer,
- 		index,
- 		scIndex,
--		&cfgParams,
--		errorPageDetails,
--		locSnippets,
--		enableSnippets,
- 		0,
--		false,
--		"",
--		"",
--		Warnings{},
- 		weightChangesDynamicReload,
- 	)
- 	if !reflect.DeepEqual(result, expected) {
-@@ -4456,21 +4467,23 @@ func TestGenerateMatchesConfigWithMultipleSplits(t *testing.T) {
- 	}
+       - name: Run Docker Scout vulnerability scanner
+         id: docker-scout
+-        uses: docker/scout-action@a4119c5a8c5076236a54e4ce99531f7e4dd2ef84 # v1.27.0
++        uses: docker/scout-action@e7e2a72bf1485d10a58f30696b6c513b261ce4fa # v1.29.0
+         with:
+           command: cves
+           image: ${{ steps.meta.outputs.tags }}
+@@ -640,7 +640,7 @@ jobs:
+         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
  
- 	result := generateMatchesConfig(
-+		locationContext{
-+			upstreamNamer:  upstreamNamer,
-+			crUpstreams:    crUpstreams,
-+			cfgParams:      &cfgParams,
-+			errorPages:     errorPageDetails,
-+			locSnippets:    locSnippets,
-+			enableSnippets: enableSnippets,
-+			isVSR:          true,
-+			vsrName:        "coffee",
-+			vsrNamespace:   "default",
-+			warnings:       Warnings{},
-+		},
- 		route,
--		upstreamNamer,
--		crUpstreams,
- 		variableNamer,
- 		index,
- 		scIndex,
--		&cfgParams,
--		errorPageDetails,
--		locSnippets,
--		enableSnippets,
- 		0,
--		true,
--		"coffee",
--		"default",
--		Warnings{},
- 		weightChangesWithoutReload,
- 	)
- 	if !reflect.DeepEqual(result, expected) {
+       - name: Create/Update Draft
+-        uses: lucacome/draft-release@5bc11f2401bad413a67299dcc857b50ff0d80b12 # v2.2.2
++        uses: lucacome/draft-release@08f1af054ed446630440d177e1015a517500e97c # v2.2.3
+         id: release-notes
+         with:
+           minor-label: "enhancement"
+```
+
+**File**: `.github/workflows/lint-format.yml` (modified, +1/-1)
+```diff
+@@ -93,7 +93,7 @@ jobs:
+       - name: Checkout Repository
+         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+ 
+-      - uses: reviewdog/action-actionlint@48e36f54d8da326b83ab061aee2cc5e01b5ca46f # v1.80.6
++      - uses: reviewdog/action-actionlint@619a81ec64ff8c0211cd6146eb2b21e8f1d7f440 # v1.81.1
+         with:
+           actionlint_flags: -shellcheck ""
+ 
+```
+
+**File**: `.github/workflows/update-release-draft.yml` (modified, +1/-1)
+```diff
+@@ -63,7 +63,7 @@ jobs:
+           ref: ${{ inputs.branch }}
+ 
+       - name: Create/Update Draft
+-        uses: lucacome/draft-release@5bc11f2401bad413a67299dcc857b50ff0d80b12 # v2.2.2
++        uses: lucacome/draft-release@08f1af054ed446630440d177e1015a517500e97c # v2.2.3
+         id: release-notes
+         with:
+           minor-label: "enhancement"
 ```
 
 ---
 
-### Incident Patch 2: `b03af829` (2026-11-03)
-**Commit Message**: Update NGINX to 1.31.8 & WAF to 5.16.1 (#11295)
+### Incident Patch 2: `2ffc49f4` (2026-11-03)
+**Commit Message**: Update container digests (main) (#11311)
 
-* Update NGINX OSS to 1.31.8
+Update container digests
 
-* Update app-protect-ip-intelligence version to 1.71
-
-* Update WAF to 5.16.1
-
----------
-
-Co-authored-by: Venktesh Patel <[REDACTED_EMAIL]>
-
-**File**: `.github/scripts/tech-specs.json` (modified, +2/-2)
-```diff
-@@ -2,7 +2,7 @@
-   "nic_k8s": {
-     "shortcode_row": {
-       "k8s_versions": "1.30 - 1.37",
--      "nginx_version": "1.31.7 / R37.2.0.1"
-+      "nginx_version": "1.31.8 / R37.2.0.1"
-     },
-     "rows": [
-       {
-@@ -74,7 +74,7 @@
-     "shortcode_row": {
-       "nap_waf_prefix": "37.2",
-       "compiler_version": "5.777.0",
--      "waf_release_version": "5.16.0"
-+      "waf_release_version": "5.16.1"
-     },
-     "rows": [
-       {
-```
-
-**File**: `.github/workflows/regression.yml` (modified, +1/-1)
-```diff
-@@ -347,7 +347,7 @@ jobs:
- 
-       - name: Generate WAF v5 tgz from JSON
-         run: |
--          docker run --rm --user root -v /var/run/docker.sock:/var/run/docker.sock -v ${{ github.workspace }}/tests/data/ap-waf-v5:/data gcr.io/f5-gcs-7899-ptg-ingrss-ctlr/nap/waf-compiler:5.16.0 -p /data/wafv5.json -o /data/wafv5.tgz
-+          docker run --rm --user root -v /var/run/docker.sock:/var/run/docker.sock -v ${{ github.workspace }}/tests/data/ap-waf-v5:/data gcr.io/f5-gcs-7899-ptg-ingrss-ctlr/nap/waf-compiler:5.16.1 -p /data/wafv5.json -o /data/wafv5.tgz
-         if: ${{ contains(matrix.images.image, 'nap-v5')}}
- 
-       - name: Generate secrets for tests
-```
-
-**File**: `.github/workflows/setup-smoke.yml` (modified, +1/-1)
-```diff
-@@ -198,7 +198,7 @@ jobs:
- 
-       - name: Generate WAF v5 tgz from JSON
-         run: |
--          docker run --rm --user root -v /var/run/docker.sock:/var/run/docker.sock -v ${{ github.workspace }}/tests/data/ap-waf-v5:/data gcr.io/f5-gcs-7899-ptg-ingrss-ctlr/nap/waf-compiler:5.16.0 -p /data/wafv5.json -o /data/wafv5.tgz
-+          docker run --rm --user root -v /var/run/docker.sock:/var/run/docker.sock -v ${{ github.workspace }}/tests/data/ap-waf-v5:/data gcr.io/f5-gcs-7899-ptg-ingrss-ctlr/nap/waf-compiler:5.16.1 -p /data/wafv5.json -o /data/wafv5.tgz
-         if: ${{ contains(inputs.image, 'nap-v5')}}
- 
-       - name: Run Smoke Tests
-```
-
-**File**: `Makefile` (modified, +2/-2)
-```diff
-@@ -11,13 +11,13 @@ WAF_REPO					  ?= "pkgs.nginx.com" ## The package repo to install nginx app prot
- DOS_REPO					  ?= "pkgs.nginx.com" ## The package repo to install nginx app protect dos from
- 
- # renovate: datasource=docker depName=nginx/nginx
--NGINX_OSS_VERSION             ?= 1.31.7
-+NGINX_OSS_VERSION             ?= 1.31.8
- NGINX_PLUS_VERSION            ?= R37.2
- 
- NAP_WAF_VERSION               ?= 37.2+5.777
- NAP_WAF_COMMON_VERSION        ?= 11.869
- NAP_WAF_PLUGIN_VERSION        ?= 6.32
--NAP_WAF_IPI_VERSION           ?= 1.68
-+NAP_WAF_IPI_VERSION           ?= 1.71
- 
- AGENT_V2_VERSION              ?= 2
- AGENT_V3_VERSION              ?= 3
-```
+Signed-off-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
+Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
 
 **File**: `build/Dockerfile` (modified, +2/-2)
 ```diff
-@@ -2,12 +2,12 @@
- ARG BUILD_OS=debian
+@@ -141,7 +141,7 @@ RUN --mount=type=secret,id=nginx-repo.crt,dst=/etc/apk/cert.pem,mode=0644 \
  
- # renovate: datasource=docker depName=nginx/nginx
--ARG NGINX_OSS_VERSION=1.31.7
-+ARG NGINX_OSS_VERSION=1.31.8
- ARG NGINX_PLUS_VERSION=R37.2
- ARG NAP_WAF_VERSION=37.2+5.777
- ARG NAP_WAF_COMMON_VERSION=11.869
- ARG NAP_WAF_PLUGIN_VERSION=6.32
--ARG NAP_WAF_IPI_VERSION=1.68
-+ARG NAP_WAF_IPI_VERSION=1.71
- ARG AGENT_V3_VERSION=3
- ARG AGENT_V2_VERSION=2
+ 
+ ############################################### NGINX OSS - Debian #############################################
+-FROM debian:trixie-slim@sha256:62bd423aeee912639ca8ee681c2b762cb3e25137e0a92b20be455898a9f034ad AS debian
++FROM debian:trixie-slim@sha256:f6b08b09a05725f9431502d3b5714f5c4576e82c1a84fa1debe0c24a7e0c3ec4 AS debian
+ ARG OSS_PACKAGE_REPO
+ ARG NGINX_OSS_VERSION
+ ARG AGENT_V3_VERSION
+@@ -437,7 +437,7 @@ RUN --mount=type=secret,id=nginx-repo.crt,dst=/etc/apk/cert.pem,mode=0644 \
+ # Base:     debian:13-slim
+ # Installs: nginx-plus, nginx-plus-module-njs/otel/fips-check, libcap2-bin, libcurl4
+ # Extended: debian-plus (Agent v3)  •  debian-plus-nap-base  •  debian-plus-nap-v5-base
+-FROM debian:13-slim@sha256:62bd423aeee912639ca8ee681c2b762cb3e25137e0a92b20be455898a9f034ad AS debian-plus-only
++FROM debian:13-slim@sha256:f6b08b09a05725f9431502d3b5714f5c4576e82c1a84fa1debe0c24a7e0c3ec4 AS debian-plus-only
+ ARG NGINX_PLUS_VERSION
+ ARG PLUS_PACKAGE_REPO
  
 ```
 
-**File**: `charts/nginx-ingress/values.schema.json` (modified, +15/-15)
+**File**: `tests/Dockerfile` (modified, +1/-1)
 ```diff
-@@ -397,10 +397,10 @@
-                     },
-                     "tag": {
-                       "type": "string",
--                      "default": "5.16.0",
-+                      "default": "5.16.1",
-                       "title": "The tag of the  App Protect WAF v5 Enforcer image",
-                       "examples": [
--                        "5.16.0"
-+                        "5.16.1"
-                       ]
-                     },
-                     "digest": {
-@@ -436,7 +436,7 @@
-                   "examples": [
-                     {
-                       "repository": "private-registry.nginx.com/nap/waf-enforcer",
--                      "tag": "5.16.0",
-+                      "tag": "5.16.1",
-                       "pullPolicy": "IfNotPresent"
-                     }
-                   ]
-@@ -474,10 +474,10 @@
-                     },
-                     "tag": {
-                       "type": "string",
--                      "default": "5.16.0",
-+                      "default": "5.16.1",
-                       "title": "The tag of the  App Protect WAF v5 Config Manager image",
-                       "examples": [
--                        "5.16.0"
-+                        "5.16.1"
-                       ]
-                     },
-                     "digest": {
-@@ -513,7 +513,7 @@
-                   "examples": [
-                     {
-                       "repository": "private-registry.nginx.com/nap/waf-config-mgr",
--                      "tag": "5.16.0",
-+                      "tag": "5.16.1",
-                       "pullPolicy": "IfNotPresent"
-                     }
-                   ]
-@@ -570,10 +570,10 @@
-                     },
-                     "tag": {
-                       "type": "string",
--                      "default": "5.16.0",
-+                      "default": "5.16.1",
-                       "title": "The tag of the App Protect WAF v5 IP Intelligence image",
-                       "examples": [
--                        "5.16.0"
-+                        "5.16.1"
-                       ]
-                     },
-                     "digest": {
-@@ -609,7 +609,7 @@
-                   "examples": [
-                     {
-                       "repository": "private-registry.nginx.com/nap/waf-ip-intelligence",
--                      "tag": "5.16.0",
-+                      "tag": "5.16.1",
-                       "pullPolicy": "IfNotPresent"
-                     }
-                   ]
-@@ -2370,15 +2370,15 @@
-               "port": 50000,
-               "image": {
-                 "repository": "private-registry.nginx.com/nap/waf-enforcer",
--                "tag": "5.16.0",
-+                "tag": "5.16.1",
-                 "pullPolicy": "IfNotPresent"
-               },
-               "securityContext": {}
-             },
-             "configManager": {
-               "image": {
-                 "repository": "private-registry.nginx.com/nap/waf-config-mgr",
--                "tag": "5.16.0",
-+                "tag": "5.16.1",
-                 "pullPolicy": "IfNotPresent"
-               },
-               "securityContext": {
-@@ -2396,7 +2396,7 @@
-               "enable": false,
-               "image": {
-                 "repository": "private-registry.nginx.com/nap/waf-ip-intelligence",
--                "tag": "5.16.0",
-+                "tag": "5.16.1",
-                 "pullPolicy": "IfNotPresent"
-               },
-               "securityContext": {
-@@ -3000,15 +3000,15 @@
-             "port": 50000,
-             "image": {
-               "repository": "private-registry.nginx.com/nap/waf-enforcer",
--              "tag": "5.16.0",
-+              "tag": "5.16.1",
-               "pullPolicy": "IfNotPresent"
-             },
-             "securityContext": {}
-           },
-           "configManager": {
-             "image": {
-               "repository": "private-registry.nginx.com/nap/waf-config-mgr",
--              "tag": "5.16.0",
-+              "tag": "5.16.1",
-               "pullPolicy": "IfNotPresent"
-             },
-             "securityContext": {
-@@ -3026,7 +3026,7 @@
-             "enable": false,
-             "image": {
-               "repository": "private-registry.nginx.com/nap/waf-ip-intelligence",
--              "tag": "5.16.0",
-+              "tag": "5.16.1",
-               "pullPolicy": "IfNotPresent"
-             },
-             "securityContext": {
-```
-
-**File**: `charts/nginx-ingress/values.yaml` (modified, +3/-3)
-```diff
-@@ -95,7 +95,7 @@ controller:
-         repository: private-registry.nginx.com/nap/waf-enforcer
+@@ -1,5 +1,5 @@
+ # syntax=docker/dockerfile:1.28
+-FROM python:3.15-trixie@sha256:8268b5058c72832502a7eabc0c719892769c09389ed95fc213f3c308cbedc6dd
++FROM python:3.15-trixie@sha256:f34e3385a59fd8de7919d46db4a38ab14c0e46928a11b59036a7ee206ac0c129
+ ARG ARCH=amd64
  
-         ## The tag of the App Protect WAF v5 Enforcer image.
--        tag: "5.16.0"
-+        tag: "5.16.1"
-         ## The digest of the App Protect WAF v5 Enforcer image.
-         ## If digest is specified it has precedence over tag and will be used instead
-         # digest: "sha256:CHANGEME"
-@@ -119,7 +119,7 @@ controller:
-         repository: private-registry.nginx.com/nap/waf-config-mgr
- 
-         ## The tag of the App Protect WAF v5 Configuration Manager image.
--        tag: "5.16.0"
-+        tag: "5.16.1"
-         ## The digest of the App Protect WAF v5 Configuration Manager image.
-         ## If digest is specified it has precedence over tag and will be used instead
-         # digest: "sha256:CHANGEME"
-@@ -165,7 +165,7 @@ controller:
-         repository: private-registry.nginx.com/nap/waf-ip-intelligence
- 
-         ## The tag of the App Protect WAF v5 IP Intelligence image.
--        tag: "5.16.0"
-+        tag: "5.16.1"
-         ## The digest of the App Protect WAF v5 IP Intelligence image.
-         ## If digest is specified it has precedence over tag and will be used instead
-         # digest: "sha256:CHANGEME"
-```
-
-**File**: `charts/tests/__snapshots__/helmunit_test.snap` (modified, +12/-12)
-```diff
-@@ -2360,7 +2360,7 @@ spec:
-           - -enable-telemetry-reporting=true
-           - -weight-changes-dynamic-reload=false
-       - name: waf-enforcer
--        image: private-registry.nginx.com/nap/waf-enforcer:5.16.0
-+        image: private-registry.nginx.com/nap/waf-enforcer:5.16.1
-         imagePullPolicy: "IfNotPresent"
-         env:
-           - name: ENFORCER_PORT
-@@ -2371,7 +2371,7 @@ spec:
-           - name: app-protect-bd-config
-             mountPath: /opt/app_protect/bd_config
-       - name: waf-config-mgr
--        image: private-registry.nginx.com/nap/waf-config-mgr:5.16.0
-+        image: private-registry.nginx.com/nap/waf-config-mgr:5.16.1
-         imagePullPolicy: "IfNotPresent"
-         securityContext:
-             allowPrivilegeEscalation: false
-@@ -3950,7 +3950,7 @@ spec:
-           - -enable-telemetry-reporting=true
-           - -weight-changes-dynamic-reload=false
-       - name: waf-enforcer
--        image: my.private.reg/nap/waf-enforcer:5.16.0
-+        image: my.private.reg/nap/waf-enforcer:5.16.1
-         imagePullPolicy: "IfNotPresent"
-         env:
-           - name: ENFORCER_PORT
-@@ -3963,7 +3963,7 @@ spec:
-           - name: app-protect-ipi-db
-             mountPath: /var/IpRep
-       - name: waf-config-mgr
--        image: my.private.reg/nap/waf-config-mgr:5.16.0
-+        image: my.private.reg/nap/waf-config-mgr:5.16.1
-         imagePullPolicy: "IfNotPresent"
-         securityContext:
-             allowPrivilegeEscalation: false
-@@ -3980,7 +3980,7 @@ spec:
-           - name: app-protect-bundles
-             mountPath: /etc/app_protect/bundles
-       - name: waf-ip-intelligence
--        image: my.private.reg/nap/waf-ip-intelligence:5.16.0
-+        image: my.private.reg/nap/waf-ip-intelligence:5.16.1
-         imagePullPolicy: "IfNotPresent"
-         securityContext:
-             allowPrivilegeEscalation: false
-@@ -4550,7 +4550,7 @@ spec:
-           - -agent=true
-           - -agent-instance-group=app-protect-wafv5-agentv2-nginx-ingress-controller
-       - name: waf-enforcer
--        image: my.private.reg/nap/waf-enforcer:5.16.0
-+        image: my.private.reg/nap/waf-enforcer:5.16.1
-         imagePullPolicy: "IfNotPresent"
-         env:
-           - name: ENFORCER_PORT
-@@ -4561,7 +4561,7 @@ spec:
-           - name: app-protect-bd-config
-             mountPath: /opt/app_protect/bd_config
-       - name: waf-config-mgr
--        image: my.private.reg/nap/waf-config-mgr:5.16.0
-+        image: my.private.reg/nap/waf-config-mgr:5.16.1
-         imagePullPolicy: "IfNotPresent"
-         securityContext:
-             allowPrivilegeEscalation: false
-@@ -5127,7 +5127,7 @@ spec:
-           - -weight-changes-dynamic-reload=false
-           - -agent=true
-       - name: waf-enforcer
--        image: my.private.reg/nap/waf-enforcer:5.16.0
-+        image: my.private.reg/nap/waf-enforcer:5.16.1
-         imagePullPolicy: "IfNotPresent"
-         env:
-           - name: ENFORCER_PORT
-@@ -5138,7 +5138,7 @@ spec:
-           - name: app-protect-bd-config
-             mountPath: /opt/app_protect/bd_config
-       - name: waf-config-mgr
--        image: my.private.reg/nap/waf-config-mgr:5.16.0
-+        image: my.private.reg/nap/waf-config-mgr:5.16.1
-         imagePullPolicy: "IfNotPresent"
-         securityContext:
-             allowPrivilegeEscalation: false
-@@ -5641,7 +5641,7 @@ spec:
-           - -enable-telemetry-reporting=true
-           - -weight-changes-dynamic-reload=false
-       - name: waf-enforcer
--        image: my.private.reg/nap/waf-enforcer:5.16.0
-+        image: my.private.reg/nap/waf-enforcer:5.16.1
-         imagePullPolicy: "IfNotPresent"
-         resources:
-             limits:
-@@ -5661,7 +5661,7 @@ spec:
-           - name: app-protect-ipi-db
-             mountPath: /var/IpRep
-       - name: waf-config-mgr
--        image: my.private.reg/nap/waf-config-mgr:5.16.0
-+        image: my.private.reg/nap/waf-config-mgr:5.16.1
-         imagePullPolicy: "IfNotPresent"
-         securityContext:
-             allowPrivilegeEscalation: false
-@@ -5685,7 +5685,7 @@ spec:
-           - name: app-protect-bundles
-             mountPath: /etc/app_protect/bundles
-       - name: waf-ip-intelligence
--        image: my.private.reg/nap/waf-ip-intelligence:5.16.0
-+        image: my.private.reg/nap/waf-ip-intelligence:5.16.1
-         imagePullPolicy: "IfNotPresent"
-         securityContext:
-             allowPrivilegeEscalation: false
+ ENV PYTHONUNBUFFERED=1
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #11319** (2026-11-03): Update NGINX to 1.31.8 & WAF to 5.16.1 (@nic-create-pr[bot])
 - **PR #11317** (2026-11-03): Update redhat/ubi10-minimal Docker tag to v10.2-1793642335 (release-5.7) (@renovate[bot])
+- **PR #11316** (2026-11-03): Update Red Hat UBI images (main) (@renovate[bot])
 - **PR #11315** (2026-11-03): Update python dependencies (release-2026-lts) (@renovate[bot])
 - **PR #11314** (2026-11-03): Update debian:13-slim Docker digest to f6b08b0 (release-2026-lts) (@renovate[bot])
 - **PR #11313** (2026-11-03): Update python dependencies (release-5.7) (@renovate[bot])
-- **PR #11312** (2026-11-03): Update debian:13-slim Docker digest to f6b08b0 (release-5.7) (@renovate[bot])
-- **PR #11310** (2026-11-03): Update AWS SDK v2 (release-5.7) (@renovate[bot])
 
 ---
 
@@ -1963,87 +1463,28 @@ Co-authored-by: Venktesh Patel <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. generateLocation() and call sites (#11296)
+## X. Update github actions (main) (#11306)
 
 **RULE**:
-When implementing operations in `internal/configs/virtualserver.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nginx/kubernetes-ingress. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/build-oss.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nginx/kubernetes-ingress. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `289622a5`: generateLocation() and call sites (#11296). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `311c58a2`: Update github actions (main) (#11306). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/configs/virtualserver.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/build-oss.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-		rc := locationContext{
-			upstreamNamer:  virtualServerUpstreamNamer,
-			crUpstreams:    crUpstreams,
-			cfgParams:      vsc.cfgParams,
-			errorPages:     errorPages,
-			originalPath:   r.Path,
-			locSnippets:    vsLocSnippets,
-			enableSnippets: vsc.enableSnippets,
-			isVSR:          isVSR,
-			warnings:       vsc.warnings,
-		}
-
-			cfg := generateMatchesConfig(rc, r, VariableNamer, matchesRoutes, len(splitClients), len(returnLocations),
-				vsc.DynamicWeightChangesReload)
-			cfg := generateDefaultSplitsConfig(rc, r, VariableNamer, len(splitClients), len(returnLocations), vsc.DynamicWeightChangesReload)
-			loc, returnLoc := generateLocation(rc, r.Path, r.Action, false, len(returnLocations))
-			rc := locationContext{
-				upstreamNamer:  upstreamNamer,
-				crUpstreams:    crUpstreams,
-				cfgParams:      vsc.cfgParams,
-				errorPages:     errorPages,
-				originalPath:   r.Path,
-				locSnippets:    locSnippets,
-				enableSnippets: vsc.enableSnippets,
-				isVSR:          isVSR,
-				vsrName:        vsr.Name,
-				vsrNamespace:   vsr.Namespace,
-				warnings:       vsc.warnings,
-			}
-
-				cfg := generateMatchesConfig(rc, r, VariableNamer, matchesRoutes, len(splitClients), len(returnLocati
+        uses: docker/scout-action@e7e2a72bf1485d10a58f30696b6c513b261ce4fa # v1.29.0
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-			cfg := generateMatchesConfig(
-				r,
-				virtualServerUpstreamNamer,
-				crUpstreams,
-				VariableNamer,
-				matchesRoutes,
-				len(splitClients),
-				vsc.cfgParams,
-				errorPages,
-				vsLocSnippets,
-				vsc.enableSnippets,
-				len(returnLocations),
-				isVSR,
-				"", "",
-				vsc.warnings,
-				vsc.DynamicWeightChangesReload,
-			)
-			cfg := generateDefaultSplitsConfig(r, virtualServerUpstreamNamer, crUpstreams, VariableNamer, len(splitClients),
-				vsc.cfgParams, errorPages, r.Path, vsLocSnippets, vsc.enableSnippets, len(returnLocations), isVSR, "", "", vsc.warnings, vsc.DynamicWeightChangesReload)
-			upstreamName := virtualServerUpstreamNamer.GetNameForUpstreamFromAction(r.Action)
-			upstream := crUpstreams[upstreamName]
-
-			serviceNamespace, serviceName := ParseServiceReference(upstream.Service, vsEx.VirtualServer.Namespace)
-			proxySSLName := generateProxySSLName(serviceName, serviceNamespace)
-
-			loc, returnLoc := generateLocation(r.Path, upstreamName, upstream, r.Action, vsc.cfgParams, errorPages, false,
-				proxySSLName, r.Path, vsLocSnippets, vsc.enableSnippets, len(returnLocations), isVSR, "", "", vsc.warnings)
-				cfg := generateMatchesConfig(
-					r,
-					upstreamNamer
+        uses: docker/scout-action@a4119c5a8c5076236a54e4ce99531f7e4dd2ef84 # v1.27.0
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `289622a5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `311c58a2` are properly handled with clean fallback behavior.
