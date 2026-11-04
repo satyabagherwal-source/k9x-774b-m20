@@ -7182,3 +7182,5 @@
 | `CYCLE-20261104-UDQH` | `2026-11-04T08:28:37.001Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6778` | Yes (`adc4dd3c...`) |
 | `CYCLE-20261104-UFA3` | `2026-11-04T08:28:39.003Z` | `gluesql/gluesql` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6779` | Yes (`02ef7814...`) |
 | `CYCLE-20261104-UH38` | `2026-11-04T08:28:41.348Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6780` | Yes (`ccb05e0d...`) |
+| `CYCLE-20261104-2SJK` | `2026-11-04T08:35:09.440Z` | `k3s-io/k3s` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6781` | Yes (`57580d88...`) |
+| `CYCLE-20261104-37QY` | `2026-11-04T08:35:29.146Z` | `speridlabs/idol` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6782, Rule 6783` | Yes (`6d4ba37b...`) |

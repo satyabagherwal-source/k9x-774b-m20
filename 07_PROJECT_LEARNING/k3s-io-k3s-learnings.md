@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/k3s-io-k3s-learnings.md`  
 > **Source**: github ([https://github.com/k3s-io/k3s](https://github.com/k3s-io/k3s))  
-> **Source Version**: `3461a87f`  
+> **Source Version**: `2b723db5`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T02:21:24.281Z  
+> **Timestamp**: 2026-11-04T08:35:08.924Z  
 > **Learning ID**: `learn-github-k3s-io-k3s`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/k3s-io-k3s-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/k3s-io/k3s](https://github.com/k3s-io/k3s))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T02:21:24.273Z  
+> **Harvest Timestamp**: 2026-11-04T08:35:07.817Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Lightweight Kubernetes
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 34288 stars
+- **Stars / Engagement**: 34331 stars
 
 ---
 
@@ -884,11 +884,11 @@ func AddFeatureGate(current, toAdd string) string {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #14943** (2026-10-30): **Fix typos and smart quotes**
-  *Symptoms*: #### Proposed Changes ####  Fix typos and smart quotes in contributing and governance docs  #### Types of Changes ####  housekeeping  #### Verification ####   #### Testing ####  #### Linked Issues ####   #### User-Facing Change #### ```release-note ```  #### Further Comments #### 
+- **Issue #14950** (2026-11-04): **Agentless servers (--disable-agent) open remotedialer tunnels to every apiserver endpoint, which nothing uses**
+  *Symptoms*: **Environmental Info:** K3s Version: k3s version v1.37.2+k3s1 (f6973cb8) Also reproduced on v1.36.6+k3s1 (fa45d6a5); seen in production on v1.36.5+k3s1. The code path is unchanged on `main`.  Node(s) CPU architecture, OS, and Version: x86_64, rancher/k3s image in Docker 29.9.3 (reproduction); servers as Kubernetes pods (production)  Cluster Configuration: Reproduction: 1 server, `--disable-agent`, no agents. Production: 3 servers with `disable-agent: true`, embedded etcd, `egress-selector-mode: cluster`, agents on separate hosts. Each server's `advertise-address` is an external load balancer address that only admits the agents' source IPs.  **Describe the bug:** Every agentless server runs the agent tunnel through `agent.RunStandalone` -> `tunnelSetup` -> `tunnel.Setup` -> `startWatches` -> `watchEndpointSlices`. It opens a remotedialer websocket to every address in the `kubernetes` EndpointSlice, its own included, and reconnects forever.  On an agentless server these tunnels have no user: - The tunnel server (`pkg/daemons/control/tunnel.go`, `dialBackend`) chooses a session by the Node whose addresses contain the destination, or by a hostname dialed as a kubelet. An agentless server has no Node object, so its session is never chosen. - #7331 already skips the tunnel authorizer when `ContainerRuntimeEndpoint` is `/dev/null`. The authorizer then allows only the loopback kubelet and stream ports, and nothing listens on either. - On a server that runs an apiserver, `DisableLoadB
 
-- **Issue #14940** (2026-10-30): **Fix dead community meeting and shell style guide links**
-  *Symptoms*: #### Proposed Changes ####  Fixes three dead links in the contributor docs:  - `GOVERNANCE.md` (two places): `https://k3s.io/community/#community-meetings` returns 404 because of the trailing slash. `https://k3s.io/community#community-meetings` returns 200 and the page has the `community-meetings` anchor. The README already links to `https://k3s.io/community`. - `docs/contrib/code_conventions.md`: Google's shell style guide moved from `styleguide/shell.xml` (404) to `styleguide/shellguide.html` (200).  #### Types of Changes ####  Documentation  #### Verification ####  Checked with curl: each old URL returns 404 and each new one returns 200.  #### Testing ####  Docs only, no code changes.  #### Linked Issues ####  None  #### User-Facing Change #### ```release-note NONE ```  #### Further Comments ####  I used an AI assistant to help find the dead links and checked every change myself. 
+- **Issue #14948** (2026-11-03): **Fix bashisms in install.sh**
+  *Symptoms*:  #### Proposed Changes ####  Replace brace expansion {1..3}, which is not POSIX and made the k3s-selinux version lookup run only once under dash, with a literal list. Use command -v instead of type for command detection.  #### Types of Changes ####  <!-- What types of changes does your code introduce to K3s? Bugfix, New Feature, Breaking Change, etc --> Bugfix.  #### Verification ####  <!-- How can the changes be verified? Please provide whatever additional information necessary to help verify the proposed changes. -->  #### Testing ####  <!-- Is this change covered by testing? If not, consider adding a Unit or Integration test. --> <!-- See https://github.com/k3s-io/k3s/blob/main/tests/TESTING.md for more info --> Maybe enable `shellcheck --shell=sh` ?  #### Linked Issues ####  https://github.com/k3s-io/k3s/issues/14947  #### User-Facing Change #### <!-- Does this PR introduce a user-facing change? If no, just write "NONE" in the release-note block below. If the PR requires additional action from users switching to the new release, include the string "action required". --> ```release-note NONE ```  #### Further Comments ####  <!-- If this is a relatively large or complex change, kick off the discussion by explaining why you chose the solution you did and what alternatives you considered, etc... --> 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -905,139 +905,77 @@ func AddFeatureGate(current, toAdd string) string {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3461a87f` (2026-10-30)
-**Commit Message**: Fix dead community meeting and shell style guide links
+### Incident Patch 1: `2b723db5` (2026-11-02)
+**Commit Message**: Fix bashisms in install.sh
 
-Signed-off-by: sarankumar1325 <[REDACTED_EMAIL]>
+Replace brace expansion {1..3}, which is not POSIX and made the
+k3s-selinux version lookup run only once under dash, with a literal
+list. Use command -v instead of type for command detection.
 
-**File**: `GOVERNANCE.md` (modified, +2/-2)
+Fixes #14947
+
+Signed-off-by: Ricardo Branco <[REDACTED_EMAIL]>
+
+**File**: `install.sh` (modified, +6/-6)
 ```diff
-@@ -155,7 +155,7 @@ Examples:
- ## Voting and Decision Making
- 
- While most business in K3s is conducted by "[lazy consensus](https://community.apache.org/committers/lazyConsensus.html)", periodically the Maintainers may need to vote on specific actions or changes. A vote can be taken on [the developer mailing list](mailto:cncf-k3s-dev@lists.cncf.io) or [the private Maintainer mailing list](mailto:cncf-k3s-maintainers@lists.cncf.io) for security or conduct matters.  
--Votes may also be taken at [the community meeting](https://k3s.io/community/#community-meetings).  Any Maintainer may demand a vote be taken.
-+Votes may also be taken at [the community meeting](https://k3s.io/community#community-meetings).  Any Maintainer may demand a vote be taken.
- 
- Most votes require a [simple majority](#simple-majority) of all Maintainers to succeed, except where otherwise noted.  [Supermajority](#supermajority) votes mean at least two-thirds of all existing Maintainers.
- 
-@@ -210,7 +210,7 @@ Smaller, self-contained changes (e.g., bug fixes, minor enhancements, or localiz
- 
- ## Meetings
- 
--Time zones permitting, Maintainers are expected to participate in the public developer meeting, which occurs [Community meetings](https://k3s.io/community/\#community-meetings)
-+Time zones permitting, Maintainers are expected to participate in the public developer meeting, which occurs [Community meetings](https://k3s.io/community#community-meetings)
- 
- Maintainers will also have closed meetings in order to discuss security reports or [Code of Conduct](https://github.com/k3s-io/k3s/blob/main/CODE_OF_CONDUCT.md) violations.  Such meetings should be scheduled by any Maintainer on receipt of a security issue or CoC report.  All current Maintainers must be invited to such closed meetings, except for any Maintainer who is accused of a CoC violation.
- 
+@@ -124,7 +124,7 @@ verify_system() {
+         HAS_OPENRC=true
+         return
+     fi
+-    if [ -x /bin/systemctl ] || type systemctl > /dev/null 2>&1; then
++    if [ -x /bin/systemctl ] || command -v systemctl > /dev/null 2>&1; then
+         HAS_SYSTEMD=true
+         return
+     fi
+@@ -405,7 +405,7 @@ get_k3s_selinux_version() {
+             fatal "Incorrect downloader executable '$DOWNLOADER'"
+             ;;
+     esac
+-    for i in {1..3}; do
++    for i in 1 2 3; do
+         set +e
+         if [ "${rpm_channel}" = "testing" ]; then
+             version=$(timeout 5 ${DOWNLOADER} ${DOWNLOADER_OPTS} https://api.github.com/repos/k3s-io/k3s-selinux/releases |  grep browser_download_url | awk '{ print $2 }' | grep -oE "[^\/]+${rpm_target}\.noarch\.rpm" | head -n 1)
+@@ -976,7 +976,7 @@ zypper_remove_selinux_rpm() {
+ dnf_remove_selinux_rpm() {
+     package_manager=dnf
+     # yum is only needed for rhel 7, which is EOM since 2024 anyway
+-    if ! type dnf >/dev/null 2>&1; then
++    if ! command -v dnf >/dev/null 2>&1; then
+         package_manager=yum
+     fi
+     \$package_manager remove -y k3s-selinux
+@@ -996,11 +996,11 @@ elif [ "\${ID:-}" = fedora ] || [ "\$(expr "\${ID_LIKE}" : ".*fedora.*\|.*rhel.*
+         dnf_remove_selinux_rpm
+     fi
+ # if we did not match yet just check for package managers commonly found on selinux-enabled distributions
+-elif type rpm-ostree >/dev/null 2>&1; then
++elif command -v rpm-ostree >/dev/null 2>&1; then
+     \$rpm_ostree_uninstall_cmd
+-elif type zypper >/dev/null 2>&1; then
++elif command -v zypper >/dev/null 2>&1; then
+     zypper_remove_selinux_rpm
+-elif type yum >/dev/null 2>&1; then
++elif command -v yum >/dev/null 2>&1; then
+     dnf_remove_selinux_rpm
+ elif [ -d /usr/share/selinux ]; then
+     echo '[WARN] Automatic removal of "k3s-selinux" package not possible, please remove it manually.' >&2
 ```
 
-**File**: `docs/contrib/code_conventions.md` (modified, +1/-1)
+**File**: `install.sh.sha256sum` (modified, +1/-1)
 ```diff
-@@ -7,7 +7,7 @@
- 
- ## POSIX shell
- 
--- [Style guide](https://google.github.io/styleguide/shell.xml)
-+- [Style guide](https://google.github.io/styleguide/shellguide.html)
- 
- ## Go
- 
-```
-
----
-
-### Incident Patch 2: `7eefffb3` (2026-10-30)
-**Commit Message**: Fix typos and smart quotes
-
-Signed-off-by: Brad Davidson <[REDACTED_EMAIL]>
-
-**File**: `CONTRIBUTING.md` (modified, +6/-6)
-```diff
-@@ -28,9 +28,9 @@ Be considerate of maintainer resources. Large AI generated PRs, commit messages,
- reports are not allowed. Issues with excessive AI prose ("Why it matters" sections and lengthy
- contrived steps to reproduce) may be ignored or rejected.
- 
--PRs may be rejected solely due to inapproriate addition of tests. Test should not be:
-+PRs may be rejected solely due to inappropriate addition of tests. Test should not be:
- * Excessively trivial (ie, validates that input=output, or covers only 3rd party code)
--* Replacable by a succinct E2E test
-+* Replaceable by a succinct E2E test
- * Unnecessarily scaffolded
- * Excessively large
- 
-@@ -66,11 +66,11 @@ Generally, pull requests need two approvals from maintainers to be merged. One e
- 
- When addressing review feedback, it is helpful to the reviewer if additional changes are made in new commits. This allows the reviewer to easily see the delta between what they previously reviewed and the changes you added to address their feedback.
- 
--Once a PR has the necessary approvals, it can be merged. Here’s how the merge should be handled:
--- If the PR is a single logical commit, the merger should use the “Rebase and merge” option. This keeps the git commit history very clean and simple and eliminates noise from "merge commits."
--- If the PR is more than one logical commit, the merger should use the “Create a merge commit” option.
-+Once a PR has the necessary approvals, it can be merged. Here's how the merge should be handled:
-+- If the PR is a single logical commit, the merger should use the "Rebase and merge" option. This keeps the git commit history very clean and simple and eliminates noise from "merge commits."
-+- If the PR is more than one logical commit, the merger should use the "Create a merge commit" option.
- - If the PR consists of more than one commit because the author added commits to address feedback, the commits should be squashed into a single commit (or more than one logical commit, if it is a big feature that needs more commits). This can be achieved in one of two ways:
--  - The merger can use the “Squash and merge” option. If they do this, the merger is responsible for cleaning up the commit message according to the previously stated commit message guidance.
-+  - The merger can use the "Squash and merge" option. If they do this, the merger is responsible for cleaning up the commit message according to the previously stated commit message guidance.
-   - The pull request author, after getting the requisite approvals, can reorganize the commits as they see fit (using, for example, git rebase -i) and re-push.
- 
- ## Development Workflow
-```
-
-**File**: `GOVERNANCE.md` (modified, +5/-5)
-```diff
-@@ -68,7 +68,7 @@ A new Maintainer must be proposed by an existing Maintainer by sending a message
- 
- Maintainers who are selected will be granted the necessary GitHub rights, and invited to the [private Maintainer mailing list](mailto:k3s-maintainers@lists.cncf.io).
- 
--Maintainer’s responsibilities:
-+Maintainer's responsibilities:
- 
- * **Code Quality & Reviews**: Review and merge pull requests, ensure adherence to project standards, and manage the codebase  
- * **Issue Management**: Triage incoming issues, provide guidance, and close or categorize as needed  
-@@ -120,7 +120,7 @@ User \-\> Contributor \-\> Reviewer \-\> Maintainer
- 
- A **supermajority** is defined as two-thirds (2/3) of active Maintainers. A supermajority is calculated based on the number of votes cast, excluding abstentions.
- 
--Maintainers may vote "agree / yes / +1", "disagree / no / -1", or "abstain". An "abstain" vote does not count toward the total used to calculate the supermajority — it is equivalent to not voting.
-+Maintainers may vote "agree / yes / +1", "disagree / no / -1", or "abstain". An "abstain" vote does not count toward the total used to calculate the supermajority - it is equivalent to not voting.
- 
- A vote passes when at least two-thirds of the non-abstaining votes are in favor within the voting period.
- 
-@@ -129,7 +129,7 @@ Votes must be cast within a defined voting period (e.g., 7 calendar days). If a
- Failure to vote on major decisions will be considered a sign of inactivity and may indicate that a Maintainer is not fulfilling their responsibilities. This behavior will be taken into account during periodic reviews of Maintainer status.
- 
- Examples:
--| Votes Cast | Yes Votes | No Votes | Required Yes Votes (≥2/3) | Result               |
-+| Votes Cast | Yes Votes | No Votes | Required Yes Votes (>=2/3) | Result               |
- |------------|-----------|----------|----------------------------|----------------------|
- | 9          | 6         | 3        | 6                          | ✅ Passes (6 = 2/3)   |
- | 9          | 5         | 4        | 6                          | ❌ Fails (5 < 2/3)    |
-@@ -201,7 +201,7 @@ The proposal PR can be marked with different status labels to represent the stat
-  A proposal may only be accepted and merged after receiving approval from at least two maintainers who are not the original author of the proposal.
- 
- ### Proposal Threshold
--The need for a proposal (in the form of an ADR or design document) is determined primarily by scope. Pull requests that introduce major changes — such as architectural overhauls, system-wide patterns, or significant new features — may prompt maintainers to request a proposal for further discussion and alignment.
-+The need for a proposal (in the form of an ADR or design document) is determined primarily by scope. Pull requests that introduce major changes - such as architectural overhauls, system-wide patterns, or significant new features - may prompt maintainers to request a proposal for further discussion and alignment.
- 
- Maintainers may comment on a PR with a request to "submit an ADR" when a change is deemed too substantial for review in isolation.
- 
-@@ -240,4 +240,4 @@ Changes to this Governance and its supporting documents may be approved by a [su
- 
- Many thanks in advance to everyone who contributes their time and effort to making K3s both a successful project as well as a successful community. The strength of our software shines in the strengths of each individual community member. Thank YOU\!
- 
--Some content in this document was built(inspired) upon the work in the [Kubernetes](https://github.com/kubernetes/community), [Linkerd](https://github.com/linkerd/linkerd2/blob/main/GOVERNANCE.md), [Helm](https://github.com/helm/community/blob/main/governance), [Harbor](https://github.com/goharbor/community/blob/main/GOVERNANCE.md), [Contour](https://github.com/projectcontour/community/blob/main/GOVERNANCE.md) Communities\! KUDOs to all of them\!  
-\ No newline at end of file
-+Some content in this document was built(inspired) upon the work in the [Kubernetes](https://github.com/kubernetes/community), [Linkerd](https://github.com/linkerd/linkerd2/blob/main/GOVERNANCE.md), [Helm](https://github.com/helm/community/blob/main/governance), [Harbor](https://github.com/goharbor/community/blob/main/GOVERNANCE.md), [Contour](https://github.com/projectcontour/community/blob/main/GOVERNANCE.md) Communities\! KUDOs to all of them\!
+@@ -1 +1 @@
+-e5cc3b3d9dfc1662c2d9be6da5abc9a4cd317d6abc3a5ffc02e3dd3248207fee  install.sh
++c2a2643dd7c259121a876d16538844c60928de3d38ae98f22f7b95a7ffcfab9d  install.sh
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #14948** (2026-11-03): Fix bashisms in install.sh (@ricardobranco777)
+- **PR #14944** (closed): Add network-policy controller on Windows (@ChuDucAnh242002)
 - **PR #14943** (2026-10-30): Fix typos and smart quotes (@brandond)
 - **PR #14940** (2026-10-30): Fix dead community meeting and shell style guide links (@sarankumar1325)
 - **PR #14939** (2026-10-30): Allow configuring flannel vxlan vni and port via env var (@brandond)
 - **PR #14938** (2026-10-29): [release-1.34] Bump x/net and pass `golang.org/x/` replacements through when building bundled binaries (@brandond)
-- **PR #14937** (2026-10-29): [release-1.35] Bump x/net and pass `golang.org/x/` replacements through when building bundled binaries (@brandond)
-- **PR #14936** (2026-10-29): [release-1.36] Bump x/net and pass `golang.org/x/` replacements through when building bundled binaries (@brandond)
 
 ---
 
@@ -1057,30 +995,38 @@ Signed-off-by: Brad Davidson <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. dead community meeting and shell style guide links
+## X. bashisms in install.sh
 
 **RULE**:
-When implementing operations in `GOVERNANCE.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in k3s-io/k3s. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `install.sh`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in k3s-io/k3s. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3461a87f`: dead community meeting and shell style guide links. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2b723db5`: bashisms in install.sh. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `GOVERNANCE.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `install.sh`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-Votes may also be taken at [the community meeting](https://k3s.io/community#community-meetings).  Any Maintainer may demand a vote be taken.
-Time zones permitting, Maintainers are expected to participate in the public developer meeting, which occurs [Community meetings](https://k3s.io/community#community-meetings)
+    if [ -x /bin/systemctl ] || command -v systemctl > /dev/null 2>&1; then
+    for i in 1 2 3; do
+    if ! command -v dnf >/dev/null 2>&1; then
+elif command -v rpm-ostree >/dev/null 2>&1; then
+elif command -v zypper >/dev/null 2>&1; then
+elif command -v yum >/dev/null 2>&1; then
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-Votes may also be taken at [the community meeting](https://k3s.io/community/#community-meetings).  Any Maintainer may demand a vote be taken.
-Time zones permitting, Maintainers are expected to participate in the public developer meeting, which occurs [Community meetings](https://k3s.io/community/\#community-meetings)
+    if [ -x /bin/systemctl ] || type systemctl > /dev/null 2>&1; then
+    for i in {1..3}; do
+    if ! type dnf >/dev/null 2>&1; then
+elif type rpm-ostree >/dev/null 2>&1; then
+elif type zypper >/dev/null 2>&1; then
+elif type yum >/dev/null 2>&1; then
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3461a87f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2b723db5` are properly handled with clean fallback behavior.

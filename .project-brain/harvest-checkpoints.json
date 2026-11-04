@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-04T08:28:41.356Z",
+  "last_updated": "2026-11-04T08:35:29.155Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -9591,14 +9591,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-k3s-io-k3s",
-      "content_hash": "374c0f5bfd8ce21161d436d8bc96a001d949476a489fac731e8b274c4f4baa23",
-      "verified_at": "2026-10-31T02:21:24.981Z",
+      "content_hash": "57580d88c284a838d0ad1b1fa83fb53f543308f951f77d5519e2a63f4fbb77d4",
+      "verified_at": "2026-11-04T08:35:09.449Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T02:21:24.981Z"
+      "last_updated": "2026-11-04T08:35:09.449Z"
     },
     "Ataraxy-Labs/sem": {
       "repository": "Ataraxy-Labs/sem",
@@ -17451,14 +17451,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-speridlabs-idol",
-      "content_hash": "d6a086941e54d2fa3a0bbd586fa187814e902650e76a052ec19cdc48e8550c3a",
-      "verified_at": "2026-10-30T22:34:31.585Z",
+      "content_hash": "6d4ba37b9ce02a9f518b07970b75070d8e549606e3eb8a87513c353e65776dad",
+      "verified_at": "2026-11-04T08:35:29.155Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T22:34:31.585Z"
+      "last_updated": "2026-11-04T08:35:29.155Z"
     },
     "meta/docusaurus": {
       "repository": "meta/docusaurus",

@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-04T08:28:41.353Z",
-  "total_cycles_completed": 7159,
-  "total_learnings_persisted": 7159,
-  "total_rules_promoted": 6804,
+  "last_updated": "2026-11-04T08:35:29.152Z",
+  "total_cycles_completed": 7161,
+  "total_learnings_persisted": 7161,
+  "total_rules_promoted": 6807,
   "history": [
-    {
-      "timestamp": "2026-11-03T19:24:11.986Z",
-      "repository": "tw93/Pake",
-      "learningId": "learn-github-tw93-pake",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-03T19:24:15.013Z",
-      "repository": "scrapy/scrapy",
-      "learningId": "learn-github-scrapy-scrapy",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-03T19:24:25.794Z",
       "repository": "volcengine/OpenViking",
@@ -1403,6 +1389,20 @@
       "repository": "NucleoidAI/Nucleoid",
       "learningId": "learn-github-nucleoidai-nucleoid",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T08:35:09.446Z",
+      "repository": "k3s-io/k3s",
+      "learningId": "learn-github-k3s-io-k3s",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T08:35:29.152Z",
+      "repository": "speridlabs/idol",
+      "learningId": "learn-huggingface-speridlabs-idol",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]

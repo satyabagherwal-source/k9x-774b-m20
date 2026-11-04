@@ -4,8 +4,8 @@
     "officialUrl": "https://github.com/rustls/rustls",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-04T02:12:04.456Z",
-    "lastVerified": "2026-11-04T02:12:04.456Z",
+    "lastChecked": "2026-11-04T08:35:06.154Z",
+    "lastVerified": "2026-11-04T08:35:06.154Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-rustls-rustls",
@@ -40,8 +40,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-04T08:28:43.882Z",
-    "lastVerified": "2026-11-04T08:28:43.882Z",
+    "lastChecked": "2026-11-04T08:35:31.684Z",
+    "lastVerified": "2026-11-04T08:35:31.684Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -145,8 +145,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-04T08:02:57.748Z",
-    "lastVerified": "2026-11-04T08:02:57.748Z",
+    "lastChecked": "2026-11-04T08:35:11.179Z",
+    "lastVerified": "2026-11-04T08:35:11.179Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -3790,9 +3790,9 @@
   "ritz078-transform": {
     "name": "transform",
     "officialUrl": "https://github.com/ritz078/transform",
-    "lastChecked": "2026-10-31T05:42:41.059Z",
+    "lastChecked": "2026-11-04T08:35:01.107Z",
     "revisionIdentifier": "ff755793",
-    "lastVerified": "2026-10-31T05:42:41.059Z"
+    "lastVerified": "2026-11-04T08:35:01.107Z"
   },
   "dosco-graphjin": {
     "name": "graphjin",
@@ -5006,9 +5006,9 @@
   "smol-rs-smol": {
     "name": "smol",
     "officialUrl": "https://github.com/smol-rs/smol",
-    "lastChecked": "2026-11-02T15:00:38.058Z",
+    "lastChecked": "2026-11-04T08:34:56.143Z",
     "revisionIdentifier": "41579301",
-    "lastVerified": "2026-11-02T15:00:38.058Z"
+    "lastVerified": "2026-11-04T08:34:56.143Z"
   },
   "hf-bigscience-bloom": {
     "name": "bigscience/bloom",
@@ -5259,9 +5259,9 @@
   "orbitinghail-sqlsync": {
     "name": "sqlsync",
     "officialUrl": "https://github.com/orbitinghail/sqlsync",
-    "lastChecked": "2026-11-03T11:07:36.227Z",
+    "lastChecked": "2026-11-04T08:35:08.609Z",
     "revisionIdentifier": "7dc1af6b",
-    "lastVerified": "2026-11-03T11:07:36.227Z"
+    "lastVerified": "2026-11-04T08:35:08.609Z"
   },
   "async-rs-async-std": {
     "name": "async-std",
@@ -7318,22 +7318,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "k3s-io-k3s": {
-    "name": "k3s",
+    "name": "k3s-io/k3s",
     "officialUrl": "https://github.com/k3s-io/k3s",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-03T12:06:18.583Z",
-    "lastVerified": "2026-11-03T12:06:18.583Z",
+    "lastChecked": "2026-11-04T08:35:07.817Z",
+    "lastVerified": "2026-11-04T08:35:07.817Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-k3s-io-k3s",
-    "contentHash": "374c0f5bfd8ce21161d436d8bc96a001d949476a489fac731e8b274c4f4baa23",
+    "contentHash": "57580d88c284a838d0ad1b1fa83fb53f543308f951f77d5519e2a63f4fbb77d4",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "3461a87f"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "duckdb-duckdb": {
     "name": "duckdb/duckdb",
@@ -12105,12 +12104,12 @@
     "officialUrl": "https://huggingface.co/speridlabs/idol",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-30T22:34:20.300Z",
-    "lastVerified": "2026-10-30T22:34:20.300Z",
+    "lastChecked": "2026-11-04T08:34:58.796Z",
+    "lastVerified": "2026-11-04T08:34:58.796Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-speridlabs-idol",
-    "contentHash": "d6a086941e54d2fa3a0bbd586fa187814e902650e76a052ec19cdc48e8550c3a",
+    "contentHash": "6d4ba37b9ce02a9f518b07970b75070d8e549606e3eb8a87513c353e65776dad",
     "promotedRulesCount": 2,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

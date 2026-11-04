@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-04T08:28:41.273Z",
+  "last_updated": "2026-11-04T08:35:29.070Z",
   "total_verified_learnings": 1205,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -34818,8 +34818,8 @@
       "slug": "k3s-io-k3s",
       "platform": "github",
       "source_url": "https://github.com/k3s-io/k3s",
-      "source_version": "3461a87f",
-      "content_hash": "374c0f5bfd8ce21161d436d8bc96a001d949476a489fac731e8b274c4f4baa23",
+      "source_version": "2b723db5",
+      "content_hash": "57580d88c284a838d0ad1b1fa83fb53f543308f951f77d5519e2a63f4fbb77d4",
       "dossier_path": "07_PROJECT_LEARNING/k3s-io-k3s-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/k3s-io-k3s-learnings.md",
       "promoted_rules": [
@@ -34867,6 +34867,11 @@
           "number": 6015,
           "title": "dead community meeting and shell style guide links",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6781,
+          "title": "bashisms in install.sh",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -34874,7 +34879,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T02:21:24.868Z",
+      "verified_at": "2026-11-04T08:35:09.373Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -160742,7 +160747,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/speridlabs/idol",
       "source_version": "hf-speridlabs-idol",
-      "content_hash": "d6a086941e54d2fa3a0bbd586fa187814e902650e76a052ec19cdc48e8550c3a",
+      "content_hash": "6d4ba37b9ce02a9f518b07970b75070d8e549606e3eb8a87513c353e65776dad",
       "dossier_path": "07_PROJECT_LEARNING/hf-speridlabs-idol-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-speridlabs-idol-learnings.md",
       "promoted_rules": [
@@ -160755,6 +160760,16 @@
           "number": 5924,
           "title": "Gated Dependency Fail-Fast Validation",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6782,
+          "title": "Hierarchical Spatial Decoding for Sparse 3D Data",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6783,
+          "title": "Dual-Encoder Conditioning for Semantic-Perceptual Alignment",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -160762,7 +160777,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T22:34:31.473Z",
+      "verified_at": "2026-11-04T08:35:29.056Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -173689,6 +173704,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-04T08:28:41.260Z"
+    },
+    "rule-6781": {
+      "learning_id": "rule-6781",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6781,
+      "title": "bashisms in install.sh",
+      "source_url": "https://github.com/k3s-io/k3s",
+      "source_version": "2b723db5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T08:35:09.373Z"
+    },
+    "rule-6782": {
+      "learning_id": "rule-6782",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6782,
+      "title": "Hierarchical Spatial Decoding for Sparse 3D Data",
+      "source_url": "https://huggingface.co/speridlabs/idol",
+      "source_version": "hf-speridlabs-idol",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T08:35:29.056Z"
+    },
+    "rule-6783": {
+      "learning_id": "rule-6783",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6783,
+      "title": "Dual-Encoder Conditioning for Semantic-Perceptual Alignment",
+      "source_url": "https://huggingface.co/speridlabs/idol",
+      "source_version": "hf-speridlabs-idol",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T08:35:29.056Z"
     }
   },
   "aliases": {

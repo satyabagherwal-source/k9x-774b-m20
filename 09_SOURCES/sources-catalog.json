@@ -6313,10 +6313,10 @@
     "repository": "k3s-io/k3s",
     "platform": "github",
     "sourceUrl": "https://github.com/k3s-io/k3s",
-    "sourceVersion": "3461a87f",
+    "sourceVersion": "2b723db5",
     "license": "Apache-2.0",
-    "contentHash": "374c0f5bfd8ce21161d436d8bc96a001d949476a489fac731e8b274c4f4baa23",
-    "lastHarvestedAt": "2026-10-31T02:21:24.972Z",
+    "contentHash": "57580d88c284a838d0ad1b1fa83fb53f543308f951f77d5519e2a63f4fbb77d4",
+    "lastHarvestedAt": "2026-11-04T08:35:09.442Z",
     "learningId": "learn-github-k3s-io-k3s"
   },
   "open-source-legal-opencontracts": {
@@ -11605,8 +11605,8 @@
     "sourceUrl": "https://huggingface.co/speridlabs/idol",
     "sourceVersion": "hf-speridlabs-idol",
     "license": "Open-Source",
-    "contentHash": "d6a086941e54d2fa3a0bbd586fa187814e902650e76a052ec19cdc48e8550c3a",
-    "lastHarvestedAt": "2026-10-30T22:34:31.576Z",
+    "contentHash": "6d4ba37b9ce02a9f518b07970b75070d8e549606e3eb8a87513c353e65776dad",
+    "lastHarvestedAt": "2026-11-04T08:35:29.148Z",
     "learningId": "learn-huggingface-speridlabs-idol"
   },
   "krishhgg-insomnia": {

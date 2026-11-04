@@ -7191,3 +7191,5 @@ Every entry in this ledger must capture:
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `a7f0c300` | Multi-dimensional audit evidence | 2026-11-04T08:28:37.003Z |
 | `learn-github-gluesql-gluesql` | `https://github.com/gluesql/gluesql` | `af90d05b` | Multi-dimensional audit evidence | 2026-11-04T08:28:39.006Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `359b34c7` | Multi-dimensional audit evidence | 2026-11-04T08:28:41.350Z |
+| `learn-github-k3s-io-k3s` | `https://github.com/k3s-io/k3s` | `2b723db5` | Multi-dimensional audit evidence | 2026-11-04T08:35:09.442Z |
+| `learn-huggingface-speridlabs-idol` | `https://huggingface.co/speridlabs/idol` | `hf-speridl` | Multi-dimensional audit evidence | 2026-11-04T08:35:29.148Z |
