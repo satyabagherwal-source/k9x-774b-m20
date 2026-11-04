@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-04T10:45:28.355Z",
+  "last_updated": "2026-11-04T11:02:39.405Z",
   "total_verified_learnings": 1206,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -47234,8 +47234,8 @@
       "slug": "pingcap-tidb",
       "platform": "github",
       "source_url": "https://github.com/pingcap/tidb",
-      "source_version": "644e2d55",
-      "content_hash": "72004ae0cea6bedc5f77a0ad3d2032c7f6373d5304467e99d6628f621be0fa83",
+      "source_version": "d85afde3",
+      "content_hash": "fd4e04716be6370d44ed6dfebeab4d3d43845ef233c87d811fe3f2b4627eccf8",
       "dossier_path": "07_PROJECT_LEARNING/pingcap-tidb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pingcap-tidb-learnings.md",
       "promoted_rules": [
@@ -47318,6 +47318,11 @@
           "number": 6544,
           "title": "deps): retain etcd compatibility with otelgrpc",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6823,
+          "title": "executor: use TiFlash joined rows for MPP join RU (#72597)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -47325,7 +47330,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T16:50:42.355Z",
+      "verified_at": "2026-11-04T10:57:36.976Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -58565,8 +58570,8 @@
       "slug": "u-root-u-root",
       "platform": "github",
       "source_url": "https://github.com/u-root/u-root",
-      "source_version": "9daa0a72",
-      "content_hash": "ab63cf9e4f862e4d1b40853e8a5a716fc7cbbb67ebfada12ea1c6da24c2f3b07",
+      "source_version": "5e3bfe39",
+      "content_hash": "77050582d1d6db9528c23e818de93c066ab1e481e6a42b3393683daaac2dad88",
       "dossier_path": "07_PROJECT_LEARNING/u-root-u-root-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/u-root-u-root-learnings.md",
       "promoted_rules": [
@@ -58599,6 +58604,11 @@
           "number": 6173,
           "title": "ulog: use unix.Klogctl to set the console log level",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6825,
+          "title": "boot/grub: fix root search for separate FAT boot partitions",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -58606,7 +58616,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T10:47:13.795Z",
+      "verified_at": "2026-11-04T11:02:29.597Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -61526,8 +61536,8 @@
       "slug": "yugabyte-yugabyte-db",
       "platform": "github",
       "source_url": "https://github.com/yugabyte/yugabyte-db",
-      "source_version": "2ff9bb64",
-      "content_hash": "f41b8be06489b34d2d2a5611709c06fcd078872cf92f02855ee10ce148d27689",
+      "source_version": "c5d0e262",
+      "content_hash": "f395cd0bc584b5275209a56626782467562b394750aca6fd09c09dcbe8360a90",
       "dossier_path": "07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md",
       "promoted_rules": [
@@ -61595,6 +61605,11 @@
           "number": 6535,
           "title": "[#36567] DocDB: Fix ConcurrentIsolationLevelsTest.ConcurrentSnapshotAndSerializa",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6824,
+          "title": "[#36659] YSQL: Fix a use-after-free in PgTxnTest.SelectForUpdateExclusiveRead (#",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -61602,7 +61617,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T16:01:34.077Z",
+      "verified_at": "2026-11-04T10:57:43.366Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -109779,7 +109794,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4",
       "source_version": "hf-nvidia-nvidia-nemotron-3.5-super-vl-120b-a12b-nvfp4",
-      "content_hash": "e13a29cfccb3f5f2ce825c0244e87be499ad04d9471b25e002d96a8969b783f1",
+      "content_hash": "f9510553a6bffcac5fdf301a8a8a3452e61bb72d018594be0591854634d9c8c2",
       "dossier_path": "07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotron-3.5-super-vl-120b-a12b-nvfp4-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotron-3.5-super-vl-120b-a12b-nvfp4-learnings.md",
       "promoted_rules": [
@@ -109797,6 +109812,21 @@
           "number": 3521,
           "title": "Left-Padding Enclosure for Hybrid Autoregressive Prefills",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6826,
+          "title": "Hybrid SSM-Transformer State Management Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6827,
+          "title": "NVFP4 Quantization Kernel Binding Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6828,
+          "title": "Vision-Language Token Alignment Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -109804,7 +109834,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T00:27:31.941Z",
+      "verified_at": "2026-11-04T11:02:39.383Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -174515,6 +174545,90 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-04T10:45:28.323Z"
+    },
+    "rule-6823": {
+      "learning_id": "rule-6823",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6823,
+      "title": "executor: use TiFlash joined rows for MPP join RU (#72597)",
+      "source_url": "https://github.com/pingcap/tidb",
+      "source_version": "d85afde3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T10:57:36.976Z"
+    },
+    "rule-6824": {
+      "learning_id": "rule-6824",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6824,
+      "title": "[#36659] YSQL: Fix a use-after-free in PgTxnTest.SelectForUpdateExclusiveRead (#",
+      "source_url": "https://github.com/yugabyte/yugabyte-db",
+      "source_version": "c5d0e262",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T10:57:43.366Z"
+    },
+    "rule-6825": {
+      "learning_id": "rule-6825",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6825,
+      "title": "boot/grub: fix root search for separate FAT boot partitions",
+      "source_url": "https://github.com/u-root/u-root",
+      "source_version": "5e3bfe39",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T11:02:29.597Z"
+    },
+    "rule-6826": {
+      "learning_id": "rule-6826",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6826,
+      "title": "Hybrid SSM-Transformer State Management Invariant",
+      "source_url": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4",
+      "source_version": "hf-nvidia-nvidia-nemotron-3.5-super-vl-120b-a12b-nvfp4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T11:02:39.383Z"
+    },
+    "rule-6827": {
+      "learning_id": "rule-6827",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6827,
+      "title": "NVFP4 Quantization Kernel Binding Invariant",
+      "source_url": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4",
+      "source_version": "hf-nvidia-nvidia-nemotron-3.5-super-vl-120b-a12b-nvfp4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T11:02:39.383Z"
+    },
+    "rule-6828": {
+      "learning_id": "rule-6828",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6828,
+      "title": "Vision-Language Token Alignment Invariant",
+      "source_url": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4",
+      "source_version": "hf-nvidia-nvidia-nemotron-3.5-super-vl-120b-a12b-nvfp4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T11:02:39.383Z"
     }
   },
   "aliases": {

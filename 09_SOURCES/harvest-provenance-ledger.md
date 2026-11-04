@@ -7230,3 +7230,7 @@ Every entry in this ledger must capture:
 | `learn-github-software-mansion-react-native-gesture-handler` | `https://github.com/software-mansion/react-native-gesture-handler` | `754229cb` | Multi-dimensional audit evidence | 2026-11-04T10:45:25.116Z |
 | `learn-github-emberstack-kubernetes-reflector` | `https://github.com/emberstack/kubernetes-reflector` | `84367eb5` | Multi-dimensional audit evidence | 2026-11-04T10:45:26.334Z |
 | `learn-huggingface-comfy-org-z_image_turbo` | `https://huggingface.co/Comfy-Org/z_image_turbo` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-11-04T10:45:28.446Z |
+| `learn-github-pingcap-tidb` | `https://github.com/pingcap/tidb` | `d85afde3` | Multi-dimensional audit evidence | 2026-11-04T10:57:37.087Z |
+| `learn-github-yugabyte-yugabyte-db` | `https://github.com/yugabyte/yugabyte-db` | `c5d0e262` | Multi-dimensional audit evidence | 2026-11-04T10:57:43.472Z |
+| `learn-github-u-root-u-root` | `https://github.com/u-root/u-root` | `5e3bfe39` | Multi-dimensional audit evidence | 2026-11-04T11:02:29.708Z |
+| `learn-huggingface-nvidia-nvidia-nemotron-3-5-super-vl-120b-a12b-nvfp4` | `https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4` | `hf-nvidia-` | Multi-dimensional audit evidence | 2026-11-04T11:02:39.491Z |

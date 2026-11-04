@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-04T10:45:28.457Z",
+  "last_updated": "2026-11-04T11:02:39.501Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -8106,14 +8106,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-yugabyte-yugabyte-db",
-      "content_hash": "f41b8be06489b34d2d2a5611709c06fcd078872cf92f02855ee10ce148d27689",
-      "verified_at": "2026-11-03T16:01:34.149Z",
+      "content_hash": "f395cd0bc584b5275209a56626782467562b394750aca6fd09c09dcbe8360a90",
+      "verified_at": "2026-11-04T10:57:43.481Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T16:01:34.149Z"
+      "last_updated": "2026-11-04T10:57:43.481Z"
     },
     "React95/React95": {
       "repository": "React95/React95",
@@ -9186,14 +9186,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-u-root-u-root",
-      "content_hash": "ab63cf9e4f862e4d1b40853e8a5a716fc7cbbb67ebfada12ea1c6da24c2f3b07",
-      "verified_at": "2026-10-31T10:47:13.907Z",
+      "content_hash": "77050582d1d6db9528c23e818de93c066ab1e481e6a42b3393683daaac2dad88",
+      "verified_at": "2026-11-04T11:02:29.716Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T10:47:13.907Z"
+      "last_updated": "2026-11-04T11:02:29.716Z"
     },
     "shoutem/ui": {
       "repository": "shoutem/ui",
@@ -10701,14 +10701,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pingcap-tidb",
-      "content_hash": "72004ae0cea6bedc5f77a0ad3d2032c7f6373d5304467e99d6628f621be0fa83",
-      "verified_at": "2026-11-03T16:50:42.470Z",
+      "content_hash": "fd4e04716be6370d44ed6dfebeab4d3d43845ef233c87d811fe3f2b4627eccf8",
+      "verified_at": "2026-11-04T10:57:37.095Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T16:50:42.470Z"
+      "last_updated": "2026-11-04T10:57:37.095Z"
     },
     "neondatabase/neon": {
       "repository": "neondatabase/neon",
@@ -12441,14 +12441,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-nvidia-nvidia-nemotron-3-5-super-vl-120b-a12b-nvfp4",
-      "content_hash": "e13a29cfccb3f5f2ce825c0244e87be499ad04d9471b25e002d96a8969b783f1",
-      "verified_at": "2026-10-31T00:27:32.091Z",
+      "content_hash": "f9510553a6bffcac5fdf301a8a8a3452e61bb72d018594be0591854634d9c8c2",
+      "verified_at": "2026-11-04T11:02:39.500Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T00:27:32.091Z"
+      "last_updated": "2026-11-04T11:02:39.500Z"
     },
     "SvenTiigi/WhatsNewKit": {
       "repository": "SvenTiigi/WhatsNewKit",

@@ -5323,10 +5323,10 @@
     "repository": "yugabyte/yugabyte-db",
     "platform": "github",
     "sourceUrl": "https://github.com/yugabyte/yugabyte-db",
-    "sourceVersion": "2ff9bb64",
+    "sourceVersion": "c5d0e262",
     "license": "NOASSERTION",
-    "contentHash": "f41b8be06489b34d2d2a5611709c06fcd078872cf92f02855ee10ce148d27689",
-    "lastHarvestedAt": "2026-11-03T16:01:34.143Z",
+    "contentHash": "f395cd0bc584b5275209a56626782467562b394750aca6fd09c09dcbe8360a90",
+    "lastHarvestedAt": "2026-11-04T10:57:43.472Z",
     "learningId": "learn-github-yugabyte-yugabyte-db"
   },
   "react95-react95": {
@@ -6043,10 +6043,10 @@
     "repository": "u-root/u-root",
     "platform": "github",
     "sourceUrl": "https://github.com/u-root/u-root",
-    "sourceVersion": "9daa0a72",
+    "sourceVersion": "5e3bfe39",
     "license": "BSD-3-Clause",
-    "contentHash": "ab63cf9e4f862e4d1b40853e8a5a716fc7cbbb67ebfada12ea1c6da24c2f3b07",
-    "lastHarvestedAt": "2026-10-31T10:47:13.898Z",
+    "contentHash": "77050582d1d6db9528c23e818de93c066ab1e481e6a42b3393683daaac2dad88",
+    "lastHarvestedAt": "2026-11-04T11:02:29.708Z",
     "learningId": "learn-github-u-root-u-root"
   },
   "shoutem-ui": {
@@ -7103,10 +7103,10 @@
     "repository": "pingcap/tidb",
     "platform": "github",
     "sourceUrl": "https://github.com/pingcap/tidb",
-    "sourceVersion": "644e2d55",
+    "sourceVersion": "d85afde3",
     "license": "Apache-2.0",
-    "contentHash": "72004ae0cea6bedc5f77a0ad3d2032c7f6373d5304467e99d6628f621be0fa83",
-    "lastHarvestedAt": "2026-11-03T16:50:42.461Z",
+    "contentHash": "fd4e04716be6370d44ed6dfebeab4d3d43845ef233c87d811fe3f2b4627eccf8",
+    "lastHarvestedAt": "2026-11-04T10:57:37.087Z",
     "learningId": "learn-github-pingcap-tidb"
   },
   "neondatabase-neon": {
@@ -8275,8 +8275,8 @@
     "sourceUrl": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4",
     "sourceVersion": "hf-nvidia-nvidia-nemotron-3.5-super-vl-120b-a12b-nvfp4",
     "license": "Open-Source",
-    "contentHash": "e13a29cfccb3f5f2ce825c0244e87be499ad04d9471b25e002d96a8969b783f1",
-    "lastHarvestedAt": "2026-10-31T00:27:32.082Z",
+    "contentHash": "f9510553a6bffcac5fdf301a8a8a3452e61bb72d018594be0591854634d9c8c2",
+    "lastHarvestedAt": "2026-11-04T11:02:39.491Z",
     "learningId": "learn-huggingface-nvidia-nvidia-nemotron-3-5-super-vl-120b-a12b-nvfp4"
   },
   "sventiigi-whatsnewkit": {

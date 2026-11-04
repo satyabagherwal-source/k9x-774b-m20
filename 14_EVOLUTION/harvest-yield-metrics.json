@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-04T10:45:28.452Z",
-  "total_cycles_completed": 7198,
-  "total_learnings_persisted": 7198,
-  "total_rules_promoted": 6849,
+  "last_updated": "2026-11-04T11:02:39.496Z",
+  "total_cycles_completed": 7202,
+  "total_learnings_persisted": 7202,
+  "total_rules_promoted": 6855,
   "history": [
-    {
-      "timestamp": "2026-11-03T21:58:03.907Z",
-      "repository": "sharkdp/bat",
-      "learningId": "learn-github-sharkdp-bat",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-03T21:58:08.843Z",
-      "repository": "tauri-apps/tauri",
-      "learningId": "learn-github-tauri-apps-tauri",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-03T21:58:11.911Z",
-      "repository": "okteto/okteto",
-      "learningId": "learn-github-okteto-okteto",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-03T21:58:12.707Z",
-      "repository": "projectdiscovery/nuclei",
-      "learningId": "learn-github-projectdiscovery-nuclei",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-03T22:06:36.601Z",
       "repository": "fb55/htmlparser2",
@@ -1403,6 +1375,34 @@
       "repository": "Comfy-Org/Z-Image-Turbo",
       "learningId": "learn-huggingface-comfy-org-z_image_turbo",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T10:57:37.092Z",
+      "repository": "pingcap/tidb",
+      "learningId": "learn-github-pingcap-tidb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T10:57:43.477Z",
+      "repository": "yugabyte/yugabyte-db",
+      "learningId": "learn-github-yugabyte-yugabyte-db",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T11:02:29.713Z",
+      "repository": "u-root/u-root",
+      "learningId": "learn-github-u-root-u-root",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T11:02:39.496Z",
+      "repository": "nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4",
+      "learningId": "learn-huggingface-nvidia-nvidia-nemotron-3-5-super-vl-120b-a12b-nvfp4",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

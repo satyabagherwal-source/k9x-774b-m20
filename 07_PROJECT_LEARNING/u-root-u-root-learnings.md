@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/u-root-u-root-learnings.md`  
 > **Source**: github ([https://github.com/u-root/u-root](https://github.com/u-root/u-root))  
-> **Source Version**: `9daa0a72`  
+> **Source Version**: `5e3bfe39`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T10:47:13.209Z  
+> **Timestamp**: 2026-11-04T11:02:28.945Z  
 > **Learning ID**: `learn-github-u-root-u-root`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/u-root-u-root-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/u-root/u-root](https://github.com/u-root/u-root))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T10:47:13.199Z  
+> **Harvest Timestamp**: 2026-11-04T10:57:27.445Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A fully Go userland with Linux bootloaders! u-root can create a one-binary root file system (initramfs) containing a busybox-like set of tools written in Go.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 3084 stars
+- **Stars / Engagement**: 3086 stars
 
 ---
 
@@ -1087,11 +1087,13 @@ func main() {
 //	–L: Print the line number of the first differing byte.
 //	–s: Print nothing for differing files, but set the exit status.
 //
-// What is an error, what goes on stderr, and what goes on stdout in cmp
-// is fairly ad-hoc, but go something like this:
+// Exit status, as POSIX specifies it: 0 if the files are the same, 1 if they
+// differ (including one being a prefix of the other), 2 for any trouble.
+// What goes where:
 // invocation error: unparseable integer: error return from cmp()
-// IO error, file too small: output on stderr, error return from cmp()
-// Files are different: print difference info on stdout, no error return
+// IO error: output on stderr, error return from cmp()
+// Files are different: difference info on stdout (none with -s), ErrDiffer
+// One file is a prefix of the other: "cmp: EOF on FILE" on stderr, ErrDiffer
 // Files are same: no output, no error
 package main
 
@@ -1184,6 +1186,7 @@ func cmp(stdout, stderr io.Writer, long, line, silent bool, args ...string) erro
 	}
 
 	lineno, charno := int64(1), int64(1)
+	differ := false
 
 	for {
 		var b [2]byte
@@ -1192,31 +1195,42 @@ func cmp(stdout, stderr io.Writer, long, line, silent bool, args ...string) erro
 
 		if err1 != nil || err2 != nil {
 			if err1 == io.EOF && err2 == io.EOF {
+				if differ {
+					return ErrDiffer
+				}
 				return nil
 			}
-			if err1 != nil {
-				fmt.Fprintf(stderr, "%s:%v", args[0], err1)
-				return err1
+			for i, err := range []error{err1, err2} {
+				if err != nil && err != io.EOF {
+					fmt.Fprintf(stderr, "%s:%v", args[i], err)
+					return err
+				}
 			}
-			if err2 != nil {
-				fmt.Fprintf(stderr, "%s:%v", args[1], err2)
-				return err2
+			// One file is a prefix of the other: a difference, not trouble.
+			short := args[0]
+			if err2 == io.EOF {
+				short = args[1]
 			}
+			if !silent {
+				fmt.Fprintf(stderr, "cmp: EOF on %s\n", short)
+			}
+			return ErrDiffer
 		}
 
 		b1, b2 := b[0], b[1]
 		if b1 != b2 {
+			differ = true
 			if silent {
-				return nil
+				return ErrDiffer
 			}
 			if line {
-				fmt.Fprintf(stdout, "%s %s: char %d line %d", args[0], args[1], charno, lineno)
+				fmt.Fprintf(stdout, "%s %s: char %d line %d\n", args[0], args[1], charno, lineno)
 				return ErrDiffer
 			}
 			if long {
 				fmt.Fprintf(stdout, "%8d %#.2o %#.2o\n", charno, b1, b2)
 			} else {
-				fmt.Fprintf(stdout, "%s %s: char %d", args[0], args[1], charno)
+				fmt.Fprintf(stdout, "%s %s: char %d\n", args[0], args[1], charno)
 				return ErrDiffer
 			}
 		}
@@ -1227,12 +1241,20 @@ func cmp(stdout, stderr io.Writer, long, line, silent bool, args ...string) erro
 	}
 }
 
-// cmp is defined to fail with exit code 2
+// exitCode is the exit status for cmp's result: 0 same, 1 different, 2 trouble.
+func exitCode(err error) int {
+	switch {
+	case err == nil:
+		return 0
+	case errors.Is(err, ErrDiffer):
+		return 1
+	}
+	return 2
+}
+
 func main() {
 	flag.Parse()
-	if err := cmp(os.Stdout, os.Stderr, *long, *line, *silent, flag.Args()...); err != nil {
-		os.Exit(2)
-	}
+	os.Exit(exitCode(cmp(os.Stdout, os.Stderr, *long, *line, *silent, flag.Args()...)))
 }
 
 ```
@@ -1264,72 +1286,177 @@ func main() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9daa0a72` (2026-10-29)
-**Commit Message**: ulog: use unix.Klogctl to set the console log level
+### Incident Patch 1: `5e3bfe39` (2026-10-29)
+**Commit Message**: boot/grub: fix root search for separate FAT boot partitions
 
-Use the Klogctl function defined in the golang.org/x/sys/unix package,
-as is already done in ClearLog, instead of calling the syslog(2)
-syscall directly.
+Match filesystem UUIDs case-insensitively so uppercase FAT UUIDs
+from GRUB match the lowercase IDs detected by u-root.
 
-Signed-off-by: Tobias Klauser <[REDACTED_EMAIL]>
+Parse --no-floppy as a boolean and preserve values when normalizing
+GRUB hint flags. Otherwise flag parsing can consume the search
+mode or UUID and leave image paths rooted on the config partition.
 
-**File**: `pkg/ulog/klog_linux.go` (modified, +4/-1)
+Add regression tests with configs on p3 and kernel/initramfs files
+on p2 for NVMe and eMMC-style devices.
+
+Tests: go test ./pkg/boot/grub ./pkg/mount/block ./pkg/boot -count=1
+
+Signed-off-by: Jono Powell <[REDACTED_EMAIL]>
+Co-Authored-By: Claude Code <[REDACTED_EMAIL]>
+
+**File**: `pkg/boot/grub/config_test.go` (modified, +87/-0)
 ```diff
-@@ -82,7 +82,10 @@ const (
- // After this call, only messages with a level value lower than the one
- // specified will be printed to console by the kernel.
- func (k *KLog) SetConsoleLogLevel(level KLogLevel) error {
--	if _, _, err := unix.Syscall(unix.SYS_SYSLOG, unix.SYSLOG_ACTION_CONSOLE_LEVEL, 0, uintptr(level)); err != 0 {
-+	// The syslog(2) "len" argument carries the console level for this
-+	// action; Klogctl passes len(buf) as that argument, so size buf
-+	// accordingly rather than actually writing into it.
-+	if _, err := unix.Klogctl(unix.SYSLOG_ACTION_CONSOLE_LEVEL, make([]byte, level)); err != nil {
- 		return fmt.Errorf("could not set syslog level to %d: %w", level, err)
- 	}
- 	return nil
-```
-
----
-
-### Incident Patch 2: `7796d399` (2026-10-29)
-**Commit Message**: rush: use unix.IoctlSetPointerInt
-
-Use the IoctlSetPointerInt function defined in the golang.org/x/sys/unix
-package instead of locally duplicating it.
-
-Signed-off-by: Tobias Klauser <[REDACTED_EMAIL]>
-
-**File**: `cmds/exp/rush/tty_linux.go` (modified, +2/-4)
-```diff
-@@ -11,7 +11,6 @@ import (
- 	"log"
- 	"os"
- 	"os/signal"
--	"unsafe"
+@@ -14,9 +14,11 @@ import (
+ 	"strings"
+ 	"testing"
  
- 	"golang.org/x/sys/unix"
++	"github.com/u-root/u-root/pkg/boot"
+ 	"github.com/u-root/u-root/pkg/boot/boottest"
+ 	"github.com/u-root/u-root/pkg/mount"
+ 	"github.com/u-root/u-root/pkg/mount/block"
++	"github.com/u-root/uio/uio"
  )
-@@ -55,9 +54,8 @@ func tty() {
- func foreground() {
- 	// Place process group in foreground.
- 	if ttypgrp != 0 {
--		_, _, errno := unix.RawSyscall(unix.SYS_IOCTL, ttyf.Fd(), uintptr(unix.TIOCSPGRP), uintptr(unsafe.Pointer(&ttypgrp)))
--		if errno != 0 {
--			log.Printf("rush pid %v: Can't set foreground to %v: %v", os.Getpid(), ttypgrp, errno)
-+		if err := unix.IoctlSetPointerInt(int(ttyf.Fd()), unix.TIOCSPGRP, ttypgrp); err != nil {
-+			log.Printf("rush pid %v: Can't set foreground to %v: %v", os.Getpid(), ttypgrp, err)
- 		}
+ 
+ // fakeDevices returns a list of fake block devices and a pool of mount points.
+@@ -110,6 +112,91 @@ func TestConfigs(t *testing.T) {
  	}
  }
+ 
++func TestSearchSeparateFATBootPartition(t *testing.T) {
++	for _, device := range []struct {
++		name string
++		uuid string
++	}{
++		{name: "nvme0n1", uuid: "a1e8-94da"},
++		{name: "mmcblk0", uuid: "6cfc-948e"},
++	} {
++		t.Run(device.name, func(t *testing.T) {
++			for _, tt := range []struct {
++				name   string
++				search string
++			}{
++				{name: "lowercase UUID", search: "search --fs-uuid --set=root " + device.uuid},
++				{name: "uppercase UUID", search: "search --fs-uuid --set=root " + strings.ToUpper(device.uuid)},
++				{name: "generated search", search: "search --no-floppy --fs-uuid --set=root " + strings.ToUpper(device.uuid)},
++				{name: "generated search with hints", search: "search --no-floppy --fs-uuid --set=root --hint-bios=hd0,gpt2 --hint-efi=hd0,gpt2 --hint-baremetal=ahci0,gpt2 " + strings.ToUpper(device.uuid)},
++				{name: "lowercase UUID with hints", search: "search --no-floppy --fs-uuid --set=root --hint-bios=hd0,gpt2 --hint-efi=hd0,gpt2 --hint-baremetal=ahci0,gpt2 " + device.uuid},
++				{name: "file search with no-floppy", search: "search --no-floppy --file --set=root /vmlinuz-linux"},
++			} {
++				t.Run(tt.name, func(t *testing.T) {
++					rootDir := filepath.Join(t.TempDir(), "p3")
++					bootDir := filepath.Join(t.TempDir(), "p2")
++					configDir := filepath.Join(rootDir, "boot", "grub")
++					for _, dir := range []string{configDir, bootDir} {
++						if err := os.MkdirAll(dir, 0o755); err != nil {
++							t.Fatal(err)
++						}
++					}
++					for name, contents := range map[string]string{
++						"vmlinuz-linux":       "test kernel on p2",
++						"initramfs-linux.img": "test initramfs on p2",
++					} {
++						if err := os.WriteFile(filepath.Join(bootDir, name), []byte(contents), 0o644); err != nil {
++							t.Fatal(err)
++						}
++					}
++					config := "menuentry 'test' {\nset root='hd0,gpt2'\n" + tt.search + "\nlinux /vmlinuz-linux\ninitrd /initramfs-linux.img\n}\n"
++					if err := os.WriteFile(filepath.Join(configDir, "grub.cfg"), []byte(config), 0o644); err != nil {
++						t.Fatal(err)
++					}
++
++					devices := block.BlockDevices{
++						&block.BlockDev{Name: device.name + "p2", FsUUID: device.uuid, FSType: "vfat"},
++						&block.BlockDev{Name: device.name + "p3", FsUUID: "test-root-uuid", FSType: "ext4"},
++					}
++					mountPool := &mount.Pool{}
++					mountPool.Add(
++						&mount.MountPoint{Path: bootDir, Device: devices[0].DevicePath(), FSType: "vfat"},
++						&mount.MountPoint{Path: rootDir, Device: devices[1].DevicePath(), FSType: "ext4"},
++					)
++					images, err := ParseLocalConfig(context.Background(), rootDir, devices, mountPool)
++					if err != nil {
++						t.Fatal(err)
++					}
++					if len(images) != 1 {
++						t.Fatalf("Got %d images, want 1", len(images))
++					}
++					image, ok := images[0].(*boot.LinuxImage)
++					if !ok {
++						t.Fatalf("Got image type %T, want *boot.LinuxImage", images[0])
++					}
++					for _, file := range []struct {
++						name   string
++						reader io.ReaderAt
++						want   string
++					}{
++						{name: "kernel", reader: image.Kernel, want: "test kernel on p2"},
++						{name: "initramfs", reader: image.Initrd, want: "test initramfs on p2"},
++					} {
++						got, err := uio.ReadAll(file.reader)
++						if err != nil {
++							t.Errorf("Failed to read %s from p2: %v", file.name, err)
++							continue
++						}
++						if string(got) != file.want {
++							t.Errorf("Read %s = %q, want %q", file.name, got, file.want)
++						}
++					}
++				})
++			}
++		})
++	}
++}
++
+ func FuzzParseGrubConfig(f *testing.F) {
+ 	baseDir := f.TempDir()
+ 
+```
+
+**File**: `pkg/boot/grub/grub.go` (modified, +5/-1)
+```diff
+@@ -429,7 +429,7 @@ func (c *parser) append(ctx context.Context, config string) error {
+ 			fs.BoolVar(searchFile, "f", false, "")
+ 			setVar := fs.String("set", "root", "")
+ 			// Ignored flags
+-			fs.String("no-floppy", "", "ignored")
++			fs.Bool("no-floppy", false, "ignored")
+ 			fs.String("hint", "", "ignored")
+ 			// Everything that begins with "hint" is ignored.
+ 			// This was slightly cleaner with pflag, but, at the same time,
+@@ -440,7 +440,11 @@ func (c *parser) append(ctx context.Context, config string) error {
+ 			// about an extra loop iterator.
+ 			for i := range kv {
+ 				if strings.HasPrefix(kv[i], "--hint") {
++					_, value, hasValue := strings.Cut(kv[i], "=")
+ 					kv[i] = "--hint"
++					if hasValue {
++						kv[i] += "=" + value
++					}
+ 				}
+ 			}
+ 
+```
+
+**File**: `pkg/mount/block/blockdev_linux.go` (modified, +1/-1)
+```diff
+@@ -463,7 +463,7 @@ func (b BlockDevices) FilterNames(names ...string) BlockDevices {
+ func (b BlockDevices) FilterFSUUID(fsuuid string) BlockDevices {
+ 	partitions := make(BlockDevices, 0)
+ 	for _, device := range b {
+-		if device.FsUUID == fsuuid {
++		if strings.EqualFold(device.FsUUID, fsuuid) {
+ 			partitions = append(partitions, device)
+ 		}
+ 	}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3819** (closed): build(deps): bump postcss-selector-parser from 6.0.13 to 6.1.5 in /website (@dependabot[bot])
+- **PR #3818** (2026-11-03): cmds/core/cmp: exit 1 when the files differ, as documented (@minjcore)
+- **PR #3817** (2026-11-03): boot/grub: fix searches for separate FAT boot partitions (@loearthorbit)
 - **PR #3816** (2026-10-31): Use more `golang.org/x/sys/unix` syscall wrappers (@tklauser)
+- **PR #3814** (2026-11-03): pkg/boot: add arm kexec support (@alanhc)
 - **PR #3813** (2026-10-27): pkg/boot/kexec: honour #address-cells and #size-cells in the FDT memory map (@alanhc)
-- **PR #3810** (2026-10-27): chmod: ignore symlinks met during recursive traversal (@alhudz)
-- **PR #3806** (2026-10-22): pkg/fdsrv: fix FD leaks, double-close, client DoS, and use context.Context (@brho)
-- **PR #3805** (2026-10-27): bootcmd: show the menu again when the shell exits (@alanhc)
-- **PR #3804** (closed): build(deps): bump markdown-it from 12.3.2 to 14.3.3 in /website (@dependabot[bot])
 
 ---
 
@@ -1349,31 +1476,50 @@ Signed-off-by: Tobias Klauser <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ulog: use unix.Klogctl to set the console log level
+## X. boot/grub: fix root search for separate FAT boot partitions
 
 **RULE**:
-When implementing operations in `pkg/ulog/klog_linux.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in u-root/u-root. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/boot/grub/config_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in u-root/u-root. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9daa0a72`: ulog: use unix.Klogctl to set the console log level. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5e3bfe39`: boot/grub: fix root search for separate FAT boot partitions. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/ulog/klog_linux.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/boot/grub/config_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	// The syslog(2) "len" argument carries the console level for this
-	// action; Klogctl passes len(buf) as that argument, so size buf
-	// accordingly rather than actually writing into it.
-	if _, err := unix.Klogctl(unix.SYSLOG_ACTION_CONSOLE_LEVEL, make([]byte, level)); err != nil {
+	"github.com/u-root/u-root/pkg/boot"
+	"github.com/u-root/uio/uio"
+func TestSearchSeparateFATBootPartition(t *testing.T) {
+	for _, device := range []struct {
+		name string
+		uuid string
+	}{
+		{name: "nvme0n1", uuid: "a1e8-94da"},
+		{name: "mmcblk0", uuid: "6cfc-948e"},
+	} {
+		t.Run(device.name, func(t *testing.T) {
+			for _, tt := range []struct {
+				name   string
+				search string
+			}{
+				{name: "lowercase UUID", search: "search --fs-uuid --set=root " + device.uuid},
+				{name: "uppercase UUID", search: "search --fs-uuid --set=root " + strings.ToUpper(device.uuid)},
+				{name: "generated search", search: "search --no-floppy --fs-uuid --set=root " + strings.ToUpper(device.uuid)},
+				{name: "generated search with hints", search: "search --no-floppy --fs-uuid --set=root --hint-bios=hd0,gpt2 --hint-efi=hd0,gpt2 --hint-baremetal=ahci0,gpt2 " + strings.ToUpper(device.uuid)},
+				{name: "lowercase UUID with hints", search: "search --no-floppy --fs-uuid --set=root --hint-bios=hd0,gpt2 --hint-efi=hd0,gpt2 --hint-baremetal=ahci0,gpt2 " + device.uuid},
+				{name: "file search with no-floppy", search: "search --no-floppy --file --set=root /vmlinuz-linux"},
+			} {
+				t.Run(tt.name, func(t 
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	if _, _, err := unix.Syscall(unix.SYS_SYSLOG, unix.SYSLOG_ACTION_CONSOLE_LEVEL, 0, uintptr(level)); err != 0 {
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9daa0a72` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5e3bfe39` are properly handled with clean fallback behavior.

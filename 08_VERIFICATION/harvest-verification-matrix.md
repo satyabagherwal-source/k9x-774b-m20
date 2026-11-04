@@ -7221,3 +7221,7 @@
 | `CYCLE-20261104-QB5L` | `2026-11-04T10:45:25.113Z` | `software-mansion/react-native-gesture-handler` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6819` | Yes (`5edd4089...`) |
 | `CYCLE-20261104-QC3E` | `2026-11-04T10:45:26.330Z` | `emberstack/kubernetes-reflector` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6820` | Yes (`1efdf81b...`) |
 | `CYCLE-20261104-QDQ2` | `2026-11-04T10:45:28.442Z` | `Comfy-Org/Z-Image-Turbo` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6821, Rule 6822` | Yes (`c0720f1e...`) |
+| `CYCLE-20261104-5ZY3` | `2026-11-04T10:57:37.083Z` | `pingcap/tidb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6823` | Yes (`fd4e0471...`) |
+| `CYCLE-20261104-64VG` | `2026-11-04T10:57:43.468Z` | `yugabyte/yugabyte-db` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6824` | Yes (`f395cd0b...`) |
+| `CYCLE-20261104-C9QG` | `2026-11-04T11:02:29.704Z` | `u-root/u-root` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6825` | Yes (`77050582...`) |
+| `CYCLE-20261104-CHA7` | `2026-11-04T11:02:39.487Z` | `nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6826, Rule 6827, Rule 6828` | Yes (`f9510553...`) |
