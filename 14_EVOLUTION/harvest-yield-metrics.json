@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-04T22:45:38.968Z",
-  "total_cycles_completed": 7358,
-  "total_learnings_persisted": 7358,
-  "total_rules_promoted": 7053,
+  "last_updated": "2026-11-04T22:52:29.036Z",
+  "total_cycles_completed": 7361,
+  "total_learnings_persisted": 7361,
+  "total_rules_promoted": 7055,
   "history": [
-    {
-      "timestamp": "2026-11-04T08:28:41.353Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T08:35:09.446Z",
-      "repository": "k3s-io/k3s",
-      "learningId": "learn-github-k3s-io-k3s",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T08:35:29.152Z",
-      "repository": "speridlabs/idol",
-      "learningId": "learn-huggingface-speridlabs-idol",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-04T08:47:17.699Z",
       "repository": "prometheus/prometheus",
@@ -1403,6 +1382,27 @@
       "repository": "nvidia/Nemotron-3-Diarization",
       "learningId": "learn-huggingface-nvidia-nemotron-3-diarization",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T22:52:23.686Z",
+      "repository": "Lightricks/LTX-2.5",
+      "learningId": "learn-huggingface-lightricks-ltx-2-5",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T22:52:26.104Z",
+      "repository": "meta/folly",
+      "learningId": "learn-github-meta-folly",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T22:52:29.036Z",
+      "repository": "tw93/Mole",
+      "learningId": "learn-github-tw93-mole",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

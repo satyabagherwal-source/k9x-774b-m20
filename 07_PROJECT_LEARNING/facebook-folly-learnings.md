@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/facebook-folly-learnings.md`  
 > **Source**: github ([https://github.com/facebook/folly](https://github.com/facebook/folly))  
-> **Source Version**: `07758a25`  
+> **Source Version**: `ee8130ad`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T18:47:40.311Z  
+> **Timestamp**: 2026-11-04T22:52:25.417Z  
 > **Learning ID**: `learn-github-meta-folly`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/facebook-folly-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/facebook/folly](https://github.com/facebook/folly))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T18:47:40.065Z  
+> **Harvest Timestamp**: 2026-11-04T22:52:25.411Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: An open-source C++ library developed and used at Facebook.
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 30557 stars
+- **Stars / Engagement**: 30555 stars
 
 ---
 
@@ -1093,10 +1093,10 @@ ConcurrentLazy<std::remove_cvref_t<Func>> concurrent_lazy(Func&& func) {
 #include <cmath>
 #include <memory>
 #include <mutex>
+#include <random>
 #include <type_traits>
 #include <vector>
 
-#include <boost/random.hpp>
 #include <glog/logging.h>
 
 #include <folly/ConstexprMath.h>
@@ -1295,8 +1295,9 @@ class SkipListRandomHeight {
   }
 
   static double randomProb() {
-    static ThreadLocal<boost::lagged_fibonacci2281> rng_;
-    return (*rng_)();
+    static ThreadLocal<std::mt19937_64> rng_;
+    // The top 53 bits scaled by 2^-53 give a uniform double in [0, 1).
+    return static_cast<double>((*rng_)() >> 11) * 0x1.0p-53;
   }
 
   double lookupTable_[kMaxHeight];
@@ -1401,12 +1402,7 @@ class NodeRecycler<
   explicit NodeRecycler(const NodeAlloc& alloc) : alloc_(alloc) {}
 
   void addRef() {}
-  void releaseRef() {}
-
-  void add(NodeType* /* node */) {}
-
-  NodeAlloc& alloc() { return alloc_; }
-
+  void relea
 ```
 
 ### Core Architecture Module: `folly/ConcurrentSkipList.h`
@@ -2368,493 +2364,299 @@ class WriteFileAtomicOptions {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2dd4d58c` (2026-11-02)
-**Commit Message**: Catch OutOfMemory in IoUringBackend::isAvailable
+### Incident Patch 1: `2a2a2eb7` (2026-11-04)
+**Commit Message**: hazptr: add benchmark probes for holder/array acquire-release
 
 Summary:
-`IoUringBackend::isAvailable()` probes ring setup and catches `NotAvailable`, but since D122351343 transient `ENOMEM` (exhausted `RLIMIT_MEMLOCK`) throws `OutOfMemory`, which is deliberately not a `NotAvailable`. The exception escapes the `call_once` probe and aborts the process, turning tests that gate on `isAvailable()` (e.g. `AsyncSocketProvidedBufferTest` via `IoUringTest::SetUp`) into `FATAL` flakes under CI host load.
+Fleetwide profiling attributes significant cost to `folly::hazptr_array::~hazptr_array` and `folly::hazptr_holder::~hazptr_holder`. These are the bookkeeping paths that move hazard pointer records between a holder and the thread cache; the fallback paths through the domain's avail list are, by contrast, nearly free fleetwide.
 
-`isAvailable()` should answer whether io_uring is generally available to the process, looking through ephemeral resource crunches. Probe with a small ring so the probe itself is unlikely to trip a loaded host's memlock budget, and retry the probe a bounded number of times on `OutOfMemory` (at most ~80ms stall, once per process), reporting unavailable only if it never clears. Real backend-construction sites already retry `OutOfMemory` with a longer backoff, so the remaining use-time window needs a sustained outage to fail.
+`HazptrBench.cpp` already carries `check_folly_hazptr_*` `FOLLY_KEEP` probes so that the generated code for the hot paths can be inspected directly. Add probes for the paths that have none - holder destruction, `hazptr_array` construction, destruction and move assignment, and construction of a hazard pointer without naming a domain - plus the benchmarks that go with them: `hazptr_move_assign_array_default`, a `3_uzic` parameter for `hazptr_make_array_default`, and `hazptr_make_default_implicit` and `hazptr_make_protect_default_implicit`.
 
-Reviewed By: dtolnay
+`hazptr_move_assign_array_default` does exactly as much hazard pointer release work per iteration as `hazptr_make_array_default`, so the difference between the two is the cost of `hazptr_array::operator=` over `~hazptr_array`.
 
-Differential Revision: D128517741
+The two `_implicit` benchm
 
-fbshipit-source-id: 87c1d226eaf2b26d8530690857c914071f8f956b
-
-**File**: `folly/io/async/IoUringBackend.cpp` (modified, +20/-6)
-```diff
-@@ -18,6 +18,8 @@
- #include <folly/portability/SysResource.h>
- 
- #include <cerrno>
-+#include <chrono>
-+#include <thread>
- 
- #include <folly/Demangle.h>
- #include <folly/FileUtil.h>
-@@ -666,12 +668,24 @@ bool IoUringBackend::isAvailable() {
- 
-   static folly::once_flag initFlag;
-   folly::call_once(initFlag, [&]() {
--    try {
--      Options options;
--      options.setCapacity(1024);
--      IoUringBackend backend(std::move(options));
--    } catch (const NotAvailable&) {
--      sAvailable = false;
-+    static constexpr auto kRetryDelay = std::chrono::milliseconds(20);
-+    static constexpr int kMaxAttempts = 5;
-+    for (int attempt = 0;; ++attempt) {
-+      try {
-+        Options options;
-+        options.setCapacity(16).setMaxSubmit(8);
-+        IoUringBackend backend(std::move(options));
-+        return;
-+      } catch (const NotAvailable&) {
-+        sAvailable = false;
-+        return;
-+      } catch (const OutOfMemory&) {
-+        if (attempt + 1 >= kMaxAttempts) {
-+          sAvailable = false;
-+          return;
-+        }
-+        /* sleep override */ std::this_thread::sleep_for(kRetryDelay);
-+      }
-     }
-   });
- 
-```
-
----
-
-### Incident Patch 2: `89eb23b9` (2026-11-02)
-**Commit Message**: Prepare the emergency signal stack before a crash
-
-Summary:
-Reserve and guard the emergency stack while constructing the fatal-signal printer, using ordinary intercepted `mmap` and `mprotect` so sanitizer bookkeeping runs before a crash. Resolve real-libc ucontext functions before handler installation and retain the sanitizer fiber hooks around a minimally uninstrumented trampoline. Use an unsymbolized fallback when setup fails or TSan makes the stack switch unsupported.
-
-Keep libc loading and failure policy local to the symbolizer. Test quiet installation and fatal-signal output; the following diff adds the complete stack-trace binding assertion.
-
-Reviewed By: skrueger
-
-Differential Revision: D127518600
-
-fbshipit-source-id: 5281d3e8ead6a313823dcae99f7fb9a0f91b7109
-
-**File**: `folly/debugging/symbolizer/Symbolizer.cpp` (modified, +136/-67)
-```diff
-@@ -627,54 +627,62 @@ namespace {
- // Size of mmap-allocated stack. Not to confuse with sigaltstack.
- const size_t kMmapStackSize = 1 * 1024 * 1024;
- 
--using MmapPtr = std::unique_ptr<char, void (*)(char*)>;
-+constexpr bool kUseAllocatedStack = !kIsSanitizeThread;
- 
--MmapPtr getNull() {
--  return MmapPtr(nullptr, [](char*) {});
-+template <typename Function>
-+Function resolve_libc_function(const char* name) {
-+  auto* symbol = detail::get_libc_symbol(name);
-+  return reinterpret_cast<Function>(symbol);
- }
- 
--// Assign a mmap-allocated stack to oucp.
--// Return a non-empty smart pointer on success.
--MmapPtr allocateStack(ucontext_t* oucp, size_t pageSize) {
--  MmapPtr p(
--      (char*)mmap(
--          nullptr,
--          kMmapStackSize,
--          PROT_WRITE | PROT_READ,
--          MAP_ANONYMOUS | MAP_PRIVATE,
--          /* fd */ -1,
--          /* offset */ 0),
--      [](char* addr) {
--        // Usually runs inside a fatal signal handler.
--        // Error handling is skipped.
--        munmap(addr, kMmapStackSize);
--      });
--
--  if (!p) {
--    return getNull();
--  }
--
--  // Prepare read-only guard pages on both ends
--  if (pageSize * 2 >= kMmapStackSize) {
--    return getNull();
--  }
--  size_t upperBound = ((kMmapStackSize - 1) / pageSize) * pageSize;
--  if (mprotect(p.get(), pageSize, PROT_NONE) != 0) {
--    return getNull();
--  }
--  if (mprotect(p.get() + upperBound, kMmapStackSize - upperBound, PROT_NONE) !=
--      0) {
--    return getNull();
--  }
-+} // namespace
- 
--  oucp->uc_stack.ss_sp = p.get() + pageSize;
--  oucp->uc_stack.ss_size = upperBound - pageSize;
--  oucp->uc_stack.ss_flags = 0;
-+struct UnsafeSelfAllocateStackTracePrinter::AllocatedStack {
-+  AllocatedStack() = default;
-+  AllocatedStack(const AllocatedStack&) = delete;
-+  AllocatedStack& operator=(const AllocatedStack&) = delete;
-+  AllocatedStack(AllocatedStack&&) = delete;
-+  AllocatedStack& operator=(AllocatedStack&&) = delete;
- 
--  return p;
--}
-+  ~AllocatedStack() {
-+    if (mapping) {
-+      munmap(mapping, kMmapStackSize);
-+    }
-+  }
- 
--} // namespace
-+  char* mapping{nullptr};
-+  void* bottom{nullptr};
-+  size_t size{0};
-+};
-+
-+struct UnsafeSelfAllocateStackTracePrinter::ContextFunctions {
-+  ContextFunctions()
-+      : getcontext(
-+            resolve_libc_function<decltype(&::getcontext)>("getcontext")),
-+        makecontext(
-+            resolve_libc_function<decltype(&::makecontext)>("makecontext")),
-+        swapcontext(
-+            resolve_libc_function<decltype(&::swapcontext)>("swapcontext")) {}
-+
-+  explicit operator bool() const {
-+    return getcontext && makecontext && swapcontext;
-+  }
-+
-+  decltype(&::getcontext) getcontext;
-+  decltype(&::makecontext) makecontext;
-+  decltype(&::swapcontext) swapcontext;
-+};
-+
-+#if __has_attribute(disable_sanitizer_instrumentation)
-+#define FOLLY_DETAIL_SYMBOLIZER_RAW                  \
-+  __attribute__((                                    \
-+      noinline,                                      \
-+      no_sanitize("address", "undefined", "thread"), \
-+      disable_sanitizer_instrumentation))
-+#else
-+#define FOLLY_DETAIL_SYMBOLIZER_RAW \
-+  __attribute__((noinline, no_sanitize("address", "undefined", "thread")))
-+#endif
- 
- FOLLY_PUSH_WARNING
- 
-@@ -683,54 +691,115 @@ FOLLY_PUSH_WARNING
- FOLLY_GNU_DISABLE_WARNING("-Wdeprecated-declarations")
- #endif
- 
--void UnsafeSelfAllocateStackTracePrinter::printSymbolizedStackTrace() {
--  if (pageSizeUnchecked_ <= 0) {
--    return;
-+std::unique_ptr<UnsafeSelfAllocateStackTracePrinter::AllocatedStack>
-+UnsafeSelfAllocateStackTracePrinter::allocateStack() {
-+  const long pageSizeUnchecked = sysconf(_SC_PAGESIZE);
-+  if (pageSizeUnchecked <= 0) {
-+    return nullptr;
-+  }
-+  const auto pageSize = static_cast<size_t>(pageSizeUnchecked);
-+  if (pageSize * 2 >= kMmapStackSize) {
-+    return nullptr;
-   }
- 
--  ucontext_t cur;
--  memset(&cur, 0, sizeof(cur));
--  ucontext_t alt;
--  memset(&alt, 0, sizeof(alt));
-+  auto* mapping = static_cast<char*>(mmap(
-+      nullptr,
-+      kMmapStackSize,
-+      PROT_WRITE | PROT_READ,
-+      MAP_ANONYMOUS | MAP_PRIVATE,
-+      /* fd */ -1,
-+      /* offset */ 0));
-+  if (mapping == MAP_FAILED) {
-+    return nullptr;
-+  }
-+  auto rollback = makeGuard([&] { munmap(mapping, kMmapStackSize); });
-+  auto stack = std::make_unique<AllocatedStack>();
-+  stack->mapping = mapping;
-+  rollback.dismiss();
-+
-+  const size_t upperBound = ((kMmapStackSize - 1) / pageSize) * pageSize;
-+  if (mprotect(mapping, pageSize, PROT_NONE) != 0 ||
-+      mprotect(mapping + upperBound, kMmapStackSize - upperBound, PROT_NONE) !=
-+          0) {
-+    return nullptr;
-+  }
- 
--  if (getcontext(&alt) != 0) {
--    return;
-+  stack->bottom = mapping + pageSize;
-+  stack->size = upperBound - pageSize;
-+  return stack;
-+}
-+
-+UnsafeSelfAllocateStackTracePrinter::UnsafeSelfAllocateStackTracePrinter(int fd)
-+    : SafeStackTracePrinter(fd),
-+      stack_(kUseAllocatedStack ? allocateStack() : nullptr),
-+      contextFunctions_(
-+          kUseAllocatedSta
-```
-
-**File**: `folly/debugging/symbolizer/Symbolizer.h` (modified, +18/-1)
-```diff
-@@ -380,9 +380,26 @@ inline std::string getStackTraceStr(
-  * Note it's still unsafe even with that.
-  */
- class UnsafeSelfAllocateStackTracePrinter : public SafeStackTracePrinter {
-+ public:
-+  /// Reserve the emergency stack and eagerly resolve context-switch bindings.
-+  /// Construct before installing handlers: binding resolution is not
-+  /// async-signal-safe.
-+  explicit UnsafeSelfAllocateStackTracePrinter(int fd = STDERR_FILENO);
-+  ~UnsafeSelfAllocateStackTracePrinter() override;
-+
-  protected:
-   void printSymbolizedStackTrace() override;
--  const long pageSizeUnchecked_ = sysconf(_SC_PAGESIZE);
-+
-+ private:
-+  struct AllocatedStack;
-+  struct ContextFunctions;
-+
-+  static std::unique_ptr<AllocatedStack> allocateStack();
-+  static void contextStart(UnsafeSelfAllocateStackTracePrinter* that);
-+  bool runOnAllocatedStack();
-+
-+  const std::unique_ptr<AllocatedStack> stack_;
-+  const std::unique_ptr<ContextFunctions> contextFunctions_;
- };
- 
- #endif // FOLLY_HAVE_SWAPCONTEXT
-```
-
-**File**: `folly/debugging/symbolizer/detail/BUCK` (modified, +1/-0)
-```diff
-@@ -10,5 +10,6 @@ fb_dirsync_cpp_library(
-     deps = [
-         "fbsource//third-party/glibc:dl",
-         "//folly:portability",
-+        "//folly/system:libc",
-     ],
- )
-```
-
-**File**: `folly/debugging/symbolizer/detail/CMakeLists.txt` (modified, +3/-1)
-```diff
-@@ -18,5 +18,7 @@ folly_add_library(
-   NAME debug
-   SRCS Debug.cpp
-   HEADERS Debug.h
--  DEPS folly_portability
-+  DEPS
-+    folly_portability
-+    folly_system_libc
- )
-```
-
-**File**: `folly/debugging/symbolizer/detail/Debug.cpp` (modified, +27/-0)
+**File**: `folly/synchronization/test/HazptrBench.cpp` (modified, +71/-10)
 ```diff
 @@ -17,6 +17,7 @@
- #include <folly/debugging/symbolizer/detail/Debug.h>
+ #include <folly/synchronization/Hazptr.h>
  
- #include <folly/Portability.h>
-+#include <folly/system/libc.h>
- 
- #ifndef _WIN32
- #include <dlfcn.h>
-@@ -34,6 +35,20 @@ namespace folly {
- namespace symbolizer {
- namespace detail {
- 
-+namespace {
-+
-+void* get_libc_handle() {
-+#ifndef _WIN32
-+  static void* const handle = dlopen(
-+      folly::detail::libc_soname(), RTLD_LAZY | RTLD_LOCAL | RTLD_NOLOAD);
-+  return handle;
-+#else
-+  return nullptr;
-+#endif
-+}
-+
-+} // namespace
-+
- #if FOLLY_DETAIL_HAS_R_DEBUG
- 
- /// There is a strong requirement of finding the true _r_debug in ld.so.
-@@ -79,6 +94,18 @@ struct r_debug* get_r_debug() {
- #endif
+ #include <atomic>
++#include <new>
+ #include <numeric>
+ #include <random>
+ #include <vector>
+@@ -113,6 +114,33 @@ extern "C" FOLLY_KEEP long check_folly_hazptr_make_protect_default(
+   return ptr ? *ptr : 0;
  }
  
-+void* get_libc_symbol(const char* name) {
-+  if (!name) {
-+    return nullptr;
-+  }
-+#ifndef _WIN32
-+  auto* handle = get_libc_handle();
-+  return handle ? dlsym(handle, name) : nullptr;
-+#else
-+  return nullptr;
-+#endif
++extern "C" FOLLY_KEEP long check_folly_hazptr_make_protect_default_implicit(
++    std::atomic<hazptr_obj_of<long>*>& channel) {
++  auto holder = folly::make_hazard_pointer();
++  auto ptr = holder.protect(channel);
++  return ptr ? *ptr : 0;
 +}
 +
- } // namespace detail
- } // namespace symbolizer
- } // namespace folly
-```
-
-**File**: `folly/debugging/symbolizer/detail/Debug.h` (modified, +1/-0)
-```diff
-@@ -23,6 +23,7 @@ namespace symbolizer {
- namespace detail {
- 
- struct r_debug* get_r_debug();
-+void* get_libc_symbol(const char* name);
- 
- } // namespace detail
- } // namespace symbolizer
-```
-
-**File**: `folly/debugging/symbolizer/test/BUCK` (modified, +13/-0)
-```diff
-@@ -6,6 +6,7 @@ load("@fbsource//tools/build_defs/dirsync:fb_dirsync_cpp_benchmark.bzl", "fb_dir
- load("@fbsource//tools/build_defs/dirsync:fb_dirsync_cpp_binary.bzl", "fb_dirsync_cpp_binary")
- load("@fbsource//tools/build_defs/dirsync:fb_dirsync_cpp_library.bzl", "fb_dirsync_cpp_library")
- load("@fbsource//tools/build_defs/dirsync:fb_dirsync_cpp_unittest.bzl", "fb_dirsync_cpp_unittest")
-+load("@fbsource//tools/build_defs/testinfra:network_access_utils.bzl", "network_access_utils")
- load("../../../defs.bzl", "fbcode_ci_default_labels")
- load(":validate_folly_symbolizer.bzl", "SPLIT_DWARF_FLAGS", "customized_unittest", "validate_folly_symbolizer", "validate_symbolizer_dwp")
- 
-@@ -69,6 +70,7 @@ fb_dirsync_cpp_binary(
-     labels = fbcode_ci_default_labels(),
-     target_compatible_with = ["ovr_config//runtime:fbcode"],
-     deps = [
-+        "//folly:portability",
-         "//folly/debugging/symbolizer:symbolizer",
-     ],
- )
-@@ -97,6 +99,17 @@ python_unittest(
-     ],
- )
- 
-+python_unittest(
-+    name = "small_sigaltstack_test",
-+    srcs = ["small_sigaltstack_test.py"],
-+    env = {
-+        "SMALL_SIGALTSTACK_CRASH": "$(location :small_sigaltstack_crash)",
-+    },
-+    labels = fbcode_ci_default_labels(python = True),
-+    network_access = network_access_utils.none(),
-+    target_compatible_with = ["ovr_config//runtime:fbcode"],
-+)
++extern "C" FOLLY_KEEP void check_folly_hazptr_holder_destroy(
++    folly::hazptr_holder<std::atomic>* holder) {
++  holder->~hazptr_holder();
++}
 +
- fb_dirsync_cpp_unittest(
-     name = "symbolized_frame_test",
-     srcs = ["SymbolizedFrameTest.cpp"],
-```
-
-**File**: `folly/debugging/symbolizer/test/SmallSigAltStackCrash.cpp` (modified, +16/-3)
-```diff
-@@ -16,20 +16,33 @@
++extern "C" FOLLY_KEEP void check_folly_hazptr_make_array_default(
++    folly::hazptr_array<3>* out) {
++  ::new (out) folly::hazptr_array<3>(folly::make_hazard_pointer_array<3>());
++}
++
++extern "C" FOLLY_KEEP void check_folly_hazptr_array_destroy_default(
++    folly::hazptr_array<3>* array) {
++  array->~hazptr_array();
++}
++
++extern "C" FOLLY_KEEP void check_folly_hazptr_array_move_assign_default(
++    folly::hazptr_array<3>* dst, folly::hazptr_array<3>* src) {
++  *dst = std::move(*src);
++}
++
+ extern "C" FOLLY_KEEP void check_folly_hazptr_obj_retire(
+     folly::hazptr_obj<std::atomic>& object,
+     folly::hazptr_domain<std::atomic>& domain) {
+@@ -360,26 +388,32 @@ BENCHMARK_DRAW_LINE();
  
- #include <signal.h>
- #include <array>
-+#include <cstdio>
-+#include <cstring>
- 
-+#include <folly/Portability.h>
- #include <folly/debugging/symbolizer/SignalHandler.h>
- 
- namespace {
-+#if defined(__aarch64__)
-+std::array<char, 32768> stack;
-+#elif defined(FOLLY_SANITIZE_THREAD)
-+std::array<char, 16384> stack;
-+#else
- std::array<char, 8192> stack;
--}
-+#endif
-+} // namespace
- 
--int main() {
-+int main(int argc, char** argv) {
-   stack_t ss;
-   ss.ss_sp = stack.data();
-   ss.ss_size = stack.size();
-   ss.ss_flags = 0;
-   sigaltstack(&ss, nullptr);
- 
-   folly::symbolizer::installFatalSignalHandler();
--  __builtin_trap();
-+  if (argc == 2 && std::strcmp(argv[1], "--install-only") == 0) {
-+    return 0;
-+  }
-+  std::fputs("crashing\n", stderr);
-+  raise(SIGILL);
+ /// benchmark creating a hazard pointer (aka a hazptr-holder) without using it,
+ /// including ctor and dtor
+-template <template <typename> class Atom>
++template <typename... Args>
+ static void do_hazptr_make(
+-    BenchmarkSuspender& braces, hazptr_domain<Atom>& domain, size_t iters) {
++    BenchmarkSuspender& braces, size_t iters, Args&... args) {
+   braces.dismissing([&] {
+     while (iters--) {
+-      make_hazard_pointer(domain);
++      make_hazard_pointer(args...);
+     }
+   });
  }
+ 
+ BENCHMARK(hazptr_make, iters) {
+   BenchmarkSuspender braces;
+   auto&& domain = hazptr_domain();
+-  do_hazptr_make(braces, domain, iters);
++  do_hazptr_make(braces, iters, domain);
+ }
+ 
+ BENCHMARK(hazptr_make_default, iters) {
+   BenchmarkSuspender braces;
+   auto&& domain = default_hazptr_domain();
+-  do_hazptr_make(braces, domain, iters);
++  do_hazptr_make(braces, iters, domain);
++}
++
++/// same, but without naming the domain, which is how most callers spell it
++BENCHMARK(hazptr_make_default_implicit, iters) {
++  BenchmarkSuspender braces;
++  do_hazptr_make(braces, iters);
+ }
+ 
+ BENCHMARK_DRAW_LINE();
+@@ -445,24 +479,45 @@ void hazptr_make_array_default(size_t iters, folly::index_constant<ArraySize>) {
+ 
+ BENCHMARK_PARAM(hazptr_make_array_default, 1_uzic)
+ BENCHMARK_PARAM(hazptr_make_array_default, 2_uzic)
++BENCHMARK_PARAM(hazptr_make_array_default, 3_uzic)
+ BENCHMARK_PARAM(hazptr_make_array_default, 4_uzic)
+ BENCHMARK_PARAM(hazptr_make_array_default, 8_uzic)
+ 
+ BENCHMARK_DRAW_LINE();
+ 
++/// benchmark move-assigning a hazard pointer array over another one; the same
++/// amount of hazard pointer release work as hazptr_make_array_default, so the
++/// difference between the two is the cost of move assignment over destruction
++template <size_t ArraySize>
++void hazptr_move_assign_array_default(
++    size_t iters, folly::index_constant<ArraySize>) {
++  auto dst = make_hazard_pointer_array<ArraySize>();
++  while (iters--) {
++    dst = make_hazard_pointer_array<ArraySize>();
++  }
++}
++
++BENCHMARK_PARAM(hazptr_move_assign_array_default, 1_uzic)
++BENCHMARK_PARAM(hazptr_move_assign_array_default, 2_uzic)
++BENCHMARK_PARAM(hazptr_move_assign_array_default, 3_uzic)
++BENCHMARK_PARAM(hazptr_move_assign_array_default, 4_uzic)
++BENCHMARK_PARAM(hazptr_move_assign_array_default, 8_uzic)
++
++BENCHMARK_DRAW_LINE();
++
+ /// benchmark creating a hazard pointer and using it to protect a pointer,
+ /// including hazard pointer ctor/dtor and protection/unprotection
+-template <template <typename> class Atom>
++template <typename... Args>
+ static void do_hazptr_make_protect(
+-    BenchmarkSuspender& braces, hazptr_domain<Atom>& domain, size_t iters) {
++    BenchmarkSuspender& braces, size_t iters, Args&... args) {
+   auto own = std::make_unique<TestObj>(42);
+   std::atomic<TestObj*> ptr{own.get()};
+   folly::compiler_must_not_predict(ptr);
+ 
+   int sum = 0;
+   braces.dismissing([&] {
+     while (iters--) {
+-      auto h = make_hazard_pointer(domain);
++      auto h = make_hazard_pointer(args...);
+       auto* obj = h.protect(ptr);
+       folly::compiler_must_not_predict(obj->value);
+       sum += obj->value;
+@@ -474,13 +529,19 @@ static void do_hazptr_make_protect(
+ BENCHMARK(hazptr_make_protect, iters) {
+   BenchmarkSuspender braces;
+   auto&& domain = hazptr_domain();
+-  do_hazptr_make_protect(braces, domain, iters);
++  do_hazptr_make_protect(braces, iters, domain);
+ }
+ 
+ BENCHMARK(hazptr_make_protect_default, iters) {
+   BenchmarkSuspender braces;
+   auto&& domain = default_hazptr_domain();
+-  do_hazptr_make_protect(braces, domain, iters);
++  do_hazptr_make_protect(braces, iters, domain);
++}
++
++/// same, but w
 ```
 
 ---
 
-### Incident Patch 3: `00b25d13` (2026-11-03)
-**Commit Message**: Give the debuglink crash helper a symbolization-capable stack
+### Incident Patch 2: `2b0f4778` (2026-11-04)
+**Commit Message**: wrap ThreadSanitizer acquire and release hooks
 
-Summary:
-Install a 1-MiB altstack before the GNU-debuglink crash helper installs its fatal-signal handler. This keeps the helper on the full-symbolization path independently of the sanitizer runtime's default altstack size, so the existing source-line assertions work under TSAN as well. Preserve all debuglink checks and CI modes; no runtime skips or compatibility exclusions.
+Summary: `SanitizeThread` wraps dynamic annotations but does not expose the compiler-rt acquire and release hooks. Add faithfully named `tsan_acquire` and `tsan_release` wrappers using the existing extern-accessor pattern, compiling to no-ops outside TSAN.
 
-___
+Reviewed By: dmm-fb
 
-landed-with-radar-review
+Differential Revision: D124562046
 
-Differential Revision: D129364192
+fbshipit-source-id: e95c90a64bfd4e48899c10eee0db86af297c3ecb
 
-fbshipit-source-id: d547876d22aedcbb125d6db61ec74b3c8e212dd7
-
-**File**: `folly/debugging/symbolizer/test/Crash.cpp` (modified, +11/-0)
+**File**: `folly/synchronization/SanitizeThread.cpp` (modified, +14/-0)
 ```diff
-@@ -14,10 +14,21 @@
-  * limitations under the License.
-  */
+@@ -22,6 +22,10 @@
+ // long, so it is helpful to keep these declarations out of widely-included
+ // header files.
  
-+#include <signal.h>
-+#include <array>
-+#include <cstdio>
- #include <cstdlib>
- #include <folly/debugging/symbolizer/SignalHandler.h>
++extern "C" void __tsan_acquire(void* addr);
++
++extern "C" void __tsan_release(void* addr);
++
+ extern "C" void AnnotateRWLockCreate(
+     char const* f, int l, const volatile void* addr);
  
- int main() {
-+  alignas(16) static std::array<char, 1024 * 1024> stack{};
-+  stack_t ss{};
-+  ss.ss_sp = stack.data();
-+  ss.ss_size = stack.size();
-+  if (sigaltstack(&ss, nullptr) != 0) {
-+    std::perror("sigaltstack");
-+    return 1;
-+  }
-   folly::symbolizer::installFatalSignalHandler();
-   std::abort();
- }
+@@ -58,6 +62,10 @@ extern "C" void AnnotateIgnoreSyncEnd(char const* f, int l);
+ 
+ namespace {
+ 
++FOLLY_CREATE_EXTERN_ACCESSOR(tsan_acquire_access_v, __tsan_acquire);
++
++FOLLY_CREATE_EXTERN_ACCESSOR(tsan_release_access_v, __tsan_release);
++
+ FOLLY_CREATE_EXTERN_ACCESSOR(
+     annotate_rwlock_create_access_v, AnnotateRWLockCreate);
+ 
+@@ -101,6 +109,12 @@ static constexpr auto const E = folly::kIsSanitizeThread;
+ namespace folly {
+ namespace detail {
+ 
++FOLLY_STORAGE_CONSTEXPR tsan_acquire_t* const tsan_acquire_v =
++    tsan_acquire_access_v<E>;
++
++FOLLY_STORAGE_CONSTEXPR tsan_release_t* const tsan_release_v =
++    tsan_release_access_v<E>;
++
+ FOLLY_STORAGE_CONSTEXPR annotate_rwlock_cd_t* const annotate_rwlock_create_v =
+     annotate_rwlock_create_access_v<E>;
+ 
+```
+
+**File**: `folly/synchronization/SanitizeThread.h` (modified, +26/-0)
+```diff
+@@ -27,12 +27,16 @@ enum class annotate_rwlock_level : long {
+ 
+ namespace detail {
+ 
++using tsan_acquire_t = void(void*);
++using tsan_release_t = void(void*);
+ using annotate_rwlock_cd_t = void(char const*, int, void const volatile*);
+ using annotate_rwlock_ar_t = void(char const*, int, void const volatile*, long);
+ using annotate_benign_race_sized_t =
+     void(char const*, int, void const volatile*, long, char const*);
+ using annotate_ignore_t = void(char const*, int);
+ 
++extern tsan_acquire_t* const tsan_acquire_v;
++extern tsan_release_t* const tsan_release_v;
+ extern annotate_rwlock_cd_t* const annotate_rwlock_create_v;
+ extern annotate_rwlock_cd_t* const annotate_rwlock_create_static_v;
+ extern annotate_rwlock_cd_t* const annotate_rwlock_destroy_v;
+@@ -48,6 +52,28 @@ extern annotate_ignore_t* const annotate_ignore_sync_end_v;
+ 
+ } // namespace detail
+ 
++//  tsan_acquire
++//
++//  Establishes a happens-before relation with a preceding tsan_release on the
++//  same address.
++//
++//  mimic: __tsan_acquire, llvm compiler-rt
++FOLLY_ALWAYS_INLINE static void tsan_acquire(void* const addr) {
++  auto fun = detail::tsan_acquire_v;
++  return kIsSanitizeThread && fun ? fun(addr) : void();
++}
++
++//  tsan_release
++//
++//  Establishes a happens-before relation with a subsequent tsan_acquire on the
++//  same address.
++//
++//  mimic: __tsan_release, llvm compiler-rt
++FOLLY_ALWAYS_INLINE static void tsan_release(void* const addr) {
++  auto fun = detail::tsan_release_v;
++  return kIsSanitizeThread && fun ? fun(addr) : void();
++}
++
+ FOLLY_ALWAYS_INLINE static void annotate_rwlock_create(
+     void const volatile* const addr, char const* const f, int const l) {
+   auto fun = detail::annotate_rwlock_create_v;
+```
+
+---
+
+### Incident Patch 3: `6da87cf6` (2026-11-04)
+**Commit Message**: Statically link small_sigaltstack_crash so binding check holds in dev-nosan
+
+Reviewed By: yfeldblum
+
+Differential Revision: D129428332
+
+fbshipit-source-id: b569ee4ba96273f6d6bbf53fd7692f10b85242ac
+
+**File**: `folly/debugging/symbolizer/test/BUCK` (modified, +1/-0)
+```diff
+@@ -68,6 +68,7 @@ fb_dirsync_cpp_binary(
+         ],
+     },
+     labels = fbcode_ci_default_labels(),
++    overridden_link_style = "static",
+     target_compatible_with = ["ovr_config//runtime:fbcode"],
+     deps = [
+         "//folly:portability",
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2735** (2026-11-04): Re-sync with internal repository (@meta-codesync[bot])
 - **PR #2731** (closed): Work around GCC < 13 TBAA miscompile in InlineFunctionRef (@Nicoshev)
 - **PR #2730** (closed): Make DistributedMutex Waiter layout independent of interference size (@Nicoshev)
 - **PR #2726** (closed): Fix FixedString literal macros with MSVC's conforming preprocessor (@tinadu1018)
 - **PR #2719** (closed): [coro] Fix CO_ASSERT_FALSE with released GoogleTest (@Hrushikesh-ramilla)
 - **PR #2718** (closed): Stop Wait.multipleWait racing a timer (@vitaut)
-- **PR #2717** (closed): Fix the remaining Windows test failures (@vitaut)
 
 ---
 
@@ -2874,52 +2676,73 @@ fbshipit-source-id: d547876d22aedcbb125d6db61ec74b3c8e212dd7
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Catch OutOfMemory in IoUringBackend::isAvailable
+## X. hazptr: add benchmark probes for holder/array acquire-release
 
 **RULE**:
-When implementing operations in `folly/io/async/IoUringBackend.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meta/folly. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `folly/synchronization/test/HazptrBench.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meta/folly. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2dd4d58c`: Catch OutOfMemory in IoUringBackend::isAvailable. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2a2a2eb7`: hazptr: add benchmark probes for holder/array acquire-release. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `folly/io/async/IoUringBackend.cpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `folly/synchronization/test/HazptrBench.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-#include <chrono>
-#include <thread>
-    static constexpr auto kRetryDelay = std::chrono::milliseconds(20);
-    static constexpr int kMaxAttempts = 5;
-    for (int attempt = 0;; ++attempt) {
-      try {
-        Options options;
-        options.setCapacity(16).setMaxSubmit(8);
-        IoUringBackend backend(std::move(options));
-        return;
-      } catch (const NotAvailable&) {
-        sAvailable = false;
-        return;
-      } catch (const OutOfMemory&) {
-        if (attempt + 1 >= kMaxAttempts) {
-          sAvailable = false;
-          return;
-        }
-        /* sleep override */ std::this_thread::sleep_for(kRetryDelay);
-      }
+#include <new>
+extern "C" FOLLY_KEEP long check_folly_hazptr_make_protect_default_implicit(
+    std::atomic<hazptr_obj_of<long>*>& channel) {
+  auto holder = folly::make_hazard_pointer();
+  auto ptr = holder.protect(channel);
+  return ptr ? *ptr : 0;
+}
+
+extern "C" FOLLY_KEEP void check_folly_hazptr_holder_destroy(
+    folly::hazptr_holder<std::atomic>* holder) {
+  holder->~hazptr_holder();
+}
+
+extern "C" FOLLY_KEEP void check_folly_hazptr_make_array_default(
+    folly::hazptr_array<3>* out) {
+  ::new (out) folly::hazptr_array<3>(folly::make_hazard_pointer_array<3>());
+}
+
+extern "C" FOLLY_KEEP void check_folly_hazptr_array_destroy_default(
+    folly::hazptr_array<3>* array) {
+  array->~hazptr_array();
+}
+
+extern "C" FOLLY_KEEP void check_folly_hazptr_array_move_assign_default(
+    folly::hazptr_array<3>* dst, folly::hazptr_array<3>* src) {
+  *dst = std::move(*src);
+}
+
+template <typename... Args>
+    BenchmarkSuspender& braces, size_t iters, Args&... args) {
+      make_hazard_pointer(args...);
+  do_hazptr_make(braces, iters, domain);
+  do_hazptr_make(braces, iters, domain);
+}
+
+/// same, but without naming the domain, which is how most callers spell it
+BENCHMARK(hazptr_make_default_impl
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-    try {
-      Options options;
-      options.setCapacity(1024);
-      IoUringBackend backend(std::move(options));
-    } catch (const NotAvailable&) {
-      sAvailable = false;
+template <template <typename> class Atom>
+    BenchmarkSuspender& braces, hazptr_domain<Atom>& domain, size_t iters) {
+      make_hazard_pointer(domain);
+  do_hazptr_make(braces, domain, iters);
+  do_hazptr_make(braces, domain, iters);
+template <template <typename> class Atom>
+    BenchmarkSuspender& braces, hazptr_domain<Atom>& domain, size_t iters) {
+      auto h = make_hazard_pointer(domain);
+  do_hazptr_make_protect(braces, domain, iters);
+  do_hazptr_make_protect(braces, domain, iters);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2dd4d58c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2a2a2eb7` are properly handled with clean fallback behavior.

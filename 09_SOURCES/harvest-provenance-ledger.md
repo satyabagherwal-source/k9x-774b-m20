@@ -7390,3 +7390,6 @@ Every entry in this ledger must capture:
 | `learn-github-apache-arrow` | `https://github.com/apache/arrow` | `6bddeb67` | Multi-dimensional audit evidence | 2026-11-04T22:45:29.250Z |
 | `learn-github-arkivanov-decompose` | `https://github.com/arkivanov/Decompose` | `c9780062` | Multi-dimensional audit evidence | 2026-11-04T22:45:33.866Z |
 | `learn-huggingface-nvidia-nemotron-3-diarization` | `https://huggingface.co/nvidia/Nemotron-3-Diarization` | `hf-nvidia-` | Multi-dimensional audit evidence | 2026-11-04T22:45:38.962Z |
+| `learn-huggingface-lightricks-ltx-2-5` | `https://huggingface.co/Lightricks/LTX-2.5` | `hf-lightri` | Multi-dimensional audit evidence | 2026-11-04T22:52:23.681Z |
+| `learn-github-meta-folly` | `https://github.com/facebook/folly` | `ee8130ad` | Multi-dimensional audit evidence | 2026-11-04T22:52:26.099Z |
+| `learn-github-tw93-mole` | `https://github.com/tw93/Mole` | `10f77d75` | Multi-dimensional audit evidence | 2026-11-04T22:52:29.031Z |

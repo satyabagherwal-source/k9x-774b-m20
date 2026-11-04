@@ -345,8 +345,8 @@
     "sourceUrl": "https://huggingface.co/Lightricks/LTX-2.5",
     "sourceVersion": "hf-lightricks-ltx-2.5",
     "license": "Open-Source",
-    "contentHash": "1dfbed9f72efe18ea80bbf0bbbe18292def8ef7e1789c3772feeac8fde867afc",
-    "lastHarvestedAt": "2026-10-31T07:32:04.143Z",
+    "contentHash": "376117dbcd9953dd34298f8f9535a7f9f568ab7f3c6c733306a35413fbb224f1",
+    "lastHarvestedAt": "2026-11-04T22:52:23.681Z",
     "learningId": "learn-huggingface-lightricks-ltx-2-5"
   },
   "hf-prism-ml-ternary-bonsai-2-27b-gguf": {
@@ -7373,10 +7373,10 @@
     "repository": "tw93/Mole",
     "platform": "github",
     "sourceUrl": "https://github.com/tw93/Mole",
-    "sourceVersion": "85162c24",
+    "sourceVersion": "10f77d75",
     "license": "GPL-3.0",
-    "contentHash": "2858af8e0275a70f697ce2e91afcb4549edb5adf6d811db28970e6f23785e03d",
-    "lastHarvestedAt": "2026-10-31T15:36:32.880Z",
+    "contentHash": "4c525dc3c3cebd8376806415d280ff21f3cdb531d1cea20a07f552443393b5aa",
+    "lastHarvestedAt": "2026-11-04T22:52:29.031Z",
     "learningId": "learn-github-tw93-mole"
   },
   "siderolabs-talos": {
@@ -7663,10 +7663,10 @@
     "repository": "meta/folly",
     "platform": "github",
     "sourceUrl": "https://github.com/facebook/folly",
-    "sourceVersion": "07758a25",
+    "sourceVersion": "ee8130ad",
     "license": "Apache-2.0",
-    "contentHash": "2d8d0f2ec94bf8d2e2a2832374042c7cf2448f3cd771ac10608da0cdd14f786e",
-    "lastHarvestedAt": "2026-11-03T18:47:40.976Z",
+    "contentHash": "1ff86133e3db6812f42e757cfeadd219229b6c8ba0a01b5508fbfd4cbcf0433a",
+    "lastHarvestedAt": "2026-11-04T22:52:26.099Z",
     "learningId": "learn-github-meta-folly"
   },
   "kotlin-kmp-production-sample": {

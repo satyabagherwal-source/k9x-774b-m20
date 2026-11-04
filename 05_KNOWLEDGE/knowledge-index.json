@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-04T22:45:38.869Z",
+  "last_updated": "2026-11-04T22:52:28.952Z",
   "total_verified_learnings": 1210,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -25810,7 +25810,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Lightricks/LTX-2.5",
       "source_version": "hf-lightricks-ltx-2.5",
-      "content_hash": "1dfbed9f72efe18ea80bbf0bbbe18292def8ef7e1789c3772feeac8fde867afc",
+      "content_hash": "376117dbcd9953dd34298f8f9535a7f9f568ab7f3c6c733306a35413fbb224f1",
       "dossier_path": "07_PROJECT_LEARNING/hf-lightricks-ltx-2.5-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-lightricks-ltx-2.5-learnings.md",
       "promoted_rules": [
@@ -25922,7 +25922,7 @@
         "learn-huggingface-hf-lightricks-ltx-2-5-mv44u4a4",
         "learn-huggingface-hf-lightricks-ltx-2-5-mv4i3gub"
       ],
-      "verified_at": "2026-10-31T07:32:04.042Z",
+      "verified_at": "2026-11-04T22:52:23.573Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -58780,8 +58780,8 @@
       "slug": "tw93-mole",
       "platform": "github",
       "source_url": "https://github.com/tw93/Mole",
-      "source_version": "85162c24",
-      "content_hash": "2858af8e0275a70f697ce2e91afcb4549edb5adf6d811db28970e6f23785e03d",
+      "source_version": "10f77d75",
+      "content_hash": "4c525dc3c3cebd8376806415d280ff21f3cdb531d1cea20a07f552443393b5aa",
       "dossier_path": "07_PROJECT_LEARNING/tw93-mole-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tw93-mole-learnings.md",
       "promoted_rules": [
@@ -58814,6 +58814,11 @@
           "number": 6233,
           "title": "clean): clean the yarn berry global cache instead of ~/.yarn/cache",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7009,
+          "title": "ui): fit CJK names by display width in uninstall --list and spinners",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -58821,7 +58826,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T15:36:32.795Z",
+      "verified_at": "2026-11-04T22:52:28.931Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -154345,8 +154350,8 @@
       "slug": "facebook-folly",
       "platform": "github",
       "source_url": "https://github.com/facebook/folly",
-      "source_version": "07758a25",
-      "content_hash": "2d8d0f2ec94bf8d2e2a2832374042c7cf2448f3cd771ac10608da0cdd14f786e",
+      "source_version": "ee8130ad",
+      "content_hash": "1ff86133e3db6812f42e757cfeadd219229b6c8ba0a01b5508fbfd4cbcf0433a",
       "dossier_path": "07_PROJECT_LEARNING/facebook-folly-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/facebook-folly-learnings.md",
       "promoted_rules": [
@@ -154364,6 +154369,11 @@
           "number": 6578,
           "title": "Catch OutOfMemory in IoUringBackend::isAvailable",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7008,
+          "title": "hazptr: add benchmark probes for holder/array acquire-release",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -154371,7 +154381,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T18:47:40.886Z",
+      "verified_at": "2026-11-04T22:52:25.999Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -178127,6 +178137,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-04T22:45:38.845Z"
+    },
+    "rule-7008": {
+      "learning_id": "rule-7008",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7008,
+      "title": "hazptr: add benchmark probes for holder/array acquire-release",
+      "source_url": "https://github.com/facebook/folly",
+      "source_version": "ee8130ad",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T22:52:25.999Z"
+    },
+    "rule-7009": {
+      "learning_id": "rule-7009",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7009,
+      "title": "ui): fit CJK names by display width in uninstall --list and spinners",
+      "source_url": "https://github.com/tw93/Mole",
+      "source_version": "10f77d75",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T22:52:28.931Z"
     }
   },
   "aliases": {

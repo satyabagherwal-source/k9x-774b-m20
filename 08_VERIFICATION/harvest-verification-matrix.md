@@ -7381,3 +7381,6 @@
 | `CYCLE-20261104-GBOE` | `2026-11-04T22:45:29.246Z` | `apache/arrow` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7003` | Yes (`1cadf76f...`) |
 | `CYCLE-20261104-GF8M` | `2026-11-04T22:45:33.862Z` | `arkivanov/Decompose` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7004` | Yes (`ac2dad4c...`) |
 | `CYCLE-20261104-GJ66` | `2026-11-04T22:45:38.958Z` | `nvidia/Nemotron-3-Diarization` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7005, Rule 7006, Rule 7007` | Yes (`05e0d252...`) |
+| `CYCLE-20261104-P7G9` | `2026-11-04T22:52:23.673Z` | `Lightricks/LTX-2.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-lightricks-ltx-2.5-learnings.md` | Yes (`376117db...`) |
+| `CYCLE-20261104-P9BJ` | `2026-11-04T22:52:26.095Z` | `meta/folly` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7008` | Yes (`1ff86133...`) |
+| `CYCLE-20261104-PBL0` | `2026-11-04T22:52:29.028Z` | `tw93/Mole` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7009` | Yes (`4c525dc3...`) |

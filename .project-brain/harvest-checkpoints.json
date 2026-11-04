@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-04T22:45:38.981Z",
+  "last_updated": "2026-11-04T22:52:29.047Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -410,14 +410,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-lightricks-ltx-2-5",
-      "content_hash": "1dfbed9f72efe18ea80bbf0bbbe18292def8ef7e1789c3772feeac8fde867afc",
-      "verified_at": "2026-10-31T07:32:04.152Z",
+      "content_hash": "376117dbcd9953dd34298f8f9535a7f9f568ab7f3c6c733306a35413fbb224f1",
+      "verified_at": "2026-11-04T22:52:23.689Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T07:32:04.152Z"
+      "last_updated": "2026-11-04T22:52:23.689Z"
     },
     "prism-ml/Ternary-Bonsai-2-27B-gguf": {
       "repository": "prism-ml/Ternary-Bonsai-2-27B-gguf",
@@ -11106,14 +11106,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tw93-mole",
-      "content_hash": "2858af8e0275a70f697ce2e91afcb4549edb5adf6d811db28970e6f23785e03d",
-      "verified_at": "2026-10-31T15:36:32.887Z",
+      "content_hash": "4c525dc3c3cebd8376806415d280ff21f3cdb531d1cea20a07f552443393b5aa",
+      "verified_at": "2026-11-04T22:52:29.046Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T15:36:32.887Z"
+      "last_updated": "2026-11-04T22:52:29.046Z"
     },
     "siderolabs/talos": {
       "repository": "siderolabs/talos",
@@ -17181,14 +17181,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-meta-folly",
-      "content_hash": "2d8d0f2ec94bf8d2e2a2832374042c7cf2448f3cd771ac10608da0cdd14f786e",
-      "verified_at": "2026-11-03T18:47:40.984Z",
+      "content_hash": "1ff86133e3db6812f42e757cfeadd219229b6c8ba0a01b5508fbfd4cbcf0433a",
+      "verified_at": "2026-11-04T22:52:26.113Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T18:47:40.984Z"
+      "last_updated": "2026-11-04T22:52:26.113Z"
     },
     "LiquidAI/LFM3-Omni-2B": {
       "repository": "LiquidAI/LFM3-Omni-2B",
