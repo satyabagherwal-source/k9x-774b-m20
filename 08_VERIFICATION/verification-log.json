@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261031-0B0A",
-    "timestamp": "2026-10-31T16:50:25.594Z",
-    "repository": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
-    "learningId": "learn-huggingface-infatoshi-glm-5-3-uncensored-exl3-3-0bpw",
-    "contentHash": "efe24c6bc2703e3ed0ba3474d8386aff98197cffcc826ec6cfed3d1e7360fc75",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261031-0BQ6",
-    "timestamp": "2026-10-31T16:50:26.526Z",
-    "repository": "astral-sh/uv",
-    "learningId": "learn-github-astral-sh-uv",
-    "contentHash": "5ff683874a3c8bc556dacb41736ddaf4e32c539eabc987b2c0fb12949d29fcaa",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261031-0MAL",
-    "timestamp": "2026-10-31T16:50:40.221Z",
-    "repository": "Bitterbot-AI/bitterbot-desktop",
-    "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
-    "contentHash": "259d2cc542f888f5c0f76453fbbe89b02de97d0f499be82da735a2522f4b9a51",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261031-902A",
     "timestamp": "2026-10-31T16:57:11.314Z",
     "repository": "pola-rs/polars",
@@ -7490,6 +7445,51 @@
     "repository": "mufeedvh/code2prompt",
     "learningId": "learn-github-mufeedvh-code2prompt",
     "contentHash": "5b5f08a7346ef79ac207d2c487e80029b8f2be0b42875e4b004e87d1c4d2449f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-74B2",
+    "timestamp": "2026-11-04T03:30:35.534Z",
+    "repository": "vitest-dev/vitest",
+    "learningId": "learn-github-vitest-dev-vitest",
+    "contentHash": "78fb7b66f34bdb13050ff323cf5fe1f61e1765111201524e687bc4ca7d9e4166",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-75GW",
+    "timestamp": "2026-11-04T03:30:37.040Z",
+    "repository": "invertase/react-native-firebase",
+    "learningId": "learn-github-invertase-react-native-firebase",
+    "contentHash": "a10fba1e33ba8cdf54b3d589039a9176db2748a9b7e5c1a0564afaf0ee11da56",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-7BFY",
+    "timestamp": "2026-11-04T03:30:44.782Z",
+    "repository": "risingwavelabs/risingwave",
+    "learningId": "learn-github-risingwavelabs-risingwave",
+    "contentHash": "7c6e0b9b44aa9176767a01d8cdccb53c8902dbd2c52d8cb1f9bb3e36d881dd7e",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

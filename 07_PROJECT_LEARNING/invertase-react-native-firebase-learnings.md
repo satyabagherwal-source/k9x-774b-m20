@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/invertase-react-native-firebase-learnings.md`  
 > **Source**: github ([https://github.com/invertase/react-native-firebase](https://github.com/invertase/react-native-firebase))  
-> **Source Version**: `c65e1ee3`  
+> **Source Version**: `cac23b87`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-24T19:34:59.562Z  
+> **Timestamp**: 2026-11-04T03:30:36.409Z  
 > **Learning ID**: `learn-github-invertase-react-native-firebase`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/invertase-react-native-firebase-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/invertase/react-native-firebase](https://github.com/invertase/react-native-firebase))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-24T19:34:58.737Z  
+> **Harvest Timestamp**: 2026-11-04T03:30:35.748Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 🔥 A well-tested feature-rich modular Firebase implementation for React Native. Supports both iOS & Android platforms for all Firebase services.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 12322 stars
+- **Stars / Engagement**: 12325 stars
 
 ---
 
@@ -1569,13 +1569,14 @@ extern NSString *const DEFAULT_APP_NAME;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #9396** (2026-10-23): **fix(ci): branch-aware publish (docs gate, dist-tag, recovery)**
-  *Symptoms*: ### Description  Make Publish safe for release branches: do not deploy the API reference unless the run is on `main` after a successful npm job; off-`main`, publish with `--dist-tag` equal to the branch name (and pin npm to `12.2.1`); on a failed `lerna publish from-package`, write a large workflow-summary notice that partial publish recovery is achieved by rerunning the exact same publish. Document that maintainer policy in OKF and correct CONTRIBUTING’s stale “merge to main auto-publishes” claim.  **Merge instruction (required):** please **rebase-merge** this PR (do **not** squash). Per-commit history on `main` is needed so only the workflow commits can be `cherry-pick -x`’d onto `release-v26` afterward. Intentional exception to the usual squash-merge preference.  ### Related issues  N/A — maintainer publish / release-branch automation.  ### Release Summary  Branch-aware Publish: main-only API docs deploy, branch-named npm dist-tags off main, partial-publish recovery summary, maintainer docs.  ### Checklist  - I read the [Contributor Guide](https://github.com/invertase/react-native-firebase/blob/main/CONTRIBUTING.md) and followed the process outlined there for submitting PRs.   - [x] Yes - My change supports the following platforms;   - [ ] `Android`   - [ ] `iOS`   - [x] `Other` (CI publish workflow + maintainer docs) - My change includes tests;   - [ ] `e2e` tests added or updated in `packages/**/e2e`   - [ ] `jest` tests added or updated in `packages/**/__tests__` - [ ] 
-  **Post-Mortem & Fix Analysis**:
-  > ## [Codecov](https://app.codecov.io/gh/invertase/react-native-firebase/pull/9396?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=invertase) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 75.10%. Comparing base ([`b12d847`](https://app.codecov.io/gh/invertase/react-native-firebase/commit/b12d8477bce15632e4391d80e8d125bf2a492402?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=invertase)) to head ([`3dba13d`](https://app.codecov.io/gh/invertase/react-native-firebase/commit/3dba13dffaf77a4fbab227825509dfee59c59e81?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=invertase)). :warning: Report is 4 commits behind head on main.  <details><summary>Additional details and impacted files</summary>    ```diff @@    
+- **Issue #9411** (2026-11-02): **fix(crashlytics, ios): name the dSYM input after the executable**
+  *Symptoms*: ### Description  The `[RNFB] Crashlytics Configuration` script phase declared its dSYM input as `${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Resources/DWARF/${TARGET_NAME}`. The DWARF file inside a dSYM is named after the binary, so in any app whose target name differs from its executable name, the declared input pointed at a file that doesn't exist. `pod install` regenerates the phase, so fixing it in Xcode didn't stick.  Changes:  - **The input now uses `${EXECUTABLE_NAME}`.** In Xcode's build-setting specs, app targets (`com.apple.package-type.wrapper.application`, based on `com.apple.package-type.wrapper`) default to `EXECUTABLE_NAME = $(EXECUTABLE_PREFIX)$(PRODUCT_NAME)$(EXECUTABLE_VARIANT_SUFFIX)$(EXECUTABLE_SUFFIX)`, and the prefix and both suffixes default to empty. So by default this resolves to the same path Firebase documents (`.../DWARF/${PRODUCT_NAME}`, in their docs and in `CrashlyticsInputFiles.xcfilelist`). It also covers apps that set a custom executable name. - **The test app's regenerated script phase** in `tests/ios/testing.xcodeproj` is updated to match, so `pod install` leaves no diff.  Apps whose target and product names match resolve to the same file as before, so nothing changes for them. Symbol uploads didn't depend on this input: `ios_config.sh` uploads from the dSYM folder. The wrong input affected Xcode's dependency analysis and script sandboxing.  ### Related issues  - Fixes #9404  ### Release Summary  Crashlytics (iOS): the dSYM i
 
-- **Issue #9393** (2026-10-23): **fix(app, sdk): bump Firebase iOS SDK to 12.19.3**
-  *Symptoms*: Bumps Firebase iOS SDK 12.18.0 → 12.19.3 for v26, the last major with CocoaPods support. 12.19.3 removes root certs for compromised eMudhra intermediate CAs from the embedded trust store (Cloud Firestore security update, [release notes](https://firebase.google.com/support/release-notes/ios)). v26 counterpart of #9391 (v27, SDK 13.1.1).  - `sdkVersions.ios.firebase` → 12.19.3 (SPM minimum), `docs/index.mdx` examples and the `test-rn-bare` Xcode pin updated - CocoaPods: 12.19.3 is only published for `Firebase`, `FirebaseCore` and `FirebaseFirestore`. Every other pod stops at 12.19.0, so the exact pins in the podspecs (e.g. `FirebaseAnalytics/Core`, `FirebaseCoreExtension`) could not resolve. When the default version is used, the podspecs now declare `~> 12.19.0` instead, so each pod resolves to its newest patch. A version pinned via `$FirebaseSDKVersion` / `FIREBASE_SDK_VERSION` stays exact. - `test_expo_ios_link` and `test_rn_bare_ios_build` now also run on `packages/app/package.json` changes, so SDK bumps on this branch exercise them (`main` already does this)  No 12.18.x patch exists and 12.19.1 / 12.19.2 aren't on CocoaPods trunk, so this crosses a minor. 12.19.0 adds the `GeminiLanguageModel` public preview plus some Auth and App Check build/crash fixes.  Targets `release-v26`, cut from `v26.4.0`.  
+- **Issue #9409** (2026-11-02): **chore(deps): bump ruby/setup-ruby from 1.329.0 to 1.334.0**
+  *Symptoms*: Bumps [ruby/setup-ruby](https://github.com/ruby/setup-ruby) from 1.329.0 to 1.334.0. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/ruby/setup-ruby/releases">ruby/setup-ruby's releases</a>.</em></p> <blockquote> <h2>v1.334.0</h2> <h2>What's Changed</h2> <ul> <li>Add ruby-3.3.13,ruby-3.4.12,ruby-4.0.9 by <a href="https://github.com/ruby-builder-bot"><code>@​ruby-builder-bot</code></a> in <a href="https://redirect.github.com/ruby/setup-ruby/pull/956">ruby/setup-ruby#956</a></li> </ul> <p><strong>Full Changelog</strong>: <a href="https://github.com/ruby/setup-ruby/compare/v1.333.0...v1.334.0">https://github.com/ruby/setup-ruby/compare/v1.333.0...v1.334.0</a></p> <h2>v1.333.0</h2> <h2>What's Changed</h2> <ul> <li>Add ruby-4.0.8 by <a href="https://github.com/ruby-builder-bot"><code>@​ruby-builder-bot</code></a> in <a href="https://redirect.github.com/ruby/setup-ruby/pull/955">ruby/setup-ruby#955</a></li> </ul> <p><strong>Full Changelog</strong>: <a href="https://github.com/ruby/setup-ruby/compare/v1.332.0...v1.333.0">https://github.com/ruby/setup-ruby/compare/v1.332.0...v1.333.0</a></p> <h2>v1.332.0</h2> <h2>What's Changed</h2> <ul> <li>Update CRuby releases on Windows (CVE-2026-111943) by <a href="https://github.com/ruby-builder-bot"><code>@​ruby-builder-bot</code></a> in <a href="https://redirect.github.com/ruby/setup-ruby/pull/952">ruby/setup-ruby#952</a></li> </ul> <p><strong>Full Changelog</strong>: <a href="https://github.com/ruby
+  **Post-Mortem & Fix Analysis**:
+  > [![CLA assistant check](https://cla-assistant.io/pull/badge/not_signed)](https://cla-assistant.io/invertase/react-native-firebase?pullRequest=9409) <br/>Thank you for your submission! We really appreciate it. Like many open source projects, we ask that you sign our [Contributor License Agreement](https://cla-assistant.io/invertase/react-native-firebase?pullRequest=9409) before we can accept your contribution.<br/><sub>You have signed the CLA already but the status is still pending? Let us [recheck](https://cla-assistant.io/check/invertase/react-native-firebase?pullRequest=9409) it.</sub>
+  > Superseded by #9420.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1592,152 +1593,110 @@ extern NSString *const DEFAULT_APP_NAME;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1cdb7de2` (2026-10-23)
-**Commit Message**: fix(crashlytics, ios): time out SPM upload-symbols so a stalled upload cannot hang the build
+### Incident Patch 1: `cac23b87` (2026-11-02)
+**Commit Message**: fix(crashlytics, ios): name the dSYM input after the executable (#9411)
 
-upload-symbols has no timeout of its own. A stalled request left the [RNFB] Crashlytics Configuration phase running until the surrounding build timed out. The script already treats an upload failure as a warning, so a timeout now takes the same path (default 300s, override with RNFB_CRASHLYTICS_UPLOAD_TIMEOUT_SEC).
-
-**File**: `packages/crashlytics/__tests__/ios_config.test.ts` (modified, +27/-1)
+**File**: `packages/crashlytics/__tests__/reactNativeConfig.test.ts` (modified, +50/-0)
 ```diff
-@@ -46,6 +46,13 @@ echo "error: stub forced failure" >&2
- exit 1
- `;
+@@ -5,6 +5,32 @@ import { describe, expect, it } from '@jest/globals';
  
-+// Never returns on its own — simulates a stalled network request in upload-symbols.
-+// `exec` keeps this a single process like the real binary, so the timeout's SIGALRM
-+// kills the hang itself rather than an orphaned child holding the output pipes open.
-+const HANGS_STUB = `#!/usr/bin/env bash
-+exec sleep 60
-+`;
-+
- const ALWAYS_SUCCEEDS_STUB = `#!/usr/bin/env bash
- exit 0
- `;
-@@ -90,12 +97,13 @@ describe('Crashlytics ios_config.sh SPM dSYM upload', function () {
-     rmSync(projectDir, { recursive: true, force: true });
-   });
+ const config = require('../react-native.config.js');
  
--  function runIosConfig() {
-+  function runIosConfig(extraEnv: Record<string, string> = {}) {
-     return spawnSync('bash', [SCRIPT_PATH], {
-       cwd: projectDir,
-       encoding: 'utf8',
-       env: {
-         PATH: process.env.PATH,
-+        ...extraEnv,
-         PROJECT_DIR: projectDir,
-         TARGET_NAME: targetName,
-         BUILD_DIR: buildDir,
-@@ -157,6 +165,24 @@ describe('Crashlytics ios_config.sh SPM dSYM upload', function () {
-     expect(result.stdout).toContain('warning:');
-     expect(result.stdout).toContain('upload-symbols (SPM) failed');
-   });
-+
-+  it('warns and continues without failing the build when SPM upload-symbols hangs past the timeout', function () {
-+    const targetFolderPlist = join(projectDir, targetName, 'GoogleService-Info.plist');
-+    mkdirSync(join(projectDir, targetName), { recursive: true });
-+    writeFileSync(targetFolderPlist, 'plist-contents');
-+
-+    writeFileSync(uploadSymbolsPath, HANGS_STUB);
-+    chmodSync(uploadSymbolsPath, 0o755);
-+
-+    const startedAt = Date.now();
-+    const result = runIosConfig({ RNFB_CRASHLYTICS_UPLOAD_TIMEOUT_SEC: '1' });
-+    const elapsedMs = Date.now() - startedAt;
-+
-+    expect(result.status).toBe(0);
-+    expect(elapsedMs).toBeLessThan(30000);
-+    expect(result.stdout).toContain('warning:');
-+    expect(result.stdout).toContain('failed or timed out');
-+  });
- });
- 
- describe('Crashlytics ios_config.sh CocoaPods / framework run', function () {
-```
-
-**File**: `packages/crashlytics/ios_config.sh` (modified, +14/-4)
-```diff
-@@ -16,6 +16,16 @@
- #
- set -e
- 
-+# upload-symbols talks to the network and has no timeout of its own, so a stalled
-+# request can hang the whole build. perl's alarm is used because macOS has no
-+# `timeout`. A timeout exits non-zero, which the callers below report as a
-+# warning without failing the build.
-+UPLOAD_SYMBOLS_TIMEOUT_SEC="${RNFB_CRASHLYTICS_UPLOAD_TIMEOUT_SEC:-300}"
-+
-+run_upload_symbols() {
-+  perl -e 'alarm shift; exec @ARGV' "${UPLOAD_SYMBOLS_TIMEOUT_SEC}" "$@"
++function expandFlatBuildSettings(value: string, settings: Record<string, string>): string {
++  return value.replace(/\$[{(](\w+)[})]/g, (_match: string, name: string) =>
++    expandFlatBuildSettings(settings[name] ?? '', settings),
++  );
 +}
 +
- if [[ ${PODS_ROOT} && -f "${PODS_ROOT}/FirebaseCrashlytics/run" ]]; then
-   echo "info: Exec FirebaseCrashlytics Run from Pods"
-   if ! "${PODS_ROOT}/FirebaseCrashlytics/run"; then
-@@ -49,14 +59,14 @@ else
-     echo "warning: GoogleService-Info.plist not found at ${PROJECT_DIR}/${TARGET_NAME}/GoogleService-Info.plist or ${PROJECT_DIR}/GoogleService-Info.plist. Skipping dSYM upload."
-   elif [[ -x "${SPM_UPLOAD_SYMBOLS}" ]]; then
-     echo "info: Exec FirebaseCrashlytics upload-symbols from SPM"
--    if ! "${SPM_UPLOAD_SYMBOLS}" -gsp "${GSP_PATH}" -p ios "${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}"; then
--      echo "warning: FirebaseCrashlytics upload-symbols (SPM) failed; continuing without failing the build. Common causes: no network, invalid/placeholder GoogleService-Info.plist credentials, or Firebase project mismatch."
-+    if ! run_upload_symbols "${SPM_UPLOAD_SYMBOLS}" -gsp "${GSP_PATH}" -p ios "${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}"; then
-+      echo "warning: FirebaseCrashlytics upload-symbols (SPM) failed or timed out; continuing without failing the build. Common causes: no network, invalid/placeholder GoogleService-Info.plist credentials, or Firebase project mismatch."
-     fi
-   elif [[ -f "${SPM_UPLOAD_SYMBOLS}" ]]; then
-     echo "info: Exec FirebaseCrashlytics upload-symbols from SPM (chmod +x)"
-     chmod +x "${SPM_UPLOAD_SYMBOLS}"
--    if ! "${SPM_UPLOAD_SYMBOLS}" -gsp "${GSP_PATH}" -p ios "${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}"; then
--      echo "warning: FirebaseCrashlytics upload-symbols (SPM) failed; continuing without failing the build. Common causes: no network, invalid/placeholder GoogleService-Info.plist credentials, or Firebase project mismatch."
-+    if ! run_upload_symbols "${SPM_UPLOAD_SYMBOLS}" -gsp "${GSP_PATH}" -p ios "${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}"; then
-+      echo "warning: FirebaseCrashlytics upload-symbols (SPM) failed or timed out; continuing without failing the build. Common causes: no network, invalid/placeholder GoogleService-Info.plist credentials, or Firebase project mismatch."
-     fi
-   else
-     echo "warning: FirebaseCrashlytics run script not found at CocoaPods, framework, or SPM paths. Skipping dSYM upload."
++const appBuildSettings: Record<string, string> = {
++  DWARF_DSYM_FOLDER_PATH: '/dsyms',
++  DWARF_DSYM_FILE_NAME: 'ExampleApp.app.dSYM',
++  TARGET_NAME: 'ExampleApp',
++  PRODUCT_NAME: 'Example Development',
++  EXECUTABLE_PREFIX: '',
++  EXECUTABLE_VARIANT_SUFFIX: '',
++  EXECUTABLE_SUFFIX: '',
++  EXECUTABLE_NAME:
++    '$(EXECUTABLE_PREFIX)$(PRODUCT_NAME)$(EXECUTABLE_VARIANT_SUFFIX)$(EXECUTABLE_SUFFIX)',
++};
++
++function declaredDwarfInput(): string {
++  const input = config.dependency.platforms.ios.scriptPhases[0].input_files.find((file: string) =>
++    file.includes('/DWARF/'),
++  );
++  expect(typeof input).toBe('string');
++  return input;
++}
++
+ describe('Crashlytics react-native.config.js', function () {
+   it('declares the iOS script phase that uploads dSYMs', function () {
+     // Without this entry `pod install` silently drops the
+@@ -18,6 +44,30 @@ describe('Crashlytics react-native.config.js', function () {
+     expect(scriptPhases[0].execution_position).toBe('after_compile');
+   });
+ 
++  it('declares the dSYM DWARF input by executable name', function () {
++    const inputFiles = config.dependency.platforms.ios.scriptPhases[0].input_files;
++
++    expect(inputFiles).toContain(
++      '${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Resources/DWARF/${EXECUTABLE_NAME}',
++    );
++    expect(inputFiles.some((file: string) => file.includes('${TARGET_NAME}'))).toBe(false);
++  });
++
++  it('resolves the dSYM DWARF input to the product name for an app by default', function () {
++    expect(expandFlatBuildSettings(declaredDwarfInput(), appBuildSettings)).toBe(
++      '/dsyms/ExampleApp.app.dSYM/Contents/Resources/DWARF/Example Development',
++    );
++  });
++
++  it('resolves the dSYM DWARF input to a custom executable name when overridden', function () {
++    expect(
++      expandFlatBuildSettings(declaredDwarfInput(), {
++        ...appBuildSettings,
++        EXECUTABLE_NAME: 'CustomBinary',
++      }),
++    ).toBe('/dsyms/ExampleApp.app.dSYM/Contents/Resources/DWARF/CustomBinary');
++  });
++
+   it('points the script phase at a script that exists', function () {
+     const scriptPath = join(__dirname, '..', config.dependency.platforms.ios.scriptPhases[0].path);
+ 
 ```
 
----
-
-### Incident Patch 2: `b12d8477` (2026-10-23)
-**Commit Message**: Reapply "docs: use relative link to Crashlytics usage in tips"
-
-This reverts commit 0444d72404760d64cafd4b90e02ae2e519343933.
-
-**File**: `docs/faqs-and-tips.mdx` (modified, +1/-1)
+**File**: `packages/crashlytics/react-native.config.js` (modified, +1/-1)
 ```diff
-@@ -98,5 +98,5 @@ To view the complete detail for this solution, please refer to this page: [#5656
-   - Build processes are costly and complex, so caching is used a lot. As a result, certain changes that you make in your app can cause cache conflicts in subsequent builds. Deal with this via `npx react-native-clean-project`. This does solve a lot of problems.
-   - Try and isolate the problem with a template React Native Firebase app. This [bash script](https://github.com/mikehardy/rnfbdemo/blob/main/make-demo.sh) is particularly helpful in making an empty template app.
- - Advice on supporting multiple environments (for example, dev, prod, maybe also staging, qa) for your React Native Firebase App: [#3504](https://github.com/invertase/react-native-firebase/issues/3504)
--- Using [Fastlane for iOS deployment](https://docs.fastlane.tools/getting-started/ios/setup/) together with [RN Firebase Crashlytics](https://rnfirebase.io/crashlytics/usage) within CI has been observed to cause builds that hang indefinitely. Using `setup_ci(force: true)` before building the application may solve the issue.: [#3706](https://github.com/invertase/react-native-firebase/issues/3706)
-+- Using [Fastlane for iOS deployment](https://docs.fastlane.tools/getting-started/ios/setup/) together with [RN Firebase Crashlytics](/crashlytics/usage) within CI has been observed to cause builds that hang indefinitely. Using `setup_ci(force: true)` before building the application may solve the issue.: [#3706](https://github.com/invertase/react-native-firebase/issues/3706)
- - Be careful if you are using a VPN, Google blocks many VPN IPs causing "unavailable" errors for various firebase API calls, and on an Android emulator it might completely mess up the network adapter causing network calls to never return, not only on firebase but on the entire emulated phone.
+@@ -12,7 +12,7 @@ module.exports = {
+             path: './ios_config.sh',
+             execution_position: 'after_compile',
+             input_files: [
+-              '${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Resources/DWARF/${TARGET_NAME}',
++              '${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Resources/DWARF/${EXECUTABLE_NAME}',
+               '$(BUILT_PRODUCTS_DIR)/$(INFOPLIST_PATH)',
+             ],
+           },
 ```
 
----
-
-### Incident Patch 3: `e823c1ef` (2026-10-23)
-**Commit Message**: Revert "docs: use relative link to Crashlytics usage in tips"
-
-This reverts commit 88131767a6efd964626dda087ca402adf336bb6e.
-
-**File**: `docs/faqs-and-tips.mdx` (modified, +1/-1)
+**File**: `tests/ios/testing.xcodeproj/project.pbxproj` (modified, +1/-1)
 ```diff
-@@ -98,5 +98,5 @@ To view the complete detail for this solution, please refer to this page: [#5656
-   - Build processes are costly and complex, so caching is used a lot. As a result, certain changes that you make in your app can cause cache conflicts in subsequent builds. Deal with this via `npx react-native-clean-project`. This does solve a lot of problems.
-   - Try and isolate the problem with a template React Native Firebase app. This [bash script](https://github.com/mikehardy/rnfbdemo/blob/main/make-demo.sh) is particularly helpful in making an empty template app.
- - Advice on supporting multiple environments (for example, dev, prod, maybe also staging, qa) for your React Native Firebase App: [#3504](https://github.com/invertase/react-native-firebase/issues/3504)
--- Using [Fastlane for iOS deployment](https://docs.fastlane.tools/getting-started/ios/setup/) together with [RN Firebase Crashlytics](/crashlytics/usage) within CI has been observed to cause builds that hang indefinitely. Using `setup_ci(force: true)` before building the application may solve the issue.: [#3706](https://github.com/invertase/react-native-firebase/issues/3706)
-+- Using [Fastlane for iOS deployment](https://docs.fastlane.tools/getting-started/ios/setup/) together with [RN Firebase Crashlytics](https://rnfirebase.io/crashlytics/usage) within CI has been observed to cause builds that hang indefinitely. Using `setup_ci(force: true)` before building the application may solve the issue.: [#3706](https://github.com/invertase/react-native-firebase/issues/3706)
- - Be careful if you are using a VPN, Google blocks many VPN IPs causing "unavailable" errors for various firebase API calls, and on an Android emulator it might completely mess up the network adapter causing network calls to never return, not only on firebase but on the entire emulated phone.
+@@ -410,7 +410,7 @@
+ 			files = (
+ 			);
+ 			inputPaths = (
+-				"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Resources/DWARF/${TARGET_NAME}",
++				"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Resources/DWARF/${EXECUTABLE_NAME}",
+ 				"$(BUILT_PRODUCTS_DIR)/$(INFOPLIST_PATH)",
+ 			);
+ 			name = "[CP-User] [RNFB] Crashlytics Configuration";
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #9411** (2026-11-02): fix(crashlytics, ios): name the dSYM input after the executable (@Mastersam07)
+- **PR #9409** (closed): chore(deps): bump ruby/setup-ruby from 1.329.0 to 1.334.0 (@dependabot[bot])
+- **PR #9406** (closed): chore(deps): bump ruby/setup-ruby from 1.329.0 to 1.332.0 (@dependabot[bot])
+- **PR #9400** (closed): chore(deps): bump ruby/setup-ruby from 1.329.0 to 1.331.0 (@dependabot[bot])
 - **PR #9396** (2026-10-23): fix(ci): branch-aware publish (docs gate, dist-tag, recovery) (@mikehardy)
 - **PR #9393** (2026-10-23): fix(app, sdk): bump Firebase iOS SDK to 12.19.3 (@russellwheatley)
-- **PR #9391** (2026-10-23): fix(app, sdk): bump Firebase iOS SDK to 13.1.1 (@russellwheatley)
-- **PR #9390** (closed): fix(firestore): align updateDoc, onSnapshot and initializeFirestore error handling with firebase-js-sdk (@Mastersam07)
-- **PR #9389** (2026-10-23): feat(app, sdk): bump Firebase iOS SDK to 13.1.0 (@mikehardy)
-- **PR #9388** (2026-10-22): feat(app, sdk): bump Firebase JS SDK to 13.1.0 (@SelaseKay)
 
 ---
 
@@ -1757,54 +1716,60 @@ This reverts commit 88131767a6efd964626dda087ca402adf336bb6e.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. crashlytics, ios): time out SPM upload-symbols so a stalled upload cannot hang t
+## X. crashlytics, ios): name the dSYM input after the executable (#9411)
 
 **RULE**:
-When implementing operations in `packages/crashlytics/__tests__/ios_config.test.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in invertase/react-native-firebase. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/crashlytics/__tests__/reactNativeConfig.test.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in invertase/react-native-firebase. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1cdb7de2`: crashlytics, ios): time out SPM upload-symbols so a stalled upload cannot hang the build. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `cac23b87`: crashlytics, ios): name the dSYM input after the executable (#9411). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/crashlytics/__tests__/ios_config.test.ts`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/crashlytics/__tests__/reactNativeConfig.test.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-// Never returns on its own — simulates a stalled network request in upload-symbols.
-// `exec` keeps this a single process like the real binary, so the timeout's SIGALRM
-// kills the hang itself rather than an orphaned child holding the output pipes open.
-const HANGS_STUB = `#!/usr/bin/env bash
-exec sleep 60
-`;
+function expandFlatBuildSettings(value: string, settings: Record<string, string>): string {
+  return value.replace(/\$[{(](\w+)[})]/g, (_match: string, name: string) =>
+    expandFlatBuildSettings(settings[name] ?? '', settings),
+  );
+}
 
-  function runIosConfig(extraEnv: Record<string, string> = {}) {
-        ...extraEnv,
+const appBuildSettings: Record<string, string> = {
+  DWARF_DSYM_FOLDER_PATH: '/dsyms',
+  DWARF_DSYM_FILE_NAME: 'ExampleApp.app.dSYM',
+  TARGET_NAME: 'ExampleApp',
+  PRODUCT_NAME: 'Example Development',
+  EXECUTABLE_PREFIX: '',
+  EXECUTABLE_VARIANT_SUFFIX: '',
+  EXECUTABLE_SUFFIX: '',
+  EXECUTABLE_NAME:
+    '$(EXECUTABLE_PREFIX)$(PRODUCT_NAME)$(EXECUTABLE_VARIANT_SUFFIX)$(EXECUTABLE_SUFFIX)',
+};
 
-  it('warns and continues without failing the build when SPM upload-symbols hangs past the timeout', function () {
-    const targetFolderPlist = join(projectDir, targetName, 'GoogleService-Info.plist');
-    mkdirSync(join(projectDir, targetName), { recursive: true });
-    writeFileSync(targetFolderPlist, 'plist-contents');
+function declaredDwarfInput(): string {
+  const input = config.dependency.platforms.ios.scriptPhases[0].input_files.find((file: string) =>
+    file.includes('/DWARF/'),
+  );
+  expect(typeof input).toBe('string');
+  return input;
+}
 
-    writeFileSync(uploadSymbolsPath, HANGS_STUB);
-    chmodSync(uploadSymbolsPath, 0o755);
+  it('declares the dSYM DWARF input by executable name', function () {
+    const inputFiles = config.dependency.platforms.ios.scriptPhases[0].input_files;
 
-    const startedAt = Date.now();
-    const result = runIosConfig({ RNFB_CRASHLYTICS_UPLOAD_TIMEOUT_SEC: '1' });
-    const elapsedMs = Date.now() - startedAt;
-
-    expect(result.status).toBe(0);
-    expect(elapsedMs).toBeLessThan(30000);
-    expect(result.stdout).toContain('warning:');
-    expect(result.stdout).toContain('failed or timed out');
-  });
+    expect(inputFiles).toContain(
+      '${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Resources/DWARF/${EXECUTABLE_NAME}',
+    );
+    expect(inputFiles.some((fil
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-  function runIosConfig() {
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1cdb7de2` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `cac23b87` are properly handled with clean fallback behavior.

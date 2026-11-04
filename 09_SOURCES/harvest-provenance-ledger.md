@@ -7149,3 +7149,6 @@ Every entry in this ledger must capture:
 | `learn-github-qwikdev-qwik` | `https://github.com/QwikDev/qwik` | `11765ab6` | Multi-dimensional audit evidence | 2026-11-04T03:23:36.696Z |
 | `learn-github-pixeltable-pixeltable` | `https://github.com/pixeltable/pixeltable` | `87375562` | Multi-dimensional audit evidence | 2026-11-04T03:23:45.667Z |
 | `learn-github-mufeedvh-code2prompt` | `https://github.com/mufeedvh/code2prompt` | `d762d9bb` | Multi-dimensional audit evidence | 2026-11-04T03:23:53.516Z |
+| `learn-github-vitest-dev-vitest` | `https://github.com/vitest-dev/vitest` | `289caab9` | Multi-dimensional audit evidence | 2026-11-04T03:30:35.537Z |
+| `learn-github-invertase-react-native-firebase` | `https://github.com/invertase/react-native-firebase` | `cac23b87` | Multi-dimensional audit evidence | 2026-11-04T03:30:37.044Z |
+| `learn-github-risingwavelabs-risingwave` | `https://github.com/risingwavelabs/risingwave` | `171d005b` | Multi-dimensional audit evidence | 2026-11-04T03:30:44.785Z |

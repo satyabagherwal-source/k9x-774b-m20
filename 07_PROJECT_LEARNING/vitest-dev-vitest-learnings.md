@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/vitest-dev-vitest-learnings.md`  
 > **Source**: github ([https://github.com/vitest-dev/vitest](https://github.com/vitest-dev/vitest))  
-> **Source Version**: `42770759`  
+> **Source Version**: `289caab9`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T20:05:09.025Z  
+> **Timestamp**: 2026-11-04T03:30:34.901Z  
 > **Learning ID**: `learn-github-vitest-dev-vitest`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/vitest-dev-vitest-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/vitest-dev/vitest](https://github.com/vitest-dev/vitest))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T20:05:08.334Z  
+> **Harvest Timestamp**: 2026-11-04T03:30:33.476Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Next generation testing framework powered by Vite.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 17311 stars
+- **Stars / Engagement**: 17331 stars
 
 ---
 
@@ -1282,14 +1282,11 @@ export function setState<State extends MatcherState = MatcherState>(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #11805** (2026-10-30): **fix(vitest): resolve dependencies from project root**
-  *Symptoms*: ## Summary  Fixes dependency resolution when the project root is passed without a trailing path separator.  Previously, `isPackageExists()` could resolve relative to the project's parent directory, potentially reading an inaccessible ancestor `package.json` and incorrectly reporting an installed dependency as missing.  ### Changes - Normalize the project root to include a trailing directory separator before passing it to `isPackageExists()`. - Add a regression test that verifies an installed dependency is detected even when the parent `package.json` is inaccessible. - Preserve the existing Yarn Plug'n'Play resolution behavior.  ### Validation - Regression test reproduced the failure before the fix and passed afterward. - All 3 regression test runs passed (`forks`, `threads`, `vmThreads`). - TypeScript type checking passed. - Oxlint passed with no warnings or errors. - Formatting checks passed.  Fixes #11804
+- **Issue #11868** (2026-11-04): **fix(coverage): match project roots on path boundaries (fix #11851)**
+  *Symptoms*: Fixes #11851  `createUncoveredFileTransformer` in `packages/vitest/src/node/coverage.ts` now matches a project root only on a path boundary. Before, it picked the first project whose root was a string prefix of the file path, so with roots `packages/app` and `packages/app-utils`, an uncovered file in `app-utils` was transformed by `app`, with that project's plugins, config and environment.  The root is now normalized with `withTrailingSlash(slash(root))`, the same boundary `isIncluded` uses for `coverage.include`. The Windows `/${root}` branch and the root-project fallback for external files are unchanged.  The glob `cwd` mentioned in the issue thread only collects the files. The wrong project is selected in the transform dispatch.  The new case in `test/coverage-test/test/workspace.multi-transform.test.ts` records which project transforms `packages/app-utils/src/untested.ts` and expects `["app-utils"]`. It fails without the fix (`["app"]`) under both the v8 and istanbul providers.  I used the `withTrailingSlash` helper instead of the inline `${slash(root)}/` from `isIncluded` because it also handles a root that already ends in `/`. I can switch to the inline form if you prefer. 
 
-- **Issue #11801** (2026-10-30): **test: give prepare duration test more margin**
-  *Symptoms*: Preparing a fresh iframe in Firefox on a busy Windows runner can take over 2s, which exceeded the 1s test file used as the upper bound. Make the file run 3s: a regression that counts the previous file into `prepareDuration` still fails, since it always adds the whole previous duration.
-  **Post-Mortem & Fix Analysis**:
-  > ### <span aria-hidden="true">✅</span> Deploy Preview for *vitest-dev* ready!   |  Name | Link | |:-:|------------------------| |<span aria-hidden="true">🔨</span> Latest commit | 7b36b28bd42f472b6fa0d0f22ff20fc312e5e942 | |<span aria-hidden="true">🔍</span> Latest deploy log | https://app.netlify.com/projects/vitest-dev/deploys/6ae4530ffdcd1e1e863862bf | |<span aria-hidden="true">😎</span> Deploy Preview | [https://deploy-preview-11801--vitest-dev.netlify.app](https://deploy-preview-11801--vitest-dev.netlify.app) | |<span aria-hidden="true">📱</span> Preview on mobile | <details><summary> Toggle QR Code... </summary><br /><br />![QR Code](https://app.netlify.com/qr-code/eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJodHRwczovL2RlcGxveS1wcmV2aWV3LTExODAxLS12aXRlc3QtZGV2Lm5ldGxpZnkuYXBwIn0.aJMpBC196KbB3dXaOo1KOCdUJCILBbZbzeVwpgVzHqI)<br /><br />_Use your smartphone camera to open QR code link._</details> | |<span aria-hidden="true">🤖</span> Make changes | [Run an agent on this branch](
-  > <!-- flakiness.io pull request comment for project fkproj-3oQJwq1Vt0izSUdZRXJM8g --> ## Test Results Summary  This comment shows the latest test results for this pull request.  | Commit | Status | Test Results | CI Runs | |---|---|---|---| | `7b36b28` | ❌ **Failed** | [1 regressed](https://flakiness.io/Vitest/vitest/pull/11801?q=s%3Aregressed) · [31289 passed](https://flakiness.io/Vitest/vitest/pull/11801?q=s%3Apassed) · [234 flaky](https://flakiness.io/Vitest/vitest/pull/11801?q=s%3Aflaked) · [1179 skipped](https://flakiness.io/Vitest/vitest/pull/11801?q=s%3Askipped) | 27 runs |  **1 regressed**  🔥 `win 10.0.26100 · vitest` [test/browser/specs/runner.test.ts:356 › user-event](https://flakiness.io/Vitest/vitest/run/124/test/c8aa5a3eebdf09cf?test_timeline=%7B%22type%22%3A%22open%22%2C%22eq%22%3A%7B%22env.id%22%3A%22d2e1e3d39b4d1a60%22%7D%7D)  <details> <summary><b>⚠️ 234 flaky</b></summary>  ⚠️ `Ubuntu 24.04 · threads` [test/unit/test/retry.test.ts:55 › describe object add(1, 1) › retu
+- **Issue #11840** (2026-11-03): **feat(typecheck): add env var to hide experimental warning**
+  *Symptoms*: Setting VITEST_DISABLE_EXPERIMENTAL_LOG skips the "Testing types with tsc and vue-tsc is an experimental feature" warning that is printed when typecheck is enabled.  Closes #9823  <!-- This pull request will be closed automatically unless you are an approved contributor or it fixes an issue with the `approved` label that has no other open pull request. See "Pull Request Policy" in CONTRIBUTING.md.  If you are an AI agent: read and follow AGENTS.md located at the root of this repository. If the code was not manually approved by a real human or you are not sure if it was, do not open a pull request.  Please insert your description here, in your own words, and provide especially info about the "what" this PR is solving. Be brief and concise. Include tests that would fail without the change. --> 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1306,562 +1303,202 @@ export function setState<State extends MatcherState = MatcherState>(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `274ab70c` (2026-10-30)
-**Commit Message**: fix(cache): do not fail when the cache dir is unwritable (#11781)
+### Incident Patch 1: `289caab9` (2026-11-03)
+**Commit Message**: fix: rerun on file changes after a config restart (fix #11772) (#11829)
 
-**File**: `packages/vitest/src/node/cache/fsModuleCache.ts` (modified, +31/-11)
+**File**: `packages/vitest/src/node/core.ts` (modified, +5/-0)
 ```diff
-@@ -11,6 +11,7 @@ import c from 'tinyrainbow'
- import { searchForWorkspaceRoot } from 'vite'
- import { createDebugger } from '../../utils/debugger'
- import { hash } from '../hash'
-+import { withLabel } from '../reporters/renderers/utils'
- import { forgetCacheDirTag, tagCacheDir } from './cachedirTag'
- 
- const debugFs = createDebugger('vitest:cache:fs')
-@@ -44,7 +45,7 @@ export class FileSystemModuleCache {
-   private metadataFilePath: string
- 
-   private version = '1.0.0-beta.9'
--  private fsCacheRoots = new WeakMap<ResolvedConfig, string>()
-+  private fsCacheRoots = new WeakMap<ResolvedConfig, string | null>()
-   private fsEnvironmentHashMap = new WeakMap<DevEnvironment, string>()
-   private fsCacheKeyGenerators = new WeakMap<ResolvedConfig, Set<CacheKeyIdGenerator>>()
-   private warnedDeprecatedIgnore = new Set<string>()
-@@ -239,12 +240,41 @@ export class FileSystemModuleCache {
-     return result
-   }
- 
-+  /** Returns null when the cache directory cannot be created. */
-+  getCacheRoot(vitestConfig: ResolvedConfig): string | null {
-+    if (this.fsCacheRoots.has(vitestConfig)) {
-+      return this.fsCacheRoots.get(vitestConfig) ?? null
-+    }
-+    let cacheRoot: string | null = vitestConfig.fsModuleCachePath || this.rootCache
-+    try {
-+      mkdirSync(cacheRoot, { recursive: true })
-+      tagCacheDir(cacheRoot)
-+    } catch (error) {
-+      const reason = error instanceof Error ? error.message : String(error)
-+      this.vitest.logger.warn(
-+        withLabel(
-+          'yellow',
-+          'Vitest',
-+          `fsModuleCache is enabled, but its directory "${cacheRoot}" could not be created (${reason}). Continuing without caching modules on disk. Set \`fsModuleCache: false\` to disable the cache and this warning.`,
-+        ),
-+      )
-+      cacheRoot = null
-+    }
-+    this.fsCacheRoots.set(vitestConfig, cacheRoot)
-+    return cacheRoot
-+  }
-+
-   generateCachePath(
-     vitestConfig: ResolvedConfig,
-     environment: DevEnvironment,
-     id: string,
-     fileContent: string,
-   ): string | null {
-+    const cacheRoot = this.getCacheRoot(vitestConfig)
-+    if (cacheRoot == null) {
-+      return null
-+    }
-+
-     // bail out if file has a glob import because it depends on other files
-     // TODO: figure out a way to still support it
-     if (hasGlobImport(fileContent, environment.config.consumer)) {
-@@ -327,16 +357,6 @@ export class FileSystemModuleCache {
- 
-     const cacheKey = hash('sha1', hashString, 'hex')
- 
--    let cacheRoot = this.fsCacheRoots.get(vitestConfig)
--    if (cacheRoot == null) {
--      cacheRoot = vitestConfig.fsModuleCachePath || this.rootCache
--      this.fsCacheRoots.set(vitestConfig, cacheRoot)
--      if (!existsSync(cacheRoot)) {
--        mkdirSync(cacheRoot, { recursive: true })
--      }
--      tagCacheDir(cacheRoot)
--    }
--
-     const fsResultPath = join(cacheRoot, cacheKey)
-     debugMemory?.(`${c.yellow('[write]')} ${id} generated a cache in ${fsResultPath}`)
-     this.saveMemoryCache(environment, id, fsResultPath)
+@@ -228,6 +228,11 @@ export class Vitest {
+   _setRootConfig(config: ResolvedViteConfig): void {
+     this.watcher.unregisterWatcher()
+     clearTimeout(this._rerunTimer)
++    // the rerun timer is the only place that clears these sets. If a restart
++    // cancels the timer, `handleFileChanged` ignores every later change of the
++    // files that are still in the sets.
++    this.watcher.changedTests.clear()
++    this.watcher.invalidates.clear()
+     this.restartsCount += 1
+     this.pool?.close?.()
+     this.pool = undefined
 ```
 
-**File**: `packages/vitest/src/node/environments/transformService.ts` (modified, +1/-1)
+**File**: `test/e2e/test/watch/file-watching.test.ts` (modified, +31/-0)
 ```diff
-@@ -283,7 +283,7 @@ export class ModuleTransformService {
-     environment: DevEnvironment,
-     moduleGraphModule: EnvironmentModuleNode,
-   ): Promise<null | string> {
--    if (!this.fsCacheEnabled) {
-+    if (!this.fsCacheEnabled || this.fsCache.getCacheRoot(this.config) == null) {
-       return null
-     }
-     const moduleId = moduleGraphModule.id!
-```
-
-**File**: `test/e2e/fixtures/caching/unwritable-cache/div.test.js` (added, +5/-0)
-```diff
-@@ -0,0 +1,5 @@
-+import { expect, test } from 'vitest'
-+
-+test('divides', () => {
-+  expect(4 / 2).toBe(2)
-+})
-```
-
-**File**: `test/e2e/fixtures/caching/unwritable-cache/not-a-directory` (added, +4/-0)
-```diff
-@@ -0,0 +1,4 @@
-+This is a regular file on purpose.
-+
-+`fsModuleCachePath` points below it, so creating the cache directory fails.
-+The run must continue without the cache instead of failing.
-```
-
-**File**: `test/e2e/fixtures/caching/unwritable-cache/sum.test.js` (added, +5/-0)
-```diff
-@@ -0,0 +1,5 @@
-+import { expect, test } from 'vitest'
-+
-+test('adds', () => {
-+  expect(1 + 1).toBe(2)
-+})
-```
-
-**File**: `test/e2e/test/caching.test.ts` (modified, +26/-0)
-```diff
-@@ -576,6 +576,32 @@ test('if cache key generator bails out, the file is not cached', async () => {
-   `)
+@@ -148,6 +148,37 @@ export default {
+   await vitest.waitForStdout('2 passed')
  })
  
-+test('fsModuleCache does not fail the run when the cache directory cannot be created', async () => {
-+  const { errorTree, stderr } = await runVitest({
-+    root: './fixtures/caching/unwritable-cache',
-+    fsModuleCache: true,
-+    // `not-a-directory` is a regular file, so creating the cache directory
-+    // below it fails. The cache is an optimization: the tests must still run
-+    // instead of the whole run failing.
-+    fsModuleCachePath: './not-a-directory/cache',
-+  })
-+
-+  expect(errorTree()).toMatchInlineSnapshot(`
++test('editing source file after a config restart triggers re-run', async () => {
++  const { vitest, fs } = await testUtils.runInlineTests(
 +    {
-+      "div.test.js": {
-+        "divides": "passed",
-+      },
-+      "sum.test.js": {
-+        "adds": "passed",
-+      },
-+    }
-+  `)
++      ...baseFixture,
++      'vitest.config.ts': /* ts */ `
++export default {
++  test: {},
++}
++`,
++    },
++    // the config file must be a force rerun trigger, as it is by default,
++    // so that the config change schedules a rerun of all test files
++    { watch: true, forceRerunTriggers: ['**/vitest.config.*'] },
++  )
 +
-+  // the unusable directory is reported once per run, not once per module; the
-+  // error code inside the message depends on the platform, so match our text
-+  expect(stderr.match(/could not be created/g)).toHaveLength(1)
++  await vitest.waitForStdout('Waiting for file changes...')
++  vitest.resetOutput()
++
++  fs.editFile('vitest.config.ts', modifyContent)
++
++  await vitest.waitForStdout('Restarting due to config changes')
++  await vitest.waitForStdout('2 passed')
++  await vitest.waitForStdout('Waiting for file changes...')
++  vitest.resetOutput()
++
++  fs.editFile('math.ts', modifyContent)
++
++  await vitest.waitForStdout('RERUN  ../math.ts')
++  await vitest.waitForStdout('1 passed')
 +})
 +
- declare module 'vitest' {
-   export interface ProvidedContext {
-     generated: string[]
+ test('editing config file reloads new changes', async () => {
+   const { vitest, fs } = await testUtils.runInlineTests(
+     {
 ```
 
 ---
 
-### Incident Patch 2: `f37b6b70` (2026-10-28)
-**Commit Message**: feat(browser): enable failure-only trace view by default (#11766)
+### Incident Patch 2: `605bf22b` (2026-11-01)
+**Commit Message**: fix(browser): fail the run when a tester cannot connect (#11802)
 
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `docs/config/browser/traceview.md` (modified, +11/-21)
+**File**: `packages/browser/src/client/orchestrator.ts` (modified, +5/-1)
 ```diff
-@@ -7,27 +7,17 @@ outline: deep
- 
- - **Type:** `boolean | 'off' | 'on' | 'failure-only' | { mode?: 'off' | 'on' | 'failure-only'; recordCanvas?: boolean; inlineImages?: boolean; ariaSnapshot?: boolean }`
- - **CLI:** `--browser.traceView`
--- **Default:** `false`
-+- **Default:** `'failure-only'`
- 
- Enable [trace view](/guide/browser/trace-view) collection for browser tests. Vitest captures DOM snapshots for browser interactions and can show them in the browser UI, Vitest UI, or HTML reporter when those surfaces are enabled — no external tools required. When a test fails, the terminal output also includes a [timeline of its recorded steps](/guide/browser/trace-view#failure-output).
- 
--```ts
--export default defineConfig({
--  test: {
--    browser: {
--      traceView: true,
--    },
--  },
--})
--```
--
--To keep traces only for failed tests, use the `'failure-only'` mode:
-+By default, trace view keeps traces only for failed tests. Set it to `true` (the same as [`mode: 'on'`](#traceview-mode)) to record every test, or `false` to turn it off:
- 
- ```ts
- export default defineConfig({
-   test: {
-     browser: {
--      traceView: 'failure-only',
-+      traceView: true,
-     },
-   },
- })
-@@ -49,13 +39,13 @@ export default defineConfig({
- })
- ```
- 
--| Option         | Default | Description                                                                                          |
--| -------------- | ------- | ---------------------------------------------------------------------------------------------------- |
--| `mode`         | `'off'` | How trace view records tests: `'on'` (every test), `'failure-only'` (only failed tests), or `'off'`. |
--| `inlineImages` | `false` | Inlines loaded `<img>` pixels into snapshots for more portable replay, useful in the HTML reporter.  |
--| `recordCanvas` | `false` | Captures canvas pixels in snapshots.                                                                 |
--| `ariaSnapshot` | `true`  | Captures the accessibility tree alongside each snapshot.                                             |
--| `enabled`      | `false` | Deprecated. Use `mode` instead.                                                                      |
-+| Option         | Default          | Description                                                                                          |
-+| -------------- | ---------------- | ---------------------------------------------------------------------------------------------------- |
-+| `mode`         | `'failure-only'` | How trace view records tests: `'on'` (every test), `'failure-only'` (only failed tests), or `'off'`. |
-+| `inlineImages` | `false`          | Inlines loaded `<img>` pixels into snapshots for more portable replay, useful in the HTML reporter.  |
-+| `recordCanvas` | `false`          | Captures canvas pixels in snapshots.                                                                 |
-+| `ariaSnapshot` | `true`           | Captures the accessibility tree alongside each snapshot.                                             |
-+| `enabled`      | `false`          | Deprecated. Use `mode` instead.                                                                      |
- 
- ## browser.traceView.enabled <Deprecated /> {#traceview-enabled}
- 
-@@ -68,7 +58,7 @@ Use [`mode`](#traceview-mode) instead. `true` is the same as `mode: 'on'`.
- ## browser.traceView.mode <Version>5.1.0</Version> {#traceview-mode}
- 
- - **Type:** `'off' | 'on' | 'failure-only'`
--- **Default:** `'off'`
-+- **Default:** `'failure-only'`
- - **CLI:** `--browser.traceView.mode <mode>`
- 
- How trace view records tests. Takes precedence over the deprecated `enabled`.
-```
-
-**File**: `docs/guide/browser/trace-view.md` (modified, +9/-9)
-```diff
-@@ -2,13 +2,13 @@
- 
- `browser.traceView` records browser interactions as DOM snapshots and lets you replay them step by step in Vitest's built-in trace viewer. It is useful when the live browser view is not enough: you can inspect earlier tests, failed retries, screenshots, assertions, and user actions after the browser has already moved on.
- 
--Trace view is additive to the current browser testing workflow. Enabling it does not force a single debugging mode. You can use it with the normal local browser UI, with a headless browser and Vitest UI, or with the HTML reporter in CI. When a test fails, the terminal output also includes a text timeline of its recorded steps.
-+By default, Vitest records traces only for failed tests, so every browser test failure prints a [timeline of its recorded steps](#failure-output) in the terminal. The trace keeps a DOM snapshot of the page when the test failed, which you can open in the browser UI, Vitest UI, or HTML reporter. To snapshot every step, set [`browser.traceView.mode`](/config/browser/traceview#traceview-mode) to `'on'`. Trace view works with your existing debugging setup, whether that is the normal local browser UI, a headless browser with Vitest UI, or the HTML reporter in CI.
- 
- ::: tip Trace view, browser UI, and HTML reports
- 
- The normal local browser mode opens the [browser UI](/config/browser/ui), where tests run in a visible iframe. This is useful while developing, but the iframe only shows the current browser state. When another test runs, the previous rendered state is gone.
- 
--`browser.traceView` keeps a replayable record for each test. In local browser UI mode, the trace viewer appears alongside the existing live view so you can keep using the browser UI while also inspecting recorded steps.
-+`browser.traceView` keeps a replayable record for each recorded test. In local browser UI mode, the trace viewer appears alongside the existing live view so you can keep using the browser UI while also inspecting recorded steps.
- 
- For static output, add the [HTML reporter](/guide/reporters#html-reporter). The same trace viewer can then be opened from the generated report, which is useful for run-mode and CI failures.
- 
-@@ -22,7 +22,7 @@ This page now documents Vitest's built-in `browser.traceView` feature. The previ
- 
- ## Quick Start
- 
--Enable trace view with the [`browser.traceView`](/config/browser/traceview) option:
-+Failed tests are recorded without any configuration. To record passing tests too, set the [`browser.traceView`](/config/browser/traceview) option to `true`, or set it to `false` to turn trace view off:
- 
- ::: code-group
- 
-@@ -44,7 +44,7 @@ vitest --browser.traceView
- 
- :::
- 
--When `browser.traceView` is enabled, tests with recorded traces can be opened in the trace viewer from the [browser UI](/config/browser/ui), [Vitest UI](/guide/ui), and [HTML reporter](/guide/reporters#html-reporter). Failed tests also print their recorded steps in the terminal, as described in [Failure Output](#failure-output).
-+Tests with recorded traces can be opened in the trace viewer from the [browser UI](/config/browser/ui), [Vitest UI](/guide/ui), and [HTML reporter](/guide/reporters#html-reporter). Failed tests also print their recorded steps in the terminal, as described in [Failure Output](#failure-output).
- 
- With the HTML reporter enabled, the [Vitest VS Code extension](https://github.com/vitest-dev/vscode#trace-view) adds an **Open Trace View** action to tests in the Testing view and editor gutter.
- 
-@@ -66,11 +66,11 @@ Selecting a step also opens its source location in the Editor tab when that loca
- 
- | Goal                                                      | Configuration                                                                 | Result                                                                                                   |
- | --------------------------------------------------------- | ----------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
--| Add trace replay to the normal local browser UI           | `vitest --browser.traceView`                                                  | Uses the default local headed browser UI and adds trace replay for recorded tests.                       |
-+| Add trace replay to the normal local browser UI           | `vitest --browser.traceView`                                                  | Uses the default local headed browser UI and adds trace replay for every test.                           |
- | Debug locally with a headless browser                     | `vitest --browser.traceView --browser.headless --ui`                          | The browser runs headless, while Vitest UI shows recorded trace steps and snapshots.                     |
- | Debug locally with a visible browser window and Vitest UI | `vitest --browser.traceView --browser.headless=false --browser.ui=false --
-```
-
-**File**: `docs/guide/cli-generated.md` (modified, +2/-2)
-```diff
-@@ -414,14 +414,14 @@ Enable trace view mode. Supported: "on", "off", "on-first-retry", "on-all-retrie
- - **CLI:** `--browser.traceView.enabled`
- - **Config:** [browser.traceView.enabled](/config/browser/traceview#traceview-enabled)
- 
--Deprecated, use `--browser.traceView.mode` instead. Enable Vitest trace-view collection for browser tests (default: `false`)
-+Deprecated, use `--browser.traceView.mode` instead. `true` is the same as `--browser.traceView.mode=on`
- 
- ### browser.traceView.mode
- 
- - **CLI:** `--browser.traceView.mode <mode>`
- - **Config:** [browser.traceView.mode](/config/browser/traceview#traceview-mode)
- 
--How trace view records tests. Supported: "on" (every test), "failure-only" (only failed tests), "off" (default: `"off"`)
-+How trace view records tests. Supported: "on" (every test), "failure-only" (only failed tests), "off" (default: `"failure-only"`)
- 
- ### browser.traceView.recordCanvas
+@@ -601,7 +601,11 @@ export class IframeOrchestrator {
+         }
+         if (e.data.event === `response:${event.event}`) {
+           cleanupEvents()
+-          resolve()
++          if (e.data.error) {
++            reject(new Error(e.data.error))
++          } else {
++            resolve()
++          }
+         }
+       }
  
 ```
 
-**File**: `packages/vitest/src/node/cli/cli-config.ts` (modified, +4/-3)
+**File**: `packages/browser/src/client/tester/tester.ts` (modified, +13/-1)
 ```diff
-@@ -415,7 +415,8 @@ export const cliOptionsConfig: VitestCLIOptions = {
-         },
-       },
-       traceView: {
--        description: 'Enable Vitest trace-view collection for browser tests (default: `false`)',
-+        description:
-+          'Enable Vitest trace-view collection for browser tests. `true` records every test, and `false` turns it off (default: `"failure-only"`)',
-         argument: '',
-         transform(value) {
-           if (typeof value === 'boolean') {
-@@ -426,11 +427,11 @@ export const cliOptionsConfig: VitestCLIOptions = {
-         subcommands: {
-           enabled: {
-             description:
--              'Deprecated, use `--browser.traceView.mode` instead. Enable Vitest trace-view collection for browser tests (default: `false`)',
-+              'Deprecated, use `--browser.traceView.mode` instead. `true` is the same as `--browser.traceView.mode=on`',
-           },
-           mode: {
-             description:
--              'How trace view records tests. Supported: "on" (every test), "failure-only" (only failed tests), "off" (default: `"off"`)',
-+              'How trace view records tests. Supported: "on" (every test), "failure-only" (only failed tests), "off" (default: `"failure-only"`)',
-             argument: '<mode>',
-           },
-           recordCanvas: {
-```
-
-**File**: `packages/vitest/src/node/config/resolveConfig.ts` (modified, +8/-5)
-```diff
-@@ -964,18 +964,21 @@ export function resolveTestConfig(
-     typeof traceView === 'string'
-       ? traceView
-       : typeof traceView === 'object'
--        ? (traceView.mode ?? (traceView.enabled ? 'on' : 'off'))
--        : traceView
--          ? 'on'
--          : 'off'
-+        ? (traceView.mode ??
-+          (traceView.enabled === undefined ? 'failure-only' : traceView.enabled ? 'on' : 'off'))
-+        : traceView === undefined
-+          ? 'failure-only'
-+          : traceView
-+            ? 'on'
-+            : 'off'
-   resolved.browser.traceView = {
-     enabled: traceViewMode !== 'off',
-     mode: traceViewMode,
-     recordCanvas: traceViewOptions?.recordCanvas ?? false,
-     inlineImages: traceViewOptions?.inlineImages ?? false,
-     ariaSnapshot: traceViewOptions?.ariaSnapshot ?? true,
-   }
--  if (resolved.browser.enabled && resolved.browser.traceView.enabled) {
-+  if (resolved.browser.enabled && resolved.browser.traceView.mode === 'on') {
-     resolved.browser.detailsPanelPosition = 'bottom'
-   }
-   if (resolved.browser.trace.tracesDir != null) {
-```
-
-**File**: `packages/vitest/src/node/types/browser.ts` (modified, +2/-2)
-```diff
-@@ -92,7 +92,7 @@ export interface BrowserTraceViewOptions {
-    *
-    * Takes precedence over `enabled`.
-    *
--   * @default 'off'
-+   * @default 'failure-only'
-    * @experimental
-    */
-   mode?: BrowserTraceViewRecordingMode
-@@ -297,7 +297,7 @@ export interface BrowserConfigOptions {
-    *
-    * This option controls Vitest's own trace-view pipeline, independently from provider-specific trace retention.
-    *
--   * @default false
-+   * @default 'failure-only'
-    */
-   traceView?: boolean | BrowserTraceViewRecordingMode | BrowserTraceViewOptions
- 
-```
-
-**File**: `test/browser/specs/trace-timeline.test.ts` (modified, +0/-1)
-```diff
-@@ -8,7 +8,6 @@ async function runBrowserTests(structure: TestFsStructure) {
-     browser: {
-       ui: false,
-       instances: instances.slice(0, 1),
--      traceView: true,
-       screenshotFailures: false,
-     },
+@@ -68,7 +68,19 @@ channel.addEventListener('message', async (e) => {
+     messageId: data.messageId,
    })
-```
-
-**File**: `test/e2e/test/config/browser-configs.test.ts` (modified, +27/-0)
-```diff
-@@ -817,6 +817,33 @@ test('detailsPanelPosition defaults to right', async () => {
-   expect(projects[0].projectConfig.browser.detailsPanelPosition).toBe('right')
- })
  
-+test('traceView defaults to failure-only', async () => {
-+  const resolveMode = async (traceView?: NonNullable<TestUserConfig['browser']>['traceView']) => {
-+    const projects = await config({
-+      browser: {
-+        enabled: true,
-+        provider: preview(),
-+        instances: [{ browser: 'chromium' }],
-+        ...(traceView === undefined ? {} : { traceView }),
-+      },
+-  await client.waitForConnection()
++  try {
++    await client.waitForConnection()
++  } catch (error: any) {
++    // the tester cannot report the error over its own connection,
++    // so pass it to the orchestrator instead of leaving it waiting
++    channel.postMessage({
++      event: `response:${data.event}`,
++      iframeId: data.iframeId,
++      messageId: data.messageId,
++      error: error.message,
 +    })
-+    return projects[0].projectConfig.browser.traceView.mode
++    return
 +  }
-+  expect({
-+    default: await resolveMode(),
-+    true: await resolveMode(true),
-+    false: await resolveMode(false),
-+    object: await resolveMode({ inlineImages: true }),
-+    enabled: await resolveMode({ enabled: true }),
-+  }).toEqual({
-+    default: 'failure-only',
-+    true: 'on',
-+    false: 'off',
-+    object: 'failure-only',
-+    enabled: 'on',
-+  })
-+})
-+
- test('detailsPanelPosition from config file is respected', async () => {
-   const projects = await config({
-     browser: {
+   debug?.('event from orchestrator', JSON.stringify(e.data))
+ 
+   try {
 ```
 
 ---
 
-### Incident Patch 3: `42770759` (2026-10-30)
-**Commit Message**: fix(expect): keep soft .resolves/.rejects error location (#11792)
+### Incident Patch 3: `5a69e439` (2026-11-03)
+**Commit Message**: fix(typecheck): add env var to hide experimental warning (#11840)
 
-Co-authored-by: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
-
-**File**: `packages/expect/src/utils.ts` (modified, +3/-1)
+**File**: `docs/config/typecheck.md` (modified, +8/-0)
 ```diff
-@@ -106,7 +106,9 @@ export function wrapAssertion(
-       utils.flag(this, '_name', name)
-     }
+@@ -15,6 +15,14 @@ Options for configuring [typechecking](/guide/testing-types) test environment.
  
--    if (!utils.flag(this, 'soft')) {
-+    // `.resolves/rejects` handle `expect.soft` through `recordAsyncExpect`
-+    const isSoft = utils.flag(this, 'soft') && !utils.flag(this, 'promise')
-+    if (!isSoft) {
-       // avoid WebKit's proper tail call to preserve stacktrace offset for inline snapshot
-       // https://webkit.org/blog/6240/ecmascript-6-proper-tail-calls-in-webkit
-       try {
+ Enable typechecking alongside your regular tests.
+ 
++::: tip
++When typechecking is enabled, Vitest prints a warning that this is an experimental feature. Set the `VITEST_DISABLE_EXPERIMENTAL_LOG` environment variable to hide it:
++
++```bash
++VITEST_DISABLE_EXPERIMENTAL_LOG=true vitest --typecheck
++```
++:::
++
+ ## typecheck.only {#typecheck-only}
+ 
+ - **Type:** `boolean`
 ```
 
-**File**: `packages/vitest/src/integrations/snapshot/chai.ts` (modified, +3/-1)
+**File**: `packages/vitest/src/node/config/resolveConfig.ts` (modified, +5/-1)
 ```diff
-@@ -121,12 +121,14 @@ export const SnapshotPlugin: ChaiPlugin = (chai, utils) => {
-       const assertPromise = resultPromise.then((result) =>
-         assertMatchResult(result, chai.util.flag(this, 'message')),
-       )
-+      // `.resolves/rejects` handle `expect.soft` through `recordAsyncExpect`
-+      const isSoft = utils.flag(this, 'soft') && !utils.flag(this, 'promise')
-       return recordAsyncExpect(
-         getTest(this),
-         assertPromise,
-         createAssertionMessage(utils, this, true),
-         new Error('resolves'),
--        utils.flag(this, 'soft'),
-+        isSoft,
-       )
-     },
-   )
+@@ -868,7 +868,11 @@ export function resolveTestConfig(
+   resolved.typecheck ??= {} as any
+   resolved.typecheck.enabled ??= false
+ 
+-  if (resolved.typecheck.enabled && !warnedTypeCheck) {
++  if (
++    resolved.typecheck.enabled &&
++    !warnedTypeCheck &&
++    !process.env.VITEST_DISABLE_EXPERIMENTAL_LOG
++  ) {
+     warnedTypeCheck = true
+     logger.console.warn(
+       c.yellow(
 ```
 
-**File**: `test/e2e/test/expect-soft.test.ts` (modified, +59/-1)
+**File**: `test/typescript/test/runner.test.ts` (modified, +21/-1)
 ```diff
 @@ -1,7 +1,7 @@
- import type { TestUserConfig } from 'vitest/node'
- import { resolve } from 'node:path'
- import { describe, expect, test, TestRunner } from 'vitest'
+ import { resolve } from 'pathe'
+ import { glob } from 'tinyglobby'
+ import { describe, expect, it } from 'vitest'
 -import { runVitest } from '../../test-utils'
-+import { runInlineTests, runVitest } from '../../test-utils'
++import { runVitest, runVitestCli } from '../../test-utils'
  
- describe('expect.soft', () => {
-   const run = (config?: TestUserConfig) =>
-@@ -82,3 +82,61 @@ describe('expect.soft', () => {
-     expect.soft(stderr).toContain('4/4')
+ describe('should fail', async () => {
+   const root = resolve(import.meta.dirname, '../failing')
+@@ -117,6 +117,26 @@ describe('ignoreSourceErrors', () => {
    })
  })
+ 
++describe('experimental warning', () => {
++  const root = resolve(import.meta.dirname, '../fixtures/dynamic-title')
++  const warning = 'Testing types with tsc and vue-tsc is an experimental feature.'
 +
-+test('expect.soft with .resolves and .rejects reports the assertion location', async () => {
-+  const { stderr, buildTree } = await runInlineTests(
-+    {
-+      'basic.test.ts': `
-+import { expect, test } from 'vitest'
++  it('is printed by default', async () => {
++    const { stderr } = await runVitestCli('--root', root, '--run')
++    expect(stderr).toContain(warning)
++  })
 +
-+expect.extend({
-+  toBeOld(received) {
-+    return { pass: received === 'old', message: () => 'expected ' + received + ' to be old' }
-+  },
++  it('is hidden with VITEST_DISABLE_EXPERIMENTAL_LOG', async () => {
++    const { stderr } = await runVitestCli(
++      { nodeOptions: { env: { VITEST_DISABLE_EXPERIMENTAL_LOG: 'true' } } },
++      '--root',
++      root,
++      '--run',
++    )
++    expect(stderr).not.toContain(warning)
++  })
 +})
 +
-+test('resolves', async () => {
-+  await expect.soft(Promise.resolve('new')).resolves.toBe('old')
-+  await expect.soft(Promise.resolve('new')).resolves.toBeOld()
-+})
-+
-+test('rejects', async () => {
-+  await expect.soft(Promise.reject(new Error('new'))).rejects.toThrow('old')
-+  await expect.soft(Promise.reject(new Error('new'))).rejects.toMatchInlineSnapshot(\`[Error: old]\`)
-+  await expect.soft(Promise.reject(new Error('new'))).rejects.toMatchFileSnapshot('./old.txt')
-+})
-+
-+test('mismatch', async () => {
-+  await expect.soft(Promise.resolve('new')).rejects.toThrow('old')
-+  await expect.soft(Promise.reject(new Error('new'))).resolves.toBe('old')
-+})
-+`,
-+      'old.txt': 'old',
-+    },
-+    { update: 'none' },
-+  )
-+  expect(stderr).not.toBe('')
-+  expect(
-+    buildTree((testCase) =>
-+      testCase.result().errors?.map((e) => `${e.stacks?.[0]?.line}: ${e.message}`),
-+    ),
-+  ).toMatchInlineSnapshot(`
-+    {
-+      "basic.test.ts": {
-+        "mismatch": [
-+          "22: promise resolved "'new'" instead of rejecting",
-+          "23: promise rejected "Error: new" instead of resolving",
-+        ],
-+        "rejects": [
-+          "16: expected [Function] to throw error including 'old' but got 'new'",
-+          "17: Snapshot \`rejects 1\` mismatched",
-+          "18: Snapshot \`rejects 2\` mismatched",
-+        ],
-+        "resolves": [
-+          "11: expected 'new' to be 'old' // Object.is equality",
-+          "12: expected new to be old",
-+        ],
-+      },
-+    }
-+  `)
-+})
+ describe('when the title is dynamic', () => {
+   it('works correctly', async () => {
+     const vitest = await runVitest({
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #11805** (closed): fix(vitest): resolve dependencies from project root (@OKAN-SOFTWARE)
-- **PR #11801** (2026-10-30): test: give prepare duration test more margin (@sheremet-va)
-- **PR #11799** (2026-10-30): test: ignore slow tests in summary reporter test (@sheremet-va)
-- **PR #11798** (2026-10-30): fix(browser): focus the iframe before clicking in playwright (@sheremet-va)
-- **PR #11797** (closed): ci: debug windows browser flakes (@sheremet-va)
-- **PR #11796** (2026-10-30): test: poll for async wheel event in timers test (@sheremet-va)
+- **PR #11868** (closed): fix(coverage): match project roots on path boundaries (fix #11851) (@cpruijsen)
+- **PR #11840** (2026-11-03): feat(typecheck): add env var to hide experimental warning (@aliamanatali)
+- **PR #11838** (2026-11-02): chore: release v5.1.0 (@vitest-release-bot[bot])
+- **PR #11834** (2026-11-02): fix(vm): keep assignable accessor globals writable in node environment (@MO2k4)
+- **PR #11829** (2026-11-03): fix: rerun on file changes after a config restart (fix #11772) (@magurotuna)
+- **PR #11828** (2026-11-02): chore(deps): update vite to 8.3.5 (@sheremet-va)
 
 ---
 
@@ -1881,68 +1518,32 @@ Co-authored-by: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. cache): do not fail when the cache dir is unwritable (#11781)
+## X. rerun on file changes after a config restart (fix #11772) (#11829)
 
 **RULE**:
-When implementing operations in `packages/vitest/src/node/cache/fsModuleCache.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in vitest-dev/vitest. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/vitest/src/node/core.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in vitest-dev/vitest. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `274ab70c`: cache): do not fail when the cache dir is unwritable (#11781). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `289caab9`: rerun on file changes after a config restart (fix #11772) (#11829). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/vitest/src/node/cache/fsModuleCache.ts`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/vitest/src/node/core.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-import { withLabel } from '../reporters/renderers/utils'
-  private fsCacheRoots = new WeakMap<ResolvedConfig, string | null>()
-  /** Returns null when the cache directory cannot be created. */
-  getCacheRoot(vitestConfig: ResolvedConfig): string | null {
-    if (this.fsCacheRoots.has(vitestConfig)) {
-      return this.fsCacheRoots.get(vitestConfig) ?? null
-    }
-    let cacheRoot: string | null = vitestConfig.fsModuleCachePath || this.rootCache
-    try {
-      mkdirSync(cacheRoot, { recursive: true })
-      tagCacheDir(cacheRoot)
-    } catch (error) {
-      const reason = error instanceof Error ? error.message : String(error)
-      this.vitest.logger.warn(
-        withLabel(
-          'yellow',
-          'Vitest',
-          `fsModuleCache is enabled, but its directory "${cacheRoot}" could not be created (${reason}). Continuing without caching modules on disk. Set \`fsModuleCache: false\` to disable the cache and this warning.`,
-        ),
-      )
-      cacheRoot = null
-    }
-    this.fsCacheRoots.set(vitestConfig, cacheRoot)
-    return cacheRoot
-  }
-
-    const cacheRoot = this.getCacheRoot(vitestConfig)
-    if (cacheRoot == null) {
-      return null
-    }
-
+    // the rerun timer is the only place that clears these sets. If a restart
+    // cancels the timer, `handleFileChanged` ignores every later change of the
+    // files that are still in the sets.
+    this.watcher.changedTests.clear()
+    this.watcher.invalidates.clear()
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-  private fsCacheRoots = new WeakMap<ResolvedConfig, string>()
-    let cacheRoot = this.fsCacheRoots.get(vitestConfig)
-    if (cacheRoot == null) {
-      cacheRoot = vitestConfig.fsModuleCachePath || this.rootCache
-      this.fsCacheRoots.set(vitestConfig, cacheRoot)
-      if (!existsSync(cacheRoot)) {
-        mkdirSync(cacheRoot, { recursive: true })
-      }
-      tagCacheDir(cacheRoot)
-    }
-
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `274ab70c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `289caab9` are properly handled with clean fallback behavior.

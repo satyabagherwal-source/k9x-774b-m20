@@ -3563,10 +3563,10 @@
     "repository": "invertase/react-native-firebase",
     "platform": "github",
     "sourceUrl": "https://github.com/invertase/react-native-firebase",
-    "sourceVersion": "c65e1ee3",
+    "sourceVersion": "cac23b87",
     "license": "NOASSERTION",
-    "contentHash": "198da7b76d0aa07344ac7f092d3d5104848e1661b66e37cb4b534b6e9d4e01b4",
-    "lastHarvestedAt": "2026-10-24T19:34:59.920Z",
+    "contentHash": "a10fba1e33ba8cdf54b3d589039a9176db2748a9b7e5c1a0564afaf0ee11da56",
+    "lastHarvestedAt": "2026-11-04T03:30:37.044Z",
     "learningId": "learn-github-invertase-react-native-firebase"
   },
   "peerdb-io-peerdb": {
@@ -3773,10 +3773,10 @@
     "repository": "risingwavelabs/risingwave",
     "platform": "github",
     "sourceUrl": "https://github.com/risingwavelabs/risingwave",
-    "sourceVersion": "4b2dbfab",
+    "sourceVersion": "171d005b",
     "license": "Apache-2.0",
-    "contentHash": "205af126e86f4097dc7e7e5706ad94cff7bb34da3892cfe57194cd9ebb6d52ff",
-    "lastHarvestedAt": "2026-11-02T16:55:02.141Z",
+    "contentHash": "7c6e0b9b44aa9176767a01d8cdccb53c8902dbd2c52d8cb1f9bb3e36d881dd7e",
+    "lastHarvestedAt": "2026-11-04T03:30:44.785Z",
     "learningId": "learn-github-risingwavelabs-risingwave"
   },
   "mertjf-tailblocks": {
@@ -10113,10 +10113,10 @@
     "repository": "vitest-dev/vitest",
     "platform": "github",
     "sourceUrl": "https://github.com/vitest-dev/vitest",
-    "sourceVersion": "42770759",
+    "sourceVersion": "289caab9",
     "license": "MIT",
-    "contentHash": "da9d0efad6726bb1ecd4b8ac8756a4dac86cb169902548abd92445d99b32b417",
-    "lastHarvestedAt": "2026-10-30T20:05:09.733Z",
+    "contentHash": "78fb7b66f34bdb13050ff323cf5fe1f61e1765111201524e687bc4ca7d9e4166",
+    "lastHarvestedAt": "2026-11-04T03:30:35.537Z",
     "learningId": "learn-github-vitest-dev-vitest"
   },
   "mijick-popups": {

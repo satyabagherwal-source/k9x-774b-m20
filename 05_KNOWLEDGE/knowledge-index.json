@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-04T03:23:53.424Z",
+  "last_updated": "2026-11-04T03:30:44.714Z",
   "total_verified_learnings": 1204,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -33428,8 +33428,8 @@
       "slug": "invertase-react-native-firebase",
       "platform": "github",
       "source_url": "https://github.com/invertase/react-native-firebase",
-      "source_version": "c65e1ee3",
-      "content_hash": "198da7b76d0aa07344ac7f092d3d5104848e1661b66e37cb4b534b6e9d4e01b4",
+      "source_version": "cac23b87",
+      "content_hash": "a10fba1e33ba8cdf54b3d589039a9176db2748a9b7e5c1a0564afaf0ee11da56",
       "dossier_path": "07_PROJECT_LEARNING/invertase-react-native-firebase-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/invertase-react-native-firebase-learnings.md",
       "promoted_rules": [
@@ -33442,6 +33442,11 @@
           "number": 3920,
           "title": "crashlytics, ios): time out SPM upload-symbols so a stalled upload cannot hang t",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6741,
+          "title": "crashlytics, ios): name the dSYM input after the executable (#9411)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -33449,7 +33454,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-24T19:34:59.851Z",
+      "verified_at": "2026-11-04T03:30:36.954Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -50007,8 +50012,8 @@
       "slug": "risingwavelabs-risingwave",
       "platform": "github",
       "source_url": "https://github.com/risingwavelabs/risingwave",
-      "source_version": "4b2dbfab",
-      "content_hash": "205af126e86f4097dc7e7e5706ad94cff7bb34da3892cfe57194cd9ebb6d52ff",
+      "source_version": "171d005b",
+      "content_hash": "7c6e0b9b44aa9176767a01d8cdccb53c8902dbd2c52d8cb1f9bb3e36d881dd7e",
       "dossier_path": "07_PROJECT_LEARNING/risingwavelabs-risingwave-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/risingwavelabs-risingwave-learnings.md",
       "promoted_rules": [
@@ -50076,6 +50081,11 @@
           "number": 6466,
           "title": "optimizer): only count equality predicates toward unique-key cardinality (#27665",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6742,
+          "title": "storage): reduce SST metadata and block decode overhead (#27761)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -50083,7 +50093,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-02T16:55:02.031Z",
+      "verified_at": "2026-11-04T03:30:44.695Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -76393,8 +76403,8 @@
       "slug": "vitest-dev-vitest",
       "platform": "github",
       "source_url": "https://github.com/vitest-dev/vitest",
-      "source_version": "42770759",
-      "content_hash": "da9d0efad6726bb1ecd4b8ac8756a4dac86cb169902548abd92445d99b32b417",
+      "source_version": "289caab9",
+      "content_hash": "78fb7b66f34bdb13050ff323cf5fe1f61e1765111201524e687bc4ca7d9e4166",
       "dossier_path": "07_PROJECT_LEARNING/vitest-dev-vitest-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/vitest-dev-vitest-learnings.md",
       "promoted_rules": [
@@ -76427,6 +76437,11 @@
           "number": 5854,
           "title": "cache): do not fail when the cache dir is unwritable (#11781)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6740,
+          "title": "rerun on file changes after a config restart (fix #11772) (#11829)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -76434,7 +76449,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T20:05:09.605Z",
+      "verified_at": "2026-11-04T03:30:35.443Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -172882,6 +172897,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-04T03:23:53.401Z"
+    },
+    "rule-6740": {
+      "learning_id": "rule-6740",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6740,
+      "title": "rerun on file changes after a config restart (fix #11772) (#11829)",
+      "source_url": "https://github.com/vitest-dev/vitest",
+      "source_version": "289caab9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T03:30:35.443Z"
+    },
+    "rule-6741": {
+      "learning_id": "rule-6741",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6741,
+      "title": "crashlytics, ios): name the dSYM input after the executable (#9411)",
+      "source_url": "https://github.com/invertase/react-native-firebase",
+      "source_version": "cac23b87",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T03:30:36.954Z"
+    },
+    "rule-6742": {
+      "learning_id": "rule-6742",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6742,
+      "title": "storage): reduce SST metadata and block decode overhead (#27761)",
+      "source_url": "https://github.com/risingwavelabs/risingwave",
+      "source_version": "171d005b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T03:30:44.695Z"
     }
   },
   "aliases": {

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/risingwavelabs-risingwave-learnings.md`  
 > **Source**: github ([https://github.com/risingwavelabs/risingwave](https://github.com/risingwavelabs/risingwave))  
-> **Source Version**: `4b2dbfab`  
+> **Source Version**: `171d005b`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-02T16:55:01.384Z  
+> **Timestamp**: 2026-11-04T03:30:44.168Z  
 > **Learning ID**: `learn-github-risingwavelabs-risingwave`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/risingwavelabs-risingwave-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/risingwavelabs/risingwave](https://github.com/risingwavelabs/risingwave))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-02T16:55:01.287Z  
+> **Harvest Timestamp**: 2026-11-04T03:30:43.289Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Event streaming platform for agentic AI. Continuously ingest, transform, and serve event streams in real time, at scale.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 9398 stars
+- **Stars / Engagement**: 9397 stars
 
 ---
 
@@ -1077,366 +1077,1183 @@ pub(crate) use def_path_lookup;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e536bf08` (2026-11-02)
-**Commit Message**: fix(optimizer): only count equality predicates toward unique-key cardinality (#27665)
+### Incident Patch 1: `171d005b` (2026-11-03)
+**Commit Message**: perf(storage): reduce SST metadata and block decode overhead (#27761)
 
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `e2e_test/batch/subquery/scalar_subquery.slt.part` (modified, +62/-0)
+**File**: `Cargo.lock` (modified, +1/-0)
 ```diff
-@@ -32,3 +32,65 @@ select (select x from t) x, 1 one;
- 
- statement ok
- drop table t;
-+
-+# Only equality on every primary key column bounds a scalar subquery to one row. Other predicates
-+# on the primary key can match several rows and must keep the runtime check.
-+statement ok
-+create table t_pk (pk int primary key, v int);
-+
-+statement ok
-+insert into t_pk values (1, 10), (2, 20), (3, 30);
-+
-+query I
-+select (select v from t_pk where pk = 2);
-+----
-+20
-+
-+query error Scalar subquery produced more than one row
-+select (select v from t_pk where pk > 1);
-+
-+query error Scalar subquery produced more than one row
-+select (select v from t_pk where pk = 1 or pk = 2);
-+
-+statement error Scalar subquery might produce more than one row
-+create materialized view mv_pk_range as select (select v from t_pk where pk > 1) v;
-+
-+# A lossless cast of the primary key and a row equality still fix the primary key.
-+statement ok
-+create table t_outer (a bigint);
-+
-+statement ok
-+insert into t_outer values (1), (3), (4);
-+
-+query II
-+select a, (select v from t_pk where pk::bigint = t_outer.a) from t_outer order by a;
-+----
-+1 10
-+3 30
-+4 NULL
-+
-+query I
-+select (select v from t_pk where (pk, v) = (2, 20));
-+----
-+20
-+
-+statement ok
-+drop table t_outer;
-+
-+statement ok
-+drop table t_pk;
-+
-+# A boolean primary key used as a predicate fixes it to true or false.
-+statement ok
-+create table t_flag (pk boolean primary key, v int);
-+
-+statement ok
-+insert into t_flag values (true, 1), (false, 0);
-+
-+query II
-+select (select v from t_flag where pk), (select v from t_flag where not pk);
-+----
-+1 0
-+
-+statement ok
-+drop table t_flag;
+@@ -15848,6 +15848,7 @@ dependencies = [
+  "tempfile",
+  "thiserror 2.0.17",
+  "thiserror-ext",
++ "tikv-jemallocator",
+  "tokio-retry",
+  "tracing",
+  "uuid",
 ```
 
-**File**: `src/frontend/planner_test/tests/testdata/input/subquery.yaml` (modified, +67/-0)
+**File**: `src/storage/Cargo.toml` (modified, +11/-0)
 ```diff
-@@ -281,6 +281,73 @@
-     select *, (select 1 from (select 1 from t2) where t1.i = 1) from t1;
-   expected_outputs:
-     - optimizer_error
-+- name: a range predicate on the primary key does not bound a scalar subquery to one row
-+  sql: |
-+    CREATE TABLE t1(a INT);
-+    CREATE TABLE t2(pk INT PRIMARY KEY, v INT);
-+    select a, (select v from t2 where t2.pk > t1.a) from t1;
-+  expected_outputs:
-+    - optimizer_error
-+- name: a disjunction on the primary key does not bound a scalar subquery to one row
-+  sql: |
-+    CREATE TABLE t2(pk INT PRIMARY KEY, v INT);
-+    select (select v from t2 where pk = 1 or pk = 2);
-+  expected_outputs:
-+    - batch_plan
-+- name: an equality between the primary key and another column does not bound a scalar subquery to one row
-+  sql: |
-+    CREATE TABLE t2(pk INT PRIMARY KEY, v INT);
-+    select (select v from t2 where pk = v);
-+  expected_outputs:
-+    - batch_plan
-+- name: a correlated equality on the primary key bounds a scalar subquery to one row
-+  sql: |
-+    CREATE TABLE t1(a INT);
-+    CREATE TABLE t2(pk INT PRIMARY KEY, v INT);
-+    select a, (select v from t2 where t2.pk = t1.a) as v from t1;
-+  expected_outputs:
-+    - batch_plan
-+    - stream_plan
-+- name: an equality on a primary key cast to decimal bounds a scalar subquery to one row
-+  sql: |
-+    CREATE TABLE t2(pk INT PRIMARY KEY, v INT);
-+    select (select v from t2 where pk = 1.5);
-+  expected_outputs:
-+    - batch_plan
-+- name: an equality on a primary key widened to bigint bounds a scalar subquery to one row
-+  sql: |
-+    CREATE TABLE t1(a BIGINT);
-+    CREATE TABLE t2(pk INT PRIMARY KEY, v INT);
-+    select a, (select v from t2 where pk::bigint = t1.a) as v from t1;
-+  expected_outputs:
-+    - batch_plan
-+    - stream_plan
-+- name: a row equality on every primary key column bounds a scalar subquery to one row
-+  sql: |
-+    CREATE TABLE t1(a INT, b INT);
-+    CREATE TABLE t2(a INT, b INT, v INT, PRIMARY KEY(a, b));
-+    select t1.a, (select v from t2 where (t2.a, t2.b) = (t1.a, t1.b)) as v from t1;
-+  expected_outputs:
-+    - batch_plan
-+    - stream_plan
-+- name: a row equality with a constant on every primary key column bounds a scalar subquery to one row
-+  sql: |
-+    CREATE TABLE t2(a INT, b INT, v INT, PRIMARY KEY(a, b));
-+    select (select v from t2 where (a, b) = (1, 2));
-+  expected_outputs:
-+    - batch_plan
-+- name: a single-item IN list on the primary key bounds a scalar subquery to one row
-+  sql: |
-+    CREATE TABLE t2(pk INT PRIMARY KEY, v INT);
-+    select (select v from t2 where pk in (2));
-+  expected_outputs:
-+    - batch_plan
-+- name: a boolean primary key used as a predicate bounds a scalar subquery to one row
-+  sql: |
-+    CREATE TABLE t2(pk BOOLEAN PRIMARY KEY, v INT);
-+    select (select v from t2 where pk), (select v from t2 where not pk);
-+  expected_outputs:
-+    - batch_plan
+@@ -86,6 +86,7 @@ criterion = { workspace = true, features = ["async_futures", "async_tokio"] }
+ expect-test = "1"
+ risingwave_hummock_sdk = { workspace = true, features = ["test"] }
+ risingwave_test_runner = { workspace = true }
++tikv-jemallocator = { workspace = true }
+ uuid = { version = "1", features = ["v4"] }
  
- - name: test grouping sets subquery 1
-   sql: |
+ [[bench]]
+@@ -136,5 +137,15 @@ harness = false
+ name = "bench_table_watermarks"
+ harness = false
+ 
++[[bench]]
++name = "bench_sstable_filter_restore"
++harness = false
++required-features = ["test"]
++
++[[bench]]
++name = "bench_sstable_decode"
++harness = false
++required-features = ["test"]
++
+ [lints]
+ workspace = true
 ```
 
-**File**: `src/frontend/planner_test/tests/testdata/output/subquery.yaml` (modified, +161/-0)
+**File**: `src/storage/benches/bench_sstable_decode.rs` (added, +190/-0)
 ```diff
-@@ -726,6 +726,167 @@
-     CREATE TABLE t2(j INT);
-     select *, (select 1 from (select 1 from t2) where t1.i = 1) from t1;
-   optimizer_error: 'internal error: Scalar subquery might produce more than one row.'
-+- name: a range predicate on the primary key does not bound a scalar subquery to one row
-+  sql: |
-+    CREATE TABLE t1(a INT);
-+    CREATE TABLE t2(pk INT PRIMARY KEY, v INT);
-+    select a, (select v from t2 where t2.pk > t1.a) from t1;
-+  optimizer_error: 'internal error: Scalar subquery might produce more than one row.'
-+- name: a disjunction on the primary key does not bound a scalar subquery to one row
-+  sql: |
-+    CREATE TABLE t2(pk INT PRIMARY KEY, v INT);
-+    select (select v from t2 where pk = 1 or pk = 2);
-+  batch_plan: |-
-+    BatchNestedLoopJoin { type: LeftOuter, predicate: true, output: all }
-+    ├─BatchValues { rows: [[]] }
-+    └─BatchMaxOneRow
-+      └─BatchExchange { order: [], dist: Single }
-+        └─BatchScan { table: t2, columns: [t2.v], scan_ranges: [t2.pk = Int32(1), t2.pk = Int32(2)], distribution: SomeShard }
-+- name: an equality between the primary key and another column does not bound a scalar subquery to one row
-+  sql: |
-+    CREATE TABLE t2(pk INT PRIMARY KEY, v INT);
-+    select (select v from t2 where pk = v);
-+  batch_plan: |-
-+    BatchNestedLoopJoin { type: LeftOuter, predicate: true, output: all }
-+    ├─BatchValues { rows: [[]] }
-+    └─BatchMaxOneRow
-+      └─BatchExchange { order: [], dist: Single }
-+        └─BatchProject { exprs: [t2.v] }
-+          └─BatchFilter { predicate: (t2.pk = t2.v) }
-+            └─BatchScan { table: t2, columns: [t2.v, t2.pk], distribution: UpstreamHashShard(t2.pk) }
-+- name: a correlated equality on the primary key bounds a scalar subquery to one row
-+  sql: |
-+    CREATE TABLE t1(a INT);
-+    CREATE TABLE t2(pk INT PRIMARY KEY, v INT);
-+    select a, (select v from t2 where t2.pk = t1.a) as v from t1;
-+  batch_plan: |-
-+    BatchExchange { order: [], dist: Single }
-+    └─BatchLookupJoin { type: LeftOuter, predicate: t1.a IS NOT DISTINCT FROM t2.pk AND IsNotNull(t2.pk), output: [t1.a, t2.v], lookup table: t2 }
-+      └─BatchExchange { order: [], dist: UpstreamHashShard(t1.a) }
-+        └─BatchScan { table: t1, columns: [t1.a], distribution: SomeShard }
-+  stream_plan: |-
-+    StreamMaterialize { columns: [a, v, t1._row_id(hidden), t2.pk(hidden)], stream_key: [t1._row_id, a], pk_columns: [t1._row_id, a], pk_conflict: NoCheck }
-+    └─StreamExchange { dist: HashShard(t1.a, t1._row_id) }
-+      └─StreamHashJoin { type: LeftOuter, predicate: t1.a IS NOT DISTINCT FROM t2.pk, output: [t1.a, t2.v, t1._row_id, t2.pk] }
-+        ├─StreamExchange { dist: HashShard(t1.a) }
-+        │ └─StreamTableScan { table: t1, columns: [t1.a, t1._row_id], stream_scan_type: SnapshotBackfill, stream_key: [t1._row_id], pk: [_row_id], dist: UpstreamHashShard(t1._row_id) }
-+        └─StreamExchange { dist: HashShard(t2.pk) }
-+          └─StreamFilter { predicate: IsNotNull(t2.pk) }
-+            └─StreamTableScan { table: t2, columns: [t2.pk, t2.v], stream_scan_type: SnapshotBackfill, stream_key: [t2.pk], pk: [pk], dist: UpstreamHashShard(t2.pk) }
-+- name: an equality on a primary key cast to decimal bounds a scalar subquery to one row
-+  sql: |
-+    CREATE TABLE t2(pk INT PRIMARY KEY, v INT);
-+    select (select v from t2 where pk = 1.5);
-+  batch_plan: |-
-+    BatchNestedLoopJoin { type: LeftOuter, predicate: true, output: all }
-+    ├─BatchValues { rows: [[]] }
-+    └─BatchExchange { order: [], dist: Single }
-+      └─BatchProject { exprs: [t2.v] }
-+        └─BatchFilter { predicate: (t2.pk::Decimal = 1.5:Decimal) }
-+          └─BatchScan { table: t2, columns: [t2.v, t2.pk], distribution: UpstreamHashShard(t2.pk) }
-+- name: an equality on a primary key widened to bigint bounds a scalar subquery to one row
-+  sql: |
-+    CREATE TABLE t1(a BIGINT);
-+    CREATE TABLE t2(pk INT PRIMARY KEY, v INT);
-+    select a, (select v from t2 where pk::bigint = t1.a) as v from t1;
-+  batch_plan: |-
-+    BatchExchange { order: [], dist: Single }
-+    └─BatchHashJoin { type: LeftOuter, predicate: t1.a IS NOT DISTINCT FROM t1.a, output: [t1.a, t2.v] }
-+      ├─BatchExchange { order: [], dist: HashShard(t1.a) }
-+      │ └─BatchScan { table: t1, columns: [t1.a], distribution: SomeShard }
-+      └─BatchHashJoin { type: Inner, predicate: t1.a = $expr1, output: [t1.a, t2.v] }
-+        ├─BatchHashAgg { group_key: [t1.a], aggs: [] }
-+        │ └─BatchExchange { order: [], dist: HashShard(t1.a) }
-+        │   └─BatchScan { table: t1, columns: [t1.a], distribution: SomeShard }
-+        └─BatchExchange { order: [], dist: HashShard($expr1) }
-+          └─BatchProject { exprs: [t2.v, t2.pk::Int64 as $expr1] }
-+            └─BatchScan { table: t2, columns: [t2.pk, t2.v], distribution: UpstreamHashShard(t2.pk) }
-+  stream_plan: |-
-+    StreamMaterialize { columns: [a, v, t1._row_id(hidden), t1.a(hidden), t2.pk(hidden)], stream_key: [t1._row_id, t2.pk, a], pk_columns: [t1._row_id, 
+@@ -0,0 +1,190 @@
++// Copyright 2026 RisingWave Labs
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//     http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++//! Criterion for native metadata and Block restore; same final owned objects.
++
++#[path = "sstable_decode_fixture/resources.rs"]
++mod resources;
++#[allow(dead_code)]
++mod sstable_meta_fixture;
++
++use std::hint::black_box;
++use std::time::Duration;
++
++use bytes::Bytes;
++use criterion::{Criterion, criterion_group, criterion_main};
++use foyer::Code;
++use resources::measure;
++use risingwave_common::catalog::TableId;
++use risingwave_hummock_sdk::key::FullKey;
++use risingwave_storage::hummock::sstable::{
++    Block, BlockBuilder, BlockBuilderOptions, BlockedXor8FilterBuilder, BlockedXor16FilterBuilder,
++    CompressionAlgorithm, Sstable, SstableMeta, Xor16FilterBuilder,
++};
++use serde::{Deserialize, Deserializer};
++
++struct LegacyBlock(Block);
++impl<'de> Deserialize<'de> for LegacyBlock {
++    fn deserialize<D: Deserializer<'de>>(d: D) -> Result<Self, D::Error> {
++        let data: Vec<u8> = serde_bytes::deserialize(d)?;
++        Ok(Self(Block::decode_from_raw_legacy_for_bench(Bytes::from(
++            data,
++        ))))
++    }
++}
++fn assert_block(a: &Block, b: &Block) {
++    assert_eq!(a.raw(), b.raw());
++    assert_eq!(a.table_id(), b.table_id());
++    assert_eq!(a.data(), b.data());
++    assert_eq!(a.restart_point_len(), b.restart_point_len());
++    for i in 0..a.restart_point_len() {
++        assert_eq!(a.restart_point(i), b.restart_point(i));
++    }
++}
++fn block_cases(c: &mut Criterion, label: &str, raw: Bytes) {
++    let old = Block::decode_from_raw_legacy_for_bench(raw.clone());
++    let new = Block::decode_from_raw(raw.clone());
++    assert_block(&old, &new);
++    let wire = bincode::serialize(&old).unwrap();
++    assert_block(
++        &new,
++        &bincode::deserialize_from::<_, LegacyBlock>(&mut &wire[..])
++            .unwrap()
++            .0,
++    );
++    eprintln!(
++        "FIXTURE name={label} raw_bytes={} restarts={} xxh64={:016x}",
++        raw.len(),
++        old.restart_point_len(),
++        xxhash_rust::xxh64::xxh64(&raw, 0)
++    );
++    let mut group = c.benchmark_group("rw_block_restore");
++    measure(&mut group, &format!("{label}_raw_old"), || {
++        Block::decode_from_raw_legacy_for_bench(black_box(raw.clone()))
++    });
++    measure(&mut group, &format!("{label}_raw_new"), || {
++        Block::decode_from_raw(black_box(raw.clone()))
++    });
++    measure(&mut group, &format!("{label}_code_old"), || {
++        bincode::deserialize_from::<_, LegacyBlock>(&mut black_box(&wire[..])).unwrap()
++    });
++    measure(&mut group, &format!("{label}_code_new"), || {
++        <Block as Code>::decode(&mut black_box(&wire[..])).unwrap()
++    });
++    group.finish();
++}
++fn producer_block(target: usize, mixed: bool) -> Bytes {
++    let mut builder = BlockBuilder::new(BlockBuilderOptions {
++        capacity: target,
++        compression_algorithm: CompressionAlgorithm::None,
++        restart_interval: 16,
++    });
++    for i in 0_u64.. {
++        let mut key = i.to_be_bytes().to_vec();
++        key.resize(if mixed && (i / 16) % 2 == 1 { 320 } else { 64 }, b'k');
++        let key = FullKey::for_test(TableId::default(), key, 1);
++        let value = vec![42; if mixed && (i / 16) % 2 == 1 { 300 } else { 16 }];
++        builder.add_for_test(key.to_ref(), &value);
++        if builder.approximate_len() >= target {
++            break;
++        }
++    }
++    let native = Bytes::copy_from_slice(builder.build());
++    let block = Block::decode(native.clone(), native.len()).unwrap();
++    Bytes::copy_from_slice(block.raw())
++}
++fn meta_case(c: &mut Criterion, label: &str, data: Bytes, meta: SstableMeta, blocks: bool) {
++    let native = data.slice(meta.meta_offset as usize..);
++    let baseline = Sstable::new(1_u64.into(), SstableMeta::decode(&native).unwrap(), false);
++    let candidate = Sstable::from_meta_bytes(1_u64.into(), &native, false).unwrap();
++    assert_eq!(baseline.id, candidate.id);
++    assert_eq!(baseline.meta, candidate.meta);
++    assert_eq!(
++        baseline.filter_reader.encode_to_bytes(),
++        candidate.filter_reader.encode_to_bytes()
++    );
++    assert_eq!(
++        bincode::serialize(&baseline).unwrap(),
++        bincode::serialize(&candidate).unwrap()
++    );
++    eprintln!(
++        "FIXTURE name={label} keys={} key_len={} blocks={} filter_bytes={} native_meta_bytes={} filter_xxh64={:016x} native_xxh64={:016x}",
++        meta.key_count,
++        meta.smallest_
 ```
 
-**File**: `src/frontend/src/optimizer/plan_visitor/cardinality_visitor.rs` (modified, +122/-8)
+**File**: `src/storage/benches/bench_sstable_filter_restore.rs` (added, +90/-0)
 ```diff
-@@ -15,15 +15,20 @@
- use std::collections::HashSet;
- use std::ops::{Mul, Sub};
+@@ -0,0 +1,90 @@
++// Copyright 2026 RisingWave Labs
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//     http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++//! Run with `cargo bench -p risingwave_storage --bench bench_sstable_filter_restore --features test`.
++
++mod sstable_meta_fixture;
++
++use std::hint::black_box;
++use std::time::Duration;
++
++use criterion::{BatchSize, Criterion, Throughput, criterion_group, criterion_main};
++use risingwave_storage::hummock::sstable::{
++    BlockedXor8FilterBuilder, BlockedXor16FilterBuilder, SstableMeta, Xor8FilterBuilder,
++    Xor16FilterBuilder, XorFilterReader,
++};
++use sstable_meta_fixture::sstable_meta;
++
++risingwave_common::enable_jemalloc!();
++
++fn bench_sstable_filter_restore(c: &mut Criterion) {
++    let runtime = tokio::runtime::Builder::new_current_thread()
++        .enable_all()
++        .build()
++        .unwrap();
++    let mut group = c.benchmark_group("sstable_filter_restore");
++    let mut measure = |name: &str, meta: SstableMeta| {
++        let restored = XorFilterReader::new(&meta.bloom_filter, &meta.block_metas);
++        assert!(!restored.is_empty());
++        assert_eq!(restored.encode_to_bytes(), meta.bloom_filter);
++        eprintln!(
++            "fixture={name} blocks={} filter_bytes={} xxh64={:016x}",
++            meta.block_metas.len(),
++            meta.bloom_filter.len(),
++            xxhash_rust::xxh64::xxh64(&meta.bloom_filter, 0)
++        );
++        group.throughput(Throughput::Bytes(meta.bloom_filter.len() as u64));
++        group.bench_function(name, |b| {
++            // Time the production reader on real SST bytes. PerIteration drops the
++            // restored reader outside timing; fixture construction and checks are excluded.
++            b.iter_batched(
++                || (),
++                |()| {
++                    XorFilterReader::new(
++                        black_box(&meta.bloom_filter),
++                        black_box(&meta.block_metas),
++                    )
++                },
++                BatchSize::PerIteration,
++            );
++        });
++    };
++    measure(
++        "xor8",
++        runtime.block_on(sstable_meta::<Xor8FilterBuilder>(1_100_000, 64)),
++    );
++    measure(
++        "xor16",
++        runtime.block_on(sstable_meta::<Xor16FilterBuilder>(1_100_000, 64)),
++    );
++    measure(
++        "blocked_xor8",
++        runtime.block_on(sstable_meta::<BlockedXor8FilterBuilder>(1_100_000, 64)),
++    );
++    measure(
++        "blocked_xor16",
++        runtime.block_on(sstable_meta::<BlockedXor16FilterBuilder>(1_100_000, 64)),
++    );
++    group.finish();
++}
++
++criterion_group! {
++    name = benches;
++    config = Criterion::default()
++        .sample_size(30)
++        .warm_up_time(Duration::from_secs(1))
++        .measurement_time(Duration::from_secs(3));
++    targets = bench_sstable_filter_restore
++}
++criterion_main!(benches);
+```
+
+**File**: `src/storage/benches/sstable_decode_fixture/resources.rs` (added, +99/-0)
+```diff
+@@ -0,0 +1,99 @@
++// Copyright 2026 RisingWave Labs
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//     http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++use std::alloc::{GlobalAlloc, Layout};
++use std::hint::black_box;
++use std::sync::atomic::{AtomicBool, AtomicU64, Ordering};
++use std::time::{Duration, Instant};
++
++use criterion::measurement::WallTime;
++use criterion::{BatchSize, BenchmarkGroup};
++
++struct CountedJemalloc;
++static COUNT: AtomicBool = AtomicBool::new(false);
++static ALLOCS: AtomicU64 = AtomicU64::new(0);
++static BYTES: AtomicU64 = AtomicU64::new(0);
++fn count(size: usize) {
++    if COUNT.load(Ordering::Relaxed) {
++        ALLOCS.fetch_add(1, Ordering::Relaxed);
++        BYTES.fetch_add(size as u64, Ordering::Relaxed);
++    }
++}
++unsafe impl GlobalAlloc for CountedJemalloc {
++    unsafe fn alloc(&self, layout: Layout) -> *mut u8 {
++        count(layout.size());
++        unsafe { tikv_jemallocator::Jemalloc.alloc(layout) }
++    }
++
++    unsafe fn alloc_zeroed(&self, layout: Layout) -> *mut u8 {
++        count(layout.size());
++        unsafe { tikv_jemallocator::Jemalloc.alloc_zeroed(layout) }
++    }
++
++    unsafe fn dealloc(&self, ptr: *mut u8, layout: Layout) {
++        unsafe { tikv_jemallocator::Jemalloc.dealloc(ptr, layout) }
++    }
++
++    unsafe fn realloc(&self, ptr: *mut u8, layout: Layout, size: usize) -> *mut u8 {
++        count(size);
++        unsafe { tikv_jemallocator::Jemalloc.realloc(ptr, layout, size) }
++    }
++}
++#[global_allocator]
++static ALLOCATOR: CountedJemalloc = CountedJemalloc;
++
++fn cpu_ns() -> u64 {
++    let mut usage = std::mem::MaybeUninit::<libc::rusage>::uninit();
++    assert_eq!(
++        unsafe { libc::getrusage(libc::RUSAGE_SELF, usage.as_mut_ptr()) },
++        0
++    );
++    let usage = unsafe { usage.assume_init() };
++    ((usage.ru_utime.tv_sec + usage.ru_stime.tv_sec) as u64) * 1_000_000_000
++        + ((usage.ru_utime.tv_usec + usage.ru_stime.tv_usec) as u64) * 1000
++}
++
++pub fn measure<T>(group: &mut BenchmarkGroup<'_, WallTime>, name: &str, mut f: impl FnMut() -> T) {
++    for _ in 0..32 {
++        drop(black_box(f()));
++    }
++    ALLOCS.store(0, Ordering::Relaxed);
++    BYTES.store(0, Ordering::Relaxed);
++    COUNT.store(true, Ordering::Relaxed);
++    let value = black_box(f());
++    COUNT.store(false, Ordering::Relaxed);
++    let allocs = ALLOCS.load(Ordering::Relaxed);
++    let bytes = BYTES.load(Ordering::Relaxed);
++    drop(value);
++    let cpu_start = cpu_ns();
++    let start = Instant::now();
++    let mut iterations = 0_u64;
++    loop {
++        for _ in 0..64 {
++            drop(black_box(f()));
++        }
++        iterations += 64;
++        if start.elapsed() >= Duration::from_millis(250) {
++            break;
++        }
++    }
++    let wall = start.elapsed().as_nanos();
++    let cpu = cpu_ns() - cpu_start;
++    eprintln!(
++        "RESOURCE case={name} iterations={iterations} wall_ns={wall} cpu_ns={cpu} allocations={allocs} allocated_bytes={bytes}"
++    );
++    group.bench_function(name, |b| {
++        b.iter_batched(|| (), |()| f(), BatchSize::PerIteration);
++    });
++}
+```
+
+**File**: `src/storage/benches/sstable_meta_fixture/mod.rs` (added, +62/-0)
+```diff
+@@ -0,0 +1,62 @@
++// Copyright 2026 RisingWave Labs
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//     http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++use risingwave_common::catalog::TableId;
++use risingwave_common::hash::VirtualNode;
++use risingwave_common::util::epoch::test_epoch;
++use risingwave_hummock_sdk::key::FullKey;
++use risingwave_storage::compaction_catalog_manager::CompactionCatalogAgent;
++use risingwave_storage::hummock::sstable::{
++    FilterBuilder, InMemWriter, SstableBuilder, SstableBuilderOptions, SstableMeta,
++};
++use risingwave_storage::hummock::value::HummockValue;
++
++// Build and native-decode an SST before any timed iterations. Shared-prefix keys keep
++// the fixture bounded while exercising actual block metadata and filter builders.
++pub async fn sstable_meta<F: FilterBuilder>(key_count: usize, key_len: usize) -> SstableMeta {
++    sstable_fixture::<F>(key_count, key_len).await.1
++}
++
++pub async fn sstable_fixture<F: FilterBuilder>(
++    key_count: usize,
++    key_len: usize,
++) -> (bytes::Bytes, SstableMeta) {
++    let options = SstableBuilderOptions {
++        capacity: 128 << 20,
++        block_capacity: 64 << 10,
++        estimated_output_key_count: Some(key_count),
++        ..Default::default()
++    };
++    let mut builder = SstableBuilder::new(
++        1_u64,
++        InMemWriter::from(&options),
++        F::create(options.filter_builder_options()),
++        options,
++        CompactionCatalogAgent::for_test(vec![TableId::default()]),
++        None,
++    );
++    for index in 0..key_count {
++        let mut key = VirtualNode::ZERO.to_be_bytes().to_vec();
++        key.resize(key_len - 8, b'k');
++        key.extend_from_slice(&(index as u64).to_be_bytes());
++        let key = FullKey::for_test(TableId::default(), key, test_epoch(1));
++        builder
++            .add(key.to_ref(), HummockValue::put(&[42; 16]))
++            .await
++            .unwrap();
++    }
++    let (bytes, meta) = builder.finish().await.unwrap().writer_output;
++    let meta = SstableMeta::decode(&bytes[meta.meta_offset as usize..]).unwrap();
++    (bytes, meta)
++}
+```
+
+**File**: `src/storage/src/hummock/sstable/block.rs` (modified, +45/-0)
+```diff
+@@ -257,6 +257,51 @@ impl Block {
+     }
  
-+use itertools::Itertools;
-+use risingwave_common::types::DataType;
-+use risingwave_common::util::iter_util::ZipEqFast;
- use risingwave_pb::plan_common::JoinType;
- 
- use super::{DefaultBehavior, DefaultValue, LogicalPlanVisitor, PlanVisitor};
-+use crate::expr::{Expr, ExprImpl, ExprType};
- use crate::optimizer::plan_node::generic::TopNLimit;
- use crate::optimizer::plan_node::{
-     self, LogicalPlanRef as PlanRef, PlanTreeNode, PlanTreeNodeBinary, PlanTreeNodeUnary,
- };
- use crate::optimizer::plan_visitor::LogicalPlanNode;
- use crate::optimizer::property::Cardinality;
-+use crate::utils::Condition;
- 
- /// A visitor that computes the cardinality of a plan node.
- pub struct CardinalityVisitor;
-@@ -51,6 +56,117 @@ impl CardinalityVisitor {
-             input_card.min(0..)
+     pub fn decode_from_raw(buf: Bytes) -> Self {
++        let table_id = (&buf[buf.len() - 4..]).get_u32_le();
++        let n_index = (&buf[buf.len() - 8..buf.len() - 4]).get_u32_le() as usize;
++        let index_start = buf.len() - 8 - n_index * RestartPoint::size_of();
++        let (index_entries, remainder) = buf[index_start..buf.len() - 8].as_chunks::<5>();
++        assert!(remainder.is_empty());
++        let mut index_entries = index_entries.iter();
++        let decode_index = |entry: &[u8; 5]| RestartPoint {
++            offset: u32::from_le_bytes(entry[..4].try_into().unwrap()),
++            key_len_type: LenType::from(entry[4] >> 4),
++            value_len_type: LenType::from(entry[4] & 0x0f),
++        };
++        let mut current = decode_index(index_entries.next().unwrap());
++        let mut next = index_entries.next().map(decode_index);
++        let n_restarts = (&buf[index_start - 4..index_start]).get_u32_le() as usize;
++        let data_len = index_start - 4 - n_restarts * size_of::<u32>();
++        let (offsets, remainder) = buf[data_len..index_start - 4].as_chunks::<4>();
++        assert!(remainder.is_empty());
++        let mut restart_points = Vec::with_capacity(n_restarts);
++        for bytes in offsets {
++            let offset = u32::from_le_bytes(*bytes);
++            if let Some(entry) = next.as_ref()
++                && offset >= entry.offset
++            {
++                current = *entry;
++                next = index_entries.next().map(decode_index);
++            }
++            restart_points.push(RestartPoint {
++                offset,
++                key_len_type: current.key_len_type,
++                value_len_type: current.value_len_type,
++            });
++        }
++        Block {
++            data: buf,
++            data_len,
++            restart_points,
++            table_id: TableId::new(table_id),
++            hitmap: Hitmap::default(),
++        }
++    }
++
++    /// Original decoder retained only as a Criterion comparison control.
++    #[cfg(feature = "test")]
++    #[doc(hidden)]
++    pub fn decode_from_raw_legacy_for_bench(buf: Bytes) -> Self {
+         let table_id = (&buf[buf.len() - 4..]).get_u32_le();
+         // decode restart_points_type_index
+         let n_index = ((&buf[buf.len() - 8..buf.len() - 4]).get_u32_le()) as usize;
+```
+
+**File**: `src/storage/src/hummock/sstable/mod.rs` (modified, +62/-4)
+```diff
+@@ -187,6 +187,21 @@ impl Sstable {
          }
      }
-+
-+    /// Returns the columns that `predicate` fixes to a single value:
-+    /// - columns compared by `=`, `IS NOT DISTINCT FROM`, or a single-item `IN` with a pure
-+    ///   expression that references no input column, such as a constant, a parameter, or a
-+    ///   correlated input ref. A row comparison such as `(a, b) = (1, 2)` fixes its columns field
-+    ///   by field.
-+    /// - boolean columns used as a conjunction directly or through `NOT`, `IS TRUE`, or
-+    ///   `IS FALSE`, such as `WHERE flag`.
-+    ///
-+    /// Other conjunctions, such as `pk > 1`, `pk = other_col`, or `pk = 1 OR pk = 2`, can keep
-+    /// several rows even when they reference every unique key column, so they are ignored.
-+    fn fixed_columns(predicate: &Condition) -> HashSet<usize> {
-+        let mut fixed = HashSet::new();
-+        for conjunction in &predicate.conjunctions {
-+            match conjunction {
-+                ExprImpl::InputRef(input_ref) => {
-+                    fixed.insert(input_ref.index());
-+                }
-+                ExprImpl::FunctionCall(call) => match (call.func_type(), call.inputs()) {
-+                    (
-+                        ExprType::Not | ExprType::IsTrue | ExprType::IsFalse,
-+                        [ExprImpl::InputRef(input_ref)],
-+                    ) => {
-+                        fixed.insert(input_ref.index());
-+                    }
-+                    // `In` with two inputs is `lhs IN (rhs)`.
-+                    (ExprType::Equal | ExprType::IsNotDistinctFrom | ExprType::In, [lhs, rhs]) => {
-+                        Self::collect_equality_fixed_columns(lhs, rhs, &mut fixed);
-+                    }
-+                    _ => {}
-+                },
-+                _ => {}
-+            }
-+        }
-+        fixed
+ 
++    /// Restore an SST handle directly from native metadata bytes.
++    pub fn from_meta_bytes(
++        id: HummockSstableObjectId,
++        bytes: &[u8],
++        skip_bloom_filter_in_serde: bool,
++    ) -> HummockResult<Self> {
++        let (meta, filter_reader) = SstableMeta::decode_with_filter(bytes, XorFilterReader::new)?;
++        Ok(Self {
++            id,
++            meta,
++            filter_reader,
++            skip_bloom_filter_in_serde,
++        })
 +    }
 +
-+    /// Collects the columns that `lhs = rhs` fixes. When both sides are rows, each pair of
-+    /// fields is compared on its own.
-+    fn collect_equality_fixed_columns(lhs: &ExprImpl, rhs: &ExprImpl, fixed: &mut HashSet<usize>) {
-+        if let (Some(lhs_fields), Some(rhs_fields)) = (Self::row_fields(lhs), Self::row_fields(rhs))
-+            && lhs_fields.len() == rhs_fields.len()
-+        {
-+            for (lhs, rhs) in lhs_fields.iter().zip_eq_fast(rhs_fields) {
-+                Self::collect_equality_fixed_columns(lhs, rhs, fixed);
-+            }
-+            return;
-+        }
-+        let is_fixed_value = |e: &ExprImpl| !e.has_input_ref() && !e.has_subquery() && e.is_pure();
-+        if is_fixed_value(rhs) {
-+            Self::collect_operand_columns(lhs, fixed);
-+        } else if is_fixed_value(lhs) {
-+            Self::collect_operand_columns(rhs, fixed);
-+        }
+     #[inline(always)]
+     pub fn has_filter(&self) -> bool {
+         !self.filter_reader.is_empty()
+@@ -403,6 +418,15 @@ impl SstableMeta {
+     }
+ 
+     pub fn decode(buf: &[u8]) -> HummockResult<Self> {
++        let (mut meta, bloom_filter) = Self::decode_with_filter(buf, |data, _| data.to_vec())?;
++        meta.bloom_filter = bloom_filter;
++        Ok(meta)
 +    }
 +
-+    /// Collects the columns of an operand that is equal to a fixed value: the column itself, a
-+    /// lossless cast of it, or each such field of a row, as in `ROW(a, b) = '(1,2)'`.
-+    fn collect_operand_columns(expr: &ExprImpl, fixed: &mut HashSet<usize>) {
-+        if let Some(fields) = Self::row_fields(expr) {
-+            for field in fields {
-+                Self::collect_operand_columns(field, fixed);
-+            }
-+        } else if let Some(index) = Self::as_injective_input_ref(expr) {
-+            fixed.insert(index);
++    fn decode_with_filter<F>(
++        buf: &[u8],
++        restore_filter: impl FnOnce(&[u8], &[BlockMeta]) -> F,
++    ) -> HummockResult<(Self, F)> {
+         let mut cursor = buf.len();
+ 
+         cursor -= 4;
+@@ -434,7 +458,9 @@ impl SstableMeta {
+             }
+         }
+ 
+-        let bloom_filter = get_length_prefixed_slice(buf);
++        let filter_len = buf.get_u32_le() as usize;
++        let filter_data = &buf[..filter_len];
++        buf.advance(filter_len);
+         let estimated_size = buf.get_u32_le();
+         let key_count = buf.get_u32_le();
+         let smallest_key = get_length_prefixed_slice(buf);
+@@ -457,18 +483,20 @@ impl SstableMeta {
+                 "read non-empty range tombstones");
+         }
+ 
++        let filter = restore_filter(filter_data, &block_metas);
+         #[expect(deprecated)]
+-        Ok(Self {
++        let meta = Self {
+             block_metas,
+-            bloom_filter,
++            bloom_filter: Vec::new(),
+             estimated_size,
+             key_count,
+             smallest_key,
+             largest_key,
+             meta_offset,
+             monotonic_tombstone_events,
+             version,
+-        })
++        };
++        Ok((meta, filter))
+     }
+ 
+     #[inline]
+@@ -667,4 +695,34 @@ mod tests {
+             sstable.filter_reader.encode_to_bytes()
+         );
+     }
++    #[tokio::test]
++    async fn test_sstable_from_meta_bytes() {
++        let (_, meta) = gen_test_sstable_data(
++            default_builder_opt_for_test(),
++            (0..100).map(|x| (iterator_test_key_of(x), HummockValue::put(vec![42]))),
++        )
++        .await;
++        let bytes = meta.encode_to_bytes();
++        for skip in [false, true] {
++            let expected = Sstable::new(42.into(), meta.clone(), skip);
++            let restored = {
++                let temporary = bytes.clone();
++                Sstable::from_meta_bytes(42.into(), &temporary, skip).unwrap()
++            };
++            assert_eq!(restored.id, expected.id);
++            assert_eq!(restored.meta, expected.meta);
++            assert_eq!(
++                restored.filter_reader.encode_to_bytes(),
++                expected.filter_reader.encode_to_bytes()
++            );
++            assert_eq!(
++                bincode::serialize(&restored).unwrap(),
++                bincode::serialize(&expected).unwrap()
++            );
 +        }
++        let mut corrupt = bytes;
++        corrupt[0] ^= 1;
++        assert!(SstableMeta::decode(&corrupt).is_err());
++        assert!(Sstable::from_meta_bytes(42.into(), &corrupt, false).is_err());
 +    }
+ }
+```
+
+---
+
+### Incident Patch 2: `bd8c61aa` (2026-11-03)
+**Commit Message**: feat(stream): support DISTRIBUTED BY in changelog CTEs (#27758)
+
+**File**: `e2e_test/streaming/changelog_distributed_by.slt` (added, +79/-0)
+```diff
+@@ -0,0 +1,79 @@
++statement ok
++SET RW_IMPLICIT_FLUSH TO true;
 +
-+    fn row_fields(expr: &ExprImpl) -> Option<&[ExprImpl]> {
-+        match expr {
-+            ExprImpl::FunctionCall(call) if call.func_type() == ExprType::Row => {
-+                Some(call.inputs())
-+            }
-+            _ => None,
-+        }
-+    }
++statement ok
++CREATE TABLE distribution_input (id INT PRIMARY KEY, tenant INT, payload VARCHAR);
 +
-+    /// Returns the column referenced by `expr` if `expr` is the column itself or a lossless cast
-+    /// of it, so that equal results imply equal column values. Such casts come from comparing
-+    /// columns of different numeric types, e.g. `CAST(int_pk AS DECIMAL) = 1.5` or
-+    /// `CAST(int_pk AS BIGINT) = bigint_col`.
-+    fn as_injective_input_ref(expr: &ExprImpl) -> Option<usize> {
-+        match expr {
-+            ExprImpl::InputRef(input_ref) => Some(input_ref.index()),
-+            ExprImpl::FunctionCall(call) if call.func_type() == ExprType::Cast => {
-+                let [input] = call
++statement ok
++CREATE MATERIALIZED VIEW distribution_log AS
++WITH c AS CHANGELOG FROM distribution_input DISTRIBUTED BY (tenant)
++SELECT *, _changelog_row_id AS event_id FROM c;
++
++# The distribution column must survive pruning, and changelog_op may be omitted.
++statement ok
++CREATE MATERIALIZED VIEW distribution_pruned AS
++WITH c AS CHANGELOG FROM distribution_input DISTRIBUTED BY (tenant, id)
++SELECT payload FROM c;
++
++statement ok
++INSERT INTO distribution_input VALUES (1, 10, 'before'), (2, 10, 'other');
++
++statement ok
++UPDATE distribution_input SET payload = 'after' WHERE id = 1;
++
++# An update that keeps the distribution key retains both update operations.
++query IIIT rowsort
++SELECT id, tenant, changelog_op, payload FROM distribution_log;
++----
++1 10 1 before
++1 10 3 after
++1 10 4 before
++2 10 1 other
++
++# Changing a distribution column must route the old and new rows to their respective vnodes.
++statement ok
++UPDATE distribution_input SET tenant = 20 WHERE id = 1;
++
++statement ok
++DELETE FROM distribution_input WHERE id = 1;
++
++# Exchanges may convert an update into a delete/insert when its key moves across actors.
++# Check the logical changes independently of that physical routing decision.
++query IIIT rowsort
++SELECT id, tenant, CASE WHEN changelog_op IN (1, 3) THEN 1 ELSE 2 END, payload
++FROM distribution_log;
++----
++1 10 1 after
++1 10 1 before
++1 10 2 after
++1 10 2 before
++1 20 1 after
++1 20 2 after
++2 10 1 other
++
++# All events for a tenant must encode the same vnode, including events for different primary keys.
++query II rowsort
++SELECT tenant, COUNT(DISTINCT rw_vnode(256, event_id)) FROM distribution_log GROUP BY tenant;
++----
++10 1
++20 1
++
++query T rowsort
++SELECT payload FROM distribution_pruned;
++----
++after
++after
++after
++after
++before
++before
++other
++
++statement ok
++DROP MATERIALIZED VIEW distribution_pruned;
++
++statement ok
++DROP MATERIALIZED VIEW distribution_log;
++
++statement ok
++DROP TABLE distribution_input;
+```
+
+**File**: `e2e_test/streaming/keyed_changelog.slt` (modified, +84/-0)
+```diff
+@@ -21,6 +21,21 @@ SELECT class_id, description, free_usage,
+        changelog_op AS __op, CAST(_changelog_row_id AS BIGINT) AS __row_id
+ FROM changes;
+ 
++# The business key may include columns that change, while distribution remains on class_id.
++statement ok
++CREATE MATERIALIZED VIEW distributed_mv AS
++WITH changes AS CHANGELOG FROM grouped_classes
++KEY (class_id, description) DISTRIBUTED BY (class_id)
++SELECT class_id, description, free_usage,
++       changelog_op AS __op, CAST(_changelog_row_id AS BIGINT) AS __row_id
++FROM changes;
++
++statement error Changelog DISTRIBUTED BY columns "description", "free_usage" are not included in KEY
++CREATE MATERIALIZED VIEW invalid_distribution AS
++WITH changes AS CHANGELOG FROM grouped_classes
++KEY (class_id) DISTRIBUTED BY (description, free_usage)
++SELECT * FROM changes;
++
+ statement ok
+ INSERT INTO source VALUES (42, 'Beginner', false), (43, 'Basic', false);
+ 
+@@ -36,6 +51,18 @@ ORDER BY class_id;
+ 42 Beginner 0 1
+ 43 Basic 0 1
+ 
++query ITII
++SELECT class_id, description, free_usage::INT, __op
++FROM (
++    SELECT *, ROW_NUMBER() OVER (PARTITION BY class_id ORDER BY __row_id DESC) AS rn
++    FROM distributed_mv
++)
++WHERE rn = 1
++ORDER BY class_id;
++----
++42 Beginner 0 1
++43 Basic 0 1
++
+ statement ok
+ UPDATE source
+ SET description = 'Advanced', free_usage = true WHERE class_id = 42;
+@@ -52,6 +79,18 @@ ORDER BY class_id;
+ 42 Advanced 1 1
+ 43 Basic 0 1
+ 
++query ITII
++SELECT class_id, description, free_usage::INT, __op
++FROM (
++    SELECT *, ROW_NUMBER() OVER (PARTITION BY class_id ORDER BY __row_id DESC) AS rn
++    FROM distributed_mv
++)
++WHERE rn = 1
++ORDER BY class_id;
++----
++42 Advanced 1 1
++43 Basic 0 1
++
+ statement ok
+ DELETE FROM source WHERE class_id = 42;
+ 
+@@ -67,6 +106,21 @@ ORDER BY class_id;
+ 42 Advanced 1 2
+ 43 Basic 0 1
+ 
++query ITII
++SELECT class_id, description, free_usage::INT, __op
++FROM (
++    SELECT *, ROW_NUMBER() OVER (PARTITION BY class_id ORDER BY __row_id DESC) AS rn
++    FROM distributed_mv
++)
++WHERE rn = 1
++ORDER BY class_id;
++----
++42 Advanced 1 2
++43 Basic 0 1
++
++statement ok
++DROP MATERIALIZED VIEW distributed_mv;
++
+ statement ok
+ DROP MATERIALIZED VIEW mv;
+ 
+@@ -75,3 +129,33 @@ DROP MATERIALIZED VIEW grouped_classes;
+ 
+ statement ok
+ DROP TABLE source;
++
++# A declared key column outside the distribution key must still participate in compaction.
++statement ok
++CREATE TABLE business_key_input (id INT PRIMARY KEY, tenant INT, business_key INT);
++
++statement ok
++CREATE MATERIALIZED VIEW business_key_log AS
++WITH changes AS CHANGELOG FROM business_key_input
++KEY (tenant, business_key) DISTRIBUTED BY (tenant)
++SELECT business_key, changelog_op FROM changes;
++
++statement ok
++INSERT INTO business_key_input VALUES (1, 10, 100);
++
++statement ok
++UPDATE business_key_input SET business_key = 200 WHERE id = 1;
++
++# These are different declared keys, so the old key is deleted and the new key is inserted.
++query II rowsort
++SELECT business_key, changelog_op FROM business_key_log;
++----
++100 1
++100 2
++200 1
++
++statement ok
++DROP MATERIALIZED VIEW business_key_log;
++
++statement ok
++DROP TABLE business_key_input;
+```
+
+**File**: `proto/stream_plan.proto` (modified, +7/-1)
+```diff
+@@ -456,7 +456,13 @@ message FilterNode {
+ }
+ 
+ message ChangeLogNode {
+-  message Keyed {}
++  message Keyed {
++    // Input column indices in KEY but absent from distribution_keys.
++    // Compaction uses stream_keys, distribution_keys, and these columns.
++    // We retain distribution_keys in compaction for backward compatibility:
++    // older keyed plans stored the full KEY there, so this list defaults to empty.
++    repeated uint32 additional_key_columns = 1;
++  }
+ 
+   // Whether or not there is an op in the final output.
+   bool need_op = 1;
+```
+
+**File**: `src/frontend/planner_test/tests/testdata/input/changelog.yaml` (modified, +52/-0)
+```diff
+@@ -41,3 +41,55 @@
+   expected_outputs:
+   - stream_plan
+   - stream_dist_plan
++
++- name: keyed changelog with a distribution subset
++  sql: |
++    create table t (id int primary key, tenant int, payload varchar);
++    with c as changelog from t key (tenant, id) distributed by (tenant)
++    select payload from c;
++  expected_outputs:
++  - logical_plan
++  - optimized_logical_plan_for_stream
++  - stream_plan
++  - stream_dist_plan
++
++- name: keyed changelog with reordered equal distribution keys
++  sql: |
++    create table t (id int primary key, tenant int, payload varchar);
++    with c as changelog from t key (tenant, id) distributed by (id, TENANT)
++    select payload from c;
++  expected_outputs:
++  - stream_plan
++  - stream_dist_plan
++
++- name: keyed changelog with a quoted distribution column
++  sql: |
++    create table t (id int primary key, "Tenant" int, payload varchar);
++    with c as changelog from t key (id, "Tenant") distributed by ("Tenant")
++    select payload from c;
++  expected_outputs:
++  - stream_plan
++
++- name: keyed changelog rejects distribution outside declared key
++  sql: |
++    create table t (id int primary key, tenant int, payload varchar);
++    with c as changelog from t key (tenant, id) distributed by (payload)
++    select * from c;
++  expected_outputs:
++  - binder_error
++
++- name: keyed changelog rejects a distribution superset
++  sql: |
++    create table t (id int primary key, tenant int, payload varchar);
++    with c as changelog from t key (tenant) distributed by (tenant, id)
++    select * from c;
++  expected_outputs:
++  - binder_error
++
++- name: keyed changelog reports all invalid distribution columns
++  sql: |
++    create table t (id int primary key, tenant int, payload varchar, "Region" int);
++    with c as changelog from t key (tenant, id) distributed by (tenant, payload, "Region")
++    select * from c;
++  expected_outputs:
++  - binder_error
+```
+
+**File**: `src/frontend/planner_test/tests/testdata/input/changelog_distributed_by.yaml` (added, +55/-0)
+```diff
+@@ -0,0 +1,55 @@
++- name: changelog distribution key survives pruning
++  sql: |
++    create table t (id int primary key, tenant int, payload varchar);
++    with c as changelog from t distributed by (tenant) select payload from c;
++  expected_outputs:
++  - logical_plan
++  - optimized_logical_plan_for_stream
++  - stream_plan
++  - stream_dist_plan
++
++- name: changelog composite distribution key preserves order
++  sql: |
++    create table t (id int primary key, tenant int, "Region" int, payload varchar);
++    with c as changelog from public.t distributed by ("Region", tenant)
++    select payload, _changelog_row_id from c;
++  expected_outputs:
++  - stream_plan
++  - stream_dist_plan
++
++- name: changelog distribution key already matches input
++  sql: |
++    create table t (id int primary key, payload varchar);
++    with c as changelog from t distributed by (id) select * from c;
++  expected_outputs:
++  - stream_plan
++
++- name: changelog distribution key on singleton input
++  sql: |
++    create table t (v int);
++    create materialized view mv as select count(*) as c from t;
++    with x as changelog from mv distributed by (c) select * from x;
++  expected_outputs:
++  - stream_plan
++  - stream_dist_plan
++
++- name: changelog missing distribution column
++  sql: |
++    create table t (id int);
++    with c as changelog from t distributed by (missing) select * from c;
++  expected_outputs:
++  - binder_error
++
++- name: changelog duplicate distribution column
++  sql: |
++    create table t (id int);
++    with c as changelog from t distributed by (id, ID) select * from c;
++  expected_outputs:
++  - binder_error
++
++- name: changelog hidden distribution column
++  sql: |
++    create table t (id int);
++    with c as changelog from t distributed by (_row_id) select * from c;
++  expected_outputs:
++  - binder_error
+```
+
+**File**: `src/frontend/planner_test/tests/testdata/output/changelog.yaml` (modified, +116/-0)
+```diff
+@@ -159,3 +159,119 @@
+     ├── distribution key: []
+     └── read pk prefix len hint: 1
+ 
++- name: keyed changelog with a distribution subset
++  sql: |
++    create table t (id int primary key, tenant int, payload varchar);
++    with c as changelog from t key (tenant, id) distributed by (tenant)
++    select payload from c;
++  logical_plan: |-
++    LogicalProject { exprs: [t.payload] }
++    └─LogicalShare { id: 2 }
++      └─LogicalChangeLog { key: [t.tenant, t.id], distribution_key: [t.tenant] }
++        └─LogicalScan { table: t, columns: [t.id, t.tenant, t.payload, t._rw_timestamp] }
++  optimized_logical_plan_for_stream: |-
++    LogicalProject { exprs: [t.payload] }
++    └─LogicalChangeLog { key: [t.tenant, t.id], distribution_key: [t.tenant] }
++      └─LogicalScan { table: t, columns: [t.payload, t.id, t.tenant] }
++  stream_plan: |-
++    StreamMaterialize { columns: [payload, _changelog_row_id(hidden)], stream_key: [_changelog_row_id], pk_columns: [_changelog_row_id], pk_conflict: NoCheck }
++    └─StreamProject { exprs: [t.payload, _changelog_row_id] }
++      └─StreamChangeLog { key: [t.tenant, t.id], distribution_key: [t.tenant] }
++        └─StreamExchange { dist: HashShard(t.tenant) }
++          └─StreamTableScan { table: t, columns: [t.payload, t.id, t.tenant], stream_scan_type: SnapshotBackfill, stream_key: [t.id], pk: [id], dist: UpstreamHashShard(t.id) }
++  stream_dist_plan: |+
++    Fragment 0
++    StreamMaterialize { columns: [payload, _changelog_row_id(hidden)], stream_key: [_changelog_row_id], pk_columns: [_changelog_row_id], pk_conflict: NoCheck }
++    └── StreamProject { exprs: [t.payload, _changelog_row_id] }
++        └── StreamChangeLog { key: [t.tenant, t.id], distribution_key: [t.tenant] }
++            └── StreamExchange Hash([2]) from 1
++
++    Fragment 1
++    StreamTableScan { table: t, columns: [t.payload, t.id, t.tenant], stream_scan_type: SnapshotBackfill, stream_key: [t.id], pk: [id], dist: UpstreamHashShard(t.id) }
++    ├── tables: [ StreamScan: 0 ]
++    ├── Upstream
++    └── BatchPlanNode
++
++    Table 0
++    ├── columns: [ vnode, epoch, row_count, is_epoch_finished, id, _rw_timestamp ]
++    ├── primary key: [ $0 ASC ]
++    ├── value indices: [ 1, 2, 3, 4 ]
++    ├── distribution key: [ 0 ]
++    ├── read pk prefix len hint: 1
++    └── vnode column idx: 0
++
++    Table 4294967294
++    ├── columns: [ payload, _changelog_row_id, _rw_timestamp ]
++    ├── primary key: [ $1 ASC ]
++    ├── value indices: [ 0, 1 ]
++    ├── distribution key: [ 1 ]
++    └── read pk prefix len hint: 1
++
++- name: keyed changelog with reordered equal distribution keys
++  sql: |
++    create table t (id int primary key, tenant int, payload varchar);
++    with c as changelog from t key (tenant, id) distributed by (id, TENANT)
++    select payload from c;
++  stream_plan: |-
++    StreamMaterialize { columns: [payload, _changelog_row_id(hidden)], stream_key: [_changelog_row_id], pk_columns: [_changelog_row_id], pk_conflict: NoCheck }
++    └─StreamProject { exprs: [t.payload, _changelog_row_id] }
++      └─StreamChangeLog { key: [t.tenant, t.id], distribution_key: [t.id, t.tenant] }
++        └─StreamExchange { dist: HashShard(t.id, t.tenant) }
++          └─StreamTableScan { table: t, columns: [t.payload, t.id, t.tenant], stream_scan_type: SnapshotBackfill, stream_key: [t.id], pk: [id], dist: UpstreamHashShard(t.id) }
++  stream_dist_plan: |+
++    Fragment 0
++    StreamMaterialize { columns: [payload, _changelog_row_id(hidden)], stream_key: [_changelog_row_id], pk_columns: [_changelog_row_id], pk_conflict: NoCheck }
++    └── StreamProject { exprs: [t.payload, _changelog_row_id] }
++        └── StreamChangeLog { key: [t.tenant, t.id], distribution_key: [t.id, t.tenant] }
++            └── StreamExchange Hash([1, 2]) from 1
++
++    Fragment 1
++    StreamTableScan { table: t, columns: [t.payload, t.id, t.tenant], stream_scan_type: SnapshotBackfill, stream_key: [t.id], pk: [id], dist: UpstreamHashShard(t.id) }
++    ├── tables: [ StreamScan: 0 ]
++    ├── Upstream
++    └── BatchPlanNode
++
++    Table 0
++    ├── columns: [ vnode, epoch, row_count, is_epoch_finished, id, _rw_timestamp ]
++    ├── primary key: [ $0 ASC ]
++    ├── value indices: [ 1, 2, 3, 4 ]
++    ├── distribution key: [ 0 ]
++    ├── read pk prefix len hint: 1
++    └── vnode column idx: 0
++
++    Table 4294967294
++    ├── columns: [ payload, _changelog_row_id, _rw_timestamp ]
++    ├── primary key: [ $1 ASC ]
++    ├── value indices: [ 0, 1 ]
++    ├── distribution key: [ 1 ]
++    └── read pk prefix len hint: 1
++
++- name: keyed changelog with a quoted distribution column
++  sql: |
++    create table t (id int primary key, "Tenant" int, payload varchar);
++    with c as changelog from t key (id, "Tenant") distributed by ("Tenant")
++    select payload from c;
++  stream_plan: |-
++    StreamMaterialize { columns: [payload, _changelog_row_id(hidden)], stream_key: [_changelog_row_id], pk_columns: [_changelog_row_id], pk_conflict: NoCheck }
++    └─StreamProject { exprs: [t.payload, _chang
+```
+
+**File**: `src/frontend/planner_test/tests/testdata/output/changelog_distributed_by.yaml` (added, +147/-0)
+```diff
+@@ -0,0 +1,147 @@
++# This file is automatically generated. See `src/frontend/planner_test/README.md` for more information.
++- name: changelog distribution key survives pruning
++  sql: |
++    create table t (id int primary key, tenant int, payload varchar);
++    with c as changelog from t distributed by (tenant) select payload from c;
++  logical_plan: |-
++    LogicalProject { exprs: [t.payload] }
++    └─LogicalShare { id: 2 }
++      └─LogicalChangeLog { distribution_key: [t.tenant] }
++        └─LogicalScan { table: t, columns: [t.id, t.tenant, t.payload, t._rw_timestamp] }
++  optimized_logical_plan_for_stream: |-
++    LogicalProject { exprs: [t.payload] }
++    └─LogicalChangeLog { distribution_key: [t.tenant] }
++      └─LogicalScan { table: t, columns: [t.payload, t.id, t.tenant] }
++  stream_plan: |-
++    StreamMaterialize { columns: [payload, _changelog_row_id(hidden)], stream_key: [_changelog_row_id], pk_columns: [_changelog_row_id], pk_conflict: NoCheck }
++    └─StreamProject { exprs: [t.payload, _changelog_row_id] }
++      └─StreamChangeLog { distribution_key: [t.tenant] }
++        └─StreamExchange { dist: HashShard(t.tenant) }
++          └─StreamTableScan { table: t, columns: [t.payload, t.id, t.tenant], stream_scan_type: SnapshotBackfill, stream_key: [t.id], pk: [id], dist: UpstreamHashShard(t.id) }
++  stream_dist_plan: |+
++    Fragment 0
++    StreamMaterialize { columns: [payload, _changelog_row_id(hidden)], stream_key: [_changelog_row_id], pk_columns: [_changelog_row_id], pk_conflict: NoCheck }
++    └── StreamProject { exprs: [t.payload, _changelog_row_id] }
++        └── StreamChangeLog { distribution_key: [t.tenant] }
++            └── StreamExchange Hash([2]) from 1
++
++    Fragment 1
++    StreamTableScan { table: t, columns: [t.payload, t.id, t.tenant], stream_scan_type: SnapshotBackfill, stream_key: [t.id], pk: [id], dist: UpstreamHashShard(t.id) }
++    ├── tables: [ StreamScan: 0 ]
++    ├── Upstream
++    └── BatchPlanNode
++
++    Table 0
++    ├── columns: [ vnode, epoch, row_count, is_epoch_finished, id, _rw_timestamp ]
++    ├── primary key: [ $0 ASC ]
++    ├── value indices: [ 1, 2, 3, 4 ]
++    ├── distribution key: [ 0 ]
++    ├── read pk prefix len hint: 1
++    └── vnode column idx: 0
++
++    Table 4294967294
++    ├── columns: [ payload, _changelog_row_id, _rw_timestamp ]
++    ├── primary key: [ $1 ASC ]
++    ├── value indices: [ 0, 1 ]
++    ├── distribution key: [ 1 ]
++    └── read pk prefix len hint: 1
++
++- name: changelog composite distribution key preserves order
++  sql: |
++    create table t (id int primary key, tenant int, "Region" int, payload varchar);
++    with c as changelog from public.t distributed by ("Region", tenant)
++    select payload, _changelog_row_id from c;
++  stream_plan: |-
++    StreamMaterialize { columns: [payload, _changelog_row_id], stream_key: [_changelog_row_id], pk_columns: [_changelog_row_id], pk_conflict: NoCheck }
++    └─StreamProject { exprs: [t.payload, _changelog_row_id] }
++      └─StreamChangeLog { distribution_key: [t.Region, t.tenant] }
++        └─StreamExchange { dist: HashShard(t.Region, t.tenant) }
++          └─StreamTableScan { table: t, columns: [t.payload, t.id, t.Region, t.tenant], stream_scan_type: SnapshotBackfill, stream_key: [t.id], pk: [id], dist: UpstreamHashShard(t.id) }
++  stream_dist_plan: |+
++    Fragment 0
++    StreamMaterialize { columns: [payload, _changelog_row_id], stream_key: [_changelog_row_id], pk_columns: [_changelog_row_id], pk_conflict: NoCheck }
++    └── StreamProject { exprs: [t.payload, _changelog_row_id] }
++        └── StreamChangeLog { distribution_key: [t.Region, t.tenant] }
++            └── StreamExchange Hash([2, 3]) from 1
++
++    Fragment 1
++    StreamTableScan { table: t, columns: [t.payload, t.id, t.Region, t.tenant], stream_scan_type: SnapshotBackfill, stream_key: [t.id], pk: [id], dist: UpstreamHashShard(t.id) }
++    ├── tables: [ StreamScan: 0 ]
++    ├── Upstream
++    └── BatchPlanNode
++
++    Table 0
++    ├── columns: [ vnode, epoch, row_count, is_epoch_finished, id, _rw_timestamp ]
++    ├── primary key: [ $0 ASC ]
++    ├── value indices: [ 1, 2, 3, 4 ]
++    ├── distribution key: [ 0 ]
++    ├── read pk prefix len hint: 1
++    └── vnode column idx: 0
++
++    Table 4294967294
++    ├── columns: [ payload, _changelog_row_id, _rw_timestamp ]
++    ├── primary key: [ $1 ASC ]
++    ├── value indices: [ 0, 1 ]
++    ├── distribution key: [ 1 ]
++    └── read pk prefix len hint: 1
++
++- name: changelog distribution key already matches input
++  sql: |
++    create table t (id int primary key, payload varchar);
++    with c as changelog from t distributed by (id) select * from c;
++  stream_plan: |-
++    StreamMaterialize { columns: [id, payload, changelog_op, _changelog_row_id(hidden)], stream_key: [_changelog_row_id], pk_columns: [_changelog_row_id], pk_conflict: NoCheck }
++    └─StreamChangeLog { distribution_key: [t.id] }
++      └─StreamExchange { dist: HashShard(t.id) }
++        └─StreamTableScan { table: t, columns: [t.id, t.paylo
+```
+
+**File**: `src/frontend/src/binder/bind_context.rs` (modified, +1/-0)
+```diff
+@@ -90,6 +90,7 @@ pub enum BindingCteState {
+     ChangeLog {
+         table: Relation,
+         key_indices: Option<Vec<usize>>,
++        distribution_key_indices: Option<Vec<usize>>,
+     },
+ }
+ 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #27757** (closed): test(batch): add randomized differential tests for hash join (@chenzl25)
-- **PR #27755** (2026-11-02): perf(storage): deserialize SST metadata bytes in bulk (@Li0k)
-- **PR #27753** (2026-11-02): perf(storage): omit unused fields from serverless compaction reports (#27751) (@risingwave-ci)
-- **PR #27751** (2026-10-31): perf(storage): omit unused fields from serverless compaction reports (@Li0k)
-- **PR #27750** (closed): fix(compactor): bound multipart uploads in shared mode (@Ad-Bean)
-- **PR #27741** (2026-10-31): refactor: box AWS SDK config loading since its futures are large (@maybe-vibe)
+- **PR #27801** (closed): refactor(frontend): derive scan ranges from a key set (@yuhao-su)
+- **PR #27793** (2026-11-03): perf(storage): reduce SST metadata and block decode overhead (release-3.0) (#27761) (@Li0k)
+- **PR #27790** (2026-11-03): perf(storage): reduce SST metadata and block decode overhead (#27761) (@risingwave-ci)
+- **PR #27784** (2026-11-03): chore(deps): bump aws-smithy-json from 0.62.5 to 0.62.7 (@dependabot[bot])
+- **PR #27774** (2026-11-03): chore(deps): bump size from 0.5.0 to 0.6.0 (@dependabot[bot])
+- **PR #27769** (closed): chore(deps): bump aws-smithy-http from 0.63.6 to 0.64.1 in the aws group (@dependabot[bot])
 
 ---
 
@@ -1456,69 +2273,21 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. optimizer): only count equality predicates toward unique-key cardinality (#27665
+## X. storage): reduce SST metadata and block decode overhead (#27761)
 
 **RULE**:
-When implementing operations in `e2e_test/batch/subquery/scalar_subquery.slt.part`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in risingwavelabs/risingwave. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in risingwavelabs/risingwave. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e536bf08`: optimizer): only count equality predicates toward unique-key cardinality (#27665). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `171d005b`: storage): reduce SST metadata and block decode overhead (#27761). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `e2e_test/batch/subquery/scalar_subquery.slt.part`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-
-# Only equality on every primary key column bounds a scalar subquery to one row. Other predicates
-# on the primary key can match several rows and must keep the runtime check.
-statement ok
-create table t_pk (pk int primary key, v int);
-
-statement ok
-insert into t_pk values (1, 10), (2, 20), (3, 30);
-
-query I
-select (select v from t_pk where pk = 2);
-----
-20
-
-query error Scalar subquery produced more than one row
-select (select v from t_pk where pk > 1);
-
-query error Scalar subquery produced more than one row
-select (select v from t_pk where pk = 1 or pk = 2);
-
-statement error Scalar subquery might produce more than one row
-create materialized view mv_pk_range as select (select v from t_pk where pk > 1) v;
-
-# A lossless cast of the primary key and a row equality still fix the primary key.
-statement ok
-create table t_outer (a bigint);
-
-statement ok
-insert into t_outer values (1), (3), (4);
-
-query II
-select a, (select v from t_pk where pk::bigint = t_outer.a) from t_outer order by a;
-----
-1 10
-3 30
-4 NULL
-
-query I
-select (select v from t_pk where (pk, v) = (2, 20));
-----
-20
-
-statement ok
-drop table t_outer;
-
-statement ok
-drop table t_pk;
-
-# A boolean primary key used as a predicate fi
+ "tikv-jemallocator",
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1528,4 +2297,4 @@ drop table t_pk;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e536bf08` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `171d005b` are properly handled with clean fallback behavior.

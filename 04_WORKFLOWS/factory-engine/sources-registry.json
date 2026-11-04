@@ -40,8 +40,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-04T03:23:56.084Z",
-    "lastVerified": "2026-11-04T03:23:56.084Z",
+    "lastChecked": "2026-11-04T03:30:47.390Z",
+    "lastVerified": "2026-11-04T03:30:47.390Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -145,8 +145,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-04T03:00:18.980Z",
-    "lastVerified": "2026-11-04T03:00:18.980Z",
+    "lastChecked": "2026-11-04T03:30:41.828Z",
+    "lastVerified": "2026-11-04T03:30:41.828Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -1071,9 +1071,9 @@
   "mimblewimble-grin": {
     "name": "grin",
     "officialUrl": "https://github.com/mimblewimble/grin",
-    "lastChecked": "2026-11-04T00:17:22.504Z",
+    "lastChecked": "2026-11-04T03:30:36.940Z",
     "revisionIdentifier": "dbaff34f",
-    "lastVerified": "2026-11-04T00:17:22.504Z"
+    "lastVerified": "2026-11-04T03:30:36.940Z"
   },
   "influxdata-influxdb": {
     "name": "influxdb",
@@ -2768,11 +2768,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "invertase-react-native-firebase": {
-    "name": "react-native-firebase",
+    "name": "invertase/react-native-firebase",
     "officialUrl": "https://github.com/invertase/react-native-firebase",
-    "lastChecked": "2026-10-31T03:26:05.428Z",
-    "revisionIdentifier": "c65e1ee3",
-    "lastVerified": "2026-10-31T03:26:05.428Z"
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-11-04T03:30:35.748Z",
+    "lastVerified": "2026-11-04T03:30:35.748Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-invertase-react-native-firebase",
+    "contentHash": "a10fba1e33ba8cdf54b3d589039a9176db2748a9b7e5c1a0564afaf0ee11da56",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 1,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "easegress-io-easegress": {
     "name": "easegress",
@@ -4014,9 +4024,9 @@
   "timvisee-ffsend": {
     "name": "ffsend",
     "officialUrl": "https://github.com/timvisee/ffsend",
-    "lastChecked": "2026-11-01T00:55:50.278Z",
+    "lastChecked": "2026-11-04T03:30:26.839Z",
     "revisionIdentifier": "85aae2f3",
-    "lastVerified": "2026-11-01T00:55:50.278Z"
+    "lastVerified": "2026-11-04T03:30:26.839Z"
   },
   "hf-comfy-org-minimax-h3": {
     "name": "Comfy-Org/MiniMax-H3",
@@ -4206,14 +4216,14 @@
     "officialUrl": "https://github.com/risingwavelabs/risingwave",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-02T16:55:01.287Z",
-    "lastVerified": "2026-11-02T16:55:01.287Z",
+    "lastChecked": "2026-11-04T03:30:43.289Z",
+    "lastVerified": "2026-11-04T03:30:43.289Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-risingwavelabs-risingwave",
-    "contentHash": "205af126e86f4097dc7e7e5706ad94cff7bb34da3892cfe57194cd9ebb6d52ff",
+    "contentHash": "7c6e0b9b44aa9176767a01d8cdccb53c8902dbd2c52d8cb1f9bb3e36d881dd7e",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -6237,9 +6247,9 @@
   "architect-architect": {
     "name": "architect",
     "officialUrl": "https://github.com/architect/architect",
-    "lastChecked": "2026-11-02T17:54:07.489Z",
+    "lastChecked": "2026-11-04T03:30:34.356Z",
     "revisionIdentifier": "9924cd0a",
-    "lastVerified": "2026-11-02T17:54:07.489Z"
+    "lastVerified": "2026-11-04T03:30:34.356Z"
   },
   "yugabyte-yugabyte-db": {
     "name": "yugabyte/yugabyte-db",
@@ -11612,14 +11622,14 @@
     "officialUrl": "https://github.com/vitest-dev/vitest",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-30T20:05:08.334Z",
-    "lastVerified": "2026-10-30T20:05:08.334Z",
+    "lastChecked": "2026-11-04T03:30:33.476Z",
+    "lastVerified": "2026-11-04T03:30:33.476Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-vitest-dev-vitest",
-    "contentHash": "da9d0efad6726bb1ecd4b8ac8756a4dac86cb169902548abd92445d99b32b417",
+    "contentHash": "78fb7b66f34bdb13050ff323cf5fe1f61e1765111201524e687bc4ca7d9e4166",
     "promotedRulesCount": 1,
-    "recentFixesCount": 20,
+    "recentFixesCount": 9,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
