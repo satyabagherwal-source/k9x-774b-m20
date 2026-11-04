@@ -7314,3 +7314,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-briaai-fibo-2-0-dev` | `https://huggingface.co/briaai/Fibo-2.0-dev` | `hf-briaai-` | Multi-dimensional audit evidence | 2026-11-04T19:41:24.412Z |
 | `learn-github-mintplex-labs-anything-llm` | `https://github.com/Mintplex-Labs/anything-llm` | `eda0eb5e` | Multi-dimensional audit evidence | 2026-11-04T19:41:34.564Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `5b3f3e76` | Multi-dimensional audit evidence | 2026-11-04T19:41:36.053Z |
+| `learn-github-zvec-ai-zvec-grep` | `https://github.com/zvec-ai/zvec-grep` | `3d60e062` | Multi-dimensional audit evidence | 2026-11-04T19:47:58.535Z |
+| `learn-huggingface-xhtoken-spark-x2-6-4b-gguf` | `https://huggingface.co/XHToken/Spark-X2.6-4B-GGUF` | `hf-xhtoken` | Multi-dimensional audit evidence | 2026-11-04T19:48:09.751Z |
+| `learn-github-meilisearch-meilisearch` | `https://github.com/meilisearch/meilisearch` | `c18c8197` | Multi-dimensional audit evidence | 2026-11-04T19:48:11.167Z |
+| `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `5aa241a1` | Multi-dimensional audit evidence | 2026-11-04T19:48:21.002Z |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-04T19:41:35.928Z",
+  "last_updated": "2026-11-04T19:48:20.945Z",
   "total_verified_learnings": 1209,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -14273,8 +14273,8 @@
       "slug": "freenet-freenet-core",
       "platform": "github",
       "source_url": "https://github.com/freenet/freenet-core",
-      "source_version": "c54e83c8",
-      "content_hash": "83ec14ac82a3e7a603deaaa1624ad320b90c2218b673350f4a84c07270274972",
+      "source_version": "5aa241a1",
+      "content_hash": "ede37a315931cde4e418a8605c755469e97b93531ae9d6283b4ee9adad43bdd8",
       "dossier_path": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "promoted_rules": [
@@ -14472,6 +14472,11 @@
           "number": 6679,
           "title": "transport): turn QUIC shadow mode on by default on Linux and macOS (#6104)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6941,
+          "title": "build: release 0.2.155 (#6108)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -14479,7 +14484,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T00:32:05.282Z",
+      "verified_at": "2026-11-04T19:48:20.931Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -39784,8 +39789,8 @@
       "slug": "meilisearch-meilisearch",
       "platform": "github",
       "source_url": "https://github.com/meilisearch/meilisearch",
-      "source_version": "fccb3537",
-      "content_hash": "17f99642447b8eb1a1f237bfd68c263f6b6e28af62ce09020dc2bd063ca440e3",
+      "source_version": "c18c8197",
+      "content_hash": "d7d6eae4278a14ff9566766ae741e8b156a05cf69af06ae393381634d6a2b446",
       "dossier_path": "07_PROJECT_LEARNING/meilisearch-meilisearch-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/meilisearch-meilisearch-learnings.md",
       "promoted_rules": [
@@ -39828,6 +39833,11 @@
           "number": 6597,
           "title": "Merge pull request #6712 from meilisearch/dependabot/github_actions/docker/build",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6940,
+          "title": "Merge pull request #6716 from meilisearch/chore/update-rails-tests",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -39835,7 +39845,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T19:52:35.561Z",
+      "verified_at": "2026-11-04T19:48:11.099Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -62995,8 +63005,8 @@
       "slug": "zvec-ai-zvec-grep",
       "platform": "github",
       "source_url": "https://github.com/zvec-ai/zvec-grep",
-      "source_version": "4eaaeb8a",
-      "content_hash": "12dce603748b214626daeeb9c9c16a81fee8a644f08ba2e51e843b007f2b8258",
+      "source_version": "3d60e062",
+      "content_hash": "16195f840ddf7a5afedeb628d8c922cbfe7dee248ded1c1983abe21c5db447e4",
       "dossier_path": "07_PROJECT_LEARNING/zvec-ai-zvec-grep-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zvec-ai-zvec-grep-learnings.md",
       "promoted_rules": [
@@ -63074,6 +63084,11 @@
           "number": 6523,
           "title": "npm): deduplicate installed native payload files (#356)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6936,
+          "title": "rust): extract and persist code graphs during indexing (#291)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -63081,7 +63096,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T12:32:12.111Z",
+      "verified_at": "2026-11-04T19:47:58.464Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -140952,7 +140967,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/XHToken/Spark-X2.6-4B-GGUF",
       "source_version": "hf-xhtoken-spark-x2.6-4b-gguf",
-      "content_hash": "b325c14b5e3b4a04e23da4ad3e162e59d2a85b104dfe8f64cff277e95b82c059",
+      "content_hash": "bb8890df84efa8ca8313447920b1c3620526888878a932c97d0137be38bc8c46",
       "dossier_path": "07_PROJECT_LEARNING/hf-xhtoken-spark-x2.6-4b-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-xhtoken-spark-x2.6-4b-gguf-learnings.md",
       "promoted_rules": [
@@ -140965,6 +140980,21 @@
           "number": 4663,
           "title": "Zero-Copy GGUF Alignment and Memory-Mapped Boundary Verification",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6937,
+          "title": "Edge-Model Quantization Integrity & Metadata Consistency",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6938,
+          "title": "Controllable Thinking Budget Enforcement in Agent Loops",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6939,
+          "title": "GGUF File Integrity & Checksum Verification for Edge Deployment",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -140972,7 +141002,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T03:45:21.448Z",
+      "verified_at": "2026-11-04T19:48:09.682Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -176716,6 +176746,90 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-04T19:41:34.435Z"
+    },
+    "rule-6936": {
+      "learning_id": "rule-6936",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6936,
+      "title": "rust): extract and persist code graphs during indexing (#291)",
+      "source_url": "https://github.com/zvec-ai/zvec-grep",
+      "source_version": "3d60e062",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T19:47:58.464Z"
+    },
+    "rule-6937": {
+      "learning_id": "rule-6937",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6937,
+      "title": "Edge-Model Quantization Integrity & Metadata Consistency",
+      "source_url": "https://huggingface.co/XHToken/Spark-X2.6-4B-GGUF",
+      "source_version": "hf-xhtoken-spark-x2.6-4b-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T19:48:09.682Z"
+    },
+    "rule-6938": {
+      "learning_id": "rule-6938",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6938,
+      "title": "Controllable Thinking Budget Enforcement in Agent Loops",
+      "source_url": "https://huggingface.co/XHToken/Spark-X2.6-4B-GGUF",
+      "source_version": "hf-xhtoken-spark-x2.6-4b-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T19:48:09.682Z"
+    },
+    "rule-6939": {
+      "learning_id": "rule-6939",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6939,
+      "title": "GGUF File Integrity & Checksum Verification for Edge Deployment",
+      "source_url": "https://huggingface.co/XHToken/Spark-X2.6-4B-GGUF",
+      "source_version": "hf-xhtoken-spark-x2.6-4b-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T19:48:09.682Z"
+    },
+    "rule-6940": {
+      "learning_id": "rule-6940",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6940,
+      "title": "Merge pull request #6716 from meilisearch/chore/update-rails-tests",
+      "source_url": "https://github.com/meilisearch/meilisearch",
+      "source_version": "c18c8197",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T19:48:11.099Z"
+    },
+    "rule-6941": {
+      "learning_id": "rule-6941",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6941,
+      "title": "build: release 0.2.155 (#6108)",
+      "source_url": "https://github.com/freenet/freenet-core",
+      "source_version": "5aa241a1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T19:48:20.931Z"
     }
   },
   "aliases": {

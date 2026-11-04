@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261102-PVMA",
-    "timestamp": "2026-11-02T14:53:41.074Z",
-    "repository": "FusionCow/Sulphur-3",
-    "learningId": "learn-huggingface-fusioncow-sulphur-3",
-    "contentHash": "a87c997452935295b79bff41cc0991b4edf6f7cf2cdade8ff3b108a6a14e9418",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261102-PXUM",
-    "timestamp": "2026-11-02T14:53:43.966Z",
-    "repository": "xiaomi-research/Xiaomi-OCR-0",
-    "learningId": "learn-huggingface-xiaomi-research-xiaomi-ocr-0",
-    "contentHash": "3a31b4d83060d8afdd699c28110fc957ff36ae601dcbd1999b73ca327f84c90d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261102-Q03P",
-    "timestamp": "2026-11-02T14:53:46.885Z",
-    "repository": "LiquidAI/d1-2B",
-    "learningId": "learn-huggingface-liquidai-d1-2b",
-    "contentHash": "0bab23197211b644907fdf958f1c45472ab43ea3c41889b74ccce81a5e046b1e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261102-Z7CU",
-    "timestamp": "2026-11-02T15:00:56.190Z",
-    "repository": "cilium/cilium",
-    "learningId": "learn-github-cilium-cilium",
-    "contentHash": "b31818fa435f7c77fed1d5ba6be49fdca85c60db969b5c1f48b743686193dcf6",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261102-Z8RI",
     "timestamp": "2026-11-02T15:00:58.014Z",
     "repository": "NucleoidAI/Nucleoid",
@@ -7492,6 +7432,66 @@
     "contentHash": "94b6bfe44ed2c595035981b7ddbe1d43d6f40c3d26775316a2229e4cc6fff6e3",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-41J8",
+    "timestamp": "2026-11-04T19:47:58.532Z",
+    "repository": "zvec-ai/zvec-grep",
+    "learningId": "learn-github-zvec-ai-zvec-grep",
+    "contentHash": "16195f840ddf7a5afedeb628d8c922cbfe7dee248ded1c1983abe21c5db447e4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-4A6S",
+    "timestamp": "2026-11-04T19:48:09.748Z",
+    "repository": "XHToken/Spark-X2.6-4B-GGUF",
+    "learningId": "learn-huggingface-xhtoken-spark-x2-6-4b-gguf",
+    "contentHash": "bb8890df84efa8ca8313447920b1c3620526888878a932c97d0137be38bc8c46",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-4BA4",
+    "timestamp": "2026-11-04T19:48:11.164Z",
+    "repository": "meilisearch/meilisearch",
+    "learningId": "learn-github-meilisearch-meilisearch",
+    "contentHash": "d7d6eae4278a14ff9566766ae741e8b156a05cf69af06ae393381634d6a2b446",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-4IVB",
+    "timestamp": "2026-11-04T19:48:20.999Z",
+    "repository": "freenet/freenet-core",
+    "learningId": "learn-github-freenet-freenet-core",
+    "contentHash": "ede37a315931cde4e418a8605c755469e97b93531ae9d6283b4ee9adad43bdd8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

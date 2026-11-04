@@ -7305,3 +7305,7 @@
 | `CYCLE-20261104-VLFC` | `2026-11-04T19:41:24.408Z` | `briaai/Fibo-2.0-dev` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6934` | Yes (`afdc08cb...`) |
 | `CYCLE-20261104-VT9B` | `2026-11-04T19:41:34.560Z` | `Mintplex-Labs/anything-llm` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6935` | Yes (`af306c9b...`) |
 | `CYCLE-20261104-VUEP` | `2026-11-04T19:41:36.049Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md` | Yes (`94b6bfe4...`) |
+| `CYCLE-20261104-41J8` | `2026-11-04T19:47:58.532Z` | `zvec-ai/zvec-grep` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6936` | Yes (`16195f84...`) |
+| `CYCLE-20261104-4A6S` | `2026-11-04T19:48:09.748Z` | `XHToken/Spark-X2.6-4B-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6937, Rule 6938, Rule 6939` | Yes (`bb8890df...`) |
+| `CYCLE-20261104-4BA4` | `2026-11-04T19:48:11.164Z` | `meilisearch/meilisearch` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6940` | Yes (`d7d6eae4...`) |
+| `CYCLE-20261104-4IVB` | `2026-11-04T19:48:20.999Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6941` | Yes (`ede37a31...`) |

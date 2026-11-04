@@ -2853,10 +2853,10 @@
     "repository": "freenet/freenet-core",
     "platform": "github",
     "sourceUrl": "https://github.com/freenet/freenet-core",
-    "sourceVersion": "c54e83c8",
+    "sourceVersion": "5aa241a1",
     "license": "NOASSERTION",
-    "contentHash": "83ec14ac82a3e7a603deaaa1624ad320b90c2218b673350f4a84c07270274972",
-    "lastHarvestedAt": "2026-11-04T00:32:05.390Z",
+    "contentHash": "ede37a315931cde4e418a8605c755469e97b93531ae9d6283b4ee9adad43bdd8",
+    "lastHarvestedAt": "2026-11-04T19:48:21.002Z",
     "learningId": "learn-github-freenet-freenet-core"
   },
   "vearch-vearch": {
@@ -6423,10 +6423,10 @@
     "repository": "meilisearch/meilisearch",
     "platform": "github",
     "sourceUrl": "https://github.com/meilisearch/meilisearch",
-    "sourceVersion": "fccb3537",
+    "sourceVersion": "c18c8197",
     "license": "NOASSERTION",
-    "contentHash": "17f99642447b8eb1a1f237bfd68c263f6b6e28af62ce09020dc2bd063ca440e3",
-    "lastHarvestedAt": "2026-11-03T19:52:35.672Z",
+    "contentHash": "d7d6eae4278a14ff9566766ae741e8b156a05cf69af06ae393381634d6a2b446",
+    "lastHarvestedAt": "2026-11-04T19:48:11.167Z",
     "learningId": "learn-github-meilisearch-meilisearch"
   },
   "pacocoursey-cmdk": {
@@ -7133,10 +7133,10 @@
     "repository": "zvec-ai/zvec-grep",
     "platform": "github",
     "sourceUrl": "https://github.com/zvec-ai/zvec-grep",
-    "sourceVersion": "4eaaeb8a",
+    "sourceVersion": "3d60e062",
     "license": "Apache-2.0",
-    "contentHash": "12dce603748b214626daeeb9c9c16a81fee8a644f08ba2e51e843b007f2b8258",
-    "lastHarvestedAt": "2026-11-03T12:32:12.229Z",
+    "contentHash": "16195f840ddf7a5afedeb628d8c922cbfe7dee248ded1c1983abe21c5db447e4",
+    "lastHarvestedAt": "2026-11-04T19:47:58.535Z",
     "learningId": "learn-github-zvec-ai-zvec-grep"
   },
   "jetbrains-kotlinconf-app": {
@@ -10815,8 +10815,8 @@
     "sourceUrl": "https://huggingface.co/XHToken/Spark-X2.6-4B-GGUF",
     "sourceVersion": "hf-xhtoken-spark-x2.6-4b-gguf",
     "license": "Open-Source",
-    "contentHash": "b325c14b5e3b4a04e23da4ad3e162e59d2a85b104dfe8f64cff277e95b82c059",
-    "lastHarvestedAt": "2026-10-31T03:45:21.563Z",
+    "contentHash": "bb8890df84efa8ca8313447920b1c3620526888878a932c97d0137be38bc8c46",
+    "lastHarvestedAt": "2026-11-04T19:48:09.751Z",
     "learningId": "learn-huggingface-xhtoken-spark-x2-6-4b-gguf"
   },
   "hf-nvidia-nvidia-nemotron-3.5-bolt-e4b-4gb": {

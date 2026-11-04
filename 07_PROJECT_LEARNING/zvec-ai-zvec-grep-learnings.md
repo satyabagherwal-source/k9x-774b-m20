@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zvec-ai-zvec-grep-learnings.md`  
 > **Source**: github ([https://github.com/zvec-ai/zvec-grep](https://github.com/zvec-ai/zvec-grep))  
-> **Source Version**: `4eaaeb8a`  
+> **Source Version**: `3d60e062`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T12:32:11.464Z  
+> **Timestamp**: 2026-11-04T19:47:58.031Z  
 > **Learning ID**: `learn-github-zvec-ai-zvec-grep`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zvec-ai-zvec-grep-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zvec-ai/zvec-grep](https://github.com/zvec-ai/zvec-grep))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T12:32:10.105Z  
+> **Harvest Timestamp**: 2026-11-04T19:47:56.900Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Local-first search across your workspace, built for humans and AI agents.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 4219 stars
+- **Stars / Engagement**: 4230 stars
 
 ---
 
@@ -1118,854 +1118,1076 @@ def render_report(report: dict[str, Any]) -> str:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a8b68d8c` (2026-11-02)
-**Commit Message**: fix(npm): deduplicate installed native payload files (#356)
+### Incident Patch 1: `3d60e062` (2026-11-04)
+**Commit Message**: feat(rust): extract and persist code graphs during indexing (#291)
 
-* fix(npm): deduplicate installed native payload files
-
-Share checksum-verified base payload inodes between the platform dependency and installed runtime paths. Preserve verified copies when link reuse is unavailable, and deduplicate existing CPU/CUDA installations without changing plugins or executable permissions.
-
-* docs(npm): restore distribution README
-
-* fix(npm): retain copies when Windows exFAT rejects hard links
-
-Handle EISDIR only when hard-link creation fails on Windows. Preserve strict directory-error handling for rename and other platforms, and cover install/rebuild plus temporary-file cleanup with injected errors.
-
-**File**: `rust/npm/meta/install.cjs` (modified, +40/-0)
+**File**: `rust/crates/zg-cli/src/render.rs` (modified, +6/-0)
 ```diff
-@@ -8,6 +8,7 @@ const {
-   closeSync,
-   copyFileSync,
-   existsSync,
-+  linkSync,
-   lstatSync,
-   mkdirSync,
-   mkdtempSync,
-@@ -246,6 +247,43 @@ function installedFiles(entry, files) {
-     [file === `bin/${entry.binary}` ? "bin/zg.exe" : file, value]));
- }
- 
-+function reuseBaseFiles({ metaRoot, platformRoot, entry }, files) {
-+  let temporaryRoot;
-+  try {
-+    for (const file of Object.keys(files)) {
-+      const source = checkedPayloadPath(platformRoot, file);
-+      const destination = checkedPayloadPath(metaRoot, file === `bin/${entry.binary}` ? "bin/zg.exe" : file);
-+      const original = lstatSync(source, { bigint: true });
-+      const installed = lstatSync(destination, { bigint: true });
-+      if (original.dev === installed.dev && original.ino === installed.ino) continue;
-+      // Sharing an inode must not change the installed permissions or ownership.
-+      if ((original.mode & 0o7777n) !== (installed.mode & 0o7777n) ||
-+          original.uid !== installed.uid || original.gid !== installed.gid) continue;
-+      // Keep staging outside bin/lib so interruption cannot invalidate the payload.
-+      if (!temporaryRoot) temporaryRoot = mkdtempSync(join(metaRoot, ".native-links-"));
-+      const temporary = join(temporaryRoot, "file");
-+      let linked = false;
-+      try {
-+        linkSync(source, temporary);
-+        linked = true;
-+        renameSync(temporary, destination);
-+      } catch (error) {
-+        // Windows exFAT maps unsupported hard links to EISDIR. Do not suppress
-+        // directory errors from rename or from other platforms.
-+        const unsupportedWindowsLink = process.platform === "win32" && !linked && error.code === "EISDIR";
-+        // Unsupported links, separate mounts or locked Windows files retain the
-+        // verified copy. Both paths remain valid for future npm rebuilds.
-+        if (!unsupportedWindowsLink &&
-+            !["EXDEV", "EPERM", "EACCES", "ENOTSUP", "EOPNOTSUPP", "ENOSYS", "EMLINK", "EBUSY"].includes(error.code)) throw error;
-+      } finally {
-+        rmSync(temporary, { force: true });
-+      }
-+    }
-+  } finally {
-+    if (temporaryRoot) rmSync(temporaryRoot, { recursive: true, force: true });
-+  }
-+}
-+
- function writeReceipt(metaRoot, receipt) {
-   const temporary = join(metaRoot, `.native-install-${process.pid}.json`);
-   writeFileSync(temporary, `${JSON.stringify({ schemaVersion: 1, target: receipt.target,
-@@ -351,6 +389,7 @@ function materialize(options) {
-   return installLock(metaRoot, () => {
-     if (checksums.schemaVersion !== 3) {
-       materializeBase(options);
-+      reuseBaseFiles(options, checksums.files);
-       if (config.mode === "cuda") throw new Error("this native package has no CUDA plugin support");
-       return verifyInstallation(options);
-     }
-@@ -363,6 +402,7 @@ function materialize(options) {
-         coreId: manifest.coreId, components: [] };
-       writeReceipt(metaRoot, installed);
-     }
-+    reuseBaseFiles(options, checksums.files);
-     if (config.mode === "cpu") return installed;
-     if (installed.components.length) return installed;
-     const wantsCuda = config.mode === "cuda" || (options.detectNvidia || plugins.detectNvidia)();
+@@ -1050,6 +1050,9 @@ mod output_tests {
+             visibility: None,
+             language: None,
+             documentation: None,
++            arity: None,
++            is_exported: false,
++            is_declaration: false,
+         }));
+         for source in [ContextSource::Index, ContextSource::Rg] {
+             result.source = source;
+@@ -1407,6 +1410,9 @@ mod output_tests {
+                 visibility: None,
+                 language: None,
+                 documentation: None,
++                arity: None,
++                is_exported: false,
++                is_declaration: false,
+             }));
+             let mut buffer = Vec::new();
+             write_item_preview(
 ```
 
-**File**: `rust/npm/meta/install.test.cjs` (modified, +154/-0)
+**File**: `rust/crates/zg-daemon/src/job_scheduler.rs` (modified, +200/-1)
 ```diff
-@@ -4,10 +4,12 @@ const assert = require("node:assert/strict");
- const { createHash } = require("node:crypto");
- const {
-   chmodSync,
-+  copyFileSync,
-   cpSync,
-   existsSync,
-   mkdtempSync,
-   mkdirSync,
-+  readdirSync,
-   readFileSync,
-   renameSync,
-   rmSync,
-@@ -87,6 +89,137 @@ test("materializes a verified native package and replaces the placeholder last",
-   }
- });
+@@ -198,10 +198,18 @@ impl IndexJobScheduler {
+             // Once another caller relies on a job, request cancellation must not stop it.
+             active.shared.store(true, Ordering::Release);
+             let active_snapshot = lock(&active.snapshot).clone();
++            // A graph switch is a saved configuration change: a job that already
++            // started under the other value cannot apply it, so the request needs
++            // its own job instead of being absorbed by the active one.
++            let graph_setting_request = {
++                let current = lock(&active.options);
++                changes_graph_setting(current.as_ref(), &options)
++            };
+             let needs_followup = reason == JobReason::Watch
+                 || active_snapshot.reason == JobReason::Watch
+                 || options.rebuild
+-                || has_selection_update(&options);
++                || has_selection_update(&options)
++                || graph_setting_request;
+             if needs_followup && active_snapshot.state == JobState::Queued {
+                 let queued_full_manual = active_snapshot.reason == JobReason::Manual
+                     && reason == JobReason::Watch
+@@ -590,6 +598,9 @@ fn merge_options(current: &mut Option<IndexOptions>, mut incoming: IndexOptions)
+     }
+     current.reset_paths |= incoming.reset_paths;
+     current.rebuild |= incoming.rebuild;
++    // A saved configuration switch follows the same rule as scan updates: an
++    // explicit value wins, including false, and omission keeps the earlier one.
++    merge_update(&mut current.graph_indexing, incoming.graph_indexing.take());
+     merge_update(
+         &mut current.scan.included_formats,
+         incoming.scan.included_formats.take(),
+@@ -743,6 +754,14 @@ fn merge_runtime_options(current: &mut IndexOptions, incoming: &mut IndexOptions
+     }
+ }
  
-+test("reuses native payload files across materialization and rebuild", () => {
-+  const paths = fixture();
-+  try {
-+    for (let attempt = 0; attempt < 2; attempt++) {
-+      materialize({ ...paths, entry, expectedVersion: "0.0.1" });
-+      for (const [source, installed] of [
-+        ["bin/zg", "bin/zg.exe"],
-+        ["lib/libbackend.dylib", "lib/libbackend.dylib"],
-+        ["lib/libfixture.dylib", "lib/libfixture.dylib"],
-+      ]) {
-+        const original = statSync(join(paths.platformRoot, source), { bigint: true });
-+        const active = statSync(join(paths.metaRoot, installed), { bigint: true });
-+        assert.deepEqual([active.dev, active.ino], [original.dev, original.ino],
-+          `${installed} must reuse the verified platform payload instead of duplicating it`);
-+        assert.equal(active.nlink, 2n);
-+      }
-+      verifyInstallation({ ...paths, entry, expectedVersion: "0.0.1" });
-+    }
-+  } finally {
-+    rmSync(paths.root, { recursive: true, force: true });
-+  }
-+});
-+
-+test("keeps platform permissions when the installed executable needs chmod", (t) => {
-+  const paths = fixture();
-+  try {
-+    if (process.platform === "win32") {
-+      t.skip("POSIX executable permission changes do not apply to Windows");
-+      return;
-+    }
-+    const source = join(paths.platformRoot, "bin/zg");
-+    chmodSync(source, 0o644);
-+    materialize({ ...paths, entry, expectedVersion: "0.0.1" });
-+    assert.equal(statSync(source).mode & 0o777, 0o644);
-+    assert.equal(statSync(join(paths.metaRoot, "bin/zg.exe")).mode & 0o777, 0o755);
-+    assert.notEqual(statSync(source, { bigint: true }).ino,
-+      statSync(join(paths.metaRoot, "bin/zg.exe"), { bigint: true }).ino);
-+    verifyInstallation({ ...paths, entry, expectedVersion: "0.0.1" });
-+  } finally {
-+    rmSync(paths.root, { recursive: true, force: true });
-+  }
-+});
-+
-+for (const code of ["EXDEV", "EPERM", "EACCES", "ENOTSUP", "EOPNOTSUPP", "ENOSYS", "EMLINK", "EBUSY", "EIO"]) {
-+  test(`native file reuse ${code} ${code === "EIO" ? "fails without damaging the installed files" : "retains verified copies"}`, () => {
-+    const paths = fixture();
-+    try {
-+      const result = spawnSync(process.execPath, ["-e", `
-+        const fs = require('fs');
-+        fs.linkSync = () => { throw Object.assign(new Error('injected link failure'), { code: process.argv[1] }); };
-+        require(process.argv[2]).materialize(JSON.parse(process.argv[3]));
-+      `, code, join(__dirname, "install.cjs"), JSON.stringify({ ...paths, entry, expectedVersion: "0.0.1" })],
-+      { encoding: "utf8" });
-+      assert.equal(result.status === 0, code !== "EIO", result.stderr);
-+      verifyInstallation({ ...paths, entry, expectedVersion: "0.0.1" });
-+      assert.equal(statSync(join(paths.metaRoot, "bin/zg.exe")).nlink, 1);
-+      assert.equal(statSync(join(paths.platformRoot, "bin/zg")).nlink, 1);
-+    } finally {
-+      rmSync(paths.root, { recursive: true, force: true });
-+    }
-+  });
++/// A request changes the saved graph switch when it names a value that differs
++/// from the one the queued job would apply; an omitted value never changes it.
++fn changes_graph_setting(current: Option<&IndexOptions>, incoming: &IndexOptions) -> bool {
++    incoming.graph_indexing.is_some_and(|requested| {
++        current.and_then(|current| current.graph_indexing) != Some(requested)
++    })
 +}
 +
-+for (const [platform, operation, fallback] of [
-+  ["win32", "linkSync", true],
-+  ["linux", "linkSync", false],
-+  ["darwin", "linkSync", false],
-+  ["win32", "renameSync", false],
-+]) {
-+  test(`${platform} ${operation} EISDIR ${fallback ? "retains verified copies on exFAT" : "still fails"}`, () => {
-+    const paths = fixture();
-+    try {
-+      const result = spawnSync(process.execPath, ["-e", `
-+        const fs = require('fs');
-+        const operation = process.argv[2];
-+        const original = fs[operation];
-+        fs[operation] = (source, destination) => {
-+          if (operation === 'linkSync' || source.includes('.native-links-')) {
-+            throw Object.assign(new Error('injected EISDIR'), { code: 'EISDIR' });
-+          }
-+          return original(source, destination);
-+        };
-+        const installer = require(process.argv[3]);
-+        Object.defineProperty(process, 'platform', { value: process.argv[1] });
-+        const options = JSON.parse(process.argv[4]);
-+        for (let attempt = 0; attempt < 2; attempt++) {
-+          installer.materialize(options);
-+          installer.verifyInstallation(options);
+ fn merge_update<T>(current: &mut Option<T>, incoming: Option<T>) {
+     if incoming.is_some() {
+         *current = incoming;
+@@ -1808,6 +1827,186 @@ mod tests {
+         }
+     }
+ 
++    #[tokio::test]
++    async fn graph_setting_requests_are_merged_and_never_absorbed() {
++        for queued in [false, true] {
++            let executor = Arc::new(RecordingExecutor {
++                calls: Mutex::new(Vec::new()),
++                started: Notify::new(),
++                releases: tokio::sync::Semaphore::new(0),
++            });
++            let scheduler = IndexJobScheduler::new(
++                executor.clone(),
++                SchedulerConfig {
++                    concurrency: 1,
++                    queue_capacity: 8,
++                },
++            );
++            if queued {
++                scheduler
++                    .submit(
++                        PathBuf::from("/blocker"),
++                        IndexOptions::default(),
++                        JobReason::Manual,
++                    )
++                    .expect("occupy worker");
++                executor.started.notified().await;
++            }
++            let root = PathBuf::from("/workspace");
++            let first = scheduler
++                .submit(root.clone(), IndexOptions::default(), JobReason::Manual)
++                .expect("initial index");
++            if !queued {
++                executor.started.notified().await;
++            }
++            // A running job cannot apply a switch it did not start with, so the
++            // request needs its own job instead of being absorbed by that one.
++            let enable = scheduler
++                .submit(
++                    root.clone(),
++                    IndexOptions {
++                        graph_indexing: Some(true),
++                        ..IndexOptions::default()
++                    },
++                    JobReason::Manual,
++                )
++                .expect("enable graph");
++            assert_eq!(
++                enable.job.id == first.job.id,
++                queued,
++                "a running job must not swallow the graph switch"
++            );
++            // A later explicit false replaces the queued true.
++            let disable = scheduler
++                .submit(
++                    root.clone(),
++                    IndexOptions {
++                        graph_indexing: Some(false),
++                        rebuild: true,
++                        ..IndexOptions::default()
++                    },
++                    JobReason::Manual,
++                )
++                .expect("disable graph");
++            assert_eq!(disable.job.id, enable.job.id);
++            // An omission keeps the value the ea
+```
+
+**File**: `rust/crates/zg-daemon/src/workspace_runtime.rs` (modified, +6/-0)
+```diff
+@@ -1352,6 +1352,7 @@ fn index_template(options: &IndexOptions) -> IndexOptions {
+     template.reset_paths = false;
+     template.changes.clear();
+     template.scan = ScanRulesUpdate::default();
++    template.graph_indexing = None;
+     template.embedding = None;
+     template
+ }
+@@ -2416,6 +2417,7 @@ mod tests {
+                         max_depth: Some(None),
+                         ..ScanRulesUpdate::default()
+                     },
++                    graph_indexing: Some(true),
+                     ..IndexOptions::default()
+                 },
+                 true,
+@@ -2444,6 +2446,10 @@ mod tests {
+             let watched = &calls[2];
+             assert_eq!(watched.embedding_concurrency, None);
+             assert_eq!(watched.scan, ScanRulesUpdate::default());
++            assert_eq!(
++                watched.graph_indexing, None,
++                "the graph switch is a saved setting, never a replayed request"
++            );
+             assert!(!watched.rebuild);
+             assert!(!watched.reset_paths);
+             assert!(!watched.allow_remote);
+```
+
+**File**: `rust/crates/zg-engine/src/api/index.rs` (modified, +9/-0)
+```diff
+@@ -25,6 +25,15 @@ pub mod options {
+         pub root: Option<PathBuf>,
+         /// Build from empty storage and replace the active index only after success.
+         pub rebuild: bool,
++        /// Turns walk-time code graph indexing on or off for this workspace.
++        ///
++        /// Omitted keeps the saved setting, and a workspace saved before this
++        /// option existed indexes without a graph. Changing the setting requires
++        /// `rebuild`: the graph and the rest of the index must describe the same
++        /// build, so a refresh that flips the switch is rejected and the published
++        /// index stays untouched.
++        #[serde(default, skip_serializing_if = "Option::is_none")]
++        pub graph_indexing: Option<bool>,
+         /// Automatic refreshes require an existing enabled index instead of creating one.
+         /// This admission policy is runtime-only and never accepted from transport requests.
+         #[serde(skip)]
+```
+
+**File**: `rust/crates/zg-engine/src/authorization.rs` (modified, +1/-0)
+```diff
+@@ -1254,6 +1254,7 @@ mod tests {
+                             ..Default::default()
+                         },
+                     )]),
++                    false,
+                     crate::domain::FTS_CONFIG,
+                 )
+                 .expect("index descriptor"),
+```
+
+**File**: `rust/crates/zg-engine/src/domain/graph.rs` (modified, +21/-5)
+```diff
+@@ -5,8 +5,18 @@ use std::collections::BTreeMap;
+ use serde::{Deserialize, Serialize};
+ 
+ use super::metadata::SymbolType;
++use super::source::TextRange;
+ 
+-/// Edge kinds produced by the extraction layer.
++/// Kinds produced by the extraction layer.
++///
++/// Resolved edges and buffered name references share this vocabulary because
++/// they become rows of the same table: the pending queue stores the kind the
++/// resolved edge will carry. Resolution state is therefore structural, not a
++/// kind — a [`PendingRef`] has no target, a [`FileEdge`] requires one — and the
++/// store keeps the same split in its `status` column.
++///
++/// `Contains` comes only from containment, which is collected as a resolved
++/// edge during the walk, so a buffered name reference never carries it.
+ #[derive(Clone, Copy, Debug, Deserialize, Eq, Hash, PartialEq, Serialize)]
+ #[serde(rename_all = "snake_case")]
+ pub(crate) enum GraphEdgeKind {
+@@ -15,6 +25,7 @@ pub(crate) enum GraphEdgeKind {
+     Imports,
+     Extends,
+     Implements,
++    Declares,
+ }
+ 
+ /// Evidence provenance recorded on persisted edges.
+@@ -74,15 +85,17 @@ pub(crate) struct FileGraphNode {
+     /// `scope::name` breadcrumb joined with `::`, or the bare name.
+     pub qualified_name: String,
+     pub language: String,
+-    pub start_line: usize,
+-    pub end_line: usize,
+-    pub start_column: usize,
+-    pub end_column: usize,
++    /// Extent of the entity in its source, absent when the entity carries no
++    /// text range (a whole-file or byte-only range has no coordinates).
++    pub range: Option<TextRange>,
+     pub signature: Option<String>,
+     pub doc: Option<String>,
+     pub arity: Option<usize>,
+     pub visibility: Option<String>,
+     pub is_exported: bool,
++    /// Pure declaration without a body (C/C++ prototypes, in-class member
++    /// declarations); definitions shadow them in name-based binding.
++    pub is_declaration: bool,
+ }
+ 
+ /// Per-file graph extraction output, assembled after the walk and partition.
+@@ -94,18 +107,21 @@ pub(crate) struct FileGraphResult {
+ }
+ 
+ impl GraphEdgeKind {
++    #[allow(dead_code)]
+     pub(crate) const fn as_str(self) -> &'static str {
+         match self {
+             Self::Contains => "contains",
+             Self::Calls => "calls",
+             Self::Imports => "imports",
+             Self::Extends => "extends",
+             Self::Implements => "implements",
++            Self::Declares => "declares",
+         }
+     }
+ }
+ 
+ impl EdgeProvenance {
++    #[allow(dead_code)]
+     pub(crate) const fn as_str(self) -> &'static str {
+         match self {
+             Self::FileLocal => "file_local",
+```
+
+**File**: `rust/crates/zg-engine/src/domain/index.rs` (modified, +75/-1)
+```diff
+@@ -46,6 +46,7 @@ pub(crate) struct IndexDescriptor {
+     default_embedding_model: EmbeddingModelInfo,
+     embedding_routes: BTreeMap<ContentKind, EmbeddingModelInfo>,
+     embedding_configs: BTreeMap<String, ModelConfig<EncryptedApiKey>>,
++    graph_indexing: bool,
+     #[serde(skip)]
+     fts: FtsConfig,
+ }
+@@ -60,13 +61,15 @@ impl<'de> Deserialize<'de> for IndexDescriptor {
+             embedding_routes: BTreeMap<ContentKind, EmbeddingModelInfo>,
+             #[serde(default, deserialize_with = "deserialize_unique_map")]
+             embedding_configs: BTreeMap<String, ModelConfig<EncryptedApiKey>>,
++            graph_indexing: bool,
+         }
+ 
+         let fields = Fields::deserialize(deserializer)?;
+         Self::new(
+             fields.default_embedding_model,
+             fields.embedding_routes,
+             fields.embedding_configs,
++            fields.graph_indexing,
+             FTS_CONFIG,
+         )
+         .map_err(serde::de::Error::custom)
+@@ -135,6 +138,7 @@ impl IndexDescriptor {
+         default_embedding_model: EmbeddingModelInfo,
+         embedding_routes: BTreeMap<ContentKind, EmbeddingModelInfo>,
+         embedding_configs: BTreeMap<String, ModelConfig<EncryptedApiKey>>,
++        graph_indexing: bool,
+         fts: FtsConfig,
+     ) -> EngineResult<Self> {
+         for (kind, embedding) in &embedding_routes {
+@@ -170,10 +174,24 @@ impl IndexDescriptor {
+             default_embedding_model,
+             embedding_routes,
+             embedding_configs,
++            graph_indexing,
+             fts,
+         })
+     }
+ 
++    /// Whether the persisted index carries the walk-time code graph.
++    pub(crate) fn graph_indexing(&self) -> bool {
++        self.graph_indexing
++    }
++
++    /// Records whether the published index carries the walk-time code graph.
++    /// Production sets the switch through [`Self::new`]; tests use this to
++    /// derive a variant of a fixture descriptor.
++    #[cfg(test)]
++    pub(crate) fn set_graph_indexing(&mut self, enabled: bool) {
++        self.graph_indexing = enabled;
++    }
++
+     pub(crate) fn default_embedding_model(&self) -> &EmbeddingModelInfo {
+         &self.default_embedding_model
+     }
+@@ -244,6 +262,16 @@ impl IndexDescriptor {
+                 .embedding
+                 .ensure_index_compatible(&other_index.embedding)?;
+         }
++        if self.graph_indexing != other.graph_indexing {
++            let existing = if self.graph_indexing {
++                "stores the code graph"
++            } else {
++                "has no code graph"
++            };
++            return Err(EngineError::invalid_argument(format!(
++                "existing index {existing}; rebuild the index to change graph indexing",
++            )));
 +        }
-+      `, platform, operation, join(__dirname, "install.cjs"), JSON.stringify({ ...paths, entry, expectedVersion: "0.0.1" })],
-+      { encoding: "utf8" });
-+      assert.equal(result.status === 0, fallback, result.stderr);
-+      if (!fallback) assert.match(result.stderr, /EISDIR/);
-+      verifyInstallation({ ...paths, entry, expectedVersion: "0.0.1" });
-+      assert.equal(statSync(join(paths.metaRoot, "bin/zg.exe")).nlink, 1);
-+      assert.equal(statSync(join(pat
+         Ok(())
+     }
+ }
+@@ -278,6 +306,7 @@ mod tests {
+             .expect("embedding"),
+             BTreeMap::new(),
+             BTreeMap::new(),
++            false,
+             FTS_CONFIG,
+         )
+         .expect("index descriptor")
+@@ -288,7 +317,10 @@ mod tests {
+         for state in [
+             IndexState::Uninitialized,
+             IndexState::Disabled,
+-            IndexState::Enabled(Box::new(descriptor())),
++            IndexState::Enabled(Box::new(IndexDescriptor {
++                graph_indexing: true,
++                ..descriptor()
++            })),
+         ] {
+             let json = serde_json::to_string(&state).expect("encode index");
+             assert_eq!(
+@@ -307,6 +339,48 @@ mod tests {
+         }
+     }
+ 
++    #[test]
++    fn graph_setting_mismatch_requires_a_rebuild() {
++        let published = descriptor();
++        let requested = IndexDescriptor {
++            graph_indexing: true,
++            ..descriptor()
++        };
++        let error = published
++            .ensure_index_compatible(&requested)
++            .expect_err("graph setting changed");
++        assert!(
++            error.message().contains("has no code graph"),
++            "{}",
++            error.message()
++        );
++        let error = requested
++            .ensure_index_compatible(&published)
++            .expect_err("graph setting changed");
++        assert!(
++            error.message().contains("stores the code graph"),
++            "{}",
++            error.message()
++        );
++        published
++            .ensure_index_compatible(&descriptor())
++            .expect("matching graph setting");
++    }
++
++    #[test]
++    fn descriptor_requires_the_graph_setting() {
++        let encoded =
++            serde_json::to_string(&IndexState::Enabled(Box::new(descriptor()))).expect("encode");
++        assert!(encoded.contains("\"graphIndexing\":false"));
++
++        let incomplete = encoded.replace(",\"graphIndexing\":false", "");
++        assert_ne!(incomplete, encoded);
++        assert!(
++            serde_json::from_str::<IndexState>(&incomplete).is_err(),
++            "a descriptor must state whether the build carries a graph"
++        );
++    }
++
+     #[test]
+     fn index_metadata_rejects_
+```
+
+**File**: `rust/crates/zg-engine/src/domain/metadata.rs` (modified, +13/-1)
+```diff
+@@ -44,7 +44,7 @@ impl IndexField {
+ 
+ // --- Code ---
+ 
+-#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
++#[derive(Clone, Debug, Default, Deserialize, Eq, PartialEq, Serialize)]
+ pub struct CodeMetadata {
+     pub symbol_type: Option<SymbolType>,
+     pub symbol_name: Option<String>,
+@@ -55,6 +55,18 @@ pub struct CodeMetadata {
+     pub documentation: Option<String>,
+     pub visibility: Option<Visibility>,
+     pub language: Option<Language>,
++    /// Declared parameter count of function-shaped symbols, with the
++    /// implicit receiver excluded.
++    pub arity: Option<usize>,
++    /// Whether the symbol is importable from outside its module.
++    #[serde(default)]
++    pub is_exported: bool,
++    /// True for pure declarations (C/C++ prototypes, in-class member
++    /// declarations) that never carry a body. Name-based binding prefers the
++    /// definition when both exist for the same symbol; a lone declaration is
++    /// the only known location and stays bindable.
++    #[serde(default)]
++    pub is_declaration: bool,
+ }
+ 
+ impl CodeMetadata {
 ```
 
 ---
 
-### Incident Patch 2: `4eaaeb8a` (2026-11-03)
-**Commit Message**: fix(models): honor Model2Vec catalog token limits (#358)
+### Incident Patch 2: `ec141d61` (2026-11-04)
+**Commit Message**: feat(bench): add model inference micro-benchmark (#362)
 
-**File**: `rust/crates/zg-engine/src/models/backends/model2vec/model.rs` (modified, +9/-1)
-```diff
-@@ -348,9 +348,17 @@ impl Model2VecDependencies for DefaultModel2VecDependencies {
-         let tokenizer_json = fs::read(&tokenizer_path).await.map_err(|error| {
-             ModelError::storage_failure(format!("Unable to read Model2Vec tokenizer: {error}"))
-         })?;
--        let tokenizer = Tokenizer::from_bytes(&tokenizer_json).map_err(|error| {
-+        let mut tokenizer = Tokenizer::from_bytes(&tokenizer_json).map_err(|error| {
-             ModelError::storage_failure("Unable to load Model2Vec tokenizer").with_cause(error)
-         })?;
-+        // Static embeddings have no positional context limit. The catalog budget
-+        // is enforced in embed_model2vec_texts, which needs the complete token
-+        // sequence to report truncation. Serialized tokenizer defaults (e.g.
-+        // Potion Code's 512-token limit) must not silently shorten that sequence.
-+        tokenizer.with_truncation(None).map_err(|error| {
-+            ModelError::storage_failure("Unable to disable Model2Vec tokenizer truncation")
-+                .with_cause(error)
-+        })?;
-         let unknown_token_id = resolve_unknown_token_id(&tokenizer, &tokenizer_json);
-         Ok(Arc::new(HuggingFaceTokenizer {
-             tokenizer,
-```
+* feat(bench): add model inference micro-benchmark
 
-**File**: `rust/crates/zg-engine/src/models/backends/model2vec/model/tests.rs` (modified, +3/-0)
+* fix(bench): verify cached artifacts and publish complete rounds
+
+* test(bench): compare GGUF cache paths using native path semantics
+
+**File**: `rust/crates/zg-engine/src/models/artifacts/inspection.rs` (modified, +15/-10)
 ```diff
-@@ -24,6 +24,9 @@ use super::{
-     ModelDownloadProgressReporter, StaticEmbeddingTable, TokenizerRuntime,
+@@ -10,16 +10,23 @@ use super::{
  };
  
-+mod boundary_audit;
-+mod tokenization;
-+
- #[tokio::test]
- #[allow(clippy::too_many_lines)]
- async fn matches_typescript_model2vec_oracle_and_reuses_loaded_assets() {
-```
-
-**File**: `rust/crates/zg-engine/src/models/backends/model2vec/model/tests/boundary_audit.rs` (added, +209/-0)
-```diff
-@@ -0,0 +1,209 @@
-+//! Local CPU audit: copy the three pinned `Model2Vec` caches into an isolated
-+//! `ZVEC_GREP_MODEL_CACHE`, then run `cargo +1.98.0 test -p zg-engine
-+//! model2vec_local_boundary_audit --lib -- --ignored --nocapture`.
-+//! No download is needed: artifacts must exist and match the catalog hashes.
-+//!
-+//! Token counts are audit observations, not fields of `EmbeddingResult`. The
-+//! public result's `truncated` indices and actual vectors are checked separately.
-+//! The pinned Potion Code model card describes static embeddings without a
-+//! positional limit; 1024 is this application's budget, retained from catalog
-+//! change f247f7d (which deliberately replaced the earlier 8192 setting).
-+//! <https://huggingface.co/minishlab/potion-code-16M-v2/blob/e9d2a44ca6a05ac6685f3b23709ea57eb7352d5b/README.md>
-+use super::*;
-+use serde_json::json;
-+use sha2::{Digest, Sha256};
-+use tokenizers::Tokenizer;
-+
-+#[tokio::test]
-+#[ignore = "requires an isolated local cache of all three pinned Model2Vec models; CPU only"]
-+async fn model2vec_local_boundary_audit() {
-+    let cache = std::env::var_os("ZVEC_GREP_MODEL_CACHE")
-+        .map(std::path::PathBuf::from)
-+        .expect("isolated local cache");
-+    let mut passed = true;
-+    for reference in [
-+        "local/potion-code-16m-v2",
-+        "local/potion-retrieval-32m",
-+        "local/potion-multilingual-128m",
-+    ] {
-+        let entry = crate::models::catalog::get_embedding_model_catalog_entry(reference)
-+            .and_then(crate::models::catalog::EmbeddingCatalogEntry::model2vec_config)
-+            .expect("Model2Vec catalog entry");
-+        let root = cache
-+            .join("model2vec")
-+            .join(entry.download.hugging_face.repo.replace('/', "--"))
-+            .join(entry.download.hugging_face.revision);
-+        let artifacts = verify_local_artifacts(&root, entry).await;
-+        let tokenizer_path = root.join("tokenizer/tokenizer.json");
-+        let mut original = Tokenizer::from_file(&tokenizer_path).expect("artifact tokenizer");
-+        let embedded_truncation = original.get_truncation().cloned();
-+        let serialized_length = original
-+            .encode("hello ".repeat(1025), false)
-+            .expect("serialized behavior")
-+            .len();
-+        original
-+            .with_truncation(None)
-+            .expect("unlimited reference tokenizer");
-+        let hello = original
-+            .encode("hello", false)
-+            .expect("one token")
-+            .get_ids()
-+            .to_vec();
-+        let tail = original
-+            .encode("world", false)
-+            .expect("one distinct token")
-+            .get_ids()
-+            .to_vec();
-+        assert_eq!(hello.len(), 1);
-+        assert_eq!(tail.len(), 1);
-+        assert_ne!(hello, tail);
-+        let model = Model2VecEmbeddingModel::new(
-+            entry,
-+            ModelConfig {
-+                cache_dir: Some(cache.clone()),
-+                ..Default::default()
-+            },
-+            crate::models::runtime::ModelComputeRuntime::shared(),
-+        );
-+        model
-+            .prepare(EmbeddingPrepareOptions::default())
-+            .await
-+            .expect("prepare local CPU model");
-+        let limit = model
-+            .info()
-+            .max_input_tokens()
-+            .expect("declared token limit");
-+        let mut observations = Vec::new();
-+        for purpose in [EmbeddingPurpose::Document, EmbeddingPurpose::Query] {
-+            for target in [513, limit - 1, limit, limit + 1] {
-+                let (matches, observation) =
-+                    audit_boundary(&model, &original, (hello[0], tail[0]), purpose, target).await;
-+                passed &= matches;
-+                observations.push(observation);
-+            }
-+            let suffix_changes_vector = suffix_changes_vector(&model, purpose).await;
-+            passed &= suffix_changes_vector;
-+            observations.push(json!({"purpose":format!("{purpose:?}"),"suffix_513_to_1024_changes_vector":suffix_changes_vector}));
-+        }
-+        println!(
-+            "MODEL2VEC_BOUNDARY_AUDIT={}",
-+            json!({"model":reference,"revision":entry.revision,"limit":limit,"embedded_truncation":embedded_truncation,"serialized_tokenizer_length_for_1025":serialized_length,"artifacts":artifacts,"observations":observations})
-+        );
-+    }
-+    assert!(
-+        passed,
-+        "all model2vec length contracts and suffix vectors must match"
-+    );
+ pub(crate) async fn model_is_cached(entry: EmbeddingCatalogEntry, cache: Option<&Path>) -> bool {
++    cached_source(entry, cache).await.is_some()
 +}
 +
-+async fn verify_local_artifacts(root: &Path, entry: Model2VecConfig) -> Vec<serde_json::Value> {
-+    let mut artifacts = Vec::new();
-+    for artifact in entry.download.artifacts {
-+        let path = root.join(if artifact.path == entry.tokenizer_file {
-+            "tokenizer/tokenizer.json"
-+        } else {
-+            artifact.path
-+        });
-+        let bytes = tokio::fs::read(&path)
-+            .await
-+            .expect("pinned local artifact must exist before prepare");
-+        let 
-```
-
-**File**: `rust/crates/zg-engine/src/models/backends/model2vec/model/tests/tokenization.rs` (added, +244/-0)
-```diff
-@@ -0,0 +1,244 @@
-+use super::super::{DefaultModel2VecDependencies, LoadedModel};
-+use super::*;
-+use serde_json::json;
-+use tokio_util::sync::CancellationToken;
-+
-+async fn tokenizer_fixture(root: &Path, direction: Option<&str>) {
-+    let bytes = serde_json::to_vec(&json!({
-+        "version": "1.0",
-+        "truncation": direction.map(|direction| json!({
-+            "direction": direction, "max_length": 512,
-+            "strategy": "LongestFirst", "stride": 0
-+        })),
-+        "padding": null,
-+        "added_tokens": [], "normalizer": null,
-+        "pre_tokenizer": {"type": "WhitespaceSplit"},
-+        "post_processor": null, "decoder": null,
-+        "model": {"type": "WordLevel", "unk_token": "[UNK]",
-+            "vocab": {"hello": 0, "tail": 1, "[UNK]": 2, "invalid": 3}}
-+    }))
-+    .expect("serialize tokenizer");
-+    tokio::fs::write(root.join("tokenizer.json"), bytes)
-+        .await
-+        .expect("write tokenizer");
-+}
-+
-+async fn loaded_fixture(root: &Path) -> Model2VecEmbeddingModel {
-+    let mut entry = fixture_entry();
-+    entry.max_input_tokens = 1024;
-+    entry.query_prefix = None;
-+    entry.document_prefix = None;
-+    entry.normalize = false;
-+    let model = Model2VecEmbeddingModel::new(
-+        entry,
-+        ModelConfig::default(),
-+        crate::models::runtime::ModelComputeRuntime::shared(),
-+    );
-+    model.state.lock().await.loaded = Some(Arc::new(LoadedModel {
-+        tokenizer: DefaultModel2VecDependencies::new()
-+            .load_tokenizer(root)
-+            .await
-+            .expect("load tokenizer"),
-+        table: StaticEmbeddingTable {
-+            values: vec![1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0],
-+            dimension: 3,
-+            rows: 3,
-+        },
-+    }));
-+    model
-+}
-+
-+async fn embed(
-+    model: &Model2VecEmbeddingModel,
-+    text: String,
-+    purpose: EmbeddingPurpose,
-+) -> crate::domain::model::EmbeddingResult {
-+    model
-+        .embed(
-+            &[vec![Content::Text(text)]],
-+            EmbeddingOptions {
-+                purpose,
-+                ..Default::default()
-+            },
-+        )
-+        .await
-+        .expect("embed fixture")
-+}
-+
-+#[tokio::test]
-+async fn catalog_limit_overrides_serialized_truncation_for_both_purposes() {
-+    for direction in [None, Some("Right"), Some("Left")] {
-+        let root = TempDir::new().expect("temporary tokenizer");
-+        tokenizer_fixture(root.path(), direction).await;
-+        let original = tokio::fs::read(root.path().join("tokenizer.json"))
-+            .await
-+            .expect("original artifact");
-+        let model = loaded_fixture(root.path()).await;
-+        assert_eq!(model.info().max_input_tokens(), Some(1024));
-+        for purpose in [EmbeddingPurpose::Query, EmbeddingPurpose::Document] {
-+            let mut inputs = Vec::new();
-+            for length in [1_usize, 511, 512, 513, 1023, 1024, 1025] {
-+                // The suffix must affect pooling from token 513 through 1024.
-+                let text =
-+                    "hello ".repeat(length.min(512)) + &"tail ".repeat(length.saturating_sub(512));
-+                inputs.push(vec![Content::Code(text.clone())]);
-+                let result = embed(&model, text, purpose).await;
-+                assert_eq!(
-+                    result.truncated,
-+                    if length > 1024 { vec![0] } else { vec![] }
-+                );
-+                let retained = u32::try_from(length.min(1024)).expect("small token count");
-+                let hello = f64::from(retained.min(512)) / f64::from(retained);
-+                assert!((f64::from(result.vectors[0][0]) - hello).abs() < 1e-7);
-+                assert!((f64::from(result.vectors[0][1]) - (1.0 - hello)).abs() < 1e-7);
-+                assert!(result.vectors[0][2].abs() < f32::EPSILON);
-+            }
-+            let batch = model
-+                .embed(
-+                    &inputs,
-+                    EmbeddingOptions {
-+                        purpose,
-+                        ..Default::default()
-+                    },
-+                )
-+                .await
-+                .expect("batch boundaries");
-+            assert_eq!(batch.truncated, [6]);
-+            // An extra token must be removed on the right, regardless of the artifact direction.
-+            let exact = "hello ".repeat(512) + &"tail ".repeat(512);
-+            assert_eq!(
-+                embed(&model, exact.clone(), purpose).await.vectors,
-+                embed(&model, exact + " hello", purpose).await.vectors
-+            );
-+        }
-+        assert_eq!(
-+            tokio::fs::read(root.path().join("tokenizer.json"))
-+                .await
-+                .expect("unchanged artifact"),
-+            original
-+        );
-+    }
-+}
-+
-+#[tokio::test]
-+async fn unknowns_and_prefixes_respect_the_token_budget() {
-+    let root = TempDir::new().expect("temporary tokenizer");
-+    tokenizer_fixture(root.path(), Some("Right")).await;
-+    let mut model = loaded_f
-```
-
----
-
-### Incident Patch 3: `825bb78a` (2026-11-02)
-**Commit Message**: fix(mcp): generate output schemas from serialization contracts (#360)
-
-**File**: `rust/Cargo.lock` (modified, +258/-2)
-```diff
-@@ -41,6 +41,12 @@ dependencies = [
-  "memchr",
- ]
- 
-+[[package]]
-+name = "allocator-api2"
-+version = "0.2.21"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "683d7910e743518b0e34f1186f92494becacb047c7b6bf616c96772180fef923"
-+
- [[package]]
- name = "android_system_properties"
- version = "0.1.6"
-@@ -275,6 +281,12 @@ dependencies = [
-  "hybrid-array",
- ]
- 
-+[[package]]
-+name = "borrow-or-share"
-+version = "0.2.4"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "dc0b364ead1874514c8c2855ab558056ebfeb775653e7ae45ff72f28f8f3166c"
-+
- [[package]]
- name = "bstr"
- version = "1.13.1"
-@@ -292,6 +304,12 @@ version = "3.20.3"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "72f5acc6cb2ba439de613abc23857ec3d78374d8ed5ac84e9d11336e87da8649"
- 
-+[[package]]
-+name = "bytecount"
-+version = "0.6.9"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "175812e0be2bccb6abe50bb8d566126198344f707e304f45c648fd8f2cc0365e"
-+
- [[package]]
- name = "bytes"
- version = "1.12.1"
-@@ -698,6 +716,12 @@ dependencies = [
-  "serde",
- ]
- 
-+[[package]]
-+name = "data-encoding"
-+version = "2.11.1"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "4583a4551df46e2792f82ceeac45e850d2e2d5debba0b91f102385cda5b11f06"
-+
- [[package]]
- name = "derive_builder"
- version = "0.20.2"
-@@ -779,6 +803,15 @@ version = "1.18.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "252afb9ae5eaa683babdc6a068b3f5726eb19e05070c731f9b2a23a7c3e8ed34"
- 
-+[[package]]
-+name = "email_address"
-+version = "0.2.9"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "e079f19b08ca6239f47f8ba8509c11cf3ea30095831f7fed61441475edd8c449"
-+dependencies = [
-+ "serde",
-+]
-+
- [[package]]
- name = "encoding_rs"
- version = "0.8.35"
-@@ -862,6 +895,17 @@ dependencies = [
-  "regex-syntax",
- ]
- 
-+[[package]]
-+name = "fancy-regex"
-+version = "0.19.2"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "d301f5bf187b3c295fce6468d3875037a0bccc5f6b151c63cac2f85babf21912"
-+dependencies = [
-+ "bit-set",
-+ "regex-automata",
-+ "regex-syntax",
-+]
-+
- [[package]]
- name = "fastrand"
- version = "2.5.0"
-@@ -904,6 +948,17 @@ dependencies = [
-  "zlib-rs",
- ]
- 
-+[[package]]
-+name = "fluent-uri"
-+version = "0.4.1"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "bc74ac4d8359ae70623506d512209619e5cf8f347124910440dbc221714b328e"
-+dependencies = [
-+ "borrow-or-share",
-+ "ref-cast",
-+ "serde",
-+]
-+
- [[package]]
- name = "fnv"
- version = "1.0.7"
-@@ -916,6 +971,12 @@ version = "0.1.5"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "d9c4f5dac5e15c24eb999c26181a6ca40b39fe946cbe4c263c7209467bc83af2"
- 
-+[[package]]
-+name = "foldhash"
-+version = "0.2.0"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "77ce24cb58228fbb8aa041425bb1050850ac19177686ea6e0f41a70416f56fdb"
-+
- [[package]]
- name = "form_urlencoded"
- version = "1.2.2"
-@@ -925,6 +986,16 @@ dependencies = [
-  "percent-encoding",
- ]
- 
-+[[package]]
-+name = "fraction"
-+version = "0.17.0"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "e246562084dde8ebbcc943b261c406ce4f68e5032ec28029a251a47d6a295500"
-+dependencies = [
-+ "num",
-+ "num-bigint",
-+]
-+
- [[package]]
- name = "fs_extra"
- version = "1.3.0"
-@@ -1058,9 +1129,11 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "899def5c37c4fd7b2664648c28120ecec138e4d395b459e5ca34f9cce2dd77fd"
- dependencies = [
-  "cfg-if",
-+ "js-sys",
-  "libc",
-  "r-efi 5.3.0",
-  "wasip2",
-+ "wasm-bindgen",
- ]
- 
- [[package]]
-@@ -1192,14 +1265,19 @@ version = "0.15.5"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "9229cfe53dfd69f0609a49f65461bd93001ea1ef889cd5529dd176593f5338a1"
- dependencies = [
-- "foldhash",
-+ "foldhash 0.1.5",
- ]
- 
- [[package]]
- name = "hashbrown"
- version = "0.17.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "ed5909b6e89a2db4456e54cd5f673791d7eca6732202bbf2a9cc504fe2f9b84a"
-+dependencies = [
-+ "allocator-api2",
-+ "equivalent",
-+ "foldhash 0.2.0",
-+]
- 
- [[package]]
- name = "hashlink"
-@@ -1632,6 +1710,60 @@ dependencies = [
-  "wasm-bindgen",
- ]
- 
-+[[package]]
-+name = "jsonschema"
-+version = "0.60.2"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "a42a11b47492e6a2cc76e9c7bcc8077776cb31dac444e0795d7f61bcc6441c08"
-+dependencies = [
-+ "ahash",
-+ "bytecount",
-+ "data-encoding",
-+ "email_address",
-+ "fancy-regex 0.19.2",
-+ "fraction",
-+ "getrandom 0.3.4",
-+ "itoa",
-+ "jsonschema-regex",
-+ "jsonschema-value",
-+ "num-cmp",
-+ "num-traits",
-+ "percent-encoding",
-+ "referencing",
-+ "regex",
-+ "serde",
-+ "serde_json",
-+ "strum",
-+ "unicode-general-category",
-+ "uuid-simd",
-+]
-+
-+[[package]]
-+name = "jsonschema-regex"
-+version = "0.60.2"
-+source = "registry+https://github.com/rust-lang/cra
-```
-
-**File**: `rust/Cargo.toml` (modified, +1/-0)
-```diff
-@@ -29,6 +29,7 @@ http-body-util = "0.1.5"
- hyper = { version = "1.11.0", features = ["client", "http1"] }
- hyper-util = { version = "0.1.20", features = ["tokio"] }
- ignore = "0.4.33"
-+jsonschema = { version = "0.60", default-features = false }
- notify = "8.2.0"
- # Keep the published binding's safety fixes while loading the separately pinned
- # ORT 1.21.0 runtime through API 21; do not enable automatic runtime downloads.
-```
-
-**File**: `rust/crates/zg-transport-mcp/Cargo.toml` (modified, +1/-0)
-```diff
-@@ -24,6 +24,7 @@ zg-cli = { path = "../zg-cli" }
- zg-engine = { path = "../zg-engine" }
- 
- [dev-dependencies]
-+jsonschema.workspace = true
- tempfile.workspace = true
- zg-testkit = { path = "../zg-testkit" }
- rmcp = { workspace = true, features = ["client", "transport-io"] }
-```
-
-**File**: `rust/crates/zg-transport-mcp/src/lib.rs` (modified, +238/-4)
-```diff
-@@ -422,7 +422,7 @@ impl ZvecGrepMcpServer {
-     #[tool(
-         name = "zvec_grep_index",
-         description = "Activate an absolute workspace root to create, incrementally update, rebuild, or explicitly drop its index. Do not call this tool to create, rebuild, or drop an index unless the user requested persistent indexing or index deletion.",
--        output_schema = rmcp::handler::server::tool::schema_for_type::<IndexOutput>(),
-+        output_schema = output_schema::<IndexOutput>(),
-         annotations(
-             title = "Ensure or drop zvec-grep index",
-             read_only_hint = false,
-@@ -472,7 +472,7 @@ impl ZvecGrepMcpServer {
-     #[tool(
-         name = "zvec_grep_index_drop",
-         description = "Delete the persisted index for an absolute workspace root and release its daemon runtime.",
--        output_schema = rmcp::handler::server::tool::schema_for_type::<IndexDropOutput>(),
-+        output_schema = output_schema::<IndexDropOutput>(),
-         annotations(
-             title = "Drop zvec-grep workspace index",
-             read_only_hint = false,
-@@ -550,7 +550,7 @@ impl ZvecGrepMcpServer {
-     #[tool(
-         name = "zvec_grep_index_status",
-         description = "Read persisted index status for an absolute root. Use only after a missing-index response, indexing failure or cancellation, explicit progress monitoring, or daemon diagnostics.",
--        output_schema = rmcp::handler::server::tool::schema_for_type::<IndexStatusOutput>(),
-+        output_schema = output_schema::<IndexStatusOutput>(),
-         annotations(
-             title = "Inspect zvec-grep index status",
-             read_only_hint = true,
-@@ -584,7 +584,7 @@ impl ZvecGrepMcpServer {
-     #[tool(
-         name = "zvec_grep_server_status",
-         description = "Read daemon version, queue, runtime and model-pool summary without exposing repository paths.",
--        output_schema = rmcp::handler::server::tool::schema_for_type::<ServerStatusOutput>(),
-+        output_schema = output_schema::<ServerStatusOutput>(),
-         annotations(
-             title = "Inspect zvec-grep server status",
-             read_only_hint = true,
-@@ -2044,6 +2044,20 @@ fn error_result(error: &EngineError) -> CallToolResult {
-     ))])
++pub(in crate::models) async fn cached_source(
++    entry: EmbeddingCatalogEntry,
++    cache: Option<&Path>,
++) -> Option<ArtifactSource> {
+     let backend = match entry {
+         EmbeddingCatalogEntry::LlamaCpp(_) => LocalModelBackend::LlamaCpp,
+         EmbeddingCatalogEntry::Model2Vec(_) => LocalModelBackend::Model2Vec,
+         EmbeddingCatalogEntry::Transformers(_) => LocalModelBackend::Transformers,
+-        EmbeddingCatalogEntry::Qwen(_) => return false,
++        EmbeddingCatalogEntry::Qwen(_) => return None,
+     };
+     let cache = cache.map_or_else(|| default_model_cache(backend), Path::to_path_buf);
+     let cache = cache.as_path();
+     let (download, sources) = match entry {
+-        EmbeddingCatalogEntry::Qwen(_) => return false,
++        EmbeddingCatalogEntry::Qwen(_) => return None,
+         EmbeddingCatalogEntry::LlamaCpp(model) => (
+             model.download,
+             [
+@@ -55,9 +62,7 @@ pub(crate) async fn model_is_cached(entry: EmbeddingCatalogEntry, cache: Option<
+             ],
+         ),
+         EmbeddingCatalogEntry::Model2Vec(model) => {
+-            let Some(model_file) = Path::new(model.model_file).file_name() else {
+-                return false;
+-            };
++            let model_file = Path::new(model.model_file).file_name()?;
+             (
+                 model.download,
+                 [
+@@ -84,18 +89,18 @@ pub(crate) async fn model_is_cached(entry: EmbeddingCatalogEntry, cache: Option<
+             )
+         }
+     };
+-    for source in &sources {
+-        let Ok(manifest) = Manifest::new(entry.reference(), source, download.artifacts) else {
++    for source in sources {
++        let Ok(manifest) = Manifest::new(entry.reference(), &source, download.artifacts) else {
+             continue;
+         };
+-        if validate_snapshot(source, download.artifacts, &manifest, None)
++        if validate_snapshot(&source, download.artifacts, &manifest, None)
+             .await
+             .unwrap_or(false)
+         {
+-            return true;
++            return Some(source);
+         }
+     }
+-    false
++    None
  }
  
-+fn output_schema<T: JsonSchema>() -> Arc<rmcp::model::JsonObject> {
-+    // Output schemas must reflect serde's serialization and field omission rules.
-+    let schema = schemars::generate::SchemaSettings::draft2020_12()
-+        .for_serialize()
-+        .into_generator()
-+        .into_root_schema_for::<T>();
-+    Arc::new(
-+        schema
-+            .as_object()
-+            .expect("MCP output schema must be an object")
-+            .clone(),
-+    )
-+}
-+
- fn structured_result(value: impl Serialize) -> CallToolResult {
-     match serde_json::to_value(value) {
-         Ok(value) => {
-@@ -2400,6 +2414,28 @@ mod tests {
-         PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("workspace")
+ #[cfg(test)]
+```
+
+**File**: `rust/crates/zg-engine/src/models/artifacts/mod.rs` (modified, +2/-0)
+```diff
+@@ -14,6 +14,8 @@ mod spec;
+ 
+ pub(super) use cache_paths::{LocalModelBackend, default_model_cache};
+ pub(super) use downloader::{ResolveArtifacts, resolve_model_artifacts};
++#[cfg(test)]
++pub(super) use inspection::cached_source;
+ pub(crate) use inspection::model_is_cached;
+ #[cfg(test)]
+ pub(super) use progress::ArtifactDownloadProgress;
+```
+
+**File**: `rust/crates/zg-engine/src/models/artifacts/source.rs` (modified, +1/-1)
+```diff
+@@ -74,7 +74,7 @@ impl ArtifactSource {
+         self
      }
  
-+    fn output_validator(name: &str) -> jsonschema::Validator {
-+        let server =
-+            ZvecGrepMcpServer::full_direct(Arc::new(ZvecGrep::new()), Arc::new(FixedStatus));
-+        let schema = server
-+            .listed_tools()
-+            .into_iter()
-+            .find(|tool| tool.name == name)
-+            .expect("listed tool")
-+            .output_schema
-+            .expect("structured output schema");
-+        jsonschema::validator_for(&serde_json::Value::Object((*schema).clone()))
-+            .expect("valid output schema")
+-    pub(super) fn local_path(
++    pub(in crate::models) fn local_path(
+         &self,
+         artifact: &ArtifactConfig,
+     ) -> Result<PathBuf, ArtifactDownloadError> {
+```
+
+**File**: `rust/crates/zg-engine/src/models/tests/mod.rs` (modified, +1/-0)
+```diff
+@@ -1,4 +1,5 @@
+ mod catalog_main_oracle;
+ mod model2vec_main_oracle;
+ mod model_layer_bench;
++mod model_micro_bench;
+ mod real_model_smoke;
+```
+
+**File**: `rust/crates/zg-engine/src/models/tests/model_micro_bench.rs` (added, +99/-0)
+```diff
+@@ -0,0 +1,99 @@
++//! Model inference micro-benchmark; see rust/micro-bench/model/README.md.
++use std::{
++    env,
++    sync::Arc,
++    time::{Duration, Instant},
++};
++
++use serde_json::{Value, json};
++
++use crate::{
++    domain::{Content, model::EmbeddingPurpose},
++    models::{
++        ModelRuntimeLease, ModelRuntimeManager,
++        spi::{EmbeddingOptions, EmbeddingPrepareOptions},
++    },
++};
++
++mod fixed_shape;
++mod support;
++use support::Config;
++
++struct Data {
++    inputs: Vec<Vec<Content>>,
++    batch: usize,
++    nominal_tokens: usize,
++    descriptions: Vec<Value>,
++}
++
++fn number(name: &str, default: usize) -> usize {
++    let value = env::var(name).map_or(default, |s| {
++        s.parse().expect("positive integer configuration")
++    });
++    assert!(value > 0, "positive benchmark configuration");
++    value
++}
++
++fn seconds(value: usize) -> Duration {
++    Duration::from_secs(u64::try_from(value).expect("duration fits u64"))
++}
++
++fn nanos(value: Duration) -> u64 {
++    u64::try_from(value.as_nanos()).expect("duration fits u64 nanoseconds")
++}
++
++fn count(value: usize) -> f64 {
++    f64::from(u32::try_from(value).expect("count fits u32"))
++}
++
++fn phase(name: &str, origin: Instant) {
++    println!(
++        "ZG_BENCH_EVENT={}",
++        json!({"phase":name,"at_ns":nanos(origin.elapsed())})
++    );
++}
++
++#[derive(Clone, serde::Serialize)]
++struct Row {
++    id: usize,
++    scheduled_ns: u64,
++    issued_ns: u64,
++    finished_ns: u64,
++    status: &'static str,
++    vectors: usize,
++    input_indices: Vec<usize>,
++}
++
++fn quantiles(mut values: Vec<u64>) -> Value {
++    values.sort_unstable();
++    let quantile = |percent: usize| {
++        let rank = (values.len() * percent).div_ceil(100);
++        values
++            .get(rank.saturating_sub(1))
++            .map(|&n| Duration::from_nanos(n).as_secs_f64() * 1000.0)
++    };
++    json!({"n":values.len(),"p50_ms":quantile(50),"p95_ms":if values.len()>=100 {quantile(95)} else {None},
++        "p99_ms":if values.len()>=1000 {quantile(99)} else {None}})
++}
++
++fn summary(rows: &[Row], elapsed: Duration, nominal_tokens_per_batch: usize) -> Value {
++    let successful: Vec<_> = rows.iter().filter(|r| r.status == "completed").collect();
++    let completed_vectors: usize = successful.iter().map(|r| r.vectors).sum();
++    json!({"scheduled":rows.len(),"issued":rows.len(),"completed":successful.len(),
++        "timeout":rows.iter().filter(|r|r.status=="timeout").count(),"errors":rows.iter().filter(|r|r.status=="error").count(),
++        "elapsed_seconds":elapsed.as_secs_f64(),"vectors_per_second":count(completed_vectors)/elapsed.as_secs_f64(),
++        "nominal_tokens_per_second":count(successful.len())*count(nominal_tokens_per_batch)/elapsed.as_secs_f64(),
++        "call_latency":quantiles(successful.iter().map(|r|r.finished_ns-r.issued_ns).collect())})
++}
++
++fn emit_rows(phase: &str, rows: &[Row]) {
++    println!("ZG_BENCH_ROWS={}", json!({"phase":phase,"rows":rows}));
++}
++
++#[test]
++fn nearest_rank_and_insufficient_tail_samples() {
++    assert_eq!(quantiles((1..=1000).collect())["p99_ms"], json!(0.000_99));
++    assert!(quantiles(vec![1; 99])["p95_ms"].is_null());
++    assert!(quantiles(vec![1; 999])["p99_ms"].is_null());
++    assert!(quantiles(Vec::new())["p50_ms"].is_null());
++}
+```
+
+**File**: `rust/crates/zg-engine/src/models/tests/model_micro_bench/fixed_shape.rs` (added, +325/-0)
+```diff
+@@ -0,0 +1,325 @@
++//! Fixed nominal input size and batch shape, using production CLI concurrency.
++use std::sync::Mutex;
++
++use futures_util::future::join_all;
++use sha2::{Digest, Sha256};
++
++use super::{
++    Arc, Config, Content, Data, Duration, EmbeddingOptions, EmbeddingPrepareOptions,
++    EmbeddingPurpose, Instant, ModelRuntimeLease, ModelRuntimeManager, Row, Value, emit_rows, json,
++    nanos, number, phase, seconds, summary, support,
++};
++
++const GENERATOR: &str = "nominal-words-v1";
++const WORDS: [&str; 8] = [
++    "search", "store", "read", "update", "check", "process", "share", "return",
++];
++
++fn inputs(target: usize, batch: usize) -> Data {
++    let mut data = Data {
++        inputs: Vec::new(),
++        batch,
++        nominal_tokens: target,
++        descriptions: Vec::new(),
++    };
++    for index in 0..WORDS.len() {
++        // L is a configured input-size label. No tokenizer probe or model
++        // correctness check is performed by this performance benchmark.
++        let text = (0..target)
++            .map(|offset| WORDS[(index + offset) % WORDS.len()])
++            .collect::<Vec<_>>()
++            .join(" ");
++        data.descriptions.push(json!({
++            "id":format!("input-{index:02}"),"generator":GENERATOR,
++            "text_sha256":hex::encode(Sha256::digest(text.as_bytes())),"bytes":text.len(),
++        }));
++        data.inputs.push(vec![Content::Text(text)]);
++    }
++    data
++}
++
++fn indices(id: usize, data: &Data) -> Vec<usize> {
++    (0..data.batch)
++        .map(|i| (id * data.batch + i) % data.inputs.len())
++        .collect()
++}
++
++fn batch(data: &Data, id: usize) -> Vec<Vec<Content>> {
++    indices(id, data)
++        .into_iter()
++        .map(|i| data.inputs[i].clone())
++        .collect()
++}
++
++fn cycle_batches(inputs: usize, batch: usize) -> usize {
++    let (mut a, mut b) = (inputs, batch);
++    while b != 0 {
++        (a, b) = (b, a % b);
++    }
++    inputs / a
++}
++
++async fn warmup(model: &ModelRuntimeLease, data: &Data, workers: usize) -> Value {
++    let shapes = cycle_batches(data.inputs.len(), data.batch);
++    let waves = shapes.max(3);
++    for wave in 0..waves {
++        let input = batch(data, wave % shapes);
++        let results =
++            join_all((0..workers).map(|_| model.embed(&input, EmbeddingOptions::default(), None)))
++                .await;
++        for result in results {
++            result.expect("embedding warmup");
++        }
++    }
++    json!({"worker_waves":waves,"workers":workers,"batch_shapes":shapes})
++}
++
++#[derive(Default)]
++struct Schedule {
++    next: usize,
++    completed: usize,
++    minimum: usize,
++    cycle: usize,
++    stop_at: Option<usize>,
++    failed: bool,
++    capped: bool,
++}
++
++impl Schedule {
++    fn take(&mut self, elapsed: Duration, duration: Duration, maximum: Duration) -> Option<usize> {
++        if self.failed || self.capped {
++            return None;
++        }
++        if elapsed >= maximum {
++            self.capped = true;
++            return None;
++        }
++        if self.stop_at.is_none() && elapsed >= duration && self.completed >= self.minimum {
++            self.stop_at = Some(self.next.div_ceil(self.cycle) * self.cycle);
++        }
++        if self.stop_at.is_some_and(|end| self.next >= end) {
++            return None;
++        }
++        let id = self.next;
++        self.next += 1;
++        Some(id)
 +    }
 +
-+    fn assert_schema_validates(validator: &jsonschema::Validator, instance: &serde_json::Value) {
-+        let errors = validator
-+            .iter_errors(instance)
-+            .map(|error| error.to_string())
-+            .collect::<Vec<_>>();
-+        assert!(errors.is_empty(), "schema mismatch: {errors:?}");
++    fn finish(&mut self, successful: bool) {
++        if successful {
++            self.completed += 1;
++        } else {
++            self.failed = true;
++        }
++    }
++}
++
++async fn request(model: &ModelRuntimeLease, data: &Data, origin: Instant, id: usize) -> Row {
++    let selected = indices(id, data);
++    let texts: Vec<_> = selected.iter().map(|&i| data.inputs[i].clone()).collect();
++    let options = EmbeddingOptions {
++        purpose: EmbeddingPurpose::Document,
++        ..Default::default()
++    };
++    let started = Instant::now();
++    let output = model.embed(&texts, options, None).await;
++    let finished = Instant::now();
++    let status = if output.is_ok() { "completed" } else { "error" };
++    if let Err(error) = &output {
++        eprintln!("embedding batch {id} failed: {error}");
++    }
++    let vectors = output.map_or(0, |result| result.vectors.len());
++    Row {
++        id,
++        scheduled_ns: nanos(started.duration_since(origin)),
++        issued_ns: nanos(started.duration_since(origin)),
++        finished_ns: nanos(finished.duration_since(origin)),
++        status,
++        vectors,
++        input_indices: selected,
++    }
++}
++
++async fn measure(
++    model: &Arc<ModelRuntimeLease>,
++    data: &Arc<Data>,
++    workers: usize,
++    origin: Instant,
++) -> (Vec<Row>, Value) {
++    let duration = seconds(number("ZG_MODEL_BENCH_SECONDS", 15));
++    let maximum = seconds(number("ZG_MODEL_BENCH_MAX_SECONDS", 120));
++    let minimum = number("ZG_MODEL_BENCH_MIN_BATCHES", 100);
++    assert!(
++        maximum >= duration,
++        "maximum duration must cover 
+```
+
+**File**: `rust/crates/zg-engine/src/models/tests/model_micro_bench/support.rs` (added, +247/-0)
+```diff
+@@ -0,0 +1,247 @@
++use crate::{
++    domain::model::{Device, ModelConfig},
++    models::{
++        ModelRuntimeLease, ModelRuntimeManager, ModelRuntimeRequest,
++        artifacts::{ArtifactDownloadConfig, cached_source},
++        catalog::{
++            EmbeddingCatalogEntry, get_embedding_model_catalog_entry, list_embedding_models,
++        },
++        runtime::{batch_concurrency, resolve_index_concurrency},
++        spi::EmbeddingPrepareOptions,
++    },
++};
++use serde_json::{Value, json};
++use sha2::{Digest, Sha256};
++use std::{
++    env,
++    fs::File,
++    io::Read,
++    path::{Path, PathBuf},
++    sync::Arc,
++};
++
++pub(super) struct Config {
++    pub reference: String,
++    pub cache: PathBuf,
++    pub device: Device,
++    pub requested: Option<usize>,
++    pub index_limit: Option<usize>,
++    pub entry: EmbeddingCatalogEntry,
++}
++
++impl Config {
++    pub fn environment() -> Self {
++        let reference = env::var("ZG_MODEL_BENCH_MODEL").expect("explicit local model");
++        let entry = get_embedding_model_catalog_entry(&reference).expect("catalog model");
++        assert!(
++            !matches!(entry, EmbeddingCatalogEntry::Qwen(_)),
++            "remote models are not authorized"
++        );
++        let requested = match env::var("ZG_MODEL_BENCH_CONCURRENCY").as_deref() {
++            Ok("default") | Err(_) => None,
++            Ok(value) => Some(value.parse().expect("CLI positive concurrency")),
++        };
++        let index_limit =
++            resolve_index_concurrency(&reference, requested).expect("CLI concurrency resolution");
++        let device = match env::var("ZG_MODEL_BENCH_DEVICE").as_deref() {
++            Ok("cpu") => Device::Cpu,
++            Ok("metal") => Device::Metal,
++            #[cfg(feature = "cuda")]
++            Ok("cuda") => Device::Cuda,
++            #[cfg(not(feature = "cuda"))]
++            Ok("cuda") => panic!("CUDA requires a CUDA build"),
++            _ => panic!("device must be cpu, metal or cuda"),
++        };
++        Self {
++            reference,
++            entry,
++            requested,
++            index_limit,
++            device,
++            cache: PathBuf::from(env::var_os("ZG_MODEL_BENCH_CACHE").expect("explicit cache")),
++        }
 +    }
 +
-     fn input() -> SearchInput {
-         SearchInput {
-             root: test_root().display().to_string(),
-@@ -2503,6 +2539,7 @@ mod tests {
- 
-     #[test]
-     fn index_status_exposes_rebuild_compatibility_without_workspace_metadata() {
-+        let validator = output_validator("zvec_grep_index_status");
-         for actual_version in [None, Some(1)] {
-             let root = test_root();
-             let reply = super::InfoResult {
-@@ -2524,6 +2561,7 @@ mod tests {
-             let output = super::info_result_to_tool_result(reply, None)
-                 .structured_content
-                 .expect("status output");
-+            assert_schema_validates(&validator, &output);
-             assert_eq!(output["status"], "rebuild_required");
-             assert_eq!(
-                 output["compatibility"],
-@@ -2536,6 +2574,12 @@ mod tests {
-             );
-             assert!(output["persistent"].get("files").is_none());
-             assert!(output["persistent"].get("workspace_index").is_none());
-+            let mut invalid = output;
-+            invalid["compatibility"]
-+                .as_object_mut()
-+                .expect("compa
++    pub fn acquire(&self, manager: &ModelRuntimeManager) -> Arc<ModelRuntimeLease> {
++        Arc::new(
++            manager
++                .acquire(ModelRuntimeRequest::new(
++                    &self.reference,
++                    ModelConfig {
++                        cache_dir: Some(self.cache.clone()),
++                        device: Some(self.device),
++                        ..Default::default()
++                    },
++                    self.index_limit,
++                ))
++                .expect("runtime acquisition"),
++        )
++    }
++
++    pub fn workers(&self, model: &ModelRuntimeLease) -> usize {
++        // Same successful-work admission as indexing's resolve_index_batch_policy.
++        batch_concurrency(&self.reference, self.index_limit)
++            .unwrap_or(model.concurrency_defaults().initial)
++    }
++}
++
++fn download(entry: EmbeddingCatalogEntry) -> &'static ArtifactDownloadConfig {
++    match entry {
++        EmbeddingCatalogEntry::LlamaCpp(e) => e.download,
++        EmbeddingCatalogEntry::Model2Vec(e) => e.download,
++        EmbeddingCatalogEntry::Transformers(e) => e.download,
++        EmbeddingCatalogEntry::Qwen(_) => panic!("local models only"),
++    }
++}
++
++fn metadata(entry: EmbeddingCatalogEntry) -> Value {
++    let (batch, limit, semantics) = match entry {
++        EmbeddingCatalogEntry::LlamaCpp(e) => (
++            e.max_batch_size,
++            e.context_size,
++            json!({"format":e.format,"dtype":"Q8_0","pooling":"native model metadata","normalize":false}),
++        ),
++        EmbeddingCatalogEntry::Model2Vec(e) => (
++            e.max_batch_size,
++            e.max_input_tokens,
++            json!({"dtype":"safetensors","normalize":e.normalize,"pooling":"mean excluding unknown ids","query_prefix":e.query_prefix,"document_prefix":e.document_prefix}),
++        ),
++        EmbeddingCatalogEntry::Transformers(e) => (
++            e.max_batch_size,
++            e.max_input_tokens,
++            json!({"dtype":e.dtype,"pooling":e.pooling,"normalize":e.normalize,"query_prefix":e.query_prefix,"document_prefix":e.document_prefix}),
++        ),
++        EmbeddingCatalogEntry::Qwen(_) => panic!("local only"),
++    };
++    let d = download(entry);
++    json!({"model":entry.reference(),"backend":entry.backend(),"dimension":entry.dimension(),"max_batch_size":batch,
++        "max_input_tokens":limit,"semantics":semantics,"revision":d.hugging_face.revision,
++        "fallback_revision":d.model_scope.revision,"artifacts":d.artifacts.iter().map(|a|json!({"path":a.path,"size":a.size,"sha256":a.sha256})).collect::<Vec<_>>()})
++}
++
++pub(super) async fn verify_artifacts(entry: EmbeddingCatalogEntry, cache: &Path) -> Value {
++    let mut meta = metadata(entry);
++    let source = c
+```
+
+**File**: `rust/micro-bench/model/README.md` (added, +217/-0)
+```diff
+@@ -0,0 +1,217 @@
++# Model module micro-benchmark contract v5
++
++One case is **model × input length L in words × batch size B × CLI
++embedding concurrency C × requested device**. One timed workload, `embedding`,
++measures batch-call latency, throughput and external resource usage.
++
++The measurement boundary is the existing private model module. It includes
++runtime admission, input formatting, tokenization, native computation and the
++engine's normal postprocessing. Scanning, chunking, storage and retrieval are
++outside this boundary. Model correctness is covered by the model tests, not this
++micro-benchmark: there are no token-length, vector-value, normalization,
++repeatability or truncation checks, and no boundary-audit prerequisite. The
++benchmark adds no backend/runtime statistics probes.
++
++## Matrix and input generation
++
++Defaults:
++
++- All local catalog models; no remote or paid models.
++- Input lengths L (whitespace-separated words): `32 256 1024`.
++- Batch sizes B: `1 4 16`.
++- CLI embedding concurrency C: `default 1 2 4 8`.
++- Requested devices: `cpu metal`; CUDA is selectable with a CUDA build.
++- One process round per executable case; use `--rounds` to request repeats.
++
++Resolve each configured L to `min(L, model.max_input_tokens)` and B to
++`min(B, model.max_batch_size)`, then deduplicate those values per model. This is
++configuration resolution against catalog limits, not validation of tokenized
++inputs. Store requested tiers and resolved cases in the manifest. Case paths are:
++
++```text
++MODEL/DEVICE/lL/bBATCH/cCONCURRENCY/r01/result.json
++```
++
++Generate a deterministic pool of eight input variants, each containing L
++whitespace-separated words. Use the same `EmbeddingPurpose::Document` format for
++every call. Record generator identity, input hashes and byte counts. Do not run a
++tokenizer probe or inspect how the backend transforms the inputs. Prefixes,
++special tokens, token filtering and truncation remain ordinary engine behavior.
++
++**L is the number of whitespace-separated words per generated input, not the
++tokenizer's token count.** The report uses the compact label `L=32`. Input-word
++throughput remains in raw and aggregate JSON but is not displayed in the table.
++The raw field names `input_tokens` and
++`nominal_tokens_per_second` are retained for compatibility. Identical L values
++do not establish identical native token counts across models.
++
++Timed workers draw batches from a deterministic shared queue. Keep B and C fixed
++within a case. A successful batch means that the embedding API returned `Ok`;
++record the number of returned vectors without asserting its size or contents.
++
++## Concurrency and device configuration
++
++Use production `resolve_index_concurrency` and `batch_concurrency`. Clear inherited
++indexing concurrency overrides so `default` uses the backend default:
++
++- llama.cpp has one in-flight batch; C controls native context parallelism within it.
++- Transformers/ONNX uses the production in-flight batch limit, capped at eight;
++  its current default is one.
++- model2vec uses its production default (currently two) or the explicit budget.
++
++Record requested C, resolved runtime budget and configured in-flight batch count.
++`default` remains a distinct case from an explicit value even if they resolve to
++the same budget. Do not add extra batch workers on top of a native context budget.
++
++The fixed first column records the **requested device only**. Actual execution device
++and fallback are not verified. External GPU utilization is a resource observation,
++not evidence that this case executed on that GPU. Do not infer a provider from
++CPU/GPU activity.
++
++The known CPU-only model2vec capability can skip non-CPU cases. Save a bound
++`case-status.json` with the reason, keep its table row, and omit its measurement
++rounds. A skip record cannot coexist with measured rounds. Other backends are not
++preclassified as unsupported from their names.
++
++## Timing and rounds
++
++Each round uses a fresh process and runtime manager. Prepare the model and input
++pool, then warm at least three worker waves while covering the input-pool batch
++cycle. Warmup calls exercise the engine without comparing outputs; call failures
++remain execution failures. Preparation and warmup are outside measurement.
++
++Run one continuous closed-loop phase: each completed worker immediately takes
++its next batch. The baseline targets both **15 seconds** and **100 completed
++batches**, ending at a balanced input-cycle boundary. Stop new submissions after
++**120 seconds** and drain already-issued calls. Preserve an unmet sample target
++when the cap fires. The cap does not cancel native work or bound total wall time.
++The process watchdog defaults to **1,800 seconds**.
++
++Smoke uses one second, at least three completed batches and a ten-second dispatch
++cap. Label it as a short validation run; it is excluded from performance
++comparison even when multiple rounds are requested.
++
++Shuffle cases independently
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #364** (2026-11-03): docs: allow package scripts in npm installation commands (@egolearner)
+- **PR #362** (2026-11-04): feat(bench): add model inference micro-benchmark (@feihongxu0824)
 - **PR #360** (2026-11-02): fix(mcp): align output schemas with serialized results (@egolearner)
 - **PR #358** (2026-11-03): fix(models): honor Model2Vec catalog token limits (@feihongxu0824)
 - **PR #357** (2026-11-03): refactor(engine): share query admission and glob filtering (@liulx20)
 - **PR #356** (2026-11-02): fix(npm): deduplicate installed native payload files (@egolearner)
-- **PR #353** (2026-11-02): chore(rust): prepare 0.3.0 stable release (@egolearner)
 
 ---
 
@@ -1985,43 +2207,26 @@ Handle EISDIR only when hard-link creation fails on Windows. Preserve strict dir
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. npm): deduplicate installed native payload files (#356)
+## X. rust): extract and persist code graphs during indexing (#291)
 
 **RULE**:
-When implementing operations in `rust/npm/meta/install.cjs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zvec-ai/zvec-grep. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `rust/crates/zg-cli/src/render.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zvec-ai/zvec-grep. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a8b68d8c`: npm): deduplicate installed native payload files (#356). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3d60e062`: rust): extract and persist code graphs during indexing (#291). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `rust/npm/meta/install.cjs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `rust/crates/zg-cli/src/render.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-  linkSync,
-function reuseBaseFiles({ metaRoot, platformRoot, entry }, files) {
-  let temporaryRoot;
-  try {
-    for (const file of Object.keys(files)) {
-      const source = checkedPayloadPath(platformRoot, file);
-      const destination = checkedPayloadPath(metaRoot, file === `bin/${entry.binary}` ? "bin/zg.exe" : file);
-      const original = lstatSync(source, { bigint: true });
-      const installed = lstatSync(destination, { bigint: true });
-      if (original.dev === installed.dev && original.ino === installed.ino) continue;
-      // Sharing an inode must not change the installed permissions or ownership.
-      if ((original.mode & 0o7777n) !== (installed.mode & 0o7777n) ||
-          original.uid !== installed.uid || original.gid !== installed.gid) continue;
-      // Keep staging outside bin/lib so interruption cannot invalidate the payload.
-      if (!temporaryRoot) temporaryRoot = mkdtempSync(join(metaRoot, ".native-links-"));
-      const temporary = join(temporaryRoot, "file");
-      let linked = false;
-      try {
-        linkSync(source, temporary);
-        linked = true;
-        renameSync(temporary, destination);
-      } catch (error) {
-        // Windows exFAT maps un
+            arity: None,
+            is_exported: false,
+            is_declaration: false,
+                arity: None,
+                is_exported: false,
+                is_declaration: false,
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2031,4 +2236,4 @@ function reuseBaseFiles({ metaRoot, platformRoot, entry }, files) {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a8b68d8c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3d60e062` are properly handled with clean fallback behavior.

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-04T19:41:36.065Z",
+  "last_updated": "2026-11-04T19:48:21.015Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4416,14 +4416,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-freenet-freenet-core",
-      "content_hash": "83ec14ac82a3e7a603deaaa1624ad320b90c2218b673350f4a84c07270274972",
-      "verified_at": "2026-11-04T00:32:05.399Z",
+      "content_hash": "ede37a315931cde4e418a8605c755469e97b93531ae9d6283b4ee9adad43bdd8",
+      "verified_at": "2026-11-04T19:48:21.015Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T00:32:05.399Z"
+      "last_updated": "2026-11-04T19:48:21.015Z"
     },
     "vearch/vearch": {
       "repository": "vearch/vearch",
@@ -9726,14 +9726,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-meilisearch-meilisearch",
-      "content_hash": "17f99642447b8eb1a1f237bfd68c263f6b6e28af62ce09020dc2bd063ca440e3",
-      "verified_at": "2026-11-03T19:52:35.682Z",
+      "content_hash": "d7d6eae4278a14ff9566766ae741e8b156a05cf69af06ae393381634d6a2b446",
+      "verified_at": "2026-11-04T19:48:11.173Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T19:52:35.682Z"
+      "last_updated": "2026-11-04T19:48:11.173Z"
     },
     "dip/cmdk": {
       "repository": "dip/cmdk",
@@ -10746,14 +10746,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zvec-ai-zvec-grep",
-      "content_hash": "12dce603748b214626daeeb9c9c16a81fee8a644f08ba2e51e843b007f2b8258",
-      "verified_at": "2026-11-03T12:32:12.239Z",
+      "content_hash": "16195f840ddf7a5afedeb628d8c922cbfe7dee248ded1c1983abe21c5db447e4",
+      "verified_at": "2026-11-04T19:47:58.548Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T12:32:12.239Z"
+      "last_updated": "2026-11-04T19:47:58.548Z"
     },
     "JetBrains/kotlinconf-app": {
       "repository": "JetBrains/kotlinconf-app",
@@ -16251,14 +16251,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-xhtoken-spark-x2-6-4b-gguf",
-      "content_hash": "b325c14b5e3b4a04e23da4ad3e162e59d2a85b104dfe8f64cff277e95b82c059",
-      "verified_at": "2026-10-31T03:45:21.573Z",
+      "content_hash": "bb8890df84efa8ca8313447920b1c3620526888878a932c97d0137be38bc8c46",
+      "verified_at": "2026-11-04T19:48:09.763Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T03:45:21.573Z"
+      "last_updated": "2026-11-04T19:48:09.763Z"
     },
     "nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB": {
       "repository": "nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB",
