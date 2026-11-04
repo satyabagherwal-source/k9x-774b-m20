@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-04T02:46:33.373Z",
+  "last_updated": "2026-11-04T02:53:31.260Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5016,14 +5016,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-wix-react-native-navigation",
-      "content_hash": "943d6e99d130ada7b8ab5ab90bbd683dd92885ff9d8e46fc212441356648d6bb",
-      "verified_at": "2026-10-23T11:30:49.376Z",
+      "content_hash": "41dfd2f2b81b48801417b28eb8a0f5a3b8b9c01b4e5b0266fef16b4d21fe41ba",
+      "verified_at": "2026-11-04T02:53:31.259Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-23T11:30:49.376Z"
+      "last_updated": "2026-11-04T02:53:31.259Z"
     },
     "AliyunContainerService/pouch": {
       "repository": "AliyunContainerService/pouch",

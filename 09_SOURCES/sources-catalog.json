@@ -3263,10 +3263,10 @@
     "repository": "wix/react-native-navigation",
     "platform": "github",
     "sourceUrl": "https://github.com/wix/react-native-navigation",
-    "sourceVersion": "3cd6bfea",
+    "sourceVersion": "f5ab5e81",
     "license": "MIT",
-    "contentHash": "943d6e99d130ada7b8ab5ab90bbd683dd92885ff9d8e46fc212441356648d6bb",
-    "lastHarvestedAt": "2026-10-23T11:30:49.372Z",
+    "contentHash": "41dfd2f2b81b48801417b28eb8a0f5a3b8b9c01b4e5b0266fef16b4d21fe41ba",
+    "lastHarvestedAt": "2026-11-04T02:53:31.252Z",
     "learningId": "learn-github-wix-react-native-navigation"
   },
   "aliyuncontainerservice-pouch": {

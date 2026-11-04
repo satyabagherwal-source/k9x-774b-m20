@@ -7140,3 +7140,4 @@ Every entry in this ledger must capture:
 | `learn-github-rollup-rollup` | `https://github.com/rollup/rollup` | `27fbdd44` | Multi-dimensional audit evidence | 2026-11-04T02:39:43.635Z |
 | `learn-github-mfontanini-presenterm` | `https://github.com/mfontanini/presenterm` | `464b32af` | Multi-dimensional audit evidence | 2026-11-04T02:46:32.448Z |
 | `learn-huggingface-liquidai-lfm3-1-7b-gguf` | `https://huggingface.co/LiquidAI/LFM3-1.7B-GGUF` | `hf-liquida` | Multi-dimensional audit evidence | 2026-11-04T02:46:33.364Z |
+| `learn-github-wix-react-native-navigation` | `https://github.com/wix/react-native-navigation` | `f5ab5e81` | Multi-dimensional audit evidence | 2026-11-04T02:53:31.252Z |

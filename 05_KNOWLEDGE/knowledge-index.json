@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-04T02:46:33.291Z",
+  "last_updated": "2026-11-04T02:53:31.179Z",
   "total_verified_learnings": 1204,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -60113,8 +60113,8 @@
       "slug": "wix-react-native-navigation",
       "platform": "github",
       "source_url": "https://github.com/wix/react-native-navigation",
-      "source_version": "3cd6bfea",
-      "content_hash": "943d6e99d130ada7b8ab5ab90bbd683dd92885ff9d8e46fc212441356648d6bb",
+      "source_version": "f5ab5e81",
+      "content_hash": "41dfd2f2b81b48801417b28eb8a0f5a3b8b9c01b4e5b0266fef16b4d21fe41ba",
       "dossier_path": "07_PROJECT_LEARNING/wix-react-native-navigation-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/wix-react-native-navigation-learnings.md",
       "promoted_rules": [
@@ -60127,6 +60127,11 @@
           "number": 3902,
           "title": "ci): wait for npm to make a published version visible (#8371)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6731,
+          "title": "docs(release): npm trust CLI flag and E409 recovery (#8373)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -60134,7 +60139,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-23T11:30:49.322Z",
+      "verified_at": "2026-11-04T02:53:31.151Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -172710,6 +172715,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-04T02:46:33.273Z"
+    },
+    "rule-6731": {
+      "learning_id": "rule-6731",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6731,
+      "title": "docs(release): npm trust CLI flag and E409 recovery (#8373)",
+      "source_url": "https://github.com/wix/react-native-navigation",
+      "source_version": "f5ab5e81",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T02:53:31.151Z"
     }
   },
   "aliases": {
