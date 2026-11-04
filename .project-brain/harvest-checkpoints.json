@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-04T18:42:22.601Z",
+  "last_updated": "2026-11-04T18:57:42.256Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4341,14 +4341,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-karmada-io-karmada",
-      "content_hash": "2def9e548d03de38583c110b64664063526124b4e87fd38e1fc63f77aa7264b8",
-      "verified_at": "2026-11-03T19:52:24.924Z",
+      "content_hash": "c41669fc4a69dd645c4a03516e810a9881e5fff4e5d44bcc1a3ed19621f90ead",
+      "verified_at": "2026-11-04T18:57:35.560Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T19:52:24.924Z"
+      "last_updated": "2026-11-04T18:57:35.560Z"
     },
     "milvus-io/bootcamp": {
       "repository": "milvus-io/bootcamp",
@@ -9276,14 +9276,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-callstack-agent-device",
-      "content_hash": "2e8ff6fcfefe1d463062548fa9e195d592ac95265dde7979a449f80d5e7c82ef",
-      "verified_at": "2026-10-31T11:46:46.332Z",
+      "content_hash": "427256d5640acf53ae92a08d520446d82b7a6dc974737d4ba44cec940ef2cf6c",
+      "verified_at": "2026-11-04T18:57:34.555Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T11:46:46.332Z"
+      "last_updated": "2026-11-04T18:57:34.555Z"
     },
     "open-policy-agent/opa": {
       "repository": "open-policy-agent/opa",
@@ -9516,14 +9516,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tursodatabase-turso",
-      "content_hash": "dc97f39e3b8576aa5459a9afb7db6a960bb1194ae3e97e9c4eef569a7c829ea4",
-      "verified_at": "2026-11-03T22:15:29.196Z",
+      "content_hash": "c9168da69b304016b806a740cdc25f7f1d03f52277ea1b98ebb2825fe716c5ba",
+      "verified_at": "2026-11-04T18:57:42.255Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T22:15:29.196Z"
+      "last_updated": "2026-11-04T18:57:42.255Z"
     },
     "carbon-design-system/carbon": {
       "repository": "carbon-design-system/carbon",
@@ -10431,14 +10431,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-medialab-xan",
-      "content_hash": "8e32d6f0d1a462801893ca58f34a56abfe9dea2c8c0ade9be43da825fa37074f",
-      "verified_at": "2026-11-03T11:51:57.831Z",
+      "content_hash": "20b9baad600712b50862bd70e8be892c4672c20ad90d9cddabbbcb7e8088a958",
+      "verified_at": "2026-11-04T18:57:27.012Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T11:51:57.831Z"
+      "last_updated": "2026-11-04T18:57:27.012Z"
     },
     "onejs/one": {
       "repository": "onejs/one",
@@ -15921,14 +15921,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-krafton-raon-1-mini-preview",
-      "content_hash": "dea0804edca749a39e0478ac3e47e8ae5d3a2895b9dd814b222880eb893be758",
-      "verified_at": "2026-10-31T02:55:59.662Z",
+      "content_hash": "507f41b45d0b89b5064c1b5b9ffc91e29fc650ddd6bb7f09b8317456900e33ee",
+      "verified_at": "2026-11-04T18:57:37.737Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T02:55:59.662Z"
+      "last_updated": "2026-11-04T18:57:37.737Z"
     },
     "ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF": {
       "repository": "ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF",

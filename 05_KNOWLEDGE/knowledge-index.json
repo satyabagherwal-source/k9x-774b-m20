@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-04T18:42:22.541Z",
+  "last_updated": "2026-11-04T18:57:42.145Z",
   "total_verified_learnings": 1208,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -6013,8 +6013,8 @@
       "slug": "callstack-agent-device",
       "platform": "github",
       "source_url": "https://github.com/callstack/agent-device",
-      "source_version": "c1f1fd02",
-      "content_hash": "2e8ff6fcfefe1d463062548fa9e195d592ac95265dde7979a449f80d5e7c82ef",
+      "source_version": "4abff15e",
+      "content_hash": "427256d5640acf53ae92a08d520446d82b7a6dc974737d4ba44cec940ef2cf6c",
       "dossier_path": "07_PROJECT_LEARNING/callstack-agent-device-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/callstack-agent-device-learnings.md",
       "promoted_rules": [
@@ -6057,6 +6057,11 @@
           "number": 6184,
           "title": "platform-android): disable persistent Android snapshots after an unhealthy helpe",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6909,
+          "title": "retain third-party license notices in distributions (#4070)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -6064,7 +6069,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T11:46:46.216Z",
+      "verified_at": "2026-11-04T18:57:34.427Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -35107,8 +35112,8 @@
       "slug": "karmada-io-karmada",
       "platform": "github",
       "source_url": "https://github.com/karmada-io/karmada",
-      "source_version": "ca8a1dad",
-      "content_hash": "2def9e548d03de38583c110b64664063526124b4e87fd38e1fc63f77aa7264b8",
+      "source_version": "d218233a",
+      "content_hash": "c41669fc4a69dd645c4a03516e810a9881e5fff4e5d44bcc1a3ed19621f90ead",
       "dossier_path": "07_PROJECT_LEARNING/karmada-io-karmada-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/karmada-io-karmada-learnings.md",
       "promoted_rules": [
@@ -35176,6 +35181,11 @@
           "number": 6596,
           "title": "Merge pull request #8015 from hnrydvd/docs/fix-interpreter-example-curl",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6910,
+          "title": "Merge pull request #8025 from AarohiSharma5/chore/helm-chart-k8s-1.37",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -35183,7 +35193,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T19:52:24.797Z",
+      "verified_at": "2026-11-04T18:57:35.439Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -39585,8 +39595,8 @@
       "slug": "medialab-xan",
       "platform": "github",
       "source_url": "https://github.com/medialab/xan",
-      "source_version": "4a795ca6",
-      "content_hash": "8e32d6f0d1a462801893ca58f34a56abfe9dea2c8c0ade9be43da825fa37074f",
+      "source_version": "1f0c0fec",
+      "content_hash": "20b9baad600712b50862bd70e8be892c4672c20ad90d9cddabbbcb7e8088a958",
       "dossier_path": "07_PROJECT_LEARNING/medialab-xan-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/medialab-xan-learnings.md",
       "promoted_rules": [
@@ -39619,6 +39629,11 @@
           "number": 6513,
           "title": "fractional_days panicking on identical points in time",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6908,
+          "title": "Fixing xan enum -A",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -39626,7 +39641,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T11:51:57.715Z",
+      "verified_at": "2026-11-04T18:57:26.885Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -58237,13 +58252,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "tursodatabase/turso",
       "repository": "tursodatabase/turso",
-      "slug": "tursodatabase-turso",
+      "slug": "tursodatabase-limbo",
       "platform": "github",
-      "source_url": "https://github.com/tursodatabase/turso",
-      "source_version": "f9446abf",
-      "content_hash": "dc97f39e3b8576aa5459a9afb7db6a960bb1194ae3e97e9c4eef569a7c829ea4",
-      "dossier_path": "07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
+      "source_url": "https://github.com/tursodatabase/limbo",
+      "source_version": "43d885ef",
+      "content_hash": "c9168da69b304016b806a740cdc25f7f1d03f52277ea1b98ebb2825fe716c5ba",
+      "dossier_path": "07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
       "promoted_rules": [
         {
           "number": 2188,
@@ -58379,6 +58394,11 @@
           "number": 6580,
           "title": "core/security: Add role catalog",
           "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 6913,
+          "title": "Merge 'postgres: add json_strip_nulls(json)' from Jaeil Lee",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -58386,7 +58406,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T22:15:29.066Z",
+      "verified_at": "2026-11-04T18:57:42.122Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -129413,14 +129433,14 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/KRAFTON/Raon-1-mini-preview",
       "source_version": "hf-krafton-raon-1-mini-preview",
-      "content_hash": "dea0804edca749a39e0478ac3e47e8ae5d3a2895b9dd814b222880eb893be758",
+      "content_hash": "507f41b45d0b89b5064c1b5b9ffc91e29fc650ddd6bb7f09b8317456900e33ee",
       "dossier_path": "07_PROJECT_LEARNING/hf-krafton-raon-1-mini-preview-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-krafton-raon-1-mini-preview-learnings.md",
       "promoted_rules": [
         {
           "number": 4992,
           "title": "Hybrid Attention Layer Indexing Invariant",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
           "number": 4993,
@@ -129446,6 +129466,16 @@
           "number": 6032,
           "title": "Asymmetric Hybrid-Layer Precision-Isolation Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6911,
+          "title": "MoE Router Renormalization & Scaling Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6912,
+          "title": "Quantization Ignored Layers Pattern Matching Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -129453,7 +129483,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T02:55:59.549Z",
+      "verified_at": "2026-11-04T18:57:37.608Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -147212,7 +147242,7 @@
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-27T20:38:35.264Z"
+      "verified_at": "2026-11-04T18:57:37.608Z"
     },
     "rule-4993": {
       "learning_id": "rule-4993",
@@ -176190,6 +176220,90 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-04T18:42:22.527Z"
+    },
+    "rule-6908": {
+      "learning_id": "rule-6908",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6908,
+      "title": "Fixing xan enum -A",
+      "source_url": "https://github.com/medialab/xan",
+      "source_version": "1f0c0fec",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T18:57:26.885Z"
+    },
+    "rule-6909": {
+      "learning_id": "rule-6909",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6909,
+      "title": "retain third-party license notices in distributions (#4070)",
+      "source_url": "https://github.com/callstack/agent-device",
+      "source_version": "4abff15e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T18:57:34.427Z"
+    },
+    "rule-6910": {
+      "learning_id": "rule-6910",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6910,
+      "title": "Merge pull request #8025 from AarohiSharma5/chore/helm-chart-k8s-1.37",
+      "source_url": "https://github.com/karmada-io/karmada",
+      "source_version": "d218233a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T18:57:35.439Z"
+    },
+    "rule-6911": {
+      "learning_id": "rule-6911",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6911,
+      "title": "MoE Router Renormalization & Scaling Invariant",
+      "source_url": "https://huggingface.co/KRAFTON/Raon-1-mini-preview",
+      "source_version": "hf-krafton-raon-1-mini-preview",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T18:57:37.608Z"
+    },
+    "rule-6912": {
+      "learning_id": "rule-6912",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6912,
+      "title": "Quantization Ignored Layers Pattern Matching Invariant",
+      "source_url": "https://huggingface.co/KRAFTON/Raon-1-mini-preview",
+      "source_version": "hf-krafton-raon-1-mini-preview",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T18:57:37.608Z"
+    },
+    "rule-6913": {
+      "learning_id": "rule-6913",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6913,
+      "title": "Merge 'postgres: add json_strip_nulls(json)' from Jaeil Lee",
+      "source_url": "https://github.com/tursodatabase/limbo",
+      "source_version": "43d885ef",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T18:57:42.122Z"
     }
   },
   "aliases": {

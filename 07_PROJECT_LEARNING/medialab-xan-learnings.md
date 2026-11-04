@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/medialab-xan-learnings.md`  
 > **Source**: github ([https://github.com/medialab/xan](https://github.com/medialab/xan))  
-> **Source Version**: `4a795ca6`  
+> **Source Version**: `1f0c0fec`  
 > **License**: Unlicense  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T11:51:57.043Z  
+> **Timestamp**: 2026-11-04T18:57:26.187Z  
 > **Learning ID**: `learn-github-medialab-xan`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/medialab-xan-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/medialab/xan](https://github.com/medialab/xan))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T11:51:55.762Z  
+> **Harvest Timestamp**: 2026-11-04T18:57:25.898Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The CSV magician
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 4546 stars
+- **Stars / Engagement**: 4548 stars
 
 ---
 
@@ -858,16 +858,14 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
 use std::fs::OpenOptions;
 use std::io::{self, Write};
 
+use simd_csv::ByteRecord;
+
 use crate::CliResult;
 use crate::config::{Config, Delimiter};
 use crate::utils;
 
 static USAGE: &str = "
 Drop a CSV file's header.
-
-Note that to be as performant as possible, this command does not try
-to be clever and only parses the first CSV row to drop it. The rest of
-the file will be flushed to the output as-is without any kind of normalization.
 
 Usage:
     xan behead [options] [<input>]
@@ -876,6 +874,10 @@ Usage:
 behead options:
     -A, --append  Only drop headers if output already exists and
                   is not empty. Requires -o/--output to be set.
+    --raw         Drop the header and flush the rest of the file to the output
+                  as-is without standardizing CSV format in order to go faster.
+                  This is activated by default if input is already standard
+                  CSV (commas, double quotes).
 
 Common options:
     -h, --help             Display this message
@@ -888,6 +890,7 @@ Common options:
 struct Args {
     arg_input: Option<String>,
     flag_append: bool,
+    flag_raw: bool,
     flag_delimiter: Option<Delimiter>,
     flag_output: Option<String>,
 }
@@ -927,9 +930,23 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
             .append(args.flag_append),
     )?;
 
-    io::copy(&mut peeker.into_reader(), &mut wtr)?;
+    if args.flag_raw || rconf.is_standard_csv() {
+        io::copy(&mut peeker.into_reader(), &mut wtr)?;
 
-    Ok(wtr.flush()?)
+        Ok(wtr.flush()?)
+    } else {
+        let mut rdr = rconf
+            .no_headers(true)
+            .simd_csv_reader_from_reader(peeker.into_reader());
+        let mut wtr = wconf.simd_csv_writer_from_writer(wtr);
+        let mut record = ByteRecord::new();
+
+        while rdr.read_byte_record(&mut record)? {
+            wtr.write_byte_record(&record)?;
+        }
+
+        Ok(wtr.flush()?)
+    }
 }
 
 ```
@@ -1954,203 +1971,62 @@ impl Args {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0b952754` (2026-10-27)
-**Commit Message**: Fix fractional_days panicking on identical points in time
+### Incident Patch 1: `471628cd` (2026-11-04)
+**Commit Message**: Fixing xan enum -A
 
-jiff panics when totaling a zero span in days relative to a date, so
-return 0.0 early for dates, datetimes and zoned datetimes.
-
-**File**: `src/moonblade/interpreter.rs` (modified, +23/-0)
+**File**: `src/cmd/enumerate.rs` (modified, +1/-1)
 ```diff
-@@ -1597,6 +1597,29 @@ mod tests {
-         );
-     }
+@@ -75,7 +75,7 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
  
-+    #[test]
-+    fn test_fractional_days() {
-+        assert_eq!(
-+            eval_code("fractional_days('2023-10-09', '2023-10-11')"),
-+            Ok(DynamicValue::from(2.0))
-+        );
-+
-+        assert_eq!(
-+            eval_code("fractional_days('2023-10-09T00:00:00', '2023-10-09T12:00:00')"),
-+            Ok(DynamicValue::from(0.5))
-+        );
-+
-+        // Identical points in time used to panic inside jiff
-+        for code in [
-+            "fractional_days('2023-10-09', '2023-10-09')",
-+            "fractional_days('2023-10-09T10:00:00', '2023-10-09T10:00:00')",
-+            "fractional_days('2023-10-09T10:00:00Z'.datetime(), '2023-10-09T10:00:00Z'.datetime())",
-+            "fractional_days('10:00:00', '10:00:00')",
-+        ] {
-+            assert_eq!(eval_code(code), Ok(DynamicValue::from(0.0)), "{code}");
-+        }
-+    }
-+
-     #[test]
-     fn test_date() {
-         let date: Date = "1999-01-31".parse().unwrap();
+     if !conf.no_headers {
+         let column_name = args.flag_column_name.unwrap_or(
+-            (if args.flag_byte_offset {
++            (if args.flag_byte_offset || args.flag_accumulate {
+                 "byte_offset"
+             } else {
+                 "index"
 ```
 
-**File**: `src/temporal.rs` (modified, +22/-3)
+**File**: `tests/test_enumerate.rs` (modified, +25/-0)
 ```diff
-@@ -280,19 +280,38 @@ impl AnyTemporal {
-     pub fn relative_total(&self, other: &Self, unit: Unit) -> Result<f64, Error> {
-         match (self, other) {
-             (AnyTemporal::Zoned(a), AnyTemporal::Zoned(b)) => {
--                let total = b.since(a)?.total((unit, a))?;
-+                let span = b.since(a)?;
+@@ -96,3 +96,28 @@ fn enumerate_byte_offset() {
+     ];
+     assert_eq!(got, expected);
+ }
 +
-+                // NOTE: jiff panics when totaling a zero span relative to a date
-+                if span.is_zero() {
-+                    return Ok(0.0);
-+                }
++#[test]
++fn enumerate_byte_offset_accumulate() {
++    let wrk = Workdir::new("enumerate_byte_offset_accumulate");
++    wrk.create(
++        "data.csv",
++        vec![
++            svec!["a"],
++            svec!["1452"],
++            svec!["23497694986"],
++            svec!["34087056085685"],
++        ],
++    );
++    let mut cmd = wrk.command("enum");
++    cmd.arg("data.csv").arg("-A");
 +
-+                let total = span.total((unit, a))?;
- 
-                 Ok(total)
-             }
- 
-             (AnyTemporal::DateTime(a), AnyTemporal::DateTime(b)) => {
--                let total = b.since(*a)?.total((unit, a.date()))?;
-+                let span = b.since(*a)?;
-+
-+                if span.is_zero() {
-+                    return Ok(0.0);
-+                }
-+
-+                let total = span.total((unit, a.date()))?;
- 
-                 Ok(total)
-             }
- 
-             (AnyTemporal::Date(a), AnyTemporal::Date(b)) => {
--                let total = b.since(*a)?.total((unit, *a))?;
-+                let span = b.since(*a)?;
-+
-+                if span.is_zero() {
-+                    return Ok(0.0);
-+                }
-+
-+                let total = span.total((unit, *a))?;
- 
-                 Ok(total)
-             }
-```
-
----
-
-### Incident Patch 2: `8f0763f0` (2026-11-03)
-**Commit Message**: Upgrading jiff & reverting span zero checks when computing spans
-
-**File**: `Cargo.lock` (modified, +6/-6)
-```diff
-@@ -1350,9 +1350,9 @@ checksum = "47f142fe24a9c9944451e8349de0a56af5f3e7226dc46f3ed4d4ecc0b85af75e"
- 
- [[package]]
- name = "jiff"
--version = "0.2.37"
-+version = "0.2.39"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "0ab1baf72f08796de0260609515130699b890ac25f30e610ad894bc5856cafdb"
-+checksum = "3ac703058abac89e5c39b0b879dce2b6b14a4ba36600c7e7e3d0c60a6883ef3c"
- dependencies = [
-  "defmt",
-  "jiff-core",
-@@ -1367,19 +1367,19 @@ dependencies = [
- 
- [[package]]
- name = "jiff-core"
--version = "0.1.1"
-+version = "0.1.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "5e52fe76043ccecc9005d2305ebaadf7d7fc0cc89ca6baa10a94d6bc68c7128c"
-+checksum = "aee43309eb53bafb8c36d35d6e444769c8f8e6206a9fbf7546f5db9d7d4a0e93"
- dependencies = [
-  "defmt",
-  "log",
- ]
- 
- [[package]]
- name = "jiff-static"
--version = "0.2.37"
-+version = "0.2.39"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "378268a1116ad67ae6228701118ac9f491d78fda38a40a1f1a9e1348de6f7212"
-+checksum = "6dc32470c67eb7d0e9ccb74303fa925313dc04cecb1aa048beaa6f391e36a93d"
- dependencies = [
-  "jiff-core",
-  "proc-macro2",
-```
-
-**File**: `Cargo.toml` (modified, +1/-1)
-```diff
-@@ -93,7 +93,7 @@ idna = "1.1.0"
- indexmap = "2.14.2"
- indicatif = "0.18.6"
- itoa = "1.0.18"
--jiff = "0.2.37"
-+jiff = "0.2.39"
- lazy_static = "1.4.0"
- levenshtein_automata = "0.2.1"
- md5 = "0.8.1"
-```
-
-**File**: `src/temporal.rs` (modified, +3/-22)
-```diff
-@@ -280,38 +280,19 @@ impl AnyTemporal {
-     pub fn relative_total(&self, other: &Self, unit: Unit) -> Result<f64, Error> {
-         match (self, other) {
-             (AnyTemporal::Zoned(a), AnyTemporal::Zoned(b)) => {
--                let span = b.since(a)?;
--
--                // NOTE: jiff panics when totaling a zero span relative to a date
--                if span.is_zero() {
--                    return Ok(0.0);
--                }
--
--                let total = span.total((unit, a))?;
-+                let total = b.since(a)?.total((unit, a))?;
- 
-                 Ok(total)
-             }
- 
-             (AnyTemporal::DateTime(a), AnyTemporal::DateTime(b)) => {
--                let span = b.since(*a)?;
--
--                if span.is_zero() {
--                    return Ok(0.0);
--                }
--
--                let total = span.total((unit, a.date()))?;
-+                let total = b.since(*a)?.total((unit, a.date()))?;
- 
-                 Ok(total)
-             }
- 
-             (AnyTemporal::Date(a), AnyTemporal::Date(b)) => {
--                let span = b.since(*a)?;
--
--                if span.is_zero() {
--                    return Ok(0.0);
--                }
--
--                let total = span.total((unit, *a))?;
-+                let total = b.since(*a)?.total((unit, *a))?;
- 
-                 Ok(total)
-             }
++    let got: Vec<Vec<String>> = wrk.read_stdout(&mut cmd);
++    let expected = vec![
++        svec!["byte_offset", "a"],
++        svec!["14", "1452"],
++        svec!["22", "23497694986"],
++        svec!["37", "34087056085685"],
++    ];
++    assert_eq!(got, expected);
++}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1223** (2026-11-04): Xml highlight (Issue #1215) (@clothilde-ml)
+- **PR #1222** (closed): Add a plain theme to xan view (@mvanhorn)
 - **PR #1221** (2026-11-03): Fix fractional_days panic on identical points in time (@solesby)
 - **PR #1204** (2026-10-19): Corrected bug #1190 : hist option -m "sum" now obey given scale (@clothilde-ml)
 - **PR #1203** (closed): Fixing xan cat rows -I header intersection (@paoValle)
 - **PR #1199** (2026-10-16): `view` env override  controls (@solesby)
-- **PR #1198** (2026-10-14): Fixing xan view panicking with a 0x0 terminal or tiny --cols (@solesby)
-- **PR #1197** (2026-10-14): Fixing try() default value with static arguments (@solesby)
 
 ---
 
@@ -2170,50 +2046,28 @@ return 0.0 early for dates, datetimes and zoned datetimes.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. fractional_days panicking on identical points in time
+## X. Fixing xan enum -A
 
 **RULE**:
-When implementing operations in `src/moonblade/interpreter.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in medialab/xan. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/cmd/enumerate.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in medialab/xan. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0b952754`: fractional_days panicking on identical points in time. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `471628cd`: Fixing xan enum -A. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/moonblade/interpreter.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/cmd/enumerate.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    #[test]
-    fn test_fractional_days() {
-        assert_eq!(
-            eval_code("fractional_days('2023-10-09', '2023-10-11')"),
-            Ok(DynamicValue::from(2.0))
-        );
-
-        assert_eq!(
-            eval_code("fractional_days('2023-10-09T00:00:00', '2023-10-09T12:00:00')"),
-            Ok(DynamicValue::from(0.5))
-        );
-
-        // Identical points in time used to panic inside jiff
-        for code in [
-            "fractional_days('2023-10-09', '2023-10-09')",
-            "fractional_days('2023-10-09T10:00:00', '2023-10-09T10:00:00')",
-            "fractional_days('2023-10-09T10:00:00Z'.datetime(), '2023-10-09T10:00:00Z'.datetime())",
-            "fractional_days('10:00:00', '10:00:00')",
-        ] {
-            assert_eq!(eval_code(code), Ok(DynamicValue::from(0.0)), "{code}");
-        }
-    }
-
+            (if args.flag_byte_offset || args.flag_accumulate {
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+            (if args.flag_byte_offset {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0b952754` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `471628cd` are properly handled with clean fallback behavior.

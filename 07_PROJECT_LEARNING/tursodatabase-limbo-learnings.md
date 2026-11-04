@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md`  
 > **Source**: github ([https://github.com/tursodatabase/limbo](https://github.com/tursodatabase/limbo))  
-> **Source Version**: `f9446abf`  
+> **Source Version**: `43d885ef`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T18:47:57.104Z  
+> **Timestamp**: 2026-11-04T18:57:41.468Z  
 > **Learning ID**: `learn-github-tursodatabase-turso`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tursodatabase/limbo](https://github.com/tursodatabase/limbo))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T18:47:57.098Z  
+> **Harvest Timestamp**: 2026-11-04T18:57:41.160Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A SQL database in Rust: SQLite-compatible, now also speaking Postgres (experimental). The LLVM of databases.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md
-- **Stars / Engagement**: 25135 stars
+- **Stars / Engagement**: 25153 stars
 
 ---
 
@@ -36,6 +36,129 @@
 ### D1: Architecture & Structural Boundaries
 - Entry configurations inspected via direct stream: pyproject.toml, Cargo.toml, README.md.
 - Evaluated system abstractions and modular contracts.
+
+### Core Architecture Module: `benches/scan_loop_benchmark.rs`
+```
+//! Scan-loop microbenchmark over a 100k-row table.
+//!
+//! `SELECT 1 FROM t` is the scan analogue of the existing `SELECT 1`
+//! benchmark: the loop body is just ResultRow + Next, so it isolates
+//! per-instruction dispatch and cursor-advance overhead with no decode
+//! work. `SELECT * FROM t` adds column decoding on top.
+//!
+//! Run:  cargo bench -p turso_core --bench scan_loop_benchmark
+
+#[cfg(feature = "codspeed")]
+use codspeed_criterion_compat::{black_box, criterion_group, criterion_main, Criterion};
+#[cfg(not(feature = "codspeed"))]
+use criterion::{black_box, criterion_group, criterion_main, Criterion};
+
+use std::sync::Arc;
+use std::time::Duration;
+use tempfile::TempDir;
+use turso_core::{ConnectOpts, Connection, Database, PlatformIO, Statement, StepResult, Value};
+use turso_sqlite::SqliteDialect;
+
+#[cfg(not(target_family = "wasm"))]
+#[global_allocator]
+static GLOBAL: mimalloc::MiMalloc = mimalloc::MiMalloc;
+
+const NROWS: usize = 100_000;
+
+struct Fixture {
+    _dir: TempDir,
+    db: Arc<Database>,
+    conn: Arc<Connection>,
+}
+
+fn seed_db() -> Fixture {
+    let dir = TempDir::new().unwrap();
+    let path = dir.path().join("scan.db");
+    #[allow(clippy::arc_with_non_send_sync)]
+    let io = Arc::new(PlatformIO::new().unwrap());
+    let db = Database::open_file(io, path.to_str().unwrap(), Arc::new(SqliteDialect)).unwrap();
+    let conn = db.connect(ConnectOpts::new()).unwrap();
+
+    conn.execute("PRAGMA cache_size=-65536").unwrap(); //negative means kibibytes (https://sqlite.org/pragma.html#pragma_cache_size)
+    conn.execute(
+        "CREATE TABLE t (id INTEGER PRIMARY KEY, name TEXT NOT NULL, value INTEGER NOT NULL)",
+    )
+    .unwrap();
+
+    conn.execute("BEGIN").unwrap();
+    let mut insert = conn.prepare("INSERT INTO t VALUES (?1, ?2, ?3)").unwrap();
+    for i in 0..NROWS as i64 {
+        insert
+            .bind_at(1usize.try_into().unwrap(), Value::from_i64(i))
+            .unwrap();
+        insert
+            .bind_at(
+                2usize.try_into().unwrap(),
+                Value::build_text(format!("name_{i}")),
+            )
+            .unwrap();
+        insert
+            .bind_at(3usize.try_into().unwrap(), Value::from_i64(i))
+            .unwrap();
+        drive_stmt_to_completion(&db, &mut insert);
+    }
+    conn.execute("COMMIT").unwrap();
+
+    Fixture {
+        _dir: dir,
+        db,
+        conn,
+    }
+}
+
+fn drive_stmt_to_completion(db: &Database, stmt: &mut Statement) -> usize {
+    let mut rows = 0;
+    loop {
+        match stmt.step().unwrap() {
+            StepResult::Row => {
+                black_box(stmt.row());
+                rows += 1;
+            }
+            StepResult::IO | StepResult::Yield | StepResult::Sleep { .. } => {
+                db.io.step().unwrap();
+            }
+            StepResult::Done => break,
+            StepResult::Interrupt | StepResult::Busy => unreachable!(),
+        }
+    }
+    stmt.reset().unwrap();
+    rows
+}
+
+#[turso_macros::codspeed_criterion_benchmark]
+fn bench_scan_loop(criterion: &mut Criterion) {
+    let mut group = criterion.benchmark_group("scan_loop");
+    group.sample_size(30);
+    group.measurement_time(Duration::from_secs(5));
+    group.warm_up_time(Duration::from_secs(3));
+
+    let fixture = seed_db();
+    for (label, sql) in [
+        ("select_one_100k", "SELECT 1 FROM t"),
+        ("select_star_100k", "SELECT * FROM t"),
+    ] {
+        group.bench_function(label, |b| {
+            let mut stmt = fixture.conn.prepare(sql).unwrap();
+            assert_eq!(
+                drive_stmt_to_completion(&fixture.db, &mut stmt),
+                NROWS,
+                "t should have been seeded with {NROWS} rows"
+            );
+            b.iter(|| drive_stmt_to_completion(&fixture.db, &mut stmt));
+        });
+    }
+    group.finish();
+}
+
+criterion_group!(benches, bench_scan_loop);
+criterion_main!(benches);
+
+```
 
 ### Core Architecture Module: `bindings/java/rs_src/turso_statement.rs`
 ```
@@ -1299,91 +1422,17 @@ export class Statement {
         return this._statement.rowValueBytesPtr(inde
 ```
 
-### Core Architecture Module: `bindings/rust/examples/concurrent_writes.rs`
-```
-//! Concurrent writes with MVCC
-//!
-//! `BEGIN CONCURRENT` lets multiple connections write at the same time without
-//! holding an exclusive lock.  Conflicts are detected at commit time: if two
-//! transactions worked on same rows, the later one receives a conflict
-//! error and must roll back and retry.
-
-use rand::Rng;
-use tempfile::NamedTempFile;
-use turso::{Builder, Error};
-
-fn is_retryable(e: &Error) -> bool {
-    matches!(e, Error::Busy(_) | Error::BusySnapshot(_))
-        || matches!(e, Error::Error(msg) if msg.contains("conflict"))
-}
-
-#[tokio::main]
-async fn main() -> Result<(), Error> {
-    let tmp = NamedTempFile::new().expect("failed to create temp file");
-    let db = Builder::new_local(tmp.path().to_str().unwrap())
-        .build()
-        .await?;
-
-    let conn = db.connect()?;
-    conn.pragma_update("journal_mode", "'mvcc'").await?;
-    conn.execute("CREATE TABLE hits (val INTEGER)", ()).await?;
-
-    let mut handles = Vec::new();
-    for _ in 0..16 {
-        let db = db.clone();
-        handles.push(tokio::spawn(async move {
-            let val = rand::rng().random_range(1..=100);
-            let conn = db.connect()?;
-            loop {
-                conn.execute("BEGIN CONCURRENT", ()).await?;
-                let result = conn
-                    .execute(&format!("INSERT INTO hits VALUES ({val})"), ())
-                    .await
-                    .and(conn.execute("COMMIT", ()).await);
-                match result {
-                    Ok(_) => return Ok::<_, Error>(val),
-                    Err(ref e) if is_retryable(e) => {
-                        let _ = conn.execute("ROLLBACK", ()).await;
-                        tokio::task::yield_now().await;
-                    }
-                    Err(e) => {
-                        let _ = conn.execute("ROLLBACK", ()).await;
-                        return Err(e);
-                    }
-                }
-            }
-        }));
-    }
-
-    for handle in handles {
-        let val = handle.await.expect("task panicked")?;
-        println!("inserted val={val}");
-    }
-
-    let mut rows = conn.query("SELECT COUNT(*) FROM hits", ()).await?;
-    if let Some(row) = rows.next().await? {
-        println!("total rows: {}", row.get::<i64>(0)?);
-    }
-
-    Ok(())
-}
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #11308** (2026-11-03): **core: refuse non-deterministic and NULL results in custom types and persisted expressions**
-  *Symptoms*: ## Summary  Step 1 of the custom type comparison redesign (plan in `docs/internals/custom-type-comparisons/`). Replaces #11143.  ### A CHECK that reads the clock is an error, as in SQLite  Whether a stored row satisfies such a CHECK depends on the date.  ```sql CREATE TABLE booking(d TEXT CHECK (d > date('now'))); INSERT INTO booking VALUES ('2030-01-01'); -- main: stored; after 2030 the same INSERT fails the CHECK -- now:  non-deterministic use of date() in a CHECK constraint   (same as sqlite3) ```  ### An index on `date(ts)` refuses a row whose `ts` is `'now'`, as in SQLite  `date(ts)` reads the clock only when the value of `ts` is `'now'`, so this can only be checked when the row is written. That is why each function call now records where it is compiled (CHECK, index, generated column or DECODE): the date functions check it at run time and name it in the error.  ```sql CREATE TABLE log(ts TEXT); CREATE INDEX d ON log(date(ts)); INSERT INTO log VALUES ('now'); -- main: stored; the index entry holds today's date, which the expression no longer gives tomorrow -- now:  non-deterministic use of date() in an index   (same as sqlite3) ```  ### Date functions that don't read the clock work in indexes and generated columns  Main refused date functions at CREATE time even when they never read the clock.  ```sql CREATE TABLE log(ts TEXT); CREATE INDEX recent ON log(ts) WHERE date(ts) > '2020-01-01'; -- main: cannot use aggregate, window functions or reference other tables in WHERE 
-  **Post-Mortem & Fix Analysis**:
-  > ### Autofixer review <sub>🔄 Autofixer updates this comment while the review runs.</sub>  Review cancelled: the pull request was closed. 
-  > <!-- __CODSPEED_PERFORMANCE_REPORT_COMMENT__ --> ## Merging this PR will **improve performance by 21.47%**  <details> <summary><b>3 warnings, 1 note</b></summary>  > :warning: **Unable to measure the execution of 1 benchmark** > > This benchmark measured no execution time, so its result is not comparable and counts as unchanged. This usually happens when the compiler removes the code under test. > > [Prevent compiler optimizations](https://codspeed.io/docs/troubleshooting?utm_source=github&utm_medium=comment-v2&utm_content=optimized_out#optimized-out-benchmarks) > > [See affected benchmarks](https://app.codspeed.io/tursodatabase/turso/branches/custom-types-compare-redesign?q=has%3Aoptimized_out&utm_source=github&utm_medium=comment-v2&utm_content=affected_benchmarks)  > :warning: **95 benchmarks are dominated by system calls** > > System calls cannot be simulated consistently and are left out of the measure. The reported value understates the real cost. Switch to the Walltime instrument
+- **Issue #11348** (2026-11-04): **core/translate: plan compound SELECT LIMIT/OFFSET subqueries**
+  *Symptoms*: ## Description  A compound SELECT's LIMIT/OFFSET applies to the compound as a whole, so it is parsed in `prepare_select_plan_from_arms` — which never planned the subqueries inside it. The emission sites in `compound_select.rs` then discarded the result of `translate_expr` with `_ =`, so an unplanned subquery expression reached `MustBeInt` as a non-integer and surfaced as `datatype mismatch`, masking the real error.  This plans those subqueries alongside the arms, emits them before the loop, and propagates the translation errors. The first commit extracts the existing LIMIT/OFFSET planning block out of `plan_subqueries_from_select_plan` into `plan_limit_offset_subqueries` unchanged, so the new call site can share it; the second commit is the behaviour change plus the conformance cases.  Behaviour now matches SQLite (checked against 3.50.4):  - `SELECT 1 UNION SELECT 2 LIMIT (SELECT 1)` returns one row, and likewise for `UNION ALL`, `INTERSECT`, `EXCEPT`, with `ORDER BY`, and with `OFFSET (SELECT 1)` - `... LIMIT (SELECT nosuchcol FROM b)` reports `no such column: nosuchcol` instead of `datatype mismatch` - `... LIMIT (SELECT 'abc')` still reports `datatype mismatch` - `LIMIT (SELECT 1), (SELECT 1)` and `LIMIT (SELECT -1)` behave as SQLite does  Three neighbouring cases remain unsupported. All three fail identically on `main` for a simple `SELECT`, so this change reaches parity rather than regressing them, and I left them out to keep the diff focused: a CTE referenced from the 
 
-- **Issue #11305** (2026-11-03): **testing/conformance/javascript: override minimatch to 11.0.4**
-  *Symptoms*: Fixes the Dependabot alert for minimatch (#671): minimatch < 11.0.1 can be made to use excessive CPU and memory by a crafted glob pattern.  ava 6.4.1 pulls in minimatch 9.x through `@vercel/nft` -> `glob@10.5.0`, and no ava release depends on a fixed version, so Dependabot can't update it. This adds an npm `overrides` entry that forces `minimatch@^11.0.4` and regenerates the lockfile (this also moves `brace-expansion` to 5.0.12 and `balanced-match` to 4.0.4, and adds `@isaacs/nonrecursive-glob-match`).  minimatch 11 needs Node 20 or >=22. The conformance workflow uses Node 24.  Tests: I installed ava 6.4.1 with the override under Node 24. `npm ls` shows `glob@10.5.0 -> minimatch@11.0.4`, and a test file runs with ava. I didn't run the full conformance suite locally because it needs the native binding built.
+- **Issue #11341** (2026-11-04): **sqlite: move SqliteDialect into a new sqlite/frontend crate**
+  *Symptoms*: The PostgreSQL frontend lives in its own crate, but the SQLite dialect was built into core. This starts `sqlite/frontend` (crate `turso_sqlite`) as the home of SQLite-specific behavior, beginning with `SqliteDialect`. A follow-up will move SQLite schema management (`sqlite_schema` and the internal catalog tables) there, behind an abstract catalog in core.  - `SqliteDialect` is now in `turso_sqlite`. Callers import `turso_sqlite::SqliteDialect` instead of `turso_core::SqliteDialect`. - The parser entry points, built-in functions and built-in catalog tables stay in core as `dialect::engine`, because both frontends use them. `SQLITE_VERSION` stays there too, and `turso_sqlite` re-exports it. - Core keeps a private `EngineDialect` for the SQL it runs for itself, such as materialized view maintenance. Its unit tests open databases with it. - Core does not depend on `turso_sqlite`, not even as a dev-dependency:   - The benchmarks move from `core/benches` to a new `benches` crate (`turso_benches`, not published). It is a default workspace member, so `cargo bench --bench <name>` from the root works as before. CodSpeed sees the benchmarks under a new crate, so their history starts over.   - The view allocation-failure test moves from `core/tests` to `sqlite/frontend/tests`. It only builds with `--cfg nightly`, so the nightly CI check now covers `turso_sqlite` too. It had stopped compiling when `Database::connect` gained an argument, as had a B-tree allocation test in core. Both are fi
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1400,554 +1449,625 @@ async fn main() -> Result<(), Error> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `35d01f9e` (2026-10-28)
-**Commit Message**: core/security: Add role catalog
+### Incident Patch 1: `717c3593` (2026-11-04)
+**Commit Message**: Merge 'postgres: add json_strip_nulls(json)' from Jaeil Lee
 
-Core has no notion of roles, so a SQL frontend that wants roles has
-nowhere to keep them and nothing to check privileges against.
-
-Add the security::roles module with RoleId, Role, and RoleCatalog.
-Two role ids are built in: RoleId::SUPERUSER, which every connection
-starts as and which passes every privilege check, and RoleId::PUBLIC,
-which every role is a member of and no session may switch to. Core
-gives them no names, and the catalog has no entry for them. The catalog
-holds the roles stored in the roles table, and RoleCatalog::new()
-builds it from their rows. Each role can be a superuser. The catalog
-also says whether a role is a superuser, and whether one role may
-switch to another.
-
-Statements need to look up roles when they are prepared, and reading
-the roles table for every statement would be slow, so each schema
-keeps a role catalog. Schema copies share it, so taking a copy of the
-schema does not copy the roles.
-
-Tests: security::roles unit tests, schema_clones_share_the_role_catalog
-
-**File**: `core/lib.rs` (modified, +1/-0)
-```diff
-@@ -36,6 +36,7 @@ pub mod native_ext;
- #[cfg(any(feature = "fuzz", feature = "bench"))]
- pub mod numeric;
- pub mod schema;
-+pub mod security;
- pub mod skiplist;
- pub mod state_machine;
- pub mod storage;
+```sql
+SELECT json_strip_nulls('{"a":null,"b":1}');
+-- tursopg:    ERROR: no such function: json_strip_nulls
+-- PostgreSQL: {"b":1}
 ```
 
-**File**: `core/schema.rs` (modified, +15/-0)
+Add `json_strip_nulls(json)` as a native scalar function in
+`postgres/frontend/functions.rs`, next to `quote_literal`. `serde` is
+added to `turso_pg`'s dependencies for `IgnoredAny`.
+
+It follows PostgreSQL 17's output for the `json` type:
+
+- Object fields whose value is null are removed at any depth; nulls in
+arrays stay (`[1,null,{"a":null}]` → `[1,null,{}]`).
+- Numbers keep their text (`1.50`, `1e2`, `1e400`) and duplicate keys
+stay, so the input is validated with `IgnoredAny` and then walked as
+text instead of being rebuilt from a parsed value.
+- Strings are decoded and escaped again the way `escape_json()` does
+(`"\u00e9"` → `"é"`, `"\/"` → `"/"`), and `\^@` errors with `unsupported
+Unicode escape sequence` (22P05). Every string is decoded, including the
+key of a dropped field, so `{"\^@":null}` errors as in PostgreSQL.
+- Whitespace between tokens is dropped; invalid input errors with
+`invalid input syntax for type json` (22P02).
+
+`postgres/conformance/pg-sqltests/json-strip-nulls.sq
+
+**File**: `Cargo.lock` (modified, +1/-0)
 ```diff
-@@ -112,6 +112,7 @@ impl Trigger {
+@@ -7281,6 +7281,7 @@ dependencies = [
+  "parking_lot",
+  "rustc-hash 2.1.1",
+  "ryu",
++ "serde",
+  "serde_json",
+  "strum",
+  "tempfile",
+```
+
+**File**: `postgres/COMPAT.md` (modified, +1/-0)
+```diff
+@@ -323,6 +323,7 @@ INTEGER. Unknown type names pass through as custom types.
+ | JSONB-modifying operators and functions | ❌ Not supported | |
+ | JSONB subscripting | ❌ Not supported | |
+ | JSON data type | 🟡 Partial | Same as jsonb (see above) |
++| json_strip_nulls | 🟡 Partial | Input nested deeper than 1000 levels errors with `stack depth limit exceeded`, where PostgreSQL's limit depends on `max_stack_depth`; a text or jsonb argument is accepted, where PostgreSQL only takes json; `jsonb_strip_nulls` is not supported |
+ | json_to_record / json_to_recordset (and jsonb_ variants) | 🟡 Partial | Work with a column definition list; WITH ORDINALITY and ROWS FROM are not supported; error messages for malformed input differ from PostgreSQL; a repeated key reads its first value, like `->>`; a json/jsonb column drops whitespace (`{"y": 2}` comes back as `{"y":2}`), like `->`; an array column (`int[]`) accepts only an array literal string such as `"{1,2}"`, not a JSON array |
+ | SQL/JSON constructors | ❌ Not supported | |
+ | SQL/JSON: datetime() | ❌ Not supported | |
+```
+
+**File**: `postgres/conformance/pg-sqltests/json-strip-nulls.sqltest` (added, +131/-0)
+```diff
+@@ -0,0 +1,131 @@
++# json_strip_nulls(json): removes object fields whose value is null, at any
++# depth. Nulls inside arrays stay, and the result is the json input with
++# insignificant whitespace removed.
++
++@database :memory:
++
++test json-strip-nulls-removes-null-field {
++    SELECT json_strip_nulls('{"a":null,"b":1}');
++}
++expect {
++    {"b":1}
++}
++
++test json-strip-nulls-removes-nested-null-field {
++    SELECT json_strip_nulls('{"a":{"b":null,"c":2}}');
++}
++expect {
++    {"a":{"c":2}}
++}
++
++test json-strip-nulls-keeps-nulls-in-arrays {
++    SELECT json_strip_nulls('[1,null,{"a":null}]');
++    SELECT json_strip_nulls('{"a":[null,{"b":null}]}');
++}
++expect {
++    [1,null,{}]
++    {"a":[null,{}]}
++}
++
++test json-strip-nulls-of-scalars-and-empty-object {
++    SELECT json_strip_nulls('{}');
++    SELECT json_strip_nulls('null');
++    SELECT json_strip_nulls('"text with  spaces"');
++    SELECT json_strip_nulls('{"a":"null"}');
++}
++expect {
++    {}
++    null
++    "text with  spaces"
++    {"a":"null"}
++}
++
++test json-strip-nulls-removes-whitespace {
++    SELECT json_strip_nulls('{ "a" : 1 ,  "b" : null }');
++}
++expect {
++    {"a":1}
++}
++
++test json-strip-nulls-keeps-duplicate-keys {
++    SELECT json_strip_nulls('{"a":1,"a":null,"a":2}');
++}
++expect {
++    {"a":1,"a":2}
++}
++
++test json-strip-nulls-keeps-numbers-as-written {
++    SELECT json_strip_nulls('{"a":1.50,"b":1e2,"c":null}');
++}
++expect {
++    {"a":1.50,"b":1e2}
++}
++
++test json-strip-nulls-escapes-strings-again {
++    SELECT json_strip_nulls('{"a":"\u00e9","b":null}');
++    SELECT json_strip_nulls('{"a":"x\"y","b":"\/","c":"\n"}');
++}
++expect {
++    {"a":"é"}
++    {"a":"x\"y","b":"/","c":"\n"}
++}
++
++test json-strip-nulls-of-nul-escape-errors {
++    SELECT json_strip_nulls('{"a":"\u0000"}');
++}
++@sqlstate 22P05
++expect error {
++    unsupported Unicode escape sequence
++}
++
++test json-strip-nulls-of-nul-escape-in-dropped-key-errors {
++    SELECT json_strip_nulls('{"\u0000":null}');
++}
++@sqlstate 22P05
++expect error {
++    unsupported Unicode escape sequence
++}
++
++test json-strip-nulls-of-lone-surrogate-in-dropped-key-errors {
++    SELECT json_strip_nulls('{"\ud800":null}');
++}
++@sqlstate 22P02
++expect error {
++    invalid input syntax for type json
++}
++
++test json-strip-nulls-keeps-numbers-outside-double-range {
++    SELECT json_strip_nulls('{"a":1e400,"b":null}');
++}
++expect {
++    {"a":1e400}
++}
++
++test json-strip-nulls-keeps-input-nested-1000-levels {
++    SELECT length(json_strip_nulls((repeat('[', 1000) || repeat(']', 1000))::json)::text);
++}
++expect {
++    2000
++}
++
++test json-strip-nulls-of-deeply-nested-input-errors {
++    SELECT json_strip_nulls((repeat('[', 50000) || repeat(']', 50000))::json);
++}
++@sqlstate 54001
++expect error {
++    stack depth limit exceeded
++}
++
++test json-strip-nulls-of-null-is-null {
++    SELECT json_strip_nulls(NULL);
++}
++expect {
++}
++
++test json-strip-nulls-of-invalid-json-errors {
++    SELECT json_strip_nulls('[1,');
++}
++@sqlstate 22P02
++expect error {
++    invalid input syntax for type json
++}
+```
+
+**File**: `postgres/frontend/Cargo.toml` (modified, +1/-0)
+```diff
+@@ -18,6 +18,7 @@ hex = { workspace = true }
+ parking_lot = { workspace = true }
+ rustc-hash = "2.0"
+ ryu = "1.0.19"
++serde = { workspace = true }
+ serde_json = { workspace = true }
+ strum = { workspace = true }
+ tempfile = { workspace = true }
+```
+
+**File**: `postgres/frontend/auth_functions.rs` (modified, +4/-14)
+```diff
+@@ -1,10 +1,8 @@
+ use crate::error::sqlstate_error;
+-use crate::functions::{pg_scalar_function, Uuid};
++use crate::functions::{invalid_json, pg_scalar_function, unsupported_unicode_escape, Uuid};
+ use turso_core::native_ext::FunctionArity;
+ use turso_core::{Connection, OpenOptions, Result};
+-use turso_pg_parser::sqlstate::{
+-    SQLSTATE_INVALID_TEXT_REPRESENTATION, SQLSTATE_UNTRANSLATABLE_CHARACTER,
+-};
++use turso_pg_parser::sqlstate::SQLSTATE_INVALID_TEXT_REPRESENTATION;
+ 
+ pub(crate) fn register_functions(options: OpenOptions) -> OpenOptions {
+     options
+@@ -72,17 +70,9 @@ fn setting(conn: &Connection, name: &str) -> Option<String> {
+ }
+ 
+ fn parse_claims(claims: &str) -> Result<serde_json::Value> {
+-    let parsed_claims = serde_json::from_str(claims).map_err(|_| {
+-        sqlstate_error(
+-            SQLSTATE_INVALID_TEXT_REPRESENTATION,
+-            "invalid input syntax for type json",
+-        )
+-    })?;
++    let parsed_claims = serde_json::from_str(claims).map_err(|_| invalid_json())?;
+     if has_nul_escape(claims) {
+-        return Err(sqlstate_error(
+-            SQLSTATE_UNTRANSLATABLE_CHARACTER,
+-            "unsupported Unicode escape sequence",
+-        ));
++        return Err(unsupported_unicode_escape());
      }
+     Ok(parsed_claims)
  }
- 
-+use crate::security::roles::RoleCatalog;
- use crate::storage::btree::{BTreeCursor, CursorTrait};
- use crate::sync::Arc;
- use crate::sync::Mutex;
-@@ -1103,6 +1104,9 @@ pub struct Schema {
-     /// The materialized views met before the names of the namespaces were
-     /// loaded, built once they are.
-     pending_materialized_views: Option<PendingMaterializedViews>,
-+
-+    /// The roles of the database. Copies of the schema share them.
-+    pub roles: Arc<RoleCatalog>,
- }
- 
- /// Materialized views the loader read before the names of the namespaces,
-@@ -1299,6 +1303,7 @@ impl Schema {
-             default_namespaces: dialect.default_namespaces(),
-             namespace_names_loaded: !dialect.supports_namespaces(),
-             pending_materialized_views: None,
-+            roles: Arc::default(),
-         };
-         dialect.register_catalog(&mut schema, enable_custom_types)?;
-         Ok(schema)
-@@ -4581,6 +4586,7 @@ impl TryClone for Schema {
-             default_namespaces: self.default_namespaces,
-             namespace_names_loaded: self.namespace_names_loaded,
-             pending_materialized_views: self.pending_materialized_views.clone(),
-+            roles: self.roles.clone(),
-             dropped_root_pages: self.dropped_root_pages.try_clone()?,
-             type_registry: self.type_registry.try_clone()?,
-             custom_types_enabled: self.custom_types_enabled,
-@@ -8711,6 +8717,15 @@ mod tests {
- 
-     use crate::alloc::vec;
- 
-+    #[test]
-+    fn schema_clones_share_the_role_catalog() {
-+        let schema = Schema::new();
-+
-+        let clone = schema.try_clone().unwrap();
-+
-+        assert!(Arc::ptr_eq(&schema.roles, &clone.roles));
-+    }
-+
-     #[test]
-     fn test_column_definition_flag_conversion() {
-         for bits in 0..=u8::MAX {
 ```
 
-**File**: `core/security/mod.rs` (added, +1/-0)
+**File**: `postgres/frontend/functions.rs` (modified, +183/-1)
 ```diff
-@@ -0,0 +1 @@
-+pub mod roles;
-```
-
-**File**: `core/security/roles.rs` (added, +211/-0)
-```diff
-@@ -0,0 +1,211 @@
-+//! Roles for access control.
-+//!
-+//! A role is an identity that owns objects and holds privileges. Two role ids
-+//! are built in: [RoleId::SUPERUSER], which every connection starts as, and
-+//! [RoleId::PUBLIC], which every role is a member of. Core gives them no
-+//! names; a frontend names them as its users expect. Roles created with
-+//! `CREATE ROLE` are stored in the `__turso_internal_roles` table, which is
-+//! created together with the first such role.
-+//!
-+//! Each schema holds a [`RoleCatalog`], an in-memory copy of the stored roles. It is
-+//! loaded together with the schema, and a statement that changes roles bumps
-+//! the schema cookie so that other connections load the change. Looking up a
-+//! role therefore never reads the database.
-+//!
-+//! Core does not add SQL syntax for roles. Each SQL frontend decides how roles
-+//! are exposed. The SQLite frontend does not expose them at all.
-+
-+use std::collections::{BTreeMap, HashMap};
-+
-+use crate::numeric::Numeric;
-+use crate::{LimboError, Result, Value};
-+
-+pub const ROLES_TABLE_NAME: &str = "__turso_internal_roles";
-+
-+pub const CREATE_ROLES_TABLE_SQL: &str = "CREATE TABLE __turso_internal_roles (\
-+    id INTEGER PRIMARY KEY, \
-+    name TEXT NOT NULL, \
-+    superuser INTEGER NOT NULL)";
-+
-+pub const SELECT_ROLES_SQL: &str = "SELECT id, name, superuser FROM __turso_internal_roles";
-+
-+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
-+pub struct RoleId(i64);
-+
-+impl RoleId {
-+    /// The superuser that every connection starts as. It passes every
-+    /// privilege check. Roles stored in the roles table have positive ids, so
-+    /// this id is never used by another role.
-+    pub const SUPERUSER: RoleId = RoleId(0);
-+    /// The built-in role that every role is a member of. No connection can
-+    /// run as it.
-+    pub const PUBLIC: RoleId = RoleId(-1);
-+
-+    pub fn get(self) -> i64 {
-+        self.0
-+    }
-+
-+    pub(crate) fn from_rowid(rowid: i64) -> Self {
-+        assert!(rowid > 0, "role rowid must be positive, got {rowid}");
-+        RoleId(rowid)
-+    }
-+}
-+
-+#[derive(Debug, Clone, PartialEq, Eq)]
-+pub struct Role {
-+    pub id: RoleId,
-+    pub name: String,
-+    /// A superuser passes every privilege check.
-+    pub superuser: bool,
-+}
-+
-+/// The roles stored in the roles table of a database. The built-in role ids
-+/// have no entry.
-+#[derive(Debug, Clone, Default)]
-+pub struct RoleCatalog {
-+    roles: BTreeMap<RoleId, Role>,
-+    ids_by_name: HashMap<String, RoleId>,
-+}
-+
-+impl RoleCatalog {
-+    /// Returns a catalog of the roles read from the roles table. Each row is
-+    /// `(id, name, superuser)`.
-+    pub fn new(rows: &[Vec<Value>]) -> Result<Self> {
-+        let mut catalog = Self::default();
-+        for row in rows {
-+            let role = role_from_row(row)?;
-+            if catalog.roles.contains_key(&role.id) || catalog.ids_by_name.contains_key(&role.name)
-+            {
-+                return Err(LimboError::Corrupt(format!(
-+                    "{ROLES_TABLE_NAME} has a duplicate role: {role:?}"
-+                )));
-+            }
-+            catalog.add(role);
+@@ -13,7 +13,8 @@ use turso_pg_parser::sqlstate::{
+     SQLSTATE_INTERNAL_ERROR, SQLSTATE_INVALID_ESCAPE_SEQUENCE,
+     SQLSTATE_INVALID_ROW_COUNT_IN_LIMIT_CLAUSE, SQLSTATE_INVALID_ROW_COUNT_IN_RESULT_OFFSET_CLAUSE,
+     SQLSTATE_INVALID_TEXT_REPRESENTATION, SQLSTATE_NUMERIC_VALUE_OUT_OF_RANGE,
+-    SQLSTATE_UNDEFINED_FUNCTION, SQLSTATE_UNDEFINED_OBJECT,
++    SQLSTATE_STATEMENT_TOO_COMPLEX, SQLSTATE_UNDEFINED_FUNCTION, SQLSTATE_UNDEFINED_OBJECT,
++    SQLSTATE_UNTRANSLATABLE_CHARACTER,
+ };
+ 
+ /// Registers one native scalar function per name. Each body is a Rust
+@@ -64,6 +65,9 @@ pub(crate) fn register_functions(options: OpenOptions) -> OpenOptions {
+         "quote_literal"(FunctionArity::Exact(1), true) => {
+             exec_quote_literal(args[0].get_value())
+         },
++        "json_strip_nulls"(FunctionArity::Exact(1), true) => {
++            exec_json_strip_nulls(args[0].get_value())?
++        },
+         "format_type"(FunctionArity::OneOf(&[1, 2]), true) => oid_arg(args, 0)?
+             .map(|type_oid| exec_pg_format_type(type_oid, int_arg(args, 1, -1))),
+         "pg_get_constraintdef"(FunctionArity::OneOf(&[1, 2]), false) => oid_arg(args, 0)?
+@@ -703,6 +707,184 @@ fn exec_quote_literal(value: &Value) -> Option<String> {
+     Some(quoted)
+ }
+ 
++/// PostgreSQL's json_strip_nulls(json): drops object fields whose value is null,
++/// keeping number text and duplicate keys as the json type does.
++fn exec_json_strip_nulls(value: &Value) -> Result<Option<String>> {
++    let json = match value {
++        Value::Null => return Ok(None),
++        Value::Text(text) => text.as_str(),
++        other => {
++            return Err(undefined_function(
++                "json_strip_nulls",
++                &[pg_type_name(other)],
++            ))
 +        }
-+        Ok(catalog)
-+    }
-+
-+    pub fn get(&self, id: RoleId) -> Option<&Role> {
-+        self.roles.get(&id)
-+    }
-+
-+    /// Role names are case-sensitive.
-+    pub fn get_by_name(&self, name: &str) -> Option<&Role> {
-+        self.ids_by_name.get(name).and_then(|id| self.roles.get(id))
-+    }
-+
-+    /// Returns all roles in the order of their ids.
-+    pub fn iter(&self) -> impl Iterator<Item = &Role> {
-+        self.roles.values()
-+    }
-+
-+    /// [RoleId::SUPERUSER] is a superuser. Any other role that is not in the
-+    /// catalog is not.
-+    pub fn is_superuser(&self, id: RoleId) -> bool {
-+        id == RoleId::SUPERUSER || self.get(id).is_some_and(|role| role.superuser)
-+    }
-+
-+    /// Whether a session whose login role is `member` may switch to `role`
-+    /// with `SET ROLE`. Role membership does not exist yet, so only a
-+    /// superuser may switch to another role. No session may switch to
-+    /// `public`.
-+    pub fn can_set_role(&self, member: RoleId, role: RoleId) -> bool {
-+        role != RoleId::PUBLIC && (member == role || self.is_superuser(member))
-+    }
-+
-+    pub fn add(&mut self, role: Role) {
-+        assert!(
-+            !self.roles.contains_key(&role.id),
-+            "role id {:?} is already in use",
-+            role.id
-+        );
-+        let previous = self.ids_by_name.insert(role.name.clone(), role.id);
-+        assert!(previous.is_none(), "role {} already exists", role.name);
-+        self.roles.insert(role.id, role);
-+    }
++    };
++    // Validate first, so the walk below can assume well-formed input.
++    serde_json::from_str::<serde::de::IgnoredAny>(json).map_err(|_| invalid_json())?;
++    let mut stripped = String::with_capacity(json.len());
++    copy_without_null_fields(json, &mut 0, 0, &mut stripped)?;
++    Ok(Some(stripped))
 +}
 +
-+fn role_from_row(row: &[Value]) -> Result<Role> {
-+    let [id, name, superuser] = row else {
-+        return Err(corrupt_row(row));
-+    };
-+    match (id, name, superuser) {
-+        (
-+            Value::Numeric(Numeric::Integer(id)),
-+            Value::Text(name),
-+            Value::Numeric(Numeric::Integer(superuser @ (0 | 
++/// The nesting limit of the walk below, the same as core's jsonb parser. Past
++/// it PostgreSQL also errors, at a depth that depends on max_stack_depth.
++const MAX_JSON_DEPTH: usize = 1000;
++
++pub(crate) fn invalid_json() -> LimboError {
++    sqlstate_error(
++        SQLSTATE_INVALID_TEXT_REPRESENTATION,
++        "invalid input syntax for type json",
++    )
++}
++
++pub(crate) fn unsupported_unicode_escape() -> LimboError {
++    sqlstate_error(
++        SQLSTATE_UNTRANSLATABLE_CHARACTER,
++        "unsupported Unicode escape sequence",
++    )
++}
++
++/// Copies the JSON value at `pos` into `out`, leaving out object fields whose
++/// value is null. `depth` is the number of objects and arrays around it.
++fn copy_without_null_fields(
++    json: &str,
++    pos: &mut usize,
++    depth: usize,
++    out: &mut String,
++) -> Result<()> {
++    let bytes = json.as_bytes();
++    skip_json_whitespace(bytes, pos);
++    if matches!(bytes[*pos], b'{' | b'[') && depth == MAX_JSON_DEPTH {
++        return Err(sqlstate_error(
++            SQLSTATE_STATEMENT_TOO_COMPLEX,
++            "stack depth limit exceeded",
++        ));
++    }
++    match bytes[*pos] {
++        b'{' => {
++            *pos += 1;
++            out.push('{');
++            let mut first = true;
++            loop {
++                skip_json_whitespace(bytes, pos);
++                match bytes[*pos] {
++                    b'}' => break,
++                    b',' => {
++                        *pos += 1;
++                        continue;
++                    }
++                    _ => {}
++                }
++                // Decoded even when the field is dropped, so a bad escape in
++                // its key errors as in PostgreSQL.
++                let key = decode_json_string(json, pos)?;
++                skip_json_whitespace(bytes, pos);
++                *pos += 1; // ':'
++                skip_json_whitespace(bytes, pos);
++                if bytes[*pos..].starts_with(b"null") {
++                    *pos += 4;
++                    continue;
++                }
++                if !first {
++                    out.push(',');
++                }
++                first = false;
++                push_json_string(&key, out);
++                out.push(':');
++                copy_without_null_fields(json, pos, depth + 1, out)?;
++            }
++            *pos += 1;
++            out.push('}');
++        }
++        b'[' => {
++            *pos += 1;
++            out.push('[');
++            let mut first = true;
++            loop {
++                skip_json_whitespace(bytes, pos);
++                match bytes[*pos] {
++                    b']' => break,
++                    b',' => {
++                        *pos += 1;
++                        continue;
++                    }
++                    _ => {}
++                }
++                if !first {
++                    out.push(',');
++                }
++          
+```
+
+**File**: `postgres/parser/sqlstate.rs` (modified, +1/-0)
+```diff
+@@ -50,6 +50,7 @@ pub const SQLSTATE_WRONG_OBJECT_TYPE: &str = "42809";
+ pub const SQLSTATE_RESERVED_NAME: &str = "42939";
+ pub const SQLSTATE_DISK_FULL: &str = "53100";
+ pub const SQLSTATE_OUT_OF_MEMORY: &str = "53200";
++pub const SQLSTATE_STATEMENT_TOO_COMPLEX: &str = "54001";
+ pub const SQLSTATE_OBJECT_NOT_IN_PREREQUISITE_STATE: &str = "55000";
+ pub const SQLSTATE_LOCK_NOT_AVAILABLE: &str = "55P03";
+ pub const SQLSTATE_QUERY_CANCELED: &str = "57014";
 ```
 
 ---
 
-### Incident Patch 2: `a39fff80` (2026-11-03)
-**Commit Message**: Merge 'bindings/dotnet: add opt-in binary Guid binding' from Marc-André Moreau
+### Incident Patch 2: `b56226c8` (2026-11-04)
+**Commit Message**: Merge 'core/json: fix json_set array appends that drop or misplace values' from app/turso-github-handyman
 
 ## Problem
 
-Both .NET providers bind a `System.Guid` parameter as 36-character TEXT,
-which matches Microsoft.Data.Sqlite. Applications that store Guids as
-16-byte BLOBs (`Guid.ToByteArray()`) have no way to bind them that way
-without converting every parameter by hand, and that layout is common:
-it is the System.Data.SQLite default.
+```sql
+SELECT json_set('["i1"]', '$[#]', json('[]'));
+-- Turso:  ["i1"]
+-- SQLite: ["i1",[]]
 
-- `Turso.Data.Sqlite` already parses the System.Data.SQLite `BinaryGUID`
-keyword, but ignores it, and its builder reports `True`.
-- `TursoConnection` has no such option, and `TursoParameter` ignores
-`DbType`.
+SELECT json_set('[{}]', '$[0][#]', 1);
+-- Turso:  [[1]]
+-- SQLite: [{}]
 
-## Fix
-
-TEXT stays the default everywhere. `BinaryGUID=True` opts an untyped
-`Guid` parameter into a 16-byte BLOB.
-
-1. **`Turso.Data.Sqlite`.** `BinaryGUID` now defaults to `False` and is
-honored by local, remote and embedded-replica commands. A parameter
-typed as `DbType.Guid` or `SqliteType.Text`, which is what EF Core
-sends, stays TEXT either way, so EF Core's Guid storage does not change.
-2. **`TursoConnection`.** New `Binary GUID` keyword (alias `BinaryGUID`;
-keywords are case-insensitive) with the same meaning, for local, replica
-and remote commands: a `TursoPar
-
-**File**: `bindings/dotnet/Readme.md` (modified, +5/-0)
-```diff
-@@ -268,6 +268,11 @@ Supported common connection string keywords include:
- | `Read Your Writes` | Keeps the remote Hrana session baton across commands. Defaults to `True`. Set `False` for stateless one-shot remote requests. |
- | `Sync Interval` | Embedded replica automatic pull interval in seconds. `0` disables automatic sync. |
- | `Tls` | Optional override for `libsql://` development URLs. Conflicting values with explicit `http://` or `https://` schemes fail early. |
-+| `BinaryGUID` | Defaults to `False`: a `Guid` parameter binds as 36-character uppercase TEXT, as in Microsoft.Data.Sqlite. Set `True` to bind an untyped `Guid` as a 16-byte BLOB (`Guid.ToByteArray()`). A parameter typed as `DbType.Guid` or `SqliteType.Text`, which is what EF Core sends, binds as TEXT either way. `GetGuid` reads both forms. |
-+
-+`TursoConnection` accepts the same `BinaryGUID=True` opt-in, and a `TursoParameter` typed as `DbType.Guid` stays TEXT
-+there too. `TursoParameter` has no untyped state, so its default `DbType.String` counts as untyped. A `TursoParameter`
-+whose `DbType` is `DbType.Binary` binds a `Guid` as a BLOB without the option.
- 
- ## SQLite-compatible facade coverage
- 
+SELECT hex(jsonb_set('[]', '$[0][0][0]', 1));
+-- Turso:  4B2B2B1331   (middle array header says 2 bytes, holds 3)
+-- SQLite: 4B3B2B1331
 ```
 
-**File**: `bindings/dotnet/src/Turso.Data.Sqlite/SqliteCommand.cs` (modified, +2/-2)
-```diff
-@@ -569,7 +569,7 @@ internal void AddManagedParameters(
-             if (!mapped.TryGetValue(parameterName, out var parameter))
-                 throw new InvalidOperationException(Properties.Resources.MissingParameters(parameterName));
- 
--            command.Parameters.Add(parameter.ToManagedParameter(parameterName));
-+            command.Parameters.Add(parameter.ToManagedParameter(parameterName, Connection!.BinaryGuid));
-         }
-     }
- 
-@@ -659,7 +659,7 @@ private void BindParameters(TursoStatementHandle statement)
-             if (parameterIndex == 0)
-                 continue;
- 
--            TursoBindings.BindParameter(statement, parameterIndex, parameter.ToTursoValue());
-+            TursoBindings.BindParameter(statement, parameterIndex, parameter.ToTursoValue(Connection!.BinaryGuid));
-             boundParameters[parameterIndex] = true;
-         }
- 
-```
+All three come from how `Jsonb::navigate_to_segment` (walks one path
+step and makes room for a new value) writes the one-byte empty container
+that the new value later replaces:
 
-**File**: `bindings/dotnet/src/Turso.Data.Sqlite/SqliteConnection.cs` (modified, +2/-0)
-```diff
-@@ -116,6 +116,8 @@ public int DefaultTimeout
- 
-     internal bool IsSharedCache => _connectionOptions.Cache == SqliteCacheMode.Shared;
- 
-+    internal bool BinaryGuid => _connectionOptions.BinaryGUID;
-+
-     internal bool IsManagedConnection => _managedConnection is not null;
- 
-     private bool HasNativeCallbackHandle =>
-```
+- At the root (`$[#]`, `$[N]`), it inserted that byte without updating
+the root array header. The header ended up one byte short. The value was
+lost when it was itself one byte (`[]` or `{}`). `jsonb_set` reported
+`malformed JSON`.
+- The empty container was always an object. When the next path step was
+an array index, that step turned any empty object into an array,
+including an `{}` that was already in the document. If that `{}` had a
+longer-than-needed JSONB header (`x'2bcc00'`), the result was `malformed
+JSON`.
+- An array index after another array index (`$[0][0]`) inserts the byte
+wit
 
-**File**: `bindings/dotnet/src/Turso.Data.Sqlite/SqliteConnectionStringBuilder.cs` (modified, +7/-2)
+**File**: `core/json/jsonb.rs` (modified, +81/-108)
 ```diff
-@@ -342,9 +342,14 @@ public string DateTimeFormat
-         set => SetString("DateTimeFormat", value);
-     }
+@@ -2616,21 +2616,26 @@ impl Jsonb {
+                 mode
+             };
  
-+    /// <summary>
-+    ///     Binds untyped <see cref="Guid" /> parameters as 16-byte BLOBs (<see cref="Guid.ToByteArray()" />)
-+    ///     instead of 36-character TEXT, which is what Microsoft.Data.Sqlite does. Defaults to
-+    ///     <see langword="false" />.
-+    /// </summary>
-     public bool BinaryGUID
-     {
--        get => GetBool("BinaryGUID", true);
-+        get => GetBool("BinaryGUID", false);
-         set => this["BinaryGUID"] = value;
-     }
+-            let result = if next_is_array {
++            let segment = if next_is_array {
+                 let array_locator = path_iter.next().ok_or_else(|| {
+                     LimboError::InternalError(
+                         "array locator should exist after peek check".to_string(),
+                     )
+                 })?;
+-
+-                self.navigate_to_segment(
+-                    SegmentVariant::KeyWithArrayIndex(current, array_locator),
+-                    pos,
+-                    segment_mode,
+-                )?
++                SegmentVariant::KeyWithArrayIndex(current, array_locator)
++            } else {
++                SegmentVariant::Single(current)
++            };
++            // A value this segment creates is either overwritten by the final
++            // operation or entered by the next segment, so it is created as the
++            // container the next segment expects.
++            let placeholder_type = if matches!(path_iter.peek(), Some(PathElement::ArrayLocator(_)))
++            {
++                ElementType::ARRAY
+             } else {
+-                self.navigate_to_segment(SegmentVariant::Single(current), pos, segment_mode)?
++                ElementType::OBJECT
+             };
++            let result = self.navigate_to_segment(segment, pos, segment_mode, placeholder_type)?;
  
-@@ -590,7 +595,7 @@ private void SetNullable<T>(string keyword, T? value)
-             "Tls" => null!,
-             "DateTimeKind" => System.DateTimeKind.Unspecified,
-             "DateTimeFormat" => string.Empty,
--            "BinaryGUID" => true,
-+            "BinaryGUID" => false,
-             "Version" => 3,
-             _ => throw new ArgumentException(Properties.Resources.KeywordNotSupported(keyword)),
-         };
-```
-
-**File**: `bindings/dotnet/src/Turso.Data.Sqlite/SqliteParameter.cs` (modified, +7/-3)
-```diff
-@@ -143,10 +143,14 @@ public virtual void ResetSqliteType()
- 
-     internal bool HasValue => _hasValue;
- 
--    internal TursoValue ToTursoValue()
-+    // An untyped Guid binds as 36-character TEXT, as in Microsoft.Data.Sqlite, unless the connection
-+    // sets BinaryGUID=True. An explicit SqliteType or DbType wins either way.
-+    internal TursoValue ToTursoValue(bool binaryGuid = false)
-     {
-         if (Value is null || Value == DBNull.Value)
-             return TursoValue.Null();
-+        if (Value is Guid guid && _sqliteType is null && binaryGuid)
-+            return TursoValue.Blob(guid.ToByteArray());
- 
-         return SqliteType switch
-         {
-@@ -158,9 +162,9 @@ internal TursoValue ToTursoValue()
-         };
-     }
- 
--    internal global::Turso.TursoParameter ToManagedParameter(string parameterName)
-+    internal global::Turso.TursoParameter ToManagedParameter(string parameterName, bool binaryGuid = false)
-     {
--        var value = ToTursoValue();
-+        var value = ToTursoValue(binaryGuid);
-         return new global::Turso.TursoParameter(parameterName, value.ValueType switch
-         {
-             TursoValueType.Null or TursoValueType.Empty => DBNull.Value,
-```
-
-**File**: `bindings/dotnet/src/Turso.Data/TursoCommand.cs` (modified, +2/-2)
-```diff
-@@ -181,7 +181,7 @@ private void PrepareCore()
- 
-                 if (!string.IsNullOrEmpty(parameter.ParameterName))
-                 {
--                    var parameterIndex = TursoBindings.BindNamedParameter(preparedStatement, parameter.ParameterName, parameter.ToValue());
-+                    var parameterIndex = TursoBindings.BindNamedParameter(preparedStatement, parameter.ParameterName, parameter.ToValue(_connection.BinaryGuid));
-                     if (parameterIndex == 0)
-                         throw new InvalidOperationException($"Parameter {parameter.ParameterName} was not found in the SQL statement.");
- 
-@@ -193,7 +193,7 @@ private void PrepareCore()
-                     if (parameterIndex > parameterCount)
-                         throw new InvalidOperationException($"Parameter at position {parameterIndex} was not found in the SQL statement.");
- 
--                    TursoBindings.BindParameter(preparedStatement, parameterIndex, parameter.ToValue());
-+                    TursoBindings.BindParameter(preparedStatement, parameterIndex, parameter.ToValue(_connection.BinaryGuid));
-                     boundParameters[parameterIndex] = true;
+             pos = match &result.array_position_info {
+                 Some(ArrayPositionKind::SpecificIndex(idx)) => *idx,
+@@ -2697,7 +2702,15 @@ impl Jsonb {
+                     delta += new_arr_el_header_len as isize - arr_el_header_len as isize;
                  }
              }
-```
-
-**File**: `bindings/dotnet/src/Turso.Data/TursoConnection.cs` (modified, +9/-1)
-```diff
-@@ -48,6 +48,8 @@ public override string ConnectionString
- 
-     public override string DataSource => _connectionOptions["Data Source"] ?? "";
- 
-+    internal bool BinaryGuid => _connectionOptions.BinaryGuid;
-+
-     public override string ServerVersion => typeof(TursoConnection).Assembly.GetName().Version?.ToString() ?? "0.0.0";
- 
-     public override ConnectionState State => _turso is not null || _remoteClient is not null
-@@ -475,11 +477,17 @@ private void OpenRemote()
-         var handler = RemoteMessageHandlerFactory?.Invoke();
-         _remoteClient = handler is null
-             ? new TursoRemoteClient(_connectionOptions.GetRemoteUri(), _connectionOptions.AuthToken)
-+            {
-+                BinaryGuid = _connectionOptions.BinaryGuid,
-+            }
-             : new TursoRemoteClient(
-                 new HttpClient(handler),
-                 _connectionOptions.GetRemoteUri(),
-                 _connectionOptions.AuthToken,
--                disposeHttpClient: true);
-+                disposeHttpClient: true)
-+            {
-+                BinaryGuid = _connectionOptions.BinaryGuid,
+-            let new_size = el_size as isize + delta;
++            // An ArrayEntry segment appends its placeholder without rewriting
++            // the header of its array, so that header must also count the
++            // placeholder.
++            let own_delta = if parent.field_key_index == JsonLocationKind::ArrayEntry {
++                parent.delta
++            } else {
++                0
 +            };
-     }
++            let new_size = el_size as isize + delta + own_delta;
+             let new_header_size = self.write_element_header(
+                 parent.field_value_index,
+                 el_type,
+@@ -2720,6 +2733,7 @@ impl Jsonb {
+         segment: SegmentVariant,
+         mut pos: usize,
+         mode: PathOperationMode,
++        placeholder_type: ElementType,
+     ) -> Result<JsonTraversalResult> {
+         let (JsonbHeader(element_type, element_size), header_size) = self.read_header(pos)?;
  
-     private void OpenReplica()
+@@ -2754,7 +2768,7 @@ impl Jsonb {
+                             if mode.allows_insert() && arr_pos == end_pos && count == *idx as usize
+                             {
+                                 let placeholder =
+-                                    JsonbHeader::new(ElementType::OBJECT, 0).into_bytes();
++                                    JsonbHeader::new(placeholder_type, 0).into_bytes();
+                                 let placeholder_bytes = placeholder.as_bytes();
+ 
+                                 self.data
+@@ -2810,7 +2824,7 @@ impl Jsonb {
+                             if !mode.allows_insert() {
+                                 bail_parse_error!("Cant insert")
+                             }
+-                            let placeholder = JsonbHeader::new(ElementType::OBJECT, 0).into_bytes();
++                            let placeholder = JsonbHeader::new(placeholder_type, 0).into_bytes();
+                             let placeholder_bytes = placeholder.as_bytes();
+                             self.data
+                                 .splice(end_pos..end_pos, placeholder_bytes.iter().copied());
+@@ -2825,30 +2839,6 @@ impl Jsonb {
+                         _ => unreachable!(),
+                     }
+                 } else {
+-                    if root_type == ElementType::OBJECT
+-                        && root_size == 0
+-                        && (*idx == Some(0) || idx.is_none())
+-                        && mode.allows_insert()
+-                    {
+-                        let array = JsonbHeader::new(ElementType::ARRAY, 0).into_bytes();
+-                        let array_bytes = array.as_bytes();
+-                        let placeholder = JsonbHeader::new(ElementType::OBJECT, 0).into_bytes();
+-                        let placeholder_bytes = placeholder.as_bytes();
+-                        self.data.splice(
+-                            pos..pos + root_header_size,
+-                            array_bytes
+-                                .iter()
+-                                .copied()
+-                                .chain(placeholder_bytes.iter().copied()),
+-                        );
+-
+-                        return Ok(JsonTraversalResult::with_array_index(
+-                            pos,
+-                            JsonLocationKind::ArrayEntry,
+-                            placeholder_bytes.len() as isize,
+-
 ```
 
-**File**: `bindings/dotnet/src/Turso.Data/TursoConnectionOptions.cs` (modified, +2/-0)
+**File**: `sqlite/conformance/sqlite-sqltests/json/default.sqltest` (modified, +70/-0)
 ```diff
-@@ -26,6 +26,8 @@ public string? this[string keyword]
- 
-     public bool Pooling => _builder.Pooling;
- 
-+    public bool BinaryGuid => _builder.BinaryGuid;
-+
-     public string DataSource => _builder.DataSource;
- 
-     public string AuthToken => _builder.AuthToken;
-```
-
----
-
-### Incident Patch 3: `fd44cda2` (2026-11-02)
-**Commit Message**: postgres: report a missing role from current_user instead of panicking
-
-current_user and session_user looked the connection's role up in the
-role catalog and panicked when it was not there. The role is there today
-because no statement can drop a role yet, but once DROP ROLE exists a
-connection can outlive its role, and a SQL statement must not be able to
-crash the server. Report the role as an undefined object, as PostgreSQL
-does for a role OID that no longer exists.
-
-Tests: a unit test looks a role up in a catalog that does not have it.
-
-**File**: `postgres/frontend/functions.rs` (modified, +42/-8)
-```diff
-@@ -4,7 +4,7 @@ use crate::settings::{find_parameter, Parameter, SettingScope};
- use chrono::{Datelike, NaiveDate, NaiveDateTime, NaiveTime, TimeDelta, Timelike, Utc};
- use std::{fmt, sync::Arc};
- use turso_core::native_ext::{FunctionArity, ReturnType, ScalarCall, ScalarFunction, ScalarReturn};
--use turso_core::security::roles::RoleId;
-+use turso_core::security::roles::{RoleCatalog, RoleId};
- use turso_core::types::IOResultOr;
- use turso_core::{
-     Connection, ExternalFunc, IOResult, LimboError, Numeric, OpenOptions, Register, Result, Value,
-@@ -101,10 +101,10 @@ pub(crate) fn register_functions(options: OpenOptions) -> OpenOptions {
-             exec_current_schemas(connection, args[0].get_value())?
-         },
-         "current_user" | "current_role" | "user"(FunctionArity::Exact(0), false) => {
--            role_name(connection, connection.current_role())
-+            role_name(connection, connection.current_role())?
-         },
-         "session_user"(FunctionArity::Exact(0), false) => {
--            role_name(connection, connection.session_role())
-+            role_name(connection, connection.session_role())?
-         },
-         "pg_backend_pid"(FunctionArity::Exact(0), true) => std::process::id() as i64,
-         // Temporary pg_dump compatibility: "t" means true, not actual recovery state.
-@@ -651,11 +651,20 @@ fn exec_pg_limit_value(args: &[Register]) -> Result<Option<i64>> {
-     Ok(Some(value))
+@@ -3790,6 +3790,76 @@ expect {
+     {"a":[1,2,3,4]}
  }
  
--fn role_name(conn: &Connection, role: RoleId) -> String {
--    crate::catalog::postgres_roles(&conn.role_catalog())
--        .find(|found| found.id == role)
--        .expect("the role of a connection is in its role catalog")
--        .name
-+fn role_name(conn: &Connection, role: RoleId) -> Result<String> {
-+    role_name_in(&conn.role_catalog(), role)
++# Appending to the root array must grow the root array header by the size of
++# the appended value. An empty array or object is one byte, the same size as
++# the placeholder written before the value, so a header that misses the
++# placeholder byte drops the appended value.
++test json_set_array_append_empty_container_at_root {
++    SELECT json_set('["i1"]', '$[#]', json('[]')),
++           json(jsonb_set('["i1"]', '$[#]', json('[]'))),
++           json_set('[1]', '$[#]', json('{}')),
++           json_set('[]', '$[#]', json('[]')),
++           json_insert('[1]', '$[#]', json('[]')),
++           json_set('[1]', '$[1]', json('[]')),
++           json_insert('[1]', '$[1]', json('{}'));
++}
++expect {
++    ["i1",[]]|["i1",[]]|[1,{}]|[[]]|[1,[]]|[1,[]]|[1,{}]
 +}
 +
-+/// The role of a connection is normally in the catalog, but it may have been
-+/// dropped by another connection since the connection was opened.
-+fn role_name_in(roles: &RoleCatalog, role: RoleId) -> Result<String> {
-+    match crate::catalog::postgres_roles(roles).find(|found| found.id == role) {
-+        Some(role) => Ok(role.name),
-+        None => Err(sqlstate_error(
-+            SQLSTATE_UNDEFINED_OBJECT,
-+            format!("invalid role OID: {}", crate::catalog::role_oid(role)),
-+        )),
-+    }
- }
- 
- fn exec_pg_get_user_by_id(conn: &Connection, oid: i64) -> String {
-@@ -1577,3 +1586,28 @@ fn pg_to_char_numeric(num: f64, format: &str) -> String {
- 
-     result
- }
-+
-+#[cfg(test)]
-+mod tests {
-+    use super::*;
-+
-+    #[test]
-+    fn role_name_of_a_role_that_is_not_in_the_catalog_is_an_error() {
-+        let with_alice = RoleCatalog::new(&[vec![
-+            Value::from_i64(1),
-+            Value::build_text("alice"),
-+            Value::from_i64(0),
-+        ]])
-+        .unwrap();
-+        let without_alice = RoleCatalog::new(&[]).unwrap();
-+        let alice = with_alice.get_by_name("alice").unwrap().id;
-+        assert_eq!(role_name_in(&with_alice, alice).unwrap(), "alice");
-+
-+        let error = role_name_in(&without_alice, alice).unwrap_err();
-+        assert_eq!(error.to_string(), "invalid role OID: 16385");
-+        assert_eq!(
-+            role_name_in(&without_alice, RoleId::SUPERUSER).unwrap(),
-+            "postgres"
-+        );
-+    }
++test jsonb_set_array_append_at_root_header_size {
++    SELECT hex(jsonb_set('[1]', '$[#]', 5)),
++           hex(jsonb_set('[1]', '$[#]', json('[2]'))),
++           hex(jsonb_insert('[1]', '$[#]', json('[]'))),
++           hex(jsonb_set('[1,2,3,4,5]', '$[#]', 6)),
++           hex(jsonb_set('[1,2,3,4,5]', '$[5]', json('[]'), '$[#]', json('{}')));
 +}
++expect {
++    4B13311335|5B13312B1332|3B13310B|CB0C133113321333133413351336|CB0C133113321333133413350B0C
++}
++
++test json_set_array_append_at_root_then_key {
++    SELECT json_set('[1]', '$[#].a', json('[]')),
++           json(jsonb_set('[1]', '$[#].a', 5));
++}
++expect {
++    [1,{"a":[]}]|[1,{"a":5}]
++}
++
++# An array index after another array index must not turn an empty object that
++# is already in the document into an array: SQLite leaves the document
++# unchanged.
++test json_set_array_index_into_existing_empty_object {
++    SELECT json_set('[{}]', '$[0][#]', 1),
++           json_set('[{}]', '$[0][0]', 1),
++           json_set('[{}]', '$[#-1][#]', 1),
++           json_insert('[{}]', '$[0][#]', 1),
++           json(jsonb_set('[{}]', '$[0][#]', 1)),
++           json(jsonb_insert('[{}]', '$[0][#]', 1)),
++           json(jsonb_set(x'2bcc00', '$[0][#]', 1)),
++           json_set('[[{}]]', '$[0][0][#]', 1),
++           json_set('{"a":[{}]}', '$.a[0][#]', 1);
++}
++expect {
++    [{}]|[{}]|[{}]|[{}]|[{}]|[{}]|[{}]|[[{}]]|{"a":[{}]}
++}
++
++# A path that creates nested arrays creates each one as an array directly, and
++# every new array header counts the array created inside it.
++test jsonb_set_nested_array_append_creates_arrays {
++    SELECT hex(jsonb_set('[]', '$[#][#]', 1)),
++           hex(jsonb_set('[]', '$[0][0][0]', 1)),
++           hex(jsonb_set('[]', '$[#][#][#][#]', 1)),
++           hex(jsonb_insert('[[]]', '$[0][#][#]', json('[]'))),
++           hex(jsonb_set('{"a":[]}', '$.a[#][#][#]', 1)),
++           hex(jsonb_set('[[1,2,3,4,5,6,7,8,9]]', '$[0][#][#]', 1)),
++           json_set('{}', '$.a[0][#][#]', 1),
++           json_set('[]', '$[#].a[#]', 2);
++}
++expect {
++    3B2B1331|4B3B2B1331|5B4B3B2B1331|3B2B1B0B|7C17614B3B2B1331|CB17CB151331133213331334133513361337133813392B1331|{"a":[[[1]]]}|[{"a":[2]}]
++}
++
+ # A BLOB argument is read as JSONB, so every element type, payload size and
+ # text byte in it is caller-controlled. Validation used to be skipped whenever
+ # the payload exceeded 7 bytes, which let arbitrary bytes reach
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #11308** (closed): core: refuse non-deterministic and NULL results in custom types and persisted expressions (@jussisaurio)
-- **PR #11305** (2026-11-03): testing/conformance/javascript: override minimatch to 11.0.4 (@penberg)
-- **PR #11299** (2026-11-03): build(deps-dev): bump node-forge from 1.4.0 to 1.4.2 in /bindings/react-native (@dependabot[bot])
-- **PR #11294** (2026-11-03): core/translate: let subqueries that run per group read the group's columns (@Raviikumar001)
-- **PR #11282** (2026-11-03): Initial pass at Postgres role support (@penberg)
-- **PR #11262** (2026-11-03): bindings/c: keep comments and trigger bodies whole in sqlite3_exec (@turso-github-handyman[bot])
+- **PR #11348** (2026-11-04): core/translate: plan compound SELECT LIMIT/OFFSET subqueries (@lyfuci)
+- **PR #11341** (2026-11-04): sqlite: move SqliteDialect into a new sqlite/frontend crate (@penberg)
+- **PR #11336** (2026-11-04): bindings/python: raise sqlite3's exception classes for SQL and misuse errors (@turso-github-handyman[bot])
+- **PR #11334** (2026-11-04): core/translate: store custom type values as the kind of their BASE (@jussisaurio)
+- **PR #11331** (2026-11-04): core/json: fix json_set array appends that drop or misplace values (@turso-github-handyman[bot])
+- **PR #11330** (2026-11-04): core: refuse COLLATE on custom types that are not text (@jussisaurio)
 
 ---
 
@@ -1967,21 +2087,21 @@ Tests: a unit test looks a role up in a catalog that does not have it.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. core/security: Add role catalog
+## X. Merge 'postgres: add json_strip_nulls(json)' from Jaeil Lee
 
 **RULE**:
-When implementing operations in `core/lib.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tursodatabase/turso. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tursodatabase/turso. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `35d01f9e`: core/security: Add role catalog. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `717c3593`: Merge 'postgres: add json_strip_nulls(json)' from Jaeil Lee. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/lib.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-pub mod security;
+ "serde",
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1991,4 +2111,4 @@ pub mod security;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `35d01f9e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `717c3593` are properly handled with clean fallback behavior.

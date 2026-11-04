@@ -7290,3 +7290,8 @@ Every entry in this ledger must capture:
 | `learn-github-topgrade-rs-topgrade` | `https://github.com/topgrade-rs/topgrade` | `155a490a` | Multi-dimensional audit evidence | 2026-11-04T18:42:13.642Z |
 | `learn-huggingface-comfy-org-fibo-2-0` | `https://huggingface.co/Comfy-Org/Fibo-2.0` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-11-04T18:42:19.030Z |
 | `learn-github-nolabs-ai-nono` | `https://github.com/nolabs-ai/nono` | `0e15816b` | Multi-dimensional audit evidence | 2026-11-04T18:42:22.594Z |
+| `learn-github-medialab-xan` | `https://github.com/medialab/xan` | `1f0c0fec` | Multi-dimensional audit evidence | 2026-11-04T18:57:26.995Z |
+| `learn-github-callstack-agent-device` | `https://github.com/callstack/agent-device` | `4abff15e` | Multi-dimensional audit evidence | 2026-11-04T18:57:34.541Z |
+| `learn-github-karmada-io-karmada` | `https://github.com/karmada-io/karmada` | `d218233a` | Multi-dimensional audit evidence | 2026-11-04T18:57:35.551Z |
+| `learn-huggingface-krafton-raon-1-mini-preview` | `https://huggingface.co/KRAFTON/Raon-1-mini-preview` | `hf-krafton` | Multi-dimensional audit evidence | 2026-11-04T18:57:37.720Z |
+| `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/limbo` | `43d885ef` | Multi-dimensional audit evidence | 2026-11-04T18:57:42.237Z |

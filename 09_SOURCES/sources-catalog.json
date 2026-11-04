@@ -2803,10 +2803,10 @@
     "repository": "karmada-io/karmada",
     "platform": "github",
     "sourceUrl": "https://github.com/karmada-io/karmada",
-    "sourceVersion": "ca8a1dad",
+    "sourceVersion": "d218233a",
     "license": "Apache-2.0",
-    "contentHash": "2def9e548d03de38583c110b64664063526124b4e87fd38e1fc63f77aa7264b8",
-    "lastHarvestedAt": "2026-11-03T19:52:24.914Z",
+    "contentHash": "c41669fc4a69dd645c4a03516e810a9881e5fff4e5d44bcc1a3ed19621f90ead",
+    "lastHarvestedAt": "2026-11-04T18:57:35.551Z",
     "learningId": "learn-github-karmada-io-karmada"
   },
   "milvus-io-bootcamp": {
@@ -6103,10 +6103,10 @@
     "repository": "callstack/agent-device",
     "platform": "github",
     "sourceUrl": "https://github.com/callstack/agent-device",
-    "sourceVersion": "c1f1fd02",
+    "sourceVersion": "4abff15e",
     "license": "MIT",
-    "contentHash": "2e8ff6fcfefe1d463062548fa9e195d592ac95265dde7979a449f80d5e7c82ef",
-    "lastHarvestedAt": "2026-10-31T11:46:46.322Z",
+    "contentHash": "427256d5640acf53ae92a08d520446d82b7a6dc974737d4ba44cec940ef2cf6c",
+    "lastHarvestedAt": "2026-11-04T18:57:34.541Z",
     "learningId": "learn-github-callstack-agent-device"
   },
   "open-policy-agent-opa": {
@@ -6263,10 +6263,10 @@
     "repository": "tursodatabase/turso",
     "platform": "github",
     "sourceUrl": "https://github.com/tursodatabase/limbo",
-    "sourceVersion": "f9446abf",
+    "sourceVersion": "43d885ef",
     "license": "MIT",
-    "contentHash": "97944d9903aa8551151e715c209020871dc0d377c9502ad7afcbcf5e1eaa3eae",
-    "lastHarvestedAt": "2026-11-03T18:47:57.745Z",
+    "contentHash": "c9168da69b304016b806a740cdc25f7f1d03f52277ea1b98ebb2825fe716c5ba",
+    "lastHarvestedAt": "2026-11-04T18:57:42.237Z",
     "learningId": "learn-github-tursodatabase-turso"
   },
   "carbon-design-system-carbon": {
@@ -6913,10 +6913,10 @@
     "repository": "medialab/xan",
     "platform": "github",
     "sourceUrl": "https://github.com/medialab/xan",
-    "sourceVersion": "4a795ca6",
+    "sourceVersion": "1f0c0fec",
     "license": "Unlicense",
-    "contentHash": "8e32d6f0d1a462801893ca58f34a56abfe9dea2c8c0ade9be43da825fa37074f",
-    "lastHarvestedAt": "2026-11-03T11:51:57.821Z",
+    "contentHash": "20b9baad600712b50862bd70e8be892c4672c20ad90d9cddabbbcb7e8088a958",
+    "lastHarvestedAt": "2026-11-04T18:57:26.995Z",
     "learningId": "learn-github-medialab-xan"
   },
   "onejs-one": {
@@ -10595,8 +10595,8 @@
     "sourceUrl": "https://huggingface.co/KRAFTON/Raon-1-mini-preview",
     "sourceVersion": "hf-krafton-raon-1-mini-preview",
     "license": "Open-Source",
-    "contentHash": "dea0804edca749a39e0478ac3e47e8ae5d3a2895b9dd814b222880eb893be758",
-    "lastHarvestedAt": "2026-10-31T02:55:59.653Z",
+    "contentHash": "507f41b45d0b89b5064c1b5b9ffc91e29fc650ddd6bb7f09b8317456900e33ee",
+    "lastHarvestedAt": "2026-11-04T18:57:37.720Z",
     "learningId": "learn-huggingface-krafton-raon-1-mini-preview"
   },
   "hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-gguf": {
