@@ -6073,10 +6073,10 @@
     "repository": "ClickHouse/ClickHouse",
     "platform": "github",
     "sourceUrl": "https://github.com/ClickHouse/ClickHouse",
-    "sourceVersion": "18430ef4",
+    "sourceVersion": "6398cafb",
     "license": "Apache-2.0",
-    "contentHash": "2e3b48d64d3fe690d43f0aa5cc819e1d3db6991ca1567b393bdd8807490a40d3",
-    "lastHarvestedAt": "2026-11-03T18:22:50.692Z",
+    "contentHash": "bf84840f9823a3cbeed80dfc1cc52451df8c55d4949efc1b9c64c71c238cfef3",
+    "lastHarvestedAt": "2026-11-04T18:35:43.884Z",
     "learningId": "learn-github-clickhouse-clickhouse"
   },
   "dockview-dockview": {
@@ -6823,10 +6823,10 @@
     "repository": "domcyrus/rustnet",
     "platform": "github",
     "sourceUrl": "https://github.com/domcyrus/rustnet",
-    "sourceVersion": "a905ace6",
+    "sourceVersion": "ac58d1f0",
     "license": "Apache-2.0",
-    "contentHash": "48654398ecdd9f13ac09cdaad5ccec081b8dd034fe213611ae3194d879b38db6",
-    "lastHarvestedAt": "2026-11-03T11:22:07.117Z",
+    "contentHash": "7ed17eed171b397e4eb17a2004eb24d14206a6077fa29d3ce746037b8a84986e",
+    "lastHarvestedAt": "2026-11-04T18:35:30.054Z",
     "learningId": "learn-github-domcyrus-rustnet"
   },
   "futurice-pepperoni-app-kit": {
@@ -10605,8 +10605,8 @@
     "sourceUrl": "https://huggingface.co/ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF",
     "sourceVersion": "hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-gguf",
     "license": "Open-Source",
-    "contentHash": "ea5e035549e1783c510e36c44e6cb0a13712b2617db427613a67c6f512780a66",
-    "lastHarvestedAt": "2026-10-31T02:35:25.487Z",
+    "contentHash": "bc175e06f28b2865a4fc5696e26374d2245d39856315ad31342eaf62bab34796",
+    "lastHarvestedAt": "2026-11-04T18:35:47.928Z",
     "learningId": "learn-huggingface-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-gguf"
   },
   "hf-comfy-org-fibo-2.0": {

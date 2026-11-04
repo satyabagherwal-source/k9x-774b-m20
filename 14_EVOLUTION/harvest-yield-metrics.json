@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-04T18:28:49.019Z",
-  "total_cycles_completed": 7252,
-  "total_learnings_persisted": 7252,
-  "total_rules_promoted": 6931,
+  "last_updated": "2026-11-04T18:35:47.933Z",
+  "total_cycles_completed": 7255,
+  "total_learnings_persisted": 7255,
+  "total_rules_promoted": 6936,
   "history": [
-    {
-      "timestamp": "2026-11-04T00:24:32.519Z",
-      "repository": "infiniflow/infinity",
-      "learningId": "learn-github-infiniflow-infinity",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T00:31:55.874Z",
-      "repository": "zeronsh/zeron",
-      "learningId": "learn-github-zeronsh-zeron",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T00:32:05.396Z",
-      "repository": "freenet/freenet-core",
-      "learningId": "learn-github-freenet-freenet-core",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-04T00:32:08.492Z",
       "repository": "dkhamsing/open-source-ios-apps",
@@ -1403,6 +1382,27 @@
       "repository": "duckdb/duckdb",
       "learningId": "learn-github-duckdb-duckdb",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T18:35:30.059Z",
+      "repository": "domcyrus/rustnet",
+      "learningId": "learn-github-domcyrus-rustnet",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T18:35:43.888Z",
+      "repository": "ClickHouse/ClickHouse",
+      "learningId": "learn-github-clickhouse-clickhouse",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T18:35:47.933Z",
+      "repository": "ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF",
+      "learningId": "learn-huggingface-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-gguf",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

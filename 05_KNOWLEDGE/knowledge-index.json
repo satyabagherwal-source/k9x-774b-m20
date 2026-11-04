@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-04T18:28:48.943Z",
+  "last_updated": "2026-11-04T18:35:47.830Z",
   "total_verified_learnings": 1208,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -7541,8 +7541,8 @@
       "slug": "clickhouse-clickhouse",
       "platform": "github",
       "source_url": "https://github.com/ClickHouse/ClickHouse",
-      "source_version": "18430ef4",
-      "content_hash": "2e3b48d64d3fe690d43f0aa5cc819e1d3db6991ca1567b393bdd8807490a40d3",
+      "source_version": "6398cafb",
+      "content_hash": "bf84840f9823a3cbeed80dfc1cc52451df8c55d4949efc1b9c64c71c238cfef3",
       "dossier_path": "07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md",
       "promoted_rules": [
@@ -7635,6 +7635,11 @@
           "number": 6574,
           "title": "Merge pull request #127836 from ClickHouse/revert-124816",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6900,
+          "title": "Merge pull request #126817 from Jonathan-Ackerman/execution-timeout",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -7642,7 +7647,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T18:22:50.587Z",
+      "verified_at": "2026-11-04T18:35:43.793Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -10732,8 +10737,8 @@
       "slug": "domcyrus-rustnet",
       "platform": "github",
       "source_url": "https://github.com/domcyrus/rustnet",
-      "source_version": "a905ace6",
-      "content_hash": "48654398ecdd9f13ac09cdaad5ccec081b8dd034fe213611ae3194d879b38db6",
+      "source_version": "ac58d1f0",
+      "content_hash": "7ed17eed171b397e4eb17a2004eb24d14206a6077fa29d3ce746037b8a84986e",
       "dossier_path": "07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md",
       "promoted_rules": [
@@ -10776,6 +10781,11 @@
           "number": 5793,
           "title": "deps): bump zip from 9.1.0 to 9.1.2 in the rust-dependencies group (#704)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6899,
+          "title": "deps): bump zip from 9.1.3 to 9.2.0 in the rust-dependencies group (#712)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -10783,7 +10793,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T11:22:06.971Z",
+      "verified_at": "2026-11-04T18:35:29.959Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -129451,7 +129461,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF",
       "source_version": "hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-gguf",
-      "content_hash": "ea5e035549e1783c510e36c44e6cb0a13712b2617db427613a67c6f512780a66",
+      "content_hash": "bc175e06f28b2865a4fc5696e26374d2245d39856315ad31342eaf62bab34796",
       "dossier_path": "07_PROJECT_LEARNING/hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-gguf-learnings.md",
       "promoted_rules": [
@@ -129494,6 +129504,21 @@
           "number": 6024,
           "title": "Layer-Wise Homogeneous MoE Quantization Constraint",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6901,
+          "title": "Artifact Layout Versioning & Local Migration Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6902,
+          "title": "Shared Artifact Deduplication via Symbolic Links",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6903,
+          "title": "Per-Tensor Quantization Sensitivity Allocation",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -129501,7 +129526,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T02:35:25.424Z",
+      "verified_at": "2026-11-04T18:35:47.811Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -176019,6 +176044,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-04T18:28:48.916Z"
+    },
+    "rule-6899": {
+      "learning_id": "rule-6899",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6899,
+      "title": "deps): bump zip from 9.1.3 to 9.2.0 in the rust-dependencies group (#712)",
+      "source_url": "https://github.com/domcyrus/rustnet",
+      "source_version": "ac58d1f0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T18:35:29.959Z"
+    },
+    "rule-6900": {
+      "learning_id": "rule-6900",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6900,
+      "title": "Merge pull request #126817 from Jonathan-Ackerman/execution-timeout",
+      "source_url": "https://github.com/ClickHouse/ClickHouse",
+      "source_version": "6398cafb",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T18:35:43.793Z"
+    },
+    "rule-6901": {
+      "learning_id": "rule-6901",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6901,
+      "title": "Artifact Layout Versioning & Local Migration Invariant",
+      "source_url": "https://huggingface.co/ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF",
+      "source_version": "hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T18:35:47.811Z"
+    },
+    "rule-6902": {
+      "learning_id": "rule-6902",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6902,
+      "title": "Shared Artifact Deduplication via Symbolic Links",
+      "source_url": "https://huggingface.co/ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF",
+      "source_version": "hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T18:35:47.811Z"
+    },
+    "rule-6903": {
+      "learning_id": "rule-6903",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6903,
+      "title": "Per-Tensor Quantization Sensitivity Allocation",
+      "source_url": "https://huggingface.co/ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF",
+      "source_version": "hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T18:35:47.811Z"
     }
   },
   "aliases": {

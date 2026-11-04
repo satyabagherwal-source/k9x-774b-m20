@@ -7284,3 +7284,6 @@ Every entry in this ledger must capture:
 | `learn-github-goodrain-rainbond` | `https://github.com/goodrain/rainbond` | `ae8540b0` | Multi-dimensional audit evidence | 2026-11-04T18:28:42.794Z |
 | `learn-huggingface-minimaxai-minimax-m3-1-flash` | `https://huggingface.co/MiniMaxAI/MiniMax-M3.1-Flash` | `hf-minimax` | Multi-dimensional audit evidence | 2026-11-04T18:28:45.249Z |
 | `learn-github-duckdb-duckdb` | `https://github.com/duckdb/duckdb` | `80b9c969` | Multi-dimensional audit evidence | 2026-11-04T18:28:49.015Z |
+| `learn-github-domcyrus-rustnet` | `https://github.com/domcyrus/rustnet` | `ac58d1f0` | Multi-dimensional audit evidence | 2026-11-04T18:35:30.054Z |
+| `learn-github-clickhouse-clickhouse` | `https://github.com/ClickHouse/ClickHouse` | `6398cafb` | Multi-dimensional audit evidence | 2026-11-04T18:35:43.884Z |
+| `learn-huggingface-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-gguf` | `https://huggingface.co/ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF` | `hf-ista-da` | Multi-dimensional audit evidence | 2026-11-04T18:35:47.928Z |
