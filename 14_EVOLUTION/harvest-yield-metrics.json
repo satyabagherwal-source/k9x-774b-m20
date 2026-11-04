@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-04T20:10:57.183Z",
-  "total_cycles_completed": 7293,
-  "total_learnings_persisted": 7293,
-  "total_rules_promoted": 6986,
+  "last_updated": "2026-11-04T20:18:13.543Z",
+  "total_cycles_completed": 7295,
+  "total_learnings_persisted": 7295,
+  "total_rules_promoted": 6990,
   "history": [
-    {
-      "timestamp": "2026-11-04T02:04:45.009Z",
-      "repository": "microsoft/Mage-VL-Cowork",
-      "learningId": "learn-huggingface-microsoft-mage-vl-cowork",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T02:04:47.485Z",
-      "repository": "meshery/meshery",
-      "learningId": "learn-github-meshery-meshery",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-04T02:12:03.463Z",
       "repository": "sveltejs/svelte",
@@ -1403,6 +1389,20 @@
       "repository": "baidu/Unlimited-OCR-2",
       "learningId": "learn-huggingface-baidu-unlimited-ocr-2",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T20:18:09.966Z",
+      "repository": "ccore/Qwen3.5-4B-3D-Coder",
+      "learningId": "learn-huggingface-ccore-qwen3-5-4b-3d-coder",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T20:18:13.543Z",
+      "repository": "skyhook-io/radar",
+      "learningId": "learn-github-skyhook-io-radar",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

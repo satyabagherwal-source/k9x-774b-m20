@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261102-QQUB",
-    "timestamp": "2026-11-02T15:22:21.155Z",
-    "repository": "salvo-rs/salvo",
-    "learningId": "learn-github-salvo-rs-salvo",
-    "contentHash": "5bf6afe73dfa4ea076daaa2a73b54bb873840fa6c27c7e22ac265f0622a7a0f3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261102-QTX1",
-    "timestamp": "2026-11-02T15:22:25.141Z",
-    "repository": "prof18/feed-flow",
-    "learningId": "learn-github-prof18-feed-flow",
-    "contentHash": "e0555e30912ead0b51924f68bd9e9a45de4edf4dee8e6fe48413bc648d1887fa",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261102-QXBV",
     "timestamp": "2026-11-02T15:22:29.563Z",
     "repository": "pulumi/pulumi",
@@ -7492,6 +7462,36 @@
     "contentHash": "92fdb6db138f9c5946a2e8dcfd396e5970ce5c947abf8d61788511c84d7ba4e4",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-6V8K",
+    "timestamp": "2026-11-04T20:18:09.956Z",
+    "repository": "ccore/Qwen3.5-4B-3D-Coder",
+    "learningId": "learn-huggingface-ccore-qwen3-5-4b-3d-coder",
+    "contentHash": "601c12eb95f9d7db49e8a4a815fa83b1af05977e7b46a713725059db787c93fa",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-6XZX",
+    "timestamp": "2026-11-04T20:18:13.533Z",
+    "repository": "skyhook-io/radar",
+    "learningId": "learn-github-skyhook-io-radar",
+    "contentHash": "aef741d42793c2e59f278d2167341fb2e01ae82cde9b5ec40bdead79914054c3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

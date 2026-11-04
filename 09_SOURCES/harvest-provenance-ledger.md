@@ -7325,3 +7325,5 @@ Every entry in this ledger must capture:
 | `learn-github-amir1376-ab-download-manager` | `https://github.com/amir1376/ab-download-manager` | `28150ded` | Multi-dimensional audit evidence | 2026-11-04T20:10:03.788Z |
 | `learn-github-milvus-io-milvus` | `https://github.com/milvus-io/milvus` | `f830e57c` | Multi-dimensional audit evidence | 2026-11-04T20:10:10.983Z |
 | `learn-huggingface-baidu-unlimited-ocr-2` | `https://huggingface.co/baidu/Unlimited-OCR-2` | `hf-baidu-u` | Multi-dimensional audit evidence | 2026-11-04T20:10:57.177Z |
+| `learn-huggingface-ccore-qwen3-5-4b-3d-coder` | `https://huggingface.co/ccore/Qwen3.5-4B-3D-Coder` | `hf-ccore-q` | Multi-dimensional audit evidence | 2026-11-04T20:18:09.960Z |
+| `learn-github-skyhook-io-radar` | `https://github.com/skyhook-io/radar` | `830d63a8` | Multi-dimensional audit evidence | 2026-11-04T20:18:13.537Z |

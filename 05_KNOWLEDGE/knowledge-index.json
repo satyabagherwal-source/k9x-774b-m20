@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-04T20:10:57.057Z",
+  "last_updated": "2026-11-04T20:18:13.443Z",
   "total_verified_learnings": 1210,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -53341,8 +53341,8 @@
       "slug": "skyhook-io-radar",
       "platform": "github",
       "source_url": "https://github.com/skyhook-io/radar",
-      "source_version": "2fa4ccf7",
-      "content_hash": "71a09be1a477c11bdcb6843cd036cb148fe6e926c8a6cdf3feaf56414f1e337e",
+      "source_version": "830d63a8",
+      "content_hash": "aef741d42793c2e59f278d2167341fb2e01ae82cde9b5ec40bdead79914054c3",
       "dossier_path": "07_PROJECT_LEARNING/skyhook-io-radar-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/skyhook-io-radar-learnings.md",
       "promoted_rules": [
@@ -53420,6 +53420,11 @@
           "number": 6623,
           "title": "Issues: name a RollingUpdate surge as the cause of a one-replica ReadWriteOnce r",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6952,
+          "title": "Explain Kueue queues and trace Workload admission dependencies (#2512)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -53427,7 +53432,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T21:44:52.806Z",
+      "verified_at": "2026-11-04T20:18:13.420Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -146669,7 +146674,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/ccore/Qwen3.5-4B-3D-Coder",
       "source_version": "hf-ccore-qwen3.5-4b-3d-coder",
-      "content_hash": "7e0fb81d86c198bd9082b1cfcc63189aa6a09bde7b07191132aacff72f7540c3",
+      "content_hash": "601c12eb95f9d7db49e8a4a815fa83b1af05977e7b46a713725059db787c93fa",
       "dossier_path": "07_PROJECT_LEARNING/hf-ccore-qwen3.5-4b-3d-coder-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-ccore-qwen3.5-4b-3d-coder-learnings.md",
       "promoted_rules": [
@@ -146697,6 +146702,21 @@
           "number": 6065,
           "title": "**Sampling‑Temperature Consistency Rule**",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6950,
+          "title": "Consistent Data‑Type Propagation Across All Subsystems",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": "EXISTING",
+          "title": "Immutable Tokenizer Configuration",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 6951,
+          "title": "Mandatory Cache Usage for Generation",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -146704,7 +146724,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T04:15:56.282Z",
+      "verified_at": "2026-11-04T20:18:09.846Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -177010,6 +177030,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-04T20:10:10.867Z"
+    },
+    "rule-6950": {
+      "learning_id": "rule-6950",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6950,
+      "title": "Consistent Data‑Type Propagation Across All Subsystems",
+      "source_url": "https://huggingface.co/ccore/Qwen3.5-4B-3D-Coder",
+      "source_version": "hf-ccore-qwen3.5-4b-3d-coder",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T20:18:09.846Z"
+    },
+    "rule-6951": {
+      "learning_id": "rule-6951",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6951,
+      "title": "Mandatory Cache Usage for Generation",
+      "source_url": "https://huggingface.co/ccore/Qwen3.5-4B-3D-Coder",
+      "source_version": "hf-ccore-qwen3.5-4b-3d-coder",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T20:18:09.846Z"
+    },
+    "rule-6952": {
+      "learning_id": "rule-6952",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6952,
+      "title": "Explain Kueue queues and trace Workload admission dependencies (#2512)",
+      "source_url": "https://github.com/skyhook-io/radar",
+      "source_version": "830d63a8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T20:18:13.420Z"
     }
   },
   "aliases": {

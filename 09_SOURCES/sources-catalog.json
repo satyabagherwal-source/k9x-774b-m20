@@ -3393,10 +3393,10 @@
     "repository": "skyhook-io/radar",
     "platform": "github",
     "sourceUrl": "https://github.com/skyhook-io/radar",
-    "sourceVersion": "2fa4ccf7",
+    "sourceVersion": "830d63a8",
     "license": "Apache-2.0",
-    "contentHash": "71a09be1a477c11bdcb6843cd036cb148fe6e926c8a6cdf3feaf56414f1e337e",
-    "lastHarvestedAt": "2026-11-03T21:44:52.920Z",
+    "contentHash": "aef741d42793c2e59f278d2167341fb2e01ae82cde9b5ec40bdead79914054c3",
+    "lastHarvestedAt": "2026-11-04T20:18:13.537Z",
     "learningId": "learn-github-skyhook-io-radar"
   },
   "mitmproxy-mitmproxy": {
@@ -11295,8 +11295,8 @@
     "sourceUrl": "https://huggingface.co/ccore/Qwen3.5-4B-3D-Coder",
     "sourceVersion": "hf-ccore-qwen3.5-4b-3d-coder",
     "license": "Open-Source",
-    "contentHash": "7e0fb81d86c198bd9082b1cfcc63189aa6a09bde7b07191132aacff72f7540c3",
-    "lastHarvestedAt": "2026-10-31T04:15:56.346Z",
+    "contentHash": "601c12eb95f9d7db49e8a4a815fa83b1af05977e7b46a713725059db787c93fa",
+    "lastHarvestedAt": "2026-11-04T20:18:09.960Z",
     "learningId": "learn-huggingface-ccore-qwen3-5-4b-3d-coder"
   },
   "agilerl-agilerl": {

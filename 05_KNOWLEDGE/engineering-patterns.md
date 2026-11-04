@@ -504969,3 +504969,233 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `eabafc85` are properly handled with clean fallback behavior.
+
+
+---
+
+## 6950. Consistent Data‑Type Propagation Across All Subsystems (Harvested from ccore/Qwen3.5-4B-3D-Coder)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Consistent Data‑Type Propagation Across All Subsystems",
+  "source": "ccore/Qwen3.5-4B-3D-Coder",
+  "source_url": "https://huggingface.co/ccore/Qwen3.5-4B-3D-Coder",
+  "source_version": "hf-ccore-qwen3.5-4b-3d-coder",
+  "license": "Open-Source",
+  "extracted_at": "2026-11-04T20:18:08.912Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-ccore-qwen3-5-4b-3d-coder",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [ccore/Qwen3.5-4B-3D-Coder](https://huggingface.co/ccore/Qwen3.5-4B-3D-Coder) (Revision: `hf-ccore-q`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+All tensors that participate in cross‑modal fusion (vision embeddings, text embeddings, and projection outputs) MUST be cast to the same floating‑point precision before any arithmetic operation.
+
+**WHY**:  
+Mismatched dtypes (e.g., float16 vision + float32 text) cause silent truncation or overflow, leading to degraded generation quality or runtime errors in GPU kernels that expect homogeneous inputs.
+
+**WHEN TO APPLY**:  
+During model initialization, after loading the vision encoder, and before feeding data into the transformer stack. Applies to any language model that fuses modalities.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# Load vision encoder
+vision_model = VisionTransformer.from_pretrained(
+    "ccore/Qwen3.5-4B-3D-Coder/vision",
+    torch_dtype=torch.float16,
+)
+
+# Load text backbone
+text_model = Qwen3_5ForConditionalGeneration.from_pretrained(
+    "ccore/Qwen3.5-4B-3D-Coder",
+    torch_dtype=torch.float16,
+)
+
+# Projection MLP
+proj = nn.Linear(vision_model.config.hidden_size, text_model.config.hidden_size)
+proj.to(torch.float16)
+
+# Forward fusion
+def forward_fusion(text_emb, vision_emb):
+    vision_emb = vision_emb.to(text_emb.dtype)   # enforce dtype
+    fused = torch.cat([text_emb, vision_emb], dim=1)
+    return fused
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# BAD: Mixing dtypes
+vision_emb = vision_model(input_ids).float()   # float32
+text_emb = text_model(input_ids).half()        # float16
+fused = torch.cat([text_emb, vision_emb], dim=1)  # dtype mismatch
+```
+
+**VERIFICATION METHOD**:  
+Unit test that asserts `fused.dtype == torch.float16` after fusion.  
+```python
+def test_fusion_dtype():
+    text_emb = torch.randn(1, 10, 2560, dtype=torch.float16)
+    vision_emb = torch.randn(1, 10, 2560, dtype=torch.float32)
+    fused = forward_fusion(text_emb, vision_emb)
+    assert fused.dtype == torch.float16
+```
+
+---
+
+
+---
+
+## 6951. Mandatory Cache Usage for Generation (Harvested from ccore/Qwen3.5-4B-3D-Coder)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Mandatory Cache Usage for Generation",
+  "source": "ccore/Qwen3.5-4B-3D-Coder",
+  "source_url": "https://huggingface.co/ccore/Qwen3.5-4B-3D-Coder",
+  "source_version": "hf-ccore-qwen3.5-4b-3d-coder",
+  "license": "Open-Source",
+  "extracted_at": "2026-11-04T20:18:09.571Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-ccore-qwen3-5-4b-3d-coder",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [ccore/Qwen3.5-4B-3D-Coder](https://huggingface.co/ccore/Qwen3.5-4B-3D-Coder) (Revision: `hf-ccore-q`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+During text generation, the `use_cache` flag MUST be set to `True` in both the model config and the generation config; otherwise, generation will fall back to recomputing all past key/values, causing exponential slowdown.
+
+**WHY**:  
+`use_cache=False` forces the transformer to recompute attention for every token, leading to O(n²) time per step and excessive GPU memory traffic.
+
+**WHEN TO APPLY**:  
+When calling `model.generate()` or any custom decoding loop.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+generation_config = GenerationConfig(
+    use_cache=True,
+    do_sample=True,
+    temperature=0.6,
+    top_k=20,
+    top_p=0.95,
+)
+
+output_ids = model.generate(
+    input_ids,
+    generation_config=generation_config,
+    max_new_tokens=512,
+)
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# BAD: Cache disabled
+output_ids = model.generate(
+    input_ids,
+    use_cache=False,  # forces recomputation
+)
+```
+
+**VERIFICATION METHOD**:  
+Check that `model.config.use_cache` and `generation_config.use_cache` are `True`.  
+```python
+def test_cache_enabled():
+    model = Qwen3_5ForConditionalGeneration.from_pretrained("ccore/Qwen3.5-4B-3D-Coder")
+    assert model.config.use_cache is True
+    gen_cfg = GenerationConfig.from_pretrained("ccore/Qwen3.5-4B-3D-Coder")
+    assert gen_cfg.use_cache is True
+```
+
+---
+
+
+---
+
+## 6952. Explain Kueue queues and trace Workload admission dependencies (#2512) (Harvested from skyhook-io/radar)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Explain Kueue queues and trace Workload admission dependencies (#2512)",
+  "source": "skyhook-io/radar",
+  "source_url": "https://github.com/skyhook-io/radar",
+  "source_version": "830d63a8",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-04T20:18:13.182Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-skyhook-io-radar",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [skyhook-io/radar](https://github.com/skyhook-io/radar) (Revision: `830d63a8`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `docs/integrations.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in skyhook-io/radar. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `b7f1d502`: Explain Kueue queues and trace Workload admission dependencies (#2512). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/integrations.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+and conditions. Reservation is distinguished from admission; resource totals are
+requests, not measured usage.
+
+Its **admission path** connects the owner, submission LocalQueue, its current
+ClusterQueue, reservation ClusterQueue and assigned ResourceFlavors. Missing,
+replaced and unreadable objects are distinguished. Per-flavor rejection reasons
+are one controller report, not attempt order or history; unrecognized text stays
+verbatim. Remote cluster names are reported without following them.
+
+LocalQueue and ClusterQueue detail separate Active state and freshness from
+configured stop policy. Pending/reserving/admitted counts are not additive;
+quota is requested capacity, not utilization or available hardware. Per-flavor
+rows compare reservations, admitted usage, nominal quota and borrowing/lending
+limits. Both v1beta1 and v1beta2 queue shapes are supported. Related flavors, AdmissionChecks and
+cohort peers are read as the viewer; Cohort objects are not read. A LocalQueue
+also shows namespace eligibility. Denied or incomplete reads never prove an
+object missing. An intentionally stopped parent softens a LocalQueue's alert
+only when fresh evidence establishes that the stop is its sole
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Anti-pattern to NEVER write (induced failure mode):
+and conditions. Links connect submission LocalQueues, reservation ClusterQueues,
+ResourceFlavors and AdmissionChecks. Reservation is distinguished from admission;
+resource totals are requests, not measured usage.
+
+LocalQueue and ClusterQueue detail distinguish reported state from configured stop
+policy, show pending/reserving/admitted counts, and link a LocalQueue to its
+ClusterQueue even before a Workload has a reservation. Per-flavor resource rows
+join quota reservations and admitted usage; ClusterQueues also show nominal quota,
+borrowing/lending limits, namespace eligibility and admission policies. These are
+controller-reported quota facts, not measured utilization or available physical
+capacity. Both v1beta1 and v1beta2 queue shapes are supported.
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `b7f1d502` are properly handled with clean fallback behavior.

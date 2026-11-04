@@ -7316,3 +7316,5 @@
 | `CYCLE-20261104-WG3S` | `2026-11-04T20:10:03.784Z` | `amir1376/ab-download-manager` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6948` | Yes (`711bf781...`) |
 | `CYCLE-20261104-WLNN` | `2026-11-04T20:10:10.979Z` | `milvus-io/milvus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6949` | Yes (`ac3186c2...`) |
 | `CYCLE-20261104-XLAO` | `2026-11-04T20:10:57.168Z` | `baidu/Unlimited-OCR-2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baidu-unlimited-ocr-2-learnings.md` | Yes (`92fdb6db...`) |
+| `CYCLE-20261104-6V8K` | `2026-11-04T20:18:09.956Z` | `ccore/Qwen3.5-4B-3D-Coder` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6950, Rule EXISTING, Rule 6951` | Yes (`601c12eb...`) |
+| `CYCLE-20261104-6XZX` | `2026-11-04T20:18:13.533Z` | `skyhook-io/radar` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6952` | Yes (`aef741d4...`) |

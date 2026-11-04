@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-04T20:10:59.724Z",
-    "lastVerified": "2026-11-04T20:10:59.724Z",
+    "lastChecked": "2026-11-04T20:18:16.104Z",
+    "lastVerified": "2026-11-04T20:18:16.104Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -144,8 +144,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-04T19:48:07.329Z",
-    "lastVerified": "2026-11-04T19:48:07.329Z",
+    "lastChecked": "2026-11-04T20:18:14.698Z",
+    "lastVerified": "2026-11-04T20:18:14.698Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -554,12 +554,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "surrealdb-surrealdb": {
-    "name": "surrealdb/surrealdb",
+    "name": "surrealdb",
     "officialUrl": "https://github.com/surrealdb/surrealdb",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-03T20:49:39.406Z",
-    "lastVerified": "2026-11-03T20:49:39.406Z",
+    "lastChecked": "2026-11-04T20:18:12.207Z",
+    "lastVerified": "2026-11-04T20:18:12.207Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-surrealdb-surrealdb",
@@ -568,7 +568,8 @@
     "recentFixesCount": 12,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "9577ac5f"
   },
   "hf-baai-bge-small-en-v1.5": {
     "name": "BAAI/bge-small-en-v1.5",
@@ -1575,9 +1576,9 @@
   "lunasec-io-lunasec": {
     "name": "lunasec",
     "officialUrl": "https://github.com/lunasec-io/lunasec",
-    "lastChecked": "2026-11-04T16:34:24.541Z",
+    "lastChecked": "2026-11-04T20:18:09.635Z",
     "revisionIdentifier": "c6bb0762",
-    "lastVerified": "2026-11-04T16:34:24.541Z"
+    "lastVerified": "2026-11-04T20:18:09.635Z"
   },
   "valeriansaliou-sonic": {
     "name": "sonic",
@@ -3473,14 +3474,14 @@
     "officialUrl": "https://github.com/skyhook-io/radar",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-03T21:44:50.604Z",
-    "lastVerified": "2026-11-03T21:44:50.604Z",
+    "lastChecked": "2026-11-04T20:18:12.607Z",
+    "lastVerified": "2026-11-04T20:18:12.607Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-skyhook-io-radar",
-    "contentHash": "71a09be1a477c11bdcb6843cd036cb148fe6e926c8a6cdf3feaf56414f1e337e",
+    "contentHash": "aef741d42793c2e59f278d2167341fb2e01ae82cde9b5ec40bdead79914054c3",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -6660,12 +6661,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "insertkoinio-koin": {
-    "name": "InsertKoinIO/koin",
+    "name": "koin",
     "officialUrl": "https://github.com/InsertKoinIO/koin",
     "sourceType": "github",
     "technology": "Kotlin",
-    "lastChecked": "2026-10-31T13:00:01.998Z",
-    "lastVerified": "2026-10-31T13:00:01.998Z",
+    "lastChecked": "2026-11-04T20:18:04.621Z",
+    "lastVerified": "2026-11-04T20:18:04.621Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-insertkoinio-koin",
@@ -6674,7 +6675,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "d486a5e8"
   },
   "argoproj-argo-workflows": {
     "name": "argoproj/argo-workflows",
@@ -7715,9 +7717,9 @@
   "str4d-rage": {
     "name": "rage",
     "officialUrl": "https://github.com/str4d/rage",
-    "lastChecked": "2026-11-03T15:54:24.118Z",
+    "lastChecked": "2026-11-04T20:17:59.576Z",
     "revisionIdentifier": "b5b68c4f",
-    "lastVerified": "2026-11-03T15:54:24.118Z"
+    "lastVerified": "2026-11-04T20:17:59.576Z"
   },
   "hf-autotrust-glm5.3-flash-e224-dgx-spark": {
     "name": "autotrust/GLM5.3-Flash-E224-DGX-Spark",
@@ -12930,12 +12932,12 @@
     "officialUrl": "https://huggingface.co/ccore/Qwen3.5-4B-3D-Coder",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-31T04:15:50.525Z",
-    "lastVerified": "2026-10-31T04:15:50.525Z",
+    "lastChecked": "2026-11-04T20:18:02.502Z",
+    "lastVerified": "2026-11-04T20:18:02.502Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-ccore-qwen3-5-4b-3d-coder",
-    "contentHash": "7e0fb81d86c198bd9082b1cfcc63189aa6a09bde7b07191132aacff72f7540c3",
+    "contentHash": "601c12eb95f9d7db49e8a4a815fa83b1af05977e7b46a713725059db787c93fa",
     "promotedRulesCount": 3,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

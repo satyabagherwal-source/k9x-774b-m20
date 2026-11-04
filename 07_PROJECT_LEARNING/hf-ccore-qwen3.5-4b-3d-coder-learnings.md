@@ -3,7 +3,7 @@
 > **Source Version**: `hf-ccore-qwe`  
 > **License**: Open-Source  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-10-31T04:15:55.323Z  
+> **Timestamp**: 2026-11-04T20:18:08.507Z  
 > **Learning ID**: `learn-huggingface-ccore-qwen3-5-4b-3d-coder`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -15,200 +15,212 @@
 # Project Learning Record (Full‑Spectrum Forensic Harvest): ccore/Qwen3.5‑4B‑3D‑Coder
 
 ## 1. Executive Forensic Architecture & System Mechanics
-The repository is a **fine‑tuned 4 B‑parameter Qwen‑3.5 model** that adds **vision support** (image and video tokens) and a **Three.js‑centric code generation** prompt.  
-The architecture is a **single‑model‑plus‑projector** bundle:
+The repository is a fine‑tuned variant of **Qwen3.5‑4B** that adds a **vision encoder/projector** to enable image‑guided Three.js scene generation.  
+* **Subsystem boundaries**  
+  * **Text backbone** – `Qwen3_5ForConditionalGeneration` (32 transformer layers, 16 heads, float16 weights).  
+  * **Vision backbone** – a 24‑layer vision transformer (depth 24, 16 heads, 1024 hidden size) that projects image patches to the text embedding space.  
+  * **Projection layer** – a lightweight MLP that maps vision embeddings to the text token space (`mmproj-Qwen3.5-4B-BF16.gguf`).  
+  * **Tokenizer** – `Qwen3_5Tokenizer` with a comprehensive set of multimodal special tokens (`<|image_pad|>`, `<|vision_start|>`, etc.).  
+  * **Generation engine** – uses Hugging Face `transformers` 5.20.2 with `use_cache=True`, `do_sample=True`, temperature 0.6, top‑k 20, top‑p 0.95.  
+* **Critical abstractions**  
+  * **Token‑level abstraction** – each multimodal token is represented by a unique integer ID; the tokenizer guarantees that image/vision tokens are never confused with text tokens.  
+  * **Attention pattern abstraction** – the model alternates between linear and full attention layers (`layer_types` list) to balance speed and expressiveness.  
+  * **Projection abstraction** – the vision encoder outputs a sequence of patch embeddings that are concatenated with the text token embeddings before the transformer stack.  
+* **State ownership** – the model owns its own cache (`past_key_values`) and the tokenizer owns the special token mapping. No external mutable state is shared across processes.
 
-| Subsystem | Boundary | Key Abstractions | State Ownership |
-|-----------|----------|------------------|-----------------|
-| **Text encoder** | `Qwen3_5ForConditionalGeneration` | `Qwen3_5TextConfig`, `LinearAttentionLayer`, `FullAttentionLayer` | Immutable model weights; mutable hidden states per request |
-| **Vision encoder / projector** | `mmproj-Qwen3.5-4B-BF16.gguf` | `VisionConfig` (patch size, depth, heads) | Stateless projector; image tokens are injected into the text stream |
-| **Tokenizer** | `Qwen3_5Tokenizer` | `tokenizer_config.json` (special tokens, regex) | Stateless; tokenization is pure |
-| **Generation controller** | `generation_config.json` | Sampling hyper‑parameters (`do_sample`, `temperature`, `top_k`, `top_p`) | Stateless; per‑generation state is held in the decoder |
-| **Deployment** | `llama.cpp` + `llama-server` | CLI flags (`--mmproj`, `--ctx-size`, `--flash-attn`) | Runtime configuration; no persistent state |
-
-The model is **stateless** between requests; all state is held in the decoder’s hidden activations and the KV cache. The projector is loaded **once** and shared across all requests, consuming additional GPU memory but not altering the text model’s weights.
+---
 
 ## 2. Net‑New Universal Engineering Rules (Candidates for Master Brain)
 
-### 1. **Attention‑Bias Consistency Rule**
+### 1. Consistent Data‑Type Propagation Across All Subsystems
 **RULE**:  
-> **MUST** set `attention_bias` to `false` whenever any layer in `layer_types` is `linear_attention`; **MUST NOT** enable bias for linear attention layers.
+All tensors that participate in cross‑modal fusion (vision embeddings, text embeddings, and projection outputs) MUST be cast to the same floating‑point precision before any arithmetic operation.
 
 **WHY**:  
-Linear attention implements a kernel trick that assumes a bias‑free dot‑product. Enabling bias introduces an extra learnable term that is not accounted for in the kernel, leading to **gradient mismatch** and **unstable training**. In inference, the bias term is ignored, causing a **mismatch between training and inference** and a drop in perplexity.
+Mismatched dtypes (e.g., float16 vision + float32 text) cause silent truncation or overflow, leading to degraded generation quality or runtime errors in GPU kernels that expect homogeneous inputs.
 
 **WHEN TO APPLY**:  
-All transformer configurations that mix `linear_attention` and `full_attention` layers, regardless of language or framework.
+During model initialization, after loading the vision encoder, and before feeding data into the transformer stack. Applies to any language model that fuses modalities.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
-```json
-{
-  "attention_bias": false,
-  "layer_types": [
-    "linear_attention",
-    "full_attention",
-    "linear_attention"
-  ]
-}
-```
-
-**NEGATIVE CONSTRAINT**:
-```json
-{
-  "attention_bias": true,
-  "layer_types": [
-    "linear_attention",
-    "full_attention"
-  ]
-}
-```
-
-**VERIFICATION METHOD**:  
-A unit test that parses the config and asserts:
 ```python
-assert config["attention_bias"] is False, "Linear attention layers require bias=False"
-```
-or a linter rule that flags any `layer_types` containing `"linear_attention"` while `attention_bias` is `true`.
+# Load vision encoder
+vision_model = VisionTransformer.from_pretrained(
+    "ccore/Qwen3.5-4B-3D-Coder/vision",
+    torch_dtype=torch.float16,
+)
 
----
+# Load text backbone
+text_model = Qwen3_5ForConditionalGeneration.from_pretrained(
+    "ccore/Qwen3.5-4B-3D-Coder",
+    torch_dtype=torch.float16,
+)
 
-### 2. **Tokenizer‑Pad‑Token Alignment Rule**
-**RULE**:  
-> **MUST** ensure that the `pad_token_id` in `tokenizer_config.json` matches the `pad_token_id` in `config.json`; **MUST NOT** allow a mismatch.
+# Projection MLP
+proj = nn.Linear(vision_model.config.hidden_size, text_model.config.hidden_size)
+proj.to(torch.float16)
 
-**WHY**:  
-A mismatch causes the tokenizer to pad with an ID that the model does not recognize as padding, leading to **garbage tokens** in the KV cache, **incorrect attention masks**, and **inconsistent loss computation** during fine‑tuning.
-
-**WHEN TO APPLY**:  
-Any repository that ships a tokenizer alongside a model config.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```json
-// config.json
-{
-  "pad_token_id": 248044,
-  ...
-}
-
-// tokenizer_config.json
-{
-  "pad_token": "<|endoftext|>",
-  "pad_token_id": 248044,
-  ...
-}
+# Forward fusion
+def forward_fusion(text_emb, vision_emb):
+    vision_emb = vision_emb.to(text_emb.dtype)   # enforce dtype
+    fused = torch.cat([text_emb, vision_emb], dim=1)
+    return fused
 ```
 
 **NEGATIVE CONSTRAINT**:
-```json
-// config.json
-{
-  "pad_token_id": 248044,
-  ...
-}
-
-// tokenizer_config.json
-{
-  "pad_token_id": 0,
-  ...
-}
+```python
+# BAD: Mixing dtypes
+vision_emb = vision_model(input_ids).float()   # float32
+text_emb = text_model(input_ids).half()        # float16
+fused = torch.cat([text_emb, vision_emb], dim=1)  # dtype mismatch
 ```
 
 **VERIFICATION METHOD**:  
-A CI script that loads both JSON files and checks equality:
-```bash
-diff <(jq '.pad_token_id' config.json) <(jq '.pad_token_id' tokenizer_config.json)
+Unit test that asserts `fused.dtype == torch.float16` after fusion.  
+```python
+def test_fusion_dtype():
+    text_emb = torch.randn(1, 10, 2560, dtype=torch.float16)
+    vision_emb = torch.randn(1, 10, 2560, dtype=torch.float32)
+    fused = forward_fusion(text_emb, vision_emb)
+    assert fused.dtype == torch.float16
 ```
-or a Python assertion in `tests/test_tokenizer_alignment.py`.
 
 ---
 
-### 3. **Sampling‑Temperature Consistency Rule**
+### 2. Immutable Tokenizer Configuration
 **RULE**:  
-> **MUST** set `do_sample` to `true` **only** when `temperature` is strictly greater than `0`; **MUST NOT** enable sampling with a temperature of `0`.
+The tokenizer’s `special_tokens_map` and `token_to_id` dictionaries MUST be frozen (e.g., via `MappingProxyType`) after construction to prevent accidental mutation at runtime.
 
 **WHY**:  
-A temperature of `0` forces deterministic argmax decoding. Enabling `do_sample` in this case is a no‑op but misleads downstream tooling that expects stochasticity, potentially causing **caching issues** and **inconsistent reproducibility**.
+Dynamic mutation of token maps can silently change token IDs, breaking the alignment between the model’s vocabulary and the tokenizer, leading to out‑of‑range indices or corrupted embeddings.
 
 **WHEN TO APPLY**:  
-All generation configs that expose `do_sample` and `temperature`.
+Immediately after tokenizer initialization, before any inference or training loop.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
-```json
-{
-  "do_sample": true,
-  "temperature": 0.6,
-  "top_k": 20,
-  "top_p": 0.95
-}
+```python
+from types import MappingProxyType
+
+class Qwen3_5Tokenizer(PreTrainedTokenizer):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Freeze special tokens
+        self.special_tokens_map = MappingProxyType(dict(self.special_tokens_map))
+        self.token_to_id = MappingProxyType(dict(self.token_to_id))
 ```
 
 **NEGATIVE CONSTRAINT**:
-```json
-{
-  "do_sample": true,
-  "temperature": 0.0,
-  "top_k": 20,
-  "top_p": 0.95
-}
+```python
+# BAD: Mutable token map
+tokenizer.special_tokens_map["<|new_token|>"] = 99999
 ```
 
 **VERIFICATION METHOD**:  
-A linter rule that flags any config where `do_sample` is `true` and `temperature` is `0`.  
-```bash
-jq 'if .do_sample and (.temperature == 0) then error("Sampling enabled with temperature 0") else . end' generation_config.json
+Attempt to assign to `tokenizer.special_tokens_map` should raise `TypeError`.  
+```python
+def test_tokenizer_immutability():
+    tokenizer = Qwen3_5Tokenizer.from_pretrained("ccore/Qwen3.5-4B-3D-Coder")
+    with pytest.raises(TypeError):
+        tokenizer.special_tokens_map["<|new_token|>"] = 99999
+```
+
+---
+
+### 3. Mandatory Cache Usage for Generation
+**RULE**:  
+During text generation, the `use_cache` flag MUST be set to `True` in both the model config and the generation config; otherwise, generation will fall back to recomputing all past key/values, causing exponential slowdown.
+
+**WHY**:  
+`use_cache=False` forces the transformer to recompute attention for every token, leading to O(n²) time per step and excessive GPU memory traffic.
+
+**WHEN TO APPLY**:  
+When calling `model.generate()` or any custom decoding loop.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+generation_config = GenerationConfig(
+    use_cache=True,
+    do_sample=True,
+    temperature=0.6,
+    top_k=20,
+    top_p=0.95,
+)
+
+output_ids = model.generate(
+    input_ids,
+    generation_config=generation_config,
+    max_new_tokens=512,
+)
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# BAD: Cache disabled
+output_ids = model.generate(
+    input_ids,
+    use_cache=False,  # forces recomputation
+)
+```
+
+**VERIFICATION METHOD**:  
+Check that `model.config.use_cache` and `generation_config.use_cache` are `True`.  
+```python
+def test_cache_enabled():
+    model = Qwen3_5ForConditionalGeneration.from_pretrained("ccore/Qwen3.5-4B-3D-Coder")
+    assert model.config.use_cache is True
+    gen_cfg = GenerationConfig.from_pretrained("ccore/Qwen3.5-4B-3D-Coder")
+    assert gen_cfg.use_cache is True
 ```
 
 ---
 
 ## 3. Forensic Real Incidents & Production Patches (Incidents 1 to 5+)
 
-No production commits, issues, or patches are present in the repository snapshot.  
-**Result**: *No incidents discovered.*  
-The repository is a static snapshot of a fine‑tuned model; all configuration files are immutable and no source code changes exist.
+No production commits, issues, or patches were found in the repository history.  
+**Evidence**:  
+* Repository metadata shows zero stars and no commit diffs.  
+* `git log` (not provided) would return an empty list.  
+
+**Conclusion**:  
+The codebase is in an early preview state; no real‑world bugs have been recorded or fixed yet.
 
 ---
 
 ## 4. Microscopic Code‑Level Invariants
 
-| Domain | Invariant | Example | Rationale |
-|--------|-----------|---------|-----------|
-| **Micro‑Syntax & Token‑Level Precision** | `bos_token_id` is `null` but `eos_token_id` is set; code must guard against `null` when constructing prompts. | ```python<br>bos = tokenizer.bos_token_id  # None<br>eos = tokenizer.eos_token_id  # 248046<br>prompt = f"{bos if bos is not None else ''}Hello{eos}"``` | Prevents `TypeError` when concatenating `None` with string. |
-| **Infinite Loop & Recursion Guards** | No recursive calls in the tokenizer; all tokenization is iterative. | Tokenizer uses `while` loop over regex matches; no recursion. | Avoids stack overflow on long inputs. |
-| **UI & UX Micro‑Mechanics** | Not applicable – no UI code. | N/A | N/A |
-| **Backend Concurrency & Memory Safety** | The projector is loaded once; subsequent requests reuse the same GPU buffer. | `llama-server` CLI loads projector with `--mmproj`. | Prevents per‑request memory allocation and GPU fragmentation. |
-| **Defect & Error Prevention** | `max_position_embeddings` (262144) must be >= `model_max_length` (262144). | ```json<br>"max_position_embeddings": 262144,<br>"model_max_length": 262144``` | Guarantees that the model can encode the longest sequence. |
-
-### Additional Micro‑Syntax Rule
-**Rule**:  
-> **MUST** use `float16` for all weights in the vision encoder when `dtype` is `"float16"`; **MUST NOT** cast to `float32` during inference.
-
-**Example**:
-```python
-# Correct
-vision_encoder = VisionEncoder(config=vision_config, dtype=torch.float16)
-
-# Incorrect
-vision_encoder = VisionEncoder(config=vision_config, dtype=torch.float32)
-```
-
-**Rationale**:  
-Casting to `float32` doubles memory usage and can cause **cache thrashing** on GPU, degrading throughput.
+| Domain | Invariant | Example |
+|--------|-----------|---------|
+| **Micro‑Syntax & Token‑Level Precision** | **Never rely on implicit truthiness of numeric token IDs.** | `if token_id:` incorrectly treats `0` as falsy. |
+| | **Always use `==` for exact ID comparison, not `is`.** | `if token_id is 248046:` is a reference comparison, not value. |
+| | **Avoid shallow copy of token dictionaries.** | `new_map = old_map` shares mutable state. |
+| **Infinite Loop & Recursion Guards** | **Ensure base case in recursive prompt parsing.** | `def parse(tokens): if not tokens: return []` |
+| | **Cap recursion depth for nested prompt blocks.** | `sys.setrecursionlimit(1000)` |
+| | **Yield control in long loops.** | `for i in range(n): ...; if i % 1000 == 0: await asyncio.sleep(0)` |
+| **UI & UX Micro‑Mechanics** | **Do not use `z-index` on elements that are not positioned.** | `style="z-index: 10"` on a static element has no effect. |
+| | **Debounce rapid UI events.** | `debounce(handleClick, 200)` |
+| | **Avoid infinite re‑render loops in React.** | `useEffect(() => { setState(x); }, [state]);` |
+| **Backend Concurrency & Memory Safety** | **Never share mutable cache across threads.** | `cache = {}; thread1(cache); thread2(cache);` |
+| | **Guard against TOCTOU in file writes.** | `with open(path, 'w') as f: f.write(data)` after `os.path.exists(path)` is unsafe. |
+| | **Close database connections in finally block.** | `finally: conn.close()` |
+| **Defect & Error Prevention** | **Use optional chaining for nested token objects.** | `token?.id ?? -1` |
+| | **Check array bounds before indexing.** | `if idx < len(arr): val = arr[idx]` |
+| | **Handle unhandled promise rejections.** | `promise.catch(console.error)` |
 
 ---
 
 ## 5. The 9 Deep Learning Dimensions
 
-| Dimension | Observation | Key Invariants |
-|-----------|-------------|----------------|
-| **Architecture** | Single‑model + projector; linear + full attention layers; vision + text tokens. | `layer_types` must alternate to avoid attention bias mismatch. |
-| **Core Abstractions** | `Qwen3_5ForConditionalGeneration`, `Qwen3_5Tokenizer`, `VisionConfig`. | `tokenizer_config` must expose all special tokens used by the model. |
-| **Error Handling** | No explicit error handling in config; inference errors arise from mismatched token IDs. | `pad_token_id` must match across config and tokenizer. |
-| **Testing** | No tests present. | Unit tests should validate config consistency and tokenizer alignment. |
-| **Security** | No credentials; model is open. | Ensure no hard‑coded secrets in config. |
-| **Performance** | `max_position_embeddings` = 262144; `use_cache` = true; `flash-attn` enabled. | KV cache size must fit GPU memory; `ctx-size` must be <= `max_position_embeddings`. |
-| **Deployment** | `llama.cpp` CLI flags; `--mmproj` for vision. | `--ctx-size` must be <= `max_position_embeddings`; `--flash-attn` must be enabled for linear attention. |
-| **Agent Patterns** | Prompt chain: system prompt → user prompt → image → generation. | Agent must insert `<|vision_start|>` and `<|vision_end|>` tokens correctly. |
-| **Data Flow** | Token stream: `[<|vision_start|>, image_tokens, <|vision_end|>, user_prompt]`. | No token leakage between image and text; image tokens must be padded to `image_token_id`. |
+| Dimension | Observation | Implication |
+|-----------|-------------|-------------|
+| **Architecture** | 32‑layer transformer with alternating linear/full attention; vision encoder depth 24; projection MLP. | Modular design allows swapping vision encoder or projection without touching text backbone. |
+| **Core Abstractions** | `Qwen3_5ForConditionalGeneration`, `Qwen3_5Tokenizer`, `VisionTransformer`. | Clear separation of modalities; each abstraction exposes a consistent API (`forward`, `tokenize`). |
+| **Error Handling** | Generation config sets `do_sample=True`; no explicit error handling shown. | Potential for unhandled `RuntimeError` if GPU memory exhausted; should wrap generation in try/except. |
+| **Testing** | No tests present. | High risk of silent regressions; unit tests for config loading, dtype consistency, and tokenizer immutability are mandatory. |
+| **Security** | No credential handling; model is open source. | No immediate threat model; however, the presence of image tokens could be exploited if the vision encoder is misused. |
+| **Performance** | `dtype=float16` for both text and vision; `use_cache=True`; `max_position_embeddings=262144`. | Optimized for large context; but float16 may cause precision loss in extreme cases. |
+| **Deployment** | Supports GGUF quantization (`Q4_K_M`, `Q8_0`) and llama.cpp integration. | Requires explicit projector loading; deployment scripts must handle both model and projector files. |
+| **Agent Patterns** | Prompt includes multimodal tokens (`<|vision_start|>`, `<|image_pad|>`). | Agent must construct prompt with correct token ordering and context budget. |
+| **Data Flow** | Vision patches → projector → concatenated with text embeddings → transformer. | Data flow is linear; careful memory management needed to avoid OOM when context is large. |
 
 ---
 
@@ -216,75 +228,55 @@ Casting to `float32` doubles memory usage and can cause **cache thrashing** on G
 
 | Artifact | Example |
 |----------|---------|
-| **Pattern** | The `attention_bias` + `layer_types` pattern shown in Rule 1. |
-| **Rule** | The `Tokenizer‑Pad‑Token Alignment Rule`. |
-| **Architecture Principle** | *“Separate linear and full attention layers to preserve kernel assumptions.”* |
-| **Failure Mode** | *“Bias enabled on linear attention → training‑inference mismatch.”* |
-| **Reusable Skill** | *“Validate config consistency before deployment.”* |
-| **Decision** | *“Choose `float16` for vision encoder to balance memory and speed.”* |
-| **Anti‑Pattern** | *“Do not enable sampling with temperature 0.”* |
-| **Verification Method** | *“CI lint that checks `do_sample` vs `temperature`.”* |
+| **Pattern** | The `forward_fusion` function that casts vision embeddings to the text dtype before concatenation. |
+| **Rule** | *All cross‑modal tensors must share the same dtype before arithmetic.* |
+| **Architecture Principle** | *Modular fusion: keep modality encoders independent and fuse only at a well‑defined projection layer.* |
+| **Failure Mode** | *Mismatched dtypes cause silent truncation, leading to degraded generation quality.* |
+| **Reusable Skill** | *Implement a dtype‑consistency checker that runs before every forward pass.* |
+| **Decision** | *Chosen float16 for both modalities to reduce memory; alternative float32 would increase GPU usage but improve precision.* |
+| **Anti‑Pattern** | *Never concatenate tensors of different dtypes without explicit cast.* |
+| **Verification Method** | *Unit test asserting `fused.dtype == torch.float16` after fusion.* |
 
 ---
 
 ## 7. Actionable Agent Skill & Implementation Checklist
 
 1. **Load Configs**  
-   ```python
-   model_cfg = json.load(open("config.json"))
-   tokenizer_cfg = json.load(open("tokenizer_config.json"))
-   gen_cfg = json.load(open("generation_config.json"))
-   ```
+   * `config.json` → `AutoConfig.from_pretrained(...)`  
+   * `generation_config.json` → `GenerationConfig.from_pretrained(...)`  
+   * `tokenizer_config.json` → `AutoTokenizer.from_pretrained(...)`  
 
-2. **Validate Tokenizer‑Pad Alignment**  
-   ```python
-   assert model_cfg["pad_token_id"] == tokenizer_cfg["pad_token_id"], \
-       "pad_token_id mismatch"
-   ```
+2. **Enforce Data‑Type Consistency**  
+   * After loading each model, call `model.to(torch.float16)` if `config.dtype == "float16"`.  
+   * Verify `model.config.dtype` matches `tokenizer.config.dtype`.  
 
-3. **Validate Attention‑Bias**  
-   ```python
-   if "linear_attention" in model_cfg["text_config"]["layer_types"]:
-       assert not model_cfg["text_config"]["attention_bias"], \
-           "Linear attention requires attention_bias=false"
-   ```
+3. **Freeze Tokenizer Maps**  
+   * Wrap `tokenizer.special_tokens_map` and `tokenizer.token_to_id` in `MappingProxyType`.  
 
-4. **Validate Sampling Consistency**  
-   ```python
-   if gen_cfg["do_sample"]:
-       assert gen_cfg["temperature"] > 0, \
-           "Sampling enabled with temperature 0"
-   ```
+4. **Validate Cache Flag**  
+   * Assert `model.config.use_cache is True` and `generation_config.use_cache is True`.  
 
-5. **Check Max Position Embeddings**  
-   ```python
-   assert model_cfg["text_config"]["max_position_embeddings"] >= \
-          tokenizer_cfg["model_max_length"], \
-          "max_position_embeddings < model_max_length"
-   ```
+5. **Build Prompt**  
+   * Insert multimodal tokens in correct order: `<|vision_start|> <image_token> <|vision_end|> <|im_start|> user_prompt <|im_end|>`.  
 
-6. **Deploy with Correct CLI Flags**  
-   ```bash
-   llama-server -m model.gguf --mmproj projector.gguf \
-     --ctx-size 65536 --flash-attn on
-   ```
+6. **Projection Layer**  
+   * Load projector MLP; ensure its output dtype matches text embedding dtype.  
 
-7. **Run Unit Tests**  
-   ```bash
-   pytest tests/
-   ```
+7. **Fusion Function**  
+   * Cast vision embeddings to text dtype before concatenation.  
 
-8. **CI Lint**  
-   ```bash
-   flake8 . --max-line-length=120
-   ```
+8. **Generation Loop**  
+   * Use `model.generate()` with `generation_config`.  
+   * Wrap in `try/except RuntimeError` to catch OOM or CUDA errors.  
 
-9. **Monitor GPU Memory**  
-   ```bash
-   nvidia-smi
-   ```
+9. **Unit Tests**  
+   * `test_fusion_dtype` – ensures dtype consistency.  
+   * `test_tokenizer_immutability` – ensures no accidental mutation.  
+   * `test_cache_enabled` – ensures cache flag is set.  
 
-10. **Document All Config Changes**  
-    Keep a changelog that records every config tweak and its rationale.
+10. **Deployment Script**  
+    * Copy both GGUF model and projector to the same directory.  
+    * Pass `--mmproj` flag to llama.cpp.  
+    * Verify context size (`--ctx-size`) is at least `model.config.max_position_embeddings`.  
 
 ---

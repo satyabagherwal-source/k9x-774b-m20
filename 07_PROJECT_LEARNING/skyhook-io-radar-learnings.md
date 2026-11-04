@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/skyhook-io-radar-learnings.md`  
 > **Source**: github ([https://github.com/skyhook-io/radar](https://github.com/skyhook-io/radar))  
-> **Source Version**: `2fa4ccf7`  
+> **Source Version**: `830d63a8`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T21:44:52.159Z  
+> **Timestamp**: 2026-11-04T20:18:12.765Z  
 > **Learning ID**: `learn-github-skyhook-io-radar`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/skyhook-io-radar-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/skyhook-io/radar](https://github.com/skyhook-io/radar))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T21:44:50.604Z  
+> **Harvest Timestamp**: 2026-11-04T20:18:12.607Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The missing open-source Kubernetes UI with a built-in MCP server for AI agents. See what's broken, why, and what changed. Issues, Topology, event timeline, Helm, GitOps, live service traffic, and cluster audits - all in one Go binary.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: package.json, go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 4026 stars
+- **Stars / Engagement**: 4034 stars
 
 ---
 
@@ -2190,271 +2190,157 @@ func (s *Server) refreshAIEngine(ctx context.Context) {
 
 ```
 
-### Core Architecture Module: `packages/k8s-ui/src/components/logs/LogCore.tsx`
+### Core Architecture Module: `packages/k8s-ui/src/components/kueue/QueueEvidence.tsx`
 ```
-import { useRef, useCallback, useState, useMemo, useEffect, useLayoutEffect, type ReactNode } from 'react'
-import { Virtuoso, type VirtuosoHandle } from 'react-virtuoso'
-import { Play, Square, Download, FileDown, Search, X, Terminal, RotateCcw, ChevronUp, ChevronDown, ChevronRight, CaseSensitive, Regex, WrapText, Clock, Copy, Trash2, Filter, EyeOff, Highlighter, Braces, Palette, ListCollapse, Sun, Moon } from 'lucide-react'
-import type { LogEntry, LogLevel } from './useLogBuffer'
-import { useLogSearch, type LogSearchMode } from './useLogSearch'
-import { StructuredLogLine } from './StructuredLogLine'
-import { Tooltip } from '../ui/Tooltip'
-import { Input } from '../ui/Input'
-import { showApiError, showApiSuccess } from '../ui/Toast'
-import {
-  formatLogTimestamp,
-  highlightSearchMatches,
-  stripAnsi,
-  ansiToHtml,
-  type TimestampFormat,
-  TIMESTAMP_FORMAT_LABELS,
-} from '../../utils/log-format'
-import { getLogPalette, getLogLevelColor, type LogPalette } from './log-palette'
-import { associateContinuations, groupContinuations, type LogGroup } from '../../utils/log-level'
-import { copyText } from '../../utils/clipboard'
-import { useAnimatedUnmount } from '../../hooks/useAnimatedUnmount'
-import { TRANSITION_MENU, overlayExitMs, overlayTransitionStyle } from '../../utils/animation'
-import {
-  LOG_EXPORT_FORMAT_LABELS,
-  LOG_EXPORT_FORMATS,
-  previewLogExport,
-  serializeLogEntries,
-  type LogExportFormat,
-  type LogExportPayload,
-} from '../../utils/log-export'
+import type { ReactNode } from 'react'
+import { Badge } from '../ui/Badge'
+import { ResourceLink } from '../ui/drawer-components'
+import { TimeValue } from '../ui/ScheduleValue'
+import { FactGrid, FactRow, FactValue, type Fact } from '../facts'
+import type { StatusBadge } from '../resources/resource-utils'
+import { getAdmissionCheckStatus, getClusterQueueStatus, getKueueQueueCondition, isKueueConditionStale } from '../resources/resource-utils-kueue'
+import { describeKueuePolicy } from './policy'
+import { isDenied, unreadReason, type RelatedRead } from './related-read'
+import { namespaceEligibility } from './eligibility'
+import { KUEUE_GROUP } from './constants'
 
-/** Retained for consumers that already import it; the export module owns the definition. */
-export type DownloadFormat = LogExportFormat
+export type Navigate = (ref: { kind: string; namespace: string; name: string; group?: string }) => void
+
+/** One related object's name with what Radar's read of it found. Without a read, the name alone. */
+export function ReadState({ read, found }: { read?: RelatedRead; found?: ReactNode }) {
+  if (!read) return null
+  if (read.state === 'found') return <>{found ?? <Badge severity="neutral" size="sm">Found</Badge>}</>
+  if (read.state === 'not_found') return <Badge severity="error" size="sm">Not found</Badge>
+  if (read.state === 'unconfirmed') return <span className="text-xs text-theme-text-tertiary">This Radar can’t confirm whether it exists</span>
+  return <span className={isDenied(read) ? 'text-xs text-theme-text-secondary' : 'text-xs text-theme-text-tertiary'}>{read.state === 'loading' ? 'Checking…' : `Not read: ${unreadReason(read)}`}</span>
+}
+
+export function StatusPill({ status }: { status: StatusBadge }) {
+  return <Badge colorClass={status.color} size="sm">{status.text}</Badge>
+}
+
+export function ReportedActive({ data, status, children }: { data: any; status: StatusBadge; children?: ReactNode }) {
+  const condition = getKueueQueueCondition(data)
+  const generation = data?.metadata?.generation
+  if (!condition) {
+    return <div className="space-y-2 text-sm">
+      <div className="flex flex-wrap items-center gap-2"><StatusPill status={status} /></div>
+      <p className="text-theme-text-secondary">No Active condition reported.</p>
+      {children}
+    </div>
+  }
+  return <div className="space-y-2 text-sm">
+    <div className="flex flex-wrap items-center gap-2">
+      <StatusPill status={status} />
+      {condition.reason && !status.text.startsWith(condition.reason) && <code className="break-all text-xs text-theme-text-secondary">{condition.reason}</code>}
+    </div>
+    {condition.message && <p className="whitespace-pre-wrap break-words text-theme-text-primary">{condition.message}</p>}
+    <p className="text-xs text-theme-text-tertiary">
+      Active={condition.status}
+      {condition.lastTransitionTime && <> since <TimeValue timestamp={condition.lastTransitionTime} /></>}
+      {' · '}
+      {condition.observedGeneration ? `observed generation ${condition.observedGeneration} of ${generation ?? '?'}` : 'observed generation not reported'}
+    </p>
+    {children}
+  </div>
+}
+
+function count(value: unknown, source: string): Fact {
+  return typeof value === 'number'
+    ? { text: String(value), tone: 'neutral', source }
+    : { text: 'Not reported', tone: 'unknown', source }
+}
+
+/** Controller-reported Workload counts. Reserving includes admitted, so they never add up. */
+export function QueueCounts({ data, kind }: { data: any; kind: 'ClusterQueue' | 'LocalQueue' }) {
+  const source = `Reported in the ${kind}'s status`
+  return <div className="space-y-2">
+    <FactGrid>
+      <FactRow label="Pending"><FactValue fact={count(data?.status?.pendingWorkloads, source)} /></FactRow>
+      <FactRow label="Reserving quota"><FactValue fact={count(data?.status?.reservingWorkloads, source)} /></FactRow>
+      <FactRow label="Admitted"><FactValue fact={count(data?.status?.admittedWorkloads, source)} /></FactRow>
+    </FactGrid>
+    <p className="text-xs text-theme-text-tertiary">Reserving includes admitted Workloads, so these counts are not additive. Admission does not establish that Pods are running.</p>
+  </div>
+}
+
+export function ConfiguredStop({ data }: { data: any }) {
+  const raw = data?.spec?.stopPolicy
+  const policy = describeKueuePolicy(data?.apiVersion, 'stopPolicy', raw ?? 'None')
+  return <div className="space-y-1 text-sm">
+    <div className="flex flex-wrap items-baseline gap-2">
+      <span className="text-theme-text-tertiary">Stop policy</span>
+      <code className="text-theme-text-primary">{policy.raw}</code>
+      {raw == null && <span className="text-xs text-theme-text-tertiary">(not set)</span>}
+    </div>
+    <p className="text-theme-text-secondary">{policy.meaning ?? `Radar has no description of this value for ${data?.apiVersion ?? 'this API version'}.`}</p>
+  </div>
+}
+
+function ReportedMessage({ condition, generation }: { condition: any; generation?: number }) {
+  return <p className="whitespace-pre-wrap break-words text-xs text-theme-text-secondary">
+    {isKueueConditionStale(condition, generation) && <span className="text-theme-text-tertiary">Reported for generation {condition.observedGeneration} (now {generation}): </span>}
+    {condition.message}
+  </p>
+}
+
+export function ClusterQueueReadSummary({ name, read, onNavigate }: { name: string; read?: RelatedRead; onNavigate?: Navigate }) {
+  const parent = read?.state === 'found' ? read.object : undefined
+  const condition = parent ? getKueueQueueCondition(parent) : undefined
+  return <div className="min-w-0 space-y-1 text-sm">
+    <div className="flex flex-wrap items-center gap-2 break-all [&_button]:text-left">
+      <ResourceLink name={name} kind="clusterqueues" group={KUEUE_GROUP} onNavigate={onNavigate} />
+      <ReadState read={read} found={parent ? <StatusPill status={getClusterQueueStatus(parent)} /> : undefined} />
+    </div>
+    {parent && <p className="text-xs text-theme-text-secondary">
+      Read from the ClusterQueue{condition?.reason && condition.status !== 'True' ? `: ${condition.reason}${isKueueConditionStale(condition, parent.metadata?.generation) ? ' (stale)' : ''}` : ''}{parent.spec?.stopPolicy && parent.spec.stopPolicy !== 'None' ? ` · stop policy ${parent.spec.stopPolicy}` : ''}
+    </p>}
+    {parent && condition?.message && condition.status !== 'True' && <ReportedMessage condition={condition} generation={parent.metadata?.generation} />}
+  </div>
+}
 
 /**
- * `toolbarExtra` may be a plain ReactNode, or a function that receives the
- * current dark/light context so wrappers can produce palette-matched controls.
+ * Whether a namespace matches a ClusterQueue's namespaceSelector. The
+ * selector is only known from a ClusterQueue that was read; the namespace's
+ * labels are needed only when the selector has terms.
  */
-export type ToolbarExtraRenderer =
-  | ReactNode
-  | ((ctx: { isDark: boolean; palette: LogPalette }) => ReactNode)
-
-interface LogCoreProps {
-  entries: LogEntry[]
-  isFollowing?: boolean
-  onFollowingChange?: (following: boolean) => void
-  pendingLineCount?: number
-  retainedLineCount?: number
-  missingLineCount?: number
-  getRetainedEntries?: () => LogEntry[]
-  /**
-   * The unfiltered buffer, when the host filters `entries` before passing them
-   * (the workload viewer's pod picker), so that export's "All" describes the
-   * real buffer rather than the slice currently on screen.
-   */
-  allEntries?: LogEntry[]
-  isLoading: boolean
-  isStreaming: boolean
-  onStartStream?: () => void
-  onStopStream: () => void
-  onRefresh: () => void
-  /** Receives a finished payload — the viewer owns serialization so copy and download cannot diverge. */
-  onDownload: (payload: LogExportPayload) => void
-  onClear?: () => void
-  toolbarExtra?: ToolbarExtraRenderer
-  showPodName?: boolean
-  emptyMessage?: ReactNode
-  sourceUnavailable?: boolean
-  emptyCommand?: string | null
-  errorMessage?: string | null
-  /**
-   * Hard override for the viewer palette. When set, the viewer stays pinned to
-   * that mode and hides the in-viewer dark/light toggle. When undefined,
-   * the viewer manages its own palette via localStorage and the Sun/Moon button.
-   */
-  forceDark?: boolean
-  /**
-   * Palette to use when the user hasn't picked one with the Sun/Moon toggle
-   * (e.g. the host app's theme). Unlike `forceDark`, the toggle stays visible.
-   * Defaults to dark.
-   */
-  defaultDark?: boolean
-}
-
-interface LevelOption {
-  level: LogLevel
-  label: string
-  /** What the chip's lines are called in its tooltip */
-  noun: string
-}
-
-const LEVEL_OPTIONS: LevelOption[] = [
-  { level: 'error', label: 'ERR', noun: 'error logs' },
-  { level: 'warn', label: 'WARN', noun: 'warning logs' },
-  { level: 'info', label: 'INFO', noun: 'info logs' },
-  { level: 'debug', label: 'DBG', noun: 'debug logs' },
-  { level: 'unknown', label: 'OTHER', noun: 'lines with no level' },
-]
-
-function getLevelActiveColor(level: LogLevel, palette: LogPalette): string {
-  switch (level) {
-    case 'error': return palette.levelActiveError
-    case 'warn': return palette.levelActiveWarn
-    case 'info': return palette.levelActiveInfo
-    case 'debug': return palette.levelActiveDebug
-    default: return palette.levelActiveOther
+export function namespaceEligibilityFact({ clusterQueue, parent, namespaceRead }: { clusterQueue: string; parent?: RelatedRead; namespaceRead?: RelatedRead }): Fact {
+  const source = `ClusterQueue ${clusterQueue} namespaceSelector`
+  if (parent?.state !== 'found') {
+    const why = !parent ? 'Unknown: the ClusterQueue was not read'
+      : parent.state === 'loading' ? 'Checking the ClusterQueue…'
+        : parent.state === 'not_found' ? 'Unknown: the ClusterQueue was not found'
+          : `Unknown: ClusterQueue not read (${unreadReason(parent)})`
+    return { text: why, tone: 'unknown', source }
+  }
+  const selector = parent.object?.spec?.namespaceSelector
+  const labels = namespaceRead?.state === 'found' ? (namespaceRead.object?.metadata?.labels ?? {}) : undefined
+  const result = namespaceEligibility(selector, labels)
+  switch (result.state) {
+    case 'eligible':
+      return { text: result.basis === 'all' ? 'Eligible: the selector is empty ({}), so every namespace matches' : 'Eligible: its labels match the selector', tone: 'healthy', source }
+    case 'not_eligible':
+      return { text: result.basis === 'none' ? 'Not eligible: the ClusterQueue sets no namespaceSelector, so no namespace matches' : 'Not eligible: its labels don’t match the selector', tone: 'unhealthy', source }
+    default:
+      if (result.why === 'unsupported_operator') return { text: `Unknown: the selector uses operator ${result.operator || '(none)'}, which Radar doesn't evaluate`, tone: 'unknown', source }
+      if (namespaceRead?.state === 'loading') return { text: 'Checking the namespace…', tone: 'unknown', source }
+      return { text: namespaceRead?.state === 'not_found' ? 'Unknown: the Namespace was not found' : `Unknown: its labels weren’t read (${unreadReason(namespaceRead)})`, tone: 'unknown', source }
   }
 }
 
-const TIMESTAMP_FORMAT_ORDER: TimestampFormat[] = [
-  'time-local', 'time-utc', 'iso-local', 'iso-utc', 'relative', 'epoch',
-]
-
-export type StructuredMode = 'compact' | 'expanded' | 'raw'
-
-const STRUCTURED_MODE_ORDER: StructuredMode[] = ['compact', 'expanded', 'raw']
-
-const STRUCTURED_MODE_LABELS: Record<StructuredMode, string> = {
-  compact: 'Compact',
-  expanded: 'Expanded',
-  raw: 'Raw',
+export function AdmissionCheckRow({ name, onFlavors, read, onNavigate }: { name: string; onFlavors?: string[]; read?: RelatedRead; onNavigate?: Navigate }) {
+  const check = read?.state === 'found' ? read.object : undefined
+  const condition = check ? getKueueQueueCondition(check) : undefined
+  return <div className="min-w-0 space-y-1 text-sm">
+    <div className="flex flex-wrap items-center gap-2 break-all [&_button]:text-left">
+      <ResourceLink name={name} kind="admissionchecks" group={KUEUE_GROUP} onNavigate={onNavigate} />
+      <ReadState read={read} found={check ? <StatusPill status={getAdmissionCheckStatus(check)} /> : undefined} />
+    </div>
+    <p className="break-words text-xs text-theme-text-secondary">{onFlavors?.length ? `Applies to flavors: ${onFlavors.join(', ')}` : 'Applies to all flavors'}</p>
+    {condition?.message && condition.status !== 'True' && <ReportedMessage condition={condition} generation={check.metadata?.generation} />}
+  </div>
 }
 
-const STRUCTURED_MODE_DESCRIPTIONS: Record<StructuredMode, string> = {
-  compact: 'Summary line with field count',
-  expanded: 'All fields shown as a tree',
-  raw: 'Original log line, unparsed',
-}
-
-const EMPTY_STATE_CLASS = 'flex-1 flex flex-col items-center justify-center gap-2 px-4 text-center'
-
-const TIMESTAMP_FORMAT_SHORT_LABELS: Record<TimestampFormat, string> = {
-  'time-local': 'Local time',
-  'time-utc': 'UTC time',
-  'iso-local': 'Full date',
-  'iso-utc': 'UTC date',
-  'relative': 'Relative',
-  'epoch': 'Unix time',
-}
-
-const TIP_DELAY = 150
-
-export function LogCore({
-  entries,
-  isFollowing: controlledFollowing,
-  onFollowingChange,
-  pendingLineCount = 0,
-  retainedLineCount,
-  missingLineCount = 0,
-  getRetainedEntries,
-  allEntries,
-  isLoading,
-  isStreaming,
-  onStartStream,
-  onStopStream,
-  onRefresh,
-  onDownload,
-  onClear,
-  toolbarExtra,
-  showPodName = false,
-  emptyMessage = 'No logs available',
-  sourceUnavailable = false,
-  emptyCommand,
-  errorMessage,
-  forceDark,
-  defaultDark = true,
-}: LogCoreProps) {
-  const virtuosoRef = useRef<VirtuosoHandle>(null)
-  const [localFollowing, setLocalFollowing] = useState(true)
-  const isFollowing = controlledFollowing ?? localFollowing
-  const followingRef = useRef(isFollowing)
-  const scrollerRef = useRef<HTMLElement | null>(null)
-  const resumeAtBottom = useRef(false)
-  const scrollbarDragging = useRef(false)
-  const scrollPosition = useRef<number | null>(null)
-  const setFollowing = useCallback((following: boolean) => {
-    followingRef.current = following
-    resumeAtBottom.current = false
-    setLocalFollowing(following)
-    onFollowingChange?.(following)
-  }, [onFollowingChange])
-  const touchY = useRef<number | null>(null)
-  const pauseFollowing = useCallback(() => setFollowing(false), [setFollowing])
-  useEffect(() => {
-    const handleSelectionChange = () => {
-      const selection = document.getSelection()
-      if (!followingRef.current || !selection || selection.isCollapsed || !selection.anchorNode || !scrollerRef.current?.contains(selection.anchorNode)) return
-      pauseFollowing()
-      const anchor = selection.anchorNode
-      const element = anchor instanceof Element ? anchor : anchor.parentElement
-      element?.closest('[data-index]')?.scrollIntoView({ block: 'nearest', inline: 'nearest' })
-    }
-    document.addEventListener('selectionchange', handleSelectionChange)
-    return () => document.removeEventListener('selectionchange', handleSelectionChange)
-  }, [pauseFollowing])
-  const themeLocked = typeof forceDark === 'boolean'
-  // Seed isDark: forceDark prop wins; else localStorage['radar-logs-dark'];
-  // else defaultDark (the host app's theme, dark if not given). See
-  // log-palette.ts for why the viewer is palette-driven
-  // instead of theme-token-driven.
-  const [isDark, setIsDark] = useState<boolean>(() => {
-    if (typeof forceDark === 'boolean') return forceDark
-    try {
-      const v = localStorage.getItem('radar-logs-dark')
-      if (v === 'false') return false
-      if (v === 'true') return true
-    } catch {}
-    return defaultDark
-  })
-  useEffect(() => {
-    if (typeof forceDark === 'boolean') {
-      setIsDark(forceDark)
-    }
-  }, [forceDark])
-  // Re-resolve whenever the host's hint changes, including when a forceDark pin
-  // is lifted: the user's saved pick wins, otherwise the host default.
-  useEffect(() => {
-    if (typeof forceDark === 'boolean') return
-    try {
-      const v = localStorage.getItem('radar-logs-dark')
-      if (v === 'true' || v === 'false') {
-        setIsDark(v === 'true')
-        return
-      }
-    } catch {}
-    setIsDark(defaultDark)
-  }, [defaultDark, forceDark])
-  const palette = useMemo(() => getLogPalette(isDark), [isDark])
-  const toggleDark = useCallback(() => {
-    if (themeLocked) return
-    setIsDark(prev => {
-      const next = !prev
-      try { localStorage.setItem('radar-logs-dark', String(next)) } catch {}
-      return next
-    })
-  }, [themeLocked])
-  const [wordWrap, setWordWrap] = useState(() => {
-    try { return localStorage.getItem('radar-logs-wrap') !== 'false' } catch { return true }
-  })
-  const [showTimestamps, setShowTimestamps] = useState(() => {
-    try { return localStorage.getItem('radar-logs-timestamps') !== 'false' } catch { return true }
-  })
-  const [tsFormat, setTsFormat] = useState<TimestampFormat>(() => {
-    try {
-      const v = localStorage.getItem('radar-logs-ts-format') as TimestampFormat | null
-      return v && TIMESTAMP_FORMAT_ORDER.includes(v) ? v : 'time-local'
-    } catch { return 'time-local' }
-  })
-  const [ansiEnabled, setAnsiEnabled] = useState(() => {
-    try { return localStorage.getItem('radar-logs-ansi') !== 'false' } catch { return true }
-  })
-  const [collapseStacks, setCollapseStacks] = useState(() => {
-    try { return localStorage.getItem('radar-logs-collapse-stacks') !== 'false' } catch { return true }
-  })
-  const [enabledLevels, setEnabledLevels] = useState<Set<LogLevel>>(
-    new Set(['error', 'warn', 'info', 'debug', 'unknown'])
-  )
-  const [showDownloadMenu, setShowDownloadMenu] = useState(false)
-  const downloadMenu = useAnimatedUnmount(showDownloadMenu, overlayExitMs('menu'))
-  const [exportScope, setExportScope] = useState<'visible' | 'all'>('visible')
-  const [exportFormat, setExportFormat] = useState<LogExportFormat>(() => {
-    try {
-      const v = localStorage.getItem('radar-logs-export-format') as LogExport
 ```
 
 
@@ -2484,673 +2370,425 @@ export function LogCore({
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e7cc3ebc` (2026-11-02)
-**Commit Message**: Issues: name a RollingUpdate surge as the cause of a one-replica ReadWriteOnce rollout deadlock (#2494)
+### Incident Patch 1: `b7f1d502` (2026-11-04)
+**Commit Message**: Explain Kueue queues and trace Workload admission dependencies (#2512)
 
-## Summary
+Queue detail should explain whether admission is intentionally stopped,
+blocked by configuration, or unknown because a dependency cannot be
+read. This adds that explanation and a navigable path from a Workload to
+its queues, reservation and assigned resources. RAD-813.
 
-The most common way people run into ReadWriteOnce trouble is a
-single-replica Deployment that mounts a ReadWriteOnce PVC and uses the
-default RollingUpdate strategy (maxSurge 25%, which resolves to one
-surge pod). Here is how it plays out:
+### Background
 
-1. A rollout starts the new pod before stopping the old one.
-2. If the scheduler puts the new pod on a different node, it hangs on a
-Multi-Attach error ("Waiting for detach" on Kubernetes 1.37+), because
-the old pod still has the volume attached on its node.
-3. With maxUnavailable 25% (0 at one replica), the old pod is only
-removed once the new one is ready, so the rollout never finishes.
+Kueue admits queued jobs against quota. A namespace’s LocalQueue points
+to a cluster-wide ClusterQueue; ResourceFlavors describe resource
+configurations, and AdmissionChecks are external readiness gates. Quota
+accounting describes requests, not physical capacity or measured usage.
 
-Before this change:
-- The pod's `VolumeMultiAttach` / `VolumeMount` row had no Cause in this
-case. #2461 named a cause only for Deployments with 2+ replicas that
-share the claim.
-- After the progress deadline, the Deployment's "Rollout stuck" row said
-"Inspect the new pods (image, readiness probe, resources)". It also
-appended "Use strategy: Recreate, a ReadWriteMany volume, or per-replica
-volumes", which points to storage changes a 1-replica De
+### What changes
 
-**File**: `internal/k8s/detect.go` (modified, +9/-2)
+- Queue detail puts controller-reported state beside configured policy,
+including generation freshness, readable policy meanings and Pending /
+Reserving / Admitted counts. Counts are not additive; missing counts say
+“Not reported.” Related flavors, checks and cohort peers carry their own
+read state.
+- LocalQueue detail follows its parent and checks namespace eligibility.
+Header, report and Conditions use a neutral tone for a stopped parent
+only when both reports are current and stopping is its sole reported
+cause. Broken, stale or unr
+
+**File**: `docs/integrations.md` (modified, +19/-11)
 ```diff
-@@ -362,7 +362,13 @@ func DetectProblemsInScope(cache *ResourceCache, namespace string, scope *Detect
+@@ -1725,17 +1725,25 @@ These integrations expose resource state and selected admission/execution relati
  
- 			if stuck != nil && replicaFailure == nil {
- 				message := stuck.Message
--				if detail := rolloutRWOVolumeDetail(cache, d); detail != "" {
-+				action := "Inspect the new pods (image, readiness probe, resources) — the rollout is waiting on them to become ready."
-+				// The pod row's RollingUpdate Multi-Attach cause, when it holds,
-+				// replaces the generic advice so both rows say the same thing.
-+				cause := rolloutMultiAttachCause(cache, d)
-+				if cause != "" {
-+					action = rollingUpdateRWOFix
-+				} else if detail := rolloutRWOVolumeDetail(cache, d); detail != "" {
- 					if message != "" {
- 						message += " " + detail
- 					} else {
-@@ -396,7 +402,8 @@ func DetectProblemsInScope(cache *ResourceCache, namespace string, scope *Detect
- 					Group:             "apps",
- 					Severity:          "critical",
- 					Reason:            "Rollout stuck",
--					Action:            "Inspect the new pods (image, readiness probe, resources) — the rollout is waiting on them to become ready.",
-+					Cause:             cause,
-+					Action:            action,
- 					Message:           message,
- 					Age:               timeutil.FormatAgeShort(now.Sub(d.CreationTimestamp.Time)),
- 					AgeSeconds:        int64(now.Sub(d.CreationTimestamp.Time).Seconds()),
+ Workload detail shows PodSet counts and controller-evaluated resource requests,
+ quota reservations and assigned flavors, admission-check states and messages,
+-and conditions. Links connect submission LocalQueues, reservation ClusterQueues,
+-ResourceFlavors and AdmissionChecks. Reservation is distinguished from admission;
+-resource totals are requests, not measured usage.
+-
+-LocalQueue and ClusterQueue detail distinguish reported state from configured stop
+-policy, show pending/reserving/admitted counts, and link a LocalQueue to its
+-ClusterQueue even before a Workload has a reservation. Per-flavor resource rows
+-join quota reservations and admitted usage; ClusterQueues also show nominal quota,
+-borrowing/lending limits, namespace eligibility and admission policies. These are
+-controller-reported quota facts, not measured utilization or available physical
+-capacity. Both v1beta1 and v1beta2 queue shapes are supported.
++and conditions. Reservation is distinguished from admission; resource totals are
++requests, not measured usage.
++
++Its **admission path** connects the owner, submission LocalQueue, its current
++ClusterQueue, reservation ClusterQueue and assigned ResourceFlavors. Missing,
++replaced and unreadable objects are distinguished. Per-flavor rejection reasons
++are one controller report, not attempt order or history; unrecognized text stays
++verbatim. Remote cluster names are reported without following them.
++
++LocalQueue and ClusterQueue detail separate Active state and freshness from
++configured stop policy. Pending/reserving/admitted counts are not additive;
++quota is requested capacity, not utilization or available hardware. Per-flavor
++rows compare reservations, admitted usage, nominal quota and borrowing/lending
++limits. Both v1beta1 and v1beta2 queue shapes are supported. Related flavors, AdmissionChecks and
++cohort peers are read as the viewer; Cohort objects are not read. A LocalQueue
++also shows namespace eligibility. Denied or incomplete reads never prove an
++object missing. An intentionally stopped parent softens a LocalQueue's alert
++only when fresh evidence establishes that the stop is its sole cause; table
++status retains the LocalQueue's own report.
+ 
+ AdmissionCheck detail distinguishes controller readiness from a Workload's check
+ result and links the built-in provisioning configuration. ProvisioningRequest
 ```
 
-**File**: `internal/k8s/detect_postbind_attach_test.go` (modified, +191/-0)
+**File**: `package-lock.json` (modified, +1/-1)
 ```diff
-@@ -10,6 +10,7 @@ import (
- 	storagev1 "k8s.io/api/storage/v1"
- 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
- 	"k8s.io/apimachinery/pkg/runtime"
-+	"k8s.io/apimachinery/pkg/util/intstr"
- 	"k8s.io/client-go/kubernetes/fake"
- )
- 
-@@ -352,3 +353,193 @@ func TestDetectPostBindProblems_MultiAttachForeignHolderHasNoCause(t *testing.T)
- 		t.Errorf("no cause expected for a foreign holder: %q / %q", p.Cause, p.Action)
- 	}
- }
+@@ -7050,7 +7050,7 @@
+         "vite": "^8.3.4"
+       },
+       "peerDependencies": {
+-        "@skyhook-io/k8s-ui": ">=1.18.2",
++        "@skyhook-io/k8s-ui": ">=1.19.1",
+         "@tanstack/react-query": ">=5",
+         "@xyflow/react": ">=12.0.0",
+         "clsx": ">=2",
+```
+
+**File**: `packages/k8s-ui/package.json` (modified, +6/-0)
+```diff
+@@ -20,6 +20,12 @@
+       "./src/components/resources/*.tsx"
+     ],
+     "./components/resources/KueueAdmissionSection": "./src/components/resources/KueueAdmissionSection.tsx",
++    "./components/kueue/AdmissionPath": "./src/components/kueue/AdmissionPath.tsx",
++    "./components/kueue/QueueEvidence": "./src/components/kueue/QueueEvidence.tsx",
++    "./components/kueue/*": [
++      "./src/components/kueue/*.ts",
++      "./src/components/kueue/*.tsx"
++    ],
+     "./components/resources/renderers/*": [
+       "./src/components/resources/renderers/*.tsx",
+       "./src/components/resources/renderers/*.ts"
+```
+
+**File**: `packages/k8s-ui/src/components/kueue/AdmissionPath.tsx` (added, +223/-0)
+```diff
+@@ -0,0 +1,223 @@
++import type { ReactNode } from 'react'
++import { Route } from 'lucide-react'
++import { ResourceLink, Section, ownerNote } from '../ui/drawer-components'
++import { gapReasonText } from '../../utils/read-actions'
++import { FactSource, FactValue } from '../facts'
++import type { Relationships } from '../../types'
++import { kindToPluralWithGroup } from '../../utils/navigation'
++import { isKueueConditionStale } from '../resources/resource-utils-kueue'
++import { localQueueStatusWithParent } from './queue-status'
++import { isFlavorAssignmentMessage, parseFlavorAttempts, type FlavorAttempt, type FlavorAttemptKind } from './flavors-tried'
++import { ClusterQueueReadSummary, ReadState, StatusPill, namespaceEligibilityFact, type Navigate } from './QueueEvidence'
++import { KUEUE_GROUP } from './constants'
++import type { RelatedRead } from './related-read'
 +
-+// rolloutClaimDeployment is sharedClaimDeployment at one replica mid-rollout:
-+// the holder web-a belongs to the old ReplicaSet web-0 (revision 1) and the
-+// stuck web-b to the current web-1 (revision 2).
-+func rolloutClaimDeployment(strategy appsv1.DeploymentStrategy) []runtime.Object {
-+	controller := true
-+	one := int32(1)
-+	depOwner := []metav1.OwnerReference{{APIVersion: "apps/v1", Kind: "Deployment", Name: "web", UID: "web-uid", Controller: &controller}}
-+	revision := func(rs *appsv1.ReplicaSet, hash, rev string) {
-+		rs.OwnerReferences = depOwner
-+		rs.Labels = map[string]string{appsv1.DefaultDeploymentUniqueLabelKey: hash}
-+		rs.Annotations = map[string]string{"deployment.kubernetes.io/revision": rev}
-+	}
-+	oldRS := &appsv1.ReplicaSet{ObjectMeta: metav1.ObjectMeta{Name: "web-0", Namespace: "redis"}}
-+	revision(oldRS, "0", "1")
-+	objs := sharedClaimDeployment(metav1.OwnerReference{APIVersion: "apps/v1", Kind: "ReplicaSet", Name: "web-0", Controller: &controller})
-+	for _, o := range objs {
-+		switch o := o.(type) {
-+		case *appsv1.Deployment:
-+			o.UID = "web-uid"
-+			o.Spec.Replicas = &one
-+			o.Spec.Strategy = strategy
-+		case *appsv1.ReplicaSet:
-+			revision(o, "1", "2")
-+		case *corev1.Pod:
-+			o.Labels = map[string]string{appsv1.DefaultDeploymentUniqueLabelKey: map[string]string{"web-a": "0", "web-b": "1"}[o.Name]}
-+		}
-+	}
-+	return append(objs, oldRS)
++/** Objects on a Workload's admission path that a host read as the viewer. */
++export interface KueueWorkloadReads {
++  localQueue?: RelatedRead
++  /** Keyed by ClusterQueue name: the LocalQueue's target and, when different, the one holding the reservation. */
++  clusterQueues?: Record<string, RelatedRead>
++  namespace?: RelatedRead
++  /** Keyed by ResourceFlavor name: the flavors the reservation assigned. */
++  flavors?: Record<string, RelatedRead>
 +}
 +
-+func rolloutPod(objs []runtime.Object, name string) *corev1.Pod {
-+	for _, o := range objs {
-+		if pod, ok := o.(*corev1.Pod); ok && pod.Name == name {
-+			return pod
-+		}
-+	}
-+	return nil
-+}
-+
-+func rollingUpdate(surge, unavailable intstr.IntOrString) appsv1.DeploymentStrategy {
-+	return appsv1.DeploymentStrategy{
-+		Type:          appsv1.RollingUpdateDeploymentStrategyType,
-+		RollingUpdate: &appsv1.RollingUpdateDeployment{MaxSurge: &surge, MaxUnavailable: &unavailable},
-+	}
-+}
-+
-+// The default strategy on one replica: the surge pod lands on another node
-+// while the old pod holds the volume, and the old pod waits for it forever.
-+func TestDetectPostBindProblems_MultiAttachNamesRollingUpdateSurge(t *testing.T) {
-+	defer ResetTestState()
-+	p := multiAttachProblem(t, rolloutClaimDeployment(rollingUpdate(intstr.FromString("25%"), intstr.FromString("25%"))))
-+	for _, want := range []string{"Deployment web uses RollingUpdate with maxSurge 25%", "ReadWriteOnce PVC data", "rollout is stuck"} {
-+		if !strings.Contains(p.Cause, want) {
-+			t.Errorf("cause missing %q: %q", want, p.Cause)
-+		}
-+	}
-+	if !strings.Contains(p.Action, "strategy: Recreate") || !strings.Contains(p.Action, "maxSurge: 0") {
-+		t.Errorf("action = %q", p.Action)
-+	}
-+}
-+
-+// maxUnavailable 1 lets the old pod stop, so the attach clears on its own: the
-+// surge is still the cause, but the rollout isn't called stuck.
-+func TestDetectPostBindProblems_MultiAttachSurgeWithUnavailableNotStuck(t *testing.T) {
-+	defer ResetTestState()
-+	p := multiAttachProblem(t, rolloutClaimDeployment(rollingUpdate(intstr.FromInt32(1), intstr.FromInt32(1))))
-+	if !strings.Contains(p.Cause, "maxSurge 1") || strings.Contains(p.Cause, "stuck") {
-+		t.Errorf("cause = %q", p.Cause)
-+	}
-+}
-+
-+// The old pod is already terminating, so the rollout isn't waiting on it.
-+func TestDetectPostBindProblems_MultiAttachTerminatingHolderNotStuck(t *testing.T) {
-+	defer ResetTestState()
-+	objs := rolloutClaimDeployment(rollingUpdate(intstr.FromString("25%"), intstr.FromString("25%")))
-+	deleted := metav1.Now()
-+	holder := rolloutPod(objs, "web-a")
-+	holder.DeletionTimestamp = &deleted
-+	holder.Finalizers = []string{"test/hold"}
-+	p := multiAttachProblem(t, objs)
-+	if !strings.Contains(p.Cause, "maxSurge 25%") || strings.Contains(p.Cause, "stuck") {
-+		t.Errorf("cause = %q", p.Cause)
-+	}
-+}
-+
-+// Without surge the old pod is deleted first, so a holder still terminating is
-+// not the rolling update's doing; a holder from the same ReplicaSet is not a
-+// rollout; a Deployment scaled to zero has neither. None gets a cause.
-+func TestDetectPostBindProblems_MultiAttachOneReplicaNoSurgeCause(t *testing.T) {
-+	controller := true
-+	for name, objs := range map[string][]runtime.Object{
-+		"maxSurge 0": rolloutClaimDeployment(rollingUpdate(intstr.FromInt32(0), intstr.FromInt32(1))),
-+		"recreate":   rolloutClaimDeployment(appsv1.DeploymentStrategy{Type: appsv1.RecreateDeploymentStrategyType}),
-+		// Scaled to zero: no replicas share the claim, and no rollout runs.
-+		"scaled to zero": func() []runtime.Object {
-+			zero := int32(0)
-+			objs := sharedClaimDeployment(metav1.OwnerReference{APIVersion: "apps/v1", 
-```
-
-**File**: `internal/k8s/detect_scheduling.go` (modified, +112/-16)
-```diff
-@@ -19,6 +19,7 @@ import (
- 	"k8s.io/apimachinery/pkg/labels"
- 	"k8s.io/apimachinery/pkg/runtime/schema"
- 	"k8s.io/apimachinery/pkg/types"
-+	"k8s.io/apimachinery/pkg/util/intstr"
- 
- 	capacitymodel "github.com/skyhook-io/radar/internal/capacity"
- 	"github.com/skyhook-io/radar/pkg/gkedisk"
-@@ -1666,19 +1667,49 @@ func attachEventVolume(message string) string {
- var multiAttachEventRE = regexp.MustCompile(`(?:Multi-Attach error|Waiting for detach) for volume "([^"]+)" Volume is already used by pod\(s\) (.+?)(?: and \d+ pod\(s\) in different namespaces)?$`)
- 
- // multiAttachSharedVolumeDiagnosis names the root cause of a Multi-Attach
--// failure on a Deployment pod when the volume is a ReadWriteOnce claim the
--// Deployment's replicas share and the pod holding it is another replica of the
--// same Deployment on a different node. Returns "" otherwise: a holder from
--// another workload, or a one-replica rollout surge (which the stuck-rollout
--// row explains), is not this cause.
-+// failure on a Deployment pod whose volume is a ReadWriteOnce claim the
-+// Deployment mounts, when the pod holding it is another pod of the same
-+// Deployment on a different node. With one replica, a holder from an older
-+// revision means a RollingUpdate surge started the new pod before the old one
-+// let go (see rolloutMultiAttachCause); with more, the replicas share the claim
-+// across nodes. Returns "" otherwise: a holder from another workload is not
-+// this cause.
- func multiAttachSharedVolumeDiagnosis(cache *ResourceCache, pod *corev1.Pod, deployment, eventMessage string) (cause, action string) {
-+	d, claim, holders := multiAttachDeploymentHolders(cache, pod, deployment, eventMessage)
-+	if len(holders) == 0 {
-+		return "", ""
-+	}
-+	replicas := schedDesiredReplicas(d.Spec.Replicas)
-+	if replicas == 1 {
-+		for _, holder := range holders {
-+			if cause := rollingUpdateMultiAttachCause(cache, d, claim, pod, holder); cause != "" {
-+				return cause, rollingUpdateRWOFix
-+			}
-+		}
-+		return "", ""
-+	}
-+	if replicas < 2 {
-+		return "", ""
-+	}
-+	// Pod and node names stay in the message: the cause must read the same
-+	// for every blocked replica so grouping keeps it.
-+	return fmt.Sprintf("Deployment %s runs %d replicas that share ReadWriteOnce PVC %s, which only one node can mount. A replica on another node holds it, so replicas on other nodes can't attach it.",
-+			d.Name, replicas, claim.Name),
-+		sharedRWOVolumeFix
-+}
-+
-+// multiAttachDeploymentHolders resolves a Multi-Attach event on a pod of the
-+// named Deployment: the Deployment, the ReadWriteOnce claim it mounts that the
-+// event names, and the event's holder pods that belong to the same Deployment
-+// and are still running on another node. Holders are nil when any of that doesn't hold.
-+func multiAttachDeploymentHolders(cache *ResourceCache, pod *corev1.Pod, deployment, eventMessage string) (*appsv1.Deployment, *corev1.PersistentVolumeClaim, []*corev1.Pod) {
- 	m := multiAttachEventRE.FindStringSubmatch(eventMessage)
- 	if m == nil || cache == nil || cache.Deployments() == nil || cache.Pods() == nil {
--		return "", ""
-+		return nil, nil, nil
- 	}
- 	d, err := cache.Deployments().Deployments(pod.Namespace).Get(deployment)
--	if err != nil || d == nil || schedDesiredReplicas(d.Spec.Replicas) < 2 {
--		return "", ""
-+	if err != nil || d == nil {
-+		return nil, nil, nil
- 	}
- 	var claim *corev1.PersistentVolumeClaim
- 	for _, pvc := range sharedRWOVolumeConflicts(cache, d) {
-@@ -1689,23 +1720,88 @@ func multiAttachSharedVolumeDiagnosis(cache *ResourceCache, pod *corev1.Pod, dep
- 		}
- 	}
- 	if claim == nil {
--		return "", ""
-+		return nil, nil, nil
- 	}
-+	var holders []*corev1.Pod
- 	for _, name := range strings.Split(m[2], ",") {
- 		holder, err := cache.Pods().Pods(pod.Namespace).Get(strings.TrimSpace(name))
--		if err != nil || holder == nil || holder.Spec.NodeName == "" || holder.Spec.NodeName == pod.Spec.NodeName {
-+		// A finished pod no longer holds the volume, though an old event names it.
-+		if err != nil || holder == nil || holder.Spec.NodeName == "" || holder.Spec.NodeName == pod.Spec.NodeName ||
-+			holder.Status.Phase == corev1.PodSucceeded || holder.Status.Phase == corev1.PodFailed {
- 			continue
- 		}
- 		if _, kind, owner := podOwnerKindName(cache, holder); kind != "Deployment" || owner != d.Name {
- 			continue
- 		}
--		// Pod and node names stay in the message: the cause must read the same
--		// for every blocked replica so grouping keeps it.
--		return fmt.Sprintf("Deployment %s runs %d replicas that share ReadWriteOnce PVC %s, which only one node can mount. A replica on another node holds it, so replicas on other nodes can't attach it.",
--				d.Name, schedDesiredReplicas(d.Spec.Replicas), claim.Name),
--			sharedRWOVolumeFix
-+		holders = append(holders, holder)
- 	}
--	return "", ""
-+	return d, claim, holders
-+}
-+
-+// rolloutMultiAttachCause returns the RollingUpdate cause for a stuck
-+// Deployment rollout: one of its pending pods has a Multi-Attach event that the
-+// pod's o
-```
-
----
-
-### Incident Patch 2: `3935aa78` (2026-11-01)
-**Commit Message**: AI investigations: a built-in example for people who haven't run one yet (#2486)
-
-## What
-
-Someone who has never run an AI investigation can now see what one
-produces before installing an agent or consenting to anything.
-
-While the investigation history is empty, the investigations panel
-offers **See an example investigation**:
-
-- in the panel's Home (the question composer or the "Choose an
-investigation" state), docked and on the full page;
-- in the history list's empty state when it opens as an overlay (on the
-full page the list sits beside Home, which already offers it);
-- on the agent setup step ("Set up AI investigations", the "not
-available right now" state and the broken `RADAR_AI_CLI_BIN` state),
-where no agent is installed and no history is fetched.
-
-After the user's first real run the link is gone. Only their own runs
-count: automatic runs and runs others shared with them (Radar Hub's
-Organization group) don't hide it. It is not offered while a start is
-waiting for the consent card. There is no dismiss control: it is a link
-in an empty state, not a banner.
-
-The example opens in the normal investigation view with an **Example**
-label at the top ("A sample investigation fro
-
-**File**: `docs/mcp.md` (modified, +2/-0)
-```diff
-@@ -516,6 +516,8 @@ The investigation's final JSON also carries the agent's case: `evidence` (up to
- 
- **Opening an investigation.** `POST /api/diagnose/runs` opens a run with a resource (`kind`, `group`, `namespace`, `name`), with the engineer's own description of a problem (`question`, at most 2000 characters, plus optional `namespaces` to start in and a `lookBack` of `15m`, `1h`, `6h` or `24h`), or with both. A backend that accepts a question says so with `questions: true` on each agent in `GET /api/agents`; the UI offers question entry only then. A question run is always a new run, never focused onto a live run for the same resource. Its opening turn uses `investigation.QuestionTaskPrompt` (no resource) or `investigation.TargetQuestionPrompt` (with a resource, whose health frame is context for the question rather than its agenda), under `investigation.QuestionSystemPrompt`; follow-ups, verification and explanations are unchanged, and the verdict and story contract below are the same. The namespaces are where the agent starts, not a boundary, and the look-back is relative to when the question was asked; every read stays live. A run that re-runs or narrows an earlier question passes that question's `askedAt` (RFC 3339, within the last 30 days) so its look-back still covers the same incident; the summary echoes `askedAt` when it differs from `createdAt`. A run with a question and no resource is read-only: an apply turn is refused, because a confirmed fix binds its writes to the run's resource — investigate the resource the fix changes, then apply it there. In the safeguarded profile that makes the run read-only end to end; a full-local agent keeps the mutation posture of its own configuration, as for any run.
- 
-+**The example investigation.** Until someone has an investigation of their own, the investigations panel's empty state and the agent setup step link to a bundled example: a finished run recorded on a test cluster (an Argo CD-managed Deployment whose image was edited outside Git to a tag that does not exist), with its identifying values replaced. It opens at the reserved run id `example` (`/investigations/example`, or `?ai-run=example` in the drawer) and replays from the frontend bundle through the same view as a saved run, so it needs no server, endpoint or agent and renders the same against any Radar a host embeds. It is labelled as a sample and is read-only: no follow-up, Apply, status check, explanation, re-run, copy or continue-in-agent, and its evidence cards do not open resources, because those resources are not in the viewer's cluster. The transcript lives in `web/src/components/diagnose/exampleInvestigation.events.json`; its test rejects the values it was recorded with and checks that every citation still lands on a card.
-+
- **The story contract.** The last fenced `json` block in the reply that carries a verdict field (`summary`, `root_cause`, `healthy`, `inconclusive`, `steps`, `evidence` or `remediation`) is the verdict and a divider, so a patch or spec quoted in a `json` fence inside the story is never mistaken for it: prose after it is the story (`report`), prose before it the agent's evidence ledger (`notes`, kept in Activity and never shown in Findings); a reply with nothing after the block keeps the older shape, where the prose before it is the story. The story may place a Radar result with `[[radar:evidence=N]]` alone on a line — N is the 0-based index into `evidence` — or mention it inline, which places the card under that paragraph when no own-line marker places it and otherwise references the placed card (with an arrow saying where it is); `[[radar:evidence=N|compact]]` places the card with its header and role label, without the agent's note; log cards also retain the last two selected log lines, and metrics cards their chart, folded unless it is the cause or the symptom. Each evidence item may carry a `gap`: the agent's own statement of what that result does not cover, rendered under its note. Only a result that returned data can be cited: a call that errored, was denied, or was truncated leaves its item `unlinked`. An inline mention past the placement cap renders as a chip that reveals the card under Captured results. Findings renders the placed result's card at that position from Radar's own record; the agent never authors a card. A marker inside a code span (which may run across lines within a paragraph), a code block, an indented code line or a blockquote is literal text. The ledger's own form, `[[radar:evidence-ref=ev_…]]`, is not a placement: the parser rewrites one that names a cited item to its index, strips any marker from `summary` and `root_cause`, and the renderer shows an unresolvable one as a citation Radar cannot identify rather than as text. At most 6 results are placed; later placements become references; a marker Radar cannot resolve renders a visible note at the sentence rather than vanishing, naming why: "unknown citation" (no such item), "unverified" (the se
-```
-
-**File**: `web/src/components/diagnose/AIMarkdown.tsx` (modified, +3/-0)
-```diff
-@@ -2,10 +2,13 @@ import { useState, type ComponentProps } from "react";
- import { AlertTriangle, Copy, Check } from "lucide-react";
- import { Markdown } from "../ui/Markdown";
- import { Tooltip } from "../ui/Tooltip";
-+import { useInExampleInvestigation } from "./exampleInvestigation";
- 
- export function CopyButton({ text, label }: { text: string; label: string }) {
-   const [state, setState] = useState<"idle" | "copied" | "failed">("idle");
-+  const inExample = useInExampleInvestigation();
-   const copied = state === "copied";
-+  if (inExample) return null;
-   return (
-     <Tooltip
-       content={
-```
-
-**File**: `web/src/components/diagnose/AgentSetupNotice.test.tsx` (modified, +17/-0)
-```diff
-@@ -55,4 +55,21 @@ describe("AgentSetupNotice", () => {
-     expect(html).not.toContain("Install one of these");
-     expect(html).toContain("Check again");
-   });
-+
-+  it("links to the example in every setup state that offers it", () => {
-+    for (const state of ["needs-install", "needs-restart"] as const) {
-+      expect(render(state)).not.toContain("See an example investigation");
-+      const html = renderToStaticMarkup(
-+        <AgentSetupNotice
-+          setupState={state}
-+          cliOverride={false}
-+          checkingAgents={false}
-+          agentsCheckFailed={false}
-+          recheckAgents={async () => {}}
-+          onOpenExample={() => {}}
-+        />,
-+      );
-+      expect(html).toContain("See an example investigation");
-+    }
-+  });
- });
-```
-
-**File**: `web/src/components/diagnose/AgentSetupNotice.tsx` (modified, +21/-3)
-```diff
-@@ -5,6 +5,7 @@ import { copyText } from "@skyhook-io/k8s-ui/utils/clipboard";
- import { SUPPORTED_AGENTS, type AgentInstall } from "./agentCatalog";
- import { type DiagnoseSetup } from "./DiagnoseContext";
- import { openExternal } from "../../utils/navigation";
-+import { ExampleInvestigationLink } from "./ExampleInvestigationLink";
- 
- const REPORT_URL =
-   "https://github.com/skyhook-io/radar/issues/new?labels=bug&template=bug_report.md";
-@@ -101,12 +102,15 @@ export function AgentSetupNotice({
-   checkingAgents,
-   agentsCheckFailed,
-   recheckAgents,
-+  onOpenExample,
- }: {
-   setupState: DiagnoseSetup;
-   cliOverride: boolean;
-   checkingAgents: boolean;
-   agentsCheckFailed: boolean;
-   recheckAgents: () => Promise<void>;
-+  /** Shows what an investigation produces before anything is set up. */
-+  onOpenExample?: () => void;
- }) {
-   // The state the panel was in when a check started. "Still…" is only true when
-   // the finished check left it there.
-@@ -123,7 +127,10 @@ export function AgentSetupNotice({
- 
-   if (cliOverride) {
-     return (
--      <SetupFrame title="Radar can't run your RADAR_AI_CLI_BIN">
-+      <SetupFrame
-+        title="Radar can't run your RADAR_AI_CLI_BIN"
-+        onOpenExample={onOpenExample}
-+      >
-         <p className="mt-1 text-sm text-theme-text-secondary">
-           Fix the path, or remove it and restart Radar.
-         </p>
-@@ -139,7 +146,10 @@ export function AgentSetupNotice({
-   }
-   if (setupState === "needs-restart") {
-     return (
--      <SetupFrame title="AI investigations aren't available right now">
-+      <SetupFrame
-+        title="AI investigations aren't available right now"
-+        onOpenExample={onOpenExample}
-+      >
-         <p className="mt-1 text-sm text-theme-text-secondary">
-           Try again in a moment.
-         </p>
-@@ -154,7 +164,7 @@ export function AgentSetupNotice({
-     );
-   }
-   return (
--    <SetupFrame title="Set up AI investigations">
-+    <SetupFrame title="Set up AI investigations" onOpenExample={onOpenExample}>
-       <p className="mt-1 text-sm text-theme-text-secondary">
-         Radar runs investigations through a coding agent CLI on your own
-         machine, with no Radar cloud and no API key. Install one of these:
-@@ -186,9 +196,11 @@ export function AgentSetupNotice({
- function SetupFrame({
-   title,
-   children,
-+  onOpenExample,
- }: {
-   title: string;
-   children: ReactNode;
-+  onOpenExample?: () => void;
- }) {
-   return (
-     <div className="mx-auto max-w-md px-1 py-6">
-@@ -199,6 +211,12 @@ function SetupFrame({
-         {title}
-       </h3>
-       {children}
-+      {onOpenExample && (
-+        <p className="mt-4 text-sm text-theme-text-secondary">
-+          Not sure yet?{" "}
-+          <ExampleInvestigationLink onOpen={onOpenExample} />
-+        </p>
-+      )}
-       <p className="mt-4 text-xs text-theme-text-tertiary">
-         Your agent runs locally. Resource details and logs are sent to its model
-         provider under your account, not to Radar.
-```
-
-**File**: `web/src/components/diagnose/DiagnoseContext.tsx` (modified, +8/-1)
-```diff
-@@ -40,6 +40,7 @@ import {
-   type ExecutionProfile,
- } from "../../api/diagnose";
- import { isQuestionOnly, runTargetKey } from "./target";
-+import { isExampleInvestigation } from "./exampleInvestigation";
- import { knownKindForPluralWithGroup } from "../../utils/navigation";
- 
- export interface Target {
-@@ -755,7 +756,11 @@ function RoutedDiagnoseProvider({
-         : undefined;
-       if (focusedID && listedFocusedRun) {
-         unavailableRunIDsRef.current.delete(focusedID);
--      } else if (focusedID && !unavailableRunIDsRef.current.has(focusedID)) {
-+      } else if (
-+        focusedID &&
-+        !isExampleInvestigation(focusedID) &&
-+        !unavailableRunIDsRef.current.has(focusedID)
-+      ) {
-         try {
-           // A stable deep link can target a retained run older than the bounded
-           // history page. Refresh it directly too: its status and capabilities
-@@ -960,6 +965,7 @@ function RoutedDiagnoseProvider({
-       setView("investigation");
-       setOpen(true);
-       writeFocusedRunID(id, true);
-+      if (isExampleInvestigation(id)) return;
-       // A Fleet issue can point at a retained automatic run older than the
-       // bounded history page. Resolve the exact id instead of waiting for list.
-       getRun(id)
-@@ -1054,6 +1060,7 @@ function RoutedDiagnoseProvider({
-     setActiveRunId(id);
-     setView("investigation");
-     setOpen(true);
-+    if (isExampleInvestigation(id)) return;
-     getRun(id)
-       .then(updateRunSummary)
-       .catch((error) => {
-```
-
-**File**: `web/src/components/diagnose/DiagnoseSurface.tsx` (modified, +43/-4)
-```diff
-@@ -51,6 +51,12 @@ import {
-   statusWord,
- } from "./Home";
- import { AgentSetupNotice } from "./AgentSetupNotice";
-+import {
-+  EXAMPLE_INVESTIGATION_ID,
-+  EXAMPLE_INVESTIGATION_RUN,
-+  exampleInvestigationOffered,
-+  isExampleInvestigation,
-+} from "./exampleInvestigation";
- import { AgentSigninNotice } from "./AgentSigninNotice";
- import {
-   useAgentSignin,
-@@ -565,7 +571,18 @@ export function DiagnoseSurface({
-   const setupPending =
-     d.setupState === "needs-install" || d.setupState === "needs-restart";
- 
--  const activeRun = d.runs.find((r) => r.id === d.activeRunId) ?? null;
-+  const exampleOpen = isExampleInvestigation(d.activeRunId);
-+  const activeRun = exampleOpen
-+    ? EXAMPLE_INVESTIGATION_RUN
-+    : (d.runs.find((r) => r.id === d.activeRunId) ?? null);
-+  const openExample = exampleInvestigationOffered({
-+    runs: d.runs,
-+    runsLoaded: d.runsLoaded,
-+    setupPending,
-+    needsConsent: d.needsConsent,
-+  })
-+    ? () => d.openRun(EXAMPLE_INVESTIGATION_ID)
-+    : undefined;
-   // Consent replaces the detail pane even if goHome retained an older run id.
-   // Header identity and actions must describe what is actually visible.
-   const visibleRunDetail =
-@@ -642,9 +659,16 @@ export function DiagnoseSurface({
-       run={activeRun}
-       agentLabel={activeAgentLabel}
-       maximized={maximized}
--      onOpenResource={onOpenResource ? openEvidenceResource : undefined}
--      onOpenTimeline={onOpenTimeline ? openEvidenceTimeline : undefined}
-+      // The example's resources are on a test cluster, not this one.
-+      onOpenResource={
-+        onOpenResource && !exampleOpen ? openEvidenceResource : undefined
-+      }
-+      onOpenTimeline={
-+        onOpenTimeline && !exampleOpen ? openEvidenceTimeline : undefined
-+      }
-       onRevealDestination={revealDestination}
-+      example={exampleOpen}
-+      onCloseExample={exampleOpen ? d.goHome : undefined}
-     />
-   ) : d.activeRunId && !d.runsLoaded ? (
-     // Deep-linked to a run before the list has ever loaded: show the load
-@@ -699,6 +723,7 @@ export function DiagnoseSurface({
-         checkingAgents={d.checkingAgents}
-         agentsCheckFailed={d.agentsCheckFailed}
-         recheckAgents={d.recheckAgents}
-+        onOpenExample={openExample}
-       />
-     </div>
-   ) : (
-@@ -730,12 +755,14 @@ export function DiagnoseSurface({
-         checkingAgents={d.checkingAgents}
-         agentsCheckFailed={d.agentsCheckFailed}
-         recheckAgents={d.recheckAgents}
-+        onOpenExample={openExample}
-       />
-     </div>
-   ) : (
-     <InvestigationHome
-       agentLabel={d.agentLabel}
-       questions={d.questions}
-+      onOpenExample={openExample}
-       onBrowseIssues={
-         d.questions || (d.runsLoaded && d.runs.length === 0)
-           ? onBrowseIssues
-@@ -847,6 +874,7 @@ export function DiagnoseSurface({
-         <div className="flex shrink-0 items-center gap-1">
-           {activeRun &&
-             visibleRunDetail &&
-+            !exampleOpen &&
-             canRerunInvestigation(d.view, activeRun, d.needsConsent) && (
-               <Tooltip
-                 content="Re-run this investigation from scratch"
-@@ -861,7 +889,9 @@ export function DiagnoseSurface({
-                 </button>
-               </Tooltip>
-             )}
--          {visibleRunDetail && headerPresentation.runActionsClass !== null && (
-+          {visibleRunDetail &&
-+            !exampleOpen &&
-+            headerPresentation.runActionsClass !== null && (
-             <div
-               className={`items-center gap-1 ${headerPresentation.runActionsClass || "flex"}`}
-             >
-@@ -946,6 +976,15 @@ export function DiagnoseSurface({
-               loadFailed={d.runsLoadFailed}
-               onRetry={d.refreshRuns}
-               questions={d.questions}
-+              // Beside Home on the full page, Home already offers it.
-+              onOpenExample={
-+                persistentHistory || exampleOpen || !openExample
-+                  ? undefined
-+                  : () => {
-+                      openExample();
-+                      dismissHistory();
-+                    }
-+              }
-             />
-           </aside>
-         )}
-```
-
-**File**: `web/src/components/diagnose/ExampleInvestigationLink.tsx` (added, +20/-0)
-```diff
-@@ -0,0 +1,20 @@
-+import { ArrowRight } from "lucide-react";
-+
-+export function ExampleInvestigationLink({
-+  onOpen,
-+  className = "",
-+}: {
-+  onOpen: () => void;
-+  className?: string;
-+}) {
++function Step({ label, children }: { label: string; children: ReactNode }) {
 +  return (
-+    <button
-+      type="button"
-+      onClick={onOpen}
-+      className={`inline-flex items-center gap-1 text-xs font-medium text-accent-text hover:underline ${className}`}
-+    >
-+      See an example investigation
-+      <ArrowRight aria-hidden className="h-3 w-3" />
-+    </button>
-+  );
++    <li className="relative grid grid-cols-[7.5rem_minmax(0,1fr)] gap-3 py-2.5 text-sm first:pt-0 last:pb-0">
++      <span className="text-theme-text-tertiary">{label}</span>
++      <div className="min-w-0 space-y-1">{children}</div>
++    </li>
++  )
++}
++
++const muted = 'text-xs text-theme-text-secondary'
++
++function OwnerStep({ data, relationships, onNavigate }: { data: any; relationships?: Relationships; onNavigate?: Navigate }) {
++  const coverage = relationships?.ownership
++  // Without the ownership answer (a Radar that predates it), `owner` may come
++  // from display edges that check neither group nor UID, so it isn't linked;
++  // the Workload's own controller reference is named instead.
++  const controllerRef = (data.metadata?.ownerReferences ?? []).find((ref: any) => ref?.controller)
++  const owner = coverage ? relationships?.owner : undefined
++  const clusterName: string | undefined = data.status?.clusterName
++  let body: ReactNode
++  if (owner) {
++    body = <div className="flex flex-wrap items-center gap-2 break-all [&_button]:text-left">
++      <span className="text-xs text-theme-text-tertiary">{owner.kind}</span>
++      <ResourceLink name={owner.name} namespace={owner.namespace} kind={kindToPluralWithGroup(owner.kind, owner.group ?? '')} group={owner.group} onNavigate={onNavigate} />
++    </div>
++  } else if (!relationships) {
++    body = <p className={muted}>Owner not read here.</p>
++  } else if (!coverage && controllerRef) {
++    body = <p className={muted}>Controller reference: {controllerRef.kind} {controllerRef.name} (this Radar doesn't resolve owners).</p>
++  } else if (coverage?.primaryOwnerState === 'several') {
++    body = <p className={muted}>Several owner references; none is the controller.</p>
++  } else {
++    const reason = coverage?.unavailableReason
++    const unanswered = !reason ? undefined
++      : reason === 'user_forbidden' ? "The owner isn't shown: your access lets you open this Workload, but not list its kind here."
++        : `The owner couldn't be read: ${gapReasonText(reason)}.`
++    const note = ownerNote(coverage)
++    body = <p className={muted}>{unanswered ?? note?.text ?? (data.metadata?.ownerReferences?.length ? 'Owner not resolved.' : 'No owner reference: this Workload was created directly.')}</p>
++  }
++  return <Step label="Owner">
++    {body}
++    {clusterName && <p className={muted}>Kueue reports cluster <code>{clusterName}</code> for this Workload (status.clusterName). Radar shows this cluster only and doesn't follow that name elsewhere.</p>}
++  </Step>
++}
++
++export function AdmissionPath({ data, reads, relationships, onNavigate }: { data: any; reads?: KueueWorkloadReads; relationships?: Relationships; onNavigate?: Navigate }) {
++  const namespace: string = data.metadata?.namespace ?? ''
++  const queueName: string | undefined = data.spec?.queueName
++  const localQueue = reads?.localQueue
++  const configured: string | undefined = localQueue?.state === 'found' ? localQueue.object?.spec?.clusterQueue : undefined
++  const reserved: string | undefined = data.status?.admission?.clusterQueue
++  const finished = (data.status?.conditions ?? []).some((condition: any) => condition?.type === 'Finished' && condition.status === 'True')
++  const admitted = (data.status?.conditions ?? []).some((condition: any) => condition?.type === 'Admitted' && condition.status === 'True')
++  const configuredRead = configured ? reads?.clusterQueues?.[configured] : undefined
++  const eligibility = configured && reads ? namespaceEligibilityFact({ clusterQueue: configured, parent: configuredRe
+```
+
+**File**: `packages/k8s-ui/src/components/kueue/QueueEvidence.tsx` (added, +148/-0)
+```diff
+@@ -0,0 +1,148 @@
++import type { ReactNode } from 'react'
++import { Badge } from '../ui/Badge'
++import { ResourceLink } from '../ui/drawer-components'
++import { TimeValue } from '../ui/ScheduleValue'
++import { FactGrid, FactRow, FactValue, type Fact } from '../facts'
++import type { StatusBadge } from '../resources/resource-utils'
++import { getAdmissionCheckStatus, getClusterQueueStatus, getKueueQueueCondition, isKueueConditionStale } from '../resources/resource-utils-kueue'
++import { describeKueuePolicy } from './policy'
++import { isDenied, unreadReason, type RelatedRead } from './related-read'
++import { namespaceEligibility } from './eligibility'
++import { KUEUE_GROUP } from './constants'
++
++export type Navigate = (ref: { kind: string; namespace: string; name: string; group?: string }) => void
++
++/** One related object's name with what Radar's read of it found. Without a read, the name alone. */
++export function ReadState({ read, found }: { read?: RelatedRead; found?: ReactNode }) {
++  if (!read) return null
++  if (read.state === 'found') return <>{found ?? <Badge severity="neutral" size="sm">Found</Badge>}</>
++  if (read.state === 'not_found') return <Badge severity="error" size="sm">Not found</Badge>
++  if (read.state === 'unconfirmed') return <span className="text-xs text-theme-text-tertiary">This Radar can’t confirm whether it exists</span>
++  return <span className={isDenied(read) ? 'text-xs text-theme-text-secondary' : 'text-xs text-theme-text-tertiary'}>{read.state === 'loading' ? 'Checking…' : `Not read: ${unreadReason(read)}`}</span>
++}
++
++export function StatusPill({ status }: { status: StatusBadge }) {
++  return <Badge colorClass={status.color} size="sm">{status.text}</Badge>
++}
++
++export function ReportedActive({ data, status, children }: { data: any; status: StatusBadge; children?: ReactNode }) {
++  const condition = getKueueQueueCondition(data)
++  const generation = data?.metadata?.generation
++  if (!condition) {
++    return <div className="space-y-2 text-sm">
++      <div className="flex flex-wrap items-center gap-2"><StatusPill status={status} /></div>
++      <p className="text-theme-text-secondary">No Active condition reported.</p>
++      {children}
++    </div>
++  }
++  return <div className="space-y-2 text-sm">
++    <div className="flex flex-wrap items-center gap-2">
++      <StatusPill status={status} />
++      {condition.reason && !status.text.startsWith(condition.reason) && <code className="break-all text-xs text-theme-text-secondary">{condition.reason}</code>}
++    </div>
++    {condition.message && <p className="whitespace-pre-wrap break-words text-theme-text-primary">{condition.message}</p>}
++    <p className="text-xs text-theme-text-tertiary">
++      Active={condition.status}
++      {condition.lastTransitionTime && <> since <TimeValue timestamp={condition.lastTransitionTime} /></>}
++      {' · '}
++      {condition.observedGeneration ? `observed generation ${condition.observedGeneration} of ${generation ?? '?'}` : 'observed generation not reported'}
++    </p>
++    {children}
++  </div>
++}
++
++function count(value: unknown, source: string): Fact {
++  return typeof value === 'number'
++    ? { text: String(value), tone: 'neutral', source }
++    : { text: 'Not reported', tone: 'unknown', source }
++}
++
++/** Controller-reported Workload counts. Reserving includes admitted, so they never add up. */
++export function QueueCounts({ data, kind }: { data: any; kind: 'ClusterQueue' | 'LocalQueue' }) {
++  const source = `Reported in the ${kind}'s status`
++  return <div className="space-y-2">
++    <FactGrid>
++      <FactRow label="Pending"><FactValue fact={count(data?.status?.pendingWorkloads, source)} /></FactRow>
++      <FactRow label="Reserving quota"><FactValue fact={count(data?.status?.reservingWorkloads, source)} /></FactRow>
++      <FactRow label="Admitted"><FactValue fact={count(data?.status?.admittedWorkloads, source)} /></FactRow>
++    </FactGrid>
++    <p className="text-xs text-theme-text-tertiary">Reserving includes admitted Workloads, so these counts are not additive. Admission does not establish that Pods are running.</p>
++  </div>
++}
++
++export function ConfiguredStop({ data }: { data: any }) {
++  const raw = data?.spec?.stopPolicy
++  const policy = describeKueuePolicy(data?.apiVersion, 'stopPolicy', raw ?? 'None')
++  return <div className="space-y-1 text-sm">
++    <div className="flex flex-wrap items-baseline gap-2">
++      <span className="text-theme-text-tertiary">Stop policy</span>
++      <code className="text-theme-text-primary">{policy.raw}</code>
++      {raw == null && <span className="text-xs text-theme-text-tertiary">(not set)</span>}
++    </div>
++    <p className="text-theme-text-secondary">{policy.meaning ?? `Radar has no description of this value for ${data?.apiVersion ?? 'this API version'}.`}</p>
++  </div>
++}
++
++function ReportedMessage({ condition, generation }: { condition: any; generation?: number }) {
++  return <p className="whitespace-pre-wrap break-words text-xs text-th
+```
+
+**File**: `packages/k8s-ui/src/components/kueue/constants.ts` (added, +1/-0)
+```diff
+@@ -0,0 +1 @@
++export const KUEUE_GROUP = 'kueue.x-k8s.io'
+```
+
+**File**: `packages/k8s-ui/src/components/kueue/eligibility.ts` (added, +43/-0)
+```diff
+@@ -0,0 +1,43 @@
++// Whether a namespace may submit Workloads to a ClusterQueue, from the
++// ClusterQueue's namespaceSelector. Kueue reads a null selector as "no
++// namespace" and an empty one ({}) as "every namespace", so only a selector
++// with terms needs the namespace's labels.
++
++export type NamespaceEligibility =
++  | { state: 'eligible'; basis: 'all' | 'labels' }
++  | { state: 'not_eligible'; basis: 'none' | 'labels' }
++  /** The labels are needed and weren't read, or the selector can't be evaluated. */
++  | { state: 'unknown'; why: 'labels_unread' | 'unsupported_operator'; operator?: string }
++
++interface Requirement { key?: string; operator?: string; values?: string[] }
++export interface LabelSelector { matchLabels?: Record<string, string>; matchExpressions?: Requirement[] }
++
++function selectorHasTerms(selector: LabelSelector | null | undefined): boolean {
++  return !!selector && (Object.keys(selector.matchLabels ?? {}).length > 0 || (selector.matchExpressions?.length ?? 0) > 0)
++}
++
++/** Evaluating the selector would use the namespace's labels (it has terms, all with supported operators). */
++export function needsNamespaceLabels(selector: LabelSelector | null | undefined): boolean {
++  const result = namespaceEligibility(selector, undefined)
++  return result.state === 'unknown' && result.why === 'labels_unread'
++}
++
++/** labels is undefined when the namespace's labels weren't read. */
++export function namespaceEligibility(selector: LabelSelector | null | undefined, labels: Record<string, string> | undefined): NamespaceEligibility {
++  if (selector == null) return { state: 'not_eligible', basis: 'none' }
++  if (!selectorHasTerms(selector)) return { state: 'eligible', basis: 'all' }
++  const unsupported = (selector.matchExpressions ?? []).find(term => !['In', 'NotIn', 'Exists', 'DoesNotExist'].includes(term?.operator ?? ''))
++  if (unsupported) return { state: 'unknown', why: 'unsupported_operator', operator: String(unsupported?.operator ?? '') }
++  if (!labels) return { state: 'unknown', why: 'labels_unread' }
++  const has = (key: string) => Object.prototype.hasOwnProperty.call(labels, key)
++  const matches = Object.entries(selector.matchLabels ?? {}).every(([key, value]) => has(key) && labels[key] === value)
++    && (selector.matchExpressions ?? []).every(({ key = '', operator, values = [] }) => {
++      switch (operator) {
++        case 'In': return has(key) && values.includes(labels[key])
++        case 'NotIn': return !has(key) || !values.includes(labels[key])
++        case 'Exists': return has(key)
++        default: return !has(key)
++      }
++    })
++  return matches ? { state: 'eligible', basis: 'labels' } : { state: 'not_eligible', basis: 'labels' }
 +}
 ```
 
-**File**: `web/src/components/diagnose/Home.test.tsx` (modified, +26/-0)
+**File**: `packages/k8s-ui/src/components/kueue/flavors-tried.ts` (added, +79/-0)
 ```diff
-@@ -352,6 +352,32 @@ describe("InvestigationHome", () => {
-     expect(text).toContain("Browse issues");
-     expect(html).not.toContain("textarea");
-   });
+@@ -0,0 +1,79 @@
++// Parses the flavor attempts out of a pending Workload's QuotaReserved
++// message. Kueue builds it as "couldn't assign flavors to pod set <ps>: <reasons>"
++// per failing pod set, joined by "; ", with each pod set's reasons sorted
++// alphabetically and joined by ", " — so the order of the reasons is not the
++// order flavors were tried. A message with any part this parser doesn't
++// recognise yields null and is shown verbatim instead.
 +
-+  it("links to the example only when the surface offers it", () => {
-+    const link = "See an example investigation";
-+    expect(
-+      visible(renderToStaticMarkup(<InvestigationHome agentLabel="Codex" />)),
-+    ).not.toContain(link);
-+    expect(
-+      visible(
-+        renderToStaticMarkup(
-+          <InvestigationHome agentLabel="Codex" onOpenExample={() => {}} />,
-+        ),
-+      ),
-+    ).toContain(link);
-+    expect(
-+      visible(
-+        renderToStaticMarkup(
-+          <RecentList
-+            agentLabel="Codex"
-+            runs={[]}
-+            onSelect={() => {}}
-+            onOpenExample={() => {}}
-+          />,
-+        ),
-+      ),
-+    ).toContain(link);
-+  });
- });
- 
- describe("RecentList question runs", () => {
++export type FlavorAttemptKind =
++  | 'insufficient_quota'
++  | 'insufficient_unused_quota'
++  | 'untolerated_taint'
++  | 'node_affinity'
++  | 'flavor_not_found'
++  | 'resource_unavailable'
++  | 'skipped_by_annotation'
++  | 'pinned_by_original'
++
++export interface FlavorAttempt {
++  kind: FlavorAttemptKind
++  flavor?: string
++  resource?: string
++  /** The controller's own words for this reason. */
++  text: string
++}
++
++export interface PodSetAttempts {
++  podSet: string
++  attempts: FlavorAttempt[]
++}
++
++const podSetPrefix = "couldn't assign flavors to pod set "
++
++/** The message is Kueue's per-flavor account of why quota wasn't assigned (parsed or not). Its error form isn't. */
++export function isFlavorAssignmentMessage(message: string | undefined): boolean {
++  return !!message && message.startsWith(podSetPrefix)
++}
++
++const patterns: { kind: FlavorAttemptKind; re: RegExp; flavor?: number; resource?: number }[] = [
++  { kind: 'insufficient_unused_quota', re: /^insufficient unused quota for (\S+) in flavor (\S+), \S+ more needed$/, resource: 1, flavor: 2 },
++  { kind: 'insufficient_quota', re: /^insufficient quota for (\S+) in flavor (\S+), (?:previously considered podsets requests \(\S+\) \+ current podset request \(\S+\) > maximum capacity \(\S+\)|request > maximum capacity \(\S+ > \S+\))$/, resource: 1, flavor: 2 },
++  { kind: 'untolerated_taint', re: /^untolerated taint .+ in flavor (\S+)$/, flavor: 1 },
++  { kind: 'node_affinity', re: /^flavor (\S+) doesn't match node affinity$/, flavor: 1 },
++  { kind: 'flavor_not_found', re: /^flavor (\S+) not found$/, flavor: 1 },
++  { kind: 'resource_unavailable', re: /^resource (\S+) unavailable in ClusterQueue$/, resource: 1 },
++  { kind: 'skipped_by_annotation', re: /^skipping flavor (\S+) due to WorkloadAllowedResourceFlavorAnnotation annotation$/, flavor: 1 },
++  // Names the candidate flavor, then the flavor the original Workload holds.
++  { kind: 'pinned_by_original', re: /^could not assign (\S+) flavor since the original workload is assigned: \S+$/, flavor: 1 },
++]
++
++// A reason begins only at one of these; ", " inside a reason ("…, 2 more needed")
++// is not a boundary.
++const reasonStart = /, (?=insufficient (?:unused )?quota for |untolerated taint |flavor \S+ (?:doesn't match node affinity|not found)|resource \S+ unavailable in ClusterQueue|skipping flavor |could not assign )/
++
++function parseReason(text: string): FlavorAttempt | null {
++  for (const { kind, re, flavor, resource } of patterns) {
++    const match = re.exec(text)
++    if (match) return { kind, text, ...(flavor ? { flavor: match[flavor] } : {}), ...(resource ? { resource: match[resource] } : {}) }
++  }
++  return null
++}
++
++export function parseFlavorAttempts(message: string | undefined): PodSetAttempts[] | null {
++  if (!message?.startsWith(podSetPrefix)) return null
++  const result: PodSetAttempts[] = []
++  for (const part of message.slice(podSetPrefix.length).split(`; ${podSetPrefix}`)) {
++    const separator = part.indexOf(': ')
++    if (separator <= 0) return null
++    const podSet = part.slice(0, separator)
++    const reasons = part.slice(separator + 2).split(reasonStart)
++    const attempts: FlavorAttempt[] = []
++    for (const reason of reasons) {
++      const attempt = parseReason(reason)
++      if (!attempt) return null
++      attempts.push(attempt)
++    }
++    result.push({ podSet, attempts })
++  }
++  return result
++}
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #2523** (2026-11-03): Detect failed cert-manager renewals while certificates remain Ready (@nadaverell)
-- **PR #2510** (2026-11-03): feat: show NATS delivery and acknowledgement progress (@nadaverell)
-- **PR #2509** (2026-11-03): Show RabbitMQ resource measurements alongside alarm evidence (@nadaverell)
-- **PR #2508** (2026-11-03): Show Vault HA connection and cluster-removal evidence (@nadaverell)
-- **PR #2507** (2026-11-03): Show Strimzi connector task details and snapshot-aware status (@nadaverell)
-- **PR #2503** (2026-11-02): Give agents a PVC's volume and StorageClass, and a StorageClass's claims (@nadaverell)
+- **PR #2535** (2026-11-04): Show CRD definitions with a searchable schema explorer and Schema tab (@nadaverell)
+- **PR #2532** (2026-11-04): deps: batch eight vetted dependency updates (@nadaverell)
+- **PR #2531** (closed): deps(go): bump modernc.org/sqlite from 1.61.0 to 1.61.1 (@dependabot[bot])
+- **PR #2530** (closed): deps(go): bump github.com/jackc/pgx/v5 from 5.11.0 to 5.12.0 (@dependabot[bot])
+- **PR #2529** (closed): deps(go): bump google.golang.org/grpc from 1.84.0 to 1.85.0 (@dependabot[bot])
+- **PR #2528** (closed): deps(go): bump golang.org/x/net from 0.61.0 to 0.62.0 (@dependabot[bot])
 
 ---
 
@@ -3170,37 +2808,55 @@ label at the top ("A sample investigation fro
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Issues: name a RollingUpdate surge as the cause of a one-replica ReadWriteOnce r
+## X. Explain Kueue queues and trace Workload admission dependencies (#2512)
 
 **RULE**:
-When implementing operations in `internal/k8s/detect.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in skyhook-io/radar. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/integrations.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in skyhook-io/radar. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e7cc3ebc`: Issues: name a RollingUpdate surge as the cause of a one-replica ReadWriteOnce rollout deadlock (#2494). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b7f1d502`: Explain Kueue queues and trace Workload admission dependencies (#2512). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/k8s/detect.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/integrations.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-				action := "Inspect the new pods (image, readiness probe, resources) — the rollout is waiting on them to become ready."
-				// The pod row's RollingUpdate Multi-Attach cause, when it holds,
-				// replaces the generic advice so both rows say the same thing.
-				cause := rolloutMultiAttachCause(cache, d)
-				if cause != "" {
-					action = rollingUpdateRWOFix
-				} else if detail := rolloutRWOVolumeDetail(cache, d); detail != "" {
-					Cause:             cause,
-					Action:            action,
+and conditions. Reservation is distinguished from admission; resource totals are
+requests, not measured usage.
+
+Its **admission path** connects the owner, submission LocalQueue, its current
+ClusterQueue, reservation ClusterQueue and assigned ResourceFlavors. Missing,
+replaced and unreadable objects are distinguished. Per-flavor rejection reasons
+are one controller report, not attempt order or history; unrecognized text stays
+verbatim. Remote cluster names are reported without following them.
+
+LocalQueue and ClusterQueue detail separate Active state and freshness from
+configured stop policy. Pending/reserving/admitted counts are not additive;
+quota is requested capacity, not utilization or available hardware. Per-flavor
+rows compare reservations, admitted usage, nominal quota and borrowing/lending
+limits. Both v1beta1 and v1beta2 queue shapes are supported. Related flavors, AdmissionChecks and
+cohort peers are read as the viewer; Cohort objects are not read. A LocalQueue
+also shows namespace eligibility. Denied or incomplete reads never prove an
+object missing. An intentionally stopped parent softens a LocalQueue's alert
+only when fresh evidence establishes that the stop is its sole
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-				if detail := rolloutRWOVolumeDetail(cache, d); detail != "" {
-					Action:            "Inspect the new pods (image, readiness probe, resources) — the rollout is waiting on them to become ready.",
+and conditions. Links connect submission LocalQueues, reservation ClusterQueues,
+ResourceFlavors and AdmissionChecks. Reservation is distinguished from admission;
+resource totals are requests, not measured usage.
+
+LocalQueue and ClusterQueue detail distinguish reported state from configured stop
+policy, show pending/reserving/admitted counts, and link a LocalQueue to its
+ClusterQueue even before a Workload has a reservation. Per-flavor resource rows
+join quota reservations and admitted usage; ClusterQueues also show nominal quota,
+borrowing/lending limits, namespace eligibility and admission policies. These are
+controller-reported quota facts, not measured utilization or available physical
+capacity. Both v1beta1 and v1beta2 queue shapes are supported.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e7cc3ebc` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b7f1d502` are properly handled with clean fallback behavior.
