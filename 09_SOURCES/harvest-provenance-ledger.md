@@ -7167,3 +7167,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-qwen-qwen3-embedding-0-6b` | `https://huggingface.co/Qwen/Qwen3-Embedding-0.6B` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-11-04T07:25:57.297Z |
 | `learn-github-juicedata-juicefs` | `https://github.com/juicedata/juicefs` | `ef423267` | Multi-dimensional audit evidence | 2026-11-04T07:25:58.112Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `a7fed6ab` | Multi-dimensional audit evidence | 2026-11-04T07:26:05.636Z |
+| `learn-github-avajs-ava` | `https://github.com/avajs/ava` | `8bd11143` | Multi-dimensional audit evidence | 2026-11-04T07:33:20.303Z |
+| `learn-github-runanywhereai-runanywhere-sdks` | `https://github.com/RunanywhereAI/runanywhere-sdks` | `a403990b` | Multi-dimensional audit evidence | 2026-11-04T07:33:20.843Z |
+| `learn-github-rook-rook` | `https://github.com/rook/rook` | `a3780453` | Multi-dimensional audit evidence | 2026-11-04T07:33:22.858Z |
+| `learn-github-kucherenko-jscpd` | `https://github.com/kucherenko/jscpd` | `cbd54239` | Multi-dimensional audit evidence | 2026-11-04T07:34:00.027Z |

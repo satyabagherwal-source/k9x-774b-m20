@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-04T07:26:05.648Z",
+  "last_updated": "2026-11-04T07:34:00.037Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -6126,14 +6126,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-runanywhereai-runanywhere-sdks",
-      "content_hash": "a69cc8ba29e2fec32ac660b7a4df9b5963a08f1c648a345d86f55449cbf93399",
-      "verified_at": "2026-10-19T00:22:52.630Z",
+      "content_hash": "38badb1580063ef272cd8a8db036ca898d39572d75ec4500db378d9a70bd8222",
+      "verified_at": "2026-11-04T07:33:20.856Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T00:22:52.630Z"
+      "last_updated": "2026-11-04T07:33:20.856Z"
     },
     "krakend/krakend-ce": {
       "repository": "krakend/krakend-ce",
@@ -7596,14 +7596,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kucherenko-jscpd",
-      "content_hash": "1370939e032bb4ba70ee8090ab021c10292eb60ddf96a0c24e38a54856d288c2",
-      "verified_at": "2026-10-31T06:17:58.404Z",
+      "content_hash": "8712973b520a508b3ce60339c1c3dadcae8cd255f16dc87c3b9f361a6dee23f6",
+      "verified_at": "2026-11-04T07:34:00.036Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T06:17:58.404Z"
+      "last_updated": "2026-11-04T07:34:00.036Z"
     },
     "akveo/kittenTricks": {
       "repository": "akveo/kittenTricks",
@@ -9066,14 +9066,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-rook-rook",
-      "content_hash": "e4480195a5c0703fba17edf6332f7e623b0bb34b6fe9f3286f2442a37d195cb7",
-      "verified_at": "2026-11-03T10:52:46.485Z",
+      "content_hash": "cf11bf5a370192bdca45277e76d5eeeb623f1deb28782b359567ecb042feb414",
+      "verified_at": "2026-11-04T07:33:22.867Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T10:52:46.485Z"
+      "last_updated": "2026-11-04T07:33:22.867Z"
     },
     "genkit-ai/genkit": {
       "repository": "genkit-ai/genkit",
@@ -15366,14 +15366,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-avajs-ava",
-      "content_hash": "3daaf96fb8e7461efb8473afba1c6e07224a95563e1318ff5106f1ce1b21c7bd",
-      "verified_at": "2026-10-30T21:19:26.691Z",
+      "content_hash": "1b7c5393c1d429be2159e225acf02615fd8d44889e4630d06fa37ed11b95861f",
+      "verified_at": "2026-11-04T07:33:20.312Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T21:19:26.691Z"
+      "last_updated": "2026-11-04T07:33:20.312Z"
     },
     "mochajs/mocha": {
       "repository": "mochajs/mocha",

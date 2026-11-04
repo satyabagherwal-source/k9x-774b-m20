@@ -4003,10 +4003,10 @@
     "repository": "RunanywhereAI/runanywhere-sdks",
     "platform": "github",
     "sourceUrl": "https://github.com/RunanywhereAI/runanywhere-sdks",
-    "sourceVersion": "259521e2",
+    "sourceVersion": "a403990b",
     "license": "NOASSERTION",
-    "contentHash": "a69cc8ba29e2fec32ac660b7a4df9b5963a08f1c648a345d86f55449cbf93399",
-    "lastHarvestedAt": "2026-10-19T00:22:52.626Z",
+    "contentHash": "38badb1580063ef272cd8a8db036ca898d39572d75ec4500db378d9a70bd8222",
+    "lastHarvestedAt": "2026-11-04T07:33:20.843Z",
     "learningId": "learn-github-runanywhereai-runanywhere-sdks"
   },
   "krakend-krakend-ce": {
@@ -4983,10 +4983,10 @@
     "repository": "kucherenko/jscpd",
     "platform": "github",
     "sourceUrl": "https://github.com/kucherenko/jscpd",
-    "sourceVersion": "0b519608",
+    "sourceVersion": "cbd54239",
     "license": "MIT",
-    "contentHash": "1370939e032bb4ba70ee8090ab021c10292eb60ddf96a0c24e38a54856d288c2",
-    "lastHarvestedAt": "2026-10-31T06:17:58.395Z",
+    "contentHash": "8712973b520a508b3ce60339c1c3dadcae8cd255f16dc87c3b9f361a6dee23f6",
+    "lastHarvestedAt": "2026-11-04T07:34:00.027Z",
     "learningId": "learn-github-kucherenko-jscpd"
   },
   "akveo-kittentricks": {
@@ -5963,10 +5963,10 @@
     "repository": "rook/rook",
     "platform": "github",
     "sourceUrl": "https://github.com/rook/rook",
-    "sourceVersion": "bcf59e98",
+    "sourceVersion": "a3780453",
     "license": "Apache-2.0",
-    "contentHash": "e4480195a5c0703fba17edf6332f7e623b0bb34b6fe9f3286f2442a37d195cb7",
-    "lastHarvestedAt": "2026-11-03T10:52:46.479Z",
+    "contentHash": "cf11bf5a370192bdca45277e76d5eeeb623f1deb28782b359567ecb042feb414",
+    "lastHarvestedAt": "2026-11-04T07:33:22.858Z",
     "learningId": "learn-github-rook-rook"
   },
   "genkit-ai-genkit": {
@@ -10223,10 +10223,10 @@
     "repository": "avajs/ava",
     "platform": "github",
     "sourceUrl": "https://github.com/avajs/ava",
-    "sourceVersion": "8640039a",
+    "sourceVersion": "8bd11143",
     "license": "MIT",
-    "contentHash": "3daaf96fb8e7461efb8473afba1c6e07224a95563e1318ff5106f1ce1b21c7bd",
-    "lastHarvestedAt": "2026-10-30T21:19:26.685Z",
+    "contentHash": "1b7c5393c1d429be2159e225acf02615fd8d44889e4630d06fa37ed11b95861f",
+    "lastHarvestedAt": "2026-11-04T07:33:20.303Z",
     "learningId": "learn-github-avajs-ava"
   },
   "maxrave-dev-kotlin-footguns": {

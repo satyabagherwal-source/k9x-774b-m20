@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/runanywhereai-runanywhere-sdks-learnings.md`  
 > **Source**: github ([https://github.com/RunanywhereAI/runanywhere-sdks](https://github.com/RunanywhereAI/runanywhere-sdks))  
-> **Source Version**: `259521e2`  
+> **Source Version**: `a403990b`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T00:22:52.409Z  
+> **Timestamp**: 2026-11-04T07:33:19.978Z  
 > **Learning ID**: `learn-github-runanywhereai-runanywhere-sdks`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/runanywhereai-runanywhere-sdks-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/RunanywhereAI/runanywhere-sdks](https://github.com/RunanywhereAI/runanywhere-sdks))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T00:22:50.881Z  
+> **Harvest Timestamp**: 2026-11-04T07:33:19.966Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Production ready toolkit to run AI locally
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 10332 stars
+- **Stars / Engagement**: 10333 stars
 
 ---
 
@@ -1038,9 +1038,7 @@ package com.runanywhere.sdk.npu.qhexrt
 
 import ai.runanywhere.proto.v1.ErrorCode
 import ai.runanywhere.proto.v1.HexagonArch
-import ai.runanywhere.proto.v1.ModelInfo
 import ai.runanywhere.proto.v1.NpuCapability
-import ai.runanywhere.proto.v1.RegisterModelFromUrlRequest
 import com.runanywhere.sdk.infrastructure.logging.SDKLogger
 import com.runanywhere.sdk.native.bridge.RunAnywhereBridge
 import kotlinx.coroutines.sync.Mutex
@@ -1087,8 +1085,10 @@ object QHexRT {
     /** Human-readable module name. */
     const val moduleName: String = "QHexRT"
 
+    /** Whether the QHexRT backend has registered successfully. */
     @Volatile
-    private var isRegistered = false
+    var isRegistered = false
+        private set
     private val registrationMutex = Mutex()
     private val registrationLock = Any()
 
@@ -1123,42 +1123,6 @@ object QHexRT {
         RunAnywhereBridge.ensureNativeLibraryLoaded()
         if (!QHexRTBridge.ensureNativeLibraryLoaded()) return false
         return QHexRTBridge.nativeArchIsSupported(arch.value)
-    }
-
-    /**
-     * Match native product catalog policy for [modelId] against [arch].
-     */
-    fun modelSupportsArchitecture(
-        modelId: String,
-        arch: HexagonArch,
-    ): Boolean {
-        RunAnywhereBridge.ensureNativeLibraryLoaded()
-        if (!QHexRTBridge.ensureNativeLibraryLoaded()) return false
-        return QHexRTBridge.nativeCatalogModelSupportsArch(modelId, arch.value)
-    }
-
-    /** Whether native product policy marks [modelId] as HF-authenticated. */
-    fun modelRequiresHfAuth(modelId: String): Boolean {
-        RunAnywhereBridge.ensureNativeLibraryLoaded()
-        if (!QHexRTBridge.ensureNativeLibraryLoaded()) return false
-        return QHexRTBridge.nativeCatalogModelRequiresHfAuth(modelId)
-    }
-
-    /**
-     * Register [request] only when native product policy allows it here.
-     *
-     * The app remains the source of the model URL and presentation metadata.
-     * QHexRT owns device probing and architecture selection, then composes the
-     * shared C++ URL-registration/download pipeline. Returns `null` for the
-     * normal "model is not eligible on this device" outcome.
-     */
-    suspend fun registerModelForDevice(request: RegisterModelFromUrlRequest): ModelInfo? {
-        RunAnywhereBridge.ensureNativeLibraryLoaded()
-        if (!QHexRTBridge.ensureNativeLibraryLoaded()) return null
-        val bytes =
-            QHexRTBridge.nativeCatalogRegisterModelProto(QHexRTCatalogWire.encodeRequest(request))
-                ?: return null
-        return QHexRTCatalogWire.decodeModel(bytes)
     }
 
     /**
@@ -1214,14 +1178,6 @@ object QHexRT {
     }
 }
 
-/** Byte/enum transport only; all QHexRT catalog policy stays native. */
-internal object QHexRTCatalogWire {
-    fun encodeRequest(request: RegisterModelFromUrlRequest): ByteArray =
-        RegisterModelFromUrlRequest.ADAPTER.encode(request)
-
-    fun decodeModel(bytes: ByteArray): ModelInfo = ModelInfo.ADAPTER.decode(bytes)
-}
-
 private val logger = SDKLogger("QHexRT")
 
 internal fun QHexRT.registerNative(): Int {
@@ -1256,7 +1212,7 @@ internal fun QHexRT.unregisterNative(): Int =
  * backend module. The native library (librac_backend_qhexrt_jni.so) exposes:
  * - rac_backend_qhexrt_register() / rac_backend_qhexrt_unregister()
  * - rac_qhexrt_probe_proto() (pre-flight Hexagon arch detection)
- * - QHexRT-owned architecture matching and device-aware model registration
+ * - QHexRT-owned architecture support checks
  */
 
 package com.runanywhere.sdk.npu.qhexrt
@@ -1337,25 +1293,6 @@ internal object QHexRTBridge {
     /** True when [arch] is in QHexRT's native device-validated support set. */
     @JvmStatic
     external fun nativeArchIsSupported(arch: Int): Boolean
-
-    /** Match the native product catalog policy for [modelId] against [arch]. */
-    @JvmStatic
-    external fun nativeCatalogModelSupportsArch(
-        modelId: String,
-        arch: Int,
-    ): Boolean
-
-    /** Whether the native product catalog marks [modelId] as HF-authenticated. */
-    @JvmStatic
-    external fun nativeCatalogModelRequiresHfAuth(modelId: String): Boolean
-
-    /**
-     * Register one serialized `RegisterModelFromUrlRequest` only when the
-     * native product catalog allows it on the current device. A null result is
-     * the normal ineligible/private-without-token outcome.
-     */
-    @JvmStatic
-    external fun nativeCatalogRegisterModelProto(requestBytes: ByteArray): ByteArray?
 
     /** QHexRT module version string (RAC_QHEXRT_VERSION baked into the JNI lib). */
     @JvmStatic
@@ -1490,11 +1427,11 @@ internal object QHexRTSkelInstaller {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1083** (2026-10-16): **core: RAC_LLM_OPTIONS_DEFAULT.min_p disagrees with the IDL's annotated default**
-  *Symptoms*: Follow-up from #1073 by @VanshBhardwaj24 — thanks again for that PR!  ## What `idl/llm_options.proto:79` annotates `min_p` with `(runanywhere.v1.rac_default) = "0.05"`, and the IDL's own comment above the message says top_k/min_p/repeat_penalty default ON to match llama.cpp and Ollama. But the C ABI struct hardcodes `.min_p = 0.0f` (`core/include/rac/features/llm/rac_llm_types.h:178`), and the struct's comment a few lines above describes min_p as a field with no annotation default — which is wrong for this one field. Every other annotated knob in the same struct uses the generated macro (`.max_tokens = RAC_DEFAULT_LLM_GENERATION_OPTIONS_MAX_OUTPUT_TOKENS`, and so on), and the VLM struct already gets it right (`.min_p = RAC_DEFAULT_LLM_GENERATION_OPTIONS_MIN_P` at `core/include/rac/features/vlm/rac_vlm_types.h:276`).  ## Why it matters An absent `min_p` reaches the engine as 0.0 (min-p sampling disabled) on the LLM path while the IDL, the generated per-SDK `defaults()` helpers and the VLM path all say 0.05 — so a Swift or Kotlin caller who reads their SDK's documented default and a Python caller who leaves it unset get different sampling. It is pre-existing (the same divergence is on base at `llm_module.cpp`'s LLM path), and #1073 neither introduced nor worsened it.  ## Suggested approach Set `.min_p = RAC_DEFAULT_LLM_GENERATION_OPTIONS_MIN_P` in `RAC_LLM_OPTIONS_DEFAULT` and correct the struct comment. This changes behaviour on both the LLM and the RAG paths wherever min_p is
+- **Issue #1204** (2026-11-02): **Web generateStructured should await StructuredOutputProtoAdapter.parseAsync**
+  *Symptoms*: Follow-up from #1136 by @Adityakk9031 — thanks again for that PR!  ## What `bindings/web/packages/core/src/Public/API/Namespaces/llm.ts:320` calls the synchronous `adapter.parse(...)`. `StructuredOutputProtoAdapter.parse` throws when `mustUseLlamaBackendWorker()` is true (see `Adapters/StructuredOutputProtoAdapter.ts:39`), and the adapter already offers `parseAsync`. The call predates #1136, which makes the llama path the default mode.  ## Why it matters With a worker-owned llama model, `generateStructured` generates fine and then throws at the parse step.  ## Suggested approach Call `await adapter.parseAsync(...)` (guarding on the same proto-parse support check) and keep the sync path only where no worker owns the model.  ## Done when - [ ] `generateStructured` returns a parsed result when the llama model is owned by the BackendWorker.  Not blocking #1136. @Adityakk9031, you know this code well now — you're welcome to take this one if you're interested.  _Opened with help from Claude Code and Codex._  _Reviewed with help from Claude Code and Codex._ <!-- oss-pr-review-merge v1 kind=followup-issue head=8b849b3 pr=1136 t=5ce8ce4b84 --> 
 
-- **Issue #1082** (2026-10-16): **bindings: Electron and Python RAG query builders still drop the six generation knobs**
-  *Symptoms*: Follow-up from #1073 by @VanshBhardwaj24 — thanks again for that PR!  ## What #1073 makes the commons RAG query path honour `repeat_penalty`, `frequency_penalty`, `presence_penalty`, `min_p`, `seed` and `stop_sequences`, each when present. Six of the seven SDK entry points already forward them — Swift (`bindings/swift/Sources/RunAnywhere/Public/API/Options.swift:183-190`), Kotlin (`bindings/kotlin/src/main/kotlin/com/runanywhere/sdk/public/api/MappingOptions.kt:247-256`), Flutter, React Native and Web all build the full `LLMGenerationOptions`. Two do not:  - Electron — `toRagGeneration` (`bindings/electron/src/api/data.ts:220-240`) copies only `maxOutputTokens`, `temperature`, `topP`, `topK` and `systemPrompt`, each gated on `!== undefined`, so `LlmOptions.minP` / `seed` / `stopSequences` / `repetitionPenalty` / `frequencyPenalty` / `presencePenalty` (declared on the shared interface at `bindings/electron/src/api/options.ts:66-71`) never reach `query.generation`. The comment three lines above it (`data.ts:217-219`) says it carries "only the sampling knobs commons' RAG pipeline reads", which #1073 makes false. The LLM path in the same package does forward all six (`bindings/electron/src/api/llm-abi.ts:103-112`). - Python — `build_query` (`bindings/python/runanywhere/_rag_bridge.py:116-130`) assigns only `max_output_tokens`, `temperature`, `top_p`, `top_k`, `system_prompt` and `reasoning` into `query.generation`, while `LlmOptions` (`bindings/python/runanywhere/options.py:125-1
+- **Issue #1200** (2026-11-03): **Clean up registry state when a plugin replace is refused as busy**
+  *Symptoms*: Follow-up from #975 by @shubhamsinnh — thanks again for that PR!  ## What In `core/src/plugin/rac_plugin_registry.cpp` (around line 459-465), `rac_plugin_register` now returns `RAC_ERROR_PLUGIN_BUSY` when the plugin being replaced still has a model lease. That early return leaves the incoming vtable's pending entry in `manifests_by_vtable` (the priority-reject path just below erases it), and the `dl_handles.try_emplace` above it has already run, leaving an empty entry. The try-register helpers in `bindings/electron/native/addon.cpp` (around line 500) and `bindings/python/native/module.cpp` (around line 408) treat only success, duplicate and already-registered as benign, so a busy refusal would be recorded as the backend being unavailable.  ## Why it matters Re-registering a backend while a segmentation model is loaded is rare, but when it happens the registry keeps a stale manifest entry, and a working backend can be reported as missing.  ## Suggested approach Erase `manifests_by_vtable[vtable]` before the busy return, make the `dl_handles` emplace happen after the busy and priority checks, and treat `RAC_ERROR_PLUGIN_BUSY` like `RAC_ERROR_PLUGIN_DUPLICATE` in the two helpers (as `plugin_loader.cpp:272` already does).  ## Done when - [ ] A busy refusal leaves no `manifests_by_vtable` or `dl_handles` residue - [ ] A busy refusal is not recorded as plugin-unavailable by the Electron and Python helpers  Not blocking #975. @shubhamsinnh, you know this code well now — you're welco
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1511,816 +1448,1255 @@ internal object QHexRTSkelInstaller {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ab31cbfd` (2026-10-14)
-**Commit Message**: fix(swift): return the Sendable handle ref from RagSession, not the raw pointer (#1015)
+### Incident Patch 1: `40053ed9` (2026-11-03)
+**Commit Message**: fix(commons): reject default tool keys that collide after UTF-8 repair (#1233)
 
-* fix(swift): return the Sendable handle ref from RagSession, not the raw pointer
+* fix(commons): reject default tool keys that collide after UTF-8 repair
 
-`main` has failed `swift-spm` since #979 merged. `RunAnywhere+Solutions.swift:63`
-returned `rac_handle_t` (`UnsafeMutableRawPointer`) out of the `RagSession`
-actor to a nonisolated caller, which Swift 6 rejects:
+* fix(commons): close key-collision gaps found in PR review
 
-    error: non-Sendable 'rac_handle_t'-typed result can not be returned from
-    actor-isolated instance method 'nativeHandleForSolution()' to nonisolated
-    context
+Reject ambiguous default tool calls wherever the parser could still read them,
+and stop rejecting the ones it cannot.
 
-`RagSessionHandleRef` (`@unchecked Sendable`) already exists in
-`RagSession.swift` and is used by other internal methods there. Hand it back
-from the actor instead, and widen it `private` -> `internal` to match the
-method's visibility. The call site then needs no wrapper of its own, so
-`SolutionRAGSessionHandleRef` is removed as dead.
+Guard coverage:
+- Scan every `<tool_call>` envelope, not just the first. With
+  `parallel_tool_calls` later envelopes are dispatched too, and their colliding
+  keys were repaired out of sight before parsing.
+- Decode and scan JSON-encoded `arguments` string values (`arguments`, `args`,
+  `params`, `parameters`, `input`), so an OpenAI-style envelope whose whole
+  argument object lives inside one string token is rejected instead of being
+  dispatched with one silently chosen value. The decode mirrors the parser's
+  own unescape and keeps malformed bytes intact, so repair provenance survives.
+- Skip closed thinking blocks in the generation-boundary check on grammar
+  backends. Those backends strip think blocks before parsing, so a colliding
+  example inside one can never reach a parser or an executor and must not fail
+  the turn. Every other backend still c
 
-Found by CI on Xcode 26.6 (swiftlang-6.3.3.1.3). Not reproducible locally: this
-machine's compiler is 6.4 (swiftlang-6.4.0.34.1) and accepts the broken shape.
-
-Co-Authored-By: Claude Code <[REDACTED_EMAIL]>
-
-* fix(swift): reach ragEvents through eventBus in the solutions test
-
-The `swift-spm` job on this bra
-
-**File**: `bindings/swift/Sources/RunAnywhere/Public/API/Rag/RagSession.swift` (modified, +3/-3)
+**File**: `core/src/features/llm/tool_calling.cpp` (modified, +20/-0)
 ```diff
-@@ -11,7 +11,7 @@ import Foundation
+@@ -32,6 +32,7 @@
+ #include <vector>
  
- /// Carries the opaque native session pointer across a `@Sendable` boundary; the
- /// handle is only ever read and handed straight back to the C ABI.
--private struct RagSessionHandleRef: @unchecked Sendable {
-+internal struct RagSessionHandleRef: @unchecked Sendable {
-     let handle: rac_handle_t
- }
+ #include "features/llm/tool_calling_internal.h"
++#include "features/llm/tool_calling_key_repair_internal.h"
+ #include "features/llm/utf8_internal.h"
+ #include "rac/core/rac_logger.h"
+ #include "rac/features/llm/rac_tool_calling.h"
+@@ -923,13 +924,32 @@ static std::string validation_errors_to_json(const std::vector<std::string>& err
+ // JSON NORMALIZATION
+ // =============================================================================
  
-@@ -202,9 +202,9 @@ public actor RagSession {
-     ///
-     /// Used by `SolutionHandle.attachRagSession(_:)`; ownership remains with
-     /// this actor and callers must not destroy the returned handle.
--    internal func nativeHandleForSolution() throws -> rac_handle_t {
-+    internal func nativeHandleForSolution() throws -> RagSessionHandleRef {
-         try requireOpen()
--        return handle
-+        return RagSessionHandleRef(handle: handle)
-     }
- 
-     // MARK: - Private
-```
-
-**File**: `bindings/swift/Sources/RunAnywhere/Public/Extensions/Solutions/RunAnywhere+Solutions.swift` (modified, +1/-9)
-```diff
-@@ -18,12 +18,6 @@ import Foundation
- import os
- import SwiftProtobuf
- 
--/// Carries a borrowed RAG session handle across the `@Sendable` closure used
--/// by `SolutionHandle.withHandle`. Ownership remains with `RagSession`.
--private struct SolutionRAGSessionHandleRef: @unchecked Sendable {
--    let handle: rac_handle_t
--}
--
- // MARK: - SolutionHandle
- 
- /// Opaque, ARC-safe wrapper around a `rac_solution_handle_t`.
-@@ -59,9 +53,7 @@ public final class SolutionHandle: @unchecked Sendable {
-     /// as long as this solution can execute retrieval. Call this before
-     /// `start()`, because native operator nodes are materialized at start time.
-     public func attachRagSession(_ session: RagSession) async throws {
--        let sessionRef = SolutionRAGSessionHandleRef(
--            handle: try await session.nativeHandleForSolution()
--        )
-+        let sessionRef = try await session.nativeHandleForSolution()
-         try withHandle { solutionHandle in
-             rac_solution_attach_rag_session(solutionHandle, sessionRef.handle)
-         }
-```
-
-**File**: `bindings/swift/Tests/RunAnywhereTests/SolutionsSurfaceTests.swift` (modified, +38/-21)
-```diff
-@@ -159,27 +159,17 @@ final class SolutionsSurfaceTests: XCTestCase {
-         try await CppBridge.ModelRegistry.shared.save(embeddingModel)
-         try await CppBridge.ModelRegistry.shared.save(llmModel)
- 
--        // MiniLM needs its vocabulary sidecar. Build the generated proto via
--        // protobuf JSON so this test does not depend on hand-maintained Swift
--        // spellings for snake_case IDL fields.
--        let embeddingConfigData = try JSONSerialization.data(
--            withJSONObject: ["vocab_path": vocabularyPath]
-+        let ragConfig = try makeRAGConfig(
-+            embeddingID: embeddingID, llmID: llmID, vocabularyPath: vocabularyPath
-         )
--        let embeddingConfig = String(decoding: embeddingConfigData, as: UTF8.self)
--        let ragConfigData = try JSONSerialization.data(withJSONObject: [
--            "embeddingModelId": embeddingID,
--            "llmModelId": llmID,
--            "embeddingConfigJson": embeddingConfig,
--            "topK": 4,
--            "chunkSize": 64,
--            "chunkOverlap": 8,
--            "maxContextTokens": 1024
--        ])
--        let ragConfig = try RARAGConfiguration(jsonUTF8Data: ragConfigData)
- 
--        let nativeSession = try await CppBridge.RAG.shared.createPipeline(ragConfig)
-+        // Hand the borrowed handle straight to the actor, which takes ownership:
-+        // `RagSession.close()` calls `destroySession` itself, so there is no
-+        // local `defer` to race with. Production does the same at
-+        // RagNamespace.swift:56.
-+        let nativeSession = try CppBridge.RAG.shared.createPipeline(ragConfig)
-         let session = RagSession(handle: nativeSession, llmModelId: llmID, defaultTopK: 4)
--        defer { CppBridge.RAG.shared.destroySession(handle: nativeSession) }
-+        defer { Task { await session.close() } }
- 
-         let document = """
-         The Zephyr Protocol avoids transmitting duplicate data by assigning a
-@@ -210,10 +200,10 @@ final class SolutionsSurfaceTests: XCTestCase {
-         // session rather than merely accepting the handle at attach time.
-         let queryCompleted = expectation(description: "RAG solution query completed")
-         var completionSubscription: AnyCancellable?
--        completionSubscription = RunAnywhere.events.ragEvents.sink { event in
-+        completionSubscription = RunAnywhere.eventBus.ragEvents.sink { event in
-             guard event.operationID == "rag.query",
--                  event.hasCapability,
--                  event.capability.kind.rawValue == 14 else { return }
-+                  case .capability(let capability)? = event.event,
-+                  capability.kind == .ragQueryCompleted else { return }
-             queryCompleted.fulfill()
-         }
-         defer { completionSubscription?.cancel() }
-@@ -226,6 +216,33 @@ final class SolutionsSurfaceTests: XCTestCase {
-         await fulfillment(of: [queryCompleted], timeout: 120.0)
-     }
- 
-+    /// Build the RAG configuration the live-session test feeds to the pipeline.
-+    ///
-+    /// MiniLM needs its vocabulary sidecar, and the generated proto is built via
-+    /// protobuf JSON so the test does not depend on hand-maintained Swift
-+    /// spellings for snake_case IDL fields. Extracted from the test body to keep
-+    /// that function inside SwiftLint's `function_body_length` limit.
-+    private func makeRAGConfig(
-+        embeddingID: String,
-+        llmID: String,
-+        vocabularyPath: String
-+    ) throws -> RARAGConfiguration {
-+        let embeddingConfigData = try JSONSerialization.data(
-+            withJSONObject: ["vocab_path": vocabularyPath]
-+        )
-+        let embeddingConfig = String(bytes: embeddingConfigData, encoding: .utf8) ?? ""
-+        let ragConfigData = try JSONSerialization.data(withJSONObject: [
-+            "embeddingModelId": embeddingID,
-+            "llmModelId": llmID,
-+            "embeddingConfigJson": embeddingConfig,
-+            "topK": 4,
-+            "chunkSize": 64,
-+            "chunkOverlap": 8,
-+            "maxContextTokens": 1024
-+        ])
-+        return try RARAGConfiguration(jsonUTF8Data: ragConfigData)
-+    }
-+
-     /// The generated handle descriptor carries its canonical fields.
-     func testGeneratedSolutionHandleCarriesCanonicalFields() {
-         var handle = RASolutionHandle()
-```
-
----
-
-### Incident Patch 2: `c130ad6a` (2026-10-14)
-**Commit Message**: fix(swift,rn): honor LoadOptions contextLength and ordered backendPreferences (#950)
-
-* docs: record the v0.20.33 release traps
-
-Four lessons from cutting v0.20.33, which took four candidates. Two were real
-defects that would have shipped an SDK where TTS does not link.
-
-The expensive one: a new NeuRT archive must be added in FOUR places, and three
-only fail in a build configuration a dev Mac never produces. Miss the force-load
-lists and every native job is green while validate_consumer_flutter dies an hour
-later on `Undefined symbol: _g_neurt_tts_ops` -- the engine registers, all CMake
-targets compile, only a CONSUMER's link fails. Miss the `#if RAC_NEURT_ROUTABLE`
-guard on the vtable entry and the opposite happens: routable builds are fine and
-every PR job without NEURUN_TOKEN fails, because the non-routable shell still
-references a symbol nothing defines. A machine with the payload staged is
-routable and reproduces neither.
-
-This file already notes that prose alone did not stop the checksum-staleness bug
-recurring twice, so the archive-list half now has a mechanism:
-`neurt_assert_no_unlisted_archives` fails packaging by name. The vtable guard has
-none -- hence the instruction to
-
-**File**: `bindings/react-native/packages/core/src/Public/Api/LoadOptionsSupport.ts` (modified, +21/-13)
-```diff
-@@ -1,20 +1,32 @@
- /**
-- * `LoadOptions` fields `commons ModelLoadRequest` has no wire path for yet.
-+ * Load-option support and lossless protobuf validation for this binding.
-  *
-- * Only `backendPreferences[0]` (equivalently the deprecated `framework`)
-- * reaches commons at load time; `contextLength`, `threads`, a real
-- * `accelerator` choice, and ordered fallback across multiple
-- * `backendPreferences` are not yet carried by the native load ABI (tracked
-- * as a follow-up — see PR #605 review follow-up issue 8). Per the v4 public
-- * API spec, "every accepted field is implemented end to end or fails
-- * preflight" — `models.load` throws when one of these is set rather than
-- * silently dropping it.
-+ * `contextLength` and the ordered `backendPreferences` list now ride
-+ * `ModelLoadRequest.context_length`/`.backend_preferences`, so only `threads`
-+ * (retired from the load ABI — reserved tag 7) and `accelerator` remain
-+ * unsupported by this React Native binding. Accelerator policy has a wire
-+ * field, but this binding does not forward it yet.
-  *
-  * Kept in its own module (no native/Nitro imports) so it stays unit-testable
-  * under the Node jest runner alongside the other pure-TS helpers.
-  */
- 
- import type { LoadOptions } from './Types';
-+import { SDKException } from '../../Foundation/Errors/SDKException';
-+
-+/** Reject context values that would be changed by int32 protobuf encoding. */
-+export function requireValidContextLength(contextLength?: number): void {
-+  if (
-+    contextLength !== undefined &&
-+    (!Number.isInteger(contextLength) ||
-+      contextLength < 0 ||
-+      contextLength > 2_147_483_647)
-+  ) {
-+    throw SDKException.invalidInput(
-+      'LoadOptions.contextLength must be a non-negative integer that fits int32'
-+    );
-+  }
-+}
- 
- export function resolvedBackendPreferences(options?: LoadOptions) {
-   if (options?.backendPreferences?.length) return options.backendPreferences;
-@@ -32,11 +44,7 @@ export function resolvedAccelerator(options?: LoadOptions) {
- 
- export function unsupportedLoadOptionKeys(options?: LoadOptions): string[] {
-   return [
--    options?.contextLength !== undefined ? 'contextLength' : undefined,
-     options?.threads !== undefined ? 'threads' : undefined,
-     resolvedAccelerator(options) !== undefined ? 'accelerator' : undefined,
--    resolvedBackendPreferences(options).length > 1
--      ? 'backendPreferences (only the first preference reaches commons; ordered fallback is not carried)'
--      : undefined,
-   ].filter((key): key is string => key !== undefined);
- }
-```
-
-**File**: `bindings/react-native/packages/core/src/Public/Api/Models.ts` (modified, +36/-8)
-```diff
-@@ -4,6 +4,7 @@
- 
- import {
-   ArchiveStructure,
-+  InferenceFramework,
-   ModelArtifactType,
-   ModelCategory,
-   ModelGetRequest,
-@@ -47,7 +48,11 @@ import type {
-   ModelRegistration,
-   ModelsState,
- } from './Types';
--import { resolvedBackendPreferences, unsupportedLoadOptionKeys } from './LoadOptionsSupport';
-+import {
-+  requireValidContextLength,
-+  resolvedBackendPreferences,
-+  unsupportedLoadOptionKeys,
-+} from './LoadOptionsSupport';
- 
- const CATEGORIES: ModelCategory[] = [
-   ModelCategory.MODEL_CATEGORY_LANGUAGE,
-@@ -328,29 +333,51 @@ export const models = {
-   /**
-    * Load a model now instead of paying for it on the first generation.
-    *
--   * Only `options.backendPreferences[0]` (equivalently the deprecated
--   * `framework`) reaches commons today; `contextLength`, `threads`, and a
--   * real `accelerator` choice are not yet carried by the native load ABI.
-+   * `contextLength` and the ordered `backendPreferences` list are forwarded on
-+   * `ModelLoadRequest`. A `required` backend preference is rejected because
-+   * `backend_preferences` carries framework enums only.
-+   * Context length is advisory at the engine boundary; engines may use their
-+   * defaults. Native load warnings are exposed through `fallbackReason`.
-    *
-    * @throws SDKException when the model is unknown, or `options` sets a
-    * placement knob the load ABI cannot honor yet.
-    */
-   async load(id: string, options?: LoadOptions): Promise<LoadedModel> {
-+    requireValidContextLength(options?.contextLength);
-     const model = await requireModel(id);
-     const unsupported = unsupportedLoadOptionKeys(options);
-     if (unsupported.length > 0) {
-       throw SDKException.invalidInput(
--        `LoadOptions.${unsupported.join(', ')} cannot be carried by the native load ABI yet`
-+        `LoadOptions.${unsupported.join(', ')} is not supported by this React Native binding`
-+      );
-+    }
-+    if (
-+      options?.backendPreferences?.some((preference) => preference.required)
-+    ) {
-+      throw SDKException.invalidInput(
-+        'LoadOptions.backendPreferences.required cannot be carried by ModelLoadRequest ' +
-+          'because backend_preferences contains framework enums only. ' +
-+          'Remove required or pass one preferred backend.'
-       );
-     }
--    const requestedBackend = resolvedBackendPreferences(options)[0];
-+    const preferences = resolvedBackendPreferences(options);
-+    const requestedBackend = preferences[0];
-+    // A lone deprecated UNSPECIFIED choice keeps catalog-based routing. In a
-+    // longer list it must not introduce a catalog pin ahead of later choices.
-+    const pinRequestedBackend =
-+      requestedBackend &&
-+      (requestedBackend.backend !==
-+        InferenceFramework.INFERENCE_FRAMEWORK_UNSPECIFIED ||
-+        preferences.length > 1);
-     const result = await loadModel(
-       ModelLoadRequest.fromPartial({
-         modelId: id,
-         category: model.category,
--        ...(requestedBackend ? { framework: requestedBackend.backend } : {}),
-+        ...(pinRequestedBackend ? { framework: requestedBackend.backend } : {}),
-         forceReload: options?.forceReload ?? false,
-         validateAvailability: true,
-+        contextLength: options?.contextLength,
-+        backendPreferences: preferences.map((preference) => preference.backend),
-       })
-     );
-     if (result.error) {
-@@ -360,8 +387,9 @@ export const models = {
-       id,
-       category: model.category,
-       ...(requestedBackend ? { requestedBackend } : {}),
--      actualBackend: requestedBackend?.backend ?? model.framework,
-+      actualBackend: result.framework,
-       actualDevice: 'unknown',
-+      fallbackReason: result.fallbackReason ?? result.warnings[0],
-       async close(): Promise<void> {
-         await models.unload(id);
-       },
-```
-
-**File**: `bindings/react-native/packages/core/src/Public/Api/Types.ts` (modified, +1/-1)
-```diff
-@@ -280,7 +280,7 @@ export type AcceleratorPolicy = 'auto' | 'cpu' | 'gpu' | 'npu';
- /** One ranked backend choice for {@link LoadOptions.backendPreferences}. */
- export interface BackendPreference {
-   backend: InferenceFramework;
--  /** `true` fails the load instead of falling back past this entry. */
-+  /** Hard fallback boundary. React Native rejects `true` until the load wire can carry it. */
-   required?: boolean;
- }
- 
-```
-
-**File**: `bindings/react-native/packages/core/tests/unit/Public/Api/LoadOptionsSupport.test.ts` (modified, +45/-22)
-```diff
-@@ -1,12 +1,20 @@
- /**
-  * Characterizes which `LoadOptions` fields `models.load()` rejects at
-- * preflight because the commons load ABI has no wire path for them yet
-+ * preflight because this binding does not support them yet
-  * (PR #605 review issue 8). Per the v4 public API spec, silently dropping
-  * an accepted field is forbidden, so unsupported knobs are reported for
-  * `models.load` to throw on rather than merely warn about.
++/**
++ * @brief Normalize a tool-call JSON payload, repairing malformed UTF-8.
 + *
-+ * `contextLength` and the ordered `backendPreferences` list are carried by
-+ * `ModelLoadRequest` now, so only `threads` (retired) and `accelerator`
-+ * remain unsupported.
-  */
++ * Rejects payloads whose distinct raw keys decode to the same key after repair
++ * (`RAC_ERROR_INVALID_ARGUMENT`), then repairs bytes and re-serializes valid
++ * JSON, falling back to the unquoted-key normalizer when the fast parse fails.
++ *
++ * @param json_str Raw JSON payload (must not be null).
++ * @param out_normalized Receives the owned normalized string on success.
++ * @return RAC_SUCCESS (repaired on the fast path, or via the unquoted-key
++ *         scanner when the fast parser rejects the payload),
++ *         RAC_ERROR_INVALID_ARGUMENT for ambiguous keys,
++ *         RAC_ERROR_OUT_OF_MEMORY on allocation failure, or RAC_ERROR_INTERNAL
++ *         for an unexpected exception.
++ */
+ extern "C" rac_result_t rac_tool_call_normalize_json(const char* json_str,
+                                                        char** out_normalized) try {
+     if (!json_str || !out_normalized) {
+         return RAC_ERROR_INVALID_ARGUMENT;
+     }
+     *out_normalized = nullptr;
  
--import { unsupportedLoadOptionKeys } from '../../../../src/Public/Api/LoadOptionsSupport';
-+import {
-+  requireValidContextLength,
-+  unsupportedLoadOptionKeys,
-+} from '../../../../src/Public/Api/LoadOptionsSupport';
-+import { SDKException } from '../../../../src/Foundation/Errors/SDKException';
- import { InferenceFramework } from '@runanywhere/proto-ts/model_types';
- 
- describe('unsupportedLoadOptionKeys', () => {
-@@ -22,32 +30,29 @@ describe('unsupportedLoadOptionKeys', () => {
-     ).toEqual([]);
-   });
- 
--  it('does not report a single backendPreferences entry', () => {
-+  it('does not report contextLength, which now reaches commons', () => {
-+    expect(unsupportedLoadOptionKeys({ contextLength: 4096 })).toEqual([]);
-+  });
-+
-+  it('does not report ordered backendPreferences, which now reach commons', () => {
-     expect(
-       unsupportedLoadOptionKeys({
--        backendPreferences: [{ backend: InferenceFramework.INFERENCE_FRAMEWORK_LLAMA_CPP }],
-+        backendPreferences: [
-+          { backend: InferenceFramework.INFERENCE_FRAMEWORK_LLAMA_CPP },
-+          { backend: InferenceFramework.INFERENCE_FRAMEWORK_ONNX },
-+        ],
-       })
-     ).toEqual([]);
-   });
- 
--  it('reports contextLength, threads, and accelerator individually', () => {
--    expect(unsupportedLoadOptionKeys({ contextLength: 4096 })).toEqual([
--      'contextLength',
--    ]);
-+  it('reports threads and accelerator individually', () => {
-     expect(unsupportedLoadOptionKeys({ threads: 4 })).toEqual(['threads']);
--    expect(unsupportedLoadOptionKeys({ accelerator: 'gpu' })).toEqual(['accelerator']);
--    expect(unsupportedLoadOptionKeys({ useGpu: true })).toEqual(['accelerator']);
--  });
--
--  it('reports multiple backendPreferences entries', () => {
--    const keys = unsupportedLoadOptionKeys({
--      backendPreferences: [
--        { backend: InferenceFramework.INFERENCE_FRAMEWORK_LLAMA_CPP },
--        { backend: InferenceFramework.INFERENCE_FRAMEWORK_ONNX },
--      ],
--    });
--    expect(keys).toHaveLength(1);
--    expect(keys[0]).toMatch(/^backendPreferences/);
-+    expect(unsupportedLoadOptionKeys({ accelerator: 'gpu' })).toEqual([
-+      'accelerator',
-+    ]);
-+    expect(unsupportedLoadOptionKeys({ useGpu: true })).toEqual([
-+      'accelerator',
-+    ]);
-   });
- 
-   it('combines every unsupported knob in a stable order', () => {
-@@ -57,6 +62,24 @@ describe('unsupportedLoadOptionKeys', () => {
-         threads: 4,
-         accelerator: 'cpu',
-       })
--    ).toEqual(['contextLength', 'threads', 'accelerator']);
-+    ).toEqual(['threads', 'accelerator']);
-   });
- });
-+
-+describe('requireValidContextLength', () => {
-+  it.each([undefined, 0, 4096, 2_147_483_647])(
-+    'preserves the valid context value %s',
-+    (contextLength) => {
-+      expect(() => requireValidContextLength(contextLength)).not.toThrow();
++    if (rac::llm::tool_calling::has_repaired_key_collision(json_str)) {
++        return RAC_ERROR_INVALID_ARGUMENT;
 +    }
-+  );
 +
-+  it.each([-1, 0.5, NaN, Infinity, -Infinity, 2_147_483_648])(
-+    'rejects the context value %s before protobuf encoding',
-+    (contextLength) => {
-+      expect(() => requireValidContextLength(contextLength)).toThrow(
-+        SDKException
-+      );
-+    }
-+  );
-+});
+     // Repair before the fast parse as well as unquoted-key normalization, so
+     // malformed model bytes do not make otherwise valid JSON take the scanner path.
+     const std::string sanitized = rac::llm::sanitize_utf8(json_str);
 ```
 
-**File**: `bindings/swift/Sources/RunAnywhere/Public/API/Handles.swift` (modified, +1/-0)
+**File**: `core/src/features/llm/tool_calling_generation_internal.h` (modified, +42/-0)
 ```diff
-@@ -30,6 +30,7 @@ public enum AcceleratorPolicy: Sendable {
- /// Ordered backend preference for model load.
- public struct BackendPreference: Sendable {
-     public var backend: InferenceFramework
-+    /// Hard fallback boundary. Swift rejects `true` until the load wire can carry it.
-     public var required: Bool
- 
-     public init(backend: InferenceFramework, required: Bool = false) {
-```
-
-**File**: `bindings/swift/Sources/RunAnywhere/Public/API/Namespaces/ModelsNamespace.swift` (modified, +61/-26)
-```diff
-@@ -233,11 +233,12 @@ public extension RunAnywhere {
- 
-         /// Load a model now instead of waiting for the first generation call.
-         ///
--        /// Only `LoadOptions.backendPreferences.first` (equivalently the
--        /// deprecated `framework`) reaches commons today. `contextLength`,
--        /// `threads`, `accelerator`, and additional ordered `backendPreferences`
--        /// are not yet carried by the native load ABI, so passing them throws
--        /// rather than being silently dropped.
-+        /// `contextLength` and the ordered `backendPreferences` list are
-+        /// forwarded on `ModelLoadRequest`; a `required` backend preference is
-+        /// rejected because `backend_preferences` carries framework enums only.
-+        /// `threads` (retired) and `accelerator` still fail preflight.
-+        /// Context length is advisory at the engine boundary; engines may use
-+        /// their defaults. Native load warnings are exposed as `fallbackReason`.
-         ///
-         /// - Throws: `SDKException` when the model cannot be loaded, or when
-         ///   `options` sets a placement knob the load ABI cannot honor yet.
-@@ -479,12 +480,31 @@ extension RunAnywhere {
-         return modelId
-     }
- 
-+    /// Load the validated request shared by explicit and automatic loading.
-     @discardableResult
-     internal static func loadResolved(
-         model: ModelInfo,
-         category: ModelCategory,
-         options: LoadOptions?
-     ) async throws -> RAModelLoadResult {
-+        let request = try modelLoadRequest(model: model, category: category, options: options)
-+        let result = await performLoad(request)
-+        guard !result.hasError else {
-+            throw SDKException(
-+                code: .modelLoadFailed,
-+                message: "Model '\(model.id)': \(result.error.message)",
-+                category: .component
-+            )
-+        }
-+        return result
-+    }
-+
-+    /// Build the exact protobuf request used by `models.load` before native work.
-+    internal static func modelLoadRequest(
-+        model: ModelInfo,
-+        category: ModelCategory,
-+        options: LoadOptions?
-+    ) throws -> RAModelLoadRequest {
-         if let options {
-             try options.requireCarriableByLoadABI()
-         }
-@@ -493,42 +513,57 @@ extension RunAnywhere {
-         request.modelID = model.id
-         request.category = category == .unspecified ? category.defaultLoadCategory : category
-         request.forceReload = options?.forceReload ?? false
--        if let backend = options?.backendPreferences.first?.backend, backend != .unspecified {
--            request.framework = backend
-+        // A lone unspecified choice leaves native catalog preference resolution
-+        // intact. In a longer list, preserve it ahead of later caller choices.
-+        if let backend = options?.backendPreferences.first?.backend {
-+            if backend != .unspecified || (options?.backendPreferences.count ?? 0) > 1 {
-+                request.framework = backend
-+            }
-         } else if model.framework != .unspecified {
-             request.framework = model.framework
-         }
-+        if let contextLength = options?.contextLength {
-+            guard contextLength >= 0, let wireContextLength = Int32(exactly: contextLength) else {
-+                throw SDKException.invalidConfiguration(
-+                    "LoadOptions.contextLength must be non-negative and fit ModelLoadRequest.context_length (int32)"
-+                )
-+            }
-+            request.contextLength = wireContextLength
-+        }
-+        // The full ordered list rides `backend_preferences`; `.framework` above
-+        // pins its first entry except for a lone unspecified preference.
-+        request.backendPreferences = options?.backendPreferences.map(\.backend) ?? []
-         request.validateAvailability = true
- 
--        let result = await performLoad(request)
--        guard !result.hasError else {
--            throw SDKException(
--                code: .modelLoadFailed,
--                message: "Model '\(model.id)': \(result.error.message)",
--                category: .component
--            )
--        }
--        return result
-+        return request
-     }
+@@ -9,6 +9,7 @@
+ #include "features/llm/llm_thinking_directive_internal.h"
+ #include "features/llm/llm_thinking_tags_internal.h"
+ #include "features/llm/rac_llm_lifecycle_bridge.h"
++#include "features/llm/tool_calling_key_repair_internal.h"
+ #include "features/llm/utf8_internal.h"
+ #include "rac/features/llm/rac_llm_service.h"
+ #include "rac/features/llm/rac_llm_thinking.h"
+@@ -318,6 +319,24 @@ inline runanywhere::v1::FinishReason finish_reason_from_raw(const rac_llm_result
  }
+ #endif
  
- private extension LoadOptions {
--    /// `backendPreferences.first` reaches commons through the same
--    /// `RAModelLoadRequest.framework` field the deprecated `framework:`
--    /// property already uses. Everything else the native load ABI cannot
--    /// carry yet — honoring it silently would violate the "every accepted
--    /// field is implemented end to end or fails preflight" contract.
-+    /// `contextLength` and the ordered `backendPreferences` list reach commons
-+    /// through `RAModelLoadRequest.context_length`/`.backend_preferences`;
-+    /// `backendPreferences.first` also pins the legacy `.framework` field,
-+    /// except when a lone unspecified preference defers to catalog routing.
-+    /// `threads` was retired from the load A
-```
-
-**File**: `bindings/swift/Sources/RunAnywhere/Public/RunAnywhere.swift` (modified, +3/-4)
-```diff
-@@ -633,12 +633,11 @@ extension RunAnywhere {
-                     name: "generateStructured.constrained",
-                     reason: "Engine-constrained decoding is not wired in yet; use .validationOnly or .repair"
-                 ),
--                .init(name: "loadOptions.contextLength", reason: "Not carried by the native load ABI yet"),
-                 .init(name: "loadOptions.threads", reason: "Not carried by the native load ABI yet"),
--                .init(name: "loadOptions.accelerator", reason: "Not carried by the native load ABI yet"),
-+                .init(name: "loadOptions.accelerator", reason: "Not forwarded by this Swift binding"),
-                 .init(
--                    name: "loadOptions.backendPreferences.fallback",
--                    reason: "Only the first backend preference reaches commons; ordered fallback is not carried"
-+                    name: "loadOptions.backendPreferences.required",
-+                    reason: "The required flag cannot be carried by the framework-only preference list"
-                 )
-             ]
-         )
-```
-
-**File**: `bindings/swift/Tests/RunAnywhereTests/ModelLoadOptionsTests.swift` (added, +101/-0)
-```diff
-@@ -0,0 +1,101 @@
-+import XCTest
-+
-+@testable import RunAnywhere
-+
-+final class ModelLoadOptionsTests: XCTestCase {
-+    func testRequestPreservesContextAndOrderedPreferencesOnTheWire() throws {
-+        let request = try makeRequest(options: LoadOptions(
-+            backendPreferences: [
-+                BackendPreference(backend: .onnx),
-+                BackendPreference(backend: .llamaCpp)
-+            ],
-+            contextLength: 4096
-+        ))
-+        let decoded = try RAModelLoadRequest(serializedBytes: request.serializedData())
-+
-+        XCTAssertEqual(decoded.contextLength, 4096)
-+        XCTAssertEqual(decoded.framework, .onnx)
-+        XCTAssertEqual(decoded.backendPreferences, [.onnx, .llamaCpp])
-+    }
-+
-+    func testOmittedAndZeroContextRemainDistinct() throws {
-+        XCTAssertFalse(try makeRequest(options: nil).hasContextLength)
-+        let request = try makeRequest(options: LoadOptions(contextLength: 0))
-+        XCTAssertTrue(request.hasContextLength)
-+        XCTAssertEqual(request.contextLength, 0)
-+    }
-+
-+    func testContextBoundaries() throws {
-+        XCTAssertEqual(
-+            try makeRequest(options: LoadOptions(contextLength: Int(Int32.max))).contextLength,
-+            Int32.max
-+        )
-+        for invalid in [-1, Int(Int32.max) + 1] {
-+            XCTAssertThrowsError(try makeRequest(options: LoadOptions(contextLength: invalid)))
++/**
++ * @brief Runs one constrained generation step for the tool-calling loop.
++ *
++ * Applies the per-step sampling, grammar dialect, and history overrides on
++ * @p generation, drives the loaded engine, and either copies the sanitized
++ * output into @p out_response or reports the failure code through @p out_rc.
++ * Ambiguous repaired-key collisions are rejected here, before the output is
++ * copied or measured, so they can never reach a parser or an executor.
++ *
++ * @param generation Step options and cached thinking-tag state (in/out).
++ * @param cancel_binding Handles exposed to rac_*_cancel while generating.
++ * @param prompt Fully formatted prompt for this step.
++ * @param out_response Sanitized model output on success (may be null).
++ * @param out_rc Receives RAC_SUCCESS or the failure code.
++ * @param agg Optional telemetry accumulator for this loop.
++ * @param out_finish_reason Optional finish-reason output (protobuf builds).
++ * @return true on success; false when the step failed (see @p out_rc).
++ */
+ inline bool run_generate_once(GenerationState& generation,
+                               const GenerationCancelBinding& cancel_binding,
+                               const std::string& prompt, std::string* out_response,
+@@ -460,6 +479,29 @@ inline bool run_generate_once(GenerationState& generation,
+         return false;
+     }
+ 
++    if (raw.text) {
++        // Grammar backends strip closed thinking blocks before parsing, so a
++        // collision that only exists inside a think block can never reach a
++        // parser or an executor. Every other backend parses the whole raw
++        // output, so it keeps the full check.
++        std::string body;
++        const std::string full(raw.text);
++        const std::string* check_text = &full;
++        if (ref.supports_grammar) {
++            std::string thinking;
++            split_display_text_and_thinking(full, &body, &thinking, generation);
++            check_text = &body;
++        }
++        if (default_call_has_repaired_key_collision(*check_text)) {
++            rac_llm_result_free(&raw);
++            release_lifecycle_llm(&ref);
++            if (out_rc) {
++                *out_rc = RAC_ERROR_INVALID_ARGUMENT;
++            }
++            return false;
 +        }
 +    }
 +
-+    func testRequiredPreferenceIsRejectedEvenAfterTheFirstEntry() {
-+        let options = LoadOptions(backendPreferences: [
-+            BackendPreference(backend: .onnx),
-+            BackendPreference(backend: .llamaCpp, required: true)
-+        ])
-+        XCTAssertThrowsError(try makeRequest(options: options))
-+        XCTAssertTrue(RunAnywhere.capabilities().unavailable.contains {
-+            $0.name == "loadOptions.backendPreferences.required"
-+        })
+     if (out_response) {
+         // Both orchestration paths serialize model output into ToolParseRequest
+         // string fields before parsing; repair bytes before that strict boundary.
+```
+
+**File**: `core/src/features/llm/tool_calling_key_repair_internal.h` (added, +333/-0)
+```diff
+@@ -0,0 +1,333 @@
++#ifndef RAC_FEATURES_LLM_TOOL_CALLING_KEY_REPAIR_INTERNAL_H
++#define RAC_FEATURES_LLM_TOOL_CALLING_KEY_REPAIR_INTERNAL_H
++
++#include <cctype>
++#include <nlohmann/json.hpp>
++#include <string>
++#include <unordered_map>
++#include <vector>
++
++#include "features/llm/utf8_internal.h"
++
++namespace rac::llm::tool_calling {
++
++namespace key_repair_detail {
++
++/** Lowercases one ASCII byte. JSON keywords are ASCII, so no locale is needed. */
++inline char ascii_lower(char ch) {
++    return (ch >= 'A' && ch <= 'Z') ? static_cast<char>(ch - 'A' + 'a') : ch;
++}
++
++/** Lowercased copy for case-insensitive keyword comparison. */
++inline std::string ascii_lower(const std::string& value) {
++    std::string lowered = value;
++    for (char& ch : lowered) {
++        ch = ascii_lower(ch);
 +    }
++    return lowered;
++}
 +
-+    func testLoadResolvedRejectsRequiredPreferenceBeforeCallingNativeCode() async {
-+        var model = ModelInfo()
-+        model.id = "demo-model"
-+        do {
-+            _ = try await RunAnywhere.loadResolved(
-+                model: model,
-+                category: .language,
-+                options: LoadOptions(backendPreferences: [
-+                    BackendPreference(backend: .llamaCpp, required: true)
-+                ])
-+            )
-+            XCTFail("A required preference must fail preflight")
-+        } catch {
-+            XCTAssertTrue(error is SDKException)
-+        }
-+    }
++/**
++ * Keys the parser accepts as the tool-call wrapper (`TOOL_NAME_KEYS` in
++ * tool_calling.cpp). An object reached through one of these is an envelope the
++ * parser unwraps, and string-encoded arguments inside it are decoded.
++ */
++inline bool is_tool_alias(const std::string& key) {
++    const std::string lowered = ascii_lower(key);
++    return lowered == "tool" || lowered == "name" || lowered == "function" || lowered == "func" ||
++           lowered == "method" || lowered == "action" || lowered == "command";
++}
 +
-+    func testLoneUnspecifiedPreferenceKeepsCatalogRouting() throws {
-+        var model = ModelInfo()
-+        model.id = "demo-model"
-+        model.framework = .llamaCpp
-+        model.preferredFramework = .mlx
-+        let request = try RunAnywhere.modelLoadRequest(
-+            model: model,
-+            category: .language,
-+            options: LoadOptions(backendPreferences: [
-+                BackendPreference(backend: .unspecified)
-+            ])
-+        )
-+        let decoded = try RAModelLoadRequest(serializedBytes: request.serializedData())
++/**
++ * Keys the parser decodes as an argument object (`ARGUMENT_KEYS` in
++ * tool_calling.cpp). The parser matches them case-insensitively, so this must
++ * too: `"Arguments"` is decoded exactly like `"arguments"`.
++ */
++inline bool is_argument_alias(const std::string& key) {
++    const std::string lowered = ascii_lower(key);
++    return lowered == "arguments" || lowered == "args" || lowered == "params" ||
++           lowered == "parameters" || lowered == "input";
++}
 +
-+        XCTAssertFalse(request.hasFramework)
-+        XCTAssertFalse(decoded.hasFramework)
-+        XCTAssertEqual(decoded.backendPreferences, [.unspecified])
-+    }
-+
-+    func testUnspecifiedFirstEntryDoesNotPinCatalogAheadOfLaterPreferences() throws {
-+        let request = try makeRequest(options: LoadOptions(backendPreferences: [
-+            BackendPreference(backend: .unspecified),
-+            BackendPreference(backend: .onnx)
-+        ]))
-+        XCTAssertTrue(request.hasFramework)
-+        XCTAssertEqual(request.framework, .unspecified)
-+        XCTAssertEqual(request.backendPreferences, [.unspecified, .onnx])
-+    }
-+
-+    private func makeRequest(options: LoadOptions?) throws -> RAModelLoadRequest {
-+        var model = ModelInfo()
-+        model.id = "demo-model"
-+        model.framework = .llamaCpp
-+        return try RunAnywhere.modelLoadRequest(model: model, category: .language, options: options)
++/** Appends one code point as UTF-8. */
++inline void append_utf8(unsigned int codepoint, std::string* out) {
++    if (codepoint < 0x80) {
++        out->push_back(static_cast<char>(codepoint));
++    } else if (codepoint < 0x800) {
++        out->push_back(static_cast<char>(0xC0 | (codepoint >> 6)));
++        out->push_back(static_cast<char>(0x80 | (codepoint & 0x3F)));
++    } else if (codepoint < 0x10000) {
++        out->push_back(static_cast<char>(0xE0 | (codepoint >> 12)));
++        out->push_back(static_cast<char>(0x80 | ((codepoint >> 6) & 0x3F)));
++        out->push_back(static_cast<char>(0x80 | (codepoint & 0x3F)));
++    } else {
++        out->push_back(static_cast<char>(0xF0 | (codepoint >> 18)));
++        out->push_back(static_cast<char>(0x80 | ((codepoint >> 12) & 0x3F)));
++        out->push_back(static_cast<char>(0x80 | ((codepoint >> 6) & 0x3F)));
++        out->push_back(static_cast<char>(0x80 | (codepoint & 0x3F)));
 +    }
 +}
++
++/** Reads four hex digits at @p pos of @p token. False when they are not hex. */
++inline bool read_hex4(const std::string& token, size_t pos, unsigned int* out) {
++    if (pos + 3 >= token.size()) {
++        return false;
++    }
++    unsigned int value = 0;
++    for (size_t i = 0; i < 4; ++i) {
++        const char ch = token[pos + i];
++        unsigned int digit = 0;
++        if (ch >= '0' && ch <= '9') {
++            digit = static_cast<unsigned int>(ch - '0');
++        } else if (ch >= 'a' && ch <= 'f') {
++            digit = static_cast<unsigned int>(ch - 'a') + 10;
++        } else if (ch >= 'A' && ch <= 'F') {
++            digit = static_cast<unsigned int>(ch - 'A') + 10;
++        } else {
++            return false;
++        }
++        value = (value << 4) | digit;
++    }
++    *out = value;
++    return true;
++}
++
++/**
++ * Decode one quoted JSON string token into the bytes the parser's JSON layer
++ * sees. `\uXXXX` escapes are decoded (including surrogate pairs) because the
++ * default-format envelope is re-serialized by nlohmann before extraction:
++ * `\u007B` reaches the parser as `{`, so it has to reach the scan as `{` too or
++ * the encoded object stays invisible. Malformed raw bytes are carried through
++ * untouched, which is what keeps their repair provenance observable.
++ *
++ * @param token Quoted token, quotes included.
++ */
++inline std::string decode_json_string_token(const std::string& token) {
++    std::string decoded;
++    if (token.size() < 2) {
++        return decoded;
++    }
++    const size_t last = token.size() - 2;  // last content byte
++    decoded.reserve(last);
++    for (size_t i = 1; i <= last; ++i) {
++        const char ch = token[i];
++        if (ch != '\\' || i + 1 > last) {
++            decoded += ch;
++            continue;
++        }
++        const char escaped = token[++i];
++        switch (escaped) {
++            case 'n':
++                decoded += '\n';
++                break;
++            case 'r':
++                decoded += '\r';
++                break;
++            case 't':
++                decoded += '\t';
++                break;
++            case 'b':
++                decoded += '\b';
++                break;
++            case 'f':
++   
+```
+
+**File**: `core/tests/test_tool_calling.cpp` (modified, +107/-0)
+```diff
+@@ -122,6 +122,112 @@ int test_parse_default_invalid_utf8() {
+     return 0;
+ }
+ 
++/** @brief Collisions are rejected at normalization and parse level; valid
++ *         duplicates and non-key JSON text stay accepted. */
++int test_default_repaired_key_collisions() {
++    // Normalization-level rejections. Bare objects carry no tool name, so a
++    // parse-level assertion on them would hold with or without the guard; the
++    // parse contract is covered by `call_collisions` below.
++    const char* normalize_collisions[] = {
++        "{\"x\xFF\":1,\"x\xFE\":2}",
++        "{\"nested\":{\"x\xFF\":1,\"x\xFE\":2}}",
++        "{\"items\":[{\"x\xFF\":1,\"x\xFE\":2}]}",
++        "{\"x\xFF\":1,\"x\uFFFD\":2}",
++        "{\"x\uFFFD\":1,\"x\xFF\":2}",
++        "{\"x\\uFFFD\":1,\"x\xFF\":2}",
++        "{\"\\u0078\xFF\":1,\"x\xFE\":2}",
++        "{nested:{\"x\xFF\":1,\"x\xFE\":2}}",
++        "{\"tool\":\"lookup\",\"arguments\":{\"x\xFF\":1,\"x\xFE\":2}}",
++        // Wrapper shapes whose string-encoded arguments the parser decodes.
++        "{\"function\":{\"name\":\"lookup\",\"arguments\":\"{\\\"x\xFF\\\":1,\\\"x\xFE\\\":2}\"}}",
++        "{\"function\":{\"name\":\"lookup\",\"Arguments\":\"{\\\"x\xFF\\\":1,\\\"x\xFE\\\":2}\"}}",
++        "{\"function\":{\"name\":\"lookup\",\"arguments\":"
++        "\"\\u007B\\\"x\xFF\\\":1,\\\"x\xFE\\\":2\\u007D\"}}",
++        "{\"tool_calls\":[{\"type\":\"function\",\"function\":{\"name\":\"lookup\","
++        "\"arguments\":\"{\\\"x\xFF\\\":1,\\\"x\xFE\\\":2}\"}}]}",
++    };
++    for (const char* input : normalize_collisions) {
++        char* normalized = nullptr;
++        ASSERT_EQ_INT(rac_tool_call_normalize_json(input, &normalized), RAC_ERROR_INVALID_ARGUMENT);
++        ASSERT_TRUE(normalized == nullptr);
++    }
++    // The same ambiguity through a full default call must parse to no call.
++    const char* call_collisions[] = {
++        "{\"tool\":\"lookup\",\"arguments\":{\"x\xFF\":1,\"x\xFE\":2}}",
++        "{\"function\":{\"name\":\"lookup\",\"arguments\":\"{\\\"x\xFF\\\":1,\\\"x\xFE\\\":2}\"}}",
++        "{\"function\":{\"name\":\"lookup\",\"Arguments\":\"{\\\"x\xFF\\\":1,\\\"x\xFE\\\":2}\"}}",
++        "{\"function\":{\"name\":\"lookup\",\"arguments\":"
++        "\"\\u007B\\\"x\xFF\\\":1,\\\"x\xFE\\\":2\\u007D\"}}",
++        "{\"tool_calls\":[{\"type\":\"function\",\"function\":{\"name\":\"lookup\","
++        "\"arguments\":\"{\\\"x\xFF\\\":1,\\\"x\xFE\\\":2}\"}}]}",
++    };
++    for (const char* input : call_collisions) {
++        const std::string call_text = std::string("<tool_call>") + input + "</tool_call>";
++        rac_tool_call_t call{};
++        ASSERT_EQ_INT(rac_tool_call_parse(call_text.c_str(), &call), RAC_SUCCESS);
++        ASSERT_EQ_INT(call.has_tool_call, RAC_FALSE);
++        ASSERT_TRUE(call.arguments_json == nullptr);
++        rac_tool_call_free(&call);
++    }
++    // Each allowed case pins its exact normalized output, so a silently wrong
++    // value cannot pass by only proving normalization succeeded.
++    struct AllowedCase {
++        const char* input;
++        const char* expected;
++    };
++    const AllowedCase allowed[] = {
++        {"{\"x\":1,\"x\":2,\"value\":\"\xFF\"}", "{\"x\":2,\"value\":\"\xEF\xBF\xBD\"}"},
++        {"{\"x\uFFFD\":1,\"x\uFFFD\":2}", "{\"x\uFFFD\":2}"},
++        {"{\"a\":{\"x\xFF\":1},\"b\":{\"x\xFE\":2}}",
++         "{\"a\":{\"x\uFFFD\":1},\"b\":{\"x\uFFFD\":2}}"},
++        {"{\"items\":[{\"x\xFF\":1},{\"x\xFE\":2}]}",
++         "{\"items\":[{\"x\uFFFD\":1},{\"x\uFFFD\":2}]}"},
++        {"{\"x\xFF\":1,\"y\xFE\":2}", "{\"x\uFFFD\":1,\"y\uFFFD\":2}"},
++        {"{\"path\":\"C:\\\\\",\"x\xFF\":1,\"text\":\"{}\\\"x:\"}",
++         "{\"path\":\"C:\\\\\",\"x\uFFFD\":1,\"text\":\"{}\\\"x:\"}"},
++        // Valid duplicate keys keep last-wins, including inside a decoded
++        // arguments string.
++        {"{\"function\":{\"name\":\"lookup\",\"arguments\":\"{\\\"x\\\":1,\\\"x\\\":2}\"}}",
++         "{\"function\":{\"name\":\"lookup\",\"arguments\":\"{\\\"x\\\":1,\\\"x\\\":2}\"}}"},
++        // A non-arguments string value is data, not keys: never rejected, and
++        // its bytes are repaired like any other value.
++        {"{\"note\":\"{\\\"x\xFF\\\":1,\\\"x\xFE\\\":2}\"}",
++         "{\"note\":\"{\\\"x\xEF\xBF\xBD\\\":1,\\\"x\xEF\xBF\xBD\\\":2}\"}"},
++        // The parser wraps top-level string arguments as {"input": ...}; it
++        // never expands them into keys, so this is not ambiguous.
++        {"{\"tool\":\"lookup\",\"arguments\":\"{\\\"x\xFF\\\":1,\\\"x\xFE\\\":2}\"}",
++         "{\"tool\":\"lookup\",\"arguments\":\"{\\\"x\xEF\xBF\xBD\\\":1,"
++         "\\\"x\xEF\xBF\xBD\\\":2}\"}"},
++        // Object-valued arguments are passed through unchanged, so JSON text in
++        // ordinary tool data is data, not keys.
++        {"{\"tool\":\"lookup\",\"arguments\":{\"metadata\":{\"arguments\":"
++         "\"{\\\"x\xFF\\\":1,\\\"x\xFE\\\":2}\"}}}",
++         "{\"tool\":\"lookup\",\"arguments\":{\"metadata\":{\"arguments\":"
++ 
+```
+
+**File**: `core/tests/test_tool_calling_run_loop.cpp` (modified, +174/-0)
+```diff
+@@ -587,6 +587,174 @@ int test_one_tool_call_then_final_text() {
+     return 0;
+ }
+ 
++int test_default_repaired_key_collision_never_executes() {
++    if (!load_mock_llm())
++        return 1;
++    set_responses({
++        "<tool_call>{\"tool\":\"get_weather\",\"arguments\":{\"x\xFF\":1,\"x\xFE\":2}}</tool_call>",
++    });
++    auto request = make_request("Look up the weather.");
++    request.mutable_options()->set_validate_calls(false);
++    std::vector<uint8_t> bytes;
++    CHECK(serialize(request, &bytes), "collision request serializes");
++    ExecutorState exec;
++    rac_proto_buffer_t out{};
++    rac_proto_buffer_init(&out);
++    const rac_result_t rc = run_loop(bytes.data(), bytes.size(), executor_callback, &exec, &out);
++    CHECK(exec.invocation_count == 0, "ambiguous call never reaches executor");
++    CHECK(generate_calls() == 1, "ambiguous call does not synthesize a result");
++    CHECK(rc == RAC_ERROR_INVALID_ARGUMENT, "collision returns invalid argument");
++    runanywhere::v1::ToolCallingResult result;
++    CHECK(out.data && result.ParseFromArray(out.data, static_cast<int>(out.size)),
++          "collision error result decodes");
++    CHECK(result.error_code() == RAC_ERROR_INVALID_ARGUMENT,
++          "collision reports invalid argument");
++    rac_proto_buffer_free(&out);
++    cleanup_environment();
++    return 0;
++}
++
++/** @brief A collision in a later envelope (parallel_tool_calls) never dispatches. */
++int test_second_default_envelope_collision_never_executes() {
++    if (!load_mock_llm())
++        return 1;
++    // With parallel_tool_calls every envelope is dispatched, so a colliding key
++    // in a later envelope must fail the turn exactly like one in the first.
++    set_responses({
++        "<tool_call>{\"tool\":\"get_weather\",\"arguments\":{\"location\":\"Paris\"}}</tool_call>"
++        "<tool_call>{\"tool\":\"get_weather\",\"arguments\":{\"x\xFF\":1,\"x\xFE\":2}}</tool_call>",
++    });
++    auto request = make_request("Look up the weather twice.");
++    request.mutable_options()->set_validate_calls(false);
++    request.mutable_options()->set_parallel_tool_calls(true);
++    std::vector<uint8_t> bytes;
++    CHECK(serialize(request, &bytes), "parallel collision request serializes");
++    ExecutorState exec;
++    rac_proto_buffer_t out{};
++    rac_proto_buffer_init(&out);
++    const rac_result_t rc = run_loop(bytes.data(), bytes.size(), executor_callback, &exec, &out);
++    CHECK(exec.invocation_count == 0, "parallel ambiguous call never reaches executor");
++    CHECK(generate_calls() == 1, "parallel ambiguous call does not synthesize a result");
++    CHECK(rc == RAC_ERROR_INVALID_ARGUMENT, "parallel collision returns invalid argument");
++    rac_proto_buffer_free(&out);
++    cleanup_environment();
++    return 0;
++}
++
++/** @brief A collision inside encoded function.arguments never dispatches. */
++int test_envelope_string_arguments_collision_never_executes() {
++    if (!load_mock_llm())
++        return 1;
++    // OpenAI-style envelope: the whole argument object is one JSON-encoded
++    // string. Its colliding keys must be rejected before dispatch, not repaired
++    // into a silently last-wins value.
++    set_responses({
++        "<tool_call>{\"function\":{\"name\":\"get_weather\",\"arguments\":"
++        "\"{\\\"x\xFF\\\":1,\\\"x\xFE\\\":2}\"}}</tool_call>",
++    });
++    auto request = make_request("Look up the weather.");
++    request.mutable_options()->set_validate_calls(false);
++    std::vector<uint8_t> bytes;
++    CHECK(serialize(request, &bytes), "encoded-arguments collision request serializes");
++    ExecutorState exec;
++    rac_proto_buffer_t out{};
++    rac_proto_buffer_init(&out);
++    const rac_result_t rc = run_loop(bytes.data(), bytes.size(), executor_callback, &exec, &out);
++    CHECK(exec.invocation_count == 0, "encoded-arguments collision never reaches executor");
++    CHECK(generate_calls() == 1, "encoded-arguments collision does not synthesize a result");
++    CHECK(rc == RAC_ERROR_INVALID_ARGUMENT,
++          "encoded-arguments collision returns invalid argument");
++    rac_proto_buffer_free(&out);
++    cleanup_environment();
++    return 0;
++}
++
++/** @brief \u-escaped braces must not hide an encoded argument collision. */
++int test_envelope_unicode_escaped_arguments_collision_never_executes() {
++    if (!load_mock_llm())
++        return 1;
++    // Braces written as \u007B/\u007D survive normalization as real braces, so
++    // the parser expands this object and would dispatch it last-wins unless the
++    // scan decodes the escapes first.
++    set_responses({
++        "<tool_call>{\"function\":{\"name\":\"get_weather\",\"arguments\":"
++        "\"\\u007B\\\"x\xFF\\\":1,\\\"x\xFE\\\":2\\u007D\"}}</tool_call>",
++    });
++    auto request = make_request("Look up the weather.");
++    request.mutable_options()->set_validate_calls(false);
++    std::vector<uint8_t> bytes;
++    CHECK(serialize(request, &bytes), "escaped-brace collision request serializes");
++    ExecutorState e
+```
+
+**File**: `core/tests/test_tool_calling_session_proto.cpp` (modified, +33/-0)
+```diff
+@@ -491,6 +491,38 @@ runanywhere::v1::ToolCallingSessionCreateRequest make_request(const std::string&
+     return request;
+ }
+ 
++/** @brief An ambiguous call fails the session with INVALID_ARGUMENT and emits no tool call. */
++int test_session_repaired_key_collision_never_emits_call() {
++    if (!load_mock_llm())
++        return 1;
++    set_responses({
++        "<tool_call>{\"tool\":\"get_weather\",\"arguments\":{\"items\":[{\"x\xFF\":1,\"x\xFE\":2}]}"
++        "}</tool_call>",
++    });
++    EventSink sink;
++    auto request = make_request("Look up the weather.");
++    request.mutable_options()->set_validate_calls(false);
++    std::vector<uint8_t> bytes;
++    CHECK(serialize(request, &bytes), "collision session request serializes");
++    uint64_t handle = 0;
++    sink.published_handle = &handle;
++    const rac_result_t rc = rac_tool_calling_session_create_proto(
++        bytes.data(), bytes.size(), sink_callback, &sink, capture_session_handle, &handle);
++    using EvCase = runanywhere::v1::ToolCallingSessionEvent::KindCase;
++    CHECK(sink.count_kind(EvCase::kToolCall) == 0, "ambiguous session never emits a tool call");
++    CHECK(rc == RAC_SUCCESS, "ambiguous session create succeeds and reports via events");
++    CHECK(sink.count_kind(EvCase::kErrorBytes) == 1, "ambiguous session emits exactly one error");
++    runanywhere::v1::SDKError error;
++    CHECK(parse_first_error(sink, &error), "ambiguous session error decodes");
++    CHECK(error.c_abi_code() == RAC_ERROR_INVALID_ARGUMENT,
++          "ambiguous session error is invalid argument");
++    if (handle) {
++        rac_tool_calling_session_destroy_proto(handle);
++    }
++    cleanup_environment();
++    return 0;
++}
++
+ int test_session_emits_tool_call() {
+     if (!load_mock_llm()) {
+         std::fprintf(stderr, "FAIL: mock LLM load\n");
+@@ -1466,6 +1498,7 @@ int main() {
+         return 0;
+ #else
+         test_session_emits_tool_call();
++        test_session_repaired_key_collision_never_emits_call();
+         test_step_with_result_emits_final();
+         test_step_with_result_emits_final("\xC3\x28", "\xEF\xBF\xBD(");
+         test_auto_execute_unset_defaults_to_true_and_pauses_for_tool_execution();
 ```
 
 ---
 
-### Incident Patch 3: `0de53c25` (2026-10-13)
-**Commit Message**: fix(gates): fail on deprecated-surface exemptions that match nothing (#965)
+### Incident Patch 2: `8916580f` (2026-11-03)
+**Commit Message**: fix(jni): validate cached refs and method ids across registration paths (#1044) (#1070)
 
-* docs: record the v0.20.33 release traps
+* fix(jni): validate cached refs and method ids across registration paths (#1044)
 
-Four lessons from cutting v0.20.33, which took four candidates. Two were real
-defects that would have shipped an SDK where TTS does not link.
+- Validate GetObjectClass before GetMethodID lookups across all registration functions
+- Reject nativeFileManagerRegisterCallbacks leaving globals untouched if any method ID or NewGlobalRef fails
+- Guard all g_fc_* method IDs in jni_fc_* callbacks before Call*Method calls
+- Validate NewGlobalRef in device, telemetry, and download registration paths, ensuring C callbacks are uninstalled/cleared on failure
+- Clear active JNI exceptions on lookup/allocation failures
 
-The expensive one: a new NeuRT archive must be added in FOUR places, and three
-only fail in a build configuration a dev Mac never produces. Miss the force-load
-lists and every native job is green while validate_consumer_flutter dies an hour
-later on `Undefined symbol: _g_neurt_tts_ops` -- the engine registers, all CMake
-targets compile, only a CONSUMER's link fails. Miss the `#if RAC_NEURT_ROUTABLE`
-guard on the vtable entry and the opposite happens: routable builds are fine and
-every PR job without NEURUN_TOKEN fails, because the non-routable shell still
-references a symbol nothing defines. A machine with the payload staged is
-routable and reproduces neither.
+* fix(jni): preserve existing platform adapter until replacement is validated
 
-This file already notes that prose alone did not stop the checksum-staleness bug
-recurring twice, so the archive-list half now has a mechanism:
-`neurt_assert_no_unlisted_archives` fails packaging by name. The vtable guard has
-none -- hence the instruction to audit al
+- Defer DeleteGlobalRef on existing adapter until replacement method IDs and global ref succeed
+- Resolve optional method IDs into local variables before committing globals
+- Avoid leaving process with null callbacks if new adapter is invalid or refused
+- Register download progress C callback before committing g_download_proto_listener
 
-**File**: `scripts/validation/gates/check_deprecated_surfaces.sh` (modified, +33/-2)
+Signed-off-by: shobhitagnihotri69 <[REDACTED_EMAIL]>
+
+---------
+
+Signed-off-by: shobhitagnihotri69 <[REDACTED_EMAIL]>
+Co-authored-by: shobhit
+
+**File**: `core/src/jni/runanywhere_commons_jni.cpp` (modified, +216/-53)
 ```diff
-@@ -5,7 +5,9 @@
- # hand-written DTOs, JSON bridges, string-based enums, or deprecated facades.
- #
- # Exits 0 when all detected violations are present in the allowlist.
--# Exits 1 when NEW (non-allowlisted) violations are found.
-+# Exits 1 when NEW (non-allowlisted) violations are found, or when an allowlist
-+# entry matched nothing this run (a stale entry would silently exempt a later
-+# reintroduction of that exact surface in that exact file).
- #
- # Can run standalone or as a step within run_global_source_checks.sh.
- set -euo pipefail
-@@ -57,14 +59,18 @@ is_allowed() {
- # Counters and temp files for collecting results.
- VIOLATIONS_FILE="$(mktemp)"
- ALLOWLISTED_FILE="$(mktemp)"
--trap 'rm -f "${VIOLATIONS_FILE}" "${ALLOWLISTED_FILE}"' EXIT
-+# path|category of every allowlist entry that exempted at least one hit.
-+USED_ENTRIES_FILE="$(mktemp)"
-+STALE_FILE="$(mktemp)"
-+trap 'rm -f "${VIOLATIONS_FILE}" "${ALLOWLISTED_FILE}" "${USED_ENTRIES_FILE}" "${STALE_FILE}"' EXIT
+@@ -1699,6 +1699,13 @@ Java_com_runanywhere_sdk_native_bridge_RunAnywhereBridge_racSetPlatformAdapter(J
+     }
  
- # Record a hit. $1 = relative path from repo root, $2 = category description.
- record_hit() {
-   local rel_path="$1"
-   local category="$2"
-   if is_allowed "${rel_path}" "${category}"; then
-     printf "%s  (%s)\n" "${rel_path}" "${category}" >> "${ALLOWLISTED_FILE}"
-+    printf "%s|%s\n" "${rel_path}" "${category}" >> "${USED_ENTRIES_FILE}"
-   else
-     printf "%s  (%s)\n" "${rel_path}" "${category}" >> "${VIOLATIONS_FILE}"
-   fi
-@@ -345,6 +351,27 @@ if [[ -s "${ALLOWLISTED_FILE}" ]]; then
-   printf "\n"
- fi
+     jclass adapterClass = env->GetObjectClass(adapter);
++    if (adapterClass == nullptr) {
++        if (env->ExceptionCheck() == JNI_TRUE) {
++            env->ExceptionClear();
++        }
++        LOGe("racSetPlatformAdapter: failed to get adapter class");
++        return RAC_ERROR_INVALID_ARGUMENT;
++    }
  
-+# An allowlist entry that exempted nothing is stale. Report it before any new
-+# violations so a renamed file shows both halves of its fix in a single run.
-+if [[ -n "${ALLOWLIST_ENTRIES}" ]]; then
-+  while IFS= read -r entry; do
-+    grep -qxF "${entry}" "${USED_ENTRIES_FILE}" || printf "%s\n" "${entry}" >> "${STALE_FILE}"
-+  done <<< "${ALLOWLIST_ENTRIES}"
-+fi
-+
-+STALE_COUNT=0
-+if [[ -s "${STALE_FILE}" ]]; then
-+  STALE_COUNT=$(wc -l < "${STALE_FILE}" | tr -d ' ')
-+  printf "STALE EXCEPTIONS (%s entries) -- they match no detected surface; delete or correct them:\n" "${STALE_COUNT}"
-+  while IFS= read -r entry; do
-+    printf "  [FAIL] %s\n" "${entry}"
-+  done < "${STALE_FILE}"
-+  printf "\n"
-+  printf "Stale entries are path|category lines in:\n"
-+  printf "  %s\n" "${ALLOWLIST_FILE}"
-+  printf "\n"
-+fi
-+
- VIOLATION_COUNT=0
- if [[ -s "${VIOLATIONS_FILE}" ]]; then
-   VIOLATION_COUNT=$(wc -l < "${VIOLATIONS_FILE}" | tr -d ' ')
-@@ -358,5 +385,9 @@ if [[ -s "${VIOLATIONS_FILE}" ]]; then
-   exit 1
- fi
+     const auto resolve_required = [&](const char* name, const char* sig) -> jmethodID {
+         const jmethodID id = env->GetMethodID(adapterClass, name, sig);
+@@ -1733,6 +1740,9 @@ Java_com_runanywhere_sdk_native_bridge_RunAnywhereBridge_racSetPlatformAdapter(J
  
-+if [[ "${STALE_COUNT}" -gt 0 ]]; then
-+  exit 1
-+fi
+     jobject adapterRef = env->NewGlobalRef(adapter);
+     if (adapterRef == nullptr) {
++        if (env->ExceptionCheck() == JNI_TRUE) {
++            env->ExceptionClear();
++        }
+         LOGe("racSetPlatformAdapter: failed to create a global reference for the adapter");
+         env->DeleteLocalRef(adapterClass);
+         return RAC_ERROR_INITIALIZATION_FAILED;
+@@ -1764,13 +1774,13 @@ Java_com_runanywhere_sdk_native_bridge_RunAnywhereBridge_racSetPlatformAdapter(J
+         env->GetMethodID(adapterClass, "fileListDirectory",
+                          "(Ljava/lang/String;)[Lcom/runanywhere/sdk/foundation/bridge/extensions/"
+                          "RacDirectoryEntry;");
+-    if (env->ExceptionCheck()) {
++    if (env->ExceptionCheck() == JNI_TRUE) {
+         env->ExceptionClear();
+         g_method_file_list_directory = nullptr;
+     }
+     g_method_is_non_empty_directory =
+         env->GetMethodID(adapterClass, "isNonEmptyDirectory", "(Ljava/lang/String;)Z");
+-    if (env->ExceptionCheck()) {
++    if (env->ExceptionCheck() == JNI_TRUE) {
+         env->ExceptionClear();
+         g_method_is_non_empty_directory = nullptr;
+     }
+@@ -3181,35 +3191,77 @@ Java_com_runanywhere_sdk_native_bridge_RunAnywhereBridge_racDeviceManagerSetCall
+         env->DeleteGlobalRef(g_device_jni_state.callback_obj);
+         g_device_jni_state.callback_obj = nullptr;
+     }
++    g_device_jni_state.get_device_info_method = nullptr;
++    g_device_jni_state.get_device_id_method = nullptr;
++    g_device_jni_state.is_registered_method = nullptr;
++    g_device_jni_state.set_registered_method = nullptr;
++    g_device_jni_state.http_post_method = nullptr;
+ 
+     if (callbacks == nullptr) {
+         LOGw("racDeviceManagerSetCallbacks: null callbacks");
++        rac_device_manager_clear_callbacks();
+         return RAC_ERROR_INVALID_ARGUMENT;
+     }
+ 
+-    // Create global reference
+-    g_device_jni_state.callback_obj = env->NewGlobalRef(callbacks);
+-
+     // Cache method IDs
+     jclass cls = env->GetObjectClass(callbacks);
+-    g_device_jni_state.get_device_info_method =
+-        env->GetMethodID(cls, "getDeviceInfo", "()Ljava/lang/String;");
+-    g_device_jni_state.get_device_id_method =
+-        env->GetMethodID(cls, "getDeviceId", "()Ljava/lang/String;");
+-    g_device_jni_state.is_registered_method = env->GetMethodID(cls, "isRegistered", "()Z");
+-    g_device_jni_state.set_registered_method = env->GetMethodID(cls, "setRegistered", "(Z)V");
+-    g_device_jni_state.http_post_method =
+-        env->GetMethodID(cls, "httpPost", "(Ljava/lang/String;Ljava/lang/String;Z)I");
++    if (cls == nullptr) {
++        if (env->ExceptionCheck() == JNI_TRUE) {
++            env->ExceptionClear();
++        }
++        LOGe("racDeviceManagerSetCallbacks: failed to get class from callbacks object");
++        rac_device_manager_clear_callbacks();
++        return RAC_ERROR_INVALID_ARGUMENT;
++    }
 +
- printf "All detected surfaces match documented exceptions. No new regressions.\n"
- exit 0
++    const auto resolve_method = [&](const char* name, const char* sig) -> jmethodID {
++        const jmethodID id = env->GetMethodID(cls, name, sig);
++        if (env->ExceptionCheck() == JNI_TRUE) {
++            env->ExceptionClear();
++        }
++        return id;
++    };
++
++    const jmethodID m_get_device_info =
++        resolve_method("getDeviceInfo", "()Ljava/lang/String;");
++    const jmethodID m_get_device_id =
++        resolve_method("getDeviceId", "()Ljava/lang/String;");
++    const jmethodID m_is_registered =
++        resolve_method("isRegistered", "()Z");
++    const jmethodID m_set_registered =
++        resolve_method("setRegistered", "(Z)V");
++    const jmethodID m_http_post =
++        resolve_method("httpPost", "(Ljava/lang/String;Ljava/lang/String;Z)I");
++
+     env->DeleteLocalRef(cls);
+ 
+-    // Verify methods found
+-    if (!g_device_jni_state.get_device_id_method || !g_device_jni_state.is_registered_method) {
+-        LOGe("racDeviceManagerSetCallbacks: required methods not found");
+-        env->DeleteGlobalRef(g_device_jni_state.callback_obj);
+-        g_device_jni_state.callback_obj = nullptr;
++    // Verify all five methods found
++    if (!m_get_device_info || !m_get_device_id || !m_is_registered ||
++        !m_set_registered || !m_http_post) {
++        LOGe("racDeviceManagerSetCallbacks: required methods not found "
++             "(getDeviceInfo/getDev
+```
+
+---
+
+### Incident Patch 3: `90001907` (2026-11-03)
+**Commit Message**: fix(qhexrt): restore example catalog architecture eligibility (#1156)
+
+* refactor(qhexrt): use explicit URL registration
+
+* fix(kotlin): preserve model registration failures
+
+* fix(flutter): complete registration metadata types
+
+* style: satisfy Flutter and Kotlin checks
+
+* fix(qhexrt): address registration review feedback
+
+* fix(registration): preserve optional metadata safely
+
+* fix(registration): align Swift metadata and JNI errors
+
+* fix(qhexrt): address architecture registration review
+
+* fix(qhexrt): complete catalog review corrections
+
+* fix: map native proto failures and preserve download size
+
+* fix(flutter): preserve native model registration failures
+
+* fix(kotlin): preserve discovery and JSON failure contracts
+
+* fix(flutter): normalize model registration failures
+
+* docs(qhexrt): correct initialization and registration examples
+
+* fix(qhexrt): improve model registration diagnostics
+
+* fix(qhexrt): document guarded bundle registration
+
+* test(react-native): cover native registration error conversion
+
+* fix(qhexrt): restore example catalog architecture eligibility
+
+* fix(sdk): preserve registration metadata and native failure details
+
+Propagate Kotlin tool serialization 
+
+**File**: `.github/workflows/pr-build.yml` (modified, +8/-0)
+```diff
+@@ -520,6 +520,14 @@ jobs:
+           dart run melos run analyze
+           dart run melos run test
+ 
++      # The example is outside the Melos package workspace.
++      - name: Test QHexRT example catalog eligibility
++        working-directory: bindings/flutter/example
++        run: |
++          set -euo pipefail
++          flutter pub get
++          flutter test --no-pub test/qhexrt_model_catalog_test.dart
++
+   rn-typecheck:
+     runs-on: ubuntu-22.04
+     steps:
+```
+
+**File**: `bindings/flutter/example/lib/core/services/qhexrt_model_catalog.dart` (modified, +51/-7)
+```diff
+@@ -115,10 +115,13 @@ abstract final class QHexRTModelCatalog {
+   static Set<String> get registeredModelIds =>
+       snapshots.value.registeredModelIds;
+ 
+-  /// Kept in lockstep with Android's `ModelCatalog.npuCatalog`.
++  /// Curated public examples, preserving the former native architecture masks.
++  /// The private kitten_nano_0_8_varlen variant is deliberately not seeded;
++  /// adding it requires an explicit HF-auth preflight, not just an arch pin.
+   static const List<QHexRTCatalogModel> models = [
+     QHexRTCatalogModel(
+       id: 'qwen3_0_6b',
++      excludedArchitectures: {HexagonArch.HEXAGON_ARCH_V79},
+       name: 'Qwen3 0.6B (HNPU)',
+       url:
+           'https://huggingface.co/runanywhere/qwen3_0_6b_HNPU/qwen3-0.6b-1024final.json',
+@@ -147,6 +150,7 @@ abstract final class QHexRTModelCatalog {
+     ),
+     QHexRTCatalogModel(
+       id: 'qwen3_5_4b',
++      excludedArchitectures: {HexagonArch.HEXAGON_ARCH_V75},
+       name: 'Qwen3.5 4B (HNPU)',
+       url:
+           'https://huggingface.co/runanywhere/qwen3_5_4b_HNPU/qwen3.5-4b-1024.json',
+@@ -156,6 +160,7 @@ abstract final class QHexRTModelCatalog {
+     ),
+     QHexRTCatalogModel(
+       id: 'qwen3_vl_2b_text',
++      pinnedArchitecture: HexagonArch.HEXAGON_ARCH_V81,
+       name: 'Qwen3-VL 2B Text (HNPU)',
+       url:
+           'https://huggingface.co/runanywhere/qwen3_vl_HNPU/qwen3vl-2b-text-512.json',
+@@ -193,6 +198,7 @@ abstract final class QHexRTModelCatalog {
+     ),
+     QHexRTCatalogModel(
+       id: 'llama3_2_1b',
++      excludedArchitectures: {HexagonArch.HEXAGON_ARCH_V75},
+       name: 'Llama 3.2 1B (HNPU)',
+       url:
+           'https://huggingface.co/runanywhere/llama3_2_1b_HNPU/llama-3.2-1b.json',
+@@ -202,31 +208,33 @@ abstract final class QHexRTModelCatalog {
+     ),
+     QHexRTCatalogModel(
+       id: 'phi_tiny_moe',
++      excludedArchitectures: {HexagonArch.HEXAGON_ARCH_V75},
+       name: 'Phi Tiny MoE (HNPU)',
+       url: 'https://huggingface.co/runanywhere/phi_tiny_moe_HNPU/phimoe.json',
+       category: _language,
+       memoryBytes: 4721494520,
+     ),
+     QHexRTCatalogModel(
++      // Preserve the native QAIRT restriction: the v79 bundle needs 2.48.
+       id: 'gemma3n_e4b',
++      pinnedArchitecture: HexagonArch.HEXAGON_ARCH_V81,
+       name: 'Gemma 3n E4B (HNPU)',
+       url:
+           'https://huggingface.co/runanywhere/gemma3n_e4b_HNPU/gemma-3n-E4B-it.json',
+       category: _language,
+       memoryBytes: 10929816419,
+-      // The V79 bundle requires QAIRT 2.48; Android currently ships 2.47.
+-      pinnedArchitecture: HexagonArch.HEXAGON_ARCH_V81,
+     ),
+     QHexRTCatalogModel(
+       id: 'gemma4_e2b',
++      excludedArchitectures: {HexagonArch.HEXAGON_ARCH_V75},
+       name: 'Gemma 4 E2B (HNPU)',
+-      url:
+-          'https://huggingface.co/runanywhere/gemma4_e2b_HNPU/gemma4-e2b.json',
++      url: 'https://huggingface.co/runanywhere/gemma4_e2b_HNPU/gemma4-e2b.json',
+       category: _language,
+       memoryBytes: 9252275672,
+     ),
+     QHexRTCatalogModel(
+       id: 'gemma4_e4b',
++      pinnedArchitecture: HexagonArch.HEXAGON_ARCH_V81,
+       name: 'Gemma 4 E4B (HNPU)',
+       url:
+           'https://huggingface.co/runanywhere/gemma4_e4b_HNPU/gemma-4-E4B.json',
+@@ -235,6 +243,7 @@ abstract final class QHexRTModelCatalog {
+     ),
+     QHexRTCatalogModel(
+       id: 'nemotron_nano_8b',
++      excludedArchitectures: {HexagonArch.HEXAGON_ARCH_V79},
+       name: 'Llama 3.1 Nemotron Nano 8B (HNPU)',
+       url:
+           'https://huggingface.co/runanywhere/nemotron_nano_8b_HNPU/nemotron-nano-8b.json',
+@@ -243,6 +252,7 @@ abstract final class QHexRTModelCatalog {
+     ),
+     QHexRTCatalogModel(
+       id: 'nemoguard_content_8b',
++      pinnedArchitecture: HexagonArch.HEXAGON_ARCH_V81,
+       name: 'NemoGuard 8B Content Safety (HNPU)',
+       url:
+           'https://huggingface.co/runanywhere/nemoguard_8b_content_safety_HNPU/nemoguard-content-8b.json',
+@@ -251,6 +261,7 @@ abstract final class QHexRTModelCatalog {
+     ),
+     QHexRTCatalogModel(
+       id: 'nemoguard_topic_8b',
++      pinnedArchitecture: HexagonArch.HEXAGON_ARCH_V81,
+       name: 'NemoGuard 8B Topic Control (HNPU)',
+       url:
+           'https://huggingface.co/runanywhere/nemoguard_8b_topic_control_HNPU/nemoguard-topic-8b.json',
+@@ -259,6 +270,7 @@ abstract final class QHexRTModelCatalog {
+     ),
+     QHexRTCatalogModel(
+       id: 'ternary_bonsai_1_7b',
++      excludedArchitectures: {HexagonArch.HEXAGON_ARCH_V79},
+       name: 'Ternary Bonsai 1.7B (HNPU)',
+       url:
+           'https://huggingface.co/runanywhere/ternary_bonsai_1_7b_HNPU/ternary-bonsai-1.7b-1024.json',
+@@ -268,6 +280,7 @@ abstract final class QHexRTModelCatalog {
+     ),
+     QHexRTCatalogModel(
+       id: 'bonsai_1_7b_1bit',
++      pinnedArchitecture: HexagonArch.HEXAGON_ARCH_V81,
+       name: 'Bonsai-1.7B 1-bit (HNPU, fully-on-NPU)',
+       url:
+           'https://huggingface.co/runanywhere/bonsai_1_7b_1bit_HNPU/bonsai-1.7b-1bit-1024.json',
+@@ -277,6 +290,7 @
+```
+
+**File**: `bindings/flutter/example/test/qhexrt_model_catalog_test.dart` (modified, +269/-34)
+```diff
+@@ -5,6 +5,130 @@ import 'package:runanywhere_ai/core/services/model_catalog_bootstrap.dart';
+ import 'package:runanywhere_ai/core/services/qhexrt_model_catalog.dart';
+ import 'package:runanywhere_ai/features/models/model_types.dart'
+     show ExampleModelInfoView, ModelSelectionContext;
++import 'package:runanywhere_qhexrt/runanywhere_qhexrt.dart';
++
++// Golden eligible IDs from kModelPolicies at 259521e299bb, intersected with
++// this app catalog. Kitten nano deliberately selects only its v81 manifest.
++const _eligibleIdsByArchitecture = <HexagonArch, List<String>>{
++  HexagonArch.HEXAGON_ARCH_V75: [
++    'canary_180m_flash',
++    'canary_1b_flash',
++    'embeddinggemma_300m',
++    'internvl3_5_1b',
++    'kokoro_en',
++    'lfm2_5_230m',
++    'lfm2_5_2_6b',
++    'lfm2_5_350m',
++    'magpie_tts_357m',
++    'melotts_en',
++    'moonshine_base',
++    'moonshine_tiny',
++    'nemotron_3_embed_1b',
++    'nemotron_asr_streaming',
++    'nemotron_nano_8b',
++    'nemotron_ocr',
++    'nemotron_ocr_v1',
++    'nemotron_parse',
++    'nv_embedqa_1b',
++    'nv_rerankqa_1b',
++    'parakeet_ctc_1_1b',
++    'parakeet_rnnt_1_1b',
++    'parakeet_tdt_0_6b_v2',
++    'parakeet_tdt_0_6b_v3',
++    'qwen3_0_6b',
++    'qwen3_5_0_8b',
++    'qwen3_5_2b',
++    'qwen3_vl',
++    'siglip2_base',
++    'ternary_bonsai_1_7b',
++    'whisper_base',
++    'whisper_small',
++  ],
++  HexagonArch.HEXAGON_ARCH_V79: [
++    'cosmos3_edge_diffusion',
++    'cosmos3_edge_text',
++    'cosmos3_edge_vlm',
++    'deepseek_r1_distill_qwen_1_5b',
++    'embeddinggemma_300m',
++    'gemma4_e2b',
++    'gemma4_e2b_vlm',
++    'internvl3_5_1b',
++    'lama_dilated',
++    'lfm2_5_230m',
++    'lfm2_5_2_6b',
++    'lfm2_5_350m',
++    'llama3_2_1b',
++    'melotts_en',
++    'moonshine_base',
++    'moonshine_tiny',
++    'phi_tiny_moe',
++    'qwen3_5_0_8b',
++    'qwen3_5_2b',
++    'qwen3_5_4b',
++    'qwen3_vl',
++    'siglip2_base',
++    'whisper_base',
++    'whisper_small',
++  ],
++  HexagonArch.HEXAGON_ARCH_V81: [
++    'bonsai_1_7b_1bit',
++    'bonsai_27b_1bit',
++    'bonsai_4b_1bit',
++    'bonsai_8b_1bit',
++    'canary_1b_flash',
++    'canary_qwen_2_5b',
++    'cosmos3_edge_diffusion',
++    'cosmos3_edge_text',
++    'cosmos3_edge_vlm',
++    'deepseek_r1_distill_qwen_1_5b',
++    'deepseek_r1_distill_qwen_7b',
++    'embeddinggemma_300m',
++    'gemma3n_e4b',
++    'gemma4_e2b',
++    'gemma4_e2b_vlm',
++    'gemma4_e4b',
++    'gemma4_e4b_vlm',
++    'internvl3_5_1b',
++    'kitten_micro_0_8',
++    'kitten_mini_0_8',
++    'kitten_nano_0_8',
++    'kokoro_en',
++    'lama_dilated',
++    'lfm2_5_230m',
++    'lfm2_5_2_6b',
++    'lfm2_5_350m',
++    'llama3_2_1b',
++    'llama_embed_nemotron_8b',
++    'magpie_tts_357m',
++    'melotts_en',
++    'moonshine_base',
++    'moonshine_tiny',
++    'nemoguard_content_8b',
++    'nemoguard_topic_8b',
++    'nemotron_asr_streaming',
++    'nemotron_nano_8b',
++    'nemotron_nano_vl_8b',
++    'nemotron_ocr',
++    'nemotron_ocr_v1',
++    'nemotron_parse',
++    'nv_embedcode_7b',
++    'nv_embedqa_1b',
++    'nv_rerankqa_1b',
++    'parakeet_rnnt_1_1b',
++    'parakeet_tdt_0_6b_v2',
++    'parakeet_tdt_0_6b_v3',
++    'phi_tiny_moe',
++    'qwen3_0_6b',
++    'qwen3_5_0_8b',
++    'qwen3_5_2b',
++    'qwen3_5_4b',
++    'qwen3_vl_2b_text',
++    'siglip2_base',
++    'ternary_bonsai_1_7b',
++    'whisper_base',
++    'whisper_small',
++  ],
++};
+ 
+ void main() {
+   tearDown(QHexRTModelCatalog.resetForTesting);
+@@ -38,40 +162,34 @@ void main() {
+     }
+   });
+ 
+-  test(
+-    'QHexRT definitions preserve app-owned explicit URL metadata',
+-    () {
+-      const rows = QHexRTModelCatalog.models;
+-
+-      expect(rows.map((model) => model.id).toSet(), hasLength(rows.length));
+-      for (final model in rows) {
+-        final request = model.toRegistrationRequest();
+-        expect(request.id, model.id);
+-        expect(request.name, model.name);
+-        expect(request.url, model.url);
+-        expect(
+-          request.framework,
+-          InferenceFramework.INFERENCE_FRAMEWORK_QHEXRT,
+-        );
+-        expect(request.category, model.category);
+-        expect(request.source, ModelSource.MODEL_SOURCE_REMOTE);
+-        expect(request.memoryRequiredBytes.toInt(), model.memoryBytes);
+-        expect(
+-          request.hasDownloadSizeBytes()
+-              ? request.downloadSizeBytes.toInt()
+-              : null,
+-          model.downloadBytes,
+-        );
+-        expect(
+-          request.hasContextLength() ? request.contextLength : null,
+-          model.contextLength,
+-        );
+-        expect(request.supportsThinking, model.supportsThinking);
+-        expect(request.supportsLora, model.supportsLora);
+-        expect(model.url, startsWith('https://'));
+-      }
+-    },
+-  );
++  test('QHexRT definitions preserve app-owned explicit URL metadata', () {
++    const rows = QHexRTModelCatalog.models;
++
++    expect(rows.map((model) => model.id).toSet(), hasLength(rows.length));
++    for (final model in rows) {
++      final request = model.toRegistrationRequest();
++      expect(request.
+```
+
+**File**: `bindings/flutter/packages/runanywhere/lib/native/dart_bridge_proto_utils.dart` (modified, +15/-6)
+```diff
+@@ -55,7 +55,8 @@ class DartBridgeProtoUtils {
+       ffi.Pointer<ffi.Uint8>,
+       int,
+       ffi.Pointer<RacProtoBuffer>,
+-    ) invoke,
++    )
++    invoke,
+     required T Function(List<int>) decode,
+     required String symbol,
+     bool preserveNativeError = false,
+@@ -68,7 +69,12 @@ class DartBridgeProtoUtils {
+     try {
+       bindings.rac_proto_buffer_init(out);
+       final code = invoke(requestPtr, bytes.length, out);
+-      ensureSuccess(out, code, symbol, preserveNativeError: preserveNativeError);
++      ensureSuccess(
++        out,
++        code,
++        symbol,
++        preserveNativeError: preserveNativeError,
++      );
+       return decodeBuffer(out, decode);
+     } finally {
+       bindings.rac_proto_buffer_free(out);
+@@ -85,7 +91,8 @@ class DartBridgeProtoUtils {
+       ffi.Pointer<ffi.Uint8>,
+       int,
+       ffi.Pointer<RacProtoBuffer>,
+-    ) invoke,
++    )
++    invoke,
+     required T Function(List<int>) decode,
+     required String symbol,
+   }) {
+@@ -123,8 +130,9 @@ class DartBridgeProtoUtils {
+     if (out.ref.data == ffi.nullptr || out.ref.size == 0) {
+       return decode(const <int>[]);
+     }
+-    final bytes =
+-        out.ref.data.asTypedList(out.ref.size).toList(growable: false);
++    final bytes = out.ref.data
++        .asTypedList(out.ref.size)
++        .toList(growable: false);
+     return decode(bytes);
+   }
+ 
+@@ -143,7 +151,8 @@ class DartBridgeProtoUtils {
+       final result = code != RacResultCodes.success ? code : out.ref.status;
+       // The canonical mapper uses callOut's default failure handling.
+       final exception = SDKException.fromResult(result)!;
+-      exception.error.message = message;
++      exception.error.message =
++          '$symbol failed: ${exception.message} (${protoBufferError(out, code)})';
+       throw exception;
+     }
+     throw SDKException.make(
+```
+
+**File**: `bindings/flutter/packages/runanywhere_qhexrt/CHANGELOG.md` (modified, +11/-0)
+```diff
+@@ -5,6 +5,17 @@ All notable changes to the RunAnywhere QHexRT Backend will be documented in this
+ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+ 
++## [Unreleased]
++
++### Removed
++
++- Breaking: removed `QHexRT.modelSupportsArchitecture`,
++  `QHexRT.modelRequiresHfAuth`, and `QHexRT.registerModelForDevice`, together
++  with the native catalog facade. Catalog selection, eligibility, and any
++  required HF-auth preflight are now the application's responsibility. Probe
++  device capabilities with `QHexRT.probeNpu()` and register eligible rows via
++  `RunAnywhere.models.register()`.
++
+ ## [0.20.40] - 2026-10-17
+ 
+ - Version bump to keep the backend package in lockstep with the SDK release.
+```
+
+**File**: `bindings/flutter/packages/runanywhere_qhexrt/README.md` (modified, +10/-2)
+```diff
+@@ -10,12 +10,18 @@
+ 
+ ```yaml
+ dependencies:
+-  runanywhere: 0.20.11
+-  runanywhere_qhexrt: 0.20.11
++  runanywhere: 0.20.37
++  runanywhere_qhexrt: 0.20.37
+ ```
+ 
+ See the [Flutter SDK README](../../README.md) for Android setup.
+ 
++The examples below target this source tree (SDK `0.20.37`). For changes not yet
++released, use local SDK packages and Commons native libraries built from the same
++checkout. The private QHexRT native payload is not in this repository: supply it
++separately from a compatible authorized build and stage it into the local backend
++package. A matching version number alone does not include unreleased changes.
++
+ ---
+ 
+ ## Usage
+@@ -54,6 +60,8 @@ A known architecture pin in the first repository folder, such as `/v79` or `/v79
+ 
+ Direct `/resolve/` or `/blob/` URLs register a single file and do not receive this bundle-folder check.
+ 
++Catalog eligibility and any required HF-auth preflight remain application-owned.
++
+ ---
+ 
+ ## Requirements
+```
+
+**File**: `bindings/kotlin/modules/runanywhere-core-qhexrt/README.md` (modified, +35/-3)
+```diff
+@@ -12,11 +12,41 @@ Requires the core SDK. Add both to your app module's `build.gradle.kts`:
+ 
+ ```kotlin
+ dependencies {
+-    implementation("io.github.sanchitmonga22:runanywhere-sdk:0.20.11")
+-    implementation("io.github.sanchitmonga22:runanywhere-qhexrt-android:0.20.11")
++    implementation("io.github.sanchitmonga22:runanywhere-sdk:0.20.37")
++    implementation("io.github.sanchitmonga22:runanywhere-qhexrt-android:0.20.37")
+ }
+ ```
+ 
++The examples below target this source tree (SDK `0.20.37`). For changes not yet
++released, use local SDK packages and Commons native libraries built from the same
++checkout. The private QHexRT native payload is not in this repository: supply it
++separately from a compatible authorized build. A matching version number alone
++does not include unreleased changes.
++
++For local Kotlin builds, stage the private engine payload under
++`engines/qhexrt/prebuilt/`, preserving its `versions/` layout and `current`
++selection. With the matching QAIRT/QNN runtime available and `ANDROID_NDK_HOME`
++configured, run from the repository root:
++
++```bash
++./scripts/build/build-core-android.sh arm64-v8a
++```
++
++If no private QHexRT prebuilt is selected, the script can complete successfully
++with QHexRT disabled. A successful build alone does not confirm that the private
++engine is included.
++
++The script validates the selected prebuilt and passes its resolved directory to
++CMake as `QHEXRT_ROOT`. It stages the backend libraries into
++`bindings/kotlin/modules/runanywhere-core-qhexrt/src/main/jniLibs/arm64-v8a/`
++and DSP skels into the module's
++`src/main/assets/runanywhere/qhexrt/skels/arm64-v8a/`. To package those staged
++files as a local Maven bundle, run from the repository root:
++
++```bash
++./bindings/kotlin/scripts/package-qhexrt.sh
++```
++
+ ---
+ 
+ ## Usage
+@@ -67,6 +97,8 @@ A known architecture pin in the first repository folder, such as `/v79` or `/v79
+ 
+ Direct `/resolve/` or `/blob/` URLs register a single file and do not receive this bundle-folder check.
+ 
++Catalog eligibility and any required HF-auth preflight remain application-owned.
++
+ ---
+ 
+ ## Modalities
+@@ -89,7 +121,7 @@ QHexRT does not seed or select models. Register the exact model URL intended for
+ - Android `arm64-v8a` only (no `armeabi-v7a` / `x86_64` package)
+ - Qualcomm Snapdragon device with Hexagon **V75**, **V79**, or **V81** NPU
+ - Matching model manifests for the device Hexagon arch (a V81-only bundle will not run on V75)
+-- Core artifact `runanywhere-sdk:0.20.11`
++- Core artifact `runanywhere-sdk:0.20.37`
+ 
+ ---
+ 
+```
+
+**File**: `bindings/kotlin/src/main/kotlin/com/runanywhere/sdk/foundation/bridge/extensions/CppBridgeModelRegistry.kt` (modified, +8/-0)
+```diff
+@@ -389,6 +389,12 @@ object CppBridgeModelRegistry {
+         return decodeModelInfoList(bytes, "downloaded ModelInfoList")
+     }
+ 
++    /**
++     * Run a native registry refresh and decode its result.
++     *
++     * Returns null when the bridge supplies no bytes or decoding fails. Native
++     * operation failures propagate as [SDKException] before decoding begins.
++     */
+     private fun refreshProto(request: ProtoModelRegistryRefreshRequest): ProtoModelRegistryRefreshResult? {
+         val bytes =
+             withNativeProtoFailure {
+@@ -408,6 +414,7 @@ object CppBridgeModelRegistry {
+     private fun removeProto(modelId: String): Int =
+         RunAnywhereBridge.racModelRegistryRemoveProto(modelId)
+ 
++    /** Decode a native model record, logging malformed payloads and returning null. */
+     private fun decodeProtoModel(bytes: ByteArray): ProtoModelInfo? =
+         try {
+             ProtoModelInfo.ADAPTER.decode(bytes)
+@@ -416,6 +423,7 @@ object CppBridgeModelRegistry {
+             null
+         }
+ 
++    /** Decode a native model list; [label] identifies malformed responses in logs. */
+     private fun decodeModelInfoList(bytes: ByteArray, label: String): ProtoModelInfoList? =
+         try {
+             ProtoModelInfoList.ADAPTER.decode(bytes)
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1132** (2026-10-17): test(connect): pin display_name and framework in the repeat host-start regression (#1105) (@Adityakk9031)
-- **PR #1111** (2026-10-16): fix(tool-calling): unwrap a single call in OpenAI's tool_calls array (@Atharvsinh-codez)
-- **PR #1091** (2026-10-16): fix(llm): give RAC_LLM_OPTIONS_DEFAULT the IDL's annotated min_p (#1083) (@Adityakk9031)
-- **PR #1089** (2026-10-16): fix(connect): reject a repeat host start that changes any model descriptor field (#1077) (@Adityakk9031)
-- **PR #1088** (2026-10-16): fix(bindings): forward the six RAG generation knobs from Electron and Python (#1082) (@Adityakk9031)
-- **PR #1073** (2026-10-16): fix(rag): the RAG query path rewrites explicit 0s and drops six generation knobs (@VanshBhardwaj24)
+- **PR #1265** (2026-11-04): docs: relabel stale reserved_slot_2..9 comments in plugin entries (@mlzerotoheroyoutube)
+- **PR #1261** (2026-11-04): feat(commons): expose rac_classify_null_directory_listing as public API (@mlzerotoheroyoutube)
+- **PR #1260** (2026-11-04): docs: v14 slot counts in rac_engine_unavailable.h; tidy RN fileListDirectory comment (@mlzerotoheroyoutube)
+- **PR #1256** (2026-11-03): fix(react-native): don't report an unreadable Android model folder as missing (@mlzerotoheroyoutube)
+- **PR #1255** (2026-11-03): fix(vad): let an explicit activation_threshold of 0.0 through the configure path (@ayaangazali)
+- **PR #1250** (2026-11-03): fix(segmentation): validate legacy direct-path buffers (@shubhamsinnh)
 
 ---
 
@@ -2340,32 +2716,47 @@ none -- hence the instruction to audit al
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. swift): return the Sendable handle ref from RagSession, not the raw pointer (#10
+## X. commons): reject default tool keys that collide after UTF-8 repair (#1233)
 
 **RULE**:
-When implementing operations in `bindings/swift/Sources/RunAnywhere/Public/API/Rag/RagSession.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in RunanywhereAI/runanywhere-sdks. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `core/src/features/llm/tool_calling.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in RunanywhereAI/runanywhere-sdks. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ab31cbfd`: swift): return the Sendable handle ref from RagSession, not the raw pointer (#1015). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `40053ed9`: commons): reject default tool keys that collide after UTF-8 repair (#1233). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `bindings/swift/Sources/RunAnywhere/Public/API/Rag/RagSession.swift`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/src/features/llm/tool_calling.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-internal struct RagSessionHandleRef: @unchecked Sendable {
-    internal func nativeHandleForSolution() throws -> RagSessionHandleRef {
-        return RagSessionHandleRef(handle: handle)
+#include "features/llm/tool_calling_key_repair_internal.h"
+/**
+ * @brief Normalize a tool-call JSON payload, repairing malformed UTF-8.
+ *
+ * Rejects payloads whose distinct raw keys decode to the same key after repair
+ * (`RAC_ERROR_INVALID_ARGUMENT`), then repairs bytes and re-serializes valid
+ * JSON, falling back to the unquoted-key normalizer when the fast parse fails.
+ *
+ * @param json_str Raw JSON payload (must not be null).
+ * @param out_normalized Receives the owned normalized string on success.
+ * @return RAC_SUCCESS (repaired on the fast path, or via the unquoted-key
+ *         scanner when the fast parser rejects the payload),
+ *         RAC_ERROR_INVALID_ARGUMENT for ambiguous keys,
+ *         RAC_ERROR_OUT_OF_MEMORY on allocation failure, or RAC_ERROR_INTERNAL
+ *         for an unexpected exception.
+ */
+    if (rac::llm::tool_calling::has_repaired_key_collision(json_str)) {
+        return RAC_ERROR_INVALID_ARGUMENT;
+    }
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-private struct RagSessionHandleRef: @unchecked Sendable {
-    internal func nativeHandleForSolution() throws -> rac_handle_t {
-        return handle
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ab31cbfd` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `40053ed9` are properly handled with clean fallback behavior.

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-04T07:26:05.522Z",
+  "last_updated": "2026-11-04T07:33:59.919Z",
   "total_verified_learnings": 1205,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -36542,8 +36542,8 @@
       "slug": "kucherenko-jscpd",
       "platform": "github",
       "source_url": "https://github.com/kucherenko/jscpd",
-      "source_version": "0b519608",
-      "content_hash": "1370939e032bb4ba70ee8090ab021c10292eb60ddf96a0c24e38a54856d288c2",
+      "source_version": "cbd54239",
+      "content_hash": "8712973b520a508b3ce60339c1c3dadcae8cd255f16dc87c3b9f361a6dee23f6",
       "dossier_path": "07_PROJECT_LEARNING/kucherenko-jscpd-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kucherenko-jscpd-learnings.md",
       "promoted_rules": [
@@ -36611,6 +36611,11 @@
           "number": 6100,
           "title": "ci(nix): build the flake on Linux and macOS",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6762,
+          "title": "deps): bump candle to 0.11.1 for zip 9 (RUSTSEC-2026-0429)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -36618,7 +36623,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T06:17:58.295Z",
+      "verified_at": "2026-11-04T07:33:59.888Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -50231,8 +50236,8 @@
       "slug": "rook-rook",
       "platform": "github",
       "source_url": "https://github.com/rook/rook",
-      "source_version": "bcf59e98",
-      "content_hash": "e4480195a5c0703fba17edf6332f7e623b0bb34b6fe9f3286f2442a37d195cb7",
+      "source_version": "a3780453",
+      "content_hash": "cf11bf5a370192bdca45277e76d5eeeb623f1deb28782b359567ecb042feb414",
       "dossier_path": "07_PROJECT_LEARNING/rook-rook-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rook-rook-learnings.md",
       "promoted_rules": [
@@ -50275,6 +50280,11 @@
           "number": 6498,
           "title": "build(deps): bump the k8s-dependencies group with 5 updates",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6761,
+          "title": "build(deps): bump the github-dependencies group with 7 updates",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -50282,7 +50292,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T10:52:46.415Z",
+      "verified_at": "2026-11-04T07:33:22.733Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -50586,14 +50596,19 @@
       "slug": "runanywhereai-runanywhere-sdks",
       "platform": "github",
       "source_url": "https://github.com/RunanywhereAI/runanywhere-sdks",
-      "source_version": "259521e2",
-      "content_hash": "a69cc8ba29e2fec32ac660b7a4df9b5963a08f1c648a345d86f55449cbf93399",
+      "source_version": "a403990b",
+      "content_hash": "38badb1580063ef272cd8a8db036ca898d39572d75ec4500db378d9a70bd8222",
       "dossier_path": "07_PROJECT_LEARNING/runanywhereai-runanywhere-sdks-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/runanywhereai-runanywhere-sdks-learnings.md",
       "promoted_rules": [
         {
           "number": 1911,
           "title": "swift): return the Sendable handle ref from RagSession, not the raw pointer (#10",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6760,
+          "title": "commons): reject default tool keys that collide after UTF-8 repair (#1233)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -50602,7 +50617,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T00:22:52.575Z",
+      "verified_at": "2026-11-04T07:33:20.687Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -76833,8 +76848,8 @@
       "slug": "avajs-ava",
       "platform": "github",
       "source_url": "https://github.com/avajs/ava",
-      "source_version": "8640039a",
-      "content_hash": "3daaf96fb8e7461efb8473afba1c6e07224a95563e1318ff5106f1ce1b21c7bd",
+      "source_version": "8bd11143",
+      "content_hash": "1b7c5393c1d429be2159e225acf02615fd8d44889e4630d06fa37ed11b95861f",
       "dossier_path": "07_PROJECT_LEARNING/avajs-ava-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/avajs-ava-learnings.md",
       "promoted_rules": [
@@ -76847,6 +76862,11 @@
           "number": 5880,
           "title": "Report timeouts without crashing the TAP reporter",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6759,
+          "title": "Make `timeout` work for synchronous tests (#3495)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -76854,7 +76874,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T21:19:26.617Z",
+      "verified_at": "2026-11-04T07:33:20.117Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -173271,6 +173291,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-04T07:25:58.000Z"
+    },
+    "rule-6759": {
+      "learning_id": "rule-6759",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6759,
+      "title": "Make `timeout` work for synchronous tests (#3495)",
+      "source_url": "https://github.com/avajs/ava",
+      "source_version": "8bd11143",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T07:33:20.117Z"
+    },
+    "rule-6760": {
+      "learning_id": "rule-6760",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6760,
+      "title": "commons): reject default tool keys that collide after UTF-8 repair (#1233)",
+      "source_url": "https://github.com/RunanywhereAI/runanywhere-sdks",
+      "source_version": "a403990b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T07:33:20.687Z"
+    },
+    "rule-6761": {
+      "learning_id": "rule-6761",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6761,
+      "title": "build(deps): bump the github-dependencies group with 7 updates",
+      "source_url": "https://github.com/rook/rook",
+      "source_version": "a3780453",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T07:33:22.733Z"
+    },
+    "rule-6762": {
+      "learning_id": "rule-6762",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6762,
+      "title": "deps): bump candle to 0.11.1 for zip 9 (RUSTSEC-2026-0429)",
+      "source_url": "https://github.com/kucherenko/jscpd",
+      "source_version": "cbd54239",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T07:33:59.888Z"
     }
   },
   "aliases": {
