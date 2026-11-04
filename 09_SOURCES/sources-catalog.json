@@ -2393,10 +2393,10 @@
     "repository": "NervJS/taro",
     "platform": "github",
     "sourceUrl": "https://github.com/NervJS/taro",
-    "sourceVersion": "0493b525",
+    "sourceVersion": "1c0e11a1",
     "license": "NOASSERTION",
-    "contentHash": "061ace3a74fc8330d3ba6c0b0237806f7b58d0d0ebebd095add36b8a550bc412",
-    "lastHarvestedAt": "2026-10-31T00:44:56.938Z",
+    "contentHash": "5f2006006b69feeb7f4ab5ad3c2cd8efbc1fb8a9341a840f7704a527ad4d1979",
+    "lastHarvestedAt": "2026-11-04T01:00:53.439Z",
     "learningId": "learn-github-nervjs-taro"
   },
   "kubeedge-kubeedge": {
@@ -4563,10 +4563,10 @@
     "repository": "openyurtio/openyurt",
     "platform": "github",
     "sourceUrl": "https://github.com/openyurtio/openyurt",
-    "sourceVersion": "83ce3925",
+    "sourceVersion": "077652c5",
     "license": "Apache-2.0",
-    "contentHash": "732e4e9426eb4377edd734e7513142d66b770883d954c8b8adc6ab2530f421d1",
-    "lastHarvestedAt": "2026-10-19T01:34:57.270Z",
+    "contentHash": "8386841e2dafbdbaaf4ec6e55e59c4b9fa446af5fbf06707c4d448f9bb872114",
+    "lastHarvestedAt": "2026-11-04T01:00:53.068Z",
     "learningId": "learn-github-openyurtio-openyurt"
   },
   "slatedb-slatedb": {

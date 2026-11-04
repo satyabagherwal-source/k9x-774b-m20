@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-03T23:13:08.331Z",
+  "last_updated": "2026-11-04T01:00:53.074Z",
   "directives": [
     {
       "id": "CD-001",
@@ -3720,6 +3720,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **VERIFICATION METHOD** automated verification protocol",
       "learning_id": "learn-github-michael-a-kuykendall-shimmy"
+    },
+    {
+      "id": "CD-ULEA",
+      "directive_title": "Empirical Invariant Guard in store.go",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "openyurtio/openyurt",
+      "source_commit": "077652c5",
+      "date_staged": "2026-11-04",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Generic header title rejected",
+      "learning_id": "learn-github-openyurtio-openyurt"
     }
   ]
 }

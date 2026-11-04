@@ -7097,3 +7097,5 @@ Every entry in this ledger must capture:
 | `learn-github-1jehuang-jcode` | `https://github.com/1jehuang/jcode` | `378f4494` | Multi-dimensional audit evidence | 2026-11-04T00:53:17.988Z |
 | `learn-github-mattermost-mattermost` | `https://github.com/mattermost/mattermost` | `4e1eec78` | Multi-dimensional audit evidence | 2026-11-04T00:53:22.819Z |
 | `learn-github-giancarloerra-socraticode` | `https://github.com/giancarloerra/SocratiCode` | `4aa6fc23` | Multi-dimensional audit evidence | 2026-11-04T00:53:28.965Z |
+| `learn-github-openyurtio-openyurt` | `https://github.com/openyurtio/openyurt` | `077652c5` | Multi-dimensional audit evidence | 2026-11-04T01:00:53.068Z |
+| `learn-github-nervjs-taro` | `https://github.com/NervJS/taro` | `1c0e11a1` | Multi-dimensional audit evidence | 2026-11-04T01:00:53.439Z |

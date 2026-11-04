@@ -7088,3 +7088,5 @@
 | `CYCLE-20261104-KU8W` | `2026-11-04T00:53:17.984Z` | `1jehuang/jcode` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6689` | Yes (`0bba5f56...`) |
 | `CYCLE-20261104-KXZ3` | `2026-11-04T00:53:22.815Z` | `mattermost/mattermost` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6690` | Yes (`3a21f9f7...`) |
 | `CYCLE-20261104-L2PT` | `2026-11-04T00:53:28.961Z` | `giancarloerra/SocratiCode` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6691` | Yes (`6d859934...`) |
+| `CYCLE-20261104-ULE0` | `2026-11-04T01:00:53.064Z` | `openyurtio/openyurt` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/openyurtio-openyurt-learnings.md` | Yes (`8386841e...`) |
+| `CYCLE-20261104-ULOB` | `2026-11-04T01:00:53.435Z` | `NervJS/taro` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6692` | Yes (`5f200600...`) |

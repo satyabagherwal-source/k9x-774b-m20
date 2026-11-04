@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-04T00:53:28.892Z",
+  "last_updated": "2026-11-04T01:00:53.354Z",
   "total_verified_learnings": 1202,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -42741,8 +42741,8 @@
       "slug": "nervjs-taro",
       "platform": "github",
       "source_url": "https://github.com/NervJS/taro",
-      "source_version": "0493b525",
-      "content_hash": "061ace3a74fc8330d3ba6c0b0237806f7b58d0d0ebebd095add36b8a550bc412",
+      "source_version": "1c0e11a1",
+      "content_hash": "5f2006006b69feeb7f4ab5ad3c2cd8efbc1fb8a9341a840f7704a527ad4d1979",
       "dossier_path": "07_PROJECT_LEARNING/nervjs-taro-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nervjs-taro-learnings.md",
       "promoted_rules": [
@@ -42775,6 +42775,11 @@
           "number": 5968,
           "title": "Complete Code-Unit Atomic Caching for Module Bundler Asset Hooks",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6692,
+          "title": "h5): settle blob conversion failures before upload (#19588)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -42782,7 +42787,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T00:44:56.833Z",
+      "verified_at": "2026-11-04T01:00:53.332Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -45595,8 +45600,8 @@
       "slug": "openyurtio-openyurt",
       "platform": "github",
       "source_url": "https://github.com/openyurtio/openyurt",
-      "source_version": "83ce3925",
-      "content_hash": "732e4e9426eb4377edd734e7513142d66b770883d954c8b8adc6ab2530f421d1",
+      "source_version": "077652c5",
+      "content_hash": "8386841e2dafbdbaaf4ec6e55e59c4b9fa446af5fbf06707c4d448f9bb872114",
       "dossier_path": "07_PROJECT_LEARNING/openyurtio-openyurt-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/openyurtio-openyurt-learnings.md",
       "promoted_rules": [
@@ -45611,7 +45616,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T01:34:57.219Z",
+      "verified_at": "2026-11-04T01:00:52.915Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -171926,6 +171931,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-04T00:53:28.873Z"
+    },
+    "rule-6692": {
+      "learning_id": "rule-6692",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6692,
+      "title": "h5): settle blob conversion failures before upload (#19588)",
+      "source_url": "https://github.com/NervJS/taro",
+      "source_version": "1c0e11a1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T01:00:53.332Z"
     }
   },
   "aliases": {

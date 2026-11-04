@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-04T00:53:28.969Z",
-  "total_cycles_completed": 7065,
-  "total_learnings_persisted": 7065,
-  "total_rules_promoted": 6714,
+  "last_updated": "2026-11-04T01:00:53.444Z",
+  "total_cycles_completed": 7067,
+  "total_learnings_persisted": 7067,
+  "total_rules_promoted": 6715,
   "history": [
-    {
-      "timestamp": "2026-11-03T11:22:11.561Z",
-      "repository": "0xCUB3/wBlock",
-      "learningId": "learn-github-0xcub3-wblock",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-03T11:22:13.513Z",
-      "repository": "linkerd/linkerd2",
-      "learningId": "learn-github-linkerd-linkerd2",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-03T11:22:17.209Z",
       "repository": "rustls/rustls",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-04T00:53:28.969Z",
       "repository": "giancarloerra/SocratiCode",
       "learningId": "learn-github-giancarloerra-socraticode",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T01:00:53.076Z",
+      "repository": "openyurtio/openyurt",
+      "learningId": "learn-github-openyurtio-openyurt",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T01:00:53.444Z",
+      "repository": "NervJS/taro",
+      "learningId": "learn-github-nervjs-taro",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

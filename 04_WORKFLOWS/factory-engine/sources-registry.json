@@ -40,8 +40,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-04T00:53:31.522Z",
-    "lastVerified": "2026-11-04T00:53:31.522Z",
+    "lastChecked": "2026-11-04T01:00:55.999Z",
+    "lastVerified": "2026-11-04T01:00:55.999Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -438,8 +438,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-04T00:32:05.269Z",
-    "lastVerified": "2026-11-04T00:32:05.269Z",
+    "lastChecked": "2026-11-04T01:00:51.784Z",
+    "lastVerified": "2026-11-04T01:00:51.784Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -1111,14 +1111,14 @@
     "officialUrl": "https://github.com/NervJS/taro",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-31T00:41:16.144Z",
-    "lastVerified": "2026-10-31T00:41:16.144Z",
+    "lastChecked": "2026-11-04T01:00:47.428Z",
+    "lastVerified": "2026-11-04T01:00:47.428Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nervjs-taro",
-    "contentHash": "061ace3a74fc8330d3ba6c0b0237806f7b58d0d0ebebd095add36b8a550bc412",
-    "promotedRulesCount": 3,
-    "recentFixesCount": 5,
+    "contentHash": "5f2006006b69feeb7f4ab5ad3c2cd8efbc1fb8a9341a840f7704a527ad4d1979",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 9,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -1567,9 +1567,9 @@
   "lunasec-io-lunasec": {
     "name": "lunasec",
     "officialUrl": "https://github.com/lunasec-io/lunasec",
-    "lastChecked": "2026-11-03T21:09:05.568Z",
+    "lastChecked": "2026-11-04T01:00:46.845Z",
     "revisionIdentifier": "c6bb0762",
-    "lastVerified": "2026-11-03T21:09:05.568Z"
+    "lastVerified": "2026-11-04T01:00:46.845Z"
   },
   "valeriansaliou-sonic": {
     "name": "sonic",
@@ -2777,9 +2777,9 @@
   "rigellute-spotify-tui": {
     "name": "spotify-tui",
     "officialUrl": "https://github.com/Rigellute/spotify-tui",
-    "lastChecked": "2026-10-31T22:23:39.921Z",
+    "lastChecked": "2026-11-04T01:00:36.823Z",
     "revisionIdentifier": "c4dcf6b9",
-    "lastVerified": "2026-10-31T22:23:39.921Z"
+    "lastVerified": "2026-11-04T01:00:36.823Z"
   },
   "hf-akatz-ai-minimax-h3-character-swap-lora": {
     "name": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
@@ -2912,9 +2912,9 @@
   "zilliztech-attu": {
     "name": "attu",
     "officialUrl": "https://github.com/zilliztech/attu",
-    "lastChecked": "2026-11-01T02:22:53.502Z",
+    "lastChecked": "2026-11-04T01:00:49.308Z",
     "revisionIdentifier": "d51e1c78",
-    "lastVerified": "2026-11-01T02:22:53.502Z"
+    "lastVerified": "2026-11-04T01:00:49.308Z"
   },
   "asciinema-asciinema": {
     "name": "asciinema",
@@ -4767,11 +4767,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "openyurtio-openyurt": {
-    "name": "openyurt",
+    "name": "openyurtio/openyurt",
     "officialUrl": "https://github.com/openyurtio/openyurt",
-    "lastChecked": "2026-11-02T15:00:45.566Z",
-    "revisionIdentifier": "83ce3925",
-    "lastVerified": "2026-11-02T15:00:45.566Z"
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-11-04T01:00:49.487Z",
+    "lastVerified": "2026-11-04T01:00:49.487Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-openyurtio-openyurt",
+    "contentHash": "8386841e2dafbdbaaf4ec6e55e59c4b9fa446af5fbf06707c4d448f9bb872114",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 1,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "cozodb-cozo": {
     "name": "cozo",
@@ -11073,9 +11083,9 @@
   "jsonld-java-jsonld-java": {
     "name": "jsonld-java",
     "officialUrl": "https://github.com/jsonld-java/jsonld-java",
-    "lastChecked": "2026-10-30T17:05:50.908Z",
+    "lastChecked": "2026-11-04T01:00:39.306Z",
     "revisionIdentifier": "4a7305f2",
-    "lastVerified": "2026-10-30T17:05:50.908Z"
+    "lastVerified": "2026-11-04T01:00:39.306Z"
   },
   "iplug2-iplug2": {
     "name": "iPlug2",

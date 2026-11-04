@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/openyurtio-openyurt-learnings.md`  
 > **Source**: github ([https://github.com/openyurtio/openyurt](https://github.com/openyurtio/openyurt))  
-> **Source Version**: `83ce3925`  
+> **Source Version**: `077652c5`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T01:34:57.048Z  
+> **Timestamp**: 2026-11-04T01:00:52.748Z  
 > **Learning ID**: `learn-github-openyurtio-openyurt`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/openyurtio-openyurt-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/openyurtio/openyurt](https://github.com/openyurtio/openyurt))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T01:34:56.860Z  
+> **Harvest Timestamp**: 2026-11-04T01:00:49.487Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: OpenYurt - Extending your native Kubernetes to edge(project under CNCF)
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 2008 stars
+- **Stars / Engagement**: 2010 stars
 
 ---
 
@@ -1282,14 +1282,11 @@ func GetMatchingTolerations(taints []v1.Taint, tolerations []v1.Toleration) (boo
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #2826** (2026-10-12): **build(deps): bump zeebe-io/backport-action from 4.6.0 to 4.7.0**
-  *Symptoms*: Bumps [zeebe-io/backport-action](https://github.com/zeebe-io/backport-action) from 4.6.0 to 4.7.0. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/zeebe-io/backport-action/releases">zeebe-io/backport-action's releases</a>.</em></p> <blockquote> <h2>Backport-action v4.7.0</h2> <h2>What's Changed</h2> <p>Thanks to a great contribution by <a href="https://github.com/lexfrei"><code>@​lexfrei</code></a>, backports no longer fail when the target branch already contains some of the changes, for example if a specific commit was already manually cherry-picked, or on a re-run. Previously, git reported the empty cherry-pick as a conflict, so the backport failed (or opened a draft PR with <code>conflict_resolution: draft_commit_conflicts</code>).</p> <p>Now the action skips those commits:</p> <ul> <li><strong>Some commits already on the target:</strong> the backport PR is created as usual. The comment on the original pull request mentions the skipped commits, and a comment on the backport PR lists them.</li> <li><strong>All commits already on the target:</strong> there's nothing to backport, so no PR is created. The target is skipped, just like when its backport PR already exists, and doesn't count as a failure in <code>was_successful</code>.</li> </ul> <p>With <code>comment_style: summary</code>, that looks like this:</p> <blockquote> <table> <thead> <tr> <th>Target</th> <th>Status</th> </tr> </thead> <tbody> <tr> <td><code>stable/8.7</code></t
+- **Issue #2840** (2026-10-26): **build(deps): bump github/codeql-action from 4.38.2 to 4.39.0**
+  *Symptoms*: Bumps [github/codeql-action](https://github.com/github/codeql-action) from 4.38.2 to 4.39.0. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/github/codeql-action/releases">github/codeql-action's releases</a>.</em></p> <blockquote> <h2>v4.39.0</h2> <ul> <li><em>Breaking change</em>: Bump the minimum required CodeQL bundle version to 2.20.7. <a href="https://redirect.github.com/github/codeql-action/pull/4205">#4205</a></li> <li>The <code>codeql-action/analyze</code> step now validates that a correct argument for the <code>checkout_path</code> input has been provided. The <code>checkout_path</code> input must be set to the path where the repository that is being analyzed is checked out at on the runner, if that path is something other than the workspace root. If the path does not point to a repository checkout or is different from the path that was used by <code>codeql-action/init</code>, then the CodeQL Action now produces a warning. <a href="https://redirect.github.com/github/codeql-action/pull/4148">#4148</a></li> <li>Resolved an issue with third-party caching implementations that prevented caches from being restored correctly. <a href="https://redirect.github.com/github/codeql-action/pull/4206">#4206</a></li> <li>The <code>codeql-action/start-proxy</code> step that is used in Code Scanning Default Setup now finds CodeQL releases using the same logic as <code>codeql-action/init</code>. This primarily benefits customers who are using 
 
-- **Issue #2821** (2026-10-05): **build(deps): bump zeebe-io/backport-action from 4.6.0 to 4.6.1**
-  *Symptoms*: Bumps [zeebe-io/backport-action](https://github.com/zeebe-io/backport-action) from 4.6.0 to 4.6.1. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/zeebe-io/backport-action/releases">zeebe-io/backport-action's releases</a>.</em></p> <blockquote> <h2>Backport-action v4.6.1</h2> <h2>What's Changed</h2> <p>Dependency updates only.</p> <h2>Updated dependencies</h2> <ul> <li>Update korthout/backport-action action to v4.6.0 by <a href="https://github.com/renovate"><code>@​renovate</code></a>[bot] in <a href="https://redirect.github.com/korthout/backport-action/pull/670">korthout/backport-action#670</a></li> <li>Update dependency prettier to v3.9.4 by <a href="https://github.com/renovate"><code>@​renovate</code></a>[bot] in <a href="https://redirect.github.com/korthout/backport-action/pull/671">korthout/backport-action#671</a></li> <li>Lock file maintenance by <a href="https://github.com/renovate"><code>@​renovate</code></a>[bot] in <a href="https://redirect.github.com/korthout/backport-action/pull/676">korthout/backport-action#676</a></li> <li>Update dependency vitest to v4.1.10 by <a href="https://github.com/renovate"><code>@​renovate</code></a>[bot] in <a href="https://redirect.github.com/korthout/backport-action/pull/677">korthout/backport-action#677</a></li> <li>Update dependency <code>@​types/node</code> to v24.13.3 by <a href="https://github.com/renovate"><code>@​renovate</code></a>[bot] in <a href="https://redirect.github.com/korthou
-  **Post-Mortem & Fix Analysis**:
-  > ## [![Quality Gate Passed](https://sonarsource.github.io/sonarcloud-github-static-resources/v2/checks/QualityGateBadge/qg-passed-20px.png 'Quality Gate Passed')](https://sonarcloud.io/dashboard?id=openyurtio_openyurt&pullRequest=2821) **Quality Gate passed**   Issues   ![](https://sonarsource.github.io/sonarcloud-github-static-resources/v2/common/passed-16px.png '') [0 New issues](https://sonarcloud.io/project/issues?id=openyurtio_openyurt&pullRequest=2821&issueStatuses=OPEN,CONFIRMED&sinceLeakPeriod=true)   ![](https://sonarsource.github.io/sonarcloud-github-static-resources/v2/common/accepted-16px.png '') [0 Accepted issues](https://sonarcloud.io/project/issues?id=openyurtio_openyurt&pullRequest=2821&issueStatuses=ACCEPTED)  Measures   ![](https://sonarsource.github.io/sonarcloud-github-static-resources/v2/common/passed-16px.png '') [0 Security Hotspots](https://sonarcloud.io/project/security_hotspots?id=openyurtio_openyurt&pullRequest=2821&issueStatuses=OPEN,CONFIRMED&sinceLeakPerio
-  > ## [Codecov](https://app.codecov.io/gh/openyurtio/openyurt/pull/2821?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=openyurtio) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 46.59%. Comparing base ([`7833349`](https://app.codecov.io/gh/openyurtio/openyurt/commit/78333496ac530d483545ac3916de2ecb2fab6d01?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=openyurtio)) to head ([`cea08b7`](https://app.codecov.io/gh/openyurtio/openyurt/commit/cea08b7f6610bd8d68b4aae0945248b94661fa16?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=openyurtio)).  <details><summary>Additional details and impacted files</summary>    ```diff @@           Coverage Diff           @@ ##           master    #2821   +/-   ## ==========
+- **Issue #2836** (2026-10-19): **build(deps): bump github/codeql-action from 4.38.2 to 4.38.3**
+  *Symptoms*: Bumps [github/codeql-action](https://github.com/github/codeql-action) from 4.38.2 to 4.38.3. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/github/codeql-action/releases">github/codeql-action's releases</a>.</em></p> <blockquote> <h2>v4.38.3</h2> <ul> <li><em>Upcoming breaking change</em>: CodeQL version 2.21.2 and earlier were discontinued on 24 September 2026 alongside GitHub Enterprise Server 3.17, and will be unsupported by the next minor release of the CodeQL Action. Added a deprecation warning for customers using these versions of CodeQL. <a href="https://redirect.github.com/github/codeql-action/pull/4188">#4188</a></li> <li>Update default CodeQL bundle version to <a href="https://github.com/github/codeql-action/releases/tag/codeql-bundle-v2.27.2">2.27.2</a>. <a href="https://redirect.github.com/github/codeql-action/pull/4203">#4203</a></li> <li>Fixed a bug where the decision of whether to use a per-language bundle did not account for custom configurations that reference queries outside of compiled CodeQL packs. This issue was caught during internal testing and did not affect any customer repositories. We will resume the roll out of per-language bundles in the coming weeks. <a href="https://redirect.github.com/github/codeql-action/pull/4184">#4184</a></li> </ul> </blockquote> </details> <details> <summary>Changelog</summary> <p><em>Sourced from <a href="https://github.com/github/codeql-action/blob/main/CHANGELOG.md">github/cod
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1306,464 +1303,29 @@ func GetMatchingTolerations(taints []v1.Taint, tolerations []v1.Toleration) (boo
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9b55de80` (2026-09-16)
-**Commit Message**: fix: data race on ek.file and ek.count between sync and compress goroutines (#2631)
+### Incident Patch 1: `47eafebb` (2026-10-12)
+**Commit Message**: fix typos.
 
-* fix: serialize ek.file and ek.count access in error_keys
-
-NewErrorKeys starts sync() and compress() goroutines that both access
-ek.file and ek.count. processNextOperator wrote these fields with no lock
-held, while rewrite closed and reassigned them under a read lock, so the
-two goroutines had an unsynchronized path to the same state. compress
-also read ek.count and len(ek.keys) with no lock.
-
-Guard ek.file and ek.count with a dedicated fileMu, read the compaction
-counters through getCount and length, and move the file swap into swapAOF
-under that lock. rewrite keeps the existing read lock for the keys
-snapshot, and fileMu is never held across the queue-drain wait, so the
-sync goroutine can keep draining while rewrite waits and no deadlock is
-introduced.
-
-go test -race ./pkg/yurthub/cachemanager/... now reports zero data races.
-
-Signed-off-by: Deepak Bhagat <[REDACTED_EMAIL]>
-
-* Potential fix for pull request finding
-
-Co-authored-by: Copilot Autofix powered by AI <[REDACTED_EMAIL]>
-
-* fix: address review on AOF swap and ticker in error_keys
-
-- Open the swapped AOF with O_APPEND so post-compaction 
-
-**File**: `pkg/yurthub/cachemanager/error_keys.go` (modified, +31/-4)
+**File**: `pkg/yurthub/util/fs/store.go` (modified, +1/-1)
 ```diff
-@@ -41,6 +41,7 @@ type errorKeys struct {
- 	sync.RWMutex
- 	keys    map[string]string
- 	queue   workqueue.TypedRateLimitingInterface[operation]
-+	fileMu  sync.Mutex
- 	file    *os.File
- 	count   int
- 	aofPath string
-@@ -135,17 +136,26 @@ func (ek *errorKeys) processNextOperator() bool {
- 		klog.Errorf("failed to serialize and persist operation: %v", op)
- 		return false
- 	}
-+	ek.fileMu.Lock()
-+	defer ek.fileMu.Unlock()
- 	ek.file.Write(append(data, '\n'))
- 	ek.file.Sync()
- 	ek.count++
- 	return true
+@@ -79,7 +79,7 @@ func (fs *FileSystemOperator) Write(path string, content []byte) error {
+ 	return err
  }
  
-+func (ek *errorKeys) getCount() int {
-+	ek.fileMu.Lock()
-+	defer ek.fileMu.Unlock()
-+	return ek.count
-+}
-+
- func (ek *errorKeys) compress() {
- 	ticker := time.NewTicker(30 * time.Second)
-+	defer ticker.Stop()
- 	for range ticker.C {
- 		if !ek.queue.ShuttingDown() {
--			if ek.count > len(ek.keys)+CompressThresh {
-+			if ek.getCount() > ek.length()+CompressThresh {
- 				ek.rewrite()
- 			}
- 		} else {
-@@ -192,15 +202,32 @@ func (ek *errorKeys) rewrite() {
- 		klog.Errorf("failed to wait for queue to be empty")
- 		return
- 	}
-+	ek.swapAOF(count)
-+}
-+
-+func (ek *errorKeys) swapAOF(count int) {
-+	ek.fileMu.Lock()
-+	defer ek.fileMu.Unlock()
- 	ek.file.Close()
- 
--	err = os.Rename(filepath.Join(ek.aofPath, "tmp_aof"), filepath.Join(ek.aofPath, "aof"))
-+	aofPath := filepath.Join(ek.aofPath, "aof")
-+	err := os.Rename(filepath.Join(ek.aofPath, "tmp_aof"), aofPath)
- 	if err != nil {
- 		klog.Errorf("failed to rename tmp_aof to aof, %v", err)
-+		// Compaction failed: keep serving the unchanged aof and do not update
-+		// the count, so ek.count stays in sync with the on-disk file.
-+		if file, oerr := os.OpenFile(aofPath, os.O_RDWR|os.O_APPEND, 0644); oerr != nil {
-+			klog.ErrorS(oerr, "failed to reopen aof after failed rename", "name", aofPath)
-+			metrics.Metrics.SetErrorKeysPersistencyStatus(0)
-+			ek.queue.ShutDown()
-+		} else {
-+			ek.file = file
-+		}
-+		return
- 	}
--	file, err = os.OpenFile(filepath.Join(ek.aofPath, "aof"), os.O_RDWR, 0644)
-+	file, err := os.OpenFile(aofPath, os.O_RDWR|os.O_APPEND, 0644)
- 	if err != nil {
--		klog.ErrorS(err, "failed to open file", "name", filepath.Join(ek.aofPath, "aof"))
-+		klog.ErrorS(err, "failed to open file", "name", aofPath)
- 		metrics.Metrics.SetErrorKeysPersistencyStatus(0)
- 		ek.queue.ShutDown()
- 		return
-```
-
-**File**: `pkg/yurthub/cachemanager/error_keys_test.go` (modified, +32/-1)
-```diff
-@@ -24,6 +24,7 @@ import (
- 	"os"
- 	"path/filepath"
- 	"strings"
-+	"sync"
- 	"testing"
- 	"time"
- 
-@@ -133,14 +134,44 @@ func TestCompress(t *testing.T) {
- 	}
- 	err = wait.PollUntilContextTimeout(context.TODO(), time.Second, time.Minute, false,
- 		func(ctx context.Context) (bool, error) {
--			if keys.count == 50 {
-+			if keys.getCount() == 50 {
- 				return true, nil
- 			}
- 			return false, nil
- 		})
- 	if err != nil {
- 		t.Errorf("failed to sync")
- 	}
-+	keys.queue.ShutDown()
-+}
-+
-+func TestConcurrentSyncAndRewrite(t *testing.T) {
-+	aofPath, err := os.MkdirTemp("", "errorkeys")
-+	if err != nil {
-+		t.Fatalf("failed to create dir: %v", err)
-+	}
-+	defer os.RemoveAll(aofPath)
-+
-+	ek := NewErrorKeys(aofPath)
-+	defer ek.queue.ShutDown()
-+
-+	var wg sync.WaitGroup
-+	wg.Add(2)
-+	go func() {
-+		defer wg.Done()
-+		for i := 0; i < 100; i++ {
-+			ek.put(fmt.Sprintf("key-%d", i), fmt.Sprintf("value-%d", i))
-+			time.Sleep(time.Millisecond)
-+		}
-+	}()
-+	go func() {
-+		defer wg.Done()
-+		for i := 0; i < 5; i++ {
-+			ek.rewrite()
-+			time.Sleep(10 * time.Millisecond)
-+		}
-+	}()
-+	wg.Wait()
- }
- 
- func TestRecoverCorruptedJSON(t *testing.T) {
-```
-
----
-
-### Incident Patch 2: `a459d3bc` (2026-08-18)
-**Commit Message**: fix: prevent watch response goroutine leak when client disconnects (#2679)
-
-The background goroutine spawned by streamResponseFilter sends each
-encoded watch event to the unbuffered watchDataCh with an unconditional
-ch <- buf. When a watch client disconnects mid-stream, the consumer
-stops reading from the channel and the goroutine blocks on the send
-forever, leaking one goroutine per disconnect.
-
-stopCh is the load balancer's process-lifetime channel, so it is only
-closed on yurthub shutdown, not on an individual client disconnect.
-Guarding the send with stopCh alone therefore does not release the
-goroutine on the disconnect path. The reverse proxy calls Close on the
-response body when the client goes away, so signal the goroutine from
-Close via a dedicated channel and select on both stopCh and that channel
-at the send site.
-
-Signed-off-by: Deepak Bhagat <[REDACTED_EMAIL]>
-
-**File**: `pkg/yurthub/filter/responsefilter/filter.go` (modified, +14/-1)
-```diff
-@@ -22,6 +22,7 @@ import (
- 	"errors"
- 	"io"
- 	"net/http"
-+	"sync"
- 
- 	"k8s.io/apimachinery/pkg/api/meta"
- 	"k8s.io/apimachinery/pkg/runtime"
-@@ -46,6 +47,8 @@ type filterReadCloser struct {
- 	isList       bool
- 	ownerName    string
- 	stopCh       <-chan struct{}
-+	closeCh      chan struct{}
-+	closeOnce    sync.Once
- }
- 
- // newFilterReadCloser create an filterReadCloser object
-@@ -75,6 +78,7 @@ func newFilterReadCloser(
- 		isList:       info.Verb == "list",
- 		ownerName:    ownerName,
- 		stopCh:       stopCh,
-+		closeCh:      make(chan struct{}),
- 	}
- 
- 	if frc.isWatch {
-@@ -113,6 +117,9 @@ func (frc *filterReadCloser) Read(p []byte) (int, error) {
- 
- // Close will close readers
- func (frc *filterReadCloser) Close() error {
-+	frc.closeOnce.Do(func() {
-+		close(frc.closeCh)
-+	})
- 	if frc.filterCache != nil {
- 		frc.filterCache.Reset()
- 	}
-@@ -198,7 +205,13 @@ func (frc *filterReadCloser) streamResponseFilter(rc io.ReadCloser, ch chan *byt
- 			klog.Errorf("could not encode resource in StreamResponseFilter of %s, %v", frc.ownerName, err)
- 			return err
- 		}
--		ch <- buf
-+		select {
-+		case ch <- buf:
-+		case <-frc.stopCh:
-+			return nil
-+		case <-frc.closeCh:
-+			return nil
-+		}
- 	}
- }
- 
-```
-
-**File**: `pkg/yurthub/filter/responsefilter/filter_leak_test.go` (added, +152/-0)
-```diff
-@@ -0,0 +1,152 @@
-+/*
-+Copyright 2025 The OpenYurt Authors.
-+
-+Licensed under the Apache License, Version 2.0 (the "License");
-+you may not use this file except in compliance with the License.
-+You may obtain a copy of the License at
-+
-+    http://www.apache.org/licenses/LICENSE-2.0
-+
-+Unless required by applicable law or agreed to in writing, software
-+distributed under the License is distributed on an "AS IS" BASIS,
-+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+See the License for the specific language governing permissions and
-+limitations under the License.
-+*/
-+
-+package responsefilter
-+
-+import (
-+	"bytes"
-+	"io"
-+	"testing"
-+	"time"
-+
-+	corev1 "k8s.io/api/core/v1"
-+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-+	"k8s.io/apimachinery/pkg/watch"
-+
-+	"github.com/openyurtio/openyurt/pkg/yurthub/kubernetes/serializer"
-+)
-+
-+func encodeWatchEvents(t *testing.T, s *serializer.Serializer, n int) *bytes.Buffer {
-+	t.Helper()
-+	buf := &bytes.Buffer{}
-+	for i := 0; i < n; i++ {
-+		event := &watch.Event{
-+			Type: watch.Added,
-+			Object: &corev1.Service{
-+				ObjectMeta: metav1.ObjectMeta{Name: "svc", Namespace: "default"},
-+			},
-+		}
-+		if _, err := s.WatchEncode(buf, event); err != nil {
-+			t.Fatalf("failed to encode watch event: %v", err)
-+		}
-+	}
-+	return buf
-+}
-+
-+func newWatchFilterReadCloser(rc io.ReadCloser, s *serializer.Serializer, stopCh <-chan struct{}) *filterReadCloser {
-+	return &filterReadCloser{
-+		rc:           rc,
-+		watchDataCh:  make(chan *bytes.Buffer),
-+		filterCache:  new(bytes.Buffer),
-+		serializer:   s,
-+		objectFilter: &nopObjectHandler{},
-+		isWatch:      true,
-+		ownerName:    "foo",
-+		stopCh:       stopCh,
-+		closeCh:      make(chan struct{}),
-+	}
-+}
-+
-+func TestStreamResponseFilterExitsOnClose(t *testing.T) {
-+	sm := serializer.NewSerializerManager()
-+	s := sm.CreateSerializer("application/json", "", "v1", "services")
-+	if s == nil {
-+		t.Fatal("failed to create serializer")
-+	}
-+
-+	frc := newWatchFilterReadCloser(io.NopCloser(encodeWatchEvents(t, s, 5)), s, make(chan struct{}))
-+
-+	done := make(chan error, 1)
-+	go func() {
-+		done <- frc.streamResponseFilter(frc.rc, frc.watchDataCh)
-+	}()
-+
-+	<-frc.watchDataCh
-+
-+	if err := frc.Close(); err != nil {
-+		t.Fatalf("failed to close filter read closer: %v", err)
-+	}
-+
-+	select {
-+	case err := <-done:
-+		if err != nil {
-+			t.Fatalf("expected nil error after Close, got %v", err)
-+		}
-+	case <-time.After(2 * time.Second):
-+		t.Fatal("streamResponseFilter goroutine leaked: still blocked after Close")
-+	}
-+}
-+
-+func TestStreamResponseFilterExitsOnStopCh(t *testing.T) {
-+	sm := serializer.NewSerializerManager()
-+	s := sm.CreateSerializer("application/json", "", "v1", "services")
-+	if s == nil {
-+		t.Fatal("failed to create serializer")
-+	}
-+
-+	stopCh := make(chan struct{})
-+	frc := newWatchFilterReadCloser(io.NopCloser(encodeWatchEvents(t, s, 5)), s, stopCh)
-+
-+	done := make(chan error, 1)
-+	go func() {
-+		done <- frc.streamResponseFilter(frc.rc, frc.watchDataCh)
-+	}()
-+
-+	<-frc.watchDataCh
-+	close(stopCh)
-+
-+	select {
-+	case err := <-done:
-+		if err != nil {
-+			t.Fatalf("expected nil error after stopCh closed, got %v", err)
-+		}
-+	case <-time.After(2 * time.Second):
-+		t.Fatal("streamResponseFilter goroutine leaked: still blocked after stopCh closed")
-+	}
-+}
-+
-+func TestStreamResponseFilterDeliversAllEventsThenEOF(t *testing.T) {
-+	sm := serializer.NewSerializerManager()
-+	s := sm.CreateSerializer("application/json", "", "v1", "services")
-+	if s == nil {
-+		t.Fatal("failed to create serializer")
-+	}
-+
-+	frc := newWatchFilterReadCloser(io.NopCloser(encodeWatchEvents(t, s, 3)), s, make(chan struct{}))
-+
-+	done := make(chan error, 1)
-+	go func() {
-+		done <- frc.streamResponseFilter(frc.rc, frc.watchDataCh)
-+	}()
-+
-+	count := 0
-+	for range frc.watchDataCh {
-+		count++
-+	}
-+
-+	if count != 3 {
-+		t.Fatalf("expected 3 watch events delivered, got %d", count)
-+	}
-+
-+	select {
-+	case err := <-done:
-+		if err != io.EOF {
-+			t.Fatalf("expected io.EOF after stream ends, got %v", err)
-+		}
-+	case <-time.After(2 * time.Second):
-+		t.Fatal("streamResponseFilter did not return after normal stream end")
-+	}
-+}
-```
-
----
-
-### Incident Patch 3: `d066363a` (2026-09-16)
-**Commit Message**: Bugfix: prevent Raven DNS panic on nil ConfigMap data (#2710)
-
-**File**: `pkg/yurtmanager/controller/raven/dns/gateway_dns_controller.go` (modified, +3/-0)
-```diff
-@@ -153,6 +153,9 @@ func (r *ReconcileDNS) Reconcile(ctx context.Context, req reconcile.Request) (re
- 		klog.Error(Format("could not list node, error %s", err.Error()))
- 		return reconcile.Result{Requeue: true, RequeueAfter: 2 * time.Second}, err
- 	}
-+	if cm.Data == nil {
-+		cm.Data = make(map[string]string)
-+	}
- 	cm.Data[util.ProxyNodesKey] = buildDNSRecords(&nodeList, enableProxy, proxyAddress)
- 	err = r.updateDNS(cm)
- 	if err != nil {
-```
-
-**File**: `pkg/yurtmanager/controller/raven/dns/gateway_dns_controller_test.go` (modified, +28/-0)
-```diff
-@@ -205,3 +205,31 @@ func TestReconcileDNS_getService(t *testing.T) {
- 		assert.Equal(t, ProxyIP, svc.Spec.ClusterIP, "expected correct clusterIP")
- 	})
- }
-+
-+func TestReconcileDNS_InitializesNilConfigMapData(t *testing.T) {
-+	r := mockReconciler()
-+	key := client.ObjectKey{
-+		Namespace: util.WorkingNamespace,
-+		Name:      util.RavenProxyNodesConfig,
-+	}
-+
-+	cm := &v1.ConfigMap{}
-+	err := r.Get(context.Background(), key, cm)
-+	assert.NoError(t, err)
-+
-+	cm.Data = nil
-+	err = r.Update(context.Background(), cm)
-+	assert.NoError(t, err)
-+
-+	_, err = r.Reconcile(context.Background(), reconcile.Request{
-+		NamespacedName: key,
-+	})
-+	assert.NoError(t, err)
-+
-+	updated := &v1.ConfigMap{}
-+	err = r.Get(context.Background(), key, updated)
-+	assert.NoError(t, err)
-+	assert.NotNil(t, updated.Data)
-+	_, exists := updated.Data[util.ProxyNodesKey]
-+	assert.True(t, exists)
-+}
+-// list will list names of entries under the rootDir(except the root dir). If isRecurisive is set, it will
++// list will list names of entries under the rootDir(except the root dir). If isRecursive is set, it will
+ // walk the path including all subdirs. The returned file names are absolute paths and
+ // in lexicographical order.
+ // There're two modes:
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2840** (closed): build(deps): bump github/codeql-action from 4.38.2 to 4.39.0 (@dependabot[bot])
+- **PR #2836** (closed): build(deps): bump github/codeql-action from 4.38.2 to 4.38.3 (@dependabot[bot])
+- **PR #2828** (2026-11-03): fix typos. (@zyjhtangtang)
 - **PR #2826** (2026-10-12): build(deps): bump zeebe-io/backport-action from 4.6.0 to 4.7.0 (@dependabot[bot])
 - **PR #2821** (closed): build(deps): bump zeebe-io/backport-action from 4.6.0 to 4.6.1 (@dependabot[bot])
 - **PR #2820** (2026-10-12): build(deps): bump github/codeql-action from 4.38.0 to 4.38.2 (@dependabot[bot])
-- **PR #2819** (closed): build(deps): bump crate-ci/typos from 1.43.3 to 1.50.3 (@dependabot[bot])
-- **PR #2817** (closed): build(deps): bump github/codeql-action from 4.38.0 to 4.38.1 (@dependabot[bot])
-- **PR #2816** (closed): build(deps): bump crate-ci/typos from 1.43.3 to 1.50.2 (@dependabot[bot])
 
 ---
 
@@ -1783,61 +1345,28 @@ Signed-off-by: Deepak Bhagat <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. data race on ek.file and ek.count between sync and compress goroutines (#2631)
+## X. Empirical Invariant Guard in store.go
 
 **RULE**:
-When implementing operations in `pkg/yurthub/cachemanager/error_keys.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in openyurtio/openyurt. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/yurthub/util/fs/store.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in openyurtio/openyurt. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9b55de80`: data race on ek.file and ek.count between sync and compress goroutines (#2631). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `47eafebb`: typos.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/yurthub/cachemanager/error_keys.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/yurthub/util/fs/store.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	fileMu  sync.Mutex
-	ek.fileMu.Lock()
-	defer ek.fileMu.Unlock()
-func (ek *errorKeys) getCount() int {
-	ek.fileMu.Lock()
-	defer ek.fileMu.Unlock()
-	return ek.count
-}
-
-	defer ticker.Stop()
-			if ek.getCount() > ek.length()+CompressThresh {
-	ek.swapAOF(count)
-}
-
-func (ek *errorKeys) swapAOF(count int) {
-	ek.fileMu.Lock()
-	defer ek.fileMu.Unlock()
-	aofPath := filepath.Join(ek.aofPath, "aof")
-	err := os.Rename(filepath.Join(ek.aofPath, "tmp_aof"), aofPath)
-		// Compaction failed: keep serving the unchanged aof and do not update
-		// the count, so ek.count stays in sync with the on-disk file.
-		if file, oerr := os.OpenFile(aofPath, os.O_RDWR|os.O_APPEND, 0644); oerr != nil {
-			klog.ErrorS(oerr, "failed to reopen aof after failed rename", "name", aofPath)
-			metrics.Metrics.SetErrorKeysPersistencyStatus(0)
-			ek.queue.ShutDown()
-		} else {
-			ek.file = file
-		}
-		return
-	file, err := os.OpenFile(aofPath, os.O_RDWR|os.O_APPEND, 0644)
-		klog.ErrorS(err, "failed to open file", "name", aofPath)
+// list will list names of entries under the rootDir(except the root dir). If isRecursive is set, it will
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-			if ek.count > len(ek.keys)+CompressThresh {
-	err = os.Rename(filepath.Join(ek.aofPath, "tmp_aof"), filepath.Join(ek.aofPath, "aof"))
-	file, err = os.OpenFile(filepath.Join(ek.aofPath, "aof"), os.O_RDWR, 0644)
-		klog.ErrorS(err, "failed to open file", "name", filepath.Join(ek.aofPath, "aof"))
+// list will list names of entries under the rootDir(except the root dir). If isRecurisive is set, it will
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9b55de80` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `47eafebb` are properly handled with clean fallback behavior.
