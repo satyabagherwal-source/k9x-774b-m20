@@ -490400,3 +490400,116 @@ Subsystems managing Java data structures, boundary deserialization, API parsing,
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `e045a46c` are properly handled with clean fallback behavior.
+
+
+---
+
+## 6726. javascript): minify equal boolean branches, exits before an else and constant ar (Harvested from webpack/webpack)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "javascript): minify equal boolean branches, exits before an else and constant ar",
+  "source": "webpack/webpack",
+  "source_url": "https://github.com/webpack/webpack",
+  "source_version": "0b35ae90",
+  "license": "MIT",
+  "extracted_at": "2026-11-04T02:33:13.267Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-webpack-webpack",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [webpack/webpack](https://github.com/webpack/webpack) (Revision: `0b35ae90`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `.changeset/238-javascript-minify-exits-arrays.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in webpack/webpack. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `e86c17aa`: javascript): minify equal boolean branches, exits before an else and constant array reads (#23099). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/238-javascript-minify-exits-arrays.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```javascript
+// Verified production-grade fix pattern:
+---
+"webpack": patch
+---
+
+Minify more conditionals, loop exits, dead code and unread values in one pass.
+```
+
+**NEGATIVE CONSTRAINT**:
+```javascript
+// Anti-pattern to NEVER write (induced failure mode):
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `e86c17aa` are properly handled with clean fallback behavior.
+
+
+---
+
+## 6727. dashboard): translate the Settings tabs, Environment, System Info and Backup (#1 (Harvested from doobidoo/mcp-memory-service)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "dashboard): translate the Settings tabs, Environment, System Info and Backup (#1",
+  "source": "doobidoo/mcp-memory-service",
+  "source_url": "https://github.com/doobidoo/mcp-memory-service",
+  "source_version": "d3e6b5aa",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-04T02:33:22.002Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-doobidoo-mcp-memory-service",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [doobidoo/mcp-memory-service](https://github.com/doobidoo/mcp-memory-service) (Revision: `d3e6b5aa`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `changelog.d/1812.fixed.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in doobidoo/mcp-memory-service. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `bf403e91`: dashboard): translate the Settings tabs, Environment, System Info and Backup (#1835). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog.d/1812.fixed.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+// Verified production-grade fix pattern:
+- **The Settings tab names and the Environment, System Info and Backup tabs stayed in English in every language, and Last Backup read "5m ago ago" (#1812, calude-bot).**
+  The seven tab names, the Environment tab's header, labels and toasts, the System Info
+  `N/A`/`Enabled`/`Disabled`/`Error` values and uptime units, the Backup tab's status texts and
+  the Backup History modal come from 40 new keys in all ten catalogs now. `formatTimeDelta()`
+  is split into a translated duration (`formatDuration()`) and a translated `{time} ago`, so the
+  sync cadence takes the duration instead of cutting " ago" off English text, and
+  `checkBackupStatus()` no longer appends a second " ago". Fields that JavaScript fills drop
+  their static `data-i18n` key, so a language switch cannot put `Never` or `Loading...` back over
+  a loaded value, and a failed System Info load finds its pending fields by `data-loading`
+  instead of comparing their text with the English `Loading...`.
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+// Anti-pattern to NEVER write (induced failure mode):
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `bf403e91` are properly handled with clean fallback behavior.

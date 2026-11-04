@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md`  
 > **Source**: github ([https://github.com/doobidoo/mcp-memory-service](https://github.com/doobidoo/mcp-memory-service))  
-> **Source Version**: `e0f224ec`  
+> **Source Version**: `d3e6b5aa`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-02T15:57:29.419Z  
+> **Timestamp**: 2026-11-04T02:33:21.589Z  
 > **Learning ID**: `learn-github-doobidoo-mcp-memory-service`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/doobidoo/mcp-memory-service](https://github.com/doobidoo/mcp-memory-service))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-02T15:57:28.130Z  
+> **Harvest Timestamp**: 2026-11-04T02:33:20.694Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Open-source persistent memory for AI agent pipelines (LangGraph, CrewAI, AutoGen) and Claude. REST API + knowledge graph + autonomous consolidation.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 2062 stars
+- **Stars / Engagement**: 2072 stars
 
 ---
 
@@ -2911,11 +2911,11 @@ Commands:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1785** (2026-11-02): **[Bug]: Milvus full reads stop at 16384 rows (get_all_memories, time range, tags, export)**
-  *Symptoms*: ### Bug Description  On the Milvus backend, reads that mean "every match" stop at 16384 rows without any error. Once a collection holds more than 16384 memories, `get_all_memories()`, `get_memories_by_time_range()`, tag search, tag counts, timestamps and the JSON export all return 16384.  There are two causes:  1. **The caller slices after draining.** `_query_memories` ([milvus.py#L4575](https://github.com/doobidoo/mcp-memory-service/blob/06e2f786/src/mcp_memory_service/storage/milvus.py#L4575)) already drains the whole match set with QueryIterator; its docstring says that is to avoid the 16384 truncation. But the callers that mean "all" pass `limit=_MILVUS_MAX_LIMIT`, so it returns `memories[:16384]` anyway ([L4621](https://github.com/doobidoo/mcp-memory-service/blob/06e2f786/src/mcp_memory_service/storage/milvus.py#L4621)). Affected: `get_all_memories` with no limit ([L3834](https://github.com/doobidoo/mcp-memory-service/blob/06e2f786/src/mcp_memory_service/storage/milvus.py#L3834)), `get_memories_by_time_range`, `search_by_tag`, `search_by_tags`, `search_by_tag_chronological` with no limit, `get_by_exact_content`, `get_largest_memories`, and the exact and time/tag-only branches of `search_memories`. 2. **A single `query()` call.** `_scan_tags` (behind `get_all_tags` and `get_all_tags_with_counts`), `get_memory_timestamps`, `purge_deleted` and `get_conflicts` call `client.query(limit=16384)` once, which Milvus caps at 16384.  The sort is newest first, so the rows dropped ar
+- **Issue #1827** (2026-11-03): **fix(dashboard): re-render the active view after a language switch (#1807)**
+  *Symptoms*: Fixes #1807, part of #1806. Approach as proposed in https://github.com/doobidoo/mcp-memory-service/issues/1807#issuecomment-6602786899.  Switching the language only rewrote elements with a `data-i18n*` attribute. Text that `app.js` had built stayed in the old language, for example `Alle Typen` in the search type filter or the weekdays in the activity report.  ## Change  - `setLanguage()` calls a new `rerenderActiveView()` after `applyTranslations()`.   - Dashboard and search re-render from `this.memories` and `this.searchResults`. No request.   - Analytics re-runs its report loaders, the same requests the tab makes on open, but not `loadGraphVisualization()`, so the graph keeps its camera.   - Documents, manage and quality analytics re-run `loadViewData()`.   - Browse is left alone: the tag cloud has no translated text, and re-rendering it would close an open tag.   - No scroll restore is needed: every renderer swaps its content in one step once its data arrives. - Manage view, which a switch now reloads: `loadTagSelectOptions()` keeps the selected bulk-delete tag, and `renderTagManagementTable()` assigns `onclick` instead of adding one more listener per render. Before, every visit to the tab added a handler, so Rename opened its prompt once per earlier visit. - The `All types` option gets `data-i18n="search.filters.type.all"`, so `applyTranslations()` translates it in place. Calling `loadMemoryTypes()` again would have reset the selected filter.  No catalog or `index.html` c
 
-- **Issue #1782** (2026-11-02): **[Bug]: Milvus memory_search without a query returns the oldest matches, not the newest**
-  *Symptoms*: ### Bug Description  On the Milvus backend, `memory_search` without a `query` (only `time_expr`, `after`/`before`, or `tags`) returns the **oldest** matching memories instead of the newest. sqlite_vec returns the newest.  The time/tag-only branch of `MilvusMemoryStorage.search_memories` ([milvus.py#L2983-L2997](https://github.com/doobidoo/mcp-memory-service/blob/815ca45b/src/mcp_memory_service/storage/milvus.py#L2983-L2997)) issues one `client.query(filter=..., limit=limit * 3)` and keeps the first `limit` rows. Milvus has no server-side `ORDER BY`, so those are the rows scanned first, which for memories written over time are the oldest. Nothing sorts them afterwards; the MCP handler does not either.  The same branch serves the `fallback=true` tag stage (`_search_tag_fallback` in `server/handlers/memory.py`). REST `/api/search*` is not affected: it does not call `search_memories`.  ### Steps to Reproduce  Through the real MCP handler, on Milvus Lite and sqlite_vec, write 30 memories one hour apart, oldest first, then call `memory_search`:  | call | sqlite_vec (hours old) | Milvus (hours old) | |---|---|---| | `{"time_expr": "last 7 days", "limit": 5}` | `[0, 1, 2, 3, 4]` | `[29, 28, 27, 26, 25]` | | `{"tags": ["timeline"], "limit": 5}` | `[0, 1, 2, 3, 4]` | `[29, 28, 27, 26, 25]` |  ### Expected Behavior  The newest matches first, as on sqlite_vec, so the tool's own example `{"time_expr": "last week", "limit": 20}` returns the last 20 memories of the week.  ### Actual Behavio
+- **Issue #1824** (2026-11-03): **[Bug]: Milvus still lists superseded versions in memory_list and tag search (#1803 follow-up)**
+  *Symptoms*: ### Bug Description  Follow-up to #1803 / #1805 for the Milvus backend. #1805 hid superseded versions in `memory_list` and tag search on sqlite-vec, and its notes say Cloudflare, Milvus and remote HTTP were left for a follow-up. On Milvus the new `include_superseded` keyword is accepted and ignored (`# interface parity (#1803); not filtered here` on `get_all_memories`, `count_all_memories`, `search_by_tag`, `search_by_tags`), so the #1803 symptom is still there: `memory_list` lists the old versions and counts them in `total`, and tag search returns them.  `memory_search` itself is fine on Milvus: its own `search_memories` already drops superseded rows on every branch.  ### Steps to Reproduce  Milvus Lite and sqlite-vec, side by side: store two memories tagged `ops`, then `update_memory_versioned` one of them.  | call | sqlite_vec | Milvus | |---|---|---| | `MemoryService.list_memories()` (`memory_list`) | total 2, old version not listed | total **3**, old version listed | | `search_by_tag(["ops"], include_superseded=False)` | old version hidden | old version **returned** | | `search_by_tags(["ops"], include_superseded=False)` | old version hidden | old version **returned** |  ### Expected Behavior  The same as sqlite-vec after #1805.  ### Actual Behavior  Superseded versions are listed, counted and returned by tag search.  ### Storage Backend  milvus (community-maintained)  ### Operating System  macOS  ### Python Version  Python 3.11.15  ### MCP Memory Service Version  main @
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2932,1181 +2932,1067 @@ Commands:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ce80cb53` (2026-11-02)
-**Commit Message**: fix: memory_search point-in-time queries with as_of and status flags (fixes #1724) (#1726)
+### Incident Patch 1: `bf403e91` (2026-11-03)
+**Commit Message**: fix(dashboard): translate the Settings tabs, Environment, System Info and Backup (#1835)
 
-* fix: memory_search point-in-time queries with as_of and status flags
+* i18n(dashboard): add the Settings tab, Environment, System Info and Backup keys (#1812)
 
-Implements issue #1724: memory_search (MCP + REST) accepts as_of for
-point-in-time queries (knowledge-time semantics), include_superseded
-results carry current/superseded status flags with superseded_by and
-superseded_at, a new superseded_at column records the replacement moment,
-and reasoning/temporal.py is wired into the graph layer instead of dead code.
+40 keys in all ten catalogs: the seven Settings tab names
+(modal.settings.tabs.*), the Environment tab (modal.settings.env.*), the
+System Info values (modal.settings.system.*), the Backup tab status
+texts (modal.settings.backup.*), the Backup History modal
+(modal.backups.*) and the duration units that formatTimeDelta() and
+formatUptime() share (time.*).
 
-Tests: tests/storage/test_1724_point_in_time.py (9 tests)
+They sit right after the modal.settings.server.* block. The open PRs
+that add keys insert elsewhere (#1821, #1822, #1826, #1833, #1793), and
+none of the new names is one of theirs, so a merge cannot leave a
+duplicate key. The files were edited as text, not reserialized, and every
+translation keeps the English tokens ({count}, {size}, {days}, {time},
+{button}, {options}). The .env file name stays as it is.
 
-* fix: memory_search point-in-time queries with as_of and status flags
+All nine non-English catalogs are machine-assisted drafts written by an
+AI agent and need a fluent reviewer. They follow each catalog's existing
+terms and register (Sie, tú, Anda, você; French spacing before colons;
+the catalogs' own w
 
-Implements issue #1724: memory_search (MCP + REST) accepts as_of for
-point-in-time queries (knowledge-time semantics), include_superseded
-results carry current/superseded status flags with superseded_by and
-superseded_at, a new superseded_at column records the replacement moment,
-and reasoning/temporal.py is wired into the graph layer instead of dead code.
-
-Rebased onto current upstream main; no upstream changes reverted.
-
-Tests: tests/storage/test_1724_point_in_time.py (9 tests)
-
-* fix: address review feedback on point-in-time as_of queri
-
-**File**: `changelog.d/1724.fixed.md` (added, +5/-0)
+**File**: `changelog.d/1812.fixed.md` (added, +10/-0)
 ```diff
-@@ -0,0 +1,5 @@
-+- **Point-in-time `as_of` searches no longer leak present-day fallback results (#1724).**
-+  With `fallback=true`, an `as_of` search returning fewer than three matches could
-+  append present-day exact or tag matches. The cascading fallback stages now forward
-+  `as_of`, so historical queries only return memories that were current at the
-+  requested date.
+@@ -0,0 +1,10 @@
++- **The Settings tab names and the Environment, System Info and Backup tabs stayed in English in every language, and Last Backup read "5m ago ago" (#1812, calude-bot).**
++  The seven tab names, the Environment tab's header, labels and toasts, the System Info
++  `N/A`/`Enabled`/`Disabled`/`Error` values and uptime units, the Backup tab's status texts and
++  the Backup History modal come from 40 new keys in all ten catalogs now. `formatTimeDelta()`
++  is split into a translated duration (`formatDuration()`) and a translated `{time} ago`, so the
++  sync cadence takes the duration instead of cutting " ago" off English text, and
++  `checkBackupStatus()` no longer appends a second " ago". Fields that JavaScript fills drop
++  their static `data-i18n` key, so a language switch cannot put `Never` or `Loading...` back over
++  a loaded value, and a failed System Info load finds its pending fields by `data-loading`
++  instead of comparing their text with the English `Loading...`.
 ```
 
-**File**: `src/mcp_memory_service/models/memory.py` (modified, +8/-2)
+**File**: `src/mcp_memory_service/web/static/app.js` (modified, +105/-51)
 ```diff
-@@ -460,12 +460,18 @@ class MemoryQueryResult:
-     memory: Memory
-     relevance_score: float
-     debug_info: Dict[str, Any] = field(default_factory=dict)
--    
-+    # Issue #1724: supersession lineage, populated by backends that track it
-+    # (sqlite_vec / hybrid). superseded_at is the exact replacement moment for
-+    # rows superseded after migration 021; for older rows it is approximated
-+    # with the successor's created_at (see RetrieveMixin.retrieve).
-+    superseded_by: Optional[str] = None
-+    superseded_at: Optional[float] = None
-+
-     @property
-     def similarity_score(self) -> float:
-         """Alias for relevance_score for backward compatibility."""
-         return self.relevance_score
--    
-+
-     def to_dict(self) -> Dict[str, Any]:
-         """Convert to dictionary representation."""
-         return {
-```
-
-**File**: `src/mcp_memory_service/server/handlers/graph.py` (modified, +27/-2)
-```diff
-@@ -99,7 +99,10 @@ async def handle_memory_graph(server, arguments: dict) -> List[types.TextContent
- 
-             return await handle_find_connected_memories(server, {
-                 "hash": hash_val,
--                "max_hops": arguments.get("max_hops", 2)
-+                "max_hops": arguments.get("max_hops", 2),
-+                # Issue #1724: forward the point-in-time bound — dropping it
-+                # here silently disabled as_of for the memory_graph tool.
-+                "as_of": arguments.get("as_of"),
-             })
- 
-         elif action == "path":
-@@ -373,10 +376,32 @@ async def handle_find_connected_memories(
- 
-     # Get optional parameters
-     max_hops = arguments.get("max_hops", 2)
-+    as_of = arguments.get("as_of")
- 
-     try:
-+        # Parse as_of (issue #1724): point-in-time traversal. Invalid values
-+        # fail the call rather than silently ignoring the bound.
-+        as_of_ts = None
-+        if as_of is not None:
-+            from ...utils.time_parser import parse_as_of
-+            try:
-+                as_of_ts = parse_as_of(as_of)
-+            except ValueError as e:
-+                result = {
-+                    "success": False,
-+                    "error": f"Invalid as_of value: {e}",
-+                    "connected": [],
-+                    "count": 0,
-+                }
-+                return [types.TextContent(
-+                    type="text",
-+                    text=json.dumps(result, indent=2)
-+                )]
-+
-         # Perform graph traversal
--        connected = await graph.find_connected(memory_hash, max_hops=max_hops)
-+        connected = await graph.find_connected(
-+            memory_hash, max_hops=max_hops, as_of=as_of_ts
-+        )
- 
-         # Format results
-         result = {
-```
-
-**File**: `src/mcp_memory_service/server/handlers/memory.py` (modified, +20/-5)
-```diff
-@@ -1152,15 +1152,16 @@ async def _collect_cascading_fallback_memories(
-     """Combine exact and tag fallback results while preserving their labels."""
-     seen_hashes = {memory.get("content_hash") for memory in memories}
-     include_superseded = arguments.get("include_superseded", False)
-+    as_of = arguments.get("as_of")
-     exact_memories = await _search_exact_fallback(
--        storage, query, limit, include_superseded
-+        storage, query, limit, include_superseded, as_of
-     )
-     _append_unique_fallback_memories(
-         memories, exact_memories, seen_hashes, "exact_fallback"
-     )
-     if len(memories) < limit:
-         tag_memories = await _search_tag_fallback(
--            storage, query, limit, include_superseded
-+            storage, query, limit, include_superseded, as_of
-         )
-         _append_unique_fallback_memories(
-             memories, tag_memories, seen_hashes, "tag_fallback"
-@@ -1173,22 +1174,23 @@ async def _collect_cascading_fallback_memories(
- 
- 
- async def _search_exact_fallback(
--    storage, query: str, limit: int, include_superseded: bool
-+    storage, query: str, limit: int, include_superseded: bool, as_of=None
- ) -> list[dict]:
-     """Return exact-search candidates, treating a backend error as no matches."""
-     result = await storage.search_memories(
-         query=query,
-         mode="exact",
-         limit=limit,
-         include_superseded=include_superseded,
-+        as_of=as_of,
-     )
-     if "error" in result:
-         return []
-     return result.get("memories", [])
- 
- 
- async def _search_tag_fallback(
--    storage, query: str, limit: int, include_superseded: bool
-+    storage, query: str, limit: int, include_superseded: bool, as_of=None
- ) -> list[dict]:
-     """Return tag-search candidates for tokens extracted from the query."""
-     query_tokens = [
-@@ -1204,6 +1206,7 @@ async def _search_tag_fallback(
-         tags=query_tokens,
-         limit=limit,
-         include_superseded=include_superseded,
-+        as_of=as_of,
-     )
-     if "error" in result:
-         return []
-@@ -1243,6 +1246,7 @@ async def _retrieve_search_results(storage, arguments: dict, normalize_tags):
-         ranking_weights=arguments.get("ranking_weights"),
-         store=store,
-         agent_id=arguments.get("agent_id"),
-+        as_of=arguments.get("as_of"),
-     )
-     if "error" in result:
-         return result, None
-@@ -1487,10 +1491,21 @@ def _format_search_memory(memory: dict, index: int, fallback_used: bool) -> str:
-     match_info = ""
-     if fallback_used and memory.get("match_method"):
-         match_info = f" (via {memory['match_method']})"
-+    # Issue #1724: surface the point-in-time status flag when the backend
-+    # attached one (include_superseded=true).
-+    status_info = ""
-+    if memory.get("status"):
-+        status_info = f"   Status: {memory['status']}"
-+        if memory.get("superseded_by"):
-+            status_info += f" by {memory['superseded_by'][:12]}"
-+            if memory.get("superseded_at_iso"):
-+                status_info += f" at {memory['superseded_at_iso']}"
-+        status_info += "\n"
-     return (
-         f"{index}. {memory.get('content', '')}\n"
-         f"   Hash: {content_hash}\n"
--        f"   Created: {created_at}{tags_display}{match_info}"
-+        f"   Created: {created_at}{tags_display}{match_info}\n"
-+        f"{status_info}".rstrip("\n")
-     )
- 
- 
-```
-
-**File**: `src/mcp_memory_service/storage/base.py` (modified, +137/-9)
-```diff
-@@ -19,6 +19,7 @@
- """
- import asyncio
- import logging
-+import time
- from abc import ABC, abstractmethod
- from typing import List, Optional, Dict, Any, Sequence, Tuple, Set
- from datetime import datetime, timezone, timedelta, date
-@@ -209,7 +210,7 @@ async def store_batch(self, memories: List[Memory], recreate: Optional[bool] = N
-         return final_results
- 
-     @abstractmethod
--    async def retrieve(self, query: str, n_results: int = 5, tags: Optional[List[str]] = None, min_confidence: float = 0.0, include_superseded: bool = False, start_time: Optional[float] = None, end_time: Optional[float] = None, store: Optional[str] = None) -> List[MemoryQueryResult]:
-+    async def retrieve(self, query: str, n_results: int = 5, tags: Optional[List[str]] = None, min_confidence: float = 0.0, include_superseded: bool = False, start_time: Optional[float] = None, end_time: Optional[float] = None, store: Optional[str] = None, as_of: Optional[float] = None) -> List[MemoryQueryResult]:
-         """Retrieve memories by semantic search.
- 
-         Args:
-@@ -221,6 +222,9 @@ async def retrieve(self, query: str, n_results: int = 5, tags: Optional[List[str
-             min_confidence: Minimum effective confidence score (0.0-1.0).
-                   When > 0, stale memories below threshold are filtered out.
-                   Default 0.0 disables filtering (backward compatible).
-+            as_of: Optional epoch seconds for a point-in-time query (issue
-+                  #1724): only memories with created_at <= as_of that had not
-+                  yet been superseded at as_of are returned. None disables.
-         """
-         pass
- 
-@@ -240,7 +244,8 @@ async def retrieve_with_quality_boost(
-         quality_boost: Optional[bool] = None,
-         quality_weight: Optional[float] = None,
-         include_superseded: bool = False,
--        store: Optional[str] = "default"
-+        store: Optional[str] = "default",
-+        as_of: Optional[float] = None,
-     ) -> List[MemoryQueryResult]:
-         """
-         Retrieve memories with optional quality-based reranking.
-@@ -285,12 +290,12 @@ async def retrieve_with_quality_boost(
- 
-         if not quality_boost:
-             # Standard retrieval, no reranking
--            return await self.retrieve(query, n_results, tags=tags, include_superseded=include_superseded, store=store)
-+            return await self.retrieve(query, n_results, tags=tags, include_superseded=include_superseded, store=store, as_of=as_of)
- 
-         # Quality-boosted retrieval
-         # Step 1: Over-fetch (3x) to have pool for reranking
-         oversample_factor = 3
--        candidates = await self.retrieve(query, n_results * oversample_factor, tags=tags, include_superseded=include_superseded, store=store)
-+        candidates = await self.retrieve(query, n_results * oversample_factor, tags=tags, include_superseded=include_superseded, store=store, as_of=as_of)
- 
-         if not candidates:
-             return []
-@@ -1219,6 +1224,74 @@ async def get_graph_visualization_data(
-             },
+@@ -18,54 +18,56 @@ class MemoryDashboard {
+             // authenticated /api/health/detailed endpoint, which is already
+             // fetched by loadSystemInfo().
+             sources: [{ path: 'version', api: 'detailedHealth' }],
+-            formatter: (value) => value || 'N/A'
++            formatter: (value, app) => value || app.t('modal.settings.system.notAvailable', 'N/A')
+         },
+         settingsBackend: {
+             sources: [
+                 { path: 'storage.storage_backend', api: 'detailedHealth' },
+                 { path: 'storage.backend', api: 'detailedHealth' }
+             ],
+-            formatter: (value) => value || 'N/A'
++            formatter: (value, app) => value || app.t('modal.settings.system.notAvailable', 'N/A')
+         },
+         settingsPrimaryBackend: {
+             sources: [
+                 { path: 'storage.primary_backend', api: 'detailedHealth' },
+                 { path: 'storage.backend', api: 'detailedHealth' }
+             ],
+-            formatter: (value) => value || 'N/A'
++            formatter: (value, app) => value || app.t('modal.settings.system.notAvailable', 'N/A')
+         },
+         settingsEmbeddingModel: {
+             sources: [
+                 { path: 'storage.primary_stats.embedding_model', api: 'detailedHealth' },
+                 { path: 'storage.embedding_model', api: 'detailedHealth' }
+             ],
+-            formatter: (value) => value || 'N/A'
++            formatter: (value, app) => value || app.t('modal.settings.system.notAvailable', 'N/A')
+         },
+         settingsEmbeddingDim: {
+             sources: [
+                 { path: 'storage.primary_stats.embedding_dimension', api: 'detailedHealth' },
+                 { path: 'storage.embedding_dimension', api: 'detailedHealth' }
+             ],
+-            formatter: (value) => value || 'N/A'
++            formatter: (value, app) => value || app.t('modal.settings.system.notAvailable', 'N/A')
+         },
+         settingsDbSize: {
+             sources: [
+                 { path: 'storage.primary_stats.database_size_mb', api: 'detailedHealth' },
+                 { path: 'storage.database_size_mb', api: 'detailedHealth' }
+             ],
+-            formatter: (value) => (value != null) ? `${value.toFixed(2)} MB` : 'N/A'
++            formatter: (value, app) => (value != null) ? `${value.toFixed(2)} MB` : app.t('modal.settings.system.notAvailable', 'N/A')
+         },
+         settingsTotalMemories: {
+             sources: [{ path: 'storage.total_memories', api: 'detailedHealth' }],
+-            formatter: (value) => (value != null) ? value.toLocaleString() : 'N/A'
++            formatter: (value, app) => (value != null) ? value.toLocaleString() : app.t('modal.settings.system.notAvailable', 'N/A')
+         },
+         settingsUptime: {
+             sources: [{ path: 'uptime_seconds', api: 'detailedHealth' }],
+-            formatter: (value) => (value != null) ? MemoryDashboard.formatUptime(value) : 'N/A'
++            formatter: (value, app) => (value != null) ? app.formatUptime(value) : app.t('modal.settings.system.notAvailable', 'N/A')
+         },
+         settingsOAuthEnabled: {
+             sources: [{ path: 'oauth_enabled', api: 'oauthStatus' }],
+-            formatter: (value) => (value === true) ? '✓ Enabled' : (value === false) ? 'Disabled' : 'N/A'
++            formatter: (value, app) => (value === true) ? app.t('modal.settings.system.enabled', '✓ Enabled')
++                : (value === false) ? app.t('modal.settings.system.disabled', 'Disabled')
++                : app.t('modal.settings.system.notAvailable', 'N/A')
          }
+     };
  
-+    @staticmethod
-+    def _post_filter_as_of(
-+        results: List[MemoryQueryResult], as_of_ts: float
-+    ) -> List[MemoryQueryResult]:
-+        """Best-effort point-in-time post-filter (issue #1724).
+@@ -408,6 +410,26 @@ class MemoryDashboard {
+         }
+     }
+ 
++    /**
++     * Set text that is not a single catalog string (a date, a size, a value
++     * from the server) and drop any data-i18n key, so a language switch
++     * leaves it alone.
++     */
++    setValueText(el, text) {
++        if (!el) return;
++        el.textContent = text;
++        delete el.dataset.i18n;
++    }
 +
-+        For backends without SQL-level as_of support (cloudflare, milvus,
-+        remote_http): drop memories created after as_of, and drop memories
-+        that are superseded without a known replacement moment (their
-+        supersede time cannot be proven to be after as_of, so they cannot be
-+        shown as current at as_of). Backends with native support (sqlite_vec,
-+        hybrid via primary) already filtered; this is a no-op for them.
-+        """
-+        filtered = []
-+        for r in results:
-+            created = r.memory.created_at
-+            if created is not None and created > as_of_ts:
-+                continue
-+            sup_by = r.superseded_by
-+            sup_at = r.superseded_at
-+            if sup_by and (sup_at is None or sup_at <= as_of_ts):
-+                continue
-+            filtered.append(r)
-+        return filtered
++    /**
++     * Markup for an element whose whole text is one catalog string. It carries
++     * the key, so a language switch translates it again without a re-render.
++     */
++    staticTextHtml(tag, className, key, fallback, style = '') {
++        const styleAttr = style ? ` style="${style}"` : '';
++        return `<${tag} class="${className}"${styleAttr} data-i18n="${key}">${this.escapeHtml(this.t(key, fallback))}</${tag}>`;
++    }
 +
-+    async def _get_supersession_map(
-+        self, content_hashes: List[str], store: Optional[str] = None
-+    ) -> Dict[str, Tuple[Optional[str], Optional[float]]]:
-+        """Batch supersession-lineage lookup: content_hash -> (superseded_by, superseded_at).
-+
-+        Issue #1724 follow-up: exact / time-only / tag-only search paths build
-+        results from raw Memory objects that never flow through retrieve(), so
-+        their lineage fields are empty. The base implementation returns {}
-+        (backend cannot provide it — those paths then get only the created_at
-+        bound); SQLite overrides with a single batched query.
-+        """
-+        return {}
-+
-+    async def _enrich_supersession(
-+        self, results: List[MemoryQueryResult], store: Optional[str] = None
-+    ) -> List[MemoryQueryResult]:
-+        """Backfill supersession lineag
+     /**
+      * 应用翻译到 DOM
+      */
+@@ -1958,7 +1980,7 @@ class MemoryDashboard {
+         panel.className = `sync-control-compact delta-sync-control ${state === 'disabled' ? 'paused' : state}`;
+         document.getElementById('deltaSyncStatus').textContent = this.t(`sync.status.${state}`, state.charAt(0).toUpperCase() + state.slice(1));
+         const next = delta.next_run_at ? new Date(delta.next_run_at) : null;
+-        const cadence = this.formatTimeDelta(delta.interval_seconds).replace(/ ago$/, '');
++        const cadenc
 ```
 
-**File**: `src/mcp_memory_service/storage/cloudflare.py` (modified, +54/-3)
+**File**: `src/mcp_memory_service/web/static/i18n/de.json` (modified, +40/-0)
 ```diff
-@@ -1039,7 +1039,7 @@ async def _store_r2_content(self, key: str, content: str) -> None:
-         if response.status_code not in [200, 201]:
-             raise ValueError(f"Failed to store content in R2: {response.status_code}")
-     
--    async def retrieve(self, query: str, n_results: int = 5, tags: Optional[List[str]] = None, min_confidence: float = 0.0, include_superseded: bool = False, start_time: Optional[float] = None, end_time: Optional[float] = None, store: str = "default") -> List[MemoryQueryResult]:
-+    async def retrieve(self, query: str, n_results: int = 5, tags: Optional[List[str]] = None, min_confidence: float = 0.0, include_superseded: bool = False, start_time: Optional[float] = None, end_time: Optional[float] = None, store: str = "default", as_of: Optional[float] = None) -> List[MemoryQueryResult]:
-         """Retrieve memories by semantic search."""
-         try:
-             # Generate query embedding
-@@ -1126,13 +1126,64 @@ async def retrieve(self, query: str, n_results: int = 5, tags: Optional[List[str
-                 except Exception as e:
-                     logger.warning("Failed to persist access metadata: %s", _sanitize_log_value(e))
- 
-+            # Issue #1724 follow-up: always load the replacement lineage, not
-+            # only when as_of is set — include_superseded status flags need it
-+            # too. Cloudflare tracks superseded_by in metadata_json but not
-+            # the replacement moment, so superseded_at stays None
-+            # (conservative in as_of queries).
-+            results = self._copy_supersession_from_metadata(results)
-+
-+            # Issue #1724: best-effort point-in-time filter. The Cloudflare
-+            # backend has no superseded_at; superseded rows are conservatively
-+            # excluded from as_of queries.
-+            if as_of is not None:
-+                results = self._post_filter_as_of(results, as_of)
-+
-             logger.info("Retrieved %s memories for query", len(results))
-             return results
--            
-+
-         except Exception as e:
-             logger.error("Failed to retrieve memories: %s", _sanitize_log_value(e))
-             return []
--    
-+
-+    @staticmethod
-+    def _copy_supersession_from_metadata(
-+        results: List[MemoryQueryResult],
-+    ) -> List[MemoryQueryResult]:
-+        """Copy the superseded_by pointer from each result's loaded metadata.
-+
-+        Issue #1724 follow-up: Cloudflare's D1 schema has no superseded_by /
-+        superseded_at columns, so MemoryQueryResult lineage is never populated
-+        by the query itself. The replacement pointer, when present, lives in
-+        the memory's metadata_json (same convention as the SQLite metadata
-+        mirror and the Milvus backend). superseded_at is not tracked, so it
-+        stays None and _post_filter_as_of conservatively excludes such rows
-+        from as_of queries instead of silently returning them as current.
-+        """
-+        for r in results:
-+            if r.superseded_by is None:
-+                r.superseded_by = (r.memory.metadata or {}).get("superseded_by") or None
-+        return results
-+
-+    async def _enrich_supersession(
-+        self, results: List[MemoryQueryResult], store: Optional[str] = None
-+    ) -> List[MemoryQueryResult]:
-+        """Backfill supersession lineage from loaded metadata (issue #1724).
-+
-+        The exact / tag-only / time-only paths in search_memories() never flow
-+        through retrieve(), so they rely on this hook. The base implementation
-+        does a batched DB lookup that this backend cannot provide; copy the
-+        pointer from the already-loaded metadata instead. Never raises.
-+        """
-+        try:
-+            return self._copy_supersession_from_metadata(results)
-+        except Exception as e:
-+            logger.warning(
-+                "Supersession enrichment failed, continuing without lineage: %s",
-+                _sanitize_log_value(str(e)),
-+            )
-+            return results
-+
-     async def _load_memory_from_match(self, match: Dict[str, Any]) -> Optional[Memory]:
-         """Load full memory from a Vectorize match id."""
-         try:
+@@ -302,6 +302,46 @@
+   "modal.settings.server.backOnline": "Server ist wieder online (v{version}, PID {pid})! Seite wird neu geladen...",
+   "modal.settings.server.didNotRestart": "Der Prozess wurde nicht neu gestartet (weiterhin PID {pid}, v{version}). Das Update ist möglicherweise unbemerkt fehlgeschlagen — prüfen Sie die Server-Logs.",
+   "modal.settings.server.backOnlineReloading": "Server ist wieder online, Seite wird neu geladen",
++  "modal.settings.tabs.preferences": "Präferenzen",
++  "modal.settings.tabs.credentials": "Zugangsdaten",
++  "modal.settings.tabs.environment": "Umgebung",
++  "modal.settings.tabs.system": "Systeminfo",
++  "modal.settings.tabs.quality": "Qualität",
++  "modal.settings.tabs.backup": "Backup",
++  "modal.settings.tabs.server": "Server",
++  "modal.settings.env.description": "Hier sehen Sie Ihre aktuelle Umgebungskonfiguration. Um Einstellungen zu ändern, bearbeiten Sie Ihre .env-Datei und starten Sie den Server neu.",
++  "modal.settings.env.copy": "Konfiguration kopieren",
++  "modal.settings.env.sensitive": "Vertraulich",
++  "modal.settings.env.notSet": "(nicht gesetzt)",
++  "modal.settings.env.enabled": "✓ Aktiviert",
++  "modal.settings.env.disabled": "✗ Deaktiviert",
++  "modal.settings.env.options": "(Optionen: {options})",
++  "modal.settings.env.loadFailed": "Konfiguration konnte nicht geladen werden",
++  "modal.settings.env.noConfig": "Keine Konfiguration geladen",
++  "modal.settings.env.copied": "Konfiguration in Zwischenablage kopiert",
++  "modal.settings.system.notAvailable": "k. A.",
++  "modal.settings.system.enabled": "✓ Aktiviert",
++  "modal.settings.system.disabled": "Deaktiviert",
++  "modal.settings.system.error": "Fehler",
++  "modal.settings.backup.disabled": "Backups deaktiviert",
++  "modal.settings.backup.scheduled": "Geplant",
++  "modal.settings.backup.notScheduled": "Nicht geplant",
++  "modal.backups.title": "Backup-Verlauf",
++  "modal.backups.loading": "Backups werden geladen...",
++  "modal.backups.close": "Schließen",
++  "modal.backups.summaryOne": "{count} Backup · {size} insgesamt",
++  "modal.backups.summaryMany": "{count} Backups · {size} insgesamt",
++  "modal.backups.empty": "Keine Backups gefunden. Erstellen Sie eines mit „{button}“.",
++  "modal.backups.unknownDate": "Unbekannt",
++  "modal.backups.ageOne": "vor 1 Tag",
++  "modal.backups.ageDays": "vor {days} Tagen",
++  "modal.backups.loadFailed": "Backups konnten nicht geladen werden.",
++  "time.seconds": "{count} s",
++  "time.minutes": "{count} Min.",
++  "time.hours": "{count} Std.",
++  "time.days": "{count} T.",
++  "time.underAMinute": "< 1 Min.",
++  "time.ago": "vor {time}",
+   "modal.settings.storageBackend": "Storage-Backend:",
+   "modal.settings.systemInfo": "Systeminformationen",
+   "modal.settings.theme": "Design",
 ```
 
-**File**: `src/mcp_memory_service/storage/graph.py` (modified, +67/-2)
+**File**: `src/mcp_memory_service/web/static/i18n/en.json` (modified, +40/-0)
 ```diff
-@@ -79,6 +79,7 @@ def normalize_entity_id(name: str) -> str:
-         cm.distance < ?  -- Limit recursion depth
-         AND instr(cm.path, ',' || {selected_hash} || ',') = 0  -- Prevent cycles (exact match)
-         {relationship_filter}
-+        {temporal_filter}
- )
- SELECT DISTINCT hash, distance
- FROM connected_memories
-@@ -268,7 +269,8 @@ async def find_connected(
-         memory_hash: str,
-         max_hops: int = 2,
-         relationship_type: Optional[str] = None,
--        direction: str = "both"
-+        direction: str = "both",
-+        as_of: Optional[float] = None,
-     ) -> List[Tuple[str, int]]:
-         """
-         Find all memories connected within N hops using recursive CTE.
-@@ -281,6 +283,11 @@ async def find_connected(
-             max_hops: Maximum number of hops to traverse (default: 2)
-             relationship_type: Optional filter for specific relationship type
-             direction: Direction to traverse ("outgoing", "incoming", "both")
-+            as_of: Optional point-in-time filter (Unix epoch, issue #1724).
-+                Edges whose metadata carries valid_from/valid_until
-+                (see reasoning.temporal.store_temporal_association) are only
-+                traversed when valid at as_of; edges without temporal bounds
-+                are always traversed.
- 
-         Returns:
-             List of (memory_hash, distance) tuples, sorted by distance
-@@ -313,6 +320,18 @@ async def find_connected(
-                 relationship_filter = "AND mg.relationship_type = ?"
-                 params.append(relationship_type)
- 
-+            # Issue #1724: point-in-time traversal. Temporal edges carry
-+            # valid_from/valid_until in metadata JSON; untimed edges pass.
-+            temporal_filter = ""
-+            if as_of is not None:
-+                temporal_filter = (
-+                    "AND (json_extract(mg.metadata, '$.valid_from') IS NULL "
-+                    "OR json_extract(mg.metadata, '$.valid_from') <= ?) "
-+                    "AND (json_extract(mg.metadata, '$.valid_until') IS NULL "
-+                    "OR json_extract(mg.metadata, '$.valid_until') >= ?)"
-+                )
-+                params.extend([as_of, as_of])
-+
-             # Build join condition and selected hash based on direction
-             if direction == "outgoing":
-                 join_condition = "JOIN memory_graph mg ON cm.hash = mg.source_hash"
-@@ -329,7 +348,8 @@ async def find_connected(
-             query = _QUERY_TEMPLATE_FIND_CONNECTED.format(
-                 selected_hash=selected_hash,
-                 join_condition=join_condition,
--                relationship_filter=relationship_filter
-+                relationship_filter=relationship_filter,
-+                temporal_filter=temporal_filter,
-             )
- 
-             cursor = conn.cursor()
-@@ -348,6 +368,51 @@ async def find_connected(
-             logger.error(f"Failed to find connected memories: {_sanitize_log_value(e)}")
-             return []
- 
-+    async def get_temporal_edges(
-+        self,
-+        memory_hash: str,
-+        as_of: Optional[float] = None,
-+    ) -> List["TemporalEdge"]:
-+        """Return temporal edges incident to a memory, filtered by as_of.
-+
-+        Issue #1724: this wires up reasoning/temporal.py (previously dead
-+        code). Edges are built from memory_graph rows — valid_from/valid_until
-+        come from the metadata JSON written by
-+        reasoning.temporal.store_temporal_association — and passed through
-+        filter_temporal_edges.
-+        """
-+        from ..reasoning.temporal import TemporalEdge, filter_temporal_edges
-+
-+        edges: List[TemporalEdge] = []
-+        try:
-+            conn = await self._get_connection()
-+            cursor = conn.cursor()
-+            try:
-+                cursor.execute(
-+                    "SELECT source_hash, target_hash, metadata FROM memory_graph "
-+                    "WHERE source_hash = ? OR target_hash = ?",
-+                    (memory_hash, memory_hash),
-+                )
-+                for row in cursor.fetchall():
-+                    try:
-+                        meta = json.loads(row["metadata"]) if row["metadata"] else {}
-+                    except (json.JSONDecodeError, TypeError):
-+                        meta = {}
-+                    edges.append(
-+                        TemporalEdge(
-+                            source=row["source_hash"],
-+                            target=row["target_hash"],
-+                            valid_from=meta.get("valid_from"),
-+                            valid_until=meta.get("valid_until"),
-+                        )
-+                    )
-+            finally:
-+                cursor.close()
-+        except sqlite3.Error as e:
-+            logger.error(f"Failed to get temporal edges: {_sanitize_log_value(e)}")
-+            return []
-+        return filter_temporal_edges(edges, as_of)
-+
-     async def get_relationship_types(self, memory_hash: str) -> Dict[str, int]:
-         """
- 
+@@ -426,6 +426,46 @@
+   "modal.settings.server.backOnline": "Server is back online (v{version}, pid {pid})! Reloading...",
+   "modal.settings.server.didNotRestart": "Process did not restart (still pid {pid}, v{version}). The update may have failed silently — check server logs.",
+   "modal.settings.server.backOnlineReloading": "Server is back online, reloading",
++  "modal.settings.tabs.preferences": "Preferences",
++  "modal.settings.tabs.credentials": "Credentials",
++  "modal.settings.tabs.environment": "Environment",
++  "modal.settings.tabs.system": "System Info",
++  "modal.settings.tabs.quality": "Quality",
++  "modal.settings.tabs.backup": "Backup",
++  "modal.settings.tabs.server": "Server",
++  "modal.settings.env.description": "View your current environment configuration. To change settings, edit your .env file and restart the server.",
++  "modal.settings.env.copy": "Copy Configuration",
++  "modal.settings.env.sensitive": "Sensitive",
++  "modal.settings.env.notSet": "(not set)",
++  "modal.settings.env.enabled": "✓ Enabled",
++  "modal.settings.env.disabled": "✗ Disabled",
++  "modal.settings.env.options": "(options: {options})",
++  "modal.settings.env.loadFailed": "Failed to load configuration",
++  "modal.settings.env.noConfig": "No configuration loaded",
++  "modal.settings.env.copied": "Configuration copied to clipboard",
++  "modal.settings.system.notAvailable": "N/A",
++  "modal.settings.system.enabled": "✓ Enabled",
++  "modal.settings.system.disabled": "Disabled",
++  "modal.settings.system.error": "Error",
++  "modal.settings.backup.disabled": "Backups disabled",
++  "modal.settings.backup.scheduled": "Scheduled",
++  "modal.settings.backup.notScheduled": "Not scheduled",
++  "modal.backups.title": "Backup History",
++  "modal.backups.loading": "Loading backups...",
++  "modal.backups.close": "Close",
++  "modal.backups.summaryOne": "{count} backup · {size} total",
++  "modal.backups.summaryMany": "{count} backups · {size} total",
++  "modal.backups.empty": "No backups found. Create one using \"{button}\".",
++  "modal.backups.unknownDate": "Unknown",
++  "modal.backups.ageOne": "1 day ago",
++  "modal.backups.ageDays": "{days} days ago",
++  "modal.backups.loadFailed": "Failed to load backups.",
++  "time.seconds": "{count}s",
++  "time.minutes": "{count}m",
++  "time.hours": "{count}h",
++  "time.days": "{count}d",
++  "time.underAMinute": "< 1m",
++  "time.ago": "{time} ago",
+   "modal.memoryViewer.title": "Document Memory Chunks",
+   "modal.memoryViewer.chunksFound": "{count} chunks found",
+   "modal.memoryViewer.close": "Close",
 ```
 
-**File**: `src/mcp_memory_service/storage/hybrid.py` (modified, +11/-1)
+**File**: `src/mcp_memory_service/web/static/i18n/es.json` (modified, +40/-0)
 ```diff
-@@ -2200,7 +2200,7 @@ async def store(self, memory: Memory, skip_semantic_dedup: bool = False, store:
- 
-         return success, message
- 
--    async def retrieve(self, query: str, n_results: int = 5, tags: Optional[List[str]] = None, min_confidence: float = 0.0, include_superseded: bool = False, start_time: Optional[float] = None, end_time: Optional[float] = None, store: str = "default") -> List[MemoryQueryResult]:
-+    async def retrieve(self, query: str, n_results: int = 5, tags: Optional[List[str]] = None, min_confidence: float = 0.0, include_superseded: bool = False, start_time: Optional[float] = None, end_time: Optional[float] = None, store: str = "default", as_of: Optional[float] = None) -> List[MemoryQueryResult]:
-         """Retrieve memories from primary storage (fast)."""
-         return await self.primary.retrieve(
-             query,
-@@ -2211,6 +2211,7 @@ async def retrieve(self, query: str, n_results: int = 5, tags: Optional[List[str
-             start_time=start_time,
-             end_time=end_time,
-             store=store,
-+            as_of=as_of,
-         )
- 
-     async def retrieve_hybrid(
-@@ -2221,6 +2222,7 @@ async def retrieve_hybrid(
-         semantic_weight: Optional[float] = None,
-         include_superseded: bool = False,
-         store: Optional[str] = "default",
-+        as_of: Optional[float] = None,
-     ) -> List[MemoryQueryResult]:
-         """BM25 + vector search on primary storage (#1576).
- 
-@@ -2235,6 +2237,7 @@ async def retrieve_hybrid(
-             semantic_weight=semantic_weight,
-             include_superseded=include_superseded,
-             store=store,
-+            as_of=as_of,
-         )
- 
-     async def search(self, query: str, n_results: int = 5, min_similarity: float = 0.0) -> List[MemoryQueryResult]:
-@@ -2335,6 +2338,13 @@ async def get_by_exact_content(self, content: str, store: Optional[str] = None)
-         """Retrieve memories by exact content match from primary storage."""
-         return await self.primary.get_by_exact_content(content, store=store)
- 
-+    async def _get_supersession_map(self, content_hashes, store=None):
-+        """Delegate the issue-#1724 lineage lookup to the primary SQLite storage."""
-+        delegate = getattr(self.primary, "_get_supersession_map", None)
-+        if delegate is not None:
-+            return await delegate(content_hashes, store=store)
-+        return {}
-+
-     async def delete_by_timeframe(self, start_date: date, end_date: date, tag: Optional[str] = None) -> Tuple[int, str]:
-         """Delete memories within a specific date range in primary storage and queue for secondary sync."""
-         count, message = await self.primary.delete_by_timeframe(start_date, end_date, tag)
+@@ -302,6 +302,46 @@
+   "modal.settings.server.backOnline": "¡El servidor vuelve a estar en línea (v{version}, pid {pid})! Recargando...",
+   "modal.settings.server.didNotRestart": "El proceso no se reinició (sigue con pid {pid}, v{version}). Es posible que la actualización haya fallado sin avisar; revise los registros del servidor.",
+   "modal.settings.server.backOnlineReloading": "El servidor vuelve a estar en línea, recargando",
++  "modal.settings.tabs.preferences": "Preferencias",
++  "modal.settings.tabs.credentials": "Credenciales",
++  "modal.settings.tabs.environment": "Entorno",
++  "modal.settings.tabs.system": "Info del Sistema",
++  "modal.settings.tabs.quality": "Calidad",
++  "modal.settings.tabs.backup": "Respaldo",
++  "modal.settings.tabs.server": "Servidor",
++  "modal.settings.env.description": "Consulta tu configuración de entorno actual. Para cambiar la configuración, edita tu archivo .env y reinicia el servidor.",
++  "modal.settings.env.copy": "Copiar configuración",
++  "modal.settings.env.sensitive": "Sensible",
++  "modal.settings.env.notSet": "(no definido)",
++  "modal.settings.env.enabled": "✓ Habilitado",
++  "modal.settings.env.disabled": "✗ Deshabilitado",
++  "modal.settings.env.options": "(opciones: {options})",
++  "modal.settings.env.loadFailed": "Error al cargar la configuración",
++  "modal.settings.env.noConfig": "No hay ninguna configuración cargada",
++  "modal.settings.env.copied": "Configuración copiada al portapapeles",
++  "modal.settings.system.notAvailable": "N/D",
++  "modal.settings.system.enabled": "✓ Habilitado",
++  "modal.settings.system.disabled": "Deshabilitado",
++  "modal.settings.system.error": "Error",
++  "modal.settings.backup.disabled": "Respaldos deshabilitados",
++  "modal.settings.backup.scheduled": "Programado",
++  "modal.settings.backup.notScheduled": "No programado",
++  "modal.backups.title": "Historial de Respaldos",
++  "modal.backups.loading": "Cargando respaldos...",
++  "modal.backups.close": "Cerrar",
++  "modal.backups.summaryOne": "{count} respaldo · {size} en total",
++  "modal.backups.summaryMany": "{count} respaldos · {size} en total",
++  "modal.backups.empty": "No se encontraron respaldos. Crea uno con \"{button}\".",
++  "modal.backups.unknownDate": "Desconocida",
++  "modal.backups.ageOne": "hace 1 día",
++  "modal.backups.ageDays": "hace {days} días",
++  "modal.backups.loadFailed": "Error al cargar los respaldos.",
++  "time.seconds": "{count} s",
++  "time.minutes": "{count} min",
++  "time.hours": "{count} h",
++  "time.days": "{count} d",
++  "time.underAMinute": "< 1 min",
++  "time.ago": "hace {time}",
+   "modal.settings.storageBackend": "Backend de Almacenamiento:",
+   "modal.settings.systemInfo": "Información del Sistema",
+   "modal.settings.theme": "Tema",
+```
+
+**File**: `src/mcp_memory_service/web/static/i18n/fr.json` (modified, +40/-0)
+```diff
+@@ -302,6 +302,46 @@
+   "modal.settings.server.backOnline": "Le serveur est de nouveau en ligne (v{version}, pid {pid}) ! Rechargement...",
+   "modal.settings.server.didNotRestart": "Le processus n'a pas redémarré (toujours pid {pid}, v{version}). La mise à jour a peut-être échoué silencieusement — consultez les journaux du serveur.",
+   "modal.settings.server.backOnlineReloading": "Le serveur est de nouveau en ligne, rechargement",
++  "modal.settings.tabs.preferences": "Préférences",
++  "modal.settings.tabs.credentials": "Identifiants",
++  "modal.settings.tabs.environment": "Environnement",
++  "modal.settings.tabs.system": "Infos Système",
++  "modal.settings.tabs.quality": "Qualité",
++  "modal.settings.tabs.backup": "Sauvegarde",
++  "modal.settings.tabs.server": "Serveur",
++  "modal.settings.env.description": "Consultez votre configuration d'environnement actuelle. Pour modifier les paramètres, modifiez votre fichier .env et redémarrez le serveur.",
++  "modal.settings.env.copy": "Copier la configuration",
++  "modal.settings.env.sensitive": "Sensible",
++  "modal.settings.env.notSet": "(non défini)",
++  "modal.settings.env.enabled": "✓ Activé",
++  "modal.settings.env.disabled": "✗ Désactivé",
++  "modal.settings.env.options": "(options : {options})",
++  "modal.settings.env.loadFailed": "Échec du chargement de la configuration",
++  "modal.settings.env.noConfig": "Aucune configuration chargée",
++  "modal.settings.env.copied": "Configuration copiée dans le presse-papiers",
++  "modal.settings.system.notAvailable": "N/D",
++  "modal.settings.system.enabled": "✓ Activé",
++  "modal.settings.system.disabled": "Désactivé",
++  "modal.settings.system.error": "Erreur",
++  "modal.settings.backup.disabled": "Sauvegardes désactivées",
++  "modal.settings.backup.scheduled": "Programmée",
++  "modal.settings.backup.notScheduled": "Non programmée",
++  "modal.backups.title": "Historique des Sauvegardes",
++  "modal.backups.loading": "Chargement des sauvegardes...",
++  "modal.backups.close": "Fermer",
++  "modal.backups.summaryOne": "{count} sauvegarde · {size} au total",
++  "modal.backups.summaryMany": "{count} sauvegardes · {size} au total",
++  "modal.backups.empty": "Aucune sauvegarde trouvée. Créez-en une avec « {button} ».",
++  "modal.backups.unknownDate": "Inconnue",
++  "modal.backups.ageOne": "il y a 1 jour",
++  "modal.backups.ageDays": "il y a {days} jours",
++  "modal.backups.loadFailed": "Échec du chargement des sauvegardes.",
++  "time.seconds": "{count} s",
++  "time.minutes": "{count} min",
++  "time.hours": "{count} h",
++  "time.days": "{count} j",
++  "time.underAMinute": "< 1 min",
++  "time.ago": "il y a {time}",
+   "modal.settings.storageBackend": "Backend de Stockage :",
+   "modal.settings.systemInfo": "Informations Système",
+   "modal.settings.theme": "Thème",
+```
+
+**File**: `src/mcp_memory_service/web/static/i18n/hi.json` (modified, +40/-0)
+```diff
+@@ -426,6 +426,46 @@
+   "modal.settings.server.backOnline": "सर्वर फिर से ऑनलाइन है (v{version}, pid {pid})! पुनः लोड हो रहा है...",
+   "modal.settings.server.didNotRestart": "प्रोसेस पुनः प्रारंभ नहीं हुई (अभी भी pid {pid}, v{version})। हो सकता है अपडेट बिना किसी सूचना के विफल हो गया हो — सर्वर लॉग जाँचें।",
+   "modal.settings.server.backOnlineReloading": "सर्वर फिर से ऑनलाइन है, पुनः लोड हो रहा है",
++  "modal.settings.tabs.preferences": "प्राथमिकताएँ",
++  "modal.settings.tabs.credentials": "क्रेडेंशियल",
++  "modal.settings.tabs.environment": "एनवायरनमेंट",
++  "modal.settings.tabs.system": "सिस्टम जानकारी",
++  "modal.settings.tabs.quality": "गुणवत्ता",
++  "modal.settings.tabs.backup": "बैकअप",
++  "modal.settings.tabs.server": "सर्वर",
++  "modal.settings.env.description": "अपना वर्तमान एनवायरनमेंट कॉन्फ़िगरेशन देखें। सेटिंग्स बदलने के लिए अपनी .env फ़ाइल संपादित करें और सर्वर पुनः प्रारंभ करें।",
++  "modal.settings.env.copy": "कॉन्फ़िगरेशन कॉपी करें",
++  "modal.settings.env.sensitive": "संवेदनशील",
++  "modal.settings.env.notSet": "(सेट नहीं)",
++  "modal.settings.env.enabled": "✓ सक्षम",
++  "modal.settings.env.disabled": "✗ अक्षम",
++  "modal.settings.env.options": "(विकल्प: {options})",
++  "modal.settings.env.loadFailed": "कॉन्फ़िगरेशन लोड करने में विफल",
++  "modal.settings.env.noConfig": "कोई कॉन्फ़िगरेशन लोड नहीं है",
++  "modal.settings.env.copied": "कॉन्फ़िगरेशन क्लिपबोर्ड पर कॉपी किया गया",
++  "modal.settings.system.notAvailable": "उपलब्ध नहीं",
++  "modal.settings.system.enabled": "✓ सक्षम",
++  "modal.settings.system.disabled": "अक्षम",
++  "modal.settings.system.error": "त्रुटि",
++  "modal.settings.backup.disabled": "बैकअप अक्षम है",
++  "modal.settings.backup.scheduled": "निर्धारित",
++  "modal.settings.backup.notScheduled": "निर्धारित नहीं",
++  "modal.backups.title": "बैकअप इतिहास",
++  "modal.backups.loading": "बैकअप लोड हो रहे हैं...",
++  "modal.backups.close": "बंद करें",
++  "modal.backups.summaryOne": "{count} बैकअप · कुल {size}",
++  "modal.backups.summaryMany": "{count} बैकअप · कुल {size}",
++  "modal.backups.empty": "कोई बैकअप नहीं मिला। \"{button}\" से एक बनाएँ।",
++  "modal.backups.unknownDate": "अज्ञात",
++  "modal.backups.ageOne": "1 दिन पहले",
++  "modal.backups.ageDays": "{days} दिन पहले",
++  "modal.backups.loadFailed": "बैकअप लोड करने में विफल।",
++  "time.seconds": "{count} सेकंड",
++  "time.minutes": "{count} मिनट",
++  "time.hours": "{count} घंटे",
++  "time.days": "{count} दिन",
++  "time.underAMinute": "< 1 मिनट",
++  "time.ago": "{time} पहले",
+   "modal.memoryViewer.title": "दस्तावेज़ मेमोरी खंड",
+   "modal.memoryViewer.chunksFound": "{count} खंड मिले",
+   "modal.memoryViewer.close": "बंद करें",
+```
+
+**File**: `src/mcp_memory_service/web/static/i18n/id.json` (modified, +40/-0)
+```diff
+@@ -426,6 +426,46 @@
+   "modal.settings.server.backOnline": "Server kembali online (v{version}, pid {pid})! Memuat ulang...",
+   "modal.settings.server.didNotRestart": "Proses tidak dimulai ulang (masih pid {pid}, v{version}). Pembaruan mungkin gagal tanpa pemberitahuan — periksa log server.",
+   "modal.settings.server.backOnlineReloading": "Server kembali online, memuat ulang",
++  "modal.settings.tabs.preferences": "Preferensi",
++  "modal.settings.tabs.credentials": "Kredensial",
++  "modal.settings.tabs.environment": "Lingkungan",
++  "modal.settings.tabs.system": "Info Sistem",
++  "modal.settings.tabs.quality": "Kualitas",
++  "modal.settings.tabs.backup": "Cadangan",
++  "modal.settings.tabs.server": "Server",
++  "modal.settings.env.description": "Lihat konfigurasi lingkungan Anda saat ini. Untuk mengubah pengaturan, edit file .env Anda lalu mulai ulang server.",
++  "modal.settings.env.copy": "Salin Konfigurasi",
++  "modal.settings.env.sensitive": "Sensitif",
++  "modal.settings.env.notSet": "(belum diatur)",
++  "modal.settings.env.enabled": "✓ Diaktifkan",
++  "modal.settings.env.disabled": "✗ Dinonaktifkan",
++  "modal.settings.env.options": "(opsi: {options})",
++  "modal.settings.env.loadFailed": "Gagal memuat konfigurasi",
++  "modal.settings.env.noConfig": "Tidak ada konfigurasi yang dimuat",
++  "modal.settings.env.copied": "Konfigurasi disalin ke papan klip",
++  "modal.settings.system.notAvailable": "T/A",
++  "modal.settings.system.enabled": "✓ Diaktifkan",
++  "modal.settings.system.disabled": "Dinonaktifkan",
++  "modal.settings.system.error": "Kesalahan",
++  "modal.settings.backup.disabled": "Cadangan dinonaktifkan",
++  "modal.settings.backup.scheduled": "Terjadwal",
++  "modal.settings.backup.notScheduled": "Tidak terjadwal",
++  "modal.backups.title": "Riwayat Cadangan",
++  "modal.backups.loading": "Memuat cadangan...",
++  "modal.backups.close": "Tutup",
++  "modal.backups.summaryOne": "{count} cadangan · total {size}",
++  "modal.backups.summaryMany": "{count} cadangan · total {size}",
++  "modal.backups.empty": "Tidak ada cadangan. Buat satu dengan \"{button}\".",
++  "modal.backups.unknownDate": "Tidak diketahui",
++  "modal.backups.ageOne": "1 hari yang lalu",
++  "modal.backups.ageDays": "{days} hari yang lalu",
++  "modal.backups.loadFailed": "Gagal memuat cadangan.",
++  "time.seconds": "{count} dtk",
++  "time.minutes": "{count} mnt",
++  "time.hours": "{count} jam",
++  "time.days": "{count} hr",
++  "time.underAMinute": "< 1 mnt",
++  "time.ago": "{time} yang lalu",
+   "modal.memoryViewer.title": "Potongan Memori Dokumen",
+   "modal.memoryViewer.chunksFound": "{count} chunk ditemukan",
+   "modal.memoryViewer.close": "Tutup",
 ```
 
 ---
 
-### Incident Patch 2: `b9cdb17c` (2026-11-02)
-**Commit Message**: fix(sync): propagate a supersede made after the first sync (#1773) (#1788)
+### Incident Patch 2: `0e7b28ab` (2026-11-03)
+**Commit Message**: fix(dashboard): translate the Settings Server tab and the restart overlay (#1831)
 
-* fix(sync): propagate a supersede made after the first sync (#1773)
+* i18n(dashboard): add the Settings Server tab and restart overlay keys (#1814)
 
-mark_superseded_batch, resolve_conflict and update_memory_versioned changed
-superseded_by / superseded_at without logging a sync event, and the
-receiver dropped superseded_by from update_metadata events, so a memory
-replaced after it was first synced stayed current on every other peer.
+32 modal.settings.server.* keys in all ten catalogs: the Server tab's
+labels and buttons, its status texts, toasts and confirmation dialogs,
+and the restart overlay.
 
-- All three writers log the supersede as an update_metadata event inside
-  the same savepoint or transaction as the UPDATE (fail-closed, ADR-0008).
-  A retry that changes nothing logs no event.
-- updates carries only superseded_by, which peers without this change
-  already treat as protected; the origin's superseded_at travels at the
-  payload top level, where those peers never read it.
-- The receiver resolves both columns with the existing field-level LWW by
-  _winner_key and writes the origin's superseded_at instead of
-  re-stamping it. update_memory_metadata now carries superseded_at too.
+They sit right after modal.settings.save, next to the other Settings
+modal keys. The open slice PRs insert elsewhere (#1826 before
+settings.quality.*, #1822 after modal.memoryViewer.close), so the
+blocks do not touch. The files were edited as text, not reserialized,
+and every translation keeps the English tokens ({count}, {error},
+{seconds}, {attempt}, {max}, {version}, {pid}).
 
-Closes #1773
+All nine non-English catalogs are machine-assisted drafts written by an
+AI agent and need a fluent reviewer. They follow each catalog's existing
+terms and register, for example Speichern & Neustarten, Sie, Anda,
+você, and French spacing before colons.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-* fix(sync): roll back a failed resolve_conflict as a whole; mirror legacy superseded_by
+* fix(dashboard): translate the Settings Server tab and the restart overlay (#1814)
 
-Review fol
+index.html: the eleven static labels of the Server tab and the restart
+overlay c
 
-**File**: `changelog.d/1773.fixed.md` (added, +10/-0)
+**File**: `changelog.d/1814.fixed.md` (added, +6/-0)
 ```diff
-@@ -0,0 +1,10 @@
-+- **A supersede made after a memory was first synced never reached the other delta-sync peers (#1773, ppcvote).**
-+  `mark_superseded_batch`, `resolve_conflict` and `update_memory_versioned` changed
-+  `superseded_by` / `superseded_at` without logging a sync event, and the receiver dropped
-+  `superseded_by` from `update_metadata` events, so a replaced memory stayed current on every
-+  other peer, in default search and in `as_of` queries. All three writers now log the
-+  supersede inside the same savepoint or transaction as the UPDATE, and the receiver writes both columns
-+  with the existing field-level last-writer-wins order, taking `superseded_at` from the
-+  origin instead of re-stamping it. Peers that supersede the same memory with different
-+  winners converge regardless of arrival order; a peer without this change keeps its
-+  current behaviour.
+@@ -0,0 +1,6 @@
++- **The Settings Server tab and the restart overlay stayed in English in every language (#1814, calude-bot).**
++  Their labels, buttons, status texts, confirmation dialogs and toasts were literals in
++  `index.html` and `app.js`. They come from 32 new `modal.settings.server.*` keys in all ten
++  catalogs now, and error details from the server are passed in through `{error}` as they are.
++  A status that shows a value (the commit count, the restart attempt) drops its `data-i18n` key,
++  so a language switch cannot put back the field's initial text.
 ```
 
-**File**: `src/mcp_memory_service/storage/mixins/metadata.py` (modified, +110/-38)
+**File**: `src/mcp_memory_service/web/static/app.js` (modified, +43/-22)
 ```diff
-@@ -199,6 +199,10 @@ def _do_update():
-                             'updates': updates,
-                             'updated_at': updated_at,
-                         }
-+                        if update_superseded_by:
-+                            # Issue #1773: carry the origin's superseded_at (the CASE above
-+                            # may have kept an earlier instant) so receivers never re-stamp it.
-+                            payload['superseded_at'] = self._read_superseded_at(content_hash)
-                         self._append_sync_event(self.conn, 'update_metadata', content_hash, payload)
-                     self.conn.execute(f"RELEASE SAVEPOINT {sp}")
-                 except Exception:
-@@ -337,25 +341,84 @@ def _batch_update():
-             logger.error("Batch update failed: %s\n%s", _sanitize_log_value(str(e)), traceback.format_exc())
-             return [False] * len(memories)
+@@ -392,6 +392,22 @@ class MemoryDashboard {
+         return str.replace(/\{(.*?)\}/g, (_, k) => vars[k] ?? `{${k}}`);
+     }
  
-+    def _read_superseded_at(self, content_hash: str) -> float | None:
-+        """Return the row's superseded_at as written by the current transaction."""
-+        row = self.conn.execute(
-+            "SELECT superseded_at FROM memories WHERE content_hash = ? AND deleted_at IS NULL",
-+            (content_hash,),
-+        ).fetchone()
-+        return row[0] if row else None
-+
-+    def _append_supersede_event(self, content_hash: str) -> None:
-+        """Log a supersede of ``content_hash`` for delta-sync peers (issue #1773).
-+
-+        Runs inside the caller's transaction/savepoint, so the UPDATE and the event
-+        commit or roll back together (ADR-0008). The event is an ``update_metadata``
-+        whose ``updates`` holds only ``superseded_by``, a field peers already treat as
-+        protected, and whose ``superseded_at`` sits at the payload top level, where a
-+        peer without #1773 never reads it. Both values and ``updated_at`` are read back
-+        from the row, so receivers write the origin's values instead of re-stamping.
-+        """
-+        if not hasattr(self, '_append_sync_event'):
-+            return
-+        row = self.conn.execute(
-+            "SELECT superseded_by, superseded_at, updated_at FROM memories "
-+            "WHERE content_hash = ? AND deleted_at IS NULL",
-+            (content_hash,),
-+        ).fetchone()
-+        if row is None:
-+            return
-+        superseded_by, superseded_at, updated_at = row
-+        payload = {
-+            'content_hash': content_hash,
-+            'updates': {'superseded_by': superseded_by},
-+            'superseded_at': superseded_at,
-+            'updated_at': updated_at,
++    /**
++     * Set an element's text from the catalog. Text without values keeps its
++     * key in data-i18n, so applyTranslations() translates it again after a
++     * language switch. Text with values drops the key, so a switch cannot put
++     * back the element's earlier text.
++     */
++    setTranslatedText(el, key, fallback, vars) {
++        if (!el) return;
++        el.textContent = this.t(key, fallback, vars);
++        if (vars) {
++            delete el.dataset.i18n;
++        } else {
++            el.dataset.i18n = key;
 +        }
-+        self._append_sync_event(self.conn, 'update_metadata', content_hash, payload)
++    }
 +
-+    def _supersede_with_event(self, winner_hash: str, loser_hash: str, now: float) -> None:
-+        """Point ``loser_hash`` at ``winner_hash`` and log the change for sync peers.
-+
-+        Issue #1724 / follow-up review: stamp superseded_at only on the actual
-+        current -> superseded transition. A retried call (same winner) or a re-point
-+        keeps the ORIGINAL replacement moment — re-stamping would corrupt the
-+        historical instant that point-in-time queries rely on. (CASE sees pre-update
-+        values.) A retry that changes nothing logs no event.
-+        """
-+        before = self.conn.execute(
-+            "SELECT superseded_by FROM memories WHERE content_hash = ? AND deleted_at IS NULL",
-+            (loser_hash,),
-+        ).fetchone()
-+        cur = self.conn.execute(
-+            "UPDATE memories SET superseded_by = ?, "
-+            "superseded_at = CASE WHEN superseded_by IS NULL OR superseded_by = '' "
-+            "THEN ? ELSE superseded_at END "
-+            "WHERE content_hash = ? AND deleted_at IS NULL",
-+            (winner_hash, now, loser_hash),
-+        )
-+        if cur.rowcount > 0 and before is not None and before[0] != winner_hash:
-+            self._append_supersede_event(loser_hash)
-+
-     async def mark_superseded_batch(self, pairs: list[tuple[str, str]]) -> int:
-         """Mark memories as superseded in a single transaction."""
-         if not pairs or not self.conn:
-             return 0
+     /**
+      * 应用翻译到 DOM
+      */
+@@ -4137,32 +4153,32 @@ class MemoryDashboard {
+         const actionText = document.getElementById('serverActionText');
  
-         def _batch_mark():
--            # Issue #1724 / follow-up review: stamp superseded_at only on the
--            # actual current -> superseded transition. A retried batch (same
--            # winner) or a re-point keeps the ORIGINAL replacement moment —
--            # re-stamping would corrupt the historical instant that
--            # point-in-time queries rely on. (CASE sees pre-update values.)
-             now = time.time()
--            self.conn.executemany(
--                "UPDATE memories SET superseded_by = ?, "
--                "superseded_at = CASE WHEN superseded_by IS NULL OR superseded_by = '' "
--                "THEN ? ELSE superseded_at END "
--                "WHERE content_hash = ? AND deleted_at IS NULL",
--                [(winner, now, loser) for winner, loser in pairs],
--            )
-+            # SAVEPOINT: the UPDAT
+         if (actionStatus) { actionStatus.style.display = 'flex'; }
+-        if (actionText) { actionText.textContent = 'Checking for updates...'; }
++        this.setTranslatedText(actionText, 'modal.settings.server.checking', 'Checking for updates...');
+ 
+         try {
+             const data = await this.apiCall('/server/version/check');
+             if (actionStatus) { actionStatus.style.display = 'none'; }
+ 
+             if (data.update_available) {
+                 if (statusEl) {
+-                    statusEl.textContent = `Yes - ${data.commits_behind} commit(s) available`;
++                    this.setTranslatedText(statusEl, 'modal.settings.server.commitsAvailable', 'Yes - {count} commit(s) available', { count: data.commits_behind });
+                     statusEl.style.color = 'var(--success, #10b981)';
+                     statusEl.style.fontWeight = '600';
+                 }
+                 if (updateBtn) { updateBtn.style.display = 'inline-flex'; }
+-                this.showToast(`${data.commits_behind} update(s) available`, 'info');
++                this.showToast(this.t('modal.settings.server.updatesAvailable', '{count} update(s) available', { count: data.commits_behind }), 'info');
+             } else {
+                 if (statusEl) {
+-                    statusEl.textContent = 'Up to date';
++                    this.setTranslatedText(statusEl, 'modal.settings.server.upToDate', 'Up to date');
+                     statusEl.style.color = 'var(--text-secondary)';
+                 }
+                 if (updateBtn) { updateBtn.style.display = 'none'; }
+-                this.showToast('Already up to date.', 'success');
++                this.showToast(this.t('modal.settings.server.alreadyUpToDate', 'Already up to date.'), 'success');
+             }
+         } catch (error) {
+             if (actionStatus) { actionStatus.style.display = 'none'; }
+-            if (statusEl) { statusEl.textContent = 'Check failed'; }
+-            this.showToast('Failed to check for updates: ' + error.message, 'error');
++            this.setTranslatedText(statusEl, 'modal.settings.server.checkFailed', 'Check failed');
++            this.showToast(this.t('modal.settings.server.checkFailedWithError', 'Failed to check for updates: {error}', { error: error.message }), 'error');
+         }
+     }
+ 
+@@ -4175,20 +4191,20 @@ class MemoryDashboard {
+      * the process actually rolled over instead of trusting /api/health.
+      */
+     async updateAndRestart(force = false) {
+-        if (!force && !confirm('This will pull the latest code, install dependencies, and restart the server. Continue?')) {
++        if (!force && !confirm(this.t('modal.settings.server.confirmUpdate', 'This will pull the latest code, install dependencies, and restart the server. Continue?'))) {
+             return;
+         }
+ 
+         const actionStatus = document.getElementById('serverActionStatus');
+         const actionText = document.getElementById('serverActionText');
+ 
+         if (actionStatus) { actionStatus.style.display = 'flex'; }
+-        if (actionText) { actionText.textContent = 'Pulling updates and installing...'; }
++        this.setTranslatedText(actionText, 'modal.settings.server.pulling', 'Pulling updates and installing...');
+ 
+         try {
+             const data = await this.apiCall('/server/update', 'POST', { confirm: true, force });
+ 
+-            if (actionText) { actionText.textContent = 'Update complete. Server restarting...'; }
++            this.setTranslatedText(actionText, 'modal.settings.server.updateComplete', 'Update complete. Server restarting...');
+             // Show captured git/pip output in console for diagnostics
+             if (data.git_output) { console.info('git pull:\n' + data.git_output); }
+             if (data.pip_output) { console.info('pip install:\n' + data.pip_output); }
+@@ -4202,14 +4218,14 @@ class MemoryDashboard {
+             // substring-matching the message — error wording can change
+             // between releases and gets translated, status codes don't.
+             if (error.status === 409) {
+-                this.showToast('Update blocked: ' + msg, 'error');
+-
 ```
 
-**File**: `src/mcp_memory_service/storage/sync/apply.py` (modified, +30/-2)
+**File**: `src/mcp_memory_service/web/static/i18n/de.json` (modified, +32/-0)
 ```diff
-@@ -472,8 +472,29 @@ def _top_level_fields(ev_op, pl):
-                 if vv is not None}
-     # update_metadata
-     upd = (pl.get("updates", {}) or {})
--    return {kk: vv for kk, vv in upd.items()
--            if kk in ("tags", "memory_type") and vv is not None}
-+    fields = {kk: vv for kk, vv in upd.items()
-+              if kk in ("tags", "memory_type") and vv is not None}
-+    fields.update(_supersede_fields(upd, pl))
-+    return fields
-+
-+
-+def _supersede_fields(upd, pl):
-+    """Supersede columns carried by an update_metadata event (issue #1773).
-+
-+    ``superseded_by`` lives in ``updates`` ("" or None clears it). ``superseded_at`` is the
-+    origin's instant at the payload top level, written as-is and never re-stamped here; a
-+    clear without one clears it too. An event from a peer without #1773 has no top-level
-+    ``superseded_at``, so only ``superseded_by`` is taken from it.
-+    """
-+    if "superseded_by" not in upd:
-+        return {}
-+    superseded_by = upd["superseded_by"] or None
-+    fields = {"superseded_by": superseded_by}
-+    if "superseded_at" in pl:
-+        fields["superseded_at"] = pl["superseded_at"]
-+    elif superseded_by is None:
-+        fields["superseded_at"] = None
-+    return fields
- 
- 
- def _take_if_winner(best, best_key, k, key, value):
-@@ -563,6 +584,13 @@ def _write_merged_metadata(s, content_hash, best, meta_best, create_md_keys, lat
-     event_owned = set(meta_best) | create_md_keys
-     merged_md = {kk: vv for kk, vv in current_md.items() if kk not in event_owned}
-     merged_md.update(meta_best)
-+    if "superseded_by" in best:
-+        # Keep the legacy JSON mirror in step with the column, as update_memory_metadata
-+        # does on the origin (#1773): readers such as the contradiction scan check it.
-+        if best["superseded_by"] is None:
-+            merged_md.pop("superseded_by", None)
-+        else:
-+            merged_md["superseded_by"] = best["superseded_by"]
-     best = dict(best)
-     best["metadata"] = merged_md
- 
+@@ -265,6 +265,38 @@
+   "modal.settings.primaryBackend": "Primäres Backend:",
+   "modal.settings.qualitySystem": "Qualitätssystem",
+   "modal.settings.save": "Einstellungen speichern",
++  "modal.settings.server.title": "Serververwaltung",
++  "modal.settings.server.pid": "Server-PID:",
++  "modal.settings.server.platform": "Plattform:",
++  "modal.settings.server.updateAvailable": "Update verfügbar:",
++  "modal.settings.server.notChecked": "Noch nicht geprüft",
++  "modal.settings.server.checkUpdates": "Nach Updates suchen",
++  "modal.settings.server.updateRestart": "Aktualisieren & Neustarten",
++  "modal.settings.server.restart": "Server neu starten",
++  "modal.settings.server.processing": "Wird verarbeitet...",
++  "modal.settings.server.checking": "Suche nach Updates...",
++  "modal.settings.server.commitsAvailable": "Ja - {count} Commit(s) verfügbar",
++  "modal.settings.server.updatesAvailable": "{count} Update(s) verfügbar",
++  "modal.settings.server.upToDate": "Aktuell",
++  "modal.settings.server.alreadyUpToDate": "Bereits auf dem neuesten Stand.",
++  "modal.settings.server.checkFailed": "Prüfung fehlgeschlagen",
++  "modal.settings.server.checkFailedWithError": "Suche nach Updates fehlgeschlagen: {error}",
++  "modal.settings.server.confirmUpdate": "Dadurch wird der neueste Code abgerufen, die Abhängigkeiten werden installiert und der Server wird neu gestartet. Fortfahren?",
++  "modal.settings.server.pulling": "Updates werden abgerufen und installiert...",
++  "modal.settings.server.updateComplete": "Update abgeschlossen. Server wird neu gestartet...",
++  "modal.settings.server.updateBlocked": "Update blockiert: {error}",
++  "modal.settings.server.confirmForcePull": "Der Server hat nicht committete lokale Änderungen, die den Pull blockieren.\n\n{error}\n\nTrotzdem einen Force-Pull ausführen? (Lokale Änderungen können überschrieben werden.)",
++  "modal.settings.server.updateFailed": "Update fehlgeschlagen: {error}",
++  "modal.settings.server.confirmRestart": "Möchten Sie den Server wirklich neu starten? Alle Clients werden vorübergehend getrennt.",
++  "modal.settings.server.restartFailed": "Neustart fehlgeschlagen: {error}",
++  "modal.settings.server.restarting": "Server wird neu gestartet...",
++  "modal.settings.server.waiting": "Warten, bis der Server wieder online ist...",
++  "modal.settings.server.reconnectingIn": "Verbindung wird in {seconds} s wiederhergestellt",
++  "modal.settings.server.attempt": "Versuch {attempt}/{max} - Warten auf den Server...",
++  "modal.settings.server.notBackOnline": "Der Server ist nicht wieder online gekommen. Bitte manuell prüfen.",
++  "modal.settings.server.backOnline": "Server ist wieder online (v{version}, PID {pid})! Seite wird neu geladen...",
++  "modal.settings.server.didNotRestart": "Der Prozess wurde nicht neu gestartet (weiterhin PID {pid}, v{version}). Das Update ist möglicherweise unbemerkt fehlgeschlagen — prüfen Sie die Server-Logs.",
++  "modal.settings.server.backOnlineReloading": "Server ist wieder online, Seite wird neu geladen",
+   "modal.settings.storageBackend": "Storage-Backend:",
+   "modal.settings.systemInfo": "Systeminformationen",
+   "modal.settings.theme": "Design",
 ```
 
-**File**: `tests/sync/test_1773_supersede_propagation.py` (added, +210/-0)
+**File**: `src/mcp_memory_service/web/static/i18n/en.json` (modified, +32/-0)
 ```diff
-@@ -0,0 +1,210 @@
-+"""
-+Issue #1773: a supersede that happens after the first sync must reach the other peers.
-+
-+#1726 made the baseline snapshot and the create path carry ``superseded_by`` /
-+``superseded_at``, which covers rows that were already superseded when first synced.
-+These tests cover a supersede made later through each of the three writers, and two
-+peers superseding the same memory with different winners.
-+"""
-+
-+import json
-+import os
-+import tempfile
-+
-+import pytest
-+import pytest_asyncio
-+
-+from mcp_memory_service.models.memory import Memory
-+from mcp_memory_service.storage.sqlite_vec import SqliteVecMemoryStorage
-+from mcp_memory_service.storage.sync.apply import apply_remote_event
-+from mcp_memory_service.storage.sync.orchestrator import _read_local_events_since
-+from mcp_memory_service.utils.hashing import generate_content_hash
-+
-+
-+@pytest_asyncio.fixture
-+async def peers(monkeypatch):
-+    """Two empty sqlite-vec stores with the event log on."""
-+    monkeypatch.setenv("MCP_SYNC_EVENTLOG", "true")
-+    monkeypatch.setenv("MCP_SEMANTIC_DEDUP_ENABLED", "false")
-+    with tempfile.TemporaryDirectory() as tmp:
-+        a = SqliteVecMemoryStorage(os.path.join(tmp, "a.db"))
-+        b = SqliteVecMemoryStorage(os.path.join(tmp, "b.db"))
-+        await a.initialize()
-+        await b.initialize()
-+        yield a, b
-+        await a.close()
-+        await b.close()
-+
-+
-+async def _store(storage, content):
-+    h = generate_content_hash(content)
-+    ok, msg = await storage.store(Memory(content=content, content_hash=h, tags=["t"], memory_type="note"))
-+    assert ok, msg
-+    return h
-+
-+
-+def _sync(src, dst):
-+    """Apply every event src has logged to dst (duplicates are idempotent no-ops)."""
-+    for event in _read_local_events_since(src, 0, 10_000):
-+        result = apply_remote_event(dst, event)
-+        assert result.applied or "Duplicate" in result.reason, result.reason
-+
-+
-+def _supersede_state(storage, content_hash):
-+    return storage.conn.execute(
-+        "SELECT superseded_by, superseded_at FROM memories WHERE content_hash = ?",
-+        (content_hash,),
-+    ).fetchone()
-+
-+
-+async def _supersede(writer, storage, loser, winner_content):
-+    """Supersede ``loser`` on ``storage`` through ``writer``; return the winner's hash."""
-+    if writer == "versioned":
-+        ok, msg, new_hash = await storage.update_memory_versioned(loser, winner_content)
-+        assert ok, msg
-+        return new_hash
-+    winner = await _store(storage, winner_content)
-+    if writer == "batch":
-+        assert await storage.mark_superseded_batch([(winner, loser)]) == 1
-+    else:
-+        ok, msg = await storage.resolve_conflict(winner, loser)
-+        assert ok, msg
-+    return winner
-+
-+
-+@pytest.mark.asyncio
-+@pytest.mark.parametrize("writer", ["batch", "resolve_conflict", "versioned"])
-+async def test_supersede_after_initial_sync_reaches_peer(peers, monkeypatch, writer):
-+    a, b = peers
-+    monkeypatch.setenv("MCP_AGENT_ID", "alpha")
-+    x = await _store(a, "Memory X: the deploy target is staging")
-+    _sync(a, b)
-+    assert _supersede_state(b, x) == (None, None)
-+
-+    monkeypatch.setenv("MCP_AGENT_ID", "alpha")
-+    winner = await _supersede(writer, a, x, "Memory Y: the deploy target is production")
-+    superseded_by, superseded_at = _supersede_state(a, x)
-+    assert superseded_by == winner and superseded_at is not None
-+
-+    # The event keeps superseded_at out of ``updates``: a peer without #1773 treats
-+    # superseded_by there as protected and never reads the top-level field.
-+    row = a.conn.execute(
-+        "SELECT payload FROM sync_events WHERE content_hash = ? AND op = 'update_metadata'",
-+        (x,),
-+    ).fetchone()
-+    payload = json.loads(row[0])
-+    assert payload["updates"] == {"superseded_by": winner}
-+    assert payload["superseded_at"] == superseded_at
-+
-+    monkeypatch.setenv("MCP_AGENT_ID", "beta")
-+    _sync(a, b)
-+    # Same value on both peers: the receiver writes the origin's instant, not its own.
-+    assert _supersede_state(b, x) == (winner, superseded_at)
-+
-+
-+@pytest.mark.asyncio
-+async def test_retried_supersede_logs_no_second_event(peers, monkeypatch):
-+    a, _ = peers
-+    monkeypatch.setenv("MCP_AGENT_ID", "alpha")
-+    x = await _store(a, "Memory X: retry target")
-+    y = await _store(a, "Memory Y: retry winner")
-+    assert await a.mark_superseded_batch([(y, x)]) == 1
-+    assert await a.mark_superseded_batch([(y, x)]) == 1
-+    count = a.conn.execute(
-+        "SELECT COUNT(*) FROM sync_events WHERE content_hash = ? AND op = 'update_metadata'",
-+        (x,),
-+    ).fetchone()[0]
-+    assert count == 1
-+
-+
-+@pytest.mark.asyncio
-+async def test_conflicting_supersedes_converge_in_both_orders(monkeypatch):
-+    """Two peers supersede X with different winners; every arrival order ends the same."""
-+    monkeypatch.setenv("MCP_SYNC_EVENTLOG", "true")
-+    monkeypatch.setenv("MCP_SEMANTIC_DEDUP_ENABLED", "false")
-+    with tempfile.TemporaryDirecto
+@@ -388,6 +388,38 @@
+   "modal.settings.viewBackups": "View Backups",
+   "modal.settings.cancel": "Cancel",
+   "modal.settings.save": "Save Settings",
++  "modal.settings.server.title": "Server Management",
++  "modal.settings.server.pid": "Server PID:",
++  "modal.settings.server.platform": "Platform:",
++  "modal.settings.server.updateAvailable": "Update Available:",
++  "modal.settings.server.notChecked": "Not checked yet",
++  "modal.settings.server.checkUpdates": "Check for Updates",
++  "modal.settings.server.updateRestart": "Update & Restart",
++  "modal.settings.server.restart": "Restart Server",
++  "modal.settings.server.processing": "Processing...",
++  "modal.settings.server.checking": "Checking for updates...",
++  "modal.settings.server.commitsAvailable": "Yes - {count} commit(s) available",
++  "modal.settings.server.updatesAvailable": "{count} update(s) available",
++  "modal.settings.server.upToDate": "Up to date",
++  "modal.settings.server.alreadyUpToDate": "Already up to date.",
++  "modal.settings.server.checkFailed": "Check failed",
++  "modal.settings.server.checkFailedWithError": "Failed to check for updates: {error}",
++  "modal.settings.server.confirmUpdate": "This will pull the latest code, install dependencies, and restart the server. Continue?",
++  "modal.settings.server.pulling": "Pulling updates and installing...",
++  "modal.settings.server.updateComplete": "Update complete. Server restarting...",
++  "modal.settings.server.updateBlocked": "Update blocked: {error}",
++  "modal.settings.server.confirmForcePull": "The server has uncommitted local changes that will block the pull.\n\n{error}\n\nForce-pull anyway? (Local changes may be overwritten.)",
++  "modal.settings.server.updateFailed": "Update failed: {error}",
++  "modal.settings.server.confirmRestart": "Are you sure you want to restart the server? This will temporarily disconnect all clients.",
++  "modal.settings.server.restartFailed": "Restart failed: {error}",
++  "modal.settings.server.restarting": "Server Restarting...",
++  "modal.settings.server.waiting": "Waiting for server to come back online...",
++  "modal.settings.server.reconnectingIn": "Reconnecting in {seconds}s",
++  "modal.settings.server.attempt": "Attempt {attempt}/{max} - Waiting for server...",
++  "modal.settings.server.notBackOnline": "Server did not come back online. Please check manually.",
++  "modal.settings.server.backOnline": "Server is back online (v{version}, pid {pid})! Reloading...",
++  "modal.settings.server.didNotRestart": "Process did not restart (still pid {pid}, v{version}). The update may have failed silently — check server logs.",
++  "modal.settings.server.backOnlineReloading": "Server is back online, reloading",
+   "modal.memoryViewer.title": "Document Memory Chunks",
+   "modal.memoryViewer.chunksFound": "{count} chunks found",
+   "modal.memoryViewer.close": "Close",
+```
+
+**File**: `src/mcp_memory_service/web/static/i18n/es.json` (modified, +32/-0)
+```diff
+@@ -265,6 +265,38 @@
+   "modal.settings.primaryBackend": "Backend Principal:",
+   "modal.settings.qualitySystem": "Sistema de Calidad",
+   "modal.settings.save": "Guardar Configuración",
++  "modal.settings.server.title": "Gestión del servidor",
++  "modal.settings.server.pid": "PID del servidor:",
++  "modal.settings.server.platform": "Plataforma:",
++  "modal.settings.server.updateAvailable": "Actualización disponible:",
++  "modal.settings.server.notChecked": "Aún no comprobado",
++  "modal.settings.server.checkUpdates": "Buscar actualizaciones",
++  "modal.settings.server.updateRestart": "Actualizar y reiniciar",
++  "modal.settings.server.restart": "Reiniciar servidor",
++  "modal.settings.server.processing": "Procesando...",
++  "modal.settings.server.checking": "Buscando actualizaciones...",
++  "modal.settings.server.commitsAvailable": "Sí - {count} commit(s) disponible(s)",
++  "modal.settings.server.updatesAvailable": "{count} actualización(es) disponible(s)",
++  "modal.settings.server.upToDate": "Actualizado",
++  "modal.settings.server.alreadyUpToDate": "Ya está actualizado.",
++  "modal.settings.server.checkFailed": "Error en la comprobación",
++  "modal.settings.server.checkFailedWithError": "Error al buscar actualizaciones: {error}",
++  "modal.settings.server.confirmUpdate": "Esto descargará el código más reciente, instalará las dependencias y reiniciará el servidor. ¿Continuar?",
++  "modal.settings.server.pulling": "Descargando e instalando actualizaciones...",
++  "modal.settings.server.updateComplete": "Actualización completada. Reiniciando el servidor...",
++  "modal.settings.server.updateBlocked": "Actualización bloqueada: {error}",
++  "modal.settings.server.confirmForcePull": "El servidor tiene cambios locales sin confirmar que bloquearán el pull.\n\n{error}\n\n¿Forzar el pull de todos modos? (Los cambios locales podrían sobrescribirse.)",
++  "modal.settings.server.updateFailed": "Error en la actualización: {error}",
++  "modal.settings.server.confirmRestart": "¿Seguro que desea reiniciar el servidor? Todos los clientes se desconectarán temporalmente.",
++  "modal.settings.server.restartFailed": "Error al reiniciar: {error}",
++  "modal.settings.server.restarting": "Reiniciando el servidor...",
++  "modal.settings.server.waiting": "Esperando a que el servidor vuelva a estar en línea...",
++  "modal.settings.server.reconnectingIn": "Reconectando en {seconds} s",
++  "modal.settings.server.attempt": "Intento {attempt}/{max} - Esperando al servidor...",
++  "modal.settings.server.notBackOnline": "El servidor no volvió a estar en línea. Compruébelo manualmente.",
++  "modal.settings.server.backOnline": "¡El servidor vuelve a estar en línea (v{version}, pid {pid})! Recargando...",
++  "modal.settings.server.didNotRestart": "El proceso no se reinició (sigue con pid {pid}, v{version}). Es posible que la actualización haya fallado sin avisar; revise los registros del servidor.",
++  "modal.settings.server.backOnlineReloading": "El servidor vuelve a estar en línea, recargando",
+   "modal.settings.storageBackend": "Backend de Almacenamiento:",
+   "modal.settings.systemInfo": "Información del Sistema",
+   "modal.settings.theme": "Tema",
+```
+
+**File**: `src/mcp_memory_service/web/static/i18n/fr.json` (modified, +32/-0)
+```diff
+@@ -265,6 +265,38 @@
+   "modal.settings.primaryBackend": "Backend Principal :",
+   "modal.settings.qualitySystem": "Système de Qualité",
+   "modal.settings.save": "Enregistrer les Paramètres",
++  "modal.settings.server.title": "Gestion du serveur",
++  "modal.settings.server.pid": "PID du serveur :",
++  "modal.settings.server.platform": "Plateforme :",
++  "modal.settings.server.updateAvailable": "Mise à jour disponible :",
++  "modal.settings.server.notChecked": "Pas encore vérifié",
++  "modal.settings.server.checkUpdates": "Rechercher des mises à jour",
++  "modal.settings.server.updateRestart": "Mettre à jour et redémarrer",
++  "modal.settings.server.restart": "Redémarrer le serveur",
++  "modal.settings.server.processing": "Traitement...",
++  "modal.settings.server.checking": "Recherche de mises à jour...",
++  "modal.settings.server.commitsAvailable": "Oui - {count} commit(s) disponible(s)",
++  "modal.settings.server.updatesAvailable": "{count} mise(s) à jour disponible(s)",
++  "modal.settings.server.upToDate": "À jour",
++  "modal.settings.server.alreadyUpToDate": "Déjà à jour.",
++  "modal.settings.server.checkFailed": "Échec de la vérification",
++  "modal.settings.server.checkFailedWithError": "Échec de la recherche de mises à jour : {error}",
++  "modal.settings.server.confirmUpdate": "Cette action va récupérer le code le plus récent, installer les dépendances et redémarrer le serveur. Continuer ?",
++  "modal.settings.server.pulling": "Récupération et installation des mises à jour...",
++  "modal.settings.server.updateComplete": "Mise à jour terminée. Redémarrage du serveur...",
++  "modal.settings.server.updateBlocked": "Mise à jour bloquée : {error}",
++  "modal.settings.server.confirmForcePull": "Le serveur a des modifications locales non commitées qui bloqueront le pull.\n\n{error}\n\nForcer le pull quand même ? (Les modifications locales risquent d'être écrasées.)",
++  "modal.settings.server.updateFailed": "Échec de la mise à jour : {error}",
++  "modal.settings.server.confirmRestart": "Voulez-vous vraiment redémarrer le serveur ? Tous les clients seront temporairement déconnectés.",
++  "modal.settings.server.restartFailed": "Échec du redémarrage : {error}",
++  "modal.settings.server.restarting": "Redémarrage du serveur...",
++  "modal.settings.server.waiting": "En attente du retour en ligne du serveur...",
++  "modal.settings.server.reconnectingIn": "Reconnexion dans {seconds} s",
++  "modal.settings.server.attempt": "Tentative {attempt}/{max} - En attente du serveur...",
++  "modal.settings.server.notBackOnline": "Le serveur n'est pas revenu en ligne. Veuillez vérifier manuellement.",
++  "modal.settings.server.backOnline": "Le serveur est de nouveau en ligne (v{version}, pid {pid}) ! Rechargement...",
++  "modal.settings.server.didNotRestart": "Le processus n'a pas redémarré (toujours pid {pid}, v{version}). La mise à jour a peut-être échoué silencieusement — consultez les journaux du serveur.",
++  "modal.settings.server.backOnlineReloading": "Le serveur est de nouveau en ligne, rechargement",
+   "modal.settings.storageBackend": "Backend de Stockage :",
+   "modal.settings.systemInfo": "Informations Système",
+   "modal.settings.theme": "Thème",
+```
+
+**File**: `src/mcp_memory_service/web/static/i18n/hi.json` (modified, +32/-0)
+```diff
+@@ -388,6 +388,38 @@
+   "modal.settings.viewBackups": "बैकअप देखें",
+   "modal.settings.cancel": "रद्द करें",
+   "modal.settings.save": "सेटिंग्स सहेजें",
++  "modal.settings.server.title": "सर्वर प्रबंधन",
++  "modal.settings.server.pid": "सर्वर PID:",
++  "modal.settings.server.platform": "प्लेटफ़ॉर्म:",
++  "modal.settings.server.updateAvailable": "अपडेट उपलब्ध:",
++  "modal.settings.server.notChecked": "अभी तक जाँचा नहीं गया",
++  "modal.settings.server.checkUpdates": "अपडेट जाँचें",
++  "modal.settings.server.updateRestart": "अपडेट करें और पुनः प्रारंभ करें",
++  "modal.settings.server.restart": "सर्वर पुनः प्रारंभ करें",
++  "modal.settings.server.processing": "प्रोसेस हो रहा है...",
++  "modal.settings.server.checking": "अपडेट जाँचे जा रहे हैं...",
++  "modal.settings.server.commitsAvailable": "हाँ - {count} कमिट उपलब्ध",
++  "modal.settings.server.updatesAvailable": "{count} अपडेट उपलब्ध",
++  "modal.settings.server.upToDate": "अद्यतित",
++  "modal.settings.server.alreadyUpToDate": "पहले से अद्यतित है।",
++  "modal.settings.server.checkFailed": "जाँच विफल",
++  "modal.settings.server.checkFailedWithError": "अपडेट जाँचने में विफल: {error}",
++  "modal.settings.server.confirmUpdate": "यह नवीनतम कोड पुल करेगा, निर्भरताएँ इंस्टॉल करेगा और सर्वर को पुनः प्रारंभ करेगा। जारी रखें?",
++  "modal.settings.server.pulling": "अपडेट पुल और इंस्टॉल किए जा रहे हैं...",
++  "modal.settings.server.updateComplete": "अपडेट पूरा हुआ। सर्वर पुनः प्रारंभ हो रहा है...",
++  "modal.settings.server.updateBlocked": "अपडेट अवरुद्ध: {error}",
++  "modal.settings.server.confirmForcePull": "सर्वर पर बिना कमिट किए गए स्थानीय बदलाव हैं, जो पुल को रोकेंगे।\n\n{error}\n\nफिर भी फ़ोर्स-पुल करें? (स्थानीय बदलाव ओवरराइट हो सकते हैं।)",
++  "modal.settings.server.updateFailed": "अपडेट विफल: {error}",
++  "modal.settings.server.confirmRestart": "क्या आप वाकई सर्वर को पुनः प्रारंभ करना चाहते हैं? इससे सभी क्लाइंट अस्थायी रूप से डिस्कनेक्ट हो जाएँगे।",
++  "modal.settings.server.restartFailed": "पुनः प्रारंभ विफल: {error}",
++  "modal.settings.server.restarting": "सर्वर पुनः प्रारंभ हो रहा है...",
++  "modal.settings.server.waiting": "सर्वर के फिर से ऑनलाइन होने की प्रतीक्षा की जा रही है...",
++  "modal.settings.server.reconnectingIn": "{seconds} सेकंड में फिर से कनेक्ट हो रहा है",
++  "modal.settings.server.attempt": "प्रयास {attempt}/{max} - सर्वर की प्रतीक्षा की जा रही है...",
++  "modal.settings.server.notBackOnline": "सर्वर फिर से ऑनलाइन नहीं हुआ। कृपया मैन्युअल रूप से जाँचें।",
++  "modal.settings.server.backOnline": "सर्वर फिर से ऑनलाइन है (v{version}, pid {pid})! पुनः लोड हो रहा है...",
++  "modal.settings.server.didNotRestart": "प्रोसेस पुनः प्रारंभ नहीं हुई (अभी भी pid {pid}, v{version})। हो सकता है अपडेट बिना किसी सूचना के विफल हो गया हो — सर्वर लॉग जाँचें।",
++  "modal.settings.server.backOnlineReloading": "सर्वर फिर से ऑनलाइन है, पुनः लोड हो रहा है",
+   "modal.memoryViewer.title": "दस्तावेज़ मेमोरी खंड",
+   "modal.memoryViewer.chunksFound": "{count} खंड मिले",
+   "modal.memoryViewer.close": "बंद करें",
+```
+
+**File**: `src/mcp_memory_service/web/static/i18n/id.json` (modified, +32/-0)
+```diff
+@@ -388,6 +388,38 @@
+   "modal.settings.viewBackups": "Lihat Cadangan",
+   "modal.settings.cancel": "Batal",
+   "modal.settings.save": "Simpan Pengaturan",
++  "modal.settings.server.title": "Manajemen Server",
++  "modal.settings.server.pid": "PID Server:",
++  "modal.settings.server.platform": "Platform:",
++  "modal.settings.server.updateAvailable": "Pembaruan Tersedia:",
++  "modal.settings.server.notChecked": "Belum diperiksa",
++  "modal.settings.server.checkUpdates": "Periksa Pembaruan",
++  "modal.settings.server.updateRestart": "Perbarui & Mulai Ulang",
++  "modal.settings.server.restart": "Mulai Ulang Server",
++  "modal.settings.server.processing": "Memproses...",
++  "modal.settings.server.checking": "Memeriksa pembaruan...",
++  "modal.settings.server.commitsAvailable": "Ya - {count} commit tersedia",
++  "modal.settings.server.updatesAvailable": "{count} pembaruan tersedia",
++  "modal.settings.server.upToDate": "Sudah terbaru",
++  "modal.settings.server.alreadyUpToDate": "Sudah versi terbaru.",
++  "modal.settings.server.checkFailed": "Pemeriksaan gagal",
++  "modal.settings.server.checkFailedWithError": "Gagal memeriksa pembaruan: {error}",
++  "modal.settings.server.confirmUpdate": "Tindakan ini akan menarik kode terbaru, memasang dependensi, dan memulai ulang server. Lanjutkan?",
++  "modal.settings.server.pulling": "Menarik dan memasang pembaruan...",
++  "modal.settings.server.updateComplete": "Pembaruan selesai. Server sedang dimulai ulang...",
++  "modal.settings.server.updateBlocked": "Pembaruan diblokir: {error}",
++  "modal.settings.server.confirmForcePull": "Server memiliki perubahan lokal yang belum di-commit dan akan memblokir pull.\n\n{error}\n\nTetap paksa pull? (Perubahan lokal mungkin akan ditimpa.)",
++  "modal.settings.server.updateFailed": "Pembaruan gagal: {error}",
++  "modal.settings.server.confirmRestart": "Apakah Anda yakin ingin memulai ulang server? Semua klien akan terputus sementara.",
++  "modal.settings.server.restartFailed": "Gagal memulai ulang: {error}",
++  "modal.settings.server.restarting": "Server Sedang Dimulai Ulang...",
++  "modal.settings.server.waiting": "Menunggu server kembali online...",
++  "modal.settings.server.reconnectingIn": "Menyambung ulang dalam {seconds} dtk",
++  "modal.settings.server.attempt": "Percobaan {attempt}/{max} - Menunggu server...",
++  "modal.settings.server.notBackOnline": "Server tidak kembali online. Silakan periksa secara manual.",
++  "modal.settings.server.backOnline": "Server kembali online (v{version}, pid {pid})! Memuat ulang...",
++  "modal.settings.server.didNotRestart": "Proses tidak dimulai ulang (masih pid {pid}, v{version}). Pembaruan mungkin gagal tanpa pemberitahuan — periksa log server.",
++  "modal.settings.server.backOnlineReloading": "Server kembali online, memuat ulang",
+   "modal.memoryViewer.title": "Potongan Memori Dokumen",
+   "modal.memoryViewer.chunksFound": "{count} chunk ditemukan",
+   "modal.memoryViewer.close": "Tutup",
 ```
 
 ---
 
-### Incident Patch 3: `6e8f5f15` (2026-11-01)
-**Commit Message**: fix(deps): patch minimatch in bridge test dependencies (#1767)
+### Incident Patch 3: `5a92f50a` (2026-11-03)
+**Commit Message**: fix(ci): a PR that fixes another issue no longer blocks /claim (#1834)
 
-* fix(deps): patch minimatch in bridge test dependencies
+* fix(ci): a PR that fixes another issue no longer blocks /claim
 
-* docs(changelog): record bridge dependency security fixes
+existing_work() counted every open PR that cross-references the issue as
+existing work. #1814 was held for manual confirmation because #1830, which
+fixes #1816, mentions it in passing.
+
+A referencing PR now counts only when it formally closes nothing or closes
+this issue. A PR whose closing references all point elsewhere is a mention.
+When the timeline entry lacks the PR number or repository, the check stays
+conservative.
+
+* fix(ci): treat a failed PR lookup in existing_work() as uncertain
+
+A gh error, a null repository or pullRequest, or a malformed node in the
+closing-references lookup escaped and stopped /claim before manual_claims()
+could label and reply. It now returns False, so the claim falls through to
+manual review.
 
 ---------
 
 Co-authored-by: Henry Krupp <[REDACTED_EMAIL]>
 
-**File**: `changelog.d/1767.internal.md` (added, +1/-0)
+**File**: `scripts/ci/mark_claim_pending.py` (modified, +48/-1)
 ```diff
-@@ -0,0 +1 @@
-+- **Patch minimatch in the bridge test dependencies (#1767).** Both JavaScript test projects now lock minimatch 11.0.3 to address GHSA-g3hv-75wg-m249. Update glob alongside it so Mocha can still discover tests through wildcard paths.
-```
-
-**File**: `tests/bridge/package-lock.json` (modified, +57/-58)
-```diff
-@@ -13,6 +13,13 @@
-         "sinon": "^17.0.0"
-       }
-     },
-+    "node_modules/@isaacs/nonrecursive-glob-match": {
-+      "version": "1.0.3",
-+      "resolved": "https://registry.npmjs.org/@isaacs/nonrecursive-glob-match/-/nonrecursive-glob-match-1.0.3.tgz",
-+      "integrity": "sha512-SI7kyKHq4XXDRozw+r9GlRZkia1ZkFrpLW98r2IC2Bpr8YkFGE3fvjzmxCG0x78A++69HmDNrDvSMYBZmHGpKA==",
-+      "dev": true,
-+      "license": "BlueOak-1.0.0"
-+    },
-     "node_modules/@sinonjs/commons": {
-       "version": "3.0.1",
-       "resolved": "https://registry.npmjs.org/@sinonjs/commons/-/commons-3.0.1.tgz",
-@@ -385,13 +392,6 @@
-         "flat": "cli.js"
-       }
-     },
--    "node_modules/fs.realpath": {
--      "version": "1.0.0",
--      "resolved": "https://registry.npmjs.org/fs.realpath/-/fs.realpath-1.0.0.tgz",
--      "integrity": "sha512-OO0pH2lK6a0hZnAdau5ItzHPI6pUlvI7jMVnxUQRtw4owF2wk8lOSabtGDCTP4Ggrg2MbGnWO9X8K1t4+fGMDw==",
--      "dev": true,
--      "license": "ISC"
--    },
-     "node_modules/fsevents": {
-       "version": "2.3.3",
-       "resolved": "https://registry.npmjs.org/fsevents/-/fsevents-2.3.3.tgz",
-@@ -418,21 +418,18 @@
-       }
-     },
-     "node_modules/glob": {
--      "version": "8.1.0",
--      "resolved": "https://registry.npmjs.org/glob/-/glob-8.1.0.tgz",
--      "integrity": "sha512-r8hpEjiQEYlF2QU0df3dS+nxxSIreXQS1qRhMJM0Q5NDdR386C7jb7Hwwod8Fgiuex+k0GFjgft18yvxm5XoCQ==",
--      "deprecated": "Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me",
-+      "version": "14.0.3",
-+      "resolved": "https://registry.npmjs.org/glob/-/glob-14.0.3.tgz",
-+      "integrity": "sha512-A1vjIwC3qpdCso45Iw127gnp7sPhqgY8lUQhDrArIs+GbmfaaVPFuoyy7WyLT9EPZCRZ7j7aLdwUhQmHWesEow==",
-       "dev": true,
--      "license": "ISC",
-+      "license": "BlueOak-1.0.0",
-       "dependencies": {
--        "fs.realpath": "^1.0.0",
--        "inflight": "^1.0.4",
--        "inherits": "2",
--        "minimatch": "^5.0.1",
--        "once": "^1.3.0"
-+        "minimatch": "^11.0.2",
-+        "minipass": "^7.1.3",
-+        "path-scurry": "^3.0.0"
-       },
-       "engines": {
--        "node": ">=12"
-+        "node": "18 || 20 || >=22"
-       },
-       "funding": {
-         "url": "https://github.com/sponsors/isaacs"
-@@ -471,25 +468,6 @@
-         "he": "bin/he"
-       }
-     },
--    "node_modules/inflight": {
--      "version": "1.0.6",
--      "resolved": "https://registry.npmjs.org/inflight/-/inflight-1.0.6.tgz",
--      "integrity": "sha512-k92I/b08q4wvFscXCLvqfsHCrjrF7yiXsQuIVvVE7N82W3+aqpzuUdBbfhWcy/FZR3/4IgflMgKLOsvPDrGCJA==",
--      "deprecated": "This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.",
--      "dev": true,
--      "license": "ISC",
--      "dependencies": {
--        "once": "^1.3.0",
--        "wrappy": "1"
--      }
--    },
--    "node_modules/inherits": {
--      "version": "2.0.4",
--      "resolved": "https://registry.npmjs.org/inherits/-/inherits-2.0.4.tgz",
--      "integrity": "sha512-k/vGaX4/Yla3WzyMCvTQOXYeIHvqOKtnqBduzTHpzpQZzAskKMhZ2K+EnBiSM9zGSoIFeMpXKxa4dYeZIQqewQ==",
--      "dev": true,
--      "license": "ISC"
--    },
-     "node_modules/is-binary-path": {
-       "version": "2.1.0",
-       "resolved": "https://registry.npmjs.org/is-binary-path/-/is-binary-path-2.1.0.tgz",
-@@ -632,14 +610,25 @@
-         "url": "https://github.com/sponsors/sindresorhus"
-       }
-     },
-+    "node_modules/lru-cache": {
-+      "version": "11.5.3",
-+      "resolved": "https://registry.npmjs.org/lru-cache/-/lru-cache-11.5.3.tgz",
-+      "integrity": "sha512-U4N8FgzmWxc8k1VH8Kr6lQg18U7Fjvby6wXHVRX/ZZ7IwWbRMgrRbP0Wrb5q5NVinryp4SQampHKdvtecItxUg==",
-+      "dev": true,
-+      "license": "BlueOak-1.0.0",
-+      "engines": {
-+        "node": "20 || >=22"
+@@ -335,13 +335,60 @@ def claim_ambiguity(first: dict, claims: list[dict], comments: list[dict]) -> bo
+     )
+ 
+ 
++_PR_CLOSES_QUERY = """
++query($owner: String!, $name: String!, $number: Int!) {
++  repository(owner: $owner, name: $name) {
++    pullRequest(number: $number) {
++      closingIssuesReferences(first: 100) {
++        nodes { number repository { nameWithOwner } }
 +      }
-+    },
-     "node_modules/minimatch": {
--      "version": "10.2.4",
--      "resolved": "https://registry.npmjs.org/minimatch/-/minimatch-10.2.4.tgz",
--      "integrity": "sha512-oRjTw/97aTBN0RHbYCdtF1MQfvusSIBQM0IZEgzl6426+8jSC0nF1a/GmnVLpfB9yyr6g6FTqWqiZVbxrtaCIg==",
-+      "version": "11.0.3",
-+      "resolved": "https://registry.npmjs.org/minimatch/-/minimatch-11.0.3.tgz",
-+      "integrity": "sha512-iny/40PEGkNJQ5/Pv6z3nm6FbRAby32GeZRjCUJk2WnNDbgPSTcdI+DDvLqsgBdD4cD5sMtMheqPPnehCCa8Nw==",
-       "dev": true,
-       "license": "BlueOak-1.0.0",
-       "dependencies": {
--        "brace-expansion": "^5.0.2"
-+        "@isaacs/nonrecursive-glob-match": "^1.0.3",
-+        "brace-expansion": "^5.0.12"
-       },
-       "engines": {
-         "node": "18 || 20 || >=22"
-@@ -648,6 +637,16 @@
-         "url": "https://github.com/sponsors/isaacs"
-       }
-     },
-+    "node_modules/minipass": {
-+      "version": "7.1.3",
-+      "resolved": "https://registry.n
++    }
++  }
++}
++"""
++
++
++def _closes_only_other_issues(source: dict, repo: str, number: int) -> bool:
++    """True when a referencing PR formally closes issues, none of them this one.
++
++    Such a PR is scoped elsewhere and only mentions this issue (#1814 was held
++    for manual review because #1830, which fixes #1816, named it in passing).
++    A PR that closes nothing stays existing work: "part of #N" may be the work.
++    """
++    match = re.search(r"/repos/([^/]+)/([^/]+)$", source.get("repository_url", ""))
++    if not match or not isinstance(source.get("number"), int):
++        return False  # cannot tell: stay conservative
++    owner, name = match.groups()
++    # An unreadable repository, a null result or a malformed node must not
++    # stop the claim: it is uncertain, so it falls through to manual review.
++    try:
++        data = json.loads(
++            gh(
++                "api", "graphql", "-f", f"query={_PR_CLOSES_QUERY}",
++                "-f", f"owner={owner}", "-f", f"name={name}",
++                "-F", f"number={source['number']}",
++            )
++        )
++        # ponytail: first 100 closing refs only; a PR closing more is not a mention
++        pr = data["data"]["repository"]["pullRequest"]
++        nodes = pr["closingIssuesReferences"]["nodes"]
++        closes = {(n["repository"]["nameWithOwner"].lower(), n["number"]) for n in nodes}
++    except (subprocess.CalledProcessError, ValueError, KeyError, TypeError):
++        return False
++    return bool(closes) and (repo.lower(), number) not in closes
++
++
+ def existing_work(repo: str, number: int, api: str) -> bool:
+     """Check all timeline pages as well as formal closing links."""
+     for item in api_pages(f"{api}/timeline"):
+         if item.get("event") == "unassigned":
+             return True  # never reactivate a manually released claim
+         source = item.get("source", {}).get("issue", {})
+-        if source.get("state") == "open" and "pull_request" in source:
++        if (
++            source.get("state") == "open"
++            and "pull_request" in source
++            and not _closes_only_other_issues(source, repo, number)
++        ):
+             return True
+     return _has_open_closing_pr(repo, number)
+ 
 ```
 
-**File**: `tests/bridge/package.json` (modified, +2/-1)
+**File**: `tests/ci/test_auto_assign_claim.py` (modified, +65/-14)
 ```diff
-@@ -13,7 +13,8 @@
-   },
-   "overrides": {
-     "brace-expansion": "^5.0.12",
--    "minimatch": "^10.2.3",
-+    "glob": "^14.0.3",
-+    "minimatch": "^11.0.1",
-     "serialize-javascript": "^7.0.3"
-   },
-   "keywords": ["mcp", "bridge", "testing"],
-```
-
-**File**: `tests/integration/package-lock.json` (modified, +57/-58)
-```diff
-@@ -13,6 +13,13 @@
-         "sinon": "^17.0.0"
-       }
-     },
-+    "node_modules/@isaacs/nonrecursive-glob-match": {
-+      "version": "1.0.3",
-+      "resolved": "https://registry.npmjs.org/@isaacs/nonrecursive-glob-match/-/nonrecursive-glob-match-1.0.3.tgz",
-+      "integrity": "sha512-SI7kyKHq4XXDRozw+r9GlRZkia1ZkFrpLW98r2IC2Bpr8YkFGE3fvjzmxCG0x78A++69HmDNrDvSMYBZmHGpKA==",
-+      "dev": true,
-+      "license": "BlueOak-1.0.0"
-+    },
-     "node_modules/@sinonjs/commons": {
-       "version": "3.0.1",
-       "resolved": "https://registry.npmjs.org/@sinonjs/commons/-/commons-3.0.1.tgz",
-@@ -385,13 +392,6 @@
-         "flat": "cli.js"
-       }
-     },
--    "node_modules/fs.realpath": {
--      "version": "1.0.0",
--      "resolved": "https://registry.npmjs.org/fs.realpath/-/fs.realpath-1.0.0.tgz",
--      "integrity": "sha512-OO0pH2lK6a0hZnAdau5ItzHPI6pUlvI7jMVnxUQRtw4owF2wk8lOSabtGDCTP4Ggrg2MbGnWO9X8K1t4+fGMDw==",
--      "dev": true,
--      "license": "ISC"
--    },
-     "node_modules/fsevents": {
-       "version": "2.3.3",
-       "resolved": "https://registry.npmjs.org/fsevents/-/fsevents-2.3.3.tgz",
-@@ -418,21 +418,18 @@
-       }
-     },
-     "node_modules/glob": {
--      "version": "8.1.0",
--      "resolved": "https://registry.npmjs.org/glob/-/glob-8.1.0.tgz",
--      "integrity": "sha512-r8hpEjiQEYlF2QU0df3dS+nxxSIreXQS1qRhMJM0Q5NDdR386C7jb7Hwwod8Fgiuex+k0GFjgft18yvxm5XoCQ==",
--      "deprecated": "Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me",
-+      "version": "14.0.3",
-+      "resolved": "https://registry.npmjs.org/glob/-/glob-14.0.3.tgz",
-+      "integrity": "sha512-A1vjIwC3qpdCso45Iw127gnp7sPhqgY8lUQhDrArIs+GbmfaaVPFuoyy7WyLT9EPZCRZ7j7aLdwUhQmHWesEow==",
-       "dev": true,
--      "license": "ISC",
-+      "license": "BlueOak-1.0.0",
-       "dependencies": {
--        "fs.realpath": "^1.0.0",
--        "inflight": "^1.0.4",
--        "inherits": "2",
--        "minimatch": "^5.0.1",
--        "once": "^1.3.0"
-+        "minimatch": "^11.0.2",
-+        "minipass": "^7.1.3",
-+        "path-scurry": "^3.0.0"
-       },
-       "engines": {
--        "node": ">=12"
-+        "node": "18 || 20 || >=22"
-       },
-       "funding": {
-         "url": "https://github.com/sponsors/isaacs"
-@@ -471,25 +468,6 @@
-         "he": "bin/he"
-       }
-     },
--    "node_modules/inflight": {
--      "version": "1.0.6",
--      "resolved": "https://registry.npmjs.org/inflight/-/inflight-1.0.6.tgz",
--      "integrity": "sha512-k92I/b08q4wvFscXCLvqfsHCrjrF7yiXsQuIVvVE7N82W3+aqpzuUdBbfhWcy/FZR3/4IgflMgKLOsvPDrGCJA==",
--      "deprecated": "This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.",
--      "dev": true,
--      "license": "ISC",
--      "dependencies": {
--        "once": "^1.3.0",
--        "wrappy": "1"
--      }
--    },
--    "node_modules/inherits": {
--      "version": "2.0.4",
--      "resolved": "https://registry.npmjs.org/inherits/-/inherits-2.0.4.tgz",
--      "integrity": "sha512-k/vGaX4/Yla3WzyMCvTQOXYeIHvqOKtnqBduzTHpzpQZzAskKMhZ2K+EnBiSM9zGSoIFeMpXKxa4dYeZIQqewQ==",
--      "dev": true,
--      "license": "ISC"
--    },
-     "node_modules/is-binary-path": {
-       "version": "2.1.0",
-       "resolved": "https://registry.npmjs.org/is-binary-path/-/is-binary-path-2.1.0.tgz",
-@@ -632,14 +610,25 @@
-         "url": "https://github.com/sponsors/sindresorhus"
-       }
-     },
-+    "node_modules/lru-cache": {
-+      "version": "11.5.3",
-+      "resolved": "https://registry.npmjs.org/lru-cache/-/lru-cache-11.5.3.tgz",
-+      "integrity": "sha512-U4N8FgzmWxc8k1VH8Kr6lQg18U7Fjvby6wXHVRX/ZZ7IwWbRMgrRbP0Wrb5q5NVinryp4SQampHKdvtecItxUg==",
-+      "dev": true,
-+      "license": "BlueOak-1.0.0",
-+      "engines": {
-+        "node": "20 || >=22"
-+      }
-+    },
-     "node_modules/minimatch": {
--      "version": "10.2.4",
--      "resolved": "https://registry.npmjs.org/minimatch/-/minimatch-10.2.4.tgz",
--      "integrity": "sha512-oRjTw/97aTBN0RHbYCdtF1MQfvusSIBQM0IZEgzl6426+8jSC0nF1a/GmnVLpfB9yyr6g6FTqWqiZVbxrtaCIg==",
-+      "version": "11.0.3",
-+      "resolved": "https://registry.npmjs.org/minimatch/-/minimatch-11.0.3.tgz",
-+      "integrity": "sha512-iny/40PEGkNJQ5/Pv6z3nm6FbRAby32GeZRjCUJk2WnNDbgPSTcdI+DDvLqsgBdD4cD5sMtMheqPPnehCCa8Nw==",
-       "dev": true,
-       "license": "BlueOak-1.0.0",
-       "dependencies": {
--        "brace-expansion": "^5.0.2"
-+        "@isaacs/nonrecursive-glob-match": "^1.0.3",
-+        "brace-expansion": "^5.0.12"
-       },
-       "engines": {
-         "node": "18 || 20 || >=22"
-@@ -648,6 +637,16 @@
-         "url": "https://github.com/sponsors/isaacs"
-       }
-     },
-+    "node_modules/minipass": {
-+      "version": "7.1.3",
-+      "resolved": "https://registry.n
-```
-
-**File**: `tests/integration/package.json` (modified, +2/-1)
-```diff
-@@ -13,7 +13,8 @@
-   },
-   "overrides": {
-     "brace-expansion": "^5.0.12",
--    "minimatch": "^10.2.3",
-+    "glob": "^14.0.3",
-+    "minimatch": "^11.0.1",
-     "serialize-javascript": "^7.0.3"
-   },
-   "keywords": ["mcp", "bridge", "integration", "testing"],
+@@ -43,6 +43,8 @@ def __init__(
+         self.calls = []
+         self.open_pr = False
+         self.timeline = []
++        self.referencing_pr_closes = []
++        self.pr_lookup = "ok"
+         self.fail_comment = False
+         self.silent_assignment = False
+         self.before_assign = None
+@@ -52,6 +54,24 @@ def __init__(
+ 
+     def gh(self, *args, stdin=None):
+         self.calls.append((args, stdin))
++        if args[:2] == ("api", "graphql") and any("pullRequest(" in a for a in args):
++            if self.pr_lookup == "error":
++                raise subprocess.CalledProcessError(1, "gh")
++            if self.pr_lookup == "null":
++                return json.dumps({"data": {"repository": None}})
++            nodes = [
++                {"number": n, "repository": {"nameWithOwner": "owner/repo"}}
++                for n in self.referencing_pr_closes
++            ]
++            return json.dumps(
++                {
++                    "data": {
++                        "repository": {
++                            "pullRequest": {"closingIssuesReferences": {"nodes": nodes}}
++                        }
++                    }
++                }
++            )
+         if args[:2] == ("api", "graphql"):
+             nodes = [{"state": "OPEN"}] if self.open_pr else []
+             return json.dumps(
+@@ -304,8 +324,30 @@ def test_prior_natural_claim_requires_manual_confirmation(
+     assert {"name": "claim-pending"} in api.issue["labels"]
+ 
+ 
++def referencing_pr(**fields):
++    source = {
++        "state": "open",
++        "pull_request": {"url": "https://api.github.com/repos/owner/repo/pulls/7"},
++        **fields,
++    }
++    return [{"event": "cross-referenced", "source": {"issue": source}}]
++
++
++PR_FIELDS = {"number": 7, "repository_url": "https://api.github.com/repos/owner/repo"}
++
++
+ @pytest.mark.parametrize(
+-    "reason", ["withdrawal", "edited", "closing-pr", "referencing-pr"]
++    "reason",
++    [
++        "withdrawal",
++        "edited",
++        "closing-pr",
++        "referencing-pr",
++        "referencing-pr-closes-nothing",
++        "referencing-pr-closes-this",
++        "referencing-pr-lookup-error",
++        "referencing-pr-lookup-null",
++    ],
+ )
+ def test_ambiguous_or_existing_work_stays_manual(tmp_path, monkeypatch, reason):
+     api = GitHub()
+@@ -316,24 +358,33 @@ def test_ambiguous_or_existing_work_stays_manual(tmp_path, monkeypatch, reason):
+     if reason == "closing-pr":
+         api.open_pr = True
+     if reason == "referencing-pr":
+-        api.timeline = [
+-            {
+-                "event": "cross-referenced",
+-                "source": {
+-                    "issue": {
+-                        "state": "open",
+-                        "pull_request": {
+-                            "url": "https://api.github.com/repos/o/r/pulls/1"
+-                        },
+-                    }
+-                },
+-            }
+-        ]
++        api.timeline = referencing_pr()  # no number/repo: cannot tell, stay manual
++    if reason == "referencing-pr-closes-nothing":
++        api.timeline = referencing_pr(**PR_FIELDS)
++    if reason == "referencing-pr-closes-this":
++        api.timeline = referencing_pr(**PR_FIELDS)
++        api.referencing_pr_closes = [42, 99]
++    if reason.startswith("referencing-pr-lookup-"):
++        api.timeline = referencing_pr(**PR_FIELDS)
++        api.referencing_pr_closes = [99]
++        api.pr_lookup = reason.rsplit("-", 1)[1]
+     run_cli(tmp_path, monkeypatch, api)
+     assert not api.issue["assignees"]
+     assert any("maintainer" in r for r in api.replies)
+ 
+ 
++def test_pr_fixing_another_issue_that_only_mentions_this_one_is_no_work(
++    tmp_path, monkeypatch
++):
++    # #1814: open PR #1830 ("Fixes #1816") named the issue in passing.
++    api = GitHub()
++    api.timeline = referencing_pr(**PR_FIELDS)
++    api.referencing_pr_closes = [99]
++    run_cli(tmp_path, monkeypatch, api)
++    assert api.issue["assignees"] == [{"login": "alice"}]
++    assert not any("maintainer" in r for r in api.replies)
++
++
+ def test_collaborator_can_claim(tmp_path, monkeypatch):
+     api = GitHub([comment(author_association="COLLABORATOR")])
+     run_cli(tmp_path, monkeypatch, api)
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1795** (closed): fix(harvest): _try_evolve returns the evolved hash, so capture() can unpack it (@Esmail-sarhadi)
-- **PR #1792** (2026-11-02): fix(web): reject blank memory content and guard NULL cosine distance (#1791) (@10RZC22)
-- **PR #1790** (2026-11-02): fix(migrations): read migration files as UTF-8 (#1789) (@ppcvote)
-- **PR #1788** (2026-11-02): fix(sync): propagate a supersede made after the first sync (#1773) (@ppcvote)
-- **PR #1787** (2026-11-02): feat(i18n): add Brazilian Portuguese dashboard translation (#1755) (@shyam1017)
-- **PR #1786** (2026-11-02): fix(storage): stop capping Milvus full reads at 16384 rows (#1785) (@henry201605)
+- **PR #1836** (2026-11-03): chore(release): v12.5.0 (@doobidoo)
+- **PR #1835** (2026-11-03): fix(dashboard): translate the Settings tabs, Environment, System Info and Backup (@calude-bot)
+- **PR #1834** (2026-11-03): fix(ci): a PR that fixes another issue no longer blocks /claim (@doobidoo)
+- **PR #1833** (2026-11-03): fix(dashboard): translate the Knowledge Graph toolbar and fullscreen controls (#1811) (@ppcvote)
+- **PR #1832** (2026-11-03): i18n(site): add Traditional Chinese (Taiwan) introduction (zh-tw) (@ppcvote)
+- **PR #1831** (2026-11-03): fix(dashboard): translate the Settings Server tab and the restart overlay (@calude-bot)
 
 ---
 
@@ -4126,25 +4012,30 @@ Co-authored-by: Henry Krupp <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. memory_search point-in-time queries with as_of and status flags (fixes #1724) (#
+## X. dashboard): translate the Settings tabs, Environment, System Info and Backup (#1
 
 **RULE**:
-When implementing operations in `changelog.d/1724.fixed.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in doobidoo/mcp-memory-service. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `changelog.d/1812.fixed.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in doobidoo/mcp-memory-service. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ce80cb53`: memory_search point-in-time queries with as_of and status flags (fixes #1724) (#1726). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `bf403e91`: dashboard): translate the Settings tabs, Environment, System Info and Backup (#1835). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog.d/1724.fixed.md`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog.d/1812.fixed.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-- **Point-in-time `as_of` searches no longer leak present-day fallback results (#1724).**
-  With `fallback=true`, an `as_of` search returning fewer than three matches could
-  append present-day exact or tag matches. The cascading fallback stages now forward
-  `as_of`, so historical queries only return memories that were current at the
-  requested date.
+- **The Settings tab names and the Environment, System Info and Backup tabs stayed in English in every language, and Last Backup read "5m ago ago" (#1812, calude-bot).**
+  The seven tab names, the Environment tab's header, labels and toasts, the System Info
+  `N/A`/`Enabled`/`Disabled`/`Error` values and uptime units, the Backup tab's status texts and
+  the Backup History modal come from 40 new keys in all ten catalogs now. `formatTimeDelta()`
+  is split into a translated duration (`formatDuration()`) and a translated `{time} ago`, so the
+  sync cadence takes the duration instead of cutting " ago" off English text, and
+  `checkBackupStatus()` no longer appends a second " ago". Fields that JavaScript fills drop
+  their static `data-i18n` key, so a language switch cannot put `Never` or `Loading...` back over
+  a loaded value, and a failed System Info load finds its pending fields by `data-loading`
+  instead of comparing their text with the English `Loading...`.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -4154,4 +4045,4 @@ Subsystems managing Python data structures, boundary deserialization, API parsin
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ce80cb53` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `bf403e91` are properly handled with clean fallback behavior.

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-04T02:26:14.165Z",
+  "last_updated": "2026-11-04T02:33:22.357Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2976,14 +2976,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-webpack-webpack",
-      "content_hash": "9938785c7214e8eca3473d650a55bb3d65173175e96a8b11355cd1847ba404a8",
-      "verified_at": "2026-10-30T19:05:44.221Z",
+      "content_hash": "3108916c3ea9239bbf225ff5caba65f241867ec2164e39a5a9eb328ca460a63f",
+      "verified_at": "2026-11-04T02:33:13.618Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T19:05:44.221Z"
+      "last_updated": "2026-11-04T02:33:13.618Z"
     },
     "rollup/rollup": {
       "repository": "rollup/rollup",
@@ -5061,14 +5061,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-doobidoo-mcp-memory-service",
-      "content_hash": "945915574a586c0415708e1ec810ee849677f908e4e7b9af84002f19098b47cf",
-      "verified_at": "2026-11-02T15:57:29.925Z",
+      "content_hash": "c6560a99f78e68d0ceeb2fbca8a27a51d07f00a87d68eba8230aaf9f2cc3baa7",
+      "verified_at": "2026-11-04T02:33:22.356Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-02T15:57:29.925Z"
+      "last_updated": "2026-11-04T02:33:22.356Z"
     },
     "21st-dev/magic-mcp": {
       "repository": "21st-dev/magic-mcp",

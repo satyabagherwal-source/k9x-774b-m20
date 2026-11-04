@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-04T02:26:14.161Z",
-  "total_cycles_completed": 7103,
-  "total_learnings_persisted": 7103,
-  "total_rules_promoted": 6748,
+  "last_updated": "2026-11-04T02:33:22.352Z",
+  "total_cycles_completed": 7105,
+  "total_learnings_persisted": 7105,
+  "total_rules_promoted": 6750,
   "history": [
-    {
-      "timestamp": "2026-11-03T16:09:09.019Z",
-      "repository": "zenbu-labs/terminal-browser",
-      "learningId": "learn-github-zenbu-labs-terminal-browser",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-03T16:09:17.889Z",
-      "repository": "gardener/gardener",
-      "learningId": "learn-github-gardener-gardener",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-03T16:09:23.507Z",
       "repository": "GreptimeTeam/greptimedb",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-04T02:26:14.161Z",
       "repository": "gocd/gocd",
       "learningId": "learn-github-gocd-gocd",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T02:33:13.614Z",
+      "repository": "webpack/webpack",
+      "learningId": "learn-github-webpack-webpack",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T02:33:22.352Z",
+      "repository": "doobidoo/mcp-memory-service",
+      "learningId": "learn-github-doobidoo-mcp-memory-service",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

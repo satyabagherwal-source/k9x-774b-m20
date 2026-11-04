@@ -7135,3 +7135,5 @@ Every entry in this ledger must capture:
 | `learn-github-vitejs-vite` | `https://github.com/vitejs/vite` | `b3cb0575` | Multi-dimensional audit evidence | 2026-11-04T02:26:09.697Z |
 | `learn-github-callstack-react-native-paper` | `https://github.com/callstack/react-native-paper` | `61d935b6` | Multi-dimensional audit evidence | 2026-11-04T02:26:10.662Z |
 | `learn-github-gocd-gocd` | `https://github.com/gocd/gocd` | `e045a46c` | Multi-dimensional audit evidence | 2026-11-04T02:26:14.157Z |
+| `learn-github-webpack-webpack` | `https://github.com/webpack/webpack` | `0b35ae90` | Multi-dimensional audit evidence | 2026-11-04T02:33:13.608Z |
+| `learn-github-doobidoo-mcp-memory-service` | `https://github.com/doobidoo/mcp-memory-service` | `d3e6b5aa` | Multi-dimensional audit evidence | 2026-11-04T02:33:22.346Z |

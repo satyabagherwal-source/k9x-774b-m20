@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261031-37QX",
-    "timestamp": "2026-10-31T15:56:42.105Z",
-    "repository": "zed-industries/zed",
-    "learningId": "learn-github-zed-industries-zed",
-    "contentHash": "4c7ce402ed21bfe213933e7b694cdb027806c811ed7a60aac06edc7e5c448098",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261031-C3Y4",
-    "timestamp": "2026-10-31T16:03:37.084Z",
-    "repository": "baidu/Unlimited-OCR",
-    "learningId": "learn-huggingface-baidu-unlimited-ocr",
-    "contentHash": "d1a56c95d26991f1ff8d9a3d294d937276aecd132df43fa11ecbc6f22a3db681",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261031-IHX0",
     "timestamp": "2026-10-31T16:08:35.124Z",
     "repository": "Edge0/Audio8-TTS-Realistic-0.6b",
@@ -7490,6 +7460,36 @@
     "repository": "gocd/gocd",
     "learningId": "learn-github-gocd-gocd",
     "contentHash": "f5ba8a73ca335f90ecb74b69f7ff3d67f6ace90969fda47895e714eba7db03cd",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-5CHW",
+    "timestamp": "2026-11-04T02:33:13.604Z",
+    "repository": "webpack/webpack",
+    "learningId": "learn-github-webpack-webpack",
+    "contentHash": "3108916c3ea9239bbf225ff5caba65f241867ec2164e39a5a9eb328ca460a63f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-5J8M",
+    "timestamp": "2026-11-04T02:33:22.342Z",
+    "repository": "doobidoo/mcp-memory-service",
+    "learningId": "learn-github-doobidoo-mcp-memory-service",
+    "contentHash": "c6560a99f78e68d0ceeb2fbca8a27a51d07f00a87d68eba8230aaf9f2cc3baa7",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

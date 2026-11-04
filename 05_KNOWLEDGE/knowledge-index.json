@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-04T02:26:14.085Z",
+  "last_updated": "2026-11-04T02:33:22.256Z",
   "total_verified_learnings": 1204,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -10750,8 +10750,8 @@
       "slug": "doobidoo-mcp-memory-service",
       "platform": "github",
       "source_url": "https://github.com/doobidoo/mcp-memory-service",
-      "source_version": "e0f224ec",
-      "content_hash": "945915574a586c0415708e1ec810ee849677f908e4e7b9af84002f19098b47cf",
+      "source_version": "d3e6b5aa",
+      "content_hash": "c6560a99f78e68d0ceeb2fbca8a27a51d07f00a87d68eba8230aaf9f2cc3baa7",
       "dossier_path": "07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md",
       "promoted_rules": [
@@ -10824,6 +10824,11 @@
           "number": 6447,
           "title": "memory_search point-in-time queries with as_of and status flags (fixes #1724) (#",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6727,
+          "title": "dashboard): translate the Settings tabs, Environment, System Info and Backup (#1",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -10831,7 +10836,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-02T15:57:29.836Z",
+      "verified_at": "2026-11-04T02:33:22.233Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -75928,8 +75933,8 @@
       "slug": "webpack-webpack",
       "platform": "github",
       "source_url": "https://github.com/webpack/webpack",
-      "source_version": "a11411af",
-      "content_hash": "9938785c7214e8eca3473d650a55bb3d65173175e96a8b11355cd1847ba404a8",
+      "source_version": "0b35ae90",
+      "content_hash": "3108916c3ea9239bbf225ff5caba65f241867ec2164e39a5a9eb328ca460a63f",
       "dossier_path": "07_PROJECT_LEARNING/webpack-webpack-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/webpack-webpack-learnings.md",
       "promoted_rules": [
@@ -75977,6 +75982,11 @@
           "number": 5836,
           "title": "hmr): stop over-fetching shared group chunks, support prototype-key chunk ids, p",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6726,
+          "title": "javascript): minify equal boolean branches, exits before an else and constant ar",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -75984,7 +75994,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T19:05:44.104Z",
+      "verified_at": "2026-11-04T02:33:13.498Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -172609,6 +172619,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-04T02:26:14.066Z"
+    },
+    "rule-6726": {
+      "learning_id": "rule-6726",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6726,
+      "title": "javascript): minify equal boolean branches, exits before an else and constant ar",
+      "source_url": "https://github.com/webpack/webpack",
+      "source_version": "0b35ae90",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T02:33:13.498Z"
+    },
+    "rule-6727": {
+      "learning_id": "rule-6727",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6727,
+      "title": "dashboard): translate the Settings tabs, Environment, System Info and Backup (#1",
+      "source_url": "https://github.com/doobidoo/mcp-memory-service",
+      "source_version": "d3e6b5aa",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T02:33:22.233Z"
     }
   },
   "aliases": {
