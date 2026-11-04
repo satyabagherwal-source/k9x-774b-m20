@@ -1413,10 +1413,10 @@
     "repository": "tickernelz/opencode-mem",
     "platform": "github",
     "sourceUrl": "https://github.com/tickernelz/opencode-mem",
-    "sourceVersion": "f2163b51",
+    "sourceVersion": "5b05e1f5",
     "license": "MIT",
-    "contentHash": "e0ea6d9f92dcbad4043c7ee4a36ced85e70dc747f563a8750ffd0c6e8b6221f3",
-    "lastHarvestedAt": "2026-11-03T19:06:07.818Z",
+    "contentHash": "8a3fa0eacb4b7efd7d9299923499954f9015b9605e52858ed757e558a1eb5991",
+    "lastHarvestedAt": "2026-11-04T19:15:37.697Z",
     "learningId": "learn-github-tickernelz-opencode-mem"
   },
   "hf-autotrust-jev-35b-nvfp4": {
@@ -6983,10 +6983,10 @@
     "repository": "restatedev/restate",
     "platform": "github",
     "sourceUrl": "https://github.com/restatedev/restate",
-    "sourceVersion": "195e0b01",
+    "sourceVersion": "b074c52f",
     "license": "NOASSERTION",
-    "contentHash": "9e0b05c72601cbab430fdb9707297a5950ed30a6a178e31f0a3fbbd2a13a7220",
-    "lastHarvestedAt": "2026-11-03T11:59:11.780Z",
+    "contentHash": "e389ed16055de52f7bada15e409e04855ada05a5e8974409aa81a1d409ea0de3",
+    "lastHarvestedAt": "2026-11-04T19:15:26.556Z",
     "learningId": "learn-github-restatedev-restate"
   },
   "kong-kubernetes-ingress-controller": {
@@ -10675,8 +10675,8 @@
     "sourceUrl": "https://huggingface.co/orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF",
     "sourceVersion": "hf-orcarouter-deepseek-v4.1-flash-1017-abliterated-gguf",
     "license": "Open-Source",
-    "contentHash": "61b6a50a679da88ece23d7194f9381cff5b5dd164d0205d7d2578f689d0bca27",
-    "lastHarvestedAt": "2026-10-31T03:12:35.864Z",
+    "contentHash": "8e4f6605d5ea954136458bc032bfb6da879cbbdeb300414723f5ac28e0aaac59",
+    "lastHarvestedAt": "2026-11-04T19:15:36.478Z",
     "learningId": "learn-huggingface-orcarouter-deepseek-v4-1-flash-1017-abliterated-gguf"
   },
   "makecindy-cindy": {

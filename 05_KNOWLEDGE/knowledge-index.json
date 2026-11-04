@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-04T19:09:02.624Z",
+  "last_updated": "2026-11-04T19:15:37.636Z",
   "total_verified_learnings": 1209,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -50116,8 +50116,8 @@
       "slug": "restatedev-restate",
       "platform": "github",
       "source_url": "https://github.com/restatedev/restate",
-      "source_version": "195e0b01",
-      "content_hash": "9e0b05c72601cbab430fdb9707297a5950ed30a6a178e31f0a3fbbd2a13a7220",
+      "source_version": "b074c52f",
+      "content_hash": "e389ed16055de52f7bada15e409e04855ada05a5e8974409aa81a1d409ea0de3",
       "dossier_path": "07_PROJECT_LEARNING/restatedev-restate-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/restatedev-restate-learnings.md",
       "promoted_rules": [
@@ -50185,6 +50185,11 @@
           "number": 6516,
           "title": "Run CI for hotfixes",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6918,
+          "title": "Service protocol v8 (#5520)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -50192,7 +50197,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T11:59:11.656Z",
+      "verified_at": "2026-11-04T19:15:26.485Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -69389,8 +69394,8 @@
       "slug": "tickernelz-opencode-mem",
       "platform": "github",
       "source_url": "https://github.com/tickernelz/opencode-mem",
-      "source_version": "f2163b51",
-      "content_hash": "e0ea6d9f92dcbad4043c7ee4a36ced85e70dc747f563a8750ffd0c6e8b6221f3",
+      "source_version": "5b05e1f5",
+      "content_hash": "8a3fa0eacb4b7efd7d9299923499954f9015b9605e52858ed757e558a1eb5991",
       "dossier_path": "07_PROJECT_LEARNING/tickernelz-opencode-mem-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tickernelz-opencode-mem-learnings.md",
       "promoted_rules": [
@@ -69453,6 +69458,11 @@
           "number": 6585,
           "title": "harden cleanup vacuum and dreaming run feedback (#480)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6922,
+          "title": "site): rebuild github-site docs UI with search (#488)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -69460,7 +69470,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T19:06:07.708Z",
+      "verified_at": "2026-11-04T19:15:37.621Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -132325,7 +132335,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF",
       "source_version": "hf-orcarouter-deepseek-v4.1-flash-1017-abliterated-gguf",
-      "content_hash": "61b6a50a679da88ece23d7194f9381cff5b5dd164d0205d7d2578f689d0bca27",
+      "content_hash": "8e4f6605d5ea954136458bc032bfb6da879cbbdeb300414723f5ac28e0aaac59",
       "dossier_path": "07_PROJECT_LEARNING/hf-orcarouter-deepseek-v4.1-flash-1017-abliterated-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-orcarouter-deepseek-v4.1-flash-1017-abliterated-gguf-learnings.md",
       "promoted_rules": [
@@ -132373,6 +132383,21 @@
           "number": 6040,
           "title": "[Memory-Bound Inference Resource Isolation]",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6919,
+          "title": "GGUF Tensor Integrity & Metadata Consistency Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6920,
+          "title": "Abliterated Model Sampling Parameter Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6921,
+          "title": "GGUF File Size & Memory Footprint Prediction Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -132380,7 +132405,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T03:12:35.759Z",
+      "verified_at": "2026-11-04T19:15:36.400Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -176412,6 +176437,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-04T19:09:02.592Z"
+    },
+    "rule-6918": {
+      "learning_id": "rule-6918",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6918,
+      "title": "Service protocol v8 (#5520)",
+      "source_url": "https://github.com/restatedev/restate",
+      "source_version": "b074c52f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T19:15:26.485Z"
+    },
+    "rule-6919": {
+      "learning_id": "rule-6919",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6919,
+      "title": "GGUF Tensor Integrity & Metadata Consistency Invariant",
+      "source_url": "https://huggingface.co/orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF",
+      "source_version": "hf-orcarouter-deepseek-v4.1-flash-1017-abliterated-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T19:15:36.400Z"
+    },
+    "rule-6920": {
+      "learning_id": "rule-6920",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6920,
+      "title": "Abliterated Model Sampling Parameter Invariant",
+      "source_url": "https://huggingface.co/orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF",
+      "source_version": "hf-orcarouter-deepseek-v4.1-flash-1017-abliterated-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T19:15:36.400Z"
+    },
+    "rule-6921": {
+      "learning_id": "rule-6921",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6921,
+      "title": "GGUF File Size & Memory Footprint Prediction Invariant",
+      "source_url": "https://huggingface.co/orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF",
+      "source_version": "hf-orcarouter-deepseek-v4.1-flash-1017-abliterated-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T19:15:36.400Z"
+    },
+    "rule-6922": {
+      "learning_id": "rule-6922",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6922,
+      "title": "site): rebuild github-site docs UI with search (#488)",
+      "source_url": "https://github.com/tickernelz/opencode-mem",
+      "source_version": "5b05e1f5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T19:15:37.621Z"
     }
   },
   "aliases": {

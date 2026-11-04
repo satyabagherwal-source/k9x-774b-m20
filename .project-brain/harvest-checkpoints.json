@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-04T19:09:02.737Z",
+  "last_updated": "2026-11-04T19:15:37.716Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2198,14 +2198,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tickernelz-opencode-mem",
-      "content_hash": "e0ea6d9f92dcbad4043c7ee4a36ced85e70dc747f563a8750ffd0c6e8b6221f3",
-      "verified_at": "2026-11-03T19:06:07.827Z",
+      "content_hash": "8a3fa0eacb4b7efd7d9299923499954f9015b9605e52858ed757e558a1eb5991",
+      "verified_at": "2026-11-04T19:15:37.715Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T19:06:07.827Z"
+      "last_updated": "2026-11-04T19:15:37.715Z"
     },
     "autotrust/JEV-35B-NVFP4": {
       "repository": "autotrust/JEV-35B-NVFP4",
@@ -10536,14 +10536,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-restatedev-restate",
-      "content_hash": "9e0b05c72601cbab430fdb9707297a5950ed30a6a178e31f0a3fbbd2a13a7220",
-      "verified_at": "2026-11-03T11:59:11.789Z",
+      "content_hash": "e389ed16055de52f7bada15e409e04855ada05a5e8974409aa81a1d409ea0de3",
+      "verified_at": "2026-11-04T19:15:26.564Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T11:59:11.789Z"
+      "last_updated": "2026-11-04T19:15:26.564Z"
     },
     "Kong/kubernetes-ingress-controller": {
       "repository": "Kong/kubernetes-ingress-controller",
@@ -16041,14 +16041,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-orcarouter-deepseek-v4-1-flash-1017-abliterated-gguf",
-      "content_hash": "61b6a50a679da88ece23d7194f9381cff5b5dd164d0205d7d2578f689d0bca27",
-      "verified_at": "2026-10-31T03:12:35.874Z",
+      "content_hash": "8e4f6605d5ea954136458bc032bfb6da879cbbdeb300414723f5ac28e0aaac59",
+      "verified_at": "2026-11-04T19:15:36.493Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T03:12:35.874Z"
+      "last_updated": "2026-11-04T19:15:36.493Z"
     },
     "makecindy/cindy": {
       "repository": "makecindy/cindy",

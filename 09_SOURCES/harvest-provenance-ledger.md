@@ -7300,3 +7300,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-coder-gguf` | `https://huggingface.co/ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-Coder-GGUF` | `hf-ista-da` | Multi-dimensional audit evidence | 2026-11-04T19:08:58.947Z |
 | `learn-github-open-source-legal-opencontracts` | `https://github.com/Open-Source-Legal/OpenContracts` | `fab192a5` | Multi-dimensional audit evidence | 2026-11-04T19:09:00.936Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `88c781d5` | Multi-dimensional audit evidence | 2026-11-04T19:09:02.719Z |
+| `learn-github-restatedev-restate` | `https://github.com/restatedev/restate` | `b074c52f` | Multi-dimensional audit evidence | 2026-11-04T19:15:26.556Z |
+| `learn-huggingface-orcarouter-deepseek-v4-1-flash-1017-abliterated-gguf` | `https://huggingface.co/orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF` | `hf-orcarou` | Multi-dimensional audit evidence | 2026-11-04T19:15:36.478Z |
+| `learn-github-tickernelz-opencode-mem` | `https://github.com/tickernelz/opencode-mem` | `5b05e1f5` | Multi-dimensional audit evidence | 2026-11-04T19:15:37.697Z |

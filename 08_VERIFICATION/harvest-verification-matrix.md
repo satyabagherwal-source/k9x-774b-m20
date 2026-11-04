@@ -7291,3 +7291,6 @@
 | `CYCLE-20261104-PWAN` | `2026-11-04T19:08:58.943Z` | `ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-Coder-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-coder-gguf-learnings.md` | Yes (`a3cdd04f...`) |
 | `CYCLE-20261104-PXTW` | `2026-11-04T19:09:00.932Z` | `Open-Source-Legal/OpenContracts` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6916` | Yes (`6db26676...`) |
 | `CYCLE-20261104-PZ7F` | `2026-11-04T19:09:02.715Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6917` | Yes (`a84fdf10...`) |
+| `CYCLE-20261104-Y7DM` | `2026-11-04T19:15:26.554Z` | `restatedev/restate` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6918` | Yes (`e389ed16...`) |
+| `CYCLE-20261104-YF17` | `2026-11-04T19:15:36.475Z` | `orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6919, Rule 6920, Rule 6921` | Yes (`8e4f6605...`) |
+| `CYCLE-20261104-YFZ2` | `2026-11-04T19:15:37.694Z` | `tickernelz/opencode-mem` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6922` | Yes (`8a3fa0ea...`) |

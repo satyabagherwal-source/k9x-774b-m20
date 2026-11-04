@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/restatedev-restate-learnings.md`  
 > **Source**: github ([https://github.com/restatedev/restate](https://github.com/restatedev/restate))  
-> **Source Version**: `195e0b01`  
+> **Source Version**: `b074c52f`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T11:59:10.954Z  
+> **Timestamp**: 2026-11-04T19:15:26.004Z  
 > **Learning ID**: `learn-github-restatedev-restate`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/restatedev-restate-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/restatedev/restate](https://github.com/restatedev/restate))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T11:59:10.084Z  
+> **Harvest Timestamp**: 2026-11-04T19:15:24.476Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Restate is the platform for building resilient applications that tolerate all infrastructure faults w/o the need for a PhD.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 4649 stars
+- **Stars / Engagement**: 4657 stars
 
 ---
 
@@ -1634,28 +1634,443 @@ async fn list(env: &CliEnv, opts: &List) -> Result<()> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6f8e3ef1` (2026-11-02)
-**Commit Message**: Run CI for hotfixes
+### Incident Patch 1: `b074c52f` (2026-11-03)
+**Commit Message**: Service protocol v8 (#5520)
 
-**File**: `.github/workflows/ci.yml` (modified, +1/-0)
+* Service protocol v8: new messages, usual wiring
+
+* Service protocol v8: implementation of the new ephemeral commands/notifications
+
+* Service protocol v8: protocol dissector
+
+* Service protocol v8: ci smoke test
+
+* fix merge conflict
+
+* Drop stale indexes_v1 experimental flag and fix protocol v8 rollback bound
+
+**File**: `.github/workflows/ci.yml` (modified, +17/-0)
 ```diff
-@@ -13,6 +13,7 @@ on:
-     branches:
-       - main
-       - release/*
-+      - hotfix/*
-       # Keep CI on existing maintenance branches during the naming transition.
-       - release-*
+@@ -276,6 +276,23 @@ jobs:
+         RESTATE_experimental_enable_protocol_v7=true
+       testArtifactOutput: sdk-typescript-protocol-v7-test-report
+ 
++  sdk-typescript-protocol-v8:
++    name: Run SDK-Typescript integration tests with Protocol V8
++    permissions:
++      contents: read
++      issues: read
++      checks: write
++      pull-requests: write
++      actions: read
++    secrets: inherit
++    needs: docker
++    uses: restatedev/sdk-typescript/.github/workflows/integration.yaml@main
++    with:
++      restateCommit: ${{ github.event.pull_request.head.sha || github.sha }}
++      envVars: |
++        RESTATE_experimental_enable_protocol_v8=true
++      testArtifactOutput: sdk-typescript-protocol-v8-test-report
++
+   sdk-typescript-bilrost-schema:
+     name: Run SDK-Typescript integration tests with Bilrost schema encoding
+     permissions:
+```
+
+**File**: `Cargo.lock` (modified, +1/-0)
+```diff
+@@ -9285,6 +9285,7 @@ name = "restate-worker-api"
+ version = "1.8.2-dev"
+ dependencies = [
+  "bytes",
++ "bytestring",
+  "codederror",
+  "derive_more",
+  "futures",
+```
+
+**File**: `crates/invoker-impl/src/error.rs` (modified, +8/-0)
+```diff
+@@ -91,6 +91,14 @@ pub(crate) enum InvokerError {
+     #[error("malformed ProposeRunCompletionMessage, missing result field")]
+     #[code(restate_errors::RT0012)]
+     MalformedProposeRunCompletion,
++    #[error("malformed GetStateEphemeralCommandMessage, the key is not a valid UTF-8 string: {0}")]
++    #[code(restate_errors::RT0012)]
++    MalformedGetStateEphemeralCommand(#[source] std::str::Utf8Error),
++    #[error(
++        "cannot process GetStateEphemeralCommandMessage, this service type doesn't have state access"
++    )]
++    #[code(restate_errors::RT0012)]
++    GetStateEphemeralCommandWithoutStateAccess,
+ 
+     #[error("error when trying to read the journal: {0}")]
+     #[code(restate_errors::RT0006)]
+```
+
+**File**: `crates/invoker-impl/src/invocation_task/mod.rs` (modified, +19/-7)
+```diff
+@@ -87,6 +87,10 @@ const SERVICE_PROTOCOL_VERSION_V6: HeaderValue =
+ const SERVICE_PROTOCOL_VERSION_V7: HeaderValue =
+     HeaderValue::from_static("application/vnd.restate.invocation.v7");
+ 
++#[allow(clippy::declare_interior_mutable_const)]
++const SERVICE_PROTOCOL_VERSION_V8: HeaderValue =
++    HeaderValue::from_static("application/vnd.restate.invocation.v8");
++
+ #[allow(clippy::declare_interior_mutable_const)]
+ const X_RESTATE_SERVER: HeaderName = HeaderName::from_static("x-restate-server");
+ 
+@@ -264,6 +268,8 @@ pub(super) struct InvocationTask<DMR> {
+ 
+     // throttling
+     action_token_bucket: Option<TokenBucket>,
++
++    allow_protocol_v8: bool,
+ }
+ 
+ /// This is needed to split the run_internal in multiple loop functions and have shortcircuiting.
+@@ -340,6 +346,7 @@ where
+         limit_key: LimitKey<ReString>,
+         idempotency_key: Option<ReString>,
+         max_awaited_future_depth: usize,
++        allow_protocol_v8: bool,
+     ) -> Self {
+         Self {
+             client,
+@@ -360,6 +367,7 @@ where
+             limit_key,
+             idempotency_key,
+             max_awaited_future_depth,
++            allow_protocol_v8,
+         }
+     }
+ 
+@@ -487,13 +495,16 @@ where
+                 );
+ 
+                 let chosen_service_protocol_version = shortcircuit!(
+-                    ServiceProtocolVersion::pick(&deployment.supported_protocol_versions)
+-                        .ok_or_else(|| {
+-                            InvokerError::IncompatibleServiceEndpoint(
+-                                deployment.id,
+-                                deployment.supported_protocol_versions.clone(),
+-                            )
+-                        })
++                    ServiceProtocolVersion::pick(
++                        &deployment.supported_protocol_versions,
++                        self.allow_protocol_v8
++                    )
++                    .ok_or_else(|| {
++                        InvokerError::IncompatibleServiceEndpoint(
++                            deployment.id,
++                            deployment.supported_protocol_versions.clone(),
++                        )
++                    })
+                 );
+ 
+                 (
+@@ -589,6 +600,7 @@ fn service_protocol_version_to_header_value(
+         ServiceProtocolVersion::V5 => SERVICE_PROTOCOL_VERSION_V5,
+         ServiceProtocolVersion::V6 => SERVICE_PROTOCOL_VERSION_V6,
+         ServiceProtocolVersion::V7 => SERVICE_PROTOCOL_VERSION_V7,
++        ServiceProtocolVersion::V8 => SERVICE_PROTOCOL_VERSION_V8,
+     }
+ }
  
 ```
 
+**File**: `crates/invoker-impl/src/invocation_task/service_protocol_runner_v4.rs` (modified, +87/-16)
+```diff
+@@ -309,7 +309,7 @@ where
+         state_read: Option<StatePreloadPolicy>,
+         mut http_stream_tx: InvokerBodySender,
+         decoder_stream: &mut S,
+-        invocation_reader: IR,
++        mut invocation_reader: IR,
+         outbound_budget: &mut LocalMemoryPool,
+         attempt_span: &mut ServiceSpan,
+     ) -> TerminalLoopState<()>
+@@ -390,7 +390,7 @@ where
+                 self.bidi_stream_loop(
+                     http_stream_tx,
+                     decoder_stream,
+-                    invocation_reader,
++                    &mut invocation_reader,
+                     // The bidi stream loop will never read from a journal v1 as it will be migrated
+                     // by the time the bidi stream loop needs to read notifications from it.
+                     // todo remove once we drop support for journal v1
+@@ -413,8 +413,13 @@ where
+         // We don't have the invoker_rx, so we simply consume the response
+         trace!("Sender side of the request has been dropped, now processing the response");
+ 
+-        self.response_stream_loop(decoder_stream, attempt_span)
+-            .await
++        self.response_stream_loop(
++            decoder_stream,
++            &mut invocation_reader,
++            outbound_budget,
++            attempt_span,
++        )
++        .await
+     }
+ 
+     fn prepare_request(
+@@ -588,7 +593,7 @@ where
+         &mut self,
+         mut http_stream_tx: InvokerBodySender,
+         http_stream_rx: &mut S,
+-        mut invocation_reader: IR,
++        invocation_reader: &mut IR,
+         journal_kind: JournalKind,
+         replayed_journal_length: EntryIndex,
+         outbound_budget: &mut LocalMemoryPool,
+@@ -671,7 +676,14 @@ where
+                         }
+                         Some(DecoderStreamItem::Parts(parts)) => shortcircuit!(self.handle_response_headers(parts)),
+                         Some(DecoderStreamItem::Message(message_header, message)) => {
+-                            shortcircuit!(self.handle_message(message_header, message, attempt_span));
++                            shortcircuit!(self.handle_message(
++                                message_header,
++                                message,
++                                Some(&mut http_stream_tx),
++                                invocation_reader,
++                                outbound_budget,
++                                attempt_span,
++                            ).await);
+                         }
+                     }
+ 
+@@ -690,13 +702,16 @@ where
+         }
+     }
+ 
+-    async fn response_stream_loop<S>(
++    async fn response_stream_loop<S, IR>(
+         &mut self,
+         http_stream_rx: &mut S,
++        invocation_reader: &mut IR,
++        outbound_budget: &mut LocalMemoryPool,
+         attempt_span: &mut ServiceSpan,
+     ) -> TerminalLoopState<()>
+     where
+         S: Stream<Item = Result<DecoderStreamItem, InvokerError>> + Unpin,
++        IR: InvocationReader,
+     {
+         loop {
+             tokio::select! {
+@@ -710,7 +725,14 @@ where
+                         }
+                         Some(DecoderStreamItem::Parts(parts)) => shortcircuit!(self.handle_response_headers(parts)),
+                         Some(DecoderStreamItem::Message(message_header, message)) => {
+-                            shortcircuit!(self.handle_message(message_header, message, attempt_span));
++                            shortcircuit!(self.handle_message(
++                                message_header,
++                                message,
++                                None,
++                                invocation_reader,
++                                outbound_budget,
++                                attempt_span,
++                            ).await);
+                         }
+                     }
+                 },
+@@ -968,10 +990,14 @@ where
+         self.command_index += 1;
+     }
+ 
+-    fn handle_message(
++    /// `http_stream_tx` is `None` once the request stream is closed.
++    async fn handle_message<IR: InvocationReader>(
+         &mut self,
+         mh: MessageHeader,
+         message: Message,
++        http_stream_tx: Option<&mut InvokerBodySender>,
++        invocation_reader: &mut IR,
++        outbound_budget: &mut LocalMemoryPool,
+         attempt_span: &mut ServiceSpan,
+     ) -> TerminalLoopState<()> {
+         trace!(
+@@ -984,12 +1010,55 @@ where
+             Message::Start { .. } => {
+                 TerminalLoopState::Failed(InvokerError::UnexpectedMessageV4(MessageType::Start))
+             }
+-            Message::CommandAck(_) => TerminalLoopState::Failed(InvokerError::UnexpectedMessageV4(
+-                MessageType::CommandAck,
+-            )),
+-            Message::ProposeRunCompletionAck(_) => TerminalLoopState::Failed(
+-                InvokerError::UnexpectedMessageV4(MessageType::ProposeRunCompletionAck),
+-            ),
++            // These we are only supposed to send from the runtime
++            m @ Message::CommandAck(_)
++            | m @ Me
+```
+
+**File**: `crates/invoker-impl/src/lib.rs` (modified, +6/-0)
+```diff
+@@ -146,6 +146,7 @@ struct DefaultInvocationTaskRunner<Schemas> {
+     client: ServiceClient,
+     schemas: Live<Schemas>,
+     action_token_bucket: Option<TokenBucket>,
++    allow_protocol_v8: bool,
+ }
+ 
+ impl<IR, Schemas> InvocationTaskRunner<IR> for DefaultInvocationTaskRunner<Schemas>
+@@ -189,6 +190,7 @@ where
+                 limit_key,
+                 idempotency_key,
+                 opts.max_awaited_future_depth,
++                self.allow_protocol_v8,
+             )
+             .run(storage_reader, budget),
+         )
+@@ -273,6 +275,10 @@ impl<StorageReader, Schemas> Service<StorageReader, Schemas> {
+                     client,
+                     schemas: Live::clone(&schemas),
+                     action_token_bucket,
++                    allow_protocol_v8: Configuration::pinned()
++                        .common
++                        .experimental
++                        .is_protocol_v8_enabled(),
+                 },
+                 schemas,
+                 invocation_tasks: Default::default(),
+```
+
+**File**: `crates/invoker-impl/src/test_util.rs` (modified, +9/-0)
+```diff
+@@ -57,6 +57,15 @@ impl InvocationReader for EmptyStorageReader {
+     ) -> Result<Option<(JournalEntry, LocalMemoryLease)>, Infallible> {
+         Ok(None)
+     }
++
++    async fn read_state_entry_budgeted(
++        &mut self,
++        _service_id: &ServiceId,
++        _key: &bytestring::ByteString,
++        _budget: &mut LocalMemoryPool,
++    ) -> Result<Option<(Bytes, LocalMemoryLease)>, Infallible> {
++        Ok(None)
++    }
+ }
+ 
+ pub struct EmptyStorageReaderTransaction;
+```
+
+**File**: `crates/service-protocol-v4/src/lib.rs` (modified, +11/-3)
+```diff
+@@ -35,6 +35,8 @@ pub mod proto {
+         CommandAckMessage,
+         ProposeRunCompletionMessage,
+         ProposeRunCompletionAckMessage,
++        GetStateEphemeralCommandMessage,
++        GetStateEphemeralNotificationMessage,
+         CallCommandMessage,
+         OneWayCallCommandMessage,
+         AwaitingOnMessage,
+@@ -523,7 +525,9 @@ mod dto {
+                     let suspension_v6 = self.as_suspension_v6();
+                     prost::Message::encode(&suspension_v6, buf)?;
+                 }
+-                ServiceProtocolVersion::V7 => prost::Message::encode(self, buf)?,
++                ServiceProtocolVersion::V7 | ServiceProtocolVersion::V8 => {
++                    prost::Message::encode(self, buf)?
++                }
+             };
+ 
+             Ok(())
+@@ -551,7 +555,9 @@ mod dto {
+                     let suspension_v6 = self.as_suspension_v6();
+                     prost::Message::encoded_len(&suspension_v6)
+                 }
+-                ServiceProtocolVersion::V7 => prost::Message::encoded_len(self),
++                ServiceProtocolVersion::V7 | ServiceProtocolVersion::V8 => {
++                    prost::Message::encoded_len(self)
++                }
+             }
+         }
+     }
+@@ -576,7 +582,9 @@ mod dto {
+                 | ServiceProtocolVersion::V4
+                 | ServiceProtocolVersion::V5
+                 | ServiceProtocolVersion::V6 => SuspensionMessageV6::decode(buf)?.into(),
+-                ServiceProtocolVersion::V7 => <SuspensionMessage as prost::Message>::decode(buf)?,
++                ServiceProtocolVersion::V7 | ServiceProtocolVersion::V8 => {
++                    <SuspensionMessage as prost::Message>::decode(buf)?
++                }
+             };
+ 
+             Ok(msg)
+```
+
+---
+
+### Incident Patch 2: `0149af09` (2026-11-03)
+**Commit Message**: [clock] Keep the cached wall clock on its own cache line
+
+`WallClock::recent_ms` and `recent_us` are read on hot paths from every
+core, such as log-server requests and the vqueues scheduler. The cached
+timestamp was a plain static, so the linker could place a frequently
+written static on the same cache line and turn those reads into cache
+misses. It is now `CachePadded`, which costs 128 bytes.
+
+**File**: `Cargo.lock` (modified, +1/-0)
+```diff
+@@ -7746,6 +7746,7 @@ dependencies = [
+  "rand 0.10.2",
+  "restate-clock",
+  "restate-platform",
++ "restate-util-cache-padded",
+  "restate-workspace-hack",
+  "schemars 1.2.2",
+  "serde",
+```
+
+**File**: `crates/clock/Cargo.toml` (modified, +1/-0)
+```diff
+@@ -16,6 +16,7 @@ test-util = []
+ restate-workspace-hack = { workspace = true }
+ 
+ restate-platform = { workspace = true }
++restate-util-cache-padded = { workspace = true }
+ 
+ bilrost = { workspace = true }
+ jiff = { workspace = true, optional = true }
+```
+
+**File**: `crates/clock/src/wall_clock.rs` (modified, +7/-1)
+```diff
+@@ -12,6 +12,8 @@ use std::sync::atomic::AtomicU64;
+ use std::sync::atomic::Ordering;
+ use std::time::SystemTime;
+ 
++use restate_util_cache_padded::CachePadded;
++
+ use crate::time::MillisSinceEpoch;
+ 
+ use super::Clock;
+@@ -26,7 +28,11 @@ use super::Clock;
+ ///
+ /// The server's `main()` function starts the upkeep thread as early as possible to remove
+ /// the possibility where this could occur.
+-static RECENT_UNIX_TIMESTAMP_US: AtomicU64 = const { AtomicU64::new(0) };
++///
++/// Kept on its own cache line: hot paths on every core read it, and a frequently written
++/// static placed next to it by the linker would turn those reads into cache misses.
++static RECENT_UNIX_TIMESTAMP_US: CachePadded<AtomicU64> =
++    const { CachePadded::new(AtomicU64::new(0)) };
+ 
+ /// Production implementation of [`Clock`] backed by system time.
+ ///
+```
+
 #### Recent Merged Pull Requests:
+- **PR #5739** (2026-11-03): [clock] Keep the cached wall clock on its own cache line (@AhmedSoliman)
+- **PR #5738** (2026-11-03): [futures-util] Keep the monotonic token counter on its own cache line (@AhmedSoliman)
+- **PR #5734** (2026-11-03): [futures-util] Never wrap or repeat monotonic tokens (@AhmedSoliman)
 - **PR #5733** (2026-11-03): [util] Add restate-util-cache-padded and use it in Bifrost (@AhmedSoliman)
 - **PR #5731** (2026-11-03): [Bifrost] Hotfix trim-point panic on the service-protocol-v8-stats build (@pcholakov)
 - **PR #5730** (2026-11-02): [Config] Rename storage-lifecycle-threads to storage-lifecycle-bg-threads (@AhmedSoliman)
-- **PR #5729** (2026-11-02): [RocksDb] Submit database maintenance from the caller, and remove the async helpers (@AhmedSoliman)
-- **PR #5728** (2026-11-02): [RocksDb] Prepare database maintenance as storage operations (@AhmedSoliman)
-- **PR #5727** (2026-11-02): [RocksDb] Remove run_background_read_op (@AhmedSoliman)
 
 ---
 
@@ -1675,13 +2090,13 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Run CI for hotfixes
+## X. Service protocol v8 (#5520)
 
 **RULE**:
 When implementing operations in `.github/workflows/ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in restatedev/restate. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6f8e3ef1`: Run CI for hotfixes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b074c52f`: Service protocol v8 (#5520). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci.yml`.
@@ -1689,7 +2104,23 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-      - hotfix/*
+  sdk-typescript-protocol-v8:
+    name: Run SDK-Typescript integration tests with Protocol V8
+    permissions:
+      contents: read
+      issues: read
+      checks: write
+      pull-requests: write
+      actions: read
+    secrets: inherit
+    needs: docker
+    uses: restatedev/sdk-typescript/.github/workflows/integration.yaml@main
+    with:
+      restateCommit: ${{ github.event.pull_request.head.sha || github.sha }}
+      envVars: |
+        RESTATE_experimental_enable_protocol_v8=true
+      testArtifactOutput: sdk-typescript-protocol-v8-test-report
+
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1699,4 +2130,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6f8e3ef1` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b074c52f` are properly handled with clean fallback behavior.
