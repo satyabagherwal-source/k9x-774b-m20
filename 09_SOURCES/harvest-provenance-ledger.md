@@ -7303,3 +7303,6 @@ Every entry in this ledger must capture:
 | `learn-github-restatedev-restate` | `https://github.com/restatedev/restate` | `b074c52f` | Multi-dimensional audit evidence | 2026-11-04T19:15:26.556Z |
 | `learn-huggingface-orcarouter-deepseek-v4-1-flash-1017-abliterated-gguf` | `https://huggingface.co/orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF` | `hf-orcarou` | Multi-dimensional audit evidence | 2026-11-04T19:15:36.478Z |
 | `learn-github-tickernelz-opencode-mem` | `https://github.com/tickernelz/opencode-mem` | `5b05e1f5` | Multi-dimensional audit evidence | 2026-11-04T19:15:37.697Z |
+| `learn-huggingface-huggingfacebio-carbon-x` | `https://huggingface.co/HuggingFaceBio/Carbon-X` | `hf-hugging` | Multi-dimensional audit evidence | 2026-11-04T19:22:52.846Z |
+| `learn-github-gkd-kit-gkd` | `https://github.com/gkd-kit/gkd` | `0fe172f5` | Multi-dimensional audit evidence | 2026-11-04T19:22:54.645Z |
+| `learn-github-bee-san-ciphey` | `https://github.com/bee-san/Ciphey` | `041ce8c7` | Multi-dimensional audit evidence | 2026-11-04T19:22:57.287Z |

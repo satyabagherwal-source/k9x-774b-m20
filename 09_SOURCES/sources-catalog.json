@@ -2633,10 +2633,10 @@
     "repository": "bee-san/Ciphey",
     "platform": "github",
     "sourceUrl": "https://github.com/bee-san/Ciphey",
-    "sourceVersion": "ad59a3bc",
+    "sourceVersion": "041ce8c7",
     "license": "MIT",
-    "contentHash": "3605c59669503808ff14909f593cd796381d82c8d265c53121699906d38c71fd",
-    "lastHarvestedAt": "2026-11-04T10:12:36.211Z",
+    "contentHash": "bfb13191170afa1b434b59feafb175aa1d60148274f533935aeb9268774a7a41",
+    "lastHarvestedAt": "2026-11-04T19:22:57.287Z",
     "learningId": "learn-github-bee-san-ciphey"
   },
   "pingcap-autoflow": {
@@ -6243,10 +6243,10 @@
     "repository": "gkd-kit/gkd",
     "platform": "github",
     "sourceUrl": "https://github.com/gkd-kit/gkd",
-    "sourceVersion": "c45a1241",
+    "sourceVersion": "0fe172f5",
     "license": "GPL-3.0",
-    "contentHash": "aaa4b5252a055a8bccfb357575165189f26d9e626471632b80623723fa709a20",
-    "lastHarvestedAt": "2026-10-31T12:08:58.471Z",
+    "contentHash": "5085768f4bbf77baf6a5fe07ea0825be5486aad96001a5c9469be19e938cc5ec",
+    "lastHarvestedAt": "2026-11-04T19:22:54.645Z",
     "learningId": "learn-github-gkd-kit-gkd"
   },
   "envoyproxy-envoy": {
@@ -10665,8 +10665,8 @@
     "sourceUrl": "https://huggingface.co/HuggingFaceBio/Carbon-X",
     "sourceVersion": "hf-huggingfacebio-carbon-x",
     "license": "Open-Source",
-    "contentHash": "e24193fb256dd74cf977f5282a8f0122f9e660fb92033392f9ce7e258f42315e",
-    "lastHarvestedAt": "2026-10-31T03:19:21.907Z",
+    "contentHash": "ec32290447adfe81003f138e8b92be5706dd8aa934c17232276db4083c7a2eee",
+    "lastHarvestedAt": "2026-11-04T19:22:52.846Z",
     "learningId": "learn-huggingface-huggingfacebio-carbon-x"
   },
   "hf-orcarouter-deepseek-v4.1-flash-1017-abliterated-gguf": {

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-04T19:15:37.636Z",
+  "last_updated": "2026-11-04T19:22:57.193Z",
   "total_verified_learnings": 1209,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -4682,8 +4682,8 @@
       "slug": "bee-san-ciphey",
       "platform": "github",
       "source_url": "https://github.com/bee-san/Ciphey",
-      "source_version": "ad59a3bc",
-      "content_hash": "3605c59669503808ff14909f593cd796381d82c8d265c53121699906d38c71fd",
+      "source_version": "041ce8c7",
+      "content_hash": "bfb13191170afa1b434b59feafb175aa1d60148274f533935aeb9268774a7a41",
       "dossier_path": "07_PROJECT_LEARNING/bee-san-ciphey-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/bee-san-ciphey-learnings.md",
       "promoted_rules": [
@@ -4706,6 +4706,11 @@
           "number": 6806,
           "title": "build(deps): bump rustls (#1134)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6927,
+          "title": "ci: bump onig_sys to 69.9.3 so Linux CI builds again (GCC 15 / C23) (#1135)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -4713,7 +4718,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T10:12:36.147Z",
+      "verified_at": "2026-11-04T19:22:57.166Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -15281,8 +15286,8 @@
       "slug": "gkd-kit-gkd",
       "platform": "github",
       "source_url": "https://github.com/gkd-kit/gkd",
-      "source_version": "c45a1241",
-      "content_hash": "aaa4b5252a055a8bccfb357575165189f26d9e626471632b80623723fa709a20",
+      "source_version": "0fe172f5",
+      "content_hash": "5085768f4bbf77baf6a5fe07ea0825be5486aad96001a5c9469be19e938cc5ec",
       "dossier_path": "07_PROJECT_LEARNING/gkd-kit-gkd-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gkd-kit-gkd-learnings.md",
       "promoted_rules": [
@@ -15300,6 +15305,11 @@
           "number": 6186,
           "title": "reorganize settings and provide UI hosts through composition",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6926,
+          "title": "ignore dead binder during privilege cleanup",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -15307,7 +15317,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T12:08:58.369Z",
+      "verified_at": "2026-11-04T19:22:54.499Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -132206,7 +132216,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/HuggingFaceBio/Carbon-X",
       "source_version": "hf-huggingfacebio-carbon-x",
-      "content_hash": "e24193fb256dd74cf977f5282a8f0122f9e660fb92033392f9ce7e258f42315e",
+      "content_hash": "ec32290447adfe81003f138e8b92be5706dd8aa934c17232276db4083c7a2eee",
       "dossier_path": "07_PROJECT_LEARNING/hf-huggingfacebio-carbon-x-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-huggingfacebio-carbon-x-learnings.md",
       "promoted_rules": [
@@ -132254,6 +132264,21 @@
           "number": 6042,
           "title": "Generation‑Config Alignment with Model Capacity",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6923,
+          "title": "Consistent Numerical Precision Across Model and Tokenizer",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6924,
+          "title": "Uniqueness of Special Tokens in Hybrid Tokenizer",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6925,
+          "title": "Controlled Use of `trust_remote_code`",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -132261,7 +132286,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T03:19:21.798Z",
+      "verified_at": "2026-11-04T19:22:52.728Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -176507,6 +176532,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-04T19:15:37.621Z"
+    },
+    "rule-6923": {
+      "learning_id": "rule-6923",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6923,
+      "title": "Consistent Numerical Precision Across Model and Tokenizer",
+      "source_url": "https://huggingface.co/HuggingFaceBio/Carbon-X",
+      "source_version": "hf-huggingfacebio-carbon-x",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T19:22:52.728Z"
+    },
+    "rule-6924": {
+      "learning_id": "rule-6924",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6924,
+      "title": "Uniqueness of Special Tokens in Hybrid Tokenizer",
+      "source_url": "https://huggingface.co/HuggingFaceBio/Carbon-X",
+      "source_version": "hf-huggingfacebio-carbon-x",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T19:22:52.728Z"
+    },
+    "rule-6925": {
+      "learning_id": "rule-6925",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6925,
+      "title": "Controlled Use of `trust_remote_code`",
+      "source_url": "https://huggingface.co/HuggingFaceBio/Carbon-X",
+      "source_version": "hf-huggingfacebio-carbon-x",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T19:22:52.728Z"
+    },
+    "rule-6926": {
+      "learning_id": "rule-6926",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6926,
+      "title": "ignore dead binder during privilege cleanup",
+      "source_url": "https://github.com/gkd-kit/gkd",
+      "source_version": "0fe172f5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T19:22:54.499Z"
+    },
+    "rule-6927": {
+      "learning_id": "rule-6927",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6927,
+      "title": "ci: bump onig_sys to 69.9.3 so Linux CI builds again (GCC 15 / C23) (#1135)",
+      "source_url": "https://github.com/bee-san/Ciphey",
+      "source_version": "041ce8c7",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T19:22:57.166Z"
     }
   },
   "aliases": {

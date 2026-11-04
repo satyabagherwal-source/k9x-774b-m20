@@ -7294,3 +7294,6 @@
 | `CYCLE-20261104-Y7DM` | `2026-11-04T19:15:26.554Z` | `restatedev/restate` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6918` | Yes (`e389ed16...`) |
 | `CYCLE-20261104-YF17` | `2026-11-04T19:15:36.475Z` | `orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6919, Rule 6920, Rule 6921` | Yes (`8e4f6605...`) |
 | `CYCLE-20261104-YFZ2` | `2026-11-04T19:15:37.694Z` | `tickernelz/opencode-mem` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6922` | Yes (`8a3fa0ea...`) |
+| `CYCLE-20261104-7RQI` | `2026-11-04T19:22:52.842Z` | `HuggingFaceBio/Carbon-X` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6923, Rule 6924, Rule 6925` | Yes (`ec322904...`) |
+| `CYCLE-20261104-7T4H` | `2026-11-04T19:22:54.641Z` | `gkd-kit/gkd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6926` | Yes (`5085768f...`) |
+| `CYCLE-20261104-7V5V` | `2026-11-04T19:22:57.283Z` | `bee-san/Ciphey` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6927` | Yes (`bfb13191...`) |

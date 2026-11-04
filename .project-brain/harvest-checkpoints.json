@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-04T19:15:37.716Z",
+  "last_updated": "2026-11-04T19:22:57.305Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4086,14 +4086,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-bee-san-ciphey",
-      "content_hash": "3605c59669503808ff14909f593cd796381d82c8d265c53121699906d38c71fd",
-      "verified_at": "2026-11-04T10:12:36.217Z",
+      "content_hash": "bfb13191170afa1b434b59feafb175aa1d60148274f533935aeb9268774a7a41",
+      "verified_at": "2026-11-04T19:22:57.304Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T10:12:36.217Z"
+      "last_updated": "2026-11-04T19:22:57.304Z"
     },
     "pingcap/autoflow": {
       "repository": "pingcap/autoflow",
@@ -9486,14 +9486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-gkd-kit-gkd",
-      "content_hash": "aaa4b5252a055a8bccfb357575165189f26d9e626471632b80623723fa709a20",
-      "verified_at": "2026-10-31T12:08:58.479Z",
+      "content_hash": "5085768f4bbf77baf6a5fe07ea0825be5486aad96001a5c9469be19e938cc5ec",
+      "verified_at": "2026-11-04T19:22:54.655Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T12:08:58.479Z"
+      "last_updated": "2026-11-04T19:22:54.655Z"
     },
     "envoyproxy/envoy": {
       "repository": "envoyproxy/envoy",
@@ -16026,14 +16026,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-huggingfacebio-carbon-x",
-      "content_hash": "e24193fb256dd74cf977f5282a8f0122f9e660fb92033392f9ce7e258f42315e",
-      "verified_at": "2026-10-31T03:19:21.916Z",
+      "content_hash": "ec32290447adfe81003f138e8b92be5706dd8aa934c17232276db4083c7a2eee",
+      "verified_at": "2026-11-04T19:22:52.866Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T03:19:21.916Z"
+      "last_updated": "2026-11-04T19:22:52.866Z"
     },
     "orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF": {
       "repository": "orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF",

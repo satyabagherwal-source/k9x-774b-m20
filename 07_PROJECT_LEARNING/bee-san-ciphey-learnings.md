@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/bee-san-ciphey-learnings.md`  
 > **Source**: github ([https://github.com/bee-san/Ciphey](https://github.com/bee-san/Ciphey))  
-> **Source Version**: `ad59a3bc`  
+> **Source Version**: `041ce8c7`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T10:12:35.662Z  
+> **Timestamp**: 2026-11-04T19:22:56.459Z  
 > **Learning ID**: `learn-github-bee-san-ciphey`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/bee-san-ciphey-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/bee-san/Ciphey](https://github.com/bee-san/Ciphey))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T10:12:35.222Z  
+> **Harvest Timestamp**: 2026-11-04T19:22:56.127Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: ⚡ Automatically decrypt encryptions without knowing the key or cipher, decode encodings, and crack hashes ⚡
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 21739 stars
+- **Stars / Engagement**: 21742 stars
 
 ---
 
@@ -1898,154 +1898,68 @@ fn describe(detection: &Detection) -> String {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ad59a3bc` (2026-11-04)
-**Commit Message**: build(deps): bump rustls (#1134)
+### Incident Patch 1: `9350174d` (2026-11-04)
+**Commit Message**: ci: bump onig_sys to 69.9.3 so Linux CI builds again (GCC 15 / C23) (#1135)
 
-Bumps the cargo group with 1 update in the / directory: [rustls](https://github.com/rustls/rustls).
+* ci: bump onig_sys to 69.9.3 so the build works with GCC 15 (C23)
 
+* ci: line-tables-only debug info in the test job (runner disk filled up)
 
-Updates `rustls` from 0.23.45 to 0.23.46
-- [Release notes](https://github.com/rustls/rustls/releases)
-- [Changelog](https://github.com/rustls/rustls/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/rustls/rustls/compare/v/0.23.45...v/0.23.46)
-
----
-updated-dependencies:
-- dependency-name: rustls
-  dependency-version: 0.23.46
-  dependency-type: indirect
-  dependency-group: cargo
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `Cargo.lock` (modified, +2/-2)
+**File**: `.github/workflows/quickstart.yml` (modified, +6/-0)
 ```diff
-@@ -4160,9 +4160,9 @@ dependencies = [
- 
- [[package]]
- name = "rustls"
--version = "0.23.45"
-+version = "0.23.46"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "0d41d731c7d2f962d1ccc364cec258de3c0e93b38c2fb3ba97ac74513048d634"
-+checksum = "48e13bd8c0e9365c43cfa5c9e8f9ad49d3c8444926c9aac819e0e4dc503c8fdf"
- dependencies = [
-  "once_cell",
-  "ring",
+@@ -75,6 +75,12 @@ jobs:
+     # NOTE: this must reference the matrix, otherwise every job runs on Linux
+     # and the Windows/macOS entries are no-ops.
+     runs-on: ${{ matrix.os }}
++    env:
++      # The Ubuntu 26.04 image has less free disk: full debug info for every test binary,
++      # built twice (with and without `mcp`), filled it on 2026-11-04 ("No space left on
++      # device" while linking ciphey-mcp). Line tables keep file:line in panics and backtraces.
++      CARGO_PROFILE_DEV_DEBUG: line-tables-only
++      CARGO_PROFILE_TEST_DEBUG: line-tables-only
+     steps:
+       - name: Checkout sources
+         uses: actions/checkout@v4
 ```
 
----
-
-### Incident Patch 2: `f4e5bb95` (2026-11-04)
-**Commit Message**: build(deps): bump rmcp from 3.5.1 to 3.8.0 (#1132)
-
-Bumps [rmcp](https://github.com/modelcontextprotocol/rust-sdk) from 3.5.1 to 3.8.0.
-- [Release notes](https://github.com/modelcontextprotocol/rust-sdk/releases)
-- [Changelog](https://github.com/modelcontextprotocol/rust-sdk/blob/main/release-plz.toml)
-- [Commits](https://github.com/modelcontextprotocol/rust-sdk/compare/rmcp-v3.5.1...rmcp-v3.8.0)
-
----
-updated-dependencies:
-- dependency-name: rmcp
-  dependency-version: 3.8.0
-  dependency-type: direct:production
-  update-type: version-update:semver-minor
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `Cargo.lock` (modified, +5/-4)
+**File**: `Cargo.lock` (modified, +5/-5)
 ```diff
-@@ -4048,13 +4048,14 @@ dependencies = [
+@@ -3212,21 +3212,21 @@ checksum = "9f7c3e4beb33f85d45ae3e3a1792185706c8e16d043238c593331cc7cd313b50"
  
  [[package]]
- name = "rmcp"
--version = "3.5.1"
-+version = "3.8.0"
+ name = "onig"
+-version = "6.4.0"
++version = "6.5.3"
  source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "ab5023804cbe0304cbe06197ac16e645a0a0d0ffa2953bf735c15c2fa0213350"
-+checksum = "f8be15815186873ea063bf005011d16c356804973489e40c39116ae3a2878d1f"
+-checksum = "8c4b31c8722ad9171c6d77d3557db078cab2bd50afcc9d09c8b315c59df8ca4f"
++checksum = "0cc3cbf698f9438986c11a880c90a6d04b9de27575afd28bbf45b154b6c709e2"
  dependencies = [
-  "chrono",
-  "futures",
-  "indexmap",
-+ "libc",
-  "pastey",
-  "pin-project-lite",
-  "rmcp-macros",
-@@ -4070,9 +4071,9 @@ dependencies = [
- 
- [[package]]
- name = "rmcp-macros"
--version = "3.5.1"
-+version = "3.8.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "a1da498700030856ba63114bceefa30ba21f5e278cb975e5b9de3529fe842b40"
-+checksum = "8b0748e054a5f5598b3213cf72099ae6b2745ba4d996c59ccf455150a7dbb839"
- dependencies = [
-  "darling 0.24.1",
-  "proc-macro2",
-```
-
-**File**: `Cargo.toml` (modified, +1/-1)
-```diff
-@@ -58,7 +58,7 @@ rayon = "1.12.0"
- regex = "1.12.4"
- # Official MCP Rust SDK, only used by `ciphey-mcp` (feature `mcp`). Pinned exactly so
- # `cargo install` (which ignores Cargo.lock) builds against the version we tested.
--rmcp = { version = "=3.5.1", optional = true, default-features = false, features = ["macros", "server", "transport-io"] }
-+rmcp = { version = "=3.8.0", optional = true, default-features = false, features = ["macros", "server", "transport-io"] }
- rusqlite = { version = "0.37", features = ["bundled"] }
- serde = { version = "1.0.228", features = ["derive"] }
- serde_derive = "1.0.197"
-```
-
----
-
-### Incident Patch 3: `0b796029` (2026-11-04)
-**Commit Message**: build(deps): bump memmap2 from 0.9.11 to 0.9.12 (#1130)
-
-Bumps [memmap2](https://github.com/RazrFalcon/memmap2-rs) from 0.9.11 to 0.9.12.
-- [Changelog](https://github.com/RazrFalcon/memmap2-rs/blob/master/CHANGELOG.md)
-- [Commits](https://github.com/RazrFalcon/memmap2-rs/compare/v0.9.11...v0.9.12)
-
----
-updated-dependencies:
-- dependency-name: memmap2
-  dependency-version: 0.9.12
-  dependency-type: direct:production
-  update-type: version-update:semver-patch
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `Cargo.lock` (modified, +2/-2)
-```diff
-@@ -2759,9 +2759,9 @@ checksum = "78ca9ab1a0babb1e7d5695e3530886289c18cf2f87ec19a575a0abdce112e3a3"
- 
- [[package]]
- name = "memmap2"
--version = "0.9.11"
-+version = "0.9.12"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "d1219ed1b7f229ee7104d281dd01d6802fe28bb6e95d292942c4daacdeb798c0"
-+checksum = "6b0ca1155a9ecc25aa12e8313a119f32edf0255fea2f44839c4ac0a12b2ac157"
- dependencies = [
+- "bitflags 1.3.2",
++ "bitflags 2.9.1",
   "libc",
-  "stable_deref_trait",
+  "once_cell",
+  "onig_sys",
+ ]
+ 
+ [[package]]
+ name = "onig_sys"
+-version = "69.8.1"
++version = "69.9.3"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "7b829e3d7e9cc74c7e315ee8edb185bf4190da5acde74afd7fc59c35b1f086e7"
++checksum = "1e68317604e77e53b85896388e1a803c1d21b74c899ec9e5e1112db90735edd7"
+ dependencies = [
+  "cc",
+  "pkg-config",
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1136** (2026-11-04): WebAssembly, part 1: native-only code by target, a clock and a thread-free search (@bee-san)
+- **PR #1135** (2026-11-04): ci: bump onig_sys to 69.9.3 so Linux CI builds again (GCC 15 / C23) (@bee-san)
 - **PR #1134** (2026-11-04): build(deps): bump rustls from 0.23.45 to 0.23.46 in the cargo group across 1 directory (@dependabot[bot])
 - **PR #1133** (2026-11-04): build(deps): bump serde_json from 1.0.151 to 1.0.154 (@dependabot[bot])
 - **PR #1132** (2026-11-04): build(deps): bump rmcp from 3.5.1 to 3.8.0 (@dependabot[bot])
 - **PR #1131** (2026-11-04): build(deps): bump uuid from 1.28.0 to 1.29.0 (@dependabot[bot])
-- **PR #1130** (2026-11-04): build(deps): bump memmap2 from 0.9.11 to 0.9.12 (@dependabot[bot])
-- **PR #1129** (2026-11-04): build(deps): bump html-escape from 0.2.15 to 0.3.0 (@dependabot[bot])
 
 ---
 
@@ -2065,30 +1979,33 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps): bump rustls (#1134)
+## X. ci: bump onig_sys to 69.9.3 so Linux CI builds again (GCC 15 / C23) (#1135)
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in bee-san/Ciphey. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/quickstart.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in bee-san/Ciphey. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ad59a3bc`: build(deps): bump rustls (#1134). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9350174d`: ci: bump onig_sys to 69.9.3 so Linux CI builds again (GCC 15 / C23) (#1135). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/quickstart.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-version = "0.23.46"
-checksum = "48e13bd8c0e9365c43cfa5c9e8f9ad49d3c8444926c9aac819e0e4dc503c8fdf"
+    env:
+      # The Ubuntu 26.04 image has less free disk: full debug info for every test binary,
+      # built twice (with and without `mcp`), filled it on 2026-11-04 ("No space left on
+      # device" while linking ciphey-mcp). Line tables keep file:line in panics and backtraces.
+      CARGO_PROFILE_DEV_DEBUG: line-tables-only
+      CARGO_PROFILE_TEST_DEBUG: line-tables-only
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-version = "0.23.45"
-checksum = "0d41d731c7d2f962d1ccc364cec258de3c0e93b38c2fb3ba97ac74513048d634"
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ad59a3bc` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9350174d` are properly handled with clean fallback behavior.

@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261102-OO7P",
-    "timestamp": "2026-11-02T14:24:45.205Z",
-    "repository": "embassy-rs/embassy",
-    "learningId": "learn-github-embassy-rs-embassy",
-    "contentHash": "361664f570229a7ad4a24ec5248d8b86caa3206c32a6add52c2731ef0200affd",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261102-XT3Q",
-    "timestamp": "2026-11-02T14:31:51.446Z",
-    "repository": "Edge0/Audio8-TTS-Realistic-Air",
-    "learningId": "learn-huggingface-edge0-audio8-tts-realistic-air",
-    "contentHash": "35f2f2392c4d702a0aee8d7bee7b9dc3acc69ec13445547a2bd6415a333154a9",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261102-XUZV",
-    "timestamp": "2026-11-02T14:31:53.899Z",
-    "repository": "OBLITERATUS/DeepSeek-V4.1-Flash-1017-obliterated",
-    "learningId": "learn-huggingface-obliteratus-deepseek-v4-1-flash-1017-obliterated",
-    "contentHash": "59cc82578ce49d479f0e2dbde33ade3edb4a7f1fdc9b102cf3aa7c8490bc265f",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261102-Y3ZS",
     "timestamp": "2026-11-02T14:32:05.560Z",
     "repository": "burner22/numbat",
@@ -7490,6 +7445,51 @@
     "repository": "tickernelz/opencode-mem",
     "learningId": "learn-github-tickernelz-opencode-mem",
     "contentHash": "8a3fa0eacb4b7efd7d9299923499954f9015b9605e52858ed757e558a1eb5991",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-7RQI",
+    "timestamp": "2026-11-04T19:22:52.842Z",
+    "repository": "HuggingFaceBio/Carbon-X",
+    "learningId": "learn-huggingface-huggingfacebio-carbon-x",
+    "contentHash": "ec32290447adfe81003f138e8b92be5706dd8aa934c17232276db4083c7a2eee",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-7T4H",
+    "timestamp": "2026-11-04T19:22:54.641Z",
+    "repository": "gkd-kit/gkd",
+    "learningId": "learn-github-gkd-kit-gkd",
+    "contentHash": "5085768f4bbf77baf6a5fe07ea0825be5486aad96001a5c9469be19e938cc5ec",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-7V5V",
+    "timestamp": "2026-11-04T19:22:57.283Z",
+    "repository": "bee-san/Ciphey",
+    "learningId": "learn-github-bee-san-ciphey",
+    "contentHash": "bfb13191170afa1b434b59feafb175aa1d60148274f533935aeb9268774a7a41",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

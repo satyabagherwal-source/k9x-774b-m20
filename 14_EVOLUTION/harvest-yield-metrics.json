@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-04T19:15:37.704Z",
-  "total_cycles_completed": 7271,
-  "total_learnings_persisted": 7271,
-  "total_rules_promoted": 6958,
+  "last_updated": "2026-11-04T19:22:57.293Z",
+  "total_cycles_completed": 7274,
+  "total_learnings_persisted": 7274,
+  "total_rules_promoted": 6963,
   "history": [
-    {
-      "timestamp": "2026-11-04T01:14:01.760Z",
-      "repository": "Orange-OpenSource/hurl",
-      "learningId": "learn-github-orange-opensource-hurl",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T01:14:08.941Z",
-      "repository": "aquasecurity/trivy",
-      "learningId": "learn-github-aquasecurity-trivy",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T01:20:36.607Z",
-      "repository": "karakeep-app/karakeep",
-      "learningId": "learn-github-karakeep-app-karakeep",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-04T01:20:39.525Z",
       "repository": "pulumi/pulumi",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-04T19:15:37.704Z",
       "repository": "tickernelz/opencode-mem",
       "learningId": "learn-github-tickernelz-opencode-mem",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T19:22:52.853Z",
+      "repository": "HuggingFaceBio/Carbon-X",
+      "learningId": "learn-huggingface-huggingfacebio-carbon-x",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T19:22:54.651Z",
+      "repository": "gkd-kit/gkd",
+      "learningId": "learn-github-gkd-kit-gkd",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T19:22:57.293Z",
+      "repository": "bee-san/Ciphey",
+      "learningId": "learn-github-bee-san-ciphey",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
