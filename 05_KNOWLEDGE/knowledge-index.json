@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-04T23:13:29.613Z",
+  "last_updated": "2026-11-04T23:20:56.134Z",
   "total_verified_learnings": 1210,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -17318,8 +17318,8 @@
       "slug": "hashicorp-terraform",
       "platform": "github",
       "source_url": "https://github.com/hashicorp/terraform",
-      "source_version": "6e64dc15",
-      "content_hash": "b638ce4de0650b152dac0e8b9cb779202945ea991017088a3c4ff20315358907",
+      "source_version": "eb097071",
+      "content_hash": "a692ad3ef5bb9664e5fe456dc4f92bb69cbde601b60b5393da70499ec7761793",
       "dossier_path": "07_PROJECT_LEARNING/hashicorp-terraform-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hashicorp-terraform-learnings.md",
       "promoted_rules": [
@@ -17387,6 +17387,11 @@
           "number": 6694,
           "title": "Make `state` subcommands use diagnostics to report errors to users (#39486)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7014,
+          "title": "Make `state` subcommands use diagnostics more when returning errors (#39490)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -17394,7 +17399,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T01:07:38.555Z",
+      "verified_at": "2026-11-04T23:20:49.962Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -30648,7 +30653,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/SupersonicLabs/Julia-1",
       "source_version": "hf-supersoniclabs-julia-1",
-      "content_hash": "fff2a7a34c5b658c32a383d79afe62524f132a61cb4f51c07f0f071e36af6ecd",
+      "content_hash": "28ad5f6862b771db0113503646498571d7284ebc5247540b040e698d8d7878c1",
       "dossier_path": "07_PROJECT_LEARNING/hf-supersoniclabs-julia-1-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-supersoniclabs-julia-1-learnings.md",
       "promoted_rules": [
@@ -30719,6 +30724,21 @@
           "number": 6137,
           "title": "High-Cardinality Action Pruning Invariant (Shortlist Gating)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7016,
+          "title": "Context-Grounded Discrimination Over Open-Ended Generation",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7017,
+          "title": "Multilingual Macro-Accuracy as the Primary Metric",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7018,
+          "title": "Strict Encoding & BF16 Precision for Latency-Critical Inference",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -30739,7 +30759,7 @@
         "learn-huggingface-hf-supersoniclabs-julia-1-mv45d8ac",
         "learn-huggingface-hf-supersoniclabs-julia-1-mv4imrbh"
       ],
-      "verified_at": "2026-10-31T08:31:07.973Z",
+      "verified_at": "2026-11-04T23:20:56.108Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -33411,8 +33431,8 @@
       "slug": "infiniflow-infinity",
       "platform": "github",
       "source_url": "https://github.com/infiniflow/infinity",
-      "source_version": "1c3abda1",
-      "content_hash": "60f5a88f64a5b66ebea0449b25f950055ddfa638a08215f386eb0b0e4f090d2f",
+      "source_version": "8f7eca22",
+      "content_hash": "606397a173c4ebde1dd3139307511635d71c834fb167a7e5c4bbd85ef63f13fb",
       "dossier_path": "07_PROJECT_LEARNING/infiniflow-infinity-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/infiniflow-infinity-learnings.md",
       "promoted_rules": [
@@ -33430,6 +33450,11 @@
           "number": 6677,
           "title": "storage): make block map access thread-safe and look up block metas by block id",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7015,
+          "title": "cleanup): remove only the dirs of dropped entities (#3539)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -33437,7 +33462,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T00:24:32.400Z",
+      "verified_at": "2026-11-04T23:20:53.888Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -178241,6 +178266,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-04T23:13:29.590Z"
+    },
+    "rule-7014": {
+      "learning_id": "rule-7014",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7014,
+      "title": "Make `state` subcommands use diagnostics more when returning errors (#39490)",
+      "source_url": "https://github.com/hashicorp/terraform",
+      "source_version": "eb097071",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T23:20:49.962Z"
+    },
+    "rule-7015": {
+      "learning_id": "rule-7015",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7015,
+      "title": "cleanup): remove only the dirs of dropped entities (#3539)",
+      "source_url": "https://github.com/infiniflow/infinity",
+      "source_version": "8f7eca22",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T23:20:53.888Z"
+    },
+    "rule-7016": {
+      "learning_id": "rule-7016",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7016,
+      "title": "Context-Grounded Discrimination Over Open-Ended Generation",
+      "source_url": "https://huggingface.co/SupersonicLabs/Julia-1",
+      "source_version": "hf-supersoniclabs-julia-1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T23:20:56.108Z"
+    },
+    "rule-7017": {
+      "learning_id": "rule-7017",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7017,
+      "title": "Multilingual Macro-Accuracy as the Primary Metric",
+      "source_url": "https://huggingface.co/SupersonicLabs/Julia-1",
+      "source_version": "hf-supersoniclabs-julia-1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T23:20:56.108Z"
+    },
+    "rule-7018": {
+      "learning_id": "rule-7018",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7018,
+      "title": "Strict Encoding & BF16 Precision for Latency-Critical Inference",
+      "source_url": "https://huggingface.co/SupersonicLabs/Julia-1",
+      "source_version": "hf-supersoniclabs-julia-1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T23:20:56.108Z"
     }
   },
   "aliases": {

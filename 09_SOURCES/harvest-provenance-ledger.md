@@ -7402,3 +7402,6 @@ Every entry in this ledger must capture:
 | `learn-github-paradedb-paradedb` | `https://github.com/paradedb/paradedb` | `bbeade35` | Multi-dimensional audit evidence | 2026-11-04T23:06:28.286Z |
 | `learn-huggingface-xingchen-agi-xing4-0-29b-a4b` | `https://huggingface.co/XingChen-AGI/Xing4.0-29B-A4B` | `hf-xingche` | Multi-dimensional audit evidence | 2026-11-04T23:13:29.007Z |
 | `learn-github-tw93-pake` | `https://github.com/tw93/Pake` | `e50ae7c1` | Multi-dimensional audit evidence | 2026-11-04T23:13:29.703Z |
+| `learn-github-hashicorp-terraform` | `https://github.com/hashicorp/terraform` | `eb097071` | Multi-dimensional audit evidence | 2026-11-04T23:20:50.080Z |
+| `learn-github-infiniflow-infinity` | `https://github.com/infiniflow/infinity` | `8f7eca22` | Multi-dimensional audit evidence | 2026-11-04T23:20:54.010Z |
+| `learn-huggingface-supersoniclabs-julia-1` | `https://huggingface.co/SupersonicLabs/Julia-1` | `hf-superso` | Multi-dimensional audit evidence | 2026-11-04T23:20:56.216Z |

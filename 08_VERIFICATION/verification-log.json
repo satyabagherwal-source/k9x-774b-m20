@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261103-7MDC",
-    "timestamp": "2026-11-03T11:39:12.000Z",
-    "repository": "sqlpage/SQLPage",
-    "learningId": "learn-github-sqlpage-sqlpage",
-    "contentHash": "56ad5a69167283bb71fc2b9f0c4a2b4d1ba7b2baeab7b655a55b062b7bb5a7d2",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261103-DXTK",
-    "timestamp": "2026-11-03T11:44:06.776Z",
-    "repository": "Louis-CFM/coucou",
-    "learningId": "learn-github-louis-cfm-coucou",
-    "contentHash": "c36786b08d516e8dda978813896c3099251aca6c5d4cdbae7a8145bfa11ed278",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261103-F3RG",
-    "timestamp": "2026-11-03T11:45:01.132Z",
-    "repository": "topgrade-rs/topgrade",
-    "learningId": "learn-github-topgrade-rs-topgrade",
-    "contentHash": "3e0299083c312134e0084794b69e21760cdf9f4117b17a9e5735f6a3c1f40d08",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261103-O1A1",
     "timestamp": "2026-11-03T11:51:57.817Z",
     "repository": "medialab/xan",
@@ -7492,6 +7447,51 @@
     "contentHash": "733e2aa3e72092e02111f7d3ace3aed604bc9ee66dd48f7a45755108d778d534",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-PS4C",
+    "timestamp": "2026-11-04T23:20:50.076Z",
+    "repository": "hashicorp/terraform",
+    "learningId": "learn-github-hashicorp-terraform",
+    "contentHash": "a692ad3ef5bb9664e5fe456dc4f92bb69cbde601b60b5393da70499ec7761793",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-PV5J",
+    "timestamp": "2026-11-04T23:20:54.007Z",
+    "repository": "infiniflow/infinity",
+    "learningId": "learn-github-infiniflow-infinity",
+    "contentHash": "606397a173c4ebde1dd3139307511635d71c834fb167a7e5c4bbd85ef63f13fb",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-PWUS",
+    "timestamp": "2026-11-04T23:20:56.212Z",
+    "repository": "SupersonicLabs/Julia-1",
+    "learningId": "learn-huggingface-supersoniclabs-julia-1",
+    "contentHash": "28ad5f6862b771db0113503646498571d7284ebc5247540b040e698d8d7878c1",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

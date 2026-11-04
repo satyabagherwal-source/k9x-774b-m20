@@ -395,8 +395,8 @@
     "sourceUrl": "https://huggingface.co/SupersonicLabs/Julia-1",
     "sourceVersion": "hf-supersoniclabs-julia-1",
     "license": "Open-Source",
-    "contentHash": "fff2a7a34c5b658c32a383d79afe62524f132a61cb4f51c07f0f071e36af6ecd",
-    "lastHarvestedAt": "2026-10-31T08:31:08.058Z",
+    "contentHash": "28ad5f6862b771db0113503646498571d7284ebc5247540b040e698d8d7878c1",
+    "lastHarvestedAt": "2026-11-04T23:20:56.216Z",
     "learningId": "learn-huggingface-supersoniclabs-julia-1"
   },
   "hf-apple-lensvlm-9b": {
@@ -4613,10 +4613,10 @@
     "repository": "hashicorp/terraform",
     "platform": "github",
     "sourceUrl": "https://github.com/hashicorp/terraform",
-    "sourceVersion": "6e64dc15",
+    "sourceVersion": "eb097071",
     "license": "NOASSERTION",
-    "contentHash": "b638ce4de0650b152dac0e8b9cb779202945ea991017088a3c4ff20315358907",
-    "lastHarvestedAt": "2026-11-04T01:07:38.651Z",
+    "contentHash": "a692ad3ef5bb9664e5fe456dc4f92bb69cbde601b60b5393da70499ec7761793",
+    "lastHarvestedAt": "2026-11-04T23:20:50.080Z",
     "learningId": "learn-github-hashicorp-terraform"
   },
   "tako8ki-gobang": {
@@ -7613,10 +7613,10 @@
     "repository": "infiniflow/infinity",
     "platform": "github",
     "sourceUrl": "https://github.com/infiniflow/infinity",
-    "sourceVersion": "1c3abda1",
+    "sourceVersion": "8f7eca22",
     "license": "Apache-2.0",
-    "contentHash": "60f5a88f64a5b66ebea0449b25f950055ddfa638a08215f386eb0b0e4f090d2f",
-    "lastHarvestedAt": "2026-11-04T00:24:32.513Z",
+    "contentHash": "606397a173c4ebde1dd3139307511635d71c834fb167a7e5c4bbd85ef63f13fb",
+    "lastHarvestedAt": "2026-11-04T23:20:54.010Z",
     "learningId": "learn-github-infiniflow-infinity"
   },
   "astral-sh-ruff": {

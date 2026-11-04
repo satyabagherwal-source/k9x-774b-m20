@@ -7393,3 +7393,6 @@
 | `CYCLE-20261104-7B5M` | `2026-11-04T23:06:28.282Z` | `paradedb/paradedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7012` | Yes (`c1cebb1c...`) |
 | `CYCLE-20261104-GBS3` | `2026-11-04T23:13:28.995Z` | `XingChen-AGI/Xing4.0-29B-A4B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-xingchen-agi-xing4.0-29b-a4b-learnings.md` | Yes (`96b03126...`) |
 | `CYCLE-20261104-GCBN` | `2026-11-04T23:13:29.699Z` | `tw93/Pake` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7013` | Yes (`733e2aa3...`) |
+| `CYCLE-20261104-PS4C` | `2026-11-04T23:20:50.076Z` | `hashicorp/terraform` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7014` | Yes (`a692ad3e...`) |
+| `CYCLE-20261104-PV5J` | `2026-11-04T23:20:54.007Z` | `infiniflow/infinity` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7015` | Yes (`606397a1...`) |
+| `CYCLE-20261104-PWUS` | `2026-11-04T23:20:56.212Z` | `SupersonicLabs/Julia-1` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7016, Rule 7017, Rule 7018` | Yes (`28ad5f68...`) |

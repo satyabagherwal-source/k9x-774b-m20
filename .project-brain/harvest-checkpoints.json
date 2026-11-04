@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-04T23:13:29.722Z",
+  "last_updated": "2026-11-04T23:20:56.232Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -470,14 +470,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-supersoniclabs-julia-1",
-      "content_hash": "fff2a7a34c5b658c32a383d79afe62524f132a61cb4f51c07f0f071e36af6ecd",
-      "verified_at": "2026-10-31T08:31:08.065Z",
+      "content_hash": "28ad5f6862b771db0113503646498571d7284ebc5247540b040e698d8d7878c1",
+      "verified_at": "2026-11-04T23:20:56.231Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T08:31:08.065Z"
+      "last_updated": "2026-11-04T23:20:56.231Z"
     },
     "apple/LensVLM-9B": {
       "repository": "apple/LensVLM-9B",
@@ -7041,14 +7041,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-hashicorp-terraform",
-      "content_hash": "b638ce4de0650b152dac0e8b9cb779202945ea991017088a3c4ff20315358907",
-      "verified_at": "2026-11-04T01:07:38.659Z",
+      "content_hash": "a692ad3ef5bb9664e5fe456dc4f92bb69cbde601b60b5393da70499ec7761793",
+      "verified_at": "2026-11-04T23:20:50.096Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T01:07:38.659Z"
+      "last_updated": "2026-11-04T23:20:50.096Z"
     },
     "TaKO8Ki/gobang": {
       "repository": "TaKO8Ki/gobang",
@@ -11466,14 +11466,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-infiniflow-infinity",
-      "content_hash": "60f5a88f64a5b66ebea0449b25f950055ddfa638a08215f386eb0b0e4f090d2f",
-      "verified_at": "2026-11-04T00:24:32.522Z",
+      "content_hash": "606397a173c4ebde1dd3139307511635d71c834fb167a7e5c4bbd85ef63f13fb",
+      "verified_at": "2026-11-04T23:20:54.025Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T00:24:32.522Z"
+      "last_updated": "2026-11-04T23:20:54.025Z"
     },
     "astral-sh/ruff": {
       "repository": "astral-sh/ruff",
