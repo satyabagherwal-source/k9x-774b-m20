@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261031-IHX0",
-    "timestamp": "2026-10-31T16:08:35.124Z",
-    "repository": "Edge0/Audio8-TTS-Realistic-0.6b",
-    "learningId": "learn-huggingface-edge0-audio8-tts-realistic-0-6b",
-    "contentHash": "6b781a5ce917580059699d28808cc7c38a043ad98ac090b08c538fddf2dca82b",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261031-XLZZ",
     "timestamp": "2026-10-31T16:20:20.256Z",
     "repository": "Aleph-Alpha/Kolibri-1",
@@ -7490,6 +7475,21 @@
     "repository": "doobidoo/mcp-memory-service",
     "learningId": "learn-github-doobidoo-mcp-memory-service",
     "contentHash": "c6560a99f78e68d0ceeb2fbca8a27a51d07f00a87d68eba8230aaf9f2cc3baa7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-DPG0",
+    "timestamp": "2026-11-04T02:39:43.632Z",
+    "repository": "rollup/rollup",
+    "learningId": "learn-github-rollup-rollup",
+    "contentHash": "d38c1b3cb7e62be812251e5097687e1cecaa3827d40b9a9df2ee88710cc0561c",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

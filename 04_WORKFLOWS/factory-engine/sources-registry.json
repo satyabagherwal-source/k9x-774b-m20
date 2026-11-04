@@ -40,8 +40,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-04T02:33:24.913Z",
-    "lastVerified": "2026-11-04T02:33:24.914Z",
+    "lastChecked": "2026-11-04T02:39:49.983Z",
+    "lastVerified": "2026-11-04T02:39:49.983Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -246,8 +246,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-04T02:12:09.494Z",
-    "lastVerified": "2026-11-04T02:12:09.494Z",
+    "lastChecked": "2026-11-04T02:39:49.974Z",
+    "lastVerified": "2026-11-04T02:39:49.974Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -413,8 +413,8 @@
     "officialUrl": "https://github.com/openziti/zrok",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-03T23:13:12.169Z",
-    "lastVerified": "2026-11-03T23:13:12.169Z",
+    "lastChecked": "2026-11-04T02:39:44.937Z",
+    "lastVerified": "2026-11-04T02:39:44.937Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-openziti-zrok",
@@ -2245,9 +2245,9 @@
   "danilowoz-react-content-loader": {
     "name": "react-content-loader",
     "officialUrl": "https://github.com/danilowoz/react-content-loader",
-    "lastChecked": "2026-10-31T02:27:52.019Z",
+    "lastChecked": "2026-11-04T02:39:39.909Z",
     "revisionIdentifier": "c8a6b6c6",
-    "lastVerified": "2026-10-31T02:27:52.019Z"
+    "lastVerified": "2026-11-04T02:39:39.909Z"
   },
   "chaos-mesh-chaos-mesh": {
     "name": "chaos-mesh/chaos-mesh",
@@ -3587,9 +3587,9 @@
   "nasiko-labs-nasiko": {
     "name": "nasiko",
     "officialUrl": "https://github.com/Nasiko-Labs/nasiko",
-    "lastChecked": "2026-10-31T23:56:26.946Z",
+    "lastChecked": "2026-11-04T02:39:34.888Z",
     "revisionIdentifier": "10a08581",
-    "lastVerified": "2026-10-31T23:56:26.946Z"
+    "lastVerified": "2026-11-04T02:39:34.888Z"
   },
   "hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2": {
     "name": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
@@ -3775,12 +3775,12 @@
     "revisionIdentifier": "6f14910d"
   },
   "seekstorm-seekstorm": {
-    "name": "SeekStorm/SeekStorm",
+    "name": "SeekStorm",
     "officialUrl": "https://github.com/SeekStorm/SeekStorm",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-02T16:04:58.458Z",
-    "lastVerified": "2026-11-02T16:04:58.458Z",
+    "lastChecked": "2026-11-04T02:39:47.385Z",
+    "lastVerified": "2026-11-04T02:39:47.385Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-seekstorm-seekstorm",
@@ -3789,7 +3789,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "2b0847bf"
   },
   "pemistahl-grex": {
     "name": "grex",
@@ -5702,12 +5703,12 @@
     "lastVerified": "2026-10-31T11:26:01.520Z"
   },
   "goss-org-goss": {
-    "name": "goss-org/goss",
+    "name": "goss",
     "officialUrl": "https://github.com/goss-org/goss",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-02T16:47:45.860Z",
-    "lastVerified": "2026-11-02T16:47:45.860Z",
+    "lastChecked": "2026-11-04T02:39:42.419Z",
+    "lastVerified": "2026-11-04T02:39:42.419Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-goss-org-goss",
@@ -5716,7 +5717,8 @@
     "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "dcd065d9"
   },
   "apple-foundationdb": {
     "name": "apple/foundationdb",
@@ -11428,14 +11430,14 @@
     "officialUrl": "https://github.com/rollup/rollup",
     "sourceType": "github",
     "technology": "JavaScript",
-    "lastChecked": "2026-10-30T19:12:24.520Z",
-    "lastVerified": "2026-10-30T19:12:24.520Z",
+    "lastChecked": "2026-11-04T02:39:41.923Z",
+    "lastVerified": "2026-11-04T02:39:41.923Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-rollup-rollup",
-    "contentHash": "9908bc5177d3fc4b0c15771d2da70063e3999653b2bfa3ae9e0703196d12d9c1",
+    "contentHash": "d38c1b3cb7e62be812251e5097687e1cecaa3827d40b9a9df2ee88710cc0561c",
     "promotedRulesCount": 1,
-    "recentFixesCount": 3,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

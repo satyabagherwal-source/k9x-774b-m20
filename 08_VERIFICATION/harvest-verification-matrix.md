@@ -7128,3 +7128,4 @@
 | `CYCLE-20261104-WCUH` | `2026-11-04T02:26:14.153Z` | `gocd/gocd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6725` | Yes (`f5ba8a73...`) |
 | `CYCLE-20261104-5CHW` | `2026-11-04T02:33:13.604Z` | `webpack/webpack` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6726` | Yes (`3108916c...`) |
 | `CYCLE-20261104-5J8M` | `2026-11-04T02:33:22.342Z` | `doobidoo/mcp-memory-service` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6727` | Yes (`c6560a99...`) |
+| `CYCLE-20261104-DPG0` | `2026-11-04T02:39:43.632Z` | `rollup/rollup` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6728` | Yes (`d38c1b3c...`) |

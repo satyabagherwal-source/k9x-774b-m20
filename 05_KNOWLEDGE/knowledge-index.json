@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-04T02:33:22.256Z",
+  "last_updated": "2026-11-04T02:39:43.585Z",
   "total_verified_learnings": 1204,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -76011,8 +76011,8 @@
       "slug": "rollup-rollup",
       "platform": "github",
       "source_url": "https://github.com/rollup/rollup",
-      "source_version": "1147f535",
-      "content_hash": "9908bc5177d3fc4b0c15771d2da70063e3999653b2bfa3ae9e0703196d12d9c1",
+      "source_version": "27fbdd44",
+      "content_hash": "d38c1b3cb7e62be812251e5097687e1cecaa3827d40b9a9df2ee88710cc0561c",
       "dossier_path": "07_PROJECT_LEARNING/rollup-rollup-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rollup-rollup-learnings.md",
       "promoted_rules": [
@@ -76050,6 +76050,11 @@
           "number": 5838,
           "title": "Preserve rendering errors when renderError fails (#6602)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6728,
+          "title": "Build linux-x64-gnu C code for baseline x86-64 CPUs (#6622)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -76057,7 +76062,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T19:12:25.883Z",
+      "verified_at": "2026-11-04T02:39:43.572Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -172647,6 +172652,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-04T02:33:22.233Z"
+    },
+    "rule-6728": {
+      "learning_id": "rule-6728",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6728,
+      "title": "Build linux-x64-gnu C code for baseline x86-64 CPUs (#6622)",
+      "source_url": "https://github.com/rollup/rollup",
+      "source_version": "27fbdd44",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T02:39:43.572Z"
     }
   },
   "aliases": {
