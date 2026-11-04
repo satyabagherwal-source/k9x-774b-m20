@@ -7157,3 +7157,5 @@ Every entry in this ledger must capture:
 | `learn-github-pimalaya-himalaya` | `https://github.com/pimalaya/himalaya` | `8196891f` | Multi-dimensional audit evidence | 2026-11-04T03:44:07.830Z |
 | `learn-github-webdriverio-webdriverio` | `https://github.com/webdriverio/webdriverio` | `a02a5ad8` | Multi-dimensional audit evidence | 2026-11-04T03:44:10.217Z |
 | `learn-github-kcl-lang-kcl` | `https://github.com/kcl-lang/kcl` | `5e193f62` | Multi-dimensional audit evidence | 2026-11-04T03:44:13.506Z |
+| `learn-github-materializeinc-materialize` | `https://github.com/MaterializeInc/materialize` | `471d259e` | Multi-dimensional audit evidence | 2026-11-04T03:51:14.215Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `ee552061` | Multi-dimensional audit evidence | 2026-11-04T03:51:14.518Z |

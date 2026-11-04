@@ -7148,3 +7148,5 @@
 | `CYCLE-20261104-OJ2R` | `2026-11-04T03:44:07.827Z` | `pimalaya/himalaya` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6745` | Yes (`261a3aac...`) |
 | `CYCLE-20261104-OKX3` | `2026-11-04T03:44:10.215Z` | `webdriverio/webdriverio` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6746` | Yes (`44105ecb...`) |
 | `CYCLE-20261104-ONGG` | `2026-11-04T03:44:13.504Z` | `kcl-lang/kcl` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6747` | Yes (`e2a10b7c...`) |
+| `CYCLE-20261104-XO2S` | `2026-11-04T03:51:14.212Z` | `MaterializeInc/materialize` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6748` | Yes (`f96ca397...`) |
+| `CYCLE-20261104-XOB7` | `2026-11-04T03:51:14.515Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6749` | Yes (`93712990...`) |

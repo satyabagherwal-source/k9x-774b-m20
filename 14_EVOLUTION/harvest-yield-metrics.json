@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-04T03:44:13.510Z",
-  "total_cycles_completed": 7125,
-  "total_learnings_persisted": 7125,
-  "total_rules_promoted": 6771,
+  "last_updated": "2026-11-04T03:51:14.523Z",
+  "total_cycles_completed": 7127,
+  "total_learnings_persisted": 7127,
+  "total_rules_promoted": 6773,
   "history": [
-    {
-      "timestamp": "2026-11-03T17:38:24.426Z",
-      "repository": "loft-sh/vcluster",
-      "learningId": "learn-github-loft-sh-vcluster",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-03T17:38:24.531Z",
-      "repository": "mitmproxy/mitmproxy",
-      "learningId": "learn-github-mitmproxy-mitmproxy",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-03T17:45:45.717Z",
       "repository": "astral-sh/ruff",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-04T03:44:13.510Z",
       "repository": "kcl-lang/kcl",
       "learningId": "learn-github-kcl-lang-kcl",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T03:51:14.220Z",
+      "repository": "MaterializeInc/materialize",
+      "learningId": "learn-github-materializeinc-materialize",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T03:51:14.523Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

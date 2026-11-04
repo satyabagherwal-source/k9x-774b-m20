@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "12382609",
+    "sourceVersion": "ee552061",
     "license": "Apache-2.0",
-    "contentHash": "13c255f6c8132ef8b2378b792d260a9c7a6d9f30c79e95c309020f874ee83a44",
-    "lastHarvestedAt": "2026-11-03T11:15:10.460Z",
+    "contentHash": "937129909886f6547af029b4317d905dfecac74b5558e68d3eca4b8b91c48782",
+    "lastHarvestedAt": "2026-11-04T03:51:14.518Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -3923,10 +3923,10 @@
     "repository": "MaterializeInc/materialize",
     "platform": "github",
     "sourceUrl": "https://github.com/MaterializeInc/materialize",
-    "sourceVersion": "0da844b2",
+    "sourceVersion": "471d259e",
     "license": "NOASSERTION",
-    "contentHash": "b39ea2cafb739992cba5384d90cab420b03d554aa2b51aad31c3f6c2cf2f7648",
-    "lastHarvestedAt": "2026-11-02T17:31:51.560Z",
+    "contentHash": "f96ca3975a6fa16d2ad84206ba3ff92728007730361502885e20067ae874b0be",
+    "lastHarvestedAt": "2026-11-04T03:51:14.215Z",
     "learningId": "learn-github-materializeinc-materialize"
   },
   "react-bootstrap-react-bootstrap": {

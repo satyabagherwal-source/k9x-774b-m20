@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-04T03:44:13.454Z",
+  "last_updated": "2026-11-04T03:51:14.454Z",
   "total_verified_learnings": 1204,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -38842,8 +38842,8 @@
       "slug": "materializeinc-materialize",
       "platform": "github",
       "source_url": "https://github.com/MaterializeInc/materialize",
-      "source_version": "0da844b2",
-      "content_hash": "b39ea2cafb739992cba5384d90cab420b03d554aa2b51aad31c3f6c2cf2f7648",
+      "source_version": "471d259e",
+      "content_hash": "f96ca3975a6fa16d2ad84206ba3ff92728007730361502885e20067ae874b0be",
       "dossier_path": "07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
       "promoted_rules": [
@@ -38916,6 +38916,11 @@
           "number": 6471,
           "title": "build(deps): bump the simple group across 1 directory with 13 updates (#40399)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6748,
+          "title": "build(deps): bump @vitest/mocker and vitest in /ci/test/docs-widgets (#40437)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -38923,7 +38928,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-02T17:31:51.455Z",
+      "verified_at": "2026-11-04T03:51:14.131Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -43888,8 +43893,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "12382609",
-      "content_hash": "13c255f6c8132ef8b2378b792d260a9c7a6d9f30c79e95c309020f874ee83a44",
+      "source_version": "ee552061",
+      "content_hash": "937129909886f6547af029b4317d905dfecac74b5558e68d3eca4b8b91c48782",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -44097,6 +44102,11 @@
           "number": 6505,
           "title": "Require every agent to pull before starting",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6749,
+          "title": "Create logs directory before writing puzzle log",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -44104,7 +44114,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T11:15:10.347Z",
+      "verified_at": "2026-11-04T03:51:14.436Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -173034,6 +173044,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-04T03:44:13.440Z"
+    },
+    "rule-6748": {
+      "learning_id": "rule-6748",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6748,
+      "title": "build(deps): bump @vitest/mocker and vitest in /ci/test/docs-widgets (#40437)",
+      "source_url": "https://github.com/MaterializeInc/materialize",
+      "source_version": "471d259e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T03:51:14.131Z"
+    },
+    "rule-6749": {
+      "learning_id": "rule-6749",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6749,
+      "title": "Create logs directory before writing puzzle log",
+      "source_url": "https://github.com/NucleoidAI/Nucleoid",
+      "source_version": "ee552061",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T03:51:14.436Z"
     }
   },
   "aliases": {

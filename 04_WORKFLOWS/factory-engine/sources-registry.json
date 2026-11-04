@@ -40,8 +40,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-04T03:44:16.053Z",
-    "lastVerified": "2026-11-04T03:44:16.053Z",
+    "lastChecked": "2026-11-04T03:51:17.054Z",
+    "lastVerified": "2026-11-04T03:51:17.054Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -434,22 +434,21 @@
     "lastVerified": "2026-11-03T20:11:11.388Z"
   },
   "nucleoidai-nucleoid": {
-    "name": "Nucleoid",
+    "name": "NucleoidAI/Nucleoid",
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-04T03:23:41.478Z",
-    "lastVerified": "2026-11-04T03:23:41.478Z",
+    "lastChecked": "2026-11-04T03:51:13.653Z",
+    "lastVerified": "2026-11-04T03:51:13.653Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "13c255f6c8132ef8b2378b792d260a9c7a6d9f30c79e95c309020f874ee83a44",
+    "contentHash": "937129909886f6547af029b4317d905dfecac74b5558e68d3eca4b8b91c48782",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "12382609"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "tabbyml-tabby": {
     "name": "tabby",
@@ -1333,8 +1332,8 @@
     "officialUrl": "https://github.com/cryfs/cryfs",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-04T00:38:31.142Z",
-    "lastVerified": "2026-11-04T00:38:31.142Z",
+    "lastChecked": "2026-11-04T03:51:03.199Z",
+    "lastVerified": "2026-11-04T03:51:03.199Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-cryfs-cryfs",
@@ -2977,9 +2976,9 @@
   "gregberge-svgr": {
     "name": "svgr",
     "officialUrl": "https://github.com/gregberge/svgr",
-    "lastChecked": "2026-10-31T03:52:19.414Z",
+    "lastChecked": "2026-11-04T03:50:58.214Z",
     "revisionIdentifier": "975215ef",
-    "lastVerified": "2026-10-31T03:52:19.414Z"
+    "lastVerified": "2026-11-04T03:50:58.214Z"
   },
   "litmuschaos-litmus": {
     "name": "litmus",
@@ -4233,8 +4232,8 @@
     "officialUrl": "https://github.com/wasm-bindgen/wasm-pack",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-01T01:26:39.753Z",
-    "lastVerified": "2026-11-01T01:26:39.753Z",
+    "lastChecked": "2026-11-04T03:50:53.195Z",
+    "lastVerified": "2026-11-04T03:50:53.195Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-wasm-bindgen-wasm-pack",
@@ -4382,14 +4381,14 @@
     "officialUrl": "https://github.com/MaterializeInc/materialize",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-02T17:31:50.031Z",
-    "lastVerified": "2026-11-02T17:31:50.031Z",
+    "lastChecked": "2026-11-04T03:51:11.943Z",
+    "lastVerified": "2026-11-04T03:51:11.943Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-materializeinc-materialize",
-    "contentHash": "b39ea2cafb739992cba5384d90cab420b03d554aa2b51aad31c3f6c2cf2f7648",
+    "contentHash": "f96ca3975a6fa16d2ad84206ba3ff92728007730361502885e20067ae874b0be",
     "promotedRulesCount": 1,
-    "recentFixesCount": 15,
+    "recentFixesCount": 17,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -6432,9 +6431,9 @@
   "cycloidio-terracognita": {
     "name": "terracognita",
     "officialUrl": "https://github.com/cycloidio/terracognita",
-    "lastChecked": "2026-11-02T21:36:30.389Z",
+    "lastChecked": "2026-11-04T03:51:00.681Z",
     "revisionIdentifier": "802bd4b5",
-    "lastVerified": "2026-11-02T21:36:30.389Z"
+    "lastVerified": "2026-11-04T03:51:00.681Z"
   },
   "netflix-dynomite": {
     "name": "dynomite",
@@ -11700,12 +11699,12 @@
     "lastVerified": "2026-11-03T20:27:22.175Z"
   },
   "devexpress-testcafe": {
-    "name": "DevExpress/testcafe",
+    "name": "testcafe",
     "officialUrl": "https://github.com/DevExpress/testcafe",
     "sourceType": "github",
     "technology": "JavaScript",
-    "lastChecked": "2026-10-30T20:36:16.983Z",
-    "lastVerified": "2026-10-30T20:36:16.983Z",
+    "lastChecked": "2026-11-04T03:50:55.679Z",
+    "lastVerified": "2026-11-04T03:50:55.679Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-devexpress-testcafe",
@@ -11714,7 +11713,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "7245edc4"
   },
   "planetable-planet": {
     "name": "Planet",

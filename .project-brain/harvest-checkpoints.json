@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-04T03:44:13.512Z",
+  "last_updated": "2026-11-04T03:51:14.526Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "13c255f6c8132ef8b2378b792d260a9c7a6d9f30c79e95c309020f874ee83a44",
-      "verified_at": "2026-11-03T11:15:10.468Z",
+      "content_hash": "937129909886f6547af029b4317d905dfecac74b5558e68d3eca4b8b91c48782",
+      "verified_at": "2026-11-04T03:51:14.525Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T11:15:10.468Z"
+      "last_updated": "2026-11-04T03:51:14.525Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -6006,14 +6006,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-materializeinc-materialize",
-      "content_hash": "b39ea2cafb739992cba5384d90cab420b03d554aa2b51aad31c3f6c2cf2f7648",
-      "verified_at": "2026-11-02T17:31:51.568Z",
+      "content_hash": "f96ca3975a6fa16d2ad84206ba3ff92728007730361502885e20067ae874b0be",
+      "verified_at": "2026-11-04T03:51:14.222Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-02T17:31:51.568Z"
+      "last_updated": "2026-11-04T03:51:14.222Z"
     },
     "react-bootstrap/react-bootstrap": {
       "repository": "react-bootstrap/react-bootstrap",
