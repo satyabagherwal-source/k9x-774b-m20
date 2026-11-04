@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-04T10:20:21.824Z",
+  "last_updated": "2026-11-04T10:30:23.895Z",
   "total_verified_learnings": 1206,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -71117,13 +71117,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
-      "slug": "aleo-labs-protocol-snarkos",
+      "slug": "provablehq-snarkos",
       "platform": "github",
-      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
+      "source_url": "https://github.com/ProvableHQ/snarkOS",
       "source_version": "a7f0c300",
-      "content_hash": "adc4dd3c6a5ede02b9279302d8b8ad34492fb5c3a15bbd7a0545b46fbc5a5479",
-      "dossier_path": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
+      "content_hash": "e29c11dc5de58a8e54ecc7704e0f9c57f63ce700adba97fb98144e18b2940641",
+      "dossier_path": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
       "promoted_rules": [
         {
           "number": 1114,
@@ -71228,7 +71228,7 @@
         {
           "number": 6778,
           "title": "Merge pull request #4621 from aleo-labs-protocol/ci/stress-test-params-example-2",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -71236,7 +71236,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T08:28:36.939Z",
+      "verified_at": "2026-11-04T10:29:59.694Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -77843,7 +77843,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/autogluon/chronos-2",
       "source_version": "hf-autogluon-chronos-2",
-      "content_hash": "debcaee89572850bbc5506261280e443ecc9d7c3616fad4266e2fb980675913f",
+      "content_hash": "c01b2833fa84226bd1cac418f0fafd135e4d9cf275b528a5f7199a7d91733124",
       "dossier_path": "07_PROJECT_LEARNING/hf-autogluon-chronos-2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-autogluon-chronos-2-learnings.md",
       "promoted_rules": [
@@ -77916,6 +77916,21 @@
           "number": 5948,
           "title": "RoPE Positional Encoding for Long-Context Generalization",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6812,
+          "title": "Quantile Output Shape Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6813,
+          "title": "Context‑Length Safety Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6814,
+          "title": "Quantile‑Monotonicity Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -77923,7 +77938,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T23:58:47.269Z",
+      "verified_at": "2026-11-04T10:30:23.873Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -164393,8 +164408,8 @@
       "slug": "vercel-labs-agent-desktop",
       "platform": "github",
       "source_url": "https://github.com/vercel-labs/agent-desktop",
-      "source_version": "9eb9b296",
-      "content_hash": "e9b20050a8a768e23d4c47a6e8376a7966e1e0166ef1dbc5b0f2592db94c0912",
+      "source_version": "6660fbac",
+      "content_hash": "f3680f1684637c15590bd0fd44d02ebcc38a0b83a6aeaff7abf41fa28b53dab0",
       "dossier_path": "07_PROJECT_LEARNING/vercel-labs-agent-desktop-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/vercel-labs-agent-desktop-learnings.md",
       "promoted_rules": [
@@ -164407,6 +164422,11 @@
           "number": 6454,
           "title": "macos): stop clipping the click highlight's glow and pop (#352)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6811,
+          "title": "macos): reach the Dock, menu bar status items and system panels (#480)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -164414,7 +164434,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-02T16:33:24.754Z",
+      "verified_at": "2026-11-04T10:29:50.294Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -173798,14 +173818,14 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 6778,
       "title": "Merge pull request #4621 from aleo-labs-protocol/ci/stress-test-params-example-2",
-      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
+      "source_url": "https://github.com/ProvableHQ/snarkOS",
       "source_version": "a7f0c300",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-04T08:28:36.939Z"
+      "verified_at": "2026-11-04T10:29:59.694Z"
     },
     "rule-6779": {
       "learning_id": "rule-6779",
@@ -174287,6 +174307,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-04T10:20:21.806Z"
+    },
+    "rule-6811": {
+      "learning_id": "rule-6811",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6811,
+      "title": "macos): reach the Dock, menu bar status items and system panels (#480)",
+      "source_url": "https://github.com/vercel-labs/agent-desktop",
+      "source_version": "6660fbac",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T10:29:50.294Z"
+    },
+    "rule-6812": {
+      "learning_id": "rule-6812",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6812,
+      "title": "Quantile Output Shape Invariant",
+      "source_url": "https://huggingface.co/autogluon/chronos-2",
+      "source_version": "hf-autogluon-chronos-2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T10:30:23.873Z"
+    },
+    "rule-6813": {
+      "learning_id": "rule-6813",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6813,
+      "title": "Context‑Length Safety Invariant",
+      "source_url": "https://huggingface.co/autogluon/chronos-2",
+      "source_version": "hf-autogluon-chronos-2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T10:30:23.873Z"
+    },
+    "rule-6814": {
+      "learning_id": "rule-6814",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6814,
+      "title": "Quantile‑Monotonicity Invariant",
+      "source_url": "https://huggingface.co/autogluon/chronos-2",
+      "source_version": "hf-autogluon-chronos-2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T10:30:23.873Z"
     }
   },
   "aliases": {

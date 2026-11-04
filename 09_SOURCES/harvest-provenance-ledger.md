@@ -7222,3 +7222,6 @@ Every entry in this ledger must capture:
 | `learn-github-meta-docusaurus` | `https://github.com/facebook/docusaurus` | `2a890559` | Multi-dimensional audit evidence | 2026-11-04T10:20:13.044Z |
 | `learn-github-wix-react-native-ui-lib` | `https://github.com/wix/react-native-ui-lib` | `999abfa6` | Multi-dimensional audit evidence | 2026-11-04T10:20:13.904Z |
 | `learn-github-apache-zookeeper` | `https://github.com/apache/zookeeper` | `a9d2ce60` | Multi-dimensional audit evidence | 2026-11-04T10:20:21.907Z |
+| `learn-github-vercel-labs-agent-desktop` | `https://github.com/vercel-labs/agent-desktop` | `6660fbac` | Multi-dimensional audit evidence | 2026-11-04T10:29:50.407Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `a7f0c300` | Multi-dimensional audit evidence | 2026-11-04T10:29:59.814Z |
+| `learn-huggingface-autogluon-chronos-2` | `https://huggingface.co/autogluon/chronos-2` | `hf-autoglu` | Multi-dimensional audit evidence | 2026-11-04T10:30:23.985Z |

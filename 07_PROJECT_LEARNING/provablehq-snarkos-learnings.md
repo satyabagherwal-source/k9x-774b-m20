@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/provablehq-snarkos-learnings.md`  
 > **Source**: github ([https://github.com/ProvableHQ/snarkOS](https://github.com/ProvableHQ/snarkOS))  
-> **Source Version**: `ecab5ce6`  
+> **Source Version**: `a7f0c300`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T20:00:59.666Z  
+> **Timestamp**: 2026-11-04T10:29:59.316Z  
 > **Learning ID**: `learn-github-aleo-labs-protocol-snarkos`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/provablehq-snarkos-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ProvableHQ/snarkOS](https://github.com/ProvableHQ/snarkOS))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T20:00:58.650Z  
+> **Harvest Timestamp**: 2026-11-04T10:29:58.923Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1966,13 +1966,11 @@ mod tests {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #4588** (2026-10-29): **Re-issue block requests that a responsive peer skipped**
+  *Symptoms*: ## Motivation  Fixes #4585. Block sync can stall for good when a validator peer drops block requests.  - A validator drops each `BlockRequest` beyond `max_cache_duplicates()` (the committee size squared) per peer within `CACHE_REQUESTS_INTERVAL` (2 s). It sends no reply. - Since 71f5f74c0, `handle_block_request_timeouts` keeps a timed-out request if its peer sent any block response within `BLOCK_REQUEST_TIMEOUT` (60 s). - The peer keeps answering newer requests. So a dropped request never times out, and it is never re-issued. The syncing node stops below the gap.  ### Fix  - For each peer, `last_response_at` also holds the latest timestamp of any request that the peer answered. - A timed-out request is exempt only while an assigned peer is responsive and has answered no request sent after it. Requests are stamped and queued to each peer in send order. So a peer that answered a later request skipped this one. - A skipped request is marked as failed and re-issued. Its peer stays in the sync pool, because the peer still responds. - A backlogged peer that answers requests in order stays exempt, as 71f5f74c0 intends. - The gateway logs each dropped block request at trace level.  ### Commits  - `fix(node/sync): time out block requests that a responsive peer skipped`: the fix, the log line, and three unit tests.  ## Test Plan  - New unit tests in `node/sync/src/block_sync.rs`:   - `test_reissue_skipped_block_request`: a timed-out request whose peer answered a later request is remove
+
 - **Issue #4585** (2026-10-29): **[Bug] Block sync stalls for good when a validator peer drops rate-limited block requests**
   *Symptoms*: ## 🐛 Bug Report  A validator that syncs blocks from a validator peer can stall for good. Two behaviors combine:  1. **The gateway drops excess block requests without a reply.** A validator counts the `BlockRequest`s from each peer over `CACHE_REQUESTS_INTERVAL` (2 seconds). From the `max_cache_duplicates()`-th request on, it returns `Ok(true)` and does nothing. It sends no response and logs nothing. The limit is the square of the current committee size, so it is 16 on a 4-validator devnet.    - [`gateway.rs#L650-L655`](https://github.com/ProvableHQ/snarkOS/blob/6b124303c094f0a58bdf9f3517d3ac589dd0820f/node/bft/src/gateway.rs#L650-L655)    - [`gateway.rs#L400-L403`](https://github.com/ProvableHQ/snarkOS/blob/6b124303c094f0a58bdf9f3517d3ac589dd0820f/node/bft/src/gateway.rs#L400-L403) 2. **A dropped request never times out while its peer answers other requests.** `handle_block_request_timeouts` keeps a request whose peer sent any block response in the last `BLOCK_REQUEST_TIMEOUT` (60 seconds). It added this exemption in 71f5f74c0 ("do not ban responsive peers"). The peer keeps answering newer requests, so the dropped ones are never re-issued.    - [`block_sync.rs#L1247-L1249`](https://github.com/ProvableHQ/snarkOS/blob/6b124303c094f0a58bdf9f3517d3ac589dd0820f/node/sync/src/block_sync.rs#L1247-L1249)    - [`block_sync.rs#L1384-L1389`](https://github.com/ProvableHQ/snarkOS/blob/6b124303c094f0a58bdf9f3517d3ac589dd0820f/node/sync/src/block_sync.rs#L1384-L1389)  The syncing node the
-
-- **Issue #4466** (2026-09-29): **[Bug] Spurious ERROR log: Attempted to decrease GC round from 36 to 34**
-  *Symptoms*: ## 🐛 Bug Report  Link to testrun: https://app.circleci.com/pipelines/gh/ProvableHQ/snarkOS/4270/workflows/6fe7a02c-9a65-48f9-86f1-b2438b7f6616/jobs/90558?utm_campaign=vcs-integration-link&utm_medium=referral&utm_source=github-checks-link  [ci-runner] 2026-09-17T17:42:01Z ❌ Test failed! Validator #1 logs contain errors. 2026-09-17T17:41:13.258841Z ERROR Block synchronization failed — Failed to garbage collect certificates — Attempted to decrease GC round from 36 to 34 
-  **Post-Mortem & Fix Analysis**:
-  > Likely already solved by 67810a9.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1989,105 +1987,104 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ecab5ce6` (2026-11-03)
-**Commit Message**: Merge pull request #4617 from aleo-labs-protocol/ci/stress-test-env-secrets
+### Incident Patch 1: `a7f0c300` (2026-11-04)
+**Commit Message**: Merge pull request #4621 from aleo-labs-protocol/ci/stress-test-params-example-2
 
-Read stress test settings from environment secrets
-
-**File**: `.github/workflows/stress-test.yml` (modified, +21/-15)
+**File**: `.github/workflows/stress-test.yml` (modified, +12/-3)
 ```diff
-@@ -1,8 +1,8 @@
- # Copy to aleo-labs-protocol/snarkOS as .github/workflows/stress-test.yml.
- #
--# Runs snarkOS stress tests on the Gauntlet host (aleo-labs-protocol/
--# aws-dev-infra/gauntlet) and reports them as the "stress-test" check on the
--# commit, so anyone looking at the commit or its PR sees the result.
-+# Runs snarkOS stress tests on the Gauntlet host and reports them as the
-+# "stress-test" check on the commit, so anyone looking at the commit or its PR
-+# sees the result.
- #
- #   start   "Run workflow" (or a release whose CI passed): approval in the
- #           stress-test environment, then queue the run on the Gauntlet host.
-@@ -11,13 +11,15 @@
- #           dispatch of this workflow, which follows the same run without
- #           asking for approval again.
- #
--# Setup lives in aws-dev-infra (setup-gauntlet-ci.sh): the IAM role that only this
--# file on staging can assume, the Instance Connect Endpoint, and these variables:
--#   STRESS_ROLE_ARN              the role
--#   STRESS_MANAGER_INSTANCE_ID   the Gauntlet host
--#   STRESS_MANAGER_HOST_KEY      the Gauntlet host's ssh host key line
--#   STRESS_RELEASE_TESTS / STRESS_RELEASE_MODE   what a release runs
--# and, optionally, the secret ANTHROPIC_API_KEY for the comparison summary.
-+# It needs an IAM role that only this file on staging can assume, an Instance
-+# Connect Endpoint, and these settings. Actions logs are public, so anything
-+# naming the cloud account is a secret, held in the stress-test and
-+# stress-test-status environments so that only this job on staging can read it:
-+#   environment secret  STRESS_ROLE_ARN              the role
-+#   environment secret  STRESS_MANAGER_INSTANCE_ID   the Gauntlet host
-+#   secret              ANTHROPIC_API_KEY            optional: the comparison summary
-+#   variable            STRESS_MANAGER_HOST_KEY      the Gauntlet host's ssh host key line
-+#   variable            STRESS_RELEASE_TESTS / STRESS_RELEASE_MODE   what a release runs
- name: Stress test
- 
- on:
-@@ -72,8 +74,8 @@ jobs:
-     env:
-       AWS_REGION: us-west-2
-       GH_TOKEN: ${{ github.token }}
--      MANAGER: ${{ vars.STRESS_MANAGER_INSTANCE_ID }}
--      ROLE_ARN: ${{ vars.STRESS_ROLE_ARN }}
-+      MANAGER: ${{ secrets.STRESS_MANAGER_INSTANCE_ID }}
-+      ROLE_ARN: ${{ secrets.STRESS_ROLE_ARN }}
-       HOST_KEY: ${{ vars.STRESS_MANAGER_HOST_KEY }}
-       RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-     steps:
-@@ -124,9 +126,13 @@ jobs:
- 
-       - name: Connect to the Gauntlet host
+@@ -43,7 +43,7 @@ on:
+         options: [testnet, mainnet]
+         default: testnet
+       params:
+-        description: "Test parameter overrides, e.g. rate=200,duration=300"
++        description: "Test parameter overrides, e.g. rate=50,duration=300"
+         default: ""
+       follow_run_id:
+         description: "Internal: keep following this run"
+@@ -189,7 +189,9 @@ jobs:
+           ACTOR: ${{ steps.req.outputs.actor }}
          run: |
--          # The Gauntlet host's gha-gauntlet user can only run the gate (aws-dev-infra/gauntlet/
--          # host/gate.sh): enqueue, status and cancel. Each connection pushes a key
--          # that lives 60 seconds, through the Instance Connect Endpoint.
-+          : "${MANAGER:?STRESS_MANAGER_INSTANCE_ID must be configured}"
-+          : "${ROLE_ARN:?STRESS_ROLE_ARN must be configured}"
-+          # AWS errors quote ARNs that differ from the secret, so mask the account too.
-+          echo "::add-mask::$(cut -d: -f5 <<<"$ROLE_ARN")"
-+          # The Gauntlet host's gha-gauntlet user can only run the gate: enqueue, status
-+          # and cancel. Each connection pushes a key that lives 60 seconds, through the
-+          # Instance Connect Endpoint.
-           mkdir -p ~/.ssh && chmod 700 ~/.ssh
-           ssh-keygen -q -t ed25519 -N '' -f ~/.ssh/stress
-           : "${HOST_KEY:?STRESS_MANAGER_HOST_KEY must be configured}"
+           source "$RUNNER_TEMP/gate.sh"
+-          gate enqueue "$RUN_ID" "$COMMIT" "$TESTS" "$VALIDATORS" "$NETWORK" "$ACTOR" "$PARAMS"
++          # Only a rejection's message reaches the check.
++          trap 'cat enqueue.err >&2; sed -n "s/^rejected: //p" enqueue.err | head -c 2000 > rejected.txt' EXIT
++          gate enqueue "$RUN_ID" "$COMMIT" "$TESTS" "$VALIDATORS" "$NETWORK" "$ACTOR" "$PARAMS" 2> enqueue.err
+ 
+       - name: Follow the run
+         id: follow
+@@ -273,11 +275,18 @@ jobs:
+           echo "$summary" >> "$GITHUB_STEP_SUMMARY"
+           [[ "$(jq -r .verdict status.json)" == pass ]]
+ 
+-      - name: Report orchestration failure
++      - name: Report a rejection or an orchestration failure
+         if: failure() && steps.check.outputs.id != '' && steps.follow.outputs.handoff != 'false'
+         env:
+           CHECK_ID: ${{ steps.check.outputs.id }}
+         run: |
++          if [[ -s rejected.txt ]]; then
++            gh api -X PATCH "repos/$GITHUB_REPOSITORY/check-runs/$CHECK_ID" \
++              -f status=completed -f conclusion=failure \
++              -f 'output[title]=Request rejected' \
++              -f "output[summary]=The Gauntlet host rejected this request and started no run: $(cat rejected.txt)" >/dev/null
++            exit 0
++          fi
+           gh api -X PATCH "repos/$GITHUB_REPOSITORY/check-runs/$CHECK_ID" \
+             -f status=completed -f conclusion=action_required \
+             -f 'output[title]=Orchestration interrupted' \
 ```
 
 ---
 
-### Incident Patch 2: `d2c5051f` (2026-11-03)
-**Commit Message**: Merge pull request #4611 from aleo-labs-protocol/ci/release-download-url
+### Incident Patch 2: `78a526ef` (2026-11-04)
+**Commit Message**: Say rejected rather than refused
 
-ci: download the latest snarkOS release from aleo-labs-protocol
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Claude-Session: https://claude.ai/code/session_01UYfmmNSP3RcL6oYCA2bxvj
 
-**File**: `.ci/utils.sh` (modified, +1/-1)
+**File**: `.github/workflows/stress-test.yml` (modified, +6/-6)
 ```diff
-@@ -860,7 +860,7 @@ function download_and_build_latest_snarkos() {
+@@ -189,8 +189,8 @@ jobs:
+           ACTOR: ${{ steps.req.outputs.actor }}
+         run: |
+           source "$RUNNER_TEMP/gate.sh"
+-          # Only a refusal's message reaches the check.
+-          trap 'cat enqueue.err >&2; sed -n "s/^refused: //p" enqueue.err | head -c 2000 > refused.txt' EXIT
++          # Only a rejection's message reaches the check.
++          trap 'cat enqueue.err >&2; sed -n "s/^rejected: //p" enqueue.err | head -c 2000 > rejected.txt' EXIT
+           gate enqueue "$RUN_ID" "$COMMIT" "$TESTS" "$VALIDATORS" "$NETWORK" "$ACTOR" "$PARAMS" 2> enqueue.err
  
-   mkdir -p "${SNARKOS_RELEASE_DIR}"
+       - name: Follow the run
+@@ -275,16 +275,16 @@ jobs:
+           echo "$summary" >> "$GITHUB_STEP_SUMMARY"
+           [[ "$(jq -r .verdict status.json)" == pass ]]
  
--  local repo="ProvableHQ/snarkOS"
-+  local repo="aleo-labs-protocol/snarkOS"
-   local latest_url latest_tag tar_url
-   local tmpdir srcdir
-   local existing_tag=""
+-      - name: Report a refusal or an orchestration failure
++      - name: Report a rejection or an orchestration failure
+         if: failure() && steps.check.outputs.id != '' && steps.follow.outputs.handoff != 'false'
+         env:
+           CHECK_ID: ${{ steps.check.outputs.id }}
+         run: |
+-          if [[ -s refused.txt ]]; then
++          if [[ -s rejected.txt ]]; then
+             gh api -X PATCH "repos/$GITHUB_REPOSITORY/check-runs/$CHECK_ID" \
+               -f status=completed -f conclusion=failure \
+-              -f 'output[title]=Request refused' \
+-              -f "output[summary]=The Gauntlet host refused this request and started no run: $(cat refused.txt)" >/dev/null
++              -f 'output[title]=Request rejected' \
++              -f "output[summary]=The Gauntlet host rejected this request and started no run: $(cat rejected.txt)" >/dev/null
+             exit 0
+           fi
+           gh api -X PATCH "repos/$GITHUB_REPOSITORY/check-runs/$CHECK_ID" \
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4621** (2026-11-04): Report a request the stress test host rejects (@cbeck88)
+- **PR #4620** (2026-11-04): Update the stress test's params example (@cbeck88)
+- **PR #4619** (2026-11-04): Choose the stress test's network size by validator count (@cbeck88)
 - **PR #4617** (2026-11-03): Read stress test settings from environment secrets (@cbeck88)
 - **PR #4616** (closed): Read stress test settings from environment secrets (@cbeck88)
 - **PR #4614** (2026-11-03): Add Gauntlet stress test workflow (@snarkworld)
-- **PR #4613** (2026-11-02): chore(deps): bump sha2 from 0.10.9 to 0.11.0 (@dependabot[bot])
-- **PR #4611** (2026-11-03): ci: download the latest snarkOS release from aleo-labs-protocol (@snarkworld)
-- **PR #4610** (2026-11-02): Fetch snarkVM from aleo-labs-protocol instead of ProvableHQ (@snarkworld)
 
 ---
 
@@ -2107,13 +2104,13 @@ ci: download the latest snarkOS release from aleo-labs-protocol
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #4617 from aleo-labs-protocol/ci/stress-test-env-secrets
+## X. Merge pull request #4621 from aleo-labs-protocol/ci/stress-test-params-example-2
 
 **RULE**:
 When implementing operations in `.github/workflows/stress-test.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ecab5ce6`: Merge pull request #4617 from aleo-labs-protocol/ci/stress-test-env-secrets. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a7f0c300`: Merge pull request #4621 from aleo-labs-protocol/ci/stress-test-params-example-2. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/stress-test.yml`.
@@ -2121,45 +2118,27 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-# Runs snarkOS stress tests on the Gauntlet host and reports them as the
-# "stress-test" check on the commit, so anyone looking at the commit or its PR
-# sees the result.
-# It needs an IAM role that only this file on staging can assume, an Instance
-# Connect Endpoint, and these settings. Actions logs are public, so anything
-# naming the cloud account is a secret, held in the stress-test and
-# stress-test-status environments so that only this job on staging can read it:
-#   environment secret  STRESS_ROLE_ARN              the role
-#   environment secret  STRESS_MANAGER_INSTANCE_ID   the Gauntlet host
-#   secret              ANTHROPIC_API_KEY            optional: the comparison summary
-#   variable            STRESS_MANAGER_HOST_KEY      the Gauntlet host's ssh host key line
-#   variable            STRESS_RELEASE_TESTS / STRESS_RELEASE_MODE   what a release runs
-      MANAGER: ${{ secrets.STRESS_MANAGER_INSTANCE_ID }}
-      ROLE_ARN: ${{ secrets.STRESS_ROLE_ARN }}
-          : "${MANAGER:?STRESS_MANAGER_INSTANCE_ID must be configured}"
-          : "${ROLE_ARN:?STRESS_ROLE_ARN must be configured}"
-          # AWS errors quote ARNs that differ from the secret, so mask the account too.
- 
+        description: "Test parameter overrides, e.g. rate=50,duration=300"
+          # Only a rejection's message reaches the check.
+          trap 'cat enqueue.err >&2; sed -n "s/^rejected: //p" enqueue.err | head -c 2000 > rejected.txt' EXIT
+          gate enqueue "$RUN_ID" "$COMMIT" "$TESTS" "$VALIDATORS" "$NETWORK" "$ACTOR" "$PARAMS" 2> enqueue.err
+      - name: Report a rejection or an orchestration failure
+          if [[ -s rejected.txt ]]; then
+            gh api -X PATCH "repos/$GITHUB_REPOSITORY/check-runs/$CHECK_ID" \
+              -f status=completed -f conclusion=failure \
+              -f 'output[title]=Request rejected' \
+              -f "output[summary]=The Gauntlet host rejected this request and started no run: $(cat rejected.txt)" >/dev/null
+            exit 0
+          fi
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-# Runs snarkOS stress tests on the Gauntlet host (aleo-labs-protocol/
-# aws-dev-infra/gauntlet) and reports them as the "stress-test" check on the
-# commit, so anyone looking at the commit or its PR sees the result.
-# Setup lives in aws-dev-infra (setup-gauntlet-ci.sh): the IAM role that only this
-# file on staging can assume, the Instance Connect Endpoint, and these variables:
-#   STRESS_ROLE_ARN              the role
-#   STRESS_MANAGER_INSTANCE_ID   the Gauntlet host
-#   STRESS_MANAGER_HOST_KEY      the Gauntlet host's ssh host key line
-#   STRESS_RELEASE_TESTS / STRESS_RELEASE_MODE   what a release runs
-# and, optionally, the secret ANTHROPIC_API_KEY for the comparison summary.
-      MANAGER: ${{ vars.STRESS_MANAGER_INSTANCE_ID }}
-      ROLE_ARN: ${{ vars.STRESS_ROLE_ARN }}
-          # The Gauntlet host's gha-gauntlet user can only run the gate (aws-dev-infra/gauntlet/
-          # host/gate.sh): enqueue, status and cancel. Each connection pushes a key
-          # that lives 60 seconds, through the Instance Connect Endpoint.
+        description: "Test parameter overrides, e.g. rate=200,duration=300"
+          gate enqueue "$RUN_ID" "$COMMIT" "$TESTS" "$VALIDATORS" "$NETWORK" "$ACTOR" "$PARAMS"
+      - name: Report orchestration failure
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ecab5ce6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a7f0c300` are properly handled with clean fallback behavior.

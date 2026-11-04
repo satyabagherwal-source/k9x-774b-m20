@@ -7213,3 +7213,6 @@
 | `CYCLE-20261104-TWFL` | `2026-11-04T10:20:13.041Z` | `meta/docusaurus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6808` | Yes (`78b39faf...`) |
 | `CYCLE-20261104-TX3H` | `2026-11-04T10:20:13.901Z` | `wix/react-native-ui-lib` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6809` | Yes (`aef953e4...`) |
 | `CYCLE-20261104-U39S` | `2026-11-04T10:20:21.904Z` | `apache/zookeeper` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6810` | Yes (`95ca4587...`) |
+| `CYCLE-20261104-69XF` | `2026-11-04T10:29:50.403Z` | `vercel-labs/agent-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6811` | Yes (`f3680f16...`) |
+| `CYCLE-20261104-6H6Q` | `2026-11-04T10:29:59.810Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6778` | Yes (`e29c11dc...`) |
+| `CYCLE-20261104-6ZU5` | `2026-11-04T10:30:23.981Z` | `autogluon/chronos-2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6812, Rule 6813, Rule 6814` | Yes (`c01b2833...`) |

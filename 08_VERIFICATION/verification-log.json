@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261031-OH2R",
-    "timestamp": "2026-10-31T20:53:10.131Z",
-    "repository": "unhappychoice/gitlogue",
-    "learningId": "learn-github-unhappychoice-gitlogue",
-    "contentHash": "787394e8fb8a7d1c10387c8585009ea9c7d6adc397d28657792304fbd68c4dc4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261031-ORP4",
-    "timestamp": "2026-10-31T20:53:23.896Z",
-    "repository": "ClickHouse/ClickHouse",
-    "learningId": "learn-github-clickhouse-clickhouse",
-    "contentHash": "8cbcaea0bdca4fa9318be0c3fac67afdb904d025b4d9ed42613c14d650500617",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261031-WRGH",
-    "timestamp": "2026-10-31T20:59:36.833Z",
-    "repository": "fallow-rs/fallow",
-    "learningId": "learn-github-fallow-rs-fallow",
-    "contentHash": "42f73f8efccbada13aa2a33fc16776c03a6dd1d06db359632528084a29ae1994",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261031-WSR0",
     "timestamp": "2026-10-31T20:59:38.508Z",
     "repository": "jacklandrin/OnlySwitch",
@@ -7492,6 +7447,51 @@
     "contentHash": "95ca4587fea1dbd08f1aaac958ca536173d77c834d064e956fcbb833008476e9",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-69XF",
+    "timestamp": "2026-11-04T10:29:50.403Z",
+    "repository": "vercel-labs/agent-desktop",
+    "learningId": "learn-github-vercel-labs-agent-desktop",
+    "contentHash": "f3680f1684637c15590bd0fd44d02ebcc38a0b83a6aeaff7abf41fa28b53dab0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-6H6Q",
+    "timestamp": "2026-11-04T10:29:59.810Z",
+    "repository": "aleo-labs-protocol/snarkOS",
+    "learningId": "learn-github-aleo-labs-protocol-snarkos",
+    "contentHash": "e29c11dc5de58a8e54ecc7704e0f9c57f63ce700adba97fb98144e18b2940641",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-6ZU5",
+    "timestamp": "2026-11-04T10:30:23.981Z",
+    "repository": "autogluon/chronos-2",
+    "learningId": "learn-huggingface-autogluon-chronos-2",
+    "contentHash": "c01b2833fa84226bd1cac418f0fafd135e4d9cf275b528a5f7199a7d91733124",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

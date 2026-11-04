@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-04T10:20:21.912Z",
-  "total_cycles_completed": 7190,
-  "total_learnings_persisted": 7190,
-  "total_rules_promoted": 6836,
+  "last_updated": "2026-11-04T10:30:23.990Z",
+  "total_cycles_completed": 7193,
+  "total_learnings_persisted": 7193,
+  "total_rules_promoted": 6841,
   "history": [
-    {
-      "timestamp": "2026-11-03T21:28:35.883Z",
-      "repository": "max-sixty/worktrunk",
-      "learningId": "learn-github-max-sixty-worktrunk",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-03T21:29:05.540Z",
-      "repository": "wcandillon/react-native-skia",
-      "learningId": "learn-github-wcandillon-react-native-skia",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-03T21:36:52.829Z",
-      "repository": "kumahq/kuma",
-      "learningId": "learn-github-kumahq-kuma",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-03T21:36:52.837Z",
       "repository": "weaviate/weaviate",
@@ -1403,6 +1382,27 @@
       "repository": "apache/zookeeper",
       "learningId": "learn-github-apache-zookeeper",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T10:29:50.414Z",
+      "repository": "vercel-labs/agent-desktop",
+      "learningId": "learn-github-vercel-labs-agent-desktop",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T10:29:59.821Z",
+      "repository": "aleo-labs-protocol/snarkOS",
+      "learningId": "learn-github-aleo-labs-protocol-snarkos",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T10:30:23.990Z",
+      "repository": "autogluon/chronos-2",
+      "learningId": "learn-huggingface-autogluon-chronos-2",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]
