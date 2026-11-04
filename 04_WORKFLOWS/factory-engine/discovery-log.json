@@ -20194,5 +20194,20 @@
     "downloads": 2508590,
     "qualityScore": 58220,
     "discoveredAt": "2026-11-04T00:08:23.099Z"
+  },
+  {
+    "name": "Agentlas-OS",
+    "fullName": "agentlas-ai/Agentlas-OS",
+    "url": "https://github.com/agentlas-ai/Agentlas-OS",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Desktop AI agent that hires a specialist for each task, works in your real apps for weeks, and takes orders from your phone. Free, Apache-2.0.",
+    "stars": 1598,
+    "forks": 111,
+    "openIssues": 1,
+    "language": "Python",
+    "qualityScore": 1084,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-11-04T01:03:45.544Z"
   }
 ]

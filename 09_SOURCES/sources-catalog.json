@@ -4613,10 +4613,10 @@
     "repository": "hashicorp/terraform",
     "platform": "github",
     "sourceUrl": "https://github.com/hashicorp/terraform",
-    "sourceVersion": "89fa8797",
+    "sourceVersion": "6e64dc15",
     "license": "NOASSERTION",
-    "contentHash": "c17f866742e49054d53b83e2f47e6675f8387fc5a8ba49f520a039dd3cf63c98",
-    "lastHarvestedAt": "2026-11-02T15:08:18.917Z",
+    "contentHash": "b638ce4de0650b152dac0e8b9cb779202945ea991017088a3c4ff20315358907",
+    "lastHarvestedAt": "2026-11-04T01:07:38.651Z",
     "learningId": "learn-github-hashicorp-terraform"
   },
   "tako8ki-gobang": {
@@ -9793,10 +9793,10 @@
     "repository": "digitalbazaar/pyld",
     "platform": "github",
     "sourceUrl": "https://github.com/digitalbazaar/pyld",
-    "sourceVersion": "470edbc3",
+    "sourceVersion": "bcdc7103",
     "license": "BSD-3-Clause",
-    "contentHash": "f791be9df922b92d6c3c17d6eb2f1ef7ef823789935adec730dc71b0ca0a3097",
-    "lastHarvestedAt": "2026-10-22T21:48:01.821Z",
+    "contentHash": "ffe51820f636e2f1d17f3b01cb8514084a83dd42ae7b7288803883ab85ebc65f",
+    "lastHarvestedAt": "2026-11-04T01:07:33.326Z",
     "learningId": "learn-github-digitalbazaar-pyld"
   },
   "aheze-popovers": {
@@ -11838,5 +11838,15 @@
     "contentHash": "13da1d70a817c106c647bd465c0edb88bad839698ec9670c4056e591bfda2996",
     "lastHarvestedAt": "2026-11-04T00:10:50.710Z",
     "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-turbo-quantized"
+  },
+  "agentlas-ai-agentlas-os": {
+    "repository": "agentlas-ai/Agentlas-OS",
+    "platform": "github",
+    "sourceUrl": "https://github.com/agentlas-ai/Agentlas-OS",
+    "sourceVersion": "33e256b9",
+    "license": "Apache-2.0",
+    "contentHash": "eed003ab9db599c7034eb12d9ac40bb56cb0951ed397f784e58e97770e366775",
+    "lastHarvestedAt": "2026-11-04T01:07:27.816Z",
+    "learningId": "learn-github-agentlas-ai-agentlas-os"
   }
 }

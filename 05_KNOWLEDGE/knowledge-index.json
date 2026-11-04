@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-04T01:00:53.354Z",
-  "total_verified_learnings": 1202,
+  "last_updated": "2026-11-04T01:07:38.573Z",
+  "total_verified_learnings": 1203,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -17028,8 +17028,8 @@
       "slug": "hashicorp-terraform",
       "platform": "github",
       "source_url": "https://github.com/hashicorp/terraform",
-      "source_version": "89fa8797",
-      "content_hash": "c17f866742e49054d53b83e2f47e6675f8387fc5a8ba49f520a039dd3cf63c98",
+      "source_version": "6e64dc15",
+      "content_hash": "b638ce4de0650b152dac0e8b9cb779202945ea991017088a3c4ff20315358907",
       "dossier_path": "07_PROJECT_LEARNING/hashicorp-terraform-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hashicorp-terraform-learnings.md",
       "promoted_rules": [
@@ -17092,6 +17092,11 @@
           "number": 6424,
           "title": "Enable colorizer in a views.View to handle [purple] tags (#39477)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6694,
+          "title": "Make `state` subcommands use diagnostics to report errors to users (#39486)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -17099,7 +17104,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-02T15:08:18.828Z",
+      "verified_at": "2026-11-04T01:07:38.555Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -75327,8 +75332,8 @@
       "slug": "digitalbazaar-pyld",
       "platform": "github",
       "source_url": "https://github.com/digitalbazaar/pyld",
-      "source_version": "470edbc3",
-      "content_hash": "f791be9df922b92d6c3c17d6eb2f1ef7ef823789935adec730dc71b0ca0a3097",
+      "source_version": "bcdc7103",
+      "content_hash": "ffe51820f636e2f1d17f3b01cb8514084a83dd42ae7b7288803883ab85ebc65f",
       "dossier_path": "07_PROJECT_LEARNING/digitalbazaar-pyld-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/digitalbazaar-pyld-learnings.md",
       "promoted_rules": [
@@ -75348,7 +75353,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T21:48:01.779Z",
+      "verified_at": "2026-11-04T01:07:33.205Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -171945,6 +171950,67 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-04T01:00:53.332Z"
+    },
+    "learn-github-agentlas-ai-agentlas-os": {
+      "learning_id": "learn-github-agentlas-ai-agentlas-os",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "agentlas-ai/Agentlas-OS",
+      "repository": "agentlas-ai/Agentlas-OS",
+      "slug": "agentlas-ai-agentlas-os",
+      "platform": "github",
+      "source_url": "https://github.com/agentlas-ai/Agentlas-OS",
+      "source_version": "33e256b9",
+      "content_hash": "eed003ab9db599c7034eb12d9ac40bb56cb0951ed397f784e58e97770e366775",
+      "dossier_path": "07_PROJECT_LEARNING/agentlas-ai-agentlas-os-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/agentlas-ai-agentlas-os-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 6693,
+          "title": "active memory recall MCP and memory on by default (1.2.79)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-04T01:07:27.722Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-6693": {
+      "learning_id": "rule-6693",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6693,
+      "title": "active memory recall MCP and memory on by default (1.2.79)",
+      "source_url": "https://github.com/agentlas-ai/Agentlas-OS",
+      "source_version": "33e256b9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T01:07:27.722Z"
+    },
+    "rule-6694": {
+      "learning_id": "rule-6694",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6694,
+      "title": "Make `state` subcommands use diagnostics to report errors to users (#39486)",
+      "source_url": "https://github.com/hashicorp/terraform",
+      "source_version": "6e64dc15",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T01:07:38.555Z"
     }
   },
   "aliases": {

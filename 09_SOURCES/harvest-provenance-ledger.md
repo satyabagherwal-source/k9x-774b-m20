@@ -7099,3 +7099,6 @@ Every entry in this ledger must capture:
 | `learn-github-giancarloerra-socraticode` | `https://github.com/giancarloerra/SocratiCode` | `4aa6fc23` | Multi-dimensional audit evidence | 2026-11-04T00:53:28.965Z |
 | `learn-github-openyurtio-openyurt` | `https://github.com/openyurtio/openyurt` | `077652c5` | Multi-dimensional audit evidence | 2026-11-04T01:00:53.068Z |
 | `learn-github-nervjs-taro` | `https://github.com/NervJS/taro` | `1c0e11a1` | Multi-dimensional audit evidence | 2026-11-04T01:00:53.439Z |
+| `learn-github-agentlas-ai-agentlas-os` | `https://github.com/agentlas-ai/Agentlas-OS` | `33e256b9` | Multi-dimensional audit evidence | 2026-11-04T01:07:27.816Z |
+| `learn-github-digitalbazaar-pyld` | `https://github.com/digitalbazaar/pyld` | `bcdc7103` | Multi-dimensional audit evidence | 2026-11-04T01:07:33.326Z |
+| `learn-github-hashicorp-terraform` | `https://github.com/hashicorp/terraform` | `6e64dc15` | Multi-dimensional audit evidence | 2026-11-04T01:07:38.651Z |
