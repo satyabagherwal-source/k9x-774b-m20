@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-04T17:45:14.119Z",
+  "last_updated": "2026-11-04T17:52:34.481Z",
   "total_verified_learnings": 1208,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -6638,8 +6638,8 @@
       "slug": "chaos-mesh-chaos-mesh",
       "platform": "github",
       "source_url": "https://github.com/chaos-mesh/chaos-mesh",
-      "source_version": "e636338c",
-      "content_hash": "a1e65dc77640d948642cf80ca171cd955071aa3fd3dfb0b88ae4bce4de5cfdc3",
+      "source_version": "ed58a25b",
+      "content_hash": "2e9266dce057e2a0d7d008f0b2dc30e8d9116b5c1da2771cec0d32903316a625",
       "dossier_path": "07_PROJECT_LEARNING/chaos-mesh-chaos-mesh-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/chaos-mesh-chaos-mesh-learnings.md",
       "promoted_rules": [
@@ -6697,6 +6697,11 @@
           "number": 6572,
           "title": "ci): query known GHCR packages for image cleanup (#5187)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6878,
+          "title": "curl): validate HTTP task commands (#5200)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -6704,7 +6709,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T18:22:42.823Z",
+      "verified_at": "2026-11-04T17:52:25.563Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -59349,8 +59354,8 @@
       "slug": "vespa-engine-vespa",
       "platform": "github",
       "source_url": "https://github.com/vespa-engine/vespa",
-      "source_version": "60fc36fb",
-      "content_hash": "a77afd5471b0b9a094d3b124d258da98096f3ea73f2fe611c6307d326e2af91a",
+      "source_version": "37ffa51d",
+      "content_hash": "b317ef57ba0f00597f450647255e71bef8554fa5812dac2777c9896d563e8458",
       "dossier_path": "07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md",
       "promoted_rules": [
@@ -59428,6 +59433,11 @@
           "number": 6556,
           "title": "Merge pull request #38422 from vespa-engine/havardpe/handle-duplicate-parameter-",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6880,
+          "title": "Merge pull request #38413 from vespa-engine/toregge/propagate-trace-and-span-ids",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -59435,7 +59445,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T17:30:22.695Z",
+      "verified_at": "2026-11-04T17:52:34.459Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -85848,14 +85858,14 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 969,
       "title": "Hybrid Attention Layer Interleaving Invariant",
-      "source_url": "https://huggingface.co/reflection/Beam-1.0-501B-A23B",
-      "source_version": "hf-reflection-beam-1.0-501b-a23b",
+      "source_url": "https://huggingface.co/XHToken/Spark-X2.6-4B",
+      "source_version": "hf-xhtoken-spark-x2.6-4b",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-04T16:50:12.827Z"
+      "verified_at": "2026-11-04T17:52:28.681Z"
     },
     "rule-970": {
       "learning_id": "rule-970",
@@ -124345,7 +124355,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/XHToken/Spark-X2.6-4B",
       "source_version": "hf-xhtoken-spark-x2.6-4b",
-      "content_hash": "41f20dbdcb0e0d8d6eab19342ee838a3d6bbc916ee6dd6c1de268684c1a847e9",
+      "content_hash": "d4254ea94df8adebbd8c3e6135b68da546d95364009eb7953bcaea38be74cb38",
       "dossier_path": "07_PROJECT_LEARNING/hf-xhtoken-spark-x2.6-4b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-xhtoken-spark-x2.6-4b-learnings.md",
       "promoted_rules": [
@@ -124363,6 +124373,11 @@
           "number": 4617,
           "title": "Controllable Thinking Budget Enforcement Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6879,
+          "title": "Controllable Thinking Budget Tokenization Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -124370,7 +124385,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-26T13:51:48.855Z",
+      "verified_at": "2026-11-04T17:52:28.681Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -175615,6 +175630,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-04T17:45:14.092Z"
+    },
+    "rule-6878": {
+      "learning_id": "rule-6878",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6878,
+      "title": "curl): validate HTTP task commands (#5200)",
+      "source_url": "https://github.com/chaos-mesh/chaos-mesh",
+      "source_version": "ed58a25b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T17:52:25.563Z"
+    },
+    "rule-6879": {
+      "learning_id": "rule-6879",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6879,
+      "title": "Controllable Thinking Budget Tokenization Invariant",
+      "source_url": "https://huggingface.co/XHToken/Spark-X2.6-4B",
+      "source_version": "hf-xhtoken-spark-x2.6-4b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T17:52:28.681Z"
+    },
+    "rule-6880": {
+      "learning_id": "rule-6880",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6880,
+      "title": "Merge pull request #38413 from vespa-engine/toregge/propagate-trace-and-span-ids",
+      "source_url": "https://github.com/vespa-engine/vespa",
+      "source_version": "37ffa51d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T17:52:34.459Z"
     }
   },
   "aliases": {

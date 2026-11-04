@@ -40,8 +40,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-04T17:45:16.757Z",
-    "lastVerified": "2026-11-04T17:45:16.757Z",
+    "lastChecked": "2026-11-04T17:52:37.136Z",
+    "lastVerified": "2026-11-04T17:52:37.136Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -356,9 +356,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-04T17:18:01.939Z",
+    "lastChecked": "2026-11-04T17:52:26.787Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-04T17:18:01.939Z"
+    "lastVerified": "2026-11-04T17:52:26.787Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -2252,14 +2252,14 @@
     "officialUrl": "https://github.com/chaos-mesh/chaos-mesh",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-03T18:22:40.256Z",
-    "lastVerified": "2026-11-03T18:22:40.256Z",
+    "lastChecked": "2026-11-04T17:52:24.244Z",
+    "lastVerified": "2026-11-04T17:52:24.244Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-chaos-mesh-chaos-mesh",
-    "contentHash": "a1e65dc77640d948642cf80ca171cd955071aa3fd3dfb0b88ae4bce4de5cfdc3",
+    "contentHash": "2e9266dce057e2a0d7d008f0b2dc30e8d9116b5c1da2771cec0d32903316a625",
     "promotedRulesCount": 1,
-    "recentFixesCount": 7,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -2350,12 +2350,12 @@
     "revisionIdentifier": "b1a36daf"
   },
   "aleo-labs-protocol-snarkos": {
-    "name": "aleo-labs-protocol/snarkOS",
+    "name": "snarkOS",
     "officialUrl": "https://github.com/aleo-labs-protocol/snarkOS",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-04T08:28:36.147Z",
-    "lastVerified": "2026-11-04T08:28:36.147Z",
+    "lastChecked": "2026-11-04T17:52:21.777Z",
+    "lastVerified": "2026-11-04T17:52:21.777Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aleo-labs-protocol-snarkos",
@@ -2364,7 +2364,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "a7f0c300"
   },
   "databendlabs-databend": {
     "name": "databendlabs/databend",
@@ -5458,9 +5459,9 @@
   "apsl-react-native-keyboard-aware-scroll-view": {
     "name": "react-native-keyboard-aware-scroll-view",
     "officialUrl": "https://github.com/APSL/react-native-keyboard-aware-scroll-view",
-    "lastChecked": "2026-10-31T10:40:22.575Z",
+    "lastChecked": "2026-11-04T17:52:16.733Z",
     "revisionIdentifier": "9eee405f",
-    "lastVerified": "2026-10-31T10:40:22.575Z"
+    "lastVerified": "2026-11-04T17:52:16.733Z"
   },
   "meshery-meshery": {
     "name": "meshery/meshery",
@@ -6626,9 +6627,9 @@
   "vercel-labs-opensrc": {
     "name": "opensrc",
     "officialUrl": "https://github.com/vercel-labs/opensrc",
-    "lastChecked": "2026-11-03T10:36:54.853Z",
+    "lastChecked": "2026-11-04T17:52:11.686Z",
     "revisionIdentifier": "b51de608",
-    "lastVerified": "2026-11-03T10:36:54.853Z"
+    "lastVerified": "2026-11-04T17:52:11.686Z"
   },
   "hf-qwen-qwen3-8b": {
     "name": "Qwen/Qwen3-8B",
@@ -7013,14 +7014,14 @@
     "officialUrl": "https://github.com/vespa-engine/vespa",
     "sourceType": "github",
     "technology": "Java",
-    "lastChecked": "2026-11-03T17:30:21.604Z",
-    "lastVerified": "2026-11-03T17:30:21.604Z",
+    "lastChecked": "2026-11-04T17:52:32.976Z",
+    "lastVerified": "2026-11-04T17:52:32.976Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-vespa-engine-vespa",
-    "contentHash": "a77afd5471b0b9a094d3b124d258da98096f3ea73f2fe611c6307d326e2af91a",
+    "contentHash": "b317ef57ba0f00597f450647255e71bef8554fa5812dac2777c9896d563e8458",
     "promotedRulesCount": 1,
-    "recentFixesCount": 3,
+    "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -12600,13 +12601,13 @@
     "officialUrl": "https://huggingface.co/XHToken/Spark-X2.6-4B",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-31T01:53:41.356Z",
-    "lastVerified": "2026-10-31T01:53:41.356Z",
+    "lastChecked": "2026-11-04T17:52:14.351Z",
+    "lastVerified": "2026-11-04T17:52:14.351Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-xhtoken-spark-x2-6-4b",
-    "contentHash": "37014a40916a3f87d7c1f483fbf55f26d34e4d7337408ba17ada4ac928590e29",
-    "promotedRulesCount": 0,
+    "contentHash": "d4254ea94df8adebbd8c3e6135b68da546d95364009eb7953bcaea38be74cb38",
+    "promotedRulesCount": 2,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",

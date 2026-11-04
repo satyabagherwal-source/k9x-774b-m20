@@ -7267,3 +7267,6 @@ Every entry in this ledger must capture:
 | `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `f851ca27` | Multi-dimensional audit evidence | 2026-11-04T17:37:28.795Z |
 | `learn-huggingface-recursivesi-flint` | `https://huggingface.co/RecursiveSI/flint` | `hf-recursi` | Multi-dimensional audit evidence | 2026-11-04T17:45:11.465Z |
 | `learn-github-lingodotdev-lingo-dev` | `https://github.com/lingodotdev/lingo.dev` | `0050b485` | Multi-dimensional audit evidence | 2026-11-04T17:45:14.211Z |
+| `learn-github-chaos-mesh-chaos-mesh` | `https://github.com/chaos-mesh/chaos-mesh` | `ed58a25b` | Multi-dimensional audit evidence | 2026-11-04T17:52:25.673Z |
+| `learn-huggingface-xhtoken-spark-x2-6-4b` | `https://huggingface.co/XHToken/Spark-X2.6-4B` | `hf-xhtoken` | Multi-dimensional audit evidence | 2026-11-04T17:52:28.799Z |
+| `learn-github-vespa-engine-vespa` | `https://github.com/vespa-engine/vespa` | `37ffa51d` | Multi-dimensional audit evidence | 2026-11-04T17:52:34.569Z |

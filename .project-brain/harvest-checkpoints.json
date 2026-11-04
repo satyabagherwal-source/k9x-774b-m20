@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-04T17:45:14.220Z",
+  "last_updated": "2026-11-04T17:52:34.579Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3651,14 +3651,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-chaos-mesh-chaos-mesh",
-      "content_hash": "a1e65dc77640d948642cf80ca171cd955071aa3fd3dfb0b88ae4bce4de5cfdc3",
-      "verified_at": "2026-11-03T18:22:42.942Z",
+      "content_hash": "2e9266dce057e2a0d7d008f0b2dc30e8d9116b5c1da2771cec0d32903316a625",
+      "verified_at": "2026-11-04T17:52:25.682Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T18:22:42.942Z"
+      "last_updated": "2026-11-04T17:52:25.682Z"
     },
     "nolabs-ai/nono": {
       "repository": "nolabs-ai/nono",
@@ -8931,14 +8931,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-vespa-engine-vespa",
-      "content_hash": "a77afd5471b0b9a094d3b124d258da98096f3ea73f2fe611c6307d326e2af91a",
-      "verified_at": "2026-11-03T17:30:22.776Z",
+      "content_hash": "b317ef57ba0f00597f450647255e71bef8554fa5812dac2777c9896d563e8458",
+      "verified_at": "2026-11-04T17:52:34.578Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T17:30:22.776Z"
+      "last_updated": "2026-11-04T17:52:34.578Z"
     },
     "radix-ui/themes": {
       "repository": "radix-ui/themes",
@@ -15771,14 +15771,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-xhtoken-spark-x2-6-4b",
-      "content_hash": "37014a40916a3f87d7c1f483fbf55f26d34e4d7337408ba17ada4ac928590e29",
-      "verified_at": "2026-10-31T01:53:42.358Z",
+      "content_hash": "d4254ea94df8adebbd8c3e6135b68da546d95364009eb7953bcaea38be74cb38",
+      "verified_at": "2026-11-04T17:52:28.808Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T01:53:42.358Z"
+      "last_updated": "2026-11-04T17:52:28.808Z"
     },
     "InternScience/Sage-A1.5": {
       "repository": "InternScience/Sage-A1.5",

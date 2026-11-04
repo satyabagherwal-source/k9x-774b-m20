@@ -2343,10 +2343,10 @@
     "repository": "chaos-mesh/chaos-mesh",
     "platform": "github",
     "sourceUrl": "https://github.com/chaos-mesh/chaos-mesh",
-    "sourceVersion": "e636338c",
+    "sourceVersion": "ed58a25b",
     "license": "Apache-2.0",
-    "contentHash": "a1e65dc77640d948642cf80ca171cd955071aa3fd3dfb0b88ae4bce4de5cfdc3",
-    "lastHarvestedAt": "2026-11-03T18:22:42.933Z",
+    "contentHash": "2e9266dce057e2a0d7d008f0b2dc30e8d9116b5c1da2771cec0d32903316a625",
+    "lastHarvestedAt": "2026-11-04T17:52:25.673Z",
     "learningId": "learn-github-chaos-mesh-chaos-mesh"
   },
   "nolabs-ai-nono": {
@@ -5873,10 +5873,10 @@
     "repository": "vespa-engine/vespa",
     "platform": "github",
     "sourceUrl": "https://github.com/vespa-engine/vespa",
-    "sourceVersion": "60fc36fb",
+    "sourceVersion": "37ffa51d",
     "license": "Apache-2.0",
-    "contentHash": "a77afd5471b0b9a094d3b124d258da98096f3ea73f2fe611c6307d326e2af91a",
-    "lastHarvestedAt": "2026-11-03T17:30:22.770Z",
+    "contentHash": "b317ef57ba0f00597f450647255e71bef8554fa5812dac2777c9896d563e8458",
+    "lastHarvestedAt": "2026-11-04T17:52:34.569Z",
     "learningId": "learn-github-vespa-engine-vespa"
   },
   "radix-ui-themes": {
@@ -10495,8 +10495,8 @@
     "sourceUrl": "https://huggingface.co/XHToken/Spark-X2.6-4B",
     "sourceVersion": "hf-xhtoken-spark-x2.6-4b",
     "license": "Open-Source",
-    "contentHash": "37014a40916a3f87d7c1f483fbf55f26d34e4d7337408ba17ada4ac928590e29",
-    "lastHarvestedAt": "2026-10-31T01:53:42.343Z",
+    "contentHash": "d4254ea94df8adebbd8c3e6135b68da546d95364009eb7953bcaea38be74cb38",
+    "lastHarvestedAt": "2026-11-04T17:52:28.799Z",
     "learningId": "learn-huggingface-xhtoken-spark-x2-6-4b"
   },
   "hf-internscience-sage-a1.5": {

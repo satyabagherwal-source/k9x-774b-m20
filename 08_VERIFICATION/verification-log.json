@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261031-ZV8I",
-    "timestamp": "2026-10-31T23:49:59.394Z",
-    "repository": "tursodatabase/turso",
-    "learningId": "learn-github-tursodatabase-turso",
-    "contentHash": "cfdc22f149ce64ba4417bc2736a0c54c67cb58b9eae578a9b680dd2b835749b8",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261031-ZWGC",
-    "timestamp": "2026-10-31T23:50:00.972Z",
-    "repository": "dathere/qsv",
-    "learningId": "learn-github-dathere-qsv",
-    "contentHash": "fbb9e0bb1b2cebcaff796cf055bb25c5c3519935798f7f14af531453b87ceefb",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261031-8D1N",
-    "timestamp": "2026-10-31T23:56:35.723Z",
-    "repository": "openbmb/MiniCPM-V-4.7-35B-A3B",
-    "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b",
-    "contentHash": "374673176bfd8f21261fb16582e44d74cf5a5056d35e99737da9ed2170f978c5",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261101-GP03",
     "timestamp": "2026-11-01T00:03:04.467Z",
     "repository": "t8y2/dbx",
@@ -7490,6 +7445,51 @@
     "repository": "lingodotdev/lingo.dev",
     "learningId": "learn-github-lingodotdev-lingo-dev",
     "contentHash": "e8dade68df2ab85133cfeea3c64acc4268faa4d7483b8c2a88cb1bfd3339fb70",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-ZG3P",
+    "timestamp": "2026-11-04T17:52:25.669Z",
+    "repository": "chaos-mesh/chaos-mesh",
+    "learningId": "learn-github-chaos-mesh-chaos-mesh",
+    "contentHash": "2e9266dce057e2a0d7d008f0b2dc30e8d9116b5c1da2771cec0d32903316a625",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-ZIIJ",
+    "timestamp": "2026-11-04T17:52:28.795Z",
+    "repository": "XHToken/Spark-X2.6-4B",
+    "learningId": "learn-huggingface-xhtoken-spark-x2-6-4b",
+    "contentHash": "d4254ea94df8adebbd8c3e6135b68da546d95364009eb7953bcaea38be74cb38",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-ZMYT",
+    "timestamp": "2026-11-04T17:52:34.565Z",
+    "repository": "vespa-engine/vespa",
+    "learningId": "learn-github-vespa-engine-vespa",
+    "contentHash": "b317ef57ba0f00597f450647255e71bef8554fa5812dac2777c9896d563e8458",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
