@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261102-J59P",
-    "timestamp": "2026-11-02T16:40:25.453Z",
-    "repository": "kamgurgul/cpu-info",
-    "learningId": "learn-github-kamgurgul-cpu-info",
-    "contentHash": "406c57f1c99f0f60edc5b1af13e48af931888235bcb44ae3c74e07e043a4b081",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261102-SLTF",
-    "timestamp": "2026-11-02T16:47:46.803Z",
-    "repository": "goss-org/goss",
-    "learningId": "learn-github-goss-org-goss",
-    "contentHash": "1144e7f3e407024341eec1da2cbb1c493a084dc7a13118eb5875782339c92bf7",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261102-SOT9",
     "timestamp": "2026-11-02T16:47:50.685Z",
     "repository": "pixeltable/pixeltable",
@@ -7490,6 +7460,36 @@
     "repository": "NucleoidAI/Nucleoid",
     "learningId": "learn-github-nucleoidai-nucleoid",
     "contentHash": "bf83750984c194c4702571f88de0f77a3deaf394e543617a1bd55fbe50439ebb",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-CQPZ",
+    "timestamp": "2026-11-04T21:18:43.271Z",
+    "repository": "BAAI/bge-small-en-v1.5",
+    "learningId": "learn-huggingface-baai-bge-small-en-v1-5",
+    "contentHash": "9a74f51b64083d1d37fa0db24dce0cb5098b5def59cb9d042b6018070f5077d5",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-D13N",
+    "timestamp": "2026-11-04T21:18:56.723Z",
+    "repository": "clockworklabs/SpacetimeDB",
+    "learningId": "learn-github-clockworklabs-spacetimedb",
+    "contentHash": "3697ece97ee185d37cf546acb818b90c1f2dc77844462cccd2e80aa0b33ccd6f",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

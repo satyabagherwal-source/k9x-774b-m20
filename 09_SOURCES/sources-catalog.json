@@ -165,8 +165,8 @@
     "sourceUrl": "https://huggingface.co/BAAI/bge-small-en-v1.5",
     "sourceVersion": "hf-baai-bge-small-en-v1.5",
     "license": "Open-Source",
-    "contentHash": "a916287b8109489bf58cd733203be0e4613462b9b12fd09cec82021227d1f42e",
-    "lastHarvestedAt": "2026-10-31T05:29:37.953Z",
+    "contentHash": "9a74f51b64083d1d37fa0db24dce0cb5098b5def59cb9d042b6018070f5077d5",
+    "lastHarvestedAt": "2026-11-04T21:18:43.282Z",
     "learningId": "learn-huggingface-baai-bge-small-en-v1-5"
   },
   "hf-autotrust-glm5.3-flash-e224-dgx-spark": {
@@ -7053,10 +7053,10 @@
     "repository": "clockworklabs/SpacetimeDB",
     "platform": "github",
     "sourceUrl": "https://github.com/clockworklabs/SpacetimeDB",
-    "sourceVersion": "0028d79e",
+    "sourceVersion": "360214e0",
     "license": "NOASSERTION",
-    "contentHash": "e3473e4ef1289497c425a3cf338726e5dfa11f5968c7d90f58b62234bc6e8516",
-    "lastHarvestedAt": "2026-11-03T22:06:46.863Z",
+    "contentHash": "3697ece97ee185d37cf546acb818b90c1f2dc77844462cccd2e80aa0b33ccd6f",
+    "lastHarvestedAt": "2026-11-04T21:18:56.727Z",
     "learningId": "learn-github-clockworklabs-spacetimedb"
   },
   "apollographql-apollo-kotlin": {

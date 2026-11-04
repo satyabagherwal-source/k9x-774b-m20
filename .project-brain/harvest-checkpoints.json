@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-04T21:11:34.982Z",
+  "last_updated": "2026-11-04T21:18:56.745Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -126,14 +126,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-baai-bge-small-en-v1-5",
-      "content_hash": "a916287b8109489bf58cd733203be0e4613462b9b12fd09cec82021227d1f42e",
-      "verified_at": "2026-10-31T05:29:37.962Z",
+      "content_hash": "9a74f51b64083d1d37fa0db24dce0cb5098b5def59cb9d042b6018070f5077d5",
+      "verified_at": "2026-11-04T21:18:43.291Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T05:29:37.962Z"
+      "last_updated": "2026-11-04T21:18:43.291Z"
     },
     "hasaneyldrm/exercises-dataset": {
       "repository": "hasaneyldrm/exercises-dataset",
@@ -10626,14 +10626,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-clockworklabs-spacetimedb",
-      "content_hash": "e3473e4ef1289497c425a3cf338726e5dfa11f5968c7d90f58b62234bc6e8516",
-      "verified_at": "2026-11-03T22:06:46.873Z",
+      "content_hash": "3697ece97ee185d37cf546acb818b90c1f2dc77844462cccd2e80aa0b33ccd6f",
+      "verified_at": "2026-11-04T21:18:56.744Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T22:06:46.873Z"
+      "last_updated": "2026-11-04T21:18:56.744Z"
     },
     "apollographql/apollo-kotlin": {
       "repository": "apollographql/apollo-kotlin",

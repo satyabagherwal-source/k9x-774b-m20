@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-04T21:11:34.969Z",
-  "total_cycles_completed": 7319,
-  "total_learnings_persisted": 7319,
-  "total_rules_promoted": 7018,
+  "last_updated": "2026-11-04T21:18:56.732Z",
+  "total_cycles_completed": 7321,
+  "total_learnings_persisted": 7321,
+  "total_rules_promoted": 7019,
   "history": [
-    {
-      "timestamp": "2026-11-04T03:30:44.790Z",
-      "repository": "risingwavelabs/risingwave",
-      "learningId": "learn-github-risingwavelabs-risingwave",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T03:37:45.436Z",
-      "repository": "cypress-io/cypress",
-      "learningId": "learn-github-cypress-io-cypress",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-04T03:37:46.033Z",
       "repository": "wix/Detox",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-04T21:11:34.969Z",
       "repository": "NucleoidAI/Nucleoid",
       "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T21:18:43.288Z",
+      "repository": "BAAI/bge-small-en-v1.5",
+      "learningId": "learn-huggingface-baai-bge-small-en-v1-5",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T21:18:56.732Z",
+      "repository": "clockworklabs/SpacetimeDB",
+      "learningId": "learn-github-clockworklabs-spacetimedb",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

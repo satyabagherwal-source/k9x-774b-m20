@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/clockworklabs-spacetimedb-learnings.md`  
 > **Source**: github ([https://github.com/clockworklabs/SpacetimeDB](https://github.com/clockworklabs/SpacetimeDB))  
-> **Source Version**: `0028d79e`  
+> **Source Version**: `360214e0`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T22:06:46.121Z  
+> **Timestamp**: 2026-11-04T21:18:55.965Z  
 > **Learning ID**: `learn-github-clockworklabs-spacetimedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/clockworklabs-spacetimedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/clockworklabs/SpacetimeDB](https://github.com/clockworklabs/SpacetimeDB))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T22:06:46.112Z  
+> **Harvest Timestamp**: 2026-11-04T21:18:55.958Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Development at the speed of light
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 25519 stars
+- **Stars / Engagement**: 25518 stars
 
 ---
 
@@ -821,557 +821,1132 @@ export type ConnectionState = ManagerConnectionState & {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `bb6eb379` (2026-11-02)
-**Commit Message**: Kris/various nix fixes (#6344)
+### Incident Patch 1: `360214e0` (2026-11-04)
+**Commit Message**: Remove unused scripts and the sqltest crate (#6475)
 
 # Description of Changes
 
-Three changes specifically for the nix builds:
-
-* Updating the nix flake to Rust 1.97.1.
-* Pinning our required version of wasm-bindgen
-* Changing a couple of hard-coded paths in the unit tests, so they get
-`cat` and `head` from `$PATH`.
-
-This makes the build and test suite more portable and repeatable.
+This PR deletes 17 shell and Python scripts that nothing runs, plus the
+`sqltest` crate, as the first step toward clearing out the scripts that
+#6019 stopped us from adding. The scripts were either replaced by Rust
+tooling (`tools/release`, `cargo lint`) or were thin wrappers whose
+commands the READMEs now show directly, and `sqltest` has not been able
+to test SpacetimeDB since SQL DDL was removed in #1499, because 106 of
+its 142 test files start with `CREATE TABLE` and its SpacetimeDB engine
+panics on the first file. Its one case that no Rust test covered,
+`WHERE` with `<>` and `!=`, is now `test_not_equal` in
+`crates/core/src/sql/execute.rs`, and because `sqltest` covered SQL
+execution in `crates/engine` and `crates/execution`, this PR takes the
+Deep review tier.
 
 # API and ABI breaking changes
 
-N/A
+This doesn't break any API or ABI, since `sqltest` was an internal
+`publish = false` crate and none of the deleted scripts are part of a
+release. Developers who ran one of these scripts by hand would notice
+the next time they tried, and the READMEs now give the equivalent
+commands.
 
 # Rollback safety impact
 
-N/A
+n/
 
-# Expected complexity level and risk
-
-1. Low risk.
-
-* The nix changes will only affect developers who use nix shells. Their
-workflow is currently broken and this just restores things.
-* The test changes become more portable, and if the change was wrong,
-we'd see it in the CI test run immediately.
-
-# Testing
-
-Ran the full test suite from a nix shell.
-
-**File**: `crates/cli/src/schema_extract/tests.rs` (modified, +33/-7)
+**File**: `Cargo.lock` (modified, +1/-162)
 ```diff
-@@ -84,6 +84,22 @@ fn inspector(script: &str) -> (tempfile::TempDir, PathBuf) {
-     (dir, path)
- }
+@@ -2323,18 +2323,6 @@ dependencies = [
+  "zeroize",
+ ]
  
-+// Inspectors run with an empty environment, so their scripts must name tools by
-+// absolute path. Resolve them from the test's own PATH rather than assuming a
-+// filesystem layout: Nix build sandboxes have neither /bin/cat nor /usr/bin/head.
-+#[cfg(unix)]
-+fn tool(name: &str) -> String {
-+    std::env::var_os("PATH")
-+        .and_then(|paths| {
-+            std::env::split_paths(&paths)
-+                .map(|dir| dir.join(name))
-+                .find(|path| path.is_file())
-+        })
-+        .unwrap_or_else(|| panic!("`{name}` not found on PATH"))
-+        .display()
-+        .to_string()
-+}
-+
- #[cfg(unix)]
- #[tokio::test]
- async fn local_inspection_passes_exact_bytes_host_and_requires_success() {
-@@ -95,7 +111,8 @@ async fn local_inspection_passes_exact_bytes_host_and_requires_success() {
-     });
-     let json = serde_json::to_string(&SerdeWrapper(raw)).unwrap();
-     let (dir, extractor) = inspector(&format!(
--        "[ \"$1\" = extract-schema ] && [ \"$3\" = --host-type ] && [ \"$4\" = js ] || exit 2\n[ \"$(/bin/cat \"$2\")\" = exact-artifact ] || exit 3\nprintf '%s' '{}'", json.replace('\'', "'\\''")
-+        "[ \"$1\" = extract-schema ] && [ \"$3\" = --host-type ] && [ \"$4\" = js ] || exit 2\n[ \"$({cat} \"$2\")\" = exact-artifact ] || exit 3\nprintf '%s' '{}'", json.replace('\'', "'\\''"),
-+        cat = tool("cat"),
-     ));
-     let result = inspect_with(
-         extractor,
-@@ -126,7 +143,8 @@ async fn synchronous_generate_adapter_uses_same_exact_byte_protocol_inside_a_run
-     });
-     let json = serde_json::to_string(&SerdeWrapper(raw)).unwrap();
-     let (_dir, extractor) = inspector(&format!(
--        "[ \"$1\" = extract-schema ] && [ \"$3\" = --host-type ] && [ \"$4\" = wasm ] || exit 2\n[ \"$(/bin/cat \"$2\")\" = generate-exact ] || exit 3\nprintf '%s' '{}'", json.replace('\'', "'\\''")
-+        "[ \"$1\" = extract-schema ] && [ \"$3\" = --host-type ] && [ \"$4\" = wasm ] || exit 2\n[ \"$({cat} \"$2\")\" = generate-exact ] || exit 3\nprintf '%s' '{}'", json.replace('\'', "'\\''"),
-+        cat = tool("cat"),
-     ));
-     let module = inspect_blocking(extractor, b"generate-exact".to_vec(), "Wasm".into()).unwrap();
-     assert_eq!(module.environment(), &schema());
-@@ -135,15 +153,23 @@ async fn synchronous_generate_adapter_uses_same_exact_byte_protocol_inside_a_run
- #[cfg(unix)]
- #[tokio::test]
- async fn invalid_and_oversize_inspector_output_never_becomes_diagnostics() {
--    for script in [
--        "printf 'generated-inspector-secret'",
--        "exec /usr/bin/head -c 16777217 /dev/zero",
-+    for (script, expected) in [
-+        (
-+            "printf 'generated-inspector-secret'".to_owned(),
-+            "returned invalid schema data",
-+        ),
-+        (
-+            format!("exec {} -c 16777217 /dev/zero", tool("head")),
-+            "exceeds output limit",
-+        ),
-     ] {
--        let (_dir, extractor) = inspector(script);
-+        let (_dir, extractor) = inspector(&script);
-         let error = inspect_with(extractor, b"input".to_vec(), "Wasm".into(), Duration::from_secs(5))
-             .await
-             .unwrap_err();
--        assert!(!format!("{error:#}").contains("generated-inspector-secret"));
-+        let error = format!("{error:#}");
-+        assert!(error.contains(expected), "{error}");
-+        assert!(!error.contains("generated-inspector-secret"));
-     }
- }
+-[[package]]
+-name = "educe"
+-version = "0.4.23"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "0f0042ff8246a363dbe77d2ceedb073339e85a804b9a47636c6e016a9a32c05f"
+-dependencies = [
+- "enum-ordinalize",
+- "proc-macro2",
+- "quote",
+- "syn 1.0.109",
+-]
+-
+ [[package]]
+ name = "either"
+ version = "1.15.0"
+@@ -2433,19 +2421,6 @@ dependencies = [
+  "syn 2.0.107",
+ ]
  
+-[[package]]
+-name = "enum-ordinalize"
+-version = "3.1.15"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "1bf1fa3f06bbff1ea5b1a9c7b14aa992a39657db60a2759457328d7e058f49ee"
+-dependencies = [
+- "num-bigint",
+- "num-traits",
+- "proc-macro2",
+- "quote",
+- "syn 2.0.107",
+-]
+-
+ [[package]]
+ name = "env_filter"
+ version = "0.1.4"
+@@ -3881,15 +3856,6 @@ dependencies = [
+  "either",
+ ]
+ 
+-[[package]]
+-name = "itertools"
+-version = "0.11.0"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "b1c173a5686ce8bfa551b3563d0c2170bf24ca44da99c7ca4bfdab5418c3fe57"
+-dependencies = [
+- "either",
+-]
+-
+ [[package]]
+ name = "itertools"
+ version = "0.12.1"
+@@ -4237,17 +4203,6 @@ dependencies = [
+  "vcpkg",
+ ]
+ 
+-[[package]]
+-name = "libtest-mimic"
+-version = "0.6.1"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "6d8de370f98a6cb8a4606618e53e802f93b094ddec0f96988eaec2c27e6e9ce7"
+-dependencies = [
+- "clap 4.5.50",
+- "termcolor",
+- "threadpool",
+-]
+-
+ [[package]]
+ name = "libz-rs-sys"
+ version = "0.5.5"
+@@ -5015,12 +4970,6 @@ version = "0.5.2"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "1a80800c0488c3a21695ea981a54918fbb37abf04f4d0720c453632255e2ff0e"
+ 
+-[[package]]
+-name = "owo-colors"
+-version = "3.5.0"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "c1b04fb49957986fdce4d6ee7a65027d55d4b6d2265e5848bbb507b58ccfdb6f"
+-
+ [[package]]
+ name = "owo-colors"
+ version = "4.2.3"
+@@ -5072,7 +5021,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "60a7ba54c704edefead1f44e9ef09c43e5cfae666bdc33516b066011f0e6ebf7"
+ dependencies = [
+  "cfg-if",
+- "owo-colors 4.2.3",
++ "owo-colors",
+  "oxc-miette-derive",
+  "textwrap",
+  "thiserror 2.0.17",
+@@ -6350,29 +6299,6 @@ version = "1.2.3"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "a1d01941d82fa2ab50be1e79e6714289dd7cde78eba4c074bc5a4374f650dfe0"
+ 
+-[[package]]
+-name = "quick-junit"
+-version = "0.3.6"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "d1a341ae463320e9f8f34adda49c8a85d81d4e8f34cce4397fb0350481552224"
+-dependencies = [
+- "chrono",
+- "indexmap 2.12.0",
+- "quick-xml 0.31.0",
+- "strip-ansi-escapes",
+- "thiserror 1.0.69",
+- "uuid",
+-]
+-
+-[[package]]
+-name = "quick-xml"
+-version = "0.31.0"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "1004a344b30a54e2ee58d66a71b32d2db2feb0a31f9a2d302bf0536f15de2a33"
+-dependencies = [
+- "memchr",
+-]
+-
+ [[package]]
+ name = "quick-xml"
+ version = "0.37.5"
+@@ -9236,30 +9162,6 @@ dependencies = [
+  "der",
+ ]
+ 
+-[[package]]
+-name = "sqllogictest"
+-version = "0.17.2"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "78ea1056caa9180e7e5727eed1a377d96c9f4615303fa82d2f4c202c64736dee"
+-dependencies = [
+- "async-trait",
+- "educe",
+- "fs-err",
+- "futures",
+- "glob",
+- "humantime",
+- "itertools 0.11.0",
+- "libtest-mimic",
+- "md-5",
+- "owo-colors 3.5.0",
+- "regex",
+- "similar",
+- "subst",
+- "tempfile",
+- "thiserror 1.0.69",
+- "tracing",
+-]
+-
+ [[package]]
+ name = "sqlparser"
+ version = "0.38.0"
+@@ -9269,32 +9171,6 @@ dependencies = [
+  "log",
+ ]
+ 
+-[[package]]
+-name = "sqltest"
+-version = "2.14.1"
+-dependencies = [
+- "anyhow",
+- "async-trait",
+- "chrono",
+- "clap 4.5.50",
+- "console",
+- "derive_more 0.99.20",
+- "fs-err",
+- "glob",
+- "itertools 0.12.1",
+- "postgres-types",
+- "quick-junit",
+- "rusqlite",
+- "rust_decimal",
+- "spacetimedb-core",
+- "spacetimedb-lib",
+- "spacetimedb-sats",
+- "sqllogictest",
+- "tempfile",
+- "tokio",
+- "tokio-postgres",
+-]
+-
+ [[package]]
+ name = "stable_deref_trait"
+ version = "1.2.1"
+@@ -9358,15 +9234,6 @@ dependencies = [
+  "unicode-properties",
+ ]
+ 
+-[[package]]
+-name = "strip-ansi-escapes"
+-version = "0.2.1"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "2a8f8038e7e7969abb3f1b7c2a811225e9296da208539e0f79c5251d6cac0025"
+-dependencies = [
+- "vte",
+-]
+-
+ [[package]]
+ name = "strsim"
+ version = "0.10.0"
+@@ -9401,16 +9268,6 @@ dependencies = [
+  "syn 2.0.107",
+ ]
+ 
+-[[package]]
+-name = "subst"
+-version = "0.3.8"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "0a9a86e5144f63c2d18334698269a8bfae6eece345c70b64821ea5b35054ec99"
+-dependencies = [
+- "memchr",
+- "unicode-width 0.1.14",
+-]
+-
+ [[package]]
+ name = "subtle"
+ version = "2.6.1"
+@@ -9748,15 +9605,6 @@ dependencies = [
+  "cfg-if",
+ ]
+ 
+-[[package]]
+-name = "threadpool"
+-version = "1.8.1"
+
 ```
 
-**File**: `flake.lock` (modified, +3/-3)
+**File**: `Cargo.toml` (modified, +0/-6)
 ```diff
-@@ -64,11 +64,11 @@
-         ]
-       },
-       "locked": {
--        "lastModified": 1770606655,
--        "narHash": "sha256-rpJf+kxvLWv32ivcgu8d+JeJooog3boJCT8J3joJvvM=",
-+        "lastModified": 1791448976,
-+        "narHash": "sha256-HJ4TEF3j7HmLYeEP/PtqjeiBX/6TppXB2qY53HcrWbs=",
-         "owner": "oxalica",
-         "repo": "rust-overlay",
--        "rev": "11a396520bf911e4ed01e78e11633d3fc63b350e",
-+        "rev": "f91010a5c1b6125b715eb78a84fb5dd8fb74a2b0",
-         "type": "github"
-       },
-       "original": {
+@@ -38,7 +38,6 @@ members = [
+   "sdks/rust",
+   "sdks/unreal",
+   "crates/snapshot",
+-  "crates/sqltest",
+   "crates/sql-parser",
+   "crates/standalone",
+   "crates/subscription",
+@@ -224,7 +223,6 @@ chrono = { version = "0.4.24", default-features = false }
+ clap = { version = "4.2.4", features = ["derive", "wrap_help"] }
+ clap-markdown = "0.1.4"
+ colored = "2.0.0"
+-console = { version = "0.15.6" }
+ convert_case = "0.6.0"
+ crc32c = "0.6.4"
+ criterion = { version = "0.5.1", features = ["async", "async_tokio", "html_reports"] }
+@@ -288,13 +286,11 @@ percent-encoding = "2.3"
+ petgraph = { version = "0.6.5", default-features = false }
+ pin-project-lite = "0.2.9"
+ pgwire = { version = "0.37", default-features = false, features = ["server-api", "pg-ext-types"] }
+-postgres-types = "0.2.5"
+ pretty_assertions = { version = "1.4", features = ["unstable"] }
+ proc-macro2 = "1.0"
+ prometheus = "0.14.0"
+ proptest = "1.4"
+ proptest-derive = "0.5"
+-quick-junit = { version = "0.3.2" }
+ quote = "1.0.8"
+ rand08 = { package = "rand", version = "0.8" }
+ rand = "0.9"
+@@ -310,7 +306,6 @@ rolldown_error = { git = "https://github.com/rolldown/rolldown.git", tag = "v1.0
+ rolldown_utils = { git = "https://github.com/rolldown/rolldown.git", tag = "v1.0.0-rc.3" }
+ ron = "0.8"
+ rusqlite = { version = "0.29.0", features = ["bundled", "column_decltype"] }
+-rust_decimal = { version = "1.29.1", features = ["db-tokio-postgres"] }
+ rustc-demangle = "0.1.21"
+ rustc-hash = "2"
+ rustyline = { version = "12.0.0", features = [] }
+@@ -329,7 +324,6 @@ sled = "0.34.7"
+ smallvec = { version = "1.11", features = ["union", "const_generics"] }
+ socket2 = "0.5"
+ sourcemap = "9.3.1"
+-sqllogictest = "0.17"
+ sqlparser = "0.38.0"
+ strum = { version = "0.25.0", features = ["derive"] }
+ syn = { version = "2", features = ["full", "extra-traits"] }
 ```
 
-**File**: `flake.nix` (modified, +3/-0)
+**File**: `crates/bench/README.md` (modified, +9/-9)
 ```diff
-@@ -200,6 +200,9 @@
-               rustStable
-               rustNightly
-               pkgs.cargo-insta
-+              # Pinned to match WASM_BINDGEN_VERSION in
-+              # crates/bindings-typescript/scripts/generate-test-utils-wasm.mjs.
-+              pkgs.wasm-bindgen-cli_0_2_104
-             ];
-           };
-         }
+@@ -19,12 +19,12 @@ RUN_ONE_MILLION=true cargo bench --bench generic --bench special
+ ```
+ 
+ To run the callgrind benchmarks, you need valgrind installed.
+-The easiest way to get it is to use the docker image in this folder. 
+-There's a handy bash script:
++The easiest way to get it is to use the docker image in this folder.
++From this directory, build the image and run the callgrind benchmarks inside it:
+ ```bash
+-bash callgrind-docker.sh 
++docker build . --tag rust-iai-callgrind:latest
++docker run --privileged -v "$(realpath ../..):/projects/SpacetimeDB" -w /projects/SpacetimeDB/crates/bench rust-iai-callgrind:latest cargo bench --bench callgrind
+ ```
+-Which will build the docker image and run the callgrind benchmarks inside of it.
+ 
+ You can also comment "benchmarks please" or "callgrind please" on a pull request in the SpacetimeDB repository to run the criterion/callgrind benchmarks on that PR. The results will be posted in a comment on the PR.
+ 
+@@ -218,8 +218,8 @@ brew install cargo-instruments
+ ```
+ 
+ ```bash
+-# ./instruments.sh TEMPLATE BENCHMARK BENCHMARK_FILTER
+-./instruments.sh time generic stdb_raw/mem/insert_bulk/location/multi_index/load=0/count=100
++# cargo instruments -t TEMPLATE --bench BENCHMARK -- BENCHMARK_FILTER --profile-time 10
++cargo instruments -t time --bench generic -- stdb_raw/mem/insert_bulk/location/multi_index/load=0/count=100 --profile-time 10
+ ```
+ 
+ Where `TEMPLATE` is one from 
+@@ -237,9 +237,9 @@ cargo instruments --list-templates
+ cargo install flamegraph
+ ```
+ 
+-You can generate flamegraphs using `flamegraph.sh` script:
++You can generate flamegraphs with `cargo flamegraph`:
+ 
+ ```bash
+-# ./flamegraph.sh BENCH_EXECUTABLE FILTER SVG_PATH
+-./flamegraph.sh generic stdb_raw/mem/insert_bulk/location/multi_index/load=0/count=100 result.svg"
++# cargo flamegraph --bench BENCHMARK --deterministic -o SVG_PATH -- BENCHMARK_FILTER --profile-time 10
++cargo flamegraph --bench generic --deterministic -o result.svg -- stdb_raw/mem/insert_bulk/location/multi_index/load=0/count=100 --profile-time 10
+ ```
+```
+
+**File**: `crates/bench/callgrind-docker.sh` (removed, +0/-10)
+```diff
+@@ -1,10 +0,0 @@
+-#!/bin/bash
+-
+-# script to enter iai dockerfile locally
+-
+-set -exo pipefail
+-
+-SCRIPT_DIR="$(dirname "$(readlink -f "$0")")"
+-cd "$SCRIPT_DIR"
+-docker build . --tag rust-iai-callgrind:latest 
+-docker run --privileged -v "$(realpath $PWD/../..):/projects/SpacetimeDB" -w /projects/SpacetimeDB/crates/bench rust-iai-callgrind:latest cargo bench --bench callgrind
+\ No newline at end of file
+```
+
+**File**: `crates/bench/flamegraph.sh` (removed, +0/-24)
+```diff
+@@ -1,24 +0,0 @@
+-#!/bin/bash
+-set -euo pipefail
+-
+-if [ "$#" -lt "2" ] ; then
+-  echo "Usage: $0 <benchmark-exe> <benchmark-filter> <svg-name>"
+-  echo "E.g.: $0 generic stdb_raw/mem/insert_bulk/location/multi_index/load=0/count=100 result.svg"
+-  exit 1
+-fi
+-
+-cd "$(dirname "$0")"
+-
+-echo
+-echo "Warning(jgilles): this script has not been tested since its last modification, sorry if it is broken."
+-echo
+-echo cargo bench --no-run
+-echo
+-
+-cargo bench --no-run
+-
+-echo
+-echo cargo flamegraph --bench "${1}" --deterministic --notes "${1};${2}" -o "${3}" -- "${2}" --profile-time 10
+-echo
+-
+-cargo flamegraph --bench "${1}" --deterministic --notes "${1};${2}" -o "${3}" -- "${2}" --profile-time 10
+```
+
+**File**: `crates/bench/hyper_cmp.py` (removed, +0/-174)
+```diff
+@@ -1,174 +0,0 @@
+-# Mini-tool for comparing benchmark between PR or locally
+-import os
+-import json
+-import argparse
+-import subprocess
+-import shutil
+-
+-
+-def statDecoder(statDict):
+-    return namedtuple('Stat', statDict.keys())(*statDict.values())
+-
+-
+-def clean(stat):
+-    new = {}
+-    for (k, v) in stat.items():
+-        if k in ["stddev", "command", "exit_codes"]:
+-            continue
+-        if k == "times":
+-            v = v[0]
+-        if isinstance(v, float):
+-            v = round(v, 2)
+-        new[k] = v
+-    return new
+-
+-
+-def larger(row: list):
+-    return [len(str(x)) for x in row]
+-
+-
+-def bar_chart(data: list):
+-    max_value = max(count for _, count in data.items())
+-    increment = max_value / 25
+-
+-    longest_label_length = max(len(label) for label, _ in data.items())
+-
+-    for label, count in data.items():
+-
+-        # The ASCII block elements come in chunks of 8, so we work out how
+-        # many fractions of 8 we need.
+-        # https://en.wikipedia.org/wiki/Block_Elements
+-        bar_chunks, remainder = divmod(int(count * 8 / increment), 8)
+-
+-        # First draw the full width chunks
+-        bar = '█' * bar_chunks
+-
+-        # Then add the fractional part.  The Unicode code points for
+-        # block elements are (8/8), (7/8), (6/8), ... , so we need to
+-        # work backwards.
+-        if remainder > 0:
+-            bar += chr(ord('█') + (8 - remainder))
+-
+-        # If the bar is empty, add a left one-eighth block
+-        bar = bar or '▏'
+-
+-        print(f'{label.rjust(longest_label_length)} ▏ {count:#4f} {bar}')
+-
+-
+-class Report:
+-    def __init__(self, title: str, header: list, bar: dict, rows: dict):
+-        self.title = title
+-        size = larger(header)
+-        for row in rows:
+-            size = size + larger(row)
+-        self.header = header
+-        self.bar = bar
+-        self.rows = rows
+-        self.larger = max(size) + 2
+-
+-
+-class Stat:
+-    def __init__(self, results):
+-        self.spacetime = clean(results[0])
+-        self.sqlite = clean(results[1])
+-
+-
+-def load_file(named: str):
+-    data = open(named).read()
+-    return Stat(json.loads(data)['results'])
+-
+-
+-def print_cell(cell: str, size: int, is_last: bool):
+-    spaces = " " * (size - len(cell))
+-    if is_last:
+-        return "| %s%s |" % (cell, spaces)
+-    else:
+-        return "| %s%s " % (cell, spaces)
+-
+-
+-def print_row(row: list, size: int):
+-    line = ""
+-    for (pos, x) in enumerate(row):
+-        line += print_cell(str(x), size, pos + 1 == len(row))
+-    print(line)
+-
+-
+-def print_mkdown(report: Report):
+-    print("###", report.title)
+-    print("\n```bash")
+-    bar_chart(report.bar)
+-    print("```\n")
+-    print("*Smaller is better.*")
+-    print_row(report.header, report.larger)
+-    print_row(["-" * report.larger for x in report.header], report.larger)
+-
+-    for row in report.rows:
+-        print_row(row, report.larger)
+-
+-
+-def pick_winner(a: dict, b: dict, label_a: str, label_b: str):
+-    if a["mean"] > b["mean"]:
+-        winner = label_b
+-        delta = a["times"]
+-    else:
+-        if a["mean"] == b["mean"]:
+-            winner = "TIE"
+-            delta = a["times"]
+-        else:
+-            winner = label_a
+-            delta = b["times"]
+-    return winner, delta
+-
+-
+-# Check Sqlite VS Spacetime
+-def cmp_bench(stat: Stat):
+-    winner, delta = pick_winner(stat.spacetime, stat.sqlite, "Spacetime", "Sqlite")
+-
+-    header = ["Stat", "Sqlite", "Spacetime", "Delta"]
+-
+-    rows = []
+-    for (k, v) in stat.sqlite.items():
+-        rows.append([k, v, stat.spacetime[k], round(stat.spacetime[k] - v, 2)])
+-
+-    bar = dict(SpacetimeDB=stat.spacetime["mean"], Sqlite=stat.sqlite["mean"])
+-    return Report("Comparing Sqlite VS Spacetime Winner: **%s**" % winner, header, bar, rows)
+-
+-
+-# Check the progress of Spacetime between branches / PR
+-def improvement_bench(old: Stat, new: Stat):
+-    winner, delta = pick_winner(old.spacetime, new.spacetime, "Old", "New")
+-
+-    header = ["Stat", "OLD", "NEW", "Delta"]
+-
+-    rows = []
+-    for (k, v) in old.spacetime.items():
+-        rows.append([k, v, new.spacetime[k], round(v - new.spacetime[k], 2)])
+-
+-    bar = dict(Old=old.spacetime["mean"], New=new.spacetime["mean"])
+-    return Report("Improvement of Spacetime. Winner: **%s**" % winner, header, bar, rows)
+-
+-
+-if __name__ == '__main__':
+-    parser = argparse.ArgumentParser()
+-    parser.add_argument("bench", choices=['versus', 'pr'], help="Select bench")
+-
+-    args = vars(parser.parse_args())
+-
+-    # args = {"bench": "pr"}
+-    cmd = "./hyperfine.sh insert"
+-    if args["bench"] == "pr":
+-        subprocess.check_call('./pr_copy.sh "%s"' % cmd, shell=True)
+-
+-        subprocess.check_call(cmd, shell=True, timeout=60 * 5)
+-        shutil.copyfile("out.json", "new.json")
+-
+-        old = load_file("old.json")
+-        new = load_file("new.json")
+-        report = improvement_bench(old, new)
+-    else:
+-        subprocess.check_call(cmd, shell=True, timeout=60 
+```
+
+**File**: `crates/bench/instruments.sh` (removed, +0/-16)
+```diff
+@@ -1,16 +0,0 @@
+-#!/bin/bash
+-set -euo pipefail
+-
+-if [ "$#" -lt "3" ] ; then
+-  echo "Usage: $0 <template> <bench_executable> <bench_filter>"
+-  echo "E.g.: $0 time generic stdb_raw/mem/insert_bulk/location/multi_index/load=0/count=100
+-"
+-  exit 1
+-fi
+-
+-echo
+-echo cargo instruments -t "${1}" --bench "${2}" -- "${3}" --profile-time 10
+-echo
+-
+-# Only OSX: Run the benchmark in instruments.app
+-cargo instruments -t "${1}" --bench "${2}" -- "${3}" --profile-time 10
+\ No newline at end of file
+```
+
+**File**: `crates/bindings-cpp/tests/client-comparison/check_tables.py` (removed, +0/-58)
+```diff
+@@ -1,58 +0,0 @@
+-#!/usr/bin/env python3
+-import json
+-from collections import Counter
+-
+-# Load both schemas
+-with open('rust-module-schema.json', 'r') as f:
+-    rust_schema = json.load(f)
+-
+-with open('cpp-module-schema.json', 'r') as f:
+-    cpp_schema = json.load(f)
+-
+-# Count actual tables
+-rust_tables = rust_schema.get('tables', [])
+-cpp_tables = cpp_schema.get('tables', [])
+-
+-print(f'Actual table counts:')
+-print(f'  Rust: {len(rust_tables)} tables')
+-print(f'  C++: {len(cpp_tables)} tables')
+-
+-# Count all duplicate table entries (tables can appear multiple times for different accessors)
+-rust_table_names = [t['name'] for t in rust_tables]
+-cpp_table_names = [t['name'] for t in cpp_tables]
+-
+-rust_counts = Counter(rust_table_names)
+-cpp_counts = Counter(cpp_table_names)
+-
+-print(f'\nTotal table entries (including duplicates):')
+-print(f'  Rust: {sum(rust_counts.values())} entries')
+-print(f'  C++: {sum(cpp_counts.values())} entries')
+-
+-# Check for tables that appear different number of times
+-print(f'\nTables with different occurrence counts:')
+-all_tables = set(rust_counts.keys()) | set(cpp_counts.keys())
+-diff_found = False
+-for table in sorted(all_tables):
+-    rust_count = rust_counts.get(table, 0)
+-    cpp_count = cpp_counts.get(table, 0)
+-    if rust_count != cpp_count:
+-        print(f'  {table}: Rust={rust_count}, C++={cpp_count}, diff={cpp_count-rust_count}')
+-        diff_found = True
+-
+-if not diff_found:
+-    print('  None - all tables appear the same number of times')
+-
+-# Check unique table names
+-print(f'\nUnique table names:')
+-print(f'  Rust: {len(set(rust_table_names))} unique tables')
+-print(f'  C++: {len(set(cpp_table_names))} unique tables')
+-
+-# Check if table counts suggest duplicates
+-print(f'\nTables appearing more than once:')
+-for table, count in rust_counts.items():
+-    if count > 1:
+-        print(f'  Rust: {table} appears {count} times')
+-        
+-for table, count in cpp_counts.items():
+-    if count > 1:
+-        print(f'  C++: {table} appears {count} times')
+\ No newline at end of file
 ```
 
 ---
 
-### Incident Patch 2: `cbd1c528` (2026-11-02)
-**Commit Message**: CLI - Refactor yes/no prompts into a YesOrNo builder (#6340)
+### Incident Patch 2: `0ebcc2f1` (2026-11-04)
+**Commit Message**: docs: refresh agent skills for recent features (#6348)
 
 # Description of Changes
 
-#6337 wants to add a new bool param to the shared `y_or_n` function (for
-the default value). It made the invocations look ugly, and made alllll
-the call sites change, so factored it into its own PR with a builder
-pattern that is much more readable imo.
+Refresh 10 of the 11 canonical SpacetimeDB skills for recent features on
+`master`, and update their packaged plugin copies. MCP is unchanged.
+This is the follow-up to Tyler's feature-coverage check, not a daily
+docs audit.
 
-This PR replaces `y_or_n` with
-`YesOrNo::new(message).force(...).default(...).prompt()`. EOF now
-returns an error instead of using the default; pressing Enter still uses
-the configured default.
+- Add TypeScript/C# submodule registration, canonical versus accessor
+names, helper-context rules, client accessors, migration cautions, and
+language-specific restrictions. Mention the official TypeScript reusable
+packages and their differing registration shapes.
+- Add environment declarations/read APIs for Rust, TypeScript, C#, and
+C++, plus CLI precedence, preservation, environment-only updates,
+deletion/replacement, and inspection semantics.
+- Add runnable Rust/TypeScript in-memory module-test setup/examples and
+distinguish them from host-level integration tests.
+- Add parameterized view definitions, current SQL limitations, explicit
+raw-SQL subscriptions in TS/C#, and subscribe-all exclusions (including
+Unity/Unreal guidance).
+- Add `spacetime auth` management and deterministic TypeScript shuffle.
+- Correct stale table-only `schema({...})` and three-argument-only view
+guidance.
 
-# API and ABI breaking changes
-
-This changes how our CLI prompts respond to EOF (it is now an error
-instead of answering "no")
-
-# Rollback safety impact
-
-n/a
-
-# Expected complexity level and risk
-
-1
-
-# Testing
-
-Existing smoketests have been updated.
-
----------
-
-Signed-off-by: Zeke Foppa <[REDACTED_EMAIL]>
-Co-authored-by: Zeke Foppa <[REDACTED_EMAIL]>
-
-**File**: `crates/cli/src/subcommands/delete.rs` (modified, +14/-9)
+**File**: `codex-plugin/plugins/spacetimedb/skills/cli/SKILL.md` (modified, +40/-0)
 ```diff
-@@ -3,7 +3,7 @@ use std::io;
- use crate::common_args;
- use crate::config::Config;
- use crate::subcommands::db_arg_resolution::{load_config_db_targets, resolve_database_arg};
--use crate::util::{add_auth_header_opt, database_identity, get_auth_header, y_or_n, AuthHeader};
-+use crate::util::{add_auth_header_opt, database_identity, get_auth_header, AuthHeader, YesOrNo};
- use clap::{Arg, ArgMatches};
- use http::StatusCode;
- use itertools::Itertools as _;
-@@ -51,10 +51,13 @@ pub async fn exec(mut config: Config, args: &ArgMatches) -> Result<(), anyhow::E
-         format!("{} ({identity})", resolved.database)
-     };
+@@ -20,6 +20,8 @@ triggers:
+   - spacetime server
+   - spacetime login
+   - spacetime generate
++  - spacetime env
++  - spacetime auth
+   - how do I use the CLI
+   - CLI command
+ ---
+@@ -71,6 +73,29 @@ spacetime publish my-database --server local --yes
+ spacetime publish my-database --delete-data=always --yes
+ ```
  
--    if !y_or_n(
--        force,
--        &format!("Are you sure you want to delete database {delete_target}? This action cannot be undone."),
--    )? {
-+    if !YesOrNo::new(format!(
-+        "Are you sure you want to delete database {delete_target}? This action cannot be undone."
-+    ))
-+    .force(force)
-+    .default(false)
-+    .prompt()?
-+    {
-         println!("Aborting");
-         return Ok(());
-     }
-@@ -69,10 +72,12 @@ pub async fn exec(mut config: Config, args: &ArgMatches) -> Result<(), anyhow::E
-         StatusCode::PRECONDITION_REQUIRED => {
-             let confirm = response.json::<DatabaseDeleteConfirmationResponse>().await?;
-             println!("WARNING: Deleting the database {identity} will also delete its children!");
--            if !force {
--                print_database_tree_info(&confirm.database_tree).await?;
--            }
--            if force || y_or_n(false, "Do you want to proceed deleting above databases?")? {
-+            print_database_tree_info(&confirm.database_tree).await?;
-+            if YesOrNo::new("Do you want to proceed deleting above databases?")
-+                .force(force)
-+                .default(false)
-+                .prompt()?
-+            {
-                 send_request(&client, &request_path, &auth_header, Some(confirm.confirmation_token))
-                     .await?
-                     .error_for_status()?;
++### Database Environment
++
++Module declarations validate string values before initialization/migration. Publishing preserves unspecified stored values. For each declared key, precedence is publishing-process environment → resolved config `env` map → stored database value. Undeclared keys can be staged explicitly in JSON, but module code cannot read them until declared. Keep secrets out of checked-in config; use process variables or ignored local config files.
++
++```bash
++# Supply declared values while publishing; use a disposable value for local development
++API_KEY='development-only' spacetime publish my-database --server local --yes
++
++# Change only the environment of an existing database (no module build/upload)
++API_KEY='development-only' spacetime publish my-database --server local --env-only --yes
++
++# Explicitly remove an optional or undeclared key
++spacetime publish my-database --server local --env-only --unset-env LOG_LEVEL --yes
++
++# Inspect stored values (these commands print secrets; authorization is required)
++spacetime env list my-database --server local
++spacetime env get my-database MODE --server local
++```
++
++Before `--unset-env`, remove that key from effective JSON/process inputs. Required values cannot be unset. `--replace-env` replaces the whole store and deletes omitted keys; it cannot be combined with `--unset-env`. `--delete-data` also clears environment values; supply required values again after a reset. `--env-only` requires an existing database and cannot be combined with a reset. An empty string is a value, not deletion. `--env` selects a project configuration environment; it does not assign a database environment variable.
++
++There is no separate `spacetime env set`: updates use validated publishing. For full merge/validation semantics see https://spacetimedb.com/docs/databases/environment-variables.
++
+ ### Database Interaction
+ 
+ ```bash
+@@ -148,6 +173,21 @@ spacetime login show
+ spacetime logout
+ ```
+ 
++### SpacetimeAuth Management (2.13+)
++
++`spacetime auth` manages SpacetimeAuth settings; it is not a replacement for `spacetime login`. Log in and enable SpacetimeAuth for the database first. Pass the database **name**, not its identity. For example:
++
++```bash
++spacetime auth config set my-database display_name 'My App'
++spacetime auth idp enable my-database github
++spacetime auth client create my-database --name web
++spacetime auth client set my-database --name web web true
++spacetime auth client get my-database --name web
++spacetime auth client set my-database --name web redirect_uris 'https://example.com/callback'
++```
++
++The command families are `config set/reset`, `idp set/enable/disable`, and `client create/delete/get/set`. `idp set <database> <idp> <client_id>` prompts for the OAuth secret when omitted (or reads it from stdin); avoid embedding real secrets in shell history. `client get --include-secret` explicitly prints a client's secret; ordinary create/get output does not. These commands use the SpacetimeAuth management service, not the database `--server` target. Use each subcommand's `--help` for supported providers, settings, and values.
++
+ ## Default Servers
+ 
+ | Name | URL | Description |
 ```
 
-**File**: `crates/cli/src/subcommands/generate.rs` (modified, +6/-2)
+**File**: `codex-plugin/plugins/spacetimedb/skills/concepts/SKILL.md` (modified, +12/-0)
 ```diff
-@@ -21,7 +21,7 @@ use crate::spacetime_config::{
- };
- use crate::tasks::csharp::dotnet_format;
- use crate::tasks::rust::rustfmt;
--use crate::util::{detect_module_language, y_or_n, ModuleLanguage};
-+use crate::util::{detect_module_language, ModuleLanguage, YesOrNo};
- use crate::Config;
- use crate::{build, common_args};
- use clap::builder::PossibleValue;
-@@ -880,7 +880,11 @@ pub async fn run_prepared_generate_configs(
-                 println!("  {}", path.to_str().unwrap());
-             }
+@@ -99,6 +99,18 @@ Server-side modules can be written in: Rust, C#, TypeScript, C++
  
--            if y_or_n(force, "Are you sure you want to delete these files?")? {
-+            if YesOrNo::new("Are you sure you want to delete these files?")
-+                .force(force)
-+                .default(false)
-+                .prompt()?
-+            {
-                 for path in files_to_delete {
-                     fs::remove_file(path)?;
-                 }
+ Lifecycle: Write → Compile → Publish (`spacetime publish`) → Hot-swap (republish without disconnecting clients)
+ 
++## Reusable Modules and Configuration
++
++TypeScript and C# support same-language submodule composition. A namespace has a language accessor and a canonical database name; SQL, CLI calls, and HTTP calls use the canonical name. Changing the canonical namespace drops its tables and their data, so pin it when renaming an accessor. TypeScript supports nested submodules; C# composition requires 2.13+ with .NET 10/C# 14, and nested or repeated C# mounts require 2.14+. See the respective server skills for registration and helper-context rules.
++
++Database environment values are read-only strings, including secrets, supplied at publish time, not process environment variables. Keys are exact and case-sensitive: declare every key module code reads; undeclared reads fail even if a value is stored. Required declarations need values before initialization/migration; optional declarations permit absence. Publishing preserves unspecified values; environment-only publishing changes configuration without replacing the module. Transactional reads share a snapshot. In TypeScript/C#, named submodules cannot declare their own environment or read the root environment through host-dispatched entry points; ordinary helper calls retain the caller's access. C# dependencies registered in `public` instead contribute to the root schema. Do not return or log secrets; private storage does not prevent module code from exposing them.
++
++## Views with Arguments and Module Tests
++
++Views can accept arguments in 2.13+ (Rust, TypeScript, C#), queried as `SELECT * FROM view_name(42)`. Use explicit queries instead of subscribe-all on that connection; subscribe-all skips these views. See server skills for definition restrictions and client skills for query/cache rules.
++
++Rust and TypeScript provide in-memory module unit-test harnesses in 2.12+: run native `cargo test` or Vitest with the module-test plugin. These use the real datastore but do not simulate clients, subscriptions, RLS enforcement, lifecycle events, or timer execution. Test those host behaviors against a running database.
++
+ ## Inter-Database Communication
+ 
+ Reducers can't make network requests, but a reducer can call a reducer in another database on the same server through an **outbox table** (async IDC). The reducer inserts a row, and after its transaction commits, the row is delivered as a reducer call to the target database exactly once, in order with other calls through the same outbox to the same database. The sending reducer doesn't wait, and the two databases don't commit together: the receiving reducer runs later in its own transaction and can fail. An optional `on_result` reducer in the sending database receives the result, so it can undo or record the work.
 ```
 
-**File**: `crates/cli/src/subcommands/publish.rs` (modified, +18/-10)
+**File**: `codex-plugin/plugins/spacetimedb/skills/cpp-server/SKILL.md` (modified, +21/-0)
 ```diff
-@@ -24,7 +24,7 @@ use crate::spacetime_config::{
-     FlatTarget, Key, LoadedConfig, SpacetimeConfig,
- };
- use crate::util::{add_auth_header_opt, get_auth_header, strip_verbatim_prefix, AuthHeader, ResponseExt};
--use crate::util::{decode_identity, y_or_n};
-+use crate::util::{decode_identity, YesOrNo};
- use crate::{build, common_args};
+@@ -167,6 +167,27 @@ ctx.rng()              // Deterministic RNG
+ ctx.sender_auth()      // AuthCtx with JWT claims
+ ```
  
- /// Individual prompts that `--yes` can suppress. `All` is a shorthand for every category below.
-@@ -407,10 +407,14 @@ fn confirm_and_clear(
-         "This will DESTROY the current {} module, and ALL corresponding data.",
-         name_or_identity
-     );
--    if !y_or_n(
--        skip_prompt,
--        format!("Are you sure you want to proceed? [deleting {}]", name_or_identity).as_str(),
--    )? {
-+    if !YesOrNo::new(format!(
-+        "Are you sure you want to proceed? [deleting {}]",
-+        name_or_identity
-+    ))
-+    .force(skip_prompt)
-+    .default(false)
-+    .prompt()?
-+    {
-         anyhow::bail!("Aborted.");
-     }
++## Environment Variables
++
++Declare the environment in a dedicated `environment.h`:
++
++```cpp
++#pragma once
++#include <spacetimedb/environment_declaration.h>
++
++SPACETIMEDB_ENV(
++    (API_KEY, std::string),
++    (MODE, std::string, ("development", "production")),
++    (LOG_LEVEL, std::optional<std::string>)
++)
++// In a root entry point: ctx.env.API_KEY(), ctx.env.LOG_LEVEL()
++// String-key lookup: ctx.env.get("LOG_LEVEL")
++```
++
++Set `SPACETIMEDB_ENV_HEADER` to this header's full path in CMake **before** adding the SpacetimeDB module library directory, so the library and module see the same context declaration. Including it manually in only one source file is insufficient. `std::string` is required; `std::optional<std::string>` permits absence. The optional third tuple element restricts allowed strings.
++
++See the concepts skill for shared environment and secret-handling rules.
++
+ ## Scheduled Tables
  
-@@ -681,7 +685,11 @@ async fn execute_publish_configs<'a>(
-         };
-         if server_address != "localhost" && server_address != "127.0.0.1" {
-             println!("You are about to publish to a non-local server: {server_address}");
--            if !y_or_n(yes.publish_to_remote, "Are you sure you want to proceed?")? {
-+            if !YesOrNo::new("Are you sure you want to proceed?")
-+                .force(yes.publish_to_remote)
-+                .default(false)
-+                .prompt()?
-+            {
-                 anyhow::bail!("Publish aborted by user.");
-             }
-         }
-@@ -928,10 +936,10 @@ async fn apply_pre_publish_if_needed(
-                 // We only arrive here if you have not specified ClearMode::Always AND there was no
-                 // conflict that required manual migration.
-                 if auto.break_clients
--                    && !y_or_n(
--                        force_break_clients || yes.break_clients,
--                        "The above changes will BREAK existing clients. Do you want to proceed?",
--                    )?
-+                    && !YesOrNo::new("The above changes will BREAK existing clients. Do you want to proceed?")
-+                        .force(force_break_clients || yes.break_clients)
-+                        .default(false)
-+                        .prompt()?
-                 {
-                     println!("Aborting");
-                     // Early exit: return an error or a special signal. Here we bail out by returning Err.
+ ```cpp
 ```
 
-**File**: `crates/cli/src/subcommands/publish/environment.rs` (modified, +5/-2)
+**File**: `codex-plugin/plugins/spacetimedb/skills/csharp-client/SKILL.md` (modified, +23/-0)
 ```diff
-@@ -91,7 +91,7 @@ pub(super) async fn publish_only(
-     input: Option<&Value>,
-     options: &super::EnvironmentOptions,
- ) -> anyhow::Result<()> {
--    use crate::util::{add_auth_header_opt, get_auth_header, y_or_n};
-+    use crate::util::{add_auth_header_opt, get_auth_header, YesOrNo};
-     use spacetimedb_client_api_messages::publish::EnvironmentMetadata;
+@@ -99,6 +99,29 @@ conn.SubscriptionBuilder()
+     });
+ ```
  
-     let host = config.get_host_url(server)?;
-@@ -100,7 +100,10 @@ pub(super) async fn publish_only(
-     if hostname != "localhost" && hostname != "127.0.0.1" {
-         println!("You are about to publish environment values to a non-local server: {hostname}");
-         anyhow::ensure!(
--            y_or_n(yes.publish_to_remote, "Are you sure you want to proceed?")?,
-+            YesOrNo::new("Are you sure you want to proceed?")
-+                .force(yes.publish_to_remote)
-+                .default(false)
-+                .prompt()?,
-             "Publish aborted by user"
-         );
-     }
++## Submodule Accessors and View Arguments
++
++A namespace accessor `MyAuth` is nested in the generated table, reducer, and procedure APIs:
++
++```csharp
++conn.SubscriptionBuilder()
++    .AddQuery(q => q.From.MyAuth.User())
++    .Subscribe();
++// Rows: conn.Db.MyAuth.User
++// Reducers: conn.Reducers.MyAuth.Add(10)
++// Procedures: conn.Procedures.MyAuth.CountUsers((ctx, result) => { ... })
++```
++
++The query builder and calls encode canonical names automatically. Raw SQL/HTTP/CLI calls use canonical qualified names, such as `auth_data.<table>` for a namespace explicitly named `auth_data`. All namespaces share the connection and cache.
++
++For views with arguments (2.13+), use raw SQL; C# has no typed argument-bearing view query builder yet:
++
++```csharp
++conn.SubscriptionBuilder().Subscribe(new[] { "SELECT * FROM by_id(42)" });
++```
++
++Use explicit queries for every table on that connection, not subscribe-all, which skips views with arguments. Only `SELECT * FROM view_name(literal_args)` is supported. All argument values share one cache table; unsubscribe from obsolete arguments to avoid combining their rows. Validate/encode dynamic values as SQL literals rather than concatenating untrusted input. Keep calling `FrameTick()` to process subscription updates.
++
+ ## Row Callbacks
+ 
+ ```csharp
 ```
 
-**File**: `crates/cli/src/subcommands/server.rs` (modified, +10/-7)
+**File**: `codex-plugin/plugins/spacetimedb/skills/csharp-server/SKILL.md` (modified, +46/-1)
 ```diff
-@@ -1,6 +1,8 @@
- use crate::{
-     common_args,
--    util::{host_or_url_to_host_and_protocol, spacetime_server_fingerprint, y_or_n, UNSTABLE_WARNING, VALID_PROTOCOLS},
-+    util::{
-+        host_or_url_to_host_and_protocol, spacetime_server_fingerprint, YesOrNo, UNSTABLE_WARNING, VALID_PROTOCOLS,
-+    },
-     Config,
- };
- use anyhow::Context;
-@@ -271,7 +273,7 @@ pub async fn exec_fingerprint(mut config: Config, args: &ArgMatches) -> Result<(
-     let force = args.get_flag("force");
+@@ -200,6 +200,16 @@ Procedural-view primary keys are explicit schema metadata. Add one only when the
  
-     if update_server_fingerprint(&mut config, Some(server)).await? {
--        if !y_or_n(force, "Continue?")? {
-+        if !YesOrNo::new("Continue?").force(force).default(false).prompt()? {
-             anyhow::bail!("Aborted");
-         }
+ Inclusive btree ranges use tuples, for example `ctx.Db.Shipment.DeliverBy.Filter((new Timestamp(1_000), new Timestamp(2_000)))`.
  
-@@ -348,7 +350,7 @@ pub async fn exec_edit(mut config: Config, args: &ArgMatches) -> Result<(), anyh
-         }
-     }
++Views can also accept arguments (2.13+), after the context:
++
++```csharp
++[SpacetimeDB.View(Accessor = "EntityById", Public = true)]
++public static Entity? EntityById(AnonymousViewContext ctx, ulong id) =>
++    ctx.Db.Entity.Id.Find(id);
++```
++
++Floating-point arguments and primary keys are rejected on argument-bearing views. See client skills for SQL subscription syntax and restrictions.
++
+ ## Client Visibility Filters
  
--    if !y_or_n(force, "Continue?")? {
-+    if !YesOrNo::new("Continue?").force(force).default(false).prompt()? {
-         anyhow::bail!("Aborted");
-     }
+ ```csharp
+@@ -232,6 +242,41 @@ double f = ctx.Rng.NextDouble();        // [0.0, 1.0)
+ timestamp.MicrosecondsSinceUnixEpoch / 1000
+ ```
  
-@@ -364,10 +366,11 @@ async fn exec_clear(_config: Config, paths: &SpacetimePaths, args: &ArgMatches)
-     if data_dir.0.exists() {
-         println!("Database path: {}", data_dir.display());
- 
--        if !y_or_n(
--            force,
--            "Are you sure you want to delete all data from the local database?",
--        )? {
-+        if !YesOrNo::new("Are you sure you want to delete all data from the local database?")
-+            .force(force)
-+            .default(false)
-+            .prompt()?
-+        {
-             println!("Aborting");
-             return Ok(());
-         }
-```
-
-**File**: `crates/cli/src/util.rs` (modified, +52/-17)
-```diff
-@@ -329,20 +329,53 @@ pub fn host_or_url_to_host_and_protocol(host_or_url: &str) -> (&str, Option<&str
-     }
- }
- 
--/// Prompt the user for `y` or `n` from stdin.
--///
--/// Return `false` unless the input is `y`.
--pub fn y_or_n(force: bool, prompt: &str) -> anyhow::Result<bool> {
--    if force {
--        println!("Skipping confirmation due to --yes");
--        return Ok(true);
-+/// Prompt the user for `n` or `n` from stdin
-+pub struct YesOrNo {
-+    message: String,
-+    force: Option<bool>,
-+    default: Option<bool>,
++## Submodules
++
++C# assembly composition requires SpacetimeDB/Runtime 2.13+, .NET 10, and C# 14 in the root and dependencies. NativeAOT-LLVM module builds require Windows or Linux, not macOS. Reference module assemblies via `ProjectReference` or NuGet. If libraries live beneath the root project, exclude their source from the root compile glob (`<Compile Remove="libraries/**/*.cs" />`). Dependencies, including transitive ones, register once in `public` unless some module mounts them with a `Namespace` attribute:
++
++```csharp
++// Root Lib.cs, before namespace/type declarations:
++[assembly: SpacetimeDB.Namespace(typeof(AuthLib.Marker), Accessor = "MyAuth", Name = "auth_data")]
++```
++
++The marker is any accessible type in the dependency assembly. Root code uses `ctx.Db.MyAuth.User` and `ctx.From.MyAuth.User()`; library code keeps `ctx.Db.User` and `ctx.From.User()`. To call a library helper, pass `ctx.As.MyAuth` (`tx.As.MyAuth` inside `WithTx`; 2.14+). Passing `ctx` directly works only while the library has one unambiguous instance; otherwise it throws `InvalidOperationException`. Helpers share the caller's transaction; namespaces are not helper security boundaries.
++
++`Accessor` controls C# members; `Name` pins the canonical namespace used in SQL (`auth_data.<table>`). Without `Name`, the root's case policy derives it (`MyAuth` → `my_auth` by default). Changing the canonical namespace drops its tables and their data; keep `Name` fixed to rename only accessors. Named dependencies retain their naming policy; `public` dependencies inherit the root's and cannot explicitly conflict with it.
++
++In 2.14+, any module can mount its own dependencies, and the same assembly can be mounted more than once with independent tables at each path; 2.13 allows only root mounts, once per assembly. Cross-language composition is unsupported. Named dependencies cannot declare lifecycle reducers, nonempty environments, or RLS filters. Define RLS in the root with canonical qualified table names. Named-submodule routes are ignored; root handlers may delegate to library helpers. Dependencies in `public` can contribute lifecycle reducers (subject to uniqueness), environment declarations, and routes.
++
++## Environment Variables
++
++```csharp
++[SpacetimeDB.Env]
++public partial struct EnvironmentSchema
++{
++    public string API_KEY;
++    [SpacetimeDB.EnvValues("development", "production")]
++    public string MODE;
++    public string? LOG_LEVEL;
 +}
++// In a root entry point:
++// ctx.Env.API_KEY: string; ctx.Env.LOG_LEVEL: string?
++// ctx.Env.Get("LOG_LEVEL"): string?
++```
 +
-+impl YesOrNo {
-+    pub fn new(message: impl Into<String>) -> Self {
-+        Self {
-+            message: message.into(),
-+            force: None,
-+            default: None,
-+        }
-+    }
++Enable nullable annotations for optional `string?` fields. One `[SpacetimeDB.Env]` struct declares the environment; `[EnvValues(...)]` restricts allowed strings. Colliding accessor names remain available through `Get("KEY")`.
 +
-+    pub fn force(mut self, force: bool) -> Self {
-+        self.force = Some(force);
-+        self
-+    }
++See the concepts skill for shared environment and secret-handling rules.
 +
-+    /// Set the response when Enter is pressed without an answer.
-+    pub fn default(mut self, default: bool) -> Self {
-+        self.default = Some(default);
-+        self
-+    }
+ ## Scheduled Tables
+ 
+ Declare the scheduled table and its reducer in the same `Module` class so `nameof(...)` resolves:
+@@ -298,7 +343,7 @@ ctx.WithTx(tx =>
+ });
+ ```
+ 
+-`WithTx` is generic: its callback must return a value (use `return 0;` when no result is needed). The callback's generated `tx.Db` exposes module table accessors; `ProcedureContext` and `HandlerContext` do not expose tables directly.
++`WithTx` is generic: its callback must return a value (use `return 0;` when no result is needed). In procedures and handlers, access tables only via `tx.Db`, never `ctx.Db`.
+ 
+ For non-GET requests, construct and send an `HttpRequest` directly:
+ 
+```
+
+**File**: `codex-plugin/plugins/spacetimedb/skills/rust-server/SKILL.md` (modified, +66/-0)
+```diff
+@@ -195,6 +195,17 @@ ctx.from.subscription().right_semijoin(
+ 
+ Query-builder comparisons against a `String` column take an owned `String`, for example `row.label.eq("active".to_string())`.
+ 
++Views can also accept arguments (2.13+), after the context:
 +
-+    pub fn prompt(self) -> anyhow::Result<bool> {
-+        assert!(!self.message.trim().is_empty(), "YesOrNo requires a message");
-+        let force = self.force.expect("YesOrNo requires an explicit force setting");
-+        let default = self.default.expect("YesOrNo requires an explicit default");
-+        if force {
-+            println!("Skipping confirmation due to --yes");
-+            return Ok(true);
-+        }
-+        let choices = if default { "Y/n" } else { "y/N" };
-+        print!("{} [{choices}]", self.message);
-+        std::io::stdout().flush()?;
-+        let mut input = String::new();
-+        let num_read = std::io::stdin().read_line(&mut input)?;
-+        anyhow::ensure!(num_read != 0, "Unexpected EOF while reading response");
-+        let input = input.trim().to_lowercase();
-+        if input.is_empty() {
-+            return Ok(default);
-+        }
-+        Ok(input == "y" || input == "yes")
-     }
--    let mut input = String::new();
--    print!("{prompt} [y/N]");
--    std::io::stdout().flush()?;
--    std::io::stdin().read_line(&mut input)?;
--    let input = input.trim().to_lowercase();
--    Ok(input == "y" || input == "yes")
++```rust
++#[spacetimedb::view(accessor = entity_by_id, public)]
++pub fn entity_by_id(ctx: &spacetimedb::AnonymousViewContext, id: u64) -> Option<Entity> {
++    ctx.db.entity().id().find(id)
++}
++```
++
++Floating-point arguments and primary keys are rejected on argument-bearing views. See client skills for SQL subscription syntax and restrictions.
++
+ ## Client Visibility Filters
+ 
+ ```rust
+@@ -231,6 +242,24 @@ let roll: u32 = ctx.rng().gen_range(1..=6);   // any rand::Rng method
+ timestamp.to_micros_since_unix_epoch() / 1000
+ ```
+ 
++## Environment Variables
++
++```rust
++#[spacetimedb::env]
++pub struct Env {
++    pub API_KEY: String,
++    pub LOG_LEVEL: Option<String>,
++}
++// Inside a root entry point:
++// ctx.env.API_KEY() -> String
++// ctx.env.LOG_LEVEL() -> Option<String>
++// ctx.env.get("LOG_LEVEL") -> Option<String>
++```
++
++For constrained values, derive `spacetimedb::EnvironmentValue` on a payload-free enum and use it as a field type (or `Option<Enum>`). `#[env(value = "production")]` on a variant supplies its exact accepted string; without it, the Rust variant name is used. `#[env(values("info", "debug"))]` also constrains `String`/`Option<String>` fields.
++
++See the concepts skill for shared environment and secret-handling rules.
++
+ ## Scheduled Tables
+ 
+ ```rust
+@@ -440,3 +469,40 @@ pub fn add_record(ctx: &ReducerContext, value: u32) {
+     });
  }
- 
- pub fn decode_identity(token: &String) -> anyhow::Result<String> {
-@@ -371,14 +404,16 @@ pub async fn get_login_token_or_log_in(
-         return Ok(token.clone());
-     }
- 
--    // Note: We pass `force: false` to `y_or_n` because if we're running non-interactively we want to default to "no", not yes!
-+    // Note: We leave `force` false because if we're running non-interactively we want to default to "no", not yes!
-     let full_login = interactive
--        && y_or_n(
--            false,
-+        && YesOrNo::new(
-             // It would be "ideal" if we could print the `spacetimedb.com` by deriving it from the `default_auth_host` constant,
-             // but this will change _so_ infrequently that it's not even worth the time to write that code and test it.
-             "You are not logged in. Would you like to log in with spacetimedb.com?",
--        )?;
-+        )
-+        .force(false)
-+        .default(false)
-+        .prompt()?;
- 
-     if full_login {
-         let host = Url::parse(DEFAULT_AUTH_HOST)?;
+ ```
++
++## Module Unit Tests
++
++The native in-memory harness is available in 2.12+. Keep the same `spacetimedb` version in normal and dev dependencies, enabling `test-utils` only for tests:
++
++```toml
++[dependencies]
++spacetimedb = { version = "2.13.0", features = ["unstable"] }
++
++[dev-dependencies]
++spacetimedb = { version = "2.13.0", features = ["test-utils"] }
++icu_calendar = ">=2.1, <2.2" # temporal_rs requires icu_calendar 2.1.x
++```
++
++Run `cargo test` natively, not with a WebAssembly target. For the `create_entity` reducer above:
++
++```rust
++#[cfg(test)]
++mod tests {
++    use super::*;
++    use spacetimedb::test_utils::{TestAuth, TestContext};
++
++    #[test]
++    fn inserts_entity() {
++        let test = TestContext::new().expect("test database");
++        test.with_reducer_tx(TestAuth::internal(), |ctx| {
++            create_entity(ctx, "Alice".to_owned());
++            Ok::<(), String>(())
++        }).expect("transaction");
++        assert_eq!(test.db.entity().count(), 1);
++    }
++}
++```
++
++`with_reducer_tx` commits on `Ok` and rolls back on `Err` or panic unwinding; propagate reducer errors with `?` when the reducer returns `Result`. Create a new `TestContext` for each test: cloning shares the database. Use `TestAuth::from_jwt_payload(payload, connection_id)?` for client calls and `TestAuth::internal()` for the database itself. The harness exposes `clock`, `rng`, procedure/view contexts, and query execution. It does not simulate subscriptions, RLS, lifecycle calls, or timers. Invoke lifecycle/scheduled reducers explicitly and retain integration tests for host behavior.
++
++See https://spacetimedb.com/docs/how-to/unit-testing for test setup, HTTP mocking, and current limitations.
 ```
 
-**File**: `crates/smoketests/tests/cluster/cli/publish.rs` (modified, +5/-5)
+**File**: `codex-plugin/plugins/spacetimedb/skills/typescript-client/SKILL.md` (modified, +21/-0)
 ```diff
-@@ -23,7 +23,7 @@ fn cli_can_publish_spacetimedb_on_disk() {
-             "--server",
-             &test.server_url,
-             // Needed when running smoketests against a remote server.
--            "--yes=remote",
-+            "--yes=remote,skip-login",
-             "foobar",
-         ])
-         .unwrap();
-@@ -37,7 +37,7 @@ fn cli_can_publish_spacetimedb_on_disk() {
-             "--server",
-             &test.server_url,
-             // Needed when running smoketests against a remote server.
--            "--yes=remote",
-+            "--yes=remote,skip-login",
-             "foobar",
-         ])
-         .unwrap();
-@@ -62,7 +62,7 @@ fn migration_test(module_name: &str, republish_args: &[&str], expect_success: bo
-             &dir,
-             "--server",
-             &test.server_url,
--            "--yes=remote",
-+            "--yes=remote,skip-login",
-             &module_name,
-         ])
-         .unwrap();
-@@ -74,7 +74,7 @@ fn migration_test(module_name: &str, republish_args: &[&str], expect_success: bo
-         &dir,
-         "--server",
-         &test.server_url,
--        "--yes=remote",
-+        "--yes=remote,skip-login",
-         &module_name,
-     ];
-     args.extend(republish_args);
-@@ -252,7 +252,7 @@ fn cli_publish_with_config_but_no_match_uses_cli_args() {
-         "--server",
-         &test.server_url,
-         // Needed when running smoketests against a remote server.
--        "--yes=remote",
-+        "--yes=remote,skip-login",
-         "cli-db-name",
-         "--module-path",
-         module_dir.to_str().unwrap(),
+@@ -136,6 +136,27 @@ conn.db.user.onDelete((ctx, user) => console.log('Left:', user.name));
+ conn.db.user.onUpdate((ctx, oldUser, newUser) => console.log('Updated:', newUser.name));
+ ```
+ 
++## Submodule Accessors and View Arguments
++
++Generated bindings preserve submodule accessors as nested members. For a namespace accessor `myAuth` pinned to canonical `auth_data`:
++
++```typescript
++conn.subscriptionBuilder().subscribe([tables.myAuth.users]);
++// Rows: conn.db.myAuth.users
++// Reducers: conn.reducers.myAuth.verifyToken({ token: 'example' })
++// React: useTable(tables.myAuth.users), useReducer(reducers.myAuth.verifyToken)
++```
++
++Use generated accessors in SDK calls; they encode canonical names automatically. Raw SQL/HTTP/CLI calls instead use canonical qualified names such as `auth_data.users` or `auth_data.verify_token`. Namespaces share the connection and cache; they are not separate database connections.
++
++For views with arguments (2.13+), use a raw SQL subscription; TypeScript has no typed argument-bearing view query builder yet:
++
++```typescript
++conn.subscriptionBuilder().subscribe('SELECT * FROM by_id(42)');
++```
++
++Use explicit queries for every table on that connection, not subscribe-all, which skips views with arguments. Only `SELECT * FROM view_name(literal_args)` is supported. All argument values share one cache table; unsubscribe from obsolete arguments to avoid combining their rows. Validate/encode dynamic values as SQL literals rather than concatenating untrusted input. In React, raw SQL subscriptions need explicit lifetime management and cleanup; `useTable` does not supply an argument-bearing view builder.
++
+ ## Automatic Reconnect and Token Refresh
+ 
+ The React provider's connection manager enables automatic reconnect; the explicit `.withAutomaticReconnect()` above also shows the setting to use for direct connections. Without it, a direct connection does not recover automatically. For direct connections, initial failures are not retried. After an established connection drops, retries use exponential backoff and jitter from `minDelayMs` (default 1 s) up to `maxDelayMs` (default 30 s), until `disconnect()` or a terminal failure. Tune these with `.withAutomaticReconnect({ minDelayMs, maxDelayMs })`; values below the 500 ms and 1 s floors are raised with a warning, so that retrying clients cannot overwhelm the database. While mounted, the React provider also preserves its separate connection-manager retries: it builds a replacement connection after an initial or terminal failure that the core connection will not retry. It respects an explicit `disconnect()`.
 ```
 
-**File**: `crates/smoketests/tests/cluster/delete_database.rs` (modified, +1/-1)
+**File**: `codex-plugin/plugins/spacetimedb/skills/typescript-server/SKILL.md` (modified, +87/-5)
 ```diff
-@@ -24,7 +24,7 @@ fn test_delete_database_aborts_without_confirmation() {
-     test.publish().name(&name).run().unwrap();
+@@ -40,9 +40,9 @@ export const addRecord = spacetimedb.reducer(
+ );
+ ```
  
-     let output = test
--        .spacetime(&["delete", "--server", &test.server_url, &name])
-+        .spacetime_with_stdin(&["delete", "--server", &test.server_url, &name], "\n")
-         .unwrap();
-     assert_delete_prompt(&output, &name);
-     assert!(output.contains("Aborting"), "expected abort message:\n{output}");
+-Only table definitions belong in `schema({...})`. Row and object builders used as reducer arguments or view return types are not schema entries.
++`schema({...})` accepts table definitions and submodule namespace registrations. Row and object builders used as reducer arguments or view return types are not schema entries. Environment declarations go in the second argument: `schema(tables, { env: { ... } })`.
+ 
+-Named runtime exports are reserved for values registered with SpacetimeDB, such as reducers, lifecycle hooks, views, procedures, HTTP exports, and visibility filters. Keep ordinary helper functions and constants unexported.
++Export the default schema and every reducer, lifecycle hook, view, procedure, HTTP export, and visibility filter to register. Root-entry named exports must be registered SpacetimeDB values: keep ordinary root helpers/constants unexported. A submodule library may export ordinary helpers for its consumer to call, because submodule discovery ignores non-module exports; do not re-export those helpers from the root entry.
+ 
+ ## Imports
+ 
+@@ -114,8 +114,8 @@ authorId: t.u64().index('btree'),
+ // Access: ctx.db.post.authorId.filter(authorId);
+ 
+ // Multi-column (named):
+-indexes: [{ accessor: 'by_group_user', algorithm: 'btree', columns: ['groupId', 'userId'] }]
+-// Access: ctx.db.membership.by_group_user.filter([groupId, userId]);
++indexes: [{ accessor: 'byGroupUser', algorithm: 'btree', columns: ['groupId', 'userId'] }]
++// Access: ctx.db.membership.byGroupUser.filter([groupId, userId]);
+ ```
+ 
+ Prefer a multi-column index over filtering by one column and looping. Filter takes an array in index column order; a prefix scan passes the leading value bare: `filter(groupId)`.
+@@ -208,6 +208,8 @@ const f: number = ctx.random();                          // [0.0, 1.0)
+ const roll: number = ctx.random.integerInRange(1, 6);    // safe JS number bounds/result, inclusive
+ const storedRoll: bigint = BigInt(roll);                 // convert the result for an i64/u64 column
+ const bytes: Uint8Array = ctx.random.fill(new Uint8Array(16));
++// 2.13+: in-place shuffle; copy first to preserve the original array.
++const shuffled = ctx.random.shuffle([...cards]);
+ 
+ // Client: Timestamp → Date
+ new Date(Number(row.createdAt.microsSinceUnixEpoch / 1000n));
+@@ -259,6 +261,41 @@ export const tick = spacetimedb.reducer(
+ //   const micros = at.tag === 'time' ? at.value : at.value.microsSinceUnixEpoch;  // bigint
+ ```
+ 
++## Submodules
++
++Import the library's full module-namespace object, not just its default schema:
++
++```typescript
++import * as authLib from 'auth_lib';
++
++const spacetimedb = schema({
++  scoreRecord,
++  myAuth: { name: 'auth_data', module: authLib },
++});
++export default spacetimedb;
++```
++
++`myAuth` is the accessor (`ctx.db.myAuth.<table>`); `auth_data` is the canonical namespace used in SQL and wire names. Without an explicit `name`, the root's case policy derives it (`myAuth` → `my_auth` by default). Pin `name` when renaming an accessor: changing the canonical namespace drops its tables and their data. The library keeps its own flat `ctx.db` accessors. To call a library function directly, pass `ctx.as.myAuth`; inside `withTx`, use `tx.as.myAuth`. Nested TypeScript submodules are supported. Lifecycle reducers and nonempty environment declarations belong in the root. Submodule routers are ignored; register delegated handlers on the root router. Composition is not cross-language.
++
++Official reusable libraries include `@spacetimedb/cron`, `@spacetimedb/retry`, `@spacetimedb/rate-limit`, and `@spacetimedb/crypto`. Their registration shapes differ: `@spacetimedb/rate-limit/submodule` is mountable, cron/retry expose factories, and crypto exports helpers. Consult the chosen package's README/exports rather than assuming every package root is a mountable module.
++
++## Environment Variables
++
++```typescript
++const spacetimedb = schema({ scoreRecord }, {
++  env: {
++    API_KEY: t.string(),
++    MODE: t.enum('Mode', ['development', 'production']),
++    LOG_LEVEL: t.string().optional(),
++  },
++});
++// In a root reducer/procedure/view/handler:
++// ctx.env.API_KEY: string; ctx.env.LOG_LEVEL: string | undefined
++// ctx.env.get('LOG_LEVEL'): string | null
++```
++
++See the concepts skill for shared environment and secret-handling rules.
++
+ ## Inter-Database Calls (Async IDC)
+ 
+ A reducer calls a reducer in another database by inserting a row into an outbox table. The call is sent only if the transaction commits, runs exactly once, and runs in order with other calls through the same outbox to the same database. The sending reducer doesn't wait for it. Both databases must be on the same server.
+@@ -347,7 +384,7 @@ A client subscribing to a view receives only the rows it returns. Use a per-user
+ 
+ `t.row(...)` and `t.object(...)` return schema builders, not TypeScript runtime row types. Let a view callback infer its result, or annotate a se
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #6488** (2026-11-04): Allow Tyler-authored license changes in CODEOWNERS check (@jdetter)
+- **PR #6475** (2026-11-04): Remove unused scripts and the sqltest crate (@cloutiertyler)
+- **PR #6460** (2026-11-04): Async IDC: rust shorthand (@Shubham8287)
 - **PR #6458** (2026-11-03): CLI - Restore yes/no prompt default on EOF (@bfops)
+- **PR #6457** (2026-11-04): Check publication permissions before reserving database names (@bfops)
 - **PR #6448** (2026-11-02): Version bump 2.14.1 (@rekhoff)
-- **PR #6446** (closed): Update nix flake lock (@Shubham8287)
-- **PR #6441** (2026-10-31): Don't rerun merge queue runs whose queue branch is gone (@cloutiertyler)
-- **PR #6440** (2026-11-02): Preserve committed index state during schema rollback (@joshua-spacetime)
-- **PR #6439** (2026-10-30): Stop describing modules as stored procedures in the FAQ (@cloutiertyler)
 
 ---
 
@@ -1391,59 +1966,77 @@ Co-authored-by: Zeke Foppa <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Kris/various nix fixes (#6344)
+## X. Remove unused scripts and the sqltest crate (#6475)
 
 **RULE**:
-When implementing operations in `crates/cli/src/schema_extract/tests.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in clockworklabs/SpacetimeDB. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in clockworklabs/SpacetimeDB. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `bb6eb379`: Kris/various nix fixes (#6344). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `360214e0`: Remove unused scripts and the sqltest crate (#6475). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/cli/src/schema_extract/tests.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-// Inspectors run with an empty environment, so their scripts must name tools by
-// absolute path. Resolve them from the test's own PATH rather than assuming a
-// filesystem layout: Nix build sandboxes have neither /bin/cat nor /usr/bin/head.
-#[cfg(unix)]
-fn tool(name: &str) -> String {
-    std::env::var_os("PATH")
-        .and_then(|paths| {
-            std::env::split_paths(&paths)
-                .map(|dir| dir.join(name))
-                .find(|path| path.is_file())
-        })
-        .unwrap_or_else(|| panic!("`{name}` not found on PATH"))
-        .display()
-        .to_string()
-}
-
-        "[ \"$1\" = extract-schema ] && [ \"$3\" = --host-type ] && [ \"$4\" = js ] || exit 2\n[ \"$({cat} \"$2\")\" = exact-artifact ] || exit 3\nprintf '%s' '{}'", json.replace('\'', "'\\''"),
-        cat = tool("cat"),
-        "[ \"$1\" = extract-schema ] && [ \"$3\" = --host-type ] && [ \"$4\" = wasm ] || exit 2\n[ \"$({cat} \"$2\")\" = generate-exact ] || exit 3\nprintf '%s' '{}'", json.replace('\'', "'\\''"),
-        cat = tool("cat"),
-    for (script, expected) in [
-        (
-            "printf 'generated-inspector-secret'".to_owned(),
-            "returned invalid schema data",
-        ),
- 
+ "owo-colors",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-        "[ \"$1\" = extract-schema ] && [ \"$3\" = --host-type ] && [ \"$4\" = js ] || exit 2\n[ \"$(/bin/cat \"$2\")\" = exact-artifact ] || exit 3\nprintf '%s' '{}'", json.replace('\'', "'\\''")
-        "[ \"$1\" = extract-schema ] && [ \"$3\" = --host-type ] && [ \"$4\" = wasm ] || exit 2\n[ \"$(/bin/cat \"$2\")\" = generate-exact ] || exit 3\nprintf '%s' '{}'", json.replace('\'', "'\\''")
-    for script in [
-        "printf 'generated-inspector-secret'",
-        "exec /usr/bin/head -c 16777217 /dev/zero",
-        let (_dir, extractor) = inspector(script);
-        assert!(!format!("{error:#}").contains("generated-inspector-secret"));
+[[package]]
+name = "educe"
+version = "0.4.23"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0f0042ff8246a363dbe77d2ceedb073339e85a804b9a47636c6e016a9a32c05f"
+dependencies = [
+ "enum-ordinalize",
+ "proc-macro2",
+ "quote",
+ "syn 1.0.109",
+]
+
+[[package]]
+name = "enum-ordinalize"
+version = "3.1.15"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1bf1fa3f06bbff1ea5b1a9c7b14aa992a39657db60a2759457328d7e058f49ee"
+dependencies = [
+ "num-bigint",
+ "num-traits",
+ "proc-macro2",
+ "quote",
+ "syn 2.0.107",
+]
+
+[[package]]
+name = "itertools"
+version = "0.11.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b1c173a5686ce8bfa551b3563d0c2170bf24ca44da99c7ca4bfdab5418c3fe57"
+dependencies = [
+ "either",
+]
+
+[[package]]
+name = "libtest-mimic"
+version = "0.6.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6d8de370f98a6cb8a4606618e53e802f93b094ddec0f96988eaec2c27e6e9ce7"
+dependencies = [
+ "clap 4.5.50",
+ "termcolor",
+ "threadpool",
+]
+
+[[package]]
+name = "owo-colors"
+version = "3.5.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c1b04fb49957986fdce4d6ee7a
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `bb6eb379` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `360214e0` are properly handled with clean fallback behavior.

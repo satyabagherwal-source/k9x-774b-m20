@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-04T21:11:34.877Z",
+  "last_updated": "2026-11-04T21:18:56.636Z",
   "total_verified_learnings": 1210,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -7739,8 +7739,8 @@
       "slug": "clockworklabs-spacetimedb",
       "platform": "github",
       "source_url": "https://github.com/clockworklabs/SpacetimeDB",
-      "source_version": "0028d79e",
-      "content_hash": "e3473e4ef1289497c425a3cf338726e5dfa11f5968c7d90f58b62234bc6e8516",
+      "source_version": "360214e0",
+      "content_hash": "3697ece97ee185d37cf546acb818b90c1f2dc77844462cccd2e80aa0b33ccd6f",
       "dossier_path": "07_PROJECT_LEARNING/clockworklabs-spacetimedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/clockworklabs-spacetimedb-learnings.md",
       "promoted_rules": [
@@ -7823,6 +7823,11 @@
           "number": 6636,
           "title": "Kris/various nix fixes (#6344)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6976,
+          "title": "Remove unused scripts and the sqltest crate (#6475)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -7830,7 +7835,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T22:06:46.752Z",
+      "verified_at": "2026-11-04T21:18:56.613Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -19827,7 +19832,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/BAAI/bge-small-en-v1.5",
       "source_version": "hf-baai-bge-small-en-v1.5",
-      "content_hash": "a916287b8109489bf58cd733203be0e4613462b9b12fd09cec82021227d1f42e",
+      "content_hash": "9a74f51b64083d1d37fa0db24dce0cb5098b5def59cb9d042b6018070f5077d5",
       "dossier_path": "07_PROJECT_LEARNING/hf-baai-bge-small-en-v1.5-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-baai-bge-small-en-v1.5-learnings.md",
       "promoted_rules": [
@@ -20276,7 +20281,7 @@
         "learn-huggingface-hf-baai-bge-small-en-v1-5-mv42wvjy",
         "learn-huggingface-hf-baai-bge-small-en-v1-5-mv4g4zgk"
       ],
-      "verified_at": "2026-10-31T05:29:37.852Z",
+      "verified_at": "2026-11-04T21:18:43.157Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -177509,6 +177514,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-04T21:11:34.854Z"
+    },
+    "rule-6976": {
+      "learning_id": "rule-6976",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6976,
+      "title": "Remove unused scripts and the sqltest crate (#6475)",
+      "source_url": "https://github.com/clockworklabs/SpacetimeDB",
+      "source_version": "360214e0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T21:18:56.613Z"
     }
   },
   "aliases": {

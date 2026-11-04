@@ -7351,3 +7351,5 @@ Every entry in this ledger must capture:
 | `learn-github-onejs-one` | `https://github.com/onejs/one` | `09334632` | Multi-dimensional audit evidence | 2026-11-04T21:11:23.967Z |
 | `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `5455bf6a` | Multi-dimensional audit evidence | 2026-11-04T21:11:29.325Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `92602a83` | Multi-dimensional audit evidence | 2026-11-04T21:11:34.964Z |
+| `learn-huggingface-baai-bge-small-en-v1-5` | `https://huggingface.co/BAAI/bge-small-en-v1.5` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-11-04T21:18:43.282Z |
+| `learn-github-clockworklabs-spacetimedb` | `https://github.com/clockworklabs/SpacetimeDB` | `360214e0` | Multi-dimensional audit evidence | 2026-11-04T21:18:56.727Z |

@@ -7342,3 +7342,5 @@
 | `CYCLE-20261104-3BQZ` | `2026-11-04T21:11:23.963Z` | `onejs/one` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6973` | Yes (`6340fe34...`) |
 | `CYCLE-20261104-3FVU` | `2026-11-04T21:11:29.322Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6974` | Yes (`967912fc...`) |
 | `CYCLE-20261104-3K8G` | `2026-11-04T21:11:34.960Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6975` | Yes (`bf837509...`) |
+| `CYCLE-20261104-CQPZ` | `2026-11-04T21:18:43.271Z` | `BAAI/bge-small-en-v1.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-small-en-v1.5-learnings.md` | Yes (`9a74f51b...`) |
+| `CYCLE-20261104-D13N` | `2026-11-04T21:18:56.723Z` | `clockworklabs/SpacetimeDB` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6976` | Yes (`3697ece9...`) |
