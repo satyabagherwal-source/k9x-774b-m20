@@ -7132,3 +7132,6 @@ Every entry in this ledger must capture:
 | `learn-github-neuron-core-neuron-ai` | `https://github.com/neuron-core/neuron-ai` | `e66e0fda` | Multi-dimensional audit evidence | 2026-11-04T02:12:12.782Z |
 | `learn-github-streetwriters-notesnook` | `https://github.com/streetwriters/notesnook` | `210154bd` | Multi-dimensional audit evidence | 2026-11-04T02:19:17.806Z |
 | `learn-github-matrixorigin-matrixone` | `https://github.com/matrixorigin/matrixone` | `e997c817` | Multi-dimensional audit evidence | 2026-11-04T02:19:24.840Z |
+| `learn-github-vitejs-vite` | `https://github.com/vitejs/vite` | `b3cb0575` | Multi-dimensional audit evidence | 2026-11-04T02:26:09.697Z |
+| `learn-github-callstack-react-native-paper` | `https://github.com/callstack/react-native-paper` | `61d935b6` | Multi-dimensional audit evidence | 2026-11-04T02:26:10.662Z |
+| `learn-github-gocd-gocd` | `https://github.com/gocd/gocd` | `e045a46c` | Multi-dimensional audit evidence | 2026-11-04T02:26:14.157Z |

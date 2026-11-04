@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-04T02:19:24.850Z",
+  "last_updated": "2026-11-04T02:26:14.165Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4671,14 +4671,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-callstack-react-native-paper",
-      "content_hash": "f5cc305acb0d41e1f6f5a1721f6f726f657808bcbcc6bb18ad9779e3436440c7",
-      "verified_at": "2026-10-31T02:14:24.846Z",
+      "content_hash": "a383a7edb1ebcc52fd3e40526c90d0500c70128b7957b0e40ce9a5586557db39",
+      "verified_at": "2026-11-04T02:26:10.671Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T02:14:24.846Z"
+      "last_updated": "2026-11-04T02:26:10.671Z"
     },
     "tensorchord/pgvecto.rs": {
       "repository": "tensorchord/pgvecto.rs",
@@ -7866,14 +7866,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-gocd-gocd",
-      "content_hash": "e46a053bbe634297b585e81261e2f00a31b1455a9f6cf7270ff4528ef0a7a48d",
-      "verified_at": "2026-11-02T16:33:32.310Z",
+      "content_hash": "f5ba8a73ca335f90ecb74b69f7ff3d67f6ace90969fda47895e714eba7db03cd",
+      "verified_at": "2026-11-04T02:26:14.164Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-02T16:33:32.310Z"
+      "last_updated": "2026-11-04T02:26:14.164Z"
     },
     "citusdata/citus": {
       "repository": "citusdata/citus",
@@ -15036,14 +15036,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-vitejs-vite",
-      "content_hash": "97e53a3ac40f17b6c2c0a2d6c914a8434b6f98455ee0a96019134553a3ff7780",
-      "verified_at": "2026-10-30T18:58:30.358Z",
+      "content_hash": "9a3f9d538403553d2295cf7b828c2cc6e2d70c630b0098a420c4c178a9e5cab4",
+      "verified_at": "2026-11-04T02:26:09.705Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T18:58:30.358Z"
+      "last_updated": "2026-11-04T02:26:09.705Z"
     },
     "KeyboardKit/KeyboardKit": {
       "repository": "KeyboardKit/KeyboardKit",

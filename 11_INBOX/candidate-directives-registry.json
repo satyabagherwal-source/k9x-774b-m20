@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-04T01:44:35.605Z",
+  "last_updated": "2026-11-04T02:26:10.666Z",
   "directives": [
     {
       "id": "CD-001",
@@ -3753,6 +3753,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-lioensky-vcptoolbox"
+    },
+    {
+      "id": "CD-WA5M",
+      "directive_title": "docs: add a security policy (#5157)",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "callstack/react-native-paper",
+      "source_commit": "61d935b6",
+      "date_staged": "2026-11-04",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-callstack-react-native-paper"
     }
   ]
 }

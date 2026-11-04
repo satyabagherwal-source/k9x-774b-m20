@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-04T02:19:24.752Z",
+  "last_updated": "2026-11-04T02:26:14.085Z",
   "total_verified_learnings": 1204,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -6079,8 +6079,8 @@
       "slug": "callstack-react-native-paper",
       "platform": "github",
       "source_url": "https://github.com/callstack/react-native-paper",
-      "source_version": "4dbf7d60",
-      "content_hash": "f5cc305acb0d41e1f6f5a1721f6f726f657808bcbcc6bb18ad9779e3436440c7",
+      "source_version": "61d935b6",
+      "content_hash": "a383a7edb1ebcc52fd3e40526c90d0500c70128b7957b0e40ce9a5586557db39",
       "dossier_path": "07_PROJECT_LEARNING/callstack-react-native-paper-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/callstack-react-native-paper-learnings.md",
       "promoted_rules": [
@@ -6105,7 +6105,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T02:14:24.737Z",
+      "verified_at": "2026-11-04T02:26:10.543Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -15437,8 +15437,8 @@
       "slug": "gocd-gocd",
       "platform": "github",
       "source_url": "https://github.com/gocd/gocd",
-      "source_version": "cb2b27a7",
-      "content_hash": "e46a053bbe634297b585e81261e2f00a31b1455a9f6cf7270ff4528ef0a7a48d",
+      "source_version": "e045a46c",
+      "content_hash": "f5ba8a73ca335f90ecb74b69f7ff3d67f6ace90969fda47895e714eba7db03cd",
       "dossier_path": "07_PROJECT_LEARNING/gocd-gocd-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gocd-gocd-learnings.md",
       "promoted_rules": [
@@ -15491,6 +15491,11 @@
           "number": 6456,
           "title": "build(deps-ui-dev): bump rack (#14711)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6725,
+          "title": "build(deps-ui-dev): bump addressable (#14718)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -15498,7 +15503,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-02T16:33:32.195Z",
+      "verified_at": "2026-11-04T02:26:14.066Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -75870,8 +75875,8 @@
       "slug": "vitejs-vite",
       "platform": "github",
       "source_url": "https://github.com/vitejs/vite",
-      "source_version": "90bc034a",
-      "content_hash": "97e53a3ac40f17b6c2c0a2d6c914a8434b6f98455ee0a96019134553a3ff7780",
+      "source_version": "b3cb0575",
+      "content_hash": "9a3f9d538403553d2295cf7b828c2cc6e2d70c630b0098a420c4c178a9e5cab4",
       "dossier_path": "07_PROJECT_LEARNING/vitejs-vite-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/vitejs-vite-learnings.md",
       "promoted_rules": [
@@ -75894,6 +75899,11 @@
           "number": 5834,
           "title": "use top-level `input` for SSR build when `build.ssr: true` (#23898)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6724,
+          "title": "deps): update all non-major dependencies (#23966)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -75901,7 +75911,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T18:58:30.268Z",
+      "verified_at": "2026-11-04T02:26:09.602Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -172571,6 +172581,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-04T02:19:24.730Z"
+    },
+    "rule-6724": {
+      "learning_id": "rule-6724",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6724,
+      "title": "deps): update all non-major dependencies (#23966)",
+      "source_url": "https://github.com/vitejs/vite",
+      "source_version": "b3cb0575",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T02:26:09.602Z"
+    },
+    "rule-6725": {
+      "learning_id": "rule-6725",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6725,
+      "title": "build(deps-ui-dev): bump addressable (#14718)",
+      "source_url": "https://github.com/gocd/gocd",
+      "source_version": "e045a46c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T02:26:14.066Z"
     }
   },
   "aliases": {

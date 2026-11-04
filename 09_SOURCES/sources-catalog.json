@@ -3033,10 +3033,10 @@
     "repository": "callstack/react-native-paper",
     "platform": "github",
     "sourceUrl": "https://github.com/callstack/react-native-paper",
-    "sourceVersion": "4dbf7d60",
+    "sourceVersion": "61d935b6",
     "license": "MIT",
-    "contentHash": "f5cc305acb0d41e1f6f5a1721f6f726f657808bcbcc6bb18ad9779e3436440c7",
-    "lastHarvestedAt": "2026-10-31T02:14:24.837Z",
+    "contentHash": "a383a7edb1ebcc52fd3e40526c90d0500c70128b7957b0e40ce9a5586557db39",
+    "lastHarvestedAt": "2026-11-04T02:26:10.662Z",
     "learningId": "learn-github-callstack-react-native-paper"
   },
   "tensorchord-pgvecto.rs": {
@@ -5163,10 +5163,10 @@
     "repository": "gocd/gocd",
     "platform": "github",
     "sourceUrl": "https://github.com/gocd/gocd",
-    "sourceVersion": "cb2b27a7",
+    "sourceVersion": "e045a46c",
     "license": "Apache-2.0",
-    "contentHash": "e46a053bbe634297b585e81261e2f00a31b1455a9f6cf7270ff4528ef0a7a48d",
-    "lastHarvestedAt": "2026-11-02T16:33:32.300Z",
+    "contentHash": "f5ba8a73ca335f90ecb74b69f7ff3d67f6ace90969fda47895e714eba7db03cd",
+    "lastHarvestedAt": "2026-11-04T02:26:14.157Z",
     "learningId": "learn-github-gocd-gocd"
   },
   "citusdata-citus": {
@@ -9993,10 +9993,10 @@
     "repository": "vitejs/vite",
     "platform": "github",
     "sourceUrl": "https://github.com/vitejs/vite",
-    "sourceVersion": "90bc034a",
+    "sourceVersion": "b3cb0575",
     "license": "MIT",
-    "contentHash": "97e53a3ac40f17b6c2c0a2d6c914a8434b6f98455ee0a96019134553a3ff7780",
-    "lastHarvestedAt": "2026-10-30T18:58:30.350Z",
+    "contentHash": "9a3f9d538403553d2295cf7b828c2cc6e2d70c630b0098a420c4c178a9e5cab4",
+    "lastHarvestedAt": "2026-11-04T02:26:09.697Z",
     "learningId": "learn-github-vitejs-vite"
   },
   "keyboardkit-keyboardkit": {

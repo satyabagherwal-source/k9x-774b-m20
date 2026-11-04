@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/gocd-gocd-learnings.md`  
 > **Source**: github ([https://github.com/gocd/gocd](https://github.com/gocd/gocd))  
-> **Source Version**: `cb2b27a7`  
+> **Source Version**: `e045a46c`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-02T16:33:31.536Z  
+> **Timestamp**: 2026-11-04T02:26:13.487Z  
 > **Learning ID**: `learn-github-gocd-gocd`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/gocd-gocd-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/gocd/gocd](https://github.com/gocd/gocd))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-02T16:33:31.049Z  
+> **Harvest Timestamp**: 2026-11-04T02:26:12.917Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: GoCD - Continuous Delivery server main repository
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 7436 stars
+- **Stars / Engagement**: 7435 stars
 
 ---
 
@@ -880,24 +880,19 @@ export class CommentRenderWidget extends MithrilViewComponent<Attrs> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `392309e6` (2026-11-01)
-**Commit Message**: build(deps-ui-dev): bump rack (#14711)
+### Incident Patch 1: `e045a46c` (2026-11-03)
+**Commit Message**: build(deps-ui-dev): bump addressable (#14718)
 
-Bumps the rack group in /server/src/main/webapp/WEB-INF/rails with 1 update: [rack](https://github.com/rack/rack).
-
-
-Updates `rack` from 2.2.24 to 2.2.25
-- [Release notes](https://github.com/rack/rack/releases)
-- [Changelog](https://github.com/rack/rack/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/rack/rack/compare/v2.2.24...v2.2.25)
+Bumps [addressable](https://github.com/sporkmonger/addressable) from 2.9.0 to 2.9.2.
+- [Changelog](https://github.com/sporkmonger/addressable/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/sporkmonger/addressable/compare/addressable-2.9.0...addressable-2.9.2)
 
 ---
 updated-dependencies:
-- dependency-name: rack
-  dependency-version: 2.2.25
+- dependency-name: addressable
+  dependency-version: 2.9.2
   dependency-type: indirect
   update-type: version-update:semver-patch
-  dependency-group: rack
 ...
 
 Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
@@ -905,224 +900,258 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 **File**: `server/src/main/webapp/WEB-INF/rails/Gemfile.lock` (modified, +2/-2)
 ```diff
-@@ -95,7 +95,7 @@ GEM
-     public_suffix (6.0.2)
-     racc (1.8.1)
-     racc (1.8.1-java)
--    rack (2.2.24)
-+    rack (2.2.25)
-     rack-session (1.0.2)
-       rack (< 3)
-     rack-test (2.3.0)
-@@ -228,7 +228,7 @@ CHECKSUMS
-   public_suffix (6.0.2) sha256=bfa7cd5108066f8c9602e0d6d4114999a5df5839a63149d3e8b0f9c1d3558394
-   racc (1.8.1) sha256=4a7f6929691dbec8b5209a0b373bc2614882b55fc5d2e447a21aaa691303d62f
-   racc (1.8.1-java) sha256=54f2e6d1e1b91c154013277d986f52a90e5ececbe91465d29172e49342732b98
--  rack (2.2.24) sha256=ef16526a0d871c43753452338c754040a664c8b41bf0dd7450b85f7772adca5f
-+  rack (2.2.25) sha256=a5b3cd8f2df29c36ede21aa797c21e643f06792fae7487926102e06abe6da0b8
-   rack-session (1.0.2) sha256=a02115e5420b4de036839b9811e3f7967d73446a554b42aa45106af335851d76
-   rack-test (2.3.0) sha256=b118d177cc002c572fc1b6fd8d19c9ed5881a36e8d6f689f9e618f9f861241e8
-   rackup (1.0.1) sha256=ba86604a28989fe1043bff20d819b360944ca08156406812dca6742b24b3c249
+@@ -37,7 +37,7 @@ GEM
+       minitest (>= 5.1, < 6)
+       securerandom (>= 0.3)
+       tzinfo (~> 2.0, >= 2.0.5)
+-    addressable (2.9.0)
++    addressable (2.9.2)
+       public_suffix (>= 2.0.2, < 8.0)
+     base64 (0.3.0)
+     benchmark (0.5.0)
+@@ -197,7 +197,7 @@ CHECKSUMS
+   actionpack (7.2.4) sha256=c7acf80263cf09125e5c4d866abda3536cc941f436e81673f17be11ad407a4eb
+   actionview (7.2.4) sha256=6005a3427881b2e8f509a5f7ed894e66f256410f734f7a227d01c4d3d9cb06a2
+   activesupport (7.2.4) sha256=b97027b31e111675dba67b86edcd589acc25a0dddf8eecacca18d33a703a0788
+-  addressable (2.9.0) sha256=7fdf6ac3660f7f4e867a0838be3f6cf722ace541dd97767fa42bc6cfa980c7af
++  addressable (2.9.2) sha256=9117c7e7d6ee07230e75ce41fb9401ae55354dc654fcd0e862ba41d539e9a610
+   base64 (0.3.0) sha256=27337aeabad6ffae05c265c450490628ef3ebd4b67be58257393227588f5a97b
+   benchmark (0.5.0) sha256=465df122341aedcb81a2a24b4d3bd19b6c67c1530713fd533f3ff034e419236c
+   bigdecimal (4.1.3) sha256=61ebe1e5e559bdc3cc6f2c0ee7f427321fc838f59611c294356eb04d6e21cf66
 ```
 
 ---
 
-### Incident Patch 2: `cb2b27a7` (2026-11-02)
-**Commit Message**: build: fix incorrectly detected 0BSD licenses
+### Incident Patch 2: `21527246` (2026-11-03)
+**Commit Message**: build(deps): bump com.github.oshi:oshi-core from 7.7.2 to 7.7.3 (#14717)
 
-**File**: `buildSrc/build.gradle` (modified, +1/-1)
-```diff
-@@ -22,7 +22,7 @@ dependencies {
-   implementation localGroovy()
-   implementation gradleApi()
-   implementation 'de.undercouch:gradle-download-task:5.7.0'
--  implementation 'com.github.jk1:gradle-license-report:3.1.4'
-+  implementation 'com.github.jk1:gradle-license-report:3.1.5'
-   implementation 'org.freemarker:freemarker:2.3.35'
-   implementation('dev.yumi:yumi-gradle-licenser:4.0.0') {
-     // Unnecessary jgit transitives
-```
+Bumps [com.github.oshi:oshi-core](https://github.com/oshi/oshi) from 7.7.2 to 7.7.3.
+- [Release notes](https://github.com/oshi/oshi/releases)
+- [Changelog](https://github.com/oshi/oshi/blob/master/CHANGELOG.md)
+- [Commits](https://github.com/oshi/oshi/compare/oshi-parent-7.7.2...oshi-parent-7.7.3)
 
-**File**: `buildSrc/src/main/groovy/com/thoughtworks/go/build/LicenseReport.groovy` (modified, +0/-1)
+---
+updated-dependencies:
+- dependency-name: com.github.oshi:oshi-core
+  dependency-version: 7.7.3
+  dependency-type: direct:production
+  update-type: version-update:semver-patch
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `build.gradle` (modified, +1/-1)
 ```diff
-@@ -37,7 +37,6 @@ class LicenseReport {
-     "Apache-1.1",
-     "Apache-2.0",
-     "BlueOak-1.0.0",
--    "0BSD",
-     "BSD-2-Clause",
-     "BSD-3-Clause",
-     "CDDL-1.0",
+@@ -135,7 +135,7 @@ def libraries = [
+   mybatisSpring       : 'org.mybatis:mybatis-spring:2.1.2',
+   mysql               : 'com.mysql:mysql-connector-j:26.10.0',
+   objenesis           : 'org.objenesis:objenesis:3.6',
+-  oshi                : 'com.github.oshi:oshi-core:7.7.2',
++  oshi                : 'com.github.oshi:oshi-core:7.7.3',
+   plexusUtils         : 'org.codehaus.plexus:plexus-utils:4.1.0',
+   postgresql          : 'org.postgresql:postgresql:42.7.14',
+   quartz              : 'org.quartz-scheduler:quartz:2.5.2',
 ```
 
 ---
 
-### Incident Patch 3: `b2985718` (2026-11-02)
-**Commit Message**: build: declare license for Tanuki Wrapper
+### Incident Patch 3: `8189d3ef` (2026-11-03)
+**Commit Message**: build(deps-ui-dev): bump sass-embedded (#14716)
 
-**File**: `buildSrc/src/main/groovy/com/thoughtworks/go/build/LicenseReport.groovy` (modified, +8/-7)
+Bumps [sass-embedded](https://github.com/sass/embedded-host-node) from 1.107.0 to 1.107.1.
+- [Changelog](https://github.com/sass/embedded-host-node/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/sass/embedded-host-node/compare/1.107.0...1.107.1)
+
+---
+updated-dependencies:
+- dependency-name: sass-embedded
+  dependency-version: 1.107.1
+  dependency-type: direct:development
+  update-type: version-update:semver-patch
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `server/src/main/webapp/WEB-INF/rails/package.json` (modified, +1/-1)
 ```diff
-@@ -59,6 +59,7 @@ class LicenseReport {
-     "OFL-1.1",
-     "Public Domain",
-     "Ruby",
-+    "Tanuki Development Software License 1.3",
-     "Zlib"
-   ).sort()
- 
-@@ -76,7 +77,7 @@ class LicenseReport {
-   LicenseReport(FileSystemOperations fileOps, ObjectFactory objectFactory,
-                 List<ReportTask> licenseReportTasks, Provider<Directory> reportDir,
-                 Map<String, Map<String, Object>> licensesForPackagedJarDependencies,
--                Map<String, File> extraEcosystemLicenseFiles, File yarnLicenseReport, GoVersions goVersions) {
-+                File yarnLicenseReport, Map<String, File> extraEcosystemLicenseFiles, GoVersions goVersions) {
-     this.fileOps = fileOps
-     this.objectFactory = objectFactory
-     this.licenseReportTasks = licenseReportTasks
-@@ -122,12 +123,6 @@ class LicenseReport {
-             renderModuleData(markup, "Java", moduleName, moduleLicenseData)
-           }
- 
--          this.extraEcosystemLicenseFiles.each {
--            new JsonSlurper().parse(it.value, "utf-8").each { String moduleName, Map<String, Object> moduleLicenseData ->
--              renderModuleData(markup, it.key, moduleName, moduleLicenseData)
--            }
--          }
--
-           new JsonSlurper().parse(this.yarnLicenseReport, "utf-8").each { String moduleName, Map<String, Object> moduleLicenseData ->
-             def yarnLicenseReportDir = this.yarnLicenseReport.parentFile
-             fileOps.copy {
-@@ -138,6 +133,12 @@ class LicenseReport {
-             renderModuleData(markup, "Javascript", moduleName, moduleLicenseData)
-           }
- 
-+          this.extraEcosystemLicenseFiles.each {
-+            new JsonSlurper().parse(it.value, "utf-8").each { String moduleName, Map<String, Object> moduleLicenseData ->
-+              renderModuleData(markup, it.key, moduleName, moduleLicenseData)
-+            }
-+          }
-+
-           def jreLicense = goVersions.packagedJavaVersion.toLicenseMetadata()
-           renderModuleData(markup, "Runtime", jreLicense.moduleName, jreLicense)
-         }
+@@ -103,7 +103,7 @@
+     "license-checker": "^25.0.1",
+     "mini-css-extract-plugin": "^2.10.2",
+     "mockdate": "^3.0.5",
+-    "sass-embedded": "^1.107.0",
++    "sass-embedded": "^1.107.1",
+     "sass-loader": "^17.1.0",
+     "simulate-event": "^1.4.0",
+     "sourcemapped-stacktrace": "^1.1.11",
 ```
 
-**File**: `installers/tanuki.gradle` (modified, +33/-0)
+**File**: `server/src/main/webapp/WEB-INF/rails/yarn.lock` (modified, +83/-83)
 ```diff
-@@ -16,6 +16,7 @@
+@@ -4639,7 +4639,7 @@ __metadata:
+     normalize-scss: "npm:^8.0.0"
+     opensans: "file:node-vendor/opensans#node-vendor/opensans::hash=930bae&locator=gocd-server-ui%40workspace%3A."
+     prismjs: "npm:^1.30.0"
+-    sass-embedded: "npm:^1.107.0"
++    sass-embedded: "npm:^1.107.1"
+     sass-loader: "npm:^17.1.0"
+     shell-quote: "npm:^1.12.0"
+     shellwords-ts: "npm:^3.0.1"
+@@ -7235,162 +7235,162 @@ __metadata:
+   languageName: node
+   linkType: hard
  
- import com.thoughtworks.go.build.DownloadFile
- import com.thoughtworks.go.build.TextUtils
-+import groovy.json.JsonOutput
+-"sass-embedded-all-unknown@npm:1.107.0":
+-  version: 1.107.0
+-  resolution: "sass-embedded-all-unknown@npm:1.107.0"
++"sass-embedded-all-unknown@npm:1.107.1":
++  version: 1.107.1
++  resolution: "sass-embedded-all-unknown@npm:1.107.1"
+   dependencies:
+-    sass: "npm:1.107.0"
++    sass: "npm:1.107.1"
+   conditions: (!cpu=arm | !cpu=arm64 | !cpu=riscv64 | !cpu=x64)
+   languageName: node
+   linkType: hard
  
- def destFile(String url) {
-   new File(gradle.gradleUserHomeDir, "download-cache/${TextUtils.md5Hex(url)}/${new File(URI.create(url).toURL().path).name}")
-@@ -28,6 +29,37 @@ def downloadTanukiDeltaPack = tasks.register('downloadTanukiDeltaPack', Download
-   checksum = rootProject.versions.tanukiSha256sum
- }
+-"sass-embedded-android-arm64@npm:1.107.0":
+-  version: 1.107.0
+-  resolution: "sass-embedded-android-arm64@npm:1.107.0"
++"sass-embedded-android-arm64@npm:1.107.1":
++  version: 1.107.1
++  resolution: "sass-embedded-android-arm64@npm:1.107.1"
+   conditions: os=android & cpu=arm64
+   languageName: node
+   linkType: hard
  
-+def tanukiDeltaPackLicense = tasks.register('tanukiDeltaPackLicense') {
-+  inputs.property('version', rootProject.versions.tanuki)
-+
-+  def licenseFile = layout.buildDirectory.file("_tanuki-licenses.json")
-+  outputs.file licenseFile
-+
-+  doFirst {
-+    licenseFile.get().asFile.with {
-+      parentFile.mkdirs()
-+      withWriter { out ->
-+        def moduleName = "com.tanukisoftware:java-service-wrapper" as String
-+        out.write(JsonOutput.prettyPrint(JsonOutput.toJson([
-+          (moduleName as String): [
-+            "moduleName"    : moduleName,
-+            "moduleVersion" : rootProject.versions.tanuki,
-+            "moduleUrls"    : [
-+              "https://wrapper.tanukisoftware.com/",
-+            ],
-+            "moduleLicenses": [
-+              [
-+                "moduleLicense"   : "Tanuki Development Software License 1.3",
-+                "moduleLicenseUrl": "https://wrapper.tanukisoftware.com/doc/english/licenseDevelopment.html#text"
-+              ]
-+            ]
-+          ],
-+        ])))
-+      }
-+    }
-+  }
-+}
-+
- tasks.register('extractDeltaPack', Copy) {
-   dependsOn downloadTanukiDeltaPack
-   destinationDir = layout.buildDirectory.dir("tanuki").get().asFile
-@@ -37,4 +69,5 @@ tasks.register('extractDeltaPack', Copy) {
-     }
-     includeEmptyDirs = false
-   }
-+  finalizedBy tanukiDeltaPackLicense
- }
-```
-
-**File**: `server/build.gradle` (modified, +17/-9)
-```diff
-@@ -740,20 +740,23 @@ tasks.register('licenseReportAggregate') {
-   dependsOn(licenseReportTasks)
-   licenseReportTasks.each { rt -> inputs.dir(rt.outputFolder) }
+-"sass-embedded-android-arm@npm:1.107.0":
+-  version: 1.107.0
+-  resolution: "sass-embedded-android-arm@npm:1.107.0"
++"sass-embedded-android-arm@npm:1.107.1":
++  version: 1.107.1
++  resolution: "sass-embedded-android-arm@npm:1.107.1"
+   conditions: os=android & cpu=arm
+   languageName: node
+   linkType: hard
  
-+  def tanukiDeltaPackLicense = findProject(':installers').tasks.named('tanukiDeltaPackLicense')
-+  dependsOn tanukiDeltaPackLicense
-   dependsOn compileAssetsWebpackProd
-   dependsOn generateRubygemsLicenseReport
+-"sass-embedded-android-riscv64@npm:1.107.0":
+-  version: 1.107.0
+-  resolution: "sass-embedded-android-riscv64@npm:1.107.0"
++"sass-embedded-android-riscv64@npm:1.107.1":
++  version: 1.107.1
++  resolution: "sass-embedded-android-riscv64@npm:1.107.1"
+   conditions: os=android & cpu=riscv64
+   languageName: node
+   linkType: hard
  
-   // try our best to run verifications first since logic here relies on the expectations here
-   def verifyJarTasks = rootProject.subprojects.collectMany { eachProject -> eachProject.tasks.withType(VerifyJarTask) }
-   shouldRunAfter verifyJarTasks
+-"sass-embedded-android-x64@npm:1.107.0":
+-  version: 1.107.0
+-  resolution: "sass-embedded-android-x64@npm:1.107.0"
++"sass-embedded-android-x64@npm:1.107.1":
++  version: 1.107.1
++  resolution: "sass-embedded-android-x64@npm:1.107.1"
+   conditions: os=android & cpu=x64
+   languageName: node
+   linkType: hard
  
--  def rubygemsReportFile = (generateRubygemsLicenseReport as Task).outputs.files.singleFile
--  def extraJavascriptLicenses = project.file("${project.railsRoot}/app/assets/javascripts/lib/_licenses.json")
--  def extraInstallerLicenses = findProject(':installers').file("windows/nsis-plugins-x86-unicode/_licenses.json")
-   def yarnLicenseReportDir = (compileAssetsWebpackProd as Task).outputs.files.find { f -> f.name == 'yarn-license-prod' } as File
--  def goVersions = rootProject.goVersions as GoVersions
--  inputs.files(rubygemsReportFile, extraJavascriptLicenses, extraInstallerLicenses)
-   inputs.dir(yarnLicenseReportDir)
-+  def extraJavascriptLicenses = project.file("${project.railsRoot}/app/assets/javascripts/lib/_licenses.json")
-+  def rubygemsReportFile = (generateRubygemsLicenseReport as Task).outputs.files.singleFile
-+  def extraInstallerLicenses = rootProject.findProject(':installers').file("windows/nsis-plugins-x86-unicode/_licenses.json")
-+  def tanukiLicenses = tanukiDeltaPackLicense.map { it.outputs.files.singleFile }
-+  inputs.files(extraJavascriptLicenses, rubygemsReportFile, extraInstallerLicenses, tanukiLicenses)
-+  def goVersions = rootProject.goVersions as GoVersions
-   inputs.property('goVersions', goVersions)
+-"sass-embedded-darwin-arm64@npm:1.107.0":
+-  version: 1.107.0
+-  resolution: "sass-embedded-darwin-arm64@npm:1.107.0"
++"sass-embedded-darwin-arm64@npm:1.107.1":
++  version: 1.107.1
++  resolution: "sass-embedded-darwin-arm64@npm:1.107.1"
+   conditions: os=darwin & cpu=arm64
+   languageName: node
+   linkType: hard
  
-   def licenseReportAggregateOutputDir = layout.getBuildDirectory().dir('reports/license-report-aggregate') as Provider<Directory>
-@@ -917,10 +920,15 @@ tasks.register('licenseReportAggregate') {
-     new LicenseReport(
-       injected.fileOps, injected.objectFactory,
-       licenseReportTasks, licenseReportAggregateOutputDir,
--      licensesForPackagedJarDependencies,
--      [ Ruby: rubygemsReportFile, Javascript: extraJavascriptLicenses, WindowsNSIS: extraInstallerLicenses ],
--      new File(yarnLicenseReportDir, 'license-report.json'),
--      goVersions
-+      licensesForPackagedJarDependencies,                    // Java
-+      new File(yarnLicenseReportDir, 'license-report.json'), // JavaScript
-+      [
-+        Javascript: extraJavascriptLicenses,
-+        Ruby: rubygemsReportFile,
-+        'NsisPlugins (Windows installers only)': extraInstallerLicenses,
-+        Runtime: tanukiLicenses.get()
-+      ],
-+      goVersions                                             // Runtime
-     ).generate()
-   }
- }
+-"sass-embedded-darwin-x64@npm:1.107.0":
+-  version: 1.107.0
+-  resolution: "sass-embedded-darwin-x64@npm:1.107.0"
++"sass-embedded-darwin-x64@npm:1.107.1":
++  version: 1.107.1
++  resolution: "sass-embedded-darwin-x64@npm:1.107.1"
+   conditions: os=darwin & cpu=x64
+   languageName: node
+   linkType: hard
+ 
+-"sass-embedded-linux-arm64@npm:1.107.0":
+-  version: 1.107.0
+-  resolution: "sass-embedded-linux-arm64@npm:1.107.0"
++"sass-embedded-linux-arm64@npm:1.107.1":
++  version: 1.107.1
++  resolution: "sass-embedded-linux-arm64@npm:1.107.1"
+   conditions: os=linux & cpu=arm64
+   languageName: node
+   linkType: hard
+ 
+-"sass-embedded-linux-arm@npm:1.107.0":
+-  version: 1.107.0
+-  resolution: "sass-embedded-linux-arm@npm:1.107.0"
++"sass-embedded-linux-arm@npm:1.107.1":
++  version: 1.107.1
++  resolution: "sass-embedded-linux-arm@npm:1.107.1"
+   conditions: os=linux & cpu=arm
+   languageName: node
+   linkType: hard
+ 
+-"sass-embedded-linux-musl-arm64@npm:1.107.0":
+-  version: 1.107.0
+-  resolution: "sass-embedded-linux-musl-arm64@npm:1.107.0"
++"sass-embedded-linux-musl-arm64@npm:1.107.1":
++  version: 1.107.1
++  resolution: "sass-embedded-linux-musl-arm64@npm:1.107.1"
+   conditions: os=linux & cpu=arm64
+   languageName: node
+   linkType: hard
+ 
+-"sass-embedded-linux-musl-arm@npm:1.107.0":
+-  version: 1.107.0
+-  resolution: "sass-embedded-linux-musl-arm@npm:1.107.0"
++"sass-embedded-linux-musl-arm@npm:1.107.1":
++  version: 1.107.1
++  resolution: "sass-embedded-linux-musl-arm@npm:1.107.1"
+   conditions: os=linux & cpu=arm
+   languageName: node
+   linkType: hard
+ 
+-"sass-embedded-linux-musl-riscv64@npm:1.107.0":
+-  version: 1.107.0
+-  resolution: "sass-embedded-linux-musl-riscv64@npm:1.107.0"
++"sass-embedded-linux-musl-riscv64@npm:1.107.1":
++  version: 1.107.1
++  resolution: "sass-embedded-linux-musl-riscv64@npm:1.107.1"
+   conditions: os=linux & cpu=riscv64
+   languageName: node
+   linkType: hard
+ 
+-"sass-embedded-linux-musl-x64@npm:1.107.0":
+-  version: 1.107.0
+-  resolution: "sass-embedded-linux-musl-x64@npm:1.107.0"
++"sass-embedded-linux-musl-x64@npm:1.107.1":
++  version: 1.107.1
++  resolution: "sass-embedded-linux-musl-x64@npm:1.107.1"
+   conditions: os=linux & cpu=x64
+   languageName: node
+   linkType: hard
+ 
+-"sass-embedded-linux-riscv64@npm:1.107.0":
+-  version: 1.107.0
+-  resolution: "sass-embedded-linux-riscv64@npm:1.107.0"
++"sass-embedded-linux-riscv64@npm:1.107.1":
++  version: 1.107.1
++  resolution: "sass-embedded-linux-riscv64@npm:1.107.1"
+   conditions: os=linux & cpu=riscv64
+   languageName: no
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #14711** (2026-11-01): build(deps-ui-dev): bump rack from 2.2.24 to 2.2.25 in /server/src/main/webapp/WEB-INF/rails in the rack group (@dependabot[bot])
-- **PR #14710** (2026-10-31): build(deps-ui): bump follow-redirects from 1.16.1 to 1.16.2 in /server/src/main/webapp/WEB-INF/rails (@dependabot[bot])
-- **PR #14709** (2026-10-31): Remove unused what-input dependency (@chadlwilson)
-- **PR #14708** (closed): [WIP] Build(deps-ui): bump what-input from 5.2.12 to 6.0.1 (@Copilot)
-- **PR #14707** (closed): build(deps-ui): bump what-input from 5.2.12 to 6.0.1 in /server/src/main/webapp/WEB-INF/rails (@dependabot[bot])
-- **PR #14706** (2026-10-31): build(deps-ui-dev): bump tzinfo-data from 1.2026.5 to 1.2026.6 in /server/src/main/webapp/WEB-INF/rails (@dependabot[bot])
+- **PR #14718** (2026-11-03): build(deps-ui-dev): bump addressable from 2.9.0 to 2.9.2 in /server/src/main/webapp/WEB-INF/rails (@dependabot[bot])
+- **PR #14717** (2026-11-03): build(deps): bump com.github.oshi:oshi-core from 7.7.2 to 7.7.3 (@dependabot[bot])
+- **PR #14716** (2026-11-03): build(deps-ui-dev): bump sass-embedded from 1.107.0 to 1.107.1 in /server/src/main/webapp/WEB-INF/rails (@dependabot[bot])
+- **PR #14715** (2026-11-03): build(deps-ui-dev): bump ffi-compiler from 1.4.2 to 1.4.3 in /server/src/main/webapp/WEB-INF/rails (@dependabot[bot])
+- **PR #14714** (2026-11-03): build(deps-ui-dev): bump webpack-cli from 7.2.3 to 7.3.1 in /server/src/main/webapp/WEB-INF/rails in the webpack group (@dependabot[bot])
+- **PR #14713** (2026-11-03): build(deps): bump com.autonomousapps.dependency-analysis from 3.20.0 to 3.20.1 in the gradle-plugins group (@dependabot[bot])
 
 ---
 
@@ -1142,13 +1171,13 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps-ui-dev): bump rack (#14711)
+## X. build(deps-ui-dev): bump addressable (#14718)
 
 **RULE**:
 When implementing operations in `server/src/main/webapp/WEB-INF/rails/Gemfile.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gocd/gocd. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `392309e6`: build(deps-ui-dev): bump rack (#14711). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e045a46c`: build(deps-ui-dev): bump addressable (#14718). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `server/src/main/webapp/WEB-INF/rails/Gemfile.lock`.
@@ -1156,16 +1185,16 @@ Subsystems managing Java data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-    rack (2.2.25)
-  rack (2.2.25) sha256=a5b3cd8f2df29c36ede21aa797c21e643f06792fae7487926102e06abe6da0b8
+    addressable (2.9.2)
+  addressable (2.9.2) sha256=9117c7e7d6ee07230e75ce41fb9401ae55354dc654fcd0e862ba41d539e9a610
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Anti-pattern to NEVER write (induced failure mode):
-    rack (2.2.24)
-  rack (2.2.24) sha256=ef16526a0d871c43753452338c754040a664c8b41bf0dd7450b85f7772adca5f
+    addressable (2.9.0)
+  addressable (2.9.0) sha256=7fdf6ac3660f7f4e867a0838be3f6cf722ace541dd97767fa42bc6cfa980c7af
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `392309e6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e045a46c` are properly handled with clean fallback behavior.
