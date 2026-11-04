@@ -7219,3 +7219,6 @@ Every entry in this ledger must capture:
 | `learn-github-gardener-gardener` | `https://github.com/gardener/gardener` | `a8da5a8a` | Multi-dimensional audit evidence | 2026-11-04T10:12:33.036Z |
 | `learn-github-bee-san-ciphey` | `https://github.com/bee-san/Ciphey` | `ad59a3bc` | Multi-dimensional audit evidence | 2026-11-04T10:12:36.211Z |
 | `learn-github-trinodb-trino` | `https://github.com/trinodb/trino` | `90f4ba81` | Multi-dimensional audit evidence | 2026-11-04T10:12:39.052Z |
+| `learn-github-meta-docusaurus` | `https://github.com/facebook/docusaurus` | `2a890559` | Multi-dimensional audit evidence | 2026-11-04T10:20:13.044Z |
+| `learn-github-wix-react-native-ui-lib` | `https://github.com/wix/react-native-ui-lib` | `999abfa6` | Multi-dimensional audit evidence | 2026-11-04T10:20:13.904Z |
+| `learn-github-apache-zookeeper` | `https://github.com/apache/zookeeper` | `a9d2ce60` | Multi-dimensional audit evidence | 2026-11-04T10:20:21.907Z |

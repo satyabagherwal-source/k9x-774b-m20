@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/facebook-docusaurus-learnings.md`  
 > **Source**: github ([https://github.com/facebook/docusaurus](https://github.com/facebook/docusaurus))  
-> **Source Version**: `65316774`  
+> **Source Version**: `2a890559`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T23:51:39.473Z  
+> **Timestamp**: 2026-11-04T10:20:12.400Z  
 > **Learning ID**: `learn-github-meta-docusaurus`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/facebook-docusaurus-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/facebook/docusaurus](https://github.com/facebook/docusaurus))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T23:51:39.374Z  
+> **Harvest Timestamp**: 2026-11-04T10:20:11.306Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Easy to maintain open source documentation websites.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 66615 stars
+- **Stars / Engagement**: 66649 stars
 
 ---
 
@@ -982,165 +982,129 @@ export function formatNodePositionExtraMessage(node: Node): string {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4d3ad871` (2026-10-29)
-**Commit Message**: fix(ci): don't proxy our unscoped packages in the E2E Verdaccio registry (AI-assisted) (#12795)
+### Incident Patch 1: `2a890559` (2026-11-02)
+**Commit Message**: chore!: require Node.js 26.13 LTS (AI-assisted) (#12821)
 
-The unpinned verdaccio/verdaccio:latest image moved from 6.10.7 to 7.0.2.
-Verdaccio 7 rejects publishing a package that exists on a proxied uplink
-with a 409 "this package is already present", so every E2E job failed to
-publish stylelint-copyright (and would fail on create-docusaurus next).
-
-Isolate both packages from npmjs like the @docusaurus/* packages.
+Node.js 26 became LTS with 26.13.0. Re-applies #12463 and #12464, reverted
+by #12468 because Netlify used an outdated Corepack with Node 26.
 
 Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `admin/verdaccio.yaml` (modified, +7/-0)
+**File**: `.github/workflows/tests-e2e.yml` (modified, +1/-1)
 ```diff
-@@ -33,6 +33,13 @@ packages:
-   '@docusaurus/*':
-     access: $all
-     publish: $all
-+  # Our unscoped packages also exist on npm: Verdaccio 7 refuses to publish them if proxied (409)
-+  'create-docusaurus':
-+    access: $all
-+    publish: $all
-+  'stylelint-copyright':
-+    access: $all
-+    publish: $all
-   '@*/*':
-     access: $all
-     publish: $authenticated
-```
-
----
-
-### Incident Patch 2: `65316774` (2026-10-30)
-**Commit Message**: fix(ci): run workflows on meta/docusaurus after the repository move (AI-assisted) (#12817)
-
-The Argos, CodeQL, Continuous Releases and Publish jobs were guarded on
-`github.repository == 'facebook/docusaurus'` (PR #12078 to skip them on forks),
-so they have been skipped since the repository moved to meta/docusaurus.
-
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/argos.yml` (modified, +1/-1)
-```diff
-@@ -27,7 +27,7 @@ jobs:
-     # We only want to trigger Argos on PRs with the 'Argos' label
-     # See https://stackoverflow.com/questions/62325286/run-github-actions-when-pull-requests-have-a-specific-label
-     if: |
--      github.repository == 'facebook/docusaurus' &&
-+      github.repository == 'meta/docusaurus' &&
-       (
-         (github.event_name != 'pull_request' && github.ref_name == 'main') ||
-         (github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'Argos'))
-```
-
-**File**: `.github/workflows/codeql-analysis.yml` (modified, +1/-1)
-```diff
-@@ -19,7 +19,7 @@ concurrency:
- jobs:
-   analyze:
-     name: Analyze
--    if: github.repository == 'facebook/docusaurus'
-+    if: github.repository == 'meta/docusaurus'
+@@ -99,7 +99,7 @@ jobs:
      runs-on: ubuntu-latest
-     permissions:
-       actions: read
-```
-
-**File**: `.github/workflows/continuous-releases.yml` (modified, +1/-1)
-```diff
-@@ -22,7 +22,7 @@ cache-mode: none
- jobs:
-   release:
-     name: Continuous Releases
--    if: github.repository == 'facebook/docusaurus'
-+    if: github.repository == 'meta/docusaurus'
-     runs-on: ubuntu-latest
- 
-     steps:
-```
-
-**File**: `.github/workflows/publish.yml` (modified, +1/-1)
-```diff
-@@ -43,7 +43,7 @@ cache-mode: none
- jobs:
-   publish:
-     name: Publish NPM release
--    if: github.repository == 'facebook/docusaurus'
-+    if: github.repository == 'meta/docusaurus'
-     runs-on: ubuntu-latest
+     strategy:
+       matrix:
+-        node: ['24.21', '26']
++        node: ['26.13', '26']
      steps:
        - name: Checkout
+         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
 ```
 
----
-
-### Incident Patch 3: `c5bc92e9` (2026-10-29)
-**Commit Message**: fix: add mobile web app capable meta tag (#12744)
-
-* fix: add mobile web app capable meta tag
-
-* fix(website): keep only the standard mobile-web-app-capable meta tag in the PWA config and docs (AI-assisted)
-
-Chrome deprecated apple-mobile-web-app-capable. iOS opens Home Screen web
-apps from the manifest `display: standalone` (and by default since iOS 26),
-so the Apple-only tag is redundant.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
----------
-
-Co-authored-by: sebastien <[REDACTED_EMAIL]>
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `website/docs/api/plugins/plugin-pwa.mdx` (modified, +1/-1)
+**File**: `.github/workflows/tests-windows.yml` (modified, +1/-1)
 ```diff
-@@ -202,7 +202,7 @@ export default {
-           },
-           {
-             tagName: 'meta',
--            name: 'apple-mobile-web-app-capable',
-+            name: 'mobile-web-app-capable',
-             content: 'yes',
-           },
-           {
+@@ -28,7 +28,7 @@ jobs:
+     runs-on: windows-8-core
+     strategy:
+       matrix:
+-        node: ['24.21', '26']
++        node: ['26.13', '26']
+     steps:
+       - name: Support longpaths
+         run: git config --system core.longpaths true
 ```
 
-**File**: `website/docusaurus.config.ts` (modified, +1/-1)
+**File**: `.github/workflows/tests.yml` (modified, +2/-2)
 ```diff
-@@ -437,7 +437,7 @@ export default async function createConfigAsync() {
-             },
-             {
-               tagName: 'meta',
--              name: 'apple-mobile-web-app-capable',
-+              name: 'mobile-web-app-capable',
-               content: 'yes',
-             },
-             {
+@@ -28,7 +28,7 @@ jobs:
+     runs-on: ubuntu-latest
+     strategy:
+       matrix:
+-        node: ['24.21', '26']
++        node: ['26.13', '26']
+     steps:
+       - name: Checkout
+         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+@@ -58,7 +58,7 @@ jobs:
+         env:
+           # Our website should build even with limited memory
+           # See https://github.com/facebook/docusaurus/pull/10590
+-          NODE_OPTIONS: "--max-old-space-size=${{ matrix.node == '24.21' && 350 || 300 }}"
++          NODE_OPTIONS: '--max-old-space-size=300'
+           DOCUSAURUS_PERF_LOGGER: 'true'
+       - name: Docusaurus site CSS order
+         run: pnpm --filter website test:css-order
 ```
 
-**File**: `website/versioned_docs/version-3.10.2/api/plugins/plugin-pwa.mdx` (modified, +1/-1)
+**File**: `.nvmrc` (modified, +1/-1)
 ```diff
-@@ -202,7 +202,7 @@ export default {
-           },
-           {
-             tagName: 'meta',
--            name: 'apple-mobile-web-app-capable',
-+            name: 'mobile-web-app-capable',
-             content: 'yes',
-           },
-           {
+@@ -1 +1 @@
+-24
++26
+```
+
+**File**: `admin/scripts/generateExamples.js` (modified, +2/-2)
+```diff
+@@ -81,9 +81,9 @@ async function generateTemplateExample(template) {
+       hardReloadOnChange: true,
+       view: 'browser',
+       template: 'docusaurus',
+-      node: '24',
++      node: '26',
+       container: {
+-        node: '24',
++        node: '26',
+       },
+     };
+     await fs.writeFile(
+```
+
+**File**: `package.json` (modified, +1/-1)
+```diff
+@@ -141,7 +141,7 @@
+   },
+   "packageManager": "pnpm@12.3.4",
+   "engines": {
+-    "node": ">=24.21",
++    "node": ">=26.13",
+     "pnpm": ">=12.3.4"
+   }
+ }
+```
+
+**File**: `packages/create-docusaurus/package.json` (modified, +1/-1)
+```diff
+@@ -34,6 +34,6 @@
+     "@types/cross-spawn": "catalog:dev"
+   },
+   "engines": {
+-    "node": ">=24.21"
++    "node": ">=26.13"
+   }
+ }
+```
+
+**File**: `packages/create-docusaurus/templates/classic-typescript/package.json` (modified, +1/-1)
+```diff
+@@ -35,6 +35,6 @@
+     "baseline widely available"
+   ],
+   "engines": {
+-    "node": ">=24.21"
++    "node": ">=26.13"
+   }
+ }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #12830** (closed): fix(theme-classic): check announcement bar id in inline script before initial load (#12646) (@praveen-kumary)
+- **PR #12829** (closed): fix(utils): preserve trailing hash in markdown content title without preceding whitespace (#12644) (@praveen-kumary)
+- **PR #12821** (2026-11-02): chore!: require Node.js 26.13 LTS (AI-assisted) (@slorber)
 - **PR #12817** (2026-10-30): fix(ci): run workflows on meta/docusaurus after the repository move (AI-assisted) (@slorber)
 - **PR #12812** (closed): test(website): dogfood a doc with a non-ASCII html slug (AI-assisted) (@slorber)
 - **PR #12809** (2026-10-30): chore(deps): upgrade mdast-util-directive to 3.1.1 and mdast-util-to-markdown to 2.2.0 (AI-assisted) (@slorber)
-- **PR #12808** (2026-10-30): chore(deps): upgrade oxfmt to 0.74 (AI-assisted) (@slorber)
-- **PR #12805** (2026-10-29): chore(utils): remove stale gray-matter TODO comment (AI-assisted) (@slorber)
-- **PR #12804** (closed): chore(deps): bump mdast-util-directive from 3.1.0 to 3.1.1 (@dependabot[bot])
 
 ---
 
@@ -1160,34 +1124,28 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ci): don't proxy our unscoped packages in the E2E Verdaccio registry (AI-assiste
+## X. chore!: require Node.js 26.13 LTS (AI-assisted) (#12821)
 
 **RULE**:
-When implementing operations in `admin/verdaccio.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meta/docusaurus. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/tests-e2e.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meta/docusaurus. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4d3ad871`: ci): don't proxy our unscoped packages in the E2E Verdaccio registry (AI-assisted) (#12795). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2a890559`: chore!: require Node.js 26.13 LTS (AI-assisted) (#12821). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `admin/verdaccio.yaml`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/tests-e2e.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-  # Our unscoped packages also exist on npm: Verdaccio 7 refuses to publish them if proxied (409)
-  'create-docusaurus':
-    access: $all
-    publish: $all
-  'stylelint-copyright':
-    access: $all
-    publish: $all
+        node: ['26.13', '26']
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+        node: ['24.21', '26']
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4d3ad871` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2a890559` are properly handled with clean fallback behavior.

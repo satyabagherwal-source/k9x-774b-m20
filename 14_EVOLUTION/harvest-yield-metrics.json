@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-04T10:12:39.056Z",
-  "total_cycles_completed": 7187,
-  "total_learnings_persisted": 7187,
-  "total_rules_promoted": 6833,
+  "last_updated": "2026-11-04T10:20:21.912Z",
+  "total_cycles_completed": 7190,
+  "total_learnings_persisted": 7190,
+  "total_rules_promoted": 6836,
   "history": [
-    {
-      "timestamp": "2026-11-03T21:17:23.255Z",
-      "repository": "sweetpad-dev/sweetpad",
-      "learningId": "learn-github-sweetpad-dev-sweetpad",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-03T21:28:33.035Z",
-      "repository": "ArchiveBox/ArchiveBox",
-      "learningId": "learn-github-archivebox-archivebox",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-03T21:28:35.523Z",
-      "repository": "NirDiamant/RAG_Techniques",
-      "learningId": "learn-github-nirdiamant-rag_techniques",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-03T21:28:35.883Z",
       "repository": "max-sixty/worktrunk",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-04T10:12:39.056Z",
       "repository": "trinodb/trino",
       "learningId": "learn-github-trinodb-trino",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T10:20:13.053Z",
+      "repository": "meta/docusaurus",
+      "learningId": "learn-github-meta-docusaurus",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T10:20:13.909Z",
+      "repository": "wix/react-native-ui-lib",
+      "learningId": "learn-github-wix-react-native-ui-lib",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T10:20:21.912Z",
+      "repository": "apache/zookeeper",
+      "learningId": "learn-github-apache-zookeeper",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

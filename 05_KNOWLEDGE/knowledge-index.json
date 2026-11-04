@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-04T10:12:39.002Z",
+  "last_updated": "2026-11-04T10:20:21.824Z",
   "total_verified_learnings": 1206,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -2491,8 +2491,8 @@
       "slug": "apache-zookeeper",
       "platform": "github",
       "source_url": "https://github.com/apache/zookeeper",
-      "source_version": "66f1aaa3",
-      "content_hash": "022104b3a51662d83b8d5ab8ff73838a947e7f4932a26f6568322ea8b5460155",
+      "source_version": "a9d2ce60",
+      "content_hash": "95ca4587fea1dbd08f1aaac958ca536173d77c834d064e956fcbb833008476e9",
       "dossier_path": "07_PROJECT_LEARNING/apache-zookeeper-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/apache-zookeeper-learnings.md",
       "promoted_rules": [
@@ -2520,6 +2520,11 @@
           "number": 6528,
           "title": "Update website for new releases 3.9.7 and 3.8.8",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6810,
+          "title": "ZOOKEEPER-5116: Pin website and CI build runner to ubuntu-24.04 to fix website a",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -2527,7 +2532,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T13:05:13.495Z",
+      "verified_at": "2026-11-04T10:20:21.806Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -60432,14 +60437,19 @@
       "slug": "wix-react-native-ui-lib",
       "platform": "github",
       "source_url": "https://github.com/wix/react-native-ui-lib",
-      "source_version": "1d6f609a",
-      "content_hash": "c7c975bbb9d022c4c046b0497d39ee9d52652fde5c41a8abc86bbef02eb50afe",
+      "source_version": "999abfa6",
+      "content_hash": "aef953e47fb48b07946aec190f4cfc96490c691452b7c03916f860baded59f5e",
       "dossier_path": "07_PROJECT_LEARNING/wix-react-native-ui-lib-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/wix-react-native-ui-lib-learnings.md",
       "promoted_rules": [
         {
           "number": 2060,
           "title": "fix/DynamicFontModule - double callback invocation causing SIGABRT on Android (#",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6809,
+          "title": "ci(docs): auto-confirm npq prompt so docs deploy runs non-interactively (#4065)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -60448,7 +60458,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T03:13:57.218Z",
+      "verified_at": "2026-11-04T10:20:13.796Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -161175,14 +161185,19 @@
       "slug": "facebook-docusaurus",
       "platform": "github",
       "source_url": "https://github.com/facebook/docusaurus",
-      "source_version": "65316774",
-      "content_hash": "1055de047ba991c63641a8fab88d658c4ab10d565be7dda27ef3688a522d11d7",
+      "source_version": "2a890559",
+      "content_hash": "78b39fafb88a6d4c3c8a1c2dae1104efd7e1ddb31cd2f1f98d8045af2c1495ab",
       "dossier_path": "07_PROJECT_LEARNING/facebook-docusaurus-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/facebook-docusaurus-learnings.md",
       "promoted_rules": [
         {
           "number": 5942,
           "title": "ci): don't proxy our unscoped packages in the E2E Verdaccio registry (AI-assiste",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6808,
+          "title": "chore!: require Node.js 26.13 LTS (AI-assisted) (#12821)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -161191,7 +161206,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T23:51:40.062Z",
+      "verified_at": "2026-11-04T10:20:12.940Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -174230,6 +174245,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-04T10:12:38.989Z"
+    },
+    "rule-6808": {
+      "learning_id": "rule-6808",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6808,
+      "title": "chore!: require Node.js 26.13 LTS (AI-assisted) (#12821)",
+      "source_url": "https://github.com/facebook/docusaurus",
+      "source_version": "2a890559",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T10:20:12.940Z"
+    },
+    "rule-6809": {
+      "learning_id": "rule-6809",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6809,
+      "title": "ci(docs): auto-confirm npq prompt so docs deploy runs non-interactively (#4065)",
+      "source_url": "https://github.com/wix/react-native-ui-lib",
+      "source_version": "999abfa6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T10:20:13.796Z"
+    },
+    "rule-6810": {
+      "learning_id": "rule-6810",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6810,
+      "title": "ZOOKEEPER-5116: Pin website and CI build runner to ubuntu-24.04 to fix website a",
+      "source_url": "https://github.com/apache/zookeeper",
+      "source_version": "a9d2ce60",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T10:20:21.806Z"
     }
   },
   "aliases": {

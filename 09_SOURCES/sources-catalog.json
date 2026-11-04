@@ -2143,10 +2143,10 @@
     "repository": "meta/docusaurus",
     "platform": "github",
     "sourceUrl": "https://github.com/facebook/docusaurus",
-    "sourceVersion": "65316774",
+    "sourceVersion": "2a890559",
     "license": "MIT",
-    "contentHash": "1055de047ba991c63641a8fab88d658c4ab10d565be7dda27ef3688a522d11d7",
-    "lastHarvestedAt": "2026-10-30T23:51:40.163Z",
+    "contentHash": "78b39fafb88a6d4c3c8a1c2dae1104efd7e1ddb31cd2f1f98d8045af2c1495ab",
+    "lastHarvestedAt": "2026-11-04T10:20:13.044Z",
     "learningId": "learn-github-meta-docusaurus"
   },
   "tabbyml-tabby": {
@@ -5123,10 +5123,10 @@
     "repository": "apache/zookeeper",
     "platform": "github",
     "sourceUrl": "https://github.com/apache/zookeeper",
-    "sourceVersion": "66f1aaa3",
+    "sourceVersion": "a9d2ce60",
     "license": "Apache-2.0",
-    "contentHash": "022104b3a51662d83b8d5ab8ff73838a947e7f4932a26f6568322ea8b5460155",
-    "lastHarvestedAt": "2026-11-03T13:05:13.583Z",
+    "contentHash": "95ca4587fea1dbd08f1aaac958ca536173d77c834d064e956fcbb833008476e9",
+    "lastHarvestedAt": "2026-11-04T10:20:21.907Z",
     "learningId": "learn-github-apache-zookeeper"
   },
   "primer-react": {
@@ -5203,10 +5203,10 @@
     "repository": "wix/react-native-ui-lib",
     "platform": "github",
     "sourceUrl": "https://github.com/wix/react-native-ui-lib",
-    "sourceVersion": "1d6f609a",
+    "sourceVersion": "999abfa6",
     "license": "MIT",
-    "contentHash": "c7c975bbb9d022c4c046b0497d39ee9d52652fde5c41a8abc86bbef02eb50afe",
-    "lastHarvestedAt": "2026-10-19T03:13:57.281Z",
+    "contentHash": "aef953e47fb48b07946aec190f4cfc96490c691452b7c03916f860baded59f5e",
+    "lastHarvestedAt": "2026-11-04T10:20:13.904Z",
     "learningId": "learn-github-wix-react-native-ui-lib"
   },
   "goss-org-goss": {

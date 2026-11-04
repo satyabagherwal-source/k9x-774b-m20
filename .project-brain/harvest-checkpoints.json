@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-04T10:12:39.059Z",
+  "last_updated": "2026-11-04T10:20:21.915Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -7806,14 +7806,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-apache-zookeeper",
-      "content_hash": "022104b3a51662d83b8d5ab8ff73838a947e7f4932a26f6568322ea8b5460155",
-      "verified_at": "2026-11-03T13:05:13.591Z",
+      "content_hash": "95ca4587fea1dbd08f1aaac958ca536173d77c834d064e956fcbb833008476e9",
+      "verified_at": "2026-11-04T10:20:21.915Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T13:05:13.591Z"
+      "last_updated": "2026-11-04T10:20:21.915Z"
     },
     "primer/react": {
       "repository": "primer/react",
@@ -7926,14 +7926,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-wix-react-native-ui-lib",
-      "content_hash": "c7c975bbb9d022c4c046b0497d39ee9d52652fde5c41a8abc86bbef02eb50afe",
-      "verified_at": "2026-10-19T03:13:57.285Z",
+      "content_hash": "aef953e47fb48b07946aec190f4cfc96490c691452b7c03916f860baded59f5e",
+      "verified_at": "2026-11-04T10:20:13.912Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T03:13:57.285Z"
+      "last_updated": "2026-11-04T10:20:13.912Z"
     },
     "goss-org/goss": {
       "repository": "goss-org/goss",
@@ -17466,14 +17466,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-meta-docusaurus",
-      "content_hash": "1055de047ba991c63641a8fab88d658c4ab10d565be7dda27ef3688a522d11d7",
-      "verified_at": "2026-10-30T23:51:40.172Z",
+      "content_hash": "78b39fafb88a6d4c3c8a1c2dae1104efd7e1ddb31cd2f1f98d8045af2c1495ab",
+      "verified_at": "2026-11-04T10:20:13.058Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T23:51:40.172Z"
+      "last_updated": "2026-11-04T10:20:13.058Z"
     },
     "krishhgg/Insomnia": {
       "repository": "krishhgg/Insomnia",
