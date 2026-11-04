@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/helixdb-helix-db-learnings.md`  
 > **Source**: github ([https://github.com/HelixDB/helix-db](https://github.com/HelixDB/helix-db))  
-> **Source Version**: `bacc207f`  
+> **Source Version**: `7f1923a3`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-02T17:39:18.711Z  
+> **Timestamp**: 2026-11-04T03:57:45.451Z  
 > **Learning ID**: `learn-github-helixdb-helix-db`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/helixdb-helix-db-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/HelixDB/helix-db](https://github.com/HelixDB/helix-db))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-02T17:39:17.530Z  
+> **Harvest Timestamp**: 2026-11-04T03:57:44.828Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: HelixDB is an OLTP graph database with native vector and full-text search built in Rust on Object Storage.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 6266 stars
+- **Stars / Engagement**: 6265 stars
 
 ---
 
@@ -1011,6 +1011,10 @@ pub struct IndexOperationQueueTuning {
     start_paused: bool,
     /// Per-search source-input budget for eventual pending overlays.
     eventual_search_budget: u64,
+    /// Lowered suppression limit of overlaid searches; `None` keeps the
+    /// search default of 800 results.
+    #[cfg(test)]
+    max_suppressed_search_results: Option<usize>,
     /// Most committed pending vector work one strong search decodes and
     /// scores; `None` follows `max_retained_bytes`.
     strong_vector_search_max_pending_bytes: Option<NonZeroU64>,
@@ -1033,20 +1037,13 @@ impl Default for IndexOperationQueueTuning {
             #[cfg(test)]
             start_paused: false,
             eventual_search_budget: EVENTUAL_SEARCH_SOURCE_INPUT_BYTES,
+            #[cfg(test)]
+            max_suppressed_search_results: None,
             strong_vector_search_max_pending_bytes: None,
             strong_text_search_max_analysis_bytes: NonZeroU64::new(
                 DEFAULT_STRONG_TEXT_SEARCH_MAX_ANALYSIS_BYTES,
             )
-            .expect("default strong text search bound is nonzero"),
-        }
-    }
-}
-
-impl IndexOperationQueueTuning {
-    /// Largest accepted [retained-byte ceiling](Self::max_retained_bytes),
-    /// about 2.27 GiB.
-    ///
-    /// Storage encodes a valu
+     
 ```
 
 ### Core Architecture Module: `crates/db/src/config/secondary_index_lifecycle.rs`
@@ -1054,7 +1051,7 @@ impl IndexOperationQueueTuning {
 //! Validated resource and scheduling policy for secondary lifecycle work.
 //!
 //! [`SecondaryIndexLifecycleTuning`] is the single user-facing source for bounded
-//! secondary outbox discovery, source backfill, catch-up, final drain, and
+//! secondary outbox discovery, source backfill, catch-up, validation, and
 //! cleanup execution. Every count, byte cap, and interval is positive by construction;
 //! [`SecondaryIndexLifecycleWorkerMode`] represents manual versus background driving
 //! without a parallel boolean. The database converts this policy into internal
@@ -1070,9 +1067,7 @@ const DEFAULT_BATCH_ROWS: usize = 1_024;
 const DEFAULT_MAX_INPUT_BYTES: u64 = 8 * 1024 * 1024;
 const DEFAULT_MAX_OUTPUT_OPERATIONS: u64 = 4_096;
 const DEFAULT_MAX_OUTPUT_BYTES: u64 = 8 * 1024 * 1024;
-const DEFAULT_FINAL_DRAIN_ENTITIES: u64 = 1_024;
 const DEFAULT_RECONCILE_INPUT_BYTES: u64 = 1024 * 1024;
-const DEFAULT_CATCH_UP_TAIL_DELAY_MILLIS: u64 = 1_000;
 const DEFAULT_ACTIVE_INTERVAL_MILLIS: u64 = 10;
 const DEFAULT_IDLE_INTERVAL_MILLIS: u64 = 1_000;
 
@@ -1101,25 +1096,6 @@ impl SecondaryIndexLifecycleBatchRows {
 
     /// Returns the positive entity limit.
     pub const fn get(self) -> usize {
-        self.0.get()
-    }
-}
-
-/// Positive delay used to coalesce a non-full secondary catch-up tail.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-pub struct SecondaryIndexLifecycleCatchUpTailDelayMillis(NonZeroU64);
-
-impl SecondaryIndexLifecycleCatchUpTailDelayMillis {
-    /// Creates a positive tail delay, returning `None` for zero.
-    pub const fn new(milliseconds: u64) -> Option<Self> {
-        match NonZeroU64::new(milliseconds) {
-            Some(milliseconds) => Some(Self(milliseconds)),
-            None => None,
-        }
-    }
-
-    /// Returns the positive tail delay in milliseconds.
-    pub const fn get(self) -> u64 {
         self.0.get()
     }
 }
@@ -1163,6 +1139,11 @@ impl SecondaryIndexLifecycleIdleIntervalMillis {
 }
 
 /// Complete positive budgets and timing for secondary lifecycle execution.
+///
+/// Every lifecycle transaction stays within the batch budgets below. A step
+/// that holds the scope's exclusive gate first drains the deltas the writes
+/// it waited for recorded, in further transactions under the same budgets,
+/// so however large that write window was, no transaction exceeds them.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct SecondaryIndexLifecycleTuning {
     worker_mode: SecondaryIndexLifecycleWorkerMode,
@@ -1170,9 +1151,7 @@ pub struct SecondaryIndexLifecycleTuning {
     max_input_bytes: NonZeroU64,
     max_output_operations: NonZeroU64,
     max_output_bytes: NonZeroU64,
-    final_drain_entities: NonZeroU64,
     reconcile_input_bytes: NonZeroU64,
-    catch_up_tail_delay_millis: SecondaryIndexLifecycleCatchUpTailDelayMillis,
     active_interval_millis: SecondaryIndexLifecycleActiveIntervalMillis,
     idle_interval_millis: SecondaryIndexLifecycleIdleIntervalMillis,
 }
@@ -1183,39 +1162,31 @@ impl SecondaryIndexLifecycleTuning {
         self.worker_mode
     }
 
-    /// Returns the maximum entities admitted by one batch or cleanup page.
+    /// Returns the maximum entities one lifecycle transaction admits, whether
+    /// it scans sources, drains deltas, releases applied state, or cleans up.
     pub const fn batch_rows(self) -> SecondaryIndexLifecycleBatchRows {
         self.batch_rows
     }
 
-    /// Returns the exact decoded-input cap for one executor transaction.
+    /// Returns the exact decoded-input cap for one lifecycle transaction.
     pub const fn max_input_bytes(self) -> NonZeroU64 {
         self.max_input_bytes
     }
 
-    /// Returns the maximum puts/deletes staged by one transaction.
+    /// Returns the maximum puts/deletes staged by one lifecycle transaction.
     pub const fn max_output_operations(self) -> NonZeroU64 {
         self.max_output_operations
     }
 
-    /// Returns the exact encoded-output cap for one transaction and entity.
+    /// Returns the exact encoded-output cap for one lifecycle transaction and
+    /// entity.
     pub const fn max_output_bytes(self) -> NonZeroU64 {
         self.max_output_bytes
-    }
-
-    /// Returns the maximum delta entities admitted under the exclusive gate.
-    pub const fn final_drain_entities(self) -> NonZeroU64 {
-        self.final_drain_entities
     }
 
     /// Returns the operation and checkpoint bytes decoded by one reconciliation call.
     pub const fn reconcile_input_bytes(self) -> NonZeroU64 {
         self.reconcile_input_bytes
-    }
-
-    /// Returns the delay used to coalesce an exhausted live catch-up tail.
-    pub const fn catch_up_tail_delay_millis(self) -> SecondaryIndexLifecycleCatchUpTailDelayMillis {
-        self.catch_up_tail_delay_millis
     }
 
     /// Returns the delay between passes while a runnable job exists.
@@ -1258,24 +1229,9 @@ impl SecondaryIndexLifecycleTuning {
         self
     }
 
-    /// Replaces the positive exclusive final-drain entity cap.
-    pub const fn with_final_drain_entities(mut self, entities: NonZeroU64) -> Self {
-        self.final_drain_entities = entities;
-        self
-    }
-
     /// Replaces the positive reconciliation decoded-input cap.
     pub const fn with_reconcile_input_bytes(mut self, bytes: NonZeroU64) -> Self {
         self.reconcile_input_bytes = bytes;
-        self
-    }
-
-    /// Replaces the positive catch-up tail coalescing delay.
-    pub const fn with_catch_up_tail_delay_millis(
-        mut self,
-        delay: SecondaryIndexLifecycleCatchUpTailDelayMillis,
-    ) -> Self {
-        self.catch_up_tail_delay_millis = delay;
         self
     }
 
@@ -1310,11 +1266,47 @@ impl Default for SecondaryIndexLifecycleTuning {
                 .expect("default output operations are positive"),
             max_output_bytes: NonZeroU64::new(DEFAULT_MAX_OUTPUT_BYTES)
                 .expect("default output bytes are positive"),
-            final_drain_entities: NonZeroU64::new(DEFAULT_FINAL_DRAIN_ENTITIES)
-                .expect("default final drain is positive"),
             reconcile_input_bytes: NonZeroU64::new(DEFAULT_RECONCILE_INPUT_BYTES)
                 .expect("default reconcile bytes are positive"),
-            catch_up_tail_delay_millis: SecondaryIndexLifecycleCatchUpTailDelayMil
+            active_interval_millis: SecondaryIndexLifecycleActiveIntervalMillis::new(
+                DEFAULT_ACTIVE_INTERVAL_MILLIS,
+            )
+            .expect("default active interval is positive"),
+            idle_interval_millis: SecondaryIndexLifecycleIdleIntervalMillis::new(
+                DEFAULT_IDLE_INTERVAL_MILLIS,
+            )
+            .expect("default idle interval is positive"),
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn zero_limits_and_intervals_are_unrepresentable() {
+        assert_eq!(SecondaryIndexLifecycleBatchRows::new(0), None);
+        assert_eq!(SecondaryIndexLifecycleActiveIntervalMillis::new(0), None);
+        assert_eq!(SecondaryIndexLifecycleIdleIntervalMillis::new(0), None);
+    }
+
+    #[test]
+    fn builders_replace_one_policy_dimension_without_erasing_the_rest() {
+        let defaults = SecondaryIndexLifecycleTuning::default();
+        let updated = defaults
+            .with_worker_mode(SecondaryIndexLifecycleWorkerMode::Disabled)
+            .with_batch_rows(SecondaryIndexLifecycleBatchRows::new(3).unwrap())
+            .with_max_output_operations(NonZeroU64::new(11).unwrap())
+            .with_active_interval_millis(
+                SecondaryIndexLifecycleActiveIntervalMillis::new(5).unwrap(),
+            )
+            .with_idle_interval_millis(SecondaryIndexLifecycleIdleIntervalMillis::new(7).unwrap());
+        assert_eq!(
+            updated.worker_mode(),
+            SecondaryIndexLifecycleWorkerMode::Disabled
+        );
+        assert_eq!(updated.bat
 ```
 
 ### Core Architecture Module: `crates/db/src/config/utils.rs`
@@ -2047,85 +2039,972 @@ impl QueuedTextReplacement {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `bacc207f` (2026-11-02)
-**Commit Message**: perf(db): do not flush deferred index state before element KV reads (#1220)
+### Incident Patch 1: `7f1923a3` (2026-11-03)
+**Commit Message**: Activate secondary index builds under sustained writes (#1215)
 
-## Problem
+Secondary index builds never activate while client writes keep arriving.
+Only active indexes are planned, so every equality lookup keeps scanning
+its label, and each write batch gets slower than the last.
 
-A write request that repeats `g().n(id).add_e(label, id, props)` pays
-for a flush of the deferred topology and
-secondary index state before every statement. The node read that starts
-each statement is an `ExecOp::KvRead`, and
-`mutation::visibility::required_for` classifies every `KvRead` as `ALL`,
-so `flush_required_mutations` runs before
-it. With the importer I work on, that was most of the request time.
+### Before / after
 
-Where the time went, for 18,000 edges written 500 statements per
-request, in memory, release build (a throwaway build
-with timers around the interpreter stages, not part of this PR):
+Full images on EC2, measured by a probe. It creates a non-unique node
+equality index on a fresh database, then immediately writes batches of
+464 upserts. Each upsert is an `n_with_label_where(label, eq(key))`
+lookup followed by `add_n`. The client never waits for the build.
 
-| Stage | Time |
-|---|---|
-| `add_edges` (all statements) | 0.25 s |
-| commit | 0.45 s |
-| `flush_required_mutations` before the `KvRead` steps | 4.5 s |
-| whole request path | about 7.5 s |
+| Image | Build state while writing | Batch time |
+|---|---|---|
+| `main` | `catch_up` forever | 1.7 s → 52 s (grows each batch) |
+| this branch | `succeeded` by batch 3 | 0.9 s, 2.3 s, 3.8 s, then
+**flat ~100 ms** |
 
-## Change
+### Cause
 
-`required_for(ExecOp::KvRead(_))` is now `NONE`. A KV read lists or gets
-element rows (node property rows and edge
-endpoint rows). Those rows are staged eagerly in the request transaction
-(`property_writes.stage` and
-`stage_edge_endpoints_scoped` write through the transaction), so a read
-sees them without a flush
+```text
+catch_up (gated barrier)
+  wait for the in-flight client write to commit
+  drain the deltas it saw
+  saw any row?  -> stay in CatchUp          # always true under writes
+validate / activate
+  any pending delta? -> back to CatchUp     # same
+scan
+  serializable range read over the captured bound
+  every concurrent insert in the bound      # IDs still leased to writers
+    -> abort and retry the 
 
-**File**: `crates/db/src/execution/interpreter/mutation/visibility.rs` (modified, +19/-2)
+**File**: `crates/db/src/config/mod.rs` (modified, +2/-2)
 ```diff
-@@ -61,8 +61,12 @@ pub(in crate::execution::interpreter) fn required_for(
-     match op {
-         exec::ExecOp::Access { plan } => required_for_access(plan),
-         exec::ExecOp::Count { plan } => required_for_count(plan),
--        exec::ExecOp::KvRead(_)
--        | exec::ExecOp::Reserved { .. }
-+        // A KV read lists or gets element rows (node property rows and edge endpoint rows). Those rows are
-+        // staged eagerly in the request transaction, so the read sees them without a flush; only the
-+        // topology and secondary families are deferred. Flushing before it re-merged every shared row a
-+        // preceding mutation touched once per read (`g().n(id).add_e(..)` repeated in one batch).
-+        exec::ExecOp::KvRead(_) => RequiredMutationVisibility::NONE,
-+        exec::ExecOp::Reserved { .. }
-         | exec::ExecOp::Barrier { .. }
-         | exec::ExecOp::IndexDdl { .. } => RequiredMutationVisibility::ALL,
-         exec::ExecOp::Expand { .. } | exec::ExecOp::ShortestPath { .. } => {
-@@ -409,6 +413,19 @@ mod tests {
-         }
+@@ -50,8 +50,8 @@ pub use search_index_backfill::{
+ };
+ pub use secondary_index_lifecycle::{
+     SecondaryIndexLifecycleActiveIntervalMillis, SecondaryIndexLifecycleBatchRows,
+-    SecondaryIndexLifecycleCatchUpTailDelayMillis, SecondaryIndexLifecycleIdleIntervalMillis,
+-    SecondaryIndexLifecycleTuning, SecondaryIndexLifecycleWorkerMode,
++    SecondaryIndexLifecycleIdleIntervalMillis, SecondaryIndexLifecycleTuning,
++    SecondaryIndexLifecycleWorkerMode,
+ };
+ pub use utils::{ConfigError, ConfigResult, DiskCacheConfig, NonEmptyPathBuf};
+ 
+```
+
+**File**: `crates/db/src/config/secondary_index_lifecycle.rs` (modified, +14/-64)
+```diff
+@@ -1,7 +1,7 @@
+ //! Validated resource and scheduling policy for secondary lifecycle work.
+ //!
+ //! [`SecondaryIndexLifecycleTuning`] is the single user-facing source for bounded
+-//! secondary outbox discovery, source backfill, catch-up, final drain, and
++//! secondary outbox discovery, source backfill, catch-up, validation, and
+ //! cleanup execution. Every count, byte cap, and interval is positive by construction;
+ //! [`SecondaryIndexLifecycleWorkerMode`] represents manual versus background driving
+ //! without a parallel boolean. The database converts this policy into internal
+@@ -17,9 +17,7 @@ const DEFAULT_BATCH_ROWS: usize = 1_024;
+ const DEFAULT_MAX_INPUT_BYTES: u64 = 8 * 1024 * 1024;
+ const DEFAULT_MAX_OUTPUT_OPERATIONS: u64 = 4_096;
+ const DEFAULT_MAX_OUTPUT_BYTES: u64 = 8 * 1024 * 1024;
+-const DEFAULT_FINAL_DRAIN_ENTITIES: u64 = 1_024;
+ const DEFAULT_RECONCILE_INPUT_BYTES: u64 = 1024 * 1024;
+-const DEFAULT_CATCH_UP_TAIL_DELAY_MILLIS: u64 = 1_000;
+ const DEFAULT_ACTIVE_INTERVAL_MILLIS: u64 = 10;
+ const DEFAULT_IDLE_INTERVAL_MILLIS: u64 = 1_000;
+ 
+@@ -52,25 +50,6 @@ impl SecondaryIndexLifecycleBatchRows {
+     }
+ }
+ 
+-/// Positive delay used to coalesce a non-full secondary catch-up tail.
+-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+-pub struct SecondaryIndexLifecycleCatchUpTailDelayMillis(NonZeroU64);
+-
+-impl SecondaryIndexLifecycleCatchUpTailDelayMillis {
+-    /// Creates a positive tail delay, returning `None` for zero.
+-    pub const fn new(milliseconds: u64) -> Option<Self> {
+-        match NonZeroU64::new(milliseconds) {
+-            Some(milliseconds) => Some(Self(milliseconds)),
+-            None => None,
+-        }
+-    }
+-
+-    /// Returns the positive tail delay in milliseconds.
+-    pub const fn get(self) -> u64 {
+-        self.0.get()
+-    }
+-}
+-
+ /// Positive delay between passes while a runnable job was observed.
+ #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+ pub struct SecondaryIndexLifecycleActiveIntervalMillis(NonZeroU64);
+@@ -110,16 +89,19 @@ impl SecondaryIndexLifecycleIdleIntervalMillis {
+ }
+ 
+ /// Complete positive budgets and timing for secondary lifecycle execution.
++///
++/// Every lifecycle transaction stays within the batch budgets below. A step
++/// that holds the scope's exclusive gate first drains the deltas the writes
++/// it waited for recorded, in further transactions under the same budgets,
++/// so however large that write window was, no transaction exceeds them.
+ #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+ pub struct SecondaryIndexLifecycleTuning {
+     worker_mode: SecondaryIndexLifecycleWorkerMode,
+     batch_rows: SecondaryIndexLifecycleBatchRows,
+     max_input_bytes: NonZeroU64,
+     max_output_operations: NonZeroU64,
+     max_output_bytes: NonZeroU64,
+-    final_drain_entities: NonZeroU64,
+     reconcile_input_bytes: NonZeroU64,
+-    catch_up_tail_delay_millis: SecondaryIndexLifecycleCatchUpTailDelayMillis,
+     active_interval_millis: SecondaryIndexLifecycleActiveIntervalMillis,
+     idle_interval_millis: SecondaryIndexLifecycleIdleIntervalMillis,
+ }
+@@ -130,41 +112,33 @@ impl SecondaryIndexLifecycleTuning {
+         self.worker_mode
      }
  
-+    #[test]
-+    fn element_kv_reads_flush_nothing() {
-+        for keyspace in [
-+            exec::ElementKeyspace::NodeProperty,
-+            exec::ElementKeyspace::EdgeEndpoints,
-+        ] {
-+            let read = exec::ExecOp::KvRead(exec::KvReadPlan::Get {
-+                key: keyspace.point_key(7),
-+            });
-+            assert_eq!(required_for(&read), RequiredMutationVisibility::NONE);
-+        }
-+    }
+-    /// Returns the maximum entities admitted by one batch or cleanup page.
++    /// Returns the maximum entities one lifecycle transaction admits, whether
++    /// it scans sources, drains deltas, releases applied state, or cleans up.
+     pub const fn batch_rows(self) -> SecondaryIndexLifecycleBatchRows {
+         self.batch_rows
+     }
+ 
+-    /// Returns the exact decoded-input cap for one executor transaction.
++    /// Returns the exact decoded-input cap for one lifecycle transaction.
+     pub const fn max_input_bytes(self) -> NonZeroU64 {
+         self.max_input_bytes
+     }
+ 
+-    /// Returns the maximum puts/deletes staged by one transaction.
++    /// Returns the maximum puts/deletes staged by one lifecycle transaction.
+     pub const fn max_output_operations(self) -> NonZeroU64 {
+         self.max_output_operations
+     }
+ 
+-    /// Returns the exact encoded-output cap for one transaction and entity.
++    /// Returns the exact encoded-output cap for one lifecycle transaction and
++    /// entity.
+     pub const fn max_output_bytes(self) -> NonZeroU64 {
+         self.max_output_bytes
+     }
+ 
+-    /// Returns the maximum delta entities admitted under the exclusive gate.
+-    pub const fn final_drain_entities(self) -> NonZeroU64 {
+-        self.final_drain_entities
+-    }
+-
+     /// Returns the operation and checkpoint bytes decoded by one reconciliation call.
+     pub const fn reconcile_input_bytes(self) -> NonZeroU64 {
+         self.reconcile_input_bytes
+     }
+ 
+-    /// Returns the delay used to coalesce an exhausted live catch-up tail.
+-    pub const fn catch_up_tail_delay_millis(self) -> SecondaryIndexLifecycleCatchUpTailDelayMillis {
+-        self.catch_up_tail_delay_millis
+-    }
+-
+     /// Returns the delay between passes while a runnable job exists.
+     pub const fn active_interv
+```
+
+**File**: `crates/db/src/index_lifecycle/operation.rs` (modified, +13/-41)
+```diff
+@@ -942,8 +942,11 @@ impl IndexOperationExecutionState {
+ /// Private cause carried by one queued operation.
+ ///
+ /// The public execution state intentionally projects every variant as queued.
+-/// Persistence retains the cause so blocking startup can distinguish ordinary
+-/// delayed progress from a failure emitted by its own worker epoch.
++/// Persistence retains the cause so blocking startup can tell a failure its
++/// own worker epoch emitted from any other delay. Committed progress no
++/// longer delays an operation; `DelayedAfterProgress` stays decodable for
++/// records earlier releases wrote, and its deadline is honored like any
++/// other.
+ #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+ pub(crate) enum IndexOperationQueueSchedule {
+     Immediate,
+@@ -1275,31 +1278,6 @@ impl IndexOperationRecord {
+         )
+     }
+ 
+-    /// Persists a successful checkpoint and releases its claim after a deadline.
+-    pub(crate) fn progressed_after(
+-        &self,
+-        progress: IndexOperationProgress,
+-        not_before_unix_millis: u64,
+-    ) -> Result<Self, IndexOperationModelError> {
+-        if !matches!(
+-            self.execution_state,
+-            IndexOperationExecutionState::Claimed(_)
+-        ) {
+-            return Err(IndexOperationModelError::IllegalExecutionTransition {
+-                from: self.execution_state.name(),
+-                transition: "progress_after",
+-            });
+-        }
+-        self.next(
+-            self.index_record_revision,
+-            progress,
+-            self.attempt,
+-            IndexOperationExecutionState::Queued {
+-                not_before_unix_millis: Some(not_before_unix_millis),
+-            },
+-        )
+-    }
+-
+     /// Releases a claim after a transient failure with a durable retry time.
+     pub(crate) fn transient_failure(
+         &self,
+@@ -1488,11 +1466,15 @@ impl IndexOperationRecord {
+             IndexOperationExecutionState::Queued {
+                 not_before_unix_millis: None,
+             } => Some(IndexOperationQueueSchedule::Immediate),
++            // A delayed requeue names its cause through
++            // `next_with_queue_schedule`.
+             IndexOperationExecutionState::Queued {
+-                not_before_unix_millis: Some(not_before_unix_millis),
+-            } => Some(IndexOperationQueueSchedule::DelayedAfterProgress {
+-                not_before_unix_millis: *not_before_unix_millis,
+-            }),
++                not_before_unix_millis: Some(_),
++            } => {
++                return Err(IndexOperationModelError::InvalidQueueSchedule(
++                    "a delayed requeue must name its schedule",
++                ));
++            }
+             IndexOperationExecutionState::Claimed(_)
+             | IndexOperationExecutionState::Blocked(_)
+             | IndexOperationExecutionState::Completed(_) => None,
+@@ -2422,15 +2404,6 @@ mod tests {
+                 not_before_unix_millis: None
+             }
+         ));
+-        let progressed_after = claimed
+-            .progressed_after(secondary_constructing(), 20)
+-            .unwrap();
+-        assert_eq!(
+-            progressed_after.queue_schedule(),
+-            Some(IndexOperationQueueSchedule::DelayedAfterProgress {
+-                not_before_unix_millis: 20
+-            })
+-        );
+         let failed = claimed.transient_failure(30).unwrap();
+         assert!(failed
+             .queue_schedule()
+@@ -2458,7 +2431,6 @@ mod tests {
+ 
+         for transition in [
+             queued.progressed(secondary_constructing()),
+-            queued.progressed_after(secondary_constructing(), 1),
+             queued.transient_failure(1),
+             queued.block(IndexOperationBlocker::InvariantViolation),
+             queued.complete(
+```
+
+**File**: `crates/db/src/index_lifecycle/outbox.rs` (modified, +218/-67)
+```diff
+@@ -10,7 +10,7 @@
+ //! staged in that repository-owned transaction can commit with recoverable
+ //! operation progress.
+ 
+-use std::num::{NonZeroU64, NonZeroUsize};
++use std::num::NonZeroUsize;
+ use std::ops::Bound;
+ use std::time::Instant;
+ 
+@@ -142,11 +142,6 @@ pub(crate) struct ClaimedOperation {
+ pub(crate) enum IndexOperationStepResult {
+     /// Physical work and the supplied next checkpoint commit together.
+     Progressed(IndexOperationProgress),
+-    /// Physical work and checkpoint commit together, then wait before reclaiming.
+-    ProgressedAfter {
+-        progress: IndexOperationProgress,
+-        delay_millis: NonZeroU64,
+-    },
+     /// No physical work commits; the exact checkpoint is durably backed off.
+     TransientFailure,
+     /// No further automatic retry is legal until an explicit retry/abort.
+@@ -354,6 +349,12 @@ impl IndexOperationStepExecution {
+     pub(crate) const fn committed_state(&self) -> Option<&CommittedStepState> {
+         self.committed_state.as_ref()
+     }
 +
-     #[test]
-     fn explicit_barrier_requires_every_deferred_family() {
-         let required = required_for(&exec::ExecOp::Barrier {
++    /// Borrows the step result the repository would commit.
++    #[cfg(test)]
++    pub(crate) const fn result(&self) -> &IndexOperationStepResult {
++        &self.result
++    }
+ }
+ 
+ /// Family-specific physical work contract.
+@@ -1132,33 +1133,6 @@ pub(crate) async fn execute_claimed_step_with_evidence(
+                     step_counter_resources(&before_status, &after_status)?,
+                 )
+             }
+-            IndexOperationStepResult::ProgressedAfter {
+-                progress,
+-                delay_millis,
+-            } => {
+-                let not_before_unix_millis =
+-                    now_unix_millis.checked_add(delay_millis.get()).ok_or(
+-                        HelixDbError::IdentifierExhausted("index operation scheduling deadline"),
+-                    )?;
+-                let next = operation
+-                    .progressed_after(progress, not_before_unix_millis)
+-                    .map_err(operation_model_error)?;
+-                let next_pointer = pointer_for(claimed.scope, &next);
+-                validate_link(claimed.scope, &index, &next, Some(&next_pointer))?;
+-                transaction.put(operation_key, encode_operation_record(&next))?;
+-                transaction.put(
+-                    pointer_key,
+-                    encode_metadata_value(&IndexV2MetadataValue::OperationQueuePointer(
+-                        next_pointer,
+-                    )),
+-                )?;
+-                let after_status = IndexOperationStatus::from_record(&next);
+-                (
+-                    CommittedOperationStep::Progressed,
+-                    after_status.common().stage,
+-                    step_counter_resources(&before_status, &after_status)?,
+-                )
+-            }
+             IndexOperationStepResult::Blocked(blocker) => {
+                 let next = operation.block(blocker).map_err(operation_model_error)?;
+                 validate_link(claimed.scope, &index, &next, None)?;
+@@ -1255,7 +1229,7 @@ pub(crate) async fn execute_claimed_step_with_evidence(
+     })
+     else {
+         prepared.discard().await?;
+-        release_transient_claim(db, claimed, now_unix_millis).await?;
++        release_transient_claim(db, claimed, now_unix_millis, TransientRetry::Backoff).await?;
+         let stage = IndexOperationStatus::from_record(&claimed.record)
+             .common()
+             .stage;
+@@ -1272,7 +1246,24 @@ pub(crate) async fn execute_claimed_step_with_evidence(
+         Ok(_) => {}
+         Err(commit) => {
+             prepared.discard().await?;
+-            return Err(commit.into());
++            let error = HelixDbError::from(commit);
++            if !error.is_transaction_conflict() {
++                return Err(error);
++            }
++            // A step that lost a serializable conflict wrote nothing. Its
++            // claim goes back to the queue after a delay instead of failing
++            // the whole worker cycle.
++            release_transient_claim(db, claimed, now_unix_millis, TransientRetry::Conflict).await?;
++            let stage = IndexOperationStatus::from_record(&claimed.record)
++                .common()
++                .stage;
++            return Ok(CommittedOperationStepEvidence {
++                outcome: CommittedOperationStep::TransientFailure,
++                before_stage: stage,
++                after_stage: stage,
++                resources: StepResourceUsage::default(),
++                elapsed_micros: elapsed_micros(started),
++            });
+         }
+     }
+     prepared.after_commit().await;
+@@ -1326,7 +1317,12 @@ async fn record_driver_failure(
+         "index operation driver failed"
+     );
+     let outcome = if retryable {
+-        release_transient_claim(db, claimed, now_unix_millis).await?;
++        let retry = if error.is_transaction_conflict() {
++            TransientRetry::Conflict
++        } else {
++            TransientRetry::Backoff
++        };
++        release_transient_claim(db, claimed, now_
+```
+
+**File**: `crates/db/src/index_lifecycle/queue/mod.rs` (modified, +3/-2)
+```diff
+@@ -28,8 +28,9 @@
+ //! statistics marker with the document it builds, which queued publication
+ //! diffs against. Rows the build owns (operation, canonical record, applied
+ //! and entity state, statistics, tenant mappings, physical rows) stay in the
+-//! step's serializable read set. Secondary builds have no queue and read
+-//! source rows serializably.
++//! step's serializable read set. Secondary builds have no queue: their scan
++//! reads source rows the same way, and a build delta recorded with each later
++//! write takes the queue's place (see `index_lifecycle::secondary`).
+ //!
+ //! The queue corrects documents, not blockers, and a blocker is durable. A
+ //! step that blocks on a graph row therefore also reads that row through its
+```
+
+**File**: `crates/db/src/index_lifecycle/vector/driver.rs` (modified, +26/-15)
+```diff
+@@ -4439,8 +4439,7 @@ mod tests {
+     };
+     use crate::index_lifecycle::outbox::{
+         claim_operation, execute_claimed_step, observe_operation_pointer, ClaimPermission,
+-        CommittedOperationStep, OperationPointerObservation, SameEpochRecoveryProof,
+-        WriteDuringStepDriver,
++        CommittedOperationStep, OperationPointerObservation, WriteDuringStepDriver,
+     };
+     use crate::index_lifecycle::{
+         ActiveIndexHandle, ClaimSequence, IndexDdlReceipt, IndexOperationId, IndexScopeGates,
+@@ -4808,7 +4807,8 @@ mod tests {
+     /// A write repairs the invalid source row 0 after the Scan step reads it
+     /// and before the step commits. The step reads its blocker's row through
+     /// the serializable transaction, so the commit fails instead of blocking
+-    /// the build durably, and the retried step indexes the repaired row.
++    /// the build durably: the claim returns to the queue after a delay, and
++    /// the retried step indexes the repaired row.
+     #[tokio::test]
+     async fn scan_step_does_not_commit_a_blocker_repaired_in_its_window() {
+         let db = test_db("vector-driver-scan-repaired-blocker").await;
+@@ -4851,32 +4851,43 @@ mod tests {
+         .await
+         .expect("vector claim succeeds")
+         .expect("vector revision is claimable");
+-        let error = execute_claimed_step(&db, &claimed, &racing, limits, NOW_MILLIS)
+-            .await
+-            .expect_err("a blocker whose row was repaired does not commit");
+-        assert!(error.is_transaction_conflict(), "{error}");
++        assert_eq!(
++            execute_claimed_step(&db, &claimed, &racing, limits, NOW_MILLIS)
++                .await
++                .expect("a lost commit conflict releases the claim"),
++            CommittedOperationStep::TransientFailure,
++            "a blocker whose row was repaired does not commit"
++        );
+ 
+-        // The supervisor rejoins its task and retries the same step.
+-        let OperationPointerObservation::ClaimedByCurrentWriter(eligible) =
++        // The same step is queued again once its delay elapses.
++        let OperationPointerObservation::Delayed { delay_millis } =
+             observe_operation_pointer(&db, build_id, writer_epoch, NOW_MILLIS)
+                 .await
+                 .expect("vector operation pointer is readable")
+         else {
+-            panic!("the failed step leaves its claim with this writer");
++            panic!("the conflicting step is requeued after a delay");
++        };
++        let retry_at = NOW_MILLIS + delay_millis;
++        let OperationPointerObservation::Eligible(eligible) =
++            observe_operation_pointer(&db, build_id, writer_epoch, retry_at)
++                .await
++                .expect("vector operation pointer is readable")
++        else {
++            panic!("the requeued step is eligible after its delay");
+         };
+         let claimed = claim_operation(
+             &db,
+             &eligible,
+             writer_epoch,
+             ClaimSequence::new(2).expect("claim sequence is non-zero"),
+-            NOW_MILLIS,
+-            ClaimPermission::SameEpochRecovery(SameEpochRecoveryProof::after_join(writer_epoch)),
++            retry_at,
++            ClaimPermission::Normal,
+         )
+         .await
+-        .expect("vector recovery claim succeeds")
+-        .expect("vector revision is reclaimable");
++        .expect("vector retry claim succeeds")
++        .expect("vector revision is claimable");
+         assert_eq!(
+-            execute_claimed_step(&db, &claimed, &inner, limits, NOW_MILLIS)
++            execute_claimed_step(&db, &claimed, &inner, limits, retry_at)
+                 .await
+                 .expect("the retried vector step commits"),
+             CommittedOperationStep::Progressed
+```
+
+**File**: `crates/db/src/index_lifecycle_testing.rs` (modified, +6/-0)
+```diff
+@@ -180,6 +180,12 @@ pub async fn run_deterministic_text_build_reconciliation_contracts() {
+     contracts::run_text_build_reconciliation().await;
+ }
+ 
++/// Runs secondary builds that must activate under uninterrupted public writes.
++pub async fn run_secondary_sustained_write_contracts() {
++    let _guard = LIFECYCLE_CONTRACT_LOCK.lock().await;
++    contracts::run_secondary_sustained_writes().await;
++}
++
+ /// Runs public secondary/vector writes at every exact build boundary.
+ pub async fn run_secondary_vector_public_boundary_contracts() {
+     let _guard = LIFECYCLE_CONTRACT_LOCK.lock().await;
+```
+
+**File**: `crates/db/src/index_lifecycle_testing/contracts.rs` (modified, +38/-25)
+```diff
+@@ -50,6 +50,7 @@ use super::{
+ };
+ 
+ mod all_index_validation;
++mod sustained_secondary_writes;
+ mod text_build_reconciliation;
+ 
+ const MAXIMUM_CONTROLLER_TURNS: usize = 4_096;
+@@ -316,23 +317,28 @@ pub(super) async fn run_secondary_vector_public_boundaries() {
+                 .await
+                 .expect("public-boundary operation resumes after writes");
+             assert_monotonic_step(&evidence);
+-            let resumed = db
++            let resumed_status = db
+                 .get_index_operation(scope, operation_id)
+                 .await
+-                .expect("public-boundary operation remains readable")
+-                .common()
+-                .stage;
++                .expect("public-boundary operation remains readable");
++            let resumed = resumed_status.common().stage;
+             match shape.family() {
+-                PublicMutationFamily::Secondary
+-                    if matches!(
+-                        stage,
+-                        IndexOperationStage::Validate | IndexOperationStage::Activate
+-                    ) =>
+-                {
+-                    assert_eq!(
+-                        resumed,
+-                        IndexOperationStage::CatchUp,
+-                        "{shape:?} must re-enter CatchUp after a public write at {stage:?}"
++                // The gated step drains a write window's deltas itself:
++                // validation moves on with its releases, and activation
++                // completes in the same step.
++                PublicMutationFamily::Secondary if stage == IndexOperationStage::Validate => {
++                    assert!(
++                        matches!(
++                            resumed,
++                            IndexOperationStage::Validate | IndexOperationStage::Activate
++                        ),
++                        "{shape:?} must drain public writes at {stage:?} and stay past catch-up, resumed at {resumed:?}"
++                    );
++                }
++                PublicMutationFamily::Secondary if stage == IndexOperationStage::Activate => {
++                    assert!(
++                        matches!(resumed_status, IndexOperationStatus::Succeeded { .. }),
++                        "{shape:?} must drain public writes at {stage:?} and activate in that step: {resumed_status:?}"
+                     );
+                 }
+                 PublicMutationFamily::Secondary => {}
+@@ -1498,18 +1504,20 @@ async fn run_unique_activation_conflict_repair() {
+             },
+         )
+         .await
+-        .expect("activation-boundary duplicate returns to catch-up");
++        .expect("activation drains the duplicate's delta");
+     assert_monotonic_step(&evidence);
++    assert_eq!(evidence.outcome, LifecycleStepOutcome::Blocked);
++    let blocked = db
++        .get_index_operation(scope, operation_id)
++        .await
++        .expect("activation unique operation remains readable");
++    assert!(matches!(blocked, IndexOperationStatus::Blocked { .. }));
+     assert_eq!(
+-        db.get_index_operation(scope, operation_id)
+-            .await
+-            .expect("activation unique operation remains readable")
+-            .common()
+-            .stage,
+-        IndexOperationStage::CatchUp
++        blocked.common().stage,
++        IndexOperationStage::Activate,
++        "the gated activation drain blocks the duplicate before activating"
+     );
+-    let blocked = drive_to_terminal(&db, &controller, scope, operation_id).await;
+-    assert!(matches!(blocked, IndexOperationStatus::Blocked { .. }));
++    assert_identity_hidden(&db, scope, &definition).await;
+ 
+     let repaired = vec![
+         Property::string("$label", "ActivationUnique"),
+@@ -1552,6 +1560,11 @@ pub(super) async fn run_text_build_reconciliation() {
+     text_build_reconciliation::run().await;
+ }
+ 
++/// Runs secondary builds that must activate while public writes never stop.
++pub(super) async fn run_secondary_sustained_writes() {
++    sustained_secondary_writes::run().await;
++}
++
+ /// Interleaves source changes with two builds and proves unique repair/retry.
+ async fn run_secondary_mutation_interleaving() {
+     let config = contract_config().with_secondary_index_lifecycle_tuning(
+@@ -3240,12 +3253,12 @@ async fn mutate_edge_source(
+ }
+ 
+ /// Compares one active physical equality lookup with an exact ID set.
+-async fn assert_equality<const N: usize>(
++async fn assert_equality(
+     db: &HelixDB,
+     scope: DataScope,
+     definition: &ValidatedDynamicIndexDefinition,
+     value: &str,
+-    expected: [u64; N],
++    expected: impl IntoIterator<Item = u64>,
+ ) {
+     let record = crate::index_lifecycle::repository::load_index_record(
+         db.lifecycle_test_writer_db()
+```
+
+---
+
+### Incident Patch 2: `f0285655` (2026-11-03)
+**Commit Message**: Drain gated secondary backlogs to an empty prefix
+
+A gated catch-up or activation step drained under the gate only until
+one batch remained by entity count and input bytes, then relied on its
+own transaction to finish. Output budgets could stop that transaction
+first (large indexed values, unique takeovers), so under sustained
+writes the step never emptied the prefix and the build stayed in
+catch-up or activation. Gated drains now run until the prefix is empty,
+so the step's own drain always reaches the end or the blocked entity.
+
+The catch-up backlog is observed again once the gate is held, so writes
+that land while the permit is awaited cannot make the step stall
+writers past GATED_BACKLOG_BATCHES; such a backlog releases the gate
+and reconciles by exact keys.
+
+observe_backlog now always selects the first delta, so a delta larger
+than the whole gated reach blocks the build as oversized instead of
+handing exact catch-up an empty batch, whose assertion panicked the
+worker on every retry.
+
+Counters of committed drains are documented as telemetry that a step
+which fails to commit leaves uncounted, and acquire_step_permit no
+longer matches constructing stages that prepare_step now own
+
+**File**: `crates/db/src/index_lifecycle/secondary.rs` (modified, +288/-99)
+```diff
+@@ -155,9 +155,10 @@ enum PreparedSecondaryStep {
+     /// while writes continue.
+     ExactCatchUp { keys: Vec<IndexEntityStateKey> },
+     /// A catch-up, validation, or activation step holding the scope's
+-    /// exclusive permit. Bounded drains committed under that permit left at
+-    /// most one batch of deltas, so the step's own drain reaches the end of
+-    /// the prefix; `counters` include their work.
++    /// exclusive permit. Bounded drains committed under that permit left the
++    /// prefix empty, or headed by the entity one blocked on, so the step's
++    /// own drain reaches the end of the prefix or blocks on that entity;
++    /// `counters` include their work.
+     Gated { counters: OperationCounters },
+ }
+ 
+@@ -737,11 +738,10 @@ impl IndexOperationDriver for SecondaryIndexDriver {
+         scope: DataScope,
+         operation: &IndexOperationRecord,
+     ) -> Result<Box<dyn IndexOperationStepPermit>> {
++        // Constructing builds take their permit in `prepare_step`.
+         let needs_exclusive = matches!(
+             operation.progress(),
+-            IndexOperationProgress::SecondaryBuild(SecondaryBuildProgress::Constructing(
+-                SecondaryBuildStage::Validate(_) | SecondaryBuildStage::Activate(_)
+-            )) | IndexOperationProgress::SecondaryBuild(SecondaryBuildProgress::Aborting(_))
++            IndexOperationProgress::SecondaryBuild(SecondaryBuildProgress::Aborting(_))
+                 | IndexOperationProgress::SecondaryCleanup(_)
+         );
+         if needs_exclusive {
+@@ -755,8 +755,9 @@ impl IndexOperationDriver for SecondaryIndexDriver {
+     /// for left behind before the step's own transaction opens.
+     ///
+     /// A catch-up backlog beyond [`GATED_BACKLOG_BATCHES`] is instead
+-    /// reconciled by exact keys while writes continue, so the gate is held
+-    /// only once the remainder is within that reach.
++    /// reconciled by exact keys while writes continue. It is observed before
++    /// the gate and again once the gate is held, so a catch-up step never
++    /// stalls writers for more than that reach.
+     async fn prepare_step(
+         &self,
+         db: &slatedb::Db,
+@@ -773,47 +774,46 @@ impl IndexOperationDriver for SecondaryIndexDriver {
+                 permit,
+             ));
+         };
+-        // Catch-up and activation only drain, so their own transaction may
+-        // finish one batch. Validation drains everything first, which leaves
+-        // its whole batch to the applied rows it releases.
+-        let (counters, disposition, remainder_batches) = match stage {
++        let exact_catch_up = |keys| {
++            PreparedIndexOperationStep::secondary(
++                Box::new(()),
++                PreparedSecondaryOperationStep {
++                    step: PreparedSecondaryStep::ExactCatchUp { keys },
++                },
++            )
++        };
++        let (counters, disposition) = match stage {
+             SecondaryBuildStage::Scan(_) => {
+                 return Ok(PreparedIndexOperationStep::driver_owned(
+                     self.family(),
+                     Box::new(()),
+                 ));
+             }
+             SecondaryBuildStage::CatchUp(progress) => {
+-                match observe_backlog(db, scope, operation, limits, GATED_BACKLOG_BATCHES).await? {
+-                    Some(keys) => {
+-                        return Ok(PreparedIndexOperationStep::secondary(
+-                            Box::new(()),
+-                            PreparedSecondaryOperationStep {
+-                                step: PreparedSecondaryStep::ExactCatchUp { keys },
+-                            },
+-                        ));
+-                    }
+-                    None => (progress.counters, AppliedStateDisposition::Retain, 1),
++                if let Some(keys) = observe_backlog(db, scope, operation, limits).await? {
++                    return Ok(exact_catch_up(keys));
+                 }
++                (progress.counters, AppliedStateDisposition::Retain)
+             }
+             SecondaryBuildStage::Validate(progress) => {
+-                (progress.counters, AppliedStateDisposition::Release, 0)
++                (progress.counters, AppliedStateDisposition::Release)
+             }
+             SecondaryBuildStage::Activate(progress) => {
+-                (progress.counters, AppliedStateDisposition::Release, 1)
++                (progress.counters, AppliedStateDisposition::Release)
+             }
+         };
+         let permit = self.scope_gates.lifecycle_permit(scope).await;
+-        let counters = drain_backlog_under_gate(
+-            db,
+-            scope,
+-            operation,
+-            counters,
+-            limits,
+-            disposition,
+-            remainder_batches,
+-        )
+-        .await?;
++        // Writes that committed while the permit was awaited may have taken
++        // the backlog past the gated reach. Validation and activation drain
++        // it regardless: returning to catch-up
+```
+
+---
+
+### Incident Patch 3: `bd1909d9` (2026-11-03)
+**Commit Message**: Fix MCP first-read example and document index operation tracking (#1241)
+
+Two doc fixes from MCP feedback.
+
+### 1. MCP first-read example was rejected
+
+The guide's "empty read" sends a batch with no entries, which the
+planner always rejects (`InvalidBatchArity { min: 1, actual: 0 }` → HTTP
+400).
+
+```diff
+-{"read":{"entries":[],"returns":[]}}
++{"read":{"entries":[{"query":{"name":"nodes","root":{"count":{"input":{"nodes_where":
++  {"predicate":{"eq":{"left":{"property":"$label"},"right":{"constant":{"string":"Example"}}}}}}}}}}],
++  "returns":["nodes"]}}
+```
+
+It still returns no user records, just a count.
+
+### 2. Index guide said "poll the receipt" without showing how
+
+New **Track an index operation** section:
+
+```text
+create_index_if_not_exists  -> receipt { operation_id }
+get_index_operation(id)     -> queued | running | blocked | succeeded | aborted
+  blocked                   -> fix cause, then retry_index_operation(id)
+                               or abort_index_operation(id)
+repeat CREATE               -> existing_operation (same id), not a new build
+```
+
+Examples for Rust, TypeScript, Go, Python and raw JSON.
+
+### Verification
+
+A throwaway test against an in-memory DB (not
+
+**File**: `docs/database/helix-cloud/connect/mcp.mdx` (modified, +4/-3)
+```diff
+@@ -116,12 +116,13 @@ Call `helix_execute_read_query` with the selected database reference:
+ ```json
+ {
+   "database": "tenant:<id>",
+-  "query_json": "{\"request_type\":\"read\",\"query\":{\"read\":{\"entries\":[],\"returns\":[]}}}"
++  "query_json": "{\"request_type\":\"read\",\"query\":{\"read\":{\"entries\":[{\"query\":{\"name\":\"nodes\",\"root\":{\"count\":{\"input\":{\"nodes_where\":{\"predicate\":{\"eq\":{\"left\":{\"property\":\"$label\"},\"right\":{\"constant\":{\"string\":\"Example\"}}}}}}}}}}],\"returns\":[\"nodes\"]}}}"
+ }
+ ```
+ 
+-This empty read checks the request path without returning user records. For useful reads and writes,
+-construct the inner request with the [query guides](/database/helix-db/query-guides/reading-data).
++This read counts `Example` nodes, which checks the request path without returning user records.
++For useful reads and writes, construct the inner request with the
++[query guides](/database/helix-db/query-guides/reading-data).
+ The result contains `status_code` and `response`; receiving an MCP response alone does not prove
+ that the database operation succeeded.
+ 
+```
+
+**File**: `docs/database/helix-db/query-guides/secondary-indexes.mdx` (modified, +61/-2)
+```diff
+@@ -98,8 +98,67 @@ helix.WriteQuery("create_user_status_index").
+ 
+ </CodeGroup>
+ 
+-The returned DDL receipt identifies the durable operation. Poll it until the index is
+-active before depending on indexed performance.
++The returned DDL receipt identifies the durable operation. A build is not listed as an
++active index until it succeeds, so poll its `operation_id` before depending on indexed
++performance.
++
++## Track an index operation
++
++<CodeGroup>
++
++```rust Rust
++read_batch()
++    .var_as("status", g().get_index_operation(operation_id))
++    .returning(["status"]);
++```
++
++```ts TypeScript
++readBatch()
++  .varAs("status", g().getIndexOperation(operationId))
++  .returning(["status"]);
++```
++
++```go Go
++helix.ReadQuery("index_operation").
++	VarAs("status", helix.G().GetIndexOperation(operationID)).
++	Returning("status")
++```
++
++```python Python
++(
++    read_batch()
++    .var_as("status", g().get_index_operation(operation_id))
++    .returning(["status"])
++)
++```
++
++```json JSON
++{
++  "request_type": "read",
++  "query": {
++    "read": {
++      "entries": [{
++        "query": {
++          "name": "status",
++          "root": { "get_index_operation": { "operation_id": "<operation_id>" } }
++        }
++      }],
++      "returns": ["status"]
++    }
++  }
++}
++```
++
++</CodeGroup>
++
++`status` is `queued`, `running`, `blocked`, `succeeded`, or `aborted`. A `blocked`
++operation carries a `blocker_code` and does not resume on its own. Fix the cause, then
++run `retry_index_operation` (`retryIndexOperation`) as a write with the same
++`operation_id`, or `abort_index_operation` (`abortIndexOperation`) to discard the build.
++While the build is in flight, repeating the same CREATE returns `existing_operation`
++with the same `operation_id` instead of starting another build. Once the index is
++active, it returns `already_active` without an `operation_id`. After an abort finishes,
++it starts a new build with a new `operation_id`.
+ 
+ ## Query indexed data
+ 
+```
+
+**File**: `docs/llms-full.txt` (modified, +61/-5)
+```diff
+@@ -4435,8 +4435,63 @@ helix.WriteQuery("create_user_status_index").
+ }
+ ```
+ 
+-The returned DDL receipt identifies the durable operation. Poll it until the index is
+-active before depending on indexed performance.
++The returned DDL receipt identifies the durable operation. A build is not listed as an
++active index until it succeeds, so poll its `operation_id` before depending on indexed
++performance.
++
++## Track an index operation
++
++```rust Rust
++read_batch()
++    .var_as("status", g().get_index_operation(operation_id))
++    .returning(["status"]);
++```
++
++```ts TypeScript
++readBatch()
++  .varAs("status", g().getIndexOperation(operationId))
++  .returning(["status"]);
++```
++
++```go Go
++helix.ReadQuery("index_operation").
++	VarAs("status", helix.G().GetIndexOperation(operationID)).
++	Returning("status")
++```
++
++```python Python
++(
++    read_batch()
++    .var_as("status", g().get_index_operation(operation_id))
++    .returning(["status"])
++)
++```
++
++```json JSON
++{
++  "request_type": "read",
++  "query": {
++    "read": {
++      "entries": [{
++        "query": {
++          "name": "status",
++          "root": { "get_index_operation": { "operation_id": "<operation_id>" } }
++        }
++      }],
++      "returns": ["status"]
++    }
++  }
++}
++```
++
++`status` is `queued`, `running`, `blocked`, `succeeded`, or `aborted`. A `blocked`
++operation carries a `blocker_code` and does not resume on its own. Fix the cause, then
++run `retry_index_operation` (`retryIndexOperation`) as a write with the same
++`operation_id`, or `abort_index_operation` (`abortIndexOperation`) to discard the build.
++While the build is in flight, repeating the same CREATE returns `existing_operation`
++with the same `operation_id` instead of starting another build. Once the index is
++active, it returns `already_active` without an `operation_id`. After an abort finishes,
++it starts a new build with a new `operation_id`.
+ 
+ ## Query indexed data
+ 
+@@ -6921,12 +6976,13 @@ Call `helix_execute_read_query` with the selected database reference:
+ ```json
+ {
+   "database": "tenant:<id>",
+-  "query_json": "{\"request_type\":\"read\",\"query\":{\"read\":{\"entries\":[],\"returns\":[]}}}"
++  "query_json": "{\"request_type\":\"read\",\"query\":{\"read\":{\"entries\":[{\"query\":{\"name\":\"nodes\",\"root\":{\"count\":{\"input\":{\"nodes_where\":{\"predicate\":{\"eq\":{\"left\":{\"property\":\"$label\"},\"right\":{\"constant\":{\"string\":\"Example\"}}}}}}}}}}],\"returns\":[\"nodes\"]}}}"
+ }
+ ```
+ 
+-This empty read checks the request path without returning user records. For useful reads and writes,
+-construct the inner request with the [query guides](/database/helix-db/query-guides/reading-data).
++This read counts `Example` nodes, which checks the request path without returning user records.
++For useful reads and writes, construct the inner request with the
++[query guides](/database/helix-db/query-guides/reading-data).
+ The result contains `status_code` and `response`; receiving an MCP response alone does not prove
+ that the database operation succeeded.
+ 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1229** (2026-10-30): Map every query error code to one transport class (@xav-db)
-- **PR #1228** (2026-10-29): fix: fsync every write to local disk storage (@xav-db)
-- **PR #1226** (2026-10-25): chore(deps): bump the npm_and_yarn group across 1 directory with 3 updates (@dependabot[bot])
-- **PR #1225** (2026-10-23): docs: explain storage-level tenant database isolation (@xav-db)
-- **PR #1224** (2026-10-25): fix: reject inner types in Go SDK ParamObject (@Tyagiquamar)
-- **PR #1223** (2026-10-26): docs: bring Helix Foundry up to date with prod: Helix MCP, API sources, AI models, usage, the Ask home (@xav-db)
+- **PR #1243** (2026-11-03): Show `auth status` workspaces one per line (@xav-db)
+- **PR #1241** (2026-11-03): Fix MCP first-read example and document index operation tracking (@xav-db)
+- **PR #1237** (2026-11-03): Support every sign-in method in `helix auth login` (@xav-db)
+- **PR #1235** (2026-11-03): test(db): replace production-coverage with ordinary unit tests (@xav-db)
+- **PR #1234** (2026-11-03): test(db): shrink the slowest tests and flush test databases every millisecond (@xav-db)
+- **PR #1233** (2026-11-03): test: delete dead, trivial and duplicated tests (@xav-db)
 
 ---
 
@@ -2145,47 +3024,30 @@ sees them without a flush
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. db): do not flush deferred index state before element KV reads (#1220)
+## X. Activate secondary index builds under sustained writes (#1215)
 
 **RULE**:
-When implementing operations in `crates/db/src/execution/interpreter/mutation/visibility.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in HelixDB/helix-db. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/db/src/config/mod.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in HelixDB/helix-db. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `bacc207f`: db): do not flush deferred index state before element KV reads (#1220). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7f1923a3`: Activate secondary index builds under sustained writes (#1215). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/db/src/execution/interpreter/mutation/visibility.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/db/src/config/mod.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        // A KV read lists or gets element rows (node property rows and edge endpoint rows). Those rows are
-        // staged eagerly in the request transaction, so the read sees them without a flush; only the
-        // topology and secondary families are deferred. Flushing before it re-merged every shared row a
-        // preceding mutation touched once per read (`g().n(id).add_e(..)` repeated in one batch).
-        exec::ExecOp::KvRead(_) => RequiredMutationVisibility::NONE,
-        exec::ExecOp::Reserved { .. }
-    #[test]
-    fn element_kv_reads_flush_nothing() {
-        for keyspace in [
-            exec::ElementKeyspace::NodeProperty,
-            exec::ElementKeyspace::EdgeEndpoints,
-        ] {
-            let read = exec::ExecOp::KvRead(exec::KvReadPlan::Get {
-                key: keyspace.point_key(7),
-            });
-            assert_eq!(required_for(&read), RequiredMutationVisibility::NONE);
-        }
-    }
-
+    SecondaryIndexLifecycleIdleIntervalMillis, SecondaryIndexLifecycleTuning,
+    SecondaryIndexLifecycleWorkerMode,
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-        exec::ExecOp::KvRead(_)
-        | exec::ExecOp::Reserved { .. }
+    SecondaryIndexLifecycleCatchUpTailDelayMillis, SecondaryIndexLifecycleIdleIntervalMillis,
+    SecondaryIndexLifecycleTuning, SecondaryIndexLifecycleWorkerMode,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `bacc207f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7f1923a3` are properly handled with clean fallback behavior.

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-04T03:51:14.454Z",
+  "last_updated": "2026-11-04T03:57:45.880Z",
   "total_verified_learnings": 1204,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -17244,8 +17244,8 @@
       "slug": "helixdb-helix-db",
       "platform": "github",
       "source_url": "https://github.com/HelixDB/helix-db",
-      "source_version": "bacc207f",
-      "content_hash": "e5b93a5638f51940158d04abaa0e0b60872a0f52e6a8a4c2b0e7f22594c0cf04",
+      "source_version": "7f1923a3",
+      "content_hash": "addd7a0c94c5945a8d3366f11e54df66cab7dec72b9314088fed7d509aa73f14",
       "dossier_path": "07_PROJECT_LEARNING/helixdb-helix-db-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/helixdb-helix-db-learnings.md",
       "promoted_rules": [
@@ -17283,6 +17283,11 @@
           "number": 6474,
           "title": "db): do not flush deferred index state before element KV reads (#1220)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6751,
+          "title": "Activate secondary index builds under sustained writes (#1215)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -17290,7 +17295,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-02T17:39:19.362Z",
+      "verified_at": "2026-11-04T03:57:45.867Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -53399,8 +53404,8 @@
       "slug": "software-mansion-react-native-reanimated",
       "platform": "github",
       "source_url": "https://github.com/software-mansion/react-native-reanimated",
-      "source_version": "c8b40ef3",
-      "content_hash": "0a6f883d35daaf9aafd3cc0d6387068bec0418d0876fef184db7fe6d307f206c",
+      "source_version": "8f38c4e3",
+      "content_hash": "7a9d10e895583da3730a2ce686ac15eb46f423a8a365ede5b8ed13f6612b82ac",
       "dossier_path": "07_PROJECT_LEARNING/software-mansion-react-native-reanimated-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/software-mansion-react-native-reanimated-learnings.md",
       "promoted_rules": [
@@ -53433,6 +53438,11 @@
           "number": 6055,
           "title": "Reanimated): don't crash on Android when worklets run during the teardown of the",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6750,
+          "title": "Reanimated): destroy the light tree's dropped views off the UI thread (#10996)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -53440,7 +53450,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T03:59:01.680Z",
+      "verified_at": "2026-11-04T03:57:39.708Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -173072,6 +173082,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-04T03:51:14.436Z"
+    },
+    "rule-6750": {
+      "learning_id": "rule-6750",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6750,
+      "title": "Reanimated): destroy the light tree's dropped views off the UI thread (#10996)",
+      "source_url": "https://github.com/software-mansion/react-native-reanimated",
+      "source_version": "8f38c4e3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T03:57:39.708Z"
+    },
+    "rule-6751": {
+      "learning_id": "rule-6751",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6751,
+      "title": "Activate secondary index builds under sustained writes (#1215)",
+      "source_url": "https://github.com/HelixDB/helix-db",
+      "source_version": "7f1923a3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T03:57:45.867Z"
     }
   },
   "aliases": {

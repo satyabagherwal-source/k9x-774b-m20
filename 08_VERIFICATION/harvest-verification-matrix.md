@@ -7150,3 +7150,5 @@
 | `CYCLE-20261104-ONGG` | `2026-11-04T03:44:13.504Z` | `kcl-lang/kcl` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6747` | Yes (`e2a10b7c...`) |
 | `CYCLE-20261104-XO2S` | `2026-11-04T03:51:14.212Z` | `MaterializeInc/materialize` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6748` | Yes (`f96ca397...`) |
 | `CYCLE-20261104-XOB7` | `2026-11-04T03:51:14.515Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6749` | Yes (`93712990...`) |
+| `CYCLE-20261104-5XKP` | `2026-11-04T03:57:39.769Z` | `software-mansion/react-native-reanimated` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6750` | Yes (`7a9d10e8...`) |
+| `CYCLE-20261104-62C6` | `2026-11-04T03:57:45.942Z` | `HelixDB/helix-db` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6751` | Yes (`addd7a0c...`) |

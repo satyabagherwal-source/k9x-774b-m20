@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-04T03:51:14.523Z",
-  "total_cycles_completed": 7127,
-  "total_learnings_persisted": 7127,
-  "total_rules_promoted": 6773,
+  "last_updated": "2026-11-04T03:57:45.948Z",
+  "total_cycles_completed": 7129,
+  "total_learnings_persisted": 7129,
+  "total_rules_promoted": 6775,
   "history": [
-    {
-      "timestamp": "2026-11-03T17:45:45.717Z",
-      "repository": "astral-sh/ruff",
-      "learningId": "learn-github-astral-sh-ruff",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-03T17:45:51.285Z",
-      "repository": "siderolabs/talos",
-      "learningId": "learn-github-siderolabs-talos",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-03T17:45:55.521Z",
       "repository": "genkit-ai/genkit",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-04T03:51:14.523Z",
       "repository": "NucleoidAI/Nucleoid",
       "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T03:57:39.775Z",
+      "repository": "software-mansion/react-native-reanimated",
+      "learningId": "learn-github-software-mansion-react-native-reanimated",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T03:57:45.948Z",
+      "repository": "HelixDB/helix-db",
+      "learningId": "learn-github-helixdb-helix-db",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

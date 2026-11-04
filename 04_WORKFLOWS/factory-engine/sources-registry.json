@@ -40,8 +40,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-04T03:51:17.054Z",
-    "lastVerified": "2026-11-04T03:51:17.054Z",
+    "lastChecked": "2026-11-04T03:57:48.477Z",
+    "lastVerified": "2026-11-04T03:57:48.477Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -145,8 +145,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-04T03:30:41.828Z",
-    "lastVerified": "2026-11-04T03:30:41.828Z",
+    "lastChecked": "2026-11-04T03:57:42.394Z",
+    "lastVerified": "2026-11-04T03:57:42.394Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -1423,9 +1423,9 @@
   "rustcrypto-hashes": {
     "name": "hashes",
     "officialUrl": "https://github.com/RustCrypto/hashes",
-    "lastChecked": "2026-11-04T00:46:28.056Z",
+    "lastChecked": "2026-11-04T03:57:37.394Z",
     "revisionIdentifier": "23d8e40e",
-    "lastVerified": "2026-11-04T00:46:28.056Z"
+    "lastVerified": "2026-11-04T03:57:37.394Z"
   },
   "neondatabase-neon": {
     "name": "neon",
@@ -3016,14 +3016,14 @@
     "officialUrl": "https://github.com/software-mansion/react-native-reanimated",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-31T03:59:00.743Z",
-    "lastVerified": "2026-10-31T03:59:00.743Z",
+    "lastChecked": "2026-11-04T03:57:37.924Z",
+    "lastVerified": "2026-11-04T03:57:37.924Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-software-mansion-react-native-reanimated",
-    "contentHash": "0a6f883d35daaf9aafd3cc0d6387068bec0418d0876fef184db7fe6d307f206c",
+    "contentHash": "7a9d10e895583da3730a2ce686ac15eb46f423a8a365ede5b8ed13f6612b82ac",
     "promotedRulesCount": 1,
-    "recentFixesCount": 8,
+    "recentFixesCount": 7,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -4296,9 +4296,9 @@
   "aome510-spotify-player": {
     "name": "spotify-player",
     "officialUrl": "https://github.com/aome510/spotify-player",
-    "lastChecked": "2026-11-01T01:33:33.223Z",
+    "lastChecked": "2026-11-04T03:57:27.350Z",
     "revisionIdentifier": "7dc9d17a",
-    "lastVerified": "2026-11-01T01:33:33.223Z"
+    "lastVerified": "2026-11-04T03:57:27.350Z"
   },
   "hf-meta-llama-meta-llama-3-8b": {
     "name": "meta-llama/Meta-Llama-3-8B",
@@ -4436,14 +4436,14 @@
     "officialUrl": "https://github.com/HelixDB/helix-db",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-02T17:39:17.530Z",
-    "lastVerified": "2026-11-02T17:39:17.530Z",
+    "lastChecked": "2026-11-04T03:57:44.828Z",
+    "lastVerified": "2026-11-04T03:57:44.828Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-helixdb-helix-db",
-    "contentHash": "e5b93a5638f51940158d04abaa0e0b60872a0f52e6a8a4c2b0e7f22594c0cf04",
+    "contentHash": "addd7a0c94c5945a8d3366f11e54df66cab7dec72b9314088fed7d509aa73f14",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 13,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -6476,9 +6476,9 @@
   "someengineering-fixinventory": {
     "name": "fixinventory",
     "officialUrl": "https://github.com/someengineering/fixinventory",
-    "lastChecked": "2026-11-02T21:43:28.654Z",
+    "lastChecked": "2026-11-04T03:57:34.954Z",
     "revisionIdentifier": "21183338",
-    "lastVerified": "2026-11-02T21:43:28.654Z"
+    "lastVerified": "2026-11-04T03:57:34.954Z"
   },
   "olric-data-olric": {
     "name": "olric",
@@ -11726,9 +11726,9 @@
   "mswjs-msw": {
     "name": "msw",
     "officialUrl": "https://github.com/mswjs/msw",
-    "lastChecked": "2026-10-30T20:47:27.629Z",
+    "lastChecked": "2026-11-04T03:57:29.895Z",
     "revisionIdentifier": "28c74aad",
-    "lastVerified": "2026-10-30T20:47:27.629Z"
+    "lastVerified": "2026-11-04T03:57:29.895Z"
   },
   "alyssaxuu-later": {
     "name": "later",

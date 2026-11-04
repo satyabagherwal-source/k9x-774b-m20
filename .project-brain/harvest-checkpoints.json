@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-04T03:51:14.526Z",
+  "last_updated": "2026-11-04T03:57:45.951Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5826,14 +5826,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-software-mansion-react-native-reanimated",
-      "content_hash": "0a6f883d35daaf9aafd3cc0d6387068bec0418d0876fef184db7fe6d307f206c",
-      "verified_at": "2026-10-31T03:59:01.795Z",
+      "content_hash": "7a9d10e895583da3730a2ce686ac15eb46f423a8a365ede5b8ed13f6612b82ac",
+      "verified_at": "2026-11-04T03:57:39.777Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T03:59:01.795Z"
+      "last_updated": "2026-11-04T03:57:39.777Z"
     },
     "liftbridge-io/liftbridge": {
       "repository": "liftbridge-io/liftbridge",
@@ -6081,14 +6081,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-helixdb-helix-db",
-      "content_hash": "e5b93a5638f51940158d04abaa0e0b60872a0f52e6a8a4c2b0e7f22594c0cf04",
-      "verified_at": "2026-11-02T17:39:19.486Z",
+      "content_hash": "addd7a0c94c5945a8d3366f11e54df66cab7dec72b9314088fed7d509aa73f14",
+      "verified_at": "2026-11-04T03:57:45.950Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-02T17:39:19.486Z"
+      "last_updated": "2026-11-04T03:57:45.950Z"
     },
     "microsoft/fluentui": {
       "repository": "microsoft/fluentui",
