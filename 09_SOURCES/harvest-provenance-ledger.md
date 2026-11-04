@@ -7079,3 +7079,4 @@ Every entry in this ledger must capture:
 | `learn-github-appwrite-appwrite` | `https://github.com/appwrite/appwrite` | `8f4601d2` | Multi-dimensional audit evidence | 2026-11-04T00:10:49.736Z |
 | `learn-huggingface-abenzerps-qwen-image-2-1-turbo-quantized` | `https://huggingface.co/abenzerps/Qwen-Image-2.1-Turbo-Quantized` | `hf-abenzer` | Multi-dimensional audit evidence | 2026-11-04T00:10:50.710Z |
 | `learn-github-paradedb-paradedb` | `https://github.com/paradedb/paradedb` | `4b2ecad6` | Multi-dimensional audit evidence | 2026-11-04T00:10:57.066Z |
+| `learn-github-laurent22-joplin` | `https://github.com/laurent22/joplin` | `a7663045` | Multi-dimensional audit evidence | 2026-11-04T00:17:25.246Z |

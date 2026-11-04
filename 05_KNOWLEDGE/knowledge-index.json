@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-04T00:10:56.973Z",
+  "last_updated": "2026-11-04T00:17:25.191Z",
   "total_verified_learnings": 1202,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -37013,8 +37013,8 @@
       "slug": "laurent22-joplin",
       "platform": "github",
       "source_url": "https://github.com/laurent22/joplin",
-      "source_version": "2e131019",
-      "content_hash": "c5989e2e012ae28423aef3a03fdf2b9db14a95e16dfcad96fb2e1ba6498a414f",
+      "source_version": "a7663045",
+      "content_hash": "cf7ae968dd13b97a38c5309b430884e87127c81f3c4da37239be27698157e2af",
       "dossier_path": "07_PROJECT_LEARNING/laurent22-joplin-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/laurent22-joplin-learnings.md",
       "promoted_rules": [
@@ -37037,6 +37037,11 @@
           "number": 5943,
           "title": "Desktop: Fixes #16939: Security: Upgrade to Electron 42.11.18 (#16964)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6672,
+          "title": "Desktop, Cli: Fix ENEX import failing when an unescaped ampersand is directly fo",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -37044,7 +37049,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T23:51:40.203Z",
+      "verified_at": "2026-11-04T00:17:25.177Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -171546,6 +171551,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-04T00:10:56.950Z"
+    },
+    "rule-6672": {
+      "learning_id": "rule-6672",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6672,
+      "title": "Desktop, Cli: Fix ENEX import failing when an unescaped ampersand is directly fo",
+      "source_url": "https://github.com/laurent22/joplin",
+      "source_version": "a7663045",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T00:17:25.177Z"
     }
   },
   "aliases": {

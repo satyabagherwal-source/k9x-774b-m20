@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-04T00:10:57.072Z",
-  "total_cycles_completed": 7047,
-  "total_learnings_persisted": 7047,
-  "total_rules_promoted": 6694,
+  "last_updated": "2026-11-04T00:17:25.250Z",
+  "total_cycles_completed": 7048,
+  "total_learnings_persisted": 7048,
+  "total_rules_promoted": 6695,
   "history": [
-    {
-      "timestamp": "2026-11-03T10:37:08.340Z",
-      "repository": "argoproj/argo-workflows",
-      "learningId": "learn-github-argoproj-argo-workflows",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-03T10:37:13.359Z",
       "repository": "cilium/cilium",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-04T00:10:57.072Z",
       "repository": "paradedb/paradedb",
       "learningId": "learn-github-paradedb-paradedb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T00:17:25.250Z",
+      "repository": "laurent22/joplin",
+      "learningId": "learn-github-laurent22-joplin",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

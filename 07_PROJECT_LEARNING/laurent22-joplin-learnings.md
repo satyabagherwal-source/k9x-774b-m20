@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/laurent22-joplin-learnings.md`  
 > **Source**: github ([https://github.com/laurent22/joplin](https://github.com/laurent22/joplin))  
-> **Source Version**: `2e131019`  
+> **Source Version**: `a7663045`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T23:51:39.622Z  
+> **Timestamp**: 2026-11-04T00:17:24.766Z  
 > **Learning ID**: `learn-github-laurent22-joplin`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/laurent22-joplin-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/laurent22/joplin](https://github.com/laurent22/joplin))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T23:51:39.613Z  
+> **Harvest Timestamp**: 2026-11-04T00:17:23.311Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Joplin - the privacy-focused note taking app with sync capabilities for Windows, macOS, Linux, Android and iOS.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 56950 stars
+- **Stars / Engagement**: 57010 stars
 
 ---
 
@@ -930,11 +930,11 @@ export {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #16998** (2026-11-03): **Desktop: Fixes #16998: Fix fatal startup error caused by CallbackUrlCommand const enum**
+  *Symptoms*: # Summary  Fixes a fatal startup crash in the desktop application caused by `CallbackUrlCommand` being erased at compile time.  # Problem  When starting the desktop application on the latest `dev` branch (`cd packages/app-desktop && yarn start`), the app crashes on startup with the following fatal error:  ```text An error occurred: Fatal error: Cannot read properties of undefined (reading 'OpenNote')  TypeError: Cannot read properties of undefined (reading 'OpenNote')     at packages/app-desktop/gui/MainScreen/handleCallbackUrl.ts:101:21     at init_handleCallbackUrl (packages/app-desktop/main-html.bundle.js:1:524)     at packages/app-desktop/gui/MainScreen.tsx:27:1 ```  ### Root Cause In `packages/lib/callbackUrlUtils.ts`, `CallbackUrlCommand` was declared using `export const enum`: ```typescript export const enum CallbackUrlCommand { ... } ``` Because of `const enum`, TypeScript strips the enum object completely when emitting JavaScript (`packages/lib/callbackUrlUtils.js`). Since `packages/app-desktop/tools/bundleJs.ts` configures esbuild to resolve `@joplin/lib` imports from pre-compiled `.js` files via `joplin--prefer-js-imports`, `CallbackUrlCommand` was `undefined` at runtime.   Accessing `CallbackUrlCommand.OpenNote` at top-level on startup in `handleCallbackUrl.ts:101` immediately threw a fatal `TypeError`.  # Solution  Changed `export const enum CallbackUrlCommand` to standard `export enum CallbackUrlCommand` in `packages/lib/callbackUrlUtils.ts` (matching other enum
+
 - **Issue #16977** (2026-10-30): **Desktop: Fixes #16976: Refresh spellcheck underlines on note load and document edit in Markdown editor**
   *Symptoms*: # Summary Fixes #16976: In the Markdown editor (CodeMirror 6), spellcheck underlines for misspelled words did not appear upon opening or switching to a note until a space character was typed. While editing, actions such as backspacing or modifying words destroyed existing spelling markers and caused all squiggly underlines to disappear without re-appearing until a space was typed.  ### Root Cause Chromium/Electron's Blink layout engine only schedules spellcheck passes when native keyboard input events contain word delimiters (e.g. spaces, punctuation, enter). In CodeMirror 6, document text is injected programmatically upon note switching, and editing actions like backspacing are intercepted by CodeMirror (`preventDefault()`) which mutates and replaces DOM text nodes. When text nodes are replaced without a native word-boundary input event, Chromium destroys previous spelling markers and skips running its spellcheck pipeline. Consequently, red squiggly underlines never appear on note switch or disappear entirely on backspace until a space character is typed.  ### Solution 1. **`spellCheckRefreshExtension`**:    - Implemented a lightweight `ViewPlugin` registered in the CodeMirror 6 extensions pipeline.    - Schedules a 100ms quick refresh on initial editor creation, note switch (`setNoteIdEffect`), or editor focus gain (`focusChanged && hasFocus`).    - Schedules a 500ms debounced refresh on document edits (`docChanged`). If the user continues typing, the timer resets, ensuring
-
-- **Issue #16958** (2026-10-30): **flatpak configuration forces creation of a backup directory separate from the user-configured directory**
-  *Symptoms*: ### Operating system  Linux  ### Joplin version  3.7.21  ### Desktop version info  3.7.21, Linux Fedora 44, flatpak version.  ### Current behaviour  The flatpak configuration forces creation of a backup directory separate from the user-configured directory.  ``` [Context] shared=ipc;network; sockets=cups;fallback-x11;pulseaudio;wayland; devices=dri; filesystems=~/.config/joplin-desktop:create;~/JoplinBackup:create;  [Session Bus Policy] org.kde.StatusNotifierWatcher=talk org.freedesktop.Notifications=talk com.canonical.AppMenu.Registrar=talk org.a11y.Bus=talk  [System Bus Policy] org.freedesktop.Avahi=talk ``` Because the flatpak configuration is creating this, there is no configuration toggle or setting within Joplin that prevents it. Disabling the backup plugin entirely does not work.  `flatpak override --user --nofilesystem=~/JoplinBackup net.cozic.joplin_desktop` is the workaround for this, but it would be better if the flatpak did not force a directory at all.  ### Expected behaviour  The application respects the user-configured backup folder and does not create an arbitrary directory.  ### Logs  _No response_
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -951,213 +951,387 @@ export {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f5823d1b` (2026-10-28)
-**Commit Message**: Desktop: Fixes #16939: Security: Upgrade to Electron 42.11.18 (#16964)
+### Incident Patch 1: `be60c3a2` (2026-11-02)
+**Commit Message**: Desktop, Cli: Fix ENEX import failing when an unescaped ampersand is directly followed by a tag
 
-**File**: `packages/app-desktop/package.json` (modified, +1/-1)
+**File**: `packages/app-cli/tests/enex_to_md/unescaped_ampersand.enex` (modified, +2/-0)
 ```diff
-@@ -185,7 +185,7 @@
-     "color": "3.2.1",
-     "compare-versions": "6.1.1",
-     "debounce": "1.2.1",
--    "electron": "42.3.0",
-+    "electron": "42.11.18",
-     "electron-builder": "26.15.6",
-     "electron-updater": "6.6.8",
-     "electron-window-state": "5.0.3",
+@@ -13,6 +13,8 @@
+     <updated>20260914T100000Z</updated>
+     <note-attributes>
+       <application-data key="evernote.caption">Phase 1: Mobilize & Measure, which involves forming an advocacy group.</application-data>
++      <application-data key="evernote.caption">Caption truncated after Polars &</application-data>
++      <application-data key="evernote.captionSource">AI</application-data>
+     </note-attributes>
+   </note>
+   <note>
 ```
 
-**File**: `yarn.lock` (modified, +13/-32)
+**File**: `packages/fork-sax/lib/sax.js` (modified, +7/-0)
 ```diff
-@@ -9934,6 +9934,13 @@ __metadata:
-   languageName: node
-   linkType: hard
+@@ -1494,6 +1494,13 @@
+             parser.state = returnState
+           } else if (isMatch(parser.entity.length ? entityBody : entityStart, c)) {
+             parser.entity += c
++          } else if (c === '<' && parser.state === S.TEXT_ENTITY) {
++            // Joplin: Treat "<" as the start of a tag, otherwise the tag would be swallowed as text
++            strictFail(parser, 'Invalid character in entity name')
++            parser[buffer] += '&' + parser.entity
++            parser.entity = ''
++            parser.state = S.OPEN_WAKA
++            parser.startTagPosition = parser.position
+           } else {
+             strictFail(parser, 'Invalid character in entity name')
+             parser[buffer] += '&' + parser.entity + c
+```
+
+**File**: `packages/lib/services/interop/InteropService_Importer_EnexToMd.test.ts` (modified, +2/-2)
+```diff
+@@ -70,7 +70,7 @@ describe('InteropService_Importer_EnexToMd', () => {
+ 		expect(notes[1].body).toContain('Mobilize & Measure');
  
-+"@electron-internal/extract-zip@npm:^1.0.1":
-+  version: 1.0.5
-+  resolution: "@electron-internal/extract-zip@npm:1.0.5"
-+  checksum: 10/f67a2ae62ab78df306e5ec38e917fed8faf87053cf13aa5d29784ed7da6d7b96b358b3559be1b6fa98d75636593dfed23ad89a8aafff5ffac01c3c88abdd0291
-+  languageName: node
-+  linkType: hard
-+
- "@electron/asar@npm:3.4.1, @electron/asar@npm:^3.3.1":
-   version: 3.4.1
-   resolution: "@electron/asar@npm:3.4.1"
-@@ -12523,7 +12530,7 @@ __metadata:
-     color: "npm:3.2.1"
-     compare-versions: "npm:6.1.1"
-     debounce: "npm:1.2.1"
--    electron: "npm:42.3.0"
-+    electron: "npm:42.11.18"
-     electron-builder: "npm:26.15.6"
-     electron-updater: "npm:6.6.8"
-     electron-window-state: "npm:5.0.3"
-@@ -19708,15 +19715,6 @@ __metadata:
-   languageName: node
-   linkType: hard
- 
--"@types/yauzl@npm:^2.9.1":
--  version: 2.10.0
--  resolution: "@types/yauzl@npm:2.10.0"
--  dependencies:
--    "@types/node": "npm:*"
--  checksum: 10/55d27ae5d346ea260e40121675c24e112ef0247649073848e5d4e03182713ae4ec8142b98f61a1c6cbe7d3b72fa99bbadb65d8b01873e5e605cdc30f1ff70ef2
--  languageName: node
--  linkType: hard
--
- "@types/yoga-layout@npm:1.9.2":
-   version: 1.9.2
-   resolution: "@types/yoga-layout@npm:1.9.2"
-@@ -29592,17 +29590,17 @@ __metadata:
-   languageName: node
-   linkType: hard
- 
--"electron@npm:42.3.0":
--  version: 42.3.0
--  resolution: "electron@npm:42.3.0"
-+"electron@npm:42.11.18":
-+  version: 42.11.18
-+  resolution: "electron@npm:42.11.18"
-   dependencies:
-+    "@electron-internal/extract-zip": "npm:^1.0.1"
-     "@electron/get": "npm:^5.0.0"
-     "@types/node": "npm:^24.9.0"
--    extract-zip: "npm:^2.0.1"
-   bin:
-     electron: cli.js
-     install-electron: install.js
--  checksum: 10/969c82badc2cb9e573f82a7e87ca208f15bcee862b77a3d45d19e2f239ca8dcc6130442e20608daa54529847adbf06c0cb628f57c4e0cff3abd6b867b7f1e42a
-+  checksum: 10/2cda7a3eff1f9fc91c7d6c332eb9a675624a3b152cbbb999d952dbaf1834dabe74d2765ea9785e510044c33aa45dfe25ad84694a1054b8020af87ab440d509ef
-   languageName: node
-   linkType: hard
- 
-@@ -32036,23 +32034,6 @@ __metadata:
-   languageName: node
-   linkType: hard
- 
--"extract-zip@npm:^2.0.1":
--  version: 2.0.1
--  resolution: "extract-zip@npm:2.0.1"
--  dependencies:
--    "@types/yauzl": "npm:^2.9.1"
--    debug: "npm:^4.1.1"
--    get-stream: "npm:^5.1.0"
--    yauzl: "npm:^2.10.0"
--  dependenciesMeta:
--    "@types/yauzl":
--      optional: true
--  bin:
--    extract-zip: cli.js
--  checksum: 10/8cbda9debdd6d6980819cc69734d874ddd71051c9fe5bde1ef307ebcedfe949ba57b004894b585f758b7c9eeeea0e3d87f2dda89b7d25320459c2c9643ebb635
--  languageName: node
--  linkType: hard
--
- "extsprintf@npm:1.3.0":
-   version: 1.3.0
-   resolution: "extsprintf@npm:1.3.0"
+ 		// Reported, but flagged so it's not presented as a failed import.
+-		expect(errors.length).toBe(1);
+-		expect(isRecoverableError(errors[0])).toBe(true);
++		expect(errors.length).toBe(2);
++		expect(errors.every(isRecoverableError)).toBe(true);
+ 	});
+ });
 ```
 
 ---
 
-### Incident Patch 2: `2e131019` (2026-10-30)
-**Commit Message**: fix(deps): update dependency js-yaml to v4.3.1 (#16973)
+### Incident Patch 2: `8beabc12` (2026-11-03)
+**Commit Message**: chore(deps): update dependency css-loader to v7 (#16996)
 
 Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
 
-**File**: `packages/lib/package.json` (modified, +1/-1)
+**File**: `packages/pdf-viewer/package.json` (modified, +1/-1)
 ```diff
-@@ -78,7 +78,7 @@
-     "html-minifier": "4.0.0",
-     "image-data-uri": "2.0.1",
-     "immer": "9.0.21",
--    "js-yaml": "4.3.0",
-+    "js-yaml": "4.3.1",
-     "markdown-it": "13.0.2",
-     "md5": "2.3.0",
-     "md5-file": "5.0.0",
-```
-
-**File**: `packages/tools/package.json` (modified, +1/-1)
-```diff
-@@ -59,7 +59,7 @@
-     "gulp": "4.0.2",
-     "html-entities": "1.4.0",
+@@ -31,7 +31,7 @@
+     "@types/react-dom": "19.1.7",
+     "@types/styled-components": "5.1.32",
+     "babel-jest": "29.7.0",
+-    "css-loader": "6.11.0",
++    "css-loader": "7.1.4",
      "jest": "29.7.0",
--    "js-yaml": "4.3.0",
-+    "js-yaml": "4.3.1",
-     "rss": "1.2.2",
-     "sass": "1.101.7",
-     "sqlite3": "5.1.6",
+     "jest-environment-jsdom": "29.7.0",
+     "style-loader": "3.3.4",
 ```
 
-**File**: `yarn.lock` (modified, +6/-6)
+**File**: `yarn.lock` (modified, +44/-2)
 ```diff
-@@ -12958,7 +12958,7 @@ __metadata:
-     immer: "npm:9.0.21"
+@@ -13025,7 +13025,7 @@ __metadata:
+     "@types/styled-components": "npm:5.1.32"
+     async-mutex: "npm:0.5.0"
+     babel-jest: "npm:29.7.0"
+-    css-loader: "npm:6.11.0"
++    css-loader: "npm:7.1.4"
      jest: "npm:29.7.0"
-     jest-expect-message: "npm:1.1.3"
--    js-yaml: "npm:4.3.0"
-+    js-yaml: "npm:4.3.1"
-     jsdom: "npm:26.1.0"
-     markdown-it: "npm:13.0.2"
-     md5: "npm:2.3.0"
-@@ -13234,7 +13234,7 @@ __metadata:
-     gulp: "npm:4.0.2"
-     html-entities: "npm:1.4.0"
-     jest: "npm:29.7.0"
--    js-yaml: "npm:4.3.0"
-+    js-yaml: "npm:4.3.1"
-     license-checker-rseidelsohn: "npm:4.4.2"
-     markdown-it: "npm:13.0.2"
-     md5-file: "npm:5.0.0"
-@@ -39266,14 +39266,14 @@ __metadata:
+     jest-environment-jsdom: "npm:29.7.0"
+     pdfjs-dist: "npm:2.16.105"
+@@ -27206,7 +27206,31 @@ __metadata:
    languageName: node
    linkType: hard
  
--"js-yaml@npm:4.3.0":
--  version: 4.3.0
--  resolution: "js-yaml@npm:4.3.0"
-+"js-yaml@npm:4.3.1":
-+  version: 4.3.1
-+  resolution: "js-yaml@npm:4.3.1"
+-"css-loader@npm:6.11.0, css-loader@npm:^6.11.0":
++"css-loader@npm:7.1.4":
++  version: 7.1.4
++  resolution: "css-loader@npm:7.1.4"
++  dependencies:
++    icss-utils: "npm:^5.1.0"
++    postcss: "npm:^8.4.40"
++    postcss-modules-extract-imports: "npm:^3.1.0"
++    postcss-modules-local-by-default: "npm:^4.0.5"
++    postcss-modules-scope: "npm:^3.2.0"
++    postcss-modules-values: "npm:^4.0.0"
++    postcss-value-parser: "npm:^4.2.0"
++    semver: "npm:^7.6.3"
++  peerDependencies:
++    "@rspack/core": 0.x || ^1.0.0 || ^2.0.0-0
++    webpack: ^5.27.0
++  peerDependenciesMeta:
++    "@rspack/core":
++      optional: true
++    webpack:
++      optional: true
++  checksum: 10/4a37f3bd5db6d7d13a71f6ffff6d7afc3b243d4e2105c98dd1df9c1ae719cf95c3b46c47aeb6c5fd3675caf60bdb144e9baeba979a432df0906613e8f07b7623
++  languageName: node
++  linkType: hard
++
++"css-loader@npm:^6.11.0":
+   version: 6.11.0
+   resolution: "css-loader@npm:6.11.0"
    dependencies:
-     argparse: "npm:^2.0.1"
-   bin:
-     js-yaml: bin/js-yaml.js
--  checksum: 10/2bcec3a8118d7f744badeb04e14366578d234a736f353d41fe35d2305e4ce2409a8e041d277f07cd6bbc8aaa12128d650a68ce43247072519bede20962d2126f
-+  checksum: 10/2ce71b5d632abbd77da80447bf860e8a0264e54bffe94840984887d58b023761495b523727547904517a6107a1ef189854b361e0fc44995ee13a84f222d7bd42
+@@ -48882,6 +48906,17 @@ __metadata:
    languageName: node
    linkType: hard
  
++"postcss@npm:^8.4.40":
++  version: 8.5.32
++  resolution: "postcss@npm:8.5.32"
++  dependencies:
++    nanoid: "npm:^3.3.20"
++    picocolors: "npm:^1.1.1"
++    source-map-js: "npm:^1.2.2"
++  checksum: 10/c86fd279d9f29d34bbec6482e01f54effe00eaf8f4dadbe17f8345d11eac68439da45d642b04bfb5d704886f665d2c31f9a0904f2a3f1b9f8098ee0894f76cea
++  languageName: node
++  linkType: hard
++
+ "postcss@npm:^8.5.1, postcss@npm:^8.5.6":
+   version: 8.5.6
+   resolution: "postcss@npm:8.5.6"
+@@ -54595,6 +54630,13 @@ __metadata:
+   languageName: node
+   linkType: hard
+ 
++"source-map-js@npm:^1.2.2":
++  version: 1.2.2
++  resolution: "source-map-js@npm:1.2.2"
++  checksum: 10/4807c894bb6280c8b84886159b96080e3996f42c6e8015e647881edfd4f955f6024ceebb8bb40d33ce8b106e24b2e29c133575e1c60c01c8aae57a05fdf17761
++  languageName: node
++  linkType: hard
++
+ "source-map-loader@npm:5.0.0":
+   version: 5.0.0
+   resolution: "source-map-loader@npm:5.0.0"
 ```
 
 ---
 
-### Incident Patch 3: `85cdb8ad` (2026-10-28)
-**Commit Message**: Clipper: Fixes #16887: Keep the Confirm button reachable with a larger browser font size (#16929)
+### Incident Patch 3: `f95f3012` (2026-11-02)
+**Commit Message**: All: Keep all the CSS of clipped pages, and compact it in linear time
 
-**File**: `packages/app-clipper/popup/src/App.css` (modified, +3/-1)
+**File**: `.gitignore` (modified, +2/-0)
 ```diff
-@@ -2,7 +2,9 @@ body {
- 	margin: 0;
- 	padding: 0;
- 	font-family: sans-serif;
--	line-height: 2em;
-+	/* What 2em gave at the default 16px. A fixed value, so a larger browser font size doesn't
-+	   make every row taller and push the Confirm button out of the popup (#16887) */
-+	line-height: 32px;
- }
+@@ -2056,6 +2056,8 @@ packages/lib/urlUtils.js
+ packages/lib/utils/ActionLogger.test.js
+ packages/lib/utils/ActionLogger.js
+ packages/lib/utils/attachedResources.js
++packages/lib/utils/compactCss.test.js
++packages/lib/utils/compactCss.js
+ packages/lib/utils/credentialFiles.js
+ packages/lib/utils/dom/makeSandboxedIframe.js
+ packages/lib/utils/focusHandler.js
+```
+
+**File**: `.ignore.eslint` (modified, +2/-0)
+```diff
+@@ -2082,6 +2082,8 @@ packages/lib/urlUtils.js
+ packages/lib/utils/ActionLogger.test.js
+ packages/lib/utils/ActionLogger.js
+ packages/lib/utils/attachedResources.js
++packages/lib/utils/compactCss.test.js
++packages/lib/utils/compactCss.js
+ packages/lib/utils/credentialFiles.js
+ packages/lib/utils/dom/makeSandboxedIframe.js
+ packages/lib/utils/focusHandler.js
+```
+
+**File**: `packages/app-mobile/web/webpack.config.ts` (modified, +0/-1)
+```diff
+@@ -74,7 +74,6 @@ const buildSharedConfig = (hotReload: boolean): webpack.Configuration => {
+ 				'react-native-fingerprint-scanner': emptyLibraryMock,
+ 				'@joplin/react-native-saf-x': emptyLibraryMock,
+ 				'react-native-quick-actions': emptyLibraryMock,
+-				'uglifycss': emptyLibraryMock,
+ 				'react-native-share': emptyLibraryMock,
+ 				'react-native-camera': emptyLibraryMock,
+ 				'react-native-zip-archive': emptyLibraryMock,
+```
+
+**File**: `packages/lib/package.json` (modified, +0/-1)
+```diff
+@@ -103,7 +103,6 @@
+     "string-to-stream": "3.0.1",
+     "tar": "7.5.22",
+     "tcp-port-used": "1.0.3",
+-    "uglifycss": "0.0.29",
+     "undici": "8.10.0",
+     "url-parse": "1.5.10",
+     "uuid": "11.1.1",
+```
+
+**File**: `packages/lib/services/rest/routes/notes.ts` (modified, +8/-8)
+```diff
+@@ -34,6 +34,7 @@ import { NoteEntity, ResourceEntity } from '../../database/types';
+ import { DownloadController } from '../../../downloadController';
+ import { FetchBlobOptions } from '../../../types';
+ import RevisionService from '../../RevisionService';
++import compactCss from '../../../utils/compactCss';
  
- .App {
+ const logger = Logger.create('routes/notes');
+ 
+@@ -122,16 +123,15 @@ async function requestNoteToNote(requestNote: RequestNote): Promise<NoteEntity>
+ 				// Need to remove all whitespaces because whitespace at a beginning of a line
+ 				// means a code block in Markdown.
+ 				collapseWhitespace: true,
+-				minifyCSS: true,
++				// Also for the CSS, but without the minifier's own, which drops CSS it does not know about and is slow on
++				// some inputs
++				minifyCSS: compactCss,
+ 				maxLineLength: 300,
++				// Only needed for templates such as PHP, and looking for them is slow on some inputs
++				ignoreCustomFragments: [] as RegExp[],
+ 			};
+ 
+-			const uglifycss = require('uglifycss');
+-			const styleString = uglifycss.processString(style.join('\n'), {
+-				// Need to set a max length because Ace Editor takes forever
+-				// to display notes with long lines.
+-				maxLineLen: 200,
+-			});
++			const styleString = compactCss(style.join('\n'));
+ 
+ 			const styleTag = style.length ? `<style>${styleString}</style>` + '\n' : '';
+ 			let minifiedHtml = '';
+@@ -145,7 +145,7 @@ async function requestNoteToNote(requestNote: RequestNote): Promise<NoteEntity>
+ 				minifiedHtml = requestNote.body_html;
+ 			}
+ 			output.body = styleTag + minifiedHtml;
+-			output.body = htmlUtils.prependBaseUrl(output.body, baseUrl);
++			if (baseUrl) output.body = htmlUtils.prependBaseUrl(output.body, baseUrl);
+ 			output.markup_language = MarkupToHtml.MARKUP_LANGUAGE_HTML;
+ 		} else {
+ 			// Convert to Markdown
+```
+
+**File**: `packages/lib/utils/compactCss.test.ts` (added, +41/-0)
+```diff
+@@ -0,0 +1,41 @@
++import compactCss from './compactCss';
++
++describe('compactCss', () => {
++
++	test.each([
++		['  .a  >  b {\n    color : red ;\n    margin: 0 auto;\n  }\n', '.a > b{color : red;margin: 0 auto;}'],
++		['a :hover { color: red; }', 'a :hover{color: red;}'],
++		['/* comment */ a { /* inner */ color: red; }', 'a{color: red;}'],
++		['a::before { content: "  two  /* not a comment */  spaces  "; }', 'a::before{content: "  two  /* not a comment */  spaces  ";}'],
++		['a::before { content: \'it\\\'s  fine\'; }', 'a::before{content: \'it\\\'s  fine\';}'],
++		['@layer base { a { color: red; } }\n.after { color: green; }', '@layer base{a{color: red;}\n}\n.after{color: green;}'],
++		['@container (min-width: 400px) { .c { display: grid; } }', '@container (min-width: 400px){.c{display: grid;}\n}'],
++		['.a { color: red; &:hover { color: blue; } }', '.a{color: red;&:hover{color: blue;}\n}'],
++		['* { --tw-ring-inset: ; --x: 1px; }', '*{--tw-ring-inset: ;--x: 1px;}'],
++		['a { background: url(data:image/png;base64,iVBORw0KGgo=) no-repeat; }', 'a{background: url(data:image/png;base64,iVBORw0KGgo=) no-repeat;}'],
++		['color:   red ;   margin:0', 'color: red;margin:0'],
++		['screen   and  (max-width: 600px)', 'screen and (max-width: 600px)'],
++		['a { content: "unterminated\n  b { color: red; }', 'a{content: "unterminated\nb{color: red;}'],
++		['', ''],
++	])('should compact %j', (css, expected) => {
++		expect(compactCss(css)).toBe(expected);
++	});
++
++	test('should not indent any line, and end a line after each rule', () => {
++		const css = Array.from({ length: 50 }, (_, i) => `\t\t.c${i} {\n\t\t\tcolor: red;\n\t\t}`).join('\n\n');
++		const lines = compactCss(css).split('\n');
++		expect(lines.length).toBe(50);
++		expect(lines.filter(line => /^\s/.test(line))).toEqual([]);
++	});
++
++	test.each([
++		['strings', '"" '.repeat(500_000)],
++		['opening braces', '{'.repeat(1_000_000)],
++		['comments', '/*'.repeat(500_000)],
++		['whitespace', ' '.repeat(1_000_000)],
++	])('should compact many %s quickly', (_case, css) => {
++		const startTime = Date.now();
++		compactCss(css);
++		expect(Date.now() - startTime).toBeLessThan(1000);
++	});
++});
+```
+
+**File**: `packages/lib/utils/compactCss.ts` (added, +50/-0)
+```diff
+@@ -0,0 +1,50 @@
++// Makes the CSS of a clipped page or an email fit in a note: comments are removed, and every run of whitespace outside
++// strings becomes a single space, so that no line is indented, which could make it render as a code block. Each
++// closing brace ends a line, so that lines stay short enough for editors. Nothing else is changed, so unlike a
++// minifier, it keeps any CSS it does not know about, such as newer at-rules or nesting, and it takes linear time.
++const compactCss = (css: string) => {
++	const output: string[] = [];
++	let lastChar = '';
++	let pendingSpace = false;
++	let i = 0;
++
++	const append = (text: string) => {
++		if (pendingSpace && lastChar && !'\n{};'.includes(lastChar)) output.push(' ');
++		pendingSpace = false;
++		output.push(text);
++		lastChar = text[text.length - 1];
++	};
++
++	while (i < css.length) {
++		const c = css[i];
++
++		if (c === '/' && css[i + 1] === '*') {
++			const end = css.indexOf('*/', i + 2);
++			i = end === -1 ? css.length : end + 2;
++			pendingSpace = true;
++		} else if (c === ' ' || c === '\t' || c === '\n' || c === '\r' || c === '\f') {
++			pendingSpace = true;
++			i++;
++		} else if (c === '"' || c === '\'') {
++			// A string ends at its closing quote, or at an unescaped line break, as in a browser
++			let end = i + 1;
++			while (end < css.length && css[end] !== c && css[end] !== '\n') {
++				end += css[end] === '\\' ? 2 : 1;
++			}
++			append(css.substring(i, Math.min(end + 1, css.length)));
++			i = end + 1;
++		} else if (c === '{' || c === '}' || c === ';') {
++			// Except in an empty custom property, which older browsers only accept with a space
++			if (lastChar !== ':') pendingSpace = false;
++			append(c === '}' ? '}\n' : c);
++			i++;
++		} else {
++			append(c);
++			i++;
++		}
++	}
++
++	return output.join('').trim();
++};
++
++export default compactCss;
+```
+
+**File**: `yarn.lock` (modified, +0/-10)
+```diff
+@@ -12993,7 +12993,6 @@ __metadata:
+     tcp-port-used: "npm:1.0.3"
+     tesseract.js: "npm:7.0.0"
+     typescript: "npm:5.9.3"
+-    uglifycss: "npm:0.0.29"
+     undici: "npm:8.10.0"
+     url-parse: "npm:1.5.10"
+     uuid: "npm:11.1.1"
+@@ -58338,15 +58337,6 @@ __metadata:
+   languageName: node
+   linkType: hard
+ 
+-"uglifycss@npm:0.0.29":
+-  version: 0.0.29
+-  resolution: "uglifycss@npm:0.0.29"
+-  bin:
+-    uglifycss: ./uglifycss
+-  checksum: 10/6304fc0f36c3b656d3b87265b6738daf0663aceb4d614fa0c8214ec77ca333f4ab3dc540399531a1bcb5d5fe606c84ca33dc738e0bf74c46c0e086451ea8678d
+-  languageName: node
+-  linkType: hard
+-
+ "uid-number@npm:0.0.6":
+   version: 0.0.6
+   resolution: "uid-number@npm:0.0.6"
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #16977** (closed): Desktop: Fixes #16976: Refresh spellcheck underlines on note load and document edit in Markdown editor (@Ayush-AM)
-- **PR #16974** (closed): Server: Resolves #16975: Listen on a Unix socket when APP_SOCKET is set (@cyberb)
-- **PR #16973** (2026-10-30): fix(deps): update dependency js-yaml to v4.3.1 (@renovate[bot])
-- **PR #16964** (2026-10-28): Desktop: Fixes #16939: Security: Upgrade to Electron 42.11.18 (@personalizedrefrigerator)
-- **PR #16963** (closed): Desktop: Fixes #16939: Security: Upgrade to Electron 42.11.18 (@personalizedrefrigerator)
-- **PR #16955** (2026-10-27): chore(deps): update actions/github-script action to v9 (@renovate[bot])
+- **PR #17002** (2026-11-03): chore(deps): update dependency style-loader to v4 (@renovate[bot])
+- **PR #17000** (2026-11-03): chore(deps): update dependency react-tooltip to v5 (@renovate[bot])
+- **PR #16999** (2026-11-03): All: Translation: Update ja_JP.po (@akiratamcat)
+- **PR #16998** (closed): Desktop: Fixes #16998: Fix fatal startup error caused by CallbackUrlCommand const enum (@saqibmanzoor-dev)
+- **PR #16997** (2026-11-03): chore(deps): update dependency gulp to v5 (@renovate[bot])
+- **PR #16996** (2026-11-03): chore(deps): update dependency css-loader to v7 (@renovate[bot])
 
 ---
 
@@ -1177,28 +1351,29 @@ Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Desktop: Fixes #16939: Security: Upgrade to Electron 42.11.18 (#16964)
+## X. Desktop, Cli: Fix ENEX import failing when an unescaped ampersand is directly fo
 
 **RULE**:
-When implementing operations in `packages/app-desktop/package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in laurent22/joplin. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/app-cli/tests/enex_to_md/unescaped_ampersand.enex`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in laurent22/joplin. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f5823d1b`: Desktop: Fixes #16939: Security: Upgrade to Electron 42.11.18 (#16964). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `be60c3a2`: Desktop, Cli: Fix ENEX import failing when an unescaped ampersand is directly followed by a tag. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/app-desktop/package.json`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/app-cli/tests/enex_to_md/unescaped_ampersand.enex`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-    "electron": "42.11.18",
+      <application-data key="evernote.caption">Caption truncated after Polars &</application-data>
+      <application-data key="evernote.captionSource">AI</application-data>
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-    "electron": "42.3.0",
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f5823d1b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `be60c3a2` are properly handled with clean fallback behavior.

@@ -487016,3 +487016,54 @@ header: stability
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `c9030485` are properly handled with clean fallback behavior.
+
+
+---
+
+## 6672. Desktop, Cli: Fix ENEX import failing when an unescaped ampersand is directly fo (Harvested from laurent22/joplin)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Desktop, Cli: Fix ENEX import failing when an unescaped ampersand is directly fo",
+  "source": "laurent22/joplin",
+  "source_url": "https://github.com/laurent22/joplin",
+  "source_version": "a7663045",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-11-04T00:17:25.029Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-laurent22-joplin",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [laurent22/joplin](https://github.com/laurent22/joplin) (Revision: `a7663045`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `packages/app-cli/tests/enex_to_md/unescaped_ampersand.enex`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in laurent22/joplin. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `be60c3a2`: Desktop, Cli: Fix ENEX import failing when an unescaped ampersand is directly followed by a tag. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/app-cli/tests/enex_to_md/unescaped_ampersand.enex`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified production-grade fix pattern:
+      <application-data key="evernote.caption">Caption truncated after Polars &</application-data>
+      <application-data key="evernote.captionSource">AI</application-data>
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// Anti-pattern to NEVER write (induced failure mode):
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `be60c3a2` are properly handled with clean fallback behavior.

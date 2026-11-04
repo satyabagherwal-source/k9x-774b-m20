@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261031-RX8Y",
-    "timestamp": "2026-10-31T12:59:57.586Z",
-    "repository": "topgrade-rs/topgrade",
-    "learningId": "learn-github-topgrade-rs-topgrade",
-    "contentHash": "832143cd6de71b1bd04f2d13028a8d99cae5cb20d6f824ba130af1412ebc5c9b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261031-S12B",
     "timestamp": "2026-10-31T13:00:02.531Z",
     "repository": "InsertKoinIO/koin",
@@ -7490,6 +7475,21 @@
     "repository": "paradedb/paradedb",
     "learningId": "learn-github-paradedb-paradedb",
     "contentHash": "e4a680b299f89c8ca855b36a2c30b17b65e3b2f77d2ef6b7848ceeceab48c7b5",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-AP6J",
+    "timestamp": "2026-11-04T00:17:25.243Z",
+    "repository": "laurent22/joplin",
+    "learningId": "learn-github-laurent22-joplin",
+    "contentHash": "cf7ae968dd13b97a38c5309b430884e87127c81f3c4da37239be27698157e2af",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

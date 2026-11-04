@@ -10313,10 +10313,10 @@
     "repository": "laurent22/joplin",
     "platform": "github",
     "sourceUrl": "https://github.com/laurent22/joplin",
-    "sourceVersion": "2e131019",
+    "sourceVersion": "a7663045",
     "license": "NOASSERTION",
-    "contentHash": "c5989e2e012ae28423aef3a03fdf2b9db14a95e16dfcad96fb2e1ba6498a414f",
-    "lastHarvestedAt": "2026-10-30T23:51:40.303Z",
+    "contentHash": "cf7ae968dd13b97a38c5309b430884e87127c81f3c4da37239be27698157e2af",
+    "lastHarvestedAt": "2026-11-04T00:17:25.246Z",
     "learningId": "learn-github-laurent22-joplin"
   },
   "appwrite-appwrite": {
