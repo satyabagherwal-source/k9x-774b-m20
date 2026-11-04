@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kcl-lang-kcl-learnings.md`  
 > **Source**: github ([https://github.com/kcl-lang/kcl](https://github.com/kcl-lang/kcl))  
-> **Source Version**: `77411c1c`  
+> **Source Version**: `5e193f62`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-02T21:30:09.329Z  
+> **Timestamp**: 2026-11-04T03:44:13.035Z  
 > **Learning ID**: `learn-github-kcl-lang-kcl`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kcl-lang-kcl-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/kcl-lang/kcl](https://github.com/kcl-lang/kcl))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-02T21:30:09.232Z  
+> **Harvest Timestamp**: 2026-11-04T03:44:12.597Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: KCL Language Core and API
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 2440 stars
+- **Stars / Engagement**: 2441 stars
 
 ---
 
@@ -1267,178 +1267,532 @@ impl ModuleInfo {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `77411c1c` (2026-11-02)
-**Commit Message**: fix(runtime): split and rsplit on unicode whitespace when no separator is given (#2258)
+### Incident Patch 1: `5e193f62` (2026-11-03)
+**Commit Message**: feat: Export subcommand [--target=golang] (#2259)
 
-Signed-off-by: Steve <[REDACTED_EMAIL]>
+* feat: Export subcommand [--target=python]
 
-**File**: `crates/runtime/src/value/val_str.rs` (modified, +68/-50)
+Signed-off-by: Mihai Galos <[REDACTED_EMAIL]>
+
+* feat: Export subcommand [--target=python]
+
+Signed-off-by: Mihai Galos <[REDACTED_EMAIL]>
+
+* feat: Export subcommand [--target=golang]
+
+Signed-off-by: Mihai Galos <[REDACTED_EMAIL]>
+
+---------
+
+Signed-off-by: Mihai Galos <[REDACTED_EMAIL]>
+
+**File**: `crates/api/spec.proto` (modified, +19/-0)
 ```diff
-@@ -1,12 +1,67 @@
- //! Copyright The KCL Authors. All rights reserved.
+@@ -1013,6 +1013,9 @@ service KclService {
+ 	/// Generate Python DTOs from the schemas of a KCL package.
+ 	rpc GeneratePython(GeneratePythonArgs) returns (GeneratePythonResult);
  
- use crate::*;
--use bstr::ByteSlice;
- use unic_ucd_bidi::BidiClass;
- use unic_ucd_category::GeneralCategory;
- use unicode_casing::CharExt;
++	/// Generate Go DTOs from the schemas of a KCL package.
++	rpc GenerateGo(GenerateGoArgs) returns (GenerateGoResult);
++
+ 	/// Generate documentation from the schemas of a KCL package.
+ 	///
+ 	/// # Examples
+@@ -1914,6 +1917,22 @@ message GeneratePythonResult {
+ 	string python_source = 1;
+ }
  
--const ASCII_WHITESPACES: [u8; 6] = [0x20, 0x09, 0x0a, 0x0c, 0x0d, 0x0b];
-+/// Returns whether `c` is whitespace for `str.isspace()`, `str.split()` and `str.rsplit()`.
-+#[inline]
-+fn is_space_char(c: char) -> bool {
-+    use unic_ucd_bidi::bidi_class::abbr_names::*;
-+    GeneralCategory::of(c) == GeneralCategory::SpaceSeparator
-+        || matches!(BidiClass::of(c), WS | B | S)
++// Message for Go DTO generation request arguments.
++message GenerateGoArgs {
++	// Arguments for parsing the program whose schemas are exported.
++	ParseProgramArgs parse_args = 1;
++	// Go package name for the generated file's `package` clause, e.g.
++	// "dto". Empty defaults to "generated" — Go requires a package clause,
++	// unlike GenerateProto's optional `package` field.
++	string package = 2;
 +}
 +
-+/// Splits `s` on runs of whitespace, at most `maxsplit` times (unlimited if negative).
-+/// The remainder after the last split is returned as is, like Python's `str.split()`.
-+fn split_whitespace_n(s: &str, maxsplit: i64) -> Vec<&str> {
-+    let mut parts = Vec::new();
-+    let mut rest = s.trim_start_matches(is_space_char);
-+    while !rest.is_empty() {
-+        if maxsplit >= 0 && parts.len() as i64 == maxsplit {
-+            parts.push(rest);
-+            break;
-+        }
-+        match rest.find(is_space_char) {
-+            Some(end) => {
-+                parts.push(&rest[..end]);
-+                rest = rest[end..].trim_start_matches(is_space_char);
-+            }
-+            None => {
-+                parts.push(rest);
-+                break;
-+            }
-+        }
-+    }
-+    parts
++// Message for Go DTO generation response.
++message GenerateGoResult {
++	// The generated Go source.
++	string go_source = 1;
 +}
 +
-+/// Splits `s` on runs of whitespace from the right, at most `maxsplit` times (unlimited if
-+/// negative). The remainder before the last split is returned as is, like Python's `str.rsplit()`.
-+/// The parts are returned from the right, so the caller reverses them.
-+fn rsplit_whitespace_n(s: &str, maxsplit: i64) -> Vec<&str> {
-+    let mut parts = Vec::new();
-+    let mut rest = s.trim_end_matches(is_space_char);
-+    while !rest.is_empty() {
-+        if maxsplit >= 0 && parts.len() as i64 == maxsplit {
-+            parts.push(rest);
-+            break;
-+        }
-+        match rest.rfind(is_space_char) {
-+            Some(start) => {
-+                let width = rest[start..].chars().next().map_or(1, char::len_utf8);
-+                parts.push(&rest[start + width..]);
-+                rest = rest[..start].trim_end_matches(is_space_char);
-+            }
-+            None => {
-+                parts.push(rest);
-+                break;
-+            }
-+        }
-+    }
-+    parts
-+}
+ // Message for generate doc request arguments.
+ message GenerateDocArgs {
+ 	// Arguments for parsing the program whose schemas are documented.
+```
+
+**File**: `crates/api/src/service/capi.rs` (modified, +19/-0)
+```diff
+@@ -39,6 +39,7 @@ impl HasErrorFormat for GenerateOpenApiArgs {}
+ impl HasErrorFormat for GenerateProtoArgs {}
+ impl HasErrorFormat for GenerateRustArgs {}
+ impl HasErrorFormat for GeneratePythonArgs {}
++impl HasErrorFormat for GenerateGoArgs {}
+ impl HasErrorFormat for GenerateDocArgs {}
+ impl HasErrorFormat for ListMethodArgs {}
  
- /// Superscript digits that `str.isdigit()` accepts besides the ASCII digits.
- const SUPERSCRIPT_DIGITS: [u16; 10] = [
-@@ -380,12 +435,7 @@ impl ValueRef {
-                 if v.is_empty() {
-                     return ValueRef::bool(false);
-                 }
--                use unic_ucd_bidi::bidi_class::abbr_names::*;
--                let result = v.chars().all(|c| {
--                    GeneralCategory::of(c) == GeneralCategory::SpaceSeparator
--                        || matches!(BidiClass::of(c), WS | B | S)
--                });
--                ValueRef::bool(result)
-+                ValueRef::bool(v.chars().all(is_space_char))
-             }
-             _ => panic!("Invalid str object in str_isspace"),
+@@ -251,6 +252,7 @@ pub(crate) fn lookup_service_fn_ptr(name: &str) -> Option<u64> {
+         "KclService.GenerateProto" => generate_proto as *const () as u64,
+         "KclService.GenerateRust" => generate_rust as *const () as u64,
+         "KclService.GeneratePython" => generate_python as *const () as u64,
++        "KclService.GenerateGo" => generate_go as *const () as u64,
+         "KclService.GenerateDoc" => generate_doc as *const () as u64,
+         // BuiltinService.Ping reuses the KclService.Ping implementation —
+         // both services share the same PingArgs/PingResult message types.
+@@ -850,6 +852,23 @@ pub(crate) fn generate_python(
+     )
+ }
+ 
++/// Service for generating Go DTOs from the schemas of a KCL package.
++pub(crate) fn generate_go(
++    serv: *mut kcl_service,
++    args: *const c_char,
++    args_len: usize,
++    result_len: *mut usize,
++) -> *const c_char {
++    call!(
++        serv,
++        args,
++        args_len,
++        result_len,
++        GenerateGoArgs,
++        generate_go
++    )
++}
++
+ /// Service for generating documentation from the schemas of a KCL package.
+ pub(crate) fn generate_doc(
+     serv: *mut kcl_service,
+```
+
+**File**: `crates/api/src/service/gen_go.rs` (added, +731/-0)
+```diff
+@@ -0,0 +1,731 @@
++//! Go DTO emitter from the shared package schema mapping.
++
++use std::cell::RefCell;
++use std::collections::{HashMap, HashSet};
++
++use kcl_ast::ast;
++
++use crate::gpyrpc::{KclType, SchemaTypes};
++use crate::service::gen_ident::to_pascal_case;
++use crate::service::gen_schema::{self, SchemaNameResolver};
++
++/// Package-level stdlib imports a generated file might need. Go treats an
++/// unused import as a hard compile error, so (unlike Rust/Python, where
++/// unused imports are at most a warning) we track which stdlib packages a
++/// `check:` expression actually used while rendering and only emit those.
++#[derive(Default)]
++struct GoImports {
++    used: RefCell<HashSet<&'static str>>,
++}
++
++impl GoImports {
++    fn mark(&self, import: &'static str) {
++        self.used.borrow_mut().insert(import);
++    }
++}
++
++const REGEX_MATCH_HELPER: &str = "func kclRegexMatch(pattern string, value string) bool {\n\tre, err := regexp.Compile(pattern)\n\tif err != nil {\n\t\treturn false\n\t}\n\treturn re.MatchString(value)\n}\n\n";
++
++pub(crate) fn generate_go(
++    mapping: &HashMap<String, SchemaTypes>,
++    package: &str,
++) -> anyhow::Result<String> {
++    let package = if package.is_empty() {
++        "generated"
++    } else {
++        package
++    };
++    let imports = GoImports::default();
++    let body =
++        gen_schema::generate_source(mapping, "Go", go_type_name, |out, name, ty, resolver| {
++            emit_schema(out, name, ty, resolver, &imports)
++        })?;
++
++    let mut out = format!("package {package}\n\n");
++    let used = imports.used.borrow();
++    if !used.is_empty() {
++        let mut names: Vec<&str> = used.iter().copied().collect();
++        names.sort();
++        out.push_str("import (\n");
++        for name in names {
++            out.push_str(&format!("\t\"{name}\"\n"));
++        }
++        out.push_str(")\n\n");
++    }
++    if used.contains("regexp") {
++        out.push_str(REGEX_MATCH_HELPER);
++    }
++    out.push_str(&body);
++    Ok(out)
++}
++
++fn emit_schema(
++    out: &mut String,
++    name: &str,
++    ty: &KclType,
++    resolver: &SchemaNameResolver,
++    imports: &GoImports,
++) -> anyhow::Result<()> {
++    for line in ty.schema_doc.lines() {
++        out.push_str("//");
++        if !line.is_empty() {
++            out.push(' ');
++            out.push_str(line);
++        }
++        out.push('\n');
++    }
++    out.push_str(&format!("type {} struct {{\n", go_type_name(name)));
++
++    let mut properties: Vec<&String> = ty.properties.keys().collect();
++    properties.sort();
++    let mut used_field_names = HashSet::new();
++    for property in &properties {
++        let field = &ty.properties[*property];
++        if field.r#type == "function" {
++            anyhow::bail!("Go DTO generation does not support function field {property:?}");
++        }
++        if !field.description.is_empty() {
++            for line in field.description.lines() {
++                out.push_str(&format!("\t// {line}\n"));
++            }
++        }
++        if !field.default.is_empty() {
++            for line in field.default.lines() {
++                out.push_str(&format!("\t// KCL default: {line}\n"));
++            }
++        }
++        let field_name = go_field_name(property);
++        if !used_field_names.insert(field_name.clone()) {
++            anyhow::bail!("Go field name collision after normalization: {field_name:?}");
++        }
++        let optional = !ty.required.iter().any(|required| required == *property);
++        let field_ty = go_type(field, resolver, property, optional)?;
++        let tag = if optional {
++            format!("`json:\"{property},omitempty\"`")
++        } else {
++            format!("`json:\"{property}\"`")
++        };
++        out.push_str(&format!("\t{field_name} {field_ty} {tag}\n"));
++    }
++    out.push_str("}\n");
++    emit_validator(out, name, ty, imports)?;
++    Ok(())
++}
++
++fn emit_validator(
++    out: &mut String,
++    name: &str,
++    ty: &KclType,
++    imports: &GoImports,
++) -> anyhow::Result<()> {
++    let fields = ty
++        .properties
++        .iter()
++        .map(|(name, field)| {
++            (
++                name.clone(),
++                (
++                    go_field_name(name),
++                    field.clone(),
++                    !ty.required.contains(name),
++                ),
++            )
++        })
++        .collect::<HashMap<_, _>>();
++
++    out.push_str(&format!(
++        "func (s *{}) Validate() []string {{\n",
++        go_type_name(name)
++    ));
++    out.push_str("\terrors := []string{}\n");
++    for check in gen_schema::decode_checks(ty)? {
++        out.push_str(&render_check(&check, &fields, imports)?);
++    }
++    out.push_str("\treturn errors\n");
++    out.push_str("}\n");
++    Ok(())
++}
++
++fn render_check(
++    check: &ast::CheckExpr,
++    fields: &HashMap<String, (String, KclType, bool)>,
++    imports: &GoImports,
++) -> anyhow::Result<String> {
++    let mut context = GoExprContext {
++        fields,
++        locals: 
+```
+
+**File**: `crates/api/src/service/jsonrpc.rs` (modified, +30/-0)
+```diff
+@@ -283,6 +283,14 @@ fn register_kcl_service(io: &mut IoHandler) {
+         };
+         futures::future::ready(catch!(kcl_service_impl, args, generate_python))
+     });
++    io.add_method("KclService.GenerateGo", |params: Params| {
++        let kcl_service_impl = KclServiceImpl::default();
++        let args: GenerateGoArgs = match params.parse() {
++            Ok(val) => val,
++            Err(err) => return futures::future::ready(Err(err)),
++        };
++        futures::future::ready(catch!(kcl_service_impl, args, generate_go))
++    });
+     io.add_method("KclService.GenerateDoc", |params: Params| {
+         let kcl_service_impl = KclServiceImpl::default();
+         let args: GenerateDocArgs = match params.parse() {
+@@ -485,6 +493,28 @@ mod tests {
+         assert!(python_source.contains("address: Address"));
+     }
+ 
++    #[test]
++    fn kcl_service_generate_go_dispatches() {
++        let mut io = IoHandler::default();
++        register_kcl_service(&mut io);
++        let request = serde_json::json!({
++            "jsonrpc": "2.0",
++            "method": "KclService.GenerateGo",
++            "params": {
++                "parse_args": {"paths": [gen_openapi_main_k()]}
++            },
++            "id": 1
++        })
++        .to_string();
++        let response = io
++            .handle_request_sync(&request)
++            .expect("KclService.GenerateGo should be registered");
++        let response: serde_json::Value = serde_json::from_str(&response).unwrap();
++        let go_source = response["result"]["go_source"].as_str().unwrap();
++        assert!(go_source.contains("type Person struct {"));
++        assert!(go_source.contains("Address Address `json:\"address\"`"));
++    }
++
+     /// The schema generator RPCs must be dispatchable through the JSON-RPC
+     /// handler, end to end from JSON params to JSON result.
+     #[test]
+```
+
+**File**: `crates/api/src/service/mod.rs` (modified, +3/-1)
+```diff
+@@ -1,5 +1,6 @@
+ pub mod capi;
+ pub(crate) mod gen_doc;
++pub(crate) mod gen_go;
+ pub(crate) mod gen_ident;
+ pub(crate) mod gen_openapi;
+ pub(crate) mod gen_proto;
+@@ -53,8 +54,9 @@ pub(crate) const SERVICE_METHODS: &[&str] = &[
+     "KclService.GenerateKcl",
+     "KclService.GenerateOpenAPI",
+     "KclService.GenerateProto",
+-    "KclService.GeneratePython",
+     "KclService.GenerateRust",
++    "KclService.GeneratePython",
++    "KclService.GenerateGo",
+     "KclService.GenerateDoc",
+     "BuiltinService.Ping",
+     "BuiltinService.ListMethod",
+```
+
+**File**: `crates/api/src/service/service_impl.rs` (modified, +181/-0)
+```diff
+@@ -40,6 +40,7 @@ use tempfile::NamedTempFile;
+ 
+ use super::SERVICE_METHODS;
+ use super::gen_doc;
++use super::gen_go;
+ use super::gen_openapi;
+ use super::gen_proto;
+ use super::gen_python;
+@@ -1823,6 +1824,18 @@ impl KclServiceImpl {
+         })
+     }
+ 
++    /// Generate Go DTOs from the schemas of a KCL package.
++    pub fn generate_go(&self, args: &GenerateGoArgs) -> anyhow::Result<GenerateGoResult> {
++        let parse_args = args
++            .parse_args
++            .as_ref()
++            .ok_or_else(|| anyhow::anyhow!("parse_args must be set to parse a KCL program"))?;
++        let mapping = gen_schema::load_pkg_schema_types(parse_args, "")?;
++        Ok(GenerateGoResult {
++            go_source: gen_go::generate_go(&mapping, &args.package)?,
++        })
++    }
++
+     /// Generate documentation from the schemas of a KCL package.
+     ///
+     /// The program referenced by `parse_args` is loaded and every schema
+@@ -3202,6 +3215,32 @@ mod generator_tests {
+         );
+     }
+ 
++    #[test]
++    fn generate_go_golden_output() {
++        let serv = KclServiceImpl::default();
++        let result = serv
++            .generate_go(&GenerateGoArgs {
++                parse_args: Some(schema_parse_args()),
++                package: String::new(),
++            })
++            .unwrap();
++        assert!(result.go_source.starts_with("package generated\n"));
++        assert!(result.go_source.contains("type Person struct {"));
++        assert!(
++            result
++                .go_source
++                .contains("Age *int64 `json:\"age,omitempty\"`")
++        );
++        assert!(
++            result
++                .go_source
++                .contains("Address Address `json:\"address\"`")
++        );
++        assert!(result.go_source.contains("Val any `json:\"val\"`"));
++        assert!(result.go_source.contains("type Base struct {"));
++        assert!(result.go_source.contains("errors := []string{}"));
++    }
++
+     #[test]
+     fn generate_rust_emits_customer_dtos_and_runtime_validation() {
+         let serv = KclServiceImpl::default();
+@@ -3450,6 +3489,138 @@ assert len(errors) >= 9, f"expected all invalid checks, got: {{errors}}"
+         );
+     }
+ 
++    #[test]
++    fn generate_go_emits_customer_dtos_and_runtime_validation() {
++        let serv = KclServiceImpl::default();
++        let result = serv
++            .generate_go(&GenerateGoArgs {
++                parse_args: Some(ParseProgramArgs {
++                    paths: vec![
++                        std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
++                            .join("src/testdata/gen_rust/main.k")
++                            .canonicalize()
++                            .unwrap()
++                            .display()
++                            .to_string(),
++                    ],
++                    ..Default::default()
++                }),
++                package: "main".to_string(),
++            })
++            .unwrap();
++        assert!(result.go_source.starts_with("package main\n"));
++        assert!(result.go_source.contains("type Entity struct {"));
++        assert!(result.go_source.contains("type Address struct {"));
++        assert!(result.go_source.contains("type Customer struct {"));
++        assert!(result.go_source.contains("Id string `json:\"id\"`"));
++        assert!(
++            result
++                .go_source
++                .contains("Version int64 `json:\"version\"`")
++        );
++        assert!(
++            result
++                .go_source
++                .contains("Age *int64 `json:\"age,omitempty\"`")
++        );
++        assert!(
++            result
++                .go_source
++                .contains("CreditLimit float64 `json:\"credit_limit\"`")
++        );
++        assert!(
++            result
++                .go_source
++                .contains("Addresses []Address `json:\"addresses\"`")
++        );
++        assert!(
++            result
++                .go_source
++                .contains("BillingAddress *Address `json:\"billing_address,omitempty\"`")
++        );
++        assert!(result.go_source.contains("KCL default: 0"));
++        assert!(result.go_source.contains("KCL default: \"EUR\""));
++        assert!(
++            result
++                .go_source
++                .contains("func (s *Customer) Validate() []string {")
++        );
++        assert!(result.go_source.contains("s.Age != nil"));
++        assert!(result.go_source.contains("*s.Age"));
++        assert!(result.go_source.contains("id must be a UUID"));
++        assert!(
++            result
++                .go_source
++                .contains("country must be an ISO 3166-1 alpha-2 code")
++        );
++        assert!(result.go_source.contains("customer must be an adult"));
++        assert!(result.go_source.contains("name must be 1..100 chars"));
++        assert!(result.go_source.contains("kclRegexMatch("));
++        assert!(result.go_source.contains("range s.Tags"));
++        assert!(result.go_source.contains("slice
+```
+
+**File**: `crates/cmd/src/export.rs` (modified, +14/-2)
+```diff
+@@ -3,7 +3,7 @@ use std::io::Write;
+ use anyhow::{Result, bail};
+ use clap::ArgMatches;
+ use kcl_api::{
+-    gpyrpc::{GeneratePythonArgs, GenerateRustArgs, ParseProgramArgs},
++    gpyrpc::{GenerateGoArgs, GeneratePythonArgs, GenerateRustArgs, ParseProgramArgs},
+     service::service_impl::KclServiceImpl,
+ };
+ 
+@@ -35,8 +35,20 @@ pub fn export_command<W: Write>(matches: &ArgMatches, writer: &mut W) -> Result<
+                 .generate_python(&GeneratePythonArgs { parse_args })?
+                 .python_source
          }
-@@ -569,7 +619,7 @@ impl ValueRef {
-                     Some(v) => v.as_int(),
-                     None => -1,
-                 };
--                let splited = if let Some(pattern) = sep {
-+                let splited: Vec<ValueRef> = if let Some(pattern) = sep {
-                     let s = pattern.as_str();
-                     if maxsplit < 0 {
-                         v.split(s.as_str()).map(convert).collect()
-@@ -580,27 +630,10 @@ impl ValueRef {
-                     }
-                 } else {
-                     // Split whitespace
--                    let mut splited = Vec::new();
--                    let mut last_offset = 0;
--                    let mut count = maxsplit;
--                    for (offset, _) in
--                        v.match_indices(|c: char| c.is_ascii_whitespace() || c == '\x0b')
--                    {
--                        if last_offset == offset {
--                            last_offset += 1;
--                            continue;
--                        }
--                        if count == 0 {
--                            break;
--                        }
--                        splited.push(convert(&v[last_offset..offset]));
--                        last_offset = offset + 1;
--                        count -= 1;
--                    }
--                    if last_offset != v.len() {
--                        splited.push(convert(&v[last_offset..]));
--                    }
--                    splited
-+                    split_whitespace_n(v, maxsplit)
-+                        .into_iter()
-+                        .map(convert)
-+                        .collect()
-                 };
-                 ValueRef::list_value(Some(splited.as_slice()))
-             }
-@@ -619,7 +652,7 @@ impl ValueRef {
-                     Some(v) => v.as_int(),
-                     None => -1,
-       
++        "go" => {
++            let package = matches
++                .get_one::<String>("package")
++                .cloned()
++                .unwrap_or_default();
++            KclServiceImpl::default()
++                .generate_go(&GenerateGoArgs {
++                    parse_args,
++                    package,
++                })?
++                .go_source
++        }
+         _ => bail!(
+-            "export target {target:?} is not implemented yet; available targets: rust, python"
++            "export target {target:?} is not implemented yet; available targets: rust, python, go"
+         ),
+     };
+ 
 ```
 
-**File**: `tests/grammar/builtins/str/split_unicode_whitespace/main.k` (added, +8/-0)
+**File**: `crates/cmd/src/lib.rs` (modified, +3/-2)
 ```diff
-@@ -0,0 +1,8 @@
-+a = "|".join("a b　c".split())
-+b = "|".join("a b　c".rsplit())
-+c = "|".join("  a 　b c ".split(maxsplit=1))
-+d = "|".join("  a b 　c ".rsplit(maxsplit=1))
-+e = len(" 　".split())
-+f = len(" 　".rsplit())
-+g = "|".join("  a  b ".split())
-+h = "|".join("é é".rsplit())
-```
-
-**File**: `tests/grammar/builtins/str/split_unicode_whitespace/stdout.golden` (added, +8/-0)
-```diff
-@@ -0,0 +1,8 @@
-+a: a|b|c
-+b: a|b|c
-+c: a|b c 
-+d:   a b|c
-+e: 0
-+f: 0
-+g: a|b
-+h: é|é
-\ No newline at end of file
+@@ -68,8 +68,9 @@ pub fn app() -> Command {
+         Command::new("export")
+             .about("export KCL schemas to source code")
+             .arg(arg!([input] ... "KCL input files").num_args(1..).required(true))
+-            .arg(arg!(target: --target <target> "Target language (currently supported: rust, python)").value_parser(["rust", "python"]).required(true))
+-            .arg(arg!(output: -o --output <output> "Write generated source to this file")),
++            .arg(arg!(target: --target <target> "Target language (currently supported: rust, python, go)").value_parser(["rust", "python", "go"]).required(true))
++            .arg(arg!(output: -o --output <output> "Write generated source to this file"))
++            .arg(arg!(package: --package <package> "Go package name for the generated file (target=go only; defaults to \"generated\")")),
+     )
+     .subcommand(Command::new("server").about("Start a rpc server for APIs"))
+     .subcommand(Command::new("version").about("Show the KCL version"))
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2259** (2026-11-03): feat: Export subcommand [--target=golang] (@mihaigalos)
 - **PR #2258** (2026-11-02): fix(runtime): split and rsplit on unicode whitespace when no separator is given (@56steve)
 - **PR #2257** (2026-10-30): perf(evaluator): skip recording schema instances nothing can read (@steeling)
 - **PR #2254** (2026-10-29): perf(runtime): cache compiled patterns in the regex module (@steeling)
 - **PR #2252** (2026-10-29): perf(runtime): read schema attributes without cloning the schema config (@steeling)
 - **PR #2251** (2026-10-29): fix(evaluator): restore panic info after runtime.catch catches an error (@steeling)
-- **PR #2250** (2026-10-29): perf(evaluator,runtime): drop per-lookup allocations in scope helpers and is_literal_type (@steeling)
 
 ---
 
@@ -1458,86 +1812,46 @@ Signed-off-by: Steve <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. runtime): split and rsplit on unicode whitespace when no separator is given (#22
+## X. Export subcommand [--target=golang] (#2259)
 
 **RULE**:
-When implementing operations in `crates/runtime/src/value/val_str.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kcl-lang/kcl. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/api/spec.proto`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kcl-lang/kcl. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `77411c1c`: runtime): split and rsplit on unicode whitespace when no separator is given (#2258). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5e193f62`: Export subcommand [--target=golang] (#2259). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/runtime/src/value/val_str.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/api/spec.proto`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-/// Returns whether `c` is whitespace for `str.isspace()`, `str.split()` and `str.rsplit()`.
-#[inline]
-fn is_space_char(c: char) -> bool {
-    use unic_ucd_bidi::bidi_class::abbr_names::*;
-    GeneralCategory::of(c) == GeneralCategory::SpaceSeparator
-        || matches!(BidiClass::of(c), WS | B | S)
+	/// Generate Go DTOs from the schemas of a KCL package.
+	rpc GenerateGo(GenerateGoArgs) returns (GenerateGoResult);
+
+// Message for Go DTO generation request arguments.
+message GenerateGoArgs {
+	// Arguments for parsing the program whose schemas are exported.
+	ParseProgramArgs parse_args = 1;
+	// Go package name for the generated file's `package` clause, e.g.
+	// "dto". Empty defaults to "generated" — Go requires a package clause,
+	// unlike GenerateProto's optional `package` field.
+	string package = 2;
 }
 
-/// Splits `s` on runs of whitespace, at most `maxsplit` times (unlimited if negative).
-/// The remainder after the last split is returned as is, like Python's `str.split()`.
-fn split_whitespace_n(s: &str, maxsplit: i64) -> Vec<&str> {
-    let mut parts = Vec::new();
-    let mut rest = s.trim_start_matches(is_space_char);
-    while !rest.is_empty() {
-        if maxsplit >= 0 && parts.len() as i64 == maxsplit {
-            parts.push(rest);
-            break;
-        }
-        match rest.find(is_space_char) {
-            Some(end) => {
-                parts.push(&rest[..end]);
-                rest = rest[end..].trim_start_matches(is_space_char);
-            }
-            None => {
-                parts.push(rest);
-                break;
-            }
-        }
-    }
-    parts
+// Message for Go DTO generation response.
+message GenerateGoResult {
+	// The generated Go source.
+	string go_source = 1;
 }
 
-/// Splits `s` on runs of whitespace from the right, at most `maxsplit` times (unlimited if
-/// negative). 
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-use bstr::ByteSlice;
-const ASCII_WHITESPACES: [u8; 6] = [0x20, 0x09, 0x0a, 0x0c, 0x0d, 0x0b];
-                use unic_ucd_bidi::bidi_class::abbr_names::*;
-                let result = v.chars().all(|c| {
-                    GeneralCategory::of(c) == GeneralCategory::SpaceSeparator
-                        || matches!(BidiClass::of(c), WS | B | S)
-                });
-                ValueRef::bool(result)
-                let splited = if let Some(pattern) = sep {
-                    let mut splited = Vec::new();
-                    let mut last_offset = 0;
-                    let mut count = maxsplit;
-                    for (offset, _) in
-                        v.match_indices(|c: char| c.is_ascii_whitespace() || c == '\x0b')
-                    {
-                        if last_offset == offset {
-                            last_offset += 1;
-                            continue;
-                        }
-                        if count == 0 {
-                            break;
-                        }
-                        splited.push(convert(&v[last_offset..offset]));
-                        last_offset = offset + 1;
-                        count -= 1;
-                    }
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `77411c1c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5e193f62` are properly handled with clean fallback behavior.

@@ -7154,3 +7154,6 @@ Every entry in this ledger must capture:
 | `learn-github-risingwavelabs-risingwave` | `https://github.com/risingwavelabs/risingwave` | `171d005b` | Multi-dimensional audit evidence | 2026-11-04T03:30:44.785Z |
 | `learn-github-cypress-io-cypress` | `https://github.com/cypress-io/cypress` | `d790431a` | Multi-dimensional audit evidence | 2026-11-04T03:37:45.430Z |
 | `learn-github-wix-detox` | `https://github.com/wix/Detox` | `667efcb6` | Multi-dimensional audit evidence | 2026-11-04T03:37:46.028Z |
+| `learn-github-pimalaya-himalaya` | `https://github.com/pimalaya/himalaya` | `8196891f` | Multi-dimensional audit evidence | 2026-11-04T03:44:07.830Z |
+| `learn-github-webdriverio-webdriverio` | `https://github.com/webdriverio/webdriverio` | `a02a5ad8` | Multi-dimensional audit evidence | 2026-11-04T03:44:10.217Z |
+| `learn-github-kcl-lang-kcl` | `https://github.com/kcl-lang/kcl` | `5e193f62` | Multi-dimensional audit evidence | 2026-11-04T03:44:13.506Z |

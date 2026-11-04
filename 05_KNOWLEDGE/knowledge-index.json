@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-04T03:37:45.941Z",
+  "last_updated": "2026-11-04T03:44:13.454Z",
   "total_verified_learnings": 1204,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -35088,8 +35088,8 @@
       "slug": "kcl-lang-kcl",
       "platform": "github",
       "source_url": "https://github.com/kcl-lang/kcl",
-      "source_version": "77411c1c",
-      "content_hash": "a4d3b761c6ed3ea40083d774d158861f65f29e8baf5605a14c1c3dbcf30cf5e1",
+      "source_version": "5e193f62",
+      "content_hash": "e2a10b7c1c8fcb45d6466364eec290550a166f5b593c7d1e2e977a991d3c99d8",
       "dossier_path": "07_PROJECT_LEARNING/kcl-lang-kcl-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kcl-lang-kcl-learnings.md",
       "promoted_rules": [
@@ -35132,6 +35132,11 @@
           "number": 6486,
           "title": "runtime): split and rsplit on unicode whitespace when no separator is given (#22",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6747,
+          "title": "Export subcommand [--target=golang] (#2259)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -35139,7 +35144,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-02T21:30:10.044Z",
+      "verified_at": "2026-11-04T03:44:13.440Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -46918,8 +46923,8 @@
       "slug": "pimalaya-himalaya",
       "platform": "github",
       "source_url": "https://github.com/pimalaya/himalaya",
-      "source_version": "5791471e",
-      "content_hash": "4a6ccc792c1a98f15f880121473ae422f70813a31bb24d2756407b15b1b520ca",
+      "source_version": "8196891f",
+      "content_hash": "261a3aac29cae34614b36e6af3f94eeeeebc95898ca5da664a6e3ec1b807efa1",
       "dossier_path": "07_PROJECT_LEARNING/pimalaya-himalaya-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pimalaya-himalaya-learnings.md",
       "promoted_rules": [
@@ -46937,6 +46942,11 @@
           "number": 5609,
           "title": "docs(testing): add IMAP+SMTP provider reports for QQ, 163, 139 Mail (#796)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6745,
+          "title": "cli): delimit config paths with $PATH's own separator (#800)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -46944,7 +46954,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T05:32:00.005Z",
+      "verified_at": "2026-11-04T03:44:07.766Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -76534,8 +76544,8 @@
       "slug": "webdriverio-webdriverio",
       "platform": "github",
       "source_url": "https://github.com/webdriverio/webdriverio",
-      "source_version": "dc7be72b",
-      "content_hash": "855d7d3b49b9e367fc199b0319ab6f83020e913d616776d56e87809c389c3d95",
+      "source_version": "a02a5ad8",
+      "content_hash": "44105ecbb734edddfc832e76b021b64ec13aea7de665f04db097bf6ad9cb188f",
       "dossier_path": "07_PROJECT_LEARNING/webdriverio-webdriverio-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/webdriverio-webdriverio-learnings.md",
       "promoted_rules": [
@@ -76573,6 +76583,11 @@
           "number": 5860,
           "title": "@wdio/html-reporter, @wdio/reporter, @wdio/video-reporter, @wdio/mocha-framework",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6746,
+          "title": "ci: build the Void Display Server image from the Fastly mirror (#16341)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -76580,7 +76595,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T20:22:01.169Z",
+      "verified_at": "2026-11-04T03:44:10.150Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -172977,6 +172992,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-04T03:37:45.919Z"
+    },
+    "rule-6745": {
+      "learning_id": "rule-6745",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6745,
+      "title": "cli): delimit config paths with $PATH's own separator (#800)",
+      "source_url": "https://github.com/pimalaya/himalaya",
+      "source_version": "8196891f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T03:44:07.766Z"
+    },
+    "rule-6746": {
+      "learning_id": "rule-6746",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6746,
+      "title": "ci: build the Void Display Server image from the Fastly mirror (#16341)",
+      "source_url": "https://github.com/webdriverio/webdriverio",
+      "source_version": "a02a5ad8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T03:44:10.150Z"
+    },
+    "rule-6747": {
+      "learning_id": "rule-6747",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6747,
+      "title": "Export subcommand [--target=golang] (#2259)",
+      "source_url": "https://github.com/kcl-lang/kcl",
+      "source_version": "5e193f62",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T03:44:13.440Z"
     }
   },
   "aliases": {

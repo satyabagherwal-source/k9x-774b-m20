@@ -1953,10 +1953,10 @@
     "repository": "webdriverio/webdriverio",
     "platform": "github",
     "sourceUrl": "https://github.com/webdriverio/webdriverio",
-    "sourceVersion": "dc7be72b",
+    "sourceVersion": "a02a5ad8",
     "license": "MIT",
-    "contentHash": "855d7d3b49b9e367fc199b0319ab6f83020e913d616776d56e87809c389c3d95",
-    "lastHarvestedAt": "2026-10-30T20:22:01.274Z",
+    "contentHash": "44105ecbb734edddfc832e76b021b64ec13aea7de665f04db097bf6ad9cb188f",
+    "lastHarvestedAt": "2026-11-04T03:44:10.217Z",
     "learningId": "learn-github-webdriverio-webdriverio"
   },
   "rubenverborgh-sparql.js": {
@@ -4743,10 +4743,10 @@
     "repository": "pimalaya/himalaya",
     "platform": "github",
     "sourceUrl": "https://github.com/pimalaya/himalaya",
-    "sourceVersion": "5791471e",
+    "sourceVersion": "8196891f",
     "license": "Apache-2.0",
-    "contentHash": "4a6ccc792c1a98f15f880121473ae422f70813a31bb24d2756407b15b1b520ca",
-    "lastHarvestedAt": "2026-10-30T05:32:00.105Z",
+    "contentHash": "261a3aac29cae34614b36e6af3f94eeeeebc95898ca5da664a6e3ec1b807efa1",
+    "lastHarvestedAt": "2026-11-04T03:44:07.830Z",
     "learningId": "learn-github-pimalaya-himalaya"
   },
   "shopify-react-native-skia": {
@@ -5713,10 +5713,10 @@
     "repository": "kcl-lang/kcl",
     "platform": "github",
     "sourceUrl": "https://github.com/kcl-lang/kcl",
-    "sourceVersion": "77411c1c",
+    "sourceVersion": "5e193f62",
     "license": "Apache-2.0",
-    "contentHash": "a4d3b761c6ed3ea40083d774d158861f65f29e8baf5605a14c1c3dbcf30cf5e1",
-    "lastHarvestedAt": "2026-11-02T21:30:10.177Z",
+    "contentHash": "e2a10b7c1c8fcb45d6466364eec290550a166f5b593c7d1e2e977a991d3c99d8",
+    "lastHarvestedAt": "2026-11-04T03:44:13.506Z",
     "learningId": "learn-github-kcl-lang-kcl"
   },
   "apache-incubator-pegasus": {

@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261031-HGB3",
-    "timestamp": "2026-10-31T17:03:45.615Z",
-    "repository": "apache/arrow",
-    "learningId": "learn-github-apache-arrow",
-    "contentHash": "72aad5d6856ea1860503331a22ba322f247da242451d98b3dd784738a1985e45",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261031-HPYR",
-    "timestamp": "2026-10-31T17:03:58.131Z",
-    "repository": "apache/shardingsphere",
-    "learningId": "learn-github-apache-shardingsphere",
-    "contentHash": "0cce456924bfca4ef9abc13ae221c1f057e7180ca7c1eec3c8f3b1b05fe01e75",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261031-MWPE",
-    "timestamp": "2026-10-31T17:08:00.146Z",
-    "repository": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
-    "learningId": "learn-huggingface-venastine-research-xing4-0-29b-a4b-gguf",
-    "contentHash": "e3e0ac9b298721bb6a45450090a8ac5e87248900880a56f646db0d91b920ddee",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261031-UTGA",
     "timestamp": "2026-10-31T17:14:09.178Z",
     "repository": "NaiveAI/Naive-N0.5-Flash",
@@ -7490,6 +7445,51 @@
     "repository": "wix/Detox",
     "learningId": "learn-github-wix-detox",
     "contentHash": "c01b154a01ccfbc7a75562a9e6d1532c1bca18281a239d9c4b8d99e79181c4cb",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-OJ2R",
+    "timestamp": "2026-11-04T03:44:07.827Z",
+    "repository": "pimalaya/himalaya",
+    "learningId": "learn-github-pimalaya-himalaya",
+    "contentHash": "261a3aac29cae34614b36e6af3f94eeeeebc95898ca5da664a6e3ec1b807efa1",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-OKX3",
+    "timestamp": "2026-11-04T03:44:10.215Z",
+    "repository": "webdriverio/webdriverio",
+    "learningId": "learn-github-webdriverio-webdriverio",
+    "contentHash": "44105ecbb734edddfc832e76b021b64ec13aea7de665f04db097bf6ad9cb188f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-ONGG",
+    "timestamp": "2026-11-04T03:44:13.504Z",
+    "repository": "kcl-lang/kcl",
+    "learningId": "learn-github-kcl-lang-kcl",
+    "contentHash": "e2a10b7c1c8fcb45d6466364eec290550a166f5b593c7d1e2e977a991d3c99d8",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

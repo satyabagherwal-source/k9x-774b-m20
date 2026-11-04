@@ -40,8 +40,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-04T03:37:49.603Z",
-    "lastVerified": "2026-11-04T03:37:49.603Z",
+    "lastChecked": "2026-11-04T03:44:16.053Z",
+    "lastVerified": "2026-11-04T03:44:16.053Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -356,9 +356,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-04T03:16:30.566Z",
+    "lastChecked": "2026-11-04T03:44:16.010Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-04T03:16:30.566Z"
+    "lastVerified": "2026-11-04T03:44:16.010Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -1226,12 +1226,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "freenet-freenet-core": {
-    "name": "freenet/freenet-core",
+    "name": "freenet-core",
     "officialUrl": "https://github.com/freenet/freenet-core",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-04T00:32:03.756Z",
-    "lastVerified": "2026-11-04T00:32:03.756Z",
+    "lastChecked": "2026-11-04T03:44:11.149Z",
+    "lastVerified": "2026-11-04T03:44:11.149Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-freenet-freenet-core",
@@ -1240,7 +1240,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "c54e83c8"
   },
   "clockworklabs-spacetimedb": {
     "name": "clockworklabs/SpacetimeDB",
@@ -2921,9 +2922,9 @@
   "nozbe-watermelondb": {
     "name": "WatermelonDB",
     "officialUrl": "https://github.com/Nozbe/WatermelonDB",
-    "lastChecked": "2026-10-31T03:45:22.348Z",
+    "lastChecked": "2026-11-04T03:44:06.036Z",
     "revisionIdentifier": "5c463222",
-    "lastVerified": "2026-10-31T03:45:22.348Z"
+    "lastVerified": "2026-11-04T03:44:06.036Z"
   },
   "kgateway-dev-kgateway": {
     "name": "kgateway-dev/kgateway",
@@ -4153,22 +4154,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "pimalaya-himalaya": {
-    "name": "himalaya",
+    "name": "pimalaya/himalaya",
     "officialUrl": "https://github.com/pimalaya/himalaya",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-01T01:14:22.962Z",
-    "lastVerified": "2026-11-01T01:14:22.962Z",
+    "lastChecked": "2026-11-04T03:44:06.004Z",
+    "lastVerified": "2026-11-04T03:44:06.004Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-pimalaya-himalaya",
-    "contentHash": "4a6ccc792c1a98f15f880121473ae422f70813a31bb24d2756407b15b1b520ca",
+    "contentHash": "261a3aac29cae34614b36e6af3f94eeeeebc95898ca5da664a6e3ec1b807efa1",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 8,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "5791471e"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-compvis-stable-diffusion-v1-4": {
     "name": "CompVis/stable-diffusion-v1-4",
@@ -4335,9 +4335,9 @@
   "erikgrinaker-toydb": {
     "name": "toydb",
     "officialUrl": "https://github.com/erikgrinaker/toydb",
-    "lastChecked": "2026-11-02T17:24:32.998Z",
+    "lastChecked": "2026-11-04T03:44:13.472Z",
     "revisionIdentifier": "2d7cd32e",
-    "lastVerified": "2026-11-02T17:24:32.998Z"
+    "lastVerified": "2026-11-04T03:44:13.472Z"
   },
   "sharkdp-pastel": {
     "name": "pastel",
@@ -6369,14 +6369,14 @@
     "officialUrl": "https://github.com/kcl-lang/kcl",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-02T21:30:09.232Z",
-    "lastVerified": "2026-11-02T21:30:09.232Z",
+    "lastChecked": "2026-11-04T03:44:12.597Z",
+    "lastVerified": "2026-11-04T03:44:12.597Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-kcl-lang-kcl",
-    "contentHash": "a4d3b761c6ed3ea40083d774d158861f65f29e8baf5605a14c1c3dbcf30cf5e1",
+    "contentHash": "e2a10b7c1c8fcb45d6466364eec290550a166f5b593c7d1e2e977a991d3c99d8",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -11680,14 +11680,14 @@
     "officialUrl": "https://github.com/webdriverio/webdriverio",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-30T20:22:00.339Z",
-    "lastVerified": "2026-10-30T20:22:00.339Z",
+    "lastChecked": "2026-11-04T03:44:09.350Z",
+    "lastVerified": "2026-11-04T03:44:09.350Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-webdriverio-webdriverio",
-    "contentHash": "855d7d3b49b9e367fc199b0319ab6f83020e913d616776d56e87809c389c3d95",
+    "contentHash": "44105ecbb734edddfc832e76b021b64ec13aea7de665f04db097bf6ad9cb188f",
     "promotedRulesCount": 1,
-    "recentFixesCount": 12,
+    "recentFixesCount": 13,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
