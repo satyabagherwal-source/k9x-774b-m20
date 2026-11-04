@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-04T03:16:23.691Z",
+  "last_updated": "2026-11-04T03:23:53.527Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5691,14 +5691,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pixeltable-pixeltable",
-      "content_hash": "47436eb40635e8d9e0d10a4588b6055c2a3f815765e09224e12d0ec63428a0ef",
-      "verified_at": "2026-11-02T16:47:50.706Z",
+      "content_hash": "bf84c4c0426733c2164169f4f886cd4568020d6b0879ebed9b2e0c3d417526aa",
+      "verified_at": "2026-11-04T03:23:45.676Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-02T16:47:50.706Z"
+      "last_updated": "2026-11-04T03:23:45.676Z"
     },
     "honojs/hono": {
       "repository": "honojs/hono",
@@ -7011,14 +7011,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-mufeedvh-code2prompt",
-      "content_hash": "2f0f2b26b5197e55f3c613e246eb21046405b8eeed5c4c9b2aa41728600e219f",
-      "verified_at": "2026-10-19T01:41:08.288Z",
+      "content_hash": "5b5f08a7346ef79ac207d2c487e80029b8f2be0b42875e4b004e87d1c4d2449f",
+      "verified_at": "2026-11-04T03:23:53.526Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T01:41:08.288Z"
+      "last_updated": "2026-11-04T03:23:53.526Z"
     },
     "react-native-image-picker/react-native-image-picker": {
       "repository": "react-native-image-picker/react-native-image-picker",
@@ -15186,14 +15186,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-qwikdev-qwik",
-      "content_hash": "014d69b0a05d898ddf2ed7b37bfc06a291a21dcd26de8a9a4a0f2b060a9c6ba0",
-      "verified_at": "2026-10-30T19:54:09.178Z",
+      "content_hash": "f86ac1a8e6de78dade76b7ea48960157a7d58125bf9fe3056852b85aa25277f8",
+      "verified_at": "2026-11-04T03:23:36.705Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T19:54:09.178Z"
+      "last_updated": "2026-11-04T03:23:36.705Z"
     },
     "TypeWhisper/typewhisper-mac": {
       "repository": "TypeWhisper/typewhisper-mac",

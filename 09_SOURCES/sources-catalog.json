@@ -3713,10 +3713,10 @@
     "repository": "pixeltable/pixeltable",
     "platform": "github",
     "sourceUrl": "https://github.com/pixeltable/pixeltable",
-    "sourceVersion": "2eca8e44",
+    "sourceVersion": "87375562",
     "license": "Apache-2.0",
-    "contentHash": "47436eb40635e8d9e0d10a4588b6055c2a3f815765e09224e12d0ec63428a0ef",
-    "lastHarvestedAt": "2026-11-02T16:47:50.693Z",
+    "contentHash": "bf84c4c0426733c2164169f4f886cd4568020d6b0879ebed9b2e0c3d417526aa",
+    "lastHarvestedAt": "2026-11-04T03:23:45.667Z",
     "learningId": "learn-github-pixeltable-pixeltable"
   },
   "honojs-hono": {
@@ -4593,10 +4593,10 @@
     "repository": "mufeedvh/code2prompt",
     "platform": "github",
     "sourceUrl": "https://github.com/mufeedvh/code2prompt",
-    "sourceVersion": "66585136",
+    "sourceVersion": "d762d9bb",
     "license": "MIT",
-    "contentHash": "2f0f2b26b5197e55f3c613e246eb21046405b8eeed5c4c9b2aa41728600e219f",
-    "lastHarvestedAt": "2026-10-19T01:41:08.284Z",
+    "contentHash": "5b5f08a7346ef79ac207d2c487e80029b8f2be0b42875e4b004e87d1c4d2449f",
+    "lastHarvestedAt": "2026-11-04T03:23:53.516Z",
     "learningId": "learn-github-mufeedvh-code2prompt"
   },
   "react-native-image-picker-react-native-image-picker": {
@@ -10093,10 +10093,10 @@
     "repository": "QwikDev/qwik",
     "platform": "github",
     "sourceUrl": "https://github.com/QwikDev/qwik",
-    "sourceVersion": "d6152907",
+    "sourceVersion": "11765ab6",
     "license": "MIT",
-    "contentHash": "014d69b0a05d898ddf2ed7b37bfc06a291a21dcd26de8a9a4a0f2b060a9c6ba0",
-    "lastHarvestedAt": "2026-10-30T19:54:09.172Z",
+    "contentHash": "f86ac1a8e6de78dade76b7ea48960157a7d58125bf9fe3056852b85aa25277f8",
+    "lastHarvestedAt": "2026-11-04T03:23:36.696Z",
     "learningId": "learn-github-qwikdev-qwik"
   },
   "typewhisper-typewhisper-mac": {

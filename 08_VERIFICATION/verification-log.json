@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261031-MGNS",
-    "timestamp": "2026-10-31T16:39:39.736Z",
-    "repository": "oven-sh/bun",
-    "learningId": "learn-github-oven-sh-bun",
-    "contentHash": "b644955beab173561023e80370047467c0bf46f267ae6801871651b65ad9485c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261031-MOM8",
-    "timestamp": "2026-10-31T16:39:50.048Z",
-    "repository": "NucleoidAI/Nucleoid",
-    "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "ac9a423851f4628ba3037de2de5f72740437860872becd3f7900db2388321ccb",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261031-MOS6",
-    "timestamp": "2026-10-31T16:39:50.262Z",
-    "repository": "sqlpage/SQLPage",
-    "learningId": "learn-github-sqlpage-sqlpage",
-    "contentHash": "8e2ed796779bd5e8d6f97c7e29e095cc395120f5ffbdfddf105f53c2de7ecb4e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261031-0B0A",
     "timestamp": "2026-10-31T16:50:25.594Z",
     "repository": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
@@ -7490,6 +7445,51 @@
     "repository": "preactjs/preact",
     "learningId": "learn-github-preactjs-preact",
     "contentHash": "87ee2cf9f53cca87d78d6b5e48dcb9af842ad239d5ee8fea36a97f45de1c2ed5",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-Y54K",
+    "timestamp": "2026-11-04T03:23:36.692Z",
+    "repository": "QwikDev/qwik",
+    "learningId": "learn-github-qwikdev-qwik",
+    "contentHash": "f86ac1a8e6de78dade76b7ea48960157a7d58125bf9fe3056852b85aa25277f8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-YC1R",
+    "timestamp": "2026-11-04T03:23:45.663Z",
+    "repository": "pixeltable/pixeltable",
+    "learningId": "learn-github-pixeltable-pixeltable",
+    "contentHash": "bf84c4c0426733c2164169f4f886cd4568020d6b0879ebed9b2e0c3d417526aa",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-YI3T",
+    "timestamp": "2026-11-04T03:23:53.513Z",
+    "repository": "mufeedvh/code2prompt",
+    "learningId": "learn-github-mufeedvh-code2prompt",
+    "contentHash": "5b5f08a7346ef79ac207d2c487e80029b8f2be0b42875e4b004e87d1c4d2449f",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

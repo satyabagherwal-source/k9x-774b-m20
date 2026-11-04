@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/mufeedvh-code2prompt-learnings.md`  
 > **Source**: github ([https://github.com/mufeedvh/code2prompt](https://github.com/mufeedvh/code2prompt))  
-> **Source Version**: `66585136`  
+> **Source Version**: `d762d9bb`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T01:41:08.004Z  
+> **Timestamp**: 2026-11-04T03:23:52.706Z  
 > **Learning ID**: `learn-github-mufeedvh-code2prompt`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/mufeedvh-code2prompt-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/mufeedvh/code2prompt](https://github.com/mufeedvh/code2prompt))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T01:41:07.997Z  
+> **Harvest Timestamp**: 2026-11-04T03:23:31.641Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A CLI tool to convert your codebase into a single LLM prompt with source tree, prompt templating, and token counting.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 7723 stars
+- **Stars / Engagement**: 7747 stars
 
 ---
 
@@ -1580,380 +1580,169 @@ impl FileProcessor for TsvProcessor {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `066e9671` (2026-07-23)
-**Commit Message**: fix(core): prune source_tree to changed files under --git-diff-branch
+### Incident Patch 1: `c7b42042` (2026-10-30)
+**Commit Message**: build(deps): bump astral-sh/setup-uv from 9.0.0 to 10.3.2
 
-When --git-diff-branch is set, the rendered source_tree still showed the
-entire repository, wasting tokens on files that weren't part of the diff.
-This mirrors how --include already prunes both the tree and file content,
-but the branch-diff path had no equivalent filtering for either.
-
-Add get_git_diff_file_paths() to compute the set of paths touched by the
-tree-to-tree diff between the two branches, and thread it through
-Code2PromptConfig.diff_files so discover_files() can intersect it with the
-existing include/exclude match, pruning both source_tree and file content
-down to just the changed files. Unaffected when --git-diff-branch is absent.
-
-Fixes #176
-
-**File**: `crates/code2prompt-core/src/configuration.rs` (modified, +8/-1)
-```diff
-@@ -7,7 +7,7 @@ use crate::tokenizer::TokenizerType;
- use crate::{sort::FileSortMethod, tokenizer::TokenFormat};
- use derive_builder::Builder;
- use serde::{Deserialize, Serialize};
--use std::collections::HashMap;
-+use std::collections::{HashMap, HashSet};
- use std::path::PathBuf;
- 
- /// Configuration object defining preferences and filters for code prompt generation.
-@@ -97,6 +97,13 @@ pub struct Code2PromptConfig {
-     /// If set, contains two branch names for which code2prompt will generate a git diff.
-     pub diff_branches: Option<(String, String)>,
- 
-+    /// Populated internally from `diff_branches` before traversal: the set of
-+    /// relative file paths that changed between the two branches. When
-+    /// present, `discover_files` prunes both the source tree and the
-+    /// collected file content down to just these paths, mirroring how
-+    /// `include_patterns` filters both. Not user-configurable directly.
-+    pub diff_files: Option<HashSet<PathBuf>>,
-+
-     /// If set, contains two branch names for which code2prompt will retrieve the git log.
-     pub log_branches: Option<(String, String)>,
- 
-```
-
-**File**: `crates/code2prompt-core/src/git.rs` (modified, +64/-1)
-```diff
-@@ -8,7 +8,8 @@
- use anyhow::{Context, Result};
- use git2::{DiffOptions, Repository};
- use log::info;
--use std::path::Path;
-+use std::collections::HashSet;
-+use std::path::{Path, PathBuf};
- 
- /// Extract git diff for staged changes in repository.
- /// 
-@@ -135,6 +136,68 @@ pub fn get_git_diff_between_branches(
-     Ok(String::from_utf8_lossy(&diff_text).into_owned())
- }
- 
-+/// Computes the set of relative file paths that changed between two branches.
-+///
-+/// This performs the same tree-to-tree diff as [`get_git_diff_between_branches`],
-+/// but instead of rendering a textual patch it collects the paths touched by
-+/// each delta (both sides, so a rename contributes its old and new path).
-+/// This set is used to prune the source tree and file content down to only
-+/// the files that actually changed when `--git-diff-branch` is active.
-+///
-+/// # Arguments
-+///
-+/// * `repo_path` - A reference to the path of the git repository
-+/// * `branch1` - The name of the first branch
-+/// * `branch2` - The name of the second branch
-+///
-+/// # Returns
-+///
-+/// * `Result<HashSet<PathBuf>>` - The relative paths that changed between the two branches
-+pub fn get_git_diff_file_paths(
-+    repo_path: &Path,
-+    branch1: &str,
-+    branch2: &str,
-+) -> Result<HashSet<PathBuf>> {
-+    info!("Opening repository at path: {:?}", repo_path);
-+    let repo = Repository::open(repo_path).context("Failed to open repository")?;
-+
-+    for branch in [branch1, branch2].iter() {
-+        if !branch_exists(&repo, branch) {
-+            return Err(anyhow::anyhow!("Branch {} doesn't exist!", branch));
-+        }
-+    }
-+
-+    let branch1_commit = repo.revparse_single(branch1)?.peel_to_commit()?;
-+    let branch2_commit = repo.revparse_single(branch2)?.peel_to_commit()?;
-+
-+    let branch1_tree = branch1_commit.tree()?;
-+    let branch2_tree = branch2_commit.tree()?;
-+
-+    let diff = repo
-+        .diff_tree_to_tree(
-+            Some(&branch1_tree),
-+            Some(&branch2_tree),
-+            Some(DiffOptions::new().ignore_whitespace(true)),
-+        )
-+        .context("Failed to generate diff between branches")?;
-+
-+    let mut paths = HashSet::new();
-+    for delta in diff.deltas() {
-+        if let Some(path) = delta.old_file().path() {
-+            paths.insert(path.to_path_buf());
-+        }
-+        if let Some(path) = delta.new_file().path() {
-+            paths.insert(path.to_path_buf());
-+        }
-+    }
-+
-+    info!(
-+        "Collected {} changed file path(s) between branches",
-+        paths.len()
-+    );
-+    Ok(paths)
-+}
-+
- /// Retrieves the git log between two branches for the repository at the provided path
- ///
- /// # Arguments
-```
-
-**File**: `crates/code2prompt-core/src/path.rs` (modified, +9/-1)
-```diff
-@@ -120,12 +120,20 @@ fn discover_files(
-         let path = entry.path();
-         if let Ok(relative_path) = path.strip_prefix(&canonical_root_path) {
-             // Use SelectionEngine if available, otherwise fall back to pattern matching
--            let entry_match = if let Some(engine) = selection_engine.as_mut() {
-+            let mut entry_match = if let Some(engine) = selection_engine.as_mut() {
-                 engine.is_selected(relative_path)
-             } else {
-                 should_include_file(relative_path, &include_globset, &exclude_globset)
-             };
- 
-+            // When `--git-diff-branch` is active, further restrict matches to
-+            // only the files that changed between the two branches. This
-+            // mirrors how include/exclude patterns prune both the tree and
-+            // the file content list.
-+            if let Some(diff_files) = &config.diff_files {
-+                entry_match = entry_match && diff_files.contains(relative_path);
-+            }
-+
-             // Directory Tree
-             let include_in_tree = config.full_directory_tree || entry_match;
- 
-```
-
-**File**: `crates/code2prompt-core/src/session.rs` (modified, +19/-1)
-```diff
-@@ -10,7 +10,9 @@ use std::sync::Arc;
- use crate::analysis::CodebaseAnalysis;
- use crate::configuration::Code2PromptConfig;
- use crate::entity_map::FileCodeMap;
--use crate::git::{get_git_diff, get_git_diff_between_branches, get_git_log};
-+use crate::git::{
-+    get_git_diff, get_git_diff_between_branches, get_git_diff_file_paths, get_git_log,
-+};
- use crate::path::{FileEntry, display_name, traverse_directory, wrap_code_block};
- use crate::selection::SelectionEngine;
- use crate::template::{OutputFormat, handlebars_setup, render_template};
-@@ -257,6 +259,22 @@ impl Code2PromptSession {
- 
-     /// Loads the codebase data (source tree and file list) into the session.
-     pub fn load_codebase(&mut self) -> Result<()> {
-+        // When comparing two branches, restrict both the source tree and the
-+        // file content to only the files that actually changed, mirroring
-+        // how `--include` filters both the tree and content. If the diff
-+        // can't be computed (e.g. a branch doesn't exist), fall back to the
-+        // unfiltered codebase; `load_git_diff_between_branches` will surface
-+        // the underlying error to the user.
-+        if let Some((branch1, branch2)) = self.config.diff_branches.clone() {
-+            match get_git_diff_file_paths(&self.config.path, &branch1, &branch2) {
-+                Ok(diff_files) => self.config.diff_files = Some(diff_files),
-+                Err(e) => log::warn!(
-+                    "Could not compute changed files between '{branch1}' and '{branch2}', \
-+                     showing unfiltered codebase: {e}"
-+                ),
-+            }
-+        }
-+
-         let (tree, files) = traverse_directory(&self.config, Some(&mut self.selection_engine))
-             .with_context(|| "Failed to traverse directory")?;
- 
-```
-
-**File**: `crates/code2prompt-core/tests/session_integration_test.rs` (modified, +99/-0)
-```diff
-@@ -3,6 +3,7 @@
- use code2prompt_core::configuration::Code2PromptConfig;
- use code2prompt_core::session::Code2PromptSession;
- use std::fs;
-+use std::path::Path;
- use tempfile::TempDir;
- 
- #[cfg(test)]
-@@ -178,4 +179,102 @@ mod tests {
-         assert_eq!(selected_files.len(), 1);
-         assert_eq!(selected_files[0], main_rs_relative);
-     }
-+
-+    /// Regression test for https://github.com/mufeedvh/code2prompt/issues/176
-+    ///
-+    /// With `--git-diff-branch`, the source tree (and file content) must be
-+    /// pruned down to only the files that actually changed between the two
-+    /// branches, the same way `--include` filters both the tree and content.
-+    #[test]
-+    fn test_git_diff_branch_prunes_source_tree_to_changed_files() {
-+        use git2::{Repository, RepositoryInitOptions, Signature};
-+
-+        let temp_dir = TempDir::new().unwrap();
-+        let repo_path = temp_dir.path();
-+
-+        let mut binding = RepositoryInitOptions::new();
-+        let init_options = binding.initial_head("master");
-+        let repo = Repository::init_opts(repo_path, init_options)
-+            .expect("Failed to initialize repository");
-+
-+        fs::create_dir_all(repo_path.join("src")).unwrap();
-+        fs::write(repo_path.join("src/changed.rs"), "fn changed() {}").unwrap();
-+        fs::write(repo_path.join("src/unchanged.rs"), "fn unchanged() {}").unwrap();
-+
-+        let signature = Signature::now("Test", "test@example.com").unwrap();
-+
-+        // Commit both files on master
-+        let mut index = repo.index().unwrap();
-+        index.add_path(Path::new("src/changed.rs")).unwrap();
-+        index.add_path(Path::new("src/unchanged.rs")).unwrap();
-+        index.write().unwrap();
-+        let tree_id = index.write_tree().unwrap();
-+        let tree = repo.find_tree(tree_id).unwrap();
-+        let master_commit = repo
-+            .commit(
-+                Some("HEAD"),
-+                &signature,
-+                &signature,
-+                "Initial commit",
-+                &tree,
-+                &[],
-+            )
-+            .expect("Failed to commit");
-+
-+        // Create a feature branch and only modify one of the two files there
-+        repo.branch("feature", &repo.find_commit(master_commit).unwrap(), false)
-+            .expect("Failed to create new branch");
-+        repo.set_head("refs/heads/feature").unwrap();
-+        repo.checkout_head(None).unwrap();
-+
-+        fs::write(
-+            repo_path.join("src/changed.rs"),
-+            "fn changed() { /* updated */ }",
-+        )
-+        .unwrap();
-+
-+        let mut index = repo.index().unwrap();
-+        index.add_path(Path::new("src/changed.rs")).unwrap();
-+        index.write().unwrap();
-+        let tree_id = index.write_tree().unwrap();
-+        let tree = repo.find_tree(tree_id).unwrap();
-+        repo.commit(
-+            Some("HEAD"),
-+            &signature,
-+            &signature,
-+            "Update changed.rs",
-+            &tree,
-+            &[&repo.find_commit(master_commit).unwrap()],
-+        )
-+        .expect("Failed to commit on feature branch");
-+
-+        let config = Code2PromptConfig::builder()
-+            .path(repo_path.to_path_buf())
-+            .diff_branches(Some(("master".to_string(), "feature".to_string())))
-+            .build()
-+            .unwrap();
-+
-+        let mut session = Code2PromptSession::new(config);
-+        session.load_codebase().expect("Failed to load codebase");
-+
-+        let source_tree = session.data.source_tree.clone().unwrap_or_default();
-+        assert!(
-+            source_tree.contains("changed.rs"),
-+            "expected diffed file in source tree, got:\n{source_tree}"
-+        );
-+        assert!(
-+            !source_tree.contains("unchanged.rs"),
-+            "expected unchanged file to be pruned from source tree, got:\n{source_tree}"
-+        );
-+
-+        let files = session.data.files.clone().unwrap_or_default();
-+        assert!(
-+            files.iter().any(|f| f.path.contains("changed.rs")),
-+            "expected diffed file in file content list"
-+        );
-+        assert!(
-+            !files.iter().any(|f| f.path.contains("unchanged.rs")),
-+            "expected unchanged file to be excluded from file content list"
-+        );
-+    }
- }
-```
-
----
-
-### Incident Patch 2: `8ba6f5df` (2026-06-29)
-**Commit Message**: build(deps): bump actions/cache from 5 to 6
-
-Bumps [actions/cache](https://github.com/actions/cache) from 5 to 6.
-- [Release notes](https://github.com/actions/cache/releases)
-- [Changelog](https://github.com/actions/cache/blob/main/RELEASES.md)
-- [Commits](https://github.com/actions/cache/compare/v5...v6)
+Bumps [astral-sh/setup-uv](https://github.com/astral-sh/setup-uv) from 9.0.0 to 10.3.2.
+- [Release notes](https://github.com/astral-sh/setup-uv/releases)
+- [Commits](https://github.com/astral-sh/setup-uv/compare/c771a70e6277c0a99b617c7a806ffedaca235ff9...07a047e608db84b3d8c06cd9a7c7dcc9c355c18e)
 
 ---
 updated-dependencies:
-- dependency-name: actions/cache
-  dependency-version: '6'
+- dependency-name: astral-sh/setup-uv
+  dependency-version: 10.3.2
   dependency-type: direct:production
   update-type: version-update:semver-major
 ...
 
 Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 
-**File**: `.github/workflows/release.yml` (modified, +2/-2)
+**File**: `.github/workflows/ci.yml` (modified, +1/-1)
 ```diff
-@@ -35,7 +35,7 @@ jobs:
-           override: true
- 
-       - name: Cache Rust dependencies
--        uses: actions/cache@v5
-+        uses: actions/cache@v6
-         with:
-           path: |
-             ~/.cargo/bin/
-@@ -57,7 +57,7 @@ jobs:
-       - name: Cache LLVM on Windows
-         if: runner.os == 'Windows'
-         id: cache-llvm
--        uses: actions/cache@v5
-+        uses: actions/cache@v6
-         with:
-           path: C:\Program Files\LLVM
-           key: windows-llvm-latest
+@@ -29,7 +29,7 @@ jobs:
+     steps:
+     - uses: actions/checkout@v6
+     - name: Install uv and Python
+-      uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
++      uses: astral-sh/setup-uv@07a047e608db84b3d8c06cd9a7c7dcc9c355c18e # v10.3.2
+       with:
+         version: "0.12.10"
+         python-version: ${{ matrix.python-version }}
 ```
 
 ---
 
-### Incident Patch 3: `c4ba219b` (2026-09-04)
-**Commit Message**: Merge pull request #333 from OctoBored/fix/star-history-chart
+### Incident Patch 2: `782d16a4` (2026-10-16)
+**Commit Message**: fix(git): synthesize diff line sigils in patches
 
-Fix the broken star history chart in the README
+`git2`'s `DiffLine::content()` omits the `+`/`-`/space origin
+prefix, so generated patches were missing line markers. Add a
+`write_diff_line` helper that prepends the appropriate sigil for
+content lines while leaving file headers, hunk headers, binary
+notices, and EOF markers untouched, and use it for staged,
+unstaged, and branch-to-branch diffs.
 
-**File**: `README.md` (modified, +1/-1)
+Add unit tests covering content lines, headers, binary notices,
+and `\ No newline at end of file` markers.
+
+**File**: `crates/code2prompt-core/src/git.rs` (modified, +72/-3)
 ```diff
-@@ -126,7 +126,7 @@ cargo install --path crates/code2prompt
+@@ -11,6 +11,28 @@ use log::info;
+ use std::collections::HashSet;
+ use std::path::{Path, PathBuf};
  
- ## ⭐ Star Gazing
++/// Synthesize a diff-line sigil (`+`/`-`/` `) for added/removed/context lines.
++///
++/// `git2`'s `DiffFormat::Patch` splits the sigil from the line content:
++/// - `origin()` returns `'+'` / `'-'` / `' '` for added/removed/context lines
++/// - `content()` returns ONLY the raw line text WITHOUT the sigil
++/// - file headers (`'F'`), hunk headers (`'H'`), binary notices (`'B'`) and the
++///   end-of-file markers (`'='/'>'/'<'`) already contain their full text in
++///   `content()`, so they get no synthesized sigil.
++///
++/// `content()` is appended unconditionally, so binary notices and the
++/// `\ No newline at end of file` markers are preserved rather than dropped.
++fn write_diff_line(buf: &mut Vec<u8>, origin: char, content: &[u8]) {
++    match origin {
++        '+' => buf.push(b'+'),
++        '-' => buf.push(b'-'),
++        ' ' => buf.push(b' '),
++        'F' | 'H' | 'B' | '=' | '>' | '<' => {} // full text already in content()
++        _ => {}
++    }
++    buf.extend_from_slice(content);
++}
++
+ /// Extract git diff for staged changes in repository.
+ /// 
+ /// Generates diff between HEAD and index to show staged changes, with additional
+@@ -50,7 +72,7 @@ pub fn get_git_diff(repo_path: &Path) -> Result<String> {
+     let mut staged_diff_text = Vec::new();
+     staged_diff
+         .print(git2::DiffFormat::Patch, |_delta, _hunk, line| {
+-            staged_diff_text.extend_from_slice(line.content());
++            write_diff_line(&mut staged_diff_text, line.origin(), line.content());
+             true
+         })
+         .context("Failed to print staged diff")?;
+@@ -70,7 +92,7 @@ pub fn get_git_diff(repo_path: &Path) -> Result<String> {
+     let mut unstaged_diff_text = Vec::new();
+     unstaged_diff
+         .print(git2::DiffFormat::Patch, |_delta, _hunk, line| {
+-            unstaged_diff_text.extend_from_slice(line.content());
++            write_diff_line(&mut unstaged_diff_text, line.origin(), line.content());
+             true
+         })
+         .context("Failed to print unstaged diff")?;
+@@ -127,7 +149,7 @@ pub fn get_git_diff_between_branches(
  
--[![Star History Chart](https://api.star-history.com/svg?repos=mufeedvh/code2prompt&type=Date)](https://star-history.com/#mufeedvh/code2prompt&Date)
-+[![Star History Chart](https://star-history.dera.page/svg?repos=mufeedvh/code2prompt&type=Date)](https://star-history.dera.page/#mufeedvh/code2prompt&Date)
- 
- ## 📜 License
- 
+     let mut diff_text = Vec::new();
+     diff.print(git2::DiffFormat::Patch, |_delta, _hunk, line| {
+-        diff_text.extend_from_slice(line.content());
++        write_diff_line(&mut diff_text, line.origin(), line.content());
+         true
+     })
+     .context("Failed to print diff")?;
+@@ -266,3 +288,50 @@ pub fn get_git_log(repo_path: &Path, branch1: &str, branch2: &str) -> Result<Str
+ fn branch_exists(repo: &Repository, branch_name: &str) -> bool {
+     repo.revparse_single(branch_name).is_ok()
+ }
++
++#[cfg(test)]
++mod tests {
++    use super::write_diff_line;
++
++    #[test]
++    fn write_diff_line_synthesizes_sigils_for_content_lines() {
++        let mut buf = Vec::new();
++        write_diff_line(&mut buf, '+', b"hello\n");
++        assert_eq!(buf, b"+hello\n");
++
++        buf.clear();
++        write_diff_line(&mut buf, '-', b"world\n");
++        assert_eq!(buf, b"-world\n");
++
++        buf.clear();
++        write_diff_line(&mut buf, ' ', b"ctx\n");
++        assert_eq!(buf, b" ctx\n");
++    }
++
++    #[test]
++    fn write_diff_line_does_not_synthesize_sigil_for_headers_and_eof_markers() {
++        let mut buf = Vec::new();
++        write_diff_line(&mut buf, 'F', b"diff --git a/x b/x\n");
++        assert_eq!(buf, b"diff --git a/x b/x\n");
++
++        buf.clear();
++        write_diff_line(&mut buf, '=', b"\\ No newline at end of file\n");
++        assert_eq!(buf, b"\\ No newline at end of file\n");
++
++        buf.clear();
++        write_diff_line(&mut buf, 'H', b"@@ -1,3 +1,4 @@\n");
++        assert_eq!(buf, b"@@ -1,3 +1,4 @@\n");
++
++        buf.clear();
++        write_diff_line(&mut buf, '>', b"old filename\n");
++        assert_eq!(buf, b"old filename\n");
++
++        buf.clear();
++        write_diff_line(&mut buf, '<', b"new filename\n");
++        assert_eq!(buf, b"new filename\n");
++
++        buf.clear();
++        write_diff_line(&mut buf, 'B', b"Binary files a/x and b/x differ\n");
++        assert_eq!(buf, b"Binary files a/x and b/x differ\n");
++    }
++}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #347** (2026-11-03): build(deps): bump astral-sh/setup-uv from 9.0.0 to 10.3.2 (@dependabot[bot])
+- **PR #346** (2026-11-03): docs: drop removed --include-priority from the filter tutorial (@dcadolph)
+- **PR #344** (closed): build(deps): bump astral-sh/setup-uv from 9.0.0 to 10.3.0 (@dependabot[bot])
+- **PR #343** (2026-11-03): fix(git): synthesize diff line sigils in patches (@linbingquan)
 - **PR #342** (closed): build(deps): bump astral-sh/setup-uv from 9.0.0 to 10.2.0 (@dependabot[bot])
 - **PR #341** (closed): build(deps): bump astral-sh/setup-uv from 9.0.0 to 10.1.0 (@dependabot[bot])
-- **PR #338** (closed): build(deps): bump pyo3 from 0.28.3 to 0.29.2 (@dependabot[bot])
-- **PR #337** (closed): build(deps): bump astral-sh/setup-uv from 9.0.0 to 10.0.1 (@dependabot[bot])
-- **PR #336** (2026-09-06): Pyo3 latest api (@ODAncona)
-- **PR #335** (2026-09-05): docs: fix three stale CLI flags in the how-to examples (--line-number, --tokens, --exclude-from-tree) (@cnYui)
 
 ---
 
@@ -1973,35 +1762,28 @@ Fix the broken star history chart in the README
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. core): prune source_tree to changed files under --git-diff-branch
+## X. build(deps): bump astral-sh/setup-uv from 9.0.0 to 10.3.2
 
 **RULE**:
-When implementing operations in `crates/code2prompt-core/src/configuration.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mufeedvh/code2prompt. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mufeedvh/code2prompt. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `066e9671`: core): prune source_tree to changed files under --git-diff-branch. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c7b42042`: build(deps): bump astral-sh/setup-uv from 9.0.0 to 10.3.2. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/code2prompt-core/src/configuration.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-use std::collections::{HashMap, HashSet};
-    /// Populated internally from `diff_branches` before traversal: the set of
-    /// relative file paths that changed between the two branches. When
-    /// present, `discover_files` prunes both the source tree and the
-    /// collected file content down to just these paths, mirroring how
-    /// `include_patterns` filters both. Not user-configurable directly.
-    pub diff_files: Option<HashSet<PathBuf>>,
-
+      uses: astral-sh/setup-uv@07a047e608db84b3d8c06cd9a7c7dcc9c355c18e # v10.3.2
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-use std::collections::HashMap;
+      uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `066e9671` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c7b42042` are properly handled with clean fallback behavior.

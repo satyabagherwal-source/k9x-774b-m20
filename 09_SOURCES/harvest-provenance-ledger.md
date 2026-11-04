@@ -7146,3 +7146,6 @@ Every entry in this ledger must capture:
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `658388c9` | Multi-dimensional audit evidence | 2026-11-04T03:09:16.830Z |
 | `learn-github-svenstaro-miniserve` | `https://github.com/svenstaro/miniserve` | `68b6f063` | Multi-dimensional audit evidence | 2026-11-04T03:16:22.330Z |
 | `learn-github-preactjs-preact` | `https://github.com/preactjs/preact` | `076fe9cc` | Multi-dimensional audit evidence | 2026-11-04T03:16:23.684Z |
+| `learn-github-qwikdev-qwik` | `https://github.com/QwikDev/qwik` | `11765ab6` | Multi-dimensional audit evidence | 2026-11-04T03:23:36.696Z |
+| `learn-github-pixeltable-pixeltable` | `https://github.com/pixeltable/pixeltable` | `87375562` | Multi-dimensional audit evidence | 2026-11-04T03:23:45.667Z |
+| `learn-github-mufeedvh-code2prompt` | `https://github.com/mufeedvh/code2prompt` | `d762d9bb` | Multi-dimensional audit evidence | 2026-11-04T03:23:53.516Z |

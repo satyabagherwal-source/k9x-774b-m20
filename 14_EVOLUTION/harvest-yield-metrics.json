@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-04T03:16:23.688Z",
-  "total_cycles_completed": 7114,
-  "total_learnings_persisted": 7114,
-  "total_rules_promoted": 6760,
+  "last_updated": "2026-11-04T03:23:53.522Z",
+  "total_cycles_completed": 7117,
+  "total_learnings_persisted": 7117,
+  "total_rules_promoted": 6763,
   "history": [
-    {
-      "timestamp": "2026-11-03T17:06:29.914Z",
-      "repository": "cilium/cilium",
-      "learningId": "learn-github-cilium-cilium",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-03T17:14:14.169Z",
-      "repository": "codewhale-hq/Codewhale",
-      "learningId": "learn-github-codewhale-hq-codewhale",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-03T17:14:22.869Z",
-      "repository": "projectdiscovery/nuclei",
-      "learningId": "learn-github-projectdiscovery-nuclei",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-03T17:22:45.284Z",
       "repository": "biomejs/biome",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-04T03:16:23.688Z",
       "repository": "preactjs/preact",
       "learningId": "learn-github-preactjs-preact",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T03:23:36.702Z",
+      "repository": "QwikDev/qwik",
+      "learningId": "learn-github-qwikdev-qwik",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T03:23:45.672Z",
+      "repository": "pixeltable/pixeltable",
+      "learningId": "learn-github-pixeltable-pixeltable",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T03:23:53.522Z",
+      "repository": "mufeedvh/code2prompt",
+      "learningId": "learn-github-mufeedvh-code2prompt",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

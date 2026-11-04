@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-04T03:16:23.620Z",
+  "last_updated": "2026-11-04T03:23:53.424Z",
   "total_verified_learnings": 1204,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -42123,14 +42123,19 @@
       "slug": "mufeedvh-code2prompt",
       "platform": "github",
       "source_url": "https://github.com/mufeedvh/code2prompt",
-      "source_version": "66585136",
-      "content_hash": "2f0f2b26b5197e55f3c613e246eb21046405b8eeed5c4c9b2aa41728600e219f",
+      "source_version": "d762d9bb",
+      "content_hash": "5b5f08a7346ef79ac207d2c487e80029b8f2be0b42875e4b004e87d1c4d2449f",
       "dossier_path": "07_PROJECT_LEARNING/mufeedvh-code2prompt-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mufeedvh-code2prompt-learnings.md",
       "promoted_rules": [
         {
           "number": 1982,
           "title": "core): prune source_tree to changed files under --git-diff-branch",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6739,
+          "title": "build(deps): bump astral-sh/setup-uv from 9.0.0 to 10.3.2",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -42139,7 +42144,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T01:41:08.211Z",
+      "verified_at": "2026-11-04T03:23:53.401Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -47210,8 +47215,8 @@
       "slug": "pixeltable-pixeltable",
       "platform": "github",
       "source_url": "https://github.com/pixeltable/pixeltable",
-      "source_version": "2eca8e44",
-      "content_hash": "47436eb40635e8d9e0d10a4588b6055c2a3f815765e09224e12d0ec63428a0ef",
+      "source_version": "87375562",
+      "content_hash": "bf84c4c0426733c2164169f4f886cd4568020d6b0879ebed9b2e0c3d417526aa",
       "dossier_path": "07_PROJECT_LEARNING/pixeltable-pixeltable-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pixeltable-pixeltable-learnings.md",
       "promoted_rules": [
@@ -47249,6 +47254,11 @@
           "number": 6213,
           "title": "eight bugs found by the skill evals (#1852)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6738,
+          "title": "PXT-1715/1726: Close query resources when a query stops; fix export_lancedb() wi",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -47256,7 +47266,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-02T16:47:50.565Z",
+      "verified_at": "2026-11-04T03:23:45.552Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -76330,8 +76340,8 @@
       "slug": "qwikdev-qwik",
       "platform": "github",
       "source_url": "https://github.com/QwikDev/qwik",
-      "source_version": "d6152907",
-      "content_hash": "014d69b0a05d898ddf2ed7b37bfc06a291a21dcd26de8a9a4a0f2b060a9c6ba0",
+      "source_version": "11765ab6",
+      "content_hash": "f86ac1a8e6de78dade76b7ea48960157a7d58125bf9fe3056852b85aa25277f8",
       "dossier_path": "07_PROJECT_LEARNING/qwikdev-qwik-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/qwikdev-qwik-learnings.md",
       "promoted_rules": [
@@ -76354,6 +76364,11 @@
           "number": 5847,
           "title": "Rebuild docs deps when serializer.mjs is missing",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6737,
+          "title": "router): report production crashes to next(err) and the logs",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -76361,7 +76376,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T19:54:09.112Z",
+      "verified_at": "2026-11-04T03:23:36.579Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -172825,6 +172840,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-04T03:16:23.602Z"
+    },
+    "rule-6737": {
+      "learning_id": "rule-6737",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6737,
+      "title": "router): report production crashes to next(err) and the logs",
+      "source_url": "https://github.com/QwikDev/qwik",
+      "source_version": "11765ab6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T03:23:36.579Z"
+    },
+    "rule-6738": {
+      "learning_id": "rule-6738",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6738,
+      "title": "PXT-1715/1726: Close query resources when a query stops; fix export_lancedb() wi",
+      "source_url": "https://github.com/pixeltable/pixeltable",
+      "source_version": "87375562",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T03:23:45.552Z"
+    },
+    "rule-6739": {
+      "learning_id": "rule-6739",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6739,
+      "title": "build(deps): bump astral-sh/setup-uv from 9.0.0 to 10.3.2",
+      "source_url": "https://github.com/mufeedvh/code2prompt",
+      "source_version": "d762d9bb",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T03:23:53.401Z"
     }
   },
   "aliases": {

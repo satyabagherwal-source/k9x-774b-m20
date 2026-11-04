@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/qwikdev-qwik-learnings.md`  
 > **Source**: github ([https://github.com/QwikDev/qwik](https://github.com/QwikDev/qwik))  
-> **Source Version**: `d6152907`  
+> **Source Version**: `11765ab6`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T19:54:08.744Z  
+> **Timestamp**: 2026-11-04T03:23:35.894Z  
 > **Learning ID**: `learn-github-qwikdev-qwik`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/qwikdev-qwik-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/QwikDev/qwik](https://github.com/QwikDev/qwik))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T19:54:08.400Z  
+> **Harvest Timestamp**: 2026-11-04T03:23:34.857Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Instant-loading web apps, without effort
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 22067 stars
+- **Stars / Engagement**: 22070 stars
 
 ---
 
@@ -1100,48 +1100,9 @@ export const WorkerRoot = component$(() => {
 
 ```
 
-### Core Architecture Module: `e2e/qwik-e2e/utils/release-gate.ts`
+### Core Architecture Module: `e2e/qwik-e2e/apps/error-handling.prod/src/routes/render-crash/index.tsx`
 ```
-type ReleaseStore = {
-  resolved: Set<string>;
-  resolvers: Map<string, Set<() => void>>;
-};
-
-// Each app bundle and the dev-server resolver rendezvous on this globalThis store.
-export const getReleaseStore = (): ReleaseStore =>
-  ((globalThis as any).__qwikOOOSReleaseStore ||= {
-    resolved: new Set<string>(),
-    resolvers: new Map<string, Set<() => void>>(),
-  });
-
-export const getReleaseKey = (requestId: string, releaseId: string): string =>
-  `${requestId}:${releaseId}`;
-
-export const waitForRelease = (requestId: string, releaseId: string): Promise<void> =>
-  new Promise<void>((resolve) => {
-    const store = getReleaseStore();
-    const key = getReleaseKey(requestId, releaseId);
-    if (store.resolved.has(key)) {
-      resolve();
-    } else {
-      let resolvers = store.resolvers.get(key);
-      if (!resolvers) {
-        store.resolvers.set(key, (resolvers = new Set()));
-      }
-      resolvers.add(resolve);
-    }
-  });
-
-// Runs produce after the test's release POST, or after a short fallback delay.
-export const releaseGated = <T>(
-  requestId: string,
-  releaseId: string | null,
-  produce: () => T
-): Promise<T> =>
-  (releaseId
-    ? waitForRelease(requestId, releaseId)
-    : new Promise<void>((resolve) => setTimeout(resolve, 1000))
-  ).then(produce);
+export { default, onGet } from '../../../../error-handling/src/routes/render-crash/index';
 
 ```
 
@@ -1175,680 +1136,769 @@ export const releaseGated = <T>(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `fe7eab76` (2026-10-28)
-**Commit Message**: Rebuild docs deps when serializer.mjs is missing
+### Incident Patch 1: `914b53ee` (2026-10-31)
+**Commit Message**: fix(router): report production crashes to next(err) and the logs
 
-A dist built before the serializer split still has core-internal.d.ts, so the
-check skipped the rebuild and the REPL import failed.
+The crash path sends the 500 page, which makes headersSent true, so the
+node middleware returned before it looked at the error. completion now
+holds failures only, so the checks can go back in their old order and
+the other adapters stop logging redirects.
 
-**File**: `packages/docs/check-qwik-build.ts` (modified, +2/-1)
-```diff
-@@ -19,7 +19,8 @@ if (isWindows && __dirname.startsWith('/')) {
- }
- const qwikPkgDir = path.join(__dirname, '..', 'qwik', 'dist');
- 
--if (!fs.existsSync(path.join(qwikPkgDir, 'core-internal.d.ts'))) {
-+const requiredArtifacts = ['core-internal.d.ts', 'serializer.mjs'];
-+if (requiredArtifacts.some((file) => !fs.existsSync(path.join(qwikPkgDir, file)))) {
-   console.warn(
-     `\n\n=== Running 'pnpm run build.full' to generate missing imports for the docs ===\n`
-   );
-```
-
----
-
-### Incident Patch 2: `4557a3bd` (2026-10-30)
-**Commit Message**: Merge pull request #9340 from QwikDev/fix/9339-track-readonly-signal
-
-fix: track() returns the value type for a ReadonlySignal
-
-**File**: `.changeset/track-readonly-signal.md` (added, +5/-0)
+**File**: `.changeset/report-production-crashes.md` (added, +5/-0)
 ```diff
 @@ -0,0 +1,5 @@
 +---
-+'@qwik.dev/core': patch
++'@qwik.dev/router': patch
 +---
 +
-+fix: `track()` returns the value type for a `ReadonlySignal`
++fix: production crashes now reach `next(err)` and the server logs
 ```
 
-**File**: `.ruler/skills/qwik-core-development/SKILL.md` (modified, +2/-0)
+**File**: `packages/qwik-router/src/middleware/node/index.ts` (modified, +3/-3)
 ```diff
-@@ -40,5 +40,7 @@ Do not load the reference for simple docs, package metadata, formatting, or unre
- - Keep tests focused and close to the behavior that changed; add e2e coverage only when browser,
-   streaming, navigation, or integration timing is the behavior under test.
- - If the change affects public API, run `pnpm api.update` after the focused tests pass.
-+- Vitest does not check `expectTypeOf`, and `pnpm tsc.check` excludes `packages/qwik/src`. Prove type
-+  tests there with `pnpm exec tsc --noEmit -p packages/qwik/tsconfig.json`.
- - If this skill or `references/core-notes.md` is stale after your source inspection, update it before
-   finishing or record why guidance edits were out of scope.
-```
-
-**File**: `packages/docs/src/routes/api/qwik/api.json` (modified, +2/-2)
-```diff
-@@ -1895,8 +1895,8 @@
-           "id": "readonlysignal"
+@@ -83,12 +83,12 @@ export function createQwikRouter(
+       const handled = await requestHandler(serverRequestEv, opts);
+       if (handled) {
+         const err = await handled.completion;
+-        if (handled.requestEv.headersSent) {
+-          return;
+-        }
+         if (err) {
+           throw err;
          }
-       ],
--      "kind": "Interface",
--      "content": "> Warning: This API is now obsolete.\n> \n> Use `Readonly<Signal<T>>` instead.\n> \n\n\n```typescript\nexport interface ReadonlySignal<T = unknown> \n```\n\n\n<table><thead><tr><th>\n\nProperty\n\n\n</th><th>\n\nModifiers\n\n\n</th><th>\n\nType\n\n\n</th><th>\n\nDescription\n\n\n</th></tr></thead>\n<tbody><tr><td>\n\nvalue\n\n\n</td><td>\n\n`readonly`\n\n\n</td><td>\n\nT\n\n\n</td><td>\n\n\n</td></tr>\n</tbody></table>",
-+      "kind": "TypeAlias",
-+      "content": "> Warning: This API is now obsolete.\n> \n> Use `Readonly<Signal<T>>` instead.\n> \n\n\n```typescript\nexport type ReadonlySignal<T = unknown> = Readonly<Signal<T>>;\n```\n**References:** [Signal](#signal)",
-       "editUrl": "https://github.com/QwikDev/qwik/tree/main/packages/qwik/src/core/reactive-primitives/signal.public.ts",
-       "mdFile": "core.readonlysignal.md"
-     },
-```
-
-**File**: `packages/docs/src/routes/api/qwik/index.mdx` (modified, +2/-34)
-```diff
-@@ -3744,42 +3744,10 @@ export type QwikWheelEvent<T = Element> = NativeWheelEvent;
- > Use `Readonly<Signal<T>>` instead.
- 
- ```typescript
--export interface ReadonlySignal<T = unknown>
-+export type ReadonlySignal<T = unknown> = Readonly<Signal<T>>;
- ```
- 
--<table><thead><tr><th>
--
--Property
--
--</th><th>
--
--Modifiers
--
--</th><th>
--
--Type
--
--</th><th>
--
--Description
--
--</th></tr></thead>
--<tbody><tr><td>
--
--value
--
--</td><td>
--
--`readonly`
--
--</td><td>
--
--T
--
--</td><td>
--
--</td></tr>
--</tbody></table>
-+**References:** [Signal](#signal)
- 
- [Edit this section](https://github.com/QwikDev/qwik/tree/main/packages/qwik/src/core/reactive-primitives/signal.public.ts)
- 
-```
-
-**File**: `packages/docs/src/routes/docs/upgrade/index.mdx` (modified, +1/-1)
-```diff
-@@ -421,7 +421,7 @@ What changed:
- 
- ### `ReadonlySignal` → `Readonly<Signal<T>>`
- 
--In v1 `ReadonlySignal<T>` was an alias for `Readonly<Signal<T>>`. In v2 it is a standalone interface exposing only `value`, so it is no longer interchangeable with a real signal. Replace it:
-+`ReadonlySignal<T>` is a deprecated alias for `Readonly<Signal<T>>`. Replace it:
- 
- ```typescript
- // v1
-```
-
-**File**: `packages/eslint-plugin-qwik/src/validLexicalScope.ts` (modified, +1/-1)
-```diff
-@@ -471,7 +471,7 @@ function isSymbolCapturable(
- 
- /**
-  * Returns the `value` property symbol if `type` is Signal-shaped — i.e. its own symbol name ends
-- * with `Signal` (e.g. `Signal`, `ReadonlySignal`), or its `value` property is declared on an
-+ * with `Signal` (e.g. `Signal`, `ComputedSignal`), or its `value` property is declared on an
-  * interface whose name ends with `Signal`. The latter covers TS utility wrappers such as
-  * `Readonly<Signal<T>>` / `Pick<Signal<T>, 'value'>` and user interfaces extending `Signal`, which
-  * produce synthetic symbol names that the simple name check would miss.
-```
-
-**File**: `packages/qwik/src/cli/migrate-v2/codemods/core-types.ts` (modified, +1/-4)
-```diff
-@@ -157,10 +157,7 @@ export const moveInternalImports = (file: SourceFile) => {
-   return changed;
- };
- 
--/**
-- * `ReadonlySignal<T>` was `Readonly<Signal<T>>` in v1. In v2 it is a deprecated interface with only
-- * `value`, which is no longer assignable to `Signal`.
-- */
-+/** `ReadonlySignal<T>` is a deprecated alias of `Readonly<Signal<T>>`, so use the target directly. */
- export const replaceReadonlySignal = (file: SourceFile) =>
-   replaceTypes(file, {
-     ReadonlySignal: {
-```
-
-**File**: `packages/qwik/src/core/qwik.core.api.md` (modified, +1/-4)
-```diff
-@@ -1055,10 +1055,7 @@ export type QwikVisibleEvent = CustomEvent<IntersectionObserverEntry>;
- export type QwikWheelEvent<T = Element> = NativeWheelEvent;
- 
- // @public @deprecated (undocumented)
--export interface ReadonlySignal<T = unknown> {
--    // (undocumented)
--    readonly value: T;
--}
-+export type ReadonlySignal<T = unknown> = Readonly<Signal<T>>;
- 
- // Warning: (ae-forgotten-export) The symbol "InternalServerComponent" needs to be exported by the entry point index.d.ts
- // Warning: (ae-forgotten-export) The symbol "SSRRevealSlotProps" needs to be exported by the entry point index.d.ts
-```
-
----
-
-### Incident Patch 3: `bbd8ba32` (2026-10-30)
-**Commit Message**: Merge pull request #9300 from QwikDev/codex/fix-loader-redirect-9240
-
-fix(router): pending loader reads during redirects
-
-**File**: `.changeset/async-signal-cancelled-reads.md` (added, +5/-0)
-```diff
-@@ -0,0 +1,5 @@
-+---
-+'@qwik.dev/core': patch
-+---
-+
-+fix: skip renders that read a cancelled async signal until it has a value
-```
-
-**File**: `.changeset/async-signal-sync-completion.md` (added, +5/-0)
-```diff
-@@ -0,0 +1,5 @@
-+---
-+'@qwik.dev/core': patch
-+---
-+
-+fix: prevent synchronous async signal results from blocking settled reads
-```
-
-**File**: `.changeset/normalize-computed-errors.md` (added, +5/-0)
-```diff
-@@ -0,0 +1,5 @@
-+---
-+'@qwik.dev/core': patch
-+---
-+
-+fix: preserve computed failures when thrown values are falsy
-```
-
-**File**: `e2e/qwik-e2e/apps/qwikrouter-test/src/routes/loader-redirect/index.tsx` (modified, +21/-1)
-```diff
-@@ -1,11 +1,31 @@
- import { component$ } from '@qwik.dev/core';
--import { useNavigate } from '@qwik.dev/router';
-+import { Link, useNavigate } from '@qwik.dev/router';
- 
- export default component$(() => {
-   const nav = useNavigate();
-   return (
-     <div>
-       <h1 id="loader-redirect-home">Loader Redirect Home</h1>
-+      <Link
-+        id="loader-redirect-list-link"
-+        href="/qwikrouter-test/loader-redirect/list/"
-+        prefetch={false}
-+      >
-+        List
-+      </Link>
-+      {[
-+        { kind: 'object', search: '?sort=old' },
-+        { kind: 'undefined', search: '?kind=undefined&sort=undefined' },
-+      ].map(({ kind, search }) => (
-+        <Link
-+          key={kind}
-+          id={`loader-redirect-${kind}-link`}
-+          href={`/qwikrouter-test/loader-redirect/list/${search}`}
-+          prefetch={false}
-+        >
-+          {kind}
-+        </Link>
-+      ))}
-       <button
-         id="loader-redirect-btn"
-         onClick$={() => {
-```
-
-**File**: `e2e/qwik-e2e/apps/qwikrouter-test/src/routes/loader-redirect/list/index.tsx` (added, +206/-0)
-```diff
-@@ -0,0 +1,206 @@
-+import {
-+  component$,
-+  noSerialize,
-+  Pending,
-+  useSignal,
-+  useTask$,
-+  type NoSerialize,
-+} from '@qwik.dev/core';
-+import {
-+  Link,
-+  routeLoader$,
-+  useLocation,
-+  useNavigate,
-+  usePreventNavigate$,
-+} from '@qwik.dev/router';
-+
-+export const useList = routeLoader$(
-+  ({ url, redirect, cookie }) => {
-+    const redirectMode = cookie.get('loader-redirect-mode')?.value;
-+    if (redirectMode === 'hash' || redirectMode === 'same' || redirectMode === 'search') {
-+      cookie.delete('loader-redirect-mode', { path: '/' });
-+      const destination = new URL(url);
-+      if (redirectMode === 'search') {
-+        destination.searchParams.set('noise', 'one');
-+      } else if (redirectMode === 'hash') {
-+        destination.hash = 'items';
-+      }
-+      throw redirect(302, `${destination.pathname}${destination.search}${destination.hash}`);
-+    }
-+    const sort = url.searchParams.get('sort');
-+    if (!sort) {
-+      const kind = url.searchParams.get('kind');
-+      throw redirect(
-+        302,
-+        `/qwikrouter-test/loader-redirect/list/?sort=new${kind ? `&kind=${kind}` : ''}`
-+      );
-+    }
-+    return sort === 'undefined' ? undefined : { sort, items: ['a', 'b', 'c'] };
-+  },
-+  { id: 'redirect-list', search: ['sort', 'kind'], serializationStrategy: 'always' }
-+);
-+
-+const ListValue = component$(() => {
-+  const signal = useList();
-+  const location = useLocation();
-+  if (signal.error) {
-+    return <p id="loader-redirect-error">{signal.error.message}</p>;
-+  }
-+  const list = signal.value;
-+  return (
-+    <p id="loader-redirect-value">
-+      {location.url.searchParams.get('kind') === 'undefined' && list === undefined
-+        ? 'undefined'
-+        : `${list!.items.length} items, sorted by ${list!.sort}`}
-+    </p>
-+  );
-+});
-+
-+export default component$(() => {
-+  const list = useList();
-+  const location = useLocation();
-+  const kind = location.url.searchParams.get('kind');
-+  const navigate = useNavigate();
-+  const read = useSignal('');
-+  const blocked = useSignal(false);
-+  const blockedAttempts = useSignal(0);
-+  const completed = useSignal(0);
-+  const deferGuard = useSignal(false);
-+  const repeatedNavigations = useSignal(0);
-+  const waitForLoader = useSignal(false);
-+  const interruptNavigation = useSignal(false);
-+  const guardResolution = useSignal<NoSerialize<(result: boolean | Error) => void>>();
-+  useTask$(({ track }) => {
-+    if (track(() => location.isNavigating) && interruptNavigation.value) {
-+      interruptNavigation.value = false;
-+      navigate('?sort=new');
-+    }
-+  });
-+  usePreventNavigate$((url) => {
-+    if (!(url instanceof URL)) {
-+      return false;
-+    }
-+    if (waitForLoader.value && url.searchParams.get('sort') === 'new') {
-+      blockedAttempts.value++;
-+      return list.promise().then(() => true);
-+    }
-+    if (deferGuard.value && url.searchParams.get('sort') === 'new') {
-+      return new Promise<boolean>((resolve, reject) => {
-+        guardResolution.value = noSerialize((result) => {
-+          if (result instanceof Error) {
-+            reject(result);
-+          } else {
-+            resolve(result);
-+          }
-+        });
-+      });
-+    }
-+    if (
-+      blocked.value &&
-+      (url.searchParams.get('sort') === 'new' ||
-+        url.pathname === '/qwikrouter-test/loader-redirect/')
-+    ) {
-+      blockedAttempts.value++;
-+      return true;
-+    }
-+    return false;
-+  });
-+  return (
-+    <main id="loader-redirect-list">
-+      <output id="loader-redirect-pending">{list.pending ? 'pending' : 'ready'}</output>
-+      <output id="loader-redirect-navigation">
-+        {location.isNavigating ? 'navigating' : 'idle'}
-+      </output>
-+      <Pending fallback$={() => <p id="loader-redirect-loading">Loading</p>} delay={0}>
-+        <ListValue />
-+      </Pending>
-+      <button
-+        id="loader-redirect-read"
-+        onClick$={() => {
-+          const value = list.value;
-+          read.value = value === undefined ? 'undefined' : value.sort;
-+        }}
-+      >
-+        Read previous value
-+      </button>
-+      <output id="loader-redirect-read-value">{read.value}</output>
-+      <button id="loader-redirect-block" onClick$={() => (blocked.value = !blocked.value)}>
-+        {blocked.value ? 'blocked' : 'allowed'}
-+      </button>
-+      <output id="loader-redirect-blocked-attempts">{blockedAttempts.value}</output>
-+      <button
-+        id="loader-redirect-wait-before-leave"
-+        onClick$={() => {
-+          waitForLoader.value = true;
-+          interruptNavigation.value = true;
-+        }}
-+      >
-+        Wait for the current loader before leaving
-+      </button>
-+      <button
-+        id="loader-redirect-settle"
-+        onClick$={async () => {
-+          await list.promise();
-+          completed.value++;
-+        }}
-+      >
-+        Wait for loader
-+      </button>
-+      <output id="loader-redirect-completed">{completed.value}</output>
-+      <button
-+        id="loader-redirect-repeat"
-```
-
-**File**: `e2e/qwik-e2e/tests/qwikrouter/loader-redirect.e2e.ts` (added, +341/-0)
-```diff
-@@ -0,0 +1,341 @@
-+import { expect, test, type Page } from '@playwright/test';
-+
-+const base = '/qwikrouter-test/loader-redirect/';
-+
-+async function holdRedirect(page: Page) {
-+  let releaseRedirect!: () => void;
-+  let releaseData!: () => void;
-+  const redirectGate = new Promise<void>((resolve) => (releaseRedirect = resolve));
-+  const dataGate = new Promise<void>((resolve) => (releaseData = resolve));
-+  await page.route('**/q-loader-*', async (route) => {
-+    const response = await route.fetch();
-+    await (new URL(route.request().url()).searchParams.has('sort') ? dataGate : redirectGate);
-+    await route.fulfill({ response });
-+  });
-+  return { releaseRedirect, releaseData };
-+}
-+
-+// The layout and page loader requests both run the redirecting loader, which consumes the cookie.
-+async function sendLoaderRequestsTogether(page: Page) {
-+  let pending = 2;
-+  let sendAll!: () => void;
-+  const bothRequested = new Promise<void>((resolve) => (sendAll = resolve));
-+  await page.route('**/q-loader-*', async (route) => {
-+    if (--pending === 0) {
-+      sendAll();
-+    }
-+    await bothRequested;
-+    await route.continue();
-+  });
-+}
-+
-+test.describe('route loader redirects', () => {
-+  const errors = new WeakMap<Page, string[]>();
-+  test.beforeEach(async ({ page }) => {
-+    errors.set(page, []);
-+    page.on('pageerror', (error) => errors.get(page)!.push(error.stack || error.message));
-+  });
-+  test.afterEach(async ({ page }) => {
-+    expect(errors.get(page)).toEqual([]);
-+  });
-+
-+  test('keeps the first read pending until redirected data arrives', async ({ page }) => {
-+    await page.goto(base);
-+    await page.waitForFunction(() => (window as any)._qwikEv?.roots);
-+    const held = await holdRedirect(page);
-+    try {
-+      await page.locator('#loader-redirect-list-link').click();
-+      await expect(page.locator('#loader-redirect-list')).toBeVisible();
-+      held.releaseRedirect();
-+      await expect(page).toHaveURL(/list\/\?sort=new$/);
-+      await expect(page.locator('#loader-redirect-pending')).toHaveText('pending');
-+      await expect(page.locator('#loader-redirect-value')).toHaveCount(0);
-+      held.releaseData();
-+      await expect(page.locator('#loader-redirect-value')).toHaveText('3 items, sorted by new');
-+      await expect(page.locator('#loader-redirect-pending')).toHaveText('ready');
-+    } finally {
-+      held.releaseRedirect();
-+      held.releaseData();
-+    }
-+  });
-+
-+  test('reports a blocked redirect without a previous value', async ({ page }) => {
-+    await page.goto(base);
-+    await page.waitForFunction(() => (window as any)._qwikEv?.roots);
-+    const held = await holdRedirect(page);
-+    try {
-+      await page.locator('#loader-redirect-list-link').click();
-+      await expect(page.locator('#loader-redirect-list')).toBeVisible();
-+      await page.locator('#loader-redirect-block').click();
-+      await expect(page.locator('#loader-redirect-block')).toHaveText('blocked');
-+      held.releaseRedirect();
-+      // Both layout and page loaders request the redirect.
-+      await expect(page.locator('#loader-redirect-blocked-attempts')).toHaveText('2');
-+      await expect(page.locator('#loader-redirect-pending')).toHaveText('ready');
-+      await expect(page.locator('#loader-redirect-error')).toHaveText(
-+        'Route loader redirect completed without data.'
-+      );
-+      await expect(page.locator('#loader-redirect-value')).toHaveCount(0);
-+      expect(new URL(page.url()).searchParams.has('sort')).toBe(false);
-+    } finally {
-+      held.releaseRedirect();
-+      held.releaseData();
-+    }
-+  });
-+
-+  for (const mode of ['hash', 'same']) {
-+    test(`reports a ${mode} redirect without a previous value`, async ({ page, context }) => {
-+      await page.goto(base);
-+      await page.waitForFunction(() => (window as any)._qwikEv?.roots);
-+      await context.addCookies([
-+        { name: 'loader-redirect-mode', value: mode, url: new URL('/', page.url()).href },
-+      ]);
-+      await sendLoaderRequestsTogether(page);
-+      await page.locator('#loader-redirect-list-link').click();
-+      await expect(page.locator('#loader-redirect-error')).toHaveText(
-+        'Route loader redirect completed without data.'
-+      );
-+      await expect(page.locator('#loader-redirect-pending')).toHaveText('ready');
-+      await expect(page.locator('#loader-redirect-value')).toHaveCount(0);
-+    });
-+  }
-+
-+  for (const previous of [
-+    { name: 'object', search: '?sort=old', text: '3 items, sorted by old', read: 'old' },
-+    {
-+      name: 'undefined',
-+      search: '?sort=undefined&kind=undefined',
-+      text: 'undefined',
-+      read: 'undefined',
-+    },
-+  ]) {
-+    test(`keeps a previous ${previous.name} readable during a redirect`, async ({ page }) => {
-+      await page.goto(`${base}list/${previous.search}`);
-+      await expect(page.locator('#loader-redirect-value')).toHaveText(previous.text);
-+      await page.waitForFunction(() => (window as any)._qwikEv?.roots)
-```
-
-**File**: `e2e/qwik-e2e/tests/qwikrouter/ssg-snapshot.e2e.ts` (modified, +1/-1)
-```diff
-@@ -14,7 +14,7 @@ import tsconfigPaths from 'vite-tsconfig-paths';
- // the growth. Keep each budget above the actual size by at least 500 bytes for core and 100 bytes
- // for the preloader and qwikloader; brotli output varies between builds, so a tighter budget is flaky.
- const PRELOADER_BROTLI_BUDGET = 1800; // We currently group the vite preload helper with the preloader, adding ~500bytes brotli.
--const CORE_BROTLI_BUDGET = 35400;
-+const CORE_BROTLI_BUDGET = 35600;
- const QWIKLOADER_BROTLI_BUDGET = 2200;
- 
- const __dirname = fileURLToPath(new URL('.', import.meta.url));
-```
-
-**File**: `packages/qwik-router/src/runtime/src/qwik-router-component.tsx` (modified, +102/-20)
-```diff
-@@ -170,6 +170,22 @@ type Navigate = (
-   options?: Parameters<RouteNavigate>[1]
- ) => Promise<void>;
- 
-+enum NavigationStartType {
-+  Unchanged,
-+  Duplicate,
-+  Prepared,
-+  Superseded,
-+  External,
-+}
-+
-+type NavigationStart = { type: NavigationStartType; finished?: Promise<void> };
-+
-+type NavigationPreparation = {
-+  promise: Promise<void>;
-+  resolve: (value: void | PromiseLike<void>) => void;
-+  navCount?: number;
-+};
-+
- type ActionData = NonNullable<Parameters<typeof resolveHead>[0]>;
- 
- type NavigationCommit = {
-@@ -301,7 +317,15 @@ export const useQwikRouter = (props?: QwikRouterProps) => {
-     prevUrl: undefined,
-   };
-   const routeLocation = useStore<MutableRouteLocation>(routeLocationTarget, { deep: false });
--  const navResolver: { r?: () => void; p?: Promise<void>; cancel?: () => void; dest?: URL } = {};
-+  const navResolver: {
-+    r?: () => void;
-+    p?: Promise<void>;
-+    cancel?: () => void;
-+    dest?: URL;
-+    preparation?: NavigationPreparation;
-+    /** Accepted route preparation survives a later blocked attempt. */
-+    routePreparation?: { started: Promise<NavigationStart>; preparation: NavigationPreparation };
-+  } = {};
-   const routeLoaderCtx = env.routeLoaderCtx;
-   routeLoaderCtx.manifestHash = manifestHash;
-   Object.assign(routeLoaderCtx.loaderPaths, env.loadedRoute.$loaderPaths$);
-@@ -403,6 +427,45 @@ export const useQwikRouter = (props?: QwikRouterProps) => {
-           getRouterContainer()
-         );
++        if (handled.requestEv.headersSent) {
++          return;
++        }
        }
-+      return prepareNavigation(path, opt).started.then((started) => started.finished);
+       next();
+     } catch (e) {
+```
+
+**File**: `packages/qwik-router/src/middleware/node/index.unit.ts` (modified, +28/-6)
+```diff
+@@ -50,16 +50,38 @@ describe('createQwikRouter().router', () => {
+     expect(middleware.router).toHaveLength(3);
+   });
+ 
+-  it('should not forward handled completion errors after headers are sent', async () => {
+-    const requestEv = {
+-      headersSent: true,
+-    };
++  it('forwards a render crash to next after the response started', async () => {
++    const error = new Error('render failed');
+     mockFromNodeHttp.mockResolvedValue({
+       platform: {},
+     });
+     mockRequestHandler.mockResolvedValue({
+-      completion: Promise.resolve(new Error('already handled')),
+-      requestEv,
++      completion: Promise.resolve(error),
++      requestEv: {
++        headersSent: true,
++      },
++    });
++
++    const next = vi.fn();
++    const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {});
++    const middleware = createQwikRouter(createNodeOptions());
++
++    await middleware.router({ url: '/', headers: {} } as any, {} as any, next);
++
++    expect(next).toHaveBeenCalledWith(error);
++    expect(consoleError).toHaveBeenCalledWith(error);
++    consoleError.mockRestore();
++  });
++
++  it('does not call next once a response went out without a failure', async () => {
++    mockFromNodeHttp.mockResolvedValue({
++      platform: {},
++    });
++    mockRequestHandler.mockResolvedValue({
++      completion: Promise.resolve(undefined),
++      requestEv: {
++        headersSent: true,
++      },
+     });
+ 
+     const next = vi.fn();
+```
+
+**File**: `packages/qwik-router/src/middleware/node/request-failures.unit.ts` (added, +152/-0)
+```diff
+@@ -0,0 +1,152 @@
++import { createServer, type Server } from 'node:http';
++import type { AddressInfo } from 'node:net';
++import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
++import { _setRouterConfig } from '../../runtime/src/router-config';
++import type { RequestEvent } from '../../runtime/src/types';
++import { ServerError } from '../request-handler/server-error';
++
++vi.mock('@qwik.dev/core', async (importOriginal) => ({
++  ...(await importOriginal<typeof import('@qwik.dev/core')>()),
++  isDev: false,
++}));
++
++vi.mock('@qwik.dev/core/internal', async (importOriginal) => ({
++  ...(await importOriginal<typeof import('@qwik.dev/core/internal')>()),
++  isDev: false,
++}));
++
++import { createQwikRouter } from './index';
++
++const routeState = { module: {} as Record<string, unknown> };
++
++_setRouterConfig({
++  routes: { _I: async () => routeState.module },
++  cacheModules: false,
++  basePathname: '/',
++  fallthrough: false,
++} as any);
++
++const FIRST_CHUNK = '<!DOCTYPE html><html q:container="paused">';
++
++const renderFirstChunkThenThrow = (thrown: unknown) =>
++  vi.fn(async (opts: any) => {
++    await opts.stream.write(FIRST_CHUNK);
++    throw thrown;
++  });
++
++const renderNothing = vi.fn();
++
++describe('request failures through the node middleware', () => {
++  const servers: Server[] = [];
++
++  const request = async (render: unknown) => {
++    const next = vi.fn();
++    const handled: Promise<void>[] = [];
++    const { router } = createQwikRouter({ render } as any);
++    const server = createServer((req, res) => {
++      handled.push(router(req, res, next));
++    });
++    servers.push(server);
++    await new Promise<void>((resolve) => server.listen(0, '127.0.0.1', resolve));
++    const { port } = server.address() as AddressInfo;
++
++    const response = await fetch(`http://127.0.0.1:${port}/`, {
++      headers: { accept: 'text/html' },
++      redirect: 'manual',
++    });
++    const body = await response.text();
++    await Promise.all(handled);
++
++    return { body, next, status: response.status };
++  };
++
++  let consoleError: ReturnType<typeof vi.spyOn>;
++
++  beforeEach(() => {
++    routeState.module = { default: () => null };
++    consoleError = vi.spyOn(console, 'error').mockImplementation(() => {});
++  });
++
++  afterEach(async () => {
++    consoleError.mockRestore();
++    await Promise.all(
++      servers.splice(0).map(
++        (server) =>
++          new Promise((resolve) => {
++            server.closeAllConnections();
++            server.close(resolve);
++          })
++      )
++    );
++  });
++
++  it('a render crash after the first chunk reaches next and the response ends', async () => {
++    const crash = new Error('render failed');
++
++    const { body, next, status } = await request(renderFirstChunkThenThrow(crash));
++
++    expect(status).toBe(200);
++    expect(body).toContain(FIRST_CHUNK);
++    expect(next).toHaveBeenCalledOnce();
++    expect(next).toHaveBeenCalledWith(crash);
++    expect(consoleError).toHaveBeenCalledWith(crash);
++  });
++
++  it('forwards a middleware crash that got the 500 page to next', async () => {
++    const crash = new Error('middleware failed');
++    routeState.module = {
++      default: () => null,
++      onGet: () => {
++        throw crash;
++      },
 +    };
 +
-+    const prepareNavigation = (path: Parameters<Navigate>[0], opt: Parameters<Navigate>[1]) => {
-+      let resolvePreparation!: NavigationPreparation['resolve'];
-+      let rejectPreparation!: (reason: unknown) => void;
-+      const prepared = new Promise<void>((resolve, reject) => {
-+        resolvePreparation = resolve;
-+        rejectPreparation = reject;
-+      });
-+      // Public navigation callers only await the completion promise.
-+      prepared.catch(() => {});
-+      const preparation: NavigationPreparation = { promise: prepared, resolve: resolvePreparation };
-+      const started = beginNavigation(path, opt, preparation);
-+      started
-+        .then(async (result) => {
-+          if (
-+            (result.type !== NavigationStartType.Duplicate &&
-+              navResolver.preparation !== preparation &&
-+              preparation.navCount !== internalState.navCount) ||
-+            result.type === NavigationStartType.Superseded ||
-+            result.type === NavigationStartType.External
-+          ) {
++    const { body, next, status } = await request(renderNothing);
++
++    expect(status).toBe(500);
++    expect(body).toContain('Internal Server Error');
++    expect(next).toHaveBeenCalledOnce();
++    expect(next).toHaveBeenCalledWith(crash);
++    expect(consoleError).toHaveBeenCalledWith(crash);
++  });
++
++  it('forwards a ServerError thrown after headers were sent', async () => {
++    const lateError = new ServerError(404, 'No such order');
++
++    const { next, status } = await request(renderFirstChunkThenThrow(lateError));
++
++    expect(status).toBe(200);
++    expect(next).toHaveBeenCalledOnce();
++    expect(next).toHaveBeenCalledWith(lateError);
++  });
++
++  it('does not call next for a redirect', async () => {
++    routeState.module = {
++      default: () => null,
++      onGet: (ev: RequestEvent) => {
++        throw ev.redirect(302, '/elsewhere');
++      },
++    };
++
++    const { next, status } = await request(renderNothing);
++
++    expect(status).toBe(302);
++    expect(next).not.toHaveBeenCalled();
++    expect(consoleError).not.toHaveBeenCalled();
++  });
++
++  it('does not call next for an error page the router sent', async () => {
++    routeState.module = {
++      onGet: (ev: RequestEvent) => {
++        throw ev.error(403, 'Members only');
++      },
++    };
++
++    const { body, next, status } = await request(renderNothing);
++
++    expect(status).toBe(403);
++    expect(body).toContain('Members only');
++    expect(next).not.toHaveBeenCalled();
++    expect(consoleError).not.toHaveBeenCalled();
++  });
++});
+```
+
+**File**: `packages/qwik-router/src/middleware/request-handler/request-event-core.ts` (modified, +1/-0)
+```diff
+@@ -46,6 +46,7 @@ export const RequestEvIsRewrite = '@rewrite';
+ export const RequestEvShareServerTiming = '@serverTiming';
+ export const RequestEvETagCacheKey = '@eTagCacheKey';
+ export const RequestEvCaughtError = '@caughtError';
++export const RequestEvSentServerError = '@sentServerError';
+ export const RequestEvHttpStatusMessage = '@httpStatusMessage';
+ 
+ export function createRequestEvent(
+```
+
+**File**: `packages/qwik-router/src/middleware/request-handler/user-response.ts` (modified, +10/-7)
+```diff
+@@ -9,7 +9,11 @@ import type {
+ } from '../../runtime/src/types';
+ import { _asyncRequestStore } from './async-request-store';
+ import { getErrorHtml } from './error-handler';
+-import { createRequestEvent, type RequestEventInternal } from './request-event-core';
++import {
++  createRequestEvent,
++  RequestEvSentServerError,
++  type RequestEventInternal,
++} from './request-event-core';
+ import { AbortMessage, RedirectMessage } from './redirect-handler';
+ import { RewriteMessage } from './rewrite-handler';
+ import { ServerError } from './server-error';
+@@ -78,7 +82,8 @@ async function runNext(
+     const message = 'Resource Not Found';
+     requestEv.status(status);
+     requestEv.html(status, getErrorHtml(status, message));
+-    return new ServerError(status, message);
++    requestEv.sharedMap.set(RequestEvSentServerError, new ServerError(status, message));
++    return;
+   }
+ 
+   let rewriteAttempt = 1;
+@@ -90,7 +95,7 @@ async function runNext(
+       if (e instanceof RedirectMessage) {
+         const stream = requestEv.getWritableStream();
+         await stream.close();
+-        return e;
++        return;
+       } else if (e instanceof RewriteMessage) {
+         if (rewriteAttempt > 50) {
+           return new Error(`Infinite rewrite loop`);
+@@ -114,12 +119,10 @@ async function runNext(
+         } else {
+           requestEv.html(status, getErrorHtml(status, e.data));
+         }
+-        return e;
++        requestEv.sharedMap.set(RequestEvSentServerError, e);
++        return;
+       }
+       if (!isDev || requestEv.headersSent) {
+-        if (isDev) {
+-          console.error(e);
+-        }
+         try {
+           if (!requestEv.headersSent) {
+             requestEv.headers.set('content-type', 'text/html; charset=utf-8');
+```
+
+**File**: `packages/qwik-router/src/middleware/request-handler/user-response.unit.ts` (modified, +33/-16)
+```diff
+@@ -13,7 +13,8 @@ vi.mock('@qwik.dev/core/internal', async (importOriginal) => ({
+   },
+ }));
+ 
+-vi.mock('./request-event-core', () => ({
++vi.mock('./request-event-core', async (importOriginal) => ({
++  ...(await importOriginal<typeof import('./request-event-core')>()),
+   createRequestEvent: mocks.createRequestEvent,
+ }));
+ 
+@@ -23,6 +24,7 @@ vi.mock('./async-request-store', () => ({
+   },
+ }));
+ 
++import { RedirectMessage } from './redirect-handler';
+ import { ServerError } from './server-error';
+ import { runQwikRouter } from './user-response';
+ import type { ServerRequestEvent } from './types';
+@@ -96,32 +98,44 @@ describe('runQwikRouter', () => {
+     };
+     mocks.createRequestEvent.mockReturnValue(requestEv);
+ 
+-    await runQwikRouter({} as any, {} as any, [], vi.fn() as any, '/').completion;
++    const completion = await runQwikRouter({} as any, {} as any, [], vi.fn() as any, '/')
++      .completion;
+ 
+-    return { html: written.join(''), writer };
++    return { completion, html: written.join(''), writer };
+   };
+ 
+-  it('finishes, logs and shows an error that is thrown after the response started in dev', async () => {
+-    const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {});
++  it('finishes and shows an error that is thrown after the response started in dev', async () => {
++    const { completion, html, writer } = await failAfterResponseStarted();
+ 
+-    try {
+-      const { html, writer } = await failAfterResponseStarted();
+-
+-      expect(html).toContain('boom');
+-      expect(writer.close).toHaveBeenCalled();
+-      expect(consoleError).toHaveBeenCalledWith(expect.objectContaining({ message: 'boom' }));
+-    } finally {
+-      consoleError.mockRestore();
+-    }
++    expect(html).toContain('boom');
++    expect(writer.close).toHaveBeenCalled();
++    expect(completion).toEqual(expect.objectContaining({ message: 'boom' }));
+   });
+ 
+   it('keeps the generic error page in production when SSR fails after the response started', async () => {
+     mocks.isDev = false;
+ 
+-    const { html } = await failAfterResponseStarted();
++    const { completion, html } = await failAfterResponseStarted();
+ 
+     expect(html).toContain('Internal Server Error');
+     expect(html).not.toContain('boom');
++    expect(completion).toEqual(expect.objectContaining({ message: 'boom' }));
++  });
++
++  it('resolves completion with nothing for a redirect', async () => {
++    const requestEv = {
++      originalUrl: new URL('http://localhost/'),
++      next: vi.fn(async () => {
++        throw new RedirectMessage();
++      }),
++      getWritableStream: vi.fn(() => ({ close: vi.fn() })),
++      isDirty: () => true,
++    };
++    mocks.createRequestEvent.mockReturnValue(requestEv);
++
++    const run = runQwikRouter({} as any, {} as any, [], vi.fn() as any, '/');
++
++    await expect(run.completion).resolves.toBeUndefined();
+   });
+ 
+   it.each(['application/json', 'text/html'])(
+@@ -132,6 +146,7 @@ describe('runQwikRouter', () => {
+         request: new Request('http://localhost/members/', { headers: { Accept: accept } }),
+         headers: new Headers({ 'Cache-Control': 'public, max-age=60' }),
+         headersSent: false,
++        sharedMap: new Map(),
+         next: vi.fn(async () => {
+           throw new ServerError(403, 'Members only');
+         }),
+@@ -141,7 +156,9 @@ describe('runQwikRouter', () => {
+       };
+       mocks.createRequestEvent.mockReturnValue(requestEv);
+ 
+-      await runQwikRouter({} as any, {} as any, [], vi.fn() as any, '/').completion;
++      await expect(
++        runQwikRouter({} as any, {} as any, [], vi.fn() as any, '/').completion
++      ).resolves.toBeUndefined();
+ 
+       expect(requestEv.send.mock.calls.length + requestEv.html.mock.calls.length).toBe(1);
+       expect(requestEv.headers.get('Cache-Control')).toBe('no-store');
+```
+
+**File**: `packages/qwik-router/src/ssg/worker-thread.ts` (modified, +7/-16)
+```diff
+@@ -4,7 +4,10 @@ import {
+   renderQwikMiddleware,
+   resolveRequestHandlers,
+ } from '../middleware/request-handler/resolve-request-handlers-core';
+-import { RequestEvCaughtError } from '../middleware/request-handler/request-event-core';
++import {
++  RequestEvCaughtError,
++  RequestEvSentServerError,
++} from '../middleware/request-handler/request-event-core';
+ import { trimInternalPathname } from '../middleware/request-handler/request-path';
+ import type { ServerRequestEvent } from '../middleware/request-handler/types';
+ import { runQwikRouter } from '../middleware/request-handler/user-response';
+@@ -317,20 +320,16 @@ export async function workerRender(
+               }
+               return completion;
+             };
++            const failure = r ?? rsp.requestEv.sharedMap.get(RequestEvSentServerError);
+             if (routeWriter) {
+-              return closePromise.then(() => failRouteOnCaughtBoundary(r));
++              return closePromise.then(() => failRouteOnCaughtBoundary(failure));
+             }
+-            return failRouteOnCaughtBoundary(r);
++            return failRouteOnCaughtBoundary(failure);
+           });
+         }
+       })
+       .then((e: any) => {
+         if (e !== undefined) {
+-          if (isRedirectMessage(e)) {
+-            // TODO We should render a html page for redirects too
+-            // that would require refactoring redirects
+-            return;
+-          }
+           if (e instanceof Error) {
+             result.error = {
+               message: e.message,
+@@ -378,14 +377,6 @@ export async function workerRender(
+ /** Create a fresh no-op WritableStream (must be a real instance for pipeTo checks). */
+ const createNoopWritableStream = () => new WritableStream();
+ 
+-function isRedirectMessage(value: unknown) {
+-  return (
+-    typeof value === 'object' &&
+-    value !== null &&
+-    (value as { constructor?: { name?: string } }).constructor?.name === 'RedirectMessage'
+-  );
+-}
+-
+ async function requestHandlerForSsg<T>(
+   serverRequestEv: ServerRequestEvent<T>,
+   opts: SsgHandlerOptions,
+```
+
+---
+
+### Incident Patch 2: `fa1528e4` (2026-11-03)
+**Commit Message**: fix(router): settle a superseded action while resolving a server rewrite
+
+- Call abandonAction() when a newer navigation takes over during the q-route.json lookup or the
+  rewritten route load, so the submit promise does not stay pending.
+- Do not reload an obsolete navigation when loading the rewritten route fails.
+- A "reload" answer with an action no longer reaches loadRoute('reload'); the action is submitted.
+- e2e: a navigation started while q-route.json is pending, and an action superseded meanwhile.
+- Shorter changeset without internal names.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `.changeset/rewrite-spa-navigation.md` (modified, +1/-1)
+```diff
+@@ -2,4 +2,4 @@
+ '@qwik.dev/router': patch
+ ---
+ 
+-fix: client navigation to a URL that only exists through a server `rewrite()` now renders the rewrite target instead of the 404 page. When no page matches on the client, the router asks the server (`q-route.json`) where the URL routes to and loads that route, keeping the original URL. This also follows a redirect thrown by a route that has no component. Submitting an action on such a URL resolves the rewrite too, so the page no longer turns into the 404 after the action runs.
++fix: client-side navigation to a URL that only exists through a server `rewrite()` now shows the rewritten page instead of a 404, and keeps the original URL in the address bar. Submitting an action on such a page keeps it rendered too, and navigating to a route that only redirects (no page component) now follows the redirect.
+```
+
+**File**: `e2e/qwik-e2e/apps/qwikrouter-test/src/routes/rewrite-spa/target/index.tsx` (modified, +16/-1)
+```diff
+@@ -1,5 +1,5 @@
+ import { component$ } from '@qwik.dev/core';
+-import { Form, routeAction$, routeLoader$ } from '@qwik.dev/router';
++import { Form, Link, routeAction$, routeLoader$ } from '@qwik.dev/router';
+ 
+ export const useTarget = routeLoader$(({ originalUrl, url }) => ({
+   original: originalUrl.pathname,
+@@ -22,6 +22,21 @@ export default component$(() => {
+         </button>
+       </Form>
+       {submit.value?.done && <p id="rewrite-spa-action-done">action done</p>}
++      <button
++        id="rewrite-spa-submit-js"
++        onClick$={() => {
++          (window as any).__submitOutcome = 'pending';
++          submit.submit().then(
++            () => ((window as any).__submitOutcome = 'resolved'),
++            () => ((window as any).__submitOutcome = 'rejected')
++          );
++        }}
++      >
++        submit from code
++      </button>
++      <Link href="/qwikrouter-test/rewrite-spa/" id="rewrite-spa-back">
++        back
++      </Link>
+     </>
+   );
+ });
+```
+
+**File**: `e2e/qwik-e2e/tests/qwikrouter/rewrite-spa.e2e.ts` (modified, +55/-1)
+```diff
+@@ -1,8 +1,23 @@
+-import { expect, test } from '@playwright/test';
++import { expect, test, type Page } from '@playwright/test';
+ 
+ const pretty = '/qwikrouter-test/rewrite-spa/pretty/';
+ const target = '/qwikrouter-test/rewrite-spa/target/';
+ 
++/** Holds the `pretty` q-route.json response until `release()` is called. */
++async function holdPrettyRoute(page: Page) {
++  let release!: () => void;
++  let started!: () => void;
++  const gate = new Promise<void>((resolve) => (release = resolve));
++  const requested = new Promise<void>((resolve) => (started = resolve));
++  await page.route(`**${pretty}q-route.json`, async (route) => {
++    const response = await route.fetch();
++    started();
++    await gate;
++    await route.fulfill({ response }).catch(() => {});
++  });
++  return { requested, release };
++}
++
+ test.describe('rewrite to a different route', () => {
+   test('SSR serves the target page under the original URL', async ({ page }) => {
+     const response = await page.goto(pretty);
+@@ -76,4 +91,43 @@ test.describe('rewrite to a different route', () => {
+     await expect(page.locator('#rewrite-spa-original')).toHaveText(pretty);
+     expect(pageErrors).toEqual([]);
+   });
++
++  test('a navigation started while q-route.json is pending wins', async ({ page }) => {
++    const prettyCached = '/qwikrouter-test/rewrite-spa/pretty-cached/';
++    const pageErrors: Error[] = [];
++    page.on('pageerror', (err) => pageErrors.push(err));
++    await page.goto('/qwikrouter-test/rewrite-spa/');
++    await page.evaluate(() => ((window as any).__noReload = true));
++    const held = await holdPrettyRoute(page);
++
++    await page.locator('[data-test-link="rewrite-spa-pretty"]').click();
++    await held.requested;
++    await page.locator('[data-test-link="rewrite-spa-pretty-cached"]').click();
++
++    await expect(page).toHaveURL(new RegExp(`${prettyCached}$`));
++    await expect(page.locator('#rewrite-spa-original')).toHaveText(prettyCached);
++
++    held.release();
++    await page.waitForTimeout(200);
++    await expect(page).toHaveURL(new RegExp(`${prettyCached}$`));
++    await expect(page.locator('#rewrite-spa-original')).toHaveText(prettyCached);
++    expect(await page.evaluate(() => (window as any).__noReload)).toBe(true);
++    expect(pageErrors).toEqual([]);
++  });
++
++  test('an action superseded while q-route.json is pending settles its submit promise', async ({
++    page,
++  }) => {
++    await page.goto(pretty);
++    await expect(page.locator('#rewrite-spa-target')).toBeVisible();
++    const held = await holdPrettyRoute(page);
++
++    await page.locator('#rewrite-spa-submit-js').click();
++    await held.requested;
++    await page.locator('#rewrite-spa-back').click();
++
++    await expect(page.locator('#rewrite-spa-source')).toBeVisible();
++    await expect.poll(() => page.evaluate(() => (window as any).__submitOutcome)).toBe('rejected');
++    held.release();
++  });
+ });
+```
+
+**File**: `packages/qwik-router/src/runtime/src/qwik-router-component.tsx` (modified, +13/-5)
+```diff
+@@ -778,23 +778,31 @@ export const useQwikRouter = (props?: QwikRouterProps) => {
+         // An action on a rewritten page also needs the real route, or the page renders as not found after submit.
+         const resolved = await Promise.race([resolveServerRewrite(trackUrl), canceled]);
+         if (internalState.navCount !== navCountBefore) {
++          abandonAction();
+           return;
+         }
+-        if (resolved === 'reload' && !action) {
+-          window.location.href = trackUrl.href;
+-          return;
+-        }
+-        if (resolved && resolved !== trackUrl.pathname) {
++        if (resolved === 'reload') {
++          // With an action, skip the reload so the submission is not dropped; the action still runs.
++          if (!action) {
++            window.location.href = trackUrl.href;
 +            return;
 +          }
-+          await navResolver.routePreparation?.started;
-+          if (getClientRouteLoaders(routeLoaderCtx).navCount === internalState.navCount) {
-+            resolvePreparation();
-+          }
-+        }, rejectPreparation)
-+        .catch(rejectPreparation);
-+      return { prepared, started };
-+    };
-+
-+    const beginNavigation = async (
-+      path: Parameters<Navigate>[0],
-+      opt: Parameters<Navigate>[1],
-+      preparation: NavigationPreparation
-+    ): Promise<NavigationStart> => {
-       const {
-         type = 'link',
-         forceReload = path === undefined, // Hack for nav() because this API is already set.
-@@ -439,9 +502,17 @@ export const useQwikRouter = (props?: QwikRouterProps) => {
-       ) {
-         // Repeated redirects/loaders can request the same in-flight destination. Treat that as a
-         // duplicate so we don't bump navCount and cancel the navigation that would commit it.
--        return navResolver.p;
-+        return {
-+          type: NavigationStartType.Duplicate,
-+          finished: navResolver.p,
-+        };
-       }
- 
-+      const previousPreparation = navResolver.preparation;
-+      navResolver.preparation = preparation;
-+      if (previousPreparation?.navCount === undefined) {
-+        previousPreparation?.resolve(preparation.promise);
-+      }
-       const attemptCount = ++internalState.attemptCount;
- 
-       if (
-@@ -452,29 +523,32 @@ export const useQwikRouter = (props?: QwikRouterProps) => {
-           !isSameOrigin(dest, lastDest))
-       ) {
-         const prevents = await Promise.all([...preventNav.$cbs$.values()].map((cb) => cb(dest)));
--        if (attemptCount !== internalState.attemptCount || prevents.some(Boolean)) {
--          if (attemptCount === internalState.attemptCount && type === 'popstate') {
-+        if (attemptCount !== internalState.attemptCount) {
-+          return { type: NavigationStartType.Superseded };
-+        }
-+        if (prevents.some(Boolean)) {
-+          if (type === 'popstate') {
-             // Popstate events are not cancellable, so we push to undo
-             // TODO keep state?
-             history.pushState(null, '', lastDest);
++        } else if (resolved && resolved !== trackUrl.pathname) {
+           try {
+             const config = await getRouterConfig();
+             loadedRoute = await loadRoute(config.routes, config.cacheModules, resolved);
+             rewrittenTo = resolved;
+           } catch (e) {
++            if (internalState.navCount !== navCountBefore) {
++              abandonAction();
++              return;
++            }
+             console.error(`Could not load rewritten route ${resolved}, reloading:`, e);
+             window.location.href = trackUrl.href;
+             return;
            }
--          return;
-+          return { type: NavigationStartType.Unchanged };
+           if (internalState.navCount !== navCountBefore) {
++            abandonAction();
+             return;
+           }
          }
-       }
- 
-       if (typeof dest === 'number') {
-         if (isBrowser) {
-           history.go(dest);
+```
 
+---
+
+### Incident Patch 3: `9832c7d9` (2026-11-02)
+**Commit Message**: Merge pull request #9345 from omerman/fix/removed-dirty-component-cleanup
+
+fix(core): run the visible task cleanups of a removed component that had a pending re-render
+
+**File**: `.changeset/removed-dirty-component-cleanup.md` (added, +5/-0)
+```diff
+@@ -0,0 +1,5 @@
++---
++'@qwik.dev/core': patch
++---
++
++fix: `useVisibleTask$` cleanups now run when a component is removed while it is about to re-render (for example, a `usePreventNavigate$` handler is now unregistered).
+```
+
+**File**: `packages/qwik/src/core/client/vnode-diff.ts` (modified, +11/-1)
+```diff
+@@ -61,7 +61,11 @@ import type { TextVNode } from '../shared/vnode/text-vnode';
+ import { createSetAttributeOperation } from '../shared/vnode/types/dom-vnode-operation';
+ import type { VirtualVNode } from '../shared/vnode/virtual-vnode';
+ import type { VNode } from '../shared/vnode/vnode';
+-import { addVNodeOperation, markVNodeDirty } from '../shared/vnode/vnode-dirty';
++import {
++  addVNodeOperation,
++  markVNodeDirty,
++  propagateToCursorRoot,
++} from '../shared/vnode/vnode-dirty';
+ import { updateDirtySubtreeCursorBoundary, type CursorBoundary } from '../use/use-cursor-boundary';
+ import { trackSignalAndAssignHost, untrack } from '../use/use-core';
+ import { TaskFlags, isTask } from '../use/use-task';
+@@ -1912,6 +1916,12 @@ export function cleanup(
+   do {
+     if (cursorRootData && vCursor !== cursorRoot && isCursor(vCursor)) {
+       abandonCursor(container, cursorRootData, vCursor);
++      // The abandoned cursor keeps its dirty bits, but nothing walks it any more. Link it to the
++      // cursor root, otherwise markVNodeDirty() below skips it as "already dirty" and the cleanups
++      // of the visible tasks in this subtree are never executed.
++      if (vCursor.dirty & ChoreBits.DIRTY_MASK) {
++        propagateToCursorRoot(vCursor, cursorRoot!);
++      }
+     }
+     const type = vCursor.flags;
+     if (type & VNodeFlags.ELEMENT_OR_VIRTUAL_MASK) {
+```
+
+**File**: `packages/qwik/src/core/shared/vnode/vnode-dirty.ts` (modified, +1/-1)
+```diff
+@@ -39,7 +39,7 @@ function propagatePath(target: VNode): void {
+  * Propagates dirty bits from vNode up to the specified cursorRoot. Used during diff when we know
+  * the cursor root to merge with. Also updates cursor position if we pass through any cursors.
+  */
+-function propagateToCursorRoot(vNode: VNode, cursorRoot: VNode): void {
++export function propagateToCursorRoot(vNode: VNode, cursorRoot: VNode): void {
+   reusablePath.push(vNode);
+   let cursorBoundary = getOwnCursorBoundary(vNode);
+   let current: VNode | null = vNode.slotParent || vNode.parent;
+```
+
+**File**: `packages/qwik/src/core/tests/use-visible-task.spec.tsx` (modified, +52/-0)
+```diff
+@@ -764,6 +764,58 @@ describe.each([
+       (globalThis as any).log = undefined;
+     });
+ 
++    it('should execute cleanup visible task on unmount when the removed component has a pending re-render', async () => {
++      (globalThis as any).log = [] as string[];
++      // Not captured by the components: Qwik would serialize (= await) a captured promise.
++      let finishTask!: () => void;
++      (globalThis as any).taskDone = new Promise<void>((resolve) => (finishTask = resolve));
++      const Child = component$((props: { count: SignalType<number> }) => {
++        useVisibleTask$(({ cleanup }) => {
++          (globalThis as any).log.push('visible_task:');
++          cleanup(() => (globalThis as any).log.push('cleanup:'));
++        });
++        // render blocking: when `count` changes the re-render of the component waits for this task
++        useTask$(async ({ track }) => {
++          const count = track(props.count);
++          if (count > 0) {
++            (globalThis as any).log.push('task: waiting');
++            await (globalThis as any).taskDone;
++          }
++        });
++        // reading the signal in the body makes the whole component re-render when it changes
++        return <span>Child {props.count.value}</span>;
++      });
++      const Parent = component$(() => {
++        const show = useSignal(true);
++        const count = useSignal(0);
++        return (
++          <button
++            onClick$={() => {
++              // the child gets a pending re-render in the same moment it is removed
++              count.value++;
++              show.value = false;
++            }}
++          >
++            {show.value ? <Child count={count} /> : 'click'}
++          </button>
++        );
++      });
++
++      const { document } = await render(<Parent />, { debug });
++      await trigger(document.body, 'span', 'qvisible');
++      expect((globalThis as any).log).toEqual(['visible_task:']);
++      (globalThis as any).log = [];
++      // the pending task keeps the scheduler busy, so don't wait for it to go idle
++      const click = trigger(document.body, 'button', 'click', {}, { waitForIdle: false });
++      await vi.waitFor(() =>
++        expect((globalThis as any).log).toEqual(expect.arrayContaining(['cleanup:']))
++      );
++      finishTask();
++      await click;
++      (globalThis as any).log = undefined;
++      (globalThis as any).taskDone = undefined;
++    });
++
+     it('#9203 - should run visible task cleanups for nested components', async () => {
+       (globalThis as any).log = [] as string[];
+       const Grandchild = component$(() => {
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #9340** (2026-10-30): fix: track() returns the value type for a ReadonlySignal (@Varixo)
-- **PR #9323** (2026-10-30): perf(core): lazy client serializer (@Varixo)
-- **PR #9320** (2026-10-28): fix(router): catch all route allocation (@Varixo)
-- **PR #9319** (2026-10-28): fix(ci): post docs previews on fork PRs (@maiieul)
-- **PR #9318** (2026-10-28): docs: index each API symbol as its own search result (@wmertens)
-- **PR #9317** (2026-10-28): docs: replace Modular Forms integration with Formisch (@fabian-hiller)
+- **PR #9368** (2026-11-03): fix(core): keep SSR-shared text intact when a keyed diff reorders or replaces siblings (@omerman)
+- **PR #9354** (closed): fix(core): keep a JSX event handler when useOn() adds the same event (@intellix)
+- **PR #9348** (2026-11-02): fix(core): hold a document's first flush until body opens (@maiieul)
+- **PR #9345** (2026-11-02): fix(core): run the visible task cleanups of a removed component that had a pending re-render (@omerman)
+- **PR #9344** (closed): fix(router): a pending render blocking task no longer blocks client navigation (@omerman)
+- **PR #9341** (2026-11-01): fix(router): report production crashes to next(err) and the logs (@maiieul)
 
 ---
 
@@ -1868,29 +1918,32 @@ fix(router): pending loader reads during redirects
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Rebuild docs deps when serializer.mjs is missing
+## X. router): report production crashes to next(err) and the logs
 
 **RULE**:
-When implementing operations in `packages/docs/check-qwik-build.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in QwikDev/qwik. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.changeset/report-production-crashes.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in QwikDev/qwik. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `fe7eab76`: Rebuild docs deps when serializer.mjs is missing. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `914b53ee`: router): report production crashes to next(err) and the logs. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/docs/check-qwik-build.ts`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/report-production-crashes.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-const requiredArtifacts = ['core-internal.d.ts', 'serializer.mjs'];
-if (requiredArtifacts.some((file) => !fs.existsSync(path.join(qwikPkgDir, file)))) {
+---
+'@qwik.dev/router': patch
+---
+
+fix: production crashes now reach `next(err)` and the server logs
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-if (!fs.existsSync(path.join(qwikPkgDir, 'core-internal.d.ts'))) {
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `fe7eab76` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `914b53ee` are properly handled with clean fallback behavior.

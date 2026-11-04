@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/pixeltable-pixeltable-learnings.md`  
 > **Source**: github ([https://github.com/pixeltable/pixeltable](https://github.com/pixeltable/pixeltable))  
-> **Source Version**: `2eca8e44`  
+> **Source Version**: `87375562`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-02T16:47:50.408Z  
+> **Timestamp**: 2026-11-04T03:23:44.877Z  
 > **Learning ID**: `learn-github-pixeltable-pixeltable`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pixeltable-pixeltable-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pixeltable/pixeltable](https://github.com/pixeltable/pixeltable))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-02T16:47:50.129Z  
+> **Harvest Timestamp**: 2026-11-04T03:23:44.016Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The backend agents build with - Multimodal database, orchestration, and serving in one file
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 1653 stars
+- **Stars / Engagement**: 1656 stars
 
 ---
 
@@ -512,344 +512,40 @@ def create_table_version_md(
 
 ### Core Architecture Module: `pixeltable/functions/util.py`
 ```
-from typing import TypedDict
+from pixeltable.functions.media_metadata import (
+    CodecContextMetadata,
+    ContainerMetadata,
+    ImageMetadata,
+    StreamMetadata,
+    get_metadata,
+)
+from pixeltable.functions.model_support import normalize_image_mode, resolve_torch_device
 
-import av
-import av.container
-import av.stream
-import PIL.Image
-
-from pixeltable.config import Config
-from pixeltable.env import Env
-
-
-def resolve_torch_device(device: str, allow_mps: bool = True) -> str:
-    Env.get().require_package('torch')
-    import torch
-
-    mps_enabled = Config.get().get_bool_value('enable_mps')
-    if mps_enabled is None:
-        mps_enabled = True  # Default to True if not set in config
-
-    if device == 'auto':
-        if torch.cuda.is_available():
-            return 'cuda'
-        if mps_enabled and allow_mps and torch.backends.mps.is_available():
-            return 'mps'
-        return 'cpu'
-    return device
-
-
-def normalize_image_mode(image: PIL.Image.Image) -> PIL.Image.Image:
-    """
-    Converts grayscale images to 3-channel for compatibility with models that only work with
-    multichannel input.
-    """
-    if image.mode in ('1', 'L'):
-        return image.convert('RGB')
-    if image.mode == 'LA':
-        return image.convert('RGBA')
-    return image
-
-
-class ImageMetadata(TypedDict, total=False):
-    width: int
-    height: int
-    mode: str
-    bits: int | None
-    format: str | None
-
-
-class CodecContextMetadata(TypedDict, total=False):
-    """Metadata about a stream's codec."""
-
-    name: str
-    """Codec name (e.g. `'h264'`, `'aac'`)."""
-    codec_tag: str
-    """Four-character codec tag, unicode-escaped."""
-    profile: str | None
-    """Codec profile (e.g. `'High'`, `'LC'`), or `None` if unavailable."""
-    channels: int | None
-    """Number of audio channels. Present only for audio streams."""
-    pix_fmt: str | None
-    """Pixel format (e.g. `'yuv420p'`). Present only for video streams."""
-
-
-class StreamMetadata(TypedDict, total=False):
-    """Metadata for a stream within a media container."""
-
-    type: str
-    """Stream type: typically `'audio'` or `'video'`. Other stream types (e.g. subtitles) will have a
-    `StreamMetadata` entry, but with no metadata other than `type`."""
-    duration: int | None
-    """Stream duration in `time_base` units, or `None` if unknown."""
-    time_base: float | None
-    """Time base of the stream as a float (seconds per tick), or `None` if unknown."""
-    duration_seconds: float | None
-    """Stream duration in seconds, computed from `duration` and `time_base`."""
-    frames: int
-    """Number of frames in the stream (may be 0 if unknown)."""
-    metadata: dict[str, str]
-    """Additional stream-specific metadata tags (e.g. language, title)."""
-    codec_context: CodecContextMetadata
-    """Codec information for this stream."""
-    width: int
-    """Frame width in pixels. Present only for video streams."""
-    height: int
-    """Frame height in pixels. Present only for video streams."""
-    average_rate: float | None
-    """Average frame rate in FPS (frames per second). Present only for video streams."""
-    base_rate: float | None
-    """Base (constant) frame rate in FPS. Present only for video streams."""
-    guessed_rate: float | None
-    """Guessed frame rate in FPS. Present only for video streams."""
-
-
-class ContainerMetadata(TypedDict):
-    """Metadata for a media container, as returned by
-    [`audio.get_metadata()`][pixeltable.functions.audio.get_metadata]
-    or [`video.get_metadata()`][pixeltable.functions.video.get_metadata]."""
-
-    bit_exact: bool
-    """Whether the container was opened in bit-exact mode."""
-    bit_rate: int | None
-    """Overall bit rate of the container in bits per second, or `None` if unknown."""
-    size: int | None
-    """Size of the container in bytes, or `None` if unknown."""
-    metadata: dict[str, str]
-    """Additional container-level metadata tags (e.g. title, encoder)."""
-    streams: list[StreamMetadata]
-    """Per-stream metadata for each stream in the container."""
-
-
-def get_metadata(path: str) -> ContainerMetadata:
-    with av.open(path) as container:
-        assert isinstance(container, av.container.InputContainer)
-        streams_info = [__get_stream_metadata(stream) for stream in container.streams]
-        result: ContainerMetadata = {
-            'bit_exact': getattr(container, 'bit_exact', False),
-            'bit_rate': container.bit_rate,
-            'size': container.size,
-            'metadata': container.metadata,
-            'streams': streams_info,
-        }
-    return result
-
-
-def __get_stream_metadata(stream: av.stream.Stream) -> StreamMetadata:
-    if stream.type not in ('audio', 'video'):
-        result_unsupported: StreamMetadata = {'type': stream.type}
-        return result_unsupported
-
-    codec_context = stream.codec_context
-    codec_tag = codec_context.codec_tag.encode('unicode-escape').decode('utf-8')
-
-    # Compute duration_seconds from stream-level duration.
-    # We intentionally don't fall back to container.duration here because it's ambiguous —
-    # it may reflect a different stream's duration (e.g. audio vs video).
-    duration_seconds: float | None = None
-    if stream.duration is not None and stream.time_base is not None:
-        duration_seconds = float(stream.duration * stream.time_base)
-
-    codec_context_md: CodecContextMetadata = {
-        'name': codec_context.name,
-        'codec_tag': codec_tag,
-        'profile': codec_context.profile,
-    }
-
-    result: StreamMetadata = {
-        'type': stream.type,
-        'duration': stream.duration,
-        'time_base': float(stream.time_base) if stream.time_base is not None else None,
-        'duration_seconds': duration_seconds,
-        'frames': stream.frames,
-        'metadata': stream.metadata,
-        'codec_context': codec_context_md,
-    }
-
-    if stream.type == 'audio':
-        assert isinstance(stream.codec_context, av.AudioCodecContext)
-        channels = stream.codec_context.channels
-        codec_context_md['channels'] = int(channels) if channels is not None else None
-    else:
-        assert stream.type == 'video'
-        assert isinstance(stream, av.VideoStream)
-        codec_context_md['pix_fmt'] = getattr(stream.codec_context, 'pix_fmt', None)
-        result['width'] = stream.width
-        result['height'] = stream.height
-        result['average_rate'] = float(stream.average_rate) if stream.average_rate is not None else None
-        result['base_rate'] = float(stream.base_rate) if stream.base_rate is not None else None
-        result['guessed_rate'] = float(stream.guessed_rate) if stream.guessed_rate is not None else None
-
-    return result
+__all__ = [
+    'CodecContextMetadata',
+    'ContainerMetadata',
+    'ImageMetadata',
+    'StreamMetadata',
+    'get_metadata',
+    'normalize_image_mode',
+    'resolve_torch_device',
+]
 
 ```
 
 ### Core Architecture Module: `pixeltable/io/utils.py`
 ```
-from __future__ import annotations
+from pixeltable.io.export import replace_media_with_fileurl
+from pixeltable.io.schema import normalize_primary_key_parameter, normalize_pxt_col_name, normalize_schema_names
+from pixeltable.utils.file_io import atomic_write
 
-import copy
-import os
-import tempfile
-from contextlib import contextmanager
-from keyword import iskeyword as is_python_keyword
-from pathlib import Path
-from typing import IO, Any, Iterator
-
-import pixeltable as pxt
-import pixeltable.exceptions as excs
-from pixeltable.catalog.globals import fold_identifier, is_system_column_name
-from pixeltable.exprs.column_property_ref import ColumnPropertyRef
-from pixeltable.exprs.column_ref import ColumnRef
-from pixeltable.exprs.expr import Expr
-
-
-def normalize_pxt_col_name(name: str) -> str:
-    """
-    Normalizes an arbitrary column name into a valid Pixeltable identifier by:
-    - replacing any non-ascii or non-alphanumeric characters with an underscore _
-    - prefixing the result with the letter 'c' if it starts with an underscore or a number
-    - folding it to lower case
-    """
-    id = ''.join(ch if ch.isascii() and ch.isalnum() else '_' for ch in name)
-    if id[0].isnumeric():
-        id = f'c_{id}'
-    elif id[0] == '_':
-        id = f'c{id}'
-    assert pxt.catalog.is_valid_identifier(id), id
-    return fold_identifier(id)
-
-
-def normalize_primary_key_parameter(primary_key: str | list[str] | None = None) -> list[str]:
-    if primary_key is None:
-        primary_key = []
-    elif isinstance(primary_key, str):
-        primary_key = [primary_key]
-    elif not isinstance(primary_key, list) or not all(isinstance(pk, str) for pk in primary_key):
-        raise excs.RequestError(
-            excs.ErrorCode.INVALID_ARGUMENT, 'primary_key must be a single column name or a list of column names'
-        )
-    return primary_key
-
-
-def _is_usable_as_column_name(name: str, destination_schema: dict[str, Any]) -> bool:
-    return not (is_system_column_name(name) or is_python_keyword(name) or name in destination_schema)
-
-
-def normalize_schema_names(
-    in_schema: dict[str, Any],
-    primary_key: list[str],
-    schema_overrides: dict[str, Any],
-    require_valid_pxt_column_names: bool = False,
-) -> tuple[dict[str, Any], list[str], dict[str, str] | None]:
-    """
-    Convert all names in the input schema from source names to valid Pixeltable identifiers
-    - Ensure that all names are unique.
-    - Report an error if any types are missing
-    - If "require_valid_pxt_column_names", report an error if any column names are not valid Pixeltable column names
-    - Report an error if any primary key columns are missing
-    Returns
-    - A new schema with normalized column names
-    - The primary key columns, mapped to the normalized names
-    - A mapping from the original names to the normalized names.
-    """
-
-    # Report any untyped columns as an error
-    untyped_cols = [in_name for in_name, column_type in in_schema.items() if column_type is None]
-    if len(untyped_cols) > 0:
-        raise excs.RequestError(
-            excs.ErrorCode.INVALID_TYPE, f'Could not infer pixeltable type for column(s): {", ".join(untyped_cols)}'
-        )
-
-    # Report any columns in `schema_overrides` that are not in the source
-    extraneous_overrides = schema_overrides.keys() - in_schema.keys()
-    if len(extraneous_overrides) > 0:
-        raise excs.RequestError(
-            excs.ErrorCode.UNSUPPORTED_OPERATION,
-            f'Some column(s) specified in `schema_overrides` are not present '
-            f'in the source: {", ".join(extraneous_overrides)}',
-        )
-
-    schema: dict[str, Any] = {}
-    col_mapping: dict[str, str] = {}  # Maps column names to Pixeltable column names if needed
-    invalid_names: list[str] = []
-    for in_name, pxt_type in in_schema.items():
-        pxt_name = normalize_pxt_col_name(in_name)
-        # Ensure that column names are unique by appending a distinguishing suffix
-        # to any collisions
-        pxt_fname = pxt_name
-        n = 1
-        while not _is_usable_as_column_name(pxt_fname, schema):
-            pxt_fname = f'{pxt_name}_{n}'
-            n += 1
-        schema[pxt_fname] = pxt_type
-        col_mapping[in_name] = pxt_fname
-        if fold_identifier(in_name) != pxt_fname:
-            invalid_names.append(in_name)
-
-    if len(invalid_names) > 0 and require_valid_pxt_column_names:
-        raise excs.RequestError(
-            excs.ErrorCode.INVALID_ARGUMENT,
-            f'Column names must be valid pixeltable identifiers. Invalid names: {", ".join(invalid_names)}',
-        )
-    # Determine if the col_mapping is the identity mapping
-    if all(k == v for k, v in col_mapping.items()):
-        col_mapping = None
-
-    # Report any primary key columns that are not in the source as an error
-    missing_pk = [pk for pk in primary_key if pk not in in_schema]
-    if len(missing_pk) > 0:
-        raise excs.NotFoundError(
-            excs.ErrorCode.COLUMN_NOT_FOUND,
-            f'Primary key column(s) are not found in the source: {", ".join(missing_pk)}',
-        )
-
-    pxt_pk = [col_mapping[pk] for pk in primary_key] if col_mapping is not None else primary_key
-
-    return schema, pxt_pk, col_mapping
-
-
-def replace_media_with_fileurl(select_list_exprs: list[Expr]) -> list[Expr]:
-    """Return a new select list where media ColumnRefs are replaced with their .fileurl property.
-
-    This avoids Pixeltable's file caching pipeline and instead returns the authoritative
-    URL stored in the database for each media column. Media-typed expressions that are not
-    bare ColumnRefs (e.g. `.resize(...)` or other transformations) have no stable URL and
-    are rejected.
-    """
-    result: list[Expr] = []
-    for expr in copy.deepcopy(select_list_exprs):
-        if isinstance(expr, ColumnRef) and expr.col_type.is_media_type():
-            result.append(ColumnPropertyRef(expr, ColumnPropertyRef.Property.FILEURL))
-        elif expr.col_type.is_media_type():
-            raise excs.RequestError(
-                excs.ErrorCode.UNSUPPORTED_OPERATION,
-                f'Cannot export media expression {expr!r}: only stored media columns can be serialized. '
-                f'Materialize it as a computed column, or select its underlying '
-                f'column via `.fileurl` instead.',
-            )
-        else:
-            result.append(expr)
-    return result
-
-
-@contextmanager
-def atomic_write(file_path: Path, **open_kwargs: Any) -> Iterator[IO[str]]:
-    """Open a tempfile alongside `file_path`; rename it onto `file_path` on clean exit, delete on error.
-
-    `open_kwargs` are forwarded to `os.fdopen` (e.g. `mode`, `encoding`, `newline`).
-    """
-    file_path.parent.mkdir(parents=True, exist_ok=True)
-    fd, tmp_name = tempfile.mkstemp(dir=str(file_path.parent), prefix=f'.{file_path.name}.', suffix='.tmp')
-    tmp_path = Path(tmp_name)
-    try:
-        with os.fdopen(fd, **open_kwargs) as f:
-            yield f
-        os.replace(tmp_path, file_path)
-    except BaseException:
-        tmp_path.unlink(missing_ok=True)
-        raise
+__all__ = [
+    'atomic_write',
+    'normalize_primary_key_parameter',
+    'normalize_pxt_col_name',
+    'normalize_schema_names',
+    'replace_media_with_fileurl',
+]
 
 ```
 
@@ -1460,11 +1156,13 @@ def udf_source_files(bases: list[model.TableModelMeta]) -> set[str]:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1878** (2026-10-30): **PXT-1726: fix event loop leak from lancedb 0.41 export**
-  *Symptoms*: <!-- CURSOR_AGENT_PR_BODY_BEGIN --> ## Root cause  Nightly's `lancedb pylance mcp opencv-python scenedetect` leg (v0.7.22, lancedb 0.41.0, pylance 14.0.2) failed at session teardown with one unclosed `_UnixSelectorEventLoop`. The same leg on 2026-10-28 with lancedb 0.40.0 did not leak. The teardown check and `_process_lifetime_loop_ids()` (which already exempts `lancedb.background_loop.LOOP.loop`) are unchanged.  Patching `asyncio.BaseEventLoop.__init__` showed the leaked loop is **not** LanceDB's process-lifetime `LOOP`. It is Pixeltable's thread-local `Runtime` event loop, created while LanceDB 0.41 consumes a live query iterator on a thread-pool worker:  ``` concurrent.futures.thread._worker lancedb.table.sanitize_create_table lancedb.table._iterator_to_reader   # next(data) on the worker pixeltable.utils.arrow.to_record_batches pixeltable.exec.exec_node.__iter__ pixeltable.runtime.Runtime._init_event_loop   # asyncio.new_event_loop() ```  lancedb 0.41 moved `sanitize_create_table` (and `to_scannable` on `add()`) onto `asyncio.to_thread` so a user iterator can call back into the sync LanceDB API without deadlocking `LOOP`. Pixeltable query iteration on that pool worker creates a `Runtime` for that thread. `reset_runtime()` only closes the caller's Runtime, so the worker loop is still open at session end.  lancedb 0.40 called `sanitize_create_table` on `LOOP`'s thread, which already has a running loop, so `ExecNode.__iter__` used `_thread_iter()` / `asyncio.Runner` and tore
+- **Issue #1899** (2026-11-04): **Module refactor**
+  *Symptoms*: Generic `globals.py` and `util(s).py` modules make it difficult to find code. This refactor moves their contents into modules named for their responsibilities, separating model support, media metadata, schema normalization, export preparation, and file writing. Function implementations and existing comments and docstrings are preserved.  No breaking changes to the public API.  All paths below are relative to `pixeltable/`.  #### `globals.py` to `api.py`  Identifies the implementation of the top-level SDK API.  Moved: `init()`, `create_table()`, `create_view()`, `create_snapshot()`, `get_table()`, `move()`, `drop_table()`, `get_dir_contents()`, `get_dir_tree()`, `list_tables()`, `create_dir()`, `drop_dir()`, `ls()`, `list_dirs()`, `list_functions()`, `tools()`, `tool()`, `array()`, `home()`; private helpers `_assemble_dir_contents()`, `_create_path_map()`, `_get_subtree()`, `_extract_paths()`; type aliases `RowData` and `TableDataSource`.  #### `func/globals.py` to `func/symbols.py`  Groups Python symbol resolution, validation, and introspection.  Moved: `resolve_symbol()`, `import_error_msg()`, `validate_symbol_path()`, `get_caller_module_path()`.  #### `exec/expr_eval/globals.py` to `exec/expr_eval/interfaces.py`  Names the shared execution contracts and context used by evaluators and schedulers.  Moved: `FnCallArgs`, `Scheduler`, `Dispatcher`, `Evaluator`, `ExprEvalCtx`.  #### `exprs/globals.py` to `exprs/operators.py`  Groups expression operator enums.  Moved: `Compa
 
-- **Issue #1877** (2026-10-30): **Fix Windows flake in test_udf_module_import_error (stale import cache)**
-  *Symptoms*: ## Root cause  `tests/test_function.py::TestFunction::test_udf_module_import_error` fails intermittently on Windows with `ModuleNotFoundError: No module named 'stored_udf_mod'` at `import stored_udf_mod`. Latest: the `slim, windows-2025, 3.11` check on #1875 ([run 40968948856](https://github.com/pixeltable/pixeltable/actions/runs/40968948856/job/123780614890)), a PR that doesn't touch this code.  - `monkeypatch.syspath_prepend(tmp_path)` calls `importlib.invalidate_caches()`. `Function.from_dict()` then imports `broken_udf_mod`, so the `FileFinder` for `tmp_path` caches the directory listing together with the directory's mtime. - The test then writes `stored_udf_mod.py` and imports it without invalidating again. `FileFinder.find_spec()` rescans only when the directory's mtime differs from the cached value. - NTFS timestamps come from a system clock that ticks every ~15.6 ms. The two writes are a few ms apart, so the directory mtime often doesn't change. The cached listing stays stale and the import fails. Linux and macOS timestamps are fine-grained enough that this rarely or never happens there.  ## Change  `stored_udf_mod.py` is now written alongside `broken_helper.py` and `broken_udf_mod.py`, before `monkeypatch.syspath_prepend()`. That call already invalidates the import caches, so the first import from `tmp_path` caches a listing that includes all three modules. `test_iterator_module_import_error` already uses this order. The first part of the test doesn't import `stored_
+- **Issue #1898** (2026-11-03): **unpin the miniforge version**
+  *Symptoms*: miniforge [released](https://github.com/conda-forge/miniforge/releases/tag/26.9.4-1) a fix for the windows issue
+  **Post-Mortem & Fix Analysis**:
+  > agents review
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1481,588 +1179,692 @@ def udf_source_files(bases: list[model.TableModelMeta]) -> set[str]:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2eca8e44` (2026-11-01)
-**Commit Message**: [PXT-1278] New Catalog locking (#1573)
+### Incident Patch 1: `77772fc4` (2026-11-03)
+**Commit Message**: PXT-1715/1726: Close query resources when a query stops; fix export_lancedb() with lancedb 0.41 (#1868)
 
-Replaces the locking mechanism in Catalog with Postgres table locks
-(LOCK TABLE) on store tables, for both data-versioned and operational
-tables. The tables-row lock (SELECT … FOR UPDATE NOWAIT + UPDATE
-lock_dummy) is gone in all of its uses.
+PXT-1715: a query over a frame view left the video file open until
+garbage collection, so on Windows the file could not be deleted and
+test_frame_iterator_seek[proxy] hung.
 
-**The design doc is a part of the pr, and will be merged along with the
-code: docs/design/catalog-locking.md**
+PXT-1726: lancedb 0.41 advances the export iterator on its own threads.
+export_lancedb() left an event loop open on one of them, and an export
+with a query UDF column failed partway through.
 
-# How it works
+Fixes
+- A query over a frame view closes the video file when it finishes,
+stops early or fails.
+- A query that stops early (a cursor loop that breaks, Ctrl-C during
+collect()) or fails releases its resources right away instead of at
+garbage collection.
+- When a query runs inside a running event loop (eg, Jupyter), a cursor
+that stops early cancels the batch in progress instead of waiting for
+it.
+- A filter with a limit no longer fetches another input batch after
+reaching the limit.
+- export_lancedb() runs the query on a thread of its own, so lancedb's
+threads only receive finished batches.
 
-- Catalog exposes transaction context managers `begin_md_read_xact()`,
-`begin_data_read_xact()`, `begin_data_write_xact()`,
-`begin_md_write_xact()`, `begin_finalize_xact()`, and decorators
-`retry_md_read_loop`, `retry_data_read_loop`, `retry_md_write_loop`,
-each of which acquires the appropriate table locks. This separation by
-purpose is needed for Catalog to use the appropriate lock mode.
-- Held read and write locks do not block each other, for either table
-kind. The exception is a schema change waiting for its lock: Postgres
-queues every later lock request on the table behind it, so readers and
-writers are affected from the moment the schema change is requested (see
-"A waiting schema change blocks later operations" in the design doc).
-- One global lock acquisition order — the
+Tests
+- Queries, computed columns, failures, early stops, Ctrl-C and query
+UDFs over a frame view leave no video file open.
+- expor
 
-**File**: `docs/design/catalog-locking.md` (added, +219/-0)
+**File**: `pixeltable/_query.py` (modified, +8/-8)
 ```diff
-@@ -0,0 +1,219 @@
-+# Catalog locking
-+
-+`Catalog` coordinates concurrent reads, writes, and schema changes using Postgres locks on store tables.
-+This document explains the rules and why they are needed. The implementation is in
-+`pixeltable/catalog/catalog.py` and `pixeltable/catalog/locking.py`.
-+
-+## 1. Lock store tables before reading metadata
-+
-+Each table or view with stored data has a Postgres store table: `tbl_<uuid.hex>` for tables and
-+`view_<uuid.hex>` for views. Pixeltable locks these tables with `LOCK TABLE`. Postgres releases the locks
-+when the transaction ends.
-+
-+Under REPEATABLE READ, `LOCK TABLE` does not establish the transaction's snapshot. The first query after
-+lock acquisition does. This means a metadata read sees changes committed while the transaction was waiting
-+for its store table locks.
-+
-+**Store table locks must precede every statement that establishes a snapshot.** A metadata query, a directory
-+row lock, or even `SELECT 1` before `LOCK TABLE` would leave the transaction reading metadata from before the wait.
-+
-+Acquiring locks first ensures that the metadata read includes changes committed during the wait.
-+Directory locks come later and need the retry mechanism described in section 5.
-+
-+## 2. Lock modes and waiting
-+
-+The `Catalog.begin_*_xact()` methods and `retry_*_loop()` decorators select an operation class (`TblOpClass`).
-+That class and the table's versioning, data-versioned or operational, determine the required lock mode.
-+
-+| Operation class | Operational table | Data-versioned table | Wait policy |
-+| --- | --- | --- | --- |
-+| `MD_READ`: catalog metadata | No lock | No lock | N/A |
-+| `DATA_READ`: query rows | `ACCESS SHARE` | `ACCESS SHARE` | Wait if any locked table is data-versioned |
-+| `DATA_WRITE`: insert/update/delete | `ROW EXCLUSIVE` | `EXCLUSIVE` | Wait if any locked table is data-versioned |
-+| `MD_WRITE`: metadata changes and DDL | `ACCESS EXCLUSIVE` | `ACCESS EXCLUSIVE` | Always wait |
-+| `FINALIZE`: complete pending operations | `ACCESS EXCLUSIVE` | `ACCESS EXCLUSIVE` | Always wait |
-+
-+Operational writers can hold `ROW EXCLUSIVE` concurrently, so writes to different rows of an operational table
-+run in parallel. Writes to the same row are not merged or queued. Instead, Postgres row locks make the later writer
-+wait, and if the earlier writer commits, the later one fails.
-+
-+Data-versioned writers use `EXCLUSIVE`, which allows only one writer at a time, so each write builds on the
-+previous version.
-+Both modes allow `ACCESS SHARE`, so a held write lock does not block readers.
-+
-+Lock modes apply per table. For example, a schema change can lock its target with `ACCESS EXCLUSIVE` and
-+its bases with `ACCESS SHARE`.
-+
-+The wait policy applies to the whole transaction. If a data read or write locks only operational tables,
-+it uses `NOWAIT` for every table lock. A conflict reports `SCHEMA_CHANGE_IN_PROGRESS`. If any locked table
-+is data-versioned, the transaction waits for every required table lock. Schema changes and finalization
-+always wait, regardless of versioning.
-+
-+### A waiting schema change blocks later operations
-+
-+Postgres grants a table lock only if it conflicts with neither the locks already held nor the requests already
-+waiting for that table. A schema change or finalization waiting for `ACCESS EXCLUSIVE` therefore blocks every later
-+lock request on the table, although it does not hold the lock yet:
-+
-+- Operational data reads and writes fail with `SCHEMA_CHANGE_IN_PROGRESS`.
-+- Data-versioned data reads and writes wait until the schema change completes.
-+
-+Pixeltable treats a waiting schema change as in progress, so its effect on other operations starts when it is
-+requested, not when it acquires its lock. For example, if `add_computed_column()` is called during a long insert, it
-+waits for the insert to finish. For the rest of the insert and the duration of the schema change, other operations on
-+the table fail or wait.
-+
-+### Metadata-only reads
-+
-+Catalog listings and descriptions read metadata without locking store tables. They don't wait for a schema change
-+in progress, so the schema they return may already be out of date by the time the caller uses it. A subsequent data
-+operation acquires its own locks and refreshes metadata.
-+
-+A metadata read can still encounter pending operations while loading a table. It then finalizes those operations
-+before continuing; finalization takes locks and may have to wait (section 7).
-+
-+If an expression reads another table, for example through a `@pxt.query` UDF, the transaction needs a read lock
-+on that table too. Section 8 describes a current limitation.
-+
-+## 3. Which objects to lock
-+
-+An operation's lock set is the store tables and directory rows that need to be locked before that operation can be
-+safely executed:
-+
-+- A read locks every table in each `TableVersionPath`, including bases. It does not lock descendant views.
-+- A data write locks its target and all mutable descendant v
-```
-
-**File**: `pixeltable/_query.py` (modified, +10/-10)
-```diff
-@@ -629,9 +629,9 @@ def _output_row_iterator(
-         self, args: dict[str, Any] | None = None, *, media_as_urls: bool = False
-     ) -> Generator[list, None, None]:
-         assert self._from_clause.is_local
--        tbl_ids = self.referenced_tbl_ids()
-+        tbl_keys = self.referenced_tbl_keys()
-         tvps = self._from_clause.tvps
--        with get_runtime().catalog.begin_xact(for_write=False, read_tvps=tvps, read_tbl_ids=tbl_ids):
-+        with get_runtime().catalog.begin_data_read_xact(tvps=tvps, tbl_keys=tbl_keys):
-             try:
-                 planned_exprs = self._compiled_select_list()
-                 if media_as_urls:
-@@ -649,7 +649,7 @@ def _output_row_iterator(
-             except excs.ExprEvalError as e:
-                 self._raise_expr_eval_err(e)
-             except (sql_exc.DBAPIError, sql_exc.OperationalError, sql_exc.InternalError) as e:
--                single_tbl = next(iter(tbl_ids)) if len(tbl_ids) == 1 else None
-+                single_tbl = next(iter(tbl_keys)).tbl_id if len(tbl_keys) == 1 else None
-                 get_runtime().catalog.convert_sql_exc(e, tbl_id=single_tbl)
-                 raise  # just re-raise if not converted to a Pixeltable error
+@@ -1,5 +1,6 @@
+ from __future__ import annotations
  
-@@ -678,7 +678,7 @@ def _collect(self, args: dict[str, Any] | None = None, *, media_as_urls: bool =
-         if not self._from_clause.is_local:
-             return self._exec_proxy(args=args).as_result_set()
-         tvps = self._from_clause.tvps
--        with get_runtime().catalog.begin_xact(for_write=False, read_tvps=tvps, read_tbl_ids=self.referenced_tbl_ids()):
-+        with get_runtime().catalog.begin_data_read_xact(tvps=tvps, tbl_keys=self.referenced_tbl_keys()):
-             schema = self.schema
-             # url-mode takes the direct path; the cursor path (no args) stays as-is for normal execution
-             if args is None and not media_as_urls:
-@@ -709,7 +709,7 @@ def _collect_content(self, args: dict[str, Any] | None = None) -> bytes:
-         sink = proxy_protocol.InlinePartSink()
-         encode = proxy_protocol.value_encoder(sink)
-         result = bytearray(b'{"schema":')
--        with get_runtime().catalog.begin_xact(for_write=False, read_tvps=tvps, read_tbl_ids=self.referenced_tbl_ids()):
-+        with get_runtime().catalog.begin_data_read_xact(tvps=tvps, tbl_keys=self.referenced_tbl_keys()):
-             # look at the schema inside the transaction
-             schema = self.schema
-             file_ref_idxs = self._file_ref_idxs()
-@@ -793,7 +793,7 @@ def count(self) -> int:
-         is_grouped = self.group_by_clause is not None or self.grouping_tbl_key is not None
++import contextlib
+ import copy
+ import hashlib
+ import json
+@@ -9,7 +10,7 @@
+ from typing import (
+     TYPE_CHECKING,
+     Any,
+-    AsyncIterator,
++    AsyncGenerator,
+     Callable,
+     Generator,
+     Hashable,
+@@ -451,15 +452,16 @@ def _exec(self, args: dict[str, Any] | None = None) -> Iterator[exprs.DataRow]:
+             get_runtime().stop_progress()
+             yield row
  
-         assert self._from_clause.is_local
--        with get_runtime().catalog.begin_xact(for_write=False, read_tvps=self._from_clause.tvps):
-+        with get_runtime().catalog.begin_data_read_xact(tvps=self._from_clause.tvps):
-             plan_root = count_query._ensure_plan().exec_root
-             if not isinstance(plan_root, exec.SqlNode):
-                 raise excs.RequestError(
-@@ -981,8 +981,8 @@ def to_coco_dataset(self) -> Path:
-             return data_file_path
-         else:
-             assert self._from_clause.is_local
--            with get_runtime().catalog.begin_xact(
--                for_write=False, read_tvps=self._from_clause.tvps, read_tbl_ids=self.referenced_tbl_ids()
-+            with get_runtime().catalog.begin_data_read_xact(
-+                tvps=self._from_clause.tvps, tbl_keys=self.referenced_tbl_keys()
-             ):
-                 return write_coco_dataset(self, dest_path)
+-    async def _aexec(self, args: dict[str, Any] | None = None) -> AsyncIterator[exprs.DataRow]:
++    async def _aexec(self, args: dict[str, Any] | None = None) -> AsyncGenerator[exprs.DataRow, None]:
+         """Run the query and yield rows."""
+         args = args or {}
+         self._validate_bound_args(args)
+         if self._resolved_limit(args) == 0:
+             return
+         plan = self._ensure_plan()
+-        async for row in plan.aexec(args):
+-            yield row
++        async with contextlib.aclosing(plan.aexec(args)) as rows:
++            async for row in rows:
++                yield row
  
-@@ -1029,8 +1029,8 @@ def to_pytorch_dataset(self, image_format: str = 'pt') -> 'torch.utils.data.Iter
-             assert dest_path.is_dir()
-         else:
-             assert self._from_clause.is_local
--            with get_runtime().catalog.begin_xact(
--                for_write=False, read_tvps=self._from_clause.tvps, read_tbl_ids=self.referenced_tbl_ids()
-+            with get_runtime().catalog.begin_data_read_xact(
-+                tvps=self._from_clause.tvps, tbl_keys=self.referenced_tbl_keys()
-             ):
-                 # we need the metadata for PixeltablePytorchDataset
-                 export_parquet(self, dest_path, inline_images=True, _write_md=True)
-```
-
-**File**: `pixeltable/_query_base.py` (modified, +11/-17)
-```diff
-@@ -12,7 +12,6 @@
- import itertools
- from abc import ABC
- from typing import Any, Callable, Self, Sequence, cast, overload
--from uuid import UUID
- 
- import pandas as pd
- 
-@@ -52,9 +51,8 @@ class QueryBase(ABC):
-     offset_val: exprs.Expr | None
-     sample_clause: SampleClause | None
- 
--    # IDs of all tables referenced by this query (from-clause path + exprs). Computed once on
--    # first access, then cached: the value depends on the static query shape and never changes.
--    _referenced_tbl_ids: set[UUID] | None
-+    # Table-version keys from the query's FROM paths and expressions, evaluated lazily
-+    _referenced_tbl_keys: set[catalog.TableVersionKey] | None
- 
-     def __init__(
-         self,
-@@ -94,7 +92,7 @@ def __init__(
-         self.limit_val = limit
-         self.offset_val = offset
-         self.sample_clause = sample_clause
--        self._referenced_tbl_ids = None
-+        self._referenced_tbl_keys = None
- 
-     @classmethod
-     def _normalize_select_list(
-@@ -324,14 +322,10 @@ def _from_query(
-             ),
-         )
- 
--    def referenced_tbl_ids(self) -> set[UUID]:
--        """Returns the IDs of all tables referenced by this query.
--
--        Walks the query's static structure (exprs + from-clause path) on first call and caches
--        the result; the value depends on the static query shape and never changes.
--        """
--        if self._referenced_tbl_ids is not None:
--            return self._referenced_tbl_ids
-+    def referenced_tbl_keys(self) -> set[catalog.TableVersionKey]:
-+        """Return table-version keys referenced by the query's expressions and FROM paths, including bases."""
-+        if self._referenced_tbl_keys is not None:
-+            return self._referenced_tbl_keys
- 
-         all_exprs = itertools.chain(
-             # _select_list_exprs is None: no external ColumnRefs without an explicit select list
-@@ -340,12 +334,12 @@ def referenced_tbl_ids(self) -> set[UUID]:
-             self.group_by_clause or [],
-             [] if self.order_by_clause is None else (e for e, _ in self.order_by_clause),
-         )
--        tbl_ids = exprs.Expr.list_tbl_ids(all_exprs)
-+        tbl_keys = exprs.Expr.list_tbl_keys(all_exprs)
-         for tp in self._from_clause.tbls:
--            tbl_ids.update(tp.tbl_ids)
-+            tbl_keys.update(tp.tbl_keys)
- 
--        self._referenced_tbl_ids = tbl_ids
--        return tbl_ids
-+        self._referenced_tbl_keys = tbl_keys
-+        return tbl_keys
- 
-     def _descriptors(self) -> DescriptionHelper:
-         helper = DescriptionHelper()
-```
-
-**File**: `pixeltable/catalog/__init__.py` (modified, +8/-1)
-```diff
-@@ -1,6 +1,13 @@
- # ruff: noqa: F401
- 
--from .catalog import Catalog, ProhibitedWriteError, retry_loop, retrying_read
-+from .catalog import (
-+    Catalog,
-+    ProhibitedWriteError,
-+    retry_data_read_loop,
-+    retry_md_read_loop,
-+    retry_md_write_loop,
-+    retrying_read,
-+)
- from .catalog_base import CatalogBase
- from .catalog_proxy import CatalogProxy
- from .column import Column
-```
-
-**File**: `pixeltable/catalog/catalog.py` (modified, +619/-548)
-```diff
-@@ -24,7 +24,6 @@
- from pixeltable.runtime import get_runtime
- from pixeltable.types import ColumnSpec
- from pixeltable.utils import fault_injection
--from pixeltable.utils.exception_handler import run_cleanup
- from pixeltable.utils.fault_injection import FaultLocation
- from pixeltable.utils.object_stores import PXT_BUCKETS_DIR
- 
-@@ -34,6 +33,18 @@
- from .globals import DirEntry, IfExistsParam, IfNotExistsParam, IndexSpec, MediaValidation, fold_identifier
- from .insertable_table import InsertableTable
- from .local_table import LocalTable
-+from .locking import (
-+    LockNotAvailableError,
-+    LockRequest,
-+    StaleLockSetError,
-+    TblLockMode,
-+    TblOpClass,
-+    XactLocks,
-+    active_tbl_clause,
-+    finalized_view_base_id,
-+    lookup_dir_md,
-+    lookup_dir_path,
-+)
- from .model import IndexDefinition, TableSchemaChangeSet, prepare_model, prepare_model_updates
- from .path import ROOT_PATH, Path
- from .schema_object import SchemaObject
-@@ -108,35 +119,62 @@ def _is_retryable_exc(e: BaseException) -> bool:
-     if not isinstance(e, sql_exc.DBAPIError):
-         return False
-     # connection_invalidated: the connection was terminated by the server (eg, by pg_terminate_backend)
--    # TODO: Investigate whether DeadlockDetected points to a bug in our locking protocol, which is
--    # supposed to be deadlock-free.
--    return e.connection_invalidated or isinstance(
--        e.orig, (psycopg.errors.SerializationFailure, psycopg.errors.LockNotAvailable, psycopg.errors.DeadlockDetected)
--    )
-+    return e.connection_invalidated or isinstance(e.orig, psycopg.errors.SerializationFailure)
-+
-+
-+def retry_md_read_loop(
-+    *, tbl_keys: Collection[TableVersionKey] | None = None
-+) -> Callable[[Callable[..., T]], Callable[..., T]]:
-+    """Retry an operation that reads catalog metadata without reading table rows.
-+
-+    `tbl_keys` identifies tables to refresh before running the operation. Any pending operations on those tables
-+    are finalized first.
-+    """
-+    return _retry_loop(LockRequest(TblOpClass.MD_READ, read_tbl_keys=tbl_keys))
-+
-+
-+def retry_data_read_loop(
-+    *, tvps: Collection[TableVersionPath] | None = None, tbl_keys: Collection[TableVersionKey] | None = None
-+) -> Callable[[Callable[..., T]], Callable[..., T]]:
-+    """Retry a data read, taking read locks on every table in the supplied paths and their bases."""
-+    return _retry_loop(LockRequest(TblOpClass.DATA_READ, read_tvps=tvps, read_tbl_keys=tbl_keys))
- 
- 
--def retry_loop(
-+def retry_md_write_loop(
-     *,
--    for_write: bool = False,
--    read_tvps: Collection[TableVersionPath] | None = None,
--    read_tbl_ids: Collection[UUID] | None = None,
--    write_tvps: Collection[TableVersionPath] | None = None,
--    write_tbl_ids: Collection[UUID] | None = None,
-+    tvps: Collection[TableVersionPath] | None = None,
-+    tbl_ids: Collection[UUID] | None = None,
-     lock_mutable_tree: bool = False,
--    isolation_level: Literal['READ COMMITTED', 'REPEATABLE READ', 'SERIALIZABLE'] | None = None,
-+    paths: Collection[Path] | None = None,
-+    lock_path_subtree: bool = False,
- ) -> Callable[[Callable[..., T]], Callable[..., T]]:
-+    """Retry a metadata write or DDL operation, taking exclusive locks on its targets."""
-+    return _retry_loop(
-+        LockRequest(
-+            TblOpClass.MD_WRITE,
-+            write_tvps=tvps,
-+            write_tbl_ids=tbl_ids,
-+            lock_mutable_tree=lock_mutable_tree,
-+            write_paths=paths,
-+            lock_path_subtree=lock_path_subtree,
-+        )
-+    )
-+
-+
-+def _retry_loop(request: LockRequest) -> Callable[[Callable[..., T]], Callable[..., T]]:
-     def decorator(op: Callable[..., T]) -> Callable[..., T]:
-         @functools.wraps(op)
-         def loop(*args: Any, **kwargs: Any) -> T:
-             cat = get_runtime().catalog
--            # retry_loop() is reentrant
-+            # a retry loop is reentrant
-             if cat._in_retry_loop:
--                cat._check_write_locks(write_tvps or [], write_tbl_ids or [], lock_mutable_tree)
-+                # TODO(PXT-1278): restore _check_write_locks()'s check that the enclosing transaction holds all
-+                # required locks.
-                 return op(*args, **kwargs)
--
-             num_retries = 0
-             while True:
-                 cat._in_retry_loop = True
-+                cat._roll_forward_ids.clear()
-                 try:
-                     # in order for retry to work, we need to make sure that there aren't any prior db updates
-                     # that are part of an ongoing transaction
-@@ -148,21 +186,11 @@ def loop(*args: Any, **kwargs: Any) -> T:
-                         )
-                     with (
-                         cat._allow_tbl_md_read(),
--                        cat.begin_xact(
--                            for_write=for_write,
--                            read_tvps=read_tvps,
--                            read_tbl_ids=read_tbl_ids,
--                            write_tvps=write_tvps,
--            
-```
-
-**File**: `pixeltable/catalog/dir.py` (modified, +2/-2)
-```diff
-@@ -37,12 +37,12 @@ def _display_name(self) -> str:
- 
-     def _name(self) -> str:
-         cat = get_runtime().catalog
--        with cat.begin_xact(for_write=False):
-+        with cat.begin_md_read_xact():
-             return cat.read_dir_record(self._id).md['name']
- 
-     def _dir_id(self) -> UUID | None:
-         cat = get_runtime().catalog
--        with cat.begin_xact(for_write=False):
-+        with cat.begin_md_read_xact():
-             return cat.read_dir_record(self._id).parent_id
- 
-     def _path(self) -> Path:
-```
-
-**File**: `pixeltable/catalog/insertable_table.py` (modified, +6/-16)
-```diff
-@@ -15,7 +15,7 @@
- from .local_table import LocalTable
- from .table_path import TableVersionPath
- from .table_version_handle import TableVersionHandle
--from .tbl_ops import CreateStoreTableOp, CreateTableMdOp, TableOp, TableOpsBuilder
-+from .tbl_ops import CreateTableMdOp, TableOp, TableOpsBuilder
- from .types import TableVersionMd
- from .update_status import UpdateStatus
- from .utils import create_table_version_md
-@@ -76,8 +76,7 @@ def _create(
- 
-         ops = (
-             TableOpsBuilder(md.tbl_md.tbl_id, tbl_version=md.tbl_md.current_version)
--            .add(CreateTableMdOp)
--            .add(CreateStoreTableOp)
-+            .add(CreateTableMdOp, is_view=False)
-             .build()
-         )
-         return md, ops
-@@ -157,13 +156,8 @@ def _insert_table_data_source(
-         start_ts = time.perf_counter()
-         status = pxt.UpdateStatus()
-         query = data_source.pxt_query if isinstance(data_source, QueryTableDataConduit) else None
--        with get_runtime().catalog.begin_xact(
--            for_write=True,
--            write_tvps=[self._tbl_version_path],
--            read_tvps=query._from_clause.tvps if query is not None else None,
--            read_tbl_ids=query.referenced_tbl_ids() if query is not None else None,
--            lock_mutable_tree=True,
--        ):
-+        read_tbl_keys = query.referenced_tbl_keys() if query is not None else None
-+        with get_runtime().catalog.begin_data_write_xact(read_tbl_keys=read_tbl_keys, tvps=[self._tbl_version_path]):
-             data_source.add_table_info(self)
-             data_source.prepare_for_insert_into_table()
-             # in on_error='abort' mode the exec raises the internal ExprEvalError on the first failing cell;
-@@ -204,9 +198,7 @@ def _insert_sql_source(
-         """
-         fail_on_exception = OnErrorParam.fail_on_exception(on_error)
-         start_ts = time.perf_counter()
--        with get_runtime().catalog.begin_xact(
--            for_write=True, write_tvps=[self._tbl_version_path], lock_mutable_tree=True
--        ):
-+        with get_runtime().catalog.begin_data_write_xact(tvps=[self._tbl_version_path]):
-             status = self._tbl_version.get().insert(
-                 source=sql_source,
-                 query=None,
-@@ -237,9 +229,7 @@ def delete(self, where: 'exprs.Expr' | None = None) -> UpdateStatus:
-         """
-         self._validate_where(where)
-         telemetry.add_attrs(telemetry.func_span(), **telemetry_schemas.OpAttrs(table_id=str(self._id)))
--        with get_runtime().catalog.begin_xact(
--            for_write=True, write_tvps=[self._tbl_version_path], lock_mutable_tree=True
--        ):
-+        with get_runtime().catalog.begin_data_write_xact(tvps=[self._tbl_version_path]):
-             tv = self._tbl_version.get()
-             status = tv.delete(where=where)
-             telemetry.add_attrs(telemetry.func_span(), **telemetry_schemas.OpAttrs(table=tv.name, version=tv.version))
-```
-
-**File**: `pixeltable/catalog/local_table.py` (modified, +26/-45)
-```diff
-@@ -92,8 +92,6 @@ def __deepcopy__(self, memo: dict[int, Any]) -> 'Table':
-     def _name(self) -> str:
-         from pixeltable.catalog import retrying_read
- 
--        # retrying_read(), not begin_xact(): this is also called as a top-level statement (eg while preparing an
--        # insert), where a dropped connection has to be retried rather than raised
-         return retrying_read(lambda: get_runtime().catalog.read_tbl_record(self._id).md['name'])
- 
-     def _dir_id(self) -> UUID | None:
-@@ -102,9 +100,9 @@ def _dir_id(self) -> UUID | None:
-         return retrying_read(lambda: get_runtime().catalog.read_tbl_record(self._id).dir_id)
- 
-     def get_metadata(self) -> 'TableMetadata':
--        from pixeltable.catalog import retry_loop
-+        from pixeltable.catalog import retry_md_read_loop
- 
--        @retry_loop(for_write=False)
-+        @retry_md_read_loop()
-         def op() -> 'TableMetadata':
-             return self._get_metadata()
- 
-@@ -216,10 +214,10 @@ def __getitem__(self, name: str) -> 'exprs.ColumnRef':
-         return getattr(self, name)
- 
-     def list_views(self, *, recursive: bool = True) -> list[str]:
--        from pixeltable.catalog import retry_loop
-+        from pixeltable.catalog import retry_md_read_loop
- 
--        # we need retry_loop() here, because we end up loading Tables for the views
--        @retry_loop(read_tvps=[self._tbl_version_path])
-+        # Loading view metadata can encounter pending operations, requiring a retry of the whole listing.
-+        @retry_md_read_loop(tbl_keys=self._tbl_version_path.tbl_keys)
-         def op() -> list[str]:
-             paths: list[str] = []
-             for t in self._get_views(recursive=recursive):
-@@ -281,7 +279,7 @@ def compute(
-         path = self._tbl_version_path
-         self._validate_compute()
+     def _ensure_plan(self) -> exec.ExecPlan:
+         assert get_runtime().in_xact
+@@ -744,10 +746,8 @@ async def _acollect(self, args: dict[str, Any] | None = None) -> ResultSet:
+         columns = {name: i for i, name in enumerate(schema)}
          try:
--            with get_runtime().catalog.begin_xact(read_tbl_ids=path.tbl_ids):
-+            with get_runtime().catalog.begin_data_read_xact(tbl_keys=path.tbl_keys):
-                 output_md = self._resolve_compute_outputs(outputs)
-                 # input rows supply values for the base table's columns
-                 base_tbl = self._get_base_tables()[-1] if path.is_view() else self
-@@ -370,7 +368,7 @@ def op() -> DescriptionHelper:
-                 helper.append(f'Custom Metadata: {Formatter.summarize_json(self._get_custom_metadata())}')
-             return helper
+             planned_exprs = self._compiled_select_list()
+-            result = [
+-                Row(tuple(row[e.slot_idx] for e in planned_exprs), columns, schema)
+-                async for row in self._aexec(args=args)
+-            ]
++            async with contextlib.aclosing(self._aexec(args=args)) as rows:
++                result = [Row(tuple(row[e.slot_idx] for e in planned_exprs), columns, schema) async for row in rows]
+             return ResultSet(result, schema)
+         except excs.ExprEvalError as e:
+             self._raise_expr_eval_err(e)
+```
+
+**File**: `pixeltable/exec/aggregation_node.py` (modified, +27/-25)
+```diff
+@@ -1,8 +1,9 @@
+ from __future__ import annotations
  
--        return retrying_read(op, read_tvps=[self._tbl_version_path])
-+        return retrying_read(op, tbl_keys=self._tbl_version_path.tbl_keys)
++import contextlib
+ import logging
+ import sys
+-from typing import Any, AsyncIterator, Iterable, cast
++from typing import Any, AsyncGenerator, Iterable, cast
  
-     def _col_descriptor(self, columns: list[str] | None = None) -> tuple[pd.DataFrame, list[int] | None]:
-         """Generates column descriptor DataFrame and a list of vertical separators.
-@@ -524,14 +522,14 @@ def add_columns(
-         schema: Mapping[str, TypeForm | ColumnSpec],
-         if_exists: Literal['error', 'ignore', 'replace', 'replace_force'] = 'error',
-     ) -> UpdateStatus:
--        from pixeltable.catalog import retry_loop
-+        from pixeltable.catalog import retry_md_write_loop
+ from pixeltable import catalog, exceptions as excs, exprs, telemetry
  
-         self._validate_column_schema(schema)
-         schema = fold_mapping_keys(schema)
+@@ -82,37 +83,38 @@ def _update_agg_state(self, row: exprs.DataRow, row_num: int) -> None:
+                 input_vals = [row[d.slot_idx] for d in fn_call.dependencies()]
+                 raise excs.ExprEvalError(fn_call, expr_msg, exc, exc_tb, input_vals, row_num) from exc
  
-         # a retry loop is necessary because drop column needs it
-         # lock_mutable_tree=True: we might end up having to drop existing columns, which requires locking the tree
--        @retry_loop(for_write=True, write_tvps=[self._tbl_version_path], lock_mutable_tree=True)
-+        @retry_md_write_loop(tvps=[self._tbl_version_path], lock_mutable_tree=True)
-         def do_add_columns() -> list[Column] | None:
-             self._check_mutable('add columns to')
+-    async def __aiter__(self) -> AsyncIterator[DataRowBatch]:
++    async def __aiter__(self) -> AsyncGenerator[DataRowBatch, None]:
+         limit = self._resolve_positive_int(self.limit, 'limit') if self.limit is not None else None
+         if limit == 0:
+             return
+         prev_row: exprs.DataRow | None = None
+         current_group: list[Any] | None = None  # the values of the group-by exprs
+         num_input_rows = 0
+         num_output_rows = 0
+-        async for row_batch in self.input:
+-            self.set_var_slots(row_batch)
+-            num_input_rows += len(row_batch)
+-            for row in row_batch:
+-                group = [row[e.slot_idx] for e in self.group_by] if self.group_by is not None else None
+-
+-                if current_group is None:
+-                    current_group = group
+-                    self._reset_agg_state(0)
+-
+-                if group != current_group:
+-                    # we're entering a new group, emit a row for the previous one
+-                    with telemetry.span('pixeltable.agg.finalize', level=telemetry.DEBUG):
+-                        self.row_builder.eval(prev_row, self.agg_fn_eval_ctx, profile=self.ctx.profile)
+-                    self.output_batch.add_row(prev_row)
+-                    num_output_rows += 1
+-                    if limit is not None and num_output_rows == limit:
+-                        yield self.output_batch
+-                        return
+-                    current_group = group
+-                    self._reset_agg_state(0)
+-                self._update_agg_state(row, 0)
+-                prev_row = row
++        async with contextlib.aclosing(aiter(self.input)) as input_iter:
++            async for row_batch in input_iter:
++                self.set_var_slots(row_batch)
++                num_input_rows += len(row_batch)
++                for row in row_batch:
++                    group = [row[e.slot_idx] for e in self.group_by] if self.group_by is not None else None
++
++                    if current_group is None:
++                        current_group = group
++                        self._reset_agg_state(0)
++
++                    if group != current_group:
++                        # we're entering a new group, emit a row for the previous one
++                        with telemetry.span('pixeltable.agg.finalize', level=telemetry.DEBUG):
++                            self.row_builder.eval(prev_row, self.agg_fn_eval_ctx, profile=self.ctx.profile)
++                        self.output_batch.add_row(prev_row)
++                        num_output_rows += 1
++                        if limit is not None and num_output_rows == limit:
++                            yield self.output_batch
++                            return
++                        current_group = group
++                        self._reset_agg_state(0)
++                    self._update_agg_state(row, 0)
++                    prev_row = row
  
-@@ -594,10 +592,10 @@ def add_computed_column(
-         if_exists: Literal['error', 'ignore', 'replace'] = 'error',
-         **kwargs: exprs.Expr,
-     ) -> UpdateStatus:
--        from pixeltable.catalog import retry_loop
-+        from pixeltable.catalog import retry_md_write_loop
+         if prev_row is not None:
+             # emit the last group
+```
+
+**File**: `pixeltable/exec/cache_prefetch_node.py` (modified, +36/-32)
+```diff
+@@ -1,12 +1,13 @@
+ from __future__ import annotations
  
-         # a retry loop is necessary because drop column needs it.
--        @retry_loop(for_write=True, write_tvps=[self._tbl_version_path], lock_mutable_tree=True)
-+        @retry_md_write_loop(tvps=[self._tbl_version_path], lock_mutable_tree=True)
-         def do_add_computed_column() -> UpdateStatus:
-             self._check_mutable('add columns to')
-             self._check_single_column_kwarg(
-@@ -670,14 +668,14 @@ def _verify_schema(cls, schema: list[Column]) -> None:
++import contextlib
+ import dataclasses
+ import itertools
+ import logging
+ from collections import deque
+ from concurrent import futures
+ from pathlib import Path
+-from typing import AsyncIterator, Iterator
++from typing import AsyncGenerator, AsyncIterator, Iterator
+ from uuid import UUID
  
-     @telemetry.spanned('pixeltable.drop_column', set_current=True)
-     def drop_column(self, column: str | ColumnRef, if_not_exists: Literal['error', 'ignore'] = 'error') -> None:
--        from pixeltable.catalog import retry_loop
-+        from pixeltable.catalog import retry_md_write_loop
+ from pixeltable import exceptions as excs, exprs, telemetry, telemetry_schemas
+@@ -95,37 +96,40 @@ async def get_input_batch(self, input_iter: AsyncIterator[DataRowBatch]) -> Data
+             self.input_finished = True
+             return None
  
-         telemetry.add_attrs(telemetry.func_span(), **telemetry_schemas.OpAttrs(table_id=str(self._id)))
+-    async def __aiter__(self) -> AsyncIterator[DataRowBatch]:
+-        input_iter = aiter(self.input)
+-        with futures.ThreadPoolExecutor(max_workers=self.MAX_WORKERS) as executor:
+-            while True:
+-                # Create work to fill the queue to the high water mark ... ?without overrunning the in-flight row limit.
+-                while not self.input_finished and self.queued_work < self.QUEUE_DEPTH_HIGH_WATER:
+-                    input_batch = await self.get_input_batch(input_iter)
+-                    if input_batch is not None:
+-                        self.__process_input_batch(input_batch, executor)
+-
+-                # Wait for enough completions to enable more queueing or if we're done
+-                while self.queued_work > self.QUEUE_DEPTH_LOW_WATER or (self.input_finished and self.queued_work > 0):
+-                    done, _ = futures.wait(self.in_flight_requests, return_when=futures.FIRST_COMPLETED)
+-                    self.__process_completions(done, ignore_errors=self.ctx.ignore_errors)
+-
+-                # Emit results to meet batch size requirements or empty the in-flight row queue
+-                if self.__has_ready_batch() or (
+-                    len(self.ready_rows) > 0 and self.input_finished and self.queued_work == 0
+-                ):
+-                    # create DataRowBatch from the first BATCH_SIZE ready rows
+-                    batch = DataRowBatch(self.row_builder)
+-                    rows = [self.ready_rows.popleft() for _ in range(min(self.BATCH_SIZE, len(self.ready_rows)))]
+-                    for row in rows:
+-                        assert row is not None
+-                        batch.add_row(row)
+-                    self.num_returned_rows += len(rows)
+-                    _logger.debug(f'returning {len(rows)} rows')
+-                    yield batch
+-
+-                if self.input_finished and self.queued_work == 0 and len(self.ready_rows) == 0:
+-                    return
++    async def __aiter__(self) -> AsyncGenerator[DataRowBatch, None]:
++        async with contextlib.aclosing(aiter(self.input)) as input_iter:
++            with futures.ThreadPoolExecutor(max_workers=self.MAX_WORKERS) as executor:
++                while True:
++                    # Create work to fill the queue to the high water mark,
++                    # without overrunning the in-flight row limit.
++                    while not self.input_finished and self.queued_work < self.QUEUE_DEPTH_HIGH_WATER:
++                        input_batch = await self.get_input_batch(input_iter)
++                        if input_batch is not None:
++                            self.__process_input_batch(input_batch, executor)
++
++                    # Wait for enough completions to enable more queueing or if we're done
++                    while self.queued_work > self.QUEUE_DEPTH_LOW_WATER or (
++                        self.input_finished and self.queued_work > 0
++                    ):
++                        done, _ = futures.wait(self.in_flight_requests, return_when=futures.FIRST_COMPLETED)
++                        self.__process_completions(done, ignore_errors=self.ctx.ignore_errors)
++
++                    # Emit results to meet batch size requirements or empty the in-flight row queue
++                    if self.__has_ready_batch() or (
++                        len(self.ready_rows) > 0 and self.input_finished and self.queued_work == 0
++                    ):
++                        # create DataRowBatch from the first BATCH_SIZE ready rows
++                        batch = DataRowBatch(self.row_builder)
++                        rows = [self.ready_rows.popleft() for _ in range(min(self.BATCH_SIZE, len(self.ready_rows)))]
++                        for row in rows:
++                            assert row is not None
++                            batch.add_row(row)
++                        self.num_returned_rows += len(rows)
++                        _logger.debug(f'returning {len(rows)} rows')
++                        yield batch
++
++                    if self.input_finished and self.queued_work == 0 and len(self.ready_rows) == 0:
++                        return
  
-         # Retry loop is necessary because table metadata is loaded inside.
-         # Note: the provided ColumnRef may belong to a different table.
-         # lock_mutable_tree=True: we need to be able to see whether
+     def __has_ready_batch(self) -> bool:
+         """True if there are >= BATCH_SIZES entries in ready_rows and the first BATCH_SIZE ones are all non-None"""
+```
+
+**File**: `pixeltable/exec/cell_materialization_node.py` (modified, +32/-30)
+```diff
+@@ -1,13 +1,14 @@
+ from __future__ import annotations
+ 
+ import asyncio
++import contextlib
+ import dataclasses
+ import io
+ import os
+ from collections import deque
+ from concurrent import futures
+ from pathlib import Path
+-from typing import Any, AsyncIterator
++from typing import Any, AsyncGenerator
+ 
+ import numpy as np
+ import PIL.Image
+@@ -101,35 +102,36 @@ def _init_exec_state(self) -> None:
+     def _open(self) -> None:
+         self._init_exec_state()
+ 
+-    async def __aiter__(self) -> AsyncIterator[DataRowBatch]:
+-        async for batch in self.input:
+-            for row in batch:
+-                for col, slot_idx in self.output_col_info.items():
+-                    if row.has_exc(slot_idx):
+-                        continue
+-
+-                    val = row[slot_idx]
+-                    if val is None:
+-                        row.cell_vals[col.id] = sql.sql.null() if col.col_type.is_json_type() else None
+-                        row.cell_md[col.id] = None
+-                        continue
+-
+-                    if col.col_type.is_json_type():
+-                        self._materialize_json_cell(row, col, slot_idx, val)
+-                    elif col.col_type.is_array_type():
+-                        assert isinstance(val, np.ndarray)
+-                        self._materialize_array_cell(row, col, val)
+-                    else:
+-                        assert col.col_type.is_binary_type()
+-                        assert isinstance(val, bytes)
+-                        self._materialize_binary_cell(row, col, val)
+-
+-                    # continue with only the currently open chunk
+-                    self.chunks = self.chunks[-1:] if self.buffered_writer is not None else []
+-
+-                await self._wait_for_uploads(self.MAX_PENDING_UPLOADS)
+-
+-            yield batch
++    async def __aiter__(self) -> AsyncGenerator[DataRowBatch, None]:
++        async with contextlib.aclosing(aiter(self.input)) as input_iter:
++            async for batch in input_iter:
++                for row in batch:
++                    for col, slot_idx in self.output_col_info.items():
++                        if row.has_exc(slot_idx):
++                            continue
++
++                        val = row[slot_idx]
++                        if val is None:
++                            row.cell_vals[col.id] = sql.sql.null() if col.col_type.is_json_type() else None
++                            row.cell_md[col.id] = None
++                            continue
++
++                        if col.col_type.is_json_type():
++                            self._materialize_json_cell(row, col, slot_idx, val)
++                        elif col.col_type.is_array_type():
++                            assert isinstance(val, np.ndarray)
++                            self._materialize_array_cell(row, col, val)
++                        else:
++                            assert col.col_type.is_binary_type()
++                            assert isinstance(val, bytes)
++                            self._materialize_binary_cell(row, col, val)
++
++                        # continue with only the currently open chunk
++                        self.chunks = self.chunks[-1:] if self.buffered_writer is not None else []
++
++                    await self._wait_for_uploads(self.MAX_PENDING_UPLOADS)
++
++                yield batch
+ 
+         self._flush_buffer(finalize=True)
+         # the rows reference the chunks' urls, so they can't be committed before all uploads have succeeded
+```
+
+**File**: `pixeltable/exec/cell_reconstruction_node.py` (modified, +48/-42)
+```diff
+@@ -1,12 +1,13 @@
+ from __future__ import annotations
+ 
+ import asyncio
++import contextlib
+ import io
+ import itertools
+ from concurrent import futures
+ from pathlib import Path
+ from types import NoneType
+-from typing import IO, Any, AsyncIterator, Iterable
++from typing import IO, Any, AsyncGenerator, Iterable
+ 
+ import numpy as np
+ import PIL.Image
+@@ -232,47 +233,52 @@ def _init_exec_state(self) -> None:
+     def _open(self) -> None:
+         self._init_exec_state()
+ 
+-    async def __aiter__(self) -> AsyncIterator[DataRowBatch]:
+-        async for batch in self.input:
+-            urls = self._chunk_urls(batch)
+-            self.reader.release(keep=urls)
+-            await self.reader.prefetch(urls)
+-            for row in batch:
+-                for col_ref in self.json_refs:
+-                    val = row[col_ref.slot_idx]
+-                    if val is None:
+-                        continue
+-                    cell_md = row.slot_md.get(col_ref.slot_idx)
+-                    if cell_md is None or cell_md.file_urls is None or not json_has_inlined_objs(row[col_ref.slot_idx]):
+-                        continue
+-                    row[col_ref.slot_idx] = reconstruct_json(val, cell_md.file_urls, self.reader)
+-
+-                for col_ref in self.json_path_anchors:
+-                    val = row[col_ref.slot_idx]
+-                    if val is None:
+-                        continue
+-                    cell_md = row.slot_md.get(col_ref.slot_idx)
+-                    if cell_md is None or cell_md.file_urls is None or not json_has_inlined_objs(val):
+-                        continue
+-                    row[col_ref.slot_idx] = load_remote_objects(val, cell_md.file_urls, self.reader)
+-
+-                for col_ref in self.array_refs:
+-                    cell_md = row.slot_md.get(col_ref.slot_idx)
+-                    if cell_md is not None and cell_md.array_md is not None:
+-                        assert row[col_ref.slot_idx] is None
+-                        row[col_ref.slot_idx] = self._reconstruct_array(cell_md)
+-                    else:
+-                        assert isinstance(row[col_ref.slot_idx], (NoneType, np.ndarray))
+-
+-                for col_ref in self.binary_refs:
+-                    cell_md = row.slot_md.get(col_ref.slot_idx)
+-                    if cell_md is not None and cell_md.binary_md is not None:
+-                        assert row[col_ref.slot_idx] is None
+-                        row[col_ref.slot_idx] = self._reconstruct_binary(cell_md)
+-                    else:
+-                        assert isinstance(row[col_ref.slot_idx], (NoneType, bytes))
+-
+-            yield batch
++    async def __aiter__(self) -> AsyncGenerator[DataRowBatch, None]:
++        async with contextlib.aclosing(aiter(self.input)) as input_iter:
++            async for batch in input_iter:
++                urls = self._chunk_urls(batch)
++                self.reader.release(keep=urls)
++                await self.reader.prefetch(urls)
++                for row in batch:
++                    for col_ref in self.json_refs:
++                        val = row[col_ref.slot_idx]
++                        if val is None:
++                            continue
++                        cell_md = row.slot_md.get(col_ref.slot_idx)
++                        if (
++                            cell_md is None
++                            or cell_md.file_urls is None
++                            or not json_has_inlined_objs(row[col_ref.slot_idx])
++                        ):
++                            continue
++                        row[col_ref.slot_idx] = reconstruct_json(val, cell_md.file_urls, self.reader)
++
++                    for col_ref in self.json_path_anchors:
++                        val = row[col_ref.slot_idx]
++                        if val is None:
++                            continue
++                        cell_md = row.slot_md.get(col_ref.slot_idx)
++                        if cell_md is None or cell_md.file_urls is None or not json_has_inlined_objs(val):
++                            continue
++                        row[col_ref.slot_idx] = load_remote_objects(val, cell_md.file_urls, self.reader)
++
++                    for col_ref in self.array_refs:
++                        cell_md = row.slot_md.get(col_ref.slot_idx)
++                        if cell_md is not None and cell_md.array_md is not None:
++                            assert row[col_ref.slot_idx] is None
++                            row[col_ref.slot_idx] = self._reconstruct_array(cell_md)
++                        else:
++                            assert isinstance(row[col_ref.slot_idx], (NoneType, np.ndarray))
++
++                    for col_ref in self.binary_refs:
++                        cell_md = row.slot_md.get(col_ref.slot_idx)
++                        if cell_md is not None and cell_md.binary_md is not None:
++                            assert row[col_ref.slot_idx] is None
++                            row[col_ref.slot_idx] = self._reconstruct_bi
+```
+
+**File**: `pixeltable/exec/component_iteration_node.py` (modified, +29/-27)
+```diff
+@@ -1,4 +1,5 @@
+-from typing import AsyncIterator, Iterator
++import contextlib
++from typing import AsyncGenerator, Iterator
+ 
+ from pixeltable import catalog, exceptions as excs, exprs, telemetry
+ from pixeltable.func.iterator import GeneratingFunctionCall
+@@ -67,34 +68,35 @@ def _instrumented_iter(self, iterator: Iterator[dict]) -> Iterator[dict]:
+                     return
+             yield item
+ 
+-    async def __aiter__(self) -> AsyncIterator[DataRowBatch]:
++    async def __aiter__(self) -> AsyncGenerator[DataRowBatch, None]:
+         telemetry_active = telemetry.active()
+         output_batch = DataRowBatch(self.row_builder)
+-        async for input_batch in self.input:
+-            for input_row in input_batch:
+-                # usually computed by the input plan, which then garbage-collected the intermediates they depend on
+-                if not input_row.has_val[self.iterator_args_expr.slot_idx]:
+-                    self.row_builder.eval(input_row, self.iterator_args_ctx)
+-                iterator_args = input_row[self.iterator_args_expr.slot_idx]
+-                assert isinstance(iterator_args, dict)
+-                # We need to ensure that all of the required (non-nullable) parameters of the iterator are
+-                # specified and are not null. If any of them are null, then we skip this row (i.e., we emit 0
+-                # output rows for this input row).
+-                if self.__non_nullable_args_specified(iterator_args):
+-                    iterator = self.view.get().iterator_call.eval(iterator_args)
+-                    try:
+-                        steps = self._instrumented_iter(iterator) if telemetry_active else iterator
+-                        for pos, component_dict in enumerate(steps):
+-                            output_row = self.row_builder.make_row()
+-                            input_row.copy(output_row)
+-                            # we're expanding the input and need to add the iterator position to the pk
+-                            self.__populate_output_row(output_row, pos, component_dict)
+-                            output_batch.add_row(output_row)
+-                            if len(output_batch) == self.__OUTPUT_BATCH_SIZE:
+-                                yield output_batch
+-                                output_batch = DataRowBatch(self.row_builder)
+-                    finally:
+-                        iterator.close()
++        async with contextlib.aclosing(aiter(self.input)) as input_iter:
++            async for input_batch in input_iter:
++                for input_row in input_batch:
++                    # usually computed by the input plan, which then garbage-collected the intermediates they depend on
++                    if not input_row.has_val[self.iterator_args_expr.slot_idx]:
++                        self.row_builder.eval(input_row, self.iterator_args_ctx)
++                    iterator_args = input_row[self.iterator_args_expr.slot_idx]
++                    assert isinstance(iterator_args, dict)
++                    # We need to ensure that all of the required (non-nullable) parameters of the iterator are
++                    # specified and are not null. If any of them are null, then we skip this row (i.e., we emit 0
++                    # output rows for this input row).
++                    if self.__non_nullable_args_specified(iterator_args):
++                        iterator = self.view.get().iterator_call.eval(iterator_args)
++                        try:
++                            steps = self._instrumented_iter(iterator) if telemetry_active else iterator
++                            for pos, component_dict in enumerate(steps):
++                                output_row = self.row_builder.make_row()
++                                input_row.copy(output_row)
++                                # we're expanding the input and need to add the iterator position to the pk
++                                self.__populate_output_row(output_row, pos, component_dict)
++                                output_batch.add_row(output_row)
++                                if len(output_batch) == self.__OUTPUT_BATCH_SIZE:
++                                    yield output_batch
++                                    output_batch = DataRowBatch(self.row_builder)
++                        finally:
++                            iterator.close()
+ 
+         if len(output_batch) > 0:
+             yield output_batch
+```
+
+**File**: `pixeltable/exec/exec_node.py` (modified, +100/-19)
+```diff
+@@ -2,10 +2,12 @@
+ 
+ import abc
+ import asyncio
++import contextlib
+ import queue
++import signal
+ import threading
+-from types import TracebackType
+-from typing import Any, AsyncIterator, Iterable, Iterator, Self, TypeVar
++from types import FrameType, TracebackType
++from typing import Any, AsyncGenerator, Generator, Iterable, Iterator, Self, TypeVar
+ 
+ import pixeltable.exceptions as excs
+ import pixeltable.type_system as ts
+@@ -27,6 +29,15 @@ class ExecNode(abc.ABC):
+     3. bind_params()/iter() can then be called repeatedly to execute the same plan with different parameters
+     4. _open() initializes per-iteration execution state
+ 
++    Closing: an iteration can stop before its last batch (eg, a cursor loop that breaks), and its cleanup (eg,
++    ColumnRef.release()) has to run right then, not at garbage collection.
++    - __aiter__() returns an async generator, which Python doesn't close when its last reference goes away: it
++      hands the generator to the event loop, which closes it later, if at all. Callers must therefore close it with
++      aclose(), also after an early stop, and an implementation that iterates over self.input must close
++      aiter(self.input) the same way, eg, with contextlib.aclosing().
++    - __iter__() returns a generator, which CPython closes as soon as its last reference goes away, eg, when the for
++      loop over it exits. Callers don't close it explicitly.
++
+     Not thread-safe.
+     """
+ 
+@@ -108,28 +119,72 @@ def set_var_slots(self, rows: Iterable[exprs.DataRow]) -> None:
+                 row[v.slot_idx] = val
+ 
+     @abc.abstractmethod
+-    def __aiter__(self) -> AsyncIterator[DataRowBatch]: ...
++    def __aiter__(self) -> AsyncGenerator[DataRowBatch, None]:  # noqa: PYI058
++        """Yield this node's output batches.
+ 
+-    def __iter__(self) -> Iterator[DataRowBatch]:
+-        try:
+-            running = asyncio.get_running_loop()
+-        except RuntimeError:
+-            running = None
++        Callers must close the generator with aclose(); see the class docstring.
++        """
+ 
+-        if running is None:
++    def __iter__(self) -> Generator[DataRowBatch, None, None]:
++        if asyncio._get_running_loop() is None:
+             # if we don't already have a running loop, we can run the async iterator directly and avoid the extra
+             # overhead introduced by _thread_iter()
+             loop = get_runtime().event_loop
+             aiter = self.__aiter__()
++            step: asyncio.Future[DataRowBatch] | None = None
+             try:
+                 while True:
+-                    batch: DataRowBatch = loop.run_until_complete(aiter.__anext__())
+-                    yield batch
++                    # wrap the next step in a Task, which the finally block can cancel
++                    step = asyncio.ensure_future(aiter.__anext__(), loop=loop)
++                    yield self._run_step(loop, step)
+             except StopAsyncIteration:
+                 pass
++            finally:
++                # skip the cleanup where run_until_complete() raises:
++                # - the loop is closed: Runtime.close() has already closed aiter
++                # - another loop is running in this thread (eg, async code closes this generator): the runtime loop's
++                #   async generator finalizer schedules aiter.aclose() once aiter is garbage-collected
++                if not loop.is_closed() and asyncio._get_running_loop() is None:
++                    if step is not None and not step.done():
++                        # an exception (eg, KeyboardInterrupt) left run_until_complete() while step was still running,
++                        # and aclose() raises for a generator in the middle of __anext__(): cancel step and wait first
++                        step.cancel()
++                        loop.run_until_complete(asyncio.wait([step]))
++                    loop.run_until_complete(aiter.aclose())
+         else:
+             yield from self._thread_iter()
+ 
++    def _run_step(self, loop: asyncio.AbstractEventLoop, step: asyncio.Future[DataRowBatch]) -> DataRowBatch:
++        """Run step on loop; if SIGINT arrives, cancel step and raise KeyboardInterrupt once it has finished.
++
++        Like asyncio.Runner, this keeps KeyboardInterrupt out of tasks: one raised inside a task can leave a stop()
++        call queued in loop, which then stops the cleanup in __iter__().
++        """
++        if threading.current_thread() is not threading.main_thread() or (
++            signal.getsignal(signal.SIGINT) is not signal.default_int_handler
++        ):
++            return loop.run_until_complete(step)
++
++        interrupted = False
++
++        def on_sigint(signum: int, frame: FrameType | None) -> None:
++            nonlocal interrupted
++            if interrupted:
++                raise KeyboardInterrupt
++            interrupted = True
++            step.cancel()
++            # wake up the loop if it waits in select()
++            loop.call_soon_threadsafe(lambda: None)
+
+```
+
+**File**: `pixeltable/exec/exec_plan.py` (modified, +10/-10)
+```diff
+@@ -1,8 +1,9 @@
+ from __future__ import annotations
+ 
+ import asyncio
++import contextlib
+ from types import TracebackType
+-from typing import Any, AsyncIterator, Iterator, Self
++from typing import Any, AsyncGenerator, Iterator, Self
+ from uuid import UUID
+ 
+ import pixeltable.exceptions as excs
+@@ -138,9 +139,6 @@ def __exit__(
+     def __iter__(self) -> Iterator[DataRowBatch]:
+         return iter(self.exec_root)
+ 
+-    def __aiter__(self) -> AsyncIterator[DataRowBatch]:
+-        return self.exec_root.__aiter__()
+-
+     def exec(self, args: dict[str, Any]) -> Iterator[exprs.DataRow]:
+         """Bind args, open the plan, and yield rows. Synchronous path.
+ 
+@@ -158,16 +156,17 @@ def exec(self, args: dict[str, Any]) -> Iterator[exprs.DataRow]:
+             self._is_executing = False
+             raise
+         with self:
++            # only the for loop references the batch iterator, so the iterator closes before __exit__()
+             for batch in self.exec_root:
+                 yield from batch
+ 
+-    async def aexec(self, args: dict[str, Any]) -> AsyncIterator[exprs.DataRow]:
++    async def aexec(self, args: dict[str, Any]) -> AsyncGenerator[exprs.DataRow, None]:
+         """Bind args, open the plan, and yield rows. Async path.
+ 
+         Holds iter_lock for the lifetime of the iteration so concurrent async callers (e.g. a
+         per-row inner-query template invoked from an outer ExprEvalNode) don't interleave their
+-        bind+iterate cycles on the same cached plan. Callers must drain the generator (or aclose
+-        it); standard async-generator finalization releases the lock when the generator is closed.
++        bind+iterate cycles on the same cached plan. Callers must drain the generator or aclose() it;
++        both release the lock.
+         """
+         if self._iter_lock is None:
+             self._iter_lock = asyncio.Lock()
+@@ -179,6 +178,7 @@ async def aexec(self, args: dict[str, Any]) -> AsyncIterator[exprs.DataRow]:
+                 self._is_executing = False
+                 raise
+             with self:
+-                async for batch in self.exec_root:
+-                    for row in batch:
+-                        yield row
++                async with contextlib.aclosing(aiter(self.exec_root)) as batches:
++                    async for batch in batches:
++                        for row in batch:
++                            yield row
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1878** (closed): PXT-1726: fix event loop leak from lancedb 0.41 export (@pierrebrunelle)
-- **PR #1877** (2026-10-30): Fix Windows flake in test_udf_module_import_error (stale import cache) (@aaron-siegel)
-- **PR #1876** (2026-10-30): Remove leftover replica references from the dashboard and the API index (@sergey-mkhitaryan)
-- **PR #1875** (2026-10-30): Expire pooled proxy daemon connections before the daemon's keep-alive closes them (@aaron-siegel)
-- **PR #1873** (2026-10-30): docs: install Pixeltable with -U everywhere, warn on Python below 3.11 (@pierrebrunelle)
-- **PR #1872** (closed): PXT-1724: Generate Gemini Omni video through the Interactions API (@pierrebrunelle)
+- **PR #1899** (2026-11-04): Module refactor (@sergey-mkhitaryan)
+- **PR #1898** (2026-11-03): unpin the miniforge version (@sergey-mkhitaryan)
+- **PR #1897** (2026-11-03): cleanup the remaining arrays with pixeltable type dtypes in the docs … (@sergey-mkhitaryan)
+- **PR #1894** (2026-11-03): PXT-1735: Compare ImagesResponse adherence to SDK model fields (@pierrebrunelle)
+- **PR #1891** (2026-11-03): docs: add a DSPy retriever integration page (@pierrebrunelle)
+- **PR #1890** (2026-11-03): Automatic restart of CLI daemon after new package installs (@mkornacker)
 
 ---
 
@@ -2082,49 +1884,42 @@ writers are affected from the moment the schema change is requested (see
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [PXT-1278] New Catalog locking (#1573)
+## X. PXT-1715/1726: Close query resources when a query stops; fix export_lancedb() wi
 
 **RULE**:
-When implementing operations in `docs/design/catalog-locking.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pixeltable/pixeltable. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pixeltable/_query.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pixeltable/pixeltable. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2eca8e44`: [PXT-1278] New Catalog locking (#1573). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `77772fc4`: PXT-1715/1726: Close query resources when a query stops; fix export_lancedb() with lancedb 0.41 (#1868). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/design/catalog-locking.md`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `pixeltable/_query.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-# Catalog locking
-
-`Catalog` coordinates concurrent reads, writes, and schema changes using Postgres locks on store tables.
-This document explains the rules and why they are needed. The implementation is in
-`pixeltable/catalog/catalog.py` and `pixeltable/catalog/locking.py`.
-
-## 1. Lock store tables before reading metadata
-
-Each table or view with stored data has a Postgres store table: `tbl_<uuid.hex>` for tables and
-`view_<uuid.hex>` for views. Pixeltable locks these tables with `LOCK TABLE`. Postgres releases the locks
-when the transaction ends.
-
-Under REPEATABLE READ, `LOCK TABLE` does not establish the transaction's snapshot. The first query after
-lock acquisition does. This means a metadata read sees changes committed while the transaction was waiting
-for its store table locks.
-
-**Store table locks must precede every statement that establishes a snapshot.** A metadata query, a directory
-row lock, or even `SELECT 1` before `LOCK TABLE` would leave the transaction reading metadata from before the wait.
-
-Acquiring locks first ensures that the metadata read includes changes committed during the wait.
-Directory locks come later and need the retry mechanism described in section 5.
-
+import contextlib
+    AsyncGenerator,
+    async def _aexec(self, args: dict[str, Any] | None = None) -> AsyncGenerator[exprs.DataRow, None]:
+        async with contextlib.aclosing(plan.aexec(args)) as rows:
+            async for row in rows:
+                yield row
+            async with contextlib.aclosing(self._aexec(args=args)) as rows:
+                result = [Row(tuple(row[e.slot_idx] for e in planned_exprs), columns, schema) async for row in rows]
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+    AsyncIterator,
+    async def _aexec(self, args: dict[str, Any] | None = None) -> AsyncIterator[exprs.DataRow]:
+        async for row in plan.aexec(args):
+            yield row
+            result = [
+                Row(tuple(row[e.slot_idx] for e in planned_exprs), columns, schema)
+                async for row in self._aexec(args=args)
+            ]
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2eca8e44` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `77772fc4` are properly handled with clean fallback behavior.
