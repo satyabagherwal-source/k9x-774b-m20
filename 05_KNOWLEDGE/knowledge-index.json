@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-04T10:30:23.895Z",
+  "last_updated": "2026-11-04T10:37:47.769Z",
   "total_verified_learnings": 1206,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -54189,8 +54189,8 @@
       "slug": "starrocks-starrocks",
       "platform": "github",
       "source_url": "https://github.com/StarRocks/starrocks",
-      "source_version": "c65d4db1",
-      "content_hash": "dedfd96b61576e3d3eac572e3e3699ab8585f58eca3692f9f285259627930abc",
+      "source_version": "0b659694",
+      "content_hash": "e643555bc77fb25b180a24b6e783125702f19c34082914bbd9fc356bca60cbbf",
       "dossier_path": "07_PROJECT_LEARNING/starrocks-starrocks-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/starrocks-starrocks-learnings.md",
       "promoted_rules": [
@@ -54258,6 +54258,11 @@
           "number": 6531,
           "title": "[BugFix][RB-723] Journal a reshard job's version reservation before releasing it",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6818,
+          "title": "[BugFix] Never raise a decimal overflow error from a NULL row's data under ERROR",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -54265,7 +54270,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T15:46:51.043Z",
+      "verified_at": "2026-11-04T10:37:47.756Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -95812,7 +95817,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Comfy-Org/MOSS-Image",
       "source_version": "hf-comfy-org-moss-image",
-      "content_hash": "51369f0b21c25348b2dd79fcf488fa22f512e764e2a143b188f5a275edf344a9",
+      "content_hash": "025227befb41029ba3ae9896eeb77922a3eb17d6527b3b9850e9a3776e55815c",
       "dossier_path": "07_PROJECT_LEARNING/hf-comfy-org-moss-image-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-comfy-org-moss-image-learnings.md",
       "promoted_rules": [
@@ -95845,6 +95850,21 @@
           "number": 5951,
           "title": "The Quantization Variant Decoupling Principle",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6815,
+          "title": "Model Artifact Directory Contract Invariance",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6816,
+          "title": "Quantization Format Consistency Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6817,
+          "title": "LoRA Rank and Base Model Compatibility Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -95852,7 +95872,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T00:05:39.635Z",
+      "verified_at": "2026-11-04T10:37:43.015Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -174363,6 +174383,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-04T10:30:23.873Z"
+    },
+    "rule-6815": {
+      "learning_id": "rule-6815",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6815,
+      "title": "Model Artifact Directory Contract Invariance",
+      "source_url": "https://huggingface.co/Comfy-Org/MOSS-Image",
+      "source_version": "hf-comfy-org-moss-image",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T10:37:43.015Z"
+    },
+    "rule-6816": {
+      "learning_id": "rule-6816",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6816,
+      "title": "Quantization Format Consistency Invariant",
+      "source_url": "https://huggingface.co/Comfy-Org/MOSS-Image",
+      "source_version": "hf-comfy-org-moss-image",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T10:37:43.015Z"
+    },
+    "rule-6817": {
+      "learning_id": "rule-6817",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6817,
+      "title": "LoRA Rank and Base Model Compatibility Invariant",
+      "source_url": "https://huggingface.co/Comfy-Org/MOSS-Image",
+      "source_version": "hf-comfy-org-moss-image",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T10:37:43.015Z"
+    },
+    "rule-6818": {
+      "learning_id": "rule-6818",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6818,
+      "title": "[BugFix] Never raise a decimal overflow error from a NULL row's data under ERROR",
+      "source_url": "https://github.com/StarRocks/starrocks",
+      "source_version": "0b659694",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T10:37:47.756Z"
     }
   },
   "aliases": {

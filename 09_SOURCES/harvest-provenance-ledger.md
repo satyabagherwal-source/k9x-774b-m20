@@ -7225,3 +7225,5 @@ Every entry in this ledger must capture:
 | `learn-github-vercel-labs-agent-desktop` | `https://github.com/vercel-labs/agent-desktop` | `6660fbac` | Multi-dimensional audit evidence | 2026-11-04T10:29:50.407Z |
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `a7f0c300` | Multi-dimensional audit evidence | 2026-11-04T10:29:59.814Z |
 | `learn-huggingface-autogluon-chronos-2` | `https://huggingface.co/autogluon/chronos-2` | `hf-autoglu` | Multi-dimensional audit evidence | 2026-11-04T10:30:23.985Z |
+| `learn-huggingface-comfy-org-moss-image` | `https://huggingface.co/Comfy-Org/MOSS-Image` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-11-04T10:37:43.085Z |
+| `learn-github-starrocks-starrocks` | `https://github.com/StarRocks/starrocks` | `0b659694` | Multi-dimensional audit evidence | 2026-11-04T10:37:47.820Z |

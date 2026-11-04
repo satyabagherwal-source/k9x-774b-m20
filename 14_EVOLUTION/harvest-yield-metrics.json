@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-04T10:30:23.990Z",
-  "total_cycles_completed": 7193,
-  "total_learnings_persisted": 7193,
-  "total_rules_promoted": 6841,
+  "last_updated": "2026-11-04T10:37:47.824Z",
+  "total_cycles_completed": 7195,
+  "total_learnings_persisted": 7195,
+  "total_rules_promoted": 6845,
   "history": [
-    {
-      "timestamp": "2026-11-03T21:36:52.837Z",
-      "repository": "weaviate/weaviate",
-      "learningId": "learn-github-weaviate-weaviate",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-03T21:44:46.019Z",
-      "repository": "lxml/lxml",
-      "learningId": "learn-github-lxml-lxml",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-03T21:44:50.058Z",
       "repository": "software-mansion/react-native-screens",
@@ -1403,6 +1389,20 @@
       "repository": "autogluon/chronos-2",
       "learningId": "learn-huggingface-autogluon-chronos-2",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T10:37:43.089Z",
+      "repository": "Comfy-Org/MOSS-Image",
+      "learningId": "learn-huggingface-comfy-org-moss-image",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T10:37:47.824Z",
+      "repository": "StarRocks/starrocks",
+      "learningId": "learn-github-starrocks-starrocks",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

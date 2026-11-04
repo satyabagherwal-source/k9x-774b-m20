@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-04T10:30:23.994Z",
+  "last_updated": "2026-11-04T10:37:47.827Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3261,14 +3261,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-comfy-org-moss-image",
-      "content_hash": "51369f0b21c25348b2dd79fcf488fa22f512e764e2a143b188f5a275edf344a9",
-      "verified_at": "2026-10-31T00:05:39.742Z",
+      "content_hash": "025227befb41029ba3ae9896eeb77922a3eb17d6527b3b9850e9a3776e55815c",
+      "verified_at": "2026-11-04T10:37:43.091Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T00:05:39.742Z"
+      "last_updated": "2026-11-04T10:37:43.091Z"
     },
     "bvaughn/react-virtualized": {
       "repository": "bvaughn/react-virtualized",
@@ -7956,14 +7956,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-starrocks-starrocks",
-      "content_hash": "dedfd96b61576e3d3eac572e3e3699ab8585f58eca3692f9f285259627930abc",
-      "verified_at": "2026-11-03T15:46:51.156Z",
+      "content_hash": "e643555bc77fb25b180a24b6e783125702f19c34082914bbd9fc356bca60cbbf",
+      "verified_at": "2026-11-04T10:37:47.827Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T15:46:51.156Z"
+      "last_updated": "2026-11-04T10:37:47.827Z"
     },
     "lobehub/lobe-ui": {
       "repository": "lobehub/lobe-ui",

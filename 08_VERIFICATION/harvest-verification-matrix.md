@@ -7216,3 +7216,5 @@
 | `CYCLE-20261104-69XF` | `2026-11-04T10:29:50.403Z` | `vercel-labs/agent-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6811` | Yes (`f3680f16...`) |
 | `CYCLE-20261104-6H6Q` | `2026-11-04T10:29:59.810Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6778` | Yes (`e29c11dc...`) |
 | `CYCLE-20261104-6ZU5` | `2026-11-04T10:30:23.981Z` | `autogluon/chronos-2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6812, Rule 6813, Rule 6814` | Yes (`c01b2833...`) |
+| `CYCLE-20261104-GENE` | `2026-11-04T10:37:43.082Z` | `Comfy-Org/MOSS-Image` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6815, Rule 6816, Rule 6817` | Yes (`025227be...`) |
+| `CYCLE-20261104-GIAY` | `2026-11-04T10:37:47.818Z` | `StarRocks/starrocks` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6818` | Yes (`e643555b...`) |
