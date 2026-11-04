@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-04T19:55:34.475Z",
-    "lastVerified": "2026-11-04T19:55:34.475Z",
+    "lastChecked": "2026-11-04T20:02:49.599Z",
+    "lastVerified": "2026-11-04T20:02:49.599Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -355,9 +355,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-04T19:33:54.325Z",
+    "lastChecked": "2026-11-04T20:02:43.192Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-04T19:33:54.325Z"
+    "lastVerified": "2026-11-04T20:02:43.192Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -426,11 +426,21 @@
     "revisionIdentifier": "fea58ae4"
   },
   "run-llama-llama_index": {
-    "name": "llama_index",
+    "name": "run-llama/llama_index",
     "officialUrl": "https://github.com/run-llama/llama_index",
-    "lastChecked": "2026-11-03T20:11:11.388Z",
-    "revisionIdentifier": "619d7466",
-    "lastVerified": "2026-11-03T20:11:11.388Z"
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-11-04T20:02:46.090Z",
+    "lastVerified": "2026-11-04T20:02:46.090Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-run-llama-llama_index",
+    "contentHash": "ae503e7eab28ad66943c5aec41d725bf04d541c5163af626b63d5eb50564001e",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 1,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "nucleoidai-nucleoid": {
     "name": "NucleoidAI/Nucleoid",
@@ -1419,9 +1429,9 @@
   "rustcrypto-hashes": {
     "name": "hashes",
     "officialUrl": "https://github.com/RustCrypto/hashes",
-    "lastChecked": "2026-11-04T10:57:32.288Z",
+    "lastChecked": "2026-11-04T20:02:38.114Z",
     "revisionIdentifier": "23d8e40e",
-    "lastVerified": "2026-11-04T10:57:32.288Z"
+    "lastVerified": "2026-11-04T20:02:38.114Z"
   },
   "neondatabase-neon": {
     "name": "neon",
@@ -3349,9 +3359,9 @@
   "aliyuncontainerservice-pouch": {
     "name": "pouch",
     "officialUrl": "https://github.com/AliyunContainerService/pouch",
-    "lastChecked": "2026-11-03T21:28:25.481Z",
+    "lastChecked": "2026-11-04T20:02:35.628Z",
     "revisionIdentifier": "ba854f2d",
-    "lastVerified": "2026-11-03T21:28:25.481Z"
+    "lastVerified": "2026-11-04T20:02:35.628Z"
   },
   "vearch-vearch": {
     "name": "vearch",
@@ -6540,9 +6550,9 @@
   "resocoder-flutter-tdd-clean-architecture-course": {
     "name": "flutter-tdd-clean-architecture-course",
     "officialUrl": "https://github.com/ResoCoder/flutter-tdd-clean-architecture-course",
-    "lastChecked": "2026-10-31T12:46:46.907Z",
+    "lastChecked": "2026-11-04T20:02:33.152Z",
     "revisionIdentifier": "6c515614",
-    "lastVerified": "2026-10-31T12:46:46.907Z"
+    "lastVerified": "2026-11-04T20:02:33.152Z"
   },
   "someengineering-fixinventory": {
     "name": "fixinventory",
@@ -7597,9 +7607,9 @@
   "ouch-org-ouch": {
     "name": "ouch",
     "officialUrl": "https://github.com/ouch-org/ouch",
-    "lastChecked": "2026-11-03T13:04:53.545Z",
+    "lastChecked": "2026-11-04T20:02:28.156Z",
     "revisionIdentifier": "6df14b05",
-    "lastVerified": "2026-11-03T13:04:53.545Z"
+    "lastVerified": "2026-11-04T20:02:28.156Z"
   },
   "hf-canberkkkkkk-ema-lightning": {
     "name": "canberkkkkkk/ema-lightning",
@@ -12884,12 +12894,12 @@
     "officialUrl": "https://huggingface.co/FastVideo/FastH3-Omni-Comfy",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-31T03:58:53.762Z",
-    "lastVerified": "2026-10-31T03:58:53.762Z",
+    "lastChecked": "2026-11-04T20:02:31.047Z",
+    "lastVerified": "2026-11-04T20:02:31.047Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-fastvideo-fasth3-omni-comfy",
-    "contentHash": "43465e50344fc283450adc7d8930769339950baaee59ae5d3296204331667fed",
+    "contentHash": "327d116ea8e9c00cbac9e4b0fd78bcb8cbc58f3cfe61cb79584a5f49e8cc61a4",
     "promotedRulesCount": 2,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

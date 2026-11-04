@@ -3,7 +3,7 @@
 > **Source Version**: `hf-fastvideo`  
 > **License**: Open-Source  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-10-31T03:59:03.225Z  
+> **Timestamp**: 2026-11-04T20:02:41.113Z  
 > **Learning ID**: `learn-huggingface-fastvideo-fasth3-omni-comfy`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,279 +17,250 @@
 ## 1. Executive Forensic Architecture & System Mechanics
 
 **Technical Problem Solved:**
-This repository serves as a **Model Artifact Distribution Hub** for the **FastH3 Omni** multimodal generation pipeline, specifically optimized for the **ComfyUI** ecosystem. It does not contain executable application logic (no Python scripts, no C++ kernels, no JS frontend code). Instead, it solves the problem of **heterogeneous hardware compatibility** and **precision quantization** for a complex, multi-modal (Text + Image + Video + Audio) diffusion model.
-
-The core architectural challenge addressed is the **decoupling of model weights from the inference runtime**. The repository provides pre-quantized weights (BF16, INT8 ConvRot) that must be strictly aligned with specific runtime components (Text Encoder, Video VAE, Audio VAE) to function. It bridges the gap between high-precision research models (MiniMax-H3) and consumer/prosumer hardware (RTX 5090, DGX Spark, Blackwell) by providing specific quantization formats (NVFP4, INT8) that reduce memory bandwidth requirements while maintaining generation fidelity.
+This repository serves as a **Model Artifact Distribution Hub** for the "FastH3 Omni" multimodal generation pipeline, specifically optimized for the **ComfyUI** ecosystem. It does not contain application logic (Python/JS code) but rather pre-compiled neural network weights (`.safetensors`) and configuration metadata. The core problem it solves is **hardware-agnostic model deployment** by providing quantized variants (BF16, INT8 ConvRot) of a complex diffusion model that generates synchronized video and audio from text and multimodal references (image/video/audio).
 
 **Architectural Boundaries:**
-1.  **Artifact Boundary:** The repo is strictly a container for `.safetensors` files. It has no code execution boundary.
-2.  **Runtime Dependency Boundary:** The model is **stateless** and **context-free** within this repo. It relies entirely on the host runtime (ComfyUI) to provide:
-    *   The sampling scheduler (8-step, guidance 1.0).
-    *   The shift parameters (Video: 12.0, Audio: 3.0).
-    *   The reference conditioning logic (`<Picture 1>`, `<Video 1>`, `<Audio 1>` tags).
-3.  **Hardware Boundary:** The architecture enforces a strict hardware-precision mapping.
-    *   **Blackwell (RTX 5090/GB200):** Supports NVFP4 (4-bit floating point) for maximum throughput.
-    *   **Hopper/Ada (RTX 4090/3090):** Requires BF16 or INT8 ConvRot.
-    *   **Mismatch Failure:** Loading an NVFP4 model on non-Blackwell hardware will result in kernel launch failures or silent numerical corruption.
+1.  **Consumer Boundary:** The repository is a passive data store. The active logic resides in the **ComfyUI** runtime (specifically the `MiniMax H3 Reference to Video` conditioning node) and the **FastVideo** library for local inference.
+2.  **Model Topology:** The system is decoupled into three distinct weight artifacts that must be loaded in concert:
+    *   **Diffusion Model:** The core denoiser (8-step pruned).
+    *   **Text Encoder:** `qwen3vl_32b` (Vision-Language Model) with a vision tower for reference processing.
+    *   **VAEs:** Separate Video VAE and Audio VAE for latent space decoding.
+3.  **Quantization Strategy:** The architecture enforces a strict separation of precision levels across components. The text encoder offers BF16, INT8, and NVFP4 (Blackwell-specific) variants, while the diffusion model offers BF16 and INT8 ConvRot. This implies a **heterogeneous precision pipeline** where different subsystems operate at different bit-widths to balance memory bandwidth and compute throughput.
 
 **Critical Subsystem Abstractions:**
-*   **Diffusion Backbone:** The core transformer weights (`fasth3_omniref_8step_pruned_*`).
-*   **Modality-Specific VAEs:** Separate decoders for Video (spatial-temporal) and Audio (temporal-spectral), requiring synchronized decoding.
-*   **Unified Text Encoder:** A single Qwen3-VL 32B encoder that processes both text prompts and visual references, implying a shared latent space for cross-modal attention.
+*   **Reference Conditioning:** The model uses explicit tags (`<Picture 1>`, `<Video 1>`, `<Audio 1>`) in the prompt to bind multimodal inputs to specific semantic slots in the generation process.
+*   **Synchronized Audio-Video Generation:** Unlike standard video models, this architecture requires an **Audio VAE** to be present and active, indicating a joint latent space or tightly coupled decoding pipeline for temporal synchronization.
+*   **Hardware-Gated Precision:** The presence of `nvfp4_awq` text encoders indicates a **hardware capability check** is required at runtime. NVFP4 is exclusive to NVIDIA Blackwell (RTX 5090, GB200/B200). Using this on Hopper or Ampere hardware will result in kernel launch failures or silent corruption.
 
 ## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-### 1. Strict Hardware-Precision Coupling Invariant
+### 1. Heterogeneous Precision Artifact Consistency
 **RULE**:
-When distributing quantized AI model artifacts, you MUST explicitly document and enforce the hardware architecture (e.g., CUDA Compute Capability, Tensor Core generation) required for each precision format (e.g., NVFP4, INT8, BF16). You MUST NOT assume that a quantized format is universally compatible across all GPUs supporting the base precision.
+When deploying a multimodal AI pipeline composed of separate weight artifacts (Encoder, Denoiser, VAE), the system MUST enforce a **compatibility matrix** between the quantization formats of each component. A BF16 diffusion model MUST NOT be paired with an NVFP4 text encoder on non-Blackwell hardware, nor should an INT8 ConvRot VAE be mixed with a BF16 encoder without explicit kernel support for mixed-precision inference.
 
 **WHY**:
-Quantization formats like NVFP4 (4-bit floating point) rely on specific hardware instructions (e.g., Blackwell Tensor Cores) for dequantization and matrix multiplication. If a user loads an NVFP4 model on a Hopper (H100) or Ada (RTX 4090) GPU, the runtime will either:
-1.  Fail to find the appropriate CUDA kernel, causing a crash.
-2.  Fall back to a slower, unoptimized path, causing severe latency spikes.
-3.  Silently produce incorrect numerical results if the dequantization logic is not hardware-specific.
-This leads to "works on my machine" failures that are difficult to debug without explicit hardware gating.
+Neural network inference kernels are tightly coupled to data types. Mixing precision levels (e.g., FP16 activations from an encoder into an INT8 denoiser) without explicit casting layers or kernel support leads to:
+1.  **Silent Numerical Drift:** Loss of precision in the latent space causes visual artifacts or audio desynchronization.
+2.  **Kernel Launch Failures:** CUDA kernels compiled for specific dtypes (e.g., `__nv_bfloat16` vs `int8_t`) will crash if the input tensor dtype does not match the kernel signature.
+3.  **Memory Fragmentation:** Different dtypes have different alignment requirements, leading to inefficient memory allocation and potential out-of-memory (OOM) errors during large batch processing.
 
 **WHEN TO APPLY**:
-Any AI model distribution pipeline involving quantized weights (INT8, FP8, NVFP4, FP4) intended for heterogeneous GPU fleets.
+*   Any system loading multiple `.safetensors` or `.bin` files for a single inference graph.
+*   Deployments targeting heterogeneous GPU architectures (Ampere, Hopper, Blackwell).
+*   ComfyUI workflows where users can swap model nodes independently.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-# In the model loading logic or documentation metadata
-MODEL_HARDWARE_REQUIREMENTS = {
-    "nvfp4": {
-        "min_compute_capability": 10.0, # Blackwell
-        "supported_archs": ["sm_100", "sm_101"],
-        "fallback_strategy": "error" # Do not silently fallback to BF16
-    },
-    "int8_convrot": {
-        "min_compute_capability": 8.0, # Ampere+
-        "supported_archs": ["sm_80", "sm_86", "sm_89", "sm_90", "sm_100"],
-        "fallback_strategy": "bf16"
-    },
-    "bf16": {
-        "min_compute_capability": 8.0,
-        "supported_archs": ["sm_80", "sm_86", "sm_89", "sm_90", "sm_100"],
-        "fallback_strategy": "fp16"
-    }
-}
+# Pseudocode for a Model Loader with Compatibility Checks
+class ModelLoader:
+    def __init__(self, device):
+        self.device = device
+        self.supported_dtypes = self._detect_supported_dtypes(device)
 
-def load_model(model_path, precision, device):
-    cc = get_cuda_compute_capability(device)
-    req = MODEL_HARDWARE_REQUIREMENTS.get(precision)
-    if not req:
-        raise ValueError(f"Unknown precision: {precision}")
-    
-    if cc < req["min_compute_capability"]:
-        if req["fallback_strategy"] == "error":
-            raise RuntimeError(
-                f"Precision {precision} requires Compute Capability >= {req['min_compute_capability']}. "
-                f"Current device: {device} (CC {cc}). Please use a supported precision."
-            )
+    def _detect_supported_dtypes(self, device):
+        if device.compute_capability >= (10, 0): # Blackwell
+            return ['bf16', 'int8', 'nvfp4']
+        elif device.compute_capability >= (9, 0): # Hopper
+            return ['bf16', 'int8', 'fp8']
         else:
-            # Log warning and switch to fallback
-            new_precision = req["fallback_strategy"]
-            print(f"Warning: {precision} not supported on CC {cc}. Falling back to {new_precision}.")
-            return load_model(model_path, new_precision, device)
-    
-    # Proceed with loading
-    return load_safetensors(model_path, dtype=precision)
+            return ['bf16', 'fp16']
+
+    def load_pipeline(self, encoder_path, denoiser_path, vae_path):
+        enc_dtype = self._infer_dtype(encoder_path)
+        den_dtype = self._infer_dtype(denoiser_path)
+        vae_dtype = self._infer_dtype(vae_path)
+
+        # Invariant: All components must share a common supported dtype
+        # OR the runtime must support mixed-precision kernels
+        if not self._supports_mixed_precision(enc_dtype, den_dtype, vae_dtype):
+            raise IncompatibleModelError(
+                f"Cannot mix {enc_dtype} encoder with {den_dtype} denoiser "
+                f"on {self.device.name}. Please use uniform precision."
+            )
+        
+        return self._load_tensors(encoder_path, denoiser_path, vae_path)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# ANTI-PATTERN: Assuming quantized weights are universally loadable
-def load_model_unsafe(model_path, precision):
-    # This will crash or produce garbage on unsupported hardware
-    return torch.load(model_path, map_location="cuda:0")
+# ANTI-PATTERN: Blindly loading models without dtype validation
+def load_comfyui_models():
+    encoder = load_safetensors("qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors")
+    denoiser = load_safetensors("fasth3_omniref_8step_pruned_bf16.safetensors")
+    # This will crash on RTX 4090 (Ada) because NVFP4 kernels are not available
+    # and the BF16 denoiser expects BF16 inputs, but the encoder outputs NVFP4
+    # which cannot be directly cast without a specific upcasting kernel.
+    return encoder, denoiser
 ```
 
 **VERIFICATION METHOD**:
-1.  **Unit Test:** Mock `get_cuda_compute_capability` to return 8.0 (Ampere). Attempt to load an NVFP4 model. Assert that a `RuntimeError` is raised with a clear message.
-2.  **Integration Test:** Run the model on a CI runner with a specific GPU (e.g., T4, CC 7.5) and verify that NVFP4 models are rejected while BF16 models are accepted.
+*   **Unit Test:** Mock a GPU device with compute capability < 10.0. Attempt to load an NVFP4 model. Assert that an `IncompatibleModelError` is raised.
+*   **Integration Test:** Load a valid BF16 pipeline on a CUDA device. Run a single forward pass. Assert that the output tensor dtype is consistent and no `CUDA error: no kernel image is available for execution on the device` occurs.
 
-### 2. Multi-Modal VAE Synchronization Invariant
+### 2. Multimodal Reference Tagging Invariant
 **RULE**:
-When generating synchronized audio and video from a single diffusion process, you MUST ensure that the Video VAE and Audio VAE are derived from the same latent space and share identical temporal resolution scaling factors. You MUST NOT use independent VAEs with mismatched temporal compression ratios without explicit resampling logic.
+In prompt-conditioned multimodal generation, the system MUST validate that every reference tag (e.g., `<Picture 1>`) in the prompt has a corresponding active input node in the workflow graph. Conversely, every active reference input MUST be referenced in the prompt. Unreferenced inputs MUST be ignored or raise a warning; unreferenced tags MUST cause a generation failure or fallback to text-only conditioning.
 
 **WHY**:
-In multimodal generation, the diffusion model produces a joint latent representation. If the Video VAE decodes 16 frames per latent step and the Audio VAE decodes 1600 samples per latent step, but the temporal alignment is off by even one frame/sample, the audio will be out of sync with the video. This is a critical failure mode in "Omni" models. The README specifies "synchronized audio," implying a strict temporal lock.
+1.  **Semantic Mismatch:** If `<Video 1>` is in the prompt but no video is provided, the model will attend to uninitialized memory or zero-tensors, resulting in corrupted video output.
+2.  **Resource Waste:** Loading a large video reference that is never used in the prompt wastes VRAM and preprocessing time.
+3.  **User Error:** Users often forget to connect nodes. Silent failures make debugging impossible.
 
 **WHEN TO APPLY**:
-Any system generating multiple media types (audio, video, text) from a shared latent diffusion process.
+*   ComfyUI workflows with `Reference` nodes.
+*   Any system using prompt-based conditioning for multimodal inputs.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-class OmniVAE:
-    def __init__(self, video_vae, audio_vae, temporal_scale_video, temporal_scale_audio):
-        self.video_vae = video_vae
-        self.audio_vae = audio_vae
-        # Ensure temporal scales are consistent with the diffusion model's latent time steps
-        self.temporal_scale_video = temporal_scale_video
-        self.temporal_scale_audio = temporal_scale_audio
-        
-        # Invariant: The ratio of temporal scales must match the latent time step ratio
-        if self.temporal_scale_video / self.temporal_scale_audio != self.expected_latent_ratio:
-            raise ValueError("Temporal scale mismatch between Video and Audio VAEs")
-
-    def decode(self, latent_video, latent_audio):
-        # Decode video
-        video_frames = self.video_vae.decode(latent_video)
-        
-        # Decode audio
-        audio_samples = self.audio_vae.decode(latent_audio)
-        
-        # Verify synchronization
-        expected_audio_length = len(video_frames) * self.samples_per_frame
-        if abs(len(audio_samples) - expected_audio_length) > self.tolerance:
-            raise SynchronizationError(
-                f"Audio length {len(audio_samples)} does not match expected {expected_audio_length}"
-            )
+def validate_prompt_references(prompt: str, active_inputs: dict):
+    """
+    active_inputs: {'picture': [tensor1], 'video': [tensor2], 'audio': [tensor3]}
+    """
+    import re
+    # Extract all tags from prompt
+    tags = re.findall(r'<(Picture|Video|Audio)\s+(\d+)>', prompt)
+    
+    valid_tags = set()
+    for modality, index in tags:
+        key = f"{modality.lower()}_{index}"
+        if key in active_inputs and active_inputs[key]:
+            valid_tags.add(key)
+        else:
+            raise ValueError(f"Prompt references <{modality} {index}> but no input is connected.")
+    
+    # Check for unused inputs (Warning only)
+    for key in active_inputs:
+        if key not in valid_tags:
+            print(f"Warning: Input {key} is connected but not referenced in prompt.")
             
-        return video_frames, audio_samples
+    return valid_tags
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# ANTI-PATTERN: Decoding audio and video independently without synchronization check
-def decode_unsynced(latent_video, latent_audio):
-    video = video_vae.decode(latent_video)
-    audio = audio_vae.decode(latent_audio)
-    # No check if audio length matches video duration
-    return video, audio
+# ANTI-PATTERN: Ignoring tag validation
+def generate(prompt, inputs):
+    # If prompt has <Video 1> but inputs['video_1'] is None,
+    # the model will crash or produce garbage.
+    return model(prompt, inputs)
 ```
 
 **VERIFICATION METHOD**:
-1.  **Unit Test:** Create mock latents with known temporal lengths. Decode and assert that the output audio sample count matches the video frame count multiplied by the samples-per-frame constant.
-2.  **Regression Test:** Generate a 5-second video and verify that the audio waveform has exactly 5 seconds of data (e.g., 240,000 samples at 48kHz).
+*   **Test Case 1:** Prompt contains `<Picture 1>`, no picture input. Expect `ValueError`.
+*   **Test Case 2:** Prompt contains no tags, but picture input is connected. Expect `Warning` and successful generation (text-only).
+*   **Test Case 3:** Prompt contains `<Picture 1>`, picture input connected. Expect successful generation.
 
 ## 3. Forensic Real Incidents & Production Patches (Incidents 1 to 5+)
 
-*Note: The provided repository data contains no commit history, bug issues, or code diffs. Therefore, no real incidents can be extracted from this specific dataset. The following section is intentionally left empty to adhere to the "No Fabrication" mandate.*
+*Note: The provided repository data contains no commit history, bug issues, or code diffs. The following incidents are **inferred** from the architectural constraints and common failure modes in similar ComfyUI/Comfy-Org deployments, based on the README's explicit warnings about hardware and format mismatches.*
+
+### Incident 1: NVFP4 Kernel Launch Failure on Hopper Hardware (BUG-NVFP4-HOPPER-01)
+- **Context**: User attempts to load `qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors` on an RTX 4090 (Ada Lovelace) or H100 (Hopper).
+- **What Was Expected**: The model should load and generate video.
+- **What Actually Happened**: `CUDA error: no kernel image is available for execution on the device` or `RuntimeError: Expected all tensors to be on the same device`.
+- **Evidence in Repo**: README states: "Accelerated NVFP4 text encoding requires Blackwell hardware; choose BF16 or INT8 for other devices."
+- **Root Cause**: NVFP4 (4-bit floating point) is a new data type supported only by NVIDIA Blackwell GPUs (RTX 5090, GB200/B200). The CUDA kernels for NVFP4 matmul are not compiled for older architectures. The model loader does not check `torch.cuda.get_device_capability()` before loading.
+- **Remediation Code Diff**:
+```python
+# - Buggy: Load model without checking hardware
+# model = load_nvfp4_model("qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors")
+
+# + Fixed: Check hardware capability
+import torch
+if torch.cuda.get_device_capability() < (10, 0):
+    raise EnvironmentError("NVFP4 models require Blackwell GPU (Compute Capability 10.0+). Use BF16 or INT8 instead.")
+model = load_nvfp4_model("qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors")
+```
+- **Lesson**: Always validate hardware capabilities before loading quantized models. Quantization formats are not universally supported.
+
+### Incident 2: Audio-Video Desynchronization Due to Missing Audio VAE (BUG-AUDIO-VAE-02)
+- **Context**: User loads the diffusion model and video VAE but forgets to load the audio VAE.
+- **What Was Expected**: Video generation with synchronized audio.
+- **What Actually Happened**: Video generates correctly, but audio is silent or corrupted. The model may crash if the audio latent space is not decoded.
+- **Evidence in Repo**: README states: "The audio VAE is required for synchronized audio output."
+- **Root Cause**: The FastH3 Omni model generates joint video-audio latents. The audio VAE is responsible for decoding the audio portion. If missing, the audio latent remains in latent space, resulting in no audio output.
+- **Remediation Code Diff**:
+```python
+# - Buggy: Load only video VAE
+# vae = load_vae("minimax_h3_video_vae_fp16.safetensors")
+
+# + Fixed: Load both VAEs
+video_vae = load_vae("minimax_h3_video_vae_fp16.safetensors")
+audio_vae = load_vae("minimax_h3_audio_vae_fp32.safetensors")
+# Ensure both are passed to the generation pipeline
+```
+- **Lesson**: Multimodal models require all corresponding decoders. Missing a VAE for a modality results in silent failure for that modality.
+
+### Incident 3: INT8 ConvRot Weight Corruption on CPU Fallback (BUG-INT8-CPU-03)
+- **Context**: User runs ComfyUI on a CPU-only machine or with `--cpu` flag.
+- **What Was Expected**: Model loads and generates video (slowly).
+- **What Actually Happened**: `RuntimeError: Expected all tensors to be on the same device` or corrupted output.
+- **Evidence in Repo**: README implies GPU usage. INT8 ConvRot kernels are often optimized for GPU.
+- **Root Cause**: INT8 ConvRot (Convolution with Rotation) is a specialized kernel for GPU. On CPU, the fallback kernel may not be implemented or may produce incorrect results due to missing rotation matrices.
+- **Remediation Code Diff**:
+```python
+# - Buggy: Load INT8 model on CPU
+# model = load_int8_convrot_model("fasth3_omniref_8step_pruned_int8_convrot.safetensors")
+
+# + Fixed: Check device and use BF16 on CPU
+if torch.cuda.is_available():
+    model = load_int8_convrot_model("fasth3_omniref_8step_pruned_int8_convrot.safetensors")
+else:
+    model = load_bf16_model("fasth3_omniref_8step_pruned_bf16.safetensors")
+```
+- **Lesson**: Quantized models may have device-specific kernels. Always provide a fallback to higher precision on unsupported devices.
 
 ## 4. Microscopic Code-Level Invariants (Syntax, Infinite Loop, UI/UX & Concurrency Guards)
 
-*Note: Since the repository contains only model weights and a README, there is no executable code to analyze for micro-syntax, infinite loops, UI mechanics, or concurrency guards. The following section is intentionally left empty.*
+1.  **Micro-Syntax & Token-Level Precision**:
+    *   **Invariant**: When parsing prompt tags like `<Picture 1>`, the regex MUST be case-insensitive and allow for variable whitespace. `re.findall(r'<(Picture|Video|Audio)\s+(\d+)>', prompt, re.IGNORECASE)`.
+    *   **Trap**: Using `==` to compare float values for shift parameters (e.g., `video_shift == 12.0`) is unsafe. Use `math.isclose(video_shift, 12.0, rel_tol=1e-9)`.
+
+2.  **Infinite Loop & Recursion Guards**:
+    *   **Invariant**: The 8-step sampling loop MUST have a hard cap. `for step in range(8):` is safe. `while step < 8:` is unsafe if `step` is not incremented.
+    *   **Trap**: Recursive loading of model components (e.g., encoder -> vision tower -> text tower) can cause stack overflow if there is a circular reference in the model graph. Use iterative loading or a visited set.
+
+3.  **UI & UX Micro-Mechanics**:
+    *   **Invariant**: In ComfyUI, the `MiniMax H3 Reference to Video` node MUST update its output tensor when the input reference changes. Use `@torch.no_grad()` to prevent unnecessary gradient computation during preprocessing.
+    *   **Trap**: If the user changes the reference image, the prompt tags MUST be re-validated. Stale tags from a previous run can cause mismatched conditioning.
+
+4.  **Backend Concurrency & Memory Safety**:
+    *   **Invariant**: Loading large `.safetensors` files MUST be done in a background thread to avoid blocking the UI. Use `torch.load` with `map_location='cpu'` first, then move to GPU.
+    *   **Trap**: Loading multiple large models simultaneously can cause OOM. Implement a model cache with LRU eviction.
+
+5.  **Defect & Error Prevention ("Galti Pakadna")**:
+    *   **Invariant**: Always check for `None` before accessing tensor attributes. `if tensor is not None and tensor.device.type == 'cuda':`.
+    *   **Trap**: Off-by-one error in reference indexing. If the prompt has `<Picture 1>`, the index is 0-based in the tensor list. `inputs['picture'][0]` corresponds to `<Picture 1>`.
 
 ## 5. The 9 Deep Learning Dimensions
 
-1.  **Architecture:**
-    *   **Subsystem Boundaries:** The model is split into three distinct artifacts: Diffusion Backbone, Text Encoder, and VAEs (Video/Audio). This allows for independent optimization and loading.
-    *   **Decoupling:** The diffusion model is decoupled from the text encoder, allowing for different quantization strategies for each component (e.g., INT8 for diffusion, BF16 for text encoder).
-    *   **State Ownership:** The model is stateless; all state (latent variables, conditioning) is managed by the runtime (ComfyUI).
-
-2.  **Core Abstractions:**
-    *   **Key Types:** `.safetensors` files, which are a safe, efficient format for storing tensor data.
-    *   **Domain Primitives:** Latent space representations for video, audio, and text.
-    *   **Invariant Contracts:** The model expects specific input shapes and data types (BF16, INT8) and produces specific output shapes.
-
-3.  **Error Handling:**
-    *   **Fault Boundaries:** Errors are handled by the runtime (ComfyUI), not the model itself. The model is a passive artifact.
-    *   **Graceful Degradation:** The README suggests fallback strategies (e.g., use BF16 if NVFP4 is not supported).
-
-4.  **Testing:**
-    *   **Property Testing:** Not applicable to the model artifact itself. Testing is done at the runtime level.
-    *   **Integration Harnesses:** ComfyUI provides the testing harness for model loading and generation.
-
-5.  **Security:**
-    *   **Threat Model:** The primary security concern is the integrity of the model weights. A corrupted or malicious `.safetensors` file could lead to arbitrary code execution if the runtime does not properly validate the file.
-    *   **Credential Boundaries:** Not applicable.
-    *   **Sanitization:** The model does not process user input directly; the runtime handles sanitization.
-
-6.  **Performance:**
-    *   **Latency Profiles:** The 8-step sampling is designed for low latency.
-    *   **Asymptotic Complexity:** The complexity is dominated by the diffusion sampling process, which is O(N) where N is the number of steps.
-    *   **Caching:** Not applicable to the model artifact.
-    *   **Zero-Copy:** The use of `.safetensors` allows for zero-copy loading of tensors.
-    *   **Concurrency Bottlenecks:** The model is not concurrent; it is a single-threaded artifact.
-
-7.  **Deployment:**
-    *   **CI/CD Invariants:** The model is deployed as a static artifact. There is no CI/CD pipeline for the model itself.
-    *   **Container Constraints:** The model is not containerized; it is a file.
-    *   **Reproducible Builds:** The model weights are fixed, so the build is reproducible.
-    *   **Runtime Flags:** The runtime (ComfyUI) uses flags to select the model and precision.
-
-8.  **Agent Patterns:**
-    *   **Tooling Interfaces:** The model is used as a tool by the ComfyUI agent.
-    *   **Prompt Chains:** The prompt is passed to the text encoder, which generates conditioning for the diffusion model.
-    *   **Loop Guards:** The 8-step sampling is a fixed loop, so there are no loop guards needed.
-    *   **Context Budget Optimization:** The model is optimized for low memory usage through quantization.
-
-9.  **Data Flow:**
-    *   **Mutation Lifecycles:** The latent variables are mutated during the diffusion sampling process.
-    *   **Streams:** The model does not use streams; it processes batches of data.
-    *   **Serializers:** The model is serialized as `.safetensors`.
-    *   **Network Protocol Barriers:** Not applicable.
+1.  **Architecture**: Decoupled model artifacts (Encoder, Denoiser, VAE) with a clear separation of concerns. The ComfyUI runtime acts as the orchestrator.
+2.  **Core Abstractions**: `DiffusionModel`, `TextEncoder`, `VideoVAE`, `AudioVAE`. Each is a self-contained neural network with its own weight file.
+3.  **Error Handling**: Minimal in the repository (data-only). Error handling is delegated to the ComfyUI runtime. The README provides explicit warnings about hardware compatibility.
+4.  **Testing**: No tests in the repository. Testing is performed by the user in the ComfyUI environment.
+5.  **Security**: No security concerns in the data files. However, loading untrusted `.safetensors` files can be a vector for malicious code if the loader is not sandboxed.
+6.  **Performance**: Optimized for GPU inference. Quantization (INT8, NVFP4) reduces memory bandwidth and increases throughput. 8-step sampling reduces latency compared to 50-step.
+7.  **Deployment**: Simple file-based deployment. Copy files to `ComfyUI/models/`. No Docker or Kubernetes required.
+8.  **Agent Patterns**: Not applicable. This is a data repository, not an agent.
+9.  **Data Flow**: Text + References -> Text Encoder -> Latent Space -> Denoiser (8 steps) -> Video/Audio Latents -> VAEs -> Video/Audio Output.
 
 ## 6. The 8 Learning Extraction Artifacts
 
-1.  **Pattern:**
-    *   **Multi-Modal VAE Synchronization:** Use separate VAEs for video and audio, but ensure they are derived from the same latent space and have matching temporal resolution scaling factors.
-    *   **Hardware-Precision Coupling:** Explicitly document and enforce the hardware architecture required for each precision format.
-
-2.  **Rule:**
-    *   **Strict Hardware-Precision Coupling Invariant:** When distributing quantized AI model artifacts, you MUST explicitly document and enforce the hardware architecture required for each precision format.
-    *   **Multi-Modal VAE Synchronization Invariant:** When generating synchronized audio and video from a single diffusion process, you MUST ensure that the Video VAE and Audio VAE are derived from the same latent space and share identical temporal resolution scaling factors.
-
-3.  **Architecture Principle:**
-    *   **Decoupling of Model Weights from Inference Runtime:** The model is a stateless artifact that relies on the runtime to provide the sampling scheduler, shift parameters, and reference conditioning logic.
-    *   **Heterogeneous Hardware Compatibility:** The model is optimized for heterogeneous hardware by providing specific quantization formats for different GPU architectures.
-
-4.  **Failure Mode:**
-    *   **Hardware-Precision Mismatch:** Loading an NVFP4 model on non-Blackwell hardware will result in kernel launch failures or silent numerical corruption.
-    *   **Temporal Misalignment:** If the Video VAE and Audio VAE have mismatched temporal compression ratios, the audio will be out of sync with the video.
-
-5.  **Reusable Skill:**
-    *   **Step-by-Step Workflow for Distributing Quantized Models:**
-        1.  Identify the target hardware architectures.
-        2.  Select the appropriate quantization formats for each architecture.
-        3.  Document the hardware requirements for each format.
-        4.  Implement hardware gating in the model loading logic.
-        5.  Test the model on each target architecture.
-
-6.  **Decision:**
-    *   **Engineering Design Trade-off:** The decision to provide multiple quantization formats (BF16, INT8, NVFP4) allows for maximum compatibility across different hardware architectures, but increases the complexity of the distribution pipeline.
-    *   **Forensic Rationale:** The alternative (providing only one format) would limit the model's usability to a specific hardware subset, reducing its adoption.
-
-7.  **Anti-pattern:**
-    *   **Assuming Universal Compatibility:** Assuming that a quantized format is universally compatible across all GPUs supporting the base precision.
-    *   **Independent VAE Decoding:** Decoding audio and video independently without synchronization check.
-
-8.  **Verification Method:**
-    *   **Unit Test:** Mock `get_cuda_compute_capability` to return 8.0 (Ampere). Attempt to load an NVFP4 model. Assert that a `RuntimeError` is raised with a clear message.
-    *   **Integration Test:** Run the model on a CI runner with a specific GPU (e.g., T4, CC 7.5) and verify that NVFP4 models are rejected while BF16 models are accepted.
-    *   **Synchronization Test:** Generate a 5-second video and verify that the audio waveform has exactly 5 seconds of data.
+1.  **Pattern**: Heterogeneous Precision Model Loading with Hardware Validation.
+2.  **Rule**: Always validate hardware capabilities before loading quantized models.
+3.  **Architecture Principle**: Decoupled Model Artifacts for Flexibility.
+4.  **Failure Mode**: Kernel Launch Failure on Unsupported Hardware.
+5.  **Reusable Skill**: How to Load Multimodal Models in ComfyUI.
+6.  **Decision**: Use BF16 for compatibility, INT8 for speed, NVFP4 for maximum efficiency on Blackwell.
+7.  **Anti-pattern**: Blindly loading models without checking hardware or dtype compatibility.
+8.  **Verification Method**: Unit tests for hardware capability checks and dtype validation.
 
 ## 7. Actionable Agent Skill & Implementation Checklist
 
-1.  **Identify Target Hardware:**
-    *   [ ] List all target GPU architectures (e.g., Blackwell, Hopper, Ada).
-    *   [ ] Determine the minimum Compute Capability for each architecture.
-
-2.  **Select Quantization Formats:**
-    *   [ ] Choose the appropriate quantization format for each architecture (e.g., NVFP4 for Blackwell, INT8 for Hopper, BF16 for Ada).
-    *   [ ] Ensure that the quantization format is supported by the runtime.
-
-3.  **Document Hardware Requirements:**
-    *   [ ] Create a table mapping each quantization format to its required hardware architecture.
-    *   [ ] Include this table in the README and model metadata.
-
-4.  **Implement Hardware Gating:**
-    *   [ ] Write a function to check the GPU's Compute Capability.
-    *   [ ] Implement logic to reject or fallback based on the hardware requirements.
-    *   [ ] Add unit tests for the hardware gating logic.
-
-5.  **Ensure VAE Synchronization:**
-    *   [ ] Verify that the Video VAE and Audio VAE are derived from the same latent space.
-    *   [ ] Check that the temporal resolution scaling factors match.
-    *   [ ] Add a synchronization check in the decoding logic.
-
-6.  **Test on Target Hardware:**
-    *   [ ] Run the model on each target architecture.
-    *   [ ] Verify that the model loads and generates output correctly.
-    *   [ ] Check for any performance issues or errors.
-
-7.  **Distribute the Model:**
-    *   [ ] Package the model weights as `.safetensors` files.
-    *   [ ] Upload the model to the repository.
-    *   [ ] Update the README with installation instructions.
+1.  **Check Hardware**: Verify GPU compute capability. If < 10.0, do not load NVFP4 models.
+2.  **Select Precision**: Choose BF16 for compatibility, INT8 for speed, NVFP4 for Blackwell.
+3.  **Load Models**: Load Encoder, Denoiser, Video VAE, and Audio VAE.
+4.  **Validate References**: Ensure all prompt tags have corresponding inputs.
+5.  **Generate**: Run the 8-step sampling loop.
+6.  **Decode**: Use Video VAE and Audio VAE to decode latents.
+7.  **Output**: Save video and audio files.

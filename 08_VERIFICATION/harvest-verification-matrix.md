@@ -7311,3 +7311,5 @@
 | `CYCLE-20261104-4IVB` | `2026-11-04T19:48:20.999Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6941` | Yes (`ede37a31...`) |
 | `CYCLE-20261104-DJBT` | `2026-11-04T19:55:21.497Z` | `matthart1983/netwatch` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6942` | Yes (`662f844b...`) |
 | `CYCLE-20261104-DRDF` | `2026-11-04T19:55:31.923Z` | `nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6943, Rule 6944` | Yes (`44a1dcd4...`) |
+| `CYCLE-20261104-MZJK` | `2026-11-04T20:02:42.416Z` | `FastVideo/FastH3-Omni-Comfy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6945, Rule 6946` | Yes (`327d116e...`) |
+| `CYCLE-20261104-N33Q` | `2026-11-04T20:02:47.030Z` | `run-llama/llama_index` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6947` | Yes (`ae503e7e...`) |

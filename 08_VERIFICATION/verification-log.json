@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261102-8OYQ",
-    "timestamp": "2026-11-02T15:08:18.914Z",
-    "repository": "hashicorp/terraform",
-    "learningId": "learn-github-hashicorp-terraform",
-    "contentHash": "c17f866742e49054d53b83e2f47e6675f8387fc5a8ba49f520a039dd3cf63c98",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261102-8RIC",
-    "timestamp": "2026-11-02T15:08:22.212Z",
-    "repository": "projectdiscovery/nuclei",
-    "learningId": "learn-github-projectdiscovery-nuclei",
-    "contentHash": "fc7d607f3095d69f141148e541864d59b195400325999378f13357c720e75ff0",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261102-HVR9",
     "timestamp": "2026-11-02T15:15:27.621Z",
     "repository": "sensenova/SenseNova-Loop-9B-Preview",
@@ -7492,6 +7462,36 @@
     "contentHash": "44a1dcd4b63e51e98b6ae8932e479fbd083f6586665032012ebf92725d58f63c",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-MZJK",
+    "timestamp": "2026-11-04T20:02:42.416Z",
+    "repository": "FastVideo/FastH3-Omni-Comfy",
+    "learningId": "learn-huggingface-fastvideo-fasth3-omni-comfy",
+    "contentHash": "327d116ea8e9c00cbac9e4b0fd78bcb8cbc58f3cfe61cb79584a5f49e8cc61a4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-N33Q",
+    "timestamp": "2026-11-04T20:02:47.030Z",
+    "repository": "run-llama/llama_index",
+    "learningId": "learn-github-run-llama-llama_index",
+    "contentHash": "ae503e7eab28ad66943c5aec41d725bf04d541c5163af626b63d5eb50564001e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

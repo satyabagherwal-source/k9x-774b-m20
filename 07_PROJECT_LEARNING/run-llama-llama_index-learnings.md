@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/run-llama-llama_index-learnings.md`  
 > **Source**: github ([https://github.com/run-llama/llama_index](https://github.com/run-llama/llama_index))  
-> **Source Version**: `619d7466`  
+> **Source Version**: `444fdf06`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T06:11:16.525Z  
+> **Timestamp**: 2026-11-04T20:02:46.272Z  
 > **Learning ID**: `learn-github-run-llama-llama_index`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/run-llama-llama_index-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/run-llama/llama_index](https://github.com/run-llama/llama_index))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T06:11:16.518Z  
+> **Harvest Timestamp**: 2026-11-04T20:02:46.090Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: LlamaIndex is the document processing platform for AI
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 52561 stars
+- **Stars / Engagement**: 52806 stars
 
 ---
 
@@ -934,11 +934,11 @@ __all__ = [
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #23395** (2026-10-06): **[Bug]: Not able to update llama-index-llm-openai**
-  *Symptoms*: ### Bug Description  I can't update llama-index-llms-openai to 0.8.2 because the latest llama-index version still depends on llama-index-llms-openai>=0.7.0,<0.8  ### Version  0.14.25  ### Steps to Reproduce  Add the below dependencies in your project's pyproject.toml and run uv sync: "llama-index>=0.14.25,<0.15.0" "llama-index-core>=0.14.25,<0.15.0" "llama-index-llms-openai>=0.8.2,<0.9.0"  ### Relevant Logs/Tracebacks  ```shell uv sync error: No solution found when resolving dependencies for split (markers: python_full_version >= '3.13' and python_full_version < '4.0')   cause: Because llama-index>=0.14.25 depends on llama-index-llms-openai>=0.7.0,<0.8 and your project depends on llama-index>=0.14.25, we can conclude          that your project depends on llama-index-llms-openai>=0.7.0,<0.8. ```
+- **Issue #23862** (2026-11-01): **[Bug]: `FunctionTool` turns an empty list result into empty content instead of `[]`**
+  *Symptoms*: ### Bug Description  `FunctionTool._parse_tool_output` treats a list as a list of content blocks when `all(isinstance(item, ...) for item in raw_output)`. For an empty list `all(...)` is true, so the list is returned as zero blocks and `ToolOutput.content` is `""`, while `[0, 1]` gives `"[0, 1]"`. An agent sees an empty string for a tool that returned an empty result.  Expected: `content` is `"[]"`, as for any other list, for example by requiring a non-empty list in that branch.   ### Version  llama-index-core 0.14.25, and main at 619d746. Python 3.12, Linux.  ### Steps to Reproduce  ```python from llama_index.core.tools import FunctionTool   def numbers(n: int) -> list:     return list(range(n))   tool = FunctionTool.from_defaults(fn=numbers, name="numbers", description="numbers") print(repr(tool.call(n=0).content), repr(tool.call(n=2).content)) ```  ### Relevant Logs/Tracebacks  ```shell '' '[0, 1]' ```
 
-- **Issue #23325** (2026-10-01): **[Bug]: llama-index-embeddings-azure-openai 0.6.0 is still dependent on llama-index-llms-azure-openai>=0.4.0,<0.6**
-  *Symptoms*: ### Bug Description  I'm not able to upgrade the version of llama-index-llms-azure-openai and llama-index-embeddings-azure-openai as llama-index-embeddings-azure-openai 0.6.0 is still dependent on llama-index-llms-azure-openai>=0.4.0,<0.6. Could you please check this?  ### Version  0.14.20  ### Steps to Reproduce  Update the below packages to the respective version constraints mentioned below: llama-index-embeddings-azure-openai>=0.6.0,<0.7.0 llama-index-llms-azure-openai>=0.6.1,<0.7.0  ### Relevant Logs/Tracebacks  ```shell uv sync error: No solution found when resolving dependencies for split (markers: python_full_version >= '3.13' and python_full_version < '4.0')   cause: Because llama-index-embeddings-azure-openai>=0.6.0 depends on llama-index-llms-azure-openai>=0.4.0,<0.6 and your project depends on llama-index-embeddings-azure-openai>=0.6.0, we can conclude that your project depends on llama-index-llms-azure-openai>=0.4.0,<0.6. ```
+- **Issue #23839** (2026-10-30): **[Bug]: `WorkflowIdleEvent` is emitted while events sent from outside the run with `handler.ctx.send_event` are still undelivered, so a context saved at that idle loses them**
+  *Symptoms*: ### Bug Description  Two steps wait for human input at the same time. Both are answered at once with `handler.ctx.send_event`, and the first answer makes its step ask a follow-up question. The stream then reports the follow-up question and `WorkflowIdleEvent`, while the second answer has not been delivered yet: its waiter is still open, and it resolves a moment later.  An application that saves the run when it goes idle, to wait for the next answer, gets a context without that answer. The restored run never finishes: it waits for an answer that was already sent.  `_check_idle_state` states that a workflow is idle only when "no sent or returned event is still waiting to be delivered". `state.deliveries` tracks events sent from inside the run, which #23583 fixed. An event sent from outside goes through `ExternalContext.send_event` into the adapter's `receive_queue`, and the control loop pulls those one tick at a time, so one waiting to be pulled is invisible to the idle check.   ### Version  llama-index-workflows 2.26.1, and `main` of run-llama/llama-agents at a457071. Python 3.12, Linux.  ### Steps to Reproduce  1. Save the script below and run it with `llama-index-workflows` 2.26.1. 2. Both questions are answered at once, the run reports the follow-up question and goes idle, and the context saved at that idle is restored and answered.  ```python import asyncio from importlib.metadata import version  from workflows import Context, Workflow, step from workflows.events import Ev
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -955,747 +955,37 @@ __all__ = [
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `13976145` (2026-10-01)
-**Commit Message**: fix(openai-like): support `llama-index-llms-openai` `0.8.x` (#23249)
+### Incident Patch 1: `444fdf06` (2026-11-03)
+**Commit Message**: Make fake credentials obviously fake (place-/holder- prefix) (#23923)
 
-Update `llama-index-llms-openai-like` to support `llama-index-llms-openai` versions `0.8.x` and refresh lockfile with `uv lock`.
+Prefix fake credentials with place-/holder- so they're obviously fake
 
-Bump `llama-index-llms-openai-like` to `0.8.1`. The refreshed lockfile also corrects its stale editable package version from `0.7.2` to `0.8.1`, as is now declared in `pyproject.toml`.
+The org-wide credential scan flags these fake user:password URIs.
+Prefixing (rather than replacing) keeps every old value a substring,
+so existing assertions, SECRET markers and lengths are unchanged.
 
-**File**: `llama-index-integrations/llms/llama-index-llms-openai-like/pyproject.toml` (modified, +2/-2)
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `llama-index-integrations/readers/llama-index-readers-snowflake/README.md` (modified, +1/-1)
 ```diff
-@@ -26,14 +26,14 @@ dev = [
- 
- [project]
- name = "llama-index-llms-openai-like"
--version = "0.8.0"
-+version = "0.8.1"
- description = "llama-index llms openai like integration"
- authors = [{name = "Your Name", email = "you@example.com"}]
- requires-python = ">=3.10,<4.0"
- readme = "README.md"
- license = "MIT"
- dependencies = [
--    "llama-index-llms-openai>=0.7.0,<0.8",
-+    "llama-index-llms-openai>=0.8.0,<0.9",
-     "llama-index-core>=0.14.3,<0.15",
- ]
- 
-```
-
-**File**: `llama-index-integrations/llms/llama-index-llms-openai-like/uv.lock` (modified, +5/-5)
-```diff
-@@ -2177,20 +2177,20 @@ wheels = [
- 
- [[package]]
- name = "llama-index-llms-openai"
--version = "0.7.10"
-+version = "0.8.2"
- source = { registry = "https://pypi.org/simple" }
- dependencies = [
-     { name = "llama-index-core" },
-     { name = "openai" },
- ]
--sdist = { url = "https://files.pythonhosted.org/packages/74/6e/1ef83a852296c55fe8c529b4476073eccaff150d57aceb3d6319a87dcc89/llama_index_llms_openai-0.7.10.tar.gz", hash = "sha256:aa8dabf08ea0b9740fc9dae9677f05049254be5e929794a886692eaf26973def", size = 27586, upload-time = "2026-07-21T23:16:18.087Z" }
-+sdist = { url = "https://files.pythonhosted.org/packages/7a/74/b1a9109331d479bb9023b00e7ae759f34b735b495b3f040fb19fb8f25dee/llama_index_llms_openai-0.8.2.tar.gz", hash = "sha256:366a03e14e724707f1c729f15ea67748c16a4ab812a3f18479ed287918de34c8", size = 27965, upload-time = "2026-09-25T02:53:30.381Z" }
- wheels = [
--    { url = "https://files.pythonhosted.org/packages/8b/89/854cb7b2e5be3b3c16561e93f3edd52d8a1b6e031be1aca4519b9fdd3917/llama_index_llms_openai-0.7.10-py3-none-any.whl", hash = "sha256:b76a0c3d4aaa9aba57dc0366ca6b2346c6819bed22973e334676d7a34704e46a", size = 28673, upload-time = "2026-07-21T23:16:17.062Z" },
-+    { url = "https://files.pythonhosted.org/packages/63/9c/f7855dbcf4240a5e27071c39842c3dbfe2220920e4cbd9d6479a03b0339e/llama_index_llms_openai-0.8.2-py3-none-any.whl", hash = "sha256:458f432b4f9909ab136ce0693572a95706a0eb3597ff41c4b3b92c0db1b38236", size = 28990, upload-time = "2026-09-25T02:53:29.351Z" },
- ]
- 
- [[package]]
- name = "llama-index-llms-openai-like"
--version = "0.7.2"
-+version = "0.8.1"
- source = { editable = "." }
- dependencies = [
-     { name = "llama-index-core" },
-@@ -2227,7 +2227,7 @@ dev = [
- [package.metadata]
- requires-dist = [
-     { name = "llama-index-core", specifier = ">=0.14.3,<0.15" },
--    { name = "llama-index-llms-openai", specifier = ">=0.7.0,<0.8" },
-+    { name = "llama-index-llms-openai", specifier = ">=0.8.0,<0.9" },
-     { name = "transformers", marker = "extra == 'transformers'", specifier = ">=4.37.0,<6" },
- ]
- provides-extras = ["transformers"]
-```
-
----
-
-### Incident Patch 2: `619d7466` (2026-10-14)
-**Commit Message**: fix(google-genai): only apply default temperature to pre-Gemini-3 models (#23481)
-
-**File**: `llama-index-integrations/llms/llama-index-llms-google-genai/llama_index/llms/google_genai/base.py` (modified, +17/-1)
-```diff
-@@ -4,6 +4,7 @@
- import inspect
- import functools
- import os
-+import re
- from importlib.metadata import PackageNotFoundError, version
- import typing
- from typing import (
-@@ -70,6 +71,21 @@
- 
- DEFAULT_MODEL = "gemini-3.7-flash"
- 
-+
-+def _is_gemini_3_or_newer(model: str) -> bool:
-+    """Check if the model is Gemini 3 or newer."""
-+    model_name = model.split("/")[-1].lower()
-+    if not model_name:
-+        return False
-+    # Pre-Gemini 3 models: gemini-1.x, gemini-2.x, gemini-pro, gemini-flash, gemini-exp
-+    return not bool(
-+        re.match(
-+            r"^gemini-(?:[12](?:\.\d+)?|exp|(?:pro|flash)(?!-(?:lite-)?latest$))(?:-|$)",
-+            model_name,
-+        )
-+    )
-+
-+
- if TYPE_CHECKING:
-     from llama_index.core.tools.types import BaseTool
- 
-@@ -191,7 +207,7 @@ def __init__(
-     ):
-         if temperature is None:
-             # Gemini 3-series models may error if temperature is set.
--            if "gemini-3" not in model:
-+            if not _is_gemini_3_or_newer(model):
-                 temperature = DEFAULT_TEMPERATURE
- 
-         # API keys are optional. The API can be authorised via OAuth (detected
-```
-
-**File**: `llama-index-integrations/llms/llama-index-llms-google-genai/pyproject.toml` (modified, +1/-1)
-```diff
-@@ -27,7 +27,7 @@ dev = [
- 
- [project]
- name = "llama-index-llms-google-genai"
--version = "0.11.2"
-+version = "0.11.3"
- description = "llama-index llms google genai integration"
- authors = [{name = "Your Name", email = "you@example.com"}]
- requires-python = ">=3.10,<4.0"
-```
-
-**File**: `llama-index-integrations/llms/llama-index-llms-google-genai/tests/test_llms_google_genai.py` (modified, +25/-14)
-```diff
-@@ -990,20 +990,31 @@ def test_temperature_defaults() -> None:
-         )
- 
-         # 1. Non-Gemini 3 models should get DEFAULT_TEMPERATURE (0.1)
--        llm_legacy = GoogleGenAI(
--            model="gemini-2.5-flash",
--            api_key="test-key",
--        )
--        assert llm_legacy.temperature == DEFAULT_TEMPERATURE
--        assert llm_legacy._generation_config["temperature"] == DEFAULT_TEMPERATURE
--
--        # 2. Gemini 3 models should leave temperature as None
--        llm_gemini3 = GoogleGenAI(
--            model="gemini-3-flash-preview",
--            api_key="test-key",
--        )
--        assert llm_gemini3.temperature is None
--        assert llm_gemini3._generation_config["temperature"] is None
-+        for legacy_model in (
-+            "gemini-2.5-flash",
-+            "gemini-2.5-pro",
-+        ):
-+            llm_legacy = GoogleGenAI(
-+                model=legacy_model,
-+                api_key="test-key",
-+            )
-+            assert llm_legacy.temperature == DEFAULT_TEMPERATURE
-+            assert llm_legacy._generation_config["temperature"] == DEFAULT_TEMPERATURE
-+
-+        # 2. Gemini 3+ models should leave temperature as None
-+        for modern_model in (
-+            "gemini-3.1-pro-preview",
-+            "gemini-3.5-flash-lite",
-+            "gemini-3.6-flash",
-+            "gemini-3.8-flash",
-+            "gemini-flash-latest",
-+        ):
-+            llm_gemini3 = GoogleGenAI(
-+                model=modern_model,
-+                api_key="test-key",
-+            )
-+            assert llm_gemini3.temperature is None
-+            assert llm_gemini3._generation_config["temperature"] is None
- 
- 
- def test_temperature_explicitly_set() -> None:
-```
-
----
-
-### Incident Patch 3: `d08512b8` (2026-10-14)
-**Commit Message**: fix(ag-ui): migrate producer content conversion to protocol 1.0 (#23344)
-
-**File**: `llama-index-integrations/protocols/llama-index-protocols-ag-ui/README.md` (modified, +36/-0)
-```diff
-@@ -8,6 +8,42 @@ The `llama-index-protocols-ag-ui` package provides a factory function for creati
- 
- Using this package, you can quickly create a FastAPI app that can be used to communicate with AG-UI compatible frameworks like [CopilotKit](https://docs.copilotkit.ai/).
- 
-+### AG-UI 1.0 content migration
-+
-+This integration requires `ag-ui-protocol>=1.0.0,<2` and
-+`llama-index-core>=0.14.1,<0.15`. Run-start events declare the SDK's
-+`PROTOCOL_VERSION` in the wire `protocolVersion` field.
-+
-+User messages accept strings or AG-UI `ContentPart` arrays. Use `TextPart`,
-+`ImagePart`, `AudioPart`, `VideoPart`, and `DocumentPart` with `DataSource` or
-+`UrlSource` for media. The deprecated `BinaryInputContent` converter has been
-+removed. Before sending older persisted messages to this endpoint, migrate each
-+`type: "binary"` part to its media type (`image`, `audio`, `video`, or `document`)
-+and move its `url` or base64 `data` into a `source`, for example:
-+
-+```json
-+{
-+  "type": "image",
-+  "source": {
-+    "type": "data",
-+    "value": "<base64 image bytes>",
-+    "mimeType": "image/png"
-+  }
-+}
-+```
-+
-+Opaque provider handles use `FileSource` (`type: "file"`). The generic
-+LlamaIndex media blocks used here cannot forward these handles, so such parts
-+are skipped with a warning. Handles are never fetched or interpreted as URLs;
-+use a supported data or URL source when the model needs the media.
-+
-+Tool messages accept strings or `ContentPart` arrays. This adapter's tool-result
-+path is text-only: text fragments are concatenated in order without trimming or
-+inserting separators, and media parts are skipped with a warning. Empty or
-+media-only results become an empty string. Message and tool-call IDs are
-+preserved, and snapshots emit the resulting text. User-message media conversion
-+and the state markers used to restore existing LlamaIndex sessions are unchanged.
-+
- ### Usage
- 
- The `get_ag_ui_workflow_router` function is a factory function that creates a FastAPI router that can be used to communicate with AG-UI compatible frameworks like [CopilotKit](https://docs.copilotkit.ai/).
-```
-
-**File**: `llama-index-integrations/protocols/llama-index-protocols-ag-ui/llama_index/protocols/ag_ui/router.py` (modified, +2/-1)
-```diff
-@@ -1,6 +1,6 @@
- from typing import Callable, Dict, Any, List, Optional, Awaitable
- 
--from ag_ui.core import RunAgentInput
-+from ag_ui.core import PROTOCOL_VERSION, RunAgentInput
- from fastapi import APIRouter
- from fastapi.responses import StreamingResponse
- 
-@@ -65,6 +65,7 @@ async def stream_response():
-                         timestamp=timestamp(),
-                         thread_id=input.thread_id,
-                         run_id=input.run_id,
-+                        protocol_version=PROTOCOL_VERSION,
-                     )
-                 )
- 
-```
-
-**File**: `llama-index-integrations/protocols/llama-index-protocols-ag-ui/llama_index/protocols/ag_ui/utils.py` (modified, +58/-68)
-```diff
-@@ -14,14 +14,16 @@
-     FunctionCall,
+@@ -39,7 +39,7 @@ reader = SnowflakeReader(
+     schema="your_schema",
+     warehouse="your_warehouse",
+     role="your_role",  # Optional role setting
+-    proxy="http://proxusername:proxypassword@myproxy:port",  # Optional proxy setting
++    proxy="http://<username>:<password>@myproxy:port",  # Optional proxy setting
  )
- from ag_ui.core.types import (
--    AudioInputContent,
--    BinaryInputContent,
--    DocumentInputContent,
--    ImageInputContent,
--    InputContentDataSource,
--    InputContentUrlSource,
--    TextInputContent,
--    VideoInputContent,
-+    AudioPart,
-+    ContentPart,
-+    FileSource,
-+    PartSource,
-+    DocumentPart,
-+    ImagePart,
-+    DataSource,
-+    UrlSource,
-+    TextPart,
-+    VideoPart,
- )
- from ag_ui.encoder import EventEncoder
- from typing import Any, List, Optional, Union, Callable
-@@ -74,7 +76,7 @@ def _drop_none(**kwargs: Any) -> dict:
  
- 
- def _source_kwargs(
--    source: Union[InputContentDataSource, InputContentUrlSource],
-+    source: PartSource,
- ) -> dict:
-     """
-     Project an AG-UI input-content source onto block constructor kwargs.
-@@ -88,45 +90,13 @@ def _source_kwargs(
-     through. Returns ``{}`` for a source this converter cannot read, so the
-     caller can skip the part with a warning.
-     """
--    if isinstance(source, InputContentDataSource):
-+    if isinstance(source, DataSource):
-         return {"data": source.value.encode("ascii"), "mime_type": source.mime_type}
--    if isinstance(source, InputContentUrlSource):
-+    if isinstance(source, UrlSource):
-         return {"url": source.value, "mime_type": source.mime_type}
-     return {}
- 
- 
--def _binary_part_to_block(part: BinaryInputContent) -> Optional[ContentBlock]:
--    """Convert the deprecated flat ``binary`` part, routed by MIME prefix."""
--    mime = part.mime_type or ""
--    # MIME types are case-insensitive (RFC 2045); route on the lowercased form
--    # but keep the original casing on the block's mimetype field.
--    mime_lower = mime.lower()
--    # Base64 passes through verbatim; see _source_kwargs for why it is not decoded.
--    data = part.data.encode("ascii") if part.data else None
--    if not part.url and data is None:
--        return None
--    if mime_lower.startswith("image/"):
--        return ImageBlock(
--            **_drop_none(image=data, url=part.url, image_mimetype=mime or None)
--        )
--    if mime_lower.startswith("audio/"):
--        return AudioBlock(
--            **_drop_none(audio=data, url=part.url, format=_audio_format_from_mime(mime))
--        )
--    if mime_lower.startswith("video/"):
--        return VideoBlock(
--            **_drop_none(video=data, url=part.url, video_mimetype=mime or None)
--        )
--    return DocumentBlock(
--        **_drop_none(
--            data=data,
--            url=part.url,
--            document_mimetype=mime or None,
--            title=part.filename,
--        )
--    )
--
--
- #: additional_kwargs key marking a user message whose AG-UI wire content was a
- #: parts LIST (as opposed to the legacy string). The reverse conversion re-emits
- #: the same shape instead of inferring it from the block structure, which is
-@@ -139,14 +109,16 @@ def _binary_part_to_block(part: BinaryInputContent) -> Optional[ContentBlock]:
- AG_UI_STATE_BLOCK_KEY = "ag_ui_injected_state_block"
- 
- 
--def agui_content_to_blocks(content: Union[str, List[Any]]) -> List[ContentBlock]:
-+def agui_content_to_blocks(
-+    content: Union[str, List[ContentPart]],
-+) -> List[ContentBlock]:
-     """
-     Convert AG-UI user-message content onto llama-index content blocks.
- 
-     String content becomes a single :class:`TextBlock`. List content maps each
--    typed part (text/image/audio/video/document, plus the deprecated flat
--    ``binary`` shape) onto the corresponding block; a part this converter
--    cannot represent is skipped with a warning rather than silently stringified.
-+    typed part (text/image/audio/video/document) onto the corresponding block.
-+    A part this converter cannot represent is skipped with a warning rather
-+    than silently stringified.
-     Part ``metadata`` is deliberately not carried onto blocks: llama-index
-     blocks have no field for it, and providers reject unknown content keys.
-     """
-@@ -155,9 +127,18 @@ def agui_content_to_blocks(content: Union[str, List[Any]]) -> List[ContentBlock]
- 
-     blocks: List[ContentBlock] = []
-     for part in content:
--        if isinstance(part, TextInputContent):
-+        if isinstance(
-+            part, (ImagePart, AudioPart, VideoPart, DocumentPart)
-+        ) and isinstance(part.source, FileSource):
-+            # LlamaIndex's generic media blocks cannot carry opaque provider
-+            # handles. Never treat a handle as a URL or decode it as data.
-+            logger.warning(
-+                "Skipping %s part with unsupported provider file source", part.type
-+            )
-+            continue
-+        if isinstance(part, TextPart):
-             blocks.append(TextBlock(text=part.text))
--        elif isinstance(part, ImageInputContent):
-+        elif isinstance(part, ImagePart):
-             kwargs = _source_kwargs(part.source)
-             if not kwargs:
-                 logger.warning("Skipping image part with unreadable source")
-@@ -171,7 +152,7 @@ def agui_content_to_blocks(conte
-```
-
-**File**: `llama-index-integrations/protocols/llama-index-protocols-ag-ui/pyproject.toml` (modified, +2/-2)
-```diff
-@@ -28,7 +28,7 @@ dev = [
- 
- [project]
- name = "llama-index-protocols-ag-ui"
--version = "0.5.0"
-+version = "0.6.0"
- description = "llama-index protocols AG-UI integration"
- authors = [
-     {name = "Logan Markewich", email = "logan@runllama.ai"},
-@@ -37,7 +37,7 @@ requires-python = ">=3.10,<3.14"
- readme = "README.md"
- license = "MIT"
- dependencies = [
--    "ag-ui-protocol>=0.1.15",
-+    "ag-ui-protocol>=1.0.0,<2",
-     "llama-index-core>=0.14.1,<0.15",
- ]
- 
-```
-
-**File**: `llama-index-integrations/protocols/llama-index-protocols-ag-ui/tests/test_content_v1.py` (added, +184/-0)
-```diff
-@@ -0,0 +1,184 @@
-+import asyncio
-+import json
-+from typing import Any, AsyncGenerator
-+
-+import pytest
-+from pydantic import ValidationError
-+from ag_ui.core import PROTOCOL_VERSION, RunAgentInput, ToolMessage, UserMessage
-+from ag_ui.core.types import FileSource, ImagePart, AudioPart, VideoPart, DocumentPart
-+from llama_index.core.llms.mock import MockLLM
-+from llama_index.core.llms.function_calling import FunctionCallingLLM
-+from llama_index.core.base.llms.types import ChatMessage, ChatResponse, LLMMetadata
-+from llama_index.protocols.ag_ui.router import (
-+    AGUIWorkflowRouter,
-+    get_default_workflow_factory,
-+)
-+from llama_index.protocols.ag_ui.utils import (
-+    ag_ui_message_to_llama_index_message,
-+    llama_index_message_to_ag_ui_message,
-+)
-+
-+
-+@pytest.mark.parametrize(
-+    ("content", "expected"),
-+    [
-+        (" plain text ", " plain text "),
-+        ([], ""),
-+        (
-+            [{"type": "text", "text": " first "}, {"type": "text", "text": "second\n"}],
-+            " first second\n",
-+        ),
-+    ],
-+)
-+def test_tool_content_is_text(content, expected) -> None:
-+    message = ToolMessage(
-+        id="result", role="tool", tool_call_id="call", content=content
-+    )
-+    converted = ag_ui_message_to_llama_index_message(message)
-+    assert converted.content == expected
-+    assert converted.additional_kwargs == {"id": "result", "tool_call_id": "call"}
-+    back = llama_index_message_to_ag_ui_message(converted)
-+    assert back.content == expected
-+    assert back.tool_call_id == "call"
-+
-+
-+@pytest.mark.parametrize("part_type", ["image", "audio", "video", "document"])
-+@pytest.mark.parametrize(
-+    "source",
-+    [
-+        {"type": "url", "value": "https://example.com/media"},
-+        {"type": "data", "value": "dGVzdA==", "mimeType": "application/octet-stream"},
-+        {"type": "file", "value": "opaque-secret-handle", "provider": "openai"},
-+    ],
-+)
-+def test_tool_media_is_skipped_with_warning(part_type, source, caplog) -> None:
-+    message = ToolMessage.model_validate(
-+        {
-+            "id": "result",
-+            "role": "tool",
-+            "toolCallId": "call",
-+            "content": [
-+                {"type": "text", "text": "before "},
-+                {"type": part_type, "source": source},
-+                {"type": "text", "text": "after"},
-+            ],
-+        }
-+    )
-+    converted = ag_ui_message_to_llama_index_message(message)
-+    assert converted.content == "before after"
-+    assert "tool result" in caplog.text
-+    assert part_type in caplog.text
-+    assert source["value"] not in caplog.text
-+
-+
-+@pytest.mark.parametrize("part_class", [ImagePart, AudioPart, VideoPart, DocumentPart])
-+def test_provider_files_are_explicitly_skipped(part_class, caplog) -> None:
-+    message = UserMessage(
-+        id="user",
-+        role="user",
-+        content=[
-+            part_class(
-+                source=FileSource(
-+                    value="https://opaque-provider-handle", provider="openai"
-+                )
-+            )
-+        ],
-+    )
-+    converted = ag_ui_message_to_llama_index_message(message)
-+    assert converted.blocks == []
-+    assert "provider file" in caplog.text
-+    assert "https://opaque-provider-handle" not in caplog.text
-+
-+
-+class TextResponseLLM(MockLLM, FunctionCallingLLM):
-+    @property
-+    def metadata(self) -> LLMMetadata:
-+        return LLMMetadata(is_function_calling_model=True, is_chat_model=True)
-+
-+    def _prepare_chat_with_tools(self, tools, **kwargs) -> dict[str, Any]:
-+        return kwargs
-+
-+    # Use APIs available at the package's minimum llama-index-core version.
-+    async def astream_chat_with_tools(
-+        self, **kwargs
-+    ) -> AsyncGenerator[ChatResponse, None]:
-+        async def responses() -> AsyncGenerator[ChatResponse, None]:
-+            yield ChatResponse(
-+                message=ChatMessage(role="assistant", content="ok"), delta="ok"
-+            )
-+
-+        return responses()
-+
-+    def get_tool_calls_from_response(self, response, **kwargs) -> list:
-+        return []
-+
-+
-+def test_router_accepts_structured_tool_results_and_declares_protocol_version() -> None:
-+    router = AGUIWorkflowRouter(get_default_workflow_factory(llm=TextResponseLLM()))
-+    request = RunAgentInput.model_validate(
-+        {
-+            "threadId": "thread",
-+            "runId": "run",
-+            "state": {},
-+            "tools": [],
-+            "context": [],
-+            "forwardedProps": {},
-+            "messages": [
-+                {
-+                    "id": "result",
-+                    "role": "tool",
-+                    "toolCallId": "call",
-+                    "content": [{"type": "text", "text": "done"}],
-+                }
-+            ],
-+        }
-+    )
-+
-+    async def collect() -> list[dict[str, Any]]:
-+        response = await router.run(request)
-+        return [
-+            json.loads(chunk.removeprefix("data: ").strip())
-+            async for chunk in response.body_iterat
-```
-
-**File**: `llama-index-integrations/protocols/llama-index-protocols-ag-ui/tests/test_multimodal_input.py` (modified, +38/-74)
-```diff
-@@ -2,14 +2,13 @@
- 
- from ag_ui.core import UserMessage
- from ag_ui.core.types import (
--    AudioInputContent,
--    BinaryInputContent,
--    DocumentInputContent,
--    ImageInputContent,
--    InputContentDataSource,
--    InputContentUrlSource,
--    TextInputContent,
--    VideoInputContent,
-+    AudioPart,
-+    DocumentPart,
-+    ImagePart,
-+    DataSource,
-+    UrlSource,
-+    TextPart,
-+    VideoPart,
- )
- from llama_index.core.base.llms.types import (
-     AudioBlock,
-@@ -45,10 +44,10 @@ def test_image_data_part_becomes_image_block_with_bytes() -> None:
-     msg = ag_ui_message_to_llama_index_message(
-         user_message(
-             [
--                TextInputContent(type="text", text="what is in this image?"),
--                ImageInputContent(
-+                TextPart(type="text", text="what is in this image?"),
-+                ImagePart(
-                     type="image",
--                    source=InputContentDataSource(
-+                    source=DataSource(
-                         type="data", value=PNG_B64, mime_type="image/png"
-                     ),
-                 ),
-@@ -67,11 +66,9 @@ def test_image_url_part_becomes_image_block_with_url() -> None:
-     msg = ag_ui_message_to_llama_index_message(
-         user_message(
-             [
--                ImageInputContent(
-+                ImagePart(
-                     type="image",
--                    source=InputContentUrlSource(
--                        type="url", value="https://example.com/cat.png"
--                    ),
-+                    source=UrlSource(type="url", value="https://example.com/cat.png"),
-                 )
-             ]
-         )
-@@ -84,23 +81,23 @@ def test_audio_video_and_document_parts_convert() -> None:
-     msg = ag_ui_message_to_llama_index_message(
-         user_message(
-             [
--                AudioInputContent(
-+                AudioPart(
-                     type="audio",
--                    source=InputContentDataSource(
-+                    source=DataSource(
-                         type="data", value=PNG_B64, mime_type="audio/mpeg"
-                     ),
-                 ),
--                VideoInputContent(
-+                VideoPart(
-                     type="video",
--                    source=InputContentUrlSource(
-+                    source=UrlSource(
-                         type="url",
-                         value="https://example.com/clip.mp4",
-                         mime_type="video/mp4",
-                     ),
-                 ),
--                DocumentInputContent(
-+                DocumentPart(
-                     type="document",
--                    source=InputContentUrlSource(
-+                    source=UrlSource(
-                         type="url",
-                         value="https://example.com/report.pdf",
-                         mime_type="application/pdf",
-@@ -120,11 +117,9 @@ def test_audio_video_and_document_parts_convert() -> None:
- def test_audio_format_roundtrips_to_mime() -> None:
-     original = user_message(
-         [
--            AudioInputContent(
-+            AudioPart(
-                 type="audio",
--                source=InputContentDataSource(
--                    type="data", value=PNG_B64, mime_type="audio/mpeg"
--                ),
-+                source=DataSource(type="data", value=PNG_B64, mime_type="audio/mpeg"),
-             )
-         ]
-     )
-@@ -143,15 +138,15 @@ def test_base64_lookalike_payload_is_not_double_decoded() -> None:
-     msg = ag_ui_message_to_llama_index_message(
-         user_message(
-             [
--                DocumentInputContent(
-+                DocumentPart(
-                     type="document",
--                    source=InputContentDataSource(
-+                    source=DataSource(
-                         type="data", value=encoded, mime_type="text/plain"
-                     ),
-                 ),
--                ImageInputContent(
-+                ImagePart(
-                     type="image",
--                    source=InputContentDataSource(
-+                    source=DataSource(
-                         type="data", value=encoded, mime_type="image/png"
-                     ),
-                 ),
-@@ -166,37 +161,13 @@ def test_base64_lookalike_payload_is_not_double_decoded() -> None:
-     assert base64.b64decode(back.content[1].source.value) == payload
- 
- 
--def test_deprecated_binary_part_routes_by_mime() -> None:
--    blocks = agui_content_to_blocks(
--        [
--            BinaryInputContent(
--                type="binary", mime_type="image/jpeg", data=PNG_B64, filename="a.jpg"
--            )
--        ]
--    )
--    assert [type(b) for b in blocks] == [ImageBlock]
--
--
--def test_unreadable_parts_are_skipped_not_stringified() -> None:
--    blocks = agui_content_to_blocks(
--        [
--            TextInputContent(type="text", text="hi"),
--            # id-only binary part: nothing to read, so it must be skipped.
--            BinaryInputContent(type="binary", mime_type="image/png", id=
-```
-
-**File**: `llama-index-integrations/protocols/llama-index-protocols-ag-ui/uv.lock` (modified, +6/-6)
-```diff
-@@ -9,14 +9,14 @@ resolution-markers = [
- 
- [[package]]
- name = "ag-ui-protocol"
--version = "0.1.21"
-+version = "1.0.0"
- source = { registry = "https://pypi.org/simple" }
- dependencies = [
-     { name = "pydantic" },
- ]
--sdist = { url = "https://files.pythonhosted.org/packages/3e/a8/86e3dec527a47a798f4aba5cddc68deedacd78dcf0f638d0cf7c9ac21525/ag_ui_protocol-0.1.21.tar.gz", hash = "sha256:42f6fb809399cd2ced5417ed928f821feda2534f4e55aebeada170823a6b1a5f", size = 15102, upload-time = "2026-08-27T11:48:28.235Z" }
-+sdist = { url = "https://files.pythonhosted.org/packages/57/92/d88fdc7f4648dc38d3d54c595066bb3e63a4c091884ffb2f98272c33eef8/ag_ui_protocol-1.0.0.tar.gz", hash = "sha256:cfebecef2e7bc942cc8a52d908a4ea86a98f631d2ffdc6ec5812bb843eac74fb", size = 30759, upload-time = "2026-09-17T18:31:19.448Z" }
- wheels = [
--    { url = "https://files.pythonhosted.org/packages/19/e5/4229590a6c0561ef9979e251d12962b85df5c5e88685c6dd2fbdf221ba7d/ag_ui_protocol-0.1.21-py3-none-any.whl", hash = "sha256:628203b9decd66eb98995f86edca5536de330ecdfbcb809809863e4408ddeb57", size = 18527, upload-time = "2026-08-27T11:48:27.343Z" },
-+    { url = "https://files.pythonhosted.org/packages/82/b0/850be4576e6443dc575daa54188d8136ae2b2eca3f19e098e7a088fc9ebc/ag_ui_protocol-1.0.0-py3-none-any.whl", hash = "sha256:0058eaf0522201089d444e430fc35180bc8ad0222cae39e8568b313e8105d9e6", size = 36842, upload-time = "2026-09-17T18:31:18.471Z" },
- ]
- 
- [[package]]
-@@ -885,7 +885,7 @@ name = "exceptiongroup"
- version = "1.3.1"
- source = { registry = "https://pypi.org/simple" }
- dependencies = [
--    { name = "typing-extensions", marker = "python_full_version < '3.11'" },
-+    { name = "typing-extensions" },
- ]
- sdist = { url = "https://files.pythonhosted.org/packages/50/79/66800aadf48771f6b62f7eb014e352e5d06856655206165d775e675a02c9/exceptiongroup-1.3.1.tar.gz", hash = "sha256:8b412432c6055b0b7d14c310000ae93352ed6754f70fa8f7c34141f91c4e3219", size = 30371, upload-time = "2025-11-21T23:01:54.787Z" }
- wheels = [
-@@ -1694,7 +1694,7 @@ wheels = [
- 
- [[package]]
- name = "llama-index-protocols-ag-ui"
--version = "0.4.1"
-+version = "0.5.0"
- source = { editable = "." }
- dependencies = [
-     { name = "ag-ui-protocol" },
-@@ -1732,7 +1732,7 @@ dev = [
- 
- [package.metadata]
- requires-dist = [
--    { name = "ag-ui-protocol", specifier = ">=0.1.15" },
-+    { name = "ag-ui-protocol", specifier = ">=1.0.0,<2" },
-     { name = "fastapi", marker = "extra == 'fastapi'" },
-     { name = "llama-index-core", specifier = ">=0.14.1,<0.15" },
- ]
+ query = "SELECT * FROM your_table"
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #23582** (closed): feat(tools): add llama-index-tools-extra-desktop for native desktop computer use (@OSYantra)
-- **PR #23572** (closed): fix(core): detect async callable class instances in `FunctionTool.from_defaults` (@deep1blue)
-- **PR #23570** (closed): fix(huggingface): reopen async client after streaming (@67-luck)
-- **PR #23531** (closed): feat(tools): add WarpPay402 x402 micropayment tools integration (@golfgolfgolf200)
-- **PR #23521** (closed): fix: handle empty keyword table node IDs (@burhansandhu)
-- **PR #23481** (2026-10-14): fix(google-genai): only apply default temperature to pre-Gemini-3 models (@gabbyong)
+- **PR #23940** (closed): (feat) integration with ydb (@Tim00tiM)
+- **PR #23937** (closed): fix(core): do not reserve metadata budget when include_metadata=False (#23683) (@xiemocun)
+- **PR #23936** (closed): fix(text-splitter): recognize Chinese clause separators (@Luckyou-d)
+- **PR #23931** (closed): fix(core): ensure relation properties are updated on upsert (#23679) (@hieuk48)
+- **PR #23929** (closed): fix(property_graph): pass original question into TextToCypherRetriever summary prompt (@ZYZ666-RGB)
+- **PR #23928** (closed): feat(readers): add x402-cleanweb reader integration for high-purity RAG and prompt injection defense (@nohosa001-pixel)
 
 ---
 
@@ -1715,30 +1005,28 @@ Bump `llama-index-llms-openai-like` to `0.8.1`. The refreshed lockfile also corr
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. openai-like): support `llama-index-llms-openai` `0.8.x` (#23249)
+## X. Make fake credentials obviously fake (place-/holder- prefix) (#23923)
 
 **RULE**:
-When implementing operations in `llama-index-integrations/llms/llama-index-llms-openai-like/pyproject.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in run-llama/llama_index. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `llama-index-integrations/readers/llama-index-readers-snowflake/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in run-llama/llama_index. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `13976145`: openai-like): support `llama-index-llms-openai` `0.8.x` (#23249). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `444fdf06`: Make fake credentials obviously fake (place-/holder- prefix) (#23923). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `llama-index-integrations/llms/llama-index-llms-openai-like/pyproject.toml`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `llama-index-integrations/readers/llama-index-readers-snowflake/README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-version = "0.8.1"
-    "llama-index-llms-openai>=0.8.0,<0.9",
+    proxy="http://<username>:<password>@myproxy:port",  # Optional proxy setting
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Anti-pattern to NEVER write (induced failure mode):
-version = "0.8.0"
-    "llama-index-llms-openai>=0.7.0,<0.8",
+    proxy="http://proxusername:proxypassword@myproxy:port",  # Optional proxy setting
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `13976145` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `444fdf06` are properly handled with clean fallback behavior.

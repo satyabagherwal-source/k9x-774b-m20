@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-04T19:55:31.937Z",
+  "last_updated": "2026-11-04T20:02:47.052Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -9906,14 +9906,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-run-llama-llama_index",
-      "content_hash": "70167becc74e332526d6380b5d5a13251c347933868569e322a8a942754ad10c",
-      "verified_at": "2026-10-19T06:11:16.756Z",
+      "content_hash": "ae503e7eab28ad66943c5aec41d725bf04d541c5163af626b63d5eb50564001e",
+      "verified_at": "2026-11-04T20:02:47.051Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T06:11:16.756Z"
+      "last_updated": "2026-11-04T20:02:47.051Z"
     },
     "vercel-labs/opensrc": {
       "repository": "vercel-labs/opensrc",
@@ -16326,14 +16326,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-fastvideo-fasth3-omni-comfy",
-      "content_hash": "43465e50344fc283450adc7d8930769339950baaee59ae5d3296204331667fed",
-      "verified_at": "2026-10-31T03:59:04.223Z",
+      "content_hash": "327d116ea8e9c00cbac9e4b0fd78bcb8cbc58f3cfe61cb79584a5f49e8cc61a4",
+      "verified_at": "2026-11-04T20:02:42.429Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T03:59:04.223Z"
+      "last_updated": "2026-11-04T20:02:42.429Z"
     },
     "YoanWai/agent-manager": {
       "repository": "YoanWai/agent-manager",

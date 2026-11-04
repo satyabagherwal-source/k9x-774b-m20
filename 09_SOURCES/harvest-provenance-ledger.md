@@ -7320,3 +7320,5 @@ Every entry in this ledger must capture:
 | `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `5aa241a1` | Multi-dimensional audit evidence | 2026-11-04T19:48:21.002Z |
 | `learn-github-matthart1983-netwatch` | `https://github.com/matthart1983/netwatch` | `ee7d2174` | Multi-dimensional audit evidence | 2026-11-04T19:55:21.501Z |
 | `learn-huggingface-nvidia-nvidia-nemotron-3-5-bolt-e4b-4gb` | `https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB` | `hf-nvidia-` | Multi-dimensional audit evidence | 2026-11-04T19:55:31.927Z |
+| `learn-huggingface-fastvideo-fasth3-omni-comfy` | `https://huggingface.co/FastVideo/FastH3-Omni-Comfy` | `hf-fastvid` | Multi-dimensional audit evidence | 2026-11-04T20:02:42.420Z |
+| `learn-github-run-llama-llama_index` | `https://github.com/run-llama/llama_index` | `444fdf06` | Multi-dimensional audit evidence | 2026-11-04T20:02:47.033Z |

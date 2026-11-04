@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-04T19:55:31.839Z",
+  "last_updated": "2026-11-04T20:02:46.945Z",
   "total_verified_learnings": 1210,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -50918,14 +50918,19 @@
       "slug": "run-llama-llama_index",
       "platform": "github",
       "source_url": "https://github.com/run-llama/llama_index",
-      "source_version": "619d7466",
-      "content_hash": "70167becc74e332526d6380b5d5a13251c347933868569e322a8a942754ad10c",
+      "source_version": "444fdf06",
+      "content_hash": "ae503e7eab28ad66943c5aec41d725bf04d541c5163af626b63d5eb50564001e",
       "dossier_path": "07_PROJECT_LEARNING/run-llama-llama_index-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/run-llama-llama_index-learnings.md",
       "promoted_rules": [
         {
           "number": 2222,
           "title": "openai-like): support `llama-index-llms-openai` `0.8.x` (#23249)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6947,
+          "title": "Make fake credentials obviously fake (place-/holder- prefix) (#23923)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -50934,7 +50939,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T06:11:16.699Z",
+      "verified_at": "2026-11-04T20:02:46.923Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -141976,7 +141981,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/FastVideo/FastH3-Omni-Comfy",
       "source_version": "hf-fastvideo-fasth3-omni-comfy",
-      "content_hash": "43465e50344fc283450adc7d8930769339950baaee59ae5d3296204331667fed",
+      "content_hash": "327d116ea8e9c00cbac9e4b0fd78bcb8cbc58f3cfe61cb79584a5f49e8cc61a4",
       "dossier_path": "07_PROJECT_LEARNING/hf-fastvideo-fasth3-omni-comfy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-fastvideo-fasth3-omni-comfy-learnings.md",
       "promoted_rules": [
@@ -141999,6 +142004,16 @@
           "number": 6057,
           "title": "Multi-Modal VAE Synchronization Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6945,
+          "title": "Heterogeneous Precision Artifact Consistency",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6946,
+          "title": "Multimodal Reference Tagging Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -142006,7 +142021,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T03:59:04.133Z",
+      "verified_at": "2026-11-04T20:02:42.310Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -176915,6 +176930,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-04T19:55:31.816Z"
+    },
+    "rule-6945": {
+      "learning_id": "rule-6945",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6945,
+      "title": "Heterogeneous Precision Artifact Consistency",
+      "source_url": "https://huggingface.co/FastVideo/FastH3-Omni-Comfy",
+      "source_version": "hf-fastvideo-fasth3-omni-comfy",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T20:02:42.310Z"
+    },
+    "rule-6946": {
+      "learning_id": "rule-6946",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6946,
+      "title": "Multimodal Reference Tagging Invariant",
+      "source_url": "https://huggingface.co/FastVideo/FastH3-Omni-Comfy",
+      "source_version": "hf-fastvideo-fasth3-omni-comfy",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T20:02:42.310Z"
+    },
+    "rule-6947": {
+      "learning_id": "rule-6947",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6947,
+      "title": "Make fake credentials obviously fake (place-/holder- prefix) (#23923)",
+      "source_url": "https://github.com/run-llama/llama_index",
+      "source_version": "444fdf06",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T20:02:46.923Z"
     }
   },
   "aliases": {
