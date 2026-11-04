@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md`  
 > **Source**: github ([https://github.com/argoproj/argo-workflows](https://github.com/argoproj/argo-workflows))  
-> **Source Version**: `c719b3e7`  
+> **Source Version**: `bcd916ca`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T10:37:07.621Z  
+> **Timestamp**: 2026-11-04T07:18:51.757Z  
 > **Learning ID**: `learn-github-argoproj-argo-workflows`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/argoproj/argo-workflows](https://github.com/argoproj/argo-workflows))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T10:37:07.618Z  
+> **Harvest Timestamp**: 2026-11-04T07:18:50.584Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -767,11 +767,11 @@ func githubMatch(secret string, r *http.Request) bool {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #17397** (2026-11-03): **Action Required: Fix Renovate Configuration**
+  *Symptoms*: There is an error with this repository's Renovate configuration that needs to be fixed. As a precaution, Renovate will stop PRs until it is resolved.  Location: `renovate.json` Error type: Duplicate keys in JSON Message: "Syntax error: duplicated keys \"customManagers\" near gers\": [\n " 
+
 - **Issue #17386** (2026-11-02): **test(cron): load scheduledWf from testdata in the workflow defaults tests**
   *Symptoms*: <!-- markdownlint-disable MD041 -- this is rendered within existing HTML, so allow starting without an H1 -->  See the [pull request guide](https://argo-workflows.readthedocs.io/en/latest/pull-requests/) for details on each item.  - [ ] Ran `make pre-commit -B` - [x] Signed-off commits with [Conventional Commit](https://www.conventionalcommits.org/en/v1.0.0/) messages - [x] PR title is a conventional commit message (it becomes the release notes entry) - [x] Unit or e2e tests cover the change - [ ] For features: an associated issue and a feature description file (`make feature-new`) - [x] Opened as draft; will mark "Ready for review" once builds are green  ### Motivation  `main` does not compile `workflow/cron`'s tests, so Lint fails on `main` and on every open PR:  ```text workflow/cron/operator_test.go:557:32: undefined: scheduledWf workflow/cron/operator_test.go:589:32: undefined: scheduledWf (typecheck) ```  #17108 moved the cron test fixtures into `testdata/` and removed the `scheduledWf` constant. #17069, written before that, added `TestCronWorkflowDefaultsResolvedPerNamespace` and `TestCronWorkflowDefaultsErrorSurfacesOnValidate`, which still use the constant. Each PR passed CI alone, but `main` broke once both had merged.  ### Modifications  Those two tests now load the fixture with `v1alpha1.MustUnmarshal("@testdata/scheduled-wf.yaml", &cronWf)`, as #17108 changed the other tests to do.  ### Verification  - `KUBECONFIG=/dev/null go test ./workflow/cron/...`: pass. - `
-
-- **Issue #17383** (2026-11-02): **chore(deps): update dependency minimatch to v11 [security] (main)**
-  *Symptoms*: This PR contains the following updates:  | Package | Change | [Age](https://docs.renovatebot.com/merge-confidence/) | [Adoption](https://docs.renovatebot.com/merge-confidence/) | [Passing](https://docs.renovatebot.com/merge-confidence/) | [Confidence](https://docs.renovatebot.com/merge-confidence/) | |---|---|---|---|---|---| | [minimatch](https://redirect.github.com/isaacs/minimatch) | [`^9.0.7` → `^11.0.0`](https://renovatebot.com/diffs/npm/minimatch/9.0.9/11.0.1) | ![age](https://developer.mend.io/api/mc/badges/age/npm/minimatch/11.0.1?slim=true) | ![adoption](https://developer.mend.io/api/mc/badges/adoption/npm/minimatch/11.0.1?slim=true) | ![passing](https://developer.mend.io/api/mc/badges/compatibility/npm/minimatch/9.0.9/11.0.1?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/npm/minimatch/9.0.9/11.0.1?slim=true) |  ---  > [!WARNING] > Some dependencies could not be looked up. Check the [Dependency Dashboard](../issues/15285) for more information.  ---  ### minimatch has potential denial of service via globparts amplification [CVE-2026-118764](https://nvd.nist.gov/vuln/detail/CVE-2026-118764) / [GHSA-g3hv-75wg-m249](https://redirect.github.com/advisories/GHSA-g3hv-75wg-m249)  <details> <summary>More information</summary>  #### Details minimatch 10.2.6 contains an attacker-controlled pattern amplification in firstPhasePreProcess() when optimizationLevel >= 2.  researcher: Reid Downing (b1nv0id) files:   - src/index.ts: 690-770 - src/index.ts
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -788,448 +788,59 @@ func githubMatch(secret string, r *http.Request) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7a300e06` (2026-11-02)
-**Commit Message**: chore(deps): update dependency minimatch to v11 [security] (main) (#17383)
+### Incident Patch 1: `bcd916ca` (2026-11-04)
+**Commit Message**: fix(artifacts): reject S3 caSecret without a valid PEM certificate (#17373)
 
-Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
+Signed-off-by: sarankumar1325 <[REDACTED_EMAIL]>
 
-**File**: `ui/package.json` (modified, +1/-1)
+**File**: `workflow/artifacts/s3/s3.go` (modified, +3/-1)
 ```diff
-@@ -104,6 +104,6 @@
-         "@tootallnate/once": "^2.0.1",
-         "braces": "^3.0.3",
-         "decode-uri-component": "^0.5.0",
--        "**/@typescript-eslint/typescript-estree/minimatch": "^9.0.7"
-+        "**/@typescript-eslint/typescript-estree/minimatch": "^11.0.0"
-     }
- }
+@@ -174,7 +174,9 @@ func (s3Driver *ArtifactDriver) newClient(ctx context.Context) (Client, error) {
+ 		if s3Driver.Secure && s3Driver.TrustedCA != "" {
+ 			// Trust only the provided root CA
+ 			pool := x509.NewCertPool()
+-			pool.AppendCertsFromPEM([]byte(s3Driver.TrustedCA))
++			if !pool.AppendCertsFromPEM([]byte(s3Driver.TrustedCA)) {
++				return nil, errors.New("no valid PEM certificate found in the S3 caSecret")
++			}
+ 			tr.TLSClientConfig.RootCAs = pool
+ 		}
+ 		// Wrap transport with OpenTelemetry tracing
 ```
 
-**File**: `ui/yarn.lock` (modified, +21/-10)
+**File**: `workflow/artifacts/s3/s3_test.go` (modified, +18/-0)
 ```diff
-@@ -1119,6 +1119,11 @@
-     "@babel/types" "^7.26.0"
-     semver "^7.5.2"
- 
-+"@isaacs/nonrecursive-glob-match@^1.0.3":
-+  version "1.0.3"
-+  resolved "https://registry.yarnpkg.com/@isaacs/nonrecursive-glob-match/-/nonrecursive-glob-match-1.0.3.tgz#7f6724fd8a6ca315d6bb7f63f0e4d079060da246"
-+  integrity sha512-SI7kyKHq4XXDRozw+r9GlRZkia1ZkFrpLW98r2IC2Bpr8YkFGE3fvjzmxCG0x78A++69HmDNrDvSMYBZmHGpKA==
-+
- "@istanbuljs/load-nyc-config@^1.0.0":
-   version "1.1.0"
-   resolved "https://registry.yarnpkg.com/@istanbuljs/load-nyc-config/-/load-nyc-config-1.1.0.tgz#fd3db1d59ecf7cf121e80650bb86712f9b55eced"
-@@ -2986,6 +2991,11 @@ balanced-match@^1.0.0:
-   resolved "https://registry.yarnpkg.com/balanced-match/-/balanced-match-1.0.2.tgz#e83e3a7e3f300b34cb9d87f615fa0cbf357690ee"
-   integrity sha512-3oSeUO0TMV67hN1AmbXsK4yaqU7tjiHlbxRDZOpH0KW9+CeX4bRAaX0Anxt0tx2MrpRpWwQaPwIlISEJhYU5Pw==
- 
-+balanced-match@^4.0.2:
-+  version "4.0.4"
-+  resolved "https://registry.yarnpkg.com/balanced-match/-/balanced-match-4.0.4.tgz#bfb10662feed8196a2c62e7c68e17720c274179a"
-+  integrity sha512-BLrgEcRTwX2o6gGxGOCNyMvGSp35YofuYzw9h1IMTRmKqttAZZVU67bdb9Pr2vUHA8+j3i2tJfjO6C6+4myGTA==
-+
- base@^0.11.1:
-   version "0.11.2"
-   resolved "https://registry.yarnpkg.com/base/-/base-0.11.2.tgz#7bde5ced145b6d551a90db87f83c558b4eb48a8f"
-@@ -3058,12 +3068,12 @@ brace-expansion@^1.1.7:
-     balanced-match "^1.0.0"
-     concat-map "0.0.1"
- 
--brace-expansion@^2.0.2:
--  version "2.1.4"
--  resolved "https://registry.yarnpkg.com/brace-expansion/-/brace-expansion-2.1.4.tgz#589dab11c0018d0366be64cd8bf12c8dbecc8326"
--  integrity sha512-hGfVzPxthbf3+2yjg/RBs60cB0FhqBS/zvdV/4wn4/BmN0bNMMHPc4V/BbFieqf1TKAGGAHnY4eSjajCl0f2Xg==
-+brace-expansion@^5.0.12:
-+  version "5.0.12"
-+  resolved "https://registry.yarnpkg.com/brace-expansion/-/brace-expansion-5.0.12.tgz#995fbb4750a77c4d16a7dc942ff2ca6ef8e675ec"
-+  integrity sha512-YovQ3rzhaLMIrDjNDMkNS01tea93qhEhG5xy8f6+R0l+dw3Ki+5sCoIoI942iuLZTHWogWktgwVDhU09iNEimQ==
-   dependencies:
--    balanced-match "^1.0.0"
-+    balanced-match "^4.0.2"
- 
- braces@^2.3.1, braces@^3.0.3, braces@~3.0.2:
-   version "3.0.3"
-@@ -6966,12 +6976,13 @@ minimalistic-assert@^1.0.0:
-   resolved "https://registry.yarnpkg.com/minimalistic-assert/-/minimalistic-assert-1.0.1.tgz#2e194de044626d4a10e7f7fbc00ce73e83e4d5c7"
-   integrity sha512-UtJcAD4yEaGtjPezWuO9wC4nwUnVH/8/Im3yEHQP4b67cXlD/Qr9hdITCU1xDbSEXg2XKNaP8jsReV7vQd00/A==
- 
--minimatch@9.0.3, minimatch@^9.0.7:
--  version "9.0.9"
--  resolved "https://registry.yarnpkg.com/minimatch/-/minimatch-9.0.9.tgz#9b0cb9fcb78087f6fd7eababe2511c4d3d60574e"
--  integrity sha512-OBwBN9AL4dqmETlpS2zasx+vTeWclWzkblfZk7KTA5j3jeOONz/tRCnZomUyvNg83wL5Zv9Ss6HMJXAgL8R2Yg==
-+minimatch@9.0.3, minimatch@^11.0.0:
-+  version "11.0.4"
-+  resolved "https://registry.yarnpkg.com/minimatch/-/minimatch-11.0.4.tgz#3ed156790c2754647ee94dab305a3f93cd16481e"
-+  integrity sha512-/UJ1dEoVQTjPNDh6SGlUo+ueLMmoHTas4q+8yaAR/5t6nLAIiBDJtoYUh20IYleix7ehiQkgczb84PE3uzHkxg==
-   dependencies:
--    brace-expansion "^2.0.2"
-+    "@isaacs/nonrecursive-glob-match" "^1.0.3"
-+    brace-expansion "^5.0.12"
- 
- minimatch@^3.0.4, minimatch@^3.0.5, minimatch@^3.1.1, minimatch@^3.1.2:
-   version "3.1.5"
-```
-
----
-
-### Incident Patch 2: `819756fc` (2026-11-02)
-**Commit Message**: fix(controller): recreate a Failed agent pod instead of erroring its nodes (#17308)
-
-Signed-off-by: Alan Clucas <[REDACTED_EMAIL]>
-Co-authored-by: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
-
-**File**: `docs/http-template.md` (modified, +12/-0)
-```diff
-@@ -49,6 +49,18 @@ The Agent and the Workflow Controller communicate through the `WorkflowTaskSet`
- In order to use the Argo Agent, you will need to ensure that you have added the appropriate [workflow RBAC](workflow-rbac.md) to add an agent role with to Argo Workflows.
- An example agent role can be found in [the quick-start manifests](https://github.com/argoproj/argo-workflows/tree/main/manifests/quick-start/base/agent-role.yaml).
- 
-+## Argo Agent Pod Failures
-+
-+Each Workflow that uses the Agent runs it in one pod.
-+If the Agent's container exits with an error, the kubelet restarts it, and the restarted Agent runs again every HTTP or Plugin task that has no result yet.
-+If the pod itself fails, for example because the node evicts it, the controller deletes the pod and creates a replacement, which also runs every task that has no result yet.
-+A request or plugin call can therefore run more than once, so make it safe to repeat.
-+
-+The controller replaces a failed pod no sooner than one minute after that pod was created, and records an `AgentPodFailed` Warning event on the Workflow, with the reason the pod failed, each time it does.
-+There is no limit on the number of replacements: as with a crashing container, a task that never gets a result fails by the Workflow's `activeDeadlineSeconds`, or by its template `timeout` unless its plugin has reported it `Running`.
-+Without either setting, the task can run until the Workflow stops for another reason.
-+When the Workflow is stopping, terminating, or past its `activeDeadlineSeconds`, the controller errors the nodes of the tasks that have no result instead.
-+
- ## WorkflowTaskSet Size Limit
- 
- The WorkflowTaskSet holds the full template of every HTTP and Plugin node that is pending or running in a Workflow, so a wide fan-out of these templates can exceed the Kubernetes object size limit (about 1.5 MiB with the default etcd configuration).
-```
-
-**File**: `workflow/controller/agent.go` (modified, +56/-2)
-```diff
-@@ -6,6 +6,7 @@ import (
- 	"fmt"
- 	"os"
- 	"slices"
-+	"time"
- 
- 	apiv1 "k8s.io/api/core/v1"
- 	apierr "k8s.io/apimachinery/pkg/api/errors"
-@@ -23,6 +24,11 @@ import (
- 	"github.com/argoproj/argo-workflows/v4/workflow/util"
- )
- 
-+// agentPodRecreationDelay is how long after a Failed agent pod was created the
-+// controller replaces it, so an agent pod that keeps failing is replaced at
-+// most this often.
-+const agentPodRecreationDelay = time.Minute
-+
- func (woc *wfOperationCtx) getAgentPodName() string {
- 	return woc.wf.NodeID("agent") + "-agent"
- }
-@@ -50,9 +56,57 @@ func (woc *wfOperationCtx) reconcileAgentPod(ctx context.Context) error {
- func (woc *wfOperationCtx) updateAgentPodStatus(ctx context.Context, pod *apiv1.Pod) {
- 	woc.log.Info(ctx, "updateAgentPodStatus")
- 	newPhase, message := assessAgentPodStatus(ctx, pod)
--	if newPhase == wfv1.NodeFailed || newPhase == wfv1.NodeError {
--		woc.markTaskSetNodesError(ctx, fmt.Errorf(`agent pod failed with reason:"%s"`, message))
-+	if newPhase != wfv1.NodeFailed && newPhase != wfv1.NodeError {
-+		return
-+	}
-+	err := fmt.Errorf(`agent pod failed with reason:"%s"`, message)
-+	if newPhase == wfv1.NodeFailed && woc.canRecreateAgentPod() {
-+		woc.recreateAgentPod(ctx, pod, err)
-+		return
-+	}
-+	woc.markTaskSetNodesError(ctx, err)
-+}
-+
-+// canRecreateAgentPod reports whether a Failed agent pod may be replaced: the
-+// controller creates the agent pods, and the workflow is not ending, so the
-+// replacement would still have work to do.
-+func (woc *wfOperationCtx) canRecreateAgentPod() bool {
-+	return !woc.controller.Config.DisableAgentPodCreation &&
-+		!woc.wf.Status.Fulfilled() &&
-+		!woc.GetShutdownStrategy().Enabled() &&
-+		(woc.workflowDeadline == nil || time.Now().UTC().Before(*woc.workflowDeadline))
-+}
-+
-+// recreateAgentPod deletes a Failed agent pod, once agentPodRecreationDelay
-+// has passed since it was created, so that reconcileAgentPod creates a
-+// replacement. Like an agent container the kubelet restarts, the replacement
-+// runs every task that has no result yet. There is no limit: as with a
-+// crash-looping container, a task that never gets a result fails by its own
-+// deadline or timeout. Each replacement is recorded as a Warning event on the
-+// workflow, with the reason the pod failed.
-+func (woc *wfOperationCtx) recreateAgentPod(ctx context.Context, pod *apiv1.Pod, cause error) {
-+	log := woc.log.WithField("podName", pod.Name)
-+	if wait := time.Until(woc.agentPodRecheckTime(pod)); wait > 0 {
-+		log.WithField("wait", wait).Info(ctx, "Agent pod failed, waiting before recreating it")
-+		woc.requeueAfter(wait)
-+		return
-+	}
-+	log.Info(ctx, "Agent pod failed, recreating it")
-+	woc.eventRecorder.Event(woc.wf, apiv1.EventTypeWarning, "AgentPodFailed", fmt.Sprintf("%v; recreating it", cause))
-+	// By UID, so that a replacement that already exists is never deleted.
-+	woc.controller.PodController.DeletePodByUID(ctx, pod.Namespace, pod.Name, string(pod.UID))
-+	woc.requeue()
-+}
-+
-+// agentPodRecheckTime is when to look at a Failed agent pod again:
-+// agentPodRecreationDelay after it was created, or the workflow deadline if that
-+// is sooner, so the deadline errors its tasks on time.
-+func (woc *wfOperationCtx) agentPodRecheckTime(pod *apiv1.Pod) time.Time {
-+	recheckAt := pod.CreationTimestamp.Add(agentPodRecreationDelay)
-+	if woc.workflowDeadline != nil && woc.workflowDeadline.Before(recheckAt) {
-+		return *woc.workflowDeadline
+@@ -782,3 +782,21 @@ func TestParseAddressingStyle(t *testing.T) {
+ 		})
  	}
-+	return recheckAt
- }
- 
- func assessAgentPodStatus(ctx context.Context, pod *apiv1.Pod) (wfv1.NodePhase, string) {
-```
-
-**File**: `workflow/controller/operator_agent_test.go` (modified, +203/-7)
-```diff
-@@ -1,6 +1,8 @@
- package controller
- 
- import (
-+	"context"
-+	"strings"
- 	"testing"
- 	"time"
- 
-@@ -9,7 +11,9 @@ import (
- 	"github.com/stretchr/testify/assert"
- 	"github.com/stretchr/testify/require"
- 	v1 "k8s.io/api/core/v1"
-+	apierr "k8s.io/apimachinery/pkg/api/errors"
- 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-+	kwait "k8s.io/apimachinery/pkg/util/wait"
- 
- 	wfv1 "github.com/argoproj/argo-workflows/v4/pkg/apis/workflow/v1alpha1"
- )
-@@ -45,7 +49,7 @@ func TestHTTPTemplate(t *testing.T) {
- 		assert.NotNil(t, ts)
- 		assert.Len(t, ts.Spec.Tasks, 1)
- 
--		// simulate agent pod failure scenario
-+		// simulate agent pod failure scenario: the pod is replaced, and its task kept
- 		pod.Status.Phase = v1.PodFailed
- 		pod.Status.Message = "manual termination"
- 		pod, err = controller.kubeclientset.CoreV1().Pods(woc.wf.Namespace).UpdateStatus(ctx, pod, metav1.UpdateOptions{})
-@@ -54,19 +58,34 @@ func TestHTTPTemplate(t *testing.T) {
- 		// sleep 1 second to wait for informer getting pod info
- 		time.Sleep(time.Second)
- 		woc.operate(ctx)
--		assert.Equal(t, wfv1.WorkflowError, woc.wf.Status.Phase)
--		assert.Equal(t, `agent pod failed with reason:"manual termination"`, woc.wf.Status.Message)
-+		assert.Equal(t, wfv1.WorkflowRunning, woc.wf.Status.Phase)
- 		assert.Len(t, woc.wf.Status.Nodes, 1)
--		assert.Equal(t, wfv1.NodeError, woc.wf.Status.Nodes["hello-world"].Phase)
--		assert.Equal(t, `agent pod failed with reason:"manual termination"`, woc.wf.Status.Nodes["hello-world"].Message)
-+		assert.False(t, woc.wf.Status.Nodes["hello-world"].Fulfilled())
-+		assert.Contains(t, agentPodFailedEvents(controller), `Warning AgentPodFailed agent pod failed with reason:"manual termination"; recreating it`)
- 		ts, err = controller.wfclientset.ArgoprojV1alpha1().WorkflowTaskSets(wf.Namespace).Get(ctx, "hello-world", metav1.GetOptions{})
- 		require.NoError(t, err)
- 		assert.NotNil(t, ts)
--		assert.Empty(t, ts.Spec.Tasks)
--		assert.Empty(t, ts.Status.Nodes)
-+		assert.Len(t, ts.Spec.Tasks, 1)
- 	})
- }
- 
-+// agentPodFailedEvents drains the events the controller has recorded and
-+// returns the AgentPodFailed ones.
-+func agentPodFailedEvents(controller *WorkflowController) []string {
-+	recorder := controller.eventRecorderManager.(*testEventRecorderManager).eventRecorder
-+	var events []string
-+	for {
-+		select {
-+		case event := <-recorder.Events:
-+			if strings.Contains(event, "AgentPodFailed") {
-+				events = append(events, event)
-+			}
-+		default:
-+			return events
-+		}
-+	}
-+}
-+
- func TestHTTPTemplateWithoutServiceAccount(t *testing.T) {
- 	wf := wfv1.MustUnmarshalWorkflow(httpwf)
- 	ctx := logging.TestContext(t.Context())
-@@ -90,3 +109,180 @@ func TestHTTPTemplateWithoutServiceAccount(t *testing.T) {
- 		assert.Equal(t, `create agent pod failed with reason:"failed to get token volumes: serviceaccounts "default" not found"`, woc.wf.Status.Nodes["hello-world"].Message)
- 	})
  }
 +
-+// failAgentPod makes the workflow's agent pod Failed, as an eviction does, and
-+// waits for the pod informer to see it.
-+func failAgentPod(ctx context.Context, t *testing.T, woc *wfOperationCtx, mutate func(pod *v1.Pod)) *v1.Pod {
-+	t.Helper()
-+	pods := woc.controller.kubeclientset.CoreV1().Pods(woc.wf.Namespace)
-+	pod, err := pods.Get(ctx, woc.getAgentPodName(), metav1.GetOptions{})
-+	require.NoError(t, err)
-+	pod.Status.Phase = v1.PodFailed
-+	pod.Status.Reason = "Evicted"
-+	pod.Status.Message = "The node was low on resource: memory."
-+	if mutate != nil {
-+		mutate(pod)
-+	}
-+	pod, err = pods.Update(ctx, pod, metav1.UpdateOptions{})
-+	require.NoError(t, err)
-+	waitForInformer(ctx, woc.controller.PodController.TestingPodInformer(), pod, func(obj any) bool {
-+		return obj.(*v1.Pod).Status.Phase == v1.PodFailed
-+	})
-+	return pod
-+}
-+
-+// A Failed agent pod is replaced, as a crashed agent container is restarted,
-+// rather than erroring the agent's nodes and leaving every later HTTP or
-+// plugin node to be errored against the same Failed pod.
-+func TestAgentPodRecreatedWhenFailed(t *testing.T) {
-+	wf := wfv1.MustUnmarshalWorkflow(httpwf)
++func TestNewClientInvalidTrustedCA(t *testing.T) {
 +	ctx := logging.TestContext(t.Context())
-+	cancel, controller := newController(ctx, wf, defaultServiceAccount)
-+	defer cancel()
++	driver := &ArtifactDriver{
++		Endpoint:  "foo.com",
++		Region:    "us-south-3",
++		Secure:    true,
++		AccessKey: "key",
++		SecretKey: "secret",
++		TrustedCA: "not a certificate",
++	}
++	_, err := driver.newClient(ctx)
++	require.EqualError(t, err, "no valid PEM certificate found in the S3 caSecret")
 +
-+	woc := newWorkflowOperationCtx(ctx, wf, controller)
-+	woc.operate(ctx)
-+	failed := failAgentPod(ctx, t, woc, nil)
-+
-+	woc = newWorkflowOperationCtx(ctx, woc.wf, controller)
-+	woc.operate(ctx)
-+	require.Equal(t, wfv1.WorkflowRunning, woc.wf.Status.Phase)
-+	require.False(t, woc.wf.Status.Nodes["hello-world"].Fulfilled(), "the agent's node must not be errored")
-+
-+	// the controller deletes the Failed pod, by its UID
-+	require.True(t, controller.PodController.TestingProcessNextItem(ctx))
-+	pods := controller.kubeclientset.CoreV1().Pods(wf.Namespace)
-+	_, err := pods.Get(ctx, failed.Name, metav1.GetOptions{})
-+	require.True(t, apierr.IsNotFound(err), "the Failed agent pod must be deleted")
-+	waitForPodGone(ctx, t, woc, failed.Name)
-+
-+	// and the next reconciliation creates its replacement
-+	woc = newWorkfl
-```
-
-**File**: `workflow/controller/taskset.go` (modified, +5/-0)
-```diff
-@@ -212,6 +212,11 @@ func (woc *wfOperationCtx) reconcileTaskSet(ctx context.Context) error {
- 				woc.log.WithField("nodeID", nodeID).Error(ctx, "was unable to obtain node for nodeID")
- 				return err
- 			}
-+			// A node already finished, e.g. errored because the agent pod
-+			// failed, must not be overwritten by a stale result.
-+			if node.Fulfilled() {
-+				continue
-+			}
- 
- 			node.Outputs = taskResult.Outputs.DeepCopy()
- 			node.Phase = taskResult.Phase
-```
-
-**File**: `workflow/controller/taskset_test.go` (modified, +26/-0)
-```diff
-@@ -269,3 +269,29 @@ func TestTaskSetRequestEntityTooLarge(t *testing.T) {
- 		assert.Equal(t, wfv1.NodePending, woc.wf.Status.Nodes[newID].Phase, "nothing is errored until the taskset can be read")
- 	})
- }
-+
-+// A node that has already finished, such as one errored because its agent
-+// pod failed, keeps its phase and message when the task set still holds a
-+// stale result for it (#14200).
-+func TestReconcileTaskSetKeepsFinishedNode(t *testing.T) {
-+	const nodeID = "http-template-fqgsf-2338098285"
-+	const message = `agent pod failed with reason:"The node was low on resource: ephemeral-storage."`
-+	wf := wfv1.MustUnmarshalWorkflow("@testdata/taskset/reconcile-task-set-with-memoization-workflow.yaml")
-+	node := wf.Status.Nodes[nodeID]
-+	node.Phase = wfv1.NodeError
-+	node.Message = message
-+	wf.Status.Nodes[nodeID] = node
-+	var ts wfv1.WorkflowTaskSet
-+	wfv1.MustUnmarshal("@testdata/taskset/reconcile-task-set-with-memoization-taskset.yaml", &ts)
-+	ts.Status.Nodes[nodeID] = wfv1.NodeResult{Phase: wfv1.NodePending, Message: "Queuing"}
-+	ctx := logging.TestContext(t.Context())
-+	cancel, controller := newController(ctx, wf, ts)
-+	defer cancel()
-+	_, err := controller.wfclientset.ArgoprojV1alpha1().WorkflowTaskSets("default").Create(ctx, &ts, v1.CreateOptions{})
++	driver.TrustedCA = ""
++	_, err = driver.newClient(ctx)
 +	require.NoError(t, err)
-+	woc := newWorkflowOperationCtx(ctx, wf, controller)
-+	time.Sleep(1 * time.Second)
-+	require.NoError(t, woc.reconcileTaskSet(ctx))
-+	assert.Equal(t, wfv1.NodeError, woc.wf.Status.Nodes[nodeID].Phase)
-+	assert.Equal(t, message, woc.wf.Status.Nodes[nodeID].Message)
 +}
-```
-
-**File**: `workflow/controller/testdata/taskset/reconcile-task-set-with-memoization-workflow.yaml` (modified, +1/-1)
-```diff
-@@ -31,7 +31,7 @@ status:
-         - name: result
-           value: |
-             { demo }
--      phase: Succeeded
-+      phase: Pending
-       templateName: http
-       type: HTTP
-   phase: Running
-```
-
----
-
-### Incident Patch 3: `c719b3e7` (2026-11-03)
-**Commit Message**: chore: fix renovate.json
-
-Signed-off-by: Alan Clucas <[REDACTED_EMAIL]>
-
-**File**: `renovate.json` (modified, +11/-13)
-```diff
-@@ -12,19 +12,6 @@
-   "nix": {
-     "enabled": true
-   },
--  "customManagers": [
--    {
--      "description": "Update tool versions annotated with `# renovate:` in hack/k8s-versions.sh",
--      "customType": "regex",
--      "managerFilePatterns": [
--        "/(^|/)hack/k8s-versions.sh$/"
--      ],
--      "matchStrings": [
--        "# renovate: datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)( versioning=(?<versioning>\\S+))?\\s+\\w+\\s*\\??=\\s*\"?(?<currentValue>[^\\s\"]+)\"?"
--      ],
--      "extractVersionTemplate": "^v(?<version>.+)$"
--    }
--  ],
-   "packageRules": [
-     {
-       "description": "Group k8s.io code-generator, proto vendor, and OpenAPI spec versions",
-@@ -105,6 +92,17 @@
-     "gomodUpdateImportPaths"
-   ],
-   "customManagers": [
-+    {
-+      "description": "Update tool versions annotated with `# renovate:` in hack/k8s-versions.sh",
-+      "customType": "regex",
-+      "managerFilePatterns": [
-+        "/(^|/)hack/k8s-versions.sh$/"
-+      ],
-+      "matchStrings": [
-+        "# renovate: datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)( versioning=(?<versioning>\\S+))?\\s+\\w+\\s*\\??=\\s*\"?(?<currentValue>[^\\s\"]+)\"?"
-+      ],
-+      "extractVersionTemplate": "^v(?<version>.+)$"
-+    },
-     {
-       "description": "k8s.io/code-generator go install in Makefile",
-       "customType": "regex",
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #17386** (2026-11-02): test(cron): load scheduledWf from testdata in the workflow defaults tests (@Joibel)
 - **PR #17383** (2026-11-02): chore(deps): update dependency minimatch to v11 [security] (main) (@renovate[bot])
+- **PR #17373** (2026-11-04): fix(artifacts): reject S3 caSecret without a valid PEM certificate (@sarankumar1325)
 - **PR #17372** (2026-10-30): chore(deps): update dependency sass to v1.107.0 (main) (@renovate[bot])
 - **PR #17371** (2026-10-30): chore(deps): update dependency python to 3.15 (main) (@renovate[bot])
 - **PR #17370** (2026-10-30): chore(deps): update dependency markdownlint-cli to v0.50.0 (main) (@renovate[bot])
-- **PR #17369** (2026-10-30): chore(deps): update module github.com/klauspost/compress to v1.20.3 (main) (@renovate[bot])
 
 ---
 
@@ -1249,28 +860,30 @@ Signed-off-by: Alan Clucas <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): update dependency minimatch to v11 [security] (main) (#17383)
+## X. artifacts): reject S3 caSecret without a valid PEM certificate (#17373)
 
 **RULE**:
-When implementing operations in `ui/package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in argoproj/argo-workflows. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `workflow/artifacts/s3/s3.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in argoproj/argo-workflows. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7a300e06`: deps): update dependency minimatch to v11 [security] (main) (#17383). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `bcd916ca`: artifacts): reject S3 caSecret without a valid PEM certificate (#17373). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `ui/package.json`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `workflow/artifacts/s3/s3.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-        "**/@typescript-eslint/typescript-estree/minimatch": "^11.0.0"
+			if !pool.AppendCertsFromPEM([]byte(s3Driver.TrustedCA)) {
+				return nil, errors.New("no valid PEM certificate found in the S3 caSecret")
+			}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-        "**/@typescript-eslint/typescript-estree/minimatch": "^9.0.7"
+			pool.AppendCertsFromPEM([]byte(s3Driver.TrustedCA))
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7a300e06` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `bcd916ca` are properly handled with clean fallback behavior.

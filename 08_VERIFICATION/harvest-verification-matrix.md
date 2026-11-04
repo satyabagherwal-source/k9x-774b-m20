@@ -7153,3 +7153,4 @@
 | `CYCLE-20261104-5XKP` | `2026-11-04T03:57:39.769Z` | `software-mansion/react-native-reanimated` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6750` | Yes (`7a9d10e8...`) |
 | `CYCLE-20261104-62C6` | `2026-11-04T03:57:45.942Z` | `HelixDB/helix-db` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6751` | Yes (`addd7a0c...`) |
 | `CYCLE-20261104-FB5I` | `2026-11-04T04:04:57.270Z` | `trailbaseio/trailbase` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6752` | Yes (`167cf0b8...`) |
+| `CYCLE-20261104-COZE` | `2026-11-04T07:18:52.538Z` | `argoproj/argo-workflows` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6753` | Yes (`8889df3d...`) |

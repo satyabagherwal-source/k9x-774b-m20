@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-04T04:04:57.185Z",
+  "last_updated": "2026-11-04T07:18:52.450Z",
   "total_verified_learnings": 1204,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -3299,8 +3299,8 @@
       "slug": "argoproj-argo-workflows",
       "platform": "github",
       "source_url": "https://github.com/argoproj/argo-workflows",
-      "source_version": "c719b3e7",
-      "content_hash": "f9c7126a6722425b2b417e6701c103ef2cc3d64e7930ae29bb137cd4ec71b873",
+      "source_version": "bcd916ca",
+      "content_hash": "8889df3d70543cfdedaa0249ff53706339fa3695889371e6e57509c62ff9b593",
       "dossier_path": "07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md",
       "promoted_rules": [
@@ -3358,6 +3358,11 @@
           "number": 6491,
           "title": "deps): update dependency minimatch to v11 [security] (main) (#17383)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6753,
+          "title": "artifacts): reject S3 caSecret without a valid PEM certificate (#17373)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -3365,7 +3370,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T10:37:08.229Z",
+      "verified_at": "2026-11-04T07:18:52.426Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -173129,6 +173134,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-04T04:04:57.163Z"
+    },
+    "rule-6753": {
+      "learning_id": "rule-6753",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6753,
+      "title": "artifacts): reject S3 caSecret without a valid PEM certificate (#17373)",
+      "source_url": "https://github.com/argoproj/argo-workflows",
+      "source_version": "bcd916ca",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T07:18:52.426Z"
     }
   },
   "aliases": {

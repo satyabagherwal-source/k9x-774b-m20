@@ -40,8 +40,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-04T04:04:59.840Z",
-    "lastVerified": "2026-11-04T04:04:59.840Z",
+    "lastChecked": "2026-11-04T07:18:55.114Z",
+    "lastVerified": "2026-11-04T07:18:55.114Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -356,9 +356,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-04T03:44:16.010Z",
+    "lastChecked": "2026-11-04T07:18:53.779Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-04T03:44:16.010Z"
+    "lastVerified": "2026-11-04T07:18:53.779Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -1568,9 +1568,9 @@
   "lunasec-io-lunasec": {
     "name": "lunasec",
     "officialUrl": "https://github.com/lunasec-io/lunasec",
-    "lastChecked": "2026-11-04T01:00:46.845Z",
+    "lastChecked": "2026-11-04T07:18:48.796Z",
     "revisionIdentifier": "c6bb0762",
-    "lastVerified": "2026-11-04T01:00:46.845Z"
+    "lastVerified": "2026-11-04T07:18:48.796Z"
   },
   "valeriansaliou-sonic": {
     "name": "sonic",
@@ -3151,9 +3151,9 @@
   "leecade-react-native-swiper": {
     "name": "react-native-swiper",
     "officialUrl": "https://github.com/leecade/react-native-swiper",
-    "lastChecked": "2026-10-31T04:15:52.860Z",
+    "lastChecked": "2026-11-04T07:18:44.415Z",
     "revisionIdentifier": "98cc9060",
-    "lastVerified": "2026-10-31T04:15:52.860Z"
+    "lastVerified": "2026-11-04T07:18:44.415Z"
   },
   "taubyte-tau": {
     "name": "taubyte/tau",
@@ -4396,9 +4396,9 @@
   "mtkennerly-ludusavi": {
     "name": "ludusavi",
     "officialUrl": "https://github.com/mtkennerly/ludusavi",
-    "lastChecked": "2026-11-01T01:46:59.077Z",
+    "lastChecked": "2026-11-04T07:18:38.697Z",
     "revisionIdentifier": "95b651aa",
-    "lastVerified": "2026-11-01T01:46:59.077Z"
+    "lastVerified": "2026-11-04T07:18:38.697Z"
   },
   "hf-black-forest-labs-flux.1-schnell": {
     "name": "black-forest-labs/FLUX.1-schnell",
@@ -4575,9 +4575,9 @@
   "malisper-pgrust": {
     "name": "pgrust",
     "officialUrl": "https://github.com/malisper/pgrust",
-    "lastChecked": "2026-11-02T17:54:12.455Z",
+    "lastChecked": "2026-11-04T07:18:51.171Z",
     "revisionIdentifier": "38634b40",
-    "lastVerified": "2026-11-02T17:54:12.455Z"
+    "lastVerified": "2026-11-04T07:18:51.171Z"
   },
   "gitui-org-gitui": {
     "name": "gitui",
@@ -6588,14 +6588,14 @@
     "officialUrl": "https://github.com/argoproj/argo-workflows",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-03T10:37:07.618Z",
-    "lastVerified": "2026-11-03T10:37:07.618Z",
+    "lastChecked": "2026-11-04T07:18:50.584Z",
+    "lastVerified": "2026-11-04T07:18:50.584Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-argoproj-argo-workflows",
-    "contentHash": "f9c7126a6722425b2b417e6701c103ef2cc3d64e7930ae29bb137cd4ec71b873",
+    "contentHash": "8889df3d70543cfdedaa0249ff53706339fa3695889371e6e57509c62ff9b593",
     "promotedRulesCount": 1,
-    "recentFixesCount": 6,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -11764,9 +11764,9 @@
   "testing-library-dom-testing-library": {
     "name": "dom-testing-library",
     "officialUrl": "https://github.com/testing-library/dom-testing-library",
-    "lastChecked": "2026-10-30T21:06:13.787Z",
+    "lastChecked": "2026-11-04T07:18:41.259Z",
     "revisionIdentifier": "6049cc0b",
-    "lastVerified": "2026-10-30T21:06:13.787Z"
+    "lastVerified": "2026-11-04T07:18:41.259Z"
   },
   "sweetpad-dev-sweetpad": {
     "name": "sweetpad-dev/sweetpad",
