@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-04T18:13:55.751Z",
+  "last_updated": "2026-11-04T18:21:43.955Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3321,14 +3321,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-microsoft-agent-governance-toolkit",
-      "content_hash": "5a37e45b67fbf02635268524c696b53583a46f1215f6c15015ed55a3634a245e",
-      "verified_at": "2026-11-03T18:22:43.996Z",
+      "content_hash": "cdd17b4a1286491e5811b6ff14d33819eb7cfeb431b0643640bc1e8f54995f92",
+      "verified_at": "2026-11-04T18:21:39.306Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T18:22:43.996Z"
+      "last_updated": "2026-11-04T18:21:39.306Z"
     },
     "SynaLinks/synalinks-skills": {
       "repository": "SynaLinks/synalinks-skills",
@@ -3981,14 +3981,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nats-io-nats-go",
-      "content_hash": "bbdaa56c0b509956d925f3ba7d6152397ed2e8df0a74892625150c5cb471db72",
-      "verified_at": "2026-11-03T19:06:02.873Z",
+      "content_hash": "0962ef1faf302411c0e77e46c88b996ca1d9057d8b673ed510764b2eac97b802",
+      "verified_at": "2026-11-04T18:21:37.188Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T19:06:02.873Z"
+      "last_updated": "2026-11-04T18:21:37.188Z"
     },
     "ChrispyBacon-dev/DockFlare": {
       "repository": "ChrispyBacon-dev/DockFlare",
@@ -9306,14 +9306,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dragonflydb-dragonfly",
-      "content_hash": "bb61564137fc1dcb88f3b0ed3b9869e9d4bc10548accc696d7f6b709ff734e4b",
-      "verified_at": "2026-11-03T18:02:36.662Z",
+      "content_hash": "ab9bf248d8466c88ddd7d22d43b14758bb0b1025af05e3c07fe1642b602084fc",
+      "verified_at": "2026-11-04T18:21:43.954Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T18:02:36.662Z"
+      "last_updated": "2026-11-04T18:21:43.954Z"
     },
     "danielpetho/fancy": {
       "repository": "danielpetho/fancy",
@@ -15861,14 +15861,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-unsloth-flint-gguf",
-      "content_hash": "a8dabe2b85b94cab9a0e3e07b512d3bca81a3040d84be0ce6ef177e83df4345c",
-      "verified_at": "2026-10-31T02:21:18.436Z",
+      "content_hash": "63b59aad0909936785afd68235fadd7940f58c327bc528153b8696958ae7fcd2",
+      "verified_at": "2026-11-04T18:21:36.478Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T02:21:18.436Z"
+      "last_updated": "2026-11-04T18:21:36.478Z"
     },
     "gauthierpiarrette/highball": {
       "repository": "gauthierpiarrette/highball",

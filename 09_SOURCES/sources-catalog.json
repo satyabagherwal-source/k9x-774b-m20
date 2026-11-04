@@ -2123,10 +2123,10 @@
     "repository": "microsoft/agent-governance-toolkit",
     "platform": "github",
     "sourceUrl": "https://github.com/microsoft/agent-governance-toolkit",
-    "sourceVersion": "6b2e03f8",
+    "sourceVersion": "a918f763",
     "license": "MIT",
-    "contentHash": "5a37e45b67fbf02635268524c696b53583a46f1215f6c15015ed55a3634a245e",
-    "lastHarvestedAt": "2026-11-03T18:22:43.987Z",
+    "contentHash": "cdd17b4a1286491e5811b6ff14d33819eb7cfeb431b0643640bc1e8f54995f92",
+    "lastHarvestedAt": "2026-11-04T18:21:39.297Z",
     "learningId": "learn-github-microsoft-agent-governance-toolkit"
   },
   "synalinks-synalinks-skills": {
@@ -2563,10 +2563,10 @@
     "repository": "nats-io/nats.go",
     "platform": "github",
     "sourceUrl": "https://github.com/nats-io/nats.go",
-    "sourceVersion": "14318705",
+    "sourceVersion": "d1774d10",
     "license": "Apache-2.0",
-    "contentHash": "bbdaa56c0b509956d925f3ba7d6152397ed2e8df0a74892625150c5cb471db72",
-    "lastHarvestedAt": "2026-11-03T19:06:02.863Z",
+    "contentHash": "0962ef1faf302411c0e77e46c88b996ca1d9057d8b673ed510764b2eac97b802",
+    "lastHarvestedAt": "2026-11-04T18:21:37.178Z",
     "learningId": "learn-github-nats-io-nats-go"
   },
   "chrispybacon-dev-dockflare": {
@@ -6123,10 +6123,10 @@
     "repository": "dragonflydb/dragonfly",
     "platform": "github",
     "sourceUrl": "https://github.com/dragonflydb/dragonfly",
-    "sourceVersion": "505d8729",
+    "sourceVersion": "5d9ae0f9",
     "license": "NOASSERTION",
-    "contentHash": "bb61564137fc1dcb88f3b0ed3b9869e9d4bc10548accc696d7f6b709ff734e4b",
-    "lastHarvestedAt": "2026-11-03T18:02:36.654Z",
+    "contentHash": "ab9bf248d8466c88ddd7d22d43b14758bb0b1025af05e3c07fe1642b602084fc",
+    "lastHarvestedAt": "2026-11-04T18:21:43.945Z",
     "learningId": "learn-github-dragonflydb-dragonfly"
   },
   "danielpetho-fancy": {
@@ -10555,8 +10555,8 @@
     "sourceUrl": "https://huggingface.co/unsloth/flint-GGUF",
     "sourceVersion": "hf-unsloth-flint-gguf",
     "license": "Open-Source",
-    "contentHash": "a8dabe2b85b94cab9a0e3e07b512d3bca81a3040d84be0ce6ef177e83df4345c",
-    "lastHarvestedAt": "2026-10-31T02:21:18.421Z",
+    "contentHash": "63b59aad0909936785afd68235fadd7940f58c327bc528153b8696958ae7fcd2",
+    "lastHarvestedAt": "2026-11-04T18:21:36.468Z",
     "learningId": "learn-huggingface-unsloth-flint-gguf"
   },
   "gauthierpiarrette-highball": {

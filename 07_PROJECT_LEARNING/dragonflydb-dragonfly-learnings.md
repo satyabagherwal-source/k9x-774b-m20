@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md`  
 > **Source**: github ([https://github.com/dragonflydb/dragonfly](https://github.com/dragonflydb/dragonfly))  
-> **Source Version**: `505d8729`  
+> **Source Version**: `5d9ae0f9`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T18:02:35.855Z  
+> **Timestamp**: 2026-11-04T18:21:43.183Z  
 > **Learning ID**: `learn-github-dragonflydb-dragonfly`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dragonflydb/dragonfly](https://github.com/dragonflydb/dragonfly))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T18:02:35.428Z  
+> **Harvest Timestamp**: 2026-11-04T18:21:41.811Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2321,865 +2321,989 @@ class Segment {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `98a439dc` (2026-11-02)
-**Commit Message**: fix(tiering): fix small-bins leak and stash-cancellation on failure (#8636)
+### Incident Patch 1: `2bac5b85` (2026-11-04)
+**Commit Message**: fix(server): Unify key expiry capping and fix GETEX replies (#8741)
 
-- SmallBins::Delete now erases a pending bin once its last key is
-  deleted, instead of leaving an empty map behind. Those empty entries
-  were never reclaimed (the cancelled IO skips NotifyStashed) and also
-  slowed the linear scan in Delete.
-- StashPrimeValue: when a filled small bin fails PrepareAndStash before
-  it is serialized, recover its keys via the new ReportStashFailed
-  instead of ReportStashAborted, which would extract() a bin id that
-  SmallBins never tracked as pending (undefined behavior).
-- Add ReportStashFailed and guard ReportStashAborted against empty nodes.
-- Deduplicate the key-draining loop shared by ReportStashAborted and
-  ReportStashFailed into a DrainKeys helper.
-- Expose pending_bins_cnt in SmallBins::Stats and add unit tests.
+EXPIREAT, PEXPIREAT and GETEX clamp representable over-cap deadlines to kMaxExpireDeadlineMs,
+as EXPIRE and SET already do. GETEX returns the existing value instead of nil, reports int64
+overflow as an invalid-expire error and journals the stored deadline so replicas apply the same
+one. Memcached GAT/GATS inherit the clamp: an over-cap absolute exptime was a miss before.
 
-**File**: `src/server/tiered_storage.cc` (modified, +10/-2)
+Fixes #8714
+
+Signed-off-by: Volodymyr Yavdoshenko <[REDACTED_EMAIL]>
+
+**File**: `README.md` (modified, +1/-3)
 ```diff
-@@ -530,13 +530,14 @@ void TieredStorage::StashPrimeValue(DbIndex dbid, string_view key, const StashDe
-   DCHECK_GT(est_size, 0u);
+@@ -194,9 +194,7 @@ You can enable caching mode by passing the `--cache_mode=true` flag. Once this m
  
-   tiering::OpManager::PendingId id;
-+  std::optional<tiering::SmallBins::FilledBin> bin;
-   error_code ec;
+ ### Expiration deadlines with relative accuracy
  
-   if (OccupiesWholePages(est_size)) {  // large enough for own page
-     id = KeyRef(dbid, key);
-     auto serialize = absl::bind_front(&StashDescriptor::Serialize, &blobs);
-     ec = op_manager_->PrepareAndStash(id, est_size, serialize);
--  } else if (auto bin = bins_->Stash(dbid, key, SerializeToString(blobs)); bin) {
-+  } else if (bin = bins_->Stash(dbid, key, SerializeToString(blobs)); bin) {
-     id = bin->id;
-     auto serialize = absl::bind_front(&tiering::SmallBins::SerializeBin, bins_.get(), &*bin);
-     ec = op_manager_->PrepareAndStash(id, 4_KB, serialize);
-@@ -551,7 +552,14 @@ void TieredStorage::StashPrimeValue(DbIndex dbid, string_view key, const StashDe
-     bool to_log = ec != errc::file_too_large && ec != errc::operation_would_block &&
-                   ec != errc::operation_in_progress;
-     LOG_IF(ERROR, to_log) << "Stash failed: " << ec.message();
--    visit([this](auto id) { op_manager_->ClearStashPending(id); }, id);
-+    if (bin) {
-+      // The bin filled up but PrepareAndStash failed before serializing it, so SmallBins never
-+      // tracked it as pending. Recover its keys directly to clear their stash-pending flags.
-+      for (const auto& bin_key : bins_->ReportStashFailed(std::move(*bin)))
-+        op_manager_->ClearStashPending(bin_key);
-+    } else {
-+      visit([this](auto id) { op_manager_->ClearStashPending(id); }, id);
+-Expiration ranges are limited to ~8 years.
+-
+-Expiration deadlines with millisecond precision (PEXPIRE, PSETEX, etc.) are rounded to the closest second **for deadlines greater than 2^28ms**, which has less than 0.001% error and should be acceptable for large ranges. If this is not suitable for your use case, get in touch or open an issue explaining your case.
++Expiration ranges are limited to 268435455 seconds (2^28 - 1, about 8.5 years). Key expiration deadlines beyond that limit are clamped to it, while hash field expirations reject them. If this is not suitable for your use case, get in touch or open an issue explaining your case.
+ 
+ For more detailed differences between Dragonfly expiration deadlines and Redis implementations, [see here](docs/differences.md).
+ 
+```
+
+**File**: `docs/differences.md` (modified, +12/-7)
+```diff
+@@ -12,18 +12,23 @@ SORT does not take any locale into account.
+ 
+ ## Expiry ranges.
+ 
++Key expirations are limited to 268435455 seconds (2^28 - 1, about 8.5 years) from the command's
++execution time. EXPIRE, PEXPIRE, EXPIREAT, PEXPIREAT, SET with EX/PX/EXAT/PXAT, SETEX, PSETEX,
++GETEX with EX/PX/EXAT/PXAT, and RESTORE (including ABSTTL) clamp deadlines beyond this limit.
++GETEX returns the existing string value when its expiration is clamped. Clamping does not replace
++command-specific validation of invalid or overflowing expiry values; GETEX reports invalid-expiry
++errors instead of returning null for an existing string key. Memcached absolute exptimes beyond the
++limit are clamped the same way, including GAT and GATS.
++
++Hash field expirations reject TTLs beyond the same 268435455-second limit instead of clamping them.
++They use one-second precision. Deadlines are rounded up to the next whole second, so fields never
++expire before the requested deadline and may remain live for less than one additional second.
++
+ ### EXPIRE flags
+ EXPIRE, PEXPIRE, EXPIREAT and PEXPIREAT accept NX together with GT or LT: the expiry is set when
+ the key has none, otherwise GT or LT alone decides. Redis rejects these combinations as
+ incompatible.
+ 
+-Expirations are limited to 8 years. For commands with millisecond precision like PEXPIRE or PSETEX,
+-expirations greater than 2^28ms are quietly rounded to the nearest second losing precision of less than 0.001%.
+-
+-Hash field expirations use one-second precision. Deadlines are rounded up to the next whole
+-second, so fields never expire before the requested deadline and may remain live for less than
+-one additional second.
+-
+ ## Lua
+ We use lua 5.4.4 that has been released in 2022.
+ That means we also support [lua integers](https://github.com/redis/redis/issues/5261).
+```
+
+**File**: `src/server/db_slice.cc` (modified, +3/-3)
+```diff
+@@ -1378,11 +1378,11 @@ OpResult<int64_t> DbSlice::UpdateExpire(const Context& cntx, Iterator prime_it,
+     return kPersistValue;
+   }
+ 
+-  if (!params.IsValid(cntx.time_now_ms)) {
++  auto [rel_msec, abs_msec] = params.Calculate(cntx.time_now_ms, true);
++  if (abs_msec < 0) {
+     return OpStatus::OUT_OF_RANGE;
+   }
+ 
+-  const int64_t abs_msec = params.ms_timestamp;
+   int64_t current_cmp = numeric_limits<int64_t>::max();  // inf if no expiry is set
+   const bool has_expire = prime_it->first.HasExpire();
+   if (has_expire)
+@@ -1403,7 +1403,7 @@ OpResult<int64_t> DbSlice::UpdateExpire(const Context& cntx, Iterator prime_it,
+   }
+ 
+   // Delete an already expired key; the caller emits the event after journaling.
+-  if (params.IsExpired(cntx.time_now_ms)) {
++  if (rel_msec <= 0) {
+     DelAtomic(cntx, prime_it.GetInnerIt());
+     db_arr_[cntx.db_index]->stats.events.expired_keys++;
+     return -1;
+```
+
+**File**: `src/server/db_slice.h` (modified, +2/-2)
+```diff
+@@ -364,8 +364,8 @@ class DbSlice {
+   // and reports no heap allocation, so overwriting it drops the only reference to its disk extent.
+   void ReleaseOffloadedValue(DbIndex db_ind, std::string_view key, PrimeValue* pv);
+ 
+-  // Update entry expiration. Return expiration timepoint in abs milliseconds, or -1 if the entry
+-  // already expired and was deleted;
++  // Update key expiration, clamping TTL to kMaxExpireDeadlineMs. Return the applied absolute
++  // deadline in ms, 0 for PERSIST, -1 if deleted, or OUT_OF_RANGE on overflow.
+   facade::OpResult<int64_t> UpdateExpire(const Context& cntx, Iterator prime_it,
+                                          const ExpireParams& params);
+ 
+```
+
+**File**: `src/server/generic_family_test.cc` (modified, +67/-1)
+```diff
+@@ -6,6 +6,7 @@
+ 
+ #include <absl/cleanup/cleanup.h>
+ #include <absl/strings/numbers.h>
++#include <absl/strings/str_join.h>
+ 
+ #include <array>
+ #include <cstring>
+@@ -24,11 +25,14 @@ extern "C" {
+ #include "facade/facade_test.h"
+ #include "facade/reply_builder.h"
+ #include "facade/string_socket.h"
++#include "io/io.h"
+ #include "server/channel_store.h"
+ #include "server/common.h"
+ #include "server/conn_context.h"
+ #include "server/container_utils.h"
+ #include "server/engine_shard_set.h"
++#include "server/journal/journal.h"
++#include "server/journal/serializer.h"
+ #include "server/test_utils.h"
+ #include "server/transaction.h"
+ 
+@@ -208,7 +212,7 @@ TEST_F(GenericFamilyTest, ExpireCornerCases) {
+   EXPECT_THAT(Run({"pexpireat", "key", "-1"}), IntArg(1));
+   EXPECT_THAT(Run({"exists", "key"}), IntArg(0));
+ 
+-  // Huge absolute timestamps overflow the kMaxExpireDeadlineMs cap and surface OUT_OF_RANGE.
++  // Absolute timestamps that overflow the internal representation remain invalid.
+   Run({"set", "key", "val"});
+   EXPECT_THAT(Run({"expireat", "key", absl::StrCat(INT64_MAX)}), ErrArg("expiry is out of range"));
+   EXPECT_THAT(Run({"exists", "key"}), IntArg(1));
+@@ -231,6 +235,59 @@ TEST_F(GenericFamilyTest, ExpireCornerCases) {
+   EXPECT_THAT(Run({"pexpireat", "missing", "0"}), IntArg(0));
+ }
+ 
++TEST_F(GenericFamilyTest, ExpireCap) {
++  TEST_current_time_ms = 1'800'000'000'123;
++  struct Case {
++    vector<string_view> args;  // the command up to its expiry argument
++    int64_t unit_ms;
++    bool absolute;
++  };
++  const Case cases[] = {
++      {{"expire", "key"}, 1000, false},       {{"pexpire", "key"}, 1, false},
++      {{"expireat", "key"}, 1000, true},      {{"pexpireat", "key"}, 1, true},
++      {{"getex", "key", "EX"}, 1000, false},  {{"getex", "key", "PX"}, 1, false},
++      {{"getex", "key", "EXAT"}, 1000, true}, {{"getex", "key", "PXAT"}, 1, true}};
++  const int64_t deadline = TEST_current_time_ms + kMaxExpireDeadlineMs;
++  pp_->at(Shard("key", shard_set->size()))->Await([&] {
++    journal::AcquireUser();
++    absl::Cleanup release_journal = [] { journal::ReleaseUser(); };
++    for (const auto& [args, unit_ms, absolute] : cases) {
++      // One unit beyond the cap is clamped to it.
++      const string value = StrCat(kMaxExpireDeadlineMs / unit_ms + 1 +
++                                  (absolute ? TEST_current_time_ms / unit_ms : 0));
++      vector<string_view> cmd(args);
++      cmd.push_back(value);
++      SCOPED_TRACE(absl::StrJoin(cmd, " "));
++
++      ASSERT_EQ(Run({"set", "key", "val", "px", "1000"}), "OK");
++      const auto lsn = journal::GetLsn();
++      const RespExpr resp = Run(cmd);
++      if (args[0] == "getex") {
++        EXPECT_EQ(resp, "val");
++      } else {
++        EXPECT_THAT(resp, IntArg(1));
++      }
++
++      // Replicas receive the applied deadline; decode the borrowed bytes before yielding.
++      ASSERT_EQ(journal::GetLsn(), lsn + 1);
++      io::BytesSource source{journal::GetEntry(lsn)};
++      JournalReader reader{&source, 0};
++      journal::ParsedEntry entry;
++      ASSERT_FALSE(reader.ReadEntry(&entry));
++      ASSERT_EQ(entry.cmd.size(), 3);
++      EXPECT_EQ(entry.cmd[0], "PEXPIREAT");
++      EXPECT_EQ(entry.cmd[2], StrCat(deadline));
++      EXPECT_THAT(Run({"pexpiretime", "key"}), IntArg(deadline));
++
++      // GT compares the clamped deadline, which equals the one already set.
++      if (args[0] != "getex") {
++        cmd.push_back("GT");
++        EXPECT_THAT(Run(cmd), IntArg(0));
++      }
 +    }
++  });
++}
++
+ TEST_F(GenericFamilyTest, ExpireOptions) {
+   // NX and XX are mutually exclusive
+   Run({"set", "key", "val"});
+@@ -1530,6 +1587,15 @@ TEST_F(GenericFamilyTest, Restore) {
+   EXPECT_EQ("hello world", resp);
+   EXPECT_EQ(CheckedInt({"pttl", "string-key"}), 2000);
+ 
++  // RESTORE caps both relative TTLs and absolute deadlines.
++  ASSERT_EQ(Run({"restore", "string-key", StrCat(kMaxExpireDeadlineMs + 1), ToSV(dump), "REPLACE"}),
++            "OK");
++  EXPECT_THAT(Run({"pttl", "string-key"}), IntArg(kMaxExpireDeadlineMs));
++  ASSERT_EQ(Run({"restore", "string-key", StrCat(TEST_current_time_ms + kMaxExpireDeadlineMs + 1),
++                 ToSV(dump), "ABSTTL", "REPLACE"}),
++            "OK");
++  EXPECT_THAT(Run({"pttl", "string-key"}), IntArg(kMaxExpireDeadlineMs));
++
+   // Last but not least - just make sure that we are good without TTL as well
+   resp = Run({"restore", "string-key", "0", ToSV(STRING_DUMP_REDIS), "REPLACE"});
+   resp = Run({"get", "string-key"});
+```
+
+**File**: `src/server/string_family.cc` (modified, +10/-5)
+```diff
+@@ -1435,23 +1435,24 @@ cmd::CmdR CmdGetEx(CmdArgParser parser, CommandContext* cmd_cntx) {
+ 
+     StringResult value = ReadString(t->GetDbIndex(), key, it_res->it->second, shard);
+ 
+-    bool key_expired = false;
++    int64_t expire_at_ms = 0;
+     if (exp_params.IsDefined()) {
+       it_res->post_updater.Run();  // Run manually before possible delete due to negative expire
+       auto expire_res = op_args.GetDbSlice().UpdateExpire(op_args.db_cntx, it_res->it, exp_params);
+       RETURN_ON_BAD_STATUS(expire_res);
+-      key_expired = *expire_res == -1;
++      expire_at_ms = *expire_res;
+     }
+ 
++    const bool key_expired = expire_at_ms == -1;
++
+     // Replicate GETEX as DEL (already-past expiration), PEXPIREAT or PERSIST.
+     if (shard->journal() && exp_params.IsDefined()) {
+       if (exp_params.persist) {
+         RecordJournal(op_args, "PERSIST", {key});
+       } else if (key_expired) {
+         RecordJournal(op_args, "DEL", {key});
+       } else {
+-        auto [ignore, abs_time] = exp_params.Calculate(op_args.db_cntx.time_now_ms, false);
+-        auto abs_time_str = absl::StrCat(abs_time);
++        auto abs_time_str = absl::StrCat(expire_at_ms);
+         RecordJournal(op_args, "PEXPIREAT", {key, abs_time_str});
+       }
+     }
+@@ -1463,7 +1464,11 @@ cmd::CmdR CmdGetEx(CmdArgParser parser, CommandContext* cmd_cntx) {
+     return value;
+   };
+ 
+-  GetReplies{cmd_cntx}.Send(co_await cmd::SingleHopT(cb));
++  auto result = co_await cmd::SingleHopT(cb);
++  if (result.status() == OpStatus::OUT_OF_RANGE)
++    co_return facade::ErrorReply{kGetExExpiryErr};
++
++  GetReplies{cmd_cntx}.Send(std::move(result));
+   co_return std::nullopt;
+ }
+ 
+```
+
+**File**: `src/server/string_family_test.cc` (modified, +21/-0)
+```diff
+@@ -478,6 +478,8 @@ TEST_F(StringFamilyTest, SetEx) {
+   ASSERT_THAT(Run({"setex", "key", StrCat(1 << 30), "val"}), "OK");
+   ASSERT_THAT(Run({"ttl", "key"}), IntArg(kMaxExpireDeadlineSec));
+   ASSERT_THAT(Run({"SETEX", "foo", "18446744073709561", "bar"}), ErrArg("invalid expire time"));
++  ASSERT_EQ(Run({"PSETEX", "key", StrCat(kMaxExpireDeadlineMs + 1), "val"}), "OK");
++  EXPECT_THAT(Run({"PTTL", "key"}), IntArg(kMaxExpireDeadlineMs));
+ }
+ 
+ TEST_F(StringFamilyTest, Range) {
+@@ -714,6 +716,25 @@ TEST_F(StringFamilyTest, GetEx) {
+ 
+   AdvanceTime(1);
+   EXPECT_THAT(Run({"getex", "foo"}), ArgType(RespExpr::NIL));
++
++  // Overflowing deadlines are rejected for an existing key; a missing key still returns nil.
++  for (string_view option : {"EX", "PX", "EXAT", "PXAT"}) {
++    SCOPED_TRACE(option);
++    Run({"set", "foo", "bar", "px", "1000"});
++    EXPECT_THAT(Run({"getex", "foo", option, StrCat(INT64_MAX)}),
++                ErrArg("invalid expire time in 'getex' command"));
++    EXPECT_THAT(Run({"pttl", "foo"}), IntArg(1000));
++    EXPECT_THAT(Run({"getex", "missing", option, StrCat(INT64_MAX)}), ArgType(RespExpr::NIL));
++  }
++
++  // Memcached GAT shares the clamp, so an absolute exptime beyond it is a hit rather than a miss.
++  // Another proactor gives GetMC a memcached connection instead of this thread's reused RESP one.
++  EXPECT_THAT(pp_->at(1)->Await([&] {
++    return GetMC(facade::MemcacheParser::GAT,
++                 {StrCat(TEST_current_time_ms / 1000 + kMaxExpireDeadlineSec + 1), "foo"});
++  }),
++              ElementsAre("VALUE foo 0 3", "bar", "END"));
++  EXPECT_THAT(Run({"pttl", "foo"}), IntArg(kMaxExpireDeadlineMs));
+ }
+ 
+ TEST_F(StringFamilyTest, ClThrottle) {
+```
+
+---
+
+### Incident Patch 2: `2b3024a3` (2026-11-04)
+**Commit Message**: fix(search): rebuild HNSW graphs on FT.ALTER and retire dropped graphs (#8673)
+
+* fix(search): rebuild HNSW graphs on FT.ALTER and retire dropped graphs
+
+FT.ALTER rebuilds the index and numbers its documents anew, but kept the HNSW graphs of the
+existing vector attributes. Nodes stored under the old numbers stayed live, so KNN and vector
+range queries returned fewer documents than requested. For HASH vectors referenced in place, a
+later write or delete of such a document left the orphan node pointing to freed memory.
+Separately, a search that fetched a graph before FT.ALTER, FT.DROPINDEX or FLUSHALL kept
+traversing it while those hash values were freed.
+
+Replace the graphs of the existing HNSW attributes with empty ones before the rebuild. Dropping
+a shard index now retires its graphs: searches on a retired graph return nothing, insertions are
+skipped, and the drop waits on its fiber for the searches and insertions already running.
+FT.DROPINDEX also unregisters the graphs before it releases the shards.
+
+* fix: review comments
+
+* fix(search): wait for retired graph readers on the fiber
+
+Retire waited on the graph lock like a removal, which blocks the shard thread. The lock stays a
+t
+
+**File**: `src/core/search/hnsw_index.cc` (modified, +51/-6)
+```diff
+@@ -9,6 +9,7 @@
+ #include <hnswlib/space_ip.h>
+ #include <hnswlib/space_l2.h>
+ 
++#include <atomic>
+ #include <cstddef>
+ 
+ #include "base/logging.h"
+@@ -75,18 +76,33 @@ struct HnswlibAdapter {
+   }
+ 
+   void Add(const void* data, GlobalDocId id) {
+-    MRMWMutexLock lock(&mrmw_mutex_, MRMWMutex::LockMode::kWriteLock);
+-    DoAdd(data, id);
++    if (auto lock = LockIfActive(MRMWMutex::LockMode::kWriteLock))
++      DoAdd(data, id);
+   }
+ 
+   void Remove(GlobalDocId id) {
+     MRMWMutexLock lock(&mrmw_mutex_, MRMWMutex::LockMode::kWriteLock);
+     DoRemove(id);
+   }
+ 
++  void Retire() {
++    retired_ = true;
++
++    // Writers share the lock and exclude readers: taking it for writing waits for the searches,
++    // taking it for reading for the insertions.
++    { MRMWMutexLock lock(&mrmw_mutex_, MRMWMutex::LockMode::kWriteLock); }
++    { MRMWMutexLock lock(&mrmw_mutex_, MRMWMutex::LockMode::kReadLock); }
++  }
++
++  bool IsRetired() const {
++    return retired_;
++  }
++
+   vector<pair<float, GlobalDocId>> Knn(const void* target, size_t k, std::optional<uint32_t> ef) {
+     uint32_t ef_runtime = ef.value_or(ef_runtime_);
+-    MRMWMutexLock lock(&mrmw_mutex_, MRMWMutex::LockMode::kReadLock);
++    auto lock = LockIfActive(MRMWMutex::LockMode::kReadLock);
++    if (!lock)
++      return {};
+     return QueueToVec(world_.searchKnnWithEf(target, k, nullptr, ef_runtime));
+   }
+ 
+@@ -104,15 +120,19 @@ struct HnswlibAdapter {
+ 
+     uint32_t ef_runtime = ef.value_or(ef_runtime_);
+     BinsearchFilter filter{&allowed};
+-    MRMWMutexLock lock(&mrmw_mutex_, MRMWMutex::LockMode::kReadLock);
++    auto lock = LockIfActive(MRMWMutex::LockMode::kReadLock);
++    if (!lock)
++      return {};
+     return QueueToVec(world_.searchKnnWithEf(target, k, &filter, ef_runtime));
+   }
+ 
+   // Brute-force KNN search over a specific subset of documents.
+   // Computes distances for all provided document IDs and returns the k nearest neighbors.
+   vector<pair<float, GlobalDocId>> SubsetKnn(const void* target, size_t k,
+                                              const vector<GlobalDocId>& docs) {
+-    MRMWMutexLock lock(&mrmw_mutex_, MRMWMutex::LockMode::kReadLock);
++    auto lock = LockIfActive(MRMWMutex::LockMode::kReadLock);
++    if (!lock)
++      return {};
+     return QueueToVec(world_.subsetKnnSearch(target, k, docs));
+   }
+ 
+@@ -122,7 +142,9 @@ struct HnswlibAdapter {
+   vector<pair<float, GlobalDocId>> RangeSearch(const void* target, float radius,
+                                                std::optional<double> epsilon) {
+     double effective_epsilon = epsilon.value_or(epsilon_);
+-    MRMWMutexLock lock(&mrmw_mutex_, MRMWMutex::LockMode::kReadLock);
++    auto lock = LockIfActive(MRMWMutex::LockMode::kReadLock);
++    if (!lock)
++      return {};
+     return world_.searchRange(target, radius, effective_epsilon);
+   }
+ 
+@@ -176,6 +198,20 @@ struct HnswlibAdapter {
+   }
+ 
+  private:
++  // Returns no lock once the index is retired. The check before locking only spares a retired
++  // index the locking. The check under the lock keeps the vectors alive: Retire sets the flag and
++  // then waits for the lock holders, so a caller that still sees the flag clear under the lock is
++  // one that Retire waits for.
++  std::optional<MRMWMutexLock> LockIfActive(MRMWMutex::LockMode mode) {
++    std::optional<MRMWMutexLock> lock;
++    if (retired_)
++      return lock;
++    lock.emplace(&mrmw_mutex_, mode);
++    if (retired_)
++      lock.reset();
++    return lock;
++  }
++
+   // Discard world_ and reconstruct it with the original ctor parameters — used to
+   // recover from a partially-applied RestoreFromNodes when the wire-ordering
+   // invariant is violated. Must be called under the write lock.
+@@ -436,6 +472,7 @@ struct HnswlibAdapter {
+   HierarchicalNSW<float> world_;
+   absl::Mutex resize_mutex_;
+   mutable MRMWMutex mrmw_mutex_;
++  std::atomic_bool retired_ = false;
+ 
+   bool copy_vector_;                    // Whether vectors are copied into hnswlib.
+   size_t capacity_;                     // Initial max_elements_ — used to reconstruct world_.
+@@ -507,6 +544,14 @@ void HnswVectorIndex::Remove(GlobalDocId id) {
+   adapter_->Remove(id);
+ }
+ 
++void HnswVectorIndex::Retire() {
++  adapter_->Retire();
++}
++
++bool HnswVectorIndex::IsRetired() const {
++  return adapter_->IsRetired();
++}
++
+ HnswIndexMetadata HnswVectorIndex::GetMetadata() const {
+   return adapter_->GetMetadata();
+ }
+```
+
+**File**: `src/core/search/hnsw_index.h` (modified, +6/-0)
+```diff
+@@ -50,6 +50,12 @@ class HnswVectorIndex {
+ 
+   void Remove(search::GlobalDocId id);
+ 
++  // Waits for the searches and writers already on the index. Afterwards searches return nothing
++  // and Add does nothing, so the vectors the index borrows may be freed.
++  void Retire();
++
++  bool IsRetired() const;
++
+   bool IsVectorCopied() const {
+     return copy_vector_;
+   }
+```
+
+**File**: `src/core/search/search_test.cc` (modified, +60/-18)
+```diff
+@@ -1555,6 +1555,24 @@ TEST(HnswRestoreInvariant, MissingEntrypointFailsGracefully) {
+   EXPECT_FALSE(restored.RestoreFromNodes(nodes, bad_metadata));
+ }
+ 
++struct BorrowedDoc final : public DocumentAccessor {
++  const char* data;
++  explicit BorrowedDoc(const char* d) : data(d) {
++  }
++  std::optional<VectorInfo> GetVector(string_view, size_t, VectorDataType) const override {
++    return BorrowedFtVector{data};
++  }
++  std::optional<StringList> GetStrings(string_view) const override {
++    return std::nullopt;
++  }
++  std::optional<StringList> GetTags(string_view) const override {
++    return std::nullopt;
++  }
++  std::optional<NumsList> GetNumbers(string_view) const override {
++    return std::nullopt;
++  }
++};
++
+ // Regression: in borrowed mode (copy_vector=false), Remove marks the node deleted
+ // but hnswlib still traverses it and dereferences its data pointer.  If the external
+ // data is freed (as happens after DEL), the pointer dangles.  The fix in DoRemove
+@@ -1576,24 +1594,6 @@ TEST(HnswBorrowedMode, DanglingPointerAfterRemove) {
+   params.hnsw_ef_construction = 200;
+   HnswVectorIndex index(params, /*copy_vector=*/false);
+ 
+-  struct BorrowedDoc : public DocumentAccessor {
+-    const char* data;
+-    explicit BorrowedDoc(const char* d) : data(d) {
+-    }
+-    std::optional<VectorInfo> GetVector(string_view, size_t, VectorDataType) const override {
+-      return BorrowedFtVector{data};
+-    }
+-    std::optional<StringList> GetStrings(string_view) const override {
+-      return std::nullopt;
+-    }
+-    std::optional<StringList> GetTags(string_view) const override {
+-      return std::nullopt;
+-    }
+-    std::optional<NumsList> GetNumbers(string_view) const override {
+-      return std::nullopt;
+-    }
+-  };
+-
+   std::mt19937 rng(42);
+   std::uniform_real_distribution<float> dist(-1.0f, 1.0f);
+ 
+@@ -1630,6 +1630,48 @@ TEST(HnswBorrowedMode, DanglingPointerAfterRemove) {
+   EXPECT_GT(results.size(), 0u);
+ }
+ 
++// A retired index reads no vectors, so the borrowed ones may be freed while searches still hold
++// the index.
++TEST(HnswBorrowedMode, RetiredIndexReadsNoVectors) {
++  constexpr size_t kDim = 256;
++  constexpr size_t kN = 20;
++
++  InitTLSearchMR(PMR_NS::get_default_resource());
++  absl::Cleanup cleanup = [] { InitTLSearchMR(nullptr); };
++
++  SchemaField::VectorParams params;
++  params.use_hnsw = true;
++  params.dim = kDim;
++  params.sim = VectorSimilarity::L2;
++  params.capacity = kN * 2;
++  params.hnsw_m = 16;
++  params.hnsw_ef_construction = 200;
++  HnswVectorIndex index(params, /*copy_vector=*/false);
++
++  std::vector<std::unique_ptr<float[]>> bufs;
++  std::vector<GlobalDocId> ids;
++  for (size_t i = 0; i < kN; i++) {
++    bufs.push_back(std::make_unique<float[]>(kDim));
++    bufs.back()[0] = static_cast<float>(i);
++    index.Add(i, BorrowedDoc{reinterpret_cast<const char*>(bufs.back().get())}, "vec");
++    ids.push_back(i);
++  }
++  vector<float> query(kDim, 0.0f);
++  ASSERT_EQ(index.Knn(query.data(), 5, std::nullopt).size(), 5u);
++
++  index.Retire();
++  bufs.clear();
++
++  EXPECT_THAT(index.Knn(query.data(), 5, std::nullopt), testing::IsEmpty());
++  EXPECT_THAT(index.Knn(query.data(), 5, std::nullopt, ids), testing::IsEmpty());
++  EXPECT_THAT(index.SubsetKnn(query.data(), 5, ids), testing::IsEmpty());
++  EXPECT_THAT(index.RangeQuery(query.data(), 1e9, std::nullopt), testing::IsEmpty());
++
++  auto extra = std::make_unique<float[]>(kDim);
++  index.Add(kN, BorrowedDoc{reinterpret_cast<const char*>(extra.get())}, "vec");
++  EXPECT_EQ(index.GetNodeCount(), kN);
++}
++
+ INSTANTIATE_TEST_SUITE_P(HnswSer, HnswSerializationTest,
+                          testing::Values(HnswSerParam{0, 2, VectorSimilarity::L2},
+                                          HnswSerParam{10, 2, VectorSimilarity::L2},
+```
+
+**File**: `src/server/search/doc_index.cc` (modified, +26/-0)
+```diff
+@@ -750,6 +750,11 @@ void ShardDocIndex::InitHnswShardIndices() {
+   }
+ }
+ 
++void ShardDocIndex::RetireHnswIndices() {
++  for (auto& hnsw_index : hnsw_shard_indices_)
++    hnsw_index.global_index()->Retire();
++}
++
+ void ShardDocIndex::AddDocToGlobalVectorIndex(ShardDocIndex::DocId doc_id, const DbContext& db_cntx,
+                                               PrimeValue* pv) {
+   if (hnsw_state_ != HnswState::kBuilding) {
+@@ -758,6 +763,11 @@ void ShardDocIndex::AddDocToGlobalVectorIndex(ShardDocIndex::DocId doc_id, const
      return;
    }
  
++  // Retired graphs ignore additions, and taking their locks would keep Retire waiting.
++  if (rng::any_of(hnsw_shard_indices_,
++                  [](const auto& hnsw) { return hnsw.global_index()->IsRetired(); }))
++    return;
++
+   auto locks = TryLockHnswIndices(doc_id);
+   if (!locks) {
+     DeferHnswUpdate(doc_id, db_cntx.ns);
+@@ -1691,6 +1701,13 @@ unique_ptr<ShardDocIndex> ShardDocIndices::ExtractIndex(string_view name) {
+   if (it == indices_.end())
+     return nullptr;
+ 
++  // Searches may still hold the graphs. Retire them while the index is registered, so that the
++  // deletions during the wait still defer and keep what the graphs point into.
++  it->second->RetireHnswIndices();
++
++  // Retiring may suspend.
++  it = indices_.find(name);
++  DCHECK(it != indices_.end());
+   DropIndexCache(*it->second);
+   auto index = std::move(it->second);
+   indices_.erase(it);
+@@ -1699,6 +1716,15 @@ unique_ptr<ShardDocIndex> ShardDocIndices::ExtractIndex(string_view name) {
+ 
+ void ShardDocIndices::DropAllIndices() {
+   aliases_.clear();
++
++  // Retire while the indices are registered, as ExtractIndex does. Retiring may suspend, so don't
++  // iterate the map meanwhile.
++  vector<ShardDocIndex*> registered;
++  for (auto& [_, idx] : indices_)
++    registered.push_back(idx.get());
++  for (auto* idx : registered)
++    idx->RetireHnswIndices();
++
+   // Move indices out before destroying — ShardDocIndex destructors can yield
+   // (CancelBuilder joins a fiber), and destroying inside the map would trigger
+   // Abseil's reentrance assert if the heartbeat iterates indices_ mid-clear.
 ```
 
-**File**: `src/server/tiering/small_bins.cc` (modified, +28/-10)
+**File**: `src/server/search/doc_index.h` (modified, +3/-0)
 ```diff
-@@ -26,6 +26,15 @@ size_t StashedValueSize(string_view value) {
-   return SmallBins::kEntryHeaderSize + value.size();
- }
+@@ -667,6 +667,9 @@ class ShardDocIndex {
+   // Initialize per-shard HNSW wrappers from schema + global registry.
+   void InitHnswShardIndices();
  
-+// Move all keys out of an entry map, emptying it.
-+template <typename T> std::vector<DbKeyId> DrainKeys(EntryMap<T>& entries) {
-+  std::vector<DbKeyId> out;
-+  out.reserve(entries.size());
-+  while (!entries.empty())
-+    out.emplace_back(std::move(entries.extract(entries.begin()).key()));
-+  return out;
-+}
++  // Retire the global HNSW indices this index is bound to (HnswVectorIndex::Retire).
++  void RetireHnswIndices();
 +
- // The biggest a single entry (value + fixed header) can ever be.
- constexpr size_t kMaxEntrySize = (2_KB - 1) + SmallBins::kEntryHeaderSize;
+  private:
+   std::shared_ptr<const DocIndex> base_;
+   DocFieldTypes field_types_;  // derived from base_->schema
+```
+
+**File**: `src/server/search/global_hnsw_index.cc` (modified, +2/-2)
+```diff
+@@ -30,14 +30,14 @@ GlobalHnswIndexRegistry& GlobalHnswIndexRegistry::Instance() {
  
-@@ -122,14 +131,17 @@ SmallBins::KeySegmentList SmallBins::ReportStashed(BinId id, DiskSegment segment
- }
+ bool GlobalHnswIndexRegistry::Create(std::string_view index_name, std::string_view field_name,
+                                      const search::SchemaField::VectorParams& params,
+-                                     DocIndex::DataType data_type) {
++                                     DocIndex::DataType data_type, bool replace) {
+   std::string key = MakeKey(index_name, field_name);
  
- std::vector<std::pair<DbIndex, std::string>> SmallBins::ReportStashAborted(BinId id) {
--  std::vector<std::pair<DbIndex, std::string>> out;
--
-   auto node = pending_bins_.extract(id);
--  auto& entries = node.mapped();
--  while (!entries.empty())
--    out.emplace_back(std::move(entries.extract(entries.begin()).key()));
-+  DCHECK(!node.empty()) << id;
-+  if (node.empty())
-+    return {};
+   std::unique_lock<std::shared_mutex> lock(registry_mutex_);
  
--  return out;
-+  return DrainKeys(node.mapped());
-+}
-+
-+std::vector<std::pair<DbIndex, std::string>> SmallBins::ReportStashFailed(FilledBin bin) {
-+  DCHECK(!pending_bins_.contains(bin.id));
-+  return DrainKeys(bin.entries_);
- }
+   auto it = indices_.find(key);
  
- std::optional<SmallBins::BinId> SmallBins::Delete(DbIndex dbid, std::string_view key) {
-@@ -143,9 +155,14 @@ std::optional<SmallBins::BinId> SmallBins::Delete(DbIndex dbid, std::string_view
-     return std::nullopt;
+-  if (it != indices_.end())
++  if (it != indices_.end() && !replace)
+     return false;
+ 
+   // We make a copy of vector data when:
+```
+
+**File**: `src/server/search/global_hnsw_index.h` (modified, +3/-1)
+```diff
+@@ -23,8 +23,10 @@ class GlobalHnswIndexRegistry {
+  public:
+   static GlobalHnswIndexRegistry& Instance();
+ 
++  // Fails if the field already has an index, unless `replace` is set.
+   bool Create(std::string_view index_name, std::string_view field_name,
+-              const search::SchemaField::VectorParams& params, DocIndex::DataType data_type);
++              const search::SchemaField::VectorParams& params, DocIndex::DataType data_type,
++              bool replace = false);
+ 
+   bool Remove(std::string_view index_name, std::string_view field_name);
+ 
+```
+
+**File**: `src/server/search/search_family.cc` (modified, +21/-8)
+```diff
+@@ -2811,6 +2811,16 @@ void CmdFtAlter(CmdArgParser parser, CommandContext* cmd_cntx) {
+     return cmd_cntx->SendError("Index already exists");
    }
  
--  for (auto& [id, keys] : pending_bins_) {
--    if (keys.erase(make_pair(dbid, key)))
--      return keys.empty() ? std::make_optional(id) : std::nullopt;
-+  for (auto it = pending_bins_.begin(); it != pending_bins_.end(); ++it) {
-+    if (it->second.erase(make_pair(dbid, key))) {
-+      if (!it->second.empty())
-+        return std::nullopt;
-+      BinId id = it->first;
-+      pending_bins_.erase(it);  // don't leave the drained bin behind
-+      return id;
++  // The rebuild numbers the documents anew, so the existing HNSW attributes start from empty
++  // graphs too. The update below retires the old graphs when it drops the old shard indices.
++  for (const auto& [alias, field] : index_info->schema.fields) {
++    if (field.number < first_added && field.IsIndexableHnswField()) {
++      const auto& vparams = std::get<search::SchemaField::VectorParams>(field.special_params);
++      GlobalHnswIndexRegistry::Instance().Create(canonical_name, alias, vparams, index_info->type,
++                                                 /*replace=*/true);
 +    }
-   }
-   return std::nullopt;
- }
-@@ -187,7 +204,8 @@ SmallBins::Stats SmallBins::GetStats() const {
-                .stashed_entries_cnt = stats_.stashed_entries_cnt,
-                .stashed_entries_bytes = stats_.stashed_entries_bytes,
-                .current_bin_bytes = current_bin_.bytes_,
--               .current_entries_cnt = current_bin_.entries_.size()};
-+               .current_entries_cnt = current_bin_.entries_.size(),
-+               .pending_bins_cnt = pending_bins_.size()};
- }
++  }
++
+   LOG(INFO) << "Altering " << canonical_name << ": "
+             << DocIndexInfo{.base_index = *index_info, .hnsw_metadata = {}}.BuildRestoreCommand();
  
- SmallBins::KeyHashDbList SmallBins::DeleteBin(DiskSegment segment, std::string_view value) {
-```
-
-**File**: `src/server/tiering/small_bins.h` (modified, +5/-0)
-```diff
-@@ -33,6 +33,7 @@ class SmallBins {
-     size_t stashed_entries_bytes = 0;
-     size_t current_bin_bytes = 0;
-     size_t current_entries_cnt = 0;
-+    size_t pending_bins_cnt = 0;
+@@ -2887,15 +2897,10 @@ void CmdFtDropIndex(CmdArgParser parser, CommandContext* cmd_cntx) {
+     return OpStatus::OK;
    };
  
-   using BinId = unsigned;
-@@ -76,6 +77,10 @@ class SmallBins {
-   // Report that a stash was aborted. Returns list of keys that the entry contained.
-   std::vector<std::pair<DbIndex, std::string>> ReportStashAborted(BinId id);
+-  cmd_cntx->tx()->Execute(cb, true);
+-
+-  // Destroy indices on their shard threads outside the FiberQueue.
+-  // ~ShardDocIndex calls CancelBuilder which joins the builder fiber. We must not run this
+-  // on the FiberQueue because the builder's VectorLoop may have work queued on the same
+-  // FiberQueue — joining from within the FiberQueue consumer would deadlock.
+-  shard_set->RunBlockingInParallel(
+-      [&dropped](EngineShard* es) { dropped[es->shard_id()].reset(); });
++  cmd_cntx->tx()->Execute(cb, false);
  
-+  // Report that a filled bin could not be stashed before it was serialized.
-+  // Returns list of keys that the bin contained.
-+  std::vector<std::pair<DbIndex, std::string>> ReportStashFailed(FilledBin bin);
++  // Unregister the graphs while the shards are still held, so that this cannot remove the graphs
++  // of a new index with the same name.
+   if (index_info) {
+     for (const auto& [alias, field_info] : index_info->schema.fields) {
+       if (field_info.type == search::SchemaField::VECTOR &&
+@@ -2906,6 +2911,14 @@ void CmdFtDropIndex(CmdArgParser parser, CommandContext* cmd_cntx) {
+       }
+     }
+   }
++  cmd_cntx->tx()->Conclude();
 +
-   // Delete a key with pending io. Returns entry id if needs to be deleted.
-   std::optional<BinId> Delete(DbIndex dbid, std::string_view key);
++  // Destroy indices on their shard threads outside the FiberQueue.
++  // ~ShardDocIndex calls CancelBuilder which joins the builder fiber. We must not run this
++  // on the FiberQueue because the builder's VectorLoop may have work queued on the same
++  // FiberQueue — joining from within the FiberQueue consumer would deadlock.
++  shard_set->RunBlockingInParallel(
++      [&dropped](EngineShard* es) { dropped[es->shard_id()].reset(); });
  
-```
-
-**File**: `src/server/tiering/small_bins_test.cc` (modified, +48/-0)
-```diff
-@@ -159,4 +159,52 @@ TEST_F(SmallBinsTest, StashedEntriesBytes) {
-   EXPECT_EQ(bins_.GetStats().stashed_entries_cnt, 0u);
- }
- 
-+TEST_F(SmallBinsTest, DeleteAllPendingKeysReleasesBin) {
-+  // Fill a single bin and move it to the pending (in-flight) state via SerializeBin.
-+  std::optional<SmallBins::FilledBin> bin;
-+  unsigned i = 0;
-+  for (; !bin; i++)
-+    bin = bins_.Stash(0, absl::StrCat("k", i), absl::StrCat("v", i));
-+  auto [id, data] = Serialize(*bin);
-+
-+  EXPECT_EQ(bins_.GetStats().pending_bins_cnt, 1u);
-+
-+  // Delete every key of the in-flight bin. Only the final delete should report the bin id.
-+  std::optional<SmallBins::BinId> reported;
-+  for (unsigned j = 0; j < i; j++) {
-+    auto res = bins_.Delete(0, absl::StrCat("k", j));
-+    if (res) {
-+      EXPECT_FALSE(reported) << "bin id reported more than once";
-+      reported = res;
-+    }
-+  }
-+
-+  ASSERT_TRUE(reported);
-+  EXPECT_EQ(*reported, id);
-+  // The now-empty pending entry must be released, otherwise empty maps pile up forever.
-+  EXPECT_EQ(bins_.GetStats().pending_bins_cnt, 0u);
-+}
-+
-+TEST_F(SmallBinsTest, ReportStashFailedReturnsAllKeys) {
-+  // A bin that filled up but failed to stash before serialization is never tracked as pending.
-+  std::optional<SmallBins::FilledBin> bin;
-+  unsigned i = 0;
-+  for (; !bin; i++)
-+    bin = bins_.Stash(0, absl::StrCat("k", i), absl::StrCat("v", i));
-+
-+  EXPECT_EQ(bins_.GetStats().pending_bins_cnt, 0u);  // not serialized yet
-+
-+  auto keys = bins_.ReportStashFailed(std::move(*bin));
-+  sort(keys.begin(), keys.end());
-+
-+  // The key that triggers the fill opens a new current bin, so the filled bin holds k0..k(i-2).
-+  EXPECT_EQ(keys.size(), i - 1);
-+  for (unsigned j = 0; j + 1 < i; j++) {
-+    std::pair<DbIndex, std::string> needle{0, absl::StrCat("k", j)};
-+    EXPECT_TRUE(binary_search(keys.begin(), keys.end(), needle)) << j;
-+  }
-+  // Recovering a failed bin must not register it as pending.
-+  EXPECT_EQ(bins_.GetStats().pending_bins_cnt, 0u);
-+}
-+
- }  // namespace dfly::tiering
+   if (num_deleted == 0u)
+     return cmd_cntx->SendError(IndexNotFoundMsg(idx_name));
 ```
 
 ---
 
-### Incident Patch 2: `71dcd511` (2026-11-03)
-**Commit Message**: fix(ci-dashboard): add private repo links (#8640)
+### Incident Patch 3: `5d9ae0f9` (2026-11-04)
+**Commit Message**: chore(ci): move the sanitizer build from PR checks to daily builds (#8743)
 
-- Fetch and link issues from dragonflydb/dataplane-private alongside the
-public issues and PRs from dragonflydb/dragonfly.
+Signed-off-by: Volodymyr Yavdoshenko <[REDACTED_EMAIL]>
 
-- Remove the 500-record limit so closed issues and PRs cover the full
-180 days. Fetch all open records and show progress while fetching.
-
-- Show each link's repository and make the test column narrower so issue
-and PR links have more room.
-
-- Use a token that can read both repositories and remove the workflow
-artifact. The dashboard is published to the private GCS bucket.
-
-- Add tests for both repositories, private issue details, issue number
-  matching, and fetching more than 500 records.
-
-Fixes #8608
-
-Signed-off-by: Gil Levkovich <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/ci-test-dashboard.yml` (modified, +9/-9)
+**File**: `.github/workflows/ci.yml` (modified, +7/-18)
 ```diff
-@@ -91,18 +91,18 @@ jobs:
-             "${DASHBOARD_ROOT}/site/data"
+@@ -73,21 +73,12 @@ jobs:
+         compiler: [{ cxx: g++, c: gcc }]
+         # -no-pie to disable address randomization so we could symbolize stacktraces
+         cxx_flags: ["-Werror -no-pie"]
+-        sanitizers: ["NoSanitizers"]
++        # The ASAN/UBSAN build runs nightly in daily-builds.yml (build-sanitizers), not per PR.
+         include:
+           - container: "alpine-dev:latest"
+             build-type: Debug
+             compiler: { cxx: clang++, c: clang }
+             cxx_flags: ""
+-            sanitizers: "NoSanitizers"
+-          - container: "ubuntu-dev:24"
+-            build-type: Debug
+-            compiler: { cxx: clang++, c: clang }
+-            # https://maskray.me/blog/2023-08-25-clang-wunused-command-line-argument (search for compiler-rt)
+-            cxx_flags: "-Wno-error=unused-command-line-argument"
+-            sanitizers: "Sanitizers"
+-            # Sanitizer builds produce larger objects, so give this job a bigger ccache.
+-            ccache-max-size: "2G"
  
-       # Create data/issue-links.json containing related issue/PR/assignee lookup data.
-+      # CI_DASHBOARD_GITHUB_TOKEN must read issues in both repos and PRs in dragonfly.
-       - name: Link tests to GitHub issues and pull requests
-         shell: bash
-         env:
--          GITHUB_TOKEN: ${{ github.token }}
--        run: python3 "${DASHBOARD_ROOT}/sync_issue_links.py" "${DASHBOARD_ROOT}/site/data"
--
--      - name: Upload dashboard artifact
--        uses: actions/upload-artifact@v7
--        with:
--          name: ci-test-dashboard
--          path: ${{ env.DASHBOARD_ROOT }}/site
--          if-no-files-found: error
-+          GITHUB_TOKEN: ${{ secrets.CI_DASHBOARD_GITHUB_TOKEN }}
+     runs-on: ubuntu-latest
+     container:
+@@ -135,7 +126,7 @@ jobs:
+           echo "-----------------------------"
+ 
+       - name: Test dependency-cache manifest
+-        if: matrix.container == 'ubuntu-dev:24' && matrix.build-type == 'Debug' && matrix.compiler.cxx == 'g++' && matrix.sanitizers == 'NoSanitizers'
++        if: matrix.container == 'ubuntu-dev:24' && matrix.build-type == 'Debug' && matrix.compiler.cxx == 'g++'
+         # run only once for both pull requests and pushes.
+         run: bash .github/actions/builder/scripts/test_deps_cache_manifest.sh
+ 
+@@ -147,11 +138,9 @@ jobs:
+           enable-deps-cache: 'true'
+           build-type: ${{matrix.build-type}}
+           cache-key-suffix: ${{ matrix.container }}
+-          ccache-max-size: ${{ matrix.ccache-max-size || '1G' }}
+           c-compiler: ${{matrix.compiler.c}}
+           cxx-compiler: ${{matrix.compiler.cxx}}
+           cxx-flags: ${{matrix.cxx_flags}}
+-          sanitizers: ${{matrix.sanitizers}}
+ 
+       - name: PostFail
+         if: failure()
+@@ -250,7 +239,7 @@ jobs:
+           path: /tmp/*INFO*
+ 
+       - name: Run regression tests
+-        if: matrix.container == 'ubuntu-dev:24' && matrix.sanitizers == 'NoSanitizers' && github.event_name != 'push'
++        if: matrix.container == 'ubuntu-dev:24' && github.event_name != 'push'
+         uses: ./.github/actions/regression-tests
+         with:
+           dfly-executable: dragonfly
+@@ -277,7 +266,7 @@ jobs:
+         # external-server mode against the just-built binary, on both Debug and Release.
+         # continue-on-error keeps it a canary for now — flip to a blocking step once proven stable
+         # in CI. See tests/dragonfly/valkey_tcl/README.md.
+-        if: matrix.container == 'ubuntu-dev:24' && matrix.sanitizers == 'NoSanitizers' && github.event_name != 'push'
++        if: matrix.container == 'ubuntu-dev:24' && github.event_name != 'push'
+         continue-on-error: true
+         timeout-minutes: 20
+         run: |
+@@ -290,8 +279,8 @@ jobs:
+       - name: Prepare JUnit artifact name
+         if: always() && github.event_name != 'push'
+         run: |
+-          NAME="junit-ci-${{ matrix.container }}-${{ matrix.build-type }}-${{ matrix.compiler.cxx }}-${{ matrix.sanitizers }}"
+-          MATRIX_NAME="container-${{ matrix.container }}-build-${{ matrix.build-type }}-compiler-${{ matrix.compiler.cxx }}-sanitizers-${{ matrix.sanitizers }}"
++          NAME="junit-ci-${{ matrix.container }}-${{ matrix.build-type }}-${{ matrix.compiler.cxx }}"
++          MATRIX_NAME="container-${{ matrix.container }}-build-${{ matrix.build-type }}-compiler-${{ matrix.compiler.cxx }}"
+           SAFE_NAME=$("${GITHUB_WORKSPACE}/.github/scripts/sanitize-token.sh" "${NAME}")
+           {
+             echo "CI_JUNIT_ARTIFACT=${SAFE_NAME}"
+@@ -346,7 +335,7 @@ jobs:
+             "${MATRIX_NAME}" "C++ GTest dashboard JSON"
+ 
+       - name: Upload dragonfly binary for cgroup test
+-        if: matrix.container == 'ubuntu-dev:24' && matrix.build-type == 'Release' && matrix.sanitizers == 'NoSanitizers' && matrix.compiler.cxx == 'g++' && github.event_name != 'push'
++        if: matrix.container == 'ubuntu-dev:24' && matrix.build-type == 'Release' && matrix.compiler.cxx == 'g++' && github.event_name != 'push'
+         uses: actions/upload-artifact@v7
+         with:
+           name: dragonfly-binary
+```
+
+**File**: `.github/workflows/daily-builds.yml` (modified, +240/-0)
+```diff
+@@ -142,3 +142,243 @@ jobs:
+             -H 'Content-Type: application/json' \
+             '${{ secrets.GSPACES_BOT_DF_BUILD }}' \
+             -d '{"text": "'"${message}"'"}'
++
++  build-sanitizers:
++    if: github.repository == 'dragonflydb/dragonfly'
++    runs-on: ubuntu-latest
++    name: Build sanitizers
++    # The ASAN/UBSAN configuration that used to be a leg of the ci-tests matrix, with the same unit-test
++    # passes and JUnit upload. It took 48-102 min there; this job is the only producer of the Sanitizers
++    # caches on main, so after a cache eviction it is a cold build.
++    timeout-minutes: 180
++
++    permissions:
++      contents: read
++      id-token: write
++      packages: read
++      actions: write # To allow deleting cache
++
++    env:
++      GTEST_BRIEF: 1
++      CPP_JUNIT_DIR: ${{ github.workspace }}/test-results/junit/cpp
++      CPP_DASHBOARD_DIR: ${{ github.workspace }}/test-results/dashboard/cpp
++
++    container:
++      image: ghcr.io/romange/ubuntu-dev:24
++      # Seems that docker by default prohibits running iouring syscalls
++      options: --security-opt seccomp=unconfined --sysctl "net.ipv6.conf.all.disable_ipv6=0"
++      volumes:
++        - /:/hostroot
++        - /mnt:/mnt
++      credentials:
++        username: ${{ github.repository_owner }}
++        password: ${{ secrets.GITHUB_TOKEN }}
++
++    steps:
++      - uses: actions/checkout@v7
++        with:
++          submodules: true
++
++      - name: Prepare Environment
 +        run: |
-+          set -euo pipefail
-+          test -n "${GITHUB_TOKEN}" || {
-+            echo "CI_DASHBOARD_GITHUB_TOKEN is required to read dragonflydb/dataplane-private" >&2
-+            false
++          uname -a
++          cmake --version
++          mkdir -p ${GITHUB_WORKSPACE}/build
++          mount
++
++          echo "===================Before freeing up space ============================================"
++          df -h
++          rm -rf /hostroot/usr/share/dotnet
++          rm -rf /hostroot/usr/local/share/boost
++          rm -rf /hostroot/usr/local/lib/android
++          rm -rf /hostroot/opt/ghc
++          echo "===================After freeing up space ============================================"
++          df -h
++          touch /mnt/foo
++          ls -la /mnt/foo
++
++      - name: System diagnostics
++        run: |
++          echo "ulimit is"
++          ulimit -s
++          echo "-----------------------------"
++          echo "disk space is:"
++          df -h
++          echo "-----------------------------"
++
++      - name: Build Dragonfly
++        uses: ./.github/actions/builder
++        with:
++          enable-ccache: 'true'
++          ccache-save: 'true'
++          enable-deps-cache: 'true'
++          build-type: Debug
++          cache-key-suffix: ubuntu-dev:24
++          # Sanitizer builds produce larger objects, so give this job a bigger ccache.
++          ccache-max-size: '2G'
++          c-compiler: clang
++          cxx-compiler: clang++
++          # https://maskray.me/blog/2023-08-25-clang-wunused-command-line-argument (search for compiler-rt)
++          cxx-flags: "-Wno-error=unused-command-line-argument"
++          sanitizers: Sanitizers
++
++      - name: PostFail
++        if: failure()
++        run: |
++          echo "disk space is:"
++          df -h
++
++      - name: C++ Unit Tests - IoUring
++        run: |
++          cd ${GITHUB_WORKSPACE}/build
++          echo Run ctest -V -L DFLY
++          JUNIT_DIR="${CPP_JUNIT_DIR}"
++          CTEST_JUNIT_DIR="${JUNIT_DIR}/ctest"
++          GTEST_IOURING_DIR="${JUNIT_DIR}/gtest/iouring"
++          GTEST_MANUAL_DIR="${JUNIT_DIR}/gtest/iouring-manual"
++          mkdir -p "${CTEST_JUNIT_DIR}" "${GTEST_IOURING_DIR}" "${GTEST_MANUAL_DIR}"
++
++          run_manual_gtest() {
++            GTEST_OUTPUT="xml:${GTEST_MANUAL_DIR}/" timeout 5m "$@"
 +          }
-+          python3 "${DASHBOARD_ROOT}/sync_issue_links.py" "${DASHBOARD_ROOT}/site/data"
- 
-       - name: Authenticate to GCP
-         uses: google-github-actions/auth@v3
++
++          GTEST_OUTPUT="xml:${GTEST_IOURING_DIR}/" \
++          GLOG_alsologtostderr=1 GLOG_vmodule=rdb_load=1,rdb_save=1,snapshot=1,op_manager=1,op_manager_test=1 \
++          FLAGS_fiber_safety_margin=4096 timeout 20m ctest -V -L DFLY -E allocation_tracker_test \
++            --output-junit "${CTEST_JUNIT_DIR}/iouring.xml"
++
++          # Run allocation tracker test separately without alsologtostderr because it generates a TON of logs.
++          GTEST_OUTPUT="xml:${GTEST_MANUAL_DIR}/" FLAGS_fiber_safety_margin=4096 \
++            timeout 5m ./allocation_tracker_test
++
++          run_manual_gtest ./dragonfly_test
++          run_manual_gtest ./json_family_test --jsonpathv2=false
++          run_manual_gtest ./tiered_storage_test --vmodule=db_slice=2 --logtostderr
++          run_manual_gtest ./search_test --use_numeric_range_tree=false
++          run_manual_gtest ./search_family_test --use_numeric_range_tree=false
++
++      - name: C++ Unit Tests - Epoll
++        run: |
++          cd ${GITHUB_WORKSPACE}/build
++          JUNIT_DIR="${CPP_JUNIT_DIR}"
++          CTEST_JUNIT_DIR="${JUNIT_DIR}/ctest"
++          GTEST_EPOLL_DIR="${JUNIT_DIR}/gtest/epoll"
++          GTEST_MANUAL_DIR="${JUNIT_DIR}/gtest/epoll-manual"
++          mkdir -p "${CTEST_JUNIT_DIR}" "${GTEST_EPOLL_DIR}" "${GTEST_MANUAL_DIR}"
++
++          # Create a rule that automatically prin
 ```
 
-**File**: `tools/ci_test_dashboard/site/app.js` (modified, +25/-11)
+**File**: `AGENTS.md` (modified, +1/-1)
 ```diff
-@@ -346,6 +346,24 @@ function linksFor(test) {
-   return state.issueLinks?.links?.[test.id] ?? null;
- }
+@@ -315,7 +315,7 @@ save, the replication teardown or the command sequence that produces it.
  
-+function linkReference(record) {
-+  const repository = record.repository ?? state.issueLinks?.repository;
-+  return repository ? `${repository}#${record.number}` : `#${record.number}`;
-+}
-+
-+function relatedLinkHtml(record, kind) {
-+  const label = escapeHtml(linkReference(record));
-+  const url = record.url ??
-+      (record.repository ? `https://github.com/${record.repository}/${kind}/${record.number}` :
-+                           null);
-+  if (!url) {
-+    return label;
-+  }
-+  const title = record.title ? ` title="${escapeHtml(record.title)}"` : '';
-+  return `<a href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer"${title}>${
-+      label}</a>`;
-+}
-+
- // Chooses the label when related issues or pull requests are unavailable or absent.
- function unavailableLinkValue(test) {
-   if (state.issueLinksStatus === 'loading') {
-@@ -369,11 +387,9 @@ function issueLinksHtml(test) {
-             const assignees = issue.eligible_for_assignee && issue.assignees?.length ?
-                 `, assigned: ${issue.assignees.join(', ')}` :
-                 '';
--            return `<a href="${
--                escapeHtml(issue.url)}" target="_blank" rel="noopener noreferrer" title="${
--                escapeHtml(
--                    issue.title)}">#${escapeHtml(issue.number)}</a><span class="link-state"> (${
--                escapeHtml(issue.state)}${escapeHtml(assignees)})</span>`;
-+            const state =
-+                issue.state ? ` (${escapeHtml(issue.state)}${escapeHtml(assignees)})` : '';
-+            return `${relatedLinkHtml(issue, 'issues')}<span class="link-state">${state}</span>`;
-           })
-           .join(', ')}</span>`;
- }
-@@ -390,7 +406,8 @@ function assigneesHtml(test) {
-     return '<span class="unavailable">N/A</span>';
-   }
-   const assignees = dedicatedIssues.flatMap(
--      (issue) => (issue.assignees ?? []).map((assignee) => `${assignee} (#${issue.number})`));
-+      (issue) =>
-+          (issue.assignees ?? []).map((assignee) => `${assignee} (${linkReference(issue)})`));
-   return assignees.length ? escapeHtml(assignees.join(', ')) :
-                             '<span class="unavailable">Unassigned</span>';
- }
-@@ -404,11 +421,8 @@ function pullRequestsHtml(test) {
-   return `<span class="related-links">${
-       links.pull_requests
-           .map(
--              (pullRequest) => `<a href="${
--                  escapeHtml(pullRequest.url)}" target="_blank" rel="noopener noreferrer" title="${
--                  escapeHtml(pullRequest.title)}">#${
--                  escapeHtml(pullRequest.number)}</a><span class="link-state"> (${
--                  escapeHtml(pullRequest.state)})</span>`)
-+              (pullRequest) => `${relatedLinkHtml(pullRequest, 'pull')}<span class="link-state">${
-+                  pullRequest.state ? ` (${escapeHtml(pullRequest.state)})` : ''}</span>`)
-           .join(', ')}</span>`;
- }
+ The CI workflow runs on all PRs and includes:
+ - **Pre-commit checks**: clang-format, black formatters
+-- **Build matrix**: Multiple OS/compiler/sanitizer combinations (Ubuntu 20/24, Alpine, GCC/Clang, ASAN/UBSAN)
++- **Build matrix**: Multiple OS/compiler combinations (Ubuntu 24, Alpine, GCC/Clang); the ASAN/UBSAN build runs nightly in `daily-builds.yml`
+ - **Test execution**: C++ unit tests, Python integration tests, cluster mode tests
+ - **Additional validations**: Helm charts, Docker image builds
  
-```
-
-**File**: `tools/ci_test_dashboard/site/styles.css` (modified, +15/-6)
-```diff
-@@ -247,7 +247,8 @@ select {
- table {
-   border-collapse: collapse;
-   font-size: 12px;
--  min-width: 1100px;
-+  min-width: 1200px;
-+  table-layout: fixed;
-   width: 100%;
- }
- 
-@@ -281,6 +282,11 @@ td:nth-child(2) {
-   width: 64px;
- }
- 
-+th:first-child,
-+td:first-child {
-+  width: 220px;
-+}
-+
- th:nth-child(3),
- td:nth-child(3),
- th:nth-child(7),
-@@ -296,7 +302,7 @@ th:nth-child(4),
- td:nth-child(4),
- th:nth-child(5),
- td:nth-child(5) {
--  width: 88px;
-+  width: 130px;
- }
- 
- th:nth-child(6),
-@@ -306,11 +312,14 @@ td:nth-child(6) {
- 
- th:nth-child(10),
- td:nth-child(10),
--th:nth-child(11),
--td:nth-child(11),
- th:nth-child(12),
- td:nth-child(12) {
--  width: 78px;
-+  width: 150px;
-+}
-+
-+th:nth-child(11),
-+td:nth-child(11) {
-+  width: 100px;
- }
- 
- th {
-@@ -336,7 +345,7 @@ tbody tr.selected {
- .test-name {
-   display: grid;
-   gap: 4px;
--  min-width: 220px;
-+  min-width: 0;
- }
- 
- .test-name strong {
-```
-
-**File**: `tools/ci_test_dashboard/sync_issue_links.py` (modified, +113/-52)
-```diff
-@@ -1,5 +1,5 @@
- #!/usr/bin/env python3
--"""Create deterministic public issue and pull request links for dashboard tests."""
-+"""Create deterministic issue and pull request links for dashboard tests."""
- 
- from __future__ import annotations
- 
-@@ -16,10 +16,11 @@
- 
- SCHEMA_VERSION = 3
- DEFAULT_REPOSITORY = "dragonflydb/dragonfly"
-+PRIVATE_ISSUES_REPOSITORY = "dragonflydb/dataplane-private"
-+DEFAULT_REPOSITORIES = (DEFAULT_REPOSITORY, PRIVATE_ISSUES_REPOSITORY)
- NAME_ONLY_MIN_LENGTH = 12
- MIN_ALIAS_LENGTH = 8
- CLOSED_HISTORY_DAYS = 180
--MAX_CLOSED_HISTORY_RECORDS = 500
- 
- 
- def github_api(url: str, token: str) -> Any:
-@@ -46,22 +47,25 @@ def github_pages(endpoint: str, token: str) -> list[dict[str, Any]]:
-     page = 1
-     while True:
-         separator = "&" if "?" in endpoint else "?"
-+        print(f"Fetching {endpoint}, page {page}", flush=True)
-         page_items = github_api(f"{endpoint}{separator}per_page=100&page={page}", token)
-         if not isinstance(page_items, list):
-             raise RuntimeError(f"Unexpected GitHub API response from {endpoint}")
-         items.extend(page_items)
-+        print(f"Received {len(page_items)} records; {len(items)} total", flush=True)
-         if len(page_items) < 100:
-             return items
-         page += 1
- 
- 
- def github_recent_pages(
--    endpoint: str, token: str, cutoff: datetime, maximum: int, include: Any = lambda item: True
-+    endpoint: str, token: str, cutoff: datetime, include: Any = lambda item: True
- ) -> list[dict[str, Any]]:
-     items: list[dict[str, Any]] = []
-     page = 1
-     while True:
-         separator = "&" if "?" in endpoint else "?"
-+        print(f"Fetching {endpoint}, page {page}", flush=True)
-         page_items = github_api(
-             f"{endpoint}{separator}per_page=100&page={page}&sort=updated&direction=desc", token
-         )
-@@ -78,8 +82,10 @@ def github_recent_pages(
-             if closed_at >= cutoff and include(item):
-                 recent_items.append(item)
-         items.extend(recent_items)
--        if len(items) >= maximum:
--            return items[:maximum]
-+        print(
-+            f"Received {len(page_items)} records; {len(items)} within the cutoff",
-+            flush=True,
-+        )
-         if len(page_items) < 100 or reached_cutoff:
-             return items
-         page += 1
-@@ -185,14 +191,13 @@ def pull_request_references_issue(
- ) -> bool:
-     text = record_text(pull_request)
-     escaped_repository = re.escape(repository)
--    return any(
--        re.search(pattern, text) is not None
--        for pattern in (
--            rf"(?<![\w/])#{issue_number}\b",
--            rf"(?<![\w/]){escaped_repository}#{issue_number}\b",
--            rf"https?://github\.com/{escaped_repository}/issues/{issue_number}\b",
--        )
--    )
-+    patterns = [
-+        rf"(?<![\w/]){escaped_repository}#{issue_number}\b",
-+        rf"https?://github\.com/{escaped_repository}/issues/{issue_number}\b",
-+    ]
-+    if pull_request.get("repository", DEFAULT_REPOSITORY) == repository:
-+        patterns.append(rf"(?<![\w/])#{issue_number}\b")
-+    return any(re.search(pattern, text) is not None for pattern in patterns)
- 
- 
- def record_state(record: dict[str, Any]) -> str:
-@@ -201,6 +206,21 @@ def record_state(record: dict[str, Any]) -> str:
-     return record.get("state", "closed")
- 
- 
-+def record_repository(record: dict[str, Any], fallback: str) -> str:
-+    return record.get("repository", fallback)
-+
-+
-+def link_record(record: dict[str, Any], fallback: str) -> dict[str, Any]:
-+    source_repository = record_repository(record, fallback)
-+    return {
-+        "number": record["number"],
-+        "repository": source_repository,
-+        "url": record["html_url"],
-+        "title": record["title"],
-+        "state": record_state(record),
-+    }
-+
-+
- def build_links(
-     tests: list[dict[str, Any]],
-     issues: list[dict[str, Any]],
-@@ -212,39 +232,36 @@ def build_links(
-     pull_request_records = [
-         (pull_request, record_text(pull_request)) for pull_request in pull_requests
-     ]
--    for test in tests:
-+    for index, test in enumerate(tests, 1):
-+        if index == 1 or index % 25 == 0:
-+            print(f"Matching dashboard tests: {index}/{len(tests)}", flush=True)
-         aliases = aliases_for_test(test)
-         matched_issues = []
-         for issue, text in issue_records:
-             match = match_aliases(aliases, text)
-             if match:
--                matched_issues.append(
-+                issue_link = link_record(issue, repository)
-+                issue_link.update(
-                     {
--                        "number": issue["number"],
--                        "url": issue["html_url"],
--                        "title": issue["title"],
--                        "state": record_state(issue),
-                         "match": match,
-                         "eligible_for_assignee": record_state(issue) == "open"
-                         and match in {"exact", "parameterized"},
-          
-```
-
-**File**: `tools/ci_test_dashboard/test_sync_issue_links.py` (modified, +232/-3)
-```diff
-@@ -6,6 +6,9 @@
- import sys
- import tempfile
- import unittest
-+import json
-+import io
-+from contextlib import redirect_stdout
- from datetime import datetime, timezone
- from pathlib import Path
- from unittest.mock import patch
-@@ -226,6 +229,124 @@ def test_build_links_includes_dedicated_assignee_and_referencing_open_pr(self):
-         self.assertTrue(match["issues"][0]["eligible_for_assignee"])
-         self.assertEqual(match["pull_requests"][0]["number"], 456)
- 
-+    def test_build_links_keeps_sources_for_same_numbered_records(self):
-+        """Keep same-numbered records from both source repositories distinct."""
-+        primary = links.DEFAULT_REPOSITORY
-+        private = "dragonflydb/dataplane-private"
-+        primary_issue = {**self.issue, "repository": primary}
-+        private_issue = {
-+            **self.issue,
-+            "repository": private,
-+            "html_url": "https://github.com/dragonflydb/dataplane-private/issues/123",
-+        }
-+        pull_requests = [
-+            {
-+                "number": 456,
-+                "repository": primary,
-+                "html_url": "https://github.com/dragonflydb/dragonfly/pull/456",
-+                "title": "Fixes #123",
-+                "body": "",
-+                "state": "open",
-+            },
-+            {
-+                "number": 456,
-+                "repository": private,
-+                "html_url": "https://github.com/dragonflydb/dataplane-private/pull/456",
-+                "title": "Fixes #123",
-+                "body": "",
-+                "state": "open",
-+            },
-+        ]
-+        result = links.build_links([self.test], [primary_issue, private_issue], pull_requests)
-+        match = result[self.test["id"]]
-+        self.assertEqual(
-+            {(issue["repository"], issue["number"]) for issue in match["issues"]},
-+            {(primary, 123), (private, 123)},
-+        )
-+        self.assertEqual(
-+            {
-+                (pull_request["repository"], pull_request["number"])
-+                for pull_request in match["pull_requests"]
-+            },
-+            {(primary, 456), (private, 456)},
-+        )
-+
-+    def test_bare_pr_issue_reference_stays_with_its_source_repository(self):
-+        """Do not link a bare issue reference to an equal number in another repository."""
-+        primary = links.DEFAULT_REPOSITORY
-+        private = "dragonflydb/dataplane-private"
-+        primary_issue = {
-+            **self.issue,
-+            "repository": primary,
-+            "title": "Unrelated test failure",
-+            "body": "",
-+        }
-+        private_issue = {
-+            **self.issue,
-+            "repository": private,
-+            "html_url": "https://github.com/dragonflydb/dataplane-private/issues/123",
-+        }
-+        pull_request = {
-+            "number": 456,
-+            "repository": primary,
-+            "html_url": "https://github.com/dragonflydb/dragonfly/pull/456",
-+            "title": "Fixes #123",
-+            "body": "",
-+            "state": "open",
-+        }
-+        result = links.build_links([self.test], [primary_issue, private_issue], [pull_request])
-+        match = result[self.test["id"]]
-+        self.assertEqual(
-+            [(issue["repository"], issue["number"]) for issue in match["issues"]],
-+            [(private, 123)],
-+        )
-+        self.assertEqual(match["pull_requests"], [])
-+
-+    def test_private_links_include_metadata(self):
-+        """Include private issue and PR details for the private dashboard."""
-+        private_issue = {
-+            **self.issue,
-+            "repository": "dragonflydb/dataplane-private",
-+            "html_url": "https://github.com/dragonflydb/dataplane-private/issues/123",
-+        }
-+        private_pr = {
-+            "number": 456,
-+            "repository": "dragonflydb/dataplane-private",
-+            "html_url": "https://github.com/dragonflydb/dataplane-private/pull/456",
-+            "title": "Fixes #123",
-+            "body": "",
-+            "state": "closed",
-+            "merged_at": "2026-10-18T00:00:00Z",
-+        }
-+        result = links.build_links([self.test], [private_issue], [private_pr])[self.test["id"]]
-+        self.assertEqual(
-+            result["issues"],
-+            [
-+                {
-+                    "number": 123,
-+                    "repository": "dragonflydb/dataplane-private",
-+                    "url": private_issue["html_url"],
-+                    "title": private_issue["title"],
-+                    "state": "open",
-+                    "match": "exact",
-+                    "eligible_for_assignee": True,
-+                    "assignees": ["dragonfly-user"],
-+                }
-+            ],
-+        )
-+        self.assertEqual(
-+            result["pull_requests"],
-+            [
-+                {
-+                    "number": 456,
-+                    "repository": "dragonflydb/dataplane-private",
-+                    "url": private_pr["html_url"],
-+                    "title
-```
-
----
-
-### Incident Patch 3: `26f97c50` (2026-11-02)
-**Commit Message**: fix(server): Skip forced snapshot serialization for redundant writes with second replica, add support for expire (#8112)
-
-* fix(server): Extend journal omits to omit only on-change, add support for ttl for omits
-
-Signed-off-by: Vlad <[REDACTED_EMAIL]>
-
-**File**: `src/server/db_slice.cc` (modified, +23/-17)
-```diff
-@@ -445,7 +445,7 @@ DbStats& DbStats::operator+=(const DbStats& o) {
- }
- 
- SliceEvents& SliceEvents::operator+=(const SliceEvents& o) {
--  static_assert(sizeof(SliceEvents) == 112, "You should update this function with new fields");
-+  static_assert(sizeof(SliceEvents) == 120, "You should update this function with new fields");
- 
-   ADD(hard_evictions);
-   ADD(garbage_collected);
-@@ -461,6 +461,7 @@ SliceEvents& SliceEvents::operator+=(const SliceEvents& o) {
-   ADD(ram_cool_hits);
-   ADD(ram_misses);
-   ADD(journal_omit);
-+  ADD(serialize_skip);
-   return *this;
- }
- 
-@@ -698,8 +699,8 @@ OpResult<DbSlice::ItAndUpdater> DbSlice::FindMutableInternal(const Context& cntx
- 
-   auto it = Iterator(*res, StringOrView::FromView(key));
- 
--  bool omitted = IsOmittableWrite(cntx, ChangeReq{it.GetInnerIt()});
--  if (!omitted)
-+  auto omit = DetermineOmitPossibility(cntx, ChangeReq{it.GetInnerIt()});
-+  if (!omit.skip_serialize)
-     PreUpdateBlocking(cntx.db_index, it);
- 
-   // PreUpdate() might have caused a deletion of `it`
-@@ -709,7 +710,7 @@ OpResult<DbSlice::ItAndUpdater> DbSlice::FindMutableInternal(const Context& cntx
-     return {{.it = it,
-              .post_updater = AutoUpdater{cntx.db_index, key, it, this},
-              .is_new = false,
--             .omitted_journal = omitted}};
-+             .omitted_journal = omit.omit_journal}};
-   }
- 
-   return OpStatus::KEY_NOTFOUND;
-@@ -842,6 +843,7 @@ OpResult<DbSlice::ItAndUpdater> DbSlice::AddOrFind(const Context& cntx, string_v
-   CHECK(res.status() == OpStatus::KEY_NOTFOUND) << res.status();
- 
-   // Call change callbacks on the computed set of buckets that can be affected by the insert
-+  bool skip_serialize = false;
-   bool omit_journal = false;
-   DbTable& db = *db_arr_[cntx.db_index];
- 
-@@ -850,8 +852,11 @@ OpResult<DbSlice::ItAndUpdater> DbSlice::AddOrFind(const Context& cntx, string_v
-       auto bucket_set = db.prime.CVCUponInsert(key);
- 
-       // We skip calling callbacks, so the bucket set is consistent and we break
--      if (omit_journal = IsOmittableWrite(cntx, bucket_set); omit_journal)
-+      if (auto omit = DetermineOmitPossibility(cntx, bucket_set); omit.skip_serialize) {
-+        skip_serialize = true;
-+        omit_journal = omit.omit_journal;
-         break;
-+      }
- 
-       CallChangeCallbacks(cntx.db_index, bucket_set);
- 
-@@ -935,7 +940,7 @@ OpResult<DbSlice::ItAndUpdater> DbSlice::AddOrFind(const Context& cntx, string_v
- 
-   DCHECK_EQ(it->second.MallocUsed(), 0UL);  // Make sure accounting is no-op
- 
--  if (!omit_journal)
-+  if (!skip_serialize)
-     it.SetVersion(NextVersion());
- 
-   TouchTopKeysIfNeeded(key, db.sample_top_keys);
-@@ -2244,31 +2249,32 @@ void DbSlice::CallChangeCallbacks(DbIndex id, const ChangeReq& cr) const {
-     cb->OnChange(id, cr);
- }
- 
--// We can omit the journal write if:
-+// We can skip the forced snapshot serialization if:
- // 1. it supports mutation hints and uses only a single key
- // 2. there is a single eventually-consistent snapshot (i.e. replica full sync)
--// 3. there are no other journal consumers
--// 4. the snapshot did not reach the bucket yet
--bool DbSlice::IsOmittableWrite(const Context& cntx, const ChangeReq& req) {
-+// 3. the snapshot did not reach the bucket yet
-+// The journal write is additionally omitted only when the snapshot is the sole journal consumer.
-+DbSlice::OmitDecision DbSlice::DetermineOmitPossibility(const Context& cntx, const ChangeReq& req) {
-   if (!journal_omit_redundant_writes_)
--    return false;
-+    return {};
- 
-   // Stash entries can be moved backwards relative to the cursor by TryMoveFromStash,
-   // breaking our reachability assumption. We must serialize now
-   if (req.ContainsStashBucket())
--    return false;
-+    return {};
- 
--  bool omit_update = false;
-+  OmitDecision res;
-   if (cntx.is_omittable_operation && change_cb_.size() == 1) {
-     auto gv = [](PrimeTable::bucket_iterator it) { return it.GetVersion(); };
-     uint64_t max_version = std::ranges::max(req.buckets(), {}, gv).GetVersion();
- 
-     auto* cb = change_cb_.front();
--    omit_update = cb->eventually_consistent_ && max_version < cb->snapshot_version_ &&
--                  journal::GetCallbackCount() == 1;
--    events_.journal_omit += unsigned(omit_update);
-+    res.skip_serialize = cb->eventually_consistent_ && max_version < cb->snapshot_version_;
-+    res.omit_journal = res.skip_serialize && journal::GetCallbackCount() == 1;
-+    events_.serialize_skip += unsigned(res.skip_serialize);
-+    events_.journal_omit += unsigned(res.omit_journal);
-   }
--  return omit_update;
-+  return res;
- }
- 
- }  // namespace dfly
-```
-
-**File**: `src/server/db_slice.h` (modified, +15/-2)
-```diff
-@@ -87,6 +87,9 @@ struct SliceEvents {
-   // how many journal omit optimizations were performed
-   size_t journal_omit = 0;
- 
-+  // how many times the forced snapshot serialization was skipped (superset of journal_omit)
-+  size_t serialize_skip = 0;
-+
-   SliceEvents& operator+=(const SliceEvents& o);
- };
- 
-@@ -677,8 +680,18 @@ class DbSlice {
- 
-   void CreateDb(DbIndex index);
- 
--  // Returns true if this write could be ignored during replication without losing consistency
--  bool IsOmittableWrite(const Context& cntx, const ChangeReq& req);
-+  // Describes what events caused by a write during ongoing serialization can be safely skipped.
-+  struct OmitDecision {
-+    bool skip_serialize = false;  // Skip bucket serialization caused by on-change consumers
-+    bool omit_journal = false;    // Skip emitting journal event
-+  };
-+
-+  // Decides whether the forced snapshot serialization and/or the journal write can be skipped.
-+  // In general, we serialize buckets just before a modification, even if the modified value is
-+  // completely overwritten - this is wasteful. If the snapshot traversal loop has not yet reached
-+  // the targets bucket, we can skip forced serialization, as it will be eventually serialized with
-+  // the new value
-+  OmitDecision DetermineOmitPossibility(const Context& cntx, const ChangeReq& req);
- 
-   enum class LookupMode : uint8_t {
-     kReadOnly,
-```
-
-**File**: `src/server/generic_family.cc` (modified, +6/-2)
-```diff
-@@ -887,8 +887,10 @@ uint64_t RmGeneric(uint64_t cursor, const ScanOpts& scan_opts, uint32_t* deleted
-   return cursor;
- }
- 
--OpStatus OpExpire(const OpArgs& op_args, string_view key, const DbSlice::ExpireParams& params) {
-+OpStatus OpExpire(OpArgs op_args, string_view key, const DbSlice::ExpireParams& params) {
-   auto& db_slice = op_args.GetDbSlice();
-+  op_args.db_cntx.is_omittable_operation = true;  // See DbSlice::DetermineOmitPossibility
-+
-   auto find_res = db_slice.FindMutable(op_args.db_cntx, key);
-   if (!IsValid(find_res.it)) {
-     return OpStatus::KEY_NOTFOUND;
-@@ -900,7 +902,9 @@ OpStatus OpExpire(const OpArgs& op_args, string_view key, const DbSlice::ExpireP
-   // If the value was deleted, replicate as DEL.
-   // Else, replicate as PEXPIREAT with exact time.
-   if (op_args.shard->journal() && res.ok()) {
--    if (res.value() == -1) {
-+    if (find_res.omitted_journal) {
-+      journal::ClearBuffer();
-+    } else if (res.value() == -1) {
-       RecordJournal(op_args, "DEL"sv, ArgSlice{key});
-     } else {
-       auto time = absl::StrCat(res.value());
-```
-
-**File**: `src/server/server_family.cc` (modified, +1/-0)
-```diff
-@@ -3188,6 +3188,7 @@ string ServerFamily::FormatInfoMetrics(
-     append("lua_gc_duration_total_sec", m.lua_stats.gc_duration_ns * 1e-9);
- 
-     append("total_journal_omits", m.events.journal_omit);
-+    append("total_serialize_skips", m.events.serialize_skip);
-   };
- 
-   auto add_tiered_info = [&] {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #8743** (2026-11-04): chore(ci): move the sanitizer build from PR checks to daily builds (@vyavdoshenko)
+- **PR #8741** (2026-11-04): fix(server): Unify key expiry capping and fix GETEX replies (@vyavdoshenko)
+- **PR #8740** (2026-11-04): feat(metrics): export snapshot and replica disconnect counters (@romange)
+- **PR #8739** (2026-11-03): chore: Switch license to Dragonfly Source Available License (DSAL) (@romange)
 - **PR #8737** (2026-11-03): refactor: MRMW mutex for HNSW index (@BorysTheDev)
 - **PR #8736** (2026-11-03): chore(search): Only collect vector range nodes once (@abhijat)
-- **PR #8734** (closed): fix(server): Unify key expiry capping and fix GETEX replies (@vyavdoshenko)
-- **PR #8733** (2026-11-03): feat: allow listpack usage during borrow mode for HNSW (@BorysTheDev)
-- **PR #8732** (2026-11-02): fix(tiering): Avoid double counting list node memory in AutoUpdater (@dranikpg)
-- **PR #8731** (closed): fix: bump helio to stop leaking DNS lookup results (@vyavdoshenko)
 
 ---
 
@@ -3199,38 +3323,30 @@ Signed-off-by: Vlad <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. tiering): fix small-bins leak and stash-cancellation on failure (#8636)
+## X. server): Unify key expiry capping and fix GETEX replies (#8741)
 
 **RULE**:
-When implementing operations in `src/server/tiered_storage.cc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dragonflydb/dragonfly. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dragonflydb/dragonfly. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `98a439dc`: tiering): fix small-bins leak and stash-cancellation on failure (#8636). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2bac5b85`: server): Unify key expiry capping and fix GETEX replies (#8741). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/server/tiered_storage.cc`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-  std::optional<tiering::SmallBins::FilledBin> bin;
-  } else if (bin = bins_->Stash(dbid, key, SerializeToString(blobs)); bin) {
-    if (bin) {
-      // The bin filled up but PrepareAndStash failed before serializing it, so SmallBins never
-      // tracked it as pending. Recover its keys directly to clear their stash-pending flags.
-      for (const auto& bin_key : bins_->ReportStashFailed(std::move(*bin)))
-        op_manager_->ClearStashPending(bin_key);
-    } else {
-      visit([this](auto id) { op_manager_->ClearStashPending(id); }, id);
-    }
+Expiration ranges are limited to 268435455 seconds (2^28 - 1, about 8.5 years). Key expiration deadlines beyond that limit are clamped to it, while hash field expirations reject them. If this is not suitable for your use case, get in touch or open an issue explaining your case.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-  } else if (auto bin = bins_->Stash(dbid, key, SerializeToString(blobs)); bin) {
-    visit([this](auto id) { op_manager_->ClearStashPending(id); }, id);
+Expiration ranges are limited to ~8 years.
+
+Expiration deadlines with millisecond precision (PEXPIRE, PSETEX, etc.) are rounded to the closest second **for deadlines greater than 2^28ms**, which has less than 0.001% error and should be acceptable for large ranges. If this is not suitable for your use case, get in touch or open an issue explaining your case.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `98a439dc` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2bac5b85` are properly handled with clean fallback behavior.

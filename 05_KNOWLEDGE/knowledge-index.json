@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-04T18:13:55.645Z",
+  "last_updated": "2026-11-04T18:21:43.857Z",
   "total_verified_learnings": 1208,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -11009,8 +11009,8 @@
       "slug": "dragonflydb-dragonfly",
       "platform": "github",
       "source_url": "https://github.com/dragonflydb/dragonfly",
-      "source_version": "505d8729",
-      "content_hash": "bb61564137fc1dcb88f3b0ed3b9869e9d4bc10548accc696d7f6b709ff734e4b",
+      "source_version": "5d9ae0f9",
+      "content_hash": "ab9bf248d8466c88ddd7d22d43b14758bb0b1025af05e3c07fe1642b602084fc",
       "dossier_path": "07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md",
       "promoted_rules": [
@@ -11093,6 +11093,11 @@
           "number": 6569,
           "title": "tiering): fix small-bins leak and stash-cancellation on failure (#8636)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6894,
+          "title": "server): Unify key expiry capping and fix GETEX replies (#8741)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -11100,7 +11105,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T18:02:36.534Z",
+      "verified_at": "2026-11-04T18:21:43.834Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -40411,8 +40416,8 @@
       "slug": "microsoft-agent-governance-toolkit",
       "platform": "github",
       "source_url": "https://github.com/microsoft/agent-governance-toolkit",
-      "source_version": "6b2e03f8",
-      "content_hash": "5a37e45b67fbf02635268524c696b53583a46f1215f6c15015ed55a3634a245e",
+      "source_version": "a918f763",
+      "content_hash": "cdd17b4a1286491e5811b6ff14d33819eb7cfeb431b0643640bc1e8f54995f92",
       "dossier_path": "07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md",
       "promoted_rules": [
@@ -40530,6 +40535,11 @@
           "number": 6573,
           "title": "deps-dev): Update setuptools requirement (#4510)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6893,
+          "title": "agent-sre): make the AgentRollout status match its CRD schema (#4483)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -40537,7 +40547,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T18:22:43.876Z",
+      "verified_at": "2026-11-04T18:21:39.187Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -42847,8 +42857,8 @@
       "slug": "nats-io-nats.go",
       "platform": "github",
       "source_url": "https://github.com/nats-io/nats.go",
-      "source_version": "14318705",
-      "content_hash": "bbdaa56c0b509956d925f3ba7d6152397ed2e8df0a74892625150c5cb471db72",
+      "source_version": "d1774d10",
+      "content_hash": "0962ef1faf302411c0e77e46c88b996ca1d9057d8b673ed510764b2eac97b802",
       "dossier_path": "07_PROJECT_LEARNING/nats-io-nats.go-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nats-io-nats.go-learnings.md",
       "promoted_rules": [
@@ -42896,6 +42906,11 @@
           "number": 6584,
           "title": "[FIXED]  WebSocket frame handling (#2225)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6892,
+          "title": "[FIXED] Treat malformed WS close frames as protocol errors (#2226)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -42903,7 +42918,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T19:06:02.754Z",
+      "verified_at": "2026-11-04T18:21:37.048Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -126930,7 +126945,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/unsloth/flint-GGUF",
       "source_version": "hf-unsloth-flint-gguf",
-      "content_hash": "a8dabe2b85b94cab9a0e3e07b512d3bca81a3040d84be0ce6ef177e83df4345c",
+      "content_hash": "63b59aad0909936785afd68235fadd7940f58c327bc528153b8696958ae7fcd2",
       "dossier_path": "07_PROJECT_LEARNING/hf-unsloth-flint-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-unsloth-flint-gguf-learnings.md",
       "promoted_rules": [
@@ -126943,6 +126958,16 @@
           "number": 3759,
           "title": "GGUF Metadata Integrity & Tokenizer Alignment",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6890,
+          "title": "MoE Quantization Fidelity Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6891,
+          "title": "GGUF Metadata Integrity Check",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -126950,7 +126975,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T02:21:18.309Z",
+      "verified_at": "2026-11-04T18:21:36.335Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -175848,6 +175873,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-04T18:13:55.622Z"
+    },
+    "rule-6890": {
+      "learning_id": "rule-6890",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6890,
+      "title": "MoE Quantization Fidelity Invariant",
+      "source_url": "https://huggingface.co/unsloth/flint-GGUF",
+      "source_version": "hf-unsloth-flint-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T18:21:36.335Z"
+    },
+    "rule-6891": {
+      "learning_id": "rule-6891",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6891,
+      "title": "GGUF Metadata Integrity Check",
+      "source_url": "https://huggingface.co/unsloth/flint-GGUF",
+      "source_version": "hf-unsloth-flint-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T18:21:36.335Z"
+    },
+    "rule-6892": {
+      "learning_id": "rule-6892",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6892,
+      "title": "[FIXED] Treat malformed WS close frames as protocol errors (#2226)",
+      "source_url": "https://github.com/nats-io/nats.go",
+      "source_version": "d1774d10",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T18:21:37.048Z"
+    },
+    "rule-6893": {
+      "learning_id": "rule-6893",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6893,
+      "title": "agent-sre): make the AgentRollout status match its CRD schema (#4483)",
+      "source_url": "https://github.com/microsoft/agent-governance-toolkit",
+      "source_version": "a918f763",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T18:21:39.187Z"
+    },
+    "rule-6894": {
+      "learning_id": "rule-6894",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6894,
+      "title": "server): Unify key expiry capping and fix GETEX replies (#8741)",
+      "source_url": "https://github.com/dragonflydb/dragonfly",
+      "source_version": "5d9ae0f9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T18:21:43.834Z"
     }
   },
   "aliases": {

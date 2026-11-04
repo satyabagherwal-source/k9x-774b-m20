@@ -7277,3 +7277,7 @@ Every entry in this ledger must capture:
 | `learn-github-genkit-ai-genkit` | `https://github.com/genkit-ai/genkit` | `8ee17216` | Multi-dimensional audit evidence | 2026-11-04T18:06:14.416Z |
 | `learn-huggingface-comfy-org-z-image-turbo` | `https://huggingface.co/Comfy-Org/Z-Image-Turbo` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-11-04T18:13:49.148Z |
 | `learn-github-redisearch-redisearch` | `https://github.com/RediSearch/RediSearch` | `27424dee` | Multi-dimensional audit evidence | 2026-11-04T18:13:55.733Z |
+| `learn-huggingface-unsloth-flint-gguf` | `https://huggingface.co/unsloth/flint-GGUF` | `hf-unsloth` | Multi-dimensional audit evidence | 2026-11-04T18:21:36.468Z |
+| `learn-github-nats-io-nats-go` | `https://github.com/nats-io/nats.go` | `d1774d10` | Multi-dimensional audit evidence | 2026-11-04T18:21:37.178Z |
+| `learn-github-microsoft-agent-governance-toolkit` | `https://github.com/microsoft/agent-governance-toolkit` | `a918f763` | Multi-dimensional audit evidence | 2026-11-04T18:21:39.297Z |
+| `learn-github-dragonflydb-dragonfly` | `https://github.com/dragonflydb/dragonfly` | `5d9ae0f9` | Multi-dimensional audit evidence | 2026-11-04T18:21:43.945Z |

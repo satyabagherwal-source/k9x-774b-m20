@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md`  
 > **Source**: github ([https://github.com/microsoft/agent-governance-toolkit](https://github.com/microsoft/agent-governance-toolkit))  
-> **Source Version**: `6b2e03f8`  
+> **Source Version**: `a918f763`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T18:22:43.244Z  
+> **Timestamp**: 2026-11-04T18:21:38.543Z  
 > **Learning ID**: `learn-github-microsoft-agent-governance-toolkit`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/microsoft/agent-governance-toolkit](https://github.com/microsoft/agent-governance-toolkit))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T18:22:42.201Z  
+> **Harvest Timestamp**: 2026-11-04T18:21:38.073Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: AI Agent Governance Toolkit — Policy enforcement, zero-trust identity, execution sandboxing, and reliability engineering for autonomous AI agents. Covers 10/10 OWASP Agentic Top 10.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: README.md, Dockerfile
-- **Stars / Engagement**: 6512 stars
+- **Stars / Engagement**: 6518 stars
 
 ---
 
@@ -405,95 +405,160 @@ export function writeHookOutput(payload) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `88aea7a2` (2026-11-03)
-**Commit Message**: chore(deps-dev): Update setuptools requirement (#4510)
+### Incident Patch 1: `a918f763` (2026-11-04)
+**Commit Message**: fix(agent-sre): make the AgentRollout status match its CRD schema (#4483)
 
-Updates the requirements on [setuptools](https://github.com/pypa/setuptools) to permit the latest version.
-- [Release notes](https://github.com/pypa/setuptools/releases)
-- [Changelog](https://github.com/pypa/setuptools/blob/main/NEWS.rst)
-- [Commits](https://github.com/pypa/setuptools/compare/v84.2.0...v84.2.1)
+* fix(agent-sre): make AgentRollout status match the CRD schema
 
----
-updated-dependencies:
-- dependency-name: setuptools
-  dependency-version: 84.2.1
-  dependency-type: direct:development
-...
+ResourceStatus.to_dict() wrote each condition's lastTransitionTime as a
+Unix timestamp (float), but the CRD schema declares it as a string, so
+the API server rejects the status update. It also wrote
+observedGeneration and message, which the schema did not declare, so
+they were pruned. Format lastTransitionTime as an RFC 3339 UTC string
+and declare the two status fields in generate_crd_manifest() and the
+Helm chart.
 
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Signed-off-by: Shivam Sharma <[REDACTED_EMAIL]>
 
-**File**: `agent-governance-python/agent-sre/pyproject.toml` (modified, +1/-1)
+* docs: move the AgentRollout status entry to the root CHANGELOG
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Signed-off-by: Shivam Sharma <[REDACTED_EMAIL]>
+
+---------
+
+Signed-off-by: Shivam Sharma <[REDACTED_EMAIL]>
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -1,5 +1,5 @@
- [build-system]
--requires = ["setuptools>=84.2.0", "wheel"]
-+requires = ["setuptools>=84.2.1", "wheel"]
- build-backend = "setuptools.build_meta"
+@@ -56,6 +56,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ - **`agent-sre` `AgentRollout` CRD keeps a step's analysis criteria.** The CRD schema, in both `k8s.generate_crd_manifest()` and the Helm chart, declared a step's `name`, `weight`, `durationSeconds` and `manualGate` but not `analysis`, although `RolloutSpec.to_dict()` writes it and `k8s.Reconciler` reads it. The API server prunes fields a structural schema does not declare, so every step of an applied `AgentRollout` lost its analysis criteria, and `analyze_step` passed it without checking a metric. The schema now declares `analysis` as a list of `metric`, `threshold` and `comparator` (`gte`, `lte` or `eq`, default `gte`).
+ - **`agent-sre` `RunbookExecutor` reports a failed rollback.** When a step failed, the executor ran the rollback actions of the steps before it and then marked the execution `rolled_back` whenever any of them had a rollback action, even if that action raised, so an execution left half undone read as cleanly rolled back. The rolled-back steps also kept `success`, and `StepStatus.ROLLED_BACK` was never set. Each step whose rollback succeeds is now marked `rolled_back`; the execution is `rolled_back` only when every rollback succeeded, and otherwise stays `failed`, with the rollback error recorded on the step.
+ - **`agent-discovery` saves reconciliation statuses and scan risk tags to the inventory file.** `Reconciler.reconcile` set each agent's status to `registered` or `shadow` but never wrote the inventory back, and `agent-discovery scan` added the `risk_level` and `risk_score` tags after the last save. With a storage path, both were lost when the process ended, so `agent-discovery inventory` showed every agent as `unknown` after `agent-discovery reconcile` and without risk tags after a scan. `AgentInventory.save()` now persists in-place changes, and `reconcile` and `scan` call it.
++- **`agent-sre` `AgentRollout` status matches the CRD schema.** `ResourceStatus.to_dict()` wrote each condition's `lastTransitionTime` as a Unix timestamp (a float), but the CRD schema, in both `k8s.generate_crd_manifest()` and the Helm chart, declares it as a string, so the API server rejects a status update that carries a condition. It also wrote `observedGeneration` and `message`, which the schema did not declare, so they were pruned from every status update. `lastTransitionTime` is now an RFC 3339 UTC time such as `2026-11-01T09:30:00Z`, as Kubernetes conditions use, and the schema declares `status.observedGeneration` (integer) and `status.message` (string).
  
- [project]
+ ### Added
+ - **.NET `PolicyEngine.EvaluateAsync`** — added an async evaluation path so external policy backends whose work is I/O-bound (`IExternalPolicyBackend.EvaluateAsync`) are awaited instead of blocked on with `GetAwaiter().GetResult()`. Backends are evaluated sequentially to preserve registration order; the synchronous `Evaluate` keeps its exact prior behavior. The token is honored on entry and before each backend call, so an already-cancelled token throws `OperationCanceledException` (including on the no-backend in-memory path) and no `PolicyDecision` is produced; backend exceptions propagate rather than being turned into a deny, matching `Evaluate` (#3778).
 ```
 
----
-
-### Incident Patch 2: `4972bef0` (2026-11-03)
-**Commit Message**: chore(deps-dev): Update setuptools requirement (#4509)
-
-Updates the requirements on [setuptools](https://github.com/pypa/setuptools) to permit the latest version.
-- [Release notes](https://github.com/pypa/setuptools/releases)
-- [Changelog](https://github.com/pypa/setuptools/blob/main/NEWS.rst)
-- [Commits](https://github.com/pypa/setuptools/compare/v84.2.0...v84.2.1)
-
----
-updated-dependencies:
-- dependency-name: setuptools
-  dependency-version: 84.2.1
-  dependency-type: direct:development
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `agent-governance-python/agent-primitives/pyproject.toml` (modified, +1/-1)
+**File**: `agent-governance-python/agent-sre/deployments/helm/agent-sre/templates/crd.yaml` (modified, +4/-0)
 ```diff
-@@ -1,5 +1,5 @@
- [build-system]
--requires = ["setuptools>=84.2.0", "wheel"]
-+requires = ["setuptools>=84.2.1", "wheel"]
- build-backend = "setuptools.build_meta"
- 
- [project]
+@@ -119,6 +119,10 @@ spec:
+                   type: integer
+                 currentWeight:
+                   type: number
++                observedGeneration:
++                  type: integer
++                message:
++                  type: string
+                 conditions:
+                   type: array
+                   items:
 ```
 
----
-
-### Incident Patch 3: `aff23f3f` (2026-11-03)
-**Commit Message**: chore(deps-dev): Update setuptools requirement (#4505)
-
-Updates the requirements on [setuptools](https://github.com/pypa/setuptools) to permit the latest version.
-- [Release notes](https://github.com/pypa/setuptools/releases)
-- [Changelog](https://github.com/pypa/setuptools/blob/main/NEWS.rst)
-- [Commits](https://github.com/pypa/setuptools/compare/v84.2.0...v84.2.1)
-
----
-updated-dependencies:
-- dependency-name: setuptools
-  dependency-version: 84.2.1
-  dependency-type: direct:development
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `agent-governance-python/agent-mcp-governance/pyproject.toml` (modified, +1/-1)
+**File**: `agent-governance-python/agent-sre/src/agent_sre/k8s/__init__.py` (modified, +8/-1)
 ```diff
-@@ -1,5 +1,5 @@
- [build-system]
--requires = ["setuptools>=84.2.0", "wheel"]
-+requires = ["setuptools>=84.2.1", "wheel"]
- build-backend = "setuptools.build_meta"
+@@ -34,6 +34,7 @@
+ import time
+ import uuid
+ from dataclasses import dataclass, field
++from datetime import UTC, datetime
+ from enum import Enum
+ from typing import Any, Dict, List, Optional
  
- [project]
+@@ -190,6 +191,8 @@ def _openapi_schema() -> dict[str, Any]:
+                     "phase": {"type": "string"},
+                     "currentStep": {"type": "integer"},
+                     "currentWeight": {"type": "number"},
++                    "observedGeneration": {"type": "integer"},
++                    "message": {"type": "string"},
+                     "conditions": {
+                         "type": "array",
+                         "items": {
+@@ -244,7 +247,11 @@ def to_dict(self) -> dict[str, Any]:
+             "status": self.status.value,
+             "reason": self.reason,
+             "message": self.message,
+-            "lastTransitionTime": self.last_transition_time,
++            # Kubernetes conditions carry an RFC 3339 timestamp, and the
++            # CRD schema declares this field as a string.
++            "lastTransitionTime": datetime.fromtimestamp(
++                self.last_transition_time, tz=UTC
++            ).strftime("%Y-%m-%dT%H:%M:%SZ"),
+         }
+ 
+ 
+```
+
+**File**: `agent-governance-python/agent-sre/tests/test_k8s.py` (modified, +51/-0)
+```diff
+@@ -39,6 +39,35 @@ def _prune(value: Any, schema: dict[str, Any]) -> Any:
+     return value
+ 
+ 
++_JSON_TYPES = {
++    "object": dict,
++    "array": list,
++    "string": str,
++    "boolean": bool,
++    "integer": int,
++    "number": (int, float),
++}
++
++
++def _type_errors(value: Any, schema: dict[str, Any], path: str = "") -> list[str]:
++    """List the values whose JSON type does not match the schema, as the API server checks."""
++    expected = schema.get("type")
++    if expected and (
++        not isinstance(value, _JSON_TYPES[expected])
++        or (isinstance(value, bool) and expected != "boolean")
++    ):
++        return [f"{path or '.'}: {type(value).__name__} is not {expected}"]
++    errors: list[str] = []
++    if isinstance(value, dict):
++        for k, v in value.items():
++            if k in schema.get("properties", {}):
++                errors += _type_errors(v, schema["properties"][k], f"{path}.{k}")
++    elif isinstance(value, list) and "items" in schema:
++        for i, v in enumerate(value):
++            errors += _type_errors(v, schema["items"], f"{path}[{i}]")
++    return errors
++
++
+ # ---------------------------------------------------------------------------
+ # CRD manifest
+ # ---------------------------------------------------------------------------
+@@ -158,6 +187,28 @@ def test_condition_to_dict(self):
+         assert d["status"] == "True"
+         assert d["reason"] == "Ready"
+ 
++    def test_condition_last_transition_time_is_rfc3339(self):
++        c = Condition(
++            ConditionType.AVAILABLE,
++            ConditionStatus.TRUE,
++            last_transition_time=1700000000.75,
++        )
++        assert c.to_dict()["lastTransitionTime"] == "2023-11-14T22:13:20Z"
++
++    def test_status_matches_crd_schema(self):
++        r = Reconciler()
++        result = r.reconcile("my-agent", "default", SAMPLE_SPEC, generation=3)
++        status = result.status.to_dict()
++        schema = generate_crd_manifest()["spec"]["versions"][0]["schema"]["openAPIV3Schema"]
++        status_schema = schema["properties"]["status"]
++
++        # Nothing the reconciler reports is pruned on a status update ...
++        assert _prune(status, status_schema) == status
++        assert status["observedGeneration"] == 3
++        assert status["message"].startswith("Rollout started")
++        # ... and every value has the type the schema declares.
++        assert _type_errors(status, status_schema) == []
++
+ 
+ # ---------------------------------------------------------------------------
+ # Reconciler — creation
 ```
 
 #### Recent Merged Pull Requests:
@@ -522,28 +587,28 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps-dev): Update setuptools requirement (#4510)
+## X. agent-sre): make the AgentRollout status match its CRD schema (#4483)
 
 **RULE**:
-When implementing operations in `agent-governance-python/agent-sre/pyproject.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in microsoft/agent-governance-toolkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in microsoft/agent-governance-toolkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `88aea7a2`: deps-dev): Update setuptools requirement (#4510). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a918f763`: agent-sre): make the AgentRollout status match its CRD schema (#4483). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `agent-governance-python/agent-sre/pyproject.toml`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-requires = ["setuptools>=84.2.1", "wheel"]
+- **`agent-sre` `AgentRollout` status matches the CRD schema.** `ResourceStatus.to_dict()` wrote each condition's `lastTransitionTime` as a Unix timestamp (a float), but the CRD schema, in both `k8s.generate_crd_manifest()` and the Helm chart, declares it as a string, so the API server rejects a status update that carries a condition. It also wrote `observedGeneration` and `message`, which the schema did not declare, so they were pruned from every status update. `lastTransitionTime` is now an RFC 3339 UTC time such as `2026-11-01T09:30:00Z`, as Kubernetes conditions use, and the schema declares `status.observedGeneration` (integer) and `status.message` (string).
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Anti-pattern to NEVER write (induced failure mode):
-requires = ["setuptools>=84.2.0", "wheel"]
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `88aea7a2` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a918f763` are properly handled with clean fallback behavior.
