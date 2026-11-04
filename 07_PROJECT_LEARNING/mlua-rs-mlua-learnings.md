@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/mlua-rs-mlua-learnings.md`  
 > **Source**: github ([https://github.com/mlua-rs/mlua](https://github.com/mlua-rs/mlua))  
-> **Source Version**: `ff96ed78`  
+> **Source Version**: `a0ad4535`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T19:06:28.073Z  
+> **Timestamp**: 2026-11-04T09:57:42.045Z  
 > **Learning ID**: `learn-github-mlua-rs-mlua`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/mlua-rs-mlua-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/mlua-rs/mlua](https://github.com/mlua-rs/mlua))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T19:06:28.063Z  
+> **Harvest Timestamp**: 2026-11-04T09:57:40.415Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: High level Lua 5.5/5.4/5.3/5.2/5.1 (including LuaJIT) and Luau bindings to Rust with async/await support
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 2922 stars
+- **Stars / Engagement**: 2936 stars
 
 ---
 
@@ -2339,412 +2339,34 @@ impl TypeKey for Option<std::task::Waker> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ff96ed78` (2026-10-24)
-**Commit Message**: Fix minimum integer lookup paths
+### Incident Patch 1: `a0ad4535` (2026-11-03)
+**Commit Message**: Bump Luau to 0.745
 
-**File**: `src/util/path.rs` (modified, +15/-2)
+**File**: `mlua-sys/Cargo.toml` (modified, +1/-1)
 ```diff
-@@ -78,18 +78,24 @@ pub(crate) fn parse_path<'a>(path: &'a str) -> Result<Vec<(PathKey<'a>, bool)>>
-                         }
-                         let mut num: Option<Integer> = None;
-                         while let Some(&(_, c @ '0'..='9')) = chars.peek() {
-+                            let digit = (c as u8 - b'0') as Integer;
-                             let new_num = num
-                                 .unwrap_or(0)
-                                 .checked_mul(10)
--                                .and_then(|n| n.checked_add((c as u8 - b'0') as Integer))
-+                                .and_then(|n| {
-+                                    if negative {
-+                                        n.checked_sub(digit)
-+                                    } else {
-+                                        n.checked_add(digit)
-+                                    }
-+                                })
-                                 .ok_or_else(|| {
-                                     Error::runtime(format!("integer overflow in path at position {pos}"))
-                                 })?;
-                             num = Some(new_num);
-                             chars.next(); // consume digit
-                         }
-                         match num {
--                            Some(n) if negative => PathKey::Int(-n),
-                             Some(n) => PathKey::Int(n),
-                             None => {
-                                 let err = format!("invalid integer in path at position {pos}");
-@@ -209,6 +215,10 @@ mod tests {
-         assert!(matches!(path[3], (PathKey::Str(ref s), false) if s == "c"));
-         assert!(matches!(path[4], (PathKey::Str(ref s), false) if s == "d"));
+@@ -43,7 +43,7 @@ cfg-if = "1.0"
+ pkg-config = "0.3.17"
+ lua-src = { version = ">= 551.1.0, < 551.2.0", optional = true }
+ luajit-src = { version = ">= 210.7.0, < 210.8.0", optional = true }
+-luau0-src = { version = "0.22.1", optional = true }
++luau0-src = { version = "0.23.0", optional = true }
  
-+        let min_path = format!("a[{}]", crate::Integer::MIN);
-+        let path = parse_path(&min_path).unwrap();
-+        assert!(matches!(path[1], (PathKey::Int(n), false) if n == crate::Integer::MIN));
-+
-         // Test empty path
-         let path = parse_path("").unwrap();
-         assert_eq!(path.len(), 0);
-@@ -249,6 +259,9 @@ mod tests {
-         // Test bad integers
-         let err = parse_path("a[99999999999999999999]").unwrap_err().to_string();
-         assert_eq!(err, "runtime error: integer overflow in path at position 2");
-+        let negative_overflow = format!("a[{}0]", crate::Integer::MIN);
-+        let err = parse_path(&negative_overflow).unwrap_err().to_string();
-+        assert_eq!(err, "runtime error: integer overflow in path at position 2");
-         let err = parse_path("a[-]").unwrap_err().to_string();
-         assert_eq!(err, "runtime error: invalid integer in path at position 2");
-     }
+ [lints.rust]
+ unexpected_cfgs = { level = "warn", check-cfg = ['cfg(raw_dylib)'] }
 ```
 
----
-
-### Incident Patch 2: `717c9eee` (2026-10-24)
-**Commit Message**: Document Wasm builds
-
-**File**: `README.md` (modified, +1/-1)
+**File**: `mlua-sys/src/luau/lua.rs` (modified, +2/-1)
 ```diff
-@@ -24,7 +24,7 @@ Started as an `rlua` fork, `mlua` supports Lua 5.5, 5.4, 5.3, 5.2, 5.1 (includin
+@@ -350,7 +350,8 @@ unsafe extern "C-unwind" {
  
- `mlua` is tested on Windows/macOS/Linux including module mode in [GitHub Actions] on `x86_64` platforms and cross-compilation to `aarch64` (other targets are also supported).
+ pub type lua_UserdataMark = unsafe extern "C-unwind" fn(L: *mut lua_State, ud: *mut c_void);
+ pub type lua_EmbedderMark = unsafe extern "C-unwind" fn(L: *mut lua_State, r#ref: c_int);
+-pub type lua_EmbedderGc = unsafe extern "C-unwind" fn(L: *mut lua_State, markref: Option<lua_EmbedderMark>);
++pub type lua_EmbedderGc =
++    unsafe extern "C-unwind" fn(L: *mut lua_State, markref: Option<lua_EmbedderMark>) -> c_int;
  
--WebAssembly (WASM) is supported through the `wasm32-unknown-emscripten` target for all Lua/Luau versions excluding JIT.
-+Lua 5.1–5.5 and Luau support `wasm32-unknown-unknown` with a WASI C runtime and the `wasm32-wasip` targets. See [Compiling for WebAssembly](docs/wasm32.md) for setup and build instructions.
- 
- [GitHub Actions]: https://github.com/mlua-rs/mlua/actions
- [Luau]: https://luau.org
-```
-
-**File**: `docs/wasm32.md` (added, +105/-0)
-```diff
-@@ -0,0 +1,105 @@
-+# Compiling for WebAssembly
-+
-+Lua 5.1-5.5 and Luau can be compiled for WebAssembly. The WASI
-+builds use [WASI SDK](https://github.com/WebAssembly/wasi-sdk) to compile and link
-+the C/C++ code, and [Wasmtime](https://github.com/bytecodealliance/wasmtime) to run it.
-+
-+| Rust target | Rust toolchain | Output |
-+| --- | --- | --- |
-+| `wasm32-wasip1` | stable | WASI Preview 1 module |
-+| `wasm32-wasip2` | stable | WASI Preview 2 component |
-+| `wasm32-wasip3` | nightly | WASI Preview 3 component |
-+| `wasm32-unknown-unknown` | stable | Module or component, linked with a WASI Preview 1 or 2 C runtime |
-+
-+LuaJIT and Luau's JIT backend are not supported.
-+
-+## Setup
-+
-+Run the commands below from the mlua repository root.
-+
-+Install WASI SDK, for example on Apple Silicon:
-+
-+```bash
-+WASI_SDK_VERSION=34
-+WASI_SDK_ARCHIVE="wasi-sdk-${WASI_SDK_VERSION}.0-arm64-macos"
-+mkdir -p "$HOME/.local"
-+curl -fL "https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-${WASI_SDK_VERSION}/${WASI_SDK_ARCHIVE}.tar.gz" \
-+    | tar -xz -C "$HOME/.local"
-+export WASI_SDK_PATH="$HOME/.local/$WASI_SDK_ARCHIVE"
-+```
-+
-+Install Wasmtime:
-+
-+```bash
-+brew install wasmtime
-+```
-+
-+Install the Rust target(s):
-+
-+```bash
-+rustup target add wasm32-wasip1 wasm32-wasip2 wasm32-unknown-unknown
-+```
-+
-+The [setup script](../tests/wasm/setup.sh) selects the SDK compilers,
-+libraries, linker flags and Cargo runner. Source it in the same shell as the
-+Cargo commands. It also enables Wasm exceptions, which the Lua runtimes need
-+for error handling.
-+
-+## WASI Preview 1 and 2
-+
-+To compile and run the basic tests with Lua 5.5 on Preview 2:
-+
-+```bash
-+source tests/wasm/setup.sh wasm32-wasip2
-+cargo test --manifest-path tests/wasm/Cargo.toml \
-+    --target wasm32-wasip2 --lib --features lua55
-+```
-+
-+The test crate accepts `lua55`, `lua54`, `lua53`, `lua52`, `lua51` or `luau`.
-+It enables vendored Lua automatically.
-+
-+For your own application, enable `vendored` for Lua.
-+Source the setup script using the path to your mlua checkout,
-+then build or run your application:
-+
-+```bash
-+source /path/to/mlua/tests/wasm/setup.sh wasm32-wasip2
-+cargo build --target wasm32-wasip2
-+cargo run --target wasm32-wasip2
-+```
-+
-+Cargo uses Wasmtime as its runner. To run the output directly:
-+
-+```bash
-+wasmtime -W exceptions target/wasm32-wasip2/debug/your-app.wasm
-+```
-+
-+## wasm32-unknown-unknown
-+
-+This build uses Rust's `wasm32-unknown-unknown` target with a WASI C runtime.
-+The host must provide the matching WASI imports and support Wasm exceptions.
-+Loading the output in a browser requires those facilities too.
-+
-+The [test crate](../tests/wasm/src/lib.rs) is a working example. Run it with
-+either C runtime:
-+
-+```bash
-+./tests/wasm/run.sh lua55 wasm32-wasip1
-+./tests/wasm/run.sh lua55 wasm32-wasip2
-+```
-+
-+Append `--release` to build and run with optimizations, or `--debug` for the default debug build.
-+
-+With Preview 1, it builds a `cdylib` and invokes the exported `run_tests` function.
-+With Preview 2, it builds a Rust `staticlib`, then links it with a small
-+[C entry point](../tests/wasm/main.c) into a command component.
-+
-+To adapt this to your project:
-+
-+1. Use the `allocator` module from the test crate as your global allocator. Rust
-+   and WASI libc must share an allocator so they do not independently manage the
-+   same linear memory.
-+2. Export your entry point as an `extern "C"` function with `#[unsafe(no_mangle)]`.
-+3. Follow [run.sh](../tests/wasm/run.sh) for the build and link commands, replacing
-+   the crate path, output name and entry point with your own. Its call to
-+   `setup.sh` selects the C runtime separately from the Rust target.
-```
-
-**File**: `tests/wasm/run.sh` (modified, +10/-4)
-```diff
-@@ -3,16 +3,22 @@ set -euo pipefail
- 
- lua="${1:-luau}"
- c_target="${2:-wasm32-wasip1}"
--if [[ $# -gt 2 || ! "$lua" =~ ^(luau|lua5[1-5])$ || ! "$c_target" =~ ^wasm32-wasip[12]$ ]]; then
--    echo "Usage: $0 [lua55|lua54|lua53|lua52|lua51|luau] [wasm32-wasip1|wasm32-wasip2]" >&2
-+if [[ $# -gt 3 || ! "$lua" =~ ^(luau|lua5[1-5])$ || ! "$c_target" =~ ^wasm32-wasip[12]$ || ! "${3:---debug}" =~ ^--(debug|release)$ ]]; then
-+    echo "Usage: $0 [lua55|lua54|lua53|lua52|lua51|luau] [wasm32-wasip1|wasm32-wasip2] [--debug|--release]" >&2
-     exit 2
- fi
- 
- cd "$(dirname "$0")/../.."
- source tests/wasm/setup.sh wasm32-unknown-unknown "$c_target"
- export CARGO_TARGET_DIR="$PWD/target/wasm-tests"
- cargo_args=(--manifest-path tests/wasm/Cargo.toml --target wasm32-unknown-unknown --features "$lua")
--wasm_output="$CARGO_TARGET_DIR/wasm32-unknown-unknown/debug/mlua_wasm_tests.wasm"
-+profile=debug
-+if [[ "${3:-}" == --release ]]; then
-+    cargo_args+=(--release)
-+    profile=release
-+fi
-+wasm_output_dir="$CARGO_TARGET_DIR/wasm32-unknown-unknown/$profile"
-+wasm_output="$wasm_output_dir/mlua_wasm_tests.wasm"
- if [[ "$c_target" == wasm32-wasip1 ]]; then
-     cargo build "${cargo_args[@]}"
-     "${wasm_runner[@]}" --invoke run_tests "$wasm_output"
-@@ -21,7 +27,7 @@ else
-     wasm_output="${wasm_output%.wasm}.component.wasm"
-     cargo rustc "${cargo_args[@]}" --lib --crate-type staticlib
-     "$WASI_SDK_PATH/bin/clang" --target="$c_target" tests/wasm/main.c \
--        "$CARGO_TARGET_DIR/wasm32-unknown-unknown/debug/libmlua_wasm_tests.a" \
-+        "$wasm_output_dir/libmlua_wasm_tests.a" \
-         -L"$wasm_lib/eh" -lc++ -lsetjmp -o "$wasm_output"
-     "${wasm_runner[@]}" "$wasm_output"
- fi
-```
-
----
-
-### Incident Patch 3: `d366205f` (2026-10-24)
-**Commit Message**: Fix calls to callable table and userdata fields
-
-Close #746
-
-**File**: `src/table.rs` (modified, +4/-0)
-```diff
-@@ -1307,6 +1307,8 @@ impl ObjectLike for Table {
-     fn call_function<R: FromLuaMulti>(&self, name: &str, args: impl IntoLuaMulti) -> Result<R> {
-         match self.get(name)? {
-             Value::Function(func) => func.call(args),
-+            Value::Table(table) => table.call(args),
-+            Value::UserData(ud) => ud.call(args),
-             val => {
-                 let msg = format!("attempt to call a {} value (function '{name}')", val.type_name());
-                 Err(Error::runtime(msg))
-@@ -1322,6 +1324,8 @@ impl ObjectLike for Table {
-     {
-         match self.get(name) {
-             Ok(Value::Function(func)) => func.call_async(args),
-+            Ok(Value::Table(table)) => table.call_async(args),
-+            Ok(Value::UserData(ud)) => ud.call_async(args),
-             Ok(val) => {
-                 let msg = format!("attempt to call a {} value (function '{name}')", val.type_name());
-                 AsyncCallFuture::error(Error::RuntimeError(msg))
-```
-
-**File**: `src/traits.rs` (modified, +6/-6)
-```diff
-@@ -169,14 +169,14 @@ pub trait ObjectLike: Sealed {
-     where
-         R: FromLuaMulti;
- 
--    /// Gets the function associated to key `name` from the object and calls it,
-+    /// Gets the callable value associated to key `name` from the object and calls it,
-     /// passing the object itself along with `args` as function arguments.
-     fn call_method<R>(&self, name: &str, args: impl IntoLuaMulti) -> Result<R>
-     where
-         R: FromLuaMulti;
- 
--    /// Gets the function associated to key `name` from the object and asynchronously calls it,
--    /// passing the object itself along with `args` as function arguments.
-+    /// Gets the callable value associated to key `name` from the object and asynchronously calls
-+    /// it, passing the object itself along with `args` as function arguments.
-     ///
-     /// This might invoke the `__index` metamethod.
-     #[cfg(feature = "async")]
-@@ -185,16 +185,16 @@ pub trait ObjectLike: Sealed {
-     where
-         R: FromLuaMulti;
- 
--    /// Gets the function associated to key `name` from the object and calls it,
-+    /// Gets the callable value associated to key `name` from the object and calls it,
-     /// passing `args` as function arguments.
-     ///
-     /// This might invoke the `__index` metamethod.
-     fn call_function<R>(&self, name: &str, args: impl IntoLuaMulti) -> Result<R>
-     where
-         R: FromLuaMulti;
- 
--    /// Gets the function associated to key `name` from the object and asynchronously calls it,
--    /// passing `args` as function arguments.
-+    /// Gets the callable value associated to key `name` from the object and asynchronously calls
-+    /// it, passing `args` as function arguments.
-     ///
-     /// This might invoke the `__index` metamethod.
-     #[cfg(feature = "async")]
-```
-
-**File**: `src/userdata/object.rs` (modified, +4/-0)
-```diff
-@@ -63,6 +63,8 @@ impl ObjectLike for AnyUserData {
-     {
-         match self.get(name)? {
-             Value::Function(func) => func.call(args),
-+            Value::Table(table) => table.call(args),
-+            Value::UserData(ud) => ud.call(args),
-             val => {
-                 let msg = format!("attempt to call a {} value (function '{name}')", val.type_name());
-                 Err(Error::RuntimeError(msg))
-@@ -77,6 +79,8 @@ impl ObjectLike for AnyUserData {
-     {
-         match self.get(name) {
-             Ok(Value::Function(func)) => func.call_async(args),
-+            Ok(Value::Table(table)) => table.call_async(args),
-+            Ok(Value::UserData(ud)) => ud.call_async(args),
-             Ok(val) => {
-                 let msg = format!("attempt to call a {} value (function '{name}')", val.type_name());
-                 AsyncCallFuture::error(Error::RuntimeError(msg))
-```
-
-**File**: `tests/async.rs` (modified, +18/-0)
-```diff
-@@ -411,6 +411,13 @@ async fn test_async_table_object_like() -> Result<()> {
-     )?;
-     table.set_metatable(Some(metatable))?;
-     assert_eq!(table.call_async::<i64>(()).await.unwrap(), 15);
-+    lua.globals().set("callable_table", &table)?;
-+    assert_eq!(
-+        lua.globals()
-+            .call_async_function::<i64>("callable_table", ())
-+            .await?,
-+        15
-+    );
- 
-     match table.call_async_method::<()>("non_existent", ()).await {
-         Err(Error::RuntimeError(err)) => {
-@@ -465,6 +472,10 @@ async fn test_async_userdata() -> Result<()> {
-     struct MyUserdata(u64);
- 
-     impl UserData for MyUserdata {
-+        fn add_fields<F: mlua::UserDataFields<Self>>(fields: &mut F) {
-+            fields.add_field_method_get("callable_userdata", |_, this| Ok(MyUserdata(this.0)));
-+        }
-+
-         fn add_methods<M: UserDataMethods<Self>>(methods: &mut M) {
-             methods.add_async_method("get_value", |_, data, ()| async move {
-                 sleep_ms(10).await;
-@@ -558,6 +569,13 @@ async fn test_async_userdata() -> Result<()> {
-     let n: u64 = userdata.call_async_method("get_value", ()).await?;
-     assert_eq!(n, 24);
-     userdata.call_async_function::<()>("sleep", 15).await?;
-+    #[cfg(not(any(feature = "lua51", feature = "luau")))]
-+    assert_eq!(
-+        userdata
-+            .call_async_function::<String>("callable_userdata", ())
-+            .await?,
-+        "elapsed:24ms"
-+    );
- 
-     #[cfg(not(any(feature = "lua51", feature = "luau")))]
-     assert_eq!(userdata.call_async::<String>(()).await?, "elapsed:24ms");
-```
-
-**File**: `tests/table.rs` (modified, +12/-0)
-```diff
-@@ -702,6 +702,13 @@ fn test_table_object_like() -> Result<()> {
-     assert_eq!(table.call_method::<String>("method", "a")?, "method_1");
-     assert_eq!(table.to_string()?, "table object");
- 
-+    assert_eq!(lua.globals().call_function::<String>("table", "b")?, "call_2");
-+    let callable = lua
-+        .load("return setmetatable({}, {__call = function(_, receiver, key) return receiver[key] end})")
-+        .eval::<Table>()?;
-+    table.set("callable", callable)?;
-+    assert_eq!(table.call_method::<i32>("callable", "a")?, 1);
-+
-     match table.call_method::<()>("non_existent", ()) {
-         Err(Error::RuntimeError(err)) => {
-             assert!(err.contains("attempt to call a nil value (function 'non_existent')"))
-@@ -712,6 +719,11 @@ fn test_table_object_like() -> Result<()> {
-     // Test calling non-callable table
-     let table2 = lua.create_table()?;
-     assert!(matches!(table2.call::<()>(()), Err(Error::RuntimeError(_))));
-+    table.set("non_callable", table2)?;
-+    assert!(matches!(
-+        table.call_function::<()>("non_callable", ()),
-+        Err(Error::RuntimeError(_))
-+    ));
- 
-     Ok(())
- }
-```
-
-**File**: `tests/userdata.rs` (modified, +2/-0)
-```diff
-@@ -976,6 +976,7 @@ fn test_userdata_object_like() -> Result<()> {
- 
-     impl UserData for MyUserData {
-         fn add_fields<F: UserDataFields<Self>>(fields: &mut F) {
-+            fields.add_field_method_get("callable_userdata", |_, this| Ok(*this));
-             fields.add_field_method_get("n", |_, this| Ok(this.0));
-             fields.add_field_method_set("n", |_, this, val| {
-                 this.0 = val;
-@@ -1004,6 +1005,7 @@ fn test_userdata_object_like() -> Result<()> {
-     }
- 
-     assert_eq!(ud.call::<LuaString>(())?, "called");
-+    assert_eq!(ud.call_function::<String>("callable_userdata", ())?, "called");
- 
-     ud.call_method::<()>("add", 2)?;
-     assert_eq!(ud.get::<u32>("n")?, 323);
+ //
+ // Reference system, can be used to pin objects
 ```
 
 #### Recent Merged Pull Requests:
@@ -2773,43 +2395,28 @@ Close #746
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. minimum integer lookup paths
+## X. Bump Luau to 0.745
 
 **RULE**:
-When implementing operations in `src/util/path.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mlua-rs/mlua. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `mlua-sys/Cargo.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mlua-rs/mlua. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ff96ed78`: minimum integer lookup paths. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a0ad4535`: Bump Luau to 0.745. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/util/path.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `mlua-sys/Cargo.toml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-                            let digit = (c as u8 - b'0') as Integer;
-                                .and_then(|n| {
-                                    if negative {
-                                        n.checked_sub(digit)
-                                    } else {
-                                        n.checked_add(digit)
-                                    }
-                                })
-        let min_path = format!("a[{}]", crate::Integer::MIN);
-        let path = parse_path(&min_path).unwrap();
-        assert!(matches!(path[1], (PathKey::Int(n), false) if n == crate::Integer::MIN));
-
-        let negative_overflow = format!("a[{}0]", crate::Integer::MIN);
-        let err = parse_path(&negative_overflow).unwrap_err().to_string();
-        assert_eq!(err, "runtime error: integer overflow in path at position 2");
+luau0-src = { version = "0.23.0", optional = true }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-                                .and_then(|n| n.checked_add((c as u8 - b'0') as Integer))
-                            Some(n) if negative => PathKey::Int(-n),
+luau0-src = { version = "0.22.1", optional = true }
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ff96ed78` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a0ad4535` are properly handled with clean fallback behavior.

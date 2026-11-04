@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261031-7D0J",
-    "timestamp": "2026-10-31T20:11:52.099Z",
-    "repository": "momenbasel/PureMac",
-    "learningId": "learn-github-momenbasel-puremac",
-    "contentHash": "a35d38628bfaab2455114ee88a874a08dd78b31fd8504313d0c56cf7c252addf",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261031-LYJI",
-    "timestamp": "2026-10-31T20:23:13.182Z",
-    "repository": "mudler/locate-anything.cpp-gguf",
-    "learningId": "learn-huggingface-mudler-locate-anything-cpp-gguf",
-    "contentHash": "c2c27e227605cfd24e8d53b39ea90bc0e0267982fd2cb817ff654633ba5c9650",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261031-LZDY",
-    "timestamp": "2026-10-31T20:23:14.278Z",
-    "repository": "zeromicro/go-zero",
-    "learningId": "learn-github-zeromicro-go-zero",
-    "contentHash": "684cab988fceb93b29ef291472a02c19fc67a21fb67d5af076c9c61c787d90b2",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261031-M0CJ",
-    "timestamp": "2026-10-31T20:23:15.523Z",
-    "repository": "tailscale/tailscale",
-    "learningId": "learn-github-tailscale-tailscale",
-    "contentHash": "508a41d242219a8541d4a67901411f4d5374e23abb0e95cde77b4be300bd1a25",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261031-M1W5",
     "timestamp": "2026-10-31T20:23:17.525Z",
     "repository": "genkit-ai/genkit",
@@ -7490,6 +7430,66 @@
     "repository": "NVIDIA/cuda-rust",
     "learningId": "learn-github-nvidia-cuda-rust",
     "contentHash": "ee582962336aec9f85a61cc010b79bd1cae30807a43ce3c02fcb087178be9c62",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-0YKT",
+    "timestamp": "2026-11-04T09:57:42.797Z",
+    "repository": "mlua-rs/mlua",
+    "learningId": "learn-github-mlua-rs-mlua",
+    "contentHash": "70ad9dfb5075bb6828e8731319bc45a49b619d7db90a7b11535d4f0307103cc6",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-12S1",
+    "timestamp": "2026-11-04T09:57:48.241Z",
+    "repository": "nativewind/nativewind",
+    "learningId": "learn-github-nativewind-nativewind",
+    "contentHash": "183a548e4e9fed9c990dbe247de517257518561356b0517ae5647019887a9f4e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-14UR",
+    "timestamp": "2026-11-04T09:57:50.931Z",
+    "repository": "projectcontour/contour",
+    "learningId": "learn-github-projectcontour-contour",
+    "contentHash": "084be519e71d01763c8ec7e614e97d20aeddce41a3420d36a40a263f53d9f290",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-17N2",
+    "timestamp": "2026-11-04T09:57:54.542Z",
+    "repository": "apple/foundationdb",
+    "learningId": "learn-github-apple-foundationdb",
+    "contentHash": "e87047cb7be46ffe56212f3c19bac48244aeaa1f78705dfa7308023377737d19",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

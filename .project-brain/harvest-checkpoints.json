@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-04T09:40:21.848Z",
+  "last_updated": "2026-11-04T09:57:54.556Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -7551,14 +7551,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nativewind-nativewind",
-      "content_hash": "0a4729518795c1c9bac22713cd15da3e3c55cb2b5c2efa7f43c56cc43f9ca161",
-      "verified_at": "2026-10-19T02:37:09.597Z",
+      "content_hash": "183a548e4e9fed9c990dbe247de517257518561356b0517ae5647019887a9f4e",
+      "verified_at": "2026-11-04T09:57:48.292Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T02:37:09.597Z"
+      "last_updated": "2026-11-04T09:57:48.292Z"
     },
     "crossplane/crossplane": {
       "repository": "crossplane/crossplane",
@@ -7581,14 +7581,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-apple-foundationdb",
-      "content_hash": "6451b733c0c47e33b67798d039fa166f017c426b5ddbf7d5cf23adb30df2dc78",
-      "verified_at": "2026-11-03T12:25:12.096Z",
+      "content_hash": "e87047cb7be46ffe56212f3c19bac48244aeaa1f78705dfa7308023377737d19",
+      "verified_at": "2026-11-04T09:57:54.555Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T12:25:12.096Z"
+      "last_updated": "2026-11-04T09:57:54.555Z"
     },
     "kucherenko/jscpd": {
       "repository": "kucherenko/jscpd",
@@ -8661,14 +8661,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-mlua-rs-mlua",
-      "content_hash": "9908bbca4161887edf9df438a17502a89bc24d1e72edc58c4468647231af1b87",
-      "verified_at": "2026-10-25T19:06:28.501Z",
+      "content_hash": "70ad9dfb5075bb6828e8731319bc45a49b619d7db90a7b11535d4f0307103cc6",
+      "verified_at": "2026-11-04T09:57:42.810Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T19:06:28.501Z"
+      "last_updated": "2026-11-04T09:57:42.810Z"
     },
     "APSL/react-native-keyboard-aware-scroll-view": {
       "repository": "APSL/react-native-keyboard-aware-scroll-view",
@@ -10251,14 +10251,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-projectcontour-contour",
-      "content_hash": "3419dc50c77549821d4bff1b3b33213d9b95a91f72f27c7280abfac1aa64ddd6",
-      "verified_at": "2026-11-03T15:54:45.355Z",
+      "content_hash": "084be519e71d01763c8ec7e614e97d20aeddce41a3420d36a40a263f53d9f290",
+      "verified_at": "2026-11-04T09:57:50.944Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T15:54:45.355Z"
+      "last_updated": "2026-11-04T09:57:50.944Z"
     },
     "topoteretes/cognee": {
       "repository": "topoteretes/cognee",

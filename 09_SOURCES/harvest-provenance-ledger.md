@@ -7208,3 +7208,7 @@ Every entry in this ledger must capture:
 | `learn-github-nitrojs-nitro` | `https://github.com/unjs/nitro` | `c7cf4fe9` | Multi-dimensional audit evidence | 2026-11-04T09:40:03.748Z |
 | `learn-github-dylanvann-react-native-fast-image` | `https://github.com/DylanVann/react-native-fast-image` | `d86d925a` | Multi-dimensional audit evidence | 2026-11-04T09:40:05.641Z |
 | `learn-github-nvidia-cuda-rust` | `https://github.com/NVIDIA/cuda-rust` | `00f6624c` | Multi-dimensional audit evidence | 2026-11-04T09:40:21.840Z |
+| `learn-github-mlua-rs-mlua` | `https://github.com/mlua-rs/mlua` | `a0ad4535` | Multi-dimensional audit evidence | 2026-11-04T09:57:42.801Z |
+| `learn-github-nativewind-nativewind` | `https://github.com/nativewind/nativewind` | `ddcfd806` | Multi-dimensional audit evidence | 2026-11-04T09:57:48.246Z |
+| `learn-github-projectcontour-contour` | `https://github.com/projectcontour/contour` | `7514fb8b` | Multi-dimensional audit evidence | 2026-11-04T09:57:50.935Z |
+| `learn-github-apple-foundationdb` | `https://github.com/apple/foundationdb` | `a647b2f2` | Multi-dimensional audit evidence | 2026-11-04T09:57:54.546Z |

@@ -4953,10 +4953,10 @@
     "repository": "nativewind/nativewind",
     "platform": "github",
     "sourceUrl": "https://github.com/nativewind/nativewind",
-    "sourceVersion": "7dbaf182",
+    "sourceVersion": "ddcfd806",
     "license": "MIT",
-    "contentHash": "0a4729518795c1c9bac22713cd15da3e3c55cb2b5c2efa7f43c56cc43f9ca161",
-    "lastHarvestedAt": "2026-10-19T02:37:09.591Z",
+    "contentHash": "183a548e4e9fed9c990dbe247de517257518561356b0517ae5647019887a9f4e",
+    "lastHarvestedAt": "2026-11-04T09:57:48.246Z",
     "learningId": "learn-github-nativewind-nativewind"
   },
   "crossplane-crossplane": {
@@ -4973,10 +4973,10 @@
     "repository": "apple/foundationdb",
     "platform": "github",
     "sourceUrl": "https://github.com/apple/foundationdb",
-    "sourceVersion": "8ddaf495",
+    "sourceVersion": "a647b2f2",
     "license": "Apache-2.0",
-    "contentHash": "6451b733c0c47e33b67798d039fa166f017c426b5ddbf7d5cf23adb30df2dc78",
-    "lastHarvestedAt": "2026-11-03T12:25:12.089Z",
+    "contentHash": "e87047cb7be46ffe56212f3c19bac48244aeaa1f78705dfa7308023377737d19",
+    "lastHarvestedAt": "2026-11-04T09:57:54.546Z",
     "learningId": "learn-github-apple-foundationdb"
   },
   "kucherenko-jscpd": {
@@ -5693,10 +5693,10 @@
     "repository": "mlua-rs/mlua",
     "platform": "github",
     "sourceUrl": "https://github.com/mlua-rs/mlua",
-    "sourceVersion": "ff96ed78",
+    "sourceVersion": "a0ad4535",
     "license": "NOASSERTION",
-    "contentHash": "9908bbca4161887edf9df438a17502a89bc24d1e72edc58c4468647231af1b87",
-    "lastHarvestedAt": "2026-10-25T19:06:28.493Z",
+    "contentHash": "70ad9dfb5075bb6828e8731319bc45a49b619d7db90a7b11535d4f0307103cc6",
+    "lastHarvestedAt": "2026-11-04T09:57:42.801Z",
     "learningId": "learn-github-mlua-rs-mlua"
   },
   "apsl-react-native-keyboard-aware-scroll-view": {
@@ -6793,10 +6793,10 @@
     "repository": "projectcontour/contour",
     "platform": "github",
     "sourceUrl": "https://github.com/projectcontour/contour",
-    "sourceVersion": "38795f67",
+    "sourceVersion": "7514fb8b",
     "license": "Apache-2.0",
-    "contentHash": "3419dc50c77549821d4bff1b3b33213d9b95a91f72f27c7280abfac1aa64ddd6",
-    "lastHarvestedAt": "2026-11-03T15:54:45.346Z",
+    "contentHash": "084be519e71d01763c8ec7e614e97d20aeddce41a3420d36a40a263f53d9f290",
+    "lastHarvestedAt": "2026-11-04T09:57:50.935Z",
     "learningId": "learn-github-projectcontour-contour"
   },
   "topoteretes-cognee": {

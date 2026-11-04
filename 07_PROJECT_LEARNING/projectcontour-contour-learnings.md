@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/projectcontour-contour-learnings.md`  
 > **Source**: github ([https://github.com/projectcontour/contour](https://github.com/projectcontour/contour))  
-> **Source Version**: `38795f67`  
+> **Source Version**: `7514fb8b`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T15:54:44.599Z  
+> **Timestamp**: 2026-11-04T09:57:50.180Z  
 > **Learning ID**: `learn-github-projectcontour-contour`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/projectcontour-contour-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/projectcontour/contour](https://github.com/projectcontour/contour))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T15:54:38.883Z  
+> **Harvest Timestamp**: 2026-11-04T09:57:49.493Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1592,15 +1592,11 @@ const (
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #7807** (2026-11-02): **Fix included HTTPProxy regex matching outside its prefix**
-  *Symptoms*: This PR prevents an included `HTTPProxy` from matching paths outside its include prefix with regex. The prefix is escaped, the child regex is grouped, and the merged regex is validated.  Fixes GHSA-g6qh-g3pq-5cpm.  This is already released in v1.33.8, so no release notes.
-  **Post-Mortem & Fix Analysis**:
-  > ## [Codecov](https://app.codecov.io/gh/projectcontour/contour/pull/7807?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=projectcontour) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 84.30%. Comparing base ([`ae99b5a`](https://app.codecov.io/gh/projectcontour/contour/commit/ae99b5a1a13166db87bee5d16a445c9c66f3e8de?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=projectcontour)) to head ([`1040db1`](https://app.codecov.io/gh/projectcontour/contour/commit/1040db17d9df48e642604448c4efd1eb401d0eae?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=projectcontour)).  <details><summary>Additional details and impacted files</summary>    [![Impacted file tree graph](https://app.codecov.io/gh/projectcontour/contour
+- **Issue #7816** (2026-11-04): **build(deps): bump docker/login-action from 4.6.0 to 4.7.0**
+  *Symptoms*: Bumps [docker/login-action](https://github.com/docker/login-action) from 4.6.0 to 4.7.0. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/docker/login-action/releases">docker/login-action's releases</a>.</em></p> <blockquote> <h2>v4.7.0</h2> <ul> <li>Preserve explicit ECR settings in <code>registry-auth</code> by <a href="https://github.com/crazy-max"><code>@​crazy-max</code></a> in <a href="https://redirect.github.com/docker/login-action/pull/1089">docker/login-action#1089</a></li> <li>Use registry hosts for scoped credentials by <a href="https://github.com/crazy-max"><code>@​crazy-max</code></a> in <a href="https://redirect.github.com/docker/login-action/pull/1088">docker/login-action#1088</a></li> <li>Raise Docker Hub OIDC max expiry to 6 hours by <a href="https://github.com/crazy-max"><code>@​crazy-max</code></a> in <a href="https://redirect.github.com/docker/login-action/pull/1068">docker/login-action#1068</a></li> <li>Log Docker Hub OIDC token exchange progress by <a href="https://github.com/crazy-max"><code>@​crazy-max</code></a> in <a href="https://redirect.github.com/docker/login-action/pull/1061">docker/login-action#1061</a></li> <li>Bump <code>@​aws-sdk/client-ecr</code> and <code>@​aws-sdk/client-ecr-public</code> to 3.1154.0 in <a href="https://redirect.github.com/docker/login-action/pull/1093">docker/login-action#1093</a></li> <li>Bump <code>@​docker/actions-toolkit</code> from 0.94.0 to 0.107.0 in <a href="https://redir
 
-- **Issue #7806** (2026-11-02): **Include all distinguishing fields in DNSNameCluster name**
-  *Symptoms*: This PR includes all JWKS settings in the `DNSNameCluster` name. Before, HTTPProxies with the same JWKS host shared one Envoy cluster and used the settings of only one of them.  Fixes GHSA-9x3c-68m7-f3x4.  This is already released in v1.33.8, so no release notes.
-  **Post-Mortem & Fix Analysis**:
-  > ## [Codecov](https://app.codecov.io/gh/projectcontour/contour/pull/7806?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=projectcontour) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 84.29%. Comparing base ([`ae99b5a`](https://app.codecov.io/gh/projectcontour/contour/commit/ae99b5a1a13166db87bee5d16a445c9c66f3e8de?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=projectcontour)) to head ([`4d888f7`](https://app.codecov.io/gh/projectcontour/contour/commit/4d888f7d0bd51a3ad3bd41f4f4303c306c796938?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=projectcontour)).  <details><summary>Additional details and impacted files</summary>    [![Impacted file tree graph](https://app.codecov.io/gh/projectcontour/contour
+- **Issue #7815** (2026-11-04): **build(deps): bump the k8s-dependencies group with 4 updates**
+  *Symptoms*: Bumps the k8s-dependencies group with 4 updates: [k8s.io/api](https://github.com/kubernetes/api), [k8s.io/apiextensions-apiserver](https://github.com/kubernetes/apiextensions-apiserver), [k8s.io/apimachinery](https://github.com/kubernetes/apimachinery) and [k8s.io/client-go](https://github.com/kubernetes/client-go).  Updates `k8s.io/api` from 0.34.12 to 0.34.13 <details> <summary>Commits</summary> <ul> <li><a href="https://github.com/kubernetes/api/commit/1b2a9bb670561fbceb53d14bc90f8dbac28ceaa1"><code>1b2a9bb</code></a> Update dependencies to v0.34.13 tag</li> <li>See full diff in <a href="https://github.com/kubernetes/api/compare/v0.34.12...v0.34.13">compare view</a></li> </ul> </details> <br />  Updates `k8s.io/apiextensions-apiserver` from 0.34.12 to 0.34.13 <details> <summary>Commits</summary> <ul> <li><a href="https://github.com/kubernetes/apiextensions-apiserver/commit/be5a186885df79a34ef3fe89dd2c8b2aa2c3cf4d"><code>be5a186</code></a> Update dependencies to v0.34.13 tag</li> <li>See full diff in <a href="https://github.com/kubernetes/apiextensions-apiserver/compare/v0.34.12...v0.34.13">compare view</a></li> </ul> </details> <br />  Updates `k8s.io/apimachinery` from 0.34.12 to 0.34.13 <details> <summary>Commits</summary> <ul> <li>See full diff in <a href="https://github.com/kubernetes/apimachinery/compare/v0.34.12...v0.34.13">compare view</a></li> </ul> </details> <br />  Updates `k8s.io/client-go` from 0.34.12 to 0.34.13 <details> <summary>Commits</summary> <ul> <li><
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1617,695 +1613,232 @@ const (
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2625d1e5` (2026-11-02)
-**Commit Message**: Fix included HTTPProxy regex matching outside its prefix (#7807)
+### Incident Patch 1: `ff7259a2` (2026-11-04)
+**Commit Message**: build(deps): bump github.com/prometheus/common from 0.72.1 to 0.73.0 (#7812)
 
-* Fix HTTPProxy Path Delegation Escape and Metacharacter Injection via Regex Conditions in mergePathMatchConditions
+Bumps [github.com/prometheus/common](https://github.com/prometheus/common) from 0.72.1 to 0.73.0.
+- [Release notes](https://github.com/prometheus/common/releases)
+- [Changelog](https://github.com/prometheus/common/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/prometheus/common/compare/v0.72.1...v0.73.0)
 
-1. Regex Alternation Escape:
-When a tenant-controlled child route regex contained a '|' (alternation) operator, raw concatenation allowed
-the alternation to escape the parent include prefix constraint (e.g., '^/team-a/x|/admin/.' evaluated
-as '(^/team-a/x)|(/admin/.)'). This allowed tenants to hijack arbitrary co-hosted routes (such as /admin).
+---
+updated-dependencies:
+- dependency-name: github.com/prometheus/common
+  dependency-version: 0.73.0
+  dependency-type: direct:production
+  update-type: version-update:semver-minor
+...
 
-2. Unescaped Parent Prefix Metacharacters:
-When a parent include prefix contained regex metacharacters (e.g., '/v1.0') and was merged with
-a child regex route, the parent prefix was concatenated without being escaped. The '.' was interpreted
-as an RE2 wildcard, allowing the tenant to match and intercept traffic destined for other prefixes (e.g., /v100).
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 
-3. Updates TestPathMatchCondition in conditions_test.go to assert the secure non-capturing group
-output format and adds explicit security exploit test cases.
-
-* Validate merged regex path conditions, add test cases
-
-Signed-off-by: Tero Saarni <[REDACTED_EMAIL]>
-
----------
-
-Signed-off-by: Tero Saarni <[REDACTED_
-
-**File**: `internal/dag/builder_test.go` (modified, +149/-1)
+**File**: `go.mod` (modified, +3/-1)
 ```diff
-@@ -14013,7 +14013,7 @@ func TestDAGInsert(t *testing.T) {
- 					Port: 8080,
- 					VirtualHosts: virtualhosts(
- 						virtualhost("example.valid.regexpath.com",
--							routeClusterRegex("/foo/regex/.*",
-+							routeClusterRegex("/foo(?:/regex/.*)",
- 								&Cluster{
- 									Upstream: service(s1),
- 								},
-@@ -14028,6 +14028,108 @@ func TestDAGInsert(t *testing.T) {
- 				},
- 			),
- 		},
-+		"httpproxy include with prefix, child regex with alternation is wrapped in non-capturing group": {
-+			objs: []any{
-+				&contour_v1.HTTPProxy{
-+					ObjectMeta: meta_v1.ObjectMeta{
-+						Name:      "root",
-+						Namespace: s1.Namespace,
-+					},
-+					Spec: contour_v1.HTTPProxySpec{
-+						VirtualHost: &contour_v1.VirtualHost{Fqdn: "example.com"},
-+						Includes: []contour_v1.Include{{
-+							Name:      "child",
-+							Namespace: s1.Namespace,
-+							Conditions: []contour_v1.MatchCondition{{
-+								Prefix: "/team-a",
-+							}},
-+						}},
-+					},
-+				},
-+				&contour_v1.HTTPProxy{
-+					ObjectMeta: meta_v1.ObjectMeta{
-+						Name:      "child",
-+						Namespace: s1.Namespace,
-+					},
-+					Spec: contour_v1.HTTPProxySpec{
-+						Routes: []contour_v1.Route{{
-+							Conditions: []contour_v1.MatchCondition{{
-+								Regex: "/x|/admin/.*",
-+							}},
-+							Services: []contour_v1.Service{{
-+								Name: s1.Name,
-+								Port: 8080,
-+							}},
-+						}},
-+					},
-+				},
-+				s1,
-+			},
-+			want: listeners(
-+				&Listener{
-+					Name: HTTP_LISTENER_NAME,
-+					Port: 8080,
-+					VirtualHosts: virtualhosts(
-+						virtualhost("example.com",
-+							routeClusterRegex("/team-a(?:/x|/admin/.*)",
-+								&Cluster{Upstream: service(s1)},
-+							),
-+						),
-+					),
-+				},
-+			),
-+		},
-+		"httpproxy include with prefix containing metacharacters, prefix is escaped in merged regex": {
-+			objs: []any{
-+				&contour_v1.HTTPProxy{
-+					ObjectMeta: meta_v1.ObjectMeta{
-+						Name:      "root",
-+						Namespace: s1.Namespace,
-+					},
-+					Spec: contour_v1.HTTPProxySpec{
-+						VirtualHost: &contour_v1.VirtualHost{Fqdn: "example.com"},
-+						Includes: []contour_v1.Include{{
-+							Name:      "child",
-+							Namespace: s1.Namespace,
-+							Conditions: []contour_v1.MatchCondition{{
-+								Prefix: "/v1.0",
-+							}},
-+						}},
-+					},
-+				},
-+				&contour_v1.HTTPProxy{
-+					ObjectMeta: meta_v1.ObjectMeta{
-+						Name:      "child",
-+						Namespace: s1.Namespace,
-+					},
-+					Spec: contour_v1.HTTPProxySpec{
-+						Routes: []contour_v1.Route{{
-+							Conditions: []contour_v1.MatchCondition{{
-+								Regex: "/.*",
-+							}},
-+							Services: []contour_v1.Service{{
-+								Name: s1.Name,
-+								Port: 8080,
-+							}},
-+						}},
-+					},
-+				},
-+				s1,
-+			},
-+			want: listeners(
-+				&Listener{
-+					Name: HTTP_LISTENER_NAME,
-+					Port: 8080,
-+					VirtualHosts: virtualhosts(
-+						virtualhost("example.com",
-+							routeClusterRegex(`/v1\.0(?:/.*)`,
-+								&Cluster{Upstream: service(s1)},
-+							),
-+						),
-+					),
-+				},
-+			),
-+		},
- 	}
- 
- 	for name, tc := range tests {
-@@ -15597,6 +15699,52 @@ func TestHTTPProxyConficts(t *testing.T) {
- 			{Name: "root-proxy", Namespace: "default"}:        fixture.NewValidCondition().Valid(),
- 		},
- 	})
-+
-+	run(t, "child proxy with regex that produces invalid merged regex reports route error", testcase{
-+		objs: []any{
-+			&contour_v1.HTTPProxy{
-+				ObjectMeta: meta_v1.ObjectMeta{
-+					Name:      "root-proxy",
-+					Namespace: "default",
-+				},
-+				Spec: contour_v1.HTTPProxySpec{
-+					VirtualHost: &contour_v1.VirtualHost{
-+						Fqdn: "example.com",
-+					},
-+					Includes: []contour_v1.Include{{
-+						Name:       "child-proxy",
-+						Namespace:  "default",
-+						Conditions: []contour_v1.MatchCondition{{Prefix: "/team-a"}},
-+					}},
-+				},
-+			},
-+			&contour_v1.HTTPProxy{
-+				ObjectMeta: meta_v1.ObjectMeta{
-+					Name:      "child-proxy",
-+					Namespace: "default",
-+				},
-+				Spec: contour_v1.HTTPProxySpec{
-+					Routes: []contour_v1.Route{{
-+						Conditions: []contour_v1.MatchCondition{{
-+							Regex: `/\Qfoo`,
-+						}},
-+						Services: []contour_v1.Service{{
-+							Name: "existing-service-1",
-+							Port: 8080,
-+						}},
-+					}},
-+				},
-+			},
-+			existingService1,
-+		},
-+		wantListeners: listeners(),
-+		wantStatus: map[types.NamespacedName]contour_v1.DetailedCondition{
-+			{Name: "child-proxy", Namespace: "default"}: fixture.NewValidCondition().
-+				WithError(contour_v1.ConditionTypeRouteError, "PathMatchConditionsNotValid",
-+					"route: regex invalid after merging with include prefix"),
-+			{Name: "root-proxy", Namespace: "default"}: fixture.NewValidCondition().Valid(),
-+		},
-+	})
- }
- 
- func TestDefaultHeadersPolicies(t *testing.T) {
+@@ -21,7 +21,7 @@ require (
+ 	github.com/pkg/errors v0.9.1
+ 	github.com/prometheus/client_golang v1.25.0
+ 	github.com/prometheus/client_model v0.6.3
+-	github.com/prometheus/common v0.72.1
++	github.com/prometheus/common v0.73.0
+ 	github.com/sirupsen/logrus v1.10.2
+ 	github.com/stretchr/testify v1.12.1
+ 	github.com/tsaarni/certyaml v0.13.0
+@@ -83,13 +83,15 @@ require (
+ 	github.com/google/go-querystring v1.1.0 // indirect
+ 	github.com/google/pprof v0.0.0-20260402051712-545e8a4df936 // indirect
+ 	github.com/gorilla/websocket v1.5.4-0.20250319132907-e064f32e3674 // indirect
++	github.com/hashicorp/go-uuid v1.0.3 // indirect
+ 	github.com/json-iterator/go v1.1.12 // indirect
+ 	github.com/miekg/dns v1.1.65 // indirect
+ 	github.com/moby/spdystream v0.5.1 // indirect
+ 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
+ 	github.com/modern-go/reflect2 v1.0.3-0.20250322232337-35a7c28c31ee // indirect
+ 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
+ 	github.com/opencontainers/go-digest v1.0.0 // indirect
++	github.com/pandatix/go-abnf v0.5.1 // indirect
+ 	github.com/planetscale/vtprotobuf v0.6.1-0.20240319094008-0393e58bdf10 // indirect
+ 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
+ 	github.com/prometheus/procfs v0.22.0 // indirect
 ```
 
-**File**: `internal/dag/conditions.go` (modified, +36/-13)
+**File**: `go.sum` (modified, +6/-2)
 ```diff
-@@ -26,22 +26,41 @@ import (
- // prefix/exact/regex Condition.
- // In the case no regex is present then the leaf condition of the include tree
- // decides whether the merged condition will be prefix or exact.
--// In case there is a regex condition present the entire condition becomes a regex condition.
--// pathMatchConditionsValid guarantees that if a prefix is present, it will start with a
--// / character, so we can simply concatenate.
--func mergePathMatchConditions(conds []contour_v1.MatchCondition) MatchCondition {
--	mergedPath := ""
-+// In case there is a regex condition present the entire condition becomes a regex condition,
-+// with prefixes escaped and the regex wrapped in a non-capturing group.
-+// An error is returned if the merged regex is not valid.
-+func mergePathMatchConditions(conds []contour_v1.MatchCondition) (MatchCondition, error) {
- 	isRegex := false
-+	for _, cond := range conds {
-+		if cond.Regex != "" {
-+			isRegex = true
-+			break
-+		}
-+	}
- 
-+	mergedPath := ""
- 	for _, cond := range conds {
- 		switch {
- 		case cond.Prefix != "":
--			mergedPath += cond.Prefix
-+			if isRegex {
-+				// Drop trailing "/" from prefix so the child regex's leading "/" is not doubled when wrapped in a non-capturing group.
-+				// "/team-a/" + "/x" -> "/team-a(?:/x)".
-+				trimmed := strings.TrimRight(cond.Prefix, "/")
-+				mergedPath += regexp.QuoteMeta(trimmed)
-+			} else {
-+				mergedPath += cond.Prefix
-+			}
- 		case cond.Exact != "":
-+			// "Exact" cannot be used with "Regex" in the same chain so there is no need to escape it.
-+			// Specifically, includeMatchConditionsValid() forbids Exact/Regex in parent includes.
- 			mergedPath += cond.Exact
- 		case cond.Regex != "":
--			mergedPath += cond.Regex
--			isRegex = true
-+			if mergedPath != "" {
-+				// Wrap in a non-capturing group so that "|" cannot escape the parent prefix.
-+				mergedPath += "(?:" + cond.Regex + ")"
-+			} else {
-+				mergedPath += cond.Regex
-+			}
- 		}
- 	}
- 
-@@ -57,28 +76,32 @@ func mergePathMatchConditions(conds []contour_v1.MatchCondition) MatchCondition
- 		mergedPath = `/`
- 		return &PrefixMatchCondition{
- 			Prefix: mergedPath,
--		}
-+		}, nil
- 	}
- 
- 	// If mergedPath is not empty then choose match type using the last rule of the delegation chain
- 	lastCondition := conds[len(conds)-1]
- 	switch {
- 	case isRegex:
-+		// Merged regex can be invalid even if each part was valid alone according to pathMatchConditionsValid().
-+		if err := ValidateRegex(mergedPath); err != nil {
-+			return nil, errors.New("regex invalid after merging with include prefix")
-+		}
- 		return &RegexMatchCondition{
- 			Regex: mergedPath,
--		}
-+		}, nil
- 	case lastCondition.Prefix != "":
- 		return &PrefixMatchCondition{
- 			Prefix: mergedPath,
--		}
-+		}, nil
- 	case lastCondition.Exact != "":
- 		return &ExactMatchCondition{
- 			Path: mergedPath,
--		}
-+		}, nil
- 	default:
- 		return &PrefixMatchCondition{
- 			Prefix: mergedPath,
--		}
-+		}, nil
- 	}
- }
- 
-```
-
-**File**: `internal/dag/conditions_test.go` (modified, +27/-2)
-```diff
-@@ -178,7 +178,31 @@ func TestPathMatchCondition(t *testing.T) {
- 			}, {
- 				Regex: "/v[0-9]+",
- 			}},
--			want: &RegexMatchCondition{Regex: "/api/v[0-9]+"},
-+			want: &RegexMatchCondition{Regex: "/api(?:/v[0-9]+)"},
-+		},
-+		"exploit scenario - prefix escape via regex alternation": {
-+			matchconditions: []contour_v1.MatchCondition{{
-+				Prefix: "/team-a",
-+			}, {
-+				Regex: "/x|/admin/.*",
-+			}},
-+			want: &RegexMatchCondition{Regex: "/team-a(?:/x|/admin/.*)"},
-+		},
-+		"exploit scenario - prefix metacharacter escape": {
-+			matchconditions: []contour_v1.MatchCondition{{
-+				Prefix: "/v1.0",
-+			}, {
-+				Regex: "/.*",
-+			}},
-+			want: &RegexMatchCondition{Regex: `/v1\.0(?:/.*)`},
-+		},
-+		"child regex with escaped backslash before Q": {
-+			matchconditions: []contour_v1.MatchCondition{{
-+				Prefix: "/team-a",
-+			}, {
-+				Regex: `/\\Qfoo`,
-+			}},
-+			want: &RegexMatchCondition{Regex: `/team-a(?:/\\Qfoo)`},
- 		},
- 		"header condition": {
- 			matchconditions: []contour_v1.MatchCondition{{
-@@ -197,7 +221,8 @@ func TestPathMatchCondition(t *testing.T) {
- 
- 	for name, tc := range tests {
- 		t.Run(name, func(t *testing.T) {
--			got := mergePathMatchConditions(tc.matchconditions)
-+			got, err := mergePathMatchConditions(tc.matchconditions)
-+			require.NoError(t, err)
- 			assert.Equal(t, tc.want, got)
- 		})
- 	}
-```
-
-**File**: `internal/dag/httpproxy_processor.go` (modified, +16/-3)
-```diff
-@@ -676,8 +676,11 @@ func addRoutes(vhost vhost, routes []*Route) {
- 
- func (p *HTTPProxyProcessor) addStatusBadGatewayRoute(routes []*Route, conds []contour_v1.MatchCondition, proxy *contour_v1.HTTPProxy) []*Route {
- 	if len(conds) > 0 {
-+		// Include conditions are prefix only, so no regex is merged and no error can be returned.
-+		pathMatchCondition, _ := mergePathMatchConditions(conds)
-+
- 		route := &Route{
--			PathMatchCondition:        mergePathMatchConditions(conds),
-+			PathMatchCondition:        pathMatchCondition,
- 			HeaderMatchConditions:     mergeHeaderMatchConditions(conds),
- 			QueryParamMatchConditions: mergeQueryParamMatchConditions(conds),
- 			DirectResponse:            directResponse(http.StatusBadGateway, ""),
-@@ -869,8 +872,15 @@ func (p *HTTPProxyProcessor) computeRoutes(
- 
- 		directPolicy := directResponsePolicy(route.DirectResponsePolicy)
- 
-+		pathMatchCondition, err := mergePathMatchConditions(routeConditions)
-+		if err != nil {
-+			validCond.AddErrorf(contour_v1.ConditionTypeRouteError, "PathMatchConditionsNotValid",
-+				"route: %s", err)
-+			return nil
-+		}
-+
- 		r := &Route{
--			PathMatchCondition:        mergePathMatchConditions(routeConditions),
-+			PathMatchCondition:        pathMatchCondition,
- 			HeaderMatchConditions:     mergeHeaderMatchConditions(routeConditions),
- 			QueryParamMatchConditions: mergeQueryParamMatchConditions(routeConditions),
- 			Websocket:                 route.EnableWebsockets,
-@@ -1870,7 +1880,10 @@ type matchConditionAggregate struct {
- func includeMatchConditionsIdentical(includeConds []contour_v1.MatchCondition, seenConds map[string][]matchConditionAggregate) bool {
- 	pathPrefix := ""
- 
--	switch pathPrefixRef := mergePathMatchConditions(includeConds).(type) {
-+	// Include conditions are prefix only, so no regex is merged and no error can be returned.
-+	mergedCond, _ := mergePathMatchConditions(includeConds)
-+
-+	switch pathPrefixRef := mergedCond.(type) {
- 	case *PrefixMatchCondition:
- 		pathPrefix = pathPrefixRef.Prefix
- 	default:
-```
-
-**File**: `test/e2e/httpproxy/include_regex_path_condition_test.go` (modified, +42/-0)
-```diff
-@@ -76,6 +76,19 @@ func testIncludeRegexCondition(namespace string) {
- 							},
- 						},
- 					},
-+					{
-+						Services: []contour_v1.Service{
-+							{
-+								Name: "echo-1",
-+								Port: 80,
-+							},
-+						},
-+						Conditions: []contour_v1.MatchCondition{
-+							{
-+								Regex: "/x|/admin/.*",
-+							},
-+						},
-+					},
- 				},
- 			},
- 		}
-@@ -149,6 +162,15 @@ func testIncludeRegexCondition(namespace string) {
- 							},
- 						},
- 					},
-+					{
-+						Name:      echo1Proxy.Name,
-+						Namespace: echo1Proxy.Namespace,
-+						Conditions: []contour_v1.MatchCondition{
-+							{
-+								Prefix: "/v1.0",
-+							},
-+						},
-+					},
- 				},
- 			},
- 		}
-@@ -183,6 +205,9 @@ func testIncludeRegexCondition(namespace string) {
- 			"/echo1/us-west-1/test": "echo-1", // "Prefix: /echo1 with included Regex: /us-west-1/.*"
- 			"/echo1/us-west-3/test": "echo-1", // "Prefix: /echo1 with included Regex: /us-west-3/.*"
- 			"/echo2/dev/utils":      "echo-2", // "Prefix: /echo2 with included Regex: /(dev|staging)/.*"
-+			"/echo1/x":              "echo-1", // "Prefix: /echo1 with included Regex: /x|/admin/.*"
-+			"/echo1/admin/secret":   "echo-1", // "Prefix: /echo1 with included Regex: /x|/admin/.*"
-+			"/v1.0/us-west-1/test":  "echo-1", // "Prefix: /v1.0 with included Regex: /us-west-1/.*"
- 		}
- 
- 		for path, expectedService := range cases {
-@@ -199,5 +224,22 @@ func testIncludeRegexCondition(namespace string) {
- 
- 			assert.Equal(t, expectedService, f.GetEchoResponseBody(res.Body).Service)
- 		}
-+
-+		notFound := []string{
-+			"/x",                   // "/x" branch of the child regex, outside /echo1
-+			"/admin/secret",        // "/admin/.*" branch of the child regex, outside /echo1
-+			"/v1X0/us-west-1/test", // "." in the delegated prefix /v1.0 used as a wildcard
-+		}
-+
-+		for _, path := range notFound {
-+			t.Logf("Querying %q, expecting 404", path)
-+
-+			res, ok := f.HTTP.RequestUntil(&e2e.HTTPRequestOpts{
-+				Host:      rootProxy.Spec.VirtualHost.Fqdn,
-+				Path:      path,
-+				Condition: e2e.HasStatusCode(404),
-+			})
-+			assert.Truef(t, ok, "expected 404 response code for %q, got %d", path, res.StatusCode)
-+		}
- 	})
- }
+@@ -137,6 +137,8 @@ github.com/gorilla/websocket v1.5.4-0.20250319132907-e064f32e3674 h1:JeSE6pjso5T
+ github.com/gorilla/websocket v1.5.4-0.20250319132907-e064f32e3674/go.mod h1:r4w70xmWCQKmi1ONH4KIaBptdivuRPyosB9RmPlGEwA=
+ github.com/grpc-ecosystem/go-grpc-prometheus v1.2.0 h1:Ovs26xHkKqVztRpIrF/92BcuyuQ/YW4NSIpoGtfXNho=
+ github.com/grpc-ecosystem/go-grpc-prometheus v1.2.0/go.mod h1:8NvIoxWQoOIhqOTXgfV/d3M/q6VIi02HzZEHgUlZvzk=
++github.com/hashicorp/go-uuid v1.0.3 h1:2gKiV6YVmrJ1i2CKKa9obLvRieoRGviZFL26PcT/Co8=
++github.com/hashicorp/go-uuid v1.0.3/go.mod h1:6SBZvOh/SIDV7/2o3Jml5SYk/TvGqwFJ/bN7x4byOro=
+ github.com/joshdk/go-junit v1.0.0 h1:S86cUKIdwBHWwA6xCmFlf3RTLfVXYQfvanM5Uh+K6GE=
+ github.com/joshdk/go-junit v1.0.0/go.mod h1:TiiV0PqkaNfFXjEiyjWM3XXrhVyCa1K4Zfga6W52ung=
+ github.com/json-iterator/go v1.1.12 h1:PV8peI4a0ysnczrg+LtxykD8LfKY9ML6u2jnxaEnrnM=
+@@ -172,6 +174,8 @@ github.com/onsi/gomega v1.44.0 h1:eAiGl3Pw5jz5GQdDff0BcxYpAX1JxW8xD7mFUuwNfZQ=
+ github.com/onsi/gomega v1.44.0/go.mod h1:e/C2HwaZ1DhvjzXXuFhcR7hY7Sh9pl7MmoWKEjzwcdA=
+ github.com/opencontainers/go-digest v1.0.0 h1:apOUWs51W5PlhuyGyz9FCeeBIOUDA/6nW8Oi/yOhh5U=
+ github.com/opencontainers/go-digest v1.0.0/go.mod h1:0JzlMkj0TRzQZfJkVvzbP0HBR3IKzErnv2BNG4W4MAM=
++github.com/pandatix/go-abnf v0.5.1 h1:iyLvSu2Aq12iE0r4n948Qw21BHDuckLq/8WIXAAF+HI=
++github.com/pandatix/go-abnf v0.5.1/go.mod h1:VBmbtpFgQNEaQpyAvmi+Ecd9wAYJKzA3TmiB3L93sVg=
+ github.com/pkg/errors v0.9.1 h1:FEBLx1zS214owpjy7qsBeixbURkuhQAwrK5UwLGTwt4=
+ github.com/pkg/errors v0.9.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=
+ github.com/planetscale/vtprotobuf v0.6.1-0.20240319094008-0393e58bdf10 h1:GFCKgmp0tecUJ0sJuv4pzYCqS9+RGSn52M3FUwPs+uo=
+@@ -185,8 +189,8 @@ github.com/prometheus/client_golang v1.25.0 h1:cDtW1TcFsMi1RJc8khwCKB4VhzwV04aKq
+ github.com/prometheus/client_golang v1.25.0/go.mod h1:j2X/4/kaQHLPnmyEU8zjmkndo1T317VpCIQEml8LTKk=
+ github.com/prometheus/client_model v0.6.3 h1:O0jaTVAYNxTHYInEPFJt5I3+sN8zqBtVMPTB1qyxiEo=
+ github.com/prometheus/client_model v0.6.3/go.mod h1:gpN5P9S7Rr6Yr92PiQ+Ixvhf6JZEkF1dnxsYL2aPBEM=
+-github.com/prometheus/common v0.72.1 h1:ZAiQed/nk8IIcsdzb2TlJu23NEUDyDLQ9TXTN2WRK6Y=
+-github.com/prometheus/common v0.72.1/go.mod h1:1IoBY4IRaJnhs2ESjNzjilP1cJ/P8pimGoomq7zRXrA=
++github.com/prometheus/common v0.73.0 h1:NGIOmVi8jrgiiPQgXxD6rP0FfxFsuZxnMQkel0qBy/g=
++github.com/prometheus/common v0.73.0/go.mod h1:Nt+CsVkf/mj4wDAmtSwq1HTPohHSX6fMr6+/f9B5UqM=
+ github.com/prometheus/procfs v0.22.0 h1:6q9+/JL9IKAPbCmBrv9n5O5Ty3NKnciV5X7YGw0oics=
+ github.com/prometheus/procfs v0.22.0/go.mod h1:CvmFr/GVhIjIvWJZW3tgkODBQMRIf0EyWMQLHCHab58=
+ github.com/rogpeppe/go-internal v1.14.1 h1:UQB4HGPB6osV0SQTLymcB4TgvyWu6ZyliaW0tI/otEQ=
 ```
 
 ---
 
-### Incident Patch 2: `38795f67` (2026-11-02)
-**Commit Message**: Include all distinguishing fields in DNSNameCluster name (#7806)
+### Incident Patch 2: `3a110e8b` (2026-11-04)
+**Commit Message**: build(deps): bump the k8s-dependencies group with 4 updates (#7810)
 
-Signed-off-by: Tero Saarni <[REDACTED_EMAIL]>
+Bumps the k8s-dependencies group with 4 updates: [k8s.io/api](https://github.com/kubernetes/api), [k8s.io/apiextensions-apiserver](https://github.com/kubernetes/apiextensions-apiserver), [k8s.io/apimachinery](https://github.com/kubernetes/apimachinery) and [k8s.io/client-go](https://github.com/kubernetes/client-go).
 
-**File**: `internal/envoy/cluster.go` (modified, +30/-1)
+
+Updates `k8s.io/api` from 0.37.1 to 0.37.2
+- [Commits](https://github.com/kubernetes/api/compare/v0.37.1...v0.37.2)
+
+Updates `k8s.io/apiextensions-apiserver` from 0.37.1 to 0.37.2
+- [Release notes](https://github.com/kubernetes/apiextensions-apiserver/releases)
+- [Commits](https://github.com/kubernetes/apiextensions-apiserver/compare/v0.37.1...v0.37.2)
+
+Updates `k8s.io/apimachinery` from 0.37.1 to 0.37.2
+- [Commits](https://github.com/kubernetes/apimachinery/compare/v0.37.1...v0.37.2)
+
+Updates `k8s.io/client-go` from 0.37.1 to 0.37.2
+- [Changelog](https://github.com/kubernetes/client-go/blob/master/CHANGELOG.md)
+- [Commits](https://github.com/kubernetes/client-go/compare/v0.37.1...v0.37.2)
+
+---
+updated-dependencies:
+- dependency-name: k8s.io/api
+  dependency-version: 0.37.2
+  dependency-type: direct:
+
+**File**: `go.mod` (modified, +5/-5)
 ```diff
-@@ -131,6 +131,35 @@ func AnyPositive(first uint32, rest ...uint32) bool {
- 	return false
- }
- 
-+// DNSNameClusterName returns the name of the CDS cluster for this DNS name based upstream (e.g. JWKS endpoint).
-+// The name looks like dnsname/https/idp.example.com/443/92e2d87ab4868b426840.
-+//
-+// Note: Cluster name is used to deduplicate clusters.
-+// When for example two HTTPProxies result in Clusters with equal name, only single cluster will be configured to Envoy.
-+// Therefore the generated name must contain all relevant fields that make the cluster unique.
- func DNSNameClusterName(cluster *dag.DNSNameCluster) string {
--	return strings.Join([]string{"dnsname", cluster.Scheme, cluster.Address}, "/")
-+	// Values are quoted to keep their boundaries unambiguous, otherwise e.g. CA secrets
-+	// tenant-a/idp-ca and tenant-ai/dp-ca would both become "tenant-aidp-ca".
-+	buf := strconv.Quote(cluster.Scheme) + strconv.Quote(cluster.Address) + strconv.Quote(strconv.Itoa(cluster.Port))
-+	buf += strconv.Quote(cluster.DNSLookupFamily)
-+
-+	if uv := cluster.UpstreamValidation; uv != nil {
-+		for _, ca := range uv.CACertificates {
-+			if ca != nil {
-+				buf += strconv.Quote(ca.Namespace()) + strconv.Quote(ca.Name())
-+			}
-+		}
-+		for _, sn := range uv.SubjectNames {
-+			buf += strconv.Quote(sn)
-+		}
-+	}
-+
-+	// Unlike in Clustername(), the name does not include the namespace, so a user in
-+	// another namespace could use the same JWKS URI and try subjectNames until the hash
-+	// matches. The hash must be long enough to make that infeasible.
-+	hash := sha256.Sum256([]byte(buf))
-+
-+	// Scheme, address and port are added as plain text to make the name readable.
-+	// Hashname() is not used since it would truncate long hostnames.
-+	return strings.Join([]string{"dnsname", cluster.Scheme, cluster.Address, strconv.Itoa(cluster.Port), fmt.Sprintf("%x", hash[:10])}, "/")
- }
+@@ -33,10 +33,10 @@ require (
+ 	google.golang.org/grpc v1.84.0
+ 	google.golang.org/protobuf v1.36.12
+ 	gopkg.in/yaml.v3 v3.0.1
+-	k8s.io/api v0.37.1
+-	k8s.io/apiextensions-apiserver v0.37.1
+-	k8s.io/apimachinery v0.37.1
+-	k8s.io/client-go v0.37.1
++	k8s.io/api v0.37.2
++	k8s.io/apiextensions-apiserver v0.37.2
++	k8s.io/apimachinery v0.37.2
++	k8s.io/client-go v0.37.2
+ 	k8s.io/klog/v2 v2.140.0
+ 	k8s.io/utils v0.0.0-20260626114624-be93311217bd
+ 	sigs.k8s.io/controller-runtime v0.25.2
+@@ -114,7 +114,7 @@ require (
+ 	gopkg.in/evanphx/json-patch.v4 v4.13.0 // indirect
+ 	gopkg.in/inf.v0 v0.9.1 // indirect
+ 	k8s.io/kube-openapi v0.0.0-20260721132016-d427ff9ee9ad // indirect
+-	k8s.io/streaming v0.37.1 // indirect
++	k8s.io/streaming v0.37.2 // indirect
+ 	sigs.k8s.io/json v0.0.0-20250730193827-2d320260d730 // indirect
+ 	sigs.k8s.io/randfill v1.0.0 // indirect
+ 	sigs.k8s.io/structured-merge-diff/v6 v6.4.2 // indirect
 ```
 
-**File**: `internal/envoy/v3/cluster_test.go` (modified, +10/-10)
+**File**: `go.sum` (modified, +10/-10)
 ```diff
-@@ -894,11 +894,11 @@ func TestDNSNameCluster(t *testing.T) {
- 				DNSLookupFamily: "auto",
- 			},
- 			want: &envoy_config_cluster_v3.Cluster{
--				Name:                 "dnsname/http/foo.projectcontour.io",
-+				Name:                 "dnsname/http/foo.projectcontour.io/80/c1a5cfb578cafae01a91",
- 				DnsLookupFamily:      envoy_config_cluster_v3.Cluster_AUTO,
- 				ClusterDiscoveryType: ClusterDiscoveryType(envoy_config_cluster_v3.Cluster_STRICT_DNS),
- 				LoadAssignment: &envoy_config_endpoint_v3.ClusterLoadAssignment{
--					ClusterName: "dnsname/http/foo.projectcontour.io",
-+					ClusterName: "dnsname/http/foo.projectcontour.io/80/c1a5cfb578cafae01a91",
- 					Endpoints: []*envoy_config_endpoint_v3.LocalityLbEndpoints{
- 						{
- 							LbEndpoints: []*envoy_config_endpoint_v3.LbEndpoint{
-@@ -923,11 +923,11 @@ func TestDNSNameCluster(t *testing.T) {
- 				DNSLookupFamily: "v4",
- 			},
- 			want: &envoy_config_cluster_v3.Cluster{
--				Name:                 "dnsname/http/foo.projectcontour.io",
-+				Name:                 "dnsname/http/foo.projectcontour.io/80/23b4f1ac31c67cc50a67",
- 				DnsLookupFamily:      envoy_config_cluster_v3.Cluster_V4_ONLY,
- 				ClusterDiscoveryType: ClusterDiscoveryType(envoy_config_cluster_v3.Cluster_STRICT_DNS),
- 				LoadAssignment: &envoy_config_endpoint_v3.ClusterLoadAssignment{
--					ClusterName: "dnsname/http/foo.projectcontour.io",
-+					ClusterName: "dnsname/http/foo.projectcontour.io/80/23b4f1ac31c67cc50a67",
- 					Endpoints: []*envoy_config_endpoint_v3.LocalityLbEndpoints{
- 						{
- 							LbEndpoints: []*envoy_config_endpoint_v3.LbEndpoint{
-@@ -952,11 +952,11 @@ func TestDNSNameCluster(t *testing.T) {
- 				DNSLookupFamily: "all",
- 			},
- 			want: &envoy_config_cluster_v3.Cluster{
--				Name:                 "dnsname/http/foo.projectcontour.io",
-+				Name:                 "dnsname/http/foo.projectcontour.io/80/3fc4a884a77ef80f294e",
- 				DnsLookupFamily:      envoy_config_cluster_v3.Cluster_ALL,
- 				ClusterDiscoveryType: ClusterDiscoveryType(envoy_config_cluster_v3.Cluster_LOGICAL_DNS),
- 				LoadAssignment: &envoy_config_endpoint_v3.ClusterLoadAssignment{
--					ClusterName: "dnsname/http/foo.projectcontour.io",
-+					ClusterName: "dnsname/http/foo.projectcontour.io/80/3fc4a884a77ef80f294e",
- 					Endpoints: []*envoy_config_endpoint_v3.LocalityLbEndpoints{
- 						{
- 							LbEndpoints: []*envoy_config_endpoint_v3.LbEndpoint{
-@@ -981,11 +981,11 @@ func TestDNSNameCluster(t *testing.T) {
- 				DNSLookupFamily: "auto",
- 			},
- 			want: &envoy_config_cluster_v3.Cluster{
--				Name:                 "dnsname/https/foo.projectcontour.io",
-+				Name:                 "dnsname/https/foo.projectcontour.io/443/92e2d87ab4868b426840",
- 				DnsLookupFamily:      envoy_config_cluster_v3.Cluster_AUTO,
- 				ClusterDiscoveryType: ClusterDiscoveryType(envoy_config_cluster_v3.Cluster_STRICT_DNS),
- 				LoadAssignment: &envoy_config_endpoint_v3.ClusterLoadAssignment{
--					ClusterName: "dnsname/https/foo.projectcontour.io",
-+					ClusterName: "dnsname/https/foo.projectcontour.io/443/92e2d87ab4868b426840",
- 					Endpoints: []*envoy_config_endpoint_v3.LocalityLbEndpoints{
- 						{
- 							LbEndpoints: []*envoy_config_endpoint_v3.LbEndpoint{
-@@ -1023,11 +1023,11 @@ func TestDNSNameCluster(t *testing.T) {
- 				},
- 			},
- 			want: &envoy_config_cluster_v3.Cluster{
--				Name:                 "dnsname/https/foo.projectcontour.io",
-+				Name:                 "dnsname/https/foo.projectcontour.io/443/4177316d05096dff8011",
- 				DnsLookupFamily:      envoy_config_cluster_v3.Cluster_AUTO,
- 				ClusterDiscoveryType: ClusterDiscoveryType(envoy_config_cluster_v3.Cluster_STRICT_DNS),
- 				LoadAssignment: &envoy_config_endpoint_v3.ClusterLoadAssignment{
--					ClusterName: "dnsname/https/foo.projectcontour.io",
-+					ClusterName: "dnsname/https/foo.projectcontour.io/443/4177316d05096dff8011",
- 					Endpoints: []*envoy_config_endpoint_v3.LocalityLbEndpoints{
- 						{
- 							LbEndpoints: []*envoy_config_endpoint_v3.LbEndpoint{
+@@ -306,20 +306,20 @@ gopkg.in/yaml.v3 v3.0.0-20200313102051-9f266ea9e77c/go.mod h1:K4uyk7z7BCEPqu6E+C
+ gopkg.in/yaml.v3 v3.0.1 h1:fxVm/GzAzEWqLHuvctI91KS9hhNmmWOoWu0XTYJS7CA=
+ gopkg.in/yaml.v3 v3.0.1/go.mod h1:K4uyk7z7BCEPqu6E+C64Yfv1cQ7kz7rIZviUmN+EgEM=
+ honnef.co/go/tools v0.1.3/go.mod h1:NgwopIslSNH47DimFoV78dnkksY2EFtX0ajyb3K/las=
+-k8s.io/api v0.37.1 h1:l6N77U7tjwB5L056bgrBTJIEdevac/naBZ3iSvDNfpM=
+-k8s.io/api v0.37.1/go.mod h1:zSlbB1YpJ1YQlFVQy20UYll81UJSJJUMLhkhvg6Z78M=
+-k8s.io/apiextensions-apiserver v0.37.1 h1:7fIQG8eThDSTVYBWg/DOpI8v5wYfKCo0N8/TDMjj+zY=
+-k8s.io/apiextensions-apiserver v0.37.1/go.mod h1:1Q3ujWwHgnhBoGsdmGORflwK1sDFmuaqH1OsMDWk2Gs=
+-k8s.io/apimachinery v0.37.1 h1:hGCYyvKHCwtwMitj2vU4vYx0Z16N9GyZk9BBnz0wDAE=
+-k8s.io/apimachinery v0.37.1/go.mod h1:jF84AyUi/IRIXRot5f+lm6MpxoWI+F1XgjaMmwCdTFw=
+-k8s.io/client-go v0.37.1 h1:QTv/5ha4jAHtW9qxxVBkQVFBRDb4jHfFopQqqMdc+wM=
+-k8s.io/client-go v0.37.1/go.mod h1:dnAPtTnCNY38Ho04D2KdY1F4IKausa9UbqaAZKl60SY=
++k8s.io/api v0.37.2 h1:PnxqnUFy93jr2GcpWDkKOm8wfy25kT9wa572MuQS8oc=
++k8s.io/api v0.37.2/go.mod h1:+NVRLft99kx+Jg9v34GmHw867Dapim89TSyCsn2hK+M=
++k8s.io/apiextensions-apiserver v0.37.2 h1:myaUiAlm1NRLYdpAvWYTqdgeiCepFupJiRFVVueMUYw=
++k8s.io/apiextensions-apiserver v0.37.2/go.mod h1:BFl1aPC89HsgFgYI+3xpFtckvkAeenDTZP84njA9yw4=
++k8s.io/apimachinery v0.37.2 h1:G4t9RGoPDbQML38hz/kQQiltttgd3egg2ODCR8aIc2o=
++k8s.io/apimachinery v0.37.2/go.mod h1:qaAvSNvgU2x07wRM95MSHSJTPQ/ob/LeNAGbeDgqQJg=
++k8s.io/client-go v0.37.2 h1:sgFtyRZukGkOrsu+QgS7LYnbFFJ5ut3MchdBNduD//E=
++k8s.io/client-go v0.37.2/go.mod h1:bo3LFC8YbCtKFPX21Yj8puMsoJLAv/+SvuOODma0s54=
+ k8s.io/klog/v2 v2.140.0 h1:Tf+J3AH7xnUzZyVVXhTgGhEKnFqye14aadWv7bzXdzc=
+ k8s.io/klog/v2 v2.140.0/go.mod h1:o+/RWfJ6PwpnFn7OyAG3QnO47BFsymfEfrz6XyYSSp0=
+ k8s.io/kube-openapi v0.0.0-20260721132016-d427ff9ee9ad h1:oXImqH8mQNk7PmvzKhmN3ddJoY6OnyM225MXwGHPm0A=
+ k8s.io/kube-openapi v0.0.0-20260721132016-d427ff9ee9ad/go.mod h1:0/mqHCVhlumdJ3BhCfnjSZQE037nAhNodh1/hK0T8/I=
+-k8s.io/streaming v0.37.1 h1:TpzVfQeFuVndn2g9mFqxy1UcUYPwDzqjUmwR/IzJCWc=
+-k8s.io/streaming v0.37.1/go.mod h1:APlJR26ZWRcVy5bIEj0QRrKUXROtBHPcxl2NT7EAzPU=
++k8s.io/streaming v0.37.2 h1:xmzp9nbqIbjvsRcqrBYa+K5XPQ6Jy/Dm3zZ8mN916AI=
++k8s.io/streaming v0.37.2/go.mod h1:APlJR26ZWRcVy5bIEj0QRrKUXROtBHPcxl2NT7EAzPU=
+ k8s.io/utils v0.0.0-20260626114624-be93311217bd h1:Ea7fgQ5we8Y9T0OX5o0dAHzQOBRI07D/dEYRaB9ZZEs=
+ k8s.io/utils v0.0.0-20260626114624-be93311217bd/go.mod h1:xDxuJ0whA3d0I4mf/C4ppKHxXynQ+fxnkmQH0vTHnuk=
+ rsc.io/pdf v0.1.1 h1:k1MczvYDUvJBe93bYd7wrZLLUEcLZAuF824/I4e5Xr4=
 ```
 
-**File**: `internal/featuretests/v3/jwtverification_test.go` (modified, +32/-32)
+---
+
+### Incident Patch 3: `7514fb8b` (2026-11-04)
+**Commit Message**: build(deps): bump golang.org/x/net from 0.61.0 to 0.62.0 (#7813)
+
+Bumps [golang.org/x/net](https://github.com/golang/net) from 0.61.0 to 0.62.0.
+- [Commits](https://github.com/golang/net/compare/v0.61.0...v0.62.0)
+
+---
+updated-dependencies:
+- dependency-name: golang.org/x/net
+  dependency-version: 0.62.0
+  dependency-type: direct:production
+  update-type: version-update:semver-minor
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `go.mod` (modified, +1/-1)
 ```diff
-@@ -142,7 +142,7 @@ func TestJWTVerification(t *testing.T) {
- 											HttpUri: &envoy_config_core_v3.HttpUri{
- 												Uri: "https://jwt.example.com/jwks.json",
- 												HttpUpstreamType: &envoy_config_core_v3.HttpUri_Cluster{
--													Cluster: "dnsname/https/jwt.example.com",
-+													Cluster: "dnsname/https/jwt.example.com/443/0771aeda175c510932e2",
- 												},
- 												Timeout: durationpb.New(7 * time.Second),
- 											},
-@@ -164,11 +164,11 @@ func TestJWTVerification(t *testing.T) {
- 				SocketOptions: envoy_v3.NewSocketOptions().TCPKeepalive().Build(),
- 			},
- 		),
--	}).Request(clusterType, "dnsname/https/jwt.example.com").Equals(&envoy_service_discovery_v3.DiscoveryResponse{
-+	}).Request(clusterType, "dnsname/https/jwt.example.com/443/0771aeda175c510932e2").Equals(&envoy_service_discovery_v3.DiscoveryResponse{
- 		TypeUrl: clusterType,
- 		Resources: resources(t,
- 			&envoy_config_cluster_v3.Cluster{
--				Name: "dnsname/https/jwt.example.com",
-+				Name: "dnsname/https/jwt.example.com/443/0771aeda175c510932e2",
- 				ClusterDiscoveryType: &envoy_config_cluster_v3.Cluster_Type{
- 					Type: envoy_config_cluster_v3.Cluster_STRICT_DNS,
- 				},
-@@ -177,7 +177,7 @@ func TestJWTVerification(t *testing.T) {
- 				},
- 				ConnectTimeout: durationpb.New(2 * time.Second),
- 				LoadAssignment: &envoy_config_endpoint_v3.ClusterLoadAssignment{
--					ClusterName: "dnsname/https/jwt.example.com",
-+					ClusterName: "dnsname/https/jwt.example.com/443/0771aeda175c510932e2",
- 					Endpoints: []*envoy_config_endpoint_v3.LocalityLbEndpoints{
- 						{
- 							LbEndpoints: []*envoy_config_endpoint_v3.LbEndpoint{
-@@ -295,7 +295,7 @@ func TestJWTVerification(t *testing.T) {
- 											HttpUri: &envoy_config_core_v3.HttpUri{
- 												Uri: "https://jwt.example.com/jwks.json",
- 												HttpUpstreamType: &envoy_config_core_v3.HttpUri_Cluster{
--													Cluster: "dnsname/https/jwt.example.com",
-+													Cluster: "dnsname/https/jwt.example.com/443/0771aeda175c510932e2",
- 												},
- 												Timeout: durationpb.New(7 * time.Second),
- 											},
-@@ -403,7 +403,7 @@ func TestJWTVerification(t *testing.T) {
- 											HttpUri: &envoy_config_core_v3.HttpUri{
- 												Uri: "https://jwt.example.com/jwks.json",
- 												HttpUpstreamType: &envoy_config_core_v3.HttpUri_Cluster{
--													Cluster: "dnsname/https/jwt.example.com",
-+													Cluster: "dnsname/https/jwt.example.com/443/0771aeda175c510932e2",
- 												},
- 												Timeout: durationpb.New(7 * time.Second),
- 											},
-@@ -513,7 +513,7 @@ func TestJWTVerification(t *testing.T) {
- 											HttpUri: &envoy_config_core_v3.HttpUri{
- 												Uri: "https://jwt.example.com/jwks.json",
- 												HttpUpstreamType: &envoy_config_core_v3.HttpUri_Cluster{
--													Cluster: "dnsname/https/jwt.example.com",
-+													Cluster: "dnsname/https/jwt.example.com/443/0771aeda175c510932e2",
- 												},
- 												Timeout: durationpb.New(7 * time.Second),
- 											},
-@@ -528,7 +528,7 @@ func TestJWTVerification(t *testing.T) {
- 											HttpUri: &envoy_config_core_v3.HttpUri{
- 												Uri: "https://jwt.example.com/jwks.json",
- 												HttpUpstreamType: &envoy_config_core_v3.HttpUri_Cluster{
--													Cluster: "dnsname/https/jwt.example.com",
-+													Cluster: "dnsname/https/jwt.example.com/443/0771aeda175c510932e2",
- 												},
- 												Timeout: durationpb.New(7 * time.Second),
- 											},
-@@ -627,7 +627,7 @@ func TestJWTVerification(t *testing.T) {
- 											HttpUri: &envoy_config_core_v3.HttpUri{
- 												Uri: "https://jwt.example.com:8443/jwks.json",
- 												HttpUpstreamType: &envoy_config_core_v3.HttpUri_Cluster{
--													Cluster: "dnsname/https/jwt.example.com",
-+													Cluster: "dnsname/https/jwt.example.com/8443/f3c7698ae471934ed629",
- 												},
- 												Timeout: durationpb.New(7 * time.Second),
- 											},
-@@ -649,11 +649,11 @@ func TestJWTVerification(t *testing.T) {
- 				SocketOptions: envoy_v3.NewSocketOptions().TCPKeepalive().Build(),
- 			},
- 		),
--	}).Request(clusterType, "dnsname/https/jwt.example.com").Equals(&envoy_service_discovery_v3.DiscoveryResponse{
-+	}).Request(clusterType, "dnsname/https/jwt.example.com/8443/f3c7698ae471934ed629").Equals(&envoy_service_discovery_v3.DiscoveryResponse{
- 		TypeUrl: clusterType,
- 		Resources: resources(t,
- 			&envoy_config_cluster_v3.Cluster{
--				Name: "dnsname/https/jwt.example.com",
-+				Name: "dnsname/https/jwt.example.com/8443/f3c7698ae471934ed629",
- 				ClusterDiscoveryType: &envoy_config_cluster_v3.Cluster_Type{
- 					Type: envoy_config_cluster_v3.Cluster_STRICT_DNS,
- 				},
-@@ -662,7 +662,7 @@ func TestJWTVerification(t *testing.T) {
- 				},
- 				ConnectTimeout: durationpb.New(2 * time.Second),
- 				LoadAssignment: &envoy_config_endpoint_v3.ClusterLoadAssignment{
--					ClusterName: "dnsname/https/jwt.example.com",
-+					ClusterName: "dnsname/https/jwt.example.com/8443/f3c7
+@@ -26,7 +26,7 @@ require (
+ 	github.com/stretchr/testify v1.12.1
+ 	github.com/tsaarni/certyaml v0.13.0
+ 	go.uber.org/automaxprocs v1.6.0
+-	golang.org/x/net v0.61.0
++	golang.org/x/net v0.62.0
+ 	golang.org/x/oauth2 v0.37.0
+ 	gonum.org/v1/plot v0.17.0
+ 	google.golang.org/genproto/googleapis/rpc v0.0.0-20260817212433-ac3dfec99bb1
+```
+
+**File**: `go.sum` (modified, +2/-2)
+```diff
+@@ -254,8 +254,8 @@ golang.org/x/mod v0.41.0/go.mod h1:Ek9pY8RKWXwsWvd3rQiHYtMqkjSUV+s1Rj7j4H5Ur6o=
+ golang.org/x/net v0.0.0-20190404232315-eb5bcb51f2a3/go.mod h1:t9HGtf8HONx5eT2rtn7q6eTqICYqUVnKs3thJo3Qplg=
+ golang.org/x/net v0.0.0-20190620200207-3b0461eec859/go.mod h1:z5CRVTTTmAJ677TzLLGU+0bjPO0LkuOLi4/5GtJWs/s=
+ golang.org/x/net v0.0.0-20201021035429-f5854403a974/go.mod h1:sp8m0HH+o8qH0wwXwYZr8TS3Oi6o0r6Gce1SSxlDquU=
+-golang.org/x/net v0.61.0 h1:RR+6j/BTBCrggOLugxa+66R8FvoN6MHlzDlZIbN9YFw=
+-golang.org/x/net v0.61.0/go.mod h1:WgDCOTH8iwtB66T4/GfI94AHo/hhdb7Hah9NDseQfiI=
++golang.org/x/net v0.62.0 h1:18ELalfM5+XNRwzM2nYqXsZQ9ByS1uhj2O/U7+5jqRY=
++golang.org/x/net v0.62.0/go.mod h1:WgDCOTH8iwtB66T4/GfI94AHo/hhdb7Hah9NDseQfiI=
+ golang.org/x/oauth2 v0.37.0 h1:JUlcxA8oAtauLfiH8FX2/FkAWHAdi0QtGCGc+hofE98=
+ golang.org/x/oauth2 v0.37.0/go.mod h1:IxwZNxUULJmpBFf9K/9NTMSIfZZuvuTy1gGxhigP/58=
+ golang.org/x/sync v0.0.0-20190423024810-112230192c58/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7807** (2026-11-02): Fix included HTTPProxy regex matching outside its prefix (@tsaarni)
-- **PR #7806** (2026-11-02): Include all distinguishing fields in DNSNameCluster name (@tsaarni)
-- **PR #7805** (2026-10-31): Update for Contour v1.33.8 release (@tsaarni)
-- **PR #7804** (2026-10-31): release-1.33: Update Kubernetes version for E2E tests to 1.37 (@tsaarni)
-- **PR #7803** (2026-10-30): Use unique filter names for Lua misdirected-request and cookie-rewrite filters (@tsaarni)
-- **PR #7797** (2026-10-29): Revert "Do not use body size limit filter for websockets (#7787)" (@tsaarni)
+- **PR #7816** (2026-11-04): build(deps): bump docker/login-action from 4.6.0 to 4.7.0 (@dependabot[bot])
+- **PR #7815** (2026-11-04): build(deps): bump the k8s-dependencies group with 4 updates (@dependabot[bot])
+- **PR #7814** (2026-11-04): build(deps): bump google.golang.org/grpc from 1.84.0 to 1.85.0 (@dependabot[bot])
+- **PR #7813** (2026-11-04): build(deps): bump golang.org/x/net from 0.61.0 to 0.62.0 (@dependabot[bot])
+- **PR #7812** (2026-11-04): build(deps): bump github.com/prometheus/common from 0.72.1 to 0.73.0 (@dependabot[bot])
+- **PR #7810** (2026-11-04): build(deps): bump the k8s-dependencies group with 4 updates (@dependabot[bot])
 
 ---
 
@@ -2325,72 +1858,30 @@ Signed-off-by: Tero Saarni <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. included HTTPProxy regex matching outside its prefix (#7807)
+## X. build(deps): bump github.com/prometheus/common from 0.72.1 to 0.73.0 (#7812)
 
 **RULE**:
-When implementing operations in `internal/dag/builder_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in projectcontour/contour. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in projectcontour/contour. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2625d1e5`: included HTTPProxy regex matching outside its prefix (#7807). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ff7259a2`: build(deps): bump github.com/prometheus/common from 0.72.1 to 0.73.0 (#7812). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing HTML data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/dag/builder_test.go`.
+Subsystems managing HTML data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```html
 // Verified production-grade fix pattern:
-							routeClusterRegex("/foo(?:/regex/.*)",
-		"httpproxy include with prefix, child regex with alternation is wrapped in non-capturing group": {
-			objs: []any{
-				&contour_v1.HTTPProxy{
-					ObjectMeta: meta_v1.ObjectMeta{
-						Name:      "root",
-						Namespace: s1.Namespace,
-					},
-					Spec: contour_v1.HTTPProxySpec{
-						VirtualHost: &contour_v1.VirtualHost{Fqdn: "example.com"},
-						Includes: []contour_v1.Include{{
-							Name:      "child",
-							Namespace: s1.Namespace,
-							Conditions: []contour_v1.MatchCondition{{
-								Prefix: "/team-a",
-							}},
-						}},
-					},
-				},
-				&contour_v1.HTTPProxy{
-					ObjectMeta: meta_v1.ObjectMeta{
-						Name:      "child",
-						Namespace: s1.Namespace,
-					},
-					Spec: contour_v1.HTTPProxySpec{
-						Routes: []contour_v1.Route{{
-							Conditions: []contour_v1.MatchCondition{{
-								Regex: "/x|/admin/.*",
-							}},
-							Services: []contour_v1.Service{{
-								Name: s1.Name,
-								Port: 8080,
-							}},
-						}},
-					},
-				},
-				s1,
-			},
-			want: listeners(
-				&Listener{
-					Name: HTTP_LISTENER_NAME,
-					Port: 8080,
-					VirtualHosts: virtualhosts(
-						virtualhost("example.com",
-							routeClusterRege
+	github.com/prometheus/common v0.73.0
+	github.com/hashicorp/go-uuid v1.0.3 // indirect
+	github.com/pandatix/go-abnf v0.5.1 // indirect
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```html
 // Anti-pattern to NEVER write (induced failure mode):
-							routeClusterRegex("/foo/regex/.*",
+	github.com/prometheus/common v0.72.1
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2625d1e5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ff7259a2` are properly handled with clean fallback behavior.

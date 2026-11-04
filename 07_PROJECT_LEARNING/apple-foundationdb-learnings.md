@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/apple-foundationdb-learnings.md`  
 > **Source**: github ([https://github.com/apple/foundationdb](https://github.com/apple/foundationdb))  
-> **Source Version**: `8ddaf495`  
+> **Source Version**: `a647b2f2`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T12:25:11.586Z  
+> **Timestamp**: 2026-11-04T09:57:53.794Z  
 > **Learning ID**: `learn-github-apple-foundationdb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/apple-foundationdb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/apple/foundationdb](https://github.com/apple/foundationdb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T12:25:10.380Z  
+> **Harvest Timestamp**: 2026-11-04T09:57:53.232Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: FoundationDB - the open source, distributed, transactional key-value store
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 16835 stars
+- **Stars / Engagement**: 16840 stars
 
 ---
 
@@ -1956,380 +1956,183 @@ constexpr std::string_view to_string(WaitState st) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8ddaf495` (2026-11-03)
-**Commit Message**: [backup] Bound restore dispatch and adapt oversized transactions (#14288)
+### Incident Patch 1: `16783380` (2026-11-03)
+**Commit Message**: Merge pull request #14415 from tclinkenbeard-oai/dev/tclinkenbeard/audit-incremental-log-prefix
 
-* [backup] Bound restore dispatch and adapt oversized transactions
+Validate the requested start of incremental restores
 
-* [backup] Buggify restore dispatch transaction size
-
-* [backup] Minimize restore dispatch changes and explain continuations
-
-* [backup] Test restore writer recovery and defer log metadata reads
-
-* [backup] Fix restore writer test linkage and retry-safe cleanup
-
-* [backup] Raise restore dispatch byte target to 4 MiB
-
-* [backup] Address restore dispatch review feedback
-
-* [backup] Reset dispatch task limit for each version window
-
-* [backup] Adapt restore dispatch after transaction age failures
-
-* [backup] Explain serial restore dispatch tradeoff
-
-* [backup] Preserve adaptive limits across dispatch lease handoff
-
-* [backup] Keep task lease updates behind the TaskBucket API
-
-Update persisted task parameters through an ownership-checked TaskBucket method instead of accessing its private timeout subspace. Configure the recovery fixture lease using the existing taskbucket_timeout_versions knob.
-
-* [backup] Fix clang-tidy findings in restore recovery fixtures
-
-**File**: `fdbclient/ClientKnobs.cpp` (modified, +1/-0)
+**File**: `fdbbackup/backup.cpp` (modified, +1/-1)
 ```diff
-@@ -304,6 +304,7 @@ void ClientKnobs::initialize(Randomize randomize, IsSimulated isSimulated) {
- 	init( BACKUP_LOGFILE_BLOCK_SIZE,        1024 * 1024);
- 	init( BACKUP_DISPATCH_ADDTASK_SIZE,             50 );
- 	init( RESTORE_DISPATCH_ADDTASK_SIZE,           150 );
-+	init( RESTORE_DISPATCH_TX_SIZE,      4 * 1024 * 1024 ); if( randomize && buggify() ) RESTORE_DISPATCH_TX_SIZE = 1 * 1024;
- 	init( RESTORE_DISPATCH_BATCH_SIZE,           30000 ); if( randomize && buggify() ) RESTORE_DISPATCH_BATCH_SIZE = 20;
- 	init (RESTORE_PARTITIONED_BATCH_VERSION_SIZE, 10000000); // each step restores 10s worth of data
- 	init( RESTORE_WRITE_TX_SIZE,            256 * 1024 );
+@@ -2345,7 +2345,7 @@ Future<Void> runRestore(Database db,
+ 			}
+ 		} else {
+ 			Optional<RestorableFileSet> rset = co_await bc->getRestoreSet(
+-			    targetVersion, ranges, false, invalidVersion, restoreMode == RestoreMode::BULKLOAD);
++			    targetVersion, ranges, onlyApplyMutationLogs, beginVersion, restoreMode == RestoreMode::BULKLOAD);
+ 
+ 			if (!rset.present()) {
+ 				fmt::print(stderr,
 ```
 
-**File**: `fdbclient/FileBackupAgent.cpp` (modified, +619/-97)
+**File**: `fdbclient/BackupContainerFileSystem.cpp` (modified, +67/-28)
 ```diff
-@@ -4828,6 +4828,52 @@ struct RestoreFileTaskFuncBase : RestoreTaskFuncBase {
+@@ -1440,6 +1440,24 @@ class BackupContainerFileSystemImpl {
+ 		return filtered;
  	}
- };
  
-+// Optional observer for the deterministic writer recovery simulation. The size limit applies only to
-+// writer transactions, so task setup and unrelated cluster activity retain their normal limits.
-+struct RestoreWriterTestState {
-+	int rejections = 0;
-+	int commits = 0;
-+	int committedRecords = 0;
-+	int lastRejectedLimit = 0;
-+	int lastCommittedLimit = 0;
-+	std::vector<int> batchLimits;
-+	std::vector<int> batchCommits;
-+
-+	void beginBatch(int limit) {
-+		if (lastCommittedLimit) {
-+			ASSERT_EQ(limit, lastCommittedLimit);
++	static Optional<RestorableFileSet> getRestoreSetFromPartitionedLogs(std::vector<LogFile> logs,
++	                                                                    Version begin,
++	                                                                    RestorableFileSet restorable) {
++		std::erase_if(logs, [&](const LogFile& file) { return file.beginVersion > restorable.targetVersion; });
++		// A retried upload can leave duplicate files within a tag.
++		std::sort(logs.begin(), logs.end(), [](const LogFile& a, const LogFile& b) {
++			return std::tie(a.tagId, a.beginVersion, a.endVersion) < std::tie(b.tagId, b.beginVersion, b.endVersion);
++		});
++		restorable.logs = filterDuplicates(logs);
++		std::sort(restorable.logs.begin(), restorable.logs.end());
++		if (!isPartitionedLogsContinuous(restorable.logs, begin, restorable.targetVersion)) {
++			return {};
 +		}
-+		batchLimits.push_back(limit);
-+		batchCommits.push_back(0);
++		restorable.continuousBeginVersion = begin;
++		restorable.continuousEndVersion = restorable.targetVersion + 1;
++		return restorable;
 +	}
 +
-+	Future<Void> commit(Reference<ReadYourWritesTransaction> tr, int limit, int records) {
-+		ASSERT(g_network->isSimulated());
-+		int64_t sizeLimit = 4096;
-+		tr->setOption(FDBTransactionOptions::SIZE_LIMIT, StringRef((uint8_t*)&sizeLimit, sizeof(sizeLimit)));
-+		try {
-+			co_await tr->commit();
-+		} catch (Error& e) {
-+			if (e.code() == error_code_transaction_too_large) {
-+				++rejections;
-+				lastRejectedLimit = limit;
+ 	static Optional<RestorableFileSet> getRestoreSetFromLogs(const std::vector<LogFile>& logs,
+ 	                                                         Version targetVersion,
+ 	                                                         RestorableFileSet restorable) {
+@@ -1473,15 +1491,24 @@ class BackupContainerFileSystemImpl {
+ 		}
+ 
+ 		if (logsOnly) {
++			if (beginVersion != invalidVersion && beginVersion > targetVersion) {
++				co_return Optional<RestorableFileSet>();
 +			}
-+			throw;
-+		}
-+		ASSERT_GT(rejections, 0);
-+		ASSERT_LT(limit, lastRejectedLimit);
-+		if (lastCommittedLimit) {
-+			ASSERT_LE(limit, lastCommittedLimit);
-+		}
-+		lastCommittedLimit = limit;
-+		++commits;
-+		committedRecords += records;
-+		if (!batchCommits.empty()) {
-+			++batchCommits.back();
-+		}
-+	}
-+};
-+
- struct RestoreRangeTaskFunc : RestoreFileTaskFuncBase {
- 	static struct : InputParams {
- 		// The range of data that the (possibly empty) data represented, which is set if it intersects the target
-@@ -4857,7 +4903,8 @@ struct RestoreRangeTaskFunc : RestoreFileTaskFuncBase {
- 	static Future<Void> _execute(Database cx,
- 	                             Reference<TaskBucket> taskBucket,
- 	                             Reference<FutureBucket> futureBucket,
--	                             Reference<Task> task) {
-+	                             Reference<Task> task,
-+	                             RestoreWriterTestState* test = nullptr) {
- 		RestoreConfig restore(task);
- 
- 		RestoreFile rangeFile = Params.inputFile().get(task);
-@@ -4964,8 +5011,8 @@ struct RestoreRangeTaskFunc : RestoreFileTaskFuncBase {
- 
- 			int start = 0;
- 			int end = data.size();
--			int dataSizeLimit =
--			    buggify() ? deterministicRandom()->randomInt(256 * 1024, 10e6) : CLIENT_KNOBS->RESTORE_WRITE_TX_SIZE;
-+			int dataSizeLimit = !test && buggify() ? deterministicRandom()->randomInt(256 * 1024, 10e6)
-+			                                       : CLIENT_KNOBS->RESTORE_WRITE_TX_SIZE;
- 
- 			tr->reset();
- 			while (true) {
-@@ -5010,7 +5057,7 @@ struct RestoreRangeTaskFunc : RestoreFileTaskFuncBase {
- 
- 					co_await checkLock;
- 
--					co_await tr->commit();
-+					co_await (test ? test->commit(tr, dataSizeLimit, i - start) : tr->commit());
- 
- 					TraceEvent("FileRestoreCommittedRange")
- 					    .suppressFor(60)
-@@ -5039,10 +5086,12 @@ struct RestoreRangeTaskFunc : RestoreFileTaskFuncBase {
- 				} catch (Error& e) {
- 					err = e;
- 				}
--				if (err.code() == error_code_transaction_too_large)
-+				if (err.code() == error_code_transaction_too_large && dataSizeLimit > 1) {
- 					dataSizeLimit /= 2;
--				else
-+					tr->reset();
-+				} else {
- 					co_await tr->onError(err);
+ 			RestorableFileSet restorableSet;
+ 			restorableSet.targetVersion = targetVersion;
+-			std::vector<LogFile> logFiles;
+ 			Version begin = beginVersion == invalidVersion ? 0 : beginVersion;
+-			logFiles = co_await bc->listLogFiles(begin, targetVersion, MutationLogType::DEFAULT);
+-			// List logs in version order so log continuity can be analyzed
++			auto logFiles = co_await bc->listLogFiles(begin, targetVersion, MutationLogType::DEFAULT);
+ 			std::sort(logFiles.begin(), logFiles.end());
+-			if (!logFiles.empty()) {
+-				co_return getRestoreSetFromLogs(logFiles, targetVersion, restorableSet);
++			if (!logFiles.empty() &&
++			    (beginVersion == invalidVersion || logFiles.front().beginVersion <= beginVersion)) {
++				auto result = getRestoreSetFromLogs(logFiles, targetVersion, restorableSet);
++				if (result.present() || beginVersion == invalidVersion) {
++					co_return result;
 +				}
++			}
++			if (beginVersion != invalidVersion) {
++				auto partitioned = co_await bc->listLogFiles(begin, targetVersion, MutationLogType::PARTITIONED_LOG);
++				co_return getRestoreSetFromPartitionedLogs(std::move(partitioned), begin, std::move(restorableSet));
  			}
  		}
- 		if (!originalFileRanges.empty()) {
-@@ -5299,7 +5348,8 @@ struct RestoreLogDataTaskFunc : RestoreFileTaskFuncBase {
- 	static Future<Void> _execute(Database cx,
- 	                             Reference<TaskBucket> taskBucket,
- 	                             Reference<FutureBucket> futureBucket,
--	                             Reference<Task> task) {
-+	                             Reference<Task> task,
-+	                             RestoreWriterTestState* test = nullptr) {
- 		RestoreConfig restore(task);
  
- 		RestoreFile logFile = Params.inputFile().get(task);
-@@ -5353,8 +5403,8 @@ struct RestoreLogDataTaskFunc : RestoreFileTaskFuncBase {
- 
- 		int start = 0;
- 		int end = dataFiltered.size();
--		int dataSizeLimit =
--		    buggify() ? deterministicRandom()->randomInt(256 * 1024, 10e6) : CLIENT_KNOBS->RESTORE_WRITE_TX_SIZE;
-+		int dataSizeLimit = !test && buggify() ? deterministicRandom()->randomInt(256 * 1024, 10e6)
-+		                                       : CLIENT_KNOBS->RESTORE_WRITE_TX_SIZE;
- 
- 		tr->reset();
- 		while (true) {
-@@ -5383,7 +5433,7 @@ struct RestoreLogDataTaskFunc : RestoreFileTaskFuncBase {
- 				// Add to bytes written count
- 				restore.bytesWritten().atomicOp(tr, txBytes, MutationRef::Type::AddValue);
- 
--				co_await tr->commit();
-+				co_await (test ? test->commit(tr, dataSizeLimit, i - start) : tr->commit());
- 
- 				TraceEvent("FileRestoreCommittedLog")
- 				    .suppressFor(60)
-@@ -5408,10 +5458,12 @@ struct RestoreLogDataTaskFunc : RestoreFileTaskFuncBase {
- 			} catch (Error& e) {
- 				err = e;
+@@ -1633,32 +1660,16 @@ class BackupContainerFileSystemImpl {
  			}
--			if (err.code() == error_code_transaction_too_large)
-+			if (err.code() == error_code_transaction_too_large && dataSizeLimit > 1
-```
-
-**File**: `fdbclient/include/fdbclient/Knobs.h` (modified, +1/-0)
-```diff
-@@ -236,6 +236,7 @@ class SWIFT_CXX_IMMORTAL_SINGLETON_TYPE ClientKnobs : public KnobsImpl<ClientKno
- 	int BACKUP_DISPATCH_ADDTASK_SIZE;
- 	bool BACKUP_ALLOW_DRYRUN;
- 	int RESTORE_DISPATCH_ADDTASK_SIZE;
-+	int RESTORE_DISPATCH_TX_SIZE; // Target bytes for partitioned restore range-task dispatch.
- 	int RESTORE_DISPATCH_BATCH_SIZE;
- 	int RESTORE_WRITE_TX_SIZE;
- 	int RESTORE_PARTITIONED_BATCH_VERSION_SIZE;
-```
-
-**File**: `fdbclient/include/fdbclient/TaskBucket.h` (modified, +13/-0)
-```diff
-@@ -215,6 +215,19 @@ class TaskBucket : public ReferenceCounted<TaskBucket> {
- 		return runRYWTransaction(cx, [=](Reference<ReadYourWritesTransaction> tr) { return finish(tr, task); });
- 	}
  
-+	// Update a persisted parameter without moving the lease key. Hold task->extendMutex through commit
-+	// so the ownership check and write address the same lease.
-+	Future<Void> updateTaskParam(Reference<ReadYourWritesTransaction> tr,
-+	                             Reference<Task> task,
-+	                             Key param,
-+	                             Value value) {
-+		Key paramKey = timeouts.get(task->timeoutVersion).get(task->key).pack(param);
-+		return map(keepRunning(tr, task), [=](Void) {
-+			tr->set(paramKey, value);
-+			return Void();
-+		});
-+	}
-+
- 	// Extend the task's timeout as if it just started and also save any parameter changes made to the task
- 	Future<Version> extendTimeout(Reference<ReadYourWritesTransaction> tr,
- 	                              Reference<Task> task,
-```
-
-**File**: `fdbserver/workloads/RestoreWriterRecovery.cpp` (added, +56/-0)
-```diff
-@@ -0,0 +1,56 @@
-+/*
-+ * RestoreWriterRecovery.cpp
-+ *
-+ * This source file is part of the FoundationDB open source project
-+ *
-+ * Copyright 2013-2026 Apple Inc. and the FoundationDB project authors
-+ *
-+ * Licensed under the Apache License, Version 2.0 (the "License");
-+ * you may not use this file except in compliance with the License.
-+ * You may obtain a copy of the License at
-+ *
-+ *     http://www.apache.org/licenses/LICENSE-2.0
-+ *
-+ * Unless required by applicable law or agreed to in writing, software
-+ * distributed under the License is distributed on an "AS IS" BASIS,
-+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+ * See the License for the specific language governing permissions and
-+ * limitations under the License.
-+ */
-+
-+#include "fdbserver/tester/workloads.h"
-+
-+namespace fileBackup {
-+Future<Void> testRestoreWriterRecovery(Database cx);
-+Future<Void> testRestoreDispatchRecovery(Database cx);
-+} // namespace fileBackup
-+
-+struct RestoreWriterRecoveryWorkload : TestWorkload {
-+	static constexpr auto NAME = "RestoreWriterRecovery";
-+	explicit RestoreWriterRecoveryWorkload(WorkloadContext const& wcx) : TestWorkload(wcx) {}
-+
-+	void disableFailureInjectionWorkloads(std::set<std::string>& out) const override { out.insert("all"); }
-+	Future<Void> setup(Database const& cx) override { return Void(); }
-+	Future<Void> start(Database const& cx) override {
-+		return clientId == 0 ? fileBackup::testRestoreWriterRecovery(cx) : Void();
-+	}
-+	Future<bool> check(Database const& cx) override { return true; }
-+	void getMetrics(std::vector<PerfMetric>& m) override {}
-+};
-+
-+WorkloadFactory<RestoreWriterRecoveryWorkload> RestoreWriterRecoveryWorkloadFactory;
-+
-+struct RestoreDispatchRecoveryWorkload : TestWorkload {
-+	static constexpr auto NAME = "RestoreDispatchRecovery";
-+	explicit RestoreDispatchRecoveryWorkload(WorkloadContext const& wcx) : TestWorkload(wcx) {}
-+
-+	void disableFailureInjectionWorkloads(std::set<std::string>& out) const override { out.insert("all"); }
-+	Future<Void> setup(Database const& cx) override { return Void(); }
-+	Future<Void> start(Database const& cx) override {
-+		return clientId == 0 ? fileBackup::testRestoreDispatchRecovery(cx) : Void();
-+	}
-+	Future<bool> check(Database const& cx) override { return true; }
-+	void getMetrics(std::vector<PerfMetric>& m) override {}
-+};
-+
-+WorkloadFactory<RestoreDispatchRecoveryWorkload> RestoreDispatchRecoveryWorkloadFactory;
-```
-
-**File**: `tests/CMakeLists.txt` (modified, +2/-0)
-```diff
-@@ -276,6 +276,8 @@ if(WITH_PYTHON)
-   add_fdb_test(TEST_FILES fast/ReadHotDetectionCorrectness.toml IGNORE) # TODO re-enable once read hot detection is enabled.
-   add_fdb_test(TEST_FILES fast/ReportConflictingKeys.toml)
-   add_fdb_test(TEST_FILES fast/RESTUnit.toml IGNORE)
-+  add_fdb_test(TEST_FILES fast/RestoreDispatchRecovery.toml)
-+  add_fdb_test(TEST_FILES fast/RestoreWriterRecovery.toml)
-   add_fdb_test(TEST_FILES fast/SelectorCorrectness.toml)
-   add_fdb_test(TEST_FILES fast/ShardedRocksNondeterministicTest.toml)
-   add_fdb_test(TEST_FILES fast/StaleCoordinatorProtocolMonitor.toml)
-```
-
-**File**: `tests/fast/RestoreDispatchRecovery.toml` (added, +17/-0)
-```diff
-@@ -0,0 +1,17 @@
-+testClass = "Backup"
-+buggify = false
-+
-+[[knobs]]
-+# Let the injected age failures, rather than the byte target, bound dispatch.
-+restore_dispatch_tx_size = 4194304
-+# Reclaim the abandoned task promptly to exercise persisted limits across lease handoff.
-+taskbucket_timeout_versions = 5000000
-+
-+[configuration]
-+tenantModes = ['disabled']
-+
-+[[test]]
-+testTitle = 'RestoreDispatchRecovery'
-+
-+    [[test.workload]]
-+    testName = 'RestoreDispatchRecovery'
-```
-
-**File**: `tests/fast/RestoreWriterRecovery.toml` (added, +16/-0)
-```diff
-@@ -0,0 +1,16 @@
-+testClass = "Backup"
-+
-+[[knobs]]
-+# The test caps writer transactions at 4 KiB, below their initial 16 KiB budget.
-+restore_write_tx_size = 16384
-+backup_logfile_block_size = 65536
-+mutation_block_size = 10000
-+
-+[configuration]
-+tenantModes = ['disabled']
-+
-+[[test]]
-+testTitle = 'RestoreWriterRecovery'
-+
-+    [[test.workload]]
-+    testName = 'RestoreWriterRecovery'
-```
-
----
-
-### Incident Patch 2: `c6fb547f` (2026-11-03)
-**Commit Message**: Merge pull request #14400 from tclinkenbeard-oai/dev/tclinkenbeard/audit-grpc-include-localities
-
-Honor locality selectors in the gRPC Include command
-
-**File**: `fdbctl/ControlCommands.cpp` (modified, +6/-2)
-```diff
-@@ -299,7 +299,6 @@ Future<grpc::Status> getWorkers(Reference<IDatabase> db, const GetWorkersRequest
- 
- Future<grpc::Status> include(Reference<IDatabase> db, const IncludeRequest* req, IncludeReply* rep) {
- 	std::vector<AddressExclusion> addresses;
--	std::vector<std::string> localities;
- 
- 	for (const auto& addr_str : req->addresses()) {
- 		auto a = AddressExclusion::parse(StringRef(addr_str));
-@@ -339,7 +338,12 @@ Future<grpc::Status> include(Reference<IDatabase> db, const IncludeRequest* req,
+ 			if (!plogs.empty()) {
+-				logs.swap(plogs);
+-				std::erase_if(logs, [&](const LogFile& file) { return file.beginVersion > restorable.targetVersion; });
+-				// sort by tag ID so that filterDuplicates works.
+-				std::sort(logs.begin(), logs.end(), [](const LogFile& a, const LogFile& b) {
+-					return std::tie(a.tagId, a.beginVersion, a.endVersion) <
+-					       std::tie(b.tagId, b.beginVersion, b.endVersion);
+-				});
+-
+-				// Remove duplicated log files that can happen for old epochs.
+-				std::vector<LogFile> filtered = filterDuplicates(logs);
+-				restorable.logs.swap(filtered);
+-				// sort by version order again for continuous analysis
+-				std::sort(restorable.logs.begin(), restorable.logs.end());
+-				if (isPartitionedLogsContinuous(restorable.logs, minKeyRangeVersion, restorable.targetVersion)) {
+-					restorable.continuousBeginVersion = minKeyRangeVersion;
+-					restorable.continuousEndVersion = restorable.targetVersion + 1; // not inclusive
+-					if (latestBulkDump) {
+-						best = std::move(restorable);
+-						continue;
+-					}
+-					co_return Optional<RestorableFileSet>(restorable);
++				auto result =
++				    getRestoreSetFromPartitionedLogs(std::move(plogs), minKeyRangeVersion, std::move(restorable));
++				if (result.present() && latestBulkDump) {
++					best = std::move(result);
++					continue;
  				}
+-				if (useBulkDump) {
++				if (!result.present() && useBulkDump) {
+ 					continue;
+ 				}
+-				co_return Optional<RestorableFileSet>();
++				co_return result;
+ 			}
  
- 				// Include specific localities
--				for (const auto& l : localities) {
-+				for (const auto& l : req->localities()) {
-+					if (!StringRef(l).startsWith(LocalityData::ExcludeLocalityPrefix) ||
-+					    l.find(':') == std::string::npos) {
-+						co_return grpc::Status(grpc::StatusCode::INVALID_ARGUMENT,
-+						                       fmt::format("'{}' is not a valid locality", l));
+ 			// List logs in version order so log continuity can be analyzed
+@@ -3113,6 +3124,34 @@ Future<Void> testBackupContainerWithMissingLogRanges(std::string url, Optional<s
+ 	printf("BackupContainerTest URL=%s PASSED.\n", url.c_str());
+ }
+ 
++TEST_CASE("/backup/containers/localdir/incrementalBeginVersion") {
++	std::string url = format("file://%s/fdb_backups/%llx", params.getDataDir().c_str(), timer_int());
++	auto container = IBackupContainer::openContainer(url, {}, {}, 0);
++	co_await container->create();
++	auto getLogs = [&](Version begin) { return container->getRestoreSet(190, {}, true, begin); };
++
++	auto log = co_await container->writeLogFile(150, 200, 1024);
+```
+
+**File**: `fdbclient/FileBackupAgent.cpp` (modified, +13/-4)
+```diff
+@@ -7296,9 +7296,6 @@ struct StartFullRestoreTaskFunc : RestoreTaskFuncBase {
+ 		}
+ 
+ 		Version firstConsistentVersion = invalidVersion;
+-		if (beginVersion == invalidVersion) {
+-			beginVersion = 0;
+-		}
+ 		Standalone<VectorRef<KeyRangeRef>> keyRangesFilter;
+ 		for (auto const& r : ranges) {
+ 			keyRangesFilter.push_back_deep(keyRangesFilter.arena(), KeyRangeRef(r));
+@@ -7339,7 +7336,9 @@ struct StartFullRestoreTaskFunc : RestoreTaskFuncBase {
+ 				}
+ 			}
+ 		} else {
+-			// In logs-only (incremental) mode, the firstConsistentVersion should just be restore.beginVersion().
++			if (beginVersion == invalidVersion) {
++				beginVersion = 0;
++			}
+ 			firstConsistentVersion = beginVersion;
+ 		}
+ 		if (!inconsistentSnapshotOnly) {
+@@ -7393,6 +7392,16 @@ struct StartFullRestoreTaskFunc : RestoreTaskFuncBase {
+ 			try {
+ 				tr->setOption(FDBTransactionOptions::ACCESS_SYSTEM_KEYS);
+ 				tr->setOption(FDBTransactionOptions::LOCK_AWARE);
++				if (logsOnly && !restorable.get().logs.empty()) {
++					// A container-wide description can reflect a different log layout from this interval.
++					const bool partitioned = restorable.get().logs.front().isPartitionedLog();
++					const auto layout =
++					    co_await restore.mutationLogType().getD(tr, Snapshot::False, MutationLogType::DEFAULT);
++					if (partitioned != (layout == MutationLogType::PARTITIONED_LOG)) {
++						restore.mutationLogType().set(
++						    tr, partitioned ? MutationLogType::PARTITIONED_LOG : MutationLogType::DEFAULT);
 +					}
- 					Key locality = req->failed() ? special_keys::failedLocalitySpecialKeyRange.begin.withSuffix(l)
- 					                             : special_keys::excludedLocalitySpecialKeyRange.begin.withSuffix(l);
- 					tr->clear(locality);
++				}
+ 				restore.firstConsistentVersion().set(tr, firstConsistentVersion);
+ 				if (!useRangeFileRestore) {
+ 					co_await taskBucket->keepRunning(tr, task);
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #14421** (2026-11-03): [release-8.0] Reject path traversal in backup, S3, bulk load, profiler, and checkpoint paths (#14341, #14347) (@ShreeChaturvedi)
+- **PR #14417** (2026-11-04): [release-8.0] Extend MVC test-suite to catch client version mismatched loading (#14383) (@akshay-v-kaushik)
+- **PR #14415** (2026-11-03): Validate the requested start of incremental restores (@tclinkenbeard-oai)
+- **PR #14405** (2026-11-03): Preserve checksum fields when decoding bulkload manifests (@tclinkenbeard-oai)
+- **PR #14403** (2026-11-03): Accept HTTP field values without whitespace after the colon (@tclinkenbeard-oai)
 - **PR #14400** (2026-11-03): Honor locality selectors in the gRPC Include command (@tclinkenbeard-oai)
-- **PR #14395** (2026-10-30): Release notes 7.3.{80, 81} (@spraza)
-- **PR #14394** (2026-10-30): [release-7.4] build: fix aws-sdk-cpp "crypto" dep, for macOS and arm64 (@ploxiln)
-- **PR #14388** (closed): RocksDB: apply ROCKSDB_COMPACTION_THREAD_PRIORITY to RocksDB's compaction threads (@ShreeChaturvedi)
-- **PR #14387** (2026-11-03): [release-7.4] Fix DataDistributor::initDcInfo bug on region failover (@akshay-v-kaushik)
-- **PR #14386** (2026-10-31): [release-7.4] Fix LocalityData value presence checks (@ploxiln)
 
 ---
 
@@ -2349,28 +2152,28 @@ Honor locality selectors in the gRPC Include command
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [backup] Bound restore dispatch and adapt oversized transactions (#14288)
+## X. Merge pull request #14415 from tclinkenbeard-oai/dev/tclinkenbeard/audit-increme
 
 **RULE**:
-When implementing operations in `fdbclient/ClientKnobs.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apple/foundationdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `fdbbackup/backup.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apple/foundationdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8ddaf495`: [backup] Bound restore dispatch and adapt oversized transactions (#14288). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `16783380`: Merge pull request #14415 from tclinkenbeard-oai/dev/tclinkenbeard/audit-incremental-log-prefix. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `fdbclient/ClientKnobs.cpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `fdbbackup/backup.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-	init( RESTORE_DISPATCH_TX_SIZE,      4 * 1024 * 1024 ); if( randomize && buggify() ) RESTORE_DISPATCH_TX_SIZE = 1 * 1024;
+			    targetVersion, ranges, onlyApplyMutationLogs, beginVersion, restoreMode == RestoreMode::BULKLOAD);
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+			    targetVersion, ranges, false, invalidVersion, restoreMode == RestoreMode::BULKLOAD);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8ddaf495` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `16783380` are properly handled with clean fallback behavior.
