@@ -7099,3 +7099,7 @@
 | `CYCLE-20261104-JYM0` | `2026-11-04T01:20:36.600Z` | `karakeep-app/karakeep` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6697` | Yes (`845b82ba...`) |
 | `CYCLE-20261104-K0V0` | `2026-11-04T01:20:39.516Z` | `pulumi/pulumi` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6698` | Yes (`80a8c55e...`) |
 | `CYCLE-20261104-K23R` | `2026-11-04T01:20:41.127Z` | `sigstore/cosign` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6699` | Yes (`fc564ce3...`) |
+| `CYCLE-20261104-T41H` | `2026-11-04T01:27:43.541Z` | `AndyTheFactory/newspaper4k` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/andythefactory-newspaper4k-learnings.md` | Yes (`67c9941f...`) |
+| `CYCLE-20261104-T7VN` | `2026-11-04T01:27:48.515Z` | `saltstack/salt` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6700` | Yes (`30d7c7b3...`) |
+| `CYCLE-20261104-TAR7` | `2026-11-04T01:27:52.243Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6701` | Yes (`9ae5e12b...`) |
+| `CYCLE-20261104-TBXB` | `2026-11-04T01:27:53.759Z` | `xerj-org/xerj` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6702` | Yes (`60014225...`) |

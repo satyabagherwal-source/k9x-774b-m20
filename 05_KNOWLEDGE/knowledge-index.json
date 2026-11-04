@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-04T01:20:41.078Z",
+  "last_updated": "2026-11-04T01:27:53.671Z",
   "total_verified_learnings": 1203,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -7029,8 +7029,8 @@
       "slug": "cilium-cilium",
       "platform": "github",
       "source_url": "https://github.com/cilium/cilium",
-      "source_version": "e9bd7c00",
-      "content_hash": "27756688007b7970c0bcce3156cfe5b978da94e9f3e9f0c2900a5d31c6936aff",
+      "source_version": "7c469256",
+      "content_hash": "9ae5e12ba0b0e1e4c1044574f01bd4cec515a71bb31941777ba760c3cfcc77ed",
       "dossier_path": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "promoted_rules": [
@@ -7238,6 +7238,11 @@
           "number": 6624,
           "title": "ipam/multi-pool: add per-pool IP and CIDR-block metrics",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6701,
+          "title": "bpf: host: remove no longer needed __maybe_unused",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -7245,7 +7250,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T21:44:55.905Z",
+      "verified_at": "2026-11-04T01:27:52.136Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -50824,8 +50829,8 @@
       "slug": "saltstack-salt",
       "platform": "github",
       "source_url": "https://github.com/saltstack/salt",
-      "source_version": "6335271b",
-      "content_hash": "6c59ba95ccdb218355797e001dc0beac6380e337e89b3470f47b7deb64bc505d",
+      "source_version": "4840c2be",
+      "content_hash": "30d7c7b379cf1b94eb34dbb582e1d5ac5dedd321ce703b77a971f106a1d05768",
       "dossier_path": "07_PROJECT_LEARNING/saltstack-salt-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/saltstack-salt-learnings.md",
       "promoted_rules": [
@@ -50868,6 +50873,11 @@
           "number": 6434,
           "title": "[master] Fixed issue with add_store and del_store  (#64659)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6700,
+          "title": "Use asyncio loops and locks in client channels and pool routing (#70604)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -50875,7 +50885,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-02T15:29:40.979Z",
+      "verified_at": "2026-11-04T01:27:48.405Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -60228,8 +60238,8 @@
       "slug": "xerj-org-xerj",
       "platform": "github",
       "source_url": "https://github.com/xerj-org/xerj",
-      "source_version": "b003bd83",
-      "content_hash": "44521c83b21af06fcc29d2104af52dcc6abddeb7c41f26b96f8cf52d1bbfcd18",
+      "source_version": "b7800483",
+      "content_hash": "60014225ca83bd25e8f278447360d0c1f7a4d02d3b7dad5d4c5af9cd860ab85d",
       "dossier_path": "07_PROJECT_LEARNING/xerj-org-xerj-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/xerj-org-xerj-learnings.md",
       "promoted_rules": [
@@ -60307,6 +60317,11 @@
           "number": 6414,
           "title": "autoindex): return from a parked bulk submit once another worker shipped its byt",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6702,
+          "title": "tests): name loopback networking when a test's bind is denied (#2889)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -60314,7 +60329,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-02T14:46:34.223Z",
+      "verified_at": "2026-11-04T01:27:53.648Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -75455,8 +75470,8 @@
       "slug": "andythefactory-newspaper4k",
       "platform": "github",
       "source_url": "https://github.com/AndyTheFactory/newspaper4k",
-      "source_version": "b53a81fc",
-      "content_hash": "a097e5b00c9e2df0d9f0c90e35f161b3a927864101867e595c0303f0a035b26b",
+      "source_version": "22a4be5c",
+      "content_hash": "67c9941fc3f9dff2192e2aae48dc8d9e8a3106f41dfcb0725f0380544b93e231",
       "dossier_path": "07_PROJECT_LEARNING/andythefactory-newspaper4k-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/andythefactory-newspaper4k-learnings.md",
       "promoted_rules": [
@@ -75471,7 +75486,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T01:27:26.672Z",
+      "verified_at": "2026-11-04T01:27:43.368Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -172106,6 +172121,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-04T01:20:41.065Z"
+    },
+    "rule-6700": {
+      "learning_id": "rule-6700",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6700,
+      "title": "Use asyncio loops and locks in client channels and pool routing (#70604)",
+      "source_url": "https://github.com/saltstack/salt",
+      "source_version": "4840c2be",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T01:27:48.405Z"
+    },
+    "rule-6701": {
+      "learning_id": "rule-6701",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6701,
+      "title": "bpf: host: remove no longer needed __maybe_unused",
+      "source_url": "https://github.com/cilium/cilium",
+      "source_version": "7c469256",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T01:27:52.136Z"
+    },
+    "rule-6702": {
+      "learning_id": "rule-6702",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6702,
+      "title": "tests): name loopback networking when a test's bind is denied (#2889)",
+      "source_url": "https://github.com/xerj-org/xerj",
+      "source_version": "b7800483",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T01:27:53.648Z"
     }
   },
   "aliases": {

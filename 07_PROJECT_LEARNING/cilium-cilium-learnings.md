@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source**: github ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
-> **Source Version**: `e9bd7c00`  
+> **Source Version**: `7c469256`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T21:44:55.297Z  
+> **Timestamp**: 2026-11-04T01:27:51.485Z  
 > **Learning ID**: `learn-github-cilium-cilium`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T21:44:54.784Z  
+> **Harvest Timestamp**: 2026-11-04T01:27:51.288Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: eBPF-based Networking, Security, and Observability
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod
-- **Stars / Engagement**: 25768 stars
+- **Stars / Engagement**: 25769 stars
 
 ---
 
@@ -1282,531 +1282,269 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e9bd7c00` (2026-10-20)
-**Commit Message**: ipam/multi-pool: add per-pool IP and CIDR-block metrics
+### Incident Patch 1: `7c469256` (2026-10-29)
+**Commit Message**: bpf: host: remove no longer needed __maybe_unused
 
-Multi-pool IPAM gave us no per-pool visibility. The operator's
-ipam_{available,used,needed}_ips gauges don't help here, because in multi-pool
-mode the per-node IP accounting happens in the agent, not the operator.
+Signed-off-by: Liam Connery <[REDACTED_EMAIL]>
 
-Agent side: emit per-pool, per-family gauges from the multi-pool manager's
-updateLocalNode:
-
-  cilium_ipam_multipool_available_ips     (used + free, to match the operator)
-  cilium_ipam_multipool_used_ips
-  cilium_ipam_multipool_needed_ips
-  cilium_ipam_multipool_allocated_blocks  (pod CIDRs currently held by the node)
-
-Operator side: a pool can also run out of CIDR blocks while individual nodes
-still have free IPs, which the IP counts won't catch. So expose the pool-wide
-total from the operator:
-
-  cilium_operator_ipam_multipool_total_blocks
-
-Comparing that against the sum of the agent's allocated_blocks shows how close a
-pool is to running out of blocks.
-
-The metrics are optional and no-op when not wired in (the ENI allocator and
-unit tests don't set them).
-
-Signed-off-by: Afeedh Shaji <[REDACTED_EMAIL]>
-
-**File**: `Documentation/observability/metrics.rst` (modified, +5/-0)
+**File**: `bpf/bpf_host.c` (modified, +17/-18)
 ```diff
-@@ -812,6 +812,10 @@ Name                                     Labels
- ``ipam_capacity``                        ``family``, ``cidr``                         Enabled    Total number of IPs in the IPAM pool labeled by family
- ``ipam_events_total``                    ``action``, ``family``                       Enabled    Number of IPAM events received labeled by action and datapath family type
- ``ip_addresses``                         ``family``                                   Enabled    Number of allocated IP addresses
-+``ipam_multipool_available_ips``         ``pool``, ``family``                         Enabled    Total IPs (in-use and free) per pool and family. Emitted by the agent in multi-pool IPAM mode
-+``ipam_multipool_used_ips``              ``pool``, ``family``                         Enabled    In-use (allocated) IPs per pool and family. Emitted by the agent in multi-pool IPAM mode
-+``ipam_multipool_needed_ips``            ``pool``, ``family``                         Enabled    IPs needed to satisfy allocation demand per pool and family. Emitted by the agent in multi-pool IPAM mode
-+``ipam_multipool_allocated_blocks``      ``pool``, ``family``                         Enabled    CIDR blocks (pod CIDRs) allocated to this node per pool and family. Emitted by the agent in multi-pool IPAM mode
- ======================================== ============================================ ========== ========================================================
+@@ -1012,22 +1012,22 @@ handle_to_netdev_ipv4(struct __ctx_buff *ctx, bool is_from_proxy, __u32 src_sec_
  
- KVstore
-@@ -995,6 +999,7 @@ Name                                     Labels
- ``ipam_available_ips``                   ``target_node``                                                   Enabled    Number of available IPs on a node (taking into account plugin specific NIC/Address limits).
- ``ipam_used_ips``                        ``target_node``                                                   Enabled    Number of currently used IPs on a node.
- ``ipam_needed_ips``                      ``target_node``                                                   Enabled    Number of IPs needed to satisfy allocation on a node.
-+``ipam_multipool_total_blocks``          ``pool``, ``family``                                              Enabled    Total number of CIDR blocks per pool and family.
- ======================================== ================================================================= ========== ========================================================
+ static __always_inline int
+ do_netdev(struct __ctx_buff *ctx, __be16 proto, __u32 identity,
+-	  enum trace_point obs_point,  const bool __maybe_unused from_host)
++	  enum trace_point obs_point, const bool from_host)
+ {
+ 	struct trace_ctx trace = {
+ 		.reason = TRACE_REASON_UNKNOWN,
+ 		.monitor = TRACE_PAYLOAD_LEN,
+ 	};
+-	fraginfo_t __maybe_unused fraginfo = 0;
+-	__u32 __maybe_unused ipcache_srcid = 0;
++	fraginfo_t fraginfo = 0;
++	__u32 ipcache_srcid = 0;
+ 	enum metric_dir dir = METRIC_INGRESS;
+-	void __maybe_unused *data, *data_end;
++	void *data, *data_end;
+ 	struct ipv6hdr __maybe_unused *ip6;
+-	struct iphdr __maybe_unused *ip4;
+-	struct arp_eth __maybe_unused *arp;
+-	int __maybe_unused hdrlen = 0;
+-	__u8 __maybe_unused next_proto = 0;
+-	__s8 __maybe_unused ext_err = 0;
++	struct iphdr *ip4;
++	struct arp_eth *arp;
++	int hdrlen = 0;
++	__u8 next_proto = 0;
++	__s8 ext_err = 0;
+ 	int ret;
  
- LB-IPAM
-```
-
-**File**: `operator/pkg/ipam/allocator/multipool/metrics.go` (added, +59/-0)
-```diff
-@@ -0,0 +1,59 @@
-+// SPDX-License-Identifier: Apache-2.0
-+// Copyright Authors of Cilium
-+
-+package multipool
-+
-+import (
-+	"github.com/prometheus/client_golang/prometheus"
-+
-+	"github.com/cilium/cilium/pkg/ipam"
-+	"github.com/cilium/cilium/pkg/metrics"
-+	"github.com/cilium/cilium/pkg/metrics/metric"
-+)
-+
-+const (
-+	multiPoolSubsystem = "ipam_multipool"
-+
-+	labelPoolName = "pool"
-+	labelIPFamily = "family"
-+)
-+
-+type Metrics struct {
-+	// TotalBlocks is the total number of CIDR blocks in the pool.
-+	TotalBlocks metric.DeletableVec[metric.Gauge]
-+}
-+
-+// NewMetrics returns a new Metrics instance.
-+func NewMetrics() Metrics {
-+	return Metrics{
-+		TotalBlocks: metric.NewGaugeVec(metric.GaugeOpts{
-+			Namespace: metrics.CiliumOperatorNamespace,
-+			Subsystem: multiPoolSubsystem,
-+			Name:      "total_blocks",
-+			Help:      "Total number of CIDR blocks in the multi-pool IPAM pool",
-+		}, []string{labelPoolName, labelIPFamily}),
-+	}
-+}
-+
-+// enabled returns false if m is nil, e.g. in unit tests.
-+func (m *Metrics) enabled() bool {
-+	return m != nil && m.TotalBlocks != nil
-+}
-+
-+// setPool sets the total-blocks gauge for a given pool and family.
-+// No-op when no Metrics was injected (see enabled).
-+func (m *Metrics) setPool(pool string, family ipam.Family, total int) {
-+	if !m.enabled() {
-+		return
-+	}
-+	m.TotalBlocks.WithLabelValues(pool, string(family)).Set(float64(total))
-+}
-+
-+// deletePool drops both families' series for a pool once it is deleted.
-+// No-op when no Metrics was injected (see enabled).
-+func (m *Metrics) deletePool(pool string) {
-+	if !m.enabled() {
-+		return
-+	}
-+	m.TotalBlocks.DeletePartialMatch(prometheus.Labels{labelPoolName: pool})
-+}
-```
-
-**File**: `operator/pkg/ipam/allocator/multipool/node_handler_test.go` (modified, +5/-5)
-```diff
-@@ -98,7 +98,7 @@ type mockResult struct {
- func TestNodeHandler(t *testing.T) {
- 	t.Cleanup(func() { testutils.GoleakVerifyNone(t) })
+ 	switch (proto) {
+@@ -1250,9 +1250,9 @@ do_netdev(struct __ctx_buff *ctx, __be16 proto, __u32 identity,
  
--	backend := NewPoolAllocator(hivetest.Logger(t), true, true)
-+	backend := NewPoolAllocator(hivetest.Logger(t), true, true, nil)
- 	err := backend.UpsertPool("default", []poolCIDRConfig{{cidr: netip.MustParsePrefix("10.0.0.0/8")}}, 24, nil, 0)
- 	assert.NoError(t, err)
+ 	return ret;
  
-@@ -259,7 +259,7 @@ func TestNodeHandler(t *testing.T) {
- func TestOrphanCIDRsAfterRestart(t *testing.T) {
- 	t.Cleanup(func() { testutils.GoleakVerifyNone(t) })
- 
--	backend := NewPoolAllocator(hivetest.Logger(t), true, true)
-+	backend := NewPoolAllocator(hivetest.Logger(t), true, true, nil)
- 
- 	onUpdateArgs := make(chan mockArgs)
- 
-@@ -396,7 +396,7 @@ func TestOrphanCIDRsAfterRestart(t *testing.T) {
- func TestOrphanCIDRsReleased(t *testing.T) {
- 	t.Cleanup(func() { testutils.GoleakVerifyNone(t) })
- 
--	backend := NewPoolAllocator(hivetest.Logger(t), true, true)
-+	backend := NewPoolAllocator(hivetest.Logger(t), true, true, nil)
- 	err := backend.UpsertPool("test-pool",
- 		[]poolCIDRConfig{
- 			{cidr: netip.MustParsePrefix("10.0.0.0/28")},
-@@ -523,7 +523,7 @@ func TestNodeHandlerRetries(t *testing.T) {
- 	t.Cleanup(func() { testutils.GoleakVerifyNone(t) })
- 
- 	t.Run("get and update", func(t *testing.T) {
--		backend := NewPoolAllocator(hivetest.Logger(t), true, false)
-+		backend := NewPoolAllocator(hivetest.Logger(t), true, false, nil)
- 		assert.NoError(t, backend.UpsertPool("default", []poolCIDRConfig{{cidr: netip.MustParsePrefix("10.0.0.0/8")}}, 24, nil, 0))
- 
- 		node := &v2.CiliumNode{
-@@ -609,7 +609,7 @@ func TestNodeHandlerRetries(t *testing.T) {
- 	})
- 
- 	t.Run("updatestatus", func(t *testing.T) {
--		backend := NewPoolAllocator(hivetest.Logger(t), true, false)
-+		backend := NewPoolAllocator(hivetest.Logger(t), true, false, nil)
- 		assert.NoError(t, backend.UpsertPool("default", []poolCIDRConfig{{cidr: netip.MustParsePrefix("10.0.0.0/8")}}, 24, nil, 0))
- 
- 		node := &v2.CiliumNode{
-```
-
-**File**: `operator/pkg/ipam/allocator/multipool/pool_allocator.go` (modified, +35/-1)
-```diff
-@@ -130,24 +130,56 @@ type PoolAllocator struct {
- 
- 	ipv4Enabled, ipv6Enabled bool
- 
-+	metrics *Metrics
-+
- 	mutex   lock.RWMutex
- 	pools   map[string]cidrPool    // poolName -> pool
- 	nodes   map[string]poolToCIDRs // nodeName -> pool -> cidrs
- 	orphans map[string]poolToCIDRs // nodeName -> pool -> list of orphaned CIDRs (CIDRs allocated to nodes but missing their parent pool)
- 	ready   bool
+-drop_err_egress: __maybe_unused
++drop_err_egress:
+ 	dir = METRIC_EGRESS;
+-drop_err_ingress: __maybe_unused
++drop_err_ingress:
+ 	return send_drop_notify_error(ctx, identity, ret, dir);
  }
  
--func NewPoolAllocator(logger *slog.Logger, enableIPv4, enableIPv6 bool) *PoolAllocator {
-+func NewPoolAllocator(logger *slog.Logger, enableIPv4, enableIPv6 bool, metrics *Metrics) *PoolAllocator {
- 	return &PoolAllocator{
- 		logger:      logger,
- 		ipv4Enabled: enableIPv4,
- 		ipv6Enabled: enableIPv6,
-+		metrics:     metrics,
- 		pools:       map[string]cidrPool{},
- 		nodes:       map[string]poolToCIDRs{},
- 		orphans:     map[string]poolToCIDRs{},
- 	}
- }
+@@ -1711,8 +1711,8 @@ int tail_ipv4_host_policy_ingress(struct __ctx_buff *ctx)
  
-+// updatePoolMetricsLocked recomputes and emits the total-blocks gauge for a
-+// single pool. The total only changes when a pool's CIDRs, mask or reserved
-+// ranges change, so this is called from UpsertPool. Caller must hold p.mutex.
-+func (p *PoolAllocator) updatePoolMetricsLocked(poolName string) {
-+	if !p.metrics.enabled() {
-+		return
-+	}
-+	pool, ok := p.pools[poolName]
-+	if !ok {
-+		p.metrics.deletePool(poolName)
-+		return
-+	}
-+	if p.ipv4Enabled {
-+		p.metrics.setPool(poolName, ipam.IPv4, totalBlocks(pool.v4))
-+	}
-+	if p.ipv6Enabled {
-+		p.metrics.setPool(poolName, ipam.IPv6, totalBlocks(pool.v6))
-+	}
-+}
-+
-+// totalBlocks sums the CIDR-block capacity across a pool's family allocators.
-+func totalBlocks(allocators []cidralloc.CIDRAllocator) int {
-+	total := 0
-+	for _, a := range allocators {
-+		total += a.Capacity()
-+	}
-+	return total
-+}
-+
- func (p *PoolAllocator) RestoreFinished() {
- 	p.mutex.Lock()
- 	p.ready = true
-@@ -366,6 +398,7 @@ func validateExistingPool(pool cidrPool, ipv4MaskSize, ipv6MaskSize int, options
- func (p *PoolAllocator) UpsertPool(poolName string, ipv4CIDRs []poolCIDRConfig, ipv4MaskSize int, ipv6CIDRs []poolCIDRConfig, ipv6MaskSize int, opts ...PoolOption) error {
- 	p.mutex.Lock()
- 	defer p.mutex.Unlock()
-+	defer p.updatePoolMetricsLocked(poolName)
+ static __always_inline
+ int host_ingress_policy(struct __ctx_buff *ctx, __be16 proto,
+-			__u32 src_sec_identity, bool traced, bool use_tailcall __maybe_unused,
+-			__s8 *ext_err __maybe_unused)
++			__u32 src_sec_identity, bool traced, bool use_tailcall,
++			__s8 *ext_err)
+ {
+ 	struct trace_ctx trace = {
+ 		.reason = TRACE_REASON_UNKNOWN,
+@@ -1913,16 +1913,15 @@ int cil_to_host(struct __ctx_buff *ctx)
+  * control back to bpf_lxc.
+  */
+ static __always_inline __maybe_unused int
+-from_host_to_lxc(struct __ctx_buff *ctx __maybe_unused, __be16 proto,
+-		 __s8 *ext_err __maybe_unused)
++from_host_to_lxc(struct __ctx_buff *ctx, __be16 proto, __s8 *ext_err)
+ {
+-	struct trace_ctx __maybe_unused trace = {
++	struct trace_ctx trace = {
+ 		.reason = TRACE_REASON_UNKNOWN,
+ 		.monitor = 0,
+ 	};
+ 	int ret = CTX_ACT_OK;
+-	void __maybe_unused *data, *data_end;
+-	struct iphdr *ip4 __maybe_unused;
++	void *data, *data_end;
++	struct iphdr *ip4;
+ 	struct ipv6hdr *ip6 __maybe_unused;
  
- 	var options poolOptions
- 	for _, opt := range opts {
-@@ -434,6 +467,7 @@ func (p *PoolAllocator) UpsertPool(poolName string, ipv4CIDRs []poolCIDRConfig,
- func (p *PoolAllocator) DeletePool(poolName string) error {
- 	p.mutex.Lock()
- 	defer p.mutex.Unlock()
-+	defer p.metrics.deletePool(poolName)
- 
- 	if _, exists := p.pools[poolName]; !exists {
- 		return fmt.Errorf("pool %q requested for deletion doesn't exist", poolName)
-```
-
-**File**: `operator/pkg/ipam/allocator/multipool/pool_allocator_test.go` (modified, +49/-12)
-```diff
-@@ -9,6 +9,7 @@ import (
- 	"testing"
- 
- 	"github.com/cilium/hive/hivetest"
-+	"github.com/prometheus/client_golang/prometheus/testutil"
- 	"github.com/stretchr/testify/require"
- 	"go4.org/netipx"
- 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-@@ -51,7 +52,7 @@ func testNode(name string, requested []ipamTypes.IPAMPoolRequest, allocated []ip
- }
- 
- func TestPoolAllocator(t *testing.T) {
--	p := NewPoolAllocator(hivetest.Logger(t), true, true)
-+	p := NewPoolAllocator(hivetest.Logger(t), true, true, nil)
- 	err := p.UpsertPool("default",
- 		[]poolCIDRConfig{
- 			{cidr: netip.MustParsePrefix("10.100.0.0/16")},
-@@ -169,7 +170,7 @@ func TestPoolAllocator(t *testing.T) {
- }
- 
- func TestPoolAllocator_PoolErrors(t *testing.T) {
--	p := NewPoolAllocator(hivetest.Logger(t), true, true)
-+	p := NewPoolAllocator(hivetest.Logger(t), true, true, nil)
- 	p.RestoreFinished()
- 
- 	node := testNode("node1",
-@@ -235,7 +236,7 @@ func TestPoolAllocator_PoolErrors(t *testing.T) {
- }
- 
- func TestPoolAllocator_AddUpsertDelete(t *testing.T) {
--	p := NewPoolAllocator(hivetest.Logger(t), true, true)
-+	p := NewPoolAllocator(hivetest.Logger(t), true, true, nil)
- 
- 	// Upserting a non-existing pool adds it
- 	_, exists := p.pools["mars"]
-@@ -486,7 +487,7 @@ func TestPoolAllocatorAllowFirstAndLastIPs(t *testing.T) {
- 
- 	for _, tt := range tests {
- 		t.Run(tt.name, func(t *testing.T) {
--			p := NewPoolAllocator(hivetest.Logger(t), true, false)
-+			p := NewPoolAllocator(hivetest.Logger(t), true, false, nil)
- 			require.NotNil(t, p)
- 
- 			options := []PoolOption{}
-@@ -523,7 +524,7 @@ func TestPoolAllocatorAllowFirstAndLastIPs(t *testing.T) {
- // TestUpdateCIDRSets_ShrinkPool ensures that shrinking a pool does not
- // trigger a nil dereference in updateCIDRSets.
- func TestUpdateCIDRSets_ShrinkPool(t *testing.T) {
--	p := NewPoolAllocator(hivetest.Logger(t), true, true)
-+	p := NewPoolAllocator(hivetest.Logger(t), true, true, nil)
- 
- 	// Initial pool with two IPv4 CIDRs
- 	err := p.UpsertPool("shrink-test",
-@@ -547,7 +548,7 @@ func TestUpdateCIDRSets_ShrinkPool(t *testing.T) {
- }
- 
- func TestPoolUpdateWithCIDRInUse(t *testing.T) {
--	p := NewPoolAllocator(hivetest.Logger(t), true, true)
-+	p := NewPoolAllocator(hivetest.Logger(t), true, true, nil)
- 
- 	// no pools available
- 	require.Empty(t, p.pools)
-@@ -598,7 +599,7 @@ func TestPoolUpdateWithCIDRInUse(t *testing.T) {
- }
- 
- func TestOrphanCIDRs(t *testing.T) {
--	p := NewPoolAllocator(hivetest.Logger(t), true, true)
-+	p := NewPoolAllocator(hivetest.Logger(t), true, true, nil)
- 
- 	// no pools available
- 	require.Empty(t, p.pools)
-@@ -812,7 +813,7 @@ func TestOrphanCIDRs(t *testing.T) {
- }
- 
- func TestOrphanCIDRsNotStolenFromAnotherPool(t *testing.T) {
--	p := NewPoolAllocator(hivetest.Logger(t), true, true)
-+	p := NewPoolAllocator(hivetest.Logger(t), true, true, nil)
- 
- 	// no pools available
- 	require.Empty(t, p.pools)
-@@ -872,7 +873,7 @@ func TestOrphanCIDRsNotStolenFromAnotherPool(t *testing.T) {
- }
- 
- func TestUpdatePoolKeepOldCIDRs(t *testing.T) {
--	p := NewPoolAllocator(hivetest.Logger(t), true, true)
-+	p := NewPoolAllocator(hivetest.Logger(t), true, true, nil)
- 
- 	err := p.UpsertPool("test-pool",
- 		[]poolCIDRConfig{
-@@ -915,7 +916,7 @@ func TestUpdatePoolKeepOldCIDRs(t *testing.T) {
- }
- 
- func TestPoolAllocator_ReservedRangesExcludeCIDRs(t *testing.T) {
--	p := NewPoolAllocator(hivetest.Logger(t), true, false)
-+	p := NewPoolAllocator(hivetest.Logger(t), true, false, nil)
- 
- 	err := p.UpsertPool("test-pool",
- 		[]poolCIDRConfig{
-@@ -948,7 +949,7 @@ func TestPoolAllocator_ReservedRangesExcludeCIDRs(t *testing.T) {
- }
- 
- func TestPoolAllocator_ReservedRangesCanBeRemoved(t *testing.T) {
--	p := NewPoolAllocator(hivetest.Logger(t), true, false)
-+	p := NewPoolAllocator(hivetest.Logger(t), true, false, nil)
- 
- 	err := p.UpsertPool("test-pool",
- 		[]poolCIDRConfig{
-@@ -996,7 +997,7 @@ func TestPoolAllocator_ReservedRangesCanBeRemoved(t *testing.T) {
- }
- 
- func TestPoolAllocator_ReleasedCIDRRemainsReserved(t *testing.T) {
--	p := NewPoolAllocator(hivetest.Logger(t), true, false)
-+	p := NewPoolAllocator(hivetest.Logger(t), true, false, nil)
- 
- 	err := p.UpsertPool("test-pool",
- 		[]poolCIDRConfig{{cidr: netip.MustParsePrefix("10.0.0.0/30")}},
-@@ -1046,3 +1047,39 @@ func TestPoolAllocator_ReleasedCIDRRemainsReserved(t *testing.T) {
- 	err = p.AllocateToNode("node3", request)
- 	require.ErrorIs(t, err, errPoolEmpty)
- }
-+
-+func TestPoolAllocatorMetrics(t *testing.T) {
-+	m := NewMetrics()
-+	p := NewPoolAllocator(hivetest.Logger(t), true, true, &m)
-+
-+	// /24 carved at /28 => 1<<(28-24) = 16 v4 blocks; /120 at /122 => 1<<2 = 4 v6 blocks.
-+	err := p.UpsertPool("default",
-+		[]poolCIDRConfig{{cidr: netip.MustParsePrefix("10.0.0.0/24")}}, 28,
-+		[]poolCIDRConfig{{cidr: netip.MustParsePrefix("fd00::/120")}}, 122,
-+	)
-+	require.NoError(t, err)
-+	require.Equal(t, float64(16), m.TotalBlocks.WithLabelValues("default", "ipv4").Get())
-+	require.Equal(t, float64(4), m.TotalBlocks.WithLabelValues("default", "ipv6").Get())
-+
-+	// Addin
-```
-
-**File**: `operator/pkg/ipam/multipool.go` (modified, +4/-2)
-```diff
-@@ -13,6 +13,7 @@ import (
- 	"github.com/cilium/cilium/operator/pkg/ipam/allocator/multipool"
- 	ipamOption "github.com/cilium/cilium/pkg/ipam/option"
- 	"github.com/cilium/cilium/pkg/logging/logfields"
-+	"github.com/cilium/cilium/pkg/metrics"
- 	"github.com/cilium/cilium/pkg/option"
- )
- 
-@@ -22,17 +23,18 @@ func init() {
- 		"Multi Pool IP Allocator",
- 
- 		cell.Config(multipool.DefaultConfig),
-+		metrics.Metric(multipool.NewMetrics),
- 		cell.Decorate(
- 			func(logger *slog.Logger) *slog.Logger {
- 				return logger.With(logfields.LogSubsys, "ipam-allocator-multi-pool")
- 			},
- 			cell.ProvidePrivate(
--				func(logger *slog.Logger, daemonCfg *option.DaemonConfig) *multipool.PoolAllocator {
-+				func(logger *slog.Logger, daemonCfg *option.DaemonConfig, m multipool.Metrics) *multipool.PoolAllocator {
- 					if daemonCfg.IPAM != ipamOption.IPAMMultiPool {
- 						return nil
- 					}
- 
--					return multipool.NewPoolAllocator(logger, daemonCfg.EnableIPv4, daemonCfg.EnableIPv6)
-+					return multipool.NewPoolAllocator(logger, daemonCfg.EnableIPv4, daemonCfg.EnableIPv6, &m)
- 				},
- 			),
- 			cell.Invoke(multipool.StartAllocator),
-```
-
-**File**: `operator/pkg/ipam/multipool_script_test.go` (modified, +1/-1)
-```diff
-@@ -38,7 +38,7 @@ func init() {
- 
- 		cell.Config(multipool.DefaultConfig),
- 		cell.Provide(func(logger *slog.Logger, daemonCfg *option.DaemonConfig) *multipool.PoolAllocator {
--			return multipool.NewPoolAllocator(logger, daemonCfg.EnableIPv4, daemonCfg.EnableIPv6)
-+			return multipool.NewPoolAllocator(logger, daemonCfg.EnableIPv4, daemonCfg.EnableIPv6, nil)
- 		}),
- 		cell.Invoke(multipool.StartAllocator),
- 	))
-```
-
-**File**: `operator/pkg/networkdriver/ipam/ipam.go` (modified, +1/-1)
-```diff
-@@ -64,7 +64,7 @@ func registerAllocator(p allocatorParams) {
- 		return
- 	}
- 
--	allocator := multipool.NewPoolAllocator(p.Logger, p.NetworkDriverConfig.IPv4Enabled, p.NetworkDriverConfig.IPv6Enabled)
-+	allocator := multipool.NewPoolAllocator(p.Logger, p.NetworkDriverConfig.IPv4Enabled, p.NetworkDriverConfig.IPv6Enabled, nil)
- 	nodeHandler := multipool.NewNodeHandler(
- 		"network-driver-ipam-sync",
- 		p.Logger,
+ 	switch (proto) {
 ```
 
 ---
 
-### Incident Patch 2: `84cfa840` (2026-10-20)
-**Commit Message**: ipam/cidrset: add Capacity method to CIDRAllocator
+### Incident Patch 2: `56c42f64` (2026-10-29)
+**Commit Message**: bpf: host: convert ENABLE_IPV4 guards to is_defined()
 
-Capacity returns the number of CIDRs in the set, excluding reserved ranges.
+When IPv4 is disabled, IPv4 and ARP packets still get the default
+unknown L3 handling. do_netdev() reaches it through a new unknown_l3
+label instead of duplicating the default case.
 
-Signed-off-by: Afeedh Shaji <[REDACTED_EMAIL]>
+Signed-off-by: Liam Connery <[REDACTED_EMAIL]>
 
-**File**: `operator/pkg/ipam/allocator/podcidr/podcidr_test.go` (modified, +4/-0)
+**File**: `bpf/bpf_host.c` (modified, +37/-14)
 ```diff
-@@ -105,6 +105,10 @@ func (d *mockCIDRAllocator) IsFull() bool {
- 	panic("d.IsFull should not have been called!")
+@@ -87,7 +87,6 @@ static __always_inline bool allow_vlan(__u32 vlan_id)
+ DEFINE_AUX(struct ct_buffer4, cilium_tail_call_buffer4);
+ DEFINE_AUX(struct ct_buffer6, cilium_tail_call_buffer6);
+ 
+-#if defined(ENABLE_IPV4) || defined(ENABLE_IPV6)
+ static __always_inline int rewrite_dmac_to_host(struct __ctx_buff *ctx)
+ {
+ 	/* When attached to cilium_host, we rewrite the DMAC to the mac of
+@@ -102,7 +101,6 @@ static __always_inline int rewrite_dmac_to_host(struct __ctx_buff *ctx)
+ 
+ 	return CTX_ACT_OK;
  }
+-#endif
  
-+func (d *mockCIDRAllocator) Capacity() int {
-+	return 0
-+}
-+
- func (d *mockCIDRAllocator) InRange(prefix netip.Prefix) bool {
- 	if d.OnInRange != nil {
- 		return d.OnInRange(prefix)
-```
-
-**File**: `pkg/ipam/cidralloc/cidralloc.go` (modified, +1/-0)
-```diff
-@@ -37,6 +37,7 @@ type CIDRAllocator interface {
- 	Release(prefix netip.Prefix) error
- 	IsAllocated(prefix netip.Prefix) (bool, error)
- 	IsFull() bool
-+	Capacity() int
- 	InRange(prefix netip.Prefix) bool
- 	IsClusterCIDR(prefix netip.Prefix) bool
- 	Prefix() netip.Prefix
-```
-
-**File**: `pkg/ipam/cidrset/cidr_set.go` (modified, +11/-0)
-```diff
-@@ -146,6 +146,17 @@ func (s *CidrSet) IsFull() bool {
- 	return s.unavailableCIDRs == s.maxCIDRs
+ #ifdef ENABLE_IPV6
+ static __always_inline __u32
+@@ -557,7 +555,6 @@ handle_to_netdev_ipv6(struct __ctx_buff *ctx, bool is_from_proxy, __u32 src_sec_
  }
+ #endif /* ENABLE_IPV6 */
  
-+// Capacity returns the number of CIDRs in the set, excluding reserved ones.
-+func (s *CidrSet) Capacity() int {
-+	s.Lock()
-+	defer s.Unlock()
-+	reserved := 0
-+	for _, word := range s.reserved.Bits() {
-+		reserved += bits.OnesCount(uint(word))
-+	}
-+	return s.maxCIDRs - reserved
-+}
+-#ifdef ENABLE_IPV4
+ static __always_inline __u32
+ resolve_srcid_ipv4(const struct __ctx_buff *ctx, const struct iphdr *ip4,
+ 		   __u32 real_sec_identity, __u32 *ipcache_sec_identity)
+@@ -1012,7 +1009,6 @@ handle_to_netdev_ipv4(struct __ctx_buff *ctx, bool is_from_proxy, __u32 src_sec_
+ 	return ipv4_host_policy_egress(ctx, is_from_proxy, src_id, ipcache_srcid, ip4,
+ 				       trace, ext_err);
+ }
+-#endif /* ENABLE_IPV4 */
+ 
+ static __always_inline int
+ do_netdev(struct __ctx_buff *ctx, __be16 proto, __u32 identity,
+@@ -1123,8 +1119,10 @@ do_netdev(struct __ctx_buff *ctx, __be16 proto, __u32 identity,
+ 		return send_drop_notify_error_with_exitcode_ext(ctx, identity, ret, ext_err,
+ 								CTX_ACT_OK, METRIC_INGRESS);
+ #endif
+-#ifdef ENABLE_IPV4
+ 	case bpf_htons(ETH_P_IP):
++		if (!is_defined(ENABLE_IPV4))
++			goto unknown_l3;
 +
- // AllocateNext allocates the next free CIDR range. This will set the range
- // as occupied and return the allocated range.
- func (s *CidrSet) AllocateNext() (netip.Prefix, error) {
-```
-
-**File**: `pkg/ipam/cidrset/cidr_set_test.go` (modified, +3/-0)
-```diff
-@@ -860,13 +860,15 @@ func TestComputeRangesToReserve(t *testing.T) {
- 			}
- 			cidrSet.SetReservedRanges(rangesToReserve)
- 			assert.Equal(t, 1, cidrSet.unavailableCIDRs)
-+			assert.Equal(t, 1, cidrSet.Capacity())
+ 		/* This is the first time revalidate_data() is going to be called.
+ 		 * Make sure that we don't legitimately drop the packet if the skb
+ 		 * arrived with the header not being not in the linear data.
+@@ -1218,6 +1216,9 @@ do_netdev(struct __ctx_buff *ctx, __be16 proto, __u32 identity,
+ 		return send_drop_notify_error_with_exitcode_ext(ctx, identity, ret, ext_err,
+ 								CTX_ACT_OK, METRIC_INGRESS);
+ 	case bpf_htons(ETH_P_ARP):
++		if (!is_defined(ENABLE_IPV4))
++			goto unknown_l3;
++
+ 		if (!revalidate_data_arp_pull(ctx, &data, &data_end, &arp)) {
+ 			ret = DROP_INVALID;
+ 			goto drop_err_ingress;
+@@ -1235,8 +1236,8 @@ do_netdev(struct __ctx_buff *ctx, __be16 proto, __u32 identity,
+ 		}
  
- 			allocated, err := cidrSet.AllocateNext()
- 			if err != nil {
- 				t.Fatalf("AllocateNext() returned an unexpected error: %v", err)
- 			}
- 			assert.Equal(t, netip.MustParsePrefix(tc.allocatedCIDR), allocated)
- 			assert.Equal(t, 2, cidrSet.unavailableCIDRs)
-+			assert.Equal(t, 1, cidrSet.Capacity())
- 			assert.True(t, cidrSet.IsFull())
+ 		break;
+-#endif /* ENABLE_IPV4 */
+ 	default:
++unknown_l3:
+ 		send_trace_notify(ctx, obs_point, identity, UNKNOWN_ID, TRACE_EP_ID_UNKNOWN,
+ 				  ctx->ingress_ifindex, trace.reason, trace.monitor, proto);
+ 		if (CONFIG(enable_host_firewall)) {
+@@ -1479,17 +1480,25 @@ int cil_to_netdev(struct __ctx_buff *ctx)
+ 						    src_sec_identity, &trace, &ext_err);
+ 			break;
+ # endif
+-# ifdef ENABLE_IPV4
+ 		case bpf_htons(ETH_P_IP): {
++			if (!is_defined(ENABLE_IPV4)) {
++				ret = DROP_UNKNOWN_L3;
++				break;
++			}
++
+ 			ret = handle_to_netdev_ipv4(ctx,
+ 						    magic == MARK_MAGIC_PROXY_EGRESS,
+ 						    src_sec_identity, &trace, &ext_err);
+ 			break;
+ 		}
+ 		case bpf_htons(ETH_P_ARP):
++			if (!is_defined(ENABLE_IPV4)) {
++				ret = DROP_UNKNOWN_L3;
++				break;
++			}
++
+ 			ret = CTX_ACT_OK;
+ 			break;
+-# endif
+ 		default:
+ 			ret = DROP_UNKNOWN_L3;
+ 			break;
+@@ -1674,7 +1683,6 @@ int tail_ipv6_host_policy_ingress(struct __ctx_buff *ctx)
+ }
+ #endif /* ENABLE_IPV6 */
  
- 			_, err = cidrSet.AllocateNext()
-@@ -878,6 +880,7 @@ func TestComputeRangesToReserve(t *testing.T) {
- 			}
- 			cidrSet.SetReservedRanges(rangesToReserve)
- 			assert.Equal(t, 1, cidrSet.unavailableCIDRs)
-+			assert.Equal(t, 2, cidrSet.Capacity())
- 			assert.False(t, cidrSet.IsFull())
+-#ifdef ENABLE_IPV4
+ __declare_tail(CILIUM_CALL_IPV4_TO_HOST_POLICY_ONLY)
+ static __always_inline
+ int tail_ipv4_host_policy_ingress(struct __ctx_buff *ctx)
+@@ -1700,7 +1708,6 @@ int tail_ipv4_host_policy_ingress(struct __ctx_buff *ctx)
  
- 			allocated, err = cidrSet.AllocateNext()
+ 	return ret;
+ }
+-#endif /* ENABLE_IPV4 */
+ 
+ static __always_inline
+ int host_ingress_policy(struct __ctx_buff *ctx, __be16 proto,
+@@ -1732,8 +1739,12 @@ int host_ingress_policy(struct __ctx_buff *ctx, __be16 proto,
+ 
+ 		break;
+ # endif
+-# ifdef ENABLE_IPV4
+ 	case bpf_htons(ETH_P_IP):
++		if (!is_defined(ENABLE_IPV4)) {
++			ret = DROP_UNKNOWN_L3;
++			break;
++		}
++
+ 		if (use_tailcall) {
+ 			ctx_store_meta(ctx, CB_SRC_LABEL, src_sec_identity);
+ 			ctx_store_meta(ctx, CB_TRACED, traced);
+@@ -1746,9 +1757,13 @@ int host_ingress_policy(struct __ctx_buff *ctx, __be16 proto,
+ 
+ 		break;
+ 	case bpf_htons(ETH_P_ARP):
++		if (!is_defined(ENABLE_IPV4)) {
++			ret = DROP_UNKNOWN_L3;
++			break;
++		}
++
+ 		ret = CTX_ACT_OK;
+ 		break;
+-# endif
+ 	default:
+ 		ret = DROP_UNKNOWN_L3;
+ 		break;
+@@ -1919,8 +1934,12 @@ from_host_to_lxc(struct __ctx_buff *ctx __maybe_unused, __be16 proto,
+ 		ret = ipv6_host_policy_egress(ctx, false, HOST_ID, 0, ip6, &trace, ext_err);
+ 		break;
+ # endif
+-# ifdef ENABLE_IPV4
+ 	case bpf_htons(ETH_P_IP):
++		if (!is_defined(ENABLE_IPV4)) {
++			ret = DROP_UNKNOWN_L3;
++			break;
++		}
++
+ 		if (!revalidate_data(ctx, &data, &data_end, &ip4))
+ 			return DROP_INVALID;
+ 
+@@ -1933,9 +1952,13 @@ from_host_to_lxc(struct __ctx_buff *ctx __maybe_unused, __be16 proto,
+ 		ret = ipv4_host_policy_egress(ctx, false, HOST_ID, 0, ip4, &trace, ext_err);
+ 		break;
+ 	case bpf_htons(ETH_P_ARP):
++		if (!is_defined(ENABLE_IPV4)) {
++			ret = DROP_UNKNOWN_L3;
++			break;
++		}
++
+ 		ret = CTX_ACT_OK;
+ 		break;
+-# endif
+ 	default:
+ 		ret = DROP_UNKN
 ```
 
 #### Recent Merged Pull Requests:
@@ -1835,32 +1573,61 @@ Signed-off-by: Afeedh Shaji <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ipam/multi-pool: add per-pool IP and CIDR-block metrics
+## X. bpf: host: remove no longer needed __maybe_unused
 
 **RULE**:
-When implementing operations in `Documentation/observability/metrics.rst`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `bpf/bpf_host.c`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e9bd7c00`: ipam/multi-pool: add per-pool IP and CIDR-block metrics. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7c469256`: bpf: host: remove no longer needed __maybe_unused. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `Documentation/observability/metrics.rst`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `bpf/bpf_host.c`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-``ipam_multipool_available_ips``         ``pool``, ``family``                         Enabled    Total IPs (in-use and free) per pool and family. Emitted by the agent in multi-pool IPAM mode
-``ipam_multipool_used_ips``              ``pool``, ``family``                         Enabled    In-use (allocated) IPs per pool and family. Emitted by the agent in multi-pool IPAM mode
-``ipam_multipool_needed_ips``            ``pool``, ``family``                         Enabled    IPs needed to satisfy allocation demand per pool and family. Emitted by the agent in multi-pool IPAM mode
-``ipam_multipool_allocated_blocks``      ``pool``, ``family``                         Enabled    CIDR blocks (pod CIDRs) allocated to this node per pool and family. Emitted by the agent in multi-pool IPAM mode
-``ipam_multipool_total_blocks``          ``pool``, ``family``                                              Enabled    Total number of CIDR blocks per pool and family.
+	  enum trace_point obs_point, const bool from_host)
+	fraginfo_t fraginfo = 0;
+	__u32 ipcache_srcid = 0;
+	void *data, *data_end;
+	struct iphdr *ip4;
+	struct arp_eth *arp;
+	int hdrlen = 0;
+	__u8 next_proto = 0;
+	__s8 ext_err = 0;
+drop_err_egress:
+drop_err_ingress:
+			__u32 src_sec_identity, bool traced, bool use_tailcall,
+			__s8 *ext_err)
+from_host_to_lxc(struct __ctx_buff *ctx, __be16 proto, __s8 *ext_err)
+	struct trace_ctx trace = {
+	void *data, *data_end;
+	struct iphdr *ip4;
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+	  enum trace_point obs_point,  const bool __maybe_unused from_host)
+	fraginfo_t __maybe_unused fraginfo = 0;
+	__u32 __maybe_unused ipcache_srcid = 0;
+	void __maybe_unused *data, *data_end;
+	struct iphdr __maybe_unused *ip4;
+	struct arp_eth __maybe_unused *arp;
+	int __maybe_unused hdrlen = 0;
+	__u8 __maybe_unused next_proto = 0;
+	__s8 __maybe_unused ext_err = 0;
+drop_err_egress: __maybe_unused
+drop_err_ingress: __maybe_unused
+			__u32 src_sec_identity, bool traced, bool use_tailcall __maybe_unused,
+			__s8 *ext_err __maybe_unused)
+from_host_to_lxc(struct __ctx_buff *ctx __maybe_unused, __be16 proto,
+		 __s8 *ext_err __maybe_unused)
+	struct trace_ctx __maybe_unused trace = {
+	void __maybe_unused *data, *data_end;
+	struct iphdr *ip4 __maybe_unused;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e9bd7c00` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7c469256` are properly handled with clean fallback behavior.

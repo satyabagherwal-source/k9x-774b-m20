@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-04T01:00:53.074Z",
+  "last_updated": "2026-11-04T01:27:43.553Z",
   "directives": [
     {
       "id": "CD-001",
@@ -3731,6 +3731,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Generic header title rejected",
       "learning_id": "learn-github-openyurtio-openyurt"
+    },
+    {
+      "id": "CD-T41T",
+      "directive_title": "update version to 0.9.6.1 and enhance CHANGELOG with SSRF fixes and new features",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "AndyTheFactory/newspaper4k",
+      "source_commit": "22a4be5c",
+      "date_staged": "2026-11-04",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-andythefactory-newspaper4k"
     }
   ]
 }

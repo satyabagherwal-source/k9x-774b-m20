@@ -7108,3 +7108,7 @@ Every entry in this ledger must capture:
 | `learn-github-karakeep-app-karakeep` | `https://github.com/karakeep-app/karakeep` | `46e80093` | Multi-dimensional audit evidence | 2026-11-04T01:20:36.603Z |
 | `learn-github-pulumi-pulumi` | `https://github.com/pulumi/pulumi` | `e6e7c7a5` | Multi-dimensional audit evidence | 2026-11-04T01:20:39.519Z |
 | `learn-github-sigstore-cosign` | `https://github.com/sigstore/cosign` | `900536dd` | Multi-dimensional audit evidence | 2026-11-04T01:20:41.129Z |
+| `learn-github-andythefactory-newspaper4k` | `https://github.com/AndyTheFactory/newspaper4k` | `22a4be5c` | Multi-dimensional audit evidence | 2026-11-04T01:27:43.545Z |
+| `learn-github-saltstack-salt` | `https://github.com/saltstack/salt` | `4840c2be` | Multi-dimensional audit evidence | 2026-11-04T01:27:48.519Z |
+| `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `7c469256` | Multi-dimensional audit evidence | 2026-11-04T01:27:52.246Z |
+| `learn-github-xerj-org-xerj` | `https://github.com/xerj-org/xerj` | `b7800483` | Multi-dimensional audit evidence | 2026-11-04T01:27:53.763Z |

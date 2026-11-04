@@ -2763,10 +2763,10 @@
     "repository": "xerj-org/xerj",
     "platform": "github",
     "sourceUrl": "https://github.com/xerj-org/xerj",
-    "sourceVersion": "b003bd83",
+    "sourceVersion": "b7800483",
     "license": "Apache-2.0",
-    "contentHash": "44521c83b21af06fcc29d2104af52dcc6abddeb7c41f26b96f8cf52d1bbfcd18",
-    "lastHarvestedAt": "2026-11-02T14:46:34.328Z",
+    "contentHash": "60014225ca83bd25e8f278447360d0c1f7a4d02d3b7dad5d4c5af9cd860ab85d",
+    "lastHarvestedAt": "2026-11-04T01:27:53.763Z",
     "learningId": "learn-github-xerj-org-xerj"
   },
   "markmead-hyperui": {
@@ -3343,10 +3343,10 @@
     "repository": "cilium/cilium",
     "platform": "github",
     "sourceUrl": "https://github.com/cilium/cilium",
-    "sourceVersion": "e9bd7c00",
+    "sourceVersion": "7c469256",
     "license": "Apache-2.0",
-    "contentHash": "27756688007b7970c0bcce3156cfe5b978da94e9f3e9f0c2900a5d31c6936aff",
-    "lastHarvestedAt": "2026-11-03T21:44:56.011Z",
+    "contentHash": "9ae5e12ba0b0e1e4c1044574f01bd4cec515a71bb31941777ba760c3cfcc77ed",
+    "lastHarvestedAt": "2026-11-04T01:27:52.246Z",
     "learningId": "learn-github-cilium-cilium"
   },
   "seekstorm-seekstorm": {
@@ -4763,10 +4763,10 @@
     "repository": "saltstack/salt",
     "platform": "github",
     "sourceUrl": "https://github.com/saltstack/salt",
-    "sourceVersion": "6335271b",
+    "sourceVersion": "4840c2be",
     "license": "Apache-2.0",
-    "contentHash": "6c59ba95ccdb218355797e001dc0beac6380e337e89b3470f47b7deb64bc505d",
-    "lastHarvestedAt": "2026-11-02T15:29:41.091Z",
+    "contentHash": "30d7c7b379cf1b94eb34dbb582e1d5ac5dedd321ce703b77a971f106a1d05768",
+    "lastHarvestedAt": "2026-11-04T01:27:48.519Z",
     "learningId": "learn-github-saltstack-salt"
   },
   "etcd-io-etcd": {
@@ -9833,10 +9833,10 @@
     "repository": "AndyTheFactory/newspaper4k",
     "platform": "github",
     "sourceUrl": "https://github.com/AndyTheFactory/newspaper4k",
-    "sourceVersion": "b53a81fc",
+    "sourceVersion": "22a4be5c",
     "license": "MIT",
-    "contentHash": "a097e5b00c9e2df0d9f0c90e35f161b3a927864101867e595c0303f0a035b26b",
-    "lastHarvestedAt": "2026-10-20T01:27:26.746Z",
+    "contentHash": "67c9941fc3f9dff2192e2aae48dc8d9e8a3106f41dfcb0725f0380544b93e231",
+    "lastHarvestedAt": "2026-11-04T01:27:43.545Z",
     "learningId": "learn-github-andythefactory-newspaper4k"
   },
   "alexdrone-render": {
