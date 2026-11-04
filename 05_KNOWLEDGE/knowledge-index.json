@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-04T17:18:03.725Z",
+  "last_updated": "2026-11-04T17:30:49.276Z",
   "total_verified_learnings": 1208,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -41626,8 +41626,8 @@
       "slug": "moby-buildkit",
       "platform": "github",
       "source_url": "https://github.com/moby/buildkit",
-      "source_version": "cbae181d",
-      "content_hash": "cb66f1f004b6f55d02d93dc0828651eeeb2b0443bec00d27e1e13529f4365460",
+      "source_version": "36e7c1fb",
+      "content_hash": "7a0a7526dd41cf2ddb1210e860c1dc6251fd1e8048eb3818325d59bd1b47a6f0",
       "dossier_path": "07_PROJECT_LEARNING/moby-buildkit-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/moby-buildkit-learnings.md",
       "promoted_rules": [
@@ -41675,6 +41675,11 @@
           "number": 6564,
           "title": "source/git: fix daemon panic on resolver cache poisoning",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6865,
+          "title": "Merge pull request #7300 from Zaczero/fix-exec-stream-failure",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -41682,7 +41687,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T17:53:49.816Z",
+      "verified_at": "2026-11-04T17:30:43.126Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -44068,8 +44073,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "6d3acec0",
-      "content_hash": "5544fc11bd5854729b52975ec9e8d9e76538b5619195e6d8fd7538d871f0df14",
+      "source_version": "e8ef229c",
+      "content_hash": "ff7150d24101aee94ffdff936fb1fed7638b2cd5b95b1e4ca7ca080b28336617",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -44292,6 +44297,11 @@
           "number": 6847,
           "title": "Clippy assert_is_empty errors in unit tests",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6869,
+          "title": "Reduce ARC workflow timeout",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -44299,7 +44309,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T16:50:18.661Z",
+      "verified_at": "2026-11-04T17:30:49.253Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -122210,7 +122220,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16",
       "source_version": "hf-nvidia-nvidia-nemotron-labs-dory1.0-4b-bf16",
-      "content_hash": "707b9107c84077b9df8584416e55fd6a49796e689e1e57855106e5f8209ebd6b",
+      "content_hash": "7839155857c6e889d31db1892d3d6b06eec008d787756298401e808423c17cef",
       "dossier_path": "07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotron-labs-dory1.0-4b-bf16-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotron-labs-dory1.0-4b-bf16-learnings.md",
       "promoted_rules": [
@@ -122223,6 +122233,21 @@
           "number": 5993,
           "title": "Hybrid Attention KV Cache Segmentation",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6866,
+          "title": "Loop-Depth Compute Elasticity Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6867,
+          "title": "Hybrid Attention Positional Encoding Separation",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6868,
+          "title": "BF16 Precision Mandate for Deep Recurrent Loops",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -122230,7 +122255,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T01:28:23.199Z",
+      "verified_at": "2026-11-04T17:30:47.905Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -175368,6 +175393,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-04T17:18:03.702Z"
+    },
+    "rule-6865": {
+      "learning_id": "rule-6865",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6865,
+      "title": "Merge pull request #7300 from Zaczero/fix-exec-stream-failure",
+      "source_url": "https://github.com/moby/buildkit",
+      "source_version": "36e7c1fb",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T17:30:43.126Z"
+    },
+    "rule-6866": {
+      "learning_id": "rule-6866",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6866,
+      "title": "Loop-Depth Compute Elasticity Invariant",
+      "source_url": "https://huggingface.co/nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16",
+      "source_version": "hf-nvidia-nvidia-nemotron-labs-dory1.0-4b-bf16",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T17:30:47.905Z"
+    },
+    "rule-6867": {
+      "learning_id": "rule-6867",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6867,
+      "title": "Hybrid Attention Positional Encoding Separation",
+      "source_url": "https://huggingface.co/nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16",
+      "source_version": "hf-nvidia-nvidia-nemotron-labs-dory1.0-4b-bf16",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T17:30:47.905Z"
+    },
+    "rule-6868": {
+      "learning_id": "rule-6868",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6868,
+      "title": "BF16 Precision Mandate for Deep Recurrent Loops",
+      "source_url": "https://huggingface.co/nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16",
+      "source_version": "hf-nvidia-nvidia-nemotron-labs-dory1.0-4b-bf16",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T17:30:47.905Z"
+    },
+    "rule-6869": {
+      "learning_id": "rule-6869",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6869,
+      "title": "Reduce ARC workflow timeout",
+      "source_url": "https://github.com/NucleoidAI/Nucleoid",
+      "source_version": "e8ef229c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T17:30:49.253Z"
     }
   },
   "aliases": {

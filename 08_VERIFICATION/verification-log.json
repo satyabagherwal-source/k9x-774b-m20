@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261031-S6YC",
-    "timestamp": "2026-10-31T23:16:01.716Z",
-    "repository": "GitoxideLabs/gitoxide",
-    "learningId": "learn-github-gitoxidelabs-gitoxide",
-    "contentHash": "d4df086adba5f5ccb0e24466a92ec462c285e63d0e408ea82a607519f091fd90",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261031-0GW6",
-    "timestamp": "2026-10-31T23:22:27.846Z",
-    "repository": "maziyarpanahi/openmed",
-    "learningId": "learn-github-maziyarpanahi-openmed",
-    "contentHash": "db274c46852bd99b603bfb771840749b3d979a66dbb77e81d6335d9cdf2ac01d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261031-0I25",
-    "timestamp": "2026-10-31T23:22:29.357Z",
-    "repository": "beclab/Olares",
-    "learningId": "learn-github-beclab-olares",
-    "contentHash": "e180efbe3244508dea2dc8f2b8183594343affa63f42ab8fd2dd7bbad09788b9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261031-3N8Q",
     "timestamp": "2026-10-31T23:24:56.042Z",
     "repository": "AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
@@ -7492,6 +7447,51 @@
     "contentHash": "92b0850f14df71e6955180daa7085deea4ecbaa7e5ad5294aa378337203fb5ee",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-7J4W",
+    "timestamp": "2026-11-04T17:30:43.232Z",
+    "repository": "moby/buildkit",
+    "learningId": "learn-github-moby-buildkit",
+    "contentHash": "7a0a7526dd41cf2ddb1210e860c1dc6251fd1e8048eb3818325d59bd1b47a6f0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-7MTP",
+    "timestamp": "2026-11-04T17:30:48.013Z",
+    "repository": "nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16",
+    "learningId": "learn-huggingface-nvidia-nvidia-nemotron-labs-dory1-0-4b-bf16",
+    "contentHash": "7839155857c6e889d31db1892d3d6b06eec008d787756298401e808423c17cef",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-7NV4",
+    "timestamp": "2026-11-04T17:30:49.360Z",
+    "repository": "NucleoidAI/Nucleoid",
+    "learningId": "learn-github-nucleoidai-nucleoid",
+    "contentHash": "ff7150d24101aee94ffdff936fb1fed7638b2cd5b95b1e4ca7ca080b28336617",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

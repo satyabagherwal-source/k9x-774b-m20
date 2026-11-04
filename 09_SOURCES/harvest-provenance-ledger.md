@@ -7259,3 +7259,6 @@ Every entry in this ledger must capture:
 | `learn-github-siderolabs-talos` | `https://github.com/siderolabs/talos` | `4d505d50` | Multi-dimensional audit evidence | 2026-11-04T17:18:00.718Z |
 | `learn-github-projectdiscovery-nuclei` | `https://github.com/projectdiscovery/nuclei` | `82d5a8ac` | Multi-dimensional audit evidence | 2026-11-04T17:18:01.635Z |
 | `learn-huggingface-lodestones-kromoss` | `https://huggingface.co/lodestones/Kromoss` | `hf-lodesto` | Multi-dimensional audit evidence | 2026-11-04T17:18:03.816Z |
+| `learn-github-moby-buildkit` | `https://github.com/moby/buildkit` | `36e7c1fb` | Multi-dimensional audit evidence | 2026-11-04T17:30:43.237Z |
+| `learn-huggingface-nvidia-nvidia-nemotron-labs-dory1-0-4b-bf16` | `https://huggingface.co/nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16` | `hf-nvidia-` | Multi-dimensional audit evidence | 2026-11-04T17:30:48.016Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `e8ef229c` | Multi-dimensional audit evidence | 2026-11-04T17:30:49.364Z |

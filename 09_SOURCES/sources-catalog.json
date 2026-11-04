@@ -2113,10 +2113,10 @@
     "repository": "moby/buildkit",
     "platform": "github",
     "sourceUrl": "https://github.com/moby/buildkit",
-    "sourceVersion": "cbae181d",
+    "sourceVersion": "36e7c1fb",
     "license": "Apache-2.0",
-    "contentHash": "cb66f1f004b6f55d02d93dc0828651eeeb2b0443bec00d27e1e13529f4365460",
-    "lastHarvestedAt": "2026-11-03T17:53:49.930Z",
+    "contentHash": "7a0a7526dd41cf2ddb1210e860c1dc6251fd1e8048eb3818325d59bd1b47a6f0",
+    "lastHarvestedAt": "2026-11-04T17:30:43.237Z",
     "learningId": "learn-github-moby-buildkit"
   },
   "microsoft-agent-governance-toolkit": {
@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "6d3acec0",
+    "sourceVersion": "e8ef229c",
     "license": "Apache-2.0",
-    "contentHash": "5544fc11bd5854729b52975ec9e8d9e76538b5619195e6d8fd7538d871f0df14",
-    "lastHarvestedAt": "2026-11-04T16:50:18.752Z",
+    "contentHash": "ff7150d24101aee94ffdff936fb1fed7638b2cd5b95b1e4ca7ca080b28336617",
+    "lastHarvestedAt": "2026-11-04T17:30:49.364Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -10415,8 +10415,8 @@
     "sourceUrl": "https://huggingface.co/nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16",
     "sourceVersion": "hf-nvidia-nvidia-nemotron-labs-dory1.0-4b-bf16",
     "license": "Open-Source",
-    "contentHash": "707b9107c84077b9df8584416e55fd6a49796e689e1e57855106e5f8209ebd6b",
-    "lastHarvestedAt": "2026-10-31T01:28:23.301Z",
+    "contentHash": "7839155857c6e889d31db1892d3d6b06eec008d787756298401e808423c17cef",
+    "lastHarvestedAt": "2026-11-04T17:30:48.016Z",
     "learningId": "learn-huggingface-nvidia-nvidia-nemotron-labs-dory1-0-4b-bf16"
   },
   "mrjackwills-oxker": {

@@ -7250,3 +7250,6 @@
 | `CYCLE-20261104-R6RU` | `2026-11-04T17:18:00.714Z` | `siderolabs/talos` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6860` | Yes (`6d4a0aec...`) |
 | `CYCLE-20261104-R7HB` | `2026-11-04T17:18:01.631Z` | `projectdiscovery/nuclei` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6861` | Yes (`663c0d0f...`) |
 | `CYCLE-20261104-R95W` | `2026-11-04T17:18:03.812Z` | `lodestones/Kromoss` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6862, Rule 6863, Rule 6864` | Yes (`92b0850f...`) |
+| `CYCLE-20261104-7J4W` | `2026-11-04T17:30:43.232Z` | `moby/buildkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6865` | Yes (`7a0a7526...`) |
+| `CYCLE-20261104-7MTP` | `2026-11-04T17:30:48.013Z` | `nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6866, Rule 6867, Rule 6868` | Yes (`78391558...`) |
+| `CYCLE-20261104-7NV4` | `2026-11-04T17:30:49.360Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6869` | Yes (`ff7150d2...`) |
