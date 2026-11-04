@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source**: github ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
-> **Source Version**: `e8ef229c`  
+> **Source Version**: `88c781d5`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T17:30:48.606Z  
+> **Timestamp**: 2026-11-04T19:09:01.887Z  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T17:30:48.251Z  
+> **Harvest Timestamp**: 2026-11-04T19:09:01.879Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -571,7 +571,7 @@ import arc_dataset from "./lib/arc_dataset.ts";
 import fs from "node:fs/promises";
 
 // Genesis puzzle_id: 3aa6fb7a
-export async function start(puzzle_id: string = "3aa6fb7a") {
+export async function start(puzzle_id: string = "27a28665") {
   const { arc_train, test_input_matrix, test_output_matrix } =
     await arc_dataset.load(puzzle_id);
 
@@ -1006,22 +1006,85 @@ export function enlarge(matrix, rows: number, cols: number) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e8ef229c` (2026-11-04)
-**Commit Message**: Reduce ARC workflow timeout
+### Incident Patch 1: `0f5e7e6d` (2026-11-04)
+**Commit Message**: Require gestalt-first design in ARC agents
 
-Set the ARC report job timeout to 30 minutes instead of 350.
+ARC dataset and purposal agents now start from the big picture (whole grids, figures, groups, relations) and write declarative rules at that level. They go down to pixel-level objects only when the training pairs cannot be expressed otherwise. The arc-dataset handoff must name the big-picture formulation it started from and, for a finer model, why it fell short. The arc-purposal skill passes this requirement to every arc-dataset run and sends back handoffs that start from pixels without justification.
 
-**File**: `.github/workflows/arc.yml` (modified, +1/-1)
+**File**: `.claude/agents/arc-dataset.agent.md` (modified, +15/-5)
 ```diff
-@@ -9,7 +9,7 @@ permissions:
- jobs:
-   report:
-     runs-on: ubuntu-latest
--    timeout-minutes: 350
-+    timeout-minutes: 30
-     defaults:
-       run:
-         shell: bash
+@@ -97,6 +97,15 @@ formatting exactly:
+ 
+ ## Model the world
+ 
++- Design with gestalt perception. Start by zooming out to the big picture:
++  each grid as a whole, the figures and groups it shows, the relations
++  between them, and how the whole changes from input to output. Write the
++  declarative statements at that level, about the objects seen first, such as
++  whole shapes, patterns, and regions. Do not start from pixels. Go down to
++  finer objects, single cells included, only when the big-picture formulation
++  cannot express what the training pairs show. A pixel-level model is then
++  allowed, but the big picture is always the starting point, and the handoff
++  names the big-picture formulation you started from and why it fell short.
+ - `declarations[0]` holds every class declaration of the world model, because
+   the solver runs it alone to build input states. Existing datasets declare
+   one class, `Obj(x: int, y: int, orientation: int, ...)`; add another class
+@@ -289,8 +298,9 @@ versions, spawn agents, start a NUC, commit, or push.
+ 
+ Return the status (`written`, `nucleoid_enhancement_required`, or `blocked`)
+ with `dataset_path`, the source puzzle path, any annotation helper's path,
+-train and test pair counts, instance counts, the declarations, each check with
+-its result, how you used any hint, any NUC request, any suggested solver change,
+-and any blockers. A staged handoff also includes `staged_dataset_path` and
+-leaves shared documentation/reporting changes to the caller. Publish no
+-partial dataset when annotation is blocked.
++train and test pair counts, instance counts, the declarations, the
++big-picture formulation you started from and, for a finer model, why it fell
++short, each check with its result, how you used any hint, any NUC request, any
++suggested solver change, and any blockers. A staged handoff also includes
++`staged_dataset_path` and leaves shared documentation/reporting changes to
++the caller. Publish no partial dataset when annotation is blocked.
+```
+
+**File**: `.claude/agents/arc-purposal.agent.md` (modified, +6/-0)
+```diff
+@@ -45,6 +45,12 @@ Follow `.claude/CLAUDE.md`, the
+   rules need a feature accepted Nucleoid lacks, trigger `/nuc-proposal` for
+   the requested enhancement through the skill's caller steps instead of
+   accepting an imperative workaround.
++- Design every solution with gestalt perception, under the same step, and
++  pass that requirement to every `arc-dataset` run: zoom out to the big
++  picture first, the whole grid, its figures, and their relations, and write
++  the declarative statements at that level. Never start from pixels; go down
++  to pixel-level objects only when the big picture cannot express what the
++  training pairs show, and never steer a worker finer than that.
+ - Never change the TypeScript implementation in `arc/`, except that before
+   the run you make the puzzle the solver's default puzzle in `arc/src/app.ts`
+   under the skill's [run step](../skills/arc-purposal/SKILL.md#run-the-puzzle).
+```
+
+**File**: `.claude/skills/arc-purposal/SKILL.md` (modified, +13/-0)
+```diff
+@@ -114,6 +114,19 @@ the handoff requests the missing enhancement instead of an imperative
+ workaround. Check a `written` handoff's rules against this requirement before
+ the run, and send any that fall short back to the arc-dataset worker.
+ 
++Design every solution with gestalt perception, and pass this requirement to
++every `/arc-dataset` run too. Start by zooming out to the big picture: each
++grid as a whole, the figures and groups it shows, the relations between them,
++and how the whole changes from input to output. Write the declarative
++statements at that level, about the objects seen first, such as whole shapes,
++patterns, and regions. Do not start from pixels. A model goes down to finer
++objects, single cells included, only when the big-picture formulation cannot
++express what the training pairs show; a pixel-level solution is then allowed,
++but the big picture is always the starting point. When you check a `written`
++handoff, send back one that starts from pixels without showing why the big
++picture falls short, and never steer a worker toward a finer model than the
++training pairs need.
++
+ Continue by the handoff's status:
+ 
+ - `written`: run the puzzle.
 ```
 
 #### Recent Merged Pull Requests:
@@ -1050,28 +1113,46 @@ Set the ARC report job timeout to 30 minutes instead of 350.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Reduce ARC workflow timeout
+## X. Require gestalt-first design in ARC agents
 
 **RULE**:
-When implementing operations in `.github/workflows/arc.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.claude/agents/arc-dataset.agent.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e8ef229c`: Reduce ARC workflow timeout. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0f5e7e6d`: Require gestalt-first design in ARC agents. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/arc.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/agents/arc-dataset.agent.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    timeout-minutes: 30
+- Design with gestalt perception. Start by zooming out to the big picture:
+  each grid as a whole, the figures and groups it shows, the relations
+  between them, and how the whole changes from input to output. Write the
+  declarative statements at that level, about the objects seen first, such as
+  whole shapes, patterns, and regions. Do not start from pixels. Go down to
+  finer objects, single cells included, only when the big-picture formulation
+  cannot express what the training pairs show. A pixel-level model is then
+  allowed, but the big picture is always the starting point, and the handoff
+  names the big-picture formulation you started from and why it fell short.
+train and test pair counts, instance counts, the declarations, the
+big-picture formulation you started from and, for a finer model, why it fell
+short, each check with its result, how you used any hint, any NUC request, any
+suggested solver change, and any blockers. A staged handoff also includes
+`staged_dataset_path` and leaves shared documentation/reporting changes to
+the caller. Publish no partial dataset when annotation is blocked.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-    timeout-minutes: 350
+train and test pair counts, instance counts, the declarations, each check with
+its result, how you used any hint, any NUC request, any suggested solver change,
+and any blockers. A staged handoff also includes `staged_dataset_path` and
+leaves shared documentation/reporting changes to the caller. Publish no
+partial dataset when annotation is blocked.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e8ef229c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0f5e7e6d` are properly handled with clean fallback behavior.

@@ -4836,3 +4836,7 @@ https://github.com/feder-cr/Jobs_Applier_AI_Agent_AIHawk
 https://huggingface.co/moonshotai/Kimi-K3.1-Pro
 # [HUGGINGFACE-AI-MODELS] nvidia/DeepSeek-V4.1-Flash-1017-NVFP4 (3670 score) - Verified Hugging Face Model: nvidia/DeepSeek-V4.1-Flash-1017-NVFP4 (167 likes, 3
 https://huggingface.co/nvidia/DeepSeek-V4.1-Flash-1017-NVFP4
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-04T19:08:36.949Z] ---
+# [HUGGINGFACE-AI-MODELS] ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-Coder-GGUF (3560 score) - Verified Hugging Face Model: ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-Coder-
+https://huggingface.co/ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-Coder-GGUF

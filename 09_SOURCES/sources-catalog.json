@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "e8ef229c",
+    "sourceVersion": "88c781d5",
     "license": "Apache-2.0",
-    "contentHash": "ff7150d24101aee94ffdff936fb1fed7638b2cd5b95b1e4ca7ca080b28336617",
-    "lastHarvestedAt": "2026-11-04T17:30:49.364Z",
+    "contentHash": "a84fdf10d1ae97c8172898785e48bf3feef2ce2d74343e6052628bdb82f1b38f",
+    "lastHarvestedAt": "2026-11-04T19:09:02.719Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -2843,10 +2843,10 @@
     "repository": "kgateway-dev/kgateway",
     "platform": "github",
     "sourceUrl": "https://github.com/kgateway-dev/kgateway",
-    "sourceVersion": "583dce38",
+    "sourceVersion": "817da822",
     "license": "Apache-2.0",
-    "contentHash": "4cc1141747f33b7c26ee3c60786521192e4a4e5967ac3bbebdfee875f189fe15",
-    "lastHarvestedAt": "2026-11-03T20:00:55.663Z",
+    "contentHash": "503c6a4578582bbbb3ca956f0851f8ec71ef2b4a15217e64e1001c60dd65c549",
+    "lastHarvestedAt": "2026-11-04T19:08:55.699Z",
     "learningId": "learn-github-kgateway-dev-kgateway"
   },
   "freenet-freenet-core": {
@@ -6323,10 +6323,10 @@
     "repository": "Open-Source-Legal/OpenContracts",
     "platform": "github",
     "sourceUrl": "https://github.com/Open-Source-Legal/OpenContracts",
-    "sourceVersion": "6652e8dd",
+    "sourceVersion": "fab192a5",
     "license": "MIT",
-    "contentHash": "620ef9119e36cf5703e824cd8629bfe043fb791cb50cc8436b292dcb23a28d61",
-    "lastHarvestedAt": "2026-10-27T13:41:01.652Z",
+    "contentHash": "6db2667646451f2e6a918d1d164e74a98833136cd80787abf38fab2f6c376d33",
+    "lastHarvestedAt": "2026-11-04T19:09:00.936Z",
     "learningId": "learn-github-open-source-legal-opencontracts"
   },
   "fastapi-fastapi": {
@@ -10625,8 +10625,8 @@
     "sourceUrl": "https://huggingface.co/ornith-ai/Ornith-1.5-122B",
     "sourceVersion": "hf-ornith-ai-ornith-1.5-122b",
     "license": "Open-Source",
-    "contentHash": "71ef22bc99a4a1cc24c19529839b73cc8d6853df55bf587720f213056bf60383",
-    "lastHarvestedAt": "2026-10-31T03:02:45.068Z",
+    "contentHash": "f723fb78d4591862394c1de3ce8768c657f93a0bfc971a9b7ccf59f8a1672656",
+    "lastHarvestedAt": "2026-11-04T19:08:54.813Z",
     "learningId": "learn-huggingface-ornith-ai-ornith-1-5-122b"
   },
   "lokoe-mehdi-scouter": {
@@ -11898,5 +11898,15 @@
     "contentHash": "79306e4f53c6a4f97730ae77b23504c19b7faab5a4e1d2d520636907504edc55",
     "lastHarvestedAt": "2026-11-04T16:34:27.416Z",
     "learningId": "learn-huggingface-moonshotai-kimi-k3-1-pro"
+  },
+  "hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-coder-gguf": {
+    "repository": "ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-Coder-GGUF",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-Coder-GGUF",
+    "sourceVersion": "hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-coder-gguf",
+    "license": "Open-Source",
+    "contentHash": "a3cdd04f02a97e12e609dca94b7a1d9021b6b8d10f67d779a0986afdb4feb0b2",
+    "lastHarvestedAt": "2026-11-04T19:08:58.947Z",
+    "learningId": "learn-huggingface-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-coder-gguf"
   }
 }

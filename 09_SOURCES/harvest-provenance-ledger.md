@@ -7295,3 +7295,8 @@ Every entry in this ledger must capture:
 | `learn-github-karmada-io-karmada` | `https://github.com/karmada-io/karmada` | `d218233a` | Multi-dimensional audit evidence | 2026-11-04T18:57:35.551Z |
 | `learn-huggingface-krafton-raon-1-mini-preview` | `https://huggingface.co/KRAFTON/Raon-1-mini-preview` | `hf-krafton` | Multi-dimensional audit evidence | 2026-11-04T18:57:37.720Z |
 | `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/limbo` | `43d885ef` | Multi-dimensional audit evidence | 2026-11-04T18:57:42.237Z |
+| `learn-huggingface-ornith-ai-ornith-1-5-122b` | `https://huggingface.co/ornith-ai/Ornith-1.5-122B` | `hf-ornith-` | Multi-dimensional audit evidence | 2026-11-04T19:08:54.813Z |
+| `learn-github-kgateway-dev-kgateway` | `https://github.com/kgateway-dev/kgateway` | `817da822` | Multi-dimensional audit evidence | 2026-11-04T19:08:55.699Z |
+| `learn-huggingface-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-coder-gguf` | `https://huggingface.co/ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-Coder-GGUF` | `hf-ista-da` | Multi-dimensional audit evidence | 2026-11-04T19:08:58.947Z |
+| `learn-github-open-source-legal-opencontracts` | `https://github.com/Open-Source-Legal/OpenContracts` | `fab192a5` | Multi-dimensional audit evidence | 2026-11-04T19:09:00.936Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `88c781d5` | Multi-dimensional audit evidence | 2026-11-04T19:09:02.719Z |

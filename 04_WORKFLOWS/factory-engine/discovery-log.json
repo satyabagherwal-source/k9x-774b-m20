@@ -20272,5 +20272,17 @@
     "downloads": 3648,
     "qualityScore": 3670,
     "discoveredAt": "2026-11-04T16:32:00.235Z"
+  },
+  {
+    "name": "ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-Coder-GGUF",
+    "fullName": "ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-Coder-GGUF",
+    "url": "https://huggingface.co/ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-Coder-GGUF",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-Coder-GGUF (156 likes, 73282 downloads)",
+    "likes": 156,
+    "downloads": 73282,
+    "qualityScore": 3560,
+    "discoveredAt": "2026-11-04T19:06:28.731Z"
   }
 ]

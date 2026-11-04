@@ -7286,3 +7286,8 @@
 | `CYCLE-20261104-B8ZF` | `2026-11-04T18:57:35.547Z` | `karmada-io/karmada` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6910` | Yes (`c41669fc...`) |
 | `CYCLE-20261104-BANO` | `2026-11-04T18:57:37.716Z` | `KRAFTON/Raon-1-mini-preview` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4992, Rule 6911, Rule 6912` | Yes (`507f41b4...`) |
 | `CYCLE-20261104-BE55` | `2026-11-04T18:57:42.233Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6913` | Yes (`c9168da6...`) |
+| `CYCLE-20261104-PT3T` | `2026-11-04T19:08:54.809Z` | `ornith-ai/Ornith-1.5-122B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6034, Rule 6154, Rule 6914` | Yes (`f723fb78...`) |
+| `CYCLE-20261104-PTSF` | `2026-11-04T19:08:55.695Z` | `kgateway-dev/kgateway` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6915` | Yes (`503c6a45...`) |
+| `CYCLE-20261104-PWAN` | `2026-11-04T19:08:58.943Z` | `ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-Coder-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-coder-gguf-learnings.md` | Yes (`a3cdd04f...`) |
+| `CYCLE-20261104-PXTW` | `2026-11-04T19:09:00.932Z` | `Open-Source-Legal/OpenContracts` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6916` | Yes (`6db26676...`) |
+| `CYCLE-20261104-PZ7F` | `2026-11-04T19:09:02.715Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6917` | Yes (`a84fdf10...`) |

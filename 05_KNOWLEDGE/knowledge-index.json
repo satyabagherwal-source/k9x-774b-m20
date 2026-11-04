@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-04T18:57:42.145Z",
-  "total_verified_learnings": 1208,
+  "last_updated": "2026-11-04T19:09:02.624Z",
+  "total_verified_learnings": 1209,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -35551,8 +35551,8 @@
       "slug": "kgateway-dev-kgateway",
       "platform": "github",
       "source_url": "https://github.com/kgateway-dev/kgateway",
-      "source_version": "583dce38",
-      "content_hash": "4cc1141747f33b7c26ee3c60786521192e4a4e5967ac3bbebdfee875f189fe15",
+      "source_version": "817da822",
+      "content_hash": "503c6a4578582bbbb3ca956f0851f8ec71ef2b4a15217e64e1001c60dd65c549",
       "dossier_path": "07_PROJECT_LEARNING/kgateway-dev-kgateway-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kgateway-dev-kgateway-learnings.md",
       "promoted_rules": [
@@ -35610,6 +35610,11 @@
           "number": 6599,
           "title": "ds): release published routing configs no client holds (#14962)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6915,
+          "title": "test(e2e): give Tracing and BackendConfigPolicy distinct, suite-level Pods (#149",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -35617,7 +35622,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T20:00:55.590Z",
+      "verified_at": "2026-11-04T19:08:55.573Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -44153,8 +44158,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "e8ef229c",
-      "content_hash": "ff7150d24101aee94ffdff936fb1fed7638b2cd5b95b1e4ca7ca080b28336617",
+      "source_version": "88c781d5",
+      "content_hash": "a84fdf10d1ae97c8172898785e48bf3feef2ce2d74343e6052628bdb82f1b38f",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -44382,6 +44387,11 @@
           "number": 6869,
           "title": "Reduce ARC workflow timeout",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6917,
+          "title": "Require gestalt-first design in ARC agents",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -44389,7 +44399,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T17:30:49.253Z",
+      "verified_at": "2026-11-04T19:09:02.592Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -45576,8 +45586,8 @@
       "slug": "open-source-legal-opencontracts",
       "platform": "github",
       "source_url": "https://github.com/Open-Source-Legal/OpenContracts",
-      "source_version": "6652e8dd",
-      "content_hash": "620ef9119e36cf5703e824cd8629bfe043fb791cb50cc8436b292dcb23a28d61",
+      "source_version": "fab192a5",
+      "content_hash": "6db2667646451f2e6a918d1d164e74a98833136cd80787abf38fab2f6c376d33",
       "dossier_path": "07_PROJECT_LEARNING/open-source-legal-opencontracts-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/open-source-legal-opencontracts-learnings.md",
       "promoted_rules": [
@@ -45595,6 +45605,11 @@
           "number": 4815,
           "title": "deps): update pypdf requirement from <7,>=6.21.0 to >=6.21.2,<7 (#2491)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6916,
+          "title": "deps-dev): bump @vitest/coverage-istanbul from 4.1.8 to 5.0.5 in /frontend (#249",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -45604,7 +45619,7 @@
       "historical_learning_ids": [
         "learn-github-open-source-legal-opencontracts-mv0ds8j9"
       ],
-      "verified_at": "2026-10-27T13:41:01.592Z",
+      "verified_at": "2026-11-04T19:09:00.809Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -129881,7 +129896,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/ornith-ai/Ornith-1.5-122B",
       "source_version": "hf-ornith-ai-ornith-1.5-122b",
-      "content_hash": "71ef22bc99a4a1cc24c19529839b73cc8d6853df55bf587720f213056bf60383",
+      "content_hash": "f723fb78d4591862394c1de3ce8768c657f93a0bfc971a9b7ccf59f8a1672656",
       "dossier_path": "07_PROJECT_LEARNING/hf-ornith-ai-ornith-1.5-122b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-ornith-ai-ornith-1.5-122b-learnings.md",
       "promoted_rules": [
@@ -129903,7 +129918,7 @@
         {
           "number": 6034,
           "title": "Hybrid Attention Interval Consistency",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
           "number": 6035,
@@ -129914,6 +129929,16 @@
           "number": 6036,
           "title": "M-RoPE Interleaved Positional Encoding",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6154,
+          "title": "SSM State Precision Isolation",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 6914,
+          "title": "MoE Expert Activation Sparsity Enforcement",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -129921,7 +129946,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T03:02:44.973Z",
+      "verified_at": "2026-11-04T19:08:54.688Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -163048,7 +163073,7 @@
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-31T03:02:44.974Z"
+      "verified_at": "2026-11-04T19:08:54.688Z"
     },
     "rule-6035": {
       "learning_id": "rule-6035",
@@ -164763,15 +164788,15 @@
       "learning_id": "rule-6154",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 6154,
-      "title": "SSM State Precision Isolation Rule",
-      "source_url": "https://huggingface.co/orcarouter/OrcaSAQ-2-27B",
-      "source_version": "hf-orcarouter-orcasaq-2-27b",
+      "title": "SSM State Precision Isolation",
+      "source_url": "https://huggingface.co/ornith-ai/Ornith-1.5-122B",
+      "source_version": "hf-ornith-ai-ornith-1.5-122b",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-31T09:47:08.198Z"
+      "verified_at": "2026-11-04T19:08:54.688Z"
     },
     "rule-6155": {
       "learning_id": "rule-6155",
@@ -176304,6 +176329,89 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-04T18:57:42.122Z"
+    },
+    "rule-6914": {
+      "learning_id": "rule-6914",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6914,
+      "title": "MoE Expert Activation Sparsity Enforcement",
+      "source_url": "https://huggingface.co/ornith-ai/Ornith-1.5-122B",
+      "source_version": "hf-ornith-ai-ornith-1.5-122b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T19:08:54.688Z"
+    },
+    "rule-6915": {
+      "learning_id": "rule-6915",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6915,
+      "title": "test(e2e): give Tracing and BackendConfigPolicy distinct, suite-level Pods (#149",
+      "source_url": "https://github.com/kgateway-dev/kgateway",
+      "source_version": "817da822",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T19:08:55.573Z"
+    },
+    "learn-huggingface-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-coder-gguf": {
+      "learning_id": "learn-huggingface-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-coder-gguf",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-Coder-GGUF",
+      "repository": "ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-Coder-GGUF",
+      "slug": "hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-coder-gguf",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-Coder-GGUF",
+      "source_version": "hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-coder-gguf",
+      "content_hash": "a3cdd04f02a97e12e609dca94b7a1d9021b6b8d10f67d779a0986afdb4feb0b2",
+      "dossier_path": "07_PROJECT_LEARNING/hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-coder-gguf-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-coder-gguf-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-04T19:08:58.790Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-6916": {
+      "learning_id": "rule-6916",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6916,
+      "title": "deps-dev): bump @vitest/coverage-istanbul from 4.1.8 to 5.0.5 in /frontend (#249",
+      "source_url": "https://github.com/Open-Source-Legal/OpenContracts",
+      "source_version": "fab192a5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T19:09:00.809Z"
+    },
+    "rule-6917": {
+      "learning_id": "rule-6917",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6917,
+      "title": "Require gestalt-first design in ARC agents",
+      "source_url": "https://github.com/NucleoidAI/Nucleoid",
+      "source_version": "88c781d5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T19:09:02.592Z"
     }
   },
   "aliases": {

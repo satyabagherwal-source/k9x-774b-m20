@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-04T18:57:42.243Z",
-  "total_cycles_completed": 7263,
-  "total_learnings_persisted": 7263,
-  "total_rules_promoted": 6947,
+  "last_updated": "2026-11-04T19:09:02.725Z",
+  "total_cycles_completed": 7268,
+  "total_learnings_persisted": 7268,
+  "total_rules_promoted": 6953,
   "history": [
-    {
-      "timestamp": "2026-11-04T00:53:22.824Z",
-      "repository": "mattermost/mattermost",
-      "learningId": "learn-github-mattermost-mattermost",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T00:53:28.969Z",
-      "repository": "giancarloerra/SocratiCode",
-      "learningId": "learn-github-giancarloerra-socraticode",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T01:00:53.076Z",
-      "repository": "openyurtio/openyurt",
-      "learningId": "learn-github-openyurtio-openyurt",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T01:00:53.444Z",
-      "repository": "NervJS/taro",
-      "learningId": "learn-github-nervjs-taro",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T01:07:27.821Z",
-      "repository": "agentlas-ai/Agentlas-OS",
-      "learningId": "learn-github-agentlas-ai-agentlas-os",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-04T01:07:33.330Z",
       "repository": "digitalbazaar/pyld",
@@ -1402,6 +1367,41 @@
       "timestamp": "2026-11-04T18:57:42.243Z",
       "repository": "tursodatabase/turso",
       "learningId": "learn-github-tursodatabase-turso",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T19:08:54.819Z",
+      "repository": "ornith-ai/Ornith-1.5-122B",
+      "learningId": "learn-huggingface-ornith-ai-ornith-1-5-122b",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T19:08:55.705Z",
+      "repository": "kgateway-dev/kgateway",
+      "learningId": "learn-github-kgateway-dev-kgateway",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T19:08:58.953Z",
+      "repository": "ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-Coder-GGUF",
+      "learningId": "learn-huggingface-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-coder-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T19:09:00.941Z",
+      "repository": "Open-Source-Legal/OpenContracts",
+      "learningId": "learn-github-open-source-legal-opencontracts",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T19:09:02.725Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

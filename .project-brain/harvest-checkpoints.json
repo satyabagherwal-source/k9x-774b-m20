@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-04T18:57:42.256Z",
+  "last_updated": "2026-11-04T19:09:02.737Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -200,14 +200,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-open-source-legal-opencontracts",
-      "content_hash": "620ef9119e36cf5703e824cd8629bfe043fb791cb50cc8436b292dcb23a28d61",
-      "verified_at": "2026-10-27T13:41:01.660Z",
+      "content_hash": "6db2667646451f2e6a918d1d164e74a98833136cd80787abf38fab2f6c376d33",
+      "verified_at": "2026-11-04T19:09:00.952Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T13:41:01.660Z"
+      "last_updated": "2026-11-04T19:09:00.952Z"
     },
     "Qwen/Qwen3.8-27B": {
       "repository": "Qwen/Qwen3.8-27B",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "ff7150d24101aee94ffdff936fb1fed7638b2cd5b95b1e4ca7ca080b28336617",
-      "verified_at": "2026-11-04T17:30:49.373Z",
+      "content_hash": "a84fdf10d1ae97c8172898785e48bf3feef2ce2d74343e6052628bdb82f1b38f",
+      "verified_at": "2026-11-04T19:09:02.736Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T17:30:49.373Z"
+      "last_updated": "2026-11-04T19:09:02.736Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -4401,14 +4401,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kgateway-dev-kgateway",
-      "content_hash": "4cc1141747f33b7c26ee3c60786521192e4a4e5967ac3bbebdfee875f189fe15",
-      "verified_at": "2026-11-03T20:00:55.670Z",
+      "content_hash": "503c6a4578582bbbb3ca956f0851f8ec71ef2b4a15217e64e1001c60dd65c549",
+      "verified_at": "2026-11-04T19:08:55.708Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T20:00:55.670Z"
+      "last_updated": "2026-11-04T19:08:55.708Z"
     },
     "freenet/freenet-core": {
       "repository": "freenet/freenet-core",
@@ -15966,14 +15966,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-ornith-ai-ornith-1-5-122b",
-      "content_hash": "71ef22bc99a4a1cc24c19529839b73cc8d6853df55bf587720f213056bf60383",
-      "verified_at": "2026-10-31T03:02:45.076Z",
+      "content_hash": "f723fb78d4591862394c1de3ce8768c657f93a0bfc971a9b7ccf59f8a1672656",
+      "verified_at": "2026-11-04T19:08:54.822Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T03:02:45.076Z"
+      "last_updated": "2026-11-04T19:08:54.822Z"
     },
     "lokoe-mehdi/scouter": {
       "repository": "lokoe-mehdi/scouter",
@@ -17909,6 +17909,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-04T16:34:27.426Z"
+    },
+    "ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-Coder-GGUF": {
+      "repository": "ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-Coder-GGUF",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-coder-gguf",
+      "content_hash": "a3cdd04f02a97e12e609dca94b7a1d9021b6b8d10f67d779a0986afdb4feb0b2",
+      "verified_at": "2026-11-04T19:08:58.956Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-04T19:08:58.956Z"
     }
   },
   "repos": {
