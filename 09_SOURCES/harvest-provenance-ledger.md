@@ -7247,3 +7247,6 @@ Every entry in this ledger must capture:
 | `learn-github-nats-io-nats-server` | `https://github.com/nats-io/nats-server` | `a441962c` | Multi-dimensional audit evidence | 2026-11-04T16:50:13.739Z |
 | `learn-github-olric-data-olric` | `https://github.com/olric-data/olric` | `9092df94` | Multi-dimensional audit evidence | 2026-11-04T16:50:15.435Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `6d3acec0` | Multi-dimensional audit evidence | 2026-11-04T16:50:18.752Z |
+| `learn-github-sigstore-cosign` | `https://github.com/sigstore/cosign` | `60d048f6` | Multi-dimensional audit evidence | 2026-11-04T16:59:20.832Z |
+| `learn-huggingface-lodestones-moss-image-sft-8-steps-dmd` | `https://huggingface.co/lodestones/MOSS-Image-SFT-8-steps-dmd` | `hf-lodesto` | Multi-dimensional audit evidence | 2026-11-04T16:59:28.534Z |
+| `learn-github-yvgude-lean-ctx` | `https://github.com/yvgude/lean-ctx` | `28d7f7cc` | Multi-dimensional audit evidence | 2026-11-04T17:00:25.279Z |

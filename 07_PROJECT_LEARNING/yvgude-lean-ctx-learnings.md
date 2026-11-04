@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/yvgude-lean-ctx-learnings.md`  
 > **Source**: github ([https://github.com/yvgude/lean-ctx](https://github.com/yvgude/lean-ctx))  
-> **Source Version**: `7c9025c4`  
+> **Source Version**: `28d7f7cc`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-02T17:39:23.116Z  
+> **Timestamp**: 2026-11-04T17:00:24.515Z  
 > **Learning ID**: `learn-github-yvgude-lean-ctx`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/yvgude-lean-ctx-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/yvgude/lean-ctx](https://github.com/yvgude/lean-ctx))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-02T17:39:06.946Z  
+> **Harvest Timestamp**: 2026-11-04T16:59:09.124Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: LeanCTX is the Context Gateway for AI Systems. Select task-relevant context, apply supported controls, connect local knowledge and inspect recorded evidence. Open-source Engine: CLI, MCP, hooks and supported proxy paths.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 3926 stars
+- **Stars / Engagement**: 3924 stars
 
 ---
 
@@ -1179,6 +1179,218 @@ class LeanCtxEngine(ContextEngine):
         # Durable cross-session persiste
 ```
 
+### Core Architecture Module: `rust/crates/lean-ctx-doc/src/state.rs`
+```
+// SPDX-License-Identifier: Apache-2.0
+
+//! The derived doc state of a page (C0 2.2 `doc-states`), never stored:
+//! fresh, noted (every derived anchor that moved is covered by an open note
+//! that accounted for exactly what is observed now) or stale.
+
+use serde::{Deserialize, Serialize};
+
+/// A page's state as a reader shows it.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum DocState {
+    Fresh,
+    Noted,
+    Stale,
+}
+
+/// Why a page is not fresh.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum StateReason {
+    AnchorChanged,
+    AnchorGone,
+}
+
+/// One moved anchor: its ref and the digest observed now (`None`: gone).
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct Drift {
+    #[serde(rename = "ref")]
+    pub reference: String,
+    /// `observed` in a drift entry, `digest` in a note's cover.
+    #[serde(alias = "digest")]
+    pub observed: Option<String>,
+}
+
+/// What a note accounted for: a ref at a digest (`None`: as gone).
+pub type Cover = Drift;
+
+/// One note about the page or one of its sections.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct NoteCovers {
+    pub open: bool,
+    pub covers: Vec<Cover>,
+}
+
+/// The verdict with its reason and the derived refs no open note covers.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct Verdict {
+    pub state: DocState,
+    pub reason: Option<StateReason>,
+    pub uncovered: Vec<String>,
+}
+
+/// The doc state of a page from its `anchor_state` (`fresh`, `to_verify`,
+/// `gone` or absent), the refs of its derived anchors, its `drift` and the
+/// notes about it.
+pub fn of(
+    anchor_state: Option<&str>,
+    derived: &[&str],
+    drift: &[Drift],
+    notes: &[NoteCovers],
+) -> Verdict {
+    let fresh = Verdict {
+        state: DocState::Fresh,
+        reason: None,
+        uncovered: Vec::new(),
+    };
+    if matches!(anchor_state, None | Some("fresh")) {
+        return fresh;
+    }
+    let moved: Vec<&Drift> = drift
+        .iter()
+        .filter(|d| derived.contains(&d.reference.as_str()))
+        .collect();
+    if moved.is_empty() && !drift.is_empty() {
+        // Only cited anchors moved: they never drive the state.
+        return fresh;
+    }
+    let gone = anchor_state == Some("gone") || moved.iter().any(|d| d.observed.is_none());
+    let reason = Some(if gone {
+        StateReason::AnchorGone
+    } else {
+        StateReason::AnchorChanged
+    });
+    let mut uncovered: Vec<String> = moved
+        .iter()
+        .filter(|d| {
+            !notes.iter().filter(|n| n.open).any(|n| {
+                n.covers
+                    .iter()
+                    .any(|c| c.reference == d.reference && c.observed == d.observed)
+            })
+        })
+        .map(|d| d.reference.clone())
+        .collect();
+    uncovered.sort();
+    // A writer that sent no drift detail leaves nothing to cover: stale.
+    let state = if moved.is_empty() || !uncovered.is_empty() {
+        DocState::Stale
+    } else {
+        DocState::Noted
+    };
+    Verdict {
+        state,
+        reason,
+        uncovered,
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    const D7: &str = "7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c";
+    const D5: &str = "5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e";
+    const DERIVED: &[&str] = &["file:a.rs"];
+
+    fn drift(r: &str, d: Option<&str>) -> Drift {
+        Drift {
+            reference: r.into(),
+            observed: d.map(Into::into),
+        }
+    }
+    fn note(open: bool, d: Option<&str>) -> NoteCovers {
+        NoteCovers {
+            open,
+            covers: vec![drift("file:a.rs", d)],
+        }
+    }
+    fn check(
+        name: &str,
+        st: Option<&str>,
+        dr: &[Drift],
+        notes: &[NoteCovers],
+        want: (DocState, Option<StateReason>, &[&str]),
+    ) {
+        let v = of(st, DERIVED, dr, notes);
+        assert_eq!((v.state, v.reason), (want.0, want.1), "{name}");
+        assert_eq!(v.uncovered, want.2, "{name}");
+    }
+
+    // C0 2.2 vectors (hive-v2 vectors/doc_state).
+    #[test]
+    fn doc_state_vectors() {
+        use DocState::{Fresh, Noted, Stale};
+        use StateReason::{AnchorChanged as Changed, AnchorGone as Gone};
+        let moved = [drift("file:a.rs", Some(D7))];
+        check("no_state", None, &[], &[], (Fresh, None, &[]));
+        check("fresh", Some("fresh"), &[], &[], (Fresh, None, &[]));
+        check(
+            "changed_uncovered",
+            Some("to_verify"),
+            &moved,
+            &[],
+            (Stale, Some(Changed), &["file:a.rs"]),
+        );
+        check(
+            "changed_covered",
+            Some("to_verify"),
+            &moved,
+            &[note(true, Some(D7))],
+            (Noted, Some(Changed), &[]),
+        );
+        check(
+            "covered_an_older_move",
+            Some("to_verify"),
+            &moved,
+            &[note(true, Some(D5))],
+            (Stale, Some(Changed), &["file:a.rs"]),
+        );
+        check(
+            "resolved_note_does_not_cover",
+            Some("to_verify"),
+            &moved,
+            &[note(false, Some(D7))],
+            (Stale, Some(Changed), &["file:a.rs"]),
+        );
+        check(
+            "migrated_null_cover_does_not_cover",
+            Some("to_verify"),
+            &moved,
+            &[note(true, None)],
+            (Stale, Some(Changed), &["file:a.rs"]),
+        );
+        check(
+            "gone_covered",
+            Some("gone"),
+            &[drift("file:a.rs", None)],
+            &[note(true, None)],
+            (Noted, Some(Gone), &[]),
+        );
+        check(
+            "cites_drift_only",
+            Some("to_verify"),
+            &[drift("file:docs/b.md", Some(D7))],
+            &[],
+            (Fresh, None, &[]),
+        );
+        check(
+            "state_without_drift",
+            Some("to_verify"),
+            &[],
+            &[],
+            (Stale, Some(Changed), &[]),
+        );
+    }
+}
+
+```
+
 ### Core Architecture Module: `rust/crates/lean-ctx-embed/src/engine.rs`
 ```
 //! The embedding [`Engine`] — a safe, ergonomic handle over the lean-ctx
@@ -1229,9 +1441,9 @@ use tokio::sync::RwLock;
 
 use lean_ctx::core::cache::SessionCache;
 use lean_ctx::core::session::SessionState;
-use lean_ctx::server::registry::{ToolRegistry, build_registry};
-use lean_ctx::server::tool_trait::{ToolContext, ToolOutput};
-use lean_ctx::tools::{CrpMode, SharedCache};
+use lean_ctx_server::server::registry::{ToolRegistry, build_registry};
+use lean_ctx_server::server::tool_trait::{ToolContext, ToolOutput};
+use lean_ctx_server::tools::{CrpMode, SharedCache};
 
 use crate::error::Error;
 use crate::output::Output;
@@ -1322,6 +1534,9 @@ impl EngineBuilder {
         let project_root = project_root.to_string_lossy().into_owned();
 
         configure_process_env(self.data_dir.as_deref());
+        // The Hive connector's hooks, as the CLI registers them at start-up
+        // (idempotent: the first registration wins).
+        lean_ctx_hive::register_hooks();
 
         let rt = tokio::runtime::Builder::new_multi_thread()
             .worker_threads(self.worker_threads)
@@ -1437,608 +1652,836 @@ impl Engine {
         let mut args = Map::new();
         let mut ctx = self.base_ctx();
         let resolved = self.resolve(subdir.unwrap_or("."))?;
-        args.insert("path".into(), Value::String(resolved.clone()));
-        ctx.resolved_paths.insert("path".into(), resolved);
-        self.dispatch("ctx_tree", args, ctx).map(|o| o.text)
-    }
-
-    /// Call 
+        args.inse
 ```
 
-### Core Architecture Module: `rust/crates/lean-ctx-protocol/src/engine_context_materialization.rs`
+### Core Architecture Module: `rust/crates/lean-ctx-hive/src/capture/lifecycle.rs`
 ```
 // SPDX-License-Identifier: Apache-2.0
-
-//! Bounded materialization of an already-planned explicit source batch.
+//! The lifecycle of captured knowledge after its `node.add`: what an agent
+//! does to a fact later reaches the vault, so other engines never keep
+//! receiving knowledge its author has withdrawn.
 //!
-//! The request carries the original source bodies because the planning
-//! response intentionally contains descriptors only.  The binding digest is
-//! an integrity join to that prior response, not an authorization grant or a
-//! receipt.
+//! Capture (step 6, [`super::emit`]) records for every node it adds which
+//! local fact it came from (`own_sources`: project, category, key, value
+//! digest). Each sync compares those own nodes with the project's knowledge
+//! store and queues, through the existing event builders:
+//!
+//! - **superseded**: the fact's value is no longer current and a current
+//!   fact of the same category and key has its own node → `edge.add
+//!   supersedes` from that node to the old one. The server derives the old
+//!   node `outdated (superseded)`; it is not retracted (one or the other).
+//! - **withdrawn**: no fact of the store carries the node's value any more
+//!   and no successor has a node → `retract` with the fixed reason
+//!   `withdrawn by author` (no content).
+//! - **re-pinned**: the vault marked the claim `to_verify`/`gone`, while the
+//!   local fact with the same value is current, not under review and its
+//!   anchors match the code here (an agent re-pinned it) → the claim is
+//!   re-anchored at `HEAD` and `anchor_state fresh`, the event `hive
+//!   maintain --confirm` writes.
+//!
+//! The comparison reads the raw store, not a policy view: a fact a view
+//! withholds still exists and is never retracted for that. A store that
+//! cannot be read, or holds no facts while own nodes exist, plans nothing.
+//! Only `fact` sources of this checkout count; another checkout of the same
+//! vault owns its nodes. The server's retraction limits apply unchanged: a
+//! held retraction stays pending, the engine sets no threshold of its own.
+//!
+//! Every action is idempotent: an edge or retraction already in the folded
+//! place or still pending is not queued again, so a sync that ran before
+//! changes nothing.
 
-use serde::{Deserialize, Serialize};
-use sha2::{Digest, Sha256};
-use std::fmt::Write as _;
+use std::collections::{BTreeMap, BTreeSet};
 
-use crate::{
-    EngineContextSourcePlanRequestV1, EngineContextSourcePlanResponseV1, SemanticVersion,
-    Sha256Digest, UtcTimestamp, ValidationError,
-};
+use serde_json::Value;
 
-/// Keep the materialized context within the existing explicit-source bound.
-pub const MAX_ENGINE_SOURCE_MATERIALIZED_CONTEXT_BYTES: usize =
-    super::MAX_ENGINE_SOURCE_PLAN_REQUEST_BYTES;
+use super::refs::Checkout;
+use crate::HiveError;
+use crate::events::build;
+use crate::events::hlc::{self, Stamp};
+use crate::replica::Replica;
+use crate::replica::fold::Graph;
+use crate::review::{curate, maintain};
 
-/// Re-submit the bounded original source batch with the digest of the plan to
-/// which the caller intends to bind materialization.
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-#[serde(deny_unknown_fields)]
-pub struct EngineContextSourceMaterializationRequestV1 {
-    pub source_plan: EngineContextSourcePlanRequestV1,
-    pub expected_binding_digest: Sha256Digest,
-    /// Server-emitted identity time from a retention-enabled source plan.
-    /// This is an unsigned replay hint, never authorization or provenance.
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub planning_evaluation_time: Option<UtcTimestamp>,
+/// The reason of a lifecycle retraction: stable, and no fact content.
+pub const WITHDRAWN_REASON: &str = "withdrawn by author";
+
+/// An own node and the fact it was captured from.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct OwnNode {
+    pub node_id: String,
+    pub category: String,
+    pub key: String,
+    pub value_digest: String,
 }
 
-impl EngineContextSourceMaterializationRequestV1 {
-    /// Validate the original source request and its serialized size before any
-    /// policy planning or body joining occurs.
-    pub fn validate_payload(&self) -> Result<(), ValidationError> {
-        self.source_plan.validate_payload()?;
-        let encoded = serde_json::to_vec(self)
-            .map_err(|_| ValidationError::new("invalid Engine materialization request"))?;
-        if encoded.len() > super::MAX_ENGINE_SOURCE_PLAN_REQUEST_BYTES {
-            return Err(ValidationError::new(
-                "Engine materialization source request exceeds size bound",
-            ));
-        }
-        Ok(())
+/// A fact of the raw store, as far as the lifecycle needs it.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct StoreFact {
+    pub category: String,
+    pub key: String,
+    pub value_digest: String,
+    /// Not superseded and not expired (`valid_until` unset).
+    pub current: bool,
+    /// Current, not under review, and every anchor matches this checkout.
+    pub confirmed_here: bool,
+}
+
+/// What the vault shows of a node.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct NodeView {
+    pub live: bool,
+    /// `anchor_state` is `to_verify` or `gone`.
+    pub marked: bool,
+    pub has_anchors: bool,
+}
+
+/// One lifecycle action, in the order it is queued.
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
+pub enum Action {
+    Supersede { old: String, new: String },
+    Retract { node: String },
+    Confirm { node: String },
+}
+
+/// What is already in the place or pending, so nothing is queued twice.
+#[derive(Debug, Default)]
+pub struct Present {
+    /// `(from, to)` of live or pending `supersedes` edges.
+    pub supersedes: BTreeSet<(String, String)>,
+    /// Targets of pending `retract` events.
+    pub retracting: BTreeSet<String>,
+    /// Targets of pending `field.set anchors` events.
+    pub confirming: BTreeSet<String>,
+    /// Nodes queued by a pending `node.add` (this sync's captures): live for
+    /// the plan, so a successor captured in the same run supersedes its
+    /// predecessor instead of the predecessor being retracted.
+    pub adding: BTreeSet<String>,
+}
+
+impl Present {
+    /// [`node_view`] in `graph`, or a pending addition as a live node.
+    pub fn view(&self, graph: &Graph, node_id: &str) -> Option<NodeView> {
+        node_view(graph, node_id).or_else(|| {
+            self.adding.contains(node_id).then_some(NodeView {
+                live: true,
+                marked: false,
+                has_anchors: false,
+            })
+        })
     }
 }
 
-/// Digest-bound context bytes selected by the canonical source planner.
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-#[serde(deny_unknown_fields)]
-pub struct EngineContextSourceMaterializationResponseV1 {
-    pub schema_version: u32,
-    pub transport_version: u32,
-    pub engine_interface_version: SemanticVersion,
-    pub plan: EngineContextSourcePlanResponseV1,
-    pub materialized_digest: Sha256Digest,
-    pub materialized_token_count: u64,
-    pub content: String,
+/// The `(category, key)` of every fact the knowledge journal of the
+/// checkout at `root` records as removed.
+pub fn removed_identities(root: &str) -> BTreeSet<(String, String)> {
+    let Ok(dir) = lean_ctx::core::knowledge::knowledge_dir_of(root) else {
+        return BTreeSet::new();
+    };
+    lean_ctx::core::knowledge::journal::rows_since(&dir, 0, usize::MAX)
+        .into_iter()
+        .filter(|r| r.op == "removed")
+        .map(|r| (r.category, r.key))
+        .collect()
 }
 
-impl EngineContextSourceMaterializationResponseV1 {
-    /// Validate the additive response envelope and the digest of its final
-    /// policy-enforced materialized bytes.
-    pub fn validate(&self) -> Result<(), ValidationError> {
-        if self.schema_version != 1
-            || self.transport_version != 1
-            || self.engine_interface_version.as_str() != "1.0.0"
-            || self.content.len() > MAX_ENGINE_SOURCE_MATERIALIZED_CONTEXT_BYTES
-            || self.materialized_token_count > self.plan.result.plan.budget_tokens
-        {
-            return Err(ValidationError::new(
-                "invalid Engine materialization response envelope",
-            ));
-        }
-        self.plan.validate_binding()?;
-        let actual = sha256_digest(self.content.as_bytes())?;
-        if actual != self.materialized_digest {
-            return Err(ValidationError::new(
-                "Engine materialized content digest mismatch",
-            ));
-        }
-        Ok(())
+/// The actions that bring the vault in line with the store, in node id
+/// order (deterministic).
+///
+/// `removed` are the `(category, key)` identities the knowledge journal
+/// records as removed. An empty store withdraws only those: a store that
+/// was reset or could not be read never withdraws everything.
+pub fn plan(
+    own: &[OwnNode],
+    store: &[StoreFact],
+    removed: &BTreeSet<(String, String)>,
+    node: impl Fn(&str) -> Option<NodeView>,
+    present: &Present,
+) -> Vec<Action> {
+    if store.is_empty() && removed.is_empty() {
+        return Vec::new();
     }
-}
-
-fn sha256_digest(bytes: &[u8]) -> Result<Sha256Digest, ValidationError> {
-    let mut digest = String::from("sha256:");
-    for byte in Sha256::digest(bytes).iter() {
-        write!(&mut digest, "{byte:02x}")
-            .map_err(|_| ValidationError::new("Engine materialized digest encoding failed"))?;
+    let mut by_identity: BTreeMap<(&str, &str), Vec<&StoreFact>> = BTreeMap::new();
+    for fact in store {
+        by_identity
+            .entry((fact.category.as_str(), fact.key.as_str()))
+            .or_default()
+            .push(fact);
     }
-    Sha256Digest::new(digest)
-}
-
-```
-
-### Core Architecture Module: `rust/crates/lean-ctx-protocol/src/engine_context_materialization_v2.rs`
-```
-// SPDX-License-Identifier: Apache-2.0
-
-//! Opt-in v2 materialization: the unchanged v1 exchange plus a presenter
-//! capability.
-//!
-//! A presenter capability is a bearer secret the Engine hands to the caller
-//! that presented the sources. Whoever later shows it is treated as THE
-//! HOLDER OF THAT CAPABILITY for those presentations. It is not an agent
-//! name, not an attested identity and not an authorization: current source
-//! rights are checked again at every use, with or without it.
-//!
-//! The capability is host-internal. It must never be placed in model context,
-//! tool arguments, tool results, logs or receipts, and never sent to a
-//! provider. Records name a presenter only by [`EnginePresenterGrantV1::presenter_ref`].
-
-use serde::{Deserialize, Serialize};
-
-use crate::{
-    EngineContextSourceMaterializationRequestV1, EngineContextSourceMaterializationResponseV1,
-    ProtocolReference, ValidationError,
-};
-
-/// Schema id of the v2 materialization exchange.
-pub const ENGINE_CONTEXT_MATERIALIZATION_V2_SCHEMA_ID: &str =
-    "leanctx.engine-context-materialization/v2";
-/// Schema id of the presenter revocation exchange.
-pub const ENGINE_PRESENTER_REVOCATION_V1_SCHEMA_ID: &str = "leanctx.engine-presenter-revocation/v1";
-/// First Engine release that serves `context-materialize-sources-v2`.
-pub const ENGINE_PRESENTER_CAPABILITY_MIN_ENGINE_VERSION: &str = "3.11.0";
-/// Longest lifetime a caller may ask for: one day.
-pub const MAX_ENGINE_PRESENTER_TTL_SECONDS: u32 = 24 * 60 * 60;
-/// Wire prefix of a presenter capability.
-pub const ENGINE_PRESENTER_CAPABILITY_PREFIX: &str = "lcp1_";
-/// Wire prefix of a content-free presenter reference.
-pub const ENGINE_PRESENTER_REF_PREFIX: &str = "presenter:";
-
-const CAPABILITY_HEX_CHARS: usize = 64;
-const PRESENTER_REF_HEX_CHARS: usize = 32;
-
-fn lower_hex(text: &str, length: usize) -> bool {
-    text.len() == length
-        && text
-            .bytes()
-            .all(|byte| byte.is_ascii_digit() || (b'a'..=b'f').contains(&byte))
-}
-
-/// Whether `text` has the wire form of a presenter capability. Form only:
-/// says nothing about whether any Engine issued it.
-#[must_use]
-pub fn is_engine_presenter_capability_form(text: &str) -> bool {
-    text.strip_prefix(ENGINE_PRESENTER_CAPABILITY_PREFIX)
-        .is_some_and(|hex| lower_hex(hex, CAPABILITY_HEX_CHARS))
-}
-
-/// How the caller wants the sources of this request to be presented.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
-#[serde(deny_unknown_fields, rename_all = "snake_case", tag = "mode")]
-pub enum EnginePresenterRequestV1 {
-    /// Mint a new capability with this lifetime.
-    Issue { ttl_seconds: u32 },
-    /// Present under a capability the caller already holds. The capability
-    /// is never part of this JSON: it reaches the Engine through
-    /// `--presenter-capability-file`.
-    Renew,
-}
-
-/// The v1 materialization request, with the presenter mode.
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-#[serde(deny_unknown_fields)]
-pub struct EngineContextSourceMaterializationRequestV2 {
-    pub schema_version: u32,
-    pub materialization: EngineContextSourceMaterializationRequestV1,
-    pub presenter: EnginePresenterRequestV1,
-}
-
-impl EngineContextSourceMaterializationRequestV2 {
-    /// Validate the envelope and the unchanged v1 payload.
-    pub fn validate_payload(&self) -> Result<(), ValidationError> {
-        if self.schema_version != 2 {
-            return Err(invalid());
+    // The own live node of each (category, key, value digest).
+    let mut node_of: BTreeMap<(&str, &str, &str), &str> = BTreeMap::new();
+    for n in own {
+        if node(&n.node_id).is_some_and(|v| v.live) {
+            node_of.insert(
+                (n.category.as_str(), n.key.as_str(), n.value_digest.as_str()),
+                n.node_id.as_str(),
+            );
         }
-        match self.presenter {
-            EnginePresenterRequestV1::Issue { ttl_seconds }
-                if !(1..=MAX_ENGINE_PRESENTER_TTL_SECONDS).contains(&ttl_seconds) =>
+    }
+    let mut actions = Vec::new();
+    for n in own {
+        let Some(view) = node(&n.node_id).filter(|v| v.live) else {
+            continue;
+        };
+        let facts = by_identity
+            .get(&(n.category.as_str(), n.key.as_str()))
+            .map(Vec::as_slice)
+            .unwrap_or_default();
+        let same = facts.iter().find(|f| f.value_digest == n.value_digest);
+        if let Some(fact) = same.filter(|f| f.current) {
+            if view.marked
+                && view.has_anchors
+                && fact.confirmed_here
+                && !present.confirming.contains(&n.node_id)
             {
-                Err(invalid())
+                actions.push(Action::Confirm {
+                    node: n.node_id.clone(),
+                });
             }
-            _ => self.materialization.validate_payload(),
+            continue;
+        }
+        // The node's value is not current any more (superseded, expired or
+        // removed). A current successor with its own node supersedes it.
+        let successor = facts
+            .iter()
+            .filter(|f| f.current && f.value_digest != n.value_digest)
+            .find_map(|f| {
+                node_of.get(&(f.category.as_str(), f.key.as_str(), f.value_digest.as_str()))
+            });
+        if let Some(&new) = successor {
+            if !present
+                .supersedes
+                .contains(&(new.to_owned(), n.node_id.clone()))
+            {
+                actions.push(Action::Supersede {
+                    old: n.node_id.clone(),
+                    new: new.to_owned(),
+                });
+            }
+        } else {
+            let journaled = removed.contains(&(n.category.clone(), n.key.clone()));
+            if (store.is_empty() && !journaled) || present.retracting.contains(&n.node_id) {
+                continue;
+            }
+            actions.push(Action::Retract {
+                node: n.node_id.clone(),
+            });
+        }
+    }
+    actions.sort();
+    actions.dedup();
+    actions
+}
+
+/// The own `fact` nodes of the checkout `project_hash`, from `own_sources`.
+pub fn own_nodes(replica: &Replica, project_hash: &str) -> Result<Vec<OwnNode>, HiveError> {
+    Ok(replica
+        .own_sources()?
+        .into_iter()
+        .filter(|(_, kind, _)| kind == "fact")
+        .filter_map(|(node_id, _, source)| {
+            if source.get("project_hash")?.as_str()? != project_hash {
+                return None;
+            }
+            Some(OwnNode {
+                node_id,
+                category: source.get("category")?.as_str()?.to_owned(),
+                key: source.get("key")?.as_str()?.to_owned(),
+                value_digest: source.get("value_digest")?.as_str()?.to_owned(),
+            })
+        })
+        .collect())
+}
+
+/// The vault's view of `node_id` in `graph`.
+pub fn node_view(graph: &Graph, node_id: &str) -> Option<NodeView> {
+    let node = graph.nodes.get(node_id)?;
+    Some(NodeView {
+        live: !node.retracted && !node.purged,
+        marked: matches!(
+            node.fields.get("anchor_state").and_then(Value::as_str),
+            Some("to_verify" | "gone")
+        ),
+        has_anchors: node
+            .fields
+            .get("anchors")
+            .and_then(Value::as_array)
+            .is_some_and(|a| !a.is_empty()),
+    })
+}
+
+/// What the folded place and the pending queue already hold.
+pub fn present(graph: &Graph, replica: &Replica) -> Result<Present, HiveError> {
+    let mut out = Present::default();
+    for edge in graph.edges.values() {
+        if edge.kind == "supersedes" && !edge.retracted {
+            out.supersedes.insert((edge.from.clone(), edge.to.clone()));
+        }
+    }
+    for (_, bytes) in replica.pending()? {
+        let Ok(event) = serde_json::from_slice::<Value>(&bytes) else {
+            continue;
+        };
+        let target = event["target"].as_str().unwrap_or_d
+```
+
+### Core Architecture Module: `rust/crates/lean-ctx-hive/src/delivery/knowledge_state.rs`
+```
+// SPDX-License-Identifier: Apache-2.0
+//! Knowledge states (Hive v5 CHECKLIST 2.2.1; C0 2.0
+//! `enums/knowledge-states.json`, `vectors/knowledge_state.vectors.json`):
+//! `verified | provisional | outdated | conflicting | rejected`, derived from
+//! the folded replica on every read, never stored. Hive derives the same
+//! state from its projection, so the web and the agent see one answer.
+
+use std::collections::HashSet;
+
+use serde_json::Value;
+
+use crate::replica::fold::{Graph, Node};
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub enum State {
+    Verified,
+    Provisional,
+    Outdated,
+    Conflicting,
+    Rejected,
+}
+
+impl State {
+    pub fn as_str(self) -> &'static str {
+        match self {
+            Self::Verified => "verified",
+            Self::Provisional => "provisional",
+            Self::Outdated => "outdated",
+            Self::Conflicting => "conflicting",
+            Self::Rejected => "rejected",
+        }
+    }
+
+    /// May an agent be given the node as current truth?
+    pub fn served_as_truth(self) -> bool {
+        matches!(self, Self::Verified | Self::Provisional)
+    }
+}
+
+/// The folded facts the state is derived from (the C0 vector inputs).
+#[derive(Debug, Clone, Default, PartialEq, Eq)]
+pub struct Inputs<'a> {
+    pub retracted: bool,
+    pub purged: bool,
+    pub evidence: Option<&'a str>,
+    /// A decision's `status`.
+    pub status: Option<&'a str>,
+    pub anchor_state: Option<&'a str>,
+    /// A live `supersedes` edge from a live node points at this one.
+    pub superseded: bool,
+    /// A live `contradicts` edge to a live node that is not superseded.
+    pub contradicted: bool,
+}
+
+/// `(state, reason)`; the reason is `None` only for `verified`.
+pub fn of_inputs(i: &Inputs<'_>) -> (State, Option<&'static str>) {
+    if i.retracted || i.purged {
+        return (State::Rejected, Some("retracted"));
+    }
+    if i.status == Some("reverted") {
+        return (State::Rejected, Some("reverted"));
+    }
+    if i.superseded || i.status == Some("superseded") {
+        return (State::Outdated, Some("superseded"));
+    }
+    match i.anchor_state {
+        Some("gone") => return (State::Outdated, Some("anchor_gone")),
+        Some("to_verify") => return (State::Outdated, Some("anchor_changed")),
+        _ => {}
+    }
+    if i.contradicted {
+        return (State::Conflicting, Some("contradicted"));
+    }
+    if i.evidence != Some("observed") {
+        return (State::Provisional, Some("not_observed"));
+    }
+    (State::Verified, None)
+}
+
+fn live(graph: &Graph, id: &str) -> bool {
+    graph
+        .nodes
+        .get(id)
+        .is_some_and(|n| !n.retracted && !n.purged)
+}
+
+/// The edge-derived inputs of every node, built once per graph (one pass
+/// over the edges, so delivery stays linear in the vault size).
+#[derive(Debug, Default)]
+pub struct Index {
+    /// Targets of a live `supersedes` edge from a live node.
+    superseded: HashSet<String>,
+    /// Ends of a live `contradicts` edge whose other end is live and not
+    /// superseded.
+    contradicted: HashSet<String>,
+}
+
+impl Index {
+    pub fn new(graph: &Graph) -> Self {
+        let superseded: HashSet<String> = graph
+            .edges
+            .values()
+            .filter(|e| e.kind == "supersedes" && !e.retracted && live(graph, &e.from))
+            .map(|e| e.to.clone())
+            .collect();
+        let open = |id: &str| live(graph, id) && !superseded.contains(id);
+        let mut contradicted = HashSet::new();
+        for e in graph
+            .edges
+            .values()
+            .filter(|e| e.kind == "contradicts" && !e.retracted)
+        {
+            if open(&e.to) {
+                contradicted.insert(e.from.clone());
+            }
+            if open(&e.from) {
+                contradicted.insert(e.to.clone());
+            }
+        }
+        Self {
+            superseded,
+            contradicted,
+        }
+    }
+
+    /// The state of `node_id` (`node` is its folded node).
+    pub fn state(&self, node_id: &str, node: &Node) -> (State, Option<&'static str>) {
+        let f = |k: &str| node.fields.get(k).and_then(Value::as_str);
+        of_inputs(&Inputs {
+            retracted: node.retracted,
+            purged: node.purged,
+            evidence: f("evidence"),
+            status: (node.node_type == "decision")
+                .then(|| f("status"))
+                .flatten(),
+            anchor_state: f("anchor_state"),
+            superseded: self.superseded.contains(node_id),
+            contradicted: self.contradicted.contains(node_id),
+        })
+    }
+}
+
+/// The state of one node of `graph` (builds the index; use [`Index`] for
+/// many nodes).
+pub fn of(graph: &Graph, node_id: &str, node: &Node) -> (State, Option<&'static str>) {
+    Index::new(graph).state(node_id, node)
+}
+
+#[cfg(test)]
+mod tests {
+    use serde_json::{Map, Value, json};
+
+    use super::*;
+    use crate::replica::fold::Edge;
+
+    const VECTORS: &str = include_str!(
+        "../../../../crates/lean-ctx-protocol/tests/fixtures/hive-v2/vectors/knowledge_state.vectors.json"
+    );
+
+    #[test]
+    fn the_c0_knowledge_state_vectors_hold() {
+        let doc: Value = serde_json::from_str(VECTORS).unwrap();
+        let defaults = doc["defaults"].as_object().unwrap();
+        let mut seen = std::collections::BTreeSet::new();
+        for c in doc["cases"].as_array().unwrap() {
+            let name = c["name"].as_str().unwrap();
+            let mut m: Map<String, Value> = defaults.clone();
+            if let Some(Value::Object(set)) = c.get("set") {
+                for (k, v) in set {
+                    assert!(m.contains_key(k), "{name}: unknown input {k}");
+                    m.insert(k.clone(), v.clone());
+                }
+            }
+            let b = |k: &str| m[k].as_bool().unwrap();
+            let (state, reason) = of_inputs(&Inputs {
+                retracted: b("retracted"),
+                purged: b("purged"),
+                evidence: m["evidence"].as_str(),
+                status: m["status"].as_str(),
+                anchor_state: m["anchor_state"].as_str(),
+                superseded: b("superseded"),
+                contradicted: b("contradicted"),
+            });
+            assert_eq!(state.as_str(), c["state"], "{name}");
+            assert_eq!(
+                reason.map_or(Value::Null, Value::from),
+                c["reason"],
+                "{name}"
+            );
+            seen.insert(state);
+        }
+        assert_eq!(seen.len(), 5, "a case per state");
+    }
+
+    fn node(fields: &Value) -> Node {
+        Node {
+            node_type: "fact".into(),
+            fields: fields.as_object().cloned().unwrap(),
+            ..Node::default()
+        }
+    }
+
+    fn edge(kind: &str, from: &str, to: &str) -> Edge {
+        Edge {
+            kind: kind.into(),
+            from: from.into(),
+            to: to.into(),
+            ..Edge::default()
+        }
+    }
+
+    #[test]
+    fn the_graph_inputs_follow_live_edges() {
+        let mut g = Graph::default();
+        for id in ["n_a", "n_b", "n_c"] {
+            g.nodes.insert(
+                id.into(),
+                node(&json!({"statement": id, "evidence": "observed"})),
+            );
+        }
+        let state = |g: &Graph, id: &str| of(g, id, &g.nodes[id]).0;
+        assert_eq!(state(&g, "n_a"), State::Verified);
+        g.edges
+            .insert("e_1".into(), edge("contradicts", "n_a", "n_b"));
+        assert_eq!(state(&g, "n_a"), State::Conflicting);
+        assert_eq!(state(&g, "n_b"), State::Conflicting);
+        // c supersedes b: b is outdated, the contradiction with it is moot.
+        g.edges
+            .insert("e_2".into(), edge("supersedes", "n_c", "n_b"));
+        assert_eq!(state(&g, "n_b"), State::Outdated);
+        assert_eq!(state(&g, "n_a"), State::Verified);
+        // A retracted successor supersedes nothing.
+        g.nodes.get_mut("n_c").unwrap().retracted = true;
+        assert_eq!(state(&g, "n_b"), State::Conflicting);
+        // The anchor re-check makes a claim outdated, `fresh` clears it.
+        g.nodes
+            .get_mut("n_a")
+            .unwrap()
+            .fields
+            .insert("anchor_state".into(), json!("to_verify"));
+        assert_eq!(
+            of(&g, "n_a", &g.nodes["n_a"]),
+            (State::Outdated, Some("anchor_changed"))
+        );
+        g.nodes
+            .get_mut("n_a")
+            .unwrap()
+            .fields
+            .insert("anchor_state".into(), json!("fresh"));
+        assert_eq!(state(&g, "n_a"), State::Conflicting);
+    }
+
+    /// Retrieval never serves outdated, conflicting or rejected knowledge
+    /// as current truth: rejected and superseded leave delivery, the rest
+    /// come last with a label.
+    #[test]
+    fn delivery_marks_or_drops_what_is_not_current_truth() {
+        use crate::delivery::{Bucket, items, render};
+        let mut g = Graph::default();
+        let mut add = |id: &str, statement: &str, extra: Value| {
+            let mut f = json!({"statement": statement, "evidence": "observed"});
+            for (k, v) in extra.as_object().unwrap() {
+                f[k] = v.clone();
+            }
+            let mut n = node(&f);
+            n.provenance = Some("workspace".into());
+            g.nodes.insert(id.into(), n);
+        };
+        add("n_ok", "Retries back off with jitter.", json!({}));
+        add("n_old", "Retries use a fixed delay.", json!({}));
+        add("n_new", "Retries back off with full jitter.", json!({}));
+        add(
+            "n_moved",
+            "The retry cap lives in retry.rs.",
+            json!({"anchor_state": "to_verify"}),
+        );
+        add("n_x", "Retries are unlimited.", json!({}));
+        add("n_y", "Retries stop after five tries.", json!({}));
+        g.edges
+            .insert("e_s".into(), edge("supersedes", "n_new", "n_old"));
+        g.edges
+            .insert("e_c".into(), edge("contradicts", "n_x", "n_y"));
+        let no_trust = |_: &str| -> Option<String> { None };
+        let list = items(&g
+```
+
+### Core Architecture Module: `rust/crates/lean-ctx-hive/src/state.rs`
+```
+// SPDX-License-Identifier: Apache-2.0
+//! Durable Hive state on this machine.
+//!
+//! `<config_dir>/hive/` (directory 0700, files 0600, written atomically):
+//! `instance.key`, `kx.key`, `instance.json`, `lease.json` (re-verified on
+//! every load), `keys.json`, `token.json` (never logged).
+//! `<data_dir>/hive/`: `activity.json` and, with later packages, project
+//! maps, cursors and the outbox.
+
+use std::collections::BTreeMap;
+use std::fmt;
+use std::path::{Path, PathBuf};
+
+use serde::de::DeserializeOwned;
+use serde::{Deserialize, Serialize};
+use serde_json::Value;
+
+use super::HiveError;
+
+pub(crate) const INSTANCE_KEY_FILE: &str = "instance.key";
+pub(crate) const KX_KEY_FILE: &str = "kx.key";
+pub(crate) const INSTANCE_FILE: &str = "instance.json";
+pub(crate) const LEASE_FILE: &str = "lease.json";
+pub(crate) const KEYS_FILE: &str = "keys.json";
+pub(crate) const TOKEN_FILE: &str = "token.json";
+pub(crate) const ACTIVITY_FILE: &str = "activity.json";
+/// The person's sharing answer at connect (`super::connect`).
+pub(crate) const SHARING_FILE: &str = "sharing.json";
+/// When the enrolled Hive last answered that it has no match route
+/// (`super::mapping`).
+pub(crate) const MATCH_FILE: &str = "vault-match.json";
+
+/// The enrolled instance.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct InstanceRecord {
+    pub instance_id: String,
+    pub org_id: String,
+    pub org_name: String,
+    pub label: String,
+    /// Origin the instance is enrolled with.
+    pub url: String,
+    pub org_salt_id: String,
+    pub enrolled_at: String,
+    /// Origin of the Hive web app, when enrollment named one (1.3).
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub web_url: Option<String>,
+    /// `personal` | `team`, when enrollment named it (Hive C line).
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub org_kind: Option<String>,
+    /// The company the team belongs to, when enrollment named one.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub company_name: Option<String>,
+}
+
+impl InstanceRecord {
+    /// Where the instance is enrolled, as people read it (owner decision
+    /// 26.10.: Personal, Team, Company): `Company Acme · Team Platform`,
+    /// `Team Platform`, `Personal (Ada)`; an older server's record keeps
+    /// the plain name.
+    pub fn workspace_label(&self) -> String {
+        let name = &self.org_name;
+        match (self.company_name.as_deref(), self.org_kind.as_deref()) {
+            (Some(company), _) => format!("Company {company} · Team {name}"),
+            (None, Some("team")) => format!("Team {name}"),
+            (None, Some("personal")) => format!("Personal ({name})"),
+            _ => name.clone(),
         }
     }
 }
 
-/// What the Engine tells the caller about its presenter entry.
-#[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
-#[serde(deny_unknown_fields)]
-pub struct EnginePresenterGrantV1 {
-    /// Content-free reference of the presenter entry: `presenter:` and 32
-    /// lowercase hex characters. Derived from a stored verifier, never from
-    /// the capability. Safe in records.
-    pub presenter_ref: ProtocolReference,
-    /// End of the capability's lifetime, Unix seconds.
-    pub expires_at_unix: u64,
-    /// The capability, for `issue` only. Host-internal secret.
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub capability: Option<String>,
+/// The last verified lease, as received, plus the service clock offset.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct LeaseRecord {
+    pub envelope: Value,
+    /// `server_time - local time` when the lease arrived, in seconds.
+    pub offset_seconds: i64,
+    pub received_at: String,
 }
 
-impl std::fmt::Debug for EnginePresenterGrantV1 {
-    fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        formatter
-            .debug_struct("EnginePresenterGrantV1")
-            .field("presenter_ref", &self.presenter_ref)
-            .field("expires_at_unix", &self.expires_at_unix)
-            .field(
-                "capability",
-                &self.capability.as_ref().map(|_| "<redacted>"),
-            )
+/// A cached access token. `Debug` never shows the token.
+#[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct TokenRecord {
+    pub access_token: String,
+    /// Unix seconds (service clock).
+    pub expires_at: i64,
+}
+
+impl fmt::Debug for TokenRecord {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_struct("TokenRecord")
+            .field("access_token", &"<redacted>")
+            .field("expires_at", &self.expires_at)
             .finish()
     }
 }
 
-impl EnginePresenterGrantV1 {
-    fn validate(&self) -> Result<(), ValidationError> {
-        let reference_ok = self
-            .presenter_ref
-            .as_str()
-            .strip_prefix(ENGINE_PRESENTER_REF_PREFIX)
-            .is_some_and(|hex| lower_hex(hex, PRESENTER_REF_HEX_CHARS));
-        let capability_ok = self
-            .capability
-            .as_deref()
-            .is_none_or(is_engine_presenter_capability_form);
-        if reference_ok && capability_ok {
-            Ok(())
-        } else {
-            Err(invalid())
-        }
-    }
+/// When Hive last answered, per channel.
+#[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, Deserialize)]
+pub struct ActivityRecord {
+    pub last_seen: Option<String>,
+    #[serde(default)]
+    pub last_success: BTreeMap<String, String>,
+    pub last_error: Option<String>,
+    /// Why Hive last refused this workspace as locked (`trial_ended`,
+    /// `plan_ended`); cleared by the next lease Hive issues.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub locked: Option<String>,
+    /// Why the last lease renewal failed; kept until a renewal succeeds
+    /// (unlike `last_error`, which the next success of any channel clears).
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub renew_error: Option<String>,
 }
 
-/// The unchanged v1 materialization response, with the presenter grant.
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-#[serde(deny_unknown_fields)]
-pub struct EngineContextSourceMaterializationResponseV2 {
-    pub schema_version: u32,
-    pub materialization: EngineContextSourceMaterializationResponseV1,
-    pub presenter: EnginePresenterGrantV1,
+/// Paths of the Hive state; [`HiveStore::open`] for this machine,
+/// [`HiveStore::at`] for tests and embedders.
+#[derive(Debug, Clone)]
+pub struct HiveStore {
+    config: PathBuf,
+    data: PathBuf,
 }
 
-impl EngineContextSourceMaterializationResponseV2 {
-    /// Validate the envelope, the grant's form and the v1 payload. The
-    /// capability never appears inside the materialized content.
-    pub fn validate(&self) -> Result<(), ValidationError> {
-        if self.schema_version != 2 {
-            return Err(invalid());
-        }
-        self.presenter.validate()?;
-        let leaked = self
-            .presenter
-            .capability
-            .as_deref()
-            .is_some_and(|capability| self.materialization.content.contains(capability));
-        if leaked {
-            return Err(invalid());
-        }
-        self.materialization.validate()
-    }
-}
-
-/// Request of `context-presenter-revoke`. The capability to revoke reaches
-/// the Engine through `--presenter-capability-file`, never through this JSON.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
-#[serde(deny_unknown_fields)]
-pub struct EnginePresenterRevocationRequestV1 {
-    pub schema_version: u32,
-}
-
-/// Answer of `context-presenter-revoke`.
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-#[serde(deny_unknown_fields)]
-pub struct EnginePresenterRevocationResponseV1 {
-    pub schema_version: u32,
-    pub presenter_ref: ProtocolReference,
-    pub revoked: bool,
-}
-
-fn invalid() -> ValidationError {
-    ValidationError::new("invalid Engine materialization v2 envelope")
-}
-
-```
-
-### Core Architecture Module: `rust/crates/lean-ctx-protocol/src/engine_context_plan.rs`
-```
-// SPDX-License-Identifier: Apache-2.0
-
-//! Local Engine planning transport. A plan is not admission or execution evidence.
-
-use serde::{Deserialize, Serialize};
-
-use crate::{ContextPlanProjectionV1, SemanticVersion, TaskId, ValidationError};
-
-/// Bound the request before parsing, independently of the selected context budget.
-pub const MAX_ENGINE_CONTEXT_PLAN_REQUEST_BYTES: usize = 64 * 1024;
-pub const MAX_ENGINE_CONTEXT_PLAN_QUERY_BYTES: usize = 16 * 1024;
-pub const MAX_ENGINE_CONTEXT_PLAN_TOKENS: u32 = 1_048_576;
-pub const MAX_ENGINE_CONTEXT_PLAN_CANDIDATES: u16 = 256;
-
-/// Ask the canonical kernel for a reference plan under the host's local policy.
-/// The task ID is correlation only, never an identity or authorization grant.
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-#[serde(deny_unknown_fields)]
-pub struct EngineContextPlanRequestV1 {
-    pub schema_version: u32,
-    pub transport_version: u32,
-    pub engine_interface_version: SemanticVersion,
-    pub task_id: TaskId,
-    pub query: String,
-    pub budget_tokens: u32,
-    pub max_candidates: u16,
-}
-
-impl EngineContextPlanRequestV1 {
-    /// Validate payload bounds; the receiving transport must also admit versions.
-    pub fn validate_payload(&self) -> Result<(), ValidationError> {
-        if self.query.trim().is_empty()
-            || self.query.len() > MAX_ENGINE_CONTEXT_PLAN_QUERY_BYTES
-            || self.query.contains('\0')
-            || !(1..=MAX_ENGINE_CONTEXT_PLAN_TOKENS).contains(&self.budget_tokens)
-            || !(1..=MAX_ENGINE_CONTEXT_PLAN_CANDIDATES).contains(&self.max_candidates)
-        {
-            return Err(ValidationError::new("invalid Engine context-plan bounds"));
-        }
-        Ok(())
-    }
-}
-
-/// Existing canonical projection, not a second planner or a fabricated receipt.
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-#[serde(deny_unknown_fields)]
-pub struct EngineContextPlanResponseV1 {
-    pub schema_version: u32,
-    pub transport_version: u32,
-    pub engine_interface_version: SemanticVersion,
-    pub plan: ContextPlanProjectionV1,
-}
-
-```
-
-### Core Architecture Module: `rust/crates/lean-ctx-protocol/src/engine_context_source_execution.rs`
-```
-// SPDX-License-Identifier: Apache-2.0
-
-//! Typed wire envelope for the operator-owned explicit-source execution flow.
-//!
-//! This module only validates joins among the existing task, execution-plan,
-//! source-plan, invocation, observation, and receipt projections.  It does not
-//! authorize a caller, verify a signer, or create a second receipt authority.
-
-use std::fmt::Write as _;
-
-use serde::{Deserialize, Serialize};
-use sha2::{Digest, Sha256};
-
-use crate::{
-    AcceptanceState, EngineContextSourceMaterializationRequestV1,
-    EngineContextSourcePlanResponseV1, EngineInvocationV1, EngineObservationStatusV1,
-    EngineObservationV1, EnginePolicyDecisionV1, ExecutionPlanV1, ProtocolReference, ReceiptId,
-    SemanticVersion, Sha256Digest, TaskEnvelopeV1, ValidationError, deserialize_schema_version,
-    validate_schema_version,
-};
-
-/// The host stdin request is bounded by the existing one-megabyte source
-/// transport limit before this typed envelope is decoded.
-pub const MAX_ENGINE_SOURCE_EXECUTION_REQUEST_BYTES: usize =
-    crate::MAX_ENGINE_SOURCE_PLAN_REQUEST_BYTES;
-
-/// Native Engine output uses the same one-megabyte bound as materialized input.
-pub const MAX_ENGINE_SOURCE_EXECUTION_VIEW_BYTES: usize =
-    crate::MAX_ENGINE_SOURCE_MATERIALIZED_CONTEXT_BYTES;
-
-const TRANSPORT_VERSION: u32 = 1;
-const ENGINE_INTERFACE_VERSION: &str = "1.0.0";
-const LOCAL_NATIVE_PROVIDER: &str = "local-native";
-const LOCAL_NATIVE_CAPABILITY: &str = "capability://leanctx/context-optimization";
-const LOCAL_NATIVE_CAPABILITY_VERSION: &str = "1.0.0";
-const INPUT_REF_PREFIX: &str = "input:source-materialization-sha256:";
-const SOURCE_PLAN_EVIDENCE_PREFIX: &str = "artifact://execution/evidence/";
-const TASK_REF_PREFIX: &str = "task:sha256:";
-const PLAN_REF_PREFIX: &str = "plan:sha256:";
-
-/// The exact operator request accepted by `context-sources-receipt`.
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-#[serde(deny_unknown_fields)]
-pub struct EngineContextSourceExecutionRequestV1 {
-    #[serde(deserialize_with = "deserialize_schema_version")]
-    pub schema_version: u32,
-    pub transport_version: u32,
-    pub engine_interface_version: SemanticVersion,
-    pub task: TaskEnvelopeV1,
-    pub plan: ExecutionPlanV1,
-    pub materialization: EngineContextSourceMaterializationRequestV1,
-}
-
-impl EngineContextSourceExecutionRequestV1 {
-    /// Validate the request envelope and its cross-object identity joins.
-    pub fn validate(&self) -> Result<(), ValidationError> {
-        validate_header(
-            self.schema_version,
-            self.transport_version,
-            &self.engine_interface_version,
-        )?;
-        self.task.validate()?;
-        self.plan.validate()?;
-        self.materialization.validate_payload()?;
-        validate_header(
-            self.materialization.source_plan.planning.schema_version,
-            self.materialization.source_plan.planning.transport_version,
-            &self
-                .materialization
-                .source_plan
-                .planning
-                .engine_interface_version,
-        )?;
-        if self.task.task_id != self.plan.task_id
-            || self.materialization.source_plan.planning.task_id != self.task.task_id
-        {
-            return Err(ValidationError::new(
-                "source execution request task IDs do not agree",
-            ));
-        }
-        validate_local_native_plan(&self.plan)?;
-        if self.plan.context_plan_id.is_some()
-            || self.task.region_policy_ref.is_some()
-            || self.task.model_policy_ref.is_some()
-        {
-            return Err(ValidationError::new(
-                "source execution request is not a local-native declaration",
-            ));
-        }
-        bounded_wire_size(self, MAX_ENGINE_SOURCE_EXECUTION_REQUEST_BYTES)
-    }
-}
-
-/// The actual output view returned by the native Engine adapter.
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-#[serde(deny_unknown_fields)]
-pub struct EngineContextSourceExecutionViewV1 {
-    pub text: String,
-    pub output_ref: Option<ProtocolReference>,
-    pub output_digest: Option<Sha256Digest>,
-}
-
-impl EngineContextSourceExecutionViewV1 {
-    fn validate_for(&self, observation: &EngineObservationV1) -> Result<(), ValidationError> {
-        if self.text.len() > MAX_ENGINE_SOURCE_EXECUTION_VIEW_BYTES
-            || self.output_ref != observation.output_ref
-            || self.output_digest != observation.output_digest
-        {
-            return Err(ValidationError::new(
-                "source execution view does not bind the Engine observation",
-            ));
-        }
-        let output_digest = self.output_digest.as_ref().ok_or_else(|| {
-            ValidationError::new("source execution view is missing its output digest")
-        })?;
-        let expected_output_ref = format!("output:{}", output_digest.hex());
-        if self.output_ref.as_ref().map(ProtocolReference::as_str)
-            != Some(expected_output_ref.as_str())
-        {
-            return Err(ValidationError::new(
-                "source execution output ref does not bind its digest",
-            ));
-        }
-        let digest = sha256_digest(self.text.as_bytes())?;
-        if self.output_digest.as_ref() != Some(&digest) {
-            return Err(ValidationError::new(
-                "source execution view digest does not bind its text",
-            ));
-        }
-        Ok(())
-    }
-}
-
-/// The canonical receipt identity projection returned by the host authority.
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-#[serde(deny_unknown_fields)]
-pub struct EngineContextSourceCanonicalReceiptV1 {
-    pub receipt_id: ReceiptId,
-    pub receipt_ref: ProtocolReference,
-    pub receipt_digest: Sha256Digest,
-    pub outcome: AcceptanceState,
-}
-
-impl EngineContextSourceCanonicalReceiptV1 {
-    fn validate(&self) -> Result<(), ValidationError> {
-        if self.outcome != AcceptanceState::Unknown
-            || self.receipt_ref.as_str() != format!("id:{}", self.receipt_digest.as_str())
-        {
-            return Err(ValidationError::new(
-                "source execution receipt must be unknown and digest-bound",
-            ));
-        }
-        Ok(())
-    }
-}
-
-/// The actual v1 source execution response; fields intentionally match the
-/// existing JSON object emitted by the CLI host adapter.
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-#[serde(deny_unknown_fields)]
-pub struct EngineContextSourceExecutionResponseV1 {
-    #[serde(deserialize_with = "deserialize_schema_version")]
-    pub schema_version: u32,
-    pub transport_version: u32,
-    pub engine_interface_version: SemanticVersion,
-    pub source_plan: EngineContextSourcePlanResponseV1,
-    pub execution_plan: ExecutionPlanV1,
-    pub view: EngineContextSourceExecutionViewV1,
-    pub invocation: EngineInvocationV1,
-    pub observation: EngineObservationV1,
-    pub canonical_receipt: EngineContextSourceCanonicalReceiptV1,
-}
-
-impl EngineContextSourceExecutionResponseV1 {
-    /// Validate response versions, canonical source evidence, and all joins
-    /// needed to consume this response as one bounded execution result.
-    pub fn validate(&self) -> Result<(), ValidationError> {
-        validate_header(
-            self.schema_version,
-            self.transport_version,
-            &self.engine_interface_version,
-        )?;
-        self.source_plan.validate_binding()?;
-        self.execution_plan.validate()?;
-        self.invocation.validate()?;
-        self.observation.validate_for(&self.invocation)?;
-        self.view.validate_for(&self.observation)?;
-        self.canonical_receipt.validate()?;
-
-        if self.execution_plan.task_id != self.source_plan.result.plan.task_id
-            || self.execution_plan.context_plan_id.as_ref()
-                != Some(&self.source_plan.result.plan.context_plan_id)
-            || self.execution_plan.context_token_limit()
-                != Some(self.source_plan.result.plan.budget_tokens)
-        {
-            return Err(ValidationError::new(
-                "source execution response plan does not bind its source plan",
-            ));
-        }
-        validate_local_native_plan(&self.execution_plan)?;
-        if self.invocation.operation.capability_id.as_str() != LOCAL_NATIVE_CAPABILITY
-            || self.invocation.operation.capability_version.as_str()
-                != LOCAL_NATIVE_CAPABILITY_VERSION
-        {
-            return Err(ValidationError::new(
-                "source execution response is not bound to the local-native capability",
-            ));
-        }
-        if self.invocation.policy_admission.decision != EnginePolicyDecisionV1::Admitted
-            || self.observation.status != EngineObservationStatusV1::Succeeded
-            || self.observation.source_lineage != self.invocation.source_refs
-        {
-            return Err(ValidationError::new(
-                "source execution response is not an admitted complete observation",
-            ));
-        }
-        let source_plan_digest = canonical_sha256(&self.source_plan)?;
-        let execution_plan_digest = canonical_sha256(&self.execution_plan)?;
-        validate_source_references(
-            &self.invocation,
-            &source_plan_digest,
-            &execution_plan_digest,
-        )?;
-        let receipt_link = self.observation.receipt_link.as_ref().ok_or_else(|| {
-            ValidationError::new("source execution response is missing the Engine receipt link")
-        })?;
-        if receipt_link.receipt_ref.as_str()
-            != format!("receipt:{}", receipt_link.receipt_digest.as_str())
-        {
-            return Err(ValidationError::new(
-                "source execution Engine receipt ref does not bind its digest",
-            ));
-        }
-        Ok(())
+impl HiveStore {
+    /// `<config_dir>/hive` and `<data_dir>/hive` of this installation. Opening
+    /// only resolves the paths: a read-only config directory keeps its mode (the
+    /// Hive's own directories are made private when something is written there).
+    pub fn open() -> Result<Self, HiveError> {
+        let config = lean_ctx::core::paths::config_dir_read_only().map_err(HiveError::Local)?;
+        let data = lean_ctx::core::paths::data_dir().map_err(HiveError::Local)?;
+        Ok(Self::at(config.join("hive"), data.join("hive")))
     }
 
-    /// Validate this response against the exact request that admitted it.
-    /// The task evidence is not repeated in the response wire object, so this
-    /// join is explicit for consumers that retain the 
+    /// State rooted at explicit directories.
+    pub fn at(config_dir: impl Into<PathBuf>, data_dir: impl Into<PathBuf>) -> Self {
+        Self {
+            config: config_dir.into(),
+            data: data_dir.into(),
+        }
+    }
+
+    pub fn config_dir(&self) -> &Path {
+        &self.config
+    }
+
+    pub fn data_dir(&self) -> &Path {
+        &self.data
+    }
+
+    pub(crate) fn read_config_bytes(&self, name: &str) -> Result<Option<Vec<u8>>, HiveError> {
+        read_optional(&self.config.join(name))
+    }
+
+    pub(crate) fn write_config_bytes(&self, name: &str, bytes: &[u8]) -> Result<(), HiveError> {
+        write_private(&self.config, name, bytes)
+    }
+
+    pub(crate) fn read_config<T: DeserializeOwned>(
+        &self,
+        name: &str,
+    ) -> Result<Option<T>, HiveError> {
+        read_json(&self.config.join(name))
+    }
+
+    pub(crate) fn write_config<T: Serialize>(
+        &self,
+        name: &str,
+        value: &T,
+    ) -> Result<(), HiveError> {
+        write_private(&self.config, name, &to_json(value)?)
+    }
+
+    pub(crate) fn remove_config(&self, name: &str) -> Result<(), HiveError> {
+        remove_optional(&self.config.join(name))
+    }
+
+    pub fn instance(&self) -> Result<Option<InstanceRecord>, HiveError> {
+        self.read_config(INSTANCE_FILE)
+    }
+
+    pub fn activity(&self) -> ActivityRecord {
+        read_json(&self.data.join(ACTIVITY_FILE))
+            .ok()
+            .flatten()
+            .unwrap_or_default()
+    }
+
+    /// Record a successful exchange on `channel` at `when` (RFC 3339).
+    pub(crate) fn record_success(&self, channel: &str, when: &str) {
+        let mut activity = self.activity();
+        activity.last_seen = Some(when.to_string());
+        activity
+            .last_success
+            .insert(channel.to_string(), when.to_string());
+        activity.last_error = None;
+        // Activity is informational; failing to record it never fails the exchange.
+        if let Ok(bytes) = to_json(&activity) {
+            let _ = write_private(&self.data, ACTIVITY_FILE, &bytes);
+        }
+    }
+
+    /// Record (`Some`) or clear (`None`) a locked workspace (E9).
+    pub fn record_locked(&self, reason: Option<&str>) {
+        let mut activity = self.activity();
+        if activity.locked.as_deref() == reason {
+            return;
+        }
+        activity.locked = reason.map(str::to_string);
+        if let Ok(bytes) = to_json(&activity) {
+            let _ = write_private(&self.data, ACTIVITY_FILE, &bytes);
+        }
+    }
+
+    /// Record (`Some`) or clear (`None`) why the lease renewal failed.
+    pub(crate) fn record_renew_error(&self, message: Option<&str>) {
+        let mut activity = self.activity();
+        if activity.renew_error.as_deref() == message {
+            return;
+        }
+        activity.renew_error = message.map(str::to_string);
+        if let Ok(bytes) = to_json(&activity) {
+            let _ = write_private(&self.data, ACTIVITY_FILE, &bytes);
+        }
+    }
+
+    pub(crate) fn record_error(&self, message: &str) {
+        let mut activity = self.activity();
+        activity.last_error = Some(message.to_string());
+        if let Ok(bytes) = to_json(&activity) {
+            let _ = write_private(&self.data, ACTIVITY_FILE, &bytes);
+        }
+    }
+
+    /// Whether this engine may record anything for Hive now: connected (an
+    /// instance record) and not revoked. Two file checks; the recording
+    /// paths call it on every record (K2 review 2, N1).
+    pub(crate) fn may_record(&self) -> bool {
+        self.config.join(INSTANCE_FILE).is_file()
+            && !self.config.join(super::revoked::REVOKED_FILE).is_file()
+    }
+
+    /// The slower half of the recording check (K2 review 3, NEW-3): the
+    /// `[hive]` switches allow engine metrics and the stored lease has not
+    /// lapsed (read from the local copy; a lease that cannot be read counts
+    /// as lapsed).
+    pub(crate) fn recording_allowed(&self, config: &super::config::HiveConfig) -> bool {
+        config.enabled != Some(false) && config.metrics_upload && self.lease_live()
+    }
+
+    fn lease_live(&self) -> bool {
+        use lean_ctx_protocol::hive::lease::{HiveLeaseV1, LeaseState};
+        let Ok(Some(record)) = self.read_config::<LeaseRecord>(LEASE_FILE) else {
+            return false;
+        };
+        let Ok(lease) = serde_json::from_value::<HiveLeaseV1>(record.envelope["lease"].clone())
+        else {
+            return false;
+        };
+        let service_now =
+            (chrono::Utc::now() + chrono::Duration::seconds(record.offset_seconds)).fixed_offset();
+        matches!(
+            lease.state_at(service_now),
+            Ok(LeaseState::Valid | LeaseState::Grace)
+        )
+    }
+
+    /// Remove credentials, lease and keys; with `keep_local` the data
+    /// directory (pulled knowledge, outbox, activity) stays, but nothing
+    /// keeps recording for Hive (metrics, signals, 
 ```
 
 
@@ -2047,16 +2490,11 @@ impl EngineContextSourceExecutionResponseV1 {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #2162** (2026-11-02): **bug: Not able to install new realease due to signature verification problems**
-  *Symptoms*: **lean-ctx version:** (run `lean-ctx --version`) 3.11.0  **OS:** (macOS / Linux / Windows) linux  **AI tool:** (Cursor / Claude Code / Copilot / Crush / other) -  **What happened:**  <img width="893" height="283" alt="Image" src="https://github.com/user-attachments/assets/4714112d-1554-42dc-aded-814040918bae" />  **What you expected:**  working   **Steps to reproduce:** 1. lean-ctx update  **Relevant output:** ``` (paste terminal output here) ``` 
-  **Post-Mortem & Fix Analysis**:
-  > Hello, yes this is a known problem with your current version 3.11. Please check https://github.com/yvgude/lean-ctx/issues/2071
-  > Closing as a duplicate of #2071. The 3.11.0 updater needs the external `cosign` tool. Reinstall once through the channel you used (for example `curl -fsSL https://leanctx.com/install.sh | sh`); from then on `lean-ctx update` works without cosign.
+- **Issue #2178** (2026-11-04): **Windows (MSVC build): lean-ctx.exe exits silently with 0xC0000135 when the VC++ runtime (VCRUNTIME140.dll) is missing**
+  *Symptoms*: **lean-ctx version:** v3.12.0 (official `x86_64-pc-windows-msvc` release asset) **OS:** Windows (reproduced on Windows Server 2025, build 26100, clean install)  **What happens**  On a Windows machine without the Microsoft Visual C++ Redistributable, `lean-ctx.exe` from the MSVC release asset exits immediately without any output. The exit status is `0xC0000135` (`STATUS_DLL_NOT_FOUND`): the binary links the C runtime dynamically and needs `VCRUNTIME140.dll`, which a clean Windows install (notably Windows Server, minimal/fresh Windows 11 images, CI images without VS) does not ship.  There is no error message, so the user just sees "nothing happens".  **Steps to reproduce**  1. Fresh Windows Server 2025 (or any Windows without the VC++ 2015–2022 Redistributable). 2. Download and verify `lean-ctx` v3.12.0 `x86_64-pc-windows-msvc` from the release. 3. Run `lean-ctx --version` → no output, `$LASTEXITCODE` = `-1073741515` (`0xC0000135`). 4. Install the VC++ Redistributable (x64) → the same binary works.  **Expected**  The binary runs on a stock Windows install, or the installer/docs state the dependency and install it.  **Possible fixes**  - Link the C runtime statically for the MSVC target (`-C target-feature=+crt-static`, e.g. via `[target.x86_64-pc-windows-msvc] rustflags` in `rust/.cargo/config.toml` or the release workflow). Needs a check of the CUDA variant (`x86_64-pc-windows-msvc-cuda`), whose CUDA libraries may require the dynamic CRT. - Or: `install.ps1` detects the missin
 
-- **Issue #2148** (2026-10-26): **bug: lean-ctx root bleeds accross sessions**
-  *Symptoms*: **lean-ctx version:** (run `lean-ctx --version`) 3.11.0  **OS:** (macOS / Linux / Windows) linux  **AI tool:** (Cursor / Claude Code / Copilot / Crush / other)  **What happened:**  In my project toktok, with a brand new conversation, I had this :  <img width="1882" height="185" alt="Image" src="https://github.com/user-attachments/assets/606ea904-4710-496d-a84d-328c9bf3a778" />  <img width="1882" height="298" alt="Image" src="https://github.com/user-attachments/assets/83e2a718-4c74-4c93-a3a4-58e89ce2c811" />  The root was not in the right folder.  **What you expected:**  Root should always follow Claude Code's own root  
-  **Post-Mortem & Fix Analysis**:
-  > checking!
+- **Issue #2177** (2026-11-02): **bug: proxy restart locks running Claude Code conversations out (sealed_origin_unknown / sealed_authority_lapsed)**
+  *Symptoms*: ## Symptom  After a proxy restart (update, `dev-install`), every already-running Claude Code session fails on its next turn:  ``` API Error: 400 request withheld by the context gateway (egress.opaque_provider_material, egress.sealed_origin_unknown, coverage.uninspected, egress.sealed_authority_lapsed) ```  Re-login and `gateway allow-once` do not help. Observed 2026-11-02 after the 14:32 binary swap: one receipt showed 90 provider blocks with unknown origin plus 1 with lapsed authority.  ## Root cause  1. **Sealed-origin register is in-memory only.** The proxy forgets which destination produced each opaque provider item (thinking signatures, encrypted content) on restart, so a resumed history is treated as unknown material whenever sealed-provenance checks are active. 2. **Stored proof bound to a short-lived request authority.** A remembered origin depends on a per-request grant; once it expires, the item reports `egress.sealed_authority_lapsed` even though its origin is known. 3. **Trigger (fixed):** an empty, valid Hive policy floor activated the strict checks. Fixed on branch `fix/empty-hive-floor` (5e9f0be191). Any real Hive rule, governed mode or local policy still hits 1+2.  ## Fix required  - Persist sealed-origin proofs across restarts: content-addressed (digest of the item), bound to destination/provider, integrity-protected (MAC with the local instance key), bounded store with eviction. No raw provider material on disk beyond what is needed. - Separate "origin prove
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2073,1235 +2511,1127 @@ impl EngineContextSourceExecutionResponseV1 {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3550b694` (2026-11-01)
-**Commit Message**: fix: 3.12.1 shell security, knowledge journal, Hive-ready engine, cleanup waves 3–4 (#2168)
+### Incident Patch 1: `28d7f7cc` (2026-11-04)
+**Commit Message**: Merge pull request #2188 from yvgude/fix/telemetry-test-guard
 
-* fix: 3.12.1 shell security, knowledge journal, Hive-ready engine, cleanup waves 3–4
+fix(telemetry): test processes of every LeanCTX crate stay off production endpoints
 
-Public export of private source ce4df17c70becdabb06095ff518ab827162a7850.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* test: make two shell-gate tests hold on Windows
-
-The run-directory side-door test built its relative path to home with the
-drive prefix still in it; the vibe heredoc test read the allowlist without
-the test env lock and raced tests that narrow it.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
----------
-
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/ci.yml` (modified, +2/-0)
+**File**: `CHANGELOG.md` (modified, +10/-0)
 ```diff
-@@ -474,6 +474,8 @@ jobs:
-         run: node packages/lean-ctx-bin/postinstall.cockpit.test.cjs
-       - name: Test fail-closed checksum verification
-         run: node packages/lean-ctx-bin/postinstall.checksum.test.cjs
-+      - name: Test preinstall stops only the installed daemon
-+        run: node packages/lean-ctx-bin/preinstall.test.cjs
+@@ -6,6 +6,16 @@ Current positioning: [LeanCTX Engine — Context Gateway for AI Systems](docs/PO
  
-   cookbook:
-     name: Cookbook (Node)
-```
-
-**File**: `.github/workflows/publish-clients.yml` (modified, +4/-30)
-```diff
-@@ -3,16 +3,17 @@ name: Historical /v1 client publishing
- # This workflow preserves publication mechanics for archived thin-client
- # prototypes. It is not an SDK release path at all: the one LeanCTX SDK is
- # `thinkery-leanctx-sdk`, developed and released in Thinkery-AG/leanctx-sdk.
--# See docs/reference/sdk-surface.md.
-+# See docs/reference/sdk-surface.md. The TypeScript client in cookbook/sdk is
-+# a private cookbook example (`private: true`) and is never published here.
+ ## [Unreleased]
  
- on:
-   workflow_dispatch:
-     inputs:
-       targets:
-         description: "Which registries to publish to"
-         type: choice
--        default: npm
--        options: [all, npm, pypi, crates]
-+        default: crates
-+        options: [all, pypi, crates]
-   push:
-     tags:
-       - 'client-v[0-9]*'
-@@ -44,33 +45,6 @@ jobs:
-           path: ${{ runner.temp }}/ip-provenance-publish-clients-report.json
-           if-no-files-found: ignore
- 
--  publish-npm:
--    name: Historical TypeScript client (disabled)
--    needs: ip-provenance-gate
--    if: false
--    runs-on: ubuntu-latest
--    steps:
--      - uses: actions/checkout@v4 # v4
--        with:
--          persist-credentials: false
--      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
--        with:
--          node-version: 22
--          registry-url: https://registry.npmjs.org
--      - name: Build, test, publish
--        working-directory: cookbook
--        run: |
--          set -euo pipefail
--          npm ci
--          npm --workspace lean-ctx-client run build
--          npm --workspace lean-ctx-client test
--          PKG_VERSION="$(node -p "require('./sdk/package.json').version")"
--          if npm view "lean-ctx-client@${PKG_VERSION}" version >/dev/null 2>&1; then
--            echo "npm already has lean-ctx-client@${PKG_VERSION} — skipping publish."
--            exit 0
--          fi
--          npm publish --workspace lean-ctx-client --access public
--
-   publish-pypi:
-     name: Historical Python client (disabled)
-     # clients/python is archived; canonical lean-ctx-python publication is
-```
-
-**File**: `AGENTS.md` (modified, +52/-10)
-```diff
-@@ -95,15 +95,44 @@ The engine crate `lean_ctx` is large; every compile with codegen costs
- 8–17 GB RAM and queues behind the machine's compile gate. With many agents
- per machine, memory runs out. Therefore:
- 
--- **Workers** iterate with `cargo check --locked --all-targets` only (type
--  checks code and tests, no codegen). A worker runs affected tests at most once
--  per task, filtered, and only when the task needs behaviour evidence.
-+- **Workers** iterate with
-+  `cargo check --locked --all-targets --config build.incremental=true` only
-+  (type checks code and tests, no codegen). Incremental is off in the global
-+  Cargo config to save disk, but for this edit loop it pays: measured
-+  2026-10-31 after a one-line edit, `--all-targets` 95 s → 18 s and plain
-+  `check` 40 s → 11 s; the first incremental check of a worktree builds the
-+  cache (minutes) and keeps about 5.5 GB under its target dir. A worker runs
-+  affected tests at most once per task, filtered, and only when the task needs
-+  behaviour evidence.
- - **Workers do not run** `cargo fast`, `cargo build`, `--release`,
-   `dev-install`/`make dev`, or the full `cargo test --lib`.
- - **The integrator** (lead) runs `cargo fast`, `dev-install` and the full gates
-   once per integrated batch, on one machine at a time.
- - A worker that needs a runnable binary asks the lead instead of building one.
- 
-+### Split before you grow (owner 2026-11-01)
++### Fixed
 +
-+The engine crate `lean_ctx` is being split into workspace crates; Rust stays
-+the language. Every change and every new feature is checked for that split
-+before it is written, and the check is part of the handover:
++- **Test processes of every LeanCTX crate stay off production endpoints.** The guard that
++  sends test traffic to a loopback sink recognised only the Engine's own unit tests and
++  processes cargo launched for the Engine or `lean-ctx` package. Since the crate split, the
++  unit tests of the server, Hive, hooks and proxy crates, and the binaries they spawn, sent
++  telemetry to production, each as a new installation. Any process of a `lean-ctx…` or
++  `leanctx…` package, and every sandboxed unit-test harness, now gets the loopback sink; an
++  installed binary keeps its configured endpoint.
 +
-+- **New code goes into a crate, not into the monolith,** whenever it has a
-+  clear boundary: its own crate under `rust/crates/`, or the crate of the area
-+  it belongs to once that exists. New code in `rust/src/` needs a reason in the
-+  handover (what it needs from the monolith, and why it cannot depend on a
-+  crate instead).
-+- **Changes to existing code do not deepen the coupling:** no new
-+  `crate::` edges from a module that is already split out or scheduled for a
-+  split; shared types move down into a lower crate rather than up.
-+- **A new heavy dependency** (a parser, ML runtime, HTTP stack, database
-+  client) lands behind a feature in its own crate, never directly in
-+  `lean_ctx`.
-+- **The handover names the decision:** "crate: <name>" or "monolith: <reason>".
-+  The integrator rejects a batch without it.
-+- Another language only where the component does not need Rust and an ADR
-+  shows the benefit (the plan's §10 gates); signed, crypto and policy logic is
-+  never implemented twice.
-+
- Published artifacts and release rehearsals keep the production `--release`
- profile. Do not use `cargo clean` in the normal edit/build loop. Use one shared
- target directory and the configured job budget across worktrees.
-@@ -155,15 +184,27 @@ Step 2 (`ctx_session` progress) stays, since it is per-agent session state.
- 
- Working the space economically:
- - read `emspace schema` at most once per session;
--- read pages with `emspace page show --body <slug>…` (several slugs in one
--  call) unless the source/notes header is the point;
-+- read the part of a page you need: `ctx_provider(action="query",
-+  provider="emspace", resource="page", id="<slug>", mode="text",
-+  query="outline")`, then the one section (`query="<section>"`); the whole
-+  body is `emspace page show --body <slug>…` (several slugs in one call);
- - before documenting, check the checkout is the base the space documents, and
-   rescan only what `emspace coverage` and `emspace status` (stale) name;
- - find a page for a file through the `ctx_read` hint rather than a separate
-   `emspace search` → `page show` chain;
- - check open sessions through `ctx_agent read` instead of a separate
-   `emspace orient` when only the in-flight work matters.
- 
-+Keeping knowledge current without rewriting it:
-+- `ctx_knowledge(action="changes", query="<lsn>")` lists what changed since
-+  an LSN (every save is journaled); `query="session"` lists what this session
-+  wrote, and a `ctx_session` handoff names that changeset;
-+- a fact marked *to verify* because its anchored code changed but the fact
-+  still holds: `ctx_knowledge(action="repin", category=…, key=…)` re-anchors
-+  it to the code as it is, without retyping its text;
-+- `ctx_knowledge(action="coverage")` lists the most edited files (90 days)
-+  no fact is anchored to: what to record next.
-+
- After 30+ tool calls without documentation:
- - lean-ctx will prompt with `[CHECKPOINT: please document current progress]`
- - Respond by calling `ctx_session(action="task")` with current status
-@@ -182,12 +223,13 @@ and `ctx_read` shows cross-source hints (e.g. "Issue #42 references this file");
- turn them off with `output_hints.cross_source_hint = false`.
- 
- **Emspace:** a linked checkout needs no setup. `ctx_read` indexes the space in
--the background (first read, then every ten minutes) and, with
-+the background (
-```
-
-**File**: `CHANGELOG.md` (modified, +495/-6)
-```diff
-@@ -8,6 +8,37 @@ Current positioning: [LeanCTX Engine — Context Gateway for AI Systems](docs/PO
+ ## [3.12.1] — 2026-11-03
  
  ### Security
- 
-+- **The skill's `curl | bash` installer verifies the binary.** It installed whatever archive
-+  it downloaded; like `install.sh` it now checks it against the release's `SHA256SUMS` and
-+  refuses to install without a hash tool, without the sums file, without exactly one entry for
-+  the archive or on a different digest.
-+- **A Cockpit bundle with two checksum entries is refused.** `install.sh`, `install.ps1` and the
-+  npm postinstall took the first matching line of `COCKPIT_SHA256SUMS`; they now require exactly
-+  one entry for the bundle, as for the engine archive.
-+- **`npm install lean-ctx-bin@X` installs engine X.** The postinstall downloaded whatever
-+  release was newest on GitHub; it now fetches the release that matches the package's own
-+  version and refuses another.
-+- **The Hermes plugin names its own client.** Its `requirements.txt` asked for `leanctx`, which
-+  on PyPI is an unrelated third-party package; it now pins `lean-ctx-client==0.1.0`, the final
-+  release of the retired HTTP `/v1` client the plugin imports as `leanctx`.
-+
-+- **Hive connect names no project before a yes and lists exactly what it shares.** Against a
-+  Hive with the C0 2.1 device setup, `hive connect` sent the folder name and git remote to
-+  Hive before anyone agreed, and the sharing question named daily usage totals and context
-+  receipts, which this version never sends, but not fact states, the automatic 1.x merges
-+  and objections, friction counts or task traffic. It now asks before the approval and sends
-+  the project only after a yes (or `--yes`); the question lists exactly what leaves the
-+  machine, the device setup announces only `knowledge` and `bus`, and a no also keeps fact
-+  states and the automatic 1.x merges and objections on the machine.
-+- **Hive screening fails closed on a broken rule.** A forbidden pattern
-+  (`[egress] forbidden_patterns` or a Hive filter pack) that did not compile was dropped
-+  silently, so what it should have blocked went to Hive. Such a rule now pauses every Hive
-+  content channel until it is fixed, and the Hive status names it; the policy pull that may
-+  bring a fixed rule goes on. The paths and symbol names of the code graph and the new place
-+  of a moved fact anchor now pass the same screen.
-+- **Hive fencing tokens are no longer printed.** `ctx_agent lease_acquire` answered
-+  `scope=hive fencing_token=…`, and the debug output of a task claim carried its lease id and
-+  token. Both stay in their 0600 files; the answer says `scope=hive`.
- - **A dashboard request that names a project is answered for that project or refused.**
-   The dashboard accepted an `X-LeanCTX-Project` header on routes outside its project list
-   (`/api/tree`, `/api/architecture`, `/api/compression-demo`, `/api/tools-health` and others)
-@@ -34,6 +65,85 @@ Current positioning: [LeanCTX Engine — Context Gateway for AI Systems](docs/PO
-   certificates or a `.npmrc` are now denied under the default role; allow them through the
-   role. Not covered: a directory-wide search, shell reads (`cat .env`), Windsurf and
-   Antigravity; see Security & Governance §4.0.
-+- **The shell hooks check every command they let run without the `lean-ctx -c` wrap.**
-+  The PreToolUse hooks enforce the shell allowlist by wrapping a violating command in
-+  `lean-ctx -c`. Several kinds of command were neither wrapped nor checked and ran natively
-+  without any allowlist check:
-+  - a command with a heredoc (`<<`), which cannot be wrapped: inline code ran that
-+    `python -c` is blocked for (since v3.10.0);
-+  - a command whose program is lean-ctx, which is never wrapped again. The hooks recognised
-+    it by its first word alone, so a compound behind a `lean-ctx …` prefix ran unchecked
-+    (since v3.10.0), and `lean-ctx allow …`, `lean-ctx yolo` or
-+    `lean-ctx config set shell_security …` could loosen the agent's own policy from the
-+    host's shell, which `ctx_shell` refuses (since v3.11.1);
-+  - a `&&`/`;` chain with a file read in it, whose read was rewritten to `lean-ctx read` in
-+    place while the other commands of the chain ran natively (since v3.10.0);
-+  - every Bash command on Mistral Vibe (`hook vibe-pre-tool`, since v3.10.0), and on Codex
-+    (`hook codex-pretooluse`) and `hook copilot` every command the hook did not rewrite to a
-+    read-only one (since the hooks enforce the allowlist, v3.10.0);
-+  - PowerShell, and any command whose wrap the host's permissions did not let through, in
-+    the governor's `hook rewrite-enforce` (new in 3.12).
-+
-+  All of these are now checked in the hook and denied when they violate the allowlist, in
-+  `enforce` mode; `warn` logs and `off` lets them run, as configured. lean-ctx is recognised
-+  by its program word, with or without a path, quotes, `VAR=value` or `env`; `lean-ctx-x` is
-+  another program. A plain `lean-ctx …` call needs no allowlist entry; one wi
 ```
 
-**File**: `PUBLISH_MANIFEST.toml` (modified, +36/-2)
+**File**: `PUBLIC-EXPORT-RECEIPT.json` (modified, +17/-17)
 ```diff
-@@ -265,6 +265,10 @@ new_paths = [
-   # output. Own code, Apache-2.0 SPDX-headed.
-   "rust/src/core/patterns/emspace.rs",
-   "rust/src/core/providers/emspace.rs",
-+  # Knowledge change journal and the ctx_knowledge actions on it (changes,
-+  # repin, coverage; owner go 2026-10-31). Own code, Apache-2.0 SPDX-headed.
-+  "rust/src/core/knowledge/journal.rs",
-+  "rust/src/tools/ctx_knowledge/changes.rs",
-   "rust/src/core/root_selection.rs",
-   "rust/src/core/audit_trail/checkpoint.rs",
-   "rust/src/core/workspace_authority.rs",
-@@ -373,6 +377,7 @@ new_paths = [
-   "rust/src/cli/hive_cmd.rs",
-   "rust/src/cli/gotchas_cmd.rs",
-   "rust/src/core/hive/auth.rs",
-+  "rust/src/core/hive/background.rs",
-   "rust/src/core/hive/bus/control.rs",
-   "rust/src/core/hive/bus/frames.rs",
-   "rust/src/core/hive/bus/handoff.rs",
-@@ -396,7 +401,6 @@ new_paths = [
-   "rust/src/core/hive/metrics/collect.rs",
-   "rust/src/core/hive/metrics/local_state.rs",
-   "rust/src/core/hive/metrics/mod.rs",
--  "rust/src/core/hive/metrics/payload.rs",
-   "rust/src/core/hive/metrics/upload.rs",
-   "rust/src/core/hive/mod.rs",
-   "rust/src/core/hive/outbox.rs",
-@@ -1340,7 +1344,6 @@ new_paths = [
-   "rust/src/core/hive/mapping.rs",
-   "rust/src/core/hive/metrics/hive_use.rs",
-   "rust/src/core/hive/metrics/hive_use_tests.rs",
--  "rust/src/core/hive/metrics/k2_review_tests.rs",
-   "rust/src/core/hive/metrics_v2/buffer.rs",
-   "rust/src/core/hive/metrics_v2/collect.rs",
-   "rust/src/core/hive/metrics_v2/gate.rs",
-@@ -1381,6 +1384,7 @@ new_paths = [
-   "rust/src/core/hive/sync/records.rs",
-   "rust/src/core/hive/sync/records_tests.rs",
-   "rust/src/core/hive/sync/writer.rs",
-+  "rust/src/core/hive/tasks/cache.rs",
-   "rust/src/core/hive/tasks/claims.rs",
-   "rust/src/core/hive/tasks/client.rs",
-   "rust/src/core/hive/tasks/keeper.rs",
-@@ -1422,6 +1426,8 @@ new_paths = [
-   "rust/src/server/shell_approval.rs",
-   "rust/src/server/shell_approval_tests.rs",
-   "rust/src/tools/ctx_agent_control.rs",
-+  "rust/src/tools/ctx_agent_lease.rs",
-+  "rust/src/hooks/agents/claude_tests.rs",
-   "rust/src/tools/registered/ctx_tasks.rs",
-   "rust/tests/agent_wait_roundtrip.rs",
-   "rust/tests/suite/hive_fake_wire_conformance.rs",
-@@ -1457,10 +1463,22 @@ new_paths = [
-   "rust/src/tools/registered/ctx_read_symbol.rs",
-   # 3.12.1 optplan R4: template collapse of repetitive output (lean-ctx-af).
-   "rust/src/core/patterns/template_collapse.rs",
-+  # 3.12.1 shell-security policy resolved from the real user config (lean-ctx-af).
-+  "rust/src/core/config/shell_policy.rs",
-+  "rust/src/core/shell_allowlist/enforcement_patterns.rs",
-+  "rust/src/core/shell_allowlist/self_config_tests.rs",
-+  # 3.12.1 outline token budget for ctx_read (lean-ctx-af, read-shell-volume).
-+  "rust/src/tools/ctx_read/outline_budget.rs",
-   # 3.12.1: the shared `cargo fast` alias (only the alias, no [build] job budget),
-   # so fresh clones can run `make build`; the root .cargo/config.toml stays private.
-   "rust/.cargo/config.toml",
-   "tests/build/test_cargo_alias.py",
-+  # 3.12.1 wave 3 (cli): npm preinstall stops only the installed daemon.
-+  "packages/lean-ctx-bin/preinstall.test.cjs",
-+  # the skill's curl | bash installer: exit status, temp dir, checksum.
-+  "tests/build/test_skill_install_sh.py",
-+  # the AUR recipe's version coupling.
-+  "scripts/tests/test_check_package_versions.py",
-   # 3.12.1 cleanup: the Task Spine v1 cohort the V3 receipt migration tests read,
-   # moved from _archive/benchmarks/efficiency/task-spine-v1/ (same synthetic files).
-   "rust/tests/fixtures/v3/task-spine-v1/README.md",
-@@ -2556,6 +2574,9 @@ removed_paths = [
-   # swarm, conductor, compute, sync/swarm, ctx_compute, ctx_tasks scope=swarm,
-   # hive swarm|compute CLI, scripts/e2e/swarm-two-engines.sh). None of them is
-   # in `baseline_commit`, so they left `new_paths` instead of being listed here.
-+  # Hive 1.x retired, owner decision 2026-10-31: the daily `POST /v1/metrics`
-+  # builder (core/hive/metrics/payload.rs, metrics/k2_review_tests.rs) left
-+  # `new_paths` the same way.
-   # Research/eval tooling removed from the engine, owner decision 2026-10-30.
-   ".github/workflows/benchmark-study.yml",
-   "rust/eval/accuracy-suite.ndjson",
-@@ -2684,6 +2705,7 @@ removed_paths = [
-   "rust/crates/lean-ctx-ocla/src/observation.rs",
-   "rust/src/cli/dispatch/analytics/provider_run.rs",
-   "rust/src/core/a2a/compress.rs",
-+  "rust/src/core/a2a/telemetry.rs",
-   "rust/src/core/code_health/coupling.rs",
-   "rust/src/core/cognitive/chunker.rs",
-   "rust/src/core/cognitive/mod.rs",
-@@ -2724,6 +2746,18 @@ removed_paths = [
-   "rust/src/proxy/web_app/normalize.rs",
-   "rust/src/proxy/web_app/proof_tests.rs",
-   "rust/tests/multi_read_cap_scenarios.rs",
-+  # Adaptive/memory trim, measured then trimmed (CHANGELOG [Unreleased] Removed):
-+  # learning stores no default read consults.
-+  "rust/src/core/adaptive_mode_policy.rs",
-+  "rust/src/core/bandit.rs",
-+  "rust/src/core/feedback.rs",
-+  "rust/src/core/mode_predictor
-```
-
-**File**: `aur/lean-ctx/PKGBUILD` (modified, +2/-2)
-```diff
-@@ -1,6 +1,6 @@
- # Maintainer: Yves Gugger <yves@pounce.ch>
- pkgname=lean-ctx
--pkgver=3.10.5
-+pkgver=3.12.0
- pkgrel=1
- pkgdesc="LeanCTX Engine — open-source Context Gateway for AI Systems. Context selection, supported controls, and evidence through local integration paths."
- arch=('x86_64' 'aarch64')
-@@ -12,7 +12,7 @@ makedepends=('cargo' 'gcc')
- # resolver finds it — no manual install, no runtime download.
- depends=('gcc-libs' 'onnxruntime')
- source=("$pkgname-$pkgver.tar.gz::https://github.com/yvgude/lean-ctx/releases/download/v$pkgver/lean-ctx-$pkgver-source.tar.gz")
--sha256sums=('3235fddead565b17be0a720779cb3ca3e73a10aa096acdb233e0348ff63bad9a')
-+sha256sums=('a1009099b7933ddb8948d6511a38c4f9addfcfbc60c0a54161adea174e32bfb5')
- 
- prepare() {
-   cd "$pkgname-$pkgver/rust"
-```
-
-**File**: `clients/rust/lean-ctx-client/src/client.rs` (modified, +51/-3)
-```diff
-@@ -33,7 +33,9 @@ pub struct EventQuery {
- /// [`LeanCtxClient::builder`] (bearer token, default workspace/channel,
- /// timeout). All methods are blocking; wrap calls in your own thread pool or
- /// `spawn_blocking` when used from async code.
--#[derive(Debug, Clone)]
-+///
-+/// `Debug` never prints the bearer token: a set token shows as `"<redacted>"`.
-+#[derive(Clone)]
- pub struct LeanCtxClient {
-     base_url: String,
-     bearer_token: Option<String>,
-@@ -42,6 +44,23 @@ pub struct LeanCtxClient {
-     agent: ureq::Agent,
+@@ -331,11 +331,11 @@
+    "size": 1033
+   },
+   {
+-   "blob": "2281734f7c2e3cd1ff31aa9529355ff055e1b641",
++   "blob": "c9fdc270931bba41b4f402eeaa7b475a6af46e95",
+    "mode": "100644",
+    "path": "CHANGELOG.md",
+-   "sha256": "f1c611f875fc949bf1dc19620911d0ba9ae44386f991c1be9ffd74c539dfd465",
+-   "size": 1215768
++   "sha256": "833539f2b2c576a24b204486f654759223865e3f51bd6c6d55f3905b76178268",
++   "size": 1216375
+   },
+   {
+    "blob": "77a7c7a520af8fc8b4df372eb5bd5fddcefbfecf",
+@@ -13071,11 +13071,11 @@
+    "size": 1929
+   },
+   {
+-   "blob": "9ec2c522d2a2648186e876e8aa5f910d19cf2d55",
++   "blob": "6ba5abcbb287e2c73aae7fa1ca543b688fdf9689",
+    "mode": "100644",
+    "path": "rust/crates/lean-ctx-server/src/lib.rs",
+-   "sha256": "171d382cd98ea7e542e744c91724a95868d23ad69945dece0f4260d2bb2cb278",
+-   "size": 956
++   "sha256": "3186da74173f5205d93fbd775ea061cada91037aab00acf033cb88ef9550dba1",
++   "size": 1588
+   },
+   {
+    "blob": "1a186eea8b60ab587ee6d38452173214cf3cc5af",
+@@ -16697,11 +16697,11 @@
+    "size": 8373
+   },
+   {
+-   "blob": "209ae5ba9167b4924c07322dc75cf003b126f35d",
++   "blob": "8821266d99d8d0a535c83c6a0df34f86417b1fad",
+    "mode": "100644",
+    "path": "rust/crates/lean-ctx/src/cli/telemetry_cmd.rs",
+-   "sha256": "de22223b8be3f48d153d7e31f398834e3ba8eb9ba90b1b96e49250cbeaf98012",
+-   "size": 17840
++   "sha256": "6c56300933a2a8bd0bc85281b3801df2d18c9900120e5a58ec46f5f7d3987f3d",
++   "size": 17827
+   },
+   {
+    "blob": "f51edcff400ab1c8c336aced0a85891c27e045a6",
+@@ -28891,18 +28891,18 @@
+    "size": 50720
+   },
+   {
+-   "blob": "a497399448ce1717046a6e53d34978a8fe118bac",
++   "blob": "c3354bed47c90a9375a6fa03c9f8040b93676495",
+    "mode": "100644",
+    "path": "rust/src/telemetry_transport.rs",
+-   "sha256": "1fdf9d081207ae2d7b54262a03c4c0dcd8500dcd215ae53efe16b5d175cefc7e",
+-   "size": 7331
++   "sha256": "2d11a8ebc66df82619ea5fe5d7de1397f8c039e9fb852021518ad835b6265481",
++   "size": 7914
+   },
+   {
+-   "blob": "93921968d2fb56e00939a41e8ecc127a9e36b575",
++   "blob": "6b4bc2f7b0489efd73ba7a866b3b711652bf0bc9",
+    "mode": "100644",
+    "path": "rust/src/telemetry_transport_tests.rs",
+-   "sha256": "6b3390b78cfb16ad390a9af16ef2304c6a2cc393620efc38df74553ce54775d1",
+-   "size": 11042
++   "sha256": "98b255e9d5895475e6b3e1dd0adab518ca8fef66b43fe81e8fb8792c53d56876",
++   "size": 12776
+   },
+   {
+    "blob": "efd3007a6c3a1caa66461170c3e810b4aee15ffc",
+@@ -32921,7 +32921,7 @@
+  ],
+  "manifest_sha256": "e9e923ead0330e9ebe42cf73ab0f6f9bbbed81099953cdf17e8ce112ef426083",
+  "schema": 1,
+- "source_commit": "577582b13c4bb9f56e6a9223f227b9138c4c6565",
++ "source_commit": "e87e97f470024eeb93b72fae60b8c57dacd9a83c",
+  "tool_sha256": "86ea08dc440cce975409b9f805c74bf5beb402284f3200800381def3714c8f3c",
+- "tree_sha256": "c1ead656164eedcbdbae34b3483c4408ac3bd46348bcd674ea1dc9dff7384f5c"
++ "tree_sha256": "e260cee0d75851dd58e0598301a625e3a9d91afbe9af77ab49443b56e48197e3"
  }
+```
+
+**File**: `rust/crates/lean-ctx-server/src/lib.rs` (modified, +17/-0)
+```diff
+@@ -12,6 +12,23 @@ pub mod engine;
+ pub mod server;
+ pub mod tools;
  
-+impl std::fmt::Debug for LeanCtxClient {
-+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-+        f.debug_struct("LeanCtxClient")
-+            .field("base_url", &self.base_url)
-+            .field("bearer_token", &redacted(self.bearer_token.as_ref()))
-+            .field("workspace_id", &self.workspace_id)
-+            .field("channel_id", &self.channel_id)
-+            .field("agent", &self.agent)
-+            .finish()
++/// The Engine's production guard must hold for this crate's unit tests too:
++/// they see the Engine without `cfg(test)` and run as package
++/// `lean-ctx-server`, and once sent telemetry to production from CI.
++#[cfg(test)]
++mod production_endpoint_tests {
++    #[test]
++    fn unit_tests_of_this_crate_are_refused_a_remote_endpoint() {
++        assert!(lean_ctx::core::data_dir::sandboxed());
++        let _url =
++            lean_ctx::test_env::EnvVarGuard::set("LEAN_CTX_API_URL", "https://api.leanctx.com");
++        assert_eq!(
++            lean_ctx::telemetry_transport::api_url(),
++            "http://127.0.0.1:9"
++        );
 +    }
 +}
 +
-+/// What `Debug` shows for a secret: whether it is set, never its value.
-+fn redacted(secret: Option<&String>) -> Option<&'static str> {
-+    secret.map(|_| "<redacted>")
+ /// The containment helper test of this crate's unit-test harness, at the path
+ /// the Engine starts its helpers and guards on (`shell::containment::tests`).
+ #[cfg(all(test, unix))]
+```
+
+**File**: `rust/crates/lean-ctx/src/cli/telemetry_cmd.rs` (modified, +2/-5)
+```diff
+@@ -224,7 +224,8 @@ fn show_payload() {
+     println!();
+     println!(
+         "\x1b[2mEndpoint: POST {}/api/telemetry/v2/batch\x1b[0m",
+-        api_url()
++        // The endpoint a send would actually use (loopback in test processes).
++        lean_ctx::telemetry_transport::api_url()
+     );
+     println!(
+         "\x1b[2mFrequency: cumulative daily totals, up to {} times per UTC day\x1b[0m",
+@@ -233,10 +234,6 @@ fn show_payload() {
+     println!("\x1b[2mAuthentication: none\x1b[0m");
+ }
+ 
+-fn api_url() -> String {
+-    std::env::var("LEAN_CTX_API_URL").unwrap_or_else(|_| "https://api.leanctx.com".to_string())
+-}
+-
+ fn show_history() {
+     let records = lean_ctx::core::telemetry_ledger::read_all();
+     if records.is_empty() {
+```
+
+**File**: `rust/src/telemetry_transport.rs` (modified, +23/-11)
+```diff
+@@ -3,15 +3,15 @@
+ //! the test-process loopback guard), the telemetry-v2 batch send, remote
+ //! telemetry deletion and anonymous product feedback.
+ 
+-/// Base URL of the lean-ctx cloud API. Unit tests and cargo-launched binaries
++/// Base URL of the lean-ctx cloud API. Test processes of every workspace crate
+ /// get the discard port instead of any non-loopback endpoint, so test fixtures
+ /// (telemetry probes, feedback, stats, wrapped cards) can never reach
+ /// production; their requests fail fast with "connection refused".
+ pub fn api_url() -> String {
+     const LOOPBACK_SINK: &str = "http://127.0.0.1:9";
+     let configured =
+         std::env::var("LEAN_CTX_API_URL").unwrap_or_else(|_| "https://api.leanctx.com".to_string());
+-    if cloud_endpoint_allowed(&configured, launched_by_cargo()) {
++    if cloud_endpoint_allowed(&configured, test_process()) {
+         configured
+     } else {
+         LOOPBACK_SINK.to_string()
+@@ -48,21 +48,33 @@ pub fn submit_product_feedback(payload: &serde_json::Value) -> Result<String, St
+     Ok(json["message"].as_str().unwrap_or("Thanks").to_string())
+ }
+ 
++/// Whether this process is a test (or `cargo run`) of a workspace crate: the
++/// unit-test harness of the Engine or of any crate above it (the data-dir
++/// sandbox, GL #512), or a process cargo launched for a workspace package —
++/// which includes the binaries those tests spawn.
++fn test_process() -> bool {
++    crate::core::data_dir::sandboxed() || launched_by_cargo()
 +}
 +
- impl LeanCtxClient {
-     /// Create a client for `base_url` with no auth and default timeout.
-     ///
-@@ -387,8 +406,8 @@ impl LeanCtxClient {
+ /// Cargo exports `CARGO_PKG_NAME` to `cargo test` / `cargo run` processes and
+ /// every child they spawn, so integration tests driving the binary carry it too.
+-/// Those run from the Engine package or from the `lean-ctx` binary package.
++/// They run from any workspace package, not only the Engine and the binary.
+ fn launched_by_cargo() -> bool {
+-    std::env::var("CARGO_PKG_NAME")
+-        .is_ok_and(|name| name == env!("CARGO_PKG_NAME") || name == BINARY_PACKAGE)
++    std::env::var("CARGO_PKG_NAME").is_ok_and(|name| workspace_package(&name))
+ }
+ 
+-/// The package that builds the `lean-ctx` binary on top of this library.
+-const BINARY_PACKAGE: &str = "lean-ctx";
++/// Every package of this workspace is named `lean-ctx…` (the Engine, the
++/// binary and every crate split out of them) or `leanctx…` (native storage).
++fn workspace_package(name: &str) -> bool {
++    const PREFIXES: [&str; 2] = ["lean-ctx", "leanctx"];
++    PREFIXES.iter().any(|prefix| name.starts_with(prefix))
++}
+ 
+-/// Unit tests and cargo-launched binaries may only talk to a loopback
+-/// endpoint; otherwise test fixtures would pollute production data.
+-fn cloud_endpoint_allowed(base_url: &str, launched_by_cargo: bool) -> bool {
+-    if !cfg!(test) && !launched_by_cargo {
++/// Test processes may only talk to a loopback endpoint; otherwise test
++/// fixtures would pollute production data. A real installed binary (no cargo
++/// environment, no test sandbox) keeps its configured endpoint.
++fn cloud_endpoint_allowed(base_url: &str, test_process: bool) -> bool {
++    if !test_process {
+         return true;
+     }
+     let Some(authority) = base_url
+```
+
+**File**: `rust/src/telemetry_transport_tests.rs` (modified, +76/-26)
+```diff
+@@ -4,32 +4,82 @@ use super::*;
+ 
+ #[test]
+ fn test_processes_never_reach_a_remote_cloud_endpoint() {
+-    for launched_by_cargo in [false, true] {
+-        for remote in [
+-            "https://api.leanctx.com",
+-            "http://10.0.0.1:8080",
+-            "http://localhost.evil.com",
+-            "http://127.0.0.1@api.leanctx.com",
+-            "ftp://127.0.0.1",
+-            "127.0.0.1:9",
+-        ] {
+-            assert!(
+-                !cloud_endpoint_allowed(remote, launched_by_cargo),
+-                "{remote}"
+-            );
+-        }
+-        for loopback in [
+-            "http://127.0.0.1:9",
+-            "http://127.3.2.1",
+-            "http://localhost:8088/prefix",
+-            "https://LOCALHOST",
+-            "http://[::1]:9",
+-        ] {
+-            assert!(
+-                cloud_endpoint_allowed(loopback, launched_by_cargo),
+-                "{loopback}"
+-            );
+-        }
++    for remote in [
++        "https://api.leanctx.com",
++        "http://10.0.0.1:8080",
++        "http://localhost.evil.com",
++        "http://127.0.0.1@api.leanctx.com",
++        "ftp://127.0.0.1",
++        "127.0.0.1:9",
++    ] {
++        assert!(!cloud_endpoint_allowed(remote, true), "{remote}");
++    }
++    for loopback in [
++        "http://127.0.0.1:9",
++        "http://127.3.2.1",
++        "http://localhost:8088/prefix",
++        "https://LOCALHOST",
++        "http://[::1]:9",
++    ] {
++        assert!(cloud_endpoint_allowed(loopback, true), "{loopback}");
++    }
++}
++
++#[test]
++fn an_installed_binary_keeps_its_configured_endpoint() {
++    for configured in ["https://api.leanctx.com", "http://10.0.0.1:8080"] {
++        assert!(cloud_endpoint_allowed(configured, false), "{configured}");
++    }
++}
++
++#[test]
++fn this_unit_test_harness_is_a_test_process() {
++    assert!(crate::core::data_dir::sandboxed());
++    assert!(test_process());
++}
++
++#[test]
++fn every_workspace_package_counts_as_cargo_launched() {
++    // Read the members from the manifests, so a crate split out later is
++    // covered too, or fails here instead of reaching production.
++    let root = std::path::Path::new(env!("CARGO_MANIFEST_DIR"));
++    let workspace = std::fs::read_to_string(root.join("Cargo.toml")).unwrap();
++    let members = workspace
++        .split_once("members = [")
++        .and_then(|(_, rest)| rest.split_once(']'))
++        .map(|(list, _)| list)
++        .unwrap();
++    let names: Vec<String> = members
++        .split(',')
++        .map(|member| member.trim().trim_matches('"'))
++        .filter(|member| !member.is_empty())
++        .map(|member| {
++            let manifest = std::fs::read_to_string(root.join(member).join("Cargo.toml")).unwrap();
++            let package = manifest.split_once("[package]").unwrap().1;
++            package
++                .lines()
++                .find_map(|line| line.trim().strip_prefix("name = "))
++                .unwrap()
++                .trim_matches('"')
++                .to_string()
++        })
++        .collect();
++    for expected in [
++        "lean-ctx-engine",
++        "lean-ctx",
++        "lean-ctx-server",
++        "lean-ctx-hive",
++        "lean-ctx-hooks",
++        "lean-ctx-proxy",
++        "leanctx-native-storage",
++    ] {
++        assert!(names.iter().any(|name| name == expected), "{names:?}");
++    }
++    for name in &names {
++        assert!(workspace_package(name), "{name}");
++    }
++    for foreign in ["", "serde", "my-lean-ctx", "lean_ctx", "cargo"] {
++        assert!(!workspace_package(foreign), "{foreign}");
      }
  }
  
--/// Builder for [`LeanCtxClient`].
--#[derive(Debug, Clone)]
-+/// Builder for [`LeanCtxClient`]. Its `Debug`, too, redacts the bearer token.
-+#[derive(Clone)]
- pub struct LeanCtxClientBuilder {
-     base_url: String,
-     bearer_token: Option<String>,
-@@ -397,6 +416,18 @@ pub struct LeanCtxClientBuilder {
-     timeout: Option<Duration>,
- }
+```
+
+---
+
+### Incident Patch 2: `c0139a96` (2026-11-04)
+**Commit Message**: fix(telemetry): test processes of every LeanCTX crate stay off production endpoints
+
+Exported from the private source e87e97f470.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `CHANGELOG.md` (modified, +10/-0)
+```diff
+@@ -6,6 +6,16 @@ Current positioning: [LeanCTX Engine — Context Gateway for AI Systems](docs/PO
  
-+impl std::fmt::Debug for LeanCtxClientBuilder {
-+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-+        f.debug_struct("LeanCtxClientBuilder")
-+            .field("base_url", &self.base_url)
-+            .field("bearer_token", &redacted(self.bearer_token.as_ref()))
-+            .field("workspace_id", &self.workspace_id)
-+            .field("channel_id", &self.channel_id)
-+            .field("timeout", &self.timeout)
-+            .finish()
+ ## [Unreleased]
+ 
++### Fixed
++
++- **Test processes of every LeanCTX crate stay off production endpoints.** The guard that
++  sends test traffic to a loopback sink recognised only the Engine's own unit tests and
++  processes cargo launched for the Engine or `lean-ctx` package. Since the crate split, the
++  unit tests of the server, Hive, hooks and proxy crates, and the binaries they spawn, sent
++  telemetry to production, each as a new installation. Any process of a `lean-ctx…` or
++  `leanctx…` package, and every sandboxed unit-test harness, now gets the loopback sink; an
++  installed binary keeps its configured endpoint.
++
+ ## [3.12.1] — 2026-11-03
+ 
+ ### Security
+```
+
+**File**: `PUBLIC-EXPORT-RECEIPT.json` (modified, +17/-17)
+```diff
+@@ -331,11 +331,11 @@
+    "size": 1033
+   },
+   {
+-   "blob": "2281734f7c2e3cd1ff31aa9529355ff055e1b641",
++   "blob": "c9fdc270931bba41b4f402eeaa7b475a6af46e95",
+    "mode": "100644",
+    "path": "CHANGELOG.md",
+-   "sha256": "f1c611f875fc949bf1dc19620911d0ba9ae44386f991c1be9ffd74c539dfd465",
+-   "size": 1215768
++   "sha256": "833539f2b2c576a24b204486f654759223865e3f51bd6c6d55f3905b76178268",
++   "size": 1216375
+   },
+   {
+    "blob": "77a7c7a520af8fc8b4df372eb5bd5fddcefbfecf",
+@@ -13071,11 +13071,11 @@
+    "size": 1929
+   },
+   {
+-   "blob": "9ec2c522d2a2648186e876e8aa5f910d19cf2d55",
++   "blob": "6ba5abcbb287e2c73aae7fa1ca543b688fdf9689",
+    "mode": "100644",
+    "path": "rust/crates/lean-ctx-server/src/lib.rs",
+-   "sha256": "171d382cd98ea7e542e744c91724a95868d23ad69945dece0f4260d2bb2cb278",
+-   "size": 956
++   "sha256": "3186da74173f5205d93fbd775ea061cada91037aab00acf033cb88ef9550dba1",
++   "size": 1588
+   },
+   {
+    "blob": "1a186eea8b60ab587ee6d38452173214cf3cc5af",
+@@ -16697,11 +16697,11 @@
+    "size": 8373
+   },
+   {
+-   "blob": "209ae5ba9167b4924c07322dc75cf003b126f35d",
++   "blob": "8821266d99d8d0a535c83c6a0df34f86417b1fad",
+    "mode": "100644",
+    "path": "rust/crates/lean-ctx/src/cli/telemetry_cmd.rs",
+-   "sha256": "de22223b8be3f48d153d7e31f398834e3ba8eb9ba90b1b96e49250cbeaf98012",
+-   "size": 17840
++   "sha256": "6c56300933a2a8bd0bc85281b3801df2d18c9900120e5a58ec46f5f7d3987f3d",
++   "size": 17827
+   },
+   {
+    "blob": "f51edcff400ab1c8c336aced0a85891c27e045a6",
+@@ -28891,18 +28891,18 @@
+    "size": 50720
+   },
+   {
+-   "blob": "a497399448ce1717046a6e53d34978a8fe118bac",
++   "blob": "c3354bed47c90a9375a6fa03c9f8040b93676495",
+    "mode": "100644",
+    "path": "rust/src/telemetry_transport.rs",
+-   "sha256": "1fdf9d081207ae2d7b54262a03c4c0dcd8500dcd215ae53efe16b5d175cefc7e",
+-   "size": 7331
++   "sha256": "2d11a8ebc66df82619ea5fe5d7de1397f8c039e9fb852021518ad835b6265481",
++   "size": 7914
+   },
+   {
+-   "blob": "93921968d2fb56e00939a41e8ecc127a9e36b575",
++   "blob": "6b4bc2f7b0489efd73ba7a866b3b711652bf0bc9",
+    "mode": "100644",
+    "path": "rust/src/telemetry_transport_tests.rs",
+-   "sha256": "6b3390b78cfb16ad390a9af16ef2304c6a2cc393620efc38df74553ce54775d1",
+-   "size": 11042
++   "sha256": "98b255e9d5895475e6b3e1dd0adab518ca8fef66b43fe81e8fb8792c53d56876",
++   "size": 12776
+   },
+   {
+    "blob": "efd3007a6c3a1caa66461170c3e810b4aee15ffc",
+@@ -32921,7 +32921,7 @@
+  ],
+  "manifest_sha256": "e9e923ead0330e9ebe42cf73ab0f6f9bbbed81099953cdf17e8ce112ef426083",
+  "schema": 1,
+- "source_commit": "577582b13c4bb9f56e6a9223f227b9138c4c6565",
++ "source_commit": "e87e97f470024eeb93b72fae60b8c57dacd9a83c",
+  "tool_sha256": "86ea08dc440cce975409b9f805c74bf5beb402284f3200800381def3714c8f3c",
+- "tree_sha256": "c1ead656164eedcbdbae34b3483c4408ac3bd46348bcd674ea1dc9dff7384f5c"
++ "tree_sha256": "e260cee0d75851dd58e0598301a625e3a9d91afbe9af77ab49443b56e48197e3"
+ }
+```
+
+**File**: `rust/crates/lean-ctx-server/src/lib.rs` (modified, +17/-0)
+```diff
+@@ -12,6 +12,23 @@ pub mod engine;
+ pub mod server;
+ pub mod tools;
+ 
++/// The Engine's production guard must hold for this crate's unit tests too:
++/// they see the Engine without `cfg(test)` and run as package
++/// `lean-ctx-server`, and once sent telemetry to production from CI.
++#[cfg(test)]
++mod production_endpoint_tests {
++    #[test]
++    fn unit_tests_of_this_crate_are_refused_a_remote_endpoint() {
++        assert!(lean_ctx::core::data_dir::sandboxed());
++        let _url =
++            lean_ctx::test_env::EnvVarGuard::set("LEAN_CTX_API_URL", "https://api.leanctx.com");
++        assert_eq!(
++            lean_ctx::telemetry_transport::api_url(),
++            "http://127.0.0.1:9"
++        );
 +    }
 +}
 +
- impl LeanCtxClientBuilder {
-     fn new(base_url: impl AsRef<str>) -> Self {
-         Self {
-@@ -573,6 +604,23 @@ mod tests {
-         assert_eq!(c.base_url(), "http://x");
+ /// The containment helper test of this crate's unit-test harness, at the path
+ /// the Engine starts its helpers and guards on (`shell::containment::tests`).
+ #[cfg(all(test, unix))]
+```
+
+**File**: `rust/crates/lean-ctx/src/cli/telemetry_cmd.rs` (modified, +2/-5)
+```diff
+@@ -224,7 +224,8 @@ fn show_payload() {
+     println!();
+     println!(
+         "\x1b[2mEndpoint: POST {}/api/telemetry/v2/batch\x1b[0m",
+-        api_url()
++        // The endpoint a send would actually use (loopback in test processes).
++        lean_ctx::telemetry_transport::api_url()
+     );
+     println!(
+         "\x1b[2mFrequency: cumulative daily totals, up to {} times per UTC day\x1b[0m",
+@@ -233,10 +234,6 @@ fn show_payload() {
+     println!("\x1b[2mAuthentication: none\x1b[0m");
+ }
+ 
+-fn api_url() -> String {
+-    std::env::var("LEAN_CTX_API_URL").unwrap_or_else(|_| "https://api.leanctx.com".to_string())
+-}
+-
+ fn show_history() {
+     let records = lean_ctx::core::telemetry_ledger::read_all();
+     if records.is_empty() {
+```
+
+**File**: `rust/src/telemetry_transport.rs` (modified, +23/-11)
+```diff
+@@ -3,15 +3,15 @@
+ //! the test-process loopback guard), the telemetry-v2 batch send, remote
+ //! telemetry deletion and anonymous product feedback.
+ 
+-/// Base URL of the lean-ctx cloud API. Unit tests and cargo-launched binaries
++/// Base URL of the lean-ctx cloud API. Test processes of every workspace crate
+ /// get the discard port instead of any non-loopback endpoint, so test fixtures
+ /// (telemetry probes, feedback, stats, wrapped cards) can never reach
+ /// production; their requests fail fast with "connection refused".
+ pub fn api_url() -> String {
+     const LOOPBACK_SINK: &str = "http://127.0.0.1:9";
+     let configured =
+         std::env::var("LEAN_CTX_API_URL").unwrap_or_else(|_| "https://api.leanctx.com".to_string());
+-    if cloud_endpoint_allowed(&configured, launched_by_cargo()) {
++    if cloud_endpoint_allowed(&configured, test_process()) {
+         configured
+     } else {
+         LOOPBACK_SINK.to_string()
+@@ -48,21 +48,33 @@ pub fn submit_product_feedback(payload: &serde_json::Value) -> Result<String, St
+     Ok(json["message"].as_str().unwrap_or("Thanks").to_string())
+ }
+ 
++/// Whether this process is a test (or `cargo run`) of a workspace crate: the
++/// unit-test harness of the Engine or of any crate above it (the data-dir
++/// sandbox, GL #512), or a process cargo launched for a workspace package —
++/// which includes the binaries those tests spawn.
++fn test_process() -> bool {
++    crate::core::data_dir::sandboxed() || launched_by_cargo()
++}
++
+ /// Cargo exports `CARGO_PKG_NAME` to `cargo test` / `cargo run` processes and
+ /// every child they spawn, so integration tests driving the binary carry it too.
+-/// Those run from the Engine package or from the `lean-ctx` binary package.
++/// They run from any workspace package, not only the Engine and the binary.
+ fn launched_by_cargo() -> bool {
+-    std::env::var("CARGO_PKG_NAME")
+-        .is_ok_and(|name| name == env!("CARGO_PKG_NAME") || name == BINARY_PACKAGE)
++    std::env::var("CARGO_PKG_NAME").is_ok_and(|name| workspace_package(&name))
+ }
+ 
+-/// The package that builds the `lean-ctx` binary on top of this library.
+-const BINARY_PACKAGE: &str = "lean-ctx";
++/// Every package of this workspace is named `lean-ctx…` (the Engine, the
++/// binary and every crate split out of them) or `leanctx…` (native storage).
++fn workspace_package(name: &str) -> bool {
++    const PREFIXES: [&str; 2] = ["lean-ctx", "leanctx"];
++    PREFIXES.iter().any(|prefix| name.starts_with(prefix))
++}
+ 
+-/// Unit tests and cargo-launched binaries may only talk to a loopback
+-/// endpoint; otherwise test fixtures would pollute production data.
+-fn cloud_endpoint_allowed(base_url: &str, launched_by_cargo: bool) -> bool {
+-    if !cfg!(test) && !launched_by_cargo {
++/// Test processes may only talk to a loopback endpoint; otherwise test
++/// fixtures would pollute production data. A real installed binary (no cargo
++/// environment, no test sandbox) keeps its configured endpoint.
++fn cloud_endpoint_allowed(base_url: &str, test_process: bool) -> bool {
++    if !test_process {
+         return true;
+     }
+     let Some(authority) = base_url
+```
+
+**File**: `rust/src/telemetry_transport_tests.rs` (modified, +76/-26)
+```diff
+@@ -4,32 +4,82 @@ use super::*;
+ 
+ #[test]
+ fn test_processes_never_reach_a_remote_cloud_endpoint() {
+-    for launched_by_cargo in [false, true] {
+-        for remote in [
+-            "https://api.leanctx.com",
+-            "http://10.0.0.1:8080",
+-            "http://localhost.evil.com",
+-            "http://127.0.0.1@api.leanctx.com",
+-            "ftp://127.0.0.1",
+-            "127.0.0.1:9",
+-        ] {
+-            assert!(
+-                !cloud_endpoint_allowed(remote, launched_by_cargo),
+-                "{remote}"
+-            );
+-        }
+-        for loopback in [
+-            "http://127.0.0.1:9",
+-            "http://127.3.2.1",
+-            "http://localhost:8088/prefix",
+-            "https://LOCALHOST",
+-            "http://[::1]:9",
+-        ] {
+-            assert!(
+-                cloud_endpoint_allowed(loopback, launched_by_cargo),
+-                "{loopback}"
+-            );
+-        }
++    for remote in [
++        "https://api.leanctx.com",
++        "http://10.0.0.1:8080",
++        "http://localhost.evil.com",
++        "http://127.0.0.1@api.leanctx.com",
++        "ftp://127.0.0.1",
++        "127.0.0.1:9",
++    ] {
++        assert!(!cloud_endpoint_allowed(remote, true), "{remote}");
++    }
++    for loopback in [
++        "http://127.0.0.1:9",
++        "http://127.3.2.1",
++        "http://localhost:8088/prefix",
++        "https://LOCALHOST",
++        "http://[::1]:9",
++    ] {
++        assert!(cloud_endpoint_allowed(loopback, true), "{loopback}");
++    }
++}
++
++#[test]
++fn an_installed_binary_keeps_its_configured_endpoint() {
++    for configured in ["https://api.leanctx.com", "http://10.0.0.1:8080"] {
++        assert!(cloud_endpoint_allowed(configured, false), "{configured}");
++    }
++}
++
++#[test]
++fn this_unit_test_harness_is_a_test_process() {
++    assert!(crate::core::data_dir::sandboxed());
++    assert!(test_process());
++}
++
++#[test]
++fn every_workspace_package_counts_as_cargo_launched() {
++    // Read the members from the manifests, so a crate split out later is
++    // covered too, or fails here instead of reaching production.
++    let root = std::path::Path::new(env!("CARGO_MANIFEST_DIR"));
++    let workspace = std::fs::read_to_string(root.join("Cargo.toml")).unwrap();
++    let members = workspace
++        .split_once("members = [")
++        .and_then(|(_, rest)| rest.split_once(']'))
++        .map(|(list, _)| list)
++        .unwrap();
++    let names: Vec<String> = members
++        .split(',')
++        .map(|member| member.trim().trim_matches('"'))
++        .filter(|member| !member.is_empty())
++        .map(|member| {
++            let manifest = std::fs::read_to_string(root.join(member).join("Cargo.toml")).unwrap();
++            let package = manifest.split_once("[package]").unwrap().1;
++            package
++                .lines()
++                .find_map(|line| line.trim().strip_prefix("name = "))
++                .unwrap()
++                .trim_matches('"')
++                .to_string()
++        })
++        .collect();
++    for expected in [
++        "lean-ctx-engine",
++        "lean-ctx",
++        "lean-ctx-server",
++        "lean-ctx-hive",
++        "lean-ctx-hooks",
++        "lean-ctx-proxy",
++        "leanctx-native-storage",
++    ] {
++        assert!(names.iter().any(|name| name == expected), "{names:?}");
++    }
++    for name in &names {
++        assert!(workspace_package(name), "{name}");
++    }
++    for foreign in ["", "serde", "my-lean-ctx", "lean_ctx", "cargo"] {
++        assert!(!workspace_package(foreign), "{foreign}");
+     }
+ }
+ 
+```
+
+---
+
+### Incident Patch 3: `12a40252` (2026-11-03)
+**Commit Message**: release: 3.12.1 release-build test retry and three flaky-test fixes
+
+Exported from the private source 4c7666032e.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `.github/workflows/release.yml` (modified, +30/-6)
+```diff
+@@ -448,18 +448,42 @@ jobs:
+         # parallelism (the serial `--test-threads=1` was an env-race legacy of
+         # v3.3.5, fixed at the source) and 64 proptest cases. Serial, it held
+         # every macOS release build for about 90 minutes.
++        # ci.yml already ran this suite on the tagged commit. A test that fails
++        # here is run once more on its own: a failure that repeats stays red,
++        # one that passes alone is named as a flake in the job summary.
+         env:
+           PROPTEST_CASES: 64
+           CARGO_PROFILE_TEST_DEBUG: line-tables-only
+         run: |
+           umask 077
+-          if [[ "${{ matrix.jemalloc }}" == "true" ]]; then
+-            JEMALLOC_OVERRIDE="${{ steps.jemalloc.outputs.jemalloc-override }}" \
+-              CARGO_TARGET_X86_64_PC_WINDOWS_GNU_RUSTFLAGS="-L ${{ steps.jemalloc.outputs.dummy-dir }}" \
+-              cargo test --lib --target x86_64-pc-windows-gnu --all-features --locked
+-          else
+-            cargo test --lib --all-features --locked
++          lib_tests() {
++            if [[ "${{ matrix.jemalloc }}" == "true" ]]; then
++              JEMALLOC_OVERRIDE="${{ steps.jemalloc.outputs.jemalloc-override }}" \
++                CARGO_TARGET_X86_64_PC_WINDOWS_GNU_RUSTFLAGS="-L ${{ steps.jemalloc.outputs.dummy-dir }}" \
++                cargo test --lib --target x86_64-pc-windows-gnu --all-features --locked "$@"
++            else
++              cargo test --lib --all-features --locked "$@"
++            fi
++          }
++          log="${RUNNER_TEMP}/lib-tests.log"
++          if lib_tests 2>&1 | tee "$log"; [[ ${PIPESTATUS[0]} -eq 0 ]]; then
++            exit 0
++          fi
++          # libtest lists the failed tests, indented, after a bare "failures:".
++          # (No mapfile: the macOS runners' bash is 3.2.)
++          failed=()
++          while IFS= read -r name; do failed+=("$name"); done < <(
++            awk '/^failures:$/{f=1; next} f && /^    [^ ]/{print $1; next} f{f=0}' "$log" | sort -u)
++          if [[ ${#failed[@]} -eq 0 || ${#failed[@]} -gt 5 ]]; then
++            echo "::error::${#failed[@]} failed tests could not be retried one by one"
++            exit 1
+           fi
++          lib_tests -- --exact "${failed[@]}"
++          {
++            echo "### Flaky lib tests (passed when run again alone)"
++            printf -- '- `%s`\n' "${failed[@]}"
++          } >> "$GITHUB_STEP_SUMMARY"
++          printf '::warning::flaky lib test passed on retry: %s\n' "${failed[@]}"
+ 
+       - name: Setup Zig
+         if: matrix.zig == true
+```
+
+**File**: `CHANGELOG.md` (modified, +4/-0)
+```diff
+@@ -851,6 +851,10 @@ Current positioning: [LeanCTX Engine — Context Gateway for AI Systems](docs/PO
+ 
+ ### Fixed
+ 
++- **A flaky lib test no longer blocks a release build.** The release workflow runs a test that
++  failed once more on its own; a failure that repeats still fails the build, and one that
++  passes alone is named in the job summary.
++
+ - **A Hive lease renews after the keyset v3 rotation.** An instance verified a renewed lease
+   only against the key set it enrolled with, so a lease signed with the v3 policy key failed
+   and the instance fell into its grace period a day after enrolling. A failed renewal also
+```
+
+**File**: `PUBLIC-EXPORT-RECEIPT.json` (modified, +37/-37)
+```diff
+@@ -233,11 +233,11 @@
+    "size": 3699
+   },
+   {
+-   "blob": "837aecc40a6a6091856ae43e7172085a227aac42",
++   "blob": "14d8a0606170c9328101ff51ddcf16ddedceb9a2",
+    "mode": "100644",
+    "path": ".github/workflows/release.yml",
+-   "sha256": "9804262a84414a98af2e238917cadc3cfc890853a6179c11e65fa12f9ab4093f",
+-   "size": 83726
++   "sha256": "1e8dcaaf051fb4d37f432756096b7324266ce44ec0c151c1c8875137a2ce868d",
++   "size": 84978
+   },
+   {
+    "blob": "75a4d6a3ea3e0e6bf69efff80c68bc5cca72e7b4",
+@@ -331,11 +331,11 @@
+    "size": 1033
+   },
+   {
+-   "blob": "c5a973f3742291d4ea6abaee83bf459d34eb740b",
++   "blob": "e4e43bd08ccfedbb312c73f75949047c5d1cee99",
+    "mode": "100644",
+    "path": "CHANGELOG.md",
+-   "sha256": "5fed2bf2f9578b505a91f00098d45bec96b0ac645db22bf289ef2a1e8fa12b1f",
+-   "size": 1215501
++   "sha256": "5202bab1d4e646f05aec88caca1d6470d099ea6924bd8647bc514973780078ce",
++   "size": 1215731
+   },
+   {
+    "blob": "77a7c7a520af8fc8b4df372eb5bd5fddcefbfecf",
+@@ -1605,10 +1605,10 @@
+    "size": 4024
+   },
+   {
+-   "blob": "6be05c0cfecd3185091def6c887b612843fa9a6b",
++   "blob": "5a17b1fdd7e7019556fe81daa94b2ccdc18bf71a",
+    "mode": "100644",
+    "path": "docs/contracts/delivery-evidence-v1.json",
+-   "sha256": "fc31e3d59d1e1871e2895e8aeb9e981fd701d08f9f7c3f8f47e278b11ff7cc54",
++   "sha256": "69c7633dfe33696156bb6588310afda444b2cccaf616fe2728e4c2aab4a896d4",
+    "size": 6734
+   },
+   {
+@@ -5084,11 +5084,11 @@
+    "size": 20898
+   },
+   {
+-   "blob": "a318533d1e655764f865a98c1aa22557e7875994",
++   "blob": "1a33f7429f6f7b23126eb0f8b0edf82173782bac",
+    "mode": "100644",
+    "path": "rust/crates/lean-ctx-hive/src/background.rs",
+-   "sha256": "3f2466f6204723f684ac73fe76479a1b45dedc259528714d67f0072d3bc51423",
+-   "size": 6879
++   "sha256": "6559af1f4e4dfcd1377037d7bbc8e2934d0cd44b40a0924474447f36333ce499",
++   "size": 9047
+   },
+   {
+    "blob": "d62c20d89a031c70965ba56b1c8cb850a607c3c9",
+@@ -13372,11 +13372,11 @@
+    "size": 8304
+   },
+   {
+-   "blob": "4531beed771c23fa4164d85ad808858246c7ac2b",
++   "blob": "69dd670fb841b88b446a05ac9b276a35436d4245",
+    "mode": "100644",
+    "path": "rust/crates/lean-ctx-server/src/server/mod.rs",
+-   "sha256": "252e8b4c38718e55eb545d615367a213d9b9539b080d870ac92566cdbc97d3dc",
+-   "size": 9078
++   "sha256": "8a6da060d8d4f8b8ca29adf536223e1a0619077697e86bc344d44a919967e8fa",
++   "size": 9678
+   },
+   {
+    "blob": "aa06d52d23eabf3216161575a3643aa84088dfef",
+@@ -13561,11 +13561,11 @@
+    "size": 11293
+   },
+   {
+-   "blob": "71ee93db2eea4e8e4928adf7ebd69b2d766bf1f0",
++   "blob": "720f3ac251d3c2d709472281002b30b9b069952a",
+    "mode": "100644",
+    "path": "rust/crates/lean-ctx-server/src/tools/ctx_agent.rs",
+-   "sha256": "310296be5aaaee7599483724eb5cd31bde3b8f24155f120c623b463b0b2797c5",
+-   "size": 53393
++   "sha256": "237399580b366d64e2ad13fc3426ccc3c483b5e51dd3471d88cfa6c54b416438",
++   "size": 53439
+   },
+   {
+    "blob": "ffbafd4ff1a636656c1d214aac21e1e3f0ec7fea",
+@@ -13680,11 +13680,11 @@
+    "size": 20006
+   },
+   {
+-   "blob": "9e0f1886c6a845de9529398425ca9b8d1b1f638f",
++   "blob": "ef6cd918116923f9990a873eb1c65b562bf97c21",
+    "mode": "100644",
+    "path": "rust/crates/lean-ctx-server/src/tools/ctx_doc.rs",
+-   "sha256": "6758a80b8eae5e7acb08ce57d89f4beb161ef6c001d9689debbf471dbfbbb2c2",
+-   "size": 14511
++   "sha256": "03cecf047617fe6bdcad5dcdb68b1a22f79f78f9cae3a5b340d6022b7bd8589e",
++   "size": 14541
+   },
+   {
+    "blob": "d79352261a12f980e9a33250468be8fd4a209a37",
+@@ -13771,11 +13771,11 @@
+    "size": 36600
+   },
+   {
+-   "blob": "dae419a8cdc19a8257f6163ae4d45a58112c78a5",
++   "blob": "b19ceb414ddedb23efc5e4dd6e899635b25595b5",
+    "mode": "100644",
+    "path": "rust/crates/lean-ctx-server/src/tools/ctx_glob.rs",
+-   "sha256": "6b928b0925c0373c421d1cacb52f5d9f6402e977b0dafbc2fd188d510c7df7c4",
+-   "size": 17620
++   "sha256": "aceeef2a41b332b26e79ac3674e6a38ada73c7eb122fe7de5123244793bb4c68",
++   "size": 17820
+   },
+   {
+    "blob": "89b3fa9e684be8d26a172e56332a3ff74c63810b",
+@@ -14310,11 +14310,11 @@
+    "size": 87
+   },
+   {
+-   "blob": "9b825e4cb6d23e17ed8d5116a7d6d9b4205f830c",
++   "blob": "4ab36e33d787835e53cf4ca2db07f98d159df9df",
+    "mode": "100644",
+    "path": "rust/crates/lean-ctx-server/src/tools/ctx_search/tests.rs",
+-   "sha256": "704b24d602ee274d6e1b4284a7e30112ef826e995d05f72d7c67bd2018f2b6ac",
+-   "size": 34548
++   "sha256": "235be2669386ca57b79e0f74d892487a305527f4d05764ef3d9e346eba7265ee",
++   "size": 34736
+   },
+   {
+    "blob": "dd339ad23579ea2d61add73cffb9193c7a151068",
+@@ -14443,11 +14443,11 @@
+    "size": 17706
+   },
+   {
+-   "blob": "76f76947bcfb4249430a57456591d149239b51b0",
++   "blob": "41957b402c52020abefb028971ca560c6f9ad127",
+    "mode": "100644",
+    "path": "rust/crates/lean-ctx-server/src/tools/ctx_tree.rs",
+-   "sha256": "2805967d8ef178395183d4208e533daf5aebce83023289785b6b40f76d54340e",
+-   "size": 13897
++   "sha256": "b2f049e974793eac86bb4de8dd848f177a50b485722a8bcff75ad5f64d1bac27",
++   "size": 14097
+   },
+   {
+    "blo
+```
+
+**File**: `docs/contracts/delivery-evidence-v1.json` (modified, +1/-1)
+```diff
+@@ -1 +1 @@
+-{"checklist":[{"evidence":{"evidence_class":"rust-integration-test","harness_command":"cargo test --manifest-path rust/Cargo.toml --test main suite::setup_ci_smoke::setup_bootstrap_doctor_status_json_smoke -- --exact --test-threads=1","path":"rust/tests/suite/setup_ci_smoke.rs","selector":"fn setup_bootstrap_doctor_status_json_smoke()","sha256":"b41fa9ff2eb630d7c44b4536f1de71bdbfcb3764f3982491776cdaab52d5e093"},"external_acceptance_required":true,"local_status":"component-evidence","stage":"setup"},{"evidence":{"evidence_class":"rust-integration-test","harness_command":"cargo test --manifest-path rust/Cargo.toml --test main suite::onboard_doctor_clean::onboard_yes_leaves_doctor_fully_green -- --exact","path":"rust/tests/suite/onboard_doctor_clean.rs","selector":"fn onboard_yes_leaves_doctor_fully_green()","sha256":"f90a45367e3cff220855ddf1b4b26a10d4be5d4d6daf4a7367506dfc69916e0b"},"external_acceptance_required":true,"local_status":"component-evidence","stage":"doctor"},{"evidence":{"evidence_class":"rust-unit-test","harness_command":"cargo test --manifest-path rust/Cargo.toml -p lean-ctx --lib doctor::migrate::tests::contract_outcome_reports_frozen_set -- --exact","path":"rust/crates/lean-ctx/src/doctor/migrate.rs","selector":"fn contract_outcome_reports_frozen_set()","sha256":"865932493e3320102e0c8076b746db3bbf056959f4dbe79516d9a64bae8d91ff"},"external_acceptance_required":true,"local_status":"component-evidence","stage":"upgrade"},{"evidence":{"evidence_class":"python-unittest","harness_command":"python3 tests/delivery/test_rehearse_delivery.py DeliveryRehearsalTests.test_rehearses_verified_candidate_and_rollback_without_deployment","path":"tests/delivery/test_rehearse_delivery.py","selector":"def test_rehearses_verified_candidate_and_rollback_without_deployment(self):","sha256":"9c8841eea94ae560ca549e5d514c003eb4e1349c748e6b85dc0725e6bee9363a"},"external_acceptance_required":true,"local_status":"offline-rehearsal","stage":"rollback"},{"evidence":{"evidence_class":"rust-integration-test","harness_command":"cargo test --manifest-path rust/Cargo.toml --test main suite::cli_characterization::uninstall_dry_run_exits_zero -- --exact","path":"rust/tests/suite/cli_characterization.rs","selector":"fn uninstall_dry_run_exits_zero()","sha256":"c86077cb7913d574597878cb2caca3b349a47bf05227e415d3cde489ccfaace8"},"external_acceptance_required":true,"local_status":"component-evidence","stage":"uninstall"}],"delivery_manifest":{"fixture":{"path":"tests/delivery/valid/delivery-manifest.json","selector":"\"schema_version\":\"leanctx.delivery/v1\"","sha256":"cf29956b3f32daf7606cbf3f3c9799835ffc498fb636c56f8d1cb9fecf888bac"},"schema":{"path":"docs/contracts/delivery-manifest-v1.schema.json","selector":"https://leanctx.dev/contracts/delivery-manifest-v1.schema.json","sha256":"80ac91c631969a9ce305d8701d3eb0ca92b69b6defcd3a2ef6f9b4a80c7ae291"},"trust_root":{"path":"tests/delivery/valid/release-trust-root.json","selector":"\"algorithm\":\"Ed25519\"","sha256":"660fbf46674b8a16166026551e50b032a1ccf58a4d260c4bb4e4218235066083"},"verifier":{"path":"scripts/verify-delivery-manifest.py","selector":"def verify(manifest_path, root, trust_root=None, rotation_plan=None):","sha256":"636e85f32ce7cd7bfb7a6257b6abf78e4a5d3719c063537ccaa04be9163f21cc"}},"owner":{"handle":"@yvgude","source":{"path":".github/CODEOWNERS","selector":"* @yvgude","sha256":"9c52bffaef2f21976aac61d2ce42311a0ae6e393a95006a36f54e1d1edc72656"}},"release":{"publish_channels":[{"id":"engine-release","source_path":".github/workflows/release.yml","source_sha256":"9804262a84414a98af2e238917cadc3cfc890853a6179c11e65fa12f9ab4093f","trigger_pattern":"v[0-9]*"},{"id":"client-release","source_path":".github/workflows/publish-clients.yml","source_sha256":"46e826bc26beb81a2128c9696b6203a94fe0f7770c6046e107639ef3f9cb5562","trigger_pattern":"client-v[0-9]*"}],"targets":[{"artifact":"x86_64-unknown-linux-gnu","certification":"not-asserted","runner":"ubuntu-22.04","target":"x86_64-unknown-linux-gnu"},{"artifact":"x86_64-unknown-linux-gnu-cuda","certification":"not-asserted","runner":"ubuntu-22.04","target":"x86_64-unknown-linux-gnu"},{"artifact":"aarch64-unknown-linux-gnu","certification":"not-asserted","runner":"ubuntu-22.04-arm","target":"aarch64-unknown-linux-gnu"},{"artifact":"x86_64-unknown-linux-musl","certification":"not-asserted","runner":"ubuntu-22.04","target":"x86_64-unknown-linux-musl"},{"artifact":"aarch64-unknown-linux-musl","certification":"not-asserted","runner":"ubuntu-22.04-arm","target":"aarch64-unknown-linux-musl"},{"artifact":"x86_64-apple-darwin","certification":"not-asserted","runner":"macos-15-intel","target":"x86_64-apple-darwin"},{"artifact":"aarch64-apple-darwin","certification":"not-asserted","runner":"macos-15","target":"aarch64-apple-darwin"},{"artifact":"x86_64-pc-windows-msvc","certification":"not-asserted","runner":"windows-2025","target":"x86_64-pc-windows-msvc"},{"artifact":"x86_64-pc-windows-msvc-cuda","certification":"not-asserted","runn
+```
+
+**File**: `rust/crates/lean-ctx-hive/src/background.rs` (modified, +75/-11)
+```diff
+@@ -9,7 +9,7 @@
+ //! same caller (a lease release after its acquire, an update after a
+ //! claim) always goes out after the earlier one. What Hive answered is kept
+ //! per caller and put in front of that caller's next answer of the same
+-//! tool ([`with_answers`]); nothing is presented as confirmed before Hive
++//! tool ([`earlier`]); nothing is presented as confirmed before Hive
+ //! confirmed it.
+ //!
+ //! The queue lives in this process: requests of a process that ends before
+@@ -119,19 +119,59 @@ pub fn take(caller: &str) -> Vec<String> {
+ 
+ /// `text` with the answers waiting for `caller` in front of it.
+ pub fn with_answers(caller: &str, text: String) -> String {
+-    let answers = take(caller);
+-    if answers.is_empty() {
+-        return text;
++    earlier(caller).present(text)
++}
++
++/// The answers waiting for `caller` as a call starts, taken before the call
++/// queues anything: an answer to this call's own request, however fast Hive
++/// answers it, always comes with the next call (CI #2183). Dropped without
++/// [`Earlier::present`] (a call that failed early), they wait again.
++pub fn earlier(caller: &str) -> Earlier {
++    Earlier {
++        caller: caller.to_string(),
++        answers: take(caller),
+     }
+-    let mut out = String::from("Hive answered your earlier requests:\n");
+-    for answer in answers {
+-        out.push_str("- ");
+-        out.push_str(&answer);
++}
++
++/// See [`earlier`].
++pub struct Earlier {
++    caller: String,
++    answers: Vec<String>,
++}
++
++impl Earlier {
++    /// `text` with these answers in front of it.
++    pub fn present(mut self, text: String) -> String {
++        let answers = std::mem::take(&mut self.answers);
++        if answers.is_empty() {
++            return text;
++        }
++        let mut out = String::from("Hive answered your earlier requests:\n");
++        for answer in answers {
++            out.push_str("- ");
++            out.push_str(&answer);
++            out.push('\n');
++        }
+         out.push('\n');
++        out.push_str(&text);
++        out
++    }
++}
++
++impl Drop for Earlier {
++    fn drop(&mut self) {
++        if self.answers.is_empty() {
++            return;
++        }
++        let answers = std::mem::take(&mut self.answers);
++        with_queue(|q| {
++            let waiting = q
++                .answers
++                .entry(std::mem::take(&mut self.caller))
++                .or_default();
++            waiting.splice(0..0, answers);
++        });
+     }
+-    out.push('\n');
+-    out.push_str(&text);
+-    out
+ }
+ 
+ /// Wait until every queued request has run (tests and CLI commands that
+@@ -181,6 +221,30 @@ mod tests {
+         assert_eq!(with_answers(caller, "again".into()), "again", "shown once");
      }
  
 +    #[test]
-+    fn debug_redacts_the_bearer_token() {
-+        let builder = LeanCtxClient::builder("http://x").bearer_token("sentinel-token");
-+        let shown = format!("{builder:?}");
-+        assert!(!shown.contains("sentinel-token"), "{shown}");
-+        assert!(shown.contains("<redacted>"), "{shown}");
-+        let client = builder.workspace_id("ws").build().unwrap();
-+        let shown = format!("{client:?}");
-+        assert!(!shown.contains("sentinel-token"), "{shown}");
++    fn an_answer_during_the_call_comes_with_the_next_one() {
++        let caller = "test:during_the_call";
++        let call = earlier(caller);
++        // Hive answers before the call returns (a refused connection).
++        submit(caller, || Some("fast".into()));
++        assert!(wait_idle(Duration::from_secs(10)));
++        assert_eq!(call.present("first".into()), "first");
++        let next = earlier(caller).present("second".into());
 +        assert!(
-+            shown.contains("<redacted>") && shown.contains("ws"),
-+            "{shown}"
++            next.contains("- fast") && next.ends_with("second"),
++            "{next}"
 +        );
-+        let anonymous = format!("{:?}", LeanCtxClient::new("http://x").unwrap());
-+        assert!(anonymous.contains("bearer_token: None"), "{anonymous}");
++
++        // A call that fails early keeps what it took for the one after it.
++        submit(caller, || Some("kept".into()));
++        assert!(wait_idle(Duration::from_secs(10)));
++        drop(earlier(caller));
++        submit(caller, || Some("later".into()));
++        assert!(wait_idle(Duration::from_secs(10)));
++        let shown = with_answers(caller, "third".into());
++        assert!(shown.find("- kept") < shown.find("- later"), "{shown}");
 +    }
 +
      #[test]
-     fn query_is_percent_encoded() {
-         let q = encode_query(&[("workspaceId".into(), "a b/c".into())]);
+     fn a_keyed_request_is_queued_once() {
+         let caller = "test:keyed";
 ```
 
-**File**: `cookbook/package-lock.json` (modified, +1/-1)
+**File**: `rust/crates/lean-ctx-server/src/server/mod.rs` (modified, +9/-0)
 ```diff
-@@ -3353,7 +3353,7 @@
-     "sdk": {
-       "name": "lean-ctx-client",
-       "version": "0.1.0",
--      "license": "MIT"
-+      "license": "Apache-2.0"
+@@ -137,6 +137,9 @@ mod tests {
+ 
+     #[test]
+     fn home_dir_detected_as_broad_root() {
++        // HOME is read here and again inside the check: another test may move
++        // it in between (macOS release prebuild, 3.12.1).
++        let _env = lean_ctx::core::data_dir::test_env_lock();
+         if let Some(home) = dirs::home_dir() {
+             assert!(is_broad_or_unsafe_root(&home));
+         }
+@@ -224,6 +227,9 @@ mod tests {
+ 
+     #[test]
+     fn is_broad_or_unsafe_root_rejects_home() {
++        // HOME is read here and again inside the check: another test may move
++        // it in between (macOS release prebuild, 3.12.1).
++        let _env = lean_ctx::core::data_dir::test_env_lock();
+         if let Some(home) = dirs::home_dir() {
+             assert!(is_broad_or_unsafe_root(&home));
+         }
+@@ -264,6 +270,9 @@ mod tests {
+ 
+     #[test]
+     fn is_broad_or_unsafe_root_allows_home_subdirs() {
++        // HOME is read here and again inside the check: another test may move
++        // it in between (macOS release prebuild, 3.12.1).
++        let _env = lean_ctx::core::data_dir::test_env_lock();
+         if let Some(home) = dirs::home_dir() {
+             let subdir = home.join("projects").join("my-app");
+             assert!(!is_broad_or_unsafe_root(&subdir));
+```
+
+**File**: `rust/crates/lean-ctx-server/src/tools/ctx_agent.rs` (modified, +6/-6)
+```diff
+@@ -345,6 +345,9 @@ pub fn handle(
+     filename: Option<&str>,
+     request_id: Option<&str>,
+ ) -> String {
++    let earlier = current_agent_id.filter(|_| action != "read").map(|agent| {
++        lean_ctx_hive::background::earlier(&lean_ctx_hive::bus::leases::caller(agent))
++    });
+     let answer = handle_action(
+         action,
+         agent_type,
+@@ -364,12 +367,9 @@ pub fn handle(
+         filename,
+         request_id,
+     );
+-    match current_agent_id {
+-        Some(agent) if action != "read" => lean_ctx_hive::background::with_answers(
+-            &lean_ctx_hive::bus::leases::caller(agent),
+-            answer,
+-        ),
+-        _ => answer,
++    match earlier {
++        Some(earlier) => earlier.present(answer),
++        None => answer,
      }
-   }
+ }
+ 
+```
+
+**File**: `rust/crates/lean-ctx-server/src/tools/ctx_doc.rs` (modified, +2/-1)
+```diff
+@@ -41,8 +41,9 @@ edit slug find replace | note slug content | confirm slug (re-pin after checking
+ 
+ /// Runs one call for the checkout at `root`.
+ pub fn handle(root: &str, args: &Args<'_>) -> String {
++    let earlier = lean_ctx_hive::background::earlier("ctx_doc");
+     match run(root, args) {
+-        Ok(out) => lean_ctx_hive::background::with_answers("ctx_doc", out),
++        Ok(out) => earlier.present(out),
+         Err(e) => format!("ctx_doc: {e}"),
+     }
  }
 ```
 
----
-
-### Incident Patch 2: `7b157a3d` (2026-11-01)
-**Commit Message**: fix: 3.12.1 first engine crate split, knowledge lifecycle to Hive, cleanup waves 5–6 (#2170)
-
-* fix: 3.12.1 first engine crate split, knowledge lifecycle to Hive, cleanup waves 5–6
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* docs: no intra-doc links from public items to private ones in lean-ctx-fs and lean-ctx-syntax
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
----------
-
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/release.yml` (modified, +41/-1)
-```diff
-@@ -1256,6 +1256,46 @@ jobs:
-             echo "Waiting 30s for crates.io index propagation..."
-             sleep 30
-           fi
-+          PATTERNS_VERSION="$(grep -m1 '^version' crates/lean-ctx-patterns/Cargo.toml | sed -E 's/.*"([^"]+)".*/\1/')"
-+          if ! curl -fsSL -H "User-Agent: lean-ctx-release" \
-+               "https://crates.io/api/v1/crates/lean-ctx-patterns/${PATTERNS_VERSION}" >/dev/null 2>&1; then
-+            echo "Publishing lean-ctx-patterns ${PATTERNS_VERSION} to crates.io first..."
-+            cargo publish --allow-dirty --token "${CARGO_REGISTRY_TOKEN}" -p lean-ctx-patterns
-+            echo "Waiting 30s for crates.io index propagation..."
-+            sleep 30
-+          fi
-+          LEAN_CTX_WORKGRAPH_VERSION="$(grep -m1 '^version' crates/lean-ctx-workgraph/Cargo.toml | sed -E 's/.*"([^"]+)".*/\1/')"
-+          if ! curl -fsSL -H "User-Agent: lean-ctx-release" \
-+               "https://crates.io/api/v1/crates/lean-ctx-workgraph/${LEAN_CTX_WORKGRAPH_VERSION}" >/dev/null 2>&1; then
-+            echo "Publishing lean-ctx-workgraph ${LEAN_CTX_WORKGRAPH_VERSION} to crates.io first..."
-+            cargo publish --allow-dirty --token "${CARGO_REGISTRY_TOKEN}" -p lean-ctx-workgraph
-+            echo "Waiting 30s for crates.io index propagation..."
-+            sleep 30
-+          fi
-+          LEAN_CTX_COMPRESS_VERSION="$(grep -m1 '^version' crates/lean-ctx-compress/Cargo.toml | sed -E 's/.*"([^"]+)".*/\1/')"
-+          if ! curl -fsSL -H "User-Agent: lean-ctx-release" \
-+               "https://crates.io/api/v1/crates/lean-ctx-compress/${LEAN_CTX_COMPRESS_VERSION}" >/dev/null 2>&1; then
-+            echo "Publishing lean-ctx-compress ${LEAN_CTX_COMPRESS_VERSION} to crates.io first..."
-+            cargo publish --allow-dirty --token "${CARGO_REGISTRY_TOKEN}" -p lean-ctx-compress
-+            echo "Waiting 30s for crates.io index propagation..."
-+            sleep 30
-+          fi
-+          LEAN_CTX_FS_VERSION="$(grep -m1 '^version' crates/lean-ctx-fs/Cargo.toml | sed -E 's/.*"([^"]+)".*/\1/')"
-+          if ! curl -fsSL -H "User-Agent: lean-ctx-release" \
-+               "https://crates.io/api/v1/crates/lean-ctx-fs/${LEAN_CTX_FS_VERSION}" >/dev/null 2>&1; then
-+            echo "Publishing lean-ctx-fs ${LEAN_CTX_FS_VERSION} to crates.io first..."
-+            cargo publish --allow-dirty --token "${CARGO_REGISTRY_TOKEN}" -p lean-ctx-fs
-+            echo "Waiting 30s for crates.io index propagation..."
-+            sleep 30
-+          fi
-+          LEAN_CTX_SYNTAX_VERSION="$(grep -m1 '^version' crates/lean-ctx-syntax/Cargo.toml | sed -E 's/.*"([^"]+)".*/\1/')"
-+          if ! curl -fsSL -H "User-Agent: lean-ctx-release" \
-+               "https://crates.io/api/v1/crates/lean-ctx-syntax/${LEAN_CTX_SYNTAX_VERSION}" >/dev/null 2>&1; then
-+            echo "Publishing lean-ctx-syntax ${LEAN_CTX_SYNTAX_VERSION} to crates.io first..."
-+            cargo publish --allow-dirty --token "${CARGO_REGISTRY_TOKEN}" -p lean-ctx-syntax
-+            echo "Waiting 30s for crates.io index propagation..."
-+            sleep 30
-+          fi
-           STORAGE_VERSION="$(grep -m1 '^version' crates/leanctx-native-storage/Cargo.toml | sed -E 's/.*"([^"]+)".*/\1/')"
-           if ! curl -fsSL -H "User-Agent: lean-ctx-release" \
-                "https://crates.io/api/v1/crates/leanctx-native-storage/${STORAGE_VERSION}" >/dev/null 2>&1; then
-@@ -1279,7 +1319,7 @@ jobs:
-           cargo package --locked -p lean-ctx
-           # Verification is intentionally mandatory: source packages cannot rely
-           # on this repository's local `[patch.crates-io]` entries.
--          cargo publish --allow-dirty --token "${CARGO_REGISTRY_TOKEN}"
-+          cargo publish --allow-dirty --token "${CARGO_REGISTRY_TOKEN}" -p lean-ctx
- 
-   publish-npm:
-     name: Publish to npm
-```
-
-**File**: `AGENTS.md` (modified, +11/-2)
-```diff
-@@ -121,9 +121,18 @@ before it is written, and the check is part of the handover:
-   it belongs to once that exists. New code in `rust/src/` needs a reason in the
-   handover (what it needs from the monolith, and why it cannot depend on a
-   crate instead).
-+- **The map is `rust/CRATE_MAP.md`** (machine form `rust/CRATE_MAP.toml`):
-+  extracted crates, modules scheduled for a crate, and the allowed direction.
-+  Crates never depend on `lean-ctx`. The engine depends on them through a thin
-+  facade (for example `core::patterns`), so engine paths stay stable. New code
-+  for an extracted area goes into its crate, never beside the facade.
- - **Changes to existing code do not deepen the coupling:** no new
--  `crate::` edges from a module that is already split out or scheduled for a
--  split; shared types move down into a lower crate rather than up.
-+  `crate::` edges out of a module that is split out or scheduled for a split;
-+  shared types move down into a lower crate rather than up.
-+  `scripts/check-crate-boundaries.py` (preflight and the pounce gate) fails on
-+  such an edge. Its baseline `rust/crate_boundary_baseline.json` only grows with
-+  the crate-split lead's sign-off ("monolith: <reason>" plus `--update`), and it
-+  shrinks with every edge you cut.
- - **A new heavy dependency** (a parser, ML runtime, HTTP stack, database
-   client) lands behind a feature in its own crate, never directly in
-   `lean_ctx`.
-```
-
-**File**: `CHANGELOG.md` (modified, +85/-4)
-```diff
-@@ -229,6 +229,11 @@ Current positioning: [LeanCTX Engine — Context Gateway for AI Systems](docs/PO
-   token in the process list; the new `--auth-token-file <path>` (or `LEAN_CTX_HTTP_TOKEN_FILE`)
-   reads it from a bounded regular file, besides `LEAN_CTX_HTTP_TOKEN`. Giving both the token
-   and a token file is refused.
-+- **`cockpit` reads its auth token from a file too.** `--auth-token=<token>` (and `--token=`)
-+  left the Bearer token in the process list; `--auth-token-file <path>` (or
-+  `LEAN_CTX_HTTP_TOKEN_FILE` while `LEAN_CTX_HTTP_TOKEN` is unset) reads it from a bounded
-+  regular file, and a background server reads the same file instead of getting the token.
-+  Giving both the token and a token file is refused.
- - **Role and policy denials are tool errors.** A tool blocked by the active role, a context
-   policy pack or its egress rules came back as a successful result; it now carries
-   `isError: true` with the same reason, and its audit entry names the calling agent instead
-@@ -269,6 +274,17 @@ Current positioning: [LeanCTX Engine — Context Gateway for AI Systems](docs/PO
-   `action=repin` re-anchors a fact marked to verify to its code as it is now without
-   retyping it, and `action=coverage` lists the most edited files that no fact is anchored to.
- - **`ctx_provider query mode=text`** lists each item with its body, for every provider.
-+- **A connected engine keeps the vault in line with what its agents changed.** Until now a
-+  fact reached the Hive vault once, when it was captured; correcting, superseding, removing or
-+  re-pinning it later never left the machine, so other engines kept receiving knowledge its
-+  author had withdrawn. Each sync now compares the engine's own vault items with its knowledge
-+  store: a superseded fact whose successor is shared gets `supersedes` (the vault shows it
-+  outdated), a withdrawn one is retracted (reason "withdrawn by author", no content), and a
-+  fact re-pinned locally is re-anchored in the vault. Only items this checkout captured, the
-+  raw store decides (a fact a policy view withholds is never retracted), an unreadable or
-+  empty store changes nothing, and the server's retraction limits and review holds apply
-+  unchanged. The knowledge journal gates the pass (nothing to do while it stands still, a full
-+  pass hourly); `hive sync` reports what it queued.
- - **Governor rule R4: template collapse for large Bash output.** R2 folds only
-   byte-identical lines, so real logs, lint output and exports, whose lines differ in a
-   timestamp, sequence number or id, never shrank and the governor wrote no receipts. R4
-@@ -330,6 +346,10 @@ Current positioning: [LeanCTX Engine — Context Gateway for AI Systems](docs/PO
- 
- ### Changed
- 
-+- **`ctx_search` drops the `[∈ enclosing symbol → …]` legend line.** The `∈name@Lstart`
-+  tags on hits stay — agents read those symbols by name and line — but no agent in the
-+  benchmark transcripts used the `handle=` form the legend described; it cost about 30
-+  tokens per run.
- - **The telemetry data dictionary says which events LeanCTX | OSS sends.** Of the 24
-   contract events the engine sends eleven; nine (trial, subscription, team and
-   orchestration) belong to the hosted service and are never built by the engine, and four
-@@ -499,6 +519,20 @@ Current positioning: [LeanCTX Engine — Context Gateway for AI Systems](docs/PO
- 
- ### Removed
- 
-+- **Episodic and procedural memory** (owner decision 2026-11-01, measured on 126 real
-+  tasks: procedures were never selected into a kernel plan, and episodes, tool/file run
-+  logs, never reached the delivered kernel trailer for code queries; decisions, findings
-+  and gotchas already live in project knowledge). Gone are `core::episodic_memory`,
-+  `core::procedural_memory`, the `memory.episodic` / `memory.procedural` kernel
-+  providers, the episode recorded at MCP shutdown and on a completed `ctx_session` task
-+  (the `Episode auto-recorded` note), the procedure capacity reclaim and its
-+  `Procedures:` line in the consolidation report, the `episodic`/`procedural` lines of
-+  `ctx_knowledge action=lifecycle_report` and of the effective-config summary, the doctor
-+  capacity checks for both stores, and the `episodes`, `procedures` and `existing_paths`
-+  inputs of the dashboard's work analysis (its work view now reports `available: false`).
-+  Existing files under `memory/episodes`, `memory/procedures` and
-+  `memory/archive/procedures` stay on disk; nothing reads them, and only the existing
-+  orphaned-project prune still removes a removed project's episode file.
- - **Dormant Context Kernel code without a caller:** `enforce_plan` (the mode never reached
-   filtering), `activation::should_suppress_in_mode`, `health::format_health` and
-   `health_api::one_line_status`. No command, route or tool output changes.
-@@ -569,9 +603,27 @@ Current positioning: [LeanCTX Engine — Context Gateway for AI Systems](docs/PO
-   always uses the static layout. `ctx_metrics` no longer prints the cali
-```
-
-**File**: `CONTRACTS.md` (modified, +1/-1)
-```diff
-@@ -306,7 +306,7 @@ Interfaces for external integrations and future plugin system.
- 
- ### CompressionPattern (planned v1)
- 
--- **Status**: Interface extracted from `rust/src/core/patterns/mod.rs`
-+- **Status**: Interface extracted from the `lean-ctx-patterns` crate (`rust/crates/lean-ctx-patterns/src/lib.rs`)
- - **Future**: Plugin-loadable compression patterns for proprietary CLI tools
- 
- ### LcpTool (planned v1)
-```
-
-**File**: `CONTRIBUTING.md` (modified, +2/-2)
-```diff
-@@ -190,14 +190,14 @@ lean-ctx/
- 
- ### Add a shell compression pattern
- 
--1. Add a new module in `rust/src/core/patterns/<tool>.rs`
-+1. Add a new module in `rust/crates/lean-ctx-patterns/src/<tool>.rs` (the `lean-ctx-patterns` crate)
- 2. Implement:
- 
- ```rust
- pub fn compress(command: &str, output: &str) -> Option<String>
- ```
- 
--3. Register the module + routing in `rust/src/core/patterns/mod.rs` (`try_specific_pattern`)
-+3. Register the module + routing in `rust/crates/lean-ctx-patterns/src/lib.rs` (`PATTERNS`, routed by `try_specific_pattern_with`)
- 4. Add tests (unit tests in the module or integration tests in `rust/tests/`)
- 5. Run the quality checks above
- 
-```
-
-**File**: `PUBLISH_MANIFEST.toml` (modified, +334/-4)
-```diff
-@@ -148,7 +148,6 @@ new_paths = [
-   "rust/src/shell/containment/tests.rs",
-   "rust/src/shell/containment/wire.rs",
-   "rust/src/tools/admitted_sources.rs",
--  "rust/src/tools/ctx_knowledge/consolidate_admission_tests.rs",
-   "rust/src/tools/ctx_read/file_io_admission_tests.rs",
-   "rust/src/tools/ctx_session/tests.rs",
-   "scripts/agent_tools_compatibility.py",
-@@ -159,6 +158,8 @@ new_paths = [
-   "rust/tests/local_free_invariant.rs",
-   "scripts/check-local-free.py",
-   "tests/delivery/test_check_local_free.py",
-+  "tests/hive-e2e/lifecycle.cjs",
-+  "tests/hive-e2e/lifecycle.sh",
-   "scripts/check-source-layout.py",
-   "scripts/export-offline-build.py",
-   "scripts/export-secret-gate.py",
-@@ -263,12 +264,16 @@ new_paths = [
-   # Emspace provider (owner go 2026-10-31): read-only connector for the space
-   # a project is linked to via `.emspace`, and the compressor of its CLI
-   # output. Own code, Apache-2.0 SPDX-headed.
--  "rust/src/core/patterns/emspace.rs",
-   "rust/src/core/providers/emspace.rs",
-   # Knowledge change journal and the ctx_knowledge actions on it (changes,
-   # repin, coverage; owner go 2026-10-31). Own code, Apache-2.0 SPDX-headed.
-   "rust/src/core/knowledge/journal.rs",
-   "rust/src/tools/ctx_knowledge/changes.rs",
-+  # Hive capture lifecycle: supersede, withdraw and re-anchor own vault items
-+  # after local knowledge changes (owner go 2026-11-01). Own code,
-+  # Apache-2.0 SPDX-headed.
-+  "rust/src/core/hive/capture/lifecycle.rs",
-+  "rust/src/core/hive/capture/lifecycle_tests.rs",
-   "rust/src/core/root_selection.rs",
-   "rust/src/core/audit_trail/checkpoint.rs",
-   "rust/src/core/workspace_authority.rs",
-@@ -1451,7 +1456,6 @@ new_paths = [
-   "rust/src/tools/ctx_edit/applied_edits.rs",
-   # 3.12.1 optplan: governor hook, partial shell runs, lossless collapse,
-   # secret gate, ctx_read symbol (lean-ctx-af, integration/optplan).
--  "rust/src/core/patterns/lossless_collapse.rs",
-   "rust/src/core/shell_allowlist/partial.rs",
-   "rust/src/hook_handlers/govern/bash.rs",
-   "rust/src/hook_handlers/govern/diagnostics.rs",
-@@ -1462,7 +1466,6 @@ new_paths = [
-   "rust/src/hooks/agents/claude_governor.rs",
-   "rust/src/tools/registered/ctx_read_symbol.rs",
-   # 3.12.1 optplan R4: template collapse of repetitive output (lean-ctx-af).
--  "rust/src/core/patterns/template_collapse.rs",
-   # 3.12.1 shell-security policy resolved from the real user config (lean-ctx-af).
-   "rust/src/core/config/shell_policy.rs",
-   "rust/src/core/shell_allowlist/enforcement_patterns.rs",
-@@ -1532,6 +1535,193 @@ new_paths = [
-   "rust/tests/fixtures/v3/task-spine-v1/tasks/task-010-database-migration/execution_receipt.json",
-   "rust/tests/fixtures/v3/task-spine-v1/tasks/task-010-database-migration/outcome.json",
-   "rust/tests/fixtures/v3/task-spine-v1/tasks/task-010-database-migration/task_envelope.json",
-+  "rust/crates/lean-ctx-patterns/Cargo.toml",
-+  "rust/crates/lean-ctx-patterns/README.md",
-+  "rust/crates/lean-ctx-patterns/src/alembic.rs",
-+  "rust/crates/lean-ctx-patterns/src/ansi.rs",
-+  "rust/crates/lean-ctx-patterns/src/ansible.rs",
-+  "rust/crates/lean-ctx-patterns/src/argocd.rs",
-+  "rust/crates/lean-ctx-patterns/src/artisan.rs",
-+  "rust/crates/lean-ctx-patterns/src/aws.rs",
-+  "rust/crates/lean-ctx-patterns/src/bazel.rs",
-+  "rust/crates/lean-ctx-patterns/src/buf.rs",
-+  "rust/crates/lean-ctx-patterns/src/bun.rs",
-+  "rust/crates/lean-ctx-patterns/src/cargo.rs",
-+  "rust/crates/lean-ctx-patterns/src/clang.rs",
-+  "rust/crates/lean-ctx-patterns/src/cmake.rs",
-+  "rust/crates/lean-ctx-patterns/src/composer.rs",
-+  "rust/crates/lean-ctx-patterns/src/cosign.rs",
-+  "rust/crates/lean-ctx-patterns/src/curl.rs",
-+  "rust/crates/lean-ctx-patterns/src/dbt.rs",
-+  "rust/crates/lean-ctx-patterns/src/deno.rs",
-+  "rust/crates/lean-ctx-patterns/src/deploy.rs",
-+  "rust/crates/lean-ctx-patterns/src/deps_cmd.rs",
-+  "rust/crates/lean-ctx-patterns/src/docker.rs",
-+  "rust/crates/lean-ctx-patterns/src/dotnet.rs",
-+  "rust/crates/lean-ctx-patterns/src/emspace.rs",
-+  "rust/crates/lean-ctx-patterns/src/env_filter.rs",
-+  "rust/crates/lean-ctx-patterns/src/eslint.rs",
-+  "rust/crates/lean-ctx-patterns/src/fd.rs",
-+  "rust/crates/lean-ctx-patterns/src/find.rs",
-+  "rust/crates/lean-ctx-patterns/src/flutter.rs",
-+  "rust/crates/lean-ctx-patterns/src/flyway.rs",
-+  "rust/crates/lean-ctx-patterns/src/gem.rs",
-+  "rust/crates/lean-ctx-patterns/src/gh.rs",
-+  "rust/crates/lean-ctx-patterns/src/git/commit.rs",
-+  "rust/crates/lean-ctx-patterns/src/git/diff.rs",
-+  "rust/crates/lean-ctx-patterns/src/git/log.rs",
-+  "rust/crates/lean-ctx-patterns/src/git/mod.rs",
-+  "rust/crates/lean-ctx-patterns/src/git/parser.rs",
-+  "rust/crates/lean-ctx-patterns/src/git/status.rs",
-+  "rust/crates/lean-ctx-patterns/src/glab.rs",
-+  "rust/crates/lean-ctx-patterns/src/golang.rs",
-+  "rust/crates/lean-ctx-patterns/src/grep.rs",
-+  "rust/crates/lean-ctx-patterns/src/grype.rs",
-+  "rust/crates/lean-ctx-patterns/src/helm.rs",
-+  "rust/crates/l
-```
-
-**File**: `README.md` (modified, +1/-1)
-```diff
-@@ -170,7 +170,7 @@ Keep useful task records and discover relationships between code and local
- knowledge. Learning here means context continuity; it does not train your model.
- 
- - **Session memory (CCP)**: persist task/facts/decisions across chats — structured recovery queries survive compaction
--- **Knowledge graph**: temporal facts with validity windows, episodic + procedural memory
-+- **Knowledge graph**: temporal facts with validity windows, relations and lifecycle
- - **Property Graph**: multi-edge code graph (imports, calls, exports, type_ref) powers impact analysis and search ranking
- - **Permission-bound reuse:** access and retention rules still apply when stored
-   context is retrieved. Experimental `.ctxpkg` export is described under Research below.
-```
-
-**File**: `SBOM.cdx.json` (modified, +204/-24)
-```diff
-@@ -1,6 +1,54 @@
- {
-   "bomFormat": "CycloneDX",
-   "components": [
-+    {
-+      "bom-ref": "path+file://./rust/crates/lean-ctx-compress#0.1.0",
-+      "description": "Deterministic text compressors (Markdown, JSON, CSV/TSV, YAML, HTML) for the LeanCTX Engine.",
-+      "externalReferences": [
-+        {
-+          "type": "website",
-+          "url": "https://leanctx.com"
-+        },
-+        {
-+          "type": "vcs",
-+          "url": "https://github.com/yvgude/lean-ctx"
-+        }
-+      ],
-+      "licenses": [
-+        {
-+          "expression": "Apache-2.0"
-+        }
-+      ],
-+      "name": "lean-ctx-compress",
-+      "purl": "pkg:cargo/lean-ctx-compress@0.1.0?download_url=file://crates/lean-ctx-compress",
-+      "scope": "required",
-+      "type": "library",
-+      "version": "0.1.0"
-+    },
-+    {
-+      "bom-ref": "path+file://./rust/crates/lean-ctx-fs#0.1.0",
-+      "description": "Filesystem and environment foundation for the LeanCTX Engine: atomic writes, file locks, hashing, JSONC, home resolution.",
-+      "externalReferences": [
-+        {
-+          "type": "website",
-+          "url": "https://leanctx.com"
-+        },
-+        {
-+          "type": "vcs",
-+          "url": "https://github.com/yvgude/lean-ctx"
-+        }
-+      ],
-+      "licenses": [
-+        {
-+          "expression": "Apache-2.0"
-+        }
-+      ],
-+      "name": "lean-ctx-fs",
-+      "purl": "pkg:cargo/lean-ctx-fs@0.1.0?download_url=file://crates/lean-ctx-fs",
-+      "scope": "required",
-+      "type": "library",
-+      "version": "0.1.0"
-+    },
-     {
-       "bom-ref": "path+file://./rust/crates/lean-ctx-ocla#4.0.0",
-       "description": "Open Context & Token Lifecycle Architecture \u2014 the provider-neutral contract boundary (capability traits, canonical types, token envelopes) shared between lean-ctx-core (OSS) and lean-ctx-enterprise (proprietary).",
-@@ -21,6 +69,30 @@
-       "type": "library",
-       "version": "4.0.0"
-     },
-+    {
-+      "bom-ref": "path+file://./rust/crates/lean-ctx-patterns#0.1.0",
-+      "description": "Deterministic shell-output compression patterns and token counting for the LeanCTX Engine.",
-+      "externalReferences": [
-+        {
-+          "type": "website",
-+          "url": "https://leanctx.com"
-+        },
-+        {
-+          "type": "vcs",
-+          "url": "https://github.com/yvgude/lean-ctx"
-+        }
-+      ],
-+      "licenses": [
-+        {
-+          "expression": "Apache-2.0"
-+        }
-+      ],
-+      "name": "lean-ctx-patterns",
-+      "purl": "pkg:cargo/lean-ctx-patterns@0.1.0?download_url=file://crates/lean-ctx-patterns",
-+      "scope": "required",
-+      "type": "library",
-+      "version": "0.1.0"
-+    },
-     {
-       "bom-ref": "path+file://./rust/crates/lean-ctx-protocol#0.4.0",
-       "description": "Open wire contracts for lean-ctx: events, observations, assignments, evidence gaps.",
-@@ -41,6 +113,54 @@
-       "type": "library",
-       "version": "0.4.0"
-     },
-+    {
-+      "bom-ref": "path+file://./rust/crates/lean-ctx-syntax#0.1.0",
-+      "description": "Tree-sitter based code structure for the LeanCTX Engine: signatures, deep AST queries, import resolution and the post-edit syntax gate.",
-+      "externalReferences": [
-+        {
-+          "type": "website",
-+          "url": "https://leanctx.com"
-+        },
-+        {
-+          "type": "vcs",
-+          "url": "https://github.com/yvgude/lean-ctx"
-+        }
-+      ],
-+      "licenses": [
-+        {
-+          "expression": "Apache-2.0"
-+        }
-+      ],
-+      "name": "lean-ctx-syntax",
-+      "purl": "pkg:cargo/lean-ctx-syntax@0.1.0?download_url=file://crates/lean-ctx-syntax",
-+      "scope": "required",
-+      "type": "library",
-+      "version": "0.1.0"
-+    },
-+    {
-+      "bom-ref": "path+file://./rust/crates/lean-ctx-workgraph#0.1.0",
-+      "description": "Bounded multi-agent work graph, budget cascade and outcome evaluation model for the LeanCTX Engine.",
-+      "externalReferences": [
-+        {
-+          "type": "website",
-+          "url": "https://leanctx.com"
-+        },
-+        {
-+          "type": "vcs",
-+          "url": "https://github.com/yvgude/lean-ctx"
-+        }
-+      ],
-+      "licenses": [
-+        {
-+          "expression": "Apache-2.0"
-+        }
-+      ],
-+      "name": "lean-ctx-workgraph",
-+      "purl": "pkg:cargo/lean-ctx-workgraph@0.1.0?download_url=file://crates/lean-ctx-workgraph",
-+      "scope": "required",
-+      "type": "library",
-+      "version": "0.1.0"
-+    },
-     {
-       "bom-ref": "path+file://./rust/crates/leanctx-native-storage#0.1.1",
-       "description": "Handle-bound native storage primitives shared by LeanCTX components",
-@@ -16749,8 +16869,13 @@
-         "registry+https://github.com/rust-lang/crates.io-index#http@1.5.0",
-         "registry+https://github.com/rust-lang/crates.io-index#ignore@0.4.30",
-         "registry+https://github.com/rust-lang/crates.io-index#keyring@3.6.3",
-+        "path+file://./rust/crates/lean-ctx-compress#0.1
-```
-
----
-
-### Incident Patch 3: `7c9025c4` (2026-11-02)
-**Commit Message**: fix: 3.12.1 Hive C0 2.1/2.2, agents talk to agents, humans observe (#2173)
-
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `CHANGELOG.md` (modified, +103/-12)
-```diff
-@@ -346,6 +346,33 @@ Current positioning: [LeanCTX Engine — Context Gateway for AI Systems](docs/PO
- 
- ### Changed
- 
-+- **The engine speaks Hive-Protocol 2.2: agents check each other's task results.** Every
-+  Hive request sends `Hive-Protocol: 2.2`; the engine records the minor Hive answers (2.0,
-+  2.1 or 2.2) at engine start and writes the 2.2 shapes only to a 2.2 Hive: a captured
-+  decision now carries its anchors there. A task result leaves the task `submitted` until
-+  another agent checks it: `ctx_tasks action=verify verdict=accept|reject` (a reject names
-+  its reason and opens the task again; Hive refuses the agent that did the work). Hive's
-+  new `task.event` bus frame reaches every engine of the vault: the engine refreshes its
-+  task list and tells its own agents on the local bus, every agent of the project when a
-+  task is open (again), and every agent but the one that did the work when a result waits
-+  for its check. The vault bus knows six message types (`question`, `offer`, `handoff`,
-+  `finding`, `answer` and `progress` as a status line); `need`, `claim`, `result`, the
-+  progress `goal` and `~` swarm addresses are gone. The consent kinds `procedure_confirm`
-+  and `reviewer_enable` are gone with Hive's review gates; the engine never runs a shared
-+  procedure's commands (delivery shows its title and steps). A delivered vault item no longer has an `[unconfirmed]` bucket, and the
-+  knowledge state follows the 2.2 vectors (no `unconfirmed` reason).
-+- **The engine speaks Hive-Protocol 2.1.** Every Hive request, the enrollment included,
-+  sends `Hive-Protocol: 2.1`. Hive answers a 2.1 enrollment with key set v3; the engine
-+  accepts it and checks it, and the lease it signs, as it checks every stored v3 set (the
-+  lease key is the v3 key of purpose `policy`). Enrollments with key set v1 keep working.
-+- **Hive's TOML org policy is no longer read.** Hive-Protocol 2.1 has none: the engine
-+  ignores `org_policy`, `unpin` and `policy_version` in the policy bundle and the lease's
-+  `policy_signer_keys`, installs no org policy from Hive and no longer refuses a bundle that
-+  drops one ("drops the org policy without a signed unpin"). Org-policy state an older
-+  engine kept in `<data_dir>/hive/policy/` is ignored and dropped on the next save, so it can
-+  never refuse a bundle. Hive filter packs are verified and applied as before. `hive status`
-+  no longer prints a "Company policy" or "Required" line, `hive status --json` has no
-+  `policy` field, and `hive sync` reports "Policy bundle verified (N filter packs)".
- - **`ctx_search` drops the `[∈ enclosing symbol → …]` legend line.** The `∈name@Lstart`
-   tags on hits stay — agents read those symbols by name and line — but no agent in the
-   benchmark transcripts used the `handle=` form the legend described; it cost about 30
-@@ -439,13 +466,43 @@ Current positioning: [LeanCTX Engine — Context Gateway for AI Systems](docs/PO
-   have no effect (see Deprecated); `autopilot evidence` still shows the local evidence. The config key
-   `intelligence_runtime.context_policy_apply` is still accepted but has no effect, and a
-   previously promoted policy file under `context-policy/` in the data directory is ignored.
--- lean-ctx-protocol: `HiveStatusPolicyV1` gains `required_filter_packs` (breaking for
--  struct literals) → 0.5.0. The version bump, its pins and lockfiles, the SBOM and the
--  notices follow in the next release preparation. With the same bump, the status output
--  types (`HiveCliStatusV1`, `HiveStatusPolicyV1` and their siblings) drop
--  `deny_unknown_fields` (or become `#[non_exhaustive]`), as the contract's convention for
--  response types says, so later additive fields are not breaking for typed readers.
--  The same bump removes `hive::compute` (Hive Task Compute was retired).
-+- lean-ctx-protocol → 0.5.0 (breaking). The version bump, its pins and lockfiles, the SBOM
-+  and the notices follow in the next release preparation. The status output types
-+  (`HiveCliStatusV1` and its siblings) drop `deny_unknown_fields` (or become
-+  `#[non_exhaustive]`), as the contract's convention for response types says, so later
-+  additive fields are not breaking for typed readers. The same bump removes
-+  `hive::compute` (Hive Task Compute), and with Hive Protocol 2.1 also
-+  `hive::swarm`, the swarm network and sender (`NetworkV1::Swarm`, `SenderV1::Swarm`,
-+  `NetworkKind`; `MessageBodyV1::validate` takes no network), swarm handles and limits
-+  (`profiles::HandleV1`, `HANDLE_SCHEMA`, `SWARM_LIMITS`, `handle_ok`),
-+  `EngineOptinV1.topics` and `TaskOriginKind::QuarantineTimeout` (a task naming it parses
-+  as `Unknown`). `EnrollmentV1.keys` becomes `EnrollmentKeySet`: key set v1 (`kid`) or v3
-+  (`HiveKeySetV3`, `key_id` and `purposes`, told apart by `schema`), and `validate()`
-+  checks that the lease `kid` names a lease key of the set. The TOML org policy is gone:
-+  `PolicyBundleV1` loses `org_policy`, `unpin` and `policy_version`, `HiveLeaseV1` 
-```
-
-**File**: `PUBLISH_MANIFEST.toml` (modified, +59/-315)
-```diff
-@@ -160,6 +160,10 @@ new_paths = [
-   "tests/delivery/test_check_local_free.py",
-   "tests/hive-e2e/lifecycle.cjs",
-   "tests/hive-e2e/lifecycle.sh",
-+  "tests/hive-e2e/bus.cjs",
-+  "tests/hive-e2e/bus.sh",
-+  "tests/hive-e2e/tasks.cjs",
-+  "tests/hive-e2e/tasks.sh",
-   "scripts/check-source-layout.py",
-   "scripts/export-offline-build.py",
-   "scripts/export-secret-gate.py",
-@@ -274,6 +278,8 @@ new_paths = [
-   # Apache-2.0 SPDX-headed.
-   "rust/src/core/hive/capture/lifecycle.rs",
-   "rust/src/core/hive/capture/lifecycle_tests.rs",
-+  "rust/src/core/hive/bus/messages_v2.rs",
-+  "rust/src/core/hive/bus/task_events.rs",
-   "rust/src/core/root_selection.rs",
-   "rust/src/core/audit_trail/checkpoint.rs",
-   "rust/src/core/workspace_authority.rs",
-@@ -312,7 +318,6 @@ new_paths = [
-   "rust/crates/lean-ctx-protocol/src/hive/lease.rs",
-   "rust/crates/lean-ctx-protocol/src/hive/mod.rs",
-   "rust/crates/lean-ctx-protocol/src/hive/policy.rs",
--  "rust/crates/lean-ctx-protocol/src/hive/sealed.rs",
-   "rust/crates/lean-ctx-protocol/src/hive/status.rs",
-   "rust/crates/lean-ctx-protocol/src/hive/telemetry.rs",
-   "rust/crates/lean-ctx-protocol/tests/hive_fixtures.rs",
-@@ -344,36 +349,26 @@ new_paths = [
-   "rust/crates/lean-ctx-protocol/tests/fixtures/hive/error.forbidden_right.json",
-   "rust/crates/lean-ctx-protocol/tests/fixtures/hive/error.instance_limit.json",
-   "rust/crates/lean-ctx-protocol/tests/fixtures/hive/error.invalid_state.json",
--  "rust/crates/lean-ctx-protocol/tests/fixtures/hive/error.key_exists.json",
-   "rust/crates/lean-ctx-protocol/tests/fixtures/hive/error.plan_required.json",
-   "rust/crates/lean-ctx-protocol/tests/fixtures/hive/error.proposal_state.json",
-   "rust/crates/lean-ctx-protocol/tests/fixtures/hive/error.rate_limited.json",
-   "rust/crates/lean-ctx-protocol/tests/fixtures/hive/error.revision_conflict.json",
--  "rust/crates/lean-ctx-protocol/tests/fixtures/hive/error.sealed_plaintext.json",
-   "rust/crates/lean-ctx-protocol/tests/fixtures/hive/error.upgrade_required.json",
-   "rust/crates/lean-ctx-protocol/tests/fixtures/hive/error.upload_disabled.json",
-   "rust/crates/lean-ctx-protocol/tests/fixtures/hive/keyset.response.json",
-   "rust/crates/lean-ctx-protocol/tests/fixtures/hive/knowledge_put.request.json",
--  "rust/crates/lean-ctx-protocol/tests/fixtures/hive/knowledge_put.sealed.request.json",
-   "rust/crates/lean-ctx-protocol/tests/fixtures/hive/knowledge_revision.response.json",
--  "rust/crates/lean-ctx-protocol/tests/fixtures/hive/knowledge_revision.sealed.response.json",
-   "rust/crates/lean-ctx-protocol/tests/fixtures/hive/lease_envelope.response.json",
-   "rust/crates/lean-ctx-protocol/tests/fixtures/hive/metrics.request.json",
-   "rust/crates/lean-ctx-protocol/tests/fixtures/hive/metrics_ack.response.json",
-   "rust/crates/lean-ctx-protocol/tests/fixtures/hive/org_salt.response.json",
-   "rust/crates/lean-ctx-protocol/tests/fixtures/hive/policy_bundle.response.json",
--  "rust/crates/lean-ctx-protocol/tests/fixtures/hive/policy_bundle.signed.response.json",
-   "rust/crates/lean-ctx-protocol/tests/fixtures/hive/proposal.request.json",
--  "rust/crates/lean-ctx-protocol/tests/fixtures/hive/proposal.sealed.request.json",
-   "rust/crates/lean-ctx-protocol/tests/fixtures/hive/proposal_ack.response.json",
-   "rust/crates/lean-ctx-protocol/tests/fixtures/hive/proposal_list.response.json",
--  "rust/crates/lean-ctx-protocol/tests/fixtures/hive/proposal_view.sealed.response.json",
-   "rust/crates/lean-ctx-protocol/tests/fixtures/hive/receipts.request.json",
-   "rust/crates/lean-ctx-protocol/tests/fixtures/hive/receipts_ack.response.json",
-   "rust/crates/lean-ctx-protocol/tests/fixtures/hive/revision_list.response.json",
--  "rust/crates/lean-ctx-protocol/tests/fixtures/hive/sealed_grant.request.json",
--  "rust/crates/lean-ctx-protocol/tests/fixtures/hive/sealed_key.response.json",
--  "rust/crates/lean-ctx-protocol/tests/fixtures/hive/sealed_pending.response.json",
-   "rust/crates/lean-ctx-protocol/tests/fixtures/hive/status.connected.json",
-   "rust/crates/lean-ctx-protocol/tests/fixtures/hive/status.lapsed.json",
-   "rust/crates/lean-ctx-protocol/tests/fixtures/hive/status.not_connected.json",
-@@ -399,21 +394,17 @@ new_paths = [
-   "rust/src/core/hive/knowledge/learn.rs",
-   "rust/src/core/hive/knowledge/mod.rs",
-   "rust/src/core/hive/knowledge/pull.rs",
--  "rust/src/core/hive/knowledge/review.rs",
-   "rust/src/core/hive/knowledge/screening.rs",
-   "rust/src/core/hive/lease.rs",
-   "rust/src/core/hive/link.rs",
-   "rust/src/core/hive/metrics/collect.rs",
--  "rust/src/core/hive/metrics/local_state.rs",
-   "rust/src/core/hive/metrics/mod.rs",
--  "rust/src/core/hive/metrics/upload.rs",
-   "rust/src/core/hive/mod.rs",
-   "rust/src/core/hive/outbox.rs",
-   "rust/src/core/hive/policy.rs",
-   "rust/src/core/hive/receipts.rs",
-   "rust/src/core/hive/runtime_lease.rs",
-   "rust/src/core/hive/scheduler.rs",
--  "rust/src/core/hive/sealed.rs",
-   "rust/src/core/hive/state.rs",
-   "rust/src/c
-```
-
-**File**: `SBOM.cdx.json` (modified, +1/-2)
-```diff
-@@ -16853,7 +16853,6 @@
-         "registry+https://github.com/rust-lang/crates.io-index#chacha20poly1305@0.10.1",
-         "registry+https://github.com/rust-lang/crates.io-index#chrono@0.4.45",
-         "registry+https://github.com/rust-lang/crates.io-index#clap@4.6.6",
--        "registry+https://github.com/rust-lang/crates.io-index#curve25519-dalek@4.1.3",
-         "registry+https://github.com/rust-lang/crates.io-index#dashmap@6.2.1",
-         "registry+https://github.com/rust-lang/crates.io-index#dirs@6.0.0",
-         "registry+https://github.com/rust-lang/crates.io-index#ed25519-dalek@2.2.0",
-@@ -20850,7 +20849,7 @@
-       },
-       {
-         "name": "leanctx:cargo-lock-sha256",
--        "value": "8446a84ff552675ec7d0b9593857c170f8054c3ab03ab9db063d682009a1a73a"
-+        "value": "b22136d62dce29b3cfdf7d21b0e9dde9139a6669a17fc3d9c5623476ec59a1a6"
-       }
-     ],
-     "tools": [
-```
-
-**File**: `THIRD_PARTY_NOTICES` (modified, +4/-4)
-```diff
-@@ -2,15 +2,15 @@
- Schema: leanctx.third-party-notices/v1
- Status: GENERATED AND APPROVED
- Content-Digest-Scope: SHA-256 of this file with the Content-Digest value zeroed
--Content-Digest: sha256:f36be4c688183b9b0ae18ab1bd6ef724d9a0087ea59be850305651a1ba4e5986
-+Content-Digest: sha256:0a8eb7cee574a2ea1d964a9b3765d757de915540c97eb8d40722a1b9fd6eb0cf
- Source inventory: rust/Cargo.lock + cargo metadata --locked --offline --all-features + SBOM.cdx.json + legal/third-party-assets.toml + packages/pi-lean-ctx/package-lock.json
- Generation command: cargo metadata --locked --offline --all-features --manifest-path rust/Cargo.toml --format-version 1
- Approval contract: legal/third-party-notices-approval.toml binds approved_content_sha256 to this file's exact SHA-256
--Cargo.lock SHA-256: 8446a84ff552675ec7d0b9593857c170f8054c3ab03ab9db063d682009a1a73a
-+Cargo.lock SHA-256: b22136d62dce29b3cfdf7d21b0e9dde9139a6669a17fc3d9c5623476ec59a1a6
- Cargo metadata inventory SHA-256: ab36d895ace61e75409e9eac896dbdcaae6444c04d19fbb424fdbd2824c519bd
--SBOM.cdx.json SHA-256: ce7b7c770e0ffdd063e5ec37b3a8b872600989912b10ee58003d12b1216bc7c9
-+SBOM.cdx.json SHA-256: 90512513e60f32345486863ac4cdeb5b79b286d042bfac6834b52bc134bcdcca
- SBOM components: 557
--Asset manifest SHA-256: 494baa053be258854e8ec70ab7e1ae02ad053f78370a188274b656275a3bc886
-+Asset manifest SHA-256: e0d4a666f1c4a31ff5a925d3bce62623e1d5c6b4b11871b5ff9ec65452db91ba
- npm package-lock.json SHA-256: 2698eb8bcaf09c3ff275826b3be2e28e5fb6044b3245cd6ec23475e06d1744a1
- Bundled MCP SDK: @modelcontextprotocol/sdk 1.32.1 (sha512-2DdE+SJDtzLEEWzY1ZjY7Q+VcPhcV1KisD3zI4u0XZyktsjHum1mwbMI+JaulUBi2OZk+KJAi2uPXzxichPkdw==)
- Cargo graph packages: 612
-```
-
-**File**: `docs/reference/generated/config-keys.md` (modified, +0/-1)
-```diff
-@@ -268,7 +268,6 @@ LeanCTX Hive: workspace knowledge, policies and the shared agent bus.
- - `receipts_upload` (bool, default `true`) — Upload context receipts to Hive.
- - `root_key` (string, default `null`) — Root public key (base64 Ed25519) of a self-hosted Hive.
- - `runtime_consent` (bool, default `false`) — You agreed to install the proprietary Intelligence runtime your plan licenses (set by `hive connect` or `hive runtime install`).
--- `sealed_grants` (string: confirm | auto, default `confirm`) — Sealed vaults: grant the vault key to a newly approved instance only after you confirmed its fingerprint (confirm), or to every instance Hive lists (auto).
- - `url` (string, default `https://hive.leanctx.com`) — Hive origin (https; a self-hosted Hive may use any https URL).
- - `vault_labels` (bool, default `true`) — Send checkout folder names as vault labels.
- - `worker.max_tasks_per_day` (integer, default `null`) — Worker mode: at most this many claimed tasks per day on this machine; only tightens the opt-in budget set on the web.
-```
-
-**File**: `legal/third-party-assets.toml` (modified, +2/-2)
-```diff
-@@ -4,9 +4,9 @@ authority = "THIRD_PARTY_NOTICES"
- 
- [inputs]
- cargo_lock = "rust/Cargo.lock"
--cargo_lock_sha256 = "8446a84ff552675ec7d0b9593857c170f8054c3ab03ab9db063d682009a1a73a"
-+cargo_lock_sha256 = "b22136d62dce29b3cfdf7d21b0e9dde9139a6669a17fc3d9c5623476ec59a1a6"
- sbom = "SBOM.cdx.json"
--sbom_sha256 = "ce7b7c770e0ffdd063e5ec37b3a8b872600989912b10ee58003d12b1216bc7c9"
-+sbom_sha256 = "90512513e60f32345486863ac4cdeb5b79b286d042bfac6834b52bc134bcdcca"
- npm_lock = "packages/pi-lean-ctx/package-lock.json"
- npm_lock_sha256 = "2698eb8bcaf09c3ff275826b3be2e28e5fb6044b3245cd6ec23475e06d1744a1"
- 
-```
-
-**File**: `legal/third-party-notices-approval.toml` (modified, +3/-3)
-```diff
-@@ -1,5 +1,5 @@
- schema = "leanctx.third-party-notices-approval/v1"
--approved_content_sha256 = "d32e30dcf0641129515ceb236617649d297dadd9ca27b320a5011bff24961d18"
-+approved_content_sha256 = "22938c1bafeab558ce8db4b830a233f7a32e2554e1a4549c83cb8908fcd59f15"
- approving_owner = "Yves Gugger"
--approval_evidence = "Copyright owner approval of the generated THIRD_PARTY_NOTICES (GENERATED AND APPROVED variant of scripts/generate-third-party-notices.py) for 3.12.1 after the first engine crate split; third-party Cargo packages unchanged (599), the only notice changes are the input digests, the Cargo graph 607 -> 612 (the own workspace crates lean-ctx-patterns, -workgraph, -compress, -fs, -syntax) and SBOM components 552 -> 557. Owner okay in the 3.12.1 integration lead session on 2026-11-01 (answer \"Freigeben\" to the notices question naming old a3b2e085 and new pending 39fd5a61)."
--approved_at = "2026-11-01"
-+approval_evidence = "Copyright owner approval of the generated THIRD_PARTY_NOTICES (GENERATED AND APPROVED variant of scripts/generate-third-party-notices.py) for 3.12.1 after the Hive C0 2.1/2.2 engine sync; notice content unchanged (599 third-party Cargo packages, Cargo graph 612, same SBOM components), only the Cargo.lock and SBOM input digests change because curve25519-dalek is no longer a direct dependency. Owner okay in the 3.12.1 integration lead session on 2026-11-02 (answer \"Freigeben\" to the notices question naming old d32e30dc and new pending c10143a0)."
-+approved_at = "2026-11-02"
-```
-
-**File**: `rust/Cargo.lock` (modified, +0/-3)
-```diff
-@@ -2180,7 +2180,6 @@ dependencies = [
-  "chrono",
-  "clap",
-  "criterion",
-- "curve25519-dalek",
-  "dashmap",
-  "dirs",
-  "ed25519-dalek",
-@@ -2342,9 +2341,7 @@ dependencies = [
-  "base64 0.22.1",
-  "chacha20poly1305",
-  "chrono",
-- "curve25519-dalek",
-  "ed25519-dalek",
-- "hkdf",
-  "hmac",
-  "regex",
-  "serde",
-```
-
 #### Recent Merged Pull Requests:
+- **PR #2188** (2026-11-04): fix(telemetry): test processes of every LeanCTX crate stay off production endpoints (@yvgude)
+- **PR #2187** (2026-11-04): release: 3.12.1 long-session elision opt-in (@yvgude)
+- **PR #2185** (2026-11-03): release: 3.12.1 flaky-test hardening (@yvgude)
+- **PR #2183** (2026-11-03): release: 3.12.1 (@yvgude)
 - **PR #2173** (2026-11-02): fix: 3.12.1 Hive C0 2.1/2.2, agents talk to agents, humans observe (@yvgude)
 - **PR #2170** (2026-11-01): fix: 3.12.1 first engine crate split, knowledge lifecycle to Hive, cleanup waves 5–6 (@yvgude)
-- **PR #2168** (2026-11-01): fix: 3.12.1 shell security, knowledge journal, Hive-ready engine, cleanup waves 3–4 (@yvgude)
-- **PR #2167** (2026-10-31): fix: emspace follow-up, background job output (#2164), semantic scan bound (#2063) (@yvgude)
-- **PR #2163** (2026-10-31): chore: 3.12.1 cleanup, emspace provider, read outline and template collapse (@yvgude)
-- **PR #2161** (2026-10-30): fix: 3.12.1 fixes, engine optimizations and OSS hardening (@yvgude)
 
 ---
 
@@ -3321,22 +3651,30 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. 3.12.1 shell security, knowledge journal, Hive-ready engine, cleanup waves 3–4 (
+## X. Merge pull request #2188 from yvgude/fix/telemetry-test-guard
 
 **RULE**:
-When implementing operations in `.github/workflows/ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in yvgude/lean-ctx. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in yvgude/lean-ctx. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3550b694`: 3.12.1 shell security, knowledge journal, Hive-ready engine, cleanup waves 3–4 (#2168). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `28d7f7cc`: Merge pull request #2188 from yvgude/fix/telemetry-test-guard. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-      - name: Test preinstall stops only the installed daemon
-        run: node packages/lean-ctx-bin/preinstall.test.cjs
+### Fixed
+
+- **Test processes of every LeanCTX crate stay off production endpoints.** The guard that
+  sends test traffic to a loopback sink recognised only the Engine's own unit tests and
+  processes cargo launched for the Engine or `lean-ctx` package. Since the crate split, the
+  unit tests of the server, Hive, hooks and proxy crates, and the binaries they spawn, sent
+  telemetry to production, each as a new installation. Any process of a `lean-ctx…` or
+  `leanctx…` package, and every sandboxed unit-test harness, now gets the loopback sink; an
+  installed binary keeps its configured endpoint.
+
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -3346,4 +3684,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3550b694` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `28d7f7cc` are properly handled with clean fallback behavior.

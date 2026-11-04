@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-04T16:50:18.675Z",
+  "last_updated": "2026-11-04T17:00:25.190Z",
   "total_verified_learnings": 1208,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -52690,8 +52690,8 @@
       "slug": "sigstore-cosign",
       "platform": "github",
       "source_url": "https://github.com/sigstore/cosign",
-      "source_version": "d13e2b83",
-      "content_hash": "8bc3994897907c2f9635d413bceaf2b4f2dc49fcb9ee83dd5aaeca0e5fddf741",
+      "source_version": "60d048f6",
+      "content_hash": "968e4be5df0801ad7530864b1154fcc59cdb1e984272fc200bc4914aabada2b7",
       "dossier_path": "07_PROJECT_LEARNING/sigstore-cosign-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sigstore-cosign-learnings.md",
       "promoted_rules": [
@@ -52759,6 +52759,11 @@
           "number": 6763,
           "title": "Add TrustedRootWithContext to stop the trusted root refresh (#5200)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6848,
+          "title": "deps): bump github.com/buildkite/agent/v3 from 3.130.0 to 3.138.2 (#5191)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -52766,7 +52771,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T07:41:19.225Z",
+      "verified_at": "2026-11-04T16:59:20.723Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -61694,8 +61699,8 @@
       "slug": "yvgude-lean-ctx",
       "platform": "github",
       "source_url": "https://github.com/yvgude/lean-ctx",
-      "source_version": "7c9025c4",
-      "content_hash": "cad98c51ef05bb9cac4395ce044e6285002236ffaedb6240908d7ae2733318a9",
+      "source_version": "28d7f7cc",
+      "content_hash": "491af6b47c3d0c51a16c34c153e4fb2e67549cba779b465db5448cc409370353",
       "dossier_path": "07_PROJECT_LEARNING/yvgude-lean-ctx-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/yvgude-lean-ctx-learnings.md",
       "promoted_rules": [
@@ -61728,6 +61733,11 @@
           "number": 6475,
           "title": "12.1 shell security, knowledge journal, Hive-ready engine, cleanup waves 3–4 (",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6851,
+          "title": "Merge pull request #2188 from yvgude/fix/telemetry-test-guard",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -61735,7 +61745,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-02T17:39:23.790Z",
+      "verified_at": "2026-11-04T17:00:25.168Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -117217,7 +117227,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/lodestones/MOSS-Image-SFT-8-steps-dmd",
       "source_version": "hf-lodestones-moss-image-sft-8-steps-dmd",
-      "content_hash": "e69d82fd5f3284462730d8d6bd01346d164072b7b92017af1373fb56a8b897e9",
+      "content_hash": "50574e612a9ecff7cd1823a7f2d97a0a1e83746e172e560837b2da08b8d9c54e",
       "dossier_path": "07_PROJECT_LEARNING/hf-lodestones-moss-image-sft-8-steps-dmd-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-lodestones-moss-image-sft-8-steps-dmd-learnings.md",
       "promoted_rules": [
@@ -117260,6 +117270,16 @@
           "number": 5048,
           "title": "Iterative Data-Space Invariant Subtraction Trajectory",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6849,
+          "title": "Precision-Dependent Distillation Integrity",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6850,
+          "title": "Custom Sampler State Consistency",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -117267,7 +117287,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T01:04:47.224Z",
+      "verified_at": "2026-11-04T16:59:28.424Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -175045,6 +175065,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-04T16:50:18.661Z"
+    },
+    "rule-6848": {
+      "learning_id": "rule-6848",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6848,
+      "title": "deps): bump github.com/buildkite/agent/v3 from 3.130.0 to 3.138.2 (#5191)",
+      "source_url": "https://github.com/sigstore/cosign",
+      "source_version": "60d048f6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T16:59:20.723Z"
+    },
+    "rule-6849": {
+      "learning_id": "rule-6849",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6849,
+      "title": "Precision-Dependent Distillation Integrity",
+      "source_url": "https://huggingface.co/lodestones/MOSS-Image-SFT-8-steps-dmd",
+      "source_version": "hf-lodestones-moss-image-sft-8-steps-dmd",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T16:59:28.424Z"
+    },
+    "rule-6850": {
+      "learning_id": "rule-6850",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6850,
+      "title": "Custom Sampler State Consistency",
+      "source_url": "https://huggingface.co/lodestones/MOSS-Image-SFT-8-steps-dmd",
+      "source_version": "hf-lodestones-moss-image-sft-8-steps-dmd",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T16:59:28.424Z"
+    },
+    "rule-6851": {
+      "learning_id": "rule-6851",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6851,
+      "title": "Merge pull request #2188 from yvgude/fix/telemetry-test-guard",
+      "source_url": "https://github.com/yvgude/lean-ctx",
+      "source_version": "28d7f7cc",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T17:00:25.168Z"
     }
   },
   "aliases": {

@@ -3523,10 +3523,10 @@
     "repository": "sigstore/cosign",
     "platform": "github",
     "sourceUrl": "https://github.com/sigstore/cosign",
-    "sourceVersion": "d13e2b83",
+    "sourceVersion": "60d048f6",
     "license": "Apache-2.0",
-    "contentHash": "8bc3994897907c2f9635d413bceaf2b4f2dc49fcb9ee83dd5aaeca0e5fddf741",
-    "lastHarvestedAt": "2026-11-04T07:41:19.334Z",
+    "contentHash": "968e4be5df0801ad7530864b1154fcc59cdb1e984272fc200bc4914aabada2b7",
+    "lastHarvestedAt": "2026-11-04T16:59:20.832Z",
     "learningId": "learn-github-sigstore-cosign"
   },
   "llphant-llphant": {
@@ -6233,10 +6233,10 @@
     "repository": "yvgude/lean-ctx",
     "platform": "github",
     "sourceUrl": "https://github.com/yvgude/lean-ctx",
-    "sourceVersion": "7c9025c4",
+    "sourceVersion": "28d7f7cc",
     "license": "Apache-2.0",
-    "contentHash": "cad98c51ef05bb9cac4395ce044e6285002236ffaedb6240908d7ae2733318a9",
-    "lastHarvestedAt": "2026-11-02T17:39:23.907Z",
+    "contentHash": "491af6b47c3d0c51a16c34c153e4fb2e67549cba779b465db5448cc409370353",
+    "lastHarvestedAt": "2026-11-04T17:00:25.279Z",
     "learningId": "learn-github-yvgude-lean-ctx"
   },
   "gkd-kit-gkd": {
@@ -10385,8 +10385,8 @@
     "sourceUrl": "https://huggingface.co/lodestones/MOSS-Image-SFT-8-steps-dmd",
     "sourceVersion": "hf-lodestones-moss-image-sft-8-steps-dmd",
     "license": "Open-Source",
-    "contentHash": "e69d82fd5f3284462730d8d6bd01346d164072b7b92017af1373fb56a8b897e9",
-    "lastHarvestedAt": "2026-10-31T01:04:47.333Z",
+    "contentHash": "50574e612a9ecff7cd1823a7f2d97a0a1e83746e172e560837b2da08b8d9c54e",
+    "lastHarvestedAt": "2026-11-04T16:59:28.534Z",
     "learningId": "learn-huggingface-lodestones-moss-image-sft-8-steps-dmd"
   },
   "ahmadhassan-bted-autoswarm-shadow-adapter": {

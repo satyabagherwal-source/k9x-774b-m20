@@ -40,8 +40,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-04T16:50:21.285Z",
-    "lastVerified": "2026-11-04T16:50:21.285Z",
+    "lastChecked": "2026-11-04T17:00:27.846Z",
+    "lastVerified": "2026-11-04T17:00:27.846Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -145,8 +145,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-04T11:09:26.414Z",
-    "lastVerified": "2026-11-04T11:09:26.414Z",
+    "lastChecked": "2026-11-04T16:59:17.785Z",
+    "lastVerified": "2026-11-04T16:59:17.785Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -1725,9 +1725,9 @@
   "kubesphere-kubesphere": {
     "name": "kubesphere",
     "officialUrl": "https://github.com/kubesphere/kubesphere",
-    "lastChecked": "2026-11-03T17:30:09.420Z",
+    "lastChecked": "2026-11-04T16:59:10.323Z",
     "revisionIdentifier": "04a29b5c",
-    "lastVerified": "2026-11-03T17:30:09.420Z"
+    "lastVerified": "2026-11-04T16:59:10.323Z"
   },
   "zama-ai-tfhe-rs": {
     "name": "tfhe-rs",
@@ -1817,14 +1817,14 @@
     "officialUrl": "https://github.com/sigstore/cosign",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-04T07:41:17.909Z",
-    "lastVerified": "2026-11-04T07:41:17.909Z",
+    "lastChecked": "2026-11-04T16:59:17.329Z",
+    "lastVerified": "2026-11-04T16:59:17.329Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-sigstore-cosign",
-    "contentHash": "8bc3994897907c2f9635d413bceaf2b4f2dc49fcb9ee83dd5aaeca0e5fddf741",
+    "contentHash": "968e4be5df0801ad7530864b1154fcc59cdb1e984272fc200bc4914aabada2b7",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -5058,9 +5058,9 @@
   "crazycodeboy-react-native-splash-screen": {
     "name": "react-native-splash-screen",
     "officialUrl": "https://github.com/crazycodeboy/react-native-splash-screen",
-    "lastChecked": "2026-10-31T09:53:54.799Z",
+    "lastChecked": "2026-11-04T16:59:07.807Z",
     "revisionIdentifier": "b4719762",
-    "lastVerified": "2026-10-31T09:53:54.799Z"
+    "lastVerified": "2026-11-04T16:59:07.807Z"
   },
   "pulumi-pulumi": {
     "name": "pulumi/pulumi",
@@ -6259,14 +6259,14 @@
     "officialUrl": "https://github.com/yvgude/lean-ctx",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-02T17:39:06.946Z",
-    "lastVerified": "2026-11-02T17:39:06.946Z",
+    "lastChecked": "2026-11-04T16:59:09.124Z",
+    "lastVerified": "2026-11-04T16:59:09.124Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-yvgude-lean-ctx",
-    "contentHash": "cad98c51ef05bb9cac4395ce044e6285002236ffaedb6240908d7ae2733318a9",
+    "contentHash": "491af6b47c3d0c51a16c34c153e4fb2e67549cba779b465db5448cc409370353",
     "promotedRulesCount": 1,
-    "recentFixesCount": 4,
+    "recentFixesCount": 6,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -6610,9 +6610,9 @@
   "lindb-lindb": {
     "name": "lindb",
     "officialUrl": "https://github.com/lindb/lindb",
-    "lastChecked": "2026-11-03T16:40:30.482Z",
+    "lastChecked": "2026-11-04T16:59:15.311Z",
     "revisionIdentifier": "612070e1",
-    "lastVerified": "2026-11-03T16:40:30.482Z"
+    "lastVerified": "2026-11-04T16:59:15.311Z"
   },
   "vercel-labs-opensrc": {
     "name": "opensrc",
@@ -12488,13 +12488,13 @@
     "officialUrl": "https://huggingface.co/lodestones/MOSS-Image-SFT-8-steps-dmd",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-31T01:04:45.922Z",
-    "lastVerified": "2026-10-31T01:04:45.922Z",
+    "lastChecked": "2026-11-04T16:59:05.981Z",
+    "lastVerified": "2026-11-04T16:59:05.981Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-lodestones-moss-image-sft-8-steps-dmd",
-    "contentHash": "e69d82fd5f3284462730d8d6bd01346d164072b7b92017af1373fb56a8b897e9",
-    "promotedRulesCount": 0,
+    "contentHash": "50574e612a9ecff7cd1823a7f2d97a0a1e83746e172e560837b2da08b8d9c54e",
+    "promotedRulesCount": 2,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",

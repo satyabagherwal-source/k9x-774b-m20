@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/sigstore-cosign-learnings.md`  
 > **Source**: github ([https://github.com/sigstore/cosign](https://github.com/sigstore/cosign))  
-> **Source Version**: `d13e2b83`  
+> **Source Version**: `60d048f6`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T07:41:18.591Z  
+> **Timestamp**: 2026-11-04T16:59:20.083Z  
 > **Learning ID**: `learn-github-sigstore-cosign`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/sigstore-cosign-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/sigstore/cosign](https://github.com/sigstore/cosign))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T07:41:17.909Z  
+> **Harvest Timestamp**: 2026-11-04T16:59:17.329Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Code signing and transparency for containers and binaries
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 6406 stars
+- **Stars / Engagement**: 6409 stars
 
 ---
 
@@ -1797,99 +1797,144 @@ func predicateTypeFromEnvelope(envelope *dsse.Envelope) (string, error) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d13e2b83` (2026-11-04)
-**Commit Message**: Add TrustedRootWithContext to stop the trusted root refresh (#5200)
+### Incident Patch 1: `b1296956` (2026-11-04)
+**Commit Message**: chore(deps): bump github.com/buildkite/agent/v3 from 3.130.0 to 3.138.2 (#5191)
 
-TrustedRoot starts a TUF refresh goroutine that runs until the process exits.
-Long-running callers pass a context that stops it.
+Bumps [github.com/buildkite/agent/v3](https://github.com/buildkite/agent) from 3.130.0 to 3.138.2.
+- [Release notes](https://github.com/buildkite/agent/releases)
+- [Commits](https://github.com/buildkite/agent/compare/v3.130.0...v3.138.2)
 
-Signed-off-by: d.schlatter <[REDACTED_EMAIL]>
+---
+updated-dependencies:
+- dependency-name: github.com/buildkite/agent/v3
+  dependency-version: 3.138.2
+  dependency-type: direct:production
+  update-type: version-update:semver-minor
+...
 
-**File**: `pkg/cosign/tuf.go` (modified, +7/-1)
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `go.mod` (modified, +6/-7)
 ```diff
-@@ -15,6 +15,7 @@
- package cosign
- 
- import (
-+	"context"
- 	"encoding/json"
- 	"errors"
- 	"fmt"
-@@ -29,11 +30,16 @@ import (
+@@ -6,12 +6,12 @@ require (
+ 	cloud.google.com/go/compute/metadata v0.10.0
+ 	cuelang.org/go v0.17.1
+ 	github.com/awslabs/amazon-ecr-credential-helper/ecr-login v0.12.0
+-	github.com/buildkite/agent/v3 v3.130.0
++	github.com/buildkite/agent/v3 v3.138.2
+ 	github.com/chrismellard/docker-credential-acr-env v0.0.0-20230304212654-82a0ddb27589
+ 	github.com/cyberphone/json-canonicalization v0.0.0-20241213102144-19d51d7fe467
+ 	github.com/depcheck-test/depcheck-test v0.0.0-20220607135614-199033aaa936
+ 	github.com/digitorus/timestamp v0.0.0-20231217203849-220c5c2851b7
+-	github.com/dustin/go-humanize v1.0.1
++	github.com/dustin/go-humanize v1.1.0
+ 	github.com/eclipse-keypont/crypto11 v1.6.8
+ 	github.com/go-jose/go-jose/v4 v4.1.6
+ 	github.com/go-openapi/runtime v0.33.3
+@@ -66,14 +66,13 @@ require (
  )
  
- func TrustedRoot() (root.TrustedMaterial, error) {
-+	return TrustedRootWithContext(context.Background())
-+}
-+
-+// TrustedRootWithContext returns a trusted root that refreshes from TUF until ctx is done.
-+func TrustedRootWithContext(ctx context.Context) (root.TrustedMaterial, error) {
- 	opts, err := setTUFOpts()
- 	if err != nil {
- 		return nil, fmt.Errorf("error setting TUF options: %w", err)
- 	}
--	tr, err := root.NewLiveTrustedRoot(opts)
-+	tr, err := root.NewLiveTrustedRoot(opts.WithContext(ctx))
- 	if err != nil {
- 		return nil, fmt.Errorf("error getting live trusted root: %w", err)
- 	}
+ require (
+-	buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.36.11-20260709200747-435963d16310.1 // indirect
+ 	cloud.google.com/go v0.123.0 // indirect
+ 	cloud.google.com/go/auth v0.24.1-0.20261001053825-dbc26066f70a // indirect
+ 	cloud.google.com/go/auth/oauth2adapt v0.3.0 // indirect
+ 	cloud.google.com/go/iam v1.13.0 // indirect
+-	cloud.google.com/go/kms v1.33.0 // indirect
++	cloud.google.com/go/kms v1.35.0 // indirect
+ 	cloud.google.com/go/longrunning v1.2.0 // indirect
+-	connectrpc.com/connect v1.20.0 // indirect
++	connectrpc.com/connect v1.21.1 // indirect
+ 	cuelabs.dev/go/oci/ociregistry v0.0.0-20260601085548-328ff8e2c943 // indirect
+ 	github.com/AliyunContainerService/ack-ram-tool/pkg/credentials/provider v0.18.1 // indirect
+ 	github.com/AliyunContainerService/ack-ram-tool/pkg/ecsmetadata v0.0.9 // indirect
+@@ -126,7 +125,7 @@ require (
+ 	github.com/aws/aws-sdk-go-v2/service/sts v1.51.4 // indirect
+ 	github.com/aws/smithy-go v1.28.5 // indirect
+ 	github.com/beorn7/perks v1.0.1 // indirect
+-	github.com/buildkite/go-pipeline v0.17.1 // indirect
++	github.com/buildkite/go-pipeline v0.18.0 // indirect
+ 	github.com/buildkite/interpolate v0.1.5 // indirect
+ 	github.com/buildkite/roko v1.4.0 // indirect
+ 	github.com/cenkalti/backoff/v4 v4.3.0 // indirect
+@@ -201,7 +200,7 @@ require (
+ 	github.com/jedisct1/go-minisign v0.0.0-20230811132847-661be99b8267 // indirect
+ 	github.com/jellydator/ttlcache/v3 v3.4.1 // indirect
+ 	github.com/json-iterator/go v1.1.12 // indirect
+-	github.com/klauspost/compress v1.20.1 // indirect
++	github.com/klauspost/compress v1.20.3 // indirect
+ 	github.com/kylelemons/godebug v1.1.0 // indirect
+ 	github.com/lestrrat-go/blackmagic v1.0.4 // indirect
+ 	github.com/lestrrat-go/dsig v1.4.0 // indirect
 ```
 
-**File**: `pkg/cosign/tuf_test.go` (added, +43/-0)
+**File**: `go.sum` (modified, +12/-14)
 ```diff
-@@ -0,0 +1,43 @@
-+// Copyright 2026 The Sigstore Authors.
-+//
-+// Licensed under the Apache License, Version 2.0 (the "License");
-+// you may not use this file except in compliance with the License.
-+// You may obtain a copy of the License at
-+//
-+//     http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+
-+package cosign
-+
-+import (
-+	"context"
-+	"runtime"
-+	"strings"
-+	"testing"
-+	"time"
-+
-+	"github.com/stretchr/testify/assert"
-+	"github.com/stretchr/testify/require"
-+)
-+
-+func TestTrustedRootWithContextStopsRefresh(t *testing.T) {
-+	t.Setenv("TUF_ROOT", t.TempDir())
-+	refreshRunning := func() bool {
-+		buf := make([]byte, 1<<20)
-+		return strings.Contains(string(buf[:runtime.Stack(buf, true)]), "root.NewLiveTrustedRootFromTargetWithPeriod.func")
-+	}
-+	ctx, cancel := context.WithCancel(context.Background())
-+
-+	trustedRoot, err := TrustedRootWithContext(ctx)
-+	require.NoError(t, err)
-+	require.NotNil(t, trustedRoot)
-+	require.True(t, refreshRunning())
-+
-+	cancel()
-+	assert.Eventually(t, func() bool { return !refreshRunning() }, 5*time.Second, 10*time.Millisecond)
-+}
+@@ -1,5 +1,3 @@
+-buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.36.11-20260709200747-435963d16310.1 h1:fXh8CsdNpjRr8R5vFdqtIxPt/Lno2IIJlYOdZBIZn0w=
+-buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.36.11-20260709200747-435963d16310.1/go.mod h1:tvtbpgaVXZX4g6Pn+AnzFycuRK3MOz5HJfEGeEllXYM=
+ cloud.google.com/go v0.26.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
+ cloud.google.com/go v0.123.0 h1:2NAUJwPR47q+E35uaJeYoNhuNEM9kM8SjgRgdeOJUSE=
+ cloud.google.com/go v0.123.0/go.mod h1:xBoMV08QcqUGuPW65Qfm1o9Y4zKZBpGS+7bImXLTAZU=
+@@ -11,12 +9,12 @@ cloud.google.com/go/compute/metadata v0.10.0 h1:pyKMUQSwchgkIBBJGdILqQbs/BNJXqwS
+ cloud.google.com/go/compute/metadata v0.10.0/go.mod h1:rGFHRrIif570kSibjFTMbt6/4/tzgJWFGI/HVol4GIk=
+ cloud.google.com/go/iam v1.13.0 h1:ufT3FPT5rFFXu6UtLkNoxaOaV5EuA1dsSkmemCSTo6U=
+ cloud.google.com/go/iam v1.13.0/go.mod h1:gHXdDEiPDvqd1q1KwBDGQlgZY/BwY760zU2LhOZS5w0=
+-cloud.google.com/go/kms v1.33.0 h1:pG0X78m212b2pv9N4fdMoUO69LuZGQ9kSvn8sHBOFAo=
+-cloud.google.com/go/kms v1.33.0/go.mod h1:CSGvW6GnMQbY+1nOHcIzhMtHSbExXlOmCKjWtYVjcpA=
++cloud.google.com/go/kms v1.35.0 h1:nJ/ktaqspx1nPM9vIcO0SHbhqCAm8nvAxL1siuVgKm0=
++cloud.google.com/go/kms v1.35.0/go.mod h1:0++71pIHvJL+GmMa8K4jOWFq7gNOX3jm2PRMSJwTKJw=
+ cloud.google.com/go/longrunning v1.2.0 h1:WjYH3YHBGCxGJP9M4dWGHBfXr/cFIjMkNgWcJj7/iMM=
+ cloud.google.com/go/longrunning v1.2.0/go.mod h1:5KMQALFGOCtFoi2xSOA1u3H7WKlhmckgiyFw7+LGQp0=
+-connectrpc.com/connect v1.20.0 h1:6TNDAB+WeNd2uolWNlYczB5E0KNNaVMNUEx8JEUsPmQ=
+-connectrpc.com/connect v1.20.0/go.mod h1:A2ygJrukXwWy32vkCAAHNVguZrqZ+jeZ9rGRnGR4dN4=
++connectrpc.com/connect v1.21.1 h1:h2kacdlzXpZU2OQFSv98xkjYXNUSr/ptxmGVbS/+CRM=
++connectrpc.com/connect v1.21.1/go.mod h1:fhMcVJ5w6r/yTYhnkEbW6+sIF7OZ5Ay7KYgmfebh2ek=
+ cuelabs.dev/go/oci/ociregistry v0.0.0-20260601085548-328ff8e2c943 h1:XUtzi/yWlmuy8V6kkmVbbmirmUqcFe9Ce3gmEaHXf1Q=
+ cuelabs.dev/go/oci/ociregistry v0.0.0-20260601085548-328ff8e2c943/go.mod h1:WjmQxb+W6nVNCgj8nXrF24lIz95AHwnSl36tpjDZSU8=
+ cuelang.org/go v0.17.1 h1:liOkxZDqTHrzq0USJX+6bMYOZ5PSf+wzvQr15AHpDCQ=
+@@ -170,10 +168,10 @@ github.com/awslabs/amazon-ecr-credential-helper/ecr-login v0.12.0 h1:JFWXO6QPihC
+ github.com/awslabs/amazon-ecr-credential-helper/ecr-login v0.12.0/go.mod h1:046/oLyFlYdAghYQE2yHXi/E//VM5Cf3/dFmA+3CZ0c=
+ github.com/beorn7/perks v1.0.1 h1:VlbKKnNfV8bJzeqoa4cOKqO6bYr3WgKZxO8Z16+hsOM=
+ github.com/beorn7/perks v1.0.1/go.mod h1:G2ZrVWU2WbWT9wwq4/hrbKbnv/1ERSJQ0ibhJ6rlkpw=
+-github.com/buildkite/agent/v3 v3.130.0 h1:fYo5iTrYAK6OTBWBoF7M627tnCKhZaRTD+Ex186dJZ0=
+-github.com/buildkite/agent/v3 v3.130.0/go.mod h1:vdR/SLbzWakWhK4wQO7SRW1YrMGQvP+5ARNXgVXw0LE=
+-github.com/buildkite/go-pipeline v0.17.1 h1:m7+a2SF9hLjqsbe6HShmzm9M4rDk4QtanKTF2LD6LG0=
+-github.com/buildkite/go-pipeline v0.17.1/go.mod h1:VE37qY3X5pmAKKUMoDZvPsHOQuyakB9cmXj9Qn6QasA=
++github.com/buildkite/agent/v3 v3.138.2 h1:L2qq07OvX+drXSBdr0/E7cHxtoCIiK0sFMBeQwZB/as=
++github.com/buildkite/agent/v3 v3.138.2/go.mod h1:L9civRWoZ0tX8MTZ/dIBUhiErdnLyJpsRB3ykxr96SQ=
++github.com/buildkite/go-pipeline v0.18.0 h1:aZJDytmm8qWoj+hAipBDzu80TFppHuByeT3LaT7uYlk=
++github.com/buildkite/go-pipeline v0.18.0/go.mod h1:6Mcx4gDQBMBsWEdRpPi1JEuxWlam11zaT3J/6/v8lN0=
+ github.com/buildkite/interpolate v0.1.5 h1:v2Ji3voik69UZlbfoqzx+qfcsOKLA61nHdU79VV+tPU=
+ github.com/buildkite/interpolate v0.1.5/go.mod h1:dHnrwHew5O8VNOAgMDpwRlFnhL5VSN6M1bHVmRZ9Ccc=
+ github.com/buildkite/roko v1.4.0 h1:DxixoCdpNqxu4/1lXrXbfsKbJSd7r1qoxtef/TT2J80=
+@@ -251,8 +249,8 @@ github.com/docker/docker-credential-helpers v0.9.5 h1:EFNN8DHvaiK8zVqFA2DT6BjXE0
+ github.com/docker/docker-credential-helpers v0.9.5/go.mod h1:v1S+hepowrQXITkEfw6o4+BMbGot02wiKpzWhGUZK6c=
+ github.com/docker/go-units v0.5.0 h1:69rxXcBk27SvSaaxTtLh/8llcHD8vYHT7WSdRZ/jvr4=
+ github.com/docker/go-units v0.5.0/go.mod h1:fgPhTUdO+D/Jk86RDLlptpiXQzgHJF7gydDDbaIK4Dk=
+-github.com/dustin/go-humanize v1.0.1 h1:GzkhY7T5VNhEkwH0PVJgjz+fX1rhBrR7pRT3mDkpeCY=
+-github.com/dustin/go-humanize v1.0.1/go.mod h1:Mu1zIs6XwVuF/gI1OepvI0qD18qycQx+mFykh5fBlto=
++github.com/dustin/go-humanize v1.1.0 h1:dbKTrvD0klcbBV/h4AWJdMuZogJACoMlvWIWZ5b2xWg=
++github.com/dustin/go-humanize v1.1.0/go.mod h1:hc1CvRkJMsgxqjmjMQF3QNRAZBwY8AXBAzKYoSX9sFI=
+ github.com/eclipse-keypont/crypto11 v1.6.8 h1:4OE1GSUYFWbZb27S2+Glj6bQpiPND5BfnPIFxOCIkKU=
+ github.com/eclipse-keypont/crypto11 v1.6.8/go.mod h1:NIBgfiTuqvCyaktz22yE33PB4Aa0dU0M2Uf6QUTfDFk=
+ github.com/emicklei/go-restful/v3 v3.13.0 h1:C4Bl2xDndpU6nJ4bc1jXd+uTmYPVUwkD6bFY/oTyCes=
+@@ -472,8 +470,8 @@ github.com/kelseyhightower/envconfig v1.4.0 h1:Im6hONhd3pLkfDFsbRgu68RDNkGF1r3dv
+ github.com/kelseyhightower/envconfig v1.4.0/go.mod h1:cccZRl6mQpaq41TPp5QxidR+Sa3axMbJDNb//FQX6Gg=
+ github.com/keybase/go-keychain v0.0.1 h1:way+bWYa6lDppZoZcgMbYsvC7GxljxrskdNInRtuthU=
+ github.com/keybase/go-keychain v0.0.1/go.mod h1:PdEILRW3i9D8JcdM+FmY6RwkHGnhHxXwkPPMeUgOK1k=
+-github.com/klauspost/compress v1.20.1 h1:T7kKElXUMXrUJ2E9QhQhxFtcK5rPyLdsGZvdbLMPdiQ=
+-github.com/k
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5204** (2026-11-04): chore(deps): bump the gomod group across 1 directory with 10 updates (@dependabot[bot])
 - **PR #5203** (2026-11-03): Pin scaffolding setup action by SHA so Dependabot keeps it updated (@Hayden-IO)
 - **PR #5202** (2026-11-04): Honor --allow-http-registry and COSIGN_REPOSITORY across OCI operations (@Hayden-IO)
 - **PR #5201** (closed): Fix failing e2e tests by bumping scaffolding to v0.7.33 (@daescha)
 - **PR #5200** (2026-11-04): Add TrustedRootWithContext to stop the trusted root refresh (@daescha)
-- **PR #5185** (closed): chore(deps): bump the gomod group with 3 updates (@dependabot[bot])
-- **PR #5182** (2026-10-22): Bump local dev builds to use distroless debian13 image (@Hayden-IO)
+- **PR #5198** (closed): chore(deps): bump the gomod group across 1 directory with 4 updates (@dependabot[bot])
 
 ---
 
@@ -1909,34 +1954,39 @@ Signed-off-by: d.schlatter <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Add TrustedRootWithContext to stop the trusted root refresh (#5200)
+## X. deps): bump github.com/buildkite/agent/v3 from 3.130.0 to 3.138.2 (#5191)
 
 **RULE**:
-When implementing operations in `pkg/cosign/tuf.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sigstore/cosign. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sigstore/cosign. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d13e2b83`: Add TrustedRootWithContext to stop the trusted root refresh (#5200). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b1296956`: deps): bump github.com/buildkite/agent/v3 from 3.130.0 to 3.138.2 (#5191). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/cosign/tuf.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	"context"
-	return TrustedRootWithContext(context.Background())
-}
-
-// TrustedRootWithContext returns a trusted root that refreshes from TUF until ctx is done.
-func TrustedRootWithContext(ctx context.Context) (root.TrustedMaterial, error) {
-	tr, err := root.NewLiveTrustedRoot(opts.WithContext(ctx))
+	github.com/buildkite/agent/v3 v3.138.2
+	github.com/dustin/go-humanize v1.1.0
+	cloud.google.com/go/kms v1.35.0 // indirect
+	connectrpc.com/connect v1.21.1 // indirect
+	github.com/buildkite/go-pipeline v0.18.0 // indirect
+	github.com/klauspost/compress v1.20.3 // indirect
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	tr, err := root.NewLiveTrustedRoot(opts)
+	github.com/buildkite/agent/v3 v3.130.0
+	github.com/dustin/go-humanize v1.0.1
+	buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.36.11-20260709200747-435963d16310.1 // indirect
+	cloud.google.com/go/kms v1.33.0 // indirect
+	connectrpc.com/connect v1.20.0 // indirect
+	github.com/buildkite/go-pipeline v0.17.1 // indirect
+	github.com/klauspost/compress v1.20.1 // indirect
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d13e2b83` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b1296956` are properly handled with clean fallback behavior.

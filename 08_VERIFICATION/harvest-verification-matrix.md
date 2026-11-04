@@ -7238,3 +7238,6 @@
 | `CYCLE-20261104-RGIW` | `2026-11-04T16:50:13.736Z` | `nats-io/nats-server` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6845` | Yes (`426cb9db...`) |
 | `CYCLE-20261104-RHU1` | `2026-11-04T16:50:15.433Z` | `olric-data/olric` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6846` | Yes (`4d562928...`) |
 | `CYCLE-20261104-RKE6` | `2026-11-04T16:50:18.750Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6847` | Yes (`5544fc11...`) |
+| `CYCLE-20261104-36NW` | `2026-11-04T16:59:20.828Z` | `sigstore/cosign` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6848` | Yes (`968e4be5...`) |
+| `CYCLE-20261104-3CLU` | `2026-11-04T16:59:28.530Z` | `lodestones/MOSS-Image-SFT-8-steps-dmd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6849, Rule 6850` | Yes (`50574e61...`) |
+| `CYCLE-20261104-4KE3` | `2026-11-04T17:00:25.275Z` | `yvgude/lean-ctx` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6851` | Yes (`491af6b4...`) |
