@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261104-OTYV",
-    "timestamp": "2026-11-04T03:16:22.327Z",
-    "repository": "svenstaro/miniserve",
-    "learningId": "learn-github-svenstaro-miniserve",
-    "contentHash": "4d82a539c381212edfabc0e139ee766444c04a50830527221a5d79f65fe45b40",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261104-OV0H",
     "timestamp": "2026-11-04T03:16:23.682Z",
     "repository": "preactjs/preact",
@@ -7492,6 +7477,21 @@
     "contentHash": "0731a8c10bcae7cb33d6d2292ee08e71e17c0587b8b91cefd0c6269d84328076",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-1QIQ",
+    "timestamp": "2026-11-05T11:37:57.890Z",
+    "repository": "google/embeddinggemma-2",
+    "learningId": "learn-huggingface-google-embeddinggemma-2",
+    "contentHash": "aa28788a819a8b8621d365e986fbca0502014f6ba75fecdf85e93f1cd8ed8306",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

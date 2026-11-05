@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-05T11:30:58.236Z",
-    "lastVerified": "2026-11-05T11:30:58.236Z",
+    "lastChecked": "2026-11-05T11:38:09.220Z",
+    "lastVerified": "2026-11-05T11:38:09.220Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -357,9 +357,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-05T11:08:35.811Z",
+    "lastChecked": "2026-11-05T11:38:09.206Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-05T11:08:35.811Z"
+    "lastVerified": "2026-11-05T11:38:09.206Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -930,8 +930,8 @@
     "officialUrl": "https://github.com/NirDiamant/RAG_Techniques",
     "sourceType": "github",
     "technology": "Jupyter Notebook",
-    "lastChecked": "2026-11-04T20:46:45.778Z",
-    "lastVerified": "2026-11-04T20:46:45.778Z",
+    "lastChecked": "2026-11-05T11:38:06.660Z",
+    "lastVerified": "2026-11-05T11:38:06.660Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nirdiamant-rag_techniques",
@@ -2150,8 +2150,8 @@
     "officialUrl": "https://github.com/trufflesecurity/trufflehog",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-05T07:27:45.046Z",
-    "lastVerified": "2026-11-05T07:27:45.046Z",
+    "lastChecked": "2026-11-05T11:38:04.208Z",
+    "lastVerified": "2026-11-05T11:38:04.208Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-trufflesecurity-trufflehog",
@@ -4095,9 +4095,9 @@
   "go-chassis-go-chassis": {
     "name": "go-chassis",
     "officialUrl": "https://github.com/go-chassis/go-chassis",
-    "lastChecked": "2026-11-04T21:32:58.676Z",
+    "lastChecked": "2026-11-05T11:38:01.696Z",
     "revisionIdentifier": "6bcf5150",
-    "lastVerified": "2026-11-04T21:32:58.676Z"
+    "lastVerified": "2026-11-05T11:38:01.696Z"
   },
   "dingodb-dingo": {
     "name": "dingo",
@@ -6469,12 +6469,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "ataraxy-labs-sem": {
-    "name": "Ataraxy-Labs/sem",
+    "name": "sem",
     "officialUrl": "https://github.com/Ataraxy-Labs/sem",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-04T17:17:51.673Z",
-    "lastVerified": "2026-11-04T17:17:51.673Z",
+    "lastChecked": "2026-11-05T11:37:54.180Z",
+    "lastVerified": "2026-11-05T11:37:54.180Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-ataraxy-labs-sem",
@@ -6483,7 +6483,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "be77b50a"
   },
   "hf-nomic-ai-nomic-embed-text-v1.5": {
     "name": "nomic-ai/nomic-embed-text-v1.5",
@@ -7644,12 +7645,12 @@
     "officialUrl": "https://huggingface.co/google/embeddinggemma-2",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-31T20:53:08.005Z",
-    "lastVerified": "2026-10-31T20:53:08.005Z",
+    "lastChecked": "2026-11-05T11:37:56.722Z",
+    "lastVerified": "2026-11-05T11:37:56.722Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-google-embeddinggemma-2",
-    "contentHash": "8045f9f70ced9eda0f04b7e64e6d107b783511b836a97513bce7b31e9fa0eb1b",
+    "contentHash": "aa28788a819a8b8621d365e986fbca0502014f6ba75fecdf85e93f1cd8ed8306",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -10478,12 +10479,12 @@
     "lastVerified": "2026-11-03T18:11:11.465Z"
   },
   "kamgurgul-cpu-info": {
-    "name": "kamgurgul/cpu-info",
+    "name": "cpu-info",
     "officialUrl": "https://github.com/kamgurgul/cpu-info",
     "sourceType": "github",
     "technology": "Kotlin",
-    "lastChecked": "2026-11-02T16:40:23.789Z",
-    "lastVerified": "2026-11-02T16:40:23.789Z",
+    "lastChecked": "2026-11-05T11:37:59.263Z",
+    "lastVerified": "2026-11-05T11:37:59.263Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-kamgurgul-cpu-info",
@@ -10492,7 +10493,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "484264e9"
   },
   "joshcarty-google-searchconsole": {
     "name": "google-searchconsole",

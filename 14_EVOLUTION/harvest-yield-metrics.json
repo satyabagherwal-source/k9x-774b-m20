@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-05T11:30:55.673Z",
-  "total_cycles_completed": 7612,
-  "total_learnings_persisted": 7612,
+  "last_updated": "2026-11-05T11:37:57.900Z",
+  "total_cycles_completed": 7613,
+  "total_learnings_persisted": 7613,
   "total_rules_promoted": 7269,
   "history": [
-    {
-      "timestamp": "2026-11-05T01:07:54.283Z",
-      "repository": "codewhale-hq/Codewhale",
-      "learningId": "learn-github-codewhale-hq-codewhale",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-05T01:07:58.126Z",
       "repository": "meshtastic/Meshtastic-Android",
@@ -1403,6 +1396,13 @@
       "repository": "projectdiscovery/nuclei",
       "learningId": "learn-github-projectdiscovery-nuclei",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T11:37:57.900Z",
+      "repository": "google/embeddinggemma-2",
+      "learningId": "learn-huggingface-google-embeddinggemma-2",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

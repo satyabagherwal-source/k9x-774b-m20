@@ -7644,3 +7644,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-autotrust-gev-26b-decide` | `https://huggingface.co/autotrust/GEV-26B-Decide` | `hf-autotru` | Multi-dimensional audit evidence | 2026-11-05T11:30:44.697Z |
 | `learn-github-chrisbanes-skills` | `https://github.com/chrisbanes/skills` | `72628aea` | Multi-dimensional audit evidence | 2026-11-05T11:30:50.793Z |
 | `learn-github-projectdiscovery-nuclei` | `https://github.com/projectdiscovery/nuclei` | `fb0eed51` | Multi-dimensional audit evidence | 2026-11-05T11:30:55.667Z |
+| `learn-huggingface-google-embeddinggemma-2` | `https://huggingface.co/google/embeddinggemma-2` | `hf-google-` | Multi-dimensional audit evidence | 2026-11-05T11:37:57.894Z |
