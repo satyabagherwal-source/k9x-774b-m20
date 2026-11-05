@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-05T00:36:47.697Z",
+  "last_updated": "2026-11-05T00:51:30.775Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -620,14 +620,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-inclusionai-ming-image-0-1-design",
-      "content_hash": "938984e4a16ef2296f6b76352e4fb02fc3a9e9d99c18c62d5a5d73afdaf35fb0",
-      "verified_at": "2026-10-31T10:27:03.183Z",
+      "content_hash": "e56a1e7bb50b6dffba1abb8d7937f9f5e00b40a541e2c01befddbf599a971d6d",
+      "verified_at": "2026-11-05T00:49:02.419Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T10:27:03.183Z"
+      "last_updated": "2026-11-05T00:49:02.419Z"
     },
     "deepseek-ai/DeepSeek-V4.1-Flash": {
       "repository": "deepseek-ai/DeepSeek-V4.1-Flash",
@@ -3861,14 +3861,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-sharkdp-bat",
-      "content_hash": "c1195cc9bfba85347ad48d56a444df2ca320fcdeefc55a291bcdc04473bc8fc0",
-      "verified_at": "2026-11-03T21:58:03.911Z",
+      "content_hash": "799e0f7f9bed419371a343e788b6eddf3a02548eb9560edbd706edd5e03cebdd",
+      "verified_at": "2026-11-05T00:51:30.774Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T21:58:03.911Z"
+      "last_updated": "2026-11-05T00:51:30.774Z"
     },
     "karakeep-app/karakeep": {
       "repository": "karakeep-app/karakeep",
@@ -4611,14 +4611,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-lioensky-vcptoolbox",
-      "content_hash": "c869f9c03f86a63fdc875afcabf9f991c4c6fe0edfc32ee3fd62b269deffa219",
-      "verified_at": "2026-11-04T01:44:35.611Z",
+      "content_hash": "78bde52778507c8fba79bf40448e69148335294090c1516136e6262735e39523",
+      "verified_at": "2026-11-05T00:48:52.051Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T01:44:35.611Z"
+      "last_updated": "2026-11-05T00:48:52.051Z"
     },
     "Megabit/Blazorise": {
       "repository": "Megabit/Blazorise",
@@ -5226,14 +5226,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-mitmproxy-mitmproxy",
-      "content_hash": "501f6bc8d781ca483de7002243adfc1f61aa13d7c87e92fee6161d3bcca9eee5",
-      "verified_at": "2026-11-03T17:38:24.534Z",
+      "content_hash": "dba3bb302761740d5b26f1e4a82c7783c4347788b8850ea45af1a1b1d9519c97",
+      "verified_at": "2026-11-05T00:48:51.568Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T17:38:24.534Z"
+      "last_updated": "2026-11-05T00:48:51.568Z"
     },
     "parthsarthi03/raptor": {
       "repository": "parthsarthi03/raptor",
@@ -7866,14 +7866,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-gocd-gocd",
-      "content_hash": "f5ba8a73ca335f90ecb74b69f7ff3d67f6ace90969fda47895e714eba7db03cd",
-      "verified_at": "2026-11-04T02:26:14.164Z",
+      "content_hash": "97b06e7886b7f5c9078406a5dcda22e81953c0e082f0307e4482301a58b18708",
+      "verified_at": "2026-11-05T00:48:47.295Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T02:26:14.164Z"
+      "last_updated": "2026-11-05T00:48:47.295Z"
     },
     "citusdata/citus": {
       "repository": "citusdata/citus",
@@ -11706,14 +11706,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-simonschubert-linuxcommandlibrary",
-      "content_hash": "9da528aae8a94a5e368734404a47a96b0641f50bcd548785894783a0002c3d4c",
-      "verified_at": "2026-10-31T17:43:56.526Z",
+      "content_hash": "c851d753c3e082f69725fc54a32b157af62f5ecd7fe8037777d9ea5692f96446",
+      "verified_at": "2026-11-05T00:48:47.342Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T17:43:56.526Z"
+      "last_updated": "2026-11-05T00:48:47.342Z"
     },
     "zed-industries/zed": {
       "repository": "zed-industries/zed",

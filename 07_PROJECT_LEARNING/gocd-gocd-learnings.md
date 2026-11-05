@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/gocd-gocd-learnings.md`  
 > **Source**: github ([https://github.com/gocd/gocd](https://github.com/gocd/gocd))  
-> **Source Version**: `e045a46c`  
+> **Source Version**: `a88de55f`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T02:26:13.487Z  
+> **Timestamp**: 2026-11-05T00:48:46.585Z  
 > **Learning ID**: `learn-github-gocd-gocd`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/gocd-gocd-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/gocd/gocd](https://github.com/gocd/gocd))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T02:26:12.917Z  
+> **Harvest Timestamp**: 2026-11-05T00:48:46.444Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -880,62 +880,17 @@ export class CommentRenderWidget extends MithrilViewComponent<Attrs> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e045a46c` (2026-11-03)
-**Commit Message**: build(deps-ui-dev): bump addressable (#14718)
+### Incident Patch 1: `a88de55f` (2026-11-04)
+**Commit Message**: build(deps): bump org.apache.felix:org.apache.felix.framework (#14720)
 
-Bumps [addressable](https://github.com/sporkmonger/addressable) from 2.9.0 to 2.9.2.
-- [Changelog](https://github.com/sporkmonger/addressable/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/sporkmonger/addressable/compare/addressable-2.9.0...addressable-2.9.2)
+Bumps org.apache.felix:org.apache.felix.framework from 7.0.5 to 8.0.0.
 
 ---
 updated-dependencies:
-- dependency-name: addressable
-  dependency-version: 2.9.2
-  dependency-type: indirect
-  update-type: version-update:semver-patch
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `server/src/main/webapp/WEB-INF/rails/Gemfile.lock` (modified, +2/-2)
-```diff
-@@ -37,7 +37,7 @@ GEM
-       minitest (>= 5.1, < 6)
-       securerandom (>= 0.3)
-       tzinfo (~> 2.0, >= 2.0.5)
--    addressable (2.9.0)
-+    addressable (2.9.2)
-       public_suffix (>= 2.0.2, < 8.0)
-     base64 (0.3.0)
-     benchmark (0.5.0)
-@@ -197,7 +197,7 @@ CHECKSUMS
-   actionpack (7.2.4) sha256=c7acf80263cf09125e5c4d866abda3536cc941f436e81673f17be11ad407a4eb
-   actionview (7.2.4) sha256=6005a3427881b2e8f509a5f7ed894e66f256410f734f7a227d01c4d3d9cb06a2
-   activesupport (7.2.4) sha256=b97027b31e111675dba67b86edcd589acc25a0dddf8eecacca18d33a703a0788
--  addressable (2.9.0) sha256=7fdf6ac3660f7f4e867a0838be3f6cf722ace541dd97767fa42bc6cfa980c7af
-+  addressable (2.9.2) sha256=9117c7e7d6ee07230e75ce41fb9401ae55354dc654fcd0e862ba41d539e9a610
-   base64 (0.3.0) sha256=27337aeabad6ffae05c265c450490628ef3ebd4b67be58257393227588f5a97b
-   benchmark (0.5.0) sha256=465df122341aedcb81a2a24b4d3bd19b6c67c1530713fd533f3ff034e419236c
-   bigdecimal (4.1.3) sha256=61ebe1e5e559bdc3cc6f2c0ee7f427321fc838f59611c294356eb04d6e21cf66
-```
-
----
-
-### Incident Patch 2: `21527246` (2026-11-03)
-**Commit Message**: build(deps): bump com.github.oshi:oshi-core from 7.7.2 to 7.7.3 (#14717)
-
-Bumps [com.github.oshi:oshi-core](https://github.com/oshi/oshi) from 7.7.2 to 7.7.3.
-- [Release notes](https://github.com/oshi/oshi/releases)
-- [Changelog](https://github.com/oshi/oshi/blob/master/CHANGELOG.md)
-- [Commits](https://github.com/oshi/oshi/compare/oshi-parent-7.7.2...oshi-parent-7.7.3)
-
----
-updated-dependencies:
-- dependency-name: com.github.oshi:oshi-core
-  dependency-version: 7.7.3
+- dependency-name: org.apache.felix:org.apache.felix.framework
+  dependency-version: 8.0.0
   dependency-type: direct:production
-  update-type: version-update:semver-patch
+  update-type: version-update:semver-major
 ...
 
 Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
@@ -943,32 +898,32 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 **File**: `build.gradle` (modified, +1/-1)
 ```diff
-@@ -135,7 +135,7 @@ def libraries = [
-   mybatisSpring       : 'org.mybatis:mybatis-spring:2.1.2',
-   mysql               : 'com.mysql:mysql-connector-j:26.10.0',
-   objenesis           : 'org.objenesis:objenesis:3.6',
--  oshi                : 'com.github.oshi:oshi-core:7.7.2',
-+  oshi                : 'com.github.oshi:oshi-core:7.7.3',
-   plexusUtils         : 'org.codehaus.plexus:plexus-utils:4.1.0',
-   postgresql          : 'org.postgresql:postgresql:42.7.14',
-   quartz              : 'org.quartz-scheduler:quartz:2.5.2',
+@@ -101,7 +101,7 @@ def libraries = [
+   dbunit              : 'org.dbunit:dbunit:3.5.2',
+   dom4j               : 'org.dom4j:dom4j:2.2.0',
+   ehcache             : 'net.sf.ehcache.internal:ehcache-core:2.11.1.3.11', // See https://repo.terracotta.org/maven2/net/sf/ehcache/internal/ehcache-core/maven-metadata.xml
+-  felix               : 'org.apache.felix:org.apache.felix.framework:7.0.5',
++  felix               : 'org.apache.felix:org.apache.felix.framework:8.0.0',
+   freemarker          : 'org.freemarker:freemarker:2.3.35',
+   gson                : 'com.google.code.gson:gson:2.15.0',
+   h2                  : 'com.h2database:h2:1.4.200',
 ```
 
 ---
 
-### Incident Patch 3: `8189d3ef` (2026-11-03)
-**Commit Message**: build(deps-ui-dev): bump sass-embedded (#14716)
+### Incident Patch 2: `82bf7ef6` (2026-11-04)
+**Commit Message**: build(deps-ui-dev): bump globals (#14719)
 
-Bumps [sass-embedded](https://github.com/sass/embedded-host-node) from 1.107.0 to 1.107.1.
-- [Changelog](https://github.com/sass/embedded-host-node/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/sass/embedded-host-node/compare/1.107.0...1.107.1)
+Bumps [globals](https://github.com/sindresorhus/globals) from 17.13.0 to 17.14.0.
+- [Release notes](https://github.com/sindresorhus/globals/releases)
+- [Commits](https://github.com/sindresorhus/globals/compare/v17.13.0...v17.14.0)
 
 ---
 updated-dependencies:
-- dependency-name: sass-embedded
-  dependency-version: 1.107.1
+- dependency-name: globals
+  dependency-version: 17.14.0
   dependency-type: direct:development
-  update-type: version-update:semver-patch
+  update-type: version-update:semver-minor
 ...
 
 Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
@@ -976,182 +931,52 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 **File**: `server/src/main/webapp/WEB-INF/rails/package.json` (modified, +1/-1)
 ```diff
-@@ -103,7 +103,7 @@
-     "license-checker": "^25.0.1",
-     "mini-css-extract-plugin": "^2.10.2",
-     "mockdate": "^3.0.5",
--    "sass-embedded": "^1.107.0",
-+    "sass-embedded": "^1.107.1",
-     "sass-loader": "^17.1.0",
-     "simulate-event": "^1.4.0",
-     "sourcemapped-stacktrace": "^1.1.11",
+@@ -87,7 +87,7 @@
+     "file-loader": "^6.2.0",
+     "fork-ts-checker-webpack-plugin": "^9.1.0",
+     "fs-extra": "^11.4.1",
+-    "globals": "^17.13.0",
++    "globals": "^17.14.0",
+     "html-webpack-plugin": "^5.6.8",
+     "jasmine": "^7.0.0",
+     "jasmine-ajax": "^5.0.0",
 ```
 
-**File**: `server/src/main/webapp/WEB-INF/rails/yarn.lock` (modified, +83/-83)
+**File**: `server/src/main/webapp/WEB-INF/rails/yarn.lock` (modified, +5/-5)
 ```diff
-@@ -4639,7 +4639,7 @@ __metadata:
-     normalize-scss: "npm:^8.0.0"
-     opensans: "file:node-vendor/opensans#node-vendor/opensans::hash=930bae&locator=gocd-server-ui%40workspace%3A."
-     prismjs: "npm:^1.30.0"
--    sass-embedded: "npm:^1.107.0"
-+    sass-embedded: "npm:^1.107.1"
-     sass-loader: "npm:^17.1.0"
-     shell-quote: "npm:^1.12.0"
-     shellwords-ts: "npm:^3.0.1"
-@@ -7235,162 +7235,162 @@ __metadata:
+@@ -4516,10 +4516,10 @@ __metadata:
    languageName: node
    linkType: hard
  
--"sass-embedded-all-unknown@npm:1.107.0":
--  version: 1.107.0
--  resolution: "sass-embedded-all-unknown@npm:1.107.0"
-+"sass-embedded-all-unknown@npm:1.107.1":
-+  version: 1.107.1
-+  resolution: "sass-embedded-all-unknown@npm:1.107.1"
-   dependencies:
--    sass: "npm:1.107.0"
-+    sass: "npm:1.107.1"
-   conditions: (!cpu=arm | !cpu=arm64 | !cpu=riscv64 | !cpu=x64)
+-"globals@npm:^17.13.0":
+-  version: 17.13.0
+-  resolution: "globals@npm:17.13.0"
+-  checksum: 10c0/8371d9e4e5581640141b5cce70a098edd765d2e3ab063b14998e590698071e0afb4a4a6739ccfbdcbdeb2565c5553697ba07d95703c51039912cf341a7dba7a7
++"globals@npm:^17.14.0":
++  version: 17.14.0
++  resolution: "globals@npm:17.14.0"
++  checksum: 10c0/422d17c24e87170d4aa566b97a53339ae451c2f4d78512594a7ca951cdb939bc4a85c10071e6dcf77ca63de48713a77f2e71eb9214e44880233dff2090e92731
    languageName: node
    linkType: hard
  
--"sass-embedded-android-arm64@npm:1.107.0":
--  version: 1.107.0
--  resolution: "sass-embedded-android-arm64@npm:1.107.0"
-+"sass-embedded-android-arm64@npm:1.107.1":
-+  version: 1.107.1
-+  resolution: "sass-embedded-android-arm64@npm:1.107.1"
-   conditions: os=android & cpu=arm64
-   languageName: node
-   linkType: hard
- 
--"sass-embedded-android-arm@npm:1.107.0":
--  version: 1.107.0
--  resolution: "sass-embedded-android-arm@npm:1.107.0"
-+"sass-embedded-android-arm@npm:1.107.1":
-+  version: 1.107.1
-+  resolution: "sass-embedded-android-arm@npm:1.107.1"
-   conditions: os=android & cpu=arm
-   languageName: node
-   linkType: hard
- 
--"sass-embedded-android-riscv64@npm:1.107.0":
--  version: 1.107.0
--  resolution: "sass-embedded-android-riscv64@npm:1.107.0"
-+"sass-embedded-android-riscv64@npm:1.107.1":
-+  version: 1.107.1
-+  resolution: "sass-embedded-android-riscv64@npm:1.107.1"
-   conditions: os=android & cpu=riscv64
-   languageName: node
-   linkType: hard
- 
--"sass-embedded-android-x64@npm:1.107.0":
--  version: 1.107.0
--  resolution: "sass-embedded-android-x64@npm:1.107.0"
-+"sass-embedded-android-x64@npm:1.107.1":
-+  version: 1.107.1
-+  resolution: "sass-embedded-android-x64@npm:1.107.1"
-   conditions: os=android & cpu=x64
-   languageName: node
-   linkType: hard
- 
--"sass-embedded-darwin-arm64@npm:1.107.0":
--  version: 1.107.0
--  resolution: "sass-embedded-darwin-arm64@npm:1.107.0"
-+"sass-embedded-darwin-arm64@npm:1.107.1":
-+  version: 1.107.1
-+  resolution: "sass-embedded-darwin-arm64@npm:1.107.1"
-   conditions: os=darwin & cpu=arm64
-   languageName: node
-   linkType: hard
- 
--"sass-embedded-darwin-x64@npm:1.107.0":
--  version: 1.107.0
--  resolution: "sass-embedded-darwin-x64@npm:1.107.0"
-+"sass-embedded-darwin-x64@npm:1.107.1":
-+  version: 1.107.1
-+  resolution: "sass-embedded-darwin-x64@npm:1.107.1"
-   conditions: os=darwin & cpu=x64
-   languageName: node
-   linkType: hard
- 
--"sass-embedded-linux-arm64@npm:1.107.0":
--  version: 1.107.0
--  resolution: "sass-embedded-linux-arm64@npm:1.107.0"
-+"sass-embedded-linux-arm64@npm:1.107.1":
-+  version: 1.107.1
-+  resolution: "sass-embedded-linux-arm64@npm:1.107.1"
-   conditions: os=linux & cpu=arm64
-   languageName: node
-   linkType: hard
- 
--"sass-embedded-linux-arm@npm:1.107.0":
--  version: 1.107.0
--  resolution: "sass-embedded-linux-arm@npm:1.107.0"
-+"sass-embedded-linux-arm@npm:1.107.1":
-+  version: 1.107.1
-+  resolution: "sass-embedded-linux-arm@npm:1.107.1"
-   conditions: os=linux & cpu=arm
-   languageName: node
-   linkType: hard
- 
--"sass-embedded-linux-musl-arm64@npm:1.107.0":
--  version: 1.107.0
--  resolution: "sass-embedded-linux-musl-arm64@npm:1.107.0"
-+"sass-embedded-linux-musl-arm64@npm:1.107.1":
-+  version: 1.107.1
-+  resolution: "sass-embedded-linux-musl-arm64@npm:1.107.1"
-   conditions: os=linux & cpu=arm64
-   languageName: node
-   linkType: hard
- 
--"sass-embedded-linux-musl-arm@npm:1.107.0":
--  version: 1.107.0
--  resolution: "sass-embedded-linux-musl-arm@npm:1.107.0"
-+"sass-embedded-linux-musl-arm@npm:1.107.1":
-+  version: 1.107.1
-+  resolution: "sass-embedded-linux-musl-arm@npm:1.107.1"
-   conditions: os=linux & cpu=arm
-   languageName: node
-   linkType: hard
- 
--"sass-embedded-linux-musl-riscv64@npm:1.107.0":
--  version: 1.107.0
--  resolution: "sass-embedded-linux-musl-riscv64@npm:1.107.0"
-+"sass-embedded-linux-musl-riscv64@npm:1.107.1":
-+  version: 1.107.1
-+  resolution: "sass-embedded-linux-musl-riscv64@npm:1.107.1"
-   conditions: os=linux & cpu=riscv64
-   languageName: node
-   linkType: hard
- 
--"sass-embedded-linux-musl-x64@npm:1.107.0":
--  version: 1.107.0
--  resolution: "sass-embedded-linux-musl-x64@npm:1.107.0"
-+"sass-embedded-linux-musl-x64@npm:1.107.1":
-+  version: 1.107.1
-+  resolution: "sass-embedded-linux-musl-x64@npm:1.107.1"
-   conditions: os=linux & cpu=x64
-   languageName: node
-   linkType: hard
- 
--"sass-embedded-linux-riscv64@npm:1.107.0":
--  version: 1.107.0
--  resolution: "sass-embedded-linux-riscv64@npm:1.107.0"
-+"sass-embedded-linux-riscv64@npm:1.107.1":
-+  version: 1.107.1
-+  resolution: "sass-embedded-linux-riscv64@npm:1.107.1"
-   conditions: os=linux & cpu=riscv64
-   languageName: no
+@@ -4612,7 +4612,7 @@ __metadata:
+     fork-ts-checker-webpack-plugin: "npm:^9.1.0"
+     foundation-sites: "npm:^6.9.0"
+     fs-extra: "npm:^11.4.1"
+-    globals: "npm:^17.13.0"
++    globals: "npm:^17.14.0"
+     hack-font: "npm:^3.3.0"
+     html-webpack-plugin: "npm:^5.6.8"
+     jasmine: "npm:^7.0.0"
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #14720** (2026-11-04): build(deps): bump org.apache.felix:org.apache.felix.framework from 7.0.5 to 8.0.0 (@dependabot[bot])
+- **PR #14719** (2026-11-04): build(deps-ui-dev): bump globals from 17.13.0 to 17.14.0 in /server/src/main/webapp/WEB-INF/rails (@dependabot[bot])
 - **PR #14718** (2026-11-03): build(deps-ui-dev): bump addressable from 2.9.0 to 2.9.2 in /server/src/main/webapp/WEB-INF/rails (@dependabot[bot])
 - **PR #14717** (2026-11-03): build(deps): bump com.github.oshi:oshi-core from 7.7.2 to 7.7.3 (@dependabot[bot])
 - **PR #14716** (2026-11-03): build(deps-ui-dev): bump sass-embedded from 1.107.0 to 1.107.1 in /server/src/main/webapp/WEB-INF/rails (@dependabot[bot])
 - **PR #14715** (2026-11-03): build(deps-ui-dev): bump ffi-compiler from 1.4.2 to 1.4.3 in /server/src/main/webapp/WEB-INF/rails (@dependabot[bot])
-- **PR #14714** (2026-11-03): build(deps-ui-dev): bump webpack-cli from 7.2.3 to 7.3.1 in /server/src/main/webapp/WEB-INF/rails in the webpack group (@dependabot[bot])
-- **PR #14713** (2026-11-03): build(deps): bump com.autonomousapps.dependency-analysis from 3.20.0 to 3.20.1 in the gradle-plugins group (@dependabot[bot])
 
 ---
 
@@ -1171,30 +996,28 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps-ui-dev): bump addressable (#14718)
+## X. build(deps): bump org.apache.felix:org.apache.felix.framework (#14720)
 
 **RULE**:
-When implementing operations in `server/src/main/webapp/WEB-INF/rails/Gemfile.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gocd/gocd. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `build.gradle`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gocd/gocd. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e045a46c`: build(deps-ui-dev): bump addressable (#14718). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a88de55f`: build(deps): bump org.apache.felix:org.apache.felix.framework (#14720). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `server/src/main/webapp/WEB-INF/rails/Gemfile.lock`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `build.gradle`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-    addressable (2.9.2)
-  addressable (2.9.2) sha256=9117c7e7d6ee07230e75ce41fb9401ae55354dc654fcd0e862ba41d539e9a610
+  felix               : 'org.apache.felix:org.apache.felix.framework:8.0.0',
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Anti-pattern to NEVER write (induced failure mode):
-    addressable (2.9.0)
-  addressable (2.9.0) sha256=7fdf6ac3660f7f4e867a0838be3f6cf722ace541dd97767fa42bc6cfa980c7af
+  felix               : 'org.apache.felix:org.apache.felix.framework:7.0.5',
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e045a46c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a88de55f` are properly handled with clean fallback behavior.

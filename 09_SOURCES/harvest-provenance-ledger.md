@@ -7435,3 +7435,9 @@ Every entry in this ledger must capture:
 | `learn-github-xerj-org-xerj` | `https://github.com/xerj-org/xerj` | `344a95f6` | Multi-dimensional audit evidence | 2026-11-05T00:29:52.219Z |
 | `learn-huggingface-xiaomimimo-mimo-v2-6-distill-qwen-9b` | `https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B` | `hf-xiaomim` | Multi-dimensional audit evidence | 2026-11-05T00:36:46.076Z |
 | `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `a967b7d8` | Multi-dimensional audit evidence | 2026-11-05T00:36:47.680Z |
+| `learn-github-gocd-gocd` | `https://github.com/gocd/gocd` | `a88de55f` | Multi-dimensional audit evidence | 2026-11-05T00:48:47.280Z |
+| `learn-github-simonschubert-linuxcommandlibrary` | `https://github.com/SimonSchubert/LinuxCommandLibrary` | `564bd77c` | Multi-dimensional audit evidence | 2026-11-05T00:48:47.334Z |
+| `learn-github-mitmproxy-mitmproxy` | `https://github.com/mitmproxy/mitmproxy` | `992052ee` | Multi-dimensional audit evidence | 2026-11-05T00:48:51.559Z |
+| `learn-github-lioensky-vcptoolbox` | `https://github.com/lioensky/VCPToolBox` | `72e964e2` | Multi-dimensional audit evidence | 2026-11-05T00:48:52.039Z |
+| `learn-huggingface-inclusionai-ming-image-0-1-design` | `https://huggingface.co/inclusionAI/Ming-Image-0.1-Design` | `hf-inclusi` | Multi-dimensional audit evidence | 2026-11-05T00:49:02.410Z |
+| `learn-github-sharkdp-bat` | `https://github.com/sharkdp/bat` | `b47e6865` | Multi-dimensional audit evidence | 2026-11-05T00:51:30.760Z |

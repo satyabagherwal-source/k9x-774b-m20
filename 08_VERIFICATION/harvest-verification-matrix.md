@@ -7426,3 +7426,9 @@
 | `CYCLE-20261105-6K7S` | `2026-11-05T00:29:52.216Z` | `xerj-org/xerj` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7047` | Yes (`794b3a35...`) |
 | `CYCLE-20261105-FFJS` | `2026-11-05T00:36:46.072Z` | `XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7048, Rule 7049, Rule 634` | Yes (`6393499a...`) |
 | `CYCLE-20261105-FGSC` | `2026-11-05T00:36:47.676Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7050` | Yes (`0475b716...`) |
+| `CYCLE-20261105-UW18` | `2026-11-05T00:48:47.276Z` | `gocd/gocd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7051` | Yes (`97b06e78...`) |
+| `CYCLE-20261105-UW2Q` | `2026-11-05T00:48:47.330Z` | `SimonSchubert/LinuxCommandLibrary` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7051` | Yes (`c851d753...`) |
+| `CYCLE-20261105-UZC4` | `2026-11-05T00:48:51.556Z` | `mitmproxy/mitmproxy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7052` | Yes (`dba3bb30...`) |
+| `CYCLE-20261105-UZPB` | `2026-11-05T00:48:52.031Z` | `lioensky/VCPToolBox` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md` | Yes (`78bde527...`) |
+| `CYCLE-20261105-V7PE` | `2026-11-05T00:49:02.402Z` | `inclusionAI/Ming-Image-0.1-Design` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-inclusionai-ming-image-0.1-design-learnings.md` | Yes (`e56a1e7b...`) |
+| `CYCLE-20261105-YE6C` | `2026-11-05T00:51:30.756Z` | `sharkdp/bat` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7053` | Yes (`799e0f7f...`) |

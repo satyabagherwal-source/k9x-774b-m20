@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T00:36:47.597Z",
+  "last_updated": "2026-11-05T00:51:30.684Z",
   "total_verified_learnings": 1210,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -15707,8 +15707,8 @@
       "slug": "gocd-gocd",
       "platform": "github",
       "source_url": "https://github.com/gocd/gocd",
-      "source_version": "e045a46c",
-      "content_hash": "f5ba8a73ca335f90ecb74b69f7ff3d67f6ace90969fda47895e714eba7db03cd",
+      "source_version": "a88de55f",
+      "content_hash": "97b06e7886b7f5c9078406a5dcda22e81953c0e082f0307e4482301a58b18708",
       "dossier_path": "07_PROJECT_LEARNING/gocd-gocd-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gocd-gocd-learnings.md",
       "promoted_rules": [
@@ -15766,6 +15766,11 @@
           "number": 6725,
           "title": "build(deps-ui-dev): bump addressable (#14718)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7051,
+          "title": "build(deps): bump org.apache.felix:org.apache.felix.framework (#14720)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -15773,7 +15778,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T02:26:14.066Z",
+      "verified_at": "2026-11-05T00:48:47.182Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -25154,7 +25159,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/inclusionAI/Ming-Image-0.1-Design",
       "source_version": "hf-inclusionai-ming-image-0.1-design",
-      "content_hash": "938984e4a16ef2296f6b76352e4fb02fc3a9e9d99c18c62d5a5d73afdaf35fb0",
+      "content_hash": "e56a1e7bb50b6dffba1abb8d7937f9f5e00b40a541e2c01befddbf599a971d6d",
       "dossier_path": "07_PROJECT_LEARNING/hf-inclusionai-ming-image-0.1-design-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-inclusionai-ming-image-0.1-design-learnings.md",
       "promoted_rules": [
@@ -25265,7 +25270,7 @@
         "learn-huggingface-hf-inclusionai-ming-image-0-1-design-mv46je2y",
         "learn-huggingface-hf-inclusionai-ming-image-0-1-design-mv4jtaws"
       ],
-      "verified_at": "2026-10-31T10:27:03.058Z",
+      "verified_at": "2026-11-05T00:49:02.291Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -38281,8 +38286,8 @@
       "slug": "lioensky-vcptoolbox",
       "platform": "github",
       "source_url": "https://github.com/lioensky/VCPToolBox",
-      "source_version": "018cd7fa",
-      "content_hash": "c869f9c03f86a63fdc875afcabf9f991c4c6fe0edfc32ee3fd62b269deffa219",
+      "source_version": "72e964e2",
+      "content_hash": "78bde52778507c8fba79bf40448e69148335294090c1516136e6262735e39523",
       "dossier_path": "07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md",
       "promoted_rules": [
@@ -38322,7 +38327,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T01:44:35.469Z",
+      "verified_at": "2026-11-05T00:48:51.918Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -41817,8 +41822,8 @@
       "slug": "mitmproxy-mitmproxy",
       "platform": "github",
       "source_url": "https://github.com/mitmproxy/mitmproxy",
-      "source_version": "2f682f3a",
-      "content_hash": "501f6bc8d781ca483de7002243adfc1f61aa13d7c87e92fee6161d3bcca9eee5",
+      "source_version": "992052ee",
+      "content_hash": "dba3bb302761740d5b26f1e4a82c7783c4347788b8850ea45af1a1b1d9519c97",
       "dossier_path": "07_PROJECT_LEARNING/mitmproxy-mitmproxy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mitmproxy-mitmproxy-learnings.md",
       "promoted_rules": [
@@ -41931,6 +41936,11 @@
           "number": 6558,
           "title": "build(deps): update asgiref requirement from <=3.12.1,>=3.2.10 to >=3.2.10,<=3.1",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7052,
+          "title": "Windows CI (#8568)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -41938,7 +41948,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T17:38:24.368Z",
+      "verified_at": "2026-11-05T00:48:51.458Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -52661,8 +52671,8 @@
       "slug": "sharkdp-bat",
       "platform": "github",
       "source_url": "https://github.com/sharkdp/bat",
-      "source_version": "41931bc4",
-      "content_hash": "c1195cc9bfba85347ad48d56a444df2ca320fcdeefc55a291bcdc04473bc8fc0",
+      "source_version": "b47e6865",
+      "content_hash": "799e0f7f9bed419371a343e788b6eddf3a02548eb9560edbd706edd5e03cebdd",
       "dossier_path": "07_PROJECT_LEARNING/sharkdp-bat-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sharkdp-bat-learnings.md",
       "promoted_rules": [
@@ -52690,6 +52700,11 @@
           "number": 6625,
           "title": "Merge pull request #3801 from xfocus3/fix/help-language-submodule-note",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7053,
+          "title": "Add changelog reference for emoji wrapping fix",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -52697,7 +52712,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T21:58:03.778Z",
+      "verified_at": "2026-11-05T00:51:30.665Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -178949,6 +178964,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-05T00:36:47.577Z"
+    },
+    "rule-7051": {
+      "learning_id": "rule-7051",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7051,
+      "title": "build(deps): bump org.apache.felix:org.apache.felix.framework (#14720)",
+      "source_url": "https://github.com/gocd/gocd",
+      "source_version": "a88de55f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T00:48:47.182Z"
+    },
+    "rule-7052": {
+      "learning_id": "rule-7052",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7052,
+      "title": "Windows CI (#8568)",
+      "source_url": "https://github.com/mitmproxy/mitmproxy",
+      "source_version": "992052ee",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T00:48:51.458Z"
+    },
+    "rule-7053": {
+      "learning_id": "rule-7053",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7053,
+      "title": "Add changelog reference for emoji wrapping fix",
+      "source_url": "https://github.com/sharkdp/bat",
+      "source_version": "b47e6865",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T00:51:30.665Z"
     }
   },
   "aliases": {

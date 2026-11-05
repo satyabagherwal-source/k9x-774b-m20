@@ -1,52 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-05T00:36:47.685Z",
-  "total_cycles_completed": 7403,
-  "total_learnings_persisted": 7403,
-  "total_rules_promoted": 7099,
+  "last_updated": "2026-11-05T00:51:30.764Z",
+  "total_cycles_completed": 7409,
+  "total_learnings_persisted": 7409,
+  "total_rules_promoted": 7103,
   "history": [
-    {
-      "timestamp": "2026-11-04T11:09:31.236Z",
-      "repository": "GreptimeTeam/greptimedb",
-      "learningId": "learn-github-greptimeteam-greptimedb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T16:34:17.610Z",
-      "repository": "nvidia/DeepSeek-V4.1-Flash-1017-NVFP4",
-      "learningId": "learn-huggingface-nvidia-deepseek-v4-1-flash-1017-nvfp4",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T16:34:27.422Z",
-      "repository": "moonshotai/Kimi-K3.1-Pro",
-      "learningId": "learn-huggingface-moonshotai-kimi-k3-1-pro",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T16:34:27.834Z",
-      "repository": "goharbor/harbor",
-      "learningId": "learn-github-goharbor-harbor",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T16:34:39.131Z",
-      "repository": "ydb-platform/ydb",
-      "learningId": "learn-github-ydb-platform-ydb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T16:43:05.413Z",
-      "repository": "Dicklesworthstone/destructive_command_guard",
-      "learningId": "learn-github-dicklesworthstone-destructive_command_guard",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-04T16:43:10.583Z",
       "repository": "czy0729/Bangumi",
@@ -1402,6 +1360,48 @@
       "timestamp": "2026-11-05T00:36:47.685Z",
       "repository": "tailscale/tailscale",
       "learningId": "learn-github-tailscale-tailscale",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T00:48:47.285Z",
+      "repository": "gocd/gocd",
+      "learningId": "learn-github-gocd-gocd",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T00:48:47.339Z",
+      "repository": "SimonSchubert/LinuxCommandLibrary",
+      "learningId": "learn-github-simonschubert-linuxcommandlibrary",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T00:48:51.565Z",
+      "repository": "mitmproxy/mitmproxy",
+      "learningId": "learn-github-mitmproxy-mitmproxy",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T00:48:52.047Z",
+      "repository": "lioensky/VCPToolBox",
+      "learningId": "learn-github-lioensky-vcptoolbox",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T00:49:02.415Z",
+      "repository": "inclusionAI/Ming-Image-0.1-Design",
+      "learningId": "learn-huggingface-inclusionai-ming-image-0-1-design",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T00:51:30.764Z",
+      "repository": "sharkdp/bat",
+      "learningId": "learn-github-sharkdp-bat",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

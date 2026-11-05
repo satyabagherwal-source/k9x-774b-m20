@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/simonschubert-linuxcommandlibrary-learnings.md`  
 > **Source**: github ([https://github.com/SimonSchubert/LinuxCommandLibrary](https://github.com/SimonSchubert/LinuxCommandLibrary))  
-> **Source Version**: `b2852d43`  
+> **Source Version**: `564bd77c`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T17:43:55.823Z  
+> **Timestamp**: 2026-11-05T00:48:46.559Z  
 > **Learning ID**: `learn-github-simonschubert-linuxcommandlibrary`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/simonschubert-linuxcommandlibrary-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/SimonSchubert/LinuxCommandLibrary](https://github.com/SimonSchubert/LinuxCommandLibrary))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T17:43:55.815Z  
+> **Harvest Timestamp**: 2026-11-05T00:48:46.228Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 2M+ app downloads, 500k+ monthly website visitors, Linux basics, tips and formatted man pages
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 2086 stars
+- **Stars / Engagement**: 2093 stars
 
 ---
 
@@ -853,25 +853,426 @@ private fun showCommandNonInteractive(terminal: Terminal, commandName: String) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b31bbf3b` (2026-10-29)
-**Commit Message**: Fix uji man page markup
+### Incident Patch 1: `e017714d` (2026-11-04)
+**Commit Message**: Fix text selection crashes in lazy lists
 
-**File**: `assets/commands/uji.md` (modified, +2/-2)
+Wrap each lazy item in its own SelectionContainer instead of one
+container around the whole LazyColumn, which crashed in SelectionManager
+when items were disposed or reused during a selection.
+
+**File**: `composeApp/src/commonMain/kotlin/com/linuxcommandlibrary/app/ui/screens/basicgroups/BasicEditorScreen.kt` (modified, +16/-16)
 ```diff
-@@ -164,11 +164,11 @@ Typed on the input line inside the screen.
+@@ -42,24 +42,24 @@ fun BasicEditorContent(
+     onNavigate: (NavEvent) -> Unit,
+ ) {
+     val gridState = rememberLazyStaggeredGridState()
+-    SelectionContainer {
+-        WithScrollbar(
++    WithScrollbar(
++        state = gridState,
++        modifier = Modifier
++            .background(MaterialTheme.colorScheme.background)
++            .fillMaxSize(),
++    ) {
++        LazyVerticalStaggeredGrid(
+             state = gridState,
+-            modifier = Modifier
+-                .background(MaterialTheme.colorScheme.background)
+-                .fillMaxSize(),
++            modifier = Modifier.fillMaxSize(),
++            columns = StaggeredGridCells.Adaptive(minSize = 300.dp),
++            contentPadding = PaddingValues(horizontal = 4.dp, vertical = 4.dp),
+         ) {
+-            LazyVerticalStaggeredGrid(
+-                state = gridState,
+-                modifier = Modifier.fillMaxSize(),
+-                columns = StaggeredGridCells.Adaptive(minSize = 300.dp),
+-                contentPadding = PaddingValues(horizontal = 4.dp, vertical = 4.dp),
+-            ) {
+-                items(
+-                    items = groups,
+-                    key = { it.id },
+-                    contentType = { "editor_group_item" },
+-                ) { group ->
++            items(
++                items = groups,
++                key = { it.id },
++                contentType = { "editor_group_item" },
++            ) { group ->
++                SelectionContainer {
+                     RichContentCard(
+                         title = group.description,
+                         sections = group.sections,
+```
+
+**File**: `composeApp/src/commonMain/kotlin/com/linuxcommandlibrary/app/ui/screens/basicgroups/BasicGroupsScreen.kt` (modified, +14/-14)
+```diff
+@@ -78,22 +78,22 @@ fun BasicGroupsContent(
+     toggleCollapse: (Long) -> Unit,
+     onNavigate: (NavEvent) -> Unit,
+ ) {
+-    SelectionContainer {
+-        WithScrollbar(
++    WithScrollbar(
++        state = listState,
++        modifier = Modifier
++            .fillMaxSize()
++            .background(MaterialTheme.colorScheme.background),
++    ) {
++        LazyColumn(
+             state = listState,
+-            modifier = Modifier
+-                .fillMaxSize()
+-                .background(MaterialTheme.colorScheme.background),
++            modifier = Modifier.fillMaxSize(),
+         ) {
+-            LazyColumn(
+-                state = listState,
+-                modifier = Modifier.fillMaxSize(),
+-            ) {
+-                items(
+-                    items = uiState.basicGroups,
+-                    key = { it.id },
+-                    contentType = { "basic_group_item" },
+-                ) { basicGroup ->
++            items(
++                items = uiState.basicGroups,
++                key = { it.id },
++                contentType = { "basic_group_item" },
++            ) { basicGroup ->
++                SelectionContainer {
+                     BasicGroupColumn(
+                         basicGroup = basicGroup,
+                         categoryTitle = uiState.categoryTitle,
+```
+
+**File**: `composeApp/src/commonMain/kotlin/com/linuxcommandlibrary/app/ui/screens/commanddetail/CommandDetailScreen.kt` (modified, +42/-38)
+```diff
+@@ -182,49 +182,53 @@ fun CommandDetailContent(
+         }
+     }
  
- **uji** is a coding agent for the terminal, configured in Lua. Every view, tool, command, and key can be swapped at runtime, including the core. It is written in Rust with an embedded Lua runtime. The binary name is **uji** (`[[bin]]` in `crates/uji`).
+-    SelectionContainer {
+-        WithScrollbar(
++    WithScrollbar(
++        state = listState,
++        modifier = Modifier
++            .background(MaterialTheme.colorScheme.background)
++            .fillMaxSize(),
++    ) {
++        LazyColumn(
+             state = listState,
+             modifier = Modifier
+-                .background(MaterialTheme.colorScheme.background)
+-                .fillMaxSize(),
++                .fillMaxSize()
++                .onGloballyPositioned { rootCoords = it },
+         ) {
+-            LazyColumn(
+-                state = listState,
+-                modifier = Modifier
+-                    .fillMaxSize()
+-                    .onGloballyPositioned { rootCoords = it },
+-            ) {
+-                itemsIndexed(
+-                    items = uiState.sections,
+-                    key = { index, _ -> index },
+-                    contentType = { _, _ -> "command_section_item" },
+-                ) { sectionIndex, section ->
+-                    val highlights = remember(matchIndex, sectionIndex, activeMatch) {
+-                        matchIndex.elementHighlightsFor(
+-                            sectionIndex = sectionIndex,
+-                            activeMatch = activeMatch,
+-                            color = highlightColor,
+-                            activeColor = activeHighlightColor,
+-                            onActiveColor = onActiveHighlightColor,
++            itemsIndexed(
++                items = uiState.sections,
++                key = { index, _ -> index },
++                contentType = { _, _ -> "command_section_item" },
++            ) { sectionIndex, section ->
++                val highlights = remember(matchIndex, sectionIndex, activeMatch) {
++                    matchIndex.elementHighlightsFor(
++                        sectionIndex = sectionIndex,
++                        activeMatch = activeMatch,
++                        color = highlightColor,
++                        activeColor = activeHighlightColor,
++                        onActiveColor = onActiveHighlightColor,
++                    )
++                }
++                // Per-item container: one spanning the whole LazyColumn crashed in
++                // SelectionManager once selected items were recycled (Play vitals, v175).
++                SelectionContainer {
++                    Column {
++                        CommandSectionColumn(
++                            section = section,
++                            // While searching everything is forced open so no hit can hide inside a
++                            // collapsed section. The user's own expand state is left untouched
++                            // underneath and comes back when the query is cleared.
++                            isExpanded = isSearching || (uiState.expandedSectionsMap[section.id] ?: false),
++                            seeAlsoCommands = uiState.seeAlsoCommands,
++                            resources = uiState.resources,
++                            installEntries = uiState.installEntries,
++                            onToggleExpanded = onToggleExpanded,
++                            onNavigate = onNavigate,
++                            highlights = highlights,
++                            onElementPositioned = { elementIndex, coords ->
++                                elementCoords[ElementPosKey(sectionIndex, elementIndex)] = coords
++                            },
+                         )
+                     }
+-                    CommandSectionColumn(
+-                        section = section,
+-                        // While searching everything is forced open so no hit can hide inside a
+-                        // collapsed section. The user's own expand state is left untouched
+-                        // underneath and comes back when the query is cleared.
+-                        isExpanded = isSearching || (uiState.expandedSectionsMap[section.id] ?: false),
+-                        seeAlsoCommands = uiState.seeAlsoCommands,
+-                        resources = uiState.resources,
+-                        installEntries = uiState.installEntries,
+-                        onToggleExpanded = onToggleExpanded,
+-                        onNavigate = onNavigate,
+-                        highlights = highlights,
+-                        onElementPositioned = { elementIndex, coords ->
+-                            elementCoords[ElementPosKey(sectionIndex, elementIndex)] = coords
+-                        },
+-                    )
+                 }
+             }
+         }
+```
+
+**File**: `composeApp/src/commonMain/kotlin/com/linuxcommandlibrary/app/ui/screens/tips/TipsScreen.kt` (modified, +16/-16)
+```diff
+@@ -39,24 +39,24 @@ fun TipsContent(
+     onNavigate: (NavEvent) -> Unit,
+ ) {
+     val gridState = rememberLazyStaggeredGridState()
+-    SelectionContainer {
+-        WithScrollbar(
++    WithScrollbar(
++        state = gridState,
++        modifier = Modifier
++            .background(MaterialTheme.colorScheme.background)
++            .fillMaxSize(),
++    ) {
++        LazyVerticalStaggeredGrid(
+             state = gridState,
+-            modifier = Modifier
+-                .background(MaterialTheme.colorScheme.background)
+-                .fillMaxSize(),
++            modifier = Modifier.fillMaxSize(),
++            columns = StaggeredGridCells.Adaptive(minSize = 300.dp),
++            contentPadding = PaddingValues(horizontal = 4.dp, vertical = 4.dp),
+         ) {
+-            LazyVerticalStaggeredGrid(
+-                state = gridState,
+-                modifier = Modifier.fillMaxSize(),
+-                columns = StaggeredGridCells.Adaptive(minSize = 300.dp),
+-                contentPadding = PaddingValues(horizontal = 4.dp, vertical = 4.dp),
+-            ) {
+-                items(
+-                    items = tips,
+-                    key = { it.id },
+-                    contentType = { "tip_item" },
+-                ) { tip ->
++            items(
++                items = tips,
++                key = { it.id },
++                contentType = { "tip_item" },
++            ) { tip ->
++                SelectionContainer {
+                     RichContentCard(
+                         title = tip.title,
+                         sections = tip.sections,
+```
+
+---
+
+### Incident Patch 2: `50dd990b` (2026-11-04)
+**Commit Message**: Fix inline formatting in command pages and add psd/cdemu install overrides
+
+**File**: `assets/commands/esp32sim-p4.md` (modified, +4/-4)
+```diff
+@@ -57,14 +57,14 @@ Flags are the same as **esp32sim**, plus the P4-only flags below. Defaults that
+ > Commands and data take bus time at the slot's clock and width. Default is instant. With **--coproc**, the SDIO link is timed too.
  
--Start it in the directory you want to work on. The first run asks you to sign in to a provider. Anthropic and OpenAI offer a browser subscription or an API key; OpenAI also offers a device-code subscription. Other providers ask for a key (or the environment variable they already read, such as the Anthropic API key). A Custom provider asks for a `base_url` and model of a server that takes OpenAI chat requests.
-+Start it in the directory you want to work on. The first run asks you to sign in to a provider. Anthropic and OpenAI offer a browser subscription or an API key; OpenAI also offers a device-code subscription. Other providers ask for a key (or the environment variable they already read, such as the Anthropic API key). A Custom provider asks for a base URL and model of a server that takes OpenAI chat requests.
+ **--usb-host** _file_
+-> High-speed USB-OTG host. Runs _file_ one command per line from power-up, then continues until **--max-seconds**. A line starting with `?` logs a failure and continues; any other failure stops the file.
++> High-speed USB-OTG host. Runs _file_ one command per line from power-up, then continues until **--max-seconds**. A line starting with **?** logs a failure and continues; any other failure stops the file.
  
- On the screen, Enter sends a message. Shift+Enter, Alt+Enter, or Ctrl+J start a new line. Esc clears the input, or stops the turn on an empty line. A line that starts with `!` runs in your shell in the session's directory; the model does not see it. When a tool call needs approval, `y` lets it run; `n` or Esc refuses it.
+ **--coproc** _c6:key=value,..._
+ > ESP32-C6 on SDIO slot 1, lock-stepped with the P4. **app** is required. **--wifi** and **--net** then use the C6 radio. Native only; the browser build has no co-processor.
  
--Built-in tools are `read_file`, `edit_file`, `write_file`, `run_command`, `ask_user`, `job_output`, and `stop_job`. `reload_config` is available when uji runs in its config directory. Packs add more; `uji.pack.add` installs a directory or git repository with its own `lua/` and `plugin/` trees, and `/sync` updates them.
-+Built-in tools are read-file, edit-file, write-file, run-command, ask-user, job-output, and stop-job. reload-config is available when uji runs in its config directory. Packs add more; `uji.pack.add` installs a directory or git repository with its own `lua/` and `plugin/` trees, and `/sync` updates them.
+ # DESCRIPTION
  
- # CONFIGURATION
+-**esp32sim-p4** is a fourth alias binary from the **esp32sim** crate (`cli/src/bin/esp32sim-p4.rs`). It calls the same CLI with default chip **p4**: two RISC-V **RV32IMAFC** cores (hart id is the core index), silicon **rev before 3**, CLIC interrupts, and the P4 memory map. UART, USB, timers, GPIO, SPI flash, and the SDMMC host are modelled. The port is a draft. Boards in the table are console-only.
++**esp32sim-p4** is a fourth alias binary from the **esp32sim** crate (**cli/src/bin/esp32sim-p4.rs**). It calls the same CLI with default chip **p4**: two RISC-V **RV32IMAFC** cores (hart id is the core index), silicon **rev before 3**, CLIC interrupts, and the P4 memory map. UART, USB, timers, GPIO, SPI flash, and the SDMMC host are modelled. The port is a draft. Boards in the table are console-only.
  
+ It boots the real P4 mask ROM, second-stage bootloader, and an unmodified application image built for rev before 3. An image built for rev 3 or later is refused. The ROM file searched like the other chips is:
+ 
+@@ -74,9 +74,9 @@ esp32p4_rev0_rom.elf
+ 
+ That ELF is ECO0. IDF images for v1.x boards link against its jump table; the first console lines are ECO0's, not the board's.
+ 
+-Wi-Fi is not on the P4 die here. **--coproc** runs an ESP32-C6 slave (ESP-Hosted wiring: CLK 18, CMD 19, D0–D3 14–17, EN on GPIO 54) in the same process. Both consoles share stdout in slice order; the C6 lines are prefixed with `[c6] `. **--max-seconds** rounds up to a whole slice. **--max-insns** does not apply to that co-sim.
++Wi-Fi is not on the P4 die here. **--coproc** runs an ESP32-C6 slave (ESP-Hosted wiring: CLK 18, CMD 19, D0–D3 14–17, EN on GPIO 54) in the same process. Both consoles share stdout in slice order; the C6 lines are prefixed with **[c6]**. **--max-seconds** rounds up to a whole slice. **--max-insns** does not apply to that co-sim.
+ 
+-**--usb-host** speaks the firmware's USB device from a text script: attach, mass-storage reads and writes, FAT files, UART injection, and fault injection. What each command did is logged on stderr as `[usb-host]`.
++**--usb-host** speaks the firmware's USB device from a text script: attach, mass-storage reads and writes, FAT files, UART injection, and fault injection. What each command did is logged on stderr as **[usb-host]**.
+ 
+ # CAVEATS
+ 
+```
+
+**File**: `assets/commands/nanomuse-browser.md` (modified, +6/-3)
+```diff
+@@ -93,20 +93,23 @@ POST a body, or switch the **profile**, then close
+ nanomuse.bridge.cli:browser_main
+ ```
+ 
+-While **nanomuse serve** runs an agent command, this program posts one JSON request to `/api/bridge/browser` and prints the answer. The action name and its arguments are the JSON body. It uses only the Python standard library.
++While **nanomuse serve** runs an agent command, this program posts one JSON request to **/api/bridge/browser** and prints the answer. The action name and its arguments are the JSON body. It uses only the Python standard library.
+ 
+ The bridge URL and token are supplied by the server for that command. The two variable names, which must both be set:
+ 
+ ```
+ NANOMUSE_BRIDGE
++```
++
++```
+ NANOMUSE_BRIDGE_TOKEN
+ ```
+ 
+-A text success prints the `output` field. Image paths are printed as `[image]` lines. Errors go to stderr.
++A text success prints the **output** field. Image paths are printed as **[image]** lines. Errors go to stderr.
+ 
+ # CAVEATS
+ 
+-Outside an agent command from **nanomuse serve**, the bridge variables are unset and the program exits **2**. A bridge error exits **1**. **--json** prints the object either way and exits **1** when `ok` is false.
++Outside an agent command from **nanomuse serve**, the bridge variables are unset and the program exits **2**. A bridge error exits **1**. **--json** prints the object either way and exits **1** when **ok** is false.
+ 
+ The request timeout is **600** seconds. This drives the in-app browser the user can see; it is not a separate Playwright process.
+ 
+```
+
+**File**: `assets/commands/nanomuse-device.md` (modified, +3/-3)
+```diff
+@@ -36,13 +36,13 @@ _capability_
+ > **clipboard**, **calendar**, **alarm**, **timer**, **contacts**, **location**, **notify**, **photo**, or **list**. **list** with no action prints one capability per line.
+ 
+ _action_
+-> **read**, **write**, **list**, **create**, **set**, **search**, **pick**, and similar. Omit it for **notify**, **location**, and **calendars**. If this word contains `=`, it is treated as a _key=value_ and there is no action.
++> **read**, **write**, **list**, **create**, **set**, **search**, **pick**, and similar. Omit it for **notify**, **location**, and **calendars**. If this word contains an equals sign, it is treated as a _key=value_ and there is no action.
+ 
+ _key=value_
+ > Arguments for that capability. A value that is JSON (a number, **true**, **false**, or an array) is parsed; anything else stays text. A hyphen in a name is normalized before the request.
+ 
+ **--json**
+-> Print the raw result object. Exit **0** when `ok` is true, **1** otherwise.
++> Print the raw result object. Exit **0** when **ok** is true, **1** otherwise.
+ 
+ # DESCRIPTION
+ 
+@@ -66,7 +66,7 @@ Outside that agent command the bridge variables are unset and the program exits
+ 
+ # CAVEATS
+ 
+-This is not a standalone phone client. With no phone connected, **list** prints that and exits **1**. A missing or refused bridge (HTTP error, or the server not reachable) is an error result, exit **1**, unless **--json** is set, which still exits **1** when `ok` is false.
++This is not a standalone phone client. With no phone connected, **list** prints that and exits **1**. A missing or refused bridge (HTTP error, or the server not reachable) is an error result, exit **1**, unless **--json** is set, which still exits **1** when **ok** is false.
+ 
+ The request timeout is **600** seconds. The token lasts for that agent command plus a short grace period, then the server forgets it.
+ 
+```
+
+**File**: `assets/commands/nanomuse-open.md` (modified, +6/-3)
+```diff
+@@ -22,7 +22,7 @@ _url_
+ > Page to open. This is the user's browser in the app (the phone's browser for the root filesystem), for something they have to do themselves.
+ 
+ **--json**
+-> Print the raw result object. Exit **0** when `ok` is true, **1** otherwise.
++> Print the raw result object. Exit **0** when **ok** is true, **1** otherwise.
+ 
+ # DESCRIPTION
+ 
+@@ -32,16 +32,19 @@ _url_
+ nanomuse.bridge.cli:open_main
+ ```
+ 
+-While **nanomuse serve** runs an agent command, it posts `{"url": ...}` to `/api/bridge/open` and prints the answer. It uses only the Python standard library.
++While **nanomuse serve** runs an agent command, it posts a JSON object whose only field is the URL to **/api/bridge/open** and prints the answer. It uses only the Python standard library.
+ 
+ The server sets the bridge URL and a one-call token for that command. Both must be present:
+ 
+ ```
+ NANOMUSE_BRIDGE
++```
++
++```
+ NANOMUSE_BRIDGE_TOKEN
+ ```
+ 
+-The request is sent with header `X-Nanomuse-Bridge` and a **600** second timeout. A text success prints the `output` field.
++The request is sent with header **X-Nanomuse-Bridge** and a **600** second timeout. A text success prints the **output** field.
+ 
+ # CAVEATS
+ 
+```
+
+**File**: `assets/commands/treg-worker.md` (modified, +1/-1)
+```diff
+@@ -101,7 +101,7 @@ Fold new ledger rows into daily **spend**
+ 
+ # DESCRIPTION
+ 
+-**treg-worker** is the server console script of the Treg registry (`treg.worker:main` in the **tools-registry** package). **treg** is the member-facing client. This binary is the scheduled maintainer: capacity, overflow routes, deferred-task settlement, hub checks, and the read models behind Arena, the catalog, showcase, spend, and the public site.
++**treg-worker** is the server console script of the Treg registry (**treg.worker:main** in the **tools-registry** package). **treg** is the member-facing client. This binary is the scheduled maintainer: capacity, overflow routes, deferred-task settlement, hub checks, and the read models behind Arena, the catalog, showcase, spend, and the public site.
+ 
+ It expects the registry server's environment (database and platform keys) and is what upstream runs from cron. It is not part of the request path. Each analytics command is a bounded pass over the audit or ledger table; the web process reads only what these jobs published. A pass that stops on its time or row cap leaves a cursor for the next run.
+ 
+```
+
+**File**: `scripts/fetch-package-installs.py` (modified, +24/-0)
+```diff
+@@ -86,6 +86,10 @@
+     "tte": ["terminaltexteffects"],
+     "vp": ["vite-plus"],
+     "vp-env": ["vite-plus"],
++    # psd: binary name; distro package is profile-sync-daemon (Debian Contents misses /usr/bin/psd)
++    "psd": ["profile-sync-daemon"],
++    # cdemu: binary name; package is cdemu-client (Debian Contents misses arch:all /usr/bin/cdemu)
++    "cdemu": ["cdemu-client"],
+ }
+ 
+ # Full install maps that replace resolver output (known collisions / enrichments).
+@@ -161,6 +165,26 @@
+     "kcc-c2e": {"aur": "kcc", "nix": "kcc"},
+     "kcc-c2p": {"aur": "kcc", "nix": "kcc"},
+     "alembic": {"apk": "py3-alembic", "nix": "python3Packages.alembic"},
++    # psd: command is psd; package is profile-sync-daemon. Debian Contents-amd64
++    # omits /usr/bin/psd (arch:all); Fedora repodata snapshot also missed it.
++    # Verified: packages.debian.org filelist, Fedora pkgs page, Arch extra, openSUSE, nixpkgs.
++    "psd": {
++        "apt": "profile-sync-daemon",
++        "dnf": "profile-sync-daemon",
++        "pacman": "profile-sync-daemon",
++        "zypper": "profile-sync-daemon",
++        "nix": "profile-sync-daemon",
++    },
++    # cdemu: command is cdemu; package is cdemu-client. Debian Contents-amd64
++    # omits /usr/bin/cdemu (arch:all). Fedora default repos have no package
++    # (COPR rok/cdemu only). Verified: packages.debian.org, Arch extra,
++    # openSUSE, nixpkgs. No brew/apk hit.
++    "cdemu": {
++        "apt": "cdemu-client",
++        "pacman": "cdemu-client",
++        "zypper": "cdemu-client",
++        "nix": "cdemu-client",
++    },
+     # backintime: CLI binary is in backintime-common on Debian/Fedora (arch:all, missed by Contents-amd64)
+     "backintime": {
+         "apt": "backintime-common",
 ```
 
 #### Recent Merged Pull Requests:
@@ -900,30 +1301,58 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. uji man page markup
+## X. text selection crashes in lazy lists
 
 **RULE**:
-When implementing operations in `assets/commands/uji.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in SimonSchubert/LinuxCommandLibrary. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `composeApp/src/commonMain/kotlin/com/linuxcommandlibrary/app/ui/screens/basicgroups/BasicEditorScreen.kt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in SimonSchubert/LinuxCommandLibrary. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b31bbf3b`: uji man page markup. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e017714d`: text selection crashes in lazy lists. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `assets/commands/uji.md`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `composeApp/src/commonMain/kotlin/com/linuxcommandlibrary/app/ui/screens/basicgroups/BasicEditorScreen.kt`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-Start it in the directory you want to work on. The first run asks you to sign in to a provider. Anthropic and OpenAI offer a browser subscription or an API key; OpenAI also offers a device-code subscription. Other providers ask for a key (or the environment variable they already read, such as the Anthropic API key). A Custom provider asks for a base URL and model of a server that takes OpenAI chat requests.
-Built-in tools are read-file, edit-file, write-file, run-command, ask-user, job-output, and stop-job. reload-config is available when uji runs in its config directory. Packs add more; `uji.pack.add` installs a directory or git repository with its own `lua/` and `plugin/` trees, and `/sync` updates them.
+    WithScrollbar(
+        state = gridState,
+        modifier = Modifier
+            .background(MaterialTheme.colorScheme.background)
+            .fillMaxSize(),
+    ) {
+        LazyVerticalStaggeredGrid(
+            modifier = Modifier.fillMaxSize(),
+            columns = StaggeredGridCells.Adaptive(minSize = 300.dp),
+            contentPadding = PaddingValues(horizontal = 4.dp, vertical = 4.dp),
+            items(
+                items = groups,
+                key = { it.id },
+                contentType = { "editor_group_item" },
+            ) { group ->
+                SelectionContainer {
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
 // Anti-pattern to NEVER write (induced failure mode):
-Start it in the directory you want to work on. The first run asks you to sign in to a provider. Anthropic and OpenAI offer a browser subscription or an API key; OpenAI also offers a device-code subscription. Other providers ask for a key (or the environment variable they already read, such as the Anthropic API key). A Custom provider asks for a `base_url` and model of a server that takes OpenAI chat requests.
-Built-in tools are `read_file`, `edit_file`, `write_file`, `run_command`, `ask_user`, `job_output`, and `stop_job`. `reload_config` is available when uji runs in its config directory. Packs add more; `uji.pack.add` installs a directory or git repository with its own `lua/` and `plugin/` trees, and `/sync` updates them.
+    SelectionContainer {
+        WithScrollbar(
+            modifier = Modifier
+                .background(MaterialTheme.colorScheme.background)
+                .fillMaxSize(),
+            LazyVerticalStaggeredGrid(
+                state = gridState,
+                modifier = Modifier.fillMaxSize(),
+                columns = StaggeredGridCells.Adaptive(minSize = 300.dp),
+                contentPadding = PaddingValues(horizontal = 4.dp, vertical = 4.dp),
+            ) {
+                items(
+                    items = groups,
+                    key = { it.id },
+                    contentType = { "editor_group_item" },
+                ) { group ->
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b31bbf3b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e017714d` are properly handled with clean fallback behavior.

@@ -505,8 +505,8 @@
     "sourceUrl": "https://huggingface.co/inclusionAI/Ming-Image-0.1-Design",
     "sourceVersion": "hf-inclusionai-ming-image-0.1-design",
     "license": "Open-Source",
-    "contentHash": "938984e4a16ef2296f6b76352e4fb02fc3a9e9d99c18c62d5a5d73afdaf35fb0",
-    "lastHarvestedAt": "2026-10-31T10:27:03.174Z",
+    "contentHash": "e56a1e7bb50b6dffba1abb8d7937f9f5e00b40a541e2c01befddbf599a971d6d",
+    "lastHarvestedAt": "2026-11-05T00:49:02.410Z",
     "learningId": "learn-huggingface-inclusionai-ming-image-0-1-design"
   },
   "hf-deepseek-ai-deepseek-v4.1-flash": {
@@ -2483,10 +2483,10 @@
     "repository": "sharkdp/bat",
     "platform": "github",
     "sourceUrl": "https://github.com/sharkdp/bat",
-    "sourceVersion": "41931bc4",
+    "sourceVersion": "b47e6865",
     "license": "Apache-2.0",
-    "contentHash": "c1195cc9bfba85347ad48d56a444df2ca320fcdeefc55a291bcdc04473bc8fc0",
-    "lastHarvestedAt": "2026-11-03T21:58:03.902Z",
+    "contentHash": "799e0f7f9bed419371a343e788b6eddf3a02548eb9560edbd706edd5e03cebdd",
+    "lastHarvestedAt": "2026-11-05T00:51:30.760Z",
     "learningId": "learn-github-sharkdp-bat"
   },
   "karakeep-app-karakeep": {
@@ -2993,10 +2993,10 @@
     "repository": "lioensky/VCPToolBox",
     "platform": "github",
     "sourceUrl": "https://github.com/lioensky/VCPToolBox",
-    "sourceVersion": "018cd7fa",
+    "sourceVersion": "72e964e2",
     "license": "NOASSERTION",
-    "contentHash": "c869f9c03f86a63fdc875afcabf9f991c4c6fe0edfc32ee3fd62b269deffa219",
-    "lastHarvestedAt": "2026-11-04T01:44:35.599Z",
+    "contentHash": "78bde52778507c8fba79bf40448e69148335294090c1516136e6262735e39523",
+    "lastHarvestedAt": "2026-11-05T00:48:52.039Z",
     "learningId": "learn-github-lioensky-vcptoolbox"
   },
   "megabit-blazorise": {
@@ -3403,10 +3403,10 @@
     "repository": "mitmproxy/mitmproxy",
     "platform": "github",
     "sourceUrl": "https://github.com/mitmproxy/mitmproxy",
-    "sourceVersion": "2f682f3a",
+    "sourceVersion": "992052ee",
     "license": "MIT",
-    "contentHash": "501f6bc8d781ca483de7002243adfc1f61aa13d7c87e92fee6161d3bcca9eee5",
-    "lastHarvestedAt": "2026-11-03T17:38:24.525Z",
+    "contentHash": "dba3bb302761740d5b26f1e4a82c7783c4347788b8850ea45af1a1b1d9519c97",
+    "lastHarvestedAt": "2026-11-05T00:48:51.559Z",
     "learningId": "learn-github-mitmproxy-mitmproxy"
   },
   "parthsarthi03-raptor": {
@@ -5163,10 +5163,10 @@
     "repository": "gocd/gocd",
     "platform": "github",
     "sourceUrl": "https://github.com/gocd/gocd",
-    "sourceVersion": "e045a46c",
+    "sourceVersion": "a88de55f",
     "license": "Apache-2.0",
-    "contentHash": "f5ba8a73ca335f90ecb74b69f7ff3d67f6ace90969fda47895e714eba7db03cd",
-    "lastHarvestedAt": "2026-11-04T02:26:14.157Z",
+    "contentHash": "97b06e7886b7f5c9078406a5dcda22e81953c0e082f0307e4482301a58b18708",
+    "lastHarvestedAt": "2026-11-05T00:48:47.280Z",
     "learningId": "learn-github-gocd-gocd"
   },
   "citusdata-citus": {
@@ -7773,10 +7773,10 @@
     "repository": "SimonSchubert/LinuxCommandLibrary",
     "platform": "github",
     "sourceUrl": "https://github.com/SimonSchubert/LinuxCommandLibrary",
-    "sourceVersion": "b2852d43",
+    "sourceVersion": "564bd77c",
     "license": "Apache-2.0",
-    "contentHash": "9da528aae8a94a5e368734404a47a96b0641f50bcd548785894783a0002c3d4c",
-    "lastHarvestedAt": "2026-10-31T17:43:56.517Z",
+    "contentHash": "c851d753c3e082f69725fc54a32b157af62f5ecd7fe8037777d9ea5692f96446",
+    "lastHarvestedAt": "2026-11-05T00:48:47.334Z",
     "learningId": "learn-github-simonschubert-linuxcommandlibrary"
   },
   "zed-industries-zed": {
