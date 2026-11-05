@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T02:18:13.055Z",
+  "last_updated": "2026-11-05T02:25:57.085Z",
   "total_verified_learnings": 1210,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -4747,8 +4747,8 @@
       "slug": "bee-san-ciphey",
       "platform": "github",
       "source_url": "https://github.com/bee-san/Ciphey",
-      "source_version": "041ce8c7",
-      "content_hash": "bfb13191170afa1b434b59feafb175aa1d60148274f533935aeb9268774a7a41",
+      "source_version": "f7ad87dd",
+      "content_hash": "71af2ccfee13af4271b2f71df880eabab3c202073265b56e6501f32b2fd2cc25",
       "dossier_path": "07_PROJECT_LEARNING/bee-san-ciphey-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/bee-san-ciphey-learnings.md",
       "promoted_rules": [
@@ -4776,6 +4776,11 @@
           "number": 6927,
           "title": "ci: bump onig_sys to 69.9.3 so Linux CI builds again (GCC 15 / C23) (#1135)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7073,
+          "title": "bench: end-to-end benchmark (corpus v1, runner, A/B quick check) with baselines",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -4783,7 +4788,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T19:22:57.166Z",
+      "verified_at": "2026-11-05T02:25:52.579Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -25679,7 +25684,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
       "source_version": "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf",
-      "content_hash": "6ec1711ec5eeaa6e298474527f705e1818788212481c1229d5fb0d0439405d11",
+      "content_hash": "6b88376da51f5fb7eebb016adf112de1a7b8485c786c12eefda10f1b4944a62d",
       "dossier_path": "07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf-learnings.md",
       "promoted_rules": [
@@ -25747,7 +25752,7 @@
         "learn-huggingface-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf-mv47q2a0",
         "learn-huggingface-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf-mv4l09tk"
       ],
-      "verified_at": "2026-10-31T11:53:29.987Z",
+      "verified_at": "2026-11-05T02:25:41.257Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -44618,8 +44623,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "55fbddc1",
-      "content_hash": "8f9f0f76583698fd432909e1ba7c7d90bfdab307efd1fa4b86da9e403fa20955",
+      "source_version": "9bd304a7",
+      "content_hash": "69ce0805e65d92f2d2c4ef99724fac3250601cce7235d5c796a747e8743bd4cd",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -44879,7 +44884,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T22:12:48.934Z",
+      "verified_at": "2026-11-05T02:25:57.071Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -179367,6 +179372,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-05T02:18:13.041Z"
+    },
+    "rule-7073": {
+      "learning_id": "rule-7073",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7073,
+      "title": "bench: end-to-end benchmark (corpus v1, runner, A/B quick check) with baselines",
+      "source_url": "https://github.com/bee-san/Ciphey",
+      "source_version": "f7ad87dd",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T02:25:52.579Z"
     }
   },
   "aliases": {

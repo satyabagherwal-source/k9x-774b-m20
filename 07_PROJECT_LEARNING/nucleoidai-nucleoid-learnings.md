@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source**: github ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
-> **Source Version**: `55fbddc1`  
+> **Source Version**: `9bd304a7`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T22:12:48.205Z  
+> **Timestamp**: 2026-11-05T02:25:56.953Z  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T22:12:48.198Z  
+> **Harvest Timestamp**: 2026-11-05T02:25:56.947Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -43,6 +43,7 @@ use indexmap::IndexMap;
 use std::fmt;
 use std::sync::Arc;
 
+use crate::graph::ShapeKey;
 use crate::history::{History, HistoryKey};
 use crate::lang::ast::VersionSelector;
 use crate::lang::ast::generator::generate_all;
@@ -363,8 +364,7 @@ impl Runtime {
         property: &str,
         value: Value,
     ) -> bool {
-        if !self.state.objects.contains_key(object) {
-            self.inse
+        if !self.state.objects.contains_key(obj
 ```
 
 ### Core Architecture Module: `src/statement.rs`
@@ -1006,412 +1006,407 @@ export function enlarge(matrix, rows: number, cols: number) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `55fbddc1` (2026-11-04)
-**Commit Message**: Add two-object pairs to ARC genesis datasets
+### Incident Patch 1: `9bd304a7` (2026-11-05)
+**Commit Message**: NUC 81 Object Spread Entries
 
-Append a second synthesized 7x7 pair with two objects to the core, extension, curve and line datasets. It covers corners at orientations 45/315 and 225/135, two points with different rims, and vertical and horizontal lines extending toward opposite ends. Update the arc/README.md description of the genesis datasets to match.
+Accepted. The independent evaluator accepted the proposal in continuous
+mode against 55fbddc and its 937-case baseline, the 926 accepted cases
+plus 11 extra baselines, which it re-recorded byte-identically. The
+required token comparison ran (Runtime features, existing comparable):
+11 cases use fewer lexer tokens, 926 the same and none more. No
+accepted spelling ties or beats a candidate case, and no policy check
+failed.
 
-**File**: `arc/README.md` (modified, +13/-7)
+Hard criteria, checked independently and again on the integrated tree:
+cargo build --all-targets, warning-denied Clippy and cargo fmt --check
+pass; the full cargo test passes (93 suites, 2,444 passed, 0 failed,
+25 ignored) with all 2,428 accepted test identities present and 41
+added; all 926 pinned accepted programs and the 11 extra baselines
+replay; a 19,935-program differential of accepted programs is
+unchanged apart from clock readings, and every program a 2,385-program
+spread grid changes was an error at the accepted revision.
+
+NUC 81 adds spread entries to object literals: {...SOURCE, key: value}
+copies the entries of the object SOURCE holds, left to right, with
+later entries winning and each key keeping its first position. A null
+
+**File**: `README.md` (modified, +27/-0)
 ```diff
-@@ -178,13 +178,19 @@ The genesis datasets are `dataset.core.json`, `dataset.extension.json`,
- the genesis puzzle `3aa6fb7a`, which has no `dataset.3aa6fb7a.json`, and every
- run receives them with the other datasets. Their pairs are synthesized
- varieties of corners, curves, and lines rather than original training or test
--pairs, so they contain no test pair. Each ends with one synthesized pair that
--holds a single object on the genesis puzzle's 7 by 7 canvas, annotated with
--that dataset's own declarations: a color-9 corner at orientation 135 with its
--outside color-4 marker (`dataset.core.json`), a color-4 corner at orientation
--45 with its inside color-7 marker (`dataset.extension.json`), a color-9 point
--with its color-2 rim below (`dataset.curve.json`), and a vertical line that
--extends down from its top endpoint (`dataset.line.json`).
-+pairs, so they contain no test pair. Each ends with two synthesized pairs on
-+the genesis puzzle's 7 by 7 canvas, annotated with that dataset's own
-+declarations. The first holds a single object: a color-9 corner at
-+orientation 135 with its outside color-4 marker (`dataset.core.json`), a
-+color-4 corner at orientation 45 with its inside color-7 marker
-+(`dataset.extension.json`), a color-9 point with its color-2 rim below
-+(`dataset.curve.json`), and a vertical line that extends down from its top
-+endpoint (`dataset.line.json`). The last holds two objects: color-9 corners
-+at orientations 45 and 315 with their outside color-4 markers, color-4
-+corners at orientations 225 and 135 with their inside color-7 markers, a
-+color-9 point with its color-2 rim below and a color-4 point with its color-8
-+rim above, and a vertical line that extends up from its bottom endpoint with
-+a horizontal line that extends left from its right endpoint.
+@@ -1735,6 +1735,33 @@ assert: [hall.mean, building], [20, 18]
+   does. See the
+   [root contract](nucleoid.spec.md#list-and-population-averages).
  
- Instance `implementation` snippets use named constructor arguments whose names
- match the parameters in their class declarations. The canvas size is not one
++## Object spread entries
++
++**Spread entries keep derived listings in step with their products**
++
++```nuc
++class Product(name, price):
++    this.name = name
++    this.price = price
++$Product.listing = {...$Product, currency: "USD"}
++lamp = Product("lamp", 40)
++draft = {...lamp.listing, price: lamp.price * 0.75}
++assert: [lamp.listing.price, draft.price], [40, 30]
++lamp.price = 60
++lamp.stock = 3
++assert: [lamp.listing, draft], [{id: "lamp", name: "lamp", price: 60, stock: 3, currency: "USD"}, {id: "lamp", name: "lamp", price: 45, stock: 3, currency: "USD"}]
++```
++
++- [NUC 81](docs/nuc-0081.md) adds spread entries to object literals:
++  `...SOURCE` copies the entries of the object `SOURCE` holds, in order, and a
++  later entry for the same key replaces its value. `$Product.listing` copies
++  each product and adds a currency, and `draft` copies the listing with a
++  discounted price.
++- A spread stays live: a changed price and the new `stock` entry reach both
++  records. A class-level rule that spreads its own receiver leaves out the
++  property it declares, so `listing` never holds an older listing. See the
++  [root contract](nucleoid.spec.md#object-spread-entries).
++
+ ## Benchmark
+ 
+ This is the comparation our sample order app in Nucleoid IDE against MySQL and Postgres with using Express.js and Sequelize libraries.
 ```
 
-**File**: `arc/src/dataset/dataset.core.json` (modified, +82/-0)
+**File**: `dataset/nucleoid.spec.jsonl` (modified, +8/-0)
 ```diff
-@@ -416,6 +416,88 @@
-           "output_value": {"horizontal_segment_color":9,"id":"objb10dd4029d3e","marker_color":4,"orientation":135,"tag":"l6624","vertex_color":9,"vertical_segment_color":9,"x":3,"y":1}
-         }
-       ]
-+    },
-+    {
-+      "input_matrix": [
-+        [0, 0, 0, 0, 0, 0, 0],
-+        [0, 0, 0, 9, 9, 0, 0],
-+        [0, 0, 0, 0, 9, 0, 0],
-+        [0, 0, 0, 0, 0, 0, 0],
-+        [0, 9, 9, 0, 0, 0, 0],
-+        [0, 9, 0, 0, 0, 0, 0],
-+        [0, 0, 0, 0, 0, 0, 0]
-+      ],
-+      "output_matrix": [
-+        [0, 0, 0, 0, 0, 4, 0],
-+        [0, 0, 0, 9, 9, 0, 0],
-+        [0, 0, 0, 0, 9, 0, 0],
-+        [4, 0, 0, 0, 0, 0, 0],
-+        [0, 9, 9, 0, 0, 0, 0],
-+        [0, 9, 0, 0, 0, 0, 0],
-+        [0, 0, 0, 0, 0, 0, 0]
-+      ],
-+      "instances": [
-+        {
-+          "instance_name": "obj1d3e297e70a8",
-+          "input_x": 3,
-+          "output_x": 3,
-+          "input_y": 1,
-+          "output_y": 0,
-+          "input_orientation": 45,
-+          "output_orientation": 45,
-+          "input_instance_matrix": [
-+            [0, 0, 0, 0, 0, 0, 0],
-+            [0, 0, 0, 9, 9, 0, 0],
-+            [0, 0, 0, 0, 9, 0, 0],
-+            [0, 0, 0, 0, 0, 0, 0],
-+            [0, 0, 0, 0, 0, 0, 0],
-+            [0, 0, 0, 0, 0, 0, 0],
-+            [0, 0, 0, 0, 0, 0, 0]
-+          ],
-+          "output_instance_matrix": [
-+            [0, 0, 0, 0, 0, 4, 0],
-+            [0, 0, 0, 9, 9, 0, 0],
-+            [0, 0, 0, 0, 9, 0, 0],
-+            [0, 0, 0, 0, 0, 0, 0],
-+            [0, 0, 0, 0, 0, 0, 0],
-+            [0, 0, 0, 0, 0, 0, 0],
-+            [0, 0, 0, 0, 0, 0, 0]
-+          ],
-+          "implementation": "obj1d3e297e70a8 = Obj(x=3, y=1, orientation=45, vertex_color=9, vertical_segment_color=9, horizontal_segment_color=9)",
-+          "input_value": {"horizontal_segment_color":9,"id":"obj1d3e297e70a8","marker_color":0,"orientation":45,"tag":"l6747","vertex_color":9,"vertical_segment_color":9,"x":3,"y":1},
-+          "output_value": {"horizontal_segment_color":9,"id":"obj1d3e297e70a8","marker_color":4,"orientation":45,"tag":"l6624","vertex_color":9,"vertical_segment_color":9,"x":3,"y":1}
-+        },
-+        {
-+          "instance_name": "obj20499ff135c0",
-+          "input_x": 1,
-+          "output_x": 0,
-+          "input_y": 4,
-+          "output_y": 3,
-+          "input_orientation": 315,
-+          "output_orientation": 315,
-+          "input_instance_matrix": [
-+            [0, 0, 0, 0, 0, 0, 0],
-+            [0, 0, 0, 0, 0, 0, 0],
-+            [0, 0, 0, 0, 0, 0, 0],
-+            [0, 0, 0, 0, 0, 0, 0],
-+            [0, 9, 9, 0, 0, 0, 0],
-+            [0, 9, 0, 0, 0, 0, 0],
-+            [0, 0, 0, 0, 0, 0, 0]
-+          ],
-+          "output_instance_matrix": [
-+            [0, 0, 0, 0, 0, 0, 0],
-+            [0, 0, 0, 0, 0, 0, 0],
-+            [0, 0, 0, 0, 0, 0, 0],
-+            [4, 0, 0, 0, 0, 0, 0],
-+            [0, 9, 9, 0, 0, 0, 0],
-+            [0, 9, 0, 0, 0, 0, 0],
-+            [0, 0, 0, 0, 0, 0, 0]
-+          ],
-+          "implementation": "obj20499ff135c0 = Obj(x=1, y=4, orientation=315, vertex_color=9, vertical_segment_color=9, horizontal_segment_color=9)",
-+          "input_value": {"horizontal_segment_color":9,"id":"obj20499ff135c0","marker_color":0,"orientation":315,"tag":"l6747","vertex_color":9,"vertical_segment_color":9,"x":1,"y":4},
-+          "output_value": {"horizontal_segment_color":9,"id":"obj20499ff135c0","marker_color":4,"orientation":315,"tag":"l6624","vertex_color":9,"vertical_segment_color":9,"x":1,"y":4}
-+        }
-+      ]
-     }
-   ]
- }
+@@ -633,3 +633,11 @@
+ {"id":"spec-0633","description":"Nucleoid uses averages in functions methods and conditional expressions","code":"class Team(name, scores):\n    this.name = name\n    this.scores = scores\n    def mean(): return this.scores.average()\ndef variance(team) => team.scores.average(score -> score * score) - team.mean() ** 2\nred = Team(\"red\", [3, 5])\nblue = Team(\"blue\", [6])\nleague = Team.average(team -> team.mean())\nleader = red.mean() > blue.mean() ? red.name : blue.name\nspread = variance(red)\nassert: [league, leader, spread], [5, \"blue\", 1]\nblue.scores.push(2)\nred.scores.push(7)\nTeam(\"green\", [1])\nassert: [league, leader, spread], [3.3333333333333335, \"red\", 2.666666666666668]","return":null}
+ {"id":"spec-0634","description":"Nucleoid keeps average as an ordinary name beside the average query","code":"average = 2\nreport = {average: 5}\ndef double average => average * 2\nclass Bag(items):\n    this.items = items\n    def average(): return this.items.average(item -> item * item)\nbag = Bag([1, 3])\nlevel = bag.items.average() + average + report.average\nbags = Bag.average(each -> each.average())\nassert: [level, bag.average(), bags, double(average)], [9, 5, 5, 4]\nassert: bag.items.average, null\nbag.items.push(5)\naverage = 4\nBag([6])\nassert: [level, bags], [12, 23.833333333333332]","return":null}
+ {"id":"spec-0635","description":"Nucleoid rolls back failed average updates","code":"def checked(value):\n    if value > 100:\n        throw \"TOO_LARGE\"\n    return value\namounts = [10, 20]\nmean = amounts.average(checked)\nfailure = \"\"\ntry:\n    amounts.push(500)\ncatch error:\n    failure = error\nassert: [failure, amounts, mean], [\"TOO_LARGE\", [10, 20], 15]\namounts.push(30)\nassert: mean, 20\nclass Item(price): this.price = price\npen = Item(3)\ntypical = Item.average(item -> checked(item.price))\nfailure = \"\"\ntry:\n    Item(500)\ncatch error:\n    failure = error\nassert: [failure, Item.length, typical], [\"TOO_LARGE\", 1, 3]\nsuppose:\n    Item(5)\n    assert: typical, 4\nassert: [Item.length, typical], [1, 3]","return":null}
++{"id":"spec-0636","description":"Nucleoid copies object entries into records with spread entries","code":"base = {name: \"tea\", price: 4, stock: 10}\nsale = {...base, price: 3, tag: \"sale\"}\nfloor = {price: 9, ...base}\nassert: [sale, floor], [{name: \"tea\", price: 3, stock: 10, tag: \"sale\"}, {price: 4, name: \"tea\", stock: 10}]\nassert: [sale == base, floor == base, base.tag], [false, false, null]\nbase.name = \"oolong\"\nbase.price = 6\nbase.size = 2\ndelete base.stock\nassert: [sale, floor], [{name: \"oolong\", price: 3, size: 2, tag: \"sale\"}, {price: 6, name: \"oolong\", size: 2}]\ntag = \"new\"\nfresh = {tag, ...base price: 5,}\nassert: fresh, {tag: \"new\", name: \"oolong\", price: 5, size: 2}","return":null}
++{"id":"spec-0637","description":"Nucleoid keeps spread entries live as their sources change","code":"base = {name: \"tea\", price: 4}\nitem = {...base, qty: 2}\nline = {...item, total: item.price * item.qty}\nassert: line, {name: \"tea\", price: 4, qty: 2, total: 8}\nbase.price = 5\nbase.size = \"large\"\ndelete base.name\nassert: line, {price: 5, size: \"large\", qty: 2, total: 10}\nbase = {name: \"jam\", price: 3}\nassert: [item, line], [{name: \"jam\", price: 3, qty: 2}, {name: \"jam\", price: 3, qty: 2, total: 6}]","return":null}
++{"id":"spec-0638","description":"Nucleoid merges records with several spread entries","code":"defaults = {color: \"red\", size: 2, gift: false}\ncustom = {size: 3}\norder = {...defaults, ...custom, id: 7}\nassert: order, {color: \"red\", size: 3, gift: false, id: 7}\ncustom.gift = true\ncustom.note = \"rush\"\nassert: order, {color: \"red\", size: 3, gift: true, note: \"rush\", id: 7}\ndelete custom.size\ndefaults.color = \"blue\"\nassert: order, {color: \"blue\", size: 2, gift: true, note: \"rush\", id: 7}","return":null}
++{"id":"spec-0639","description":"Nucleoid spreads instances into records and class level rules","code":"class Room(name, temp):\n    this.name = name\n    this.temp = temp\n$Room.card = {...$Room, unit: \"C\"}\nlab = Room(\"lab\", 20)\nlab.temp = 25\nlab.floor = 2\nassert: lab.card, {id: \"lab\", name: \"lab\", temp: 25, floor: 2, unit: \"C\"}\nhall = Room(\"hall\", 18)\ncopy = {...hall, temp: 19}\nassert: (why copy)[0].from, [\"hall\", \"hall.id\", \"hall.name\", \"hall.card\"]\nhall.name = \"foyer\"\nassert: copy, {id: \"hall\", name: \"foyer\", temp: 19, card: {id: \"hall\", name: \"foyer\", temp: 18, unit: \"C\"}}","return":null}
++{"id":"spec-0640","description":"Nucleoid spreads entries in functions methods and lambdas","code":"class Point(x, y):\n    this.x = x\n    this.y = y\n    def shifted dx => {...this, x: this.x + dx}\ndef flat p => {...p, z: 0}\np = Point(1, 2)\nq = Point(3, 4)\nup = flat(p)\nfar = p.shifted(10)\ngrid = [p, q].map(lambda pt: {...pt, area: pt.x * pt.y})\nassert: [up, far], [{id: \"p\", x: 1, y: 2, z: 0}, {id: \"p\", x: 11, y: 2}]\np.y
 ```
 
-**File**: `arc/src/dataset/dataset.curve.json` (modified, +82/-0)
+**File**: `dataset/nucleoid.synth.56.jsonl` (added, +8/-0)
 ```diff
-@@ -313,6 +313,88 @@
-           "output_value": {"id":"obj3d302d758b50","orientation":180,"rim_color":2,"tag":"l9906","vertex_color":9,"x":3,"y":2}
-         }
-       ]
-+    },
-+    {
-+      "input_matrix": [
-+        [0, 0, 0, 0, 0, 0, 0],
-+        [0, 0, 0, 0, 9, 0, 0],
-+        [0, 0, 0, 0, 0, 0, 0],
-+        [0, 0, 0, 0, 0, 0, 0],
-+        [0, 0, 0, 0, 0, 0, 0],
-+        [0, 0, 4, 0, 0, 0, 0],
-+        [0, 0, 0, 0, 0, 0, 0]
-+      ],
-+      "output_matrix": [
-+        [0, 0, 0, 0, 0, 0, 0],
-+        [0, 0, 0, 0, 9, 0, 0],
-+        [0, 0, 0, 2, 0, 2, 0],
-+        [0, 0, 0, 0, 0, 0, 0],
-+        [0, 8, 0, 8, 0, 0, 0],
-+        [0, 0, 4, 0, 0, 0, 0],
-+        [0, 0, 0, 0, 0, 0, 0]
-+      ],
-+      "instances": [
-+        {
-+          "instance_name": "obja1b9ca3ab601",
-+          "input_x": 4,
-+          "output_x": 3,
-+          "input_y": 1,
-+          "output_y": 1,
-+          "input_orientation": 180,
-+          "output_orientation": 180,
-+          "input_instance_matrix": [
-+            [0, 0, 0, 0, 0, 0, 0],
-+            [0, 0, 0, 0, 9, 0, 0],
-+            [0, 0, 0, 0, 0, 0, 0],
-+            [0, 0, 0, 0, 0, 0, 0],
-+            [0, 0, 0, 0, 0, 0, 0],
-+            [0, 0, 0, 0, 0, 0, 0],
-+            [0, 0, 0, 0, 0, 0, 0]
-+          ],
-+          "output_instance_matrix": [
-+            [0, 0, 0, 0, 0, 0, 0],
-+            [0, 0, 0, 0, 9, 0, 0],
-+            [0, 0, 0, 2, 0, 2, 0],
-+            [0, 0, 0, 0, 0, 0, 0],
-+            [0, 0, 0, 0, 0, 0, 0],
-+            [0, 0, 0, 0, 0, 0, 0],
-+            [0, 0, 0, 0, 0, 0, 0]
-+          ],
-+          "implementation": "obja1b9ca3ab601 = Obj(x=4, y=1, orientation=180, vertex_color=9)",
-+          "input_value": {"id":"obja1b9ca3ab601","orientation":180,"tag":"l7544","vertex_color":9,"x":4,"y":1},
-+          "output_value": {"id":"obja1b9ca3ab601","orientation":180,"rim_color":2,"tag":"l9906","vertex_color":9,"x":3,"y":1}
-+        },
-+        {
-+          "instance_name": "obj5fb3f33a329f",
-+          "input_x": 2,
-+          "output_x": 1,
-+          "input_y": 5,
-+          "output_y": 4,
-+          "input_orientation": 0,
-+          "output_orientation": 0,
-+          "input_instance_matrix": [
-+            [0, 0, 0, 0, 0, 0, 0],
-+            [0, 0, 0, 0, 0, 0, 0],
-+            [0, 0, 0, 0, 0, 0, 0],
-+            [0, 0, 0, 0, 0, 0, 0],
-+            [0, 0, 0, 0, 0, 0, 0],
-+            [0, 0, 4, 0, 0, 0, 0],
-+            [0, 0, 0, 0, 0, 0, 0]
-+          ],
-+          "output_instance_matrix": [
-+            [0, 0, 0, 0, 0, 0, 0],
-+            [0, 0, 0, 0, 0, 0, 0],
-+            [0, 0, 0, 0, 0, 0, 0],
-+            [0, 0, 0, 0, 0, 0, 0],
-+            [0, 8, 0, 8, 0, 0, 0],
-+            [0, 0, 4, 0, 0, 0, 0],
-+            [0, 0, 0, 0, 0, 0, 0]
-+          ],
-+          "implementation": "obj5fb3f33a329f = Obj(x=2, y=5, orientation=0, vertex_color=4)",
-+          "input_value": {"id":"obj5fb3f33a329f","orientation":0,"tag":"l7544","vertex_color":4,"x":2,"y":5},
-+          "output_value": {"id":"obj5fb3f33a329f","orientation":0,"rim_color":8,"tag":"l6840","vertex_color":4,"x":1,"y":4}
-+        }
-+      ]
-     }
-   ]
- }
+@@ -0,0 +1,8 @@
++{"id":"synth-56-0001","description":"A spread entry copies a record's entries into a new record that adds its own","code":"base = {name: \"tea\", price: 4}\nsale = {...base, tag: \"sale\"}\n[sale.name, sale.price, sale.tag, base.tag]","return":"[\"tea\",4,\"sale\",null]"}
++{"id":"synth-56-0002","description":"Entries apply from left to right, so a later entry wins and a key keeps its first position","code":"defaults = {theme: \"light\", size: 12, font: \"mono\"}\nprefs = {size: 14}\nsettings = {...defaults, ...prefs, theme: \"dark\"}\nkeys = []\nfor key, value of settings: keys.push(key + \"=\" + value)\nkeys","return":"[\"theme=dark\",\"size=14\",\"font=mono\"]"}
++{"id":"synth-56-0003","description":"A spread stays live as its source gains, changes and loses entries","code":"item = {name: \"lamp\", price: 40}\nlisting = {...item, currency: \"USD\"}\nitem.price = 35\nitem.stock = 3\ndelete item.name\nlisting","return":"{\"price\":35,\"stock\":3,\"currency\":\"USD\"}"}
++{"id":"synth-56-0004","description":"A class-level rule that spreads its instance copies the id first and leaves out the property it declares","code":"class Order(total):\n    this.total = total\n$Order.view = {...$Order, paid: false}\norder = Order(10)\norder.total = 12\norder.view","return":"{\"id\":\"order\",\"total\":12,\"paid\":false}"}
++{"id":"synth-56-0005","description":"A spread of a null source waits for the source, and an unset property copies nothing","code":"owner = null\ncard = {...owner, seen: true}\nfirst := card\nowner = {name: \"ada\"}\nbox = {}\npacked = {...box.lid, open: false}\n[first, card, packed]","return":"[null,{\"name\":\"ada\",\"seen\":true},{\"open\":false}]"}
++{"id":"synth-56-0006","description":"Spreading a value that is not an object raises a TypeError","code":"sizes = [1, 2]\nfailure = \"\"\ntry:\n    record = {...sizes}\ncatch error:\n    failure = error\nfailure","return":"\"TypeError: sizes is not an object\""}
++{"id":"synth-56-0007","description":"Lambdas and named arrows build records with spread entries","code":"points = [{x: 1, y: 2}, {x: 3, y: 4}]\ndef lift p => {...p, z: 0}\n[points.map(lambda p: {...p, x: p.x * 10}), lift(points[0])]","return":"[[{\"x\":10,\"y\":2},{\"x\":30,\"y\":4}],{\"x\":1,\"y\":2,\"z\":0}]"}
++{"id":"synth-56-0008","description":"Explanations render a spread entry once, as it is written","code":"lab = {name: \"lab\", temp: 20}\nview = {...lab, unit: \"C\"}\n(why view)[0].rule","return":"\"view = {...lab,\\\"unit\\\":\\\"C\\\"}\""}
 ```
 
-**File**: `arc/src/dataset/dataset.extension.json` (modified, +82/-0)
+**File**: `docs/README.md` (modified, +55/-0)
 ```diff
-@@ -430,6 +430,88 @@
-           "output_value": {"horizontal_segment_color":4,"id":"objc28d52f4b589","marker_color":7,"orientation":45,"tag":"l6624","vertex_color":4,"vertical_segment_color":4,"x":3,"y":2}
-         }
-       ]
-+    },
-+    {
-+      "input_matrix": [
-+        [0, 0, 0, 0, 0, 0, 0],
-+        [0, 4, 0, 0, 0, 0, 0],
-+        [0, 4, 0, 0, 0, 0, 0],
-+        [0, 4, 4, 4, 0, 0, 4],
-+        [0, 0, 0, 0, 0, 0, 4],
-+        [0, 0, 0, 0, 4, 4, 4],
-+        [0, 0, 0, 0, 0, 0, 0]
-+      ],
-+      "output_matrix": [
-+        [0, 0, 0, 0, 0, 0, 0],
-+        [0, 4, 0, 0, 0, 0, 0],
-+        [0, 4, 7, 0, 0, 0, 0],
-+        [0, 4, 4, 4, 0, 0, 4],
-+        [0, 0, 0, 0, 0, 7, 4],
-+        [0, 0, 0, 0, 4, 4, 4],
-+        [0, 0, 0, 0, 0, 0, 0]
-+      ],
-+      "instances": [
-+        {
-+          "instance_name": "objd50f6f521f67",
-+          "input_x": 1,
-+          "output_x": 1,
-+          "input_y": 1,
-+          "output_y": 1,
-+          "input_orientation": 225,
-+          "output_orientation": 225,
-+          "input_instance_matrix": [
-+            [0, 0, 0, 0, 0, 0, 0],
-+            [0, 4, 0, 0, 0, 0, 0],
-+            [0, 4, 0, 0, 0, 0, 0],
-+            [0, 4, 4, 4, 0, 0, 0],
-+            [0, 0, 0, 0, 0, 0, 0],
-+            [0, 0, 0, 0, 0, 0, 0],
-+            [0, 0, 0, 0, 0, 0, 0]
-+          ],
-+          "output_instance_matrix": [
-+            [0, 0, 0, 0, 0, 0, 0],
-+            [0, 4, 0, 0, 0, 0, 0],
-+            [0, 4, 7, 0, 0, 0, 0],
-+            [0, 4, 4, 4, 0, 0, 0],
-+            [0, 0, 0, 0, 0, 0, 0],
-+            [0, 0, 0, 0, 0, 0, 0],
-+            [0, 0, 0, 0, 0, 0, 0]
-+          ],
-+          "implementation": "objd50f6f521f67 = Obj(x=1, y=1, orientation=225, vertex_color=4, vertical_segment_color=4, horizontal_segment_color=4)",
-+          "input_value": {"horizontal_segment_color":4,"id":"objd50f6f521f67","marker_color":0,"orientation":225,"tag":"l6747","vertex_color":4,"vertical_segment_color":4,"x":1,"y":1},
-+          "output_value": {"horizontal_segment_color":4,"id":"objd50f6f521f67","marker_color":7,"orientation":225,"tag":"l6624","vertex_color":4,"vertical_segment_color":4,"x":1,"y":1}
-+        },
-+        {
-+          "instance_name": "obj6977f002d257",
-+          "input_x": 4,
-+          "output_x": 4,
-+          "input_y": 3,
-+          "output_y": 3,
-+          "input_orientation": 135,
-+          "output_orientation": 135,
-+          "input_instance_matrix": [
-+            [0, 0, 0, 0, 0, 0, 0],
-+            [0, 0, 0, 0, 0, 0, 0],
-+            [0, 0, 0, 0, 0, 0, 0],
-+            [0, 0, 0, 0, 0, 0, 4],
-+            [0, 0, 0, 0, 0, 0, 4],
-+            [0, 0, 0, 0, 4, 4, 4],
-+            [0, 0, 0, 0, 0, 0, 0]
-+          ],
-+          "output_instance_matrix": [
-+            [0, 0, 0, 0, 0, 0, 0],
-+            [0, 0, 0, 0, 0, 0, 0],
-+            [0, 0, 0, 0, 0, 0, 0],
-+            [0, 0, 0, 0, 0, 0, 4],
-+            [0, 0, 0, 0, 0, 7, 4],
-+            [0, 0, 0, 0, 4, 4, 4],
-+            [0, 0, 0, 0, 0, 0, 0]
-+          ],
-+          "implementation": "obj6977f002d257 = Obj(x=4, y=3, orientation=135, vertex_color=4, vertical_segment_color=4, horizontal_segment_color=4)",
-+          "input_value": {"horizontal_segment_color":4,"id":"obj6977f002d257","marker_color":0,"orientation":135,"tag":"l6747","vertex_color":4,"vertical_segment_color":4,"x":4,"y":3},
-+          "output_value": {"horizontal_segment_color":4,"id":"obj6977f002d257","marker_color":7,"orientation":135,"tag":"l6624","vertex_color":4,"vertical_segment_color":4,"x":4,"y":3}
-+        }
-+      ]
-     }
-   ]
- }
+@@ -545,6 +545,59 @@ assert(summary.kind, "alert")
+   Existing computed-key writes, exporter splitting and receiver-frame limits
+   are not repaired.
+ 
++### Object spread entries
++
++```
++defaults = {theme: "light", size: 12}
++prefs = {size: 14}
++settings = {...defaults, ...prefs}
++assert(settings.theme, "light")
++assert(settings.size, 14)
++prefs.theme = "dark"
++defaults.font = "mono"
++assert(settings.theme, "dark")
++assert(settings.font, "mono")
++delete prefs.size
++settings.size
++```
++
++- This is the complete `Nucleoid derives records with spread entries`
++  program in `tests/reference.md`, without its title and expected-return
++  metadata; it returns `12`.
++- [NUC 81](nuc-0081.md) adds spread entries to object literals:
++  `...SOURCE` copies the entries of the object `SOURCE` holds, in insertion
++  order. They are the entries an entry loop visits: an instance's `id` first,
++  `null` values included, undefined slots left out. A copy is shallow, so a
++  nested object or list is the same value in both records.
++- Entries apply from left to right, and each source is evaluated once. A
++  later entry for a key the object already holds replaces its value and keeps
++  the key's first position, so `{...point, x: 5}` lists `x` first and
++  `{x: 9, ...point}` takes `x` from `point`.
++- A spread is three adjacent dots wherever a key may begin. A keyed entry may
++  follow it without a comma, as in `{...base qty: 1}`; a spread after a value
++  or another spread needs one. Statement-leading braces and anonymous arrow
++  bodies in braces stay blocks, so `({...a})` and `lambda p: {...p}` write
++  objects. `[...xs]`, `f(...xs)` and `{x, ...rest} = p` keep their syntax
++  errors.
++- A `null` source or an undefined property copies nothing. Reading a `null`
++  source is an ordinary null read, so the declaration is `null` until its
++  source holds an object, while copied `null` values never settle it. Any
++  other value raises `TypeError("<source> is not an object")`.
++- A declaration that spreads stays live. It depends on every entry it copies,
++  except one a later keyed entry replaces, and observes its source's set of
++  entries, so a changed, deleted or added entry and a rebound source
++  re-evaluate it. `why` lists the dependencies of the explicit record that
++  names the same entries, `--graph` shows the observation as
++  `observes {...<object id>}`, and rollback restores entries, their order and
++  observations together.
++- While a property declaration evaluates its value, a spread of the object
++  that owns the property leaves that property out, so
++  `$Order.view = {...$Order, paid: false}` never nests an older view. Two
++  class-level rules that spread the same receiver read each other and raise
++  `TypeError("Circular Dependency")` when an instance applies both.
++- The authoritative contract is the
++  [object spread entries](../nucleoid.spec.md#object-spread-entries) section.
++
+ ### Operators
+ 
+ - Arithmetic: `+`, `-`, `*`, `/`, `%`, and exponentiation `**`; see below.
+@@ -3213,6 +3266,7 @@ Messages are exact and are part of the observable behaviour of the language.
+ | Missing or non-function `maxBy` or `minBy` selector, including `null`, even on an empty receiver | `maxBy expects a function` or `minBy expects a function` |
+ | An `all` or `any` quantifier over a value that is neither null nor a list or a declared class's instances | `<collection> is not a collection` |
+ | A two-name `for key, value of source` loop over a value that is not an object | `<source> is not an object` |
++| A spread entry `...source` whose source is neither an object nor `null` or undefined | `<source> is not an object` |
+ | Assigning a `suppose` block whose last statement is not an expression | `suppose has no value` |
+ | `:=` on a class-level property outside a class-level rule | `Cannot use ':=' on a class-level property` |
+ | A `:=` declaration whose value nests lists 192 levels or more | `Maximum expression depth exceeded` |
+@@ -3377,6 +3431,7 @@ def name amount: type:                 one typed parameter, indented only (NUC 2
+ { statement; statement }               block
+ record = { amount, label }             object shorthand (candidate NUC 17)
+ record = {amount: amount unit: "C"}    optional explicit-property comma (NUC 44)
++record = {...base, qty: 1}             copy base's entries in order; later entries win (NUC 81)
+ 
+ throw value                            raise a value
+ return expression                      yield from a block or function
 ```
 
-**File**: `arc/src/dataset/dataset.line.json` (modified, +82/-0)
+**File**: `docs/examples.md` (modified, +33/-0)
 ```diff
-@@ -355,6 +355,88 @@
-           "output_value": {"endpoint_position":"up","extension_direction":"down","id":"obj84b61b7cd8f6","orientation":0,"tag":"l6012","x":2,"y":1}
-         }
-       ]
-+    },
-+    {
-+      "input_matrix": [
-+        [0, 0, 0, 0, 0, 0, 0],
-+        [0, 6, 0, 0, 0, 0, 0],
-+        [0, 6, 0, 0, 0, 0, 0],
-+        [0, 6, 0, 0, 0, 0, 0],
-+        [0, 8, 0, 0, 0, 0, 0],
-+        [0, 0, 0, 0, 6, 6, 8],
-+        [0, 0, 0, 0, 0, 0, 0]
-+      ],
-+      "output_matrix": [
-+        [0, 6, 0, 0, 0, 0, 0],
-+        [0, 6, 0, 0, 0, 0, 0],
-+        [0, 6, 0, 0, 0, 0, 0],
-+        [0, 6, 0, 0, 0, 0, 0],
-+        [0, 8, 0, 0, 0, 0, 0],
-+        [0, 0, 0, 6, 6, 6, 8],
-+        [0, 0, 0, 0, 0, 0, 0]
-+      ],
-+      "instances": [
-+        {
-+          "instance_name": "obj71a65bf8e5ce",
-+          "input_x": 1,
-+          "output_x": 1,
-+          "input_y": 1,
-+          "output_y": 0,
-+          "input_orientation": 0,
-+          "output_orientation": 0,
-+          "input_instance_matrix": [
-+            [0, 0, 0, 0, 0, 0, 0],
-+            [0, 6, 0, 0, 0, 0, 0],
-+            [0, 6, 0, 0, 0, 0, 0],
-+            [0, 6, 0, 0, 0, 0, 0],
-+            [0, 8, 0, 0, 0, 0, 0],
-+            [0, 0, 0, 0, 0, 0, 0],
-+            [0, 0, 0, 0, 0, 0, 0]
-+          ],
-+          "output_instance_matrix": [
-+            [0, 6, 0, 0, 0, 0, 0],
-+            [0, 6, 0, 0, 0, 0, 0],
-+            [0, 6, 0, 0, 0, 0, 0],
-+            [0, 6, 0, 0, 0, 0, 0],
-+            [0, 8, 0, 0, 0, 0, 0],
-+            [0, 0, 0, 0, 0, 0, 0],
-+            [0, 0, 0, 0, 0, 0, 0]
-+          ],
-+          "implementation": "obj71a65bf8e5ce = Obj(x=1, y=1, orientation=0, endpoint_position='down')",
-+          "input_value": {"endpoint_position":"down","id":"obj71a65bf8e5ce","orientation":0,"tag":"l8001","x":1,"y":1},
-+          "output_value": {"endpoint_position":"down","extension_direction":"up","id":"obj71a65bf8e5ce","orientation":0,"tag":"l6012","x":1,"y":0}
-+        },
-+        {
-+          "instance_name": "obj400315cd8551",
-+          "input_x": 4,
-+          "output_x": 3,
-+          "input_y": 5,
-+          "output_y": 5,
-+          "input_orientation": 90,
-+          "output_orientation": 90,
-+          "input_instance_matrix": [
-+            [0, 0, 0, 0, 0, 0, 0],
-+            [0, 0, 0, 0, 0, 0, 0],
-+            [0, 0, 0, 0, 0, 0, 0],
-+            [0, 0, 0, 0, 0, 0, 0],
-+            [0, 0, 0, 0, 0, 0, 0],
-+            [0, 0, 0, 0, 6, 6, 8],
-+            [0, 0, 0, 0, 0, 0, 0]
-+          ],
-+          "output_instance_matrix": [
-+            [0, 0, 0, 0, 0, 0, 0],
-+            [0, 0, 0, 0, 0, 0, 0],
-+            [0, 0, 0, 0, 0, 0, 0],
-+            [0, 0, 0, 0, 0, 0, 0],
-+            [0, 0, 0, 0, 0, 0, 0],
-+            [0, 0, 0, 6, 6, 6, 8],
-+            [0, 0, 0, 0, 0, 0, 0]
-+          ],
-+          "implementation": "obj400315cd8551 = Obj(x=4, y=5, orientation=90, endpoint_position='right')",
-+          "input_value": {"endpoint_position":"right","id":"obj400315cd8551","orientation":90,"tag":"l8001","x":4,"y":5},
-+          "output_value": {"endpoint_position":"right","extension_direction":"left","id":"obj400315cd8551","orientation":90,"tag":"l4102","x":3,"y":5}
-+        }
-+      ]
-     }
-   ]
- }
+@@ -3299,6 +3299,39 @@ assert: [Number.isNaN(chair.rating), chair.featured], [true, false]
+   [NUC 80](nuc-0080.md) and the
+   [root contract](../nucleoid.spec.md#list-and-population-averages).
+ 
++## Object spread entries
++
++**Spread entries keep shipping labels in step with their customers**
++
++```nuc
++class Customer(name, city):
++    this.name = name
++    this.city = city
++class Order(customer, item, qty):
++    this.customer = customer
++    this.item = item
++    this.qty = qty
++$Order.label = {...$Order.customer, item: $Order.item, qty: $Order.qty}
++ada = Customer("ada", "Paris")
++lamp = Order(ada, "lamp", 1)
++desk = Order(ada, "desk", 2)
++assert: lamp.label, {id: "ada", name: "ada", city: "Paris", item: "lamp", qty: 1}
++ada.city = "Lyon"
++ada.zip = "69001"
++desk.qty = 3
++assert: desk.label, {id: "ada", name: "ada", city: "Lyon", zip: "69001", item: "desk", qty: 3}
++[lamp.label.city, lamp.label.zip, desk.label.qty]
++# return: ["Lyon","69001",3]
++```
++
++- `$Order.label` copies every entry of the order's customer, its `id`
++  first, and adds the order's item and quantity. Each order gets its own
++  label from the same rule.
++- The labels follow their sources: Ada's move to Lyon, her new `zip` entry
++  and the desk's new quantity re-evaluate them without naming any of the
++  customer's fields. See [NUC 81](nuc-0081.md) and the
++  [root contract](../nucleoid.spec.md#object-spread-entries).
++
+ ## Copyright
+ 
+ Copyright 2020 Nucleoid
+```
+
+**File**: `docs/nuc-0000.md` (modified, +2/-0)
+```diff
+@@ -79,6 +79,7 @@ Created: 31-Jul-2026
+ | [70](nuc-0070.md) | Object Entry Loops | Automatic-Accepted: independent evaluation rejected it because a rolled-back `delete` re-appended the key; its loops ship through NUC 72, which fixed that |
+ | [72](nuc-0072.md) | Object Entry Loops with Ordered Rollback | Accepted |
+ | [74](nuc-0074.md) | Final Rest Parameters | Accepted |
++| [81](nuc-0081.md) | Object Spread Entries | Accepted |
+ 
+ ### Utility enhancement
+ 
+@@ -215,6 +216,7 @@ Created: 31-Jul-2026
+ | [78](nuc-0078.md) | Extends Clauses for Subclasses | Standards Track | Language compatibility | Accepted |
+ | [79](nuc-0079.md) | Property Selector Arguments | Standards Track | Syntax enhancement | Accepted |
+ | [80](nuc-0080.md) | List and Population Averages | Standards Track | Utility enhancement | Accepted |
++| [81](nuc-0081.md) | Object Spread Entries | Standards Track | Runtime features | Accepted |
+ 
+ ## Copyright
+ 
+```
+
+**File**: `docs/nuc-0081.md` (added, +957/-0)
+```diff
+@@ -0,0 +1,957 @@
++# NUC 81 -- Object Spread Entries
++
++```
++NUC: 81
++Title: Object Spread Entries
++Author: Claude <noreply@anthropic.com>
++Status: Accepted
++Type: Standards Track
++Category: Runtime features
++Created: 04-Nov-2026
++Requires: 8, 17, 18, 44, 45, 57, 65, 66, 72, 74
++```
++
++## Abstract
++
++- Object literals gain spread entries. `{...SOURCE, key: value}` copies the
++  entries of the object `SOURCE` holds into the new object, in their
++  insertion order, so `{...point, z: 0}` extends a record and
++  `{...defaults, ...overrides}` merges two.
++- Entries apply from left to right, and each source is evaluated once. A
++  later entry for a key the object already holds replaces its value and
++  keeps the key's first position, as a repeated key does in an accepted
++  literal. A spread copies exactly the entries an entry loop visits: `null`
++  values are copied, undefined slots are not.
++- A `null` or undefined source copies nothing, and reading a `null` source is
++  an ordinary null read, so a declaration waits for an unknown source. Every
++  other value that is not an object raises
++  `TypeError("<source> is not an object")`, the message of
++  [NUC 72](nuc-0072.md)'s entry loops.
++- A spread in a standing declaration stays live. It depends on the entries it
++  copies and observes its source's set of entries, so changing, deleting or
++  adding an entry, or replacing the binding its source reads, evaluates the
++  declaration again. A derived record stays equal to the explicit record
++  that names every entry its source holds. Programs without spreads
++  propagate exactly as before.
++- While a property declaration evaluates its value, a spread of the object
++  that owns the property leaves that property out, so the class-level rule
++  `$Order.view = {...$Order, paid: false}` never copies an older view into a
++  newer one.
++- No keyword, token or error type is added. Three adjacent dots start a spread
++  only where an object-literal entry may begin, as [NUC 74](nuc-0074.md)
++  recognizes them only in parameter lists. Every accepted program keeps its
++  parse and behavior; only inputs that raised
++  `SyntaxError("Expected a key but found '.'")` at such an entry change. The
++  public `Expr` enum gains `Expr::SpreadObject`, the public `ast` module gains
++  the enum `ObjectEntry`, and the public `ShapeKey` enum gains
++  `ShapeKey::Entries`; they need human SemVer review. No project version is
++  changed. The authoritative contract is
++  [Object spread entries](../nucleoid.spec.md#object-spread-entries).
++- **Outcome: Accepted.** The independent evaluation and the caller's
++  integrated-tree checks passed all three hard criteria, and the independent
++  evaluator decided Accepted. The required token comparison ran in
++  continuous mode: 11 cases use fewer tokens, 926 the same and none more. No
++  policy check failed. The evaluation corrects one claim above: where the
++  parser backtracks, some spreads that raised a different syntax error at
++  the accepted revision now run too, such as `{x, y} = {...p}`; every
++  changed input was an error at the accepted revision.
++
++## Motivation
++
++- A world model derives records from records: an order line from a product,
++  a shipping label from a customer and an order, the settings in effect from
++  defaults and a user's preferences, a sale beside the regular listing, an
++  instance's public view. Each derived record keeps the fields of its source
++  and changes or adds a few.
++- Accepted Nucleoid cannot copy an object's entries. `{...a}` raises
++  `SyntaxError("Expected a key but found '.'")`, `Object.assign({}, a)`
++  raises `ReferenceError("Object is not defined")`, `JSON` is not defined,
++  and computed writes such as `a[k] = 2` raise
++  `SyntaxError("Cannot assign to a[k]")`, so NUC 72's entry loops can read
++  every entry but cannot write one into another object. NUC 74 lists
++  call-site spread among what it does not add.
++- The accepted spellings therefore name every field by hand, as
++  `line = {name: item.name price: item.price size: item.size qty: item.qty total: item.price * item.qty}`
++  does. They repeat the source for every field and break as the model grows:
++  - a field the source gains later is missing from every derived record that
++    does not name it ahead of time, as `size: item.size` does above;
++  - merging records needs `??` for every key both may hold,
++    `{size: custom.size ?? defaults.size gift: custom.gift ?? defaults.gift}`,
++    and still misses keys neither literal names;
++  - [NUC 67](nuc-0067.md)'s destructuring shortens the reads, but a
++    destructured name of a missing or deleted key reads `null`, and the
++    null-read rule then settles every record that reads it to `null`;
++  - a class-level rule that copies its receiver lists each field, and a rule
++    that reads its own property raises `TypeError("Circular Dependency")`.
++- JavaScript's `{...a, b: 1}`, Python's `{**a, "b": 1}`, Kotlin's
++  `a.copy(b = 1)`, C#'s `a with { B = 1 }` 
+```
+
+**File**: `nucleoid.spec.md` (modified, +233/-0)
+```diff
+@@ -3768,6 +3768,97 @@ statement positions; caught values and transaction recovery are unchanged.
+   `Nucleoid restores object entries in place when it rolls back` specify the
+   executable behavior.
+ 
++## Object spread entries
++
++- [NUC 81](docs/nuc-0081.md) adds spread entries to object literals:
++  `{...SOURCE, key: value}` copies the entries of the object `SOURCE` holds
++  into the new object. No keyword, token or error type is added.
++- A spread entry is three dots at consecutive columns of one line, followed
++  by one expression, its source. It may begin wherever a key may: first in
++  the braces or after a comma, with the line breaks a key allows before it.
++  The source is parsed as an entry's value is, so it ends at a comma, at the
++  closing brace, or before a following keyed entry written without a comma,
++  as in `{...base qty: 1}`. Keyed, shorthand and spread entries mix in any
++  order, and one trailing comma is allowed: `{tag, ...base stock: 0,}`.
++- A spread that follows a value or another spread needs a comma before it:
++  `{y: 2 ...a}` keeps `SyntaxError("Expected a property but found '.'")`,
++  because the value reads the dots as a member access. Shorthand entries keep
++  needing a comma or the closing brace after them.
++- Spreads are entries of object literals written as expressions, in
++  assignments, arguments, list items, returns, named-arrow and `lambda`
++  bodies, parentheses, template interpolations, nested literals,
++  constructors, methods, class-level rules and every suite. A brace that
++  begins a statement is still a block, so `{...a, y: 2}` as a statement keeps
++  `SyntaxError("Unexpected '.'")`, and an anonymous arrow body in braces is
++  still a block; `({...a})`, `lambda p: {...p}` and `def f p => {...p}` write
++  objects. `[...xs]`, `f(...xs)` and `{x, ...rest} = p` keep their syntax
++  errors.
++- The entries are evaluated once each, from left to right. A keyed entry
++  stores its value. A spread evaluates its source once and copies the
++  source's entries in their insertion order, the entries an entry loop
++  visits: an instance's `id` first, then its other properties in the order
++  they were stored; every property whose value is not undefined, `null`
++  values included. A slot whose value is undefined is not copied. The result
++  is a new object that belongs to no class, and a copied object or list is
++  the same value in both records.
++- An entry for a key the object already holds replaces its value and keeps
++  the key's first position, as a repeated key does: with
++  `point = {x: 1, y: 2}`, `{...point, x: 5}` lists `x` then `y` with `x` 5,
++  and `{x: 9, ...point}` takes `x` from `point`.
++- Copying an entry is not a read of a binding, so a copied `null` does not
++  settle a declaration to `null`. The source's own reads follow the existing
++  rules: after `owner = null`, `card = {...owner, seen: true}` is `null`,
++  and it becomes a record when `owner` holds one. An undefined source, such
++  as a property never set, copies nothing, and the literal `null` copies
++  nothing. An undefined name raises `ReferenceError("<name> is not defined")`
++  as before.
++- Every other source raises `TypeError("<source> is not an object")`, with the
++  source in canonical form, as entry loops do: a list, a string, a number, a
++  boolean, a class outside a class-level rule, a function, a date and a
++  regular expression. After `sizes = [1, 2]`, `{...sizes}` raises
++  `TypeError("sizes is not an object")`. The error is positioned at the
++  running top-level statement and rolls back its transaction.
++- While a property declaration evaluates its value, a spread of the object
++  that owns the declared property leaves that property out:
++  `cart.copy = {...cart}` copies every other entry of `cart`, and the
++  class-level rule `$Order.view = {...$Order}` every other entry of each
++  order. This holds in
++  every suite, in constructors, class-level rules and value assignments, and
++  in the functions they call. An assignment used as an expression evaluates
++  its value before its target and copies every entry.
++- A declaration that spreads stays live. Its source's reads are dependencies
++  as usual. It also depends on every entry it copies, except an entry that a
++  later keyed entry of the same literal replaces, and it observes the set of
++  entries of the source object. Changing a copied entry, deleting an entry,
++  adding an entry and replacing the binding the source reads each evaluate it
++  again, so a derived record stays equal to the explicit record that names
++  every entry its source holds. Evaluating it again creates a new object, as
++  every object literal declaration does. `{...a.value}` follows the entries
++  of the object `a` held when the declaration was stored, and `b := {...a}`
++  copies once.
++- Entry-set observations are not graph nodes or value dependencies: `why`
++  lists the same dependencies as the explicit record, `affects`, `model` and
++  the reasoning stages are unch
 ```
 
 #### Recent Merged Pull Requests:
@@ -1440,46 +1435,54 @@ Append a second synthesized 7x7 pair with two objects to the core, extension, cu
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Add two-object pairs to ARC genesis datasets
+## X. NUC 81 Object Spread Entries
 
 **RULE**:
-When implementing operations in `arc/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `55fbddc1`: Add two-object pairs to ARC genesis datasets. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9bd304a7`: NUC 81 Object Spread Entries. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `arc/README.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-pairs, so they contain no test pair. Each ends with two synthesized pairs on
-the genesis puzzle's 7 by 7 canvas, annotated with that dataset's own
-declarations. The first holds a single object: a color-9 corner at
-orientation 135 with its outside color-4 marker (`dataset.core.json`), a
-color-4 corner at orientation 45 with its inside color-7 marker
-(`dataset.extension.json`), a color-9 point with its color-2 rim below
-(`dataset.curve.json`), and a vertical line that extends down from its top
-endpoint (`dataset.line.json`). The last holds two objects: color-9 corners
-at orientations 45 and 315 with their outside color-4 markers, color-4
-corners at orientations 225 and 135 with their inside color-7 markers, a
-color-9 point with its color-2 rim below and a color-4 point with its color-8
-rim above, and a vertical line that extends up from its bottom endpoint with
-a horizontal line that extends left from its right endpoint.
+## Object spread entries
+
+**Spread entries keep derived listings in step with their products**
+
+```nuc
+class Product(name, price):
+    this.name = name
+    this.price = price
+$Product.listing = {...$Product, currency: "USD"}
+lamp = Product("lamp", 40)
+draft = {...lamp.listing, price: lamp.price * 0.75}
+assert: [lamp.listing.price, draft.price], [40, 30]
+lamp.price = 60
+lamp.stock = 3
+assert: [lamp.listing, draft], [{id: "lamp", name: "lamp", price: 60, stock: 3, currency: "USD"}, {id: "lamp", name: "lamp", price: 45, stock: 3, currency: "USD"}]
+```
+
+- [NUC 81](docs/nuc-0081.md) adds spread entries to object literals:
+  `...SOURCE` copies the entries of the object `SOURCE` holds, in order, and a
+  later entry for the same key replaces its value. `$Product.listing` copies
+  each product and adds a currency, and `draft` copies the listing with a
+  discounted price.
+- A spread stays live: a changed price and the new `stock` entry reach both
+  records. A class-level rule that spreads its own receiver leaves out the
+  property it declares, so `listing` never holds an older listing. See the
+  [root contract](nucleoid.spec.md#object-spread-entries).
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-pairs, so they contain no test pair. Each ends with one synthesized pair that
-holds a single object on the genesis puzzle's 7 by 7 canvas, annotated with
-that dataset's own declarations: a color-9 corner at orientation 135 with its
-outside color-4 marker (`dataset.core.json`), a color-4 corner at orientation
-45 with its inside color-7 marker (`dataset.extension.json`), a color-9 point
-with its color-2 rim below (`dataset.curve.json`), and a vertical line that
-extends down from its top endpoint (`dataset.line.json`).
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `55fbddc1` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9bd304a7` are properly handled with clean fallback behavior.

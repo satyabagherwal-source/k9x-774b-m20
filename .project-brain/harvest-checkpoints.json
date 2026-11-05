@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-05T02:18:13.123Z",
+  "last_updated": "2026-11-05T02:25:57.183Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -770,14 +770,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf",
-      "content_hash": "6ec1711ec5eeaa6e298474527f705e1818788212481c1229d5fb0d0439405d11",
-      "verified_at": "2026-10-31T11:53:30.112Z",
+      "content_hash": "6b88376da51f5fb7eebb016adf112de1a7b8485c786c12eefda10f1b4944a62d",
+      "verified_at": "2026-11-05T02:25:41.347Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T11:53:30.112Z"
+      "last_updated": "2026-11-05T02:25:41.347Z"
     },
     "unsloth/Qwen3.8-27B-GGUF": {
       "repository": "unsloth/Qwen3.8-27B-GGUF",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "8f9f0f76583698fd432909e1ba7c7d90bfdab307efd1fa4b86da9e403fa20955",
-      "verified_at": "2026-11-04T22:12:49.074Z",
+      "content_hash": "69ce0805e65d92f2d2c4ef99724fac3250601cce7235d5c796a747e8743bd4cd",
+      "verified_at": "2026-11-05T02:25:57.182Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T22:12:49.074Z"
+      "last_updated": "2026-11-05T02:25:57.182Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -4086,14 +4086,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-bee-san-ciphey",
-      "content_hash": "bfb13191170afa1b434b59feafb175aa1d60148274f533935aeb9268774a7a41",
-      "verified_at": "2026-11-04T19:22:57.304Z",
+      "content_hash": "71af2ccfee13af4271b2f71df880eabab3c202073265b56e6501f32b2fd2cc25",
+      "verified_at": "2026-11-05T02:25:52.673Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T19:22:57.304Z"
+      "last_updated": "2026-11-05T02:25:52.673Z"
     },
     "pingcap/autoflow": {
       "repository": "pingcap/autoflow",

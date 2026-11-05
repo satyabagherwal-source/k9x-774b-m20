@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-05T01:15:12.496Z",
+  "last_updated": "2026-11-05T02:25:57.178Z",
   "directives": [
     {
       "id": "CD-001",
@@ -3863,6 +3863,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-thaw-app-thaw"
+    },
+    {
+      "id": "CD-BUEY",
+      "directive_title": "NUC 81 Object Spread Entries",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "NucleoidAI/Nucleoid",
+      "source_commit": "9bd304a7",
+      "date_staged": "2026-11-05",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-nucleoidai-nucleoid"
     }
   ]
 }

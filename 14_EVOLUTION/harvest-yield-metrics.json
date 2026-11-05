@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-05T02:18:13.113Z",
-  "total_cycles_completed": 7434,
-  "total_learnings_persisted": 7434,
-  "total_rules_promoted": 7123,
+  "last_updated": "2026-11-05T02:25:57.180Z",
+  "total_cycles_completed": 7437,
+  "total_learnings_persisted": 7437,
+  "total_rules_promoted": 7124,
   "history": [
-    {
-      "timestamp": "2026-11-04T17:45:14.216Z",
-      "repository": "lingodotdev/lingo.dev",
-      "learningId": "learn-github-lingodotdev-lingo-dev",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T17:52:25.679Z",
-      "repository": "chaos-mesh/chaos-mesh",
-      "learningId": "learn-github-chaos-mesh-chaos-mesh",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T17:52:28.805Z",
-      "repository": "XHToken/Spark-X2.6-4B",
-      "learningId": "learn-huggingface-xhtoken-spark-x2-6-4b",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-04T17:52:34.574Z",
       "repository": "vespa-engine/vespa",
@@ -1403,6 +1382,27 @@
       "repository": "kcl-lang/kcl",
       "learningId": "learn-github-kcl-lang-kcl",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T02:25:41.344Z",
+      "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
+      "learningId": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T02:25:52.664Z",
+      "repository": "bee-san/Ciphey",
+      "learningId": "learn-github-bee-san-ciphey",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T02:25:57.180Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

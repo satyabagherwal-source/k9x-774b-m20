@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-05T02:18:15.662Z",
-    "lastVerified": "2026-11-05T02:18:15.662Z",
+    "lastChecked": "2026-11-05T02:25:59.708Z",
+    "lastVerified": "2026-11-05T02:25:59.708Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -444,22 +444,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "nucleoidai-nucleoid": {
-    "name": "Nucleoid",
+    "name": "NucleoidAI/Nucleoid",
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-05T01:54:51.162Z",
-    "lastVerified": "2026-11-05T01:54:51.162Z",
+    "lastChecked": "2026-11-05T02:25:56.947Z",
+    "lastVerified": "2026-11-05T02:25:56.947Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "8f9f0f76583698fd432909e1ba7c7d90bfdab307efd1fa4b86da9e403fa20955",
-    "promotedRulesCount": 1,
+    "contentHash": "69ce0805e65d92f2d2c4ef99724fac3250601cce7235d5c796a747e8743bd4cd",
+    "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "55fbddc1"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "tabbyml-tabby": {
     "name": "tabby",
@@ -976,22 +975,21 @@
     "lastVerified": "2026-11-04T10:20:10.516Z"
   },
   "bee-san-ciphey": {
-    "name": "Ciphey",
+    "name": "bee-san/Ciphey",
     "officialUrl": "https://github.com/bee-san/Ciphey",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-04T22:52:30.069Z",
-    "lastVerified": "2026-11-04T22:52:30.069Z",
+    "lastChecked": "2026-11-05T02:25:52.119Z",
+    "lastVerified": "2026-11-05T02:25:52.119Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bee-san-ciphey",
-    "contentHash": "bfb13191170afa1b434b59feafb175aa1d60148274f533935aeb9268774a7a41",
+    "contentHash": "71af2ccfee13af4271b2f71df880eabab3c202073265b56e6501f32b2fd2cc25",
     "promotedRulesCount": 1,
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "041ce8c7"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "weaviate-weaviate": {
     "name": "weaviate/weaviate",
@@ -2238,9 +2236,9 @@
   "sayanarijit-xplr": {
     "name": "xplr",
     "officialUrl": "https://github.com/sayanarijit/xplr",
-    "lastChecked": "2026-11-03T23:45:58.096Z",
+    "lastChecked": "2026-11-05T02:25:37.922Z",
     "revisionIdentifier": "50824d0d",
-    "lastVerified": "2026-11-03T23:45:58.096Z"
+    "lastVerified": "2026-11-05T02:25:37.922Z"
   },
   "hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf": {
     "name": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
@@ -3348,12 +3346,12 @@
     "officialUrl": "https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-31T11:53:28.995Z",
-    "lastVerified": "2026-10-31T11:53:28.995Z",
+    "lastChecked": "2026-11-05T02:25:40.533Z",
+    "lastVerified": "2026-11-05T02:25:40.533Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf",
-    "contentHash": "6ec1711ec5eeaa6e298474527f705e1818788212481c1229d5fb0d0439405d11",
+    "contentHash": "6b88376da51f5fb7eebb016adf112de1a7b8485c786c12eefda10f1b4944a62d",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -4056,9 +4054,9 @@
   "dingodb-dingo": {
     "name": "dingo",
     "officialUrl": "https://github.com/dingodb/dingo",
-    "lastChecked": "2026-11-04T03:09:09.745Z",
+    "lastChecked": "2026-11-05T02:25:50.425Z",
     "revisionIdentifier": "bb96a741",
-    "lastVerified": "2026-11-04T03:09:09.745Z"
+    "lastVerified": "2026-11-05T02:25:50.425Z"
   },
   "timvisee-ffsend": {
     "name": "ffsend",
@@ -6529,9 +6527,9 @@
   "cycloidio-terracognita": {
     "name": "terracognita",
     "officialUrl": "https://github.com/cycloidio/terracognita",
-    "lastChecked": "2026-11-04T03:51:00.681Z",
+    "lastChecked": "2026-11-05T02:25:45.472Z",
     "revisionIdentifier": "802bd4b5",
-    "lastVerified": "2026-11-04T03:51:00.681Z"
+    "lastVerified": "2026-11-05T02:25:45.472Z"
   },
   "netflix-dynomite": {
     "name": "dynomite",
@@ -9030,9 +9028,9 @@
   "parthjadhav-app-store-screenshots": {
     "name": "app-store-screenshots",
     "officialUrl": "https://github.com/ParthJadhav/app-store-screenshots",
-    "lastChecked": "2026-10-31T19:30:34.659Z",
+    "lastChecked": "2026-11-05T02:25:42.902Z",
     "revisionIdentifier": "5386f227",
-    "lastVerified": "2026-10-31T19:30:34.659Z"
+    "lastVerified": "2026-11-05T02:25:42.902Z"
   },
   "hf-openmoss-team-moss-image-base": {
     "name": "OpenMOSS-Team/MOSS-Image-Base",
