@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261103-015V",
-    "timestamp": "2026-11-03T23:13:08.323Z",
-    "repository": "Michael-A-Kuykendall/shimmy",
-    "learningId": "learn-github-michael-a-kuykendall-shimmy",
-    "contentHash": "56f0d2d754f916d8180f4aefb69526c0c352d6532110ad26d53cf27d75903e2f",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261103-09KN",
-    "timestamp": "2026-11-03T23:13:19.223Z",
-    "repository": "langchain4j/langchain4j",
-    "learningId": "learn-github-langchain4j-langchain4j",
-    "contentHash": "3a36ea3ccd9b8e09a1528e09b173a14ffe733b5c4e534a59a9de2dfabe60c170",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261103-94YZ",
-    "timestamp": "2026-11-03T23:20:13.163Z",
-    "repository": "metalbear-co/mirrord",
-    "learningId": "learn-github-metalbear-co-mirrord",
-    "contentHash": "a72ea04a9b9ad201f83ad6f0c99dfad4902b84eb051335d83a814d4bbd644301",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261103-99EX",
     "timestamp": "2026-11-03T23:20:18.921Z",
     "repository": "kirillzyusko/react-native-keyboard-controller",
@@ -7490,6 +7445,51 @@
     "repository": "yugabyte/yugabyte-db",
     "learningId": "learn-github-yugabyte-yugabyte-db",
     "contentHash": "5fd1b8748405c1c7e67c92edb59cc6f981520dbeaa199742368a8b69070fc83c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-SLXZ",
+    "timestamp": "2026-11-05T06:50:55.895Z",
+    "repository": "baidu/Unlimited-OCR",
+    "learningId": "learn-huggingface-baidu-unlimited-ocr",
+    "contentHash": "0468a447e87d4b58b77cb21fef723f7bc656712fb68564fe9877675ed84b98b9",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-SS96",
+    "timestamp": "2026-11-05T06:51:04.074Z",
+    "repository": "siderolabs/talos",
+    "learningId": "learn-github-siderolabs-talos",
+    "contentHash": "614b28997a1f0293782f7f768977355a232230bdd6e5c3854cffea74f74a03e2",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-SWMJ",
+    "timestamp": "2026-11-05T06:51:09.739Z",
+    "repository": "GreptimeTeam/greptimedb",
+    "learningId": "learn-github-greptimeteam-greptimedb",
+    "contentHash": "d31ed1f07fbf484b121a8433ec52486adf715a39013f3ec25ca5e66da1ad8b7f",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

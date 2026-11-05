@@ -7560,3 +7560,6 @@ Every entry in this ledger must capture:
 | `learn-github-apache-pinot` | `https://github.com/apache/pinot` | `14b56442` | Multi-dimensional audit evidence | 2026-11-05T06:43:58.352Z |
 | `learn-huggingface-edge0-audio8-tts-realistic-0-6b` | `https://huggingface.co/Edge0/Audio8-TTS-Realistic-0.6b` | `hf-edge0-a` | Multi-dimensional audit evidence | 2026-11-05T06:44:02.455Z |
 | `learn-github-yugabyte-yugabyte-db` | `https://github.com/yugabyte/yugabyte-db` | `539f7491` | Multi-dimensional audit evidence | 2026-11-05T06:44:11.267Z |
+| `learn-huggingface-baidu-unlimited-ocr` | `https://huggingface.co/baidu/Unlimited-OCR` | `hf-baidu-u` | Multi-dimensional audit evidence | 2026-11-05T06:50:55.898Z |
+| `learn-github-siderolabs-talos` | `https://github.com/siderolabs/talos` | `f6e5ac35` | Multi-dimensional audit evidence | 2026-11-05T06:51:04.077Z |
+| `learn-github-greptimeteam-greptimedb` | `https://github.com/GreptimeTeam/greptimedb` | `2cb47360` | Multi-dimensional audit evidence | 2026-11-05T06:51:09.742Z |

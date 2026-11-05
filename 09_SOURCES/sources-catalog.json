@@ -1005,8 +1005,8 @@
     "sourceUrl": "https://huggingface.co/baidu/Unlimited-OCR",
     "sourceVersion": "hf-baidu-unlimited-ocr",
     "license": "Open-Source",
-    "contentHash": "d1a56c95d26991f1ff8d9a3d294d937276aecd132df43fa11ecbc6f22a3db681",
-    "lastHarvestedAt": "2026-10-31T16:03:37.095Z",
+    "contentHash": "0468a447e87d4b58b77cb21fef723f7bc656712fb68564fe9877675ed84b98b9",
+    "lastHarvestedAt": "2026-11-05T06:50:55.898Z",
     "learningId": "learn-huggingface-baidu-unlimited-ocr"
   },
   "hf-aleph-alpha-kolibri-1": {
@@ -5373,10 +5373,10 @@
     "repository": "GreptimeTeam/greptimedb",
     "platform": "github",
     "sourceUrl": "https://github.com/GreptimeTeam/greptimedb",
-    "sourceVersion": "351f4207",
+    "sourceVersion": "2cb47360",
     "license": "Apache-2.0",
-    "contentHash": "ff4142e0b8d3b27c363be80a61d1e5181c9fd92e2c1752fedd18f271e6dc5beb",
-    "lastHarvestedAt": "2026-11-04T11:09:31.231Z",
+    "contentHash": "d31ed1f07fbf484b121a8433ec52486adf715a39013f3ec25ca5e66da1ad8b7f",
+    "lastHarvestedAt": "2026-11-05T06:51:09.742Z",
     "learningId": "learn-github-greptimeteam-greptimedb"
   },
   "heroui-inc-heroui-native": {
@@ -7383,10 +7383,10 @@
     "repository": "siderolabs/talos",
     "platform": "github",
     "sourceUrl": "https://github.com/siderolabs/talos",
-    "sourceVersion": "4d505d50",
+    "sourceVersion": "f6e5ac35",
     "license": "MPL-2.0",
-    "contentHash": "6d4a0aec7fbaa5c757520d2a1697736c354ffffdc99de519193398e6e93a9e19",
-    "lastHarvestedAt": "2026-11-04T17:18:00.718Z",
+    "contentHash": "614b28997a1f0293782f7f768977355a232230bdd6e5c3854cffea74f74a03e2",
+    "lastHarvestedAt": "2026-11-05T06:51:04.077Z",
     "learningId": "learn-github-siderolabs-talos"
   },
   "zilliztech-claude-context": {

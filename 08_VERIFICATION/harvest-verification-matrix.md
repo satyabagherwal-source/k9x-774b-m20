@@ -7551,3 +7551,6 @@
 | `CYCLE-20261105-JNRG` | `2026-11-05T06:43:58.348Z` | `apache/pinot` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7139` | Yes (`2f9dc2e4...`) |
 | `CYCLE-20261105-JQX9` | `2026-11-05T06:44:02.445Z` | `Edge0/Audio8-TTS-Realistic-Air` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-edge0-audio8-tts-realistic-0.6b-learnings.md` | Yes (`9dd0d0cb...`) |
 | `CYCLE-20261105-JXQ7` | `2026-11-05T06:44:11.263Z` | `yugabyte/yugabyte-db` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7140` | Yes (`5fd1b874...`) |
+| `CYCLE-20261105-SLXZ` | `2026-11-05T06:50:55.895Z` | `baidu/Unlimited-OCR` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baidu-unlimited-ocr-learnings.md` | Yes (`0468a447...`) |
+| `CYCLE-20261105-SS96` | `2026-11-05T06:51:04.074Z` | `siderolabs/talos` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7141` | Yes (`614b2899...`) |
+| `CYCLE-20261105-SWMJ` | `2026-11-05T06:51:09.739Z` | `GreptimeTeam/greptimedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7142` | Yes (`d31ed1f0...`) |

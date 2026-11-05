@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-05T06:44:11.273Z",
-  "total_cycles_completed": 7528,
-  "total_learnings_persisted": 7528,
-  "total_rules_promoted": 7198,
+  "last_updated": "2026-11-05T06:51:09.747Z",
+  "total_cycles_completed": 7531,
+  "total_learnings_persisted": 7531,
+  "total_rules_promoted": 7200,
   "history": [
-    {
-      "timestamp": "2026-11-04T21:42:24.720Z",
-      "repository": "biomejs/biome",
-      "learningId": "learn-github-biomejs-biome",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T21:42:37.467Z",
-      "repository": "t8y2/dbx",
-      "learningId": "learn-github-t8y2-dbx",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T21:42:39.378Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-04T21:42:55.269Z",
       "repository": "black-forest-labs/FLUX.1-dev",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-05T06:44:11.273Z",
       "repository": "yugabyte/yugabyte-db",
       "learningId": "learn-github-yugabyte-yugabyte-db",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T06:50:55.903Z",
+      "repository": "baidu/Unlimited-OCR",
+      "learningId": "learn-huggingface-baidu-unlimited-ocr",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T06:51:04.082Z",
+      "repository": "siderolabs/talos",
+      "learningId": "learn-github-siderolabs-talos",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T06:51:09.747Z",
+      "repository": "GreptimeTeam/greptimedb",
+      "learningId": "learn-github-greptimeteam-greptimedb",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

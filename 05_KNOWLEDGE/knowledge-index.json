@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T06:44:11.134Z",
+  "last_updated": "2026-11-05T06:51:09.663Z",
   "total_verified_learnings": 1215,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -16726,8 +16726,8 @@
       "slug": "greptimeteam-greptimedb",
       "platform": "github",
       "source_url": "https://github.com/GreptimeTeam/greptimedb",
-      "source_version": "351f4207",
-      "content_hash": "ff4142e0b8d3b27c363be80a61d1e5181c9fd92e2c1752fedd18f271e6dc5beb",
+      "source_version": "2cb47360",
+      "content_hash": "d31ed1f07fbf484b121a8433ec52486adf715a39013f3ec25ca5e66da1ad8b7f",
       "dossier_path": "07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md",
       "promoted_rules": [
@@ -16800,6 +16800,11 @@
           "number": 6832,
           "title": "meta): invalidate all datanode tables on address change (#9986)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7142,
+          "title": "catalog): use advertised peer address as process identity (#10153)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -16807,7 +16812,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T11:09:31.159Z",
+      "verified_at": "2026-11-05T06:51:09.642Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -20549,7 +20554,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/baidu/Unlimited-OCR",
       "source_version": "hf-baidu-unlimited-ocr",
-      "content_hash": "d1a56c95d26991f1ff8d9a3d294d937276aecd132df43fa11ecbc6f22a3db681",
+      "content_hash": "0468a447e87d4b58b77cb21fef723f7bc656712fb68564fe9877675ed84b98b9",
       "dossier_path": "07_PROJECT_LEARNING/hf-baidu-unlimited-ocr-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-baidu-unlimited-ocr-learnings.md",
       "promoted_rules": [],
@@ -20570,7 +20575,7 @@
         "learn-huggingface-hf-baidu-unlimited-ocr-mv3x7ph4",
         "learn-huggingface-hf-baidu-unlimited-ocr-mv4bx9rt"
       ],
-      "verified_at": "2026-10-31T16:03:36.973Z",
+      "verified_at": "2026-11-05T06:50:55.790Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -53453,8 +53458,8 @@
       "slug": "siderolabs-talos",
       "platform": "github",
       "source_url": "https://github.com/siderolabs/talos",
-      "source_version": "4d505d50",
-      "content_hash": "6d4a0aec7fbaa5c757520d2a1697736c354ffffdc99de519193398e6e93a9e19",
+      "source_version": "f6e5ac35",
+      "content_hash": "614b28997a1f0293782f7f768977355a232230bdd6e5c3854cffea74f74a03e2",
       "dossier_path": "07_PROJECT_LEARNING/siderolabs-talos-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/siderolabs-talos-learnings.md",
       "promoted_rules": [
@@ -53522,6 +53527,11 @@
           "number": 6860,
           "title": "bump go-blockdevice to 2.0.37",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7141,
+          "title": "automatically detect the install image on upgrade",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -53529,7 +53539,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T17:18:00.596Z",
+      "verified_at": "2026-11-05T06:51:03.982Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -180792,6 +180802,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-05T06:44:11.102Z"
+    },
+    "rule-7141": {
+      "learning_id": "rule-7141",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7141,
+      "title": "automatically detect the install image on upgrade",
+      "source_url": "https://github.com/siderolabs/talos",
+      "source_version": "f6e5ac35",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T06:51:03.982Z"
+    },
+    "rule-7142": {
+      "learning_id": "rule-7142",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7142,
+      "title": "catalog): use advertised peer address as process identity (#10153)",
+      "source_url": "https://github.com/GreptimeTeam/greptimedb",
+      "source_version": "2cb47360",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T06:51:09.643Z"
     }
   },
   "aliases": {
