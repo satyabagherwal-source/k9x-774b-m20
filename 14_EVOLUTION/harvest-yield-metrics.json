@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-05T19:06:59.945Z",
-  "total_cycles_completed": 7740,
-  "total_learnings_persisted": 7740,
-  "total_rules_promoted": 7384,
+  "last_updated": "2026-11-05T19:15:19.445Z",
+  "total_cycles_completed": 7741,
+  "total_learnings_persisted": 7741,
+  "total_rules_promoted": 7385,
   "history": [
-    {
-      "timestamp": "2026-11-05T07:20:34.002Z",
-      "repository": "projectdiscovery/nuclei",
-      "learningId": "learn-github-projectdiscovery-nuclei",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-05T07:27:38.553Z",
       "repository": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-05T19:06:59.945Z",
       "repository": "typedb/typedb",
       "learningId": "learn-github-typedb-typedb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T19:15:19.445Z",
+      "repository": "trufflesecurity/trufflehog",
+      "learningId": "learn-github-trufflesecurity-trufflehog",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -7772,3 +7772,4 @@ Every entry in this ledger must capture:
 | `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `00354062` | Multi-dimensional audit evidence | 2026-11-05T19:00:24.225Z |
 | `learn-huggingface-sensenova-sensenova-loop-9b-preview` | `https://huggingface.co/sensenova/SenseNova-Loop-9B-Preview` | `hf-senseno` | Multi-dimensional audit evidence | 2026-11-05T19:06:49.605Z |
 | `learn-github-typedb-typedb` | `https://github.com/typedb/typedb` | `bcf527e4` | Multi-dimensional audit evidence | 2026-11-05T19:06:59.934Z |
+| `learn-github-trufflesecurity-trufflehog` | `https://github.com/trufflesecurity/trufflehog` | `f8221ca5` | Multi-dimensional audit evidence | 2026-11-05T19:15:19.438Z |

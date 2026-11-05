@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261104-8N1O",
-    "timestamp": "2026-11-04T17:59:34.572Z",
-    "repository": "InternScience/Sage-A1.5",
-    "learningId": "learn-huggingface-internscience-sage-a1-5",
-    "contentHash": "74f0ea1d4723a748e5998b9260165a32b71813c87e35d0aee57b7a55ba53f886",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261104-H0WV",
     "timestamp": "2026-11-04T18:06:05.791Z",
     "repository": "Qwen/Qwen3-14B",
@@ -7490,6 +7475,21 @@
     "repository": "typedb/typedb",
     "learningId": "learn-github-typedb-typedb",
     "contentHash": "52bb3d09e9d217059d6243c0900a6e8ad8e78ba5d7302837a9f6d6243e829734",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-DWJU",
+    "timestamp": "2026-11-05T19:15:19.434Z",
+    "repository": "trufflesecurity/trufflehog",
+    "learningId": "learn-github-trufflesecurity-trufflehog",
+    "contentHash": "fd76a1aa208615122c972cd6d0b1f9895ab64f363917cc67ed9fbe6c03d0556c",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

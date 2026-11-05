@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T19:06:59.868Z",
+  "last_updated": "2026-11-05T19:15:19.341Z",
   "total_verified_learnings": 1219,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -59602,11 +59602,16 @@
       "slug": "trufflesecurity-trufflehog",
       "platform": "github",
       "source_url": "https://github.com/trufflesecurity/trufflehog",
-      "source_version": "6ced18b7",
-      "content_hash": "17b00c6cd1bb8840cd83ef30fcb3cdc20dc00b196b05d028792c1598b19c02b3",
+      "source_version": "f8221ca5",
+      "content_hash": "fd76a1aa208615122c972cd6d0b1f9895ab64f363917cc67ed9fbe6c03d0556c",
       "dossier_path": "07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "sqlserver): use driver's default port in pre-dial check (#5527)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 1863,
           "title": "Update module google.golang.org/grpc to v1.83.2 [SECURITY] (#5431)",
@@ -59713,7 +59718,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T15:06:11.860Z",
+      "verified_at": "2026-11-05T19:15:19.316Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-05T19:07:02.533Z",
-    "lastVerified": "2026-11-05T19:07:02.533Z",
+    "lastChecked": "2026-11-05T19:15:22.026Z",
+    "lastVerified": "2026-11-05T19:15:22.026Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -144,8 +144,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-05T18:45:44.562Z",
-    "lastVerified": "2026-11-05T18:45:44.562Z",
+    "lastChecked": "2026-11-05T19:15:02.757Z",
+    "lastVerified": "2026-11-05T19:15:02.757Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -314,9 +314,9 @@
   "actions-actions-runner-controller": {
     "name": "actions-runner-controller",
     "officialUrl": "https://github.com/actions/actions-runner-controller",
-    "lastChecked": "2026-11-05T04:36:06.312Z",
+    "lastChecked": "2026-11-05T19:14:55.320Z",
     "revisionIdentifier": "89f34c4f",
-    "lastVerified": "2026-11-05T04:36:06.312Z"
+    "lastVerified": "2026-11-05T19:14:55.320Z"
   },
   "microsoft-agent-governance-toolkit": {
     "name": "agent-governance-toolkit",
@@ -466,9 +466,9 @@
   "tabbyml-tabby": {
     "name": "tabby",
     "officialUrl": "https://github.com/TabbyML/tabby",
-    "lastChecked": "2026-11-05T00:00:00.464Z",
+    "lastChecked": "2026-11-05T19:14:47.871Z",
     "revisionIdentifier": "21b29048",
-    "lastVerified": "2026-11-05T00:00:00.464Z"
+    "lastVerified": "2026-11-05T19:14:47.871Z"
   },
   "hf-cross-encoder-ms-marco-minilm-l6-v2": {
     "name": "cross-encoder/ms-marco-MiniLM-L6-v2",
@@ -2150,14 +2150,14 @@
     "officialUrl": "https://github.com/trufflesecurity/trufflehog",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-05T15:06:11.122Z",
-    "lastVerified": "2026-11-05T15:06:11.122Z",
+    "lastChecked": "2026-11-05T19:15:05.629Z",
+    "lastVerified": "2026-11-05T19:15:05.629Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-trufflesecurity-trufflehog",
-    "contentHash": "17b00c6cd1bb8840cd83ef30fcb3cdc20dc00b196b05d028792c1598b19c02b3",
+    "contentHash": "fd76a1aa208615122c972cd6d0b1f9895ab64f363917cc67ed9fbe6c03d0556c",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -4829,9 +4829,9 @@
   "qovery-replibyte": {
     "name": "Replibyte",
     "officialUrl": "https://github.com/Qovery/Replibyte",
-    "lastChecked": "2026-11-05T03:53:30.904Z",
+    "lastChecked": "2026-11-05T19:15:00.243Z",
     "revisionIdentifier": "5504db91",
-    "lastVerified": "2026-11-05T03:53:30.904Z"
+    "lastVerified": "2026-11-05T19:15:00.243Z"
   },
   "grpc-grpc-rust": {
     "name": "grpc/grpc-rust",
@@ -9338,9 +9338,9 @@
   "maatify-seo": {
     "name": "seo",
     "officialUrl": "https://github.com/Maatify/seo",
-    "lastChecked": "2026-11-02T15:15:17.931Z",
+    "lastChecked": "2026-11-05T19:14:50.243Z",
     "revisionIdentifier": "47d17d7d",
-    "lastVerified": "2026-11-02T15:15:17.931Z"
+    "lastVerified": "2026-11-05T19:14:50.243Z"
   },
   "alin23-lunar": {
     "name": "Lunar",
@@ -11805,9 +11805,9 @@
   "zekunyan-ttgtagcollectionview": {
     "name": "TTGTagCollectionView",
     "officialUrl": "https://github.com/zekunyan/TTGTagCollectionView",
-    "lastChecked": "2026-11-03T19:05:53.762Z",
+    "lastChecked": "2026-11-05T19:14:52.849Z",
     "revisionIdentifier": "cad737af",
-    "lastVerified": "2026-11-03T19:05:53.762Z"
+    "lastVerified": "2026-11-05T19:14:52.849Z"
   },
   "hf-liquidai-lfm3-1.7b-gguf": {
     "name": "LiquidAI/LFM3-1.7B-GGUF",

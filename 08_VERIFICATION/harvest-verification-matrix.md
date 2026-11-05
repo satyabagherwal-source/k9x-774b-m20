@@ -7763,3 +7763,4 @@
 | `CYCLE-20261105-UPSR` | `2026-11-05T19:00:24.219Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`c63451d8...`) |
 | `CYCLE-20261105-2Z5V` | `2026-11-05T19:06:49.603Z` | `sensenova/SenseNova-Loop-9B-Preview` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null` | Yes (`615371e0...`) |
 | `CYCLE-20261105-374S` | `2026-11-05T19:06:59.932Z` | `typedb/typedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`52bb3d09...`) |
+| `CYCLE-20261105-DWJU` | `2026-11-05T19:15:19.434Z` | `trufflesecurity/trufflehog` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`fd76a1aa...`) |
