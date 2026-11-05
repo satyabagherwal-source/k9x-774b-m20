@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source**: github ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
-> **Source Version**: `a967b7d8`  
+> **Source Version**: `dc698697`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T00:36:47.002Z  
+> **Timestamp**: 2026-11-05T07:34:49.386Z  
 > **Learning ID**: `learn-github-tailscale-tailscale`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T00:36:46.898Z  
+> **Harvest Timestamp**: 2026-11-05T07:34:49.381Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The easiest, most secure way to use WireGuard and 2FA.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 38636 stars
+- **Stars / Engagement**: 38661 stars
 
 ---
 
@@ -821,205 +821,260 @@ export const sessionStateStorage: IPNStateStorage = {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a967b7d8` (2026-10-15)
-**Commit Message**: tailcfg: add a nodecap to disable hybrid handshakes
+### Incident Patch 1: `dc698697` (2026-11-05)
+**Commit Message**: net/netcheck: never prefer a STUN-only region as the home DERP (#21976)
 
-Updates tailscale/corp#50068
+The PreferredDERP selection loop only considers RegionLatency, which
+STUN probes populate for STUN-only regions too. When such a region is
+the only one with a latency sample (e.g. self-hosted DERP behind a
+TCP-only tunnel while a public STUN server is reachable), it gets
+selected as the preferred DERP and all relay traffic blackholes, since
+the region has no DERP server to relay through.
 
-Signed-off-by: David Anderson <[REDACTED_EMAIL]>
-Change-Id: I07fc56c2eff6ab54ac9eec8ce33ea1d16a6a6964
+Filter STUN-only regions in the selection loop by reusing the existing
+regionHasDERPNode predicate (renamed to CanServeDERP), which was
+already applied to the HTTPS/ICMP fallback probing but not here.
 
-**File**: `tailcfg/nodecap/nodecap.go` (modified, +9/-0)
+Regions missing from the map, or present without any nodes, keep the
+old behavior, as some tests use latency-only DERP maps.
+
+Fixes #21975
+
+Signed-off-by: Luo Chen <[REDACTED_EMAIL]>
+
+**File**: `net/netcheck/netcheck.go` (modified, +9/-10)
 ```diff
-@@ -91,6 +91,15 @@ const (
- 	// server, DERP servers, etc.)
- 	DebugTSDNSResolution Cap = "https://tailscale.com/cap/debug-ts-dns-resolution"
+@@ -1004,7 +1004,7 @@ func (c *Client) GetReport(ctx context.Context, dm *tailcfg.DERPMap, opts *GetRe
+ 		var wg sync.WaitGroup
+ 		var need []*tailcfg.DERPRegion
+ 		for rid, reg := range dm.Regions {
+-			if !rs.haveRegionLatency(tailcfg.DERPRegionID(rid)) && regionHasDERPNode(reg) && !reg.Avoid && !reg.NoMeasureNoHome {
++			if !rs.haveRegionLatency(tailcfg.DERPRegionID(rid)) && reg.CanServeDERP() && !reg.Avoid && !reg.NoMeasureNoHome {
+ 				need = append(need, reg)
+ 			}
+ 		}
+@@ -1466,6 +1466,14 @@ func (c *Client) addReportHistoryAndSetPreferredDERP(rs *reportState, r *Report,
+ 			d = time.Duration(float64(d) * score)
+ 		}
  
-+	// DisableHybridHandshakes indicates that the node should not use hybrid
-+	// PQ wireguard handshakes to communicate with peers that support hybrid
-+	// handshakes.
-+	// 2026-11-03: This is a temporary panic disable attribute intended to reduce
-+	// the risk of the initial rollout of hybrid handshakes. It will eventually
-+	// be deleted to remove the control server's ability to downgrade hybrid
-+	// handshakes.
-+	DisableHybridHandshakes Cap = "https://tailscale.com/cap/disable-hybrid-handshakes"
++		// A STUN-only region has no DERP server to relay through, so it must
++		// never become the preferred DERP even though its STUN probe gives it
++		// a RegionLatency entry. Regions missing from the map or without any
++		// DERP server are equally unable to serve as a home.
++		if !dm.Regions().Get(regionID).CanServeDERP() {
++			continue
++		}
 +
- 	// FunnelPorts specifies the ports that the Funnel is available on.
- 	// The ports are specified as a comma-separated list of port numbers or port
- 	// ranges (e.g. "80,443,8080-8090") in the ports query parameter.
-```
-
----
-
-### Incident Patch 2: `274a3f20` (2026-11-04)
-**Commit Message**: feature/conn25: roll back the address assignment when the send queue is full (#22165)
-
-reserveAddresses inserts the assignment into c.assignments before
-enqueueing it, and leaves it there when the enqueue fails. The connector
-never learns about such a mapping, and nothing tell it later.
-Add addrAssignments.remove and use it to undo the insert and return both
-addresses to their pools when enqueueAddressAssignment fails. The caller
-still gets a SERVFAIL, but the next DNS query starts from a clean slate.
-
-Fixes https://github.com/tailscale/corp/issues/50917
-
-Change-Id: I5a387bdcf5a5e87e2dca44867e88ed6149678729
-
-Signed-off-by: Mazdak Nasab <[REDACTED_EMAIL]>
-
-**File**: `feature/conn25/addrAssignments.go` (modified, +20/-4)
-```diff
-@@ -145,13 +145,29 @@ func (a *addrAssignments) popExpired(now time.Time) *addrs {
- 		// TODO(mzb/fran): This is an expensive operation we could consider optimizing.
- 		heap.Push(&a.byExpiresAt, candidate)
- 	}
--	delete(a.byMagicIP, v.magic)
--	delete(a.byTransitIP, v.connectorAddr.transit)
--	dd := domainDst{domain: v.domain, dst: v.dst}
--	delete(a.byDomainDst, dd)
-+	a.deleteFromNonHeapIndexes(v)
- 	return v
+ 		if regionID == prevDERP {
+ 			oldRegionCurLatency = d
+ 		}
+@@ -1755,15 +1763,6 @@ func (c *Client) nodeAddrPort(ctx context.Context, n *tailcfg.DERPNode, port int
+ 	return zero, false
  }
  
-+// remove removes the provided address assignment from all the indexes.
-+func (a *addrAssignments) remove(as *addrs) {
-+	a.deleteFromNonHeapIndexes(as)
-+	for i, v := range a.byExpiresAt {
-+		if v == as {
-+			heap.Remove(&a.byExpiresAt, i)
-+			break
-+		}
+-func regionHasDERPNode(r *tailcfg.DERPRegion) bool {
+-	for _, n := range r.Nodes {
+-		if !n.STUNOnly {
+-			return true
+-		}
+-	}
+-	return false
+-}
+-
+ func maxDurationValue(m map[tailcfg.DERPRegionID]time.Duration) (max time.Duration) {
+ 	for _, v := range m {
+ 		if v > max {
+```
+
+**File**: `net/netcheck/netcheck_test.go` (modified, +55/-2)
+```diff
+@@ -47,7 +47,12 @@ func TestBasic(t *testing.T) {
+ 		t.Fatal(err)
+ 	}
+ 
+-	r, err := c.GetReport(ctx, stuntest.DERPMapOf(stunAddr.String()), nil)
++	dm := stuntest.DERPMapOf(stunAddr.String())
++	// stuntest nodes are all STUNOnly; make this a regular DERP region so
++	// that the PreferredDERP assertion below exercises the normal path.
++	dm.Regions[1].Nodes[0].STUNOnly = false
++
++	r, err := c.GetReport(ctx, dm, nil)
+ 	if err != nil {
+ 		t.Fatal(err)
+ 	}
+@@ -130,6 +135,51 @@ func TestSTUNResponseProvesCanSend(t *testing.T) {
+ 	}
+ }
+ 
++// TestSTUNOnlyRegionNotPreferredDERP verifies a STUNOnly region is
++// never selected as the preferred DERP, even when it's the only region
++// with a STUN latency sample (as in real setups where only a public
++// STUN server is reachable, e.g. self-hosted DERP behind a TCP-only
++// tunnel), where selecting it would blackhole all relay traffic.
++func TestSTUNOnlyRegionNotPreferredDERP(t *testing.T) {
++	// Region 1: a real, reachable STUN server marked STUNOnly.
++	stunAddr, cleanup := stuntest.Serve(t)
++	defer cleanup()
++
++	// Region 2: a UDP blackhole (unreachable) normal DERP region.
++	blackhole, err := net.ListenPacket("udp4", "127.0.0.1:0")
++	if err != nil {
++		t.Fatalf("failed to open blackhole STUN listener: %v", err)
++	}
++	defer blackhole.Close()
++
++	dm := stuntest.DERPMapOf(stunAddr.String(), blackhole.LocalAddr().String())
++	dm.Regions[1].Nodes[0].STUNOnly = true
++	dm.Regions[2].Nodes[0].STUNOnly = false
++
++	c := newTestClient(t)
++
++	ctx := t.Context()
++
++	if err := c.Standalone(ctx, "127.0.0.1:0"); err != nil {
++		t.Fatal(err)
++	}
++
++	r, err := c.GetReport(ctx, dm, nil)
++	if err != nil {
++		t.Fatal(err)
++	}
++
++	// The STUN-only region must have produced a latency sample...
++	if _, ok := r.RegionLatency[1]; !ok {
++		t.Fatalf("expected region 1 (STUNOnly) to have a STUN latency sample; got %+v", r.RegionLatency)
++	}
++	// ...but must not be selected as the preferred DERP, even though it
++	// is the only region with a latency sample.
++	if r.PreferredDERP == 1 {
++		t.Errorf("PreferredDERP = 1 (STUNOnly region); want a region with DERP nodes")
 +	}
 +}
 +
-+// deleteFromNonHeapIndexes removes as from every index except byExpiresAt,
-+// which the caller is responsible for.
-+func (a *addrAssignments) deleteFromNonHeapIndexes(as *addrs) {
-+	delete(a.byMagicIP, as.magic)
-+	delete(a.byTransitIP, as.connectorAddr.transit)
-+	delete(a.byDomainDst, domainDst{domain: as.domain, dst: as.dst})
-+}
-+
- func (a *addrAssignments) updateExpiry(as *addrs, expiresIn time.Duration) {
- 	now := a.clock.Now()
- 	as.expiresAt = now.Add(expiresIn)
+ func TestWorksWhenUDPBlocked(t *testing.T) {
+ 	blackhole, err := net.ListenPacket("udp4", "127.0.0.1:0")
+ 	if err != nil {
+@@ -530,7 +580,10 @@ func TestAddReportHistoryAndSetPreferredDERP(t *testing.T) {
+ 			Regions:    map[tailcfg.DERPRegionID]*tailcfg.DERPRegion{},
+ 		}
+ 		for _, id := range regions {
+-			dm.Regions[id] = &tailcfg.DERPRegion{RegionID: id}
++			dm.Regions[id] = &tailcfg.DERPRegion{
++				RegionID: id,
++				Nodes:    []*tailcfg.DERPNode{{RegionID: id, Name: fmt.Sprintf("%da", id), HostName: fmt.Sprintf("derp%d.invalid", id)}},
++			}
+ 		}
+ 		return dm
+ 	}
 ```
 
-**File**: `feature/conn25/client.go` (modified, +4/-2)
+**File**: `tailcfg/derpmap.go` (modified, +27/-0)
 ```diff
-@@ -200,8 +200,10 @@ func (c *client) reserveAddresses(appName string, domain dnsname.FQDN, dst netip
- 		transitPool.returnAddr(tip)
- 		return nil, err
- 	}
--	err = c.enqueueAddressAssignment(as)
--	if err != nil {
-+	if err := c.enqueueAddressAssignment(as); err != nil {
-+		c.assignments.remove(as)
-+		magicPool.returnAddr(mip)
-+		transitPool.returnAddr(tip)
- 		return nil, err
- 	}
- 	return as, nil
-```
-
-**File**: `feature/conn25/client_test.go` (modified, +89/-0)
-```diff
-@@ -212,6 +212,95 @@ func TestReserveAddressesNoLeakOnFailure(t *testing.T) {
- 	}
+@@ -183,6 +183,33 @@ type DERPRegion struct {
+ 	Nodes []*DERPNode
  }
  
-+// TestReserveAddressesRollbackOnQueueFull checks that an assignment that
-+// couldn't be enqueued isn't left behind. The connector never learns about such
-+// an assignment, and nothing will tell it later, so keeping it would mean every
-+// later lookup for the same domain/dst returns a mapping the connector can't
-+// use.
-+func TestReserveAddressesRollbackOnQueueFull(t *testing.T) {
-+	for _, tt := range []struct {
-+		name string
-+		dst  netip.Addr
++// CanServeDERP reports whether this DERP region can serve as a DERP home.
++// Regions that have no DERP servers can never be DERP homes.
++func (r *DERPRegion) CanServeDERP() bool {
++	if r == nil {
++		return false
++	}
++	for _, n := range r.Nodes {
++		if !n.STUNOnly {
++			return true
++		}
++	}
++	return false
++}
++
++// CanServeDERP is [DERPRegion.CanServeDERP] for [DERPRegionView].
++func (v DERPRegionView) CanServeDERP() bool {
++	if !v.Valid() {
++		return false
++	}
++	for _, n := range v.Nodes().All() {
++		if !n.STUNOnly() {
++			return true
++		}
++	}
++	return false
++}
++
+ // DERPNode describes a DERP packet relay node running within a DERPRegion.
+ type DERPNode struct {
+ 	// Name is a unique node name (across all regions).
+```
+
+**File**: `tailcfg/derpmap_test.go` (added, +66/-0)
+```diff
+@@ -0,0 +1,66 @@
++// Copyright (c) Tailscale Inc & contributors
++// SPDX-License-Identifier: BSD-3-Clause
++
++package tailcfg
++
++import "testing"
++
++func TestDERPRegionCanServeDERP(t *testing.T) {
++	tests := []struct {
++		name   string
++		region *DERPRegion
++		want   bool
 +	}{
 +		{
-+			name: "v4",
-+			dst:  netip.MustParseAddr("0.0.0.1"),
++			name:   "nil_region",
++			region: (*DERPRegion)(nil),
++			want:   false,
 +		},
 +		{
-+			name: "v6",
-+			dst:  netip.MustParseAddr("::1"),
++			name:   "no_nodes",
++			region: &DERPRegion{},
++			want:   false,
 +		},
-+	} {
++		{
++			name: "stun_only",
++			region: &DERPRegion{
++				Nodes: []*DERPNode{
++					{Name: "1a", STUNOnly: true},
++					{Name: "1b", STUNOnly: true},
++				},
++			},
++			want: false,
++		},
++		{
++			name: "mixed",
++			region: &DERPRegion{
++				Nodes: []*DERPNode{
++					{Name: "1a", STUNOnly: true},
++					{Name: "1b"},
++				},
++			},
++			want: true,
++		},
++		{
++			name: "derp_only",
++			region: &DERPRegion{
++				Nodes: []*DERPNode{{Name: "1a"}},
++			},
++			want: true,
++		},
++	}
++	for _, tt := range tests {
 +		t.Run(tt.name, func(t *testing.T) {
-+			const appName = "a"
-+			domain := must.Get(dnsname.ToFQDN("example.com."))
-+			c := newConn25(t.Logf).client
-+			c.v4MagicIPPool = newIPPool(mustIPSetFromPrefix("100.64.0.0/24"))
-+			c.v6MagicIPPool = newIPPool(mustIPSetFromPrefix("fd7a:115c:a1e0:a99c:0100::/80"))
-+			c.v4TransitIPPool = newIPPool(mustIPSetFromPrefix("169.254.0.0/24"))
-+			c.v6TransitIPPool = newIPPool(mustIPSetFromPrefix("fd7a:115c:a1e0:a99c:0200::/80"))
-+
-+			magicPool, transitPool := c.v4MagicIPPool, c.v4TransitIPPool
-+			if tt.dst.Is6() {
-+				magicPool, transitPool = c.v6MagicIPPool, c.v6TransitIPPool
++			if got := tt.region.CanServeDERP(); got != tt.want {
++				t.Errorf("CanServeDERP() = %v, want %v", got, tt.want)
 +			}
-+
-+			// Nothing reads this channel, so the first enqueue fills it and the
-+			// second one fails.
-+			c.addrsCh = make(chan addrs, 1)
-+			if _, err := c.reserveAddresses(appName, "filler.example.com.", tt.dst, 10, testConnectorPeer, ""); err != nil {
-+				t.Fatal(err)
++			var v DERPRegionView
++			if tt.region != nil {
++				v = tt.region.View()
 +			}
-+
-+			_, err := c.reserveAddresses(appName, domain, tt.dst, 10, testConnectorPeer, "")
-+			if !errors.Is(err, errQueueFull) {
-+				t.Fatalf("want errQueueFull, got %v", err)
-+			}
-+
-+			// Only the filler assignment should remain, in every index.
-+			if got := len(c.assignments.byMagicIP); got != 1 {
-+				t.Errorf("want 1 entry in byMagicIP, got %d", got)
-+			}
-+			if got := len(c.assignments.byTransitIP); got != 1 {
-+				t.Errorf("want 1 entry in byTransitIP, got %d", got)
-+			}
-+			if got := len(c.assignments.byDomainDst); got != 1 {
-+				t.Errorf("want 1 entry in byDomainDst, got %d", got)
-+			}
-+			if got := c.assignments.byExpiresAt.Len(); got != 1 {
-+				t.Errorf("want 1 entry in byExpiresAt, got %d", got)
-+			}
-+			if _, ok := c.assignments.lookupByDomainDst(domain, tt.dst); ok {
-+				t.Error("dropped assignment is still reachable by domain/dst")
-+			}
-+
-+			// Both addresses should be back in their pools.
-+			if got := magicPool.inUseCount(); got != 1 {
-+				t.Errorf("magic pool has %d addresses in use, want 1 (the filler)", got)
-+			}
-+			if got := transitPool.inUseCount(); got != 1 {
-+				t.Errorf("transit pool has %d addresses in use, want 1 (the filler)", got)
-+			}
-+
-+			// Once there's room again, the next attempt gets a fresh
-+			// assignment and actually enqueues it.
-+			<-c.addrsCh
-+			as, err := c.reserveAddresses(appName, domain, tt.dst, 10, testConnectorPeer, "")
-+			if err != nil {
-+				t.Fatal(err)
-+			}
-+			select {
-+			case queued := <-c.addrsCh:
-+				if queued.connectorAddr.transit != as.connectorAddr.transit {
-+					t.Errorf("queued transit IP %v, want %v", queued.connectorAddr.transit, as.connectorAddr.transit)
-+				}
-+			default:
-+				t.Error("reservation after rollback didn't enqueue an assignment")
++			if got := v.CanServeDERP(); got != tt.want {
++				t.Errorf("DERPRegionView.CanServeDERP() = %v, want %v", got, tt.want)
 +			}
 +		})
 +	}
 +}
-+
- func TestTransitIPConnMapping(t *testing.T) {
- 	conn25 := newConn25(t.Logf)
- 
 ```
 
 #### Recent Merged Pull Requests:
@@ -1048,36 +1103,45 @@ Signed-off-by: Mazdak Nasab <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. tailcfg: add a nodecap to disable hybrid handshakes
+## X. net/netcheck: never prefer a STUN-only region as the home DERP (#21976)
 
 **RULE**:
-When implementing operations in `tailcfg/nodecap/nodecap.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `net/netcheck/netcheck.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a967b7d8`: tailcfg: add a nodecap to disable hybrid handshakes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `dc698697`: net/netcheck: never prefer a STUN-only region as the home DERP (#21976). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `tailcfg/nodecap/nodecap.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `net/netcheck/netcheck.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	// DisableHybridHandshakes indicates that the node should not use hybrid
-	// PQ wireguard handshakes to communicate with peers that support hybrid
-	// handshakes.
-	// 2026-11-03: This is a temporary panic disable attribute intended to reduce
-	// the risk of the initial rollout of hybrid handshakes. It will eventually
-	// be deleted to remove the control server's ability to downgrade hybrid
-	// handshakes.
-	DisableHybridHandshakes Cap = "https://tailscale.com/cap/disable-hybrid-handshakes"
+			if !rs.haveRegionLatency(tailcfg.DERPRegionID(rid)) && reg.CanServeDERP() && !reg.Avoid && !reg.NoMeasureNoHome {
+		// A STUN-only region has no DERP server to relay through, so it must
+		// never become the preferred DERP even though its STUN probe gives it
+		// a RegionLatency entry. Regions missing from the map or without any
+		// DERP server are equally unable to serve as a home.
+		if !dm.Regions().Get(regionID).CanServeDERP() {
+			continue
+		}
 
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+			if !rs.haveRegionLatency(tailcfg.DERPRegionID(rid)) && regionHasDERPNode(reg) && !reg.Avoid && !reg.NoMeasureNoHome {
+func regionHasDERPNode(r *tailcfg.DERPRegion) bool {
+	for _, n := range r.Nodes {
+		if !n.STUNOnly {
+			return true
+		}
+	}
+	return false
+}
+
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a967b7d8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `dc698697` are properly handled with clean fallback behavior.

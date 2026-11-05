@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T07:27:55.191Z",
+  "last_updated": "2026-11-05T07:34:49.975Z",
   "total_verified_learnings": 1215,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -31961,7 +31961,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Venastine-Research/Xing4.0-29B-A4B-GGUF",
       "source_version": "hf-venastine-research-xing4.0-29b-a4b-gguf",
-      "content_hash": "e3e0ac9b298721bb6a45450090a8ac5e87248900880a56f646db0d91b920ddee",
+      "content_hash": "b318cd6de4f83bffb48b7db0c3808751d75eac83e87fa10813e7b8ddd80fcffe",
       "dossier_path": "07_PROJECT_LEARNING/hf-venastine-research-xing4.0-29b-a4b-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-venastine-research-xing4.0-29b-a4b-gguf-learnings.md",
       "promoted_rules": [
@@ -32008,7 +32008,7 @@
         "learn-huggingface-hf-venastine-research-xing4-0-29b-a4b-gguf-mv3xybf6",
         "learn-huggingface-hf-venastine-research-xing4-0-29b-a4b-gguf-mv4co4ot"
       ],
-      "verified_at": "2026-10-31T17:08:00.071Z",
+      "verified_at": "2026-11-05T07:34:39.955Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -56769,8 +56769,8 @@
       "slug": "tailscale-tailscale",
       "platform": "github",
       "source_url": "https://github.com/tailscale/tailscale",
-      "source_version": "a967b7d8",
-      "content_hash": "0475b716ec2990ed22a34396e700ebcba20a59e4f4cff7d502b86dcfee58fbf0",
+      "source_version": "dc698697",
+      "content_hash": "a82fb3211457203599952de31b712d8eeb4cf10a8df025e958d1ab781a18f538",
       "dossier_path": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "promoted_rules": [
@@ -56953,6 +56953,11 @@
           "number": 7050,
           "title": "tailcfg: add a nodecap to disable hybrid handshakes",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7156,
+          "title": "net/netcheck: never prefer a STUN-only region as the home DERP (#21976)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -56960,7 +56965,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T00:36:47.577Z",
+      "verified_at": "2026-11-05T07:34:49.955Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -181077,6 +181082,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-05T07:27:55.169Z"
+    },
+    "rule-7156": {
+      "learning_id": "rule-7156",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7156,
+      "title": "net/netcheck: never prefer a STUN-only region as the home DERP (#21976)",
+      "source_url": "https://github.com/tailscale/tailscale",
+      "source_version": "dc698697",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T07:34:49.955Z"
     }
   },
   "aliases": {

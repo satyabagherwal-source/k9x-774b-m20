@@ -7567,3 +7567,5 @@
 | `CYCLE-20261105-3TIO` | `2026-11-05T07:27:38.544Z` | `pablodawson/MiniMax-H3-360-Orbit-LoRA` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-pablodawson-minimax-h3-360-orbit-lora-learnings.md` | Yes (`0d1b214c...`) |
 | `CYCLE-20261105-3V8U` | `2026-11-05T07:27:40.782Z` | `actix/actix-web` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7154` | Yes (`64ba778a...`) |
 | `CYCLE-20261105-46FF` | `2026-11-05T07:27:55.275Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7155` | Yes (`d33d2a6f...`) |
+| `CYCLE-20261105-CURE` | `2026-11-05T07:34:40.058Z` | `Venastine-Research/Xing4.0-29B-A4B-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-venastine-research-xing4.0-29b-a4b-gguf-learnings.md` | Yes (`b318cd6d...`) |
+| `CYCLE-20261105-D2H7` | `2026-11-05T07:34:50.059Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7156` | Yes (`a82fb321...`) |

@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261104-2804",
-    "timestamp": "2026-11-04T00:10:49.732Z",
-    "repository": "appwrite/appwrite",
-    "learningId": "learn-github-appwrite-appwrite",
-    "contentHash": "7dbd33ecdd89958fcd1895e53751e11ff4a53d77f335d5a5395b9834d6beb81c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261104-28R6",
-    "timestamp": "2026-11-04T00:10:50.706Z",
-    "repository": "abenzerps/Qwen-Image-2.1-Turbo-Quantized",
-    "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-turbo-quantized",
-    "contentHash": "13da1d70a817c106c647bd465c0edb88bad839698ec9670c4056e591bfda2996",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261104-2DNQ",
     "timestamp": "2026-11-04T00:10:57.062Z",
     "repository": "paradedb/paradedb",
@@ -7490,6 +7460,36 @@
     "repository": "NucleoidAI/Nucleoid",
     "learningId": "learn-github-nucleoidai-nucleoid",
     "contentHash": "d33d2a6f4dcbba1919322b9a9b65b90109bc55632fabbaa51ce28bae07470fa3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-CURE",
+    "timestamp": "2026-11-05T07:34:40.058Z",
+    "repository": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
+    "learningId": "learn-huggingface-venastine-research-xing4-0-29b-a4b-gguf",
+    "contentHash": "b318cd6de4f83bffb48b7db0c3808751d75eac83e87fa10813e7b8ddd80fcffe",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-D2H7",
+    "timestamp": "2026-11-05T07:34:50.059Z",
+    "repository": "tailscale/tailscale",
+    "learningId": "learn-github-tailscale-tailscale",
+    "contentHash": "a82fb3211457203599952de31b712d8eeb4cf10a8df025e958d1ab781a18f538",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

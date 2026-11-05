@@ -1075,8 +1075,8 @@
     "sourceUrl": "https://huggingface.co/Venastine-Research/Xing4.0-29B-A4B-GGUF",
     "sourceVersion": "hf-venastine-research-xing4.0-29b-a4b-gguf",
     "license": "Open-Source",
-    "contentHash": "e3e0ac9b298721bb6a45450090a8ac5e87248900880a56f646db0d91b920ddee",
-    "lastHarvestedAt": "2026-10-31T17:08:00.150Z",
+    "contentHash": "b318cd6de4f83bffb48b7db0c3808751d75eac83e87fa10813e7b8ddd80fcffe",
+    "lastHarvestedAt": "2026-11-05T07:34:40.062Z",
     "learningId": "learn-huggingface-venastine-research-xing4-0-29b-a4b-gguf"
   },
   "hf-naiveai-naive-n0.5-flash": {
@@ -3583,10 +3583,10 @@
     "repository": "tailscale/tailscale",
     "platform": "github",
     "sourceUrl": "https://github.com/tailscale/tailscale",
-    "sourceVersion": "a967b7d8",
+    "sourceVersion": "dc698697",
     "license": "BSD-3-Clause",
-    "contentHash": "0475b716ec2990ed22a34396e700ebcba20a59e4f4cff7d502b86dcfee58fbf0",
-    "lastHarvestedAt": "2026-11-05T00:36:47.680Z",
+    "contentHash": "a82fb3211457203599952de31b712d8eeb4cf10a8df025e958d1ab781a18f538",
+    "lastHarvestedAt": "2026-11-05T07:34:50.063Z",
     "learningId": "learn-github-tailscale-tailscale"
   },
   "dingodb-dingo": {

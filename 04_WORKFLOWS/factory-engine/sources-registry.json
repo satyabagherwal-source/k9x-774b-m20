@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-05T07:27:57.846Z",
-    "lastVerified": "2026-11-05T07:27:57.846Z",
+    "lastChecked": "2026-11-05T07:34:52.621Z",
+    "lastVerified": "2026-11-05T07:34:52.621Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -144,8 +144,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-05T07:06:00.050Z",
-    "lastVerified": "2026-11-05T07:06:00.050Z",
+    "lastChecked": "2026-11-05T07:34:49.068Z",
+    "lastVerified": "2026-11-05T07:34:49.068Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -2226,22 +2226,21 @@
     "lastVerified": "2026-11-05T07:13:04.164Z"
   },
   "tailscale-tailscale": {
-    "name": "tailscale",
+    "name": "tailscale/tailscale",
     "officialUrl": "https://github.com/tailscale/tailscale",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-05T04:14:34.527Z",
-    "lastVerified": "2026-11-05T04:14:34.527Z",
+    "lastChecked": "2026-11-05T07:34:49.381Z",
+    "lastVerified": "2026-11-05T07:34:49.381Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tailscale-tailscale",
-    "contentHash": "0475b716ec2990ed22a34396e700ebcba20a59e4f4cff7d502b86dcfee58fbf0",
+    "contentHash": "a82fb3211457203599952de31b712d8eeb4cf10a8df025e958d1ab781a18f538",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "a967b7d8"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "oramasearch-orama": {
     "name": "orama",
@@ -2473,9 +2472,9 @@
   "alexellis-k3sup": {
     "name": "k3sup",
     "officialUrl": "https://github.com/alexellis/k3sup",
-    "lastChecked": "2026-11-04T18:06:01.751Z",
+    "lastChecked": "2026-11-05T07:34:41.614Z",
     "revisionIdentifier": "07ee3911",
-    "lastVerified": "2026-11-04T18:06:01.751Z"
+    "lastVerified": "2026-11-05T07:34:41.614Z"
   },
   "paradedb-paradedb": {
     "name": "paradedb/paradedb",
@@ -4675,9 +4674,9 @@
   "gitui-org-gitui": {
     "name": "gitui",
     "officialUrl": "https://github.com/gitui-org/gitui",
-    "lastChecked": "2026-11-04T07:48:57.506Z",
+    "lastChecked": "2026-11-05T07:34:34.168Z",
     "revisionIdentifier": "d7214ecc",
-    "lastVerified": "2026-11-04T07:48:57.506Z"
+    "lastVerified": "2026-11-05T07:34:34.168Z"
   },
   "hf-deepseek-ai-deepseek-v4-pro": {
     "name": "deepseek-ai/DeepSeek-V4-Pro",
@@ -5843,13 +5842,13 @@
     "officialUrl": "https://huggingface.co/Venastine-Research/Xing4.0-29B-A4B-GGUF",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-31T17:03:42.441Z",
-    "lastVerified": "2026-10-31T17:03:42.441Z",
+    "lastChecked": "2026-11-05T07:34:36.684Z",
+    "lastVerified": "2026-11-05T07:34:36.684Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-venastine-research-xing4-0-29b-a4b-gguf",
-    "contentHash": "e3e0ac9b298721bb6a45450090a8ac5e87248900880a56f646db0d91b920ddee",
-    "promotedRulesCount": 2,
+    "contentHash": "b318cd6de4f83bffb48b7db0c3808751d75eac83e87fa10813e7b8ddd80fcffe",
+    "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
@@ -6820,9 +6819,9 @@
   "apache-incubator-pegasus": {
     "name": "incubator-pegasus",
     "officialUrl": "https://github.com/apache/incubator-pegasus",
-    "lastChecked": "2026-11-04T17:17:59.502Z",
+    "lastChecked": "2026-11-05T07:34:46.675Z",
     "revisionIdentifier": "75015467",
-    "lastVerified": "2026-11-04T17:17:59.502Z"
+    "lastVerified": "2026-11-05T07:34:46.675Z"
   },
   "dalance-procs": {
     "name": "procs",
@@ -9934,9 +9933,9 @@
   "touchlab-skie": {
     "name": "SKIE",
     "officialUrl": "https://github.com/touchlab/SKIE",
-    "lastChecked": "2026-11-01T01:14:27.984Z",
+    "lastChecked": "2026-11-05T07:34:39.078Z",
     "revisionIdentifier": "25bb2b91",
-    "lastVerified": "2026-11-01T01:14:27.984Z"
+    "lastVerified": "2026-11-05T07:34:39.078Z"
   },
   "pas7-studio-nextjs-sitemap-hreflang": {
     "name": "nextjs-sitemap-hreflang",

@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-05T07:27:55.284Z",
-  "total_cycles_completed": 7544,
-  "total_learnings_persisted": 7544,
-  "total_rules_promoted": 7213,
+  "last_updated": "2026-11-05T07:34:50.067Z",
+  "total_cycles_completed": 7546,
+  "total_learnings_persisted": 7546,
+  "total_rules_promoted": 7214,
   "history": [
-    {
-      "timestamp": "2026-11-04T22:12:49.064Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T22:20:03.262Z",
-      "repository": "XingChen-AGI/TeleOCR",
-      "learningId": "learn-huggingface-xingchen-agi-teleocr",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-04T22:20:07.358Z",
       "repository": "oven-sh/bun",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-05T07:27:55.284Z",
       "repository": "NucleoidAI/Nucleoid",
       "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T07:34:40.067Z",
+      "repository": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
+      "learningId": "learn-huggingface-venastine-research-xing4-0-29b-a4b-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T07:34:50.067Z",
+      "repository": "tailscale/tailscale",
+      "learningId": "learn-github-tailscale-tailscale",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
