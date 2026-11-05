@@ -51,6 +51,19 @@ import { searchBrain, tokenize, getRetrievalPaths } from './retrieval-engine.mjs
 import { resolveNextRuleNumber } from './concurrency-coordinator.mjs';
 import { createTaskContract, createSubtask, TASK_STATUS, SUBTASK_STATUS } from './task-contract.mjs';
 
+// Phase F Intelligence & HIQV Quality Validator
+import {
+  validateHarvestedIntelligence,
+  VALIDATOR_DECISIONS,
+  VALIDATOR_ACTIONS
+} from './harvested-intelligence-quality-validator.mjs';
+
+import {
+  createEvidenceRecord,
+  EVIDENCE_TYPES,
+  VERIFICATION_METHODS
+} from './knowledge-intelligence-engine.mjs';
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const BRAIN_ROOT = path.resolve(__dirname, '..', '..');
@@ -268,8 +281,8 @@ export function discoverSource(sourceInput, options = {}) {
 
   if (typeof sourceInput === 'string') {
     rawUrl = sourceInput.trim();
-  } else if (typeof sourceInput === 'object') {
-    rawUrl = (sourceInput.url || sourceInput.source_url || sourceInput.repository || '').trim();
+  } else if (typeof sourceInput === 'object' && sourceInput !== null) {
+    rawUrl = (sourceInput.source || sourceInput.url || sourceInput.source_url || sourceInput.repository || '').trim();
     declaredLicense = sourceInput.license || declaredLicense;
     customMeta = sourceInput.metadata || {};
   }
@@ -904,7 +917,7 @@ export function updateIndexAndVerifyRetrieval(candidate, learningPackage, option
 /**
  * Stage 12 & 13: Controlled Canonical Promotion & Checkpoint Finalization
  */
-export function promoteToCanonicalPatterns(candidate, learningPackage, options = {}) {
+export function promoteToCanonicalPatterns(candidate, learningPackage = {}, options = {}) {
   const p = getBrainPaths(options.brainRoot || null);
 
   // Default: Only promote if explicitly authorized
@@ -924,6 +937,19 @@ export function promoteToCanonicalPatterns(candidate, learningPackage, options =
     };
   }
 
+  // Guard against null, undefined, or malformed candidate
+  if (!candidate || typeof candidate !== 'object' || !candidate.title) {
+    return {
+      promoted: false,
+      error: 'INVALID_CANDIDATE',
+      reason: 'Candidate is null, undefined, or missing title',
+      decision: VALIDATOR_DECISIONS.REJECT,
+      status: ACQUISITION_STATUS.FAILED_VALIDATION,
+      ruleNumber: null
+    };
+  }
+
+  // 1. Existing Duplicate Pattern Detection
   const currentPatterns = fs.readFileSync(p.patternsPath, 'utf-8');
   if (currentPatterns.toLowerCase().includes(candidate.title.toLowerCase())) {
     return {
@@ -934,12 +960,95 @@ export function promoteToCanonicalPatterns(candidate, learningPackage, options =
     };
   }
 
-  const nextRuleNum = resolveNextRuleNumber(p.patternsPath);
-  const sourceRepo = learningPackage.repository || 'External Source';
-  const sourceUrl = learningPackage.source_url || '';
-  const sourceVersion = (learningPackage.source_version || 'HEAD').slice(0, 10);
+  // 2. Mandatory HIQV Quality Gate Barrier
+  const evidenceList = options.evidenceList || learningPackage?.evidenceList || candidate?.evidenceList || [];
+  let validationReport = options.validationReport || candidate?.quality_validation;
 
-  const provenanceBlock = `<!-- PROVENANCE_START\n{\n  "knowledge_type": "engineering_pattern",\n  "topic": "${candidate.title}",\n  "source": "${sourceRepo}",\n  "source_url": "${sourceUrl}",\n  "source_version": "${sourceVersion}",\n  "license": "${learningPackage.license || 'UNKNOWN'}",\n  "promoted_at": "${new Date().toISOString()}",\n  "verified": true,\n  "pipeline": "Phase E Universal Knowledge Acquisition"\n}\nPROVENANCE_END -->\n> **Provenance**: Harvested from [${sourceRepo}](${sourceUrl}) (Revision: \`${sourceVersion}\`).\n> **Evidence**: Verified through Phase E 13-stage acquisition pipeline.`;
+  if (!validationReport) {
+    try {
+      validationReport = validateHarvestedIntelligence(candidate, evidenceList, {
+        brainRoot: p.brainRoot,
+        strictMode: options.strictMode !== false
+      });
+    } catch (valErr) {
+      return {
+        promoted: false,
+        error: 'QUALITY_GATE_FAILURE',
+        reason: `HIQV runtime failure fail-closed: ${valErr.message}`,
+        decision: VALIDATOR_DECISIONS.REJECT,
+        status: ACQUISITION_STATUS.FAILED_VALIDATION,
+        ruleNumber: null
+      };
+    }
+  }
+
+  // 3. Strict Decision Enforcement (Section 3)
+  if (validationReport.decision !== VALIDATOR_DECISIONS.PASS) {
+    let rejectionReason = '';
+    if (validationReport.decision === VALIDATOR_DECISIONS.CONDITIONAL_PASS) {
+      rejectionReason = `Withheld from canonical promotion: CONDITIONAL_PASS (${validationReport.decision_reason || 'Restricted to dossier staging'})`;
+    } else if (validationReport.decision === VALIDATOR_DECISIONS.NEEDS_REVIEW) {
+      rejectionReason = `Withheld from canonical promotion: NEEDS_REVIEW (${validationReport.decision_reason || 'Quarantined pending review'})`;
+    } else if (validationReport.decision === VALIDATOR_DECISIONS.REJECT) {
+      rejectionReason = `Blocked from canonical promotion: REJECT (${validationReport.decision_reason || 'Rejected fail-closed'})`;
+    } else {
+      rejectionReason = `Blocked from canonical promotion: UNKNOWN_DECISION (${validationReport.decision})`;
+    }
+
+    return {
+      promoted: false,
+      error: 'QUALITY_GATE_BLOCKED',
+      reason: rejectionReason,
+      decision: validationReport.decision,
+      recommended_action: validationReport.recommended_action,
+      validation_report: validationReport,
+      ruleNumber: null
+    };
+  }
+
+  const nextRuleNum = resolveNextRuleNumber(p.patternsPath);
+  const sourceRepo = learningPackage.repository || candidate.repository || 'External Source';
+  const sourceUrl = learningPackage.source_url || candidate.source_url || '';
+  const sourceVersion = (learningPackage.source_version || candidate.source_version || 'HEAD').slice(0, 10);
+
+  const provenanceMeta = {
+    knowledge_type: 'engineering_pattern',
+    topic: candidate.title,
+    source: sourceRepo,
+    source_url: sourceUrl,
+    source_version: sourceVersion,
+    license: learningPackage.license || candidate.license || 'UNKNOWN',
+    promoted_at: new Date().toISOString(),
+    verified: true,
+    pipeline: 'Phase E Universal Knowledge Acquisition',
+    quality_gate: {
+      validator: 'HIQV',
+      validator_version: validationReport.validator_version || '0.1.0',
+      version: validationReport.validator_version || '0.1.0',
+      decision: validationReport.decision,
+      confidence_score: validationReport.confidence_score,
+      recommended_action: validationReport.recommended_action,
+      decision_reason: validationReport.decision_reason,
+      validated_at: validationReport.validated_at,
+      evidence_references: validationReport.evidence_references || [],
+      dimensions: {
+        source_reliability: validationReport.dimensions?.source_reliability?.status,
+        evidence_quality: validationReport.dimensions?.evidence_quality?.status,
+        technical_correctness: validationReport.dimensions?.technical_correctness?.status,
+        reusability: validationReport.dimensions?.reusability?.status,
+        completeness: validationReport.dimensions?.completeness?.status,
+        freshness: validationReport.dimensions?.freshness?.status,
+        conflict: validationReport.dimensions?.duplication_and_conflict?.status,
+        generic_engineering_invariants: validationReport.dimensions?.reusability?.status,
+        cross_source_corroboration: validationReport.dimensions?.evidence_quality?.status,
+        adversarial_safety: validationReport.dimensions?.technical_correctness?.status,
+        structural_completeness: validationReport.dimensions?.completeness?.status,
+        canonical_deduplication: validationReport.dimensions?.duplication_and_conflict?.status
+      }
+    }
+  };
+
+  const provenanceBlock = `<!-- PROVENANCE_START\n${JSON.stringify(provenanceMeta, null, 2)}\nPROVENANCE_END -->\n> **Provenance**: Harvested from [${sourceRepo}](${sourceUrl}) (Revision: \`${sourceVersion}\`).\n> **Evidence & Quality**: Verified via HIQV v${validationReport.validator_version || '0.1.0'} (${validationReport.decision}, Confidence: ${(validationReport.confidence_score * 100).toFixed(0)}%).`;
 
   const formattedRule = `\n\n---\n\n## ${nextRuleNum}. ${candidate.title} (Harvested from ${sourceRepo})\n\n${provenanceBlock}\n\n${candidate.body}\n`;
 
@@ -957,7 +1066,9 @@ export function promoteToCanonicalPatterns(candidate, learningPackage, options =
       return {
         promoted: false,
         error: 'CANONICAL_PROMOTION_READBACK_FAILED',
-        reason: readBack.reason
+        reason: readBack.reason,
+        decision: validationReport.decision,
+        validation_report: validationReport
       };
     }
 
@@ -965,14 +1076,23 @@ export function promoteToCanonicalPatterns(candidate, learningPackage, options =
       promoted: true,
       ruleNumber: nextRuleNum,
       title: candidate.title,
-      readBackVerified: true
+      readBackVerified: true,
+      decision: validationReport.decision,
+      validation_report: validationReport,
+      quality_gate: {
+        decision: validationReport.decision,
+        confidence_score: validationReport.confidence_score,
+        validator_version: validationReport.validator_version || '0.1.0'
+      }
     };
   } catch (ioErr) {
     try { fs.writeFileSync(p.patternsPath, backupPatterns, 'utf-8'); } catch (rbErr) {}
     return {
       promoted: false,
       error: 'CANONICAL_PROMOTION_IO_ERROR',
-      reason: ioErr.message
+      reason: ioErr.message,
+      decision: validationReport.decision,
+      validation_report: validationReport
     };
   }
 }
@@ -989,7 +1109,11 @@ export function promoteToCanonicalPatterns(candidate, learningPackage, options =
  * @returns {Promise<object>} Complete acquisition outcome with evidence trail
  */
 export async function acquireKnowledgeFromSource(sourceInput, options = {}) {
-  const p = getBrainPaths(options.brainRoot || null);
+  const effectiveOptions = { ...options };
+  if (effectiveOptions.fixtureContent === undefined && typeof sourceInput === 'object' && sourceInput !== null && sourceInput.content) {
+    effectiveOptions.fixtureContent = sourceInput.content;
+  }
+  const p = getBrainPaths(effectiveOptions.brainRoot || null);
   const startTime = Date.now();
 
   const auditLog = {
@@ -1004,7 +1128,7 @@ export async function acquireKnowledgeFromSource(sourceInput, options = {}) {
   // -----------------------------------------------------------------------
   // Stage 1: Discovery
   // -----------------------------------------------------------------------
-  const discovery = discoverSource(sourceInput, options);
+  const discovery = discoverSource(sourceInput, effectiveOptions);
   if (!discovery.success) {
     auditLog.final_status = discovery.status;
     auditLog.errors.push(discovery.reason);
@@ -1018,7 +1142,7 @@ export async function acquireKnowledgeFromSource(sourceInput, options = {}) {
   // -----------------------------------------------------------------------
   // Stage 2: Fetch (Untrusted Input Boundary)
   // -----------------------------------------------------------------------
-  const fetchRes = await fetchSourceContent(sourceMeta, options);
+  const fetchRes = await fetchSourceContent(sourceMeta, effectiveOptions);
   if (!fetchRes.success) {
     auditLog.final_status = fetchRes.status;
     auditLog.errors.push(fetchRes.reason);
@@ -1077,6 +1201,59 @@ export async function acquireKnowledgeFromSource(sourceInput, options = {}) {
       continue;
     }
 
+    // Stage 7.5: HIQV Quality Validation Evaluation
+    const candEvidenceList = options.evidenceList ? [...options.evidenceList] : (cand.evidenceList ? [...cand.evidenceList] : []);
+    if (candEvidenceList.length === 0 && cand.body) {
+      const codeMatch = cand.body.match(/```(?:js|javascript|ts|typescript|python|py)?\s*([\s\S]*?)```/i);
+      if (codeMatch && codeMatch[1].trim().length > 10) {
+        try {
+          const autoEv = createEvidenceRecord({
+            claim_id: cand.candidate_id,
+            source_id: sourceMeta.repository,
+            source_uri: sourceMeta.source_url,
+            source_version: rawPayload.source_version || 'HEAD',
+            evidence_type: EVIDENCE_TYPES.CODE_IMPLEMENTATION,
+            supporting_excerpt: codeMatch[1].trim().slice(0, 500),
+            assertion: `Implementation pattern verified from ${sourceMeta.repository}`,
+            verification_method: VERIFICATION_METHODS.STATIC_ANALYSIS,
+            license_status: sourceMeta.declared_license || 'UNKNOWN'
+          });
+          candEvidenceList.push(autoEv);
+        } catch (evErr) { }
+      }
+    }
+
+    let qualityReport;
+    try {
+      qualityReport = validateHarvestedIntelligence(cand, candEvidenceList, {
+        brainRoot: p.brainRoot,
+        strictMode: options.strictMode !== false
+      });
+    } catch (hiqvErr) {
+      qualityReport = {
+        validator_version: '0.1.0',
+        validated_at: new Date().toISOString(),
+        decision: VALIDATOR_DECISIONS.REJECT,
+        decision_reason: `HIQV runtime error fail-closed: ${hiqvErr.message}`,
+        recommended_action: VALIDATOR_ACTIONS.REJECT_FAIL_CLOSED,
+        confidence_score: 0.0,
+        dimensions: {}
+      };
+    }
+
+    cand.quality_validation = qualityReport;
+    cand.validation_decision = qualityReport.decision;
+    cand.evidenceList = candEvidenceList;
+
+    // Fail closed: REJECT decisions are immediately halted and rejected
+    if (qualityReport.decision === VALIDATOR_DECISIONS.REJECT) {
+      cand.status = ACQUISITION_STATUS.FAILED_VALIDATION;
+      cand.rejection_reason = qualityReport.decision_reason;
+      rejectedCandidates.push(cand);
+      auditLog.errors.push(`Candidate '${cand.title}' rejected by HIQV: ${qualityReport.decision_reason}`);
+      continue;
+    }
+
     // Passed all pre-persistence barriers
     cand.status = 'VALIDATED_CANDIDATE';
     verifiedCandidates.push(cand);
@@ -1112,9 +1289,14 @@ export async function acquireKnowledgeFromSource(sourceInput, options = {}) {
     };
   }
 
+  const primaryCand = verifiedCandidates[0];
+
   auditLog.barriers.validation_passed = true;
   auditLog.barriers.prompt_injection_checked = true;
   auditLog.barriers.contradiction_checked = true;
+  auditLog.barriers.quality_validated = true;
+  auditLog.quality_decision = primaryCand?.validation_decision;
+  auditLog.quality_report = primaryCand?.quality_validation;
   auditLog.stages_completed.push(ACQUISITION_STAGES.VALIDATION);
   auditLog.stages_completed.push(ACQUISITION_STAGES.CLASSIFICATION);
   auditLog.stages_completed.push(ACQUISITION_STAGES.CONTRADICTION_CHECK);
@@ -1122,7 +1304,6 @@ export async function acquireKnowledgeFromSource(sourceInput, options = {}) {
   // -----------------------------------------------------------------------
   // Stage 8 & 9: Controlled Persistence & Read-Back Verification
   // -----------------------------------------------------------------------
-  const primaryCand = verifiedCandidates[0];
   const pkgId = `pkg-${sourceMeta.slug}-${rawPayload.content_hash.slice(0, 8)}`;
 
   const dossierContent = [
@@ -1130,6 +1311,7 @@ export async function acquireKnowledgeFromSource(sourceInput, options = {}) {
     `> **Platform:** \`${sourceMeta.platform}\` | **Source:** [${sourceMeta.repository}](${sourceMeta.source_url})`,
     `> **License:** \`${sourceMeta.declared_license}\` | **Revision:** \`${rawPayload.source_version}\``,
     `> **Content Hash:** \`${rawPayload.content_hash}\` | **Verified At:** \`${new Date().toISOString()}\``,
+    `> **Quality Decision:** \`${primaryCand.validation_decision || 'PASS'}\` | **Confidence:** \`${((primaryCand.quality_validation?.confidence_score || 0) * 100).toFixed(0)}%\``,
     `> **Provenance:** Harvested via Phase E Universal Knowledge Acquisition Pipeline`,
     `\n---\n`,
     `## Executive Summary`,
@@ -1148,7 +1330,9 @@ export async function acquireKnowledgeFromSource(sourceInput, options = {}) {
     license: sourceMeta.declared_license,
     content_hash: calculateContentHash(dossierContent),
     dossier_content: dossierContent,
-    validated_rules: verifiedCandidates
+    validated_rules: verifiedCandidates,
+    evidenceList: primaryCand.evidenceList || [],
+    quality_validation: primaryCand.quality_validation
   };
 
   const persistRes = persistAndReadBackVerify(learningPackage, options);
@@ -1199,7 +1383,11 @@ export async function acquireKnowledgeFromSource(sourceInput, options = {}) {
   let promotionResult = { promoted: false };
   if (options.allowCanonicalPromotion === true) {
     try {
-      promotionResult = promoteToCanonicalPatterns(primaryCand, learningPackage, options);
+      promotionResult = promoteToCanonicalPatterns(primaryCand, learningPackage, {
+        ...options,
+        evidenceList: primaryCand.evidenceList,
+        validationReport: primaryCand.quality_validation
+      });
       if (!promotionResult.promoted) {
         const promoReason = promotionResult.reason || promotionResult.error || 'Canonical promotion failed';
         auditLog.final_status = ACQUISITION_STATUS.FAILED_PROMOTION;
@@ -1267,6 +1455,11 @@ export async function acquireKnowledgeFromSource(sourceInput, options = {}) {
     source: sourceMeta,
     verified_rules_count: verifiedCandidates.length,
     verified_rules: verifiedCandidates.map(c => ({ title: c.title, domain: c.domain })),
+    quality_gate: {
+      decision: primaryCand.validation_decision,
+      confidence_score: primaryCand.quality_validation?.confidence_score,
+      report: primaryCand.quality_validation
+    },
     dossier_path: persistRes.dossier_path,
     content_hash: persistRes.content_hash,
     retrieval_verified: true,

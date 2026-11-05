@@ -96,6 +96,35 @@ export {
   VERIFICATION_METHODS
 };
 
+import {
+  validateHarvestedIntelligence,
+  validateSourceReliability,
+  validateEvidenceQuality,
+  validateTechnicalCorrectness,
+  validateReusability,
+  validateCompleteness,
+  validateFreshnessAndValidity,
+  validateDuplicationAndConflict,
+  VALIDATOR_VERSION,
+  VALIDATOR_DECISIONS,
+  VALIDATOR_ACTIONS,
+  DIMENSION_STATUS
+} from './harvested-intelligence-quality-validator.mjs';
+export {
+  validateHarvestedIntelligence,
+  validateSourceReliability,
+  validateEvidenceQuality,
+  validateTechnicalCorrectness,
+  validateReusability,
+  validateCompleteness,
+  validateFreshnessAndValidity,
+  validateDuplicationAndConflict,
+  VALIDATOR_VERSION,
+  VALIDATOR_DECISIONS,
+  VALIDATOR_ACTIONS,
+  DIMENSION_STATUS
+};
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const BRAIN_ROOT = path.resolve(__dirname, '..', '..');

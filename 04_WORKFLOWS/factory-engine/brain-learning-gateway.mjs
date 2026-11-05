@@ -4,6 +4,11 @@ import crypto from 'crypto';
 import { fileURLToPath } from 'url';
 import { validateRuleCandidate } from './gemini-brain-agent.mjs';
 import { resolveNextRuleNumber } from './concurrency-coordinator.mjs';
+import {
+  validateHarvestedIntelligence,
+  VALIDATOR_DECISIONS,
+  VALIDATOR_ACTIONS
+} from './harvested-intelligence-quality-validator.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -544,6 +549,7 @@ export function promoteValidatedRules(learningPackage, options = {}) {
 
   const promotedList = [];
   const rulesToPromote = learningPackage.validated_rules || [];
+  const evidenceList = options.evidenceList || learningPackage.evidenceList || [];
 
   for (const rule of rulesToPromote) {
     const currentPatterns = fs.readFileSync(p.patternsPath, 'utf-8');
@@ -556,6 +562,48 @@ export function promoteValidatedRules(learningPackage, options = {}) {
         number: existingNum,
         title: rule.title,
         status: LEARNING_STATUS.ALREADY_PRESENT_VERIFIED
+      });
+      continue;
+    }
+
+    // HIQV Quality Validation Gate Barrier
+    let valReport = rule.quality_validation || options.validationReport;
+    if (!valReport) {
+      try {
+        valReport = validateHarvestedIntelligence(
+          {
+            candidate_id: rule.candidate_id || `rule-${Date.now()}`,
+            title: rule.title,
+            body: rule.body,
+            repository: learningPackage.repository,
+            source_url: learningPackage.source_url,
+            license: learningPackage.license
+          },
+          evidenceList,
+          { brainRoot: p.brainRoot, strictMode: options.strictMode !== false }
+        );
+      } catch (valErr) {
+        valReport = {
+          validator_version: '0.1.0',
+          decision: VALIDATOR_DECISIONS.REJECT,
+          decision_reason: `HIQV runtime failure fail-closed: ${valErr.message}`,
+          recommended_action: VALIDATOR_ACTIONS.REJECT_FAIL_CLOSED,
+          confidence_score: 0.0,
+          dimensions: {}
+        };
+      }
+    }
+
+    if (valReport.decision !== VALIDATOR_DECISIONS.PASS) {
+      console.warn(`🛡️ [GATEWAY QUALITY GATE WITHHELD] Rule "${rule.title}" withheld from canonical promotion: ${valReport.decision} (${valReport.decision_reason})`);
+      promotedList.push({
+        number: null,
+        title: rule.title,
+        status: `WITHHELD_${valReport.decision}`,
+        decision: valReport.decision,
+        reason: valReport.decision_reason,
+        recommended_action: valReport.recommended_action,
+        quality_gate: valReport
       });
       continue;
     }
@@ -579,10 +627,24 @@ export function promoteValidatedRules(learningPackage, options = {}) {
       verified: true,
       confidence: 'high',
       promotion_status: 'approved',
-      distillation_prohibited: true
+      distillation_prohibited: true,
+      quality_gate: {
+        decision: valReport.decision,
+        confidence_score: valReport.confidence_score,
+        validator_version: valReport.validator_version || '0.1.0',
+        dimensions: {
+          source_reliability: valReport.dimensions?.source_reliability?.status,
+          cross_source_corroboration: valReport.dimensions?.cross_source_corroboration?.status,
+          adversarial_safety: valReport.dimensions?.adversarial_safety?.status,
+          empirical_reproducibility: valReport.dimensions?.empirical_reproducibility?.status,
+          structural_completeness: valReport.dimensions?.structural_completeness?.status,
+          generic_engineering_invariants: valReport.dimensions?.generic_engineering_invariants?.status,
+          canonical_deduplication: valReport.dimensions?.canonical_deduplication?.status
+        }
+      }
     };
 
-    const provenanceBlock = `<!-- PROVENANCE_START\n${JSON.stringify(provenanceMeta, null, 2)}\nPROVENANCE_END -->\n> **Provenance**: Harvested from [${sourceRepoName}](${sourceUrl}) (Revision: \`${sourceVersion.slice(0, 10)}\`).  \n> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).`;
+    const provenanceBlock = `<!-- PROVENANCE_START\n${JSON.stringify(provenanceMeta, null, 2)}\nPROVENANCE_END -->\n> **Provenance**: Harvested from [${sourceRepoName}](${sourceUrl}) (Revision: \`${sourceVersion.slice(0, 10)}\`).  \n> **Evidence & Quality**: Verified via HIQV v${valReport.validator_version || '0.1.0'} (${valReport.decision}, Confidence: ${(valReport.confidence_score * 100).toFixed(0)}%).`;
 
     const formattedRule = `\n\n---\n\n## ${nextRuleNum}. ${rule.title} (Harvested from ${sourceRepoName})\n\n${provenanceBlock}\n\n${rule.body}\n`;
 
@@ -600,7 +662,8 @@ export function promoteValidatedRules(learningPackage, options = {}) {
       number: nextRuleNum,
       title: rule.title,
       status: 'PROMOTED_AND_VERIFIED',
-      provenance: provenanceMeta
+      provenance: provenanceMeta,
+      quality_gate: valReport
     });
   }
 

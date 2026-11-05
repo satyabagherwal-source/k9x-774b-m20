@@ -12,6 +12,7 @@ import fs from 'fs';
 import path from 'path';
 import crypto from 'crypto';
 import { fileURLToPath } from 'url';
+import { performance } from 'perf_hooks';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -60,6 +61,7 @@ const STOPWORDS = new Set([
 let _inMemoryIndex = null;
 let _inMemoryHash = null;
 const _indexCacheByRoot = new Map();
+const _persistenceStateByRoot = new Map();
 
 /**
  * Tokenizes text into normalized query/document terms
@@ -490,13 +492,278 @@ export function resolveAlias(id, maxHops = 3) {
   }
 }
 
+
+/**
+ * Schedules or executes atomic, observable disk cache persistence
+ */
+function scheduleCachePersistence(indexPackage, p, cacheKey, options = {}) {
+  // If already persisting this exact sourceHash, return existing in-flight promise
+  const existing = _persistenceStateByRoot.get(cacheKey);
+  if (existing && existing.status === 'persisting' && existing.sourceHash === indexPackage.sourceHash && existing.promise) {
+    return existing.promise;
+  }
+
+  let resolvePromise, rejectPromise;
+  const promise = new Promise((resolve, reject) => {
+    resolvePromise = resolve;
+    rejectPromise = reject;
+  });
+
+  const state = {
+    status: 'persisting',
+    sourceHash: indexPackage.sourceHash,
+    lastPersistedAt: null,
+    filePath: p.cacheIndexFile,
+    error: null,
+    promise,
+    stats: null
+  };
+  _persistenceStateByRoot.set(cacheKey, state);
+
+  const executePersistence = async () => {
+    const dir = p.cacheDir;
+    const randSuffix = Math.random().toString(36).slice(2, 7);
+    const tmpFile = path.join(dir, `retrieval-index.tmp.${process.pid}.${Date.now()}.${randSuffix}`);
+
+    try {
+      // Step B: JSON Serialization
+      const tSerStart = performance.now();
+      const serialized = JSON.stringify(indexPackage);
+      const serializationMs = performance.now() - tSerStart;
+      const payloadSizeBytes = Buffer.byteLength(serialized, 'utf-8');
+
+      // Step C: Disk Persistence to temporary file
+      const tDiskStart = performance.now();
+      await fs.promises.mkdir(dir, { recursive: true });
+      await fs.promises.writeFile(tmpFile, serialized, 'utf-8');
+
+      // Atomic rename/replace to final destination
+      try {
+        await fs.promises.rename(tmpFile, p.cacheIndexFile);
+      } catch (renameErr) {
+        // Fallback for Windows file locks or cross-drive quirks
+        if (fs.existsSync(p.cacheIndexFile)) {
+          try { fs.unlinkSync(p.cacheIndexFile); } catch (uErr) {}
+        }
+        await fs.promises.rename(tmpFile, p.cacheIndexFile);
+      }
+      const diskWriteMs = performance.now() - tDiskStart;
+      const totalReadinessMs = indexPackage.buildDurationMs + serializationMs + diskWriteMs;
+
+      const completionStats = {
+        computationMs: indexPackage.buildDurationMs,
+        serializationMs: Math.round(serializationMs * 100) / 100,
+        diskWriteMs: Math.round(diskWriteMs * 100) / 100,
+        totalReadinessMs: Math.round(totalReadinessMs * 100) / 100,
+        payloadSizeBytes
+      };
+
+      state.status = 'persisted';
+      state.lastPersistedAt = new Date().toISOString();
+      state.stats = completionStats;
+      state.promise = null;
+
+      const result = {
+        success: true,
+        filePath: p.cacheIndexFile,
+        persistedAt: state.lastPersistedAt,
+        stats: completionStats
+      };
+
+      resolvePromise(result);
+      return result;
+    } catch (err) {
+      try {
+        if (fs.existsSync(tmpFile)) fs.unlinkSync(tmpFile);
+      } catch (cleanErr) {}
+
+      state.status = 'failed';
+      state.error = err;
+      state.promise = null;
+
+      rejectPromise(err);
+      throw err;
+    }
+  };
+
+  // Synchronous execution mode when explicitly requested
+  if (options.sync === true || options.syncPersist === true) {
+    const dir = p.cacheDir;
+    const randSuffix = Math.random().toString(36).slice(2, 7);
+    const tmpFile = path.join(dir, `retrieval-index.tmp.${process.pid}.${Date.now()}.${randSuffix}`);
+    try {
+      const tSerStart = performance.now();
+      const serialized = JSON.stringify(indexPackage);
+      const serializationMs = performance.now() - tSerStart;
+      const payloadSizeBytes = Buffer.byteLength(serialized, 'utf-8');
+
+      const tDiskStart = performance.now();
+      fs.mkdirSync(dir, { recursive: true });
+      fs.writeFileSync(tmpFile, serialized, 'utf-8');
+
+      try {
+        fs.renameSync(tmpFile, p.cacheIndexFile);
+      } catch (renameErr) {
+        if (fs.existsSync(p.cacheIndexFile)) {
+          try { fs.unlinkSync(p.cacheIndexFile); } catch (uErr) {}
+        }
+        fs.renameSync(tmpFile, p.cacheIndexFile);
+      }
+      const diskWriteMs = performance.now() - tDiskStart;
+      const totalReadinessMs = indexPackage.buildDurationMs + serializationMs + diskWriteMs;
+
+      const completionStats = {
+        computationMs: indexPackage.buildDurationMs,
+        serializationMs: Math.round(serializationMs * 100) / 100,
+        diskWriteMs: Math.round(diskWriteMs * 100) / 100,
+        totalReadinessMs: Math.round(totalReadinessMs * 100) / 100,
+        payloadSizeBytes
+      };
+
+      state.status = 'persisted';
+      state.lastPersistedAt = new Date().toISOString();
+      state.stats = completionStats;
+      state.promise = null;
+
+      resolvePromise({
+        success: true,
+        filePath: p.cacheIndexFile,
+        persistedAt: state.lastPersistedAt,
+        stats: completionStats
+      });
+      return promise;
+    } catch (err) {
+      try {
+        if (fs.existsSync(tmpFile)) fs.unlinkSync(tmpFile);
+      } catch (cleanErr) {}
+
+      state.status = 'failed';
+      state.error = err;
+      state.promise = null;
+
+      rejectPromise(err);
+      throw err;
+    }
+  }
+
+  // Non-blocking async persistence scheduled via setImmediate
+  setImmediate(() => {
+    executePersistence().catch(() => {});
+  });
+
+  return promise;
+}
+
+/**
+ * Returns observable cache persistence status and timing metrics
+ */
+export function getCachePersistenceStatus(customRoot = null) {
+  const p = getRetrievalPaths(customRoot);
+  const cacheKey = customRoot || 'DEFAULT';
+  const state = _persistenceStateByRoot.get(cacheKey);
+
+  if (state) {
+    return {
+      status: state.status,
+      sourceHash: state.sourceHash,
+      lastPersistedAt: state.lastPersistedAt,
+      filePath: state.filePath,
+      error: state.error ? state.error.message : null,
+      stats: state.stats ? { ...state.stats } : null
+    };
+  }
+
+  // If no in-flight state, probe disk cache existence
+  if (fs.existsSync(p.cacheIndexFile)) {
+    try {
+      const stat = fs.statSync(p.cacheIndexFile);
+      return {
+        status: 'persisted',
+        sourceHash: null,
+        lastPersistedAt: stat.mtime.toISOString(),
+        filePath: p.cacheIndexFile,
+        error: null,
+        stats: {
+          payloadSizeBytes: stat.size
+        }
+      };
+    } catch (e) {}
+  }
+
+  return {
+    status: 'idle',
+    sourceHash: null,
+    lastPersistedAt: null,
+    filePath: p.cacheIndexFile,
+    error: null,
+    stats: null
+  };
+}
+
+/**
+ * Waits for active cache persistence to complete safely
+ */
+export async function waitForCachePersistence(customRoot = null, timeoutMs = 15000) {
+  const p = getRetrievalPaths(customRoot);
+  const cacheKey = customRoot || 'DEFAULT';
+  const state = _persistenceStateByRoot.get(cacheKey);
+
+  if (!state || state.status === 'idle') {
+    if (fs.existsSync(p.cacheIndexFile)) {
+      return { success: true, filePath: p.cacheIndexFile, status: 'persisted' };
+    }
+    return { success: true, filePath: p.cacheIndexFile, status: 'idle' };
+  }
+
+  if (state.status === 'persisted') {
+    return {
+      success: true,
+      filePath: p.cacheIndexFile,
+      persistedAt: state.lastPersistedAt,
+      stats: state.stats
+    };
+  }
+
+  if (state.status === 'failed') {
+    throw state.error || new Error('Cache persistence failed');
+  }
+
+  if (state.promise) {
+    let timer;
+    const timeoutPromise = new Promise((_, reject) => {
+      timer = setTimeout(() => {
+        reject(new Error(`Cache persistence timed out after ${timeoutMs}ms`));
+      }, timeoutMs);
+    });
+
+    try {
+      const res = await Promise.race([state.promise, timeoutPromise]);
+      clearTimeout(timer);
+      return res;
+    } catch (err) {
+      clearTimeout(timer);
+      throw err;
+    }
+  }
+
+  return { success: true, filePath: p.cacheIndexFile, status: state.status };
+}
+
 /**
  * Builds the complete BM25 & Lexical Inverted Index
  */
-export function buildSearchIndex(forceRebuild = false, customRoot = null) {
-  const p = getRetrievalPaths(customRoot);
-  const cacheKey = customRoot || 'DEFAULT';
-  const currentHash = computeSourceFilesHash(customRoot);
+export function buildSearchIndex(forceRebuild = false, customRoot = null, options = {}) {
+  // Support options object as 2nd argument: buildSearchIndex(forceRebuild, options)
+  let resolvedRoot = customRoot;
+  let resolvedOpts = options;
+  if (customRoot && typeof customRoot === 'object' && !Array.isArray(customRoot)) {
+    resolvedOpts = customRoot;
+    resolvedRoot = resolvedOpts.brainRoot || null;
+  }
+
+  const p = getRetrievalPaths(resolvedRoot);
+  const cacheKey = resolvedRoot || 'DEFAULT';
+  const currentHash = computeSourceFilesHash(resolvedRoot);
 
   const rootMemory = _indexCacheByRoot.get(cacheKey);
   if (!forceRebuild && rootMemory && rootMemory.sourceHash === currentHash) {
@@ -506,27 +773,33 @@ export function buildSearchIndex(forceRebuild = false, customRoot = null) {
   // Check persistent disk cache if valid
   if (!forceRebuild && fs.existsSync(p.cacheIndexFile)) {
     try {
-      const cached = JSON.parse(fs.readFileSync(p.cacheIndexFile, 'utf-8'));
-      if (cached.sourceHash === currentHash) {
+      const raw = fs.readFileSync(p.cacheIndexFile, 'utf-8');
+      const cached = JSON.parse(raw);
+      if (cached && cached.sourceHash === currentHash && Array.isArray(cached.documents) && cached.invertedIndex) {
         _indexCacheByRoot.set(cacheKey, cached);
-        if (!customRoot) {
+        if (!resolvedRoot) {
           _inMemoryIndex = cached;
           _inMemoryHash = currentHash;
         }
         return cached;
       }
     } catch (e) {
+      // Incomplete or corrupted cache on disk: quarantine to allow clean self-healing
+      try {
+        const corruptBackup = `${p.cacheIndexFile}.corrupt.${Date.now()}`;
+        fs.renameSync(p.cacheIndexFile, corruptBackup);
+      } catch (rmErr) {}
       // Fall through to rebuild
     }
   }
 
   const startTime = Date.now();
-  const patternDocs = parseEngineeringPatterns(customRoot);
-  const coreDocs = parseCoreOperatingRules(customRoot);
-  const skillDocs = parseSkills(customRoot);
+  const patternDocs = parseEngineeringPatterns(resolvedRoot);
+  const coreDocs = parseCoreOperatingRules(resolvedRoot);
+  const skillDocs = parseSkills(resolvedRoot);
   const indexDocs = parseKnowledgeIndex(p);
 
-  const capabilityDocs = parseCapabilities(customRoot);
+  const capabilityDocs = parseCapabilities(resolvedRoot);
   const documents = [...patternDocs, ...coreDocs, ...skillDocs, ...indexDocs, ...capabilityDocs];
   const N = documents.length;
 
@@ -590,18 +863,14 @@ export function buildSearchIndex(forceRebuild = false, customRoot = null) {
   };
 
   _indexCacheByRoot.set(cacheKey, indexPackage);
-  if (!customRoot) {
+  if (!resolvedRoot) {
     _inMemoryIndex = indexPackage;
     _inMemoryHash = currentHash;
   }
 
-  // Persist cache to disk (non-blocking async serialization to prevent blocking callers)
-  setImmediate(() => {
-    try {
-      fs.mkdirSync(p.cacheDir, { recursive: true });
-      fs.writeFile(p.cacheIndexFile, JSON.stringify(indexPackage), 'utf-8', () => {});
-    } catch (e) {}
-  });
+  // Schedule atomic, observable persistence to disk
+  const persistencePromise = scheduleCachePersistence(indexPackage, p, cacheKey, resolvedOpts);
+  indexPackage.persistencePromise = persistencePromise;
 
   return indexPackage;
 }
