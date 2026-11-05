@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-05T23:40:02.937Z",
-  "total_cycles_completed": 7802,
-  "total_learnings_persisted": 7802,
-  "total_rules_promoted": 7444,
+  "last_updated": "2026-11-05T23:49:04.183Z",
+  "total_cycles_completed": 7805,
+  "total_learnings_persisted": 7805,
+  "total_rules_promoted": 7447,
   "history": [
-    {
-      "timestamp": "2026-11-05T11:08:37.161Z",
-      "repository": "zama-ai/tfhe-rs",
-      "learningId": "learn-github-zama-ai-tfhe-rs",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T11:09:32.415Z",
-      "repository": "mudler/locate-anything.cpp-gguf",
-      "learningId": "learn-huggingface-mudler-locate-anything-cpp-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T11:16:44.561Z",
-      "repository": "mikepenz/multiplatform-markdown-renderer",
-      "learningId": "learn-github-mikepenz-multiplatform-markdown-renderer",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-05T11:16:51.727Z",
       "repository": "jialinyyzz/humanizer",
@@ -1403,6 +1382,27 @@
       "repository": "GreptimeTeam/greptimedb",
       "learningId": "learn-github-greptimeteam-greptimedb",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T23:49:01.839Z",
+      "repository": "projectdiscovery/nuclei",
+      "learningId": "learn-github-projectdiscovery-nuclei",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T23:49:02.020Z",
+      "repository": "react/react-native",
+      "learningId": "learn-github-react-react-native",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T23:49:04.183Z",
+      "repository": "ydb-platform/ydb",
+      "learningId": "learn-github-ydb-platform-ydb",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

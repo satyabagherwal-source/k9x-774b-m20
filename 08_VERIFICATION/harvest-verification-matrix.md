@@ -7825,3 +7825,6 @@
 | `CYCLE-20261105-U8HR` | `2026-11-05T23:39:57.951Z` | `kirillzyusko/react-native-keyboard-controller` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`a58a177a...`) |
 | `CYCLE-20261105-U9LW` | `2026-11-05T23:39:59.396Z` | `authzed/spicedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`ef569a41...`) |
 | `CYCLE-20261105-UCC0` | `2026-11-05T23:40:02.928Z` | `GreptimeTeam/greptimedb` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md` | Yes (`e285a283...`) |
+| `CYCLE-20261105-5W5I` | `2026-11-05T23:49:01.830Z` | `projectdiscovery/nuclei` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`8112b6f1...`) |
+| `CYCLE-20261105-5WAJ` | `2026-11-05T23:49:02.011Z` | `react/react-native` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`664cc181...`) |
+| `CYCLE-20261105-5XYN` | `2026-11-05T23:49:04.175Z` | `ydb-platform/ydb` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`0c5410e1...`) |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T23:40:02.809Z",
+  "last_updated": "2026-11-05T23:49:04.072Z",
   "total_verified_learnings": 1222,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -49628,11 +49628,16 @@
       "slug": "projectdiscovery-nuclei",
       "platform": "github",
       "source_url": "https://github.com/projectdiscovery/nuclei",
-      "source_version": "fb0eed51",
-      "content_hash": "0731a8c10bcae7cb33d6d2292ee08e71e17c0587b8b91cefd0c6269d84328076",
+      "source_version": "bb2da9bb",
+      "content_hash": "8112b6f178c57ddfd09f7c42ac66aa973301da4df61e2b52e9dc384290c9a7aa",
       "dossier_path": "07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "http): read annotations only before the request line (#8062)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 1841,
           "title": "runtime): honor cancellation in HTTP and headless waits (#7814)",
@@ -49769,7 +49774,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T11:30:55.550Z",
+      "verified_at": "2026-11-05T23:49:01.713Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -51120,11 +51125,16 @@
       "slug": "react-react-native",
       "platform": "github",
       "source_url": "https://github.com/react/react-native",
-      "source_version": "edf2b86e",
-      "content_hash": "3f760147ca7782b826487f29aec76ca9c5fdbc82e7a9c7494c6475f05befda05",
+      "source_version": "93019c44",
+      "content_hash": "664cc1814002910824d5f39baa6e4028bf3cb87186ef835f59c0716338ec9a03",
       "dossier_path": "07_PROJECT_LEARNING/react-react-native-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/react-react-native-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "addViewAt crash for views held by startViewTransition on Android",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 3035,
           "title": "race in UiThreadUtil main handler lazy initialization (#58963)",
@@ -51156,7 +51166,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T23:32:17.596Z",
+      "verified_at": "2026-11-05T23:49:01.916Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -63109,11 +63119,16 @@
       "slug": "ydb-platform-ydb",
       "platform": "github",
       "source_url": "https://github.com/ydb-platform/ydb",
-      "source_version": "1dda9d96",
-      "content_hash": "4682c9661d31c763c49ee57ae6911f132283deddb4779e02529c3379bc9cd8ec",
+      "source_version": "c26894aa",
+      "content_hash": "0c5410e1f9bfc9f9c20ebf2bba8d3db761a57e39ec47131ce90690e2834d8793",
       "dossier_path": "07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "offsets replication for consumers with availability period (#58279)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2084,
           "title": "replication admission and lost data recovery after a group generation change by",
@@ -63200,7 +63215,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T06:58:31.694Z",
+      "verified_at": "2026-11-05T23:49:04.052Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

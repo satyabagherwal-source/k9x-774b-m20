@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-05T23:40:05.470Z",
-    "lastVerified": "2026-11-05T23:40:05.470Z",
+    "lastChecked": "2026-11-05T23:49:06.773Z",
+    "lastVerified": "2026-11-05T23:49:06.773Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -85,14 +85,14 @@
     "officialUrl": "https://github.com/react/react-native",
     "sourceType": "github",
     "technology": "C++",
-    "lastChecked": "2026-11-03T23:32:16.774Z",
-    "lastVerified": "2026-11-03T23:32:16.774Z",
+    "lastChecked": "2026-11-05T23:48:53.252Z",
+    "lastVerified": "2026-11-05T23:48:53.252Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-react-react-native",
-    "contentHash": "3f760147ca7782b826487f29aec76ca9c5fdbc82e7a9c7494c6475f05befda05",
+    "contentHash": "664cc1814002910824d5f39baa6e4028bf3cb87186ef835f59c0716338ec9a03",
     "promotedRulesCount": 1,
-    "recentFixesCount": 11,
+    "recentFixesCount": 6,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -356,9 +356,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-05T23:09:37.263Z",
+    "lastChecked": "2026-11-05T23:48:59.532Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-05T23:09:37.263Z"
+    "lastVerified": "2026-11-05T23:48:59.532Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -2051,22 +2051,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "projectdiscovery-nuclei": {
-    "name": "nuclei",
+    "name": "projectdiscovery/nuclei",
     "officialUrl": "https://github.com/projectdiscovery/nuclei",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-05T19:06:50.607Z",
-    "lastVerified": "2026-11-05T19:06:50.607Z",
+    "lastChecked": "2026-11-05T23:48:59.795Z",
+    "lastVerified": "2026-11-05T23:48:59.795Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-projectdiscovery-nuclei",
-    "contentHash": "0731a8c10bcae7cb33d6d2292ee08e71e17c0587b8b91cefd0c6269d84328076",
+    "contentHash": "8112b6f178c57ddfd09f7c42ac66aa973301da4df61e2b52e9dc384290c9a7aa",
     "promotedRulesCount": 1,
-    "recentFixesCount": 4,
+    "recentFixesCount": 1,
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "fb0eed51"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "zilliztech-claude-context": {
     "name": "claude-context",
@@ -2613,8 +2612,8 @@
     "officialUrl": "https://github.com/nats-io/nats.go",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-05T07:51:58.733Z",
-    "lastVerified": "2026-11-05T07:51:58.733Z",
+    "lastChecked": "2026-11-05T23:48:52.033Z",
+    "lastVerified": "2026-11-05T23:48:52.033Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nats-io-nats-go",
@@ -2646,9 +2645,9 @@
   "sharkdp-hyperfine": {
     "name": "hyperfine",
     "officialUrl": "https://github.com/sharkdp/hyperfine",
-    "lastChecked": "2026-11-05T03:12:38.451Z",
+    "lastChecked": "2026-11-05T23:48:44.509Z",
     "revisionIdentifier": "c5161524",
-    "lastVerified": "2026-11-05T03:12:38.451Z"
+    "lastVerified": "2026-11-05T23:48:44.509Z"
   },
   "hf-xiaomimimo-mimo-v2.6-distill-qwen-9b": {
     "name": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
@@ -6538,14 +6537,14 @@
     "officialUrl": "https://github.com/ydb-platform/ydb",
     "sourceType": "github",
     "technology": "C++",
-    "lastChecked": "2026-11-05T06:58:30.964Z",
-    "lastVerified": "2026-11-05T06:58:30.964Z",
+    "lastChecked": "2026-11-05T23:49:02.542Z",
+    "lastVerified": "2026-11-05T23:49:02.542Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-ydb-platform-ydb",
-    "contentHash": "4682c9661d31c763c49ee57ae6911f132283deddb4779e02529c3379bc9cd8ec",
+    "contentHash": "0c5410e1f9bfc9f9c20ebf2bba8d3db761a57e39ec47131ce90690e2834d8793",
     "promotedRulesCount": 1,
-    "recentFixesCount": 4,
+    "recentFixesCount": 5,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -9823,9 +9822,9 @@
   "kaiopiola-seocheck": {
     "name": "SEOCheck",
     "officialUrl": "https://github.com/kaiopiola/SEOCheck",
-    "lastChecked": "2026-11-03T10:29:23.116Z",
+    "lastChecked": "2026-11-05T23:48:47.037Z",
     "revisionIdentifier": "a1e13f715f",
-    "lastVerified": "2026-11-03T10:29:23.116Z"
+    "lastVerified": "2026-11-05T23:48:47.037Z"
   },
   "kudoleh-ios-clean-architecture-mvvm": {
     "name": "iOS-Clean-Architecture-MVVM",

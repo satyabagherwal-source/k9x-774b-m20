@@ -7834,3 +7834,6 @@ Every entry in this ledger must capture:
 | `learn-github-kirillzyusko-react-native-keyboard-controller` | `https://github.com/kirillzyusko/react-native-keyboard-controller` | `7ec1e4e2` | Multi-dimensional audit evidence | 2026-11-05T23:39:57.956Z |
 | `learn-github-authzed-spicedb` | `https://github.com/authzed/spicedb` | `4613dae4` | Multi-dimensional audit evidence | 2026-11-05T23:39:59.400Z |
 | `learn-github-greptimeteam-greptimedb` | `https://github.com/GreptimeTeam/greptimedb` | `5bcb576b` | Multi-dimensional audit evidence | 2026-11-05T23:40:02.932Z |
+| `learn-github-projectdiscovery-nuclei` | `https://github.com/projectdiscovery/nuclei` | `bb2da9bb` | Multi-dimensional audit evidence | 2026-11-05T23:49:01.834Z |
+| `learn-github-react-react-native` | `https://github.com/react/react-native` | `93019c44` | Multi-dimensional audit evidence | 2026-11-05T23:49:02.014Z |
+| `learn-github-ydb-platform-ydb` | `https://github.com/ydb-platform/ydb` | `c26894aa` | Multi-dimensional audit evidence | 2026-11-05T23:49:04.178Z |
