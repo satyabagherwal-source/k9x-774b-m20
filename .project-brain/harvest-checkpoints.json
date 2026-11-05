@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-05T07:41:59.808Z",
+  "last_updated": "2026-11-05T07:53:34.046Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1445,14 +1445,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-openai-clip-vit-base-patch32",
-      "content_hash": "3df7cad9dbdb197e751776ef4cd6289836559d9639d96868781b4177d0625109",
-      "verified_at": "2026-10-31T17:22:54.801Z",
+      "content_hash": "6d0925d88cd2491437399568931b53c74c3a0c7201633ac3e89ef0a43286e526",
+      "verified_at": "2026-11-05T07:53:34.045Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T17:22:54.801Z"
+      "last_updated": "2026-11-05T07:53:34.045Z"
     },
     "sentence-transformers/all-mpnet-base-v2": {
       "repository": "sentence-transformers/all-mpnet-base-v2",
@@ -2526,14 +2526,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aleo-labs-protocol-snarkos",
-      "content_hash": "383705f793aa2a820ee88096e9635ec068f0216a535858282c83bec2c40ea1b9",
-      "verified_at": "2026-11-05T06:07:51.563Z",
+      "content_hash": "5114d0e911705130d9a20575b4158fec162cda82ce15585c4308f3f123ee4fc8",
+      "verified_at": "2026-11-05T07:52:04.663Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T06:07:51.563Z"
+      "last_updated": "2026-11-05T07:52:04.663Z"
     },
     "volcengine/OpenViking": {
       "repository": "volcengine/OpenViking",
@@ -8211,14 +8211,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-grpc-grpc-rust",
-      "content_hash": "a784eaa96e213ca954ae0e6692018cdbd75679f68b70f462e9a31aa3124b4573",
-      "verified_at": "2026-11-04T08:04:23.667Z",
+      "content_hash": "85e2e9572c19dfb509cb6111690f2db3bff6d263b56edb4935117677c3de1380",
+      "verified_at": "2026-11-05T07:52:00.004Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T08:04:23.667Z"
+      "last_updated": "2026-11-05T07:52:00.004Z"
     },
     "crazycodeboy/react-native-splash-screen": {
       "repository": "crazycodeboy/react-native-splash-screen",

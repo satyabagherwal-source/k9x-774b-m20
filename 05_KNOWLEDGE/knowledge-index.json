@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T07:41:59.721Z",
+  "last_updated": "2026-11-05T07:53:33.937Z",
   "total_verified_learnings": 1215,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -16839,8 +16839,8 @@
       "slug": "grpc-grpc-rust",
       "platform": "github",
       "source_url": "https://github.com/grpc/grpc-rust",
-      "source_version": "422ad407",
-      "content_hash": "a784eaa96e213ca954ae0e6692018cdbd75679f68b70f462e9a31aa3124b4573",
+      "source_version": "0c9feb49",
+      "content_hash": "85e2e9572c19dfb509cb6111690f2db3bff6d263b56edb4935117677c3de1380",
       "dossier_path": "07_PROJECT_LEARNING/grpc-grpc-rust-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/grpc-grpc-rust-learnings.md",
       "promoted_rules": [
@@ -16923,6 +16923,11 @@
           "number": 6769,
           "title": "ds-client: retry the ADS stream indefinitely and fix backoff overflow panic (#2",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7157,
+          "title": "Wire A32 circuit breaking into xDS channels (#2712)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -16930,7 +16935,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T08:04:23.542Z",
+      "verified_at": "2026-11-05T07:51:59.873Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -28111,7 +28116,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/openai/clip-vit-base-patch32",
       "source_version": "hf-openai-clip-vit-base-patch32",
-      "content_hash": "3df7cad9dbdb197e751776ef4cd6289836559d9639d96868781b4177d0625109",
+      "content_hash": "6d0925d88cd2491437399568931b53c74c3a0c7201633ac3e89ef0a43286e526",
       "dossier_path": "07_PROJECT_LEARNING/hf-openai-clip-vit-base-patch32-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-openai-clip-vit-base-patch32-learnings.md",
       "promoted_rules": [
@@ -28123,6 +28128,21 @@
         {
           "number": 1440,
           "title": "Causal Masking and Deterministic EOS Token Feature Extraction",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7158,
+          "title": "Dual-Encoder Decoupling Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7159,
+          "title": "Logit Scale Temperature Control Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7160,
+          "title": "Tokenizer Padding & Truncation Invariant",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -28143,7 +28163,7 @@
         "learn-huggingface-hf-openai-clip-vit-base-patch32-mv3y5o08",
         "learn-huggingface-hf-openai-clip-vit-base-patch32-mv4cvq4q"
       ],
-      "verified_at": "2026-10-31T17:22:54.689Z",
+      "verified_at": "2026-11-05T07:53:33.914Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -72402,13 +72422,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
-      "slug": "provablehq-snarkos",
+      "slug": "aleo-labs-protocol-snarkos",
       "platform": "github",
-      "source_url": "https://github.com/ProvableHQ/snarkOS",
+      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
       "source_version": "acb81361",
-      "content_hash": "383705f793aa2a820ee88096e9635ec068f0216a535858282c83bec2c40ea1b9",
-      "dossier_path": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
+      "content_hash": "5114d0e911705130d9a20575b4158fec162cda82ce15585c4308f3f123ee4fc8",
+      "dossier_path": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
       "promoted_rules": [
         {
           "number": 1114,
@@ -72523,7 +72543,7 @@
         {
           "number": 7128,
           "title": "Merge pull request #4625 from aleo-labs-protocol/fix/simple-node-startup",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -72531,7 +72551,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T06:07:51.434Z",
+      "verified_at": "2026-11-05T07:52:04.527Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -180663,14 +180683,14 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 7128,
       "title": "Merge pull request #4625 from aleo-labs-protocol/fix/simple-node-startup",
-      "source_url": "https://github.com/ProvableHQ/snarkOS",
+      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
       "source_version": "acb81361",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-05T06:07:51.434Z"
+      "verified_at": "2026-11-05T07:52:04.527Z"
     },
     "rule-7129": {
       "learning_id": "rule-7129",
@@ -181096,6 +181116,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-05T07:34:49.955Z"
+    },
+    "rule-7157": {
+      "learning_id": "rule-7157",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7157,
+      "title": "Wire A32 circuit breaking into xDS channels (#2712)",
+      "source_url": "https://github.com/grpc/grpc-rust",
+      "source_version": "0c9feb49",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T07:51:59.873Z"
+    },
+    "rule-7158": {
+      "learning_id": "rule-7158",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7158,
+      "title": "Dual-Encoder Decoupling Invariant",
+      "source_url": "https://huggingface.co/openai/clip-vit-base-patch32",
+      "source_version": "hf-openai-clip-vit-base-patch32",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T07:53:33.914Z"
+    },
+    "rule-7159": {
+      "learning_id": "rule-7159",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7159,
+      "title": "Logit Scale Temperature Control Invariant",
+      "source_url": "https://huggingface.co/openai/clip-vit-base-patch32",
+      "source_version": "hf-openai-clip-vit-base-patch32",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T07:53:33.914Z"
+    },
+    "rule-7160": {
+      "learning_id": "rule-7160",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7160,
+      "title": "Tokenizer Padding & Truncation Invariant",
+      "source_url": "https://huggingface.co/openai/clip-vit-base-patch32",
+      "source_version": "hf-openai-clip-vit-base-patch32",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T07:53:33.914Z"
     }
   },
   "aliases": {

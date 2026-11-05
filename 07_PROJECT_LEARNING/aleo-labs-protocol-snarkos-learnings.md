@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md`  
 > **Source**: github ([https://github.com/aleo-labs-protocol/snarkOS](https://github.com/aleo-labs-protocol/snarkOS))  
-> **Source Version**: `66955b13`  
+> **Source Version**: `acb81361`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T21:26:18.537Z  
+> **Timestamp**: 2026-11-05T07:52:04.140Z  
 > **Learning ID**: `learn-github-aleo-labs-protocol-snarkos`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/aleo-labs-protocol/snarkOS](https://github.com/aleo-labs-protocol/snarkOS))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T21:26:18.529Z  
+> **Harvest Timestamp**: 2026-11-05T07:52:04.132Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1987,264 +1987,341 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `66955b13` (2026-11-04)
-**Commit Message**: Merge pull request #4624 from aleo-labs-protocol/ci/bump-snarkvm
+### Incident Patch 1: `b9cda7fe` (2026-11-05)
+**Commit Message**: Merge pull request #4625 from aleo-labs-protocol/fix/simple-node-startup
 
-Bump snarkVM to aleo-labs-protocol/snarkVM@a62f98959
-
-**File**: `Cargo.lock` (modified, +155/-170)
+**File**: `.ci/test_simple_node.sh` (added, +148/-0)
 ```diff
-@@ -521,11 +521,11 @@ dependencies = [
- 
- [[package]]
- name = "bit-set"
--version = "0.8.0"
-+version = "0.11.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "08807e080ed7f9d5433fa9b275196cfc35414f66a0c79d864dc51a0d825231a3"
-+checksum = "56d87354e4229f54a44f7bf2435906a4656dba36026ab6eaca629a2c436a691c"
- dependencies = [
-- "bit-vec 0.8.0",
-+ "bit-vec 0.10.1",
- ]
- 
- [[package]]
-@@ -536,9 +536,13 @@ checksum = "349f9b6a179ed607305526ca489b34ad0a41aed5f7980fa90eb03160b69598fb"
- 
- [[package]]
- name = "bit-vec"
--version = "0.8.0"
-+version = "0.10.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "5e764a1d40d510daf35e07be9eb06e75770908c27d411ee6c92109c9840eaaf7"
-+checksum = "5727b15fa97d4f4fee0a3b7c3d550ed0269f54329207b86388de918604e31269"
-+dependencies = [
-+ "borsh",
-+ "serde",
-+]
- 
- [[package]]
- name = "bitflags"
-@@ -608,10 +612,24 @@ version = "1.8.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "a88b7ea17d208c4193f2c1e6de3c35fe71f98c96982d5ced308bdcc749ff6e1f"
- dependencies = [
-+ "borsh-derive",
-  "bytes",
-  "cfg_aliases",
- ]
- 
-+[[package]]
-+name = "borsh-derive"
-+version = "1.8.1"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "12cdfe656708a01f89b451a7d36466e6fe6c414de0aa18fc54f864f6f9ca9f56"
-+dependencies = [
-+ "once_cell",
-+ "proc-macro-crate",
-+ "proc-macro2",
-+ "quote 1.0.47",
-+ "syn 3.0.3",
-+]
+@@ -0,0 +1,148 @@
++#!/bin/bash
 +
- [[package]]
- name = "bs58"
- version = "0.5.1"
-@@ -1106,6 +1124,12 @@ version = "0.8.7"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "773648b94d0e5d620f64f280777445740e61fe701025087ec8b57f45c791888b"
- 
-+[[package]]
-+name = "core_detect"
-+version = "1.0.0"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "7f8f80099a98041a3d1622845c271458a2d73e688351bf3cb999266764b81d48"
++####################################################
++# Runs the simple_node example in each of its modes
++####################################################
 +
- [[package]]
- name = "cpubits"
- version = "0.1.1"
-@@ -1487,7 +1511,7 @@ checksum = "bba95f299f6b9cd47f68a847eca2ae9060a2713af532dc35c342065544845407"
- dependencies = [
-  "proc-macro2",
-  "quote 1.0.47",
-- "structmeta 0.3.0",
-+ "structmeta",
-  "syn 2.0.119",
- ]
- 
-@@ -2489,7 +2513,7 @@ dependencies = [
-  "libc",
-  "percent-encoding",
-  "pin-project-lite",
-- "socket2 0.6.5",
-+ "socket2 0.5.10",
-  "system-configuration",
-  "tokio",
-  "tower-service",
-@@ -3365,9 +3389,9 @@ dependencies = [
- 
- [[package]]
- name = "num-bigint"
--version = "0.4.8"
-+version = "0.5.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "c89e69e7e0f03bea5ef08013795c25018e101932225a656383bd384495ecc367"
-+checksum = "93e7820bc0a80a0238e650327316f929ba18d5be054b647490a3a6a339f3e7c0"
- dependencies = [
-  "num-integer",
-  "num-traits",
-@@ -3981,6 +4005,15 @@ dependencies = [
-  "wnaf",
- ]
- 
-+[[package]]
-+name = "proc-macro-crate"
-+version = "3.5.0"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "e67ba7e9b2b56446f1d419b1d807906278ffa1a658a8a5d8a39dcb1f5a78614f"
-+dependencies = [
-+ "toml_edit",
-+]
++set -eo pipefail # error on any command failure
 +
- [[package]]
- name = "proc-macro2"
- version = "1.0.107"
-@@ -3992,18 +4025,18 @@ dependencies = [
- 
- [[package]]
- name = "proptest"
--version = "1.6.0"
-+version = "1.12.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "14cae93065090804185d3b75f0bf93b8eeda30c7a9b4a33d3bdb3988d6229e50"
-+checksum = "b8530004ccb15eae51c7e40009fbe317f341f804db54dc033eec1c50be28cfa0"
- dependencies = [
-- "bit-set 0.8.0",
-- "bit-vec 0.8.0",
-+ "bit-set 0.11.1",
-+ "bit-vec 0.10.1",
-  "bitflags 2.13.1",
-- "lazy_static",
-+ "chacha20 0.10.2",
-+ "core_detect",
-  "num-traits",
-- "rand 0.8.7",
-- "rand_chacha 0.3.1",
-- "rand_xorshift 0.3.0",
-+ "rand 0.10.3",
-+ "rand_xorshift",
-  "regex-syntax",
-  "rusty-fork",
-  "tempfile",
-@@ -4096,7 +4129,7 @@ dependencies = [
-  "quinn-udp",
-  "rustc-hash",
-  "rustls",
-- "socket2 0.6.5",
-+ "socket2 0.5.10",
-  "thiserror 2.0.20",
-  "tokio",
-  "tracing",
-@@ -4135,7 +4168,7 @@ dependencies = [
-  "cfg_aliases",
-  "libc",
-  "once_cell",
-- "socket2 0.6.5",
-+ "socket2 0.5.10",
-  "tracing",
-  "windows-sys 0.61.2",
- ]
-@@ -4173,8 +4206,6 @@ version = "0.8.7"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "22f6172bdec972074665ed81ed53b71da00bfc44b65a753cfde883ec4c702a1a"
- dependencies = [
-- "libc",
-- "rand_chacha 0.3.1",
-  "rand_core 0.6.4",
- ]
- 
-@@ -4199,16 +4230,6 @@ dependencies = [
-  "rand_core 0.10.1",
- ]
- 
--[[package]]
--name = "rand_chacha"
--version = "0.3.1"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "e6c10a63a0fa32252be49d21e7709d4d4baf8d231c2dbce1eaa8141b9b127d88"
--dependencies = [
-- "ppv-lite86",
-- "rand_core 0.6.4",
--]
--
- [[package]]
- name = "rand_chacha"
- version = "0.9.0"
-@@ -4272,15 +4293,6 @@ dependencies = [
-  "rand_core 0.10.1",
- ]
- 
--[[package]]
--name = "rand_xorshift"
--version = "0.3.0"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "d25bf25ec5ae4a3f1b92f929810509a2f53d7dca2f50b794ff57e3face536c8f"
--dependencies =
++# The example's public balances only add up to the starting supply if the node count divides it
++# evenly. For example, 7 or 9 nodes panic at genesis.
++num_nodes=4
++
++# Set parameters directly
++min_round=$1
++timeout_secs=$2
++
++# Default values if not provided
++# The target must stay below round 102. The example's ledger stays at genesis, so at that round the
++# committee lookback asks for a committee the ledger does not have, and the nodes stop proposing.
++: "${min_round:=40}"
++: "${timeout_secs:=300}"
++
++# shellcheck source=SCRIPTDIR/utils.sh
++. ./.ci/utils.sh
++
++init_log_dir
++
++run_dir=$(mktemp -d)
++PIDS=()
++
++# Print the end of each node's log if the script fails, and clean up in any case.
++# shellcheck disable=SC2329
++function exit_handler() {
++  local status=$?
++  stop_nodes
++  if [ "$status" -ne 0 ]; then
++    for node_log in "$log_dir"/*-node-*.log; do
++      [ -f "$node_log" ] || continue
++      echo "--- $node_log"
++      tail -n 20 "$node_log"
++    done
++  fi
++  rm -rf "$run_dir"
++}
++trap exit_handler EXIT
++
++# Exits if a process already listens on a node's port, as its responses would count as the node's.
++function check_ports_free() {
++  local port
++  for ((i = 0; i < num_nodes; i++)); do
++    for port in $((3000 + i)) $((5000 + i)); do
++      if (exec 3<>"/dev/tcp/127.0.0.1/$port") 2>/dev/null; then
++        log "⛔️ Another process listens on port $port"
++        exit 1
++      fi
++    done
++  done
++}
++
++# Starts the nodes for the given mode.
++function start_nodes() {
++  local mode="$1"
++  check_ports_free
++  PIDS=()
++  for ((i = 0; i < num_nodes; i++)); do
++    # A node keeps its data in its working directory.
++    local node_dir="$run_dir/$mode-$i"
++    mkdir -p "$node_dir"
++    (
++      cd "$node_dir"
++      exec "$simple_node" --mode "$mode" --id "$i" --num-nodes "$num_nodes" --fire-transmissions
++    ) > "$log_dir/$mode-node-$i.log" 2>&1 &
++    PIDS+=($!)
++  done
++}
++
++# Waits until every node reaches the target round. Exits if a node stops or the timeout elapses.
++function wait_for_round() {
++  local mode="$1"
++  local start
++  start=$(now)
++  while true; do
++    for pid in "${PIDS[@]}"; do
++      if ! kill -0 "$pid" 2>/dev/null; then
++        log "⛔️ A $mode node (pid=$pid) exited early"
++        exit 1
++      fi
++    done
++
++    local lowest_round=$min_round
++    for ((i = 0; i < num_nodes; i++)); do
++      local round
++      round=$(curl -sf -m 2 "127.0.0.1:$((3000 + i))/round/current") || round=0
++      # A longer or zero-padded number does not compare correctly below.
++      [[ "$round" =~ ^(0|[1-9][0-9]{0,8})$ ]] || round=0
++      if ((round < lowest_round)); then
++        lowest_round=$round
++      fi
++    done
++
++    if ((lowest_round >= min_round)); then
++      log "✅ All $mode nodes reached round $min_round after $(elapsed_since "$start")s"
++      return 0
++    fi
++
++    if (($(elapsed_since "$start") >= timeout_secs)); then
++      log "⛔️ The lowest $mode node is at round $lowest_round after ${timeout_secs}s, below round $min_round"
++      exit 1
++    fi
++
++    sleep 5
++  done
++}
++
++log "Building the simple_node example"
++CARGO_PROFILE_RELEASE_LTO=off \
++CARGO_PROFILE_RELEASE_CODEGEN_UNITS=16 \
++CARGO_PROFILE_RELEASE_OPT_LEVEL=2 \
++CARGO_PROFILE_RELEASE_DEBUG=0 \
++  cargo build --release --locked -p snarkos-node-bft --example simple_node
++simple_node="$(realpath "${CARGO_TARGET_DIR:-target}")/release/examples/simple_node"
++
++for mode in bft narwhal; do
++  log "Starting $num_nodes $mode nodes"
++  start_nodes "$mode"
++  wait_for_round "$mode"
++
++  # Nodes with different genesis blocks can still reach consensus, and report the fork in their logs.
++  if grep -l "Detected fork" "$log_dir/$mode"-node-*.log; then
++    log "⛔️ The $mode nodes do not share a genesis block"
++    exit 1
++  fi
++
++  # Narwhal mode has no BFT layer, so its nodes do not commit.
++  if [ "$mode" = bft ]; then
++    for ((i = 0; i < num_nodes; i++)); do
++      if ! grep -q "Committing a subDAG" "$log_dir/$mode-node-$i.log"; then
++        log "⛔️ BFT node $i reached round $min_round without a commit"
++        exit 1
++      fi
++    done
++  fi
++
++  stop_nodes
++  PIDS=()
++done
++
++log "✅ simple_node ran in every mode"
 ```
 
-**File**: `Cargo.toml` (modified, +1/-1)
+**File**: `.github/workflows/ci.yml` (modified, +9/-3)
 ```diff
-@@ -49,7 +49,7 @@ default-features = false
- [workspace.dependencies.snarkvm]
- #path = "../snarkVM"
- git = "https://github.com/aleo-labs-protocol/snarkVM.git"
--rev = "9796eb19dee4fd2c671be9b3a1322eda62586991" #staging
-+rev = "a62f989591d78bcf10877accd5df1877c3e662da" #staging
- #version = "=4.12.0"
- default-features = false
- 
+@@ -271,16 +271,22 @@ jobs:
+             runs: |
+               ./.ci/test_db_backup.sh
+               ./.ci/test_devnet.sh
++          # Clippy and `cargo check` only compile the examples, so this is the one
++          # job that runs one. It builds the example itself.
++          - name: simple-node
++            timeout: 60
++            delay: false
++            runs: ./.ci/test_simple_node.sh
+     name: devnet (${{ matrix.name }})
+     steps: &devnet-steps
+       - uses: actions/checkout@v7
+         with: { persist-credentials: false }
+       - uses: aleo-labs-protocol/gh-actions/.github/actions/runner-job-setup@v2
+       - name: Stop leftover nodes
+         run: &stop-nodes |
+-          pkill -x snarkos || true
+-          for _ in $(seq 20); do pgrep -x snarkos > /dev/null || break; sleep 1; done
+-          pkill -9 -x snarkos || true
++          pkill -x 'snarkos|simple_node' || true
++          for _ in $(seq 20); do pgrep -x 'snarkos|simple_node' > /dev/null || break; sleep 1; done
++          pkill -9 -x 'snarkos|simple_node' || true
+           sudo -n /usr/local/sbin/runner-netem clear
+       - uses: actions/download-artifact@v8
+         with:
 ```
 
-**File**: `node/bft/src/helpers/storage.rs` (modified, +1/-1)
+**File**: `CI.md` (modified, +3/-2)
 ```diff
-@@ -2066,7 +2066,7 @@ pub mod prop_tests {
-         type Strategy = BoxedStrategy<CryptoTestRng>;
+@@ -44,6 +44,7 @@ other jobs run on every event.
+ | `test (sync)` | `cpu` | all | 90 | `snarkos-node-sync` |
+ | `build-snarkos` | `cpu` | all | 60 | release `snarkos` with `test_network`, as an artifact |
+ | `devnet (devnet)` | `cpu` | all | 40 | `test_db_backup.sh`, `test_devnet.sh` |
++| `devnet (simple-node)` | `cpu` | all | 60 | `test_simple_node.sh` |
+ | `devnet (dev-on-prod-restart)` | `cpu` | merge | 45 | `test_dev_on_prod_restart.sh` |
+ | `devnet (chaotic-minority-reset)` | `cpu` | merge | 45 | `test_reset_minority.sh`, with delays |
+ | `devnet (chaotic-majority-restart)` | `cpu` | merge | 45 | `test_restart_majority.sh`, with delays |
+@@ -91,8 +92,8 @@ blocks are keyed by `Cargo.lock` and `cli/src/commands/start.rs`. The
+ of their own. It builds that release the first time a box sees its tag, in a
+ target dir of its own, and keeps it. The chaotic entries delay loopback
+ traffic through the boxes' `runner-netem` helper, which the runner user may
+-run with `sudo`. Every devnet entry stops leftover `snarkos` processes and
+-clears the delays before it starts and after it ends.
++run with `sudo`. Every devnet entry stops leftover `snarkos` and `simple_node`
++processes and clears the delays before it starts and after it ends.
  
-         fn arbitrary_with(_: Self::Parameters) -> Self::Strategy {
--            use proptest::prelude::RngCore as ProptestRngCore;
-+            use proptest::prelude::Rng as ProptestRng;
-             Just(0).prop_perturb(|_, mut rng| CryptoTestRng(ChaChaRng::seed_from_u64(rng.next_u64()))).boxed()
-         }
+ To run the `.ci` scripts on macOS you may want to `brew install bash coreutils
+ && echo 'export PATH="/opt/homebrew/bin:$PATH"' >> ~/.bash_profile`.
+```
+
+**File**: `node/bft/examples/simple_node.rs` (modified, +14/-49)
+```diff
+@@ -34,7 +34,7 @@ use snarkos_utilities::{NodeDataDir, SimpleStoppable};
+ 
+ use aleo_std::StorageMode;
+ use snarkvm::{
+-    console::{account::PrivateKey, algorithms::BHP256, types::Address},
++    console::{account::PrivateKey, types::Address},
+     ledger::{
+         Block,
+         Ledger,
+@@ -44,8 +44,8 @@ use snarkvm::{
+         puzzle::{Solution, SolutionID},
+         store::{ConsensusStore, helpers::memory::ConsensusMemory},
+     },
+-    prelude::{Field, Hash, Network, Uniform, VM},
+-    utilities::{FromBytes, TestRng, ToBits, ToBytes, to_bytes_le},
++    prelude::{Field, Network, Uniform, VM},
++    utilities::TestRng,
+ };
+ 
+ use ::bytes::Bytes;
+@@ -67,7 +67,7 @@ use std::{
+     net::{IpAddr, Ipv4Addr, SocketAddr},
+     path::PathBuf,
+     str::FromStr,
+-    sync::{Arc, Mutex, OnceLock},
++    sync::Arc,
+ };
+ use tokio::{net::TcpListener, sync::oneshot};
+ use tracing_subscriber::{
+@@ -129,7 +129,7 @@ pub async fn start_bft(
+     // Initialize the components.
+     let (committee, account) = initialize_components(node_id, num_nodes)?;
+     // Initialize the translucent ledger service.
+-    let ledger = create_ledger(&account, num_nodes, committee, node_id);
++    let ledger = tokio::task::spawn_blocking(move || create_ledger(num_nodes, committee, node_id)).await?;
+     // Initialize the storage.
+     let storage = Storage::new(
+         ledger.clone(),
+@@ -184,7 +184,7 @@ pub async fn start_primary(
+     // Initialize the components.
+     let (committee, account) = initialize_components(node_id, num_nodes)?;
+     // Initialize the translucent ledger service.
+-    let ledger = create_ledger(&account, num_nodes, committee, node_id);
++    let ledger = tokio::task::spawn_blocking(move || create_ledger(num_nodes, committee, node_id)).await?;
+     // Initialize the storage.
+     let storage = Storage::new(
+         ledger.clone(),
+@@ -223,31 +223,29 @@ pub async fn start_primary(
+ }
+ 
+ /// Initialize the translucent ledger service.
++///
++/// This must run on a blocking thread, as the VM's sequential operations panic on an async one.
+ fn create_ledger(
+-    account: &Account<CurrentNetwork>,
+     num_nodes: u16,
+     committee: Committee<snarkvm::prelude::MainnetV0>,
+     node_id: u16,
+ ) -> Arc<TranslucentLedgerService<snarkvm::prelude::MainnetV0, ConsensusMemory<snarkvm::prelude::MainnetV0>>> {
+-    let gen_key = account.private_key();
++    // Every node derives the same genesis block.
++    let gen_key = Account::<CurrentNetwork>::new(&mut rand_chacha::ChaChaRng::seed_from_u64(0)).unwrap();
+     let public_balance_per_validator =
+         (CurrentNetwork::STARTING_SUPPLY - (num_nodes as u64) * MIN_VALIDATOR_STAKE) / (num_nodes as u64);
+     let mut balances = IndexMap::<Address<CurrentNetwork>, u64>::new();
+     for address in committee.members().keys() {
+         balances.insert(*address, public_balance_per_validator);
      }
-```
-
----
-
-### Incident Patch 2: `e23a7374` (2026-11-04)
-**Commit Message**: Merge pull request #4626 from aleo-labs-protocol/ci/bump-snarkvm-twice-weekly
-
-Run the snarkVM bump workflow on Mondays and Thursdays
-
-**File**: `.github/workflows/bump-snarkvm.yml` (modified, +1/-1)
-```diff
-@@ -1,7 +1,7 @@
- name: Bump snarkVM
- on:
-   schedule:
--    - cron: '0 6 * * 1'
-+    - cron: '0 6 * * 1,4'
-   workflow_dispatch:
+-    let mut rng = TestRng::default();
+-    let gen_ledger = genesis_ledger(*gen_key, committee.clone(), balances.clone(), node_id, &mut rng);
++    let mut rng = TestRng::fixed(0);
++    let block = genesis_block(*gen_key.private_key(), committee, balances, &mut rng);
++    let gen_ledger = CurrentLedger::load(block, StorageMode::Development(node_id)).unwrap();
+     Arc::new(TranslucentLedgerService::new(gen_ledger, SimpleStoppable::new()))
+ }
  
- concurrency:
+ pub type CurrentLedger = Ledger<CurrentNetwork, ConsensusMemory<CurrentNetwork>>;
+ 
+-fn genesis_cache() -> &'static Mutex<HashMap<Vec<u8>, Block<CurrentNetwork>>> {
+-    static CACHE: OnceLock<Mutex<HashMap<Vec<u8>, Block<CurrentNetwork>>>> = OnceLock::new();
+-    CACHE.get_or_init(|| Mutex::new(HashMap::new()))
+-}
+-
+ fn genesis_block(
+     genesis_private_key: PrivateKey<CurrentNetwork>,
+     committee: Committee<CurrentNetwork>,
+@@ -264,39 +262,6 @@ fn genesis_block(
+     vm.genesis_quorum(&genesis_private_key, committee, public_balances, bonded_balances, rng).unwrap()
+ }
+ 
+-fn genesis_ledger(
+-    genesis_private_key: PrivateKey<CurrentNetwork>,
+-    committee: Committee<CurrentNetwork>,
+-    public_balances: IndexMap<Address<CurrentNetwork>, u64>,
+-    node_id: u16,
+-    rng: &mut impl CryptoRng,
+-) -> CurrentLedger {
+-    let cache_key =
+-        to_bytes_le![genesis_private_key, committee, public_balances.iter().collect::<Vec<(_, _)>>()].unwrap();
+-    // Initialize the genesis block on the first call; other callers
+-    // will wait for it on the mutex.
+-    let block = genesis_cache()
+-        .lock()
+-        .unwrap()
+-        .entry(cache_key.clone())
+-        .or_insert_with(|| {
+-            let hasher = BHP256::<CurrentNetwork>::setup("aleo.dev.block").unwrap();
+-            let file_name = hasher.hash(&cache_key.to_bits_le()).unwrap().to_string() + ".genesis";
+-            let file_path = std::env::temp_dir().join(file_name);
+-            if file_path.exists() {
+-                let buffer = std::fs::read(file_path).unwrap();
+-                return Block::from_bytes_le(&buffer).unwrap();
+-            }
+-
+-            let block = gen
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4631** (2026-11-05): Send only the load test options that are filled in (@cbeck88)
 - **PR #4626** (2026-11-04): Run the snarkVM bump workflow on Mondays and Thursdays (@cbeck88)
+- **PR #4625** (2026-11-05): Make the simple_node example run, and smoke test it in CI (@cbeck88)
 - **PR #4624** (2026-11-04): Bump snarkVM to aleo-labs-protocol/snarkVM@a62f98959 (@aleo-labs-merge-bot[bot])
 - **PR #4623** (2026-11-04): Open snarkVM bump PRs with the merge-bot app (@cbeck88)
-- **PR #4621** (2026-11-04): Report a request the stress test host rejects (@cbeck88)
-- **PR #4620** (2026-11-04): Update the stress test's params example (@cbeck88)
-- **PR #4619** (2026-11-04): Choose the stress test's network size by validator count (@cbeck88)
+- **PR #4622** (2026-11-05): Add a form for running load tests (@cbeck88)
 
 ---
 
@@ -2264,107 +2341,72 @@ Run the snarkVM bump workflow on Mondays and Thursdays
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #4624 from aleo-labs-protocol/ci/bump-snarkvm
+## X. Merge pull request #4625 from aleo-labs-protocol/fix/simple-node-startup
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.ci/test_simple_node.sh`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `66955b13`: Merge pull request #4624 from aleo-labs-protocol/ci/bump-snarkvm. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b9cda7fe`: Merge pull request #4625 from aleo-labs-protocol/fix/simple-node-startup. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.ci/test_simple_node.sh`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-version = "0.11.1"
-checksum = "56d87354e4229f54a44f7bf2435906a4656dba36026ab6eaca629a2c436a691c"
- "bit-vec 0.10.1",
-version = "0.10.1"
-checksum = "5727b15fa97d4f4fee0a3b7c3d550ed0269f54329207b86388de918604e31269"
-dependencies = [
- "borsh",
- "serde",
-]
- "borsh-derive",
-[[package]]
-name = "borsh-derive"
-version = "1.8.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "12cdfe656708a01f89b451a7d36466e6fe6c414de0aa18fc54f864f6f9ca9f56"
-dependencies = [
- "once_cell",
- "proc-macro-crate",
- "proc-macro2",
- "quote 1.0.47",
- "syn 3.0.3",
-]
+#!/bin/bash
 
-[[package]]
-name = "core_detect"
-version = "1.0.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7f8f80099a98041a3d1622845c271458a2d73e688351bf3cb999266764b81d48"
+####################################################
+# Runs the simple_node example in each of its modes
+####################################################
 
- "structmeta",
- "socket2 0.5.10",
-version = "0.5.1"
-checksum = "93e7820bc0a80a0238e650327316f929ba18d5be054b647490a3a6a339f3e7c0"
-[[package]]
-name = "proc-macro-crate"
-version = "3.5.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e67ba7e9b2b56446f1d419b1d807906278ffa1a658a8a5d8a39dcb1f5a78614f"
-dependencies = [
- "toml_edit",
-]
+set -eo pipefail # error on any command failure
 
-version = "1.12.0"
-checksum = "b8530004ccb15eae51c7e40009fbe317f341f804db54d
+# The example's public balances only add up to the starting supply if the node count divides it
+# evenly. For example, 7 or 9 nodes panic at genesis.
+num_nodes=4
+
+# Set parameters directly
+min_round=$1
+timeout_secs=$2
+
+# Default values if not provided
+# The target must stay below round 102. The example's ledger stays at genesis, so at that round the
+# committee lookback asks for a committee the ledger does not have, and the nodes stop proposing.
+: "${min_round:=40}"
+: "${timeout_secs:=300}"
+
+# shellcheck source=SCRIPTDIR/utils.sh
+. ./.ci/utils.sh
+
+init_log_dir
+
+run_dir=$(mktemp -d)
+PIDS=()
+
+# Print the end of each node's log if the script fails, and clean up in any case.
+# shellcheck disable=SC2329
+function exit_handler() {
+  local status=$?
+  stop_nodes
+  if [ "$status" -ne 0 ]; then
+    for node_log in "$log_dir"/*-node-*.log; do
+      [ -f "$node_log" ] || continue
+      echo "--- $node_log"
+      tail -n 20 "$node_log"
+    done
+  fi
+  rm -rf "$run_dir"
+}
+trap e
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-version = "0.8.0"
-checksum = "08807e080ed7f9d5433fa9b275196cfc35414f66a0c79d864dc51a0d825231a3"
- "bit-vec 0.8.0",
-version = "0.8.0"
-checksum = "5e764a1d40d510daf35e07be9eb06e75770908c27d411ee6c92109c9840eaaf7"
- "structmeta 0.3.0",
- "socket2 0.6.5",
-version = "0.4.8"
-checksum = "c89e69e7e0f03bea5ef08013795c25018e101932225a656383bd384495ecc367"
-version = "1.6.0"
-checksum = "14cae93065090804185d3b75f0bf93b8eeda30c7a9b4a33d3bdb3988d6229e50"
- "bit-set 0.8.0",
- "bit-vec 0.8.0",
- "lazy_static",
- "rand 0.8.7",
- "rand_chacha 0.3.1",
- "rand_xorshift 0.3.0",
- "socket2 0.6.5",
- "socket2 0.6.5",
- "libc",
- "rand_chacha 0.3.1",
-[[package]]
-name = "rand_chacha"
-version = "0.3.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e6c10a63a0fa32252be49d21e7709d4d4baf8d231c2dbce1eaa8141b9b127d88"
-dependencies = [
- "ppv-lite86",
- "rand_core 0.6.4",
-]
-
-[[package]]
-name = "rand_xorshift"
-version = "0.3.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d25bf25ec5ae4a3f1b92f929810509a2f53d7dca2f50b794ff57e3face536c8f"
-dependencies =
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `66955b13` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b9cda7fe` are properly handled with clean fallback behavior.

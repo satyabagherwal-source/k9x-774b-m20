@@ -7570,3 +7570,6 @@
 | `CYCLE-20261105-CURE` | `2026-11-05T07:34:40.058Z` | `Venastine-Research/Xing4.0-29B-A4B-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-venastine-research-xing4.0-29b-a4b-gguf-learnings.md` | Yes (`b318cd6d...`) |
 | `CYCLE-20261105-D2H7` | `2026-11-05T07:34:50.059Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7156` | Yes (`a82fb321...`) |
 | `CYCLE-20261105-MA2B` | `2026-11-05T07:41:59.795Z` | `NaiveAI/Naive-N0.5-Flash` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-naiveai-naive-n0.5-flash-learnings.md` | Yes (`a9df434d...`) |
+| `CYCLE-20261105-Z567` | `2026-11-05T07:51:59.983Z` | `grpc/grpc-rust` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7157` | Yes (`85e2e957...`) |
+| `CYCLE-20261105-Z8RM` | `2026-11-05T07:52:04.642Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7128` | Yes (`5114d0e9...`) |
+| `CYCLE-20261105-15QG` | `2026-11-05T07:53:34.024Z` | `openai/clip-vit-base-patch32` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7158, Rule 7159, Rule 7160` | Yes (`6d0925d8...`) |
