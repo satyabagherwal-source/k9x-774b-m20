@@ -7645,3 +7645,6 @@ Every entry in this ledger must capture:
 | `learn-github-chrisbanes-skills` | `https://github.com/chrisbanes/skills` | `72628aea` | Multi-dimensional audit evidence | 2026-11-05T11:30:50.793Z |
 | `learn-github-projectdiscovery-nuclei` | `https://github.com/projectdiscovery/nuclei` | `fb0eed51` | Multi-dimensional audit evidence | 2026-11-05T11:30:55.667Z |
 | `learn-huggingface-google-embeddinggemma-2` | `https://huggingface.co/google/embeddinggemma-2` | `hf-google-` | Multi-dimensional audit evidence | 2026-11-05T11:37:57.894Z |
+| `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `2993b5e6` | Multi-dimensional audit evidence | 2026-11-05T11:45:25.158Z |
+| `learn-huggingface-canberkkkkkk-ema-lightning` | `https://huggingface.co/canberkkkkkk/ema-lightning` | `hf-canberk` | Multi-dimensional audit evidence | 2026-11-05T11:45:25.859Z |
+| `learn-github-weaviate-weaviate` | `https://github.com/weaviate/weaviate` | `7e97594b` | Multi-dimensional audit evidence | 2026-11-05T11:45:28.133Z |

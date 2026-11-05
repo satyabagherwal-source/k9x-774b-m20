@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-05T11:37:57.904Z",
+  "last_updated": "2026-11-05T11:45:28.152Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -815,14 +815,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-canberkkkkkk-ema-lightning",
-      "content_hash": "4790bcaa173fafcf803ab13360e0b6c782066220e15ea55141054f9b4be3f530",
-      "verified_at": "2026-10-31T20:59:43.797Z",
+      "content_hash": "d6a858078e57780e249484384c2f822302fb5291e8f825ba571c753aed520fd8",
+      "verified_at": "2026-11-05T11:45:25.876Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T20:59:43.797Z"
+      "last_updated": "2026-11-05T11:45:25.876Z"
     },
     "google/embeddinggemma-2": {
       "repository": "google/embeddinggemma-2",
@@ -5496,14 +5496,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tailscale-tailscale",
-      "content_hash": "a82fb3211457203599952de31b712d8eeb4cf10a8df025e958d1ab781a18f538",
-      "verified_at": "2026-11-05T07:34:50.077Z",
+      "content_hash": "3cf5257e9abd01959c45761fa06cf8021f304d2437039eeb0ae05d7920f21d0d",
+      "verified_at": "2026-11-05T11:45:25.178Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T07:34:50.077Z"
+      "last_updated": "2026-11-05T11:45:25.178Z"
     },
     "dingodb/dingo": {
       "repository": "dingodb/dingo",
@@ -10341,14 +10341,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-weaviate-weaviate",
-      "content_hash": "5cec20d7e0b7cb9cdef1a31c41782a1b02f13b57b755293a2d5351996e9402dc",
-      "verified_at": "2026-11-04T20:53:29.906Z",
+      "content_hash": "7f53e1275670e8740eb373882a912b5c6d632215cce08eb70a6c457ad76da43c",
+      "verified_at": "2026-11-05T11:45:28.151Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T20:53:29.906Z"
+      "last_updated": "2026-11-05T11:45:28.151Z"
     },
     "topgrade-rs/topgrade": {
       "repository": "topgrade-rs/topgrade",

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source**: github ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
-> **Source Version**: `dc698697`  
+> **Source Version**: `2993b5e6`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T07:34:49.386Z  
+> **Timestamp**: 2026-11-05T11:45:24.347Z  
 > **Learning ID**: `learn-github-tailscale-tailscale`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T07:34:49.381Z  
+> **Harvest Timestamp**: 2026-11-05T11:45:24.232Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The easiest, most secure way to use WireGuard and 2FA.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 38661 stars
+- **Stars / Engagement**: 38672 stars
 
 ---
 
@@ -821,260 +821,245 @@ export const sessionStateStorage: IPNStateStorage = {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `dc698697` (2026-11-05)
-**Commit Message**: net/netcheck: never prefer a STUN-only region as the home DERP (#21976)
+### Incident Patch 1: `2993b5e6` (2026-11-05)
+**Commit Message**: cmd/k8s-operator: move Recorder reconciler into its own package (#20891)
 
-The PreferredDERP selection loop only considers RegionLatency, which
-STUN probes populate for STUN-only regions too. When such a region is
-the only one with a latency sample (e.g. self-hosted DERP behind a
-TCP-only tunnel while a public STUN server is reachable), it gets
-selected as the preferred DERP and all relay traffic blackholes, since
-the region has no DERP server to relay through.
+Move the Recorder reconciler and its object specs into
+k8s-operator/reconciler/recorder, following the earlier ProxyClass,
+DNSConfig and nameserver moves, and switch it to the shared finalizer,
+resource tracker and CreateOrUpdate helpers.
 
-Filter STUN-only regions in the selection loop by reusing the existing
-regionHasDERPNode predicate (renamed to CanServeDERP), which was
-already applied to the HTTPS/ICMP fallback probing but not here.
+Hoist two duplicated helpers into tailscaled.PrefsFromStateSecret and
+reconciler.IsOptimisticLockError, and add
+k8s-operator/reconciler/reconcilertest for the test helpers each package
+had copied, including one fake Tailscale API client in place of four.
 
-Regions missing from the map, or present without any nodes, keep the
-old behavior, as some tests use latency-only DERP maps.
+No behaviour change; the Recorder's watches and labels are untouched.
 
-Fixes #21975
+Fixes tailscale/corp#37086
 
-Signed-off-by: Luo Chen <[REDACTED_EMAIL]>
+Signed-off-by: David Bond <[REDACTED_EMAIL]>
 
-**File**: `net/netcheck/netcheck.go` (modified, +9/-10)
+**File**: `cmd/k8s-operator/api-server-proxy-pg.go` (modified, +3/-3)
 ```diff
-@@ -1004,7 +1004,7 @@ func (c *Client) GetReport(ctx context.Context, dm *tailcfg.DERPMap, opts *GetRe
- 		var wg sync.WaitGroup
- 		var need []*tailcfg.DERPRegion
- 		for rid, reg := range dm.Regions {
--			if !rs.haveRegionLatency(tailcfg.DERPRegionID(rid)) && regionHasDERPNode(reg) && !reg.Avoid && !reg.NoMeasureNoHome {
-+			if !rs.haveRegionLatency(tailcfg.DERPRegionID(rid)) && reg.CanServeDERP() && !reg.Avoid && !reg.NoMeasureNoHome {
- 				need = append(need, reg)
- 			}
- 		}
-@@ -1466,6 +1466,14 @@ func (c *Client) addReportHistoryAndSetPreferredDERP(rs *reportState, r *Report,
- 			d = time.Duration(float64(d) * score)
- 		}
+@@ -12,7 +12,6 @@ import (
+ 	"fmt"
+ 	"maps"
+ 	"slices"
+-	"strings"
  
-+		// A STUN-only region has no DERP server to relay through, so it must
-+		// never become the preferred DERP even though its STUN probe gives it
-+		// a RegionLatency entry. Regions missing from the map or without any
-+		// DERP server are equally unable to serve as a home.
-+		if !dm.Regions().Get(regionID).CanServeDERP() {
-+			continue
-+		}
-+
- 		if regionID == prevDERP {
- 			oldRegionCurLatency = d
+ 	"go.uber.org/zap"
+ 	corev1 "k8s.io/api/core/v1"
+@@ -27,6 +26,7 @@ import (
+ 
+ 	tsoperator "tailscale.com/k8s-operator"
+ 	tsapi "tailscale.com/k8s-operator/apis/v1alpha1"
++	"tailscale.com/k8s-operator/reconciler"
+ 	"tailscale.com/k8s-operator/tsclient"
+ 	"tailscale.com/kube/k8s-proxy/conf"
+ 	"tailscale.com/kube/kubetypes"
+@@ -85,7 +85,7 @@ func (r *KubeAPIServerTSServiceReconciler) Reconcile(ctx context.Context, req re
+ 
+ 	if markedForDeletion(pg) {
+ 		logger.Debugf("ProxyGroup is being deleted, ensuring any created resources are cleaned up")
+-		if err = r.maybeCleanup(ctx, serviceName, pg, logger, tsClient); err != nil && strings.Contains(err.Error(), optimisticLockErrorMsg) {
++		if err = r.maybeCleanup(ctx, serviceName, pg, logger, tsClient); reconciler.IsOptimisticLockError(err) {
+ 			logger.Infof("optimistic lock error, retrying: %s", err)
+ 			return res, nil
  		}
-@@ -1755,15 +1763,6 @@ func (c *Client) nodeAddrPort(ctx context.Context, n *tailcfg.DERPNode, port int
- 	return zero, false
- }
+@@ -95,7 +95,7 @@ func (r *KubeAPIServerTSServiceReconciler) Reconcile(ctx context.Context, req re
  
--func regionHasDERPNode(r *tailcfg.DERPRegion) bool {
--	for _, n := range r.Nodes {
--		if !n.STUNOnly {
--			return true
--		}
--	}
--	return false
--}
--
- func maxDurationValue(m map[tailcfg.DERPRegionID]time.Duration) (max time.Duration) {
- 	for _, v := range m {
- 		if v > max {
-```
-
-**File**: `net/netcheck/netcheck_test.go` (modified, +55/-2)
-```diff
-@@ -47,7 +47,12 @@ func TestBasic(t *testing.T) {
- 		t.Fatal(err)
- 	}
- 
--	r, err := c.GetReport(ctx, stuntest.DERPMapOf(stunAddr.String()), nil)
-+	dm := stuntest.DERPMapOf(stunAddr.String())
-+	// stuntest nodes are all STUNOnly; make this a regular DERP region so
-+	// that the PreferredDERP assertion below exercises the normal path.
-+	dm.Regions[1].Nodes[0].STUNOnly = false
-+
-+	r, err := c.GetReport(ctx, dm, nil)
+ 	err = r.maybeProvision(ctx, serviceName, pg, logger, tsClient)
  	if err != nil {
- 		t.Fatal(err)
- 	}
-@@ -130,6 +135,51 @@ func TestSTUNResponseProvesCanSend(t *testing.T) {
- 	}
- }
- 
-+// TestSTUNOnlyRegionNotPreferredDERP verifies a STUNOnly region is
-+// never selected as the preferred DERP, even when it's the only region
-+// with a STUN latency sample (as in real setups where only a public
-+// STUN server is reachable, e.g. self-hosted DERP behind a TCP-only
-+// tunnel), where selecting it would blackhole all relay traffic.
-+func TestSTUNOnlyRegionNotPreferredDERP(t *testing.T) {
-+	// Region 1: a real, reachable STUN server marked STUNOnly.
-+	stunAddr, cleanup := stuntest.Serve(t)
-+	defer cleanup()
-+
-+	// Region 2: a UDP blackhole (unreachable) normal DERP region.
-+	blackhole, err := net.ListenPacket("udp4", "127.0.0.1:0")
-+	if err != nil {
-+		t.Fatalf("failed to open blackhole STUN listener: %v", err)
-+	}
-+	defer blackhole.Close()
-+
-+	dm := stuntest.DERPMapOf(stunAddr.String(), blackhole.LocalAddr().String())
-+	dm.Regions[1].Nodes[0].STUNOnly = true
-+	dm.Regions[2].Nodes[0].STUNOnly = false
-+
-+	c := newTestClient(t)
-+
-+	ctx := t.Context()
-+
-+	if err := c.Standalone(ctx, "127.0.0.1:0"); err != nil {
-+		t.Fatal(err)
-+	}
-+
-+	r, err := c.GetReport(ctx, dm, nil)
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+
-+	// The STUN-only region must have produced a latency sample...
-+	if _, ok := r.RegionLatency[1]; !ok {
-+		t.Fatalf("expected region 1 (STUNOnly) to have a STUN latency sample; got %+v", r.RegionLatency)
-+	}
-+	// ...but must not be selected as the preferred DERP, even though it
-+	// is the only region with a latency sample.
-+	if r.PreferredDERP == 1 {
-+		t.Errorf("PreferredDERP = 1 (STUNOnly region); want a region with DERP nodes")
-+	}
-+}
-+
- func TestWorksWhenUDPBlocked(t *testing.T) {
- 	blackhole, err := net.ListenPacket("udp4", "127.0.0.1:0")
- 	if err != nil {
-@@ -530,7 +580,10 @@ func TestAddReportHistoryAndSetPreferredDERP(t *testing.T) {
- 			Regions:    map[tailcfg.DERPRegionID]*tailcfg.DERPRegion{},
+-		if strings.Contains(err.Error(), optimisticLockErrorMsg) {
++		if reconciler.IsOptimisticLockError(err) {
+ 			logger.Infof("optimistic lock error, retrying: %s", err)
+ 			return reconcile.Result{}, nil
  		}
- 		for _, id := range regions {
--			dm.Regions[id] = &tailcfg.DERPRegion{RegionID: id}
-+			dm.Regions[id] = &tailcfg.DERPRegion{
-+				RegionID: id,
-+				Nodes:    []*tailcfg.DERPNode{{RegionID: id, Name: fmt.Sprintf("%da", id), HostName: fmt.Sprintf("derp%d.invalid", id)}},
-+			}
- 		}
- 		return dm
- 	}
 ```
 
-**File**: `tailcfg/derpmap.go` (modified, +27/-0)
+**File**: `cmd/k8s-operator/api-server-proxy-pg_test.go` (modified, +2/-1)
 ```diff
-@@ -183,6 +183,33 @@ type DERPRegion struct {
- 	Nodes []*DERPNode
- }
+@@ -20,6 +20,7 @@ import (
  
-+// CanServeDERP reports whether this DERP region can serve as a DERP home.
-+// Regions that have no DERP servers can never be DERP homes.
-+func (r *DERPRegion) CanServeDERP() bool {
-+	if r == nil {
-+		return false
-+	}
-+	for _, n := range r.Nodes {
-+		if !n.STUNOnly {
-+			return true
-+		}
-+	}
-+	return false
-+}
-+
-+// CanServeDERP is [DERPRegion.CanServeDERP] for [DERPRegionView].
-+func (v DERPRegionView) CanServeDERP() bool {
-+	if !v.Valid() {
-+		return false
-+	}
-+	for _, n := range v.Nodes().All() {
-+		if !n.STUNOnly() {
-+			return true
-+		}
-+	}
-+	return false
-+}
-+
- // DERPNode describes a DERP packet relay node running within a DERPRegion.
- type DERPNode struct {
- 	// Name is a unique node name (across all regions).
+ 	tsoperator "tailscale.com/k8s-operator"
+ 	tsapi "tailscale.com/k8s-operator/apis/v1alpha1"
++	"tailscale.com/k8s-operator/reconciler/tailscaled"
+ 	"tailscale.com/k8s-operator/tsclient"
+ 	"tailscale.com/kube/k8s-proxy/conf"
+ 	"tailscale.com/kube/kubetypes"
+@@ -199,7 +200,7 @@ func TestAPIServerProxyReconciler(t *testing.T) {
+ 
+ 	// Simulate Pod prefs updated with advertised services; should see Configured condition updated to true.
+ 	mustUpdate(t, fc, ns, "test-pg-0", func(o *corev1.Secret) {
+-		var p prefs
++		var p tailscaled.Prefs
+ 		if err = json.Unmarshal(o.Data["test"], &p); err != nil {
+ 			t.Errorf("failed to unmarshal preferences: %v", err)
+ 		}
 ```
 
-**File**: `tailcfg/derpmap_test.go` (added, +66/-0)
+**File**: `cmd/k8s-operator/connector.go` (modified, +2/-2)
 ```diff
-@@ -0,0 +1,66 @@
-+// Copyright (c) Tailscale Inc & contributors
-+// SPDX-License-Identifier: BSD-3-Clause
-+
-+package tailcfg
-+
-+import "testing"
-+
-+func TestDERPRegionCanServeDERP(t *testing.T) {
-+	tests := []struct {
-+		name   string
-+		region *DERPRegion
-+		want   bool
-+	}{
-+		{
-+			name:   "nil_region",
-+			region: (*DERPRegion)(nil),
-+			want:   false,
-+		},
-+		{
-+			name:   "no_nodes",
-+			region: &DERPRegion{},
-+			want:   false,
-+		},
-+		{
-+			name: "stun_only",
-+			region: &DERPRegion{
-+				Nodes: []*DERPNode{
-+					{Name: "1a", STUNOnly: true},
-+					{Name: "1b", STUNOnly: true},
-+				},
-+			},
-+			want: false,
-+		},
-+		{
-+			name: "mixed",
-+			region: &DERPRegion{
-+				Nodes: []*DERPNode{
-+					{Name: "1a", STUNOnly: true},
-+					{Name: "1b"},
-+				},
-+			},
-+			want: true,
-+		},
-+		{
-+			name: "derp_only",
-+			region: &DERPRegion{
-+				Nodes: []*DERPNode{{Name: "1a"}},
-+			},
-+			want: true,
-+		},
-+	}
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			if got := tt.region.CanServeDERP(); got != tt.want {
-+				t.Errorf("CanServeDERP() = %v, want %v", got, tt.want)
-+			}
-+			var v DERPRegionView
-+			if tt.region != nil {
-+				v = tt.region.View()
-+			}
-+			if got := v.CanServeDERP(); got != tt.want {
-+				t.Errorf("DERPRegionView.CanServeDERP() = %v, want %v", got, tt.want)
-+			}
-+		})
-+	}
-+}
+@@ -11,7 +11,6 @@ import (
+ 	"fmt"
+ 	"net/netip"
+ 	"slices"
+-	"strings"
+ 	"sync"
+ 	"time"
+ 
+@@ -28,6 +27,7 @@ import (
+ 
+ 	tsoperator "tailscale.com/k8s-operator"
+ 	tsapi "tailscale.com/k8s-operator/apis/v1alpha1"
++	"tailscale.com/k8s-operator/reconciler"
+ 	"tailscale.com/kube/kubetypes"
+ 	"tailscale.com/net/netutil"
+ 	"tailscale.com/net/tsaddr"
+@@ -146,7 +146,7 @@ func (a *ConnectorReconciler) Reconcile(ctx context.Context, req reconcile.Reque
+ 	if err = a.maybeProvisionConnector(ctx, logger, cn); err != nil {
+ 		reason := reasonConnectorCreationFailed
+ 		message := fmt.Sprintf(messageConnectorCreationFailed, err)
+-		if strings.Contains(err.Error(), optimisticLockErrorMsg) {
++		if reconciler.IsOptimisticLockError(err) {
+ 			reason = reasonConnectorCreating
+ 			message = fmt.Sprintf("optimistic lock error, retrying: %s", err)
+ 			err = nil
+```
+
+**File**: `cmd/k8s-operator/depaware.txt` (modified, +1/-0)
+```diff
+@@ -774,6 +774,7 @@ tailscale.com/cmd/k8s-operator dependencies: (generated by github.com/tailscale/
+         tailscale.com/k8s-operator/reconciler/peerrelay              from tailscale.com/cmd/k8s-operator
+         tailscale.com/k8s-operator/reconciler/proxyclass             from tailscale.com/cmd/k8s-operator
+         tailscale.com/k8s-operator/reconciler/proxygrouppolicy       from tailscale.com/cmd/k8s-operator
++        tailscale.com/k8s-operator/reconciler/recorder               from tailscale.com/cmd/k8s-operator
+         tailscale.com/k8s-operator/reconciler/staticendpoints        from tailscale.com/cmd/k8s-operator
+         tailscale.com/k8s-operator/reconciler/tailnet                from tailscale.com/cmd/k8s-operator
+         tailscale.com/k8s-operator/reconciler/tailscaled             from tailscale.com/k8s-operator/reconciler/peerrelay+
+```
+
+**File**: `cmd/k8s-operator/egress-services.go` (modified, +2/-1)
+```diff
+@@ -34,6 +34,7 @@ import (
+ 
+ 	tsoperator "tailscale.com/k8s-operator"
+ 	tsapi "tailscale.com/k8s-operator/apis/v1alpha1"
++	"tailscale.com/k8s-operator/reconciler"
+ 	"tailscale.com/kube/egressservices"
+ 	"tailscale.com/kube/kubetypes"
+ 	"tailscale.com/tstime"
+@@ -161,7 +162,7 @@ func (esr *egressSvcsReconciler) Reconcile(ctx context.Context, req reconcile.Re
+ 	}
+ 
+ 	if err := esr.maybeProvision(ctx, svc, lg); err != nil {
+-		if strings.Contains(err.Error(), optimisticLockErrorMsg) {
++		if reconciler.IsOptimisticLockError(err) {
+ 			lg.Infof("optimistic lock error, retrying: %s", err)
+ 		} else {
+ 			return reconcile.Result{}, err
+```
+
+**File**: `cmd/k8s-operator/ingress-for-pg.go` (modified, +2/-1)
+```diff
+@@ -34,6 +34,7 @@ import (
+ 	"tailscale.com/ipn"
+ 	tsoperator "tailscale.com/k8s-operator"
+ 	tsapi "tailscale.com/k8s-operator/apis/v1alpha1"
++	"tailscale.com/k8s-operator/reconciler/tailscaled"
+ 	"tailscale.com/k8s-operator/tsclient"
+ 	"tailscale.com/kube/kubetypes"
+ 	"tailscale.com/tailcfg"
+@@ -851,7 +852,7 @@ func numberPodsAdvertising(ctx context.Context, cl client.Client, tsNamespace, p
+ 
+ 	var count int
+ 	for _, secret := range secrets.Items {
+-		prefs, ok, err := getDevicePrefs(&secret)
++		prefs, ok, err := tailscaled.PrefsFromStateSecret(&secret)
+ 		if err != nil {
+ 			return 0, fmt.Errorf("error getting node metadata: %w", err)
+ 		}
+```
+
+**File**: `cmd/k8s-operator/ingress-for-pg_test.go` (modified, +7/-6)
+```diff
+@@ -30,6 +30,7 @@ import (
+ 	"tailscale.com/ipn"
+ 	tsoperator "tailscale.com/k8s-operator"
+ 	tsapi "tailscale.com/k8s-operator/apis/v1alpha1"
++	"tailscale.com/k8s-operator/reconciler/tailscaled"
+ 	"tailscale.com/k8s-operator/tsclient"
+ 	"tailscale.com/kube/kubetypes"
+ 	"tailscale.com/tailcfg"
+@@ -563,7 +564,7 @@ func TestIngressPGReconciler_HTTPEndpoint(t *testing.T) {
+ 
+ 	// Add the Tailscale Service to prefs to have the Ingress recognised as ready.
+ 	mustUpdate(t, fc, "operator-ns", "test-pg-0", func(o *corev1.Secret) {
+-		var p prefs
++		var p tailscaled.Prefs
+ 		var err error
+ 		if err = json.Unmarshal(o.Data["test"], &p); err != nil {
+ 			t.Errorf("failed to unmarshal preferences: %v", err)
+@@ -689,7 +690,7 @@ func TestIngressPGReconciler_HTTPRedirect(t *testing.T) {
+ 
+ 	// Add the Tailscale Service to prefs to have the Ingress recognised as ready.
+ 	mustUpdate(t, fc, "operator-ns", "test-pg-0", func(o *corev1.Secret) {
+-		var p prefs
++		var p tailscaled.Prefs
+ 		var err error
+ 		if err = json.Unmarshal(o.Data["test"], &p); err != nil {
+ 			t.Errorf("failed to unmarshal preferences: %v", err)
+@@ -824,7 +825,7 @@ func TestIngressPGReconciler_HTTPEndpointAndRedirectConflict(t *testing.T) {
+ 
+ 	// Add the Tailscale Service to prefs to have the Ingress recognised as ready.
+ 	mustUpdate(t, fc, "operator-ns", "test-pg-0", func(o *corev1.Secret) {
+-		var p prefs
++		var p tailscaled.Prefs
+ 		var err error
+ 		if err = json.Unmarshal(o.Data["test"], &p); err != nil {
+ 			t.Errorf("failed to unmarshal preferences: %v", err)
+@@ -1151,7 +1152,7 @@ func createPGResources(t *testing.T, fc client.Client, pgName string) {
+ 	}
+ 	mustCreate(t, fc, pgCfgSecret)
+ 
+-	pr := prefs{}
++	pr := tailscaled.Prefs{}
+ 	pr.Config.UserProfile.LoginName = "test.ts.net"
+ 	pr.Config.NodeID = "test"
+ 
+@@ -1168,8 +1169,8 @@ func createPGResources(t *testing.T, fc client.Client, pgName string) {
+ 			Labels:    pgSecretLabels(pgName, kubetypes.LabelSecretTypeState),
+ 		},
+ 		Data: map[string][]byte{
+-			currentProfileKey: []byte("test"),
+-			"test":            p,
++			string(ipn.CurrentProfileStateKey): []byte("test"),
++			"test":                             p,
+ 		},
+ 	}
+ 	mustCreate(t, fc, pgStateSecret)
+```
+
+**File**: `cmd/k8s-operator/ingress.go` (modified, +2/-1)
+```diff
+@@ -25,6 +25,7 @@ import (
+ 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
+ 
+ 	"tailscale.com/ipn"
++	"tailscale.com/k8s-operator/reconciler"
+ 	"tailscale.com/kube/kubetypes"
+ 	"tailscale.com/types/opt"
+ 	"tailscale.com/util/clientmetric"
+@@ -82,7 +83,7 @@ func (a *IngressReconciler) Reconcile(ctx context.Context, req reconcile.Request
+ 	}
+ 
+ 	if err := a.maybeProvision(ctx, logger, ing); err != nil {
+-		if strings.Contains(err.Error(), optimisticLockErrorMsg) {
++		if reconciler.IsOptimisticLockError(err) {
+ 			logger.Infof("optimistic lock error, retrying: %s", err)
+ 		} else {
+ 			return reconcile.Result{}, err
 ```
 
 #### Recent Merged Pull Requests:
@@ -1103,45 +1088,32 @@ Signed-off-by: Luo Chen <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. net/netcheck: never prefer a STUN-only region as the home DERP (#21976)
+## X. cmd/k8s-operator: move Recorder reconciler into its own package (#20891)
 
 **RULE**:
-When implementing operations in `net/netcheck/netcheck.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cmd/k8s-operator/api-server-proxy-pg.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `dc698697`: net/netcheck: never prefer a STUN-only region as the home DERP (#21976). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2993b5e6`: cmd/k8s-operator: move Recorder reconciler into its own package (#20891). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `net/netcheck/netcheck.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cmd/k8s-operator/api-server-proxy-pg.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-			if !rs.haveRegionLatency(tailcfg.DERPRegionID(rid)) && reg.CanServeDERP() && !reg.Avoid && !reg.NoMeasureNoHome {
-		// A STUN-only region has no DERP server to relay through, so it must
-		// never become the preferred DERP even though its STUN probe gives it
-		// a RegionLatency entry. Regions missing from the map or without any
-		// DERP server are equally unable to serve as a home.
-		if !dm.Regions().Get(regionID).CanServeDERP() {
-			continue
-		}
-
+	"tailscale.com/k8s-operator/reconciler"
+		if err = r.maybeCleanup(ctx, serviceName, pg, logger, tsClient); reconciler.IsOptimisticLockError(err) {
+		if reconciler.IsOptimisticLockError(err) {
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-			if !rs.haveRegionLatency(tailcfg.DERPRegionID(rid)) && regionHasDERPNode(reg) && !reg.Avoid && !reg.NoMeasureNoHome {
-func regionHasDERPNode(r *tailcfg.DERPRegion) bool {
-	for _, n := range r.Nodes {
-		if !n.STUNOnly {
-			return true
-		}
-	}
-	return false
-}
-
+	"strings"
+		if err = r.maybeCleanup(ctx, serviceName, pg, logger, tsClient); err != nil && strings.Contains(err.Error(), optimisticLockErrorMsg) {
+		if strings.Contains(err.Error(), optimisticLockErrorMsg) {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `dc698697` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2993b5e6` are properly handled with clean fallback behavior.

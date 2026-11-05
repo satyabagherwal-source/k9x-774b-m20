@@ -655,8 +655,8 @@
     "sourceUrl": "https://huggingface.co/canberkkkkkk/ema-lightning",
     "sourceVersion": "hf-canberkkkkkk-ema-lightning",
     "license": "Open-Source",
-    "contentHash": "4790bcaa173fafcf803ab13360e0b6c782066220e15ea55141054f9b4be3f530",
-    "lastHarvestedAt": "2026-10-31T20:59:43.792Z",
+    "contentHash": "d6a858078e57780e249484384c2f822302fb5291e8f825ba571c753aed520fd8",
+    "lastHarvestedAt": "2026-11-05T11:45:25.859Z",
     "learningId": "learn-huggingface-canberkkkkkk-ema-lightning"
   },
   "hf-google-embeddinggemma-2": {
@@ -3583,10 +3583,10 @@
     "repository": "tailscale/tailscale",
     "platform": "github",
     "sourceUrl": "https://github.com/tailscale/tailscale",
-    "sourceVersion": "dc698697",
+    "sourceVersion": "2993b5e6",
     "license": "BSD-3-Clause",
-    "contentHash": "a82fb3211457203599952de31b712d8eeb4cf10a8df025e958d1ab781a18f538",
-    "lastHarvestedAt": "2026-11-05T07:34:50.063Z",
+    "contentHash": "3cf5257e9abd01959c45761fa06cf8021f304d2437039eeb0ae05d7920f21d0d",
+    "lastHarvestedAt": "2026-11-05T11:45:25.158Z",
     "learningId": "learn-github-tailscale-tailscale"
   },
   "dingodb-dingo": {
@@ -6853,10 +6853,10 @@
     "repository": "weaviate/weaviate",
     "platform": "github",
     "sourceUrl": "https://github.com/weaviate/weaviate",
-    "sourceVersion": "9e152c7c",
+    "sourceVersion": "7e97594b",
     "license": "NOASSERTION",
-    "contentHash": "5cec20d7e0b7cb9cdef1a31c41782a1b02f13b57b755293a2d5351996e9402dc",
-    "lastHarvestedAt": "2026-11-04T20:53:29.894Z",
+    "contentHash": "7f53e1275670e8740eb373882a912b5c6d632215cce08eb70a6c457ad76da43c",
+    "lastHarvestedAt": "2026-11-05T11:45:28.133Z",
     "learningId": "learn-github-weaviate-weaviate"
   },
   "topgrade-rs-topgrade": {

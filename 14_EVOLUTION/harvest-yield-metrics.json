@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-05T11:37:57.900Z",
-  "total_cycles_completed": 7613,
-  "total_learnings_persisted": 7613,
-  "total_rules_promoted": 7269,
+  "last_updated": "2026-11-05T11:45:28.139Z",
+  "total_cycles_completed": 7616,
+  "total_learnings_persisted": 7616,
+  "total_rules_promoted": 7274,
   "history": [
-    {
-      "timestamp": "2026-11-05T01:07:58.126Z",
-      "repository": "meshtastic/Meshtastic-Android",
-      "learningId": "learn-github-meshtastic-meshtastic-android",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T01:15:06.887Z",
-      "repository": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
-      "learningId": "learn-huggingface-akatz-ai-minimax-h3-character-swap-lora",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T01:15:12.498Z",
-      "repository": "thaw-app/Thaw",
-      "learningId": "learn-github-thaw-app-thaw",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-05T01:22:15.979Z",
       "repository": "unsloth/Qwen-Image-2.1-GGUF",
@@ -1403,6 +1382,27 @@
       "repository": "google/embeddinggemma-2",
       "learningId": "learn-huggingface-google-embeddinggemma-2",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T11:45:25.163Z",
+      "repository": "tailscale/tailscale",
+      "learningId": "learn-github-tailscale-tailscale",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T11:45:25.864Z",
+      "repository": "canberkkkkkk/ema-lightning",
+      "learningId": "learn-huggingface-canberkkkkkk-ema-lightning",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T11:45:28.139Z",
+      "repository": "weaviate/weaviate",
+      "learningId": "learn-github-weaviate-weaviate",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

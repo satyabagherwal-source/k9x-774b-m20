@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T11:37:57.788Z",
+  "last_updated": "2026-11-05T11:45:28.038Z",
   "total_verified_learnings": 1215,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -21408,7 +21408,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/canberkkkkkk/ema-lightning",
       "source_version": "hf-canberkkkkkk-ema-lightning",
-      "content_hash": "4790bcaa173fafcf803ab13360e0b6c782066220e15ea55141054f9b4be3f530",
+      "content_hash": "d6a858078e57780e249484384c2f822302fb5291e8f825ba571c753aed520fd8",
       "dossier_path": "07_PROJECT_LEARNING/hf-canberkkkkkk-ema-lightning-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-canberkkkkkk-ema-lightning-learnings.md",
       "promoted_rules": [
@@ -21451,6 +21451,21 @@
           "number": 6321,
           "title": "The Streaming Chunk Boundary Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7207,
+          "title": "The \"Latent Rate Decoupling\" Invariant for Real-Time TTS",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7209,
+          "title": "The \"Batched Scheduler\" Concurrency Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7210,
+          "title": "The \"Flow Matching 4-Step\" Sampling Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -21471,7 +21486,7 @@
         "learn-huggingface-hf-canberkkkkkk-ema-lightning-mv485u82",
         "learn-huggingface-hf-canberkkkkkk-ema-lightning-mv4lfa5g"
       ],
-      "verified_at": "2026-10-31T20:59:43.731Z",
+      "verified_at": "2026-11-05T11:45:25.741Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -56984,8 +56999,8 @@
       "slug": "tailscale-tailscale",
       "platform": "github",
       "source_url": "https://github.com/tailscale/tailscale",
-      "source_version": "dc698697",
-      "content_hash": "a82fb3211457203599952de31b712d8eeb4cf10a8df025e958d1ab781a18f538",
+      "source_version": "2993b5e6",
+      "content_hash": "3cf5257e9abd01959c45761fa06cf8021f304d2437039eeb0ae05d7920f21d0d",
       "dossier_path": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "promoted_rules": [
@@ -57173,6 +57188,11 @@
           "number": 7156,
           "title": "net/netcheck: never prefer a STUN-only region as the home DERP (#21976)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7208,
+          "title": "cmd/k8s-operator: move Recorder reconciler into its own package (#20891)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -57180,7 +57200,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T07:34:49.955Z",
+      "verified_at": "2026-11-05T11:45:25.040Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -61572,8 +61592,8 @@
       "slug": "weaviate-weaviate",
       "platform": "github",
       "source_url": "https://github.com/weaviate/weaviate",
-      "source_version": "9e152c7c",
-      "content_hash": "5cec20d7e0b7cb9cdef1a31c41782a1b02f13b57b755293a2d5351996e9402dc",
+      "source_version": "7e97594b",
+      "content_hash": "7f53e1275670e8740eb373882a912b5c6d632215cce08eb70a6c457ad76da43c",
       "dossier_path": "07_PROJECT_LEARNING/weaviate-weaviate-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/weaviate-weaviate-learnings.md",
       "promoted_rules": [
@@ -61606,6 +61626,11 @@
           "number": 6971,
           "title": "rbac): remove `policy.csv` and rebuild RBAC state from raft (#13638)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7211,
+          "title": "Merge pull request #13785 from weaviate/merge-stable-v1.40-into-main",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -61613,7 +61638,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T20:53:29.822Z",
+      "verified_at": "2026-11-05T11:45:28.014Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -182051,6 +182076,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-05T11:30:55.550Z"
+    },
+    "rule-7208": {
+      "learning_id": "rule-7208",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7208,
+      "title": "cmd/k8s-operator: move Recorder reconciler into its own package (#20891)",
+      "source_url": "https://github.com/tailscale/tailscale",
+      "source_version": "2993b5e6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T11:45:25.040Z"
+    },
+    "rule-7207": {
+      "learning_id": "rule-7207",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7207,
+      "title": "The \"Latent Rate Decoupling\" Invariant for Real-Time TTS",
+      "source_url": "https://huggingface.co/canberkkkkkk/ema-lightning",
+      "source_version": "hf-canberkkkkkk-ema-lightning",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T11:45:25.741Z"
+    },
+    "rule-7209": {
+      "learning_id": "rule-7209",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7209,
+      "title": "The \"Batched Scheduler\" Concurrency Invariant",
+      "source_url": "https://huggingface.co/canberkkkkkk/ema-lightning",
+      "source_version": "hf-canberkkkkkk-ema-lightning",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T11:45:25.741Z"
+    },
+    "rule-7210": {
+      "learning_id": "rule-7210",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7210,
+      "title": "The \"Flow Matching 4-Step\" Sampling Invariant",
+      "source_url": "https://huggingface.co/canberkkkkkk/ema-lightning",
+      "source_version": "hf-canberkkkkkk-ema-lightning",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T11:45:25.741Z"
+    },
+    "rule-7211": {
+      "learning_id": "rule-7211",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7211,
+      "title": "Merge pull request #13785 from weaviate/merge-stable-v1.40-into-main",
+      "source_url": "https://github.com/weaviate/weaviate",
+      "source_version": "7e97594b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T11:45:28.014Z"
     }
   },
   "aliases": {

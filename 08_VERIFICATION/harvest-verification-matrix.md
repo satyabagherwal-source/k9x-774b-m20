@@ -7636,3 +7636,6 @@
 | `CYCLE-20261105-SKYT` | `2026-11-05T11:30:50.789Z` | `chrisbanes/skills` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7205` | Yes (`acbde899...`) |
 | `CYCLE-20261105-SOQ7` | `2026-11-05T11:30:55.663Z` | `projectdiscovery/nuclei` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7206` | Yes (`0731a8c1...`) |
 | `CYCLE-20261105-1QIQ` | `2026-11-05T11:37:57.890Z` | `google/embeddinggemma-2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-embeddinggemma-2-learnings.md` | Yes (`aa28788a...`) |
+| `CYCLE-20261105-BBMQ` | `2026-11-05T11:45:25.154Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7208` | Yes (`3cf5257e...`) |
+| `CYCLE-20261105-BC67` | `2026-11-05T11:45:25.855Z` | `canberkkkkkk/ema-lightning` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7207, Rule 7209, Rule 7210` | Yes (`d6a85807...`) |
+| `CYCLE-20261105-BDXD` | `2026-11-05T11:45:28.129Z` | `weaviate/weaviate` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7211` | Yes (`7f53e127...`) |

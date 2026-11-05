@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/weaviate-weaviate-learnings.md`  
 > **Source**: github ([https://github.com/weaviate/weaviate](https://github.com/weaviate/weaviate))  
-> **Source Version**: `9e152c7c`  
+> **Source Version**: `7e97594b`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T20:53:29.414Z  
+> **Timestamp**: 2026-11-05T11:45:27.340Z  
 > **Learning ID**: `learn-github-weaviate-weaviate`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/weaviate-weaviate-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/weaviate/weaviate](https://github.com/weaviate/weaviate))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T20:53:29.229Z  
+> **Harvest Timestamp**: 2026-11-05T11:45:27.332Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Weaviate is an open-source vector database that stores both objects and vectors, allowing for the combination of vector search with structured filtering with the fault tolerance and scalability of a cloud-native database​.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: pyproject.toml, go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 16937 stars
+- **Stars / Engagement**: 16938 stars
 
 ---
 
@@ -1732,341 +1732,14 @@ func (s *State) SetGraphQLIfCurrent(gql graphql.GraphQL, gen uint64) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `89f57f01` (2026-11-04)
-**Commit Message**: feat(rbac): remove `policy.csv` and rebuild RBAC state from raft (#13638)
+### Incident Patch 1: `7e97594b` (2026-11-05)
+**Commit Message**: Merge pull request #13785 from weaviate/merge-stable-v1.40-into-main
 
-* rbac: hold casbin policy state in memory only
+Merge stable/v1.40 into main
 
-- The policy.csv write-through cache is gone: RAFT snapshot restore and log replay already rebuild RBAC state on every start, so Init attaches no adapter and mutations no longer call SavePolicy
-- A one-time seed still reads a legacy policy.csv (plus its version file for the <1.30 upgrade) so clusters upgraded from file-based releases keep their roles until a RAFT snapshot carries them
-- replacePolicies now rebuilds role links explicitly, which restore previously got as a side effect of LoadPolicy; without it a revoked assignment keeps granting after a restore, and a test pins the rebuild running before the V0 upgrade
-- Legacy files are not yet deleted; that lands separately.
-
-* rbac: delete legacy policy files after a RAFT restore carries RBAC
-
-* rbac: apply RBAC through RAFT regardless of config; Enabled gates capabilities
-
-- The casbin store is built on every node and wired into the RAFT FSM whether or not AUTHORIZATION_ENABLE_RBAC is set: snapshots taken while enforcement is off still carry the RBAC state, so disabling and re-enabling RBAC no longer loses r
-
-**File**: `adapters/handlers/rest/authz/handlers_authz.go` (modified, +103/-1)
+**File**: `adapters/clients/license/client.go` (added, +133/-0)
 ```diff
-@@ -32,6 +32,7 @@ import (
- 	"github.com/weaviate/weaviate/usecases/auth/authorization"
- 	"github.com/weaviate/weaviate/usecases/auth/authorization/conv"
- 	"github.com/weaviate/weaviate/usecases/auth/authorization/filter"
-+	"github.com/weaviate/weaviate/usecases/auth/authorization/rbac"
- 	"github.com/weaviate/weaviate/usecases/auth/authorization/rbac/rbacconf"
- 	"github.com/weaviate/weaviate/usecases/auth/authorization/rolevisibility"
- 	"github.com/weaviate/weaviate/usecases/config"
-@@ -62,6 +63,68 @@ type ControllerAndGetUsers interface {
- 	GetUsers(userIds ...string) (map[string]apikey.UserView, error)
- }
- 
-+// UserGetter looks up dynamic DB users.
-+type UserGetter interface {
-+	GetUsers(userIds ...string) (map[string]apikey.UserView, error)
-+}
-+
-+// InertController backs the role API on a cluster with RBAC disabled: every
-+// mutation returns nil without effect and every RBAC getter returns the empty
-+// value. GetUsers delegates to Users, because user existence is not RBAC state.
-+type InertController struct {
-+	Users UserGetter
-+}
-+
-+var _ ControllerAndGetUsers = InertController{}
-+
-+func (InertController) UpdateRolesPermissions(map[string][]authorization.Policy) error {
-+	return nil
-+}
-+
-+func (InertController) CreateRolesPermissions(map[string][]authorization.Policy) error {
-+	return nil
-+}
-+
-+func (InertController) DeleteRoles(...string) error {
-+	return nil
-+}
-+
-+func (InertController) AddRolesForUser(string, []string) error {
-+	return nil
-+}
-+
-+func (InertController) RevokeRolesForUser(string, ...string) error {
-+	return nil
-+}
-+
-+func (InertController) RemovePermissions(string, []*authorization.Policy) error {
-+	return nil
-+}
-+
-+func (InertController) GetRoles(...string) (map[string][]authorization.Policy, error) {
-+	return nil, nil
-+}
-+
-+func (InertController) GetRolesForUserOrGroup(string, authentication.AuthType, bool) (map[string][]authorization.Policy, error) {
-+	return nil, nil
-+}
-+
-+func (InertController) GetUsersOrGroupForRole(string, authentication.AuthType, bool) ([]string, error) {
-+	return nil, nil
-+}
-+
-+func (InertController) HasPermission(string, *authorization.Policy) (bool, error) {
-+	return false, nil
-+}
-+
-+func (InertController) GetUsersOrGroupsWithRoles(bool, authentication.AuthType) ([]string, error) {
-+	return nil, nil
-+}
-+
-+func (c InertController) GetUsers(userIds ...string) (map[string]apikey.UserView, error) {
-+	return c.Users.GetUsers(userIds...)
-+}
-+
- func SetupHandlers(api *operations.WeaviateAPI, controller ControllerAndGetUsers,
- 	apiKeysConfigs config.StaticAPIKey, oidcConfigs config.OIDC, rconfig rbacconf.Config, namespacesEnabled bool, metrics *monitoring.PrometheusMetrics, authorizer authorization.Authorizer, logger logrus.FieldLogger,
- ) {
-@@ -659,7 +722,7 @@ func (h *authZHandlers) getRoles(params authz.GetRolesParams, principal *models.
- 
- 	var response []*models.Role
- 	for roleName, policies := range roles {
--		if roleName == authorization.Root && !slices.Contains(h.rbacconfig.RootUsers, principal.Username) {
-+		if roleName == authorization.Root && (principal == nil || !slices.Contains(h.rbacconfig.RootUsers, principal.Username)) {
- 			continue
- 		}
- 
-@@ -1390,6 +1453,10 @@ func (h *authZHandlers) revokeRoleFromUser(params authz.RevokeRoleFromUserParams
- 		return authz.NewRevokeRoleFromUserForbidden().WithPayload(cerrors.ErrPayloadFromSingleErr(principal, err))
- 	}
- 
-+	if err := h.validateNotConfiguredGrant(internalID, authentication.AuthType(params.Body.UserType), roleNames); err != nil {
-+		return authz.NewRevokeRoleFromUserForbidden().WithPayload(cerrors.ErrPayloadFromSingleErr(principal, err))
-+	}
-+
- 	existedRoles, err := h.controller.GetRoles(roleNames...)
- 	if err != nil {
- 		return authz.NewRevokeRoleFromUserInternalServerError().WithPayload(cerrors.ErrPayloadFromSingleErr(principal, fmt.Errorf("GetRoles: %w", err)))
-@@ -1641,6 +1708,41 @@ func validateEnvVarRoles(name string) error {
- 	return nil
- }
- 
-+// configuredGrantSettings maps each role rbac.AdminViewerGrants can return to
-+// the environment variable and the config-file key that grant it.
-+var configuredGrantSettings = map[string]string{
-+	authorization.Admin:  "the EXPERIMENTAL_AUTHORIZATION_RBAC_ADMIN_USERS env var or the admin_users config key",
-+	authorization.Viewer: "the EXPERIMENTAL_AUTHORIZATION_RBAC_READONLY_USERS env var or the viewer_users config key",
-+}
-+
-+// validateNotConfiguredGrant refuses to revoke a role that this node's config
-+// grants to internalID (see rbac.AdminViewerGrants). Every boot adds such a
-+// grant back. With RBAC disabled, config grants take no effect, so this
-+// refuses nothing. An empty userType checks both user types, as
-+// getUserTypesAndValidateExistence does. A user with such a grant always passes
-+// that existence check, so this check does not need to call the controller.
-+func (h *authZHandlers) validateNotConfiguredGrant(internalID string, userType authentication.AuthType, roleNames []string) error {
-+	if !h.rbacconfig.Enabled {
-+		return nil
-+	}
-```
-
-**File**: `adapters/handlers/rest/authz/handlers_authz_get_roles_test.go` (modified, +20/-2)
-```diff
-@@ -17,6 +17,7 @@ import (
- 	"github.com/sirupsen/logrus/hooks/test"
- 	"github.com/stretchr/testify/assert"
- 	"github.com/stretchr/testify/mock"
-+	"github.com/stretchr/testify/require"
- 
- 	"github.com/weaviate/weaviate/adapters/handlers/rest/operations/authz"
- 	"github.com/weaviate/weaviate/entities/models"
-@@ -30,6 +31,7 @@ func TestGetRolesSuccess(t *testing.T) {
- 		principal       *models.Principal
- 		authorizedRoles []string
- 		expectedRoles   map[string][]authorization.Policy
-+		wantRoles       []string
- 	}
- 
- 	tests := []testCase{
-@@ -40,6 +42,7 @@ func TestGetRolesSuccess(t *testing.T) {
- 			expectedRoles: map[string][]authorization.Policy{
- 				"testRole": {},
- 			},
-+			wantRoles: []string{"testRole"},
- 		},
- 		{
- 			name:            "success as root user",
-@@ -48,6 +51,7 @@ func TestGetRolesSuccess(t *testing.T) {
- 			expectedRoles: map[string][]authorization.Policy{
- 				"testRole": {}, "root": {},
- 			},
-+			wantRoles: []string{"root", "testRole"},
- 		},
- 		{
- 			name:            "success without principal",
-@@ -56,6 +60,16 @@ func TestGetRolesSuccess(t *testing.T) {
- 			expectedRoles: map[string][]authorization.Policy{
- 				"testRole": {},
- 			},
-+			wantRoles: []string{"testRole"},
-+		},
-+		{
-+			name:            "without principal the root role is hidden",
-+			principal:       nil,
-+			authorizedRoles: []string{"testRole", "root"},
-+			expectedRoles: map[string][]authorization.Policy{
-+				"testRole": {}, "root": {},
-+			},
-+			wantRoles: []string{"testRole"},
- 		},
- 	}
- 
-@@ -75,8 +89,12 @@ func TestGetRolesSuccess(t *testing.T) {
- 			}
- 			res := h.getRoles(authz.GetRolesParams{HTTPRequest: req}, tt.principal)
- 			parsed, ok := res.(*authz.GetRolesOK)
--			assert.True(t, ok)
--			assert.Len(t, parsed.Payload, len(tt.expectedRoles))
-+			require.True(t, ok)
-+			var gotRoles []string
-+			for _, role := range parsed.Payload {
-+				gotRoles = append(gotRoles, *role.Name)
-+			}
-+			assert.Equal(t, tt.wantRoles, gotRoles)
- 		})
- 	}
- }
-```
-
-**File**: `adapters/handlers/rest/authz/handlers_authz_revoke_roles_test.go` (modified, +108/-0)
-```diff
-@@ -22,6 +22,7 @@ import (
- 	"github.com/sirupsen/logrus/hooks/test"
- 	"github.com/stretchr/testify/assert"
- 	"github.com/stretchr/testify/mock"
-+	"github.com/stretchr/testify/require"
- 
- 	"github.com/weaviate/weaviate/adapters/handlers/rest/operations/authz"
- 	"github.com/weaviate/weaviate/entities/models"
-@@ -481,6 +482,113 @@ func TestRevokeRoleFromUserForbidden(t *testing.T) {
- 	}
- }
- 
-+func TestRevokeRoleFromUserConfiguredGrant(t *testing.T) {
-+	principal := &models.Principal{Username: "operator"}
-+	apiKeys := config.StaticAPIKey{Enabled: true, Users: []string{"alice"}}
-+	tests := []struct {
-+		name     string
-+		userType models.UserTypeInput
-+		role     string
-+		oidc     bool
-+		rbacConf rbacconf.Config
-+		// wantErr is a substring of the refusal message. Empty means the revoke succeeds.
-+		wantErr string
-+	}{
-+		{
-+			name:     "a db admin env grant is refused",
-+			userType: models.UserTypeInputDb,
-+			role:     authorization.Admin,
-+			rbacConf: rbacconf.Config{Enabled: true, AdminUsers: []string{"alice"}},
-+			wantErr:  "EXPERIMENTAL_AUTHORIZATION_RBAC_ADMIN_USERS env var or the admin_users config key",
-+		},
-+		{
-+			name:     "an oidc viewer env grant is refused",
-+			userType: models.UserTypeInputOidc,
-+			role:     authorization.Viewer,
-+			oidc:     true,
-+			rbacConf: rbacconf.Config{Enabled: true, ViewerUsers: []string{"alice"}},
-+			wantErr:  "EXPERIMENTAL_AUTHORIZATION_RBAC_READONLY_USERS env var or the viewer_users config key",
-+		},
-+		{
-+			name:     "an env grant is refused when the user type is omitted",
-+			role:     authorization.Admin,
-+			rbacConf: rbacconf.Config{Enabled: true, AdminUsers: []string{"alice"}},
-+			wantErr:  "EXPERIMENTAL_AUTHORIZATION_RBAC_ADMIN_USERS env var or the admin_users config key",
-+		},
-+		{
-+			name:     "a role the config does not grant the user is revoked",
-+			userType: models.UserTypeInputDb,
-+			role:     authorization.Viewer,
-+			rbacConf: rbacconf.Config{Enabled: true, AdminUsers: []string{"alice"}},
-+		},
-+		{
-+			name:     "the same user and role with the user absent from the config is revoked",
-+			userType: models.UserTypeInputDb,
-+			role:     authorization.Admin,
-+			rbacConf: rbacconf.Config{Enabled: true, AdminUsers: []string{"bob"}},
-+		},
-+	}
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			authorizer := authorization.NewMockAuthorizer(t)
-+			// A refused revoke sets no expectation, so any controller call fails the test.
-+			controller := NewMockControllerAndGetUsers(t)
-+			logger, _ := test.NewNullLogger()
-+			params := authz.RevokeRoleFromUserParams{
-+				ID:          "alice",
-+				HTTPRequest: req,
-+				Body:        authz.RevokeRoleFromUserBody{Roles: []string{tt.role}, UserType: tt.userType},
-+			}
-+			authorizer.On("Authorize", mock.Anything, principal, authorization.USER_AND_GROUP_ASSIGN_AND_REVOKE, authorization.Users("alice")[0]).Return(nil)
-+			if tt.wantErr == "" {
-+				controller.On("GetRoles", tt.role).Return(map[string][]authorization.Policy{tt.role: {}}, nil)
-+				controller.On("RevokeRolesForUser", conv.UserNameWithTypeFromId("alice", authentication.AuthType(tt.userType)), tt.role).Return(nil).Once()
-+			}
-+
-+			h := &authZHandlers{
-+				authorizer:     authorizer,
-+				controller:     controller,
-+				logger:         logger,
-+				apiKeysConfigs: apiKeys,
-+				oidcConfigs:    config.OIDC{Enabled: tt.oidc},
-+				rbacconfig:     tt.rbacConf,
-+			}
-+			res := h.revokeRoleFromUser(params, principal)
-+
-+			if tt.wantErr == "" {
-+				assert.IsType(t, &authz.RevokeRoleFromUserOK{}, res)
-+				return
-+			}
-+			parsed, ok := res.(*authz.RevokeRoleFromUserForbidden)
-+			require.True(t, ok, "got %T", res)
-+			assert.Contains(t, parsed.Payload.Error[0].Message, tt.wantErr)
-+		})
-+	}
-+
-+	t.Run("with RBAC disabled a configured grant gets the inert response", func(t *testing.T) {
-+		authorizer := authorization.NewMockAuthorizer(t)
-+		authorizer.On("Authorize", mock.Anything, principal, authorization.USER_AND_GROUP_ASSIGN_AND_REVOKE, authorization.Users("alice")[0]).Return(nil)
-+		logger, _ := test.NewNullLogger()
-+		h := &authZHandlers{
-+			authorizer:     authorizer,
-+			controller:     InertController{Users: NewMockControllerAndGetUsers(t)},
-+			logger:         logger,
-+			apiKeysConfigs: apiKeys,
-+			rbacconfig:     rbacconf.Config{AdminUsers: []string{"alice"}},
-+		}
-+		params := authz.RevokeRoleFromUserParams{
-+			ID:          "alice",
-+			HTTPRequest: req,
-+			Body:        authz.RevokeRoleFromUserBody{Roles: []string{authorization.Admin}, UserType: models.UserTypeInputDb},
-+		}
-+
-+		// InertController.GetRoles lists no roles, so the inert response is the
-+		// unknown-role 404, not the configured-grant 403.
-+		res := h.revokeRoleFromUser(params, principal)
-+		assert.IsType(t, &authz.RevokeRoleFromUserNotFound{}, res)
-+	})
-+}
-+
- func TestRevokeRoleFromGroupForbidden(t *testing.T) {
- 	type testCase struct {
- 		name          string
-```
-
-**File**: `adapters/handlers/rest/authz/inert_controller_test.go` (added, +109/-0)
-```diff
-@@ -0,0 +1,109 @@
+@@ -0,0 +1,133 @@
 +//                           _       _
 +// __      _____  __ ___   ___  __ _| |_ ___
 +// \ \ /\ / / _ \/ _` \ \ / / |/ _` | __/ _ \
@@ -2078,487 +1751,1035 @@ Observed empirical fixes and code patches:
 +//  CONTACT: hello@weaviate.io
 +//
 +
-+package authz
++package license
 +
 +import (
-+	"testing"
++	"bytes"
++	"context"
++	"crypto/ed25519"
++	"encoding/json"
++	"errors"
++	"fmt"
++	"io"
++	"net/http"
++	"strings"
++	"time"
 +
-+	"github.com/sirupsen/logrus/hooks/test"
-+	"github.com/stretchr/testify/assert"
-+	"github.com/stretchr/testify/require"
-+
-+	"github.com/weaviate/weaviate/adapters/handlers/rest/operations/authz"
-+	"github.com/weaviate/weaviate/entities/models"
-+	"github.com/weaviate/weaviate/usecases/auth/authentication"
-+	"github.com/weaviate/weaviate/usecases/auth/authentication/apikey"
-+	"github.com/weaviate/weaviate/usecases/auth/authorization"
++	protocol "github.com/weaviate/weaviate/entities/license"
 +)
 +
-+func TestInertController(t *testing.T) {
-+	c := InertController{}
-+	policy := authorization.Policy{Resource: "collections/*", Verb: authorization.READ, Domain: authorization.CollectionsDomain}
++// DefaultServerURL is the production license service.
++const DefaultServerURL = "https://license.weaviate.io"
 +
-+	t.Run("mutations return nil", func(t *testing.T) {
-+		for name, mutate := range map[string]func() error{
-+			"UpdateRolesPermissions": func() error { return c.UpdateRolesPermissions(map[string][]authorization.Policy{"r": {policy}}) },
-+			"AddRolesForUser":        func() error { return c.AddRolesForUser("db:u", []string{"r"}) },
-+			"RevokeRolesForUser":     func() error { return c.RevokeRolesForUser("db:u", "r") },
-+			"RemovePermissions":      func() error { return c.RemovePermissions("r", []*authorization.Policy{&policy}) },
-+		} {
-+			assert.NoError(t, mutate(), name)
-+		}
-+	})
++// Client performs signed verify calls against the license service. It is the
++// piece Weaviate embeds.
++type Client struct {
++	ServerURL   string // defaults to DefaultServerURL
++	LicenseID   string // from protocol.ParseKey
++	PrivateKey  ed25519.PrivateKey
++	TrustedKeys protocol.ServerKeySet // server public keys embedded in the binary
++	HTTPClient  *http.Client          // defaults to a 10s-timeout client
++	UserAgent   string
 +}
 +
-+func TestRoleAPI(t *testing.T) {
-+	principal := &models.Principal{Username: "admin"}
-+	roleName := "newRole"
-+	createParams := authz.CreateRoleParams{
-+		HTTPRequest: req,
-+		Body: &models.Role{
-+			Name: &roleName,
-+			Permissions: []*models.Permission{{
-+				Action:      String(authorization.ReadCollections),
-+				Collections: &models.PermissionCollections{Collection: String("*")},
-+			}},
-+		},
-+	}
-+	newHandlers := func(controller ControllerAndGetUsers) *authZHandlers {
-+		logger, _ := test.NewNullLogger()
-+		return &authZHandlers{
-+			authorizer: &authorization.DummyAuthorizer{},
-+			controller: controller,
-+			logger:     logger,
-+		}
-+	}
-+	listedRoles := func(t *testing.T, h *authZHandlers) []*models.Role {
-+		res, ok := h.getRoles(authz.GetRolesParams{HTTPRequest: req}, principal).(*authz.GetRolesOK)
-+		require.True(t, ok)
-+		return res.Payload
-+	}
-+
-+	t.Run("with RBAC disabled a created role is accepted and not listed", func(t *testing.T) {
-+		h := newHandlers(InertController{Users: NewMockControllerAndGetUsers(t)})
-+
-+		assert.IsType(t, &authz.CreateRoleCreated{}, h.createRole(createParams, principal))
-+		assert.Empty(t, listedRoles(t, h))
-+		assert.IsType(t, &authz.DeleteRoleNoContent{}, h.deleteRole(authz.DeleteRoleParams{HTTPRequest: req, ID: roleName}, principal))
-+	})
-+
-+	t.Run("with RBAC disabled reads return empty", func(t *testing.T) {
-+		userSource := NewMockControllerAndGetUsers(t)
-+		// getUsersForRole looks up the DB users among the role's (empty) members.
-+		userSource.On("GetUsers").Return(map[string]apikey.UserView{}, nil).Once()
-+		h := newHandlers(InertController{Users: userSource})
-+
-+		assert.IsType(t, &authz.GetRoleNotFound{}, h.getRole(authz.GetRoleParams{HTTPRequest: req, ID: roleName}, principal))
-+
-+		groups, ok := h.getGroups(authz.GetGroupsParams{HTTPRequest: req, GroupType: string(authentication.AuthTypeOIDC)}, principal).(*authz.GetGroupsOK)
-+		require.True(t, ok)
-+		assert.Empty(t, groups.Payload)
-+
-+		users, ok := h.getUsersForRole(authz.GetUsersForRoleParams{HTTPRequest: req, ID: roleName}, principal).(*authz.GetUsersForRoleOK)
-+		require.True(t, ok)
-+		assert.Empty(t, users.Payload)
-+
-+		has, ok := h.hasPermission(authz.HasPermissionParams{HTTPRequest: req, ID: roleName, Body: createParams.Body.Permissions[0]}, principal).(*authz.HasPermissionOK)
-+		require.True(t, ok)
-+		assert.False(t, has.Payload)
-+	})
-+
-+	t.Run("with RBAC disabled an existing DB user's roles read succeeds with no roles", func(t *testing.T) {
-+		users := NewMockControllerAndGetUsers(t)
-+		users.On("GetUsers", "dbUser").Return(map[string]apikey.UserView{"dbUser": {}}, nil).Once()
-+		h := newHandlers(InertController{Users: users})
-+
-+		res, ok := h.getRolesForUser(authz.GetRolesForUserParams{HTTPRequest: req, ID: "dbUser", UserType: string(models.UserTypeInputDb)}, principal).(*authz.GetRolesForUserOK)
-+		require.True(t, ok)
-+		assert.Empty(t, res.Payload)
-+	})
-+}
-```
-
-**File**: `adapters/handlers/rest/configure_api.go` (modified, +25/-27)
-```diff
-@@ -692,7 +692,6 @@ func MakeAppState(ctx, serverShutdownCtx context.Context, options *swag.CommandL
- 		LoadLegacySchema:            schemaRepo.LoadLegacySchema,
- 		SentryEnabled:               appState.ServerConfig.Config.Sentry.Enabled,
- 		TelemetryEnabled:            telemetryEnabled(appState),
--		AuthzController:             appState.AuthzController,
- 		RBAC:                        appState.RBAC,
- 		DynamicUserController:       appState.APIKey.Dynamic,
- 		NamespacesController:        namespacesController,
-@@ -726,7 +725,7 @@ func MakeAppState(ctx, serverShutdownCtx context.Context, options *swag.CommandL
- 		}
- 	}
- 
--	appState.ClusterService = rCluster.New(rConfig, appState.AuthzController, appState.GRPCServerMetrics)
-+	appState.ClusterService = rCluster.New(rConfig, appState.GRPCServerMetrics)
- 	migrator.SetCluster(appState.ClusterService.Raft)
- 	appState.ClusterService.SetInflightDrainer(repo.WaitForLocalInflightWrites)
- 
-@@ -842,13 +841,7 @@ func MakeAppState(ctx, serverShutdownCtx context.Context, options *swag.CommandL
- 	appState.RemoteIndexIncoming = remote.NewIndexIncoming(repo, appState.ClusterService.SchemaReader(), appState.Modules)
- 	appState.RemoteNodeIncoming = sharding.NewRemoteNodeIncoming(repo)
- 
--	// Assign only when RBAC is on. A nil *rbac.Manager put into this interface
--	// leaves rbacSourcer non-nil, so the backupper's nil check misses it and an
--	// includeRoles request produces an empty RBAC blob instead of being rejected.
--	var rbacSourcer backup.RBACSnapshotter
--	if appState.RBAC != nil {
--		rbacSourcer = appState.RBAC
--	}
-+	rbacSourcer, _ := rbacBackupCapabilities(appState.ServerConfig.Config.Authorization.Rbac.Enabled, appState.RBAC)
- 	backupManager := backup.NewHandler(appState.Logger, appState.ServerConfig.Config.Backup, appState.Authorizer,
- 		schemaManager, appState.Cluster.LocalName(), repo, appState.Modules, rbacSourcer, appState.APIKey.Dynamic)
- 	appState.BackupManager = backupManager
-@@ -911,6 +904,12 @@ func MakeAppState(ctx, serverShutdownCtx context.Context, options *swag.CommandL
- 		}
- 	}, appState.Logger)
- 
-+	enterrors.GoWrapper(func() {
-+		bootEnvRoleGrants(appState.ServerConfig.Config.Authorization.Rbac, appState.ServerConfig.Config.Authentication,
-+			appState.ClusterService.Raft, metaStoreReady.waitForMetaStore, envGrantBackoff(serverShutdownCtx),
-+			appState.Logger.WithField("action", "rbac_env_grants"))
-+	}, appState.Logger)
-+
- 	// TODO-RAFT: refactor remove this wait
- 	// it blocks GraphQL for up to 2s to give RAFT time to start.
- 	for deadline := time.Now().Add(2 * time.Second); !appState.ClusterService.Ready() && time.Now().Before(deadline); {
-@@ -965,18 +964,12 @@ func MakeAppState(ctx, serverShutdownCtx context.Context, options *swag.CommandL
- 		appState.NamespacesController, appState.DB, appState.ServerConfig.Config.ObjectsTTLConcurrencyFactor,
- 		appState.Logger, appState.ClusterHttpClient, appState.Cluster, appState.ObjectTTLLocalStatus)
- 
--	// appState.RBAC is a typed nil when RBAC is disabled; pass an untyped-nil
--	// interface so the cleanup's nil check holds.
--	var rbacLister namespacecleanup.RBACLister
--	if appState.RBAC != nil {
--		rbacLister = appState.RBAC
--	}
- 	namespaceCleanupCoordinator := namespacecleanup.NewCoordinator(
- 		appState.NamespacesController,
- 		rCluster.NewSchemaNamespaceLister(appState.ClusterService.SchemaReader()),
- 		appState.APIKey.Dynamic,
- 		appState.ClusterService.Raft,
--		rbacLister,
-+		appState.RBAC,
- 		appState.ClusterService.IsLeader,
- 		appState.Logger,
- 	)
-@@ -1017,7 +1010,7 @@ func MakeAppState(ctx, serverShutdownCtx context.Context, options *swag.CommandL
- 		// must fail closed, rather than crashing an NS-enabled node that never
- 		// inspects this data.
- 		var roleNames, groupingSubjects []string
--		if !appState.ServerConfig.Config.Namespaces.Enabled && appState.RBAC != nil {
-+		if !appState.ServerConfig.Config.Namespaces.Enabled {
- 			roles, err := appState.RBAC.GetRoles()
- 			if err != nil {
- 				l.Fatalf("namespace startup invariants: GetRoles: %v", err)
-@@ -1451,7 +1444,7 @@ func configureAPI(api *operations.WeaviateAPI) http.Handler {
- 		appState.ServerConfig.Config.Authentication.DBUsers.Enabled,
- 		appState.Logger)
- 	authz.SetupHandlers(api,
--		appState.ClusterService.Raft,
-+		roleAPIController(appState.ServerConfig.Config.Authorization.Rbac.Enabled, appState.ClusterService.Raft),
- 		appState.ServerConfig.Config.Authentication.APIKey,
- 		appState.ServerConfig.Config.Authentication.OIDC,
- 		appState.ServerConfig.Config.Authorization.Rbac,
-@@ -1464,7 +1457,7 @@ func configureAPI(api *operations.WeaviateAPI) http.Handler {
- 
- 	remoteDbUsers := clients.NewRemoteUser(appState.ClusterHttpClient, appState.Cluster)
- 	dbUserExpirationMode := dbUserExpirationModeFor(appState.ServerConfig.Config)
--	db_users.SetupHandlers(api, appState.ClusterService.Raft, appState.APIKey.Dynamic, appState.AuthzController, appState.Authorizer, appState.ServerConfig.Config.Authentication, appState.ServerConfig.Config.Authorization,
-```
-
-**File**: `adapters/handlers/rest/configure_server.go` (modified, +24/-18)
-```diff
-@@ -24,6 +24,7 @@ import (
- 
- 	"github.com/weaviate/weaviate/adapters/handlers/graphql"
- 	"github.com/weaviate/weaviate/adapters/handlers/graphql/utils"
-+	"github.com/weaviate/weaviate/adapters/handlers/rest/authz"
- 	"github.com/weaviate/weaviate/adapters/handlers/rest/state"
- 	"github.com/weaviate/weaviate/entities/schema"
- 	"github.com/weaviate/weaviate/usecases/auth/authentication/anonymous"
-@@ -170,36 +171,41 @@ func configureAuthorizer(appState *state.State) error {
- 		return fmt.Errorf("NAMESPACES_ENABLED=true requires a namespace controller, but it wasn't initialized")
- 	}
- 
-+	// The store is built whether or not RBAC is enabled: the RAFT FSM applies,
-+	// snapshots and restores RBAC state on every node.
-+	rbacController, err := rbac.New(
-+		filepath.Join(appState.ServerConfig.Config.Persistence.DataPath, config.DefaultRaftDir),
-+		appState.ServerConfig.Config.Authorization.Rbac, appState.ServerConfig.Config.Authentication,
-+		appState.ServerConfig.Config.Namespaces.Enabled,
-+		appState.NamespacesController,
-+		appState.Logger)
++// NewClient parses a customer license key and returns a client for it.
++func NewClient(key string, trusted protocol.ServerKeySet) (*Client, error) {
++	id, priv, err := protocol.ParseKey(key)
 +	if err != nil {
-+		return fmt.Errorf("can't init casbin %w", err)
++		return nil, err
 +	}
-+	appState.RBAC = rbacController
-+
- 	if appState.ServerConfig.Config.Authorization.Rbac.Enabled {
- 		// if rbac enforcer enabled, start forcing all requests using the casbin enforcer
--		rbacController, err := rbac.New(
--			filepath.Join(appState.ServerConfig.Config.Persistence.DataPath, config.DefaultRaftDir),
--			appState.ServerConfig.Config.Authorization.Rbac, appState.ServerConfig.Config.Authentication,
--			appState.ServerConfig.Config.Namespaces.Enabled,
--			appState.NamespacesController,
--			appState.Logger)
--		if err != nil {
--			return fmt.Errorf("can't init casbin %w", err)
--		}
--
--		appState.AuthzController = rbacController
--		appState.RBAC = rbacController
- 		appState.Authorizer = rbacController
- 	} else if appState.ServerConfig.Config.Authorization.AdminList.Enabled {
- 		appState.Authorizer = adminlist.New(appState.ServerConfig.Config.Authorization.AdminList)
- 	} else {
- 		appState.Authorizer = &authorization.DummyAuthorizer{}
- 	}
- 
--	if appState.ServerConfig.Config.Authorization.Rbac.Enabled && appState.RBAC == nil {
--		// this in general shall not happen, it's to catch cases were RBAC expected but we weren't able
--		// to assign it.
--		return fmt.Errorf("RBAC is expected to be enabled, but the controller wasn't initialized")
--	}
--
- 	return nil
- }
- 
-+// roleAPIController returns the controller behind the /authz endpoints, which
-+// is authz.InertController when RBAC is disabled. A mutation InertController
-+// accepts does not take effect when RBAC is enabled later.
-+func roleAPIController(rbacEnabled bool, raft authz.ControllerAndGetUsers) authz.ControllerAndGetUsers {
-+	if rbacEnabled {
-+		return raft
++	if len(trusted) == 0 {
++		return nil, errors.New("license: no trusted server keys")
 +	}
-+	return authz.InertController{Users: raft}
++	return &Client{LicenseID: id, PrivateKey: priv, TrustedKeys: trusted}, nil
 +}
 +
- func timeTillDeadline(ctx context.Context) string {
- 	dl, _ := ctx.Deadline()
- 	return time.Until(dl).String()
++// Error is a structured error returned by the service.
++type Error struct {
++	HTTPStatus int
++	Code       string `json:"error"`
++	Message    string `json:"message"`
++}
++
++func (e *Error) Error() string {
++	return fmt.Sprintf("license: server returned %d %s: %s", e.HTTPStatus, e.Code, e.Message)
++}
++
++// Verify signs a challenge for this node and returns the server's answer.
++// The response signature is checked against TrustedKeys and the nonce is
++// checked against the request, so a non-nil result can be trusted.
++func (c *Client) Verify(ctx context.Context, clusterID, instanceID, weaviateVersion string) (protocol.VerifyResponse, error) {
++	req := protocol.VerifyRequest{
++		LicenseID:       c.LicenseID,
++		ClusterID:       clusterID,
++		InstanceID:      instanceID,
++		WeaviateVersion: weaviateVersion,
++	}
++	if err := req.Sign(c.PrivateKey); err != nil {
++		return protocol.VerifyResponse{}, err
++	}
++	body, err := json.Marshal(req)
++	if err != nil {
++		return protocol.VerifyResponse{}, err
++	}
++
++	base := c.ServerURL
++	if base == "" {
++		base = DefaultServerURL
++	}
++	// A trailing slash on a configured ServerURL must not produce
++	// "//v1/verify": servers may answer that with a redirect, which would
++	// turn this POST into a GET.
++	base = strings.TrimRight(base, "/")
++	httpReq, err := http.NewRequestWithContext(ctx, http.MethodPost, base+"/v1/verify", bytes.NewReader(body))
++	if err != nil {
++		return protocol.VerifyResponse{}, err
++	}
++	httpReq.Header.Set("Content-Type", "application/json")
++	httpReq.Header.Set("Accept", "application/json")
++	if c.UserAgent != "" {
++		httpReq.Header.Set("User-Agent", c.UserAgent)
++	}
++	hc := c.HTTPClient
++	if hc == nil {
++		hc = &http.Client{Timeout: 10 * time.Second}
++	}
++	res, err := hc.Do(httpReq)
++	if err != nil {
++		return protocol.VerifyResponse{}, fmt.Errorf("license: verify request: %w", err)
++	}
++	defer res.Body.Close()
++	raw, err := io.ReadAll(io.LimitReader(res.Body, 64<<10))
++	if err != nil {
++		return protocol.VerifyResponse{}, fmt.Errorf("license: read response: %w", err)
++	}
++	if res.StatusCode != http.StatusOK {
++		e := &Error{HTTPStatus: res.StatusCode}
++		if json.Unmarshal(raw, e) != nil || e.Code == "" {
++			e.Code = "http_error"
++			e.Message = http.StatusText(res.StatusCode)
++		}
++		return protocol.VerifyResponse{}, e
++	}
++	var resp protocol.VerifyResponse
++	if err := json.Unmarshal(raw, &resp); err != nil {
++		return protocol.VerifyResponse{}, fmt.Errorf("license: decode response: %w", err)
++	}
++	if err := c.TrustedKeys.Verify(resp); err != nil {
++		return protocol.VerifyResponse{}, err
++	}
++	if !resp.Matches(req) {
++		return protocol.VerifyResponse{}, errors.New("license: response does not match request")
++	}
++	return resp, nil
++}
 ```
 
-**File**: `adapters/handlers/rest/configure_server_test.go` (modified, +94/-0)
+**File**: `adapters/clients/license/client_test.go` (added, +196/-0)
 ```diff
-@@ -13,12 +13,15 @@ package rest
- 
- import (
- 	"context"
-+	"os"
-+	"path/filepath"
- 	"testing"
- 
- 	"github.com/sirupsen/logrus/hooks/test"
- 	"github.com/stretchr/testify/assert"
- 	"github.com/stretchr/testify/require"
- 
-+	"github.com/weaviate/weaviate/adapters/handlers/rest/authz"
- 	"github.com/weaviate/weaviate/adapters/handlers/rest/state"
- 	"github.com/weaviate/weaviate/entities/models"
- 	"github.com/weaviate/weaviate/usecases/auth/authorization"
-@@ -62,6 +65,97 @@ func Test_AdminListAuthorizer(t *testing.T) {
- 	})
- }
- 
-+func TestConfigureAuthorizer(t *testing.T) {
-+	rbacAuthorizer := func(t *testing.T, appState *state.State) {
-+		assert.Equal(t, appState.RBAC, appState.Authorizer)
+@@ -0,0 +1,196 @@
++//                           _       _
++// __      _____  __ ___   ___  __ _| |_ ___
++// \ \ /\ / / _ \/ _` \ \ / / |/ _` | __/ _ \
++//  \ V  V /  __/ (_| |\ V /| | (_| | ||  __/
++//   \_/\_/ \___|\__,_| \_/ |_|\__,_|\__\___|
++//
++//  Copyright © 2016 - 2026 Weaviate B.V. All rights reserved.
++//
++//  CONTACT: hello@weaviate.io
++//
++
++package license
++
++import (
++	"context"
++	"crypto/ed25519"
++	"crypto/rand"
++	"encoding/json"
++	"net/http"
++	"net/http/httptest"
++	"reflect"
++	"testing"
++	"time"
++
++	"github.com/weaviate/weaviate/entities/license"
++)
++
++func TestNewClientRejectsEmptyTrustedKeys(t *testing.T) {
++	lic, err := license.Generate()
++	if err != nil {
++		t.Fatal(err)
 +	}
 +	tests := []struct {
-+		name  string
-+		authz config.Authorization
-+		// legacyPolicy, when set, is planted as <DataPath>/raft/rbac/policy.csv.
-+		legacyPolicy   string
-+		wantAuthorizer func(t *testing.T, appState *state.State)
++		name    string
++		trusted license.ServerKeySet
 +	}{
-+		{
-+			name:           "RBAC enabled",
-+			authz:          config.Authorization{Rbac: rbacconf.Config{Enabled: true}},
-+			wantAuthorizer: rbacAuthorizer,
-+		},
-+		{
-+			name:  "RBAC enabled seeds the legacy policy file under the RAFT dir",
-+			authz: config.Authorization{Rbac: rbacconf.Config{Enabled: true}},
-+			legacyPolicy: "p, role:custom, schema/collections/Movies/shards/#, R, schema\n" +
-+				"g, db:wv_internal_empty, role:custom\n",
-+			wantAuthorizer: rbacAuthorizer,
-+		},
-+		{
-+			name:  "adminlist enabled",
-+			authz: config.Authorization{AdminList: adminlist.Config{Enabled: true}},
-+			wantAuthorizer: func(t *testing.T, appState *state.State) {
-+				assert.IsType(t, &adminlist.Authorizer{}, appState.Authorizer)
-+			},
-+		},
-+		{
-+			name: "no authorization configured",
-+			wantAuthorizer: func(t *testing.T, appState *state.State) {
-+				assert.IsType(t, &authorization.DummyAuthorizer{}, appState.Authorizer)
-+			},
-+		},
++		{name: "nil", trusted: nil},
++		{name: "empty", trusted: license.ServerKeySet{}},
 +	}
-+
 +	for _, tt := range tests {
 +		t.Run(tt.name, func(t *testing.T) {
-+			logger, _ := test.NewNullLogger()
-+			dataPath := t.TempDir()
-+			if tt.legacyPolicy != "" {
-+				legacyDir := filepath.Join(dataPath, "raft", "rbac")
-+				require.NoError(t, os.MkdirAll(legacyDir, 0o755))
-+				require.NoError(t, os.WriteFile(filepath.Join(legacyDir, "policy.csv"), []byte(tt.legacyPolicy), 0o644))
-+				// A version of 1.30 or later skips the <1.30 rewrite, so the rows load as written.
-+				require.NoError(t, os.WriteFile(filepath.Join(legacyDir, "version"), []byte("1.30.0"), 0o644))
++			client, err := NewClient(lic.Key(), tt.trusted)
++			if err == nil {
++				t.Fatal("NewClient() accepted an empty trusted-key set")
 +			}
-+			appState := &state.State{
-+				Logger: logger,
-+				ServerConfig: &config.WeaviateConfig{Config: config.Config{
-+					Persistence:   config.Persistence{DataPath: dataPath},
-+					Authorization: tt.authz,
-+				}},
-+			}
-+			require.NoError(t, configureAuthorizer(appState))
-+
-+			require.NotNil(t, appState.RBAC, "the manager is built whatever the config")
-+			tt.wantAuthorizer(t, appState)
-+			if tt.legacyPolicy != "" {
-+				roles, err := appState.RBAC.GetRoles()
-+				require.NoError(t, err)
-+				_, seeded := roles["custom"]
-+				assert.True(t, seeded, "the role from the legacy policy file is seeded")
-+			}
-+
-+			// assert.Nil also passes a typed nil pointer inside the interface, so
-+			// the disabled case compares the interfaces with nil directly.
-+			snapshotter, roleLister := rbacBackupCapabilities(tt.authz.Rbac.Enabled, appState.RBAC)
-+			if tt.authz.Rbac.Enabled {
-+				assert.Same(t, appState.RBAC, snapshotter)
-+				assert.Same(t, appState.RBAC, roleLister)
-+			} else {
-+				assert.True(t, snapshotter == nil, "RBAC disabled leaves the snapshotter untyped nil")
-+				assert.True(t, roleLister == nil, "RBAC disabled leaves the role lister untyped nil")
-+			}
-+
-+			raft := authz.NewMockControllerAndGetUsers(t)
-+			roleAPI := roleAPIController(tt.authz.Rbac.Enabled, raft)
-+			if tt.authz.Rbac.Enabled {
-+				assert.Same(t, raft, roleAPI)
-+			} else {
-+				inert, ok := roleAPI.(authz.InertController)
-+				require.True(t, ok, "RBAC disabled selects the inert controller")
-+				assert.Same(t, raft, inert.Users, "user lookups go to raft")
++			if client != nil {
++				t.Fatal("NewClient() returned a client with an empty trusted-key set")
 +			}
 +		})
 +	}
 +}
 +
- func TestConfigureAuthorizerRefusesNamespacesWithoutController(t *testing.T) {
- 	logger, _ := test.NewNullLogger()
- 	appState := &state.State{
++func TestVerifyToleratesTrailingSlashServerURL(t *testing.T) {
++	pub, priv, _ := ed25519.GenerateKey(rand.Reader)
++	key := license.ServerKey{ID: "k", PrivateKey: priv}
++	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++		if r.URL.Path != "/v1/verify" {
++			t.Errorf("unexpected request path %q", r.URL.Path)
++		}
++		var req license.VerifyRequest
++		json.NewDecoder(r.Body).Decode(&req)
++		now := time.Now().UTC().Truncate(time.Second)
++		resp := license.VerifyResponse{
++			LicenseID: req.LicenseID, Status: license.StatusValid,
++			ExpiresAt: now.Add(time.Hour), CheckedAt: now, NextCheckAfter: now.Add(24 * time.Hour), Nonce: req.Nonce,
++		}
++		key.Sign(&resp)
++		json.NewEncoder(w).Encode(resp)
++	}))
++	defer srv.Close()
++
++	lic, _ := license.Generate()
++	client, err := NewClient(lic.Key(), license.ServerKeySet{"k": pub})
++	if err != nil {
++		t.Fatal(err)
++	}
++	client.ServerURL = srv.URL + "/"
++	resp, err := client.Verify(context.Background(), "c-1", "n-1", "1.39.0")
++	if err != nil {
++		t.Fatal(err)
++	}
++	if resp.Status != license.StatusValid {
++		t.Fatalf("unexpected status %q", resp.Status)
++	}
++}
++
++// TestVerifyTrustChecks covers the two checks that make an answer
++// trustworthy: the server signature against the trusted key set, and the
++// echo of this request's license ID and nonce. Every bad row must produce an
++// error and a zero response; each row fails if its corresponding check is
++// removed.
++func TestVerifyTrustChecks(t *testing.T) {
++	pub, priv, _ := ed25519.GenerateKey(rand.Reader)
++	_, roguePriv, _ := ed25519.GenerateKey(rand.Reader)
++
++	lic, err := license.Generate()
++	if err != nil {
++		t.Fatal(err)
++	}
++	trusted := license.ServerKeySet{"k": pub}
++
++	cases := []struct {
++		name             string
++		signKey          ed25519.PrivateKey
++		mutateBeforeSign func(*license.VerifyResponse) // signature stays valid
++		mutateAfterSign  func(*license.VerifyResponse) // breaks the signature
++		wantErr          bool
++	}{
++		{"valid answer", priv, nil, nil, false},
++		{"signed by an untrusted key", roguePriv, nil, nil, true},
++		{"different nonce, valid signature", priv, func(r *license.VerifyResponse) { r.Nonce = "other-nonce" }, nil, true},
++		{"different license id, valid signature", priv, func(r *license.VerifyResponse) { r.LicenseID = "lic_01ARZ3NDEKTSV4RRFFQ69G5FAV" }, nil, true},
++		{"field tampered after signing", priv, nil, func(r *license.VerifyResponse) { r.Status = license.StatusRevoked }, true},
++	}
++	for _, tt := range cases {
++		t.Run(tt.name, func(t *testing.T) {
++			srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++				var req license.VerifyRequest
++				json.NewDecoder(r.Body).Decode(&req)
++				now := time.Now().UTC().Truncate(time.Second)
++				resp := license.VerifyResponse{
++					LicenseID: req.LicenseID, Status: license.StatusValid,
++					ExpiresAt: now.Add(time.Hour), CheckedAt: now, NextCheckAfter: now.Add(24 * time.Hour), Nonce: req.Nonce,
++				}
++				if tt.mutateBeforeSign != nil {
++					tt.mutateBeforeSign(&resp)
++				}
++				key := license.ServerKey{ID: "k", PrivateKey: tt.signKey}
++				key.Sign(&resp)
++				if tt.mutateAfterSign != nil {
++					tt.mutateAfterSign(&resp)
++				}
++				json.NewEncoder(w).Encode(resp)
++			}))
++			defer srv.Close()
++
++			client, err := NewClient(lic.Key(), trusted)
++			if err != nil {
++				t.Fatal(err)
++			}
++			client.ServerURL = srv.URL
++			resp, err := client.Verify(context.Background(), "c-1", "n-1", "1.39.0")
++			if tt.wantErr {
++				if err == nil {
++					t.Fatal("expected an error")
++				}
++				if !reflect.DeepEqual(resp, license.VerifyResponse{}) {
++					t.Fatalf("expected a zero response on error, got %+v", resp)
++				}
++				return
++			}
++			if err != nil {
++				t.Fatal(err)
++			}
++			if 
 ```
 
-**File**: `adapters/handlers/rest/db_users/create_user_test.go` (modified, +0/-1)
+**File**: `adapters/handlers/grpc/v1/batch/handler_test.go` (modified, +28/-3)
 ```diff
-@@ -696,7 +696,6 @@ func TestListAndGetUser_NamespaceVisibility(t *testing.T) {
+@@ -24,12 +24,13 @@ import (
+ 	restCtx "github.com/weaviate/weaviate/adapters/handlers/rest/context"
+ 	"github.com/weaviate/weaviate/entities/models"
+ 	pb "github.com/weaviate/weaviate/grpc/generated/protocol/v1"
++	"github.com/weaviate/weaviate/usecases/objects"
+ 	wlnamespaces "github.com/weaviate/weaviate/wl/namespaces"
+ )
  
- 			dynUser := NewMockDbUserAndRolesGetter(t)
- 			dynUser.On("GetUsers", userID).Return(map[string]apikey.UserView{userID: storedUser}, nil)
--			dynUser.On("GetRolesForUserOrGroup", userID, mock.Anything, false).Return(map[string][]authorization.Policy{}, nil)
+-// Drives BatchObjects with a request carrying no objects, which returns before
+-// the batch manager is touched. The namespace is recorded before class
+-// resolution and authorization, so a rejected batch is still attributed.
++// Drives BatchObjects with requests that return before the batch manager is
++// touched. The namespace is recorded before class resolution and authorization,
++// so a rejected batch is still attributed.
+ // docs/metrics.md lists the residuals.
+ func TestHandler_BatchObjects(t *testing.T) {
+ 	t.Run("records the caller's namespace in the slot", func(t *testing.T) {
+@@ -87,4 +88,28 @@ func TestHandler_BatchObjects(t *testing.T) {
+ 		require.Error(t, err)
+ 		assert.Empty(t, slot.Namespace)
+ 	})
++
++	t.Run("every object with an empty collection fails alone", func(t *testing.T) {
++		logger, _ := test.NewNullLogger()
++		authenticator := auth.NewHandler(false, func(string, []string) (*models.Principal, error) {
++			return &models.Principal{Username: "ns_a:alice", Namespace: "ns_a"}, nil
++		})
++		// The nil authorizer, batch manager and schema manager panic if the handler reaches them.
++		h := NewHandler(nil, nil, logger, authenticator, nil, wlnamespaces.NewPrefixing())
++
++		ctx, _ := restCtx.WithBatchNamespaceSlot(context.Background())
++		reply, err := h.BatchObjects(ctx, &pb.BatchObjectsRequest{Objects: []*pb.BatchObject{
++			{Collection: "", Uuid: "a0b55b05-bc5b-4cc9-b646-1452d1390a62"},
++			{Collection: "", Uuid: "a0b55b05-bc5b-4cc9-b646-1452d1390a63"},
++		}})
++
++		require.NoError(t, err)
++		require.Len(t, reply.Errors, 2)
++		var indexes []int32
++		for _, batchErr := range reply.Errors {
++			assert.Contains(t, batchErr.Error, objects.ErrEmptyClass.Error())
++			indexes = append(indexes, batchErr.Index)
++		}
++		assert.ElementsMatch(t, []int32{0, 1}, indexes)
++	})
+ }
+```
+
+**File**: `adapters/handlers/grpc/v1/batch/parse.go` (modified, +8/-0)
+```diff
+@@ -21,6 +21,7 @@ import (
+ 	"github.com/weaviate/weaviate/entities/models"
+ 	"github.com/weaviate/weaviate/entities/schema"
+ 	pb "github.com/weaviate/weaviate/grpc/generated/protocol/v1"
++	"github.com/weaviate/weaviate/usecases/objects"
+ 	"github.com/weaviate/weaviate/usecases/schema/namespacing"
+ )
  
- 			h := dynUserHandler{
- 				dbUsers:       dynUser,
+@@ -45,6 +46,13 @@ func BatchObjectsFromProto(req *pb.BatchObjectsRequest, authorizedGetClass func(
+ 		var props map[string]interface{}
+ 
+ 		collection := schema.UppercaseClassName(obj.Collection)
++		// An empty collection fails this object alone, before anything is parsed.
++		// Resolving it would qualify it to "<namespace>:" for a namespaced caller,
++		// and authorizing it would check every collection for anyone else.
++		if collection == "" {
++			objectErrors[i] = objects.ErrEmptyClass
++			continue
++		}
+ 		resolved, class, err := authorizedGetClass(collection, obj.Tenant)
+ 		if err != nil {
+ 			objectErrors[i] = err
+```
+
+**File**: `adapters/handlers/grpc/v1/batch/parse_test.go` (modified, +31/-12)
+```diff
+@@ -22,6 +22,7 @@ import (
+ 	"github.com/weaviate/weaviate/entities/models"
+ 	"github.com/weaviate/weaviate/entities/schema"
+ 	pb "github.com/weaviate/weaviate/grpc/generated/protocol/v1"
++	"github.com/weaviate/weaviate/usecases/objects"
+ 	"github.com/weaviate/weaviate/usecases/schema/namespacing"
+ 	wlnamespaces "github.com/weaviate/weaviate/wl/namespaces"
+ 	"google.golang.org/protobuf/encoding/protojson"
+@@ -557,21 +558,39 @@ func TestGRPCBatchRequest_MultiTargetNamespace(t *testing.T) {
+ 	})
+ }
+ 
+-// TestGRPCBatchRequest_AutoSchemaQualifiesNamespace pins the auto-schema branch
+-// (class not yet in schema): the parsed object must carry the resolver's
+-// qualified name, not the bare request collection.
++// TestGRPCBatchRequest_AutoSchemaQualifiesNamespace pins that an object whose
++// class is not yet in schema carries the resolver's qualified name, and that an
++// empty collection fails that object alone without reaching the resolver.
+ func TestGRPCBatchRequest_AutoSchemaQualifiesNamespace(t *testing.T) {
+-	getClass := func(class, shard string) (string, *models.Class, error) {
+-		// resolver qualifies the short name; class is nil (auto-schema creates it).
+-		return "ns1:Movies", nil, nil
+-	}
+-	req := []*pb.BatchObject{{Collection: "Movies", Uuid: UUID4}}
++	t.Run("short name", func(t *testing.T) {
++		getClass := func(class, shard string) (string, *models.Class, error) {
++			// The resolver qualifies the short name, and the class is nil because auto-schema creates it.
++			return "ns1:" + class, nil, nil
++		}
++		req := []*pb.BatchObject{{Collection: "Movies", Uuid: UUID4}}
+ 
+-	out, _, batchErrors := batch.BatchObjectsFromProto(&pb.BatchObjectsRequest{Objects: req}, getClass, nil, namespacing.Disabled)
++		out, _, batchErrors := batch.BatchObjectsFromProto(&pb.BatchObjectsRequest{Objects: req}, getClass, nil, namespacing.Disabled)
+ 
+-	require.Len(t, batchErrors, 0)
+-	require.Len(t, out, 1)
+-	require.Equal(t, "ns1:Movies", out[0].Class)
++		require.Len(t, batchErrors, 0)
++		require.Len(t, out, 1)
++		require.Equal(t, "ns1:Movies", out[0].Class)
++	})
++
++	t.Run("empty name beside a short name", func(t *testing.T) {
++		getClass := func(class, shard string) (string, *models.Class, error) {
++			require.NotEmpty(t, class, "resolver called with an empty collection")
++			return "ns1:" + class, nil, nil
++		}
++		req := []*pb.BatchObject{{Collection: "", Uuid: UUID4}, {Collection: "Movies", Uuid: UUID4}}
++
++		out, originalIndex, batchErrors := batch.BatchObjectsFromProto(&pb.BatchObjectsRequest{Objects: req}, getClass, nil, namespacing.Disabled)
++
++		require.Len(t, batchErrors, 1)
++		require.ErrorIs(t, batchErrors[0], objects.ErrEmptyClass)
++		require.Len(t, out, 1)
++		require.Equal(t, "ns1:Movies", out[0].Class)
++		require.Equal(t, map[int]int{0: 1}, originalIndex)
++	})
+ }
+ 
+ // The worker re-sends the same pointers on retry; a parse that rewrites the
+```
+
+**File**: `adapters/handlers/rest/authz/handlers_authz_alias_pattern_test.go` (modified, +57/-31)
+```diff
+@@ -29,37 +29,63 @@ import (
+ 	"github.com/weaviate/weaviate/usecases/config"
+ )
+ 
+-// TestAliasPatternCheckedAsStored checks that create and add refuse an alias
+-// pattern that stops compiling once conv uppercases it, and checkLookup doesn't.
+-func TestAliasPatternCheckedAsStored(t *testing.T) {
+-	perm := &models.Permission{Action: String(authorization.ReadAliases), Aliases: &models.PermissionAliases{Collection: String("*"), Alias: String("[[:alpha:]]+")}}
+-	wantErr := "'[[:alpha:]]+' is not a valid alias name"
+-	require.NoError(t, validatePermissions(false, checkLookup, perm))
+-
+-	t.Run("create role", func(t *testing.T) {
+-		logger, _ := test.NewNullLogger()
+-		h := &authZHandlers{authorizer: authorization.NewMockAuthorizer(t), controller: NewMockControllerAndGetUsers(t), logger: logger}
+-		res := h.createRole(authz.CreateRoleParams{
+-			HTTPRequest: req,
+-			Body:        &models.Role{Name: String("newRole"), Permissions: []*models.Permission{perm}},
+-		}, &models.Principal{Username: "user1"})
+-		parsed, ok := res.(*authz.CreateRoleUnprocessableEntity)
+-		require.True(t, ok, "got %T", res)
+-		assert.Contains(t, parsed.Payload.Error[0].Message, wantErr)
+-	})
+-
+-	t.Run("add permissions", func(t *testing.T) {
+-		logger, _ := test.NewNullLogger()
+-		h := &authZHandlers{authorizer: authorization.NewMockAuthorizer(t), controller: NewMockControllerAndGetUsers(t), logger: logger}
+-		res := h.addPermissions(authz.AddPermissionsParams{
+-			ID:          "someRole",
+-			HTTPRequest: req,
+-			Body:        authz.AddPermissionsBody{Permissions: []*models.Permission{perm}},
+-		}, &models.Principal{Username: "user1"})
+-		parsed, ok := res.(*authz.AddPermissionsBadRequest)
+-		require.True(t, ok, "got %T", res)
+-		assert.Contains(t, parsed.Payload.Error[0].Message, wantErr)
+-	})
++// TestPatternCheckedAsStored checks that create and add refuse a pattern that
++// stops compiling once conv stores it, and checkLookup doesn't, so a row already
++// stored stays removable.
++func TestPatternCheckedAsStored(t *testing.T) {
++	tests := []struct {
++		name    string
++		perm    *models.Permission
++		wantErr string
++	}{
++		{
++			name:    "alias uppercased",
++			perm:    &models.Permission{Action: String(authorization.ReadAliases), Aliases: &models.PermissionAliases{Collection: String("*"), Alias: String("[[:alpha:]]+")}},
++			wantErr: "'[[:alpha:]]+' is not a valid alias name",
++		},
++		{
++			// conv stores X|\Q as (X|\Q), and \Q quotes the closing ')'.
++			name:    "alternation wrapped in a group",
++			perm:    &models.Permission{Action: String(authorization.ReadData), Data: &models.PermissionData{Collection: String(`X|\Q`)}},
++			wantErr: "is not a valid pattern: error parsing regexp: missing closing )",
++		},
++	}
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			require.NoError(t, validatePermissions(false, checkLookup, tt.perm))
++
++			t.Run("create role", func(t *testing.T) {
++				logger, _ := test.NewNullLogger()
++				h := &authZHandlers{authorizer: authorization.NewMockAuthorizer(t), controller: NewMockControllerAndGetUsers(t), logger: logger}
++				res := h.createRole(authz.CreateRoleParams{
++					HTTPRequest: req,
++					Body:        &models.Role{Name: String("newRole"), Permissions: []*models.Permission{tt.perm}},
++				}, &models.Principal{Username: "user1"})
++				parsed, ok := res.(*authz.CreateRoleUnprocessableEntity)
++				require.True(t, ok, "got %T", res)
++				assert.Contains(t, parsed.Payload.Error[0].Message, tt.wantErr)
++			})
++
++			t.Run("add permissions", func(t *testing.T) {
++				logger, _ := test.NewNullLogger()
++				h := &authZHandlers{authorizer: authorization.NewMockAuthorizer(t), controller: NewMockControllerAndGetUsers(t), logger: logger}
++				res := h.addPermissions(authz.AddPermissionsParams{
++					ID:          "someRole",
++					HTTPRequest: req,
++					Body:        authz.AddPermissionsBody{Permissions: []*models.Permission{tt.perm}},
++				}, &models.Principal{Username: "user1"})
++				parsed, ok := res.(*authz.AddPermissionsBadRequest)
++				require.True(t, ok, "got %T", res)
++				assert.Contains(t, parsed.Payload.Error[0].Message, tt.wantErr)
++			})
++		})
++	}
++}
++
++// TestValidateStorablePoliciesBraceRewrite checks that the stored-form compile
++// rewrites "{...}" as KeyMatch5 does, so a target the matcher accepts is not refused.
++func TestValidateStorablePoliciesBraceRewrite(t *testing.T) {
++	require.NoError(t, validateStorablePolicies([]authorization.Policy{{Resource: "users/x{1001}"}}))
+ }
+ 
+ // TestValidatePermissionsAliasRule checks that create and add apply the
+```
+
+**File**: `adapters/handlers/rest/authz/validation.go` (modified, +10/-5)
+```diff
+@@ -34,9 +34,8 @@ const maxTargetLength = 256
+ // validateRegexTarget rejects a permission target that would not survive being
+ // stored as a casbin resource pattern: it is over-long, contains a '/' (which
+ // shifts the segment boundaries used on read-back), or does not compile as a
+-// regex (which panics the matcher at enforce time). It reproduces exactly what
+-// the matcher compiles — the '*' wildcard expanded and KeyMatch5's "{...}"
+-// rewrite applied — so constructs the rewrite would break (e.g. "\p{L}",
++// regex. It compiles the target with the '*' wildcard expanded and KeyMatch5's
++// "{...}" rewrite applied, so constructs the rewrite would break (e.g. "\p{L}",
+ // "\x{263a}") are caught here, not at enforce.
+ func validateRegexTarget(field, value string) error {
+ 	if len(value) > maxTargetLength {
+@@ -90,8 +89,8 @@ func validatePermissions(namespacesEnabled bool, check permissionCheck, permissi
+ 		}
+ 		// aliasName checks the pattern as conv stores it, uppercased, against the
+ 		// class-name rule. That refuses "ålias.*", which matches no alias, and
+-		// "[[:alpha:]]", stored as "[[:Alpha:]]", which panics casbin on every alias
+-		// check. checkLookup skips the rule so remove can drop such stored rows.
++		// "[[:alpha:]]", stored as "[[:Alpha:]]", which does not compile. checkLookup
++		// skips the rule so remove can drop such stored rows.
+ 		aliasName := func(name string) {
+ 			if check == checkLookup {
+ 				return
+@@ -170,11 +169,17 @@ func validatePermissions(namespacesEnabled bool, check permissionCheck, permissi
+ // validateStorablePolicies rejects a permission whose resource would corrupt the
+ // policy file. It skips the length check because a resource joins several
+ // targets, and validatePermissions already caps each one at maxTargetLength.
++// It also compiles each resource as KeyMatch5 does, since conv stores a target
++// such as "X|\Q" as "(X|\Q)", and there "\Q" quotes the closing ')'.
+ func validateStorablePolicies(policies []authorization.Policy) error {
+ 	for _, p := range policies {
+ 		if err := conv.ValidateStorableCharacters(p.Resource); err != nil {
+ 			return fmt.Errorf("permission %q %w", p.Resource, err)
+ 		}
++		pattern := "^" + keyMatch5BraceRe.ReplaceAllString(strings.ReplaceAll(p.Resource, "/*", "/.*"), "[^/]+") + "$"
++		if _, err := regexp.Compile(pattern); err != nil {
++			return fmt.Errorf("permission %q is not a valid pattern: %w", p.Resource, err)
++		}
+ 	}
+ 	return nil
+ }
+```
+
+**File**: `adapters/handlers/rest/embedded_spec.go` (modified, +8/-8)
+```diff
+@@ -1866,13 +1866,13 @@ func init() {
+             "description": "Unauthorized or invalid credentials."
+           },
+           "403": {
+-            "description": "Forbidden",
++            "description": "The caller lacks read_backups on a collection in the backup. Callers without read_backups on all collections also get 403 when no backup with this ID exists at this location, so a 403 does not confirm the backup exists.",
+             "schema": {
+               "$ref": "#/definitions/ErrorResponse"
+             }
+           },
+           "404": {
+-            "description": "Backup not found on the specified backend with the given ID.",
++            "description": "No backup with this ID exists at this backend, bucket and path. Only callers with read_backups on all collections get 404; others get 403.",
+             "schema": {
+               "$ref": "#/definitions/ErrorResponse"
+             }
+@@ -2007,13 +2007,13 @@ func init() {
+             "description": "Unauthorized or invalid credentials."
+           },
+           "403": {
+-            "description": "Forbidden",
++            "description": "The caller lacks read_backups on a collection in the backup. Callers without read_backups on all collections also get 403 when no backup with this ID exists at this location, so a 403 does not confirm the backup exists.",
+             "schema": {
+               "$ref": "#/definitions/ErrorResponse"
+             }
+           },
+           "404": {
+-            "description": "Backup not found on the specified backend with the given ID.",
++            "description": "No restore of this backup was started at this backend, bucket and path.",
+             "schema": {
+               "$ref": "#/definitions/ErrorResponse"
+             }
+@@ -14690,13 +14690,13 @@ func init() {
+             "description": "Unauthorized or invalid credentials."
+           },
+           "403": {
+-            "description": "Forbidden",
++            "description": "The caller lacks read_backups on a collection in the backup. Callers without read_backups on all collections also get 403 when no backup with this ID exists at this location, so a 403 does not confirm the backup exists.",
+             "schema": {
+               "$ref": "#/definitions/ErrorResponse"
+             }
+           },
+           "404": {
+-            "description": "Backup not found on the specified backend with the given ID.",
++            "description": "No backup with this ID exists at this backend, bucket and path. Only callers with read_backups on all collections get 404; others get 403.",
+             "schema": {
+               "$ref": "#/definitions/ErrorResponse"
+             }
+@@ -14831,13 +14831,13 @@ func init() {
+             "description": "Unauthorized or invalid credentials."
+           },
+           "403": {
+-            "description": "Forbidden",
++            "description": "The caller lacks read_backups on a collection in the backup. Callers without read_backups on all collections also get 403 when no backup with this ID exists at this location, so a 403 does not confirm the backup exists.",
+             "schema": {
+               "$ref": "#/definitions/ErrorResponse"
+             }
+           },
+           "404": {
+-            "description": "Backup not found on the specified backend with the given ID.",
++            "description": "No restore of this backup was started at this backend, bucket and path.",
+             "schema": {
+               "$ref": "#/definitions/ErrorResponse"
+             }
 ```
 
 ---
 
-### Incident Patch 2: `5080908a` (2026-11-03)
-**Commit Message**: queue: one place builds and parses chunk names
+### Incident Patch 2: `9e219cb0` (2026-11-05)
+**Commit Message**: Merge pull request #13773 from weaviate/vector-index-update-queue-rewind
 
-**File**: `adapters/repos/db/queue/queue.go` (modified, +16/-4)
+vector index update: a queue can rewind to where it started retaining
+
+**File**: `adapters/repos/db/queue/queue.go` (modified, +233/-55)
 ```diff
-@@ -65,6 +65,18 @@ const (
- 	minEncodedRecordSize = 4 + 1
+@@ -37,6 +37,8 @@ import (
+ 
+ 	"github.com/pkg/errors"
+ 	"github.com/sirupsen/logrus"
++
++	"github.com/weaviate/weaviate/entities/diskio"
  )
  
-+// chunkPath is the path of the chunk numbered seq in dir.
-+func chunkPath(dir string, seq int64) string {
-+	return filepath.Join(dir, fmt.Sprintf(chunkFileFmt, seq))
+ const (
+@@ -712,14 +714,26 @@ func (q *DiskQueue) EnableMaintenanceMode() {
+ // tombstone files and their corresponding chunk files left from the freeze
+ // period, unless a retention still keeps them.
+ func (q *DiskQueue) DisableMaintenanceMode() error {
++	tombstones, err := q.endMaintenanceMode()
++	if err != nil {
++		return err
++	}
++	// without rmLock, as in ReleaseRetention
++	q.logRemoveProcessedChunks(tombstones)
++	return nil
 +}
 +
-+// chunkSeq is the number a chunk file is named after.
-+func chunkSeq(path string) (int64, bool) {
-+	name := strings.TrimSuffix(strings.TrimPrefix(filepath.Base(path), "chunk-"), ".bin")
-+	seq, err := strconv.ParseInt(name, 10, 64)
-+	return seq, err == nil
-+}
-+
- // regex pattern for the chunk files.
- // It is anchored so that derived files (e.g. .processed tombstones or
- // .corrupt quarantined chunks) never match.
-@@ -755,7 +767,7 @@ func (q *DiskQueue) Retain() (mark string, err error) {
- 		mark = q.w.f.Name()
++// endMaintenanceMode turns maintenance mode off and lists the tombstones of
++// the chunks nothing keeps anymore.
++func (q *DiskQueue) endMaintenanceMode() ([]string, error) {
+ 	q.rmLock.Lock()
+ 	defer q.rmLock.Unlock()
+ 
+ 	q.maintenanceMode.Store(false)
+ 	if q.retained {
+-		return q.cleanupProcessedChunksBefore(q.retainedFrom)
++		return q.processedChunks(q.retainedFrom)
  	}
- 	if mark == "" {
--		mark = filepath.Join(q.dir, fmt.Sprintf(chunkFileFmt, q.w.nextSeq()))
-+		mark = chunkPath(q.dir, q.w.nextSeq())
+-	return q.cleanupProcessedChunks()
++	return q.processedChunks(math.MaxInt64)
+ }
+ 
+ // keepsProcessed reports whether a processed chunk is kept rather than
+@@ -728,93 +742,221 @@ func (q *DiskQueue) keepsProcessed() bool {
+ 	return q.maintenanceMode.Load() || q.retained
+ }
+ 
+-// Retain keeps every chunk from the returned mark on, processed or not,
+-// until ReleaseRetention: a replacement index replays them while the current
+-// consumer carries on. Processed chunks are kept as a backup keeps them,
+-// behind a .processed tombstone, so a restart deletes them: a replacement is
+-// never resumed after one.
+-//
+-// The mark is the path of the first chunk to replay, and every chunk named
+-// at or after it replays: the oldest chunk not processed yet, or on a queue
+-// with none a name reserved below every chunk created next. The file may not
+-// exist yet. Chunks a backup kept from before the mark go when the backup
+-// ends. A queue is retained once at a time.
+-func (q *DiskQueue) Retain() (mark string, err error) {
++// Retain keeps everything queued from now on or not processed yet, processed
++// or not, until ReleaseRetention: a replacement index replays it, see Rewind,
++// while the current consumer carries on. Processed chunks are kept as a backup
++// keeps them, behind a .processed tombstone, so a restart deletes them unless
++// Rewind runs before Init. Chunks a backup kept from before Retain go when the
++// backup ends. A queue is retained once at a time.
++func (q *DiskQueue) Retain() error {
+ 	q.rmLock.Lock()
+ 	defer q.rmLock.Unlock()
+ 
+ 	if q.r == nil || q.w == nil {
+-		return "", errors.New("queue not initialized")
++		return errors.New("queue not initialized")
  	}
- 	q.retained = true
- 	return mark, nil
-@@ -1399,7 +1411,7 @@ func (w *chunkWriter) Create() error {
- 	// retention's mark is a name).
- 	ts := w.nextSeq()
- 	for i := 0; ; i++ {
--		path := filepath.Join(w.dir, fmt.Sprintf(chunkFileFmt, ts))
-+		path := chunkPath(w.dir, ts)
- 		w.f, err = os.OpenFile(path, os.O_CREATE|os.O_EXCL|os.O_RDWR, 0o644)
- 		if err == nil {
- 			break
-@@ -1465,8 +1477,8 @@ func (w *chunkWriter) Open() error {
- 			continue
- 		}
- 		lastChunk = entry.Name()
--		seq, err := strconv.ParseInt(strings.TrimSuffix(strings.TrimPrefix(lastChunk, "chunk-"), ".bin"), 10, 64)
--		if err == nil && seq > w.lastSeq {
-+		seq, ok := chunkSeq(lastChunk)
-+		if ok && seq > w.lastSeq {
- 			w.lastSeq = seq
- 		}
- 	}
-```
-
-**File**: `adapters/repos/db/queue/queue_test.go` (modified, +2/-3)
-```diff
-@@ -23,7 +23,6 @@ import (
- 	"os"
- 	"path/filepath"
- 	"runtime/debug"
--	"strconv"
- 	"strings"
- 	"testing"
- 	"time"
-@@ -2543,8 +2542,8 @@ func TestChunkNamesGrowWhenTheClockStepsBack(t *testing.T) {
- 	}
- 	seqOf := func(t *testing.T, path string) int64 {
- 		t.Helper()
--		seq, err := strconv.ParseInt(strings.TrimSuffix(strings.TrimPrefix(filepath.Base(path), "chunk-"), ".bin"), 10, 64)
--		require.NoError(t, err)
-+		seq, ok := chunkSeq(path)
-+		require.True(t, ok)
- 		return seq
+ 	if q.retained {
+-		return "", errors.New("queue already retained")
++		return errors.New("queue already retained")
  	}
  
+ 	// under the writer's lock, so no chunk is created in between
+ 	q.m.Lock()
+ 	defer q.m.Unlock()
+-	mark = q.r.firstUnprocessed()
+-	if mark == "" && q.w.f != nil {
+-		mark = q.w.f.Name()
++	first := q.r.firstUnprocessed()
++	if first == "" && q.w.f != nil {
++		first = q.w.f.Name()
+ 	}
+-	if mark == "" {
+-		mark = chunkPath(q.dir, q.w.nextSeq())
++	if first == "" {
++		first = chunkPath(q.dir, q.w.nextSeq())
+ 	}
+-	from, ok := chunkSeq(mark)
++	from, ok := chunkSeq(first)
+ 	if !ok {
+-		return "", fmt.Errorf("unexpected chunk name %q", mark)
++		return fmt.Errorf("unexpected chunk name %q", first)
+ 	}
+ 	q.retained = true
+ 	q.retainedFrom = from
+-	return mark, nil
++	return nil
++}
++
++// Rewind serves every kept chunk again, in order, ahead of what is still
++// queued. A running queue must be retained, not held by a backup, and paused
++// with no batch left: a batch finishing after the rewind would tombstone its
++// chunk out of the replay. On a queue not initialized yet it only
++// makes the kept chunks ordinary ones for Init, which would delete them
++// otherwise; that is how a restart resumes one. Doing it twice replays at most
++// what a backup kept in between. The retention stays until ReleaseRetention,
++// which must not overlap it: a release deleting would take what it re-queues,
++// so the retention's one owner calls them in sequence.
++func (q *DiskQueue) Rewind() error {
++	// not q.m around the disk work: Push and the scheduler's Size need it
++	q.rmLock.Lock()
++	defer q.rmLock.Unlock()
++
++	live := q.r != nil
++	if live && !q.retained {
++		return errors.New("queue not retained")
++	}
++	if live && !q.scheduler.IsQueueIdle(q.id) {
++		return errors.New("queue not paused, or a batch is still running")
++	}
++	// a backup may be copying the chunks this would move or re-queue
++	if live && q.maintenanceMode.Load() {
++		return errors.New("queue in maintenance mode")
++	}
++
++	entries, err := os.ReadDir(q.dir)
++	if err != nil {
++		if stderrors.Is(err, fs.ErrNotExist) {
++			return nil
++		}
++		return errors.Wrap(err, "failed to read directory during rewind")
++	}
++
++	var refs []chunkRef
++	var errs []error
++	for _, entry := range entries {
++		if !processedChunkFilePattern.MatchString(entry.Name()) {
++	
+```
+
+**File**: `adapters/repos/db/queue/queue_test.go` (modified, +477/-29)
+```diff
+@@ -24,6 +24,7 @@ import (
+ 	"path/filepath"
+ 	"runtime/debug"
+ 	"strings"
++	"sync"
+ 	"testing"
+ 	"time"
+ 
+@@ -2338,6 +2339,11 @@ func chunksOf(t *testing.T, q *DiskQueue) (chunks []string, tombstoned map[strin
+ 	return chunks, tombstoned
+ }
+ 
++// retainedStart is the path of the first chunk q's retention keeps.
++func retainedStart(q *DiskQueue) string {
++	return chunkPath(q.dir, q.retainedFrom)
++}
++
+ // processNext dequeues the next batch and marks it done.
+ func processNext(t *testing.T, q *DiskQueue) {
+ 	t.Helper()
+@@ -2347,7 +2353,7 @@ func processNext(t *testing.T, q *DiskQueue) {
+ 	batch.Done()
+ }
+ 
+-// A retention keeps every processed chunk from its mark on, while the
++// A retention keeps every processed chunk from where it started, while the
+ // consumer moves past it, and its release deletes them.
+ func TestRetention_KeepsProcessedChunksUntilReleased(t *testing.T) {
+ 	s := makeScheduler(t)
+@@ -2357,9 +2363,9 @@ func TestRetention_KeepsProcessedChunksUntilReleased(t *testing.T) {
+ 	chunks, _ := chunksOf(t, q)
+ 	require.Len(t, chunks, 3)
+ 
+-	mark, err := q.Retain()
++	err := q.Retain()
+ 	require.NoError(t, err)
+-	assert.Equal(t, chunks[0], mark)
++	assert.Equal(t, chunks[0], retainedStart(q))
+ 
+ 	processNext(t, q)
+ 	processNext(t, q)
+@@ -2392,7 +2398,7 @@ func TestRetention_AndBackupKeepChunksIndependently(t *testing.T) {
+ 		pushMany(t, q, 1, 1, 2, 3, 4)
+ 		chunks, _ := chunksOf(t, q)
+ 		require.Len(t, chunks, 2)
+-		_, err := q.Retain()
++		err := q.Retain()
+ 		require.NoError(t, err)
+ 		q.EnableMaintenanceMode()
+ 		processNext(t, q)
+@@ -2422,9 +2428,9 @@ func TestRetention_AndBackupKeepChunksIndependently(t *testing.T) {
+ 	})
+ }
+ 
+-// The mark is the oldest chunk not processed when the retention starts, or
++// A retention starts at the oldest chunk not processed yet, or
+ // the next chunk the queue creates.
+-func TestRetention_Mark(t *testing.T) {
++func TestRetention_Start(t *testing.T) {
+ 	t.Run("the oldest chunk not processed yet", func(t *testing.T) {
+ 		s := makeScheduler(t)
+ 		q := makeQueueSize(t, s, discardExecutor(), 50)
+@@ -2433,9 +2439,9 @@ func TestRetention_Mark(t *testing.T) {
+ 		require.Len(t, chunks, 3)
+ 		processNext(t, q)
+ 
+-		mark, err := q.Retain()
++		err := q.Retain()
+ 		require.NoError(t, err)
+-		assert.Equal(t, chunks[1], mark)
++		assert.Equal(t, chunks[1], retainedStart(q))
+ 	})
+ 
+ 	t.Run("the chunk being written", func(t *testing.T) {
+@@ -2445,12 +2451,12 @@ func TestRetention_Mark(t *testing.T) {
+ 		chunks, _ := chunksOf(t, q)
+ 		require.Len(t, chunks, 1)
+ 
+-		mark, err := q.Retain()
++		err := q.Retain()
+ 		require.NoError(t, err)
+-		assert.Equal(t, chunks[0], mark)
++		assert.Equal(t, chunks[0], retainedStart(q))
+ 	})
+ 
+-	t.Run("an empty queue marks the next chunk name", func(t *testing.T) {
++	t.Run("an empty queue starts at the next chunk name", func(t *testing.T) {
+ 		s := makeScheduler(t)
+ 		q := makeQueueSize(t, s, discardExecutor(), 50)
+ 		pushMany(t, q, 1, 1, 2, 3, 4)
+@@ -2460,12 +2466,12 @@ func TestRetention_Mark(t *testing.T) {
+ 		chunks, _ := chunksOf(t, q)
+ 		require.Empty(t, chunks)
+ 
+-		mark, err := q.Retain()
++		err := q.Retain()
+ 		require.NoError(t, err)
+ 		pushMany(t, q, 1, 5, 6, 7, 8)
+ 		chunks, _ = chunksOf(t, q)
+ 		require.Len(t, chunks, 2)
+-		assert.LessOrEqual(t, filepath.Base(mark), filepath.Base(chunks[0]),
++		assert.LessOrEqual(t, filepath.Base(retainedStart(q)), filepath.Base(chunks[0]),
+ 			"every chunk created after Retain replays")
+ 	})
+ 
+@@ -2481,26 +2487,26 @@ func TestRetention_Mark(t *testing.T) {
+ 		require.Len(t, kept, 2)
+ 		require.Len(t, tombstoned, 2, "precondition: the queue is empty but a backup keeps its chunks")
+ 
+-		mark, err := q.Retain()
++		err := q.Retain()
+ 		require.NoError(t, err)
+ 		pushMany(t, q, 1, 5)
+ 		chunks, _ := chunksOf(t, q)
+ 		require.Len(t, chunks, 3)
+ 		for _, c := range kept {
+-			assert.Less(t, filepath.Base(c), filepath.Base(mark), "a chunk processed before Retain")
++			assert.Less(t, filepath.Base(c), filepath.Base(retainedStart(q)), "a chunk processed before Retain")
+ 		}
+-		assert.LessOrEqual(t, filepath.Base(mark), filepath.Base(chunks[2]), "a chunk created after Retain")
++		assert.LessOrEqual(t, filepath.Base(retainedStart(q)), filepath.Base(chunks[2]), "a chunk created after Retain")
+ 	})
+ 
+ 	t.Run("one retention at a time", func(t *testing.T) {
+ 		s := makeScheduler(t)
+ 		q := makeQueueSize(t, s, discardExecutor(), 50)
+-		_, err := q.Retain()
++		err := q.Retain()
+ 		require.NoError(t, err)
+-		_, err = q.Retain()
++		err = q.Retain()
+ 		require.ErrorContains(t, err, "already retained")
+ 		require.NoError(t, q.ReleaseRetention())
+-		_, err = q.Retain()
++		err = q.Retain()
+ 		require.NoError(t, err)
+ 	})
+ }
+@@ -2517,7 +2523,7 @@ func TestRetention_KeepsAChunkWhoseTombstoneFails(t *testing.T) {
+ 	q.m.Unlock()
+ 	chunks, _ := chunksOf(t, q)
+ 	require.Len(t, chunks, 1)
+-	_, err := q.Retain()
++	err := q.Retain()
+ 	require.NoError(t, err)
+ 	t.Cleanup(func() { _ = q.ReleaseRetention() })
+ 
+@@ -2537,7 +2543,7 @@ func
+```
+
+**File**: `adapters/repos/db/queue/scheduler.go` (modified, +27/-5)
+```diff
+@@ -290,6 +290,22 @@ func (s *Scheduler) ResumeQueue(id string) {
+ 	s.Logger.WithField("id", id).Debug("queue resumed")
+ }
+ 
++// IsQueueIdle returns true if the queue is paused and none of its work is
++// scheduled or running.
++func (s *Scheduler) IsQueueIdle(id string) bool {
++	if s.ctx == nil {
++		// scheduler not started
++		return false
++	}
++
++	q := s.getQueue(id)
++	if q == nil {
++		return false
++	}
++
++	return q.Paused() && !q.Scheduled() && q.activeTasks.Count() == 0
++}
++
+ func (s *Scheduler) updatePausedMetric() {
+ 	if s.Metrics == nil {
+ 		return
+@@ -446,10 +462,7 @@ func (s *Scheduler) scheduleQueues() (nothingScheduled bool) {
+ 		}
+ 
+ 		// mark it as scheduled
+-		q.MarkAsScheduled()
+-
+-		if q.Paused() {
+-			q.MarkAsUnscheduled()
++		if !q.MarkAsScheduled() {
+ 			continue
+ 		}
+ 
+@@ -744,8 +757,17 @@ func (qs *queueState) Scheduled() bool {
+ 	return qs.scheduled.Count() > 0
+ }
+ 
+-func (qs *queueState) MarkAsScheduled() {
++// MarkAsScheduled marks the queue unless it is paused, under the lock
++// PauseQueue takes, so a pause sees the mark or the scheduler sees the pause.
++func (qs *queueState) MarkAsScheduled() bool {
++	qs.m.RLock()
++	defer qs.m.RUnlock()
++
++	if qs.paused {
++		return false
++	}
+ 	qs.scheduled.Incr()
++	return true
+ }
+ 
+ func (qs *queueState) MarkAsUnscheduled() {
+```
+
+**File**: `adapters/repos/db/queue/scheduler_test.go` (modified, +18/-0)
+```diff
+@@ -899,3 +899,21 @@ func TestStreamExecutorTaskDoesNotBlockClose(t *testing.T) {
+ 
+ 	require.NoError(t, s.Close(t.Context()))
+ }
++
++// A queue is marked scheduled only when not paused, in one step with the
++// check, so a pause sees the mark or the scheduler sees the pause.
++func TestMarkAsScheduled_SkipsAPausedQueue(t *testing.T) {
++	s := makeScheduler(t)
++	s.Start()
++	defer s.Close(t.Context())
++	q := makeQueue(t, s, discardExecutor())
++	state := s.getQueue(q.id)
++
++	require.NoError(t, q.Pause(t.Context()))
++	require.False(t, state.MarkAsScheduled())
++	require.True(t, s.IsQueueIdle(q.id))
++
++	q.Resume()
++	require.True(t, state.MarkAsScheduled())
++	state.MarkAsUnscheduled()
++}
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #13766** (2026-11-04): Merge stable/v1.38 into stable/v1.39 (@antas-marcin)
-- **PR #13765** (2026-11-04): chore(test): attempt fix of `TestReplicationReplicateMOVEDeletesSourceReplica` flakiness (@tsmith023)
-- **PR #13764** (closed): fix(offload): delete unfreeze source copies only after DONE commits (@moogacs)
-- **PR #13763** (2026-11-04): test(docker): wait for a stopped node through a weaviate node  (@moogacs)
-- **PR #13762** (2026-11-04): prepare release v1.39.15 (@antas-marcin)
-- **PR #13761** (2026-11-04): schema: return the class version when AddClassProperty adds nothing (@rlmanrique)
+- **PR #13785** (2026-11-05): Merge stable/v1.40 into main (@antas-marcin)
+- **PR #13776** (2026-11-05): Merge stable/v1.39 into stable/v1.40 (@antas-marcin)
+- **PR #13775** (2026-11-05): Require every verb of a manage permission before assigning its role (@dirkkul)
+- **PR #13774** (2026-11-05): Merge stable/v1.38 into stable/v1.39 (@antas-marcin)
+- **PR #13773** (2026-11-05): vector index update: a queue can rewind to where it started retaining (@asdine)
+- **PR #13767** (2026-11-05): Answer an empty class in a batch with the per-object error (@dirkkul)
 
 ---
 
@@ -2578,71 +2799,71 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. rbac): remove `policy.csv` and rebuild RBAC state from raft (#13638)
+## X. Merge pull request #13785 from weaviate/merge-stable-v1.40-into-main
 
 **RULE**:
-When implementing operations in `adapters/handlers/rest/authz/handlers_authz.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in weaviate/weaviate. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `adapters/clients/license/client.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in weaviate/weaviate. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `89f57f01`: rbac): remove `policy.csv` and rebuild RBAC state from raft (#13638). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7e97594b`: Merge pull request #13785 from weaviate/merge-stable-v1.40-into-main. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `adapters/handlers/rest/authz/handlers_authz.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `adapters/clients/license/client.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	"github.com/weaviate/weaviate/usecases/auth/authorization/rbac"
-// UserGetter looks up dynamic DB users.
-type UserGetter interface {
-	GetUsers(userIds ...string) (map[string]apikey.UserView, error)
+//                           _       _
+// __      _____  __ ___   ___  __ _| |_ ___
+// \ \ /\ / / _ \/ _` \ \ / / |/ _` | __/ _ \
+//  \ V  V /  __/ (_| |\ V /| | (_| | ||  __/
+//   \_/\_/ \___|\__,_| \_/ |_|\__,_|\__\___|
+//
+//  Copyright © 2016 - 2026 Weaviate B.V. All rights reserved.
+//
+//  CONTACT: hello@weaviate.io
+//
+
+package license
+
+import (
+	"bytes"
+	"context"
+	"crypto/ed25519"
+	"encoding/json"
+	"errors"
+	"fmt"
+	"io"
+	"net/http"
+	"strings"
+	"time"
+
+	protocol "github.com/weaviate/weaviate/entities/license"
+)
+
+// DefaultServerURL is the production license service.
+const DefaultServerURL = "https://license.weaviate.io"
+
+// Client performs signed verify calls against the license service. It is the
+// piece Weaviate embeds.
+type Client struct {
+	ServerURL   string // defaults to DefaultServerURL
+	LicenseID   string // from protocol.ParseKey
+	PrivateKey  ed25519.PrivateKey
+	TrustedKeys protocol.ServerKeySet // server public keys embedded in the binary
+	HTTPClient  *http.Client          // defaults to a 10s-timeout client
+	UserAgent   string
 }
 
-// InertController backs the role API on a cluster with RBAC disabled: every
-// mutation returns nil without effect and every RBAC getter returns the empty
-// value. GetUsers delegates to Users, because user existence is not RBAC state.
-type InertController struct {
-	Users UserGetter
-}
-
-var _ ControllerAndGetUsers = InertController{}
-
-func (InertController) UpdateRolesPermissions(map[string][]authorization.Policy) error {
-	return nil
-}
-
-func (InertController) CreateRolesPermissions(map[string][]authorization.Policy) error {
-	return nil
-}
-
-func (InertController) DeleteRoles(...string) error {
-	return nil
-}
-
-func (InertController) AddRolesForUser(string, []string) error {
-	return nil
-}
-
-func (InertController) RevokeRolesForUser(string, ...string) error {
-	return nil
-}
-
-func (InertController) RemovePermissions(string, []*authorization.Policy) error {
-	return nil
-}
-
-func (InertController) GetRoles(...string) (map[string][]authorization.Policy, error) {
-	return nil, nil
-}
-
-func (InertCont
+// NewClient parses a customer license key and returns a client for it.
+func NewClient(key string, trusted protocol.ServerKeySet) (*Clien
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-		if roleName == authorization.Root && !slices.Contains(h.rbacconfig.RootUsers, principal.Username) {
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `89f57f01` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7e97594b` are properly handled with clean fallback behavior.

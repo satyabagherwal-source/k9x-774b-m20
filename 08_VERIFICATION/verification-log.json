@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261104-OV0H",
-    "timestamp": "2026-11-04T03:16:23.682Z",
-    "repository": "preactjs/preact",
-    "learningId": "learn-github-preactjs-preact",
-    "contentHash": "87ee2cf9f53cca87d78d6b5e48dcb9af842ad239d5ee8fea36a97f45de1c2ed5",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261104-Y54K",
-    "timestamp": "2026-11-04T03:23:36.692Z",
-    "repository": "QwikDev/qwik",
-    "learningId": "learn-github-qwikdev-qwik",
-    "contentHash": "f86ac1a8e6de78dade76b7ea48960157a7d58125bf9fe3056852b85aa25277f8",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261104-YC1R",
-    "timestamp": "2026-11-04T03:23:45.663Z",
-    "repository": "pixeltable/pixeltable",
-    "learningId": "learn-github-pixeltable-pixeltable",
-    "contentHash": "bf84c4c0426733c2164169f4f886cd4568020d6b0879ebed9b2e0c3d417526aa",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261104-YI3T",
     "timestamp": "2026-11-04T03:23:53.513Z",
     "repository": "mufeedvh/code2prompt",
@@ -7492,6 +7447,51 @@
     "contentHash": "aa28788a819a8b8621d365e986fbca0502014f6ba75fecdf85e93f1cd8ed8306",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-BBMQ",
+    "timestamp": "2026-11-05T11:45:25.154Z",
+    "repository": "tailscale/tailscale",
+    "learningId": "learn-github-tailscale-tailscale",
+    "contentHash": "3cf5257e9abd01959c45761fa06cf8021f304d2437039eeb0ae05d7920f21d0d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-BC67",
+    "timestamp": "2026-11-05T11:45:25.855Z",
+    "repository": "canberkkkkkk/ema-lightning",
+    "learningId": "learn-huggingface-canberkkkkkk-ema-lightning",
+    "contentHash": "d6a858078e57780e249484384c2f822302fb5291e8f825ba571c753aed520fd8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-BDXD",
+    "timestamp": "2026-11-05T11:45:28.129Z",
+    "repository": "weaviate/weaviate",
+    "learningId": "learn-github-weaviate-weaviate",
+    "contentHash": "7f53e1275670e8740eb373882a912b5c6d632215cce08eb70a6c457ad76da43c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
