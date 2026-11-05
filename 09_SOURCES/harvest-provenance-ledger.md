@@ -7807,3 +7807,7 @@ Every entry in this ledger must capture:
 | `learn-github-nats-io-nats-server` | `https://github.com/nats-io/nats-server` | `8397827b` | Multi-dimensional audit evidence | 2026-11-05T22:16:10.008Z |
 | `learn-github-electron-electron` | `https://github.com/electron/electron` | `9ec6bc44` | Multi-dimensional audit evidence | 2026-11-05T22:25:11.230Z |
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `9baea576` | Multi-dimensional audit evidence | 2026-11-05T22:25:15.264Z |
+| `learn-github-metalbear-co-mirrord` | `https://github.com/metalbear-co/mirrord` | `7cf43de5` | Multi-dimensional audit evidence | 2026-11-05T22:31:40.632Z |
+| `learn-github-loft-sh-vcluster` | `https://github.com/loft-sh/vcluster` | `a8ab30ea` | Multi-dimensional audit evidence | 2026-11-05T22:31:49.255Z |
+| `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `196263ba` | Multi-dimensional audit evidence | 2026-11-05T22:31:52.092Z |
+| `learn-github-arangodb-arangodb` | `https://github.com/arangodb/arangodb` | `511a3044` | Multi-dimensional audit evidence | 2026-11-05T22:31:53.902Z |

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/loft-sh-vcluster-learnings.md`  
 > **Source**: github ([https://github.com/loft-sh/vcluster](https://github.com/loft-sh/vcluster))  
-> **Source Version**: `13fdf431`  
+> **Source Version**: `a8ab30ea`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T17:10:00.716Z  
+> **Timestamp**: 2026-11-05T22:31:48.028Z  
 > **Learning ID**: `learn-github-loft-sh-vcluster`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/loft-sh-vcluster-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/loft-sh/vcluster](https://github.com/loft-sh/vcluster))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T17:09:29.276Z  
+> **Harvest Timestamp**: 2026-11-05T22:31:47.575Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: vCluster creates tenant clusters: fully isolated environments delivered as managed Kubernetes, or as the foundation for Slurm, Ray, Run:ai and inference clusters. Each gets its own API server, CRDs and RBAC, and runs on an existing cluster or standalone on bare metal. CNCF Certified Kubernetes.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 11370 stars
+- **Stars / Engagement**: 11371 stars
 
 ---
 
@@ -1474,533 +1474,74 @@ func ResumeVCluster(ctx context.Context, kubeClient *kubernetes.Clientset, name,
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `621c6803` (2026-11-04)
-**Commit Message**: fix(deps): bump loft-sh/api to v5.0.0-rc.1 for node pools
+### Incident Patch 1: `a8ab30ea` (2026-11-05)
+**Commit Message**: fix(cli): stop helm parsing chart file names as flags in registry push (#2699)
 
-The node pools change copied the node pool API types into vendor/ by
-hand while go.mod still pinned github.com/loft-sh/api/v5 at
-v5.0.0-alpha.6, so hack/verify-vendor.sh failed: regenerating vendor
-from go.mod dropped those files again.
+Monorepo-Commit: f6f0438b6d051cf6a973eb2bc48f2426dc3f54b4
 
-Node pools are now released in loft-enterprise, so pin api/v5 and
-agentapi/v5 to v5.0.0-rc.1 in both the pro and staged OSS modules and
-regenerate vendor with hack/update-vendor.sh. The released types only
-add to what was vendored by hand. The OpenTelemetry and genproto bumps
-are indirect minimums required by the new api module.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Monorepo-Commit: 47645a41fa2eb0d7b3d29fcb3948a694c9358bf9
-
-**File**: `go.mod` (modified, +11/-11)
+**File**: `cmd/vclusterctl/cmd/registry/push.go` (modified, +2/-0)
 ```diff
-@@ -23,9 +23,9 @@ require (
- 	github.com/invopop/jsonschema v0.14.0
- 	github.com/kubernetes-csi/external-snapshotter/client/v8 v8.6.0
- 	github.com/loft-sh/admin-apis v0.0.0-20260928151145-c0a92a2b2cf8
--	github.com/loft-sh/agentapi/v5 v5.0.0-alpha.6
-+	github.com/loft-sh/agentapi/v5 v5.0.0-rc.1
- 	github.com/loft-sh/analytics-client v0.0.0-20240219162240-2f4c64b2494e
--	github.com/loft-sh/api/v5 v5.0.0-alpha.6
-+	github.com/loft-sh/api/v5 v5.0.0-rc.1
- 	github.com/loft-sh/e2e-framework v0.0.0-20260721073036-aa8d4d6d0958
- 	github.com/loft-sh/image v0.0.0-20250625154753-87447a6ad364
- 	github.com/loft-sh/utils v0.0.29
-@@ -192,13 +192,13 @@ require (
- 	go.etcd.io/bbolt v1.4.3 // indirect
- 	go.etcd.io/raft/v3 v3.6.0 // indirect
- 	go.opentelemetry.io/auto/sdk v1.2.1 // indirect
--	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.44.0 // indirect
--	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.44.0 // indirect
-+	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.45.0 // indirect
-+	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.45.0 // indirect
- 	go.yaml.in/yaml/v2 v2.4.4 // indirect
- 	go.yaml.in/yaml/v3 v3.0.5 // indirect
- 	go.yaml.in/yaml/v4 v4.0.0-rc.2 // indirect
--	google.golang.org/genproto/googleapis/api v0.0.0-20260526163538-3dc84a4a5aaa // indirect
--	google.golang.org/genproto/googleapis/rpc v0.0.0-20260630182238-925bb5da69e7 // indirect
-+	google.golang.org/genproto/googleapis/api v0.0.0-20260904194346-d0f1323225a4 // indirect
-+	google.golang.org/genproto/googleapis/rpc v0.0.0-20260904194346-d0f1323225a4 // indirect
- 	gopkg.in/evanphx/json-patch.v4 v4.13.0 // indirect
- 	k8s.io/cri-api v0.36.0 // indirect
- 	k8s.io/cri-client v0.36.0 // indirect
-@@ -276,11 +276,11 @@ require (
- 	go.etcd.io/etcd/client/v3 v3.6.14
- 	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.68.0 // indirect
- 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.67.0 // indirect
--	go.opentelemetry.io/otel v1.44.0 // indirect
--	go.opentelemetry.io/otel/metric v1.44.0 // indirect
--	go.opentelemetry.io/otel/sdk v1.44.0 // indirect
--	go.opentelemetry.io/otel/trace v1.44.0 // indirect
--	go.opentelemetry.io/proto/otlp v1.10.0 // indirect
-+	go.opentelemetry.io/otel v1.45.0 // indirect
-+	go.opentelemetry.io/otel/metric v1.45.0 // indirect
-+	go.opentelemetry.io/otel/sdk v1.45.0 // indirect
-+	go.opentelemetry.io/otel/trace v1.45.0 // indirect
-+	go.opentelemetry.io/proto/otlp v1.11.0 // indirect
- 	go.uber.org/multierr v1.11.0 // indirect
- 	go.uber.org/zap v1.27.1
- 	golang.org/x/crypto v0.58.0 // indirect
+@@ -215,6 +215,8 @@ func (o *PushOptions) pushHelmChart(ctx context.Context, helmChart string, local
+ 		"helm",
+ 		"push",
+ 		"--plain-http",
++		// a chart file name starting with "-" must not be parsed as a helm flag
++		"--",
+ 		helmChart,
+ 		remoteRef,
+ 	)
 ```
 
-**File**: `go.sum` (modified, +24/-24)
+**File**: `cmd/vclusterctl/cmd/registry/push_test.go` (added, +47/-0)
 ```diff
-@@ -348,12 +348,12 @@ github.com/lithammer/dedent v1.1.0 h1:VNzHMVCBNG1j0fh3OrsFRkVUwStdDArbgBWoPAffkt
- github.com/lithammer/dedent v1.1.0/go.mod h1:jrXYCQtgg0nJiN+StA2KgR7w6CiQNv9Fd/Z9BP0jIOc=
- github.com/loft-sh/admin-apis v0.0.0-20260928151145-c0a92a2b2cf8 h1:cWuxRoc6g0QDRxmibH6DVukNibs88Mmdao56Didm5Vg=
- github.com/loft-sh/admin-apis v0.0.0-20260928151145-c0a92a2b2cf8/go.mod h1:pp+2PgOsRCTb1DXnEev/HCc0gvj5t0nHuTIMU8C8b90=
--github.com/loft-sh/agentapi/v5 v5.0.0-alpha.6 h1:72w4OZmI0sMbB6j13XOoH8rpS46wwrTpq/JiscVDYY0=
--github.com/loft-sh/agentapi/v5 v5.0.0-alpha.6/go.mod h1:sXdRxueSDpaEBDHeyjkEtHyvHdQ3HRyALZ5dIH/dpjk=
-+github.com/loft-sh/agentapi/v5 v5.0.0-rc.1 h1:mgykeGqu6J73G8fYnugd/N+FANa7AIziUnSRH5PRiIA=
-+github.com/loft-sh/agentapi/v5 v5.0.0-rc.1/go.mod h1:ZMhVAbh8ODozJePM4qCQsCtzzQ9MbBQ0X5BN9GKsDZw=
- github.com/loft-sh/analytics-client v0.0.0-20240219162240-2f4c64b2494e h1:JcPnMaoczikvpasi8OJ47dCkWZjfgFubWa4V2SZo7h0=
- github.com/loft-sh/analytics-client v0.0.0-20240219162240-2f4c64b2494e/go.mod h1:FFWcGASyM2QlWTDTCG/WBVM/XYr8btqYt335TFNRCFg=
--github.com/loft-sh/api/v5 v5.0.0-alpha.6 h1:hKjdjoQbONk3fooSPFGkw0NxwL8a+dQhFnfEUuR3Jks=
--github.com/loft-sh/api/v5 v5.0.0-alpha.6/go.mod h1:bTEKAZz9EHt4FM8H9RVjhuUfBjsRnwF53GpWwLl0jlc=
-+github.com/loft-sh/api/v5 v5.0.0-rc.1 h1:s4S91haNo37iFPetysQiY8JQg5U3m/g9eHEzJWB7fq0=
-+github.com/loft-sh/api/v5 v5.0.0-rc.1/go.mod h1:Ew5TXWExvdTmu+V52U/64V7/a8snBeOm4wRpzAz/65U=
- github.com/loft-sh/apiserver v0.0.0-20260707184419-aef558a5ae8d h1:i+nBgAm6Wuc/9ALNniOdRWJfgz/og5AOgbs4pJVolqE=
- github.com/loft-sh/apiserver v0.0.0-20260707184419-aef558a5ae8d/go.mod h1:YfIUirXHfVcUb3bVtj7yzIAVT6etrHj9wkOkMgnEuz0=
- github.com/loft-sh/e2e-framework v0.0.0-20260721073036-aa8d4d6d0958 h1:ruX0UEryszOsjlDf38QtEK1zn9xMhy4C9iJazauVjIg=
-@@ -560,22 +560,22 @@ go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.6
- go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.68.0/go.mod h1:Sje3i3MjSPKTSPvVWCaL8ugBzJwik3u4smCjUeuupqg=
- go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.67.0 h1:OyrsyzuttWTSur2qN/Lm0m2a8yqyIjUVBZcxFPuXq2o=
- go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.67.0/go.mod h1:C2NGBr+kAB4bk3xtMXfZ94gqFDtg/GkI7e9zqGh5Beg=
--go.opentelemetry.io/otel v1.44.0 h1:JjwHmHpA4iZ3wBxluu2fbbE7j4kqlE8jXyAyPXH7HqU=
--go.opentelemetry.io/otel v1.44.0/go.mod h1:BMgjTHL9WPRlRjL2oZCBTL4whCGtXch2H4BhOPIAyYc=
--go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.44.0 h1:4YsVu3B8+3qtWYYrsUYgn0OG78pN0rnNPRGX4SbokQI=
--go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.44.0/go.mod h1:+wnlSn0mD1ADVMe3v9Z/WIaiz6q6gL2J/ejaAmdmv80=
--go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.44.0 h1:qazEJlUOQzhCpzQpFETGby7EdqjI1wsd0W+6Gg1SCTU=
--go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.44.0/go.mod h1:fOD2Yefuxixkx3ahVNf0O/PERb6r4OlbxfATVnYvzCo=
--go.opentelemetry.io/otel/metric v1.44.0 h1:1w0gILTcHdr3YI+ixLyjemwrVnsMURbTZFrSYCdDdmc=
--go.opentelemetry.io/otel/metric v1.44.0/go.mod h1:8O7hanEPBNgEMmybD3s2VBKcgWOCsA6tzHBPODAiquo=
--go.opentelemetry.io/otel/sdk v1.44.0 h1:nHYwb9lK+fJPU/dnT6s7W7Z8itMWyqrnVfbheVYrZ58=
--go.opentelemetry.io/otel/sdk v1.44.0/go.mod h1:Osuydd3Se74nqjAKxid74N5eC+jfEqfTegHRnq58oK0=
--go.opentelemetry.io/otel/sdk/metric v1.44.0 h1:3LlKgI+VjbVsjNRFZJZAJ30WjXC5VkNRks6si09iEfI=
--go.opentelemetry.io/otel/sdk/metric v1.44.0/go.mod h1:5B5pMARnXxKhltooO4xUuCBorl65a4EpnTalObqOigA=
--go.opentelemetry.io/otel/trace v1.44.0 h1:jxF5CsGYCe74MCRx2X4g7WsY/VBKRqqpNvXlX/6gtIk=
--go.opentelemetry.io/otel/trace v1.44.0/go.mod h1:oLl1jrMQAVo6v3GAggN+1VH9VIz9iUSvW53sW1Q8PIE=
--go.opentelemetry.io/proto/otlp v1.10.0 h1:IQRWgT5srOCYfiWnpqUYz9CVmbO8bFmKcwYxpuCSL2g=
--go.opentelemetry.io/proto/otlp v1.10.0/go.mod h1:/CV4QoCR/S9yaPj8utp3lvQPoqMtxXdzn7ozvvozVqk=
-+go.opentelemetry.io/otel v1.45.0 h1:pdrWmLHofpubmArBv1LgFSv1Z0Ie/ppdZzu+kUN5EeU=
-+go.opentelemetry.io/otel v1.45.0/go.mod h1:XZxIqPapzEYnhNSScF5DIqXhm/rYi0FzCe2XddAwZfQ=
-+go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.45.0 h1:QRefszxJmfPdjXUUm3j6iDzY03mTPXMjqErFqQ67vUg=
-+go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.45.0/go.mod h1:Tiz03lTBVBrm7eWZBOidzEaYaJa8tjwGUGv6d8mlTyk=
-+go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.45.0 h1:fG5MCxGz8+2VtrN/WgqSpJFctVz24gpxj8CxkKmc8Ww=
-+go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.45.0/go.mod h1:BmAYTn+3ysbRe+IU2msxmf5Rx3g6DHvex+tWI3LdhYI=
-+go.opentelemetry.io/otel/metric v1.45.0 h1:7Eg1uH7CJ5cXv9is6tnBe1FI6rj1nwUdbFypRm3br/M=
-+go.opentelemetry.io/otel/metric v1.45.0/go.mod h1:HAPbm1nd3p1PmFH7v2dR+6BjXxw+Lq4a2+pndMAm08s=
-+go.opentelemetry.io/otel/sdk v1.45.0 h1:4VVSMgQ83dUgW2aoX5f6JgLvHwIvzcuLnF9lUdCSpCw=
-+go.opentelemetry.io/otel/sdk v1.45.0/go.mod h1:Sr40LgXV7DsKMMJMKOhUWOgMWTfAaqvm2kF0g7ilwuA=
-+go.opentelemetry.io/otel/sdk/metric v1.45.0 h1:oVFszMfyj1Am6s24Vtc7wBb8BKLcwepJjNEYILuiE3o=
-+go.opentelemetry.io/otel/sdk/metric v1.45.0/go.mod h1:vUWUxDZvu1WVR
-```
-
-**File**: `vendor/github.com/loft-sh/api/v5/pkg/apis/management/v1/event_types.go` (modified, +3/-0)
-```diff
-@@ -27,4 +27,7 @@ type EventSpec struct {
- // EventStatus holds the status, which is the parsed raw config
- type EventStatus struct {
- 	auditv1.Event `json:",inline"`
-+
-+	// Tenant is the tenant recorded for the request when it was stored. Empty for operator requests and events stored before tenant recording.
-+	Tenant string `json:"tenant,omitempty"`
- }
-```
-
-**File**: `vendor/github.com/loft-sh/api/v5/pkg/apis/management/v1/nodepool_types.go` (added, +60/-0)
-```diff
-@@ -0,0 +1,60 @@
-+package v1
+@@ -0,0 +1,47 @@
++package registry
 +
 +import (
-+	agentstoragev1 "github.com/loft-sh/agentapi/v5/pkg/apis/loft/storage/v1"
-+	storagev1 "github.com/loft-sh/api/v5/pkg/apis/storage/v1"
-+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
++	"context"
++	"os"
++	"path/filepath"
++	"runtime"
++	"strings"
++	"testing"
++
++	"github.com/loft-sh/log"
 +)
 +
-+// +genclient
-+// +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
-+// +kubebuilder:printcolumn:name="Status",type="string",JSONPath=".status.phase"
-+// +kubebuilder:printcolumn:name="VCluster",type="string",JSONPath=".spec.vClusterRef"
-+// +kubebuilder:printcolumn:name="Replicas",type="integer",JSONPath=".status.replicas"
-+// +kubebuilder:printcolumn:name="Ready",type="integer",JSONPath=".status.readyReplicas"
-+// +kubebuilder:printcolumn:name="Network",type="string",JSONPath=".status.networkEnvironment"
-+// +kubebuilder:subresource:status
-+
-+// NodePool keeps a set of NodeClaims for a cluster that are all built from one template.
-+// +k8s:openapi-gen=true
-+// +resource:path=nodepools,rest=NodePoolREST,statusRest=NodePoolStatusREST
-+type NodePool struct {
-+	metav1.TypeMeta   `json:",inline"`
-+	metav1.ObjectMeta `json:"metadata,omitempty"`
-+
-+	Spec   NodePoolSpec   `json:"spec,omitempty"`
-+	Status NodePoolStatus `json:"status,omitempty"`
-+}
-+
-+// NodePoolSpec defines spec of node pool.
-+type NodePoolSpec struct {
-+	storagev1.NodePoolSpec `json:",inline"`
-+}
-+
-+type NodePoolStatus struct {
-+	storagev1.NodePoolStatus `json:",inline"`
-+}
-+
-+func (a *NodePool) GetOwner() *storagev1.UserOrTeam {
-+	return a.Spec.Owner
-+}
-+
-+func (a *NodePool) SetOwner(userOrTeam *storagev1.UserOrTeam) {
-+	a.Spec.Owner = userOrTeam
-+}
-+
-+func (a *NodePool) GetAccess() []storagev1.Access {
-+	return a.Spec.Access
-+}
-+
-+func (a *NodePool) SetAccess(access []storagev1.Access) {
-+	a.Spec.Access = access
-+}
-+
-+func (a *NodePool) GetConditions() agentstoragev1.Conditions {
-+	return a.Status.Conditions
-+}
-+
-+func (a *NodePool) SetConditions(conditions agentstoragev1.Conditions) {
-+	a.Status.Conditions = conditions
-+}
-```
-
-**File**: `vendor/github.com/loft-sh/api/v5/pkg/apis/management/v1/self_types.go` (modified, +7/-0)
-```diff
-@@ -74,6 +74,13 @@ type SelfStatus struct {
- 	// ProjectNamespacePrefix is the prefix used to name project namespaces after defaulting has been applied
- 	// +optional
- 	ProjectNamespacePrefix *string `json:"projectNamespacePrefix,omitempty"`
-+
-+	// ExternalClustersAllowed reports whether the described subject's tenant allows
-+	// importing externally deployed clusters: its tenant's setting, or true outside any
-+	// tenant. It does not account for RBAC: registering a cluster still needs create on
-+	// registervirtualclusters. Unset if it could not be determined.
-+	// +optional
-+	ExternalClustersAllowed *bool `json:"externalClustersAllowed,omitempty"`
- }
- 
- type UserInfo struct {
-```
-
-**File**: `vendor/github.com/loft-sh/api/v5/pkg/apis/management/v1/zz_generated.api.register.go` (modified, +16/-0)
-```diff
-@@ -76,6 +76,8 @@ func addKnownTypes(scheme *runtime.Scheme) error {
- 		&NetworkPeerDebug{},
- 		&NodeClaim{},
- 		&NodeClaimList{},
-+		&NodePool{},
-+		&NodePoolList{},
- 		&NodeProfile{},
- 		&NodeProfileList{},
- 		&NodeProvider{},
-@@ -288,6 +290,12 @@ var (
- 			func() runtime.Object { return &NodeClaim{} },     // Register versioned resource
- 			func() runtime.Object { return &NodeClaimList{} }, // Register versioned resource list
- 			management.NewNodeClaimStatusREST),
-+		management.ManagementNodePoolStorage,
-+		builders.NewApiResourceWithStorage(
-+			management.InternalNodePoolStatus,
-+			func() runtime.Object { return &NodePool{} },     // Register versioned resource
-+			func() runtime.Object { return &NodePoolList{} }, // Register versioned resource list
-+			management.NewNodePoolStatusREST),
- 		management.ManagementNodeProfileStorage,
- 		management.ManagementNodeProviderStorage,
- 		builders.NewApiResourceWithStorage(
-@@ -877,6 +885,14 @@ type NodeClaimList struct {
- 
- // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
- 
-+type NodePoolList struct {
-+	metav1.TypeMeta `json:",inline"`
-+	metav1.ListMeta `json:"metadata,omitempty"`
-+	Items           []NodePool `json:"items"`
-+}
-+
-+// +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
-+
- type NodeProfileList struct {
- 	metav1.TypeMeta `json:",inline"`
- 	metav1.ListMeta `json:"metadata,omitempty"`
-```
-
-**File**: `vendor/github.com/loft-sh/api/v5/pkg/apis/management/v1/zz_generated.conversion.go` (modified, +138/-0)
-```diff
-@@ -1701,6 +1701,46 @@ func RegisterConversions(s *runtime.Scheme) error {
- 	}); err != nil {
- 		return err
- 	}
-+	if err := s.AddGeneratedConversionFunc((*NodePool)(nil), (*management.NodePool)(nil), func(a, b interface{}, scope conversion.Scope) error {
-+		return Convert_v1_NodePool_To_management_NodePool(a.(*NodePool), b.(*management.NodePool), scope)
-+	}); err != nil {
-+		return err
++func TestPushHelmChartPassesDashPrefixedFileAsPositional(t *testing.T) {
++	if runtime.GOOS == "windows" {
++		t.Skip("fake helm is a shell script")
 +	}
-+	if err := s.AddGeneratedConversionFunc((*management.NodePool)(nil), (*NodePool)(nil), func(a, b interface{}, scope conversion.Scope) error {
-+		return Convert_management_NodePool_To_v1_NodePool(a.(*management.NodePool), b.(*NodePool), scope)
-+	}); err != nil {
-+		return err
-+	}
-+	if err := s.AddGeneratedConversionFunc((*NodePoolList)(nil), (*management.NodePoolList)(nil), func(a, b interface{}, scope conversion.Scope) error {
-+		return Convert_v1_NodePoolList_To_management_NodePoolList(a.(*NodePoolList), b.(*management.NodePoolList), scope)
-+	}); err != nil {
-+		return err
-+	}
-+	if err := s.AddGeneratedConversionFunc((*management.NodePoolList)(nil), (*NodePoolList)(nil), func(a, b interface{}, scope conversion.Scope) error {
-+		return Convert_management_NodePoolList_To_v1_NodePoolList(a.(*management.NodePoolList), b.(*NodePoolList), scope)
-+	}); err != nil {
-+		return err
-+	}
-+	if err := s.AddGeneratedConversionFunc((*NodePoolSpec)(nil), (*management.NodePoolSpec)(nil), func(a, b interface{}, scope conversion.Scope) error {
-+		return Convert_v1_NodePoolSpec_To_management_NodePoolSpec(a.(*NodePoolSpec), b.(*management.NodePoolSpec), scope)
-+	}); err != nil {
-+		return err
-+	}
-+	if err := s.AddGeneratedConversionFunc((*management.NodePoolSpec)(nil), (*NodePoolSpec)(nil), func(a, b interface{}, scope conversion.Scope) error {
-+		return Convert_management_NodePoolSpec_To_v1_NodePoolSpec(a.(*management.NodePoolSpec), b.(*NodePoolSpec), scope)
-+	}); err != nil {
-+		return err
-+	}
-+	if err := s.AddGeneratedConversionFunc((*NodePoolStatus)(nil), (*management.NodePoolStatus)(nil), func(a, b interface{}, scope conversion.Scope) error {
-+		return Convert_v1_NodePoolStatus_To_management_NodePoolStatus(a.(*NodePoolStatus), b.(*management.NodePoolStatus), scope)
-+	}); err != nil {
-+		return err
-+	}
-+	if err := s.AddGeneratedConversionFunc((*management.NodePoolStatus)(nil), (*NodePoolStatus)(nil), func(a, b interface{}, scope conversion.Scope) error {
-+		return Convert_management_NodePoolStatus_To_v1_NodePoolStatus(a.(*management.NodePoolStatus), b.(*NodePoolStatus), scope)
-+	}); err != nil {
-+		return err
-+	}
- 	if err := s.AddGeneratedConversionFunc((*NodeProfile)(nil), (*management.NodeProfile)(nil), func(a, b interface{}, scope conversion.Scope) error {
- 		return Convert_v1_NodeProfile_To_management_NodeProfile(a.(*NodeProfile), b.(*management.NodeProfile), scope)
- 	}); err != nil {
-@@ -7322,6 +7362,7 @@ func Convert_management_EventSpec_To_v1_EventSpec(in *management.EventSpec, out
- 
- func autoConvert_v1_EventStatus_To_management_EventStatus(in *EventStatus, out *management.EventStatus, s conversion.Scope) error {
- 	out.Event = in.Event
-+	out.Tenant = in.Tenant
- 	return nil
- }
- 
-@@ -7332,6 +7373,7 @@ func Convert_v1_EventStatus_To_management_EventStatus(in *EventStatus, out *mana
- 
- func autoConvert_management_EventStatus_To_v1_EventStatus(in *management.EventStatus, out *EventStatus, s conversion.Scope) error {
- 	out.Event = in.Event
-+	out.Tenant = in.Tenant
- 	return nil
- }
- 
-@@ -8698,6 +8740,100 @@ func Convert_management_NodeClaimStatus_To_v1_NodeClaimStatus(in *management.Nod
- 	return autoConvert_management_NodeClaimStatus_To_v1_NodeClaimStatus(in, out, s)
- }
- 
-+func autoConvert_v1_NodePool_To_management_NodePool(in *NodePool, out *management.NodePool, s conversion.Scope) error {
-+	out.ObjectMeta = in.ObjectMeta
-+	if err := Convert_v1_NodePoolSpec_To_management_NodePoolSpec(&in.Spec, &out.Spec, s); err != nil {
-+		return err
-+	}
-+	if err := Convert_v1_NodePoolStatus_To_management_NodePoolStatus(&in.Status, &out.Status, s); err != nil {
-+		return err
-+	}
-+	return nil
-+}
 +
-+// Convert_v1_NodePool_To_management_NodePool is an autogenerated conversion function.
-+func Convert_v1_NodePool_To_management_NodePool(in *NodePool, out *management.NodePool, s conversion.Scope) error {
-+	return autoConvert_v1_NodePool_To_management_NodePool(in, out, s)
-+}
-+
-+func autoConvert_management_NodePool_To_v1_NodePool(in *management.NodePool, out *NodePool, s conversion.Scope) error {
-+	out.ObjectMeta = in.ObjectMeta
-+	if err := Convert_management_NodePoolSpec_To_v1_NodePoolSpec(&in.Spec, &out.Spec, s); err != nil {
-+		return err
++	// fake helm records its arguments, one per line
++	binDir := t.TempDir()
++	argsFile := filepath.Join(binDir, "args")
++	script := "#!/bin/sh\nprintf '%s\\n' \"$@\" > " + argsFile + "\n"
++	err := os.WriteFile(filepath.Join(binDir, "helm"), []byte(script), 0o755)
++	if err != nil {
++		t.Fatalf("write fake helm: %v", err)
 +	}
-+	if err := Convert_management_NodePoolStatus_To_v1_NodePoolStatus(&in.Status, &out.Status, s); err != nil {
-+		return err
++	t.Setenv("PATH", binDir+string(os.PathListSeparator)+os.Getenv("PATH"))
++
++	o := &PushOptions{
++		Log:                 log.Discard,
++		HelmChartRepository: "charts",
 +	}
-+	return nil
-+}
-+
-+// Convert_management_NodePool_To_v1_NodePool is an autogenerated conversion function.
-+func Convert_management_NodePool_To_v1_NodePool(in *management.NodePool, out *NodePool, s conversion.Scope) error {
-+	return autoConvert_management_NodePool_To_v1_NodePool(in, out, s)
-+}
-+
-
-```
-
-**File**: `vendor/github.com/loft-sh/api/v5/pkg/apis/management/v1/zz_generated.deepcopy.go` (modified, +100/-0)
-```diff
-@@ -4346,6 +4346,101 @@ func (in *NodeClaimStatus) DeepCopy() *NodeClaimStatus {
- 	return out
- }
- 
-+// DeepCopyInto is an autogenerated deepcopy function, copying the receiver, writing into out. in must be non-nil.
-+func (in *NodePool) DeepCopyInto(out *NodePool) {
-+	*out = *in
-+	out.TypeMeta = in.TypeMeta
-+	in.ObjectMeta.DeepCopyInto(&out.ObjectMeta)
-+	in.Spec.DeepCopyInto(&out.Spec)
-+	in.Status.DeepCopyInto(&out.Status)
-+	return
-+}
-+
-+// DeepCopy is an autogenerated deepcopy function, copying the receiver, creating a new NodePool.
-+func (in *NodePool) DeepCopy() *NodePool {
-+	if in == nil {
-+		return nil
++	err = o.pushHelmChart(context.Background(), "-evil-0.1.0.tgz", 5000)
++	if err != nil {
++		t.Fatalf("pushHelmChart() error = %v", err)
 +	}
-+	out := new(NodePool)
-+	in.DeepCopyInto(out)
-+	return out
-+}
 +
-+// DeepCopyObject is an autogenerated deepcopy function, copying the receiver, creating a new runtime.Object.
-+func (in *NodePool) DeepCopyObject() runtime.Object {
-+	if c := in.DeepCopy(); c != nil {
-+		return c
++	raw, err := os.ReadFile(argsFile)
++	if err != nil {
++		t.Fatalf("read recorded args: %v", err)
 +	}
-+	return nil
-+}
-+
-+// DeepCopyInto is an autogenerated deepcopy function, copying the receiver, writing into out. in must be non-nil.
-+func (in *NodePoolList) DeepCopyInto(out *NodePoolList) {
-+	*out = *in
-+	out.TypeMeta = in.TypeMeta
-+	in.ListMeta.DeepCopyInto(&out.ListMeta)
-+	if in.Items != nil {
-+		in, out := &in.Items, &out.Items
-+		*out = make([]NodePool, len(*in))
-+		for i := range *in {
-+			(*in)[i].DeepCopyInto(&(*out)[i])
-+		}
++	got := strings.Split(strings.TrimSpace(string(raw)), "\n")
++	want := []string{"push", "--plain-http", "--", "-evil-0.1.0.tgz", "oci://127.0.0.1:5000/charts"}
++	if strings.Join(got, " ") != strings.Join(want, " ") {
++		t.Fatalf("helm args = %q, want %q", got, want)
 +	}
-+	return
 +}
-+
-+// DeepCopy is an autogenerated deepcopy function, copying the receiver, creating a new NodePoolList.
-+func (in *NodePoolList) DeepCopy() *NodePoolList {
-+	if in == nil {
-+		return nil
-+	}
-+	out := new(NodePoolList)
-+	in.DeepCopyInto(out)
-+	return out
-+}
-+
-+// DeepCopyObject is an autogenerated deepcopy function, copying the receiver, creating a new runtime.Object.
-+func (in *NodePoolList) DeepCopyObject() runtime.Object {
-+	if c := in.DeepCopy(); c != nil {
-+		return c
-+	}
-+	return nil
-+}
-+
-+// DeepCopyInto is an autogenerated deepcopy function, copying the receiver, writing into out. in must be non-nil.
-+func (in *NodePoolSpec) DeepCopyInto(out *NodePoolSpec) {
-+	*out = *in
-+	in.NodePoolSpec.DeepCopyInto(&out.NodePoolSpec)
-+	return
-+}
-+
-+// DeepCopy is an autogenerated deepcopy function, copying the receiver, creating a new NodePoolSpec.
-+func (in *NodePoolSpec) DeepCopy() *NodePoolSpec {
-+	if in == nil {
-+		return nil
-+	}
-+	out := new(NodePoolSpec)
-+	in.DeepCopyInto(out)
-+	return out
-+}
-+
-+// DeepCopyInto is an autogenerated deepcopy function, copying the receiver, writing into out. in must be non-nil.
-+func (in *NodePoolStatus) DeepCopyInto(out *NodePoolStatus) {
-+	*out = *in
-+	in.NodePoolStatus.DeepCopyInto(&out.NodePoolStatus)
-+	return
-+}
-+
-+// DeepCopy is an autogenerated deepcopy function, copying the receiver, creating a new NodePoolStatus.
-+func (in *NodePoolStatus) DeepCopy() *NodePoolStatus {
-+	if in == nil {
-+		return nil
-+	}
-+	out := new(NodePoolStatus)
-+	in.DeepCopyInto(out)
-+	return out
-+}
-+
- // DeepCopyInto is an autogenerated deepcopy function, copying the receiver, writing into out. in must be non-nil.
- func (in *NodeProfile) DeepCopyInto(out *NodeProfile) {
- 	*out = *in
-@@ -7016,6 +7111,11 @@ func (in *SelfStatus) DeepCopyInto(out *SelfStatus) {
- 		*out = new(string)
- 		**out = **in
- 	}
-+	if in.ExternalClustersAllowed != nil {
-+		in, out := &in.ExternalClustersAllowed, &out.ExternalClustersAllowed
-+		*out = new(bool)
-+		**out = **in
-+	}
- 	return
- }
- 
-```
-
----
-
-### Incident Patch 2: `d38464dd` (2026-11-04)
-**Commit Message**: fix(destroy): delete node pools before node claims
-
-The api bump brings the storage.loft.sh NodePool kind, and destroy
-refuses to start while discovery reports a kind outside resourceOrder,
-which TestResourceOrderCoversEveryStorageKind caught.
-
-Place nodepools right before nodeclaims: a live static pool recreates
-the claims deleted under it, each provisioning a machine, while a
-deleted pool removes its own claims and drops its finalizer once they
-are gone. Pin that order in TestResourceOrderDeletesHoldersFirst.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Monorepo-Commit: 9c6b8da666c0903a7302d10a83e7933511001413
-
-**File**: `pkg/cli/destroy/destroy.go` (modified, +3/-0)
-```diff
-@@ -59,6 +59,9 @@ var resourceOrder = []string{
- 	"runners",
- 	"clusters",
- 	"clusteraccesses",
-+	// before nodeclaims: a static pool recreates the claims deleted under it, and a deleted pool
-+	// removes its own claims before it goes
-+	"nodepools",
- 	"nodeclaims",
- 	"machines",
- 	// after nodeclaims: a claim holds its environment until the claim is gone
-```
-
-**File**: `pkg/cli/destroy/destroy_test.go` (modified, +4/-2)
-```diff
-@@ -65,10 +65,12 @@ func TestResourceOrderIsWellFormed(t *testing.T) {
- 
- // TestResourceOrderDeletesHoldersFirst pins the relative positions a finalizer makes load-bearing:
- // a resource that holds another through a finalizer must be deleted first, or destroy waits on
--// the held one until its timeout. A node claim holds its network environment, a provider's
--// finalizer waits on its environments, and a tenant storage names its profile.
-+// the held one until its timeout. A static node pool recreates the claims deleted under it, a
-+// node claim holds its network environment, a provider's finalizer waits on its environments,
-+// and a tenant storage names its profile.
- func TestResourceOrderDeletesHoldersFirst(t *testing.T) {
- 	pairs := [][2]string{
-+		{"nodepools", "nodeclaims"},
- 		{"nodeclaims", "networkenvironments"},
- 		{"networkenvironments", "nodeproviders"},
- 		{"tenantstorages", "storageprofiles"},
 ```
 
 #### Recent Merged Pull Requests:
@@ -2029,48 +1570,29 @@ Monorepo-Commit: 9c6b8da666c0903a7302d10a83e7933511001413
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): bump loft-sh/api to v5.0.0-rc.1 for node pools
+## X. cli): stop helm parsing chart file names as flags in registry push (#2699)
 
 **RULE**:
-When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in loft-sh/vcluster. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cmd/vclusterctl/cmd/registry/push.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in loft-sh/vcluster. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `621c6803`: deps): bump loft-sh/api to v5.0.0-rc.1 for node pools. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a8ab30ea`: cli): stop helm parsing chart file names as flags in registry push (#2699). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cmd/vclusterctl/cmd/registry/push.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	github.com/loft-sh/agentapi/v5 v5.0.0-rc.1
-	github.com/loft-sh/api/v5 v5.0.0-rc.1
-	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.45.0 // indirect
-	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.45.0 // indirect
-	google.golang.org/genproto/googleapis/api v0.0.0-20260904194346-d0f1323225a4 // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20260904194346-d0f1323225a4 // indirect
-	go.opentelemetry.io/otel v1.45.0 // indirect
-	go.opentelemetry.io/otel/metric v1.45.0 // indirect
-	go.opentelemetry.io/otel/sdk v1.45.0 // indirect
-	go.opentelemetry.io/otel/trace v1.45.0 // indirect
-	go.opentelemetry.io/proto/otlp v1.11.0 // indirect
+		// a chart file name starting with "-" must not be parsed as a helm flag
+		"--",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	github.com/loft-sh/agentapi/v5 v5.0.0-alpha.6
-	github.com/loft-sh/api/v5 v5.0.0-alpha.6
-	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.44.0 // indirect
-	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.44.0 // indirect
-	google.golang.org/genproto/googleapis/api v0.0.0-20260526163538-3dc84a4a5aaa // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20260630182238-925bb5da69e7 // indirect
-	go.opentelemetry.io/otel v1.44.0 // indirect
-	go.opentelemetry.io/otel/metric v1.44.0 // indirect
-	go.opentelemetry.io/otel/sdk v1.44.0 // indirect
-	go.opentelemetry.io/otel/trace v1.44.0 // indirect
-	go.opentelemetry.io/proto/otlp v1.10.0 // indirect
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `621c6803` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a8ab30ea` are properly handled with clean fallback behavior.

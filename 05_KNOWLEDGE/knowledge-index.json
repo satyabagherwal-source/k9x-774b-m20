@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T22:25:15.172Z",
+  "last_updated": "2026-11-05T22:31:53.827Z",
   "total_verified_learnings": 1221,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -3119,11 +3119,16 @@
       "slug": "arangodb-arangodb",
       "platform": "github",
       "source_url": "https://github.com/arangodb/arangodb",
-      "source_version": "cdc63f4b",
-      "content_hash": "c029547f5a19949f9ae12c1c92347972ef53da3bb17b610e8f673db9a590d20e",
+      "source_version": "511a3044",
+      "content_hash": "8df3a10948a28016fd671d3508bb0d600a3050c3adc1fffa9cba0fce698fb1ac",
       "dossier_path": "07_PROJECT_LEARNING/arangodb-arangodb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/arangodb-arangodb-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Merge pull request #23595 from arangodb/bug-fix/bts-2437",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2037,
           "title": "catch crashes during upgrade cycling arangods (#23453)",
@@ -3185,7 +3190,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T06:00:35.693Z",
+      "verified_at": "2026-11-05T22:31:53.812Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -14653,14 +14658,19 @@
       "slug": "freenet-freenet-core",
       "platform": "github",
       "source_url": "https://github.com/freenet/freenet-core",
-      "source_version": "24d872db",
-      "content_hash": "4b78f68a6c1aa90d6fdf87c6825f0492a593d3c22992b5830f8d1d2806284c0f",
+      "source_version": "196263ba",
+      "content_hash": "3ae4a90aa8746205694295e91f7d2ff4a248a6c7ba1a5eda89298ba512612111",
       "dossier_path": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "transport): send QUIC data on the path with fallback to UDP (#6114)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "transport): export QUIC data path telemetry (#6118)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -14879,7 +14889,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T17:57:32.886Z",
+      "verified_at": "2026-11-05T22:31:52.017Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -39256,11 +39266,16 @@
       "slug": "loft-sh-vcluster",
       "platform": "github",
       "source_url": "https://github.com/loft-sh/vcluster",
-      "source_version": "13fdf431",
-      "content_hash": "393ce61c65ae263db8d09173f6bebf28abdb525914c6044cdfe73a53f3c0142c",
+      "source_version": "a8ab30ea",
+      "content_hash": "3fa716c14a5cd1c9a15a3fd748a68e7b3dd03457b5c2c9ae0f56730722bb9f94",
       "dossier_path": "07_PROJECT_LEARNING/loft-sh-vcluster-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/loft-sh-vcluster-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "cli): stop helm parsing chart file names as flags in registry push (#2699)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2425,
           "title": "Two-Phase Ordered OS Signal Interruption Invariant",
@@ -39317,7 +39332,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T17:10:01.357Z",
+      "verified_at": "2026-11-05T22:31:49.177Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -41234,11 +41249,16 @@
       "slug": "metalbear-co-mirrord",
       "platform": "github",
       "source_url": "https://github.com/metalbear-co/mirrord",
-      "source_version": "89bfc07c",
-      "content_hash": "5479c29fe91f23dae9f00b597c8231ef76837eecfce2fb260b4440492dad4f95",
+      "source_version": "7cf43de5",
+      "content_hash": "69c3896dcfd497240682830757797c3042e09a778becce928f2fbbf14efdc2f1",
       "dossier_path": "07_PROJECT_LEARNING/metalbear-co-mirrord-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/metalbear-co-mirrord-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Cap the CI runner build cache on the Blacksmith sticky disks (#5202)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 1787,
           "title": "layer): drop a closed fd's layer state before the kernel close",
@@ -41305,7 +41325,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T02:01:52.498Z",
+      "verified_at": "2026-11-05T22:31:40.557Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

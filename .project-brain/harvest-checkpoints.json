@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-05T22:25:15.274Z",
+  "last_updated": "2026-11-05T22:31:53.909Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4416,14 +4416,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-freenet-freenet-core",
-      "content_hash": "4b78f68a6c1aa90d6fdf87c6825f0492a593d3c22992b5830f8d1d2806284c0f",
-      "verified_at": "2026-11-05T17:57:33.024Z",
+      "content_hash": "3ae4a90aa8746205694295e91f7d2ff4a248a6c7ba1a5eda89298ba512612111",
+      "verified_at": "2026-11-05T22:31:52.098Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T17:57:33.024Z"
+      "last_updated": "2026-11-05T22:31:52.098Z"
     },
     "vearch/vearch": {
       "repository": "vearch/vearch",
@@ -4641,14 +4641,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-metalbear-co-mirrord",
-      "content_hash": "5479c29fe91f23dae9f00b597c8231ef76837eecfce2fb260b4440492dad4f95",
-      "verified_at": "2026-11-05T02:01:52.627Z",
+      "content_hash": "69c3896dcfd497240682830757797c3042e09a778becce928f2fbbf14efdc2f1",
+      "verified_at": "2026-11-05T22:31:40.639Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T02:01:52.627Z"
+      "last_updated": "2026-11-05T22:31:40.639Z"
     },
     "openkruise/kruise": {
       "repository": "openkruise/kruise",
@@ -7641,14 +7641,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-arangodb-arangodb",
-      "content_hash": "c029547f5a19949f9ae12c1c92347972ef53da3bb17b610e8f673db9a590d20e",
-      "verified_at": "2026-11-05T06:00:35.826Z",
+      "content_hash": "8df3a10948a28016fd671d3508bb0d600a3050c3adc1fffa9cba0fce698fb1ac",
+      "verified_at": "2026-11-05T22:31:53.909Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T06:00:35.826Z"
+      "last_updated": "2026-11-05T22:31:53.909Z"
     },
     "chakra-ui/ark": {
       "repository": "chakra-ui/ark",
@@ -11046,14 +11046,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-loft-sh-vcluster",
-      "content_hash": "393ce61c65ae263db8d09173f6bebf28abdb525914c6044cdfe73a53f3c0142c",
-      "verified_at": "2026-11-04T17:10:01.478Z",
+      "content_hash": "3fa716c14a5cd1c9a15a3fd748a68e7b3dd03457b5c2c9ae0f56730722bb9f94",
+      "verified_at": "2026-11-05T22:31:49.262Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T17:10:01.478Z"
+      "last_updated": "2026-11-05T22:31:49.262Z"
     },
     "arkivanov/Decompose": {
       "repository": "arkivanov/Decompose",

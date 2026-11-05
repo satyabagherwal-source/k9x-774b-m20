@@ -2853,10 +2853,10 @@
     "repository": "freenet/freenet-core",
     "platform": "github",
     "sourceUrl": "https://github.com/freenet/freenet-core",
-    "sourceVersion": "24d872db",
+    "sourceVersion": "196263ba",
     "license": "NOASSERTION",
-    "contentHash": "4b78f68a6c1aa90d6fdf87c6825f0492a593d3c22992b5830f8d1d2806284c0f",
-    "lastHarvestedAt": "2026-11-05T17:57:33.005Z",
+    "contentHash": "3ae4a90aa8746205694295e91f7d2ff4a248a6c7ba1a5eda89298ba512612111",
+    "lastHarvestedAt": "2026-11-05T22:31:52.092Z",
     "learningId": "learn-github-freenet-freenet-core"
   },
   "vearch-vearch": {
@@ -3013,10 +3013,10 @@
     "repository": "metalbear-co/mirrord",
     "platform": "github",
     "sourceUrl": "https://github.com/metalbear-co/mirrord",
-    "sourceVersion": "89bfc07c",
+    "sourceVersion": "7cf43de5",
     "license": "MIT",
-    "contentHash": "5479c29fe91f23dae9f00b597c8231ef76837eecfce2fb260b4440492dad4f95",
-    "lastHarvestedAt": "2026-11-05T02:01:52.610Z",
+    "contentHash": "69c3896dcfd497240682830757797c3042e09a778becce928f2fbbf14efdc2f1",
+    "lastHarvestedAt": "2026-11-05T22:31:40.632Z",
     "learningId": "learn-github-metalbear-co-mirrord"
   },
   "openkruise-kruise": {
@@ -5013,10 +5013,10 @@
     "repository": "arangodb/arangodb",
     "platform": "github",
     "sourceUrl": "https://github.com/arangodb/arangodb",
-    "sourceVersion": "cdc63f4b",
+    "sourceVersion": "511a3044",
     "license": "NOASSERTION",
-    "contentHash": "c029547f5a19949f9ae12c1c92347972ef53da3bb17b610e8f673db9a590d20e",
-    "lastHarvestedAt": "2026-11-05T06:00:35.805Z",
+    "contentHash": "8df3a10948a28016fd671d3508bb0d600a3050c3adc1fffa9cba0fce698fb1ac",
+    "lastHarvestedAt": "2026-11-05T22:31:53.902Z",
     "learningId": "learn-github-arangodb-arangodb"
   },
   "chakra-ui-ark": {
@@ -7333,10 +7333,10 @@
     "repository": "loft-sh/vcluster",
     "platform": "github",
     "sourceUrl": "https://github.com/loft-sh/vcluster",
-    "sourceVersion": "13fdf431",
+    "sourceVersion": "a8ab30ea",
     "license": "Apache-2.0",
-    "contentHash": "393ce61c65ae263db8d09173f6bebf28abdb525914c6044cdfe73a53f3c0142c",
-    "lastHarvestedAt": "2026-11-04T17:10:01.468Z",
+    "contentHash": "3fa716c14a5cd1c9a15a3fd748a68e7b3dd03457b5c2c9ae0f56730722bb9f94",
+    "lastHarvestedAt": "2026-11-05T22:31:49.255Z",
     "learningId": "learn-github-loft-sh-vcluster"
   },
   "arkivanov-decompose": {

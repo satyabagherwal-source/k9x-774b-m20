@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261104-LWQW",
-    "timestamp": "2026-11-04T19:33:52.520Z",
-    "repository": "Nanbeige/Nanbeige4.3-33B",
-    "learningId": "learn-huggingface-nanbeige-nanbeige4-3-33b",
-    "contentHash": "fe63a84485f05d2c4172865102829deae27eb021b11bdc141c79928146c23ad1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261104-LWS0",
-    "timestamp": "2026-11-04T19:33:52.560Z",
-    "repository": "beclab/Olares",
-    "learningId": "learn-github-beclab-olares",
-    "contentHash": "f60931850ddc18ef32940cb0fcfb0299579877c785346f9240a394a623c917a6",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261104-LWYS",
-    "timestamp": "2026-11-04T19:33:52.804Z",
-    "repository": "open-ani/animeko",
-    "learningId": "learn-github-open-ani-animeko",
-    "contentHash": "32a775c3ea1ad3a689a1d0333bdb1bd45cbf9f1db316bef33bd168a409bc9c35",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261104-M10O",
-    "timestamp": "2026-11-04T19:33:58.056Z",
-    "repository": "volcengine/OpenViking",
-    "learningId": "learn-github-volcengine-openviking",
-    "contentHash": "0a089e86484bca094f0f7a791cdaa544b50a74da72747912642a2e8defc0f565",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261104-VLFC",
     "timestamp": "2026-11-04T19:41:24.408Z",
     "repository": "briaai/Fibo-2.0-dev",
@@ -7490,6 +7430,66 @@
     "repository": "aleo-labs-protocol/snarkOS",
     "learningId": "learn-github-aleo-labs-protocol-snarkos",
     "contentHash": "df6a0285a8ae77348e74afe1256bd8491b8cde66589b51f981c1657583f75fd2",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-EEZ9",
+    "timestamp": "2026-11-05T22:31:40.629Z",
+    "repository": "metalbear-co/mirrord",
+    "learningId": "learn-github-metalbear-co-mirrord",
+    "contentHash": "69c3896dcfd497240682830757797c3042e09a778becce928f2fbbf14efdc2f1",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-ELMT",
+    "timestamp": "2026-11-05T22:31:49.253Z",
+    "repository": "loft-sh/vcluster",
+    "learningId": "learn-github-loft-sh-vcluster",
+    "contentHash": "3fa716c14a5cd1c9a15a3fd748a68e7b3dd03457b5c2c9ae0f56730722bb9f94",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-ENTL",
+    "timestamp": "2026-11-05T22:31:52.089Z",
+    "repository": "freenet/freenet-core",
+    "learningId": "learn-github-freenet-freenet-core",
+    "contentHash": "3ae4a90aa8746205694295e91f7d2ff4a248a6c7ba1a5eda89298ba512612111",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-EP7W",
+    "timestamp": "2026-11-05T22:31:53.900Z",
+    "repository": "arangodb/arangodb",
+    "learningId": "learn-github-arangodb-arangodb",
+    "contentHash": "8df3a10948a28016fd671d3508bb0d600a3050c3adc1fffa9cba0fce698fb1ac",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

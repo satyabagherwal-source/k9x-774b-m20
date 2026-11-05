@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/freenet-freenet-core-learnings.md`  
 > **Source**: github ([https://github.com/freenet/freenet-core](https://github.com/freenet/freenet-core))  
-> **Source Version**: `24d872db`  
+> **Source Version**: `196263ba`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T17:57:31.134Z  
+> **Timestamp**: 2026-11-05T22:31:50.880Z  
 > **Learning ID**: `learn-github-freenet-freenet-core`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/freenet-freenet-core-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/freenet/freenet-core](https://github.com/freenet/freenet-core))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T17:57:31.126Z  
+> **Harvest Timestamp**: 2026-11-05T22:31:50.647Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1738,14 +1738,11 @@ pub mod streaming_buffer;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #6114** (2026-11-05): **feat(transport): send QUIC data on the path with fallback to UDP**
-  *Symptoms*: ## Problem  A pair of nodes that both set the QUIC data bit (#5940, e5b-3) still sent all of its traffic on UDP: nothing put a message on the path. e5b-4 built the receive side and e5b-5 the bounded sends, so this is the step that routes data onto the path, and back onto UDP when the path cannot carry it.  ## Approach  - **One route per message**, chosen when it is sent, from `QuicPathState::data_route`. A connection gets a route only once both sides set the data bit, and loses it when the path is torn down. With no route (QUIC off, shadow, the default on Linux and macOS, and every pair while `QUIC_DATA_PERCENT` is 0) the check is one atomic load and takes no lock. With QUIC off there is no new task, select arm or `GlobalRng` draw. - **Nothing waits in the connection's task.** A message of one packet goes into a per-path queue of 256 with `try_send`; when the queue is full or closed it goes on UDP at once. One worker per path sends what is queued, at most 64 at a time. Larger messages, streams and pipes each run as a task in `outbound_stream_futures`, the arm that already accounts for UDP streams. - **Fallback by outcome** (`quic/path/route.rs`): a message goes on UDP only when the outcome shows the receiver cannot deliver it, so nothing is delivered twice and a short needs no dedup at the receiver.   - A send that never opened goes on UDP. A stream keeps its id and its completion channel, and a pipe reads its source again from the start.   - A stream that opened is dropped a
-  **Post-Mortem & Fix Analysis**:
-  > <!-- claude-rule-review --> ### Claude Rule Review: Failed to run  The Claude rule review step failed (likely an authentication or API issue). Check the [workflow logs](https://github.com/freenet/freenet-core/actions/runs/42070416569) for details.  --- *Advisory review against `.claude/rules/`. Critical patterns are enforced by the Rule Lint CI job.*
-  > ## ⚠️ Extended Benchmark Regressions Detected  Some extended benchmarks show performance regressions.  **Note**: Extended benchmarks include high-latency and packet-loss scenarios which have higher variance than standard CI benchmarks.  [View full results](https://github.com/freenet/freenet-core/actions/runs/42036291707)  [View full benchmark summary](https://github.com/freenet/freenet-core/actions/runs/42036291707)
+- **Issue #6119** (2026-11-05): **fix(test): advance VirtualTime in controlled simulations**
+  *Symptoms*: ## Problem  The turmoil-based simulation runners never moved the network's `VirtualTime`. After a 700 s `run_controlled_simulation` it still read 0 ns. Those runners are `run_simulation` (behind `TestConfig`), `run_controlled_simulation`, `run_fdev_test` and `turmoil_runner::run_turmoil_simulation`.  The node tasks run on turmoil's clock, so most of a node is unaffected. Two things read `VirtualTime` instead, and none of their timers fired in these runners:  - **Each QUIC endpoint and path.** This covers quinn's timers (loss detection, idle, keepalive, pacing), the path's send deadlines, and the 2 s acknowledgement watch, all through `get_socket_virtual_time`. A QUIC scenario under these runners ran with every QUIC timer frozen. Data still moved, because quinn is driven by packets, so a passing test could not show it. - **The fault injector's time-based rules**, such as partitions with heal times and QUIC datagram drops with a start time. A rule starting after zero never applied.  The direct runner (`run_simulation_direct`) already follows tokio's clock with a time driver, so it was not affected.  Found while writing the QUIC data scenarios for #5940 (step e5b-9). `fail_endpoint_at` never fired in a controlled run, even at 1 s.  ## Approach  The runners now step turmoil themselves and move `VirtualTime` to `sim.elapsed()` after each step, through `run_turmoil_on_virtual_time` in `testing_impl.rs`. This mirrors what the direct runner's time driver does with tokio's clock. The 
 
-- **Issue #6113** (2026-11-05): **test(transport): pin the QUIC fair share where it holds and record the default-minimum case**
-  *Symptoms*: ## Problem  #6112 reported that under a saturated egress cap (`total-bandwidth-limit`), the QUIC window cap from #6111 let a path take about 390 kB/s of a 500 kB/s cap, against what the test took to be a 250 kB/s fair share.  That test built its `GlobalBandwidthManager` with the default minimum per connection, `DEFAULT_MIN_PER_CONNECTION` (1 MB/s), which the manager clamps to the total. So each connection's share was the whole 500 kB/s cap, and the QUIC window cap (`share x RTT`) did no apportioning. Measuring it properly shows two cases:  | Setup (2 connections, 500 kB/s cap, 40 seeds) | QUIC | UDP stream sender | |---|---|---| | Minimum per connection below the 250 kB/s share | 239 to 240 kB/s | 250 kB/s | | The same, window cap removed | 491 kB/s | 12 kB/s | | **Default minimum** (share = whole cap) | **about 462 kB/s** | **about 38 kB/s** |  The UDP sender in every row is paced as the transport paces a stream fragment: its connection's `TokenBucket` at the share, then `try_take` on the egress cap with `jittered` sleeps.  With the default minimum, which covers nearly every residential `total-bandwidth-limit` (any total below n x 1 MB/s), the window cap does not apportion the cap. The egress cap is not neutral either: QUIC waits in `poll_admit` (a queued waker, woken in order as the bucket refills), while UDP stream senders `try_take` and sleep jittered deficits, so QUIC wins contended refills. **That defect remains open in #6112. This PR does not fix it.**  ## What this PR
+- **Issue #6118** (2026-11-05): **feat(transport): export QUIC data path telemetry**
+  *Symptoms*: ## Problem  #6114 put QUIC data on the path, but what the sends and receives did was counted only per path, inside `QuicPathStats`, so none of it reached telemetry. The step-3 rollout gates (#5940) cannot be read without these counts, and neither can how far paths lag the data ramp. The gates are stream-limit waits below 0.5% of sends, `ge_48` below 0.2% of path-windows, data refusals at 0, and memory read against QUIC bytes.  ## Approach  - One node-wide `QuicDataCounters` in `TRANSPORT_METRICS` (`transport/metrics/quic_data.rs`). Each count is recorded where the path decides it, into the path's own counters and the node's in the same step, so it is counted once, at the decision. A path holds a reference to its node counters (`QuicPathLimits::counters`), which tests replace with their own, since every test in a process writes the global one. - The snapshot is one nested field, `TransportSnapshot::quic_data`, uploaded flat with a key per non-zero count. `QuicUpgradeOutcome` is already at 32, the most serde and `Default` take for an array, so this is a set of its own:   - `quic_data_send_<kind>_<result>`: short, large short, stream and pipe, by sent, maybe delivered, not opened then UDP, failed then UDP, dropped.   - `quic_data_event_<event>`: short overflow to UDP, data refused, stall closes, UDP sends that failed.   - `quic_data_stop_<code>`: stops the peer sent to data sends, by code.   - `quic_inbound_<outcome>`: every receive outcome, including `refused_not_accepting_data
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1762,570 +1759,1209 @@ pub mod streaming_buffer;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `24d872db` (2026-11-05)
-**Commit Message**: feat(transport): send QUIC data on the path with fallback to UDP (#6114)
+### Incident Patch 1: `196263ba` (2026-11-05)
+**Commit Message**: feat(transport): export QUIC data path telemetry (#6118)
 
-**File**: `.claude/rules/transport.md` (modified, +103/-18)
+**File**: `.claude/rules/transport.md` (modified, +41/-5)
 ```diff
-@@ -932,10 +932,11 @@ it must not wait unless it is a pacing point.
- `QuicMode::default_mode`, shadow on Linux and macOS and off elsewhere, since
- the breaker cannot trip without a boot identity) decides whether `bind_udp_listener` builds a quinn endpoint over the DemuxSocket.
- `prefer` negotiates data with the release's share of pairs ("Data slice" below;
--`upgrade::policy::log_startup` reports the share at INFO once per node). No code
--sends data on a path yet, so `prefer` differs from `shadow` only by that bit. The
--release that makes `prefer` carry data must say in its notes that existing
--`prefer` configs start carrying data. Off: no endpoint, no QUIC ingress, nothing
-+`upgrade::policy::log_startup` reports the share at INFO once per node), and a pair
-+with both bits sends its data on the path ("QUIC send route" below). At a share of
-+0, with no `quic-data-percent`, `prefer` differs from `shadow` only by the bit, which
-+stays 0. The release that raises the share above 0 must say in its notes that
-+existing `prefer` configs start carrying data. Off: no endpoint, no QUIC ingress, nothing
- changes. QUIC must stay off by default on Windows until the crash-loop
- breaker has been confirmed on a real Windows machine (#6031). The default is
- read, never written to config.toml: a node that did not set the key follows the
-@@ -1075,8 +1076,11 @@ pair is in the slice when its bucket is below the percentage, so 0 holds none,
-   overtake the frame carrying its bit. Sending is `QuicPath::send_data`, which
-   `debug_assert_carries_data` reads. The Offer's caps stay 0. A release before the
-   bit clears it on decode and sends 0, so its pairs stay in shadow.
--  No node code sends data on a path yet. Frames a peer sends to a node with its own
--  bit set reach `recv` ("QUIC receive flow" below).
-+  With both bits the connection sends on the path ("QUIC send route" below). Frames
-+  a peer sends to a node with its own bit set reach `recv` ("QUIC receive flow"
-+  below). A sender needs no version check: 0.2.154 is the first release that can
-+  set the bit and the first that reads, every earlier one clears the bit on decode
-+  and sends 0, and a node rolled back has restarted and negotiates again.
+@@ -1180,10 +1180,46 @@ snapshot except the two gauges.
+   connections (per connection and direction), set when the endpoint is built,
+   0 without one; a state, not reset and not activity. Throughput by window
+   size shows whether nodes at the 128 KiB floor are slower on QUIC than on UDP.
+-  Not built: stream-concurrency instruments on real QUIC (`quic_open_uni_waited`,
+-  permit waits, ge_8..ge_48, control_* refusals) have no source until e5b and
+-  read zero in shadow; the `transport=legacy|quic` connection attribute; a
+-  per-path memory estimate.
++  Not built: the `transport=legacy|quic` attribute on connection, transfer and
++  disconnect events; quinn's RTT, min RTT and lost bytes on a QUIC transfer's
++  events (those fields are None today); the per-peer byte counters and the
++  dashboard for QUIC traffic; a per-path memory estimate.
++
++QUIC data telemetry (#5940 e5b-8, `transport/metrics/quic_data.rs`): node-wide
++counts of what paths' data sends and receives did, in one nested
++`TransportSnapshot::quic_data` and uploaded flat, a key per non-zero count and the
++gauge every period, 0 included (`QuicDataSnapshot::upload_keys`). Each is
++recorded where the path decides it, into the path's `QuicPathStats` and the node's
++`QuicDataCounters` together (`QuicPathLimits::counters`, `TRANSPORT_METRICS` unless
++a test passes its own; tests read their own, never the global).
++  quic_data_send_<short|large_short|stream|pipe>_<sent|maybe_delivered|
++  not_opened_udp|failed_udp|dropped>; quic_data_event_<short_overflow_udp|
++  data_refused|stalled_closed|udp_send_failed>; quic_data_stop_<code> (stops a
++  peer sent to data sends); quic_inbound_<QuicInboundOutcome> (every receive
++  outcome, refusals by frame kind as short_refused_budget and
++  stream_refused_budget); quic_enabled_data_paths; quic_live_data_paths (a gauge of
++  paths with a route the peer has not refused data on, not reset, not activity;
++  lowered once, at the refusal or when the attempt goes); quic_sends and quic_open_uni_waited (opens a
++  path tried, data and control, and those that waited for stream credit);
++  quic_streamed_sends and quic_stream_permit_waited; quic_bytes_sent and
++  quic_bytes_received (quinn's UDP payload counts, reported by change at each 2 s
++  tick of the acknowledgement watch, so a path's last tick before it closes is
++  lost); quic_session_ended_with_data_path_<age> (sessions that ended while their
++  path's route still carried data); quic_streams_sampled_paths,
++  quic_streams_open_ge_<8|16|32|48> and quic_streams_peak_max (per path and period,
++  the peak of inbound streams read at once, counted as inbound_concurrency counts
++  connections).
++  A family is the keys of one label list under one prefix
++  (`QuicDataSnapshot::keys_by_family`). No other key starts with a family's
++  prefix or with the prefix sibling families share (`quic_data_` for the send,
++  event and stop families, `quic_streams_open_` for the levels), and no key starts
++  with a prefix two of the snapshot's other keys share (`quic_send_`,
++  `quic_paths_` and the rest), so a prefix sum never adds two kinds of count. The
++  tests read the families from the keys and the other keys from the snapshot's
++  serde fields, not from a list (`no_key_is_under_another_family`). The step-3
++  stream-limit bars read quic_open_uni_waited over quic_sends,
++  quic_stream_permit_waited over quic_streamed_sends (both counts of attempts),
++  and quic_streams_open_ge_48 over quic_streams_sampled_paths.
  
- Receipt stamp (#6028, e5b-3): `ReceiptStamp` reads the later of two values,
- `last_inbound_nanos` (UDP) and `quic_receipt_nanos`, on the connection's clock. The
-@@ -1189,10 +1193,10 @@ task, no select arm and no GlobalRng draw. It owns one task per connection, whic
- runs the machine, so nothing of a negotiation runs inside `recv`, which only
- `try_send`s a received Upgrade to it.
-   Sends: UDP Upgrade messages are tracked packets, sent by the driver through
--  UpgradeSender, which holds only what a send needs. It charges flight size and
-+  UdpSender, which holds only what a send needs. It charges flight size and
-   tracks the packet only after the socket took it, with no await between, so a
-   send that fails or is dropped leaves nothing in flight. Control frames go through
--  send_control_bounded in a task per send, and nothing else is sent on a path.
-+  send_control_bounded in a task per send. Data goes by "QUIC send route" below.
-   Paths: QuicPath::with_budget(.., SHADOW or DEFAULT by this node's data bit, the
-   connection's inbound budget, the session's data channels), on the clock quinn runs on (PathClock: RealTime, or
-   the network's VirtualTime in simulation). The machine reads the connection's
-@@ -1386,10 +1390,11 @@ that join, not by the exact edge set. `probe_quic_endpoints_at` sends each
+ Upgrade driver (`quic/upgrade/driver.rs`, #5940 step e5a-5b): QuicUpgrades is
+ per node (endpoint, policy, routes by address, live sessions by peer key, backoff
+@@ -1841,7 +1877,7 @@ Control payload (quic/control.rs), the body of a Control frame, one per
+   QuicInbound::controls and counts refusals per path
+   (control_unknown_version, control_unknown_type, control_malformed); they
+   are counted only through it, not by QuicControl::decode.
+-Not here: export of the QUIC-only counters (per path, QuicPath::stats).
++Counts: per path (QuicPath::stats) and node-wide ("QUIC data telemetry" above).
+ QUIC send route (#5940 e5b-6, quic/upgrade/data_route.rs,
+   peer_connection/quic_send.rs, quic/path/route.rs):
+   A message has one route, chosen when it is sent, from
+```
+
+**File**: `crates/core/src/tracing/telemetry.rs` (modified, +64/-1)
+```diff
+@@ -3136,6 +3136,10 @@ fn event_kind_to_json(kind: &EventKind) -> serde_json::Value {
+                 "quic_flow_control_window_bytes".into(),
+                 serde_json::json!(snapshot.quic_flow_control_window_bytes),
+             );
++            // Flat, a key per non-zero count, as the upload carries them.
++            for (key, count) in snapshot.quic_data.upload_keys() {
++                m.insert(key, count.into());
++            }
+             m.insert(
+                 "nat_fail_samples".into(),
+                 serde_json::json!(snapshot.nat_fail_samples),
+@@ -7607,11 +7611,15 @@ mod tests {
+             .unwrap()
+             .keys()
+             .filter(|key| {
+-                !key.starts_with("conn_identity_") && !key.starts_with("inbound_concurrency_")
++                !key.starts_with("conn_identity_")
++                    && !key.starts_with("inbound_concurrency_")
++                    && *key != "quic_data"
+             })
+             .cloned()
+             .collect();
+         expected.insert("type".to_string());
++        // The QUIC data gauge goes out in every snapshot, 0 included.
++        expected.insert("quic_live_data_paths".to_string());
+         // The QUIC families are arrays in the snapshot and one key per label in
+         // the event.
+         use crate::transport::metrics::{
+@@ -7664,6 +7672,61 @@ mod tests {
+         assert_eq!(actual, expected);
+     }
+ 
++    /// The QUIC data counts go out flat, one key per non-zero count with its own
++    /// value, in the event log and in the upload alike, and the nested field
++    /// does not.
++    #[test]
++    fn transport_snapshot_json_carries_quic_data_values() {
++        use crate::transport::metrics::{QuicDataCounters, TransportSnapshot};
++        let mut snapshot = TransportSnapshot {
++            quic_data: QuicDataCounters::new().snapshot(false),
++            ..Default::default()
++        };
++        let mut next = 0u64;
++        let mut fill = |values: &mut Vec<u64>| {
++            for value in values.iter_mut() {
++                next += 1;
++                *value = next;
++            }
++        };
++        let data = &mut snapshot.quic_data;
++        fill(&mut data.sends);
++        fill(&mut data.events);
++        fill(&mut data.stops);
++        fill(&mut data.inbound);
++        fill(&mut data.session_ended_with_data_path);
++        data.data_enabled = 1001;
++        data.data_paths = 1002;
++        data.sends_opened = 1003;
++        data.open_uni_waited = 1004;
++        data.permit_takes = 1005;
++        data.permit_waited = 1006;
++        data.bytes_sent = 1007;
++        data.bytes_received = 1008;
++        data.streams_open_paths_sampled = 1009;
++        data.streams_open_ge = vec![1010, 1011, 1012, 1013];
++        data.streams_open_max = 1014;
++        let want: std::collections::BTreeMap<String, u64> =
++            snapshot.quic_data.keys().into_iter().collect();
++        assert!(want.values().all(|value| *value != 0));
++        let distinct: std::collections::BTreeSet<_> = want.values().collect();
++        assert_eq!(distinct.len(), want.len(), "each value tells its key apart");
++
++        let event = event_kind_to_json(&super::super::EventKind::TransportSnapshot(Box::new(
++            snapshot.clone(),
++        )));
++        let upload = snapshot.upload_json().expect("serializes");
++        for json in [event, upload] {
++            let map = json.as_object().unwrap();
++            assert!(!map.contains_key("quic_data"));
++            for (key, value) in &want {
++                assert_eq!(map.get(key), Some(&serde_json::json!(value)), "{key}");
++            }
++            let sent = map.keys().filter(|key| want.contains_key(*key)).count();
++            assert_eq!(sent, want.len());
++        }
++    }
++
+     /// As below, for the NAT-origin, stray-intro and dial-queue counts:
+     /// each is distinct and non-zero, so a swapped or mis-keyed one is caught.
+     #[test]
+```
+
+**File**: `crates/core/src/transport/metrics.rs` (modified, +57/-1)
+```diff
+@@ -29,6 +29,10 @@ use tokio::sync::mpsc;
+ 
+ use crate::tracing::{TransferDirection, TransferEvent};
+ 
++mod quic_data;
++pub use quic_data::QuicDataSnapshot;
++pub(crate) use quic_data::{QuicDataCounters, StreamsOpenPeak};
++
+ /// Global transport metrics instance.
+ ///
+ /// All peer connections report to this single instance, which aggregates
+@@ -870,6 +874,8 @@ pub struct TransportMetrics {
+     /// connection and direction (`quic::config::connection_window_bytes`):
+     /// a state set when the endpoint is built, 0 without one.
+     quic_flow_control_window_bytes: AtomicU64,
++    /// What QUIC paths' data sends and receives did (`quic_data`).
++    pub(crate) quic_data: QuicDataCounters,
+ 
+     /// The current snapshot period, starting at 1 and advanced by each
+     /// `take_snapshot`. A connection's [`InboundConcurrencyPeak`] from an
+@@ -1280,6 +1286,7 @@ impl TransportMetrics {
+             quic_paths_offered_or_dialing: AtomicU64::new(0),
+             quic_paths_active: AtomicU64::new(0),
+             quic_flow_control_window_bytes: AtomicU64::new(0),
++            quic_data: QuicDataCounters::new(),
+             inbound_concurrency_epoch: AtomicU64::new(1),
+             inbound_concurrency: Default::default(),
+             inbound_stream_outcomes: Default::default(),
+@@ -2582,6 +2589,7 @@ impl TransportMetrics {
+             quic_flow_control_window_bytes: self
+                 .quic_flow_control_window_bytes
+                 .load(Ordering::Relaxed),
++            quic_data: self.quic_data.snapshot(reset),
+             quic_close_sent_peer_not_acknowledging: get64(
+                 &self.quic_close_sent[QuicCloseCode::PeerNotAcknowledging as usize],
+             ),
+@@ -3183,6 +3191,9 @@ pub struct TransportSnapshot {
+     /// low-memory nodes, whose window is the 128 KiB floor, are slower on QUIC
+     /// than on UDP over long paths.
+     pub quic_flow_control_window_bytes: u64,
++    /// What QUIC paths' data sends and receives did (`metrics::quic_data`).
++    /// Uploaded flat, a key per non-zero count ([`QuicDataSnapshot::keys`]).
++    pub quic_data: QuicDataSnapshot,
+     /// Per-attempt records of the FIRST 8 failed outbound NAT traversals in
+     /// the period (not a representative sample of a busy period);
+     /// `nat_fail_samples_dropped` counts the rest. Read with the same
+@@ -3461,8 +3472,13 @@ impl TransportSnapshot {
+         let mut json = serde_json::to_value(self)?;
+         if let Some(map) = json.as_object_mut() {
+             map.retain(|key, _| {
+-                !key.starts_with("conn_identity_") && !key.starts_with("inbound_concurrency_")
++                !key.starts_with("conn_identity_")
++                    && !key.starts_with("inbound_concurrency_")
++                    && key != "quic_data"
+             });
++            for (key, count) in self.quic_data.upload_keys() {
++                map.insert(key, serde_json::json!(count));
++            }
+             for (key, count) in self.nonzero_conn_identity() {
+                 map.insert(key, serde_json::json!(count));
+             }
+@@ -3533,6 +3549,7 @@ impl TransportSnapshot {
+             quic_paths_offered_or_dialing,
+             quic_paths_active,
+             quic_flow_control_window_bytes,
++            quic_data,
+             nat_fail_samples,
+             nat_fail_samples_dropped,
+             inbound_stream_refused_invalid_length,
+@@ -3674,6 +3691,7 @@ impl TransportSnapshot {
+         self.quic_paths_offered_or_dialing = quic_paths_offered_or_dialing;
+         self.quic_paths_active = quic_paths_active;
+         self.quic_flow_control_window_bytes = quic_flow_control_window_bytes;
++        self.quic_data = quic_data;
+         self.nat_fail_samples = nat_fail_samples;
+         self.nat_fail_samples_dropped = nat_fail_samples_dropped;
+         self.inbound_stream_refused_invalid_length = inbound_stream_refused_invalid_length;
+@@ -3897,6 +3915,9 @@ struct SnapshotExtras {
+     /// low-memory nodes, whose window is the 128 KiB floor, are slower on QUIC
+     /// than on UDP over long paths.
+     pub quic_flow_control_window_bytes: u64,
++    /// What QUIC paths' data sends and receives did (`metrics::quic_data`).
++    /// Uploaded flat, a key per non-zero count ([`QuicDataSnapshot::keys`]).
++    pub quic_data: QuicDataSnapshot,
+     /// Per-attempt records of the FIRST 8 failed outbound NAT traversals in
+     /// the period (not a representative sample of a busy period);
+     /// `nat_fail_samples_dropped` counts the rest. Read with the same
+@@ -4075,6 +4096,7 @@ impl SnapshotExtras {
+             || self.quic_establish_samples != 0
+             || self.quic_paths_offered_or_dialing != 0
+             || self.quic_paths_active != 0
++            || self.quic_data.has_activity()
+             || !self.nat_fail_samples.is_empty()
+             || self.inbound_stream_refused_invalid_length != 0
+             || self.inbound_stream_refused_connection_bytes != 0
+@@ -5029,6 +5051,40 @@ mod tests {
+         assert_eq!(snap.quic_flow_con
+```
+
+**File**: `crates/core/src/transport/metrics/quic_data.rs` (added, +678/-0)
+```diff
+@@ -0,0 +1,678 @@
++//! Telemetry of QUIC data paths (#5940, e5b-8).
++//!
++//! Node-wide counts of what the paths' data sends and receives did, gathered from
++//! the per-path counters (`QuicPathStats`) where each is recorded, so a count is
++//! made once, at the decision. Exported per period in `transport_snapshot`, each
++//! count only when non-zero and the gauge always. A family is the keys of one
++//! label list under one prefix; no other key starts with a family's prefix, or
++//! with the prefix its sibling families share (`quic_data_`), so summing either
++//! never adds two kinds of count:
++//!
++//! | Key | What |
++//! |---|---|
++//! | `quic_data_send_<kind>_<result>` | data sends by kind and how they ended |
++//! | `quic_data_event_<event>` | short overflow to UDP, refusals, stall closes, lost UDP sends |
++//! | `quic_data_stop_<code>` | stops the peer sent to data sends, by code |
++//! | `quic_inbound_<outcome>` | every `QuicInboundOutcome`, node-wide |
++//! | `quic_enabled_data_paths` | paths where both sides set the data bit |
++//! | `quic_live_data_paths` | paths carrying data now (a gauge, not reset, sent every period, 0 included); a path the peer refused data on is not one |
++//! | `quic_sends`, `quic_open_uni_waited` | streams a path tried to open (data and control), and those whose open had to wait for a stream credit |
++//! | `quic_streamed_sends`, `quic_stream_permit_waited` | streamed-send permits taken, and those that waited |
++//! | `quic_bytes_sent`, `quic_bytes_received` | UDP payload bytes of QUIC paths, from quinn's counts |
++//! | `quic_session_ended_with_data_path_<age>` | sessions that ended under a data path, by the path's age |
++//! | `quic_streams_sampled_paths`, `quic_streams_open_ge_<n>`, `quic_streams_peak_max` | per path and period, the peak of inbound streams read at once: the paths sampled, those whose peak reached each level, and the highest peak |
++//!
++//! The waits are the step-3 stream-limit bars: `quic_open_uni_waited` over
++//! `quic_sends` and `quic_stream_permit_waited` over `quic_streamed_sends` below 0.5%, and
++//! `quic_streams_open_ge_48` below 0.2% of `quic_streams_sampled_paths`. Both
++//! wait counts are of attempts: a send that waits and then times out is counted.
++
++use std::sync::atomic::{AtomicU64, Ordering};
++
++use parking_lot::Mutex;
++
++use super::QuicPathAge;
++use crate::transport::quic::path::{
++    QuicInboundOutcome, QuicSendEvent, QuicSendResult, SendKind, stop_code,
++};
++
++/// The gauge's key, uploaded in every snapshot ([`QuicDataSnapshot::upload_keys`]).
++const LIVE_DATA_PATHS: &str = "quic_live_data_paths";
++
++/// The levels `quic_streams_open_ge_<n>` reports, up to the streamed-send limit
++/// (`quic::config::STREAMED_SEND_LIMIT`), which is the bar.
++pub(crate) const QUIC_STREAMS_OPEN_THRESHOLDS: [u32; 4] = [8, 16, 32, 48];
++
++/// The streams-open counts of one period, under one lock with its period, as the
++/// connection-level inbound concurrency counts are.
++#[derive(Debug, Default, Clone, Copy)]
++struct StreamsOpenCounts {
++    paths_sampled: u32,
++    ge: [u32; QUIC_STREAMS_OPEN_THRESHOLDS.len()],
++    max: u32,
++}
++
++/// One path's peak of inbound streams read at once in the current period. Owned
++/// by the path's receive task.
++#[derive(Debug, Default)]
++pub(crate) struct StreamsOpenPeak {
++    /// The period the peak belongs to; 0 before the first sample.
++    epoch: u64,
++    peak: u32,
++}
++
++/// The node-wide counts. A field of `TransportMetrics`.
++#[derive(Debug)]
++pub(crate) struct QuicDataCounters {
++    sends: [[AtomicU64; QuicSendResult::COUNT]; SendKind::ALL.len()],
++    events: [AtomicU64; QuicSendEvent::COUNT],
++    stops: [AtomicU64; stop_code::ALL.len()],
++    inbound: [AtomicU64; QuicInboundOutcome::COUNT],
++    data_enabled: AtomicU64,
++    /// A gauge: paths with a data route now.
++    data_paths: AtomicU64,
++    sends_opened: AtomicU64,
++    open_uni_waited: AtomicU64,
++    permit_takes: AtomicU64,
++    permit_waited: AtomicU64,
++    bytes_sent: AtomicU64,
++    bytes_received: AtomicU64,
++    session_ended: [AtomicU64; QuicPathAge::COUNT],
++    streams_epoch: AtomicU64,
++    streams: Mutex<StreamsOpenCounts>,
++}
++
++impl QuicDataCounters {
++    pub(crate) fn new() -> Self {
++        let zero = || AtomicU64::new(0);
++        Self {
++            sends: std::array::from_fn(|_| std::array::from_fn(|_| zero())),
++            events: std::array::from_fn(|_| zero()),
++            stops: std::array::from_fn(|_| zero()),
++            inbound: std::array::from_fn(|_| zero()),
++            data_enabled: zero(),
++            data_paths: zero(),
++            sends_opened: zero(),
++            open_uni_waited: zero(),
++            permit_takes: zero(),
++            permit_waited: zero(),
++            bytes_sent: zero(),
++            bytes_received: zero(),
++            session_ended: std::array::from_fn(|_| zero()),
++            streams_epoch: AtomicU64::new(1),
++            streams: Mutex::new(StreamsOpenCounts::default()),
++     
+```
+
+**File**: `crates/core/src/transport/quic/path.rs` (modified, +98/-8)
+```diff
+@@ -121,10 +121,11 @@
+ //! - Dedup. A message goes on UDP only when the outcome proves the receiver
+ //!   cannot deliver it ([`route`]), so a Short needs none. A stream id on both
+ //!   paths is refused where both transports meet (`completed_inbound_streams`).
+-//! - Exporting the QUIC-specific counters. They are per path
+-//!   ([`QuicPath::stats`]); the refusals and evictions the UDP transport also
+-//!   has are counted in `TRANSPORT_METRICS` as well, under the same
+-//!   `InboundStreamOutcome` labels. Telemetry for the rest is e2/e5.
++//!
++//! Counts: per path ([`QuicPath::stats`]), and node-wide in the same step, in
++//! `metrics::quic_data` (exported as `quic_data_*`, `quic_inbound_*` and the
++//! rest listed there). The refusals and evictions the UDP transport also has are
++//! also counted under the shared `InboundStreamOutcome` labels.
+ //!
+ //! [`MAX_UNI_STREAMS`]: super::config::MAX_UNI_STREAMS
+ //! [`StreamHandle`]: crate::transport::peer_connection::streaming::StreamHandle
+@@ -152,7 +153,7 @@ use crate::config::GlobalExecutor;
+ use crate::simulation::TimeSource;
+ use crate::transport::StreamId;
+ use crate::transport::boundary::StreamProgressObserver;
+-use crate::transport::metrics::{InboundStreamOutcome, QuicCloseCode};
++use crate::transport::metrics::{InboundStreamOutcome, QuicCloseCode, QuicDataCounters};
+ use crate::transport::peer_connection::inbound_budget::SharedInboundBudget;
+ use crate::transport::peer_connection::streaming::StreamError;
+ #[cfg(test)]
+@@ -202,6 +203,23 @@ pub(crate) mod stop_code {
+     /// it and sends on the UDP session, since a retry on the same path fails
+     /// the same way.
+     pub(crate) const NOT_ACCEPTING_DATA: u32 = 0x19;
++    /// A code's name in telemetry (`quic_data_stop_<label>`); `unknown` for a
++    /// code not in [`ALL`].
++    pub(crate) fn label(code: u32) -> &'static str {
++        match code {
++            HEADER_REFUSED => "header_refused",
++            BUDGET_REFUSED => "budget_refused",
++            STREAM_ID_IN_USE => "stream_id_in_use",
++            CHANNEL_FULL => "channel_full",
++            OVERLONG => "overlong",
++            EVICTED => "evicted",
++            CANCELLED => "cancelled",
++            FRAGMENT_REFUSED => "fragment_refused",
++            NOT_ACCEPTING_DATA => "not_accepting_data",
++            _ => "unknown",
++        }
++    }
++
+     /// Every stop code, for the range and duplicate checks in
+     /// `super::error`. A source-scrape test checks that each `const` in this
+     /// module is listed.
+@@ -273,6 +291,10 @@ pub(crate) struct QuicPathLimits {
+     /// refuses data with [`stop_code::NOT_ACCEPTING_DATA`] right after the
+     /// header, before anything is charged to the inbound budget.
+     pub(crate) accept_data: bool,
++    /// Where the path's counts are also kept node-wide; `None` is
++    /// `TRANSPORT_METRICS`. A test passes its own, since every test in a process
++    /// writes the global one.
++    pub(crate) counters: Option<&'static QuicDataCounters>,
+     /// The receive task panics on its first stream (supervisor test).
+     #[cfg(test)]
+     pub(crate) panic_in_receive: bool,
+@@ -297,6 +319,7 @@ impl QuicPathLimits {
+         control_capacity: CONTROL_CHANNEL_CAPACITY,
+         max_send_aborts: recycle::SEND_ABORT_LIMIT,
+         accept_data: true,
++        counters: None,
+         #[cfg(test)]
+         panic_in_receive: false,
+     };
+@@ -401,6 +424,11 @@ quic_outcomes! {
+         ControlUnknownType => "control_unknown_type",
+         /// A control payload that is empty or of the wrong length.
+         ControlMalformed => "control_malformed",
++        /// A Short past one packet did not fit the inbound budget
++        /// (`stop_code::BUDGET_REFUSED`; also counted under the shared refusal).
++        ShortRefusedBudget => "short_refused_budget",
++        /// A Stream did not fit the inbound budget (as above).
++        StreamRefusedBudget => "stream_refused_budget",
+     }
+ }
+ 
+@@ -436,6 +464,9 @@ impl QuicInboundOutcome {
+ /// Per-path counters. Tests read these, never the process-wide ones, which
+ /// every test in the process writes.
+ pub(crate) struct QuicPathStats {
++    /// Where the counts are also kept node-wide: `TRANSPORT_METRICS`, or a
++    /// test's own ([`QuicPathLimits::counters`]).
++    node: &'static QuicDataCounters,
+     quic: [AtomicU64; QuicInboundOutcome::COUNT],
+     shared: [AtomicU64; InboundStreamOutcome::COUNT],
+     /// Data sends by [`SendKind`] and [`QuicSendResult`].
+@@ -446,8 +477,9 @@ pub(crate) struct QuicPathStats {
+ }
+ 
+ impl QuicPathStats {
+-    fn new() -> Self {
++    fn new(node: &'static QuicDataCounters) -> Self {
+         Self {
++            node,
+             quic: std::array::from_fn(|_| AtomicU64::new(0)),
+             shared: std::array::from_fn(|_| AtomicU64::new(0)),
+             sends: std::array::from_fn(|_| std::array::from_fn(|_| AtomicU64::new(0))),
+@@ -456,7 +488,9 @@ impl QuicPathStats {
+         }
+     }
+ 
++    /// Count an outcome here and node-wide 
+```
+
+**File**: `crates/core/src/transport/quic/path/inbound.rs` (modified, +28/-4)
+```diff
+@@ -212,11 +212,17 @@ pub(in crate::transport::quic) async fn receive<T: TimeSource>(
+     let mut readers = FuturesUnordered::new();
+     // Kept across iterations, so a pending accept is never dropped.
+     let mut accept = std::pin::pin!(connection.accept_uni());
++    // This path's peak of streams read at once (`quic_streams_open_*`).
++    let mut peak = crate::transport::metrics::StreamsOpenPeak::default();
+     loop {
+         tokio::select! {
+             accepted = &mut accept => match accepted {
+                 Ok(recv) => {
+                     readers.push(read_one(recv, receiver.clone()));
++                    receiver.stats.node().record_streams_open(
++                        &mut peak,
++                        u32::try_from(readers.len()).unwrap_or(u32::MAX),
++                    );
+                     accept.set(connection.accept_uni());
+                 }
+                 Err(error) => {
+@@ -721,13 +727,21 @@ impl<T: TimeSource> Receiver<T> {
+         tracing::debug!(?failure, "QUIC path: inbound stream failed");
+     }
+ 
+-    /// Count a budget refusal as the UDP transport does, and stop the stream.
+-    fn refuse(&self, reader: &mut BodyReader<T>, rejection: BudgetRejection, total: u64) {
++    /// Count a budget refusal as the UDP transport does, and by frame kind
++    /// (`kind`), and stop the stream.
++    fn refuse(
++        &self,
++        reader: &mut BodyReader<T>,
++        rejection: BudgetRejection,
++        total: u64,
++        kind: QuicInboundOutcome,
++    ) {
+         let outcome = match rejection {
+             BudgetRejection::Bytes { .. } => InboundStreamOutcome::RefusedConnectionBytes,
+             BudgetRejection::Streams { .. } => InboundStreamOutcome::RefusedConnectionStreams,
+         };
+         self.stats.record_shared(outcome);
++        self.stats.record(kind);
+         tracing::debug!(?rejection, total, "QUIC path: refusing an inbound stream");
+         reader.stop(stop_code::BUDGET_REFUSED);
+     }
+@@ -759,7 +773,12 @@ impl<T: TimeSource> Receiver<T> {
+                 let mut budget = self.budget.lock();
+                 if let Err(rejection) = budget.check(total, Releaser::Quic) {
+                     drop(budget);
+-                    self.refuse(&mut reader, rejection, total);
++                    self.refuse(
++                        &mut reader,
++                        rejection,
++                        total,
++                        QuicInboundOutcome::ShortRefusedBudget,
++                    );
+                     return;
+                 }
+                 let key = self.short_key(&budget);
+@@ -879,7 +898,12 @@ impl<T: TimeSource> Receiver<T> {
+             }
+             if let Err(rejection) = budget.check(total, Releaser::Quic) {
+                 drop(budget);
+-                self.refuse(&mut reader, rejection, total);
++                self.refuse(
++                    &mut reader,
++                    rejection,
++                    total,
++                    QuicInboundOutcome::StreamRefusedBudget,
++                );
+                 return;
+             }
+             // Allocates only the buffer's chunk table (see
+```
+
+**File**: `crates/core/src/transport/quic/path/route.rs` (modified, +10/-0)
+```diff
+@@ -61,6 +61,16 @@ pub(crate) enum SendKind {
+ impl SendKind {
+     pub(crate) const ALL: [Self; 4] = [Self::Short, Self::LargeShort, Self::Stream, Self::Pipe];
+ 
++    /// Its name in telemetry (`quic_data_send_<kind>_<result>`).
++    pub(crate) fn label(self) -> &'static str {
++        match self {
++            Self::Short => "short",
++            Self::LargeShort => "large_short",
++            Self::Stream => "stream",
++            Self::Pipe => "pipe",
++        }
++    }
++
+     fn is_short(self) -> bool {
+         match self {
+             Self::Short | Self::LargeShort => true,
+```
+
+**File**: `crates/core/src/transport/quic/path/tests.rs` (modified, +7/-1)
+```diff
+@@ -23,6 +23,7 @@ use crate::transport::peer_connection::streaming::{
+ use crate::transport::peer_connection::streaming_buffer::FRAGMENT_PAYLOAD_SIZE;
+ use crate::transport::peer_connection::streaming_handle_idle_timeout;
+ 
++mod node_counts;
+ mod route;
+ 
+ /// How long, in virtual time, a test's traffic may take.
+@@ -114,7 +115,12 @@ async fn paths_built(
+     })
+     .await;
+     drop(permit);
+-    let (a, a_in) = QuicPath::new(client, pair.time.clone());
++    // `a` keeps its node-wide counts where `b` does.
++    let a_limits = QuicPathLimits {
++        counters: b_limits.counters,
++        ..QuicPathLimits::DEFAULT
++    };
++    let (a, a_in) = QuicPath::with_limits(client, pair.time.clone(), a_limits);
+     let (b, b_in) = match b_budget {
+         Some(budget) => {
+             let (b, b_in) =
+```
+
+---
+
+### Incident Patch 2: `86a4034e` (2026-11-05)
+**Commit Message**: fix(test): advance VirtualTime in controlled simulations (#6119)
+
+**File**: `.claude/rules/testing.md` (modified, +1/-0)
+```diff
+@@ -339,6 +339,7 @@ Scale > 50 nodes or virtual time > 5 minutes?
+ 
+ - **Direct runner** (`run_simulation_direct`): Single `current_thread` + `start_paused(true)` tokio runtime. 100% deterministic. Scales to 500+ nodes. Supports `ChurnConfig` for automated crash/recover cycles via fault injection. Used by fdev CLI and nightly tests.
+ - **Turmoil runner** (`run_simulation`): Turmoil scheduler. ~99% deterministic. Supports mid-simulation fault injection via closures (partitions, targeted crashes). Better for fine-grained fault tolerance tests.
++- Both kinds move the network's `VirtualTime`, which QUIC endpoints and paths and the fault injector's time-based rules run on: the direct runner from tokio's clock, the turmoil runners (`run_simulation`, `run_controlled_simulation`, `run_fdev_test`, `run_turmoil_simulation`) through `run_turmoil_on_virtual_time` after each step. A test that drives turmoil itself with `sim.run()` leaves VirtualTime at 0, so no timer on it fires.
+ 
+ ## Fault Injection in Turmoil Tests
+ 
+```
+
+**File**: `.claude/rules/transport.md` (modified, +6/-2)
+```diff
+@@ -1386,7 +1386,11 @@ once connections open, quinn's connection-ID draws
+ inside quinn's tasks. With endpoints idle, the one difference from QUIC off
+ is scheduling (one endpoint driver task per node), which changes some
+ connection choices, so a QUIC-on run is compared with QUIC off by the peers
+-that join, not by the exact edge set. `probe_quic_endpoints_at` sends each
++that join, not by the exact edge set. Every runner moves that VirtualTime: the
++direct runner from tokio's clock, the turmoil runners after each step
++(`run_turmoil_on_virtual_time`); before that the turmoil runners left it at 0, so
++no QUIC timer fired there. A record's `at` is on its host's own clock; under
++turmoil each host's starts when its runtime is built. `probe_quic_endpoints_at` sends each
  node a stranger's QUIC datagram during a direct-runner run, so a test can
  check every endpoint was live (`not_allowed`) rather than failed to bind.
  `SimNetwork::quic_upgrade_trace` returns a handle (`quic/upgrade/sim_trace.rs`,
--tests only) with what each node's upgrades did, readable after the run. It also
--injects: `send_shorts_on_paths` (the node sends each message that fits a packet as
--a Short on the connection's path, when that path may carry data, with no fallback
--to UDP; nothing else sends data on a path yet), `send_initial_on_each_attempt` (the node receives an Initial with the
-+tests only) with what each node's upgrades did, readable after the run,
-+including what arrived on the path and on UDP (`received a short on the path`,
-+`data arrived on UDP`, noted at the receiver whichever code sent it) and what each
-+send ended as (`sent a short on the path: ...`). It also
-+injects: `send_initial_on_each_attempt` (the node receives an Initial with the
- peer's address as its source each time it allows that address, and records
+@@ -1399,7 +1403,7 @@ peer's address as its source each time it allows that address, and records
  `injected an Initial`), `make_record_wrong` (the key compared after the
  handshake disagrees, so the path closes with IDENTITY_MISMATCH),
-@@ -1450,9 +1455,10 @@ every rate), endpoint-down, panics and breaker trips, RSS against
- 
- Simulation scenarios (`tests/simulation_integration.rs`, `test_quic_*`): two
- nodes established with traffic on UDP; data bits on each side, where only both
--enable data and n
+ `fail_endpoint_at` (the endpoint
+-driver dies) and `run_as_release` (a peer reporting the crate's version reads
++driver dies, recorded as `failed the endpoint at <ms> ms` on VirtualTime) and `run_as_release` (a peer reporting the crate's version reads
+ as a given release, since this tree reports a version below the negotiation
+ floor until the release bump). The first offer is 2-10 s after promotion, so give a run tens of
+ virtual seconds.
 ```
 
-**File**: `crates/core/src/config.rs` (modified, +6/-5)
+**File**: `crates/core/src/node/testing_impl.rs` (modified, +121/-5)
 ```diff
-@@ -2499,8 +2499,9 @@ pub struct NetworkArgs {
-     /// `shadow` builds a QUIC endpoint on the network port and upgrades
-     /// connections to peers that also run it to a QUIC path. The path carries
-     /// control frames only, so all traffic stays on the existing transport.
--    /// `prefer` also negotiates data with a share of pairs; this release sends
--    /// none. `off` builds no endpoint. An unknown value is treated as `off`,
-+    /// `prefer` also negotiates data with a share of pairs (`quic-data-percent`,
-+    /// or this release's share, which is 0), and a pair where both sides did
-+    /// sends its traffic on the path. `off` builds no endpoint. An unknown value is treated as `off`,
-     /// with a warning in the log.
-     #[arg(long, env = "FREENET_TRANSPORT_QUIC", value_name = "off|shadow|prefer")]
-     #[serde(rename = "transport-quic", skip_serializing_if = "Option::is_none")]
-@@ -2511,7 +2512,7 @@ pub struct NetworkArgs {
-     ///
-     /// Default: `max-number-of-connections`; a larger value is lowered to it,
-     /// and 0 turns QUIC upgrades off. A value that is not a whole number is
--    /// ignored with a warning in the log. Unused in this release.
-+    /// ignored with a warning in the log.
-     #[arg(
-         long = "quic-max-paths",
-         env = "FREENET_QUIC_MAX_PATHS",
-@@ -2531,8 +2532,8 @@ pub struct NetworkArgs {
-     /// node's own half: a pair carries data only if both sides say so. Takes
-     /// effect with `transport-quic = "prefer"`. A value that cannot be read is
-     /// ignored with a warning in the log. For test runs: setting it to 100 makes a
--    /// `prefer` node say it accepts data from every peer, which this release only
--    /// does in a build with the `testing` feature.
-+    /// `prefer` node say it accepts data from every peer, and send its own data on
-+    /// QUIC to every peer that says the same.
-     #[arg(
-         long = "quic-data-percent",
-         env = "FREENET_QUIC_DATA_PERCENT",
-```
-
-**File**: `crates/core/src/transport/boundary.rs` (modified, +3/-1)
-```diff
-@@ -196,7 +196,9 @@ pub(crate) enum StreamSendOutcome {
-     /// NOT after a receiver ACK — this path has no end-to-end delivery
-     /// acknowledgement. It is the strongest "the send actually happened" signal
-     /// the broadcast queue can observe, as distinct from the message being
--    /// dropped before/while transmitting.
-+    /// dropped before/while transmitting. On a QUIC path this is a stream the
-+    /// peer acknowledged whole; one whose acknowledgement did not come back is
-+    /// `Dropped`, though it is not sent again.
-     Delivered,
-     /// The stream fragment was dropped before/while transferring (channel
-     /// closed, congestion timeout, no connection, transport send error). The
-```
-
-**File**: `crates/core/src/transport/peer_connection.rs` (modified, +160/-83)
-```diff
-@@ -29,6 +29,7 @@ mod outbound_stream;
- pub(super) use outbound_stream::embeds_metadata;
- mod peer_identity;
- pub(crate) mod piped_stream;
-+mod quic_send;
- pub(crate) mod streaming;
- 
- #[cfg(test)]
-@@ -492,6 +493,10 @@ pub struct PeerConnection<S = super::UdpSocket, T: TimeSource = RealTime> {
-     /// arms are then never polled.
-     quic_shorts: Option<mpsc::Receiver<super::quic::path::InboundShort>>,
-     quic_streams: Option<mpsc::Receiver<super::quic::path::InboundStreamArrival>>,
-+    /// A route a test built around a path of its own, used in place of the
-+    /// session's.
-+    #[cfg(test)]
-+    quic_route_for_test: Option<super::quic::upgrade::data_route::DataRoute>,
-     /// With QUIC off, bounds the replies to upgrade offers. Fixed size.
-     decline_gate: super::quic::upgrade::driver::DeclineGate,
-     /// With QUIC off, the attempt of an Offer to decline, sent at the top of
-@@ -1087,7 +1092,7 @@ impl<S: super::Socket, T: TimeSource> PeerConnection<S, T> {
-                 self.remote_conn.remote_protoc_version,
-                 self.inbound_budget.clone(),
-                 self.quic_receipt_nanos.clone(),
--                self.upgrade_sender(),
-+                self.udp_sender(),
-                 self.remote_conn.time_source.clone(),
-             );
-             self.quic_path = Some(quic_path);
-@@ -1202,6 +1207,14 @@ impl<S: super::Socket, T: TimeSource> PeerConnection<S, T> {
-         (!self.is_duplicate_dispatch(&bytes)).then_some(bytes)
-     }
- 
-+    /// Tell a test's trace that data arrived on UDP on a connection with upgrades.
-+    /// At the receiver, so it counts every send whichever code made it.
-+    fn note_udp_data(&self, kind: &str) {
-+        if self.quic_path.is_some() {
-+            self.note_quic_delivery(|| format!("data arrived on UDP, {kind}"));
-+        }
-+    }
-+
-     /// Tell a test's trace what `recv` took from a path.
-     #[cfg_attr(not(any(test, feature = "testing")), allow(unused_variables))]
-     fn note_quic_delivery(&self, what: impl FnOnce() -> String) {
-@@ -1219,7 +1232,7 @@ impl<S: super::Socket, T: TimeSource> PeerConnection<S, T> {
-             attempt,
-             reason: symmetric_message::DeclineReason::Disabled.wire(),
-         };
--        if let Err(error) = self.upgrade_sender().send(decline).await {
-+        if let Err(error) = self.udp_sender().send_upgrade(decline).await {
-             tracing::debug!(
-                 peer_addr = %self.remote_conn.remote_addr,
-                 %error,
-@@ -1229,9 +1242,10 @@ impl<S: super::Socket, T: TimeSource> PeerConnection<S, T> {
-         self.pending_decline = None;
-     }
- 
--    /// What sends this connection's upgrade messages on the UDP session.
--    fn upgrade_sender(&self) -> UpgradeSender<S, T> {
--        UpgradeSender {
-+    /// What sends one tracked packet on the UDP session from outside the
-+    /// connection's task.
-+    fn udp_sender(&self) -> UdpSender<S, T> {
-+        UdpSender {
-             remote_addr: self.remote_conn.remote_addr,
-             socket: self.remote_conn.socket.clone(),
-             outbound_symmetric_key: self.remote_conn.outbound_symmetric_key.clone(),
-@@ -1521,6 +1535,8 @@ impl<S: super::Socket, T: TimeSource> PeerConnection<S, T> {
-             legacy_tokens: HashMap::new(),
-             inbound_outcomes: [0; super::metrics::InboundStreamOutcome::COUNT],
-             quic_path: None,
-+            #[cfg(test)]
-+            quic_route_for_test: None,
-             quic_shorts: None,
-             quic_streams: None,
-             decline_gate: Default::default(),
-@@ -1613,44 +1629,37 @@ impl<S: super::Socket, T: TimeSource> PeerConnection<S, T> {
-     /// Hand an already-serialized message to the transport: as one short
-     /// message when it fits in a packet, otherwise as a stream.
-     pub(crate) async fn send_serialized(&mut self, data: SerializedMessage) -> Result<()> {
--        #[cfg(any(test, feature = "testing"))]
--        let data = match self.send_short_on_path_for_test(data) {
--            Ok(()) => return Ok(()),
--            Err(data) => data,
--        };
--        if data.len() + SymmetricMessage::short_message_overhead() > MAX_DATA_SIZE {
-+        if !fits_one_packet(data.len() as u64) {
-             tracing::trace!(
-                 peer_addr = %self.remote_conn.remote_addr,
-                 total_size_bytes = data.len(),
-                 "Sending as stream"
-             );
-             self.outbound_stream(data).await;
--            Ok(())
--        } else {
--            tracing::trace!(
--                peer_addr = %self.remote_conn.remote_addr,
--                "Sending as short message"
--            );
--            self.outbound_short_message(data).await
-+            return Ok(());
-         }
-+        tracing::trace!(
-+            peer_addr = %self.remote_conn.remote_addr,
-+            "Sending as short message"
-+        );
-+        // Never waits: this runs in the connection's task (`transport.md`).
-+        let data = match self.quic_data_route() {
-+         
-```
-
-**File**: `crates/core/src/transport/peer_connection/ack_policy_tests.rs` (modified, +1/-0)
-```diff
-@@ -10,6 +10,7 @@ use aes_gcm::KeyInit;
- use bytes::Bytes;
- 
- mod quic_data;
-+mod quic_send;
- 
- use super::*;
- use crate::transport::crypto::TransportKeypair;
-```
-
-**File**: `crates/core/src/transport/peer_connection/ack_policy_tests/quic_data.rs` (modified, +3/-3)
-```diff
-@@ -1,7 +1,7 @@
- //! What a QUIC path delivers reaches the connection's `recv` as UDP's messages
- //! do (#5940 e5b-4). A real path on `VirtualTime`, built on the connection's
--//! budget and channels, with a raw test peer on the other end: no node code sends
--//! data on a path yet. The connection itself runs on `RealTime`, which barely moves
-+//! budget and channels, with a raw test peer on the other end, so a test can send
-+//! what a node would not. The connection itself runs on `RealTime`, which barely moves
- //! here, so its idle timers do not fire and an age limit is not reached.
- 
- use std::time::Duration;
-@@ -87,7 +87,7 @@ impl DataPath {
-     }
- 
-     /// Let the virtual clock and every task run.
--    async fn settle(&self, by: Duration) {
-+    pub(super) async fn settle(&self, by: Duration) {
-         self.time.sleep(by).await;
+@@ -433,6 +433,34 @@ impl ScheduledOperation {
      }
  }
-```
-
-**File**: `crates/core/src/transport/peer_connection/ack_policy_tests/quic_send.rs` (added, +1348/-0)
-```diff
-@@ -0,0 +1,1348 @@
-+//! A connection's data on a QUIC path, and what goes on UDP when the path cannot
-+//! take it (#5940 e5b-6). A real path on `VirtualTime` and a real connection, with
-+//! the route the session would hand it. The peer is a path of its own, read
-+//! directly, and UDP is the connection's wire. The connection runs on `RealTime`,
-+//! which barely moves here, so only the path's deadlines come due.
-+
-+use std::time::Duration;
-+
-+use futures::FutureExt;
-+use tokio::sync::oneshot;
-+
-+use super::*;
-+use crate::transport::StreamSendOutcome;
-+use crate::transport::peer_connection::streaming::StreamHandle;
-+use crate::transport::peer_connection::streaming_buffer::FRAGMENT_PAYLOAD_SIZE;
-+use crate::transport::quic::path::tests::DropFrom;
-+use crate::transport::quic::path::{
-+    QuicInboundOutcome as Q, QuicPathLimits, QuicSendEvent as E, QuicSendResult as R, SendKind,
-+    data_channels, stop_code,
-+};
-+use crate::transport::quic::upgrade::data_route::{DataRoute, RouteNote, SHORT_QUEUE_CAPACITY};
-+use crate::transport::quic::upgrade::driver::PathClock;
-+use crate::transport::quic::upgrade::driver::tests::{DataPath, data_path_to, run_bounded};
-+
-+struct Rig {
-+    e: End,
-+    path: DataPath,
-+    route: DataRoute,
-+    worker: tokio::task::JoinHandle<()>,
-+}
-+
-+impl Rig {
-+    fn stats(&self) -> &crate::transport::quic::path::QuicPathStats {
-+        self.route.path().stats()
-+    }
-+
-+    fn flightsize(&self) -> usize {
-+        self.e.conn.remote_conn.congestion_controller.flightsize()
-+    }
-+
-+    /// The data this end put on UDP since the last call.
-+    fn udp_data(&mut self) -> UdpData {
-+        let mut data = UdpData::default();
-+        for message in self.e.drain_sent() {
-+            if let SymmetricMessagePayload::ShortMessage { payload } = &message.payload {
-+                data.ids.push(message.packet_id);
-+                data.shorts.push(payload.to_vec());
-+            } else if let SymmetricMessagePayload::StreamFragment {
-+                stream_id, payload, ..
-+            } = &message.payload
-+            {
-+                data.ids.push(message.packet_id);
-+                data.stream_ids.push(*stream_id);
-+                data.stream_bytes.extend_from_slice(payload);
-+            }
-+        }
-+        data
-+    }
-+
-+    /// Every `Short` the peer has received so far.
-+    fn delivered_shorts(&mut self) -> Vec<Vec<u8>> {
-+        let inbound = self.path.peer_inbound();
-+        let mut delivered = Vec::new();
-+        while let Ok(short) = inbound.shorts.try_recv() {
-+            delivered.push(short.payload().to_vec());
-+        }
-+        delivered
-+    }
-+
-+    /// Acknowledge `ids` as the peer's UDP session would, and let `recv` read it.
-+    async fn ack(&mut self, ids: &[u32]) {
-+        for (packet_id, receipts) in (9_000..).zip(ids.chunks(32)) {
-+            let packet = SymmetricMessage::serialize_msg_to_packet_data(
-+                packet_id,
-+                SymmetricMessagePayload::NoOp,
-+                &self.e.inbound_key,
-+                receipts.to_vec(),
-+            )
-+            .expect("encrypt");
-+            let queued = self
-+                .e
-+                .queued(PacketData::<UnknownEncryption>::from_buf(packet.data()));
-+            let inbound = self.e.inbound.clone();
-+            inbound.send(queued).await.expect("deliver");
-+        }
-+        let turns = async {
-+            for _ in 0..256 {
-+                tokio::task::yield_now().await;
-+            }
-+        };
-+        tokio::select! {
-+            biased;
-+            _ = self.e.conn.recv() => {}
-+            () = turns => {}
-+        }
-+    }
-+
-+    /// Run `recv` long enough to take the result of every finished send task.
-+    async fn collect_tasks(&mut self) {
-+        self.ack(&[]).await;
-+    }
-+
-+    /// Fill every uni stream the peer allows with one it is still reading. The
-+    /// next send on the path cannot open a stream.
-+    fn hold_stream_credit(&self) -> impl Future<Output = Vec<quinn::SendStream>> + use<> {
-+        let connection = self.route.path().connection().inner().clone();
-+        let time = self.path.time.clone();
-+        async move {
-+            let mut held = Vec::new();
-+            for _ in 0..MAX_UNI_STREAMS {
-+                let mut stream = connection.open_uni().await.expect("open");
-+                let header =
-+                    FrameHeader::stream(StreamId::next(), 1000, 0).expect("a valid header");
-+                stream.write_all(&header.encode()).await.expect("header");
-+                held.push(stream);
-+            }
-+            time.sleep(Duration::from_millis(50)).await;
-+            held
+ 
++/// Steps turmoil to the end of the run, as `turmoil::Sim::run` does, and moves
++/// the network's `VirtualTime` to turmoil's elapsed time after every step, the way
++/// the direct runner's time driver follows tokio's clock.
++///
++/// Two differences from `Sim::run`: it steps once even with no client registered
++/// (`run` returns at once then, and `step` reports the run finished after one
++/// tick), and VirtualTime trails each host's tokio clock by up to one tick, since
++/// it moves after the step (1 ms at turmoil's default tick; deterministic).
++///
++/// The node tasks run on turmoil's clock, but some parts of a node read the
++/// network's `VirtualTime` instead: each QUIC endpoint and path (quinn's timers,
++/// the path's send deadlines and ack watch, `get_socket_virtual_time`), and the
++/// fault injector's time-based rules. Without this the clock stayed at zero for
++/// the whole run, so none of those timers ever fired and a rule starting after
++/// zero never applied.
++pub(crate) fn run_turmoil_on_virtual_time(
++    sim: &mut turmoil::Sim<'_>,
++    time: &VirtualTime,
++) -> turmoil::Result {
++    loop {
++        let finished = sim.step()?;
++        time.advance_to(u64::try_from(sim.elapsed().as_nanos()).unwrap_or(u64::MAX));
++        if finished {
++            return Ok(());
 +        }
 +    }
 +}
 +
-+use crate::transport::quic::config::{MAX_UNI_STREAMS, STREAMED_SEND_LIMIT};
-+use crate::transport::quic::framing::FrameHeader;
-+use crate::transport::quic::path::STALLED_SENDS_LIMIT;
-+
-+#[derive(Default)]
-+struct UdpData {
-+    ids: Vec<u32>,
-+    shorts: Vec<Vec<u8>>,
-+    stream_ids: Vec<StreamId>,
-+    stream_bytes: V
-```
-
-**File**: `crates/core/src/transport/peer_connection/quic_send.rs` (added, +366/-0)
-```diff
-@@ -0,0 +1,366 @@
-+//! Streams and messages past one packet on a QUIC path (#5940, e5b-6).
-+//!
-+//! Each runs as a task in `PeerConnection::outbound_stream_futures`, as a UDP
-+//! stream does, so the transfer's result is accounted for in one place and nothing
-+//! waits in the connection's task. A send ends by the table in
-+//! `quic::path::route`: done, gone, or handed to the UDP code with the same id.
-+//!
-+//! No UDP state moves for a send that stays on the path, so flight size is only
-+//! touched by `send_stream` and `pipe_stream`, which release what they charged by
-+//! the rules of #4345.
-+//!
-+//! A send that goes on UDP is reported as started twice under one id, since the
-+//! UDP code reports its own start.
-+
-+use std::net::SocketAddr;
-+use std::pin::Pin;
-+use std::sync::Arc;
-+use std::sync::atomic::{AtomicBool, AtomicU32, Ordering};
-+use std::task::{Context, Poll};
-+use std::time::Duration;
-+
-+use aes_gcm::Aes128Gcm;
-+use bytes::Bytes;
-+use futures::Stream;
-+use tokio::sync::oneshot;
-+
-+use super::outbound_stream;
-+use super::streaming::StreamError;
-+use super::{OutboundStreamResult, StreamId};
-+use crate::simulation::TimeSource;
-+use crate::tracing::TransferDirection;
-+use crate::transport::congestion_control::CongestionController;
-+use crate::transport::metrics::{
-+    emit_transfer_completed, emit_transfer_failed, emit_transfer_started,
-+};
-+use crate::transport::quic::path::{BoundedSend, NextStep, SendDeadlines, SendKind};
-+use crate::transport::quic::upgrade::data_route::DataRoute;
-+use crate::transport::sent_packet_tracker::SentPacketTracker;
-+use crate::transport::token_bucket::TokenBucket;
-+use crate::transport::{
-+    IncomingStream, Socket, StreamProgressObserver, StreamSendOutcome, TransferStats,
-+    TransportError,
-+};
-+
-+/// What `send_stream` and `pipe_stream` take of a connection, to start one on the
-+/// UDP session from a task.
-+pub(super) struct UdpStreamSender<S, T: TimeSource> {
-+    pub(super) last_packet_id: Arc<AtomicU32>,
-+    pub(super) socket: Arc<S>,
-+    pub(super) remote_addr: SocketAddr,
-+    pub(super) outbound_symmetric_key: Aes128Gcm,
-+    pub(super) sent_tracker: Arc<parking_lot::Mutex<SentPacketTracker<T>>>,
-+    pub(super) token_bucket: Arc<TokenBucket<T>>,
-+    pub(super) congestion_controller: Arc<CongestionController<T>>,
-+    pub(super) time_source: T,
-+}
-+
-+impl<S: Socket, T: TimeSource> UdpStreamSender<S, T> {
-+    pub(super) async fn send_stream(
-+        self,
-+        stream_id: StreamId,
-+        data: Bytes,
-+        metadata: Option<Bytes>,
-+        completion_tx: Option<oneshot::Sender<StreamSendOutcome>>,
-+        progress: Option<Arc<dyn StreamProgressObserver>>,
-+    ) -> OutboundStreamResult {
-+        outbound_stream::send_stream(
-+            stream_id,
-+            self.last_packet_id,
-+            self.socket,
-+            self.remote_addr,
-+            data,
-+            self.outbound_symmetric_key,
-+            self.sent_tracker,
-+            self.token_bucket,
-+            self.congestion_controller,
-+            self.time_source,
-+            metadata,
-+            completion_tx,
-+            progress,
-+        )
-+        .await
-+    }
-+
-+    pub(super) async fn pipe_stream(
-+        self,
-+        stream_id: StreamId,
-+        inbound_handle: IncomingStream,
-+        metadata: Option<Bytes>,
-+        progress: Option<Arc<dyn StreamProgressObserver>>,
-+    ) -> OutboundStreamResult {
-+        outbound_stream::pipe_stream(
-+            inbound_handle,
-+            stream_id,
-+            self.last_packet_id,
-+            self.socket,
-+            self.remote_addr,
-+            self.outbound_symmetric_key,
-+            self.sent_tracker,
-+            self.token_bucket,
-+            self.congestion_controller,
-+            self.time_source,
-+            metadata,
-+            progress,
-+        )
-+        .await
-+    }
-+}
-+
-+/// A transfer on a path, for the same telemetry as a UDP one. The figures that
-+/// come from the UDP congestion controller and sent tracker do not exist here,
-+/// so they are left out (`None`) of the event and 0 in the stats.
-+struct PathTransfer<T> {
-+    stream_id: StreamId,
-+    remote_addr: SocketAddr,
-+    bytes: u64,
-+    time_source: T,
-+    started: Duration,
-+}
-+
-+impl<T: TimeSource> PathTransfer<T> {
-+    fn start(stream_id: StreamId, remote_addr: SocketAddr, bytes: u64, time_source: T) -> Self {
-+        emit_transfer_started(
-+            stream_id.0 as u64,
-+            remote_addr,
-+            bytes,
-+            TransferDirection::Send,
+ /// Packet-delivery decision consulted by every `SimulationSocket` (via the
+ /// per-network delivery callback installed by `run_controlled_simulation` and
+ /// `run_simulation_direct`) so an injected node crash or partition actually
+@@ -5275,7 +5303,7 @@ impl SimNetwork {
+         });
+ 
+         // Run the simulation
+-        sim.run()
++        run_turmoil_on_virtual_time(&mut sim, &self.virtual_time)
+     }
+ 
+     /// Run a deterministic simulation with controlled events using Turmoil.
+@@ -5540,7 +5568,7 @@ impl SimNetwork {
+             HashMap::new();
+         // Pre-seeded contract stores for nodes with SeedContract operations.
+         // Wrapped in Arc<Mutex> so closures can look up their store at
+-        // startup (after seed_ops populates the map, before sim.run()).
++        // startup (after seed_ops populates the map, before the run).
+         let contract_stores: Arc<
+             Mutex<HashMap<NodeLabel, crate::wasm_runtime::InMemoryContractStore>>,
+         > = Arc::new(Mutex::new(HashMap::new()));
+@@ -5776,7 +5804,7 @@ impl SimNetwork {
+         let label_to_key: HashMap<NodeLabel, _> = labels.into_iter().collect();
+ 
+         // Clone the network name for the client closure (the outer
+-        // `network_name` is still needed after `sim.run()` for topology capture).
++        // `network_name` is still needed after the run for topology capture).
+         let network_name_for_client = network_name.clone();
+ 
+         // Optional pre-operation join-convergence barrier (see
+@@ -5964,7 +5992,7 @@ impl SimNetwork {
+         });
+ 
+         // Run the simulation
+-        let turmoil_result = sim.run();
++        let turmoil_result = run_turmoil_on_virtual_time(&mut sim, &self.virtual_time);
+ 
+         // Capture topology snapshots BEFORE self is dropped (which clears them)
+         let topology_snapshots = get_all_topology_snapshots(&network_name);
+@@ -6262,7 +6290,7 @@ impl SimNetwork {
+         });
+ 
+         // Run the simulation
+-        sim.run()
++        run_turmoil_on_virtual_time(&mut sim, &self.virtual_time)
+             .map_err(|e| anyhow::anyhow!("Turmoil simulation failed: {:?}", e))
+     }
+ 
+@@ -7441,6 +7469,94 @@ use crate::contract::OperationMode;
+ mod tests {
+     use super::*;
+ 
++    /// The helper moves VirtualTime with turmoil's clock: after a run whose client
++    /// sleeps 5 s, VirtualTime reads 5 s, within a tick or two.
++    #[test]
++    fn run_turmoil_on_virtual_time_moves_the_clock_with_the_run() {
++        use crate::simulation::TimeSource;
++        let time = VirtualTime::new();
++        let mut sim = turmoil::Builder::new()
++            .simulation_duration(Duration::from_secs(60))
++            .build();
++        sim.client("sleeper", async {
++            tokio::time::sleep(Duration::from_secs(5)).await;
++            Ok(())
++        });
++        run_turmoil_on_virtual_time(&mut sim, &time).expect("the run succeeds");
++        let now = Duration::from_nanos(time.now_nanos());
++        assert!(
++            now >= Duration::from_secs(5)
++                && now <= Duration::from_secs(5) + Duration::from_millis(10),
++            "VirtualTime followed the run: {now:?}"
 +        );
-+        let started = time_source.now();
-+        Self {
-+            stream_id,
-+            remote_addr,
-+            bytes,
-+            time_source,
-+            started,
-+        }
 +    }
 +
-+    fn elapsed(&self) -> Duration {
-+        self.time_source.now().saturating_sub(self.started)
-+    }
++    /// Every turmoil runner goes through `run_turmoil_on_virtual_time`, checked in
++    /// each runner's own body. A runner that stepped turmoil any other way
++    /// (`sim.run()`, `turmoil::Sim::run(&mut sim)`) would leave the network's
++    /// VirtualTime at 0, and no QUIC timer or time-based fault rule would fire in
++    /// its runs.
++    #[test]
++    fn turmoil_runners_move_virtual_time() {
++        /// The body of t
+```
+
+**File**: `crates/core/src/node/testing_impl/turmoil_runner.rs` (modified, +1/-1)
+```diff
+@@ -274,7 +274,7 @@ where
+     }
+ 
+     // Run the simulation
+-    let result = sim.run();
++    let result = super::run_turmoil_on_virtual_time(&mut sim, &virtual_time);
+ 
+     // Cleanup
+     unregister_network_time_source(&network_name);
+```
+
+**File**: `crates/core/src/transport/connection_handler.rs` (modified, +8/-0)
+```diff
+@@ -369,10 +369,18 @@ fn build_quic_upgrades(
+     if let Some(at) = trace.as_ref().and_then(|trace| trace.down_at()) {
+         let failing = endpoint.clone();
+         let clock = path_clock.clone();
++        let noted = trace.clone();
+         // Bounded by `at`, and holds an endpoint share only until then.
+         drop(GlobalExecutor::spawn(async move {
+             clock.sleep(at).await;
+             failing.fail_driver();
++            // Recorded so a test can check the fault ran rather than infer it,
++            // with the time on the clock the fault was set on: a record's `at`
++            // is on the recording host's own clock.
++            if let Some(trace) = noted {
++                let ms = clock.now_nanos() / 1_000_000;
++                trace.record(trace.addr(), 0, format!("failed the endpoint at {ms} ms"));
++            }
+         }));
+     }
+     Some(QuicUpgrades::new(
+```
+
+**File**: `crates/core/src/transport/quic/upgrade/sim_trace.rs` (modified, +11/-4)
+```diff
+@@ -20,14 +20,19 @@ type Version = (u8, u8, u16);
+ /// One thing a node's upgrades did.
+ #[derive(Debug, Clone, PartialEq, Eq)]
+ pub struct QuicUpgradeRecord {
+-    /// On the runtime's clock, which every node shares.
++    /// Since the first record, on the clock of the runtime that recorded it. The
++    /// direct runner has one runtime, so times compare across nodes. Under turmoil
++    /// each host's clock starts when its runtime is built, so compare times only
++    /// within one node.
+     pub at: Duration,
+     pub node: SocketAddr,
+     pub peer: SocketAddr,
+-    /// The session's number in its node; 0 for a node with QUIC off.
++    /// The session's number in its node; 0 for a node with QUIC off, and for a
++    /// record about no session (an injected fault, with the node as `peer`).
+     pub session: u64,
+     /// An `Outcome` in its `Debug` form, or `received ...`, `sent ...`,
+-    /// `closed path with ...`, `stale connection ...`, `session ended`.
++    /// `closed path with ...`, `stale connection ...`, `session ended`,
++    /// `injected an Initial`, `failed the endpoint at <ms> ms`.
+     pub what: String,
+     /// The path permits the node held just after this.
+     pub permits: usize,
+@@ -124,7 +129,9 @@ impl QuicUpgradeTrace {
+         *self.data.release.lock() = Some((real, release));
+     }
+ 
+-    /// `node`'s QUIC endpoint driver fails `at` after its transport opens.
++    /// `node`'s QUIC endpoint driver fails `at` after its transport opens, on the
++    /// path clock (the network's VirtualTime in simulation). The node records
++    /// `failed the endpoint at <ms> ms` with that clock's time.
+     pub fn fail_endpoint_at(&self, node: SocketAddr, at: Duration) {
+         self.data.down_at.lock().insert(node, at);
+     }
+```
+
+**File**: `crates/core/tests/simulation_integration.rs` (modified, +64/-0)
+```diff
+@@ -1688,6 +1688,8 @@ fn test_high_latency_timeout_regression() {
+ 
+ /// Test: Use actual SimulationSocket inside Turmoil.
+ /// This verifies that the real in-memory socket works with Turmoil's deterministic scheduler.
++/// It drives turmoil itself with `sim.run()`, so the VirtualTime it registers stays
++/// at 0: nothing here (no QUIC endpoint, no time-based fault rule) runs on it.
+ #[test]
+ fn test_turmoil_with_real_simulation_socket() -> turmoil::Result {
+     let network_name = "turmoil-test";
+@@ -21472,6 +21474,68 @@ fn test_quic_endpoint_down_closes_every_path() {
+     );
+ }
+ 
++/// The controlled (turmoil) runner moves the network's VirtualTime with its own
++/// clock, so a timer on that clock fires: the gateway's endpoint failure, set for
++/// 5 s on the path clock, happens at 5 s, and VirtualTime ends near the run's
++/// length. Before the runner moved it, VirtualTime read 0 for the whole run and
++/// the failure never happened.
++#[test_log::test]
++fn test_controlled_simulation_advances_virtual_time() {
++    use freenet::dev_tool::NodeLabel;
++    const NETWORK: &str = "controlled-virtual-time";
++    const SEED: u64 = 0x5940_7117_0001;
++    const FAIL_AT: Duration = Duration::from_secs(5);
++    const WAIT: Duration = Duration::from_secs(20);
++    setup_deterministic_state(SEED);
++    let rt = create_runtime();
++    let gateway = NodeLabel::gateway(NETWORK, 0);
++    let (sim, trace, time, gateway_addr) = rt.block_on(async {
++        let mut sim = SimNetwork::new(NETWORK, 1, 1, 7, 3, 10, 2, SEED).await;
++        sim.with_transport_quic("shadow");
++        let trace = sim.quic_upgrade_trace();
++        let gateway_addr = sim.all_node_addresses()[&gateway];
++        trace.fail_endpoint_at(gateway_addr, FAIL_AT);
++        let time = sim.virtual_time().clone();
++        (sim, trace, time, gateway_addr)
++    });
++    drop(rt);
++    let (no_operations, max_duration) = (Vec::new(), Duration::from_secs(60));
++    let result = sim.run_controlled_simulation(SEED, no_operations, max_duration, WAIT);
++    assert!(
++        result.turmoil_result.is_ok(),
++        "simulation failed: {:?}",
++        result.turmoil_result.err()
++    );
++    // The client sleeps 3 s, fires no operation and waits `WAIT`, so the run
++    // lasts at least that long, and VirtualTime with it.
++    let now = Duration::from_nanos(time.now_nanos());
++    assert!(
++        now >= WAIT + Duration::from_secs(3),
++        "VirtualTime followed the run: {now:?}"
++    );
++    let failed = trace.matching(gateway_addr, "failed the endpoint at ");
++    assert_eq!(
++        failed.len(),
++        1,
++        "the 5 s timer fired once: {:#?}",
++        trace.records()
++    );
++    // The time the record carries is on the path clock, VirtualTime itself; a
++    // record's `at` is on its host's own clock, which under turmoil does not
++    // start at the run's start.
++    let fired_ms: u64 = failed[0]
++        .what
++        .trim_start_matches("failed the endpoint at ")
++        .trim_end_matches(" ms")
++        .parse()
++        .expect("the record carries its time");
++    let fired = Duration::from_millis(fired_ms);
++    assert!(
++        fired >= FAIL_AT && fired <= FAIL_AT + Duration::from_secs(1),
++        "it fired at 5 s on VirtualTime: {fired:?}"
++    );
++}
 +
-+    fn completed(self) -> OutboundStreamResult {
-+        let elapsed = self.elapsed();
-+        let stream_id = self.stream_id.0 as u64;
-+        emit_tr
+ /// The same run with the same seed gives the same upgrades at the same times.
+ #[test_log::test]
+ fn test_quic_shadow_upgrade_is_deterministic() {
+```
+
+---
+
+### Incident Patch 3: `e65f5d59` (2026-11-05)
+**Commit Message**: fix(hosted): orient cold visitors and point them at the installer (#6117)
+
+**File**: `crates/core/src/server/path_handlers.rs` (modified, +96/-6)
+```diff
+@@ -2236,7 +2236,7 @@ fn shell_page(
+     // the sandboxed app iframe. It is the only place a per-user-data action
+     // (export to your own peer) can live — the durable user token is held by
+     // the shell and must never reach the sandbox — and the only place the
+-    // "this is a hosted proxy, not private" disclosure cannot be hidden or
++    // "stored encrypted on this server" privacy disclosure cannot be hidden or
+     // spoofed by the contract app. Empty (and the layout unchanged) when hosted
+     // mode is off. The export control is a placeholder until the node-side
+     // export endpoint lands (P3 `secrets export` over HTTP, scoped to the
+@@ -2478,7 +2478,7 @@ const SHELL_USER_TOKEN_JS: &str = include_str!("path_handlers/assets/shell_user_
+ /// only when hosted mode is on; the bar lives OUTSIDE the sandboxed app iframe.
+ const HOSTED_BAR_STYLES: &str = include_str!("path_handlers/assets/hosted_bar.css");
+ 
+-/// Markup for the hosted-mode bar: the always-visible "not private" disclosure
++/// Markup for the hosted-mode bar: the always-visible privacy disclosure (with an inline install link)
+ /// plus an Account popover with the access-key backup/restore, a "New ID"
+ /// control to start over with a fresh identity, and the export-to-your-own-peer
+ /// action. The access key is the per-user token, read from the shell-only
+@@ -6769,7 +6769,7 @@ mod tests {
+     #[tokio::test]
+     async fn shell_page_hosted_mode_renders_proxy_chrome_bar() {
+         // The hosted-mode "shell chrome" bar lives OUTSIDE the sandboxed iframe
+-        // and carries the "not private" disclosure plus the Account popover
++        // and carries the privacy disclosure plus the Account popover
+         // (access-key backup/restore + export-to-your-own-peer). It must render
+         // in hosted mode and be ABSENT in non-hosted mode so a normal
+         // single-user node is unaffected.
+@@ -6782,9 +6782,24 @@ mod tests {
+             hosted.contains(r#"id="fnbar""#),
+             "hosted bar missing: {hosted}"
+         );
++        // The always-visible disclosure must say both halves: the data is held
++        // (encrypted) by this server, and full privacy needs your own peer.
++        // Located via the bar's own `.nt` span, so the text cannot pass by
++        // appearing somewhere else (the popover, a script) instead.
++        let disclosure = hosted
++            .split_once(r#"class="nt""#)
++            .and_then(|(_, rest)| rest.split_once('>'))
++            .and_then(|(_, rest)| rest.split_once("for full privacy."))
++            .map(|(d, _)| d.trim())
++            .expect("the bar's .nt disclosure must end 'for full privacy.'");
+         assert!(
+-            hosted.contains("not private"),
+-            "always-visible disclosure missing"
++            disclosure.starts_with("Stored encrypted on this server."),
++            "disclosure must lead with where the data lives: {disclosure}"
++        );
++        assert!(
++            disclosure.contains("https://freenet.org/quickstart/"),
++            "the install link must sit inside the disclosure, before \
++             'for full privacy.': {disclosure}"
+         );
+         assert!(
+             hosted.contains("Access key") && hosted.contains("Restore from key"),
+@@ -8484,6 +8499,77 @@ mod tests {
+         assert!(clear < reload, "must clear the token before reloading");
+     }
+ 
++    /// A hosted visitor who has no peer must be told how to get one. Before
++    /// this, the bar never said what Freenet is or how to install it, and the
++    /// popover offered "Move to my peer" and a loopback import link with no
++    /// install pointer, so a try.freenet.org visitor (typically arriving cold
++    /// from a shared link) had no way forward.
++    #[test]
++    fn hosted_bar_points_visitors_without_a_peer_at_the_installer() {
++        const QUICKSTART: &str = "href=\"https://freenet.org/quickstart/\"";
++        let section = HOSTED_BAR_HTML
++            .find("<h4>Your own peer</h4>")
++            .expect("hosted bar must have a 'Your own peer' section");
++        let migrate = HOSTED_BAR_HTML
++            .find("id=\"fnmigrate\"")
++            .expect("Move-to-my-peer button present");
++        let reveal = HOSTED_BAR_HTML
++            .find("id=\"fnmigrateout\"")
++            .expect("migration hint block present");
++        let open = HOSTED_BAR_HTML
++            .find("id=\"fnmigrateopen\"")
++            .expect("primary open control present");
++        let acct = HOSTED_BAR_HTML
++            .find("id=\"fnacct\"")
++            .expect("Account control present");
++
++        // (0) The always-visible bar itself, before the Account popover: the
++        // brand links to what Freenet is, and an install pointer is one click
++        // away without opening any menu.
++        let bar = &HOSTED_BAR_HTML[..acct];
++        assert!(
++            bar.contains("href=\"https://freenet.org/\""),
++            "the bar's Freenet brand must link to what Freenet is"
++        );
++   
+```
+
+**File**: `crates/core/src/server/path_handlers/assets/hosted_bar.css` (modified, +57/-1)
+```diff
+@@ -27,10 +27,24 @@ iframe {
+   font-weight: 600;
+   color: #222;
+   letter-spacing: 0.02em;
++  text-decoration: none;
++}
++#fnbar .fn:hover {
++  text-decoration: underline;
++}
++/* The bar's own "Install Freenet" pointer, inline in the disclosure: the next
++   step for a visitor who arrived from a shared link, always visible rather than
++   buried in the popover. */
++#fnbar a.fnbarinstall {
++  color: #222;
++  text-decoration: underline;
+ }
+ #fnbar .nt {
+   flex: 1 1 auto;
+   min-width: 0;
++  /* Not the bar's line-height 1: the inline install link's underline and focus
++     ring would be clipped by this span's overflow:hidden. */
++  line-height: 1.4;
+   color: #777;
+   overflow: hidden;
+   text-overflow: ellipsis;
+@@ -83,6 +97,14 @@ iframe {
+   cursor: auto;
+   display: none;
+   z-index: 10;
++  /* The shell body is overflow:hidden, so a popover taller than a short
++     (landscape phone) viewport would be clipped with no way to reach its
++     lower sections. */
++  max-height: calc(100vh - 50px);
++  /* dvh excludes a mobile browser's dynamic URL bar; 100vh is the fallback. */
++  max-height: calc(100dvh - 50px);
++  overflow-y: auto;
++  box-sizing: border-box;
+ }
+ #fnpop.open {
+   display: block;
+@@ -102,6 +124,13 @@ iframe {
+ #fnpop .sec {
+   margin-bottom: 14px;
+ }
++/* Inline "Install Freenet" pointer for visitors who have no peer yet. A plain
++   underlined link in the text colour, so it stays inside the popover's
++   near-monochrome palette rather than shouting in default link blue. */
++#fnpop a.fninstall {
++  color: #222;
++  text-decoration: underline;
++}
+ #fnpop .sec:last-child {
+   margin-bottom: 0;
+ }
+@@ -143,6 +172,28 @@ iframe {
+   font-size: 12px;
+ }
+ 
++/* Phone width: let the disclosure wrap instead of truncating, so the whole
++   sentence survives, including its inline install link ("on this server" is
++   also the answer to "how is this peer-to-peer with nothing installed?").
++   Three lines covers a 320px screen. */
++@media (max-width: 560px) {
++  #fnbar {
++    height: auto;
++    min-height: 34px;
++    padding-top: 4px;
++    padding-bottom: 4px;
++  }
++  #fnbar .nt {
++    white-space: normal;
++    line-height: 1.25;
++    font-size: 12px;
++    display: -webkit-box;
++    -webkit-box-orient: vertical;
++    -webkit-line-clamp: 3;
++    line-clamp: 3;
++  }
++}
++
+ /* Respect the OS dark-mode preference. Same restrained, near-monochrome
+    character as the light theme: charcoal bar, light-grey text, hairline
+    borders. */
+@@ -152,7 +203,8 @@ iframe {
+     border-bottom-color: #303032;
+     color: #98989c;
+   }
+-  #fnbar .fn {
++  #fnbar .fn,
++  #fnbar a.fnbarinstall {
+     color: #ececee;
+   }
+   #fnbar .nt {
+@@ -182,13 +234,17 @@ iframe {
+     border-color: #3a3a3e;
+     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+     color: #c2c2c6;
++    color-scheme: dark;
+   }
+   #fnpop h4 {
+     color: #88888c;
+   }
+   #fnpop p {
+     color: #a0a0a4;
+   }
++  #fnpop a.fninstall {
++    color: #e6e6e8;
++  }
+   #fnok {
+     color: #5cbd83;
+   }
+```
+
+**File**: `crates/core/src/server/path_handlers/assets/hosted_bar.html` (modified, +34/-5)
+```diff
+@@ -1,7 +1,21 @@
+-<div id="fnbar" role="region" aria-label="Hosted proxy notice">
+-  <span class="fn">Freenet</span
++<div id="fnbar" role="region" aria-label="Hosted privacy notice">
++  <a
++    class="fn"
++    href="https://freenet.org/"
++    target="_blank"
++    rel="noopener"
++    title="What is Freenet?"
++    >Freenet</a
+   ><span class="nt"
+-    >Hosted proxy, not private. Your data is stored on this server.</span
++    >Stored encrypted on this server.
++    <a
++      class="fninstall fnbarinstall"
++      href="https://freenet.org/quickstart/"
++      target="_blank"
++      rel="noopener"
++      >Install Freenet</a
++    >
++    for full privacy.</span
+   ><span id="fnacct"
+     ><button id="fnacctbtn" type="button">Account</button>
+     <div id="fnpop">
+@@ -23,7 +37,14 @@ <h4>Access key</h4>
+         <h4>Your own peer</h4>
+         <p>
+           Move your data to a Freenet peer you run yourself, fully
+-          decentralized.
++          decentralized. Don't have one yet?
++          <a
++            class="fninstall"
++            href="https://freenet.org/quickstart/"
++            target="_blank"
++            rel="noopener"
++            >Install Freenet</a
++          >, then come back here.
+         </p>
+         <div class="row">
+           <button class="act" id="fnmigrate">Move to my peer</button
+@@ -32,7 +53,15 @@ <h4>Your own peer</h4>
+         <div id="fnmigrateout" hidden>
+           <p class="mhint">
+             This opens a one-time confirmation page on the Freenet peer running
+-            on this computer. It expires in a few minutes.
++            on this computer. It expires in a few minutes. If that page can't
++            connect, your peer isn't running, or Freenet isn't installed yet:
++            <a
++              class="fninstall"
++              href="https://freenet.org/quickstart/"
++              target="_blank"
++              rel="noopener"
++              >install Freenet</a
++            >, then try again.
+           </p>
+           <div class="row">
+             <a
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #6119** (2026-11-05): fix(test): advance VirtualTime in controlled simulations (@sanity)
+- **PR #6118** (2026-11-05): feat(transport): export QUIC data path telemetry (@sanity)
+- **PR #6117** (2026-11-05): fix(hosted): orient cold visitors and point them at the installer (@sanity)
 - **PR #6114** (2026-11-05): feat(transport): send QUIC data on the path with fallback to UDP (@sanity)
 - **PR #6113** (2026-11-05): test(transport): pin the QUIC fair share where it holds and record the default-minimum case (@sanity)
 - **PR #6111** (2026-11-05): feat(transport): cap the QUIC window to the configured bandwidth (@sanity)
-- **PR #6110** (2026-11-05): feat(transport): attribute QUIC fallbacks to session churn (@sanity)
-- **PR #6108** (2026-11-04): build: release 0.2.155 (@sanity)
-- **PR #6105** (2026-11-03): ci: cut Ubicloud runner spend without slowing PR CI (@sanity)
 
 ---
 
@@ -2345,13 +2981,13 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. transport): send QUIC data on the path with fallback to UDP (#6114)
+## X. transport): export QUIC data path telemetry (#6118)
 
 **RULE**:
 When implementing operations in `.claude/rules/transport.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `24d872db`: transport): send QUIC data on the path with fallback to UDP (#6114). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `196263ba`: transport): export QUIC data path telemetry (#6118). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/rules/transport.md`.
@@ -2359,40 +2995,35 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-`upgrade::policy::log_startup` reports the share at INFO once per node), and a pair
-with both bits sends its data on the path ("QUIC send route" below). At a share of
-0, with no `quic-data-percent`, `prefer` differs from `shadow` only by the bit, which
-stays 0. The release that raises the share above 0 must say in its notes that
-existing `prefer` configs start carrying data. Off: no endpoint, no QUIC ingress, nothing
-  With both bits the connection sends on the path ("QUIC send route" below). Frames
-  a peer sends to a node with its own bit set reach `recv` ("QUIC receive flow"
-  below). A sender needs no version check: 0.2.154 is the first release that can
-  set the bit and the first that reads, every earlier one clears the bit on decode
-  and sends 0, and a node rolled back has restarted and negotiates again.
-  UdpSender, which holds only what a send needs. It charges flight size and
-  send_control_bounded in a task per send. Data goes by "QUIC send route" below.
-tests only) with what each node's upgrades did, readable after the run,
-including what arrived on the path and on UDP (`received a short on the path`,
-`data arrived on UDP`, noted at the receiver whichever code sent it) 
+  Not built: the `transport=legacy|quic` attribute on connection, transfer and
+  disconnect events; quinn's RTT, min RTT and lost bytes on a QUIC transfer's
+  events (those fields are None today); the per-peer byte counters and the
+  dashboard for QUIC traffic; a per-path memory estimate.
+
+QUIC data telemetry (#5940 e5b-8, `transport/metrics/quic_data.rs`): node-wide
+counts of what paths' data sends and receives did, in one nested
+`TransportSnapshot::quic_data` and uploaded flat, a key per non-zero count and the
+gauge every period, 0 included (`QuicDataSnapshot::upload_keys`). Each is
+recorded where the path decides it, into the path's `QuicPathStats` and the node's
+`QuicDataCounters` together (`QuicPathLimits::counters`, `TRANSPORT_METRICS` unless
+a test passes its own; tests read their own, never the global).
+  quic_data_send_<short|large_short|stream|pipe>_<sent|maybe_delivered|
+  not_opened_udp|failed_udp|dropped>; quic_data_event_<short_overflow_udp|
+  data_refused|stalled_closed|udp_send_failed>; quic_data_stop_<code> (stops a
+  peer sent to data sends); quic_inbound_<QuicInboundOutcome> (every receive
+  outcome, refusals by frame kind as short_refused_budget and
+  stream_ref
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-`upgrade::policy::log_startup` reports the share at INFO once per node). No code
-sends data on a path yet, so `prefer` differs from `shadow` only by that bit. The
-release that makes `prefer` carry data must say in its notes that existing
-`prefer` configs start carrying data. Off: no endpoint, no QUIC ingress, nothing
-  No node code sends data on a path yet. Frames a peer sends to a node with its own
-  bit set reach `recv` ("QUIC receive flow" below).
-  UpgradeSender, which holds only what a send needs. It charges flight size and
-  send_control_bounded in a task per send, and nothing else is sent on a path.
-tests only) with what each node's upgrades did, readable after the run. It also
-injects: `send_shorts_on_paths` (the node sends each message that fits a packet as
-a Short on the connection's path, when that path may carry data, with no fallback
-to UDP; nothing else sends data on a path yet), `send_initial_on_each_attempt` (the node receives an Initial with the
-enable data and n
+  Not built: stream-concurrency instruments on real QUIC (`quic_open_uni_waited`,
+  permit waits, ge_8..ge_48, control_* refusals) have no source until e5b and
+  read zero in shadow; the `transport=legacy|quic` connection attribute; a
+  per-path memory estimate.
+Not here: export of the QUIC-only counters (per path, QuicPath::stats).
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `24d872db` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `196263ba` are properly handled with clean fallback behavior.

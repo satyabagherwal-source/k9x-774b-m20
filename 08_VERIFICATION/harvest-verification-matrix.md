@@ -7798,3 +7798,7 @@
 | `CYCLE-20261105-UGWK` | `2026-11-05T22:16:10.004Z` | `nats-io/nats-server` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`4b0aa5c6...`) |
 | `CYCLE-20261105-62II` | `2026-11-05T22:25:11.226Z` | `electron/electron` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`22dad3dc...`) |
 | `CYCLE-20261105-65MK` | `2026-11-05T22:25:15.260Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`df6a0285...`) |
+| `CYCLE-20261105-EEZ9` | `2026-11-05T22:31:40.629Z` | `metalbear-co/mirrord` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`69c3896d...`) |
+| `CYCLE-20261105-ELMT` | `2026-11-05T22:31:49.253Z` | `loft-sh/vcluster` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`3fa716c1...`) |
+| `CYCLE-20261105-ENTL` | `2026-11-05T22:31:52.089Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`3ae4a90a...`) |
+| `CYCLE-20261105-EP7W` | `2026-11-05T22:31:53.900Z` | `arangodb/arangodb` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`8df3a109...`) |
