@@ -7552,3 +7552,7 @@ Every entry in this ledger must capture:
 | `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `27b1b0c4` | Multi-dimensional audit evidence | 2026-11-05T06:15:08.098Z |
 | `learn-github-apache-zookeeper` | `https://github.com/apache/zookeeper` | `87e85f28` | Multi-dimensional audit evidence | 2026-11-05T06:15:11.658Z |
 | `learn-huggingface-mistralai-mixtral-8x7b-instruct-v0-1` | `https://huggingface.co/mistralai/Mixtral-8x7B-Instruct-v0.1` | `hf-mistral` | Multi-dimensional audit evidence | 2026-11-05T06:21:35.355Z |
+| `learn-github-nats-io-nats-server` | `https://github.com/nats-io/nats-server` | `9bad2e8d` | Multi-dimensional audit evidence | 2026-11-05T06:28:51.532Z |
+| `learn-huggingface-meta-llama-llama-2-7b` | `https://huggingface.co/meta-llama/Llama-2-7b` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-11-05T06:28:57.467Z |
+| `learn-github-starrocks-starrocks` | `https://github.com/StarRocks/starrocks` | `d0391e8c` | Multi-dimensional audit evidence | 2026-11-05T06:28:58.250Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `9318a957` | Multi-dimensional audit evidence | 2026-11-05T06:28:59.413Z |

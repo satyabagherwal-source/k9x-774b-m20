@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-05T06:21:35.362Z",
+  "last_updated": "2026-11-05T06:28:59.431Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1280,14 +1280,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-meta-llama-llama-2-7b",
-      "content_hash": "18c0ca147ee2632a1acbf0d3028958797d033eeb1e649376d05dd2f6acd8029e",
-      "verified_at": "2026-10-31T15:49:48.820Z",
+      "content_hash": "40aa3ba9cd4f17e5dc48884f6c64af700bf2ffbfdad6830816e8b244d9da5192",
+      "verified_at": "2026-11-05T06:28:57.488Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T15:49:48.820Z"
+      "last_updated": "2026-11-05T06:28:57.488Z"
     },
     "mistralai/Mixtral-8x7B-Instruct-v0.1": {
       "repository": "mistralai/Mixtral-8x7B-Instruct-v0.1",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "d55b8ab3ae96bf8058d35fb3b85605d4c1b0dc35d7c58938ca9c5fe39b132aa8",
-      "verified_at": "2026-11-05T06:00:36.559Z",
+      "content_hash": "37a635731e8a41acddd750c38003966b81da163c6ede4b5fd382281d001d7a0b",
+      "verified_at": "2026-11-05T06:28:59.430Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T06:00:36.559Z"
+      "last_updated": "2026-11-05T06:28:59.430Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -7956,14 +7956,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-starrocks-starrocks",
-      "content_hash": "e643555bc77fb25b180a24b6e783125702f19c34082914bbd9fc356bca60cbbf",
-      "verified_at": "2026-11-04T10:37:47.827Z",
+      "content_hash": "29fe7e61427d3884715d57c62dcc1161f44e790e2f759a9a689e1afa644c40d5",
+      "verified_at": "2026-11-05T06:28:58.268Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T10:37:47.827Z"
+      "last_updated": "2026-11-05T06:28:58.268Z"
     },
     "lobehub/lobe-ui": {
       "repository": "lobehub/lobe-ui",
@@ -10941,14 +10941,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nats-io-nats-server",
-      "content_hash": "426cb9db8c931fbde679cb6dad66c9ac013852c3d0d60f3fd9f5108bd3b23289",
-      "verified_at": "2026-11-04T16:50:13.745Z",
+      "content_hash": "637dcf1c1ab8fc3d03ba7e9fb8612ee685e57dd7188c0e36dc1cb68449e1e05b",
+      "verified_at": "2026-11-05T06:28:51.550Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T16:50:13.745Z"
+      "last_updated": "2026-11-05T06:28:51.550Z"
     },
     "str4d/rage": {
       "repository": "str4d/rage",

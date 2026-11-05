@@ -975,8 +975,8 @@
     "sourceUrl": "https://huggingface.co/meta-llama/Llama-2-7b",
     "sourceVersion": "hf-meta-llama-llama-2-7b",
     "license": "Open-Source",
-    "contentHash": "18c0ca147ee2632a1acbf0d3028958797d033eeb1e649376d05dd2f6acd8029e",
-    "lastHarvestedAt": "2026-10-31T15:49:48.810Z",
+    "contentHash": "40aa3ba9cd4f17e5dc48884f6c64af700bf2ffbfdad6830816e8b244d9da5192",
+    "lastHarvestedAt": "2026-11-05T06:28:57.467Z",
     "learningId": "learn-huggingface-meta-llama-llama-2-7b"
   },
   "hf-mistralai-mixtral-8x7b-instruct-v0.1": {
@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "a1cefa48",
+    "sourceVersion": "9318a957",
     "license": "Apache-2.0",
-    "contentHash": "d55b8ab3ae96bf8058d35fb3b85605d4c1b0dc35d7c58938ca9c5fe39b132aa8",
-    "lastHarvestedAt": "2026-11-05T06:00:36.542Z",
+    "contentHash": "37a635731e8a41acddd750c38003966b81da163c6ede4b5fd382281d001d7a0b",
+    "lastHarvestedAt": "2026-11-05T06:28:59.413Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -5223,10 +5223,10 @@
     "repository": "StarRocks/starrocks",
     "platform": "github",
     "sourceUrl": "https://github.com/StarRocks/starrocks",
-    "sourceVersion": "0b659694",
+    "sourceVersion": "d0391e8c",
     "license": "Apache-2.0",
-    "contentHash": "e643555bc77fb25b180a24b6e783125702f19c34082914bbd9fc356bca60cbbf",
-    "lastHarvestedAt": "2026-11-04T10:37:47.820Z",
+    "contentHash": "29fe7e61427d3884715d57c62dcc1161f44e790e2f759a9a689e1afa644c40d5",
+    "lastHarvestedAt": "2026-11-05T06:28:58.250Z",
     "learningId": "learn-github-starrocks-starrocks"
   },
   "lobehub-lobe-ui": {
@@ -7263,10 +7263,10 @@
     "repository": "nats-io/nats-server",
     "platform": "github",
     "sourceUrl": "https://github.com/nats-io/nats-server",
-    "sourceVersion": "a441962c",
+    "sourceVersion": "9bad2e8d",
     "license": "Apache-2.0",
-    "contentHash": "426cb9db8c931fbde679cb6dad66c9ac013852c3d0d60f3fd9f5108bd3b23289",
-    "lastHarvestedAt": "2026-11-04T16:50:13.739Z",
+    "contentHash": "637dcf1c1ab8fc3d03ba7e9fb8612ee685e57dd7188c0e36dc1cb68449e1e05b",
+    "lastHarvestedAt": "2026-11-05T06:28:51.532Z",
     "learningId": "learn-github-nats-io-nats-server"
   },
   "str4d-rage": {

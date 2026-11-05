@@ -7543,3 +7543,7 @@
 | `CYCLE-20261105-IKOU` | `2026-11-05T06:15:08.094Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7131` | Yes (`e1184c9f...`) |
 | `CYCLE-20261105-INFQ` | `2026-11-05T06:15:11.654Z` | `apache/zookeeper` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7132` | Yes (`7ae8f317...`) |
 | `CYCLE-20261105-QVHV` | `2026-11-05T06:21:35.347Z` | `mistralai/Mixtral-8x7B-Instruct-v0.1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-mistralai-mixtral-8x7b-instruct-v0.1-learnings.md` | Yes (`4df4459b...`) |
+| `CYCLE-20261105-081Z` | `2026-11-05T06:28:51.527Z` | `nats-io/nats-server` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7133` | Yes (`637dcf1c...`) |
+| `CYCLE-20261105-0CMV` | `2026-11-05T06:28:57.463Z` | `meta-llama/Llama-2-7b` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7134, Rule 7135, Rule 7136` | Yes (`40aa3ba9...`) |
+| `CYCLE-20261105-0D8M` | `2026-11-05T06:28:58.246Z` | `StarRocks/starrocks` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7137` | Yes (`29fe7e61...`) |
+| `CYCLE-20261105-0E4W` | `2026-11-05T06:28:59.408Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7138` | Yes (`37a63573...`) |

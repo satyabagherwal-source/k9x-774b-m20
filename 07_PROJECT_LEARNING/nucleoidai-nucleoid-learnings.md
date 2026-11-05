@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source**: github ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
-> **Source Version**: `a1cefa48`  
+> **Source Version**: `9318a957`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T06:00:35.766Z  
+> **Timestamp**: 2026-11-05T06:28:58.635Z  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T06:00:35.759Z  
+> **Harvest Timestamp**: 2026-11-05T06:28:58.627Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -571,7 +571,7 @@ import arc_dataset from "./lib/arc_dataset.ts";
 import fs from "node:fs/promises";
 
 // Genesis puzzle_id: 3aa6fb7a
-export async function start(puzzle_id: string = "74dd1130") {
+export async function start(puzzle_id: string = "9565186b") {
   const { arc_train, test_input_matrix, test_output_matrix } =
     await arc_dataset.load(puzzle_id);
 
@@ -1006,192 +1006,197 @@ export function enlarge(matrix, rows: number, cols: number) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a1cefa48` (2026-11-05)
-**Commit Message**: Add ARC dataset for puzzle 74dd1130
+### Incident Patch 1: `9318a957` (2026-11-05)
+**Commit Message**: Add ARC dataset for puzzle 9565186b
 
-Annotate the four original training pairs of the default puzzle 74dd1130,
-followed by its test pair, with one whole-mosaic Obj instance per 3 by 3
-grid. A single class-level rule, `$Obj.mirror_axis = 135`, mirrors every
-mosaic across its main diagonal, stated as an axis angle clockwise from
-north by the line-orientation convention; orientation, x, y and the tag
-stay unchanged, and the output canvas is EXACT.
+Annotate the four original training pairs of the default puzzle 9565186b,
+followed by its test pair, with one Obj instance per color region, all the
+cells of one color, carrying `color` and `cell_count` as scalars. A single
+class-level rule,
+`if any other in Obj: other.cell_count > $Obj.cell_count: $Obj.color = 5`,
+keeps the color with the most cells and turns every region another region
+outnumbers color 5; x, y, orientation and the tag stay unchanged, and the
+output canvas is EXACT.
 
-Files: arc/src/dataset/dataset.74dd1130.json, its paragraph in
+Files: arc/src/dataset/dataset.9565186b.json, its paragraph in
 arc/README.md, its entry in the ARC puzzle report list in
 .github/workflows/arc.yml, the solver's default puzzle in arc/src/app.ts
-(3c9b0459 to 74dd1130), and the progress record
-arc/docs/ARC-NUC-74dd1130.md.
+(74dd1130 to 9565186b), and the progress record
+arc/docs/ARC-NUC-9565186b.md.
 
 No Nucleoid enhancement was requested, so there is no NUC outcome.
 
-Run: one local `bun start 74dd1130` exited 0, an exact match with
+Run: one local `bun start 9565186b` exited 0, an exact match with
 difference 0. Its few-shot context held this dataset's test pair, so the
 match does not show inference from the training pairs alone.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Claude-Session: https://claude.ai/code/session_01AJtz8ek5nqrKPYRXo542Yu
 
 **File**: `.github/workflows/arc.yml` (modified, +1/-0)
 ```diff
-@@ -31,6 +31,7 @@ jobs:
-         25d8a9c8
+@@ -32,6 +32,7 @@ jobs:
          25ff71a9
          3c9b0459
-+        74dd1130
+         74dd1130
++        9565186b
        NUCLEOID_EXECUTABLE: ${{ github.workspace }}/target/debug/nucleoid
        DOTENV_CONFIG_PATH: /dev/null
        NO_COLOR: "1"
 ```
 
-**File**: `arc/README.md` (modified, +55/-0)
+**File**: `arc/README.md` (modified, +57/-0)
 ```diff
-@@ -654,6 +654,61 @@ in every input state, where the block is not turned, and 180 in every output
- state. The test pair follows the training pairs at the same level and is
- annotated by the same rules.
+@@ -709,6 +709,63 @@ the flip. The declarations hold executable code only, without `#` comments.
+ The test pair follows the training pairs at the same level and is annotated
+ by the same rules.
  
-+`dataset.74dd1130.json` annotates the four original training pairs from
-+`data\training\74dd1130.json`, in order, followed by its test pair, five
-+mosaic instances in total, one per pair. Every input and output retains its
-+original 3 by 3 canvas, colors, and positions, and no grid has a zero cell.
-+Each input is one mosaic of 9 cells that fills its canvas, in three colors:
-+1, 2, and 5; 2, 5, and 6; 5, 8, and 9; and 1, 2, and 6 in the training pairs.
-+Each object is that whole mosaic, the figure seen first, whose 3 by 3 box
-+spans the canvas from its origin, 0 and 0. Each output mirrors the whole
-+mosaic across its main diagonal, the line from its top-left corner to its
-+bottom-right corner, so the cell in row r and column c moves to row c and
-+column r: each input row becomes the output column of the same index, read
-+top to bottom as the row reads left to right, the three cells on the diagonal
-+stay in place, and every color keeps its cell count. The flip across the main
-+diagonal is the only one of the square's eight turns and mirrors, the
-+identity included, that reproduces any training pair: no training mosaic
-+looks the same after a quarter turn, a half turn, a mirror across either
-+center line, or a flip across either diagonal, and the flip across the other
-+diagonal, from the top-right corner to the bottom-left, reproduces none. No
-+turn reproduces a training output, so `orientation`, a clockwise angle from
-+north, cannot state the change: a mirror reverses the mosaic's handedness,
-+which no turn does. The class takes no descriptive property, with no color,
-+parts list, width, height, canvas size, or matrix of cells, because the rule
-+needs none: the mosaic's cells travel in its masks, and its flip is its
-+mirror axis. One unconditional class-level rule introduces `mirror_axis`,
-+which is absent before the rules run, as `135`: the axis the mosaic is
-+mirrored across, as an angle clockwise from north by the convention of line
-+orientations, where vertical is 0 and horizontal is 90, so the main diagonal,
-+which runs from northwest to southeast, is 135 and the other diagonal 45. The
-+rules leave `x` and `y` unchanged: a mosaic that fills its square canvas keeps
-+its box in place under a flip across its main diagonal, whether its own or the
-+canvas's. Two further rules, `$Obj.x = $Obj.y@first` and
-+`$Obj.y = $Obj.x@first`, which swap the box's origin as a flip across the
-+canvas's diagonal does, would reproduce every training output as well, but
-+every mosaic's origin is 0 and 0, so those rules would only return the input
-+origin; the rules state the flip alone, a choice fixed from the training pairs
-+before the test pair was read. Each training grid holds a single mosaic and
-+shows no relation between objects, so no population operation appears. The
-+rules create no other property and leave `x`, `y`, `orientation`, and the tag
-+unchanged, so each output state adds only `mirror_axis` to its input state's
-+keys. Native snapshots start with the pair's `canvas_width` and
-+`canvas_height`, and output snapshots are captured with the pair's
-+implementation followed by `Obj[:]`. The tag `l9100` is a single shape, as in
-+`dataset.28bf18c6.json` and `dataset.3c9b0459.json`, in both states. Input
++`dataset.9565186b.json` annotates the four original training pairs from
++`data\training\9565186b.json`, in order, followed by its test pair, sixteen
++region instances in total (3, 4, 2, and 4 per training pair and 3 in the test
++pair). Every input and output retains its original 3 by 3 canvas, colors, and
++positions, and no grid has a zero cell. Each input is a mosaic of two to four
++colors, and each object is one color region, all the cells of one color,
++whether or not they touch, as in `dataset.d631b094.json`: 5, 1, and 3 cells of
++colors 2, 1, and 8 in the first training pair; 4, 2, 1, and 2 cells of colors
++1, 8, 3, and 2 in the second; 7 and 2 cells of colors 2 and 8 in the third;
++and 2, 2, 3, and 2 cells of colors 3, 8, 4, and 1 in the fourth, listed in
++reading order of each color's first cell. In the training pairs every color
++forms one edge-connected piece except color 8 in the fourth, two single cells
++in the top-right and bottom-left corners. Each output keeps the region with
++the most cells in its color and turns every other region color 5, so 9 of the
++13 training regions turn gray. The whole mosaic, the figure seen first in
++`dataset.3c9b0459.json` and `dataset.74dd1130.json`, does not change as one:
++its cells keep or lose their color by the region they belong to, which no
++scalar property of a single mosaic object can state, so the objects are the
++regions the mosaic is made of. The count decides, not the color or a share of
++the canvas: the largest color, 8, never stays, the smallest stays only in the
++second and third training pairs, and the kept region covers 5, 4, 7, and 3 of
++the 9 cells, more than half only in the first and third. The training pairs
++alone also fit reading each edge-connected piece as an object and keeping the
++largest piece, because the only split color, the fourth pair's two single
++color-8 cells, turns gray either way; the rules count each color as one region
++instead, the unit in which every output changes, since all cells of a color
++share one output color, a choice fixed from the training pairs before the
++test pair was read. The class takes `color` and `cell_count`, the region's
++number of cells, as scalars, as in `dataset.9af7a82c.json`, with no parts
++list, histogram, rank, output color, canvas size, or matrix of cells, so no
++input property names the kept color. One conditional class-level rule,
++`if any other in Obj: other.cell_count > $Obj.cell_count:` with the body
++`$Obj.color = 5`, turns gray every region that another region of its pair
++outnumbers: the quantifier `any` of [NUC 62](../docs/nuc-0062.md) states the
++claim of `Obj.some(...)` directly, its binder ranges over the pair's whole
++population, and `$Obj.cell_count` reads the region the rule is evaluated for.
++The condition reads no color, so the rule rewrites `color` without an
++`@first` anchor, and a tie for the most cells, which no pair has, would keep
++every tied region's color. The rules create no property and leave `x`, `y`,
++`orientation`, and the tag unchanged, so input and output states share the
++same keys, and a gray region's output state differs from its input state only
++in `color`. Native snapshots start with the pair's `canvas_width` and
++`canvas_height`, and output snapshots are captured with all of the same pair's
++implementations together, followed by `Obj[:]`, so every region is compared
++with its whole pair. The tag `l9100` is a single shape, as in
++`dataset.9af7a82c.json` and `dataset.d631b094.json`, in both states. Input
 +masks retain each pair's full-size 3 by 3 input canvas and output masks the
-+complete 3 by 3 output; with no zero cell, each mask equals its pair's grid,
-+and merging them reproduces each pair's input and output. The
-+`output_x`/`output_y` fields record the mirrored mosaic's nonzero bounding-box
-+origin, 0 and 0, equal to `output_value.x`/`output_value.y`. `output_canvas`
-+is `EXACT` because each output keeps its input's 3 by 3 canvas; with no zero
-+cell to crop, `FIT` would frame the same grids. Orientation is 0 in both
-+states because the mosaic is mirrored, not turned, and `mirror_axis` states
-+the flip. The declarations hold executable code only, without `#` comments.
-+The test pair follows the training pairs at the same level and is annotated
-+by the same rules.
++complete 3 by 3 output, each padded with `0` outside its region; merging them
++reproduces each pair's input and output. The `output_x`/`output_y` fields
++record the region's nonzero bounding-box origin, unchanged from its input and
++equal to `output_value.x`/`output_value.y`. `output_canvas` is `EXACT` because
++each output keeps its input's 3 by 3 canvas; with no zero cell to crop, `FIT`
++would frame the same grids. Orientation is 0 in both states because no region
++is turned. The declarations hold executable code only, without `#` comments.
++The test pair follows the training pairs at the same level and is annotated by
++the same rules.
 +
  `dataset.9af7a82c.json` annotates the four original training pairs from
  `data\training\9af7a82c.json`, followed by its test pair, nineteen region
  instances in total (3, 4, 4, 3, and 5 per pair). The fully colored input
 ```
 
-**File**: `arc/docs/ARC-NUC-74dd1130.md` (added, +150/-0)
+**File**: `arc/docs/ARC-NUC-9565186b.md` (added, +165/-0)
 ```diff
-@@ -0,0 +1,150 @@
-+# ARC-NUC-74dd1130 -- Main-Diagonal Mirror
+@@ -0,0 +1,165 @@
++# ARC-NUC-9565186b -- Minority Colors Turn Gray
 +
-+Progress record for ARC training puzzle `74dd1130`: its instruction dataset,
++Progress record for ARC training puzzle `9565186b`: its instruction dataset,
 +the solver and Nucleoid changes it needed, its runs, and what is still open.
 +
 +| Item | Status |
 +| --- | --- |
-+| Puzzle | [`data/training/74dd1130.json`](../data/training/74dd1130.json) |
-+| Instruction dataset | [`dataset.74dd1130.json`](../src/dataset/dataset.74dd1130.json): the puzzle's 4 original training pairs and its test pair, 5 mosaic instances, one per pair; committed with this record |
++| Puzzle | [`data/training/9565186b.json`](../data/training/9565186b.json) |
++| Instruction dataset | [`dataset.9565186b.json`](../src/dataset/dataset.9565186b.json): the puzzle's 4 original training pairs and its test pair, 16 color-region instances, 3, 4, 2, and 4 in the training pairs and 3 in the test pair; committed with this record |
 +| Output canvas | `EXACT` |
-+| Nucleoid enhancements | None requested, so no proposal strategy was selected and strategy learning did not apply; the rule is one unconditional class-level rule of accepted Nucleoid |
++| Nucleoid enhancements | None requested, so no proposal strategy was selected and strategy learning did not apply; the rule uses the `any` quantifier of [NUC 62](../../docs/nuc-0062.md) |
 +| Solver changes | None; suggested changes await review, not applied |
 +| Solver runs | 1 local run on 5-Nov-2026, exit 0, an exact match, with this dataset's test pair in its few-shot context |
 +| Updated | 5-Nov-2026 |
 +
 +## Puzzle
 +
-+Each training input is a 3 by 3 canvas filled by one mosaic: every cell holds
-+a color, and none holds the background color 0. The four mosaics use three
-+colors each: 1, 2, and 5; 2, 5, and 6; 5, 8, and 9; and 1, 2, and 6. The
-+output keeps the canvas and mirrors the whole mosaic across its main
-+diagonal, the line from the top-left corner to the bottom-right corner, so the
-+cell in row r and column c moves to row c and column r. Each input row becomes
-+the output column of the same index, the three cells on the diagonal stay in
-+place, and every color keeps its cell count. Of the square's eight turns and
-+mirrors, only this flip maps each training input to its output, and no
-+training mosaic looks the same under any of the other seven, so each pair
-+confirms the flip on its own. No turn reproduces any training output, because
-+a mirror reverses the mosaic's handedness and a turn never does. The output
-+keeps the input's 3 by 3 canvas, so the dataset is `EXACT`; with no zero cell
-+to crop, `FIT` would frame the same grids.
++Each training input is a 3 by 3 canvas filled by a mosaic of two to four
++colors, with no background cell of color 0. The output keeps the canvas and
++the cells of the color with the most cells, and turns every other cell color
++5, which no training input holds. The kept color has 5, 4, 7, and 3 of the 9
++cells in the four training pairs: always the most, but more than half only in
++the first and third. The count decides, not the color: 8 appears in every
++training pair and never stays, and the smallest color value stays only in the
++second and third. The output keeps the input's 3 by 3 canvas, so the dataset
++is `EXACT`; with no zero cell to crop, `FIT` would frame the same grids.
 +
-+`/arc-purposal` chose this puzzle by default: among the 385 training puzzles
++`/arc-purposal` chose this puzzle by default: among the 384 training puzzles
 +other than the genesis puzzle `3aa6fb7a` and those with a dataset, its largest
 +training matrix has the fewest cells, 9, with 72 cells in all its training
-+matrices. Three other puzzles, `9565186b`, `a85d4709`, and `ed36ccf7`, tie on
-+both measures, and `74dd1130` has the lowest ID among them. It was one of the
-+puzzles tied with [`3c9b0459`](ARC-NUC-3c9b0459.md), the previous default.
++matrices. Two other puzzles, `a85d4709` and `ed36ccf7`, tie on both measures,
++and `9565186b` has the lowest ID among them. It also tied with
++[`74dd1130`](ARC-NUC-74dd1130.md), which the previous invocation took.
 +
 +## Dataset
 +
 +The dataset holds the four original training pairs in source order, followed
 +at the same level by the puzzle's test pair, which the same rule annotates.
-+Every mosaic is one instance of `Obj(x, y, orientation)`, tagged `l9100`, a
-+single shape, as in `dataset.28bf18c6.json` and `dataset.3c9b0459.json`. The
-+class takes no color, size, cell list, canvas size, or matrix of cells: the
-+mosaic's cells travel unchanged in its masks. One unconditional class-level
-+rule states the flip:
++Each object is one color region, all the cells of one color whether or not
++they touch, as in `dataset.d631b094.json`: an instance of
++`Obj(x, y, orientation, color, cell_count)`, tagged `l9100`, a single shape.
++`color` and `cell_count`, the region's number of cells, are scalars, as in
++`dataset.9af7a82c.json`. The class has no parts list, histogram, rank, output
++color, canvas size, or matrix of cells, so no input property names the kept
++color. One conditional class-level rule turns gray every region that another
++region of its pair outnumbers:
 +
 +```nuc
-+$Obj.mirror_axis = 135
++if any other in Obj: other.cell_count > $Obj.cell_count:
++    $Obj.color = 5
 +```
 +
-+`mirror_axis` is the axis the mosaic is mirrored across, as an angle clockwise
-+from north, and is absent from every input state. It follows the convention of
-+the line orientations in `dataset.line.json`, where vertical lines are 0 and
-+horizontal lines 90, so the main diagonal, which runs from northwest to
-+southeast, is 135, and the other diagonal would be 45. `orientation` cannot
-+carry the change, since it is a clockwise turn and no turn reproduces a
-+training output, so it stays 0 in both states. The rule creates no other
-+property and leaves `x`, `y`, and the tag unchanged: a mosaic that fills its
-+square canvas keeps its box at 0 and 0 under the flip. Each output state adds
-+only `mirror_axis` to its input state. The declarations carry no `#` comments,
-+as in `dataset.3c9b0459.json`, `dataset.25d8a9c8.json`, and
-+`dataset.25ff71a9.json`. The [README](../README.md#instruction-datasets)
-+describes the dataset in full.
++The quantifier `any` ranges over the pair's whole population, and
++`$Obj.cell_count` reads the region the rule is evaluated for. The region with
++the most cells has no larger region and keeps its color; a tie for the most,
++which no training pair has, would keep every tied region's color. The
++condition reads no color, so the rule rewrites `color` without an `@first`
++anchor, as `dataset.017c7c7b.json` recolors its objects. The rule creates no
++property and leaves `x`, `y`, `orientation`, and the tag unchanged, so a gray
++region's output state differs from its input state only in `color`; 9 of the
++13 training regions turn gray. The declarations carry no `#` comments. The
++[README](../README.md#instruction-datasets) describes the dataset in full.
 +
-+The worker started from the big picture, the whole mosaic as the object, and
-+that formulation explained every training pair, so it never went down to rows,
-+color regions, or single cells. It weighed two alternatives. A turn plus a
-+mirror flag would state one change with two properties and a convention for
-+their order. Rules that swap the box's origin, `$Obj.x = $Obj.y@first` and
-+`$Obj.y = $Obj.x@first`, reproduce every training output too, but every
-+mosaic's origin is 0 and 0, so they would only return the input origin, the
-+reason `dataset.3c9b0459.json` also leaves its position rules out. The worker
-+fixed the rule from the training pairs before it read the test pair and
-+reported that the same rule reproduces it. Each training grid holds one mosaic
-+and relates it to nothing else, so the rule needs no population operation such
-+as `filter` or `some`. This is the first dataset that states a mirror as a
-+transformation: `dataset.44f52bb0.json` only tests whether a pattern is mirror
++The worker started from the big picture, each grid as one whole mosaic, as in
++`dataset.3c9b0459.json` and `dataset.74dd1130.json`. That fell short: the
++mosaic does not change as one, since each cell keeps or loses its color by the
++color region it belongs to, which no scalar property of a single mosaic object
++can state. Only a parts list could, as in `dataset.5582e5ca.json`, and the
++user approved that list for that puzzle alone. The model therefore went one
++level down, to the color regions the mosaic is made of, which are still whole
++figures, and models no cell on its own.
 +
++The training pairs also fit edge-connected pieces with the largest piece
++kept, because the only split color, the fourth pair's two color-8 corner
++cells, turns gray either way. The worker counted each color as one region, the
++unit in which every output changes. `Obj.some(...)`,
++`$Obj.cell_count < max of Obj.map(...)`, and a conditional expression with
++`@first` ran identically, and the worker chose `any` because it states the
++relation once, with no derived property or anchor. The training pairs rule
++out a more-than-half threshold, the color's value, and the top-left cell's
++color. The worker fixed the rule from th
 ```
 
 **File**: `arc/src/app.ts` (modified, +1/-1)
@@ -1200,145 +1205,37 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
  import fs from "node:fs/promises";
  
  // Genesis puzzle_id: 3aa6fb7a
--export async function start(puzzle_id: string = "3c9b0459") {
-+export async function start(puzzle_id: string = "74dd1130") {
+-export async function start(puzzle_id: string = "74dd1130") {
++export async function start(puzzle_id: string = "9565186b") {
    const { arc_train, test_input_matrix, test_output_matrix } =
      await arc_dataset.load(puzzle_id);
  
 ```
 
-**File**: `arc/src/dataset/dataset.74dd1130.json` (added, +189/-0)
+**File**: `arc/src/dataset/dataset.9565186b.json` (added, +431/-0)
 ```diff
-@@ -0,0 +1,189 @@
+@@ -0,0 +1,431 @@
 +{
 +  "declarations": [
-+    "class Obj(x: int, y: int, orientation: int):\n    this.x = x\n    this.y = y\n    this.orientation = orientation\n    this.tag = 'l9100'",
-+    "$Obj.mirror_axis = 135"
++    "class Obj(x: int, y: int, orientation: int, color: int, cell_count: int):\n    this.x = x\n    this.y = y\n    this.orientation = orientation\n    this.tag = 'l9100'\n    this.color = color\n    this.cell_count = cell_count",
++    "if any other in Obj: other.cell_count > $Obj.cell_count:\n    $Obj.color = 5"
 +  ],
 +  "output_canvas": "EXACT",
 +  "dataset": [
 +    {
 +      "input_matrix": [
-+        [2, 2, 1],
-+        [1, 5, 1],
-+        [5, 2, 2]
-+      ],
-+      "output_matrix": [
-+        [2, 1, 5],
-+        [2, 5, 2],
-+        [1, 1, 2]
-+      ],
-+      "instances": [
-+        {
-+          "instance_name": "obj98ecd3af71f1",
-+          "input_x": 0,
-+          "output_x": 0,
-+          "input_y": 0,
-+          "output_y": 0,
-+          "input_orientation": 0,
-+          "output_orientation": 0,
-+          "input_instance_matrix": [
-+            [2, 2, 1],
-+            [1, 5, 1],
-+            [5, 2, 2]
-+          ],
-+          "output_instance_matrix": [
-+            [2, 1, 5],
-+            [2, 5, 2],
-+            [1, 1, 2]
-+          ],
-+          "implementation": "obj98ecd3af71f1 = Obj(x=0, y=0, orientation=0)",
-+          "input_value": {"id":"obj98ecd3af71f1","orientation":0,"tag":"l9100","x":0,"y":0},
-+          "output_value": {"id":"obj98ecd3af71f1","mirror_axis":135,"orientation":0,"tag":"l9100","x":0,"y":0}
-+        }
-+      ]
-+    },
-+    {
-+      "input_matrix": [
-+        [2, 2, 5],
-+        [6, 2, 2],
-+        [5, 5, 5]
-+      ],
-+      "output_matrix": [
-+        [2, 6, 5],
-+        [2, 2, 5],
-+        [5, 2, 5]
-+      ],
-+      "instances": [
-+        {
-+          "instance_name": "objffef4308101e",
-+          "input_x": 0,
-+          "output_x": 0,
-+          "input_y": 0,
-+          "output_y": 0,
-+          "input_orientation": 0,
-+          "output_orientation": 0,
-+          "input_instance_matrix": [
-+            [2, 2, 5],
-+            [6, 2, 2],
-+            [5, 5, 5]
-+          ],
-+          "output_instance_matrix": [
-+            [2, 6, 5],
-+            [2, 2, 5],
-+            [5, 2, 5]
-+          ],
-+          "implementation": "objffef4308101e = Obj(x=0, y=0, orientation=0)",
-+          "input_value": {"id":"objffef4308101e","orientation":0,"tag":"l9100","x":0,"y":0},
-+          "output_value": {"id":"objffef4308101e","mirror_axis":135,"orientation":0,"tag":"l9100","x":0,"y":0}
-+        }
-+      ]
-+    },
-+    {
-+      "input_matrix": [
-+        [9, 9, 5],
-+        [5, 5, 8],
-+        [5, 8, 9]
-+      ],
-+      "output_matrix": [
-+        [9, 5, 5],
-+        [9, 5, 8],
-+        [5, 8, 9]
-+      ],
-+      "instances": [
-+        {
-+          "instance_name": "objb5bc2fe94345",
-+          "input_x": 0,
-+          "output_x": 0,
-+          "input_y": 0,
-+          "output_y": 0,
-+          "input_orientation": 0,
-+          "output_orientation": 0,
-+          "input_instance_matrix": [
-+            [9, 9, 5],
-+            [5, 5, 8],
-+            [5, 8, 9]
-+          ],
-+          "output_instance_matrix": [
-+            [9, 5, 5],
-+            [9, 5, 8],
-+            [5, 8, 9]
-+          ],
-+          "implementation": "objb5bc2fe94345 = Obj(x=0, y=0, orientation=0)",
-+          "input_value": {"id":"objb5bc2fe94345","orientation":0,"tag":"l9100","x":0,"y":0},
-+          "output_value": {"id":"objb5bc2fe94345","mirror_axis":135,"orientation":0,"tag":"l9100","x":0,"y":0}
-+        }
-+      ]
-+    },
-+    {
-+      "input_matrix": [
-+        [2, 6, 6],
-+        [2, 1, 1],
-+        [2, 6, 2]
++        [2, 2, 2],
++        [2, 1, 8],
++        [2, 8, 8]
 +      ],
 +      "output_matrix": [
 +        [2, 2, 2],
-+        [6, 1, 6],
-+        [6, 1, 2]
++        [2, 5, 5],
++        [2, 5, 5]
 +      ],
 +      "instances": [
 +        {
-+          "instance_name": "objf024b87c2f1b",
++          "instance_name": "objfd8da1fb82d2",
 +          "input_x": 0,
 +          "output_x": 0,
 +          "input_y": 0,
@@ -1346,35 +1243,79 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 +          "input_orientation": 0,
 +          "output_orientation": 0,
 +          "input_instance_matrix": [
-+            [2, 6, 6],
-+            [2, 1, 1],
-+            [2, 6, 2]
++            [2, 2, 2],
++            [2, 0, 0],
++            [2, 0, 0]
 +          ],
 +          "output_instance_matrix": [
 +            [2, 2, 2],
-+            [6, 1, 6],
-+            [6, 1, 2]
++            [2, 0, 0],
++            [2, 0, 0]
 +          ],
-+          "implementation": "objf024b87c2f1b = Obj(x=0, y=0, orientation=0)",
-+          "input_value": {"id":"objf024b87c2f1b","orientation":0,"tag":"l9100","x":0,"y":0},
-+          "output_value": {"id":"objf024b87c2f1b","mirror_axis":135,"orientation":0,"tag":"l9100","x":0,"y":0}
++          "implementation": "objfd8da1fb82d2 = Obj(x=0, y=0, orientation=0, color=2, cell_count=5)",
++          "input_value": {"cell_count":5,"color":2,"id":"objfd8da1fb82d2","orientation":0,"tag":"l9100","x":0,"y":0},
++          "output_value": {"cell_count":5,"color":2,"id":"objfd8da1fb82d2","orientation":0,"tag":"l9100","x":0,"y":0}
++        },
++        {
++          "instance_name": "obj18a2b2379cda",
++          "input_x": 1,
++          "output_x": 1,
++          "input_y": 1,
++          "output_y": 1,
++          "input_orientation": 0,
++          "output_orientation": 0,
++          "input_instance_matrix": [
++            [0, 0, 0],
++            [0, 1, 0],
++            [0, 0, 0]
++          ],
++          "output_instance_matrix": [
++            [0, 0, 0],
++            [0, 5, 0],
++            [0, 0, 0]
++          ],
++          "implementation": "obj18a2b2379cda = Obj(x=1, y=1, orientation=0, color=1, cell_count=1)",
++          "input_value": {"cell_count":1,"color":1,"id":"obj18a2b2379cda","orientation":0,"tag":"l9100","x":1,"y":1},
++          "output_value": {"cell_count":1,"color":5,"id":"obj18a2b2379cda","orientation":0,"tag":"l9100","x":1,"y":1}
++        },
++        {
++          "instance_name": "objaabb8a63326c",
++          "input_x": 1,
++          "output_x": 1,
++          "input_y": 1,
++          "output_y": 1,
++          "input_orientation": 0,
++          "output_orientation": 0,
++          "input_instance_matrix": [
++            [0, 0, 0],
++            [0, 0, 8],
++            [0, 8, 8]
++          ],
++          "output_instance_matrix": [
++            [0, 0, 0],
++            [0, 0, 5],
++            [0, 5, 5]
++          ],
++          "implementation": "objaabb8a63326c = Obj(x=1, y=1, orientation=0, color=8, cell_count=3)",
++          "input_value": {"cell_count":3,"color":8,"id":"objaabb8a63326c","orientation":0,"tag":"l9100","x":1,"y":1},
++          "output_value": {"cell_count":3,"color":5,"id":"objaabb8a63326c","orientation":0,"tag":"l9100","x":1,"y":1}
 +        }
 +      ]
 +    },
 +    {
 +      "input_matrix": [
-+        [9, 3, 4],
-+        [9, 4, 4],
-+        [9, 3, 4]
++        [1, 1, 1],
++        [8, 1, 3],
++        [8, 2, 2]
 +      ],
 +      "output_matrix": [
-+        [9, 9, 9],
-+        [3, 4, 3],
-+        [4, 4, 4]
++        [1, 1, 1],
++        [5, 1, 5],
++        [5, 5, 5]
 +      ],
 +      "instances": [
 +        {
-+          "instance_name": "obj661249916bd0",
++          "instance_name": "objb4c2bdc31cbd",
 +          "input_x": 0,
 +          "output_x": 0,
 +          "input_y": 0,
@@ -1382,16 +1323,41 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 +          "input_orientation": 0,
 +          "output_orientation": 0,
 +          "input_instance_matrix": [
-+            [9, 3, 4],
-+            [9, 4, 4],
-+            [9, 3, 4]
++            [1, 1, 1],
++            [0, 1, 0],
++            [0, 0, 0]
 +          ],
 +          "output_instance_matrix": [
-+            [9, 9, 9],
-+            [3, 4, 3],
-+            [4, 4, 4]
++            [1, 1, 1],
++            [0, 1, 0],
++            [0, 0, 0]
 +          ],
-
++          "implementation": "objb4c2bdc31cbd = Obj(x=0, y=0, orientation=0, color=1, cell_count=4)",
++          "input_value": {"cell_count":4,"color":1,"id":"objb4c2bdc31cbd","orientation":0,"tag":"l9100","x":0,"y":0},
++          "output_value": {"cell_count":4,"color":1,"id":"objb4c2bdc31cbd","orientation":0,"tag":"l9100","x":0,"y":0}
++        },
++        {
++          "instance_name": "objfbe4a4224d14",
++          "input_x": 0,
++          "output_x": 0,
++          "input_y": 1,
++          "output_y": 1,
++          "input_orientation": 0,
++          "output_orientation": 0,
++          "input_instance_matrix": [
++            [0, 0, 0],
++            [8, 0, 0],
++            [8, 0, 0]
++          ],
++          "output_instance_matrix": [
++            [0, 0, 0],
++            [5, 0, 0],
++            [5, 0, 0]
++          ],
++          "implementation": "objfbe4a4224d14 = Obj(x=0, y=1, orientation=0, color=8, cell_count=2)",
++          "input_value": {"cell_count":2,"color":8,"id":"objfbe4a4224d14","orientation":0,"tag":"l9100","x":0,"y":1},
++          "output_value": {"cell_count":2,"color":5,"id":"objfbe4a4224d14","orientation":0,"tag":"l9100","x":0,"y":1}
++
 ```
 
 #### Recent Merged Pull Requests:
@@ -1420,13 +1386,13 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Add ARC dataset for puzzle 74dd1130
+## X. Add ARC dataset for puzzle 9565186b
 
 **RULE**:
 When implementing operations in `.github/workflows/arc.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a1cefa48`: Add ARC dataset for puzzle 74dd1130. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9318a957`: Add ARC dataset for puzzle 9565186b. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/arc.yml`.
@@ -1434,7 +1400,7 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        74dd1130
+        9565186b
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1444,4 +1410,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a1cefa48` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9318a957` are properly handled with clean fallback behavior.
