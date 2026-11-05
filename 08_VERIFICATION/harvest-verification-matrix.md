@@ -7437,3 +7437,5 @@
 | `CYCLE-20261105-JESS` | `2026-11-05T01:07:51.340Z` | `Efficient-Large-Model/Open-H3-Regenerate-2K` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-efficient-large-model-open-h3-regenerate-2k-learnings.md` | Yes (`15835dbb...`) |
 | `CYCLE-20261105-JH29` | `2026-11-05T01:07:54.273Z` | `codewhale-hq/Codewhale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6979` | Yes (`4ba046dc...`) |
 | `CYCLE-20261105-JK10` | `2026-11-05T01:07:58.116Z` | `meshtastic/Meshtastic-Android` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7057` | Yes (`241ded57...`) |
+| `CYCLE-20261105-SQUV` | `2026-11-05T01:15:06.871Z` | `akatz-ai/MiniMax-H3-Character-Swap-LoRA` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-akatz-ai-minimax-h3-character-swap-lora-learnings.md` | Yes (`93693f56...`) |
+| `CYCLE-20261105-SV6U` | `2026-11-05T01:15:12.486Z` | `thaw-app/Thaw` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/thaw-app-thaw-learnings.md` | Yes (`07cf412c...`) |

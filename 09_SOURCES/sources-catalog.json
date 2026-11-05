@@ -525,8 +525,8 @@
     "sourceUrl": "https://huggingface.co/akatz-ai/MiniMax-H3-Character-Swap-LoRA",
     "sourceVersion": "hf-akatz-ai-minimax-h3-character-swap-lora",
     "license": "Open-Source",
-    "contentHash": "26d814f41282865f751e9b21358e2d61f71e597940fefc4e7a3fd2d05ddb58cc",
-    "lastHarvestedAt": "2026-10-31T10:40:20.305Z",
+    "contentHash": "93693f56429feec3b8fdd59a2d503b68873692dd707144c90d527463dc8d3b18",
+    "lastHarvestedAt": "2026-11-05T01:15:06.881Z",
     "learningId": "learn-huggingface-akatz-ai-minimax-h3-character-swap-lora"
   },
   "hf-unsloth-qwen-image-2.1-gguf": {
@@ -7833,10 +7833,10 @@
     "repository": "thaw-app/Thaw",
     "platform": "github",
     "sourceUrl": "https://github.com/thaw-app/Thaw",
-    "sourceVersion": "cbe1b6fa",
+    "sourceVersion": "fa2b68af",
     "license": "GPL-3.0",
-    "contentHash": "b5789af04803849c6a936a31318bd2a639e696e51a808ecc97ef438bf061e261",
-    "lastHarvestedAt": "2026-10-31T18:08:48.607Z",
+    "contentHash": "07cf412cad3ed68770b99ed88368ac06b10f93931e713c5d278297c6ff3cb1de",
+    "lastHarvestedAt": "2026-11-05T01:15:12.490Z",
     "learningId": "learn-github-thaw-app-thaw"
   },
   "rtk-ai-rtk": {

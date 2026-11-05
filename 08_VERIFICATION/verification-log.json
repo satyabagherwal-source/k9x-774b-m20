@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261103-WJ2P",
-    "timestamp": "2026-11-03T17:06:29.905Z",
-    "repository": "cilium/cilium",
-    "learningId": "learn-github-cilium-cilium",
-    "contentHash": "268cd29a954eba588061d513c7e75266d7f7ec849953bd7b22120139a4637551",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261103-6HAN",
-    "timestamp": "2026-11-03T17:14:14.159Z",
-    "repository": "codewhale-hq/Codewhale",
-    "learningId": "learn-github-codewhale-hq-codewhale",
-    "contentHash": "18b09878035c7f7d6a4840dc639c46d3fa2727c625a9a1529c4dc3c2b1578579",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261103-6O0B",
     "timestamp": "2026-11-03T17:14:22.859Z",
     "repository": "projectdiscovery/nuclei",
@@ -7492,6 +7462,36 @@
     "contentHash": "241ded5705ec728854c4f5a1233b2ccfdfce8ebefcde5e032ebcf685cfd66548",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-SQUV",
+    "timestamp": "2026-11-05T01:15:06.871Z",
+    "repository": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
+    "learningId": "learn-huggingface-akatz-ai-minimax-h3-character-swap-lora",
+    "contentHash": "93693f56429feec3b8fdd59a2d503b68873692dd707144c90d527463dc8d3b18",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-SV6U",
+    "timestamp": "2026-11-05T01:15:12.486Z",
+    "repository": "thaw-app/Thaw",
+    "learningId": "learn-github-thaw-app-thaw",
+    "contentHash": "07cf412cad3ed68770b99ed88368ac06b10f93931e713c5d278297c6ff3cb1de",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

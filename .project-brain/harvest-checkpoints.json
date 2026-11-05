@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-05T01:07:58.137Z",
+  "last_updated": "2026-11-05T01:15:12.502Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -650,14 +650,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-akatz-ai-minimax-h3-character-swap-lora",
-      "content_hash": "26d814f41282865f751e9b21358e2d61f71e597940fefc4e7a3fd2d05ddb58cc",
-      "verified_at": "2026-10-31T10:40:20.312Z",
+      "content_hash": "93693f56429feec3b8fdd59a2d503b68873692dd707144c90d527463dc8d3b18",
+      "verified_at": "2026-11-05T01:15:06.891Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T10:40:20.312Z"
+      "last_updated": "2026-11-05T01:15:06.891Z"
     },
     "unsloth/Qwen-Image-2.1-GGUF": {
       "repository": "unsloth/Qwen-Image-2.1-GGUF",
@@ -11781,14 +11781,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-thaw-app-thaw",
-      "content_hash": "b5789af04803849c6a936a31318bd2a639e696e51a808ecc97ef438bf061e261",
-      "verified_at": "2026-10-31T18:08:48.616Z",
+      "content_hash": "07cf412cad3ed68770b99ed88368ac06b10f93931e713c5d278297c6ff3cb1de",
+      "verified_at": "2026-11-05T01:15:12.501Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T18:08:48.616Z"
+      "last_updated": "2026-11-05T01:15:12.501Z"
     },
     "rtk-ai/rtk": {
       "repository": "rtk-ai/rtk",

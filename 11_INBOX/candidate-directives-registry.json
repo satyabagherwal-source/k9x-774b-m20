@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-05T01:00:36.129Z",
+  "last_updated": "2026-11-05T01:15:12.496Z",
   "directives": [
     {
       "id": "CD-001",
@@ -3852,6 +3852,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **VERIFICATION METHOD** automated verification protocol",
       "learning_id": "learn-github-sharkdp-fd"
+    },
+    {
+      "id": "CD-SV74",
+      "directive_title": "items): find the app behind a hidden item listed without one (#1444)",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "thaw-app/Thaw",
+      "source_commit": "fa2b68af",
+      "date_staged": "2026-11-05",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-thaw-app-thaw"
     }
   ]
 }

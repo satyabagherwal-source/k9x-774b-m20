@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-05T01:07:58.126Z",
-  "total_cycles_completed": 7414,
-  "total_learnings_persisted": 7414,
+  "last_updated": "2026-11-05T01:15:12.498Z",
+  "total_cycles_completed": 7416,
+  "total_learnings_persisted": 7416,
   "total_rules_promoted": 7108,
   "history": [
-    {
-      "timestamp": "2026-11-04T16:50:18.756Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T16:59:20.838Z",
-      "repository": "sigstore/cosign",
-      "learningId": "learn-github-sigstore-cosign",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-04T16:59:28.540Z",
       "repository": "lodestones/MOSS-Image-SFT-8-steps-dmd",
@@ -1403,6 +1389,20 @@
       "repository": "meshtastic/Meshtastic-Android",
       "learningId": "learn-github-meshtastic-meshtastic-android",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T01:15:06.887Z",
+      "repository": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
+      "learningId": "learn-huggingface-akatz-ai-minimax-h3-character-swap-lora",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T01:15:12.498Z",
+      "repository": "thaw-app/Thaw",
+      "learningId": "learn-github-thaw-app-thaw",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

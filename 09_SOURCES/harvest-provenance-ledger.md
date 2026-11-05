@@ -7446,3 +7446,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-efficient-large-model-open-h3-regenerate-2k` | `https://huggingface.co/Efficient-Large-Model/Open-H3-Regenerate-2K` | `hf-efficie` | Multi-dimensional audit evidence | 2026-11-05T01:07:51.349Z |
 | `learn-github-codewhale-hq-codewhale` | `https://github.com/Hmbown/Codewhale` | `cbb7380f` | Multi-dimensional audit evidence | 2026-11-05T01:07:54.277Z |
 | `learn-github-meshtastic-meshtastic-android` | `https://github.com/meshtastic/Meshtastic-Android` | `9ea8d718` | Multi-dimensional audit evidence | 2026-11-05T01:07:58.120Z |
+| `learn-huggingface-akatz-ai-minimax-h3-character-swap-lora` | `https://huggingface.co/akatz-ai/MiniMax-H3-Character-Swap-LoRA` | `hf-akatz-a` | Multi-dimensional audit evidence | 2026-11-05T01:15:06.881Z |
+| `learn-github-thaw-app-thaw` | `https://github.com/thaw-app/Thaw` | `fa2b68af` | Multi-dimensional audit evidence | 2026-11-05T01:15:12.490Z |

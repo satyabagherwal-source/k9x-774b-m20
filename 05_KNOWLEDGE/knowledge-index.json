@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T01:07:58.032Z",
+  "last_updated": "2026-11-05T01:15:12.367Z",
   "total_verified_learnings": 1210,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -18117,7 +18117,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/akatz-ai/MiniMax-H3-Character-Swap-LoRA",
       "source_version": "hf-akatz-ai-minimax-h3-character-swap-lora",
-      "content_hash": "26d814f41282865f751e9b21358e2d61f71e597940fefc4e7a3fd2d05ddb58cc",
+      "content_hash": "93693f56429feec3b8fdd59a2d503b68873692dd707144c90d527463dc8d3b18",
       "dossier_path": "07_PROJECT_LEARNING/hf-akatz-ai-minimax-h3-character-swap-lora-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-akatz-ai-minimax-h3-character-swap-lora-learnings.md",
       "promoted_rules": [
@@ -18195,7 +18195,7 @@
         "learn-huggingface-hf-akatz-ai-minimax-h3-character-swap-lora-mv46r4cy",
         "learn-huggingface-hf-akatz-ai-minimax-h3-character-swap-lora-mv4k1h95"
       ],
-      "verified_at": "2026-10-31T10:40:20.210Z",
+      "verified_at": "2026-11-05T01:15:06.756Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -57220,8 +57220,8 @@
       "slug": "thaw-app-thaw",
       "platform": "github",
       "source_url": "https://github.com/thaw-app/Thaw",
-      "source_version": "cbe1b6fa",
-      "content_hash": "b5789af04803849c6a936a31318bd2a639e696e51a808ecc97ef438bf061e261",
+      "source_version": "fa2b68af",
+      "content_hash": "07cf412cad3ed68770b99ed88368ac06b10f93931e713c5d278297c6ff3cb1de",
       "dossier_path": "07_PROJECT_LEARNING/thaw-app-thaw-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/thaw-app-thaw-learnings.md",
       "promoted_rules": [
@@ -57266,7 +57266,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T18:08:48.500Z",
+      "verified_at": "2026-11-05T01:15:12.344Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
