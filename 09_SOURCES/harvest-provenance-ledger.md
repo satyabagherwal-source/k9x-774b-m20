@@ -7633,3 +7633,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-zai-org-glm-5-3` | `https://huggingface.co/zai-org/GLM-5.3` | `hf-zai-org` | Multi-dimensional audit evidence | 2026-11-05T10:57:59.280Z |
 | `learn-github-fabio-rovai-open-ontologies` | `https://github.com/fabio-rovai/open-ontologies` | `375fbc47` | Multi-dimensional audit evidence | 2026-11-05T10:58:08.597Z |
 | `learn-github-milvus-io-milvus` | `https://github.com/milvus-io/milvus` | `d3063b15` | Multi-dimensional audit evidence | 2026-11-05T10:58:15.800Z |
+| `learn-github-dicklesworthstone-destructive_command_guard` | `https://github.com/Dicklesworthstone/destructive_command_guard` | `a2cbf561` | Multi-dimensional audit evidence | 2026-11-05T11:08:28.808Z |
+| `learn-github-zama-ai-tfhe-rs` | `https://github.com/zama-ai/tfhe-rs` | `c46b58f7` | Multi-dimensional audit evidence | 2026-11-05T11:08:37.156Z |
+| `learn-huggingface-mudler-locate-anything-cpp-gguf` | `https://huggingface.co/mudler/locate-anything.cpp-gguf` | `hf-mudler-` | Multi-dimensional audit evidence | 2026-11-05T11:09:32.410Z |

@@ -75,8 +75,8 @@
     "sourceUrl": "https://huggingface.co/mudler/locate-anything.cpp-gguf",
     "sourceVersion": "hf-mudler-locate-anything.cpp-gguf",
     "license": "Open-Source",
-    "contentHash": "c2c27e227605cfd24e8d53b39ea90bc0e0267982fd2cb817ff654633ba5c9650",
-    "lastHarvestedAt": "2026-10-31T20:23:13.185Z",
+    "contentHash": "ae0ec32799d4934f4879cf97bc8201bed4d4a99e4763922efa1bbb4f347cb3a6",
+    "lastHarvestedAt": "2026-11-05T11:09:32.410Z",
     "learningId": "learn-huggingface-mudler-locate-anything-cpp-gguf"
   },
   "hf-jialinyyzz-humanizer": {
@@ -3283,10 +3283,10 @@
     "repository": "zama-ai/tfhe-rs",
     "platform": "github",
     "sourceUrl": "https://github.com/zama-ai/tfhe-rs",
-    "sourceVersion": "a834a81e",
+    "sourceVersion": "c46b58f7",
     "license": "NOASSERTION",
-    "contentHash": "4c4018304db74767e9f07f3893b8c5c92a57d8b474140ad60700e73cc85d2faa",
-    "lastHarvestedAt": "2026-11-02T14:46:31.751Z",
+    "contentHash": "cc6be31d4e266dbc41c96bf832c6a592184f55ce159e572b4ff5c1bc0433f304",
+    "lastHarvestedAt": "2026-11-05T11:08:37.156Z",
     "learningId": "learn-github-zama-ai-tfhe-rs"
   },
   "doobidoo-mcp-memory-service": {
@@ -6143,10 +6143,10 @@
     "repository": "Dicklesworthstone/destructive_command_guard",
     "platform": "github",
     "sourceUrl": "https://github.com/Dicklesworthstone/destructive_command_guard",
-    "sourceVersion": "7c71db93",
+    "sourceVersion": "a2cbf561",
     "license": "NOASSERTION",
-    "contentHash": "aa3dc7fe5b41e78660ee75436291bf76b24eb5b7d1cf3c283fcc8040f209a54e",
-    "lastHarvestedAt": "2026-11-04T16:43:05.408Z",
+    "contentHash": "00058eaa6a6a809d4ee22359defa7d86f02155c178d874a276ed6243286be3cc",
+    "lastHarvestedAt": "2026-11-05T11:08:28.808Z",
     "learningId": "learn-github-dicklesworthstone-destructive_command_guard"
   },
   "xinthink-react-native-material-kit": {

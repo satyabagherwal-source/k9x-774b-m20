@@ -7624,3 +7624,6 @@
 | `CYCLE-20261105-MBQK` | `2026-11-05T10:57:59.276Z` | `zai-org/GLM-5.3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-zai-org-glm-5.3-learnings.md` | Yes (`713ab4ba...`) |
 | `CYCLE-20261105-MIXD` | `2026-11-05T10:58:08.593Z` | `fabio-rovai/open-ontologies` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7195` | Yes (`0944db45...`) |
 | `CYCLE-20261105-MOHG` | `2026-11-05T10:58:15.796Z` | `milvus-io/milvus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7196` | Yes (`aff96c17...`) |
+| `CYCLE-20261105-ZTHH` | `2026-11-05T11:08:28.805Z` | `Dicklesworthstone/destructive_command_guard` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7197` | Yes (`00058eaa...`) |
+| `CYCLE-20261105-ZZXC` | `2026-11-05T11:08:37.152Z` | `zama-ai/tfhe-rs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7198` | Yes (`cc6be31d...`) |
+| `CYCLE-20261105-16K5` | `2026-11-05T11:09:32.405Z` | `mudler/locate-anything.cpp-gguf` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-mudler-locate-anything.cpp-gguf-learnings.md` | Yes (`ae0ec327...`) |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T10:58:15.708Z",
+  "last_updated": "2026-11-05T11:09:32.294Z",
   "total_verified_learnings": 1215,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -10335,8 +10335,8 @@
       "slug": "dicklesworthstone-destructive_command_guard",
       "platform": "github",
       "source_url": "https://github.com/Dicklesworthstone/destructive_command_guard",
-      "source_version": "7c71db93",
-      "content_hash": "aa3dc7fe5b41e78660ee75436291bf76b24eb5b7d1cf3c283fcc8040f209a54e",
+      "source_version": "a2cbf561",
+      "content_hash": "00058eaa6a6a809d4ee22359defa7d86f02155c178d874a276ed6243286be3cc",
       "dossier_path": "07_PROJECT_LEARNING/dicklesworthstone-destructive_command_guard-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dicklesworthstone-destructive_command_guard-learnings.md",
       "promoted_rules": [
@@ -10399,6 +10399,11 @@
           "number": 6838,
           "title": "evaluator): read PowerShell call, dot-source and script-block invoke statements",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7197,
+          "title": "core): prove dynamic redirect targets independently (#634) [skip ci]",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -10406,7 +10411,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T16:43:05.315Z",
+      "verified_at": "2026-11-05T11:08:28.694Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -27833,7 +27838,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/mudler/locate-anything.cpp-gguf",
       "source_version": "hf-mudler-locate-anything.cpp-gguf",
-      "content_hash": "c2c27e227605cfd24e8d53b39ea90bc0e0267982fd2cb817ff654633ba5c9650",
+      "content_hash": "ae0ec32799d4934f4879cf97bc8201bed4d4a99e4763922efa1bbb4f347cb3a6",
       "dossier_path": "07_PROJECT_LEARNING/hf-mudler-locate-anything.cpp-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-mudler-locate-anything.cpp-gguf-learnings.md",
       "promoted_rules": [
@@ -27945,7 +27950,7 @@
         "learn-huggingface-hf-mudler-locate-anything-cpp-gguf-mv4177m8",
         "learn-huggingface-hf-mudler-locate-anything-cpp-gguf-mv4f5wy1"
       ],
-      "verified_at": "2026-10-31T20:23:13.069Z",
+      "verified_at": "2026-11-05T11:09:32.263Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -63160,8 +63165,8 @@
       "slug": "zama-ai-tfhe-rs",
       "platform": "github",
       "source_url": "https://github.com/zama-ai/tfhe-rs",
-      "source_version": "a834a81e",
-      "content_hash": "4c4018304db74767e9f07f3893b8c5c92a57d8b474140ad60700e73cc85d2faa",
+      "source_version": "c46b58f7",
+      "content_hash": "cc6be31d4e266dbc41c96bf832c6a592184f55ce159e572b4ff5c1bc0433f304",
       "dossier_path": "07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md",
       "promoted_rules": [
@@ -63249,6 +63254,11 @@
           "number": 6413,
           "title": "bench): migrate zk benchmark to the spec",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7198,
+          "title": "ci): setup tailscale ci to make slab work again (#4141)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -63256,7 +63266,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-02T14:46:31.641Z",
+      "verified_at": "2026-11-05T11:08:37.040Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -181861,6 +181871,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-05T10:58:15.684Z"
+    },
+    "rule-7197": {
+      "learning_id": "rule-7197",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7197,
+      "title": "core): prove dynamic redirect targets independently (#634) [skip ci]",
+      "source_url": "https://github.com/Dicklesworthstone/destructive_command_guard",
+      "source_version": "a2cbf561",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T11:08:28.694Z"
+    },
+    "rule-7198": {
+      "learning_id": "rule-7198",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7198,
+      "title": "ci): setup tailscale ci to make slab work again (#4141)",
+      "source_url": "https://github.com/zama-ai/tfhe-rs",
+      "source_version": "c46b58f7",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T11:08:37.040Z"
     }
   },
   "aliases": {

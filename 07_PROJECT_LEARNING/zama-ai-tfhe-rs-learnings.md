@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md`  
 > **Source**: github ([https://github.com/zama-ai/tfhe-rs](https://github.com/zama-ai/tfhe-rs))  
-> **Source Version**: `a834a81e`  
+> **Source Version**: `c46b58f7`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-02T14:46:31.009Z  
+> **Timestamp**: 2026-11-05T11:08:36.374Z  
 > **Learning ID**: `learn-github-zama-ai-tfhe-rs`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zama-ai/tfhe-rs](https://github.com/zama-ai/tfhe-rs))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-02T14:46:30.071Z  
+> **Harvest Timestamp**: 2026-11-05T11:08:36.366Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: TFHE-rs: A Pure Rust implementation of the TFHE Scheme for Boolean and Integer Arithmetics Over Encrypted Data.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 1677 stars
+- **Stars / Engagement**: 1678 stars
 
 ---
 
@@ -1927,577 +1927,470 @@ public:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a834a81e` (2026-11-02)
-**Commit Message**: chore(bench): migrate zk benchmark to the spec
+### Incident Patch 1: `c46b58f7` (2026-11-05)
+**Commit Message**: chore(ci): setup tailscale ci to make slab work again (#4141)
 
-* chore(bench): move zk spec tag into the path for more readability
+* chore(zk): add itertools as dev-dependency
 
-* chore(bench): move zk pke bench to tfhe-benchmark crate
+* chore(ci): setup tailscale ci to make slab work again (#4141)
 
-* chore(bench): migrate tfhe-zk-pok to the spec
+---------
 
-* chore(ci): update ci around zk bench
+Co-authored-by: Theo Souchon <[REDACTED_EMAIL]>
 
-* chore(bench): rename a zkscheme into zkproofvariantkind for more clarity
-
-**File**: `.github/workflows/generate_svgs.yml` (modified, +5/-5)
+**File**: `.github/workflows/aws_tfhe_noise_checks.yml` (modified, +10/-0)
 ```diff
-@@ -156,14 +156,15 @@ jobs:
-   # -----------------------------------------------------------
-   # ZK benchmarks tables
-   # -----------------------------------------------------------
-+  # All three use the Rust extractor: the Python one cannot parse spec ids.
+@@ -31,10 +31,15 @@ jobs:
+       backend: aws
+       # We want an hpc7a more compute, will be faster
+       profile: bench
++    permissions:
++      contents: read
++      id-token: write # Needed to join the Slab tailnet via OIDC
+     secrets:
+       SLAB_ACTION_TOKEN: ${{ secrets.SLAB_ACTION_TOKEN }}
+       SLAB_BASE_URL: ${{ secrets.SLAB_BASE_URL }}
+       JOB_SECRET: ${{ secrets.JOB_SECRET }}
++      TS_SLAB_OAUTH_CLIENT_ID: ${{ secrets.TS_SLAB_OAUTH_CLIENT_ID }}
++      TS_SLAB_OAUTH_AUDIENCE: ${{ secrets.TS_SLAB_OAUTH_AUDIENCE }}
  
-   cpu-zk-server-latency-table:
-     name: generate_documentation_svgs/cpu-zk-server-latency-table
--    uses: ./.github/workflows/generate_svg_common.yml
-+    uses: ./.github/workflows/generate_svg_rust_common.yml
-     if: inputs.generate-cpu-svgs
+   noise-checks:
+     name: aws_tfhe_noise_checks/noise-checks
+@@ -82,10 +87,15 @@ jobs:
      with:
-       backend: cpu
--      hardware_name: hpc7a.96xlarge
-+      hardware_name: hpc8a.96xlarge
-       layer: integer
-       bench_subset: zk
-       pbs_kind: classical
-@@ -177,11 +178,11 @@ jobs:
+       runner-name: ${{ needs.setup-instance.outputs.runner-name }}
+       notification-context: noise-checks
++    permissions:
++      contents: read
++      id-token: write # Needed to join the Slab tailnet via OIDC
+     secrets:
+       SLAB_ACTION_TOKEN: ${{ secrets.SLAB_ACTION_TOKEN }}
+       SLAB_BASE_URL: ${{ secrets.SLAB_BASE_URL }}
+       JOB_SECRET: ${{ secrets.JOB_SECRET }}
+       SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
+       BOT_USERNAME: ${{ secrets.BOT_USERNAME }}
+       SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
++      TS_SLAB_OAUTH_CLIENT_ID: ${{ secrets.TS_SLAB_OAUTH_CLIENT_ID }}
++      TS_SLAB_OAUTH_AUDIENCE: ${{ secrets.TS_SLAB_OAUTH_AUDIENCE }}
+```
+
+**File**: `.github/workflows/benchmark_cpu.yml` (modified, +4/-0)
+```diff
+@@ -145,6 +145,8 @@ jobs:
+       params_type: ${{ inputs.params_type }}
+       precisions_set: ${{ inputs.precisions_set }}
+       additional_file_to_parse: ${{ needs.parse-inputs.outputs.additional_file_to_parse }}
++    permissions:
++      id-token: write # Needed to join the Slab tailnet via OIDC
+     secrets:
+       BOT_USERNAME: ${{ secrets.BOT_USERNAME }}
+       SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
+@@ -154,3 +156,5 @@ jobs:
+       SLAB_ACTION_TOKEN: ${{ secrets.SLAB_ACTION_TOKEN }}
+       SLAB_URL: ${{ secrets.SLAB_URL }}
+       SLAB_BASE_URL: ${{ secrets.SLAB_BASE_URL }}
++      TS_SLAB_OAUTH_CLIENT_ID: ${{ secrets.TS_SLAB_OAUTH_CLIENT_ID }}
++      TS_SLAB_OAUTH_AUDIENCE: ${{ secrets.TS_SLAB_OAUTH_AUDIENCE }}
+```
+
+**File**: `.github/workflows/benchmark_cpu_common.yml` (modified, +12/-0)
+```diff
+@@ -52,6 +52,10 @@ on:
+         required: true
+       SLACK_WEBHOOK:
+         required: true
++      TS_SLAB_OAUTH_CLIENT_ID:
++        required: true
++      TS_SLAB_OAUTH_AUDIENCE:
++        required: true
  
-   cpu-zk-server-throughput-table:
-     name: generate_documentation_svgs/cpu-zk-server-throughput-table
--    uses: ./.github/workflows/generate_svg_common.yml
-+    uses: ./.github/workflows/generate_svg_rust_common.yml
-     if: inputs.generate-cpu-svgs
+ env:
+   CARGO_TERM_COLOR: always
+@@ -134,10 +138,14 @@ jobs:
      with:
-       backend: cpu
--      hardware_name: hpc7a.96xlarge
-+      hardware_name: hpc8a.96xlarge
-       layer: integer
-       bench_subset: zk
-       pbs_kind: classical
-@@ -193,7 +194,6 @@ jobs:
-       DATA_EXTRACTOR_DATABASE_HOST: ${{ secrets.DATA_EXTRACTOR_DATABASE_HOST }}
-       DATA_EXTRACTOR_DATABASE_PASSWORD: ${{ secrets.DATA_EXTRACTOR_DATABASE_PASSWORD }}
+       backend: ${{ inputs.backend }}
+       profile: ${{ inputs.profile }}
++    permissions:
++      id-token: write # Needed to join the Slab tailnet via OIDC
+     secrets:
+       SLAB_ACTION_TOKEN: ${{ secrets.SLAB_ACTION_TOKEN }}
+       SLAB_BASE_URL: ${{ secrets.SLAB_BASE_URL }}
+       JOB_SECRET: ${{ secrets.JOB_SECRET }}
++      TS_SLAB_OAUTH_CLIENT_ID: ${{ secrets.TS_SLAB_OAUTH_CLIENT_ID }}
++      TS_SLAB_OAUTH_AUDIENCE: ${{ secrets.TS_SLAB_OAUTH_AUDIENCE }}
  
--  # Uses the Rust extractor: the Python one cannot parse spec ids.
-   cpu-zk-client-latency-table:
-     name: generate_documentation_svgs/cpu-zk-client-latency-table
-     uses: ./.github/workflows/generate_svg_rust_common.yml
+   integer-benchmarks:
+     name: benchmark_cpu_common/integer-benchmarks
+@@ -296,10 +304,14 @@ jobs:
+     with:
+       runner-name: ${{ needs.setup-instance.outputs.runner-name }}
+       notification-context: cpu-benchmarks
++    permissions:
++      id-token: write # Needed to join the Slab tailnet via OIDC
+     secrets:
+       SLAB_ACTION_TOKEN: ${{ secrets.SLAB_ACTION_TOKEN }}
+       SLAB_BASE_URL: ${{ secrets.SLAB_BASE_URL }}
+       JOB_SECRET: ${{ secrets.JOB_SECRET }}
+       SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
+       BOT_USERNAME: ${{ secrets.BOT_USERNAME }}
+       SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
++      TS_SLAB_OAUTH_CLIENT_ID: ${{ secrets.TS_SLAB_OAUTH_CLIENT_ID }}
++      TS_SLAB_OAUTH_AUDIENCE: ${{ secrets.TS_SLAB_OAUTH_AUDIENCE }}
 ```
 
-**File**: `Cargo.lock` (modified, +0/-1)
+**File**: `.github/workflows/benchmark_cpu_weekly.yml` (modified, +32/-0)
 ```diff
-@@ -3893,7 +3893,6 @@ dependencies = [
-  "ark-ff",
-  "ark-poly",
-  "bincode",
-- "criterion",
-  "getrandom 0.2.17",
-  "itertools 0.15.0",
-  "num-bigint 0.5.1",
+@@ -81,6 +81,8 @@ jobs:
+       command: integer,signed_integer, integer_compression
+       op_flavor: ${{ needs.prepare-inputs.outputs.op_flavor }}
+       precisions_set: ${{ needs.prepare-inputs.outputs.precisions_set }}
++    permissions:
++      id-token: write # Needed to join the Slab tailnet via OIDC
+     secrets:
+       BOT_USERNAME: ${{ secrets.BOT_USERNAME }}
+       SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
+@@ -90,6 +92,8 @@ jobs:
+       SLAB_ACTION_TOKEN: ${{ secrets.SLAB_ACTION_TOKEN }}
+       SLAB_URL: ${{ secrets.SLAB_URL }}
+       SLAB_BASE_URL: ${{ secrets.SLAB_BASE_URL }}
++      TS_SLAB_OAUTH_CLIENT_ID: ${{ secrets.TS_SLAB_OAUTH_CLIENT_ID }}
++      TS_SLAB_OAUTH_AUDIENCE: ${{ secrets.TS_SLAB_OAUTH_AUDIENCE }}
+ 
+   run-benchmarks-integer-zk-pke:
+     name: benchmark_cpu_weekly/run-benchmarks-integer-zk-pke
+@@ -99,6 +103,8 @@ jobs:
+     with:
+       command: integer_zk
+       additional_file_to_parse: pke_zk_crs_sizes.csv
++    permissions:
++      id-token: write # Needed to join the Slab tailnet via OIDC
+     secrets:
+       BOT_USERNAME: ${{ secrets.BOT_USERNAME }}
+       SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
+@@ -108,6 +114,8 @@ jobs:
+       SLAB_ACTION_TOKEN: ${{ secrets.SLAB_ACTION_TOKEN }}
+       SLAB_URL: ${{ secrets.SLAB_URL }}
+       SLAB_BASE_URL: ${{ secrets.SLAB_BASE_URL }}
++      TS_SLAB_OAUTH_CLIENT_ID: ${{ secrets.TS_SLAB_OAUTH_CLIENT_ID }}
++      TS_SLAB_OAUTH_AUDIENCE: ${{ secrets.TS_SLAB_OAUTH_AUDIENCE }}
+ 
+   run-benchmarks-hlapi-erc7984:
+     name: benchmark_cpu_weekly/run-benchmarks-hlapi-erc7984
+@@ -117,6 +125,8 @@ jobs:
+     with:
+       command: hlapi_erc7984
+       additional_file_to_parse: erc7984_pbs_count.csv
++    permissions:
++      id-token: write # Needed to join the Slab tailnet via OIDC
+     secrets:
+       BOT_USERNAME: ${{ secrets.BOT_USERNAME }}
+       SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
+@@ -126,6 +136,8 @@ jobs:
+       SLAB_ACTION_TOKEN: ${{ secrets.SLAB_ACTION_TOKEN }}
+       SLAB_URL: ${{ secrets.SLAB_URL }}
+       SLAB_BASE_URL: ${{ secrets.SLAB_BASE_URL }}
++      TS_SLAB_OAUTH_CLIENT_ID: ${{ secrets.TS_SLAB_OAUTH_CLIENT_ID }}
++      TS_SLAB_OAUTH_AUDIENCE: ${{ secrets.TS_SLAB_OAUTH_AUDIENCE }}
+ 
+   run-benchmarks-hlapi-dex:
+     name: benchmark_cpu_weekly/run-benchmarks-hlapi-dex
+@@ -135,6 +147,8 @@ jobs:
+     with:
+       command: hlapi_dex
+       additional_file_to_parse: dex_swap_request_update_dex_balance_pbs_count.csv,dex_swap_request_finalize_pbs_count.csv,dex_swap_claim_prepare_pbs_count.csv,dex_swap_claim_update_dex_balance_pbs_count.csv
++    permissions:
++      id-token: write # Needed to join the Slab tailnet via OIDC
+     secrets:
+       BOT_USERNAME: ${{ secrets.BOT_USERNAME }}
+       SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
+@@ -144,6 +158,8 @@ jobs:
+       SLAB_ACTION_TOKEN: ${{ secrets.SLAB_ACTION_TOKEN }}
+       SLAB_URL: ${{ secrets.SLAB_URL }}
+       SLAB_BASE_URL: ${{ secrets.SLAB_BASE_URL }}
++      TS_SLAB_OAUTH_CLIENT_ID: ${{ secrets.TS_SLAB_OAUTH_CLIENT_ID }}
++      TS_SLAB_OAUTH_AUDIENCE: ${{ secrets.TS_SLAB_OAUTH_AUDIENCE }}
+ 
+   run-benchmarks-core-crypto:
+     name: benchmark_cpu_weekly/run-benchmarks-core-crypto
+@@ -152,6 +168,8 @@ jobs:
+     uses: ./.github/workflows/benchmark_cpu_common.yml
+     with:
+       command: ks,pbs,pbs128,ks_pbs
++    permissions:
++      id-token: write # Needed to join the Slab tailnet via OIDC
+     secrets:
+       BOT_USERNAME: ${{ secrets.BOT_USERNAME }}
+       SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
+@@ -161,6 +179,8 @@ jobs:
+       SLAB_ACTION_TOKEN: ${{ secrets.SLAB_ACTION_TOKEN }}
+       SLAB_URL: ${{ secrets.SLAB_URL }}
+       SLAB_BASE_URL: ${{ secrets.SLAB_BASE_URL }}
++      TS_SLAB_OAUTH_CLIENT_ID: ${{ secrets.TS_SLAB_OAUTH_CLIENT_ID }}
++      TS_SLAB_OAUTH_AUDIENCE: ${{ secrets.TS_SLAB_OAUTH_AUDIENCE }}
+ 
+   run-benchmarks-shortint:
+     name: benchmark_cpu_weekly/run-benchmarks-shortint
+@@ -170,6 +190,8 @@ jobs:
+     with:
+       op_flavor: ${{ needs.prepare-inputs.outputs.op_flavor }}
+       command: shortint
++    permissions:
++      id-token: write # Needed to join the Slab tailnet via OIDC
+     secrets:
+       BOT_USERNAME: ${{ secrets.BOT_USERNAME }}
+       SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
+@@ -179,6 +201,8 @@ jobs:
+       SLAB_ACTION_TOKEN: ${{ secrets.SLAB_ACTION_TOKEN }}
+       SLAB_URL: ${{ secrets.SLAB_URL }}
+       SLAB_BASE_URL: ${{ secrets.SLAB_BASE_URL }}
++      TS_SLAB_OAUTH_CLIENT_ID: ${{ secrets.TS_SLAB_OAUTH_CLIENT_ID }}
++      TS_SLAB_OAUTH_AUDIENCE: ${{ secrets.TS_SLAB_OAUTH_AUDIENCE }}
+ 
+   run-benchmarks-boolean:
+     name: benchmark_cpu_weekly/run-benchmarks-boolean
+@@ -189,6 +213,8 @@ jobs:
+       command: boolean
+       additional_recipe: measure_boolean_key_sizes
+       additional_file_to_parse: boolean_key_sizes.csv
++    permissions:
++      id-token: write # Needed to join the Slab tailnet via OIDC
+     secrets:
+       BOT_USERNAME: ${{ secrets.BOT_USERNAME }}
+       SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
+@@ -198,6 +224,8 @@ jobs:
 ```
 
-**File**: `Makefile` (modified, +5/-3)
+**File**: `.github/workflows/benchmark_ct_key_sizes.yml` (modified, +8/-0)
 ```diff
-@@ -2372,14 +2372,16 @@ bench_hlapi_erc7984_hpu: install_rs_check_toolchain
- .PHONY: bench_tfhe_zk_pok # Run benchmarks for the tfhe_zk_pok crate
- bench_tfhe_zk_pok: install_rs_check_toolchain
- 	RUSTFLAGS="$(RUSTFLAGS)" \
--	cargo $(CARGO_RS_CHECK_TOOLCHAIN) bench -p tfhe-zk-pok --
-+	cargo $(CARGO_RS_CHECK_TOOLCHAIN) bench \
-+	--bench zk-pke-v1 --bench zk-pke-v2 \
-+	--features=zk-pok -p tfhe-benchmark --
+@@ -31,10 +31,14 @@ jobs:
+     with:
+       backend: aws
+       profile: cpu-big
++    permissions:
++      id-token: write # Needed to join the Slab tailnet via OIDC
+     secrets:
+       SLAB_ACTION_TOKEN: ${{ secrets.SLAB_ACTION_TOKEN }}
+       SLAB_BASE_URL: ${{ secrets.SLAB_BASE_URL }}
+       JOB_SECRET: ${{ secrets.JOB_SECRET }}
++      TS_SLAB_OAUTH_CLIENT_ID: ${{ secrets.TS_SLAB_OAUTH_CLIENT_ID }}
++      TS_SLAB_OAUTH_AUDIENCE: ${{ secrets.TS_SLAB_OAUTH_AUDIENCE }}
  
- .PHONY: bench_tfhe_zk_pok_gpu # Run benchmarks for the tfhe_zk_pok crate using GPU acceleration
- bench_tfhe_zk_pok_gpu: install_rs_check_toolchain
- 	RUSTFLAGS="$(RUSTFLAGS)" __TFHE_RS_BENCH_TYPE=$(BENCH_TYPE) \
- 	cargo $(CARGO_RS_CHECK_TOOLCHAIN) bench \
--	--package tfhe-zk-pok \
--	--features=gpu --profile release
-+	--bench zk-pke-v1 --bench zk-pke-v2 \
-+	--features=gpu-zk -p tfhe-benchmark --profile release
- 
- .PHONY: bench_hlapi_noise_squash # Run benchmarks for noise squash operation
- bench_hlapi_noise_squash: install_rs_check_toolchain
+   sizes-benchmarks:
+     name: Execute sizes client benchmarks
+@@ -134,10 +138,14 @@ jobs:
+     with:
+       runner-name: ${{ needs.setup-instance.outputs.runner-name }}
+       notification-context: sizes-benchmarks
++    permissions:
++      id-token: write # Needed to join the Slab tailnet via OIDC
+     secrets:
+       SLAB_ACTION_TOKEN: ${{ secrets.SLAB_ACTION_TOKEN }}
+       SLAB_BASE_URL: ${{ secrets.SLAB_BASE_URL }}
+       JOB_SECRET: ${{ secrets.JOB_SECRET }}
+       SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
+       BOT_USERNAME: ${{ secrets.BOT_USERNAME }}
+       SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
++      TS_SLAB_OAUTH_CLIENT_ID: ${{ secrets.TS_SLAB_OAUTH_CLIENT_ID }}
++      TS_SLAB_OAUTH_AUDIENCE: ${{ secrets.TS_SLAB_OAUTH_AUDIENCE }}
 ```
 
-**File**: `tfhe-benchmark/Cargo.toml` (modified, +12/-0)
+**File**: `.github/workflows/benchmark_documentation.yml` (modified, +36/-0)
 ```diff
-@@ -253,6 +253,18 @@ path = "benches/zk/msm.rs"
- harness = false
- required-features = ["zk-pok"]
+@@ -50,6 +50,8 @@ jobs:
+       op_flavor: fast_default
+       bench_type: both
+       precisions_set: documentation
++    permissions:
++      id-token: write # Needed to join the Slab tailnet via OIDC
+     secrets:
+       BOT_USERNAME: ${{ secrets.BOT_USERNAME }}
+       SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
+@@ -59,6 +61,8 @@ jobs:
+       SLAB_ACTION_TOKEN: ${{ secrets.SLAB_ACTION_TOKEN }}
+       SLAB_URL: ${{ secrets.SLAB_URL }}
+       SLAB_BASE_URL: ${{ secrets.SLAB_BASE_URL }}
++      TS_SLAB_OAUTH_CLIENT_ID: ${{ secrets.TS_SLAB_OAUTH_CLIENT_ID }}
++      TS_SLAB_OAUTH_AUDIENCE: ${{ secrets.TS_SLAB_OAUTH_AUDIENCE }}
  
-+[[bench]]
-+name = "zk-pke-v1"
-+path = "benches/zk/pke_v1.rs"
-+harness = false
-+required-features = ["zk-pok"]
-+
-+[[bench]]
-+name = "zk-pke-v2"
-+path = "benches/zk/pke_v2.rs"
-+harness = false
-+required-features = ["zk-pok"]
-+
- [[bin]]
- name = "boolean_key_sizes"
- path = "src/bin/boolean_key_sizes.rs"
+   run-benchmarks-cpu-zk-server:
+     name: benchmark_documentation/run-benchmarks-cpu-zk-server
+@@ -68,6 +72,8 @@ jobs:
+       command: integer_zk
+       op_flavor: default
+       bench_type: both
++    permissions:
++      id-token: write # Needed to join the Slab tailnet via OIDC
+     secrets:
+       BOT_USERNAME: ${{ secrets.BOT_USERNAME }}
+       SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
+@@ -77,13 +83,17 @@ jobs:
+       SLAB_ACTION_TOKEN: ${{ secrets.SLAB_ACTION_TOKEN }}
+       SLAB_URL: ${{ secrets.SLAB_URL }}
+       SLAB_BASE_URL: ${{ secrets.SLAB_BASE_URL }}
++      TS_SLAB_OAUTH_CLIENT_ID: ${{ secrets.TS_SLAB_OAUTH_CLIENT_ID }}
++      TS_SLAB_OAUTH_AUDIENCE: ${{ secrets.TS_SLAB_OAUTH_AUDIENCE }}
+ 
+   run-benchmarks-cpu-zk-client:
+     name: benchmark_documentation/run-benchmarks-cpu-zk-client
+     uses: ./.github/workflows/benchmark_wasm_client_common.yml
+     if: inputs.run-cpu-benchmarks
+     with:
+       browser: chrome
++    permissions:
++      id-token: write # Needed to join the Slab tailnet via OIDC
+     secrets:
+       BOT_USERNAME: ${{ secrets.BOT_USERNAME }}
+       SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
+@@ -93,6 +103,8 @@ jobs:
+       SLAB_ACTION_TOKEN: ${{ secrets.SLAB_ACTION_TOKEN }}
+       SLAB_URL: ${{ secrets.SLAB_URL }}
+       SLAB_BASE_URL: ${{ secrets.SLAB_BASE_URL }}
++      TS_SLAB_OAUTH_CLIENT_ID: ${{ secrets.TS_SLAB_OAUTH_CLIENT_ID }}
++      TS_SLAB_OAUTH_AUDIENCE: ${{ secrets.TS_SLAB_OAUTH_AUDIENCE }}
+ 
+   run-benchmarks-cpu-kvstore:
+     name: benchmark_documentation/run-benchmarks-cpu-kvstore
+@@ -103,6 +115,8 @@ jobs:
+       op_flavor: default
+       bench_type: latency
+       precisions_set: all
++    permissions:
++      id-token: write # Needed to join the Slab tailnet via OIDC
+     secrets:
+       BOT_USERNAME: ${{ secrets.BOT_USERNAME }}
+       SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
+@@ -112,6 +126,8 @@ jobs:
+       SLAB_ACTION_TOKEN: ${{ secrets.SLAB_ACTION_TOKEN }}
+       SLAB_URL: ${{ secrets.SLAB_URL }}
+       SLAB_BASE_URL: ${{ secrets.SLAB_BASE_URL }}
++      TS_SLAB_OAUTH_CLIENT_ID: ${{ secrets.TS_SLAB_OAUTH_CLIENT_ID }}
++      TS_SLAB_OAUTH_AUDIENCE: ${{ secrets.TS_SLAB_OAUTH_AUDIENCE }}
+ 
+   run-benchmarks-gpu-integer:
+     name: benchmark_documentation/run-benchmarks-gpu-integer
+@@ -126,6 +142,8 @@ jobs:
+       op_flavor: fast_default
+       bench_type: both
+       precisions_set: documentation
++    permissions:
++      id-token: write # Needed to join the Slab tailnet via OIDC
+     secrets:
+       BOT_USERNAME: ${{ secrets.BOT_USERNAME }}
+       SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
+@@ -135,6 +153,8 @@ jobs:
+       SLAB_ACTION_TOKEN: ${{ secrets.SLAB_ACTION_TOKEN }}
+       SLAB_URL: ${{ secrets.SLAB_URL }}
+       SLAB_BASE_URL: ${{ secrets.SLAB_BASE_URL }}
++      TS_SLAB_OAUTH_CLIENT_ID: ${{ secrets.TS_SLAB_OAUTH_CLIENT_ID }}
++      TS_SLAB_OAUTH_AUDIENCE: ${{ secrets.TS_SLAB_OAUTH_AUDIENCE }}
+ 
+   run-benchmarks-gpu-erc7984-multi-group:
+     name: benchmark_documentation/run-benchmarks-gpu-erc7984-multi-group
+@@ -148,6 +168,8 @@ jobs:
+       bench_type: throughput
+       params_type: classical + multi_bit
+       erc7984_filter: "::transfer::(whitepaper|no_cmux|overflow)"
++    permissions:
++      id-token: write # Needed to join the Slab tailnet via OIDC
+     secrets:
+       BOT_USERNAME: ${{ secrets.BOT_USERNAME }}
+       SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
+@@ -157,6 +179,8 @@ jobs:
+       SLAB_ACTION_TOKEN: ${{ secrets.SLAB_ACTION_TOKEN }}
+       SLAB_URL: ${{ secrets.SLAB_URL }}
+       SLAB_BASE_URL: ${{ secrets.SLAB_BASE_URL }}
++      TS_SLAB_OAUTH_CLIENT_ID: ${{ secrets.TS_SLAB_OAUTH_CLIENT_ID }}
++      TS_SLAB_OAUTH_AUDIENCE: ${{ secrets.TS_SLAB_OAUTH_AUDIENCE }}
+ 
+   run-benchmarks-hpu-integer:
+     name: benchmark_documentation/run-benchmarks-hpu-integer
+@@ -188,6 +212,8 @@ jobs:
+       command: pbs, ks_pbs
+       bench_type: latency
+       params_type: classical_documentation + multi_bit_documentation
++    permissions:
++      id-token: write # Needed to join the Slab tailnet via OIDC
+     secrets:
+       BOT_USERNAME: ${{ secrets.BOT_USERNAME }}
+       SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
+@@ -197,6 +223,8 @@ jobs:
+       SLAB_ACTION_TOKEN: ${{ secrets.SLAB_ACTION_TOKEN }}
+       SLAB_URL: ${{ secrets.SLAB_URL }}
+       SLAB_BASE_URL: ${{ secrets.SLAB_BASE_URL }}
++      TS_SLAB_OAUTH_CLIENT_ID: ${{ secrets.TS
 ```
 
-**File**: `tfhe-benchmark/benches/core_crypto/ks_bench.rs` (modified, +31/-15)
+**File**: `.github/workflows/benchmark_gpu.yml` (modified, +4/-0)
 ```diff
-@@ -19,7 +19,7 @@ fn keyswitch<Scalar: UnsignedTorus + CastInto<usize> + Serialize>(
-     criterion: &mut Criterion,
-     parameters: &[(String, BenchPbsParams<Scalar>)],
- ) {
--    let cc_bench = CoreCryptoBench::Keyswitch;
-+    let cc_bench = CoreCryptoBench::Keyswitch(None);
-     let bench_type = get_bench_type();
-     let mut bench_group = criterion.benchmark_group(cc_bench.to_string());
- 
-@@ -347,7 +347,8 @@ mod cuda {
-     };
-     use benchmark::BenchPbsParams;
-     use benchmark_spec::{
--        get_bench_type, BenchmarkSpec, BenchmarkType, CoreCryptoBench, CudaKeyswitchConfig,
-+        get_bench_type, BenchmarkSpec, BenchmarkType, CoreCryptoBench, KsIndices, KsVariant,
-+        PrecisionTag,
-     };
-     use criterion::{Criterion, Throughput};
-     use itertools::Itertools;
-@@ -365,14 +366,27 @@ mod cuda {
- 
-     use tfhe::core_crypto::prelude::*;
- 
-+    fn ks_variant(uses_gemm_ks: bool, uses_trivial_indices: bool) -> KsVariant {
-+        let indices = if uses_trivial_indices {
-+            KsIndices::TrivialIndices
-+        } else {
-+            KsIndices::ComplexIndices
-+        };
-+        if uses_gemm_ks {
-+            KsVariant::Gemm(indices)
-+        } else {
-+            KsVariant::Classical(indices)
-+        }
-+    }
-+
-     fn cuda_keyswitch_classical_and_gemm<
-         Scalar: UnsignedTorus + CastInto<usize> + CastFrom<u64> + Serialize,
-         KeyswitchScalar: UnsignedTorus + CastFrom<Scalar>,
-     >(
-         criterion: &mut Criterion,
-         parameters: &[(String, BenchPbsParams<Scalar>)],
-     ) {
--        let cc_bench = CoreCryptoBench::Keyswitch;
-+        let cc_bench = CoreCryptoBench::Keyswitch(None);
-         let bench_type = get_bench_type();
-         let mut bench_group = criterion.benchmark_group(cc_bench.to_string());
- 
-@@ -473,11 +487,15 @@ mod cuda {
-                     let h_indexes = [Scalar::ZERO];
-                     let cuda_indexes = CudaIndexes::new(&h_indexes, &streams, 0);
- 
--                    let ks_config = CudaKeyswitchConfig::new(ks_bits, None, None);
-+                    let uses_trivial_indices = true;
-+                    let uses_gemm_ks = false;
-                     let benchmark_spec = BenchmarkSpec::new_cuda_core_crypto(
--                        cc_bench,
-+                        CoreCryptoBench::Keyswitch(Some(ks_variant(
-+                            uses_gemm_ks,
-+                            uses_trivial_indices,
-+                        ))),
-                         name,
--                        Some(ks_config.into()),
-+                        Some(PrecisionTag::Bits(ks_bits).into()),
-                         bench_type,
-                     );
-                     let bench_id = benchmark_spec.to_string();
-@@ -490,9 +508,9 @@ mod cuda {
-                                     &mut output_ct_gpu,
-                                     &cuda_indexes.d_input,
-                                     &cuda_indexes.d_output,
--                                    true,
-+                                    uses_trivial_indices,
-                                     &streams,
--                                    false,
-+                                    uses_gemm_ks,
-                                 );
- 
-                                 black_box(&mut ct_gpu);
-@@ -515,15 +533,13 @@ mod cuda {
- 
-                     for uses_gemm_ks in [false, true] {
-                         for uses_trivial_indices in [false, true] {
--                            let ks_config = CudaKeyswitchConfig::new(
--                                ks_bits,
--                                Some(uses_gemm_ks),
--                                Some(uses_trivial_indices),
--                            );
-                             let benchmark_spec = BenchmarkSpec::new_cuda_core_crypto(
--                                cc_bench,
-+                                CoreCryptoBench::Keyswitch(Some(ks_variant(
-+                                    uses_gemm_ks,
-+                                    uses_trivial_indices,
-+                                ))),
-                                 name,
--                                Some(ks_config.into()),
-+                                Some(PrecisionTag::Bits(ks_bits).into()),
-                                 bench_type,
-                             );
-                             let bench_id = benchmark_spec.to_string();
+@@ -159,6 +159,8 @@ jobs:
+       params_type: ${{ inputs.params_type }}
+       precisions_set: ${{ inputs.precisions_set }}
+       additional_file_to_parse: ${{ needs.parse-inputs.outputs.additional_file_to_parse }}
++    permissions:
++      id-token: write # Needed to join the Slab tailnet via OIDC
+     secrets:
+       BOT_USERNAME: ${{ secrets.BOT_USERNAME }}
+       SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
+@@ -168,3 +170,5 @@ jobs:
+       SLAB_ACTION_TOKEN: ${{ secrets.SLAB_ACTION_TOKEN }}
+       SLAB_URL: ${{ secrets.SLAB_URL }}
+       SLAB_BASE_URL: ${{ secrets.SLAB_BASE_URL }}
++      TS_SLAB_OAUTH_CLIENT_ID: ${{ secrets.TS_SLAB_OAUTH_CLIENT_ID }}
++      TS_SLAB_OAUTH_AUDIENCE: ${{ secrets.TS_SLAB_OAUTH_AUDIENCE }}
 ```
 
-**File**: `tfhe-benchmark/benches/integer/zk_pke.rs` (modified, +52/-43)
+**File**: `.github/workflows/benchmark_gpu_common.yml` (modified, +12/-0)
 ```diff
-@@ -2,7 +2,7 @@ use benchmark::params_aliases::*;
- use benchmark::utilities::{throughput_num_threads, write_to_json, OperatorType};
- use benchmark_spec::{
-     get_bench_type, BenchmarkMetric, BenchmarkSpec, BenchmarkType, ComputeLoad, CsvResultWriter,
--    IntegerBench, ZkPkeBench, ZkPkeConfig, ZkScheme,
-+    IntegerBench, ZkPkeBench, ZkPkeConfig, ZkProofVariant, ZkProofVariantKind,
- };
- use criterion::{criterion_group, Criterion, Throughput};
- use rand::prelude::*;
-@@ -62,42 +62,37 @@ fn compute_load_config() -> Vec<ZkComputeLoad> {
-     conf
- }
+@@ -53,6 +53,10 @@ on:
+         required: true
+       SLACK_WEBHOOK:
+         required: true
++      TS_SLAB_OAUTH_CLIENT_ID:
++        required: true
++      TS_SLAB_OAUTH_AUDIENCE:
++        required: true
  
--fn zk_scheme(param_pke: CompactPublicKeyEncryptionParameters) -> ZkScheme {
-+fn zk_scheme(param_pke: CompactPublicKeyEncryptionParameters) -> ZkProofVariantKind {
-     match param_pke.zk_scheme {
--        SupportedCompactPkeZkScheme::V1 => ZkScheme::V1,
--        SupportedCompactPkeZkScheme::V2 => ZkScheme::V2,
-+        SupportedCompactPkeZkScheme::V1 => ZkProofVariantKind::V1,
-+        SupportedCompactPkeZkScheme::V2 => ZkProofVariantKind::V2,
-         SupportedCompactPkeZkScheme::ZkNotSupported => {
-             panic!("these benches need parameters supporting a zk scheme")
-         }
-     }
- }
+ env:
+   CARGO_TERM_COLOR: always
+@@ -135,10 +139,14 @@ jobs:
+     with:
+       backend: ${{ inputs.backend }}
+       profile: ${{ inputs.profile }}
++    permissions:
++      id-token: write # Needed to join the Slab tailnet via OIDC
+     secrets:
+       SLAB_ACTION_TOKEN: ${{ secrets.SLAB_ACTION_TOKEN }}
+       SLAB_BASE_URL: ${{ secrets.SLAB_BASE_URL }}
+       JOB_SECRET: ${{ secrets.JOB_SECRET }}
++      TS_SLAB_OAUTH_CLIENT_ID: ${{ secrets.TS_SLAB_OAUTH_CLIENT_ID }}
++      TS_SLAB_OAUTH_AUDIENCE: ${{ secrets.TS_SLAB_OAUTH_AUDIENCE }}
  
--/// The tag of anything measured on a proven list: all four axes are relevant.
--fn proven_list_tag(
--    bits: usize,
--    crs_size: usize,
--    compute_load: ZkComputeLoad,
--    scheme: ZkScheme,
--) -> ZkPkeConfig {
-+fn proof_variant(compute_load: ZkComputeLoad, scheme: ZkProofVariantKind) -> ZkProofVariant {
-+    ZkProofVariant::new(
-+        scheme,
-+        match compute_load {
-+            ZkComputeLoad::Proof => ComputeLoad::Proof,
-+            ZkComputeLoad::Verify => ComputeLoad::Verify,
-+        },
-+    )
-+}
-+
-+fn proven_list_tag(bits: usize, crs_size: usize) -> ZkPkeConfig {
-     ZkPkeConfig {
-         bits_packed: Some(bits as u32),
-         crs_bits: crs_size as u32,
--        compute_load: Some(match compute_load {
--            ZkComputeLoad::Proof => ComputeLoad::Proof,
--            ZkComputeLoad::Verify => ComputeLoad::Verify,
--        }),
--        scheme,
-     }
- }
- 
--/// A CRS is built before anything is packed into a proof or a load is picked,
--/// and its size depends on neither.
--fn crs_tag(crs_size: usize, scheme: ZkScheme) -> ZkPkeConfig {
-+fn crs_tag(crs_size: usize) -> ZkPkeConfig {
-     ZkPkeConfig {
-         bits_packed: None,
-         crs_bits: crs_size as u32,
--        compute_load: None,
--        scheme,
-     }
- }
- 
-@@ -185,9 +180,9 @@ fn cpu_pke_zk_proof(c: &mut Criterion) {
- 
-                 for compute_load in compute_load_config() {
-                     let spec = zk_spec(
--                        ZkPkeBench::Proof,
-+                        ZkPkeBench::Proof(proof_variant(compute_load, scheme)),
-                         param_name,
--                        proven_list_tag(*bits, crs_size, compute_load, scheme),
-+                        proven_list_tag(*bits, crs_size),
-                         get_bench_type(),
-                     );
-                     let bench_id = spec.to_string();
-@@ -298,9 +293,9 @@ fn cpu_pke_zk_verify(c: &mut Criterion, results_file: &Path) {
-             println!("CRS size: {}", crs_data.len());
- 
-             let crs_spec = zk_spec(
--                ZkPkeBench::Crs,
-+                ZkPkeBench::Crs(scheme),
-                 param_name,
--                crs_tag(crs_size, scheme),
-+                crs_tag(crs_size),
-                 BenchmarkMetric::KeySize,
-             );
- 
-@@ -318,11 +313,16 @@ fn cpu_pke_zk_verify(c: &mut Criterion, results_file: &Path) {
-                 let shortint_params: PBSParameters = param_fhe.into();
- 
-                 for compute_load in compute_load_config() {
--                    let config = proven_list_tag(*bits, crs_size, compute_load, scheme);
--                    let spec_verify =
--                        zk_spec(ZkPkeBench::Verify, param_name, config, get_bench_type());
-+                    let variant = proof_variant(compute_load, scheme);
-+                    let config = proven_list_tag(*bits, crs_size);
-+                    let spec_verify = zk_spec(
-+                        ZkPkeBench::Verify(variant),
-+                        param_name,
-+                        config,
-+                        get_bench_type(),
-+                    );
-                     let spec_verify_and_expand = zk_spec(
--                        ZkPkeBench::VerifyAndExpand,
-+                        ZkPkeBench::VerifyAndExpand(variant),
-                         param_name,
-                         config,
-                         get_bench_type(),
-@@ -350,7 +350,7 @@ fn cpu_pke_zk_verify(c: &mut Criterion, results_file: &Path) {
-                             );
- 
-                             let proven_list_spec = zk_spec(
--                                ZkPkeBench::ProvenList,
-+                                ZkPkeBench::ProvenList(variant),
-                                 param_name,
-                                 config,
-                                 BenchmarkMetric::KeySize,
-@@ -373
-```
-
-**File**: `tfhe-benchmark/benches/zk/pke_v1.rs` (renamed, +19/-9)
-```diff
-@@ -1,8 +1,10 @@
-+use benchmark_spec::zk::pke::{PkeBench, PkeProof, PkeVerify};
-+use benchmark_spec::Backend;
- use criterion::{criterion_group, criterion_main, Criterion};
- use rand::Rng;
- use tfhe_zk_pok::proofs::pke::{prove, verify};
- use tfhe_zk_pok::proofs::ComputeLoad;
--use utils::{write_to_json, PKEV1_TEST_PARAMS, PKEV2_TEST_PARAMS};
-+use utils::{pke_spec, spec_compute_load, write_pke_record, PKEV1_TEST_PARAMS, PKEV2_TEST_PARAMS};
- 
- #[path = "./utils.rs"]
- mod utils;
-@@ -24,11 +26,15 @@ fn bench_pke_v1_prove(c: &mut Criterion) {
-         (PKEV2_TEST_PARAMS, "PKEV2_TEST_PARAMS"),
-     ] {
-         let (public_param, public_commit, private_commit, metadata) = init_params_v1(params);
--        let effective_t = params.t >> 1;
--        let bits = (params.k as u32) * effective_t.ilog2();
- 
-         for load in [ComputeLoad::Proof, ComputeLoad::Verify] {
--            let bench_id = format!("{bench_name}::{param_name}_{bits}_bits_packed_{load}");
-+            let spec = pke_spec(
-+                PkeBench::Proof(PkeProof::V1(spec_compute_load(load))),
-+                Backend::Cpu,
-+                params,
-+                param_name,
-+            );
-+            let bench_id = spec.to_string();
- 
-             let seed: u128 = rng.gen();
- 
-@@ -44,7 +50,7 @@ fn bench_pke_v1_prove(c: &mut Criterion) {
-                 })
-             });
- 
--            write_to_json(&bench_id, params, param_name, bench_shortname);
-+            write_pke_record(&spec, params, bench_shortname);
-         }
-     }
- }
-@@ -64,11 +70,15 @@ fn bench_pke_v1_verify(c: &mut Criterion) {
-         (PKEV2_TEST_PARAMS, "PKEV2_TEST_PARAMS"),
-     ] {
-         let (public_param, public_commit, private_commit, metadata) = init_params_v1(params);
--        let effective_t = params.t >> 1;
--        let bits = (params.k as u32) * effective_t.ilog2();
- 
-         for load in [ComputeLoad::Proof, ComputeLoad::Verify] {
--            let bench_id = format!("{bench_name}::{param_name}_{bits}_bits_packed_{load}");
-+            let spec = pke_spec(
-+                PkeBench::Verify(PkeVerify::V1(spec_compute_load(load))),
-+                Backend::Cpu,
-+                params,
-+                param_name,
-+            );
-+            let bench_id = spec.to_string();
- 
-             let seed: u128 = rng.gen();
- 
-@@ -86,7 +96,7 @@ fn bench_pke_v1_verify(c: &mut Criterion) {
-                 })
-             });
- 
--            write_to_json(&bench_id, params, param_name, bench_shortname);
-+            write_pke_record(&spec, params, bench_shortname);
-         }
-     }
- }
-```
-
-**File**: `tfhe-benchmark/benches/zk/pke_v2.rs` (renamed, +62/-25)
-```diff
-@@ -1,12 +1,32 @@
-+use benchmark_spec::zk::pke::{PkeBench, PkeProof, PkeVerify, ZkBound, ZkPairingMode};
-+use benchmark_spec::Backend;
- use criterion::{criterion_group, criterion_main, Criterion};
- use rand::Rng;
- use tfhe_zk_pok::proofs::pke_v2::{prove, verify, Bound, VerificationPairingMode};
- use tfhe_zk_pok::proofs::ComputeLoad;
--use utils::{init_params_v2, write_to_json, PKEV1_TEST_PARAMS, PKEV2_TEST_PARAMS};
-+use utils::{
-+    init_params_v2, pke_spec, spec_compute_load, write_pke_record, PKEV1_TEST_PARAMS,
-+    PKEV2_TEST_PARAMS,
-+};
- 
- #[path = "./utils.rs"]
- mod utils;
- 
-+fn spec_bound(bound: Bound, load: ComputeLoad) -> ZkBound {
-+    let load = spec_compute_load(load);
-+    match bound {
-+        Bound::CS => ZkBound::Cs(load),
-+        Bound::GHL => ZkBound::Ghl(load),
-+    }
-+}
-+
-+fn spec_pairing_mode(mode: VerificationPairingMode, bound: ZkBound) -> ZkPairingMode {
-+    match mode {
-+        VerificationPairingMode::TwoSteps => ZkPairingMode::TwoSteps(bound),
-+        VerificationPairingMode::Batched => ZkPairingMode::Batched(bound),
-+    }
-+}
-+
- fn bench_pke_v2_prove(c: &mut Criterion) {
-     let bench_shortname = "pke_zk_proof_v2";
-     let bench_name = format!("tfhe_zk_pok::{bench_shortname}");
-@@ -26,10 +46,14 @@ fn bench_pke_v2_prove(c: &mut Criterion) {
-         [Bound::CS, Bound::GHL]
-     ) {
-         let (public_param, public_commit, private_commit, metadata) = init_params_v2(params, bound);
--        let effective_t = params.t >> 1;
--        let bits = (params.k as u32) * effective_t.ilog2();
- 
--        let bench_id = format!("{bench_name}::{param_name}_{bits}_bits_packed_{load}_{bound:?}");
-+        let spec = pke_spec(
-+            PkeBench::Proof(PkeProof::V2(spec_bound(bound, load))),
-+            Backend::Cpu,
-+            params,
-+            param_name,
-+        );
-+        let bench_id = spec.to_string();
-         println!("{bench_id}");
- 
-         let seed: u128 = rng.gen();
-@@ -46,7 +70,7 @@ fn bench_pke_v2_prove(c: &mut Criterion) {
-             })
-         });
- 
--        write_to_json(&bench_id, params, param_name, bench_shortname);
-+        write_pke_record(&spec, params, bench_shortname);
-     }
- }
- 
-@@ -73,12 +97,17 @@ fn bench_pke_v2_verify(c: &mut Criterion) {
-         ]
-     ) {
-         let (public_param, public_commit, private_commit, metadata) = init_params_v2(params, bound);
--        let effective_t = params.t >> 1;
--        let bits = (params.k as u32) * effective_t.ilog2();
- 
--        let bench_id = format!(
--            "{bench_name}::{param_name}_{bits}_bits_packed_{load}_{bound:?}_{pairing_mode:?}"
-+        let spec = pke_spec(
-+            PkeBench::Verify(PkeVerify::V2(spec_pairing_mode(
-+                pairing_mode,
-+                spec_bound(bound, load),
-+            ))),
-+            Backend::Cpu,
-+            params,
-+            param_name,
-         );
-+        let bench_id = spec.to_string();
-         println!("{bench_id}");
- 
-         let seed: u128 = rng.gen();
-@@ -103,11 +132,11 @@ fn bench_pke_v2_verify(c: &mut Criterion) {
-             })
-         });
- 
--        write_to_json(&bench_id, params, param_name, bench_shortname);
-+        write_pke_record(&spec, params, bench_shortname);
-     }
- }
- 
--#[cfg(feature = "gpu")]
-+#[cfg(feature = "gpu-zk")]
- mod gpu {
-     use super::*;
-     use tfhe_zk_pok::gpu::pke_v2 as gpu_pke_v2;
-@@ -132,11 +161,14 @@ mod gpu {
-         ) {
-             let (public_param, public_commit, private_commit, metadata) =
-                 init_params_v2(params, bound);
--            let effective_t = params.t >> 1;
--            let bits = (params.k as u32) * effective_t.ilog2();
- 
--            let bench_id =
--                format!("{bench_name}::{param_name}_{bits}_bits_packed_{load}_{bound:?}");
-+            let spec = pke_spec(
-+                PkeBench::Proof(PkeProof::V2(spec_bound(bound, load))),
-+                Backend::Cuda,
-+                params,
-+                param_name,
-+            );
-+            let bench_id = spec.to_string();
-             println!("{bench_id}");
- 
-             let seed: u128 = rng.gen();
-@@ -153,7 +185,7 @@ mod gpu {
-                 })
-             });
- 
--            write_to_json(&bench_id, params, param_name, bench_shortname);
-+            write_pke_record(&spec, params, bench_shortname);
-         }
-     }
- 
-@@ -181,12 +213,17 @@ mod gpu {
-         ) {
-             let (public_param, public_commit, private_commit, metadata) =
-                 init_params_v2(params, bound);
--            let effective_t = params.t >> 1;
--            let bits = (params.k as u32) * effective_t.ilog2();
- 
--            let bench_id = format!(
--                "{bench_name}::{param_name}_{bits}_bits_packed_{load}_{bound:?}_{pairing_mode:?}"
-+            let spec = pke_spec(
-+                PkeBench::Verify(PkeVerify::V2(spec_pairing_mode(
-+                    pairing_mode,
-+                    spec_bound(bound, load),
-+                ))),
-+                Backend::Cuda,
-+                params,
-+        
+   install-dependencies:
+     name: benchmark_gpu_common/install-dependencies
+@@ -366,10 +374,14 @@ jobs:
+     with:
+       runner-name: ${{ needs.setup-instance.outputs.runner-name }}
+       notification-context: cuda-${{ inputs.profile }}-benchmarks
++    permissions:
++      id-token: write # Needed to join the Slab tailnet via OIDC
+     secrets:
+       SLAB_ACTION_TOKEN: ${{ secrets.SLAB_ACTION_TOKEN }}
+       SLAB_BASE_URL: ${{ secrets.SLAB_BASE_URL }}
+       JOB_SECRET: ${{ secrets.JOB_SECRET }}
+       SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
+       BOT_USERNAME: ${{ secrets.BOT_USERNAME }}
+       SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
++      TS_SLAB_OAUTH_CLIENT_ID: ${{ secrets.TS_SLAB_OAUTH_CLIENT_ID }}
++      TS_SLAB_OAUTH_AUDIENCE: ${{ secrets.TS_SLAB_OAUTH_AUDIENCE }}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4142** (closed): Ns/feat/stream ciphertext list (@nsarlin-zama)
+- **PR #4141** (2026-11-05): chore(ci): setup tailscale ci to make slab work again (@SouchonTheo)
+- **PR #4135** (2026-11-05): chore(zk): add itertools as dev-dependency (@nsarlin-zama)
 - **PR #4125** (2026-10-30): chore: add some missing dependency tracking in dependabot (@IceTDrinker)
 - **PR #4124** (2026-10-30): chore: upgrade CODEOWNERS to always have reviews (@IceTDrinker)
 - **PR #4122** (2026-10-30): chore(zk): remove unused itertools dep (@nsarlin-zama)
-- **PR #4121** (2026-10-28): chore(tfhe-lints): bump dylint 6.3.0 (@nsarlin-zama)
-- **PR #4116** (2026-10-29): fix(gpu): fix cmux metadata (@guillermo-oyarzun)
-- **PR #4115** (2026-10-28): chore(deps-dev): bump fast-uri from 3.1.7 to 3.1.9 in /tfhe/web_wasm_parallel_tests (@dependabot[bot])
 
 ---
 
@@ -2517,36 +2410,37 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. bench): migrate zk benchmark to the spec
+## X. ci): setup tailscale ci to make slab work again (#4141)
 
 **RULE**:
-When implementing operations in `.github/workflows/generate_svgs.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zama-ai/tfhe-rs. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/aws_tfhe_noise_checks.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zama-ai/tfhe-rs. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a834a81e`: bench): migrate zk benchmark to the spec. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c46b58f7`: ci): setup tailscale ci to make slab work again (#4141). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/generate_svgs.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/aws_tfhe_noise_checks.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-  # All three use the Rust extractor: the Python one cannot parse spec ids.
-    uses: ./.github/workflows/generate_svg_rust_common.yml
-      hardware_name: hpc8a.96xlarge
-    uses: ./.github/workflows/generate_svg_rust_common.yml
-      hardware_name: hpc8a.96xlarge
+    permissions:
+      contents: read
+      id-token: write # Needed to join the Slab tailnet via OIDC
+      TS_SLAB_OAUTH_CLIENT_ID: ${{ secrets.TS_SLAB_OAUTH_CLIENT_ID }}
+      TS_SLAB_OAUTH_AUDIENCE: ${{ secrets.TS_SLAB_OAUTH_AUDIENCE }}
+    permissions:
+      contents: read
+      id-token: write # Needed to join the Slab tailnet via OIDC
+      TS_SLAB_OAUTH_CLIENT_ID: ${{ secrets.TS_SLAB_OAUTH_CLIENT_ID }}
+      TS_SLAB_OAUTH_AUDIENCE: ${{ secrets.TS_SLAB_OAUTH_AUDIENCE }}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-    uses: ./.github/workflows/generate_svg_common.yml
-      hardware_name: hpc7a.96xlarge
-    uses: ./.github/workflows/generate_svg_common.yml
-      hardware_name: hpc7a.96xlarge
-  # Uses the Rust extractor: the Python one cannot parse spec ids.
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a834a81e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c46b58f7` are properly handled with clean fallback behavior.
