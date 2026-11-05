@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-05T22:16:12.630Z",
-    "lastVerified": "2026-11-05T22:16:12.630Z",
+    "lastChecked": "2026-11-05T22:25:17.869Z",
+    "lastVerified": "2026-11-05T22:25:17.869Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -144,8 +144,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-05T21:54:39.556Z",
-    "lastVerified": "2026-11-05T21:54:39.556Z",
+    "lastChecked": "2026-11-05T22:25:13.474Z",
+    "lastVerified": "2026-11-05T22:25:13.474Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -1172,14 +1172,14 @@
     "officialUrl": "https://github.com/ProvableHQ/snarkOS",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-05T17:47:57.106Z",
-    "lastVerified": "2026-11-05T17:47:57.106Z",
+    "lastChecked": "2026-11-05T22:25:13.227Z",
+    "lastVerified": "2026-11-05T22:25:13.227Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aleo-labs-protocol-snarkos",
-    "contentHash": "fff181b9d9d0e9d11d1b859da55634a07c43d6a26aea80ed9b3694e5d524ddf0",
+    "contentHash": "df6a0285a8ae77348e74afe1256bd8491b8cde66589b51f981c1657583f75fd2",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -1755,9 +1755,9 @@
   "kubesphere-kubesphere": {
     "name": "kubesphere",
     "officialUrl": "https://github.com/kubesphere/kubesphere",
-    "lastChecked": "2026-11-05T06:36:27.203Z",
+    "lastChecked": "2026-11-05T22:25:05.921Z",
     "revisionIdentifier": "04a29b5c",
-    "lastVerified": "2026-11-05T06:36:27.203Z"
+    "lastVerified": "2026-11-05T22:25:05.921Z"
   },
   "zama-ai-tfhe-rs": {
     "name": "zama-ai/tfhe-rs",
@@ -1882,8 +1882,8 @@
     "officialUrl": "https://github.com/Michael-A-Kuykendall/shimmy",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-05T01:54:36.423Z",
-    "lastVerified": "2026-11-05T01:54:36.423Z",
+    "lastChecked": "2026-11-05T22:24:58.390Z",
+    "lastVerified": "2026-11-05T22:24:58.390Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-michael-a-kuykendall-shimmy",
@@ -5912,12 +5912,12 @@
     "revisionIdentifier": "dcd065d9"
   },
   "apple-foundationdb": {
-    "name": "apple/foundationdb",
+    "name": "foundationdb",
     "officialUrl": "https://github.com/apple/foundationdb",
     "sourceType": "github",
     "technology": "C++",
-    "lastChecked": "2026-11-05T05:53:18.896Z",
-    "lastVerified": "2026-11-05T05:53:18.896Z",
+    "lastChecked": "2026-11-05T22:25:10.946Z",
+    "lastVerified": "2026-11-05T22:25:10.946Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-apple-foundationdb",
@@ -5926,7 +5926,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "34019fa3"
   },
   "gotham-rs-gotham": {
     "name": "gotham",
@@ -9661,9 +9662,9 @@
   "turbopress-x-seo-auditing-software": {
     "name": "seo-auditing-software",
     "officialUrl": "https://github.com/TurboPress-X/seo-auditing-software",
-    "lastChecked": "2026-11-02T17:31:32.868Z",
+    "lastChecked": "2026-11-05T22:25:00.962Z",
     "revisionIdentifier": "68d4a606db",
-    "lastVerified": "2026-11-02T17:31:32.868Z"
+    "lastVerified": "2026-11-05T22:25:00.962Z"
   },
   "ivanvorobei-swiftui": {
     "name": "SwiftUI",
@@ -12243,14 +12244,14 @@
     "officialUrl": "https://github.com/electron/electron",
     "sourceType": "github",
     "technology": "C++",
-    "lastChecked": "2026-11-03T22:06:40.158Z",
-    "lastVerified": "2026-11-03T22:06:40.158Z",
+    "lastChecked": "2026-11-05T22:25:08.271Z",
+    "lastVerified": "2026-11-05T22:25:08.271Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-electron-electron",
-    "contentHash": "17138543b15c2e9b9738209635e4218bd104fcc13efdf6096459c5d0fa2e72db",
+    "contentHash": "22dad3dc65b3bb606143878a772a598a8f67ad0efcba695cb903980be0c26797",
     "promotedRulesCount": 1,
-    "recentFixesCount": 9,
+    "recentFixesCount": 8,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

@@ -7805,3 +7805,5 @@ Every entry in this ledger must capture:
 | `learn-github-falkordb-falkordb` | `https://github.com/FalkorDB/FalkorDB` | `5d98077a` | Multi-dimensional audit evidence | 2026-11-05T22:16:01.510Z |
 | `learn-github-tauri-apps-tauri` | `https://github.com/tauri-apps/tauri` | `2e23492a` | Multi-dimensional audit evidence | 2026-11-05T22:16:06.338Z |
 | `learn-github-nats-io-nats-server` | `https://github.com/nats-io/nats-server` | `8397827b` | Multi-dimensional audit evidence | 2026-11-05T22:16:10.008Z |
+| `learn-github-electron-electron` | `https://github.com/electron/electron` | `9ec6bc44` | Multi-dimensional audit evidence | 2026-11-05T22:25:11.230Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `9baea576` | Multi-dimensional audit evidence | 2026-11-05T22:25:15.264Z |

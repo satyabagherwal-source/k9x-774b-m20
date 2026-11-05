@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/provablehq-snarkos-learnings.md`  
 > **Source**: github ([https://github.com/ProvableHQ/snarkOS](https://github.com/ProvableHQ/snarkOS))  
-> **Source Version**: `c250f749`  
+> **Source Version**: `9baea576`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T17:47:57.311Z  
+> **Timestamp**: 2026-11-05T22:25:13.502Z  
 > **Learning ID**: `learn-github-aleo-labs-protocol-snarkos`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/provablehq-snarkos-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ProvableHQ/snarkOS](https://github.com/ProvableHQ/snarkOS))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T17:47:57.106Z  
+> **Harvest Timestamp**: 2026-11-05T22:25:13.227Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1987,170 +1987,173 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `cad420b6` (2026-11-05)
-**Commit Message**: Add a devnet entry that crashes all validators with SIGKILL
+### Incident Patch 1: `9baea576` (2026-11-05)
+**Commit Message**: Merge pull request #4636 from aleo-labs-protocol/snarkworld/gauntlet-report-artifacts
 
-Validators must be crash safe. The `chaotic-restart-all` entry stops them
-with SIGTERM, which lets each node save its proposal cache, so no CI job
-covers a crash of the whole committee.
+ci: attach interactive Gauntlet reports to stress-test runs
 
-Add a `crash` stop mode to `test_restart_all.sh`, and run it as the new
-`chaotic-crash-all` entry of `devnet-release`. The default mode keeps its
-behavior.
-
-`stop_nodes` sends SIGKILL. Bash logs a "Killed" line for each node, which
-is the evidence of the signal. The bare `wait` in `stop_nodes` discards the
-exit statuses, so the script cannot check them.
-
-A height check alone passes if nodes restart from genesis and sync, or if
-they fork. So crash mode also fails if a validator serves a lower height
-after a restart than it served before the crash, or if validators hold
-different blocks at the final height.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `.ci/test_restart_all.sh` (modified, +63/-2)
+**File**: `.github/workflows/stress-test.yml` (modified, +77/-10)
 ```diff
-@@ -20,13 +20,21 @@ network_id=$2
- restart_interval=$3
- final_height=$4
- num_restarts=$5
-+# How validators stop before each restart: `graceful` (SIGTERM) or `crash` (SIGKILL).
-+stop_mode=$6
+@@ -142,8 +142,8 @@ jobs:
+           : "${ROLE_ARN:?STRESS_ROLE_ARN must be configured}"
+           # AWS errors quote ARNs that differ from the secret, so mask the account too.
+           echo "::add-mask::$(cut -d: -f5 <<<"$ROLE_ARN")"
+-          # The Gauntlet host's gha-gauntlet user can only run the gate: enqueue, status
+-          # and cancel. Each connection pushes a key that lives 60 seconds, through the
++          # The Gauntlet host's gha-gauntlet user can only run the gate: enqueue, status,
++          # report and cancel. Each connection pushes a key that lives 60 seconds, through the
+           # Instance Connect Endpoint.
+           mkdir -p ~/.ssh && chmod 700 ~/.ssh
+           ssh-keygen -q -t ed25519 -N '' -f ~/.ssh/stress
+@@ -273,19 +273,86 @@ jobs:
+           fi
+           jq -r '[.content[] | select(.type == "text") | .text] | join("\n")' response.json > claude.md
  
- # Default values if not provided.
- : "${total_validators:=7}"
- : "${network_id:=0}"
- : "${restart_interval:=10}"
- : "${final_height:=100}"
- : "${num_restarts:=3}"
-+: "${stop_mode:=graceful}"
++      - name: Export the interactive report
++        id: export
++        if: steps.follow.outputs.handoff == 'false'
++        continue-on-error: true
++        env:
++          RUN_ID: ${{ steps.req.outputs.run_id }}
++        run: |
++          source "$RUNNER_TEMP/gate.sh"
++          mkdir -p report
++          gate report "$RUN_ID" html > report/report.html
++          gate report "$RUN_ID" json > report/report.json
++          jq -e --arg run "$RUN_ID" '.schema_version == 1 and .run.run_id == $run' report/report.json >/dev/null
++          # Artifacts bypass GitHub log masking.
++          python3 - <<'PY'
++          import ipaddress
++          import os
++          import re
++          from pathlib import Path
 +
-+if [[ "$stop_mode" != graceful && "$stop_mode" != crash ]]; then
-+  log "❌ Unknown stop mode '$stop_mode'."
-+  exit 1
-+fi
- 
- # The time that is used to determine the total timeout for the test.
- max_wait_per_block=10
-@@ -53,6 +61,48 @@ common_flags=(
-   "--dev-num-validators=$total_validators"
- )
- 
-+# Records the height of each validator in `crash_heights`, then kills all validators with SIGKILL.
-+function crash_validators() {
-+  local index
-+  for index in "${!PIDS[@]}"; do
-+    crash_heights[index]=$(get_block_height_by_port $((3030 + index)) "$network_name" 5)
-+    if ! is_integer "${crash_heights[index]}"; then
-+      log "❌ Test failed! Validator $index did not report its height before the crash."
-+      exit 1
-+    fi
-+  done
-+  log "Heights before the crash: ${crash_heights[*]}"
-+  stop_nodes
-+}
++          secrets = (os.environ["MANAGER"], os.environ["ROLE_ARN"], os.environ["ROLE_ARN"].split(":")[4])
++          cloud = re.compile(
++              r"\barn:|\bi-[0-9a-f]{8,17}\b|"
++              r"\b(?:[a-z0-9-]+\.)+(?:compute(?:-\d+)?\.amazonaws\.com(?:\.cn)?|compute\.internal|ec2\.internal)\b",
++              re.IGNORECASE)
++          addresses = re.compile(
++              r"(?<![\w:])(?:[a-f\d]{0,4}:){2,}[a-f\d:.]*(?:%[\w.-]+)?(?![\w:])|"
++              r"(?<![\w.])(?:\d{1,3}\.){3}\d{1,3}(?![\w.])", re.IGNORECASE)
++          for name in ("report.html", "report.json"):
++              content = Path("report", name).read_text()
++              blocked = any(value and value in content for value in secrets) or cloud.search(content)
++              for match in addresses.finditer(content):
++                  try:
++                      ipaddress.ip_address(match[0])
++                  except ValueError:
++                      continue
++                  blocked = True
++                  break
++              if blocked:
++                  raise SystemExit("::warning::Interactive report contains infrastructure identifiers; skipping upload.")
++          PY
 +
-+# Fails unless each validator serves at least the height it held before the crash.
-+function check_resumed_from_ledger() {
-+  local index resumed_height
-+  for index in "${!PIDS[@]}"; do
-+    resumed_height=$(get_block_height_by_port $((3030 + index)) "$network_name" 5)
-+    log "Validator $index resumed at height '$resumed_height' and held ${crash_heights[index]} before the crash"
-+    if ! is_integer "$resumed_height" || (( resumed_height < crash_heights[index] )); then
-+      log "❌ Test failed! Validator $index did not resume from its ledger."
-+      exit 1
-+    fi
-+  done
-+}
++      - name: Upload the report
++        id: artifact
++        if: steps.follow.outputs.handoff == 'false' && steps.export.outcome == 'success'
++        continue-on-error: true
++        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
++        with:
++          name: gauntlet-${{ steps.req.outputs.run_id }}
++          path: |
++            report/report.html
++            report/report.json
++          retention-days: 14
++          if-no-files-found: error
 +
-+# Fails unless all validators hold the same block at height $1.
-+function check_same_block() {
-+  local block_height=$1
-+  local index block_hash first_hash=""
-+  for index in "${!PIDS[@]}"; do
-+    block_hash=$(curl -s --max-time 5 "http://$localhost:$((3030 + index))/v2/$network_name/block/$block_height" | jq -r '.block_hash // empty' 2>/dev/null || true)
-+    log "Validator $index holds block '$block_hash' at height $block_height"
-+    : "${first_hash:=$block_hash}"
-+    if [[ -z "$block_hash" || "$block_hash" != "$first_hash" ]]; then
-+      log "❌ Test failed! Validators disagree on the block at height $block_height."
-+      exit 1
-+    fi
-+  done
-+}
+       - name: Close the check
+         if: steps.follow.outputs.handoff == 'false'
+         env:
+           CHECK_ID: ${{ steps.check.outputs.id }}
++          REPORT_URL: ${{ steps.artifact.outputs.artifact-url }}
+         run: |
+-          summary="$(jq -r .summary status.json)"
+-          if [[ -s claude.md ]]; then
+-            summary="$summary"$'\n\n### Compared with the last passing run (Claude)\n\n'"$(cat claude.md)"
+-          fi
+-          jq -n --arg summary "$summary" --slurpfile s status.json \
+-            '{status: "completed", conclusion: $s[0].conclusion, output: {title: $s[0].title, summary: $summary}}' \
+-            | gh api -X PATCH "repos/$GITHUB_REPOSITORY/check-runs/$CHECK_ID" --input - >/dev/null
+-          echo "$summary" >> "$GITHUB_STEP_SUMMARY"
++          python3 - <<'PY'
++          import json
++          import os
++          from pathlib import Path
 +
- # Start all validator nodes in the background
- for validator_index in $(seq 0 $((total_validators-1))); do
-   snarkos clean "--dev=$validator_index" "--network=$network_id"
-@@ -79,8 +129,12 @@ for iter in $(seq 1 "$num_restarts"); do
-   fi
-   log "All nodes reached restart height $restart_height. Restarting all validators (iteration $iter/$num_restarts)..."
- 
--  # Gracefully shut down all validators
--  stop_some_nodes "${!PIDS[@]}"
-+  if [[ "$stop_mode" == crash ]]; then
-+    crash_validators
-+  else
-+    # Gracefully shut down all validators
-+    stop_some_nodes "${!PIDS[@]}"
-+  fi
- 
-   # Wait briefly before restarting
-   sleep 5
-@@ -100,10 +154,17 @@ for iter in $(seq 1 "$num_restarts"); do
-     log "❌ Test failed! Not all nodes became ready within $max_restart_wait seconds after restart #$iter."
-     exit 1
-   fi
-+
-+  if [[ "$stop_mode" == crash ]]; then
-+    check_resumed_from_ledger
-+  fi
- done
- 
- # Wait for final height
- if wait_for_heights 0 "$total_validators" "$final_height" "$network_name" "$max_wait"; then
-+  if [[ "$stop_mode" == crash ]]; then
-+    check_same_block "$final_height"
-+  fi
-  log "SUCCESS!"
-   exit 0
- else
++          state = json.loads(Path("status.json").read_text())
++          summary = state["summary"]
++          if url := os.environ.get("REPORT_URL"):
++              summary = f"[Download interactive report + JSON]({url}) · Unzip and open report.html locally.\n\n" + summary
++          extra = Path("claude.md")
++          if extra.is_file():
++              note = "\n\n### Compared with the last passing run (Claude)\n\n" + extra.read_text()
++              if len((summary + note).encode()) <= 65535:
++                  summary += note
++          Path("check.json").write_text(json.dumps({"status": "completed", "conclusion": state["conclusion"],
++                                                  "output": {"title": state["title"], "summary": summary}}))
++          with open(os.environ["GITHUB_STEP_SUMMARY"], "a") as o
 ```
 
-**File**: `.github/workflows/ci.yml` (modified, +4/-0)
-```diff
-@@ -367,6 +367,10 @@ jobs:
-             timeout: 45
-             delay: true
-             runs: ./.ci/test_restart_all.sh
-+          - name: chaotic-crash-all
-+            timeout: 45
-+            delay: true
-+            runs: ./.ci/test_restart_all.sh 7 0 10 100 3 crash
-     name: devnet (${{ matrix.name }})
-     steps: *devnet-steps
- 
-```
+---
 
-**File**: `CI.md` (modified, +1/-0)
+### Incident Patch 2: `d3ff4bd8` (2026-11-05)
+**Commit Message**: ci: validate Gauntlet reports before upload
+
+**File**: `.github/workflows/stress-test.yml` (modified, +29/-1)
 ```diff
-@@ -52,6 +52,7 @@ marked "release" only on the third. The other jobs run on every event.
- | `devnet (upgrade)` | `cpu` | merge | 90 | `test_full_upgrade.sh`, `test_partial_upgrade.sh` |
- | `devnet (upgrade-required)` | `cpu` | release | 30 | `test_upgrade_required.sh` |
- | `devnet (chaotic-restart-all)` | `cpu` | release | 45 | `test_restart_all.sh`, with delays |
-+| `devnet (chaotic-crash-all)` | `cpu` | release | 45 | `test_restart_all.sh` with SIGKILL, with delays |
- | `machete` | hosted | all | | `cargo machete` |
- | `windows` | hosted (Windows) | merge | | `cargo check --examples --benches --tests` in `account`, `cli`, `display`, `node` |
- | `ci-ok` | hosted | all | | fails unless every job a pull request runs succeeded |
+@@ -285,12 +285,40 @@ jobs:
+           gate report "$RUN_ID" html > report/report.html
+           gate report "$RUN_ID" json > report/report.json
+           jq -e --arg run "$RUN_ID" '.schema_version == 1 and .run.run_id == $run' report/report.json >/dev/null
++          # Artifacts bypass GitHub log masking.
++          python3 - <<'PY'
++          import ipaddress
++          import os
++          import re
++          from pathlib import Path
++
++          secrets = (os.environ["MANAGER"], os.environ["ROLE_ARN"], os.environ["ROLE_ARN"].split(":")[4])
++          cloud = re.compile(
++              r"\barn:|\bi-[0-9a-f]{8,17}\b|"
++              r"\b(?:[a-z0-9-]+\.)+(?:compute(?:-\d+)?\.amazonaws\.com(?:\.cn)?|compute\.internal|ec2\.internal)\b",
++              re.IGNORECASE)
++          addresses = re.compile(
++              r"(?<![\w:])(?:[a-f\d]{0,4}:){2,}[a-f\d:.]*(?:%[\w.-]+)?(?![\w:])|"
++              r"(?<![\w.])(?:\d{1,3}\.){3}\d{1,3}(?![\w.])", re.IGNORECASE)
++          for name in ("report.html", "report.json"):
++              content = Path("report", name).read_text()
++              blocked = any(value and value in content for value in secrets) or cloud.search(content)
++              for match in addresses.finditer(content):
++                  try:
++                      ipaddress.ip_address(match[0])
++                  except ValueError:
++                      continue
++                  blocked = True
++                  break
++              if blocked:
++                  raise SystemExit("::warning::Interactive report contains infrastructure identifiers; skipping upload.")
++          PY
+ 
+       - name: Upload the report
+         id: artifact
+         if: steps.follow.outputs.handoff == 'false' && steps.export.outcome == 'success'
+         continue-on-error: true
+-        uses: actions/upload-artifact@v4
++        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+         with:
+           name: gauntlet-${{ steps.req.outputs.run_id }}
+           path: |
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4636** (2026-11-05): ci: attach interactive Gauntlet reports to stress-test runs (@snarkworld)
 - **PR #4635** (2026-11-05): Bump snarkVM to aleo-labs-protocol/snarkVM@6d0fb24ac (@aleo-labs-merge-bot[bot])
 - **PR #4634** (2026-11-05): Run the merge job twice a day (@cbeck88)
 - **PR #4632** (2026-11-05): Bump snarkVM to aleo-labs-protocol/snarkVM@2939d66dd (@aleo-labs-merge-bot[bot])
 - **PR #4631** (2026-11-05): Send only the load test options that are filled in (@cbeck88)
 - **PR #4630** (2026-11-05): Run the telemetry tests in CI (@cbeck88)
-- **PR #4629** (2026-11-05): Run the upgrade and restart-all devnets in a release-only CI job (@cbeck88)
 
 ---
 
@@ -2170,57 +2173,62 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Add a devnet entry that crashes all validators with SIGKILL
+## X. Merge pull request #4636 from aleo-labs-protocol/snarkworld/gauntlet-report-arti
 
 **RULE**:
-When implementing operations in `.ci/test_restart_all.sh`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/stress-test.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `cad420b6`: Add a devnet entry that crashes all validators with SIGKILL. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9baea576`: Merge pull request #4636 from aleo-labs-protocol/snarkworld/gauntlet-report-artifacts. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.ci/test_restart_all.sh`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/stress-test.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-# How validators stop before each restart: `graceful` (SIGTERM) or `crash` (SIGKILL).
-stop_mode=$6
-: "${stop_mode:=graceful}"
+          # The Gauntlet host's gha-gauntlet user can only run the gate: enqueue, status,
+          # report and cancel. Each connection pushes a key that lives 60 seconds, through the
+      - name: Export the interactive report
+        id: export
+        if: steps.follow.outputs.handoff == 'false'
+        continue-on-error: true
+        env:
+          RUN_ID: ${{ steps.req.outputs.run_id }}
+        run: |
+          source "$RUNNER_TEMP/gate.sh"
+          mkdir -p report
+          gate report "$RUN_ID" html > report/report.html
+          gate report "$RUN_ID" json > report/report.json
+          jq -e --arg run "$RUN_ID" '.schema_version == 1 and .run.run_id == $run' report/report.json >/dev/null
+          # Artifacts bypass GitHub log masking.
+          python3 - <<'PY'
+          import ipaddress
+          import os
+          import re
+          from pathlib import Path
 
-if [[ "$stop_mode" != graceful && "$stop_mode" != crash ]]; then
-  log "❌ Unknown stop mode '$stop_mode'."
-  exit 1
-fi
-# Records the height of each validator in `crash_heights`, then kills all validators with SIGKILL.
-function crash_validators() {
-  local index
-  for index in "${!PIDS[@]}"; do
-    crash_heights[index]=$(get_block_height_by_port $((3030 + index)) "$network_name" 5)
-    if ! is_integer "${crash_heights[index]}"; then
-      log "❌ Test failed! Validator $index did not report its height before the crash."
-      exit 1
-    fi
-  done
-  log "Heights before the crash: ${crash_heights[*]}"
-  stop_nodes
-}
-
-# Fails unless each validator serves at least the height it held before the crash.
-function check_resumed_from_ledger() {
-  local index resumed_height
-  for index in "${!PIDS[@]}"; do
-    resumed_height=$(get_block_height_by_port $((3030 + index)) "$network_name" 5)
-    log "Validator $index resumed at height '$resumed_height' and held ${crash_heights[index]} before the crash"
-    if ! is_integer "$resumed_height" || (( resumed_height < crash_heigh
+          secrets = (os.environ["MANAGER"], os.environ["ROLE_ARN"], os.environ["ROLE_ARN"].split(":")[4])
+          cloud = re.compile(
+              r"\barn:|\bi-[0-9a-f]{8,17}\b|"
+              r"\b(?:[a-z0-9-]+\.)+(?:compute(?:-\d+)?\.amazonaws\.com(?:\.cn)?|compute\.internal|ec2\.internal)\b",
+              re.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-  # Gracefully shut down all validators
-  stop_some_nodes "${!PIDS[@]}"
+          # The Gauntlet host's gha-gauntlet user can only run the gate: enqueue, status
+          # and cancel. Each connection pushes a key that lives 60 seconds, through the
+          summary="$(jq -r .summary status.json)"
+          if [[ -s claude.md ]]; then
+            summary="$summary"$'\n\n### Compared with the last passing run (Claude)\n\n'"$(cat claude.md)"
+          fi
+          jq -n --arg summary "$summary" --slurpfile s status.json \
+            '{status: "completed", conclusion: $s[0].conclusion, output: {title: $s[0].title, summary: $summary}}' \
+            | gh api -X PATCH "repos/$GITHUB_REPOSITORY/check-runs/$CHECK_ID" --input - >/dev/null
+          echo "$summary" >> "$GITHUB_STEP_SUMMARY"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `cad420b6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9baea576` are properly handled with clean fallback behavior.

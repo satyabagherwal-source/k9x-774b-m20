@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-05T22:16:10.014Z",
-  "total_cycles_completed": 7773,
-  "total_learnings_persisted": 7773,
-  "total_rules_promoted": 7415,
+  "last_updated": "2026-11-05T22:25:15.269Z",
+  "total_cycles_completed": 7775,
+  "total_learnings_persisted": 7775,
+  "total_rules_promoted": 7417,
   "history": [
-    {
-      "timestamp": "2026-11-05T09:36:22.449Z",
-      "repository": "intfloat/multilingual-e5-small",
-      "learningId": "learn-huggingface-intfloat-multilingual-e5-small",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T09:44:34.383Z",
-      "repository": "argmaxinc/whisperkit-coreml",
-      "learningId": "learn-huggingface-argmaxinc-whisperkit-coreml",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-05T09:44:34.852Z",
       "repository": "NVIDIA/cuda-rust",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-05T22:16:10.014Z",
       "repository": "nats-io/nats-server",
       "learningId": "learn-github-nats-io-nats-server",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T22:25:11.236Z",
+      "repository": "electron/electron",
+      "learningId": "learn-github-electron-electron",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T22:25:15.269Z",
+      "repository": "aleo-labs-protocol/snarkOS",
+      "learningId": "learn-github-aleo-labs-protocol-snarkos",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

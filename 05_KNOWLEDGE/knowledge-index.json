@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T22:16:09.915Z",
+  "last_updated": "2026-11-05T22:25:15.172Z",
   "total_verified_learnings": 1221,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -12162,11 +12162,16 @@
       "slug": "electron-electron",
       "platform": "github",
       "source_url": "https://github.com/electron/electron",
-      "source_version": "67528212",
-      "content_hash": "17138543b15c2e9b9738209635e4218bd104fcc13efdf6096459c5d0fa2e72db",
+      "source_version": "9ec6bc44",
+      "content_hash": "22dad3dc65b3bb606143878a772a598a8f67ad0efcba695cb903980be0c26797",
       "dossier_path": "07_PROJECT_LEARNING/electron-electron-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/electron-electron-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "extensions): crash when using chrome.system.storage (#55612)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2705,
           "title": "build: stop overriding node GN declare_args defaults in patch (#55042)",
@@ -12208,7 +12213,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T22:06:40.988Z",
+      "verified_at": "2026-11-05T22:25:11.113Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -73207,17 +73212,22 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
-      "slug": "aleo-labs-protocol-snarkos",
+      "slug": "provablehq-snarkos",
       "platform": "github",
-      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
-      "source_version": "c250f749",
-      "content_hash": "e8d49f67161e790727076b0df1ff1f3acc2dab0d9a5b5c6a60685507839b18cc",
-      "dossier_path": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
+      "source_url": "https://github.com/ProvableHQ/snarkOS",
+      "source_version": "9baea576",
+      "content_hash": "df6a0285a8ae77348e74afe1256bd8491b8cde66589b51f981c1657583f75fd2",
+      "dossier_path": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "Add a devnet entry that crashes all validators with SIGKILL",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Merge pull request #4636 from aleo-labs-protocol/snarkworld/gauntlet-report-arti",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -73346,7 +73356,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T19:38:11.581Z",
+      "verified_at": "2026-11-05T22:25:15.149Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
