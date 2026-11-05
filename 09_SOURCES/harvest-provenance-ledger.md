@@ -7823,3 +7823,4 @@ Every entry in this ledger must capture:
 | `learn-github-gauthierpiarrette-highball` | `https://github.com/gauthierpiarrette/highball` | `b4f4a5a6` | Multi-dimensional audit evidence | 2026-11-05T22:55:00.463Z |
 | `learn-huggingface-pyannote-speaker-diarization-3-1` | `https://huggingface.co/pyannote/speaker-diarization-3.1` | `hf-pyannot` | Multi-dimensional audit evidence | 2026-11-05T22:55:01.950Z |
 | `learn-github-citusdata-citus` | `https://github.com/citusdata/citus` | `e0ad46db` | Multi-dimensional audit evidence | 2026-11-05T22:55:05.899Z |
+| `learn-github-starrocks-starrocks` | `https://github.com/StarRocks/starrocks` | `5366ee35` | Multi-dimensional audit evidence | 2026-11-05T23:02:12.950Z |

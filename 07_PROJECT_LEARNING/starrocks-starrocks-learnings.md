@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/starrocks-starrocks-learnings.md`  
 > **Source**: github ([https://github.com/StarRocks/starrocks](https://github.com/StarRocks/starrocks))  
-> **Source Version**: `d0391e8c`  
+> **Source Version**: `5366ee35`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T06:28:57.475Z  
+> **Timestamp**: 2026-11-05T23:02:11.713Z  
 > **Learning ID**: `learn-github-starrocks-starrocks`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/starrocks-starrocks-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/StarRocks/starrocks](https://github.com/StarRocks/starrocks))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T06:28:57.259Z  
+> **Harvest Timestamp**: 2026-11-05T23:02:10.684Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The world's fastest open query engine for sub-second analytics both on and off the data lakehouse. With the flexibility to support nearly any scenario, StarRocks provides best-in-class performance for multi-dimensional analytics, real-time analytics, and ad-hoc queries. A Linux Foundation project.
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 12239 stars
+- **Stars / Engagement**: 12241 stars
 
 ---
 
@@ -1818,517 +1818,301 @@ public:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `dfbaec3e` (2026-11-05)
-**Commit Message**: [UT] Split the range sync MV reshard case so it fits the case timeout (#81416)
+### Incident Patch 1: `b8ae8cbe` (2026-11-05)
+**Commit Message**: [BugFix][RB-225] Fix Iceberg one-sided stats bounds, orphan files on a failed build, and wrong MAX with tiny batches (#82508)
+
+**File**: `be/src/connector/hive/scanner/hdfs_scanner.cpp` (modified, +1/-0)
+```diff
+@@ -72,6 +72,7 @@ Status HdfsScanner::_build_scanner_context() {
+     ctx.format_scan_context.is_first_split = false;
+     ctx.format_scan_context.first_row_id.reset();
+     ctx.format_scan_context.min_max_values.clear();
++    ctx.format_scan_context.min_max_value_cursors.clear();
+     ctx.format_scan_context.extended_column_exprs.clear();
+     ctx.format_scan_context.predicate_tree = nullptr;
+     ctx.format_scan_context.runtime_filter_scan_range_pruner = nullptr;
+```
+
+**File**: `be/src/formats/parquet/group_reader.cpp` (modified, +6/-2)
+```diff
+@@ -313,9 +313,13 @@ StatusOr<bool> GroupReader::_evaluate_compound_predicates(const Range<uint64_t>&
+ 
+     // Append side columns to active_chunk so compound conjuncts referencing
+     // partition / not-existed / extended slots can be evaluated correctly.
++    // get_next() appends them again for the output, so this evaluation-only
++    // copy must not consume the file min/max values the output still has to emit.
+     if (state.active_chunk->num_rows() > 0) {
+-        RETURN_IF_ERROR(
+-                _param.scan_ctx->append_side_columns_to_chunk(&state.active_chunk, state.active_chunk->num_rows()));
++        auto saved_min_max_value_cursors = _param.scan_ctx->min_max_value_cursors;
++        Status st = _param.scan_ctx->append_side_columns_to_chunk(&state.active_chunk, state.active_chunk->num_rows());
++        _param.scan_ctx->min_max_value_cursors = std::move(saved_min_max_value_cursors);
++        RETURN_IF_ERROR(st);
+     }
+ 
+     // Finalize all active columns to logical form before compound conjunct eval.
+```
+
+**File**: `be/src/formats/scan_context.cpp` (modified, +19/-5)
+```diff
+@@ -312,12 +312,22 @@ MutableColumnPtr FormatScanContext::create_min_max_value_column(SlotDescriptor*
+     if (!is_first_split) {
+         std::reverse(data.begin(), data.end());
+     }
+-    for (int i = 0; i < data.size() && row_count > 0; i++) {
++    // A batch too small to hold every value (chunk_size <= 2, or a tiny row group) continues where the previous
++    // small batch stopped, so consecutive small batches still emit null/min/max all: always starting over from the
++    // first value would never emit the last one, e.g. the max.
++    size_t start = 0;
++    if (!data.empty() && row_count < data.size()) {
++        size_t& cursor = min_max_value_cursors[slot_desc->id()];
++        start = cursor % data.size();
++        cursor += row_count;
++    }
++    for (size_t i = 0; i < data.size() && row_count > 0; i++) {
+         row_count -= 1;
+-        if (data[i].is_null()) {
++        const Datum& datum = data[(start + i) % data.size()];
++        if (datum.is_null()) {
+             col->append_nulls(1);
+         } else {
+-            col->append_datum(data[i]);
++            col->append_datum(datum);
+         }
+     }
+     if (row_count > 0) {
+@@ -381,9 +391,13 @@ Status FormatScanContext::evaluate_all_predicates(ChunkPtr* chunk) {
+ StatusOr<bool> FormatScanContext::should_skip_by_evaluating_not_existed_slots() {
+     if (not_existed_slots.size() == 0) return false;
+ 
+-    // build chunk for evaluation.
++    // build chunk for evaluation. It is thrown away, so it must not consume min/max values the output batches still
++    // have to emit.
++    auto saved_min_max_value_cursors = min_max_value_cursors;
+     ChunkPtr chunk = std::make_shared<Chunk>();
+-    RETURN_IF_ERROR(append_or_update_not_existed_columns_to_chunk(&chunk, 1));
++    Status st = append_or_update_not_existed_columns_to_chunk(&chunk, 1);
++    min_max_value_cursors = std::move(saved_min_max_value_cursors);
++    RETURN_IF_ERROR(st);
+     // do evaluation.
+     {
+         SCOPED_RAW_TIMER(&stats->expr_filter_ns);
+```
+
+**File**: `be/src/formats/scan_context.h` (modified, +2/-0)
+```diff
+@@ -286,6 +286,8 @@ struct FormatScanContext {
+     int64_t scan_range_length = std::numeric_limits<int64_t>::max();
+     int32_t scan_range_id = -1;
+     std::map<int32_t, TExprMinMaxValue> min_max_values;
++    // Per slot, how many values of its [null?, min, max] the batches too small to hold them all have emitted.
++    std::unordered_map<int32_t, size_t> min_max_value_cursors;
+     std::map<int32_t, TExpr> extended_column_exprs;
+     std::optional<int64_t> first_row_id;
+     int64_t file_record_count = 0;
+```
+
+**File**: `be/test/connector/hive/scanner/hdfs_scanner_test.cpp` (modified, +37/-0)
+```diff
+@@ -661,6 +661,43 @@ TEST_F(HdfsScannerTest, TestCreateMinMaxValueColumnForDatetimeSupportsNegativeMi
+     ASSERT_EQ("[1969-12-31 23:59:59.999999, 1970-01-01 00:00:00]", col->debug_string());
+ }
+ 
++// Batches smaller than [null, min, max] (chunk_size <= 2) still emit every value across consecutive batches,
++// so MIN/MAX over a file whose other columns are read see the max too.
++TEST_F(HdfsScannerTest, TestCreateMinMaxValueColumnSpreadsValuesOverSmallBatches) {
++    SlotDesc descs[] = {{"c1", TYPE_INT_DESC}, {""}};
++    auto* tuple_desc = _create_tuple_desc(descs);
++    SlotDescriptor* slot = tuple_desc->slots()[0];
++
++    TExprMinMaxValue min_max_value;
++    min_max_value.__set_type(TExprNodeType::INT_LITERAL);
++    min_max_value.__set_has_null(true);
++    min_max_value.__set_all_null(false);
++    min_max_value.__set_min_int_value(1);
++    min_max_value.__set_max_int_value(9);
++
++    HdfsScannerContext ctx;
++    ctx.format_scan_context.is_first_split = true;
++    auto& fsc = ctx.format_scan_context;
++    // The file-open probe on the not-existed slots builds a 1-row chunk it throws away: it consumes no value.
++    FormatScannerStats stats;
++    fsc.stats = &stats;
++    fsc.options.use_min_max_opt = true;
++    fsc.not_existed_slots.push_back(slot);
++    fsc.min_max_values[slot->id()] = min_max_value;
++    ASSERT_FALSE(fsc.should_skip_by_evaluating_not_existed_slots().value());
++    ASSERT_EQ("[NULL]", fsc.create_min_max_value_column(slot, min_max_value, 1)->debug_string());
++    ASSERT_EQ("[1]", fsc.create_min_max_value_column(slot, min_max_value, 1)->debug_string());
++    ASSERT_EQ("[9]", fsc.create_min_max_value_column(slot, min_max_value, 1)->debug_string());
++
++    HdfsScannerContext ctx2;
++    ctx2.format_scan_context.is_first_split = true;
++    auto& fsc2 = ctx2.format_scan_context;
++    ASSERT_EQ("[NULL, 1]", fsc2.create_min_max_value_column(slot, min_max_value, 2)->debug_string());
++    ASSERT_EQ("[9, NULL]", fsc2.create_min_max_value_column(slot, min_max_value, 2)->debug_string());
++    // A batch that holds every value is unchanged: null/min/max first, then the min.
++    ASSERT_EQ("[NULL, 1, 9, 1]", fsc2.create_min_max_value_column(slot, min_max_value, 4)->debug_string());
++}
++
+ // ========================= ORC SCANNER ============================
+ 
+ static TTypeDesc create_primitive_type_desc(TPrimitiveType::type type) {
+```
+
+**File**: `fe/fe-core/src/main/java/com/starrocks/connector/iceberg/IcebergMetadata.java` (modified, +5/-5)
+```diff
+@@ -3366,11 +3366,6 @@ private void commitDataOperation(Transaction transaction, org.apache.iceberg.Tab
+             batchWrite.toBranch(branch);
+         }
+ 
+-        PartitionSpec partitionSpec = nativeTbl.spec();
+-        for (TIcebergDataFile dataFile : dataFiles) {
+-            batchWrite.addFile(buildDataFile(dataFile, partitionSpec, nativeTbl));
+-        }
+-
+         if (isRewrite && extra != null) {
+             ((IcebergSinkExtra) extra).getScannedDataFiles().forEach(batchWrite::deleteFile);
+             ((IcebergSinkExtra) extra).getAppliedDeleteFiles().forEach(batchWrite::deleteFile);
+@@ -3400,7 +3395,12 @@ private void commitDataOperation(Transaction transaction, org.apache.iceberg.Tab
+         }
+ 
+         try {
++            // Build the files inside commitWithCleanup so a rejected entry deletes the BE-written files.
+             commitWithCleanup(() -> {
++                PartitionSpec partitionSpec = nativeTbl.spec();
++                for (TIcebergDataFile dataFile : dataFiles) {
++                    batchWrite.addFile(buildDataFile(dataFile, partitionSpec, nativeTbl));
++                }
+                 batchWrite.commit();
+                 transaction.commitTransaction();
+             }, () -> invalidateCacheAfterCommit(dbName, tableName), dataFiles, dbName, tableName);
+```
+
+**File**: `fe/fe-core/src/main/java/com/starrocks/connector/iceberg/cost/IcebergFileStats.java` (modified, +22/-10)
+```diff
+@@ -46,7 +46,10 @@ public class IcebergFileStats {
+     private Map<Integer, Object> maxValues;
+     private Map<Integer, Long> nullCounts;
+     private Map<Integer, Long> columnSizes;
+-    private Set<Integer> corruptedStats;
++    // Columns whose lower (upper) bound is unknown: a counted file has rows for them but no lower (upper) bound.
++    // Tracked per side, so a file missing only one bound keeps the other side usable.
++    private Set<Integer> corruptedMinStats;
++    private Set<Integer> corruptedMaxStats;
+     private boolean hasValidColumnMetrics;
+     private Map<Integer, Long> columnSizeRecordCounts;
+ 
+@@ -70,16 +73,13 @@ public IcebergFileStats(
+             this.maxValues = null;
+             this.nullCounts = null;
+             this.columnSizes = null;
+-            corruptedStats = null;
++            corruptedMinStats = null;
++            corruptedMaxStats = null;
+         } else {
+             this.minValues = new HashMap<>(minValues);
+             this.maxValues = new HashMap<>(maxValues);
+-            // we are assuming if minValues is not present, max will be not be present either.
+-            this.corruptedStats = nonPartitionPrimitiveColumns.stream()
+-                    .map(Types.NestedField::fieldId)
+-                    .filter(id -> !minValues.containsKey(id) &&
+-                            (!nullCounts.containsKey(id) || nullCounts.get(id) != recordCount))
+-                    .collect(toSet());
++            this.corruptedMinStats = missingBounds(nonPartitionPrimitiveColumns, minValues, nullCounts, recordCount);
++            this.corruptedMaxStats = missingBounds(nonPartitionPrimitiveColumns, maxValues, nullCounts, recordCount);
+             this.nullCounts = new HashMap<>(nullCounts);
+             this.columnSizes = columnSizes != null ? new HashMap<>(columnSizes) : new HashMap<>();
+             this.columnSizeRecordCounts = new HashMap<>();
+@@ -92,6 +92,16 @@ public IcebergFileStats(
+         }
+     }
+ 
++    // A bound may be absent only when every value of the column in the file is null.
++    private static Set<Integer> missingBounds(List<Types.NestedField> columns, Map<Integer, Object> bounds,
++                                              Map<Integer, Long> nullCounts, long recordCount) {
++        return columns.stream()
++                .map(Types.NestedField::fieldId)
++                .filter(id -> !bounds.containsKey(id) &&
++                        (!nullCounts.containsKey(id) || nullCounts.get(id) != recordCount))
++                .collect(toSet());
++    }
++
+     public IcebergFileStats(long recordCount) {
+         this.recordCount = recordCount;
+     }
+@@ -157,8 +167,9 @@ public Map<Integer, Long> getColumnSizes() {
+         return columnSizes;
+     }
+ 
+-    public Set<Integer> getCorruptedStats() {
+-        return corruptedStats;
++    // The corrupted set of the side `bounds` belongs to (getMinValues() or getMaxValues()).
++    public Set<Integer> getCorruptedStats(Map<Integer, Object> bounds) {
++        return bounds == maxValues ? corruptedMaxStats : corruptedMinStats;
+     }
+ 
+     public boolean hasValidColumnMetrics() {
+@@ -205,6 +216,7 @@ public void updateStats(Map<Integer, Object> current,
+             hasValidColumnMetrics = false;
+             return;
+         }
++        Set<Integer> corruptedStats = getCorruptedStats(current);
+         for (Types.NestedField column : nonPartitionPrimitiveColumns) {
+             int id = column.fieldId();
+ 
+```
+
+**File**: `fe/fe-core/src/main/java/com/starrocks/connector/iceberg/cost/IcebergStatisticProvider.java` (modified, +3/-2)
+```diff
+@@ -462,16 +462,17 @@ private void updatePartitionedStats(
+             return;
+         }
+ 
++        Set<Integer> corruptedStats = icebergFileStats.getCorruptedStats(current);
+         for (PartitionField field : partitionFields) {
+             int id = field.sourceId();
+-            if (icebergFileStats.getCorruptedStats().contains(id)) {
++            if (corruptedStats.contains(id)) {
+                 continue;
+             }
+ 
+             Object newValue = newStats.get(id);
+             if (newValue == null) {
+                 current.remove(id);
+-                icebergFileStats.getCorruptedStats().add(id);
++                corruptedStats.add(id);
+                 continue;
+             }
+ 
+```
+
+---
+
+### Incident Patch 2: `5b00c887` (2026-11-05)
+**Commit Message**: [UT] Let BE UT suites that rely on another suite's global setup run alone (#82525)
 
 Signed-off-by: Hyper-FF <[REDACTED_EMAIL]>
 Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `test/sql/test_range_orderby/R/test_range_sync_mv_reshard.sql` (modified, +115/-10)
+**File**: `be/test/column/CMakeLists.txt` (modified, +2/-2)
 ```diff
-@@ -1,13 +1,15 @@
- -- name: test_range_sync_mv_reshard @cloud @sequential
- -- Test Point: Build on genuinely shared split files, then split/unshare/merge an aggregate MV with independent keys.
- -- Method: Compare base, rewritten and direct sync-index data; assert FINISHED jobs and real layouts.
---- Scope: Shared-data range synchronous MV backfill, double writes and maintenance.
-+-- Scope: Shared-data range synchronous MV backfill, double writes and maintenance for SUM/COUNT/MIN/MAX/AVG MVs.
-+-- The sketch MVs run the same flow in test_range_sync_mv_reshard_sketch: one case holding all seven ran within
-+-- seconds of the 150-second case timeout.
+@@ -96,8 +96,8 @@ set(COLUMN_TEST_LINK_LIBS
+ add_library(starrocks_column_test_objs OBJECT ${COLUMN_TEST_FILES})
+ target_link_libraries(starrocks_column_test_objs PRIVATE StarRocksPCH)
+ set_target_properties(starrocks_column_test_objs PROPERTIES COMPILE_FLAGS "-fno-access-control")
+-add_executable(column_test $<TARGET_OBJECTS:starrocks_column_test_objs>)
+-target_link_libraries(column_test ${COLUMN_TEST_LINK_LIBS} gtest_main)
++add_executable(column_test column_test_main.cpp $<TARGET_OBJECTS:starrocks_column_test_objs>)
++target_link_libraries(column_test ${COLUMN_TEST_LINK_LIBS})
  
- CREATE DATABASE db_${uuid0};
- 
- USE db_${uuid0};
- 
--shell: exec python3 -c 'exec('"'"'import os,signal\nsignal.alarm(5)\ndirectory=\'"'"'/tmp/range_sync_mv_test_range_sync_mv_reshard_${uuid0}\'"'"'\nos.mkdir(directory,0o700)\nhelper_source=\'"'"'import concurrent.futures\\nimport contextlib\\nimport ctypes\\nimport io\\nimport json\\nimport os\\nfrom pathlib import Path\\nimport signal\\nimport subprocess\\nimport sys\\nimport time\\nfrom urllib.parse import urljoin, urlparse\\ndb = "db_${uuid0}"\\ncfg = None\\nconn = None\\nstage_deadline = 0\\ndef remaining():\\n    seconds = stage_deadline - time.monotonic()\\n    assert seconds > 0, "total stage deadline expired"\\n    return seconds\\ndef connection(database=db):\\n    return pymysql.connect(host=cfg.mysql_host, port=int(cfg.mysql_port), user=cfg.mysql_user,\\n                           password=cfg.mysql_password, database=database, autocommit=True,\\n                           connect_timeout=min(5, remaining()), read_timeout=min(15, remaining()),\\n                           write_timeout=min(15, remaining()))\\ndef q(sql, c=None):\\n    c = conn if c is None else c\\n    c._read_timeout = min(15, remaining())\\n    c._write_timeout = min(15, remaining())\\n    with c.cursor() as cursor:\\n        cursor.execute(sql)\\n        return cursor.fetchall()\\ndef records(sql):\\n    conn._read_timeout = min(15, remaining())\\n    conn._write_timeout = min(15, remaining())\\n    with conn.cursor(pymysql.cursors.DictCursor) as cursor:\\n        cursor.execute(sql)\\n        return cursor.fetchall()\\ndef latest(mv):\\n    rows = records("SHOW ALTER MATERIALIZED VIEW ORDER BY JobId DESC")\\n    return next(r for r in rows if r["RollupIndexName"] == mv)\\ndef supervise(argv, budget=105):\\n    # The wrapper is exec\\\'"'"'ed over the harness shell. Its budget plus this five-second\\n    # descendant shutdown is shorter than the harness\\\'"'"'s 120-second timeout.\\n    libc = ctypes.CDLL(None, use_errno=True)\\n    assert libc.prctl(36, 1, 0, 0, 0) == 0, "cannot enable Linux child subreaping"\\n    child = subprocess.Popen(argv, start_new_session=True)\\n    timed_out = False\\n    try:\\n        try:\\n            status = child.wait(timeout=budget)\\n        except subprocess.TimeoutExpired:\\n            timed_out = True\\n            status = None\\n    finally:\\n        shutdown_deadline = time.monotonic() + 5\\n        for sig in (signal.SIGTERM, signal.SIGKILL):\\n            try:\\n                os.killpg(child.pid, sig)\\n            except ProcessLookupError:\\n                pass\\n            try:\\n                child.wait(timeout=min(2, max(0.01, shutdown_deadline - time.monotonic())))\\n            except subprocess.TimeoutExpired:\\n                if sig == signal.SIGKILL:\\n                    raise\\n        # Subreaping lets the supervisor join grandchildren even when their leader\\n        # was killed while its ThreadPoolExecutor or HTTP request was still running.\\n        while True:\\n            try:\\n                pid, _ = os.waitpid(-child.pid, os.WNOHANG)\\n            except ChildProcessError:\\n                break\\n            if pid == 0:\\n                assert time.monotonic() < shutdown_deadline, "descendants did not terminate and join"\\n                time.sleep(0.01)\\n    assert not timed_out, "total stage timeout: process group terminated and joined"\\n    assert status == 0, "stage failed: process group terminated and joined, status=" + str(status)\\ndef worker(code, cleanup=False):\\n    global cfg, conn, pymysql, requests, stage_deadline\\n    import pymysql\\n    import requests\\n    sys.path.insert(0, os.getcwd())\\n    from lib.sr_sql_lib import StarrocksSQLApiLib\\n    stage_deadline = time.monotonic() + 100\\n    with contextlib.redirect_stdout(io.StringIO()):\\n        cfg = StarrocksSQLApiLib()\\n    conn = connection(database=None if cleanup else db)\\n    cfg.mysql_lib.connector = conn\\n    try:\\n        exec(code, globals())\\n    finally:\\n        if conn.open:\\n            conn.close()\\ndef restore_config():\\n    if state_path.exists():\\n        saved = json.loads(state_path.read_text())\\n        failures = []\\n        for key in ("lake_compaction_disable_ids", "tablet_reshard_enable_tablet_merge"):\\n            try:\\n                q
+ set(CHUNK_TEST_FILES
+     ../base/cxa_throw_wrap.cpp
 ```
 
-**File**: `test/sql/test_range_orderby/T/test_range_sync_mv_reshard.sql` (modified, +84/-10)
+**File**: `be/test/column/column_test_main.cpp` (added, +26/-0)
 ```diff
-@@ -1,13 +1,15 @@
- -- name: test_range_sync_mv_reshard @cloud @sequential
- -- Test Point: Build on genuinely shared split files, then split/unshare/merge an aggregate MV with independent keys.
- -- Method: Compare base, rewritten and direct sync-index data; assert FINISHED jobs and real layouts.
---- Scope: Shared-data range synchronous MV backfill, double writes and maintenance.
-+-- Scope: Shared-data range synchronous MV backfill, double writes and maintenance for SUM/COUNT/MIN/MAX/AVG MVs.
-+-- The sketch MVs run the same flow in test_range_sync_mv_reshard_sketch: one case holding all seven ran within
-+-- seconds of the 150-second case timeout.
- 
- CREATE DATABASE db_${uuid0};
- 
- USE db_${uuid0};
- 
--shell: exec python3 -c 'exec('"'"'import os,signal\nsignal.alarm(5)\ndirectory=\'"'"'/tmp/range_sync_mv_test_range_sync_mv_reshard_${uuid0}\'"'"'\nos.mkdir(directory,0o700)\nhelper_source=\'"'"'import concurrent.futures\\nimport contextlib\\nimport ctypes\\nimport io\\nimport json\\nimport os\\nfrom pathlib import Path\\nimport signal\\nimport subprocess\\nimport sys\\nimport time\\nfrom urllib.parse import urljoin, urlparse\\ndb = "db_${uuid0}"\\ncfg = None\\nconn = None\\nstage_deadline = 0\\ndef remaining():\\n    seconds = stage_deadline - time.monotonic()\\n    assert seconds > 0, "total stage deadline expired"\\n    return seconds\\ndef connection(database=db):\\n    return pymysql.connect(host=cfg.mysql_host, port=int(cfg.mysql_port), user=cfg.mysql_user,\\n                           password=cfg.mysql_password, database=database, autocommit=True,\\n                           connect_timeout=min(5, remaining()), read_timeout=min(15, remaining()),\\n                           write_timeout=min(15, remaining()))\\ndef q(sql, c=None):\\n    c = conn if c is None else c\\n    c._read_timeout = min(15, remaining())\\n    c._write_timeout = min(15, remaining())\\n    with c.cursor() as cursor:\\n        cursor.execute(sql)\\n        return cursor.fetchall()\\ndef records(sql):\\n    conn._read_timeout = min(15, remaining())\\n    conn._write_timeout = min(15, remaining())\\n    with conn.cursor(pymysql.cursors.DictCursor) as cursor:\\n        cursor.execute(sql)\\n        return cursor.fetchall()\\ndef latest(mv):\\n    rows = records("SHOW ALTER MATERIALIZED VIEW ORDER BY JobId DESC")\\n    return next(r for r in rows if r["RollupIndexName"] == mv)\\ndef supervise(argv, budget=105):\\n    # The wrapper is exec\\\'"'"'ed over the harness shell. Its budget plus this five-second\\n    # descendant shutdown is shorter than the harness\\\'"'"'s 120-second timeout.\\n    libc = ctypes.CDLL(None, use_errno=True)\\n    assert libc.prctl(36, 1, 0, 0, 0) == 0, "cannot enable Linux child subreaping"\\n    child = subprocess.Popen(argv, start_new_session=True)\\n    timed_out = False\\n    try:\\n        try:\\n            status = child.wait(timeout=budget)\\n        except subprocess.TimeoutExpired:\\n            timed_out = True\\n            status = None\\n    finally:\\n        shutdown_deadline = time.monotonic() + 5\\n        for sig in (signal.SIGTERM, signal.SIGKILL):\\n            try:\\n                os.killpg(child.pid, sig)\\n            except ProcessLookupError:\\n                pass\\n            try:\\n                child.wait(timeout=min(2, max(0.01, shutdown_deadline - time.monotonic())))\\n            except subprocess.TimeoutExpired:\\n                if sig == signal.SIGKILL:\\n                    raise\\n        # Subreaping lets the supervisor join grandchildren even when their leader\\n        # was killed while its ThreadPoolExecutor or HTTP request was still running.\\n        while True:\\n            try:\\n                pid, _ = os.waitpid(-child.pid, os.WNOHANG)\\n            except ChildProcessError:\\n                break\\n            if pid == 0:\\n                assert time.monotonic() < shutdown_deadline, "descendants did not terminate and join"\\n                time.sleep(0.01)\\n    assert not timed_out, "total stage timeout: process group terminated and joined"\\n    assert status == 0, "stage failed: process group terminated and joined, status=" + str(status)\\ndef worker(code, cleanup=False):\\n    global cfg, conn, pymysql, requests, stage_deadline\\n    import pymysql\\n    import requests\\n    sys.path.insert(0, os.getcwd())\\n    from lib.sr_sql_lib import StarrocksSQLApiLib\\n    stage_deadline = time.monotonic() + 100\\n    with contextlib.redirect_stdout(io.StringIO()):\\n        cfg = StarrocksSQLApiLib()\\n    conn = connection(database=None if cleanup else db)\\n    cfg.mysql_lib.connector = conn\\n    try:\\n        exec(code, globals())\\n    finally:\\n        if conn.open:\\n            conn.close()\\ndef restore_config():\\n    if state_path.exists():\\n        saved = json.loads(state_path.read_text())\\n        failures = []\\n        for key in ("lake_compaction_disable_ids", "tablet_reshard_enable_tablet_merge"):\\n            try:\\n                q
-```
-
----
-
-### Incident Patch 2: `481a97bd` (2026-11-04)
-**Commit Message**: [BugFix][RB-743] Fix pooled Kafka consumers skipping data on an out-of-range offset and failing on new partitions (#81909)
-
-Signed-off-by: meegoo <[REDACTED_EMAIL]>
-Co-authored-by: mervinsr <[REDACTED_EMAIL]>
-Co-authored-by: meegoo <[REDACTED_EMAIL]>
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Co-authored-by: huailiu1122 <[REDACTED_EMAIL]>
-
-**File**: `be/src/data_workflows/load/routine_load/data_consumer.cpp` (modified, +22/-8)
-```diff
-@@ -340,15 +340,30 @@ Status KafkaDataConsumer::get_partition_offset(std::vector<int32_t>* partition_i
-     latest_offsets->reserve(partition_ids->size());
-     MonotonicStopWatch watch;
-     watch.start();
-+    bool metadata_refreshed = false;
-     for (auto p_id : *partition_ids) {
-         int64_t beginning_offset;
-         int64_t latest_offset;
--        auto left_ms = timeout - watch.elapsed_time() / 1000 / 1000;
-+        // elapsed_time() is unsigned. Keep the difference signed, so running past the timeout makes it negative.
-+        int64_t left_ms = timeout - static_cast<int64_t>(watch.elapsed_time() / 1000 / 1000);
-         if (left_ms <= 0) {
-             return Status::TimedOut("get kafka partition offset timeout");
-         }
-         RdKafka::ErrorCode err =
-                 _k_consumer->query_watermark_offsets(_topic, p_id, &beginning_offset, &latest_offset, left_ms);
-+        if (err == RdKafka::ERR__UNKNOWN_PARTITION && !metadata_refreshed) {
-+            // A pooled consumer knows the partitions of the topic as of its last metadata refresh, which librdkafka
-+            // repeats only every topic.metadata.refresh.interval.ms, so a partition added since is unknown to it until
-+            // then. Refresh the metadata of the topic once and query again.
-+            metadata_refreshed = true;
-+            std::vector<int32_t> refreshed_partition_ids;
-+            RETURN_IF_ERROR(get_partition_meta(&refreshed_partition_ids, left_ms));
-+            left_ms = timeout - static_cast<int64_t>(watch.elapsed_time() / 1000 / 1000);
-+            if (left_ms <= 0) {
-+                return Status::TimedOut("get kafka partition offset timeout");
-+            }
-+            err = _k_consumer->query_watermark_offsets(_topic, p_id, &beginning_offset, &latest_offset, left_ms);
-+        }
-         if (err != RdKafka::ERR_NO_ERROR) {
-             LOG(WARNING) << "failed to get offset of partition: " << p_id << " in topic: " << _topic
-                          << ", err: " << RdKafka::err2str(err);
-@@ -365,14 +380,13 @@ Status KafkaDataConsumer::get_partition_offset(std::vector<int32_t>* partition_i
- Status KafkaDataConsumer::get_partition_meta(std::vector<int32_t>* partition_ids, int timeout) {
-     DCHECK(!_k_consumer->closed());
-     _last_visit_time = time(nullptr);
--    // create topic conf
--    RdKafka::Conf* tconf = RdKafka::Conf::create(RdKafka::Conf::CONF_TOPIC);
--    auto conf_deleter = [tconf]() { delete tconf; };
--    DeferOp delete_conf([conf_deleter] { return conf_deleter(); });
--
--    // create topic
-+    // Create the topic with the consumer's default topic configuration, not a new one. librdkafka keeps one topic
-+    // object per name, configured by whoever creates it first, and consuming the topic later uses that object too. A
-+    // new configuration carries the default auto.offset.reset (largest) instead of the consumer's "error", so a pooled
-+    // consumer that queried the metadata before consuming would jump to the end of a partition whose offset is out of
-+    // range, skipping what is there, instead of failing.
-     std::string errstr;
--    RdKafka::Topic* topic = RdKafka::Topic::create(_k_consumer, _topic, tconf, errstr);
-+    RdKafka::Topic* topic = RdKafka::Topic::create(_k_consumer, _topic, nullptr, errstr);
-     if (topic == nullptr) {
-         std::stringstream ss;
-         ss << "failed to create topic: " << errstr;
-```
-
-**File**: `be/test/data_workflows/load/routine_load/data_consumer_test.cpp` (modified, +69/-0)
-```diff
-@@ -17,10 +17,12 @@
- #include <chrono>
- #include <map>
- #include <thread>
-+#include <vector>
- 
- #include "gtest/gtest.h"
- 
- // Routine load dependencies.
-+#include "base/concurrency/stopwatch.hpp"
- #include "base/testutil/assert.h"
- #include "data_workflows/load/routine_load/data_consumer_group.h"
- #include "exec/exec_env.h"
-@@ -230,6 +232,73 @@ TEST_F(KafkaDataConsumerEofTest, closed_queue_keeps_message_ownership_with_consu
-     EXPECT_EQ(nullptr, message);
- }
- 
-+// A partition the consumer does not know makes it refresh the topic metadata once and query again, because a pooled
-+// consumer misses the partitions added since its last refresh. A partition the topic really lacks still fails, and
-+// fails fast rather than after the timeout.
-+TEST_F(KafkaDataConsumerEofTest, partition_offset_of_a_missing_partition_fails_after_a_metadata_refresh) {
-+    ASSERT_EQ(RdKafka::ERR_NO_ERROR, produce(0, 3));
-+    std::vector<int32_t> partitions{0, 7};
-+    std::vector<int64_t> beginning_offsets;
-+    std::vector<int64_t> latest_offsets;
-+    MonotonicStopWatch watch;
-+    watch.start();
-+    auto status = _consumer->get_partition_offset(&partitions, &beginning_offsets, &latest_offsets, 30000);
-+    ASSERT_FALSE(status.ok());
-+    EXPECT_NE(std::string::npos, status.to_string().find("failed to get offset of partition: 7")) << status;
-+    EXPECT_NE(std::string::npos, status.to_string().find("Unknown partition")) << status;
-+    EXPECT_LT(watch.elapsed_time() / 1000 / 1000, 10000);
-+    ASSERT_EQ(1, latest_offsets.size());
-+    EXPECT_EQ(0, beginning_offsets[0]);
-+    EXPECT_EQ(3, latest_offsets[0]);
-+}
-+
-+// The case the refresh is for: a consumer answers "Unknown partition" from its metadata cache until librdkafka
-+// refreshes it, for example after partitions were added to the topic. The mock broker cannot add partitions, so here
-+// the consumer caches the topic as missing before the topic is created. The offset query must refresh the metadata
-+// once and find the partitions.
-+TEST_F(KafkaDataConsumerEofTest, partition_offset_is_found_after_refreshing_stale_metadata) {
-+    auto* cluster = rd_kafka_handle_mock_cluster(_producer->c_ptr());
-+    ASSERT_NE(nullptr, cluster);
-+    const std::string topic = "routine_load_late_topic";
-+    TKafkaLoadInfo info;
-+    info.brokers = rd_kafka_mock_cluster_bootstraps(cluster);
-+    info.topic = topic;
-+    info.properties = {{"group.id", "routine-load-late-topic-test"}, {"enable.auto.commit", "false"}};
-+    auto context = std::make_unique<StreamLoadContext>(nullptr);
-+    context->kafka_info = std::make_unique<KafkaLoadInfo>(info);
-+    auto consumer = std::make_unique<KafkaDataConsumer>(context.get());
-+    ASSERT_OK(consumer->init(context.get()));
-+
-+    std::vector<int32_t> partitions{0};
-+    std::vector<int64_t> beginning_offsets;
-+    std::vector<int64_t> latest_offsets;
-+    ASSERT_FALSE(consumer->get_partition_offset(&partitions, &beginning_offsets, &latest_offsets, 10000).ok());
-+
-+    ASSERT_EQ(RD_KAFKA_RESP_ERR_NO_ERROR, rd_kafka_mock_topic_create(cluster, topic.c_str(), 2, 1));
-+    partitions = {0, 1};
-+    beginning_offsets.clear();
-+    latest_offsets.clear();
-+    ASSERT_OK(consumer->get_partition_offset(&partitions, &beginning_offsets, &latest_offsets, 10000));
-+    EXPECT_EQ((std::vector<int64_t>{0, 0}), beginning_offsets);
-+    EXPECT_EQ((std::vector<int64_t>{0, 0}), latest_offsets);
-+}
-+
-+// Querying the metadata creates the consumer's topic object, which consuming the topic then reuses. An offset out of
-+// range must still fail the consumption, as auto.offset.reset=error asks, rather than jump to the end of the partition
-+// and skip what is there.
-+TEST_F(KafkaDataConsumerEofTest, out_of_range_offset_fails_after_a_metadata_query) {
-+    ASSERT_EQ(RdKafka::ERR_NO_ERROR, produce(0, 3));
-+    std::vector<int32_t> partitions;
-+    ASSERT_OK(_consumer->get_partition_meta(&partitions, 10000));
-+    ASSERT_EQ(3, partitions.size());
-+
-+    auto result = consume_batch({{0, 100}});
-+    ASSERT_FALSE(result.status.ok());
-+    EXPECT_NE(std::string::npos, result.status.to_string().find("out of range")) << result.status;
-+    EXPECT_TRUE(result.data_rows.empty());
-+    EXPECT_TRUE(result.eof_events.empty());
-+}
-+
- // A minimal RdKafka::Message stand-in for build_kafka_message_meta: only the fields the builder reads
- // (partition/offset/timestamp/key/headers) are backed; the rest of the librdkafka interface returns
- // harmless defaults. Lets the message->meta mapping be exercised without a live broker.
-```
-
----
-
-### Incident Patch 3: `80853902` (2026-11-05)
-**Commit Message**: [BugFix] Let a temporary partition adopt the bounds of the partition it overwrites (#78707)
-
-Signed-off-by: satanson <[REDACTED_EMAIL]>
-Signed-off-by: meegoo <[REDACTED_EMAIL]>
-Co-authored-by: meegoo <[REDACTED_EMAIL]>
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `fe/fe-core/src/main/java/com/starrocks/catalog/OlapTable.java` (modified, +53/-0)
-```diff
-@@ -42,7 +42,9 @@
- import com.google.common.collect.Maps;
- import com.google.common.collect.Multimap;
- import com.google.common.collect.Range;
-+import com.google.common.collect.RangeMap;
- import com.google.common.collect.Sets;
-+import com.google.common.collect.TreeRangeMap;
- import com.google.gson.annotations.SerializedName;
- import com.staros.proto.FileCacheInfo;
- import com.staros.proto.FilePathInfo;
-@@ -2729,6 +2731,57 @@ public void dropTempPartition(String partitionName, boolean needDropTablet) {
-         }
-     }
- 
-+    /**
-+     * Checks that {@link #replaceMatchPartitions} can promote the given temporary partitions without leaving two
-+     * formal partitions whose ranges overlap. A temporary partition replaces the formal partition its name points
-+     * at, if there is one, so it may overlap that partition and no other.
-+     */
-+    public void checkReplaceMatchPartitions(List<String> tempPartitionNames) throws DdlException {
-+        if (!(partitionInfo instanceof RangePartitionInfo rangeInfo)) {
-+            return;
-+        }
-+        Map<Long, Range<PartitionKey>> tempRanges = rangeInfo.getIdToRange(true);
-+        // temporary ranges never overlap each other, every one is checked against the others when it is created
-+        RangeMap<PartitionKey, String> promotedRanges = TreeRangeMap.create();
-+        Set<Long> replacedPartitionIds = Sets.newHashSet();
-+        for (String tempPartitionName : tempPartitionNames) {
-+            Partition tempPartition = tempPartitions.getPartition(tempPartitionName);
-+            if (tempPartition == null) {
-+                continue;
-+            }
-+            Partition replaced = nameToPartition.get(tempPartitionName.substring(
-+                    tempPartitionName.indexOf(AnalyzerUtils.PARTITION_NAME_PREFIX_SPLIT) + 1));
-+            if (replaced != null) {
-+                replacedPartitionIds.add(replaced.getId());
-+            }
-+            Range<PartitionKey> range = tempRanges.get(tempPartition.getId());
-+            if (range != null && !range.isEmpty()) {
-+                promotedRanges.put(range, tempPartitionName);
-+            }
-+        }
-+        if (promotedRanges.asMapOfRanges().isEmpty()) {
-+            return;
-+        }
-+        // All formal ranges rather than the range index: on a table whose ranges already overlap, the index can hold
-+        // one entry for two partitions that start at the same key.
-+        for (Map.Entry<Long, Range<PartitionKey>> entry : rangeInfo.getIdToRange(false).entrySet()) {
-+            if (replacedPartitionIds.contains(entry.getKey()) || entry.getValue().isEmpty()) {
-+                continue;
-+            }
-+            Map<Range<PartitionKey>, String> overlapping = promotedRanges.subRangeMap(entry.getValue()).asMapOfRanges();
-+            if (!overlapping.isEmpty()) {
-+                String tempPartitionName = overlapping.values().iterator().next();
-+                Range<PartitionKey> tempRange = tempRanges.get(tempPartitions.getPartition(tempPartitionName).getId());
-+                Partition partition = idToPartition.get(entry.getKey());
-+                throw new DdlException(String.format(
-+                        "temporary partition %s [%s, %s) overlaps partition %s [%s, %s), which it does not replace",
-+                        tempPartitionName, tempRange.lowerEndpoint().toSql(), tempRange.upperEndpoint().toSql(),
-+                        partition == null ? entry.getKey() : partition.getName(),
-+                        entry.getValue().lowerEndpoint().toSql(), entry.getValue().upperEndpoint().toSql()));
-+            }
-+        }
-+    }
-+
-     public void replaceMatchPartitions(long dbId, List<String> tempPartitionNames) {
-         for (String partitionName : tempPartitionNames) {
-             Partition partition = tempPartitions.getPartition(partitionName);
-```
-
-**File**: `fe/fe-core/src/main/java/com/starrocks/catalog/RangePartitionInfo.java` (modified, +18/-0)
-```diff
-@@ -494,6 +494,24 @@ public long getEnclosingPartitionId(Map<ColumnId, Column> schema,
-         return -1;
-     }
- 
-+    /**
-+     * The formal partition whose range contains {@code key}, as (partition id, its range), or null when no formal
-+     * partition contains it. O(log n) on the concurrent range index, so it may run without the table lock, where it
-+     * can miss a partition that changes meanwhile.
-+     */
-+    public Map.Entry<Long, Range<PartitionKey>> getFormalPartitionContaining(PartitionKey key) {
-+        // Ranges never overlap, so only the range starting at or right below the key can contain it. The probe
-+        // [key, key] sorts with a non-empty range that starts at the key, and after an empty (shadow) one there.
-+        Map.Entry<Range<PartitionKey>, Map.Entry<Long, Range<PartitionKey>>> floor =
-+                rangeIndex.floorEntry(Range.closed(key, key));
-+        // Check the entry's own range: on a table whose ranges already overlap, two of them can share a lower
-+        // endpoint, and then the index keeps the key of one and the entry of the other.
-+        while (floor != null && floor.getValue().getValue().isEmpty()) {
-+            floor = rangeIndex.lowerEntry(floor.getKey());
-+        }
-+        return floor != null && floor.getValue().getValue().contains(key) ? floor.getValue() : null;
-+    }
-+
-     private NavigableMap<Range<PartitionKey>, Map.Entry<Long, Range<PartitionKey>>> rangeIndex(boolean isTemp) {
-         return isTemp ? tempRangeIndex : rangeIndex;
-     }
-```
-
-**File**: `fe/fe-core/src/main/java/com/starrocks/load/InsertOverwriteJobRunner.java` (modified, +3/-0)
-```diff
-@@ -947,6 +947,9 @@ protected void doCommit() {
-                         stats.setSourceRows(sumSourceRows);
-                     }
-                     LOG.info("dynamic overwrite job {} replace tmpPartitionNames:{}", job.getJobId(), tmpPartitionNames);
-+                    // replaceMatchPartitions swaps by name only; refuse a swap that would leave two formal
-+                    // partitions with overlapping ranges, which reads and later loads cannot tell apart
-+                    targetTable.checkReplaceMatchPartitions(tmpPartitionNames);
-                     ensureTempPartitionsVisible(targetTable, tmpPartitionIds);
-                 } else {
-                     ensureTempPartitionsVisible(targetTable, tmpPartitionIds);
-```
-
-**File**: `fe/fe-core/src/main/java/com/starrocks/sql/analyzer/AnalyzerUtils.java` (modified, +76/-3)
-```diff
-@@ -26,6 +26,7 @@
- import com.google.common.collect.Lists;
- import com.google.common.collect.Maps;
- import com.google.common.collect.Multimap;
-+import com.google.common.collect.Range;
- import com.google.common.collect.Sets;
- import com.starrocks.authorization.AccessDeniedException;
- import com.starrocks.authorization.ObjectType;
-@@ -42,6 +43,7 @@
- import com.starrocks.catalog.MaterializedView;
- import com.starrocks.catalog.OlapTable;
- import com.starrocks.catalog.PaimonTable;
-+import com.starrocks.catalog.Partition;
- import com.starrocks.catalog.PartitionInfo;
- import com.starrocks.catalog.PartitionKey;
- import com.starrocks.catalog.Table;
-@@ -1905,8 +1907,10 @@ public static AddPartitionClause getAddPartitionClauseFromPartitionValues(OlapTa
-             ExpressionPartitionDesc expressionPartitionDesc = (ExpressionPartitionDesc) partitionDesc;
-             PartitionMeasure measure = checkAndGetPartitionMeasure(expressionPartitionDesc.getExpr());
-             PartitionInfo partitionInfo = olapTable.getPartitionInfo();
-+            // The caller supplies the granularity here (partition merge builds its target partition this
-+            // way), so the existing partitions are exactly what it intends to replace — never adopt them.
-             return getAddPartitionClauseForRangePartition(olapTable, partitionValues, isTemp, partitionNamePrefix, measure,
--                    distributionDesc, (ExpressionRangePartitionInfo) partitionInfo);
-+                    distributionDesc, (ExpressionRangePartitionInfo) partitionInfo, false);
-         } else {
-             PartitionInfo partitionInfo = olapTable.getPartitionInfo();
-             throw new AnalysisException("Unsupported partition type " + partitionInfo.getType());
-@@ -1927,8 +1931,11 @@ public static AddPartitionClause getAddPartitionClauseFromPartitionValues(OlapTa
-             }
-             Expr expr = partitionExprs.get(0);
-             PartitionMeasure measure = checkAndGetPartitionMeasure(expr);
-+            // Granularity comes from the table's own expression, so an existing partition may legitimately
-+            // be coarser than it (partition merge is scoped by BETWEEN and leaves the expression alone).
-+            // A temporary partition is swapped into this table, so it must not contradict what is there.
-             return getAddPartitionClauseForRangePartition(olapTable, partitionValues, isTemp, partitionNamePrefix, measure,
--                    null, expressionRangePartitionInfo);
-+                    null, expressionRangePartitionInfo, isTemp);
-         } else if (partitionInfo instanceof ListPartitionInfo) {
-             Short replicationNum = olapTable.getTableProperty().getReplicationNum();
-             DistributionDesc distributionDesc = olapTable.getDefaultDistributionInfo()
-@@ -2040,7 +2047,8 @@ private static AddPartitionClause getAddPartitionClauseForRangePartition(
-             String partitionPrefix,
-             PartitionMeasure measure,
-             DistributionDesc distributionDesc,
--            ExpressionRangePartitionInfo expressionRangePartitionInfo) throws AnalysisException {
-+            ExpressionRangePartitionInfo expressionRangePartitionInfo,
-+            boolean adoptCoveringPartition) throws AnalysisException {
-         String granularity = measure.getGranularity();
-         long interval = measure.getInterval();
-         Type firstPartitionColumnType = expressionRangePartitionInfo.getPartitionColumns(olapTable.getIdToColumn())
-@@ -2078,6 +2086,20 @@ private static AddPartitionClause getAddPartitionClauseForRangePartition(
-                 PartitionKeyDesc partitionKeyDesc =
-                         createPartitionKeyDesc(firstPartitionColumnType, beginTime, endTime);
- 
-+                // A partition may be coarser than the table's partition expression: ALTER TABLE ...
-+                // PARTITION BY <coarser expr> BETWEEN a AND b merges a range of partitions and, being
-+                // scoped by BETWEEN, deliberately leaves the expression alone. A temporary partition is
-+                // swapped into this table afterwards, so computing its bounds from the expression would
-+                // re-introduce the finer partitions the merge had removed.
-+                if (adoptCoveringPartition) {
-+                    Pair<String, PartitionKeyDesc> covering =
-+                            findCoveringPartition(olapTable, expressionRangePartitionInfo, partitionItem);
-+                    if (covering != null) {
-+                        partitionName = covering.first;
-+                        partitionKeyDesc = covering.second;
-+                    }
-+                }
-+
-                 if (partitionPrefix != null) {
-                     if (partitionPrefix.contains(PARTITION_NAME_PREFIX_SPLIT)) {
-                         throw new AnalysisException("partition name prefix can not contain " + PARTITION_NAME_PREFIX_SPLIT);
-@@ -2103,6 +2125,57 @@ private static AddPartitionClause getAddPartitionClauseForRangePartition(
-
-```
-
-**File**: `fe/fe-core/src/test/java/com/starrocks/alter/MergePartitionJobTest.java` (modified, +193/-0)
-```diff
-@@ -16,22 +16,28 @@
- 
- import com.google.common.collect.Lists;
- import com.google.common.collect.Maps;
-+import com.google.common.collect.Range;
- import com.google.common.collect.Sets;
- import com.starrocks.alter.AlterJobV2.JobState;
- import com.starrocks.catalog.CatalogRecycleBin;
- import com.starrocks.catalog.Database;
-+import com.starrocks.catalog.ExpressionRangePartitionInfo;
- import com.starrocks.catalog.GlobalStateMgrTestUtil;
- import com.starrocks.catalog.LocalTablet;
- import com.starrocks.catalog.MaterializedIndex;
- import com.starrocks.catalog.OlapTable;
- import com.starrocks.catalog.OlapTable.OlapTableState;
- import com.starrocks.catalog.Partition;
-+import com.starrocks.catalog.PartitionKey;
- import com.starrocks.catalog.PhysicalPartition;
-+import com.starrocks.catalog.RangePartitionInfo;
- import com.starrocks.catalog.Replica;
- import com.starrocks.catalog.Tablet;
- import com.starrocks.catalog.TabletInvertedIndex;
- import com.starrocks.common.Config;
-+import com.starrocks.common.DdlException;
- import com.starrocks.common.jmockit.Deencapsulation;
-+import com.starrocks.common.util.RangeUtils;
- import com.starrocks.common.util.UUIDUtil;
- import com.starrocks.persist.AddPartitionsInfoV2;
- import com.starrocks.persist.OperationType;
-@@ -50,8 +56,21 @@
- import com.starrocks.scheduler.persist.TaskRunStatus;
- import com.starrocks.server.GlobalStateMgr;
- import com.starrocks.server.LocalMetastore;
-+import com.starrocks.service.ExecuteEnv;
-+import com.starrocks.service.FrontendServiceImpl;
-+import com.starrocks.sql.analyzer.AlterTableClauseAnalyzer;
-+import com.starrocks.sql.analyzer.AnalyzerUtils;
- import com.starrocks.sql.analyzer.DDLTestBase;
-+import com.starrocks.sql.ast.AddPartitionClause;
- import com.starrocks.sql.ast.AlterTableStmt;
-+import com.starrocks.sql.ast.ExpressionPartitionDesc;
-+import com.starrocks.sql.ast.PartitionKeyDesc;
-+import com.starrocks.sql.ast.RangePartitionDesc;
-+import com.starrocks.sql.ast.SingleRangePartitionDesc;
-+import com.starrocks.sql.ast.expression.Expr;
-+import com.starrocks.thrift.TCreatePartitionRequest;
-+import com.starrocks.thrift.TCreatePartitionResult;
-+import com.starrocks.thrift.TStatusCode;
- import com.starrocks.transaction.GlobalTransactionMgr;
- import com.starrocks.transaction.TabletCommitInfo;
- import com.starrocks.transaction.TransactionState;
-@@ -66,6 +85,7 @@
- import org.mockito.Mockito;
- 
- import java.util.ArrayList;
-+import java.util.Arrays;
- import java.util.Collection;
- import java.util.Collections;
- import java.util.HashMap;
-@@ -702,6 +722,179 @@ private static void assertPruned(MergePartitionJob job) {
-         Assertions.assertNull(Deencapsulation.getField(job, "optimizeClause"));
-     }
- 
-+    // ---- dynamic overwrite into a merged table --------------------------------------------------
-+
-+    /**
-+     * A merge leaves the partition expression at day, and the dynamic overwrite RPC used to build its temp partitions
-+     * from it: txn_p20240130 and so on, which the commit then made formal partitions inside the merged p202401. The
-+     * temp partitions take the merged partitions' names and ranges now, so the swap replaces them as a whole.
-+     */
-+    @Test
-+    public void testDynamicOverwriteAfterMergeReplacesMergedPartitions() throws Exception {
-+        OlapTable table = createTwoMonthDailyPartitionedTable("t_merge_dynamic_overwrite");
-+        mergeIntoMonths(table);
-+        assertDynamicOverwriteReplacesMergedPartitions(table, "2024-01-30", "2024-01-31", "2024-02-01");
-+    }
-+
-+    @Test
-+    public void testDynamicOverwriteAfterMergeReplacesMergedDatetimePartitions() throws Exception {
-+        starRocksAssert.withTable("CREATE TABLE t_merge_dynamic_overwrite_datetime (k DATETIME, v INT) " +
-+                "DUPLICATE KEY(k) PARTITION BY date_trunc('day', k) " +
-+                "(START ('2024-01-30') END ('2024-02-02') EVERY (INTERVAL 1 DAY)) " +
-+                "DISTRIBUTED BY HASH(k) BUCKETS 1 PROPERTIES ('replication_num' = '1')");
-+        OlapTable table = (OlapTable) starRocksAssert.getTable(GlobalStateMgrTestUtil.testDb1,
-+                "t_merge_dynamic_overwrite_datetime");
-+        mergeIntoMonths(table);
-+        assertDynamicOverwriteReplacesMergedPartitions(table,
-+                "2024-01-30 08:00:00", "2024-01-31 23:59:59", "2024-02-01 00:00:00");
-+    }
-+
-+    /**
-+     * Only temp partitions built from the table's own expression adopt the partition covering their value. An
-+     * ordinary load keeps the expression's partitions (the sink never asks for a value a partition covers, and the
-+     * analyzer maps such a partition to the merged one), and a merge gives the granularity of its target itself.
-+     */
-+    @Test
-+    public void testOnlyDynamicOverwriteTempPartitionsAdoptTheCoveringPartition() throws Exception {
-+        OlapTable table = createTwoMonthDailyPartitionedTable("t_merge_clause_adopts");
-+        mergeIntoMonths(table);
-+        List<List<String>> values = List.of(List.of("2024-01-30"), List.of
-```
-
-**File**: `fe/fe-core/src/test/java/com/starrocks/sql/analyzer/AnalyzerUtilsTempPartitionOnMergedTest.java` (added, +219/-0)
-```diff
-@@ -0,0 +1,219 @@
+@@ -0,0 +1,26 @@
 +// Copyright 2021-present StarRocks, Inc. All rights reserved.
 +//
 +// Licensed under the Apache License, Version 2.0 (the "License");
@@ -2343,306 +2127,258 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 +// See the License for the specific language governing permissions and
 +// limitations under the License.
 +
-+package com.starrocks.sql.analyzer;
++#include <gtest/gtest.h>
 +
-+import com.google.common.collect.ImmutableMap;
-+import com.google.common.collect.Lists;
-+import com.google.common.collect.Range;
-+import com.starrocks.catalog.Column;
-+import com.starrocks.catalog.DistributionInfo;
-+import com.starrocks.catalog.ExpressionRangePartitionInfo;
-+import com.starrocks.catalog.HashDistributionInfo;
-+import com.starrocks.catalog.OlapTable;
-+import com.starrocks.catalog.Partition;
-+import com.starrocks.catalog.PartitionKey;
-+import com.starrocks.catalog.PartitionType;
-+import com.starrocks.catalog.TableProperty;
-+import com.starrocks.common.AnalysisException;
-+import com.starrocks.common.DdlException;
-+import com.starrocks.persist.ColumnIdExpr;
-+import com.starrocks.sql.ast.AddPartitionClause;
-+import com.starrocks.sql.ast.KeysType;
-+import com.starrocks.sql.ast.PartitionKeyDesc;
-+import com.starrocks.sql.ast.PartitionValue;
-+import com.starrocks.sql.ast.RangePartitionDesc;
-+import com.starrocks.sql.ast.SingleRangePartitionDesc;
-+import com.starrocks.sql.ast.expression.Expr;
-+import com.starrocks.sql.ast.expression.FunctionCallExpr;
-+import com.starrocks.sql.ast.expression.SlotRef;
-+import com.starrocks.sql.ast.expression.StringLiteral;
-+import com.starrocks.type.DateType;
-+import org.junit.jupiter.api.Assertions;
-+import org.junit.jupiter.api.Test;
++#include "types/time_types.h"
 +
-+import java.util.Collections;
-+import java.util.List;
++int main(int argc, char** argv) {
++    // PARALLEL_TEST cases have no fixture, so initialize the process-wide date cache here instead of relying on
++    // another suite having done it earlier in the same process.
++    starrocks::date::init_date_cache();
 +
-+/**
-+ * Automatic partitions created at load time must not contradict the partitions the table already has.
-+ *
-+ * <p>A table can hold partitions coarser than its own partition expression: {@code ALTER TABLE t
-+ * PARTITION BY date_trunc('month', dt) BETWEEN ...} merges a range of daily partitions into one
-+ * monthly partition and — by design, since the merge is scoped by BETWEEN — leaves the table's
-+ * partition expression at {@code date_trunc('day', dt)}. That state is reachable only through the
-+ * merge job (a table with automatic partitioning rejects a manual ADD PARTITION), so these tests
-+ * build it directly on the metadata.
-+ *
-+ * <p>Ordinary loads are unaffected: the sink resolves a row against the existing ranges and only
-+ * asks the FE for a partition when no range covers it. Dynamic overwrite is different — it creates
-+ * a *temporary* partition per written partition at load time and swaps it in afterwards, so a
-+ * temporary partition computed from the expression granularity instead of the covering partition
-+ * re-introduces the daily partitions the merge had removed.
-+ */
-+public class AnalyzerUtilsTempPartitionOnMergedTest {
++    ::testing::InitGoogleTest(&argc, argv);
++    return RUN_ALL_TESTS();
++}
+```
+
+**File**: `be/test/orchestration/fragment_mgr_test.cpp` (modified, +2/-0)
+```diff
+@@ -42,6 +42,7 @@
+ 
+ #include "base/time/monotime.h"
+ #include "common/config_runtime_fwd.h"
++#include "common/system/cpu_info.h"
+ #include "exec/exec_env.h"
+ #include "exec_primitive/data_sink.h"
+ #include "gen_cpp/Types_types.h"
+@@ -83,6 +84,7 @@ class FragmentMgrTest : public testing::Test {
+     FragmentMgrTest() = default;
+ 
+     static void SetUpTestSuite() {
++        CpuInfo::init();
+         auto* runtime_env = RuntimeEnv::GetInstance();
+         _previous_process_mem_tracker = runtime_env->_process_mem_tracker;
+         _previous_query_pool_mem_tracker = runtime_env->_query_pool_mem_tracker;
+```
+
+**File**: `be/test/runtime/serde_core_test.cpp` (modified, +9/-0)
+```diff
+@@ -41,6 +41,7 @@
+ #include "common/config_local_io_fwd.h"
+ #include "common/statusor.h"
+ #include "gutil/strings/substitute.h"
++#include "runtime/memory/mem_chunk_allocator.h"
+ #include "runtime/serde/chunk_encode_context.h"
+ #include "runtime/serde/protobuf_chunk_serde.h"
+ #include "types/hll.h"
+@@ -526,6 +527,14 @@ PARALLEL_TEST(ColumnArraySerdeTest, variant_column_shredded_multiple_paths) {
+ 
+ // NOLINTNEXTLINE
+ PARALLEL_TEST(ColumnArraySerdeTest, hll_column_failed_deserialize) {
++    // The HLL registers allocator is process-global and normally installed by RuntimeEnv::init(). Install the same
++    // MemChunkAllocator-backed one so the failpoint below is reachable when this case runs alone.
++    HyperLogLog::RegistersAllocator allocator;
++    allocator.allocate = [](size_t size, void*, MemChunk* chunk) { return MemChunkAllocator::allocate(size, chunk); };
++    allocator.free = [](const MemChunk& chunk, void*) { MemChunkAllocator::free(chunk); };
++    Status st = HyperLogLog::set_registers_allocator(allocator);
++    ASSERT_TRUE(st.ok() || st.is_already_exist()) << st;
 +
-+    private static final long MERGED_PARTITION_ID = 10001L;
+     auto c1 = HyperLogLogColumn::create();
+     // prepare a sparse-encoded HLL (few non-zero registers)
+     HyperLogLog sparse_hll;
+```
+
+---
+
+### Incident Patch 3: `9eea2ac7` (2026-11-05)
+**Commit Message**: [BugFix][RB-377] Fix lost wakeup in spill BufferedInputStream::prefetch (#82515)
+
+Co-authored-by: stdpain <[REDACTED_EMAIL]>
+Co-authored-by: Hyper-FF <[REDACTED_EMAIL]>
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `be/src/compute_env/spill/input_stream.cpp` (modified, +35/-12)
+```diff
+@@ -24,7 +24,6 @@
+ #include <vector>
+ 
+ #include "base/concurrency/blocking_queue.hpp"
+-#include "base/utility/defer_op.h"
+ #include "common/status.h"
+ #include "compute_env/sorting/sorted_chunks_merger.h"
+ #include "compute_env/spill/block_manager.h"
+@@ -165,6 +164,8 @@ class BufferedInputStream : public SpillInputStream {
+     StatusOr<ChunkUniquePtr> read_from_buffer();
+ 
+ private:
++    Status _prefetch_one(workgroup::YieldContext& yield_ctx, SerdeContext& ctx);
 +
-+    /** A day-partitioned table that already holds one monthly partition, as a merge would leave it. */
-+    private static OlapTable mergedTable() throws Exception {
-+        Column dt = new Column("dt", DateType.DATE);
-+        List<Column> schema = Lists.newArrayList(dt);
-+
-+        Expr dayExpr = new FunctionCallExpr("date_trunc",
-+                Lists.newArrayList(new StringLiteral("day"), new SlotRef(null, "dt")));
-+        ExpressionRangePartitionInfo partitionInfo = new ExpressionRangePartitionInfo(
-+                Lists.newArrayList(ColumnIdExpr.create(dayExpr)), schema, PartitionType.EXPR_RANGE);
-+
-+        HashDistributionInfo distributionInfo = new HashDistributionInfo(1, schema);
-+        OlapTable table = new OlapTable(1L, "merged_day_tbl", schema, KeysType.DUP_KEYS,
-+                partitionInfo, distributionInfo);
-+        table.setTableProperty(new TableProperty(ImmutableMap.of("replication_num", "1")));
-+
-+        Range<PartitionKey> january = Range.closedOpen(
-+                PartitionKey.createPartitionKey(
-+                        Collections.singletonList(new PartitionValue("2026-01-01")), schema),
-+                PartitionKey.createPartitionKey(
-+                        Collections.singletonList(new PartitionValue("2026-02-01")), schema));
-+        partitionInfo.setRange(MERGED_PARTITION_ID, false, january);
-+        partitionInfo.setReplicationNum(MERGED_PARTITION_ID, (short) 1);
-+        table.addPartition(new Partition(MERGED_PARTITION_ID, "p202601", distributionInfo));
-+        return table;
+     bool _acquire() {
+         bool expected = false;
+         return _is_prefetching.compare_exchange_strong(expected, true);
+@@ -181,6 +182,9 @@ class BufferedInputStream : public SpillInputStream {
+     InputStreamPtr _input_stream;
+     UnboundedBlockingQueue<ChunkUniquePtr> _chunk_buffer;
+     std::atomic_bool _is_prefetching = false;
++    // Set by every prefetch caller before it tries to take _is_prefetching; the holder re-checks it after
++    // releasing the flag so that a request which lost the race is never dropped. See prefetch().
++    std::atomic_bool _prefetch_requested = false;
+     Spiller* _spiller = nullptr;
+ };
+ 
+@@ -210,17 +214,7 @@ StatusOr<ChunkUniquePtr> BufferedInputStream::get_next(workgroup::YieldContext&
+     return Status::InternalError("spill BufferedInputStream: no buffered chunk and stream is not at EOF");
+ }
+ 
+-Status BufferedInputStream::prefetch(workgroup::YieldContext& yield_ctx, SerdeContext& ctx) {
+-    if (is_buffer_full() || eof()) {
+-        return Status::OK();
+-    }
+-    // concurrent prefetch is not allowed, should call _acquire and _release before and after prefetch
+-    // to ensure that it doesn't happen.
+-    if (!_acquire()) {
+-        return Status::OK();
+-    }
+-    DeferOp defer([this]() { _release(); });
+-
++Status BufferedInputStream::_prefetch_one(workgroup::YieldContext& yield_ctx, SerdeContext& ctx) {
+     auto res = _input_stream->get_next(yield_ctx, ctx);
+     if (res.ok()) {
+         COUNTER_ADD(_spiller->metrics().input_stream_peak_memory_usage, res.value()->memory_usage());
+@@ -233,6 +227,35 @@ Status BufferedInputStream::prefetch(workgroup::YieldContext& yield_ctx, SerdeCo
+     return res.status();
+ }
+ 
++Status BufferedInputStream::prefetch(workgroup::YieldContext& yield_ctx, SerdeContext& ctx) {
++    while (true) {
++        if (is_buffer_full() || eof()) {
++            return Status::OK();
++        }
++        // Concurrent prefetch is not allowed (it would reorder chunks of an ordered stream), so only the
++        // task holding _is_prefetching reads. A task that fails to take the flag must not simply drop its
++        // request: the holder may already have published its chunk and be on its way out, while the reader
++        // consumes that chunk and triggers new restore tasks that all land in this window. Each of them
++        // would see the flag held and return, the holder would exit after its single chunk, and the stream
++        // would be left with an empty buffer, not at EOF, and no restore task in flight -- the source
++        // operator then waits forever for data nothing will produce.
++        // So announce the request before trying to take the flag; the holder re-checks it after releasing
++        // the flag and serves it. The store precedes the CAS and the holder's load follows its release (all
++        // seq_cst), so either the holder observes the request or the requester's CAS succeeds.
++        _prefetch_requested.store(true);
++        if (!_acquire()) {
++            return Status::OK();
++        }
++        _prefetch_requested.store(false);
++        Status st = _prefetch_one(yield_ctx, ctx);
++        _release();
++        RETURN_IF_ERROR(st);
++        if (!_prefetch_requested.load()) {
++            return Status::OK();
++        }
 +    }
++}
 +
-+    private static List<List<String>> values(String partitionValue) {
-+        return Collections.singletonList(Collections.singletonList(partitionValue));
-+   
+ InputStreamPtr detail::make_buffered_input_stream(int capacity, InputStreamPtr stream, Spiller* spiller) {
+     return std::make_shared<BufferedInputStream>(capacity, std::move(stream), spiller);
+ }
 ```
 
-**File**: `test/sql/test_optimize_table/R/test_merge_partition_dynamic_overwrite` (added, +158/-0)
+**File**: `be/test/compute_env/spill/spill_test.cpp` (modified, +71/-0)
 ```diff
-@@ -0,0 +1,158 @@
-+-- name: test_dynamic_overwrite_into_merged_partition
-+create database test_merge_dyn_ow_${uuid0};
-+-- result:
-+-- !result
-+use test_merge_dyn_ow_${uuid0};
-+-- result:
-+-- !result
-+create table t(dt date not null, k int not null, v int) duplicate key(dt, k) partition by date_trunc('day', dt) distributed by hash(k) buckets 2 properties("replication_num"="1");
-+-- result:
-+-- !result
-+insert into t values ('2026-01-01', 1, 101), ('2026-01-01', 2, 102), ('2026-01-02', 1, 201), ('2026-01-03', 1, 301), ('2026-02-03', 1, 2301);
-+-- result:
-+-- !result
-+alter table t partition by date_trunc('month', dt) between '2026-01-01' and '2026-01-31';
-+-- result:
-+-- !result
-+function: wait_optimize_table_finish()
-+-- result:
-+None
-+-- !result
-+function: print_query_columns("show partitions from t", "PartitionName", "Range")
-+-- result:
-+p202601	[types: [DATE]; keys: [2026-01-01]; ..types: [DATE]; keys: [2026-02-01]; )
-+p20260203	[types: [DATE]; keys: [2026-02-03]; ..types: [DATE]; keys: [2026-02-04]; )
-+-- !result
-+set dynamic_overwrite = true;
-+-- result:
-+-- !result
-+insert overwrite t values ('2026-01-01', 1, 9001), ('2026-01-01', 2, 9002);
-+-- result:
-+-- !result
-+set dynamic_overwrite = false;
-+-- result:
-+-- !result
-+function: print_query_columns("show partitions from t", "PartitionName", "Range")
-+-- result:
-+p202601	[types: [DATE]; keys: [2026-01-01]; ..types: [DATE]; keys: [2026-02-01]; )
-+p20260203	[types: [DATE]; keys: [2026-02-03]; ..types: [DATE]; keys: [2026-02-04]; )
-+-- !result
-+select * from t order by dt, k;
-+-- result:
-+2026-01-01	1	9001
-+2026-01-01	2	9002
-+2026-02-03	1	2301
-+-- !result
-+select count(*), sum(v) from t where dt = '2026-01-01';
-+-- result:
-+2	18003
-+-- !result
-+set dynamic_overwrite = true;
-+-- result:
-+-- !result
-+insert overwrite t values ('2026-01-15', 1, 9151), ('2026-02-03', 1, 9231), ('2026-03-05', 1, 9351);
-+-- result:
-+-- !result
-+set dynamic_overwrite = false;
-+-- result:
-+-- !result
-+function: print_query_columns("show partitions from t", "PartitionName", "Range")
-+-- result:
-+p202601	[types: [DATE]; keys: [2026-01-01]; ..types: [DATE]; keys: [2026-02-01]; )
-+p20260203	[types: [DATE]; keys: [2026-02-03]; ..types: [DATE]; keys: [2026-02-04]; )
-+p20260305	[types: [DATE]; keys: [2026-03-05]; ..types: [DATE]; keys: [2026-03-06]; )
-+-- !result
-+select * from t order by dt, k;
-+-- result:
-+2026-01-15	1	9151
-+2026-02-03	1	9231
-+2026-03-05	1	9351
-+-- !result
-+select dt, count(*), sum(v) from t where dt in ('2026-01-01', '2026-01-15', '2026-02-03', '2026-03-05') group by dt order by dt;
-+-- result:
-+2026-01-15	1	9151
-+2026-02-03	1	9231
-+2026-03-05	1	9351
-+-- !result
-+drop database test_merge_dyn_ow_${uuid0};
-+-- result:
-+-- !result
-+-- name: test_dynamic_overwrite_into_merged_partition_pk
-+create database test_merge_dyn_ow_pk_${uuid0};
-+-- result:
-+-- !result
-+use test_merge_dyn_ow_pk_${uuid0};
-+-- result:
-+-- !result
-+create table t(dt date not null, k int not null, v int) primary key(dt, k) partition by date_trunc('day', dt) distributed by hash(k) buckets 2 properties("replication_num"="1");
-+-- result:
-+-- !result
-+insert into t values ('2026-01-01', 1, 101), ('2026-01-01', 2, 102), ('2026-01-02', 1, 201), ('2026-01-03', 1, 301), ('2026-02-03', 1, 2301);
-+-- result:
-+-- !result
-+alter table t partition by date_trunc('month', dt) between '2026-01-01' and '2026-01-31';
-+-- result:
-+-- !result
-+function: wait_optimize_table_finish()
-+-- result:
-+None
-+-- !result
-+function: print_query_columns("show partitions from t", "PartitionName", "Range")
-+-- result:
-+p202601	[types: [DATE]; keys: [2026-01-01]; ..types: [DATE]; keys: [2026-02-01]; )
-+p20260203	[types: [DATE]; keys: [2026-02-03]; ..types: [DATE]; keys: [2026-02-04]; )
-+-- !result
-+set dynamic_overwrite = true;
-+-- result:
-+-- !result
-+insert overwrite t values ('2026-01-01', 1, 9001), ('2026-01-01', 2, 9002);
-+-- result:
-+-- !result
-+set dynamic_overwrite = false;
-+-- result:
-+-- !result
-+function: print_query_columns("show partitions from t", "PartitionName", "Range")
-+-- result:
-+p202601	[types: [DATE]; keys: [2026-01-01]; ..types: [DATE]; keys: [2026-02-01]; )
-+p20260203	[types: [DATE]; keys: [2026-02-03]; ..types: [DATE]; keys: [2026-02-04]; )
-+-- !result
-+select * from t order by dt, k;
-+-- result:
-+2026-01-01	1	9001
-+2026-01-01	2	9002
-+2026-02-03	1	2301
-+-- !result
-+select count(*), sum(v) from t where dt = '2026-01-01';
-+-- result:
-+2	18003
-+-- !result
-+set dynamic_overwrite = true;
-+-- result:
-+-- !result
-+insert overwrite t values ('2026-01-15', 1, 9151), ('2026-02-03', 1, 9231), ('2026-03-05', 1, 9351);
-+-- result:
-+-- !result
-+set dynamic_overwrite = false;
-+-- result:
-+-- !result
-+function: print_query_columns("show partitions from t", "PartitionName", "Range")
-+-- result:
-+p202601	[types: [DATE]; keys: [2026-01-01]; ..types: [DATE]; keys: [2026-02-01]; )
-+p20260203	[types: [DATE]; keys: [2026-02-03]; ..types: [DATE]; keys: [2026-02-04]; )
-+p20260305	[types: [DATE]; keys: [2026-03-05]; ..types: [DATE]; k
-```
-
-**File**: `test/sql/test_optimize_table/T/test_merge_partition_dynamic_overwrite` (added, +56/-0)
-```diff
-@@ -0,0 +1,56 @@
-+-- name: test_dynamic_overwrite_into_merged_partition
-+create database test_merge_dyn_ow_${uuid0};
-+use test_merge_dyn_ow_${uuid0};
+@@ -49,6 +49,7 @@
+ #include "common/statusor.h"
+ #include "common/storage_define.h"
+ #include "compute_env/sorting/merge.h"
++#include "compute_env/spill/input_stream_internal.h"
+ #include "compute_env/spill/log_block_manager.h"
+ #include "compute_env/spill/mem_table.h"
+ #include "compute_env/spill/mem_tracker_guard.h"
+@@ -1569,6 +1570,76 @@ TEST_F(SpillTest, direct_io_open_failure_falls_back_to_buffered) {
+     dummy_rt_st._query_options.spill_enable_direct_io = false;
+ }
+ 
++// Child of a BufferedInputStream whose first get_next blocks until the test opens the gate, so the test
++// can hold the buffered stream's prefetch flag while another restore task asks for a prefetch.
++class GatedInputStream final : public spill::SpillInputStream {
++public:
++    explicit GatedInputStream(int num_chunks) : _remaining(num_chunks) {}
 +
-+create table t(dt date not null, k int not null, v int) duplicate key(dt, k) partition by date_trunc('day', dt) distributed by hash(k) buckets 2 properties("replication_num"="1");
-+insert into t values ('2026-01-01', 1, 101), ('2026-01-01', 2, 102), ('2026-01-02', 1, 201), ('2026-01-03', 1, 301), ('2026-02-03', 1, 2301);
++    StatusOr<ChunkUniquePtr> get_next(workgroup::YieldContext& yield_ctx, spill::SerdeContext& ctx) override {
++        if (_calls.fetch_add(1) == 0) {
++            _entered.set_value();
++            _gate.wait();
++        }
++        if (_remaining-- <= 0) {
++            return Status::EndOfFile("end of gated stream");
++        }
++        return std::make_unique<Chunk>();
++    }
++    bool is_ready() override { return true; }
++    void close() override {}
 +
-+-- the merge leaves the partition expression at day
-+alter table t partition by date_trunc('month', dt) between '2026-01-01' and '2026-01-31';
-+function: wait_optimize_table_finish()
-+function: print_query_columns("show partitions from t", "PartitionName", "Range")
++    void wait_entered() { _entered_future.wait(); }
++    void open_gate() { _gate_promise.set_value(); }
++    int calls() const { return _calls.load(); }
 +
-+-- a dynamic overwrite of one January day replaces the merged p202601 as a whole, no daily partition comes back
-+set dynamic_overwrite = true;
-+insert overwrite t values ('2026-01-01', 1, 9001), ('2026-01-01', 2, 9002);
-+set dynamic_overwrite = false;
-+function: print_query_columns("show partitions from t", "PartitionName", "Range")
-+select * from t order by dt, k;
-+select count(*), sum(v) from t where dt = '2026-01-01';
++private:
++    int _remaining;
++    std::atomic_int _calls{0};
++    std::promise<void> _entered;
++    std::future<void> _entered_future = _entered.get_future();
++    std::promise<void> _gate_promise;
++    std::shared_future<void> _gate = _gate_promise.get_future().share();
++};
 +
-+-- the merged month, a daily partition and a day that has no partition yet
-+set dynamic_overwrite = true;
-+insert overwrite t values ('2026-01-15', 1, 9151), ('2026-02-03', 1, 9231), ('2026-03-05', 1, 9351);
-+set dynamic_overwrite = false;
-+function: print_query_columns("show partitions from t", "PartitionName", "Range")
-+select * from t order by dt, k;
-+select dt, count(*), sum(v) from t where dt in ('2026-01-01', '2026-01-15', '2026-02-03', '2026-03-05') group by dt order by dt;
++// Regression test for a lost wakeup in BufferedInputStream::prefetch. Restore tasks that found the
++// prefetch flag held used to return without doing anything; when they all landed while the holder was
++// on its way out after reading its single chunk, nothing read the next chunk and the spilled sort source
++// waited forever (row_number() over a force-spilled sort hung until query timeout). A prefetch request
++// that loses the race must be served by the task holding the flag.
++TEST_F(SpillTest, buffered_input_stream_serves_prefetch_request_that_lost_the_race) {
++    ObjectPool pool;
++    RawSpillerFixture fx(this, &pool, &dummy_rt_st, /*pool_size=*/1);
++    auto child = std::make_shared<GatedInputStream>(/*num_chunks=*/4);
++    auto stream = spill::detail::make_buffered_input_stream(/*capacity=*/4, child, fx.spiller.get());
 +
-+drop database test_merge_dyn_ow_${uuid0};
++    auto holder = std::async(std::launch::async, [&stream]() {
++        workgroup::YieldContext yield_ctx;
++        spill::SerdeContext ctx;
++        return stream->prefetch(yield_ctx, ctx);
++    });
++    // The holder owns the prefetch flag and is blocked reading its chunk.
++    child->wait_entered();
 +
-+-- name: test_dynamic_overwrite_into_merged_partition_pk
-+create database test_merge_dyn_ow_pk_${uuid0};
-+use test_merge_dyn_ow_pk_${uuid0};
++    workgroup::YieldContext yield_ctx;
++    spill::SerdeContext ctx;
++    // This request loses the race for the flag and returns immediately without reading.
++    ASSERT_OK(stream->prefetch(yield_ctx, ctx));
++    ASSERT_EQ(child->calls(), 1);
 +
-+create table t(dt date not null, k int not null, v int) primary key(dt, k) partition by date_trunc('day', dt) distributed by hash(k) buckets 2 properties("replication_num"="1");
-+insert into t values ('2026-01-01', 1, 101), ('2026-01-01', 2, 102), ('2026-01-02', 1, 201), ('2026-01-03', 1, 301), ('2026-02-03', 1, 2301);
++    child->open_gate();
++    ASSERT_OK(holder.get());
 +
-+alter table t partition by date_trunc('month', dt) between '2026-01-01' and '2026-01-31';
-+function: wait_optimize_table_finish()
-+function: print_query_columns("show partitions from t", "PartitionName", "Range")
++    // The holder served the request that lost the race: two chunks were read, not one.
++    EXPECT_EQ(child->calls(), 2);
++    ASSERT_TRUE(stream->is_ready());
++    ASSERT_OK(stream->get_next(yield_ctx, ctx).status());
++    ASSERT_TRUE(stream->is_ready());
++    ASSERT_OK(stream->get_next(yield_ctx, ctx).status());
++    ASSERT_FALSE(stream->is_ready());
++    ASSERT_FALSE(stream->eof());
++}
 +
-+set dynamic_overwrite = true;
-+insert overwrite t values ('2026-01-01', 1, 9001), ('2026-01-01', 2, 9002);
-+set dynamic_overwrite = false;
-+function: print_query_columns("show partitions from t", "PartitionName", "Range")
-+select * from t order by dt, k;
-+select count(*), sum(v) from t where dt = '2026-01-01';
-+
-+set dynamic_overwrite = true;
-+insert overwrite t values ('2026-01-15', 1, 9151), ('2026-02-03', 1, 9231), ('2026-03-05', 1, 9351);
-+set dynamic_overwrite = false;
-+function: print_query_columns("show partitions from t", "PartitionName", "Range")
-+select * from t order by dt, k;
-+select dt, count(*), sum(v) from t where dt in ('2026-01-01', '2026-01-15', '2026-02-03', '2026-03-05') group by dt order by dt;
-+
-+drop database test_merge_dyn_ow_pk_${uuid0};
+ /*
+ TEST_F(SpillTest, file_group_test) {
+     auto chunk = std::make_unique<Chunk>();
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #82487** (2026-11-05): [BugFix][RB-96] Allow metadata-only ALTER TABLE while a range table is resharding (backport #82457) (@mergify[bot])
-- **PR #82485** (2026-11-05): [Enhancement][RB-225] Serve the Iceberg column-statistics path from the manifest cache and use only fresh Puffin NDVs (backport #82462) (@mergify[bot])
-- **PR #82484** (2026-11-05): [Enhancement][RB-225] Honor the Iceberg write metrics config for data files written by StarRocks (backport #82464) (@mergify[bot])
-- **PR #82466** (2026-11-05): [Enhancement][RB-904] Show a load job's rejected rows only to users with SELECT on its target tables (@starrocks-bot[bot])
-- **PR #82465** (2026-11-05): [Enhancement] Add passive FE models for grouped range scans (backport #82453) (@mergify[bot])
-- **PR #82464** (2026-11-05): [Enhancement][RB-225] Honor the Iceberg write metrics config for data files written by StarRocks (@starrocks-bot[bot])
+- **PR #82527** (2026-11-05): [Enhancement][RB-225] TPCDS Q78 Pre-filter the aggregation under a LEFT JOIN chain filtered by an OR (backport #82518) (@mergify[bot])
+- **PR #82525** (2026-11-05): [UT] Let BE UT suites that rely on another suite's global setup run alone (@Hyper-FF)
+- **PR #82524** (2026-11-05): [BugFix][RB-225] Fix Iceberg one-sided stats bounds, orphan files on a failed build, and wrong MAX with tiny batches (backport #82508) (@mergify[bot])
+- **PR #82523** (2026-11-05): [Enhancement] Extrapolate sampled external NDV from its growth over nested partition subsets (backport #82516) (@mergify[bot])
+- **PR #82518** (2026-11-05): [Enhancement][RB-225] TPCDS Q78 Pre-filter the aggregation under a LEFT JOIN chain filtered by an OR (@starrocks-bot[bot])
+- **PR #82517** (2026-11-05): [BugFix][RB-904] Show a multi-statement transaction's statements in full only with SELECT on all its tables (backport #82514) (@mergify[bot])
 
 ---
 
@@ -2662,30 +2398,28 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [UT] Split the range sync MV reshard case so it fits the case timeout (#81416)
+## X. [BugFix][RB-225] Fix Iceberg one-sided stats bounds, orphan files on a failed bu
 
 **RULE**:
-When implementing operations in `test/sql/test_range_orderby/R/test_range_sync_mv_reshard.sql`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in StarRocks/starrocks. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `be/src/connector/hive/scanner/hdfs_scanner.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in StarRocks/starrocks. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `dfbaec3e`: [UT] Split the range sync MV reshard case so it fits the case timeout (#81416). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b8ae8cbe`: [BugFix][RB-225] Fix Iceberg one-sided stats bounds, orphan files on a failed build, and wrong MAX with tiny batches (#82508). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `test/sql/test_range_orderby/R/test_range_sync_mv_reshard.sql`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `be/src/connector/hive/scanner/hdfs_scanner.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
--- Scope: Shared-data range synchronous MV backfill, double writes and maintenance for SUM/COUNT/MIN/MAX/AVG MVs.
--- The sketch MVs run the same flow in test_range_sync_mv_reshard_sketch: one case holding all seven ran within
--- seconds of the 150-second case timeout.
+    ctx.format_scan_context.min_max_value_cursors.clear();
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Anti-pattern to NEVER write (induced failure mode):
-shell: exec python3 -c 'exec('"'"'import os,signal\nsignal.alarm(5)\ndirectory=\'"'"'/tmp/range_sync_mv_test_range_sync_mv_reshard_${uuid0}\'"'"'\nos.mkdir(directory,0o700)\nhelper_source=\'"'"'import concurrent.futures\\nimport contextlib\\nimport ctypes\\nimport io\\nimport json\\nimport os\\nfrom pathlib import Path\\nimport signal\\nimport subprocess\\nimport sys\\nimport time\\nfrom urllib.parse import urljoin, urlparse\\ndb = "db_${uuid0}"\\ncfg = None\\nconn = None\\nstage_deadline = 0\\ndef remaining():\\n    seconds = stage_deadline - time.monotonic()\\n    assert seconds > 0, "total stage deadline expired"\\n    return seconds\\ndef connection(database=db):\\n    return pymysql.connect(host=cfg.mysql_host, port=int(cfg.mysql_port), user=cfg.mysql_user,\\n                           password=cfg.mysql_password, database=database, autocommit=True,\\n                           connect_timeout=min(5, remaining()), read_timeout=min(15, remaining()),\\n                           write_timeout=min(15, remaining()))\\ndef q(sql, c=None):\\n    c = conn if c is None else c\\n    c._read_timeout = min(15, remaining())\\n    c._write_timeout = min(15, remaining())\\n    with c.cursor
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `dfbaec3e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b8ae8cbe` are properly handled with clean fallback behavior.

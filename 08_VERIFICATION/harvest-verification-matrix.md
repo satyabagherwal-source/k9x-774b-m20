@@ -7814,3 +7814,4 @@
 | `CYCLE-20261105-8F3F` | `2026-11-05T22:55:00.459Z` | `gauthierpiarrette/highball` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`841e6e01...`) |
 | `CYCLE-20261105-8G8R` | `2026-11-05T22:55:01.947Z` | `pyannote/speaker-diarization-3.1` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null` | Yes (`46266a74...`) |
 | `CYCLE-20261105-8JAG` | `2026-11-05T22:55:05.896Z` | `citusdata/citus` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`3d3addf1...`) |
+| `CYCLE-20261105-HOSY` | `2026-11-05T23:02:12.946Z` | `StarRocks/starrocks` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`433c190f...`) |

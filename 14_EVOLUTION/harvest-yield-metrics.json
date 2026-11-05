@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-05T22:55:05.904Z",
-  "total_cycles_completed": 7791,
-  "total_learnings_persisted": 7791,
-  "total_rules_promoted": 7435,
+  "last_updated": "2026-11-05T23:02:12.955Z",
+  "total_cycles_completed": 7792,
+  "total_learnings_persisted": 7792,
+  "total_rules_promoted": 7436,
   "history": [
-    {
-      "timestamp": "2026-11-05T10:23:19.000Z",
-      "repository": "Mintplex-Labs/anything-llm",
-      "learningId": "learn-github-mintplex-labs-anything-llm",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-05T10:26:24.387Z",
       "repository": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-05T22:55:05.904Z",
       "repository": "citusdata/citus",
       "learningId": "learn-github-citusdata-citus",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T23:02:12.955Z",
+      "repository": "StarRocks/starrocks",
+      "learningId": "learn-github-starrocks-starrocks",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

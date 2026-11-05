@@ -5223,10 +5223,10 @@
     "repository": "StarRocks/starrocks",
     "platform": "github",
     "sourceUrl": "https://github.com/StarRocks/starrocks",
-    "sourceVersion": "d0391e8c",
+    "sourceVersion": "5366ee35",
     "license": "Apache-2.0",
-    "contentHash": "29fe7e61427d3884715d57c62dcc1161f44e790e2f759a9a689e1afa644c40d5",
-    "lastHarvestedAt": "2026-11-05T06:28:58.250Z",
+    "contentHash": "433c190f2c7ba39a067f12e93aa8f3cdd4b6da9f124ba34a9ca13b3b372234c1",
+    "lastHarvestedAt": "2026-11-05T23:02:12.950Z",
     "learningId": "learn-github-starrocks-starrocks"
   },
   "lobehub-lobe-ui": {

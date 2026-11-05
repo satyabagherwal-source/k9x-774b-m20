@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261104-WLNN",
-    "timestamp": "2026-11-04T20:10:10.979Z",
-    "repository": "milvus-io/milvus",
-    "learningId": "learn-github-milvus-io-milvus",
-    "contentHash": "ac3186c24a74f82f6408f7270eddb246eb5f0d847f137bd0f9699f7bf514e4c2",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261104-XLAO",
     "timestamp": "2026-11-04T20:10:57.168Z",
     "repository": "baidu/Unlimited-OCR-2",
@@ -7490,6 +7475,21 @@
     "repository": "citusdata/citus",
     "learningId": "learn-github-citusdata-citus",
     "contentHash": "3d3addf16809328c4c58ad1463ca91f98d5247623ebd9b9c56baaaa3d2a56509",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-HOSY",
+    "timestamp": "2026-11-05T23:02:12.946Z",
+    "repository": "StarRocks/starrocks",
+    "learningId": "learn-github-starrocks-starrocks",
+    "contentHash": "433c190f2c7ba39a067f12e93aa8f3cdd4b6da9f124ba34a9ca13b3b372234c1",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

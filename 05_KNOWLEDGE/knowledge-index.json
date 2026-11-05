@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T22:55:05.820Z",
+  "last_updated": "2026-11-05T23:02:12.811Z",
   "total_verified_learnings": 1222,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -55959,11 +55959,16 @@
       "slug": "starrocks-starrocks",
       "platform": "github",
       "source_url": "https://github.com/StarRocks/starrocks",
-      "source_version": "d0391e8c",
-      "content_hash": "29fe7e61427d3884715d57c62dcc1161f44e790e2f759a9a689e1afa644c40d5",
+      "source_version": "5366ee35",
+      "content_hash": "433c190f2c7ba39a067f12e93aa8f3cdd4b6da9f124ba34a9ca13b3b372234c1",
       "dossier_path": "07_PROJECT_LEARNING/starrocks-starrocks-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/starrocks-starrocks-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "[BugFix][RB-225] Fix Iceberg one-sided stats bounds, orphan files on a failed bu",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2065,
           "title": "[BugFix] Drop repeated policy lookups and unbounded waits left by the planner lo",
@@ -56045,7 +56050,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T06:28:58.135Z",
+      "verified_at": "2026-11-05T23:02:12.784Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

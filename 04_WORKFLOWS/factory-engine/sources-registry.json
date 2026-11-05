@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-05T22:55:08.500Z",
-    "lastVerified": "2026-11-05T22:55:08.500Z",
+    "lastChecked": "2026-11-05T23:02:15.522Z",
+    "lastVerified": "2026-11-05T23:02:15.522Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -246,8 +246,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-05T22:31:49.791Z",
-    "lastVerified": "2026-11-05T22:31:49.791Z",
+    "lastChecked": "2026-11-05T23:02:06.835Z",
+    "lastVerified": "2026-11-05T23:02:06.835Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -1594,9 +1594,9 @@
   "lunasec-io-lunasec": {
     "name": "lunasec",
     "officialUrl": "https://github.com/lunasec-io/lunasec",
-    "lastChecked": "2026-11-05T18:31:32.715Z",
+    "lastChecked": "2026-11-05T23:02:01.744Z",
     "revisionIdentifier": "c6bb0762",
-    "lastVerified": "2026-11-05T18:31:32.715Z"
+    "lastVerified": "2026-11-05T23:02:01.744Z"
   },
   "valeriansaliou-sonic": {
     "name": "sonic",
@@ -2219,9 +2219,9 @@
   "fission-fission": {
     "name": "fission",
     "officialUrl": "https://github.com/fission/fission",
-    "lastChecked": "2026-11-05T07:13:04.164Z",
+    "lastChecked": "2026-11-05T23:01:59.293Z",
     "revisionIdentifier": "ae2aabf5",
-    "lastVerified": "2026-11-05T07:13:04.164Z"
+    "lastVerified": "2026-11-05T23:01:59.293Z"
   },
   "tailscale-tailscale": {
     "name": "tailscale/tailscale",
@@ -2250,9 +2250,9 @@
   "sayanarijit-xplr": {
     "name": "xplr",
     "officialUrl": "https://github.com/sayanarijit/xplr",
-    "lastChecked": "2026-11-05T02:25:37.922Z",
+    "lastChecked": "2026-11-05T23:01:51.699Z",
     "revisionIdentifier": "50824d0d",
-    "lastVerified": "2026-11-05T02:25:37.922Z"
+    "lastVerified": "2026-11-05T23:01:51.699Z"
   },
   "hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf": {
     "name": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
@@ -6264,14 +6264,14 @@
     "officialUrl": "https://github.com/StarRocks/starrocks",
     "sourceType": "github",
     "technology": "Java",
-    "lastChecked": "2026-11-05T06:28:57.259Z",
-    "lastVerified": "2026-11-05T06:28:57.259Z",
+    "lastChecked": "2026-11-05T23:02:10.684Z",
+    "lastVerified": "2026-11-05T23:02:10.684Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-starrocks-starrocks",
-    "contentHash": "29fe7e61427d3884715d57c62dcc1161f44e790e2f759a9a689e1afa644c40d5",
+    "contentHash": "433c190f2c7ba39a067f12e93aa8f3cdd4b6da9f124ba34a9ca13b3b372234c1",
     "promotedRulesCount": 1,
-    "recentFixesCount": 10,
+    "recentFixesCount": 6,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -9711,9 +9711,9 @@
   "magnetoid-seo-crawler": {
     "name": "SEO-Crawler",
     "officialUrl": "https://github.com/magnetoid/SEO-Crawler",
-    "lastChecked": "2026-11-02T21:22:52.936Z",
+    "lastChecked": "2026-11-05T23:01:54.148Z",
     "revisionIdentifier": "ebce8aa942",
-    "lastVerified": "2026-11-02T21:22:52.936Z"
+    "lastVerified": "2026-11-05T23:01:54.148Z"
   },
   "bernaferrari-figmatocode": {
     "name": "FigmaToCode",
@@ -12382,9 +12382,9 @@
   "shiguangschedule-shiguangschedule": {
     "name": "shiguangschedule",
     "officialUrl": "https://github.com/ShiGuangSchedule/shiguangschedule",
-    "lastChecked": "2026-11-03T22:51:57.103Z",
+    "lastChecked": "2026-11-05T23:01:56.658Z",
     "revisionIdentifier": "feabb68f",
-    "lastVerified": "2026-11-03T22:51:57.103Z"
+    "lastVerified": "2026-11-05T23:01:56.658Z"
   },
   "hf-speridlabs-idol": {
     "name": "speridlabs/idol",
