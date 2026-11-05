@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/xerj-org-xerj-learnings.md`  
 > **Source**: github ([https://github.com/xerj-org/xerj](https://github.com/xerj-org/xerj))  
-> **Source Version**: `344a95f6`  
+> **Source Version**: `83c9f0d1`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T00:29:51.575Z  
+> **Timestamp**: 2026-11-05T15:20:46.451Z  
 > **Learning ID**: `learn-github-xerj-org-xerj`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/xerj-org-xerj-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/xerj-org/xerj](https://github.com/xerj-org/xerj))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T00:29:51.568Z  
+> **Harvest Timestamp**: 2026-11-05T15:20:46.257Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: AI search engine and MCP server for bots and agents. One Rust binary indexes code, docs, logs, JSONL/CSV and PDFs for BM25 full-text, vector and hybrid search, code search without grep, agent memory and RAG. Elasticsearch-compatible API; Corpus Hub serves hundreds of reference memory corpora.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 19084 stars
+- **Stars / Engagement**: 19029 stars
 
 ---
 
@@ -36,6 +36,99 @@
 ### D1: Architecture & Structural Boundaries
 - Entry configurations inspected via direct stream: README.md.
 - Evaluated system abstractions and modular contracts.
+
+### Core Architecture Module: `benchmarks/agent-memory/score.py`
+```
+"""Score every results/*.json the same way and write summary.csv + summary.json.
+
+A question is a hit@k when a returned memory among the top k contains the
+answer string (case-insensitive, word boundaries). For update and distractor
+questions, "correct first" means the first returned memory that contains
+either the answer or the stale/wrong answer contains the answer (and the
+answer appears in the top k). Stdlib only.
+"""
+import json, os, re, glob, statistics, csv
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+ds = json.load(open(os.path.join(HERE, "dataset.json")))
+QS = {q["id"]: q for q in ds["questions"]}
+
+def has(text, s):
+    return re.search(r"(?<![\w-])" + re.escape(s.lower()) + r"(?![\w-])", (text or "").lower()) is not None
+
+def first_rank(hits, s):
+    for i, h in enumerate(hits):
+        if has(h, s):
+            return i + 1
+    return None
+
+def pct(a):
+    return round(100.0 * sum(a) / len(a), 1) if a else None
+
+def p(xs, q):
+    xs = sorted(xs)
+    if not xs:
+        return None
+    i = min(len(xs) - 1, max(0, int(round(q / 100.0 * (len(xs) - 1)))))
+    return round(xs[i], 2)
+
+rows = []
+per_q = []
+for f in sorted(glob.glob(os.path.join(HERE, "results", "*.json"))):
+    r = json.load(open(f))
+    k = r["k"]
+    by_type = {}
+    h1_all, h5_all = [], []
+    upd_ok, dis_ok = [], []
+    for qr in r["questions"]:
+        q = QS[qr["id"]]
+        hits = qr["hits"]
+        ra = first_rank(hits, q["answer"])
+        h1 = ra == 1
+        hk = ra is not None and ra <= k
+        h1_all.append(h1); h5_all.append(hk)
+        by_type.setdefault(q["type"], []).append((h1, hk))
+        ok = None
+        if q["stale"]:
+            rs = first_rank(hits, q["stale"])
+            ok = ra is not None and (rs is None or ra <= rs)
+            (upd_ok if q["type"] == "update" else dis_ok).append(ok)
+        per_q.append({"system": r["system"], "config": r["config"], "id": q["id"], "type": q["type"],
+                      "answer_rank": ra, "hit1": h1, "hitk": hk, "correct_first": ok})
+    qms = [x["ms"] for x in r["questions"]]
+    row = {
+        "system": r["system"], "config": r["config"],
+        "version": r["meta"].get("version"), "commit": r["meta"].get("commit"),
+        "llm": r["meta"].get("llm") or "none", "embedder": r["meta"].get("embedder") or "none",
+        "hit_at_1_pct": pct(h1_all), "hit_at_5_pct": pct(h5_all),
+    }
+    for t in ("exact", "paraphrase", "update", "distractor"):
+        v = by_type.get(t, [])
+        row[f"{t}_hit5_pct"] = pct([b for _, b in v])
+    row["update_newest_wins_pct"] = pct(upd_ok)
+    row["distractor_correct_first_pct"] = pct(dis_ok)
+    row["write_ms_p50"] = p(r["write_ms"], 50)
+    row["write_ms_p95"] = p(r["write_ms"], 95)
+    row["query_ms_p50"] = p(qms, 50)
+    row["query_ms_p95"] = p(qms, 95)
+    row["ingest_total_s"] = r["ingest_total_s"]
+    row["llm_calls_per_write"] = r["meta"].get("llm_calls_per_write")
+    row["run_at"] = r["run_at"]
+    rows.append(row)
+
+os.makedirs(os.path.join(HERE, "out"), exist_ok=True)
+if rows:
+    with open(os.path.join(HERE, "out", "summary.csv"), "w", newline="") as fh:
+        w = csv.DictWriter(fh, fieldnames=list(rows[0].keys()))
+        w.writeheader(); w.writerows(rows)
+    with open(os.path.join(HERE, "out", "per_question.csv"), "w", newline="") as fh:
+        w = csv.DictWriter(fh, fieldnames=list(per_q[0].keys()))
+        w.writeheader(); w.writerows(per_q)
+    json.dump(rows, open(os.path.join(HERE, "out", "summary.json"), "w"), indent=1)
+for r in rows:
+    print(f'{r["system"]:<22}{r["config"]:<22} h@1 {r["hit_at_1_pct"]:>5}  h@5 {r["hit_at_5_pct"]:>5}  ex {r["exact_hit5_pct"]:>5} para {r["paraphrase_hit5_pct"]:>5} upd-new {r["update_newest_wins_pct"]:>5} dis {r["distractor_correct_first_pct"]:>5}  w50 {r["write_ms_p50"]:>8} q50 {r["query_ms_p50"]:>8} q95 {r["query_ms_p95"]:>8}')
+
+```
 
 ### Core Architecture Module: `benchmarks/decisions-as-retrieval/results/2026-09-30-rc80gates/score_history.py`
 ```
@@ -1641,255 +1734,6 @@ impl EmbeddingProxy {
         let chunks: Vec<&[String]> = if texts.len() <
 ```
 
-### Core Architecture Module: `engine/crates/xerj-ai/src/embedder.rs`
-```
-//! Unified embedding backend.
-//!
-//! XERJ embeds `semantic_text` fields through one of four interchangeable
-//! backends, all behind a single [`Embedder`] handle so the engine's ingest
-//! and query paths never branch on the backend:
-//!
-//!   * [`Embedder::Lexical`] — the zero-dependency built-in feature-hash
-//!     embedder ([`crate::local::local_embed`]). Deterministic, offline,
-//!     fast — but lexical, *not* neural semantic understanding. This is the
-//!     honest default when nothing else is configured.
-//!   * [`Embedder::Proxy`] — an external OpenAI-compatible `/v1/embeddings`
-//!     service ([`crate::embed::EmbeddingProxy`]). Bring any model/provider.
-//!   * [`Embedder::Neural`] — the built-in BERT sentence encoder
-//!     ([`crate::neural`]), running in-process via `candle`. Compiled only
-//!     under the `neural` cargo feature. The server loads it at startup
-//!     (`Embedder::preload_neural`); a blocked download refuses the process
-//!     rather than failing every ingest. The handle still shares one
-//!     process-wide model.
-//!   * [`Embedder::Onnx`] — the experimental in-process ONNX Runtime backend.
-//!     It is compiled only under `onnx-experimental`, requires explicit model
-//!     and tokenizer paths, and loads the model lazily on first use.
-//!
-//! [`Embedder::is_active`] distinguishes a neural/proxy/ONNX backend from the
-//! lexical fallback. The query path nevertheless auto-embeds `semantic_text`
-//! fields with whichever backend indexed them, including lexical, so ingest
-//! and query vectors always use the same embedding identity.
-
-use anyhow::{anyhow, Result};
-
-use crate::embed::EmbeddingProxy;
-use crate::local::{local_embed, DEFAULT_DIMS};
-
-#[cfg(feature = "onnx-experimental")]
-struct CancellationSafeInit<T> {
-    result: std::sync::OnceLock<std::result::Result<std::sync::Arc<T>, std::sync::Arc<str>>>,
-    started: std::sync::atomic::AtomicBool,
-    slow_warning_emitted: std::sync::atomic::AtomicBool,
-    notify: tokio::sync::Notify,
-}
-
-#[cfg(feature = "onnx-experimental")]
-struct InitCompletionGuard<T: Send + Sync + 'static> {
-    shared: std::sync::Arc<CancellationSafeInit<T>>,
-    armed: bool,
-}
-
-#[cfg(feature = "onnx-experimental")]
-impl<T: Send + Sync + 'static> Drop for InitCompletionGuard<T> {
-    fn drop(&mut self) {
-        if !self.armed {
-            return;
-        }
-        let fallback = std::sync::Arc::<str>::from(
-            "ONNX initialization worker panicked before publishing a terminal result",
-        );
-        let _ = self.shared.result.set(Err(fallback));
-        self.shared.notify.notify_waiters();
-    }
-}
-
-#[cfg(feature = "onnx-experimental")]
-impl<T: Send + Sync + 'static> CancellationSafeInit<T> {
-    fn new() -> Self {
-        Self {
-            result: std::sync::OnceLock::new(),
-            started: std::sync::atomic::AtomicBool::new(false),
-            slow_warning_emitted: std::sync::atomic::AtomicBool::new(false),
-            notify: tokio::sync::Notify::new(),
-        }
-    }
-
-    async fn get_or_spawn<F>(
-        self: &std::sync::Arc<Self>,
-        thread_name: &str,
-        load: F,
-    ) -> Result<std::sync::Arc<T>>
-    where
-        F: FnOnce() -> Result<T> + Send + 'static,
-    {
-        use std::sync::atomic::Ordering;
-
-        if !self.started.swap(true, Ordering::AcqRel) {
-            let shared = std::sync::Arc::clone(self);
-            let thread_name = thread_name.to_string();
-            let worker_name = thread_name.clone();
-            let started = std::time::Instant::now();
-            tracing::info!(%thread_name, "ONNX lazy initialization scheduled");
-            // #1122: Builder::spawn panics in the child when the alternate
-            // signal stack cannot be mapped (`panic = "abort"` kills the
-            // node). A failed spawn publishes the error on the same path
-            // an `Err` from pthread_create already took.
-            let spawn = xerj_common::thread_spawn::try_spawn_unguarded(&thread_name, move || {
-                let mut completion = InitCompletionGuard {
-                    shared: std::sync::Arc::clone(&shared),
-                    armed: true,
-                };
-                let result =
-                    std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| match load() {
-                        Ok(value) => Ok(std::sync::Arc::new(value)),
-                        Err(error) => Err(std::sync::Arc::<str>::from(format!("{error:#}"))),
-                    }))
-                    .unwrap_or_else(|payload| {
-                        let detail = if let Some(message) = payload.downcast_ref::<&str>() {
-                            (*message).to_string()
-                        } else if let Some(message) = payload.downcast_ref::<String>() {
-                            message.clone()
-                        } else {
-                            "non-string panic payload".to_string()
-                        };
-                        Err(std::sync::Arc::<str>::from(format!(
-                            "ONNX initialization loader panicked: {detail}"
-                        )))
-                    });
-                let elapsed_ms = started.elapsed().as_millis();
-                let _ = shared.result.set(result);
-                shared.notify.notify_waiters();
-                completion.armed = false;
-
-                let published = shared
-                    .result
-                    .get()
-                    .expect("initialization result was just published");
-                match published {
-                    Ok(_) => tracing::info!(
-                        thread_name = %worker_name,
-                        elapsed_ms,
-                        "ONNX lazy initialization completed"
-                    ),
-                    Err(error) => tracing::error!(
-                        thread_name = %worker_name,
-                        elapsed_ms,
-                        %error,
-                        "ONNX lazy initialization failed"
-                    ),
-                }
-            });
-            if let Err(failure) = spawn {
-                let error = failure.error;
-                drop(failure.job);
-                let error = std::sync::Arc::<str>::from(format!(
-                    "spawn ONNX initialization thread {thread_name}: {error}"
-                ));
-                let _ = self.result.set(Err(error));
-                self.notify.notify_waiters();
-            }
-        }
-
-        loop {
-            let notified = self.notify.notified();
-            if let Some(result) = self.result.get() {
-                return result
-                    .clone()
-                    .map_err(|error| anyhow!("ONNX model initialization failed: {error}"));
-            }
-            if self
-                .slow_warning_emitted
-                .load(std::sync::atomic::Ordering::Acquire)
-            {
-                notified.await;
-            } else {
-                tokio::select! {
-                    () = notified => {}
-                    () = tokio::time::sleep(std::time::Duration::from_secs(30)) => {
-                        if !self.slow_warning_emitted.swap(
-                            true,
-                            std::sync::atomic::Ordering::AcqRel,
-                        ) {
-                            tracing::warn!(
-                                "ONNX lazy initialization is still running after 30 seconds"
-                            );
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-
-#[cfg(feature = "onnx-experimental")]
-struct OnnxShared {
-    init: std::sync::Arc<CancellationSafeInit<crate::onnx::OnnxPool>>,
-    calls: std::sync::Arc<tokio::sync::Semaphore>,
-    bytes: std::sync::Arc<tokio::sync::Semaphore>,
-}
-
-#[cfg(feature = "neural")]
-type NeuralCell = tokio::sync::OnceCell<std::sync::Arc<crate::neural::NeuralEmbedder>>;
-
-/// Process-scoped registry of lazily loaded neural models. Every index builds
-/// its own [`Embedder`], but indices using the same complete neural
-/// configuration must not each load another copy of the ~90 MB model.
-///
-/// Weak values are intentional: the registry coordinates sharing without
-/// extending a model's lifetime after the last index using it is dropped.
-#[cfg(feature = "neural")]
-fn shared_neural_cell(cfg: &crate::neural::NeuralConfig) -> std::sync::Arc<NeuralCell> {
-    use std::collections::HashMap;
-    use std::sync::{Mutex, OnceLock, Weak};
-
-    static CELLS: OnceLock<Mutex<HashMap<crate::neural::NeuralConfig, Weak<NeuralCell>>>> =
-        OnceLock::new();
-
-    let mut cells = CELLS
-        .get_or_init(|| Mutex::new(HashMap::new()))
-        .lock()
-        .unwrap_or_else(|poisoned| poisoned.into_inner());
-    if let Some(cell) = cells.get(cfg).and_then(Weak::upgrade) {
-        return cell;
-    }
-
-    // Opportunistically discard entries whose final handle has gone away.
-    cells.retain(|_, cell| cell.strong_count() > 0);
-    let cell = std::sync::Arc::new(NeuralCell::new());
-    cells.insert(cfg.clone(), std::sync::Arc::downgrade(&cell));
-    cell
-}
-
-/// A backend-agnostic text embedder shared across the engine.
-pub enum Embedder {
-    /// Built-in lexical feature-hash embedder (no model, no network).
-    Lexical,
-    /// External OpenAI-compatible embedding service.
-    Proxy(EmbeddingProxy),
-    /// Built-in neural BERT embedder (candle). The server preloads it at
-    /// startup; a handle built without that preload still loads on first embed.
-    #[cfg(feature = "neural")]
-    Neural(NeuralHandle),
-    /// Experimental local ONNX Runtime sentence encoder.
-    #[cfg(feature = "onnx-experimental")]
-    Onnx(OnnxHandle),
-}
-
-impl Embedder {
-    /// The zero-config lexical fallback.
-    pub fn lexical() -> Self {
-        Embedder::Lexical
-    }
-
-    /// Wrap an already-constructed external embedding proxy.
-    pub fn proxy(proxy: EmbeddingProxy) -> Self {
-        Embedder::Proxy(proxy)
-    }
-
-    /// A built-in neural embedder. Call [`preload_neural`] first when a
-    /// failed down
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -1917,529 +1761,680 @@ impl Embedder {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `702b8d3d` (2026-11-04)
-**Commit Message**: fix(tests): stop debug cargo test stack overflows, and name the missing 127.0.0.2 alias (#2910)
+### Incident Patch 1: `c5798431` (2026-11-05)
+**Commit Message**: fix(api): refuse a malformed _bulk action line for the whole request (#2938)
 
-* fix(tests): pass a debug cargo test in local_def, and name the missing 127.0.0.2 alias
+Motivation: ES 8 parses every action line of a `_bulk` body before it
+runs any action (`BulkRequestParser#parse`). A line it cannot read as an
+action refuses the whole request with a 400 `illegal_argument_exception`
+naming the line, and nothing in the body is written. XERJ answered 200,
+wrote every other action, and gave the bad line a per-item error. It
+also ignored unknown keys in an action line, so `_type` (removed in ES 8)
+and typos such as `_routing` went through silently. Two vendored ES YAML
+cases were on the catch-lenient ratchet for this:
+`bulk/10_basic.yml · empty action` and
+`bulk/60_deprecated.yml · Deprecated parameters should fail in Bulk query`.
 
-#2903, from a macOS field report; the first half reproduces on Linux too.
+Before, on a scratch node (`{"index":{...}}`, `{"f1":"v1"}`, `{}`):
 
-- xerj-mcp tests/local_def.rs: the test that serves the ES-compat router in
-  process ran on #[tokio::test]'s 2 MiB workers, and in a debug build a
-  handler overflowed the stack ("thread 'tokio-rt-worker' has overflowed its
-  stack", SIGABRT), taking the whole binary down. It now builds its runtime
-  with the server's 4 MiB RT_THREAD_STACK_SIZE, the pattern the other
-  in-process router tests in xerj-api already use.
-- xerj_common::loopback_test::require_loopback_alias(addr): binds the address
-  and, if the host lacks it (AddrNotAvailable), fails naming it and the macOS
-  fix, `sudo ifconfig lo0 alias <addr> up`. loopback_proxy calls it for
-  127.0.0.2 first, instead of failing later on a bare connection error.
-- CONTRIBUTING (Testing): CI runs --profile ci-test, a debug cargo test passes
-  too, the 4 MiB rule for in-process router tests, and the 127.0.0.2 alias.
+  ES 8.13  400 "Malformed action/metadata line [3], expected FIELD_NAME
+           but found [END_OBJECT]", nothing written
+  XERJ     200 errors:true, line 1 written, item 2 a 400
 
-Tests: on main, a debug `cargo test -p xerj-mcp --test local
+Root cause: the engine's bulk parse (`xerj_engine::bulk`) reads action
+lines in parallel and turns a bad one into a per-item error, after
+which the rest of the batch is applied. Its fast path never loo
 
-**File**: `CHANGELOG.md` (modified, +11/-0)
+**File**: `CHANGELOG.md` (modified, +12/-0)
 ```diff
-@@ -139,6 +139,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- 
- ### Fixed
- 
-+- A plain debug `cargo test --workspace` no longer aborts on a stack overflow,
-+  and the `127.0.0.2` loopback test names the missing macOS alias (#2903). Five
-+  tests that run the ES-compat router on multi-thread workers overflowed tokio's
-+  2 MiB worker stack in a debug build, killing their whole test binary: one in
-+  `xerj-mcp`'s `local_def`, one in `xerj-api`'s
-+  `autoindex_changed_file_drops_stale_symbols`, and three in `hub_api`. They now
-+  use the server's 4 MiB, as the other in-process router tests do. On a host without `127.0.0.2`,
-+  `loopback_proxy` fails up front with
-+  `sudo ifconfig lo0 alias 127.0.0.2 up` instead of a bare connection error,
-+  through the new `xerj_common::loopback_test::require_loopback_alias`.
-+  CONTRIBUTING documents both, and that CI runs `--profile ci-test`.
+@@ -156,6 +156,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+   `sudo ifconfig lo0 alias 127.0.0.2 up` instead of a bare connection error,
+   through the new `xerj_common::loopback_test::require_loopback_alias`.
+   CONTRIBUTING documents both, and that CI runs `--profile ci-test`.
++- `_bulk` refuses a malformed action line the way Elasticsearch 8 does: the
++  whole request is a 400 `illegal_argument_exception` naming the line
++  (`Malformed action/metadata line [3], expected FIELD_NAME but found
++  [END_OBJECT]`, `Action/metadata line [1] contains an unknown parameter
++  [_type]`), and nothing in the body is written. XERJ answered 200 with a
++  per-item error for that line and wrote every other action. An unknown
++  parameter (`_type`, `_version`, `_routing`, a typo) used to be ignored and
++  is now refused, as in ES 8; a client sending the 7.x REST compatibility
++  header (`compatible-with=7`) may still send `_type`, as ES 8 allows. A line
++  the check cannot read with confidence (JSON ES's own parser rejects, an
++  escaped key, a byte order mark) stops the check there, and the rest of the
++  body is answered as before.
  - Data-stream `_rollover` honours `dry_run` and its `conditions` instead of
    ignoring the body: `max_docs`/`max_age` are ORed and reported in
    `conditions`, and a dry run or an unmet condition creates no backing index.
 ```
 
-**File**: `CONTRIBUTING.md` (modified, +11/-0)
+**File**: `engine/crates/xerj-api/src/bulk_action_lines.rs` (added, +554/-0)
 ```diff
-@@ -47,6 +47,17 @@ sandbox that denies binding `127.0.0.1`, those tests fail with a message that sa
- so. A new test that binds an ephemeral loopback port should wrap the bind in
- `xerj_common::loopback_test::expect_loopback`.
- 
-+CI runs the tests with `cargo test --profile ci-test` (optimised, with unwinding
-+panics). A plain debug `cargo test` passes too. In a debug build, the ES-compat
-+handlers need more than tokio's 2 MiB default worker stack, so a test that
-+serves the router in process builds its runtime with
-+`thread_stack_size(4 * 1024 * 1024)`, the server's own size, instead of using
-+`#[tokio::test]`.
+@@ -0,0 +1,554 @@
++//! Elasticsearch's whole-request check of `_bulk` action lines.
++//!
++//! ES parses every action line of a bulk body before it executes any action
++//! (`BulkRequestParser#parse`, 8.13). A line it cannot read as an action
++//! refuses the whole request with a 400 `illegal_argument_exception` that
++//! names the line, so nothing in the body is written. The bulk engine reads
++//! action lines on its parallel parse and reports a bad one as a per-item
++//! error after the rest have run; this check runs first, on the HTTP path,
++//! and gives ES's answer instead.
++//!
++//! It is a byte scanner, not a JSON parse: action lines are short, and the
++//! bulk hot path deliberately avoids building a `Value` per action (M5.12 in
++//! `xerj_engine::bulk`). It reads names and token shapes the way ES's
++//! streaming parser meets them, and refuses only what it reads with
++//! confidence. Anything else (JSON it cannot follow, an escaped key, a byte
++//! order mark) stops the check at that line and leaves the rest of the body
++//! to the engine, which answers exactly as before. Stopping, rather than
++//! skipping the line, matters: once a line is unread, which line is an action
++//! and which is a source is no longer certain, and reading a source line as
++//! an action would refuse a body ES accepts.
++//!
++//! It does not convert values. ES does (`version` to a number, `_source` to a
++//! fetch context), so for a line that also has a value ES cannot convert, ES
++//! can name that value where this check names a later problem. Both answers
++//! are a 400 for the whole request.
 +
-+One test, `xerj-mcp`'s `loopback_proxy`, connects to `127.0.0.2`. Linux routes
-+all of `127.0.0.0/8` to loopback. Stock macOS configures only `127.0.0.1`, so the
-+test fails and names the fix: `sudo ifconfig lo0 alias 127.0.0.2 up`.
++/// Fields ES reads as a simple value inside an action. `_type` is absent on
++/// purpose: on the 8.x REST API it is an unknown parameter (see
++/// `first_malformed_action_line` for the 7.x compatibility case).
++const SIMPLE_FIELDS: &[&[u8]] = &[
++    b"_index",
++    b"_id",
++    b"routing",
++    b"op_type",
++    b"version",
++    b"version_type",
++    b"if_seq_no",
++    b"if_primary_term",
++    b"retry_on_conflict",
++    b"pipeline",
++    b"_source",
++    b"require_alias",
++    b"require_data_stream",
++    b"list_executed_pipelines",
++];
 +
- ### ES-YAML conformance suite (required)
- 
- XERJ's compatibility contract is the Elasticsearch REST API YAML test suite based on ES 8.13. **CI requires 0 failed cases — there is no "known failures" list.** The runner reports passed, failed, and skipped cases separately; skipped cases do not fail the gate, and the total changes as cases are added. If a test expects one response and XERJ returns another, XERJ is wrong; fix the engine, not the test.
-```
-
-**File**: `engine/crates/xerj-api/tests/autoindex_changed_file_drops_stale_symbols.rs` (modified, +15/-2)
-```diff
-@@ -348,8 +348,21 @@ async fn reindex_changed_code(app: &axum::Router, url: &str, no_graph: bool) {
-     assert_only_current(&format!("{mode} incremental reindex"), &live, &fresh);
- }
- 
--#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
--async fn changed_code_file_reindex_drops_shifted_and_removed_symbols_on_the_engine() {
-+#[test]
-+fn changed_code_file_reindex_drops_shifted_and_removed_symbols_on_the_engine() {
-+    // The router is served in process, and its handlers do not fit tokio's
-+    // 2 MiB default worker stack in a debug build (#2903). The server runtime
-+    // is 4 MiB (`xerj-server`'s `RT_THREAD_STACK_SIZE`); match it.
-+    let rt = tokio::runtime::Builder::new_multi_thread()
-+        .worker_threads(2)
-+        .thread_stack_size(4 * 1024 * 1024)
-+        .enable_all()
-+        .build()
-+        .expect("runtime");
-+    rt.block_on(changed_code_file_reindex_drops_shifted_and_removed_symbols_inner());
-+}
++/// Fields ES accepts as an object inside an action.
++const OBJECT_FIELDS: &[&[u8]] = &[b"dynamic_templates", b"_source"];
 +
-+async fn changed_code_file_reindex_drops_shifted_and_removed_symbols_inner() {
-     let app = app().await;
-     let listener = xerj_common::loopback_test::expect_loopback(
-         tokio::net::TcpListener::bind("127.0.0.1:0").await,
-```
-
-**File**: `engine/crates/xerj-api/tests/hub_api.rs` (modified, +32/-6)
-```diff
-@@ -366,6 +366,20 @@ fn bare(o: &Opts) -> Hub {
-     }
- }
- 
-+/// Runs `test` on four workers with the server's 4 MiB stack. The hub's Ask
-+/// and Def paths do not fit tokio's 2 MiB default worker stack in a debug
-+/// build (#2903); the server runtime is 4 MiB (`xerj-server`'s
-+/// `RT_THREAD_STACK_SIZE`).
-+fn on_server_stack<F: std::future::Future>(test: F) -> F::Output {
-+    tokio::runtime::Builder::new_multi_thread()
-+        .worker_threads(4)
-+        .thread_stack_size(4 * 1024 * 1024)
-+        .enable_all()
-+        .build()
-+        .expect("runtime")
-+        .block_on(test)
-+}
-+
- /// A node with the fixture indices seeded.
- async fn hub(o: Opts) -> Hub {
-     let hub = bare(&o);
-@@ -908,8 +922,12 @@ async fn catalogue_follows_the_file_when_it_changes() {
-     assert_ne!(etag1, etag2, "and under a new ETag");
- }
- 
--#[tokio::test(flavor = "multi_thread", worker_threads = 4)]
--async fn def_answers_with_the_fixture_value_the_pin_and_a_hosted_origin() {
-+#[test]
-+fn def_answers_with_the_fixture_value_the_pin_and_a_hosted_origin() {
-+    on_server_stack(def_answers_with_the_fixture_value_the_pin_and_a_hosted_origin_inner());
-+}
-+
-+async fn def_answers_with_the_fixture_value_the_pin_and_a_hosted_origin_inner() {
-     let h = hub(Opts::new(false, false)).await;
-     let r = h.get("/_hub/v1/def/mini-c/MINI_LIMIT").await;
-     assert_eq!(r.status, StatusCode::OK, "{:?}", r.json());
-@@ -1303,8 +1321,12 @@ async fn k_is_clamped_to_fifty_and_garbage_k_is_400() {
-     assert!(hub_api::parse_k(Some("0"), 5).is_err());
- }
- 
--#[tokio::test(flavor = "multi_thread", worker_threads = 4)]
--async fn oversized_blank_missing_and_stray_inputs_are_400() {
-+#[test]
-+fn oversized_blank_missing_and_stray_inputs_are_400() {
-+    on_server_stack(oversized_blank_missing_and_stray_inputs_are_400_inner());
-+}
-+
-+async fn oversized_blank_missing_and_stray_inputs_are_400_inner() {
-     let h = hub(Opts::new(false, false)).await;
-     let big = "a".repeat(600);
-     let edge = "a".repeat(512);
-@@ -3103,8 +3125,12 @@ fn the_fixture_dir_is_the_shared_one() {
- /// index's store is `<data_dir>/<index name>` — so it must carry a name no
- /// index can take. It used to be `hub-routing`, a legal index name: an `Ask`
- /// wrote `.git` into a user's `hub-routing` index on every request.
--#[tokio::test(flavor = "multi_thread", worker_threads = 4)]
--async fn ask_never_writes_into_a_user_index_named_like_its_routing_dir() {
-+#[test]
-+fn ask_never_writes_into_a_user_index_named_like_its_routing_dir() {
-+    on_server_stack(ask_never_writes_into_a_user_index_named_like_its_routing_dir_inner());
-+}
-+
-+async fn ask_never_writes_into_a_user_index_named_like_its_routing_dir_inner() {
-     let h = hub(Opts::new(false, false)).await;
-     let data = PathBuf::from(&h.state.config.server.data_dir);
-     // The old name, and the shape of the new one: an index may take the first,
-```
-
-**File**: `engine/crates/xerj-common/src/loopback_test.rs` (modified, +54/-0)
-```diff
-@@ -40,6 +40,34 @@ pub fn bind_failure(e: &io::Error) -> String {
-     }
- }
- 
-+/// Fails the test, naming the fix, unless `addr` (a loopback address other
-+/// than 127.0.0.1, such as 127.0.0.2) is usable on this host. Linux routes all
-+/// of 127.0.0.0/8 to loopback; stock macOS configures only 127.0.0.1, and a
-+/// connection to another address fails with an error that does not say why
-+/// (#2903). Call it at the top of a test that connects to such an address.
-+#[track_caller]
-+pub fn require_loopback_alias(addr: std::net::Ipv4Addr) {
-+    if let Err(e) = std::net::TcpListener::bind((addr, 0)) {
-+        panic!("{}", alias_failure(addr, &e));
-+    }
-+}
-+
-+/// The panic message for a loopback address the host cannot bind.
-+pub fn alias_failure(addr: std::net::Ipv4Addr, e: &io::Error) -> String {
-+    match e.kind() {
-+        io::ErrorKind::AddrNotAvailable => format!(
-+            "loopback address {addr} is not configured on this host ({e}): this test \
-+             connects to {addr} as a second loopback address. Linux has it by default; \
-+             on macOS add it with `sudo ifconfig lo0 alias {addr} up`."
-+        ),
-+        io::ErrorKind::PermissionDenied => format!(
-+            "loopback bind to {addr} failed ({e}): this test needs loopback networking. \
-+             Run the tests where binding {addr} is allowed."
-+        ),
-+        _ => format!("bind {addr}: {e}"),
-+    }
-+}
-+
- #[cfg(test)]
- mod tests {
-     use super::*;
-@@ -69,4 +97,30 @@ mod tests {
-     fn expect_loopback_passes_a_listener_through() {
-         assert_eq!(expect_loopback(Ok::<u16, io::Error>(7)), 7);
-     }
-+
-+    #[test]
-+    fn a_missing_loopback_alias_names_the_address_and_the_fix() {
-+        let addr = std::net::Ipv4Addr::new(127, 0, 0, 2);
-+        let msg = alias_failure(addr, &io::Error::from(io::ErrorKind::AddrNotAvailable));
-+        assert!(msg.contains("127.0.0.2 is not configured"), "{msg}");
-+        assert!(msg.contains("ifconfig lo0 alias 127.0.0.2"), "{msg}");
-+        let denied = alias_failure(addr, &io::Error::from(io::ErrorKind::PermissionDenied));
-+        assert!(denied.contains("needs loopback networking"), "{denied}");
-+        assert!(!denied.contains("ifconfig"), "{denied}");
-+        let other = alias_failure(addr, &io::Error::from(io::ErrorKind::Other));
-+        assert!(!other.contains("ifconfig"), "{other}");
-+    }
-+
-+    #[test]
-+    fn require_loopback_alias_accepts_127_0_0_1() {
-+        require_loopback_alias(std::net::Ipv4Addr::LOCALHOST);
-+    }
-+
-+    /// A non-loopback documentation address (TEST-NET-1) is never configured,
-+    /// so it stands in for macOS's missing 127.0.0.2.
-+    #[test]
-+    #[should_panic(expected = "is not configured on this host")]
-+    fn require_loopback_alias_panics_for_an_unconfigured_address() {
-+        require_loopback_alias(std::net::Ipv4Addr::new(192, 0, 2, 1));
-+    }
- }
-```
-
-**File**: `engine/crates/xerj-mcp/tests/local_def.rs` (modified, +16/-2)
-```diff
-@@ -221,8 +221,22 @@ async fn lookup(url: &str, arguments: Value) -> Value {
-     serde_json::from_str(response["result"]["content"][0]["text"].as_str().unwrap()).unwrap()
- }
- 
--#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
--async fn local_def_returns_ranked_unique_declarations_in_the_requested_scope() {
-+#[test]
-+fn local_def_returns_ranked_unique_declarations_in_the_requested_scope() {
-+    // This test serves the ES-compat router in process. Its handlers do not fit
-+    // tokio's 2 MiB default worker stack in a debug build, which overflowed a
-+    // plain `cargo test` (#2903). The server runtime is 4 MiB
-+    // (`xerj-server`'s `RT_THREAD_STACK_SIZE`); match it.
-+    let rt = tokio::runtime::Builder::new_multi_thread()
-+        .worker_threads(2)
-+        .thread_stack_size(4 * 1024 * 1024)
-+        .enable_all()
-+        .build()
-+        .expect("runtime");
-+    rt.block_on(local_def_returns_ranked_unique_declarations_in_the_requested_scope_inner());
-+}
-+
-+async fn local_def_returns_ranked_unique_declarations_in_the_requested_scope_inner() {
-     let tmp = tempfile::tempdir().unwrap();
-     let mut config = xerj_common::config::Config::default();
-     config.server.data_dir = tmp.path().join("data").to_string_lossy().into_owned();
-```
-
-**File**: `engine/crates/xerj-mcp/tests/loopback_proxy.rs` (modified, +3/-0)
-```diff
-@@ -145,6 +145,9 @@ async fn tool(url: &str, msg: Value) -> (bool, String) {
- 
- #[tokio::test]
- async fn loopback_ignores_an_unreachable_proxy_and_a_proxied_503_names_the_proxy() {
-+    // Phase 3 connects to 127.0.0.2 directly. Stock macOS has no such alias,
-+    // and the connection error alone does not say so (#2903).
-+    xerj_common::loopback_test::require_loopback_alias(std::net::Ipv4Addr::new(127, 0, 0, 2));
-     let _guard = EnvGuard::capture();
- 
-     let node_hits = Arc::new(AtomicUsize::new(0));
-```
-
----
-
-### Incident Patch 2: `4f5471fe` (2026-11-04)
-**Commit Message**: fix(deps): calamine 0.38.0 for RUSTSEC-2026-0436 (cargo-audit red on every PR) (#2912)
-
-cargo-audit is red on main and on every PR opened or re-run since RustSec
-published RUSTSEC-2026-0436 on 2026-11-03 (09:44Z). The last green audit
-on main ran at 08:29Z, so no change in between caused it.
-
-Root cause: calamine 0.37.0's CFB/OLE2 reader (src/cfb.rs) can panic on a
-directory stream whose length is not a multiple of 128 (an unchecked fixed
-offset slice of a short final chunk), and can allocate without bound
-walking a crafted self-referential DIFAT chain. Both are reachable through
-Xls::new on an attacker-supplied file, which is how xerj-autoindex reads
-legacy .xls. Fixed upstream in calamine 0.38.0 (tafia/calamine#762);
-patched = ">= 0.38.0".
-
-- xerj-autoindex: calamine =0.37.0 -> =0.38.0, and the comment above the
-  pin now names the advisory it clears.
-- Cargo.lock: calamine version and checksum only. Its dependency list is
-  unchanged (still zip ^9 and quick-xml 0.42), so nothing else moves.
-- No call-site changes: the 0.38.0 changelog has no Changed or Removed
-  section, only additions (XLSX styles, workbook_properties on Xls/Ods)
-  and fixes. xls.rs uses Xls, Reader, Data and D
-
-**File**: `engine/Cargo.lock` (modified, +2/-2)
-```diff
-@@ -956,9 +956,9 @@ dependencies = [
- 
- [[package]]
- name = "calamine"
--version = "0.37.0"
-+version = "0.38.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "c9ca341b94bc4b29e08970b1a03914fad2dfe177e2ecb67fcd6de9046004aafb"
-+checksum = "f431b67cba6122a1f7d26b7adafc71bbdf07026095fe811f5efc025d8748e1d8"
- dependencies = [
-  "atoi_simd",
-  "byteorder",
-```
-
-**File**: `engine/crates/xerj-autoindex/Cargo.toml` (modified, +6/-4)
-```diff
-@@ -144,14 +144,16 @@ quick-xml = "0.41"                               # XML pull parser + DOCX intern
- zip = { version = "9", default-features = false, features = ["deflate"] }  # DOCX container
- # --- Legacy Microsoft Office binary formats (OLE2 / Compound File Binary) ---
- # calamine reads the legacy BIFF `.xls` worksheet stream (it ships its own CFB
--# reader internally); pinned to 0.37.0, which depends on `zip ^9` (the
--# zip 8.x line carries RUSTSEC-2026-0367/0368/0369, fixed in 9.0.0) so it
--# shares this crate's `zip 9` major, and never retains `quick-xml 0.31.0`
-+# reader internally); pinned to 0.38.0, the first release with the CFB reader
-+# fix for RUSTSEC-2026-0436 (panic and unbounded allocation on a malformed
-+# compound file). It depends on `zip ^9` (the zip 8.x line carries
-+# RUSTSEC-2026-0367/0368/0369, fixed in 9.0.0) so it shares this crate's
-+# `zip 9` major, and never retains `quick-xml 0.31.0`
- # (RUSTSEC-2026-0194 / 0195); it brings `quick-xml 0.42` alongside our 0.41.
- # Licence: MIT. Its transitive adds are codepage (MIT, for the legacy 8-bit
- # cell codepage) and log (MIT/Apache-2.0); byteorder and encoding_rs are
- # already here.
--calamine = { version = "=0.37.0", features = ["dates"] }
-+calamine = { version = "=0.38.0", features = ["dates"] }
- # `cfb` reads the OLE2/Compound File Binary container directly: used by the
- # content sniffer to route a `.doc`/`.xls`/other OLE2 file by its stream names,
- # and by the `.doc` extractor to pull the WordDocument + Table streams and the
-```
-
----
-
-### Incident Patch 3: `3bba497a` (2026-11-04)
-**Commit Message**: fix(api): enforce index.max_terms_count on terms queries (#2936)
-
-* fix(api): enforce index.max_terms_count on terms queries
-
-Motivation:
-`index.max_terms_count` (default 65 536) bounds how many values one
-`terms` query may carry. ES refuses a longer list with `The number of
-terms [3] used in the Terms Query request has exceeded the allowed
-maximum of [2]. This maximum can be set by changing the
-[index.max_terms_count] index level setting.` (TermsQueryBuilder
-#doToQuery), and counts the values a terms lookup fetched, not the
-lookup object. XERJ stored the setting but never read it, so an index
-configured with a small limit accepted any number of terms and the
-default bounded nothing. One catch-lenient line is this case
-(`search/170_terms_query.yml · Terms Query with No.of terms exceeding
-index.max_terms_count should FAIL`).
-
-Fix:
-`find_terms_query_over_limit` runs in `search_impl` right after the
-terms lookups are resolved, over the query and both aggregation keys
-(filter / filters buckets carry terms queries too). It takes the
-longest value list of any `terms` clause and compares it with the
-largest `index.max_terms_count` among the target indices: ES checks per
-shard, so a reques
-
-**File**: `engine/crates/xerj-api/src/es_compat.rs` (modified, +192/-0)
-```diff
-@@ -6346,6 +6346,186 @@ fn rewrite_unqueryable_exists(q: &mut Value, state: &AppState, indices: &[String
-     walk(q, state, indices);
- }
- 
-+/// ES's default for `index.max_terms_count` (`IndexSettings.MAX_TERMS_COUNT_SETTING`).
-+const DEFAULT_MAX_TERMS_COUNT: u64 = 65_536;
-+
-+/// The first `terms` query whose value list is longer than
-+/// `index.max_terms_count`, with ES's message (`TermsQueryBuilder#doToQuery`).
++/// The reason ES gives for the first malformed action line in `body`, or
++/// `None` when every action line is one ES would accept, or the check
++/// stopped at a line it leaves to the engine. Lines are numbered from 1 and
++/// blank lines count, as in ES. Pairing follows the bulk engine: every action
++/// but a delete is followed by one source line.
 +///
-+/// ES counts the values each `terms` clause carries after a terms lookup has
-+/// been fetched, so this runs on the resolved body. The setting is per index
-+/// and ES checks it per shard: a request only fails outright when it exceeds
-+/// the limit of every target index, so the largest limit among the targets is
-+/// the one that decides. XERJ never read the setting, so an index configured
-+/// with a small limit accepted any number of terms, and the 65 536 default did
-+/// not bound a request either.
-+fn find_terms_query_over_limit(
-+    roots: &[Option<&Value>],
-+    state: &AppState,
-+    indices: &[&str],
-+) -> Option<String> {
-+    fn longest(v: &Value, out: &mut usize) {
-+        match v {
-+            Value::Object(obj) => {
-+                if let Some(Value::Object(terms)) = obj.get("terms") {
-+                    for (field, values) in terms {
-+                        if matches!(field.as_str(), "boost" | "_name") {
-+                            continue;
-+                        }
-+                        if let Value::Array(values) = values {
-+                            *out = (*out).max(values.len());
-+                        }
-+                    }
-+                }
-+                for child in obj.values() {
-+                    longest(child, out);
-+                }
++/// `compat_v7` is a request sent with ES's REST compatibility header
++/// (`compatible-with=7`); ES 8 then accepts `_type` with a deprecation
++/// warning instead of refusing it.
++pub(crate) fn first_malformed_action_line(body: &str, compat_v7: bool) -> Option<String> {
++    let mut expect_source = false;
++    for (n, line) in body.split('\n').enumerate() {
++        if line.trim().is_empty() {
++            if expect_source {
++                // ES takes the very next line as the source even when it is
++                // blank; the engine skips blank lines. The two pair every
++                // line after this one differently, so stop here.
++                return None;
 +            }
-+            Value::Array(items) => {
-+                for item in items {
-+                    longest(item, out);
-+                }
-+            }
-+            _ => {}
++            continue;
++        }
++        if expect_source {
++            expect_source = false;
++            continue;
++        }
++        match check(line.as_bytes(), n + 1, compat_v7) {
++            Line::Refused(reason) => return Some(reason),
++            Line::Deferred => return None,
++            Line::Accepted => {}
++        }
++        expect_source = !crate::cluster_shard::bulk_action_line_is_delete(line);
++    }
++    None
++}
++
++enum Line {
++    Accepted,
++    Refused(String),
++    /// Not something this scanner reads with confidence; the engine decides.
++    Deferred,
++}
++
++/// A JSON number, the whole of `t`.
++fn is_json_number(t: &[u8]) -> bool {
++    let digits = |i: &mut usize| {
++        let start = *i;
++        while matches!(t.get(*i), Some(b'0'..=b'9')) {
++            *i += 1;
++        }
++        *i > start
++    };
++    let mut i = 0;
++    if t.first() == Some(&b'-') {
++        i += 1;
++    }
++    match t.get(i) {
++        Some(b'0') => i += 1,
++        Some(b'1'..=b'9') => {
++            digits(&mut i);
++        }
++        _ => return false,
++    }
++    if t.get(i) == Some(&b'.') {
++        i += 1;
++        if !digits(&mut i) {
++            return false;
 +        }
 +    }
-+    let mut count = 0usize;
-+    for root in roots.iter().flatten() {
-+        longest(root, &mut count);
++    if matches!(t.get(i), Some(b'e' | b'E')) {
++        i += 1;
++        if matches!(t.get(i), Some(b'+' | b'-')) {
++            i += 1;
++        }
++        if !digits(&mut i) {
++            return false;
++        }
 +    }
-+    let limit = indices
-+        .iter()
-+        .map(|ix| {
-+            index_int_setting(state, ix, "max_terms_count").unwrap_or(DEFAULT_MAX_TERMS_COUNT)
-+        })
-+        .max()?;
-+    (count as u64 > limit).then(|| {
-+        format!(
-+            "The number of terms [{count}] used in the Terms Query request has exceeded the \
-+             allowed maximum of [{limit}]. This maximum can be set by changing the \
-+             [index.max_terms_count] index level setting."
-+        )
-+    })
++    i == t.len()
 +}
 +
-+#[cfg(test)]
-+mod max_terms_count_tests {
-+    use super::*;
-+    use axum::{body::Body, http::Request};
-+    use tower::ServiceExt;
-+    use xerj_common::{
-+        config::{Config, WalSync},
-+        metrics::Metrics,
-+    };
-+    use xerj_engine::Engine;
++struct Cursor<'a> {
++    b: &'a [u8],
++    p: usize,
++}
 +
-+    fn test_state() -> AppState {
-+        let dir = tempfile::tempdir().expect("tempdir").keep();
-+        let mut config = Config::default();
-+        config.server.data_dir = dir.to_string_lossy().into_owned();
-+        config.storage.wal_sync = WalSync::Async;
-+        let metrics = Metrics::new().expect("metrics");
-+        let engine = Engine::new(config.clone()).expect("engine");
-+        AppState::new(config, engine, metrics)
-+    }
-+
-+    async fn send(app: &axum::Router, method: &str, uri: &str, body: Value) -> (StatusCode, Value) {
-+        let resp = app
-+            .clone()
-+            .oneshot(
-+                Request::builder()
-+                    .method(method)
-+                    .uri(uri)
-+                    .header("content-type", "application/json")
-+                    .body(Body::from(body.to_string()))
-+                    .unwrap(),
-+            )
-+            .await
-+            .unwrap();
-+        let status = resp.status();
-+        let bytes = axum::body::to_bytes(resp.into_body(), usize::MAX)
-+            .await
-+            .unwrap();
-+        (status, serde_json::from_slice(&bytes).unwrap())
-+    }
-+
-+    /// `small` allows two terms, `big` keeps the default.
-+    async fn app() -> axum::Router {
-+        let app = crate::router::build_es_compat_router(test_state());
-+        let mappings = json!({"properties": {"user": {"type": "keyword"},
-+                                             "followers": {"type": "keyword"}}});
-+        let (status, body) = send(
-+            &app,
-+            "PUT",
-+            "/small",
-+            json!({"settings": {"index.max_terms_count": 2}, "mappings": mappings}),
-+        )
-+        .await;
-+        assert_eq!(status, StatusCode::OK, "{body}");
-+        let (status, body) = send(&app, "PUT", "/big", json!({ "mappings": mappings })).await;
-+        assert_eq!(status, StatusCode::OK, "{body}");
-+        for (id, followers) in [
-+            ("u1", json!(["u2", "u3"])),
-+            ("u2", json!(["u1", "u3", "u4"])),
-+        ] {
-+            let doc = json!({"user": id, "followers": followers});
-+            let (status, body) =
-+                send(&app, "PUT", 
++impl<'a> Cursor<'a> {
++    fn peek(&mut self) -> Option<u8> {
++        while self.p < self.b.len() && matches!(self.b[self.p], b' ' | b'\t' | b'\r
 ```
 
-**File**: `engine/tests/es-compat-yaml/catch-lenient.txt` (modified, +0/-1)
+**File**: `engine/crates/xerj-api/src/cluster_shard.rs` (modified, +1/-1)
 ```diff
-@@ -59,7 +59,6 @@ search/120_batch_reduce_size.yml · batched_reduce_size lower limit
- search/140_pre_filter_search_shards.yml · pre_filter_shard_size with invalid parameter
- search/150_rewrite_on_coordinator.yml · Ensure that we fetch the document only once
- search/160_exists_query.yml · Test exists query on _source field
--search/170_terms_query.yml · Terms Query with No.of terms exceeding index.max_terms_count should FAIL
- search/220_total_hits_object.yml · hits.total as an object
- search/260_parameter_validation.yml · test negative size throws IAE
- search/260_parameter_validation.yml · test negative terminate_after throws IAE
+@@ -1849,7 +1849,7 @@ fn bulk_item_error(
+ 
+ /// Same pairing rule as the bulk engine: a delete action has no source line.
+ /// The two parsers have to agree, or a delete swallows the next action.
+-fn bulk_action_line_is_delete(line: &str) -> bool {
++pub(crate) fn bulk_action_line_is_delete(line: &str) -> bool {
+     let b = line.as_bytes();
+     let mut p = 0usize;
+     while p < b.len() && (b[p] == b' ' || b[p] == b'\t') {
+```
+
+**File**: `engine/crates/xerj-api/src/es_compat.rs` (modified, +32/-2)
+```diff
+@@ -21417,11 +21417,13 @@ pub async fn bulk_ops(
+     State(state): State<AppState>,
+     Path(index): Path<String>,
+     axum::extract::Query(qp): axum::extract::Query<std::collections::HashMap<String, String>>,
++    headers: axum::http::HeaderMap,
+     body: bytes::Bytes,
+ ) -> impl IntoResponse {
+     let started = Instant::now();
+     let opts = bulk_opts_from_query(&qp);
+-    process_bulk_body(&state, Some(&index), &body, started, opts).await
++    let compat_v7 = wants_rest_compat_v7(&headers);
++    process_bulk_body(&state, Some(&index), &body, started, opts, compat_v7).await
+ }
+ 
+ // ─────────────────────────────────────────────────────────────────────────────
+@@ -21431,11 +21433,30 @@ pub async fn bulk_ops(
+ pub async fn global_bulk(
+     State(state): State<AppState>,
+     axum::extract::Query(qp): axum::extract::Query<std::collections::HashMap<String, String>>,
++    headers: axum::http::HeaderMap,
+     body: bytes::Bytes,
+ ) -> impl IntoResponse {
+     let started = Instant::now();
+     let opts = bulk_opts_from_query(&qp);
+-    process_bulk_body(&state, None, &body, started, opts).await
++    let compat_v7 = wants_rest_compat_v7(&headers);
++    process_bulk_body(&state, None, &body, started, opts, compat_v7).await
++}
++
++/// A request sent with ES's REST API compatibility header for 7.x
++/// (`Accept` or `Content-Type` of
++/// `application/vnd.elasticsearch+json; compatible-with=7`). ES 8 keeps a few
++/// 7.x forms for such a client; `_bulk` uses it to accept `_type`.
++fn wants_rest_compat_v7(headers: &axum::http::HeaderMap) -> bool {
++    [axum::http::header::ACCEPT, axum::http::header::CONTENT_TYPE]
++        .iter()
++        .filter_map(|h| headers.get(h)?.to_str().ok())
++        .any(|v| {
++            v.split(';').any(|param| {
++                param.trim().split_once('=').is_some_and(|(k, v)| {
++                    k.trim().eq_ignore_ascii_case("compatible-with") && v.trim() == "7"
++                })
++            })
++        })
+ }
+ 
+ fn bulk_opts_from_query(
+@@ -21522,6 +21543,7 @@ async fn process_bulk_body(
+     body: &bytes::Bytes,
+     _started: Instant,
+     opts: xerj_engine::bulk::BulkOpts,
++    compat_v7: bool,
+ ) -> axum::response::Response {
+     // The request body remains owned by this handler through parsing,
+     // grouping, and publication. The opt-in guard is a single branch and
+@@ -21538,6 +21560,14 @@ async fn process_bulk_body(
+         }
+     };
+ 
++    // ES reads every action line before it runs any action, so a malformed
++    // one refuses the whole request and nothing is written. Checked on the
++    // body as sent, before the rewrites below and before the local and
++    // cluster paths split, so the line number is the client's.
++    if let Some(reason) = crate::bulk_action_lines::first_malformed_action_line(text, compat_v7) {
++        return es_bad_request("illegal_argument_exception", &reason, None);
++    }
++
+     // ES bulk NDJSON alternates action-lines and source-lines. We rewrite
+     // each source line through apply_ignore_malformed so the downstream
+     // bulk pipeline sees a doc with _ignored already populated and any
+```
+
+**File**: `engine/crates/xerj-api/src/lib.rs` (modified, +1/-0)
+```diff
+@@ -68,6 +68,7 @@ pub mod audit_mw;
+ pub mod auth;
+ pub mod authz;
+ pub mod binary_protocol;
++mod bulk_action_lines;
+ pub mod cat;
+ pub mod cluster_shard;
+ pub mod embed_warning;
+```
+
+**File**: `engine/crates/xerj-api/tests/bulk_action_line_refusal.rs` (added, +232/-0)
+```diff
+@@ -0,0 +1,232 @@
++//! A malformed `_bulk` action line refuses the whole request, as in
++//! Elasticsearch 8, and nothing in the body is written.
++//!
++//! ES parses every action line before it executes any of them
++//! (`BulkRequestParser`), so a bad line is a 400 `illegal_argument_exception`
++//! naming the line, and the actions before it never run. XERJ used to answer
++//! 200 with a per-item error for the bad line and write everything else.
++
++use axum::body::Body;
++use axum::http::{Request, StatusCode};
++use serde_json::Value;
++use tower::ServiceExt;
++
++async fn app() -> (axum::Router, tempfile::TempDir) {
++    let dir = tempfile::tempdir().expect("tempdir");
++    let mut config = xerj_common::config::Config::default();
++    config.server.data_dir = dir.path().to_string_lossy().into_owned();
++    let metrics = xerj_common::metrics::Metrics::new().expect("metrics");
++    let engine = xerj_engine::Engine::new(config.clone()).expect("engine");
++    let state = xerj_api::state::AppState::new(config, engine, metrics);
++    (xerj_api::router::build_es_compat_router(state), dir)
++}
++
++async fn send(app: &axum::Router, method: &str, path: &str, body: &str) -> (StatusCode, Value) {
++    send_as(app, method, path, "application/x-ndjson", body).await
++}
++
++async fn send_as(
++    app: &axum::Router,
++    method: &str,
++    path: &str,
++    content_type: &str,
++    body: &str,
++) -> (StatusCode, Value) {
++    let req = Request::builder()
++        .method(method)
++        .uri(path)
++        .header("content-type", content_type)
++        .body(Body::from(body.to_owned()))
++        .expect("request");
++    let response = app.clone().oneshot(req).await.expect("response");
++    let status = response.status();
++    let bytes = axum::body::to_bytes(response.into_body(), usize::MAX)
++        .await
++        .expect("body");
++    (
++        status,
++        serde_json::from_slice(&bytes).unwrap_or(Value::Null),
++    )
++}
++
++async fn bulk(app: &axum::Router, body: &str) -> (StatusCode, Value) {
++    send(app, "POST", "/_bulk?refresh=true", body).await
++}
++
++/// The request was refused as a whole with ES's reason.
++fn assert_refused(status: StatusCode, got: &Value, reason: &str) {
++    assert_eq!(status, StatusCode::BAD_REQUEST, "{got}");
++    assert_eq!(got["status"], 400, "{got}");
++    assert_eq!(got["error"]["type"], "illegal_argument_exception", "{got}");
++    assert_eq!(got["error"]["reason"], reason, "{got}");
++    assert_eq!(got["error"]["root_cause"][0]["reason"], reason, "{got}");
++}
++
++async fn doc_exists(app: &axum::Router, index: &str, id: &str) -> bool {
++    let (status, _) = send(app, "GET", &format!("/{index}/_doc/{id}"), "").await;
++    status == StatusCode::OK
++}
++
++#[tokio::test]
++async fn an_empty_action_refuses_the_request_and_writes_nothing() {
++    let (app, _dir) = app().await;
++    let body = "{\"index\":{\"_index\":\"t\",\"_id\":\"1\"}}\n{\"f1\":\"v1\"}\n{}\n";
++    let (status, got) = bulk(&app, body).await;
++    assert_refused(
++        status,
++        &got,
++        "Malformed action/metadata line [3], expected FIELD_NAME but found [END_OBJECT]",
++    );
++    assert!(!doc_exists(&app, "t", "1").await, "the first action ran");
++}
++
++#[tokio::test]
++async fn an_unknown_parameter_refuses_the_request_and_writes_nothing() {
++    let (app, _dir) = app().await;
++    // ES 8 dropped mapping types: `_type` is an unknown parameter now.
++    let body = "{\"index\":{\"_index\":\"t\",\"_id\":\"1\"}}\n{\"a\":1}\n\
++                {\"update\":{\"_index\":\"t\",\"_type\":\"x\",\"_id\":\"1\"}}\n{\"doc\":{\"a\":2}}\n";
++    let (status, got) = bulk(&app, body).await;
++    assert_refused(
++        status,
++        &got,
++        "Action/metadata line [3] contains an unknown parameter [_type]",
++    );
++    assert!(!doc_exists(&app, "t", "1").await, "the first action ran");
++
++    // The ES 7 underscore spellings are unknown too.
++    for key in ["_version", "_routing", "_retry_on_conflict"] {
++        let body =
++            format!("{{\"index\":{{\"_index\":\"t\",\"_id\":\"2\",\"{key}\":1}}}}\n{{\"a\":1}}\n");
++        let (status, got) = bulk(&app, &body).await;
++        assert_refused(
++            status,
++            &got,
++            &format!("Action/metadata line [1] contains an unknown parameter [{key}]"),
++        );
++    }
++    assert!(!doc_exists(&app, "t", "2").await);
++}
++
++#[tokio::test]
++async fn an_unknown_action_is_named_with_its_line() {
++    let (app, _dir) = app().await;
++    // Blank lines count toward the line number, as in ES; a delete has no
++    // source line, so the line after it is the next action.
++    let body = "\n{\"delete\":{\"_index\":\"t\",\"_id\":\"9\"}}\n\n{\"upsert\":{\"_index\":\"t\"}}\n{\"a\":1}\n";
++    let (status, got) = bulk(&app, body).await;
++    assert_refused(
++        status,
++        &got,
++        "Malformed action/metadata line [4], expected field [create], [delete], [index] or [update] but found [upsert]",
++    );
++}
++
++#[tokio::test]
++async fn each_malformed
+```
+
+**File**: `engine/tests/es-compat-yaml/catch-lenient.txt` (modified, +0/-2)
+```diff
+@@ -44,8 +44,6 @@ aggregations/stats_metric_fail_formatting.yml · fail formatting
+ aggregations/terms.yml · IP test
+ aggregations/top_hits.yml · having
+ aggregations/weighted_avg.yml · Multi weight field not allowed
+-bulk/10_basic.yml · empty action
+-bulk/60_deprecated.yml · Deprecated parameters should fail in Bulk query
+ indices/indices.put_template/10_basic.yml · Put template create
+ scroll/11_clear.yml · Body params with array param override query string
+ scroll/11_clear.yml · Body params with string param scroll id override query string
+```
+
+---
+
+### Incident Patch 2: `9892820a` (2026-11-05)
+**Commit Message**: fix(aggs): keep composite missing order consistent across pages (#2944)
+
+Explicit missing_order first/last must not reverse with descending order.
+Use one comparator for initial ordering and after-key filtering so missing
+buckets remain reachable through pagination.
+
+Written with AI assistance and reviewed by parijat1222q. The exact native
+regression fails on unchanged production code at ascending/missing-last
+pagination and passes after this change. The focused aggregation suite has
+118 passing tests, including mixed two-source numeric/missing cases.
+Two new YAML cases fail on the unpatched rc.100 release as expected.
+Full candidate server/YAML and release validation remain pending fork CI.
+
+Related to xerj-org/xerj#2935, single-index composite missing-order finding.
+
+**File**: `engine/crates/xerj-engine/src/aggs.rs` (modified, +150/-62)
+```diff
+@@ -8786,44 +8786,60 @@ fn run_composite(
+             parts.next().unwrap_or(0),
+         )
+     }
+-    let mut sorted_keys: Vec<Vec<String>> = bucket_map.keys().cloned().collect();
+-    sorted_keys.sort_by(|a, b| {
++    // Use exactly the same ordering for the initial sort and cursor filtering.
++    // Explicit missing_order is absolute; only the default follows direction.
++    let cmp_parts = |a: &[String], b: &[String]| -> std::cmp::Ordering {
+         use std::cmp::Ordering;
+         for i in 0..a.len().min(b.len()) {
+             let (av, bv) = (&a[i], &b[i]);
+-            let null_cmp = match missing_orders.get(i).copied().unwrap_or("default") {
+-                "first" => (Ordering::Less, Ordering::Greater),
+-                "last" => (Ordering::Greater, Ordering::Less),
+-                _ => (Ordering::Less, Ordering::Greater), // "default" — first
++            let asc = orders.get(i).copied().unwrap_or(true);
++            let null_first = match missing_orders.get(i).copied().unwrap_or("default") {
++                "first" => true,
++                "last" => false,
++                _ => asc,
+             };
+-            let cmp = if av == "__null__" && bv == "__null__" {
+-                Ordering::Equal
+-            } else if av == "__null__" {
+-                null_cmp.0
+-            } else if bv == "__null__" {
+-                null_cmp.1
+-            } else if geotile_src.get(i).copied().unwrap_or(false) {
+-                // Geotile keys sort by (zoom, x, y) numerically.
+-                geotile_parse(av).cmp(&geotile_parse(bv))
+-            } else {
+-                composite_part_cmp(
+-                    kinds.get(i).copied().unwrap_or(CompositeKeyKind::Heuristic),
+-                    numeric_src.get(i).copied().unwrap_or(false),
+-                    av,
+-                    bv,
+-                )
+-            };
+-            let cmp = if orders.get(i).copied().unwrap_or(true) {
+-                cmp
+-            } else {
+-                cmp.reverse()
++            let cmp = match (av == "__null__", bv == "__null__") {
++                (true, true) => Ordering::Equal,
++                (true, false) => {
++                    if null_first {
++                        Ordering::Less
++                    } else {
++                        Ordering::Greater
++                    }
++                }
++                (false, true) => {
++                    if null_first {
++                        Ordering::Greater
++                    } else {
++                        Ordering::Less
++                    }
++                }
++                (false, false) => {
++                    let cmp = if geotile_src.get(i).copied().unwrap_or(false) {
++                        geotile_parse(av).cmp(&geotile_parse(bv))
++                    } else {
++                        composite_part_cmp(
++                            kinds.get(i).copied().unwrap_or(CompositeKeyKind::Heuristic),
++                            numeric_src.get(i).copied().unwrap_or(false),
++                            av,
++                            bv,
++                        )
++                    };
++                    if asc {
++                        cmp
++                    } else {
++                        cmp.reverse()
++                    }
++                }
+             };
+             if cmp != Ordering::Equal {
+                 return cmp;
+             }
+         }
+         a.len().cmp(&b.len())
+-    });
++    };
++    let mut sorted_keys: Vec<Vec<String>> = bucket_map.keys().cloned().collect();
++    sorted_keys.sort_by(|a, b| cmp_parts(a, b));
+ 
+     // Filter by `after` param for pagination: drop every key <= after-key.
+     if let Some(after_obj) = params.get("after").and_then(Value::as_object) {
+@@ -8901,40 +8917,6 @@ fn run_composite(
+                     .unwrap_or_default()
+             })
+             .collect();
+-        // Compare keys against `after` using the same per-source
+-        // numeric/lex semantics as the sort — otherwise `after: {long: 20}`
+-        // would keep keys like `"100"` before `"20"` lexicographically.
+-        let cmp_parts = |a: &[String], b: &[String]| -> std::cmp::Ordering {
+-            use std::cmp::Ordering;
+-            for i in 0..a.len().min(b.len()) {
+-                let (av, bv) = (&a[i], &b[i]);
+-                let c = if av == "__null__" && bv == "__null__" {
+-                    Ordering::Equal
+-                } else if av == "__null__" {
+-                    Ordering::Less
+-                } else if bv == "__null__" {
+-                    Ordering::Greater
+-                } else if geotile_src.get(i).copied().unwrap_or(false) {
+-                    geotile_parse(av).cmp(&geotile_parse(bv))
+-                } else {
+-                    composite_part_cmp(
+-                        kinds.get(i).copied().unwrap_or(CompositeKeyKind::Heuristic),
+-                        numeric_src.get(i).copied().unwrap_or(false),
+-                        av,
+-                        bv,
+-             
+```
+
+**File**: `engine/tests/es-compat-yaml/yaml/aggregations/composite_missing_order_pagination.yml` (added, +70/-0)
+```diff
+@@ -0,0 +1,70 @@
++---
++setup:
++  - do:
++      indices.create:
++        index: missing-order-test
++        body:
++          mappings:
++            properties:
++              tag: { type: keyword }
++  - do:
++      index:
++        index: missing-order-test
++        id: "1"
++        body: { tag: "1" }
++  - do:
++      index:
++        index: missing-order-test
++        id: "2"
++        body: { tag: "2" }
++  - do:
++      index:
++        index: missing-order-test
++        id: "3"
++        body: {}
++  - do:
++      indices.refresh:
++        index: missing-order-test
++---
++"missing last survives ascending cursor pagination":
++  - do:
++      search:
++        index: missing-order-test
++        body:
++          size: 0
++          aggs:
++            c:
++              composite:
++                size: 1
++                after: { tag: "2" }
++                sources:
++                  - tag:
++                      terms:
++                        field: tag
++                        missing_bucket: true
++                        missing_order: last
++  - length: { aggregations.c.buckets: 1 }
++  - match: { aggregations.c.buckets.0.key: { tag: null } }
++  - match: { aggregations.c.buckets.0.doc_count: 1 }
++---
++"explicit missing first stays first under descending order":
++  - do:
++      search:
++        index: missing-order-test
++        body:
++          size: 0
++          aggs:
++            c:
++              composite:
++                size: 10
++                sources:
++                  - tag:
++                      terms:
++                        field: tag
++                        order: desc
++                        missing_bucket: true
++                        missing_order: first
++  - length: { aggregations.c.buckets: 3 }
++  - match: { aggregations.c.buckets.0.key: { tag: null } }
++  - match: { aggregations.c.buckets.1.key.tag: "2" }
++  - match: { aggregations.c.buckets.2.key.tag: "1" }
+```
+
+---
+
+### Incident Patch 3: `15f6a926` (2026-11-05)
+**Commit Message**: chore: add gravion-ux to .contributors (CLA signature) (#2920)
+
+Record acceptance of the XERJ Contributor License Agreement (CLA.md, adapted from the ASF ICLA v2.0): copyright licence and patent licence grants as written there, copyright retained. Signed from the gravion-ux account by opening this PR, per the CLA process.
+
+Written by an AI coding agent (MiniMax M3.1, the MCode desktop agent), run by @gravion-ux (Priyanshu Kumar Thakur), who read CLA.md and stands behind this change.
+
+Co-authored-by: xerj-org <[REDACTED_EMAIL]>
+
+**File**: `.contributors` (modified, +2/-1)
+```diff
+@@ -101,5 +101,6 @@
+   "richuff",
+   "badretd",
+   "parijat1222q",
+-  "napattan"
++  "napattan",
++  "gravion-ux"
+ ]
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2951** (closed): fix(hub): verify the cached catalogue's signature on every read (#2904) (@Irfanwani)
+- **PR #2947** (2026-11-05): hub: allow post-audit /add for #2171 withheld logins (@xerj-org)
+- **PR #2946** (2026-11-05): seo: restore AI agent memory benchmark pages from #2788 onto main (@xerj-org)
+- **PR #2944** (2026-11-05): fix(aggs): keep composite missing order consistent across pages (@parijat1222q)
+- **PR #2938** (2026-11-05): fix(api): refuse a malformed _bulk action line for the whole request (@jelbirt)
 - **PR #2937** (2026-11-04): fix(api): enforce the search.max_keep_alive cluster setting (@amartya1523)
-- **PR #2936** (2026-11-04): fix(api): enforce index.max_terms_count on terms queries (@amartya1523)
-- **PR #2934** (2026-11-04): Sign CLA: add parijat1222q to .contributors (@parijat1222q)
-- **PR #2932** (2026-11-04): feat(hub): wire opt-in pinned answer evidence receipts (@drk-ram)
-- **PR #2923** (2026-11-04): docs(feedback): add Antigravity Windows 11 field report (@napattan)
-- **PR #2915** (2026-11-04): fix(api): validate scroll searches the way SearchRequest#validate does (@amartya1523)
 
 ---
 
@@ -2459,13 +2454,13 @@ shard, so a reques
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. tests): stop debug cargo test stack overflows, and name the missing 127.0.0.2 al
+## X. api): refuse a malformed _bulk action line for the whole request (#2938)
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in xerj-org/xerj. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `702b8d3d`: tests): stop debug cargo test stack overflows, and name the missing 127.0.0.2 alias (#2910). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c5798431`: api): refuse a malformed _bulk action line for the whole request (#2938). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -2473,17 +2468,18 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- A plain debug `cargo test --workspace` no longer aborts on a stack overflow,
-  and the `127.0.0.2` loopback test names the missing macOS alias (#2903). Five
-  tests that run the ES-compat router on multi-thread workers overflowed tokio's
-  2 MiB worker stack in a debug build, killing their whole test binary: one in
-  `xerj-mcp`'s `local_def`, one in `xerj-api`'s
-  `autoindex_changed_file_drops_stale_symbols`, and three in `hub_api`. They now
-  use the server's 4 MiB, as the other in-process router tests do. On a host without `127.0.0.2`,
-  `loopback_proxy` fails up front with
-  `sudo ifconfig lo0 alias 127.0.0.2 up` instead of a bare connection error,
-  through the new `xerj_common::loopback_test::require_loopback_alias`.
-  CONTRIBUTING documents both, and that CI runs `--profile ci-test`.
+- `_bulk` refuses a malformed action line the way Elasticsearch 8 does: the
+  whole request is a 400 `illegal_argument_exception` naming the line
+  (`Malformed action/metadata line [3], expected FIELD_NAME but found
+  [END_OBJECT]`, `Action/metadata line [1] contains an unknown parameter
+  [_type]`), and nothing in the body is written. XERJ answered 200 with a
+  per-item error for that line and wrote every other action. An unknown
+  parameter (`_type`, `_version`, `_routing`, a typo) used to be ignored and
+  is now refused, as in ES 8; a client sending the 7.x REST compatibility
+  header (`compatible-with=7`) may still send `_type`, as ES 8 allows. A line
+  the check cannot read with confidence (JSON ES's own parser rejects, an
+  escaped key, a byte order mark) stops the check there, and the rest of the
+  body is answered as before.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2493,4 +2489,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `702b8d3d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c5798431` are properly handled with clean fallback behavior.

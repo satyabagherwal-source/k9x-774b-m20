@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md`  
 > **Source**: github ([https://github.com/domcyrus/rustnet](https://github.com/domcyrus/rustnet))  
-> **Source Version**: `ac58d1f0`  
+> **Source Version**: `fff807d1`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T18:35:29.398Z  
+> **Timestamp**: 2026-11-05T12:58:21.832Z  
 > **Learning ID**: `learn-github-domcyrus-rustnet`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/domcyrus/rustnet](https://github.com/domcyrus/rustnet))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T18:35:28.746Z  
+> **Harvest Timestamp**: 2026-11-05T12:58:21.826Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Per-process network monitoring for your terminal with deep packet inspection. Cross-platform, sandboxed.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 5209 stars
+- **Stars / Engagement**: 5210 stars
 
 ---
 
@@ -2495,93 +2495,87 @@ pub(super) fn dns_header_counts(payload: &[u8]) -> Option<DnsHeaderCounts> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ac58d1f0` (2026-11-04)
-**Commit Message**: chore(deps): bump zip from 9.1.3 to 9.2.0 in the rust-dependencies group (#712)
+### Incident Patch 1: `fff807d1` (2026-11-05)
+**Commit Message**: fix: discard pending RTT probes on TCP keepalives (#716)
 
-Bumps the rust-dependencies group with 1 update: [zip](https://github.com/zip-rs/zip2).
-
-
-Updates `zip` from 9.1.3 to 9.2.0
-- [Release notes](https://github.com/zip-rs/zip2/releases)
-- [Changelog](https://github.com/zip-rs/zip2/blob/master/CHANGELOG.md)
-- [Commits](https://github.com/zip-rs/zip2/compare/v9.1.3...v9.2.0)
-
----
-updated-dependencies:
-- dependency-name: zip
-  dependency-version: 9.2.0
-  dependency-type: direct:production
-  update-type: version-update:semver-minor
-  dependency-group: rust-dependencies
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `Cargo.lock` (modified, +2/-2)
+**File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -4124,9 +4124,9 @@ dependencies = [
+@@ -23,6 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ - Retire eligible Linux TCP/UDP flows after verified process exit and socket disappearance, including protected processes and sockets present at startup; preserve shared sockets and show cleanup status in Details (#684)
  
- [[package]]
- name = "zip"
--version = "9.1.3"
-+version = "9.2.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "1156b39d142a34b999c2310a50455e0cb3760bf7efad0122f796d813bee26ccb"
-+checksum = "3f5b58784007ff6e5f280ec82c8596686a3b9b5dd5836c63288d4479f84728b9"
- dependencies = [
-  "aes",
-  "bzip2",
+ ### Fixed
++- Discard pending TCP RTT probes on one-byte keepalives to prevent inflated or ambiguous timing samples after missed ACKs or last-byte retransmissions
+ - Match local IPv4/IPv6 DNS stub replies correctly and prevent healthy resolvers from hiding a failing secondary resolver
+ - Fall back to a pinned, checksum-verified Npcap SDK mirror when the primary download fails during Windows builds or CI test setup.
+ - Stop classifying successful DNS ANY answers as NODATA in Details and passive DNS statistics (#689)
 ```
 
----
-
-### Incident Patch 2: `22023fd0` (2026-11-03)
-**Commit Message**: chore(deps): bump log (#711)
-
-Bumps the rust-dependencies group with 1 update: [log](https://github.com/rust-lang/log).
-
-
-Updates `log` from 0.4.34 to 0.4.35
-- [Release notes](https://github.com/rust-lang/log/releases)
-- [Changelog](https://github.com/rust-lang/log/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/rust-lang/log/compare/0.4.34...v0.4.35)
-
----
-updated-dependencies:
-- dependency-name: log
-  dependency-version: 0.4.35
-  dependency-type: direct:production
-  update-type: version-update:semver-patch
-  dependency-group: rust-dependencies
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `Cargo.lock` (modified, +2/-2)
+**File**: `crates/rustnet-core/src/network/merge.rs` (modified, +41/-0)
 ```diff
-@@ -1558,9 +1558,9 @@ dependencies = [
+@@ -181,6 +181,10 @@ fn analyze_tcp_segment(
+                 analytics.highest_seq_outbound = seq_end;
+                 arm_rtt_probe(analytics, seq_end, at);
+             } else if one_byte_data && seq_end == analytics.highest_seq_outbound {
++                // Its reply cannot reliably time earlier data if capture
++                // missed the original ACK. A genuine last-byte resend also
++                // matches this heuristic, so Karn's ambiguity rule still applies.
++                analytics.rtt_probe = None;
+                 debug!("TCP keepalive probe ignored: seq={}", seq);
+             } else if !seq_lt(analytics.highest_seq_outbound, seq_end) {
+                 // Segment ends at or before the highest byte already sent, so
+@@ -1966,6 +1970,43 @@ mod tests {
+         assert_eq!(events.rtt_sample, None);
+     }
  
- [[package]]
- name = "log"
--version = "0.4.34"
-+version = "0.4.35"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "f9f8bd3e56ce4dfc153cf470fffbfa98c7620958b312ca5c3a4b8d5181fd13c6"
-+checksum = "5d15f86d12da44cd8d4ec3c73984537eb7f4cadcb9776a575a0a8a05ca11005c"
- 
- [[package]]
- name = "lru"
++    #[test]
++    fn one_byte_keepalive_discards_pending_rtt_after_a_missed_ack() {
++        let mut a = TcpAnalytics::new();
++        send_at(&mut a, 1000, 100, t0());
++
++        // The peer ACKed the data, but capture missed that ACK. Its reply to
++        // a later keepalive must not time the original data from a minute ago.
++        send_at(&mut a, 1099, 1, t0() + Duration::from_secs(60));
++        assert_eq!(a.retransmit_count, 0);
++        let events = recv_at(&mut a, 5000, 1100, 0, t0() + Duration::from_millis(60_020));
++        assert_eq!(events.rtt_sample, None);
++        assert_eq!(a.smoothed_rtt, None);
++        assert_eq!(a.rtt_probe, None);
++
++        // Fresh data still arms a probe and produces a valid measurement.
++        let sent = t0() + Duration::from_secs(61);
++        send_at(&mut a, 1100, 100, sent);
++        let events = recv_at(&mut a, 5000, 1200, 0, sent + Duration::from_millis(20));
++        assert_eq!(events.rtt_sample, Some(Duration::from_millis(20)));
++        assert_eq!(a.smoothed_rtt, Some(Duration::from_millis(20)));
++    }
++
++    #[test]
++    fn one_byte_keepalive_shape_discards_ambiguous_retransmission_rtt() {
++        let mut a = TcpAnalytics::new();
++        send_at(&mut a, 1000, 1, t0());
++
++        // A genuine resend of the last byte also matches the keepalive
++        // heuristic. Excluding it from loss must not allow an ambiguous RTT.
++        send_at(&mut a, 1000, 1, t0() + Duration::from_millis(200));
++        assert_eq!(a.retransmit_count, 0);
++        let events = recv_at(&mut a, 5000, 1001, 0, t0() + Duration::from_millis(220));
++        assert_eq!(events.rtt_sample, None);
++        assert_eq!(a.smoothed_rtt, None);
++        assert_eq!(a.rtt_probe, None);
++    }
++
+     #[test]
+     fn smoothed_rtt_is_an_ewma_of_samples() {
+         let mut a = TcpAnalytics::new();
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #716** (2026-11-05): fix: discard pending RTT probes on TCP keepalives (@domcyrus)
+- **PR #714** (2026-11-05): Do not count one-byte TCP keepalive probes as loss (@FreXxXmeister)
 - **PR #712** (2026-11-04): chore(deps): bump zip from 9.1.3 to 9.2.0 in the rust-dependencies group (@dependabot[bot])
 - **PR #711** (2026-11-03): chore(deps): bump log from 0.4.34 to 0.4.35 in the rust-dependencies group (@dependabot[bot])
 - **PR #710** (2026-11-02): chore(deps): bump zip from 9.1.2 to 9.1.3 in the rust-dependencies group (@dependabot[bot])
 - **PR #709** (2026-11-01): Cache unchanged historic headless records (@domcyrus)
-- **PR #708** (2026-11-01): Update OUI vendor database (@github-actions[bot])
-- **PR #705** (2026-10-31): docs: relax contribution guidelines (@domcyrus)
 
 ---
 
@@ -2601,30 +2595,28 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): bump zip from 9.1.3 to 9.2.0 in the rust-dependencies group (#712)
+## X. discard pending RTT probes on TCP keepalives (#716)
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in domcyrus/rustnet. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in domcyrus/rustnet. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ac58d1f0`: deps): bump zip from 9.1.3 to 9.2.0 in the rust-dependencies group (#712). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `fff807d1`: discard pending RTT probes on TCP keepalives (#716). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-version = "9.2.0"
-checksum = "3f5b58784007ff6e5f280ec82c8596686a3b9b5dd5836c63288d4479f84728b9"
+- Discard pending TCP RTT probes on one-byte keepalives to prevent inflated or ambiguous timing samples after missed ACKs or last-byte retransmissions
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-version = "9.1.3"
-checksum = "1156b39d142a34b999c2310a50455e0cb3760bf7efad0122f796d813bee26ccb"
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ac58d1f0` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `fff807d1` are properly handled with clean fallback behavior.

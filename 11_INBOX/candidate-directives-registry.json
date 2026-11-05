@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-05T02:55:10.505Z",
+  "last_updated": "2026-11-05T15:37:38.224Z",
   "directives": [
     {
       "id": "CD-001",
@@ -3896,6 +3896,61 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-kuddev-pebrel"
+    },
+    {
+      "id": "CD-ZTZ2",
+      "directive_title": "NUC 82 Depth-Limited Reasoning Selections",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "NucleoidAI/Nucleoid",
+      "source_commit": "a6054657",
+      "date_staged": "2026-11-05",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-nucleoidai-nucleoid"
+    },
+    {
+      "id": "CD-D7GG",
+      "directive_title": "Merge pull request #1354 from thebaselab/l10n/1.12.4-release-notes",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "thebaselab/codeapp",
+      "source_commit": "ef33ee57",
+      "date_staged": "2026-11-05",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-thebaselab-codeapp"
+    },
+    {
+      "id": "CD-273J",
+      "directive_title": "Record ARC 6e02f1e3 publication blockers",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "NucleoidAI/Nucleoid",
+      "source_commit": "c57cbd6c",
+      "date_staged": "2026-11-05",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-nucleoidai-nucleoid"
+    },
+    {
+      "id": "CD-04Q8",
+      "directive_title": "Quantization-Aware Distillation (QAD) Artifact Separation",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "LiquidAI/LFM2.5-24B-A2B-GGUF",
+      "source_commit": "hf-liquidai-",
+      "date_staged": "2026-11-05",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-huggingface-liquidai-lfm2-5-24b-a2b-gguf"
+    },
+    {
+      "id": "CD-LYGG",
+      "directive_title": "Empirical Invariant Guard in MagiAgent.js",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "lioensky/VCPToolBox",
+      "source_commit": "eff29b1f",
+      "date_staged": "2026-11-05",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Generic header title rejected",
+      "learning_id": "learn-github-lioensky-vcptoolbox"
     }
   ]
 }

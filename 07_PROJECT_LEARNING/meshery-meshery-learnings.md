@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/meshery-meshery-learnings.md`  
 > **Source**: github ([https://github.com/meshery/meshery](https://github.com/meshery/meshery))  
-> **Source Version**: `5eadb108`  
+> **Source Version**: `f5be64bb`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T00:22:40.384Z  
+> **Timestamp**: 2026-11-05T14:22:48.162Z  
 > **Learning ID**: `learn-github-meshery-meshery`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/meshery-meshery-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/meshery/meshery](https://github.com/meshery/meshery))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T00:22:40.377Z  
+> **Harvest Timestamp**: 2026-11-05T14:22:48.030Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -804,11 +804,11 @@ if __name__ == "__main__":
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #22839** (2026-11-04): **[Server] Close each adapter client per host in Provision**
-  *Symptoms*: ﻿**Notes for Reviewers**  - This PR fixes #20874  **What was wrong**  `serviceActionProvider.Provision` loops over a component's hosts and opens a gRPC adapter client for each one with `meshes.CreateClient`. The close was `defer`red inside the loop, so it ran when `Provision` returned and not at the end of each iteration. With several hosts, every adapter connection stayed open until the last host had been provisioned.  **What this changes**  - Moves the per-host adapter call (create client, marshal the component, call `Provision`, build the message) into a new method, `provisionOnAdapter`. - Its `defer mClient.Close()` now runs when that host is done, so each connection closes before the next host is provisioned. - Behavior and error messages are otherwise unchanged. The local-call path in `Provision` is untouched.  **How this was tested**  - Added `TestProvisionClosesEachAdapterClientBeforeTheNextHost` (`server/handlers/design_engine_provision_test.go`). It starts two in-process gRPC adapters that count their open client connections, provisions a component across both hosts, and asserts the first adapter's connection is closed while the second host is being provisioned, and that none remain after `Provision` returns. - Before the change the test fails (the first adapter still held 1 client connection). After the change it passes, including three runs with `-race`. - `go build ./server/...`, `go vet ./server/handlers/` and gofmt are clean. - The same four tests in `server/ha
+- **Issue #22858** (2026-11-05): **[mesheryctl] Send perf apply durations in whole seconds and reject the rest**
+  *Symptoms*: **Notes for Reviewers**  - This PR fixes #22856  `splitTestDuration` split `--duration` at the first non-numeric character and sent the parts as the `t` and `dur` query params. The server parses `t` as an integer and treats any `dur` other than `h` or `m` as seconds, so `500ms` ran for 8m20s, `1h30m` ran for 1s and `1.5m` ran for 1m, with no warning.  The duration is now parsed with `time.ParseDuration` and always sent in seconds, so combined and fractional values work. A value that can't be expressed as a whole number of seconds of at least 1s fails with a clear error, before it is saved in a new profile or run. A number without a unit still means seconds, and the server is unchanged.  A saved profile with a sub-second duration now fails with that error instead of running for the wrong length.  - Replaced the `splitTestDuration` tests with table tests for valid and rejected values, and added a test that an invalid duration doesn't create a profile.  **[Signed commits](../CONTRIBUTING.md#signing-off-on-commits-developer-certificate-of-origin)** - [x] Yes, I signed my commits.   <!-- This is an auto-generated comment: release notes by coderabbit.ai -->  <!-- coderabbit-ai-generated:v1 -->  ## Summary by CodeRabbit  * **Bug Fixes**   * Performance test durations are now consistently interpreted in seconds, including values with units, whitespace, or no unit.   * Invalid, negative, zero, or sub-second durations are rejected before a test is submitted or a profile is saved.   * B
 
-- **Issue #22828** (2026-11-04): **Add Maanvi Chetwanii's introduction to meetings doc**
-  *Symptoms*: **Notes for Reviewers**  - This PR fixes #  **[Signed commits](https://github.com/meshery/meshery/blob/master/CONTRIBUTING.md#signing-off-on-commits-developer-certificate-of-origin)** - [x] Yes, I signed my commits.  <!-- Thank you for contributing to Meshery!   Contributing Conventions:  1. Include descriptive PR titles with [<component-name>] prepended. 2. Build and test your changes before submitting a PR.  3. Sign your commits. 4. Include before and after screenshots/terminal output.  By following the community's contribution conventions upfront, the review process will  be accelerated and your PR merged more quickly. -->   <!-- This is an auto-generated comment: release notes by coderabbit.ai -->  <!-- coderabbit-ai-generated:v1 -->  ## Summary by CodeRabbit  * **Documentation**   * Added a brief introduction expressing enthusiasm for contributing.  <!-- end of auto-generated comment: release notes by coderabbit.ai -->
+- **Issue #22856** (2026-11-05): **[mesheryctl] `perf apply --duration` silently runs the wrong test length for values like `500ms`, `1h30m` and `1.5m`**
+  *Symptoms*: ### Current Behavior The `--duration` flag of `mesheryctl perf apply` points users to Go's duration format ("e.g. 10s, 5m, 2h. For more, see https://golang.org/pkg/time/#ParseDuration"), but only a whole number followed by exactly `s`, `m` or `h` works.  `splitTestDuration` splits the value at the first non-numeric character and sends the two parts as the `t` and `dur` query params. The server parses `t` as an integer (a failed parse becomes 1) and treats any `dur` other than `h` or `m` as seconds. Neither side rejects the value, so the test runs for a different length with no warning:  | `--duration` | `t` | `dur` | Test runs for | Expected | |---|---|---|---|---| | `500ms` | `500` | `ms` | 8m20s | 500ms | | `1h30m` | `1` | `h30m` | 1s | 1h30m | | `1.5m` | `1.5` | `m` | 1m | 1m30s |  ### Expected Behavior A valid Go duration runs for that duration. A value that can't be honored fails with a clear error before the test starts, rather than silently running for a different length.  ### Environment - mesheryctl built from master 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -825,190 +825,395 @@ if __name__ == "__main__":
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ed66e6ec` (2026-11-04)
-**Commit Message**: [mesheryctl] Prevent nil pointer dereference panic and unhandled HTTP status in perf apply (#22801)
+### Incident Patch 1: `6a0dfa7a` (2026-11-02)
+**Commit Message**: [Server] Harden fd leak tests for Linux /proc/self/fd and decouple live template assertions
 
-[mesheryctl] Prevent nil pointer dereference panic and unhandled HTTP status in perf apply
+- Verifies open fd count remains unchanged via /proc/self/fd on Linux runners during success and corrupted JSON test cases.
 
-**File**: `mesheryctl/internal/cli/root/perf/apply.go` (modified, +20/-5)
+- Decouples live template tests from volatile color and shape branding strings by asserting non-empty values.
+
+- Directly addresses review feedback from @pontusringblom.
+
+Signed-off-by: Aman Singh <[REDACTED_EMAIL]>
+
+**File**: `server/models/k8s_components_registration_test.go` (modified, +21/-9)
 ```diff
-@@ -17,6 +17,7 @@ package perf
- import (
- 	"bytes"
- 	"encoding/json"
-+	"fmt"
- 	"io"
- 	"net/http"
- 	"os"
-@@ -453,12 +454,13 @@ func createPerformanceProfile(mctlCfg *config.MesheryCtlConfig) (string, string,
- 		certData := string(certFile)
- 		certName := fileInfo.Name()
+@@ -39,8 +39,14 @@ func TestLoadK8sMeshModelMetadata_Success(t *testing.T) {
+ 	err := os.WriteFile(filePath, []byte(validJSON), 0600)
+ 	require.NoError(t, err, "failed to write test file")
  
--		// check if values["metadata"] is nil
--		if values["metadata"] == nil {
--			values["metadata"] = map[string]interface{}{}
-+		metadata, ok := values["metadata"].(map[string]interface{})
-+		if !ok || metadata == nil {
-+			metadata = map[string]interface{}{}
-+			values["metadata"] = metadata
- 		}
- 
--		values["metadata"].(map[string]interface{})["ca_certificate"] = map[string]interface{}{
-+		metadata["ca_certificate"] = map[string]interface{}{
- 			"name":     certName,
- 			"certName": certData,
- 		}
-@@ -475,7 +477,7 @@ func createPerformanceProfile(mctlCfg *config.MesheryCtlConfig) (string, string,
- 
- 	resp, err := utils.MakeRequest(req)
- 	if err != nil {
--		return "", "", ErrPerfProfileServer(errors.New("failed to save performance profile on server"))
-+		return "", "", ErrPerfProfileServer(err)
- 	}
- 
- 	var response *perfprofile.PerformanceProfile
-@@ -485,10 +487,23 @@ func createPerformanceProfile(mctlCfg *config.MesheryCtlConfig) (string, string,
- 	if err != nil {
- 		return "", "", utils.ErrReadResponseBody(err)
- 	}
-+	if resp.StatusCode != http.StatusOK && resp.StatusCode != http.StatusCreated {
-+		serverErrMsg := strings.TrimSpace(string(body))
-+		if serverErrMsg == "" {
-+			serverErrMsg = fmt.Sprintf("server returned status: %s", resp.Status)
-+		}
-+		return "", "", ErrPerfProfileServer(errors.New(serverErrMsg))
++	// Track open file descriptors around the call (effective on Linux /proc/self/fd)
++	beforeFDs, _ := filepath.Glob("/proc/self/fd/*")
+ 	metadata, err := loadK8sMeshModelMetadata(filePath)
+ 	require.NoError(t, err, "loadK8sMeshModelMetadata should succeed for valid JSON")
++	afterFDs, _ := filepath.Glob("/proc/self/fd/*")
++	if len(beforeFDs) > 0 && len(afterFDs) > 0 {
++		assert.Equal(t, len(beforeFDs), len(afterFDs), "file descriptor count should remain unchanged after successful load")
 +	}
-+
- 	err = json.Unmarshal(body, &response)
- 	if err != nil {
- 		return "", "", ErrFailUnmarshal(err)
- 	}
-+
-+	if response == nil {
-+		return "", "", ErrPerfProfileServer(errors.New("server returned empty performance profile"))
-+	}
-+
- 	profileID = response.ID.String()
- 	profileName = response.Name
  
+ 	assert.Equal(t, "#326CE5", metadata.PrimaryColor)
+ 	require.NotNil(t, metadata.SecondaryColor)
+@@ -75,41 +81,47 @@ func TestLoadK8sMeshModelMetadata_CorruptedJSON(t *testing.T) {
+ 	err := os.WriteFile(filePath, []byte(malformedJSON), 0600)
+ 	require.NoError(t, err, "failed to write corrupt test file")
+ 
++	// Track open file descriptors around the call (effective on Linux /proc/self/fd)
++	beforeFDs, _ := filepath.Glob("/proc/self/fd/*")
+ 	metadata, err := loadK8sMeshModelMetadata(filePath)
+ 	assert.Error(t, err, "expected error for corrupted JSON content")
++	afterFDs, _ := filepath.Glob("/proc/self/fd/*")
++	if len(beforeFDs) > 0 && len(afterFDs) > 0 {
++		assert.Equal(t, len(beforeFDs), len(afterFDs), "file descriptor should be closed even on unmarshal error")
++	}
+ 	assert.Empty(t, metadata.PrimaryColor)
+ 
+-	// Verify deferred close executed despite JSON unmarshal error:
++	// Verify deferred close executed despite JSON unmarshal error (effective on Windows file locks):
+ 	removeErr := os.Remove(filePath)
+ 	assert.NoError(t, removeErr, "file descriptor should be closed even on unmarshal error")
+ }
+ 
+ // TestLoadK8sMeshModelMetadata_LiveTemplate verifies that the actual project-relative
+-// template file at k8sMeshModelPath can be read and parsed.
++// template file at k8sMeshModelPath can be read and parsed without coupling to volatile values.
+ func TestLoadK8sMeshModelMetadata_LiveTemplate(t *testing.T) {
+ 	if _, err := os.Stat(k8sMeshModelPath); os.IsNotExist(err) {
+ 		t.Skipf("skipping live template test: %s not found from current directory", k8sMeshModelPath)
+ 	}
+ 
+ 	metadata, err := loadK8sMeshModelMetadata(k8sMeshModelPath)
+ 	require.NoError(t, err, "failed to load live model_template.json")
+-	assert.Equal(t, "#326CE5", metadata.PrimaryColor)
++	assert.NotEmpty(t, metadata.PrimaryColor)
+ 	require.NotNil(t, metadata.SecondaryColor)
+-	assert.Equal(t, "#7aa1f0", *metadata.SecondaryColor)
++	assert.NotEmpty(t, *metadata.SecondaryColor)
+ 	require.NotNil(t, metadata.Shape)
+-	assert.Equal(t, "circle", string(*metadata.Shape))
++	assert.NotEmpty(t, string(*metadata.Shape))
+ }
+ 
+ // TestK8sMeshModelMetadata_PackageVar verifies that the package-level K8sMeshModelMetadata
+-// is initialized by init() when the template file is available.
++// is initialized by init() when the template file is available without coupling to volatile values.
+ func TestK8sMeshModelMetadata_PackageVar(t *testing.T) {
+ 	if _, err := os.Stat(k8sMeshModelPath); os.IsNotExist(err) {
+ 		t.Skipf("skipping package var test: %s not found from current directory", k8sMeshModelPath)
+ 	}
+ 
+-	assert.Equal(t, "#326CE5", K8sMeshModelMetadata.PrimaryColor)
++	assert.NotEmpty(t, K8sMeshModelMetadata.PrimaryColor)
+ 	require.NotNil(t, K8sMeshModelMetadata.SecondaryColor)
+-	assert.Equal(t, "#7aa1f0", *K8sMeshModelMetadata.SecondaryColor)
++	assert.NotEmpty(t, *K8sMeshModelMetadata.SecondaryColor)
+ 	require.NotNil(t, K8sMeshModelMetadata.Shape)
+-	assert.Equal(t, "circle", string(*K8sMeshModelMetadata.Shape))
++	assert.NotEmpty(t, string(*K8sMeshModelMetadata.Shape))
+ }
 ```
 
-**File**: `mesheryctl/internal/cli/root/perf/apply_test.go` (modified, +188/-1)
+---
+
+### Incident Patch 2: `864c1b0b` (2026-11-05)
+**Commit Message**: Merge pull request #22850 from harshitsaxena214/fix/21259-stdin-prompt-errors
+
+[mesheryctl] Return an error instead of exiting on stdin read failures in prompts
+
+**File**: `mesheryctl/internal/cli/root/perf/apply.go` (modified, +4/-1)
 ```diff
-@@ -153,7 +153,18 @@
- //	}
- package perf
+@@ -224,7 +224,10 @@ mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-gene
+ 				userResponse = true
+ 			} else {
+ 				// ask user for confirmation
+-				userResponse = utils.AskForConfirmation("Profile with name '" + profileName + "' does not exist. Do you want to create a new one")
++				userResponse, err = utils.AskForConfirmation("Profile with name '" + profileName + "' does not exist. Do you want to create a new one")
++				if err != nil {
++					return err
++				}
+ 			}
  
--import "testing"
-+import (
-+	"net/http"
-+	"path/filepath"
-+	"runtime"
-+	"strings"
-+	"testing"
-+
-+	"github.com/jarcoal/httpmock"
-+	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
-+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
-+	"github.com/spf13/viper"
-+)
+ 			if userResponse {
+```
+
+**File**: `mesheryctl/internal/cli/root/registry/purge.go` (modified, +4/-1)
+```diff
+@@ -128,7 +128,10 @@ mesheryctl registry purge --retain 2 -y
  
- func TestSplitTestDurationDefaultsEmptyDuration(t *testing.T) {
- 	value, unit := splitTestDuration("")
-@@ -202,3 +213,179 @@ func resetVariables() {
- 	viewSingleProfile = false
- 	viewSingleResult = false
+ 		userResponse := utils.SilentFlag
+ 		if !userResponse {
+-			userResponse = utils.AskForConfirmation(fmt.Sprintf("This will permanently delete %s under %s. Are you sure you want to continue", pluralize(plan.totalToRemove(), "model version directory", "model version directories"), modelsDir))
++			userResponse, err = utils.AskForConfirmation(fmt.Sprintf("This will permanently delete %s under %s. Are you sure you want to continue", pluralize(plan.totalToRemove(), "model version directory", "model version directories"), modelsDir))
++			if err != nil {
++				return err
++			}
+ 		}
+ 		if !userResponse {
+ 			utils.Log.Info("Purge aborted.")
+```
+
+**File**: `mesheryctl/internal/cli/root/system/channel.go` (modified, +4/-1)
+```diff
+@@ -234,7 +234,10 @@ mesheryctl system channel switch [stable|stable-version|edge|edge-version]
+ 			userResponse = true
+ 		} else {
+ 			// ask user for confirmation
+-			userResponse = utils.AskForConfirmation("The Meshery deployment in context '" + focusedContext + "' will be replaced with a new Meshery deployment and channel subscription. Are you sure you want to continue")
++			userResponse, err = utils.AskForConfirmation("The Meshery deployment in context '" + focusedContext + "' will be replaced with a new Meshery deployment and channel subscription. Are you sure you want to continue")
++			if err != nil {
++				return err
++			}
+ 		}
+ 
+ 		if !userResponse {
+```
+
+**File**: `mesheryctl/internal/cli/root/system/context.go` (modified, +4/-1)
+```diff
+@@ -153,7 +153,10 @@ mesheryctl system context delete [context name]
+ 			if utils.SilentFlag {
+ 				res = true
+ 			} else {
+-				res = utils.AskForConfirmation("Are you sure you want to delete the current context")
++				res, err = utils.AskForConfirmation("Are you sure you want to delete the current context")
++				if err != nil {
++					return err
++				}
+ 			}
+ 
+ 			if !res {
+```
+
+**File**: `mesheryctl/internal/cli/root/system/delete.go` (modified, +4/-1)
+```diff
+@@ -96,7 +96,10 @@ func deleteContainers() error {
+ 		if utils.SilentFlag {
+ 			userResponse = true
+ 		} else {
+-			userResponse = utils.AskForConfirmation("Meshery containers will be deleted. Are you sure you want to continue")
++			userResponse, err = utils.AskForConfirmation("Meshery containers will be deleted. Are you sure you want to continue")
++			if err != nil {
++				return err
++			}
+ 		}
+ 
+ 		if !userResponse {
+```
+
+**File**: `mesheryctl/internal/cli/root/system/provider.go` (modified, +4/-1)
+```diff
+@@ -284,7 +284,10 @@ mesheryctl system provider switch [provider]
+ 			userResponse = true
+ 		} else {
+ 			// ask user for confirmation
+-			userResponse = utils.AskForConfirmation("The Meshery deployment in context '" + focusedContext + "' will be replaced with a new Meshery deployment with provider set to '" + args[0] + "'. Are you sure you want to continue")
++			userResponse, err = utils.AskForConfirmation("The Meshery deployment in context '" + focusedContext + "' will be replaced with a new Meshery deployment with provider set to '" + args[0] + "'. Are you sure you want to continue")
++			if err != nil {
++				return err
++			}
+ 		}
+ 
+ 		if !userResponse {
+```
+
+**File**: `mesheryctl/internal/cli/root/system/reset.go` (modified, +5/-1)
+```diff
+@@ -52,12 +52,16 @@ mesheryctl system reset
+ 
+ // resets meshery config, skips conirmation if skipConfirmation is true
+ func resetMesheryConfig() error {
++	var err error
+ 	userResponse := false
+ 	if utils.SilentFlag {
+ 		userResponse = true
+ 	} else {
+ 		// ask user for confirmation
+-		userResponse = utils.AskForConfirmation("Meshery config file will be reset to system defaults. Are you sure you want to continue")
++		userResponse, err = utils.AskForConfirmation("Meshery config file will be reset to system defaults. Are you sure you want to continue")
++		if err != nil {
++			return err
++		}
+ 	}
+ 	if !userResponse {
+ 		utils.Log.Info("Reset aborted.")
+```
+
+**File**: `mesheryctl/internal/cli/root/system/restart.go` (modified, +4/-1)
+```diff
+@@ -127,7 +127,10 @@ func restart() error {
+ 				userResponse = true
+ 			} else {
+ 				// ask user for confirmation
+-				userResponse = utils.AskForConfirmation("Meshery deployments will be deleted from your cluster. Are you sure you want to continue")
++				userResponse, err = utils.AskForConfirmation("Meshery deployments will be deleted from your cluster. Are you sure you want to continue")
++				if err != nil {
++					return err
++				}
+ 			}
+ 			if !userResponse {
+ 				utils.Log.Info("Restart aborted.")
+```
+
+---
+
+### Incident Patch 3: `f5be64bb` (2026-11-05)
+**Commit Message**: Merge pull request #22858 from Eternity0207/fix/perf-duration
+
+[mesheryctl] Send perf apply durations in whole seconds and reject the rest
+
+**File**: `mesheryctl/internal/cli/root/perf/apply.go` (modified, +26/-13)
+```diff
+@@ -23,6 +23,7 @@ import (
+ 	"os"
+ 	"strconv"
+ 	"strings"
++	"time"
+ 
+ 	"github.com/asaskevich/govalidator"
+ 	"github.com/ghodss/yaml"
+@@ -59,23 +60,27 @@ var linkDocPerfApply = map[string]string{
+ 	"caption": "Usage of mesheryctl perf apply",
  }
+ 
+-func splitTestDuration(duration string) (string, string) {
+-	duration = strings.TrimSpace(duration)
+-	if duration == "" {
+-		return "30", "s"
++// splitTestDuration converts a Go duration into the value and unit query
++// params of a test run. The server only reads a whole number of hours, minutes
++// or seconds, so the duration is always sent in seconds, and one that can't be
++// expressed that way is rejected rather than run for a different length.
++func splitTestDuration(duration string) (string, string, error) {
++	normalized := strings.ToLower(strings.TrimSpace(duration))
++	if normalized == "" {
++		return "30", "s", nil
+ 	}
+ 
+-	unitStart := strings.IndexFunc(duration, func(r rune) bool {
+-		return (r < '0' || r > '9') && r != '.'
+-	})
+-	if unitStart == -1 {
+-		return duration, "s"
++	// A number without a unit means seconds.
++	if _, err := strconv.Atoi(normalized); err == nil {
++		normalized += "s"
+ 	}
+-	if unitStart == 0 {
+-		return "30", strings.ToLower(strings.TrimSpace(duration))
 +
-+func TestCreatePerformanceProfile_ServerErrors(t *testing.T) {
-+	testContext := utils.InitTestEnvironment(t)
-+	defer utils.StopMockery(t)
-+	_ = utils.SetupMeshkitLoggerTesting(t, false)
-+
-+	_, filename, _, ok := runtime.Caller(0)
-+	if !ok {
-+		t.Fatal("Not able to get current working directory")
++	parsed, err := time.ParseDuration(normalized)
++	if err != nil || parsed < time.Second || parsed%time.Second != 0 {
++		return "", "", utils.ErrFlagsInvalid(fmt.Errorf("invalid test duration %q: use a whole number of seconds of at least 1s, such as 30s, 5m or 1h30m", duration))
+ 	}
+ 
+-	return strings.TrimSpace(duration[:unitStart]), strings.ToLower(strings.TrimSpace(duration[unitStart:]))
++	return strconv.FormatInt(int64(parsed/time.Second), 10), "s", nil
+ }
+ 
+ var applyCmd = &cobra.Command{
+@@ -315,7 +320,10 @@ mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-gene
+ 		q.Add("qps", qps)
+ 		q.Add("reqBody", loadTestBody)
+ 
+-		testDurationValue, testDurationUnit := splitTestDuration(testDuration)
++		testDurationValue, testDurationUnit, err := splitTestDuration(testDuration)
++		if err != nil {
++			return err
++		}
+ 		q.Add("dur", testDurationUnit)
+ 		q.Add("t", testDurationValue)
+ 
+@@ -391,6 +399,11 @@ func createPerformanceProfile(mctlCfg *config.MesheryCtlConfig) (string, string,
+ 		testDuration = "30s"
+ 	}
+ 
++	// Reject an invalid duration before it is saved in the profile.
++	if _, _, err := splitTestDuration(testDuration); err != nil {
++		return "", "", err
 +	}
-+	currDir := filepath.Dir(filename)
-+	origToken := utils.TokenFlag
-+	utils.TokenFlag = filepath.Join(currDir, "fixtures", "auth.json")
-+	defer func() { utils.TokenFlag = origToken }()
 +
-+	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
-+	if err != nil {
-+		t.Fatalf("failed to get mesheryctl config: %v", err)
-+	}
-+
-+	profileURL := testContext.BaseURL + "/api/performance/profiles"
-+
+ 	if loadGenerator == "" {
+ 		loadGenerator = "fortio"
+ 	}
+```
+
+**File**: `mesheryctl/internal/cli/root/perf/apply_test.go` (modified, +59/-24)
+```diff
+@@ -166,35 +166,43 @@ import (
+ 	"github.com/spf13/viper"
+ )
+ 
+-func TestSplitTestDurationDefaultsEmptyDuration(t *testing.T) {
+-	value, unit := splitTestDuration("")
+-
+-	if value != "30" || unit != "s" {
+-		t.Fatalf("expected empty duration to default to 30s, got value=%q unit=%q", value, unit)
+-	}
+-}
+-
+-func TestSplitTestDurationTrimsDuration(t *testing.T) {
+-	value, unit := splitTestDuration(" 5m ")
+-
+-	if value != "5" || unit != "m" {
+-		t.Fatalf("expected trimmed duration to split into 5 and m, got value=%q unit=%q", value, unit)
++func TestSplitTestDuration(t *testing.T) {
 +	tests := []struct {
-+		name          string
-+		statusCode    int
-+		responseBody  string
-+		expectedInErr string
++		name     string
++		duration string
++		value    string
 +	}{
-+		{
-+			name:          "server returns 500 internal server error",
-+			statusCode:    http.StatusInternalServerError,
-+			responseBody:  `{"error":"failed to save profile in database"}`,
-+			expectedInErr: "failed to save profile in database",
-+		},
-+		{
-+			name:          "server returns 400 with empty body uses status code",
-+			statusCode:    http.StatusBadRequest,
-+			responseBody:  "",
-+			expectedInErr: "400",
-+		},
-+		{
-+			name:          "server returns 401 unauthorized",
-+			statusCode:    http.StatusUnauthorized,
-+			responseBody:  `{"error":"unauthorized access"}`,
-+			expectedInErr: "unauthorized access",
-+		},
-+		{
-+			name:          "server returns 204 no content",
-+			statusCode:    http.StatusNoContent,
-+			responseBody:  "",
-+			expectedInErr: "204",
-+		},
-+	}
-+
++		{name: "empty duration defaults to 30s", duration: "", value: "30"},
++		{name: "number without a unit means seconds", duration: "30", value: "30"},
++		{name: "seconds", duration: "10s", value: "10"},
++		{name: "surrounding spaces are trimmed", duration: " 5m ", value: "300"},
++		{name: "hours", duration: "2h", value: "7200"},
++		{name: "uppercase unit", duration: "5M", value: "300"},
++		{name: "combined units", duration: "1h30m", value: "5400"},
++		{name: "fractional value that is a whole number of seconds", duration: "1.5m", value: "90"},
++		{name: "milliseconds that are a whole number of seconds", duration: "2000ms", value: "2"},
+ 	}
+-}
+ 
+-func TestSplitTestDurationDefaultsUnitlessDuration(t *testing.T) {
+-	value, unit := splitTestDuration("30")
+-
+-	if value != "30" || unit != "s" {
+-		t.Fatalf("expected unitless duration to default to seconds, got value=%q unit=%q", value, unit)
 +	for _, tt := range tests {
 +		t.Run(tt.name, func(t *testing.T) {
-+			resetVariables()
-+			profileName = "test-profile"
-+			testURL = "https://meshery.io"
-+
-+			httpmock.RegisterResponder("POST", profileURL,
-+				httpmock.NewStringResponder(tt.statusCode, tt.responseBody))
-+
-+			id, name, err := createPerformanceProfile(mctlCfg)
-+			if err == nil {
-+				t.Fatalf("expected error for status code %d, got nil", tt.statusCode)
++			value, unit, err := splitTestDuration(tt.duration)
++			if err != nil {
++				t.Fatalf("unexpected error: %v", err)
 +			}
-+			if !strings.Contains(err.Error(), tt.expectedInErr) {
-+				t.Errorf("expected error to contain %q, got %q", tt.expectedInErr, err.Error())
-+			}
-+			if id != "" || name != "" {
-+				t.Errorf("expected empty profile ID and name on error, got id=%q, name=%q", id, name)
++			if value != tt.value || unit != "s" {
++				t.Fatalf("expected %q to be sent as %ss, got value=%q unit=%q", tt.duration, tt.value, value, unit)
 +			}
 +		})
-+	}
-+}
-+
-+func TestCreatePerformanceProfile_NullResponseGuardsAgainstPanic(t *testing.T) {
+ 	}
+ }
+ 
+-func TestSplitTestDurationSupportsMultiCharacterUnit(t *testing.T) {
+-	value, unit := splitTestDuration("500ms")
+-
+-	if value != "500" || unit != "ms" {
+-		t.Fatalf("expected multi-character unit to be preserved, got value=%q unit=%q", value, unit)
++func TestSplitTestDurationRejectsInvalidDuration(t *testing.T) {
++	for _, duration := range []string{"500ms", "1500ms", "1.5", "0s", "0", "-5s", "abc", "s", "5x"} {
++		t.Run(duration, func(t *testing.T) {
++			if value, unit, err := splitTestDuration(duration); err == nil {
++				t.Fatalf("expected %q to be rejected, got value=%q unit=%q", duration, value, unit)
++			}
++		})
+ 	}
+ }
+ 
+@@ -290,6 +298,33 @@ func TestCreatePerformanceProfile_ServerErrors(t *testing.T) {
+ 	}
+ }
+ 
++func TestCreatePerformanceProfile_RejectsInvalidDuration(t *testing.T) {
 +	testContext := utils.InitTestEnvironment(t)
 +	defer utils.StopMockery(t)
 +	_ = utils.SetupMeshkitLoggerTesting(t, false)
-+
-+	_, filename, _, ok := runtime.Caller(0)
-+	if !ok {
-+		t.Fatal("Not able to get current working directory")
-+	}
-+	currDir := filepath.Dir(filename)
-+	origToken := utils.TokenFlag
-+	utils.TokenFlag = filepath.Join(currDir, "fixtures", "auth.json")
-+	defer func() { utils.TokenFlag = origToken }()
 +
 +	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 +	if err != nil {
@@ -1016,462 +1221,34 @@ Observed empirical fixes and code patches:
 +	}
 +
 +	profileURL := testContext.BaseURL + "/api/performance/profiles"
++	httpmock.RegisterResponder("POST", profileURL, httpmock.NewStringResponder(http.StatusOK, `{}`))
 +
 +	resetVariables()
-+	profileName = "test-profile-null"
++	defer resetVariables()
++	profileName = "test-profile"
 +	testURL = "https://meshery.io"
++	testDuration = "500ms"
 +
-+	httpmock.RegisterResponder("POST", profileURL,
-+		httpmock.NewStringResponder(http.StatusOK, "null"))
-+
-+	defer func() {
-+		if r := recover(); r != nil {
-+			t.Fatalf("createPerformanceProfile panicked on null response: %v", r)
-+		}
-+	}()
-+
-+	id, name, err := createPerformanceProfile(mctlCfg)
-+	if err == nil {
-+		t.Fatal("expected error on null response, got nil")
++	if _, _, err := createPerformanceProfile(mctlCfg); err == nil {
++		t.Fatal("expected an invalid duration to be rejected")
 +	}
-+	if !strings.Contains(err.Error(), "empty performance profile") {
-+		t.Errorf("expected error to contain 'empty performance profile', got: %v", err)
-+	}
-+	if id != "" || name != "" {
-+		t.Errorf("expected empty profile ID and name, got id=%q, name=%q", id, name)
++	if calls := httpmock.GetCallCountInfo()["POST "+profileURL]; calls != 0 {
++		t.Errorf("expected no profile to be created, got %d request(s)", calls)
 +	}
 +}
 +
-+func TestCreatePerformanceProfile_Success(t *testing.T) {
-+	testContext := utils.InitTestEnvironment(t)
-+	defer utils.StopMockery(t)
-+	_ = utils.SetupMeshkitLoggerTesting(t, false)
-+
-+	_, filename, _, ok := runtime.Caller(0)
-+	if !ok {
-+		t.Fatal("Not able to get current working directory")
-+	}
-+	currDir := filepath.Dir(filename)
-+	origToken := utils.TokenFlag
-+	utils.TokenFlag = filepath.Join(currDir, "fixtures", "auth.json")
-+	defer func() { utils.TokenFlag = origToken }()
-+
-+	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
-+	if err != nil {
-+		t.Fatalf("failed to get mesheryctl config: %v", err)
-+	}
-+
-+	profileURL := testContext.BaseURL + "/api/performance/profiles"
-+
-+
-```
-
-**File**: `mesheryctl/pkg/utils/auth.go` (modified, +9/-9)
-```diff
-@@ -106,6 +106,15 @@ func MakeRequest(req *http.Request) (*http.Response, error) {
- 		return nil, ErrInvalidToken()
- 	}
- 
-+	if resp.StatusCode == http.StatusInternalServerError {
-+		defer func() { _ = resp.Body.Close() }()
-+		bodyBytes, err := io.ReadAll(resp.Body)
-+		if err != nil {
-+			return nil, ErrReadResponseBody(err)
-+		}
-+		return nil, ErrMesheryServerInternalError(errors.New(string(bodyBytes)))
-+	}
-+
- 	// failsafe for not being authenticated
- 	if ContentTypeIsHTML(resp) {
- 		SafeClose(resp.Body)
-@@ -123,15 +132,6 @@ func MakeRequest(req *http.Request) (*http.Response, error) {
- 		return nil, ErrNotFound(errors.New(string(bodyBytes)))
- 	}
- 
--	if resp.StatusCode == http.StatusInternalServerError {
--		defer func() { _ = resp.Body.Close() }()
--		bodyBytes, err := io.ReadAll(resp.Body)
--		if err != nil {
--			return nil, ErrReadResponseBody(err)
--		}
--		return nil, ErrMesheryServerInternalError(errors.New(string(bodyBytes)))
--	}
--
- 	// failsafe for bad api call
- 	isNotSuccess := resp.StatusCode != http.StatusOK &&
- 		resp.StatusCode != http.StatusCreated &&
-```
-
-**File**: `mesheryctl/pkg/utils/auth_test.go` (modified, +25/-0)
-```diff
-@@ -168,4 +168,29 @@ func TestMakeRequest_Status302AndHTMLResponseHandling(t *testing.T) {
- 			t.Fatal("expected response body to be closed on HTML content-type response")
- 		}
- 	})
-+
-+	t.Run("MakeRequest returns ErrMesheryServerInternalError on HTML 500 response", func(t *testing.T) {
-+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-+			w.Header().Set("Content-Type", "text/html; charset=utf-8")
-+			w.WriteHeader(http.StatusInternalServerError)
-+			_, _ = fmt.Fprint(w, "<html><body>500 Internal Server Error</body></html>")
-+		}))
-+		defer server.Close()
-+
-+		req, err := http.NewRequest(http.MethodGet, server.URL, nil)
-+		if err != nil {
-+			t.Fatalf("unexpected error creating request: %v", err)
-+		}
-+
-+		resp, err := MakeRequest(req)
-+		if resp != nil {
-+			t.Errorf("expected nil response on 500, got %v", resp)
-+		}
-+		if err == nil {
-+			t.Fatal("expected error on 500, got nil")
-+		}
-+		if errors.GetCode(err) != ErrMesheryServerInternalErrorCode {
-+			t.Errorf("expected error code %s, got %s", ErrMesheryServerInternalErrorCode, errors.GetCode(err))
-+		}
-+	})
- }
-```
-
----
-
-### Incident Patch 2: `873d7a25` (2026-11-04)
-**Commit Message**: [UI] Fix notification center infinite scroll loading past the last page (#22793)
-
-[UI] Fix notification center infinite scroll loading past the last page
-
-**File**: `ui/components/layout/NotificationCenter/index.tsx` (modified, +15/-18)
-```diff
-@@ -1,4 +1,4 @@
--import React, { useContext, useEffect, useRef, useState } from 'react';
-+import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
- import { CustomTooltip, NoSsr } from '@sistent/sistent';
- import {
-   alpha,
-@@ -367,10 +367,15 @@ const EventsView = ({ handleLoadNextPage, isFetching, hasMore }) => {
-   const events = useSelector(selectEvents);
-   // const page = useSelector((state) => state.events.current_view.page);
-   const lastEventRef = useRef(null);
--  const intersectionObserver = useRef(
--    new IntersectionObserver(
-+
-+  useEffect(() => {
-+    const node = lastEventRef.current;
-+    if (!node) {
-+      return;
-+    }
-+    const observer = new IntersectionObserver(
-       (entries) => {
--        if (isFetching && !hasMore) {
-+        if (isFetching || !hasMore) {
-           return;
-         }
-         const firstEntry = entries[0];
-@@ -379,20 +384,12 @@ const EventsView = ({ handleLoadNextPage, isFetching, hasMore }) => {
-         }
-       },
-       { threshold: 1 },
--    ),
--  );
--
--  useEffect(() => {
--    const currentObserver = intersectionObserver.current;
--    if (lastEventRef.current) {
--      currentObserver.observe(lastEventRef.current);
--    }
-+    );
-+    observer.observe(node);
-     return () => {
--      if (lastEventRef.current) {
--        currentObserver.unobserve(lastEventRef.current);
--      }
-+      observer.unobserve(node);
-     };
--  }, [lastEventRef.current]);
-+  }, [isFetching, hasMore, handleLoadNextPage]);
- 
-   return (
-     <>
-@@ -432,9 +429,9 @@ const NotificationCenterDrawer = () => {
-     );
-   }, []);
- 
--  const loadMore = () => {
-+  const loadMore = useCallback(() => {
-     dispatch(loadNextPage(fetchEvents));
--  };
-+  }, [dispatch, fetchEvents]);
- 
-   const handleClose = () => {
-     if (!isNotificationCenterOpen) {
-```
-
----
-
-### Incident Patch 3: `06ed1f16` (2026-11-04)
-**Commit Message**: Merge pull request #22839 from harshitsaxena214/fix-adapter-client-leak
-
-[Server] Close each adapter client per host in Provision
-
-**File**: `server/handlers/design_engine_handler.go` (modified, +56/-46)
-```diff
-@@ -627,60 +627,70 @@ func (sap *serviceActionProvider) Provision(ccp stages.CompConfigPair) ([]patter
- 			return nil, fmt.Errorf("error execute operation on %v: %v", host, err)
- 		}
- 
--		addr := hostName
--		if hostPort != 0 {
--			addr += ":" + strconv.Itoa(hostPort)
--		}
--		// Create mesh client
--		mClient, err := meshes.CreateClient(
--			context.TODO(),
--			addr,
--		)
--		if err != nil {
--			return nil, fmt.Errorf("error creating a mesh client: %v", err)
--		}
--		defer func() {
--			_ = mClient.Close()
--		}()
--
--		// Else it is an  adapter call
--		//TODO: Accommodate gRPC calls to use context mapping with kubeconfig
--		var kconfigs []string
--		for _, v := range sap.ctxTokubeconfig {
--			kconfigs = append(kconfigs, v)
--		}
--		compStr, err := utils.Marshal(ccp.Component)
-+		msg, err := sap.provisionOnAdapter(hostName, hostPort, ccp.Component)
- 		if err != nil {
--			err = errors.Wrapf(err, "error marshalling component \"%s\" of type : %s", ccp.Component.DisplayName, ccp.Component.Component.Kind)
- 			return nil, err
- 		}
--		resp, err := mClient.MClient.Provision(context.TODO(), &meshes.ProvisionRequest{
--			Username:     sap.userID,
--			DeleteOp:     sap.opIsDelete,
--			KubeConfigs:  kconfigs,
--			Declarations: []string{compStr},
--		})
--		success := err == nil
--		msgs = append(msgs, patterns.DeploymentMessagePerContext{
--			SystemName: hostName,
--			Location:   fmt.Sprintf("%s:%s", hostName, strconv.Itoa(hostPort)),
--			Summary: []patterns.DeploymentMessagePerComp{
--				{
--					Kind:       ccp.Component.Component.Kind,
--					Model:      ccp.Component.Model.Name,
--					CompName:   ccp.Component.DisplayName,
--					DesignName: sap.patternName,
--					Success:    success,
--					Message:    resp.GetMessage(),
--					Error:      err,
--				},
--			},
--		})
-+		msgs = append(msgs, msg)
- 	}
- 
- 	return msgs, nil
- }
- 
-+// provisionOnAdapter provisions comp through one gRPC adapter, closing its client
-+// on return so hosts do not hold connections open until Provision ends.
-+func (sap *serviceActionProvider) provisionOnAdapter(hostName string, hostPort int, comp component.ComponentDefinition) (patterns.DeploymentMessagePerContext, error) {
-+	addr := hostName
-+	if hostPort != 0 {
-+		addr += ":" + strconv.Itoa(hostPort)
-+	}
-+	// Create mesh client
-+	mClient, err := meshes.CreateClient(
-+		context.TODO(),
-+		addr,
-+	)
-+	if err != nil {
-+		return patterns.DeploymentMessagePerContext{}, fmt.Errorf("error creating a mesh client: %v", err)
-+	}
-+	defer func() {
-+		_ = mClient.Close()
-+	}()
-+
-+	// Else it is an  adapter call
-+	//TODO: Accommodate gRPC calls to use context mapping with kubeconfig
-+	var kconfigs []string
-+	for _, v := range sap.ctxTokubeconfig {
-+		kconfigs = append(kconfigs, v)
-+	}
-+	compStr, err := utils.Marshal(comp)
-+	if err != nil {
-+		err = errors.Wrapf(err, "error marshalling component \"%s\" of type : %s", comp.DisplayName, comp.Component.Kind)
-+		return patterns.DeploymentMessagePerContext{}, err
-+	}
-+	resp, err := mClient.MClient.Provision(context.TODO(), &meshes.ProvisionRequest{
-+		Username:     sap.userID,
-+		DeleteOp:     sap.opIsDelete,
-+		KubeConfigs:  kconfigs,
-+		Declarations: []string{compStr},
-+	})
-+	success := err == nil
-+	return patterns.DeploymentMessagePerContext{
-+		SystemName: hostName,
-+		Location:   fmt.Sprintf("%s:%s", hostName, strconv.Itoa(hostPort)),
-+		Summary: []patterns.DeploymentMessagePerComp{
-+			{
-+				Kind:       comp.Component.Kind,
-+				Model:      comp.Model.Name,
-+				CompName:   comp.DisplayName,
-+				DesignName: sap.patternName,
-+				Success:    success,
-+				Message:    resp.GetMessage(),
-+				Error:      err,
-+			},
-+		},
-+	}, nil
-+}
-+
- // func (sap *serviceActionProvider) Persist(name string, svc patterncore.Service, isUpdate bool) error {
- // 	if !sap.opIsDelete {
- // 		if isUpdate {
-```
-
-**File**: `server/handlers/design_engine_provision_test.go` (added, +123/-0)
-```diff
-@@ -0,0 +1,123 @@
-+package handlers
-+
-+import (
-+	"context"
-+	"net"
-+	"sync/atomic"
-+	"testing"
-+	"time"
-+
-+	"github.com/meshery/meshery/server/meshes"
-+	"github.com/meshery/meshery/server/models/pattern/stages"
-+	"github.com/meshery/meshkit/logger"
-+	"github.com/meshery/schemas/models/v1beta1/connection"
-+	modelv1beta1 "github.com/meshery/schemas/models/v1beta1/model"
-+	"google.golang.org/grpc"
-+	"google.golang.org/grpc/stats"
-+)
-+
-+// provisionAdapter is an in-process adapter that counts its open client connections.
-+type provisionAdapter struct {
-+	meshes.UnimplementedMeshServiceServer
-+	openConns   atomic.Int32
-+	onProvision func()
-+}
-+
-+func (a *provisionAdapter) Provision(context.Context, *meshes.ProvisionRequest) (*meshes.ProvisionResponse, error) {
-+	if a.onProvision != nil {
-+		a.onProvision()
-+	}
-+	return &meshes.ProvisionResponse{Message: "provisioned"}, nil
-+}
-+
-+func (a *provisionAdapter) TagRPC(ctx context.Context, _ *stats.RPCTagInfo) context.Context {
-+	return ctx
-+}
-+func (a *provisionAdapter) HandleRPC(context.Context, stats.RPCStats) {}
-+func (a *provisionAdapter) TagConn(ctx context.Context, _ *stats.ConnTagInfo) context.Context {
-+	return ctx
-+}
-+
-+func (a *provisionAdapter) HandleConn(_ context.Context, s stats.ConnStats) {
-+	switch s.(type) {
-+	case *stats.ConnBegin:
-+		a.openConns.Add(1)
-+	case *stats.ConnEnd:
-+		a.openConns.Add(-1)
-+	}
-+}
-+
-+// waitForNoOpenConns waits briefly, since a client close reaches the server asynchronously.
-+func (a *provisionAdapter) waitForNoOpenConns() int32 {
-+	deadline := time.Now().Add(2 * time.Second)
-+	for a.openConns.Load() != 0 && time.Now().Before(deadline) {
-+		time.Sleep(10 * time.Millisecond)
-+	}
-+	return a.openConns.Load()
-+}
-+
-+// startProvisionAdapter serves a provisionAdapter on a free local port and
-+// returns it with the host Provision reaches it through.
-+func startProvisionAdapter(t *testing.T) (*provisionAdapter, connection.Connection) {
-+	t.Helper()
-+
-+	listener, err := net.Listen("tcp", "127.0.0.1:0")
-+	if err != nil {
-+		t.Fatalf("listen for the adapter: %v", err)
-+	}
-+
-+	adapter := &provisionAdapter{}
-+	server := grpc.NewServer(grpc.StatsHandler(adapter))
-+	meshes.RegisterMeshServiceServer(server, adapter)
-+	go func() { _ = server.Serve(listener) }()
-+	t.Cleanup(server.Stop)
-+
-+	host := connection.Connection{
-+		Kind: "adapter",
-+		Metadata: map[string]interface{}{
-+			"host_name": "127.0.0.1",
-+			"port":      listener.Addr().(*net.TCPAddr).Port,
-+		},
-+	}
-+	return adapter, host
-+}
-+
-+// Each host's adapter client must close before the next host is provisioned (#20874).
-+func TestProvisionClosesEachAdapterClientBeforeTheNextHost(t *testing.T) {
-+	log, err := logger.New("provision-test", logger.Options{})
-+	if err != nil {
-+		t.Fatalf("failed to build a logger: %v", err)
-+	}
-+
-+	first, firstHost := startProvisionAdapter(t)
-+	second, secondHost := startProvisionAdapter(t)
-+
-+	var firstStillOpen atomic.Int32
-+	second.onProvision = func() {
-+		firstStillOpen.Store(first.waitForNoOpenConns())
-+	}
-+
-+	comp := mutateTestComponent("workload", "Deployment")
-+	comp.Model = &modelv1beta1.ModelDefinition{Name: "kubernetes"}
-+
-+	sap := &serviceActionProvider{log: log, userID: "user", patternName: "design"}
-+	msgs, err := sap.Provision(stages.CompConfigPair{
-+		Component: *comp,
-+		Hosts:     []connection.Connection{firstHost, secondHost},
-+	})
-+	if err != nil {
-+		t.Fatalf("Provision: %v", err)
-+	}
-+	if len(msgs) != 2 {
-+		t.Fatalf("Provision returned %d message(s), want 2", len(msgs))
-+	}
-+
-+	if open := firstStillOpen.Load(); open != 0 {
-+		t.Errorf("the first adapter still held %d client connection(s) while the second host was provisioned, want 0", open)
-+	}
-+	for name, adapter := range map[string]*provisionAdapter{"first": first, "second": second} {
-+		if open := adapter.waitForNoOpenConns(); open != 0 {
-+			t.Errorf("the %s adapter still holds %d client connection(s) after Provision returned, want 0", name, open)
-+		}
-+	}
-+}
+ func TestCreatePerformanceProfile_NullResponseGuardsAgainstPanic(t *testing.T) {
+ 	testContext := utils.InitTestEnvironment(t)
+ 	defer utils.StopMockery(t)
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #22858** (2026-11-05): [mesheryctl] Send perf apply durations in whole seconds and reject the rest (@Eternity0207)
+- **PR #22855** (2026-11-05): [mesheryctl] Accept any case of --output-format in the output formatter factories (@Eternity0207)
+- **PR #22852** (closed): [UI] Type ArrayFieldTemplate props and fix fixed-array detection (@dropps07)
+- **PR #22850** (2026-11-05): [mesheryctl] Return an error instead of exiting on stdin read failures in prompts (@harshitsaxena214)
+- **PR #22846** (closed): [UI] Forward options through initiateQuery (@krishbuilds01)
 - **PR #22839** (2026-11-04): [Server] Close each adapter client per host in Provision (@harshitsaxena214)
-- **PR #22828** (2026-11-04): Add Maanvi Chetwanii's introduction to meetings doc (@Maanvi212006)
-- **PR #22801** (2026-11-04): [mesheryctl] Prevent nil pointer dereference panic and unhandled HTTP status in perf apply (@Swatantra-66)
-- **PR #22793** (2026-11-04): [UI] Fix notification center infinite scroll loading past the last page (@ayushgade06)
-- **PR #22769** (2026-11-03): fix(server): stop embedding design contents in event metadata (@yi-nuo426)
-- **PR #22746** (2026-11-02): fix/CLI reference docs should not include /home/runner/... (@Aravind226)
 
 ---
 
@@ -1491,51 +1268,55 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [mesheryctl] Prevent nil pointer dereference panic and unhandled HTTP status in 
+## X. [Server] Harden fd leak tests for Linux /proc/self/fd and decouple live template
 
 **RULE**:
-When implementing operations in `mesheryctl/internal/cli/root/perf/apply.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meshery/meshery. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `server/models/k8s_components_registration_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meshery/meshery. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ed66e6ec`: [mesheryctl] Prevent nil pointer dereference panic and unhandled HTTP status in perf apply (#22801). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6a0dfa7a`: [Server] Harden fd leak tests for Linux /proc/self/fd and decouple live template assertions. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `mesheryctl/internal/cli/root/perf/apply.go`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `server/models/k8s_components_registration_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-	"fmt"
-		metadata, ok := values["metadata"].(map[string]interface{})
-		if !ok || metadata == nil {
-			metadata = map[string]interface{}{}
-			values["metadata"] = metadata
-		metadata["ca_certificate"] = map[string]interface{}{
-		return "", "", ErrPerfProfileServer(err)
-	if resp.StatusCode != http.StatusOK && resp.StatusCode != http.StatusCreated {
-		serverErrMsg := strings.TrimSpace(string(body))
-		if serverErrMsg == "" {
-			serverErrMsg = fmt.Sprintf("server returned status: %s", resp.Status)
-		}
-		return "", "", ErrPerfProfileServer(errors.New(serverErrMsg))
+	// Track open file descriptors around the call (effective on Linux /proc/self/fd)
+	beforeFDs, _ := filepath.Glob("/proc/self/fd/*")
+	afterFDs, _ := filepath.Glob("/proc/self/fd/*")
+	if len(beforeFDs) > 0 && len(afterFDs) > 0 {
+		assert.Equal(t, len(beforeFDs), len(afterFDs), "file descriptor count should remain unchanged after successful load")
 	}
-
-
-	if response == nil {
-		return "", "", ErrPerfProfileServer(errors.New("server returned empty performance profile"))
+	// Track open file descriptors around the call (effective on Linux /proc/self/fd)
+	beforeFDs, _ := filepath.Glob("/proc/self/fd/*")
+	afterFDs, _ := filepath.Glob("/proc/self/fd/*")
+	if len(beforeFDs) > 0 && len(afterFDs) > 0 {
+		assert.Equal(t, len(beforeFDs), len(afterFDs), "file descriptor should be closed even on unmarshal error")
 	}
-
+	// Verify deferred close executed despite JSON unmarshal error (effective on Windows file locks):
+// template file at k8sMeshModelPath can be read and parsed without coupling to volatile values.
+	assert.NotEmpty(t, metadata.PrimaryColor)
+	assert.NotEmpty(t, *metadata.SecondaryColor)
+	assert.NotEmpty(t, string(*metadata.Shape))
+// is initialized by init() when the template file is available without coupling to volatile values.
+	assert.NotEmpty(t, K8sMeshModelMetadata.PrimaryColor)
+	assert.NotEmpty(t, *K8
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-		// check if values["metadata"] is nil
-		if values["metadata"] == nil {
-			values["metadata"] = map[string]interface{}{}
-		values["metadata"].(map[string]interface{})["ca_certificate"] = map[string]interface{}{
-		return "", "", ErrPerfProfileServer(errors.New("failed to save performance profile on server"))
+	// Verify deferred close executed despite JSON unmarshal error:
+// template file at k8sMeshModelPath can be read and parsed.
+	assert.Equal(t, "#326CE5", metadata.PrimaryColor)
+	assert.Equal(t, "#7aa1f0", *metadata.SecondaryColor)
+	assert.Equal(t, "circle", string(*metadata.Shape))
+// is initialized by init() when the template file is available.
+	assert.Equal(t, "#326CE5", K8sMeshModelMetadata.PrimaryColor)
+	assert.Equal(t, "#7aa1f0", *K8sMeshModelMetadata.SecondaryColor)
+	assert.Equal(t, "circle", string(*K8sMeshModelMetadata.Shape))
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ed66e6ec` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6a0dfa7a` are properly handled with clean fallback behavior.

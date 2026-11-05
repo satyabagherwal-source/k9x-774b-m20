@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md`  
 > **Source**: github ([https://github.com/aleo-labs-protocol/snarkOS](https://github.com/aleo-labs-protocol/snarkOS))  
-> **Source Version**: `66955b13`  
+> **Source Version**: `ddfec329`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T21:26:18.537Z  
+> **Timestamp**: 2026-11-05T15:30:14.328Z  
 > **Learning ID**: `learn-github-aleo-labs-protocol-snarkos`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/aleo-labs-protocol/snarkOS](https://github.com/aleo-labs-protocol/snarkOS))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T21:26:18.529Z  
+> **Harvest Timestamp**: 2026-11-05T15:30:14.320Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1987,264 +1987,115 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `66955b13` (2026-11-04)
-**Commit Message**: Merge pull request #4624 from aleo-labs-protocol/ci/bump-snarkvm
+### Incident Patch 1: `ddfec329` (2026-11-05)
+**Commit Message**: Merge pull request #4630 from aleo-labs-protocol/ci/telemetry-tests
 
-Bump snarkVM to aleo-labs-protocol/snarkVM@a62f98959
+Run the telemetry tests in CI
 
-**File**: `Cargo.lock` (modified, +155/-170)
+**File**: `.github/workflows/ci.yml` (modified, +15/-9)
 ```diff
-@@ -521,11 +521,11 @@ dependencies = [
+@@ -111,13 +111,14 @@ jobs:
+       - run: cargo check -p snarkos-node-metrics --all-features
+       - run: cargo check -p snarkos-display --all-features
  
- [[package]]
- name = "bit-set"
--version = "0.8.0"
-+version = "0.11.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "08807e080ed7f9d5433fa9b275196cfc35414f66a0c79d864dc51a0d825231a3"
-+checksum = "56d87354e4229f54a44f7bf2435906a4656dba36026ab6eaca629a2c436a691c"
- dependencies = [
-- "bit-vec 0.8.0",
-+ "bit-vec 0.10.1",
- ]
- 
- [[package]]
-@@ -536,9 +536,13 @@ checksum = "349f9b6a179ed607305526ca489b34ad0a41aed5f7980fa90eb03160b69598fb"
- 
- [[package]]
- name = "bit-vec"
--version = "0.8.0"
-+version = "0.10.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "5e764a1d40d510daf35e07be9eb06e75770908c27d411ee6c92109c9840eaaf7"
-+checksum = "5727b15fa97d4f4fee0a3b7c3d550ed0269f54329207b86388de918604e31269"
-+dependencies = [
-+ "borsh",
-+ "serde",
-+]
- 
- [[package]]
- name = "bitflags"
-@@ -608,10 +612,24 @@ version = "1.8.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "a88b7ea17d208c4193f2c1e6de3c35fe71f98c96982d5ced308bdcc749ff6e1f"
- dependencies = [
-+ "borsh-derive",
-  "bytes",
-  "cfg_aliases",
- ]
- 
-+[[package]]
-+name = "borsh-derive"
-+version = "1.8.1"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "12cdfe656708a01f89b451a7d36466e6fe6c414de0aa18fc54f864f6f9ca9f56"
-+dependencies = [
-+ "once_cell",
-+ "proc-macro-crate",
-+ "proc-macro2",
-+ "quote 1.0.47",
-+ "syn 3.0.3",
-+]
-+
- [[package]]
- name = "bs58"
- version = "0.5.1"
-@@ -1106,6 +1124,12 @@ version = "0.8.7"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "773648b94d0e5d620f64f280777445740e61fe701025087ec8b57f45c791888b"
- 
-+[[package]]
-+name = "core_detect"
-+version = "1.0.0"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "7f8f80099a98041a3d1622845c271458a2d73e688351bf3cb999266764b81d48"
-+
- [[package]]
- name = "cpubits"
- version = "0.1.1"
-@@ -1487,7 +1511,7 @@ checksum = "bba95f299f6b9cd47f68a847eca2ae9060a2713af532dc35c342065544845407"
- dependencies = [
-  "proc-macro2",
-  "quote 1.0.47",
-- "structmeta 0.3.0",
-+ "structmeta",
-  "syn 2.0.119",
- ]
- 
-@@ -2489,7 +2513,7 @@ dependencies = [
-  "libc",
-  "percent-encoding",
-  "pin-project-lite",
-- "socket2 0.6.5",
-+ "socket2 0.5.10",
-  "system-configuration",
-  "tokio",
-  "tower-service",
-@@ -3365,9 +3389,9 @@ dependencies = [
- 
- [[package]]
- name = "num-bigint"
--version = "0.4.8"
-+version = "0.5.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "c89e69e7e0f03bea5ef08013795c25018e101932225a656383bd384495ecc367"
-+checksum = "93e7820bc0a80a0238e650327316f929ba18d5be054b647490a3a6a339f3e7c0"
- dependencies = [
-  "num-integer",
-  "num-traits",
-@@ -3981,6 +4005,15 @@ dependencies = [
-  "wnaf",
- ]
- 
-+[[package]]
-+name = "proc-macro-crate"
-+version = "3.5.0"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "e67ba7e9b2b56446f1d419b1d807906278ffa1a658a8a5d8a39dcb1f5a78614f"
-+dependencies = [
-+ "toml_edit",
-+]
-+
- [[package]]
- name = "proc-macro2"
- version = "1.0.107"
-@@ -3992,18 +4025,18 @@ dependencies = [
- 
- [[package]]
- name = "proptest"
--version = "1.6.0"
-+version = "1.12.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "14cae93065090804185d3b75f0bf93b8eeda30c7a9b4a33d3bdb3988d6229e50"
-+checksum = "b8530004ccb15eae51c7e40009fbe317f341f804db54dc033eec1c50be28cfa0"
- dependencies = [
-- "bit-set 0.8.0",
-- "bit-vec 0.8.0",
-+ "bit-set 0.11.1",
-+ "bit-vec 0.10.1",
-  "bitflags 2.13.1",
-- "lazy_static",
-+ "chacha20 0.10.2",
-+ "core_detect",
-  "num-traits",
-- "rand 0.8.7",
-- "rand_chacha 0.3.1",
-- "rand_xorshift 0.3.0",
-+ "rand 0.10.3",
-+ "rand_xorshift",
-  "regex-syntax",
-  "rusty-fork",
-  "tempfile",
-@@ -4096,7 +4129,7 @@ dependencies = [
-  "quinn-udp",
-  "rustc-hash",
-  "rustls",
-- "socket2 0.6.5",
-+ "socket2 0.5.10",
-  "thiserror 2.0.20",
-  "tokio",
-  "tracing",
-@@ -4135,7 +4168,7 @@ dependencies = [
-  "cfg_aliases",
-  "libc",
-  "once_cell",
-- "socket2 0.6.5",
-+ "socket2 0.5.10",
-  "tracing",
-  "windows-sys 0.61.2",
- ]
-@@ -4173,8 +4206,6 @@ version = "0.8.7"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "22f6172bdec972074665ed81ed53b71da00bfc44b65a753cfde883ec4c702a1a"
- dependencies = [
-- "libc",
-- "rand_chacha 0.3.1",
-  "rand_core 0.6.4",
- ]
- 
-@@ -4199,16 +4230,6 @@ dependencies = [
-  "rand_core 0.10.1",
- ]
- 
--[[package]]
--name = "rand_chacha"
--version = "0.3.1"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "e6c10a63a0fa32252be49d21e7709d4d4baf8d231c2dbce1eaa8141b9b127d88"
--dependencies = [
-- "ppv-lite86",
-- "rand_core 0.6.4",
--]
--
- [[package]]
- name = "rand_chacha"
- version = "0.9.0"
-@@ -4272,15 +4293,6 @@ dependencies = [
-  "rand_core 0.10.1",
- ]
- 
--[[package]]
--name = "rand_xorshift"
--version = "0.3.0"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "d25bf25ec5ae4a3f1b92f929810509a2f53d7dca2f50b794ff57e3face536c8f"
--dependencies =
+-  # Each entry is one build. `cargo test -p a -p b` unifies the features of
+-  # a and b, and several crates enable features on their dependencies that
+-  # change what those dependencies do: `snarkos-node-router/test`,
+-  # `snarkos-node-network/test` and `snarkvm-ledger-block/test` skip checks,
+-  # and `rocks` and `metrics` select other code paths. Crates share an entry
+-  # only where that unification enables none of these on any crate. Helper
+-  # features such as `test-helpers` and `mock` can still be unified.
++  # Each line of `runs` is one build. `cargo test -p a -p b` unifies the
++  # features of a and b, and several crates enable features on their
++  # dependencies that change what those dependencies do:
++  # `snarkos-node-router/test`, `snarkos-node-network/test` and
++  # `snarkvm-ledger-block/test` skip checks, and `rocks` and `metrics` select
++  # other code paths. Crates share a line only where that unification enables
++  # none of these on any crate. Helper features such as `test-helpers` and
++  # `mock` can still be unified.
+   #
+   # Cheap entries run on free hosted runners and do not wait for the fleet.
+   test-hosted:
+@@ -163,7 +164,8 @@ jobs:
+           key: aleo-resources-${{ matrix.name }}-${{ hashFiles('Cargo.lock') }}
+       - uses: taiki-e/install-action@v2
+         with: { tool: cargo-nextest@0.9.114 }
+-      # Each line of `runs` is one cargo command.
++      # Each line of `runs` is one cargo command, split on whitespace with no
++      # shell parsing, so its arguments can hold neither quotes nor spaces.
+       - name: Test
+         env:
+           RUNS: ${{ matrix.runs }}
+@@ -211,8 +213,12 @@ jobs:
+             runs: nextest run -p snarkos-node-consensus -p snarkos-node-rest -p snarkos-cli
+           - name: node
+             runs: nextest run -p snarkos-node -p snarkos-node-bft-storage-service --features snarkos-node-bft-storage-service/memory,snarkos-node-bft-storage-service/persistent
++          # `helpers::telemetry` compiles only under `metrics`. `--no-tests=fail`
++          # overrides NEXTEST_NO_TESTS, so a filter that stops matching fails.
+           - name: bft
+-            runs: nextest run -p snarkos-node-bft
++            runs: |
++              nextest run -p snarkos-node-bft
++              nextest run -p snarkos-node-bft --lib --features metrics --no-tests=fail -E test(/helpers::telemetry::/)
+           - name: router
+             runs: nextest run -p snarkos-node-router
+           - name: sync
 ```
 
-**File**: `Cargo.toml` (modified, +1/-1)
+**File**: `CI.md` (modified, +15/-11)
 ```diff
-@@ -49,7 +49,7 @@ default-features = false
- [workspace.dependencies.snarkvm]
- #path = "../snarkVM"
- git = "https://github.com/aleo-labs-protocol/snarkVM.git"
--rev = "9796eb19dee4fd2c671be9b3a1322eda62586991" #staging
-+rev = "a62f989591d78bcf10877accd5df1877c3e662da" #staging
- #version = "=4.12.0"
- default-features = false
+@@ -39,7 +39,7 @@ other jobs run on every event.
+ | `test (messages)` | hosted | all | 90 | `snarkos-node-bft-events`, `-node-router-messages`, `-node-bft-ledger-service` |
+ | `test (services)` | `cpu` | all | 90 | `snarkos-node-consensus`, `-node-rest`, `-cli` |
+ | `test (node)` | `cpu` | all | 90 | `snarkos-node` with `snarkos-node-bft-storage-service` (features `memory,persistent`) |
+-| `test (bft)` | `cpu` | all | 90 | `snarkos-node-bft` |
++| `test (bft)` | `cpu` | all | 90 | `snarkos-node-bft`; its `helpers::telemetry` tests with `metrics`, as a second build |
+ | `test (router)` | `cpu` | all | 90 | `snarkos-node-router` |
+ | `test (sync)` | `cpu` | all | 90 | `snarkos-node-sync` |
+ | `build-snarkos` | `cpu` | all | 60 | release `snarkos` with `test_network`, as an artifact |
+@@ -63,19 +63,23 @@ fails in both cases.
  
-```
-
-**File**: `node/bft/src/helpers/storage.rs` (modified, +1/-1)
-```diff
-@@ -2066,7 +2066,7 @@ pub mod prop_tests {
-         type Strategy = BoxedStrategy<CryptoTestRng>;
+ ## Test groups
  
-         fn arbitrary_with(_: Self::Parameters) -> Self::Strategy {
--            use proptest::prelude::RngCore as ProptestRngCore;
-+            use proptest::prelude::Rng as ProptestRng;
-             Just(0).prop_perturb(|_, mut rng| CryptoTestRng(ChaChaRng::seed_from_u64(rng.next_u64()))).boxed()
-         }
-     }
-```
-
----
-
-### Incident Patch 2: `e23a7374` (2026-11-04)
-**Commit Message**: Merge pull request #4626 from aleo-labs-protocol/ci/bump-snarkvm-twice-weekly
-
-Run the snarkVM bump workflow on Mondays and Thursdays
-
-**File**: `.github/workflows/bump-snarkvm.yml` (modified, +1/-1)
-```diff
-@@ -1,7 +1,7 @@
- name: Bump snarkVM
- on:
-   schedule:
--    - cron: '0 6 * * 1'
-+    - cron: '0 6 * * 1,4'
-   workflow_dispatch:
+-Each `test` entry is one cargo build. `cargo test -p a -p b` unifies the
+-features of `a` and `b`, and several crates enable features on their
++Each line of a `test` entry is one cargo build. `cargo test -p a -p b` unifies
++the features of `a` and `b`, and several crates enable features on their
+ dependencies that change what those dependencies do, such as
+-`snarkos-node-router/test` and `snarkvm-ledger-block/test`. So crates share an
+-entry only where that unification enables no such feature on any crate.
+-Helper features such as `test-helpers` and `mock` can still be unified, so a
+-test may compile in its entry that would not under `cargo test -p <crate>`
+-alone. Check this before moving a crate between entries, for example by
+-comparing `cargo tree -e features` for the entry against each crate alone.
++`snarkos-node-router/test` and `snarkvm-ledger-block/test`. So crates share a
++line only where that unification enables no such feature on any crate. Helper
++features such as `test-helpers` and `mock` can still be unified, so a test may
++compile in its line that would not under `cargo test -p <crate>` alone. Check
++this before moving a crate between lines, for example by comparing
++`cargo tree -e features` for the line against each crate alone.
++
++`test (bft)` has a second line for the tests in `helpers::telemetry`, which
++compile only under `metrics`. That line builds the library alone. It passes
++`--no-tests=fail`, because the step otherwise lets a command match no tests.
  
- concurrency:
+ [`.config/nextest.toml`](.config/nextest.toml) sets two test threads. Each
+-entry uploads nextest's JUnit report as the artifact `junit-<entry>`, with the
+-time of each test.
++entry uploads nextest's JUnit reports as the artifact `junit-<entry>`, one file
++per line, with the time of each test.
+ 
+ ## Devnets
+ 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4631** (2026-11-05): Send only the load test options that are filled in (@cbeck88)
+- **PR #4630** (2026-11-05): Run the telemetry tests in CI (@cbeck88)
 - **PR #4626** (2026-11-04): Run the snarkVM bump workflow on Mondays and Thursdays (@cbeck88)
+- **PR #4625** (2026-11-05): Make the simple_node example run, and smoke test it in CI (@cbeck88)
 - **PR #4624** (2026-11-04): Bump snarkVM to aleo-labs-protocol/snarkVM@a62f98959 (@aleo-labs-merge-bot[bot])
 - **PR #4623** (2026-11-04): Open snarkVM bump PRs with the merge-bot app (@cbeck88)
-- **PR #4621** (2026-11-04): Report a request the stress test host rejects (@cbeck88)
-- **PR #4620** (2026-11-04): Update the stress test's params example (@cbeck88)
-- **PR #4619** (2026-11-04): Choose the stress test's network size by validator count (@cbeck88)
 
 ---
 
@@ -2264,107 +2115,50 @@ Run the snarkVM bump workflow on Mondays and Thursdays
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #4624 from aleo-labs-protocol/ci/bump-snarkvm
+## X. Merge pull request #4630 from aleo-labs-protocol/ci/telemetry-tests
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `66955b13`: Merge pull request #4624 from aleo-labs-protocol/ci/bump-snarkvm. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ddfec329`: Merge pull request #4630 from aleo-labs-protocol/ci/telemetry-tests. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-version = "0.11.1"
-checksum = "56d87354e4229f54a44f7bf2435906a4656dba36026ab6eaca629a2c436a691c"
- "bit-vec 0.10.1",
-version = "0.10.1"
-checksum = "5727b15fa97d4f4fee0a3b7c3d550ed0269f54329207b86388de918604e31269"
-dependencies = [
- "borsh",
- "serde",
-]
- "borsh-derive",
-[[package]]
-name = "borsh-derive"
-version = "1.8.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "12cdfe656708a01f89b451a7d36466e6fe6c414de0aa18fc54f864f6f9ca9f56"
-dependencies = [
- "once_cell",
- "proc-macro-crate",
- "proc-macro2",
- "quote 1.0.47",
- "syn 3.0.3",
-]
-
-[[package]]
-name = "core_detect"
-version = "1.0.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7f8f80099a98041a3d1622845c271458a2d73e688351bf3cb999266764b81d48"
-
- "structmeta",
- "socket2 0.5.10",
-version = "0.5.1"
-checksum = "93e7820bc0a80a0238e650327316f929ba18d5be054b647490a3a6a339f3e7c0"
-[[package]]
-name = "proc-macro-crate"
-version = "3.5.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e67ba7e9b2b56446f1d419b1d807906278ffa1a658a8a5d8a39dcb1f5a78614f"
-dependencies = [
- "toml_edit",
-]
-
-version = "1.12.0"
-checksum = "b8530004ccb15eae51c7e40009fbe317f341f804db54d
+  # Each line of `runs` is one build. `cargo test -p a -p b` unifies the
+  # features of a and b, and several crates enable features on their
+  # dependencies that change what those dependencies do:
+  # `snarkos-node-router/test`, `snarkos-node-network/test` and
+  # `snarkvm-ledger-block/test` skip checks, and `rocks` and `metrics` select
+  # other code paths. Crates share a line only where that unification enables
+  # none of these on any crate. Helper features such as `test-helpers` and
+  # `mock` can still be unified.
+      # Each line of `runs` is one cargo command, split on whitespace with no
+      # shell parsing, so its arguments can hold neither quotes nor spaces.
+          # `helpers::telemetry` compiles only under `metrics`. `--no-tests=fail`
+          # overrides NEXTEST_NO_TESTS, so a filter that stops matching fails.
+            runs: |
+              nextest run -p snarkos-node-bft
+              nextest run -p snarkos-node-bft --lib --features metrics --no-tests=fail -E test(/helpers::telemetry::/)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-version = "0.8.0"
-checksum = "08807e080ed7f9d5433fa9b275196cfc35414f66a0c79d864dc51a0d825231a3"
- "bit-vec 0.8.0",
-version = "0.8.0"
-checksum = "5e764a1d40d510daf35e07be9eb06e75770908c27d411ee6c92109c9840eaaf7"
- "structmeta 0.3.0",
- "socket2 0.6.5",
-version = "0.4.8"
-checksum = "c89e69e7e0f03bea5ef08013795c25018e101932225a656383bd384495ecc367"
-version = "1.6.0"
-checksum = "14cae93065090804185d3b75f0bf93b8eeda30c7a9b4a33d3bdb3988d6229e50"
- "bit-set 0.8.0",
- "bit-vec 0.8.0",
- "lazy_static",
- "rand 0.8.7",
- "rand_chacha 0.3.1",
- "rand_xorshift 0.3.0",
- "socket2 0.6.5",
- "socket2 0.6.5",
- "libc",
- "rand_chacha 0.3.1",
-[[package]]
-name = "rand_chacha"
-version = "0.3.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e6c10a63a0fa32252be49d21e7709d4d4baf8d231c2dbce1eaa8141b9b127d88"
-dependencies = [
- "ppv-lite86",
- "rand_core 0.6.4",
-]
-
-[[package]]
-name = "rand_xorshift"
-version = "0.3.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d25bf25ec5ae4a3f1b92f929810509a2f53d7dca2f50b794ff57e3face536c8f"
-dependencies =
+  # Each entry is one build. `cargo test -p a -p b` unifies the features of
+  # a and b, and several crates enable features on their dependencies that
+  # change what those dependencies do: `snarkos-node-router/test`,
+  # `snarkos-node-network/test` and `snarkvm-ledger-block/test` skip checks,
+  # and `rocks` and `metrics` select other code paths. Crates share an entry
+  # only where that unification enables none of these on any crate. Helper
+  # features such as `test-helpers` and `mock` can still be unified.
+      # Each line of `runs` is one cargo command.
+            runs: nextest run -p snarkos-node-bft
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `66955b13` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ddfec329` are properly handled with clean fallback behavior.

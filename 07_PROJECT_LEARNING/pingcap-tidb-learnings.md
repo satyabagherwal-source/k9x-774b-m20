@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/pingcap-tidb-learnings.md`  
 > **Source**: github ([https://github.com/pingcap/tidb](https://github.com/pingcap/tidb))  
-> **Source Version**: `d85afde3`  
+> **Source Version**: `47dc1214`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T10:57:36.334Z  
+> **Timestamp**: 2026-11-05T06:00:28.493Z  
 > **Learning ID**: `learn-github-pingcap-tidb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pingcap-tidb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pingcap/tidb](https://github.com/pingcap/tidb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T10:57:35.772Z  
+> **Harvest Timestamp**: 2026-11-05T06:00:28.313Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: TiDB is built for agentic workloads that grow unpredictably, with ACID guarantees and native support for transactions, analytics, and vector search. No data silos. No noisy neighbors. No infrastructure ceiling.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 40707 stars
+- **Stars / Engagement**: 40711 stars
 
 ---
 
@@ -1919,11 +1919,11 @@ func SearchPlacementRule(tableID int64, placementRules []pdtypes.Rule, role pdty
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #72667** (2026-11-03): **server: restore session on change user auth failure**
-  *Symptoms*: <!--  Thank you for contributing to TiDB!  PR Title Format: 1. pkg [, pkg2, pkg3]: what's changed 2. *: what's changed  -->  ### What problem does this PR solve? <!--  Please create an issue first to describe the problem.  There MUST be one line starting with "Issue Number:  " and linking the relevant issues via the "close" or "ref".  For more info, check https://pingcap.github.io/tidb-dev-guide/contribute-to-tidb/contribute-code.html#referring-to-an-issue.  -->  Issue Number: ref #69691  Problem Summary:  Backport the connection session restoration fix from #69692 to `cdc-based-release-8.5.5-active-active`. If authentication during `COM_CHANGE_USER` failed, the connection could retain the newly opened session instead of restoring the previously authenticated session.  ### What changed and how does it work?  The change keeps the old user, database, authentication plugin, and session context until the new authentication succeeds. Any failed authentication path closes the new context and restores the previous session state.  The active-active branch predates the resource-group counter API added by the upstream fix, so the unrelated resource-group bookkeeping line was omitted.  ### Check List  Tests <!-- At least one of them must be included. -->  - [x] Unit test - [ ] Integration test - [ ] Manual test (add detailed scripts or steps below) - [ ] No need to test   > - [ ] I checked and no code files have been changed.   > <!-- Or your custom  "No need to test" reasons -->  Comma
+- **Issue #72692** (2026-11-05): **ddl, executor: guard table and cluster flashback for MV objects**
+  *Symptoms*: <!--  Thank you for contributing to TiDB!  PR Title Format: 1. pkg [, pkg2, pkg3]: what's changed 2. *: what's changed  -->  ### What problem does this PR solve? <!--  Please create an issue first to describe the problem.  There MUST be one line starting with "Issue Number:  " and linking the relevant issues via the "close" or "ref".  For more info, check https://pingcap.github.io/tidb-dev-guide/contribute-to-tidb/contribute-code.html#referring-to-an-issue.  -->  Issue Number: ref #18023  Problem Summary:  `FLASHBACK TABLE` skips materialized-object DROP jobs, producing generic errors or selecting an older ordinary table with the same name. Cluster flashback can restore materialized-object data without matching maintenance state, and its object checks also need to cover refresh shadow tables.  ### What changed and how does it work?  Cover `FLASHBACK TABLE` and `FLASHBACK CLUSTER` for materialized views (MVs), materialized view logs (MLogs), and protected out-of-place refresh shadow tables:  - Table flashback returns error 8200 with an object-specific unsupported message for current objects and matching dropped historical objects. The `TO` form validates the original object before renaming. - Inspect MV/MLog/shadow DROP jobs in their original history order, so a newer materialized-object drop blocks fallback to an older ordinary table. A newer ordinary-table drop still takes precedence and recovers its own data. - Make the extra history candidate types opt-in for table flashba
 
-- **Issue #72657** (2026-11-03): ***: bump otlptrace and OpenTelemetry modules to v1.45.0 (GHSA-8wmf-6v46-5gfg) (#72534) (#72640) | tidb-test=release-8.5-20260715-v8.5.7**
-  *Symptoms*: This is an automated cherry-pick of #72640  This is an automated cherry-pick of #72534  ### What problem does this PR solve?  Issue Number: close #72629  Problem Summary: Dependabot alert GHSA-8wmf-6v46-5gfg (CVE-2026-81870, low severity). OpenTelemetry Go < 1.45.0 can write trace exporter endpoint config to Info-level internal logs when an SDK `TracerProvider` is created. `go.opentelemetry.io/otel/exporters/otlp/otlptrace` was pinned at v1.22.0, which is in the vulnerable range.  ### What changed and how does it work?  - Upgrade OpenTelemetry core, SDK, trace exporters, and related modules to v1.45.0, and gRPC to v1.83.2, retaining the security fixes. - Keep the otelgrpc v0.59.0 compatibility replacement while etcd 3.5 still uses the legacy interceptors removed in v0.60.0. Include the generated Bazel dependency updates and the embedded-etcd unary/streaming RPC regression test. - Build external plugins in a temporary Go workspace containing both the plugin module and the TiDB module it imports. Go does not inherit dependency-module replacements, which otherwise makes the plugin use a different otelgrpc version and fail at `plugin.Open`. Preserve an existing workspace when the caller has already supplied one. - Add a regression that compiles a real plugin and loads it into a host with a dependency replacement. Cover Classic, NextGen, and an existing workspace, and verify that module files are unchanged. Regenerate the plugin packager's Bazel test target.  ### Check List  Tests
+- **Issue #72682** (2026-11-04): **statistics: report sync load failure regardless of result arrival order (#70316)**
+  *Symptoms*: This is an automated cherry-pick of #70316  ### What problem does this PR solve? <!--  Please create an issue first to describe the problem.  There MUST be one line starting with "Issue Number:  " and linking the relevant issues via the "close" or "ref".  For more info, check https://pingcap.github.io/tidb-dev-guide/contribute-to-tidb/contribute-code.html#referring-to-an-issue.  -->  Issue Number: close #67629  Problem Summary:  A timed-out sync stats load races two timers with the same timeout. If the waiter's timer in `SyncWaitStatsLoad` fires first, the statement is marked as sync-load failed; if the errored result arrives first, the failure is only logged and swallowed, so a plan built on pseudo stats can enter the plan cache (defeating #67411). The scheduling-dependent ordering is why `TestPreparedPlanCacheInvalidatedAfterSyncLoadTimeoutFallback` is flaky.  ### What changed and how does it work?  `SyncWaitStatsLoad` now returns an error whenever needed items were not delivered within the wait window, so both orderings report the failure. Commit 1 pins the buggy behavior in a deterministic test; commit 2 fixes it and flips the expectation.  With `tidb_stats_load_pseudo_timeout = OFF`, a timed-out load now fails the statement in both orderings.  Verification: `GOMAXPROCS=1 go test -run TestPreparedPlanCacheInvalidatedAfterSyncLoadTimeoutFallback -count=30` — 4/30 failures before, 0/30 after.  ### Check List  Tests <!-- At least one of them must be included. -->  - [x] Unit
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1940,505 +1940,627 @@ func SearchPlacementRule(tableID int64, placementRules []pdtypes.Rule, role pdty
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d85afde3` (2026-11-04)
-**Commit Message**: executor: use TiFlash joined rows for MPP join RU (#72597)
+### Incident Patch 1: `47dc1214` (2026-11-05)
+**Commit Message**: session, lightning: enable log redaction by default (#72666)
 
-ref pingcap/tidb#70444
+close pingcap/tidb#72665
 
-**File**: `DEPS.bzl` (modified, +2/-2)
+**File**: `lightning/tests/run.sh` (modified, +11/-0)
 ```diff
-@@ -3840,8 +3840,8 @@ def go_deps():
-         name = "com_github_pingcap_tipb",
-         build_file_proto_mode = "disable_global",
-         importpath = "github.com/pingcap/tipb",
--        sum = "h1:GalvMypJTiQvfc6p8fs7OS0z+X9O5ZAN+hTZ67QpTYM=",
--        version = "v0.0.0-20261006155659-59b678398b17",
-+        sum = "h1:cUXlcHgqq/LfYp/pXVpreJt8994mB9creB/NtPR7xrY=",
-+        version = "v0.0.0-20261015020031-7adb3bb014c4",
-     )
-     go_repository(
-         name = "com_github_pkg_browser",
-```
-
-**File**: `go.mod` (modified, +1/-1)
-```diff
-@@ -107,7 +107,7 @@ require (
- 	github.com/pingcap/metering_sdk v0.0.0-20260814062708-9e3b68cd9adf
- 	github.com/pingcap/sysutil v1.0.1-0.20240311050922-ae81ee01f3a5
- 	github.com/pingcap/tidb/pkg/parser v0.0.0-20211011031125-9b13dc409c5e
--	github.com/pingcap/tipb v0.0.0-20261006155659-59b678398b17
-+	github.com/pingcap/tipb v0.0.0-20261015020031-7adb3bb014c4
- 	github.com/pkg/errors v0.9.1
- 	github.com/prometheus/client_golang v1.23.0
- 	github.com/prometheus/client_model v0.6.2
-```
-
-**File**: `go.sum` (modified, +2/-2)
-```diff
-@@ -2208,8 +2208,8 @@ github.com/pingcap/metering_sdk v0.0.0-20260814062708-9e3b68cd9adf h1:8gzQg9J2EN
- github.com/pingcap/metering_sdk v0.0.0-20260814062708-9e3b68cd9adf/go.mod h1:IP3HAzDbY5sdoLTQSkF5HjZukuO2koKzbX2FglVSaIA=
- github.com/pingcap/sysutil v1.0.1-0.20240311050922-ae81ee01f3a5 h1:T4pXRhBflzDeAhmOQHNPRRogMYxP13V7BkYw3ZsoSfE=
- github.com/pingcap/sysutil v1.0.1-0.20240311050922-ae81ee01f3a5/go.mod h1:rlimy0GcTvjiJqvD5mXTRr8O2eNZPBrcUgiWVYp9530=
--github.com/pingcap/tipb v0.0.0-20261006155659-59b678398b17 h1:GalvMypJTiQvfc6p8fs7OS0z+X9O5ZAN+hTZ67QpTYM=
--github.com/pingcap/tipb v0.0.0-20261006155659-59b678398b17/go.mod h1:RM8iRcMalzOthG2XJxnNBniM4xFGb/lDwHUwqkaVzt4=
-+github.com/pingcap/tipb v0.0.0-20261015020031-7adb3bb014c4 h1:cUXlcHgqq/LfYp/pXVpreJt8994mB9creB/NtPR7xrY=
-+github.com/pingcap/tipb v0.0.0-20261015020031-7adb3bb014c4/go.mod h1:RM8iRcMalzOthG2XJxnNBniM4xFGb/lDwHUwqkaVzt4=
- github.com/pkg/browser v0.0.0-20240102092130-5ac0b6a4141c h1:+mdjkGKdHQG3305AYmdv1U2eRNDiU2ErMBj1gwrq8eQ=
- github.com/pkg/browser v0.0.0-20240102092130-5ac0b6a4141c/go.mod h1:7rwL4CYBLnjLxUqIJNnCWiEdr3bn6IUYi15bNlnbCCU=
- github.com/pkg/diff v0.0.0-20210226163009-20ebb0f2a09e/go.mod h1:pJLUxLENpZxwdsKMEsNbx1VGcRFpLqf3715MtcvvzbA=
-```
-
-**File**: `pkg/executor/statement_ru_mpp_test.go` (modified, +57/-6)
-```diff
-@@ -171,33 +171,34 @@ func TestStatementRUMPPPublication(t *testing.T) {
- 		rows := []uint64{5, 7, 7, 14, 9, 9}[i]
- 		read := []uint64{100, 200, 0, 0, 0, 0}[i]
- 		cross := []uint64{0, 0, 10, 10, 0, 20}[i]
--		same, hash := uint64(0), uint64(8)
-+		same, hash, joined := uint64(0), uint64(8), uint64(20)
- 		id := fmt.Sprintf("%s_%d", plan.TP(), plan.ID())
- 		summary := &tipb.ExecutorExecutionSummary{ExecutorId: &id, NumProducedRows: &rows,
- 			DetailInfo:            &tipb.ExecutorExecutionSummary_TiflashScanContext{TiflashScanContext: &tipb.TiFlashScanContext{UserReadBytes: &read}},
- 			TiflashNetworkSummary: &tipb.TiFlashNetWorkSummary{InnerZoneSendBytes: &same, InterZoneSendBytes: &cross}}
- 		if plan == join {
-+			summary.TiflashJoinStats = &tipb.TiFlashJoinStats{JoinedRows: &joined}
- 			summary.TiflashHashTableStats = &tipb.TiFlashHashTableStats{Size_: &hash, SizeKind: tipb.TiFlashHashTableSizeKind_TIFLASH_HASH_TABLE_SIZE_KIND_BUILD_ROW_COUNT.Enum()}
- 		}
- 		sc.RuntimeStatsColl.RecordTiFlashExecutionSummaries(ids, []*tipb.ExecutorExecutionSummary{summary})
- 	}
- 	finalized, operators, ok := calculateStatementRUWithOperators(flat, sc.RuntimeStatsColl, ctx.GetSessionVars().RUV2Metrics, statementRUWriteSnapshot{}, fixture.owner.calculationSetup, true)
- 	require.True(t, ok)
- 	require.Equal(t, float64(19), finalized.units.CPUWork)
--	// Without candidate-pair evidence, MPP retains input-based residual work.
-+	// Residual work uses candidate pairs before filtering, not input or output rows.
- 	join.OtherConditions = make(expression.CNFExprs, 2)
- 	withResidual, ok := calculateStatementRU(flat, sc.RuntimeStatsColl, ctx.GetSessionVars().RUV2Metrics, statementRUWriteSnapshot{}, fixture.owner.calculationSetup, true)
- 	require.True(t, ok)
--	require.Equal(t, float64(19*3), withResidual.units.CPUWork)
--	require.Equal(t, float64(9), withResidual.units.JoinOutputRows)
-+	require.Equal(t, float64(19+20*2), withResidual.units.CPUWork)
-+	require.Equal(t, float64(20), withResidual.units.JoinOutputRows)
- 	join.OtherConditions = nil
- 	require.Equal(t, float64(300), finalized.units.ScanBytes)
- 	require.Equal(t, float64(50), finalized.units.NetBytes)
- 	require.Equal(t, float64(30), finalized.units.CrossAZNetBytes)
--	require.Equal(t, float64(9), finalized.units.JoinOutputRows)
-+	require.Equal(t, float64(20), finalized.units.JoinOutputRows)
- 	require.Equal(t, float64(8), finalized.units.HashStateRows)
- 	require.Equal(t, float64(40), finalized.engineRU.TiKV)
--	require.Equal(t, float64(4020), finalized.engineRU.TiFlash) // (19+300+60+9+8+6)*10
-+	require.Equal(t, float64(4130), finalized.engineRU.TiFlash) // (19+300+60+20+8+6)*10
- 	requireStatementRUReportConservation(t, finalized)
- 	require.InDelta(t, finalized.result.TotalRU, operators.TotalRU, 1e-9)
- 	require.InDelta(t, finalized.result.TotalRU, operators.Main[0].CumRU, 1e-9)
-@@ -227,3 +228,53 @@ func TestStatementRUMPPPublication(t *testing.T) {
- 		require.InDelta(t, want, testutil.ToFloat64(metrics.RUV2ByEngine.WithLabelValues(statementRUEngineNames[i]))-before[i], 1e-9)
- 	}
- }
+@@ -43,6 +43,13 @@ SELECTED_TEST_NAME="${TEST_NAME-$(find tests -mindepth 2 -maxdepth 2 -name run.s
+ trap stop_services EXIT
+ start_services $@
+ 
++WITH_TIDB=true
++for arg in "$@"; do
++    if [ "$arg" = '--no-tidb' ]; then
++        WITH_TIDB=false
++    fi
++done
 +
-+func TestStatementRUMPPJoinRows(t *testing.T) {
-+	zero, pairs := uint64(0), uint64(20)
-+	for _, cross := range []bool{false, true} {
-+		for _, tc := range []struct {
-+			name    string
-+			reports []*uint64
-+			want    float64
-+		}{
-+			{"no summaries", nil, 0},
-+			{"legacy or interrupted", []*uint64{nil}, 0},
-+			{"zero", []*uint64{&zero}, 0},
-+			{"multiple tasks", []*uint64{&pairs, &pairs}, 40},
-+			{"partial", []*uint64{nil, &pairs, nil}, 20},
-+		} {
-+			t.Run(fmt.Sprintf("cross=%v/%s", cross, tc.name), func(t *testing.T) {
-+				ctx := mock.NewContext()
-+				join := physicalop.PhysicalHashJoin{BasePhysicalJoin: physicalop.BasePhysicalJoin{
-+					JoinType: base.InnerJoin, OtherConditions: make(expression.CNFExprs, 2),
-+				}}.Init(ctx, &property.StatsInfo{}, 0)
-+				var inputWork, hashWork float64
-+				if !cross {
-+					join.EqualConditions = []*expression.ScalarFunction{{}}
-+					inputWork = 19
-+					hashWork = float64(len(tc.reports) * 8)
-+				}
-+				op := &plannercore.FlatOperator{Origin: join, StoreType: kv.TiFlash, ReqType: physicalop.MPP}
-+				stats := execdetails.NewRuntimeStatsColl(nil)
-+				id, output, hash := fmt.Sprintf("HashJoin_%d", join.ID()), uint64(9), uint64(8)
-+				for _, rows := range tc.reports {
-+					summary := &tipb.ExecutorExecutionSummary{ExecutorId: &id, NumProducedRows: &output}
-+					if rows != nil {
-+						summary.TiflashJoinStats = &tipb.TiFlashJoinStats{JoinedRows: rows}
-+					}
-+					if !cross {
-+						summary.TiflashHashTableStats = &tipb.TiFlashHashTableStats{Size_: &hash}
-+					}
-+					stats.RecordTiFlashExecutionSummaries([]int{join.ID()}, []*tipb.ExecutorExecutionSummary{summary})
-+				}
-+				children := []statementRUOperatorResult{{outputRows: 5}, {outputRows: 14}}
-+				calculator := &statementRUCalculator{}
-+				require.Equal(t, statementRUOperatorComplete, collectStatementRUJoinUnits(op, children, stats, calculator))
-+				require.Equal(t, ruv2.StmtUnits{CPUWork: inpu
+ # Intermediate file needed because read can be used as a pipe target.
+ # https://stackoverflow.com/q/2746553/
+ run_curl "https://$PD_ADDR/pd/api/v1/version" | grep -o 'v[0-9.]\+' > "$TEST_DIR/cluster_version.txt"
+@@ -59,6 +66,10 @@ run_case() {
+     local case=$1
+     local script=$2
+     echo "*===== Running test $script... =====*"
++    # Tests inspect error values, including after earlier cases restart the cluster.
++    if $WITH_TIDB; then
++        TEST_NAME="$case" run_sql "SET GLOBAL tidb_redact_log = OFF"
++    fi
+     INTEGRATION_TEST=1 \
+     TEST_DIR="$TEST_DIR" \
+     TEST_NAME="$case" \
 ```
 
-**File**: `pkg/executor/statement_ru_plan_walk.go` (modified, +21/-21)
+**File**: `lightning/tidb-lightning.toml` (modified, +2/-2)
 ```diff
-@@ -947,7 +947,7 @@ func calculateStatementRUPlanChildFirst(
- 		*physicalop.PhysicalIndexJoin, *physicalop.PhysicalIndexHashJoin,
- 		*physicalop.PhysicalIndexMergeJoin:
- 		state := collectStatementRUJoinUnits(
--			operator, children, outputRows, runtimeStatsColl, calculator,
-+			operator, children, runtimeStatsColl, calculator,
- 		)
- 		if state != statementRUOperatorComplete {
- 			return statementRUOperatorResult{state: state}
-@@ -1054,21 +1054,20 @@ func calculateStatementRUPlanChildFirst(
- // collectStatementRUJoinUnits charges one supported root Join or MPP HashJoin using
- // these formulas:
- //
--//	CPUWork = (left child rows + right child rows) * input expression count + joined rows * other condition count (root)
--//	JoinOutputRows = candidate pairs processed before other conditions (root)
-+//	CPUWork = (left child rows + right child rows) * input expression count + joined rows * other condition count
-+//	JoinOutputRows = candidate pairs processed before other conditions
- //	HashStateRows = constructed HashJoin lookup-state rows
- //
- // statementRUJoinContractForPlan defines the expression count for each Join
--// subtype. MPP uses both children's merged rows, including ExchangeReceiver rows,
--// for all expression slots, and the Join's own reported output for JoinOutputRows
--// until TiFlash supplies candidate-pair evidence. Root joins use worker counters,
--// excluding null-extension rows and pairs skipped by semi-join short circuit. MPP hash state comes from
--// TiFlash hash-table stats, not the build child's output or the join result size.
-+// subtype. Root joins use worker counters; MPP joins use TiFlash's joined_rows,
-+// summed across received summaries. Both exclude null-extension rows and pairs
-+// skipped by semi-join short circuit. Missing evidence contributes zero without
-+// discarding other reported work. MPP input rows include ExchangeReceiver rows;
-+// hash state comes from TiFlash hash-table stats, independently of joined_rows.
- // TiKV Cop and FullOuter joins remain unsupported.
- func collectStatementRUJoinUnits(
- 	operator *plannercore.FlatOperator,
- 	children []statementRUOperatorResult,
--	outputRows int64,
- 	runtimeStatsColl *execdetails.RuntimeStatsColl,
- 	calculator *statementRUCalculator,
- ) statementRUOperatorState {
-@@ -1085,22 +1084,23 @@ func collectStatementRUJoinUnits(
- 	if !ok {
- 		return statementRUOperatorUnsupported
- 	}
--	joinedRows := outputRows
--	if operator.IsRoot {
--		joinedRows = 0
--		if runtimeStatsColl != nil {
--			joinedRows, _ = runtimeStatsColl.GetRootJoinedRows(operator.Origin.ID())
-+	var joinedRows float64
-+	if runtimeStatsColl != nil {
-+		if operator.IsRoot {
-+			rows, _ := runtimeStatsColl.GetRootJoinedRows(operator.Origin.ID())
-+			joinedRows = float64(rows)
-+		} else {
-+			units, _ := runtimeStatsColl.GetTiFlashExecutionUnits(operator.Origin.ID())
-+			if units.Invalid {
-+				return statementRUOperatorInvalid
-+			}
-+			joinedRows = float64(units.JoinedRows)
- 		}
- 	}
- 	inputRows := float64(children[0].outputRows) + float64(children[1].outputRows)
--	// MPP retains input-based residual work until it reports candidate pairs.
--	otherConditionRows := inputRows
--	if operator.IsRoot {
--		otherConditionRows = float64(joinedRows)
--	}
--	cpuWork := inputRows*float64(contract.inputExpressionCount) + otherConditionRows*float64(contract.otherConditionCount)
-+	cpuWork := inputRows*float64(contract.inputExpressionCount) + joinedRows*float64(contract.otherConditionCount)
- 	if !addStatementRUCPUWork(&delta, cpuWork) ||
--		!addStatementRUJoinOutputRows(&delta, float64(joinedRows)) {
-+		!addStatementRUJoinOutputRows(&delta, joinedRows) {
- 		return statementRUOperatorInvalid
- 	}
- 	if contract.hashState {
+@@ -63,8 +63,8 @@ max-backups = 14
+ # cert-path = "/path/to/lightning.pem"
+ # private key of this service.
+ # key-path = "/path/to/lightning.key"
+-# If set to true, lightning will redact sensitive infomation in log.
+-# redact-info-log = false
++# Whether Lightning redacts sensitive information in logs. Enabled by default.
++# redact-info-log = true
+ 
+ [checkpoint]
+ # Whether to enable checkpoints.
 ```
 
-**File**: `pkg/resourcegroup/ruv2/model.go` (modified, +4/-3)
+**File**: `pkg/bindinfo/binding_auto.go` (modified, +1/-1)
 ```diff
-@@ -49,9 +49,10 @@ type StmtUnits struct {
- 	// contributions retain their producer's size definition: distinct keys,
- 	// build rows, or aggregation map entries, summed without normalization.
- 	HashStateRows float64
--	// JoinOutputRows counts candidate pairs processed by root joins before other
--	// conditions, excluding null-extension rows and pairs skipped by short circuit.
--	// MPP joins retain TiFlash-reported output rows until candidate counts are available.
-+	// JoinOutputRows counts candidate pairs processed by root and MPP joins before
-+	// other conditions, excluding null-extension rows and pairs skipped by short
-+	// circuit. Root joins use executor runtime stats; MPP joins use TiFlash's
-+	// joined_rows counter. Missing evidence contributes zero.
- 	JoinOutputRows float64
+@@ -100,7 +100,7 @@ func (ba *bindingAuto) ExplorePlansForSQL(stmtSCtx base.PlanContext, sqlOrDigest
+ 		return nil, err
+ 	}
+ 
+-	generatedPlans, err := ba.planGenerator.Generate(currentDB, sqlOrDigest, charset, collation)
++	generatedPlans, err := ba.planGenerator.Generate(currentDB, sqlOrDigest, charset, collation, stmtSCtx.GetSessionVars().EnableRedactLog)
+ 	if err != nil {
+ 		return nil, err
+ 	}
+```
+
+**File**: `pkg/bindinfo/binding_plan_generation.go` (modified, +10/-2)
+```diff
+@@ -33,7 +33,7 @@ import (
+ 
+ // PlanGenerator is used to generate new Plan Candidates for this specified query.
+ type PlanGenerator interface {
+-	Generate(defaultSchema, sql, charset, collation string) (plans []*BindingPlanInfo, err error)
++	Generate(defaultSchema, sql, charset, collation, redactLog string) (plans []*BindingPlanInfo, err error)
  }
  
+ // planGenerator implements PlanGenerator.
+@@ -43,7 +43,10 @@ type planGenerator struct {
+ }
+ 
+ // Generate generates new plans for the given SQL statement.
+-func (g *planGenerator) Generate(defaultSchema, sql, charset, collation string) (plans []*BindingPlanInfo, err error) {
++// redactLog is the caller's tidb_redact_log value. Plan text must follow it:
++// pooled sessions otherwise keep the process default, which does not match the
++// session that issued EXPLAIN EXPLORE.
++func (g *planGenerator) Generate(defaultSchema, sql, charset, collation, redactLog string) (plans []*BindingPlanInfo, err error) {
+ 	// TODO: only support SQL starting with SELECT for now, support other types of SQLs later.
+ 	// TODO: make this check more strict.
+ 	sql = strings.TrimSpace(sql)
+@@ -53,6 +56,11 @@ func (g *planGenerator) Generate(defaultSchema, sql, charset, collation string)
+ 	}
+ 
+ 	err = callWithSCtx(g.sPool, false, func(sctx sessionctx.Context) error {
++		vars := sctx.GetSessionVars()
++		origRedactLog := vars.EnableRedactLog
++		vars.EnableRedactLog = redactLog
++		defer func() { vars.EnableRedactLog = origRedactLog }()
++
+ 		genedPlans, err := generatePlanWithSCtx(sctx, defaultSchema, sql, charset, collation)
+ 		if err != nil {
+ 			return err
 ```
 
-**File**: `pkg/util/execdetails/tiflash_execution_units.go` (modified, +8/-1)
+**File**: `pkg/executor/materialized_view_refresh_internal_test.go` (modified, +31/-0)
 ```diff
-@@ -30,13 +30,15 @@ const (
- 	TiFlashUnitHash
- 	TiFlashUnitScan
- 	TiFlashUnitNetwork
-+	TiFlashUnitJoin
+@@ -25,7 +25,9 @@ import (
+ 	"github.com/pingcap/tidb/pkg/meta/model"
+ 	"github.com/pingcap/tidb/pkg/parser/ast"
+ 	"github.com/pingcap/tidb/pkg/sessionctx"
++	"github.com/pingcap/tidb/pkg/sessionctx/vardef"
+ 	"github.com/pingcap/tidb/pkg/sessionctx/variable"
++	"github.com/pingcap/tidb/pkg/util/mock"
+ 	"github.com/stretchr/testify/require"
  )
  
- // TiFlashExecutionUnits retains raw MPP evidence separately from EXPLAIN's dummy
- // summaries. Missing evidence is best-effort zero; present invalid evidence is not.
- // Streamed summaries may already combine tasks, so Observed never proves coverage.
- type TiFlashExecutionUnits struct {
- 	Rows                uint64
-+	JoinedRows          uint64
- 	HashDistinctEntries uint64
- 	HashBuildRows       uint64
- 	UserReadBytes       uint64
-@@ -53,6 +55,10 @@ func tiFlashExecutionUnits(summary *tipb.ExecutorExecutionSummary) TiFlashExecut
- 		units.Rows = summary.GetNumProducedRows()
- 		units.Observed |= TiFlashUnitRows
- 	}
-+	if stats := summary.GetTiflashJoinStats(); stats != nil && stats.JoinedRows != nil {
-+		units.JoinedRows = stats.GetJoinedRows()
-+		units.Observed |= TiFlashUnitJoin
-+	}
- 	if stats := summary.GetTiflashHashTableStats(); stats != nil && stats.Size_ != nil {
- 		switch stats.GetSizeKind() {
- 		case tipb.TiFlashHashTableSizeKind_TIFLASH_HASH_TABLE_SIZE_KIND_DISTINCT_KEY_COUNT:
-@@ -79,7 +85,7 @@ func tiFlashExecutionUnits(summary *tipb.ExecutorExecutionSummary) TiFlashExecut
- 			units.Observed |= TiFlashUnitNetwork
- 		}
- 	}
--	units.Missing = (TiFlashUnitRows | TiFlashUnitHash | TiFlashUnitScan | TiFlashUnitNetwork) &^ units.Observed
-+	units.Missing = (TiFlashUnitRows | TiFlashUnitHash | TiFlashUnitScan | TiFlashUnitNetwork | TiFlashUnitJoin) &^ units.Observed
- 	return units
+@@ -120,6 +122,35 @@ func TestInitRefreshMaterializedViewSessionAppliesDefinitionDivPrecisionIncremen
+ 	require.Equal(t, 2, sessVars.DivPrecisionIncrement)
  }
  
-@@ -95,6 +101,7 @@ func (u *TiFlashExecutionUnits) merge(other TiFlashExecutionUnits) {
- 		*dst += n
- 	}
- 	add(&u.Rows, other.Rows)
-+	add(&u.JoinedRows, other.JoinedRows)
- 	add(&u.HashDistinctEntries, other.HashDistinctEntries)
- 	add(&u.HashBuildRows, other.HashBuildRows)
- 	add(&u.UserReadBytes, other.UserReadBytes)
-```
-
-**File**: `pkg/util/execdetails/tiflash_execution_units_test.go` (modified, +42/-1)
-```diff
-@@ -24,10 +24,11 @@ import (
- 
- func TestTiFlashExecutionUnits(t *testing.T) {
- 	id := "HashJoin_1"
--	rows, size, bytes := uint64(8), uint64(1), uint64(20)
-+	rows, size, bytes, joined := uint64(8), uint64(1), uint64(20), uint64(12)
- 	summary := &tipb.ExecutorExecutionSummary{
- 		ExecutorId: &id, NumProducedRows: &rows,
- 		TiflashHashTableStats: &tipb.TiFlashHashTableStats{Size_: &size},
-+		TiflashJoinStats:      &tipb.TiFlashJoinStats{JoinedRows: &joined},
- 		DetailInfo:            &tipb.ExecutorExecutionSummary_TiflashScanContext{TiflashScanContext: &tipb.TiFlashScanContext{UserReadBytes: &bytes}},
- 		TiflashNetworkSummary: &tipb.TiFlashNetWorkSummary{InnerZoneSendBytes: &bytes, InterZoneSendBytes: &size, InnerZoneReceiveBytes: &bytes},
- 	}
-@@ -40,6 +41,7 @@ func TestTiFlashExecutionUnits(t *testing.T) {
- 	require.True(t, found)
- 	require.False(t, units.Invalid)
- 	require.Equal(t, uint64(16), units.Rows)
-+	require.Equal(t, uint64(24), units.JoinedRows)
- 	require.Equal(t, uint64(1), units.HashDistinctEntries)
- 	require.Equal(t, uint64(8), units.HashBuildRows)
- 	require.Equal(t, uint64(40), units.UserReadBytes)
-@@ -142,3 +144,42 @@ func TestTiFlashExecutionUnitsColumnar(t *testing.T) {
- 		})
- 	}
- }
++func TestPrepareMVRefreshObserveInternalSessionRedaction(t *testing.T) {
++	for _, mode := range []string{vardef.Off, vardef.On, vardef.Marker} {
++		t.Run(mode, func(t *testing.T) {
++			caller := mock.NewContext()
++			caller.GetSessionVars().EnableRedactLog = mode
++			internal := mock.NewContext()
++			originalMode := vardef.On
++			if mode == vardef.On {
++				originalMode = vardef.Off
++			}
++			internal.GetSessionVars().EnableRedactLog = originalMode
++			e := &RefreshMaterializedViewDryRunExec{
++				BaseExecutor: exec.NewBaseExecutor(caller, nil, 0),
++			}
 +
-+func TestTiFlashExecutionUnitsJoin(t *testing.T) {
-+	id := "HashJoin_1"
-+	zero, pairs := uint64(0), uint64(12)
-+	for _, tc := range []struct {
-+		name     string
-+		join     *tipb.TiFlashJoinStats
-+		want     uint64
-+		observed bool
-+	}{
-+		{"missing message", nil, 0, false},
-+		{"missing count", &tipb.TiFlashJoinStats{}, 0, false},
-+		{"zero", &tipb.TiFlashJoinStats{JoinedRows: &zero}, 0, true},
-+		{"pairs", &tipb.TiFlashJoinStats{JoinedRows: &pairs}, 24, true},
-+	} {
-+		t.Run(tc.name, func(t *testing.T) {
-+			stats := NewRuntimeStatsColl(nil)
-+			// Join evidence does not depend on output rows or hash-table stats.
-+			summary := &tipb.ExecutorExecutionSummary{ExecutorId: &id, TiflashJoinStats: tc.join}
-+			stats.RecordTiFlashExecutionSummaries([]int{1}, []*tipb.ExecutorExecutionSummary{summary})
-+			stats.RecordTiFlashExecutionSummaries([]int{1}, []*tipb.ExecutorExecutionSummary{summary})
-+			units, found := stats.GetTiFlashExecutionUnits(1)
-+			require.True(t, found)
-+			require.False(t, units.Invalid)
-+			require.Equal(t, tc.want, units.JoinedRows)
-+			require.Equal(t, tc.observed, units.Observed&TiFlashUnitJoin != 0)
-+			require.Equal(t, !tc.observed, units.Missing&TiFlashUnitJoin != 0)
-+			// A legacy or interrupted task cannot erase earlier work or presence.
-+			stats.RecordTiFlashExecutionSummaries([]int{1}, []*tipb.ExecutorExecutionSummary{{ExecutorId: &id}})
-+			units, _ = stats.GetTiFlashExecutionUnits(1)
-+			require.Equal(t, tc.want, units.JoinedRows)
-+			require.Equal(t, tc.observed, units.Observed&TiFlashUnitJoin != 0)
-+			require.NotZero(t, units.Missing&TiFlashUnitJoin)
-+			require.Same(t, stats, NewRuntimeStatsColl(stats))
-+			_, found = stats.GetTiFlashExecutionUnits(1)
-+			require.False(t, found)
++			func() {
++				restore, err := e.prepareMVRefreshObserveInternalSession(internal)
++				require.NoError(t, err)
++				defer restore()
++				require.Equal(t, mode, internal.GetSessionVars().EnableRedactLog)
++				require.Equal(t, mode, internal.GetPlanCtx().GetSessionVars().EnableRedactLog)
++			}()
++			require.Equal(t, originalMode, internal.GetSessionVars().EnableRedactLog)
++			require.Equal(t, originalMode, internal.GetPlanCtx().GetSessionVars().EnableRedactLog)
++			require.Equal(t, mode, caller.GetSessionVars().EnableRedactLog)
 +		})
 +	}
 +}
++
+ func TestBuildMVRefreshOutOfPlaceBuildSQLImportOptions(t *testing.T) {
+ 	tblInfo := &model.TableInfo{
+ 		Name: ast.NewCIStr("mv"),
+```
+
+**File**: `pkg/executor/mv_refresh_observability.go` (modified, +15/-0)
+```diff
+@@ -769,6 +769,19 @@ func enableInternalSQLScanUserTableForPlan(sctx sessionctx.Context) func() {
+ 	}
+ }
+ 
++func setMVRefreshObserveRedaction(sctx sessionctx.Context, mode string) func() {
++	// Plans use the borrowed session's context, so follow the caller's redaction mode.
++	sessVars := sctx.GetSessionVars()
++	planVars := sctx.GetPlanCtx().GetSessionVars()
++	origRedactLog, origPlanRedactLog := sessVars.EnableRedactLog, planVars.EnableRedactLog
++	sessVars.EnableRedactLog = mode
++	planVars.EnableRedactLog = mode
++	return func() {
++		planVars.EnableRedactLog = origPlanRedactLog
++		sessVars.EnableRedactLog = origRedactLog
++	}
++}
++
+ func (e *RefreshMaterializedViewDryRunExec) prepareMVRefreshObserveInternalSession(sctx sessionctx.Context) (func(), error) {
+ 	sessVars := sctx.GetSessionVars()
+ 	restoreExecutionVars, err := applyRefreshExecutionSessionVars(
+@@ -785,7 +798,9 @@ func (e *RefreshMaterializedViewDryRunExec) prepareMVRefreshObserveInternalSessi
+ 		return nil, errors.Annotate(err, "dry run refresh materialized view: failed to enable materialized view support")
+ 	}
+ 	restoreObserve := enableMVRefreshObserveMaintenanceFlags(sctx)
++	restoreRedaction := setMVRefreshObserveRedaction(sctx, e.Ctx().GetSessionVars().EnableRedactLog)
+ 	return func() {
++		restoreRedaction()
+ 		restoreObserve()
+ 		if err := sessVars.SetSystemVar(vardef.TiDBMViewEnable, variable.BoolToOnOff(origEnableMView)); err != nil {
+ 			logutil.BgLogger().Warn("dry run refresh materialized view: failed to restore materialized view enablement", zap.Error(err))
+```
+
+**File**: `pkg/executor/mview_refresh.go` (modified, +6/-0)
+```diff
+@@ -431,6 +431,9 @@ func (e *RefreshMaterializedViewExec) executeRefreshMaterializedView(kctx contex
+ 		return err
+ 	}
+ 	defer e.ReleaseSysSession(releaseCtx, refreshSctx)
++	if e.stepObserver != nil {
++		defer setMVRefreshObserveRedaction(refreshSctx, e.Ctx().GetSessionVars().EnableRedactLog)()
++	}
+ 	if collectorAware, ok := refreshSctx.(interface{ AttachStatsCollectorForInternalSession() func() }); ok {
+ 		// REFRESH MATERIALIZED VIEW runs real maintenance reads/writes against user tables, so
+ 		// reuse the full session collectors here, including index usage collection when enabled.
+@@ -1009,6 +1012,9 @@ func (e *RefreshMaterializedViewExec) executeRefreshMaterializedViewCompleteOutO
+ 		return 0, err
+ 	}
+ 	defer e.ReleaseSysSession(releaseCtx, buildSctx)
++	if e.stepObserver != nil {
++		defer setMVRefreshObserveRedaction(buildSctx, e.Ctx().GetSessionVars().EnableRedactLog)()
++	}
+ 
+ 	buildSessVars := buildSctx.GetSessionVars()
+ 	restoreBuildExecutionVars, err := applyRefreshExecutionSessionVars(buildSessVars, targetExecutionVars, isInternalSQL)
+```
+
+**File**: `pkg/executor/test/materializedview/materialized_view_refresh_test.go` (modified, +69/-32)
+```diff
+@@ -218,38 +218,75 @@ func TestMaterializedViewRefreshCompleteOutOfPlacePreservesPreviousCommitTSOSnap
+ }
+ 
+ func TestProfileMaterializedViewRefreshStepRuntime(t *testing.T) {
+-	store, _ := testkit.CreateMockStoreAndDomain(t)
+-	tk := newMViewTestKit(t, store)
+-	tk.MustExec("use test")
+-	tk.MustExec("create table t_mv_explain_analyze (a int not null, b int not null)")
+-	tk.MustExec("insert into t_mv_explain_analyze values (1, 10), (1, 5), (2, 7)")
+-	tk.MustExec("create materialized view log on t_mv_explain_analyze (a, b) purge next date_add(now(), interval 1 hour)")
+-	tk.MustExec("create materialized view mv_mv_explain_analyze (a, s, cnt) refresh fast next date_add(now(), interval 1 hour) as select a, sum(b), count(1) from t_mv_explain_analyze group by a")
+-
+-	tk.MustExec("insert into t_mv_explain_analyze values (2, 3), (3, 4)")
+-	fastRows := tk.MustQuery("refresh materialized view mv_mv_explain_analyze fast with profile").Rows()
+-	requireRowsContainPrefix(t, fastRows, "[S01 TXN_BEGIN]")
+-	requireRowsContainPrefix(t, fastRows, "[S04 DATA_CHANGE_FAST_MERGE]")
+-	requireRowsContainPrefix(t, fastRows, "  MViewDeltaMerge")
+-	requireRowsContainPrefix(t, fastRows, "[S07 FINALIZE_HIST]")
+-
+-	tk.MustExec("insert into t_mv_explain_analyze values (4, 8)")
+-	inPlaceRows := tk.MustQuery("refresh materialized view mv_mv_explain_analyze complete in place with profile").Rows()
+-	requireRowsContainPrefix(t, inPlaceRows, "[S04 DATA_CHANGE_COMPLETE_DELETE]")
+-	requireRowsContainPrefix(t, inPlaceRows, "[S05 DATA_CHANGE_COMPLETE_INSERT]")
+-	requireRowsContainPrefix(t, inPlaceRows, "[S08 FINALIZE_HIST]")
+-
+-	tk.MustExec("update t_mv_explain_analyze set b = 11 where a = 1 and b = 10")
+-	deltaApplyDryRunRows := tk.MustQuery("refresh materialized view mv_mv_explain_analyze complete delta apply dry run").Rows()
+-	requireRowsContainPrefix(t, deltaApplyDryRunRows, "[S04 DATA_CHANGE_COMPLETE_DELTA_APPLY]")
+-	requireRowsContainPrefix(t, deltaApplyDryRunRows, "  MViewCompleteDeltaApply")
+-
+-	deltaApplyProfileRows := tk.MustQuery("refresh materialized view mv_mv_explain_analyze complete delta apply with profile").Rows()
+-	requireRowsContainPrefix(t, deltaApplyProfileRows, "[S04 DATA_CHANGE_COMPLETE_DELTA_APPLY]")
+-	requireRowsContainPrefix(t, deltaApplyProfileRows, "  MViewCompleteDeltaApply")
+-	require.Contains(t, joinRowsAsText(deltaApplyProfileRows), "mview_complete_delta_apply:{writer:{")
+-	require.Contains(t, joinRowsAsText(deltaApplyProfileRows), "rows:{insert:")
+-	requireRowsContainPrefix(t, deltaApplyProfileRows, "[S07 FINALIZE_HIST]")
++	t.Run("step_runtime", func(t *testing.T) {
++		store, _ := testkit.CreateMockStoreAndDomain(t)
++		tk := newMViewTestKit(t, store)
++		tk.MustExec("use test")
++		tk.MustExec("create table t_mv_explain_analyze (a int not null, b int not null)")
++		tk.MustExec("insert into t_mv_explain_analyze values (1, 10), (1, 5), (2, 7)")
++		tk.MustExec("create materialized view log on t_mv_explain_analyze (a, b) purge next date_add(now(), interval 1 hour)")
++		tk.MustExec("create materialized view mv_mv_explain_analyze (a, s, cnt) refresh fast next date_add(now(), interval 1 hour) as select a, sum(b), count(1) from t_mv_explain_analyze group by a")
++
++		tk.MustExec("insert into t_mv_explain_analyze values (2, 3), (3, 4)")
++		fastRows := tk.MustQuery("refresh materialized view mv_mv_explain_analyze fast with profile").Rows()
++		requireRowsContainPrefix(t, fastRows, "[S01 TXN_BEGIN]")
++		requireRowsContainPrefix(t, fastRows, "[S04 DATA_CHANGE_FAST_MERGE]")
++		requireRowsContainPrefix(t, fastRows, "  MViewDeltaMerge")
++		requireRowsContainPrefix(t, fastRows, "[S07 FINALIZE_HIST]")
++
++		tk.MustExec("insert into t_mv_explain_analyze values (4, 8)")
++		inPlaceRows := tk.MustQuery("refresh materialized view mv_mv_explain_analyze complete in place with profile").Rows()
++		requireRowsContainPrefix(t, inPlaceRows, "[S04 DATA_CHANGE_COMPLETE_DELETE]")
++		requireRowsContainPrefix(t, inPlaceRows, "[S05 DATA_CHANGE_COMPLETE_INSERT]")
++		requireRowsContainPrefix(t, inPlaceRows, "[S08 FINALIZE_HIST]")
++
++		tk.MustExec("update t_mv_explain_analyze set b = 11 where a = 1 and b = 10")
++		deltaApplyDryRunRows := tk.MustQuery("refresh materialized view mv_mv_explain_analyze complete delta apply dry run").Rows()
++		requireRowsContainPrefix(t, deltaApplyDryRunRows, "[S04 DATA_CHANGE_COMPLETE_DELTA_APPLY]")
++		requireRowsContainPrefix(t, deltaApplyDryRunRows, "  MViewCompleteDeltaApply")
++
++		deltaApplyProfileRows := tk.MustQuery("refresh materialized view mv_mv_explain_analyze complete delta apply with profile").Rows()
++		requireRowsContainPrefix(t, deltaApplyProfileRows, "[S04 DATA_CHANGE_COMPLETE_DELTA_APPLY]")
++		requireRowsContainPrefix(t, deltaApplyProfileRows, "  MViewCompleteDeltaApply")
++		require.Contains(t, joinRowsAsText(deltaApplyProfileRows), "mview_complete_delta_apply:{writer:{")
++		require.Contains(t, joinRowsAsText(deltaApplyProfileRows), "rows:{insert:")
++		requireRowsContainPrefix(t, deltaApplyProfileRows, "[S07 FINALI
 ```
 
 ---
 
-### Incident Patch 2: `95c89143` (2026-11-04)
-**Commit Message**: ddl: migrate separated auto-increment IDs to auto-random (#71094)
+### Incident Patch 2: `8c6cb106` (2026-11-04)
+**Commit Message**: types, statistics: handle zero timestamp stats scalarization (#69448)
 
-close pingcap/tidb#70091
+close pingcap/tidb#69440
 
-**File**: `pkg/ddl/column.go` (modified, +5/-1)
+**File**: `pkg/statistics/BUILD.bazel` (modified, +3/-0)
 ```diff
-@@ -1101,7 +1101,11 @@ func applyNewAutoRandomBits(jobCtx *jobContext, dbInfo *model.DBInfo,
- 		errMsg := fmt.Sprintf(autoid.AutoRandomAllocatorNotFound, dbInfo.Name.O, tblInfo.Name.O)
- 		return dbterror.ErrInvalidAutoRandom.GenWithStackByArgs(errMsg)
- 	}
--	idAcc := jobCtx.metaMut.GetAutoIDAccessors(dbInfo.ID, tblInfo.ID).RowID()
-+	idAccessors := jobCtx.metaMut.GetAutoIDAccessors(dbInfo.ID, tblInfo.ID)
-+	idAcc := idAccessors.RowID()
-+	if tblInfo.SepAutoInc() {
-+		idAcc = idAccessors.IncrementID(model.TableInfoVersion5)
-+	}
- 	nextAutoIncID, err := idAcc.Get()
- 	if err != nil {
- 		return errors.Trace(err)
+@@ -118,8 +118,11 @@ go_test(
+         "//pkg/util/sqlkiller",
+         "@com_github_pingcap_errors//:errors",
+         "@com_github_pingcap_failpoint//:failpoint",
++        "@com_github_pingcap_log//:log",
+         "@com_github_pingcap_tipb//go-tipb",
+         "@com_github_stretchr_testify//require",
+         "@org_uber_go_goleak//:goleak",
++        "@org_uber_go_zap//:zap",
++        "@org_uber_go_zap//zaptest/observer",
+     ],
+ )
 ```
 
-**File**: `pkg/ddl/db_integration_test.go` (modified, +129/-0)
+**File**: `pkg/statistics/scalar.go` (modified, +41/-11)
 ```diff
-@@ -2225,6 +2225,104 @@ func TestAutoIncrementForce(t *testing.T) {
- 	tk.MustExec("drop table t")
+@@ -68,17 +68,7 @@ func convertDatumToScalar(value *types.Datum, commonPfxLen int) float64 {
+ 		}
+ 		return scalar
+ 	case types.KindMysqlTime:
+-		valueTime := value.GetMysqlTime()
+-		var minTime types.Time
+-		switch valueTime.Type() {
+-		case mysql.TypeDate:
+-			minTime = types.NewTime(types.MinDatetime, mysql.TypeDate, types.DefaultFsp)
+-		case mysql.TypeDatetime:
+-			minTime = types.NewTime(types.MinDatetime, mysql.TypeDatetime, types.DefaultFsp)
+-		case mysql.TypeTimestamp:
+-			minTime = types.MinTimestamp
+-		}
+-		return float64(valueTime.Sub(UTCWithAllowInvalidDateCtx, &minTime).Duration)
++		return convertMysqlTimeToScalar(value.GetMysqlTime())
+ 	case types.KindString, types.KindBytes:
+ 		bytes := value.GetBytes()
+ 		if len(bytes) <= commonPfxLen {
+@@ -95,6 +85,46 @@ func convertDatumToScalar(value *types.Datum, commonPfxLen int) float64 {
+ 	}
  }
  
-+func TestAutoRandomAllocatorMigration(t *testing.T) {
-+	store := testkit.CreateMockStore(t)
-+	readIDs := func(t *testing.T, tk *testkit.TestKit) model.AutoIDGroup {
-+		t.Helper()
-+		tbl := external.GetTableByName(t, tk, "test", "t")
-+		db, ok := domain.GetDomain(tk.Session()).InfoSchema().SchemaByName(ast.NewCIStr("test"))
-+		require.True(t, ok)
-+		txn, err := store.Begin()
-+		require.NoError(t, err)
-+		ids, err := meta.NewMutator(txn).GetAutoIDAccessors(db.ID, tbl.Meta().ID).Get()
-+		require.NoError(t, err)
-+		require.NoError(t, txn.Rollback())
-+		return ids
-+	}
-+	const highID = 1 << 20
-+	for _, cache := range []int{1, 10} {
-+		for _, unsigned := range []bool{false, true} {
-+			colType := "bigint"
-+			incrementalBits := uint(58) // 63 signed bits minus AUTO_RANDOM(5).
-+			if unsigned {
-+				colType += " unsigned"
-+				incrementalBits++
-+			}
-+			for _, populated := range []bool{false, true} {
-+				t.Run(fmt.Sprintf("cache=%d/unsigned=%t/populated=%t", cache, unsigned, populated), func(t *testing.T) {
-+					tk := testkit.NewTestKit(t, store)
-+					tk.MustExec("use test")
-+					tk.MustExec("set @@tidb_allow_remove_auto_inc = true")
-+					tk.MustExec(fmt.Sprintf("create table t (id %s primary key clustered auto_increment, payload int) auto_id_cache=%d auto_increment=%d", colType, cache, highID))
-+					t.Cleanup(func() { tk.MustExec("drop table t") })
-+					if populated {
-+						tk.MustExec(fmt.Sprintf("insert into t values (1,10),(2,20),(%d,30)", highID*2))
-+						tk.MustExec(fmt.Sprintf("delete from t where id=%d", highID*2))
-+					}
-+					before := readIDs(t, tk)
-+					base := before.RowID
-+					if cache == 1 {
-+						base = before.IncrementID
-+					}
-+					require.GreaterOrEqual(t, base, int64(highID-1))
-+					if populated {
-+						// The durable high-water mark must survive deleting the largest ID.
-+						require.GreaterOrEqual(t, base, int64(highID*2))
-+					}
-+					tk.MustExec(fmt.Sprintf("alter table t modify column id %s auto_random(5)", colType))
-+					after := readIDs(t, tk)
-+					require.Equal(t, base+1, after.RandomID)
-+					if cache == 1 {
-+						require.Zero(t, after.IncrementID)
-+						require.Equal(t, before.RowID, after.RowID)
-+					} else {
-+						require.Zero(t, after.RowID)
-+						require.Equal(t, before.IncrementID, after.IncrementID)
-+					}
-+
-+					other := testkit.NewTestKit(t, store)
-+					other.MustExec("use test")
-+					other.MustExec("insert into t(payload) values (30),(40)")
-+					tk.MustExec("insert into t(payload) values (50)")
-+					mask := (uint64(1) << incrementalBits) - 1
-+					tk.MustQuery(fmt.Sprintf("select count(*),count(distinct id),min(id & %d)>%d from t where payload>=30", mask, base)).Check(testkit.Rows("3 3 1"))
-+					if populated {
-+						tk.MustQuery("select id,payload from t where payload<30 order by id").Check(testkit.Rows("1 10", "2 20"))
-+						tk.MustQuery("select count(*) from t").Check(testkit.Rows("5"))
-+					} else {
-+						tk.MustQuery("select count(*) from t").Check(testkit.Rows("3"))
-+					}
-+					tk.MustExec("admin check table t")
-+				})
-+			}
++// convertMysqlTimeToScalar maps a types.Time to the float64 scalar used for
++// histogram fraction and out-of-range estimation. The scalar is the duration
++// from the type's minimum bound (MinDatetime for date/datetime, MinTimestamp
++// for timestamp). TIMESTAMP values outside the legal range are clamped just
++// outside the valid scalar range so estimates stay finite and ordered.
++func convertMysqlTimeToScalar(valueTime types.Time) float64 {
++	var minTime types.Time
++	switch valueTime.Type() {
++	case mysql.TypeDate:
++		minTime = types.NewTime(types.MinDatetime, mysql.TypeDate, types.DefaultFsp)
++	case mysql.TypeDatetime:
++		minTime = types.NewTime(types.MinDatetime, mysql.TypeDatetime, types.DefaultFsp)
++	case mysql.TypeTimestamp:
++		minTime = types.MinTimestamp
++		if valueTime.Compare(types.MinTimestamp) < 0 {
++			// Relaxed SQL modes can leave zero TIMESTAMP values in stats. If we
++			// subtract MinTimestamp (1970-01-01 00:00:01) from such a value
++			// directly, GoTime normalizes zero TIMESTAMP to -0001-11-30 and the
++			// subtraction saturates to math.MinInt64 ns. That artificial huge
++			// distance from normal TIMESTAMP values would skew fraction and
++			// out-of-range estimates, so keep before-min values finite and just
++			// before the legal TIMESTAMP range. All before-min values collapse to
++			// the same -1; this is acceptable since they are invalid/zero values
++			// and calcFraction treats value <= lower as 0.
++			return -1
++		}
++		if valueTime.Compare(types.MaxTimestamp) > 0 {
++			// Historical stats may also contain above-max TIMESTAMP bounds. Put
++			// them just after the legal maximum. maxScalar + 1 is not enough here:
++			// at this magnitude float64 rounds it back to maxScalar, collapsing a
++			// [MaxTimestamp, after-max] bucket into a zero-width interval, so use
++			// Nextafter to advance by a single ULP.
++			maxTimestamp := types.MaxTimestamp
++			maxScalar := float64(maxTimestamp.Sub(UTCWithAllowInvalidDateCtx, &minTime).Duration)
++			return math.Nextafter(maxScalar, math.Inf(1))
 +		}
 +	}
++	return float64(valueTime.Sub(UTCWithAllowInvalidDateCtx, &minTime).Duration)
++}
 +
-+	for _, colType := range []string{"bigint", "bigint unsigned"} {
-+		t.Run("overflow/"+colType, func(t *testing.T) {
-+			tk := testkit.NewTestKit(t, store)
-+			tk.MustExec("use test")
-+			tk.MustExec("set @@tidb_allow_remove_auto_inc = true")
-+			tk.MustExec(fmt.Sprintf("create table t (id %s primary key clustered auto_increment, payload int) auto_id_cache=1", colType))
-+			t.Cleanup(func() { tk.MustExec("drop table t") })
-+			const overflowID = 1 << 60
-+			tk.MustExec(fmt.Sprintf("insert into t values (%d,10)", overflowID))
-+			before := readIDs(t, tk)
-+			tk.MustGetErrCode(fmt.Sprintf("alter table t modify column id %s auto_random(5)", colType), errno.ErrInvalidAutoRandom)
-+			after := readIDs(t, tk)
-+			require.Zero(t, after.RandomID)
-+			require.GreaterOrEqual(t, after.IncrementID, before.IncrementID)
-+			tbl := external.GetTableByName(t, tk, "test", "t")
-+			require.Zero(t, tbl.Meta().AutoRandomBits)
-+			require.True(t, mysql.HasAutoIncrementFlag(tbl.Meta().Columns[0].GetFlag()))
-+			tk.MustExec("insert into t(payload) values (20)")
-+			tk.MustQuery(fmt.Sprintf("select id=%d from t where payload=10", overflowID)).Check(testkit.Rows("1"))
-+			tk.MustQuery(fmt.Sprintf("select id>%d from t where payload=20", overflowID)).Check(testkit.Rows("1"))
-+			tk.MustExec("admin check table t")
-+		})
+ // PreCalculateScalar converts the lower and upper to scalar. When the datum type is KindString or KindBytes, we also
+ // calculate their common prefix length, because when a value falls between lower and upper, the common prefix
+ // of lower and upper equals to the common prefix of the lower, upper and the value. For some simple types like `Int64`,
+```
+
+**File**: `pkg/statistics/scalar_test.go` (modified, +64/-0)
+```diff
+@@ -18,9 +18,13 @@ import (
+ 	"math"
+ 	"testing"
+ 
++	"github.com/pingcap/log"
+ 	"github.com/pingcap/tidb/pkg/parser/mysql"
+ 	"github.com/pingcap/tidb/pkg/types"
++	"github.com/pingcap/tidb/pkg/util/mock"
+ 	"github.com/stretchr/testify/require"
++	"go.uber.org/zap"
++	"go.uber.org/zap/zaptest/observer"
+ )
+ 
+ const eps = 1e-9
+@@ -138,6 +142,20 @@ func TestCalcFraction(t *testing.T) {
+ 			fraction: 0.34444444444444444,
+ 			tp:       types.NewFieldType(mysql.TypeTimestamp),
+ 		},
++		{
++			lower:    types.NewTimeDatum(types.NewTime(types.ZeroCoreTime, mysql.TypeTimestamp, types.DefaultFsp)),
++			upper:    types.NewTimeDatum(types.NewTime(types.FromDate(1970, 1, 1, 0, 0, 3, 0), mysql.TypeTimestamp, types.DefaultFsp)),
++			value:    types.NewTimeDatum(types.NewTime(types.FromDate(1970, 1, 1, 0, 0, 2, 0), mysql.TypeTimestamp, types.DefaultFsp)),
++			fraction: 0.5,
++			tp:       types.NewFieldType(mysql.TypeTimestamp),
++		},
++		{
++			lower:    types.NewTimeDatum(types.MaxTimestamp),
++			upper:    types.NewTimeDatum(types.NewTime(types.FromDate(9999, 12, 31, 23, 59, 59, 0), mysql.TypeTimestamp, types.DefaultFsp)),
++			value:    types.NewTimeDatum(types.NewTime(types.FromDate(9999, 12, 31, 23, 59, 59, 0), mysql.TypeTimestamp, types.DefaultFsp)),
++			fraction: 1.0,
++			tp:       types.NewFieldType(mysql.TypeTimestamp),
++		},
+ 		{
+ 			lower:    types.NewTimeDatum(getTime(2017, 1, 1, mysql.TypeDatetime)),
+ 			upper:    types.NewTimeDatum(getTime(2017, 4, 1, mysql.TypeDatetime)),
+@@ -176,6 +194,52 @@ func TestCalcFraction(t *testing.T) {
+ 	}
+ }
+ 
++// TestConvertMysqlTimeToScalarTimestampBounds verifies that zero/before-min and
++// above-max TIMESTAMP values are clamped to finite, ordered scalars and that
++// the zero-TIMESTAMP path does not emit tolerated GoTime error logs.
++func TestConvertMysqlTimeToScalarTimestampBounds(t *testing.T) {
++	core, recorded := observer.New(zap.ErrorLevel)
++	restore := log.ReplaceGlobals(
++		zap.New(core),
++		&log.ZapProperties{Core: core, Level: zap.NewAtomicLevelAt(zap.InfoLevel)},
++	)
++	defer restore()
++
++	datum := types.NewTimeDatum(types.NewTime(types.ZeroCoreTime, mysql.TypeTimestamp, types.DefaultFsp))
++	scalar := convertDatumToScalar(&datum, 0)
++
++	require.Empty(t, recorded.FilterMessage("encountered error").All())
++	require.Equal(t, float64(-1), scalar)
++
++	minTimestamp := types.NewTimeDatum(types.MinTimestamp)
++	require.Equal(t, float64(0), convertDatumToScalar(&minTimestamp, 0))
++
++	maxTimestamp := types.NewTimeDatum(types.MaxTimestamp)
++	maxTimestampScalar := convertDatumToScalar(&maxTimestamp, 0)
++	afterMaxTimestamp := types.NewTimeDatum(types.NewTime(types.FromDate(9999, 12, 31, 23, 59, 59, 0), mysql.TypeTimestamp, types.DefaultFsp))
++	afterMaxTimestampScalar := convertDatumToScalar(&afterMaxTimestamp, 0)
++	require.Greater(t, afterMaxTimestampScalar, maxTimestampScalar)
++}
++
++// TestOutOfRangeRowCountZeroTimestampLowerBound verifies the end-to-end
++// out-of-range estimate when a histogram bucket has a zero TIMESTAMP (clamped
++// to scalar -1) as its lower bound.
++func TestOutOfRangeRowCountZeroTimestampLowerBound(t *testing.T) {
++	datum := types.NewTimeDatum(types.NewTime(types.ZeroCoreTime, mysql.TypeTimestamp, types.DefaultFsp))
++
++	hg := NewHistogram(0, 0, 0, 0, types.NewFieldType(mysql.TypeTimestamp), 1, 0)
++	upper := types.NewTimeDatum(types.NewTime(types.FromDate(1970, 1, 1, 0, 0, 3, 0), mysql.TypeTimestamp, types.DefaultFsp))
++	hg.AppendBucket(&datum, &upper, 2, 1)
++
++	ctx := mock.NewContext()
++	ctx.GetSessionVars().RiskRangeSkewRatio = 0.5
++	right := types.NewTimeDatum(types.NewTime(types.FromDate(1970, 1, 1, 0, 0, 4, 0), mysql.TypeTimestamp, types.DefaultFsp))
++	estimate := hg.OutOfRangeRowCount(ctx, &upper, &right, 100, 100, 2)
++	require.InDelta(t, 45.937499984687506, estimate.Est, eps)
++	require.InDelta(t, 18.374999993875, estimate.MinEst, eps)
++	require.InDelta(t, 73.4999999755, estimate.MaxEst, eps)
++}
++
+ func TestEnumRangeValues(t *testing.T) {
+ 	tests := []struct {
+ 		low         types.Datum
+```
+
+**File**: `pkg/types/BUILD.bazel` (modified, +3/-0)
+```diff
+@@ -116,8 +116,11 @@ go_test(
+         "//pkg/util/hack",
+         "@com_github_go_sql_driver_mysql//:mysql",
+         "@com_github_pingcap_errors//:errors",
++        "@com_github_pingcap_log//:log",
+         "@com_github_stretchr_testify//assert",
+         "@com_github_stretchr_testify//require",
+         "@org_uber_go_goleak//:goleak",
++        "@org_uber_go_zap//:zap",
++        "@org_uber_go_zap//zaptest/observer",
+     ],
+ )
+```
+
+**File**: `pkg/types/time.go` (modified, +18/-2)
+```diff
+@@ -702,9 +702,9 @@ func (t *Time) Sub(ctx Context, t1 *Time) Duration {
+ 	var duration gotime.Duration
+ 	if t.Type() == mysql.TypeTimestamp && t1.Type() == mysql.TypeTimestamp {
+ 		a, err := t.GoTime(ctx.Location())
+-		terror.Log(errors.Trace(err))
++		logTimeSubGoTimeErr(ctx, err)
+ 		b, err := t1.GoTime(ctx.Location())
+-		terror.Log(errors.Trace(err))
++		logTimeSubGoTimeErr(ctx, err)
+ 		duration = a.Sub(b)
+ 	} else {
+ 		seconds, microseconds, neg := calcTimeTimeDiff(t.coreTime, t1.coreTime, 1)
+@@ -725,6 +725,22 @@ func (t *Time) Sub(ctx Context, t1 *Time) Duration {
+ 	}
+ }
+ 
++// logTimeSubGoTimeErr logs a GoTime conversion error produced by Time.Sub for
++// TIMESTAMP operands. Such errors are expected when the context tolerates
++// invalid/zero dates (e.g. zero TIMESTAMP values read from stats under relaxed
++// SQL modes), and are suppressed there to avoid log noise; in strict contexts
++// the original terror.Log behavior is preserved.
++func logTimeSubGoTimeErr(ctx Context, err error) {
++	if err == nil {
++		return
++	}
++	flags := ctx.Flags()
++	if flags.IgnoreInvalidDateErr() || flags.IgnoreZeroInDate() {
++		return
++	}
++	terror.Log(errors.Trace(err))
++}
++
+ // Add adds d to t, returns the result time value.
+ func (t *Time) Add(ctx Context, d Duration) (Time, error) {
+ 	seconds, microseconds, _ := calcTimeDurationDiff(t.coreTime, d)
+```
+
+**File**: `pkg/types/time_test.go` (modified, +71/-0)
+```diff
+@@ -23,11 +23,14 @@ import (
+ 	"unsafe"
+ 
+ 	"github.com/pingcap/errors"
++	"github.com/pingcap/log"
+ 	"github.com/pingcap/tidb/pkg/parser/mysql"
+ 	"github.com/pingcap/tidb/pkg/parser/terror"
+ 	"github.com/pingcap/tidb/pkg/types"
+ 	contextutil "github.com/pingcap/tidb/pkg/util/context"
+ 	"github.com/stretchr/testify/require"
++	"go.uber.org/zap"
++	"go.uber.org/zap/zaptest/observer"
+ )
+ 
+ func TestTimeEncoding(t *testing.T) {
+@@ -1988,6 +1991,74 @@ func TestTimeSub(t *testing.T) {
+ 	}
+ }
+ 
++func TestTimeSubTimestampGoTimeErrorLogRespectsContextFlags(t *testing.T) {
++	zeroTimestamp := types.NewTime(types.ZeroCoreTime, mysql.TypeTimestamp, types.DefaultFsp)
++	minTimestamp := types.MinTimestamp
++
++	testCases := []struct {
++		name              string
++		ctx               types.Context
++		expectedErrorLogs int
++	}{
++		{
++			name:              "strict context logs GoTime error",
++			ctx:               types.StrictContext,
++			expectedErrorLogs: 1,
++		},
++		{
++			name: "ignore invalid date error suppresses GoTime error log",
++			ctx: types.NewContext(
++				types.DefaultStmtFlags|types.FlagIgnoreInvalidDateErr,
++				time.UTC,
++				contextutil.IgnoreWarn,
++			),
++			expectedErrorLogs: 0,
++		},
++		{
++			name: "ignore zero in date suppresses GoTime error log",
++			ctx: types.NewContext(
++				types.DefaultStmtFlags|types.FlagIgnoreZeroInDateErr,
++				time.UTC,
++				contextutil.IgnoreWarn,
++			),
++			expectedErrorLogs: 0,
++		},
++		{
++			name: "ignore invalid date error and zero in date suppress GoTime error log",
++			ctx: types.NewContext(
++				types.DefaultStmtFlags|types.FlagIgnoreInvalidDateErr|types.FlagIgnoreZeroInDateErr,
++				time.UTC,
++				contextutil.IgnoreWarn,
++			),
++			expectedErrorLogs: 0,
++		},
++	}
++
++	var strictDuration types.Duration
++	for i, tc := range testCases {
++		duration, logs := timeSubWithObservedErrorLogs(t, tc.ctx, &zeroTimestamp, &minTimestamp)
++		require.Lenf(t, logs.FilterMessage("encountered error").All(), tc.expectedErrorLogs, "%s", tc.name)
++		if i == 0 {
++			strictDuration = duration
++			continue
++		}
++		require.Equalf(t, strictDuration, duration, "%s", tc.name)
 +	}
 +}
 +
- func TestAutoIncrementForceAutoIDCache(t *testing.T) {
- 	store := testkit.CreateMockStore(t)
- 	tk := testkit.NewTestKit(t, store)
-@@ -2291,6 +2389,37 @@ func TestAutoIncrementForceAutoIDCache(t *testing.T) {
- 	tk.MustQuery("select (a & 3) from t order by 1;").Check(testkit.Rows("1", "2"))
- 	tk.MustExec("drop table if exists t;")
- 
-+	// Converting AUTO_INCREMENT to AUTO_RANDOM must migrate the separate
-+	// auto-increment allocator used by AUTO_ID_CACHE=1.
-+	tk.MustExec("set @@tidb_allow_remove_auto_in
++func timeSubWithObservedErrorLogs(t *testing.T, ctx types.Context, left, right *types.Time) (types.Duration, *observer.ObservedLogs) {
++	t.Helper()
++
++	core, recorded := observer.New(zap.ErrorLevel)
++	restore := log.ReplaceGlobals(
++		zap.New(core),
++		&log.ZapProperties{Core: core, Level: zap.NewAtomicLevelAt(zap.InfoLevel)},
++	)
++	defer restore()
++
++	return left.Sub(ctx, right), recorded
++}
++
+ func TestCheckMonthDay(t *testing.T) {
+ 	dates := []struct {
+ 		date        types.CoreTime
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #72692** (2026-11-05): ddl, executor: guard table and cluster flashback for MV objects (@windtalker)
+- **PR #72682** (2026-11-04): statistics: report sync load failure regardless of result arrival order (#70316) (@ti-chi-bot)
+- **PR #72681** (2026-11-05): bindinfo: save bindinfo into stmtctx to avoid calling NormalizeStmtForBinding and getbindcache repeatedly (#65484) (@ti-chi-bot)
+- **PR #72675** (2026-11-04): executor: port extra commit TS metadata fallback for old rows (@windtalker)
 - **PR #72667** (closed): server: restore session on change user auth failure (@lcwangchao)
-- **PR #72657** (2026-11-03): *: bump otlptrace and OpenTelemetry modules to v1.45.0 (GHSA-8wmf-6v46-5gfg) (#72534) (#72640) | tidb-test=release-8.5-20260715-v8.5.7 (@ti-chi-bot)
-- **PR #72651** (closed): expression: skip empty digests before statement summary lookups (#72594) (@ti-chi-bot)
-- **PR #72650** (closed): expression: skip empty digests before statement summary lookups (#72594) (@ti-chi-bot)
-- **PR #72648** (2026-11-03): dumpling: pin MinIO CI downloads to GitHub releases (#71291) (@ti-chi-bot)
-- **PR #72647** (2026-11-03): *: update client-go to latest master (@lcwangchao)
+- **PR #72666** (2026-11-05): session, lightning: enable log redaction by default | tidb-test=pr/2809 (@D3Hunter)
 
 ---
 
@@ -2458,30 +2580,38 @@ close pingcap/tidb#70091
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. executor: use TiFlash joined rows for MPP join RU (#72597)
+## X. session, lightning: enable log redaction by default (#72666)
 
 **RULE**:
-When implementing operations in `DEPS.bzl`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pingcap/tidb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `lightning/tests/run.sh`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pingcap/tidb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d85afde3`: executor: use TiFlash joined rows for MPP join RU (#72597). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `47dc1214`: session, lightning: enable log redaction by default (#72666). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `DEPS.bzl`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `lightning/tests/run.sh`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-        sum = "h1:cUXlcHgqq/LfYp/pXVpreJt8994mB9creB/NtPR7xrY=",
-        version = "v0.0.0-20261015020031-7adb3bb014c4",
+WITH_TIDB=true
+for arg in "$@"; do
+    if [ "$arg" = '--no-tidb' ]; then
+        WITH_TIDB=false
+    fi
+done
+
+    # Tests inspect error values, including after earlier cases restart the cluster.
+    if $WITH_TIDB; then
+        TEST_NAME="$case" run_sql "SET GLOBAL tidb_redact_log = OFF"
+    fi
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-        sum = "h1:GalvMypJTiQvfc6p8fs7OS0z+X9O5ZAN+hTZ67QpTYM=",
-        version = "v0.0.0-20261006155659-59b678398b17",
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d85afde3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `47dc1214` are properly handled with clean fallback behavior.

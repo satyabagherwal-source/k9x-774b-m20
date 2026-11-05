@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md`  
 > **Source**: github ([https://github.com/vespa-engine/vespa](https://github.com/vespa-engine/vespa))  
-> **Source Version**: `37ffa51d`  
+> **Source Version**: `776b9266`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T17:52:33.836Z  
+> **Timestamp**: 2026-11-05T08:15:32.764Z  
 > **Learning ID**: `learn-github-vespa-engine-vespa`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/vespa-engine/vespa](https://github.com/vespa-engine/vespa))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T17:52:32.976Z  
+> **Harvest Timestamp**: 2026-11-05T08:14:07.409Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The AI search platform
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 7160 stars
+- **Stars / Engagement**: 7161 stars
 
 ---
 
@@ -1065,485 +1065,308 @@ func (v *showHiddenFlag) IsBoolFlag() bool { return true }
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `70530021` (2026-11-04)
-**Commit Message**: Merge pull request #38413 from vespa-engine/toregge/propagate-trace-and-span-ids-through-search-protocol
+### Incident Patch 1: `776b9266` (2026-11-05)
+**Commit Message**: Merge pull request #38430 from vespa-engine/boeker/add-new-string-matchers
 
-Propagate trace and span ids through search protocol.
+Refactoring: Add new string matcher classes
 
-**File**: `container-search/src/main/java/com/yahoo/search/dispatch/rpc/ProtobufSerialization.java` (modified, +83/-6)
+**File**: `searchlib/src/vespa/searchlib/attribute/CMakeLists.txt` (modified, +4/-0)
 ```diff
-@@ -4,6 +4,7 @@
- import ai.vespa.searchlib.searchprotocol.protobuf.SearchProtocol;
- import ai.vespa.searchlib.searchprotocol.protobuf.SearchProtocol.StringProperty;
- import ai.vespa.searchlib.searchprotocol.protobuf.SearchProtocol.TensorProperty;
-+import ai.vespa.telemetry.api.Telemetry;
- import com.google.protobuf.ByteString;
- import com.google.protobuf.InvalidProtocolBufferException;
- import com.yahoo.data.access.helpers.MatchFeatureData;
-@@ -33,6 +34,9 @@
- import com.yahoo.searchlib.aggregation.Grouping;
- import com.yahoo.slime.BinaryFormat;
- import com.yahoo.vespa.objects.BufferSerializer;
-+import io.opentelemetry.api.trace.Span;
-+import io.opentelemetry.context.Context;
-+import io.opentelemetry.context.propagation.TextMapSetter;
+@@ -155,10 +155,14 @@ vespa_add_library(searchlib_attribute OBJECT
+     singlestringattribute.cpp
+     singlestringpostattribute.cpp
+     sourceselector.cpp
++    string_fuzzy_matcher.cpp
++    string_fuzzy_search_helper.cpp
+     string_matcher.cpp
+     string_posting_search_context.cpp
+     string_range_matcher.cpp
+     string_range_search_helper.cpp
++    string_regex_matcher.cpp
++    string_regex_search_helper.cpp
+     string_search_context.cpp
+     string_search_helper.cpp
+     string_sort_blob_writer.cpp
+```
+
+**File**: `searchlib/src/vespa/searchlib/attribute/multi_enum_search_context.cpp` (modified, +6/-0)
+```diff
+@@ -4,25 +4,31 @@
  
- import java.util.ArrayList;
- import java.util.List;
-@@ -51,7 +55,11 @@ public class ProtobufSerialization {
-     private static final ThreadLocal<GrowableByteBuffer> threadLocalBuffer = ThreadLocal.withInitial(() -> new GrowableByteBuffer(4096));
+ #include "numeric_range_matcher.h"
+ #include "numeric_search_context.h"
++#include "string_fuzzy_matcher.h"
+ #include "string_range_matcher.h"
++#include "string_regex_matcher.h"
+ #include "string_search_context.h"
  
-     static byte[] serializeSearchRequest(Query query, int hits, String nodeId, double contentShare, double requestTimeout) {
--        return convertFromQuery(query, hits, nodeId, contentShare, requestTimeout).toByteArray();
-+        return serializeSearchRequest(createSearchRequestBuilder(query, hits, nodeId, contentShare, requestTimeout));
+ using ValueRef = vespalib::datastore::AtomicEntryRef;
+ using WeightedValueRef = search::multivalue::WeightedValue<vespalib::datastore::AtomicEntryRef>;
+ 
+ namespace search::attribute {
+ 
++template class MultiEnumSearchContext<const char*, StringSearchContextT<StringFuzzyMatcher>, ValueRef>;
+ template class MultiEnumSearchContext<const char*, StringSearchContextT<StringMatcher>, ValueRef>;
+ template class MultiEnumSearchContext<const char*, StringSearchContextT<StringRangeMatcher>, ValueRef>;
++template class MultiEnumSearchContext<const char*, StringSearchContextT<StringRegexMatcher>, ValueRef>;
+ template class MultiEnumSearchContext<int8_t, NumericSearchContext<NumericRangeMatcher<int8_t>>, ValueRef>;
+ template class MultiEnumSearchContext<int16_t, NumericSearchContext<NumericRangeMatcher<int16_t>>, ValueRef>;
+ template class MultiEnumSearchContext<int32_t, NumericSearchContext<NumericRangeMatcher<int32_t>>, ValueRef>;
+ template class MultiEnumSearchContext<int64_t, NumericSearchContext<NumericRangeMatcher<int64_t>>, ValueRef>;
+ template class MultiEnumSearchContext<float, NumericSearchContext<NumericRangeMatcher<float>>, ValueRef>;
+ template class MultiEnumSearchContext<double, NumericSearchContext<NumericRangeMatcher<double>>, ValueRef>;
+ 
++template class MultiEnumSearchContext<const char*, StringSearchContextT<StringFuzzyMatcher>, WeightedValueRef>;
+ template class MultiEnumSearchContext<const char*, StringSearchContextT<StringMatcher>, WeightedValueRef>;
+ template class MultiEnumSearchContext<const char*, StringSearchContextT<StringRangeMatcher>, WeightedValueRef>;
++template class MultiEnumSearchContext<const char*, StringSearchContextT<StringRegexMatcher>, WeightedValueRef>;
+ template class MultiEnumSearchContext<int8_t, NumericSearchContext<NumericRangeMatcher<int8_t>>, WeightedValueRef>;
+ template class MultiEnumSearchContext<int16_t, NumericSearchContext<NumericRangeMatcher<int16_t>>, WeightedValueRef>;
+ template class MultiEnumSearchContext<int32_t, NumericSearchContext<NumericRangeMatcher<int32_t>>, WeightedValueRef>;
+```
+
+**File**: `searchlib/src/vespa/searchlib/attribute/multi_string_enum_hint_search_context.cpp` (modified, +6/-0)
+```diff
+@@ -2,7 +2,9 @@
+ 
+ #include "multi_string_enum_hint_search_context.hpp"
+ 
++#include "string_fuzzy_matcher.h"
+ #include "string_range_matcher.h"
++#include "string_regex_matcher.h"
+ 
+ #include <vespa/searchcommon/attribute/multivalue.h>
+ 
+@@ -11,10 +13,14 @@ using WeightedValueRef = search::multivalue::WeightedValue<vespalib::datastore::
+ 
+ namespace search::attribute {
+ 
++template class MultiStringEnumHintSearchContextT<ValueRef, StringFuzzyMatcher>;
+ template class MultiStringEnumHintSearchContextT<ValueRef, StringMatcher>;
+ template class MultiStringEnumHintSearchContextT<ValueRef, StringRangeMatcher>;
++template class MultiStringEnumHintSearchContextT<ValueRef, StringRegexMatcher>;
+ 
++template class MultiStringEnumHintSearchContextT<WeightedValueRef, StringFuzzyMatcher>;
+ template class MultiStringEnumHintSearchContextT<WeightedValueRef, StringMatcher>;
+ template class MultiStringEnumHintSearchContextT<WeightedValueRef, StringRangeMatcher>;
++template class MultiStringEnumHintSearchContextT<WeightedValueRef, StringRegexMatcher>;
+ 
+ } // namespace search::attribute
+```
+
+**File**: `searchlib/src/vespa/searchlib/attribute/multi_string_enum_search_context.cpp` (modified, +6/-0)
+```diff
+@@ -2,7 +2,9 @@
+ 
+ #include "multi_string_enum_search_context.hpp"
+ 
++#include "string_fuzzy_matcher.h"
+ #include "string_range_matcher.h"
++#include "string_regex_matcher.h"
+ 
+ #include <vespa/searchcommon/attribute/multivalue.h>
+ 
+@@ -11,10 +13,14 @@ using WeightedValueRef = search::multivalue::WeightedValue<vespalib::datastore::
+ 
+ namespace search::attribute {
+ 
++template class MultiStringEnumSearchContextT<ValueRef, StringFuzzyMatcher>;
+ template class MultiStringEnumSearchContextT<ValueRef, StringMatcher>;
+ template class MultiStringEnumSearchContextT<ValueRef, StringRangeMatcher>;
++template class MultiStringEnumSearchContextT<ValueRef, StringRegexMatcher>;
+ 
++template class MultiStringEnumSearchContextT<WeightedValueRef, StringFuzzyMatcher>;
+ template class MultiStringEnumSearchContextT<WeightedValueRef, StringMatcher>;
+ template class MultiStringEnumSearchContextT<WeightedValueRef, StringRangeMatcher>;
++template class MultiStringEnumSearchContextT<WeightedValueRef, StringRegexMatcher>;
+ 
+ } // namespace search::attribute
+```
+
+**File**: `searchlib/src/vespa/searchlib/attribute/single_enum_search_context.cpp` (modified, +4/-0)
+```diff
+@@ -4,13 +4,17 @@
+ 
+ #include "numeric_range_matcher.h"
+ #include "numeric_search_context.h"
++#include "string_fuzzy_matcher.h"
+ #include "string_range_matcher.h"
++#include "string_regex_matcher.h"
+ #include "string_search_context.h"
+ 
+ namespace search::attribute {
+ 
++template class SingleEnumSearchContext<const char*, StringSearchContextT<StringFuzzyMatcher>>;
+ template class SingleEnumSearchContext<const char*, StringSearchContextT<StringMatcher>>;
+ template class SingleEnumSearchContext<const char*, StringSearchContextT<StringRangeMatcher>>;
++template class SingleEnumSearchContext<const char*, StringSearchContextT<StringRegexMatcher>>;
+ template class SingleEnumSearchContext<int8_t, NumericSearchContext<NumericRangeMatcher<int8_t>>>;
+ template class SingleEnumSearchContext<int16_t, NumericSearchContext<NumericRangeMatcher<int16_t>>>;
+ template class SingleEnumSearchContext<int32_t, NumericSearchContext<NumericRangeMatcher<int32_t>>>;
+```
+
+**File**: `searchlib/src/vespa/searchlib/attribute/single_string_enum_hint_search_context.cpp` (modified, +4/-0)
+```diff
+@@ -2,11 +2,15 @@
+ 
+ #include "single_string_enum_hint_search_context.hpp"
+ 
++#include "string_fuzzy_matcher.h"
+ #include "string_range_matcher.h"
++#include "string_regex_matcher.h"
+ 
+ namespace search::attribute {
+ 
++template class SingleStringEnumHintSearchContextT<StringFuzzyMatcher>;
+ template class SingleStringEnumHintSearchContextT<StringMatcher>;
+ template class SingleStringEnumHintSearchContextT<StringRangeMatcher>;
++template class SingleStringEnumHintSearchContextT<StringRegexMatcher>;
+ 
+ } // namespace search::attribute
+```
+
+**File**: `searchlib/src/vespa/searchlib/attribute/single_string_enum_search_context.cpp` (modified, +4/-1)
+```diff
+@@ -2,12 +2,15 @@
+ 
+ #include "single_string_enum_search_context.hpp"
+ 
++#include "string_fuzzy_matcher.h"
+ #include "string_range_matcher.h"
++#include "string_regex_matcher.h"
+ 
+ namespace search::attribute {
+ 
++template class SingleStringEnumSearchContextT<StringFuzzyMatcher>;
+ template class SingleStringEnumSearchContextT<StringMatcher>;
+-
+ template class SingleStringEnumSearchContextT<StringRangeMatcher>;
++template class SingleStringEnumSearchContextT<StringRegexMatcher>;
+ 
+ } // namespace search::attribute
+```
+
+**File**: `searchlib/src/vespa/searchlib/attribute/string_fuzzy_matcher.cpp` (added, +76/-0)
+```diff
+@@ -0,0 +1,76 @@
++// Copyright Vespa.ai. Licensed under the terms of the Apache 2.0 license. See LICENSE in the project root.
++
++#include "string_fuzzy_matcher.h"
++
++#include "enumstore.h"
++#include "i_dictionary_lookup.h"
++
++#include <vespa/searchlib/query/query_term_ucs4.h>
++#include <vespa/searchlib/queryeval/executeinfo.h>
++#include <vespa/vespalib/fuzzy/fuzzy_matcher.h>
++
++namespace search::attribute {
++
++StringFuzzyMatcher::StringFuzzyMatcher(std::unique_ptr<QueryTermSimple> query_term, bool cased,
++                                       vespalib::FuzzyMatchingAlgorithm fuzzy_matching_algorithm)
++    : _query_term(static_cast<QueryTermUCS4*>(query_term.release())),
++      _helper(*_query_term, cased, fuzzy_matching_algorithm) {
++}
++
++StringFuzzyMatcher::StringFuzzyMatcher(StringFuzzyMatcher&&) noexcept = default;
++
++StringFuzzyMatcher::~StringFuzzyMatcher() = default;
++
++bool StringFuzzyMatcher::lookup_in_dictionary(const EnumStoreT<const char*>& enum_store,
++                                              IDictionaryLookup&             dict) const {
++    if (is_valid()) {
++        std::string prefix(_helper.get_fuzzy_matcher().getPrefix());
++        auto        comp = enum_store.prefix_lookup_comparator(prefix.c_str());
++        dict.lookupRange(comp, comp);
++        return true;
 +    }
 +
-+    static byte[] serializeSearchRequest(SearchProtocol.SearchRequest.Builder builder) {
-+        return createSearchRequest(builder).toByteArray();
-     }
- 
-     private static void convertSearchReplyErrors(Result target, List<SearchProtocol.Error> errors, boolean softTimeout, boolean annTimeout) {
-@@ -62,8 +70,14 @@ private static void convertSearchReplyErrors(Result target, List<SearchProtocol.
-         }
-     }
- 
--    static SearchProtocol.SearchRequest convertFromQuery(Query query, int hits, String nodeId, double contentShare,
--                                                         double requestTimeout) {
-+    static SearchProtocol.SearchRequest createSearchRequest(SearchProtocol.SearchRequest.Builder builder) {
-+        mergeToSearchRequestFromTracing(builder);
-+        return builder.build();
++    return false;
++}
++
++bool StringFuzzyMatcher::use_dictionary_entry(const EnumStoreT<const char*>&  enum_store,
++                                              EnumPostingTree::ConstIterator& it) const {
++    if (_helper.is_cased()) {
++        if (match(enum_store.get_value(it.getKey().load_acquire()))) {
++            return true;
++        }
++        ++it;
++        return false;
 +    }
 +
-+    static SearchProtocol.SearchRequest.Builder createSearchRequestBuilder(Query query, int hits, String nodeId, double contentShare,
-+                                                                           double requestTimeout) {
++    return _helper.is_fuzzy_match(enum_store.get_value(it.getKey().load_acquire()), it, enum_store.get_data_store());
++}
 +
-         var builder = SearchProtocol.SearchRequest.newBuilder().setHits(hits).setOffset(query.getOffset())
-                 .setTimeout((int) (requestTimeout * 1000));
-         var documentDb = query.getModel().getDocumentDb();
-@@ -105,7 +119,7 @@ static SearchProtocol.SearchRequest convertFromQuery(Query query, int hits, Stri
- 
-         mergeToSearchRequestFromRanking(query.getRanking(), context, scratchPad, builder);
- 
--        return builder.build();
-+        return builder;
-     }
- 
-     public static int getTraceLevelForBackend(Query query) {
-@@ -167,6 +181,36 @@ private static void mergeToSearchRequestFromProfiling(Profiling prof, SearchProt
-         }
-     }
- 
-+    private static void mergeToSearchRequestFromTracing(SearchProtocol.SearchRequest.Builder builder) {
-+        var metadataBuilder = createTelemetryMetadataBuilderIfRecording();
-+        if (metadataBuilder != null) {
-+            builder.setTelemetryMetadata(metadataBuilder);
-+        } else {
-+            builder.clearTelemetryMetadata();
-+        }
-+    }
++bool StringFuzzyMatcher::use_posting_lists_when_non_strict(const queryeval::ExecuteInfo& info,
++                                                           uint32_t                      docid_limit) const {
++    uint32_t           exp_doc_hits = docid_limit * info.hit_rate();
++    constexpr uint32_t fuzzy_use_posting_lists_doc_limit = 10000;
++    /**
++     * The above constant was derived after a query latency experiment with fuzzy matching
++     * on 2M documents with a dictionary size of 292070.
++     *
++     * Cost per document in dfa-based fuzzy matching (scanning the dictionary and merging posting lists) - strict
++     * iterator: 2.8 ms / 2k = 0.0014 ms 4.4 ms / 20k = 0.00022 ms 9.0 ms / 200k = 0.000045 ms 98 ms / 1M =
++     * 0.000098 ms
++     *
++     * Cost per document in lookup-based fuzzy matching - non-strict iterator:
++     *   7.6 ms / 2k = 0.0038 ms
++     *   54 ms / 20k = 0.0027 ms
++     *   529 ms / 200k = 0.0026 ms
++     *
++     * Based on this experiment, we observe that we should avoid lookup-based fuzzy matching
++     * when the number of documents to calculate this on exceeds a number between 2000 - 20000.
++     *
++     * Also note that the cost of scanning the dictionary and performing the fuzzy matching
++     * is already performed at this point.
++     * The only work remaining if returning true is merging the posting lists.
++     */
++    return exp_doc_hits > fuzzy_use_posting_lists_doc_limit;
++}
 +
-+    private static SearchProtocol.TelemetryMetadata.Builder createTelemetryMetadataBuilderIfRecording() {
-+        var context = Context.current();
-+        var span = Span.fromContext(context);
-+        if (!span.isRecording()) {
-+            return null;
-+        }
-+        var telemetry = Telemetry.from(context);
-+        var metadataBuilder = SearchProtocol.TelemetryMetadata.newBuilder();
-+
-+        var propagator = telemetry.textMapPropagator();
-+        propagator.inject(context, metadataBuilder, traceContextSetter);
-+        return metadataBuilder;
-+    }
-+
-+    private static final TextMapSetter<SearchProtocol.TelemetryMetadata.Builder> traceContextSetter =
-+        (builder, key, value) -> {
-+            if (builder != null) {
-+                builder.putTraceContext(key, value);
-+            }
-+        };
-+
-     static SearchProtocol.DocsumRequest.Builder createDocsumRequestBuilder(Query query,
-                                                                            String serverId,
-                                                                            String summaryClass,
-@@ -210,12 +254,26 @@ static SearchProtocol.DocsumRequest.Builder createDocsumRequestBuilder(Query que
-         return builder;
-     }
- 
--    static byte[] serializeDocsumRequest(SearchProtocol.DocsumRequest.Builder builder, List<FastHit> documents) {
-+    static SearchProtocol.DocsumRequest createDocsumRequest(SearchProtocol.DocsumRequest.Builder builder, List<FastHit> documents) {
-         builder.clearGlobalIds();
-         for (va
-```
-
-**File**: `container-search/src/main/java/com/yahoo/search/dispatch/rpc/RpcPing.java` (modified, +1/-1)
-```diff
-@@ -66,7 +66,7 @@ private Pong toPong(ResponseOrError<ProtobufResponse> responseOrError) {
- 
-     private void sendPing() {
-         var connection = connectionPool.getConnection(node.key());
--        var ping = SearchProtocol.MonitorRequest.newBuilder().build().toByteArray();
-+        var ping = ProtobufSerialization.serializeMonitorRequest();
-         double timeoutSeconds = ((double) clusterMonitor.getConfiguration().getRequestTimeout()) / 1000.0;
-         Compressor.Compression compressionResult = compressor.compress(PING_COMPRESSION, ping);
-         connection.request(RPC_METHOD, compressionResult.type(), ping.length, compressionResult.data(), this, timeoutSeconds);
-```
-
-**File**: `container-search/src/main/java/com/yahoo/search/dispatch/rpc/RpcProtobufFillInvoker.java` (modified, +16/-9)
-```diff
-@@ -31,6 +31,7 @@
- 
- import java.util.ArrayList;
- import java.util.List;
-+import java.util.Objects;
- import java.util.Set;
- import java.util.concurrent.BlockingQueue;
- import java.util.concurrent.LinkedBlockingQueue;
-@@ -134,8 +135,7 @@ void sendFillRequestByNode(Result result, String summaryClass, ListMap<Integer,
-         var builder = ProtobufSerialization.createDocsumRequestBuilder(
-                 result.getQuery(), serverId, askForSummary, onlyFields, summaryNeedsQuery, timeout.request());
-         hitsByNode.forEach((nodeId, hits) -> {
--            var payload = ProtobufSerialization.serializeDocsumRequest(builder, hits);
--            sendDocsumsRequest(nodeId, hits, payload, result, timeout.client());
-+            sendDocsumsRequest(nodeId, hits, builder, result, timeout.client());
-         });
-     }
- 
-@@ -191,7 +191,7 @@ private final ListMap<Integer, FastHit> hitsByNode(Result result) {
-     }
- 
-     /** Send a docsums request to a node. Responses will be added to the given receiver. */
--    private void sendDocsumsRequest(int nodeId, List<FastHit> hits, byte[] payload, Result result,
-+    private void sendDocsumsRequest(int nodeId, List<FastHit> hits, SearchProtocol.DocsumRequest.Builder builder, Result result,
-                                     double clientTimeout) {
-         Client.NodeConnection node = resourcePool.getConnection(nodeId);
-         if (node == null) {
-@@ -204,7 +204,6 @@ private void sendDocsumsRequest(int nodeId, List<FastHit> hits, byte[] payload,
-             return;
-         }
-         Query query = result.getQuery();
--        Compressor.Compression compressionResult = compressor.compress(query, payload);
- 
-         Span span = OtelTracing.startSpan(Context.current(), "node.fill", SpanKind.CLIENT);
-         // Every value is a parameter or a constant, so no isRecording() guard is warranted. There is no
-@@ -216,11 +215,19 @@ private void sendDocsumsRequest(int nodeId, List<FastHit> hits, byte[] payload,
-             .setAttribute(TraceAttributes.FILL_HITS_REQUESTED, hits.size())
-             .setAttribute(TraceAttributes.FILL_RETRY,          hits.get(0).getDistributionKey() != nodeId);
- 
--        // End BEFORE enqueueing, as RpcSearchInvoker.receive does, so the same statement holds on both paths:
--        // the caller thread can never observe a response whose span is still recording. It also keeps the span
--        // ending even if receive() throws - responses is a BOUNDED queue and uses add(), which throws when full.
--        node.request(RPC_METHOD, compressionResult.type(), payload.length, compressionResult.data(),
--                roe -> { endSpan(span, roe); receive(roe, hits); }, clientTimeout);
-+        try (var scope = span.makeCurrent()) {
-+            Objects.requireNonNull(scope);
-+            var payload = ProtobufSerialization.serializeDocsumRequest(builder, hits);
-+            Compressor.Compression compressionResult = compressor.compress(query, payload);
-+            // End BEFORE enqueueing, as RpcSearchInvoker.receive does, so the same statement holds on both paths:
-+            // the caller thread can never observe a response whose span is still recording. It also keeps the span
-+            // ending even if receive() throws - responses is a BOUNDED queue and uses add(), which throws when full.
-+            node.request(RPC_METHOD, compressionResult.type(), payload.length, compressionResult.data(),
-+                roe -> {
-+                    endSpan(span, roe);
-+                    receive(roe, hits);
-+                }, clientTimeout);
-+        }
-     }
- 
-     /**
-```
-
-**File**: `container-search/src/main/java/com/yahoo/search/dispatch/rpc/RpcSearchInvoker.java` (modified, +13/-3)
-```diff
-@@ -15,9 +15,11 @@
- import io.opentelemetry.api.trace.SpanKind;
- import io.opentelemetry.api.trace.StatusCode;
- import io.opentelemetry.context.Context;
-+import io.opentelemetry.context.Scope;
- 
- 
- import java.io.IOException;
-+import java.util.Objects;
- import java.util.Optional;
- import java.util.concurrent.BlockingQueue;
- import java.util.concurrent.LinkedBlockingQueue;
-@@ -84,7 +86,15 @@ protected Object sendSearchRequest(Query query, double contentShare, Object inco
-             responseAvailable();
-             return incomingContext;
-         }
--        SerializedQuery serializedQuery = getSerializedQuery(incomingContext, contentShare, timeout.request());
-+        SerializedQuery serializedQuery;
-+        if (span.isRecording()) {
-+            try (var scope = span.makeCurrent()) {
-+                Objects.requireNonNull(scope);
-+                serializedQuery = getSerializedQuery(incomingContext, contentShare, timeout.request(), true);
-+            }
-+        } else {
-+            serializedQuery = getSerializedQuery(incomingContext, contentShare, timeout.request(), false);
-+        }
-         nodeConnection.request(RPC_METHOD,
-                                serializedQuery.compressedPayload.type(),
-                                serializedQuery.compressedPayload.uncompressedSize(),
-@@ -163,9 +173,9 @@ private String getName() {
-         return searcher.getName();
-     }
- 
--    private SerializedQuery getSerializedQuery(Object incomingContext, double contentShare, double requestTimeout) {
-+    private SerializedQuery getSerializedQuery(Object incomingContext, double contentShare, double requestTimeout, boolean tracing) {
-         if (incomingContext instanceof SerializedQuery serializedQuery
--            && newSerializationWillBeSimilar(contentShare, serializedQuery))
-+            && newSerializationWillBeSimilar(contentShare, serializedQuery) && !tracing)
-             return serializedQuery;
-         return new SerializedQuery(compressor, query, contentShare,
-                                    ProtobufSerialization.serializeSearchRequest(query,
-```
-
-**File**: `container-search/src/test/java/com/yahoo/search/dispatch/rpc/ProtobufSerializationTest.java` (modified, +31/-10)
-```diff
-@@ -4,6 +4,7 @@
- 
- import ai.vespa.searchlib.searchprotocol.protobuf.SearchProtocol;
- import com.google.protobuf.ByteString;
-+import com.google.protobuf.InvalidProtocolBufferException;
- import com.yahoo.document.GlobalId;
- import com.yahoo.document.idstring.IdString;
- import com.yahoo.prelude.fastsearch.FastHit;
-@@ -14,11 +15,13 @@
- import com.yahoo.search.query.profile.QueryProfile;
- import com.yahoo.search.query.profile.compiled.CompiledQueryProfileRegistry;
- import com.yahoo.search.query.profile.config.QueryProfileXMLReader;
-+import com.yahoo.search.test.SpanRecorder;
- import org.junit.jupiter.api.Test;
- 
- import java.util.List;
- import java.util.OptionalInt;
- import java.util.Set;
-+import java.util.concurrent.atomic.AtomicReference;
- 
- import static org.junit.jupiter.api.Assertions.assertEquals;
- import static org.junit.jupiter.api.Assertions.assertFalse;
-@@ -39,7 +42,7 @@ void testQuerySerialization() {
-                 .setRequest("?query=test&ranking.features.query(tensor_1)=[1.200]")
-                 .build();
- 
--        SearchProtocol.SearchRequest request1 = ProtobufSerialization.convertFromQuery(query, 9, "serverId", 1.0, 0.5);
-+        SearchProtocol.SearchRequest request1 = ProtobufSerialization.createSearchRequestBuilder(query, 9, "serverId", 1.0, 0.5).build();
-         assertEquals(9, request1.getHits());
-         assertEquals(0, request1.getRankPropertiesCount());
-         assertEquals(0, request1.getTensorRankPropertiesCount());
-@@ -50,9 +53,10 @@ void testQuerySerialization() {
-         assertEquals("\"\\006\\001\\001\\001x\\001?\\231\\231\\232\"",
-                 contentsOf(request1.getTensorFeatureOverrides(1).getValue()));
-         assertFalse(request1.hasProfiling());
-+        assertTrue(request1.getTelemetryMetadata().getTraceContextMap().isEmpty());
- 
-         query.prepare(); // calling prepare() moves "overrides" to "features" - content stays the same
--        SearchProtocol.SearchRequest request2 = ProtobufSerialization.convertFromQuery(query, 9, "serverId", 1.0, 0.5);
-+        SearchProtocol.SearchRequest request2 = ProtobufSerialization.createSearchRequestBuilder(query, 9, "serverId", 1.0, 0.5).build();
-         assertEquals(9, request2.getHits());
-         assertEquals(0, request2.getRankPropertiesCount());
-         assertEquals(2, request2.getTensorRankPropertiesCount());
-@@ -62,6 +66,14 @@ void testQuerySerialization() {
-                 contentsOf(request2.getTensorRankProperties(1).getValue()));
-         assertEquals(0, request2.getFeatureOverridesCount());
-         assertEquals(0, request2.getTensorFeatureOverridesCount());
-+        assertTrue(request2.getTelemetryMetadata().getTraceContextMap().isEmpty());
-+
-+        var builder3 = ProtobufSerialization.createSearchRequestBuilder(query, 9, "serverId", 1.0, 0.5);
-+        SpanRecorder recorder = SpanRecorder.underParentSpan("search");
-+        AtomicReference<SearchProtocol.SearchRequest> request3Holder = new AtomicReference<>();
-+        recorder.record(() -> request3Holder.set(ProtobufSerialization.createSearchRequest(builder3)));
-+        var request3 = request3Holder.get();
-+        assertFalse(request3.getTelemetryMetadata().getTraceContextMap().isEmpty());
-     }
- 
-     @Test
-@@ -73,6 +85,15 @@ void testDocsumSerialization() {
-         var bytes = ProtobufSerialization.serializeDocsumRequest(builder, List.of(hit));
- 
-         assertEquals(63, bytes.length);
-+
-+        var request = ProtobufSerialization.createDocsumRequest(builder, List.of(hit));
-+        assertTrue(request.getTelemetryMetadata().getTraceContextMap().isEmpty());
-+
-+        SpanRecorder recorder = SpanRecorder.underParentSpan("docsum");
-+        AtomicReference<SearchProtocol.DocsumRequest> request2Holder = new AtomicReference<>();
-+        recorder.record(() -> request2Holder.set(ProtobufSerialization.createDocsumRequest(builder, List.of(hit))));
-+        var request2 = request2Holder.get();
-+        assertFalse(request2.getTelemetryMetadata().getTraceContextMap().isEmpty());
-     }
- 
-     private String contentsOf(ByteString property) {
-@@ -154,7 +175,7 @@ void profiling_parameters_are_serialized_in_search_request() {
-                 "trace.profiling.firstPhaseRanking.depth=5&" +
-                 "trace.profiling.secondPhaseRanking.depth=-7&" +
-                 "trace.profiling.sortFeatures.depth=-4");
--        var req = ProtobufSerialization.convertFromQuery(q, 1, "serverId", 1.0, 0.5);
-+        var req = ProtobufSerialization.createSearchRequestBuilder(q, 1, "serverId", 1.0, 0.5).build();
-         assertEquals(3, req.getProfiling().getMatch().getDepth());
-         assertEquals(5, req.getProfiling().getFirstPhase().getDepth());
-         assertEquals(-7, req.getProfiling().getSecondPhase().getDepth());
-@@ -165,7 +186,7 @@ void profiling_parameters_are_serialized_in_search_request() {
-     void only_set_profiling_parameters_are_serialized_in_search_request() {
-         var q = new Query("?query=test&trace.level=1&" +
-                 "trace.profili
-```
-
-**File**: `container-search/src/test/java/com/yahoo/search/test/SpanRecorder.java` (modified, +2/-1)
-```diff
-@@ -7,6 +7,7 @@
- import ai.vespa.telemetry.api.trace.OtelTracing;
- import io.opentelemetry.api.trace.Span;
- import io.opentelemetry.api.trace.SpanKind;
-+import io.opentelemetry.api.trace.propagation.W3CTraceContextPropagator;
- import io.opentelemetry.context.Context;
- import io.opentelemetry.context.Scope;
- import io.opentelemetry.context.propagation.TextMapPropagator;
-@@ -65,7 +66,7 @@ private SpanRecorder(String parentSpanName) {
-                 .build();
-         telemetry = new Telemetry() {
-             @Override public ScopedTracer tracer(String scope) { return new ScopedTracer(tracerProvider.get(scope)); }
--            @Override public TextMapPropagator textMapPropagator() { return NoopTelemetry.INSTANCE.textMapPropagator(); }
-+            @Override public TextMapPropagator textMapPropagator() { return W3CTraceContextPropagator.getInstance(); }
-         };
-         parent = telemetry.tracer(OtelTracing.DEFAULT_SCOPE).startSpan(parentSpanName, SpanKind.INTERNAL, Context.root());
-         context = Telemetry.store(Context.root().with(parent), telemetry);
-```
-
-**File**: `opentelemetry/src/vespa/opentelemetry/CMakeLists.txt` (modified, +2/-0)
-```diff
-@@ -2,6 +2,8 @@
- vespa_add_library(vespa_opentelemetry
-     SOURCES
-     opentelemetry_tracer_providers.cpp
-+    proto_telemetry_server_carrier.cpp
-+    rpc_server_tools.cpp
-     INSTALL lib64
-     DEPENDS
-     opentelemetry-cpp::api
-```
-
-**File**: `opentelemetry/src/vespa/opentelemetry/opentelemetry_tracer_providers.cpp` (modified, +4/-0)
-```diff
-@@ -7,12 +7,14 @@
- #include <vespa/vespalib/component/vtag.h>
- #include <vespa/vespalib/net/tls/transport_security_options_reading.h>
- 
-+#include <opentelemetry/context/propagation/global_propagator.h>
- #include <opentelemetry/exporters/memory/in_memory_span_exporter_factory.h>
- #include <opentelemetry/exporters/ostream/span_exporter_factory.h>
- #include <opentelemetry/exporters/otlp/otlp_grpc_exporter_factory.h>
- #include <opentelemetry/sdk/trace/batch_span_processor_factory.h>
- #include <opentelemetry/sdk/trace/simple_processor_factory.h>
- #include <opentelemetry/sdk/trace/tracer_provider_factory.h>
-+#include <opentelemetry/trace/propagation/http_trace_context.h>
- #include <opentelemetry/trace/provider.h>
- 
- #include <format>
-@@ -88,6 +90,8 @@ void OpenTelemetryTracerProviders::init_grpc_tracer_provider(
-     std::shared_ptr<opentelemetry::trace::TracerProvider> provider =
-         opentelemetry::sdk::trace::TracerProviderFactory::Create(std::move(processor), resource);
-     opentelemetry::trace::Provider::SetTracerProvider(provider);
-+    opentelemetry::context::propagation::GlobalTextMapPropagator::SetGlobalPropagator(
-+        std::make_shared<opentelemetry::trace::propagation::HttpTraceContext>());
- }
- 
- void OpenTelemetryTracerProviders::init_grpc_tracer_provider(const std::string& service_name,
++} // namespace search::attribute
 ```
 
 ---
 
-### Incident Patch 2: `eec2de65` (2026-11-04)
-**Commit Message**: Fix typo
+### Incident Patch 2: `fa6d435a` (2026-11-04)
+**Commit Message**: Merge pull request #38434 from vespa-engine/hmusum/20261104-change-default-value-of-USE_ML_MODEL_IMPORT_CACHE
 
-**File**: `searchlib/src/vespa/searchlib/attribute/string_matcher.h` (modified, +1/-1)
+Change default value of USE_ML_MODEL_IMPORT_CACHE
+
+**File**: `config-model/src/main/java/com/yahoo/config/model/deploy/TestProperties.java` (modified, +1/-1)
 ```diff
-@@ -43,7 +43,7 @@ class StringMatcher {
+@@ -93,7 +93,7 @@ public class TestProperties implements ModelContext.Properties, ModelContext.Fea
+     private boolean enableLandlock = false;
+     private boolean enableLegacyFeedHandler = true;
+     private boolean productDiscovery = false;
+-    private boolean useMlModelImportCache = false;
++    private boolean useMlModelImportCache = true;
+     private OpenTelemetryConfiguration opentelemetrySdk = OpenTelemetrySettings.createDisabled();
  
-     /*
-      * Methods for dictionary lookups. Used by StringPostingSearchContext.
--     * lookup_in_dictionary is also ued by StringSearchContext with an EnumHintSearchContext.
-+     * lookup_in_dictionary is also used by StringSearchContext with an EnumHintSearchContext.
-      */
-     bool lookup_in_dictionary(const EnumStoreT<const char*>& enum_store, IDictionaryLookup& dict) const;
-     bool use_dictionary_entry(const EnumStoreT<const char*>& enum_store, EnumPostingTree::ConstIterator& it) const;
+     @Override public ModelContext.FeatureFlags featureFlags() { return this; }
 ```
 
-**File**: `searchlib/src/vespa/searchlib/attribute/string_range_matcher.h` (modified, +1/-1)
+**File**: `flags/src/main/java/com/yahoo/vespa/flags/Flags.java` (modified, +1/-1)
 ```diff
-@@ -45,7 +45,7 @@ class StringRangeMatcher {
+@@ -264,7 +264,7 @@ public class Flags {
+             TENANT_ID, APPLICATION, INSTANCE_ID);
  
-     /*
-      * Methods for dictionary lookups. Used by StringPostingSearchContext.
--     * lookup_in_dictionary is also ued by StringSearchContext with an EnumHintSearchContext.
-+     * lookup_in_dictionary is also used by StringSearchContext with an EnumHintSearchContext.
-      */
-     bool lookup_in_dictionary(const EnumStoreT<const char*>& enum_store, IDictionaryLookup& dict) const;
- 
-```
-
----
-
-### Incident Patch 3: `de78d213` (2026-11-04)
-**Commit Message**: Merge pull request #38425 from vespa-engine/johsol/fix-tmgrammar
-
-fix tmgrammar
-
-**File**: `integration/tmgrammar/grammars/vespa-schema.tmLanguage.json` (modified, +1/-1)
-```diff
-@@ -176,7 +176,7 @@
-           "match": "\\[(\\d+)\\]",
-           "captures": {
-             "1": {
--              "name": "constant.numeric.vespa"
-+              "name": "constant.numeric.integer.vespa"
-             }
-           }
-         },
-```
-
-**File**: `integration/tmgrammar/tools/generate_tmgrammar.py` (modified, +2/-2)
-```diff
-@@ -437,7 +437,7 @@ def _rules_for_scope(source: str, scope: str) -> list[dict]:
-     #   tensor  → keyword.control
-     #   float   → storage.type.tensor (value type: float, double, bfloat16, int8, etc.)
-     #   x       → variable.other.dimension (dimension name)
--    #   384     → constant.numeric (dimension size)
-+    #   384     → constant.numeric.integer (dimension size, as numeric-literal scopes integers)
-     #   {}      → mapped dimension marker
-     #   < > ( ) [ ] , → punctuation
-     repository["tensor-type"] = {
-@@ -471,7 +471,7 @@ def _rules_for_scope(source: str, scope: str) -> list[dict]:
-             {
-                 "match": r"\[(\d+)\]",
-                 "captures": {
--                    "1": {"name": "constant.numeric.vespa"},
-+                    "1": {"name": "constant.numeric.integer.vespa"},
-                 },
-             },
-             # Mapped dimension marker: {}
-```
-
-**File**: `integration/tmgrammar/tools/test_tmgrammar.py` (modified, +2/-0)
-```diff
-@@ -391,6 +391,8 @@ def test_scope_spotchecks(grammar: dict) -> tuple[bool, list[str]]:
-         # Tensor keyword → keyword.control (begin capture)
-         ("tensor<float>(x[384])", "tensor", "keyword.control.vespa", "tensor-type"),
-         ("tensor(x[384])", "tensor", "keyword.control.vespa", "tensor-type"),
-+        # Dimension size → integer, like a numeric literal (Rouge maps it to Literal.Number.Integer)
-+        ("tensor(x[384])", "384", "constant.numeric.integer.vespa", "tensor-type"),
-         # Comment # → punctuation
-         ("# comment", "#", "punctuation.definition.comment.vespa", "comment"),
-         # Variable $ → punctuation
+     public static final UnboundBooleanFlag USE_ML_MODEL_IMPORT_CACHE = defineFeatureFlag(
+-            "use-ml-model-import-cache", false,
++            "use-ml-model-import-cache", true,
+             List.of("hmusum"), "2026-10-18", "2027-04-18",
+             "Whether to cache imported ONNX, XGBoost and LightGBM models on config server disk between deployments.",
+             "Takes effect on the next deployment.",
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #38436** (2026-11-04): Replace gjoranv with arnej27959 as config-model owner (@arnej27959)
+- **PR #38435** (2026-11-04): Allow selecting summary cache update strategy in services.xml (@arnej27959)
+- **PR #38434** (2026-11-04): Change default value of USE_ML_MODEL_IMPORT_CACHE (@hmusum)
+- **PR #38430** (2026-11-05): Refactoring: Add new string matcher classes (@boeker)
 - **PR #38429** (2026-11-04): Add vectorized quantized vs. quantized dot product kernel (@vekterli)
 - **PR #38428** (2026-11-04): Support ZooKeeper 3.9.7 (@hmusum)
-- **PR #38426** (2026-11-04): Refactoring: Clean up StringMatcher (@boeker)
-- **PR #38425** (2026-11-04): fix tmgrammar (@johansolbakken)
-- **PR #38424** (2026-11-03): Decide Triton use from the application package before provisioning nodes (@glebashnik)
-- **PR #38423** (2026-11-03): Handle field path updates in attribute updater (@johansolbakken)
 
 ---
 
@@ -1563,54 +1386,31 @@ fix tmgrammar
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #38413 from vespa-engine/toregge/propagate-trace-and-span-ids
+## X. Merge pull request #38430 from vespa-engine/boeker/add-new-string-matchers
 
 **RULE**:
-When implementing operations in `container-search/src/main/java/com/yahoo/search/dispatch/rpc/ProtobufSerialization.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in vespa-engine/vespa. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `searchlib/src/vespa/searchlib/attribute/CMakeLists.txt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in vespa-engine/vespa. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `70530021`: Merge pull request #38413 from vespa-engine/toregge/propagate-trace-and-span-ids-through-search-protocol. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `776b9266`: Merge pull request #38430 from vespa-engine/boeker/add-new-string-matchers. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `container-search/src/main/java/com/yahoo/search/dispatch/rpc/ProtobufSerialization.java`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `searchlib/src/vespa/searchlib/attribute/CMakeLists.txt`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-import ai.vespa.telemetry.api.Telemetry;
-import io.opentelemetry.api.trace.Span;
-import io.opentelemetry.context.Context;
-import io.opentelemetry.context.propagation.TextMapSetter;
-        return serializeSearchRequest(createSearchRequestBuilder(query, hits, nodeId, contentShare, requestTimeout));
-    }
-
-    static byte[] serializeSearchRequest(SearchProtocol.SearchRequest.Builder builder) {
-        return createSearchRequest(builder).toByteArray();
-    static SearchProtocol.SearchRequest createSearchRequest(SearchProtocol.SearchRequest.Builder builder) {
-        mergeToSearchRequestFromTracing(builder);
-        return builder.build();
-    }
-
-    static SearchProtocol.SearchRequest.Builder createSearchRequestBuilder(Query query, int hits, String nodeId, double contentShare,
-                                                                           double requestTimeout) {
-
-        return builder;
-    private static void mergeToSearchRequestFromTracing(SearchProtocol.SearchRequest.Builder builder) {
-        var metadataBuilder = createTelemetryMetadataBuilderIfRecording();
-        if (metadataBuilder != null) {
-            builder.setTelemetryMetadata(metadataBuilder);
-        } els
+    string_fuzzy_matcher.cpp
+    string_fuzzy_search_helper.cpp
+    string_regex_matcher.cpp
+    string_regex_search_helper.cpp
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Anti-pattern to NEVER write (induced failure mode):
-        return convertFromQuery(query, hits, nodeId, contentShare, requestTimeout).toByteArray();
-    static SearchProtocol.SearchRequest convertFromQuery(Query query, int hits, String nodeId, double contentShare,
-                                                         double requestTimeout) {
-        return builder.build();
-    static byte[] serializeDocsumRequest(SearchProtocol.DocsumRequest.Builder builder, List<FastHit> documents) {
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `70530021` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `776b9266` are properly handled with clean fallback behavior.

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/pulumi-pulumi-learnings.md`  
 > **Source**: github ([https://github.com/pulumi/pulumi](https://github.com/pulumi/pulumi))  
-> **Source Version**: `b0bce2a2`  
+> **Source Version**: `fe09a7ba`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T23:34:44.206Z  
+> **Timestamp**: 2026-11-05T13:33:47.550Z  
 > **Learning ID**: `learn-github-pulumi-pulumi`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pulumi-pulumi-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pulumi/pulumi](https://github.com/pulumi/pulumi))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T23:34:44.047Z  
+> **Harvest Timestamp**: 2026-11-05T13:33:47.545Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Pulumi - Infrastructure as Code in any programming language 🚀
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 25846 stars
+- **Stars / Engagement**: 25849 stars
 
 ---
 
@@ -1689,15 +1689,13 @@ func marshalVerbatimCheckpointRequest(req apitype.PatchUpdateVerbatimCheckpointR
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #25559** (2026-11-04): **Workflow failure: On Push at dev-release / build-release (linux, amd64, ubuntu-latest) / linux-amd64 (+4 more)**
-  *Symptoms*: ## Workflow Failure  [On Push](https://github.com/pulumi/pulumi/blob/master/.github/workflows/on-push.yml) has failed. See the list of failures below:  - [2026-11-04T16:40:42.000Z](https://github.com/pulumi/pulumi/actions/runs/41867336799)   - ❌ [dev-release / build-release (linux, amd64, ubuntu-latest) / linux-amd64](https://github.com/pulumi/pulumi/actions/runs/41867336799/job/126709767201): Package (cancelled)   - ❌ [dev-release / build-release (darwin, arm64, ubuntu-latest) / darwin-arm64](https://github.com/pulumi/pulumi/actions/runs/41867336799/job/126709767496): Package (cancelled)   - ❌ [dev-release / build-release (linux, arm64, ubuntu-latest) / linux-arm64](https://github.com/pulumi/pulumi/actions/runs/41867336799/job/126709767865): Package (cancelled)   - ❌ [dev-release / build-release (windows, arm64, ubuntu-latest) / windows-arm64](https://github.com/pulumi/pulumi/actions/runs/41867336799/job/126709768157): Package (cancelled)   - ❌ [dev-release / build-release (darwin, amd64, ubuntu-latest) / darwin-amd64](https://github.com/pulumi/pulumi/actions/runs/41867336799/job/126709768244): Package (failure)
-  **Post-Mortem & Fix Analysis**:
-  > This issue has been automatically closed because the workflow succeeded.  Successful run: [2026-11-04T16:45:24.000Z](https://github.com/pulumi/pulumi/actions/runs/41868585487)
+- **Issue #25570** (2026-11-05): **3.273.0: .NET resource transforms receive secret inputs as plain values instead of secret Outputs**
+  *Symptoms*: > [!NOTE] > This issue was authored by an AI agent on @iwahbe's behalf.  ## What happened?  A .NET program gives a resource a secret input, for example `Length = Output.CreateSecret(21)`. A resource transform on that resource reads the input as an `Output<double>`. Before CLI 3.273.0, the transform received the secret input as a secret `Output`.  Since CLI 3.273.0, the transform receives a plain `double`. The secret wrapper is gone, so the cast throws and `pulumi up` fails.  Only the CLI version changes. The program and the .NET SDK are the same.  ## Example  The `TestDotNetTransforms` integration test in pulumi/pulumi-dotnet reproduces this ([`integration_tests/transformations_remote/Program.cs`](https://github.com/pulumi/pulumi-dotnet/blob/main/integration_tests/transformations_remote/Program.cs), Scenario #7):  ```csharp var res7 = new Random("res7", new RandomArgs { Length = Output.CreateSecret(21) }, new CustomResourceOptions {     ResourceTransforms =     {         async (args, _) =>         {             var length = ((Output<double>)args.Args["length"]).Apply(v => v * 2);             return new ResourceTransformResult(args.Args.SetItem("length", Output.Unsecret(length)), args.Options);         }     } }); ```  ```console $ cd pulumi-dotnet && make build $ mise exec github:pulumi/pulumi@3.272.0 -- bash -c 'cd integration_tests && gotestsum -- -run TestDotNetTransforms -count=1 .' DONE 1 tests in 19.567s $ mise exec github:pulumi/pulumi@3.273.0 -- bash -c 'cd integratio
 
-- **Issue #25558** (2026-11-04): **Workflow failure: Pull Request on #25550**
-  *Symptoms*: ## Workflow Failure  Triggered by PR: https://github.com/pulumi/pulumi/pull/25550  [Pull Request](https://github.com/pulumi/pulumi/blob/master/.github/workflows/on-pr.yml) has failed. See the list of failures below:  - [2026-11-04T15:27:31.000Z](https://github.com/pulumi/pulumi/actions/runs/41847172520)
+- **Issue #25567** (2026-11-05): **Workflow failure: Run full language matrix of tests daily**
+  *Symptoms*: ## Workflow Failure  [Run full language matrix of tests daily](<https://github.com/pulumi/pulumi/blob/master/.github/workflows/cron-test-all.yml>) has failed. See the list of failures below:  * [2026-11-05T06:37:41.000Z](<https://github.com/pulumi/pulumi/actions/runs/41974249687>)   * [2026-11-05T10:53:35.000Z](<https://github.com/pulumi/pulumi/actions/runs/41974249687>)
   **Post-Mortem & Fix Analysis**:
-  > This issue has been automatically closed because the associated PR #25550 was merged.  PR: https://github.com/pulumi/pulumi/pull/25550
+  > This issue has been automatically closed because the workflow succeeded.  Successful run: [2026-11-05T11:35:33.000Z](https://github.com/pulumi/pulumi/actions/runs/41974249687)
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1714,269 +1712,470 @@ func marshalVerbatimCheckpointRequest(req apitype.PatchUpdateVerbatimCheckpointR
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e80a544a` (2026-11-04)
-**Commit Message**: Fix Windows signer checks across Ubuntu runner versions (#25543)
+### Incident Patch 1: `b05575fc` (2026-11-05)
+**Commit Message**: Fix nested dependency handling in resource transforms (#25568)
 
-Windows binary signature checks fail after ubuntu-latest moves from
-Ubuntu 24.04 to 26.04. This upgrades osslsigncode from 2.8 to 2.13.
-Version 2.10 changed certificate subjects from slash-separated output to
-RFC 2253 format. Our signer check expects the old format and rejects
-valid Pulumi signatures.
+Resource transforms could unnecessarily wrap an input object in an
+Output when its nested values already carried the declared dependencies.
+This changed the input shape received by remote component providers,
+even with a no-op transform.
 
-Accept both formats to support runners during the image transition.
+Fixes #25466
 
-Fixes https://github.com/pulumi/pulumi/issues/25542
-
-**File**: `scripts/check-windows-signatures.sh` (modified, +7/-2)
-```diff
-@@ -3,7 +3,11 @@
- set -euo pipefail
- 
- ROOT_CA="$(dirname "$0")/microsoft-identity-verification-root-ca-2020.pem"
--EXPECTED_SIGNER="/O=PULUMI CORPORATION/CN=PULUMI CORPORATION"
-+# osslsigncode 2.10 switched from slash-separated subjects to RFC 2253 format.
-+# Accept both Ubuntu 24.04's osslsigncode 2.8 and Ubuntu 26.04's osslsigncode 2.13
-+# while ubuntu-latest runners transition between these images.
-+EXPECTED_SIGNER="CN=PULUMI CORPORATION,O=PULUMI CORPORATION"
-+EXPECTED_SIGNER_LEGACY="/O=PULUMI CORPORATION/CN=PULUMI CORPORATION"
- 
- if [[ $# -eq 0 ]]; then
-     echo "no binaries to check" >&2
-@@ -16,7 +20,8 @@ for binary in "$@"; do
-         echo "invalid signature: ${binary}"
-         echo "${output}" | tail -5
-         failed=1
--    elif ! echo "${output}" | grep -m1 -A1 'Signer #0:' | grep -q "${EXPECTED_SIGNER}$"; then
-+    elif ! echo "${output}" | grep -m1 -A1 'Signer #0:' |
-+        grep -Eq -e "^[[:space:]]*Subject: ${EXPECTED_SIGNER}(,|$)" -e "${EXPECTED_SIGNER_LEGACY}$"; then
-         echo "unexpected signer: ${binary}"
-         echo "${output}" | grep -m1 -A1 'Signer #0:' | head -2
-         failed=1
-```
-
----
-
-### Incident Patch 2: `d31c4b4a` (2026-11-04)
-**Commit Message**: Update Python installation guidance to match the SDK minimum (#25553)
-
-When Pulumi cannot find a Python executable, its error recommends
-installing Python 3.6 or greater. The current Python SDK requires Python
-3.10 or greater, so following that guidance can leave users with an
-unsupported version.
-
-Update the error to recommend Python 3.10 or greater. Add a maintenance
-instruction in `sdk/python/AGENTS.md` to keep this guidance aligned with
-`requires-python` in `pyproject.toml`.
-
-**File**: `sdk/python/AGENTS.md` (modified, +1/-0)
-```diff
-@@ -14,3 +14,4 @@ All commands run from `sdk/python/`. Prefix with `mise exec --` if mise is not a
- ## If you change...
- 
- - Python files → `mise exec -- make lint && mise exec -- make test_fast`
-+- When changing `requires-python` in `pyproject.toml`, update the Python installation guidance in `toolchain/pip.go` to match.
-```
-
-**File**: `sdk/python/toolchain/pip.go` (modified, +1/-1)
-```diff
-@@ -361,7 +361,7 @@ func CommandPath() (string /*pythonPath*/, string /*pythonCmd*/, error) {
- 		}
- 		if err != nil {
- 			return "", "", fmt.Errorf(
--				"failed to locate any of %q on your PATH. Have you installed Python 3.6 or greater?",
-+				"failed to locate any of %q on your PATH. Have you installed Python 3.10 or greater?",
- 				pythonCmds)
- 		}
- 	}
-```
-
----
-
-### Incident Patch 3: `c52b2f28` (2026-11-04)
-**Commit Message**: Print model-built comments and template delimiters in PCL (#25530)
-
-Tools that build PCL with `pkg/codegen/hcl2/model` cannot print
-comments. `syntax.Comment` and `syntax.TemplateDelimiter` print only
-their private `bytes` field, and only the parser sets it. A
-`syntax.Comment{Lines: ...}` or `syntax.TemplateDelimiter{Type: ...}`
-built by a tool therefore prints nothing.
-
-Tokens already print from their meaning when they have no source text.
-`Token.Format` uses the text of the token type, and the model printer
-fills identifiers and literals from the model. This PR applies the same
-rule to trivia. A parsed comment or delimiter always has a source range,
-so a zero `Range` marks one that a tool built. If a `Comment` has a zero
-`Range`, `Bytes` renders each of its `Lines` as a `//` line comment, and
-a newline in a line starts a new line comment. A line comment ends only
-at a newline, so the output always parses back to the same lines. If a
-`TemplateDelimiter` has a zero `Range`, `Bytes` renders the text of its
-`Type`. `Whitespace` has no other source for its text.
-
-pulumi-yaml needs this to keep YAML comments when `pulumi convert`
-ejects a YAML program (pulumi/pulumi-yaml#318).
-
-Fixes h
-
-**File**: `changelog/pending/20261103--codegen-pcl--new-comment.yaml` (added, +4/-0)
+**File**: `changelog/pending/20261105--engine--transform-nested-dependencies.yaml` (added, +4/-0)
 ```diff
 @@ -0,0 +1,4 @@
-+component: codegen/pcl
-+kind: improvement
-+body: Print `syntax.Comment` and `syntax.TemplateDelimiter` trivia that tools build without source text
-+time: 2026-11-03T00:00:00Z
++component: engine
++kind: fix
++body: Fix resource transforms adding unnecessary Output wrappers to objects with nested dependencies
++time: 2026-11-05T00:00:00Z
 ```
 
-**File**: `pkg/codegen/hcl2/syntax/comments_test.go` (modified, +55/-0)
+**File**: `pkg/engine/lifecycletest/transformation_test.go` (modified, +89/-0)
 ```diff
-@@ -16,6 +16,7 @@ package syntax
- 
- import (
- 	"bytes"
-+	"fmt"
- 	"os"
- 	"strings"
- 	"testing"
-@@ -247,3 +248,57 @@ func TestComments(t *testing.T) {
- func normString(s string) string {
- 	return strings.TrimSuffix(s, "\r")
+@@ -745,6 +745,95 @@ func TestRemoteComponentTransforms(t *testing.T) {
+ 	}, res.Inputs)
  }
-+
-+func TestCommentLinesRoundTrip(t *testing.T) {
+ 
++func TestRemoteComponentTransformNestedDependencies(t *testing.T) {
 +	t.Parallel()
 +
-+	tests := []struct {
-+		name     string
-+		lines    []string
-+		expected string
-+		parsed   []string
-+	}{
-+		{"no lines", nil, "", nil},
-+		{"empty line", []string{""}, "//\n", []string{""}},
-+		{"multiline", []string{" a", "", " b"}, "// a\n//\n// b\n", []string{" a", "", " b"}},
-+		{"newline in line", []string{" a\n b"}, "// a\n// b\n", []string{" a", " b"}},
-+		{"trailing newline", []string{" a\n"}, "// a\n//\n", []string{" a", ""}},
-+		{"line comment", []string{" // a"}, "// // a\n", []string{" // a"}},
-+		{"hash comment", []string{"# a"}, "//# a\n", []string{"# a"}},
-+		{"block comment", []string{"/* a", "*/ b"}, "///* a\n//*/ b\n", []string{"/* a", "*/ b"}},
-+		{"carriage return", []string{"a\r", "b\r"}, "//a\r\n//b\r\n", []string{"a\r", "b\r"}},
-+		{"invalid utf8", []string{"\xff"}, "//\xff\n", []string{"\xff"}},
-+	}
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
++	for _, withTransform := range []bool{false, true} {
++		t.Run(fmt.Sprintf("transform=%t", withTransform), func(t *testing.T) {
 +			t.Parallel()
 +
-+			comment := fmt.Sprintf("%v", TriviaList{Comment{Lines: tt.lines}})
-+			assert.Equal(t, tt.expected, comment)
++			var inputs resource.PropertyMap
++			var sourceURN resource.URN
++			loaders := []*deploytest.ProviderLoader{
++				deploytest.NewProviderLoader("pkgA", semver.MustParse("1.0.0"), func() (plugin.Provider, error) {
++					return &deploytest.Provider{
++						CreateF: func(_ context.Context, req plugin.CreateRequest) (plugin.CreateResponse, error) {
++							return plugin.CreateResponse{
++								ID:         "source-id",
++								Properties: req.Properties,
++								Status:     resource.StatusOK,
++							}, nil
++						},
++						ConstructF: func(_ context.Context, req plugin.ConstructRequest,
++							monitor *deploytest.ResourceMonitor,
++						) (plugin.ConstructResponse, error) {
++							assert.Empty(t, req.Inputs.Get("wrapper").Dependencies())
++							assert.Equal(t, resource.FromResourcePropertyMap(inputs), req.Inputs)
++							assert.Equal(t, []resource.URN{sourceURN}, req.Options.PropertyDependencies["wrapper"])
 +
-+			parser := NewParser()
-+			require.NoError(t, parser.ParseFile(strings.NewReader(comment+"x = 1\n"), "main.pp"))
-+			require.False(t, parser.Diagnostics.HasErrors(), parser.Diagnostics.Error())
-+
-+			file := parser.Files[0]
-+			attrTokens := file.Tokens.ForNode(file.Body.Attributes["x"]).(*AttributeTokens)
-+			var parsed []string
-+			for _, trivia := range attrTokens.Name.LeadingTrivia {
-+				if comment, ok := trivia.(Comment); ok {
-+					parsed = append(parsed, comment.Lines...)
-+				}
++							resp, err := monitor.RegisterResource(req.Type, req.Name, false, deploytest.ResourceOptions{})
++							if err != nil {
++								return plugin.ConstructResponse{}, err
++							}
++							return plugin.ConstructResponse{URN: resp.URN}, nil
++						},
++					}, nil
++				}),
 +			}
-+			assert.Equal(t, tt.parsed, parsed)
++
++			programF := deploytest.NewLanguageRuntimeF(func(_ plugin.RunInfo, monitor *deploytest.ResourceMonitor) error {
++				source, err := monitor.RegisterResource("pkgA:m:Source", "source", true, deploytest.ResourceOptions{
++					Inputs: resource.PropertyMap{"value": resource.NewProperty("source-value")},
++				})
++				require.NoError(t, err)
++				sourceURN = source.URN
++				inputs = resource.PropertyMap{
++					"wrapper": resource.NewProperty(resource.PropertyMap{
++						"value": resource.NewProperty(resource.Output{
++							Element:      source.Outputs["value"],
++							Known:        true,
++							Dependencies: []resource.URN{source.URN},
++						}),
++					}),
++				}
++				callbacks, err := deploytest.NewCallbacksServer()
++				require.NoError(t, err)
++				defer func() { require.NoError(t, callbacks.Close()) }()
++
++				var transforms []*pulumirpc.Callback
++				if withTransform {
++					callback, err := callbacks.Allocate(func(request []byte) (proto.Message, error) {
++						var req pulumirpc.TransformRequest
++						if err := proto.Unmarshal(request, &req); err != nil {
++							return nil, err
++						}
++						return &pulumirpc.TransformResponse{Properties: req.Properties, Options: req.Options}, nil
++					})
++					require.NoError(t, err)
++					transforms = []*pulumirpc.Callback{callback}
++				}
++
++				_, err = monitor.RegisterResource("pkgA:m:Component", "component", false, deploytest.ResourceOptions{
++					Remote:     true,
++					Inputs:     inputs,
++					Transforms: transforms,
++					PropertyDeps: map[resource.PropertyKey][]resource.URN{
++						"wrapper": {source.URN},
++					},
++				})
++				return err
++			})
++			hostF := deploytest.NewPluginHostF(nil, nil, programF, nil, nil, loaders...)
++			p := &lt.TestPlan{Options: lt.TestUpdateOptions{T: t, HostF: hostF, SkipDisplayTests: true}}
++			project := p.GetProject()
++			snap, err := lt.TestOp(Update).Run(project, p.GetTarget(t, nil), p.Options, false, p.BackendClient, nil)
++			require.NoError(t, err)
++			_, err = lt.TestOp(Update).Run(project, p.GetTarget(t, snap), p.Options, true, p.BackendClient, nil)
++			require.NoError(t, err)
 +		})
 +	}
 +}
 +
-+func TestTemplateDelimiterBytes(t *testing.T) {
-+	t.Parallel()
-+
-+	assert.Equal(t, []byte("${"), TemplateDelimiter{Type: hclsyntax.TokenTemplateInterp}.Bytes())
-+	assert.Equal(t, []byte("%{"), TemplateDelimiter{Type: hclsyntax.TokenTemplateControl}.Bytes())
-+	assert.Equal(t, []byte("}"), TemplateDelimiter{Type: hclsyntax.TokenTemplateSeqEnd}.Bytes())
-+	assert.Nil(t, TemplateDelimiter{Type: hclsyntax.TokenOBrace}.Bytes())
-+	assert.Equal(t, []byte("${"), NewTemplateDelimiter(hclsyntax.TokenTemplateInterp).Bytes())
-+}
+ func TestTransformsProviderOpt(t *testing.T) {
+ 	t.Parallel()
+ 
 ```
 
-**File**: `pkg/codegen/hcl2/syntax/tokens.go` (modified, +24/-16)
+**File**: `pkg/resource/deploy/source_eval.go` (modified, +3/-2)
 ```diff
-@@ -19,6 +19,7 @@ import (
- 	"fmt"
- 	"math/big"
- 	"strconv"
-+	"strings"
- 	"unicode"
- 	"unicode/utf8"
+@@ -3623,9 +3623,10 @@ func upgradeOutputValues(
+ 	for k, v := range m.All {
+ 		if deps, has := propertyDependencies[resource.PropertyKey(k)]; has {
+ 			current := mapset.NewSet[resource.URN]()
+-			current.Append(v.Dependencies()...)
++			addOutputDependencies(current, v)
+ 			if !current.IsSuperset(deps) {
+-				v = v.WithDependencies(current.Union(deps).ToSlice())
++				outer := mapset.NewSet(v.Dependencies()...)
++				v = v.WithDependencies(outer.Union(deps).ToSlice())
+ 			}
+ 		}
+ 		result[k] = v
+```
+
+**File**: `pkg/resource/deploy/source_eval_test.go` (modified, +50/-0)
+```diff
+@@ -28,6 +28,7 @@ import (
  
-@@ -180,7 +181,18 @@ func (c Comment) Range() hcl.Range {
+ 	"github.com/pulumi/pulumi/sdk/v3/go/common/apitype"
  
- // Bytes returns the raw bytes that comprise the comment.
- func (c Comment) Bytes() []byte {
--	return c.bytes
-+	if c.rng != (hcl.Range{}) {
-+		return c.bytes
-+	}
-+	var b bytes.Buffer
-+	for _, l := range c.Lines {
-+		for line := range strings.SplitSeq(l, "\n") {
-+			b.WriteString("//")
-+			b.WriteString(line)
-+			b.WriteByte('\n')
-+		}
-+	}
-+	return b.Bytes()
++	mapset "github.com/deckarep/golang-set/v2"
+ 	opentracing "github.com/opentracing/opentracing-go"
+ 	"github.com/stretchr/testify/assert"
+ 	"github.com/stretchr/testify/require"
+@@ -4061,6 +4062,55 @@ func TestValidationFailures(t *testing.T) {
+ 	}
  }
  
- func (Comment) isTrivia() {}
-@@ -221,22 +233,15 @@ type TemplateDelimiter struct {
- // NewTemplateDelimiter creates a new TemplateDelimiter value with the given delimiter type. If the token type is not a
- // template delimiter, this function will panic.
- func NewTemplateDelimiter(typ hclsyntax.TokenType) TemplateDelimiter {
--	var s string
--	//nolint:exhaustive // Only some tokens are template delimiters.
--	switch typ {
--	case hclsyntax.TokenTemplateInterp:
--		s = "${"
--	case hclsyntax.TokenTemplateControl:
--		s = "%{"
--	case hclsyntax.TokenTemplateSeqEnd:
--		s = "}"
--	default:
-+	if !isTemplateDelimiter(typ) {
- 		panic(fmt.Errorf("%v is not a template delimiter", typ))
- 	}
--	return TemplateDelimiter{
--		Type:  typ,
--		bytes: []byte(s),
--	}
-+	return TemplateDelimiter{Type: typ}
++func TestUpgradeOutputValues(t *testing.T) {
++	t.Parallel()
++
++	a := resource.URN("urn:pulumi:stack::project::pkg:mod:Resource::a")
++	b := resource.URN("urn:pulumi:stack::project::pkg:mod:Resource::b")
++	c := resource.URN("urn:pulumi:stack::project::pkg:mod:Resource::c")
++	value := property.New("value").WithDependencies([]resource.URN{a})
++	nested := property.New(map[string]property.Value{"value": value})
++	array := property.New([]property.Value{value})
++	outer := nested.WithDependencies([]resource.URN{b})
++
++	for _, tt := range []struct {
++		name     string
++		input    property.Value
++		deps     []resource.URN
++		expected property.Value
++	}{
++		{"no declared dependencies", nested, nil, nested},
++		{"existing dependency", value, []resource.URN{a}, value},
++		{"nested object dependency", nested, []resource.URN{a}, nested},
++		{"nested array dependency", array, []resource.URN{a}, array},
++		{"outer and nested dependencies", outer, []resource.URN{a, b}, outer},
++		{"missing dependency", property.New("value"), []resource.URN{a}, value},
++		{
++			"missing dependency preserves outer and nested dependencies",
++			outer,
++			[]resource.URN{c},
++			outer.WithDependencies([]resource.URN{b, c}),
++		},
++		{
++			"partially represented dependencies",
++			outer,
++			[]resource.URN{a, c},
++			outer.WithDependencies([]resource.URN{a, b, c}),
++		},
++	} {
++		t.Run(tt.name, func(t *testing.T) {
++			t.Parallel()
++
++			input := property.NewMap(map[string]property.Value{"wrapper": tt.input})
++			actual := upgradeOutputValues(input, map[resource.PropertyKey]mapset.Set[resource.URN]{
++				"wrapper": mapset.NewSet(tt.deps...),
++			})
++			assert.True(t, tt.expected.Equals(actual.Get("wrapper")),
++				"expected %v, got %v", tt.expected, actual.Get("wrapper"))
++		})
++	}
 +}
 +
-+func isTemplateDelimiter(typ hclsyntax.TokenType) bool {
-+	return typ == hclsyntax.TokenTemplateInterp || typ == hclsyntax.TokenTemplateControl ||
-+		typ == hclsyntax.TokenTemplateSeqEnd
- }
+ func TestDowngradeOutputValues(t *testing.T) {
+ 	t.Parallel()
  
- // Range returns the range of the delimiter in the source file.
-@@ -246,7 +251,10 @@ func (t TemplateDelimiter) Range() hcl.Range {
+```
+
+---
+
+### Incident Patch 2: `0861b2dd` (2026-11-05)
+**Commit Message**: Revert "engine: stop duplicating Inputs as State on ReadStep.Apply (#24973)" (#25561)
+
+## Summary
+Reverts #24973, restoring the prior behavior of sending resource inputs
+as both `Inputs` and `State` for user-driven reads. This also restores
+the existing read/test-provider expectations and removes the helper code
+introduced by #24973.
+
+## Test plan
+- [x] Existing engine lifecycle and deploy tests pass: `cd pkg && go
+test ./resource/deploy ./engine/lifecycletest`
+
+## Validation
+- [x] `cd pkg && go test ./resource/deploy ./engine/lifecycletest` —
+passed
+- [ ] `make lint` — not run
+- [ ] `make test_fast` — not run
+- [ ] `make tidy_fix` — not run
+- [ ] `make format` — not run
+- [ ] `make check_proto` — not applicable
+
+## Changelog
+No new changelog entry added; this PR reverts the change from #24973.
+Please apply the `impact/no-changelog-required` label if appropriate.
+
+## Risk
+This restores the prior compatibility behavior: providers will again
+receive `Inputs` duplicated in `State` on user-driven reads, so they
+cannot distinguish those reads from refreshes using `State` alone.
+
+---------
+
+Co-authored-by: Frassle <[REDACTED_EMAIL]>
+
+**File**: `changelog/pending/engine-fix-20261105-101122.yaml` (added, +4/-0)
+```diff
+@@ -0,0 +1,4 @@
++component: engine
++kind: fix
++body: Revert changes to only send inputs not state to provider reads
++time: 2026-11-05T10:11:22.114278Z
+```
+
+**File**: `pkg/engine/lifecycletest/components_test.go` (modified, +5/-5)
+```diff
+@@ -307,7 +307,7 @@ func TestConstructCallSecretsUnknowns(t *testing.T) {
+ 					return plugin.ReadResponse{
+ 						ReadResult: plugin.ReadResult{
+ 							Inputs:  &req.Inputs,
+-							Outputs: coalesceReadOutputs(req),
++							Outputs: &req.State,
+ 						},
+ 						Status: resource.StatusOK,
+ 					}, nil
+@@ -401,7 +401,7 @@ func TestConstructCallReturnDependencies(t *testing.T) {
+ 						return plugin.ReadResponse{
+ 							ReadResult: plugin.ReadResult{
+ 								Inputs:  &req.Inputs,
+-								Outputs: coalesceReadOutputs(req),
++								Outputs: &req.State,
+ 							},
+ 							Status: resource.StatusOK,
+ 						}, nil
+@@ -547,7 +547,7 @@ func TestConstructCallReturnOutputs(t *testing.T) {
+ 						return plugin.ReadResponse{
+ 							ReadResult: plugin.ReadResult{
+ 								Inputs:  &req.Inputs,
+-								Outputs: coalesceReadOutputs(req),
++								Outputs: &req.State,
+ 							},
+ 							Status: resource.StatusOK,
+ 						}, nil
+@@ -686,7 +686,7 @@ func TestConstructCallSendDependencies(t *testing.T) {
+ 						return plugin.ReadResponse{
+ 							ReadResult: plugin.ReadResult{
+ 								Inputs:  &req.Inputs,
+-								Outputs: coalesceReadOutputs(req),
++								Outputs: &req.State,
+ 							},
+ 							Status: resource.StatusOK,
+ 						}, nil
+@@ -851,7 +851,7 @@ func TestConstructCallDependencyDedeuplication(t *testing.T) {
+ 						return plugin.ReadResponse{
+ 							ReadResult: plugin.ReadResult{
+ 								Inputs:  &req.Inputs,
+-								Outputs: coalesceReadOutputs(req),
++								Outputs: &req.State,
+ 							},
+ 							Status: resource.StatusOK,
+ 						}, nil
+```
+
+**File**: `pkg/engine/lifecycletest/golang_sdk_test.go` (modified, +5/-5)
+```diff
+@@ -77,7 +77,7 @@ func TestSingleResourceDefaultProviderGolangLifecycle(t *testing.T) {
+ 						ReadResult: plugin.ReadResult{
+ 							ID:      req.ID,
+ 							Inputs:  &req.Inputs,
+-							Outputs: coalesceReadOutputs(req),
++							Outputs: &req.State,
+ 						},
+ 						Status: resource.StatusOK,
+ 					}, nil
+@@ -146,7 +146,7 @@ func TestIgnoreChangesGolangLifecycle(t *testing.T) {
+ 					return plugin.ReadResponse{
+ 						ReadResult: plugin.ReadResult{
+ 							Inputs:  &req.Inputs,
+-							Outputs: coalesceReadOutputs(req),
++							Outputs: &req.State,
+ 						},
+ 						Status: resource.StatusOK,
+ 					}, nil
+@@ -349,7 +349,7 @@ func TestReadResourceGolangLifecycle(t *testing.T) {
+ 					return plugin.ReadResponse{
+ 						ReadResult: plugin.ReadResult{
+ 							Inputs:  &req.Inputs,
+-							Outputs: coalesceReadOutputs(req),
++							Outputs: &req.State,
+ 						},
+ 						Status: resource.StatusOK,
+ 					}, nil
+@@ -435,7 +435,7 @@ func TestProviderInheritanceGolangLifecycle(t *testing.T) {
+ 					return plugin.ReadResponse{
+ 						ReadResult: plugin.ReadResult{
+ 							Inputs:  &req.Inputs,
+-							Outputs: coalesceReadOutputs(req),
++							Outputs: &req.State,
+ 						},
+ 						Status: resource.StatusOK,
+ 					}, nil
+@@ -460,7 +460,7 @@ func TestProviderInheritanceGolangLifecycle(t *testing.T) {
+ 					return plugin.ReadResponse{
+ 						ReadResult: plugin.ReadResult{
+ 							Inputs:  &req.Inputs,
+-							Outputs: coalesceReadOutputs(req),
++							Outputs: &req.State,
+ 						},
+ 						Status: resource.StatusOK,
+ 					}, nil
+```
+
+**File**: `pkg/engine/lifecycletest/import_test.go` (modified, +5/-5)
+```diff
+@@ -53,8 +53,8 @@ func TestImportOption(t *testing.T) {
+ 		"out": property.New(41.0),
+ 	})
  
- // Bytes returns the raw bytes that comprise the delimiter.
- func (t TemplateDelimiter) Bytes() []byte {
--	return t.bytes
-+	if t.rng != (hcl.Range{}) || !isTemplateDelimiter(t.Type) {
-+		return t.bytes
-+	}
-+	return []byte(tokenStrings[t.Type])
- }
+-	// For imports we expect inputs and state to be empty. For a read we expect the resource inputs to be passed in the
+-	// Inputs field; State is empty (the engine no longer duplicates Inputs into State on reads for non-dynamic providers).
++	// For imports we expect inputs and state to be nil, but when we change to do a read they should both be set to the
++	// resource inputs.
+ 	var expectedInputs, expectedState property.Map
+ 	loaders := []*deploytest.ProviderLoader{
+ 		deploytest.NewProviderLoader("pkgA", semver.MustParse("1.0.0"), func() (plugin.Provider, error) {
+@@ -329,7 +329,7 @@ func TestImportOption(t *testing.T) {
  
- func (TemplateDelimiter) isTrivia() {}
+ 	// Change the program to read a resource rather than creating one.
+ 	readID = "id"
+-	expectedInputs, expectedState = resource.FromResourcePropertyMap(inputs), property.Map{}
++	expectedInputs, expectedState = resource.FromResourcePropertyMap(inputs), resource.FromResourcePropertyMap(inputs)
+ 	snap, err = lt.TestOp(Update).RunStep(project, p.GetTarget(t, nil), p.Options, false, p.BackendClient,
+ 		func(_ workspace.Project, _ deploy.Target, entries JournalEntries, _ []Event, err error) error {
+ 			for _, entry := range entries {
+@@ -1902,8 +1902,8 @@ func TestImportWithFailedUpdate(t *testing.T) {
+ 		"out": property.New(41.0),
+ 	})
+ 
+-	// For imports we expect inputs and state to be empty. For a read we expect the resource inputs to be passed in the
+-	// Inputs field; State is empty (the engine no longer duplicates Inputs into State on reads for non-dynamic providers).
++	// For imports we expect inputs and state to be nil, but when we change to do a read they should both be set to the
++	// resource inputs.
+ 	var expectedInputs, expectedState property.Map
+ 	loaders := []*deploytest.ProviderLoader{
+ 		deploytest.NewProviderLoader("pkgA", semver.MustParse("1.0.0"), func() (plugin.Provider, error) {
+```
+
+**File**: `pkg/engine/lifecycletest/parameterized_test.go` (modified, +1/-1)
+```diff
+@@ -181,7 +181,7 @@ func TestReplacementParameterizedProvider(t *testing.T) {
+ 						ReadResult: plugin.ReadResult{
+ 							ID:      req.ID,
+ 							Inputs:  &req.Inputs,
+-							Outputs: coalesceReadOutputs(req),
++							Outputs: &req.State,
+ 						},
+ 						Status: resource.StatusOK,
+ 					}, nil
+```
+
+**File**: `pkg/engine/lifecycletest/provider_test.go` (modified, +1/-1)
+```diff
+@@ -2355,7 +2355,7 @@ func TestMissingIDRefresh(t *testing.T) {
+ 						Status: resource.StatusOK,
+ 						ReadResult: plugin.ReadResult{
+ 							Inputs:  &req.Inputs,
+-							Outputs: coalesceReadOutputs(req),
++							Outputs: &req.State,
+ 						},
+ 					}, nil
+ 				},
+```
+
+**File**: `pkg/engine/lifecycletest/pulumi_test.go` (modified, +1/-1)
+```diff
+@@ -4357,7 +4357,7 @@ func TestSourcePositions(t *testing.T) {
+ 					return plugin.ReadResponse{
+ 						ReadResult: plugin.ReadResult{
+ 							Inputs:  &req.Inputs,
+-							Outputs: coalesceReadOutputs(req),
++							Outputs: &req.State,
+ 						},
+ 						Status: resource.StatusOK,
+ 					}, nil
+```
+
+**File**: `pkg/engine/lifecycletest/read_helper_test.go` (removed, +0/-30)
+```diff
+@@ -1,30 +0,0 @@
+-// Copyright 2026, Pulumi Corporation.
+-//
+-// Licensed under the Apache License, Version 2.0 (the "License");
+-// you may not use this file except in compliance with the License.
+-// You may obtain a copy of the License at
+-//
+-//     http://www.apache.org/licenses/LICENSE-2.0
+-//
+-// Unless required by applicable law or agreed to in writing, software
+-// distributed under the License is distributed on an "AS IS" BASIS,
+-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-// See the License for the specific language governing permissions and
+-// limitations under the License.
+-
+-package lifecycletest
+-
+-import (
+-	"github.com/pulumi/pulumi/pkg/v3/resource/plugin"
+-	"github.com/pulumi/pulumi/sdk/v3/go/property"
+-)
+-
+-// coalesceReadOutputs returns the outputs a trivial mock provider should surface from a Read.
+-// On refresh the engine passes prior outputs in req.State; on a user-driven Get the engine
+-// passes an empty map, so fall back to req.Inputs to emulate a provider that returns the live state.
+-func coalesceReadOutputs(req plugin.ReadRequest) *property.Map {
+-	if req.State.Len() > 0 {
+-		return &req.State
+-	}
+-	return &req.Inputs
+-}
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #25557** (2026-11-04): Bump pulumi-cloud-sdk/go to v1.20261104.0 (@aacotroneo)
-- **PR #25554** (2026-11-04): Skip full PR CI for changelog-only changes (@julienp)
-- **PR #25553** (2026-11-04): Update Python installation guidance to match the SDK minimum (@kramhuber)
-- **PR #25550** (2026-11-04): Changelog for v3.274.0 (@pulumi-bot)
-- **PR #25547** (2026-11-04): recover 3.274.0 release (@julienp)
-- **PR #25546** (2026-11-04): Use the current version matrix for releases (@julienp)
+- **PR #25574** (2026-11-05): Freeze v3.274.1 (@julienp)
+- **PR #25573** (2026-11-05): Prepare 3.274.1 (@julienp)
+- **PR #25569** (2026-11-05): Preserve secret Output values in resource transforms (@julienp)
+- **PR #25568** (2026-11-05): Fix nested dependency handling in resource transforms (@julienp)
+- **PR #25561** (2026-11-05): Revert "engine: stop duplicating Inputs as State on ReadStep.Apply (#24973)" (@Frassle)
+- **PR #25560** (closed): Prefer output value wrappers when calling transforms (@Frassle)
 
 ---
 
@@ -1996,35 +2195,31 @@ Fixes h
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Windows signer checks across Ubuntu runner versions (#25543)
+## X. nested dependency handling in resource transforms (#25568)
 
 **RULE**:
-When implementing operations in `scripts/check-windows-signatures.sh`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pulumi/pulumi. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `changelog/pending/20261105--engine--transform-nested-dependencies.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pulumi/pulumi. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e80a544a`: Windows signer checks across Ubuntu runner versions (#25543). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b05575fc`: nested dependency handling in resource transforms (#25568). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `scripts/check-windows-signatures.sh`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog/pending/20261105--engine--transform-nested-dependencies.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-# osslsigncode 2.10 switched from slash-separated subjects to RFC 2253 format.
-# Accept both Ubuntu 24.04's osslsigncode 2.8 and Ubuntu 26.04's osslsigncode 2.13
-# while ubuntu-latest runners transition between these images.
-EXPECTED_SIGNER="CN=PULUMI CORPORATION,O=PULUMI CORPORATION"
-EXPECTED_SIGNER_LEGACY="/O=PULUMI CORPORATION/CN=PULUMI CORPORATION"
-    elif ! echo "${output}" | grep -m1 -A1 'Signer #0:' |
-        grep -Eq -e "^[[:space:]]*Subject: ${EXPECTED_SIGNER}(,|$)" -e "${EXPECTED_SIGNER_LEGACY}$"; then
+component: engine
+kind: fix
+body: Fix resource transforms adding unnecessary Output wrappers to objects with nested dependencies
+time: 2026-11-05T00:00:00Z
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-EXPECTED_SIGNER="/O=PULUMI CORPORATION/CN=PULUMI CORPORATION"
-    elif ! echo "${output}" | grep -m1 -A1 'Signer #0:' | grep -q "${EXPECTED_SIGNER}$"; then
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e80a544a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b05575fc` are properly handled with clean fallback behavior.

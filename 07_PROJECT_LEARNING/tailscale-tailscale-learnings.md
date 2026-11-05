@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source**: github ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
-> **Source Version**: `a967b7d8`  
+> **Source Version**: `2993b5e6`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T00:36:47.002Z  
+> **Timestamp**: 2026-11-05T11:45:24.347Z  
 > **Learning ID**: `learn-github-tailscale-tailscale`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T00:36:46.898Z  
+> **Harvest Timestamp**: 2026-11-05T11:45:24.232Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The easiest, most secure way to use WireGuard and 2FA.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 38636 stars
+- **Stars / Engagement**: 38672 stars
 
 ---
 
@@ -821,205 +821,245 @@ export const sessionStateStorage: IPNStateStorage = {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a967b7d8` (2026-10-15)
-**Commit Message**: tailcfg: add a nodecap to disable hybrid handshakes
+### Incident Patch 1: `2993b5e6` (2026-11-05)
+**Commit Message**: cmd/k8s-operator: move Recorder reconciler into its own package (#20891)
 
-Updates tailscale/corp#50068
+Move the Recorder reconciler and its object specs into
+k8s-operator/reconciler/recorder, following the earlier ProxyClass,
+DNSConfig and nameserver moves, and switch it to the shared finalizer,
+resource tracker and CreateOrUpdate helpers.
 
-Signed-off-by: David Anderson <[REDACTED_EMAIL]>
-Change-Id: I07fc56c2eff6ab54ac9eec8ce33ea1d16a6a6964
+Hoist two duplicated helpers into tailscaled.PrefsFromStateSecret and
+reconciler.IsOptimisticLockError, and add
+k8s-operator/reconciler/reconcilertest for the test helpers each package
+had copied, including one fake Tailscale API client in place of four.
 
-**File**: `tailcfg/nodecap/nodecap.go` (modified, +9/-0)
+No behaviour change; the Recorder's watches and labels are untouched.
+
+Fixes tailscale/corp#37086
+
+Signed-off-by: David Bond <[REDACTED_EMAIL]>
+
+**File**: `cmd/k8s-operator/api-server-proxy-pg.go` (modified, +3/-3)
 ```diff
-@@ -91,6 +91,15 @@ const (
- 	// server, DERP servers, etc.)
- 	DebugTSDNSResolution Cap = "https://tailscale.com/cap/debug-ts-dns-resolution"
+@@ -12,7 +12,6 @@ import (
+ 	"fmt"
+ 	"maps"
+ 	"slices"
+-	"strings"
  
-+	// DisableHybridHandshakes indicates that the node should not use hybrid
-+	// PQ wireguard handshakes to communicate with peers that support hybrid
-+	// handshakes.
-+	// 2026-11-03: This is a temporary panic disable attribute intended to reduce
-+	// the risk of the initial rollout of hybrid handshakes. It will eventually
-+	// be deleted to remove the control server's ability to downgrade hybrid
-+	// handshakes.
-+	DisableHybridHandshakes Cap = "https://tailscale.com/cap/disable-hybrid-handshakes"
-+
- 	// FunnelPorts specifies the ports that the Funnel is available on.
- 	// The ports are specified as a comma-separated list of port numbers or port
- 	// ranges (e.g. "80,443,8080-8090") in the ports query parameter.
+ 	"go.uber.org/zap"
+ 	corev1 "k8s.io/api/core/v1"
+@@ -27,6 +26,7 @@ import (
+ 
+ 	tsoperator "tailscale.com/k8s-operator"
+ 	tsapi "tailscale.com/k8s-operator/apis/v1alpha1"
++	"tailscale.com/k8s-operator/reconciler"
+ 	"tailscale.com/k8s-operator/tsclient"
+ 	"tailscale.com/kube/k8s-proxy/conf"
+ 	"tailscale.com/kube/kubetypes"
+@@ -85,7 +85,7 @@ func (r *KubeAPIServerTSServiceReconciler) Reconcile(ctx context.Context, req re
+ 
+ 	if markedForDeletion(pg) {
+ 		logger.Debugf("ProxyGroup is being deleted, ensuring any created resources are cleaned up")
+-		if err = r.maybeCleanup(ctx, serviceName, pg, logger, tsClient); err != nil && strings.Contains(err.Error(), optimisticLockErrorMsg) {
++		if err = r.maybeCleanup(ctx, serviceName, pg, logger, tsClient); reconciler.IsOptimisticLockError(err) {
+ 			logger.Infof("optimistic lock error, retrying: %s", err)
+ 			return res, nil
+ 		}
+@@ -95,7 +95,7 @@ func (r *KubeAPIServerTSServiceReconciler) Reconcile(ctx context.Context, req re
+ 
+ 	err = r.maybeProvision(ctx, serviceName, pg, logger, tsClient)
+ 	if err != nil {
+-		if strings.Contains(err.Error(), optimisticLockErrorMsg) {
++		if reconciler.IsOptimisticLockError(err) {
+ 			logger.Infof("optimistic lock error, retrying: %s", err)
+ 			return reconcile.Result{}, nil
+ 		}
 ```
 
----
-
-### Incident Patch 2: `274a3f20` (2026-11-04)
-**Commit Message**: feature/conn25: roll back the address assignment when the send queue is full (#22165)
-
-reserveAddresses inserts the assignment into c.assignments before
-enqueueing it, and leaves it there when the enqueue fails. The connector
-never learns about such a mapping, and nothing tell it later.
-Add addrAssignments.remove and use it to undo the insert and return both
-addresses to their pools when enqueueAddressAssignment fails. The caller
-still gets a SERVFAIL, but the next DNS query starts from a clean slate.
-
-Fixes https://github.com/tailscale/corp/issues/50917
-
-Change-Id: I5a387bdcf5a5e87e2dca44867e88ed6149678729
-
-Signed-off-by: Mazdak Nasab <[REDACTED_EMAIL]>
-
-**File**: `feature/conn25/addrAssignments.go` (modified, +20/-4)
+**File**: `cmd/k8s-operator/api-server-proxy-pg_test.go` (modified, +2/-1)
 ```diff
-@@ -145,13 +145,29 @@ func (a *addrAssignments) popExpired(now time.Time) *addrs {
- 		// TODO(mzb/fran): This is an expensive operation we could consider optimizing.
- 		heap.Push(&a.byExpiresAt, candidate)
- 	}
--	delete(a.byMagicIP, v.magic)
--	delete(a.byTransitIP, v.connectorAddr.transit)
--	dd := domainDst{domain: v.domain, dst: v.dst}
--	delete(a.byDomainDst, dd)
-+	a.deleteFromNonHeapIndexes(v)
- 	return v
- }
+@@ -20,6 +20,7 @@ import (
  
-+// remove removes the provided address assignment from all the indexes.
-+func (a *addrAssignments) remove(as *addrs) {
-+	a.deleteFromNonHeapIndexes(as)
-+	for i, v := range a.byExpiresAt {
-+		if v == as {
-+			heap.Remove(&a.byExpiresAt, i)
-+			break
-+		}
-+	}
-+}
-+
-+// deleteFromNonHeapIndexes removes as from every index except byExpiresAt,
-+// which the caller is responsible for.
-+func (a *addrAssignments) deleteFromNonHeapIndexes(as *addrs) {
-+	delete(a.byMagicIP, as.magic)
-+	delete(a.byTransitIP, as.connectorAddr.transit)
-+	delete(a.byDomainDst, domainDst{domain: as.domain, dst: as.dst})
-+}
-+
- func (a *addrAssignments) updateExpiry(as *addrs, expiresIn time.Duration) {
- 	now := a.clock.Now()
- 	as.expiresAt = now.Add(expiresIn)
+ 	tsoperator "tailscale.com/k8s-operator"
+ 	tsapi "tailscale.com/k8s-operator/apis/v1alpha1"
++	"tailscale.com/k8s-operator/reconciler/tailscaled"
+ 	"tailscale.com/k8s-operator/tsclient"
+ 	"tailscale.com/kube/k8s-proxy/conf"
+ 	"tailscale.com/kube/kubetypes"
+@@ -199,7 +200,7 @@ func TestAPIServerProxyReconciler(t *testing.T) {
+ 
+ 	// Simulate Pod prefs updated with advertised services; should see Configured condition updated to true.
+ 	mustUpdate(t, fc, ns, "test-pg-0", func(o *corev1.Secret) {
+-		var p prefs
++		var p tailscaled.Prefs
+ 		if err = json.Unmarshal(o.Data["test"], &p); err != nil {
+ 			t.Errorf("failed to unmarshal preferences: %v", err)
+ 		}
 ```
 
-**File**: `feature/conn25/client.go` (modified, +4/-2)
+**File**: `cmd/k8s-operator/connector.go` (modified, +2/-2)
 ```diff
-@@ -200,8 +200,10 @@ func (c *client) reserveAddresses(appName string, domain dnsname.FQDN, dst netip
- 		transitPool.returnAddr(tip)
- 		return nil, err
- 	}
--	err = c.enqueueAddressAssignment(as)
--	if err != nil {
-+	if err := c.enqueueAddressAssignment(as); err != nil {
-+		c.assignments.remove(as)
-+		magicPool.returnAddr(mip)
-+		transitPool.returnAddr(tip)
- 		return nil, err
- 	}
- 	return as, nil
+@@ -11,7 +11,6 @@ import (
+ 	"fmt"
+ 	"net/netip"
+ 	"slices"
+-	"strings"
+ 	"sync"
+ 	"time"
+ 
+@@ -28,6 +27,7 @@ import (
+ 
+ 	tsoperator "tailscale.com/k8s-operator"
+ 	tsapi "tailscale.com/k8s-operator/apis/v1alpha1"
++	"tailscale.com/k8s-operator/reconciler"
+ 	"tailscale.com/kube/kubetypes"
+ 	"tailscale.com/net/netutil"
+ 	"tailscale.com/net/tsaddr"
+@@ -146,7 +146,7 @@ func (a *ConnectorReconciler) Reconcile(ctx context.Context, req reconcile.Reque
+ 	if err = a.maybeProvisionConnector(ctx, logger, cn); err != nil {
+ 		reason := reasonConnectorCreationFailed
+ 		message := fmt.Sprintf(messageConnectorCreationFailed, err)
+-		if strings.Contains(err.Error(), optimisticLockErrorMsg) {
++		if reconciler.IsOptimisticLockError(err) {
+ 			reason = reasonConnectorCreating
+ 			message = fmt.Sprintf("optimistic lock error, retrying: %s", err)
+ 			err = nil
 ```
 
-**File**: `feature/conn25/client_test.go` (modified, +89/-0)
+**File**: `cmd/k8s-operator/depaware.txt` (modified, +1/-0)
 ```diff
-@@ -212,6 +212,95 @@ func TestReserveAddressesNoLeakOnFailure(t *testing.T) {
+@@ -774,6 +774,7 @@ tailscale.com/cmd/k8s-operator dependencies: (generated by github.com/tailscale/
+         tailscale.com/k8s-operator/reconciler/peerrelay              from tailscale.com/cmd/k8s-operator
+         tailscale.com/k8s-operator/reconciler/proxyclass             from tailscale.com/cmd/k8s-operator
+         tailscale.com/k8s-operator/reconciler/proxygrouppolicy       from tailscale.com/cmd/k8s-operator
++        tailscale.com/k8s-operator/reconciler/recorder               from tailscale.com/cmd/k8s-operator
+         tailscale.com/k8s-operator/reconciler/staticendpoints        from tailscale.com/cmd/k8s-operator
+         tailscale.com/k8s-operator/reconciler/tailnet                from tailscale.com/cmd/k8s-operator
+         tailscale.com/k8s-operator/reconciler/tailscaled             from tailscale.com/k8s-operator/reconciler/peerrelay+
+```
+
+**File**: `cmd/k8s-operator/egress-services.go` (modified, +2/-1)
+```diff
+@@ -34,6 +34,7 @@ import (
+ 
+ 	tsoperator "tailscale.com/k8s-operator"
+ 	tsapi "tailscale.com/k8s-operator/apis/v1alpha1"
++	"tailscale.com/k8s-operator/reconciler"
+ 	"tailscale.com/kube/egressservices"
+ 	"tailscale.com/kube/kubetypes"
+ 	"tailscale.com/tstime"
+@@ -161,7 +162,7 @@ func (esr *egressSvcsReconciler) Reconcile(ctx context.Context, req reconcile.Re
  	}
- }
  
-+// TestReserveAddressesRollbackOnQueueFull checks that an assignment that
-+// couldn't be enqueued isn't left behind. The connector never learns about such
-+// an assignment, and nothing will tell it later, so keeping it would mean every
-+// later lookup for the same domain/dst returns a mapping the connector can't
-+// use.
-+func TestReserveAddressesRollbackOnQueueFull(t *testing.T) {
-+	for _, tt := range []struct {
-+		name string
-+		dst  netip.Addr
-+	}{
-+		{
-+			name: "v4",
-+			dst:  netip.MustParseAddr("0.0.0.1"),
-+		},
-+		{
-+			name: "v6",
-+			dst:  netip.MustParseAddr("::1"),
-+		},
-+	} {
-+		t.Run(tt.name, func(t *testing.T) {
-+			const appName = "a"
-+			domain := must.Get(dnsname.ToFQDN("example.com."))
-+			c := newConn25(t.Logf).client
-+			c.v4MagicIPPool = newIPPool(mustIPSetFromPrefix("100.64.0.0/24"))
-+			c.v6MagicIPPool = newIPPool(mustIPSetFromPrefix("fd7a:115c:a1e0:a99c:0100::/80"))
-+			c.v4TransitIPPool = newIPPool(mustIPSetFromPrefix("169.254.0.0/24"))
-+			c.v6TransitIPPool = newIPPool(mustIPSetFromPrefix("fd7a:115c:a1e0:a99c:0200::/80"))
-+
-+			magicPool, transitPool := c.v4MagicIPPool, c.v4TransitIPPool
-+			if tt.dst.Is6() {
-+				magicPool, transitPool = c.v6MagicIPPool, c.v6TransitIPPool
-+			}
-+
-+			// Nothing reads this channel, so the first enqueue fills it and the
-+			// second one fails.
-+			c.addrsCh = make(chan addrs, 1)
-+			if _, err := c.reserveAddresses(appName, "filler.example.com.", tt.dst, 10, testConnectorPeer, ""); err != nil {
-+				t.Fatal(err)
-+			}
-+
-+			_, err := c.reserveAddresses(appName, domain, tt.dst, 10, testConnectorPeer, "")
-+			if !errors.Is(err, errQueueFull) {
-+				t.Fatalf("want errQueueFull, got %v", err)
-+			}
-+
-+			// Only the filler assignment should remain, in every index.
-+			if got := len(c.assignments.byMagicIP); got != 1 {
-+				t.Errorf("want 1 entry in byMagicIP, got %d", got)
-+			}
-+			if got := len(c.assignments.byTransitIP); got != 1 {
-+				t.Errorf("want 1 entry in byTransitIP, got %d", got)
-+			}
-+			if got := len(c.assignments.byDomainDst); got != 1 {
-+				t.Errorf("want 1 entry in byDomainDst, got %d", got)
-+			}
-+			if got := c.assignments.byExpiresAt.Len(); got != 1 {
-+				t.Errorf("want 1 entry in byExpiresAt, got %d", got)
-+			}
-+			if _, ok := c.assignments.lookupByDomainDst(domain, tt.dst); ok {
-+				t.Error("dropped assignment is still reachable by domain/dst")
-+			}
-+
-+			// Both addresses should be back in their pools.
-+			if got := magicPool.inUseCount(); got != 1 {
-+				t.Errorf("magic pool has %d addresses in use, want 1 (the filler)", got)
-+			}
-+			if got := transitPool.inUseCount(); got != 1 {
-+				t.Errorf("transit pool has %d addresses in use, want 1 (the filler)", got)
-+			}
-+
-+			// Once there's room again, the next attempt gets a fresh
-+			// assignment and actually enqueues it.
-+			<-c.addrsCh
-+			as, err := c.reserveAddresses(appName, domain, tt.dst, 10, testConnectorPeer, "")
-+			if err != nil {
-+				t.Fatal(err)
-+			}
-+			select {
-+			case queued := <-c.addrsCh:
-+				if queued.connectorAddr.transit != as.connectorAddr.transit {
-+					t.Errorf("queued transit IP %v, want %v", queued.connectorAddr.transit, as.connectorAddr.transit)
-+				}
-+			default:
-+				t.Error("reservation after rollback didn't enqueue an assignment")
-+			}
-+		})
-+	}
-+}
-+
- func TestTransitIPConnMapping(t *testing.T) {
- 	conn25 := newConn25(t.Logf)
+ 	if err := esr.maybeProvision(ctx, svc, lg); err != nil {
+-		if strings.Contains(err.Error(), optimisticLockErrorMsg) {
++		if reconciler.IsOptimisticLockError(err) {
+ 			lg.Infof("optimistic lock error, retrying: %s", err)
+ 		} else {
+ 			return reconcile.Result{}, err
+```
+
+**File**: `cmd/k8s-operator/ingress-for-pg.go` (modified, +2/-1)
+```diff
+@@ -34,6 +34,7 @@ import (
+ 	"tailscale.com/ipn"
+ 	tsoperator "tailscale.com/k8s-operator"
+ 	tsapi "tailscale.com/k8s-operator/apis/v1alpha1"
++	"tailscale.com/k8s-operator/reconciler/tailscaled"
+ 	"tailscale.com/k8s-operator/tsclient"
+ 	"tailscale.com/kube/kubetypes"
+ 	"tailscale.com/tailcfg"
+@@ -851,7 +852,7 @@ func numberPodsAdvertising(ctx context.Context, cl client.Client, tsNamespace, p
  
+ 	var count int
+ 	for _, secret := range secrets.Items {
+-		prefs, ok, err := getDevicePrefs(&secret)
++		prefs, ok, err := tailscaled.PrefsFromStateSecret(&secret)
+ 		if err != nil {
+ 			return 0, fmt.Errorf("error getting node metadata: %w", err)
+ 		}
+```
+
+**File**: `cmd/k8s-operator/ingress-for-pg_test.go` (modified, +7/-6)
+```diff
+@@ -30,6 +30,7 @@ import (
+ 	"tailscale.com/ipn"
+ 	tsoperator "tailscale.com/k8s-operator"
+ 	tsapi "tailscale.com/k8s-operator/apis/v1alpha1"
++	"tailscale.com/k8s-operator/reconciler/tailscaled"
+ 	"tailscale.com/k8s-operator/tsclient"
+ 	"tailscale.com/kube/kubetypes"
+ 	"tailscale.com/tailcfg"
+@@ -563,7 +564,7 @@ func TestIngressPGReconciler_HTTPEndpoint(t *testing.T) {
+ 
+ 	// Add the Tailscale Service to prefs to have the Ingress recognised as ready.
+ 	mustUpdate(t, fc, "operator-ns", "test-pg-0", func(o *corev1.Secret) {
+-		var p prefs
++		var p tailscaled.Prefs
+ 		var err error
+ 		if err = json.Unmarshal(o.Data["test"], &p); err != nil {
+ 			t.Errorf("failed to unmarshal preferences: %v", err)
+@@ -689,7 +690,7 @@ func TestIngressPGReconciler_HTTPRedirect(t *testing.T) {
+ 
+ 	// Add the Tailscale Service to prefs to have the Ingress recognised as ready.
+ 	mustUpdate(t, fc, "operator-ns", "test-pg-0", func(o *corev1.Secret) {
+-		var p prefs
++		var p tailscaled.Prefs
+ 		var err error
+ 		if err = json.Unmarshal(o.Data["test"], &p); err != nil {
+ 			t.Errorf("failed to unmarshal preferences: %v", err)
+@@ -824,7 +825,7 @@ func TestIngressPGReconciler_HTTPEndpointAndRedirectConflict(t *testing.T) {
+ 
+ 	// Add the Tailscale Service to prefs to have the Ingress recognised as ready.
+ 	mustUpdate(t, fc, "operator-ns", "test-pg-0", func(o *corev1.Secret) {
+-		var p prefs
++		var p tailscaled.Prefs
+ 		var err error
+ 		if err = json.Unmarshal(o.Data["test"], &p); err != nil {
+ 			t.Errorf("failed to unmarshal preferences: %v", err)
+@@ -1151,7 +1152,7 @@ func createPGResources(t *testing.T, fc client.Client, pgName string) {
+ 	}
+ 	mustCreate(t, fc, pgCfgSecret)
+ 
+-	pr := prefs{}
++	pr := tailscaled.Prefs{}
+ 	pr.Config.UserProfile.LoginName = "test.ts.net"
+ 	pr.Config.NodeID = "test"
+ 
+@@ -1168,8 +1169,8 @@ func createPGResources(t *testing.T, fc client.Client, pgName string) {
+ 			Labels:    pgSecretLabels(pgName, kubetypes.LabelSecretTypeState),
+ 		},
+ 		Data: map[string][]byte{
+-			currentProfileKey: []byte("test"),
+-			"test":            p,
++			string(ipn.CurrentProfileStateKey): []byte("test"),
++			"test":                             p,
+ 		},
+ 	}
+ 	mustCreate(t, fc, pgStateSecret)
+```
+
+**File**: `cmd/k8s-operator/ingress.go` (modified, +2/-1)
+```diff
+@@ -25,6 +25,7 @@ import (
+ 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
+ 
+ 	"tailscale.com/ipn"
++	"tailscale.com/k8s-operator/reconciler"
+ 	"tailscale.com/kube/kubetypes"
+ 	"tailscale.com/types/opt"
+ 	"tailscale.com/util/clientmetric"
+@@ -82,7 +83,7 @@ func (a *IngressReconciler) Reconcile(ctx context.Context, req reconcile.Request
+ 	}
+ 
+ 	if err := a.maybeProvision(ctx, logger, ing); err != nil {
+-		if strings.Contains(err.Error(), optimisticLockErrorMsg) {
++		if reconciler.IsOptimisticLockError(err) {
+ 			logger.Infof("optimistic lock error, retrying: %s", err)
+ 		} else {
+ 			return reconcile.Result{}, err
 ```
 
 #### Recent Merged Pull Requests:
@@ -1048,36 +1088,32 @@ Signed-off-by: Mazdak Nasab <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. tailcfg: add a nodecap to disable hybrid handshakes
+## X. cmd/k8s-operator: move Recorder reconciler into its own package (#20891)
 
 **RULE**:
-When implementing operations in `tailcfg/nodecap/nodecap.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cmd/k8s-operator/api-server-proxy-pg.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a967b7d8`: tailcfg: add a nodecap to disable hybrid handshakes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2993b5e6`: cmd/k8s-operator: move Recorder reconciler into its own package (#20891). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `tailcfg/nodecap/nodecap.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cmd/k8s-operator/api-server-proxy-pg.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	// DisableHybridHandshakes indicates that the node should not use hybrid
-	// PQ wireguard handshakes to communicate with peers that support hybrid
-	// handshakes.
-	// 2026-11-03: This is a temporary panic disable attribute intended to reduce
-	// the risk of the initial rollout of hybrid handshakes. It will eventually
-	// be deleted to remove the control server's ability to downgrade hybrid
-	// handshakes.
-	DisableHybridHandshakes Cap = "https://tailscale.com/cap/disable-hybrid-handshakes"
-
+	"tailscale.com/k8s-operator/reconciler"
+		if err = r.maybeCleanup(ctx, serviceName, pg, logger, tsClient); reconciler.IsOptimisticLockError(err) {
+		if reconciler.IsOptimisticLockError(err) {
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+	"strings"
+		if err = r.maybeCleanup(ctx, serviceName, pg, logger, tsClient); err != nil && strings.Contains(err.Error(), optimisticLockErrorMsg) {
+		if strings.Contains(err.Error(), optimisticLockErrorMsg) {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a967b7d8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2993b5e6` are properly handled with clean fallback behavior.

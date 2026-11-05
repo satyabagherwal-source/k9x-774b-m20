@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kgateway-dev-kgateway-learnings.md`  
 > **Source**: github ([https://github.com/kgateway-dev/kgateway](https://github.com/kgateway-dev/kgateway))  
-> **Source Version**: `817da822`  
+> **Source Version**: `a723f1e0`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T19:08:54.828Z  
+> **Timestamp**: 2026-11-05T08:50:18.674Z  
 > **Learning ID**: `learn-github-kgateway-dev-kgateway`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kgateway-dev-kgateway-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/kgateway-dev/kgateway](https://github.com/kgateway-dev/kgateway))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T19:08:54.823Z  
+> **Harvest Timestamp**: 2026-11-05T08:50:15.026Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The Cloud-Native API Gateway and AI Gateway
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 5733 stars
+- **Stars / Engagement**: 5734 stars
 
 ---
 
@@ -930,11 +930,11 @@ func FileDataSource(s string) *envoycorev3.DataSource {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #14976** (2026-11-04): **[2.1] tests: Update expired certs**
-  *Symptoms*: # Description  Fix expired certs on v2.1.x. Backport of #14364 (2.2) and #14362 (2.3).  The test fixture certificates expired on July 7, 2026, so these e2e tests fail on every v2.1.x PR:  - `TestBackendTLSPolicyAndStatus` (agent-gateway-cluster, cluster-four) - `TestOTelTracingSecure` (cluster-three) - `TestCustomMtlsWithIstioAndBcp` (cluster-six)  Example failing run: https://github.com/kgateway-dev/kgateway/actions/runs/41844461623  This PR applies the same certificate data as #14364. The only change is the file paths, because v2.1.x still uses `test/kubernetes/e2e/` instead of `test/e2e/`. The new certificates are valid until July 2036.  # Change Type  /kind cleanup  # Changelog  ```release-note NONE ```  # Additional Notes  `TestZeroDowntimeRolloutAgentGateway` also failed in the same run (4 of 800 requests got "connection refused"). That failure does not look certificate-related and might be a flake.  🤖 Generated with [Claude Code](https://claude.com/claude-code) 
+- **Issue #14980** (2026-11-05): **e2e: add Gateway.SendWithResponse and Gateway.Do, and fix ExecuteRequest body truncation**
+  *Symptoms*: # Description  Adds two methods to `common.Gateway` and uses them to move the last plain-HTTP Gateway requests that read the response off `kubectl exec` curl. Also fixes a `curl.ExecuteRequest` bug that truncated response bodies.  **What changed:** - `Gateway.SendWithResponse`: `Send` that also returns the matching response. The body is buffered, so the caller can read it after the matcher did. - `Gateway.Do`: sends one unchecked request, for callers that inspect the response with their own logic inside their own `Eventually`/`Consistently` loops. - Migrated to these methods:   - `transformation`: all 25 subtests go through one request site, which parses the echoed request body. The suite no longer deploys the curl pod.   - `xds_starvation` (`gatewayResponse`): it no longer deploys the curl pod either.   - `xds_warming` (`assertGatewayEventuallyServes`, `gatewayResponse`): it uses `common.BaseGateway` and keeps the curl pod for the controller `/metrics` scrape. - **Fix:** `curl.ExecuteRequest` with `WithConnectionTimeout` wrapped the request in a context timeout and canceled it on return. A caller reading a body larger than one read chunk then got `context canceled` partway through (a 100 KB body was cut off at about 12 KB). The client's `Timeout` already bounds the whole exchange, including the body read, so the context timeout is gone. Includes a regression test. - `curl.ExecuteRequest` now disables keep-alives. It builds a fresh transport for every request and never reuses
 
-- **Issue #14972** (2026-11-03): **[2.5] fix(deployer): drop removed Envoy runtime guard and deprecated bootstrap field (#14971)**
-  *Symptoms*: # Description  Backport of #14971 to v2.5.x.  **Motivation:** kgateway v2.5.0 ships Envoy 1.39.6, and every proxy pod logs an `envoy_bug` with a stack trace on startup because the bootstrap sets the removed runtime guard `envoy.restart_features.use_eds_cache_for_ads`. A future Envoy release will reject it.  **What changed:** (cherry-picked cleanly, identical diff to #14971) - Removed the guard (and the now-empty `static_layer`) from the Envoy Helm template. No behavior change: Envoy's EDS cache for ADS has been unconditional since 1.37. - Moved the Istio `gateway_proxy_sds` cluster off the deprecated `Cluster.http2_protocol_options` field to `typed_extension_protocol_options`. - Added a `validator.FailOnWarnings()` option and enabled it for the deployer bootstrap goldens, so removed or deprecated bootstrap config fails tests instead of only logging at runtime. The runtime validator is unchanged. - Added an end-to-end validator test and refreshed the deployer goldens.  **Related issues:** Fixes #14970 on v2.5.x  # Change Type  /kind fix  # Changelog  ```release-note Fixed proxy pods logging an `envoy_bug` error on startup about the removed runtime guard `envoy.restart_features.use_eds_cache_for_ads`, and moved the Istio SDS cluster off the deprecated `http2_protocol_options` field. ```  # Additional Notes  Validator, deployer, `ir`, and helm tests pass locally on this branch. 
+- **Issue #14978** (2026-11-04): **test(e2e): apply and delete test manifests without shelling out to kubectl**
+  *Symptoms*: # Description  **Motivation:** e2e suites shelled out to `kubectl` to apply and delete test manifests. That is slow, and a namespace set in the local kubeconfig changes where unnamespaced resources land, so tests can pass in CI and fail locally (one of the items in #12981).  **What changed:** - New `cluster.Context.Manifests()` helper (`test/e2e/testutils/cluster/manifests.go`) that applies and deletes YAML through the API server:   - Apply is a server-side apply with the same `istio-ci` field manager the kubectl helpers use, so the two can be mixed on the same objects. Files apply in order, documents within a file in order.   - Delete ignores objects that are already gone and waits (bounded at 2 minutes) for the rest to disappear, matching `kubectl delete`.   - `InNamespace`, `WithGracePeriod` and `WithoutWait` replace the `-n`, `--grace-period 0` and `--wait=false` flags callers passed.   - Unnamespaced resources resolve to the client's default namespace (`default`), never the kubeconfig's. - Every kubectl `ApplyFile`/`DeleteFile`/`DeleteFileSafe`/`Apply`/`Delete`/`Create` call in the e2e suites (~80 calls, 23 files) moves onto it. The httproute suite's TCPRoute CRD save/restore uses a client `Get`/`Create` instead of `kubectl get -o yaml` + `kubectl create`. - Unit test for the delete path: missing objects, namespace defaulting, namespace conflicts, `WithoutWait`.  **Related issues:** part of #12981  # Change Type  /kind test  # Changelog  ```release-n
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -951,1242 +951,502 @@ func FileDataSource(s string) *envoycorev3.DataSource {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `817da822` (2026-11-04)
-**Commit Message**: test(e2e): give Tracing and BackendConfigPolicy distinct, suite-level Pods (#14967)
+### Incident Patch 1: `a723f1e0` (2026-11-05)
+**Commit Message**: e2e: add Gateway.SendWithResponse and Gateway.Do, and fix ExecuteRequest body truncation (#14980)
 
 Signed-off-by: omar <[REDACTED_EMAIL]>
 
-**File**: `test/e2e/features/backendconfigpolicy/suite.go` (modified, +1/-1)
+**File**: `pkg/utils/requestutils/curl/native_request.go` (modified, +7/-7)
 ```diff
-@@ -73,7 +73,7 @@ func NewTestingSuite(ctx context.Context, testInst *e2e.TestInstallation) suite.
- 		},
- 	}
- 	return &testingSuite{
--		BaseTestingSuite: base.NewBaseTestingSuite(ctx, testInst, base.TestCase{}, testCases),
-+		BaseTestingSuite: base.NewBaseTestingSuite(ctx, testInst, base.TestCase{Manifests: []string{backendsManifest}}, testCases),
- 	}
- }
- 
-```
-
-**File**: `test/e2e/features/backendconfigpolicy/testdata/backends.yaml` (added, +196/-0)
-```diff
-@@ -0,0 +1,196 @@
-+# Backend Pods shared by every test in the suite. They are applied once at suite setup
-+# rather than per test, so a test never reapplies a Pod while the previous test's copy is
-+# still terminating. Each Pod has its own name and app.kubernetes.io/name label; the
-+# per-test manifests own the Services that select them.
-+apiVersion: v1
-+kind: Pod
-+metadata:
-+  name: example-nginx
-+  namespace: kgateway-base
-+  labels:
-+    app.kubernetes.io/name: example-nginx
-+spec:
-+  terminationGracePeriodSeconds: 0
-+  containers:
-+    - name: nginx
-+      image: nginx:1.28.0
-+      ports:
-+        - containerPort: 80
-+          name: http-web-svc
-+---
-+# nginx cert and key generated via:
-+# openssl req -x509 -out ex.crt -keyout ex.key \
-+#   -newkey rsa:2048 -days 365 -nodes -sha256 \
-+#   -subj '/CN=example.com' -extensions EXT -config <( \
-+#    printf "[dn]\nCN=example.com\n[req]\ndistinguished_name = dn\n[EXT]\nsubjectAltName=DNS:example.com\nkeyUsage=digitalSignature\nextendedKeyUsage=serverAuth")
-+apiVersion: v1
-+kind: ConfigMap
-+metadata:
-+  name: nginx-conf
-+  namespace: kgateway-base
-+data:
-+  nginx.conf: |
-+    user nginx;
-+    worker_processes  1;
-+    events {
-+      worker_connections  10240;
-+    }
-+    http {
-+      server {
-+          # A bare `listen 80` binds 0.0.0.0 only, which is unreachable in an
-+          # IPv6-only cluster; nginx defaults [::] listeners to ipv6only=on.
-+          listen              80;
-+          listen              [::]:80;
-+          listen              443 ssl;
-+          listen              [::]:443 ssl;
-+          server_name         example.com;
-+          ssl_certificate     /etc/nginx/example.crt;
-+          ssl_certificate_key /etc/nginx/example.key;
-+
-+          location / {
-+            root   /usr/share/nginx/html;
-+            index  index.html index.htm;
-+        }
-+      }
-+    }
-+  example.crt: |
-+    -----BEGIN CERTIFICATE-----
-+    MIIDFTCCAf2gAwIBAgIUIlv+uw9O1gTwKnf4HvCIFusHWh4wDQYJKoZIhvcNAQEL
-+    BQAwFjEUMBIGA1UEAwwLZXhhbXBsZS5jb20wHhcNMjYwNzA3MTY0OTM2WhcNMzYw
-+    NzA0MTY0OTM2WjAWMRQwEgYDVQQDDAtleGFtcGxlLmNvbTCCASIwDQYJKoZIhvcN
-+    AQEBBQADggEPADCCAQoCggEBAJJiw/saYoXDnvJ2hgLGErN/DEOU7NCFE7h5tECa
-+    8uTmBV2m2bXnlXjg6umB0rPsKSOnSpF2qCt64Ll7I+/kODyu/VkuhYA/ki5Wi32V
-+    uFU7scb1FwbuhNL1/zq6hRhpsqajmpt6Q7ndpfp1mVXx/dblsufV6dyODkjenU97
-+    BukkLXar+G0KBouw1MNqLzN9y6ISuo0BvEvfLBUi0b9NuNXmtICrffBHzVNBf7Sx
-+    7KEW4nSO+55AoLJnAga6X0ZvSQju9GXE9iyrV4YRY51fwW/E+jU4GYOlUQow7bEI
-+    fOJDupwoUuFsUthhMCNpnJS955hxPFjqmeWJCJs0rTNoU1UCAwEAAaNbMFkwFgYD
-+    VR0RBA8wDYILZXhhbXBsZS5jb20wCwYDVR0PBAQDAgeAMBMGA1UdJQQMMAoGCCsG
-+    AQUFBwMBMB0GA1UdDgQWBBQRB7nN8rfErGTItgws/E8EPzPSIjANBgkqhkiG9w0B
-+    AQsFAAOCAQEAH63LT5aquDjz13D4HuXGiJlXyBnTmYQ5yQRbioeWJp3msai12/MJ
-+    /St1T4CyhWV5pUAUDdpjsjgAZjGxntYdw/fs4bJbLqnbKGC5ujObxwZ/tzbPvm+v
-+    t0UH8beP4ba5wKzwqeWu3sWMNPwoxyzIRQpInZPSxnqYe/7ataB93d3wLS/AcuU6
-+    Lijsx/zJXw0xNoyfJjvqdI0cSoV6lyYggxul06Mc5d08NNeck/gObDc3Ku2IapN3
-+    Ith7RWjemymjJw/gQZguqctyRnBaAZZrFES8s6Acqsxa3Ee9Oyk+9OZs6wnXWscZ
-+    cmk3NzvSnsKQt+jTR3DZWdUR5Iua0WP6xw==
-+    -----END CERTIFICATE-----
-+
-+  example.key: |
-+    -----BEGIN PRIVATE KEY-----
-+    MIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQCSYsP7GmKFw57y
-+    doYCxhKzfwxDlOzQhRO4ebRAmvLk5gVdptm155V44OrpgdKz7Ckjp0qRdqgreuC5
-+    eyPv5Dg8rv1ZLoWAP5IuVot9lbhVO7HG9RcG7oTS9f86uoUYabKmo5qbekO53aX6
-+    dZlV8f3W5bLn1encjg5I3p1PewbpJC12q/htCgaLsNTDai8zfcuiErqNAbxL3ywV
-+    ItG/TbjV5rSAq33wR81TQX+0seyhFuJ0jvueQKCyZwIGul9Gb0kI7vRlxPYsq1eG
-+    EWOdX8FvxPo1OBmDpVEKMO2xCHziQ7qcKFLhbFLYYTAjaZyUveeYcTxY6pnliQib
-+    NK0zaFNVAgMBAAECggEAQcRl0Hb2NKrCyqQ9aRmcZVB7LhHGo5hmV8c2GKCE6Bn/
-+    5yeDQJqfKQPEBszw4S0E/qO2eMwamg5G0I5mguzB52GnKV4hVJE7F96CJRYTDxgW
-+    sxCCG/clbbJfzP7ntSQnw35Vg+zWaLcQTwpurZJfPSFN06Ljwtd/y3VYr9DSNgQA
-+    2S0S3M6GoQ2Eji/XrykCii8BhU2Qz8D3Vl9mPRbFIlyhqnI/OTi/IzW0pMV6U7Ze
-+    p07SAFGQRVBwnJ8p9z2MgmPq9anBS2XGWq98FDPxh1hFnT1+1azPb4c1DslZEZ0f
-+    fPihZfGjPl37YUYAx3WiE16NlrjtOl233bfHdTsysQKBgQDKiD0YUtcbmMbWYJxi
-+    DgygbjY8NLN+U1u7efW+S6A2mc2CbeH0Xup+S6Mq9WdjIJEykTsG11yGtw6PYIqz
-+    eYaVyHItdZBqK+gM0oeNMQL5OANwBYIb01T1gibE6A5L4RSXSW+o23AZWMl+IQsv
-+    YNTpM/khJ21r+uSnkh/aueP8PwKBgQC5B/pnaB/Ck07wndGKhT/E9m4ccUi6kYVK
-+    fs7tS9kroMPZtfdBeld/Z/sM1v3BYTdP2geJqyRdq1ml+Nrt/yHpeJ19yWMN0Zy1
-+    ONN5HfAn3PhXZcNzCVkudNG+l0JAoQEVHZRnrfiHH2LjKCkPOGAhIHkSWUDFRqxt
-+    mF6KgqzbawKBgB8sHvMqdO9LcXc3gXpaHTloHTLhDato2xqc5+T1MOCWhZoInZmG
-+    LmNn8uI+yT3pmk+FKOehqB0X+ca5nj+Hed597ozupl6hCWNH2BM0Mvf21hic0GzF
-+    9zKeaKcv7Ftjdk7ev6/mrndIQiMGpPkS11JZbIPc1Kuk/yKHjB2XNO7zAoGAPjHV
-+    VJ7mVhQH689QmNwzVDR1TLAzfyrc/+5iBdeB9y1Bx9NneiXydUvxUh6OC0tvOTMT
-+    Z44UWjv3lVdx15/zuTOm1Jo15nY30553TvXmPLAE9fOp3+gbhwcTXZogVfMIlx1r
-+    PfJ3YIwHRE3Ch3Aut9PffnBr2iPoX6pg1PQZwGMCgYBTmGoJqhZ5Yu3sCz2NF4rl
-+    ID1xDB/LEMySE+nuzBjVe74yYo/Gcga5OJjERd2eeTKJ5PTLukitcTWJ/wL/Bq1+
-+    e6G65k5SyLaSts74zXhLhDeYSppC/Pi+n+j62NiGY/I0gF+IrP4EMSTcddlwuWQL
-+    OHnItVU7MYDTZ9YUeQ/cdg==
-+    -----END PRIVATE KEY-----
-+---
-+apiVersion: 
-```
-
-**File**: `test/e2e/features/backendconfigpolicy/testdata/nginx.yaml` (modified, +0/-119)
-```diff
-@@ -29,122 +29,3 @@ spec:
-       port: 8443
-       targetPort: https-web-svc
-       name: https
-----
--# nginx cert and key generated via:
--# openssl req -x509 -out ex.crt -keyout ex.key \
--#   -newkey rsa:2048 -days 365 -nodes -sha256 \
--#   -subj '/CN=example.com' -extensions EXT -config <( \
--#    printf "[dn]\nCN=example.com\n[req]\ndistinguished_name = dn\n[EXT]\nsubjectAltName=DNS:example.com\nkeyUsage=digitalSignature\nextendedKeyUsage=serverAuth")
--apiVersion: v1
--kind: ConfigMap
--metadata:
--  name: nginx-conf
--  namespace: kgateway-base
--data:
--  nginx.conf: |
--    user nginx;
--    worker_processes  1;
--    events {
--      worker_connections  10240;
--    }
--    http {
--      server {
--          # A bare `listen 80` binds 0.0.0.0 only, which is unreachable in an
--          # IPv6-only cluster; nginx defaults [::] listeners to ipv6only=on.
--          listen              80;
--          listen              [::]:80;
--          listen              443 ssl;
--          listen              [::]:443 ssl;
--          server_name         example.com;
--          ssl_certificate     /etc/nginx/example.crt;
--          ssl_certificate_key /etc/nginx/example.key;
--
--          location / {
--            root   /usr/share/nginx/html;
--            index  index.html index.htm;
--        }
--      }
--    }
--  example.crt: |
--    -----BEGIN CERTIFICATE-----
--    MIIDFTCCAf2gAwIBAgIUIlv+uw9O1gTwKnf4HvCIFusHWh4wDQYJKoZIhvcNAQEL
--    BQAwFjEUMBIGA1UEAwwLZXhhbXBsZS5jb20wHhcNMjYwNzA3MTY0OTM2WhcNMzYw
--    NzA0MTY0OTM2WjAWMRQwEgYDVQQDDAtleGFtcGxlLmNvbTCCASIwDQYJKoZIhvcN
--    AQEBBQADggEPADCCAQoCggEBAJJiw/saYoXDnvJ2hgLGErN/DEOU7NCFE7h5tECa
--    8uTmBV2m2bXnlXjg6umB0rPsKSOnSpF2qCt64Ll7I+/kODyu/VkuhYA/ki5Wi32V
--    uFU7scb1FwbuhNL1/zq6hRhpsqajmpt6Q7ndpfp1mVXx/dblsufV6dyODkjenU97
--    BukkLXar+G0KBouw1MNqLzN9y6ISuo0BvEvfLBUi0b9NuNXmtICrffBHzVNBf7Sx
--    7KEW4nSO+55AoLJnAga6X0ZvSQju9GXE9iyrV4YRY51fwW/E+jU4GYOlUQow7bEI
--    fOJDupwoUuFsUthhMCNpnJS955hxPFjqmeWJCJs0rTNoU1UCAwEAAaNbMFkwFgYD
--    VR0RBA8wDYILZXhhbXBsZS5jb20wCwYDVR0PBAQDAgeAMBMGA1UdJQQMMAoGCCsG
--    AQUFBwMBMB0GA1UdDgQWBBQRB7nN8rfErGTItgws/E8EPzPSIjANBgkqhkiG9w0B
--    AQsFAAOCAQEAH63LT5aquDjz13D4HuXGiJlXyBnTmYQ5yQRbioeWJp3msai12/MJ
--    /St1T4CyhWV5pUAUDdpjsjgAZjGxntYdw/fs4bJbLqnbKGC5ujObxwZ/tzbPvm+v
--    t0UH8beP4ba5wKzwqeWu3sWMNPwoxyzIRQpInZPSxnqYe/7ataB93d3wLS/AcuU6
--    Lijsx/zJXw0xNoyfJjvqdI0cSoV6lyYggxul06Mc5d08NNeck/gObDc3Ku2IapN3
--    Ith7RWjemymjJw/gQZguqctyRnBaAZZrFES8s6Acqsxa3Ee9Oyk+9OZs6wnXWscZ
--    cmk3NzvSnsKQt+jTR3DZWdUR5Iua0WP6xw==
--    -----END CERTIFICATE-----
--
--  example.key: |
--    -----BEGIN PRIVATE KEY-----
--    MIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQCSYsP7GmKFw57y
--    doYCxhKzfwxDlOzQhRO4ebRAmvLk5gVdptm155V44OrpgdKz7Ckjp0qRdqgreuC5
--    eyPv5Dg8rv1ZLoWAP5IuVot9lbhVO7HG9RcG7oTS9f86uoUYabKmo5qbekO53aX6
--    dZlV8f3W5bLn1encjg5I3p1PewbpJC12q/htCgaLsNTDai8zfcuiErqNAbxL3ywV
--    ItG/TbjV5rSAq33wR81TQX+0seyhFuJ0jvueQKCyZwIGul9Gb0kI7vRlxPYsq1eG
--    EWOdX8FvxPo1OBmDpVEKMO2xCHziQ7qcKFLhbFLYYTAjaZyUveeYcTxY6pnliQib
--    NK0zaFNVAgMBAAECggEAQcRl0Hb2NKrCyqQ9aRmcZVB7LhHGo5hmV8c2GKCE6Bn/
--    5yeDQJqfKQPEBszw4S0E/qO2eMwamg5G0I5mguzB52GnKV4hVJE7F96CJRYTDxgW
--    sxCCG/clbbJfzP7ntSQnw35Vg+zWaLcQTwpurZJfPSFN06Ljwtd/y3VYr9DSNgQA
--    2S0S3M6GoQ2Eji/XrykCii8BhU2Qz8D3Vl9mPRbFIlyhqnI/OTi/IzW0pMV6U7Ze
--    p07SAFGQRVBwnJ8p9z2MgmPq9anBS2XGWq98FDPxh1hFnT1+1azPb4c1DslZEZ0f
--    fPihZfGjPl37YUYAx3WiE16NlrjtOl233bfHdTsysQKBgQDKiD0YUtcbmMbWYJxi
--    DgygbjY8NLN+U1u7efW+S6A2mc2CbeH0Xup+S6Mq9WdjIJEykTsG11yGtw6PYIqz
--    eYaVyHItdZBqK+gM0oeNMQL5OANwBYIb01T1gibE6A5L4RSXSW+o23AZWMl+IQsv
--    YNTpM/khJ21r+uSnkh/aueP8PwKBgQC5B/pnaB/Ck07wndGKhT/E9m4ccUi6kYVK
--    fs7tS9kroMPZtfdBeld/Z/sM1v3BYTdP2geJqyRdq1ml+Nrt/yHpeJ19yWMN0Zy1
--    ONN5HfAn3PhXZcNzCVkudNG+l0JAoQEVHZRnrfiHH2LjKCkPOGAhIHkSWUDFRqxt
--    mF6KgqzbawKBgB8sHvMqdO9LcXc3gXpaHTloHTLhDato2xqc5+T1MOCWhZoInZmG
--    LmNn8uI+yT3pmk+FKOehqB0X+ca5nj+Hed597ozupl6hCWNH2BM0Mvf21hic0GzF
--    9zKeaKcv7Ftjdk7ev6/mrndIQiMGpPkS11JZbIPc1Kuk/yKHjB2XNO7zAoGAPjHV
--    VJ7mVhQH689QmNwzVDR1TLAzfyrc/+5iBdeB9y1Bx9NneiXydUvxUh6OC0tvOTMT
--    Z44UWjv3lVdx15/zuTOm1Jo15nY30553TvXmPLAE9fOp3+gbhwcTXZogVfMIlx1r
--    PfJ3YIwHRE3Ch3Aut9PffnBr2iPoX6pg1PQZwGMCgYBTmGoJqhZ5Yu3sCz2NF4rl
--    ID1xDB/LEMySE+nuzBjVe74yYo/Gcga5OJjERd2eeTKJ5PTLukitcTWJ/wL/Bq1+
--    e6G65k5SyLaSts74zXhLhDeYSppC/Pi+n+j62NiGY/I0gF+IrP4EMSTcddlwuWQL
--    OHnItVU7MYDTZ9YUeQ/cdg==
--    -----END PRIVATE KEY-----
-----
--apiVersion: v1
--kind: Pod
--metadata:
--  name: nginx
--  namespace: kgateway-base
--  labels:
--    app.kubernetes.io/name: nginx
--spec:
--  terminationGracePeriodSeconds: 0
--  containers:
--  - name: nginx
--    image: nginx:1.28.0
--    ports:
--    - containerPort: 80
--      name: http-web-svc
--    - containerPort: 443
--      name: https-web-svc
--    volumeMounts:
--    - name: nginx-conf
--      mountPath: /etc/nginx/
--      readOnly: true
--  volumes:
--  - name: nginx-conf
--    configMap:
--      name: nginx-conf
--      items:
--      - key: nginx.conf
--        path: nginx.conf
-
-```
-
-**File**: `test/e2e/features/backendconfigpolicy/testdata/setup.yaml` (modified, +1/-16)
-```diff
-@@ -21,7 +21,7 @@ metadata:
-   namespace: kgateway-base
- spec:
-   selector:
--    app.kubernetes.io/name: nginx
-+    app.kubernetes.io/name: example-nginx
-   ports:
-     - protocol: TCP
-       port: 8080
-@@ -53,21 +53,6 @@ spec:
-     overrideStreamErrorOnInvalidHttpMessage: true
- ---
- apiVersion: v1
--kind: Pod
--metadata:
--  name: nginx
--  namespace: kgateway-base
--  labels:
--    app.kubernetes.io/name: nginx
--spec:
--  containers:
--    - name: nginx
--      image: nginx:1.28.0
--      ports:
--        - containerPort: 80
--          name: http-web-svc
-----
--apiVersion: v1
- kind: Service
- metadata:
-   name: httpbin
-```
-
-**File**: `test/e2e/features/backendconfigpolicy/testdata/upstream-proxy-protocol.yaml` (modified, +1/-59)
-```diff
-@@ -1,69 +1,11 @@
- apiVersion: v1
--kind: ConfigMap
--metadata:
--  name: nginx-proxy-protocol-conf
--  namespace: kgateway-base
--data:
--  nginx.conf: |
--    user nginx;
--    worker_processes 1;
--    events {
--      worker_connections 10240;
--    }
--    http {
--      server {
--        # A bare `listen 80` binds 0.0.0.0 only, which is unreachable in an
--        # IPv6-only cluster; nginx defaults [::] listeners to ipv6only=on.
--        listen 80 proxy_protocol;
--        listen [::]:80 proxy_protocol;
--        server_name example.com;
--
--        set_real_ip_from 0.0.0.0/0;
--        set_real_ip_from ::/0;
--        real_ip_header proxy_protocol;
--
--        location / {
--          add_header X-Proxy-Protocol-Addr $proxy_protocol_addr always;
--          return 200 "proxy-protocol-ok\n";
--        }
--      }
--    }
-----
--apiVersion: v1
--kind: Pod
--metadata:
--  name: nginx
--  namespace: kgateway-base
--  labels:
--    app.kubernetes.io/name: nginx
--spec:
--  terminationGracePeriodSeconds: 0
--  containers:
--  - name: nginx
--    image: nginx:1.28.0
--    ports:
--    - containerPort: 80
--      name: http-web-svc
--    volumeMounts:
--    - name: nginx-conf
--      mountPath: /etc/nginx/
--      readOnly: true
--  volumes:
--  - name: nginx-conf
--    configMap:
--      name: nginx-proxy-protocol-conf
--      items:
--      - key: nginx.conf
--        path: nginx.conf
-----
--apiVersion: v1
- kind: Service
- metadata:
-   name: upstream-pp-svc
-   namespace: kgateway-base
- spec:
-   selector:
--    app.kubernetes.io/name: nginx
-+    app.kubernetes.io/name: nginx-proxy-protocol
-   ports:
-   - protocol: TCP
-     port: 8080
-```
-
-**File**: `test/e2e/features/backendconfigpolicy/types.go` (modified, +1/-0)
-```diff
-@@ -12,6 +12,7 @@ import (
- 
- var (
- 	// manifests
-+	backendsManifest              = filepath.Join(fsutils.MustGetThisDir(), "testdata", "backends.yaml")
- 	setupManifest                 = filepath.Join(fsutils.MustGetThisDir(), "testdata", "setup.yaml")
- 	nginxManifest                 = filepath.Join(fsutils.MustGetThisDir(), "testdata", "nginx.yaml")
- 	dnsManifest                   = filepath.Join(fsutils.MustGetThisDir(), "testdata", "dns.yaml")
-```
-
-**File**: `test/e2e/features/tracing/suite.go` (modified, +6/-6)
-```diff
-@@ -46,16 +46,16 @@ func (s *testingSuite) gateway() *common.Gateway {
- }
- 
- func (s *testingSuite) TestOTelTracing() {
--	s.testOTelTracing()
-+	s.testOTelTracing(otelCollectorPod)
- }
- 
- func (s *testingSuite) TestOTelTracingSecure() {
--	s.testOTelTracing()
-+	s.testOTelTracing(otelCollectorSecurePod)
- }
- 
- // testOTelTracing makes a request to the httpbin service
- // and checks if the collector pod logs contain the expected lines
--func (s *testingSuite) testOTelTracing() {
-+func (s *testingSuite) testOTelTracing(collectorPod string) {
- 	s.TestInstallation.AssertionsT(s.T()).EventuallyListenerPolicyCondition(s.Ctx, "tracing-policy", "default", gwv1.GatewayConditionAccepted, metav1.ConditionTrue)
- 
- 	// The headerValue passed is used to differentiate between multiple calls by identifying a unique trace per call
-@@ -104,7 +104,7 @@ func (s *testingSuite) testOTelTracing() {
+@@ -70,16 +70,13 @@ func (c *requestConfig) executeNative() (*http.Response, error) {
  		}
- 
- 		// fetch the collector pod logs
--		logs, err := s.TestInstallation.Actions.Kubectl().GetContainerLogs(s.Ctx, "default", "otel-collector")
-+		logs, err := s.TestInstallation.Actions.Kubectl().GetContainerLogs(s.Ctx, "default", collectorPod)
- 		g.Expect(err).NotTo(gomega.HaveOccurred(), "Failed to get pod logs")
- 
- 		// check if the logs match the patterns
-@@ -153,7 +153,7 @@ func (s *testingSuite) TestRouteTracingCustomAttributes() {
- 			fmt.Sprintf("-> route-request-header: Str(%s)", headerValue),
- 		}
- 
--		logs, err := s.TestInstallation.Actions.Kubectl().GetContainerLogs(s.Ctx, "default", "otel-collector")
-+		logs, err := s.TestInstallation.Actions.Kubectl().GetContainerLogs(s.Ctx, "default", otelCollectorPod)
- 		g.Expect(err).NotTo(gomega.HaveOccurred(), "Failed to get pod logs")
- 
- 		allMatched := true
-@@ -196,7 +196,7 @@ func (s *testingSuite) TestRouteTracingDisable() {
- 	time.Sleep(5 * time.Second)
- 
- 	// Verify that no traces with our unique marker appear in the collector logs
--	logs, err := s.TestInstallation.Actions.Kubectl().GetContainerLogs(s.Ctx, "default", "otel-collector")
-+	logs, err := s.TestInstallation.Actions.Kubectl().GetContainerLogs(s.Ctx, "default", otelCollectorPod)
- 	s.Require().NoError(err, "Failed to get pod logs")
- 	s.Require().NotContains(logs, marker, "traces should not be emitted when route tracing is disabled")
- }
-```
-
-**File**: `test/e2e/features/tracing/testdata/otel-collector-secure.yaml` (modified, +7/-7)
-```diff
-@@ -2,7 +2,7 @@
- apiVersion: v1
- kind: ConfigMap
- metadata:
--  name: otel-collector-conf
-+  name: otel-collector-secure-conf
-   labels:
-     app: otel-collector
-     component: otel-collector-conf
-@@ -90,11 +90,11 @@ data:
- apiVersion: v1
- kind: Pod
- metadata:
--  name: otel-collector
-+  name: otel-collector-secure
-   labels:
-     app: otel-collector
-     component: otel-collector
--    app.kubernetes.io/name: otel-collector
-+    app.kubernetes.io/name: otel-collector-secure
- spec:
-   containers:
-   - command:
-@@ -118,7 +118,7 @@ spec:
-   volumes:
-     - name: otel-collector-config-vol
-       configMap:
--        name: otel-collector-conf
-+        name: otel-collector-secure-conf
-         items:
-           - key: otel-collector-config
-             path: otel-collector-config.yaml
-@@ -130,7 +130,7 @@ spec:
- apiVersion: v1
- kind: Service
- metadata:
--  name: otel-collector
-+  name: otel-collector-secure
-   labels:
-     app: otel-collector
-     component: otel-collector
-@@ -143,7 +143,7 @@ spec:
-     targetPort: 4317
-     appProtocol: grpc
-   selector:
--    app.kubernetes.io/name: otel-collector
-+    app.kubernetes.io/name: otel-collector-secure
- ---
- apiVersion: v1
- kind: ConfigMap
-@@ -181,7 +181,7 @@ spec:
-   targetRefs:
-   - group: ""
-     kind: Service
--    name: otel-collector
-+    name: otel-collector-secure
-   validation:
-     hostname: "example.com"
-     caCertificateRefs:
-```
-
----
-
-### Incident Patch 2: `dc52532e` (2026-11-03)
-**Commit Message**: e2e: send Gateway requests from the test process in seven more suites (#14941)
-
-Signed-off-by: omar <[REDACTED_EMAIL]>
-
-**File**: `Makefile` (modified, +3/-1)
-```diff
-@@ -423,7 +423,9 @@ test: ## Run all tests with ginkgo, or only run the test package at {TEST_PKG} i
- # address. This override is honored only for the base gateway resolved by
- # common.SetupBaseGateway; multi-gateway suites that construct their own
- # common.Gateway values cannot disambiguate multiple gateways with a single env
--# var and are therefore out of scope under k3d.
-+# var and are therefore out of scope under k3d. Suites that resolve their
-+# Gateways with common.NewGateway can instead set GATEWAY_PORT_FORWARD=true to
-+# send through port-forwards (also works for kind on macOS).
- CLUSTER_TYPE ?= kind
- SKIP_EXTPROC_SERVER_SETUP ?= false
- 
-```
-
-**File**: `pkg/utils/requestutils/curl/native_request.go` (modified, +4/-0)
-```diff
-@@ -211,6 +211,10 @@ func (c *requestConfig) buildHTTPClient() *http.Client {
- }
- 
- func (c *requestConfig) buildDialer() func(context.Context, string, string) (net.Conn, error) {
-+	if c.dialContext != nil {
-+		return c.dialContext
-+	}
-+
- 	dialer := &net.Dialer{
- 		Timeout: 30 * time.Second,
  	}
+ 
+-	// Create context with timeout
++	// connectionTimeout is enforced by the client's Timeout, which also covers reading the
++	// body. A context timeout here would be canceled when this function returns, cutting off
++	// a body the caller has not read yet.
+ 	ctx := c.ctx
+ 	if ctx == nil {
+ 		ctx = context.Background()
+ 	}
+-	if c.connectionTimeout > 0 {
+-		var cancel context.CancelFunc
+-		ctx, cancel = context.WithTimeout(ctx, time.Duration(c.connectionTimeout)*time.Second)
+-		defer cancel()
+-	}
+ 	if method == "" {
+ 		method = "GET"
+ 	}
+@@ -159,8 +156,11 @@ func (c *requestConfig) buildURL() string {
+ }
+ 
+ func (c *requestConfig) buildHTTPClient() *http.Client {
++	// Each request gets its own transport that is never reused, so a kept-alive connection
++	// would only sit idle in its pool until the server closed it.
+ 	transport := &http.Transport{
+-		DialContext: c.buildDialer(),
++		DialContext:       c.buildDialer(),
++		DisableKeepAlives: true,
+ 	}
+ 
+ 	// Configure TLS
 ```
 
-**File**: `pkg/utils/requestutils/curl/native_request_test.go` (added, +36/-0)
+**File**: `pkg/utils/requestutils/curl/native_request_test.go` (modified, +49/-0)
 ```diff
-@@ -0,0 +1,36 @@
-+package curl
+@@ -2,9 +2,12 @@ package curl
+ 
+ import (
+ 	"context"
++	"io"
+ 	"net"
+ 	"net/http"
+ 	"net/http/httptest"
++	"strconv"
++	"strings"
+ 	"testing"
+ 
+ 	"github.com/stretchr/testify/assert"
+@@ -34,3 +37,49 @@ func TestExecuteRequestWithDialContext(t *testing.T) {
+ 	assert.Equal(t, http.StatusTeapot, resp.StatusCode)
+ 	assert.Equal(t, "unreachable.invalid:8080", dialed, "dialer should get the URL's host and port")
+ }
 +
-+import (
-+	"context"
-+	"net"
-+	"net/http"
-+	"net/http/httptest"
-+	"testing"
-+
-+	"github.com/stretchr/testify/assert"
-+	"github.com/stretchr/testify/require"
-+)
-+
-+// WithDialContext routes the connection through the given dialer, regardless of the URL's host.
-+func TestExecuteRequestWithDialContext(t *testing.T) {
++// WithConnectionTimeout must still let the caller read a body larger than one read chunk after
++// ExecuteRequest returns.
++func TestExecuteRequestWithConnectionTimeoutReadsWholeBody(t *testing.T) {
++	body := strings.Repeat("x", 100_000)
 +	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-+		w.WriteHeader(http.StatusTeapot)
++		_, _ = w.Write([]byte(body))
 +	}))
 +	defer server.Close()
 +
-+	var dialed string
-+	resp, err := ExecuteRequest(
-+		WithHost("unreachable.invalid"),
-+		WithPort(8080),
-+		WithDialContext(func(ctx context.Context, network, addr string) (net.Conn, error) {
-+			dialed = addr
-+			var d net.Dialer
-+			return d.DialContext(ctx, network, server.Listener.Addr().String())
-+		}),
-+	)
++	host, port, err := net.SplitHostPort(server.Listener.Addr().String())
++	require.NoError(t, err)
++	portNum, err := strconv.Atoi(port)
++	require.NoError(t, err)
++
++	resp, err := ExecuteRequest(WithHost(host), WithPort(portNum), WithConnectionTimeout(5))
 +	require.NoError(t, err)
 +	defer resp.Body.Close()
 +
-+	assert.Equal(t, http.StatusTeapot, resp.StatusCode)
-+	assert.Equal(t, "unreachable.invalid:8080", dialed, "dialer should get the URL's host and port")
++	got, err := io.ReadAll(resp.Body)
++	require.NoError(t, err, "reading the body should not be cut off by the timeout")
++	assert.Len(t, got, len(body))
++}
++
++// WithFormBody sends the body with a form Content-Type, as `curl -d` does.
++func TestExecuteRequestWithFormBody(t *testing.T) {
++	var gotContentType, gotBody string
++	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++		gotContentType = r.Header.Get("Content-Type")
++		b, _ := io.ReadAll(r.Body)
++		gotBody = string(b)
++	}))
++	defer server.Close()
++
++	host, port, err := net.SplitHostPort(server.Listener.Addr().String())
++	require.NoError(t, err)
++	portNum, err := strconv.Atoi(port)
++	require.NoError(t, err)
++
++	resp, err := ExecuteRequest(WithHost(host), WithPort(portNum), WithFormBody("hello"))
++	require.NoError(t, err)
++	defer resp.Body.Close()
++
++	assert.Equal(t, "application/x-www-form-urlencoded", gotContentType)
++	assert.Equal(t, "hello", gotBody)
 +}
 ```
 
-**File**: `pkg/utils/requestutils/curl/option.go` (modified, +8/-0)
+**File**: `pkg/utils/requestutils/curl/option.go` (modified, +9/-0)
 ```diff
-@@ -57,6 +57,14 @@ func WithContext(ctx context.Context) Option {
+@@ -216,6 +216,15 @@ func WithPostBody(body string) Option {
  	}
  }
  
-+// WithDialContext returns the Option to open connections with dial instead of the default dialer,
-+// e.g. to send through a port-forward. Only ExecuteRequest honors it; the curl binary ignores it.
-+func WithDialContext(dial func(ctx context.Context, network, addr string) (net.Conn, error)) Option {
++// WithFormBody returns the Option to send body with a form Content-Type, the way `curl -d` does.
++// ExecuteRequest sends no Content-Type for a plain WithBody, which some servers treat as binary.
++func WithFormBody(body string) Option {
 +	return func(config *requestConfig) {
-+		config.dialContext = dial
++		WithBody(body)(config)
++		WithContentType("application/x-www-form-urlencoded")(config)
 +	}
 +}
 +
- // VerboseOutput returns the Option to emit a verbose output for the  curl request
- // https://curl.se/docs/manpage.html#-v
- func VerboseOutput() Option {
+ // WithBody returns the Option to configure the body for a curl request
+ // https://curl.se/docs/manpage.html#-d
+ func WithBody(body string) Option {
 ```
 
-**File**: `pkg/utils/requestutils/curl/request.go` (modified, +3/-0)
+**File**: `test/e2e/common/gateway.go` (modified, +52/-7)
 ```diff
-@@ -3,6 +3,7 @@ package curl
- import (
- 	"context"
- 	"fmt"
-+	"net"
- 	"net/url"
- 	"strconv"
- 	"strings"
-@@ -123,6 +124,8 @@ type requestConfig struct {
- 	// ctx is used by ExecuteRequest to build the http.Request and aborts the
- 	// in-flight call when ctx cancels. Set via WithContext.
- 	ctx context.Context
-+	// dialContext, when set, replaces the dialer ExecuteRequest uses. Set via WithDialContext.
-+	dialContext func(ctx context.Context, network, addr string) (net.Conn, error)
- }
- 
- func (c *requestConfig) generateArgs() []string {
-```
-
-**File**: `test/e2e/common/base.go` (modified, +22/-12)
-```diff
-@@ -140,26 +140,36 @@ func SetupSharedNginxBackend(ctx context.Context, t *testing.T, installation *e2
- 	}, 2*time.Minute)
- }
- 
--// SetupBaseGateway resolves the LB address for the named Gateway and stores it in BaseGateway.
-+// NewGateway resolves the LB address of the named Gateway from its status.
-+//
-+// GATEWAY_PORT_FORWARD: when set to true, requests go through port-forwards to the Gateway's
-+// Service instead, one per destination port, opened on first use and closed when t ends. This
-+// exists for hosts that cannot reach LB IPs, e.g. kind on macOS.
-+func NewGateway(ctx context.Context, t *testing.T, installation *e2e.TestInstallation, name types.NamespacedName) Gateway {
-+	gw := Gateway{
-+		NamespacedName: name,
-+		Address:        installation.AssertionsT(t).EventuallyGatewayAddress(ctx, name.Name, name.Namespace),
-+	}
-+	if os.Getenv("GATEWAY_PORT_FORWARD") == "true" {
-+		gw.forwards = newPortForwards(installation.ClusterContext.KubeContext, name)
-+		testutils.Cleanup(t, gw.forwards.close)
-+	}
-+	return gw
-+}
-+
-+// SetupBaseGateway resolves the named Gateway with NewGateway and stores it in BaseGateway.
- //
- // GATEWAY_ADDRESS_OVERRIDE: when set, overrides the resolved address. This exists to support
- // environments where the LB IP is not directly reachable from the host (e.g., k3d on macOS using
- // port mapping). The override is applied ONLY here — single-gateway suites that use BaseGateway
- // pick it up automatically. Suites that construct their own common.Gateway values (e.g.,
- // multi-gateway suites that need more than one address) do NOT honor the override, since a single
--// env var cannot disambiguate multiple gateways. Running such suites under k3d is out of scope.
-+// env var cannot disambiguate multiple gateways; GATEWAY_PORT_FORWARD covers those when they use
-+// NewGateway.
- func SetupBaseGateway(ctx context.Context, t *testing.T, installation *e2e.TestInstallation, name types.NamespacedName) {
--	address := installation.AssertionsT(t).EventuallyGatewayAddress(
--		ctx,
--		name.Name,
--		name.Namespace,
--	)
-+	BaseGateway = NewGateway(ctx, t, installation, name)
- 	if override := os.Getenv("GATEWAY_ADDRESS_OVERRIDE"); override != "" {
--		address = override
--	}
--	BaseGateway = Gateway{
--		NamespacedName: name,
--		Address:        address,
-+		BaseGateway.Address = override
- 	}
- }
- 
-```
-
-**File**: `test/e2e/common/gateway.go` (modified, +91/-1)
-```diff
-@@ -8,12 +8,16 @@ import (
+@@ -8,6 +8,7 @@ import (
  	"fmt"
  	"io"
  	"net"
-+	"strconv"
-+	"sync"
++	"net/http"
+ 	"strconv"
+ 	"sync"
  	"testing"
- 	"time"
- 
-+	avastretry "github.com/avast/retry-go/v4"
- 	"istio.io/istio/pkg/test/util/retry"
- 	"k8s.io/apimachinery/pkg/types"
- 
-+	"github.com/kgateway-dev/kgateway/v2/pkg/utils/kubeutils/portforward"
- 	"github.com/kgateway-dev/kgateway/v2/pkg/utils/requestutils/curl"
- 	"github.com/kgateway-dev/kgateway/v2/test/gomega/matchers"
+@@ -41,6 +42,9 @@ const (
+ 	defaultConsistencyPoll   = 1 * time.Second
  )
-@@ -25,6 +29,10 @@ import (
- type Gateway struct {
- 	types.NamespacedName
- 	Address string
+ 
++// defaultAttemptTimeoutSeconds bounds a single request attempt.
++const defaultAttemptTimeoutSeconds = 8
 +
-+	// forwards, when set, sends requests through port-forwards to the Gateway's Service instead
-+	// of Address. Set by NewGateway under GATEWAY_PORT_FORWARD.
-+	forwards *portForwards
+ // Send curls the gateway and waits until the response matches using Istio default retry options (10s timeout, 100ms delay).
+ func (g *Gateway) Send(t *testing.T, match *matchers.HttpResponse, opts ...curl.Option) {
+ 	t.Helper()
+@@ -61,6 +65,34 @@ func (g *Gateway) SendWithRetry(ctx context.Context, t *testing.T, match *matche
+ 	}, retryOpts...)
  }
  
- // Defaults for SendEventuallyConsistent — mirror values in assertions.AssertEventuallyConsistentCurlResponse.
-@@ -140,5 +148,87 @@ func (g *Gateway) curlOpts(opts []curl.Option) []curl.Option {
++// SendWithResponse is Send plus access to the matching response. Its body is buffered,
++// so it can be read even though the matcher already did; the caller must close it.
++func (g *Gateway) SendWithResponse(t *testing.T, match *matchers.HttpResponse, opts ...curl.Option) *http.Response {
++	t.Helper()
++	ctx := t.Context()
++	fullOpts := g.curlOpts(opts)
++	var resp *http.Response
++	retry.UntilSuccessOrFail(t, func() error {
++		if err := ctx.Err(); err != nil {
++			t.Fatalf("send retry interrupted by ctx: %v", err)
++		}
++		//nolint:bodyclose // returned to the caller, who closes it
++		r, err := g.matchResponse(ctx, fullOpts, match)
++		if err != nil {
++			return err
++		}
++		resp = r
++		return nil
++	})
++	return resp
++}
++
++// Do sends one request to the gateway and returns the response unchecked, for callers that
++// inspect it with their own logic. The caller must close the body.
++func (g *Gateway) Do(ctx context.Context, opts ...curl.Option) (*http.Response, error) {
++	return curl.ExecuteRequest(curl.Extend(g.curlOpts(opts), curl.WithContext(ctx))...)
++}
++
+ // SendOnce curls the gateway once and returns an error if the response does not match,
+ // for callers that poll inside their own Eventually loop.
+ func (g *Gateway) SendOnce(ctx context.Context, match *matchers.HttpResponse, opts ...curl.Option) error {
+@@ -118,27 +150,38 @@ func (g *Gateway) SendConsistentlyFor(ctx context.Context, t *testing.T, match *
+ // (the underlying gomega HaveHttpResponse matcher does not print the actual body —
+ // see test/gomega/matchers/have_http_response.go).
+ func (g *Gateway) matchOnce(ctx context.Context, fullOpts []curl.Option, match *matchers.HttpResponse) error {
+-	r, err := curl.ExecuteRequest(curl.Extend(fullOpts, curl.WithContext(ctx))...)
++	r, err := g.matchResponse(ctx, fullOpts, match)
+ 	if err != nil {
+ 		return err
+ 	}
+-	defer r.Body.Close()
++	return r.Body.Close()
++}
+ 
++// matchResponse is matchOnce, returning the matching response with its body buffered so it
++// can be read again.
++func (g *Gateway) matchResponse(ctx context.Context, fullOpts []curl.Option, match *matchers.HttpResponse) (*http.Response, error) {
++	r, err := curl.ExecuteRequest(curl.Extend(fullOpts, curl.WithContext(ctx))...)
++	if err != nil {
++		return nil, err
++	}
+ 	body, err := io.ReadAll(r.Body)
++	r.Body.Close()
+ 	if err != nil {
+-		return fmt.Errorf("reading response body: %w", err)
++		return nil, fmt.Errorf("reading response body: %w", err)
+ 	}
+ 	r.Body = io.NopCloser(bytes.NewReader(body))
+ 
+ 	mm := matchers.HaveHttpResponse(match)
+ 	success, matchErr := mm.Match(r)
+ 	if matchErr != nil {
+-		return matchErr
++		return nil, matchErr
+ 	}
+ 	if !success {
+-		return fmt.Errorf("%s\nactual: status=%d body=%q", mm.FailureMessage(r), r.StatusCode, string(body))
++		return nil, fmt.Errorf("%s\nactual: status=%d body=%q", mm.FailureMessage(r), r.StatusCode, string(body))
+ 	}
+-	return nil
++	// The matcher may have read the body; hand back a fresh reader.
++	r.Body = io.NopCloser(bytes.NewReader(body))
++	return r, nil
+ }
+ 
+ func (g *Gateway) curlOpts(opts []curl.Option) []curl.Option {
+@@ -148,7 +191,9 @@ func (g *Gateway) curlOpts(opts []curl.Option) []curl.Option {
  	} else {
  		hostOpt = curl.WithHost(g.Address)
  	}
--	return curl.Extend([]curl.Option{hostOpt}, opts...)
-+	base := []curl.Option{hostOpt}
-+	if g.forwards != nil {
-+		base = append(base, curl.WithDialContext(g.forwards.dial))
-+	}
-+	return curl.Extend(base, opts...)
-+}
-+
-+// portForwards opens one port-forward per destination port of a Gateway's Service on first use.
-+// The Service shares the Gateway's name and maps each listener port to the same container port.
-+type portForwards struct {
-+	kubeContext string
-+	service     types.NamespacedName
-+
-+	mu     sync.Mutex
-+	byPort map[string]portforward.PortForwarder
-+}
-+
-+func newPortForwards(kubeContext string, service types.NamespacedName) *portForwards {
-+	return &portForwards{
-+		kubeContext: kubeContext,
-+		service:     service,
-+		byPort:      map[string]portforward.PortForwarder{},
-+	}
-+}
-+
-+// dial ignores the host in addr and connects to the port-forward for its port.
-+func (p *portForwards) dial(ctx context.Context, network, addr string) (net.Conn, error) {
-+	_, port, err := net.SplitHostPort(addr)
-+	if err != nil {
-+		return nil, err
-+	}
-+	fwd, err := p.get(ctx, port)
-+	if err != nil {
-+		return nil, err
-+	}
-+	var d net.Dialer
-+	conn, err := d.DialContext(ctx, network, fwd.Address())
-+	if err != nil {
-+		// The forward may point at a pod that is gone; reopen it on the next attempt.
-+		p.drop(port, fwd)
-+	}
-+	return conn, err
-+}
-+
-+func (p *portForwards) get(ctx context.Context, port string) (portforward.PortForwarder, error) {
-+	p.mu.Lock()
-+	defer p.mu.Unlock()
-+	if fwd, ok := p.byPort[port]; ok {
-+		return fwd, nil
-+	}
-+	remotePort, err := strconv.Atoi(port)
-+	if err != nil {
-+		return nil, err
-+	}
-+	fwd := portforward.NewApiPortForwarder(
-+		portforward.WithKubeContext(p.kubeContext),
-+		portforward.WithService(p.service.Name, p.service.Namespace),
-+		portforward.WithRemotePort(remotePort),
-+	)
-+	// One attempt: the caller's retry loop retries the whole request.
-+	if err := fwd.Start(ctx, avastretry.Attempts(1)); err != nil {
-+		return nil, fmt.Errorf("port-forward to service %s port %d: %w", p.service, remotePort, err)
-+	}
-+	p.byPort[port] = fwd
-+	return fwd, nil
-+}
-+
-+func (p *portForwards) drop(port string, fwd portforward.PortForwarder) {
-+	p.mu.Lock()
-+	defer p.mu.Unlock()
-+	if p.byPort[port] == fwd {
-+		delete(p.byPort, port)
-+		fwd.Close()
-+	}
-+}
-+
-+func (p *portForwards) close() {
-+	p.mu.Lock()
-+	defer p.mu.Unlock()
-+	for port, fwd := range p.byPort {
-+		fwd.Close()
-+		delete(p.byPort, port)
-+	}
- }
+-	base := []curl.Option{hostOpt}
++	// Bound each attempt well below the retry budget, so one hung request (e.g. a cold
++	// upstream connection) cannot use it all up. Callers may override it with their own.
++	base := []curl.Option{hostOpt, curl.WithConnectionTimeout(defaultAttemptTimeoutSeconds)}
+ 	if g.forwards != nil {
+ 		base = append(base, curl.WithDialContext(g.forwards.dial))
+ 	}
 ```
 
-**File**: `test/e2e/features/lambda/suite.go` (modified, +52/-87)
+**File**: `test/e2e/features/transformation/suite.go` (modified, +27/-29)
 ```diff
-@@ -18,11 +18,12 @@ import (
+@@ -15,16 +15,17 @@ import (
  	"github.com/stretchr/testify/suite"
- 	corev1 "k8s.io/api/core/v1"
+ 	"k8s.io/apimachinery/pkg/api/meta"
  	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 +	"k8s.io/apimachinery/pkg/types"
  	"sigs.k8s.io/controller-runtime/pkg/client"
+ 	gwv1 "sigs.k8s.io/gateway-api/apis/v1"
  
+ 	"github.com/kgateway-dev/kgateway/v2/api/v1alpha1/kgateway"
+ 	"github.com/kgateway-dev/kgateway/v2/api/v1alpha1/shared"
+ 	reports "github.com/kgateway-dev/kgateway/v2/pkg/pluginsdk/reporter"
+ 	"github.com/kgateway-dev/kgateway/v2/pkg/utils/fsutils"
+-	"github.com/kgateway-dev/kgateway/v2/pkg/utils/kubeutils"
+ 	"github.com/kgateway-dev/kgateway/v2/pkg/utils/requestutils/curl"
+ 	"github.com/kgateway-dev/kgateway/v2/test/e2e"
++	"github.com/kgateway-dev/kgateway/v2/test/e2e/common"
+ 	"github.com/kgateway-dev/kgateway/v2/test/e2e/defaults"
+ 	"github.com/kgateway-dev/kgateway/v2/test/e2e/tests/base"
+ 	"github.com/kgateway-dev/kgateway/v2/test/e2e/testutils/helper"
+@@ -70,7 +71,6 @@ var (
+ 	// test cases
+ 	setup = base.TestCase{
+ 		Manifests: []string{
+-			defaults.CurlPodManifest,
+ 			simpleServiceManifest,
+ 			gatewayManifest,
+ 			transformForCustomFunctionsManifest,
+@@ -156,7 +156,7 @@ func selectTestCases(indices ...int) []transformationTestCase {
+ 			name:      "basic",
+ 			routeName: "headers",
+ 			opts: []curl.Option{
+-				curl.WithBody("hello"),
++				curl.WithFormBody("hello"),
+ 				curl.WithHeader("cookie", "foo=bar"),
+ 				curl.WithHeader("User-Agent", "curl/8.18.0"),
+ 			},
+@@ -207,7 +207,7 @@ func selectTestCases(indices ...int) []transformationTestCase {
+ 			name:      "remove headers",
+ 			routeName: "headers",
+ 			opts: []curl.Option{
+-				curl.WithBody("hello"),
++				curl.WithFormBody("hello"),
+ 				curl.WithHeader("x-remove-me", "test"),
+ 				curl.WithHeader("x-dont-remove-me", "in request"),
+ 			},
+@@ -236,7 +236,7 @@ func selectTestCases(indices ...int) []transformationTestCase {
+ 			name:      "set headers with headers already exists multiple times",
+ 			routeName: "headers",
+ 			opts: []curl.Option{
+-				curl.WithBody("hello"),
++				curl.WithFormBody("hello"),
+ 				// The 2 x-foo-bar headers will be replaced with a single one when we set the header
+ 				// to a value using transformation
+ 				curl.WithMultiHeader("x-foo-bar", []string{"original_1", "original_2"}),
+@@ -272,7 +272,7 @@ func selectTestCases(indices ...int) []transformationTestCase {
+ 			name:      "conditional set by request header", // inja and the request_header function in use
+ 			routeName: "headers",
+ 			opts: []curl.Option{
+-				curl.WithBody("hello-world"),
++				curl.WithFormBody("hello-world"),
+ 				curl.WithHeader("x-add-bar", "super"),
+ 			},
+ 			resp: &testmatchers.HttpResponse{
+@@ -374,7 +374,7 @@ func selectTestCases(indices ...int) []transformationTestCase {
+ 			name:      "match-header-and-query",
+ 			routeName: "match",
+ 			opts: []curl.Option{
+-				curl.WithBody("hello"),
++				curl.WithFormBody("hello"),
+ 				curl.WithHeader("foo", "bar"),
+ 				curl.WithQueryParameters(map[string]string{"test": "123"}),
+ 			},
+@@ -409,7 +409,7 @@ func selectTestCases(indices ...int) []transformationTestCase {
+ 			name:      "match-query",
+ 			routeName: "match",
+ 			opts: []curl.Option{
+-				curl.WithBody("hello"),
++				curl.WithFormBody("hello"),
+ 				curl.WithQueryParameters(map[string]string{"test": "123"}),
+ 			},
+ 			resp: &testmatchers.HttpResponse{
+@@ -445,7 +445,7 @@ func selectTestCases(indices ...int) []transformationTestCase {
+ 			name:      "match-none",
+ 			routeName: "match",
+ 			opts: []curl.Option{
+-				curl.WithBody("hello"),
++				curl.WithFormBody("hello"),
+ 			},
+ 			resp: &testmatchers.HttpResponse{
+ 				StatusCode: http.StatusNotFound,
+@@ -482,7 +482,7 @@ func selectTestCases(indices ...int) []transformationTestCase {
+ 			name:      "custom-functions",
+ 			routeName: "custom-functions",
+ 			opts: []curl.Option{
+-				curl.WithBody(`{"foo":"\"bar\""}`),
++				curl.WithFormBody(`{"foo":"\"bar\""}`),
+ 				curl.WithHeader("x-nested-call", "my name is andy"),
+ 			},
+ 			resp: &testmatchers.HttpResponse{
+@@ -537,7 +537,7 @@ func selectTestCases(indices ...int) []transformationTestCase {
+ 			name:      "pull-json-info", // shows we parse the body as json
+ 			routeName: "route-for-body-json",
+ 			opts: []curl.Option{
+-				curl.WithBody(`{"mykey": {"myinnerkey": "myinnervalue"}}`),
++				curl.WithFormBody(`{"mykey": {"myinnerkey": "myinnervalue"}}`),
+ 				curl.WithHeader("X-Incoming-Stuff", "super"),
+ 			},
+ 			resp: &testmatchers.HttpResponse{
+@@ -566,7 +566,7 @@ func selectTestCases(indices ...int) []transformationTestCase {
+ 			name:      "dont pull info if we dont parse json",
+ 			routeName: "route-for-body",
+ 			opts: []curl.Option{
+-				curl.WithBody(`{"mykey": {"myinnerkey": "myinnervalue"}}`),
++				curl.WithFormBody(`{"mykey": {"myinnerkey": "myinnervalue"}}`),
+ 				curl.WithHeader("X-Incoming-Stuff", "super"),
+ 			},
+ 			resp: &testmatchers.HttpResponse{
+@@ -581,7 +581,7 @@ func selectTestCases(indices ...int) []transformationTestCase {
+ 			
+```
+
+**File**: `test/e2e/features/xds_starvation/suite.go` (modified, +14/-8)
+```diff
+@@ -29,14 +29,14 @@ import (
+ 	"github.com/onsi/gomega"
+ 	"github.com/stretchr/testify/suite"
+ 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
++	"k8s.io/apimachinery/pkg/types"
+ 
+ 	"github.com/kgateway-dev/kgateway/v2/pkg/utils/fsutils"
 -	"github.com/kgateway-dev/kgateway/v2/pkg/utils/kubeutils"
  	"github.com/kgateway-dev/kgateway/v2/pkg/utils/requestutils/curl"
  	"github.com/kgateway-dev/kgateway/v2/test/e2e"
 +	"github.com/kgateway-dev/kgateway/v2/test/e2e/common"
  	testdefaults "github.com/kgateway-dev/kgateway/v2/test/e2e/defaults"
- 	"github.com/kgateway-dev/kgateway/v2/test/e2e/testutils/localstack"
- 	"github.com/kgateway-dev/kgateway/v2/test/envoyutils/admincli"
-@@ -73,18 +74,21 @@ func NewTestingSuite(ctx context.Context, testInst *e2e.TestInstallation) suite.
- 	}
- }
+ 	"github.com/kgateway-dev/kgateway/v2/test/e2e/tests/base"
+-	"github.com/kgateway-dev/kgateway/v2/test/gomega/transforms"
+ 	"github.com/kgateway-dev/kgateway/v2/test/testutils"
+ )
  
-+// gateway resolves the address of the Gateway behind the given proxy.
-+func (s *testingSuite) gateway(proxy metav1.ObjectMeta) *common.Gateway {
-+	gw := common.NewGateway(s.ctx, s.T(), s.ti, types.NamespacedName{
-+		Name:      proxy.Name,
-+		Namespace: proxy.Namespace,
-+	})
-+	return &gw
+@@ -48,7 +48,6 @@ var (
+ 
+ 	setup = base.TestCase{
+ 		Manifests: []string{
+-			testdefaults.CurlPodManifest,
+ 			setupManifest,
+ 		},
+ 	}
+@@ -75,6 +74,17 @@ var proxyObjectMeta = metav1.ObjectMeta{
+ 
+ type testingSuite struct {
+ 	*base.BaseTestingSuite
++
++	// gw is the suite's Gateway, resolved once in SetupSuite so it lives as long as the suite.
++	gw common.Gateway
 +}
 +
- func (s *testingSuite) SetupSuite() {
- 	err := s.ti.Actions.Kubectl().ApplyFile(s.ctx, setupManifest)
- 	s.NoError(err, "can apply "+setupManifest)
--	err = s.ti.Actions.Kubectl().ApplyFile(s.ctx, testdefaults.CurlPodManifest)
--	s.NoError(err, "can apply curl pod manifest")
- 	err = s.ti.Actions.Kubectl().ApplyFile(s.ctx, awsCliPodManifest)
- 	s.NoError(err, "can apply aws-cli pod manifest")
- 
--	s.ti.AssertionsT(s.T()).EventuallyObjectsExist(s.ctx, testdefaults.CurlPod)
--	s.ti.AssertionsT(s.T()).EventuallyPodsRunning(s.ctx, testdefaults.CurlPod.GetNamespace(), metav1.ListOptions{
--		LabelSelector: testdefaults.WellKnownAppLabel + "=curl",
--	})
- 	s.ti.AssertionsT(s.T()).EventuallyPodReady(s.ctx, "lambda-test", "aws-cli", 30*time.Second)
- 
- 	s.manifests = map[string][]string{
-@@ -108,8 +112,6 @@ func (s *testingSuite) TearDownSuite() {
- 	}
- 	err := s.ti.Actions.Kubectl().DeleteFileSafe(s.ctx, setupManifest)
- 	s.NoError(err, "can delete setup manifest")
--	err = s.ti.Actions.Kubectl().DeleteFileSafe(s.ctx, testdefaults.CurlPodManifest)
--	s.NoError(err, "can delete curl pod manifest")
- 	err = s.ti.Actions.Kubectl().DeleteFileSafe(s.ctx, stsServiceManifest)
- 	s.NoError(err, "can delete sts service manifest")
++func (s *testingSuite) SetupSuite() {
++	s.BaseTestingSuite.SetupSuite()
++	s.gw = common.NewGateway(s.Ctx, s.T(), s.TestInstallation, types.NamespacedName{
++		Name:      proxyObjectMeta.Name,
++		Namespace: proxyObjectMeta.Namespace,
++	})
  }
-@@ -146,11 +148,6 @@ func (s *testingSuite) BeforeTest(suiteName, testName string) {
- 		s.Require().NoError(err, "can apply manifest "+manifest)
- 	}
  
--	s.ti.AssertionsT(s.T()).EventuallyObjectsExist(s.ctx, testdefaults.CurlPod)
--	s.ti.AssertionsT(s.T()).EventuallyPodsRunning(s.ctx, testdefaults.CurlPod.GetNamespace(), metav1.ListOptions{
--		LabelSelector: testdefaults.WellKnownAppLabel + "=curl",
--	})
--
- 	s.ti.AssertionsT(s.T()).EventuallyObjectsExist(s.ctx, proxyServiceMeta)
- 	s.ti.AssertionsT(s.T()).EventuallyObjectsExist(s.ctx, proxyDeploymentMeta)
- 	s.ti.AssertionsT(s.T()).EventuallyPodsRunning(s.ctx, proxyDeploymentMeta.GetNamespace(), metav1.ListOptions{
-@@ -171,32 +168,20 @@ func (s *testingSuite) AfterTest(suiteName, testName string) {
+ func NewTestingSuite(ctx context.Context, testInst *e2e.TestInstallation) suite.TestingSuite {
+@@ -163,10 +173,8 @@ func (s *testingSuite) assertEventuallyStatusAtLeast(host string, status int, ti
+ }
  
- func (s *testingSuite) TestLambdaBackendRouting() {
- 	// Test Lambda backend with custom endpoint
--	s.ti.AssertionsT(s.T()).AssertEventualCurlResponse(
--		s.ctx,
+ func (s *testingSuite) gatewayResponse(host string) (int, string, error) {
+-	curlResponse, err := s.TestInstallation.ClusterContext.Cli.CurlFromPod(
++	response, err := s.gw.Do(
+ 		s.Ctx,
 -		testdefaults.CurlPodExecOpt,
--		[]curl.Option{
--			curl.WithHost(kubeutils.ServiceFQDN(gatewayObjectMeta)),
--			curl.WithHostHeader("www.example.com"),
--			curl.WithPort(8080),
--			curl.WithPath("/lambda"),
--		},
-+	s.gateway(gatewayObjectMeta).Send(
+-		curl.WithHost(kubeutils.ServiceFQDN(proxyObjectMeta)),
+ 		curl.WithHostHeader(host),
+ 		curl.WithPort(8080),
+ 		curl.WithPath("/"),
+@@ -175,8 +183,6 @@ func (s *testingSuite) gatewayResponse(host string) (int, string, error) {
+ 	if err != nil {
+ 		return 0, "", err
+ 	}
+-
+-	response := transforms.WithCurlResponse(curlResponse)
+ 	defer response.Body.Close()
+ 
+ 	body, err := io.ReadAll(response.Body)
+```
+
+**File**: `test/e2e/features/xds_warming/suite.go` (modified, +5/-12)
+```diff
+@@ -24,6 +24,7 @@ import (
+ 	"github.com/kgateway-dev/kgateway/v2/pkg/utils/kubeutils"
+ 	"github.com/kgateway-dev/kgateway/v2/pkg/utils/requestutils/curl"
+ 	"github.com/kgateway-dev/kgateway/v2/test/e2e"
++	"github.com/kgateway-dev/kgateway/v2/test/e2e/common"
+ 	testdefaults "github.com/kgateway-dev/kgateway/v2/test/e2e/defaults"
+ 	"github.com/kgateway-dev/kgateway/v2/test/e2e/tests/base"
+ 	"github.com/kgateway-dev/kgateway/v2/test/envoyutils/admincli"
+@@ -452,14 +453,13 @@ func (s *testingSuite) assertActiveClusterIsPresent(clusterName string) {
+ }
+ 
+ func (s *testingSuite) assertGatewayEventuallyServes(host, bodySubstring string) {
+-	s.TestInstallation.AssertionsT(s.T()).AssertEventualCurlResponse(
+-		s.Ctx,
+-		testdefaults.CurlPodExecOpt,
+-		s.gatewayCurlOptions(host),
++	common.BaseGateway.Send(
 +		s.T(),
  		&testmatchers.HttpResponse{
  			StatusCode: http.StatusOK,
- 			Body:       gomega.ContainSubstring(`Hello from Lambda`),
+ 			Body:       gomega.ContainSubstring(bodySubstring),
  		},
-+		curl.WithHostHeader("www.example.com"),
-+		curl.WithPort(8080),
-+		curl.WithPath("/lambda"),
++		s.gatewayCurlOptions(host)...,
  	)
+ }
  
- 	// Test Lambda backend with Envoy payload transformation disabled
--	s.ti.AssertionsT(s.T()).AssertEventualCurlResponse(
--		s.ctx,
+@@ -513,16 +513,10 @@ func (s *testingSuite) assertGatewayEventuallyServesAll(host string, bodySubstri
+ }
+ 
+ func (s *testingSuite) gatewayResponse(host string) (int, string, error) {
+-	curlResponse, err := s.TestInstallation.ClusterContext.Cli.CurlFromPod(
+-		s.Ctx,
 -		testdefaults.CurlPodExecOpt,
--		[]curl.Option{
--			curl.WithHost(kubeutils.ServiceFQDN(gatewayObjectMeta)),
--			curl.WithHostHeader("www.example.com"),
--			curl.WithPort(8080),
--			curl.WithPath("/lambda/no-payload-transform"),
--			curl.WithBody("{}"), // JSON payload is a requirement when Envoy payload transformation is disabled
--		},
-+	s.gateway(gatewayObjectMeta).Send(
-+		s.T(),
- 		// Ensure the JSON transformation Envoy applies are not a part of the lambda's response body:
- 		// https://www.envoyproxy.io/docs/envoy/latest/configuration/http/http_filters/aws_lambda_filter
- 		&testmatchers.HttpResponse{
-@@ -210,89 +195,73 @@ func (s *testingSuite) TestLambdaBackendRouting() {
- 				gomega.Not(gomega.ContainSubstring(`is_base64_encoded`)),
- 			),
- 		},
-+		curl.WithHostHeader("www.example.com"),
-+		curl.WithPort(8080),
-+		curl.WithPath("/lambda/no-payload-transform"),
-+		curl.WithBody("{}"), // JSON payload is a requirement when Envoy payload transformation is disabled
- 	)
- }
- 
- func (s *testingSuite) TestLambdaBackendAsyncRouting() {
- 	// Test Lambda backend with custom endpoint
--	s.ti.AssertionsT(s.T()).AssertEventualCurlResponse(
--		s.ct
-```
-
----
-
-### Incident Patch 3: `06af7019` (2026-11-03)
-**Commit Message**: fix(deployer): drop removed Envoy runtime guard and deprecated bootstrap field (#14971)
-
-Signed-off-by: omar <[REDACTED_EMAIL]>
-
-**File**: `pkg/kgateway/helm/envoy/templates/configmap.yaml` (modified, +5/-4)
-```diff
-@@ -38,9 +38,6 @@ data:
-         socket_address: { address: 127.0.0.1, port_value: 19000 }
-     layered_runtime:
-       layers:
--      - name: static_layer
--        static_layer:
--          envoy.restart_features.use_eds_cache_for_ads: true
-       - name: admin_layer
-         admin_layer: {}
-     {{- with $gateway.maxDownstreamConnections }}
-@@ -287,7 +284,11 @@ data:
-         {{- if $gateway.istio.enabled }}
-         - name: gateway_proxy_sds
-           connect_timeout: 0.25s
--          http2_protocol_options: {}
-+          typed_extension_protocol_options:
-+            envoy.extensions.upstreams.http.v3.HttpProtocolOptions:
-+              "@type": type.googleapis.com/envoy.extensions.upstreams.http.v3.HttpProtocolOptions
-+              explicit_http_config:
-+                http2_protocol_options: {}
-           load_assignment:
-             cluster_name: gateway_proxy_sds
-             endpoints:
-```
-
-**File**: `pkg/pluginsdk/ir/model.go` (modified, +2/-2)
-```diff
-@@ -220,8 +220,8 @@ func NewEndpointsForBackend(us BackendObjectIR) *EndpointsForBackend {
- 	// ResourceName and ClusterName here so Gateway-scoped backend clones that
- 	// share the same Service and endpoints, but differ in client certificate
- 	// identity, do not collapse to the same endpoint hash.
--	// note: we no longer need to add the upstream body hash to the clustername, as we applied `use_eds_cache_for_ads`
--	// to mitigate https://github.com/envoyproxy/envoy/issues/13070 / https://github.com/envoyproxy/envoy/issues/13009
-+	// note: we no longer need to add the upstream body hash to the clustername, as Envoy's EDS cache for ADS
-+	// (always on since Envoy 1.37) mitigates https://github.com/envoyproxy/envoy/issues/13070 / https://github.com/envoyproxy/envoy/issues/13009
- 
- 	h := fnv.New64a()
- 	objSrc := us.GetObjectSource()
-```
-
-**File**: `pkg/validator/validator.go` (modified, +47/-5)
-```diff
-@@ -109,9 +109,10 @@ func (b *binaryValidator) Validate(ctx context.Context, bootstrap *envoybootstra
- }
- 
- type dockerValidator struct {
--	img      string
--	etcEnvoy string
--	pull     string
-+	img            string
-+	etcEnvoy       string
-+	pull           string
-+	failOnWarnings bool
- }
- 
- type DockerValidatorOptions func(*dockerValidator)
-@@ -134,6 +135,16 @@ func PullPolicy(policy string) func(*dockerValidator) {
- 	}
- }
- 
-+// FailOnWarnings makes validation fail when Envoy accepts the config but logs a
-+// warning, error, or envoy_bug while loading it (e.g. a removed runtime guard or
-+// a deprecated field). Envoy exits 0 in those cases, so they only show up in logs.
-+// Intended for tests that pin configs to the bundled Envoy version.
-+func FailOnWarnings() func(*dockerValidator) {
-+	return func(d *dockerValidator) {
-+		d.failOnWarnings = true
-+	}
-+}
-+
- var _ Validator = &dockerValidator{}
- 
- // NewDocker creates a new docker validator. If img is empty, the default image is used.
-@@ -162,19 +173,44 @@ func (d *dockerValidator) args() []string {
- 	if d.etcEnvoy != "" {
- 		args = append(args, "-v", d.etcEnvoy+":/etc/envoy/:ro")
- 	}
-+	logLevel, logFormat := "critical", "%v"
-+	if d.failOnWarnings {
-+		logLevel, logFormat = "warning", "[%l] %v"
-+	}
- 	args = append(args,
- 		"--entrypoint", "/usr/local/bin/envoy",
- 		d.img,
- 		"--mode",
- 		"validate",
- 		"--service-node", "dummy-node",
- 		"--config-path", "/dev/fd/0",
--		"-l", "critical",
--		"--log-format", "%v",
-+		"-l", logLevel,
-+		"--log-format", logFormat,
- 	)
- 	return args
- }
- 
-+// envoyWarningLineRe matches log lines at warning level or above, as emitted with
-+// the "[%l] %v" log format. Envoy prints some info output (e.g. the runtime layer
-+// dump) regardless of -l, so filtering by level is required.
-+var envoyWarningLineRe = regexp.MustCompile(`^\[(warning|error|critical)\] `)
-+
-+// envoyStacktraceLineRe matches the stack trace Envoy logs after an envoy_bug.
-+var envoyStacktraceLineRe = regexp.MustCompile(`^\[error\] (stacktrace for envoy bug|#\d+ )`)
-+
-+// extractEnvoyWarnings returns the warning-or-worse log lines from Envoy's stderr,
-+// without stack traces.
-+func extractEnvoyWarnings(stderr string) []string {
-+	var warnings []string
-+	for line := range strings.SplitSeq(stderr, "\n") {
-+		line = strings.TrimSpace(line)
-+		if envoyWarningLineRe.MatchString(line) && !envoyStacktraceLineRe.MatchString(line) {
-+			warnings = append(warnings, line)
-+		}
-+	}
-+	return warnings
-+}
-+
- func (d *dockerValidator) Validate(ctx context.Context, bootstrap *envoybootstrapv3.Bootstrap) error {
- 	marshalled, err := prepareBootstrapConfig(bootstrap)
+-		s.gatewayCurlOptions(host)...,
+-	)
++	response, err := common.BaseGateway.Do(s.Ctx, s.gatewayCurlOptions(host)...)
  	if err != nil {
-@@ -191,6 +227,12 @@ func (d *dockerValidator) Validate(ctx context.Context, bootstrap *envoybootstra
- 
- 	err = cmd.Run()
- 	if err == nil {
-+		if d.failOnWarnings {
-+			if warnings := extractEnvoyWarnings(stderr.String()); len(warnings) > 0 {
-+				return fmt.Errorf("%w: envoy accepted the config but logged: %s",
-+					ErrInvalidXDS, normalizeEnvoyError(strings.Join(warnings, "; ")))
-+			}
-+		}
- 		return nil
+ 		return 0, "", err
  	}
+-
+-	response := transforms.WithCurlResponse(curlResponse)
+ 	defer response.Body.Close()
  
-```
-
-**File**: `pkg/validator/validator_test.go` (modified, +81/-0)
-```diff
-@@ -4,6 +4,7 @@ import (
- 	"context"
- 	"os"
- 	"path/filepath"
-+	"strings"
- 	"testing"
+ 	body, err := io.ReadAll(response.Body)
+@@ -534,7 +528,6 @@ func (s *testingSuite) gatewayResponse(host string) (int, string, error) {
  
- 	envoybootstrapv3 "github.com/envoyproxy/go-control-plane/envoy/config/bootstrap/v3"
-@@ -19,6 +20,7 @@ import (
- 	"github.com/golang/protobuf/ptypes/duration"
- 	"github.com/stretchr/testify/assert"
- 	"github.com/stretchr/testify/require"
-+	"google.golang.org/protobuf/types/known/structpb"
- 
- 	"github.com/kgateway-dev/kgateway/v2/pkg/kgateway/utils"
- 	"github.com/kgateway-dev/kgateway/v2/pkg/xds/bootstrap"
-@@ -424,6 +426,34 @@ func TestDockerValidator_Validate(t *testing.T) {
- 	}
- }
- 
-+func TestDockerValidator_FailOnWarnings(t *testing.T) {
-+	// Envoy accepts a removed runtime guard but logs an envoy_bug (see #14970).
-+	// If a future Envoy rejects this guard outright, the default-validator case
-+	// below will fail: switch to a guard or field deprecated in that Envoy version.
-+	staticLayer, err := structpb.NewStruct(map[string]any{
-+		"envoy.restart_features.use_eds_cache_for_ads": true,
-+	})
-+	require.NoError(t, err)
-+	bootstrap := &envoybootstrapv3.Bootstrap{
-+		Node: &envoycorev3.Node{
-+			Id:      "test-id",
-+			Cluster: "test-cluster",
-+		},
-+		LayeredRuntime: &envoybootstrapv3.LayeredRuntime{
-+			Layers: []*envoybootstrapv3.RuntimeLayer{{
-+				Name:           "static_layer",
-+				LayerSpecifier: &envoybootstrapv3.RuntimeLayer_StaticLayer{StaticLayer: staticLayer},
-+			}},
-+		},
-+	}
-+
-+	err = NewDocker(FailOnWarnings()).Validate(t.Context(), bootstrap)
-+	require.ErrorIs(t, err, ErrInvalidXDS, "FailOnWarnings should reject a config Envoy accepts with an envoy_bug")
-+	assert.Contains(t, err.Error(), "Using a removed guard envoy.restart_features.use_eds_cache_for_ads")
-+
-+	require.NoError(t, NewDocker().Validate(t.Context(), bootstrap), "default validator should only fail when Envoy rejects the config")
-+}
-+
- func TestExtractEnvoyError(t *testing.T) {
- 	tests := []struct {
- 		name     string
-@@ -519,6 +549,57 @@ more details`,
- 	}
- }
- 
-+func TestExtractEnvoyWarnings(t *testing.T) {
-+	tests := []struct {
-+		name     string
-+		input    string
-+		expected []string
-+	}{
-+		{
-+			name: "info output only",
-+			input: `[info] runtime: layers:
-+[info]   - name: static_layer
-+configuration '/dev/fd/0' OK`,
-+			expected: nil,
-+		},
-+		{
-+			name: "removed runtime guard envoy_bug drops stacktrace",
-+			input: `[info] runtime: layers:
-+[error] envoy bug failure: false. Details: Using a removed guard envoy.restart_features.use_eds_cache_for_ads. In future version of Envoy this will be treated as invalid configuration
-+[error] stacktrace for envoy bug
-+[error] #0 UNKNOWN [0xaaaae4960eac]
-+[error] #1 UNKNOWN [0xaaaae49653d8]
-+configuration '/dev/fd/0' OK`,
-+			expected: []string{
-+				"[error] envoy bug failure: false. Details: Using a removed guard envoy.restart_features.use_eds_cache_for_ads. In future version of Envoy this will be treated as invalid configuration",
-+			},
-+		},
-+		{
-+			name: "deprecated field warning with docker noise",
-+			input: `WARNING: The requested image's platform (linux/amd64) does not match the detected host platform
-+Status: Downloaded newer image for envoyproxy/envoy:v1.39.6
-+[warning] Using deprecated option 'envoy.config.core.v3.Foo.bar'`,
-+			expected: []string{
-+				"[warning] Using deprecated option 'envoy.config.core.v3.Foo.bar'",
-+			},
-+		},
-+	}
-+
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			assert.Equal(t, tt.expected, extractEnvoyWarnings(tt.input))
-+		})
-+	}
-+}
-+
-+func TestDockerValidator_FailOnWarningsArgs(t *testing.T) {
-+	args := NewDocker(FailOnWarnings()).(*dockerValidator).args()
-+	assert.Contains(t, strings.Join(args, " "), "-l warning --log-format [%l] %v")
-+
-+	args = NewDocker().(*dockerValidator).args()
-+	assert.Contains(t, strings.Join(args, " "), "-l critical --log-format %v", "default must stay at critical so runtime validation is unchanged")
-+}
-+
- func TestNormalizeEnvoyError(t *testing.T) {
- 	tests := []struct {
- 		name     string
-```
-
-**File**: `test/deployer/deployer_helm.go` (modified, +6/-2)
-```diff
-@@ -127,7 +127,8 @@ func VerifyAllYAMLFilesReferenced(t *testing.T, testDataDir string, testCases []
- 	require.Empty(t, unreferenced, "Found YAML files in %s without corresponding test cases: %v", testDataDir, unreferenced)
- }
- 
--// VerifyAllEnvoyBootstrapAreValid ensures that envoy bootstrap configs are accepted by envoy.
-+// VerifyAllEnvoyBootstrapAreValid ensures that envoy bootstrap configs are accepted by envoy
-+// without warnings, so removed runtime guards and deprecated fields fail on the Envoy bump PR.
- func VerifyAllEnvoyBootstrapAreValid(t *testing.T, testDataDir string) {
- 	t.Helper()
- 
-@@ -143,7 +144,10 @@ func VerifyAllEnvoyBootstrapAreValid(t *testing.T, testDataDir string) {
- 	var wg sync.WaitGroup
- 	var envoyErr error
- 	var once sync.Once
--	validator := validator.NewDocker(validator.EtcEnvoyVolume(filepath.Join(testDataDir, "etc-envoy")))
-+	validator := validator.NewDocker(
-+		validator.EtcEnvoyVolume(filepath.Join(testDataDir, "etc-envoy")),
-+		validator.FailOnWarnings(),
-+	)
- 
- 	for _, yamlFile := range yamlFiles {
- 		// deserialize the YAML file
-```
-
-**File**: `test/deployer/testdata/base-gateway-out.yaml` (modified, +0/-3)
-```diff
-@@ -21,9 +21,6 @@ data:
-         socket_address: { address: 127.0.0.1, port_value: 19000 }
-     layered_runtime:
-       layers:
--      - name: static_layer
--        static_layer:
--          envoy.restart_features.use_eds_cache_for_ads: true
-       - name: admin_layer
-         admin_layer: {}
-     node:
-```
-
-**File**: `test/deployer/testdata/base-gateway-tls-out.yaml` (modified, +0/-3)
-```diff
-@@ -36,9 +36,6 @@ data:
-         socket_address: { address: 127.0.0.1, port_value: 19000 }
-     layered_runtime:
-       layers:
--      - name: static_layer
--        static_layer:
--          envoy.restart_features.use_eds_cache_for_ads: true
-       - name: admin_layer
-         admin_layer: {}
-     node:
-```
-
-**File**: `test/deployer/testdata/both-gwc-and-gw-have-envoy-extra-args-out.yaml` (modified, +0/-3)
-```diff
-@@ -21,9 +21,6 @@ data:
-         socket_address: { address: 127.0.0.1, port_value: 19000 }
-     layered_runtime:
-       layers:
--      - name: static_layer
--        static_layer:
--          envoy.restart_features.use_eds_cache_for_ads: true
-       - name: admin_layer
-         admin_layer: {}
-     node:
+ func (s *testingSuite) gatewayCurlOptions(host string) []curl.Option {
+ 	return []curl.Option{
+-		curl.WithHost(kubeutils.ServiceFQDN(proxyObjectMeta)),
+ 		curl.WithHostHeader(host),
+ 		curl.WithPort(80),
+ 		curl.WithPath("/"),
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #14980** (2026-11-05): e2e: add Gateway.SendWithResponse and Gateway.Do, and fix ExecuteRequest body truncation (@puertomontt)
+- **PR #14978** (2026-11-04): test(e2e): apply and delete test manifests without shelling out to kubectl (@puertomontt)
 - **PR #14976** (closed): [2.1] tests: Update expired certs (@kristin-kronstain-brown)
 - **PR #14972** (2026-11-03): [2.5] fix(deployer): drop removed Envoy runtime guard and deprecated bootstrap field (#14971) (@puertomontt)
 - **PR #14971** (2026-11-03): fix(deployer): drop removed Envoy runtime guard and deprecated bootstrap field (@puertomontt)
 - **PR #14969** (2026-11-03): ci: prime the Go build cache from empty so it stops growing (@puertomontt)
-- **PR #14967** (2026-11-04): test(e2e): give Tracing and BackendConfigPolicy distinct, suite-level Pods (@puertomontt)
-- **PR #14966** (closed): fix(xds): record routing targets at publish instead of memoizing configs (@chandler-solo)
 
 ---
 
@@ -2206,28 +1466,40 @@ Signed-off-by: omar <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. test(e2e): give Tracing and BackendConfigPolicy distinct, suite-level Pods (#149
+## X. e2e: add Gateway.SendWithResponse and Gateway.Do, and fix ExecuteRequest body tr
 
 **RULE**:
-When implementing operations in `test/e2e/features/backendconfigpolicy/suite.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kgateway-dev/kgateway. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/utils/requestutils/curl/native_request.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kgateway-dev/kgateway. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `817da822`: test(e2e): give Tracing and BackendConfigPolicy distinct, suite-level Pods (#14967). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a723f1e0`: e2e: add Gateway.SendWithResponse and Gateway.Do, and fix ExecuteRequest body truncation (#14980). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `test/e2e/features/backendconfigpolicy/suite.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/utils/requestutils/curl/native_request.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-		BaseTestingSuite: base.NewBaseTestingSuite(ctx, testInst, base.TestCase{Manifests: []string{backendsManifest}}, testCases),
+	// connectionTimeout is enforced by the client's Timeout, which also covers reading the
+	// body. A context timeout here would be canceled when this function returns, cutting off
+	// a body the caller has not read yet.
+	// Each request gets its own transport that is never reused, so a kept-alive connection
+	// would only sit idle in its pool until the server closed it.
+		DialContext:       c.buildDialer(),
+		DisableKeepAlives: true,
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-		BaseTestingSuite: base.NewBaseTestingSuite(ctx, testInst, base.TestCase{}, testCases),
+	// Create context with timeout
+	if c.connectionTimeout > 0 {
+		var cancel context.CancelFunc
+		ctx, cancel = context.WithTimeout(ctx, time.Duration(c.connectionTimeout)*time.Second)
+		defer cancel()
+	}
+		DialContext: c.buildDialer(),
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `817da822` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a723f1e0` are properly handled with clean fallback behavior.

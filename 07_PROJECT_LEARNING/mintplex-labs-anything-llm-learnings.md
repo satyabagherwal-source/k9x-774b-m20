@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/mintplex-labs-anything-llm-learnings.md`  
 > **Source**: github ([https://github.com/Mintplex-Labs/anything-llm](https://github.com/Mintplex-Labs/anything-llm))  
-> **Source Version**: `eda0eb5e`  
+> **Source Version**: `cbaf3357`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T19:41:33.719Z  
+> **Timestamp**: 2026-11-05T10:23:18.330Z  
 > **Learning ID**: `learn-github-mintplex-labs-anything-llm`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/mintplex-labs-anything-llm-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Mintplex-Labs/anything-llm](https://github.com/Mintplex-Labs/anything-llm))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T19:41:33.581Z  
+> **Harvest Timestamp**: 2026-11-05T10:23:18.324Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Stop renting your intelligence. Own it with AnythingLLM. Everything you need for a powerful local-first agent experience 
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 67939 stars
+- **Stars / Engagement**: 67963 stars
 
 ---
 
@@ -1309,352 +1309,360 @@ module.exports = {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ed730a82` (2026-11-03)
-**Commit Message**: fix: replace agent session complete notice with an explicit exit notice (#6966)
+### Incident Patch 1: `2b1b81d6` (2026-11-04)
+**Commit Message**: fix: honour the workspace chat mode in the mobile stream-chat command (#6983)
 
-* fix: stop appending agent session complete notice to chat history
+* fix: honour the workspace chat mode in the mobile stream-chat command
 
-The appended statusResponse became the last history item, which hid the
-finished answer's regenerate action and rendered a trailing Thoughts block.
-Content-less placeholders are still swept when the socket closes.
+The mobile stream-chat command passed a literal mode of "chat" to
+ApiChatHandler.streamChat, so a workspace configured as Automatic or
+Query behaved as plain Chat from the phone and tools never ran unless
+the message was prefixed with @agent.
 
-* feat: show a notice when the user exits an agent session
+Pass workspace.chatMode, as the web stream endpoint and the developer
+API thread endpoints already do for the same handler.
 
-Bail commands (exit, stop, halt) now send an agentSessionExited event
-before the socket closes, rendered as an italic notice in the live chat.
-Timeouts, /reset, the stop button, and disconnects send nothing.
+* fix: await the mobile command handler so a rejected chat cannot crash the server
 
-**File**: `frontend/src/components/WorkspaceChat/ChatContainer/ChatHistory/AgentSessionExited/index.jsx` (added, +17/-0)
+The /mobile/send/:command route returned the handler's promise without
+awaiting it, so its try/catch never saw a rejection. With the workspace
+chat mode honoured, an "automatic" workspace runs the agent pre-flight on
+every mobile message, which can reject on a misconfigured provider; that
+rejection would escape as an unhandled promise rejection. Await the call,
+and when the stream headers are already out just end the response rather
+than attempting a 500 after the fact.
+
+* test: trim mobile stream-chat tests to happy path plus input edge cases
+
+---------
+
+Co-authored-by: Timothy Carambat 
+
+**File**: `server/__tests__/endpoints/mobile/utils/index.test.js` (modified, +79/-1)
 ```diff
-@@ -0,0 +1,17 @@
-+import { useTranslation } from "react-i18next";
-+import { Info } from "@phosphor-icons/react";
+@@ -12,13 +12,14 @@ jest.mock("../../../../models/workspaceThread", () => ({
+ }));
+ jest.mock("../../../../models/mobileDevice", () => ({ MobileDevice: {} }));
+ jest.mock("../../../../utils/chats/apiChatHandler", () => ({
+-  ApiChatHandler: {},
++  ApiChatHandler: { streamChat: jest.fn() },
+ }));
+ jest.mock("../../../../endpoints/utils", () => ({ getModelTag: () => "test" }));
+ 
+ const prisma = require("../../../../utils/prisma");
+ const { WorkspaceChats } = require("../../../../models/workspaceChats");
+ const { Workspace } = require("../../../../models/workspace");
++const { ApiChatHandler } = require("../../../../utils/chats/apiChatHandler");
+ const {
+   handleMobileCommand,
+ } = require("../../../../endpoints/mobile/utils/index");
+@@ -125,4 +126,81 @@ describe("handleMobileCommand: stream-chat", () => {
+     expect(response.status).toHaveBeenCalledWith(404);
+     expect(response.json).toHaveBeenCalledWith({ error: "Thread not found" });
+   });
 +
-+/**
-+ * Notice shown after the user ends an agent session with an exit command.
-+ */
-+export default function AgentSessionExited() {
-+  const { t } = useTranslation();
-+  return (
-+    <div className="flex justify-start w-full">
-+      <div className="py-4 px-4 md:pl-0 flex items-center gap-x-1.5 text-xs font-mono italic text-zinc-400 light:text-slate-500">
-+        <Info className="h-4 w-4 shrink-0" />
-+        <p className="!m-0">{t("chat.agent_session_exited")}</p>
-+      </div>
-+    </div>
-+  );
-+}
++  function streamResponse(user = null) {
++    return {
++      locals: { user },
++      status: jest.fn().mockReturnThis(),
++      json: jest.fn().mockReturnThis(),
++      setHeader: jest.fn(),
++      flushHeaders: jest.fn(),
++      end: jest.fn(),
++    };
++  }
++
++  function streamChat(body, response) {
++    return handleMobileCommand(
++      { params: { command: "stream-chat" }, body },
++      response
++    );
++  }
++
++  it("chats in the workspace's configured mode", async () => {
++    Workspace.get.mockResolvedValue({ ...workspace, chatMode: "automatic" });
++    const response = streamResponse();
++
++    await streamChat({ workspaceSlug: "my-ws", message: "hi" }, response);
++
++    expect(ApiChatHandler.streamChat).toHaveBeenCalledWith(
++      expect.objectContaining({
++        mode: "automatic",
++        message: "hi",
++        thread: null,
++      })
++    );
++    expect(response.end).toHaveBeenCalled();
++  });
++
++  it("uses the mode of the workspace resolved for the signed-in user", async () => {
++    const user = { id: 3 };
++    Workspace.getWithUser.mockResolvedValue({
++      ...workspace,
++      chatMode: "query",
++    });
++    const response = streamResponse(user);
++
++    await streamChat({ workspaceSlug: 123, message: "hi" }, response);
++
++    expect(Workspace.get).not.toHaveBeenCalled();
++    expect(Workspace.getWithUser).toHaveBeenCalledWith(user, { slug: "123" });
++    expect(ApiChatHandler.streamChat).toHaveBeenCalledWith(
++      expect.objectContaining({ mode: "query", user })
++    );
++  });
++
++  it.each([
++    [{ workspaceSlug: "my-ws" }, "Message is required"],
++    [{ workspaceSlug: "my-ws", message: "" }, "Message is required"],
++    [{ message: "hi" }, "Workspace ID is required"],
++  ])("rejects %j before opening the stream", async (body, error) => {
++    const response = streamResponse();
++
++    await streamChat(body, response);
++
++    expect(response.status).toHaveBeenCalledWith(400);
++    expect(response.json).toHaveBeenCalledWith({ error });
++    expect(response.flushHeaders).not.toHaveBeenCalled();
++    expect(ApiChatHandler.streamChat).not.toHaveBeenCalled();
++  });
++
++  it("propagates a chat handler failure to the route instead of ending the stream", async () => {
++    ApiChatHandler.streamChat.mockRejectedValue(new Error("bad provider"));
++    const response = streamResponse();
++
++    await expect(
++      streamChat({ workspaceSlug: "my-ws", message: "hi" }, response)
++    ).rejects.toThrow("bad provider");
++    expect(response.flushHeaders).toHaveBeenCalled();
++    expect(response.end).not.toHaveBeenCalled();
++  });
+ });
 ```
 
-**File**: `frontend/src/components/WorkspaceChat/ChatContainer/ChatHistory/index.jsx` (modified, +3/-0)
+**File**: `server/endpoints/mobile/index.js` (modified, +2/-1)
 ```diff
-@@ -7,6 +7,7 @@ import ClarifyingQuestionCard from "./ClarifyingQuestion";
- import FileDownloadCard from "./FileDownloadCard";
- import ImageGenerationPending from "./ImageGenerationPending";
- import ScheduledJobCreatedCard from "./ScheduledJobCreatedCard";
-+import AgentSessionExited from "./AgentSessionExited";
- import { useManageWorkspaceModal } from "../../../Modals/ManageWorkspace";
- import ManageWorkspace from "../../../Modals/ManageWorkspace";
- import { ArrowDown } from "@phosphor-icons/react";
-@@ -300,6 +301,8 @@ function buildMessages({
-       acc.push(<FileDownloadCard key={props.uuid} props={props} />);
-     } else if (props.type === "scheduledJobCreated" && !!props.content) {
-       acc.push(<ScheduledJobCreatedCard key={props.uuid} props={props} />);
-+    } else if (props.type === "agentSessionExited") {
-+      acc.push(<AgentSessionExited key={props.uuid} />);
-     } else if (props.type === "imageGenerationPending") {
-       acc.push(
-         <ImageGenerationPending
-```
-
-**File**: `frontend/src/components/WorkspaceChat/ChatContainer/index.jsx` (modified, +4/-22)
-```diff
-@@ -55,7 +55,6 @@ export default function ChatContainer({
-   const { files, parseAttachments } = useContext(DndUploaderContext);
-   const { chatHistoryRef } = useChatContainerQuickScroll();
-   const pendingMessageChecked = useRef(false);
--  const pendingResetRef = useRef(false);
-   const activeThreadSlug = threadSlug;
- 
-   const isEmpty =
-@@ -332,7 +331,6 @@ export default function ChatContainer({
-         // server to abort the agent and close the socket; fall through to the
-         // /reset flow below which resets memory + clears chat history.
-         if (promptMessage.userMessage.trim() !== "/reset") return;
--        pendingResetRef.current = true;
+@@ -148,9 +148,10 @@ function mobileEndpoints(app) {
+     [validDeviceToken],
+     async (request, response) => {
+       try {
+-        return handleMobileCommand(request, response);
++        return await handleMobileCommand(request, response);
+       } catch (e) {
+         console.error(e);
++        if (response.headersSent) return response.end();
+         response.sendStatus(500).end();
        }
- 
-       if (!promptMessage || !promptMessage?.userMessage) return false;
-@@ -417,26 +415,10 @@ export default function ChatContainer({
-           setAgentSessionActive(false);
-           setAgentSessionSocket(null);
-           window.dispatchEvent(new CustomEvent(AGENT_SESSION_END));
--          // When the close was triggered by /reset, skip the "Agent session
--          // complete." status - the pending /reset flow will clear history.
--          if (pendingResetRef.current) {
--            pendingResetRef.current = false;
--          } else {
--            setChatHistory((prev) => [
--              ...prev.filter((msg) => !!msg.content),
--              {
--                uuid: v4(),
--                type: "statusResponse",
--                content: "Agent session complete.",
--                role: "assistant",
--                sources: [],
--                closed: true,
--                error: null,
--                animate: false,
--                pending: false,
--              },
--            ]);
--          }
-+          // Session end is stream plumbing, not conversation, so nothing is
-+          // appended. Still sweep content-less placeholders (e.g. the pending
-+          // dots from the @agent handoff) in case no agent event replaced them.
-+          setChatHistory((prev) => prev.filter((msg) => !!msg.content));
-           setLoadingResponse(false);
-           setWebsocket(null);
-           setSocketId(null);
+     }
 ```
 
-**File**: `frontend/src/locales/ar/common.js` (modified, +1/-0)
+**File**: `server/endpoints/mobile/utils/index.js` (modified, +1/-1)
 ```diff
-@@ -260,6 +260,7 @@ const TRANSLATIONS = {
-     token_limit_reached:
-       "وصلت الاستجابة إلى الحد الأقصى لعدد الرموز، لذا يجب زيادة الحد الأقصى لعدد الرموز التي يمكن للنموذج إنتاجها للسماح بإنتاج استجابات أطول.",
-     no_response: "فشل النموذج في الرد.",
-+    agent_session_exited: "لقد أنهيت جلسة الوكيل.",
-   },
-   "vector-workspace": {
-     identifier: "معرف قاعدة بيانات المتجهة",
-```
-
-**File**: `frontend/src/locales/bg/common.js` (modified, +1/-0)
-```diff
-@@ -307,6 +307,7 @@ const TRANSLATIONS = {
-     token_limit_reached:
-       "Отговорът достигна максималния лимит за генерирани токени. Увеличете максималния брой токени, които моделът може да генерира, за да позволите по-дълги отговори.",
-     no_response: "Моделът не успя да отговори.",
-+    agent_session_exited: "Прекратихте сесията с агента.",
-   },
-   "vector-workspace": {
-     identifier: "Идентификатор на векторната база данни",
-```
-
-**File**: `frontend/src/locales/ca/common.js` (modified, +1/-0)
-```diff
-@@ -307,6 +307,7 @@ const TRANSLATIONS = {
-     token_limit_reached:
-       "La resposta ha arribat al límit de tokens de sortida. Augmenta el nombre màxim de tokens de sortida del model per permetre respostes més llargues.",
-     no_response: "El model no ha pogut respondre.",
-+    agent_session_exited: "Has finalitzat la sessió de l'agent.",
-   },
-   "vector-workspace": {
-     identifier: "Identificador de la base de dades vectorial",
-```
-
-**File**: `frontend/src/locales/cs/common.js` (modified, +1/-0)
-```diff
-@@ -304,6 +304,7 @@ const TRANSLATIONS = {
-     token_limit_reached:
-       "Odpověď dosáhla maximálního limitu tokenů. Zvyšte maximální počet tokenů, které model může generovat, aby bylo možné získat delší odpovědi.",
-     no_response: "Model nedokázal odpovědět.",
-+    agent_session_exited: "Ukončili jste relaci agenta.",
-   },
-   "vector-workspace": {
-     identifier: "Identifikátor vektorové databáze",
-```
-
-**File**: `frontend/src/locales/da/common.js` (modified, +1/-0)
-```diff
-@@ -263,6 +263,7 @@ const TRANSLATIONS = {
-     token_limit_reached:
-       "Svaret nåede det maksimale tilladte antal tokens. Øg modellens maksimale antal tokens, så svaret kan være længere.",
-     no_response: "Modellen kunne ikke svare.",
-+    agent_session_exited: "Du afsluttede agent-sessionen.",
-   },
-   "vector-workspace": {
-     identifier: "Identifikator for vektordatabase",
+@@ -182,7 +182,7 @@ async function handleMobileCommand(request, response) {
+       workspace,
+       thread,
+       message,
+-      mode: "chat",
++      mode: workspace.chatMode,
+       user: user,
+       sessionId: null,
+       attachments: [],
 ```
 
 ---
 
-### Incident Patch 2: `eda0eb5e` (2026-11-04)
-**Commit Message**: fix: honor a chat history limit of 0 (#6973)
+### Incident Patch 2: `83a3db61` (2026-11-04)
+**Commit Message**: fix: auto-name threads first messaged via the mobile app or developer API (#6982)
 
-* fix: honor a chat history limit of 0
+* fix: auto-name threads first messaged via the mobile app or developer API
 
-* Allow a chat history limit of 0 in workspace settings
+The first-message rename of a thread (WorkspaceThread.autoRenameThread)
+was only wired into the web UI stream endpoint and the agent chat-history
+plugin. Threads whose first message arrived through the mobile stream-chat
+command or the developer API thread chat/stream-chat endpoints kept the
+default "Thread" name indefinitely.
+
+Call autoRenameThread after the chat handler returns at those three sites,
+mirroring server/endpoints/chat.js. The model's own guards (default name,
+exactly one chat) are unchanged, so explicitly named threads are untouched.
+
+* Emit rename_thread on streamed thread renames, drop narrow tests
+
+Match the web chat endpoint: API stream-chat and mobile stream-chat now pass onRename to autoRenameThread and write a rename_thread action chunk. Removes the new endpoint/model test files and the added mobile test cases.
 
 ---------
 
 Co-authored-by: Timothy Carambat <[REDACTED_EMAIL]>
 
-**File**: `frontend/src/pages/WorkspaceSettings/ChatSettings/ChatHistorySettings/index.jsx` (modified, +1/-1)
+**File**: `server/endpoints/api/workspaceThread/index.js` (modified, +22/-0)
 ```diff
-@@ -17,7 +17,7 @@ export default function ChatHistorySettings({ workspace }) {
-       <input
-         name="openAiHistory"
-         type="number"
--        min={1}
-+        min={0}
-         step={1}
-         onWheel={(e) => e.target.blur()}
-         defaultValue={workspace?.openAiHistory ?? 20}
+@@ -455,6 +455,12 @@ function apiWorkspaceThreadEndpoints(app) {
+           attachments,
+           reset,
+         });
++        await WorkspaceThread.autoRenameThread({
++          thread,
++          workspace,
++          user,
++          prompt: message,
++        });
+         await Telemetry.sendTelemetry("sent_chat", {
+           LLMSelection: process.env.LLM_PROVIDER || "openai",
+           Embedder: process.env.EMBEDDING_ENGINE || "inherit",
+@@ -643,6 +649,22 @@ function apiWorkspaceThreadEndpoints(app) {
+           attachments,
+           reset,
+         });
++        // If thread was renamed emit event to the client via special `action` response.
++        await WorkspaceThread.autoRenameThread({
++          thread,
++          workspace,
++          user,
++          prompt: message,
++          onRename: (thread) => {
++            writeResponseChunk(response, {
++              action: "rename_thread",
++              thread: {
++                slug: thread.slug,
++                name: thread.name,
++              },
++            });
++          },
++        });
+         await Telemetry.sendTelemetry("sent_chat", {
+           LLMSelection: process.env.LLM_PROVIDER || "openai",
+           Embedder: process.env.EMBEDDING_ENGINE || "inherit",
 ```
 
-**File**: `server/__tests__/utils/chats/apiChatHandler.test.js` (modified, +53/-0)
+**File**: `server/endpoints/mobile/utils/index.js` (modified, +17/-0)
 ```diff
-@@ -442,3 +442,56 @@ describe("ApiChatHandler @agent persistence", () => {
+@@ -2,6 +2,7 @@ const { Workspace } = require("../../../models/workspace");
+ const { WorkspaceChats } = require("../../../models/workspaceChats");
+ const { WorkspaceThread } = require("../../../models/workspaceThread");
+ const { ApiChatHandler } = require("../../../utils/chats/apiChatHandler");
++const { writeResponseChunk } = require("../../../utils/helpers/chat/responses");
+ const { reqBody } = require("../../../utils/http");
+ const prisma = require("../../../utils/prisma");
+ const { getModelTag } = require("../../utils");
+@@ -187,6 +188,22 @@ async function handleMobileCommand(request, response) {
+       attachments: [],
+       reset: false,
      });
-   });
- });
-+
-+describe("ApiChatHandler chat history limit", () => {
-+  const { recentChatHistory } = require("../../../utils/chats/index");
-+  const historyLoaded = new Error("history loaded");
-+
-+  beforeEach(() => {
-+    jest.clearAllMocks();
-+    EphemeralAgentHandler.isAgentInvocation.mockResolvedValue(false);
-+    resolveProviderConnector.mockResolvedValue({
-+      connector: { promptWindowLimit: () => 8000 },
-+      routingMetadata: null,
++    // If thread was renamed emit event to the client via special `action` response.
++    await WorkspaceThread.autoRenameThread({
++      thread,
++      workspace,
++      user,
++      prompt: message,
++      onRename: (thread) => {
++        writeResponseChunk(response, {
++          action: "rename_thread",
++          thread: {
++            slug: thread.slug,
++            name: thread.name,
++          },
++        });
++      },
 +    });
-+    getVectorDbClass.mockReturnValue({
-+      hasNamespace: jest.fn().mockResolvedValue(false),
-+      namespaceCount: jest.fn().mockResolvedValue(0),
-+    });
-+    // Stop the chat once the history is requested, the limit is all we check.
-+    recentChatHistory.mockRejectedValue(historyLoaded);
-+  });
-+
-+  test.each([
-+    ["chatSync", (args) => ApiChatHandler.chatSync(args)],
-+    [
-+      "streamChat",
-+      (args) => ApiChatHandler.streamChat({ response: {}, ...args }),
-+    ],
-+  ])(
-+    "%s sends no prior messages when the history limit is 0",
-+    async (_, chat) => {
-+      await expect(
-+        chat({
-+          workspace: { ...workspace, openAiHistory: 0 },
-+          message: "hello",
-+          mode: "chat",
-+        })
-+      ).rejects.toBe(historyLoaded);
-+
-+      expect(recentChatHistory).toHaveBeenCalledWith(
-+        expect.objectContaining({ messageLimit: 0 })
-+      );
-+    }
-+  );
-+
-+  test("falls back to 20 messages when the workspace has no history limit", async () => {
-+    await expect(
-+      ApiChatHandler.chatSync({ workspace, message: "hello", mode: "chat" })
-+    ).rejects.toBe(historyLoaded);
-+
-+    expect(recentChatHistory).toHaveBeenCalledWith(
-+      expect.objectContaining({ messageLimit: 20 })
-+    );
-+  });
-+});
-```
-
-**File**: `server/utils/chats/apiChatHandler.js` (modified, +2/-2)
-```diff
-@@ -269,7 +269,7 @@ async function chatSync({
-     });
+     return response.end();
+   }
  
-   const VectorDb = getVectorDbClass();
--  const messageLimit = workspace?.openAiHistory || 20;
-+  const messageLimit = workspace?.openAiHistory ?? 20;
-   const hasVectorizedSpace = await VectorDb.hasNamespace(workspace.slug);
-   const embeddingsCount = await VectorDb.namespaceCount(workspace.slug);
- 
-@@ -652,7 +652,7 @@ async function streamChat({
-   abortConnectorOnClientDisconnect(response, LLMConnector);
- 
-   const VectorDb = getVectorDbClass();
--  const messageLimit = workspace?.openAiHistory || 20;
-+  const messageLimit = workspace?.openAiHistory ?? 20;
-   const hasVectorizedSpace = await VectorDb.hasNamespace(workspace.slug);
-   const embeddingsCount = await VectorDb.namespaceCount(workspace.slug);
- 
-```
-
-**File**: `server/utils/chats/stream.js` (modified, +1/-1)
-```diff
-@@ -102,7 +102,7 @@ async function streamChatWithWorkspace(
- 
-   const VectorDb = getVectorDbClass();
- 
--  const messageLimit = workspace?.openAiHistory || 20;
-+  const messageLimit = workspace?.openAiHistory ?? 20;
-   const hasVectorizedSpace = await VectorDb.hasNamespace(workspace.slug);
-   const embeddingsCount = await VectorDb.namespaceCount(workspace.slug);
- 
-```
-
-**File**: `server/utils/router/index.js` (modified, +1/-1)
-```diff
-@@ -340,7 +340,7 @@ class ModelRouterService {
-     } = require("../../models/workspaceParsedFiles");
-     const { TokenManager } = require("../helpers/tiktoken");
- 
--    const messageLimit = workspace?.openAiHistory || 20;
-+    const messageLimit = workspace?.openAiHistory ?? 20;
- 
-     const { rawHistory, chatHistory } = chatHistoryOverride
-       ? chatHistoryOverride
-```
-
-**File**: `server/utils/telegramBot/chat/stream.js` (modified, +1/-1)
-```diff
-@@ -68,7 +68,7 @@ async function streamResponse({
-   await ctx.bot.sendChatAction(chatId, "typing");
- 
-   const chatMode = workspace.chatMode || "chat";
--  const messageLimit = workspace?.openAiHistory || 20;
-+  const messageLimit = workspace?.openAiHistory ?? 20;
-   const { rawHistory, chatHistory } = await recentChatHistory({
-     workspace,
-     thread,
 ```
 
 ---
 
-### Incident Patch 3: `975afaba` (2026-11-04)
-**Commit Message**: Fix light mode highlight for active settings sidebar items (#6974)
+### Incident Patch 3: `5c872bad` (2026-11-04)
+**Commit Message**: test: fix mobile stream-chat mock and skip host-dependent suites locally (#7012)
 
-fix light mode highlight for active + hovered settings sidebar items
+The mobile stream-chat test mocked WorkspaceThread as an empty object, so
+the autoRenameThread call after streaming threw and failed CI.
 
-**File**: `frontend/src/components/SettingsSidebar/MenuOption/index.jsx` (modified, +2/-2)
+The embedded lemonade boot and CUDA suites spawn a #!/bin/sh stand-in and
+rely on POSIX file modes, so skip them on Windows. The ffmpeg suite now
+also skips when no ffmpeg binary is on PATH, so yarn jest passes on a
+fresh machine.
+
+**File**: `collector/__tests__/utils/WhisperProviders/ffmpeg/index.test.js` (modified, +6/-4)
 ```diff
-@@ -77,8 +77,8 @@ export default function MenuOption({
-           rounded-[6px]
-           ${
-             isActive
--              ? "bg-theme-sidebar-subitem-selected font-medium border-outline"
--              : "hover:bg-theme-sidebar-subitem-hover"
-+              ? "bg-theme-sidebar-subitem-selected light:bg-slate-300 font-medium border-outline"
-+              : "hover:bg-theme-sidebar-subitem-hover light:hover:bg-slate-300"
-           }
-         `}
-       >
+@@ -1,14 +1,18 @@
+ process.env.STORAGE_DIR = "test-storage";
+ const fs = require("fs");
+ const path = require("path");
++const { spawnSync } = require("child_process");
+ 
+ // Mock fix-path as a noop to prevent SIGSEGV (segfault)
+ // Returns ESM-style default export for dynamic import()
+ jest.mock("fix-path", () => ({ default: jest.fn() }));
+ 
+ const { FFMPEGWrapper } = require("../../../../utils/WhisperProviders/ffmpeg");
+ 
+-const describeRunner = process.env.GITHUB_ACTIONS ? describe.skip : describe;
++// Needs a real ffmpeg on PATH, so skip in CI and on machines without one.
++const hasFFMPEG = !spawnSync("ffmpeg", ["-version"]).error;
++const describeRunner =
++  process.env.GITHUB_ACTIONS || !hasFFMPEG ? describe.skip : describe;
+ 
+ describeRunner("FFMPEGWrapper", () => {
+   /** @type { import("../../../../utils/WhisperProviders/ffmpeg/index").FFMPEGWrapper } */
+@@ -50,9 +54,7 @@ describeRunner("FFMPEGWrapper", () => {
+ 
+     const response = await fetch(sampleUrl);
+     if (!response.ok)
+-      throw new Error(
+-        `Failed to download sample file: ${response.statusText}`
+-      );
++      throw new Error(`Failed to download sample file: ${response.statusText}`);
+ 
+     const buffer = await response.arrayBuffer();
+     fs.writeFileSync(inputPath, Buffer.from(buffer));
+```
+
+**File**: `server/__tests__/endpoints/mobile/utils/index.test.js` (modified, +1/-1)
+```diff
+@@ -8,7 +8,7 @@ jest.mock("../../../../models/workspace", () => ({
+   Workspace: { get: jest.fn(), getWithUser: jest.fn() },
+ }));
+ jest.mock("../../../../models/workspaceThread", () => ({
+-  WorkspaceThread: {},
++  WorkspaceThread: { autoRenameThread: jest.fn() },
+ }));
+ jest.mock("../../../../models/mobileDevice", () => ({ MobileDevice: {} }));
+ jest.mock("../../../../utils/chats/apiChatHandler", () => ({
+```
+
+**File**: `server/__tests__/utils/AiProviders/embeddedLemonade/engine.test.js` (modified, +6/-2)
+```diff
+@@ -52,7 +52,11 @@ afterEach(() => {
+   jest.restoreAllMocks();
+ });
+ 
+-describe("EmbeddedLemonadeEngine boot", () => {
++// These suites spawn a `#!/bin/sh` stand-in for lemond and rely on POSIX file
++// modes, neither of which Windows supports, so they only run on POSIX hosts.
++const describePosix = process.platform === "win32" ? describe.skip : describe;
++
++describePosix("EmbeddedLemonadeEngine boot", () => {
+   it("reports a lemond that cannot be executed instead of crashing the server", async () => {
+     installLemond("#!/bin/sh\nsleep 30\n", 0o644);
+ 
+@@ -151,7 +155,7 @@ describe("EmbeddedLemonadeEngine boot", () => {
+   });
+ });
+ 
+-describe("EmbeddedLemonadeEngine CUDA selection", () => {
++describePosix("EmbeddedLemonadeEngine CUDA selection", () => {
+   // These lemonds are running - wait for them to exit so their exit log lands while console.log is still mocked.
+   afterEach(() => EmbeddedLemonadeEngine.stop());
+ 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #6974** (2026-11-04): Fix light mode highlight for active settings sidebar items (@shatfield4)
-- **PR #6973** (2026-11-04): fix: honor a chat history limit of 0 (@RaphaelFakhri)
-- **PR #6966** (2026-11-03): fix: replace agent session complete notice with an explicit exit notice (@timothycarambat)
-- **PR #6964** (2026-11-03): fix: keep underscores inside words when reading messages aloud (@Fahmid-Arman)
-- **PR #6962** (2026-11-03): fix: keep * bullets and spaced * as text in Telegram replies (@Fahmid-Arman)
-- **PR #6960** (closed): fix: drop the stray agent session complete status from chat history (@lakshya-dhariwal)
+- **PR #7012** (2026-11-04): test: fix mobile stream-chat mock and skip host-dependent suites locally (@timothycarambat)
+- **PR #7011** (2026-11-04): fix: reject nested folder names and move destinations in document storage (@timothycarambat)
+- **PR #7010** (2026-11-04): fix: use SambaNova completion_tokens_per_sec for non-streaming outputTps (@timothycarambat)
+- **PR #7009** (2026-11-04): fix: resolve local $ref pointers to other properties in dereferenceSchema (@Fahmid-Arman)
+- **PR #7007** (2026-11-05): Add workspace and thread search to the mobile sidebar drawer (@shatfield4)
+- **PR #7006** (2026-11-04): fix: accept null and JSON string arguments in prompt-based tool calls (@Fahmid-Arman)
 
 ---
 
@@ -1674,44 +1682,69 @@ fix light mode highlight for active + hovered settings sidebar items
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. replace agent session complete notice with an explicit exit notice (#6966)
+## X. honour the workspace chat mode in the mobile stream-chat command (#6983)
 
 **RULE**:
-When implementing operations in `frontend/src/components/WorkspaceChat/ChatContainer/ChatHistory/AgentSessionExited/index.jsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Mintplex-Labs/anything-llm. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `server/__tests__/endpoints/mobile/utils/index.test.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Mintplex-Labs/anything-llm. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ed730a82`: replace agent session complete notice with an explicit exit notice (#6966). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2b1b81d6`: honour the workspace chat mode in the mobile stream-chat command (#6983). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `frontend/src/components/WorkspaceChat/ChatContainer/ChatHistory/AgentSessionExited/index.jsx`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `server/__tests__/endpoints/mobile/utils/index.test.js`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-import { useTranslation } from "react-i18next";
-import { Info } from "@phosphor-icons/react";
+  ApiChatHandler: { streamChat: jest.fn() },
+const { ApiChatHandler } = require("../../../../utils/chats/apiChatHandler");
 
-/**
- * Notice shown after the user ends an agent session with an exit command.
- */
-export default function AgentSessionExited() {
-  const { t } = useTranslation();
-  return (
-    <div className="flex justify-start w-full">
-      <div className="py-4 px-4 md:pl-0 flex items-center gap-x-1.5 text-xs font-mono italic text-zinc-400 light:text-slate-500">
-        <Info className="h-4 w-4 shrink-0" />
-        <p className="!m-0">{t("chat.agent_session_exited")}</p>
-      </div>
-    </div>
-  );
-}
+  function streamResponse(user = null) {
+    return {
+      locals: { user },
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn().mockReturnThis(),
+      setHeader: jest.fn(),
+      flushHeaders: jest.fn(),
+      end: jest.fn(),
+    };
+  }
+
+  function streamChat(body, response) {
+    return handleMobileCommand(
+      { params: { command: "stream-chat" }, body },
+      response
+    );
+  }
+
+  it("chats in the workspace's configured mode", async () => {
+    Workspace.get.mockResolvedValue({ ...workspace, chatMode: "automatic" });
+    const response = streamResponse();
+
+    await streamChat({ workspaceSlug: "my-ws", message: "hi" }, response);
+
+    expect(ApiChatHandler.streamChat).toHaveBeenCalledWith(
+      expect.objectContaining({
+        mode: "automatic",
+        message: "hi",
+        thread: null,
+      })
+    );
+    expect(response.end).toHaveBeenCalled();
+  });
+
+  it("uses the mode of the workspace resolved for the signed-in user", async () => {
+    const user = { id: 3 };
+    Workspace.getWithUser.mockResolvedValue({
+      ...workspace,
+    
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+  ApiChatHandler: {},
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ed730a82` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2b1b81d6` are properly handled with clean fallback behavior.

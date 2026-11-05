@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/buresdv-cork-learnings.md`  
 > **Source**: github ([https://github.com/buresdv/Cork](https://github.com/buresdv/Cork))  
-> **Source Version**: `01177307`  
+> **Source Version**: `2fb27615`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-29T22:28:16.011Z  
+> **Timestamp**: 2026-11-05T06:15:03.058Z  
 > **Learning ID**: `learn-github-buresdv-cork`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/buresdv-cork-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/buresdv/Cork](https://github.com/buresdv/Cork))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-29T22:26:05.586Z  
+> **Harvest Timestamp**: 2026-11-05T06:15:03.047Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: [NO AI] Fast GUI for Homebrew written in SwiftUI
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 4716 stars
+- **Stars / Engagement**: 4726 stars
 
 ---
 
@@ -748,88 +748,59 @@ struct ContentView: View, Sendable
         {
             SidebarView()
         } detail: {
-            switch navigationManager.openedScreen
+            Group
             {
-            case .package(let package):
-                PackageDetailView(package: package)
-                    .frame(minWidth: 600, minHeight: 500)
-            case .tap(let tap):
-                TapDetailView(tap: tap)
-                    .frame(minWidth: 600, minHeight: 500)
-            case nil:
-                StartPage()
-                    .frame(minWidth: 600, minHeight: 500)
+                switch navigationManager.openedScreen
+                {
+                case .package(let package):
+                    PackageDetailView(package: package)
+                        .frame(minWidth: 600, minHeight: 500)
+                case .tap(let tap):
+                    TapDetailView(tap: tap)
+                        .frame(minWidth: 600, minHeight: 500)
+                case nil:
+                    StartPage()
+                        .frame(minWidth: 600, minHeight: 500)
+                }
+            }
+            .toolbar(id: "PackageActions")
+            {
+                ToolbarItem(id: "updatePackages", placement: .primaryAction)
+                {
+                    CheckForOutdatedPackagesButton()
+                }
+                .defaultCustomization(.hidden)
+
+                ToolbarItem(id: "upgradePackages", placement: .primaryAction)
+                {
+                    UpgradePackagesButton(appState: appState)
+                }
+
+                ToolbarItem(id: "addTap", placement: .primaryAction)
+                {
+                    AddTapButton(appState: appState)
+                }
+
+                ToolbarItem(id: "installPackage", placement: .primaryAction)
+                {
+                    InstallPackageButton(appState: appState)
+                }
+
+                ToolbarItem(id: "maintenance", placement: .primaryAction)
+                {
+                    self.performMaintenanceButton
+                }
+                .defaultCustomization(.hidden)
+
+                ToolbarItem(id: "manageServices", placement: .primaryAction)
+                {
+                    self.manageServicesButton
+                }
+                .defaultCustomization(.hidden)
             }
         }
         .navigationTitle("app-name")
         .navigationSubtitle("navigation.installed-packages.count-\(self.brewPackagesTracker.numberOfInstalledPackages)")
-        .toolbar(id: "PackageActions")
-        {
-            ToolbarItem(id: "updatePackages", placement: .primaryAction)
-            {
-                CheckForOutdatedPackagesButton()
-            }
-            .defaultCustomization(.hidden)
-
-            ToolbarItem(id: "upgradePackages", placement: .primaryAction)
-            {
-                UpgradePackagesButton(appState: appState)
-            }
-
-            ToolbarItem(id: "addTap", placement: .primaryAction)
-            {
-                AddTapButton(appState: appState)
-            }
-
-            ToolbarItem(id: "installPackage", placement: .primaryAction)
-            {
-                InstallPackageButton(appState: appState)
-            }
-
-            ToolbarItem(id: "maintenance", placement: .primaryAction)
-            {
-                self.performMaintenanceButton
-            }
-            .defaultCustomization(.hidden)
-
-            ToolbarItem(id: "manageServices", placement: .primaryAction)
-            {
-                self.manageServicesButton
-            }
-            .defaultCustomization(.hidden)
-
-            ToolbarItem(id: "spacer", placement: .automatic)
-            {
-                Spacer()
-            }
-            .defaultCustomization(.hidden)
-
-            ToolbarItem(id: "divider", placement: .automatic)
-            {
-                Divider()
-            }
-            .defaultCustomization(.hidden)
-
-            // TODO: Implement this button
-            /*
-             ToolbarItem(id: "installPackageDirectly", placement: .automatic)
-             {
-                 Button
-                 {
-                     AppConstants.shared.logger.info("Ahoj")
-                 } label: {
-                     Label
-                     {
-                         Text("navigation.install-package.direct")
-                     } icon: {
-                         Image(systemName: "plus.viewfinder")
-                     }
-                 }
-                 .help("navigation.install-package.direct.help")
-             }
-             .defaultCustomization(.hidden)
-              */
-        }
         .basicsSetup(of: self)
         .packageLoadingTask(of: self)
         .tapLoadingTask(of: self)
@@ -903,7 +874,7 @@ private extension View
 
                 view.brewPackagesTracker.installedFormulae = await availableFormulae ?? .init()
                 view.brewPackagesTracker.installedCasks = await availableCasks ?? .init()
-                
+
                 view.cachedDownloadsTracker.cachedDownloads = view.cachedDownloadsTracker.assignPackageTypeToCachedDownloads(cachedDownloads: view.cachedDownloadsTracker.cachedDownloads, brewPackagesTracker: view.brewPackagesTracker)
             }
     }
@@ -931,7 +902,24 @@ private extension View
                     switch tapLoadingError
                     {
                     case .couldNotAccessParentTapFolder(let errorDetails):
-                        view.appState.showAlert(errorToShow: .tapLoadingFailed
+                        view.appState.showAlert(errorToShow: .tapLoadingFailedDueToTapParentLocation(localizedDescription: errorDetails))
+                    case .couldNotReadTapFolderContents(let errorDetails):
+                        view.appState.showAlert(errorToShow: .tapLoadingFailedDueToTapItself(localizedDescription: errorDetails))
+                    case .couldNotParseTapName(let errorDetails):
+                        view.appState.showAlert(errorToShow: .generic(customMessage: errorDetails))
+                    }
+                }
+            }
+    }
+
+    func analyticsSetupTask(of view: ContentView) -> some View
+    {
+        self
+            .task
+            {
+                AppConstants.shared.logger.info("Started Analytics startup action at \(Date())")
+
+                async let analyticsQueryCommand: [TerminalOutput] = await shellNonStreaming(A
 ```
 
 ### Core Architecture Module: `Cork/CorkApp.swift`
@@ -1260,22 +1248,186 @@ extension ServicesFatalError
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `01177307` (2026-10-27)
-**Commit Message**: ^ FDA doesn't disappear on grant
+### Incident Patch 1: `2fb27615` (2026-11-02)
+**Commit Message**: ~ Just legalities, nothing changes
 
-**File**: `Cork/Views/Start Page/Start Page.swift` (modified, +4/-1)
+**File**: `Cork/ContentView.swift` (modified, +48/-77)
 ```diff
-@@ -152,7 +152,10 @@ struct StartPage: View
-                                 HomebrewWarningsSection()
-                             }
-                             
--                            AdditionalPermissionsRequired()
-+                            if issues.contains(.fullDiskAccessPermissionsRequired)
-+                            {
-+                                AdditionalPermissionsRequired()
-+                            }
-                         }
-                         
+@@ -97,88 +97,59 @@ struct ContentView: View, Sendable
+         {
+             SidebarView()
+         } detail: {
+-            switch navigationManager.openedScreen
++            Group
+             {
+-            case .package(let package):
+-                PackageDetailView(package: package)
+-                    .frame(minWidth: 600, minHeight: 500)
+-            case .tap(let tap):
+-                TapDetailView(tap: tap)
+-                    .frame(minWidth: 600, minHeight: 500)
+-            case nil:
+-                StartPage()
+-                    .frame(minWidth: 600, minHeight: 500)
+-            }
+-        }
+-        .navigationTitle("app-name")
+-        .navigationSubtitle("navigation.installed-packages.count-\(self.brewPackagesTracker.numberOfInstalledPackages)")
+-        .toolbar(id: "PackageActions")
+-        {
+-            ToolbarItem(id: "updatePackages", placement: .primaryAction)
+-            {
+-                CheckForOutdatedPackagesButton()
++                switch navigationManager.openedScreen
++                {
++                case .package(let package):
++                    PackageDetailView(package: package)
++                        .frame(minWidth: 600, minHeight: 500)
++                case .tap(let tap):
++                    TapDetailView(tap: tap)
++                        .frame(minWidth: 600, minHeight: 500)
++                case nil:
++                    StartPage()
++                        .frame(minWidth: 600, minHeight: 500)
++                }
+             }
+-            .defaultCustomization(.hidden)
+-
+-            ToolbarItem(id: "upgradePackages", placement: .primaryAction)
++            .toolbar(id: "PackageActions")
+             {
+-                UpgradePackagesButton(appState: appState)
+-            }
+-
+-            ToolbarItem(id: "addTap", placement: .primaryAction)
+-            {
+-                AddTapButton(appState: appState)
+-            }
++                ToolbarItem(id: "updatePackages", placement: .primaryAction)
++                {
++                    CheckForOutdatedPackagesButton()
++                }
++                .defaultCustomization(.hidden)
+ 
+-            ToolbarItem(id: "installPackage", placement: .primaryAction)
+-            {
+-                InstallPackageButton(appState: appState)
+-            }
++                ToolbarItem(id: "upgradePackages", placement: .primaryAction)
++                {
++                    UpgradePackagesButton(appState: appState)
++                }
+ 
+-            ToolbarItem(id: "maintenance", placement: .primaryAction)
+-            {
+-                self.performMaintenanceButton
+-            }
+-            .defaultCustomization(.hidden)
++                ToolbarItem(id: "addTap", placement: .primaryAction)
++                {
++                    AddTapButton(appState: appState)
++                }
+ 
+-            ToolbarItem(id: "manageServices", placement: .primaryAction)
+-            {
+-                self.manageServicesButton
+-            }
+-            .defaultCustomization(.hidden)
++                ToolbarItem(id: "installPackage", placement: .primaryAction)
++                {
++                    InstallPackageButton(appState: appState)
++                }
+ 
+-            ToolbarItem(id: "spacer", placement: .automatic)
+-            {
+-                Spacer()
+-            }
+-            .defaultCustomization(.hidden)
++                ToolbarItem(id: "maintenance", placement: .primaryAction)
++                {
++                    self.performMaintenanceButton
++                }
++                .defaultCustomization(.hidden)
+ 
+-            ToolbarItem(id: "divider", placement: .automatic)
+-            {
+-                Divider()
++                ToolbarItem(id: "manageServices", placement: .primaryAction)
++                {
++                    self.manageServicesButton
++                }
++                .defaultCustomization(.hidden)
+             }
+-            .defaultCustomization(.hidden)
+-
+-            // TODO: Implement this button
+-            /*
+-             ToolbarItem(id: "installPackageDirectly", placement: .automatic)
+-             {
+-                 Button
+-                 {
+-                     AppConstants.shared.logger.info("Ahoj")
+-                 } label: {
+-                     Label
+-                     {
+-                         Text("navigation.install-package.direct")
+-                     } icon: {
+-                         Image(systemName: "plus.viewfinder")
+-                     }
+-                 }
+-                 .help("navigation.install-package.direct.help")
+-             }
+-             .defaultCustomization(.hidden)
+-              */
+         }
++        .navigationTitle("app-name")
++        .navigationSubtitle("navigation.installed-packages.count-\(self.brewPackagesTracker.numberOfInstalledPackages)")
+         .basicsSetup(of: self)
+         .packageLoadingTask(of: self)
+         .tapLoadingTask(of: self)
+@@ -252,7 +223,7 @@ private extension View
+ 
+                 view.br
+```
+
+**File**: `Cork/Views/About/About View.swift` (modified, +11/-5)
+```diff
+@@ -122,6 +122,8 @@ struct AboutView: View
+                 Text("about.copyright-\(String(Calendar.current.component(.year, from: .now)))")
+                     .font(.subheadline)
+                     .foregroundColor(.secondary)
++                    .lineLimit(2)
++                    .fixedSize(horizontal: false, vertical: true)
+ 
+                 VStack(alignment: .leading)
+                 {
+@@ -246,10 +248,14 @@ struct AboutView: View
+                     }
+                     .betterDisclosureGroupStyle()
+                      */
+-
+-                    Text("about.privacy-policy")
+-                        .font(.subheadline)
+-                        .foregroundColor(.secondary)
++                    HStack(alignment: .center, spacing: 5)
++                    {
++                        Text("about.terms-of-service")
++                        Text("about.privacy-policy")
++                        Text("about.eula")
++                    }
++                    .font(.subheadline)
++                    .foregroundColor(.secondary)
+                 }
+ 
+                 HStack
+@@ -265,7 +271,7 @@ struct AboutView: View
+ 
+                     Button
+                     {
+-                        NSWorkspace.shared.open(URL(string: "https://mstdn.social/@davidbures")!)
++                        NSWorkspace.shared.open(URL(string: "https://bsky.app/profile/corkmac.app")!)
+                     } label: {
+                         Label("about.contact", systemImage: "paperplane")
                      }
 ```
 
@@ -1285,223 +1437,13 @@ Observed empirical fixes and code patches:
  
  let settings = Environment.selfCompiled.getBoolean(default: false)
  
--let version: String = "2.1.0"
--let build: String = "153"
-+let version: String = "2.1.1"
-+let build: String = "154"
+-let version: String = "2.1.1"
+-let build: String = "154"
++let version: String = "2.1.2"
++let build: String = "155"
  
  func corkTarget(configureWithSelfCompiled: Bool) -> ProjectDescription.Target {
      var additionalCompilationConditions = [String]()
-```
-
----
-
-### Incident Patch 2: `e740731c` (2026-10-27)
-**Commit Message**: Merge pull request #690 from buresdv/l10n-import
-
-Merge translations into string catalog
-
-**File**: `Cork/Localizable.xcstrings` (modified, +239/-227)
-```diff
-@@ -179,7 +179,7 @@
-         },
-         "he": {
-           "stringUnit": {
--            "state": "new",
-+            "state": "translated",
-             "value": "%1$@ - %2$@"
-           }
-         },
-@@ -304,7 +304,7 @@
-         "he": {
-           "stringUnit": {
-             "state": "translated",
--            "value": "%1$@ → %2$@"
-+            "value": "%1$@ ← %2$@"
-           }
-         },
-         "id": {
-@@ -427,7 +427,7 @@
-         },
-         "he": {
-           "stringUnit": {
--            "state": "new",
-+            "state": "translated",
-             "value": "%1$@/%2$@"
-           }
-         },
-@@ -9266,8 +9266,8 @@
-         },
-         "he": {
-           "stringUnit": {
--            "state": "new",
--            "value": "Add"
-+            "state": "translated",
-+            "value": "הוסף"
-           }
-         },
-         "id": {
-@@ -9981,19 +9981,19 @@
-               "one": {
-                 "stringUnit": {
-                   "state": "translated",
--                  "value": "יישום %lld נוסף"
-+                  "value": "הוסף יישום %lld"
-                 }
-               },
-               "other": {
-                 "stringUnit": {
-                   "state": "translated",
--                  "value": "%lld יישומים נוספו"
-+                  "value": "הוסף %lld יישומים"
-                 }
-               },
-               "two": {
-                 "stringUnit": {
-                   "state": "translated",
--                  "value": "%lld יישומים נוספו"
-+                  "value": "הוסף %lld יישומים"
-                 }
-               }
-             }
-@@ -10282,8 +10282,8 @@
-         },
-         "he": {
-           "stringUnit": {
--            "state": "new",
--            "value": "Back"
-+            "state": "translated",
-+            "value": "חזור"
-           }
-         },
-         "id": {
-@@ -11399,8 +11399,8 @@
-         },
-         "he": {
-           "stringUnit": {
--            "state": "new",
--            "value": "Continue"
-+            "state": "translated",
-+            "value": "המשך"
-           }
-         },
-         "id": {
-@@ -11772,8 +11772,8 @@
-         },
-         "he": {
-           "stringUnit": {
--            "state": "new",
--            "value": "Delete"
-+            "state": "translated",
-+            "value": "מחק"
-           }
-         },
-         "id": {
-@@ -12020,8 +12020,8 @@
-         },
-         "he": {
-           "stringUnit": {
--            "state": "new",
--            "value": "Download…"
-+            "state": "translated",
-+            "value": "הורד…"
-           }
-         },
-         "id": {
-@@ -12269,8 +12269,8 @@
-         },
-         "he": {
-           "stringUnit": {
--            "state": "new",
--            "value": "Fix permissions…"
-+            "state": "translated",
-+            "value": "תקן הרשאות…"
-           }
-         },
-         "id": {
-@@ -13637,8 +13637,8 @@
-         },
-         "he": {
-           "stringUnit": {
--            "state": "new",
--            "value": "Open System Settings"
-+            "state": "translated",
-+            "value": "פתח את הגדרות המערכת"
-           }
-         },
-         "id": {
-@@ -14101,8 +14101,8 @@
-       "localizations": {
-         "cs": {
-           "stringUnit": {
--            "state": "new",
--            "value": "Preview final environment…"
-+            "state": "translated",
-+            "value": "Náhled výsledného prostředí…"
-           }
-         },
-         "de": {
-@@ -14137,8 +14137,8 @@
-         },
-         "he": {
-           "stringUnit": {
--            "state": "new",
--            "value": "Preview final environment…"
-+            "state": "translated",
-+            "value": "תצוגה מקדימה של הסביבה…"
-           }
-         },
-         "id": {
-@@ -15219,8 +15219,8 @@
-       "localizations": {
-         "cs": {
-           "stringUnit": {
--            "state": "new",
--            "value": "Remove quarantine…"
-+            "state": "translated",
-+            "value": "Odstranit z karantény…"
-           }
-         },
-         "de": {
-@@ -15343,8 +15343,8 @@
-       "localizations": {
-         "cs": {
-           "stringUnit": {
--            "state": "new",
--            "value": "Remove %@ from quarantine"
-+            "state": "translated",
-+            "value": "Odstranit %@ z karantény"
-           }
-         },
-         "de": {
-@@ -16837,8 +16837,8 @@
-       "localizations": {
-         "cs": {
-           "stringUnit": {
--            "state": "new",
--            "value": "Open on GitHub…"
-+            "state": "translated",
-+            "value": "Otevřít na GitHubu…"
-           }
-         },
-         "de": {
-@@ -16873,8 +16873,8 @@
-         },
-         "he": {
-           "stringUnit": {
--            "state": "new",
--            "value": "Open on GitHub…"
-+            "state": "translated",
-+            "value": "פתח ב-GitHub…"
-           }
-         },
-         "id": {
-@@ -16961,8 +16961,8 @@
-       "localizations": {
-         "cs": {
-           "stringUnit": {
--            "state": "new",
--            "value":
 ```
 
 #### Recent Merged Pull Requests:
@@ -1530,31 +1472,85 @@ Merge translations into string catalog
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ^ FDA doesn't disappear on grant
+## X. ~ Just legalities, nothing changes
 
 **RULE**:
-When implementing operations in `Cork/Views/Start Page/Start Page.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in buresdv/Cork. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cork/ContentView.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in buresdv/Cork. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `01177307`: ^ FDA doesn't disappear on grant. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2fb27615`: ~ Just legalities, nothing changes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cork/Views/Start Page/Start Page.swift`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cork/ContentView.swift`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-                            if issues.contains(.fullDiskAccessPermissionsRequired)
-                            {
-                                AdditionalPermissionsRequired()
-                            }
+            Group
+                switch navigationManager.openedScreen
+                {
+                case .package(let package):
+                    PackageDetailView(package: package)
+                        .frame(minWidth: 600, minHeight: 500)
+                case .tap(let tap):
+                    TapDetailView(tap: tap)
+                        .frame(minWidth: 600, minHeight: 500)
+                case nil:
+                    StartPage()
+                        .frame(minWidth: 600, minHeight: 500)
+                }
+            .toolbar(id: "PackageActions")
+                ToolbarItem(id: "updatePackages", placement: .primaryAction)
+                {
+                    CheckForOutdatedPackagesButton()
+                }
+                .defaultCustomization(.hidden)
+                ToolbarItem(id: "upgradePackages", placement: .primaryAction)
+                {
+                    UpgradePackagesButton(appState: appState)
+                }
+                ToolbarItem(id: "addTap", placement: .primaryAction)
+                {
+                    AddTapButton(appState: appState)
+                }
+                ToolbarItem(id: "installPackage", placement: .primaryAction)
+ 
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Anti-pattern to NEVER write (induced failure mode):
-                            AdditionalPermissionsRequired()
+            switch navigationManager.openedScreen
+            case .package(let package):
+                PackageDetailView(package: package)
+                    .frame(minWidth: 600, minHeight: 500)
+            case .tap(let tap):
+                TapDetailView(tap: tap)
+                    .frame(minWidth: 600, minHeight: 500)
+            case nil:
+                StartPage()
+                    .frame(minWidth: 600, minHeight: 500)
+            }
+        }
+        .navigationTitle("app-name")
+        .navigationSubtitle("navigation.installed-packages.count-\(self.brewPackagesTracker.numberOfInstalledPackages)")
+        .toolbar(id: "PackageActions")
+        {
+            ToolbarItem(id: "updatePackages", placement: .primaryAction)
+            {
+                CheckForOutdatedPackagesButton()
+            .defaultCustomization(.hidden)
+
+            ToolbarItem(id: "upgradePackages", placement: .primaryAction)
+                UpgradePackagesButton(appState: appState)
+            }
+
+            ToolbarItem(id: "addTap", placement: .primaryAction)
+            {
+                AddTapButton(appState: appState)
+            }
+            ToolbarItem(id: "installPackage", placement: .prim
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `01177307` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2fb27615` are properly handled with clean fallback behavior.

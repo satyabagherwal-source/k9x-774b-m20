@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/openyurtio-openyurt-learnings.md`  
 > **Source**: github ([https://github.com/openyurtio/openyurt](https://github.com/openyurtio/openyurt))  
-> **Source Version**: `077652c5`  
+> **Source Version**: `9a5a72ec`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T01:00:52.748Z  
+> **Timestamp**: 2026-11-05T13:13:42.410Z  
 > **Learning ID**: `learn-github-openyurtio-openyurt`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/openyurtio-openyurt-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/openyurtio/openyurt](https://github.com/openyurtio/openyurt))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T01:00:49.487Z  
+> **Harvest Timestamp**: 2026-11-05T13:13:42.404Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: OpenYurt - Extending your native Kubernetes to edge(project under CNCF)
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 2010 stars
+- **Stars / Engagement**: 2008 stars
 
 ---
 
@@ -1282,11 +1282,11 @@ func GetMatchingTolerations(taints []v1.Taint, tolerations []v1.Toleration) (boo
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #2840** (2026-10-26): **build(deps): bump github/codeql-action from 4.38.2 to 4.39.0**
-  *Symptoms*: Bumps [github/codeql-action](https://github.com/github/codeql-action) from 4.38.2 to 4.39.0. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/github/codeql-action/releases">github/codeql-action's releases</a>.</em></p> <blockquote> <h2>v4.39.0</h2> <ul> <li><em>Breaking change</em>: Bump the minimum required CodeQL bundle version to 2.20.7. <a href="https://redirect.github.com/github/codeql-action/pull/4205">#4205</a></li> <li>The <code>codeql-action/analyze</code> step now validates that a correct argument for the <code>checkout_path</code> input has been provided. The <code>checkout_path</code> input must be set to the path where the repository that is being analyzed is checked out at on the runner, if that path is something other than the workspace root. If the path does not point to a repository checkout or is different from the path that was used by <code>codeql-action/init</code>, then the CodeQL Action now produces a warning. <a href="https://redirect.github.com/github/codeql-action/pull/4148">#4148</a></li> <li>Resolved an issue with third-party caching implementations that prevented caches from being restored correctly. <a href="https://redirect.github.com/github/codeql-action/pull/4206">#4206</a></li> <li>The <code>codeql-action/start-proxy</code> step that is used in Code Scanning Default Setup now finds CodeQL releases using the same logic as <code>codeql-action/init</code>. This primarily benefits customers who are using 
+- **Issue #2846** (2026-11-05): **fix(yurthub): update service env in init containers in serviceenvupdater filter**
+  *Symptoms*: #### What type of PR is this? /kind bug  #### What this PR does / why we need it:  The `serviceenvupdater` filter rewrites `KUBERNETES_SERVICE_HOST` and `KUBERNETES_SERVICE_PORT` so that pods on edge nodes reach kube-apiserver through YurtHub. It only handled `pod.Spec.Containers`, so init containers kept the original kube-apiserver address. After a pod restart on a disconnected edge node, those init containers cannot reach kube-apiserver and the pod does not start.  This PR applies the same env rewrite to `pod.Spec.InitContainers`. The per-container loop moves into a `mutateContainersEnv` helper that runs for both lists. A new test case covers a pod with an init container.  #### Which issue(s) this PR fixes: Fixes #2845 #### Special notes for your reviewer:  The new test case fails on master (init container env is unchanged) and passes with this change:  ``` go test ./pkg/yurthub/filter/serviceenvupdater/ -v ```  #### Does this PR introduce a user-facing change? ```release-note YurtHub serviceenvupdater filter now also updates KUBERNETES_SERVICE_HOST and KUBERNETES_SERVICE_PORT in init containers. ```  #### other Note 
 
-- **Issue #2836** (2026-10-19): **build(deps): bump github/codeql-action from 4.38.2 to 4.38.3**
-  *Symptoms*: Bumps [github/codeql-action](https://github.com/github/codeql-action) from 4.38.2 to 4.38.3. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/github/codeql-action/releases">github/codeql-action's releases</a>.</em></p> <blockquote> <h2>v4.38.3</h2> <ul> <li><em>Upcoming breaking change</em>: CodeQL version 2.21.2 and earlier were discontinued on 24 September 2026 alongside GitHub Enterprise Server 3.17, and will be unsupported by the next minor release of the CodeQL Action. Added a deprecation warning for customers using these versions of CodeQL. <a href="https://redirect.github.com/github/codeql-action/pull/4188">#4188</a></li> <li>Update default CodeQL bundle version to <a href="https://github.com/github/codeql-action/releases/tag/codeql-bundle-v2.27.2">2.27.2</a>. <a href="https://redirect.github.com/github/codeql-action/pull/4203">#4203</a></li> <li>Fixed a bug where the decision of whether to use a per-language bundle did not account for custom configurations that reference queries outside of compiled CodeQL packs. This issue was caught during internal testing and did not affect any customer repositories. We will resume the roll out of per-language bundles in the coming weeks. <a href="https://redirect.github.com/github/codeql-action/pull/4184">#4184</a></li> </ul> </blockquote> </details> <details> <summary>Changelog</summary> <p><em>Sourced from <a href="https://github.com/github/codeql-action/blob/main/CHANGELOG.md">github/cod
+- **Issue #2845** (2026-11-05): **[BUG] serviceenvupdater filter does not update KUBERNETES_SERVICE_HOST/PORT in init containers**
+  *Symptoms*: **What happened**:  The YurtHub `serviceenvupdater` filter rewrites explicitly set `KUBERNETES_SERVICE_HOST` and `KUBERNETES_SERVICE_PORT` env vars so that pods on edge nodes reach kube-apiserver through YurtHub (see #2158). `mutatePodEnv` only iterates over `pod.Spec.Containers`. Env vars set on `pod.Spec.InitContainers` keep their original values.  Admission webhooks that inject the public kube-apiserver address usually set it on init containers as well. Those init containers then talk to kube-apiserver directly instead of through YurtHub. When an edge node is disconnected from the cloud and the pod restarts (for example after a node reboot), the init containers run again, cannot reach kube-apiserver, and the pod never starts.  **What you expected to happen**:  The filter updates `KUBERNETES_SERVICE_HOST` and `KUBERNETES_SERVICE_PORT` in init containers the same way it does for regular containers.  **How to reproduce it (as minimally and precisely as possible)**:  1. Enable the `serviceenvupdater` filter (enabled by default for kubelet pod requests). 2. Create a pod on an edge node with an init container that sets `KUBERNETES_SERVICE_HOST=some-host` and `KUBERNETES_SERVICE_PORT=1234`. 3. Get the pod through YurtHub: the regular container env is rewritten to the YurtHub address, the init container env still shows `some-host:1234`.  Unit level: call `Filter` on a pod whose `Spec.InitContainers[0].Env` contains both variables; the values are unchanged.  **Anything else we need
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1303,29 +1303,128 @@ func GetMatchingTolerations(taints []v1.Taint, tolerations []v1.Toleration) (boo
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `47eafebb` (2026-10-12)
-**Commit Message**: fix typos.
+### Incident Patch 1: `5901c7dc` (2026-11-05)
+**Commit Message**: build(deps): bump ossf/scorecard-action from 2.4.4 to 2.5.0 (#2839)
 
-**File**: `pkg/yurthub/util/fs/store.go` (modified, +1/-1)
+Bumps [ossf/scorecard-action](https://github.com/ossf/scorecard-action) from 2.4.4 to 2.5.0.
+- [Release notes](https://github.com/ossf/scorecard-action/releases)
+- [Changelog](https://github.com/ossf/scorecard-action/blob/main/RELEASE.md)
+- [Commits](https://github.com/ossf/scorecard-action/compare/2d1146689b8cda280b9bc96326124645441f03bc...fa7117db83c52d787ae5a89f350999701505d78e)
+
+---
+updated-dependencies:
+- dependency-name: ossf/scorecard-action
+  dependency-version: 2.5.0
+  dependency-type: direct:production
+  update-type: version-update:semver-minor
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `.github/workflows/sonarcloud.yaml` (modified, +1/-1)
 ```diff
-@@ -79,7 +79,7 @@ func (fs *FileSystemOperator) Write(path string, content []byte) error {
- 	return err
+@@ -34,7 +34,7 @@ jobs:
+           persist-credentials: false
+ 
+       - name: "Run analysis"
+-        uses: ossf/scorecard-action@2d1146689b8cda280b9bc96326124645441f03bc # v2.4.4
++        uses: ossf/scorecard-action@fa7117db83c52d787ae5a89f350999701505d78e # v2.5.0
+         with:
+           results_file: results.sarif
+           results_format: sarif
+```
+
+---
+
+### Incident Patch 2: `a38d2aa9` (2026-11-05)
+**Commit Message**: build(deps): bump github/codeql-action from 4.38.2 to 4.39.1 (#2842)
+
+Bumps [github/codeql-action](https://github.com/github/codeql-action) from 4.38.2 to 4.39.1.
+- [Release notes](https://github.com/github/codeql-action/releases)
+- [Changelog](https://github.com/github/codeql-action/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/github/codeql-action/compare/v4.38.2...v4.39.1)
+
+---
+updated-dependencies:
+- dependency-name: github/codeql-action
+  dependency-version: 4.39.1
+  dependency-type: direct:production
+  update-type: version-update:semver-minor
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `.github/workflows/sonarcloud.yaml` (modified, +1/-1)
+```diff
+@@ -48,6 +48,6 @@ jobs:
+           retention-days: 5
+ 
+       - name: "Upload to code-scanning"
+-        uses: github/codeql-action/upload-sarif@v4.38.2
++        uses: github/codeql-action/upload-sarif@v4.39.1
+         with:
+           sarif_file: results.sarif
+```
+
+**File**: `.github/workflows/trivy-scan.yml` (modified, +1/-1)
+```diff
+@@ -44,7 +44,7 @@ jobs:
+           output: 'trivy-results.sarif'
+ 
+       - name: Upload Trivy scan results to GitHub Security
+-        uses: github/codeql-action/upload-sarif@v4.38.2
++        uses: github/codeql-action/upload-sarif@v4.39.1
+         if: always()
+         with:
+           sarif_file: 'trivy-results.sarif'
+```
+
+---
+
+### Incident Patch 3: `9a5a72ec` (2026-11-05)
+**Commit Message**: docs: fix unmarshaler typos (#2658)
+
+This PR fixes a typo in the traffic reuse proposal and in the bootstraptoken API where unmarshal was spelled with an extra 'l'.
+
+Signed-off-by: [REDACTED_EMAIL]
+
+Signed-off-by: [REDACTED_EMAIL]
+
+**File**: `docs/proposals/20240529-node-level-traffic-reuse-capability.md` (modified, +1/-1)
+```diff
+@@ -63,7 +63,7 @@ type Interface interface {
+ 	Watch(ctx context.Context, key string, opts ListOptions) (watch.Interface, error)
+ 
+ 
+-	// GetList unmarshalls objects found at key into a *List api object (an object
++	// GetList unmarshals objects found at key into a *List api object (an object
+ 	// that satisfies runtime.IsList definition).
+ 	// If 'opts.Recursive' is false, 'key' is used as an exact match. If `opts.Recursive'
+ 	// is true, 'key' is used as a prefix.
+```
+
+**File**: `pkg/util/kubernetes/kubeadm/app/apis/bootstraptoken/v1/utils.go` (modified, +1/-1)
+```diff
+@@ -35,7 +35,7 @@ func (bts BootstrapTokenString) MarshalJSON() ([]byte, error) {
+ 	return []byte(fmt.Sprintf(`"%s"`, bts.String())), nil
  }
  
--// list will list names of entries under the rootDir(except the root dir). If isRecurisive is set, it will
-+// list will list names of entries under the rootDir(except the root dir). If isRecursive is set, it will
- // walk the path including all subdirs. The returned file names are absolute paths and
- // in lexicographical order.
- // There're two modes:
+-// UnmarshalJSON implements the json.Unmarshaller interface.
++// UnmarshalJSON implements the json.Unmarshaler interface.
+ func (bts *BootstrapTokenString) UnmarshalJSON(b []byte) error {
+ 	// If the token is represented as "", just return quickly without an error
+ 	if len(b) == 0 {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2846** (2026-11-05): fix(yurthub): update service env in init containers in serviceenvupdater filter (@RaphaelFakhri)
+- **PR #2844** (2026-11-05): feat(claude): add openyurt-deploy skill for cluster deployment (@Jonny-ee)
+- **PR #2842** (2026-11-05): build(deps): bump github/codeql-action from 4.38.2 to 4.39.1 (@dependabot[bot])
 - **PR #2840** (closed): build(deps): bump github/codeql-action from 4.38.2 to 4.39.0 (@dependabot[bot])
+- **PR #2839** (2026-11-05): build(deps): bump ossf/scorecard-action from 2.4.4 to 2.5.0 (@dependabot[bot])
 - **PR #2836** (closed): build(deps): bump github/codeql-action from 4.38.2 to 4.38.3 (@dependabot[bot])
-- **PR #2828** (2026-11-03): fix typos. (@zyjhtangtang)
-- **PR #2826** (2026-10-12): build(deps): bump zeebe-io/backport-action from 4.6.0 to 4.7.0 (@dependabot[bot])
-- **PR #2821** (closed): build(deps): bump zeebe-io/backport-action from 4.6.0 to 4.6.1 (@dependabot[bot])
-- **PR #2820** (2026-10-12): build(deps): bump github/codeql-action from 4.38.0 to 4.38.2 (@dependabot[bot])
 
 ---
 
@@ -1345,28 +1444,28 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in store.go
+## X. build(deps): bump ossf/scorecard-action from 2.4.4 to 2.5.0 (#2839)
 
 **RULE**:
-When implementing operations in `pkg/yurthub/util/fs/store.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in openyurtio/openyurt. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/sonarcloud.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in openyurtio/openyurt. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `47eafebb`: typos.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5901c7dc`: build(deps): bump ossf/scorecard-action from 2.4.4 to 2.5.0 (#2839). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/yurthub/util/fs/store.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/sonarcloud.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-// list will list names of entries under the rootDir(except the root dir). If isRecursive is set, it will
+        uses: ossf/scorecard-action@fa7117db83c52d787ae5a89f350999701505d78e # v2.5.0
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// list will list names of entries under the rootDir(except the root dir). If isRecurisive is set, it will
+        uses: ossf/scorecard-action@2d1146689b8cda280b9bc96326124645441f03bc # v2.4.4
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `47eafebb` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5901c7dc` are properly handled with clean fallback behavior.

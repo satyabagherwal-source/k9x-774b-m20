@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/databendlabs-databend-learnings.md`  
 > **Source**: github ([https://github.com/databendlabs/databend](https://github.com/databendlabs/databend))  
-> **Source Version**: `75a200a3`  
+> **Source Version**: `75d69a0f`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T22:59:05.769Z  
+> **Timestamp**: 2026-11-05T13:40:24.897Z  
 > **Learning ID**: `learn-github-databendlabs-databend`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/databendlabs-databend-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/databendlabs/databend](https://github.com/databendlabs/databend))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T22:59:05.764Z  
+> **Harvest Timestamp**: 2026-11-05T13:40:24.892Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Data Agent Ready Warehouse : One for  Analytics, Search, AI, Python Sandbox.  — rebuilt from scratch. Unified architecture on your S3.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 9490 stars
+- **Stars / Engagement**: 9491 stars
 
 ---
 
@@ -1217,1496 +1217,601 @@ unsafe impl<T: BitChunk> TrustedLen for BitChunks<'_, T> {}
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6454b150` (2026-11-04)
-**Commit Message**: fix(storage): prevent incomplete index refresh after writes (#20909)
+### Incident Patch 1: `f004c938` (2026-11-05)
+**Commit Message**: fix(query): allow create Materialized View with Table in different Database (#20906)
 
-* refactor(storage): streamline compact and recluster maintenance
+* fix(query): allow create Materialized View with Table in different Database
 
-Use execution-time segment claims and publish-time table locks for
-lightweight compaction. Bound hook compaction to 128 source segments and
-cap auto_compaction_segments_limit at 128.
+* fix
 
-Keep commit-lock retries for already-written output, with a one-second
-query-level lock timeout for Compact/Recluster hooks. Leave session
-settings unchanged.
+* fix
 
-Preserve parent-write hints across partial compaction and refresh the
-table cache before index maintenance. Log Compact/Recluster stage times.
+* fix
 
-Retain block HLL, Top-N and segment-local virtual schemas during metadata
-assembly. Use physical block sizes for native compact admission and keep
-partition boundaries, force-perfect handling and the original recluster
-memory threshold unchanged.
+* add tests
 
-Remove redundant compact interfaces and stop reading distributed
-maintenance toggles. Retain both settings as deprecated no-ops so existing
-SET statements remain accepted.
+* add tests
 
-Extend existing settings, index-refresh and auto-compaction regressions.
-Validation: rustfmt --check on 24 changed Rust files; git diff --check.
-Builds, t
+* fix tests
 
-**File**: `src/query/catalog/src/plan/partition.rs` (modified, +21/-5)
+* fix tests
+
+**File**: `src/meta/api/src/api_impl/materialized_view_api.rs` (modified, +30/-8)
 ```diff
-@@ -28,8 +28,10 @@ use databend_common_exception::Result;
- use databend_meta_client::types::NodeInfo;
- use databend_storages_common_table_meta::meta::BlockIndexMeta;
- use databend_storages_common_table_meta::meta::BlockMeta;
-+use databend_storages_common_table_meta::meta::BlockTopN;
- use databend_storages_common_table_meta::meta::RawBlockHLL;
- use databend_storages_common_table_meta::meta::Statistics;
-+use databend_storages_common_table_meta::meta::VirtualSegmentSchema;
- use parking_lot::RwLock;
- use rand::prelude::SliceRandom;
- use rand::thread_rng;
-@@ -84,8 +86,11 @@ pub trait PartInfo: Send + Sync {
- impl Debug for Box<dyn PartInfo> {
-     fn fmt(&self, f: &mut Formatter) -> std::fmt::Result {
-         match serde_json::to_string(self) {
--            Ok(str) => write!(f, "{}", str),
--            Err(_cause) => Err(std::fmt::Error {}),
-+            Ok(json) => f.write_str(&json),
-+            Err(cause) => f
-+                .debug_struct("PartInfo")
-+                .field("serialization_error", &cause)
-+                .finish(),
-         }
-     }
- }
-@@ -496,12 +501,22 @@ pub struct ReclusterTask {
-     pub inverted_index_sources: Vec<Vec<BlockIndexMeta>>,
- }
+@@ -127,6 +127,7 @@ use std::collections::BTreeSet;
+ use std::collections::HashMap;
  
--pub type BlockMetaWithHLL = (Arc<BlockMeta>, Option<RawBlockHLL>);
-+/// A surviving block keeps its segment-local virtual-column interpretation
-+/// and per-block statistics when maintenance replaces the containing segment.
-+#[derive(Clone, Debug, PartialEq, serde::Serialize, serde::Deserialize)]
-+pub struct RetainedBlockMeta {
-+    pub block_meta: Arc<BlockMeta>,
-+    pub hll: Option<RawBlockHLL>,
-+    pub top_n: Option<BlockTopN>,
-+    /// Local index into the enclosing container's `virtual_schemas`.
-+    pub virtual_schema_index: usize,
-+}
- 
- #[derive(Clone, Default)]
- pub struct ReclusterParts {
-     pub tasks: Vec<ReclusterTask>,
--    pub remained_blocks: Vec<BlockMetaWithHLL>,
-+    pub remained_blocks: Vec<RetainedBlockMeta>,
-+    pub virtual_schemas: Vec<Option<Arc<VirtualSegmentSchema>>>,
-     pub removed_segment_indexes: Vec<usize>,
-     pub removed_segment_summary: Statistics,
- }
-@@ -514,7 +529,8 @@ impl ReclusterParts {
- 
- #[derive(serde::Serialize, serde::Deserialize, Clone, Debug, Default)]
- pub struct ReclusterInfoSideCar {
--    pub merged_blocks: Vec<BlockMetaWithHLL>,
-+    pub merged_blocks: Vec<RetainedBlockMeta>,
-+    pub virtual_schemas: Vec<Option<Arc<VirtualSegmentSchema>>>,
-     pub removed_segment_indexes: Vec<usize>,
-     pub removed_statistics: Statistics,
-     /// Acquire the table lock only around refresh, sequence validation, and CAS publish.
-```
-
-**File**: `src/query/service/src/interpreters/hook/compact_hook.rs` (modified, +71/-41)
-```diff
-@@ -46,7 +46,6 @@ use crate::interpreters::hook::vacuum_hook::hook_vacuum_temp_files;
- use crate::pipelines::executor::ExecutorSettings;
- use crate::pipelines::executor::PipelineCompleteExecutor;
- use crate::sessions::QueryContext;
--use crate::sessions::TableContext;
- use crate::sessions::TableContextPartitionStats;
- use crate::sessions::TableContextProgress;
- use crate::sessions::TableContextSettings;
-@@ -207,10 +206,10 @@ pub(crate) async fn compact_table(
-         &compact_target.database,
-         &compact_target.table,
-     )?;
--
-     ctx.clear_table_meta_timestamps_cache();
- 
+ use databend_common_meta_app::schema::DBIdTableName;
++use databend_common_meta_app::schema::DatabaseId;
+ use databend_common_meta_app::schema::DatabaseIdToName;
+ use databend_common_meta_app::schema::ListedMVSource;
+ use databend_common_meta_app::schema::ListedMaterializedView;
+@@ -723,18 +724,34 @@ where
+     let source_database_keys = source_database_ids
+         .iter()
+         .map(|database_id| DatabaseIdToName::new(*database_id).to_string_key())
++        .chain(
++            source_database_ids
++                .iter()
++                .map(|database_id| DatabaseId::new(*database_id).to_string_key()),
++        )
+         .collect::<Vec<_>>();
+-    let source_database_responses = mget_responses(kv_api, &source_database_keys).await?;
++    let mut source_database_name_responses = mget_responses(kv_api, &source_database_keys).await?;
++    let source_database_meta_responses =
++        source_database_name_responses.split_off(source_database_ids.len());
+     let mut source_database_names = HashMap::with_capacity(source_database_ids.len());
+-    for (database_id, response) in source_database_ids
+-        .into_iter()
+-        .zip(source_database_responses)
 -    {
-+    let compact_start = Instant::now();
-+    let compact_result: Result<()> = async {
-         // do compact.
-         let compact_block = RelOperator::CompactBlock(OptimizeCompactBlock {
-             catalog: compact_target.catalog.clone(),
-@@ -243,13 +242,27 @@ pub(crate) async fn compact_table(
-             let complete_executor =
-                 PipelineCompleteExecutor::from_pipelines(pipelines, executor_settings)?;
- 
--            // Clears previously generated segment locations to avoid duplicate data in the refresh phase
--            ctx.written_segment_locations().clear();
-+            // Preserve parent-write hints for untouched segments and failed compaction.
-+            // CommitSink adds published outputs; refresh filters out no-longer-live sources.
-             ctx.set_executor(complete_executor.get_inner())?;
-             complete_executor.execute().await?;
-             drop(complete_executor);
+-        let (_, database_name) = deserialize_struct_get_response::<DatabaseIdToName>(response)?;
++    // DROP DATABASE marks only DatabaseMeta and keeps both the id-to-name mapping and the tables'
++    // TableMeta until GC, so a source in a dropped database must be checked through its database.
++    let mut active_source_database_ids = BTreeSet::new();
++    for (database_id, (name_response, meta_response)) in source_database_ids.into_iter().zip(
++        source_database_name_responses
++            .into_iter()
++            .zip(source_database_meta_responses),
++    ) {
++        let (_, database_name) =
++            deserialize_struct_get_response::<DatabaseIdToName>(name_response)?;
+         if let Some(database_name) = database_name {
+             source_database_names
+                 .insert(database_id, database_name.data.database_name().to_string());
          }
-+        Ok(())
++        let (_, database_meta) = deserialize_struct_get_response::<DatabaseId>(meta_response)?;
++        if database_meta.is_some_and(|meta| meta.data.drop_on.is_none()) {
++            active_source_database_ids.insert(database_id);
++        }
      }
-+    .await;
-+    info!(
-+        event = "compact_hook.stage_finished",
-+        stage = "compact",
-+        catalog = compact_target.catalog.as_str(),
-+        database = compact_target.database.as_str(),
-+        table = compact_target.table.as_str(),
-+        elapsed_ms = compact_start.elapsed().as_millis() as u64,
-+        success = compact_result.is_ok(),
-+        error :? = compact_result.as_ref().err();
-+        "Compact hook stage finished"
-+    );
-+    compact_result?;
  
-     {
-         let table = ctx
-@@ -264,42 +277,59 @@ pub(crate) async fn compact_table(
-         }
-         // do recluster.
-         if table.cluster_key_meta().is_some() {
--            // evict the table from cache
--            ctx.evict_table_from_cache(
--                &compact_target.catalog,
--                &compact_target.database,
--                &compact_target.table,
--            )?;
--            // Spill is disabled to keep this synchronous hook fast (spilling adds
--            // disk IO). Admission must then keep tasks inside the memory budget.
--            // TODO: remove once the async hook is enabled.
--            ctx.set_enable_sort_spill(false);
--            let target = if is_materialized_view_engine(table.engine()) {
--                MaintenanceTarget::MaterializedView {
--                    table_id: table.get_id(),
--                }
--            } else {
--                MaintenanceTarget::Table
--            };
--            let recluster = ReclusterPlan {
--                catalog: compact_target.catalog,
--                database: compact_target.database,
--                table: compact_target.table,
--                target,
--                limit: Some(settings.get_auto_compaction_segments_limit()? as usize),
--                selection: None,
--                is_final: false,
--            };
--            let allow_segment_claims = lock_opt != LockTableOption::NoLock;
--            let recluster_interpreter = ReclusterTableInterpreter::try_create(
--                ctx.clone(),
--                recluster,
--                allow_segment_claims,
--            )?;
--            // Recluster will be done in `ReclusterTableInterpreter::execute2` directly,
--            // we do not need to use `PipelineCompleteExecutor` to execute it.
--            let build_res = recluster_interpreter.execute2().await?;
--            debug_assert!(build_res.main_pipeline.is_empty());
-+            let recluster_start = Instant::now();
-+            let recluster_result: Result<()> = async {
-+                // evict the table from cache
-+                ctx.evict_table_from_cache(
-+                    &compact_target.catalog,
-+                    &compact_target.database,
-+                    &compact_target.table,
-+                )?;
-+                // Spill is disabled to keep this synchronous hook fast (spilling adds
-+                // disk IO). Admission must then keep tasks inside the memory budget.
-+                // TODO: remove once the async hook is enabled.
-+                ctx.set_enable_sort_spill(false);
-+                let target = if is_materialized_view_engine(table.engine()) {
-+                    MaintenanceTarget::MaterializedView {
-+                        table_id: table.get_id(),
-+                    }
-+                } else {
-+                    MaintenanceTarget::Table
-+                };
-+                let recluster = ReclusterPlan {
-+                    catalog: compact_targ
+     let mut listed = Vec::with_capacity(targets.len());
+@@ -744,16 +761,20 @@ where
+             .get(&target.source_table_id)
+             .cloned()
+             .unwrap_or((None, None, false));
+-        let (database_id, database_name, table_name) = match table_name {
++        let (database_id, database_name, table_name, is_active, database_dropped) = match table_name
++        {
+             Some(table_name) => {
+                 let database_id = table_name.data.db_id;
++                let database_dropped = !active_source_database_ids.contains(&database_id);
+                 (
+                     Some(database_id),
+                     source_database_names.get(&database_id).cloned(),
+                     Some(table_name.data.table_name),
++                    is_active && !database_dropped,
++                    database_dropped,
+                 )
+             }
+-            None => (None, None, None),
++            None => (None, None, None, is_active, false),
+         };
+         listed.push(ListedMaterializedView {
+             mv: target.mv,
+@@ -766,6 +787,7 @@ where
+                 database_name,
+                 table_name,
+                 is_active,
++                database_dropped,
+                 bound_source_generation: binding
+                     .map(|binding| binding.data.bound_source_generation),
+                 current_source_generation: generation
 ```
 
-**File**: `src/query/service/src/interpreters/hook/refresh_hook.rs` (modified, +40/-114)
+**File**: `src/meta/app/src/schema/materialized_view/mod.rs` (modified, +4/-1)
 ```diff
-@@ -17,20 +17,14 @@ databend_common_tracing::register_module_tag!("[REFRESH-HOOK]");
+@@ -178,8 +178,11 @@ pub struct ListedMVSource {
+     pub database_id: Option<u64>,
+     pub database_name: Option<String>,
+     pub table_name: Option<String>,
+-    /// Whether source `TableMeta` exists and is not soft-dropped.
++    /// Whether source `TableMeta` exists and is not soft-dropped, and its database is not dropped.
+     pub is_active: bool,
++    /// Whether the source's current database is dropped. `is_active` is false in that case too;
++    /// this flag only tells management paths which of the two was dropped.
++    pub database_dropped: bool,
+     pub bound_source_generation: Option<u64>,
+     pub current_source_generation: Option<u64>,
+ }
+```
+
+**File**: `src/query/ee/tests/it/materialized_view.rs` (modified, +47/-0)
+```diff
+@@ -12,7 +12,10 @@
+ // See the License for the specific language governing permissions and
+ // limitations under the License.
  
- use std::sync::Arc;
- 
--use databend_common_ast::ast;
- use databend_common_base::runtime::GlobalIORuntime;
--use databend_common_catalog::table::Table;
- use databend_common_exception::Result;
--use databend_common_meta_app::schema::TableIndexType;
- use databend_common_pipeline::core::ExecutionInfo;
- use databend_common_pipeline::core::Pipeline;
- use databend_common_pipeline::core::always_callback;
--use databend_common_sql::plans::Plan;
--use databend_common_sql::plans::RefreshTableIndexPlan;
-+use databend_common_storages_fuse::FuseTable;
- use log::info;
- 
--use crate::interpreters::Interpreter;
--use crate::interpreters::RefreshTableIndexInterpreter;
- use crate::interpreters::hook::resolve_current_table_name_by_id;
- use crate::interpreters::hook::table_id_matches_target;
- use crate::interpreters::hook::vacuum_hook::hook_clear_m_cte_temp_table;
-@@ -40,7 +34,6 @@ use crate::pipelines::executor::ExecutorSettings;
- use crate::pipelines::executor::PipelineCompleteExecutor;
- use crate::sessions::QueryContext;
- use crate::sessions::TableContext;
--use crate::sessions::TableContextSettings;
- use crate::sessions::TableContextTableAccess;
- use crate::sessions::TableContextTableManagement;
- 
-@@ -69,14 +62,9 @@ pub async fn hook_refresh(ctx: Arc<QueryContext>, pipeline: &mut Pipeline, desc:
- pub(crate) async fn execute_refresh_hook(ctx: Arc<QueryContext>, desc: RefreshDesc) -> Result<()> {
-     info!("Table hook starting refresh job");
-     match do_refresh(ctx, desc).await {
--        Ok(_) => {
--            info!("Refresh job completed successfully");
--        }
--        Err(e) => {
--            info!("Refresh job failed: {:?}", e);
--        }
-+        Ok(_) => info!("Refresh job completed successfully"),
-+        Err(e) => info!("Refresh job failed: {:?}", e),
-     }
--
++use databend_common_exception::ErrorCode;
+ use databend_common_meta_app::principal::GrantObject;
++use databend_common_meta_app::schema::RenameTableReq;
++use databend_common_meta_app::schema::TableNameIdent;
+ use databend_common_meta_store::LocalMetaService;
+ use databend_common_users::UserApiProvider;
+ use databend_enterprise_query::test_kits::context::EESetup;
+@@ -70,3 +73,47 @@ async fn test_materialized_view_revoke_all_legacy_grants() -> anyhow::Result<()>
+     assert!(after.grants.entries().is_empty(), "{:?}", after.grants);
      Ok(())
  }
- 
-@@ -85,87 +73,58 @@ pub(crate) async fn do_refresh(ctx: Arc<QueryContext>, desc: RefreshDesc) -> Res
-         return Ok(());
-     };
- 
--    if desc.table_id.is_some() {
--        ctx.evict_table_from_cache(&desc.catalog, &desc.database, &desc.table)?;
--        ctx.clear_table_meta_timestamps_cache();
--    }
--
-+    // Sync hooks reuse the write context too. Filter accumulated write and
-+    // maintenance hints against the post-maintenance snapshot, not a cached one.
-+    ctx.evict_table_from_cache(&desc.catalog, &desc.database, &desc.table)?;
-     let table = ctx
-         .get_table(&desc.catalog, &desc.database, &desc.table)
-         .await?;
--    let table_id = table.get_id();
-     if !table_id_matches_target(
-         "refresh",
-         desc.table_id,
--        table_id,
-+        table.get_id(),
-         &desc.catalog,
-         &desc.database,
-         &desc.table,
-     ) {
-         return Ok(());
-     }
--
-     ctx.clear_table_meta_timestamps_cache();
--
--    let mut plans = Vec::new();
--
--    // Generate sync inverted indexes.
--    let inverted_index_plans = generate_refresh_table_index_plan(ctx.clone(), &desc, table).await?;
--    plans.extend_from_slice(&inverted_index_plans);
--
--    let mut tasks = Vec::with_capacity(std::cmp::min(
--        ctx.get_settings().get_max_threads()? as usize,
--        plans.len(),
--    ));
--
--    for plan in plans {
--        let ctx_cloned = ctx.clone();
--        tasks.push(async move {
--            match plan {
--                Plan::RefreshTableIndex(inverted_index_plan) => {
--                    let refresh_inverted_index_interpreter =
--                        RefreshTableIndexInterpreter::try_create(
--                            ctx_cloned.clone(),
--                            *inverted_index_plan,
--                        )?;
--                    let mut build_res = refresh_inverted_index_interpreter.execute2().await?;
--                    if build_res.main_pipeline.is_empty() {
--                        return Ok(());
--                    }
--
--                    let settings = ctx_cloned.get_settings();
--                    build_res.set_max_threads(settings.get_max_threads()? as usize);
--                    let settings = ExecutorSettings::try_create(ctx_cloned.clone())?;
--
--                    if build_res.main_pipeline.is_complete_pipeline()? {
--                        let query_ctx = ctx_cloned.clone();
--                        build_res.main_pipeline.set_on_finished(always_callback(
--                            move |_info: &ExecutionInfo| {
--                                hook_clear_m_cte_temp_table(&query_ctx)?;
--                                hook_vacuum_temp_files(&query_ctx)?;
--                                hook_disk_temp_dir(&query_ctx)?;
--                                Ok(())
--                            },
--                        ));
--
--                        let mut pipelines = build_res.sources_pipelines;
--                        pipelines.push(build_res.main_pipeline);
--
--                        let complete_executor =
--                            PipelineCompleteExecutor::from_pipelines(pipelin
-```
-
-**File**: `src/query/service/src/interpreters/interpreter_table_recluster.rs` (modified, +8/-9)
-```diff
-@@ -70,7 +70,6 @@ use crate::pipelines::executor::ExecutorSettings;
- use crate::pipelines::executor::PipelineCompleteExecutor;
- use crate::schedulers::build_query_pipeline_without_render_result_set;
- use crate::sessions::QueryContext;
--use crate::sessions::TableContext;
- use crate::sessions::TableContextLicense;
- use crate::sessions::TableContextQueryState;
- use crate::sessions::TableContextSettings;
-@@ -303,8 +302,7 @@ impl ReclusterTableInterpreter {
-         } = &self.plan;
-         // Callers that already own the lifecycle lock (for example, MV refresh) disable segment
-         // claims to avoid reacquiring the shared table lock at the commit gate.
--        let mut use_segment_claims =
--            self.allow_segment_claims && settings.get_enable_table_lock()?;
-+        let use_segment_claims = self.allow_segment_claims && settings.get_enable_table_lock()?;
- 
-         // Concurrent planning must evict this cache so the claim set is matched against the
-         // latest snapshot.
-@@ -314,10 +312,8 @@ impl ReclusterTableInterpreter {
-         let mut tbl = self.ctx.get_table(catalog, database, table).await?;
-         // Temporary tables are session-local, and their IDs are intentionally unsupported by
-         // the segment-claim and lock catalog APIs.
--        if tbl.is_temp() {
--            use_segment_claims = false;
--        }
--        let claim_manager = use_segment_claims.then(CoordinationManager::instance);
-+        let claim_manager =
-+            (use_segment_claims && !tbl.is_temp()).then(CoordinationManager::instance);
-         let mut claim_retries = 0;
-         let (parts, snapshot, claim_guard) = loop {
-             check_maintenance_target(tbl.as_ref(), &self.plan.target)?;
-@@ -380,7 +376,7 @@ impl ReclusterTableInterpreter {
-             tbl = self.ctx.get_table(catalog, database, table).await?;
-         };
-         let mut physical_plan =
--            self.build_linear_plan(tbl.as_ref(), parts, snapshot, use_segment_claims)?;
-+            self.build_linear_plan(tbl.as_ref(), parts, snapshot, claim_manager.is_some())?;
-         physical_plan.adjust_plan_id(&mut 0);
-         let mut build_res =
-             build_query_pipeline_without_render_result_set(&self.ctx, &physical_plan).await?;
-@@ -392,7 +388,8 @@ impl ReclusterTableInterpreter {
-             let table = self.plan.table.clone();
-             build_res.main_pipeline.set_on_finished(always_callback(
-                 move |info: &ExecutionInfo| {
--                    ctx.written_segment_locations().clear();
-+                    // Retain parent-write refresh hints and published output
-+                    // locations; index refresh filters out no-longer-live sources.
-                     ctx.evict_table_from_cache(&catalog, &database, &table)?;
- 
-                     ctx.unload_spill_meta();
-@@ -512,6 +509,7 @@ impl ReclusterTableInterpreter {
-         let ReclusterParts {
-             tasks,
-             remained_blocks,
-+            virtual_schemas,
-             removed_segment_indexes,
-             removed_segment_summary,
-         } = parts;
-@@ -546,6 +544,7 @@ impl ReclusterTableInterpreter {
-             table_meta_timestamps,
-             recluster_info: Some(ReclusterInfoSideCar {
-                 merged_blocks: remained_blocks,
-+                virtual_schemas,
-                 removed_segment_indexes,
-                 removed_statistics: removed_segment_summary,
-                 acquire_commit_lock,
-```
-
-**File**: `src/query/service/src/physical_plans/physical_commit_sink.rs` (modified, +5/-16)
-```diff
-@@ -30,8 +30,6 @@ use databend_common_storages_fuse::operations::MutationGenerator;
- use databend_common_storages_fuse::operations::TableMutationAggregator;
- use databend_common_storages_fuse::operations::TransformMergeCommitMeta;
- use databend_common_storages_fuse::operations::TruncateGenerator;
--use databend_storages_common_table_meta::meta::BlockHLLState;
--use databend_storages_common_table_meta::meta::ExtendedBlockMeta;
- use databend_storages_common_table_meta::meta::TableMetaTimestamps;
- use databend_storages_common_table_meta::meta::TableSnapshot;
- use databend_storages_common_table_meta::readers::snapshot_reader::TableSnapshotAccessor;
-@@ -182,29 +180,20 @@ impl IPhysicalPlan for CommitSink {
-                             // extract re-cluster related mutations from physical plan
-                             let recluster_info = self.recluster_info.clone().unwrap_or_default();
- 
--                            let extended_merged_blocks = recluster_info
--                                .merged_blocks
--                                .into_iter()
--                                .map(|(block_meta, column_hlls)| {
--                                    Arc::new(ExtendedBlockMeta {
--                                        block_meta: Arc::unwrap_or_clone(block_meta),
--                                        draft_virtual_block_meta: None,
--                                        column_hlls: column_hlls.map(BlockHLLState::Serialized),
--                                        column_top_n: None,
--                                    })
--                                })
--                                .collect::<Vec<Arc<ExtendedBlockMeta>>>();
--
-                             TableMutationAggregator::create(
-                                 table,
-                                 builder.ctx.clone(),
-                                 base_segments,
--                                extended_merged_blocks,
-+                                vec![],
-                                 recluster_info.removed_segment_indexes,
-                                 recluster_info.removed_statistics,
-                                 *kind,
-                                 self.table_meta_timestamps,
-                             )
-+                            .with_retained_blocks(
-+                                recluster_info.merged_blocks,
-+                                recluster_info.virtual_schemas,
-+                            )
-                         });
-                 }
- 
-```
-
-**File**: `src/query/service/src/physical_plans/physical_compact_source.rs` (modified, +1/-2)
-```diff
-@@ -270,8 +270,7 @@ impl PhysicalPlanBuilder {
-             meta: PhysicalPlanMeta::new("ConstantTableScan"),
-         });
- 
--        let is_distributed = (!self.ctx.get_cluster().is_empty())
--            && self.ctx.get_settings().get_enable_distributed_compact()?;
-+        let is_distributed = !self.ctx.get_cluster().is_empty();
-         if is_distributed {
-             root = PhysicalPlan::new(Exchange {
-                 input: root,
-```
-
-**File**: `src/query/service/src/sessions/query_ctx.rs` (modified, +0/-4)
-```diff
-@@ -89,7 +89,6 @@ use databend_common_component::FragmentId;
- use databend_common_component::MutationState;
- use databend_common_component::ReadBlockThresholdsState;
- use databend_common_component::ResultCacheState;
--use databend_common_component::SegmentLocationsState;
- use databend_common_config::GlobalConfig;
- use databend_common_exception::ErrorCode;
- use databend_common_exception::Result;
-@@ -196,8 +195,6 @@ pub struct QueryContext {
-     shared: Arc<QueryContextShared>,
-     query_settings: Arc<Settings>,
-     fragment_id: FragmentId,
--    // Used by synchronized generate aggregating indexes when new data written.
--    written_segment_locs: SegmentLocationsState,
-     // Temp table for materialized CTE, first string is the database_name, second string is the table_name
-     // All temp tables' catalog is `CATALOG_DEFAULT`, so we don't need to store it.
-     m_cte_temp_table: Arc<RwLock<Vec<(String, String)>>>,
-@@ -230,7 +227,6 @@ impl QueryContext {
-             shared,
-             query_settings,
-             fragment_id: Default::default(),
--            written_segment_locs: Default::default(),
-             read_block_thresholds: Default::default(),
-             m_cte_temp_table: Arc::new(RwLock::new(Vec::new())),
-         })
-```
-
-**File**: `src/query/service/src/sessions/query_ctx/context.rs` (modified, +1/-1)
-```diff
-@@ -41,7 +41,7 @@ impl TableContext for QueryContext {
-     }
- 
-     fn written_segment_locations(&self) -> &SegmentLocationsState {
--        &self.written_segment_locs
-+        &self.shared.written_segment_locs
-     }
- 
-     fn as_any(&self) -> &dyn Any {
-```
-
----
-
-### Incident Patch 2: `4e2c7131` (2026-11-04)
-**Commit Message**: fix(query): skip aggregate work for empty inputs and buckets (#20891)
-
-* fix(query): skip aggregate work for empty inputs and buckets
-
-Distributed aggregation with little or no input paid for allocations that
-nothing used:
-
-- Payload::aggregate_flush_all allocated and zeroed a ~136KB
-  PayloadFlushState even for empty payloads, and the exchange serializer
-  called it once per bucket payload. Return early for empty payloads and
-  reuse one flush state in the serializer.
-- TransformFinalAggregate created its hash table (32K-slot index) at
-  construction and after each spill. Create it on the first non-empty
-  input instead.
-- TransformPartialAggregate created its hash table while the pipeline was
-  built and always emitted a block of per-bucket payloads on finish, even
-  when it aggregated nothing. Create the table on the first block and emit
-  only spilled payloads when nothing was aggregated.
-
-Also add the release regression query where a spilled final aggregate
-feeds a join whose build side is empty; main already handles it via
-#20489.
-
-* chore(query): format partial aggregate finish
-
-* chore(query): drop dead lint allow and redundant empty check (fable review round 1)
-
-**File**: `src/query/expression/src/aggregate/payload_flush.rs` (modified, +20/-1)
-```diff
-@@ -185,10 +185,25 @@ impl PartitionedPayload {
- 
- impl Payload {
-     pub fn aggregate_flush_all(&self) -> Result<DataBlock> {
-+        // A PayloadFlushState is over 100KB, do not allocate one for an empty payload.
-+        if self.len() == 0 {
-+            return Ok(self.empty_block(0));
-+        }
-+
-         let mut state = PayloadFlushState::default();
-+        self.aggregate_flush_all_with_state(&mut state)
-+    }
-+
-+    /// Same as `aggregate_flush_all`, but reuses the caller's flush state, so that
-+    /// flushing many payloads does not allocate a new state for each of them.
-+    pub fn aggregate_flush_all_with_state(
-+        &self,
-+        state: &mut PayloadFlushState,
-+    ) -> Result<DataBlock> {
-+        state.clear();
-         let mut blocks = vec![];
- 
--        while let Some(block) = self.aggregate_flush(&mut state)? {
-+        while let Some(block) = self.aggregate_flush(state)? {
-             blocks.push(block);
-         }
- 
-@@ -230,6 +245,10 @@ impl Payload {
-     }
- 
-     pub fn group_by_flush_all(&self) -> Result<DataBlock> {
-+        if self.len() == 0 {
-+            return Ok(self.empty_block(0));
-+        }
-+
-         let mut state = PayloadFlushState::default();
-         let mut blocks = vec![];
- 
-```
-
-**File**: `src/query/functions/tests/it/aggregates/agg_hashtable.rs` (modified, +75/-0)
-```diff
-@@ -28,6 +28,7 @@ use databend_common_expression::ProjectedBlock;
- use databend_common_expression::aggregate_function::AggregateCallRef;
- use databend_common_expression::aggregate_function::RawAggregateCall;
- use databend_common_expression::aggregate_function::get_states_layout;
-+use databend_common_expression::block_debug::assert_block_value_eq;
- use databend_common_expression::block_debug::assert_block_value_sort_eq;
- use databend_common_expression::types::ArgType;
- use databend_common_expression::types::BooleanType;
-@@ -562,3 +563,77 @@ fn test_agg_hashtable_encoded_columns() {
-         }
-     }
- }
-+
-+// Flushing a payload with a reused `PayloadFlushState` must produce the same
-+// result as flushing it with a fresh state, including for empty payloads.
-+#[test]
-+fn test_payload_flush_all_with_reused_state() {
-+    let aggrs = vec![
-+        resolve_agg("sum", Int64Type::data_type()),
-+        resolve_agg("count", Int64Type::data_type()),
-+    ];
-+
-+    // (distinct groups, radix bits): the first case has payloads larger than
-+    // one flush batch, the second one has mostly empty payloads.
-+    for (m, radix_bits) in [(5000_usize, 1_u64), (2, 4)] {
-+        let n = m * 2;
-+        let group_columns: Vec<BlockEntry> =
-+            vec![Int64Type::from_data((0..n).map(|x| (x % m) as i64).collect_vec()).into()];
-+        let group_types = group_columns
-+            .iter()
-+            .map(|c| c.data_type())
-+            .collect::<Vec<_>>();
-+        let args = vec![group_columns[0].clone()];
-+        let params: Vec<ProjectedBlock> = aggrs.iter().map(|_| (&args).into()).collect_vec();
-+
-+        let config = HashTableConfig::default().with_initial_radix_bits(radix_bits);
-+        let mut hashtable = AggregateHashTable::new(
-+            group_types.clone(),
-+            aggrs.clone(),
-+            config,
-+            Arc::new(Bump::new()),
-+        );
-+
-+        let mut state = ProbeState::default();
-+        hashtable
-+            .add_groups(
-+                &mut state,
-+                (&group_columns).into(),
-+                &params,
-+                (&[]).into(),
-+                n,
-+            )
-+            .unwrap();
-+
-+        assert_eq!(hashtable.payload.partition_count(), 1 << radix_bits);
-+
-+        let mut shared_state = PayloadFlushState::default();
-+        let mut total_rows = 0;
-+        let mut empty_payloads = 0;
-+        for (_, payload) in hashtable.payload.into_bucket_payloads() {
-+            let expected = payload.aggregate_flush_all().unwrap();
-+            let actual = payload
-+                .aggregate_flush_all_with_state(&mut shared_state)
-+                .unwrap();
-+
-+            assert_eq!(expected.num_rows(), payload.len());
-+            assert_eq!(actual.num_rows(), payload.len());
-+            assert_eq!(expected.num_columns(), group_types.len() + aggrs.len());
-+            assert_eq!(actual.num_columns(), expected.num_columns());
-+            assert_block_value_eq(&expected, &actual);
-+
-+            let group_by = payload.group_by_flush_all().unwrap();
-+            assert_eq!(group_by.num_rows(), payload.len());
-+
-+            if payload.len() == 0 {
-+                empty_payloads += 1;
-+            }
-+            total_rows += actual.num_rows();
-+        }
-+
-+        assert_eq!(total_rows, m);
-+        if m < (1 << radix_bits) {
-+            assert!(empty_payloads > 0);
-+        }
-+    }
-+}
-```
-
-**File**: `src/query/service/src/pipelines/processors/transforms/aggregator/serde/aggregate_scatter.rs` (modified, +6/-1)
-```diff
-@@ -21,6 +21,7 @@ use databend_common_expression::AggregatePayload;
- use databend_common_expression::BlockMetaInfoDowncast;
- use databend_common_expression::DataBlock;
- use databend_common_expression::DataSchemaRef;
-+use databend_common_expression::PayloadFlushState;
- use databend_common_expression::ProjectedBlock;
- use databend_common_expression::group_hash_entries;
- use databend_common_expression::group_hash_route_index;
-@@ -173,8 +174,12 @@ impl AggregateScatter {
-         let mut buckets = Vec::with_capacity(payloads.len());
-         let mut row_counts = Vec::with_capacity(payloads.len());
-         let mut blocks = Vec::with_capacity(payloads.len());
-+        // One flush state (over 100KB) for all payloads instead of one per payload.
-+        let mut flush_state = PayloadFlushState::default();
-         for payload in payloads {
--            let block = payload.payload.aggregate_flush_all()?;
-+            let block = payload
-+                .payload
-+                .aggregate_flush_all_with_state(&mut flush_state)?;
-             if block.num_rows() == 0 {
-                 continue;
-             }
-```
-
-**File**: `src/query/service/src/pipelines/processors/transforms/aggregator/transform_aggregate_final.rs` (modified, +132/-44)
-```diff
-@@ -56,18 +56,6 @@ use crate::pipelines::processors::transforms::aggregator::statistics::FinalAggre
- use crate::sessions::QueryContext;
- use crate::sessions::TableContextSettings;
- 
--#[allow(clippy::enum_variant_names)]
--enum HashTable {
--    MovedOut,
--    AggregateHashTable(AggregateHashTable),
--}
--
--impl Default for HashTable {
--    fn default() -> Self {
--        Self::MovedOut
--    }
--}
--
- const SPILL_BUCKET_NUM: usize = 4;
- const SPILL_BUCKET_BITS: u64 = SPILL_BUCKET_NUM.trailing_zeros() as u64;
- 
-@@ -102,7 +90,10 @@ pub struct TransformFinalAggregate {
-     stage: Stage,
-     spilled_occurred: bool,
- 
--    hashtable: HashTable,
-+    // Created on the first non-empty input. With bucket shuffle there are many final
-+    // processors and most of them may never receive rows, so an eagerly allocated
-+    // hash table (and its hash index) per processor is pure overhead.
-+    hashtable: Option<AggregateHashTable>,
-     params: Arc<AggregatorParams>,
-     flush_state: PayloadFlushState,
-     statistics: AggregationStatistics,
-@@ -132,7 +123,6 @@ impl TransformFinalAggregate {
-         let max_aggregate_spill_level =
-             (settings.get_max_aggregate_spill_level()? as usize).min(max_partition_depth);
- 
--        let hashtable = Self::create_hashtable(&params, 0);
-         let flush_state = PayloadFlushState::default();
- 
-         let spiller = AggregateSpiller::try_create(
-@@ -156,7 +146,7 @@ impl TransformFinalAggregate {
-             output_finished: WatchNotify::new(),
-             stage: Stage::Input,
-             spilled_occurred: false,
--            hashtable: HashTable::AggregateHashTable(hashtable),
-+            hashtable: None,
-             params,
-             flush_state,
-             statistics: AggregationStatistics::new("FinalAggregate"),
-@@ -189,11 +179,20 @@ impl TransformFinalAggregate {
-         )
-     }
- 
-+    /// Drop the current hash table and switch to `spilled_depth`. The next hash
-+    /// table is created by `hashtable_mut` when data arrives.
-     fn reset_hashtable(&mut self, spilled_depth: usize) {
--        let partition_depth = spilled_depth.min(self.max_partition_depth);
--        self.hashtable =
--            HashTable::AggregateHashTable(Self::create_hashtable(&self.params, partition_depth));
--        self.current_partition_depth = partition_depth;
-+        self.hashtable = None;
-+        self.current_partition_depth = spilled_depth.min(self.max_partition_depth);
-+    }
-+
-+    // Takes the fields separately so callers can still borrow `flush_state`.
-+    fn hashtable_mut<'a>(
-+        hashtable: &'a mut Option<AggregateHashTable>,
-+        params: &Arc<AggregatorParams>,
-+        partition_depth: usize,
-+    ) -> &'a mut AggregateHashTable {
-+        hashtable.get_or_insert_with(|| Self::create_hashtable(params, partition_depth))
-     }
- 
-     // One final-aggregate processor handles both the original input stream and
-@@ -203,9 +202,7 @@ impl TransformFinalAggregate {
-     // `spilled_depth * SPILL_BUCKET_BITS`.
-     fn ensure_spill_depth(&mut self, spilled_depth: usize) {
-         let partition_depth = spilled_depth.min(self.max_partition_depth);
--        if !matches!(&self.hashtable, HashTable::AggregateHashTable(_))
--            || self.current_partition_depth != partition_depth
--        {
-+        if self.current_partition_depth != partition_depth {
-             self.reset_hashtable(spilled_depth);
-         }
-     }
-@@ -231,7 +228,12 @@ impl TransformFinalAggregate {
-         let rows = block.num_rows();
-         self.statistics.record_block(rows, block.memory_size());
- 
--        if let HashTable::AggregateHashTable(ht) = &mut self.hashtable {
-+        if rows != 0 {
-+            let ht = Self::hashtable_mut(
-+                &mut self.hashtable,
-+                &self.params,
-+                self.current_partition_depth,
-+            );
-             let group_columns = ProjectedBlock::project(&self.params.group_columns, &block);
-             let params = self
-                 .params
-@@ -253,9 +255,12 @@ impl TransformFinalAggregate {
-             Arc::new(Bump::new()),
-         )?;
- 
--        if let HashTable::AggregateHashTable(ht) = &mut self.hashtable {
--            ht.combine_payloads(&partitioned_payload, &mut self.flush_state)?;
--        }
-+        let ht = Self::hashtable_mut(
-+            &mut self.hashtable,
-+            &self.params,
-+            self.current_partition_depth,
-+        );
-+        ht.combine_payloads(&partitioned_payload, &mut self.flush_state)?;
- 
-         Ok(())
-     }
-@@ -269,7 +274,12 @@ impl TransformFinalAggregate {
-         let bytes = payload.payload.memory_size();
-         self.statistics.record_block(rows, bytes);
- 
--        if let HashTable::AggregateHashTable(ht) = &mut self.hashtable {
-+        if rows != 0 {
-+            let ht = Self::hashtable_mut(
-+                &mut self.hashtable,
-+                &self.params,
-+                self.current_partition_depth,
-+            );
-             ht.combine_payload(&payload.paylo
-```
-
-**File**: `src/query/service/src/pipelines/processors/transforms/aggregator/transform_aggregate_partial.rs` (modified, +116/-22)
-```diff
-@@ -66,8 +66,11 @@ pub fn parse_partial_aggregate_mode(mode: &str) -> Result<PartialAggregateMode>
- /// input blocks are forwarded unchanged as raw rows for the final aggregate to aggregate. The
- /// partial aggregate never spills: the state bounds the table and the final aggregate spills.
- pub struct TransformPartialAggregate {
--    /// Taken out when the input ends.
-+    /// Created on the first rows to aggregate, so that the processors of a scan pruned to zero
-+    /// rows (or in bypass) do not each pay for a table while the pipeline is being built. Taken
-+    /// out when the input ends.
-     table: Option<AggregateHashTable>,
-+    config: HashTableConfig,
-     probe_state: ProbeState,
-     params: Arc<AggregatorParams>,
-     statistics: AggregationStatistics,
-@@ -116,18 +119,12 @@ impl TransformPartialAggregate {
-         mode: PartialAggregateMode,
-         max_table_bytes: usize,
-     ) -> Result<Box<dyn Processor>> {
--        let table = AggregateHashTable::new(
--            params.group_data_types.clone(),
--            params.aggregate_functions.clone(),
--            config,
--            Arc::new(Bump::new()),
--        );
--
-         Ok(AccumulatingTransformer::create(
-             input,
-             output,
-             TransformPartialAggregate {
--                table: Some(table),
-+                table: None,
-+                config,
-                 probe_state: ProbeState::default(),
-                 settings: MemorySettings::from_aggregate_settings(&ctx)?,
-                 statistics: AggregationStatistics::new("PartialAggregate"),
-@@ -189,9 +186,15 @@ impl TransformPartialAggregate {
-         let group_columns = ProjectedBlock::project(&self.params.group_columns, block);
-         let params_columns =
-             Self::aggregate_arguments(block, &self.params.aggregate_functions_arguments);
--        let Some(table) = self.table.as_mut() else {
--            unreachable!("[TRANSFORM-AGGREGATOR] Partial table already taken")
--        };
-+        let (params, config) = (&self.params, &self.config);
-+        let table = self.table.get_or_insert_with(|| {
-+            AggregateHashTable::new(
-+                params.group_data_types.clone(),
-+                params.aggregate_functions.clone(),
-+                config.clone(),
-+                Arc::new(Bump::new()),
-+            )
-+        });
-         let capacity = self.state.capacity();
-         let stats = self.memory.track(|| {
-             table.add_groups_partial(
-@@ -289,13 +292,13 @@ impl AccumulatingTransform for TransformPartialAggregate {
-     }
- 
-     fn on_finish(&mut self, output: bool) -> Result<Vec<DataBlock>> {
--        let Some(table) = self.table.take() else {
--            return Ok(vec![]);
--        };
--        self.statistics.log_partial_finish_statistics(
--            self.output_rows + table.len(),
--            table.hash_index_resize_count(),
--        );
-+        // No table means no rows were aggregated: they were bypassed, or there were none.
-+        let table = self.table.take();
-+        let (table_rows, hash_index_resizes) = table.as_ref().map_or((0, 0), |table| {
-+            (table.len(), table.hash_index_resize_count())
-+        });
-+        self.statistics
-+            .log_partial_finish_statistics(self.output_rows + table_rows, hash_index_resizes);
-         let total = &self.total;
-         log::info!(
-             "[PartialAggregate] Adaptive: final_state={:?}, rows={}, new_groups={}, windows={}, emits={:?}, group_bytes={}",
-@@ -306,9 +309,100 @@ impl AccumulatingTransform for TransformPartialAggregate {
-             self.emits,
-             Self::group_bytes(&self.memory, total),
-         );
--        if !output {
--            return Ok(vec![]);
-+        match table {
-+            Some(table) if output => Ok(self.emit(table.payload)),
-+            _ => Ok(vec![]),
-         }
--        Ok(self.emit(table.payload))
-+    }
-+}
-+
-+#[cfg(test)]
-+mod tests {
-+    use databend_common_expression::BlockMetaInfoDowncast;
-+    use databend_common_expression::DataField;
-+    use databend_common_expression::DataSchema;
-+    use databend_common_expression::FromData;
-+    use databend_common_expression::types::DataType;
-+    use databend_common_expression::types::NumberDataType;
-+    use databend_common_expression::types::UInt64Type;
-+
-+    use super::*;
-+    use crate::test_kits::TestFixture;
-+
-+    // Boxed like in the pipeline: the probe state alone is about 100KB, too large to
-+    // keep several transforms in the test future on the test thread's stack.
-+    fn create_transform(ctx: &Arc<QueryContext>) -> Result<Box<TransformPartialAggregate>> {
-+        let key_type = DataType::Number(NumberDataType::UInt64);
-+        let params = AggregatorParams::try_create(
-+            Arc::new(DataSchema::new(vec![DataField::new(
-+                "key",
-+                key_type.clone(),
-+            )])),
-+            vec![key_type],
-+            &[0],
-+            &[],
-+            &[],
-+            false,
-+            1024,
-+   
-```
-
-**File**: `tests/sqllogictests/suites/query/aggregate.test` (modified, +36/-0)
-```diff
-@@ -330,6 +330,42 @@ select count(*) from (select number from numbers(2000000) group by number);
- ----
- 2000000
- 
-+## Most buckets are empty: only a few groups, or no input rows at all
-+query II
-+select number % 3 as k, sum(number) from numbers_mt(10000) group by k order by k;
-+----
-+0 16668333
-+1 16661667
-+2 16665000
-+
-+query I
-+select count(*) from (select number % 7 as k, sum(number) from numbers_mt(10000) where number > 100000 group by k);
-+----
-+0
-+
-+statement ok
-+set force_aggregate_data_spill = 1;
-+
-+query II
-+select number % 3 as k, sum(number) from numbers_mt(10000) group by k order by k;
-+----
-+0 16668333
-+1 16661667
-+2 16665000
-+
-+query I
-+select count(*) from (select number % 7 as k, sum(number) from numbers_mt(10000) where number > 100000 group by k);
-+----
-+0
-+
-+## Spilled final-aggregate tasks whose consumer finishes early (the other join side is empty) must not hang
-+query II
-+select a.k, count(*) from (select number % 4 as k from numbers_mt(1000) group by k) a join (select number % 4 as k from numbers_mt(2000) where number > 5000 group by k) b on a.k = b.k group by a.k order by a.k;
-+----
-+
-+statement ok
-+unset force_aggregate_data_spill;
-+
- 
- ## Aggregation without Exchange source
- query III
-```
-
----
-
-### Incident Patch 3: `75a200a3` (2026-11-04)
-**Commit Message**: fix(storage): publish snapshot hints only after transaction commit (#20827)
-
-* fix(storage): publish snapshot hints only after transaction commit
-
-* test(storage): deduplicate transaction snapshot hint coverage
-
-* fix(query): defer temporary metadata updates on commit conflicts
-
-**File**: `src/query/service/src/catalogs/default/session_catalog.rs` (modified, +8/-3)
-```diff
-@@ -606,9 +606,14 @@ impl Catalog for SessionCatalog {
-                         .retryable_update_multi_table_meta(tenant, req)
-                         .await?
-                 };
--                self.temp_tbl_mgr
--                    .lock()
--                    .update_multi_table_meta(update_temp_tables);
-+                // An OCC conflict is an inner Err, not a successful commit.
-+                // Keep temporary tables unchanged until persistent updates succeed;
-+                // otherwise a failed retry can partially commit a mixed transaction.
-+                if reply.is_ok() {
-+                    self.temp_tbl_mgr
-+                        .lock()
-+                        .update_multi_table_meta(update_temp_tables);
-+                }
-                 Ok(reply)
-             }
-             TxnState::Active => {
-```
-
-**File**: `src/query/service/tests/it/storages/fuse/operations/mod.rs` (modified, +1/-0)
-```diff
-@@ -32,6 +32,7 @@ mod purge_drop;
- mod read_plan;
- mod replace_into;
- mod scan_progress;
-+mod snapshot_hint;
- mod table_analyze;
- mod truncate;
- mod virtual_column_pruner_reader;
-```
-
-**File**: `src/query/service/tests/it/storages/fuse/operations/snapshot_hint.rs` (added, +238/-0)
-```diff
-@@ -0,0 +1,238 @@
-+// Copyright 2021 Datafuse Labs.
-+//
-+// Licensed under the Apache License, Version 2.0 (the "License");
-+// you may not use this file except in compliance with the License.
-+// You may obtain a copy of the License at
-+//
-+//     http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+
-+use std::sync::Arc;
-+
-+use databend_common_catalog::session_type::SessionType;
-+use databend_common_catalog::table::Table;
-+use databend_common_storages_fuse::FuseTable;
-+use databend_common_storages_fuse::operations::load_last_snapshot_hint;
-+use databend_common_version::BUILD_INFO;
-+use databend_query::sessions::Session;
-+use databend_query::sessions::TableContextTableAccess;
-+use databend_query::test_kits::ConfigBuilder;
-+use databend_query::test_kits::OSSSetup;
-+use databend_query::test_kits::TestFixture;
-+use futures::TryStreamExt;
-+
-+// Single-session behavior is covered by txn_snapshot_hint.test. These tests
-+// control concurrent writers to exercise successful and failed commit retries.
-+async fn execute(session: &Arc<Session>, sql: &str) -> anyhow::Result<()> {
-+    let ctx = session.create_query_context(&BUILD_INFO).await?;
-+    TestFixture::execute_query_with_ctx(ctx, sql)
-+        .await?
-+        .try_collect::<Vec<_>>()
-+        .await?;
-+    Ok(())
-+}
-+
-+async fn table(fixture: &TestFixture, name: &str) -> anyhow::Result<FuseTable> {
-+    let ctx = fixture.new_query_ctx().await?;
-+    let table = ctx
-+        .get_table("default", &fixture.default_db_name(), name)
-+        .await?;
-+    Ok(FuseTable::try_from_table(table.as_ref())?.clone())
-+}
-+
-+async fn ids(fixture: &TestFixture, name: &str) -> anyhow::Result<Vec<String>> {
-+    let blocks = fixture
-+        .execute_query(&format!(
-+            "SELECT id FROM {}.{name} ORDER BY id",
-+            fixture.default_db_name()
-+        ))
-+        .await?
-+        .try_collect::<Vec<_>>()
-+        .await?;
-+    let mut result = Vec::new();
-+    for block in blocks {
-+        for row in 0..block.num_rows() {
-+            result.push(
-+                block
-+                    .get_by_offset(0)
-+                    .value()
-+                    .index(row)
-+                    .unwrap()
-+                    .to_string(),
-+            );
-+        }
-+    }
-+    Ok(result)
-+}
-+
-+fn snapshot_path(table: &FuseTable) -> String {
-+    format!(
-+        "{}{}",
-+        table.get_operator().info().root(),
-+        table.snapshot_loc().unwrap()
-+    )
-+}
-+
-+async fn hint(table: &FuseTable) -> anyhow::Result<Option<String>> {
-+    Ok(load_last_snapshot_hint(
-+        table.meta_location_generator().prefix(),
-+        &table.get_operator(),
-+    )
-+    .await?
-+    .map(|hint| hint.snapshot_full_path))
-+}
-+
-+async fn setup() -> anyhow::Result<TestFixture> {
-+    // Temporary tables require a client session rather than SessionType::Dummy.
-+    let fixture = TestFixture::setup_with_custom_and_session_type(
-+        OSSSetup {
-+            config: ConfigBuilder::create().config(),
-+        },
-+        SessionType::MySQL,
-+    )
-+    .await?;
-+    fixture.create_default_database().await?;
-+    fixture
-+        .execute_command("SET auto_compaction_imperfect_blocks_threshold=0")
-+        .await?;
-+    fixture.execute_command("SET enable_auto_analyze=0").await?;
-+    Ok(fixture)
-+}
 +
 +#[tokio::test(flavor = "multi_thread")]
-+async fn test_transaction_snapshot_hints_after_retry() -> anyhow::Result<()> {
-+    let fixture = setup().await?;
-+    let db = fixture.default_db_name();
-+    let writer = fixture.new_session_with_type(SessionType::Dummy).await?;
-+    let names = ["hint_retry_a", "hint_retry_b"];
-+    for name in names {
-+        fixture
-+            .execute_command(&format!("CREATE TABLE {db}.{name}(id INT, v INT)"))
-+            .await?;
-+        fixture
-+            .execute_command(&format!("INSERT INTO {db}.{name} VALUES (1,10)"))
-+            .await?;
++async fn test_materialized_view_rejects_source_moved_across_databases() -> anyhow::Result<()> {
++    let meta = LocalMetaService::new_testing::<DatabendRuntime>("mv-moved-source").await?;
++    let mut setup = EESetup::new();
++    setup.config_mut().meta.endpoints = meta.get_cached_endpoints().await?;
++    let fixture = TestFixture::setup_with_custom(setup).await?;
++    for sql in [
++        "CREATE DATABASE mv_moved_old",
++        "CREATE DATABASE mv_moved_new",
++        "CREATE TABLE mv_moved_old.t(id INT) CHANGE_TRACKING = true",
++    ] {
++        fixture.execute_command(sql).await?;
 +    }
-+    let temp = "hint_retry_temp";
-+    fixture
-+        .execute_command(&format!("CREATE TEMP TABLE {db}.{temp}(id INT)"))
-+        .await?;
-+    fixture
-+        .execute_command(&format!("INSERT INTO {db}.{temp} VALUES (0)"))
-+        .await?;
-+    let before = table(&fixture, temp).await?;
-+    assert_eq!(hint(&before).await?, Some(snapshot_path(&before)));
-+
-+    fixture.execute_command("BEGIN").await?;
-+    fixture
-+        .execute_command(&format!("INSERT INTO {db}.{temp} VALUES (1)"))
-+        .await?;
-+    let temp_buffered = table(&fixture, temp).await?;
-+    assert_ne!(temp_buffered.snapshot_loc(), before.snapshot_loc());
-+    assert_eq!(hint(&before).await?, Some(snapshot_path(&before)));
-+    fixture
-+        .execute_command(&format!(
-+            "INSERT ALL INTO {db
-```
-
-**File**: `src/query/storages/fuse/src/operations/snapshot_hint.rs` (modified, +6/-0)
-```diff
-@@ -143,6 +143,12 @@ impl SnapshotHintWriter<'_> {
-         table_meta: &TableMeta,
-     ) {
-         let ctx = &self.ctx;
-+        // Attached tables trust this hint without consulting the catalog. Do not
-+        // expose a buffered snapshot; COMMIT publishes the final snapshot after
-+        // the metadata update succeeds (and has switched to auto-commit mode).
-+        if ctx.txn_mgr().lock().is_active() {
-+            return;
-+        }
-         if let Ok(false) = ctx.get_settings().get_enable_last_snapshot_location_hint() {
-             info!(
-                 "Write last_snapshot_location_hint disabled. Snapshot {}",
-```
-
-**File**: `src/query/storages/fuse/src/retry/commit.rs` (modified, +58/-0)
-```diff
-@@ -34,6 +34,7 @@ use databend_storages_common_table_meta::meta::Versioned;
- use databend_storages_common_table_meta::readers::snapshot_reader::TableSnapshotAccessor;
- use databend_storages_common_table_meta::table::is_fuse_backed_engine;
- use log::info;
-+use log::warn;
- use tokio::time::sleep;
- 
- use super::diff::SegmentsDiff;
-@@ -66,6 +67,9 @@ pub async fn commit_with_backoff(
-             .retryable_update_multi_table_meta(tenant, req.clone())
-             .await?;
-         let Err(update_failed_tbls) = ret else {
-+            // Retries can replace the buffered snapshots with merged snapshots.
-+            // Publish only the locations in the request that actually committed.
-+            write_snapshot_hints(ctx.as_ref(), &req).await;
-             return Ok(());
-         };
-         let Some(duration) = backoff.next_backoff() else {
-@@ -89,6 +93,60 @@ pub async fn commit_with_backoff(
-     }
- }
- 
-+// Like the hint write itself, operator initialization is best effort: metadata
-+// has already committed, so a hint failure must not turn COMMIT into an error.
-+async fn write_snapshot_hints(ctx: &dyn TableContext, req: &UpdateMultiTableMetaReq) {
-+    let storage_class = match ctx.get_settings().get_s3_storage_class() {
-+        Ok(storage_class) => storage_class,
-+        Err(e) => {
-+            warn!("Failed to initialize transaction snapshot hints: {e}");
-+            return;
-+        }
-+    };
-+    let tables = req
-+        .update_table_metas
-+        .iter()
-+        .map(|(update, info)| {
-+            (
-+                update.table_id,
-+                info.ident.seq,
-+                &update.new_table_meta,
-+                info.desc.as_str(),
-+            )
++    // The binder has rejected cross-database RENAME TABLE since #14098; older versions moved the
++    // table without updating its recorded database id. Seed that state through the catalog.
++    let ctx = fixture.new_query_ctx().await?;
++    let tenant = ctx.get_tenant();
++    ctx.get_default_catalog()?
++        .rename_table(RenameTableReq {
++            if_exists: false,
++            name_ident: TableNameIdent {
++                tenant: tenant.clone(),
++                db_name: "mv_moved_old".to_string(),
++                table_name: "t".to_string(),
++            },
++            new_db_name: "mv_moved_new".to_string(),
++            new_table_name: "t".to_string(),
 +        })
-+        .chain(req.update_temp_tables.iter().map(|update| {
-+            (
-+                update.table_id,
-+                0,
-+                &update.new_table_meta,
-+                update.desc.as_str(),
-+            )
-+        }));
-+    for (table_id, seq, meta, desc) in tables {
-+        if !is_fuse_backed_engine(&meta.engine) {
-+            continue;
-+        }
-+        let table =
-+            match FuseTable::from_table_meta(table_id, seq, meta.clone(), storage_class, desc) {
-+                Ok(table) => table,
-+                Err(e) => {
-+                    warn!("Failed to initialize snapshot hint for table {table_id}: {e}");
-+                    continue;
-+                }
-+            };
-+        if let Some(location) = table.snapshot_loc() {
-+            FuseTable::write_last_snapshot_hint(
-+                ctx,
-+                &table.get_operator(),
-+                table.meta_location_generator(),
-+                &location,
-+                meta,
-+            )
-+            .await;
-+        }
-+    }
-+}
++        .await?;
 +
- async fn compute_table_segments_diffs(
-     ctx: Arc<dyn TableContext>,
-     req: &UpdateMultiTableMetaReq,
++    let error = fixture
++        .execute_command(
++            "CREATE MATERIALIZED VIEW mv_moved_new.mv AS SELECT id FROM mv_moved_new.t WHERE 1 = 1",
++        )
++        .await
++        .unwrap_err();
++    assert_eq!(
++        ErrorCode::INVALID_MATERIALIZED_VIEW,
++        error.code(),
++        "{error}"
++    );
++    Ok(())
++}
 ```
 
-**File**: `tests/sqllogictests/suites/http_handler/transaction/txn_snapshot_hint.test` (added, +228/-0)
+**File**: `src/query/sql/src/planner/binder/bind_table_reference/bind_materialized_view.rs` (modified, +16/-1)
 ```diff
-@@ -0,0 +1,228 @@
-+# Regression for #20752. Inspect the same storage hint used by ATTACH TABLE,
-+# without requiring an enterprise license to attach the table. The dedicated
-+# fs prefix follows txn_ext.test; clear it so repeated runs see only this table.
+@@ -674,7 +674,22 @@ impl Binder {
+         .with_subquery_executor(self.subquery_executor.clone());
+         let mut definition_context = BindContext::new();
+         definition_context.binding_depth = bind_context.next_depth()?;
+-        let (definition_expr, _) = definition_binder.bind_query(&mut definition_context, &query)?;
++        // The persisted definition names the source captured by CREATE. A missing database or
++        // table means the source was dropped, renamed, or replaced, which REFRESH also reports as
++        // InvalidMaterializedView. Other errors keep their original code.
++        let (definition_expr, _) = definition_binder
++            .bind_query(&mut definition_context, &query)
++            .map_err(|error| match error.code() {
++                ErrorCode::UNKNOWN_DATABASE | ErrorCode::UNKNOWN_TABLE => {
++                    ErrorCode::InvalidMaterializedView(format!(
++                        "materialized view {} source table changed: expected table id {}: {}",
++                        table_meta.name(),
++                        source_table_id,
++                        error
++                    ))
++                }
++                _ => error,
++            })?;
+         validate_materialized_view_source(
+             &definition_metadata,
+             source_table_id,
+```
+
+**File**: `src/query/sql/src/planner/binder/ddl/materialized_view.rs` (modified, +47/-13)
+```diff
+@@ -50,6 +50,8 @@ use databend_common_license::license_manager::LicenseManagerSwitch;
+ use databend_common_meta_app::schema::MATERIALIZED_VIEW_SOURCE_ROW_ID_COLUMN;
+ use databend_common_meta_app::schema::MVDefinition;
+ use databend_common_meta_app::schema::OPT_KEY_MATERIALIZED_VIEW_SOURCE_TABLE_ID;
++use databend_common_meta_app::schema::TableIdent;
++use databend_common_meta_app::schema::TableInfo;
+ use databend_common_meta_app::schema::UpsertTableOptionReq;
+ use databend_common_meta_app::schema::is_materialized_view_engine;
+ use databend_enterprise_materialized_view::get_materialized_view_handler;
+@@ -222,20 +224,28 @@ impl Binder {
+                     .get(OPT_KEY_DATABASE_ID)
+                     .ok_or_else(|| ErrorCode::Internal("materialized view database id is missing"))?
+                     .parse::<u64>()?;
+-                let mv_database = catalog.get_db_name_by_id(database_id).await?;
++                // A materialized view may live in a different database than its source. A dropped
++                // database keeps its id-to-name mapping and the MV source bindings until GC, and
++                // `get_db_name_by_id` still returns that name. `mget_database_names_by_ids` also
++                // checks `drop_on`; MVs in a dropped database are skipped like dropped MVs, so
++                // queries on the source table are not affected.
++                let Some(mv_database) = catalog
++                    .mget_database_names_by_ids(&tenant, &[database_id])
++                    .await?
++                    .pop()
++                    .flatten()
++                else {
++                    continue;
++                };
+                 let Some(mv_name) = catalog.get_table_name_by_id(mv.mv_id).await? else {
+                     continue;
+                 };
+                 let current_mv = catalog.get_table(&tenant, &mv_database, &mv_name).await?;
+-                let mv_table =
+-                    catalog.get_table_by_info(&databend_common_meta_app::schema::TableInfo {
+-                        ident: databend_common_meta_app::schema::TableIdent::new(
+-                            mv.mv_id,
+-                            mv.table_meta.seq,
+-                        ),
+-                        meta: mv.table_meta.data.clone(),
+-                        ..current_mv.get_table_info().clone()
+-                    })?;
++                let mv_table = catalog.get_table_by_info(&TableInfo {
++                    ident: TableIdent::new(mv.mv_id, mv.table_meta.seq),
++                    meta: mv.table_meta.data.clone(),
++                    ..current_mv.get_table_info().clone()
++                })?;
+ 
+                 let logical_query = parse_materialized_view_query(
+                     &mv.definition.data.original_query,
+@@ -566,7 +576,9 @@ impl Binder {
+         let source_table_name = source_entry.name().to_string();
+         let source_table_id = source_table.get_id();
+         let source_table_seq = source_table.get_table_info().ident.seq;
+-        let source_database_id = source_table
++        // Refresh, read, and privilege checks resolve the source database from this option, so
++        // reject a source without it here instead of creating an unusable materialized view.
++        let recorded_source_database_id = source_table
+             .get_table_info()
+             .meta
+             .options
+@@ -577,12 +589,34 @@ impl Binder {
+                 ))
+             })?
+             .parse::<u64>()?;
+-        if source_catalog_name != catalog_name || source_database_id != target_database_id {
++        // Refresh, read, and privilege checks resolve the source through its table id in the
++        // default catalog, so the source may live in any database of the target catalog.
++        if source_catalog_name != catalog_name {
+             return Err(ErrorCode::InvalidMaterializedView(format!(
+-                "materialized view and source table must belong to the same catalog and database: target '{}.{}', source '{}.{}'",
++                "materialized view and source table must belong to the same catalog: target '{}.{}', source '{}.{}'",
+                 catalog_name, database_name, source_catalog_name, source_database
+             )));
+         }
++        // The recorded database id also locates the table's storage, so RENAME TABLE does not
++        // update it. Older versions allowed renaming a table into another database, which leaves
++        // the recorded id pointing at the old database. Refresh, read, and privilege checks would
++        // then resolve the wrong database, so reject such a source instead of creating an unusable
++        // materialized view.
++        let current_source_database_id = target_catalog
++            .get_database(&tenant, &source_database)
++            .await?
++            .get_db_info()
++            .database_id
++            .db_id;
++        if recorded_source_database_id != current_source_database_id {
++            return Err(ErrorCode::InvalidMaterializedView(for
+```
+
+**File**: `src/query/storages/common/table_meta/src/table/table_keys.rs` (modified, +2/-0)
+```diff
+@@ -51,6 +51,8 @@ pub const MATERIALIZED_VIEW_INVALID_SOURCE_REASON: &str =
+     "source table was dropped, renamed, or replaced";
+ /// Reason reported when the database name persisted in the MV definition no longer resolves.
+ pub const MATERIALIZED_VIEW_INVALID_SOURCE_DATABASE_REASON: &str = "source database was renamed";
++/// Reason reported when the source table's current database is dropped.
++pub const MATERIALIZED_VIEW_DROPPED_SOURCE_DATABASE_REASON: &str = "source database was dropped";
+ pub const OPT_KEY_SNAPSHOT_LOCATION_FIXED_FLAG: &str = "snapshot_location_fixed";
+ pub const OPT_KEY_STORAGE_FORMAT: &str = "storage_format";
+ /// External-table S3 storage class for new objects; overrides the experimental session setting.
+```
+
+**File**: `src/query/storages/system/src/materialized_views_table.rs` (modified, +55/-7)
+```diff
+@@ -48,6 +48,7 @@ use databend_common_meta_app::tenant::Tenant;
+ use databend_common_storages_fuse::TableContext;
+ use databend_common_users::TablePrivilegeTarget;
+ use databend_common_users::filter_tables_by_privilege;
++use databend_storages_common_table_meta::table::MATERIALIZED_VIEW_DROPPED_SOURCE_DATABASE_REASON;
+ use databend_storages_common_table_meta::table::MATERIALIZED_VIEW_INVALID_SOURCE_DATABASE_REASON;
+ use databend_storages_common_table_meta::table::MATERIALIZED_VIEW_INVALID_SOURCE_REASON;
+ use databend_storages_common_table_meta::table::OPT_KEY_MATERIALIZED_VIEW_SOURCE_DATABASE_NAME;
+@@ -254,10 +255,15 @@ fn source_lifecycle_invalid_reason(
+     current_source_database: Option<&str>,
+     current_source_name: Option<&str>,
+     source_is_active: bool,
++    source_database_dropped: bool,
+ ) -> Option<&'static str> {
+     let expected_source_name = table_meta
+         .options
+         .get(OPT_KEY_MATERIALIZED_VIEW_SOURCE_TABLE_NAME)?;
++    // A dropped database also makes the source inactive; report the more specific cause.
++    if source_database_dropped {
++        return Some(MATERIALIZED_VIEW_DROPPED_SOURCE_DATABASE_REASON);
++    }
+     if !source_is_active || current_source_name != Some(expected_source_name.as_str()) {
+         return Some(MATERIALIZED_VIEW_INVALID_SOURCE_REASON);
+     }
+@@ -275,6 +281,7 @@ fn listed_materialized_view_status(item: &ListedMaterializedView) -> (bool, Opti
+         item.source.database_name.as_deref(),
+         item.source.table_name.as_deref(),
+         item.source.is_active,
++        item.source.database_dropped,
+     );
+     let binding_invalid = item.source.bound_source_generation.is_none()
+         || item.source.current_source_generation.is_none()
+@@ -380,7 +387,13 @@ mod tests {
+ 
+         // Legacy MVs without the source-name option do not get lifecycle validation.
+         assert_eq!(
+-            source_lifecycle_invalid_reason(&table_meta, Some("database"), Some("renamed"), false,),
++            source_lifecycle_invalid_reason(
++                &table_meta,
++                Some("database"),
++                Some("renamed"),
++                false,
++                false
++            ),
+             None
+         );
+ 
+@@ -389,19 +402,37 @@ mod tests {
+             "source".to_string(),
+         );
+         assert_eq!(
+-            source_lifecycle_invalid_reason(&table_meta, Some("database"), Some("source"), true,),
++            source_lifecycle_invalid_reason(
++                &table_meta,
++                Some("database"),
++                Some("source"),
++                true,
++                false
++            ),
+             None
+         );
+         assert_eq!(
+-            source_lifecycle_invalid_reason(&table_meta, Some("database"), Some("renamed"), true,),
++            source_lifecycle_invalid_reason(
++                &table_meta,
++                Some("database"),
++                Some("renamed"),
++                true,
++                false
++            ),
+             Some(MATERIALIZED_VIEW_INVALID_SOURCE_REASON)
+         );
+         assert_eq!(
+-            source_lifecycle_invalid_reason(&table_meta, Some("database"), Some("source"), false,),
++            source_lifecycle_invalid_reason(
++                &table_meta,
++                Some("database"),
++                Some("source"),
++                false,
++                false
++            ),
+             Some(MATERIALIZED_VIEW_INVALID_SOURCE_REASON)
+         );
+         assert_eq!(
+-            source_lifecycle_invalid_reason(&table_meta, Some("database"), None, false),
++            source_lifecycle_invalid_reason(&table_meta, Some("database"), None, false, false),
+             Some(MATERIALIZED_VIEW_INVALID_SOURCE_REASON)
+         );
+ 
+@@ -410,7 +441,13 @@ mod tests {
+             "database".to_string(),
+         );
+         assert_eq!(
+-            source_lifecycle_invalid_reason(&table_meta, Some("database"), Some("source"), true,),
++            source_lifecycle_invalid_reason(
++                &table_meta,
++                Some("database"),
++                Some("source"),
++                true,
++                false
++            ),
+             None
+         );
+         assert_eq!(
+@@ -419,12 +456,23 @@ mod tests {
+                 Some("renamed_database"),
+                 Some("source"),
+                 true,
++                false,
+             ),
+             Some(MATERIALIZED_VIEW_INVALID_SOURCE_DATABASE_REASON)
+         );
+         assert_eq!(
+-            source_lifecycle_invalid_reason(&table_meta, None, Some("source"), true),
++            source_lifecycle_invalid_reason(&table_meta, None, Some("source"), true, false),
+             Some(MATERIALIZED_VIEW_INVALID_SOURCE_DATABASE_REASON)
+         );
++        assert_eq!(
++            source_lifecycle_invalid_reason(
++                &table_meta,
++                Some("database"),
++                Some("source"),
++                false,
++                true
++            ),
++            Some(MATERIALIZED_VIEW_DROPPED
+```
+
+**File**: `tests/sqllogictests/suites/ee/05_ee_ddl/05_0017_ddl_materialized_view.test` (modified, +94/-8)
+```diff
+@@ -847,7 +847,13 @@ ALTER MATERIALIZED VIEW test_mv2 CLUSTER BY (cnt)
+ statement ok
+ ALTER MATERIALIZED VIEW test_mv2 CLUSTER BY (val)
+ 
+-# Materialized views and their sources must belong to the same database.
++# Cross-database MV creation resolves source references in the session database.
 +statement ok
-+create or replace database txn_snapshot_hint;
++DROP DATABASE IF EXISTS mv_src_db
 +
 +statement ok
-+use txn_snapshot_hint;
++DROP DATABASE IF EXISTS mv_dst_db
++
+ statement ok
+ CREATE DATABASE mv_src_db
+ 
+@@ -872,12 +878,95 @@ INSERT INTO mv_dst_db.t VALUES (100)
+ statement ok
+ USE mv_src_db
+ 
+-statement error 2328
++statement ok
+ CREATE MATERIALIZED VIEW mv_dst_db.cross_mv AS SELECT id FROM t WHERE 1 = 1
+ 
++query I
++SELECT count(*) FROM mv_dst_db.cross_mv
++----
++2
++
++query TT
++SHOW CREATE MATERIALIZED VIEW mv_dst_db.cross_mv
++----
++cross_mv CREATE MATERIALIZED VIEW `mv_dst_db`.`cross_mv` (`id`) AS SELECT id FROM mv_src_db.t WHERE 1 = 1
 +
 +statement ok
-+set auto_compaction_imperfect_blocks_threshold=0;
-+
-+statement ok
-+set enable_auto_analyze=0;
-+
-+statement ok
-+create or replace stage txn_hint_stage url='fs:///tmp/http_handler_txn_snapshot_hint/persistent/';
-+
-+statement ok
-+remove @txn_hint_stage;
-+
-+statement ok
-+create table t(id int, v int) 'fs:///tmp/http_handler_txn_snapshot_hint/persistent/';
-+
-+# A table's first snapshot must not create a hint until COMMIT.
-+statement ok
-+begin;
-+
-+statement ok
-+insert into t values (1,10);
++REFRESH MATERIALIZED VIEW mv_dst_db.cross_mv
 +
 +query I
-+select count(*) from @txn_hint_stage (pattern=>'.*last_snapshot_location_hint_v2', file_format=>'ndjson');
++SELECT id FROM mv_dst_db.cross_mv ORDER BY id
 +----
-+0
++1
++2
++
+ statement ok
+ USE test_mv_ddl
+ 
++# A dropped source database invalidates the MV even though the source TableMeta is retained.
++statement ok
++DROP DATABASE mv_src_db
++
++query TBT
++SELECT source_database, invalid, invalid_reason
++FROM system.materialized_views
++WHERE database = 'mv_dst_db' AND name = 'cross_mv'
++----
++mv_src_db 1 source database was dropped
++
++# The persisted definition still names the dropped database; reads and refreshes both report it
++# as an invalid materialized view.
++statement error 2328
++SELECT * FROM mv_dst_db.cross_mv
++
++statement error 2328
++REFRESH MATERIALIZED VIEW mv_dst_db.cross_mv
 +
 +statement ok
-+rollback;
++UNDROP DATABASE mv_src_db
++
++query BB
++SELECT invalid, invalid_reason IS NULL
++FROM system.materialized_views
++WHERE database = 'mv_dst_db' AND name = 'cross_mv'
++----
++0 1
++
++# MVs in a dropped database are skipped, so queries on the source table are not affected.
++statement ok
++DROP DATABASE mv_dst_db
 +
 +query I
-+select count(*) from @txn_hint_stage (pattern=>'.*last_snapshot_location_hint_v2', file_format=>'ndjson');
++SELECT count(*) FROM mv_src_db.t
 +----
-+0
++2
++
++# A source database recreated under the same name binds the definition to a new table, which the
++# table-id check rejects instead of reading it. UNDROP restores the latest database id of a name,
++# so this runs after the UNDROP case above.
++statement ok
++UNDROP DATABASE mv_dst_db
 +
 +statement ok
-+begin;
++DROP DATABASE mv_src_db
 +
 +statement ok
-+insert into t values (1,10);
++CREATE DATABASE mv_src_db
++
++# CHANGE_TRACKING lets the definition's change$row_id bind, so the table-id check is what rejects
++# the new table.
++statement ok
++CREATE TABLE mv_src_db.t (id INT) CHANGE_TRACKING = true
++
++statement error 2328
++SELECT * FROM mv_dst_db.cross_mv
++
++statement error 2328
++REFRESH MATERIALIZED VIEW mv_dst_db.cross_mv
 +
 +statement ok
-+commit;
++DROP DATABASE mv_dst_db
 +
-+statement ok
-+create temp table hint_before as select $1:snapshot_full_path::string as path from @txn_hint_stage (pattern=>'.*last_snapshot_location_hint_v2', file_format=>'ndjson');
-+
-+statement ok
-+begin;
-+
-+statement ok
-+delete from t where id=1;
-+
-+# The source sees its own DELETE, but the published hint must not change.
-+query I
-+select count(*) from t;
-+----
-+0
-+
-+statement ok
-+insert into t values (1,10),(2,20);
-+
-+statement ok
-+update t set v=-1 where id=1;
-+
-+statement ok
-+replace into t on (id) values (1,-2),(5,50);
-+
-+query B
-+select $1:snapshot_full_path::string = (select path from hint_before) from @txn_hint_stage (pattern=>'.*last_snapshot_location_hint_v2', file_format=>'ndjson');
-+----
-+1
-+
-+statement ok
-+rollback;
-+
-+query II
-+select * from t;
-+----
-+1 10
-+
-+query B
-+select $1:snapshot_full_path::string = (select path from hint_before) from @txn_hint_stage (pattern=>'.*last_snapshot_location_hint_v2', file_format=>'ndjson');
-+----
-+1
-+
-+# Multiple statements must publish only the final snapshot on COMMIT.
-+statement ok
-+begin;
-+
-+statement ok
-+insert into t values (2,20);
-+
-+statement ok
-+update t set v=11 where id=1;
-+
-+query B
-+select $1:snapshot_full_path::string = (select path from hint_before) from @txn_hint_stage (pattern=>'.*last_snapshot_location_hint_v2', file_format=>'ndjson');
-+----
-+1
-+
-+statement ok
-+commit;
-+
-+query II
-+select * from t order by id;
-+----
-+1 11
-+2 20
-+
-+query B
-+select right($1:snapshot_full_path::string, length(s.snapshot_location)) = s.snapshot_location
-+from @txn_hint_stage (pattern=>'.*last_snapshot_location_hint_v2', file_format=>'ndjson')
-+cross join (select snapshot_location from fuse_snapshot('txn_snapshot_hint','t') limit 1) s;
-+----
-+1
-+
-+query B
-+select $1:snapshot_full_path::string != (select path from hint_before) from @txn_hint_stage (pattern=>'.*last_snapshot_location_hint_v2', file_format=>'ndjson');
-+----
-+1
-+
-+# COMMIT must still honor the setting that disables hint writes.
-+statement ok
-+set enable_last_snapshot_location_hint=0;
-+
-+statement ok
-+begin;
-+
-+statement ok
-+insert into t values (3,30);
-+
-+statement ok
-+commit;
-+
-+query B
-+select right($1:snapshot_full_path::string, length(s.snapshot_location)) = s.snapshot_location
-+from @txn_hint_stage (pattern=>'.*last_snapshot_location_hint_v2', file_format=>'ndjson')
-+cross join (select snapshot_location from fuse_snapshot('txn_snapshot_hint','t') limit 1) s;
-+----
-+0
-+
-+statement ok
-+set enable_last_snapshot_location_hint=1;
-+
-+# Temporary tables use a separate metadata-update list at COMMIT.
-+statement ok
-+create or replace stage txn_temp_hint_stage url='fs:///tmp/http_handler_txn_snapshot_hint/temporary/';
-+
-+statement ok
-+remove @txn_temp_hint_stage;
-+
-+statement ok
-+create temp table tt(id int) 'fs:///tmp/http_handler_txn_snapshot_hint/temporary/';
-+
-+statement ok
-+insert into tt values (1);
-+
-+statement ok
-+begin;
-+
-+statement ok
-+insert into tt values (2);
-+
-+query B
-+select right($1:snapshot_full_path::string, length(s.snapshot_location)) = s.snapshot_location
-+from @txn_temp_hint_stage (pattern=>'.*last_snapshot_location_hint_v2', file_format=>'ndjson')
-+cross join (select snapshot_location from fuse_snapshot('txn_snapshot_hint','tt') limit 1) s;
-+----
-+0
-+
-+statement ok
-+rollback;
-+
-+query B
-+select right($1:snapshot_full_path::string, length(s.snapshot_location)) = s.snapshot_location
-+from @txn_temp_hint_stage (pattern=>'.*last_snapshot_location_hint_v2', file_format=>'ndjson')
-+cross join (select snapshot_location from fuse_snapshot('txn_snapshot_hint','tt') limit 1) s;
-+----
-+1
-+
-+statement ok
-+begin;
-+
-+statement ok
-+insert into tt values (2);
-+
-+statement ok
-+commit;
-+
-+query B
-+select right($1:snapshot_full_path::string, length(s.snapshot_location)) = s.sna
+ # CTE definitions remain outside the query shapes supported by feat-mv-insert.
+ statement error 1065
+ CREATE MATERIALIZED VIEW test_mv_cte AS WITH c AS (SELECT val, SUM(amount) AS total FROM mv_base_t GROUP BY val) SELECT * FROM c WHERE 1 = 1
+@@ -968,7 +1057,7 @@ where database = 'test_mv_ddl' and name = 'replaced_mv'
+ ----
+ renamed_replaced_source 1 source table was dropped, renamed, or replaced
+ 
+-statement error 1025
++statement error 2328
+ select * from replaced_mv
+ 
+ statement error 2328
+@@ -1058,7 +1147,7 @@ where database = 'test_mv_ddl' and name = 'dropped_mv'
+ ----
+ dropped_source 1 source table was dropped, renamed, or replaced
+ 
+-statement error 1025
++statement error 2328
+ select * from dropped_mv
+ 
+ statement error 2328
+@@ -1160,7 +1249,7 @@ where database = 'mv_database_renamed' and name = 'mv'
+ ----
+ mv_database_renamed source 1 source database was renamed 0 0
+ 
+-statement error 1003
++statement error 2328
+ select * from mv_database_renamed.mv
+ 
+ statement error 2328
+@@ -1261,9 +1350,6 @@ DROP TABLE mv_guard_source
+ statement ok
+ DROP MATERIALIZED VIEW IF EXISTS test_mv2
+ 
+-statement ok
+-DROP MATERIALIZED VIEW IF EXISTS mv_dst_db.cross_mv
+-
+ statement ok
+ DROP DATABASE IF EXISTS mv_src_db
+ 
 ```
 
 #### Recent Merged Pull Requests:
@@ -2714,8 +1819,8 @@ feeds a join whose build side is empty; main already handles it via
 - **PR #20965** (2026-11-04): ci: use $1 for the capture group in ClickBench Q28 (@KKould)
 - **PR #20964** (2026-11-04): feat(query): prune runtime TopN by the first of several sort keys (@KKould)
 - **PR #20962** (2026-11-04): feat(query): prune group items computed from group items and constants (@KKould)
+- **PR #20956** (2026-11-05): feat(query): keep dictionary encoded columns in hash join (@KKould)
 - **PR #20955** (closed): fix(query): evaluate stream status in private task conditions (@KKould)
-- **PR #20954** (closed): feat(storage): prune segments using learned snapshot layouts (@KKould)
 
 ---
 
@@ -2735,52 +1840,56 @@ feeds a join whose build side is empty; main already handles it via
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. storage): prevent incomplete index refresh after writes (#20909)
+## X. query): allow create Materialized View with Table in different Database (#20906)
 
 **RULE**:
-When implementing operations in `src/query/catalog/src/plan/partition.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in databendlabs/databend. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/meta/api/src/api_impl/materialized_view_api.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in databendlabs/databend. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6454b150`: storage): prevent incomplete index refresh after writes (#20909). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f004c938`: query): allow create Materialized View with Table in different Database (#20906). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/query/catalog/src/plan/partition.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/meta/api/src/api_impl/materialized_view_api.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-use databend_storages_common_table_meta::meta::BlockTopN;
-use databend_storages_common_table_meta::meta::VirtualSegmentSchema;
-            Ok(json) => f.write_str(&json),
-            Err(cause) => f
-                .debug_struct("PartInfo")
-                .field("serialization_error", &cause)
-                .finish(),
-/// A surviving block keeps its segment-local virtual-column interpretation
-/// and per-block statistics when maintenance replaces the containing segment.
-#[derive(Clone, Debug, PartialEq, serde::Serialize, serde::Deserialize)]
-pub struct RetainedBlockMeta {
-    pub block_meta: Arc<BlockMeta>,
-    pub hll: Option<RawBlockHLL>,
-    pub top_n: Option<BlockTopN>,
-    /// Local index into the enclosing container's `virtual_schemas`.
-    pub virtual_schema_index: usize,
-}
-    pub remained_blocks: Vec<RetainedBlockMeta>,
-    pub virtual_schemas: Vec<Option<Arc<VirtualSegmentSchema>>>,
-    pub merged_blocks: Vec<RetainedBlockMeta>,
-    pub virtual_schemas: Vec<Option<Arc<VirtualSegmentSchema>>>,
+use databend_common_meta_app::schema::DatabaseId;
+        .chain(
+            source_database_ids
+                .iter()
+                .map(|database_id| DatabaseId::new(*database_id).to_string_key()),
+        )
+    let mut source_database_name_responses = mget_responses(kv_api, &source_database_keys).await?;
+    let source_database_meta_responses =
+        source_database_name_responses.split_off(source_database_ids.len());
+    // DROP DATABASE marks only DatabaseMeta and keeps both the id-to-name mapping and the tables'
+    // TableMeta until GC, so a source in a dropped database must be checked through its database.
+    let mut active_source_database_ids = BTreeSet::new();
+    for (database_id, (name_response, meta_response)) in source_database_ids.into_iter().zip(
+        source_database_name_responses
+            .into_iter()
+            .zip(source_database_meta_responses),
+    ) {
+        let (_, database_name) =
+            deserialize_struct_get_response::<DatabaseIdToName>(name_response)?;
+        let (_, database_meta) = deserialize_struct_get_response::<DatabaseId>(meta_response)?;
+        if database_meta.is_some_and(|meta| meta.data.drop_on.is_none()) {
+           
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-            Ok(str) => write!(f, "{}", str),
-            Err(_cause) => Err(std::fmt::Error {}),
-pub type BlockMetaWithHLL = (Arc<BlockMeta>, Option<RawBlockHLL>);
-    pub remained_blocks: Vec<BlockMetaWithHLL>,
-    pub merged_blocks: Vec<BlockMetaWithHLL>,
+    let source_database_responses = mget_responses(kv_api, &source_database_keys).await?;
+    for (database_id, response) in source_database_ids
+        .into_iter()
+        .zip(source_database_responses)
+    {
+        let (_, database_name) = deserialize_struct_get_response::<DatabaseIdToName>(response)?;
+        let (database_id, database_name, table_name) = match table_name {
+            None => (None, None, None),
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6454b150` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f004c938` are properly handled with clean fallback behavior.

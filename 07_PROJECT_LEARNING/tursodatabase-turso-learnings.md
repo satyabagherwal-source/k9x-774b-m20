@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tursodatabase-turso-learnings.md`  
 > **Source**: github ([https://github.com/tursodatabase/turso](https://github.com/tursodatabase/turso))  
-> **Source Version**: `ff97c223`  
+> **Source Version**: `3b6bbb46`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T21:26:21.740Z  
+> **Timestamp**: 2026-11-05T12:14:38.980Z  
 > **Learning ID**: `learn-github-tursodatabase-turso`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tursodatabase-turso-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tursodatabase/turso](https://github.com/tursodatabase/turso))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T21:26:21.732Z  
+> **Harvest Timestamp**: 2026-11-05T12:14:38.881Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A SQL database in Rust: SQLite-compatible, now also speaking Postgres (experimental). The LLVM of databases.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md
-- **Stars / Engagement**: 25154 stars
+- **Stars / Engagement**: 25170 stars
 
 ---
 
@@ -1428,14 +1428,11 @@ export class Statement {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #11359** (2026-11-04): **serverless/go: support dedicated sessions and buffered execution metadata**
-  *Symptoms*: ## Description  Add explicit Go driver APIs for dedicated backend connections, statement Describe metadata without execution, and per-connector HTTP client and request-header configuration. Queries retain the existing buffered database/sql behavior.  `OpenConnection`, `DescribeContext`, `ExecuteContext`, and `Autocommit` let gateways reuse the driver's authentication, batons, and transaction handling. `WithSessionRetention` preserves backend state across autocommit calls. `WithRequestHeaders(http.Header)` copies headers for each connector and connection, applies explicit headers over defaults on every request, and handles Host through Go's request Host field.  `ExecuteContext` returns a single buffered `StatementResult` containing actual nullable execution column metadata, raw decoded rows (date/time text remains text), and the backend affected-row count together. It executes the statement once, including DML with RETURNING, while preserving existing database/sql conversions.  Reject truncated cursor responses and prevent lost sessions from silently restarting transactions on a new backend. HTTP request failures invalidate retained sessions and connections already in a transaction. Default autocommit connections retain their existing ability to open a fresh stream on a later call, including when held through db.Conn; failed requests are never retried automatically. Completed statement results and SQL errors are preserved if a follow-up autocommit refresh fails, using 
-  **Post-Mortem & Fix Analysis**:
-  > <!-- __CODSPEED_PERFORMANCE_REPORT_COMMENT__ --> ## Merging this PR will **not alter performance**  <details> <summary><b>2 warnings, 1 note</b></summary>  > :warning: **Unable to measure the execution of 1 benchmark** > > This benchmark measured no execution time, so its result is not comparable and counts as unchanged. This usually happens when the compiler removes the code under test. > > [Prevent compiler optimizations](https://codspeed.io/docs/troubleshooting?utm_source=github&utm_medium=comment-v2&utm_content=optimized_out#optimized-out-benchmarks) > > [See affected benchmarks](https://app.codspeed.io/tursodatabase/turso/branches/codex%2Fgo-serverless-gateway-support?q=has%3Aoptimized_out&utm_source=github&utm_medium=comment-v2&utm_content=affected_benchmarks)  > :warning: **120 benchmarks are dominated by system calls** > > System calls cannot be simulated consistently and are left out of the measure. The reported value understates the real cost. Switch to the Walltime instrumen
-  > ### Autofixer review <sub>🔄 Autofixer updates this comment while the review runs.</sub>  A maintainer asked Autofixer to review this pull request. The review of `95204b749dfa` is [here](https://github.com/tursodatabase/turso/pull/11359#pullrequestreview-5774171775).  ⚠️ **Verdict: changes suggested** — 1 input fails or gives a wrong result that main handles correctly.  <sub>Automated review by Autofixer; maintainers decide what to merge.</sub>  <!-- autofixer:contributor-review:95204b749dfa4bbc860c722f65f5be79106afb3a --> <!-- autofixer:contributor-review-state:eyJ2ZXJzaW9uIjoxLCJyZXZpZXdzIjpbeyJoZWFkU2hhIjoiNTU5YWI0ZWYxZWI4YzFkZjM3NTc3ZjQ0NDhhMDJiNDc3OWExOTE2ZCIsImF1ZGl0ZWRBdCI6IjIwMjYtMTEtMDRUMTg6Mzc6MjguMDk2WiIsInZlcmRpY3QiOiJyZXF1ZXN0X2NoYW5nZXMiLCJyZWNvbW1lbmRhdGlvbiI6eyJ2YWx1ZSI6Im5lZWRzX2h1bWFuIiwicmVhc29uIjoiTWFpbnRhaW5lcnMgbXVzdCBkZWNpZGUgd2hldGhlciB0byBhY2NlcHQgYSBwZXJtYW5lbnQgZXhwb3J0ZWQgR28gc2VydmVybGVzcyBBUEkgZm9yIG9uZSBnYXRld2F5OiBDb25uZWN0aW9uLCBFeGVjdXRlQ29udGV4dCwgRGV
+- **Issue #11434** (2026-11-05): **core: reject a rowid in the fraction of percentile_disc and percentile_cont**
+  *Symptoms*: ## Problem  ```sql CREATE TABLE t (a INT); INSERT INTO t VALUES (1); SELECT percentile_disc(oid) WITHIN GROUP (ORDER BY a) FROM t; -- tursopg (Turso's PostgreSQL-compatible server): process panics with --   Cursor not found: CursorKey { table_reference_id: TableInternalId(1), ... } -- PostgreSQL: error ```  The same panic happens in tursopg with `percentile_cont(oid)`, `percentile_disc(rowid)`, `percentile_disc(t.oid)`, `percentile_disc(oid = 1)`, on an empty table, and inside `INSERT ... SELECT`. It also happens in tursodb (the SQLite dialect) with `percentile_disc(rowid)`, `percentile_cont(rowid)` and `percentile_disc(t.rowid)`.  `emit_percentile_fraction_check` compiles the fraction once, before the cursors of the query's tables are open. It rejects a fraction that reads a column of those tables (`Expr::Column`), but not one that reads their rowid (`Expr::RowId`). Compiling the rowid read then looks up a cursor that does not exist yet and panics.  ## Fix  `emit_percentile_fraction_check` now treats `Expr::RowId` like `Expr::Column`. A rowid of a table in this query gives the error that `percentile_disc(a)` already gives:  ``` the fraction argument of percentile_disc() must be a constant expression that does not depend on the aggregated rows ```  A rowid of an outer query in a correlated subquery is still allowed, the same as an outer column.  Not changed in this pull request: - tursopg returns SQLSTATE 42601 for this error. PostgreSQL returns 42803 for a column and 42703 f
 
-- **Issue #11348** (2026-11-04): **core/translate: plan compound SELECT LIMIT/OFFSET subqueries**
-  *Symptoms*: ## Description  A compound SELECT's LIMIT/OFFSET applies to the compound as a whole, so it is parsed in `prepare_select_plan_from_arms` — which never planned the subqueries inside it. The emission sites in `compound_select.rs` then discarded the result of `translate_expr` with `_ =`, so an unplanned subquery expression reached `MustBeInt` as a non-integer and surfaced as `datatype mismatch`, masking the real error.  This plans those subqueries alongside the arms, emits them before the loop, and propagates the translation errors. The first commit extracts the existing LIMIT/OFFSET planning block out of `plan_subqueries_from_select_plan` into `plan_limit_offset_subqueries` unchanged, so the new call site can share it; the second commit is the behaviour change plus the conformance cases.  Behaviour now matches SQLite (checked against 3.50.4):  - `SELECT 1 UNION SELECT 2 LIMIT (SELECT 1)` returns one row, and likewise for `UNION ALL`, `INTERSECT`, `EXCEPT`, with `ORDER BY`, and with `OFFSET (SELECT 1)` - `... LIMIT (SELECT nosuchcol FROM b)` reports `no such column: nosuchcol` instead of `datatype mismatch` - `... LIMIT (SELECT 'abc')` still reports `datatype mismatch` - `LIMIT (SELECT 1), (SELECT 1)` and `LIMIT (SELECT -1)` behave as SQLite does  Three neighbouring cases remain unsupported. All three fail identically on `main` for a simple `SELECT`, so this change reaches parity rather than regressing them, and I left them out to keep the diff focused: a CTE referenced from the 
+- **Issue #11424** (2026-11-05): **tursopg: percentile_disc and percentile_cont panic when the fraction reads the rowid**
+  *Symptoms*: ```sql CREATE TABLE t (a INT); INSERT INTO t VALUES (1); SELECT percentile_disc(oid) WITHIN GROUP (ORDER BY a) FROM t; ```  ## Observed  The statement panics. The process stops.  ```text thread 'main' panicked at core/vdbe/builder.rs:2093:32: Cursor not found: CursorKey { table_reference_id: TableInternalId(1), index: None, is_build: false } ```  - `percentile_cont(oid)`, `percentile_disc(rowid)`, `percentile_disc(t.oid)` and `percentile_disc(oid = 1)` panic in the same way. - The table can be empty. The panic also occurs in `INSERT INTO t SELECT percentile_disc(...) ... FROM t`. - A fraction that reads a normal column gives an error, as it must: `percentile_disc(a)` gives `the fraction argument of percentile_disc() must be a constant expression that does not depend on the aggregated rows`.  ## Cause  `emit_percentile_fraction_check` in `core/translate/main_loop/init.rs` looks for `Expr::Column` and subqueries in the fraction. It does not look for `Expr::RowId`. So a rowid reference passes the check. Then `translate_expr` reads the rowid before the cursor of the table is open, and `resolve_cursor_id` panics.  ## Expected  An error and no panic. PostgreSQL rejects the query: a user table has no `oid` column (`column "oid" does not exist`). For a column of the aggregated rows, PostgreSQL gives `direct arguments of an ordered-set aggregate must use only grouped columns`. tursopg can give the same error as for `percentile_disc(a)`.  ## Version  turso commit ff97c22 (ff97c2231a118
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1452,625 +1449,642 @@ export class Statement {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `717c3593` (2026-11-04)
-**Commit Message**: Merge 'postgres: add json_strip_nulls(json)' from Jaeil Lee
+### Incident Patch 1: `3b6bbb46` (2026-11-05)
+**Commit Message**: Merge 'core/time: return NULL instead of panicking when time_date overflows' from 
 
-```sql
-SELECT json_strip_nulls('{"a":null,"b":1}');
--- tursopg:    ERROR: no such function: json_strip_nulls
--- PostgreSQL: {"b":1}
-```
+`SELECT make_date(1, 4, 1453556443)` (and `make_timestamp(2024, 1,
+1453556443, 0, 0, 0)`) panicked with `NaiveDateTime + TimeDelta
+overflowed`.
 
-Add `json_strip_nulls(json)` as a native scalar function in
-`postgres/frontend/functions.rs`, next to `quote_literal`. `serde` is
-added to `turso_pg`'s dependencies for `IgnoredAny`.
+`Time::time_date` already checks that the day/hour/minute/second values
+fit in a `chrono::Duration` with `try_days` etc., but then adds them
+with `dt += d`, which panics when the result goes past what
+`NaiveDateTime` can hold. I switched each of those additions (and the
+nanosecond one) to `checked_add_signed` and return `Ok(None)` on
+overflow, same as the year and month steps above already do. So these
+calls now give NULL rather than crashing the process.
 
-It follows PostgreSQL 17's output for the `json` type:
+This also covers the extra cases from your follow-up comment: a negative
+day like `make_date(40, 1, -2147483648)` goes through the same checked
+add, and `year - 1` / `month - 1` / `day - 1` now use `checked_sub` so
+`make_date(-2147483648, 1, 1)` and `make_date(2000, -2147483648, 1)`
+don't hit the subtraction overflow in debug/fuzz builds.
 
-- Object fields whose value is null are removed at any depth; nulls in
-arrays stay (`[1,null,{"a":null}]` → `[1,null,{}]`).
-- Numbers keep their text (`1.50`, `1e2`, `1e400`) and duplicate keys
-stay, so the input is validated with `IgnoredAny` and then walked as
-text instead of being rebuilt from a parsed value.
-- Strings are decoded and escaped again the way `escape_json()` does
-(`"\u00e9"` → `"é"`, `"\/"` → `"/"`), and `\^@` errors with `unsupported
-Unicode escape sequence` (22P05). Every string is decoded, including the
-key of a dropped field, so `{"\^@":null}` errors as in PostgreSQL.
-- Whitespace between tokens is dropped; invalid input errors with
-`invalid input syntax for type json` (22P02).
+The issue mentions Postgres raises `date field value out of range` here.
+I kept it as NULL to match how every other out-of-range input to
+`time_date` behaves today; if 
 
-`postgres/conformance/pg-sqltests/json-strip-nulls.sq
-
-**File**: `Cargo.lock` (modified, +1/-0)
+**File**: `core/time/internal.rs` (modified, +131/-34)
 ```diff
-@@ -7281,6 +7281,7 @@ dependencies = [
-  "parking_lot",
-  "rustc-hash 2.1.1",
-  "ryu",
-+ "serde",
-  "serde_json",
-  "strum",
-  "tempfile",
-```
-
-**File**: `postgres/COMPAT.md` (modified, +1/-0)
-```diff
-@@ -323,6 +323,7 @@ INTEGER. Unknown type names pass through as custom types.
- | JSONB-modifying operators and functions | ❌ Not supported | |
- | JSONB subscripting | ❌ Not supported | |
- | JSON data type | 🟡 Partial | Same as jsonb (see above) |
-+| json_strip_nulls | 🟡 Partial | Input nested deeper than 1000 levels errors with `stack depth limit exceeded`, where PostgreSQL's limit depends on `max_stack_depth`; a text or jsonb argument is accepted, where PostgreSQL only takes json; `jsonb_strip_nulls` is not supported |
- | json_to_record / json_to_recordset (and jsonb_ variants) | 🟡 Partial | Work with a column definition list; WITH ORDINALITY and ROWS FROM are not supported; error messages for malformed input differ from PostgreSQL; a repeated key reads its first value, like `->>`; a json/jsonb column drops whitespace (`{"y": 2}` comes back as `{"y":2}`), like `->`; an array column (`int[]`) accepts only an array literal string such as `"{1,2}"`, not a JSON array |
- | SQL/JSON constructors | ❌ Not supported | |
- | SQL/JSON: datetime() | ❌ Not supported | |
-```
-
-**File**: `postgres/conformance/pg-sqltests/json-strip-nulls.sqltest` (added, +131/-0)
-```diff
-@@ -0,0 +1,131 @@
-+# json_strip_nulls(json): removes object fields whose value is null, at any
-+# depth. Nulls inside arrays stay, and the result is the json input with
-+# insignificant whitespace removed.
-+
-+@database :memory:
-+
-+test json-strip-nulls-removes-null-field {
-+    SELECT json_strip_nulls('{"a":null,"b":1}');
-+}
-+expect {
-+    {"b":1}
-+}
-+
-+test json-strip-nulls-removes-nested-null-field {
-+    SELECT json_strip_nulls('{"a":{"b":null,"c":2}}');
-+}
-+expect {
-+    {"a":{"c":2}}
-+}
-+
-+test json-strip-nulls-keeps-nulls-in-arrays {
-+    SELECT json_strip_nulls('[1,null,{"a":null}]');
-+    SELECT json_strip_nulls('{"a":[null,{"b":null}]}');
-+}
-+expect {
-+    [1,null,{}]
-+    {"a":[null,{}]}
-+}
-+
-+test json-strip-nulls-of-scalars-and-empty-object {
-+    SELECT json_strip_nulls('{}');
-+    SELECT json_strip_nulls('null');
-+    SELECT json_strip_nulls('"text with  spaces"');
-+    SELECT json_strip_nulls('{"a":"null"}');
-+}
-+expect {
-+    {}
-+    null
-+    "text with  spaces"
-+    {"a":"null"}
-+}
-+
-+test json-strip-nulls-removes-whitespace {
-+    SELECT json_strip_nulls('{ "a" : 1 ,  "b" : null }');
-+}
-+expect {
-+    {"a":1}
-+}
-+
-+test json-strip-nulls-keeps-duplicate-keys {
-+    SELECT json_strip_nulls('{"a":1,"a":null,"a":2}');
-+}
-+expect {
-+    {"a":1,"a":2}
-+}
-+
-+test json-strip-nulls-keeps-numbers-as-written {
-+    SELECT json_strip_nulls('{"a":1.50,"b":1e2,"c":null}');
-+}
-+expect {
-+    {"a":1.50,"b":1e2}
-+}
-+
-+test json-strip-nulls-escapes-strings-again {
-+    SELECT json_strip_nulls('{"a":"\u00e9","b":null}');
-+    SELECT json_strip_nulls('{"a":"x\"y","b":"\/","c":"\n"}');
-+}
-+expect {
-+    {"a":"é"}
-+    {"a":"x\"y","b":"/","c":"\n"}
-+}
-+
-+test json-strip-nulls-of-nul-escape-errors {
-+    SELECT json_strip_nulls('{"a":"\u0000"}');
-+}
-+@sqlstate 22P05
-+expect error {
-+    unsupported Unicode escape sequence
-+}
-+
-+test json-strip-nulls-of-nul-escape-in-dropped-key-errors {
-+    SELECT json_strip_nulls('{"\u0000":null}');
-+}
-+@sqlstate 22P05
-+expect error {
-+    unsupported Unicode escape sequence
-+}
-+
-+test json-strip-nulls-of-lone-surrogate-in-dropped-key-errors {
-+    SELECT json_strip_nulls('{"\ud800":null}');
-+}
-+@sqlstate 22P02
-+expect error {
-+    invalid input syntax for type json
-+}
-+
-+test json-strip-nulls-keeps-numbers-outside-double-range {
-+    SELECT json_strip_nulls('{"a":1e400,"b":null}');
-+}
-+expect {
-+    {"a":1e400}
-+}
-+
-+test json-strip-nulls-keeps-input-nested-1000-levels {
-+    SELECT length(json_strip_nulls((repeat('[', 1000) || repeat(']', 1000))::json)::text);
-+}
-+expect {
-+    2000
-+}
-+
-+test json-strip-nulls-of-deeply-nested-input-errors {
-+    SELECT json_strip_nulls((repeat('[', 50000) || repeat(']', 50000))::json);
-+}
-+@sqlstate 54001
-+expect error {
-+    stack depth limit exceeded
-+}
-+
-+test json-strip-nulls-of-null-is-null {
-+    SELECT json_strip_nulls(NULL);
-+}
-+expect {
-+}
-+
-+test json-strip-nulls-of-invalid-json-errors {
-+    SELECT json_strip_nulls('[1,');
-+}
-+@sqlstate 22P02
-+expect error {
-+    invalid input syntax for type json
-+}
-```
-
-**File**: `postgres/frontend/Cargo.toml` (modified, +1/-0)
-```diff
-@@ -18,6 +18,7 @@ hex = { workspace = true }
- parking_lot = { workspace = true }
- rustc-hash = "2.0"
- ryu = "1.0.19"
-+serde = { workspace = true }
- serde_json = { workspace = true }
- strum = { workspace = true }
- tempfile = { workspace = true }
-```
-
-**File**: `postgres/frontend/auth_functions.rs` (modified, +4/-14)
-```diff
-@@ -1,10 +1,8 @@
- use crate::error::sqlstate_error;
--use crate::functions::{pg_scalar_function, Uuid};
-+use crate::functions::{invalid_json, pg_scalar_function, unsupported_unicode_escape, Uuid};
- use turso_core::native_ext::FunctionArity;
- use turso_core::{Connection, OpenOptions, Result};
--use turso_pg_parser::sqlstate::{
--    SQLSTATE_INVALID_TEXT_REPRESENTATION, SQLSTATE_UNTRANSLATABLE_CHARACTER,
--};
-+use turso_pg_parser::sqlstate::SQLSTATE_INVALID_TEXT_REPRESENTATION;
+@@ -205,7 +205,10 @@ impl Time {
  
- pub(crate) fn register_functions(options: OpenOptions) -> OpenOptions {
-     options
-@@ -72,17 +70,9 @@ fn setting(conn: &Connection, name: &str) -> Option<String> {
- }
+         match year.cmp(&0) {
+             std::cmp::Ordering::Greater => {
+-                let months = match (year - 1).unsigned_abs().checked_mul(12) {
++                let months = match year
++                    .checked_sub(1)
++                    .and_then(|y| y.unsigned_abs().checked_mul(12))
++                {
+                     Some(m) => m,
+                     None => return Ok(None),
+                 };
+@@ -216,7 +219,10 @@ impl Time {
+                 };
+             }
+             std::cmp::Ordering::Less => {
+-                let months = match (year - 1).unsigned_abs().checked_mul(12) {
++                let months = match year
++                    .checked_sub(1)
++                    .and_then(|y| y.unsigned_abs().checked_mul(12))
++                {
+                     Some(m) => m,
+                     None => return Ok(None),
+                 };
+@@ -231,45 +237,54 @@ impl Time {
  
- fn parse_claims(claims: &str) -> Result<serde_json::Value> {
--    let parsed_claims = serde_json::from_str(claims).map_err(|_| {
--        sqlstate_error(
--            SQLSTATE_INVALID_TEXT_REPRESENTATION,
--            "invalid input syntax for type json",
--        )
--    })?;
-+    let parsed_claims = serde_json::from_str(claims).map_err(|_| invalid_json())?;
-     if has_nul_escape(claims) {
--        return Err(sqlstate_error(
--            SQLSTATE_UNTRANSLATABLE_CHARACTER,
--            "unsupported Unicode escape sequence",
--        ));
-+        return Err(unsupported_unicode_escape());
+         match month.cmp(&0) {
+             std::cmp::Ordering::Greater => {
+-                dt = match dt.checked_add_months(chrono::Months::new((month - 1).unsigned_abs())) {
++                dt = match month
++                    .checked_sub(1)
++                    .and_then(|m| dt.checked_add_months(chrono::Months::new(m.unsigned_abs())))
++                {
+                     Some(d) => d,
+                     None => return Ok(None),
+                 };
+             }
+             std::cmp::Ordering::Less => {
+-                dt = match dt.checked_sub_months(chrono::Months::new((month - 1).unsigned_abs())) {
++                dt = match month
++                    .checked_sub(1)
++                    .and_then(|m| dt.checked_sub_months(chrono::Months::new(m.unsigned_abs())))
++                {
+                     Some(d) => d,
+                     None => return Ok(None),
+                 };
+             }
+             std::cmp::Ordering::Equal => (),
+         };
+ 
+-        if let Some(d) = chrono::Duration::try_days(day - 1) {
+-            dt += d;
+-        } else {
+-            return Ok(None);
+-        }
++        dt = match day
++            .checked_sub(1)
++            .and_then(chrono::Duration::try_days)
++            .and_then(|d| dt.checked_add_signed(d))
++        {
++            Some(d) => d,
++            None => return Ok(None),
++        };
+ 
+-        if let Some(d) = chrono::Duration::try_hours(hour) {
+-            dt += d;
+-        } else {
+-            return Ok(None);
+-        }
++        dt = match chrono::Duration::try_hours(hour).and_then(|d| dt.checked_add_signed(d)) {
++            Some(d) => d,
++            None => return Ok(None),
++        };
+ 
+-        if let Some(d) = chrono::Duration::try_minutes(minutes) {
+-            dt += d;
+-        } else {
+-            return Ok(None);
+-        }
++        dt = match chrono::Duration::try_minutes(minutes).and_then(|d| dt.checked_add_signed(d)) {
++            Some(d) => d,
++            None => return Ok(None),
++        };
+ 
+-        if let Some(d) = chrono::Duration::try_seconds(seconds) {
+-            dt += d;
+-        } else {
+-            return Ok(None);
+-        }
++        dt = match chrono::Duration::try_seconds(seconds).and_then(|d| dt.checked_add_signed(d)) {
++            Some(d) => d,
++            None => return Ok(None),
++        };
+ 
+-        dt += chrono::Duration::nanoseconds(nano_secs);
++        dt = match dt.checked_add_signed(chrono::Duration::nanoseconds(nano_secs)) {
++            Some(d) => d,
++            None => return Ok(None),
++        };
+ 
+         let dt = dt
+             .and_local_timezone(offset)
+@@ -287,13 +302,17 @@ impl Time {
+ 
+         match years.cmp(&0) {
+             std::cmp::Ordering::Greater => {
+-                dt = dt
+-                    .checked_add_months(chrono::Months::new(years.unsigned_abs() * 12))
++                dt = years
++                    .unsigned_abs()
++                    .checked_mul(12)
++                    .and_then(|m| dt.checked_add_months(chrono::Months::new(m)))
+                     .ok_or(TimeError::CreationError)?;
+             }
+             std::cmp::Ordering::Less => {
+-                dt = dt
+-                    .checked_sub_months(chrono::Months::new(years.unsigned_abs() * 12))
++                dt = years
++                    .unsigned_abs()
++                    .checked_mul(12)
++                    .and_then(|m| dt.checked_sub_months(chrono::Months::new(m)))
+                     .ok_or(TimeError::CreationError)?;
+             }
+             std::cmp::Ordering::Equal => (),
+@@ -313,7 +332,9 @@ impl Time {
+             std::cmp::Ordering::Equal => (),
+         };
+ 
+-        dt += chrono::Duration::try_days(days).ok_or(TimeError::CreationError)?;
++        dt = chrono::Duration::try_days(days)
++            .and_then(|d| dt.checked_add_signed(d))
++            .ok_or(TimeError::CreationError)?;
+ 
+         Ok(dt.into())
      }
-     Ok(parsed_claims)
- }
+@@ -342,10 +363,10 @@ impl Time {
+         self.inner.timestamp_nanos_opt()
+     }
+ 
+-    pub fn add_duration(&self, 
 ```
 
-**File**: `postgres/frontend/functions.rs` (modified, +183/-1)
+**File**: `core/time/mod.rs` (modified, +52/-6)
 ```diff
-@@ -13,7 +13,8 @@ use turso_pg_parser::sqlstate::{
-     SQLSTATE_INTERNAL_ERROR, SQLSTATE_INVALID_ESCAPE_SEQUENCE,
-     SQLSTATE_INVALID_ROW_COUNT_IN_LIMIT_CLAUSE, SQLSTATE_INVALID_ROW_COUNT_IN_RESULT_OFFSET_CLAUSE,
-     SQLSTATE_INVALID_TEXT_REPRESENTATION, SQLSTATE_NUMERIC_VALUE_OUT_OF_RANGE,
--    SQLSTATE_UNDEFINED_FUNCTION, SQLSTATE_UNDEFINED_OBJECT,
-+    SQLSTATE_STATEMENT_TOO_COMPLEX, SQLSTATE_UNDEFINED_FUNCTION, SQLSTATE_UNDEFINED_OBJECT,
-+    SQLSTATE_UNTRANSLATABLE_CHARACTER,
- };
+@@ -194,13 +194,23 @@ fn time_date_internal(args: &[Value]) -> Value {
+     }
  
- /// Registers one native scalar function per name. Each body is a Rust
-@@ -64,6 +65,9 @@ pub(crate) fn register_functions(options: OpenOptions) -> OpenOptions {
-         "quote_literal"(FunctionArity::Exact(1), true) => {
-             exec_quote_literal(args[0].get_value())
-         },
-+        "json_strip_nulls"(FunctionArity::Exact(1), true) => {
-+            exec_json_strip_nulls(args[0].get_value())?
-+        },
-         "format_type"(FunctionArity::OneOf(&[1, 2]), true) => oid_arg(args, 0)?
-             .map(|type_oid| exec_pg_format_type(type_oid, int_arg(args, 1, -1))),
-         "pg_get_constraintdef"(FunctionArity::OneOf(&[1, 2]), false) => oid_arg(args, 0)?
-@@ -703,6 +707,184 @@ fn exec_quote_literal(value: &Value) -> Option<String> {
-     Some(quoted)
- }
- 
-+/// PostgreSQL's json_strip_nulls(json): drops object fields whose value is null,
-+/// keeping number text and duplicate keys as the json type does.
-+fn exec_json_strip_nulls(value: &Value) -> Result<Option<String>> {
-+    let json = match value {
-+        Value::Null => return Ok(None),
-+        Value::Text(text) => text.as_str(),
-+        other => {
-+            return Err(undefined_function(
-+                "json_strip_nulls",
-+                &[pg_type_name(other)],
-+            ))
+     if args.len() == 8 {
+-        let offset_sec = ok_tri!(args[7].to_integer()) as i32;
+-        seconds -= offset_sec as i64;
++        let offset_sec = ok_tri!(args[7].to_integer());
++        if i32::try_from(offset_sec).is_err() {
++            return Value::null();
 +        }
++        seconds = match seconds.checked_sub(offset_sec) {
++            Some(s) => s,
++            None => return Value::null(),
++        };
+     }
+ 
++    let (Ok(year), Ok(month)) = (i32::try_from(year), i32::try_from(month)) else {
++        return Value::null();
 +    };
-+    // Validate first, so the walk below can assume well-formed input.
-+    serde_json::from_str::<serde::de::IgnoredAny>(json).map_err(|_| invalid_json())?;
-+    let mut stripped = String::with_capacity(json.len());
-+    copy_without_null_fields(json, &mut 0, 0, &mut stripped)?;
-+    Ok(Some(stripped))
-+}
 +
-+/// The nesting limit of the walk below, the same as core's jsonb parser. Past
-+/// it PostgreSQL also errors, at a depth that depends on max_stack_depth.
-+const MAX_JSON_DEPTH: usize = 1000;
-+
-+pub(crate) fn invalid_json() -> LimboError {
-+    sqlstate_error(
-+        SQLSTATE_INVALID_TEXT_REPRESENTATION,
-+        "invalid input syntax for type json",
-+    )
-+}
-+
-+pub(crate) fn unsupported_unicode_escape() -> LimboError {
-+    sqlstate_error(
-+        SQLSTATE_UNTRANSLATABLE_CHARACTER,
-+        "unsupported Unicode escape sequence",
-+    )
-+}
-+
-+/// Copies the JSON value at `pos` into `out`, leaving out object fields whose
-+/// value is null. `depth` is the number of objects and arrays around it.
-+fn copy_without_null_fields(
-+    json: &str,
-+    pos: &mut usize,
-+    depth: usize,
-+    out: &mut String,
-+) -> Result<()> {
-+    let bytes = json.as_bytes();
-+    skip_json_whitespace(bytes, pos);
-+    if matches!(bytes[*pos], b'{' | b'[') && depth == MAX_JSON_DEPTH {
-+        return Err(sqlstate_error(
-+            SQLSTATE_STATEMENT_TOO_COMPLEX,
-+            "stack depth limit exceeded",
-+        ));
+     let t = Time::time_date(
+-        year as i32,
+-        month as i32,
++        year,
++        month,
+         day,
+         hour,
+         minutes,
+@@ -715,7 +725,10 @@ fn time_add(args: &[Value]) -> Value {
+ 
+     let d = Duration::from(d);
+ 
+-    t.add_duration(d).into_blob()
++    match t.add_duration(d) {
++        Some(t) => t.into_blob(),
++        None => Value::null(),
 +    }
-+    match bytes[*pos] {
-+        b'{' => {
-+            *pos += 1;
-+            out.push('{');
-+            let mut first = true;
-+            loop {
-+                skip_json_whitespace(bytes, pos);
-+                match bytes[*pos] {
-+                    b'}' => break,
-+                    b',' => {
-+                        *pos += 1;
-+                        continue;
-+                    }
-+                    _ => {}
-+                }
-+                // Decoded even when the field is dropped, so a bad escape in
-+                // its key errors as in PostgreSQL.
-+                let key = decode_json_string(json, pos)?;
-+                skip_json_whitespace(bytes, pos);
-+                *pos += 1; // ':'
-+                skip_json_whitespace(bytes, pos);
-+                if bytes[*pos..].starts_with(b"null") {
-+                    *pos += 4;
-+                    continue;
-+                }
-+                if !first {
-+                    out.push(',');
-+                }
-+                first = false;
-+                push_json_string(&key, out);
-+                out.push(':');
-+                copy_without_null_fields(json, pos, depth + 1, out)?;
-+            }
-+            *pos += 1;
-+            out.push('}');
-+        }
-+        b'[' => {
-+            *pos += 1;
-+            out.push('[');
-+            let mut first = true;
-+            loop {
-+                skip_json_whitespace(bytes, pos);
-+                match bytes[*pos] {
-+                    b']' => break,
-+                    b',' => {
-+                        *pos += 1;
-+                        continue;
-+                    }
-+                    _ => {}
-+                }
-+                if !first {
-+                    out.push(',');
-+                }
-+          
+ }
+ 
+ #[scalar(name = "time_add_date")]
+@@ -757,7 +770,11 @@ fn time_add_date(args: &[Value]) -> Value {
+         days = ok_tri!(args[3].to_integer());
+     }
+ 
+-    let t: Time = tri!(t.time_add_date(years as i32, months as i32, days));
++    let (Ok(years), Ok(months)) = (i32::try_from(years), i32::try_from(months)) else {
++        return Value::error_with_message(TimeError::CreationError.to_string());
++    };
++
++    let t: Time = tri!(t.time_add_date(years, months, days));
+ 
+     t.into_blob()
+ }
+@@ -1029,3 +1046,32 @@ fn time_parse(args: &[Value]) -> Value {
+ 
+     Time::from_datetime(dt.and_utc()).into_blob()
+ }
++
++#[cfg(test)]
++mod tests {
++    use super::*;
++
++    fn ints(v: &[i64]) -> Vec<Value> {
++        v.iter().map(|&i| Value::from_integer(i)).collect()
++    }
++
++    #[test]
++    fn time_date_overflowing_args_return_null() {
++        // seconds - offset_sec overflows i64
++        let v = time_date_internal(&ints(&[2000, 1, 1, 0, 0, i64::MIN, 0, 1]));
++        assert_eq!(v.value_type(), ValueType::Null);
++        let v = time_date_internal(&ints(&[2024, 1, 1, 0, 0, i64::MAX, 0, -1]));
++        assert_eq!(v.value_type(), ValueType::Null);
++        // year / month that don't fit in i32 must not be truncated
++        let v = time_date_internal(&ints(&[4294969297, 1, 1]));
++        assert_eq!(v.value_type(), ValueType::Null);
++        let v = time_date_internal(&ints(&[2024, 4294967297, 1]));
++        assert_eq!(v.value_type(), ValueType::Null);
++        // offset that doesn't fit in i32
++        let v = time_date_internal(&ints(&[2024, 1, 1, 0, 0, 0, 0, 4294967296]));
++        assert_eq!(v.value_type(), ValueType::Null);
++        // sanity: normal call still returns a blob
++        let v = time_date_internal(&ints(&[2024, 1, 1, 0, 0, 0, 0, 3600]));
++        assert_eq!(v.value_type(), ValueType::Blob);
++    }
++}
 ```
 
-**File**: `postgres/parser/sqlstate.rs` (modified, +1/-0)
+**File**: `sqlite/conformance/sqlite-sqltests/scalar-functions-datetime.sqltest` (modified, +65/-0)
 ```diff
-@@ -50,6 +50,7 @@ pub const SQLSTATE_WRONG_OBJECT_TYPE: &str = "42809";
- pub const SQLSTATE_RESERVED_NAME: &str = "42939";
- pub const SQLSTATE_DISK_FULL: &str = "53100";
- pub const SQLSTATE_OUT_OF_MEMORY: &str = "53200";
-+pub const SQLSTATE_STATEMENT_TOO_COMPLEX: &str = "54001";
- pub const SQLSTATE_OBJECT_NOT_IN_PREREQUISITE_STATE: &str = "55000";
- pub const SQLSTATE_LOCK_NOT_AVAILABLE: &str = "55P03";
- pub const SQLSTATE_QUERY_CANCELED: &str = "57014";
+@@ -2220,6 +2220,71 @@ test time_date-overflow-issue-5251 {
+ expect {
+ }
+ 
++@skip-if sqlite "time_date is a custom Limbo function not supported in standard SQLite"
++test make_date-day-overflow-issue-11398 {
++    SELECT make_date(1, 4, 1453556443);
++}
++expect {
++}
++
++@skip-if sqlite "time_date is a custom Limbo function not supported in standard SQLite"
++test make_timestamp-day-overflow-issue-11398 {
++    SELECT make_timestamp(2024, 1, 1453556443, 0, 0, 0);
++}
++expect {
++}
++
++@skip-if sqlite "time_date is a custom Limbo function not supported in standard SQLite"
++test make_date-year-wider-than-i32 {
++    SELECT make_date(4294969297, 1, 1);
++}
++expect {
++}
++
++@skip-if sqlite "time_date is a custom Limbo function not supported in standard SQLite"
++test make_date-month-wider-than-i32 {
++    SELECT make_date(2024, 4294967297, 1);
++}
++expect {
++}
++
++@skip-if sqlite "time_date is a custom Limbo function not supported in standard SQLite"
++test time_date-offset-overflow {
++    SELECT time_date(2000, 1, 1, 0, 0, -9223372036854775808, 0, 1);
++}
++expect {
++}
++
++@skip-if sqlite "time_date is a custom Limbo function not supported in standard SQLite"
++test time_date-offset-overflow-negative {
++    SELECT time_date(2024, 1, 1, 0, 0, 9223372036854775807, 0, -1);
++}
++expect {
++}
++
++@skip-if sqlite "time_date is a custom Limbo function not supported in standard SQLite"
++test time_add-overflow {
++    SELECT time_add(time_date(-262143, 1, 1), -9223372036854775807);
++}
++expect {
++}
++
++@skip-if sqlite "time_date is a custom Limbo function not supported in standard SQLite"
++test time_add_date-day-overflow {
++    SELECT time_add_date(make_date(2024, 1, 1), 0, 0, 1453556443);
++}
++expect error {
++    time creation error
++}
++
++@skip-if sqlite "time_date is a custom Limbo function not supported in standard SQLite"
++test time_add_date-year-overflow {
++    SELECT time_add_date(make_date(2024, 1, 1), 2147483647);
++}
++expect error {
++    time creation error
++}
++
+ # Invalid date and time
+ test invalid-date {
+     SELECT date('2024-07-21 24:00:00');
 ```
 
 ---
 
-### Incident Patch 2: `b56226c8` (2026-11-04)
-**Commit Message**: Merge 'core/json: fix json_set array appends that drop or misplace values' from app/turso-github-handyman
+### Incident Patch 2: `06abd777` (2026-11-05)
+**Commit Message**: core/time: return NULL instead of panicking when time_date overflows
+
+make_date(1, 4, 1453556443) and make_timestamp with a huge day number
+panicked with `NaiveDateTime + TimeDelta overflowed`. The day/hour/
+minute/second offsets were checked to fit in a Duration, but the
+addition itself used `+=`, which panics past NaiveDateTime's range.
+With overflow checks on, `year - 1` / `month - 1` / `day - 1` also
+panicked for the minimum integer value.
+
+Use checked arithmetic for each step and return None like the other
+out-of-range paths in Time::time_date.
+
+Fixes #11398
+
+**File**: `core/time/internal.rs` (modified, +86/-25)
+```diff
+@@ -205,7 +205,10 @@ impl Time {
+ 
+         match year.cmp(&0) {
+             std::cmp::Ordering::Greater => {
+-                let months = match (year - 1).unsigned_abs().checked_mul(12) {
++                let months = match year
++                    .checked_sub(1)
++                    .and_then(|y| y.unsigned_abs().checked_mul(12))
++                {
+                     Some(m) => m,
+                     None => return Ok(None),
+                 };
+@@ -216,7 +219,10 @@ impl Time {
+                 };
+             }
+             std::cmp::Ordering::Less => {
+-                let months = match (year - 1).unsigned_abs().checked_mul(12) {
++                let months = match year
++                    .checked_sub(1)
++                    .and_then(|y| y.unsigned_abs().checked_mul(12))
++                {
+                     Some(m) => m,
+                     None => return Ok(None),
+                 };
+@@ -231,45 +237,54 @@ impl Time {
+ 
+         match month.cmp(&0) {
+             std::cmp::Ordering::Greater => {
+-                dt = match dt.checked_add_months(chrono::Months::new((month - 1).unsigned_abs())) {
++                dt = match month
++                    .checked_sub(1)
++                    .and_then(|m| dt.checked_add_months(chrono::Months::new(m.unsigned_abs())))
++                {
+                     Some(d) => d,
+                     None => return Ok(None),
+                 };
+             }
+             std::cmp::Ordering::Less => {
+-                dt = match dt.checked_sub_months(chrono::Months::new((month - 1).unsigned_abs())) {
++                dt = match month
++                    .checked_sub(1)
++                    .and_then(|m| dt.checked_sub_months(chrono::Months::new(m.unsigned_abs())))
++                {
+                     Some(d) => d,
+                     None => return Ok(None),
+                 };
+             }
+             std::cmp::Ordering::Equal => (),
+         };
+ 
+-        if let Some(d) = chrono::Duration::try_days(day - 1) {
+-            dt += d;
+-        } else {
+-            return Ok(None);
+-        }
++        dt = match day
++            .checked_sub(1)
++            .and_then(chrono::Duration::try_days)
++            .and_then(|d| dt.checked_add_signed(d))
++        {
++            Some(d) => d,
++            None => return Ok(None),
++        };
+ 
+-        if let Some(d) = chrono::Duration::try_hours(hour) {
+-            dt += d;
+-        } else {
+-            return Ok(None);
+-        }
++        dt = match chrono::Duration::try_hours(hour).and_then(|d| dt.checked_add_signed(d)) {
++            Some(d) => d,
++            None => return Ok(None),
++        };
+ 
+-        if let Some(d) = chrono::Duration::try_minutes(minutes) {
+-            dt += d;
+-        } else {
+-            return Ok(None);
+-        }
++        dt = match chrono::Duration::try_minutes(minutes).and_then(|d| dt.checked_add_signed(d)) {
++            Some(d) => d,
++            None => return Ok(None),
++        };
+ 
+-        if let Some(d) = chrono::Duration::try_seconds(seconds) {
+-            dt += d;
+-        } else {
+-            return Ok(None);
+-        }
++        dt = match chrono::Duration::try_seconds(seconds).and_then(|d| dt.checked_add_signed(d)) {
++            Some(d) => d,
++            None => return Ok(None),
++        };
+ 
+-        dt += chrono::Duration::nanoseconds(nano_secs);
++        dt = match dt.checked_add_signed(chrono::Duration::nanoseconds(nano_secs)) {
++            Some(d) => d,
++            None => return Ok(None),
++        };
+ 
+         let dt = dt
+             .and_local_timezone(offset)
+@@ -601,3 +616,49 @@ impl Deref for Duration {
+         &self.inner
+     }
+ }
++
++#[cfg(test)]
++mod tests {
++    use super::*;
++
++    fn utc() -> FixedOffset {
++        FixedOffset::east_opt(0).unwrap()
++    }
++
++    #[test]
++    fn time_date_out_of_range_returns_none() {
++        // make_date(1, 4, 1453556443)
++        assert!(Time::time_date(1, 4, 1453556443, 0, 0, 0, 0, utc())
++            .unwrap()
++            .is_none());
++        // make_timestamp(2024, 1, 1453556443, 0, 0, 0)
++        assert!(Time::time_date(2024, 1, 1453556443, 0, 0, 0, 0, utc())
++            .unwrap()
++            .is_none());
++        // make_date(40, 1, -2147483648)
++        assert!(Time::time_date(40, 1, -2147483648, 0, 0, 0, 0, utc())
++            .unwrap()
++            .is_none());
++        // make_date(-2147483648, 1, 1) and make_date(2000, -2147483648, 1)
++        assert!(Time::time_date(i32::MIN, 1, 1, 0, 0, 0, 0, utc())
++            .unwrap()
++            .is_none());
++        assert!(Time::time_date(2000, i32::MIN, 1, 0, 0, 0, 0, utc())
++            .unwrap()
++            .is_none());
++        assert!(Time::time_date(2000, 1, i64::MIN, 0, 0, 0, 0, utc())
++            .unwrap()
++            .is_none());
++        // the same overflow through the hour argument
++        assert!(Time::time_date(2024, 1, 1, 24 * 1453556443, 0, 0, 0, utc())
++            .unwrap()
++            .is_none());
++    }
++
++    #[test]
++
+```
+
+---
+
+### Incident Patch 3: `b0421529` (2026-11-05)
+**Commit Message**: Merge 'postgres: reject array types with more than 7 dimensions, not panic' from app/turso-github-handyman
 
 ## Problem
 
 ```sql
-SELECT json_set('["i1"]', '$[#]', json('[]'));
--- Turso:  ["i1"]
--- SQLite: ["i1",[]]
-
-SELECT json_set('[{}]', '$[0][#]', 1);
--- Turso:  [[1]]
--- SQLite: [{}]
-
-SELECT hex(jsonb_set('[]', '$[0][0][0]', 1));
--- Turso:  4B2B2B1331   (middle array header says 2 bytes, holds 3)
--- SQLite: 4B3B2B1331
+CREATE TABLE v3 (c4 INT[][][][][][][][]);
+-- tursopg (Turso's PostgreSQL-compatible server): process stops with
+--   panicked at core/schema.rs: array dimensions must be <= 7
+-- PostgreSQL 18: CREATE TABLE
 ```
 
-All three come from how `Jsonb::navigate_to_segment` (walks one path
-step and makes room for a new value) writes the one-byte empty container
-that the new value later replaces:
+The same panic happens with a domain base type
+(`posint[][][][][][][][]`), `ALTER TABLE ... ADD COLUMN`, a cast
+(`'{}'::int[][][][][][][][]`), and a `json_to_recordset(...) AS x(a
+int[][][][][][][][])` column list.
 
-- At the root (`$[#]`, `$[N]`), it inserted that byte without updating
-the root array header. The header ended up one byte short. The value was
-lost when it was itself one byte (`[]` or `{}`). `jsonb_set` reported
-`malformed JSON`.
-- The empty container was always an object. When the next path step was
-an array index, that step turned any empty object into an array,
-including an `{}` that was already in the document. If that `{}` had a
-longer-than-needed JSONB header (`x'2bcc00'`), the result was `malformed
-JSON`.
-- An array index after another array index (`$[0][0]`) inserts the byte
-wit
+`core` expects an `ast::Type` to have at most
+`ast::MAX_ARRAY_DIMENSIONS` (7) array dimensions, and
+`ColumnInfo::set_array_dimensions` asserts it. The SQLite parser checks
+this limit. The PostgreSQL translator (`postgres/parser/translator.rs`)
+builds `ast::Type` from the `[]` count without checking it.
 
-**File**: `core/json/jsonb.rs` (modified, +81/-108)
+## Fix
+
+- New `check_array_dimensions` in the translator returns `0A000` "an
+array type with 8 dimensions (at most 7) is not supported".
+- It is called from the two functions that produce array dimensions:
+`map_column_type` (every column type in `CREATE TABLE` and `ALTER TABLE
+ADD COLUMN`) and `pg_type_name_to_ast_type` (casts and column d
+
+**File**: `docs/sql-reference/data-types.mdx` (modified, +2/-0)
 ```diff
-@@ -2616,21 +2616,26 @@ impl Jsonb {
-                 mode
-             };
+@@ -219,6 +219,8 @@ INSERT INTO matrices VALUES (1, ARRAY[ARRAY[1, 2], ARRAY[3, 4]]);
  
--            let result = if next_is_array {
-+            let segment = if next_is_array {
-                 let array_locator = path_iter.next().ok_or_else(|| {
-                     LimboError::InternalError(
-                         "array locator should exist after peek check".to_string(),
-                     )
-                 })?;
--
--                self.navigate_to_segment(
--                    SegmentVariant::KeyWithArrayIndex(current, array_locator),
--                    pos,
--                    segment_mode,
--                )?
-+                SegmentVariant::KeyWithArrayIndex(current, array_locator)
-+            } else {
-+                SegmentVariant::Single(current)
-+            };
-+            // A value this segment creates is either overwritten by the final
-+            // operation or entered by the next segment, so it is created as the
-+            // container the next segment expects.
-+            let placeholder_type = if matches!(path_iter.peek(), Some(PathElement::ArrayLocator(_)))
-+            {
-+                ElementType::ARRAY
-             } else {
--                self.navigate_to_segment(SegmentVariant::Single(current), pos, segment_mode)?
-+                ElementType::OBJECT
-             };
-+            let result = self.navigate_to_segment(segment, pos, segment_mode, placeholder_type)?;
+ Every element of an `INTEGER[][]` must be an array (or NULL), and the elements of those are checked as an `INTEGER[]` checks its elements, so `ARRAY[1, 2]` and `ARRAY[ARRAY['abc']]` are errors. Text input has no nested arrays, so build arrays of more than one dimension with `ARRAY[...]`.
  
-             pos = match &result.array_position_info {
-                 Some(ArrayPositionKind::SpecificIndex(idx)) => *idx,
-@@ -2697,7 +2702,15 @@ impl Jsonb {
-                     delta += new_arr_el_header_len as isize - arr_el_header_len as isize;
-                 }
-             }
--            let new_size = el_size as isize + delta;
-+            // An ArrayEntry segment appends its placeholder without rewriting
-+            // the header of its array, so that header must also count the
-+            // placeholder.
-+            let own_delta = if parent.field_key_index == JsonLocationKind::ArrayEntry {
-+                parent.delta
-+            } else {
-+                0
-+            };
-+            let new_size = el_size as isize + delta + own_delta;
-             let new_header_size = self.write_element_header(
-                 parent.field_value_index,
-                 el_type,
-@@ -2720,6 +2733,7 @@ impl Jsonb {
-         segment: SegmentVariant,
-         mut pos: usize,
-         mode: PathOperationMode,
-+        placeholder_type: ElementType,
-     ) -> Result<JsonTraversalResult> {
-         let (JsonbHeader(element_type, element_size), header_size) = self.read_header(pos)?;
++An array type has at most 7 dimensions. A type with more bracket pairs, such as `INTEGER[][][][][][][][]`, is an error.
++
+ Arrays can be inserted using the `ARRAY[...]` constructor or as JSON text:
  
-@@ -2754,7 +2768,7 @@ impl Jsonb {
-                             if mode.allows_insert() && arr_pos == end_pos && count == *idx as usize
-                             {
-                                 let placeholder =
--                                    JsonbHeader::new(ElementType::OBJECT, 0).into_bytes();
-+                                    JsonbHeader::new(placeholder_type, 0).into_bytes();
-                                 let placeholder_bytes = placeholder.as_bytes();
- 
-                                 self.data
-@@ -2810,7 +2824,7 @@ impl Jsonb {
-                             if !mode.allows_insert() {
-                                 bail_parse_error!("Cant insert")
-                             }
--                            let placeholder = JsonbHeader::new(ElementType::OBJECT, 0).into_bytes();
-+                            let placeholder = JsonbHeader::new(placeholder_type, 0).into_bytes();
-                             let placeholder_bytes = placeholder.as_bytes();
-                             self.data
-                                 .splice(end_pos..end_pos, placeholder_bytes.iter().copied());
-@@ -2825,30 +2839,6 @@ impl Jsonb {
-                         _ => unreachable!(),
-                     }
-                 } else {
--                    if root_type == ElementType::OBJECT
--                        && root_size == 0
--                        && (*idx == Some(0) || idx.is_none())
--                        && mode.allows_insert()
--                    {
--                        let array = JsonbHeader::new(ElementType::ARRAY, 0).into_bytes();
--                        let array_bytes = array.as_bytes();
--                        let placeholder = JsonbHeader::new(ElementType::OBJECT, 0).into_bytes();
--                        let placeholder_bytes = placeholder.as_bytes();
--                        self.data.splice(
--                            pos..pos + root_header_size,
--                            array_bytes
--                                .iter()
--                                .copied()
--                                .chain(placeholder_bytes.iter().copied()),
--                        );
--
--                        return Ok(JsonTraversalResult::with_array_index(
--                            pos,
--                            JsonLocationKind::ArrayEntry,
--                            placeholder_bytes.len() as isize,
--
+ ```sql
 ```
 
-**File**: `sqlite/conformance/sqlite-sqltests/json/default.sqltest` (modified, +70/-0)
+**File**: `postgres/frontend/tests/embedded_errors.rs` (modified, +28/-0)
 ```diff
-@@ -3790,6 +3790,76 @@ expect {
-     {"a":[1,2,3,4]}
+@@ -264,6 +264,34 @@ fn errors_report_postgres_sqlstates() {
+     }
  }
  
-+# Appending to the root array must grow the root array header by the size of
-+# the appended value. An empty array or object is one byte, the same size as
-+# the placeholder written before the value, so a header that misses the
-+# placeholder byte drops the appended value.
-+test json_set_array_append_empty_container_at_root {
-+    SELECT json_set('["i1"]', '$[#]', json('[]')),
-+           json(jsonb_set('["i1"]', '$[#]', json('[]'))),
-+           json_set('[1]', '$[#]', json('{}')),
-+           json_set('[]', '$[#]', json('[]')),
-+           json_insert('[1]', '$[#]', json('[]')),
-+           json_set('[1]', '$[1]', json('[]')),
-+           json_insert('[1]', '$[1]', json('{}'));
-+}
-+expect {
-+    ["i1",[]]|["i1",[]]|[1,{}]|[[]]|[1,[]]|[1,[]]|[1,{}]
-+}
-+
-+test jsonb_set_array_append_at_root_header_size {
-+    SELECT hex(jsonb_set('[1]', '$[#]', 5)),
-+           hex(jsonb_set('[1]', '$[#]', json('[2]'))),
-+           hex(jsonb_insert('[1]', '$[#]', json('[]'))),
-+           hex(jsonb_set('[1,2,3,4,5]', '$[#]', 6)),
-+           hex(jsonb_set('[1,2,3,4,5]', '$[5]', json('[]'), '$[#]', json('{}')));
-+}
-+expect {
-+    4B13311335|5B13312B1332|3B13310B|CB0C133113321333133413351336|CB0C133113321333133413350B0C
-+}
-+
-+test json_set_array_append_at_root_then_key {
-+    SELECT json_set('[1]', '$[#].a', json('[]')),
-+           json(jsonb_set('[1]', '$[#].a', 5));
-+}
-+expect {
-+    [1,{"a":[]}]|[1,{"a":5}]
++#[test]
++fn array_types_with_more_than_seven_dimensions_are_not_supported() {
++    let (_io, conn) = pg_connection();
++    conn.execute("CREATE DOMAIN posint AS INT").unwrap();
++    conn.execute("CREATE TABLE seven (a INT[][][][][][][])")
++        .unwrap();
++    conn.execute("ALTER TABLE seven ADD COLUMN b posint[][][][][][][]")
++        .unwrap();
++    conn.execute("SELECT '{}'::int[][][][][][][]").unwrap();
++    for sql in [
++        "CREATE TABLE v3 (c4 INT[][][][][][][][])",
++        "CREATE TABLE v3 (c4 posint[][][][][][][][])",
++        "CREATE TABLE v3 (c4 _int4[][][][][][][])",
++        "ALTER TABLE seven ADD COLUMN c int[][][][][][][][]",
++        "SELECT '{}'::int[][][][][][][][]",
++        "SELECT CAST('{}' AS posint[][][][][][][][])",
++        "SELECT * FROM json_to_recordset('[]') AS x(a int[][][][][][][][])",
++    ] {
++        let e = exec_err(&conn, sql);
++        assert_eq!(e.sqlstate, "0A000", "{sql}: {e:?}");
++        assert_eq!(
++            e.to_string(),
++            "an array type with 8 dimensions (at most 7) is not supported",
++            "{sql}"
++        );
++    }
 +}
 +
-+# An array index after another array index must not turn an empty object that
-+# is already in the document into an array: SQLite leaves the document
-+# unchanged.
-+test json_set_array_index_into_existing_empty_object {
-+    SELECT json_set('[{}]', '$[0][#]', 1),
-+           json_set('[{}]', '$[0][0]', 1),
-+           json_set('[{}]', '$[#-1][#]', 1),
-+           json_insert('[{}]', '$[0][#]', 1),
-+           json(jsonb_set('[{}]', '$[0][#]', 1)),
-+           json(jsonb_insert('[{}]', '$[0][#]', 1)),
-+           json(jsonb_set(x'2bcc00', '$[0][#]', 1)),
-+           json_set('[[{}]]', '$[0][0][#]', 1),
-+           json_set('{"a":[{}]}', '$.a[0][#]', 1);
-+}
-+expect {
-+    [{}]|[{}]|[{}]|[{}]|[{}]|[{}]|[{}]|[[{}]]|{"a":[{}]}
+ #[test]
+ fn nested_begin_keeps_the_open_transaction() {
+     // PostgreSQL warns "there is already a transaction in progress" for BEGIN
+```
+
+**File**: `postgres/parser/translator.rs` (modified, +16/-1)
+```diff
+@@ -6167,10 +6167,12 @@ fn pg_type_name_to_ast_type(
+         _ => &pg_type,
+     };
+ 
++    let array_dimensions = type_name.array_bounds.len() as u32;
++    check_array_dimensions(array_dimensions)?;
+     Ok(ast::Type {
+         name: name.to_string(),
+         size: None,
+-        array_dimensions: type_name.array_bounds.len() as u32,
++        array_dimensions,
+     })
+ }
+ 
+@@ -6244,9 +6246,22 @@ fn map_column_type(pg_type: &str, typmods: &[i64]) -> Result<PgTypeMapping, Pars
+     if !typmods.is_empty() && mapping.type_params.is_empty() {
+         return Err(not_supported(format!("a type modifier on {pg_type}")));
+     }
++    check_array_dimensions(mapping.array_dimensions)?;
+     Ok(mapping)
+ }
+ 
++/// PostgreSQL accepts any number of `[]` in a type name, but a Turso column
++/// or cast holds at most [ast::MAX_ARRAY_DIMENSIONS].
++fn check_array_dimensions(dimensions: u32) -> Result<(), ParseError> {
++    if dimensions > ast::MAX_ARRAY_DIMENSIONS {
++        return Err(not_supported(format!(
++            "an array type with {dimensions} dimensions (at most {})",
++            ast::MAX_ARRAY_DIMENSIONS
++        )));
++    }
++    Ok(())
 +}
 +
-+# A path that creates nested arrays creates each one as an array directly, and
-+# every new array header counts the array created inside it.
-+test jsonb_set_nested_array_append_creates_arrays {
-+    SELECT hex(jsonb_set('[]', '$[#][#]', 1)),
-+           hex(jsonb_set('[]', '$[0][0][0]', 1)),
-+           hex(jsonb_set('[]', '$[#][#][#][#]', 1)),
-+           hex(jsonb_insert('[[]]', '$[0][#][#]', json('[]'))),
-+           hex(jsonb_set('{"a":[]}', '$.a[#][#][#]', 1)),
-+           hex(jsonb_set('[[1,2,3,4,5,6,7,8,9]]', '$[0][#][#]', 1)),
-+           json_set('{}', '$.a[0][#][#]', 1),
-+           json_set('[]', '$[#].a[#]', 2);
-+}
-+expect {
-+    3B2B1331|4B3B2B1331|5B4B3B2B1331|3B2B1B0B|7C17614B3B2B1331|CB17CB151331133213331334133513361337133813392B1331|{"a":[[[1]]]}|[{"a":[2]}]
-+}
-+
- # A BLOB argument is read as JSONB, so every element type, payload size and
- # text byte in it is caller-controlled. Validation used to be skipped whenever
- # the payload exceeded 7 bytes, which let arbitrary bytes reach
+ fn extract_key_columns(keys: &[pg_query::protobuf::Node]) -> Result<Vec<String>, ParseError> {
+     use pg_query::protobuf::node::Node;
+ 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #11359** (2026-11-04): serverless/go: support dedicated sessions and buffered execution metadata (@pedrocarlo)
-- **PR #11348** (2026-11-04): core/translate: plan compound SELECT LIMIT/OFFSET subqueries (@lyfuci)
-- **PR #11341** (2026-11-04): sqlite: move SqliteDialect into a new sqlite/frontend crate (@penberg)
-- **PR #11336** (2026-11-04): bindings/python: raise sqlite3's exception classes for SQL and misuse errors (@turso-github-handyman[bot])
-- **PR #11334** (2026-11-04): core/translate: store custom type values as the kind of their BASE (@jussisaurio)
-- **PR #11331** (2026-11-04): core/json: fix json_set array appends that drop or misplace values (@turso-github-handyman[bot])
+- **PR #11434** (2026-11-05): core: reject a rowid in the fraction of percentile_disc and percentile_cont (@turso-github-handyman[bot])
+- **PR #11423** (2026-11-05): postgres: reject array types with more than 7 dimensions, not panic (@turso-github-handyman[bot])
+- **PR #11422** (2026-11-05): core: make lpad and rpad as fast as repeat for long results (@turso-github-handyman[bot])
+- **PR #11419** (2026-11-05): fix (tursopg/parser): reject mismatched VALUES row lengths (@Surajsuthar)
+- **PR #11418** (2026-11-05): tursopg: match LIKE on the operands' text without copying it (@turso-github-handyman[bot])
+- **PR #11414** (2026-11-05): core/translate: skip DO UPDATE when the table has only a non-unique index (@turso-github-handyman[bot])
 
 ---
 
@@ -2090,28 +2104,85 @@ wit
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge 'postgres: add json_strip_nulls(json)' from Jaeil Lee
+## X. Merge 'core/time: return NULL instead of panicking when time_date overflows' fro
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tursodatabase/turso. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `core/time/internal.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tursodatabase/turso. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `717c3593`: Merge 'postgres: add json_strip_nulls(json)' from Jaeil Lee. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3b6bbb46`: Merge 'core/time: return NULL instead of panicking when time_date overflows' from. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/time/internal.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
- "serde",
+                let months = match year
+                    .checked_sub(1)
+                    .and_then(|y| y.unsigned_abs().checked_mul(12))
+                {
+                let months = match year
+                    .checked_sub(1)
+                    .and_then(|y| y.unsigned_abs().checked_mul(12))
+                {
+                dt = match month
+                    .checked_sub(1)
+                    .and_then(|m| dt.checked_add_months(chrono::Months::new(m.unsigned_abs())))
+                {
+                dt = match month
+                    .checked_sub(1)
+                    .and_then(|m| dt.checked_sub_months(chrono::Months::new(m.unsigned_abs())))
+                {
+        dt = match day
+            .checked_sub(1)
+            .and_then(chrono::Duration::try_days)
+            .and_then(|d| dt.checked_add_signed(d))
+        {
+            Some(d) => d,
+            None => return Ok(None),
+        };
+        dt = match chrono::Duration::try_hours(hour).and_then(|d| dt.checked_add_signed(d)) {
+            Some(d) => d,
+            None => return Ok(None),
+        };
+        dt = match chrono::Duration::try_minutes(minutes).and_then(|d| dt.checked_add_signed(d)) {
+      
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+                let months = match (year - 1).unsigned_abs().checked_mul(12) {
+                let months = match (year - 1).unsigned_abs().checked_mul(12) {
+                dt = match dt.checked_add_months(chrono::Months::new((month - 1).unsigned_abs())) {
+                dt = match dt.checked_sub_months(chrono::Months::new((month - 1).unsigned_abs())) {
+        if let Some(d) = chrono::Duration::try_days(day - 1) {
+            dt += d;
+        } else {
+            return Ok(None);
+        }
+        if let Some(d) = chrono::Duration::try_hours(hour) {
+            dt += d;
+        } else {
+            return Ok(None);
+        }
+        if let Some(d) = chrono::Duration::try_minutes(minutes) {
+            dt += d;
+        } else {
+            return Ok(None);
+        }
+        if let Some(d) = chrono::Duration::try_seconds(seconds) {
+            dt += d;
+        } else {
+            return Ok(None);
+        }
+        dt += chrono::Duration::nanoseconds(nano_secs);
+                dt = dt
+                    .checked_add_months(chrono::Months::new(years.unsigned_abs() * 12))
+                dt = dt
+                    .checked_sub_months(chrono::Months::new(years.unsigned_abs() * 12)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `717c3593` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3b6bbb46` are properly handled with clean fallback behavior.

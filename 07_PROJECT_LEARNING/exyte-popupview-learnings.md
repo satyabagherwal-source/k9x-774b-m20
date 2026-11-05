@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/exyte-popupview-learnings.md`  
 > **Source**: github ([https://github.com/exyte/PopupView](https://github.com/exyte/PopupView))  
-> **Source Version**: `99695337`  
+> **Source Version**: `38fe3de1`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T16:24:46.140Z  
+> **Timestamp**: 2026-11-05T07:13:06.862Z  
 > **Learning ID**: `learn-github-exyte-popupview`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/exyte-popupview-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/exyte/PopupView](https://github.com/exyte/PopupView))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T16:24:46.132Z  
+> **Harvest Timestamp**: 2026-11-05T07:13:06.676Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1345,15 +1345,15 @@ class UITextFieldCheckingVC<Content: View>: UIHostingController<Content> {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #302** (2026-11-02): **Fix premature dismissal while first popup layout is pending**
+  *Symptoms*: On a fresh presentation, a popup whose initial content measures zero can disappear before that content becomes ready. In an iPhone Duo app this left the settings popup invisible until navigating away and back.  `appearAction` schedules an animation-completion fallback after 0.3 seconds. If initial layout is still pending, `shouldShowContent` is false even though the presentation request is still active. `onAnimationCompleted` therefore mistakes the pending presentation for a completed dismissal and unloads its content.  This change checks `closingIsInProcess` before unloading, so only an actual dismissal request follows the dismissal path. It keeps the existing semaphore signaling for presentation completion.  The regression test uses the public popup API in a macOS `NSHostingView`. It holds content at zero size for 600 ms, then checks that native content mounts without another presentation request or navigation. It also checks dismissal, the dismissal callback, and reopening. All new comments and assertion messages are in English.  Validation: - The regression test fails with four assertions on upstream `master` at `9969533` and passes with this change (`swift test --filter PopupDelayedLayoutTests`). - The consuming iOS app builds against the updated upstream code. - On iPhone Duo Simulator, a fresh app process can open settings on the first tap without visiting another screen. Existing settings navigation and closing were also checked. 
+  **Post-Mortem & Fix Analysis**:
+  > Hey @Corotata, thank you so much for the fix, have a wonderful day!
+
 - **Issue #300** (2026-10-06): **Fix watchOS build: don't use NSEdgeInsets outside macOS**
   *Symptoms*: ScreenUtils.safeAreaInsets fell through to the NSEdgeInsets branch on every platform except iOS/tvOS, so building for watchOS failed with "Cannot find type 'NSEdgeInsets' in scope". Limit NSEdgeInsets to macOS and return UIEdgeInsets.zero on the remaining platforms (watchOS, visionOS).
   **Post-Mortem & Fix Analysis**:
   > Hey @JustSAT, thank you so much, have an amazing day!
-
-- **Issue #299** (2026-09-22): **Fix macOS popup drag dismissal state**
-  *Symptoms*: - Prevent the popup from bouncing before closing when dismissed by dragging. - Clear stale drag offsets after the dismissal animation completes. - Reset presentation state when reopening a popup. - Fix an issue where reopening a popup could show only the background blur while the content remained off-screen.
-  **Post-Mortem & Fix Analysis**:
-  > Hey @Corotata, thank you for the PR, have a wonderful day!
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1370,161 +1370,300 @@ class UITextFieldCheckingVC<Content: View>: UIHostingController<Content> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0b41a0fa` (2026-10-06)
-**Commit Message**: Fix watchOS build: don't use NSEdgeInsets outside macOS
+### Incident Patch 1: `784b5a4b` (2026-10-31)
+**Commit Message**: Fix premature dismissal while first popup layout is pending
 
-ScreenUtils.safeAreaInsets fell through to the NSEdgeInsets branch on
-every platform except iOS/tvOS, so building for watchOS failed with
-"Cannot find type 'NSEdgeInsets' in scope". Limit NSEdgeInsets to macOS
-and return UIEdgeInsets.zero on the remaining platforms (watchOS, visionOS).
+On first presentation, the animation fallback can run before the popup
+receives a nonzero layout. Treating shouldShowContent == false as a
+completed dismissal unloads content even though the request is still active.
+This can leave a popup invisible until another navigation round trip.
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Only unload content when closingIsInProcess records an actual dismissal.
+Add a public-API regression test with delayed initial layout, real dismissal,
+and reopening. The test fails on upstream master and passes with this fix.
 
-**File**: `Sources/PopupView/Utils/Utils.swift` (modified, +5/-1)
+**File**: `Package.swift` (modified, +2/-1)
 ```diff
-@@ -43,10 +43,14 @@ struct ScreenUtils {
-             .keyWindow?
-             .safeAreaInsets ?? .zero
-     }
--#else
-+#elseif os(macOS)
-     static var safeAreaInsets: NSEdgeInsets {
-         return NSEdgeInsets()
-     }
-+#else
-+    static var safeAreaInsets: UIEdgeInsets {
-+        return .zero
-+    }
- #endif
- }
- 
+@@ -21,6 +21,7 @@ let package = Package(
+             swiftSettings: [
+               .enableExperimentalFeature("StrictConcurrency")
+             ]
+-        )
++        ),
++        .testTarget(name: "PopupViewTests", dependencies: ["PopupView"])
+     ]
+ )
 ```
 
----
-
-### Incident Patch 2: `99695337` (2026-10-06)
-**Commit Message**: Merge pull request #300 from JustSAT/fix/watchos-safe-area-insets
-
-Fix watchOS build: don't use NSEdgeInsets outside macOS
-
-**File**: `Sources/PopupView/Utils/Utils.swift` (modified, +5/-1)
+**File**: `Sources/PopupView/PopupModifier.swift` (modified, +3/-1)
 ```diff
-@@ -43,10 +43,14 @@ struct ScreenUtils {
-             .keyWindow?
-             .safeAreaInsets ?? .zero
+@@ -344,7 +344,9 @@ public struct PopupModifier<Item: Equatable, PopupContent: View>: ViewModifier {
      }
--#else
-+#elseif os(macOS)
-     static var safeAreaInsets: NSEdgeInsets {
-         return NSEdgeInsets()
-     }
-+#else
-+    static var safeAreaInsets: UIEdgeInsets {
-+        return .zero
-+    }
- #endif
- }
  
-```
-
----
-
-### Incident Patch 3: `e053f506` (2026-09-23)
-**Commit Message**: Fix drag to hide animation after lifting a finger
-
-**File**: `Sources/PopupView/PopupBody.swift` (modified, +17/-2)
-```diff
-@@ -259,7 +259,11 @@ struct PopupBody<PopupContent: View>: View {
-                     timeToHide: $timeToHide,
-                     params: params,
-                     appearFrom: calculatedAppearFrom,
--                    shouldDismiss: { dismissCallback(.drag) }
-+                    shouldDismiss: {
-+                        consolidateDragOffset(dragToDismissManager.dragTranslation)
-+                        dragToDismissManager.resetDragTranslation()
-+                        dismissCallback(.drag)
-+                    }
-                 )
-             }
- 
-@@ -277,6 +281,14 @@ struct PopupBody<PopupContent: View>: View {
+     func onAnimationCompleted() {
+-        if shouldShowContent { // return if this was called on showing animation, only proceed if called on hiding
++        // First presentation can still be waiting for layout when the fallback fires.
++        // Only a requested dismissal may unload content; visibility is not dismissal intent.
++        if !closingIsInProcess {
+             eventsSemaphore.signal()
+             return
          }
-     }
- 
-+    /// Bakes a live drag offset into `actualCurrentOffset` so a subsequent hide animation
-+    /// covers only the remaining distance instead of restarting from the displayed position
-+    /// on top of the still-applied drag offset.
-+    private func consolidateDragOffset(_ translation: CGSize) {
-+        actualCurrentOffset.x += translation.width
-+        actualCurrentOffset.y += translation.height
+```
+
+**File**: `Tests/PopupViewTests/PopupDelayedLayoutTests.swift` (added, +101/-0)
+```diff
+@@ -0,0 +1,101 @@
++#if os(macOS)
++import AppKit
++import Observation
++import SwiftUI
++import XCTest
++@testable import PopupView
++
++/// Control when initial popup content becomes ready without navigating or presenting again.
++@MainActor
++@Observable
++private final class DelayedPopupModel {
++    /// The presentation request passed to the public popup API.
++    var isPresented = false
++    /// Whether the first presentation can provide measurable content.
++    var isContentReady = false
++    /// The number of completed dismissal callbacks.
++    var dismissCount = 0
++}
++
++/// Host delayed native content through the public popup API.
++@MainActor
++private struct DelayedPopupHost: View {
++    /// Presentation and content state owned by the test.
++    @Bindable var model: DelayedPopupModel
++
++    /// Start with zero-sized content, then provide a measurable native control when ready.
++    var body: some View {
++        Color.clear
++            .frame(width: 640, height: 420)
++            .popup(isPresented: $model.isPresented) {
++                if model.isContentReady {
++                    DelayedPopupMarker().frame(width: 240, height: 120)
++                } else {
++                    Color.clear.frame(width: 0, height: 0)
++                }
++            } customize: {
++                $0.type(.floater(verticalPadding: 0, horizontalPadding: 0, useSafeAreaInset: false))
++                    .position(.bottom)
++                    .appearFrom(.bottomSlide)
++                    .disappearTo(.bottomSlide)
++                    .closeOnTap(false)
++                    .dismissCallback { model.dismissCount += 1 }
++            }
++    }
++}
++
++/// Use a native control to distinguish a pending request from content that remains mounted.
++private struct DelayedPopupMarker: NSViewRepresentable {
++    /// Create a marker that can be located in the actual hosting hierarchy.
++    func makeNSView(context: Context) -> NSButton {
++        let button = NSButton(title: "Delayed popup content", target: nil, action: nil)
++        button.identifier = NSUserInterfaceItemIdentifier("popup.delayedLayout.marker")
++        return button
 +    }
 +
-     /// This is the builder for the sheet content
-     @ViewBuilder
-     func bodyWithGestures() -> some View {
-@@ -288,7 +300,10 @@ struct PopupBody<PopupContent: View>: View {
-                         dragToDismissManager: dragToDismissManager,
-                         sheetContentRect: $sheetContentRect,
-                         scrollParams: params,
--                        shouldDismiss: { dismissCallback(.drag) }
-+                        shouldDismiss: { dragOffset in
-+                            consolidateDragOffset(CGSize(width: 0, height: dragOffset))
-+                            dismissCallback(.drag)
-+                        }
-                     ))
-                 }
- #endif
++    /// The marker has no state to synchronize after creation.
++    func updateNSView(_ nsView: NSButton, context: Context) {}
++}
++
++/// Protect presentations whose initial layout takes longer than the animation fallback.
++@MainActor
++final class PopupDelayedLayoutTests: XCTestCase {
++    /// Keep a pending presentation alive and allow it to reopen after a real dismissal.
++    func testFirstPresentationSurvivesDelayedLayoutAndCanReopen() async throws {
++        let model = DelayedPopupModel()
++        let host = NSHostingView(rootView: DelayedPopupHost(model: model))
++        host.frame = NSRect(x: 0, y: 0, width: 640, height: 420)
++        let window = NSWindow(contentRect: host.frame, styleMask: [.titled], backing: .buffered, defer: false)
++        window.isReleasedWhenClosed = false
++        window.contentView = host
++        window.makeKeyAndOrderFront(nil)
++        defer { window.close() }
++        try await Task.sleep(for: .milliseconds(100))
++
++        model.isPresented = true
++        // Exceed the production 0.3-second fallback without navigating or presenting again.
++        try await Task.sleep(for: .milliseconds(600))
++        XCTAssertTrue(model.isPresented)
++        XCTAssertEqual(model.dismissCount, 0, "The animation fallback must not dismiss a presentation that is still waiting for layout.")
++        model.isContentReady = true
++        try await Task.sleep(for: .milliseconds(400))
++        host.layoutSubtreeIfNeeded()
++        XCTAssertTrue(containsMarker(in: host), "Delayed content must mount without another presentation request or a navigation round trip.")
++
++        model.isPresented = false
++        try await Task.sleep(for: .milliseconds(450))
++        XCTAssertFalse(containsMarker(in: host))
++        XCTAssertEqual(model.dismissCount, 1)
++        model.isPresented = true
++        try await Task.sleep(for: .milliseconds(450))
++        XCTAssertTrue(containsMarker(in: host), "The popup must reopen after an actual dismissal.")
++        XCTAssertEqual(model.dismissCount, 1)
++    }
++
++    /// Inspect actual content mounting without relying on private SwiftUI view class names.
++    private func containsMarker(in view: NSView) -> Bool {
++        view.identifier?.rawValue == "popup.delayedLayout.marker"
++            || view.subviews.contains { containsMarker(in: $0) }
++    }
++}
++#endif
 ```
 
-**File**: `Sources/PopupView/PopupModifier.swift` (modified, +4/-2)
+---
+
+### Incident Patch 2: `38fe3de1` (2026-11-02)
+**Commit Message**: Merge pull request #302 from Corotata/codex/fix-delayed-first-layout
+
+Fix premature dismissal while first popup layout is pending
+
+**File**: `Package.swift` (modified, +2/-1)
 ```diff
-@@ -330,8 +330,10 @@ public struct PopupModifier<Item: Equatable, PopupContent: View>: ViewModifier {
-             params.willDismissCallback(dismissSource ?? .binding)
-             autohidingWorkHolder.work?.cancel()
-             dismissibleInWorkHolder.work?.cancel()
--            shouldShowContent = false // this will cause currentOffset change thus triggering the sliding hiding animation
--            animatableOpacity = 0
-+            withAnimation {
-+                shouldShowContent = false // this will cause currentOffset change thus triggering the sliding hiding animation
-+                animatableOpacity = 0
-+            }
-             // do the rest once the animation is finished (see onAnimationCompleted())
+@@ -21,6 +21,7 @@ let package = Package(
+             swiftSettings: [
+               .enableExperimentalFeature("StrictConcurrency")
+             ]
+-        )
++        ),
++        .testTarget(name: "PopupViewTests", dependencies: ["PopupView"])
+     ]
+ )
+```
+
+**File**: `Sources/PopupView/PopupModifier.swift` (modified, +3/-1)
+```diff
+@@ -344,7 +344,9 @@ public struct PopupModifier<Item: Equatable, PopupContent: View>: ViewModifier {
+     }
+ 
+     func onAnimationCompleted() {
+-        if shouldShowContent { // return if this was called on showing animation, only proceed if called on hiding
++        // First presentation can still be waiting for layout when the fallback fires.
++        // Only a requested dismissal may unload content; visibility is not dismissal intent.
++        if !closingIsInProcess {
+             eventsSemaphore.signal()
+             return
          }
- 
 ```
 
-**File**: `Sources/PopupView/Utils/ScrollPopupModifier.swift` (modified, +5/-2)
+**File**: `Tests/PopupViewTests/PopupDelayedLayoutTests.swift` (added, +101/-0)
 ```diff
-@@ -15,7 +15,7 @@ struct ScrollPopupModifier: ViewModifier {
-     @ObservedObject var dragToDismissManager: DragToDismissHelper
-     @Binding var sheetContentRect: CGRect
-     var scrollParams: Popup.ScrollPopupParameters
--    var shouldDismiss: ()->()
-+    var shouldDismiss: (CGFloat)->()
- 
-     @StateObject private var scrollViewDelegate = PopupScrollViewDelegate()
- 
-@@ -94,7 +94,10 @@ struct ScrollPopupModifier: ViewModifier {
-         let referenceY = sheetContentRect.height / 3
-         scrollViewDelegate.onDragEnded = { value in
-             if scrollParams.dragToDismiss && value >= referenceY {
--                shouldDismiss()
-+                // consolidate the live drag offset into the shared hide animation so it only
-+                // covers the remaining distance, instead of stacking on top of a full-length one
-+                dragToDismissOffset = 0
-+                shouldDismiss(value)
-             } else {
-                 withAnimation {
-                     dragToDismissOffset = .zero
+@@ -0,0 +1,101 @@
++#if os(macOS)
++import AppKit
++import Observation
++import SwiftUI
++import XCTest
++@testable import PopupView
++
++/// Control when initial popup content becomes ready without navigating or presenting again.
++@MainActor
++@Observable
++private final class DelayedPopupModel {
++    /// The presentation request passed to the public popup API.
++    var isPresented = false
++    /// Whether the first presentation can provide measurable content.
++    var isContentReady = false
++    /// The number of completed dismissal callbacks.
++    var dismissCount = 0
++}
++
++/// Host delayed native content through the public popup API.
++@MainActor
++private struct DelayedPopupHost: View {
++    /// Presentation and content state owned by the test.
++    @Bindable var model: DelayedPopupModel
++
++    /// Start with zero-sized content, then provide a measurable native control when ready.
++    var body: some View {
++        Color.clear
++            .frame(width: 640, height: 420)
++            .popup(isPresented: $model.isPresented) {
++                if model.isContentReady {
++                    DelayedPopupMarker().frame(width: 240, height: 120)
++                } else {
++                    Color.clear.frame(width: 0, height: 0)
++                }
++            } customize: {
++                $0.type(.floater(verticalPadding: 0, horizontalPadding: 0, useSafeAreaInset: false))
++                    .position(.bottom)
++                    .appearFrom(.bottomSlide)
++                    .disappearTo(.bottomSlide)
++                    .closeOnTap(false)
++                    .dismissCallback { model.dismissCount += 1 }
++            }
++    }
++}
++
++/// Use a native control to distinguish a pending request from content that remains mounted.
++private struct DelayedPopupMarker: NSViewRepresentable {
++    /// Create a marker that can be located in the actual hosting hierarchy.
++    func makeNSView(context: Context) -> NSButton {
++        let button = NSButton(title: "Delayed popup content", target: nil, action: nil)
++        button.identifier = NSUserInterfaceItemIdentifier("popup.delayedLayout.marker")
++        return button
++    }
++
++    /// The marker has no state to synchronize after creation.
++    func updateNSView(_ nsView: NSButton, context: Context) {}
++}
++
++/// Protect presentations whose initial layout takes longer than the animation fallback.
++@MainActor
++final class PopupDelayedLayoutTests: XCTestCase {
++    /// Keep a pending presentation alive and allow it to reopen after a real dismissal.
++    func testFirstPresentationSurvivesDelayedLayoutAndCanReopen() async throws {
++        let model = DelayedPopupModel()
++        let host = NSHostingView(rootView: DelayedPopupHost(model: model))
++        host.frame = NSRect(x: 0, y: 0, width: 640, height: 420)
++        let window = NSWindow(contentRect: host.frame, styleMask: [.titled], backing: .buffered, defer: false)
++        window.isReleasedWhenClosed = false
++        window.contentView = host
++        window.makeKeyAndOrderFront(nil)
++        defer { window.close() }
++        try await Task.sleep(for: .milliseconds(100))
++
++        model.isPresented = true
++        // Exceed the production 0.3-second fallback without navigating or presenting again.
++        try await Task.sleep(for: .milliseconds(600))
++        XCTAssertTrue(model.isPresented)
++        XCTAssertEqual(model.dismissCount, 0, "The animation fallback must not dismiss a presentation that is still waiting for layout.")
++        model.isContentReady = true
++        try await Task.sleep(for: .milliseconds(400))
++        host.layoutSubtreeIfNeeded()
++        XCTAssertTrue(containsMarker(in: host), "Delayed content must mount without another presentation request or a navigation round trip.")
++
++        model.isPresented = false
++        try await Task.sleep(for: .milliseconds(450))
++        XCTAssertFalse(containsMarker(in: host))
++        XCTAssertEqual(model.dismissCount, 1)
++        model.isPresented = true
++        try await Task.sleep(for: .milliseconds(450))
++        XCTAssertTrue(containsMarker(in: host), "The popup must reopen after an actual dismissal.")
++        XCTAssertEqual(model.dismissCount, 1)
++    }
++
++    /// Inspect actual content mounting without relying on private SwiftUI view class names.
++    private func containsMarker(in view: NSView) -> Bool {
++        view.identifier?.rawValue == "popup.delayedLayout.marker"
++            || view.subviews.contains { containsMarker(in: $0) }
++    }
++}
++#endif
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #302** (2026-11-02): Fix premature dismissal while first popup layout is pending (@Corotata)
 - **PR #300** (2026-10-06): Fix watchOS build: don't use NSEdgeInsets outside macOS (@JustSAT)
 - **PR #299** (2026-09-22): Fix macOS popup drag dismissal state (@Corotata)
 - **PR #297** (2026-07-29): Add becomesKeyWindow option to avoid stealing keyboard from presenting .window mode (@dmtrbbrv)
 - **PR #291** (2026-05-02): Fix .scroll popup shifting off-screen when keyboard appears (@pgovindaraj1)
 - **PR #290** (2026-05-12): Fix scroll headerView (@Shonchik)
-- **PR #288** (2026-04-22): Fix scroll (@Shonchik)
 
 ---
 
@@ -1544,32 +1683,29 @@ Fix watchOS build: don't use NSEdgeInsets outside macOS
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. watchOS build: don't use NSEdgeInsets outside macOS
+## X. premature dismissal while first popup layout is pending
 
 **RULE**:
-When implementing operations in `Sources/PopupView/Utils/Utils.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in exyte/PopupView. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Package.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in exyte/PopupView. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0b41a0fa`: watchOS build: don't use NSEdgeInsets outside macOS. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `784b5a4b`: premature dismissal while first popup layout is pending. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Sources/PopupView/Utils/Utils.swift`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Package.swift`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-#elseif os(macOS)
-#else
-    static var safeAreaInsets: UIEdgeInsets {
-        return .zero
-    }
+        ),
+        .testTarget(name: "PopupViewTests", dependencies: ["PopupView"])
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Anti-pattern to NEVER write (induced failure mode):
-#else
+        )
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0b41a0fa` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `784b5a4b` are properly handled with clean fallback behavior.

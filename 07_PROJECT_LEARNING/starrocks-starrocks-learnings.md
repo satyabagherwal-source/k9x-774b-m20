@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/starrocks-starrocks-learnings.md`  
 > **Source**: github ([https://github.com/StarRocks/starrocks](https://github.com/StarRocks/starrocks))  
-> **Source Version**: `0b659694`  
+> **Source Version**: `d0391e8c`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T10:37:47.359Z  
+> **Timestamp**: 2026-11-05T06:28:57.475Z  
 > **Learning ID**: `learn-github-starrocks-starrocks`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/starrocks-starrocks-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/StarRocks/starrocks](https://github.com/StarRocks/starrocks))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T10:37:46.103Z  
+> **Harvest Timestamp**: 2026-11-05T06:28:57.259Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The world's fastest open query engine for sub-second analytics both on and off the data lakehouse. With the flexibility to support nearly any scenario, StarRocks provides best-in-class performance for multi-dimensional analytics, real-time analytics, and ad-hoc queries. A Linux Foundation project.
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 12231 stars
+- **Stars / Engagement**: 12239 stars
 
 ---
 
@@ -1818,707 +1818,517 @@ public:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `84536d8f` (2026-11-04)
-**Commit Message**: [BugFix] Never raise a decimal overflow error from a NULL row's data under ERROR_IF_OVERFLOW (#82254)
+### Incident Patch 1: `dfbaec3e` (2026-11-05)
+**Commit Message**: [UT] Split the range sync MV reshard case so it fits the case timeout (#81416)
 
+Signed-off-by: Hyper-FF <[REDACTED_EMAIL]>
 Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `be/src/exprs/arithmetic_expr.cpp` (modified, +1/-1)
+**File**: `test/sql/test_range_orderby/R/test_range_sync_mv_reshard.sql` (modified, +115/-10)
 ```diff
-@@ -224,7 +224,7 @@ class VectorizedDivArithmeticExpr final : public Expr
-     StatusOr<ColumnPtr> evaluate_checked(ExprContext* context, Chunk* ptr) override {
-         if constexpr (is_intdiv_op<Op> && lt_is_bigint<Type>) {
- #define EVALUATE_CHECKED_OVERFLOW(Mode)                                                   \
--    using CastFunction = VectorizedUnaryFunction<DecimalTo<Mode>>;                        \
-+    using CastFunction = VectorizedDecimalCastFunction<DecimalTo, Mode>;                  \
-     switch (_children[0]->type().type) {                                                  \
-     case TYPE_DECIMAL32: {                                                                \
-         ASSIGN_OR_RETURN(auto column, evaluate_internal<TYPE_DECIMAL32>(context, ptr));   \
+@@ -1,13 +1,15 @@
+ -- name: test_range_sync_mv_reshard @cloud @sequential
+ -- Test Point: Build on genuinely shared split files, then split/unshare/merge an aggregate MV with independent keys.
+ -- Method: Compare base, rewritten and direct sync-index data; assert FINISHED jobs and real layouts.
+--- Scope: Shared-data range synchronous MV backfill, double writes and maintenance.
++-- Scope: Shared-data range synchronous MV backfill, double writes and maintenance for SUM/COUNT/MIN/MAX/AVG MVs.
++-- The sketch MVs run the same flow in test_range_sync_mv_reshard_sketch: one case holding all seven ran within
++-- seconds of the 150-second case timeout.
+ 
+ CREATE DATABASE db_${uuid0};
+ 
+ USE db_${uuid0};
+ 
+-shell: exec python3 -c 'exec('"'"'import os,signal\nsignal.alarm(5)\ndirectory=\'"'"'/tmp/range_sync_mv_test_range_sync_mv_reshard_${uuid0}\'"'"'\nos.mkdir(directory,0o700)\nhelper_source=\'"'"'import concurrent.futures\\nimport contextlib\\nimport ctypes\\nimport io\\nimport json\\nimport os\\nfrom pathlib import Path\\nimport signal\\nimport subprocess\\nimport sys\\nimport time\\nfrom urllib.parse import urljoin, urlparse\\ndb = "db_${uuid0}"\\ncfg = None\\nconn = None\\nstage_deadline = 0\\ndef remaining():\\n    seconds = stage_deadline - time.monotonic()\\n    assert seconds > 0, "total stage deadline expired"\\n    return seconds\\ndef connection(database=db):\\n    return pymysql.connect(host=cfg.mysql_host, port=int(cfg.mysql_port), user=cfg.mysql_user,\\n                           password=cfg.mysql_password, database=database, autocommit=True,\\n                           connect_timeout=min(5, remaining()), read_timeout=min(15, remaining()),\\n                           write_timeout=min(15, remaining()))\\ndef q(sql, c=None):\\n    c = conn if c is None else c\\n    c._read_timeout = min(15, remaining())\\n    c._write_timeout = min(15, remaining())\\n    with c.cursor() as cursor:\\n        cursor.execute(sql)\\n        return cursor.fetchall()\\ndef records(sql):\\n    conn._read_timeout = min(15, remaining())\\n    conn._write_timeout = min(15, remaining())\\n    with conn.cursor(pymysql.cursors.DictCursor) as cursor:\\n        cursor.execute(sql)\\n        return cursor.fetchall()\\ndef latest(mv):\\n    rows = records("SHOW ALTER MATERIALIZED VIEW ORDER BY JobId DESC")\\n    return next(r for r in rows if r["RollupIndexName"] == mv)\\ndef supervise(argv, budget=105):\\n    # The wrapper is exec\\\'"'"'ed over the harness shell. Its budget plus this five-second\\n    # descendant shutdown is shorter than the harness\\\'"'"'s 120-second timeout.\\n    libc = ctypes.CDLL(None, use_errno=True)\\n    assert libc.prctl(36, 1, 0, 0, 0) == 0, "cannot enable Linux child subreaping"\\n    child = subprocess.Popen(argv, start_new_session=True)\\n    timed_out = False\\n    try:\\n        try:\\n            status = child.wait(timeout=budget)\\n        except subprocess.TimeoutExpired:\\n            timed_out = True\\n            status = None\\n    finally:\\n        shutdown_deadline = time.monotonic() + 5\\n        for sig in (signal.SIGTERM, signal.SIGKILL):\\n            try:\\n                os.killpg(child.pid, sig)\\n            except ProcessLookupError:\\n                pass\\n            try:\\n                child.wait(timeout=min(2, max(0.01, shutdown_deadline - time.monotonic())))\\n            except subprocess.TimeoutExpired:\\n                if sig == signal.SIGKILL:\\n                    raise\\n        # Subreaping lets the supervisor join grandchildren even when their leader\\n        # was killed while its ThreadPoolExecutor or HTTP request was still running.\\n        while True:\\n            try:\\n                pid, _ = os.waitpid(-child.pid, os.WNOHANG)\\n            except ChildProcessError:\\n                break\\n            if pid == 0:\\n                assert time.monotonic() < shutdown_deadline, "descendants did not terminate and join"\\n                time.sleep(0.01)\\n    assert not timed_out, "total stage timeout: process group terminated and joined"\\n    assert status == 0, "stage failed: process group terminated and joined, status=" + str(status)\\ndef worker(code, cleanup=False):\\n    global cfg, conn, pymysql, requests, stage_deadline\\n    import pymysql\\n    import requests\\n    sys.path.insert(0, os.getcwd())\\n    from lib.sr_sql_lib import StarrocksSQLApiLib\\n    stage_deadline = time.monotonic() + 100\\n    with contextlib.redirect_stdout(io.StringIO()):\\n        cfg = StarrocksSQLApiLib()\\n    conn = connection(database=None if cleanup else db)\\n    cfg.mysql_lib.connector = conn\\n    try:\\n        exec(code, globals())\\n    finally:\\n        if conn.open:\\n            conn.close()\\ndef restore_config():\\n    if state_path.exists():\\n        saved = json.loads(state_path.read_text())\\n        failures = []\\n        for key in ("lake_compaction_disable_ids", "tablet_reshard_enable_tablet_merge"):\\n            try:\\n                q
 ```
 
-**File**: `be/src/exprs/cast_expr_tpl.hpp` (modified, +5/-4)
+**File**: `test/sql/test_range_orderby/T/test_range_sync_mv_reshard.sql` (modified, +84/-10)
 ```diff
-@@ -1240,24 +1240,25 @@ class VectorizedCastExpr final : public Expr
-             }
-         } else if constexpr (lt_is_decimal<FromType> && lt_is_decimal<ToType>) {
-             if (context != nullptr && context->error_if_overflow()) {
--                return VectorizedUnaryFunction<DecimalToDecimal<OverflowMode::REPORT_ERROR>>::evaluate<FromType,
--                                                                                                       ToType>(
-+                return VectorizedDecimalCastFunction<DecimalToDecimal, OverflowMode::REPORT_ERROR>::evaluate<FromType,
-+                                                                                                             ToType>(
-                         column, to_type.precision, to_type.scale);
-             } else {
-                 return VectorizedUnaryFunction<DecimalToDecimal<OverflowMode::OUTPUT_NULL>>::evaluate<FromType, ToType>(
-                         column, to_type.precision, to_type.scale);
-             }
-         } else if constexpr (lt_is_decimal<FromType>) {
-             if (context != nullptr && context->error_if_overflow()) {
--                return VectorizedUnaryFunction<DecimalTo<OverflowMode::REPORT_ERROR>>::evaluate<FromType, ToType>(
-+                return VectorizedDecimalCastFunction<DecimalTo, OverflowMode::REPORT_ERROR>::evaluate<FromType, ToType>(
-                         column);
-             } else {
-                 return VectorizedUnaryFunction<DecimalTo<OverflowMode::OUTPUT_NULL>>::evaluate<FromType, ToType>(
-                         column);
-             }
-         } else if constexpr (lt_is_decimal<ToType>) {
-             if (context != nullptr && context->error_if_overflow()) {
--                return VectorizedUnaryFunction<DecimalFrom<OverflowMode::REPORT_ERROR>>::evaluate<FromType, ToType>(
-+                return VectorizedDecimalCastFunction<DecimalFrom, OverflowMode::REPORT_ERROR>::evaluate<FromType,
-+                                                                                                        ToType>(
-                         column, to_type.precision, to_type.scale);
-             } else {
-                 return VectorizedUnaryFunction<DecimalFrom<OverflowMode::OUTPUT_NULL>>::evaluate<FromType, ToType>(
-```
-
-**File**: `be/src/exprs/decimal_binary_function.h` (modified, +122/-31)
-```diff
-@@ -48,7 +48,7 @@ struct DecimalBinaryFunction {
-               typename RhsCppType, typename ResultCppType>
-     static inline bool adjust_evaluate(size_t num_rows, const LhsCppType* lhs_data, const RhsCppType* rhs_data,
-                                        ResultCppType* result_data, NullColumn::ValueType* nulls, bool* has_null,
--                                       int adjust_scale) {
-+                                       int adjust_scale, const uint8_t* input_nulls) {
-         [[maybe_unused]] LhsCppType lhs_datum;
-         [[maybe_unused]] RhsCppType rhs_datum;
-         [[maybe_unused]] const auto scale_factor = get_scale_factor<LhsCppType>(adjust_scale);
-@@ -61,7 +61,9 @@ struct DecimalBinaryFunction {
-             if constexpr (adjust_left) {
-                 overflow = DecimalV3Cast::scale_up<LhsCppType, LhsCppType, check_overflow<overflow_mode>>(
-                         lhs_datum, scale_factor, &lhs_datum);
--                // adjusting operand generates decimal overflow
-+                // adjusting operand generates decimal overflow. The constant operand is shared by every row, and
-+                // NullAwareReportErrorDecimalBinaryFunction never calls in with every row null, so under
-+                // REPORT_ERROR this overflow belongs to a non-null row.
-                 if constexpr (check_overflow<overflow_mode>) {
-                     if (overflow) {
-                         if constexpr (error_if_overflow<overflow_mode>) {
-@@ -100,8 +102,10 @@ struct DecimalBinaryFunction {
-             if constexpr (check_overflow<overflow_mode>) {
-                 if (overflow) {
-                     if constexpr (error_if_overflow<overflow_mode>) {
--                        throw std::overflow_error(strings::Substitute(
--                                "The '$0' operation involving decimal values overflows", get_op_name<Op>()));
-+                        if (!is_null_input_row(input_nulls, i)) {
-+                            throw std::overflow_error(strings::Substitute(
-+                                    "The '$0' operation involving decimal values overflows", get_op_name<Op>()));
-+                        }
-                     } else {
-                         static_assert(null_if_overflow<overflow_mode>);
-                         *has_null = true;
-@@ -114,7 +118,7 @@ struct DecimalBinaryFunction {
-     }
+@@ -1,13 +1,15 @@
+ -- name: test_range_sync_mv_reshard @cloud @sequential
+ -- Test Point: Build on genuinely shared split files, then split/unshare/merge an aggregate MV with independent keys.
+ -- Method: Compare base, rewritten and direct sync-index data; assert FINISHED jobs and real layouts.
+--- Scope: Shared-data range synchronous MV backfill, double writes and maintenance.
++-- Scope: Shared-data range synchronous MV backfill, double writes and maintenance for SUM/COUNT/MIN/MAX/AVG MVs.
++-- The sketch MVs run the same flow in test_range_sync_mv_reshard_sketch: one case holding all seven ran within
++-- seconds of the 150-second case timeout.
  
-     template <bool lhs_is_const, bool rhs_is_const, LogicalType LhsType, LogicalType RhsType, LogicalType ResultType>
--    static inline ColumnPtr evaluate(const ColumnPtr& lhs, const ColumnPtr& rhs) {
-+    static inline ColumnPtr evaluate(const ColumnPtr& lhs, const ColumnPtr& rhs, const uint8_t* input_nulls = nullptr) {
-         using ResultCppType = RunTimeCppType<ResultType>;
-         using ResultColumnType = RunTimeColumnType<ResultType>;
+ CREATE DATABASE db_${uuid0};
  
-@@ -148,47 +152,47 @@ struct DecimalBinaryFunction {
-             if (adjust_scale == 0) {
-                 // S(lhs)==S(rhs) no need to adjust
-                 all_null = adjust_evaluate<lhs_is_const, rhs_is_const, false, BinaryOperator>(
--                        num_rows, lhs_data, rhs_data, result_data, nulls, &has_null, adjust_scale);
-+                        num_rows, lhs_data, rhs_data, result_data, nulls, &has_null, adjust_scale, input_nulls);
-             } else if (lhs_scale < rhs_scale) {
-                 // S(lhs) < S(rhs), scale lhs up by S(rhs)-S(lhs)
-                 all_null = adjust_evaluate<lhs_is_const, rhs_is_const, true, BinaryOperator>(
--                        num_rows, lhs_data, rhs_data, result_data, nulls, &has_null, adjust_scale);
-+                        num_rows, lhs_data, rhs_data, result_data, nulls, &has_null, adjust_scale, input_nulls);
-             } else {
-                 // S(lhs) > S(rhs), scale rhs up by S(lhs)-S(rhs)
-                 if constexpr (is_add_op<Op>) {
-                     // add: just swap two operands
-                     all_null = adjust_evaluate<rhs_is_const, lhs_is_const, true, BinaryOperator>(
--                            num_rows, rhs_data, lhs_data, result_data, nulls, &has_null, adjust_scale);
-+                            num_rows, rhs_data, lhs_data, result_data, nulls, &has_null, adjust_scale, input_nulls);
-                 } else if constexpr (is_sub_op<Op>) {
-                     // sub: just swap two operand and then rhs - lhs
-                     using ReverseSubOperator = ArithmeticBinaryOperator<ReverseSubOp, ResultType>;
-                     all_null = adjust_evaluate<rhs_is_const, lhs_is_const, true, ReverseSubOperator>(
--                            num_rows, rhs_data, lhs_data, result_data, nulls, &has_null, adjust_scale);
-+                            num_rows, rhs_data, lhs_data, result_data, nulls, &has_null, adjust_scale, input_nulls);
-                 } else if constexpr (is_mod_op<Op>) {
-                     // mod: just swap two operand and then rhs - lhs
-                     using ReverseModOperator = ArithmeticBinaryOperator<ReverseModOp, ResultType>;
-                
-```
-
-**File**: `be/src/exprs/decimal_cast_expr.h` (modified, +62/-17)
-```diff
-@@ -18,7 +18,9 @@
+ USE db_${uuid0};
  
- #include "base/decimal_types.h"
- #include "column/column_builder.h"
-+#include "exprs/function_helper.h"
- #include "exprs/overflow.h"
-+#include "exprs/unary_function.h"
- #include "types/decimalv3.h"
- #include "types/variant.h"
- 
-@@ -30,7 +32,8 @@ UNION_VALUE_GUARD(LogicalType, FixedNonDecimalTypeGuard, lt_is_fixed_non_decimal
- 
- template <OverflowMode overflow_mode, LogicalType Type, LogicalType ResultType>
- struct DecimalDecimalCast {
--    static inline ColumnPtr evaluate(const ColumnPtr& column, int to_precision, int to_scale) {
-+    static inline ColumnPtr evaluate(const ColumnPtr& column, int to_precision, int to_scale,
-+                                     const uint8_t* input_nulls = nullptr) {
-         using FromCppType = RunTimeCppType<Type>;
-         using FromColumnType = RunTimeColumnType<Type>;
-         using ToCppType = RunTimeCppType<ResultType>;
-@@ -74,7 +77,9 @@ struct DecimalDecimalCast {
-                     if constexpr (check_overflow<overflow_mode>) {
-                         if (overflow) {
-                             if constexpr (error_if_overflow<overflow_mode>) {
--                                throw std::overflow_error("The type cast from decimal to decimal overflows");
-+                                if (!is_null_input_row(input_nulls, i)) {
-+                                    throw std::overflow_error("The type cast from decimal to decimal overflows");
-+                                }
-                             } else {
-                                 static_assert(null_if_overflow<overflow_mode>);
-                                 has_null = true;
-@@ -93,7 +98,9 @@ struct DecimalDecimalCast {
-                 if constexpr (check_overflow<overflow_mode>) {
-                     if (overflow) {
-                         if constexpr (error_if_overflow<overflow_mode>) {
--                            throw std::overflow_error("The type cast from decimal to decimal overflows");
-+                            if (!is_null_input_row(input_nulls, i)) {
-+                                throw std::overflow_error("The type cast from decimal to decimal overflows");
-+                            }
-                         } else {
-                             static_assert(null_if_overflow<overflow_mode>);
-                             has_null = true;
-@@ -111,7 +118,9 @@ struct DecimalDecimalCast {
-                 if constexpr (check_overflow<overflow_mode>) {
-                     if (overflow) {
-                         if constexpr (error_if_overflow<overflow_mode>) {
--                            throw std::overflow_error("The type cast from decimal to decimal overflows");
-+                            if (!is_null_input_row(input_nulls, i)) {
-+                                throw std::overflow_error("The type cast from decimal to decimal overflows");
-+                            }
-                         } else {
-                             static_assert(null_if_overflow<overflow_mode>);
-                             has_null = true;
-@@ -141,16 +150,18 @@ struct DecimalNonDecimalCast<overflow_mode, DecimalType, NonDecimalType, Decimal
-     using NonDecimalCppType = RunTimeCppType<NonDecimalType>;
-     using NonDecimalColumnType = RunTimeColumnType<NonDecimalType>;
- 
--    static inline ColumnPtr decimal_from(const ColumnPtr& column, int precision, int scale) {
-+    static inline ColumnPtr decimal_from(const ColumnPtr& column, int precision, int scale,
-+                                         const uint8_t* input_nulls = nullptr) {
-         if (scale == 0) {
--            return _decimal_from<true>(column, precision, scale);
-+            return _decimal_from<true>(column, precision, scale, input_nulls);
-         } else {
--            return _decimal_from<false>(column, precision, scale);
-+            return _decimal_from<false>(column, precision, scale, input_nulls);
-         }
-     }
- 
-     template <bool ZeroScale>
--    static inline ColumnPtr _decimal_from(const ColumnPtr& column, int precision, int scale) {
-+    static inline ColumnPtr _decimal_from(const ColumnPtr& column, int precision, int scale,
-+                                          const uint8_t* input_nulls) {
-         const auto num_rows = column->size();
-         typename DecimalColumnType::MutablePtr result = DecimalColumnType::create(precision, scale, num_rows);
-         const auto data = &ColumnHelper::cast_to_raw<NonDecimalType>(column.get())->immutable_data().front();
-@@ -227,7 +238,9 @@ struct DecimalNonDecimalCast<overflow_mode, DecimalType, NonDecimalType, Decimal
-             if constexpr (check_overflow<overflow_mode>) {
-                 if (overflow) {
-                     if constexpr (error_if_overflow<overflow_mode>) {
--                        throw std::overflow_error("The type cast from other types to decimal overflows");
-+                        if (!is_null_input_row(input_nulls, i)) {
-+                            throw std::overflow_error("The type cast from other types to decimal
-```
-
-**File**: `be/src/exprs/overflow.h` (modified, +10/-0)
-```diff
-@@ -14,6 +14,9 @@
- 
- #pragma once
- 
-+#include <cstddef>
-+#include <cstdint>
-+
- namespace starrocks {
- enum OverflowMode {
-     // We don't check overflow in this mode
-@@ -40,4 +43,11 @@ template <OverflowMode mode>
- inline constexpr bool error_if_overflow = false;
- template <>
- inline constexpr bool error_if_overflow<OverflowMode::REPORT_ERROR> = true;
-+
-+// Under REPORT_ERROR a decimal kernel can be given the null flags of its input rows (nullptr: no null rows).
-+// The data slot of a null row is undefined, e.g. "" after NULLIF or a value left by an upstream expression, so
-+// an overflow found in it must not raise an error: the row's result is NULL anyway.
-+inline bool is_null_input_row(const uint8_t* input_nulls, size_t row) {
-+    return input_nulls != nullptr && input_nulls[row] != 0;
-+}
- } // namespace starrocks
-```
-
-**File**: `be/test/exprs/CMakeLists.txt` (modified, +1/-0)
-```diff
-@@ -75,6 +75,7 @@ set(EXPR_TEST_FILES
-     decimal_cast_expr_decimalv2_test.cpp
-     decimal_cast_expr_integer_test.cpp
-     decimal_cast_expr_time_test.cpp
-+    decimal_null_row_report_error_test.cpp
-     encryption_functions_test.cpp
-     function_call_expr_test.cpp
-     generate_series_core_test.cpp
-```
-
-**File**: `be/test/exprs/decimal_null_row_report_error_test.cpp` (added, +437/-0)
-```diff
-@@ -0,0 +1,437 @@
-+// Copyright 2021-present StarRocks, Inc. All rights reserved.
-+//
-+// Licensed under the Apache License, Version 2.0 (the "License");
-+// you may not use this file except in compliance with the License.
-+// You may obtain a copy of the License at
-+//
-+//     https://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+
-+// Under sql_mode=ERROR_IF_OVERFLOW (OverflowMode::REPORT_ERROR) a decimal cast or decimal arithmetic must only
-+// report an error for a non-null row. The data slot of a null row is undefined ("" for a string, 0, or a value
-+// left by an upstream expression), so it must never raise an error. Every case below builds one column whose
-+// null row holds a slot that the op rejects, next to a valid non-null row, so neither the all-null nor the
-+// no-null shortcut is taken.
-+
-+#include <gtest/gtest.h>
-+
-+#include <stdexcept>
-+#include <string>
-+#include <vector>
-+
-+#include "column/binary_column.h"
-+#include "column/column_helper.h"
-+#include "column/const_column.h"
-+#include "column/nullable_column.h"
-+#include "column/runtime_type_traits.h"
-+#include "exprs/arithmetic_operation.h"
-+#include "exprs/decimal_binary_function.h"
-+#include "exprs/decimal_cast_expr.h"
-+#include "types/date_value.h"
-+#include "types/timestamp_value.h"
-+
-+namespace starrocks {
-+
-+namespace {
-+
-+constexpr auto REPORT = OverflowMode::REPORT_ERROR;
-+
-+template <typename DataColumn>
-+ColumnPtr make_nullable(typename DataColumn::MutablePtr data, const std::vector<uint8_t>& is_null) {
-+    auto nulls = NullColumn::create();
-+    bool any_null = false;
-+    for (auto n : is_null) {
-+        nulls->get_data().push_back(n);
-+        any_null |= (n != 0);
-+    }
-+    auto column = NullableColumn::create(std::move(data), std::move(nulls));
-+    column->set_has_null(any_null);
-+    return column;
-+}
-+
-+ColumnPtr make_strings(const std::vector<std::string>& values, const std::vector<uint8_t>& is_null) {
-+    auto data = BinaryColumn::create();
-+    for (const auto& v : values) {
-+        data->append(Slice(v));
-+    }
-+    if (is_null.empty()) {
-+        return data;
-+    }
-+    return make_nullable<BinaryColumn>(std::move(data), is_null);
-+}
-+
-+template <LogicalType Type>
-+ColumnPtr make_decimals(int precision, int scale, const std::vector<RunTimeCppType<Type>>& values,
-+                        const std::vector<uint8_t>& is_null) {
-+    auto data = RunTimeColumnType<Type>::create(precision, scale);
-+    for (const auto& v : values) {
-+        data->get_data().push_back(v);
-+    }
-+    if (is_null.empty()) {
-+        return data;
-+    }
-+    return make_nullable<RunTimeColumnType<Type>>(std::move(data), is_null);
-+}
-+
-+template <LogicalType Type>
-+ColumnPtr make_values(const std::vector<RunTimeCppType<Type>>& values, const std::vector<uint8_t>& is_null) {
-+    auto data = RunTimeColumnType<Type>::create();
-+    for (const auto& v : values) {
-+        data->get_data().push_back(v);
-+    }
-+    return make_nullable<RunTimeColumnType<Type>>(std::move(data), is_null);
-+}
-+
-+void expect_nulls(const ColumnPtr& result, const std::vector<bool>& expected) {
-+    ASSERT_EQ(result->size(), expected.size());
-+    for (size_t i = 0; i < expected.size(); ++i) {
-+        EXPECT_EQ(result->is_null(i), expected[i]) << "row " << i;
-+    }
-+}
-+
-+template <LogicalType Type>
-+RunTimeCppType<Type> value_at(const ColumnPtr& result, size_t row) {
-+    const auto* data = ColumnHelper::get_data_column(result.get());
-+    return down_cast<const RunTimeColumnType<Type>*>(data)->immutable_data()[row];
-+}
-+
-+template <LogicalType From, LogicalType To, typename... Args>
-+ColumnPtr cast_from(const ColumnPtr& column, Args... args) {
-+    return VectorizedDecimalCastFunction<DecimalFrom, REPORT>::evaluate<From, To>(column, args...);
-+}
-+
-+template <LogicalType From, LogicalType To>
-+ColumnPtr cast_to(const ColumnPtr& column) {
-+    return VectorizedDecimalCastFunction<DecimalTo, REPORT>::evaluate<From, To>(column);
-+}
-+
-+template <LogicalType From, LogicalType To>
-+ColumnPtr cast_decimal(const ColumnPtr& column, int precision, int scale) {
-+    return VectorizedDecimalCastFunction<DecimalToDecimal, REPORT>::evaluate<From, To>(column, precision, scale);
-+}
-+
-+const int128_t kE20 = static_cast<int128_t>(100000000000LL) * 1000000000LL; // 1e20
-+const int128_t kE38 = kE20 * 1000000000000000000LL;                         // 1e38
-+
-+} // namespace
-+
-+class DecimalNullRowReportErrorTest : public ::testing::Test {
-+public:
-+    void SetUp() override { date::init_date_cache(); }
-+};
-+
-+// ---------------------------------------------------------------- cast -> DECIMAL (DecimalFrom)
-+
-+// Issue #82140: NULLIF(x, '') leaves "" in the null row, an
-```
-
-**File**: `test/sql/test_analyze_statistics/R/test_stats_mixed_null_column_error_if_overflow` (added, +54/-0)
-```diff
-@@ -0,0 +1,54 @@
-+-- name: test_stats_mixed_null_column_error_if_overflow @sequential
-+[UC]ori_sql_mode=select @@GLOBAL.sql_mode;
-+-- result:
-+
-+-- !result
-+set global sql_mode = 'ERROR_IF_OVERFLOW';
-+-- result:
-+-- !result
-+create database analyze_test_${uuid0};
-+-- result:
-+-- !result
-+use analyze_test_${uuid0};
-+-- result:
-+-- !result
-+CREATE TABLE `mixed_null_decimal` (
-+  `k1` int,
-+  `c1` decimal(20,8)
-+)
-+DUPLICATE KEY(`k1`)
-+PARTITION BY RANGE(`k1`) (
-+  PARTITION p1 VALUES LESS THAN ("10"),
-+  PARTITION p2 VALUES LESS THAN ("20")
-+)
-+DISTRIBUTED BY HASH(`k1`) BUCKETS 1
-+PROPERTIES ('replication_num' = '1');
-+-- result:
-+-- !result
-+INSERT INTO mixed_null_decimal VALUES (1, null), (2, null), (11, 1.25), (12, 2.50);
-+-- result:
-+-- !result
-+analyze table mixed_null_decimal;
-+-- result:
-+[REGEX].*OK.*
-+-- !result
-+select partition_name, length(`max`) > 0, length(`min`) > 0 from default_catalog._statistics_.column_statistics where table_name='analyze_test_${uuid0}.mixed_null_decimal' and column_name='c1' order by partition_name;
-+-- result:
-+p1	0	0
-+p2	1	1
-+-- !result
-+LOOP {
-+  PROPERTY: {"timeout": 120, "interval": 5, "desc": "wait column stats cache load under ERROR_IF_OVERFLOW"}
-+  result=explain costs select c1 from mixed_null_decimal;
-+  CHECK: re.search("c1-->\[1.25, 2.5, .*ESTIMATE", ${result}) != None
-+} END LOOP
-+set global sql_mode = '${ori_sql_mode}';
-+-- result:
-+-- !result
-+drop database analyze_test_${uuid0};
-+-- result:
-+-- !result
-+CLEANUP {
-+    set global sql_mode = '${ori_sql_mode}';
-+    drop database if exists analyze_test_${uuid0};
-+} END CLEANUP
+-shell: exec python3 -c 'exec('"'"'import os,signal\nsignal.alarm(5)\ndirectory=\'"'"'/tmp/range_sync_mv_test_range_sync_mv_reshard_${uuid0}\'"'"'\nos.mkdir(directory,0o700)\nhelper_source=\'"'"'import concurrent.futures\\nimport contextlib\\nimport ctypes\\nimport io\\nimport json\\nimport os\\nfrom pathlib import Path\\nimport signal\\nimport subprocess\\nimport sys\\nimport time\\nfrom urllib.parse import urljoin, urlparse\\ndb = "db_${uuid0}"\\ncfg = None\\nconn = None\\nstage_deadline = 0\\ndef remaining():\\n    seconds = stage_deadline - time.monotonic()\\n    assert seconds > 0, "total stage deadline expired"\\n    return seconds\\ndef connection(database=db):\\n    return pymysql.connect(host=cfg.mysql_host, port=int(cfg.mysql_port), user=cfg.mysql_user,\\n                           password=cfg.mysql_password, database=database, autocommit=True,\\n                           connect_timeout=min(5, remaining()), read_timeout=min(15, remaining()),\\n                           write_timeout=min(15, remaining()))\\ndef q(sql, c=None):\\n    c = conn if c is None else c\\n    c._read_timeout = min(15, remaining())\\n    c._write_timeout = min(15, remaining())\\n    with c.cursor() as cursor:\\n        cursor.execute(sql)\\n        return cursor.fetchall()\\ndef records(sql):\\n    conn._read_timeout = min(15, remaining())\\n    conn._write_timeout = min(15, remaining())\\n    with conn.cursor(pymysql.cursors.DictCursor) as cursor:\\n        cursor.execute(sql)\\n        return cursor.fetchall()\\ndef latest(mv):\\n    rows = records("SHOW ALTER MATERIALIZED VIEW ORDER BY JobId DESC")\\n    return next(r for r in rows if r["RollupIndexName"] == mv)\\ndef supervise(argv, budget=105):\\n    # The wrapper is exec\\\'"'"'ed over the harness shell. Its budget plus this five-second\\n    # descendant shutdown is shorter than the harness\\\'"'"'s 120-second timeout.\\n    libc = ctypes.CDLL(None, use_errno=True)\\n    assert libc.prctl(36, 1, 0, 0, 0) == 0, "cannot enable Linux child subreaping"\\n    child = subprocess.Popen(argv, start_new_session=True)\\n    timed_out = False\\n    try:\\n        try:\\n            status = child.wait(timeout=budget)\\n        except subprocess.TimeoutExpired:\\n            timed_out = True\\n            status = None\\n    finally:\\n        shutdown_deadline = time.monotonic() + 5\\n        for sig in (signal.SIGTERM, signal.SIGKILL):\\n            try:\\n                os.killpg(child.pid, sig)\\n            except ProcessLookupError:\\n                pass\\n            try:\\n                child.wait(timeout=min(2, max(0.01, shutdown_deadline - time.monotonic())))\\n            except subprocess.TimeoutExpired:\\n                if sig == signal.SIGKILL:\\n                    raise\\n        # Subreaping lets the supervisor join grandchildren even when their leader\\n        # was killed while its ThreadPoolExecutor or HTTP request was still running.\\n        while True:\\n            try:\\n                pid, _ = os.waitpid(-child.pid, os.WNOHANG)\\n            except ChildProcessError:\\n                break\\n            if pid == 0:\\n                assert time.monotonic() < shutdown_deadline, "descendants did not terminate and join"\\n                time.sleep(0.01)\\n    assert not timed_out, "total stage timeout: process group terminated and joined"\\n    assert status == 0, "stage failed: process group terminated and joined, status=" + str(status)\\ndef worker(code, cleanup=False):\\n    global cfg, conn, pymysql, requests, stage_deadline\\n    import pymysql\\n    import requests\\n    sys.path.insert(0, os.getcwd())\\n    from lib.sr_sql_lib import StarrocksSQLApiLib\\n    stage_deadline = time.monotonic() + 100\\n    with contextlib.redirect_stdout(io.StringIO()):\\n        cfg = StarrocksSQLApiLib()\\n    conn = connection(database=None if cleanup else db)\\n    cfg.mysql_lib.connector = conn\\n    try:\\n        exec(code, globals())\\n    finally:\\n        if conn.open:\\n            conn.close()\\ndef restore_config():\\n    if state_path.exists():\\n        saved = json.loads(state_path.read_text())\\n        failures = []\\n        for key in ("lake_compaction_disable_ids", "tablet_reshard_enable_tablet_merge"):\\n            try:\\n                q
 ```
 
 ---
 
-### Incident Patch 2: `c3f653d9` (2026-11-04)
-**Commit Message**: [BugFix] Keep the gtid image block at id 40 (#82360)
-
-Signed-off-by: PengFei Li <[REDACTED_EMAIL]>
-Co-authored-by: Cursor <[REDACTED_EMAIL]>
-
-**File**: `fe/fe-core/src/main/java/com/starrocks/persist/metablock/SRMetaBlockID.java` (modified, +4/-1)
-```diff
-@@ -110,7 +110,10 @@ public int getId() {
-     // AIProviderMgr image block (SQL-managed embedding / rerank providers).
-     public static final SRMetaBlockID AI_PROVIDER_MGR = new SRMetaBlockID(38);
- 
--    public static final SRMetaBlockID GTID_GENERATOR = new SRMetaBlockID(39);
-+    // Placeholder.
-+    public static final SRMetaBlockID PLACEHOLDER = new SRMetaBlockID(39);
-+
-+    public static final SRMetaBlockID GTID_GENERATOR = new SRMetaBlockID(40);
- 
-     /**
-      * NOTICE: SRMetaBlockID cannot use a value exceeding 20000, please follow the above sequence number
-```
-
----
-
-### Incident Patch 3: `dfff47f3` (2026-11-03)
-**Commit Message**: [BugFix][RB-843] Read channel stream load pipes without blocking, with the default buffer (#81872)
+### Incident Patch 2: `481a97bd` (2026-11-04)
+**Commit Message**: [BugFix][RB-743] Fix pooled Kafka consumers skipping data on an out-of-range offset and failing on new partitions (#81909)
 
 Signed-off-by: meegoo <[REDACTED_EMAIL]>
 Co-authored-by: mervinsr <[REDACTED_EMAIL]>
 Co-authored-by: meegoo <[REDACTED_EMAIL]>
 Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Co-authored-by: huailiu1122 <[REDACTED_EMAIL]>
 
-**File**: `be/src/compute_env/load/stream_context_mgr.cpp` (modified, +13/-1)
+**File**: `be/src/data_workflows/load/routine_load/data_consumer.cpp` (modified, +22/-8)
 ```diff
-@@ -29,6 +29,12 @@
- 
- namespace starrocks {
- 
-+// How long a read of a channel stream load pipe waits for data before the pipeline scan yields. A channel can stay
-+// idle for seconds between the requests of a transaction. Data and the end of the stream wake the read at once, so
-+// a longer wait only means fewer wake-ups of idle channels: with a 500 us wait, the scan task of every idle channel
-+// was re-queued thousands of times a second.
-+static constexpr int32_t CHANNEL_PIPE_READ_WAIT_US = 20 * 1000;
-+
- StreamContextMgr::StreamContextMgr(LoadStreamMgr* load_stream_mgr) : _load_stream_mgr(load_stream_mgr) {}
- 
- StreamContextMgr::~StreamContextMgr() {
-@@ -93,7 +99,13 @@ Status StreamContextMgr::create_channel_context(const std::string& label, int ch
-     if (_load_stream_mgr == nullptr) {
-         return Status::InternalError("load stream manager is not initialized");
-     }
--    auto pipe = std::make_shared<StreamLoadPipe>(true);
-+    // A channel stays open between the requests of a transaction and until it is committed. Its fragment reads
-+    // without blocking (the pipeline scan yields on a timed-out read), so an open channel holds a connector scan
-+    // thread for at most one read wait instead of until its next request, and requests are buffered like any
-+    // stream load's, so an HTTP worker does not wait for the fragment to consume the previous chunk.
-+    auto pipe = std::make_shared<StreamLoadPipe>(/*non_blocking_read=*/true, CHANNEL_PIPE_READ_WAIT_US,
-+                                                 DEFAULT_STREAM_LOAD_PIPE_BUFFERED_BYTES,
-+                                                 DEFAULT_STREAM_LOAD_PIPE_CHUNK_SIZE);
-     RETURN_IF_ERROR(_load_stream_mgr->put(load_id, pipe));
-     ctx = new StreamLoadContext(load_id, _load_stream_mgr);
-     if (ctx == nullptr) {
-```
-
-**File**: `be/src/compute_env/load/stream_load_pipe.h` (modified, +5/-0)
-```diff
-@@ -37,6 +37,7 @@
- #include <condition_variable>
- #include <deque>
- #include <mutex>
-+#include <type_traits>
- #include <utility>
- 
- #include "base/bit/bit_util.h"
-@@ -59,6 +60,10 @@ class StreamLoadPipe : public MessageBodySink {
-                    size_t min_chunk_size = DEFAULT_STREAM_LOAD_PIPE_CHUNK_SIZE)
-             : StreamLoadPipe(false, -1, max_buffered_bytes, min_chunk_size) {}
- 
-+    // A lone bool would silently bind to max_buffered_bytes above: a 1-byte buffer with blocking reads.
-+    template <typename T, typename = std::enable_if_t<std::is_same_v<T, bool>>>
-+    explicit StreamLoadPipe(T non_blocking_read) = delete;
-+
-     StreamLoadPipe(bool non_blocking_read, int32_t non_blocking_wait_us, size_t max_buffered_bytes,
-                    size_t min_chunk_size)
-             : _non_blocking_read(non_blocking_read),
-```
-
-**File**: `be/src/connector/file/scanner/csv_scanner.cpp` (modified, +24/-18)
-```diff
-@@ -275,27 +275,33 @@ Status CSVScanner::_init_reader() {
+@@ -340,15 +340,30 @@ Status KafkaDataConsumer::get_partition_offset(std::vector<int32_t>* partition_i
+     latest_offsets->reserve(partition_ids->size());
+     MonotonicStopWatch watch;
+     watch.start();
++    bool metadata_refreshed = false;
+     for (auto p_id : *partition_ids) {
+         int64_t beginning_offset;
+         int64_t latest_offset;
+-        auto left_ms = timeout - watch.elapsed_time() / 1000 / 1000;
++        // elapsed_time() is unsigned. Keep the difference signed, so running past the timeout makes it negative.
++        int64_t left_ms = timeout - static_cast<int64_t>(watch.elapsed_time() / 1000 / 1000);
+         if (left_ms <= 0) {
+             return Status::TimedOut("get kafka partition offset timeout");
          }
- 
-         // only the first range needs to skip header
--        if (_parse_options.skip_header && range_desc.start_offset == 0) {
--            for (int64_t i = 0; i < _parse_options.skip_header; i++) {
--                CSVReader::Record dummy;
--                auto st = _curr_reader->next_record(&dummy);
--                if (!st.ok()) {
--                    if (st.is_end_of_file()) {
--                        auto err_msg = fmt::format(
--                                "The parameter 'skip_header' is set to {}, but there are only {} rows in the csv file",
--                                _parse_options.skip_header, i);
+         RdKafka::ErrorCode err =
+                 _k_consumer->query_watermark_offsets(_topic, p_id, &beginning_offset, &latest_offset, left_ms);
++        if (err == RdKafka::ERR__UNKNOWN_PARTITION && !metadata_refreshed) {
++            // A pooled consumer knows the partitions of the topic as of its last metadata refresh, which librdkafka
++            // repeats only every topic.metadata.refresh.interval.ms, so a partition added since is unknown to it until
++            // then. Refresh the metadata of the topic once and query again.
++            metadata_refreshed = true;
++            std::vector<int32_t> refreshed_partition_ids;
++            RETURN_IF_ERROR(get_partition_meta(&refreshed_partition_ids, left_ms));
++            left_ms = timeout - static_cast<int64_t>(watch.elapsed_time() / 1000 / 1000);
++            if (left_ms <= 0) {
++                return Status::TimedOut("get kafka partition offset timeout");
++            }
++            err = _k_consumer->query_watermark_offsets(_topic, p_id, &beginning_offset, &latest_offset, left_ms);
++        }
+         if (err != RdKafka::ERR_NO_ERROR) {
+             LOG(WARNING) << "failed to get offset of partition: " << p_id << " in topic: " << _topic
+                          << ", err: " << RdKafka::err2str(err);
+@@ -365,14 +380,13 @@ Status KafkaDataConsumer::get_partition_offset(std::vector<int32_t>* partition_i
+ Status KafkaDataConsumer::get_partition_meta(std::vector<int32_t>* partition_ids, int timeout) {
+     DCHECK(!_k_consumer->closed());
+     _last_visit_time = time(nullptr);
+-    // create topic conf
+-    RdKafka::Conf* tconf = RdKafka::Conf::create(RdKafka::Conf::CONF_TOPIC);
+-    auto conf_deleter = [tconf]() { delete tconf; };
+-    DeferOp delete_conf([conf_deleter] { return conf_deleter(); });
 -
--                        return Status::EndOfFile(err_msg);
--                    } else {
--                        return st;
--                    }
--                }
--            }
--        }
--        return Status::OK();
-+        _header_rows_to_skip =
-+                (_parse_options.skip_header && range_desc.start_offset == 0) ? _parse_options.skip_header : 0;
-     } else if (_curr_reader == nullptr) {
-         return Status::EndOfFile("CSVScanner");
-     }
-+    return _skip_header_rows();
+-    // create topic
++    // Create the topic with the consumer's default topic configuration, not a new one. librdkafka keeps one topic
++    // object per name, configured by whoever creates it first, and consuming the topic later uses that object too. A
++    // new configuration carries the default auto.offset.reset (largest) instead of the consumer's "error", so a pooled
++    // consumer that queried the metadata before consuming would jump to the end of a partition whose offset is out of
++    // range, skipping what is there, instead of failing.
+     std::string errstr;
+-    RdKafka::Topic* topic = RdKafka::Topic::create(_k_consumer, _topic, tconf, errstr);
++    RdKafka::Topic* topic = RdKafka::Topic::create(_k_consumer, _topic, nullptr, errstr);
+     if (topic == nullptr) {
+         std::stringstream ss;
+         ss << "failed to create topic: " << errstr;
+```
+
+**File**: `be/test/data_workflows/load/routine_load/data_consumer_test.cpp` (modified, +69/-0)
+```diff
+@@ -17,10 +17,12 @@
+ #include <chrono>
+ #include <map>
+ #include <thread>
++#include <vector>
+ 
+ #include "gtest/gtest.h"
+ 
+ // Routine load dependencies.
++#include "base/concurrency/stopwatch.hpp"
+ #include "base/testutil/assert.h"
+ #include "data_workflows/load/routine_load/data_consumer_group.h"
+ #include "exec/exec_env.h"
+@@ -230,6 +232,73 @@ TEST_F(KafkaDataConsumerEofTest, closed_queue_keeps_message_ownership_with_consu
+     EXPECT_EQ(nullptr, message);
+ }
+ 
++// A partition the consumer does not know makes it refresh the topic metadata once and query again, because a pooled
++// consumer misses the partitions added since its last refresh. A partition the topic really lacks still fails, and
++// fails fast rather than after the timeout.
++TEST_F(KafkaDataConsumerEofTest, partition_offset_of_a_missing_partition_fails_after_a_metadata_refresh) {
++    ASSERT_EQ(RdKafka::ERR_NO_ERROR, produce(0, 3));
++    std::vector<int32_t> partitions{0, 7};
++    std::vector<int64_t> beginning_offsets;
++    std::vector<int64_t> latest_offsets;
++    MonotonicStopWatch watch;
++    watch.start();
++    auto status = _consumer->get_partition_offset(&partitions, &beginning_offsets, &latest_offsets, 30000);
++    ASSERT_FALSE(status.ok());
++    EXPECT_NE(std::string::npos, status.to_string().find("failed to get offset of partition: 7")) << status;
++    EXPECT_NE(std::string::npos, status.to_string().find("Unknown partition")) << status;
++    EXPECT_LT(watch.elapsed_time() / 1000 / 1000, 10000);
++    ASSERT_EQ(1, latest_offsets.size());
++    EXPECT_EQ(0, beginning_offsets[0]);
++    EXPECT_EQ(3, latest_offsets[0]);
 +}
 +
-+Status CSVScanner::_skip_header_rows() {
-+    // A read of a stream load pipe that has no data yet times out. The header rows still to skip carry over to the
-+    // next call, which goes on with the same reader.
-+    while (_header_rows_to_skip > 0) {
-+        CSVReader::Record dummy;
-+        auto st = _curr_reader->next_record(&dummy);
-+        if (!st.ok()) {
-+            if (st.is_end_of_file()) {
-+                const int64_t skipped = _parse_options.skip_header - _header_rows_to_skip;
-+                _header_rows_to_skip = 0;
-+                auto err_msg = fmt::format(
-+                        "The parameter 'skip_header' is set to {}, but there are only {} rows in the csv file",
-+                        _parse_options.skip_header, skipped);
-+                return Status::EndOfFile(err_msg);
-+            }
-+            return st;
++// The case the refresh is for: a consumer answers "Unknown partition" from its metadata cache until librdkafka
++// refreshes it, for example after partitions were added to the topic. The mock broker cannot add partitions, so here
++// the consumer caches the topic as missing before the topic is created. The offset query must refresh the metadata
++// once and find the partitions.
++TEST_F(KafkaDataConsumerEofTest, partition_offset_is_found_after_refreshing_stale_metadata) {
++    auto* cluster = rd_kafka_handle_mock_cluster(_producer->c_ptr());
++    ASSERT_NE(nullptr, cluster);
++    const std::string topic = "routine_load_late_topic";
++    TKafkaLoadInfo info;
++    info.brokers = rd_kafka_mock_cluster_bootstraps(cluster);
++    info.topic = topic;
++    info.properties = {{"group.id", "routine-load-late-topic-test"}, {"enable.auto.commit", "false"}};
++    auto context = std::make_unique<StreamLoadContext>(nullptr);
++    context->kafka_info = std::make_unique<KafkaLoadInfo>(info);
++    auto consumer = std::make_unique<KafkaDataConsumer>(context.get());
++    ASSERT_OK(consumer->init(context.get()));
++
++    std::vector<int32_t> partitions{0};
++    std::vector<int64_t> beginning_offsets;
++    std::vector<int64_t> latest_offsets;
++    ASSERT_FALSE(consumer->get_partition_offset(&partitions, &beginning_offsets, &latest_offsets, 10000).ok());
++
++    ASSERT_EQ(RD_KAFKA_RESP_ERR_NO_ERROR, rd_kafka_mock_topic_create(cluster, topic.c_str(), 2, 1));
++    partitions = {0, 1};
++    beginning_offsets.clear();
++    latest_offsets.clear();
++    ASSERT_OK(consumer->get_partition_offset(&partitions, &beginning_offsets, &latest_offsets, 10000));
++    EXPECT_EQ((std::vector<int64_t>{0, 0}), beginning_offsets);
++    EXPECT_EQ((std::vector<int64_t>{0, 0}), latest_offsets);
++}
++
++// Querying the metadata creates the consumer's topic object, which consuming the topic then reuses. An offset out of
++// range must still fail the consumption, as auto.offset.reset=error asks, rather than jump to the end of the partition
++// and skip what is there.
++TEST_F(KafkaDataConsumerEofTest, out_of_range_offset_fails_after_a_metadata_query) {
++    ASSERT_EQ(RdKafka::ERR_NO_ERROR, produce(0, 3));
++    std::vector<int32_t> partitions;
++    ASSERT_OK(_consumer->get_partition_meta(&partitions, 10000));
++    ASSERT_EQ(3, partitions.size());
++
++    auto result = consume_batch({{0, 100}});
++    ASSERT_FALSE(result.status.ok());
++    EXPECT_NE(std::string::npos, result.status.to_string().find("out of range")) << result.status;
++    EXPECT_TRUE(result.data_rows.empty());
++    EXPECT_TRUE(result.eof_events.empty());
++}
++
+ // A minimal RdKafka::Message stand-in for build_kafka_message_meta: only the fields the builder reads
+ // (partition/offset/timestamp/key/headers) are backed; the rest of the librdkafka interface returns
+ // harmless defaults. Lets the message->meta mapping be exercised without a live broker.
+```
+
+---
+
+### Incident Patch 3: `80853902` (2026-11-05)
+**Commit Message**: [BugFix] Let a temporary partition adopt the bounds of the partition it overwrites (#78707)
+
+Signed-off-by: satanson <[REDACTED_EMAIL]>
+Signed-off-by: meegoo <[REDACTED_EMAIL]>
+Co-authored-by: meegoo <[REDACTED_EMAIL]>
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `fe/fe-core/src/main/java/com/starrocks/catalog/OlapTable.java` (modified, +53/-0)
+```diff
+@@ -42,7 +42,9 @@
+ import com.google.common.collect.Maps;
+ import com.google.common.collect.Multimap;
+ import com.google.common.collect.Range;
++import com.google.common.collect.RangeMap;
+ import com.google.common.collect.Sets;
++import com.google.common.collect.TreeRangeMap;
+ import com.google.gson.annotations.SerializedName;
+ import com.staros.proto.FileCacheInfo;
+ import com.staros.proto.FilePathInfo;
+@@ -2729,6 +2731,57 @@ public void dropTempPartition(String partitionName, boolean needDropTablet) {
+         }
+     }
+ 
++    /**
++     * Checks that {@link #replaceMatchPartitions} can promote the given temporary partitions without leaving two
++     * formal partitions whose ranges overlap. A temporary partition replaces the formal partition its name points
++     * at, if there is one, so it may overlap that partition and no other.
++     */
++    public void checkReplaceMatchPartitions(List<String> tempPartitionNames) throws DdlException {
++        if (!(partitionInfo instanceof RangePartitionInfo rangeInfo)) {
++            return;
 +        }
-+        --_header_rows_to_skip;
++        Map<Long, Range<PartitionKey>> tempRanges = rangeInfo.getIdToRange(true);
++        // temporary ranges never overlap each other, every one is checked against the others when it is created
++        RangeMap<PartitionKey, String> promotedRanges = TreeRangeMap.create();
++        Set<Long> replacedPartitionIds = Sets.newHashSet();
++        for (String tempPartitionName : tempPartitionNames) {
++            Partition tempPartition = tempPartitions.getPartition(tempPartitionName);
++            if (tempPartition == null) {
++                continue;
++            }
++            Partition replaced = nameToPartition.get(tempPartitionName.substring(
++                    tempPartitionName.indexOf(AnalyzerUtils.PARTITION_NAME_PREFIX_SPLIT) + 1));
++            if (replaced != null) {
++                replacedPartitionIds.add(replaced.getId());
++            }
++            Range<PartitionKey> range = tempRanges.get(tempPartition.getId());
++            if (range != null && !range.isEmpty()) {
++                promotedRanges.put(range, tempPartitionName);
++            }
++        }
++        if (promotedRanges.asMapOfRanges().isEmpty()) {
++            return;
++        }
++        // All formal ranges rather than the range index: on a table whose ranges already overlap, the index can hold
++        // one entry for two partitions that start at the same key.
++        for (Map.Entry<Long, Range<PartitionKey>> entry : rangeInfo.getIdToRange(false).entrySet()) {
++            if (replacedPartitionIds.contains(entry.getKey()) || entry.getValue().isEmpty()) {
++                continue;
++            }
++            Map<Range<PartitionKey>, String> overlapping = promotedRanges.subRangeMap(entry.getValue()).asMapOfRanges();
++            if (!overlapping.isEmpty()) {
++                String tempPartitionName = overlapping.values().iterator().next();
++                Range<PartitionKey> tempRange = tempRanges.get(tempPartitions.getPartition(tempPartitionName).getId());
++                Partition partition = idToPartition.get(entry.getKey());
++                throw new DdlException(String.format(
++                        "temporary partition %s [%s, %s) overlaps partition %s [%s, %s), which it does not replace",
++                        tempPartitionName, tempRange.lowerEndpoint().toSql(), tempRange.upperEndpoint().toSql(),
++                        partition == null ? entry.getKey() : partition.getName(),
++                        entry.getValue().lowerEndpoint().toSql(), entry.getValue().upperEndpoint().toSql()));
++            }
++        }
 +    }
-     return Status::OK();
- }
- 
++
+     public void replaceMatchPartitions(long dbId, List<String> tempPartitionNames) {
+         for (String partitionName : tempPartitionNames) {
+             Partition partition = tempPartitions.getPartition(partitionName);
 ```
 
-**File**: `be/src/connector/file/scanner/csv_scanner.h` (modified, +3/-0)
+**File**: `fe/fe-core/src/main/java/com/starrocks/catalog/RangePartitionInfo.java` (modified, +18/-0)
 ```diff
-@@ -76,6 +76,7 @@ class CSVScanner final : public FileScanner {
-     ChunkPtr _create_chunk(const std::vector<SlotDescriptor*>& slots);
+@@ -494,6 +494,24 @@ public long getEnclosingPartitionId(Map<ColumnId, Column> schema,
+         return -1;
+     }
  
-     Status _init_reader();
-+    Status _skip_header_rows();
-     Status _parse_csv(Chunk* chunk);
-     Status _parse_csv_v2(Chunk* chunk);
- 
-@@ -93,6 +94,8 @@ class CSVScanner final : public FileScanner {
-     int _num_fields_in_csv = 0;
-     int _curr_file_index = -1;
-     CSVReaderPtr _curr_reader;
-+    // Header rows of the current range still to skip; a timed-out read leaves the rest to the next call.
-+    int64_t _header_rows_to_skip = 0;
-     std::vector<ConverterPtr> _converters;
-     bool _use_v2;
-     CSVReader::Fields fields;
++    /**
++     * The formal partition whose range contains {@code key}, as (partition id, its range), or null when no formal
++     * partition contains it. O(log n) on the concurrent range index, so it may run without the table lock, where it
++     * can miss a partition that changes meanwhile.
++     */
++    public Map.Entry<Long, Range<PartitionKey>> getFormalPartitionContaining(PartitionKey key) {
++        // Ranges never overlap, so only the range starting at or right below the key can contain it. The probe
++        // [key, key] sorts with a non-empty range that starts at the key, and after an empty (shadow) one there.
++        Map.Entry<Range<PartitionKey>, Map.Entry<Long, Range<PartitionKey>>> floor =
++                rangeIndex.floorEntry(Range.closed(key, key));
++        // Check the entry's own range: on a table whose ranges already overlap, two of them can share a lower
++        // endpoint, and then the index keeps the key of one and the entry of the other.
++        while (floor != null && floor.getValue().getValue().isEmpty()) {
++            floor = rangeIndex.lowerEntry(floor.getKey());
++        }
++        return floor != null && floor.getValue().getValue().contains(key) ? floor.getValue() : null;
++    }
++
+     private NavigableMap<Range<PartitionKey>, Map.Entry<Long, Range<PartitionKey>>> rangeIndex(boolean isTemp) {
+         return isTemp ? tempRangeIndex : rangeIndex;
+     }
 ```
 
-**File**: `be/src/formats/csv/csv_reader.cpp` (modified, +23/-10)
+**File**: `fe/fe-core/src/main/java/com/starrocks/load/InsertOverwriteJobRunner.java` (modified, +3/-0)
 ```diff
-@@ -112,16 +112,26 @@ Status CSVReader::buffInit() {
- }
- 
- Status CSVReader::readMore(bool expandBuffer) {
-+    // Once a read of this more_rows() call has timed out, the row being parsed cannot be completed in this call.
-+    // Every later read fails at once too, also one inside is_row_delimiter() or is_column_delimiter(), which only
-+    // returns false: the parser then reaches NEWROW without taking bytes of a delimiter for data, and parses the
-+    // row again on the next call.
-+    if (UNLIKELY(!_read_timeout.ok())) {
-+        return _read_timeout;
-+    }
-+    Status st;
-     if (_buff.free_space() > 0) {
--        return _fill_buffer();
-+        st = _fill_buffer();
-+    } else if (expandBuffer) {
-+        RETURN_IF_ERROR(_expand_buffer_loosely());
-+        st = _fill_buffer();
-     } else {
--        if (expandBuffer) {
--            RETURN_IF_ERROR(_expand_buffer_loosely());
--            return _fill_buffer();
--        } else {
--            return Status::OK();
--        }
-+        return Status::OK();
-+    }
-+    if (UNLIKELY(st.is_time_out())) {
-+        _read_timeout = st;
-     }
-+    return st;
- }
- 
- #define DOUBLE_CHECK_AVAILABLE()                \
-@@ -156,6 +166,7 @@ Status CSVReader::more_rows() {
-     if (UNLIKELY(_limit > 0 && _parsed_bytes > _limit)) {
-         return Status::EndOfFile("Reached limit");
-     }
-+    _read_timeout = Status::OK();
-     Status status = Status::OK();
-     status = buffInit();
-     if (!status.ok()) {
-@@ -403,10 +414,12 @@ Status CSVReader::more_rows() {
- 
-         newrow_label:
-         case NEWROW:
--            if (reachBuffEnd) {
--                // We dot get the complete row, back the read pointer, continue next time.
-+            if (reachBuffEnd || UNLIKELY(status.is_time_out())) {
-+                // The row is not complete: move the read pointer back to its start and parse it again next time. A
-+                // timed-out read (a stream load pipe that has no data yet) returns its status so that the scanner
-+                // yields; the bytes of the row stay in the buffer for the next call.
-                 _buff.set_position_offset(parsed_start);
--                return Status::OK();
-+                return status;
+@@ -947,6 +947,9 @@ protected void doCommit() {
+                         stats.setSourceRows(sumSourceRows);
+                     }
+                     LOG.info("dynamic overwrite job {} replace tmpPartitionNames:{}", job.getJobId(), tmpPartitionNames);
++                    // replaceMatchPartitions swaps by name only; refuse a swap that would leave two formal
++                    // partitions with overlapping ranges, which reads and later loads cannot tell apart
++                    targetTable.checkReplaceMatchPartitions(tmpPartitionNames);
+                     ensureTempPartitionsVisible(targetTable, tmpPartitionIds);
+                 } else {
+                     ensureTempPartitionsVisible(targetTable, tmpPartitionIds);
+```
+
+**File**: `fe/fe-core/src/main/java/com/starrocks/sql/analyzer/AnalyzerUtils.java` (modified, +76/-3)
+```diff
+@@ -26,6 +26,7 @@
+ import com.google.common.collect.Lists;
+ import com.google.common.collect.Maps;
+ import com.google.common.collect.Multimap;
++import com.google.common.collect.Range;
+ import com.google.common.collect.Sets;
+ import com.starrocks.authorization.AccessDeniedException;
+ import com.starrocks.authorization.ObjectType;
+@@ -42,6 +43,7 @@
+ import com.starrocks.catalog.MaterializedView;
+ import com.starrocks.catalog.OlapTable;
+ import com.starrocks.catalog.PaimonTable;
++import com.starrocks.catalog.Partition;
+ import com.starrocks.catalog.PartitionInfo;
+ import com.starrocks.catalog.PartitionKey;
+ import com.starrocks.catalog.Table;
+@@ -1905,8 +1907,10 @@ public static AddPartitionClause getAddPartitionClauseFromPartitionValues(OlapTa
+             ExpressionPartitionDesc expressionPartitionDesc = (ExpressionPartitionDesc) partitionDesc;
+             PartitionMeasure measure = checkAndGetPartitionMeasure(expressionPartitionDesc.getExpr());
+             PartitionInfo partitionInfo = olapTable.getPartitionInfo();
++            // The caller supplies the granularity here (partition merge builds its target partition this
++            // way), so the existing partitions are exactly what it intends to replace — never adopt them.
+             return getAddPartitionClauseForRangePartition(olapTable, partitionValues, isTemp, partitionNamePrefix, measure,
+-                    distributionDesc, (ExpressionRangePartitionInfo) partitionInfo);
++                    distributionDesc, (ExpressionRangePartitionInfo) partitionInfo, false);
+         } else {
+             PartitionInfo partitionInfo = olapTable.getPartitionInfo();
+             throw new AnalysisException("Unsupported partition type " + partitionInfo.getType());
+@@ -1927,8 +1931,11 @@ public static AddPartitionClause getAddPartitionClauseFromPartitionValues(OlapTa
              }
-             _parsed_bytes += _buff.position_offset() - parsed_start;
-             parsed_end = _buff.position_offset();
-```
-
-**File**: `be/src/formats/csv/csv_reader.h` (modified, +2/-0)
-```diff
-@@ -220,6 +220,8 @@ class CSVReader {
+             Expr expr = partitionExprs.get(0);
+             PartitionMeasure measure = checkAndGetPartitionMeasure(expr);
++            // Granularity comes from the table's own expression, so an existing partition may legitimately
++            // be coarser than it (partition merge is scoped by BETWEEN and leaves the expression alone).
++            // A temporary partition is swapped into this table, so it must not contradict what is there.
+             return getAddPartitionClauseForRangePartition(olapTable, partitionValues, isTemp, partitionNamePrefix, measure,
+-                    null, expressionRangePartitionInfo);
++                    null, expressionRangePartitionInfo, isTemp);
+         } else if (partitionInfo instanceof ListPartitionInfo) {
+             Short replicationNum = olapTable.getTableProperty().getReplicationNum();
+             DistributionDesc distributionDesc = olapTable.getDefaultDistributionInfo()
+@@ -2040,7 +2047,8 @@ private static AddPartitionClause getAddPartitionClauseForRangePartition(
+             String partitionPrefix,
+             PartitionMeasure measure,
+             DistributionDesc distributionDesc,
+-            ExpressionRangePartitionInfo expressionRangePartitionInfo) throws AnalysisException {
++            ExpressionRangePartitionInfo expressionRangePartitionInfo,
++            boolean adoptCoveringPartition) throws AnalysisException {
+         String granularity = measure.getGranularity();
+         long interval = measure.getInterval();
+         Type firstPartitionColumnType = expressionRangePartitionInfo.getPartitionColumns(olapTable.getIdToColumn())
+@@ -2078,6 +2086,20 @@ private static AddPartitionClause getAddPartitionClauseForRangePartition(
+                 PartitionKeyDesc partitionKeyDesc =
+                         createPartitionKeyDesc(firstPartitionColumnType, beginTime, endTime);
  
-     size_t _parsed_bytes = 0;
-     size_t _limit = 0;
-+    // Set by the first read of a more_rows() call that times out (a stream load pipe that has no data yet).
-+    Status _read_timeout;
- };
++                // A partition may be coarser than the table's partition expression: ALTER TABLE ...
++                // PARTITION BY <coarser expr> BETWEEN a AND b merges a range of partitions and, being
++                // scoped by BETWEEN, deliberately leaves the expression alone. A temporary partition is
++                // swapped into this table afterwards, so computing its bounds from the expression would
++                // re-introduce the finer partitions the merge had removed.
++                if (adoptCoveringPartition) {
++                    Pair<String, PartitionKeyDesc> covering =
++                            findCoveringPartition(olapTable, expressionRangePartitionInfo, partitionItem);
++                    if (covering != null) {
++                        partitionName = covering.first;
++                        partitionKeyDesc = covering.second;
++                    }
++                }
++
+                 if (partitionPrefix != null) {
+                     if (partitionPrefix.contains(PARTITION_NAME_PREFIX_SPLIT)) {
+                         throw new AnalysisException("partition name prefix can not contain " + PARTITION_NAME_PREFIX_SPLIT);
+@@ -2103,6 +2125,57 @@ private static AddPartitionClause getAddPartitionClauseForRangePartition(
+
+```
+
+**File**: `fe/fe-core/src/test/java/com/starrocks/alter/MergePartitionJobTest.java` (modified, +193/-0)
+```diff
+@@ -16,22 +16,28 @@
  
- } // namespace starrocks
+ import com.google.common.collect.Lists;
+ import com.google.common.collect.Maps;
++import com.google.common.collect.Range;
+ import com.google.common.collect.Sets;
+ import com.starrocks.alter.AlterJobV2.JobState;
+ import com.starrocks.catalog.CatalogRecycleBin;
+ import com.starrocks.catalog.Database;
++import com.starrocks.catalog.ExpressionRangePartitionInfo;
+ import com.starrocks.catalog.GlobalStateMgrTestUtil;
+ import com.starrocks.catalog.LocalTablet;
+ import com.starrocks.catalog.MaterializedIndex;
+ import com.starrocks.catalog.OlapTable;
+ import com.starrocks.catalog.OlapTable.OlapTableState;
+ import com.starrocks.catalog.Partition;
++import com.starrocks.catalog.PartitionKey;
+ import com.starrocks.catalog.PhysicalPartition;
++import com.starrocks.catalog.RangePartitionInfo;
+ import com.starrocks.catalog.Replica;
+ import com.starrocks.catalog.Tablet;
+ import com.starrocks.catalog.TabletInvertedIndex;
+ import com.starrocks.common.Config;
++import com.starrocks.common.DdlException;
+ import com.starrocks.common.jmockit.Deencapsulation;
++import com.starrocks.common.util.RangeUtils;
+ import com.starrocks.common.util.UUIDUtil;
+ import com.starrocks.persist.AddPartitionsInfoV2;
+ import com.starrocks.persist.OperationType;
+@@ -50,8 +56,21 @@
+ import com.starrocks.scheduler.persist.TaskRunStatus;
+ import com.starrocks.server.GlobalStateMgr;
+ import com.starrocks.server.LocalMetastore;
++import com.starrocks.service.ExecuteEnv;
++import com.starrocks.service.FrontendServiceImpl;
++import com.starrocks.sql.analyzer.AlterTableClauseAnalyzer;
++import com.starrocks.sql.analyzer.AnalyzerUtils;
+ import com.starrocks.sql.analyzer.DDLTestBase;
++import com.starrocks.sql.ast.AddPartitionClause;
+ import com.starrocks.sql.ast.AlterTableStmt;
++import com.starrocks.sql.ast.ExpressionPartitionDesc;
++import com.starrocks.sql.ast.PartitionKeyDesc;
++import com.starrocks.sql.ast.RangePartitionDesc;
++import com.starrocks.sql.ast.SingleRangePartitionDesc;
++import com.starrocks.sql.ast.expression.Expr;
++import com.starrocks.thrift.TCreatePartitionRequest;
++import com.starrocks.thrift.TCreatePartitionResult;
++import com.starrocks.thrift.TStatusCode;
+ import com.starrocks.transaction.GlobalTransactionMgr;
+ import com.starrocks.transaction.TabletCommitInfo;
+ import com.starrocks.transaction.TransactionState;
+@@ -66,6 +85,7 @@
+ import org.mockito.Mockito;
+ 
+ import java.util.ArrayList;
++import java.util.Arrays;
+ import java.util.Collection;
+ import java.util.Collections;
+ import java.util.HashMap;
+@@ -702,6 +722,179 @@ private static void assertPruned(MergePartitionJob job) {
+         Assertions.assertNull(Deencapsulation.getField(job, "optimizeClause"));
+     }
+ 
++    // ---- dynamic overwrite into a merged table --------------------------------------------------
++
++    /**
++     * A merge leaves the partition expression at day, and the dynamic overwrite RPC used to build its temp partitions
++     * from it: txn_p20240130 and so on, which the commit then made formal partitions inside the merged p202401. The
++     * temp partitions take the merged partitions' names and ranges now, so the swap replaces them as a whole.
++     */
++    @Test
++    public void testDynamicOverwriteAfterMergeReplacesMergedPartitions() throws Exception {
++        OlapTable table = createTwoMonthDailyPartitionedTable("t_merge_dynamic_overwrite");
++        mergeIntoMonths(table);
++        assertDynamicOverwriteReplacesMergedPartitions(table, "2024-01-30", "2024-01-31", "2024-02-01");
++    }
++
++    @Test
++    public void testDynamicOverwriteAfterMergeReplacesMergedDatetimePartitions() throws Exception {
++        starRocksAssert.withTable("CREATE TABLE t_merge_dynamic_overwrite_datetime (k DATETIME, v INT) " +
++                "DUPLICATE KEY(k) PARTITION BY date_trunc('day', k) " +
++                "(START ('2024-01-30') END ('2024-02-02') EVERY (INTERVAL 1 DAY)) " +
++                "DISTRIBUTED BY HASH(k) BUCKETS 1 PROPERTIES ('replication_num' = '1')");
++        OlapTable table = (OlapTable) starRocksAssert.getTable(GlobalStateMgrTestUtil.testDb1,
++                "t_merge_dynamic_overwrite_datetime");
++        mergeIntoMonths(table);
++        assertDynamicOverwriteReplacesMergedPartitions(table,
++                "2024-01-30 08:00:00", "2024-01-31 23:59:59", "2024-02-01 00:00:00");
++    }
++
++    /**
++     * Only temp partitions built from the table's own expression adopt the partition covering their value. An
++     * ordinary load keeps the expression's partitions (the sink never asks for a value a partition covers, and the
++     * analyzer maps such a partition to the merged one), and a merge gives the granularity of its target itself.
++     */
++    @Test
++    public void testOnlyDynamicOverwriteTempPartitionsAdoptTheCoveringPartition() throws Exception {
++        OlapTable table = createTwoMonthDailyPartitionedTable("t_merge_clause_adopts");
++        mergeIntoMonths(table);
++        List<List<String>> values = List.of(List.of("2024-01-30"), List.of
 ```
 
-**File**: `be/test/compute_env/CMakeLists.txt` (modified, +1/-0)
+**File**: `fe/fe-core/src/test/java/com/starrocks/sql/analyzer/AnalyzerUtilsTempPartitionOnMergedTest.java` (added, +219/-0)
 ```diff
-@@ -76,6 +76,7 @@ add_executable(compute_env_test
-         data_stream_mgr_test.cpp
-         fragment_dict_state_test.cpp
-         load/load_stream_mgr_test.cpp
-+        load/stream_context_mgr_test.cpp
-         load/stream_load_context_test.cpp
-         load/stream_load_metrics_test.cpp
-         load/stream_load_pipe_test.cpp
-```
-
-**File**: `be/test/compute_env/load/stream_context_mgr_test.cpp` (added, +125/-0)
-```diff
-@@ -0,0 +1,125 @@
+@@ -0,0 +1,219 @@
 +// Copyright 2021-present StarRocks, Inc. All rights reserved.
 +//
 +// Licensed under the Apache License, Version 2.0 (the "License");
@@ -2533,109 +2343,306 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 +// See the License for the specific language governing permissions and
 +// limitations under the License.
 +
-+#include "compute_env/load/stream_context_mgr.h"
++package com.starrocks.sql.analyzer;
 +
-+#include <gtest/gtest.h>
++import com.google.common.collect.ImmutableMap;
++import com.google.common.collect.Lists;
++import com.google.common.collect.Range;
++import com.starrocks.catalog.Column;
++import com.starrocks.catalog.DistributionInfo;
++import com.starrocks.catalog.ExpressionRangePartitionInfo;
++import com.starrocks.catalog.HashDistributionInfo;
++import com.starrocks.catalog.OlapTable;
++import com.starrocks.catalog.Partition;
++import com.starrocks.catalog.PartitionKey;
++import com.starrocks.catalog.PartitionType;
++import com.starrocks.catalog.TableProperty;
++import com.starrocks.common.AnalysisException;
++import com.starrocks.common.DdlException;
++import com.starrocks.persist.ColumnIdExpr;
++import com.starrocks.sql.ast.AddPartitionClause;
++import com.starrocks.sql.ast.KeysType;
++import com.starrocks.sql.ast.PartitionKeyDesc;
++import com.starrocks.sql.ast.PartitionValue;
++import com.starrocks.sql.ast.RangePartitionDesc;
++import com.starrocks.sql.ast.SingleRangePartitionDesc;
++import com.starrocks.sql.ast.expression.Expr;
++import com.starrocks.sql.ast.expression.FunctionCallExpr;
++import com.starrocks.sql.ast.expression.SlotRef;
++import com.starrocks.sql.ast.expression.StringLiteral;
++import com.starrocks.type.DateType;
++import org.junit.jupiter.api.Assertions;
++import org.junit.jupiter.api.Test;
 +
-+#include <chrono>
-+#include <cstdint>
-+#include <functional>
-+#include <future>
-+#include <memory>
-+#include <optional>
-+#include <string>
-+#include <type_traits>
-+#include <utility>
++import java.util.Collections;
++import java.util.List;
 +
-+#include "base/testutil/assert.h"
-+#include "base/uid_util.h"
-+#include "base/utility/defer_op.h"
-+#include "compute_env/load/load_stream_mgr.h"
-+#include "compute_env/load/stream_load_context.h"
-+#include "compute_env/load/stream_load_pipe.h"
-+#include "gen_cpp/PlanNodes_types.h"
-+#include "runtime/byte_buffer.h"
++/**
++ * Automatic partitions created at load time must not contradict the partitions the table already has.
++ *
++ * <p>A table can hold partitions coarser than its own partition expression: {@code ALTER TABLE t
++ * PARTITION BY date_trunc('month', dt) BETWEEN ...} merges a range of daily partitions into one
++ * monthly partition and — by design, since the merge is scoped by BETWEEN — leaves the table's
++ * partition expression at {@code date_trunc('day', dt)}. That state is reachable only through the
++ * merge job (a table with automatic partitioning rejects a manual ADD PARTITION), so these tests
++ * build it directly on the metadata.
++ *
++ * <p>Ordinary loads are unaffected: the sink resolves a row against the existing ranges and only
++ * asks the FE for a partition when no range covers it. Dynamic overwrite is different — it creates
++ * a *temporary* partition per written partition at load time and swaps it in afterwards, so a
++ * temporary partition computed from the expression granularity instead of the covering partition
++ * re-introduces the daily partitions the merge had removed.
++ */
++public class AnalyzerUtilsTempPartitionOnMergedTest {
 +
-+namespace starrocks {
++    private static final long MERGED_PARTITION_ID = 10001L;
 +
-+// A lone bool used to bind to StreamLoadPipe(size_t max_buffered_bytes, ...): a 1-byte buffer with blocking reads.
-+static_assert(!std::is_constructible_v<StreamLoadPipe, bool>);
-+static_assert(std::is_constructible_v<StreamLoadPipe, size_t>);
++    /** A day-partitioned table that already holds one monthly partition, as a merge would leave it. */
++    private static OlapTable mergedTable() throws Exception {
++        Column dt = new Column("dt", DateType.DATE);
++        List<Column> schema = Lists.newArrayList(dt);
 +
-+namespace {
++        Expr dayExpr = new FunctionCallExpr("date_trunc",
++                Lists.newArrayList(new StringLiteral("day"), new SlotRef(null, "dt")));
++        ExpressionRangePartitionInfo partitionInfo = new ExpressionRangePartitionInfo(
++                Lists.newArrayList(ColumnIdExpr.create(dayExpr)), schema, PartitionType.EXPR_RANGE);
 +
-+ByteBufferPtr make_buffer(size_t size, char fill) {
-+    auto buf = ByteBuffer::allocate_with_tracker(size).value();
-+    const std::string data(size, fill);
-+    buf->put_bytes(data.data(), data.size());
-+    buf->flip_to_read();
-+    return buf;
-+}
++        HashDistributionInfo distributionInfo = new HashDistributionInfo(1, schema);
++        OlapTable table = new OlapTable(1L, "merged_day_tbl", schema, KeysType.DUP_KEYS,
++                partitionInfo, distributionInfo);
++        table.setTableProperty(new TableProperty(ImmutableMap.of("replication_num", "1")));
 +
-+// Runs `fn` on another thread and waits up to 10 s for it. A pipe call that blocks would never return, so on a
-+// timeout the pipe is cancelled to release the thread, and nullopt lets the caller fail instead of hanging.
-+std::optional<Status> call_with_deadline(StreamLoadPipe* pipe, std::function<Status()> fn) {
-+    auto future = std::async(std::launch::async, std::move(fn));
-+    if (future.wait_for(std::chrono::seconds(10)) != std::future_status::ready) {
-+        pipe->cancel(Status::Cancelled("blocked past the deadline"));
-+        future.wait();
-+        return std::nullopt;
++        Range<PartitionKey> january = Range.closedOpen(
++                PartitionKey.createPartitionKey(
++                        Collections.singletonList(new PartitionValue("2026-01-01")), schema),
++                PartitionKey.createPartitionKey(
++                        Collections.singletonList(new PartitionValue("2026-02-01")), schema));
++        partitionInfo.setRange(MERGED_PARTITION_ID, false, january);
++        partitionInfo.setReplicationNum(MERGED_PARTITION_ID, (short) 1);
++        table.addPartition(new Partition(MERGED_PARTITION_ID, "p202601", distributionInfo));
++        return table;
 +    }
-+    return future.get();
-+}
 +
-+} // namespace
++    private static List<List<String>> values(String partitionValue) {
++        return Collections.singletonList(Collections.singletonList(partitionValue));
++   
+```
+
+**File**: `test/sql/test_optimize_table/R/test_merge_partition_dynamic_overwrite` (added, +158/-0)
+```diff
+@@ -0,0 +1,158 @@
++-- name: test_dynamic_overwrite_into_merged_partition
++create database test_merge_dyn_ow_${uuid0};
++-- result:
++-- !result
++use test_merge_dyn_ow_${uuid0};
++-- result:
++-- !result
++create table t(dt date not null, k int not null, v int) duplicate key(dt, k) partition by date_trunc('day', dt) distributed by hash(k) buckets 2 properties("replication_num"="1");
++-- result:
++-- !result
++insert into t values ('2026-01-01', 1, 101), ('2026-01-01', 2, 102), ('2026-01-02', 1, 201), ('2026-01-03', 1, 301), ('2026-02-03', 1, 2301);
++-- result:
++-- !result
++alter table t partition by date_trunc('month', dt) between '2026-01-01' and '2026-01-31';
++-- result:
++-- !result
++function: wait_optimize_table_finish()
++-- result:
++None
++-- !result
++function: print_query_columns("show partitions from t", "PartitionName", "Range")
++-- result:
++p202601	[types: [DATE]; keys: [2026-01-01]; ..types: [DATE]; keys: [2026-02-01]; )
++p20260203	[types: [DATE]; keys: [2026-02-03]; ..types: [DATE]; keys: [2026-02-04]; )
++-- !result
++set dynamic_overwrite = true;
++-- result:
++-- !result
++insert overwrite t values ('2026-01-01', 1, 9001), ('2026-01-01', 2, 9002);
++-- result:
++-- !result
++set dynamic_overwrite = false;
++-- result:
++-- !result
++function: print_query_columns("show partitions from t", "PartitionName", "Range")
++-- result:
++p202601	[types: [DATE]; keys: [2026-01-01]; ..types: [DATE]; keys: [2026-02-01]; )
++p20260203	[types: [DATE]; keys: [2026-02-03]; ..types: [DATE]; keys: [2026-02-04]; )
++-- !result
++select * from t order by dt, k;
++-- result:
++2026-01-01	1	9001
++2026-01-01	2	9002
++2026-02-03	1	2301
++-- !result
++select count(*), sum(v) from t where dt = '2026-01-01';
++-- result:
++2	18003
++-- !result
++set dynamic_overwrite = true;
++-- result:
++-- !result
++insert overwrite t values ('2026-01-15', 1, 9151), ('2026-02-03', 1, 9231), ('2026-03-05', 1, 9351);
++-- result:
++-- !result
++set dynamic_overwrite = false;
++-- result:
++-- !result
++function: print_query_columns("show partitions from t", "PartitionName", "Range")
++-- result:
++p202601	[types: [DATE]; keys: [2026-01-01]; ..types: [DATE]; keys: [2026-02-01]; )
++p20260203	[types: [DATE]; keys: [2026-02-03]; ..types: [DATE]; keys: [2026-02-04]; )
++p20260305	[types: [DATE]; keys: [2026-03-05]; ..types: [DATE]; keys: [2026-03-06]; )
++-- !result
++select * from t order by dt, k;
++-- result:
++2026-01-15	1	9151
++2026-02-03	1	9231
++2026-03-05	1	9351
++-- !result
++select dt, count(*), sum(v) from t where dt in ('2026-01-01', '2026-01-15', '2026-02-03', '2026-03-05') group by dt order by dt;
++-- result:
++2026-01-15	1	9151
++2026-02-03	1	9231
++2026-03-05	1	9351
++-- !result
++drop database test_merge_dyn_ow_${uuid0};
++-- result:
++-- !result
++-- name: test_dynamic_overwrite_into_merged_partition_pk
++create database test_merge_dyn_ow_pk_${uuid0};
++-- result:
++-- !result
++use test_merge_dyn_ow_pk_${uuid0};
++-- result:
++-- !result
++create table t(dt date not null, k int not null, v int) primary key(dt, k) partition by date_trunc('day', dt) distributed by hash(k) buckets 2 properties("replication_num"="1");
++-- result:
++-- !result
++insert into t values ('2026-01-01', 1, 101), ('2026-01-01', 2, 102), ('2026-01-02', 1, 201), ('2026-01-03', 1, 301), ('2026-02-03', 1, 2301);
++-- result:
++-- !result
++alter table t partition by date_trunc('month', dt) between '2026-01-01' and '2026-01-31';
++-- result:
++-- !result
++function: wait_optimize_table_finish()
++-- result:
++None
++-- !result
++function: print_query_columns("show partitions from t", "PartitionName", "Range")
++-- result:
++p202601	[types: [DATE]; keys: [2026-01-01]; ..types: [DATE]; keys: [2026-02-01]; )
++p20260203	[types: [DATE]; keys: [2026-02-03]; ..types: [DATE]; keys: [2026-02-04]; )
++-- !result
++set dynamic_overwrite = true;
++-- result:
++-- !result
++insert overwrite t values ('2026-01-01', 1, 9001), ('2026-01-01', 2, 9002);
++-- result:
++-- !result
++set dynamic_overwrite = false;
++-- result:
++-- !result
++function: print_query_columns("show partitions from t", "PartitionName", "Range")
++-- result:
++p202601	[types: [DATE]; keys: [2026-01-01]; ..types: [DATE]; keys: [2026-02-01]; )
++p20260203	[types: [DATE]; keys: [2026-02-03]; ..types: [DATE]; keys: [2026-02-04]; )
++-- !result
++select * from t order by dt, k;
++-- result:
++2026-01-01	1	9001
++2026-01-01	2	9002
++2026-02-03	1	2301
++-- !result
++select count(*), sum(v) from t where dt = '2026-01-01';
++-- result:
++2	18003
++-- !result
++set dynamic_overwrite = true;
++-- result:
++-- !result
++insert overwrite t values ('2026-01-15', 1, 9151), ('2026-02-03', 1, 9231), ('2026-03-05', 1, 9351);
++-- result:
++-- !result
++set dynamic_overwrite = false;
++-- result:
++-- !result
++function: print_query_columns("show partitions from t", "PartitionName", "Range")
++-- result:
++p202601	[types: [DATE]; keys: [2026-01-01]; ..types: [DATE]; keys: [2026-02-01]; )
++p20260203	[types: [DATE]; keys: [2026-02-03]; ..types: [DATE]; keys: [2026-02-04]; )
++p20260305	[types: [DATE]; keys: [2026-03-05]; ..types: [DATE]; k
+```
+
+**File**: `test/sql/test_optimize_table/T/test_merge_partition_dynamic_overwrite` (added, +56/-0)
+```diff
+@@ -0,0 +1,56 @@
++-- name: test_dynamic_overwrite_into_merged_partition
++create database test_merge_dyn_ow_${uuid0};
++use test_merge_dyn_ow_${uuid0};
 +
-+// A channel stays open between the requests of a transaction and until it is committed. If its pipe blocked a
-+// reader that has no data, every open channel would hold a connector scan thread; if the pipe could not buffer a
-+// request while the fragment is not reading, the HTTP worker delivering it would wait for the fragment. Together
-+// they deadlocked compute nodes with more open channels than connector scan threads until the transactions timed
-+// out.
-+TEST(StreamContextMgrTest, channel_pipe_reads_without_blocking_and_buffers_requests) {
-+    // Declared first: a context removes its pipe from the load stream manager when it is released.
-+    LoadStreamMgr load_stream_mgr;
-+    StreamContextMgr stream_context_mgr(&load_stream_mgr);
-+    const TUniqueId load_id = UniqueId::gen_uid().to_thrift();
-+    StreamLoadContext* ctx = nullptr;
-+    ASSERT_OK(stream_context_mgr.create_channel_context("label", 0, "db", "tbl", TFileFormatType::FORMAT_CSV_PLAIN, ctx,
-+                                                        load_id, 1));
-+    DeferOp release_ctx([&] { StreamLoadContext::release(ctx); });
++create table t(dt date not null, k int not null, v int) duplicate key(dt, k) partition by date_trunc('day', dt) distributed by hash(k) buckets 2 properties("replication_num"="1");
++insert into t values ('2026-01-01', 1, 101), ('2026-01-01', 2, 102), ('2026-01-02', 1, 201), ('2026-01-03', 1, 301), ('2026-02-03', 1, 2301);
 +
-+    auto pipe = std::dynamic_pointer_cast<StreamLoadPipe>(ctx->body_sink);
-+    ASSERT_NE(nullptr, pipe);
-+    ASSERT_EQ(pipe, load_stream_mgr.get(load_id));
++-- the merge leaves the partition expression at day
++alter table t partition by date_trunc('month', dt) between '2026-01-01' and '2026-01-31';
++function: wait_optimize_table_finish()
++function: print_query_columns("show partitions from t", "PartitionName", "Range")
 +
-+    // The fragment starts reading before any request arrives: the read times out instead of blocking.
-+    auto read_st = call_with_deadline(pipe.get(), [&pipe] { return pipe->read().status(); });
-+    ASSERT_TRUE(read_st.has_value()) << "a read with no data blocked";
-+    ASSERT_TRUE(read_st->is_time_out()) << *read_st;
++-- a dynamic overwrite of one January day replaces the merged p202601 as a whole, no daily partition comes back
++set dynamic_overwrite = true;
++insert overwrite t values ('2026-01-01', 1, 9001), ('2026-01-01', 2, 9002);
++set dynamic_overwrite = false;
++function: print_query_columns("show partitions from t", "PartitionName", "Range")
++select * from t order by dt, k;
++select count(*), sum(v) from t where dt = '2026-01-01';
 +
-+    // The scanners read through StreamLoadPipeInputStream, which uses the byte read.
-+    auto byte_read_st = call_with_deadline(pipe.get(), [&pipe] {
-+        uint8_t data[16];
-+        size_t size = sizeof(data);
-+        bool eof = false;
-+        return pipe->read(data, &size, &eof);
-+    });
-+    ASSERT_TRUE(byte_read_st.has_value()) << "a byte read with no data blocked";
-+    ASSERT_TRUE(byte_read_st->is_time_out()) << *byte_read_st;
++-- the merged month, a daily partition and a day that has no partition yet
++set dynamic_overwrite = true;
++insert overwrite t values ('2026-01-15', 1, 9151), ('2026-02-03', 1, 9231), ('2026-03-05', 1, 9351);
++set dynamic_overwrite = false;
++function: print_query_columns("show partitions from t", "PartitionName", "Range")
++select * from t order by dt, k;
++select dt, count(*), sum(v) from t where dt in ('2026-01-01', '2026-01-15', '2026-02-03', '2026-03-05') group by dt order by dt;
 +
-+    // Two requests arrive while the fragment is not reading. Both fit in the default buffer, so the second one
-+    // does not wait for the fragment to consume the first.
-+    const size_t request_bytes = DEFAULT_STREAM_LOAD_PIPE_BUFFERED_BYTES / 2;
-+    ASSERT_OK(pipe->append(make_buffer(request_bytes, 'a')));
-+    auto second_request = make_buffer(request_bytes, 'b');
-+    auto append_st = call_with_deadline(pipe.get(), [&] { return pipe->append(std::move(second_request)); });
-+    ASSERT_TRUE(append_st.has_
++drop database test_merge_dyn_ow_${uuid0};
++
++-- name: test_dynamic_overwrite_into_merged_partition_pk
++create database test_merge_dyn_ow_pk_${uuid0};
++use test_merge_dyn_ow_pk_${uuid0};
++
++create table t(dt date not null, k int not null, v int) primary key(dt, k) partition by date_trunc('day', dt) distributed by hash(k) buckets 2 properties("replication_num"="1");
++insert into t values ('2026-01-01', 1, 101), ('2026-01-01', 2, 102), ('2026-01-02', 1, 201), ('2026-01-03', 1, 301), ('2026-02-03', 1, 2301);
++
++alter table t partition by date_trunc('month', dt) between '2026-01-01' and '2026-01-31';
++function: wait_optimize_table_finish()
++function: print_query_columns("show partitions from t", "PartitionName", "Range")
++
++set dynamic_overwrite = true;
++insert overwrite t values ('2026-01-01', 1, 9001), ('2026-01-01', 2, 9002);
++set dynamic_overwrite = false;
++function: print_query_columns("show partitions from t", "PartitionName", "Range")
++select * from t order by dt, k;
++select count(*), sum(v) from t where dt = '2026-01-01';
++
++set dynamic_overwrite = true;
++insert overwrite t values ('2026-01-15', 1, 9151), ('2026-02-03', 1, 9231), ('2026-03-05', 1, 9351);
++set dynamic_overwrite = false;
++function: print_query_columns("show partitions from t", "PartitionName", "Range")
++select * from t order by dt, k;
++select dt, count(*), sum(v) from t where dt in ('2026-01-01', '2026-01-15', '2026-02-03', '2026-03-05') group by dt order by dt;
++
++drop database test_merge_dyn_ow_pk_${uuid0};
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #82406** (2026-11-04): [Tool] Retire the stale GEO storage descriptor waivers (backport #82400) (@trueeyu)
-- **PR #82403** (2026-11-04): [UT][RB-428] Stop the background publish in OptimizeJobV2Test (backport #82396) (@mergify[bot])
-- **PR #82401** (2026-11-04): [Enhancement] Keep a bundled tablet's lake publish result for the retry (backport #81774) (@mergify[bot])
-- **PR #82400** (2026-11-04): [Tool] Retire the stale GEO storage descriptor waivers (@trueeyu)
-- **PR #82396** (2026-11-04): [UT][RB-428] Stop the background publish in OptimizeJobV2Test (@starrocks-bot[bot])
-- **PR #82393** (2026-11-04): [Refactor] Use DistinctAggregateStateV2 for the nullable decimal_multi_distinct_sum wrapper (backport #82383) (@mergify[bot])
+- **PR #82487** (2026-11-05): [BugFix][RB-96] Allow metadata-only ALTER TABLE while a range table is resharding (backport #82457) (@mergify[bot])
+- **PR #82485** (2026-11-05): [Enhancement][RB-225] Serve the Iceberg column-statistics path from the manifest cache and use only fresh Puffin NDVs (backport #82462) (@mergify[bot])
+- **PR #82484** (2026-11-05): [Enhancement][RB-225] Honor the Iceberg write metrics config for data files written by StarRocks (backport #82464) (@mergify[bot])
+- **PR #82466** (2026-11-05): [Enhancement][RB-904] Show a load job's rejected rows only to users with SELECT on its target tables (@starrocks-bot[bot])
+- **PR #82465** (2026-11-05): [Enhancement] Add passive FE models for grouped range scans (backport #82453) (@mergify[bot])
+- **PR #82464** (2026-11-05): [Enhancement][RB-225] Honor the Iceberg write metrics config for data files written by StarRocks (@starrocks-bot[bot])
 
 ---
 
@@ -2655,28 +2662,30 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [BugFix] Never raise a decimal overflow error from a NULL row's data under ERROR
+## X. [UT] Split the range sync MV reshard case so it fits the case timeout (#81416)
 
 **RULE**:
-When implementing operations in `be/src/exprs/arithmetic_expr.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in StarRocks/starrocks. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `test/sql/test_range_orderby/R/test_range_sync_mv_reshard.sql`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in StarRocks/starrocks. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `84536d8f`: [BugFix] Never raise a decimal overflow error from a NULL row's data under ERROR_IF_OVERFLOW (#82254). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `dfbaec3e`: [UT] Split the range sync MV reshard case so it fits the case timeout (#81416). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `be/src/exprs/arithmetic_expr.cpp`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `test/sql/test_range_orderby/R/test_range_sync_mv_reshard.sql`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-    using CastFunction = VectorizedDecimalCastFunction<DecimalTo, Mode>;                  \
+-- Scope: Shared-data range synchronous MV backfill, double writes and maintenance for SUM/COUNT/MIN/MAX/AVG MVs.
+-- The sketch MVs run the same flow in test_range_sync_mv_reshard_sketch: one case holding all seven ran within
+-- seconds of the 150-second case timeout.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Anti-pattern to NEVER write (induced failure mode):
-    using CastFunction = VectorizedUnaryFunction<DecimalTo<Mode>>;                        \
+shell: exec python3 -c 'exec('"'"'import os,signal\nsignal.alarm(5)\ndirectory=\'"'"'/tmp/range_sync_mv_test_range_sync_mv_reshard_${uuid0}\'"'"'\nos.mkdir(directory,0o700)\nhelper_source=\'"'"'import concurrent.futures\\nimport contextlib\\nimport ctypes\\nimport io\\nimport json\\nimport os\\nfrom pathlib import Path\\nimport signal\\nimport subprocess\\nimport sys\\nimport time\\nfrom urllib.parse import urljoin, urlparse\\ndb = "db_${uuid0}"\\ncfg = None\\nconn = None\\nstage_deadline = 0\\ndef remaining():\\n    seconds = stage_deadline - time.monotonic()\\n    assert seconds > 0, "total stage deadline expired"\\n    return seconds\\ndef connection(database=db):\\n    return pymysql.connect(host=cfg.mysql_host, port=int(cfg.mysql_port), user=cfg.mysql_user,\\n                           password=cfg.mysql_password, database=database, autocommit=True,\\n                           connect_timeout=min(5, remaining()), read_timeout=min(15, remaining()),\\n                           write_timeout=min(15, remaining()))\\ndef q(sql, c=None):\\n    c = conn if c is None else c\\n    c._read_timeout = min(15, remaining())\\n    c._write_timeout = min(15, remaining())\\n    with c.cursor
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `84536d8f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `dfbaec3e` are properly handled with clean fallback behavior.

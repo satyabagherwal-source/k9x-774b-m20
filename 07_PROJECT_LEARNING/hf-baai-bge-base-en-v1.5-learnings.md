@@ -3,7 +3,7 @@
 > **Source Version**: `hf-baai-bge-`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T19:14:30.953Z  
+> **Timestamp**: 2026-11-05T10:09:00.988Z  
 > **Learning ID**: `learn-huggingface-baai-bge-base-en-v1-5`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-baai-bge-base-en-v1.5-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/BAAI/bge-base-en-v1.5](https://huggingface.co/BAAI/bge-base-en-v1.5))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T19:14:30.123Z  
+> **Harvest Timestamp**: 2026-11-05T10:08:53.100Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: feature-extraction
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 7936371 downloads | 540 likes
+- **Stars / Engagement**: 8210851 downloads | 540 likes
 
 ---
 

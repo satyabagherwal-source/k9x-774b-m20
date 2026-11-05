@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/milvus-io-milvus-learnings.md`  
 > **Source**: github ([https://github.com/milvus-io/milvus](https://github.com/milvus-io/milvus))  
-> **Source Version**: `f830e57c`  
+> **Source Version**: `d3063b15`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T20:10:10.175Z  
+> **Timestamp**: 2026-11-05T10:58:15.024Z  
 > **Learning ID**: `learn-github-milvus-io-milvus`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/milvus-io-milvus-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/milvus-io/milvus](https://github.com/milvus-io/milvus))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T20:10:10.072Z  
+> **Harvest Timestamp**: 2026-11-05T10:58:15.016Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Milvus is a high-performance, cloud-native vector database built for scalable vector ANN search
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 46595 stars
+- **Stars / Engagement**: 46600 stars
 
 ---
 
@@ -1412,14 +1412,14 @@ BENCHMARK_MAIN();
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #55138** (2026-11-04): **fix: [3.0] release MinioChunkManager's AWS SDK reference when the process exits**
-  *Symptoms*: issue: #55128 pr: #55131  Cherry-pick of #55131 to 3.0. The patch applies cleanly: `MinioChunkManager.h` and `RemoteChunkManagerSingleton.h` are identical on both branches, and 3.0's `MinioChunkManager.cpp` differs from master only in credential handling, away from the changed lines. 3.0 builds the same AWS SDK (1.11.842), its milvus-storage pin (ab1d5fd4) releases its own reference through `FinalizeS3` as master's does, and `RemoteChunkManagerSingleton` is the only static owner of a remote chunk manager there too.  ## What  - MinioChunkManager takes its AWS SDK reference through `InitSDKAPIUntilExit`, which registers `ReleaseSDKAPIAtExit` with `std::atexit` once. At exit the handler calls `Aws::ShutdownAPI` with the options the SDK was initialized with, unless `ShutdownSDKAPI` has released the reference already. While the process runs nothing changes: managers coming and going still leave the SDK initialized. - `RemoteChunkManagerSingleton::GetInstance` allocates the instance and never destroys it. The remote chunk manager already lives as long as the process (`Release` keeps it), and its static destructor would otherwise destroy an S3 client after the SDK was shut down at exit. It is the only static owner of a remote chunk manager in segcore; the others are created per task.  ## Why  A process that runs exit handlers destroys the SDK's static objects while MinioChunkManager's reference keeps the SDK initialized. The default client bootstrap then shuts down from its static d
-
-- **Issue #55131** (2026-11-04): **fix: release MinioChunkManager's AWS SDK reference when the process exits**
-  *Symptoms*: issue: #55128  ## What  - MinioChunkManager takes its AWS SDK reference through `InitSDKAPIUntilExit`, which registers `ReleaseSDKAPIAtExit` with `std::atexit` once. At exit the handler calls `Aws::ShutdownAPI` with the options the SDK was initialized with, unless `ShutdownSDKAPI` has released the reference already. While the process runs nothing changes: managers coming and going still leave the SDK initialized. - `RemoteChunkManagerSingleton::GetInstance` allocates the instance and never destroys it. The remote chunk manager already lives as long as the process (`Release` keeps it), and its static destructor would otherwise destroy an S3 client after the SDK was shut down at exit. It is the only static owner of a remote chunk manager in segcore; the others are created per task.  ## Why  A process that runs exit handlers destroys the SDK's static objects while MinioChunkManager's reference keeps the SDK initialized. The default client bootstrap then shuts down from its static destructor, and the cleanup thread that starts races the destruction of the SDK's log redirection: a CRT thread crashes in `s_aws_logger_redirect_get_log_level`. `Aws::ShutdownAPI` counts references, so with this change whichever holder releases last, MinioChunkManager or milvus-storage's `FinalizeS3`, shuts the SDK down before its static objects are destroyed.  ## Effect on Milvus  None for the milvus binary: `os.Exit` and the return from `main` end with `exit_group`, so exit handlers never run. C++ te
+- **Issue #55166** (2026-11-05): **test: build big_entities lazily in stability/test_restart.py**
+  *Symptoms*: ## Problem  `tests/python_client/testcases/stability/test_restart.py` builds `big_entities = gen_entities(100000)` at module level. pytest imports every module during collection, so each pytest-xdist worker materialises 100k 128-dim float vectors as Python lists (~650 MB) before any test runs. Every test in this module is named `_test_*`, so pytest never collects any of them; the memory is spent for nothing.  With `-n 32` per suite, that is ~20 GB per python_client suite, and nightly runs several suites in parallel on the same host. On a 119 GB host running the nightly suites concurrently, python workers peaked at ~76 GB about 3 minutes after start (during collection), MemAvailable dropped to 1.6 GB and the standalone Milvus under test was OOM-killed.  ## Change  Generate the entities on first use through a cached `big_entities()` helper. The test bodies only change `big_entities` to `big_entities()`.  ## Verification  Same venv, whole-tree `pytest --collect-only -q testcases` (single process, i.e. one worker's collection cost), two runs each:  | | peak RSS | collected | |---|---|---| | master | 1,116,968 KB / 1,118,380 KB | 5408 | | this PR | 459,444 KB / 459,460 KB | 5408 |  - Collected node IDs are identical before and after (sorted diff is empty); `test_restart.py` still collects 0 tests. - `big_entities()` returns the same cached object on repeated calls, with the same field names and row counts (`int64`, `float`, `float_vector`, 100000 rows each) as `gen_entities(100000
   **Post-Mortem & Fix Analysis**:
   > [ci-v2-notice] Notice: New ci-v2 system is enabled for this PR.  To rerun ci-v2 checks, comment with: - /ci-rerun-code-check  // for ci-v2/code-check - /ci-rerun-code-check-macos  // for Code Checker MacOS (GitHub Actions) - /ci-rerun-build  // for ci-v2/build - /ci-rerun-build-all  // for ci-v2/build-all (multi-arch builds) - /ci-rerun-buildenv  // for ci-v2/build-env (build milvus-env builder images; update .env after the new tag is ready) - /ci-rerun-ut-integration  // for ci-v2/ut-integration, will rerun ci-v2/build - /ci-rerun-ut-go  // for ci-v2/ut-go, will rerun ci-v2/build - /ci-rerun-ut-cpp  // for ci-v2/ut-cpp - /ci-rerun-ut  // for all ci-v2/ut-integration, ci-v2/ut-go, ci-v2/ut-cpp, will rerun ci-v2/build - /ci-rerun-e2e-default  // for ci-v2/e2e-default - /ci-rerun-e2e-pulsar-wp  // for ci-v2/e2e-pulsar-wp (GCP branch-equivalent Pulsar + Woodpecker Python E2E) - /ci-rerun-e2e-amd  // for ci-v2/e2e-amd (e2e pool dispatcher) - /ci-rerun-e2e-dist-wp  // for ci-v2/e2e-dist-wp 
-  > <!-- team2-arev:debate-D235ee857e4 --> > **Must-fix issues introduced by this PR: 0** > **Merge recommendation:** Mergeable as-is — this review found no must-fix issue introduced by this PR.  Adversarial review found no issues requiring changes.  **Verified:** - `internal/core/src/storage/minio/MinioChunkManager.cpp:406-410`: `init_count_.exchange(0) > 0` results in exactly one `Aws::ShutdownAPI` call. That matches the single `Aws::InitAPI` call made on the 0→1 transition (`:272-273`, `:327-328`). When `ShutdownSDKAPI` has already brought the count back to 0, the handler does nothing. - `internal/core/src/storage/minio/MinioChunkManager.cpp:397-401`: `std::call_once` ensures `atexit` is registered only once. If the SDK is initialized again after an explicit shutdown, `sdk_options_at_init` is overwritten, so the handler shuts down with the options from the most recent init. - `internal/core/src/storage/minio/MinioChunkManager.cpp:405`: the handler takes `client_mutex_`, the same mutex b
+  > /lgtm /approve
+
+- **Issue #55156** (2026-11-05): **enhance: [2.6] restrict AWS credential sources in chunk managers**
+  *Symptoms*:  issue: #54503 pr: #54504  Backport #54504 to `2.6`. `AwsChunkManager` and `MinioChunkManager` use the shared storage AWS credential chain: environment credentials, then IRSA, with EC2 instance-profile credentials available only when `AWS_EC2_METADATA_ENABLE=true` (case-insensitive). Accept AK/SK without a session token while retaining this branch's existing AK/SK assertions.  Pin milvus-storage to `48823358`, the merged `2.6` credential-chain backport: https://github.com/milvus-io/milvus-storage/pull/775.  Backport adaptations: - Use the public `s3_fs.h` header and the existing 2.6 ChunkManager paths. - The master-only `test_s3_endpoint_auth.cpp` fixture/endpoint guard and `segcore_error_boundary_baseline.txt` infrastructure are absent on this branch and are not imported. The storage pin contains its credential-policy regression tests; ChunkManager runtime coverage is not verified here.  Validation: static review of the provider declaration/implementation, credential ordering and EC2 opt-in, both ChunkManager call sites, and existing include/link configuration; `git diff --check`; `clang-format-12 --dry-run --Werror` on both changed C++ files. No compilation or tests run, as requested. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1436,876 +1436,1089 @@ BENCHMARK_MAIN();
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `eabafc85` (2026-11-04)
-**Commit Message**: fix: release MinioChunkManager's AWS SDK reference when the process exits (#55131)
+### Incident Patch 1: `de9d02bb` (2026-11-05)
+**Commit Message**: fix: keep the search timestamp in the search requery (#55068)
 
-issue: #55128
+issue: #55066
 
-## What
+## Problem
 
-- MinioChunkManager takes its AWS SDK reference through
-`InitSDKAPIUntilExit`, which registers `ReleaseSDKAPIAtExit` with
-`std::atexit` once. At exit the handler calls `Aws::ShutdownAPI` with
-the options the SDK was initialized with, unless `ShutdownSDKAPI` has
-released the reference already. While the process runs nothing changes:
-managers coming and going still leave the SDK initialized.
-- `RemoteChunkManagerSingleton::GetInstance` allocates the instance and
-never destroys it. The remote chunk manager already lives as long as the
-process (`Release` keeps it), and its static destructor would otherwise
-destroy an S3 client after the SDK was shut down at exit. It is the only
-static owner of a remote chunk manager in segcore; the others are
-created per task.
+`requeryOperator.requery` builds the requery `RetrieveRequest.Base`
+without a timestamp. The guard in `QueryTask.SetTs` that keeps a
+requery's preset timestamp (`t.reQuery && t.Base.Timestamp != 0`)
+therefore never applies, and the scheduler gives the requery a new
+timestamp (the proxy wall clock, since a requery always skips TSO
+allocation). `QueryTask.PreExecute` derives from that timestamp:
 
-## Why
+- the collection TTL cutoff (`CollectionTtlTimestamps`), under every
+consistency level;
+- the guarantee timestamp and the entity TTL cutoff
+(`EntityTtlPhysicalTime`), under Bounded. Strong passes the search's
+guarantee through, and Session / Customized / Eventually do not depend
+on the timestamp.
 
-A process that runs exit handlers destroys the SDK's static objects
-while MinioChunkManager's reference keeps the SDK initialized. The
-default client bootstrap then shuts down from its static destructor, and
-the cleanup thread that starts races the destruction of the SDK's log
-redirection: a CRT thread crashes in
-`
+Reads still use the search's per-channel MVCC (`channelsMvcc` overrides
+MVCC and guarantee per shard), so only the TTL cutoffs differ. Segcore
+applies both cutoffs to the retrieve (`MvccNode` for collection TTL, the
+TTL field filter for entity TTL). A row that expires between the search
+and the requery is returned by the search and filtered out by the
+requery, and the search fails with `ErrInconsistentRequery`
 
-**File**: `internal/core/src/storage/RemoteChunkManagerSingleton.h` (modified, +6/-2)
+**File**: `internal/proxy/dql/requery_integration_test.go` (modified, +82/-0)
 ```diff
-@@ -33,8 +33,12 @@ class RemoteChunkManagerSingleton {
- 
-     static RemoteChunkManagerSingleton&
-     GetInstance() {
--        static RemoteChunkManagerSingleton instance;
--        return instance;
-+        // Never destroyed. The remote chunk manager lives as long as the
-+        // process, since Release keeps it, and a static destructor would
-+        // destroy its client after MinioChunkManager released the AWS SDK at
-+        // exit, which the SDK does not allow.
-+        static auto* instance = new RemoteChunkManagerSingleton();
-+        return *instance;
-     }
- 
-     void
-```
-
-**File**: `internal/core/src/storage/minio/MinioChunkManager.cpp` (modified, +37/-3)
-```diff
-@@ -32,6 +32,7 @@
- #include <algorithm>
- #include <cctype>
- #include <chrono>
-+#include <cstdlib>
- #include <exception>
- #include <functional>
- #include <mutex>
-@@ -75,6 +76,11 @@ std::mutex MinioChunkManager::client_mutex_;
- 
- namespace {
- 
-+// The options the SDK was last initialized with: Aws::ShutdownAPI undoes what
-+// Aws::InitAPI set up from them.
-+Aws::SDKOptions sdk_options_at_init;
-+std::once_flag release_sdk_at_exit;
-+
- std::mutex&
- GcsEndpointsMutex() {
-     static std::mutex mutex;
-@@ -310,7 +316,7 @@ MinioChunkManager::InitSDKAPI(RemoteStorageType type,
-         sdk_options_.loggingOptions.logger_create_fn = [log_level]() {
-             return std::make_shared<AwsLogger>(log_level);
-         };
--        Aws::InitAPI(sdk_options_);
-+        InitSDKAPIUntilExit(sdk_options_);
-     }
- }
- 
-@@ -363,7 +369,7 @@ MinioChunkManager::InitSDKAPIDefault(const std::string& log_level_str,
-         sdk_options_.loggingOptions.logger_create_fn = [log_level]() {
-             return std::make_shared<AwsLogger>(log_level);
-         };
--        Aws::InitAPI(sdk_options_);
-+        InitSDKAPIUntilExit(sdk_options_);
-     }
- }
- 
-@@ -376,6 +382,34 @@ MinioChunkManager::ShutdownSDKAPI() {
-     }
- }
- 
-+// MinioChunkManagers share one reference to the AWS SDK. The first manager
-+// takes it, and managers coming and going do not release it, since the SDK
-+// would then have to be initialized again for the next one (#42459). It is
-+// released when the process exits instead. A Go process ends with exit_group
-+// and runs no exit handlers, but a host process that runs them would
-+// otherwise destroy the SDK's static objects while the SDK is still
-+// initialized: the default client bootstrap then shuts down from its static
-+// destructor, and the cleanup thread that starts races the destruction of the
-+// SDK's log redirection (a SIGSEGV in s_aws_logger_redirect_get_log_level).
-+// Aws::ShutdownAPI counts references, so whichever holder releases the SDK
-+// last shuts it down, this one or milvus-storage's own release at exit.
-+void
-+MinioChunkManager::InitSDKAPIUntilExit(const Aws::SDKOptions& options) {
-+    Aws::InitAPI(options);
-+    sdk_options_at_init = options;
-+    std::call_once(release_sdk_at_exit,
-+                   [] { std::atexit(MinioChunkManager::ReleaseSDKAPIAtExit); });
-+}
-+
-+void
-+MinioChunkManager::ReleaseSDKAPIAtExit() {
-+    std::scoped_lock lock{client_mutex_};
-+    // ShutdownSDKAPI may have released the reference already.
-+    if (init_count_.exchange(0) > 0) {
-+        Aws::ShutdownAPI(sdk_options_at_init);
-+    }
-+}
-+
- void
- MinioChunkManager::BuildS3Client(
-     const StorageConfig& storage_config,
-@@ -654,7 +688,7 @@ MinioChunkManager::MinioChunkManager(const StorageConfig& storage_config)
- 
- MinioChunkManager::~MinioChunkManager() {
-     client_.reset();
--    // ShutdownSDKAPI();
-+    // The SDK reference outlives the manager: see InitSDKAPIUntilExit.
- }
- 
- uint64_t
-```
-
-**File**: `internal/core/src/storage/minio/MinioChunkManager.h` (modified, +7/-0)
-```diff
-@@ -312,6 +312,13 @@ class MinioChunkManager : public ChunkManager {
-     static bool
-     NeedChecksumOverride(const std::string& cloud_provider);
- 
-+    // Aws::InitAPI, whose reference ReleaseSDKAPIAtExit drops when the
-+    // process exits. Called with client_mutex_ held.
-+    static void
-+    InitSDKAPIUntilExit(const Aws::SDKOptions& options);
-+    static void
-+    ReleaseSDKAPIAtExit();
-+
-     Aws::SDKOptions sdk_options_;
-     static std::atomic<size_t> init_count_;
-     static std::mutex client_mutex_;
-```
-
----
-
-### Incident Patch 2: `1fe17a49` (2026-11-04)
-**Commit Message**: fix: Replay deltalogs when reopening external milvus-table segments (#54736)
-
-issue: #54735
-
-### Problem
-
-A milvus-table refresh reuses a target segment when every fragment
-identity is unchanged. The identity is the source segment manifest path
-**including its version**, plus the row range
-(`packed.FragmentIdentity`). Snapshot-level L0 deltalogs are attached to
-every fragment (`buildMilvusTableFileInfosFromSnapshotMetadata`).
-
-Trigger: the source table deletes rows, and a new snapshot is taken
-**before source L0 compaction** folds those deletes into the source
-segments. The source segment manifests keep their versions, so the
-refresh keeps the target segments. Their L0 deltalog sets differ, so
-`refreshMilvusTableSegmentManifest` only rewrites their manifests to
-include the new deltalogs. QueryCoord sees the newer manifest and sends
-a reopen.
-
-QueryNode reopen only switched the segcore view and never loaded the new
-deltalogs, so the deleted rows stayed visible. Because the new manifest
-was already reported, QueryCoord never retried. One such refresh affects
-every kept segment of the collection. The deletes took effect only after
-a full reload (release/load, QueryNode restart, balanc
-
-**File**: `internal/core/unittest/test_sealed.cpp` (modified, +32/-0)
-```diff
-@@ -5037,6 +5037,38 @@ TEST(SealedSegmentReopen, LazySchemaReopenDoesNotWaitForReopenMutex) {
-     EXPECT_EQ(sealed->TestGetSchemaSnapshot()->get_schema_version(), 300);
- }
- 
-+TEST(SealedSegmentReopen, ReplayedDeletesSurviveReopen) {
-+    auto schema = std::make_shared<Schema>();
-+    auto pk_id = schema->AddDebugField("pk", DataType::INT64);
-+    schema->set_primary_field_id(pk_id);
-+    schema->set_schema_version(100);
-+    auto dataset = DataGen(schema, 10);
-+    auto segment = CreateSealedWithFieldDataLoaded(schema, dataset);
-+    auto* sealed = dynamic_cast<ChunkedSegmentSealedImpl*>(segment.get());
-+    ASSERT_NE(sealed, nullptr);
-+
-+    auto pks = dataset.get_col<int64_t>(pk_id);
-+    auto ids = std::make_unique<IdArray>();
-+    ids->mutable_int_id()->add_data(pks[0]);
-+    std::vector<Timestamp> timestamps{1000};
-+    LoadDeletedRecordInfo deletes = {timestamps.data(), ids.get(), 1};
-+    segment->LoadDeletedRecord(deletes);
-+    ASSERT_EQ(segment->get_deleted_count(), 1);
-+
-+    // A later reopen must retain deletes; retrying their application is idempotent.
-+    auto next_schema = std::make_shared<Schema>();
-+    auto next_pk = next_schema->AddDebugField("pk", DataType::INT64);
-+    next_schema->set_primary_field_id(next_pk);
-+    next_schema->set_schema_version(101);
-+    EXPECT_NO_THROW(sealed->Reopen(next_schema));
-+    segment->LoadDeletedRecord(deletes);
-+    EXPECT_EQ(segment->get_deleted_count(), 1);
-+    BitsetType mask(10, false);
-+    auto view = BitsetTypeView(mask);
-+    segment->mask_with_delete(view, 10, 2000);
-+    EXPECT_EQ(mask.count(), 1);
-+}
-+
- TEST(SealedSegmentReopen, SchemaOnlyReopenPublishesDefaultFilledState) {
-     auto old_schema = std::make_shared<Schema>();
-     old_schema->AddDebugField("pk", DataType::INT64);
-```
-
-**File**: `internal/querynodev2/segments/segment.go` (modified, +14/-0)
-```diff
-@@ -1306,6 +1306,15 @@ func (s *LocalSegment) Load(ctx context.Context) error {
- }
- 
- func (s *LocalSegment) Reopen(ctx context.Context, newLoadInfo *querypb.SegmentLoadInfo) error {
-+	return s.reopen(ctx, newLoadInfo, nil)
-+}
-+
-+// reopen runs the optional delete replay before publishing newLoadInfo. If the
-+// replay fails, the old load info stays reported so the QueryCoord checker can
-+// schedule another reopen, independently of the RPC error retry classification.
-+// Segcore has already switched views; rows pending deletion can remain visible
-+// until a later replay succeeds (permanent source errors require repair).
-+func (s *LocalSegment) reopen(ctx context.Context, newLoadInfo *querypb.SegmentLoadInfo, replayDeletes func() error) error {
- 	if !s.ptrLock.PinIfNotReleased() {
- 		return merr.WrapErrSegmentNotLoaded(s.ID(), "segment released during reopen")
- 	}
-@@ -1327,6 +1336,11 @@ func (s *LocalSegment) Reopen(ctx context.Context, newLoadInfo *querypb.SegmentL
- 	if err != nil {
- 		return err
- 	}
-+	if replayDeletes != nil {
-+		if err := replayDeletes(); err != nil {
-+			return merr.Wrap(err, "replay deltalogs after reopen")
-+		}
-+	}
- 	s.syncFieldIndexes(newLoadInfo.GetIndexInfos())
- 	if s.relatedDataSize != nil {
- 		s.relatedDataSize.Store(calculateSegmentLogSize(newLoadInfo))
-```
-
-**File**: `internal/querynodev2/segments/segment_loader.go` (modified, +41/-1)
-```diff
-@@ -27,6 +27,7 @@ import (
+@@ -20,6 +20,7 @@ import (
  	"context"
- 	"fmt"
- 	"io"
-+	"maps"
- 	"math"
- 	"path"
  	"strconv"
-@@ -2104,7 +2105,19 @@ func (loader *segmentLoader) ReopenSegments(ctx context.Context,
- 			configureUseTakeForOutput(info, collection.Schema())
- 		}
- 
--		err := segment.Reopen(ctx, info)
-+		var err error
-+		local, ok := segment.(*LocalSegment)
-+		if ok && collection != nil && typeutil.IsExternalCollection(collection.Schema()) &&
-+			typeutil.NewStorageColumnResolver(collection.Schema()).IsMilvusTable() &&
-+			!deltaSourceUnchanged(local.LoadInfo(), info) {
-+			// External refresh may add deletes to the new manifest; replay them
-+			// before the new load info is published.
-+			err = local.reopen(ctx, info, func() error {
-+				return loader.loadDeltalogs(ctx, local, info)
-+			})
-+		} else {
-+			err = segment.Reopen(ctx, info)
-+		}
- 		if err != nil {
- 			mlog.Warn(context.TODO(), "failed to reopen segment", mlog.Int64("segmentID", info.GetSegmentID()), mlog.Err(err))
- 			return err
-@@ -2114,6 +2127,33 @@ func (loader *segmentLoader) ReopenSegments(ctx context.Context,
- 	return nil
- }
- 
-+// deltaSourceUnchanged reports whether incoming references the same delete
-+// sources as the published load info. Reopen publishes load info only after a
-+// successful replay, so an unchanged source (e.g. index-only reopen) has
-+// already been applied. Child manifests are not kept in the runtime load info,
-+// so their presence always forces a replay.
-+func deltaSourceUnchanged(current, incoming *querypb.SegmentLoadInfo) bool {
-+	if len(incoming.GetChildManifestPaths()) != 0 || current.GetManifestPath() != incoming.GetManifestPath() {
-+		return false
-+	}
-+	// Files are immutable; ordering and repeated references do not change their contents.
-+	type identity struct {
-+		fieldID int64
-+		logID   int64
-+		path    string
-+	}
-+	sources := func(info *querypb.SegmentLoadInfo) map[identity]struct{} {
-+		result := make(map[identity]struct{})
-+		for _, field := range info.GetDeltalogs() {
-+			for _, log := range field.GetBinlogs() {
-+				result[identity{field.GetFieldID(), log.GetLogID(), log.GetLogPath()}] = struct{}{}
-+			}
-+		}
-+		return result
-+	}
-+	return maps.Equal(sources(current), sources(incoming))
-+}
-+
- func getBinlogDataDiskSize(fieldBinlog *datapb.FieldBinlog) int64 {
- 	fieldSize := int64(0)
- 	for _, binlog := range fieldBinlog.Binlogs {
-```
-
-**File**: `internal/querynodev2/segments/segment_loader_test.go` (modified, +365/-0)
-```diff
-@@ -24,19 +24,25 @@ import (
  	"testing"
- 	"time"
++	"time"
  
-+	"github.com/apache/arrow/go/v17/arrow"
-+	"github.com/apache/arrow/go/v17/arrow/array"
-+	"github.com/apache/arrow/go/v17/arrow/memory"
- 	"github.com/bytedance/mockey"
  	"github.com/cockroachdb/errors"
  	"github.com/stretchr/testify/assert"
- 	"github.com/stretchr/testify/require"
- 	"github.com/stretchr/testify/suite"
- 	"go.uber.org/atomic"
-+	"google.golang.org/protobuf/proto"
+@@ -41,6 +42,7 @@ import (
+ 	"github.com/milvus-io/milvus/pkg/v3/util/merr"
+ 	"github.com/milvus-io/milvus/pkg/v3/util/paramtable"
+ 	"github.com/milvus-io/milvus/pkg/v3/util/timerecord"
++	"github.com/milvus-io/milvus/pkg/v3/util/tsoutil"
+ 	"github.com/milvus-io/milvus/pkg/v3/util/typeutil"
+ )
  
- 	"github.com/milvus-io/milvus-proto/go-api/v3/commonpb"
- 	"github.com/milvus-io/milvus-proto/go-api/v3/schemapb"
- 	"github.com/milvus-io/milvus/internal/mocks/util/mock_segcore"
-+	"github.com/milvus-io/milvus/internal/querynodev2/segments/state"
- 	"github.com/milvus-io/milvus/internal/storage"
- 	"github.com/milvus-io/milvus/internal/storagev2/packed"
- 	"github.com/milvus-io/milvus/internal/util/initcore"
-+	"github.com/milvus-io/milvus/internal/util/segcore"
- 	"github.com/milvus-io/milvus/internal/util/segcore/loadresource"
- 	"github.com/milvus-io/milvus/pkg/v3/common"
- 	"github.com/milvus-io/milvus/pkg/v3/mlog"
-@@ -132,6 +138,291 @@ func (eofRecordReader) Close() error {
- 	return nil
+@@ -221,6 +223,86 @@ func TestSearchTask_Requery(t *testing.T) {
+ 	})
  }
  
-+type reopenTestCore struct{ segcore.CSegment }
++// TestSearchTask_RequeryKeepsSearchTimestamp checks that the requery task keeps
++// the search timestamp through scheduling, so its guarantee and TTL cutoffs
++// match the search. Otherwise a row that expires between the search and the
++// requery is missing from the requery and the search fails with
++// ErrInconsistentRequery.
++func TestSearchTask_RequeryKeepsSearchTimestamp(t *testing.T) {
++	const (
++		collectionName = "test_collection"
++		collectionID   = int64(100)
++	)
++	ctx := context.Background()
++	searchTime := time.Unix(1_700_000_000, 0)
++	searchTS := tsoutil.ComposeTSByTime(searchTime)
++	schedulerTS := tsoutil.ComposeTSByTime(searchTime.Add(2 * time.Second))
++	collectionTTL := time.Hour
++	gracefulTime := paramtable.Get().CommonCfg.GracefulTime.GetAsDuration(time.Millisecond)
 +
-+type reopenDeltaReader struct {
-+	record storage.Record
-+	read   bool
-+}
-+
-+func (r *reopenDeltaReader) Next() (storage.Record, error) {
-+	if r.read {
-+		return nil, io.EOF
-+	}
-+	r.read = true
-+	return r.record, nil
-+}
-+
-+func (r *reopenDeltaReader) Close() error {
-+	r.record.Release()
-+	return nil
-+}
-+
-+func newReopenTestSegment(schema *schemapb.CollectionSchema, info *querypb.SegmentLoadInfo) *LocalSegment {
-+	return &LocalSegment{
-+		baseSegment: baseSegment{
-+			collection: NewCollectionWithoutSegcoreForTest(info.GetCollectionID(), schema),
-+			loadInfo:   atomic.NewPointer(info),
++	schema := mustNewSchemaInfo(&schemapb.CollectionSchema{
++		Name: collectionName,
++		Fields: []*schemapb.FieldSchema{
++			{FieldID: 100, Name: "id", IsPrimaryKey: true, DataType: schemapb.DataType_Int64},
++			{FieldID: 101, Name: "vec", DataType: schemapb.DataType_FloatVector, TypeParams: []*commonpb.KeyValuePair{{Key: common.DimKey, Value: "4"}}},
 +		},
-+		ptrLock:            state.NewLoadStateLock(state.LoadStateDataLoaded),
-+		csegment:           &reopenTestCore{},
-+		lastDeltaTimestamp: atomic.NewUint64(0),
-+		fieldIndexes:       typeutil.NewConcurrentMap[int64, *IndexedFieldInfo](),
++	})
++	mockTest(t, (*metacache.MetaCache).GetCollectionID, collectionID, nil)
++	mockTest(t, (*metacache.MetaCache).GetCollectionSchema, schema, nil)
++	mockTest(t, (*metacache.MetaCache).GetCollectionInfo, &collectionInfo{CollID: collectionID, Schema: schema, CollectionTTL: uint64(collectionTTL)}, nil)
++
++	var requeryTask *QueryTask
++	mockTestTo(t, (*namespaceRequeryMockNode).ExecuteQuery, func(_ *namespaceRequeryMockNode, _ context.Context, qt taskmodel.Task, _ trace.Span) (*milvuspb.QueryResults, segcore.StorageCost, error) {
++		requeryTask = qt.(*QueryTask)
++		return &milvuspb.QueryResults{Status: merr.Success()}, segcore.StorageCost{}, nil
++	})
++
++	// With a fresh requery timestamp, Strong only moves the collection TTL
++	// cutoff; Bounded also moves the guarantee and the entity TTL cutoff.
++	for _, tc := range []struct {
++		name          string
++		level         commonpb.ConsistencyLevel
++		guaranteeTime time.Time
++	}{
++		{name: "strong", level: commonpb.ConsistencyLevel_Strong, guaranteeTime: searchTime},
++		{name: "bounded", level: commonpb.ConsistencyLevel_Bounded, guaranteeTime: searchTime.Add(-gracefulTime)},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			requeryTask = nil
++			searchTask := &SearchTask{
++				ctx: ctx,
++				SearchRequest: &internalpb.SearchRequest{
++					Base:               &commonpb.MsgBase{MsgType: commonpb.MsgType_Search, Timestamp: searchTS},
++					CollectionID:       collectionID,
++					ConsistencyLevel:   tc.level,
++					GuaranteeTimestamp: tsoutil.ComposeTSByTime(tc.guaranteeTime),
++				},
++				request: &milvuspb.SearchRequest{CollectionName: collectionName},
++				schema:  schema,
++				tr:      timerecord.NewTimeRecorder("search"),
++				node:    &namespaceRequeryMockNode{},
++			}
++			op, err := newRequeryOperator(searchTask, nil)
++			require.NoError(t, err)
++			ids := &schemapb.IDs{IdField: &schemapb.IDs_IntId{IntId: &schemapb.LongArray{Data: []int64{1}}}}
++			_, _, err = op.(*requeryOperator).requery(ctx, nil, ids, []string{"id"})
++			require.NoError(t, err)
++			require.NotNil(t, requeryTask)
++
++			// Replay what the scheduler does before running the task: it assigns a
++			// newer timestamp, which must not replace the search timestamp.
++			require.NoError(t, requeryTask.OnEnqueue())
++			requeryTask.SetTs(schedulerTS)
++			require.NoError(t, requeryTask.PreExecute(ctx))
++
++			require.Equal(t, searchTS, requeryTask.BeginTs())
++			require.Equal(t, tsoutil.ComposeTSByTime(tc.guaranteeTime), requeryTask.GetGuaranteeTimestamp())
++			require.Equal(t, tsoutil.ComposeTSByTime(searchTime.Add(-collectionTTL)), requeryTask.GetCollectionTtlTimestamps())
++			require.Equal(t, uint64(tc.guaranteeTime.UnixMilli()*1000), requeryTask.GetEntityTtlPhysicalTime())
++		})
 +	}
 +}
 +
-+func TestReopenSegmentsExternalDeltalogs(t *testing.T) {
-+	paramtable.Init()
-+	params := paramtable.Get()
-+	statsKey := params.CommonCfg.EnabledJSONKeyStats.Key
-+	statsValue := params.CommonCfg.EnabledJSONKeyStats.GetValue()
-+	require.NoError(t, params.Save(statsKey, "false"))
-+	t.Cleanup(func() { require.NoError(t, params.Save(statsKey, statsValue)) })
-+	for _, scenario := range []struct {
-+		name      string
-+		virtualPK bool
-+		failure   string
-+		permanent bool
-+	}{
-+		{name: "real_pk_success", failure: "none"},
-+		{name: "virtual_pk_success", virtualPK: true, failure: "none"},
-+		{name: "reopen_failure", failure: "reopen"},
-+		{name: "read_failure", failure: "read"},
-+		{name: "apply_failure", failure: "apply"},
-+		{name: "permanent_read_failure", failure: "read", permanent: true},
-+		{name: "permanent_apply_failure", failure: "apply", permanent: true},
-+		{name: "virtual_pk_read_failure", virtualPK: true, failure: "read"},
-+	} {
-+		t.Run(scenario.name, func(t *testing.T) {
-+			failure := scenario.failure
-+			ctx := context.Background()
-+			manager := NewManager()
-+			schema := milvusTableCollectionSchema(scenario.virtualPK)
-+			schema.ExternalSource = "s3://source-bucket/snapshots/100/metadata/200.json"
-+			manager.Collection.(*collectionManager).collections[1000] = NewCollectionWithoutSegcoreForTest(1000, schema)
-+			oldInfo := &querypb.SegmentLoadInfo{
-+				CollectionID: 1000, SegmentID: 3000,
-+				ManifestPath: packed.MarshalManifestPath("files/insert_log/1000/2000/3000", 1),
-+			}
-+			newInfo := &querypb.SegmentLoadInfo{
-+				CollectionID: 1000, SegmentID: 3000,
-+				ManifestPath: packed.MarshalManifestPath("files/insert_log/1000/2000/3000", 2),
-+			}
-+			segment := newReopenTestSegment(schema, oldInfo)
-+			// Deletes from the old manifest were already applied; replay only
-+			// reads the newly added deltalog.
-+			segment.lastDeltaTimestamp.Store(50)
-+			manager.Segment.(*segmentManager).globalSegments.Put(ctx, SegmentTypeSealed, segment)
-+			loader := &segmentLoader{manager: manager, loadingSegments: typeutil.NewConcurrentMap[int64, *loadResult]()}
-+			resourcePatch := mockey.Mock((*segmentLoader).requestResource).Return(requestResourceResult{}, nil).Build()
-+			defer resourcePatch.UnPatch()
-+			freePatch := mockey.Mock((*segmentLoader).freeRequestResource).Return().Build()
-+			defer freePatch.UnPatch()
-+
-+			injected := merr.Wrap(merr.ErrIoTooManyRequests, "injected reopen failure")
-+			if scenario.permanent {
-+				injected = merr.Wrap(merr.ErrParameterInvalid, "injected permanent failure")
-+			}
-+			var calls []string
-+			failed := false
-+			expectedInfo := oldInfo
-+			failOnce := func(stage string) error {
-+				calls = append(calls, stage)
-+				assert.Same(t, expectedInfo, segment.LoadInfo(), "load info must not be published before replay completes")
-+				if failure == stage && !failed {
-+					failed = true
-+					return injected
-+				}
-+				return nil
-+			}
-+			corePatch := mockey.Mock((*reopenTestCore)
+ // TestSearchTask_ErrExecute exercises the error propagation of SearchTask
+ // execution. The shard dispatch is stubbed at the lb level: Execute runs the
+ // workload, whose Exec invokes the query node client; each scenario returns a
+```
+
+**File**: `internal/proxy/dql/search_pipeline.go` (modified, +3/-0)
+```diff
+@@ -1366,6 +1366,9 @@ func (op *requeryOperator) requery(ctx context.Context, span trace.Span, ids *sc
+ 			Base: commonpbutil.NewMsgBase(
+ 				commonpbutil.WithMsgType(commonpb.MsgType_Retrieve),
+ 				commonpbutil.WithSourceID(paramtable.GetNodeID()),
++				// Keep the search timestamp (QueryTask.SetTs does not overwrite it) so
++				// the requery derives the same guarantee and TTL cutoffs as the search.
++				commonpbutil.WithTimeStamp(op.timestamp),
+ 			),
+ 			ReqID:            paramtable.GetNodeID(),
+ 			PartitionIDs:     op.partitionIDs, // use search partitionIDs
 ```
 
 ---
 
-### Incident Patch 3: `fc28ab6b` (2026-11-04)
-**Commit Message**: enhance: add native TSan builds with LLVM Archer (#53895)
+### Incident Patch 2: `e4976eac` (2026-11-05)
+**Commit Message**: fix: preserve CMEK keys across storage and background tasks (#53450)
 
-## What changed
+Encrypted writers could lose their encryption context when the writer
+key or cipher plugin was unavailable. Storage V3 also passed binary DEKs
+through NUL-terminated strings, which could truncate valid keys. This PR
+blocks writes that lack their required context, separates import source
+and target keys, and fixes Storage V3 key transport and reader
+decryption.
 
-Add an opt-in `USE_TSAN=ON` CMake build for Linux CPU development with
-LLVM 20 and upstream Archer. Native race investigations can use the
-standard build and runtime entry points without maintaining custom
-OpenMP synchronization wrappers.
+## Changes
 
-- Use a shared LLVM TSan runtime across Core, source dependencies, the
-parser wrapper and cgo; reject incompatible sanitizer/GPU combinations
-and mixed build outputs.
-- Rebuild six synchronization-sensitive Conan packages with distinct
-TSan identities, use pthread OpenBLAS to avoid mixing OpenMP runtimes,
-and verify installed dependencies.
-- Package libomp, Archer and the matching LLVM symbolizer; activate
-Archer automatically and fail detected races with exit code 66.
-- Add synchronized and intentionally racy C/C++/OpenMP controls, plus
-two Clang narrowing-conversion compatibility fixes.
+1. **Storage V3 writer and reader fixes.** Base64-encode binary DEKs
+across the cgo/Loon string interfaces and install key retrievers on
+manifest readers for sealed load/reopen, growing recovery and paged
+field reads. Add native-bridge and Arrow Go Parquet readback regressions
+for keys with a NUL at offset 0, 16, 24 or 31.
+2. **Writer-context validation and import identities.** Propagate
+writer-key lookup errors through DataCoord request builders, ordinary
+V2/V3 flush and shared raw-data writers. Preserve explicit encryption
+contexts at receivers and reject packed writers that lack the required
+cipher plugin. Resolve Import V3 backup source keys separately from
+target writer keys; plaintext backup readers explicitly use no source
+context.
+3. **
 
-issue: #53763
-
-design doc:
-docs/design-docs/design_docs/20260928-native-thread-sanitizer.md
-
-## Verification
-
-- Full native + Go build and container packaging passed; the deployed
-service reached Healthy. Runtime dependency auditing checked 163 ELF
-files without unresolved dependencies,
-
-**File**: `Makefile` (modified, +39/-4)
+**File**: `Makefile` (modified, +1/-1)
 ```diff
-@@ -55,6 +55,38 @@ ifeq ($(USE_ASAN), ON)
- 	MILVUS_GO_BUILD_TAGS := $(MILVUS_GO_BUILD_TAGS),use_asan
- endif
+@@ -338,7 +338,7 @@ integration-test-base: getdeps
+ 	@(bash $(PWD)/scripts/run_intergration_test.sh --exclude-package ./cmek --exclude-package ./idempotency "$(INSTALL_PATH)/gotestsum --")
  
-+USE_TSAN ?= OFF
-+export USE_TSAN
-+# Preserve Go's default C++ flags when the caller did not provide an override.
-+CGO_CXXFLAGS ?= $(shell $(GO) env CGO_CXXFLAGS)
-+ifneq ($(USE_TSAN),ON)
-+ifneq ($(USE_TSAN),OFF)
-+$(error USE_TSAN must be ON or OFF)
-+endif
-+endif
-+use_tsan = $(USE_TSAN)
-+TSAN_GO_LDFLAGS :=
-+ifeq ($(USE_TSAN), ON)
-+ifneq ($(OS),Linux)
-+$(error USE_TSAN currently requires Linux)
-+endif
-+ifeq ($(USE_ASAN), ON)
-+$(error USE_ASAN and USE_TSAN are mutually exclusive)
-+endif
-+ifneq ($(filter -race -race=true,$(GOFLAGS) $(shell $(GO) env GOFLAGS)),)
-+$(error USE_TSAN cannot be combined with Go -race)
-+endif
-+	override CGO_CFLAGS += -fsanitize=thread -g -fno-omit-frame-pointer
-+	override CGO_CXXFLAGS += -fsanitize=thread -g -fno-omit-frame-pointer
-+	override CGO_LDFLAGS += -fsanitize=thread -shared-libsan
-+	MILVUS_LLVM_ROOT ?= /usr/lib/llvm-20
-+	override CC := $(MILVUS_LLVM_ROOT)/bin/clang
-+	override CXX := $(MILVUS_LLVM_ROOT)/bin/clang++
-+	export CC CXX MILVUS_LLVM_ROOT
-+	MILVUS_GO_BUILD_TAGS := dynamic,sonic,$(SONIC_PLUGIN_SYNC_TAG)
-+	TSAN_GO_LDFLAGS := -linkmode=external
-+endif
-+
- use_dynamic_simd = ON
- ifdef USE_DYNAMIC_SIMD
- 	use_dynamic_simd = ${USE_DYNAMIC_SIMD}
-@@ -126,6 +158,9 @@ endif
- unexport WITH_GPU
+ integration-test-cmek: getdeps build-cmek-fixtures
+-	@echo "Running CMEK scalar-index integration tests ..."
++	@echo "Running CMEK integration tests ..."
+ 	@(env MILVUS_CMEK_FIXTURE_DIR="$(CMEK_FIXTURE_PATH)" MILVUS_INTEGRATION_COVERAGE_APPEND="$(MILVUS_INTEGRATION_COVERAGE_APPEND)" bash $(PWD)/scripts/run_intergration_test.sh --package ./cmek "$(INSTALL_PATH)/gotestsum --")
  
- ifneq ($(filter ON on TRUE True true 1,$(WITH_GPU)),)
-+    ifeq ($(USE_TSAN),ON)
-+        $(error USE_TSAN does not support GPU builds)
-+    endif
-     ifneq ($(index_engine),cardinal)
-         MILVUS_GO_BUILD_TAGS := $(MILVUS_GO_BUILD_TAGS),cuda
-     endif
-@@ -149,7 +184,7 @@ build-go:
- 	@echo "Building Milvus ..."
- 	@source $(PWD)/scripts/setenv.sh && \
- 		mkdir -p $(INSTALL_PATH) && go env -w CGO_ENABLED="1" && \
--		$(GOEXPERIMENT_FLAG) CGO_LDFLAGS="$(CGO_LDFLAGS)" CGO_CFLAGS="$(CGO_CFLAGS)" GO111MODULE=on $(GO) build -pgo=$(PGO_PATH)/default.pgo -ldflags="$(SONIC_PLUGIN_SYNC_LDFLAG) -r $${RPATH} -X '$(OBJPREFIX).BuildTags=$(BUILD_TAGS)' -X '$(OBJPREFIX).BuildTime=$(BUILD_TIME)' -X '$(OBJPREFIX).GitCommit=$(GIT_COMMIT)' -X '$(OBJPREFIX).GoVersion=$(GO_VERSION)' -X '$(OBJPREFIX).MilvusVersion=$(MILVUS_VERSION)'" \
-+		$(GOEXPERIMENT_FLAG) CGO_LDFLAGS="$(CGO_LDFLAGS)" CGO_CFLAGS="$(CGO_CFLAGS)" CGO_CXXFLAGS="$(CGO_CXXFLAGS)" GO111MODULE=on $(GO) build -pgo=$(PGO_PATH)/default.pgo -ldflags="$(TSAN_GO_LDFLAGS) $(SONIC_PLUGIN_SYNC_LDFLAG) -r $${RPATH} -X '$(OBJPREFIX).BuildTags=$(BUILD_TAGS)' -X '$(OBJPREFIX).BuildTime=$(BUILD_TIME)' -X '$(OBJPREFIX).GitCommit=$(GIT_COMMIT)' -X '$(OBJPREFIX).GoVersion=$(GO_VERSION)' -X '$(OBJPREFIX).MilvusVersion=$(MILVUS_VERSION)'" \
- 		-tags "$(MILVUS_GO_BUILD_TAGS)" -o $(INSTALL_PATH)/milvus $(PWD)/cmd/main.go 1>/dev/null
- 
- get-build-deps:
-@@ -350,15 +385,15 @@ check-segcore-codes-product: generate-segcore-codes
- 
- build-cpp: generated-proto plan-parser-lib
- 	@echo "Building Milvus cpp library ..."
--	@(env TANTIVY_ANALYZER_REMOTE_TLS=$(tantivy_analyzer_remote_tls) bash $(PWD)/scripts/core_build.sh -t ${mode} -a ${use_asan} -n ${use_disk_index} -y ${use_dynamic_simd} ${AZURE_OPTION} -x ${index_engine} -G ${WITH_GPU} -f $(tantivy_features) -S ${use_svs} -R ${with_crt})
-+	@(env TANTIVY_ANALYZER_REMOTE_TLS=$(tantivy_analyzer_remote_tls) bash $(PWD)/scripts/core_build.sh -t ${mode} -a ${use_asan} -T ${use_tsan} -n ${use_disk_index} -y ${use_dynamic_simd} ${AZURE_OPTION} -x ${index_engine} -G ${WITH_GPU} -f $(tantivy_features) -S ${use_svs} -R ${with_crt})
- 
- build-cpp-with-unittest: generated-proto plan-parser-lib
- 	@echo "Building Milvus cpp library with unittest ... "
--	@(env TANTIVY_ANALYZER_REMOTE_TLS=$(tantivy_analyzer_remote_tls) bash $(PWD)/scripts/core_build.sh -t ${mode} -a ${use_asan} -u -n ${use_disk_index} -y ${use_dynamic_simd} ${AZURE_OPTION} -x ${index_engine} -G ${WITH_GPU} -f $(tantivy_features) -S ${use_svs} -R ${with_crt})
-+	@(env TANTIVY_ANALYZER_REMOTE_TLS=$(tantivy_analyzer_remote_tls) bash $(PWD)/scripts/core_build.sh -t ${mode} -a ${use_asan} -T ${use_tsan} -u -n ${use_disk_index} -y ${use_dynamic_simd} ${AZURE_OPTION} -x ${index_engine} -G ${WITH_GPU} -f $(tantivy_features) -S ${use_svs} -R ${with_crt})
- 
- build-cpp-with-coverage: generated-proto plan-parser-lib
- 	@echo "Building Milvus cpp library with coverage and unittest ..."
--	@(env TANTIVY_ANALYZER_REMOTE_TLS=$(tantivy_analyzer_remote_tls) bash $(PWD)/scripts/core_build.sh -t ${mode} -a ${use_asan} -u -c -n ${use_disk_index} -y ${use_dynamic_simd} ${AZURE_OPTION} -x ${index_engine} -G ${WITH_GPU} -f $(tantivy_features) -S ${use_svs} -R ${with_crt})
-+	@(env TANTIVY_ANALYZER_REMOTE_TLS=$(tantivy_analyzer_remote_tls) bash $(PWD)/scripts/core_build.sh -t ${mode} -a ${use_asan} -T ${use_tsan} -u -c -n ${use_disk_index} -y ${use_dynamic_simd} ${AZURE_OPTION} -x ${index_engine} -G ${WITH_GPU} -f $(tantivy_features) -S ${use_svs} -R ${with_crt})
- 
- check-proto-product: generated-proto
- 	 @(env bash $(PWD)/scripts/check_proto_product.sh)
+ BUILD_TAGS = $(shell git describe --tags --always --dirty="-dev")
 ```
 
-**File**: `build/build_image.sh` (modified, +12/-0)
+**File**: `docs/design-docs/design_docs/20260921-import-v3-reshard-design.md` (modified, +5/-4)
 ```diff
-@@ -44,6 +44,9 @@ fi
- 
- echo ${IMAGE_ARCH}
- 
-+source "${toplevel}/scripts/sanitizer_env.sh"
-+milvus_sanitizer_env "${toplevel}"
-+
- if [[ "$USE_ASAN" == "ON" ]]; then
-     if [[ "$OS_NAME" == "ubuntu20.04" ]]; then
-         BUILD_ARGS="${BUILD_ARGS:---build-arg TARGETARCH=${IMAGE_ARCH} --build-arg MILVUS_ASAN_LIB=/milvus/lib/libasan.so.6}"
-@@ -56,6 +59,15 @@ else
-     BUILD_ARGS="${BUILD_ARGS:---build-arg TARGETARCH=${IMAGE_ARCH}}"
- fi
- 
-+if [[ "${MILVUS_ENABLE_TSAN}" == "ON" ]]; then
-+    BUILD_ARGS="${BUILD_ARGS} --build-arg MILVUS_JEMALLOC_LIB="
-+    if [[ -f "${toplevel}/lib/milvus-archer" ]]; then
-+        python3 "${toplevel}/internal/core/milvus_tsan.py" verify "${toplevel}/lib"
-+        python3 "${toplevel}/internal/core/milvus_tsan.py" verify-runtime "${toplevel}/lib"
-+        BUILD_ARGS="${BUILD_ARGS} --build-arg MILVUS_ARCHER_LIB=/milvus/lib/libarcher.so --build-arg MILVUS_TSAN_OPTIONS=halt_on_error=1:exitcode=66:suppressions=/milvus/lib/tsan.supp:external_symbolizer_path=/milvus/lib/llvm-symbolizer"
-+    fi
-+fi
-+
- pushd "${toplevel}"
- 
- docker build --network host ${BUILD_ARGS} --platform linux/${IMAGE_ARCH} -f "./build/docker/milvus/${OS_NAME}/Dockerfile" -t "${MILVUS_IMAGE_REPO}:${MILVUS_IMAGE_TAG}" .
+@@ -365,10 +365,11 @@ ordered fragment readers
+ - Ordinary import materializes `timestamp = ImportJob.DataTs`; backup keeps the
+   source timestamp carried in the fragment and requires it.
+ - Writer options come from the `WriterSpec`. Column groups are encrypted with the
+-  **target** collection's CMEK zone, while fragment readers use the read/source
+-  plugin context. **TEXT columns are the deliberate exception: they are written
+-  plaintext.** The target-zone plugin context is still threaded all the way down
+-  into the TEXT-aware writer, but its two call sites
++  **target** collection's CMEK zone. Reshard uses the source plugin context only
++  to read original backup data; it writes fragments with the target context,
++  which fragment readers also use. **TEXT columns are the deliberate exception:
++  they are written plaintext.** The target-zone plugin context is still threaded
++  all the way down into the TEXT-aware writer, but its two call sites
+   (`internal/flushcommon/syncmgr/pack_writer_v3.go`,
+   `internal/storage/binlog_record_writer.go`) intentionally do not apply it yet,
+   because the TEXT read chain has no key retriever wiring: segcore reads V3
 ```
 
-**File**: `build/docker/milvus/amazonlinux2023/Dockerfile` (modified, +6/-1)
+**File**: `internal/core/src/segcore/ChunkedSegmentSealedImpl.cpp` (modified, +13/-0)
 ```diff
-@@ -15,6 +15,9 @@ FROM amazonlinux:2023
- 
- ARG TARGETARCH
- ARG MILVUS_ASAN_LIB
-+ARG MILVUS_ARCHER_LIB
-+ARG MILVUS_TSAN_OPTIONS=halt_on_error=1:exitcode=66
-+ARG MILVUS_JEMALLOC_LIB=/milvus/lib/libjemalloc.so
- ARG MILVUS_RUNTIME_USER=milvus:milvus
- 
- COPY --from=uv /uv /usr/local/bin/uv
-@@ -50,7 +53,9 @@ RUN uv --no-cache pip install --python python3.12 --system --break-system-packag
- 
- ENV PATH=/milvus/bin:$PATH
- ENV LD_LIBRARY_PATH=/milvus/lib:$LD_LIBRARY_PATH:/usr/lib
--ENV LD_PRELOAD=${MILVUS_ASAN_LIB}:/milvus/lib/libjemalloc.so
-+ENV LD_PRELOAD=${MILVUS_ASAN_LIB}:${MILVUS_JEMALLOC_LIB}
-+ENV TSAN_OPTIONS=${MILVUS_TSAN_OPTIONS}
-+ENV OMP_TOOL_LIBRARIES=${MILVUS_ARCHER_LIB}
- ENV MALLOC_CONF=background_thread:true
- ENV OPENSSL_MODULES=/milvus/lib/ossl-modules
- 
+@@ -153,6 +153,7 @@
+ #include "storage/FileManager.h"
+ #include "storage/StatusToErrorCode.h"
+ #include "storage/KeyRetriever.h"
++#include "storage/PluginLoader.h"
+ #include "storage/LocalChunkManager.h"
+ #include "storage/LocalChunkManagerSingleton.h"
+ #include "storage/MmapManager.h"
+@@ -2681,6 +2682,13 @@ ChunkedSegmentSealedImpl::LoadColumnGroups(
+                                             /*arrow_schema=*/nullptr,
+                                             needed_columns,
+                                             *properties));
++    // QueryNode registers the collection's cipher context before loading.
++    // Resolve encrypted Parquet keys through that context when opening files.
++    if (storage::PluginLoader::GetInstance().getCipherPlugin()) {
++        reader->set_keyretriever([](const std::string& key_metadata) {
++            return storage::KeyRetriever().GetKey(key_metadata);
++        });
++    }
+     committer.Commit([reader](RuntimeResourceState& runtime,
+                               PublishedSegmentState&) mutable {
+         runtime.reader = std::move(reader);
+@@ -8224,6 +8232,11 @@ ChunkedSegmentSealedImpl::PrepareLoadDiffForReopen(
+                 milvus_storage::api::Reader::create(
+                     column_groups, arrow_schema, needed_columns, *properties)
+                     .release());
++            if (storage::PluginLoader::GetInstance().getCipherPlugin()) {
++                reader->set_keyretriever([](const std::string& key_metadata) {
++                    return storage::KeyRetriever().GetKey(key_metadata);
++                });
++            }
+             committer.Commit(
+                 [reader = std::move(reader)](RuntimeResourceState& runtime,
+                                              PublishedSegmentState&) mutable {
 ```
 
-**File**: `build/docker/milvus/rockylinux9/Dockerfile` (modified, +6/-1)
+**File**: `internal/core/src/segcore/SegmentGrowingImpl.cpp` (modified, +6/-0)
 ```diff
-@@ -15,6 +15,9 @@ FROM rockylinux/rockylinux:9
+@@ -82,6 +82,7 @@
+ #include "segcore/Utils.h"
+ #include "segcore/memory_planner.h"
+ #include "storage/KeyRetriever.h"
++#include "storage/PluginLoader.h"
+ #include "storage/ThreadPool.h"
+ #include "storage/ThreadPools.h"
+ #include "storage/Types.h"
+@@ -4190,6 +4191,11 @@ SegmentGrowingImpl::LoadColumnsGroups(std::string manifest_path) {
+         schema->ConvertToLoonArrowSchema(/*text_lob_as_binary=*/true);
+     reader_ = milvus_storage::api::Reader::create(
+         column_groups, arrow_schema, nullptr, *properties);
++    if (storage::PluginLoader::GetInstance().getCipherPlugin()) {
++        reader_->set_keyretriever([](const std::string& key_metadata) {
++            return storage::KeyRetriever().GetKey(key_metadata);
++        });
++    }
  
- ARG TARGETARCH
- ARG MILVUS_ASAN_LIB
-+ARG MILVUS_ARCHER_LIB
-+ARG MILVUS_TSAN_OPTIONS=halt_on_error=1:exitcode=66
-+ARG MILVUS_JEMALLOC_LIB=/milvus/lib/libjemalloc.so
- ARG MILVUS_RUNTIME_USER=milvus:milvus
- 
- COPY --from=uv /uv /usr/local/bin/uv
-@@ -52,7 +55,9 @@ RUN uv --no-cache pip install --python python3.12 --system --break-system-packag
- 
- ENV PATH=/milvus/bin:$PATH
- ENV LD_LIBRARY_PATH=/milvus/lib:$LD_LIBRARY_PATH:/usr/lib
--ENV LD_PRELOAD=${MILVUS_ASAN_LIB}:/milvus/lib/libjemalloc.so
-+ENV LD_PRELOAD=${MILVUS_ASAN_LIB}:${MILVUS_JEMALLOC_LIB}
-+ENV TSAN_OPTIONS=${MILVUS_TSAN_OPTIONS}
-+ENV OMP_TOOL_LIBRARIES=${MILVUS_ARCHER_LIB}
- ENV MALLOC_CONF=background_thread:true
- ENV OPENSSL_MODULES=/milvus/lib/ossl-modules
- 
+     // A column group whose fields were all dropped from the segment schema
+     // has an empty read projection; opening it violates the reader contract
 ```
 
-**File**: `build/docker/milvus/ubuntu20.04/Dockerfile` (modified, +6/-1)
+**File**: `internal/core/src/segcore/packed_writer_c.cpp` (modified, +4/-2)
 ```diff
-@@ -15,6 +15,9 @@ FROM ubuntu:focal-20240530
- 
- ARG TARGETARCH
- ARG MILVUS_ASAN_LIB
-+ARG MILVUS_ARCHER_LIB
-+ARG MILVUS_TSAN_OPTIONS=halt_on_error=1:exitcode=66
-+ARG MILVUS_JEMALLOC_LIB=/milvus/lib/libjemalloc.so
- ARG MILVUS_RUNTIME_USER=milvus:milvus
- 
- COPY --from=uv /uv /usr/local/bin/uv
-@@ -59,7 +62,9 @@ RUN uv --no-cache pip install --python python3.12 --system --break-system-packag
- 
- ENV PATH=/milvus/bin:$PATH
- ENV LD_LIBRARY_PATH=/milvus/lib:$LD_LIBRARY_PATH:/usr/lib
--ENV LD_PRELOAD=${MILVUS_ASAN_LIB}:/milvus/lib/libjemalloc.so
-+ENV LD_PRELOAD=${MILVUS_ASAN_LIB}:${MILVUS_JEMALLOC_LIB}
-+ENV TSAN_OPTIONS=${MILVUS_TSAN_OPTIONS}
-+ENV OMP_TOOL_LIBRARIES=${MILVUS_ARCHER_LIB}
- ENV MALLOC_CONF=background_thread:true
- 
- # protobuf 5.x RepeatedField adds container annotations that trigger ASAN
+@@ -121,7 +121,8 @@ NewPackedWriterWithStorageConfig(struct ArrowSchema* schema,
+         parquet::WriterProperties::Builder builder;
+         auto plugin_ptr =
+             milvus::storage::PluginLoader::GetInstance().getCipherPlugin();
+-        if (plugin_ptr != nullptr && c_plugin_context != nullptr) {
++        if (c_plugin_context != nullptr) {
++            AssertInfo(plugin_ptr != nullptr, "failed to get cipher plugin");
+             plugin_ptr->Update(c_plugin_context->ez_id,
+                                c_plugin_context->collection_id,
+                                std::string(c_plugin_context->key));
+@@ -203,7 +204,8 @@ NewPackedWriter(struct ArrowSchema* schema,
+         parquet::WriterProperties::Builder builder;
+         auto plugin_ptr =
+             milvus::storage::PluginLoader::GetInstance().getCipherPlugin();
+-        if (plugin_ptr != nullptr && c_plugin_context != nullptr) {
++        if (c_plugin_context != nullptr) {
++            AssertInfo(plugin_ptr != nullptr, "failed to get cipher plugin");
+             plugin_ptr->Update(c_plugin_context->ez_id,
+                                c_plugin_context->collection_id,
+                                std::string(c_plugin_context->key));
 ```
 
-**File**: `build/docker/milvus/ubuntu22.04/Dockerfile` (modified, +6/-1)
+**File**: `internal/core/src/storage/Util.cpp` (modified, +11/-0)
 ```diff
-@@ -15,6 +15,9 @@ FROM ubuntu:jammy-20240530
+@@ -83,6 +83,7 @@
+ #include "storage/MemFileManagerImpl.h"
+ #include "storage/DiskFileManagerImpl.h"
+ #include "storage/KeyRetriever.h"
++#include "storage/PluginLoader.h"
+ #include "segcore/memory_planner.h"
+ #include "mmap/Types.h"
+ #include "storage/loon_ffi/ffi_reader_c.h"
+@@ -2186,6 +2187,11 @@ ReadFieldDataFromManifestInto(const std::string& manifest_path,
+             }
+             auto reader = milvus_storage::api::Reader::create(
+                 column_groups, nullptr, columns, reader_properties);
++            if (PluginLoader::GetInstance().getCipherPlugin()) {
++                reader->set_keyretriever([](const std::string& key_metadata) {
++                    return KeyRetriever().GetKey(key_metadata);
++                });
++            }
+             const auto parallelism =
+                 milvus_storage::ThreadPoolHolder::GetParallelism();
+             auto pool =
+@@ -2415,6 +2421,11 @@ VisitFieldDataFromManifestPaged(
+     if (!(reader != nullptr)) {
+         ThrowInfo(ErrorCode::FileReadFailed, "Failed to create reader");
+     }
++    if (PluginLoader::GetInstance().getCipherPlugin()) {
++        reader->set_keyretriever([](const std::string& key_metadata) {
++            return KeyRetriever().GetKey(key_metadata);
++        });
++    }
+     std::shared_ptr<arrow::RecordBatch> batch;
  
- ARG TARGETARCH
- ARG MILVUS_ASAN_LIB
-+ARG MILVUS_ARCHER_LIB
-+ARG MILVUS_TSAN_OPTIONS=halt_on_error=1:exitcode=66
-+ARG MILVUS_JEMALLOC_LIB=/milvus/lib/libjemalloc.so
- ARG MILVUS_RUNTIME_USER=milvus:milvus
- 
- COPY --from=uv /uv /usr/local/bin/uv
-@@ -59,7 +62,9 @@ RUN uv --no-cache pip install --python python3.12 --system --break-system-packag
- 
- ENV PATH=/milvus/bin:$PATH
- ENV LD_LIBRARY_PATH=/milvus/lib:$LD_LIBRARY_PATH:/usr/lib
--ENV LD_PRELOAD=${MILVUS_ASAN_LIB}:/milvus/lib/libjemalloc.so
-+ENV LD_PRELOAD=${MILVUS_ASAN_LIB}:${MILVUS_JEMALLOC_LIB}
-+ENV TSAN_OPTIONS=${MILVUS_TSAN_OPTIONS}
-+ENV OMP_TOOL_LIBRARIES=${MILVUS_ARCHER_LIB}
- ENV MALLOC_CONF=background_thread:true
- ENV OPENSSL_MODULES=/milvus/lib/ossl-modules
- 
+     // Decode batches on a background thread pool while this thread keeps
 ```
 
-**File**: `docs/design-docs/design_docs/20260928-native-thread-sanitizer.md` (added, +246/-0)
+**File**: `internal/core/src/storage/loon_ffi/ffi_writer_c.cpp` (modified, +24/-11)
 ```diff
-@@ -0,0 +1,246 @@
-+# MEP: Native ThreadSanitizer builds with LLVM Archer
+@@ -13,12 +13,16 @@
+ // limitations under the License.
+ 
+ #include <string.h>
++#include <cstdlib>
+ #include <exception>
+ #include <memory>
+ #include <string>
+ #include <utility>
+ 
++#include <arrow/util/base64.h>
 +
-+- **Created:** 2026-09-28
-+- **Author(s):** @zhuwenxing
-+- **Status:** Under Review
-+- **Component:** Other (native build and test infrastructure)
-+- **Related Issues:** #53763
-+
-+## Summary
-+
-+`USE_TSAN` is an opt-in CMake option for 64-bit Linux CPU builds with LLVM 20 (Clang, compiler-rt,
-+libomp and Archer). It instruments Milvus C/C++ targets and CMake source dependencies with
-+`-fsanitize=thread`, debug information, and frame pointers. It is independent of
-+`BUILD_UNIT_TEST` and defaults to `OFF`. ASan and TSan cannot be combined.
-+
-+This is a native-code diagnostic build, not a claim of whole-process race
-+coverage. Go `-race` is a separate build. Stable Rust/Cargo builds and ordinary
-+prebuilt Conan packages do not become instrumented when this option is enabled.
-+GPU builds are rejected. Runtime compatibility and dependency coverage must be
-+validated for the particular compiler, container, and dependency versions used.
-+
-+## Motivation
-+
-+Native concurrency investigations currently require manual sanitizer flags,
-+dependency rebuilds and OpenMP synchronization controls. A repeatable build
-+must expose application races without treating invisible OpenMP synchronization
-+as a missing lock. The build also needs to preserve symbols and runtime
-+compatibility when artifacts move from a compiler environment into an image.
-+
-+## Public Interfaces
-+
-+The existing build entry points propagate the option:
-+
-+```bash
-+make USE_TSAN=ON mode=RelWithDebInfo build-cpp-with-unittest
-+make USE_TSAN=ON mode=RelWithDebInfo install
-+```
-+
-+These are commands for the Linux build environment with LLVM 20 installed.
-+`MILVUS_LLVM_ROOT` defaults to `/usr/lib/llvm-20`; the build scripts select its
-+Clang drivers and fail if the compiler-rt, libomp or Archer library is absent.
-+The native/cgo links use `-shared-libsan` so DSOs and the Go executable share
-+one LLVM TSan runtime. The C++ ABI remains `libstdc++11`.
-+
-+The direct Core script accepts `-T ON`. Direct CMake users pass
-+`-DUSE_TSAN=ON` along with their existing Conan toolchain, install prefix and
-+other configuration arguments. Use a separate worktree/build/install tree and
-+Cargo cache from ordinary or ASan builds. CMake rejects changing
-+to or from TSan in a build/install tree already marked with another mode.
-+For direct CMake invocation, first prepare the parser prerequisite with
-+`USE_TSAN=ON bash scripts/build_plan_parser.sh`; CMake cannot change an already
-+built parser wrapper.
-+
-+`cmake/Sanitizers.cmake` is loaded before dependency and source subdirectories.
-+Its directory compile options reach the OBJECT libraries aggregated into
-+`milvus_core`; flags attached only to the final shared library would not
-+instrument those objects. Link options reach shared libraries and executables.
-+Both C and C++ compiler/runtime links are checked during configuration.
-+
-+ASan flags are centralized in the same module. The Tantivy C++ helpers no longer
-+implicitly enable ASan just because the build type is Debug; select `USE_ASAN`
-+explicitly. TSan builds skip jemalloc and split DWARF. The handwritten parser
-+wrapper build and Go/cgo compilation receive their own TSan flags.
-+
-+## Design Details
-+
-+### Conan dependency variants
-+
-+The standard build scripts rebuild Folly, milvus-common, libevent, oneTBB,
-+GEOS and gtest with TSan by default. Synchronization in prebuilt Folly is not
-+visible to TSan and can produce reports during service startup. The generated
-+host profile selects Clang 20 and C++20 for Core and these six packages,
-+retains the default compiler identity for other packages and build tools and makes sanitizer flags part of
-+package IDs. A scoped Conan hook preserves the flags that the Folly recipe
-+otherwise overwrites. The generated dependency manifest verifies native symbols
-+and records package revisions and library hashes.
-+
-+OpenBLAS uses its pthread backend in the TSan profile. Its default GCC/Fortran
-+OpenMP backend would introduce `libgomp` alongside LLVM `libomp`; pthread BLAS
-+preserves parallelism without mixing OpenMP runtimes. Other Conan dependencies
-+remain prebuilt. For broader native dependency
-+instrumentation, opt into the provided full host profile (this broader profile
-+still requires validation of each recipe):
-+
-+```bash
-+mkdir -p cmake_build
-+python3 internal/core/milvus_tsan.py profile --all > cmake_build/tsan-all.profile
-+CONAN_HOST_PROFILE="$PWD/cmake_build/tsan-all.profile" \
-+    make USE_TSAN=ON mode=RelWithDebInfo build-cpp-with-unittest
-+```
-+
-+The full profile extends `default` and configures C/C++ compile flags and executable/
-+shared-library link flags. It includes those settings and the sanitizer marker
-+in Conan package IDs. `--build=missing` can therefore reuse TSan variants without
-+silently substituting ordinary packages. Build-context tools retain the normal
-+profile. A custom compiler profile must match the Core compiler and runtime.
-+
-+The 
+ #include "PluginInterface.h"
++#include "common/CGoCatch.h"
+ #include "common/EasyAssert.h"
+ #include "common/common_type_c.h"
+ #include "storage/KeyRetriever.h"
+@@ -33,7 +37,7 @@
+  *   2. Updates the plugin with encryption zone ID, collection ID, and key
+  *   3. Retrieves the encryptor for the given zone and collection
+  *   4. Encodes key metadata containing zone ID, collection ID, and key version
+- *   5. Returns the encryption key and metadata as newly allocated strings
++ *   5. Returns the Base64-encoded key and metadata as newly allocated strings
+  *
+  * @see GetEncParams declaration in ffi_writer_c.h for parameter documentation
+  */
+@@ -42,6 +46,10 @@ GetEncParams(CPluginContext* c_plugin_context,
+              char** out_key,
+              char** out_meta) {
+     try {
++        AssertInfo(out_key != nullptr && out_meta != nullptr,
++                   "encryption parameter outputs must not be null");
++        *out_key = nullptr;
++        *out_meta = nullptr;
+         AssertInfo(c_plugin_context != nullptr, "c_plugin_context is nullptr");
+         auto plugin_ptr =
+             milvus::storage::PluginLoader::GetInstance().getCipherPlugin();
+@@ -56,15 +64,20 @@ GetEncParams(CPluginContext* c_plugin_context,
+             milvus::storage::EncodeKeyMetadata(c_plugin_context->ez_id,
+                                                c_plugin_context->collection_id,
+                                                got.second);
+-        *out_key = strdup(got.first->GetKey().c_str());
+-        *out_meta = strdup(metadata.c_str());
++        // Both cgo and Loon properties use NUL-terminated strings. Encode the
++        // binary DEK before crossing either boundary. The Parquet writer
++        // decodes it when constructing its encryption configuration.
++        auto key = arrow::util::base64_encode(got.first->GetKey());
++        auto key_buffer =
++            std::unique_ptr<char, decltype(&free)>(strdup(key.c_str()), free);
++        auto metadata_buffer = std::unique_ptr<char, decltype(&free)>(
++            strdup(metadata.c_str()), free);
++        if (!key_buffer || !metadata_buffer) {
++            throw std::bad_alloc();
++        }
++        *out_key = key_buffer.release();
++        *out_meta = metadata_buffer.release();
+         return milvus::SuccessCStatus();
+-
+-    } catch (std::exception& e) {
+-        return milvus::FailureCStatus(milvus::ErrorCode::UnexpectedError,
+-                                      e.what());
+-    } catch (...) {
+-        return milvus::FailureCStatus(milvus::ErrorCode::UnexpectedError,
+-                                      "unknown exception");
+     }
+-}
+\ No newline at end of file
++    CGO_CATCH_AND_RETURN_CSTATUS
++}
 ```
 
-**File**: `internal/core/CMakeLists.txt` (modified, +17/-7)
+**File**: `internal/core/src/storage/loon_ffi/ffi_writer_c.h` (modified, +4/-3)
 ```diff
-@@ -83,6 +83,8 @@ endif ()
+@@ -30,8 +30,9 @@ extern "C" {
+  * @param[in] c_plugin_context Pointer to the plugin context containing:
+  *                             - ez_id: Encryption zone ID
+  *                             - collection_id: The collection ID
+- *                             - key: The encryption key string
+- * @param[out] out_key Pointer to receive the encryption key (caller must free with free())
++ *                             - key: Base64 EZ key to register
++ * @param[out] out_key Pointer to receive the Base64-encoded encryption key (caller must free with free()).
++ *                    Pass this text unchanged to Loon's writer.enc.key property.
+  * @param[out] out_meta Pointer to receive the encoded key metadata (caller must free with free())
+  *
+  * @return CStatus Success status or error with message if failed
+@@ -43,4 +44,4 @@ GetEncParams(CPluginContext* c_plugin_context, char** out_key, char** out_meta);
  
- set( CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake" )
- include( Utils )
-+include( DefineOptions )
-+include( Sanitizers )
+ #ifdef __cplusplus
+ }
+-#endif
+\ No newline at end of file
++#endif
+```
+
+---
+
+### Incident Patch 3: `d3063b15` (2026-11-05)
+**Commit Message**: fix: Reuse StorageV2 footers across batches (#54482)
+
+StorageV2 creates an independent reader for each batch, repeatedly
+fetching and parsing the same Parquet footer. Smaller load batches
+amplify this overhead.
+
+Reuse plaintext footer metadata through caller-owned
+`PreparedParquetFile` contexts while keeping independent readers for
+each batch:
+- Sealed column groups prepare each touched file once per `get_cells()`
+call and share the context across that call's batch readers. The
+translator retains only the filesystem, paths, row-group layout, and
+skip metrics; it does not retain parsed footers across lazy loads or
+reloads.
+- Growing loads reuse the contexts created during metadata discovery for
+the load operation. Paged reads share a context across the current
+file's read windows.
+- Contexts are released when their owning operation and tasks finish.
+Encrypted files continue to open fresh without sharing decoded footers.
+No process-wide footer cache is introduced.
+
+This uses the file-context API already present in master's
+milvus-storage dependency; this PR does not change the storage version.
+
+## Validation
+
+Counted-filesystem tests cover concurrent batch readers, footer
+reads/bytes
+
+**File**: `internal/core/src/segcore/ChunkedSegmentSealedImpl.cpp` (modified, +1/-0)
+```diff
+@@ -3362,6 +3362,7 @@ ChunkedSegmentSealedImpl::load_column_group_data_internal(
+                 GroupChunkType::DEFAULT,
+                 field_metas,
+                 column_group_info,
++                fs,
+                 std::move(insert_files),
+                 std::move(packing.row_group_meta_list),
+                 info.enable_mmap,
+```
+
+**File**: `internal/core/src/segcore/MemoryPlannerFooterReuseTest.cpp` (added, +311/-0)
+```diff
+@@ -0,0 +1,311 @@
++// Licensed to the LF AI & Data foundation under one
++// or more contributor license agreements. See the NOTICE file
++// distributed with this work for additional information
++// regarding copyright ownership. The ASF licenses this file
++// to you under the Apache License, Version 2.0 (the
++// "License"); you may not use this file except in compliance
++// with the License. You may obtain a copy of the License at
++//
++//     http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++#include <atomic>
++#include <future>
++#include <memory>
++#include <vector>
++
++#include <gtest/gtest.h>
++#include <arrow/api.h>
++#include <arrow/filesystem/localfs.h>
++#include <arrow/io/memory.h>
++#include <parquet/arrow/writer.h>
++
++#include "milvus-storage/common/constants.h"
++#include "segcore/memory_planner.h"
++#include "storage/KeyRetriever.h"
++
++namespace milvus::segcore {
++namespace {
++
++using namespace milvus_storage;
++
++// Every input gets its own BufferReader. Track footer intersections separately
++// from data reads; creating a prepared reader must issue neither kind of read.
++struct ReadCounts {
++    std::atomic<int> opens{0};
++    std::atomic<int> handles{0};
++    std::atomic<int> footer_reads{0};
++    std::atomic<int> data_reads{0};
++    std::atomic<bool> fail_reads{false};
++    std::atomic<bool> fail_opens{false};
++};
++
++class CountedInput : public arrow::io::RandomAccessFile {
++ public:
++    CountedInput(std::shared_ptr<arrow::Buffer> data,
++                 std::shared_ptr<ReadCounts> counts)
++        : input_(std::move(data)), counts_(std::move(counts)) {
++        ++counts_->handles;
++        auto buffer = input_.buffer();
++        if (buffer->size() < 8) {
++            footer_start_ = 0;
++            return;
++        }
++        const auto* tail = buffer->data() + buffer->size() - 8;
++        uint32_t footer_size = static_cast<uint32_t>(tail[0]) |
++                               static_cast<uint32_t>(tail[1]) << 8 |
++                               static_cast<uint32_t>(tail[2]) << 16 |
++                               static_cast<uint32_t>(tail[3]) << 24;
++        footer_start_ = buffer->size() - 8 - footer_size;
++    }
++    ~CountedInput() override {
++        (void)CountedInput::Close();
++    }
++    arrow::Status
++    Close() override {
++        if (!input_.closed()) {
++            --counts_->handles;
++        }
++        return input_.Close();
++    }
++    bool
++    closed() const override {
++        return input_.closed();
++    }
++    arrow::Result<int64_t>
++    Tell() const override {
++        return input_.Tell();
++    }
++    arrow::Status
++    Seek(int64_t position) override {
++        return input_.Seek(position);
++    }
++    arrow::Result<int64_t>
++    GetSize() override {
++        return input_.GetSize();
++    }
++    arrow::Result<int64_t>
++    Read(int64_t nbytes, void* out) override {
++        ARROW_ASSIGN_OR_RAISE(auto pos, Tell());
++        ARROW_RETURN_NOT_OK(Record(pos, nbytes));
++        return input_.Read(nbytes, out);
++    }
++    arrow::Result<std::shared_ptr<arrow::Buffer>>
++    Read(int64_t nbytes) override {
++        ARROW_ASSIGN_OR_RAISE(auto pos, Tell());
++        ARROW_RETURN_NOT_OK(Record(pos, nbytes));
++        return input_.Read(nbytes);
++    }
++    arrow::Result<int64_t>
++    ReadAt(int64_t pos, int64_t nbytes, void* out) override {
++        ARROW_RETURN_NOT_OK(Record(pos, nbytes));
++        return input_.ReadAt(pos, nbytes, out);
++    }
++    arrow::Result<std::shared_ptr<arrow::Buffer>>
++    ReadAt(int64_t pos, int64_t nbytes) override {
++        ARROW_RETURN_NOT_OK(Record(pos, nbytes));
++        return input_.ReadAt(pos, nbytes);
++    }
++
++ private:
++    arrow::Status
++    Record(int64_t pos, int64_t nbytes) {
++        if (counts_->fail_reads) {
++            return arrow::Status::IOError("injected read failure");
++        }
++        if (pos + nbytes > footer_start_) {
++            ++counts_->footer_reads;
++        } else {
++            ++counts_->data_reads;
++        }
++        return arrow::Status::OK();
++    }
++    arrow::io::BufferReader input_;
++    std::shared_ptr<ReadCounts> counts_;
++    int64_t footer_start_;
++};
++
++// Serve an immutable packed file through a fresh counted handle for each reader.
++class CountedFileSystem : public arrow::fs::SubTreeFileSystem {
++ public:
++    CountedFileSystem(std::shared_ptr<arrow::Buffer> data, std::string key)
++        : arrow::fs::SubTreeFileSystem(
++              "", std::make_shared<arrow::fs::LocalFileSystem>()),
++          counts(std::make_shared<ReadCounts>()),
++          data_(std::move(data)),
++          key_(std::move(key)) {
++    }
++    using arrow::fs::SubTreeFileSystem::OpenInputFile;
++    arrow::Result
+```
+
+**File**: `internal/core/src/segcore/SegmentGrowingImpl.cpp` (modified, +13/-22)
+```diff
+@@ -2158,34 +2158,24 @@ SegmentGrowingImpl::load_column_group_data_internal(
+         // Get all row groups for each file
+         std::vector<std::vector<int64_t>> row_group_lists;
+         row_group_lists.reserve(insert_files.size());
++        PreparedParquetFiles prepared_files;
++        prepared_files.reserve(insert_files.size());
+         for (const auto& file : insert_files) {
+-            auto result = milvus_storage::FileRowGroupReader::Make(
+-                fs,
+-                file,
+-                milvus_storage::DEFAULT_READ_BUFFER_SIZE,
+-                storage::GetReaderProperties(),
+-                storage::GetArrowReaderProperties());
++            auto result = milvus_storage::PreparedParquetFile::Open(
++                fs, file, storage::GetReaderProperties());
+             if (!result.ok()) {
+                 ThrowInfo(
+-                    milvus::storage::ArrowStatusToErrorCode(result),
+-                    "[StorageV2] Failed to create file row group reader: " +
+-                        result.status().ToString());
++                    milvus::storage::ArrowStatusToErrorCode(result.status()),
++                    "[StorageV2] Failed to prepare file {}: {}",
++                    file,
++                    result.status().ToString());
+             }
+-            auto reader = result.ValueOrDie();
+-            auto row_group_num =
+-                reader->file_metadata()->GetRowGroupMetadataVector().size();
++            auto prepared = std::move(result).ValueOrDie();
++            auto row_group_num = prepared->row_group_metadata().size();
+             std::vector<int64_t> all_row_groups(row_group_num);
+             std::iota(all_row_groups.begin(), all_row_groups.end(), 0);
+             row_group_lists.push_back(all_row_groups);
+-            auto status = reader->Close();
+-            if (!status.ok()) {
+-                ThrowInfo(milvus::storage::ArrowStatusToErrorCode(status),
+-                          "[StorageV2] failed to close file reader when get "
+-                          "row group "
+-                          "metadata from file {} with error {}",
+-                          file,
+-                          status.ToString());
+-            }
++            prepared_files.push_back(std::move(prepared));
+         }
  
- # **************************** Build time, type and code version ****************************
- get_current_time( BUILD_TIME )
-@@ -188,12 +190,11 @@ find_package(Azure REQUIRED)
- include( CTest )
- include( BuildUtils )
- include( AwsRuntime )
--include( DefineOptions )
+         // create parallel degree split strategy
+@@ -2200,7 +2190,8 @@ SegmentGrowingImpl::load_column_group_data_internal(
+                                     row_group_lists,
+                                     fs,
+                                     nullptr,
+-                                    infos.load_priority);
++                                    infos.load_priority,
++                                    prepared_files);
+         });
  
- # ---- Split DWARF (Linux only) ----
- # Keep this opt-in: .dwo files stay in the build tree and are not included in
- # installed artifacts or the published debug image by default.
--if (LINUX AND MILVUS_USE_SPLIT_DWARF AND NOT USE_ASAN STREQUAL "ON")
-+if (LINUX AND MILVUS_USE_SPLIT_DWARF AND NOT USE_ASAN AND NOT USE_TSAN)
-     check_cxx_compiler_flag("-gsplit-dwarf" HAS_SPLIT_DWARF)
-     if (HAS_SPLIT_DWARF)
-         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -gsplit-dwarf")
-@@ -204,6 +205,20 @@ endif ()
+         LOG_INFO(
+```
+
+**File**: `internal/core/src/segcore/memory_planner.cpp` (modified, +91/-75)
+```diff
+@@ -111,19 +111,16 @@ BatchReaderMemoryLimit(int64_t batch_loaded_memory_bytes,
+ }
  
- include( ExternalProject )
- include( GNUInstallDirs )
-+foreach(_libdir lib lib64)
-+    set(_sanitizer_marker "${CMAKE_INSTALL_PREFIX}/${_libdir}/milvus-sanitizer")
-+    if(EXISTS "${_sanitizer_marker}")
-+        file(READ "${_sanitizer_marker}" _installed_sanitizer)
-+        string(STRIP "${_installed_sanitizer}" _installed_sanitizer)
-+        if(NOT _installed_sanitizer STREQUAL MILVUS_SANITIZER AND
-+           (_installed_sanitizer STREQUAL "thread" OR USE_TSAN))
-+            message(FATAL_ERROR "Changing TSan mode requires a fresh install directory")
-+        endif()
-+    endif()
-+endforeach()
-+file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/milvus-sanitizer" "${MILVUS_SANITIZER}\n")
-+install(FILES "${CMAKE_CURRENT_BINARY_DIR}/milvus-sanitizer"
-+        DESTINATION "${CMAKE_INSTALL_LIBDIR}")
- include( FetchContent )
+ arrow::Result<std::vector<std::shared_ptr<arrow::Table>>>
+-ReadFileRowGroupBlock(const milvus_storage::ArrowFileSystemPtr& fs,
+-                      const std::string& file,
+-                      int64_t rg_offset,
+-                      int64_t rg_count,
+-                      int64_t reader_memory_limit) {
+-    ARROW_ASSIGN_OR_RAISE(auto reader,
+-                          milvus_storage::FileRowGroupReader::Make(
+-                              fs,
+-                              file,
+-                              nullptr,
+-                              reader_memory_limit,
+-                              milvus::storage::GetReaderProperties(),
+-                              milvus::storage::GetArrowReaderProperties()));
++ReadFileRowGroupBlock(
++    const std::shared_ptr<milvus_storage::PreparedParquetFile>& file,
++    int64_t rg_offset,
++    int64_t rg_count,
++    int64_t reader_memory_limit) {
++    ARROW_ASSIGN_OR_RAISE(
++        auto reader,
++        file->MakeReader(nullptr,
++                         reader_memory_limit,
++                         milvus::storage::GetArrowReaderProperties()));
+     auto close_guard = folly::makeGuard([&reader]() { (void)reader->Close(); });
+     ARROW_RETURN_NOT_OK(reader->SetRowGroupOffsetAndCount(rg_offset, rg_count));
+     std::vector<std::shared_ptr<arrow::Table>> tables;
+@@ -201,12 +198,16 @@ LoadWithStrategy(const std::vector<std::string>& remote_files,
+                  const std::vector<std::vector<int64_t>>& row_group_lists,
+                  const milvus_storage::ArrowFileSystemPtr& fs,
+                  const std::shared_ptr<arrow::Schema> schema,
+-                 milvus::proto::common::LoadPriority priority) {
++                 milvus::proto::common::LoadPriority priority,
++                 const PreparedParquetFiles& prepared_files) {
+     auto close_channel = folly::makeGuard([&channel] { channel->close(); });
+     try {
+         AssertInfo(remote_files.size() == row_group_lists.size(),
+                    "[StorageV2] Number of remote files must match number of "
+                    "row group lists");
++        AssertInfo(prepared_files.empty() ||
++                       prepared_files.size() == remote_files.size(),
++                   "[StorageV2] Prepared files must match remote files");
+         auto& pool =
+             ThreadPools::GetThreadPool(milvus::PriorityForLoad(priority));
  
- include_directories( thirdparty )
-@@ -228,11 +243,6 @@ if (LINUX OR MSYS)
-                   "-Wno-error"
-                   "-Wno-all"
-                   )
--    if (USE_ASAN STREQUAL "ON")
--        message( STATUS "Building Milvus Core Using AddressSanitizer")
--        add_compile_options(-fno-stack-protector -fno-omit-frame-pointer -fno-var-tracking -fsanitize=address)
--        add_link_options(-fno-stack-protector -fno-omit-frame-pointer -fno-var-tracking -fsanitize=address)
--    endif()
-     if (CMAKE_BUILD_TYPE STREQUAL "Release")
-         append_flags( CMAKE_CXX_FLAGS
-                 "-O3"
+@@ -218,6 +219,25 @@ LoadWithStrategy(const std::vector<std::string>& remote_files,
+                 continue;
+             }
+ 
++            std::shared_ptr<milvus_storage::PreparedParquetFile> prepared;
++            if (prepared_files.empty()) {
++                auto result = milvus_storage::PreparedParquetFile::Open(
++                    fs, file, milvus::storage::GetReaderProperties());
++                if (!result.ok()) {
++                    ThrowInfo(milvus::storage::ArrowStatusToErrorCode(
++                                  result.status()),
++                              "[StorageV2] Failed to prepare file {}: {}",
++                              file,
++                              result.status().ToString());
++                }
++                prepared = std::move(result).ValueOrDie();
++            } else {
++                prepared = prepared_files[file_idx];
++            }
++            AssertInfo(prepared != nullptr,
++                       "[StorageV2] Prepared file {} is null",
++                       file);
++
+             // Use provided strategy to split row groups
+             auto blocks = strategy->split(row_groups);
+ 
+@@ -238,63 +258,59 @@ LoadWithStrategy(const std::vector<std::string>& remote_files,
+                 memory_limit / blocks.size(), FILE_SLICE_SIZE.load());
+ 
+             for (const auto& block : blocks) {
+-                futures.emplace_back(pool.Submit(
+-                    [block, fs, file, file_idx, schema, reader_memory_limit]() {
+-                        AssertInfo(fs != nullptr,
+-                                   "[StorageV2] file system is nullptr");
+-                        auto result = milvus_storage::FileRowGroupReader::Make(
+-                            fs,
+-                            file,
+-                            schema,
+-                            reader_memory_limit,
+-                            milvus::storage::GetReaderProperties(),
+-                            milvus::storage::GetArrowReaderProperties());
+-                        if (!result.ok()) {
+-                            ThrowInfo(milvus::storage::ArrowStatusToErrorCode(
+-                                          result.status()),
+-                                      "[StorageV2] Failed to create row group "
+-                                      "reader: {}",
+-                                      result.status().ToString());
+-                        }
+-                        auto row_group_reader = result.ValueOrDie();
+-                        auto close_guard 
+```
+
+**File**: `internal/core/src/segcore/memory_planner.h` (modified, +11/-7)
+```diff
+@@ -31,10 +31,14 @@
+ #include "common/OpContext.h"
+ #include "milvus-storage/common/metadata.h"
+ #include "milvus-storage/filesystem/fs.h"
++#include "milvus-storage/format/parquet/file_reader.h"
+ #include "milvus-storage/reader.h"
+ 
+ namespace milvus::segcore {
+ 
++using PreparedParquetFiles =
++    std::vector<std::shared_ptr<milvus_storage::PreparedParquetFile>>;
++
+ struct RowGroupBlock {
+     int64_t offset;  // Start offset of the row group block
+     int64_t count;   // Number of row groups in this block
+@@ -73,6 +77,8 @@ class ParallelDegreeSplitStrategy : public RowGroupSplitStrategy {
+  * @param strategy: strategy to split row groups
+  * @param row_group_lists: list of row group lists
+  * @param schema: schema of the data, if not provided, storage v2 will read all columns of the files.
++ * @param prepared_files: contexts from metadata discovery, in remote_files order.
++ * If omitted, prepare each file once before splitting it into reader tasks.
+  */
+ void
+ LoadWithStrategy(const std::vector<std::string>& remote_files,
+@@ -83,7 +89,8 @@ LoadWithStrategy(const std::vector<std::string>& remote_files,
+                  const milvus_storage::ArrowFileSystemPtr& fs,
+                  const std::shared_ptr<arrow::Schema> schema = nullptr,
+                  milvus::proto::common::LoadPriority priority =
+-                     milvus::proto::common::LoadPriority::HIGH);
++                     milvus::proto::common::LoadPriority::HIGH,
++                 const PreparedParquetFiles& prepared_files = {});
+ 
+ // ---- Cell-batch loading ----
+ 
+@@ -166,14 +173,11 @@ LoadCellBatchAsync(milvus::OpContext* op_ctx,
+ 
+ /**
+  * Creates a BatchReaderFactory that reads from Parquet files via
+- * FileRowGroupReader. This factory uses one reader for the requested contiguous
+- * row group range and leaves row group internals to the storage/Arrow reader.
+- * The returned factory owns a copy of remote_files, so the caller's vector
+- * need not outlive the factory.
++ * independent readers from caller-prepared files. The factory retains the file
++ * contexts across batch tasks; it shares plaintext footers but no reader state.
+  */
+ BatchReaderFactory
+-MakeFileReaderFactory(std::vector<std::string> remote_files,
+-                      milvus_storage::ArrowFileSystemPtr fs);
++MakeFileReaderFactory(PreparedParquetFiles prepared_files);
+ 
+ /**
+  * Creates a BatchReaderFactory that reads from a ChunkReader via batch
+```
+
+**File**: `internal/core/src/segcore/storagev2translator/GroupChunkTranslator.cpp` (modified, +32/-5)
+```diff
+@@ -14,7 +14,6 @@
+ // See the License for the specific language governing permissions and
+ // limitations under the License.
+ #include "segcore/storagev2translator/GroupChunkTranslator.h"
+-#include "segcore/default_fs.h"
+ 
+ #include <assert.h>
+ #include <algorithm>
+@@ -44,14 +43,15 @@
+ #include "log/Log.h"
+ #include "milvus-storage/common/config.h"
+ #include "milvus-storage/common/constants.h"
+-#include "milvus-storage/filesystem/fs.h"
++#include "milvus-storage/format/parquet/file_reader.h"
+ #include "mmap/Types.h"
+ #include "segcore/InsertRecord.h"
+ #include "segcore/Utils.h"
+ #include "segcore/memory_planner.h"
+ #include "segcore/storagev2translator/GroupCTMeta.h"
+ #include "storage/EntryStreamUtils.h"
+ #include "storage/KeyRetriever.h"
++#include "storage/StatusToErrorCode.h"
+ #include "storage/LoadOverheadController.h"
+ #include "segcore/storagev2translator/StorageV2Config.h"
+ #include "storage/Util.h"
+@@ -71,6 +71,7 @@ GroupChunkTranslator::GroupChunkTranslator(
+     GroupChunkType group_chunk_type,
+     const std::unordered_map<FieldId, FieldMeta>& field_metas,
+     FieldDataInfo column_group_info,
++    milvus_storage::ArrowFileSystemPtr fs,
+     std::vector<std::string> insert_files,
+     std::vector<milvus_storage::RowGroupMetadataVector>&& row_group_meta_list,
+     bool use_mmap,
+@@ -101,6 +102,7 @@ GroupChunkTranslator::GroupChunkTranslator(
+       }()),
+       field_metas_(field_metas),
+       column_group_info_(column_group_info),
++      fs_(std::move(fs)),
+       insert_files_(std::move(insert_files)),
+       row_group_meta_list_(std::move(row_group_meta_list)),
+       meta_(num_fields,
+@@ -143,6 +145,8 @@ GroupChunkTranslator::GroupChunkTranslator(
+                                    })),
+       writeback_mode_(writeback_mode),
+       load_priority_(load_priority) {
++    AssertInfo(insert_files_.size() == row_group_meta_list_.size(),
++               "[StorageV2] Files must match row group metadata");
+     // Build prefix sum for O(1) lookup in get_cid_from_file_and_row_group_index
+     file_row_group_prefix_sum_.reserve(row_group_meta_list_.size() + 1);
+     file_row_group_prefix_sum_.push_back(
+@@ -361,6 +365,10 @@ GroupChunkTranslator::get_cells(milvus::OpContext* ctx,
+         cells;
+     cells.reserve(cids.size());
+ 
++    if (cids.empty()) {
++        return cells;
++    }
++
+     auto max_cid = *std::max_element(cids.begin(), cids.end());
+     if (max_cid >= meta_.chunk_memory_size_.size()) {
+         ThrowInfo(
+@@ -387,9 +395,28 @@ GroupChunkTranslator::get_cells(milvus::OpContext* ctx,
+     }
+ 
+     // Submit cell-batch loading tasks
+-    auto fs = milvus::segcore::GetDefaultArrowFileSystem();
+-
+-    auto factory = milvus::segcore::MakeFileReaderFactory(insert_files_, fs);
++    // Preserve file_idx while preparing only files touched by this operation.
++    // Batch tasks share the contexts, but the translator never retains them.
++    PreparedParquetFiles prepared_files(insert_files_.size());
++    for (const auto& spec : cell_specs) {
++        if (prepared_files[spec.file_idx]) {
++            continue;
++        }
++        CheckCancellation(ctx, segment_id_, "GroupChunkTranslator::prepare");
++        const auto& path = insert_files_[spec.file_idx];
++        auto result = milvus_storage::PreparedParquetFile::Open(
++            fs_, path, storage::GetReaderProperties());
++        if (!result.ok()) {
++            ThrowInfo(storage::ArrowStatusToErrorCode(result.status()),
++                      "[StorageV2] Failed to prepare file {}: {}",
++                      path,
++                      result.status().ToString());
++        }
++        prepared_files[spec.file_idx] = std::move(result).ValueOrDie();
++    }
++    CheckCancellation(ctx, segment_id_, "GroupChunkTranslator::prepare");
++    auto factory =
++        milvus::segcore::MakeFileReaderFactory(std::move(prepared_files));
+     auto finalize_cell =
+         [this, priority](
+             const std::vector<std::shared_ptr<arrow::Table>>& tables,
+```
+
+**File**: `internal/core/src/segcore/storagev2translator/GroupChunkTranslator.h` (modified, +5/-0)
+```diff
+@@ -24,6 +24,7 @@
+ #include "cachinglayer/Utils.h"
+ #include "common/ChunkTarget.h"
+ #include "milvus-storage/common/metadata.h"
++#include "milvus-storage/filesystem/fs.h"
+ #include "mmap/Types.h"
+ #include "common/Types.h"
+ #include "common/GroupChunk.h"
+@@ -40,6 +41,7 @@ class GroupChunkTranslator
+         GroupChunkType group_chunk_type,
+         const std::unordered_map<FieldId, FieldMeta>& field_metas,
+         FieldDataInfo column_group_info,
++        milvus_storage::ArrowFileSystemPtr fs,
+         std::vector<std::string> insert_files,
+         std::vector<milvus_storage::RowGroupMetadataVector>&&
+             row_group_meta_list,
+@@ -114,6 +116,9 @@ class GroupChunkTranslator
+     std::string key_;
+     std::unordered_map<FieldId, FieldMeta> field_metas_;
+     FieldDataInfo column_group_info_;
++    // Full footers are prepared only for the files requested by get_cells and
++    // released with that operation. Keep only the layout across calls.
++    milvus_storage::ArrowFileSystemPtr fs_;
+     std::vector<std::string> insert_files_;
+     std::vector<milvus_storage::RowGroupMetadataVector> row_group_meta_list_;
+     std::vector<size_t> file_row_group_prefix_sum_;
+```
+
+**File**: `internal/core/src/segcore/storagev2translator/GroupChunkTranslatorTest.cpp` (modified, +188/-0)
+```diff
+@@ -58,6 +58,10 @@
+ #include "segcore/storagev2translator/StorageV2Config.h"
+ #include <folly/ScopeGuard.h>
+ #include "test_utils/Constants.h"
++#include "test_utils/CountedFileSystem.h"
++#include "storage/KeyRetriever.h"
++#include "storage/StatusToErrorCode.h"
++#include <folly/CancellationToken.h>
+ #include "test_utils/DataGen.h"
+ 
+ using namespace milvus;
+@@ -116,8 +120,189 @@ class GroupChunkTranslatorTest : public ::testing::TestWithParam<bool> {
+ 
+     std::vector<std::string> paths_;
+     int64_t segment_id_ = 0;
++
++    // Two files, each with several row groups. Non-adjacent cids force
++    // separate batches while a request confined to file 1 leaves file 0 cold.
++    std::unique_ptr<GroupChunkTranslator>
++    MakeFooterReuseTranslator(
++        const std::shared_ptr<test::CountedFileSystem>& fs,
++        std::vector<std::string>& files) {
++        files = {path_ + "/footer_scope_0.parquet",
++                 path_ + "/footer_scope_1.parquet"};
++        auto write_paths = std::vector<std::string>{files[0]};
++        auto groups = std::vector<std::vector<int>>{
++            {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15}};
++        auto config = milvus_storage::StorageConfig();
++        auto result = milvus_storage::PackedRecordBatchWriter::Make(
++            fs_,
++            write_paths,
++            arrow_schema_,
++            config,
++            groups,
++            1024 * 1024,
++            parquet::default_writer_properties());
++        AssertInfo(result.ok(), "failed to create footer test writer");
++        auto writer = std::move(result).ValueOrDie();
++        int64_t rows = 0;
++        for (int i = 0; i < 12; ++i) {
++            auto data = DataGen(schema_, 1000);
++            auto batch = ConvertToArrowRecordBatch(data, 128, arrow_schema_);
++            rows += batch->num_rows();
++            AssertInfo(writer->Write(batch).ok(),
++                       "failed to write footer test file");
++        }
++        AssertInfo(writer->Close().ok(), "failed to close footer test file");
++        AssertInfo(fs_->CopyFile(files[0], files[1]).ok(),
++                   "failed to copy footer test file");
++        auto metadata = LoadGroupChunkMetadata(files, {}, "test_footer_scope");
++        AssertInfo(metadata.row_group_meta_list[0].size() >= 3,
++                   "footer test requires at least three row groups");
++        return std::make_unique<GroupChunkTranslator>(
++            segment_id_,
++            GroupChunkType::DEFAULT,
++            schema_->get_fields(),
++            FieldDataInfo(0, rows * 2, TestLocalPath),
++            fs,
++            files,
++            std::move(metadata.row_group_meta_list),
++            GetParam(),
++            true,
++            schema_->get_field_ids().size(),
++            proto::common::LoadPriority::LOW,
++            "disable",
++            MmapChunkWritebackMode::Disabled,
++            /* force_one_row_group_per_cell */ true);
++    }
+ };
+ 
++TEST_P(GroupChunkTranslatorTest, FooterReuseScopedToRequestedFilesAndCall) {
++    auto fs = std::make_shared<test::CountedFileSystem>(fs_);
++    std::vector<std::string> files;
++    auto translator = MakeFooterReuseTranslator(fs, files);
++    auto untouched = fs->CountsFor(files[0]);
++    auto requested = fs->CountsFor(files[1]);
++    // Metadata discovery uses fs_, so the translator must start with no
++    // footer references or counted handles from construction.
++    EXPECT_EQ(requested->opens, 0);
++    const int before_probe = requested->footer_reads;
++    const auto bytes_before_probe = requested->footer_bytes.load();
++    auto probe = milvus_storage::PreparedParquetFile::Open(
++        fs, files[1], storage::GetReaderProperties());
++    ASSERT_TRUE(probe.ok()) << probe.status();
++    const int reads_per_prepare = requested->footer_reads - before_probe;
++    const auto bytes_per_prepare = requested->footer_bytes - bytes_before_probe;
++    ASSERT_GT(reads_per_prepare, 0);
++    auto reader = probe.ValueOrDie()->MakeReader();
++    ASSERT_TRUE(reader.ok()) << reader.status();
++    std::weak_ptr<parquet::FileMetaData> footer =
++        reader.ValueOrDie()->file_metadata()->GetParquetMetadata();
++    reader.ValueOrDie().reset();
++    probe.ValueOrDie().reset();
++    EXPECT_TRUE(footer.expired());
++    EXPECT_EQ(requested->handles, 0);
++    const int baseline = requested->footer_reads;
++    const auto baseline_bytes = requested->footer_bytes.load();
++    const int baseline_opens = requested->opens;
++    // Keep original file_idx=1, and split the same file into two batches.
++    const std::vector<cachinglayer::cid_t> cids{
++        translator->get_global_row_group_idx(1, 0),
++        translator->get_global_row_group_idx(1, 2)};
++    for (int call = 1; call <= 2; ++call) {
++        auto cells = translator->get_cells(nullptr, cids);
++        EXPECT_EQ(cells.size(), cids.size());
++        EXPECT_EQ(requested->footer_reads, baseline + call * reads_per_prepare);
++        // A preparation also probes the 4-byte encryption m
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #55138** (2026-11-04): fix: [3.0] release MinioChunkManager's AWS SDK reference when the process exits (@santiago-wjq)
-- **PR #55131** (2026-11-04): fix: release MinioChunkManager's AWS SDK reference when the process exits (@santiago-wjq)
-- **PR #55120** (2026-11-04): enhance: reduce StreamingNode metadata memory overhead (@sijie-ni-0214)
-- **PR #55105** (2026-11-04): fix: count each proxy request once at boundary (@congqixia)
-- **PR #55101** (2026-11-04): build(deps): upgrade AWS SDK to 1.11.921 and CRT to 0.44.3 (@jiaqizho)
-- **PR #55096** (2026-11-04): fix: [cp3.0]don't blacklist a healthy delegator when the client cancels (@bigsheeper)
+- **PR #55166** (2026-11-05): test: build big_entities lazily in stability/test_restart.py (@czs007)
+- **PR #55156** (2026-11-05): enhance: [2.6] restrict AWS credential sources in chunk managers (@jiaqizho)
+- **PR #55149** (closed): fix: [2.6] cancel stale orphan segment cleanup after node is reassigned (@czs007)
+- **PR #55145** (2026-11-04): fix: let JSON_CONTAINS use JSON path indexes ahead of JSON stats (@xiaofan-luan)
+- **PR #55143** (2026-11-05): fix: [3.0] count each proxy request once at boundary (#55105) (@congqixia)
+- **PR #55142** (2026-11-05): fix: [2.6] count each proxy request once at boundary (#55105) (@congqixia)
 
 ---
 
@@ -2325,34 +2538,54 @@ files without unresolved dependencies,
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. release MinioChunkManager's AWS SDK reference when the process exits (#55131)
+## X. keep the search timestamp in the search requery (#55068)
 
 **RULE**:
-When implementing operations in `internal/core/src/storage/RemoteChunkManagerSingleton.h`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in milvus-io/milvus. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `internal/proxy/dql/requery_integration_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in milvus-io/milvus. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `eabafc85`: release MinioChunkManager's AWS SDK reference when the process exits (#55131). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `de9d02bb`: keep the search timestamp in the search requery (#55068). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/core/src/storage/RemoteChunkManagerSingleton.h`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/proxy/dql/requery_integration_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-        // Never destroyed. The remote chunk manager lives as long as the
-        // process, since Release keeps it, and a static destructor would
-        // destroy its client after MinioChunkManager released the AWS SDK at
-        // exit, which the SDK does not allow.
-        static auto* instance = new RemoteChunkManagerSingleton();
-        return *instance;
+	"time"
+	"github.com/milvus-io/milvus/pkg/v3/util/tsoutil"
+// TestSearchTask_RequeryKeepsSearchTimestamp checks that the requery task keeps
+// the search timestamp through scheduling, so its guarantee and TTL cutoffs
+// match the search. Otherwise a row that expires between the search and the
+// requery is missing from the requery and the search fails with
+// ErrInconsistentRequery.
+func TestSearchTask_RequeryKeepsSearchTimestamp(t *testing.T) {
+	const (
+		collectionName = "test_collection"
+		collectionID   = int64(100)
+	)
+	ctx := context.Background()
+	searchTime := time.Unix(1_700_000_000, 0)
+	searchTS := tsoutil.ComposeTSByTime(searchTime)
+	schedulerTS := tsoutil.ComposeTSByTime(searchTime.Add(2 * time.Second))
+	collectionTTL := time.Hour
+	gracefulTime := paramtable.Get().CommonCfg.GracefulTime.GetAsDuration(time.Millisecond)
+
+	schema := mustNewSchemaInfo(&schemapb.CollectionSchema{
+		Name: collectionName,
+		Fields: []*schemapb.FieldSchema{
+			{FieldID: 100, Name: "id", IsPrimaryKey: true, DataType: schemapb.DataType_Int64},
+			{FieldID: 101, Name: "vec", DataType: schemapb.DataType_FloatVector, TypeParams: []*commonpb.KeyValuePair{{Key: common.DimKey, Value: "4"}}},
+		},
+	})
+	mo
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-        static RemoteChunkManagerSingleton instance;
-        return instance;
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `eabafc85` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `de9d02bb` are properly handled with clean fallback behavior.

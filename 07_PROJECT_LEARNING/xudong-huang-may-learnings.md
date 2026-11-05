@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/xudong-huang-may-learnings.md`  
 > **Source**: github ([https://github.com/Xudong-Huang/may](https://github.com/Xudong-Huang/may))  
-> **Source Version**: `1a717549`  
+> **Source Version**: `9cc902be`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T15:58:17.909Z  
+> **Timestamp**: 2026-11-05T10:15:59.292Z  
 > **Learning ID**: `learn-github-xudong-huang-may`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/xudong-huang-may-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Xudong-Huang/may](https://github.com/Xudong-Huang/may))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T15:58:17.903Z  
+> **Harvest Timestamp**: 2026-11-05T10:15:58.764Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: rust stackful coroutine library
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 2442 stars
+- **Stars / Engagement**: 2443 stars
 
 ---
 
@@ -2184,1056 +2184,286 @@ where
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1a717549` (2026-10-27)
-**Commit Message**: spsc: add Receiver::recv_timeout
+### Incident Patch 1: `0d5efcb1` (2026-11-05)
+**Commit Message**: :bug: fix CoIo - deregister fd from selector before closing it
 
-`may::sync::mpsc` and `mpmc` receivers have `recv_timeout`; the spsc
-receiver only had a blocking `recv`. Add `recv_timeout(Duration) ->
-Result<T, RecvTimeoutError>` with the same signature and std error type.
+CoIo dropped its inner socket before IoData, so the fd was closed before
+IoData::drop ran epoll_ctl(EPOLL_CTL_DEL); the DEL failed with EBADF. If
+another thread reused the fd number in that window, the stale DEL
+removed the new socket's epoll registration instead. A coroutine blocked
+on that socket then never received an io event again, hanging forever --
+seen intermittently as os::unix::net tests stuck in JoinHandle::join
+while every worker idled in epoll_wait.
 
-In a coroutine it parks once: an EventSource stores the coroutine where
-`send()` can take it and registers a scheduler timer, and both sides race
-on one shared `AtomicOption` slot, so exactly one of them resumes the
-coroutine (a cancel also goes through it). On a plain thread it parks with
-`park_timeout`. Whoever loses the race finds the slot empty; the data, if
-any, stays in the queue for the next receive. `recv` and `try_recv` are
-unchanged.
+Reorder CoIo's fields so IoData is dropped first, while the fd is still
+open, and add a regression test that reuses a registered fd via dup2 and
+verifies its new epoll registration survives the old CoIo's drop.
 
-Tests cover immediate data, the timer winning, data before the deadline,
-disconnect before and during the wait, a zero duration with and without
-data, cancellation while waiting, a send after a timeout, alternating with
-`recv`, and a stress mix, in coroutines and on threads.
+Co-Authored-By: Claude Code <[REDACTED_EMAIL]>
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `src/sync/spsc.rs` (modified, +520/-3)
+**File**: `src/io/sys/unix/co_io.rs` (modified, +122/-1)
 ```diff
-@@ -1,20 +1,50 @@
- //! provide single consumer single producer channel
- use std::fmt;
-+use std::io::ErrorKind;
- use std::num::NonZeroUsize;
- use std::panic::{RefUnwindSafe, UnwindSafe};
- use std::sync::atomic::{AtomicBool, AtomicUsize, Ordering};
--use std::sync::mpsc::{RecvError, SendError, TryRecvError};
-+use std::sync::mpsc::{RecvError, RecvTimeoutError, SendError, TryRecvError};
- use std::sync::Arc;
- use std::thread::Thread;
-+use std::time::Duration;
- 
- use super::AtomicOption;
--use crate::coroutine_impl::{is_coroutine, run_coroutine, CoroutineImpl, EventSource};
-+use crate::coroutine_impl::{
-+    co_cancel_data, is_coroutine, run_coroutine, CoroutineImpl, EventSource,
-+};
- use crate::likely::{likely, unlikely};
- use crate::scheduler::get_scheduler;
--use crate::yield_now::{yield_now, yield_with};
-+use crate::yield_now::{get_co_para, yield_now, yield_with};
- 
- use may_queue::spsc::Queue;
- 
-+/// EventSource for `recv_timeout`. It holds its own reference to the queue:
-+/// once the coroutine is reachable by `send()` or the timer it may resume,
-+/// finish and drop the channel on another worker while `subscribe` still runs.
-+struct RecvTimeoutSource<T> {
-+    queue: Arc<InnerQueue<T>>,
-+    timeout: Duration,
-+}
+@@ -43,8 +43,14 @@ fn set_nonblocking<T: AsRawFd>(fd: &T, nb: bool) -> io::Result<()> {
+ /// this type can be used in coroutine context without blocking the thread
+ #[derive(Debug)]
+ pub struct CoIo<T: AsRawFd> {
+-    inner: T,
++    // NOTE: field order matters. `io` must be dropped before `inner`, so the
++    // fd is removed from the selector while it is still open. If `inner` were
++    // dropped first, the fd number could be reused by another thread before
++    // `IoData::drop` runs its `epoll_ctl(DEL)`; the DEL only knows the fd
++    // number, so it would remove the registration of the new socket instead,
++    // and that socket would never receive an io event again.
+     io: io_impl::IoData,
++    inner: T,
+     #[cfg(feature = "io_timeout")]
+     read_timeout: AtomicDuration,
+     #[cfg(feature = "io_timeout")]
+@@ -301,4 +307,119 @@ mod tests {
+         io.read_exact(&mut buf).unwrap();
+         assert_eq!(buf, [0x55u8; 100]);
+     }
 +
-+impl<T> EventSource for RecvTimeoutSource<T> {
-+    fn subscribe(&mut self, co: CoroutineImpl) {
-+        let cancel = co_cancel_data(&co);
-+        // Shared between the scheduler timer and `send()` wakeup (see `timeout_wait`).
-+        let wait_co = Arc::new(AtomicOption::some(co));
-+        // Register for cancellation while nothing else can resume the
-+        // coroutine: afterwards its cancel data may be gone.
-+        cancel.set_co(wait_co.clone());
-+        if cancel.is_canceled() {
-+            unsafe { cancel.cancel() };
-+            return;
-+        }
-+        self.queue.timeout_wait.store(wait_co.clone());
-+        // Arm the timer last: a short timeout can fire at once.
-+        get_scheduler().add_timer(self.timeout, wait_co);
-+    }
-+}
-+
- struct Park<'a, T> {
-     queue: &'a InnerQueue<T>,
-     // a flag if kernel is entered
-@@ -131,6 +161,8 @@ struct InnerQueue<T> {
-     queue: Queue<T>,
-     // thread/coroutine for wake up, must use differently address for each round
-     wait_co: AtomicOption<Blocker>,
-+    /// Coroutine waiting on `recv_timeout` (timer + send share this Arc).
-+    timeout_wait: AtomicOption<Arc<AtomicOption<CoroutineImpl>>>,
-     // The number of tx channels which are currently using this queue.
-     channels: AtomicUsize,
-     // if rx is dropped
-@@ -142,6 +174,7 @@ impl<T> InnerQueue<T> {
-         InnerQueue {
-             queue: Queue::new(),
-             wait_co: AtomicOption::none(),
-+            timeout_wait: AtomicOption::none(),
-             channels: AtomicUsize::new(1),
-             port_dropped: AtomicBool::new(false),
-         }
-@@ -155,6 +188,11 @@ impl<T> InnerQueue<T> {
-         if let Some(co) = self.wait_co.take() {
-             co.unpark();
-         }
-+        if let Some(wait_co) = self.timeout_wait.take() {
-+            if let Some(co) = wait_co.take() {
-+                get_scheduler().schedule(co);
++    /// Check whether `target` is registered in any epoll instance of this
++    /// process by inspecting `/proc/self/fdinfo`.
++    #[cfg(target_os = "linux")]
++    fn fd_is_watched(target: RawFd) -> bool {
++        let dir = match std::fs::read_dir("/proc/self/fd") {
++            Ok(dir) => dir,
++            Err(_) => return false,
++        };
++        for entry in dir.flatten() {
++            let name = entry.file_name();
++            let info = match std::fs::read_to_string(format!(
++                "/proc/self/fdinfo/{}",
++                name.to_string_lossy()
++            )) {
++                Ok(info) => info,
++                Err(_) => continue,
++            };
++            let tokens: Vec<&str> = info.split_whitespace().collect();
++            for pair in tokens.windows(2) {
++                if pair[0] == "tfd:" && pair[1].parse::<RawFd>() == Ok(target) {
++                    return true;
++                }
 +            }
 +        }
-         Ok(())
-     }
- 
-@@ -211,6 +249,49 @@ impl<T> InnerQueue<T> {
-         self.try_recv()
-     }
- 
-+    /// Receive a value with a timeout.
-+    ///
-+    /// Returns `Ok(T)` if data arrives before `timeout`.
-+    /// Returns `Err(RecvTimeoutError::Timeout)` if the timeout expires.
-+    /// Returns `Err(RecvTimeoutError::Disconnected)` if the channel is disconnected.
-+    fn recv_timeout_co(self: &Arc<Self>, timeout: Duration) -> Result<T, RecvTimeoutError> {
-+        // Quick check: if data is already available, return immediately.
-+        match self.try_recv() {
-+            Ok(t) => return Ok(t),
-+            Err(TryRecvError::Disconnected) => return Err(RecvTimeoutError::Disconnected),
-+            Err(TryRecvError::Empty) => {}
-+        }
++        false
++    }
 +
-+        // Create an EventSource that:
-+        // 1. Stores the coroutine as a Blocker in wait_co (for send() to take)
-+        // 2. Registers a scheduler timer that fires after `timeout`
-+        let source = RecvTimeoutSource {
-+            queue: self.clone(),
-+            timeout,
-+        };
-+        yield_with(&source);
-+        self.timeout_wait.clear();
++    /// A raw fd owner whose drop replaces the file description at its fd
++    /// number and then blocks, keeping the close/deregister window open.
++    #[cfg(target_os = "linux")]
++    struct ReplacingFd {
++        stream: Option<std::os::unix::net::UnixStream>,
++        replacement: Option<std::os::unix::net::UnixStream>,
++        replaced_tx: std::sync::mpsc::Sender<()>,
++        go_rx: std::sync::mpsc::Receiver<()>,
++    }
 +
-+        // We are back: either data arrived (send() took wait_co and
-+        // unparked us) or the timer fired (which set co_para=TimedOut).
-+        //
-+        // Data is always queued BEFORE the wakeup (in send()), so if
-+        // data won, it's in the queue right now.
-+        match self.try_recv() {
-+            Ok(t) => Ok(t),
-+            Err(TryRecvError::Empty) => {
-+                // Queue is empty. The timer fired. Check co_para to confirm.
-+                if let Some(err) = get_co_para() {
-+                    if err.kind() == ErrorKind::TimedOut {
-+                        return Err(RecvTimeoutError::Timeout);
-+                    }
-+                }
-+                Err(RecvTimeoutError::Di
-```
-
----
-
-### Incident Patch 2: `f4f73b8b` (2026-07-21)
-**Commit Message**: fix(spsc): harden native-thread recv — SeqCst fence, re-register loop, bounded park
-
-Consumer-side lost-wakeup hardening: the store-blocker/check/park sequence could in principle lose a wakeup (Dekker store/load race with the producer push->take), and a single park() + single retry mishandles spurious returns and stale tokens. Loop with SeqCst fence and 10ms bounded park makes any consumer-side miss cost one interval instead of a hang. NOTE: does NOT cure the hauliage reproducer hang — with this in place the consumer re-polls every 10ms and the queue stays empty, proving the producer (may_postgres connection driver coroutine) never runs. Investigation continues at the scheduler level; see hauliage docs/engineering/may-spsc-lost-wakeup-stacks.txt.
-
-**File**: `AI_USAGE_GUIDE.md` (removed, +0/-755)
-```diff
-@@ -1,755 +0,0 @@
--# May Rust Coroutine Library - AI Usage Guide
--
--## Overview
--
--**May** is a high-performance Rust library for stackful coroutines, providing Go-style goroutines for Rust. This guide provides comprehensive information for AI systems to properly understand, use, and contribute to the May codebase.
--
--## 🎯 Core Concepts
--
--### 1. Stackful Coroutines
--- **Definition**: Each coroutine has its own stack (default 32KB on 64-bit systems)
--- **Implementation**: Built on the `generator` library
--- **Scheduling**: Cooperative scheduling across configurable worker threads
--- **Memory**: Fixed stack size per coroutine (no automatic growth)
--
--### 2. Go-style Concurrency
--- **Philosophy**: Similar to Go's goroutines but with Rust safety guarantees
--- **Spawning**: Use `go!` macro instead of direct `spawn` calls
--- **Communication**: Channels (MPSC, MPMC, SPSC) and synchronization primitives
--
--## 🚀 Getting Started
--
--### Basic Coroutine Spawning
--
--```rust
--#[macro_use]
--extern crate may;
--
--// Simple coroutine
--let handle = go!(|| {
--    println!("Hello from coroutine!");
--});
--handle.join().unwrap();
--
--// With custom stack size
--let handle = go_with!(8192, || {
--    println!("Coroutine with 8KB stack");
--});
--
--// Named coroutine with custom stack
--let handle = go_with!("my_task", 16384, || {
--    println!("Named coroutine with 16KB stack");
--});
--```
--
--### Configuration
--
--```rust
--use may::config;
--
--fn setup_runtime() {
--    config()
--        .set_workers(4)           // 4 worker threads
--        .set_stack_size(0x2000)   // 8KB default stack
--        .set_pool_capacity(1000)  // Coroutine pool size
--        .set_worker_pin(true);    // Pin workers to CPU cores
--}
--```
--
--## 📚 API Reference
--
--### 1. Coroutine Management
--
--#### Spawning Coroutines
--```rust
--// Preferred: Use go! macro (safe)
--let handle = go!(|| {
--    // coroutine code
--});
--
--// Advanced: Use Builder for custom configuration
--let handle = go!(
--    coroutine::Builder::new()
--        .name("worker".to_string())
--        .stack_size(0x4000),
--    || {
--        // coroutine code
--    }
--);
--
--// Scoped coroutines (wait for all to complete)
--coroutine::scope(|scope| {
--    for i in 0..10 {
--        go!(scope, move || {
--            println!("Worker {}", i);
--        });
--    }
--    // All coroutines complete before scope exits
--});
--```
--
--#### Join Handles
--```rust
--let handle = go!(|| {
--    42
--});
--
--// Wait for completion and get result
--let result = handle.join().unwrap();
--assert_eq!(result, 42);
--
--// Check if done without blocking
--if handle.is_done() {
--    println!("Coroutine finished");
--}
--
--// Get coroutine handle for cancellation
--let co = handle.coroutine();
--unsafe { co.cancel(); } // Cancel the coroutine
--```
--
--### 2. Network I/O
--
--#### TCP Server
--```rust
--use may::net::TcpListener;
--use std::io::{Read, Write};
--
--let listener = TcpListener::bind("127.0.0.1:8080")?;
--for stream in listener.incoming() {
--    let mut stream = stream?;
--    go!(move || {
--        let mut buf = [0; 1024];
--        while let Ok(n) = stream.read(&mut buf) {
--            if n == 0 { break; }
--            stream.write_all(&buf[0..n])?;
--        }
--        Ok::<_, std::io::Error>(())
--    });
--}
--```
--
--#### UDP Socket
--```rust
--use may::net::UdpSocket;
--
--let socket = UdpSocket::bind("127.0.0.1:8080")?;
--let mut buf = [0; 1024];
--
--loop {
--    let (len, addr) = socket.recv_from(&mut buf)?;
--    socket.send_to(&buf[0..len], addr)?;
--}
--```
--
--#### Generic I/O Wrapper
--```rust
--use may::io::CoIo;
--use std::fs::File;
--
--// Wrap any I/O object for coroutine use
--let file = File::open("example.txt")?;
--let mut co_file = CoIo::new(file)?;
--
--// Now can be used in coroutine context without blocking
--let mut contents = String::new();
--co_file.read_to_string(&mut contents)?;
--```
--
--### 3. Synchronization Primitives
--
--#### Channels
--```rust
--use may::sync::mpsc;
--
--// MPSC Channel
--let (tx, rx) = mpsc::channel();
--go!(move || {
--    tx.send(42).unwrap();
--});
--let value = rx.recv().unwrap();
--
--// MPMC Channel
--use may::sync::mpmc;
--let (tx, rx) = mpmc::channel();
--
--// SPSC Channel (highest performance)
--use may::sync::spsc;
--let (tx, rx) = spsc::channel();
--```
--
--#### Mutex and RwLock
--```rust
--use may::sync::{Mutex, RwLock};
--use std::sync::Arc;
--
--// Mutex
--let data = Arc::new(Mutex::new(0));
--let data_clone = data.clone();
--
--go!(move || {
--    let mut guard = data_clone.lock().unwrap();
--    *guard += 1;
--});
--
--// RwLock
--let data = Arc::new(RwLock::new(vec![1, 2, 3]));
--let reader = data.read().unwrap();
--println!("Data: {:?}", *reader);
--```
--
--#### Semaphore and Barriers
--```rust
--use may::sync::{Semphore, Barrier};
--use std::sync::Arc;
--
--// Semaphore
--let sem = Arc::new(Semphore::new(3)); // Allow 3 concurrent access
--sem.wait(); // Acquire
--sem.post(); // Release
--
--// Barrier
--let barrier = Arc::new(Barrier::new(5)); // Wait for 5 coroutines
--let result = barrier.wait();
--if result.is_leader() {
--    println!("I'm the lead
-```
-
-**File**: `MAY_IMPROVEMENT_ANALYSIS.md` (removed, +0/-574)
-```diff
-@@ -1,574 +0,0 @@
--# May Rust Coroutine Library - Safety Improvement Analysis
--
--## Executive Summary
--
--This analysis examines the May Rust coroutine library to identify potential improvements that could eliminate the need for `unsafe` spawn functions and enhance overall safety. The current `unsafe` requirements stem from two primary concerns: **Thread Local Storage (TLS) access** and **stack overflow risks**. This document proposes concrete solutions to address these safety issues.
--
--## 🚨 Current Safety Issues
--
--### 1. Thread Local Storage (TLS) Safety
--**Problem**: Coroutines can migrate between threads, making TLS access undefined behavior.
--**Current Impact**: Requires `unsafe` spawn functions and careful developer discipline.
--
--### 2. Stack Overflow Risk  
--**Problem**: Fixed-size stacks with no automatic growth can cause segmentation faults.
--**Current Impact**: Requires `unsafe` spawn functions and manual stack size management.
--
--### 3. Blocking API Detection
--**Problem**: No compile-time or runtime detection of thread-blocking API usage.
--**Current Impact**: Performance degradation when developers accidentally use blocking APIs.
--
--## 🎯 Proposed Improvements
--
--## Improvement 1: Safe TLS Detection and Prevention
--
--### 1.1 Compile-Time TLS Detection
--```rust
--// New proc macro to detect TLS usage
--#[may_coroutine_safe]
--fn my_coroutine_function() {
--    // This would cause a compile error:
--    // thread_local! { static FOO: i32 = 42; }
--    
--    // This would be allowed:
--    coroutine_local! { static FOO: i32 = 42; }
--}
--
--// Implementation using syn/quote
--pub fn may_coroutine_safe(input: TokenStream) -> TokenStream {
--    // Parse function and scan for thread_local! usage
--    // Generate compile errors for unsafe patterns
--}
--```
--
--### 1.2 Runtime TLS Access Guard
--```rust
--// Enhanced coroutine spawn with TLS monitoring
--pub fn spawn_safe<F, T>(f: F) -> JoinHandle<T>
--where
--    F: FnOnce() -> T + Send + 'static + TlsSafe,
--    T: Send + 'static,
--{
--    // TlsSafe trait ensures no TLS access
--    spawn_impl_safe(f)
--}
--
--// Trait to mark TLS-safe functions
--pub unsafe auto trait TlsSafe {}
--
--// Explicitly opt-out functions that use TLS
--impl !TlsSafe for fn() {
--    // Functions using thread_local! would not implement TlsSafe
--}
--```
--
--### 1.3 TLS Access Runtime Detection
--```rust
--// Thread-local flag to detect TLS access in coroutines
--thread_local! {
--    static IN_COROUTINE: Cell<bool> = Cell::new(false);
--}
--
--// Modified coroutine execution wrapper
--fn run_coroutine_safe(mut co: CoroutineImpl) {
--    IN_COROUTINE.with(|flag| flag.set(true));
--    
--    // Install panic hook to catch TLS access
--    let old_hook = std::panic::take_hook();
--    std::panic::set_hook(Box::new(|info| {
--        if info.payload().downcast_ref::<TlsAccessError>().is_some() {
--            eprintln!("❌ FATAL: TLS access detected in coroutine context!");
--            std::process::abort();
--        }
--    }));
--    
--    match co.resume() {
--        Some(ev) => ev.subscribe(co),
--        None => Done::drop_coroutine(co),
--    }
--    
--    std::panic::set_hook(old_hook);
--    IN_COROUTINE.with(|flag| flag.set(false));
--}
--
--// TLS access detector (would need to be injected into std)
--struct TlsAccessError;
--
--fn check_tls_access() {
--    if IN_COROUTINE.with(|flag| flag.get()) {
--        panic!(TlsAccessError);
--    }
--}
--```
--
--## Improvement 2: Stack Safety Enhancements
--
--### 2.1 Stack Guard Pages
--```rust
--use std::alloc::{alloc, dealloc, Layout};
--use libc::{mprotect, PROT_NONE, PROT_READ, PROT_WRITE};
--
--pub struct SafeStack {
--    base: *mut u8,
--    size: usize,
--    guard_size: usize,
--}
--
--impl SafeStack {
--    pub fn new(size: usize) -> io::Result<Self> {
--        let page_size = page_size();
--        let guard_size = page_size;
--        let total_size = size + guard_size * 2; // Guard pages at both ends
--        
--        // Allocate memory
--        let layout = Layout::from_size_align(total_size, page_size)
--            .map_err(|_| io::Error::other("Invalid layout"))?;
--        
--        let base = unsafe { alloc(layout) };
--        if base.is_null() {
--            return Err(io::Error::other("Stack allocation failed"));
--        }
--        
--        // Protect guard pages
--        unsafe {
--            // Bottom guard page
--            mprotect(base as *mut _, guard_size, PROT_NONE);
--            // Top guard page  
--            mprotect(
--                base.add(guard_size + size) as *mut _, 
--                guard_size, 
--                PROT_NONE
--            );
--        }
--        
--        Ok(SafeStack {
--            base: unsafe { base.add(guard_size) }, // Start after guard page
--            size,
--            guard_size,
--        })
--    }
--    
--    pub fn usable_ptr(&self) -> *mut u8 {
--        self.base
--    }
--}
--
--impl Drop for SafeStack {
--    fn drop(&mut self) {
--        unsafe {
--            let layout = Layout::from_size_align_unchecked(
--                self.size + sel
-```
-
-**File**: `MAY_MESSAGE_PASSING_IMPROVEMENTS.md` (removed, +0/-668)
-```diff
-@@ -1,668 +0,0 @@
--# May Rust Coroutine Library - Message Passing Improvement Analysis
--
--## Executive Summary
--
--This analysis examines the current message passing implementations in May and identifies opportunities for significant performance and usability improvements. The current channel implementations (MPSC, MPMC, SPSC) are functional but have several optimization opportunities and missing features that could enhance the developer experience and system performance.
--
--## 🔍 Current State Analysis
--
--### Existing Channel Types
--
--#### 1. SPSC (Single Producer Single Consumer)
--**Location**: `src/sync/spsc.rs`, `may_queue/src/spsc.rs`
--**Performance**: Highest performance, lock-free with block-based queue
--**Strengths**:
--- Lock-free implementation
--- Block-based storage reduces allocation overhead
--- Bulk operations support (`bulk_pop`)
--- Cache-friendly design with padding
--
--**Weaknesses**:
--- Limited to single producer/consumer
--- Complex wake-up mechanism with dual thread/coroutine support
--- No backpressure control
--- Missing timeout operations for some methods
--
--#### 2. MPSC (Multi Producer Single Consumer)  
--**Location**: `src/sync/mpsc.rs`, `may_queue/src/mpsc.rs`
--**Performance**: Good performance for many-to-one scenarios
--**Strengths**:
--- Lock-free queue implementation
--- Supports timeout operations
--- Compatible with both threads and coroutines
--
--**Weaknesses**:
--- Single atomic blocker registration (contention under high load)
--- No priority message support
--- No batching operations
--- Limited flow control
--
--#### 3. MPMC (Multi Producer Multi Consumer)
--**Location**: `src/sync/mpmc.rs`
--**Performance**: Lower performance due to semaphore usage
--**Strengths**:
--- True multi-consumer support
--- Pressure monitoring (`pressure()` method)
--- Timeout support
--
--**Weaknesses**:
--- Uses semaphore which can be expensive
--- No work-stealing between consumers
--- No message prioritization
--- Limited scalability under high contention
--
--### Current Usage Patterns
--
--```rust
--// Basic usage - from examples/select.rs
--let (tx1, rx1) = mpsc::channel();
--let (tx2, rx2) = mpsc::channel();
--
--go!(move || {
--    tx2.send("hello").unwrap();
--    tx1.send(42).unwrap();
--});
--
--// Selection between channels
--let id = select!(
--    _ = rx1.recv() => println!("rx1 received"),
--    a = rx2.recv() => println!("rx2 received, a={a:?}")
--);
--```
--
--## 🚀 Proposed Improvements
--
--## Improvement 1: High-Performance Channel Variants
--
--### 1.1 Lock-Free MPMC with Work Stealing
--```rust
--pub mod sync {
--    pub mod mpmc_ws {
--        pub struct Channel<T> {
--            queues: Vec<WorkStealingQueue<T>>,
--            workers: AtomicUsize,
--            round_robin: AtomicUsize,
--        }
--        
--        impl<T> Channel<T> {
--            pub fn with_workers(worker_count: usize) -> (Sender<T>, Receiver<T>) {
--                // Each worker gets its own queue to reduce contention
--                // Receivers can steal work from other queues when empty
--            }
--            
--            pub fn send_to_worker(&self, worker_id: usize, item: T) -> Result<(), SendError<T>> {
--                // Direct worker targeting for CPU-bound task distribution
--            }
--        }
--    }
--}
--```
--
--### 1.2 Priority Channel Implementation
--```rust
--pub mod sync {
--    pub mod priority {
--        #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
--        pub enum Priority {
--            Low = 0,
--            Normal = 1,
--            High = 2,
--            Critical = 3,
--        }
--        
--        pub struct PriorityChannel<T> {
--            queues: [Queue<T>; 4], // One queue per priority level
--            waiters: AtomicOption<Arc<Blocker>>,
--            priority_mask: AtomicU8, // Bitmask of non-empty priorities
--        }
--        
--        impl<T> PriorityChannel<T> {
--            pub fn send_priority(&self, item: T, priority: Priority) -> Result<(), SendError<T>> {
--                let queue_idx = priority as usize;
--                self.queues[queue_idx].push(item);
--                self.priority_mask.fetch_or(1 << queue_idx, Ordering::AcqRel);
--                self.wake_receiver();
--                Ok(())
--            }
--            
--            pub fn recv(&self) -> Result<(T, Priority), RecvError> {
--                // Always receive highest priority message first
--                for (idx, queue) in self.queues.iter().enumerate().rev() {
--                    if let Some(item) = queue.pop() {
--                        if queue.is_empty() {
--                            self.priority_mask.fetch_and(!(1 << idx), Ordering::AcqRel);
--                        }
--                        return Ok((item, Priority::from(idx)));
--                    }
--                }
--                // Block if no messages available
--                self.block_recv()
--            }
--        }
--    }
--}
--```
--
--### 1.3 Bounded Channels with Backpressure
--```rust
--pub mod sync {
--    pub mod bounded {
--        pub struct Bou
-```
-
-**File**: `src/sync/spsc.rs` (modified, +35/-10)
-```diff
-@@ -165,24 +165,49 @@ impl<T> InnerQueue<T> {
-                     let park = Park::new(self);
-                     yield_with(&park);
-                 } else {
--                    let blocker = Blocker::new_thread(std::thread::current());
--                    self.wait_co.store(blocker);
--                    match self.try_recv() {
--                        Err(TryRecvError::Empty) => {
--                            // no data, wait for it
--                            std::thread::park();
-+                    // Native-thread consumer. The naive
-+                    // store-blocker / check-queue / park() sequence loses
-+                    // wakeups: the producer's push -> take can interleave so
-+                    // that it sees no waiter while our re-check misses the
-+                    // pushed item (Dekker store/load race), leaving this
-+                    // thread parked forever with data in the queue. Observed
-+                    // deterministically via may_postgres::Client::prepare on
-+                    // plain test threads.
-+                    //
-+                    // Hardened: (a) SeqCst fence between announcing the
-+                    // waiter and re-checking the queue, pairing with the
-+                    // producer's push -> take RMW; (b) re-register and
-+                    // re-check in a loop, so spurious park returns and stale
-+                    // park tokens are absorbed; (c) bounded park as a
-+                    // last-resort backstop — a residual lost wakeup costs one
-+                    // interval, not a hang.
-+                    loop {
-+                        let blocker = Blocker::new_thread(std::thread::current());
-+                        self.wait_co.store(blocker);
-+                        std::sync::atomic::fence(Ordering::SeqCst);
-+                        match self.try_recv() {
-+                            Err(TryRecvError::Empty) => {
-+                                std::thread::park_timeout(std::time::Duration::from_millis(10));
-+                            }
-+                            data => {
-+                                self.wait_co.clear();
-+                                return data;
-+                            }
-                         }
--                        data => {
--                            self.wait_co.clear();
--                            return data;
-+                        match self.try_recv() {
-+                            Err(TryRecvError::Empty) => continue,
-+                            data => {
-+                                self.wait_co.clear();
-+                                return data;
-+                            }
-                         }
-                     }
-                 }
-             }
-             data => return data,
-         }
- 
--        // after come back try recv again
-+        // after come back try recv again (coroutine path)
-         self.try_recv()
-     }
- 
-```
-
-**File**: `tasks/tasks.md` (removed, +0/-634)
-```diff
-@@ -1,634 +0,0 @@
--# May Rust Coroutine Library - Implementation PRD
--
--## Executive Summary
--
--This Product Requirements Document (PRD) outlines the comprehensive implementation plan for enhancing the May Rust coroutine library based on three key analysis documents:
--
--1. **AI Usage Guide** - Comprehensive documentation and API reference
--2. **Safety Improvement Analysis** - Eliminating unsafe spawn requirements
--3. **Message Passing Improvements** - Enhanced channel implementations and patterns
--
--The implementation spans **24 months** across **6 major phases**, delivering significant performance improvements (10-50% throughput gains), enhanced safety (90%+ safe API coverage), and superior developer experience through modern patterns and comprehensive tooling.
--
--## 🎯 Project Objectives
--
--### Primary Goals
--- **Eliminate unsafe spawn requirements** through compile-time and runtime safety mechanisms
--- **Improve performance by 10-50%** via advanced channel designs and optimizations
--- **Enhance developer experience** with modern APIs, reactive patterns, and comprehensive tooling
--- **Maintain 100% backward compatibility** throughout the transition
--- **Position May as the leading Rust coroutine library** for high-performance applications
--
--### Success Metrics
--- **Safety**: 90%+ of coroutine spawning operations use safe APIs
--- **Performance**: 10-50% throughput improvement in benchmark scenarios
--- **Adoption**: 25% increase in GitHub stars and crate downloads
--- **Developer Satisfaction**: >4.5/5 rating in community surveys
--- **Ecosystem Integration**: 10+ major projects adopt enhanced May APIs
--
--## 📋 Feature Requirements
--
--## Phase 1: Foundation and Safety Infrastructure (Months 1-4)
--
--### 1.1 Safe Coroutine Spawning APIs
--
--**Priority: Critical**
--**Effort: 8 weeks**
--
--#### Requirements
--- **Compile-time TLS Detection**
--  - Implement proc macro `#[may_coroutine_safe]` to detect `thread_local!` usage
--  - Generate compile errors for unsafe TLS patterns
--  - Provide migration suggestions in error messages
--
--- **Runtime TLS Guards**
--  - Implement `TlsSafe` trait for spawn function parameters
--  - Add runtime TLS access monitoring with thread migration detection
--  - Create `CoroutineSafeSpawner` for verified safe spawning
--
--- **Type-Safe Spawn APIs**
--  - Implement `spawn_safe<F, T>()` function requiring `TlsSafe` bounds
--  - Add `CoroutineSafe` trait for automatic safety verification
--  - Create `SafeBuilder` pattern for coroutine configuration
--
--#### Acceptance Criteria
--- [ ] Compile-time macro detects 95%+ of TLS usage patterns
--- [ ] Runtime guards catch TLS violations with <1% performance overhead
--- [ ] All existing examples compile and run with new safe APIs
--- [ ] Comprehensive test suite covering safety edge cases
--
--### 1.2 Stack Safety Mechanisms
--
--**Priority: Critical**
--**Effort: 6 weeks**
--
--#### Requirements
--- **Stack Guard Pages**
--  - Implement memory protection for stack overflow detection
--  - Add configurable guard page sizes (4KB-16KB)
--  - Provide graceful error handling for stack overflow events
--
--- **Stack Monitoring**
--  - Add runtime stack usage tracking
--  - Implement stack watermark detection
--  - Create stack usage reporting and analytics
--
--- **Enhanced Stack Configuration**
--  - Extend builder pattern with stack safety options
--  - Add automatic stack size estimation based on function complexity
--  - Implement stack size recommendations
--
--#### Acceptance Criteria
--- [ ] Stack guard pages prevent 100% of overflow-related crashes
--- [ ] Stack monitoring adds <2% performance overhead
--- [ ] Automatic stack sizing reduces manual configuration by 80%
--- [ ] Stack safety works across all supported platforms
--
--### 1.3 Enhanced Builder Patterns
--
--**Priority: High**
--**Effort: 4 weeks**
--
--#### Requirements
--- **Safe Coroutine Builder**
--  - Implement fluent API for coroutine configuration
--  - Add compile-time validation of configuration combinations
--  - Provide sensible defaults for all safety options
--
--- **Configuration Validation**
--  - Add runtime validation of configuration parameters
--  - Implement configuration conflict detection
--  - Create helpful error messages for invalid configurations
--
--#### Acceptance Criteria
--- [ ] Builder API covers 100% of coroutine configuration options
--- [ ] Configuration validation catches common mistakes
--- [ ] API is intuitive and requires minimal documentation to use
--
--## Phase 2: Advanced Channel Infrastructure (Months 5-8)
--
--### 2.1 High-Performance Channel Variants
--
--**Priority: Critical**
--**Effort: 10 weeks**
--
--#### Requirements
--- **Lock-Free MPMC with Work Stealing**
--  - Implement per-worker queue design to reduce contention
--  - Add work stealing algorithm for load balancing
--  - Support direct worker targeting for CPU-bound tasks
--  - Achieve 2-5x performance improvement over current MPMC
--
--- **Priority Channel Implementation**
--  - Create multi-level priority queues (4 priority levels)
--  - Implement b
-```
-
----
-
-### Incident Patch 3: `ff6bceb8` (2026-10-27)
-**Commit Message**: park: keep sub-millisecond timeouts instead of waiting forever
-
-AtomicDuration stores a park timeout in whole milliseconds and uses 0
-for "no timeout", but it truncated, so any timeout under 1 ms became 0
-and read back as None. In a coroutine, `coroutine::park_timeout` and
-`Semphore::wait_timeout` with such a timeout parked without a timer and
-never returned unless something else woke them; a caller that waits
-until a deadline reaches a sub-millisecond remainder sooner or later.
-With `io_timeout`, a socket timeout under 1 ms was dropped the same way.
-
-Round up to whole milliseconds, with a minimum of 1 ms for any timeout.
-This also stops a timeout firing up to a millisecond early.
-
-Tests: AtomicDuration keeps sub-millisecond timeouts; park_timeout and
-Semphore::wait_timeout return for timeouts from 0 to 2 ms in a
-coroutine.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `src/sync/atomic_dur.rs` (modified, +41/-12)
-```diff
-@@ -1,18 +1,26 @@
- use std::sync::atomic::{AtomicUsize, Ordering};
- use std::time::Duration;
- 
-+// 0 encodes `None` (no timeout). A timeout is stored in whole milliseconds,
-+// rounded up and at least 1: truncating would turn any timeout under 1 ms
-+// into 0, which reads back as "no timeout" and waits forever.
-+fn encode(dur: Option<Duration>) -> usize {
-+    match dur {
-+        None => 0,
-+        Some(d) => {
-+            let ms = d.as_nanos().div_ceil(1_000_000).max(1);
-+            usize::try_from(ms).unwrap_or(usize::MAX)
++    #[cfg(target_os = "linux")]
++    impl AsRawFd for ReplacingFd {
++        fn as_raw_fd(&self) -> RawFd {
++            self.stream.as_ref().unwrap().as_raw_fd()
 +        }
 +    }
-+}
 +
- // atomic duration in milli seconds
- #[derive(Debug)]
- pub struct AtomicDuration(AtomicUsize);
- 
- impl AtomicDuration {
-     pub fn new(dur: Option<Duration>) -> Self {
--        let dur = match dur {
--            None => 0,
--            Some(d) => d.as_millis() as usize,
--        };
--
--        AtomicDuration(AtomicUsize::new(dur))
-+        AtomicDuration(AtomicUsize::new(encode(dur)))
-     }
- 
-     #[inline]
-@@ -26,12 +34,7 @@ impl AtomicDuration {
- 
-     #[inline]
-     pub fn store(&self, dur: Option<Duration>) {
--        let timeout = match dur {
--            None => 0,
--            Some(d) => d.as_millis() as usize,
--        };
--
--        self.0.store(timeout, Ordering::Relaxed);
-+        self.0.store(encode(dur), Ordering::Relaxed);
-     }
- 
-     #[inline]
-@@ -42,3 +45,29 @@ impl AtomicDuration {
-         }
++    #[cfg(target_os = "linux")]
++    impl Drop for ReplacingFd {
++        fn drop(&mut self) {
++            let target = self.as_raw_fd();
++            // give up ownership without closing the fd; dup2 replaces the
++            // file description at this fd number, closing the old one
++            let _ = self.stream.take().unwrap().into_raw_fd();
++            let replacement = self.replacement.as_ref().unwrap().as_raw_fd();
++            assert_eq!(unsafe { libc::dup2(replacement, target) }, target);
++            self.replaced_tx.send(()).unwrap();
++            // hold the window between closing the old description and the
++            // IoData drop so that a new registration can be installed
++            let _ = self.go_rx.recv_timeout(std::time::Duration::from_secs(10));
++        }
++    }
++
++    /// Closing the socket before deregistering it from the selector lets a
++    /// concurrent fd reuse install a new registration under the same fd
++    /// number, which the stale `epoll_ctl(DEL)` then removes. The reused
++    /// socket would then never receive an io event again.
++    #[test]
++    #[cfg(target_os = "linux")]
++    fn drop_does_not_remove_reused_fd_registration() {
++        use std::os::unix::io::FromRawFd;
++        use std::sync::mpsc::channel;
++
++        let (old_a, _old_b) = std::os::unix::net::UnixStream::pair().unwrap();
++        let target = old_a.as_raw_fd();
++        let (replacement, _replacement_peer) = std::os::unix::net::UnixStream::pair().unwrap();
++
++        let (replaced_tx, replaced_rx) = channel();
++        let (go_tx, go_rx) = channel();
++        let (done_tx, done_rx) = channel();
++
++        let old_co = CoIo::new(ReplacingFd {
++            stream: Some(old_a),
++            replacement: Some(replacement),
++            replaced_tx,
++            go_rx,
++        })
++        .unwrap();
++
++        let drop_thread = std::thread::spawn(move || {
++            drop(old_co);
++            let _ = done_tx.send(());
++        });
++
++        // wait until the old description is gone and the fd number now
++        // refers to the replacement socket
++        replaced_rx.recv().unwrap();
++
++        // register the replacement socket under the same fd number
++        let replacement = unsafe { std::os::unix::net::UnixStream::from_raw_fd(target) };
++        let replacement_co = CoIo::new(replacement).unwrap();
++        assert!(
++            fd_is_watched(target),
++            "replacement
+```
+
+---
+
+### Incident Patch 2: `9cc902be` (2026-11-05)
+**Commit Message**: Fix coroutine-local type safety
+
+Co-authored-by: Copilot <[REDACTED_EMAIL]>
+
+**File**: `src/local.rs` (modified, +11/-8)
+```diff
+@@ -1,4 +1,4 @@
+-use std::any::TypeId;
++use std::any::{Any, TypeId};
+ use std::cell::RefCell;
+ use std::collections::HashMap;
+ use std::hash::{BuildHasherDefault, Hasher};
+@@ -57,10 +57,7 @@ fn with<F: FnOnce(&LocalMap) -> R, R>(f: F) -> R {
      }
  }
-+
-+#[cfg(test)]
-+mod tests {
-+    use super::*;
-+
-+    #[test]
-+    fn short_timeouts_are_not_lost() {
-+        let d = AtomicDuration::new(None);
-+        assert_eq!(d.take(), None);
-+        for (given, kept) in [
-+            (Duration::ZERO, 1),
-+            (Duration::from_nanos(1), 1),
-+            (Duration::from_micros(500), 1),
-+            (Duration::from_millis(1), 1),
-+            (Duration::from_micros(1001), 2),
-+            (Duration::from_millis(50), 50),
-+        ] {
-+            d.store(Some(given));
-+            assert_eq!(d.take(), Some(Duration::from_millis(kept)), "{given:?}");
-+        }
-+        assert_eq!(
-+            AtomicDuration::new(Some(Duration::from_micros(10))).take(),
-+            Some(Duration::from_millis(1))
-+        );
-+    }
-+}
+ 
+-pub type LocalMap = RefCell<HashMap<TypeId, Box<dyn Opaque>, BuildHasherDefault<IdHasher>>>;
+-
+-pub trait Opaque {}
+-impl<T> Opaque for T {}
++pub type LocalMap = RefCell<HashMap<TypeId, Box<dyn Any>, BuildHasherDefault<IdHasher>>>;
+ 
+ /// A key for local data stored in a coroutine.
+ ///
+@@ -124,19 +121,25 @@ impl<T: 'static> LocalKey<T> {
+     ///
+     /// * If the initialization expression is run and it panics
+     /// * If the closure provided panics
++    /// * If multiple keys use the same key identifier with different value types
+     #[inline]
+     pub fn with<F, R>(&'static self, f: F) -> R
+     where
+         F: FnOnce(&T) -> R,
+     {
+         let key = (self.__key)();
+         with(|data| {
+-            let raw_pointer = {
++            let value = {
+                 let mut data = data.borrow_mut();
+                 let entry = data.entry(key).or_insert_with(|| Box::new((self.__init)()));
+-                &**entry as *const dyn Opaque as *const T
++                entry
++                    .downcast_ref::<T>()
++                    .expect("coroutine-local key used with mismatched value type")
++                    as *const T
+             };
+-            unsafe { f(&*raw_pointer) }
++            // Values are boxed, so map reallocation cannot move them. Access is
++            // shared-only, and the downcast above verifies the pointer's type.
++            unsafe { f(&*value) }
+         })
+     }
+ }
 ```
 
-**File**: `tests/park_timeout.rs` (added, +53/-0)
+**File**: `tests/local.rs` (modified, +27/-0)
 ```diff
-@@ -0,0 +1,53 @@
-+//! Timed waits in a coroutine must return for any timeout, including ones
-+//! shorter than the timer's resolution.
-+
-+use may::sync::Semphore;
-+use std::sync::mpsc;
-+use std::time::Duration;
-+
-+fn returns_within(d: Duration, n: usize) -> bool {
-+    let (tx, rx) = mpsc::channel();
-+    may::go!(move || {
-+        let s = Semphore::new(0);
-+        for _ in 0..n {
-+            assert!(!s.wait_timeout(d));
-+        }
-+        tx.send(()).unwrap();
-+    });
-+    rx.recv_timeout(Duration::from_secs(10)).is_ok()
+@@ -3,6 +3,27 @@ extern crate may;
+ 
+ use may::coroutine;
+ 
++fn colliding_key() -> std::any::TypeId {
++    std::any::TypeId::of::<()>()
 +}
 +
++fn init_i32() -> i32 {
++    1
++}
++
++fn init_u32() -> u32 {
++    2
++}
++
++static COLLIDING_I32: may::LocalKey<i32> = may::LocalKey {
++    __key: colliding_key,
++    __init: init_i32,
++};
++static COLLIDING_U32: may::LocalKey<u32> = may::LocalKey {
++    __key: colliding_key,
++    __init: init_u32,
++};
++
+ #[test]
+ fn local_in_thread() {
+     coroutine_local!(static FOO: i32 = 3);
+@@ -13,6 +34,12 @@ fn local_in_thread() {
+     });
+ }
+ 
 +#[test]
-+fn semaphore_wait_timeout_returns_for_short_timeouts() {
-+    for d in [
-+        Duration::ZERO,
-+        Duration::from_micros(1),
-+        Duration::from_micros(100),
-+        Duration::from_micros(500),
-+        Duration::from_millis(1),
-+        Duration::from_millis(2),
-+    ] {
-+        assert!(returns_within(d, 200), "wait_timeout({d:?}) did not return");
-+    }
++fn mismatched_local_key_types_panic() {
++    COLLIDING_I32.with(|value| assert_eq!(*value, 1));
++    assert!(std::panic::catch_unwind(|| COLLIDING_U32.with(|_| ())).is_err());
 +}
 +
-+#[test]
-+fn park_timeout_returns_for_short_timeouts() {
-+    let (tx, rx) = mpsc::channel();
-+    may::go!(move || {
-+        for d in [
-+            Duration::ZERO,
-+            Duration::from_micros(50),
-+            Duration::from_millis(1),
-+        ] {
-+            for _ in 0..200 {
-+                may::coroutine::park_timeout(d);
-+            }
-+        }
-+        tx.send(()).unwrap();
-+    });
-+    assert!(
-+        rx.recv_timeout(Duration::from_secs(10)).is_ok(),
-+        "park_timeout did not return"
-+    );
-+}
+ #[test]
+ fn coroutine_local() {
+     fn square(i: i32) -> i32 {
+```
+
+---
+
+### Incident Patch 3: `3903ade9` (2026-11-05)
+**Commit Message**: :pencil: fix the break link
+
+**File**: `docs/may_caveat.md` (modified, +3/-3)
+```diff
+@@ -5,7 +5,7 @@ If you are not aware of them, your application will easily lost performance or e
+ I will list 4 rules bellow
+ 
+ ## Don't call thread blocking APIs
+-This is obvious. Calling thread block version APIs in coroutine would halt the worker thread and can't schedule other ready coroutines. It will hurt the performance. 
++This is obvious. Calling thread block version APIs in coroutine would halt the worker thread and can't schedule other ready coroutines. It will hurt the performance.
+ 
+ Those block version APIs includes:
+ * io block operation such as socket `read()`/`write()`
+@@ -19,7 +19,7 @@ The solution is calling [MAY][may] API instead. And port necessary dependency li
+ ## Don't use Thread Local Storage
+ Access TLS in coroutine would trigger undefined behavior and it will be hard to debug the issue.
+ 
+-There is a [post](cls) already cover this topic. And the solution is using Coroutine Local Storage instead.
++There is a [post](CLS_instead_of_TLS.md) already cover this topic. And the solution is using Coroutine Local Storage instead.
+ 
+ But if you are depending on a third party function that uses TLS you likely get hurt sooner or later. There is an [issue][issue] that discuss this a bit.
+ 
+@@ -31,7 +31,7 @@ Currently calling `libstd` APIs is safe in  [MAY][may] coroutines.
+ [MAY][may] APIs will automatically yield out if necessary, so this is not a problem. But if you are running a long time CPU bound task in coroutine, you'd better call `coroutine::yield_now()` manually at appropriate point.
+ 
+ 
+-## Don't exceed the stack 
++## Don't exceed the stack
+ [MAY][may] doesn't support automatic stack increasing. Each coroutine alloc a limited stack size for its own. If the coroutine exceeds it's stack size, it will trigger undefined behavior.
+ 
+ So that you should avoid calling recursive functions in coroutine. Recursive function calls would easily exhaust your stack.
 ```
 
 #### Recent Merged Pull Requests:
@@ -3262,57 +2492,54 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. spsc: add Receiver::recv_timeout
+## X. :bug: fix CoIo - deregister fd from selector before closing it
 
 **RULE**:
-When implementing operations in `src/sync/spsc.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Xudong-Huang/may. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/io/sys/unix/co_io.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Xudong-Huang/may. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1a717549`: spsc: add Receiver::recv_timeout. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0d5efcb1`: :bug: fix CoIo - deregister fd from selector before closing it. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/sync/spsc.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/io/sys/unix/co_io.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-use std::io::ErrorKind;
-use std::sync::mpsc::{RecvError, RecvTimeoutError, SendError, TryRecvError};
-use std::time::Duration;
-use crate::coroutine_impl::{
-    co_cancel_data, is_coroutine, run_coroutine, CoroutineImpl, EventSource,
-};
-use crate::yield_now::{get_co_para, yield_now, yield_with};
-/// EventSource for `recv_timeout`. It holds its own reference to the queue:
-/// once the coroutine is reachable by `send()` or the timer it may resume,
-/// finish and drop the channel on another worker while `subscribe` still runs.
-struct RecvTimeoutSource<T> {
-    queue: Arc<InnerQueue<T>>,
-    timeout: Duration,
-}
+    // NOTE: field order matters. `io` must be dropped before `inner`, so the
+    // fd is removed from the selector while it is still open. If `inner` were
+    // dropped first, the fd number could be reused by another thread before
+    // `IoData::drop` runs its `epoll_ctl(DEL)`; the DEL only knows the fd
+    // number, so it would remove the registration of the new socket instead,
+    // and that socket would never receive an io event again.
+    inner: T,
 
-impl<T> EventSource for RecvTimeoutSource<T> {
-    fn subscribe(&mut self, co: CoroutineImpl) {
-        let cancel = co_cancel_data(&co);
-        // Shared between the scheduler timer and `send()` wakeup (see `timeout_wait`).
-        let wait_co = Arc::new(AtomicOption::some(co));
-        // Register for cancellation while nothing else can resume the
-        // coroutine: afterwards its cancel data may be gone.
-        cancel.set_co(wait_co.clone());
-        if cancel.is_canceled() {
-            unsafe { cancel.cancel() };
-            return;
-        }
-        self.queue.timeout
+    /// Check whether `target` is registered in any epoll instance of this
+    /// process by inspecting `/proc/self/fdinfo`.
+    #[cfg(target_os = "linux")]
+    fn fd_is_watched(target: RawFd) -> bool {
+        let dir = match std::fs::read_dir("/proc/self/fd") {
+            Ok(dir) => dir,
+            Err(_) => return false,
+        };
+        for entry in dir.flatten() {
+            let name = entry.file_name();
+            let info = match std::fs::read_to_string(format!(
+                "/proc/self/fdinfo/{}",
+                name.to_string_lossy()
+            )) {
+                Ok(info) => info,
+                Err(_) => continue,
+            };
+            let tokens: Vec<&str> = info.split_whitespace().collect();
+   
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-use std::sync::mpsc::{RecvError, SendError, TryRecvError};
-use crate::coroutine_impl::{is_coroutine, run_coroutine, CoroutineImpl, EventSource};
-use crate::yield_now::{yield_now, yield_with};
+    inner: T,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1a717549` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0d5efcb1` are properly handled with clean fallback behavior.

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/mariadb-server-learnings.md`  
 > **Source**: github ([https://github.com/MariaDB/server](https://github.com/MariaDB/server))  
-> **Source Version**: `bdf154a3`  
+> **Source Version**: `d4923790`  
 > **License**: GPL-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T17:22:50.349Z  
+> **Timestamp**: 2026-11-05T08:01:21.482Z  
 > **Learning ID**: `learn-github-mariadb-server`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/mariadb-server-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/MariaDB/server](https://github.com/MariaDB/server))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T17:22:49.064Z  
+> **Harvest Timestamp**: 2026-11-05T08:00:49.679Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: MariaDB server is a community developed fork of MySQL server. Started by core members of the original MySQL team, MariaDB actively works with outside developers to deliver the most featureful, stable, and sanely licensed open SQL server in the industry.
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 8518 stars
+- **Stars / Engagement**: 8534 stars
 
 ---
 
@@ -1613,13 +1613,13 @@ C_MODE_END
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #6064** (2026-11-03): **MDEV-40935: Crash when os_file_set_size() fails to extend innodb_log_archive=ON on shutdown**
-  *Symptoms*: `os_file_set_size()`: Do not treat server shutdown specially in any code path; always process `EINTR` as a transient error on POSIX. This prevents an intentional crash on shutdown when we fail to create or extend an `innodb_log_archive=ON` file.  `log_t::set_archive()`: Prevent a livelock when all the buffer pool has been written out and we are actually waiting for a "dummy" checkpoint. This was caught as a hang in the test `innodb.log_file_size_online`.
+- **Issue #6073** (2026-11-04): **MDEV-42009: Set GLOBAL innodb_log_file_size=ON is not crash safe**
+  *Symptoms*: `log_t::set_archive()`: If the log is memory-mapped (on `/dev/shm` or on a DAX mounted file system), zero-fill the rest of the file before updating the header, so that any old garbage from `innodb_log_archive=OFF` format will be properly discarded before recovery.  This fixes a regression that had been introduced in #4405.
   **Post-Mortem & Fix Analysis**:
-  > [![CLA assistant check](https://cla-assistant.io/pull/badge/not_signed)](https://cla-assistant.io/MariaDB/server?pullRequest=6064) <br/>Thank you for your submission! We really appreciate it. Like many open source projects, we ask that you sign our [Contributor License Agreement](https://cla-assistant.io/MariaDB/server?pullRequest=6064) before we can accept your contribution.<br/><sub>You have signed the CLA already but the status is still pending? Let us [recheck](https://cla-assistant.io/check/MariaDB/server?pullRequest=6064) it.</sub>
+  > [![CLA assistant check](https://cla-assistant.io/pull/badge/not_signed)](https://cla-assistant.io/MariaDB/server?pullRequest=6073) <br/>Thank you for your submission! We really appreciate it. Like many open source projects, we ask that you sign our [Contributor License Agreement](https://cla-assistant.io/MariaDB/server?pullRequest=6073) before we can accept your contribution.<br/><sub>You have signed the CLA already but the status is still pending? Let us [recheck](https://cla-assistant.io/check/MariaDB/server?pullRequest=6073) it.</sub>
 
-- **Issue #6063** (2026-11-03): **10.11 mdev 41769**
-  *Symptoms*: 
+- **Issue #6072** (2026-11-04): **MDEV-42000 : galera.galera_restart_on_unknown_option fails**
+  *Symptoms*: Problem was that test uses unknown Galera option. Server does 2-phase check for options. In first phase unknown options are ignored and Galera SST/IST is started. In second phase options are checked again now that we have Galera it detects that provided option is unknown and tries to interrupt SST/IST and disconnect wsrep and server using unireg_abort().  However, if Galera library has reached to IST receiver there was no way to interrupt IST and mariadbd gets stuck in unireg_abort() during wsrep disconnect. This issue has been fixed on Galera library. For this test case we need to just verify that Galera library version contains fix for SST/IST interrupt i.e. at least 26.4.29.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1636,32 +1636,701 @@ C_MODE_END
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5129c153` (2026-10-29)
-**Commit Message**: Fix sys_vars.tmp_disk_table_size_basic when no perfschema
+### Incident Patch 1: `d2cc0162` (2026-11-04)
+**Commit Message**: MDEV-42033: Memory leak of derived_handler when a statement fails early
 
-Signed-off-by: Kristian Nielsen <[REDACTED_EMAIL]>
+A derived_handler is created in mysql_derived_prepare() and stored in
+TABLE_LIST::dt_handler. It was freed only by JOIN::cleanup(). If the
+statement failed before a JOIN was created, nothing freed it, e.g.
 
-**File**: `mysql-test/suite/sys_vars/t/tmp_disk_table_size_basic.test` (modified, +3/-0)
+  WITH cte AS (SELECT * FROM fed_t) UPDATE cte SET a= a * 2;
+
+which fails with ER_NON_UPDATABLE_TABLE.
+
+Make JOIN::free_pushdown_handlers() a free function,
+free_derived_pushdown_handlers(), and also call it from
+st_select_lex::cleanup() on top_join_list, right after join->destroy().
+It sets pushdown_derived and dt_handler to NULL, so calling it a second
+time is a no-op.
+
+The failing tests are already present in
+federatedx_pushdown_upd_del.test, just that they need to be run with
+valgrind or ASAN build.
+
+**File**: `sql/sql_select.cc` (modified, +6/-5)
 ```diff
-@@ -26,6 +26,9 @@
- ###############################################################################
+@@ -17636,7 +17636,7 @@ void JOIN::cleanup(bool full)
+         }
+       }
+     }
+-    free_pushdown_handlers(*join_list);
++    free_derived_pushdown_handlers(*join_list);
+   }
+   /* Restore ref array to original state */
+   if (current_ref_ptrs != items0)
+@@ -17647,22 +17647,23 @@ void JOIN::cleanup(bool full)
+ }
  
- --source include/load_sysvars.inc
-+# The --error ER_RECORD_FILE_FULL below requires the views from perfschema to
-+# be present in INFORMATION_SCHEMA.views.
-+--source include/have_perfschema.inc
+ /**
+-  Clean up all derived pushdown handlers in this join.
++  Clean up all derived pushdown handlers in this join list.
  
- ##############################################################
- #           START OF tmp_disk_table_size TESTS                    #
+   @detail
+     Note that dt_handler is picked at the prepare stage (as opposed
+     to optimization stage where one could expect this).
+     Because of that, we have to do cleanups in this function that is called
+-    from JOIN::cleanup() and not in JOIN_TAB::cleanup.
++    from JOIN::cleanup() and SELECT_LEX::cleanup() (for statements that fail
++    before a JOIN is created) and not in JOIN_TAB::cleanup.
+  */
+-void JOIN::free_pushdown_handlers(List<TABLE_LIST>& join_list)
++void free_derived_pushdown_handlers(List<TABLE_LIST>& join_list)
+ {
+   List_iterator<TABLE_LIST> li(join_list);
+   TABLE_LIST *table_ref;
+   while ((table_ref= li++))
+   {
+     if (table_ref->nested_join)
+-      free_pushdown_handlers(table_ref->nested_join->join_list);
++      free_derived_pushdown_handlers(table_ref->nested_join->join_list);
+     if (table_ref->pushdown_derived)
+     {
+       delete table_ref->pushdown_derived;
+```
+
+**File**: `sql/sql_select.h` (modified, +1/-1)
+```diff
+@@ -2269,7 +2269,6 @@ class JOIN :public Sql_alloc
+   bool add_having_as_table_cond(JOIN_TAB *tab);
+   bool make_aggr_tables_info();
+   bool add_fields_for_current_rowid(JOIN_TAB *cur, List<Item> *fields);
+-  void free_pushdown_handlers(List<TABLE_LIST>& join_list);
+   void init_join_cache_and_keyread();
+   bool prepare_sum_aggregators(THD *thd,Item_sum **func_ptr,
+                                bool need_distinct);
+@@ -2971,6 +2970,7 @@ TABLE *create_tmp_table_for_schema(THD *thd, TMP_TABLE_PARAM *param,
+                                    bool do_not_open, bool keep_row_order);
+ 
+ void free_tmp_table(THD *thd, TABLE *entry);
++void free_derived_pushdown_handlers(List<TABLE_LIST>& join_list);
+ 
+ /*
+   The row copying step of create_internal_tmp_table_from_heap(): copies
+```
+
+**File**: `sql/sql_union.cc` (modified, +2/-0)
+```diff
+@@ -3021,6 +3021,8 @@ bool st_select_lex::cleanup()
+     delete join;
+     join= 0;
+   }
++  /* No-op if join->destroy() already freed them; else error before JOIN */
++  free_derived_pushdown_handlers(top_join_list);
+   leaf_tables.empty();
+   for (SELECT_LEX_UNIT *lex_unit= first_inner_unit(); lex_unit ;
+        lex_unit= lex_unit->next_unit())
+```
+
+---
+
+### Incident Patch 2: `f05a9a22` (2026-10-06)
+**Commit Message**: MDEV-41293: FederatedX: connection state after a net_read_timeout
+
+Problem:
+When reading the reply of the remote server times out, the client
+library compiled into the server returns without closing the connection
+and without setting a client error. FederatedX took the raw
+ER_NET_READ_INTERRUPTED for an error of the remote server and went on
+using a connection that still had the reply of the failed statement to
+arrive. As a result:
+* the next statement on that connection failed in various ways, either
+  with ER_QUERY_ON_FOREIGN_DATA_SOURCE ("Server has gone away") or with
+  an error packet that mysqltest took for a malformed packet;
+* inside a transaction, the following statements continued on a new
+  remote session in autocommit mode, so they were committed on the
+  remote server one by one even though the local transaction was later
+  rolled back. The savepoints of the lost session were also still
+  remembered by FederatedX.
+The same happened when the connection was lost while reading the reply.
+
+Fix:
+* After a timeout FederatedX closes the connection, so that the next
+  statement opens a new one. The client still gets the error of the
+  timeout, ER_NET_READ_INTERRUPTED.
+* Whenev
+
+**File**: `mysql-test/suite/federated/federatedx_nrt_kill.inc` (added, +31/-0)
+```diff
+@@ -0,0 +1,31 @@
++# Kill the statement matching the LIKE pattern $nrt_pattern (an SQL
++# expression) on the remote server, and wait until it is gone. The remote
++# server may have ended it already, e.g. when it noticed that the client
++# closed the connection. If the statement is just being sent and may not be
++# there yet, set $nrt_wait_start to wait for it first.
++
++connection slave;
++if ($nrt_wait_start)
++{
++  let $wait_condition=
++    SELECT COUNT(*) >= 1 FROM information_schema.processlist
++    WHERE info LIKE $nrt_pattern AND id != CONNECTION_ID();
++  --source include/wait_condition.inc
++}
++let $nrt_id= `SELECT IFNULL(MAX(id), 0) FROM information_schema.processlist
++              WHERE info LIKE $nrt_pattern AND id != CONNECTION_ID()`;
++if ($nrt_id)
++{
++  # The statement can still end on its own between the SELECT above and the
++  # KILL: a lock wait on the remote server checks every second whether its
++  # client is still connected.
++  --disable_query_log
++  --error 0,ER_NO_SUCH_THREAD
++  eval KILL $nrt_id;
++  --enable_query_log
++}
++let $wait_condition=
++  SELECT COUNT(*) = 0 FROM information_schema.processlist
++  WHERE info LIKE $nrt_pattern AND id != CONNECTION_ID();
++--source include/wait_condition.inc
++let $nrt_wait_start= 0;
+```
+
+**File**: `mysql-test/suite/federated/federatedx_nrt_timeout.inc` (added, +58/-0)
+```diff
+@@ -0,0 +1,58 @@
++# net_read_timeout of the pushed down multi-table statement $nrt_stmt, which
++# the remote server executes as a statement matching $nrt_pattern.
++# $nrt_after is run after the timeout, without and with pushdown.
++
++--echo # Hold the table lock on the remote server, so the pushed down statement times out
++connection slave;
++TRUNCATE TABLE mysql.general_log;
++LOCK TABLES federated_nrt.s1 WRITE;
++connection master;
++--enable_info
++set global federated_pushdown=ON;
++--error ER_NET_READ_INTERRUPTED
++eval $nrt_stmt;
++--disable_info
++
++--echo # Kill the abandoned statement on the remote server and release the lock
++--source federatedx_nrt_kill.inc
++UNLOCK TABLES;
++
++--echo # Run the same kind of statement without and with pushdown after the timeout
++connection master;
++--enable_info
++set global federated_pushdown=OFF;
++eval $nrt_after;
++set global federated_pushdown=ON;
++eval $nrt_after;
++--disable_info
++set global federated_pushdown= @old_federated_pushdown;
++
++--echo # Repeat the timeout inside a transaction
++connection slave;
++TRUNCATE TABLE mysql.general_log;
++LOCK TABLES federated_nrt.s1 WRITE;
++connection master;
++set global federated_pushdown=ON;
++SET autocommit=0;
++--error ER_NET_READ_INTERRUPTED
++eval $nrt_stmt;
++SELECT @@in_transaction;
++
++--echo # Kill the abandoned statement and release the lock
++--source federatedx_nrt_kill.inc
++UNLOCK TABLES;
++
++--echo # Statements after the timeout, then end the transaction
++connection master;
++INSERT INTO federated_nrt.s1 VALUES (0);
++ROLLBACK;
++SET autocommit=1;
++set global federated_pushdown= @old_federated_pushdown;
++
++--echo # Statements the remote server received for the new connection
++connection slave;
++SELECT argument FROM mysql.general_log
++WHERE argument IN ('SET AUTOCOMMIT=0', 'ROLLBACK') OR argument LIKE 'INSERT %'
++ORDER BY event_time;
++DELETE FROM federated_nrt.s1 WHERE a=0;
++SELECT COUNT(*) FROM federated_nrt.s1;
+```
+
+**File**: `mysql-test/suite/federated/federatedx_pushdown_upd_del.result` (modified, +342/-0)
+```diff
+@@ -1752,6 +1752,348 @@ DROP PROCEDURE p_reparse;
+ DROP PROCEDURE p_upd_del;
+ DROP PROCEDURE p_outer;
+ DROP PROCEDURE p_execute;
++#
++# MDEV-41293: FederatedX: connection state after a net_read_timeout
++#
++# Separate database on both servers, so that a new connection is opened
++connection master;
++CREATE DATABASE federated_nrt;
++connection slave;
++CREATE DATABASE federated_nrt;
++create table federated_nrt.s1 (a int);
++connection master;
++DROP TABLE IF EXISTS federated_nrt.s1;
++Warnings:
++Note	1051	Unknown table 'federated_nrt.s1'
++# Short read timeout for the new connection to the remote server
++set global net_read_timeout=2;
++CREATE TABLE federated_nrt.s1 (a int)
++ENGINE="FEDERATED" DEFAULT CHARSET=latin1
++CONNECTION='mysql://root@127.0.0.1:SLAVE_PORT/federated_nrt/s1';
++# Fill the table
++insert into federated_nrt.s1 select seq from seq_1_to_100;
++# Log the statements received by the remote server
++connection slave;
++TRUNCATE TABLE mysql.general_log;
++SET global general_log=1;
++# Pushed down multi-table UPDATE
++connection master;
++set @old_federated_pushdown= @@global.federated_pushdown;
++# Hold the table lock on the remote server, so the pushed down statement times out
++connection slave;
++TRUNCATE TABLE mysql.general_log;
++LOCK TABLES federated_nrt.s1 WRITE;
++connection master;
++set global federated_pushdown=ON;
++affected rows: 0
++UPDATE federated_nrt.s1 JOIN federated_nrt.s1 AS outr2 SET outr2.a = 1 where s1.a > 0;
++ERROR 08S01: Got timeout reading communication packets
++# Kill the abandoned statement on the remote server and release the lock
++connection slave;
++UNLOCK TABLES;
++# Run the same kind of statement without and with pushdown after the timeout
++connection master;
++set global federated_pushdown=OFF;
++affected rows: 0
++UPDATE federated_nrt.s1 JOIN federated_nrt.s1 AS outr2 SET outr2.a = 1 where s1.a < 2 AND outr2.a < 2;
++affected rows: 0
++info: Rows matched: 1  Changed: 0  Warnings: 0
++set global federated_pushdown=ON;
++affected rows: 0
++UPDATE federated_nrt.s1 JOIN federated_nrt.s1 AS outr2 SET outr2.a = 1 where s1.a < 2 AND outr2.a < 2;
++affected rows: 0
++info: Rows matched: 1  Changed: 0  Warnings: 0
++set global federated_pushdown= @old_federated_pushdown;
++# Repeat the timeout inside a transaction
++connection slave;
++TRUNCATE TABLE mysql.general_log;
++LOCK TABLES federated_nrt.s1 WRITE;
++connection master;
++set global federated_pushdown=ON;
++SET autocommit=0;
++UPDATE federated_nrt.s1 JOIN federated_nrt.s1 AS outr2 SET outr2.a = 1 where s1.a > 0;
++ERROR 08S01: Got timeout reading communication packets
++SELECT @@in_transaction;
++@@in_transaction
++0
++# Kill the abandoned statement and release the lock
++connection slave;
++UNLOCK TABLES;
++# Statements after the timeout, then end the transaction
++connection master;
++INSERT INTO federated_nrt.s1 VALUES (0);
++ROLLBACK;
++SET autocommit=1;
++set global federated_pushdown= @old_federated_pushdown;
++# Statements the remote server received for the new connection
++connection slave;
++SELECT argument FROM mysql.general_log
++WHERE argument IN ('SET AUTOCOMMIT=0', 'ROLLBACK') OR argument LIKE 'INSERT %'
++ORDER BY event_time;
++argument
++SET AUTOCOMMIT=0
++SET AUTOCOMMIT=0
++INSERT INTO `s1` (`a`)  VALUES  (0)
++ROLLBACK
++DELETE FROM federated_nrt.s1 WHERE a=0;
++SELECT COUNT(*) FROM federated_nrt.s1;
++COUNT(*)
++100
++# Pushed down multi-table DELETE
++# Hold the table lock on the remote server, so the pushed down statement times out
++connection slave;
++TRUNCATE TABLE mysql.general_log;
++LOCK TABLES federated_nrt.s1 WRITE;
++connection master;
++set global federated_pushdown=ON;
++affected rows: 0
++DELETE t FROM federated_nrt.s1 AS t JOIN federated_nrt.s1 AS outr2 where t.a > 0;
++ERROR 08S01: Got timeout reading communication packets
++# Kill the abandoned statement on the remote server and release the lock
++connection slave;
++UNLOCK TABLES;
++# Run the same kind of statement without and with pushdown after the timeout
++connection master;
++set global federated_pushdown=OFF;
++affected rows: 0
++DELETE t FROM federated_nrt.s1 AS t JOIN federated_nrt.s1 AS outr2 where t.a = 100 AND outr2.a = 100;
++affected rows: 1
++set global federated_pushdown=ON;
++affected rows: 0
++DELETE t FROM federated_nrt.s1 AS t JOIN federated_nrt.s1 AS outr2 where t.a = 100 AND outr2.a = 100;
++affected rows: 0
++set global federated_pushdown= @old_federated_pushdown;
++# Repeat the timeout inside a transaction
++connection slave;
++TRUNCATE TABLE mysql.general_log;
++LOCK TABLES federated_nrt.s1 WRITE;
++connection master;
++set global federated_pushdown=ON;
++SET autocommit=0;
++DELETE t FROM federated_nrt.s1 AS t JOIN federated_nrt.s1 AS outr2 where t.a > 0;
++ERROR 08S01: Got timeout reading communication packets
++SELECT @@in_transaction;
++@@in_transaction
++0
++# Kill the abandoned statement and release the lock
++connection slave;
++UNLOCK TABLES;
++# Statements after the timeout, then end the transaction
++connection master;
++INSERT INTO federated_nrt.s1 VALUES (0);
++ROLLBACK;
++SET autocommit=1;
++set global federa
+```
+
+**File**: `mysql-test/suite/federated/federatedx_pushdown_upd_del.test` (modified, +262/-0)
+```diff
+@@ -18,6 +18,8 @@
+ --source have_federatedx.inc
+ --source include/federated.inc
+ --source include/no_valgrind_without_big.inc
++--source include/have_sequence.inc
++--source include/have_innodb.inc
+ 
+ connection default;
+ ALTER DATABASE federated CHARACTER SET latin1;
+@@ -1235,6 +1237,266 @@ DROP PROCEDURE p_upd_del;
+ DROP PROCEDURE p_outer;
+ DROP PROCEDURE p_execute;
+ 
++--echo #
++--echo # MDEV-41293: FederatedX: connection state after a net_read_timeout
++--echo #
++--echo # Separate database on both servers, so that a new connection is opened
++connection master;
++CREATE DATABASE federated_nrt;
++connection slave;
++CREATE DATABASE federated_nrt;
++create table federated_nrt.s1 (a int);
++
++connection master;
++DROP TABLE IF EXISTS federated_nrt.s1;
++--echo # Short read timeout for the new connection to the remote server
++let $old_net_read_timeout= `SELECT @@global.net_read_timeout`;
++set global net_read_timeout=2;
++--replace_result $SLAVE_MYPORT SLAVE_PORT
++eval
++CREATE TABLE federated_nrt.s1 (a int)
++ENGINE="FEDERATED" DEFAULT CHARSET=latin1
++CONNECTION='mysql://root@127.0.0.1:$SLAVE_MYPORT/federated_nrt/s1';
++
++--echo # Fill the table
++insert into federated_nrt.s1 select seq from seq_1_to_100;
++
++--echo # Log the statements received by the remote server
++connection slave;
++TRUNCATE TABLE mysql.general_log;
++SET global general_log=1;
++
++--echo # Pushed down multi-table UPDATE
++let $nrt_stmt= UPDATE federated_nrt.s1 JOIN federated_nrt.s1 AS outr2 SET outr2.a = 1 where s1.a > 0;
++let $nrt_pattern= 'update %';
++let $nrt_after= UPDATE federated_nrt.s1 JOIN federated_nrt.s1 AS outr2 SET outr2.a = 1 where s1.a < 2 AND outr2.a < 2;
++connection master;
++set @old_federated_pushdown= @@global.federated_pushdown;
++--source federatedx_nrt_timeout.inc
++
++--echo # Pushed down multi-table DELETE
++let $nrt_stmt= DELETE t FROM federated_nrt.s1 AS t JOIN federated_nrt.s1 AS outr2 where t.a > 0;
++let $nrt_pattern= 'delete %';
++let $nrt_after= DELETE t FROM federated_nrt.s1 AS t JOIN federated_nrt.s1 AS outr2 where t.a = 100 AND outr2.a = 100;
++--source federatedx_nrt_timeout.inc
++
++--echo # The remote connection is killed while a transaction is open
++connection slave;
++TRUNCATE TABLE mysql.general_log;
++connection master;
++set global federated_pushdown=ON;
++SET autocommit=0;
++INSERT INTO federated_nrt.s1 VALUES (-1);
++connection slave;
++LOCK TABLES federated_nrt.s1 WRITE;
++connection master;
++send UPDATE federated_nrt.s1 JOIN federated_nrt.s1 AS outr2 SET outr2.a = 1 where s1.a > 0;
++let $nrt_pattern= 'update %';
++let $nrt_wait_start= 1;
++--source federatedx_nrt_kill.inc
++UNLOCK TABLES;
++connection master;
++--disable_abort_on_error
++reap;
++--enable_abort_on_error
++SELECT @@in_transaction;
++INSERT INTO federated_nrt.s1 VALUES (0);
++ROLLBACK;
++SET autocommit=1;
++set global federated_pushdown= @old_federated_pushdown;
++connection slave;
++SELECT argument FROM mysql.general_log
++WHERE argument IN ('SET AUTOCOMMIT=0', 'ROLLBACK') OR argument LIKE 'INSERT %'
++ORDER BY event_time;
++DELETE FROM federated_nrt.s1 WHERE a=0;
++
++--echo # The timeout while the rows of a result are read (store_result())
++--echo # The remote server flushes the first rows and then stalls in a row,
++--echo # so that the result is not complete when the query returns
++connection slave;
++create table federated_nrt.t_slow (a int);
++insert into federated_nrt.t_slow select seq from seq_1_to_100;
++create view federated_nrt.v_slow as
++select a, repeat('x', 1000) as c, sleep(if(a=100, 5, 0)) as s
++from federated_nrt.t_slow;
++connection master;
++--replace_result $SLAVE_MYPORT SLAVE_PORT
++eval CREATE TABLE federated_nrt.f_slow (a int, c varchar(1000), s int)
++ENGINE="FEDERATED" DEFAULT CHARSET=latin1
++CONNECTION='mysql://root@127.0.0.1:$SLAVE_MYPORT/federated_nrt/v_slow';
++--error ER_NET_READ_INTERRUPTED
++select * from federated_nrt.f_slow;
++--echo # Kill the abandoned SELECT on the remote server
++let $nrt_pattern= CONCAT('SELECT ', CHAR(96), '%');
++--source federatedx_nrt_kill.inc
++connection master;
++--echo # The connection is usable after it
++select * from federated_nrt.s1 where a=0;
++DROP TABLE federated_nrt.f_slow;
++connection slave;
++DROP VIEW federated_nrt.v_slow;
++DROP TABLE federated_nrt.t_slow;
++
++--echo # The timeout of the query that sets the time zone of a new connection
++--echo # The remote server runs init_connect after it accepted the connection,
++--echo # for the users that do not have the SUPER privilege
++connection slave;
++CREATE USER nrt_u@127.0.0.1;
++GRANT SELECT ON federated_nrt.* TO nrt_u@127.0.0.1;
++connection master;
++--replace_result $SLAVE_MYPORT SLAVE_PORT
++eval CREATE TABLE federated_nrt.f_init (a int)
++ENGINE="FEDERATED" DEFAULT CHARSET=latin1
++CONNECTION='mysql://nrt_u@127.0.0.1:$SLAVE_MYPORT/federated_nrt/s1';
++connection slave;
++set @old_init_connect= @@global.init_connect;
++set global init_connect= 'do sleep(5)';
++connection master;
++--error ER_NET_READ_INTERRUPTED
++select * from federated_nrt.f_init;
++connection slave;
++set global init_connec
+```
+
+**File**: `mysql-test/suite/federated/include/federatedx_kill_idle_f3db.inc` (added, +16/-0)
+```diff
+@@ -0,0 +1,16 @@
++# Kill the idle FederatedX connection(s) to f3db on the remote server and
++# wait until they are gone. Run it on the remote ("slave") connection.
++
++let $wait_condition= SELECT COUNT(*) = 1 FROM information_schema.processlist
++  WHERE command='Sleep' AND db='f3db';
++--source include/wait_condition.inc
++
++let $id= `SELECT id FROM information_schema.processlist
++          WHERE command='Sleep' AND db='f3db'`;
++--disable_query_log
++eval KILL $id;
++--enable_query_log
++
++let $wait_condition= SELECT COUNT(*) = 0 FROM information_schema.processlist
++  WHERE db='f3db';
++--source include/wait_condition.inc
+```
+
+**File**: `mysql-test/suite/versioning/r/delete_history,32bit.rdiff` (modified, +1/-1)
+```diff
+@@ -5,7 +5,7 @@
+  1	SIMPLE	t1	ALL	NULL	NULL	NULL	NULL	1	100.00	Using where
+  Warnings:
+ -Note	1003	delete  from `test`.`t1` FOR SYSTEM_TIME BEFORE TIMESTAMP '2039-01-01 23:00' using dual where `test`.`t1`.`row_end` < TIMESTAMP/*WITH LOCAL TIME ZONE*/'2039-01-01 23:00:00' and is_history(`test`.`t1`.`row_end`)
+-+Note	1003	delete  from `test`.`t1` FOR SYSTEM_TIME BEFORE TIMESTAMP '2039-01-01 23:00' using dual where `test`.`t1`.`row_end` < '2039-01-01 23:00' and is_history(`test`.`t1`.`row_end`)
+++Note	1003	delete from `test`.`t1` FOR SYSTEM_TIME BEFORE TIMESTAMP '2039-01-01 23:00' where `test`.`t1`.`row_end` < '2039-01-01 23:00' and is_history(`test`.`t1`.`row_end`)
+  create or replace procedure p() delete history from t1 before system_time '2039-01-01 23:00';
+  call p;
+  select * from t1;
+```
+
+**File**: `storage/federatedx/federatedx_io_mysql.cc` (modified, +107/-15)
+```diff
+@@ -38,6 +38,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ #include "m_string.h"
+ #include "mysqld_error.h"
+ #include "sql_servers.h"
++#include <errmsg.h>
+ 
+ #define SAVEPOINT_REALIZED  1
+ #define SAVEPOINT_RESTRICT  2
+@@ -64,8 +65,11 @@ class federatedx_io_mysql :public federatedx_io
+   bool requested_autocommit;
+   bool actual_autocommit;
+ 
+-  int actual_query(const char *buffer, size_t length);
++  int actual_query(const char *buffer, size_t length,
++                   bool ending_transaction= false);
+   bool test_all_restrict() const;
++  bool wants_autocommit() const;
++  void connection_lost(bool ending_transaction);
+ public:
+   federatedx_io_mysql(FEDERATEDX_SERVER *);
+   ~federatedx_io_mysql() override;
+@@ -170,7 +174,7 @@ int federatedx_io_mysql::commit()
+   int error= 0;
+   DBUG_ENTER("federatedx_io_mysql::commit");
+   
+-  if (!actual_autocommit && (error= actual_query("COMMIT", 6)))
++  if (!actual_autocommit && (error= actual_query("COMMIT", 6, true)))
+     rollback();
+   
+   reset();
+@@ -184,7 +188,7 @@ int federatedx_io_mysql::rollback()
+   DBUG_ENTER("federatedx_io_mysql::rollback");
+   
+   if (!actual_autocommit)
+-    error= actual_query("ROLLBACK", 8);
++    error= actual_query("ROLLBACK", 8, true);
+   else
+     error= ER_WARNING_NOT_COMPLETE_ROLLBACK;
+ 
+@@ -376,22 +380,26 @@ bool federatedx_io_mysql::test_all_restrict() const
+ }
+ 
+ 
++/* Whether the remote session should be in autocommit mode right now */
++bool federatedx_io_mysql::wants_autocommit() const
++{
++  return requested_autocommit || is_readonly() || test_all_restrict();
++}
++
++
+ int federatedx_io_mysql::query(const char *buffer, size_t length)
+ {
+   int error;
+-  bool wants_autocommit= requested_autocommit | is_readonly();
++  const bool autocommit= wants_autocommit();
+   DBUG_ENTER("federatedx_io_mysql::query");
+ 
+-  if (!wants_autocommit && test_all_restrict())
+-    wants_autocommit= TRUE;
+-
+-  if (wants_autocommit != actual_autocommit)
++  if (autocommit != actual_autocommit)
+   {
+-    if ((error= actual_query(wants_autocommit ? "SET AUTOCOMMIT=1"
+-                                            : "SET AUTOCOMMIT=0", 16)))
++    if ((error= actual_query(autocommit ? "SET AUTOCOMMIT=1"
++                                        : "SET AUTOCOMMIT=0", 16)))
+     DBUG_RETURN(error);                         
+-    mysql.reconnect= wants_autocommit ? 1 : 0;
+-    actual_autocommit= wants_autocommit;
++    mysql.reconnect= autocommit ? 1 : 0;
++    actual_autocommit= autocommit;
+   }
+   
+   if (!actual_autocommit && last_savepoint() != actual_savepoint())
+@@ -418,7 +426,84 @@ int federatedx_io_mysql::query(const char *buffer, size_t length)
+ }
+ 
+ 
+-int federatedx_io_mysql::actual_query(const char *buffer, size_t length)
++/*
++  Called after a failed query or a failed read of its result. If the
++  connection is gone, forget the state of its session. The next query opens
++  a new session in autocommit mode, so query() has to send SET AUTOCOMMIT=0
++  to it again, or the rest of the transaction would be committed on the
++  remote server statement by statement.
++
++  The client library compiled into the server returns from a timeout of
++  reading the remote reply (net_read_timeout) without closing the connection,
++  so the reply to the query is still to arrive. Close it, so that the next
++  query does not read a stale reply. mysql_close() rather than end_server()
++  is needed, because the next query initializes the MYSQL structure from
++  scratch (see actual_query()), which would lose everything the closed
++  connection has allocated. The timeout is already reported to the user by
++  the network layer (ER_NET_READ_INTERRUPTED); CR_SERVER_LOST is only what
++  the error of this io object says.
++
++  @param ending_transaction  the failed query is the COMMIT or ROLLBACK of the
++                             transaction. Its error is returned to the
++                             caller, so the transaction is not marked for
++                             rollback here.
++*/
++
++void federatedx_io_mysql::connection_lost(bool ending_transaction)
++{
++  void *thd= mysql.net.thd;
++  DBUG_ASSERT(thd);
++  /*
++    The remote session is in a transaction, or was about to enter one when
++    the failed statement was SET AUTOCOMMIT=0 itself.
++  */
++  const bool in_transaction= !actual_autocommit || !wants_autocommit();
++
++  /*
++    A real read timeout: net.error == 2 means our own read failed. A remote
++    error packet that merely carries ER_NET_READ_INTERRUPTED (e.g. via SIGNAL)
++    leaves net.error at 0, so it isn't mistaken for a lost connection.
++  */
++  const bool timeout= mysql.net.vio && mysql.net.error == 2 &&
++                      mysql.net.last_errno == ER_NET_READ_INTERRUPTED;
++  if (mysql.net.vio && !timeout)
++    return;
++
++  /* The library closed the connection by end_server(), which the next
++     mysql_init() of the structure would leak. Keep its error. */
++  uint last_errno= timeout ? CR_SERVER_LOST : mysql.net.last_errno;
++  char sql
+```
+
+**File**: `storage/federatedx/federatedx_pushdown.cc` (modified, +1/-5)
+```diff
+@@ -15,8 +15,6 @@
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301  USA */
+ 
+ /* !!! For inclusion into ha_federatedx.cc */
+-/* For CR_MIN_ERROR/CR_MAX_ERROR, the error code range of the client library */
+-#include <errmsg.h>
+ 
+ /*
+   This is a quick a dirty implemention of the derived_handler and select_handler
+@@ -491,10 +489,8 @@ int ha_federatedx_multi_upddel_handler::batch_update_delete(
+       server error codes and are reported as a foreign data source failure.
+     */
+     const int remote_errno= (*iop)->error_code();
+-    if (remote_errno < CR_MIN_ERROR || remote_errno > CR_MAX_ERROR)
++    if (!report_client_library_error(remote_errno, (*iop)->error_str()))
+       my_message(remote_errno, (*iop)->error_str(), MYF(0));
+-    else
+-      my_error(ER_QUERY_ON_FOREIGN_DATA_SOURCE, MYF(0), (*iop)->error_str());
+     rc= HA_FEDERATEDX_ERROR_WITH_REMOTE_SYSTEM;
+   }
+   else
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #6073** (2026-11-04): MDEV-42009: Set GLOBAL innodb_log_file_size=ON is not crash safe (@dr-m)
+- **PR #6072** (2026-11-04): MDEV-42000 : galera.galera_restart_on_unknown_option fails (@janlindstrom)
+- **PR #6071** (2026-11-04): mysql_client_test: cleanup, speedup and resilience of proxy protocol tests (@vaintroub)
 - **PR #6064** (2026-11-03): MDEV-40935: Crash when os_file_set_size() fails to extend innodb_log_archive=ON on shutdown (@dr-m)
 - **PR #6063** (2026-11-03): 10.11 mdev 41769 (@janlindstrom)
 - **PR #6062** (2026-11-03): MDEV-41995 galera.MDEV-40727 result file has latin1 instead of utf8mb4 (@mariadb-SusilBehera)
-- **PR #6055** (2026-11-03): MDEV-41737 Galera async replica SQL thread stops instead of retrying (@janlindstrom)
-- **PR #6052** (2026-11-02): MDEV-34839 Report real cause when async slave apply fails under wsrep (@janlindstrom)
-- **PR #6051** (closed): MDEV-33843: Server crash via XPath unary minus recursion (@dfengliu)
 
 ---
 
@@ -1681,30 +2350,37 @@ Signed-off-by: Kristian Nielsen <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. sys_vars.tmp_disk_table_size_basic when no perfschema
+## X. MDEV-42033: Memory leak of derived_handler when a statement fails early
 
 **RULE**:
-When implementing operations in `mysql-test/suite/sys_vars/t/tmp_disk_table_size_basic.test`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in MariaDB/server. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `sql/sql_select.cc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in MariaDB/server. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5129c153`: sys_vars.tmp_disk_table_size_basic when no perfschema. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d2cc0162`: MDEV-42033: Memory leak of derived_handler when a statement fails early. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `mysql-test/suite/sys_vars/t/tmp_disk_table_size_basic.test`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `sql/sql_select.cc`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-# The --error ER_RECORD_FILE_FULL below requires the views from perfschema to
-# be present in INFORMATION_SCHEMA.views.
---source include/have_perfschema.inc
+    free_derived_pushdown_handlers(*join_list);
+  Clean up all derived pushdown handlers in this join list.
+    from JOIN::cleanup() and SELECT_LEX::cleanup() (for statements that fail
+    before a JOIN is created) and not in JOIN_TAB::cleanup.
+void free_derived_pushdown_handlers(List<TABLE_LIST>& join_list)
+      free_derived_pushdown_handlers(table_ref->nested_join->join_list);
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+    free_pushdown_handlers(*join_list);
+  Clean up all derived pushdown handlers in this join.
+    from JOIN::cleanup() and not in JOIN_TAB::cleanup.
+void JOIN::free_pushdown_handlers(List<TABLE_LIST>& join_list)
+      free_pushdown_handlers(table_ref->nested_join->join_list);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5129c153` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d2cc0162` are properly handled with clean fallback behavior.

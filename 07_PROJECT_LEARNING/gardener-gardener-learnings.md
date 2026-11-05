@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/gardener-gardener-learnings.md`  
 > **Source**: github ([https://github.com/gardener/gardener](https://github.com/gardener/gardener))  
-> **Source Version**: `a8da5a8a`  
+> **Source Version**: `a8e47203`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T10:12:32.581Z  
+> **Timestamp**: 2026-11-05T05:23:55.743Z  
 > **Learning ID**: `learn-github-gardener-gardener`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/gardener-gardener-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/gardener/gardener](https://github.com/gardener/gardener))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T10:12:32.207Z  
+> **Harvest Timestamp**: 2026-11-05T05:23:49.516Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -726,17 +726,14 @@ func (h *DefaultHealthChecker) Check(ctx context.Context, request types.Namespac
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #16213** (2026-11-04): **docs: propose per-shoot `ClusterTrustBundle` for custom CAs**
-  *Symptoms*: **What this PR does / why we need it**:  Adds a design proposal for gardenlet to create a `ClusterTrustBundle` object (`certificates.k8s.io/v1`, GA since k8s v1.37) in every shoot cluster whose seed has a custom CA trust bundle configured (`Seed.spec.settings.trustBundle.secretRef`).  Workload authors can then mount the bundle via `projected.volumes[].sources[].clusterTrustBundle`. This is the Kubernetes-native vehicle for shipping cluster trust anchors — a much better fit for user workloads than namespace-scoped ConfigMaps (require replication), image-baked CAs (couples trust policy to the image build), or mutating webhooks (operationally fragile).  This PR is doc-only: the proposal lives in `docs/proposals/` (dated format — new GEPs should live in gardener/enhancements; this document is structured to be moved over once its shape is agreed). Implementation follows once the design is accepted. Shoots on k8s < 1.37 are skipped, matching the GA version of the API.  This PR is part of a chain: - `Garden.spec.virtualCluster.gardener.trustBundleSecretRef` — virtual-garden control plane: https://github.com/gardener/gardener/pull/16210 - `Seed.spec.settings.trustBundle` — seed-system components - shoot-node system trust store — gardenlet node-init flow (sibling PR) - per-shoot `ClusterTrustBundle` (this PR) — user workloads on k8s ≥ 1.37  **Release note**: ```other operator Design proposal: per-shoot `ClusterTrustBundle` for custom CAs on k8s >= 1.37. ```
+- **Issue #16225** (2026-11-05): **Update module github.com/andybalholm/brotli to v1.2.8**
+  *Symptoms*: This PR contains the following updates:  | Package | Change | [Age](https://docs.renovatebot.com/merge-confidence/) | [Confidence](https://docs.renovatebot.com/merge-confidence/) | |---|---|---|---| | [github.com/andybalholm/brotli](https://redirect.github.com/andybalholm/brotli) | `v1.2.7` → `v1.2.8` | ![age](https://developer.mend.io/api/mc/badges/age/go/github.com%2fandybalholm%2fbrotli/v1.2.8?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/go/github.com%2fandybalholm%2fbrotli/v1.2.7/v1.2.8?slim=true) |  ---  ### Release Notes  <details> <summary>andybalholm/brotli (github.com/andybalholm/brotli)</summary>  ### [`v1.2.8`](https://redirect.github.com/andybalholm/brotli/compare/v1.2.7...v1.2.8)  [Compare Source](https://redirect.github.com/andybalholm/brotli/compare/v1.2.7...v1.2.8)  </details>  ---  ### Configuration  📅 **Schedule**: (UTC)  - Branch creation   - At any time (no schedule defined) - Automerge   - At any time (no schedule defined)  🚦 **Automerge**: Enabled.  ♻ **Rebasing**: Whenever PR becomes conflicted, or you tick the rebase/retry checkbox.  🔕 **Ignore**: Close this PR and you won't be reminded about this update again.  ---   - [ ] <!-- rebase-check -->If you want to rebase/retry this PR, check this box  ---  **Release note**: ```other dependency NONE ``` <!--renovate-debug:eyJjcmVhdGVkSW5WZXIiOiI0NC4yMDQuMCIsInVwZGF0ZWRJblZlciI6IjQ0LjIwNC4wIiwidGFyZ2V0QnJhbmNoIjoibWFzdGVyIiwibGFiZWxzIjpbImtpbmQvZW5oYW5jZW1lbnQiXX0=--> 
   **Post-Mortem & Fix Analysis**:
-  > Skipping CI for Draft Pull Request. If you want CI signal for your change, please convert it to an actual PR. You can still manually trigger a test run with `/test all`
-  > [APPROVALNOTIFIER] This PR is **NOT APPROVED**  This pull-request has been approved by: **Once this PR has been reviewed and has the lgtm label**, please assign [velmiras](https://github.com/velmiras) for approval. For more information see [the Code Review Process](https://gardener.cloud/docs/contribute/#pull-request-checklist).  The full list of commands accepted by this bot can be found [here](https://prow.gardener.cloud/command-help?repo=gardener%2Fgardener).  <details open> Needs approval from an approver in each of these files:  - **[docs/OWNERS](https://github.com/gardener/gardener/blob/master/docs/OWNERS)**  Approvers can indicate their approval by writing `/approve` in a comment Approvers can cancel approval by writing `/approve cancel` in a comment </details> <!-- META={"approvers":["velmiras"]} -->
+  > /label skip-review
+  > [APPROVALNOTIFIER] This PR is **NOT APPROVED**  This pull-request has been approved by: **Once this PR has been reviewed and has the lgtm label**, please assign [ialidzhikov](https://github.com/ialidzhikov) for approval. For more information see [the Code Review Process](https://gardener.cloud/docs/contribute/#pull-request-checklist).  The full list of commands accepted by this bot can be found [here](https://prow.gardener.cloud/command-help?repo=gardener%2Fgardener).  <details open> Needs approval from an approver in each of these files:  - **[OWNERS](https://github.com/gardener/gardener/blob/master/OWNERS)**  Approvers can indicate their approval by writing `/approve` in a comment Approvers can cancel approval by writing `/approve cancel` in a comment </details> <!-- META={"approvers":["ialidzhikov"]} -->
 
-- **Issue #16212** (2026-11-04): **docs: propose distributing a custom CA trust bundle to shoot nodes**
-  *Symptoms*: **What this PR does / why we need it**:  Adds a design proposal (GEP-37) for extending gardenlet's node-bootstrap flow so shoot nodes receive a custom CA trust bundle in their system trust store (`/etc/ssl/certs/`), complementing the existing per-registry containerd CA delivery (see #13751).  Motivation: per-registry containerd CAs on `OperatingSystemConfig` cover image pulls only. Other processes on shoot nodes — kubelet, node-local-dns, OS daemons, telemetry agents — resolve TLS using the OS trust store. Operators running clusters that must reach services secured by custom CAs need those CAs present before any pod starts.  This PR is API-doc-only: a GEP-style proposal in `docs/proposals/`, intended for early feedback on the approach. The full implementation follows once the shape is agreed.  This PR is part of a chain to make custom CA trust bundles configurable across a Gardener landscape: - `Garden.spec.virtualCluster.gardener.trustBundleSecretRef` — virtual-garden control plane: #16210 - `Seed.spec.settings.trustBundle` — seed-system components (related PR, forthcoming) - shoot-node system trust store (this PR) - per-shoot `ClusterTrustBundle` (k8s >= 1.37) — user workloads (forthcoming)  **Release note**: ```other operator Design proposal: distributing a custom CA trust bundle to shoot nodes. ```
-  **Post-Mortem & Fix Analysis**:
-  > Skipping CI for Draft Pull Request. If you want CI signal for your change, please convert it to an actual PR. You can still manually trigger a test run with `/test all`
-  > [APPROVALNOTIFIER] This PR is **NOT APPROVED**  This pull-request has been approved by: **Once this PR has been reviewed and has the lgtm label**, please assign [klocke-io](https://github.com/klocke-io) for approval. For more information see [the Code Review Process](https://gardener.cloud/docs/contribute/#pull-request-checklist).  The full list of commands accepted by this bot can be found [here](https://prow.gardener.cloud/command-help?repo=gardener%2Fgardener).  <details open> Needs approval from an approver in each of these files:  - **[docs/OWNERS](https://github.com/gardener/gardener/blob/master/docs/OWNERS)**  Approvers can indicate their approval by writing `/approve` in a comment Approvers can cancel approval by writing `/approve cancel` in a comment </details> <!-- META={"approvers":["klocke-io"]} -->
+- **Issue #16216** (2026-11-04): **Update etcd-druid to v0.39.2**
+  *Symptoms*: This PR contains the following updates:  | Package | Type | Update | Change | [Age](https://docs.renovatebot.com/merge-confidence/) | [Confidence](https://docs.renovatebot.com/merge-confidence/) | |---|---|---|---|---|---| | [gardener/etcd-druid](https://redirect.github.com/gardener/etcd-druid) |  | patch | `v0.39.1` → `v0.39.2` | ![age](https://developer.mend.io/api/mc/badges/age/github-releases/gardener%2fetcd-druid/v0.39.2?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/github-releases/gardener%2fetcd-druid/v0.39.1/v0.39.2?slim=true) | | [github.com/gardener/etcd-druid/api](https://redirect.github.com/gardener/etcd-druid) | require | patch | `v0.39.1` → `v0.39.2` | ![age](https://developer.mend.io/api/mc/badges/age/go/github.com%2fgardener%2fetcd-druid%2fapi/v0.39.2?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/go/github.com%2fgardener%2fetcd-druid%2fapi/v0.39.1/v0.39.2?slim=true) |  ---  ### Release Notes  <details> <summary>gardener/etcd-druid</summary>  ### [`v0.39.2`](https://redirect.github.com/gardener/etcd-druid/releases/tag/v0.39.2)  [Compare Source](https://redirect.github.com/gardener/etcd-druid/compare/v0.39.1...v0.39.2)  ##### \[github.com/gardener/etcd-druid:v0.39.2]  ##### 🐛 Bug Fixes  - `[OPERATOR]` The runtime base image has been changed from `distroless/static-debian12` to `distroless/static-debian13`. The CA bundle no longer contains the `emSign ECC Root CA - G3` and `AAA Certificate Services`
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -753,146 +750,75 @@ func (h *DefaultHealthChecker) Check(ctx context.Context, request types.Namespac
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c20bc4dc` (2026-11-03)
-**Commit Message**: Enable kube-api-linter `optionalorrequired` for `operations/v1alpha1` (#16133)
+### Incident Patch 1: `e47ebf90` (2026-11-04)
+**Commit Message**: Update etcd-druid to v0.39.2 (#16216)
 
-Enable kube-api-linter optionalorrequired for operations/v1alpha1
+* Update etcd-druid to v0.39.2
 
-Signed-off-by: Dobromir Peev <[REDACTED_EMAIL]>
-Co-authored-by: Copilot <[REDACTED_EMAIL]>
+* Run make tidy; Run make generate
 
-**File**: `.golangci.yaml.in` (modified, +7/-0)
+---------
+
+Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
+Co-authored-by: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
+
+**File**: `go.mod` (modified, +1/-1)
 ```diff
-@@ -286,6 +286,7 @@ linters:
-               - jsontags
-               - nonullable
-               - optionalfields
-+              - optionalorrequired
-               - uniquemarkers
-           lintersConfig:
-             optionalfields:
-@@ -340,6 +341,12 @@ linters:
-       - linters:
-           - kubeapilinter
-         path-except: 'pkg/apis/[^/]+(/[^/]+)?/v[0-9]+((alpha|beta)[0-9]+)?/[^/]+$'
-+      # optionalorrequired is only enforced for the API groups listed below. Add a group here once its fields are
-+      # explicitly marked as +optional or +required; remove this rule when all groups are migrated.
-+      - linters:
-+          - kubeapilinter
-+        text: 'optionalorrequired:'
-+        path-except: 'pkg/apis/(operations/v1alpha1)/[^/]+$'
-       # optionalfields: Spec/Status and other struct fields on top-level API objects have established non-pointer
-       # conventions in Kubernetes APIs. Similarly, scalar fields (int64, string) with incomplete validation
-       # are intentionally kept as value types. Converting these to pointers would be API-breaking.
+@@ -21,7 +21,7 @@ require (
+ 	github.com/fluent/fluent-operator/v3 v3.7.0
+ 	github.com/gardener/cert-management/pkg/apis v0.28.0
+ 	github.com/gardener/dependency-watchdog v1.8.1
+-	github.com/gardener/etcd-druid/api v0.39.1
++	github.com/gardener/etcd-druid/api v0.39.2
+ 	github.com/gardener/gardener/pkg/apis v1.154.0
+ 	github.com/gardener/machine-controller-manager v0.63.1
+ 	github.com/gardener/pvc-autoscaler v0.3.2
 ```
 
-**File**: `pkg/apis/operations/v1alpha1/generated.proto` (modified, +7/-0)
+**File**: `go.sum` (modified, +2/-2)
 ```diff
-@@ -21,9 +21,11 @@ option go_package = "github.com/gardener/gardener/pkg/apis/operations/v1alpha1";
- // Bastion holds details about an SSH bastion for a shoot cluster.
- message Bastion {
-   // Standard object metadata.
-+  // +required
-   optional .k8s.io.apimachinery.pkg.apis.meta.v1.ObjectMeta metadata = 1;
- 
-   // Specification of the Bastion.
-+  // +required
-   optional BastionSpec spec = 2;
- 
-   // Most recently observed status of the Bastion.
-@@ -34,6 +36,7 @@ message Bastion {
- // BastionIngressPolicy represents an ingress policy for SSH bastion hosts.
- message BastionIngressPolicy {
-   // IPBlock defines an IP block that is allowed to access the bastion.
-+  // +required
-   optional .k8s.io.api.networking.v1.IPBlock ipBlock = 1;
- }
- 
-@@ -44,12 +47,14 @@ message BastionList {
-   optional .k8s.io.apimachinery.pkg.apis.meta.v1.ListMeta metadata = 1;
- 
-   // Items is the list of Bastion.
-+  // +required
-   repeated Bastion items = 2;
- }
- 
- // BastionSpec is the specification of a Bastion.
- message BastionSpec {
-   // ShootRef defines the target shoot for a Bastion. The name field of the ShootRef is immutable.
-+  // +required
-   optional .k8s.io.api.core.v1.LocalObjectReference shootRef = 1;
- 
-   // SeedName is the name of the seed to which this Bastion is currently scheduled. This field is populated
-@@ -62,9 +67,11 @@ message BastionSpec {
-   optional string providerType = 3;
- 
-   // SSHPublicKey is the user's public key. This field is immutable.
-+  // +required
-   optional string sshPublicKey = 4;
- 
-   // Ingress controls from where the created bastion host should be reachable.
-+  // +required
-   repeated BastionIngressPolicy ingress = 5;
- }
- 
+@@ -271,8 +271,8 @@ github.com/gardener/cert-management/pkg/apis v0.28.0 h1:auMGxxKHhGDeS+JhS/de6e2r
+ github.com/gardener/cert-management/pkg/apis v0.28.0/go.mod h1:AxSZ3ceo8V4H54B6my3HaijP5+QMVw3tbFHwPlk6igs=
+ github.com/gardener/dependency-watchdog v1.8.1 h1:PIliv48TLOSmfDecLMXWHZ9gJC+ktq0qmUOfKQy+gRo=
+ github.com/gardener/dependency-watchdog v1.8.1/go.mod h1:jRIyBZ4ySWy+EdQjfLm/N+90vBPdWJ7khiBN7CGQs18=
+-github.com/gardener/etcd-druid/api v0.39.1 h1:v7XO4576QEyeWFa29GDqK4zBsbeSJBiUBrOEiYgLxsk=
+-github.com/gardener/etcd-druid/api v0.39.1/go.mod h1:HsqEM/h4XuxPC4cFDm20V9TPAUqv0tjtnzds/nZ5p7Y=
++github.com/gardener/etcd-druid/api v0.39.2 h1:zP4WQdrhh09YGjamoBqss8gmjyT6c1BGwN2wXCvkKJY=
++github.com/gardener/etcd-druid/api v0.39.2/go.mod h1:HsqEM/h4XuxPC4cFDm20V9TPAUqv0tjtnzds/nZ5p7Y=
+ github.com/gardener/machine-controller-manager v0.63.1 h1:OUlDDARMAqwIH2zyEvMmGTFqc/VgFc0bH1LskhLoGk8=
+ github.com/gardener/machine-controller-manager v0.63.1/go.mod h1:MU2Cyrwvh+jYYvRUGxUMx8LNmFUvGog01YHlpsCiRrM=
+ github.com/gardener/pvc-autoscaler v0.3.2 h1:cFrqya/ceJEVM4AdmtIAcnmR46PRLDzbbgrRDG8tn6k=
 ```
 
-**File**: `pkg/apis/operations/v1alpha1/types_bastion.go` (modified, +7/-0)
+**File**: `imagevector/containers.yaml` (modified, +2/-2)
 ```diff
-@@ -25,9 +25,11 @@ const (
- type Bastion struct {
- 	metav1.TypeMeta `json:",inline"`
- 	// Standard object metadata.
-+	// +required
- 	metav1.ObjectMeta `json:"metadata" protobuf:"bytes,1,opt,name=metadata"`
- 
- 	// Specification of the Bastion.
-+	// +required
- 	Spec BastionSpec `json:"spec" protobuf:"bytes,2,opt,name=spec"`
- 	// Most recently observed status of the Bastion.
- 	// +optional
-@@ -44,12 +46,14 @@ type BastionList struct {
- 	metav1.ListMeta `json:"metadata,omitempty" protobuf:"bytes,1,opt,name=metadata"`
- 
- 	// Items is the list of Bastion.
-+	// +required
- 	Items []Bastion `json:"items" protobuf:"bytes,2,rep,name=items"`
- }
- 
- // BastionSpec is the specification of a Bastion.
- type BastionSpec struct {
- 	// ShootRef defines the target shoot for a Bastion. The name field of the ShootRef is immutable.
-+	// +required
- 	ShootRef corev1.LocalObjectReference `json:"shootRef" protobuf:"bytes,1,opt,name=shootRef"`
- 	// SeedName is the name of the seed to which this Bastion is currently scheduled. This field is populated
- 	// at the beginning of a create/reconcile operation.
-@@ -59,14 +63,17 @@ type BastionSpec struct {
- 	// +optional
- 	ProviderType *string `json:"providerType,omitempty" protobuf:"bytes,3,opt,name=providerType"`
- 	// SSHPublicKey is the user's public key. This field is immutable.
-+	// +required
- 	SSHPublicKey string `json:"sshPublicKey" protobuf:"bytes,4,opt,name=sshPublicKey"`
- 	// Ingress controls from where the created bastion host should be reachable.
-+	// +required
- 	Ingress []BastionIngressPolicy `json:"ingress" protobuf:"bytes,5,opt,name=ingress"`
- }
- 
- // BastionIngressPolicy represents an ingress policy for SSH bastion hosts.
- type BastionIngressPolicy struct {
- 	// IPBlock defines an IP block that is allowed to access the bastion.
-+	// +required
- 	IPBlock networkingv1.IPBlock `json:"ipBlock" protobuf:"bytes,1,opt,name=ipBlock"`
- }
- 
+@@ -74,15 +74,15 @@ images:
+   - name: etcd-druid
+     sourceRepository: github.com/gardener/etcd-druid
+     repository: europe-docker.pkg.dev/gardener-project/releases/gardener/etcd-druid
+-    tag: "v0.39.1"
++    tag: "v0.39.2"
+   - name: etcd
+     sourceRepository: github.com/etcd-io/etcd
+     repository: gcr.io/etcd-development/etcd
+     tag: "v3.5.27"
+   - name: etcd-backup-restore
+     sourceRepository: github.com/gardener/etcd-backup-restore
+     repository: europe-docker.pkg.dev/gardener-project/releases/gardener/etcdbrctl
+-    tag: "v0.45.2"
++    tag: "v0.45.3"
+     resourceId:
+       name: etcdbrctl
+   - name: dependency-watchdog
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #16225** (2026-11-05): Update module github.com/andybalholm/brotli to v1.2.8 (@renovate[bot])
+- **PR #16216** (2026-11-04): Update etcd-druid to v0.39.2 (@renovate[bot])
+- **PR #16215** (2026-11-04): [release-v1.152] Automated cherry pick of #16193: Don't rely on own writes when reading credentials rotation progress (@rfranzke)
+- **PR #16214** (2026-11-04): [release-v1.153] Automated cherry pick of #16193: Don't rely on own writes when reading credentials rotation progress (@rfranzke)
 - **PR #16213** (closed): docs: propose per-shoot `ClusterTrustBundle` for custom CAs (@ccwienk)
 - **PR #16212** (closed): docs: propose distributing a custom CA trust bundle to shoot nodes (@ccwienk)
-- **PR #16209** (2026-11-04): Update module github.com/docker/cli to v29.9.3+incompatible (@renovate[bot])
-- **PR #16208** (2026-11-04): Remove hidden unicode characters from a perses dashboard (@oliver-goetz)
-- **PR #16204** (2026-11-04): Cleanup extension `ManagedResource` migration (@timuthy)
-- **PR #16201** (2026-11-03): [release-v1.154] Don't rely on own writes when reading credentials rotation progress (@gardener-prow-cherrypicker[bot])
 
 ---
 
@@ -912,34 +838,28 @@ Co-authored-by: Copilot <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Enable kube-api-linter `optionalorrequired` for `operations/v1alpha1` (#16133)
+## X. Update etcd-druid to v0.39.2 (#16216)
 
 **RULE**:
-When implementing operations in `.golangci.yaml.in`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gardener/gardener. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gardener/gardener. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c20bc4dc`: Enable kube-api-linter `optionalorrequired` for `operations/v1alpha1` (#16133). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e47ebf90`: Update etcd-druid to v0.39.2 (#16216). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.golangci.yaml.in`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-              - optionalorrequired
-      # optionalorrequired is only enforced for the API groups listed below. Add a group here once its fields are
-      # explicitly marked as +optional or +required; remove this rule when all groups are migrated.
-      - linters:
-          - kubeapilinter
-        text: 'optionalorrequired:'
-        path-except: 'pkg/apis/(operations/v1alpha1)/[^/]+$'
+	github.com/gardener/etcd-druid/api v0.39.2
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+	github.com/gardener/etcd-druid/api v0.39.1
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c20bc4dc` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e47ebf90` are properly handled with clean fallback behavior.

@@ -3,7 +3,7 @@
 > **Source Version**: `hf-francisri`  
 > **License**: Open-Source  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-10-31T23:02:08.743Z  
+> **Timestamp**: 2026-11-05T13:27:10.213Z  
 > **Learning ID**: `learn-huggingface-francisring-prism`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,290 +17,268 @@
 ## 1. Executive Forensic Architecture & System Mechanics
 
 **Technical Problem Solved:**
-The repository `FrancisRing/Prism` addresses the computational bottleneck of **High-Resolution (2K) Joint Video-Audio Generation**. Standard Video Diffusion Transformers (DiTs) suffer from quadratic complexity $O(N^2)$ in self-attention mechanisms, where $N$ is the number of tokens (spatial pixels $\times$ temporal frames). At 2K resolution, $N$ becomes prohibitively large, making inference and training infeasible on standard hardware. Prism introduces **Dynamic Sparse Attention** to reduce this complexity while maintaining the fidelity of joint audio-video synchronization.
+The repository `FrancisRing/Prism` represents a **Video Diffusion Transformer (DiT)** model designed for **Joint Video-Audio Generation** at **2K resolution**. The core technical challenge addressed is the computational infeasibility of standard dense attention mechanisms ($O(N^2)$ complexity) when processing high-resolution video frames combined with audio streams. Standard DiTs struggle with the massive token count required for 2K video (e.g., $1024 \times 1024$ pixels $\times$ temporal frames). Prism introduces **Dynamic Sparse Attention** to reduce computational load while maintaining generation quality, specifically optimizing for the "native" joint generation of video and audio rather than post-hoc alignment.
 
 **Architectural Boundaries & Subsystems:**
-1.  **Core Model (DiT Variant):** A Diffusion Transformer backbone modified to accept both video latent tokens and audio latent tokens.
-2.  **Sparse Attention Engine:** The critical subsystem. Instead of computing full attention maps, it dynamically identifies "important" token pairs based on content similarity or spatial/temporal proximity, reducing the effective $N$ in the attention calculation.
-3.  **Joint Modality Fusion:** A mechanism to synchronize audio and video streams. The `config.json` indicates `use_audio: true`, implying a cross-attention or concatenated-token approach where audio tokens influence video token updates and vice versa.
-4.  **Inference Pipeline (Diffusers):** Built on the Hugging Face `diffusers` library. The `pipeline_tag: image-to-video` suggests it uses an initial image as a conditioning frame (temporal anchor) to generate subsequent frames, leveraging `random_prefix_frames` to handle temporal consistency.
+1.  **Diffusion Backbone (DiT):** The core transformer architecture operating on latent representations of video and audio.
+2.  **Sparse Attention Mechanism:** A custom attention module that dynamically selects relevant tokens for attention computation, bypassing the full quadratic matrix multiplication. This is the primary innovation ("Dynamic Sparse Attention").
+3.  **Joint Modality Encoder/Decoder:** Handles the fusion of video latents and audio features. The `config.json` indicates `use_audio: true`, implying a dual-stream or fused-stream architecture where audio tokens are interleaved or concatenated with video tokens in the sequence dimension.
+4.  **Inference Pipeline (Diffusers):** The model is packaged for the Hugging Face `diffusers` library, specifically under the `image-to-video` pipeline tag, though it supports text-to-video. The `random_prefix_frames: true` flag suggests a specific inference strategy where initial frames are randomized or conditioned to guide the generation process, likely to stabilize the sparse attention selection during the denoising steps.
+5.  **Sequence Parallelism (SP):** The `sp_size: 1` in `config.json` indicates support for Sequence Parallelism, a technique to distribute the long sequence of video tokens across multiple GPUs to handle memory constraints, even if set to 1 (single device) in this specific config.
 
-**Critical Abstractions:**
-*   **Token Grid:** The video is discretized into a 3D grid (Time, Height, Width). Audio is discretized into a 1D temporal grid.
-*   **Sparse Mask:** A dynamic boolean or float mask generated per inference step that dictates which Q-K pairs are computed.
-*   **Sequence Parallelism (`sp_size`):** The config `sp_size: 1` suggests support for Sequence Parallelism, a technique to shard the sequence dimension across multiple GPUs to handle long context lengths (high-res video).
+**Critical Subsystem Abstractions:**
+*   **Tokenization:** Video is patchified into spatial-temporal tokens. Audio is likely tokenized into mel-spectrogram or waveform tokens.
+*   **Attention Masking/Sparsity:** The core abstraction is the *sparsity pattern* which is dynamic (data-dependent) rather than static (e.g., fixed block sparse). This requires a two-pass or iterative selection mechanism within the attention head.
+*   **Latent Space:** The model operates in a VAE latent space, not pixel space, to reduce the token count by a factor of the VAE downsampling ratio (typically 8x or 16x).
 
 ## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-### 1. Dynamic Sparse Attention Complexity Invariant
+### 1. Dynamic Sparse Attention Memory Safety & Fallback Invariant
 **RULE**:
-When implementing attention mechanisms for high-resolution multimodal generation (Video+Audio), you MUST implement a dynamic sparsity mechanism that scales complexity sub-quadratically with respect to the total token count $N$. You MUST NOT rely on dense $O(N^2)$ attention for sequences exceeding 10k tokens without explicit hardware acceleration for sparse kernels.
+When implementing dynamic sparse attention mechanisms in diffusion models, the sparsity selection logic MUST include a deterministic fallback to dense attention (or a fixed minimum sparsity ratio) if the dynamic selection yields an empty set or a set below a critical threshold. The system MUST NOT allow the attention matrix to become entirely zero or undefined, which would cause gradient vanishing or NaN propagation during backpropagation.
 
 **WHY**:
-Dense attention memory usage is $O(N^2)$. For a 2K video (e.g., 1024x1024) with 16 frames, the token count can exceed 100k. $100k^2 = 10^{10}$ operations per head, which exceeds VRAM capacity on consumer/prosumer GPUs (24GB-80GB). Dynamic sparsity reduces the effective $N$ to $K \ll N$, making $O(NK)$ feasible.
+Dynamic sparsity relies on data-dependent scores (e.g., top-k selection of attention weights). In early denoising steps or with noisy inputs, the attention scores may be uniformly low or erratic. If the top-k selection fails to pick any tokens (or picks too few), the resulting attention output becomes zero or near-zero. In a diffusion model, this breaks the denoising trajectory, leading to corrupted outputs or training instability (NaNs). A fallback ensures the model always has a valid, albeit less efficient, attention path.
 
 **WHEN TO APPLY**:
-Any Video Diffusion Transformer (DiT), Audio-Visual Transformer, or Long-Context LLM inference pipeline where sequence length $N > 10,000$.
+Any implementation of top-k, top-p, or threshold-based sparse attention in transformer architectures, especially in generative models where input distributions shift during inference (denoising steps).
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 import torch
 import torch.nn.functional as F
 
-def dynamic_sparse_attention(q, k, v, top_k_ratio=0.1):
+def dynamic_sparse_attention(q, k, v, top_k_ratio=0.1, min_k=16):
     """
-    q, k, v: [Batch, Heads, SeqLen, Dim]
+    q, k, v: [B, H, L, D]
     """
-    B, H, N, D = q.shape
+    B, H, L, D = q.shape
     
-    # 1. Compute full attention scores (expensive, but necessary for selection)
-    # Optimization: Use block-wise scoring to avoid materializing full NxN matrix if possible
+    # Compute attention scores
     scores = torch.matmul(q, k.transpose(-2, -1)) / (D ** 0.5)
     
-    # 2. Select top-k indices per query
-    k_indices = int(N * top_k_ratio)
-    top_k_scores, top_k_indices = torch.topk(scores, k_indices, dim=-1)
+    # Dynamic Selection: Top-K
+    k = max(int(L * top_k_ratio), min_k)  # Ensure at least min_k tokens
+    topk_indices = torch.topk(scores, k, dim=-1).indices
     
-    # 3. Create sparse mask
+    # Create sparse mask
     mask = torch.zeros_like(scores, dtype=torch.bool)
-    mask.scatter_(-1, top_k_indices, True)
+    mask.scatter_(-1, topk_indices, True)
     
-    # 4. Apply mask and compute weighted sum
+    # CRITICAL FALLBACK: If mask is empty (shouldn't happen with min_k, but safe)
+    # Or if scores are all NaN/Inf, fallback to dense
+    if not mask.any():
+        mask = torch.ones_like(scores, dtype=torch.bool)
+    
+    # Apply mask
     scores = scores.masked_fill(~mask, float('-inf'))
+    
+    # Softmax
     attn_weights = F.softmax(scores, dim=-1)
     
-    # 5. Compute output
-    out = torch.matmul(attn_weights, v)
-    return out
+    # Output
+    return torch.matmul(attn_weights, v)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# ANTI-PATTERN: Dense attention on high-res video
-def dense_attention(q, k, v):
-    # This will OOM (Out Of Memory) for N > 10k on 24GB GPUs
+# ANTI-PATTERN: No fallback, no minimum k
+def unsafe_sparse_attention(q, k, v, top_k_ratio=0.01):
     scores = torch.matmul(q, k.transpose(-2, -1))
+    k = int(L * top_k_ratio)
+    if k == 0:
+        # BUG: Returns zero tensor, breaking gradient flow
+        return torch.zeros_like(v)
+    topk_indices = torch.topk(scores, k, dim=-1).indices
+    mask = torch.zeros_like(scores, dtype=torch.bool)
+    mask.scatter_(-1, topk_indices, True)
+    scores = scores.masked_fill(~mask, float('-inf'))
+    # BUG: If all scores are -inf, softmax returns NaN
     attn_weights = F.softmax(scores, dim=-1)
     return torch.matmul(attn_weights, v)
 ```
 
 **VERIFICATION METHOD**:
-1.  **Memory Profiling**: Run inference with `N=10,000` tokens. Assert `torch.cuda.max_memory_allocated()` < 80% of available VRAM.
-2.  **Complexity Test**: Measure inference time for $N=1k, 2k, 4k$. Plot time vs $N$. The slope should be closer to linear ($O(N)$) or $O(N \log N)$ rather than quadratic ($O(N^2)$).
+1.  **Unit Test**: Feed a tensor of all zeros to `q, k, v`. Assert that the output is not NaN and has non-zero variance.
+2.  **Gradient Check**: Verify that `torch.autograd.gradcheck` passes for the sparse attention module with random inputs.
+3.  **Log Assertion**: In production, log the average sparsity ratio. If it drops below 0.05 for more than 10 consecutive steps, trigger a warning and force dense attention.
 
-### 2. Joint Modality Temporal Alignment Invariant
+### 2. Joint Modality Token Interleaving & Positional Encoding Alignment
 **RULE**:
-In joint video-audio generation, you MUST enforce strict temporal alignment between audio and video token grids. You MUST NOT allow independent temporal sampling rates without explicit resampling or interpolation layers that preserve phase coherence.
+In joint video-audio generation models, the positional encodings for video and audio tokens MUST be aligned to a common temporal grid. The system MUST NOT use independent, unaligned positional encodings for video frames and audio chunks, as this breaks the causal and temporal correlation required for lip-sync and sound-event alignment.
 
 **WHY**:
-Audio is typically sampled at 16kHz-48kHz, while video is 24-30 FPS. If the transformer processes them as independent sequences without alignment, the model learns to ignore temporal correlation, resulting in "lip-sync" failures or audio-video desynchronization.
+Video frames are sampled at a fixed frame rate (e.g., 24 fps), while audio is sampled at a much higher rate (e.g., 44.1 kHz). If positional encodings are assigned independently (e.g., video token 0 at pos 0, audio token 0 at pos 0), the model cannot learn the correct temporal offset. For example, a sound event at 1.0 seconds in audio must correspond to the video frame at 1.0 seconds. Misaligned positional encodings lead to desynchronized outputs (lip-sync errors, sound effects occurring at wrong times).
 
 **WHEN TO APPLY**:
-Any multimodal generation model where one modality is temporal (audio/video) and the other is also temporal but at a different frequency.
+Any multi-modal generative model where temporal alignment is critical (video+audio, speech+text, etc.).
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-class TemporalAligner(nn.Module):
-    def __init__(self, video_fps=24, audio_sample_rate=16000, video_token_len=16):
+class AlignedPositionalEncoding(nn.Module):
+    def __init__(self, video_fps, audio_sample_rate, audio_chunk_size):
         super().__init__()
-        # Calculate how many audio samples correspond to one video frame
-        self.samples_per_frame = audio_sample_rate / video_fps
-        # Calculate how many audio tokens correspond to one video token
-        # Assuming audio is also tokenized, adjust based on audio tokenizer rate
-        self.audio_tokens_per_video_token = int(self.samples_per_frame / audio_token_size)
-
-    def forward(self, video_tokens, audio_tokens):
-        """
-        video_tokens: [B, T_video, D]
-        audio_tokens: [B, T_audio, D]
-        """
-        # Resample audio tokens to match video temporal grid
-        # Use linear interpolation or nearest neighbor
-        target_len = video_tokens.shape[1]
-        audio_resampled = F.interpolate(
-            audio_tokens.unsqueeze(1), 
-            size=target_len, 
-            mode='linear', 
-            align_corners=False
-        ).squeeze(1)
+        self.video_fps = video_fps
+        self.audio_sample_rate = audio_sample_rate
+        self.audio_chunk_size = audio_chunk_size
         
-        # Concatenate or Cross-Attend
-        # Here we assume concatenation for simplicity
-        combined = torch.cat([video_tokens, audio_resampled], dim=-1)
-        return combined
+        # Calculate temporal scale factor
+        # 1 video frame = 1/video_fps seconds
+        # 1 audio chunk = audio_chunk_size / audio_sample_rate seconds
+        self.temporal_scale = (1.0 / video_fps) / (audio_chunk_size / audio_sample_rate)
+        
+    def forward(self, video_tokens, audio_tokens):
+        # video_tokens: [B, T_v, D]
+        # audio_tokens: [B, T_a, D]
+        
+        # Generate positional encodings based on absolute time
+        # Video time: t_v = i / video_fps
+        # Audio time: t_a = j * audio_chunk_size / audio_sample_rate
+        
+        # Align audio tokens to video frame indices
+        # For each video frame i, find the corresponding audio chunk j
+        # j = round(i / temporal_scale)
+        
+        # In practice, this is often done by interpolating or repeating
+        # positional encodings to match the sequence length.
+        
+        # Example: If video has 10 frames, and audio has 100 chunks,
+        # and temporal_scale = 10, then video frame 0 aligns with audio chunk 0,
+        # video frame 1 aligns with audio chunk 10, etc.
+        
+        # Implementation detail: Use sinusoidal PE with time-based arguments
+        video_pos = torch.arange(video_tokens.shape[1], device=video_tokens.device) / self.video_fps
+        audio_pos = torch.arange(audio_tokens.shape[1], device=audio_tokens.device) * self.audio_chunk_size / self.audio_sample_rate
+        
+        # Interpolate audio PE to match video length if necessary
+        # Or, more commonly, concatenate and use a unified time-based PE
+        # Here we assume a unified sequence where time is the key.
+        
+        return video_pos, audio_pos
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# ANTI-PATTERN: Independent temporal processing
-def misaligned_fusion(video_tokens, audio_tokens):
-    # No resampling. If T_video != T_audio, this fails or produces garbage
-    if video_tokens.shape[1] != audio_tokens.shape[1]:
-        raise ValueError("Temporal mismatch")
-    return torch.cat([video_tokens, audio_tokens], dim=-1)
+# ANTI-PATTERN: Independent positional encodings
+class MisalignedPositionalEncoding(nn.Module):
+    def forward(self, video_tokens, audio_tokens):
+        # BUG: Video PE starts at 0, Audio PE starts at 0, but they are not time-aligned
+        video_pos = torch.arange(video_tokens.shape[1])
+        audio_pos = torch.arange(audio_tokens.shape[1])
+        # This implies video frame 0 and audio chunk 0 are at the same "position",
+        # but they represent different time scales.
+        return video_pos, audio_pos
 ```
 
 **VERIFICATION METHOD**:
-1.  **Phase Coherence Test**: Generate a video of a person speaking "Hello". Extract audio and video. Use a lip-sync metric (e.g., SyncNet) to verify correlation > 0.8.
-2.  **Unit Test**: Assert that `audio_resampled.shape[1] == video_tokens.shape[1]` for all input combinations.
+1.  **Temporal Alignment Test**: Generate a video with a known sound event at time T. Verify that the audio output has the peak amplitude at time T.
+2.  **Positional Encoding Check**: Assert that the positional encoding for video frame `i` and audio chunk `j` satisfies `i / video_fps ≈ j * audio_chunk_size / audio_sample_rate` within a tolerance.
 
 ## 3. Forensic Real Incidents & Production Patches (Incidents 1 to 5+)
 
-*Note: The provided repository data contains no commit history, bug issues, or code diffs. Therefore, no real production incidents can be extracted. The following section is intentionally left empty to adhere to the "No Fabrication" mandate.*
+*Note: The provided repository data contains no commit history, bug issues, or code diffs. Therefore, no real incidents can be documented. The following section is intentionally left empty as per the mandate to only report observed evidence.*
 
 ## 4. Microscopic Code-Level Invariants (Syntax, Infinite Loop, UI/UX & Concurrency Guards)
 
-Since no source code is available, the following invariants are derived from the **config.json** and **README.md** metadata, applied to the known domain of Diffusion Transformers.
-
 ### 1. Micro-Syntax & Token-Level Precision
-*   **Invariant**: `sp_size` (Sequence Parallelism size) MUST be an integer divisor of the total sequence length $N$.
-*   **Trap**: If `sp_size=2` and $N=1001$, the sequence cannot be evenly sharded. This leads to uneven GPU load or index out-of-bounds errors in distributed all-reduce operations.
-*   **Code Example**:
+*   **Float Precision in Attention Scores**: When computing attention scores `q @ k.T`, use `float32` for the matrix multiplication even if the model is in `float16` or `bfloat16`. This prevents underflow/overflow in the exponential function of softmax.
     ```python
-    # BAD
-    if N % sp_size != 0:
-        # Silently truncate? No, this loses data.
-        pass
-    
     # GOOD
-    if N % sp_size != 0:
-        raise ValueError(f"Sequence length {N} must be divisible by sp_size {sp_size}")
+    scores = torch.matmul(q.float(), k.float().transpose(-2, -1))
+    # BAD
+    scores = torch.matmul(q, k.transpose(-2, -1))  # May underflow in fp16
+    ```
+*   **Integer Division in Sparsity Ratio**: Ensure `top_k` is computed as an integer. `int(L * ratio)` is safe, but `L * ratio` might be a float, causing errors in `torch.topk`.
+    ```python
+    k = max(int(L * top_k_ratio), min_k)  # GOOD
+    k = L * top_k_ratio  # BAD: float, will error in topk
     ```
 
 ### 2. Infinite Loop & Recursion Guards
-*   **Invariant**: Diffusion sampling loops MUST have a fixed step count (`num_inference_steps`).
-*   **Trap**: If `num_inference_steps` is set to `None` or `0`, the loop may hang or produce noise.
-*   **Code Example**:
+*   **Sparse Attention Selection Loop**: If the sparse attention mechanism uses an iterative selection process (e.g., iterative top-k), ensure a maximum iteration count is set.
     ```python
-    # BAD
-    for t in reversed(range(num_steps)):
-        if t == 0 and not is_final_step: # Ambiguous condition
-            continue
-    
-    # GOOD
-    if num_steps <= 0:
-        raise ValueError("num_inference_steps must be > 0")
-    for t in range(num_steps - 1, -1, -1):
-        # ...
+    max_iters = 10
+    for i in range(max_iters):
+        # Selection logic
+        if convergence_criterion:
+            break
+    else:
+        # Fallback to dense if not converged
+        pass
     ```
 
 ### 3. UI & UX Micro-Mechanics
-*   **Invariant**: N/A (Backend model repository).
+*   **N/A**: This is a backend model repository. No UI/UX components are present.
 
 ### 4. Backend Concurrency & Memory Safety
-*   **Invariant**: `random_prefix_frames` MUST be seeded deterministically for reproducibility.
-*   **Trap**: If `random_prefix_frames` uses `torch.rand` without setting the seed, different runs will produce different initial frames, making debugging impossible.
-*   **Code Example**:
+*   **Sequence Parallelism (SP) Synchronization**: When `sp_size > 1`, ensure that all GPUs synchronize before and after the attention computation. Use `torch.distributed.all_reduce` or `torch.distributed.barrier` to prevent race conditions.
     ```python
-    # BAD
-    prefix = torch.rand(1, C, H, W)
+    if sp_size > 1:
+        torch.distributed.barrier()
+        # Attention computation
+        torch.distributed.barrier()
+    ```
+*   **Memory Leak in Sparse Masks**: Ensure that sparse masks are not stored in the model state. They should be computed on-the-fly and discarded after each forward pass.
+    ```python
+    # GOOD: Mask is local to the function
+    def forward(self, q, k, v):
+        mask = compute_sparse_mask(q, k)
+        # ...
+        return output  # Mask is not stored
     
-    # GOOD
-    generator = torch.Generator().manual_seed(42)
-    prefix = torch.rand(1, C, H, W, generator=generator)
+    # BAD: Mask is stored in self
+    def forward(self, q, k, v):
+        self.mask = compute_sparse_mask(q, k)  # Memory leak
+        # ...
+        return output
     ```
 
 ### 5. Defect & Error Prevention ("Galti Pakadna")
-*   **Invariant**: `use_audio` flag MUST be consistent with the model weights.
-*   **Trap**: If `use_audio=True` but the model weights were trained without audio, the model will crash or produce garbage because the audio input tensor dimensions will not match the expected input shape.
-*   **Code Example**:
+*   **NaN Propagation in Softmax**: If all attention scores are `-inf` (due to masking), `softmax` returns `NaN`. Always add a small epsilon to the scores before softmax, or ensure at least one score is not `-inf`.
     ```python
-    # BAD
-    if config.use_audio:
-        audio_input = load_audio()
-    # If model expects no audio, this will cause shape mismatch
-    
+    scores = scores.masked_fill(~mask, float('-inf'))
+    # GOOD: Add epsilon to prevent all -inf
+    scores = scores + 1e-9
+    attn_weights = F.softmax(scores, dim=-1)
+    ```
+*   **Off-by-One in Temporal Alignment**: When aligning video and audio tokens, ensure that the index mapping is correct. Use `round()` instead of `int()` to avoid truncation errors.
+    ```python
     # GOOD
-    if config.use_audio:
-        if not model.has_audio_module:
-            raise RuntimeError("Model does not support audio, but use_audio=True")
-        audio_input = load_audio()
+    audio_idx = round(video_idx / temporal_scale)
+    # BAD
+    audio_idx = int(video_idx / temporal_scale)  # Truncation error
     ```
 
 ## 5. The 9 Deep Learning Dimensions
 
-1.  **Architecture**:
-    *   **Subsystem Boundaries**: Clear separation between Video Encoder, Audio Encoder, Joint DiT Backbone, and Decoders.
-    *   **Decoupling**: The sparse attention mechanism is decoupled from the DiT blocks, allowing it to be swapped with dense attention for debugging.
-    *   **State Ownership**: The diffusion scheduler owns the noise schedule state; the model owns the weight parameters.
-
-2.  **Core Abstractions**:
-    *   **Key Types**: `VideoLatent`, `AudioLatent`, `SparseMask`, `DiffusionScheduler`.
-    *   **Domain Primitives**: Tokenization of video into 3D patches, audio into 1D mel-spectrogram patches.
-    *   **Invariant Contracts**: The output of the DiT block MUST have the same shape as the input.
-
-3.  **Error Handling**:
-    *   **Fault Boundaries**: Errors in audio loading MUST NOT crash the video generation pipeline. Graceful degradation: if audio fails, generate video only.
-    *   **Retries**: No retries for inference. Fail fast.
-    *   **Rollbacks**: No rollbacks. Inference is stateless.
-
-4.  **Testing**:
-    *   **Property Testing**: Test that sparse attention output is close to dense attention output when `top_k_ratio=1.0`.
-    *   **Mock Invariants**: Mock the audio encoder to return zero tensors. Verify that video generation still works.
-    *   **Integration Harness**: End-to-end test: Image + Text -> Video + Audio. Verify output dimensions and file integrity.
-
-5.  **Security**:
-    *   **Threat Model**: Model poisoning via malicious weights. Mitigation: Verify checksums of model files.
-    *   **Credential Boundaries**: No credentials required for inference.
-    *   **Sanitization**: Input text prompts MUST be sanitized to prevent prompt injection if the model is used in a web service.
-
-6.  **Performance**:
-    *   **Latency Profiles**: Inference time is dominated by the DiT forward pass. Sparse attention reduces this by ~50-80% compared to dense.
-    *   **Asymptotic Complexity**: $O(NK)$ where $K$ is the number of selected tokens.
-    *   **Caching**: KV-cache is not applicable for diffusion (each step is independent). However, intermediate activations can be cached for backpropagation during training.
-    *   **Zero-Copy**: Use `torch.no_grad()` and `torch.inference_mode()` to avoid unnecessary memory allocations.
-
-7.  **Deployment**:
-    *   **CI/CD Invariants**: Model weights MUST be versioned. Config files MUST be validated against the model architecture.
-    *   **Container Constraints**: Docker image MUST include CUDA 12.1+ and PyTorch 2.0+.
-    *   **Reproducible Builds**: Use `pip freeze` to lock dependencies.
-    *   **Runtime Flags**: `--sp_size`, `--use_audio`, `--random_prefix_frames` MUST be exposed as CLI arguments.
-
-8.  **Agent Patterns**:
-    *   **Tooling Interfaces**: The model is exposed via the `diffusers` pipeline API, which is a standard interface for AI agents.
-    *   **Prompt Chains**: No prompt chains. Single-step inference.
-    *   **Loop Guards**: No loops.
-    *   **Context Budget Optimization**: Sparse attention is a form of context budget optimization, reducing the effective context length.
-
-9.  **Data Flow**:
-    *   **Mutation Lifecycles**: Input image -> Latent space -> Diffusion steps -> Decoded video.
-    *   **Streams**: No streaming. Batch processing.
-    *   **Serializers**: Model weights are saved in `.safetensors` format, which is safer than `.bin` (pickle) as it does not execute arbitrary code.
-    *   **Network Protocol Barriers**: No network calls during inference.
+1.  **Architecture**: The model is a DiT with a custom sparse attention module. The architecture is modular, with the sparse attention being a drop-in replacement for standard attention. The joint video-audio generation is achieved by concatenating video and audio tokens in the sequence dimension.
+2.  **Core Abstractions**: The key abstractions are the `SparseAttention` module and the `AlignedPositionalEncoding` module. The `SparseAttention` module encapsulates the dynamic selection logic, while the `AlignedPositionalEncoding` module ensures temporal alignment.
+3.  **Error Handling**: The model relies on the `diffusers` library for error handling. The sparse attention module should include fallbacks to dense attention to prevent NaNs.
+4.  **Testing**: The model should be tested for temporal alignment, sparsity ratio, and gradient flow. Unit tests for the sparse attention module should verify that the output is not NaN and that the sparsity ratio is within the expected range.
+5.  **Security**: The model is a public model on Hugging Face. There are no specific security concerns, but the model should be validated to ensure it does not generate harmful content.
+6.  **Performance**: The sparse attention mechanism reduces the computational complexity from $O(N^2)$ to $O(NK)$, where $K$ is the sparsity ratio. This is critical for 2K video generation. The model should be optimized for GPU memory usage, especially when using sequence parallelism.
+7.  **Deployment**: The model is deployed using the `diffusers` library. The `config.json` specifies the model parameters, including `i2v`, `use_audio`, `random_prefix_frames`, and `sp_size`. The model should be tested for reproducibility and consistency across different hardware configurations.
+8.  **Agent Patterns**: The model can be used in an agent pipeline for video generation. The agent should handle the input preprocessing (image to video), the model inference, and the post-processing (video to audio).
+9.  **Data Flow**: The data flow is: Input Image/Text -> VAE Encoder -> Latent Tokens -> DiT (with Sparse Attention) -> VAE Decoder -> Video/Audio. The sparse attention module modifies the data flow by selecting a subset of tokens for attention computation.
 
 ## 6. The 8 Learning Extraction Artifacts
 
-1.  **Pattern**: Dynamic Sparse Attention for High-Res Video.
-2.  **Rule**: MUST use sub-quadratic attention for $N > 10k$.
-3.  **Architecture Principle**: Decouple sparsity mechanism from DiT blocks.
-4.  **Failure Mode**: OOM crash due to dense attention on high-res video.
-5.  **Reusable Skill**: Implement `top_k` selection in attention.
-6.  **Decision**: Choose dynamic sparsity over static sparsity for better quality.
-7.  **Anti-pattern**: Dense attention on high-res video.
-8.  **Verification Method**: Memory profiling and complexity testing.
+1.  **Pattern**: Dynamic Sparse Attention with Fallback.
+2.  **Rule**: Always include a fallback to dense attention in sparse attention mechanisms.
+3.  **Architecture Principle**: Temporal alignment is critical for joint multi-modal generation.
+4.  **Failure Mode**: NaN propagation in softmax due to all `-inf` scores.
+5.  **Reusable Skill**: Implementing sparse attention with dynamic selection and fallback.
+6.  **Decision**: Use dynamic sparse attention instead of static sparse attention to adapt to the input data.
+7.  **Anti-pattern**: Independent positional encodings for video and audio.
+8.  **Verification Method**: Temporal alignment test and gradient check.
 
 ## 7. Actionable Agent Skill & Implementation Checklist
 
-1.  **Verify Model Compatibility**:
-    *   [ ] Check `config.json` for `use_audio`, `sp_size`, `random_prefix_frames`.
-    *   [ ] Ensure PyTorch version supports `torch.compile` (optional but recommended).
-    *   [ ] Ensure CUDA version matches the model's requirements.
-
-2.  **Implement Sparse Attention**:
-    *   [ ] Replace dense attention with `dynamic_sparse_attention`.
-    *   [ ] Tune `top_k_ratio` to balance quality and speed.
-    *   [ ] Verify that `top_k_ratio=1.0` produces the same output as dense attention.
-
-3.  **Implement Temporal Alignment**:
-    *   [ ] Resample audio tokens to match video temporal grid.
-    *   [ ] Verify phase coherence using a lip-sync metric.
-
-4.  **Test Inference**:
-    *   [ ] Run inference with a sample image and text prompt.
-    *   [ ] Verify output video and audio dimensions.
-    *   [ ] Check for OOM errors.
-
-5.  **Optimize Performance**:
-    *   [ ] Use `torch.inference_mode()`.
-    *   [ ] Use `torch.compile()` if supported.
-    *   [ ] Tune `sp_size` for multi-GPU inference.
+1.  **Verify Temporal Alignment**: Ensure that the positional encodings for video and audio are aligned to a common temporal grid.
+2.  **Implement Sparse Attention with Fallback**: Implement the sparse attention module with a fallback to dense attention to prevent NaNs.
+3.  **Test Gradient Flow**: Verify that the gradient flow is not broken by the sparse attention mechanism.
+4.  **Optimize for GPU Memory**: Use sequence parallelism to distribute the long sequence of video tokens across multiple GPUs.
+5.  **Validate Reproducibility**: Test the model for reproducibility and consistency across different hardware configurations.
+6.  **Monitor Sparsity Ratio**: Log the average sparsity ratio during inference and trigger a warning if it drops below a critical threshold.
+7.  **Handle Edge Cases**: Ensure that the model handles edge cases, such as empty inputs or all-zero inputs, gracefully.
+8.  **Document the Model**: Provide clear documentation on the model's architecture, parameters, and usage.

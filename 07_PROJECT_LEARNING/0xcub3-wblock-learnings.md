@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/0xcub3-wblock-learnings.md`  
 > **Source**: github ([https://github.com/0xCUB3/wBlock](https://github.com/0xCUB3/wBlock))  
-> **Source Version**: `e2ada45d`  
+> **Source Version**: `9e5ec865`  
 > **License**: GPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T11:22:10.794Z  
+> **Timestamp**: 2026-11-05T14:02:36.071Z  
 > **Learning ID**: `learn-github-0xcub3-wblock`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/0xcub3-wblock-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/0xCUB3/wBlock](https://github.com/0xCUB3/wBlock))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T11:22:10.518Z  
+> **Harvest Timestamp**: 2026-11-05T14:02:35.275Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Free, open-source Safari ad blocker for macOS, iOS, iPadOS and visionOS. Up to 750,000 rules, custom filter lists, userscripts and userstyles. No subscription.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 3179 stars
+- **Stars / Engagement**: 3191 stars
 
 ---
 
@@ -37,1265 +37,2192 @@
 - Entry configurations inspected via direct stream: README.md.
 - Evaluated system abstractions and modular contracts.
 
-### Core Architecture Module: `scripts/render_action_icons.swift`
+### Core Architecture Module: `Packages/wblock-engine/Package.swift`
 ```
-#!/usr/bin/env swift
+// swift-tools-version:5.9
+// The Rust engine (crates/wbe) as a Swift package. build/WBE.xcframework comes
+// from scripts/build-xcframework.sh and must exist before Xcode resolves this.
+import PackageDescription
 
-import AppKit
-
-// Run from the repository root: swift scripts/render_action_icons.swift
-// Draws the toolbar icon as the wBlock "w" mark, parsed at runtime from the app
-// icon's layer SVG so the toolbar and app icon share one shape. Mac Safari crops
-// a toolbar icon to its opaque bounds and scales that square to 19pt, so the
-// w is fitted to the square with its opaque bounds touching the top and bottom
-// (or sides, whichever limits) and centered. Safari tints toolbar icons using
-// their alpha mask, so gray alone cannot distinguish disabled protection; the
-// disabled variant cuts a gap around a diagonal slash instead.
-let directory = URL(fileURLWithPath: "wBlock Scripts (iOS)/Resources/assets/images", isDirectory: true)
-let source = URL(fileURLWithPath: "wBlock/Resources/App Icons/AppIcon.icon/Assets/2 - Layer 2.svg")
-let gray = CGColor(gray: 0.56, alpha: 1)
-
-func write(_ context: CGContext, _ name: String) throws {
-    guard let output = context.makeImage(),
-          let png = NSBitmapImageRep(cgImage: output).representation(using: .png, properties: [:]) else {
-        fatalError("Cannot encode \(name)")
-    }
-    try png.write(to: directory.appendingPathComponent(name))
-}
-
-// Reads the w path's d attribute and builds it. Supports the absolute M, L, C,
-// and Z commands the layer uses; the SVG's translate(128, 77) is applied here.
-func loadW() throws -> CGPath {
-    let svg = try String(contentsOf: source, encoding: .utf8)
-    let d = svg.components(separatedBy: " d=\"")[1].components(separatedBy: "\"")[0]
-    var tokens: [String] = []
-    var current = ""
-    func flush() {
-        if !current.isEmpty { tokens.append(current); current = "" }
-    }
-    for character in d {
-        if character.isLetter {
-            flush()
-            tokens.append(String(character))
-        } else if character == " " || character == "," {
-            flush()
-        } else if character == "-" && !current.isEmpty {
-            flush()
-            current = "-"
-        } else {
-            current.append(character)
-        }
-    }
-    flush()
-
-    let path = CGMutablePath()
-    var i = 0
-    var command = ""
-    func number() -> CGFloat { defer { i += 1 }; return CGFloat(Double(tokens[i])!) }
-    func point() -> CGPoint { let x = number() + 128; return CGPoint(x: x, y: number() + 77) }
-    while i < tokens.count {
-        if tokens[i].first!.isLetter { command = tokens[i]; i += 1 }
-        switch command {
-        case "M": path.move(to: point()); command = "L"
-        case "L": path.addLine(to: point())
-        case "C":
-            let control1 = point(), control2 = point()
-            path.addCurve(to: point(), control1: control1, control2: control2)
-        case "Z": path.closeSubpath(); command = ""
-        default: fatalError("Unsupported path command \(command) in \(source.lastPathComponent)")
-        }
-    }
-    return path
-}
-
-let w = try loadW()
-let opaque = w.boundingBoxOfPath
-
-for size in [16, 19, 32, 38, 48, 96, 128, 256, 512] {
-    guard let context = CGContext(
-        data: nil, width: size, height: size, bitsPerComponent: 8,
-        bytesPerRow: size * 4, space: CGColorSpaceCreateDeviceRGB(),
-        bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue
-    ) else { fatalError("Cannot render icon at \(size)px") }
-
-    // Scale the w uniformly to fit the square, then flip from the SVG's
-    // top-left origin to the context's bottom-left origin.
-    let side = CGFloat(size)
-    let scale = min(side / opaque.width, side / opaque.height)
-    let offsetX = (side - opaque.width * scale) / 2
-    let offsetY = (side - opaque.height * scale) / 2
-    context.saveGState()
-    context.concatenate(CGAffineTransform(
-        a: scale, b: 0, c: 0, d: -scale,
-        tx: offsetX - opaque.minX * scale, ty: offsetY + opaque.maxY * scale
-    ))
-    context.addPath(w)
-    context.setFillColor(CGColor(gray: 0, alpha: 0.85))
-    context.fillPath()
-    context.restoreGState()
-    try write(context, "icon-\(size).png")
-
-    let bounds = CGRect(x: 0, y: 0, width: side, height: side)
-    context.setBlendMode(.sourceIn)
-    context.setFillColor(gray)
-    context.fill(bounds)
-
-    func strokeSlash(width: CGFloat, blendMode: CGBlendMode) {
-        context.setBlendMode(blendMode)
-        context.setStrokeColor(gray)
-        context.setLineWidth(side * width)
-        context.setLineCap(.round)
-        context.move(to: CGPoint(x: side * 0.18, y: side * 0.82))
-        context.addLine(to: CGPoint(x: side * 0.82, y: side * 0.18))
-        context.strokePath()
-    }
-
-    strokeSlash(width: 0.19, blendMode: .clear)
-    strokeSlash(width: 0.075, blendMode: .normal)
-    try write(context, "icon-disabled-\(size).png")
-}
+let package = Package(
+    name: "WBEngine",
+    platforms: [.macOS("12.3"), .iOS("15.4")],
+    products: [.library(name: "WBEngine", targets: ["WBEngine"])],
+    targets: [
+        .binaryTarget(name: "WBE", path: "build/WBE.xcframework"),
+        .target(name: "WBEngine", dependencies: ["WBE"]),
+    ]
+)
 
 ```
 
-### Core Architecture Module: `wBlock Scripts (iOS)/Resources/redirects/scorecardresearch-beacon.js`
+### Core Architecture Module: `Packages/wblock-engine/Sources/WBEngine/WBEngine.swift`
 ```
-(function(source, args) {
-    const flag = "done";
-    const uniqueIdentifier = source.uniqueId + source.name + "_" + (Array.isArray(args) ? args.join("_") : "");
-    if (source.uniqueId) {
-        if (Window.prototype.toString[uniqueIdentifier] === flag) {
-            return;
+import Foundation
+import WBE
+
+/// Swift face of the wbe engine (crates/wbe/include/wbe.h).
+public enum WBEngine {
+    public struct EngineError: LocalizedError {
+        public let errorDescription: String?
+        static func last() -> EngineError {
+            EngineError(errorDescription: wbe_last_error().map { String(cString: $0) } ?? "wbe failed")
         }
     }
-    function ScoreCardResearchBeacon(source) {
-        window.COMSCORE = {
-            purge() {
-                window._comscore = [];
-            },
-            beacon() {}
+
+    /// Changes whenever the engine's outputs change for the same input.
+    public static var outputVersion: UInt32 { wbe_output_version() }
+
+    public struct Compiled {
+        /// Safari content-blocker JSON array, as UTF-8 bytes.
+        public let safariRulesJSON: Data
+        /// Rules for the per-page engine, one per line.
+        public let runtimeRules: String
+        public let stats: Stats
+    }
+
+    public struct Stats: Decodable {
+        public let lines: Int
+        public let rules: Int
+        public let nativeRules: Int
+        public let runtimeRules: Int
+        public let dropped: [String: Int]
+        public let admitted: [String: Int]?
+        /// `Plan.fingerprint` of the arguments that produced these stats.
+        public let fingerprint: String?
+
+        enum CodingKeys: String, CodingKey {
+            case lines, rules, dropped, admitted, fingerprint
+            case nativeRules = "native_rules"
+            case runtimeRules = "runtime_rules"
+        }
+    }
+
+    /// Drops the parsed lists kept between plans. Plans in use keep theirs.
+    public static func clearParseCache() {
+        wbe_clear_parse_cache()
+    }
+
+    public final class Plan: @unchecked Sendable {
+        private let handle: OpaquePointer
+
+        public init(requestJSON: String) throws {
+            guard let handle = wbe_plan_new(requestJSON) else { throw EngineError.last() }
+            self.handle = handle
+        }
+
+        deinit { wbe_plan_free(handle) }
+
+        /// Compiles the blocker unless `knownFingerprint` is the fingerprint its
+        /// output has now (`compiled.stats.fingerprint`); then nil, and nothing
+        /// was compiled.
+        public func compileTarget(_ target: Int, extras: String, knownFingerprint: UInt64?) throws -> Compiled? {
+            guard target >= 0 else {
+                throw EngineError(errorDescription: "target index out of bounds")
+            }
+            guard let result = wbe_plan_compile_target(
+                handle, target, extras, knownFingerprint != nil, knownFingerprint ?? 0
+            ) else {
+                throw EngineError.last()
+            }
+            defer { wbe_compile_free(result) }
+            if wbe_compile_unchanged(result) { return nil }
+            let statsJSON = String(cString: wbe_compile_stats_json(result))
+            let webkit = wbe_compile_webkit_json(result)!
+            return Compiled(
+                // One copy out of the engine's buffer; no String round trip.
+                safariRulesJSON: Data(bytes: webkit, count: strlen(webkit)),
+                runtimeRules: String(cString: wbe_compile_runtime_text(result)),
+                stats: try JSONDecoder().decode(Stats.self, from: Data(statsJSON.utf8))
+            )
+        }
+    }
+
+    /// Serializes a per-page engine for `runtimeRules`.
+    public static func buildEngine(runtimeRules: String) throws -> Data {
+        var bytes: UnsafeMutablePointer<UInt8>?
+        var length = 0
+        guard wbe_engine_build(runtimeRules, &bytes, &length), let bytes else {
+            throw EngineError.last()
+        }
+        defer { wbe_bytes_free(bytes, length) }
+        return Data(bytes: bytes, count: length)
+    }
+
+    /// The per-page engine. Not safe for concurrent use; callers serialize.
+    public final class Engine {
+        private let handle: OpaquePointer
+
+        public init(data: Data) throws {
+            let handle = data.withUnsafeBytes { raw in
+                wbe_engine_open(raw.bindMemory(to: UInt8.self).baseAddress, raw.count)
+            }
+            guard let handle else { throw EngineError.last() }
+            self.handle = handle
+        }
+
+        deinit { wbe_engine_free(handle) }
+
+        /// `{"hide":[..],"procedural":[..],"scriptlets":[[name, args..]],"generichide":bool}`.
+        public func lookup(url: String) throws -> Data {
+            guard let json = wbe_engine_lookup(handle, url) else { throw EngineError.last() }
+            defer { wbe_string_free(json) }
+            return Data(bytes: json, count: strlen(json))
+        }
+    }
+
+    /// The registrable domain (eTLD+1) of `host`, or nil for a public suffix.
+    public static func registrableDomain(of host: String) -> String? {
+        guard let root = wbe_registrable_domain(host) else { return nil }
+        defer { wbe_string_free(root) }
+        return String(cString: root)
+    }
+
+    /// The parsed form of one rule line as JSON, for the rule editor.
+    public static func classify(line: String) -> Data? {
+        guard let json = wbe_classify_line(line) else { return nil }
+        defer { wbe_string_free(json) }
+        return Data(bytes: json, count: strlen(json))
+    }
+}
+
+```
+
+### Core Architecture Module: `Packages/wblock-engine/crates/wbe/include/wbe.h`
+```
+/*
+ * C ABI of the wbe filter engine (crates/wbe/src/ffi.rs), used by
+ * wBlockCoreService through module.modulemap.
+ *
+ * Ownership: every pointer returned by a function named *_new, *_build,
+ * *_open or *_lookup, or by wbe_classify_line, is owned by the caller and
+ * released with the matching free function. Accessors such as
+ * wbe_compile_webkit_json return borrowed pointers that stay valid until
+ * the owning WbeCompileResult is freed.
+ *
+ * Failure: functions return NULL or false. wbe_last_error returns the
+ * message for the last call on the calling thread; it is valid until that
+ * thread's next wbe call and must not be freed.
+ *
+ * Threading: a WbeEngine must not be used from two threads at once. A WbePlan
+ * may compile targets concurrently; free it only after all calls have finished.
+ */
+#ifndef WBE_H
+#define WBE_H
+
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdint.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+typedef struct WbeCompileResult WbeCompileResult;
+typedef struct WbeEngine WbeEngine;
+typedef struct WbePlan WbePlan;
+
+const char *wbe_last_error(void);
+
+/* Changes whenever the engine's outputs change for the same input. */
+uint32_t wbe_output_version(void);
+
+/* PlanRequest JSON contains safari, lists, targets, and optional cosmetics.
+ * Each list may provide text or a UTF-8 file path. The plan owns its inputs. */
+WbePlan *wbe_plan_new(const char *request_json);
+/* extras_json is an array of {"text":..., "trusted":...}. The result's
+ * stats JSON additionally contains admitted counts keyed by list ID. */
+/* Compiles blocker `target` unless has_known_fingerprint and its fingerprint is
+ * known_fingerprint; then wbe_compile_unchanged is true and nothing was compiled. */
+WbeCompileResult *wbe_plan_compile_target(const WbePlan *plan, size_t target,
+                                          const char *extras_json,
+                                          bool has_known_fingerprint,
+                                          uint64_t known_fingerprint);
+bool wbe_compile_unchanged(const WbeCompileResult *result);
+void wbe_plan_free(WbePlan *plan);
+/* Drops the parsed lists kept between plans; plans in use keep theirs. */
+void wbe_clear_parse_cache(void);
+
+/* Safari content-blocker JSON array. */
+const char *wbe_compile_webkit_json(const WbeCompileResult *result);
+/* uBO rule lines for wbe_engine_build, joined with newlines. */
+const char *wbe_compile_runtime_text(const WbeCompileResult *result);
+/* {"lines":..,"rules":..,"native_rules":..,"runtime_rules":..,"dropped":{..}} */
+const char *wbe_compile_stats_json(const WbeCompileResult *result);
+void wbe_compile_free(WbeCompileResult *result);
+
+/* On success *out holds *out_len bytes; free with wbe_bytes_free. */
+bool wbe_engine_build(const char *runtime_text, uint8_t **out, size_t *out_len);
+void wbe_bytes_free(uint8_t *bytes, size_t len);
+
+WbeEngine *wbe_engine_open(const uint8_t *bytes, size_t len);
+/* PagePayload JSON: {"hide":[..],"procedural":[..],"scriptlets":[[name,args..],..],"generichide":bool}. */
+char *wbe_engine_lookup(const WbeEngine *engine, const char *url);
+void wbe_engine_free(WbeEngine *engine);
+
+/* Registrable domain (eTLD+1) of host, or NULL for a public suffix; free with wbe_string_free. */
+char *wbe_registrable_domain(const char *host);
+
+/* ParsedLine JSON for one filter line, for the rule editor. */
+char *wbe_classify_line(const char *line);
+void wbe_string_free(char *s);
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* WBE_H */
+
+```
+
+### Core Architecture Module: `Packages/wblock-engine/crates/wbe/src/apply.rs`
+```
+//! One wBlock apply: every selected list parsed once and spread over the
+//! content blockers. What used to be text passes in the app happens here on
+//! parsed rules:
+//!
+//! - per-list site scope (#653, #767) and the global cosmetic scope (#899),
+//! - `!#safari_cb_affinity` routing and shards of lists too big for one blocker,
+//! - one copy of a rule shared by blockers with the same exceptions (#681),
+//! - exceptions copied into the blockers whose blocks they cancel (#836),
+//! - a large excluded list's plain blocks ahead of one ignore rule (#925),
+//! - per-list counts of the rules each blocker admitted.
+//!
+//! `Plan::new` does the shared work; `Plan::compile_target` builds one
+//! blocker's output and may run for several blockers at once.
+
+use crate::ast::{
+    DomainList, DomainMatcher, NetworkAction, NetworkRule, Party, ResourceTypes, Rule,
+};
+use crate::compile::{
+    compile_blocker, compile_rules, parallel_indices, parse_list, CompileOptions, CompileOutput,
+    NetworkContext, Others, RuleSet, Stats,
+};
+use crate::parse::cosmetic::with_domains;
+use crate::webkit::{SafariVersion, WebkitJson, WkAction, WkRule, WkTrigger};
+use serde::{Deserialize, Serialize};
+use std::collections::hash_map::DefaultHasher;
+use rustc_hash::{FxHashMap, FxHashSet};
+use std::borrow::Cow;
+use std::collections::BTreeMap;
+use std::ops::Range;
+use std::sync::{Arc, Mutex, MutexGuard, PoisonError};
+use std::hash::{Hash, Hasher};
+
+#[derive(Debug, Clone, Default, Deserialize)]
+pub struct SiteScope {
+    /// Sites the list must not apply to (`name.*` for every ending).
+    #[serde(default)]
+    pub exclude: Vec<String>,
+    /// When set, the only sites the list applies to.
+    #[serde(default)]
+    pub only: Option<Vec<String>>,
+}
+
+impl SiteScope {
+    fn is_empty(&self) -> bool {
+        self.exclude.is_empty() && self.only.is_none()
+    }
+}
+
+#[derive(Debug, Clone, Deserialize)]
+pub struct ListSpec {
+    pub id: String,
+    #[serde(default)]
+    pub text: String,
+    #[serde(default)]
+    pub path: Option<String>,
+    #[serde(default)]
+    pub trusted: bool,
+    #[serde(default)]
+    pub scope: SiteScope,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+pub struct TargetList {
+    pub list: usize,
+    /// `[index, count]` when the list is split over blockers.
+    #[serde(default)]
+    pub shard: Option<(u32, u32)>,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+pub struct TargetSpec {
+    /// wBlock's blocker slot (1...5), which decides its affinity types.
+    pub slot: u8,
+    pub lists: Vec<TargetList>,
+}
+
+#[derive(Debug, Clone, Default, Deserialize)]
+pub struct CosmeticScope {
+    #[serde(flatten)]
+    pub sites: SiteScope,
+    /// False drops hides that name no site.
+    #[serde(default = "yes")]
+    pub generic: bool,
+}
+
+fn yes() -> bool {
+    true
+}
+
+#[derive(Debug, Clone, Deserialize)]
+pub struct PlanRequest {
+    pub safari: (u16, u16),
+    /// In compile order.
+    pub lists: Vec<ListSpec>,
+    pub targets: Vec<TargetSpec>,
+    #[serde(default)]
+    pub cosmetics: CosmeticScope,
+    /// Keep each list's patterns in the cache for later plans, so a plan
+    /// fingerprints its blockers without parsing their rules again. It costs
+    /// memory for as long as the cache holds the list, so a phone leaves it off.
+    #[serde(default)]
+    pub retain: bool,
+}
+
+/// Extra text one blocker compiles after its lists (zapper rules, wBlock's
+/// compatibility rules, redirect carve-outs).
+#[derive(Debug, Clone, Deserialize)]
+pub struct Extra {
+    pub text: String,
+    #[serde(default)]
+    pub trusted: bool,
+}
+
+#[derive(Debug, Serialize)]
+pub struct TargetOutput {
+    #[serde(skip)]
+    pub output: CompileOutput,
+    /// List id -> rules this blocker admitted from it (first copies only).
+    pub admitted: BTreeMap<String, u64>,
+    /// `Plan::fingerprint` of these arguments.
+    #[serde(skip)]
+    pub fingerprint: u64,
+}
+
+/// One rule of a list, kept as a pointer to its line. The rule itself is
+/// parsed again when a blocker needs it (`Plan::rule`), so the plan holds
+/// the list text and these records instead of every parsed rule.
+#[derive(Clone, Copy)]
+struct Parsed {
+    /// Byte offset of the line in the list's text.
+    offset: usize,
+    /// 1-based line number, the rule's `source.line`.
+    line: u32,
+    /// Position of the rule among those its line parses to.
+    index: u32,
+    identity: u64,
+    /// Exceptions and `$badfilter` stay in every shard and drive #681.
+    shared: bool,
+    /// An exception rule, which `shared` also covers with `$badfilter`.
+    exception: bool,
+    /// A network rule, so the network pass can skip the other kinds unparsed.
+    network: bool,
+    /// `is_plain_block`, which the segment of #925 compiles unscoped.
+    plain: bool,
+    badfilter: bool,
+    /// Affinity types of the enclosing `!#safari_cb_affinity` block.
+    affinity: Option<u8>,
+}
+
+struct ParsedList {
+    /// The records in line order, in the chunks they were parsed in.
+    chunks: Vec<Vec<Parsed>>,
+    /// The patterns of the records, per chunk, when the list keeps them.
+    patterns: Option<Vec<PatternChunk>>,
+    has_affinity: bool,
+    /// A `!#` directive anywhere keeps the list out of #681 dedupe, as before.
+    has_directive: bool,
+    stats: Stats,
+}
+
+/// The patterns of one chunk's records: `text` holds them back to back, and
+/// `spans` gives each record's (start, length) in it, length 0 for none.
+#[derive(Default)]
+struct PatternChunk {
+    text: String,
+    spans: Vec<(u32, u32)>,
+}
+
+impl ParsedList {
+    fn records(&self) -> impl Iterator<Item = &Parsed> + '_ {
+        self.chunks.iter().flatten()
+    }
+
+    /// Record `i` of `chunk`'s pattern, when the list keeps patterns: `Some(None)`
+    /// for a record with none.
+    fn stored_pattern(&self, chunk: usize, i: usize) -> Option<Option<&str>> {
+        let kept = self.patterns.as_ref()?.get(chunk)?;
+        let (start, len) = kept.spans[i];
+        Some((len > 0).then(|| &kept.text[start as usize..(start + len) as usize]))
+    }
+
+    fn count(&self) -> usize {
+        self.chunks.iter().map(Vec::len).sum()
+    }
+}
+
+/// What `parse` reads from a list, so a list's records can be reused by any
+/// plan with the same key. The text is hashed and its length kept beside the
+/// hash; the records' offsets point into that text.
+#[derive(Clone, Copy, PartialEq, Eq)]
+struct ParseKey {
+    text: u64,
+    len: usize,
+    trusted: bool,
+    scope: u64,
+    version: u32,
+    retain: bool,
+}
+
+impl ParseKey {
+    fn of(list: &ListSpec, text: u64, retain: bool) -> ParseKey {
+        ParseKey {
+            text,
+            len: list.text.len(),
+            trusted: list.trusted,
+            scope: hash(&(&list.scope.exclude, &list.scope.only)),
+            version: crate::OUTPUT_VERSION,
+            retain,
+        }
+    }
+}
+
+/// Parsed lists kept between plans. A plan keeps only the entries of its own
+/// lists, so the cache holds one apply's lists and a changed list is parsed
+/// again alone. The app clears it on phones after each apply.
+#[derive(Default)]
+pub struct ParseCache(Mutex<Vec<(ParseKey, Arc<ParsedList>)>>);
+
+/// The cache `Plan::new` uses.
+static PARSE_CACHE: ParseCache = ParseCache(Mutex::new(Vec::new()));
+
+impl ParseCache {
+    fn entries(&self) -> MutexGuard<'_, Vec<(ParseKey, Arc<ParsedList>)>> {
+        self.0.lock().unwrap_or_else(PoisonError::into_inner)
+    }
+
+    fn parsed(&self, key: ParseKey, list: &ListSpec) -> Arc<ParsedList> {
+        if let Some((_, hit)) = self.entries().iter().find(|(k, _)| *k == key) {
+            return hit.clone();
+        }
+        let parsed = Arc::new(parse(list, key.retain));
+        let mut entries = self.entries();
+        if !entries.iter().any(|(k, _)| *k == key) {
+            entries.push((key, parsed.clone()));
+        }
+        parsed
+    }
+
+    fn keep(&self, keys: &[ParseKey]) {
+        self.entries().retain(|(k, _)| keys.contains(k));
+    }
+
+    /// Drops every entry. Plans in use keep the lists they already parsed.
+    pub fn clear(&self) {
+        self.entries().clear();
+    }
+}
+
+/// Empties the process-wide parse cache.
+pub fn clear_parse_cache() {
+    PARSE_CACHE.clear();
+}
+
+/// Records per network unit: the granularity at which rules are parsed and
+/// compiled, so a unit's rules are the only ones held at once.
+const UNIT_RECORDS: usize = 2048;
+
+/// A run of records of one chunk of one list.
+struct Unit {
+    list: usize,
+    chunk: usize,
+    range: Range<usize>,
+}
+
+/// A `fmt::Write` that hashes the text it is given.
+struct HashText<'a>(&'a mut DefaultHasher);
+
+impl std::fmt::Write for HashText<'_> {
+    fn write_str(&mut self, text: &str) -> std::fmt::Result {
+        self.0.write(text.as_bytes());
+        Ok(())
+    }
+}
+
+/// What one list adds to a blocker, gathered by `Plan::scan` in one pass over
+/// the list's rules, which are then dropped.
+#[derive(Default)]
+struct ListScan {
+    /// Whether the blocker takes any rule of the list. A list it takes none
+    /// from adds no stats and no admission counts.
+    takes: bool,
+    /// Admission identities of the kept rules, in order.
+    admitted: Vec<u64>,
+    /// The whole-set facts of the kept network rules.
+    ctx: NetworkContext,
+    /// Cosmetic and scriptlet rules kept, in order.
+    others: Others,
+}
+
+impl ListScan {
+    /// Adds `part`, the scan of a later range of the same list.
+    fn absorb(&mut self, part: ListScan) {
+        self.takes |= part.takes;
+        self.admitted.extend(part.admitted);
+        self.ctx.merge(part.ctx);
+        self.others.cosmetic.extend(part.others.cosmetic);
+        self.others.scriptlets.extend(part.others.scriptlets);
+    }
+}
+
+pub struct Plan {
+    opts: CompileOptions,
+    lists: Vec<ListSpec>,
+    parsed: Vec<Arc<ParsedList>>,
+    targets: Vec<TargetSpec>,
+    cosmetics: CosmeticScope,
+    /// List index -> rule identities a blocker other than this one owns (#681).
+    duplicates: Vec<Vec<FxHashSet<u64>>>,
+    /// Hash of each list's text, for `fingerprint`.
+    text_hashes: Vec<u64>,
+}
+
+impl Plan {
+    pub fn new(request: PlanRequest)
+```
+
+### Core Architecture Module: `Packages/wblock-engine/crates/wbe/src/ast.rs`
+```
+//! Parsed filter rules. The parser keeps every detail of the source line
+//! (domains as strings, option arguments verbatim) because the compiler needs
+//! them; nothing here is hashed or lossy.
+//!
+//! Semantics follow uBlock Origin's static filtering parser
+//! (src/js/static-filtering-parser.js). AdGuard syntax is accepted only to the
+//! extent uBO accepts it, after `normalize::adguard_to_ubo`.
+
+use bitflags::bitflags;
+use serde::{Deserialize, Serialize};
+
+/// Where a rule came from: index of the list in the compile input and the
+/// 1-based line number inside that list.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize, Default)]
+pub struct SourceRef {
+    pub list: u32,
+    pub line: u32,
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(tag = "kind", rename_all = "snake_case")]
+pub enum Rule {
+    Network(Box<NetworkRule>),
+    Cosmetic(CosmeticRule),
+    Scriptlet(ScriptletRule),
+}
+
+/// Result of parsing one line. Tagged `status` because a `Rule` inside
+/// carries its own `kind` tag.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(tag = "status", rename_all = "snake_case")]
+pub enum ParsedLine {
+    /// Blank line, comment, `[Adblock Plus ...]` header, or preprocessor
+    /// directive (directives are evaluated before the engine sees the text).
+    Ignored,
+    Rule(Rule),
+    /// Valid syntax that cannot be enforced in Safari (HTML filtering `##^`,
+    /// `$replace`, raw `#%#` JavaScript, ...). Counted, never compiled.
+    Unsupported {
+        reason: String,
+    },
+    /// Malformed line.
+    Invalid {
+        reason: String,
+    },
+}
+
+// ---------------------------------------------------------------------------
+// Domains
+// ---------------------------------------------------------------------------
+
+/// One entry of `$domain=`/`$from=`/`$to=`/`$denyallow=` or of the hostname
+/// list before a cosmetic marker.
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+#[serde(tag = "kind", content = "value", rename_all = "snake_case")]
+pub enum DomainMatcher {
+    /// Lowercased, punycode-encoded hostname. Matches itself and subdomains.
+    Hostname(String),
+    /// `google.*`: the label before the public suffix, any suffix.
+    Entity(String),
+    /// `/regex/` (uBO extension), source without slashes.
+    Regex(String),
+}
+
+/// Include and exclude lists. Empty `include` means "everywhere".
+#[derive(Debug, Clone, PartialEq, Eq, Default, Serialize, Deserialize)]
+pub struct DomainList {
+    pub include: Vec<DomainMatcher>,
+    pub exclude: Vec<DomainMatcher>,
+}
+
+impl DomainList {
+    pub fn is_empty(&self) -> bool {
+        self.include.is_empty() && self.exclude.is_empty()
+    }
+
+    /// Drops excludes that no include can match, so `a.com,~b.com` is just
+    /// `a.com`, as uBO matches it. Only hostname lists are judged.
+    pub fn without_unreachable_excludes(mut self) -> Self {
+        let hosts: Option<Vec<&String>> = self
+            .include
+            .iter()
+            .map(|m| match m {
+                DomainMatcher::Hostname(h) => Some(h),
+                _ => None,
+            })
+            .collect();
+        let Some(hosts) = hosts.filter(|h| !h.is_empty()) else {
+            return self;
         };
-        hit(source);
+        let reachable = |x: &str| {
+            hosts.iter().any(|h| {
+                x == h.as_str() || x.strip_suffix(h.as_str()).is_some_and(|p| p.ends_with('.'))
+            })
+        };
+        let kept = self
+            .exclude
+            .iter()
+            .filter(|m| !matches!(m, DomainMatcher::Hostname(x) if !reachable(x)))
+            .cloned()
+            .collect();
+        self.exclude = kept;
+        self
     }
-    function hit(e) {
-        if (e.verbose) {
-            try {
-                var n = console.trace.bind(console), i = "[AdGuard] ";
-                "corelibs" === e.engine ? i += e.ruleText : (e.domainName && (i += `${e.domainName}`), 
-                e.args ? i += `#%#//scriptlet('${e.name}', '${e.args.join("', '")}')` : i += `#%#//scriptlet('${e.name}')`), 
-                n && n(i);
-            } catch (e) {}
-            "function" == typeof window.__debug && window.__debug(e);
-        }
+}
+
+// ---------------------------------------------------------------------------
+// Network rules
+// ---------------------------------------------------------------------------
+
+bitflags! {
+    /// Request types, uBO names. `DOC` is the main document; `FRAME` is a
+    /// subdocument.
+    #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize, Default)]
+    pub struct ResourceTypes: u32 {
+        const SCRIPT        = 1 << 0;
+        const IMAGE         = 1 << 1;
+        const CSS           = 1 << 2;
+        const OBJECT        = 1 << 3;
+        const XHR           = 1 << 4;
+        const FRAME         = 1 << 5;
+        const DOC           = 1 << 6;
+        const FONT          = 1 << 7;
+        const MEDIA         = 1 << 8;
+        const PING          = 1 << 9;
+        const WEBSOCKET     = 1 << 10;
+        const OTHER         = 1 << 11;
+        const POPUP         = 1 << 12;
+        const POPUNDER      = 1 << 13;
+        const WEBRTC        = 1 << 14;
+        const INLINE_SCRIPT = 1 << 15;
+        const INLINE_FONT   = 1 << 16;
     }
-    const updatedArgs = args ? [].concat(source).concat(args) : [ source ];
-    try {
-        ScoreCardResearchBeacon.apply(this, updatedArgs);
-        if (source.uniqueId) {
-            Object.defineProperty(Window.prototype.toString, uniqueIdentifier, {
-                value: flag,
-                enumerable: false,
-                writable: false,
-                configurable: false
-            });
-        }
-    } catch (e) {
-        console.log(e);
+}
+
+bitflags! {
+    /// Document-level exception scopes: `@@...$document`, `$elemhide`,
+    /// `$generichide`, `$specifichide`, `$genericblock`. Only meaningful on
+    /// exceptions.
+    #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize, Default)]
+    pub struct ExceptionScope: u8 {
+        const DOC          = 1 << 0;
+        const EHIDE        = 1 << 1;
+        const GHIDE        = 1 << 2;
+        const SHIDE        = 1 << 3;
+        const GENERICBLOCK = 1 << 4;
     }
-})({
-    name: "scorecardresearch-beacon",
-    args: []
-}, []);
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize, Default)]
+#[serde(rename_all = "snake_case")]
+pub enum Party {
+    #[default]
+    Any,
+    First,
+    Third,
+    StrictFirst,
+    StrictThird,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize, Default)]
+#[serde(rename_all = "snake_case")]
+pub enum PatternKind {
+    /// `||host^path`: anchored at a hostname label boundary.
+    Hostname,
+    /// `|https://`: anchored at the start of the URL.
+    Left,
+    /// No anchor at the start.
+    #[default]
+    Plain,
+    /// `/regex/`, body is the regex source without slashes.
+    Regex,
+}
+
+/// The URL pattern. `body` keeps `*` (any) and `^` (separator) verbatim and
+/// excludes the `||`/`|` prefix and the trailing `|`.
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize, Default)]
+pub struct Pattern {
+    pub kind: PatternKind,
+    pub body: String,
+    /// Trailing `|`.
+    pub right_anchored: bool,
+}
+
+impl Pattern {
+    /// Matches every URL (`*`, empty, or `|http*`-style generic patterns are
+    /// not collapsed here; only literally empty or `*` bodies).
+    pub fn is_match_all(&self) -> bool {
+        self.kind != PatternKind::Regex
+            && !self.right_anchored
+            && (self.body.is_empty() || self.body == "*")
+    }
+}
+
+/// What the rule does when it matches. Exceptions keep the action they
+/// except (`@@||x^$removeparam=y` is an exception to a RemoveParam action).
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize, Default)]
+#[serde(tag = "type", content = "value", rename_all = "snake_case")]
+pub enum NetworkAction {
+    #[default]
+    Block,
+    /// `$redirect=` (or `$empty`/`$mp4` aliases). `rule_only` for
+    /// `$redirect-rule`. Resource name normalized to uBO's canonical name.
+    Redirect {
+        resource: String,
+        rule_only: bool,
+    },
+    /// `$removeparam`, `None` = remove all parameters.
+    RemoveParam(Option<String>),
+    /// `$csp`, `None` only on exceptions (except all CSP rules).
+    Csp(Option<String>),
+    Permissions(Option<String>),
+    /// `$urlskip=`, `$uritransform=`, `$replace=`, `$header=`/`$responseheader=`,
+    /// `$requestheader=`. Kept verbatim; not enforceable natively.
+    Other {
+        option: String,
+        value: Option<String>,
+    },
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize, Default)]
+pub struct MethodList {
+    pub include: Vec<String>,
+    pub exclude: Vec<String>,
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
+pub struct NetworkRule {
+    pub source: SourceRef,
+    /// The line as written (after AdGuard normalization), for provenance
+    /// and debugging.
+    pub raw: String,
+    pub exception: bool,
+    pub important: bool,
+    pub badfilter: bool,
+    pub match_case: bool,
+    pub pattern: Pattern,
+    pub party: Party,
+    /// Types the rule applies to. Empty means uBO's default: every type
+    /// except `DOC`, `POPUP`, `POPUNDER` (and `INLINE_*`).
+    pub types: ResourceTypes,
+    /// `~type` options.
+    pub negated_types: ResourceTypes,
+    /// `$domain=` / `$from=`.
+    pub from: DomainList,
+    /// `$to=`.
+    pub to: DomainList,
+    /// `$denyallow=`, hostnames only.
+    pub denyallow: Vec<String>,
+    pub method: MethodList,
+    pub scope: ExceptionScope,
+    pub action: NetworkAction,
+    /// Options the parser recognised but that need DNS or headers
+    /// (`$cname`, `$ipaddress`, `$header`, ...). A rule with any of these is
+    /// not compiled natively.
+    pub runtime_only_options: Vec<String>,
+}
+
+// ---------------------------------------------------------------------------
+// Cosmetic rules
+// ---------------------------------------------------------------------------
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+#[serde(tag = "type", content = "value", rename_all = "snake_case")]
+pub enum CosmeticBody {
+    /// A selector that is plain CSS (may use `:has()`, `:is()`, `:not()`).
+    /// Whether a given Safari version accepts it is the compiler's call.
+    Hide(String),
+    /// Uses uBO procedural operators (`:has-text`, `:upward`, `:xpath`,
+    /// `:matches-css`, `:min-text-length`, `:watch-attr`, `:others`,
+    /// `:matches-attr`, `:matches-media`, `:matches-prop`, `:-abp-*`), or an
+    /// action (`:remove()`, `:style()`, `:remove-attr()`, `:remove-class()`).
+    /// Kept as the normalized uBO selector text.
+    Procedural(String),
+    /// A stylesheet, including conditional at-rules, injected by the extension.
+    Style(String),
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct CosmeticRule {
+    pub source: SourceRef,
+    pub raw: String,
+    pub exception: bool,
+    pub domains: 
 ```
 
-### Core Architecture Module: `wBlock/ConcurrentLogManager.swift`
+### Core Architecture Module: `Packages/wblock-engine/crates/wbe/src/bin/wbe.rs`
 ```
-//
-//  ConcurrentLogManager.swift
-//  wBlock
-//
-//  Created by Alexander Skula on 5/23/25.
-//
+//! `wbe compile [--safari 18.0] [--runtime-out FILE] [--trusted] LIST...`
+//! writes Safari JSON to stdout and stats JSON to stderr. `--trusted` marks
+//! the list after it as trusted (may use `trusted-*` scriptlets).
+//! `wbe engine-build --out FILE RUNTIME.txt` serializes a runtime engine.
+//! `wbe lookup [--bench N] ENGINE URL...`
+//! prints PagePayload JSON per URL; with `--bench` it prints p50/p99 JSON for
+//! N lookups over the URLs in the file.
 
-import Foundation
-import wBlockCoreService
+use std::time::Instant;
+use wbe::runtime::Engine;
+use wbe::webkit::{to_json, SafariVersion};
+use wbe::{compile, CompileOptions, ListInput};
 
-/// Log severity levels following Swift-Log best practices
-public enum LogLevel: String, Codable, Comparable, CaseIterable {
-    case trace   // Detailed diagnostics, not for production
-    case debug   // High-value operational info
-    case info    // Significant events, recoverable failures
-    case warning // One-time warnings, deprecations
-    case error   // Errors requiring attention
-
-    public static func < (lhs: LogLevel, rhs: LogLevel) -> Bool {
-        let order: [LogLevel] = [.trace, .debug, .info, .warning, .error]
-        guard let lhsIndex = order.firstIndex(of: lhs),
-              let rhsIndex = order.firstIndex(of: rhs) else {
-            return false
+fn main() {
+    let args: Vec<String> = std::env::args().skip(1).collect();
+    match args.first().map(String::as_str) {
+        Some("compile") => compile_cmd(&args[1..]),
+        Some("engine-build") => engine_build_cmd(&args[1..]),
+        Some("lookup") => lookup_cmd(&args[1..]),
+        _ => {
+            eprintln!(
+                "usage: wbe compile [--safari 18.0] [--runtime-out FILE] [--trusted] LIST..."
+            );
+            eprintln!("       wbe engine-build --out FILE RUNTIME.txt");
+            eprintln!("       wbe lookup [--bench N] ENGINE URL|URLFILE...");
+            std::process::exit(2);
         }
-        return lhsIndex < rhsIndex
     }
 }
 
-/// Log category for better organization
-public enum LogCategory: String, Codable {
-    case system = "System"
-    case filterUpdate = "FilterUpdate"
-    case filterApply = "FilterApply"
-    case userScript = "UserScript"
-    case network = "Network"
-    case whitelist = "Whitelist"
-    case autoUpdate = "AutoUpdate"
-    case startup = "Startup"
+fn read(path: &str) -> String {
+    std::fs::read_to_string(path).unwrap_or_else(|e| panic!("{path}: {e}"))
 }
 
-/// Structured log entry with metadata support
-public struct LogEntry: Identifiable, Codable, Equatable {
-    public let id: UUID
-    public let timestamp: Date
-    public let level: LogLevel
-    public let category: LogCategory
-    public let message: String
-    public let metadata: [String: String]?
-    public var count: Int // For deduplication
-
-    public init(
-        id: UUID = UUID(),
-        timestamp: Date = Date(),
-        level: LogLevel,
-        category: LogCategory,
-        message: String,
-        metadata: [String: String]? = nil,
-        count: Int = 1
-    ) {
-        self.id = id
-        self.timestamp = timestamp
-        self.level = level
-        self.category = category
-        self.message = message
-        self.metadata = metadata
-        self.count = count
-    }
-
-    /// Check if this entry can be deduplicated with another
-    func canDeduplicate(with other: LogEntry) -> Bool {
-        self.level == other.level &&
-        self.category == other.category &&
-        self.message == other.message &&
-        self.metadata == other.metadata
-    }
-
-    /// Compact single-line format
-    var compactFormat: String {
-        let time = LogDateFormatters.timeFormatter.string(from: timestamp)
-        let metaStr = metadata?.sorted { $0.key < $1.key }.map { "\($0.key)=\($0.value)" }.joined(separator: ", ") ?? ""
-        let meta = metaStr.isEmpty ? "" : " (\(metaStr))"
-        let countStr = count > 1 ? " ×\(count)" : ""
-        return "\(time) [\(level.rawValue.uppercased())] \(category.rawValue): \(message)\(meta)\(countStr)"
-    }
-
-    /// Export format for txt file
-    var exportFormat: String {
-        let time = LogDateFormatters.exportTimeFormatter.string(from: timestamp)
-        var lines = ["\(time) [\(level.rawValue.uppercased())] \(category.rawValue): \(message)"]
-        if let metadata = metadata, !metadata.isEmpty {
-            lines.append("  Metadata: \(metadata.sorted { $0.key < $1.key }.map { "\($0.key)=\($0.value)" }.joined(separator: ", "))")
+fn engine_build_cmd(args: &[String]) {
+    let mut out = None;
+    let mut runtime = None;
+    let mut it = args.iter();
+    while let Some(arg) = it.next() {
+        match arg.as_str() {
+            "--out" => out = it.next().cloned(),
+            _ => runtime = Some(arg.clone()),
         }
-        if count > 1 {
-            lines.append("  Repeated: \(count) times")
-        }
-        return lines.joined(separator: "\n")
     }
+    let (Some(out), Some(runtime)) = (out, runtime) else {
+        eprintln!("usage: wbe engine-build --out FILE RUNTIME.txt");
+        std::process::exit(2);
+    };
+    let text = read(&runtime);
+    let lines: Vec<String> = text.lines().map(str::to_owned).collect();
 
+    let start = Instant::now();
+    let engine = Engine::build(&lines);
+    let bytes = engine.serialize();
+    let build_ms = start.elapsed().as_secs_f64() * 1000.0;
+
+    std::fs::write(&out, &bytes).unwrap_or_else(|e| panic!("{out}: {e}"));
+    let report =
+        serde_json::json!({ "build_ms": build_ms, "bytes": bytes.len(), "lines": lines.len() });
+    eprintln!("{report}");
 }
 
-/// Concurrency-safe logger with structured logging and deduplication
-public actor ConcurrentLogManager {
-
-    private let maxLogEntries: Int = 5_000
-    private let cleanupThreshold: Int = 6_000
-    private let deduplicationWindow: TimeInterval = 60 // 1 minute
-
-    private var logEntries: [LogEntry] = []
-    private let iso8601Formatter = ISO8601DateFormatter()
-    private let iso8601FractionalFormatter: ISO8601DateFormatter = {
-        let formatter = ISO8601DateFormatter()
-        formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
-        return formatter
-    }()
-
-    public static let shared = ConcurrentLogManager()
-
-    private init() {}
-
-    /// Log a message with structured metadata
-    public func log(
-        _ level: LogLevel,
-        _ category: LogCategory,
-        _ message: String,
-        metadata: [String: String]? = nil,
-        timestamp: Date = Date(),
-        file: String = #file,
-        function: String = #function,
-        line: Int = #line
-    ) {
-        var resolvedMetadata = metadata ?? [:]
-        // Warnings and errors record where they came from so a report can be
-        // traced back to code without guessing. Info rows stay quiet.
-        if level >= .warning, resolvedMetadata["source"] == nil {
-            let fileName = file.split(separator: "/").last.map(String.init) ?? file
-            resolvedMetadata["source"] = "\(fileName):\(line)"
+fn lookup_cmd(args: &[String]) {
+    let mut bench = None;
+    let mut rest = Vec::new();
+    let mut it = args.iter();
+    while let Some(arg) = it.next() {
+        match arg.as_str() {
+            "--bench" => {
+                bench = Some(
+                    it.next()
+                        .expect("--bench needs a count")
+                        .parse::<usize>()
+                        .expect("count"),
+                )
+            }
+            _ => rest.push(arg.clone()),
         }
-        let entry = LogEntry(
-            timestamp: timestamp,
-            level: level,
-            category: category,
-            message: message,
-            metadata: resolvedMetadata.isEmpty ? nil : resolvedMetadata
-        )
+    }
+    let Some((engine_path, inputs)) = rest.split_first() else {
+        eprintln!("usage: wbe lookup [--bench N] ENGINE URL|URLFILE...");
+        std::process::exit(2);
+    };
 
-        // Try to deduplicate with recent entries
-        if let lastEntry = logEntries.last,
-           lastEntry.canDeduplicate(with: entry),
-           entry.timestamp.timeIntervalSince(lastEntry.timestamp) >= 0,
-           entry.timestamp.timeIntervalSince(lastEntry.timestamp) < deduplicationWindow {
-            // Increment count on last entry
-            logEntries[logEntries.count - 1].count += 1
-        } else {
-            // Add new entry
-            logEntries.append(entry)
+    let start = Instant::now();
+    let bytes = std::fs::read(engine_path).unwrap_or_else(|e| panic!("{engine_path}: {e}"));
+    let engine = Engine::deserialize(&bytes).unwrap_or_else(|e| panic!("{e}"));
+    let load_ms = start.elapsed().as_secs_f64() * 1000.0;
 
-            // Cleanup if needed
-            if logEntries.count > cleanupThreshold {
-                logEntries.removeFirst(logEntries.count - maxLogEntries)
+    match bench {
+        Some(n) => bench_cmd(&engine, load_ms, n, &read(&inputs[0])),
+        None => {
+            let mut timings = Vec::new();
+            for url in inputs {
+                let start = Instant::now();
+                let payload = engine.lookup(url);
+                timings.push(
+                    serde_json::json!({ "url": url, "us": start.elapsed().as_secs_f64() * 1e6 }),
+                );
+                println!(
+                    "{}",
+                    serde_json::to_string(&payload).expect("payload serializes")
+                );
+            }
+            eprintln!(
+                "{}",
+                serde_json::json!({ "load_ms": load_ms, "lookups": timings })
+            );
+        }
+    }
+}
+
+fn bench_cmd(engine: &Engine, load_ms: f64, count: usize, url_text: &str) {
+    let urls: Vec<&str> = url_text
+        .lines()
+        .map(str::trim)
+        .filter(|l| !l.is_empty())
+        .collect();
+    assert!(!urls.is_empty(), "URL file is empty");
+    let mut us = Vec::with_capacity(count);
+    for i in 0..count {
+        let url = urls[i % urls.len()];
+        let start = Instant::now();
+        std::hint::black_box(engine.lookup(std::hint::black_box(url)));
+        us.push(start.elapsed().as_secs_f64() * 1e6);
+    }
+    us.sort_by(f64::total_cmp);
+    let pct = |p: usize| us[(us.len() * p / 100).min(us.len() - 1)];
+    let mean = us.iter().sum::<f64>() / us.len() as f64;
+    let report = serde_json::json!({
+        "load_ms": load_ms,
+        "lookups": count,
+        "urls": urls.len(),
+        "p50_us": pct(50),
+        "p99_us": pct(99),
+        "mean_us": mean,
+    });
+    println!("{report}");
+}
+
+fn compile_cmd(args: &[String]) {
+    let mut safari = SafariVersion::new(18, 0);
+    let mut trusted = false;
+    let mut runtime_out = None;
+    let mut paths = Vec::new();
+    let mut trust = Vec::new();
+    let mut it = args.iter();
+    while let Some(arg) = it.next() {
+        match arg.as_str() {
+            "--safari" => {
+                let v = it.next().expect("--safari needs a version");
+                let (major, minor) = v.split_once('.').unwrap_or((v, "0"));
+                safari = SafariVersion::new(major.parse().unwrap(), minor.parse().unwrap());
+            }
+            "--trusted" => trusted = true,
+            "--runtime-out" => {
+                runtime_out = Some(it.next().expect("--runtime-out needs a path").clone())
+            }
+            _ => {
+                paths.push(arg.clone());
+                trust.push(std::mem::take(&mut trusted));
             }
         }
-
-        // Print to console for debugging
-        #if DEBUG
-        print(entry.compactFormat)
-        #endif
-
-        schedulePersist()
     }
+    let texts: Vec<String> = paths
+        .iter()
+        .map(|p| std::fs::read_to_string(p).unwrap_or_else(|e| panic!("{p}: {e}")))
+        .collect();
+    let inputs: Vec<ListInput> = texts
+        .iter()
+        .zip(trust)
+        .map(|(text, trusted)| ListInput { text, trusted })
+        .collect();
 
-    public func operation(_ event: String, fields: [String: String] = [:], level: LogLevel = .info) {
-        log(level, .system, LocalizedStrings.text("Operation details"),
-            metadata: fields.merging(["operation": event]) { _, new in new })
+    let start = Instant::now();
+    let out = compile(&inputs, &CompileOptions { safari });
+    let compile_ms = start.elapsed().as_secs_f64() * 1000.0;
+
+    print!("{}", to_json(&out.webkit));
+    if let Some(path) = runtime_out {
+        std::fs::write(path, out.runtime.join("\n")).expect("write runtime rules");
     }
-
-    public func debug(_ category: LogCategory, _ message: String, metadata: [String: String]? = nil,
-                      file: String = #file, function: String = #function, line: Int = #line) {
-        log(.debug, category, message, metadata: metadata, file: file, function: function, line: line)
-    }
-
-    public func info(_ category: LogCategory, _ message: String, metadata: [String: String]? = nil,
-                     file: String = #file, function: String = #function, line: Int = #line) {
-        log(.info, category, message, metadata: metadata, file: file, function: function, line: line)
-    }
-
-    public func warning(_ category: LogCategory, _ message: String, metadata: [String: String]? = nil,
-                        file: String = #file, function: String = #function, line: Int = #line) {
-        log(.warning, category, message, metadata: metadata, file: file, function: function, line: line)
-    }
-
-    public func error(_ category: LogCategory, _ message: String, metadata: [String: String]? = nil,
-                      file: String = #file, function: String = #function, line: Int = #line) {
-        log(.error, category, message, metadata: metadata, file: file, function: function, line: line)
-    }
-
-    /// Logs an error together with a full description of the thrown value
-    /// (domain, code, underlying errors) under the `error` metadata key.
-    public func error(_ category: LogCategory, _ message: String, error: Error,
-                      metadata: [String: String] = [:],
-                      file: String = #file, function: String = #function, line: Int = #line) {
-        var merged = metadata
-        merged["error"] = LogErrorDescriber.describe(error)
-        log(.error, category, message, metadata: merged, file: file, function: function, line: line)
-    }
-
-    public func warning(_ category: LogCategory, _ message: String, error: Error,
-                        metadata: [String: String] = [:],
-                        file: String = #file, function: String = #function, line: Int = #line) {
-        var merged = metadata
-        merged["error"] = LogErrorDescriber.describe(error)
-        log(.warning, category, message, metadata: merged, file: file, function: function, line: line)
-    }
-
-    // MARK: - Environment
-
-    /// App and OS details that every bug report needs. Written once per launch
-    /// as the first Startup entry and repeated in the export header.
-    public nonisolated static var environmentDetails: [String: String] {
-        let info = Bundle.main.infoDictionary
-        let version = info?["CFBundleShortVersionString"] as? String ?? "?"
-        let build = info?["CFBundleVersion"] as? String ?? "?"
-        let os = ProcessInfo.processInfo.operatingSystemVersion
-        #if os(macOS)
-        let platform = "macOS"
-        #else
-        let platform = "iOS"
-        #endif
-        var details: [String: String] = [
-            "app": "\(version) (\(build))",
-            "os": "\(platform) \(os.majorVersion).\(os.minorVersion).\(os.patchVersion)",
-            "device": deviceModelIdentifier,
-            "locale": Locale.current.identifier,
-        ]
-        #if DEBUG
-        details["configuration"] = "debug"
-        #endif
-        return details
-    }
-
-    private nonisolated static var deviceModelIdentifier: String {
-        #if os(macOS)
-        // On macOS utsname.machine is the CPU architecture; hw.model holds the Mac model.
-        var size = 0
-        sysctlbyname("hw.model", nil, &size, nil, 0)
-        if size > 0 {
-            var buffer = [CChar](repeating: 0, count: size)
-            if sysctlbyname("hw.model", &buffer, &size, nil, 0) == 0 {
-                let model = String(cString: buffer)
-                if !model.isEmpty { return model }
-            }
-        }
-        #endif
-        var systemInfo = utsname()
-        uname(&systemInfo)
-        let machine = wi
-```
-
-### Core Architecture Module: `wBlockCoreService/AdGuardFilterRegistry.swift`
-```
-import Foundation
-
-/// A list from AdGuard's Safari filter registry, ready to add as a custom list.
-public struct AdGuardRegistryList: Identifiable, Hashable, Sendable {
-    public let id: Int
-    /// Its Safari-optimized download, with the registry's name, description,
-    /// category, and languages.
-    public let filter: FilterList
-    /// Every address the list is published at: the download, its upstream
-    /// source, and the registry's mirrors of the download.
-    public let knownURLs: [URL]
-
-    public func isSameList(as url: URL) -> Bool {
-        knownURLs.contains { FilterListURLSupport.isSameList($0, url) }
-            || FilterListURLMirror.adGuardFilterID(for: url) == id
-    }
+    let stats = serde_json::json!({ "compile_ms": compile_ms, "stats": out.stats });
+    eprintln!("{stats}");
 }
 
-/// AdGuard's filter registry for Safari, so people can find lists wBlock
-/// doesn't include. Fetched only when asked for, refreshed at most daily, and
-/// served from the last good copy when offline.
-public enum AdGuardFilterRegistry {
-    public static let sourceURL = URL(string:
-        "https://raw.githubusercontent.com/AdguardTeam/FiltersRegistry/master/platforms/extension/safari/filters.json")!
-    static let refreshInterval: TimeInterval = 24 * 60 * 60
+```
 
-    private struct Payload: Decodable {
-        struct Entry: Decodable {
-            let filterId: Int
-            let name: String
-            let description: String?
-            let groupId: Int
-            let languages: [String]?
-            let deprecated: Bool?
-            let subscriptionUrl: URL?
-            let downloadUrl: URL
-        }
-        let filters: [Entry]
-    }
+### Core Architecture Module: `Packages/wblock-engine/crates/wbe/src/compile/cosmetic.rs`
+```
+//! Cosmetic hides and exceptions to Safari `css-display-none` rules.
+//!
+//! Model: uBO's cosmetic-filtering.js. A filter's key is its selector plus its
+//! `:matches-path()` argument. On a page, every exception applicable to the page
+//! removes its key from every hide applicable to the page, generic or specific.
+//! Exceptions are resolved here when each page they touch can be expressed
+//! natively. Otherwise every hide and exception with that key goes to `runtime`.
 
-    /// Registry lists still maintained, in the registry's order.
-    public static func lists(from data: Data) throws -> [AdGuardRegistryList] {
-        try JSONDecoder().decode(Payload.self, from: data).filters.compactMap { entry in
-            guard entry.deprecated != true, entry.downloadUrl.scheme?.lowercased() == "https" else { return nil }
-            let category = category(filterID: entry.filterId, groupID: entry.groupId)
-            // GitHub first, like wBlock's own lists, then AdGuard's CDN and jsDelivr.
-            let url = FilterListURLMirror.fallbackURLs(for: entry.downloadUrl)
-                .first { $0.host == "raw.githubusercontent.com" } ?? entry.downloadUrl
-            let filter = FilterList(
-                name: entry.name, url: url, category: category, isCustom: true,
-                description: entry.description ?? "",
-                languages: category == .foreign ? entry.languages ?? [] : [])
-            var urls = [url, entry.downloadUrl] + FilterListURLMirror.fallbackURLs(for: url)
-            if let source = entry.subscriptionUrl { urls.append(source) }
-            return AdGuardRegistryList(id: entry.filterId, filter: filter, knownURLs: urls)
-        }
-    }
+use super::{CompileOptions, Stats, Tier, Tiered};
+use crate::ast::{CosmeticBody, CosmeticRule, DomainMatcher};
+use crate::webkit::{SafariVersion, WkAction, WkResourceType, WkRule, WkTrigger};
+use std::collections::{BTreeMap, BTreeSet, HashSet};
 
-    /// The registry's groups mapped onto wBlock's categories. Its "Other" group
-    /// mixes an allowlist and an experimental list with privacy lists.
-    static func category(filterID: Int, groupID: Int) -> FilterListCategory {
-        switch (filterID, groupID) {
-        case (5, _): return .experimental
-        case (10, _): return .allowlists
-        case (_, 1): return .ads
-        case (_, 2): return .privacy
-        case (_, 3), (_, 4): return .annoyances
-        case (_, 5): return .security
-        case (_, 7): return .foreign
-        default: return .custom
-        }
-    }
+/// Selectors per emitted rule. AdGuard's Compiler uses the same limit
+/// (`MAX_SELECTORS_PER_RULE`).
+const GROUP_SIZE: usize = 250;
 
-    public static var defaultCacheURL: URL? {
-        FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first?
-            .appendingPathComponent("adguard-safari-filter-registry.json")
-    }
+/// Host part of an `if-top-url` pattern that matches any host.
+const ANY_HOST: &str = r"[^\/]+";
 
-    public static func load(
-        session: URLSession = .shared,
-        cacheURL: URL? = defaultCacheURL,
-        now: Date = Date()
-    ) async throws -> [AdGuardRegistryList] {
-        let cached = cacheURL.flatMap { try? Data(contentsOf: $0) }.flatMap { try? lists(from: $0) }
-        let cacheDate = cacheURL.flatMap {
-            try? FileManager.default.attributesOfItem(atPath: $0.path)[.modificationDate] as? Date
+/// A selector and the `:matches-path()` argument it is scoped to.
+type Key<'a> = (&'a str, Option<&'a str>);
+
+pub(super) fn compile(
+    rules: &[&CosmeticRule],
+    opts: &CompileOptions,
+    out: &mut Vec<Tiered>,
+    runtime: &mut Vec<String>,
+    stats: &mut Stats,
+) {
+    let safari = opts.safari;
+    // Each rule's verdict and scope depend on the rule alone, so they are
+    // worked out in parallel; the rest is in rule order.
+    let decided = super::parallel_indices(rules.len(), |i| match &rules[i].body {
+        CosmeticBody::Hide(selector) => {
+            let verdict = verdict(selector, safari);
+            let scope = if verdict == Verdict::Native {
+                Scope::of(rules[i])
+            } else {
+                None
+            };
+            Some((verdict, scope))
         }
-        if let cached, let cacheDate, now.timeIntervalSince(cacheDate) < refreshInterval {
-            return cached
-        }
-        var lastError: Error = URLError(.badServerResponse)
-        for url in [sourceURL] + FilterListURLMirror.fallbackURLs(for: sourceURL) {
-            do {
-                let request = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: 20)
-                let (data, response) = try await session.data(for: request)
-                guard let http = response as? HTTPURLResponse, (200...299).contains(http.statusCode) else {
-                    throw URLError(.badServerResponse)
+        CosmeticBody::Procedural(_) | CosmeticBody::Style(_) => None,
+    });
+    let mut hides: BTreeMap<Key, Vec<Entry>> = BTreeMap::new();
+    let mut exceptions: BTreeMap<Key, Vec<Entry>> = BTreeMap::new();
+    let mut runtime_lines = BTreeSet::new();
+    for (rule, decided) in rules.iter().zip(decided) {
+        match &rule.body {
+            CosmeticBody::Procedural(_) | CosmeticBody::Style(_) => {
+                runtime_lines.insert(rule.raw.as_str());
+            }
+            CosmeticBody::Hide(selector) => match decided.expect("hide has a verdict") {
+                (Verdict::Invalid, _) => stats.drop("invalid cosmetic selector"),
+                (_, scope) => {
+                    let key = (selector.as_str(), rule.matches_path.as_deref());
+                    let map = if rule.exception {
+                        &mut exceptions
+                    } else {
+                        &mut hides
+                    };
+                    map.entry(key).or_default().push(Entry { rule, scope });
                 }
-                let fresh = try lists(from: data)
-                guard !fresh.isEmpty else { throw URLError(.cannotDecodeContentData) }
-                if let cacheURL { try? data.write(to: cacheURL, options: .atomic) }
-                return fresh
-            } catch {
-                if error is CancellationError || (error as? URLError)?.code == .cancelled { throw error }
-                lastError = error
+            },
+        }
+    }
+
+    let keys: Vec<&Key> = hides
+        .keys()
+        .chain(exceptions.keys())
+        .collect::<BTreeSet<&Key>>()
+        .into_iter()
+        .collect();
+    let resolved_all = super::parallel_indices(keys.len(), |i| {
+        let key = keys[i];
+        let hs = hides.get(key).map(Vec::as_slice).unwrap_or_default();
+        let es = exceptions.get(key).map(Vec::as_slice).unwrap_or_default();
+        resolve(hs, es, safari)
+    });
+    let mut resolved: Vec<(&Key, Vec<(Tier, Trigger)>)> = Vec::new();
+    for (key, triggers) in keys.into_iter().zip(resolved_all) {
+        match triggers {
+            Some(triggers) => resolved.push((key, triggers)),
+            None => {
+                let hs = hides.get(key).map(Vec::as_slice).unwrap_or_default();
+                let es = exceptions.get(key).map(Vec::as_slice).unwrap_or_default();
+                for entry in hs.iter().chain(es) {
+                    runtime_lines.insert(entry.rule.raw.as_str());
+                }
             }
         }
-        if let cached { return cached }
-        throw lastError
-    }
-}
-
-```
-
-### Core Architecture Module: `wBlockCoreService/AsyncConcurrency.swift`
-```
-import Foundation
-
-public enum CloudSyncUploadAction: Equatable {
-    case startNow(String)
-    case deferUntilIdle
-}
-
-public struct CloudSyncUploadCoordinator {
-    private var deferredTrigger: String?
-
-    public init() {}
-
-    public mutating func actionForUploadRequest(
-        trigger: String,
-        isSyncing: Bool
-    ) -> CloudSyncUploadAction {
-        guard isSyncing else {
-            return .startNow(trigger)
-        }
-
-        deferredTrigger = trigger
-        return .deferUntilIdle
     }
 
-    public mutating func takeDeferredTrigger() -> String? {
-        defer { deferredTrigger = nil }
-        return deferredTrigger
-    }
-}
+    // A selector hidden on every page makes its domain-specific copies redundant.
+    let universal: HashSet<&str> = resolved
+        .iter()
+        .filter(|(key, _)| key.1.is_none())
+        .filter(|(_, ts)| ts.contains(&(Tier::GenericHide, Trigger::Generic)))
+        .map(|(key, _)| key.0)
+        .collect();
 
-/// Runs an async operation on each item with bounded concurrency, calling `onResult`
-/// for each completed result in completion order. Platform-aware default concurrency.
-public func boundedConcurrentForEach<Item: Sendable, Result: Sendable>(
-    _ items: [Item],
-    maxConcurrent: Int? = nil,
-    operation: @Sendable @escaping (Item) async -> Result,
-    onResult: (Result) async -> Void
-) async {
-    guard !items.isEmpty else { return }
-
-    let limit: Int
-    if let maxConcurrent {
-        limit = max(1, maxConcurrent)
-    } else {
-        #if os(macOS)
-        limit = 3
-        #else
-        limit = 2
-        #endif
-    }
-
-    var iterator = items.makeIterator()
-
-    await withTaskGroup(of: Result.self) { group in
-        func enqueueNext() {
-            guard let item = iterator.next() else { return }
-            group.addTask { await operation(item) }
-        }
-
-        for _ in 0..<min(limit, items.count) {
-            enqueueNext()
-        }
-
-        while let result = await group.next() {
-            guard !Task.isCancelled else {
-                group.cancelAll()
-                break
+    let mut groups: BTreeMap<(Tier, &Trigger), BTreeSet<&str>> = BTreeMap::new();
+    for (key, triggers) in &resolved {
+        for (tier, trigger) in triggers {
+            let redundant =
+                *tier == Tier::SpecificHide && key.1.is_none() && universal.contains(key.0);
+            if !redundant {
+                groups.entry((*tier, trigger)).or_default().insert(key.0);
             }
-            await onResult(result)
-            guard !Task.isCancelled else {
-                group.cancelAll()
-                break
+        }
+    }
+    let groups: Vec<((Tier, &Trigger), Vec<&str>)> = groups
+        .into_iter()
+        .map(|(group, selectors)| (group, selectors.into_iter().collect()))
+        .collect();
+    let emitted = super::parallel_indices(groups.len(), |g| {
+        let ((_, trigger), selectors) = &groups[g];
+        selectors
+            .chunks(GROUP_SIZE)
+            .map(|chunk| WkRule {
+                trigger: trigger.to_trigger(),
+                action: WkAction::CssDisplayNone {
+                    selector: chunk.join(", "),
+                },
+            })
+            .collect::<Vec<WkRule>>()
+    });
+    for (((tier, _), _), rules) in groups.iter().zip(emitted) {
+        out.extend(rules.into_iter().map(|rule| Tiered { tier: *tier, rule }));
+    }
+
+    runtime.extend(runtime_lines.into_iter().map(str::to_string));
+}
+
+/// A hide or exception that reached the compiler. `scope: None` means the
+/// rule needs the runtime (regex domain, entity exclusion, or a selector Safari
+/// cannot take).
+struct Entry<'a> {
+    rule: &'a CosmeticRule,
+    scope: Option<Scope>,
+}
+
+/// Domain and path conditions of a rule, split by kind.
+#[derive(Clone, Default)]
+struct Scope {
+    hosts: Vec<String>,
+    entities: Vec<String>,
+    excludes: Vec<String>,
+    path: Option<String>,
+}
+
+impl Scope {
+    fn of(rule: &CosmeticRule) -> Option<Self> {
+        let mut scope = Scope {
+            path: rule.matches_path.clone(),
+            ..Self::default()
+        };
+        for matcher in &rule.domains.include {
+            match matcher {
+                DomainMatcher::Hostname(h) => scope.hosts.push(h.clone()),
+                DomainMatcher::Entity(e) => scope.entities.push(e.clone()),
+                DomainMatcher::Regex(_) => return None,
             }
-            enqueueNext()
         }
+        for matcher in &rule.domains.exclude {
+            match matcher {
+                DomainMatcher::Hostname(h) => scope.excludes.push(h.clone()),
+                _ => return None,
+            }
+        }
+        Some(scope)
+    }
+
+    fn is_generic(&self) -> bool {
+        self.hosts.is_empty() && self.entities.is_empty()
     }
 }
 
-```
+/// One Safari trigger. `Generic` and `Unless` apply to every page, so they
+/// are generic hides. The rest are specific.
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
+enum Trigger {
+    Generic,
+    Unless(Vec<String>),
+    IfDomain(Vec<String>),
+    TopUrl(Vec<String>),
+}
 
-### Core Architecture Module: `wBlockCoreService/AsyncDelay.swift`
-```
-import Foundation
-
-public struct AsyncDelay: Sendable, Equatable, CustomStringConvertible {
-    public let nanoseconds: UInt64
-
-    public init(nanoseconds: UInt64) {
-        self.nanoseconds = nanoseconds
-    }
-
-    public static func seconds(_ seconds: Int) -> AsyncDelay {
-        AsyncDelay(nanoseconds: clampedNanoseconds(seconds, multiplier: 1_000_000_000))
-    }
-
-    public static func seconds(_ seconds: TimeInterval) -> AsyncDelay {
-        guard seconds > 0 else { return AsyncDelay(nanoseconds: 0) }
-        let nanoseconds = seconds * 1_000_000_000
-        return AsyncDelay(nanoseconds: nanoseconds >= Double(UInt64.max) ? UInt64.max : UInt64(nanoseconds))
-    }
-
-    public static func milliseconds(_ milliseconds: Int) -> AsyncDelay {
-        AsyncDelay(nanoseconds: clampedNanoseconds(milliseconds, multiplier: 1_000_000))
-    }
-
-    public var description: String {
-        if nanoseconds.isMultiple(of: 1_000_000_000) {
-            return "\(nanoseconds / 1_000_000_000)s"
+impl Trigger {
+    fn to_trigger(&self) -> WkTrigger {
+        let mut trigger = WkTrigger {
+            url_filter: ".*".into(),
+            ..WkTrigger::default()
+        };
+        match self {
+            Trigger::Generic => return trigger,
+            Trigger::Unless(d) => trigger.unless_domain = Some(d.clone()),
+            Trigger::IfDomain(d) => trigger.if_domain = Some(d.clone()),
+            Trigger::TopUrl(r) => trigger.if_top_url = Some(r.clone()),
         }
-        if nanoseconds.isMultiple(of: 1_000_000) {
-            return "\(nanoseconds / 1_000_000)ms"
-        }
-        return "\(nanoseconds)ns"
-    }
-
-    private static func clampedNanoseconds(_ value: Int, multiplier: UInt64) -> UInt64 {
-        guard value > 0 else { return 0 }
-        let unsignedValue = UInt64(value)
-        guard unsignedValue <= UInt64.max / multiplier else { return UInt64.max }
-        return unsignedValue * multiplier
+        // A scoped hide only needs checking when a document loads, not on
+        // every subresource (wBlock #873).
+        trigger.resource_type = Some(vec![WkResourceType::Document]);
+        trigger
     }
 }
 
-public enum TaskSleep {
-    public static func sleep(for delay: AsyncDelay) async throws {
-        try await Task.sleep(nanoseconds: delay.nanoseconds)
+/// Resolves the hides and exceptions of one key. Returns the triggers the
+/// hides keep, or `None` when the key must go to the runtime.
+fn resolve(
+    hides: &[Entry],
+    exceptions: &[Entry],
+    safari: SafariVersion,
+) -> Option<Vec<(Tier, Trigger)>> {
+    let mut excepted_hosts: Vec<&str> = Vec::new();
+    let mut global = false;
+    for exception in exceptions {
+        let scope = exception.scope.as_ref()?;
+        if !scope.entities.is_empty() || !scope.excludes.is_empty() {
+            return None;
+        }
+        if scope.hosts.is_empty() {
+            global = true;
+        }
+        excepted_hosts.extend(scope.hosts.iter().map(String::as_str));
+    }
+    if global {
+        return Some(Vec::new());
+    }
+
+    let mut triggers = Vec::new();
+    for hide in hides {
+        let mut scope = hide.scope.clone()?;
+        if !excepted_hosts.is_empty() {
+            if scope.is_generic() {
+                scope
+                    .excludes
+                    .extend(excepted_hosts.iter().map(|h| h.to_string()));
+            } else {
+                if !scope.entities.is_empty() {
+                    return None;
+                }
+                let had_hosts = !scope.hosts.is_empty();
+                for host in &scope.hosts {
+                    if excepted_hosts.iter().any(|x| within(host, x)) {
+                        continue;
+                    }
+                    if excepted_hosts.iter().any(|x| within(x, host)) {
+                        // Pages under the excepted host would need an unless-domain
+                        // on a domain-specific trigger, which Safari cannot combine.
+                        return None;
+                    }
+                }
+                scope
+                    .hosts
+                    .retain(|host| !excepted_hosts.iter().any(|x| within(host, x)));
+                if had_hosts && scope.hosts.is_empty() {
+                    continue;
+                }
+            }
+        }
+        triggers.extend(scope_triggers(&scope, safari)?);
+    }
+    Some(triggers)
+}
+
+/// `child` is `parent` or one of its subdomains.
+fn within(child: &str, parent: &str) -> bool {
+    child == parent || child.strip_suffix(parent).is_some_and(|p| p.ends_with('.'))
+}
+
+/// The triggers that express a scope natively, or `None` if Safari cannot.
+fn scope_triggers(scope
+```
+
+### Core Architecture Module: `Packages/wblock-engine/crates/wbe/src/compile/mod.rs`
+```
+//! Rules to Safari JSON.
+//!
+//! Output order matters: WebKit applies rules top to bottom and
+//! `ignore-previous-rules` only cancels earlier matches. Each sub-compiler
+//! tags its rules with a `Tier`; the final list is a stable sort by tier.
+//! The tier order is the precedence policy proven in scripts/proofs.
+//! Because `ignore-previous-rules` cancels every earlier match, page-level
+//! cosmetic exceptions sit right after the hides they cancel and before any
+//! network rule.
+
+pub(crate) mod cosmetic;
+mod network;
+pub mod regex;
+
+use crate::ast::{CosmeticRule, NetworkRule, ParsedLine, Rule, ScriptletRule, SourceRef};
+use crate::webkit::{SafariVersion, WebkitJson, WkRule};
+use serde::{Deserialize, Serialize};
+use std::collections::BTreeMap;
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
+pub enum Tier {
+    GenericHide = 0,
+    /// `$generichide`: cancels generic hides only.
+    GenericHideException = 1,
+    SpecificHide = 2,
+    /// `$elemhide` (and `$specifichide`, widened): cancels all hides.
+    ElemHideException = 3,
+    /// Blocks with no page domains, which `$genericblock` lifts.
+    GenericBlock = 4,
+    /// `$genericblock`: cancels the generic blocks before it on the page's
+    /// subresources, leaving its hides and the blocks after it in place.
+    GenericBlockException = 5,
+    Block = 6,
+    Exception = 7,
+    /// `$important` with `$denyallow`: the block, then its exclusions.
+    ImportantDenyallowBlock = 8,
+    /// The exclusions of an important `$denyallow` block. Each cancels only
+    /// the blocks before it, so they sit ahead of every other important block.
+    ImportantDenyallowException = 9,
+    ImportantBlock = 10,
+    /// AdGuard `$important` exceptions override important blocks.
+    ImportantException = 11,
+    /// `@@...$document`: cancels everything on the page.
+    DocumentException = 12,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct CompileOptions {
+    pub safari: SafariVersion,
+}
+
+pub struct ListInput<'a> {
+    pub text: &'a str,
+    /// Trusted lists may use `trusted-*` scriptlets (uBO: its own lists and
+    /// the user's rules).
+    pub trusted: bool,
+}
+
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+pub struct Stats {
+    pub lines: u64,
+    pub rules: u64,
+    pub native_rules: u64,
+    pub runtime_rules: u64,
+    /// Reason -> count, for rules neither native nor runtime.
+    pub dropped: BTreeMap<String, u64>,
+}
+
+impl Stats {
+    pub fn drop(&mut self, reason: &str) {
+        *self.dropped.entry(reason.to_string()).or_default() += 1;
     }
 }
 
+#[derive(Debug, Clone, Default)]
+pub struct CompileOutput {
+    pub webkit: WebkitJson,
+    /// Normalized uBO lines for `runtime::Engine`, one per rule.
+    pub runtime: Vec<String>,
+    pub stats: Stats,
+}
+
+pub(crate) struct Tiered {
+    pub tier: Tier,
+    pub rule: WkRule,
+}
+
+/// Safari JSON of the network rules, written as they are compiled. Each unit
+/// of work writes its own arena and `entries` locates every rule in one of
+/// them. Nothing is held as a `WkRule`, which costs several allocations per
+/// rule.
+#[derive(Debug, Default)]
+pub(crate) struct Emitted {
+    arenas: Vec<Vec<u8>>,
+    entries: Vec<Entry>,
+}
+
+#[derive(Debug)]
+pub(super) struct Entry {
+    tier: Tier,
+    arena: u32,
+    /// `arenas[arena][start..end]` is the rule, unless `domain` is set.
+    start: usize,
+    end: usize,
+    /// An `if-domain` rule: its domain list can grow when rules merge.
+    domain: Option<Box<DomainSpan>>,
+}
+
+#[derive(Debug)]
+pub(super) struct DomainSpan {
+    /// `arena[start..head]` ends before the `if-domain` key and
+    /// `arena[tail..end]` starts after its array.
+    head: usize,
+    tail: usize,
+    domains: Vec<String>,
+}
+
+pub(crate) use network::Context as NetworkContext;
+
+/// Counts the bytes written to it.
+struct Count(usize);
+
+impl std::io::Write for Count {
+    fn write(&mut self, buf: &[u8]) -> std::io::Result<usize> {
+        self.0 += buf.len();
+        Ok(buf.len())
+    }
+
+    fn flush(&mut self) -> std::io::Result<()> {
+        Ok(())
+    }
+}
+
+/// Tiers in output order.
+const TIERS: [Tier; 13] = [
+    Tier::GenericHide,
+    Tier::GenericHideException,
+    Tier::SpecificHide,
+    Tier::ElemHideException,
+    Tier::GenericBlock,
+    Tier::GenericBlockException,
+    Tier::Block,
+    Tier::Exception,
+    Tier::ImportantDenyallowBlock,
+    Tier::ImportantDenyallowException,
+    Tier::ImportantBlock,
+    Tier::ImportantException,
+    Tier::DocumentException,
+];
+
+impl Emitted {
+    /// Room for `rules` network rules of roughly 500 bytes of JSON each, in
+    /// one arena. The reserved bytes are not touched, so they cost nothing.
+    fn with_capacity(rules: usize) -> Self {
+        Self {
+            arenas: vec![Vec::with_capacity(rules * 512)],
+            entries: Vec::with_capacity(rules * 2),
+        }
+    }
+
+    /// The arena rules are written to now.
+    pub(super) fn arena(&mut self) -> usize {
+        if self.arenas.is_empty() {
+            self.arenas.push(Vec::new());
+        }
+        self.arenas.len() - 1
+    }
+
+    /// `parts` in order, as one output. Arenas move; entries are re-pointed.
+    fn absorb(parts: Vec<Emitted>) -> Emitted {
+        let rules: usize = parts.iter().map(|p| p.entries.len()).sum();
+        let mut out = Emitted {
+            arenas: Vec::with_capacity(parts.len()),
+            entries: Vec::with_capacity(rules),
+        };
+        for part in parts {
+            let base = out.arenas.len() as u32;
+            out.arenas.extend(part.arenas);
+            out.entries.extend(part.entries.into_iter().map(|mut e| {
+                e.arena += base;
+                e
+            }));
+        }
+        out
+    }
+
+    fn render(&self, entry: &Entry, out: &mut Vec<u8>) {
+        let arena = &self.arenas[entry.arena as usize];
+        match &entry.domain {
+            None => out.extend_from_slice(&arena[entry.start..entry.end]),
+            Some(span) => {
+                out.extend_from_slice(&arena[entry.start..span.head]);
+                out.extend_from_slice(b",\"if-domain\":");
+                serde_json::to_writer(&mut *out, &span.domains).expect("domains serialize");
+                out.extend_from_slice(&arena[span.tail..entry.end]);
+            }
+        }
+    }
+
+    /// The bytes `render` writes for `entry`.
+    fn rendered_len(&self, entry: &Entry) -> usize {
+        match &entry.domain {
+            None => entry.end - entry.start,
+            Some(span) => {
+                let mut domains = Count(0);
+                serde_json::to_writer(&mut domains, &span.domains).expect("domains serialize");
+                (span.head - entry.start)
+                    + b",\"if-domain\":".len()
+                    + domains.0
+                    + (entry.end - span.tail)
+            }
+        }
+    }
+
+    pub(crate) fn push_rule(&mut self, tier: Tier, rule: &WkRule) {
+        let arena = self.arena();
+        let bytes = &mut self.arenas[arena];
+        let start = bytes.len();
+        serde_json::to_writer(&mut *bytes, rule).expect("WkRule serializes");
+        let end = bytes.len();
+        self.entries.push(Entry {
+            tier,
+            arena: arena as u32,
+            start,
+            end,
+            domain: None,
+        });
+    }
+
+    /// Everything emitted, in tier order; within a tier, emission order.
+    fn into_webkit(self) -> WebkitJson {
+        // Sized up front so the output is never copied to grow.
+        let size = self
+            .entries
+            .iter()
+            .map(|e| self.rendered_len(e) + 1)
+            .sum::<usize>()
+            + 2;
+        let mut json = Vec::with_capacity(size);
+        json.push(b'[');
+        let mut first = true;
+        for tier in TIERS {
+            for entry in self.entries.iter().filter(|e| e.tier == tier) {
+                if !first {
+                    json.push(b',');
+                }
+                first = false;
+                self.render(entry, &mut json);
+            }
+        }
+        json.push(b']');
+        WebkitJson::from_bytes(json, self.entries.len())
+    }
+
+    #[cfg(test)]
+    pub(crate) fn tiered(&self) -> Vec<Tiered> {
+        self.entries
+            .iter()
+            .map(|entry| {
+                let mut json = Vec::new();
+                self.render(entry, &mut json);
+                Tiered {
+                    tier: entry.tier,
+                    rule: serde_json::from_slice(&json).expect("rule parses back"),
+                }
+            })
+            .collect()
+    }
+}
+
+/// `body(i)` for every `i < count`, on all cores, results in order. Indices
+/// are handed out one at a time, so uneven items still balance.
+pub(crate) fn parallel_indices<R: Send>(count: usize, body: impl Fn(usize) -> R + Sync) -> Vec<R> {
+    use std::sync::atomic::{AtomicUsize, Ordering};
+    let threads = std::thread::available_parallelism()
+        .map_or(4, |n| n.get())
+        .min(count.max(1));
+    let next = AtomicUsize::new(0);
+    let done: Vec<(usize, R)> = std::thread::scope(|scope| {
+        let handles: Vec<_> = (0..threads)
+            .map(|_| {
+                let (body, next) = (&body, &next);
+                scope.spawn(move || {
+                    let mut done = Vec::new();
+                    loop {
+                        let i = next.fetch_add(1, Ordering::Relaxed);
+                        if i >= count {
+                            break done;
+                        }
+                        done.push((i, body(i)));
+                    }
+                })
+            })
+            .collect();
+        handles
+            .into_iter()
+            .flat_map(|h| h.join().expect("worker thread"))
+            .collect()
+    });
+    let mut slots: Vec<Option<R>> = (0..count).map(|_| None).collect();
+    for (i, r) in done {
+        slots[i] = Some(r);
+    }
+    slots.into_iter().map(|r| r.expect("every index ran")).collect()
+}
+
+/// The cosmetic and scriptlet rules of one blocker, in compile order.
+#[derive(Debug, Clone, Defa
 ```
 
-### Core Architecture Module: `wBlockCoreService/BackgroundUpdateSchedule.swift`
+### Core Architecture Module: `Packages/wblock-engine/crates/wbe/src/compile/network.rs`
 ```
-import Foundation
+//! uBO network rules to WebKit rules.
+//!
+//! Blocks are dropped when a condition cannot be expressed, so they never
+//! block more than uBO does. Exceptions drop the condition instead, which
+//! makes them wider and can only under-block. Each rule's tier follows
+//! `compile/mod.rs`; exceptions use ignore-previous-rules.
 
-public enum BackgroundUpdateSchedule {
-    public static func earliestBeginDate(
-        now: Date,
-        intervalHours: Double,
-        nextEligibleTime: Int64,
-        lastCheckTime: Int64
-    ) -> Date {
-        let due: Date
-        if nextEligibleTime > 0 {
-            due = Date(timeIntervalSince1970: TimeInterval(nextEligibleTime))
-        } else if lastCheckTime > 0 {
-            let hours = intervalHours.isFinite && intervalHours > 0 ? intervalHours : 6
-            due = Date(timeIntervalSince1970: TimeInterval(lastCheckTime) + hours * 3600)
+use super::regex::{domain_top_url, url_filter};
+use super::{DomainSpan, Emitted, Entry, Stats, Tier};
+use crate::ast::{
+    DomainList, DomainMatcher, ExceptionScope, NetworkAction, NetworkRule, Party, Pattern,
+    PatternKind, ResourceTypes, SourceRef,
+};
+use crate::webkit::{SafariVersion, WkLoadContext, WkLoadType, WkResourceType};
+use rustc_hash::{FxHashMap, FxHashSet, FxHasher};
+use serde::Serialize;
+use std::collections::hash_map::Entry as MapEntry;
+use std::hash::Hasher;
+
+/// uBO's default for a rule without `$type`: every type except the main
+/// document, popups and inline resources (static-net-filtering.js,
+/// `typeNameToTypeValue`).
+const DEFAULT_TYPES: ResourceTypes = ResourceTypes::all().difference(
+    ResourceTypes::DOC
+        .union(ResourceTypes::POPUP)
+        .union(ResourceTypes::POPUNDER)
+        .union(ResourceTypes::INLINE_SCRIPT)
+        .union(ResourceTypes::INLINE_FONT),
+);
+
+/// What a blocker's network rules need from the whole set before any of them
+/// compiles: the hosts of untyped blocks (`StrictHosts`) and the `$badfilter`
+/// rules that cancel identical filters.
+#[derive(Default)]
+pub(crate) struct Context {
+    strict: StrictHosts,
+    bad: Vec<NetworkRule>,
+    bad_bodies: FxHashSet<String>,
+}
+
+impl Context {
+    pub(crate) fn add(&mut self, rule: &NetworkRule) {
+        self.strict.add(rule);
+        if rule.badfilter {
+            let bad = unlabeled(rule);
+            self.bad_bodies.insert(bad.pattern.body.clone());
+            self.bad.push(bad);
+        }
+    }
+
+    pub(crate) fn merge(&mut self, other: Context) {
+        self.strict.hosts.extend(other.strict.hosts);
+        self.strict.parents.extend(other.strict.parents);
+        self.bad.extend(other.bad);
+        self.bad_bodies.extend(other.bad_bodies);
+    }
+}
+
+/// The host of a `$genericblock` exception Safari can represent: one
+/// ignore-previous-rules on that host's pages, between the generic and the
+/// specific blocks.
+fn genericblock_host(r: &NetworkRule) -> Option<String> {
+    (r.exception && r.scope.contains(ExceptionScope::GENERICBLOCK) && r.types.is_empty()
+        && r.negated_types.is_empty() && r.from.is_empty() && r.to.is_empty()
+        && r.party == Party::Any && r.method.include.is_empty() && r.method.exclude.is_empty()
+        && r.runtime_only_options.is_empty() && matches!(r.action, NetworkAction::Block))
+        .then(|| host_only(&r.pattern)).flatten()
+}
+
+/// Compiles one network rule of a blocker whose `ctx` covers every rule.
+/// A dropped rule records its reason in `stats`.
+pub(crate) fn emit_rule(
+    ctx: &Context,
+    safari: SafariVersion,
+    rule: &NetworkRule,
+    out: &mut Emitted,
+    stats: &mut Stats,
+) {
+    if rule.badfilter {
+        return;
+    }
+    if ctx.bad_bodies.contains(rule.pattern.body.as_str())
+        && ctx.bad.contains(&unlabeled(rule))
+    {
+        return;
+    }
+    if let Err(reason) = compile_rule(rule, safari, ctx, out, None) {
+        stats.drop(&reason);
+    }
+}
+
+/// A rule with its provenance and `$badfilter` flag cleared, for comparing
+/// filters. uBO cancels a filter only when its compiled form is identical
+/// (static-net-filtering.js, `freeze`); there is no domain-subset matching.
+fn unlabeled(r: &NetworkRule) -> NetworkRule {
+    let mut r = r.clone();
+    r.source = SourceRef::default();
+    r.raw.clear();
+    r.badfilter = false;
+    r
+}
+
+/// `tier` overrides the tier the rule's own flags pick.
+fn compile_rule(
+    r: &NetworkRule,
+    v: SafariVersion,
+    ctx: &Context,
+    out: &mut Emitted,
+    tier: Option<Tier>,
+) -> Result<(), String> {
+    let strict = &ctx.strict;
+    match &r.action {
+        NetworkAction::Block
+        | NetworkAction::Redirect {
+            rule_only: false, ..
+        } => {}
+        NetworkAction::Redirect {
+            rule_only: true, ..
+        } => {
+            return Err("dnr:redirect-rule".into());
+        }
+        NetworkAction::RemoveParam(_) => return Err("dnr:removeparam".into()),
+        NetworkAction::Csp(_) => return Err("dnr:csp".into()),
+        NetworkAction::Permissions(_) => return Err("dnr:permissions".into()),
+        NetworkAction::Other { option, .. } => return Err(format!("dnr:{option}")),
+    }
+    if !r.scope.is_empty() {
+        return if r.exception {
+            compile_scope(r, v, out)
         } else {
-            due = now
-        }
-        // Backoff prevents immediate resubmission loops for an overdue task.
-        return max(due, now.addingTimeInterval(60))
+            Err("dnr:scope-on-block".into())
+        };
     }
-}
-
-```
-
-### Core Architecture Module: `wBlockCoreService/BlockedCountDNRRules.swift`
-```
-import Foundation
-
-/// Counting rules for the toolbar's blocked-request badge.
-///
-/// Safari only counts blocks made by an extension's own DNR rules, and never
-/// reports what the content blockers block. Safari evaluates every rule list
-/// for every load, so a DNR copy of a filter-list block still gets counted
-/// when a content blocker blocked the same request.
-///
-/// Only host-anchored blocks without site conditions are copied (`||host^`,
-/// `||host/path`, optionally limited to third-party requests or resource
-/// types), so the copies stay a subset of what the content blockers already
-/// block. Exceptions become `allow` rules at the same priority, which wins
-/// over a block. Every other wBlock DNR rule sits at priority 2 or higher, so
-/// these allows only ever cancel counting rules.
-extension RemoveParamDNRRuleGenerator {
-    public static let blockedCountRulesFilename = "blocked_count_dnr_rules.json"
-    public static let blockedCountRuleIDBase = 1_660_000
-    /// Global Privacy Control's rule starts at 1,700,000.
-    public static let blockedCountRuleIDLimit = 1_700_000
-    static let blockedCountMaxRules = blockedCountRuleIDLimit - blockedCountRuleIDBase
-    static let blockedCountDomainsPerRule = 1_000
-    /// Removeparam, redirects, GPC and the CSP rule must stay above this.
-    public static let blockedCountPriority = 1
-    /// Bump when `extractBlockedCountLines` changes, so cached lists rescan.
-    static let blockedCountExtractionFormat = 1
-
-    /// Exception options that lift every block on the page, not just one host.
-    private static let pageWideExceptionOptions: Set<String> = ["document", "doc", "urlblock", "genericblock", "all"]
-    /// Exceptions that lift cosmetic, scripting or other non-blocking rules.
-    private static let nonBlockingExceptionOptions: Set<String> = [
-        "elemhide", "ehide", "generichide", "ghide", "specifichide", "shide",
-        "jsinject", "content", "extension", "stealth", "popup", "csp",
-        "redirect", "redirect-rule", "removeparam", "removeheader", "cookie",
-        "replace", "header", "permissions", "jsonprune", "hls",
-        "referrerpolicy", "urltransform", "webrtc"
-    ]
-
-    // MARK: - Extraction
-
-    /// Compact per-list summary cached beside the removeparam lines, one
-    /// tab-separated entry per line:
-    /// `H host thirdParty` whole-host block, `P host urlFilter types thirdParty`
-    /// path or typed block, `U pattern` badfilter, `S site` page-wide
-    /// exception, `E host urlFilter sites` exception (host, filter and sites
-    /// may each be empty), `X host` exception on a host it cannot express.
-    static func extractBlockedCountLines(from contents: String) -> String {
-        var result = ""
-        RuleText.forEachLine(contents) { rawLine in
-            let line = RuleText.trimmed(rawLine)
-            guard line.hasPrefix("||") || line.hasPrefix("@@") else { return }
-            for entry in blockedCountEntries(for: String(line)) {
-                result.append(entry.joined(separator: "\t"))
-                result.append("\n")
+    let exception = r.exception;
+    // `@@...$cname` only exempts a request from CNAME uncloaking; it never
+    // allows one (static-net-filtering.js), so it has nothing to lift here.
+    if exception && r.runtime_only_options.iter().any(|o| o == "cname") {
+        return Err("dnr:cname-exception".into());
+    }
+    if r.runtime_only_options.iter().any(|o| o.starts_with("responseheader=")) {
+        return Err("response header matching: Safari DNR does not support responseHeaders conditions".into());
+    }
+    if !exception && !r.runtime_only_options.is_empty() {
+        return Err("dnr:runtime-option".into());
+    }
+    if !exception && (!r.method.include.is_empty() || !r.method.exclude.is_empty()) {
+        return Err("dnr:method".into());
+    }
+    if !exception && !r.denyallow.is_empty() {
+        return compile_denyallow(r, v, ctx, out);
+    }
+    let party = party(r.party, exception)?;
+    let urls = urls(r, exception)?;
+    let conds = domain_conds(&r.from, v, exception)?;
+    let types = effective_types(r);
+    // uBO also strict-blocks top-level navigation for an untyped filter whose
+    // match ends at the hostname (traffic.js, `shouldStrictBlock`), so such a
+    // block is one trigger over every type, documents included. An exception
+    // takes that form only where it must lift such a block: on a page load,
+    // ignore-previous-rules also cancels the page's cosmetic hides.
+    let untyped = r.types.is_empty()
+        && r.negated_types.is_empty()
+        && host_only(&r.pattern).is_some_and(|h| !exception || strict.related(&h));
+    let type_triggers = if untyped {
+        vec![(Vec::new(), None)]
+    } else {
+        type_triggers(types, v)
+    };
+    if type_triggers.is_empty() {
+        // An exception without a type WebKit can match cancels nothing.
+        return if exception {
+            Ok(())
+        } else {
+            Err(type_drop_reason(types, v))
+        };
+    }
+    let (ignore, default) = if exception {
+        (true, if r.important { Tier::ImportantException } else { Tier::Exception })
+    } else if r.important {
+        (false, Tier::ImportantBlock)
+    } else if r.from.include.is_empty() {
+        (false, Tier::GenericBlock)
+    } else {
+        (false, Tier::Block)
+    };
+    let tier = tier.unwrap_or(default);
+    for url in &urls {
+        for (types, context) in &type_triggers {
+            for cond in &conds {
+                emit(
+                    out,
+                    tier,
+                    &Trigger {
+                        url,
+                        case_sensitive: r.match_case,
+                        types: (!types.is_empty()).then_some(types.as_slice()),
+                        load_type: party,
+                        load_context: *context,
+                        cond: cond.as_ref(),
+                    },
+                    ignore,
+                );
             }
         }
-        return result
     }
+    Ok(())
+}
 
-    private static func blockedCountEntries(for line: String) -> [[String]] {
-        let isException = line.hasPrefix("@@")
-        let body = isException ? String(line.dropFirst(2)) : line
-        // A regex may contain `$`; its options follow the closing slash.
-        let isRegex = body.hasPrefix("/") && (body.range(of: "/$", options: .backwards) != nil
-            || body.hasSuffix("/") && body.count > 1)
-        let optionsStart = isRegex
-            ? body.range(of: "/$", options: .backwards).map { body.index(before: $0.upperBound) }
-            : body.lastIndex(of: "$")
-        let pattern = optionsStart.map { String(body[..<$0]) } ?? body
-        let options = optionsStart.map {
-            splitOptions(String(body[body.index(after: $0)...])).map(optionNameAndValue)
-        } ?? []
-        let names = Set(options.map(\.name))
-
-        guard isException else {
-            if names.contains("badfilter") { return [["U", pattern]] }
-            return blockEntry(pattern: pattern, names: names).map { [$0] } ?? []
-        }
-
-        if names.contains("badfilter") { return [] }
-        let sites = options.first { $0.name == "domain" }.flatMap { $0.value }
-            .map { $0.split(separator: "|").map { $0.trimmingCharacters(in: .whitespaces).lowercased() } }
-        let includedSites = sites?.filter { !$0.hasPrefix("~") && isCountableHost($0) } ?? []
-        // DNR cannot express negated or `name.*` sites. Widening such an
-        // exception to everywhere only means fewer requests get counted.
-        let scopedSites = sites != nil && includedSites.count == sites?.count ? includedSites : []
-
-        if !names.isDisjoint(with: pageWideExceptionOptions) {
-            if !scopedSites.isEmpty { return scopedSites.map { ["S", $0] } }
-            return anchoredHost(pattern).flatMap { isCountableHost($0) ? [["S", $0]] : nil } ?? []
-        }
-        if !names.isDisjoint(with: nonBlockingExceptionOptions) { return [] }
-
-        let host = isRegex ? nil : anchoredHost(pattern).flatMap { isCountableHost($0) ? $0 : nil }
-        let urlFilter = !isRegex && isCountableURLFilter(pattern) ? pattern : ""
-        // Widened to everywhere, a catch-all like `*` or `|http` would
-        // cancel every count, so keep it to the sites DNR can express.
-        if host == nil, isCatchAll(pattern), scopedSites.isEmpty {
-            return includedSites.map { ["S", $0] }
-        }
-        if urlFilter.isEmpty {
-            // A regex or odd pattern could lift any block, so the only safe
-            // reading is that it lifts every block on its sites.
-            if !scopedSites.isEmpty, host == nil { return scopedSites.map { ["S", $0] } }
-            guard let host else { return [] }
-            if scopedSites.isEmpty { return [["X", host]] }
-        }
-        return [["E", host ?? "", urlFilter, scopedSites.joined(separator: "|")]]
+/// uBO blocks what the rule matches except requests to the `$denyallow`
+/// hosts. For a match-all rule scoped to pages that is the block plus one
+/// exception per allowed host under the same options. The exceptions also
+/// lift other lists' blocks of those hosts on those pages (under-blocking);
+/// with a pattern they would lift more, so only match-all rules expand.
+/// An important block takes its exclusions in the tiers just before the
+/// important blocks: an exception there lifts this block and no other
+/// important block, and it cannot follow the block without lifting them.
+fn compile_denyallow(
+    r: &NetworkRule,
+    v: SafariVersion,
+    ctx: &Context,
+    out: &mut Emitted,
+) -> Result<(), String> {
+    if !r.pattern.is_match_all() || r.from.include.is_empty() {
+        return Err("dnr:denyallow".into());
     }
+    let (block_tier, allow_tier) = if r.important {
+        (Tier::ImportantDenyallowBlock, Tier::ImportantDenyallowException)
+    } else {
+        (Tier::Block, Tier::Exception)
+    };
+    let block = NetworkRule {
+        denyallow: Vec::new(),
+        ..r.clone()
+    };
+    let arena = out.arena();
+    let mark = (out.arenas[arena].len(), out.entries.len());
+    let result = compile_rule(&block, v, ctx, out, Some(block_tier)).and_then(|()| {
+        r.denyallow.iter().try_for_each(|host| {
+            let allow = NetworkRule {
+                exception: true,
+                important: false,
+                pattern: Pattern {
+                    kind: PatternKind::Hostname,
+                    body: format!("{host}^"),
+                    right_anchored: false,
+                },
+                ..block.clone()
+            };
+            compile_rule(&allow, v, ctx, out, Some(allow_tier))
+        })
+    });
+    if result.is_err() {
+        // The block was emitted before a failing exception: drop it too.
+        out.arenas[arena].truncate(mark.0);
+        out.entries.truncate(mark.1);
+    }
+    result
+}
 
-    private static func blockEntry(pattern: String, names: Set<String>) -> [String]? {
-        guard pattern.hasPrefix("||"), let host = anchoredHost(pattern), isCountableHost(host) else { return nil }
-        var thirdParty = false
-        var types: [String] = []
-        for name in names {
-            switch name {
-            case "third-party", "3p": thirdParty = true
-            case "important": break
-            default:
-                guard let mapped = resourceTypeMap[name], !mapped.contains("main_frame") else { return nil }
-                types.append(contentsOf: mapped)
+/// `@@...$document`, `$generichide`, `$elemhide`, `$specifichide`: one
+/// ignore-previous-rules over every type, conditioned on the page URL.
+/// `$specifichide` is widened to `$elemhide`, which also cancels generic
+/// hides.
+fn compile_scope(r: &NetworkRule, v: SafariVersion, out: &mut Emitted) -> Result<(), String> {
+    let generic = r.scope.contains(ExceptionScope::GENERICBLOCK);
+    if let Some(host) = genericbloc
+```
+
+### Core Architecture Module: `Packages/wblock-engine/crates/wbe/src/compile/regex.rs`
+```
+//! uBO URL patterns and regexes to WebKit's url-filter regex subset.
+//!
+//! Plain patterns follow AdGuard's SimpleRegex.swift (`||`, `|`, `*`, `^`).
+//! The separator is uBO's (`^` matches anything but a letter, digit, `_`, `-`,
+//! `.` or `%`; uBO static-filtering-parser.js). Regex sources are translated
+//! into the subset WebKit accepts (SafariRegex.swift and the WebKit compiler:
+//! no alternation, `\d`/`\w`/`\b`, `{n}`, lookaround, backreferences). Anything
+//! else returns `None`, and the caller drops the rule or widens the exception.
+
+use crate::ast::{DomainMatcher, Pattern, PatternKind};
+
+/// uBO separator class.
+const SEPARATOR: &str = "[^a-zA-Z0-9_.%-]";
+/// Hostname anchor (`||`), the expression Apple recommends.
+const HOST_START: &str = "^[^:]+://+([^:/]+\\.)?";
+/// What follows a host in a top-level URL. WHATWG URLs always have a path, so
+/// a host is always followed by one of these.
+const HOST_END: &str = "[/:?#]";
+/// Largest repetition count expanded inline.
+const MAX_REPEAT: u32 = 32;
+/// Largest repetition of `.` expanded inline. Each extra any-character step
+/// after a pattern grows WebKit's DFA: one `der-windows-papst.de/.{32}\?ver`
+/// rule took a cookie and annoyance blocker from 335 MB to 1150 MB of compile
+/// memory on macOS, and timed out Safari on an iPad 6; 12 adds about 6 MB.
+const MAX_ANY_REPEAT: u32 = 12;
+
+/// The url-filter for a uBO URL pattern, matched case-insensitively.
+pub fn url_filter(p: &Pattern) -> Option<String> {
+    if p.is_match_all() {
+        return Some(".*".into());
+    }
+    if p.kind == PatternKind::Regex {
+        // A regex that reduces to nothing (`/x{0}/`) matches every URL;
+        // WebKit rejects an empty url-filter, so say that as `.*`.
+        return translate(&p.body)
+            .map(|r| if r.is_empty() { ".*".into() } else { r })
+            .filter(|r| webkit_accepts(r));
+    }
+    let mut out = String::new();
+    let mut body = p.body.as_str();
+    match p.kind {
+        PatternKind::Hostname => {
+            out.push_str(HOST_START);
+            // A `^` right after a plain host ends the host, which in a URL is
+            // always followed by one of HOST_END. The narrower class makes the
+            // ~60k `||host^` blocks of EasyList and AdGuard Base compile 12%
+            // faster in WebKit.
+            let host = body.split_once('^').filter(|(h, _)| {
+                !h.is_empty() && h.bytes().all(|b| b.is_ascii_alphanumeric() || b == b'-' || b == b'.')
+            });
+            if let Some((host, rest)) = host {
+                literal(host, &mut out)?;
+                out.push_str(HOST_END);
+                body = rest;
             }
         }
-        let flag = thirdParty ? "1" : "0"
-        if pattern == "||\(host)^", types.isEmpty { return ["H", host, flag] }
-        guard isCountableURLFilter(pattern) else { return nil }
-        return ["P", host, pattern, Set(types).sorted().joined(separator: ","), flag]
+        PatternKind::Left => out.push('^'),
+        _ => {}
+    }
+    literal(body, &mut out)?;
+    if p.right_anchored {
+        out.push('$');
+    }
+    webkit_accepts(&out).then_some(out)
+}
+
+/// Longest url-filter emitted. Counted repeats expand, so this also bounds
+/// the work a single source rule can cause in WebKit's compiler.
+const MAX_FILTER_LEN: usize = 4096;
+
+/// Final check on an emitted url-filter, so one bad rule never reaches
+/// Safari (a rule WebKit rejects fails its whole content blocker): non-empty,
+/// ASCII, bounded, balanced groups and classes, ascending class ranges, and
+/// quantifiers only after something they can repeat.
+pub fn webkit_accepts(re: &str) -> bool {
+    let b = re.as_bytes();
+    if b.is_empty() || b.len() > MAX_FILTER_LEN || !re.is_ascii() {
+        return false;
+    }
+    let (mut depth, mut i, mut can_repeat) = (0usize, 0usize, false);
+    while i < b.len() {
+        match b[i] {
+            b'\\' => {
+                if i + 1 >= b.len() {
+                    return false;
+                }
+                i += 1;
+                can_repeat = true;
+            }
+            b'(' => {
+                depth += 1;
+                can_repeat = false;
+            }
+            b')' => {
+                if depth == 0 {
+                    return false;
+                }
+                depth -= 1;
+                can_repeat = true;
+            }
+            b'[' => {
+                let Some(end) = class_end(b, i) else {
+                    return false;
+                };
+                i = end;
+                can_repeat = true;
+            }
+            b']' => return false,
+            b'*' | b'+' | b'?' => {
+                if !can_repeat {
+                    return false;
+                }
+                can_repeat = false;
+            }
+            b'^' if i != 0 => return false,
+            b'$' if i != b.len() - 1 => return false,
+            b'|' | b'{' | b'}' => return false,
+            _ => can_repeat = true,
+        }
+        i += 1;
+    }
+    depth == 0
+}
+
+/// Index of the `]` closing the class that opens at `start`, or `None` when
+/// it is unterminated, empty, or has a descending range.
+fn class_end(b: &[u8], start: usize) -> Option<usize> {
+    let mut i = start + 1;
+    if b.get(i) == Some(&b'^') {
+        i += 1;
+    }
+    let first = i;
+    let mut prev: Option<u8> = None;
+    while i < b.len() {
+        let c = match b[i] {
+            b']' if i > first => return Some(i),
+            b'\\' => {
+                i += 1;
+                *b.get(i)?
+            }
+            c => c,
+        };
+        if c == b'-' && prev.is_some() && b.get(i + 1).is_some_and(|&n| n != b']') {
+            let lo = prev?;
+            i += 1;
+            let hi = match b[i] {
+                b'\\' => {
+                    i += 1;
+                    *b.get(i)?
+                }
+                h => h,
+            };
+            if hi < lo {
+                return None;
+            }
+            prev = None;
+        } else {
+            prev = Some(c);
+        }
+        i += 1;
+    }
+    None
+}
+
+/// An `if-top-url` regex for a domain option (uBO `$domain=`/`$to=` item).
+/// Hostnames match themselves and subdomains. Entities (`google.*`) accept a
+/// one-label suffix or `co.`/`com.` plus one label, approximating uBO's public
+/// suffix list: `google.de` and `google.co.uk` match, `google.evil.com` does
+/// not, and rarer two-label suffixes (`google.ne.jp`) are missed. Regex domains match the host
+/// with the regex, as uBO tests them against the hostname.
+pub fn domain_top_url(m: &DomainMatcher) -> Option<String> {
+    top_url(m).filter(|u| webkit_accepts(u))
+}
+
+fn top_url(m: &DomainMatcher) -> Option<String> {
+    match m {
+        DomainMatcher::Hostname(h) => {
+            let mut out = HOST_START.to_string();
+            literal(h, &mut out)?;
+            out.push_str(HOST_END);
+            Some(out)
+        }
+        DomainMatcher::Entity(e) => {
+            let mut out = HOST_START.to_string();
+            literal(e, &mut out)?;
+            // `name.<tld>` or `name.co.<tld>`/`name.com.<tld>`, not `name.evil.com`.
+            out.push_str("\\.(com?\\.)?[^:/.]+");
+            out.push_str(HOST_END);
+            Some(out)
+        }
+        DomainMatcher::Regex(src) => {
+            let (anchored, body) = match src.strip_prefix('^') {
+                Some(rest) => (true, rest),
+                None => (false, src.as_str()),
+            };
+            let (body, at_end) = match body.strip_suffix('$') {
+                Some(rest) if !rest.ends_with('\\') => (rest, true),
+                _ => (body, false),
+            };
+            let inner = translate(body)?;
+            let mut out = String::from("^[^:]+://");
+            if !anchored {
+                out.push_str("[^/:?#]*");
+            }
+            out.push_str(&inner);
+            if !at_end {
+                out.push_str("[^/:?#]*");
+            }
+            out.push_str(HOST_END);
+            Some(out)
+        }
+    }
+}
+
+/// Literal pattern text with `*` and `^` translated. Escapes regex
+/// metacharacters. Returns `None` for non-ASCII input.
+fn literal(body: &str, out: &mut String) -> Option<()> {
+    for c in body.chars() {
+        match c {
+            '*' => out.push_str(".*"),
+            '^' => out.push_str(SEPARATOR),
+            c if c.is_ascii() => {
+                if ".+?()[]{}|$\\".contains(c) {
+                    out.push('\\');
+                }
+                out.push(c);
+            }
+            _ => return None,
+        }
+    }
+    Some(())
+}
+
+/// Translates a uBO regex body into the WebKit subset. `^` is accepted only
+/// as the first character and `$` only as the last.
+fn translate(src: &str) -> Option<String> {
+    if src.is_empty() || !src.is_ascii() {
+        return None;
+    }
+    let mut p = Translator {
+        src: src.as_bytes(),
+        pos: 0,
+    };
+    let out = p.seq(0)?;
+    (p.pos == src.len()).then_some(out)
+}
+
+struct Translator<'a> {
+    src: &'a [u8],
+    pos: usize,
+}
+
+impl Translator<'_> {
+    fn peek(&self) -> Option<u8> {
+        self.src.get(self.pos).copied()
     }
 
-    private static func isCountableHost(_ host: String) -> Bool {
-        host.contains(".") && host.allSatisfy(\.isASCII) && isSupportedDomain(host)
-            && !host.hasPrefix(".") && !host.hasSuffix(".") && !host.hasPrefix("-")
+    fn next(&mut self) -> Option<u8> {
+        let c = self.peek()?;
+        self.pos += 1;
+        Some(c)
     }
 
-    private static func isCatchAll(_ pattern: String) -> Bool {
-        var rest = pattern.lowercased()
-        for token in ["https", "http", "wss", "ws"] { rest = rest.replacingOccurrences(of: token, with: "") }
-        return rest.allSatisfy { "*|^:/.".contains($0) }
-    }
-
-    /// Plain ASCII in filter syntax, which DNR's `urlFilter` shares.
-    private static func isCountableURLFilter(_ pattern: String) -> Bool {
-        !pattern.isEmpty && pattern.count <= 512 && !pattern.hasPrefix("||*")
-            && pattern.unicodeScalars.allSatisfy { $0.value > 0x20 && $0.value < 0x7F }
-    }
-
-    // MARK: - Generation
-
-    private struct PathBlock: Hashable {
-        var host: String
-        var urlFilter: String
-        var types: [String]
-        var thirdParty: Bool
-    }
-
-    private struct Exception: Hashable {
-        var host: String
-        var urlFilter: String
-        var sites: [String]
-    }
-
-    public static func generateBlockedCountRules(
-        from summary: String,
-        disabledSites: [String] = []
-    ) -> [DeclarativeRule] {
-        var hostBlocks: [String: Bool] = [:]  // host -> third-party only
-        var pathBlocks: [PathBlock] = []
-        var listCount: [String: Int] = [:]  // how many entries name a host
-        var badfilters = Set<String>()
-        var exceptedHosts = Set<String>()
-        var exceptions = Set<Exception>()
-        var pageWideSites = Set(disabledSites
-            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines).lowercased() }
-            .filter(isCountableHost))
-
-        RuleText.forEachLine(summary) { line in
-            let parts = line.split(separator: "\t", omittingEmptySubsequences: false).map(String.init)
-            guard parts.count >= 2 else { return }
-            switch (parts[0], parts.count) {
-            case ("H", 3):
-                hostBlocks[parts[1]] = (hostBlocks[parts[1]] ?? true) && parts[2] == "1"
-                listCount[parts[1], default: 0] += 1
-            case ("P", 5):
-                pathBlocks.append(PathBlock(
-                    host: parts[1], urlFilter: parts[2],
-                    types: parts[3].isEmpty ? [] : parts[3].split(separator: ",").map(String.init),
-                    thirdParty: parts[4] == "1"
-                ))
-                listCount[parts[1], default: 0] += 1
-            case ("U", _): badfilters.insert(parts[1])
-            case ("X", _): exceptedHosts.insert(parts[1])
-            case ("S", _): pageWideSites.insert(parts[1])
-            case ("E", 4):
-                exceptions.insert(Exception(
-                    host: parts[1], urlFilter: parts[2],
-                    sites: parts[3].isEmpty ? [] : parts[3].split(separator: "|").map(String.init)
-                ))
-            default: break
+    /// Parses atoms and quantifiers up to `)` (inside a group) or the end.
+    fn seq(&mut self, depth: u32) -> Option<String> {
+        let mut out = String::new();
+        while let Some(c) = self.peek() {
+            if c == b')' {
+                return (depth > 0).then_some(out);
+            }
+            let (atom, quantifiable) = self.atom(depth)?;
+            match self.quantifier()? {
+                None => out.push_str(&atom),
+                Some((min, max)) => {
+                    let limit = if atom == "." { MAX_ANY_REPEAT } else { MAX_REPEAT };
+                    if !quantifiable || min.max(max.unwrap_or(0)) > limit {
+                        return None;
+                    }
+                    repeat(&atom, min, max, &mut out);
+                }
             }
         }
-        for host in hostBlocks.keys where badfilters.contains("||\(host)^") { hostBlocks[host
-```
-
-### Core Architecture Module: `wBlockCoreService/BlockingPauseStore.swift`
-```
-//
-//  BlockingPauseStore.swift
-//  wBlockCoreService
-//
-//  Stores the global "blocking paused" flag in the shared app-group container so that
-//  the host app and the FilterUpdateAgent/XPC helpers share one source of truth.
-//
-
-import Foundation
-import CoreFoundation
-
-public struct BlockingPauseComponents: OptionSet, Hashable, Sendable {
-    public let rawValue: Int
-
-    public init(rawValue: Int) {
-        self.rawValue = rawValue
+        (depth == 0).then_some(out)
     }
 
-    public static let filters = BlockingPauseComponents(rawValue: 1 << 0)
-    public static let userScripts = BlockingPauseComponents(rawValue: 1 << 1)
-    public static let elementZapper = BlockingPauseComponents(rawValue: 1 << 2)
-    public static let all: BlockingPauseComponents = [.filters, .userScripts, .elementZapper]
-}
-
-public enum BlockingPauseStore {
-    /// Legacy UserDefaults key backing the single paused flag.
-    public static let key = "isBlockingPaused"
-    /// App-group key storing the bitmask of independently paused components.
-    public static let componentsKey = "blockingPausedComponents"
-    /// Shared request key used by the extension to ask the containing app to resume.
-    public static let resumeRequestKey = "blockingResumeRequested"
-    public static let resumeStatusKey = "blockingResumeStatus"
-    public static let resumeErrorKey = "blockingResumeError"
-    public static let resumeRequestNotificationName = "skula.wBlock.blocking-resume-requested"
-    private static let resumeRequestLock = NSLock()
-
-    public enum ResumeStatus: String {
-        case idle
-        case pending
-        case applying
-        case succeeded
-        case failed
-    }
-
-    /// Reads the paused components, migrating the old single Boolean to all components.
-    public static func pausedComponents(
-        groupIdentifier: String = GroupIdentifier.shared.value
-    ) -> BlockingPauseComponents {
-        guard let defaults = UserDefaults(suiteName: groupIdentifier) else { return [] }
-        if let rawValue = defaults.object(forKey: componentsKey) as? NSNumber {
-            return BlockingPauseComponents(rawValue: rawValue.intValue).intersection(.all)
-        }
-
-        // Existing installations only have `isBlockingPaused`; a true value means that
-        // every component was paused by the old global switch.
-        let migrated = defaults.bool(forKey: key) ? BlockingPauseComponents.all : []
-        defaults.set(migrated.rawValue, forKey: componentsKey)
-        return migrated
-    }
-
-    public static func isPaused(
-        _ component: BlockingPauseComponents,
-        groupIdentifier: String = GroupIdentifier.shared.value
-    ) -> Bool {
-        !pausedComponents(groupIdentifier: groupIdentifier).intersection(component).isEmpty
-    }
-
-    /// True when both output-producing blocking components are paused. User scripts are
-    /// independent and do not make the content-blocker extensions inert.
-    public static func isContentBlockingPaused(
-        groupIdentifier: String = GroupIdentifier.shared.value
-    ) -> Bool {
-        isPaused(.filters, groupIdentifier: groupIdentifier)
-            && isPaused(.elementZapper, groupIdentifier: groupIdentifier)
-    }
-
-    /// Reads the global paused state. It remains true whenever any component is paused.
-    public static func isPaused(groupIdentifier: String = GroupIdentifier.shared.value) -> Bool {
-        !pausedComponents(groupIdentifier: groupIdentifier).isEmpty
-    }
-
-    public static func setPausedComponents(
-        _ components: BlockingPauseComponents,
-        groupIdentifier: String = GroupIdentifier.shared.value
-    ) {
-        let normalized = components.intersection(.all)
-        guard let defaults = UserDefaults(suiteName: groupIdentifier) else { return }
-        defaults.set(normalized.rawValue, forKey: componentsKey)
-        defaults.set(!normalized.isEmpty, forKey: key)
-    }
-
-    /// Persists the legacy global operation: pausing selects all components and resuming
-    /// clears every component selection.
-    public static func setPaused(
-        _ paused: Bool,
-        groupIdentifier: String = GroupIdentifier.shared.value
-    ) {
-        setPausedComponents(paused ? .all : [], groupIdentifier: groupIdentifier)
-    }
-
-    /// Allows Safari to read prepared rules during a serialized resume apply without
-    /// resuming user scripts or committing the global pause toggle prematurely.
-    @MainActor
-    public static func withContentBlockingResumed<T>(
-        groupIdentifier: String = GroupIdentifier.shared.value,
-        operation: @MainActor () async throws -> T
-    ) async rethrows -> T {
-        let previous = pausedComponents(groupIdentifier: groupIdentifier)
-        setPausedComponents(previous.subtracting([.filters, .elementZapper]), groupIdentifier: groupIdentifier)
-        defer { setPausedComponents(previous, groupIdentifier: groupIdentifier) }
-        return try await operation()
-    }
-
-    /// Requests that the containing app run its canonical resume/apply lifecycle.
-    /// Pending and applying requests are coalesced so repeated popup taps cannot start
-    /// another apply or reset the status of the request already in progress.
-    @discardableResult
-    public static func requestResume(groupIdentifier: String = GroupIdentifier.shared.value) -> ResumeStatus {
-        guard let defaults = UserDefaults(suiteName: groupIdentifier) else { return .idle }
-        resumeRequestLock.lock()
-        defer { resumeRequestLock.unlock() }
-        let currentStatus = ResumeStatus(
-            rawValue: defaults.string(forKey: resumeStatusKey) ?? ResumeStatus.idle.rawValue
-        ) ?? .idle
-        if currentStatus == .pending || currentStatus == .applying {
-            return currentStatus
-        }
-
-        defaults.set(true, forKey: resumeRequestKey)
-        defaults.set(ResumeStatus.pending.rawValue, forKey: resumeStatusKey)
-        defaults.removeObject(forKey: resumeErrorKey)
-        CFNotificationCenterPostNotification(
-            CFNotificationCenterGetDarwinNotifyCenter(),
-            CFNotificationName(rawValue: resumeRequestNotificationName as CFString),
-            nil,
-            nil,
-            true
-        )
-        return .pending
-    }
-
-    /// Consumes one queued resume request. This is intentionally separate from `setPaused`:
-    /// the app must clear the pause only through AppFilterManager.setBlockingPaused(false).
-    public static func consumeResumeRequest(groupIdentifier: String = GroupIdentifier.shared.value) -> Bool {
-        guard let defaults = UserDefaults(suiteName: groupIdentifier),
-              defaults.bool(forKey: resumeRequestKey)
-        else { return false }
-        defaults.set(false, forKey: resumeRequestKey)
-        return true
-    }
-
-    public static func setResumeApplying(groupIdentifier: String = GroupIdentifier.shared.value) {
-        UserDefaults(suiteName: groupIdentifier)?.set(ResumeStatus.applying.rawValue, forKey: resumeStatusKey)
-    }
-
-    public static func setResumeSucceeded(groupIdentifier: String = GroupIdentifier.shared.value) {
-        guard let defaults = UserDefaults(suiteName: groupIdentifier) else { return }
-        defaults.set(ResumeStatus.succeeded.rawValue, forKey: resumeStatusKey)
-        defaults.removeObject(forKey: resumeErrorKey)
-    }
-
-    public static func setResumeFailed(
-        _ error: String,
-        groupIdentifier: String = GroupIdentifier.shared.value
-    ) {
-        guard let defaults = UserDefaults(suiteName: groupIdentifier) else { return }
-        defaults.set(ResumeStatus.failed.rawValue, forKey: resumeStatusKey)
-        defaults.set(error, forKey: resumeErrorKey)
-    }
-
-    public static func resumeStatus(
-        groupIdentifier: String = GroupIdentifier.shared.value
-    ) -> (status: ResumeStatus, error: String?) {
-        let defaults = UserDefaults(suiteName: groupIdentifier)
-        let rawStatus = defaults?.string(forKey: resumeStatusKey) ?? ResumeStatus.idle.rawValue
-        return (
-            status: ResumeStatus(rawValue: rawStatus) ?? .idle,
-            error: defaults?.string(forKey: resumeErrorKey)
-        )
-    }
-}
-
-```
-
-### Core Architecture Module: `wBlockCoreService/BuiltInUserScripts.swift`
-```
-import Foundation
-
-struct BuiltInUserScriptDefinition {
-    let name: String
-    let url: String
-    let isEnabledByDefault: Bool
-    let description: String
-    let languages: [String]
-    let displayRole: BuiltInUserScriptDisplayRole?
-    let isBeta: Bool
-
-    init(
-        name: String,
-        url: String,
-        isEnabledByDefault: Bool,
-        description: String = "Default userscript",
-        languages: [String] = [],
-        displayRole: BuiltInUserScriptDisplayRole? = nil,
-        isBeta: Bool = false
-    ) {
-        self.name = name
-        self.url = url
-        self.isEnabledByDefault = isEnabledByDefault
-        self.description = description
-        self.languages = languages.map { $0.lowercased() }
-        self.displayRole = displayRole
-        self.isBeta = isBeta
-    }
-}
-
-enum BuiltInUserScripts {
-    static let popupBlockerName = "AdGuard Popup Blocker"
-    static let popupBlockerStableURL =
-        "https://userscripts.adtidy.org/release/popup-blocker/2.5/popupblocker.user.js"
-    static let tinyShieldURL =
-        "https://cdn.jsdelivr.net/npm/@filteringdev/tinyshield@latest/dist/tinyShield.user.js"
-    static let tinyShieldDescription =
-        "Lets ad blockers quickly resist Ad-Shield, which reinserts ads on matching sites after filter lists hide them."
-    static let retiredYouTubeAdBlockURL =
-        "https://raw.githubusercontent.com/SysAdminDoc/YoutubeAdblock/main/YoutubeAdblock.user.js"
-
-    static let tubeCleanerURL = "https://raw.githubusercontent.com/0xCUB3/wBlock-userscripts/main/packages/tube-cleaner/dist/tube-cleaner.user.js"
-    static let deArrowURL = DeArrowPreference.scriptURL
-    static let deArrowDescription = "Replaces YouTube titles and thumbnails with community-submitted DeArrow alternatives."
-    static let playerCleanerURL = "https://raw.githubusercontent.com/0xCUB3/wBlock-userscripts/main/packages/player-cleaner/dist/player-cleaner.user.js"
-    static let darkReaderURL = DarkReaderAppearancePreference.scriptURL
-    static let darkReaderDescription =
-        "Dark Reader's MIT-licensed API engine for wBlock (beta; without the full site-fix database)."
-    static let tubeCleanerDescription =
-        "Gives YouTube Safari-native controls, chapters, SponsorBlock skipping, picture-in-picture, background playback, quality selection, and audio-only mode."
-    static let playerCleanerDescription =
-        "Gives custom web players native controls, auto PiP, background playback, restored subtitle and chapter tracks, Now Playing metadata, and remembered playback preferences."
-
-    static let definitions: [BuiltInUserScriptDefinition] = [
-        BuiltInUserScriptDefinition(
-            name: "Tube Cleaner",
-            url: tubeCleanerURL,
-            isEnabledByDefault: false,
-            description: tubeCleanerDescription,
-            displayRole: .functionality,
-            isBeta: true
-        ),
-        BuiltInUserScriptDefinition(
-            name: "DeArrow",
-            url: deArrowURL,
-            isEnabledByDefault: false,
-            description: deArrowDescription,
-            displayRole: .functionality,
-            isBeta: true
-        ),
-        BuiltInUserScriptDefinition(
-            name: "Player Cleaner",
-            url: playerCleanerURL,
-            isEnabledByDefault: false,
-            description: playerCleanerDescription,
-            displayRole: .functionality,
-            isBeta: true
-        ),
-        BuiltInUserScriptDefinition(
-            name: "Dark Reader",
-            url: darkReaderURL,
-            isEnabledByDefault: false,
-            description: darkReaderDescription,
-            displayRole: .functionality,
-            isBeta: true
-        ),
-        BuiltInUserScriptDefinition(
-            name: "Return YouTube Dislike",
-            url: "https://raw.githubusercontent.com/Anarios/return-youtube-dislike/main/Extensions/UserScript/Return%20Youtube%20Dislike.user.js",
-            isEnabledByDefault: false,
-            displayRole: .functionality
-        ),
-        BuiltInUserScriptDefinition(
-            name: "Bypass Paywalls Clean",
-            url: "https://greasyfork.org/scripts/542351-bypass-paywalls-clean-en/code/Bypass%20Paywalls%20Clean%20(EN).user.js",
-            isEnabledByDefault: false,
-            languages: ["en"],
-            displayRole: .functionality
-        ),
-        BuiltInUserScriptDefinition(
-            name: "AdGuard Extra",
-            url: "https://userscripts.adtidy.org/release/adguard-extra/1.0/adguard-extra.user.js",
-            isEnabledByDefault: false,
-            description: "AdGuard Extra blocks Twitch ads and handles complicated anti-adblock cases.",
-            displayRole: .blocking
-        ),
-        BuiltInUserScriptDefinition(
-            name: "TwitchAdSolutions (vaft)",
-            url: "https://raw.githubusercontent.com/ryanbr/TwitchAdSolutions/master/vaft/vaft.user.js",
-            isEnabledByDefault: false,
-            description: "Blocks Twitch ads with the vaft script from TwitchAdSolutions.",
-            displayRole: .blocking
-        ),
-        BuiltInUserScriptDefinition(
-            name: "tinyShield",
-            url: tinyShieldURL,
-            isEnabledByDefault: true,
-            description: tinyShieldDescription,
-            displayRole: .blocking
-        ),
-        BuiltInUserScriptDefinition(
-            name: popupBlockerName,
-            url: popupBlockerStableURL,
-            isEnabledByDefault: false,
-            displayRole: .blocking
-        ),
-    ]
-
-    static let protectedURLs = Set(definitions.map(\.url))
-    static let displayRoleByURL = Dictionary(uniqueKeysWithValues: definitions.compactMap { definition in
-        definition.displayRole.map { (definition.url, $0) }
-    })
-    static let isBetaByURL = Dictionary(
-        uniqueKeysWithValues: definitions.filter(\.isBeta).map { ($0.url, true) }
-    )
-    static let languagesByURL = Dictionary(
-        uniqueKeysWithValues: definitions.map { ($0.url, $0.languages) }
-    )
-    static let isEnabledByDefaultByURL = Dictionary(
-        uniqueKeysWithValues: definitions.map { ($0.url, $0.isEnabledByDefault) }
-    )
-
-    static func definition(for url: URL?) -> BuiltInUserScriptDefinition? {
-        guard let source = url?.absoluteString else { return nil }
-        return definitions.first { $0.url == source }
-    }
-
-    /// Catalog keys keep curated metadata localizable; uncataloged descriptions use the header.
-    @discardableResult
-    static func applyDisplayMetadata(to script: inout UserScript) -> Bool {
-        guard let definition = definition(for: script.url) else { return false }
-        let previousName = script.name
-        let previousDescription = script.description
-        script.name = definition.name
-        if definition.description != "Default userscript" {
-            script.description = definition.description
-        }
-        return script.name != previousName || script.description != previousDescription
-    }
-}
-
+    /// Returns the translated atom and whether a quantifier may follow it.
+    fn atom(&mut self, depth: u32) -> Option<(String, bool)> {
+        let c = self.next()?;
+        Some(match c {
+            b'^' if self.pos == 1 => ("^".into(), fal
 ```
 
 
@@ -1304,11 +2231,11 @@ enum BuiltInUserScripts {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1069** (2026-11-02): **[BUG]**
-  *Symptoms*: ### Describe the bug  Enabling the AdGuard Tracking Protection Filter consistently causes the Safari content blocker wBlock 5 to fail during the Apply Changes process.  When the Tracking Protection Filter is disabled, Apply Changes completes successfully. However, as soon as I enable it and apply the changes, wBlock reports:  “wBlock 5 still failed to reload. Safari may need a restart.”  <img width="1125" height="2436" alt="Image" src="https://github.com/user-attachments/assets/0998ad3c-b353-444c-9478-a098c8f9f74f" /> <img width="1125" height="2436" alt="Image" src="https://github.com/user-attachments/assets/b417575d-7b2d-4aaa-943d-37345e2c774b" /> <img width="1125" height="2436" alt="Image" src="https://github.com/user-attachments/assets/080f7a9f-ad61-44a0-9814-68e2948fe884" /> <img width="1125" height="2436" alt="Image" src="https://github.com/user-attachments/assets/7fba030a-61c0-4daa-820f-6069f4b1f10f" /> <img width="1125" height="2436" alt="Image" src="https://github.com/user-attachments/assets/a90c4601-ecd1-44e2-83ad-e3a54ab04ad5" />    ### To reproduce  The filter application process completes with errors. The fifth Safari content blocker cannot reload, even after multiple retry attempts.  ### Expected behavior  All five Safari content blockers should reload successfully, and the AdGuard Tracking Protection Filter should be applied without errors.  ### Screenshot or video  [wBlock_logs_11-2-2026.txt](https://github.com/user-attachments/files/34272072/wBlock_logs_11-2-2
+- **Issue #1080** (2026-11-04): **[BUG] Stevo’s AI Blocklist failing on github.com**
+  *Symptoms*: ### Describe the bug  Filters for “Stevo’s AI Blocklist” are failing to hide items on github.com for the mobile version of wBlock.  ### To reproduce  Steps to reproduce the behavior: 1. Either add “Stevo’s AI Blocklist”, or add the following as a custom list  <details> <summary>Click to expand</summary>   ``` ! === GitHub === ! Copilot network requests ! * Prevents Copilot-generated commit messages  ||api.individual.githubcopilot.com/$xhr,domain=github.com  ! -- https://github.com/ (Any logged-in GitHub page) ! Header - "Chat with Copilot" icon next to search bar github.com##[data-testid="top-bar-actions"] > .hide-md:has([data-component="ActionMenu.Button"][class*=" CopilotMenu__"]) ! Header - Search bar - Copilot autocomplete suggestion github.com##[data-component="ActionList.Group"]:has([data-testid="quick-search-suggestion"][href="/copilot"]) github.com##[data-component="ActionList.Divider"]:has(+ [data-component="ActionList.Group"] [data-testid="quick-search-suggestion"][href="/copilot"]) ! Header - Profile icon - Feature Preview - Organization Custom Instructions ! * Only applies if feature is already disabled github.com##[id$="-tab-copilot_chat_custom_instructions"]:has(.octicon-eye-closed) ! Left sidebar (≡) - Copilot button github.com##[data-testid="side-nav-menu-item-COPILOT"] ! Left sidebar (≡) - MCP Registry github.com##[data-component="NavList.Item"][href="/mcp"] ! Command Palette - Copilot ! * "Command Palette" is enabled via "Feature Preview". Opens with Ctrl+K 
 
-- **Issue #1068** (2026-11-02): **[BUG] Funny button sizing bug**
-  *Symptoms*: ### Describe the bug  Upon opening the application, the pause blocking button on filters page is an ellipse, different from default size of the bubbles. Once you switch to another page and back, the issue is fixed.  ### To reproduce  Steps to reproduce the behavior: 1. Go to '...' 2. Click on '....' 3. Scroll down to '....' 4. See error   ### Expected behavior  _No response_  ### Screenshot or video  _No response_  ### Environment  - OS: [e.g. iOS 26.5, macOS 26.5] - wBlock Version: [e.g. 2.0.4] - Intel or Apple Silicon (macOS only): [e.g. Apple M2]   ### Troubleshooting checklist  - [ ] I have enabled all 5 wBlock Content Blocker extensions in Safari _(including Profiles, if applicable)_. - [ ] I have enabled `wBlock Scripts` and set it to `Allow` on all websites (`Always Allow on Every Website`) in Safari settings. - [ ] I have enabled `Allow in Private Browsing` for `wBlock Scripts` and all 5 content blockers _(Safari → Settings → Extensions)_. - [ ] I have opened wBlock and pressed `Apply Changes` after changing filters, userscripts, whitelist, and/or extension settings. - [ ] For filtering issues, I have restarted iOS/iPadOS and/or macOS, opened wBlock, manually checked for updates 🔄, and reopened Safari. _(Optional)_  ### Additional context  _No response_
+- **Issue #1073** (2026-11-03): **[BUG] Generic cosmetic filters not working**
+  *Symptoms*: ### Describe the bug  Generic cosmetic filters from Fanboy's Annoyances List don't seem to be applied on iOS.  ### To reproduce  Steps to reproduce the behavior: 1. Add the custom list `https://secure.fanboy.co.nz/fanboy-annoyance.txt` 2. Go to `https://www.it-connect.tech/proton-apologizes-and-says-its-internal-ai-tools-will-soon-be-open-source/` on iOS 3. Scroll down the page and a back to top button appears.  I have tried keeping the total rules under 150,000 but the issue still applies.   ### Expected behavior  The button should be hidden. On desktop with a Firefox-like browser, the button is hidden. It should be hidden by `##[aria-label="Back to top"]`.  Unclear to me if its a limitation of MV3.  ### Screenshot or video  [![IMG-1424.png](https://i.postimg.cc/BbXTpPmX/IMG-1424.png)](https://postimg.cc/p5M5XrbH)  ### Environment  - OS: iOS 18 - wBlock Version: 3.2.3   ### Troubleshooting checklist  - [x] I have enabled all 5 wBlock Content Blocker extensions in Safari _(including Profiles, if applicable)_. - [x] I have enabled `wBlock Scripts` and set it to `Allow` on all websites (`Always Allow on Every Website`) in Safari settings. - [x] I have enabled `Allow in Private Browsing` for `wBlock Scripts` and all 5 content blockers _(Safari → Settings → Extensions)_. - [x] I have opened wBlock and pressed `Apply Changes` after changing filters, userscripts, whitelist, and/or extension settings. - [x] For filtering issues, I have restarted iOS/iPadOS and/or macOS, opened wBloc
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1325,309 +2252,403 @@ enum BuiltInUserScripts {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d672f38d` (2026-11-02)
-**Commit Message**: fix(popup): let the background time native calls instead of cutting them at 3.5s
+### Incident Patch 1: `c426d8f6` (2026-11-05)
+**Commit Message**: fix(reload): repair rules only when WebKit rejected them
 
-The first popup after an update launches the native host cold, which can
-take longer than the popup's own 3.5 s cutoff. The popup then reported
-"Native message timed out: getBlockingPausedState" while the background
-was still waiting within its own per-action budget. The background now
-owns that timeout alone.
+A reload that times out or is interrupted went on to the rule repair,
+which compiles the whole blocker inside the app first. On an iPad 6
+with nearly every list on, that compile ran the app out of memory in
+WebKit's DFA minimizer and crashed it (TestFlight 1555). The repair
+now runs only for WKErrorDomain 6 with no underlying error, which is
+how WebKit reports rules it refuses.
 
-**File**: `wBlock Scripts (iOS)/Resources/pages/popup/popup.js` (modified, +28/-30)
+**File**: `wBlockCoreService/wBlockCoreService.swift` (modified, +22/-4)
 ```diff
-@@ -77,25 +77,23 @@ function withTimeout(promise, timeoutMs, message = 'Operation timed out.') {
-     ]);
- }
+@@ -408,16 +408,21 @@ www.youtube.com#%#//scriptlet('trusted-youtube-backoff-recovery')
+         /// Why the reload failed, in a form that can be shown in the app log.
+         /// nil on success or when the reload was skipped.
+         public let failureReason: String?
++        /// Safari's WebKit compiled the rules and rejected them, the one
++        /// failure that dropping the offending rules can fix.
++        public let rulesRejected: Bool
  
--function sendNativeMessageWithTimeout(message, timeoutMs = NATIVE_MESSAGE_TIMEOUT_MS) {
--    return withTimeout(
--        // Safari native messaging belongs to the background context, not the popup.
--        browser.runtime.sendMessage({ action: 'wblock:popup:nativeMessage', message }).then((response) => {
--            if (!response || response.ok !== true) {
--                throw new Error((response && response.error) || 'Native message relay failed');
--            }
--            return response.response;
--        }),
--        timeoutMs,
--        `Native message timed out: ${message && message.action ? message.action : 'unknown'}`
--    );
-+// The background times out each native call by action, with room for the
-+// native host's slow first launch after an update. A shorter cutoff here
-+// reported that launch as a failure.
-+async function sendNativeMessage(message) {
-+    // Safari native messaging belongs to the background context, not the popup.
-+    const response = await browser.runtime.sendMessage({ action: 'wblock:popup:nativeMessage', message });
-+    if (!response || response.ok !== true) {
-+        throw new Error((response && response.error) || 'Native message relay failed');
+         public init(
+             success: Bool,
+             skipped: Bool = false,
+             disabledInSafari: Bool = false,
+             attempts: Int,
+             durationMs: Int,
+-            failureReason: String? = nil
++            failureReason: String? = nil,
++            rulesRejected: Bool = false
+         ) {
+             self.success = success
++            self.rulesRejected = rulesRejected
+             self.skipped = skipped
+             self.disabledInSafari = disabledInSafari
+             self.attempts = attempts
+@@ -936,8 +941,10 @@ www.youtube.com#%#//scriptlet('trusted-youtube-backoff-recovery')
+             )
+             totalAttempts += reload.attempts
+             // A rule this Safari's WebKit rejects fails the whole blocker. Drop
+-            // such rules and reload once more before reporting a failure.
+-            if !reload.success, enabledInSafari != false, !repairedOutput,
++            // such rules and reload once more before reporting a failure. Only
++            // a rejection: after a timeout, compiling the whole blocker again in
++            // the app ran an iPad 6 out of memory and crashed it.
++            if !reload.success, reload.rulesRejected, enabledInSafari != false, !repairedOutput,
+                await repairRejectedRules(outputURL: outputURL, containerURL: containerURL, targetRulesFilename: targetRulesFilename),
+                let repaired = try? readReloadSnapshot(markerURL: markerURL, outputURL: outputURL, appGroupURL: containerURL),
+                repaired.outputDigest != nil
+@@ -1165,6 +1172,14 @@ www.youtube.com#%#//scriptlet('trusted-youtube-backoff-recovery')
+         return result
+     }
+ 
++    /// WKErrorDomain 6 with no underlying error is WebKit refusing the rules
++    /// themselves; with one (such as NSPOSIXErrorDomain 2) the file could not
++    /// be read. Timeouts and interrupted loads are neither.
++    static func isRuleRejection(_ error: Error) -> Bool {
++        let error = error as NSError
++        return error.domain == "WKErrorDomain" && error.code == 6 && error.userInfo[NSUnderlyingErrorKey] == nil
 +    }
-+    return response.response;
- }
++
+     private static func reloadWithRetryRaw(
+         identifier: String,
+         maxRetries: Int,
+@@ -1181,6 +1196,7 @@ www.youtube.com#%#//scriptlet('trusted-youtube-backoff-recovery')
+         }
  
- async function logExtensionDiagnostic(fields) {
-     const normalizedFields = normalizeDiagnosticFields(fields);
-     console.info('[wBlock] Support diagnostic', normalizedFields);
-     try {
--        await sendNativeMessageWithTimeout({
-+        await sendNativeMessage({
-             action: 'logExtensionDiagnostic',
-             fields: normalizedFields,
-         }, 1200);
-@@ -215,7 +213,7 @@ async function syncRulesToNative(host, rules) {
-         return null;
-     } catch {
-         try {
--            const response = await sendNativeMessageWithTimeout({
-+            const response = await sendNativeMessage({
-                 action: 'syncZapperRules',
-                 hostname: host,
-                 rules: normalizedRules
-@@ -261,7 +259,7 @@ async function fetchRulesFromNative(host) {
-         return { rules: state.rules, disabled };
-     } catch {
-         try {
--            const response = await sendNativeMessageWithTimeout({
-+            const response = await sendNativeMessage({
-                 action: 'getZapperRules',
-                 hostname: host,
-             });
-@@ -495,7 +493,7 @@ async function openWBlockApp(host) {
- // native handler declines on iOS, so any failure falls back to the wblockapp URL.
- async function openAppFromHeader() {
-     if (await isMacPlatform()) {
--        const response = await sendNativeMessageWithTimeout({ action: 'openApp' }).catch(() => null);
-+        const response = await sendNativeMessage({ action: 'openApp' }).catch(() => null);
-         if (response && response.ok === true) {
-             window.close();
-             return;
-@@ -867,7 +865,7 @@ function renderZapperRules(rules) {
+         var lastFailureReason: String?
++        var rulesRejected = false
+         for attempt in 1...maxRetries {
+             if Task.isCancelled {
+                 return ReloadAttemptResult(
+@@ -1201,6 +1217,7 @@ www.youtube.com#%#//scriptlet('trusted-youtube-backoff-recovery')
+             }
+             if case .failure(let error) = result {
+                 lastFailureReason = LogErrorDescriber.describe(error)
++                rulesRejected = isRuleRejection(error)
+             }
  
- async function getBlockingPausedState() {
-     try {
--        const response = await sendNativeMessageWithTimeout({
-+        const response = await sendNativeMessage({
-             action: 'getBlockingPausedState',
-         });
-         if (!response || typeof response.paused !== 'boolean' ||
-@@ -886,7 +884,7 @@ async function getBlockingPausedState() {
+             // A timed-out attempt means Safari is not answering reload requests at
+@@ -1236,7 +1253,8 @@ www.youtube.com#%#//scriptlet('trusted-youtube-backoff-recovery')
+             success: false,
+             attempts: maxRetries,
+             durationMs: elapsedMs(),
+-            failureReason: lastFailureReason
++            failureReason: lastFailureReason,
++            rulesRejected: rulesRejected
+         )
+     }
  
- async function getResumeRequestStatus() {
-     try {
--        const response = await sendNativeMessageWithTimeout({
-+        const response = await sendNativeMessage({
-             action: 'getResumeRequestStatus',
-         });
-         if (!response || response.ok !== true || typeof response.status !== 'string') {
-@@ -902,7 +900,7 @@ async function getResumeRequestStatus() {
- async function resumeBlocking() {
-     let response;
-     try {
--        response = await sendNativeMessageWithTimeout({
-+        response = await sendNativeMessage({
-             action: 'resumeBlocking',
-         }, 10000);
-     } catch (error) {
-@@ -946,7 +944,7 @@ let siteWhitelisted = false;
- async function getSiteDisabledState(host) {
-     if (!host) return false;
-     try {
--        const response = await sendNativeMessageWithTimeout({
-+        const response = await sendNativeMessage({
-             action: 'getSiteFilterDisabledState',
-             host,
-         });
-@@ -969,7 +967,7 @@ async function readSiteDisabledStateAfterTimeout(targetHost) {
- 
- async function setSiteDisabledState(host, disabled) {
-     if (!host) return;
--    return sendNativeMessageWithTimeout({
-+    return sendNativeMessage({
-         action: 'setSiteFilterDisabledState',
-         host,
-         disabled: Boolean(disabled),
-@@ -978,7 +976,7 @@ async function setSiteDisabledState(host, disabled) {
- 
- async function setUserScriptsSiteDisabled(host, disabled) {
-     if (!host) return { ok: false, disabled: false };
--    const response = await sendNativeMessageWithTimeout({
-+    const response = await sendNativeMessage({
-         acti
 ```
 
 ---
 
-### Incident Patch 2: `5fe46efa` (2026-11-01)
-**Commit Message**: fix(popup): say Resuming while the app finishes a resume
+### Incident Patch 2: `f0492eaf` (2026-11-04)
+**Commit Message**: fix(engine): stop $genericblock from crashing Safari's rule compiler
 
-The app shows blocking on as soon as Resume is tapped, but the shared
-pause flag stays set until the reload commits, which can take a minute.
-The popup read that as Paused and greyed out the zapper. Native now
-reports a resume in progress, the popup shows Resuming and looks again
-until it commits, and an in-app resume records its own success or
-failure so the popup cannot stick on Resuming.
+AdGuard Base has @@||adguardpartner.com^$genericblock. wbe copied that
+host into every generic block as unless-domain, 75k rules once EasyList
+and the uBO filters share the Ads blocker, and WebKit's NFA-to-DFA step
+crashed ContentBlockerLoader on that set. Arjun's crash reports match the
+local repro frame for frame.
 
-**File**: `wBlock Scripts (iOS)/Resources/pages/popup/popup.js` (modified, +17/-3)
+A genericblock host is now one ignore-previous-rules on the host's pages,
+in a new tier between the generic and the specific blocks. It leaves out
+documents so the page keeps its hides. Calibration case k90 checks that
+in WKWebView.
+
+The `^` right after a plain `||host^` now emits [/:?#], since a URL's host
+is always followed by one of those. WebKit compiles the ~60k host blocks
+about 10% faster.
+
+**File**: `Packages/wblock-engine/crates/wbe/src/compile/mod.rs` (modified, +15/-8)
 ```diff
-@@ -1824,6 +1824,14 @@ function setupListeners() {
+@@ -25,18 +25,23 @@ pub enum Tier {
+     SpecificHide = 2,
+     /// `$elemhide` (and `$specifichide`, widened): cancels all hides.
+     ElemHideException = 3,
+-    Block = 4,
+-    Exception = 5,
++    /// Blocks with no page domains, which `$genericblock` lifts.
++    GenericBlock = 4,
++    /// `$genericblock`: cancels the generic blocks before it on the page's
++    /// subresources, leaving its hides and the blocks after it in place.
++    GenericBlockException = 5,
++    Block = 6,
++    Exception = 7,
+     /// `$important` with `$denyallow`: the block, then its exclusions.
+-    ImportantDenyallowBlock = 6,
++    ImportantDenyallowBlock = 8,
+     /// The exclusions of an important `$denyallow` block. Each cancels only
+     /// the blocks before it, so they sit ahead of every other important block.
+-    ImportantDenyallowException = 7,
+-    ImportantBlock = 8,
++    ImportantDenyallowException = 9,
++    ImportantBlock = 10,
+     /// AdGuard `$important` exceptions override important blocks.
+-    ImportantException = 9,
++    ImportantException = 11,
+     /// `@@...$document`: cancels everything on the page.
+-    DocumentException = 10,
++    DocumentException = 12,
+ }
+ 
+ #[derive(Debug, Clone, Serialize, Deserialize)]
+@@ -127,11 +132,13 @@ impl std::io::Write for Count {
+ }
+ 
+ /// Tiers in output order.
+-const TIERS: [Tier; 11] = [
++const TIERS: [Tier; 13] = [
+     Tier::GenericHide,
+     Tier::GenericHideException,
+     Tier::SpecificHide,
+     Tier::ElemHideException,
++    Tier::GenericBlock,
++    Tier::GenericBlockException,
+     Tier::Block,
+     Tier::Exception,
+     Tier::ImportantDenyallowBlock,
+```
+
+**File**: `Packages/wblock-engine/crates/wbe/src/compile/network.rs` (modified, +78/-54)
+```diff
+@@ -36,13 +36,11 @@ pub(crate) struct Context {
+     strict: StrictHosts,
+     bad: Vec<NetworkRule>,
+     bad_bodies: FxHashSet<String>,
+-    generic_exceptions: Vec<NetworkRule>,
+ }
+ 
+ impl Context {
+     pub(crate) fn add(&mut self, rule: &NetworkRule) {
+         self.strict.add(rule);
+-        if !rule.badfilter && genericblock_host(rule).is_some() { self.generic_exceptions.push(rule.clone()); }
+         if rule.badfilter {
+             let bad = unlabeled(rule);
+             self.bad_bodies.insert(bad.pattern.body.clone());
+@@ -53,15 +51,14 @@ impl Context {
+     pub(crate) fn merge(&mut self, other: Context) {
+         self.strict.hosts.extend(other.strict.hosts);
+         self.strict.parents.extend(other.strict.parents);
+-        self.generic_exceptions.extend(other.generic_exceptions);
+         self.bad.extend(other.bad);
+         self.bad_bodies.extend(other.bad_bodies);
      }
  }
  
-+// While the app finishes a resume, look again so the zapper and switches
-+// unlock once it commits.
-+let resumeRecheckTimer = null;
-+function scheduleResumeRecheck(resuming) {
-+    clearTimeout(resumeRecheckTimer);
-+    resumeRecheckTimer = resuming ? setTimeout(() => { refreshUi().catch(() => {}); }, 2000) : null;
-+}
-+
- async function refreshUi() {
-     const generationAtStart = siteToggleGeneration;
-     if (!siteToggleInFlight) {
-@@ -1938,7 +1946,11 @@ async function refreshUi() {
+-/// Safari has no network-only ignore action. Hostname genericblock exceptions
+-/// are represented by exclusions on generic triggers, leaving cosmetic and
+-/// specific network rules untouched (including their own exceptions).
++/// The host of a `$genericblock` exception Safari can represent: one
++/// ignore-previous-rules on that host's pages, between the generic and the
++/// specific blocks.
+ fn genericblock_host(r: &NetworkRule) -> Option<String> {
+     (r.exception && r.scope.contains(ExceptionScope::GENERICBLOCK) && r.types.is_empty()
+         && r.negated_types.is_empty() && r.from.is_empty() && r.to.is_empty()
+@@ -154,14 +151,7 @@ fn compile_rule(
      }
- 
-     const blockingPaused = pauseState.paused;
-+    // The app keeps everything paused until a resume's reload commits. Saying
-+    // Paused then contradicts the app, which already shows blocking on.
-+    const resuming = blockingPaused && pauseState.resuming === true;
-     const resumeAvailable = pauseState.resumeAvailable;
-+    scheduleResumeRecheck(resuming);
-     const filtersPaused = pauseState.filtersPaused;
-     const userScriptsPaused = pauseState.userScriptsPaused;
-     const zapperPaused = pauseState.elementZapperPaused;
-@@ -1958,8 +1970,8 @@ async function refreshUi() {
-             disableToggle.disabled = filtersPaused || siteWhitelisted;
-         }
-     }
--    if (pausedPrompt) pausedPrompt.hidden = !blockingPaused;
--    if (resumeButton) resumeButton.hidden = !(blockingPaused && resumeAvailable);
-+    if (pausedPrompt) pausedPrompt.hidden = !blockingPaused || resuming;
-+    if (resumeButton) resumeButton.hidden = !(blockingPaused && resumeAvailable) || resuming;
-     if (pausedPromptTitle) {
-         pausedPromptTitle.textContent = partiallyPaused
-             ? t('popup_paused_partial_prompt_title', undefined, 'Some blocking components are paused')
-@@ -1986,7 +1998,9 @@ async function refreshUi() {
-     updateNoAutoplayControls(noAutoplayState, { host, siteDisabled: siteWhitelisted });
-     const shouldCommitSiteStatus = !skipSiteToggleCommit || blockingPaused;
-     if (shouldCommitSiteStatus) {
--        if (siteDisabledUnknown && !blockingPaused) {
-+        if (resuming) {
-+            setStatus(t('popup_status_resuming', undefined, 'Resuming…'), 'neutral');
-+        } else if (siteDisabledUnknown && !blockingPaused) {
-             setStatus(t('popup_status_unavailable', undefined, 'Unavailable'), 'neutral');
-         } else {
-             setStatus(
+     let party = party(r.party, exception)?;
+     let urls = urls(r, exception)?;
+-    let mut from = std::borrow::Cow::Borrowed(&r.from);
+-    if !exception && !r.important && r.from.include.is_empty() {
+-        for rule in &ctx.generic_exceptions {
+-            if ctx.bad.contains(&unlabeled(rule)) { continue; }
+-            from.to_mut().exclude.push(DomainMatcher::Hostname(genericblock_host(rule).unwrap()));
+-        }
+-    }
+-    let conds = domain_conds(&from, v, exception)?;
++    let conds = domain_conds(&r.from, v, exception)?;
+     let types = effective_types(r);
+     // uBO also strict-blocks top-level navigation for an untyped filter whose
+     // match ends at the hostname (traffic.js, `shouldStrictBlock`), so such a
+@@ -188,6 +178,8 @@ fn compile_rule(
+         (true, if r.important { Tier::ImportantException } else { Tier::Exception })
+     } else if r.important {
+         (false, Tier::ImportantBlock)
++    } else if r.from.include.is_empty() {
++        (false, Tier::GenericBlock)
+     } else {
+         (false, Tier::Block)
+     };
+@@ -270,6 +262,30 @@ fn compile_denyallow(
+ /// `$specifichide` is widened to `$elemhide`, which also cancels generic
+ /// hides.
+ fn compile_scope(r: &NetworkRule, v: SafariVersion, out: &mut Emitted) -> Result<(), String> {
++    let generic = r.scope.contains(ExceptionScope::GENERICBLOCK);
++    if let Some(host) = genericblock_host(r).filter(|_| generic) {
++        // Copying the host into every generic block as unless-domain made
++        // WebKit's NFA-to-DFA step crash ContentBlockerLoader (EasyList, uBO
++        // filters and AdGuard Base in one blocker). Documents and frames are
++        // left out: an ignore on the page's document load would also cancel
++        // its hides, so generic blocks of subframes stay.
++        let cond = Cond::IfDomain(vec![format!("*{host}")]);
++        for (types, context) in type_triggers(DEFAULT_TYPES.difference(ResourceTypes::FRAME), v) {
++            emit(
++                out,
++                Tier::GenericBlockException,
++                &Trigger {
++                    url: ".*",
++                    case_sensitive: false,
++                    types: Some(&types),
++                    load_type: None,
++                    load_context: context,
++                    cond: Some(&cond),
++                },
++                true,
++            );
++        }
++    }
+     let remaining = r.scope.difference(ExceptionScope::GENERICBLOCK);
+     let tier = if remaining.contains(ExceptionScope::DOC) {
+         Tier::DocumentException
+@@ -278,7 +294,7 @@ fn compile_scope(r: &NetworkRule, v: SafariVersion, out: &mut Emitted) -> Result
+     } else if remaining.contains(ExceptionScope::GHIDE) {
+         Tier::GenericHideException
+     } else {
+-        return if genericblock_host(r).is_some() { Ok(()) } else {
++        return if generic && genericblock_host(r).is_some() { Ok(()) } else {
+             Err("genericblock: only unconstrained hostname page exceptions can be represented without canceling cosmetics".into())
+         };
+     };
+@@ -976,7 +992,7 @@ mod tests {
+         check(
+             &[net("||ads.example.com^")],
+             V15,
+-            r#"[{"trigger":{"url-filter":"^[^:]+://+([^:/]+\\.)?ads\\.example\\.com[^a-zA-Z0-9_.%-]"},"action":{"type":"block"}}]"#,
++            r#"[{"trigger":{"url-filter":"^[^:]+://+([^:/]+\\.)?ads\\.example\\.com[/:?#]"},"action":{"type":"block
 ```
 
-**File**: `wBlock/AppFilterManager+ApplyPipeline.swift` (modified, +13/-1)
+**File**: `Packages/wblock-engine/crates/wbe/src/compile/regex.rs` (modified, +19/-4)
 ```diff
-@@ -1305,7 +1305,19 @@ extension AppFilterManager {
-                 }
-             }
-         }
--        return started && lastApplySucceeded && !BlockingPauseStore.isPaused()
-+        let resumed = started && lastApplySucceeded && !BlockingPauseStore.isPaused()
-+        // An in-app resume must also end the shared status; left at applying, the
-+        // Safari popup would keep reading "Resuming" after a failure.
-+        if started {
-+            if resumed {
-+                BlockingPauseStore.setResumeSucceeded()
-+            } else {
-+                BlockingPauseStore.setResumeFailed(
-+                    statusDescription.isEmpty ? "Failed to resume blocking." : statusDescription
-+                )
+@@ -32,12 +32,27 @@ pub fn url_filter(p: &Pattern) -> Option<String> {
+             .filter(|r| webkit_accepts(r));
+     }
+     let mut out = String::new();
++    let mut body = p.body.as_str();
+     match p.kind {
+-        PatternKind::Hostname => out.push_str(HOST_START),
++        PatternKind::Hostname => {
++            out.push_str(HOST_START);
++            // A `^` right after a plain host ends the host, which in a URL is
++            // always followed by one of HOST_END. The narrower class makes the
++            // ~60k `||host^` blocks of EasyList and AdGuard Base compile 12%
++            // faster in WebKit.
++            let host = body.split_once('^').filter(|(h, _)| {
++                !h.is_empty() && h.bytes().all(|b| b.is_ascii_alphanumeric() || b == b'-' || b == b'.')
++            });
++            if let Some((host, rest)) = host {
++                literal(host, &mut out)?;
++                out.push_str(HOST_END);
++                body = rest;
 +            }
 +        }
-+        return resumed
+         PatternKind::Left => out.push('^'),
+         _ => {}
+     }
+-    literal(&p.body, &mut out)?;
++    literal(body, &mut out)?;
+     if p.right_anchored {
+         out.push('$');
+     }
+@@ -443,7 +458,7 @@ mod emitted_filter_tests {
+     fn webkit_accepts_checks_structure() {
+         for ok in [
+             ".*",
+-            "^[^:]+://+([^:/]+\\.)?ads\\.com[^a-zA-Z0-9_.%-]",
++            "^[^:]+://+([^:/]+\\.)?ads\\.com[/:?#]",
+             "a[\\]]b",
+             "[-a]",
+             "x?$",
+@@ -491,7 +506,7 @@ mod tests {
+                 right_anchored: false
+             })
+             .unwrap(),
+-            "^[^:]+://+([^:/]+\\.)?ads\\.com[^a-zA-Z0-9_.%-]path"
++            "^[^:]+://+([^:/]+\\.)?ads\\.com[/:?#]path"
+         );
      }
  
-     func prepareApplyRunState() {
 ```
 
-**File**: `wBlockCoreService/WebExtensionRequestHandler.swift` (modified, +3/-0)
+**File**: `Packages/wblock-engine/harness/sim/calibrate-expected.json` (modified, +12/-0)
 ```diff
-@@ -624,6 +624,9 @@ public enum WebExtensionRequestHandler {
-             "filtersPaused": components.contains(.filters),
-             "userScriptsPaused": components.contains(.userScripts),
-             "elementZapperPaused": components.contains(.elementZapper),
-+            // A resume keeps every component paused until its reload commits, which
-+            // can take a minute; the popup says Resuming instead of Paused then.
-+            "resuming": !components.isEmpty && BlockingPauseStore.resumeStatus().status == .applying,
-             "resumeAvailable": resumeAvailable
-         ])
-         context.completeRequest(returningItems: [response])
+@@ -501,6 +501,18 @@
+         "a": false
+       },
+       "hidden": []
++    },
++    {
++      "id": "k90",
++      "pageReached": true,
++      "reached": {
++        "a": true,
++        "b": false
++      },
++      "hidden": [
++        "A",
++        "B"
++      ]
+     }
+   ]
+ }
+```
+
+**File**: `Packages/wblock-engine/harness/sim/calibration-cases.ts` (modified, +15/-0)
+```diff
+@@ -362,4 +362,19 @@ export const CALIBRATION_CASES: CalibrationCase[] = [
+         rules: [block('lib', { 'if-frame-url': ['frame/f58'] })],
+         resources: [frameDoc('f', 'first', 'frame/f58.html'), script('a', 'first', CHILD_IN_LIB, 'f')],
+     },
++    {
++        id: 'k90', what: '$genericblock: a page-scoped ignore over subresource types lifts earlier blocks and keeps the page hides',
++        rules: [
++            css('.*', '.cs-A'),
++            css('.*', '.cs-B', { 'if-domain': ['*app.localtest.me'] }),
++            block('lib/a'),
++            ignorePrevious('.*', {
++                'resource-type': ['image', 'style-sheet', 'script', 'font', 'media', 'ping', 'fetch', 'websocket', 'other'],
++                'if-domain': ['*app.localtest.me'],
++            }),
++            block('lib/b', { 'if-domain': ['*app.localtest.me'] }),
++        ],
++        resources: [script('a', 'third', 'lib/a.js'), script('b', 'third', 'lib/b.js')],
++        hide: ['A', 'B', 'C'],
++    },
+ ];
 ```
 
 ---
 
-### Incident Patch 3: `9f3c1ced` (2026-11-01)
-**Commit Message**: feat(zapper): outline the overflow menu items and pair Undo with Redo
+### Incident Patch 3: `9e5ec865` (2026-11-05)
+**Commit Message**: fix(engine): bump output version so saved blockers rebuild
 
-The menu items now have the panel's button fill and a hairline outline,
-Undo and Redo share a row since the menu is wide enough for both, and
-the English label reads Add Custom CSS Rule… like the other buttons.
+The $genericblock fix and the any-character repeat cap both change
+Safari output for the same input, so outputs saved by the older engine
+must not be reused.
 
-**File**: `wBlock Scripts (iOS)/Resources/_locales/en/messages.json` (modified, +1/-1)
+**File**: `Packages/wblock-engine/crates/wbe/src/lib.rs` (modified, +1/-1)
 ```diff
-@@ -140,7 +140,7 @@
-     "description": "Tooltip for choosing the child element in refine mode."
-   },
-   "zapper_button_add_custom_rule": {
--    "message": "Add custom CSS rule…",
-+    "message": "Add Custom CSS Rule…",
-     "description": "Menu item label for adding a manual CSS selector rule."
-   },
-   "zapper_button_done": {
-```
-
-**File**: `wBlock Scripts (iOS)/Resources/zapper-content.js` (modified, +11/-6)
-```diff
-@@ -527,13 +527,14 @@
-       #${UI_ROOT_ID} .wblock-footer { position: relative; display: flex; align-items: center; justify-content: space-between; }
-       #${UI_ROOT_ID} .wblock-step { flex: 0 0 30px; width: 30px; min-height: 28px; padding: 0; background: transparent; }
-       #${UI_ROOT_ID} .wblock-step svg { display: block; width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
--      #${UI_ROOT_ID} .wblock-overflow { position: absolute; right: calc(100% + 8px); bottom: 0; min-width: 170px; padding: 4px; border-radius: 14px; background: var(--wb-menu); border: 1px solid var(--wb-line); box-shadow: 0 8px 24px var(--wb-shadow); opacity: 0; transform: scale(0.97); transition: opacity 0.15s ease, transform 0.15s ease; pointer-events: none; }
-+      #${UI_ROOT_ID} .wblock-overflow { display: flex; flex-direction: column; gap: 4px; position: absolute; right: calc(100% + 8px); bottom: 0; min-width: 170px; padding: 4px; border-radius: 14px; background: var(--wb-menu); border: 1px solid var(--wb-line); box-shadow: 0 8px 24px var(--wb-shadow); opacity: 0; transform: scale(0.97); transition: opacity 0.15s ease, transform 0.15s ease; pointer-events: none; }
-       #${UI_ROOT_ID} .wblock-overflow.wblock-open { opacity: 1; transform: scale(1); pointer-events: auto; }
--      #${UI_ROOT_ID} .wblock-overflow button { width: 100%; justify-content: flex-start; text-align: left; min-height: 36px; padding: 8px 10px; border-radius: 9px; background: transparent; font-weight: 500; }
--      #${UI_ROOT_ID} .wblock-overflow button:active { background: var(--wb-fill); }
-+      #${UI_ROOT_ID} .wblock-overflow button { width: 100%; justify-content: flex-start; text-align: left; min-height: 36px; padding: 8px 10px; border-radius: 9px; background: var(--wb-fill); border: 1px solid var(--wb-line); font-weight: 500; }
-+      #${UI_ROOT_ID} .wblock-history { display: flex; gap: 4px; }
-+      #${UI_ROOT_ID} .wblock-history button { flex: 1 1 0; justify-content: center; text-align: center; }
-       /* 16px keeps iOS from zooming the page when the field takes focus. */
-       #${UI_ROOT_ID} .wblock-rule-form { display: none; flex-direction: column; gap: 6px; padding: 4px; }
--      #${UI_ROOT_ID} .wblock-overflow.wblock-editing > button { display: none; }
-+      #${UI_ROOT_ID} .wblock-overflow.wblock-editing > :not(.wblock-rule-form) { display: none; }
-       #${UI_ROOT_ID} .wblock-overflow.wblock-editing .wblock-rule-form { display: flex; }
-       #${UI_ROOT_ID} .wblock-rule-form input { all: initial; box-sizing: border-box; width: 100%; min-height: 34px; padding: 7px 9px; border-radius: 9px; background: var(--wb-fill); color: var(--wb-text); font: 16px -apple-system, system-ui, sans-serif; cursor: text; -webkit-user-select: text; user-select: text; }
-       #${UI_ROOT_ID} .wblock-rule-form button { justify-content: center; text-align: center; background: var(--wb-fill); font-weight: 600; }
-@@ -609,11 +610,15 @@
-       closeOverflow();
-     });
+@@ -19,7 +19,7 @@ pub use parse::parse_line;
+ /// Version of everything the engine writes: Safari JSON, runtime rules, and
+ /// the serialized per-page engine. Bump it whenever any of them changes for
+ /// the same input, so callers discard outputs cached by an older engine.
+-pub const OUTPUT_VERSION: u32 = 17;
++pub const OUTPUT_VERSION: u32 = 18;
  
--    const manualButton = uiButton(t('zapper_button_add_custom_rule', undefined, 'Add custom CSS rule…'), '', () => {
-+    const manualButton = uiButton(t('zapper_button_add_custom_rule', undefined, 'Add Custom CSS Rule…'), '', () => {
-       overflowMenu.classList.add('wblock-editing');
-       ruleInput.focus();
-     });
--    overflowMenu.append(undoButton, redoButton, manualButton, ruleForm);
-+    // Undo and Redo share a row; the menu has the width for both.
-+    const historyRow = document.createElement('div');
-+    historyRow.className = 'wblock-history';
-+    historyRow.append(undoButton, redoButton);
-+    overflowMenu.append(historyRow, manualButton, ruleForm);
- 
-     function closeOverflow() {
-       overflowMenu.classList.remove('wblock-open', 'wblock-editing');
+ /// The registrable domain (eTLD+1) of `host`, or `None` for a public suffix
+ /// or an invalid name.
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1076** (2026-11-03): ci: build only wBlockCoreService for the native tests (@0xCUB3)
+- **PR #1075** (2026-11-03): [ImgBot] Optimize images (@imgbot[bot])
+- **PR #1072** (2026-11-03): feat: replace AdGuard's converter with a uBO-semantics engine (@0xCUB3)
 - **PR #1063** (2026-11-01): [ImgBot] Optimize images (@imgbot[bot])
 - **PR #1055** (2026-10-29): Fix spacing in localization string for extensions (@daywalk3r666)
 - **PR #1054** (2026-10-29): Update Localizable.strings for Important notes regarding the Montenegrin language (@so-5699)
-- **PR #1053** (2026-10-29): Refactor Japanese localization strings (@so-5699)
-- **PR #1047** (2026-10-27): fix(l10n): use positional specifiers where translations reorder arguments (@dmatthan)
-- **PR #1005** (2026-10-18): Turkish localization updated (@remad0)
 
 ---
 
@@ -1647,67 +2668,52 @@ the English label reads Add Custom CSS Rule… like the other buttons.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. popup): let the background time native calls instead of cutting them at 3.5s
+## X. reload): repair rules only when WebKit rejected them
 
 **RULE**:
-When implementing operations in `wBlock Scripts (iOS)/Resources/pages/popup/popup.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in 0xCUB3/wBlock. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `wBlockCoreService/wBlockCoreService.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in 0xCUB3/wBlock. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d672f38d`: popup): let the background time native calls instead of cutting them at 3.5s. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c426d8f6`: reload): repair rules only when WebKit rejected them. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `wBlock Scripts (iOS)/Resources/pages/popup/popup.js`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `wBlockCoreService/wBlockCoreService.swift`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-// The background times out each native call by action, with room for the
-// native host's slow first launch after an update. A shorter cutoff here
-// reported that launch as a failure.
-async function sendNativeMessage(message) {
-    // Safari native messaging belongs to the background context, not the popup.
-    const response = await browser.runtime.sendMessage({ action: 'wblock:popup:nativeMessage', message });
-    if (!response || response.ok !== true) {
-        throw new Error((response && response.error) || 'Native message relay failed');
+        /// Safari's WebKit compiled the rules and rejected them, the one
+        /// failure that dropping the offending rules can fix.
+        public let rulesRejected: Bool
+            failureReason: String? = nil,
+            rulesRejected: Bool = false
+            self.rulesRejected = rulesRejected
+            // such rules and reload once more before reporting a failure. Only
+            // a rejection: after a timeout, compiling the whole blocker again in
+            // the app ran an iPad 6 out of memory and crashed it.
+            if !reload.success, reload.rulesRejected, enabledInSafari != false, !repairedOutput,
+    /// WKErrorDomain 6 with no underlying error is WebKit refusing the rules
+    /// themselves; with one (such as NSPOSIXErrorDomain 2) the file could not
+    /// be read. Timeouts and interrupted loads are neither.
+    static func isRuleRejection(_ error: Error) -> Bool {
+        let error = error as NSError
+        return error.domain == "WKErrorDomain" && error.code == 6 && error.userInfo[NSUnderlyingErrorKey] == nil
     }
-    return response.response;
-        await sendNativeMessage({
-            const response = await sendNativeMessage({
-            const response = await sendNativeMessage({
-        const response = await sendNativeMessage({ action: 'openApp' }).catch(() => null);
-        const response = await sendNativeMessage({
-        const response = await sendNativeMessage({
-        response = await sendNativeMessage({
-        const response = await sendNativeMessage({
-    return sendNativeMessage({
-    const response = await sendNativeMessage({
+
+        var rulesRejected = false
+                rulesRejected = isRuleRejection(error)
+            failureReason: lastFailureReason,
+ 
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Anti-pattern to NEVER write (induced failure mode):
-function sendNativeMessageWithTimeout(message, timeoutMs = NATIVE_MESSAGE_TIMEOUT_MS) {
-    return withTimeout(
-        // Safari native messaging belongs to the background context, not the popup.
-        browser.runtime.sendMessage({ action: 'wblock:popup:nativeMessage', message }).then((response) => {
-            if (!response || response.ok !== true) {
-                throw new Error((response && response.error) || 'Native message relay failed');
-            }
-            return response.response;
-        }),
-        timeoutMs,
-        `Native message timed out: ${message && message.action ? message.action : 'unknown'}`
-    );
-        await sendNativeMessageWithTimeout({
-            const response = await sendNativeMessageWithTimeout({
-            const response = await sendNativeMessageWithTimeout({
-        const response = await sendNativeMessageWithTimeout({ action: 'openApp' }).catch(() => null);
-        const response = await sendNativeMessageWithTimeout({
-        const response = await sendNativeMessageWithTimeout({
-        response = await sendNativeMessageWithTimeout({
-        const response = await sendNativeMessageWithTimeout({
-    return sendNativeMessageWithTimeout({
+            failureReason: String? = nil
+            // such rules and reload once more before reporting a failure.
+            if !reload.success, enabledInSafari != false, !repairedOutput,
+            failureReason: lastFailureReason
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d672f38d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c426d8f6` are properly handled with clean fallback behavior.

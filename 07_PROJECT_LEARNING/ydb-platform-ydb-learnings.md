@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md`  
 > **Source**: github ([https://github.com/ydb-platform/ydb](https://github.com/ydb-platform/ydb))  
-> **Source Version**: `b24a3efb`  
+> **Source Version**: `1dda9d96`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T16:34:38.399Z  
+> **Timestamp**: 2026-11-05T06:58:30.972Z  
 > **Learning ID**: `learn-github-ydb-platform-ydb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ydb-platform/ydb](https://github.com/ydb-platform/ydb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T16:34:37.984Z  
+> **Harvest Timestamp**: 2026-11-05T06:58:30.964Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: YDB is an open source Distributed SQL Database that combines high availability and scalability with strong consistency and ACID transactions
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 4784 stars
+- **Stars / Engagement**: 4785 stars
 
 ---
 
@@ -2067,488 +2067,566 @@ impl Remappable for noncontiguous::NFA {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b24a3efb` (2026-11-04)
-**Commit Message**: EXT-2580 Hive log UI actions (#57953)
+### Incident Patch 1: `6c50d2c3` (2026-11-05)
+**Commit Message**: Revert "Document bridge cluster lifecycle and mixed storage (#57823)" (#58209)
 
-**File**: `ydb/core/mind/hive/balancer.cpp` (modified, +3/-1)
+Co-authored-by: Rutkovsky Alexander <[REDACTED_EMAIL]>
+
+**File**: `ydb/docs/en/core/concepts/bridge.md` (modified, +21/-48)
 ```diff
-@@ -561,14 +561,16 @@ class THiveBalancer : public NActors::TActorBootstrapped<THiveBalancer>, public
-     }
- };
+@@ -2,27 +2,27 @@
  
--void THive::StartHiveBalancer(TBalancerSettings&& settings) {
-+bool THive::StartHiveBalancer(TBalancerSettings&& settings) {
-     if (IsItPossibleToStartBalancer(settings.Type)) {
-         LastBalancerTrigger = settings.Type;
-         LastBalancerSuppression.reset();
-         auto* balancer = new THiveBalancer(this, std::move(settings));
-         SubActors.emplace_back(balancer);
-         RegisterWithSameMailbox(balancer);
-+        return true;
-     }
-+    return false;
- }
+ {% include [feature_enterprise.md](../_includes/feature_enterprise.md) %}
  
- } // NHive
+-Bridge mode is a {{ ydb-short-name }} cluster operating mode that stores data with synchronous replication between multiple parts of the cluster called [piles](glossary.md#pile).
++This article describes a special operating mode of the {{ ydb-short-name }} cluster in which data is stored with synchronous replication between multiple parts of the cluster called [pile](glossary.md#pile).
+ 
+-Bridge mode extends the basic distributed storage modes: each pile uses one of the {{ ydb-short-name }} [operating modes](topology.md#cluster-config), for example `mirror-3-dc` or `block-4-2`, and is fault-tolerant on its own. Bridge adds synchronous replication between piles and managed failover and switchover of load between them. This provides an extra layer of fault tolerance on top of the selected topology. Bridge mode requires more hardware and is more complex to operate; it is especially useful for clusters deployed across two data centers and for systems with higher availability requirements, for example when availability must survive three out of four data centers failing.
++The bridge mode is an extension on top of the basic distributed storage modes: each pile is built using one of the {{ ydb-short-name }} [operating modes](topology.md#cluster-config) (for example, `mirror-3-dc` or `block-4-2`) and is fault-tolerant on its own; bridge adds synchronous replication between piles on top of that, plus managed failover/switchover of load between them. This provides an extra layer of fault tolerance on top of the chosen topologies. Bridge mode requires more hardware and is more complex to operate; it is especially useful for clusters deployed across two data centers and for systems with higher availability requirements — for example, when you need to remain available if three out of four data centers fail.
+ 
+ ## Description of the mode {#description}
+ 
+-In bridge mode, cluster nodes are split into several [piles](glossary.md#pile), typically one pile per data center. If a pile fails, bridged storage becomes unavailable until the command to disable that pile is executed. After it is disabled, the cluster resumes operation.
++In bridge mode, cluster nodes are split into several [piles](glossary.md#pile) (typically one pile per datacenter). If one of the piles fails, the cluster becomes unavailable until the command to disable that pile is executed. After it is disabled, the cluster resumes operation.
+ 
+-{{ ydb-short-name }} supports an arbitrary number of piles; however, some scenarios below use two piles for simplicity.
++{{ ydb-short-name }} supports an arbitrary number of piles; however, for simplicity, the following discussion considers the case of two piles.
+ 
+ At the [distributed storage](glossary.md#distributed-storage) level, bridge mode implements synchronous Active/Active replication between piles. At the [database node](glossary.md#database-node) level, Active/Passive redundancy is possible.
+ 
+-Each bridged [storage group](glossary.md#storage-group) has one part in every pile. Within each pile, any {{ ydb-short-name }} [operating mode](topology.md#cluster-config) supported for data storage may be used.
++Data is stored in pairs of [storage groups](glossary.md#storage-group) from different piles. Within each pile, any {{ ydb-short-name }} [operating mode](topology.md#cluster-config) supported for data storage may be used.
+ 
+-Bridge mode can achieve zero-downtime [switchover](https://en.wikipedia.org/wiki/Switchover). On [failover](https://en.wikipedia.org/wiki/Failover), the cluster requires explicit disabling of replication to the failed pile before it can resume. When any participating pile fails, request processing for bridged groups is suspended until replication to that pile is disabled.
++Bridge mode can achieve zero-downtime [switchover](https://en.wikipedia.org/wiki/Switchover). On [failover](https://en.wikipedia.org/wiki/Failover), the cluster requires explicit disabling of replication to the failed pile before it can resume. When any pile is disabled, request processing is suspended until the command to disable replication to that pile is executed.
+ 
+ Piles are not standalone {{ ydb-short-name }} clusters; they are parts of a single cluster with a complex topology:
+ 
+ - [Tablets](glossary.md#tablet) in bridge mode run as a single instance;
+-- each pile runs its own [static group](glossary.md#static-group) and storage group parts with regular [VDisk](glossary.md#vdisk)s. Bridged storage groups are accessed through a bridge proxy, which exposes the [DS-proxy](glossary.md#ds-proxy) interface to tablets and performs operations using the DS-proxy instances of the participating piles;
+-- each pile runs its own set of replicas of [StateStorage](glossary.md#state-storage), [SchemeBoard](glossary.md#scheme-board), and [Board](glossary.md#board). Access to StateStorage, SchemeBoard, and Board is through similar proxy co
 ```
 
-**File**: `ydb/core/mind/hive/hive_impl.cpp` (modified, +6/-0)
+**File**: `ydb/docs/en/core/concepts/glossary.md` (modified, +0/-4)
 ```diff
-@@ -2796,7 +2796,13 @@ void THive::Handle(NConsole::TEvConsole::TEvConfigNotificationRequest::TPtr& ev)
-     const NKikimrConsole::TConfigNotificationRequest& record = ev->Get()->Record;
-     ClusterConfig = record.GetConfig().GetHiveConfig();
-     NodeBrokerEpoch = TDuration::MicroSeconds(record.GetConfig().GetNodeBrokerConfig().GetEpochDuration());
-+    const NKikimrConfig::THiveConfig previousConfig = CurrentConfig;
-     BuildCurrentConfig();
-+    if (TString changes = GetHiveConfigDiffText(previousConfig, CurrentConfig)) {
-+        YDB_LOG_INFO("Handle TEvConsole::TEvConfigNotificationRequest: effective config changed",
-+            {"logPrefix", GetLogPrefix()},
-+            {"changes", changes});
-+    }
-     YDB_LOG_DEBUG("Handle TEvConsole::TEvConfigNotificationRequest: merged config",
-         {"logPrefix", GetLogPrefix()},
-         {"config", CurrentConfig});
+@@ -194,10 +194,6 @@ A monotonically increasing lower bound on the event times in a [streaming query]
+ 
+ **Bridge mode** is a special cluster topology in which data is stored with synchronous replication between multiple [piles](#pile). The specifics of the mode are described in [{#T}](topology.md#bridge) and also in [{#T}](bridge.md).
+ 
+-#### Non-uniform storage {#non-uniform-storage}
+-
+-**Non-uniform storage** is a bridge cluster mode in which bridged storage pools and ordinary storage pools coexist. Ordinary pools can reduce storage overhead and write latency but still depend on the bridge control plane for failover. For details, see [Bridged and ordinary storage pools](bridge.md#storage-pools).
+-
+ ### Table {#table}
+ 
+ A **table** is a structured piece of information organized into rows and columns. Each row represents a single record or item, and each column is a specific attribute or field with a defined data type.
 ```
 
-**File**: `ydb/core/mind/hive/hive_impl.h` (modified, +8/-2)
+**File**: `ydb/docs/en/core/devops/deployment-options/manual/bridge-management.md` (modified, +48/-421)
 ```diff
-@@ -128,6 +128,12 @@ TString GetResourceValuesHtml(const TResourceRawValues& values);
- NJson::TJsonValue GetResourceValuesJson(const TResourceRawValues& values);
- NJson::TJsonValue GetResourceValuesJson(const TResourceRawValues& values, const TResourceRawValues& maximum);
- TString GetResourceValuesHtml(const NKikimrTabletBase::TMetrics& values);
-+
-+// value of a THiveConfig field in single-line text form; a repeated field is rendered as [a, b, c], an absent singular field as <unset>
-+TString GetHiveConfigFieldText(const NKikimrConfig::THiveConfig& config, const google::protobuf::FieldDescriptor* field);
-+
-+// "Field: from -> to" for every field that differs between the two configs, "; "-separated; empty when they are equal
-+TString GetHiveConfigDiffText(const NKikimrConfig::THiveConfig& from, const NKikimrConfig::THiveConfig& to);
- TString GetResourceValuesHtml(const TMetrics& values);
- NJson::TJsonValue GetResourceValuesJson(const NKikimrTabletBase::TMetrics& values);
- ui64 GetReadThroughput(const NKikimrTabletBase::TMetrics& values);
-@@ -264,10 +270,10 @@ class THive : public TActor<THive>, public TTabletExecutedFlat, public THiveShar
-     bool IsItPossibleToStartBalancer(EBalancerType balancerType);
-     // balancerType is empty when the suppression is not about a specific type
-     void LogBalancerNotStarted(const TString& balancerType, EBalancerSuppressReason reason);
--    void StartHiveBalancer(TBalancerSettings&& settings);
-+    bool StartHiveBalancer(TBalancerSettings&& settings);
-     THiveDrain* StartHiveDrain(TDrainTarget target, TDrainSettings settings);
-     void StartHiveFill(TNodeId nodeId, const TActorId& initiator);
--    void StartHiveStorageBalancer(TStorageBalancerSettings settings);
-+    bool StartHiveStorageBalancer(TStorageBalancerSettings settings);
-     // starts a new reassign for every tablet in the list
-     void StartReassignActor(std::vector<TReassignOperation> operations, const TActorId& source, ui32 maxInFlight, TString description, std::unique_ptr<IReassignCallback> callback);
-     // continues reassigns of tablets that were left in the middle of it (e.g. by a Hive restart)
+@@ -1,478 +1,107 @@
+-# Managing a cluster in bridge mode
++## Managing a cluster in bridge mode
+ 
+ {% include [feature_enterprise.md](../../../_includes/feature_enterprise.md) %}
+ 
+-Bridge cluster management is a set of procedures for converting a cluster to [bridge mode](../../../concepts/bridge.md), changing its pile topology and storage pool modes, and recovering from pile failures. This article describes these procedures using [{{ ydb-short-name }} CLI commands](../../../reference/ydb-cli/commands/bridge/index.md) and {{ ydb-short-name }} DSTool.
++Below are typical operations for a cluster in [bridge mode](../../../concepts/bridge.md) using the [corresponding {{ ydb-short-name }} CLI commands](../../../reference/ydb-cli/commands/bridge/index.md).
+ 
+-## Common command usage {#common}
++### View current state {#list}
+ 
+-Run management commands through any available cluster node. Add the endpoint to the command as follows:
+-
+-```bash
+-{{ ydb-cli }} -e grpc://<node>:2135 admin cluster bridge list
+-```
+-
+-Where:
+-
+-- `<node>` is the host name or IP address of an available cluster node, for example `node-1.example.com`.
+-
+-Mutating `ydb admin` commands ask for confirmation, while the read-only `bridge list` command does not. Without a TTY, confirmation is silently declined and the command exits with code 1. Scripts must therefore pass the global `-y` option to mutating commands. The examples below omit the endpoint for brevity.
+-
+-{% note warning "Points of no return" %}
+-
+-Converting a cluster to bridge mode is irreversible. After conversion and after a persisted bridge feature-level raise caused by pile operations, non-uniform storage, or per-pile storage overrides, nodes that do not support the required level are fenced out. Upgrade every static and dynamic node before enabling a feature. There is no supported way to make a cluster non-bridged again.
+-
+-{% endnote %}
+-
+-## Operations overview {#operations}
+-
+-| Operation | Command or action | Reversible |
+-| --- | --- | --- |
+-| Convert to a single-pile bridge | `{{ ydb-cli }} -y admin cluster bridge convert [--skip-storage-pool-conversion]` | No |
+-| Enable non-uniform storage | Set `bridge_config.enable_non_uniform_storage: true` | No |
+-| List a pile | Add it to `bridge_config.piles` and its nodes to `hosts`, then replace the configuration | Yes, while it is `INACTIVE` |
+-| Add a pile | `{{ ydb-cli }} -y admin cluster bridge add-pile --pile P` | Yes, with `remove-pile` |
+-| Return a pile | `{{ ydb-cli }} -y admin cluster bridge rejoin --pile P` | — |
+-| Switch the primary pile | `{{ ydb-cli }} -y admin cluster bridge switchover --new-primary P` | — |
+-| Planned takedown | `{{ ydb-cli }} -y admin cluster bridge takedown --pile P [--new-primary Q]` | `rejoin` |
+-| Emergency disconnect | `{{ ydb-cli }} -y admin cluster bridge failover --pile P [--pile R] [--new-primary Q]` | `rejoin` |
+-| Remove a pile | `{{ ydb-cli }} -y admin cluster bridge remove-pile --pile P` | No, the data is deleted |
+-| Switch a pool's mode | `ydb-dstool pool set-bridge-mode --pool-name N (--bridged \| --ordinary [--retain-pile P])` | Yes |
+-| View state and progress | `{{ ydb-cli }} admin cluster bridge list [--format json]` | — |
+-
+-## View current state {#list}
+-
+-The `list` command shows the current state of each pile, conversion progress, and pending pile operations:
++Shows the current state of each pile configured on the {{ ydb-short-name }} cluster.
+ 
+ ```bash
+ {{ ydb-cli }} admin cluster bridge list
+ ```
+ 
+ Example output:
+ 
+-```text
+-Pile pile-a: PRIMARY
+-Pile pile-b: SYNCHRONIZED
+-Generation: 4
+-```
+-
+-For scripts, use `--format json`. During conversion, the output includes `Conversion from non-bridged cluster is in progress, piles can't be added yet`. During pile addition or removal, it includes `Pending operation on pile P: ADD` or `REMOVE`. If the last attempt failed and is being retried, the output also includes its error. For the output format, see the [command reference](../../../reference/ydb-cli/commands/bridge/list.md).
+-
+-## Planned `PRIMARY` change (switchover) {#switchover}
+-
+-If maintenance is planned in the data center or on the equipment where the current `PRIMARY` pile runs, switch the cluster to another pile in advance. Select a pile in the `SYNCHRONIZED` state:
+-
+ ```bash
+-{{ ydb-cli }} -y admin cluster bridge switchover --new-primary <pile>
++pile-a: PRIMARY
++pile-b: SYNCHRONIZED
+ ```
+ 
+-Where `<pile>` is the name of the new primary pile, for example `pile-b`.
+-
+-The switchover is performed smoothly: roles go through `PRIMARY/PROMOTED` and end in `SYNCHRONIZED/PRIMARY`.
+-
+-## Planned pile disconnection (takedown) {#takedown}
+-
+-Before maintenance that will make a pile unavailable, take it out of the cluster:
+-
+-```bash
+-{{ ydb-cli }} -y admin cluster bridge takedown --pile <pile>
+-```
++### Planned `PRIMARY` change (switchover) {#switchover}
+ 
+-If disconnecting the current `PRIMARY`, specify a synchronized replacement:
++If planned maintenance is scheduled i
 ```
 
-**File**: `ydb/core/mind/hive/hive_statics.cpp` (modified, +40/-0)
+**File**: `ydb/docs/en/core/reference/configuration/bridge_config.md` (modified, +3/-20)
 ```diff
-@@ -1,10 +1,50 @@
- #include "hive_impl.h"
+@@ -1,10 +1,8 @@
+-# bridge_config {#bridge-config}
++# bridge_config
  
- #include <library/cpp/json/json_value.h>
-+#include <google/protobuf/text_format.h>
-+#include <util/string/strip.h>
+-The `bridge_config` section configures [piles](../../concepts/glossary.md#pile) and mixed storage for [bridge mode](../../concepts/bridge.md). Use it to declare pile names and optionally allow bridged and ordinary storage pools to coexist.
++This section describes cluster [piles](../../concepts/glossary.md#pile) for [bridge mode](../../concepts/bridge.md). List the pile names used to bind hosts and other entities. In bridge mode, each host must also specify the corresponding pile name in the `hosts` section (`bridge_pile_name` field); see [Bridge mode specifics](hosts.md#hosts-bridge).
  
- namespace NKikimr {
- namespace NHive {
+-Each host must specify its pile in the `hosts` section with the `location.bridge_pile_name` field; see [Bridge mode specifics](hosts.md#hosts-bridge). Nodes read `bridge_config` and their own `location` only at startup, so changing these settings requires a rolling restart of static and dynamic nodes.
+-
+-## Syntax {#syntax}
++## Syntax
  
-+TString GetHiveConfigFieldText(const NKikimrConfig::THiveConfig& config, const google::protobuf::FieldDescriptor* field) {
-+    google::protobuf::TextFormat::Printer printer;
-+    printer.SetSingleLineMode(true);
-+    TProtoStringType value;
-+    if (!field->is_repeated()) {
-+        // an absent field is not the same as its default: e.g. absent MinCPUScatterToBalance falls back to MinScatterToBalance
-+        if (field->has_presence() && !config.GetReflection()->HasField(config, field)) {
-+            return "<unset>";
-+        }
-+        printer.PrintFieldValueToString(config, field, -1, &value);
-+        return TString(value);
-+    }
-+    TStringBuilder result;
-+    result << '[';
-+    int size = config.GetReflection()->FieldSize(config, field);
-+    for (int i = 0; i < size; ++i) {
-+        value.clear();
-+        printer.PrintFieldValueToString(config, field, i, &value);
-+        result << (i ? ", " : "") << StripString(TString(value));
-+    }
-+    result << ']';
-+    return result;
-+}
-+
-+TString GetHiveConfigDiffText(const NKikimrConfig::THiveConfig& from, const NKikimrConfig::THiveConfig& to) {
-+    TStringBuilder result;
-+    const google::protobuf::Descriptor* descriptor = NKikimrConfig::THiveConfig::GetDescriptor();
-+    for (int i = 0; i < descriptor->field_count(); ++i) {
-+        const google::protobuf::FieldDescriptor* field = descriptor->field(i);
-+        TString fromValue = GetHiveConfigFieldText(from, field);
-+        TString toValue = GetHiveConfigFieldText(to, field);
-+        if (fromValue != toValue) {
-+            result << (result.empty() ? "" : "; ") << field->name() << ": " << fromValue << " -> " << toValue;
-+        }
-+    }
-+    return result;
-+}
-+
- TResourceRawValues ResourceRawValuesFromMetrics(const NKikimrTabletBase::TMetrics& metrics) {
-     TResourceRawValues values = {};
-     if (metrics.HasCounter()) {
+ ```yaml
+ bridge_config:
+@@ -13,19 +11,4 @@ bridge_config:
+   - name: <pile_name_2>
+   ...
+   - name: <pile_name_n>
+-  enable_non_uniform_storage: <true_or_false>
+ ```
+-
+-Where:
+-
+-- `<pile_name_1>`, `<pile_name_2>`, and `<pile_name_n>` are unique pile names, for example `pile-a`, `pile-b`, and `pile-c`;
+-- `<true_or_false>` is `true` to enable non-uniform storage or `false` to leave it disabled.
+-
+-## Parameters {#parameters}
+-
+-| Parameter | Default value | Description |
+-| --- | --- | --- |
+-| `piles` | `[]` | Lists piles configured in the cluster. A listed pile without allocated resources is `INACTIVE`. |
+-| `enable_non_uniform_storage` | `false` | Enables [non-uniform storage](../../concepts/bridge.md#storage-pools), allowing bridged and ordinary pools in one cluster. This setting is irreversible after activation. |
+-
+-During default conversion of a non-bridged cluster, leave `enable_non_uniform_storage` unset until conversion completes. Conversion with `--skip-storage-pool-conversion` requires it to be `true` before conversion starts. For the procedure, see [Converting a cluster](../../devops/deployment-options/manual/bridge-management.md#convert).
 ```
 
-**File**: `ydb/core/mind/hive/monitoring.cpp` (modified, +195/-36)
+**File**: `ydb/docs/en/core/reference/configuration/domains_config.md` (modified, +0/-3)
 ```diff
-@@ -20,21 +20,58 @@ namespace NHive {
- static constexpr ui64 MAX_REASSIGNS_WITHOUT_CONFIRMATION = 1000;
- static constexpr i64 REASSIGN_CONFIRMATION_ERROR_MARGIN = 10;
+@@ -58,7 +58,6 @@ The following [fault tolerance modes](../../concepts/topology.md) are available:
+       encryption_mode: <optional, specify 1 to encrypt data on the disk>
+       erasure_species: <fault tolerance mode name - none, block-4-2, or mirror-3-dc>
+       kind: <storage pool name - specify the same value as above>
+-      bridge_mode: <optional, true for a bridged pool or false for an ordinary pool>
+       pdisk_filter:
+       - property:
+         - type: <device type to be compared with the one specified in host_configs.drive.type>
+@@ -67,8 +66,6 @@ The following [fault tolerance modes](../../concepts/topology.md) are available:
+   ...
+ ```
  
--TLoggedMonTransaction::TLoggedMonTransaction(const NMon::TEvRemoteHttpInfo::TPtr& ev, THive* self) {
--    Index = ++self->OperationsLogIndex;
-+TString GetMonUser(const NMon::TEvRemoteHttpInfo* ev) {
-+    const auto& query = ev->ExtendedQuery;
-+    if (!query) {
-+        return {};
-+    }
-+    NACLib::TUserToken token(query->GetUserToken());
-+    return token.GetUserSID();
-+}
-+
-+TString GetMonUserForLog(const NMon::TEvRemoteHttpInfo* ev) {
-+    TString user = GetMonUser(ev);
-+    return user.empty() ? TString("anonymous") : user;
-+}
+-In a bridge cluster with [non-uniform storage](../../concepts/bridge.md#storage-pools), `bridge_mode` selects whether the pool is bridged (`true`) or ordinary (`false`). Set it explicitly when creating pool types: an omitted value is resolved from the cluster's persisted bridge state. This field cannot change the mode of an existing pool; use [`ydb-dstool pool set-bridge-mode`](../ydb-dstool/pool-set-bridge-mode.md) instead.
+-
+ Each database in the cluster is assigned at least one of the available storage pools selected in the database creation operation. The names of storage pools among those assigned can be used in the `DATA` attribute when defining column groups in YQL operators [`CREATE TABLE`](../../yql/reference/syntax/create_table/family.md)/[`ALTER TABLE`](../../yql/reference/syntax/alter_table/family.md).
  
--    const auto& query = ev->Get()->ExtendedQuery;
--    if (query) {
--        NACLib::TUserToken token(query->GetUserToken());
--        User = token.GetUserSID();
-+TLoggedMonTransaction::TLoggedMonTransaction(const NMon::TEvRemoteHttpInfo::TPtr& ev, THive* self)
-+    : Index(++self->OperationsLogIndex)
-+    , User(GetMonUser(ev->Get()))
-+    , LogPrefix(self->GetLogPrefix())
-+{}
-+
-+// JSON object -> structured log fields: a nested object becomes "key.subkey" fields, an array is written as JSON text
-+static NActors::NStructuredLog::TStructuredMessage JsonToStructuredMessage(const NJson::TJsonValue& json) {
-+    using namespace NActors::NStructuredLog;
-+    TStructuredMessage message;
-+    for (const auto& [key, value] : json.GetMap()) {
-+        switch (value.GetType()) {
-+            case NJson::JSON_UNDEFINED:
-+            case NJson::JSON_NULL:
-+                break;
-+            case NJson::JSON_MAP:
-+                message.AppendSubMessage(TKeyName(key), JsonToStructuredMessage(value));
-+                break;
-+            case NJson::JSON_STRING:
-+                message.AppendValue({TKeyName(key)}, value.GetString());
-+                break;
-+            default:
-+                message.AppendValue({TKeyName(key)}, NJson::WriteJson(value, false));
-+                break;
-+        }
-     }
-+    return message;
- }
- 
--void TLoggedMonTransaction::WriteOperation(NIceDb::TNiceDb& db, const NJson::TJsonValue& op) {
-+void TLoggedMonTransaction::WriteOperation(NIceDb::TNiceDb& db, const NJson::TJsonValue& op, TStringBuf description) {
-     TStringStream str;
-     NJson::WriteJson(&str, &op);
-     TInstant timestamp = TActivationContext::Now();
-     db.Table<Schema::OperationsLog>().Key(Index).Update<Schema::OperationsLog::User, Schema::OperationsLog::OperationTimestamp, Schema::OperationsLog::Operation>(User, timestamp.MilliSeconds(), str.Str());
-+    YDB_LOG_INFO(description,
-+        {"logPrefix", LogPrefix},
-+        {"user", GetUserForLog()},
-+        JsonToStructuredMessage(op));
- }
- 
- TCgiParameters GetParams(const NMon::TEvRemoteHttpInfo* ev) {
-@@ -828,6 +865,7 @@ class TTxMonEvent_Settings : public TTransactionBase<THive>, public TLoggedMonTr
-     TAutoPtr<NMon::TEvRemoteHttpInfo> Event;
-     bool ChangeRequest = false;
-     std::optional<TString> Status;
-+    TStringBuilder Changes; // applied changes in "Name: from -> to" form, for the operations log
- 
-     TTxMonEvent_Settings(const TActorId &source, NMon::TEvRemoteHttpInfo::TPtr& ev, TSelf *hive)
-         : TBase(hive)
-@@ -912,12 +950,33 @@ class TTxMonEvent_Settings : public TTransactionBase<THive>, public TLoggedMonTr
-         }
-     }
- 
-+    void AddChange(const TString& change) {
-+        Changes << (Changes.empty() ? "" : "; ") << change;
-+    }
-+
-+    static TString GetAllowedMetricsText(const TVector<i64>& metrics) {
-+        const auto* descriptor = NKikimrTabletBase::TMetrics::descriptor();
-+        TStringBuilder result;
-+        for (auto metricNum : metrics) {
-+            const auto* field = descriptor->FindFieldByNumber(metricNum);
-+            result << (result.empty() ? "" : ",");
-+            if (field) {
-+                result << field->name();
-+            } else {
-+                result << metricNum;
-+            }
-+        }
-+        return result.empty() ? TString("none") : TString(result);
-+    }
-+
-     bool Execute(TTransactionContext& txc, const TActorContext&) override {
-         const auto params(GetParams(Event.Get()));
-         NIceDb::TNiceDb db(txc.DB);
- 
-         NJson::TJsonValue jsonOperation;
-         auto& configUpdates = jsonOperation["ConfigUpdates"];
-+        const NKikimrConfig::THiveConfig previousConfig = Self->CurrentConfig;
-+        const NKikimrConfig::THiveConfig previousDatabaseConfig = Self->DatabaseConfig;
- 
-         UpdateConfig(db, "MaxTabletsScheduled", configUpdates, TSchemeIds::State::MaxTabletsScheduled);
-         UpdateConfig(db, "MaxBootBatchSize", configUpdates, TSchemeIds::State::MaxBootBatchSize);
-@@ -1058,6 +1117,24 @@ class TTxMonEvent_Settings : public TTransactionBase<THive>, public TLoggedMonTr
-             Self->BuildCurrentConfig();
-             db.Table<Schema::State>().Key(TSchemeIds::State::DefaultState).Update<Schema::State::Config>(Self->DatabaseConfig);
-             Self->Pro
+ ## State Storage Configuration {#domains-state}
 ```
 
-**File**: `ydb/core/mind/hive/monitoring.h` (modified, +8/-1)
+**File**: `ydb/docs/en/core/reference/ydb-cli/_includes/commands.md` (modified, +0/-3)
 ```diff
-@@ -11,11 +11,12 @@ class TLoggedMonTransaction {
- private:
-     ui64 Index;
-     TString User;
-+    TString LogPrefix;
+@@ -22,12 +22,9 @@ Any command can be run from the command line with the `--help` option to get hel
  
- protected:
-     TLoggedMonTransaction(const NMon::TEvRemoteHttpInfo::TPtr& evi, THive* self);
- 
--    void WriteOperation(NIceDb::TNiceDb& db, const NJson::TJsonValue& op);
-+    void WriteOperation(NIceDb::TNiceDb& db, const NJson::TJsonValue& op, TStringBuf description);
- 
-     TString GetUserForLog() const {
-         return User.empty() ? TString("anonymous") : User;
-@@ -24,6 +25,12 @@ class TLoggedMonTransaction {
- 
- TCgiParameters GetParams(const NMon::TEvRemoteHttpInfo* ev);
- 
-+// user SID from the request's auth token; empty when the request carries no token
-+TString GetMonUser(const NMon::TEvRemoteHttpInfo* ev);
-+
-+// the same with "anonymous" instead of an empty SID: for log lines and event history
-+TString GetMonUserForLog(const NMon::TEvRemoteHttpInfo* ev);
-+
- struct THttpStatus {
-     static const inline TString OK = "200 Ok";
-     static const inline TString BAD_REQUEST = "400 Bad Request";
+ | Command / subcommand | Brief description |
+ | --- | --- |
+-| [admin cluster bridge add-pile](../commands/bridge/add-pile.md) | Add an inactive [pile](../../../concepts/glossary.md#pile) and allocate its storage group parts |
+-| [admin cluster bridge convert](../commands/bridge/convert.md) | Convert a non-bridged cluster to a single-pile [bridge mode](../../../concepts/bridge.md) cluster |
+ | [admin cluster bridge failover](../commands/bridge/failover.md) | Emergency switchover when [pile](../../../concepts/glossary.md#pile) is unavailable |
+ | [admin cluster bridge list](../commands/bridge/list.md) | List state of each [pile](../../../concepts/glossary.md#pile) in [bridge mode](../../../concepts/bridge.md) |
+ | [admin cluster bridge rejoin](../commands/bridge/rejoin.md) | Returning [pile](../../../concepts/glossary.md#pile) to the [cluster](../../../concepts/glossary.md#cluster) after maintenance or recovery |
+-| [admin cluster bridge remove-pile](../commands/bridge/remove-pile.md) | Remove a disconnected [pile](../../../concepts/glossary.md#pile) and delete its storage group parts |
+ | [admin cluster bridge switchover](../commands/bridge/switchover.md) | Planned `PRIMARY` [pile](../../../concepts/glossary.md#pile) change |
+ | [admin cluster bridge takedown](../commands/bridge/takedown.md) | Taking [pile](../../../concepts/glossary.md#pile) out of the [cluster](../../../concepts/glossary.md#cluster) for maintenance |
+ | [admin cluster config fetch](../commands/configuration/cluster/fetch.md) | Getting the current dynamic configuration of the [cluster](../../../concepts/glossary.md#cluster) |
 ```
 
-**File**: `ydb/core/mind/hive/storage_balancer.cpp` (modified, +3/-1)
+**File**: `ydb/docs/en/core/reference/ydb-cli/commands/bridge/add-pile.md` (removed, +0/-64)
 ```diff
-@@ -206,12 +206,14 @@ class THiveStorageBalancer : public NActors::TActorBootstrapped<THiveStorageBala
-     }
- };
- 
--void THive::StartHiveStorageBalancer(TStorageBalancerSettings settings) {
-+bool THive::StartHiveStorageBalancer(TStorageBalancerSettings settings) {
-     if (IsItPossibleToStartBalancer(EBalancerType::Storage)) {
-         auto* balancer = new THiveStorageBalancer(this, std::move(settings));
-         SubActors.emplace_back(balancer);
-         RegisterWithSameMailbox(balancer);
-+        return true;
-     }
-+    return false;
- }
- 
- } // NHive
+@@ -1,64 +0,0 @@
+-# admin cluster bridge add-pile
+-
+-{% include [feature_enterprise.md](../../../../_includes/feature_enterprise.md) %}
+-
+-Use the `admin cluster bridge add-pile` command to allocate storage resources for a pile already listed in `bridge_config`. The command creates the pile's parts of bridged storage groups and leaves the pile `DISCONNECTED` so it can then be returned with [rejoin](rejoin.md).
+-
+-{% include [danger-warning](../_includes/danger-warning.md) %}
+-
+-General command syntax:
+-
+-```bash
+-{{ ydb-cli }} [global options...] admin cluster bridge add-pile [options...]
+-```
+-
+-- `global options` — [global parameters](../global-options.md) for the CLI;
+-- `options` — [subcommand parameters](#options).
+-
+-View command help:
+-
+-```bash
+-{{ ydb-cli }} admin cluster bridge add-pile --help
+-```
+-
+-## Subcommand parameters {#options}
+-
+-| Name | Description |
+-| --- | --- |
+-| `--pile <pile>` | Name of the `INACTIVE` pile to add. |
+-
+-## Requirements {#requirements}
+-
+-- Cluster conversion must be complete.
+-- The pile and its hosts must be present in the configuration, its static nodes must be running, and [list](list.md) must show it as `INACTIVE`.
+-- `system_tablets` node lists must include nodes from the new pile so system tablets can start there after failover.
+-- No other pile addition or removal can be pending.
+-- The pile must have enough drives and failure domains for static groups, State Storage, and all bridged pools.
+-
+-For the full procedure, see [Listing and adding a pile](../../../../devops/deployment-options/manual/bridge-management.md#add-pile).
+-
+-## Examples {#examples}
+-
+-Add the registered pile `pile-b`:
+-
+-```bash
+-{{ ydb-cli }} -y admin cluster bridge add-pile --pile pile-b
+-```
+-
+-The command starts a pending `ADD` operation. If there is insufficient space, it fails without changing the configuration. A transient BSC error is retained in the pending operation and retried. Immediately after hosts are registered, `group allocation failed` can also mean that BSC has not discovered them yet; retry after a few seconds.
+-
+-### Verifying the result {#verify}
+-
+-Check the operation and pile state:
+-
+-```bash
+-{{ ydb-cli }} admin cluster bridge list
+-```
+-
+-Wait for the pending `ADD` operation to clear and for the pile to become `DISCONNECTED`, then return it:
+-
+-```bash
+-{{ ydb-cli }} -y admin cluster bridge rejoin --pile pile-b
+-```
+-
+-The pile synchronizes in the background and becomes `SYNCHRONIZED`. A stuck `ADD` operation can be cancelled with [remove-pile](remove-pile.md).
 ```
 
----
-
-### Incident Patch 2: `256b1726` (2026-11-04)
-**Commit Message**: Fix MIN in columnshard value aggregation signals (#58052)
-
-**File**: `ydb/library/signals/agent.cpp` (modified, +4/-4)
+**File**: `ydb/docs/en/core/reference/ydb-cli/commands/bridge/convert.md` (removed, +0/-63)
 ```diff
-@@ -17,8 +17,8 @@ bool TValueAggregationAgent::CalcAggregationsAndClean(i64& sum, i64& minValue, i
-     }
-     sum = 0;
-     const TInstant now = TInstant::Now();
--    auto minValueLocal = Values.front()->GetValue(now);
--    auto maxValueLocal = Values.front()->GetValue(now);
-+    std::optional<i64> minValueLocal;
-+    std::optional<i64> maxValueLocal;
-     for (auto it = Values.begin(); it != Values.end();) {
-         if (it->use_count() == 1) {
-             it = Values.erase(it);
-@@ -41,8 +41,8 @@ bool TValueAggregationAgent::CalcAggregationsAndClean(i64& sum, i64& minValue, i
-     if (!maxValueLocal) {
-         return false;
-     }
--    minValue = maxValueLocal.value_or(0);
--    maxValue = maxValueLocal.value_or(0);
-+    minValue = *minValueLocal;
-+    maxValue = *maxValueLocal;
-     return true;
- }
- 
-```
-
-**File**: `ydb/library/signals/ut/agent_ut.cpp` (added, +26/-0)
-```diff
-@@ -0,0 +1,26 @@
-+#include <ydb/library/signals/agent.h>
-+#include <ydb/library/signals/owner.h>
-+
-+#include <library/cpp/testing/gtest/gtest.h>
-+
-+namespace NKikimr::NColumnShard {
-+
-+TEST(TValueAggregationAgentTest, MinMaxSum) {
-+    auto root = MakeIntrusive<NMonitoring::TDynamicCounters>();
-+    TCommonCountersOwner owner("test", root);
-+    TValueAggregationAgent agent("Value", owner);
-+    // Released at once: the agent holds the last reference and must skip it.
-+    agent.GetClient()->SetValue(100);
-+    auto low = agent.GetClient();
-+    auto high = agent.GetClient();
-+    low->SetValue(3);
-+    high->SetValue(7);
-+    agent.ResendStatus();
-+    auto group = root->FindSubgroup("module_id", "test");
-+    ASSERT_TRUE(group);
-+    EXPECT_EQ(group->FindCounter("Aggregation/MIN/Value")->Val(), 3);
-+    EXPECT_EQ(group->FindCounter("Aggregation/MAX/Value")->Val(), 7);
-+    EXPECT_EQ(group->FindCounter("Aggregation/SUM/Value")->Val(), 10);
-+}
-+
-+} // namespace NKikimr::NColumnShard
-```
-
-**File**: `ydb/library/signals/ut/ya.make` (added, +11/-0)
-```diff
-@@ -0,0 +1,11 @@
-+GTEST()
-+
-+PEERDIR(
-+    ydb/library/signals
-+)
-+
-+SRCS(
-+    agent_ut.cpp
-+)
-+
-+END()
-```
-
-**File**: `ydb/library/signals/ya.make` (modified, +4/-0)
-```diff
-@@ -19,3 +19,7 @@ PEERDIR(
- )
- 
- END()
-+
-+RECURSE_FOR_TESTS(
-+    ut
-+)
+@@ -1,63 +0,0 @@
+-# admin cluster bridge convert
+-
+-{% include [feature_enterprise.md](../../../../_includes/feature_enterprise.md) %}
+-
+-Use the `admin cluster bridge convert` command to convert a non-bridged cluster into a [bridge cluster](../../../../concepts/bridge.md) with one pile. Conversion is irreversible.
+-
+-{% include [danger-warning](../_includes/danger-warning.md) %}
+-
+-General command syntax:
+-
+-```bash
+-{{ ydb-cli }} [global options...] admin cluster bridge convert [options...]
+-```
+-
+-- `global options` — [global parameters](../global-options.md) for the CLI;
+-- `options` — [subcommand parameters](#options).
+-
+-View command help:
+-
+-```bash
+-{{ ydb-cli }} admin cluster bridge convert --help
+-```
+-
+-## Subcommand parameters {#options}
+-
+-| Name | Description |
+-| --- | --- |
+-| `--skip-storage-pool-conversion` | Leave existing storage pools and groups ordinary. Static and system storage is still converted. Existing pools can later be converted separately with [`ydb-dstool pool set-bridge-mode`](../../../ydb-dstool/pool-set-bridge-mode.md). This option requires `bridge_config.enable_non_uniform_storage: true`. |
+-
+-## Requirements {#requirements}
+-
+-- Configuration V2 and self-management must be enabled.
+-- Every static and dynamic node must run a supporting build and must have been restarted with a single-pile `bridge_config`.
+-- The configuration must contain exactly one pile.
+-- With `--skip-storage-pool-conversion`, `bridge_config.enable_non_uniform_storage` must be `true`. With default conversion, it must be unset until conversion completes.
+-
+-For the complete checklist and configuration examples, see [Converting a cluster](../../../../devops/deployment-options/manual/bridge-management.md#convert).
+-
+-## Examples {#examples}
+-
+-Convert the cluster and make every existing pool bridged:
+-
+-```bash
+-{{ ydb-cli }} -y admin cluster bridge convert
+-```
+-
+-Convert only system storage and leave existing pools ordinary:
+-
+-```bash
+-{{ ydb-cli }} -y admin cluster bridge convert --skip-storage-pool-conversion
+-```
+-
+-These are alternative modes. Choose the second for large clusters or when ordinary pools are required, so pool synchronization can be controlled separately.
+-
+-### Verifying the result {#verify}
+-
+-Use [list](list.md) to wait until conversion is complete:
+-
+-```bash
+-{{ ydb-cli }} admin cluster bridge list
+-```
+-
+-The conversion is still running while the output contains `Conversion from non-bridged cluster is in progress, piles can't be added yet`. After completion, the single pile is shown as `PRIMARY`. Until then, the pile list cannot change.
 ```
 
 ---
 
-### Incident Patch 3: `72f6b992` (2026-11-04)
-**Commit Message**: Fix simulated deadlines in paused replication bootstrap retry tests (#58135)
+### Incident Patch 2: `430c9eae` (2026-11-04)
+**Commit Message**: Bridge: fix ignored BridgeSyncRateBytesPerSecond setting (#58162)
 
-**File**: `ydb/core/tx/replication/controller/schema_change_ut.cpp` (modified, +21/-7)
+**File**: `ydb/core/blobstorage/nodewarden/distconf_ut.cpp` (modified, +26/-0)
 ```diff
-@@ -2707,7 +2707,8 @@ Y_UNIT_TEST_SUITE(StreamResultFreshness) {
- }
- 
- Y_UNIT_TEST_SUITE(StreamRetry) {
--    void RetryPausedBootstrapWithPublicConfig(bool failConsumer, bool changeCredentials) {
-+    void RetryPausedBootstrapWithPublicConfig(bool failConsumer, bool changeCredentials,
-+            TDuration responseDelay = TDuration::Zero()) {
-         TTestEnv env(true, NTestHelpers::ERuntimeMode::Simulated);
-         auto& runtime = env.GetRuntime();
-         CreateSourceTable(env, "bootstrap");
-@@ -2734,6 +2735,7 @@ Y_UNIT_TEST_SUITE(StreamRetry) {
- 
-         bool rejectSource = true;
-         bool holdResults = true;
-+        THashSet<TActorId> delayedCreators;
-         TVector<TAutoPtr<IEventHandle>> pending;
-         auto observer = runtime.AddObserver([&](IEventHandle::TPtr& ev) {
-             if (!ev->HasEvent()) {
-@@ -2765,6 +2767,14 @@ Y_UNIT_TEST_SUITE(StreamRetry) {
-                 return;
-             }
- 
-+            if (responseDelay && delayedCreators.insert(ev->Sender).second) {
-+                // Visit a timestamp past the old deadline before delivering the result.
-+                runtime.Schedule(new IEventHandle(env.GetSender(), env.GetSender(), new TEvents::TEvWakeup()),
-+                    responseDelay - TDuration::Seconds(1));
-+                runtime.Schedule(ev.Release(), responseDelay);
-+                return;
-+            }
-+
-             pending.push_back(std::move(ev));
-         });
-         const auto info = StartReplication(
-@@ -2776,12 +2786,13 @@ Y_UNIT_TEST_SUITE(StreamRetry) {
-             NKikimrSchemeOp::EIndexTypeGlobal,
-             true,
-             false);
-+        // Source setup uses real SDK callbacks, independently of simulated
-+        // time. The test runner's wall-clock timeout bounds these waits.
-         runtime.WaitFor(
-             "failed PAUSED source setup",
-             [&] {
-                 return DescribeReplication(env, info)->Get()->Record.GetState().HasError();
--            },
--            TDuration::Seconds(30));
-+            });
-         const auto failed = DescribeReplication(env, info);
-         UNIT_ASSERT_VALUES_EQUAL(failed->Get()->Record.TargetsSize(), 1);
-         const TWorkerId worker(1, failed->Get()->Record.GetTargets(0).GetId(), 0);
-@@ -2815,17 +2826,16 @@ Y_UNIT_TEST_SUITE(StreamRetry) {
-         UNIT_ASSERT_C(altered.IsSuccess(), altered.GetIssues().ToString());
-         runtime.WaitFor(
-             "retried source setup result",
--            [&] { return pending.size() == 1; },
--            TDuration::Seconds(30));
-+            [&] { return pending.size() == 1; });
-         UNIT_ASSERT_VALUES_EQUAL(readStream(TReplication::EStreamState::Creating), stream);
-         UNIT_ASSERT(DescribeReplication(env, info)->Get()->Record.GetState().HasPaused());
- 
-         // The retry must survive a crash between its durable reset and success.
-         RestartController(env, info.ControllerId);
-         runtime.WaitFor(
-             "retried source setup after restart",
--            [&] { return pending.size() == 2; },
--            TDuration::Seconds(30));
-+            [&] { return pending.size() == 2; });
-+        UNIT_ASSERT_VALUES_EQUAL(delayedCreators.size(), responseDelay ? 2 : 0);
-         UNIT_ASSERT_VALUES_EQUAL(readStream(TReplication::EStreamState::Creating), stream);
-         holdResults = false;
-         runtime.Send(pending.back().Release());
-@@ -2875,6 +2885,10 @@ Y_UNIT_TEST_SUITE(StreamRetry) {
-         RetryPausedBootstrapWithPublicConfig(false, true);
+@@ -11369,6 +11369,32 @@ Y_UNIT_TEST_SUITE(TDeriveStorageConfigBridgeTest) {
+         UNIT_ASSERT_STRING_CONTAINS(error, "mandatory pile name is missing for node 1");
      }
  
-+    Y_UNIT_TEST(PausedBootstrapCredentialRetryWithDelayedSourceResults) {
-+        RetryPausedBootstrapWithPublicConfig(false, true, TDuration::Minutes(1));
++    // node warden takes the rate of its syncer quoter from the derived config, so a value lost here is replaced with the
++    // default one as soon as distconf provides the config
++    Y_UNIT_TEST(BridgeSyncRateBytesPerSecond) {
++        NKikimrConfig::TAppConfig appConfig;
++        appConfig.MutableNameserviceConfig();
++        auto *bsFrom = appConfig.MutableBlobStorageConfig();
++        NKikimrBlobStorage::TStorageConfig config;
++        const auto& bsTo = *config.MutableBlobStorageConfig();
++        TString error;
++
++        bsFrom->SetBridgeSyncRateBytesPerSecond(123'000'000);
++        UNIT_ASSERT_C(NStorage::DeriveStorageConfig(appConfig, &config, &error), error);
++        UNIT_ASSERT_VALUES_EQUAL(bsTo.GetBridgeSyncRateBytesPerSecond(), 123'000'000);
++
++        // zero turns the throttling off, it isn't the same as the value being unset
++        bsFrom->SetBridgeSyncRateBytesPerSecond(0);
++        UNIT_ASSERT_C(NStorage::DeriveStorageConfig(appConfig, &config, &error), error);
++        UNIT_ASSERT(bsTo.HasBridgeSyncRateBytesPerSecond());
++        UNIT_ASSERT_VALUES_EQUAL(bsTo.GetBridgeSyncRateBytesPerSecond(), 0);
++
++        // the value dropped from the new config doesn't stick from the previous one
++        bsFrom->ClearBridgeSyncRateBytesPerSecond();
++        UNIT_ASSERT_C(NStorage::DeriveStorageConfig(appConfig, &config, &error), error);
++        UNIT_ASSERT(!bsTo.HasBridgeSyncRateBytesPerSecond());
 +    }
 +
-     Y_UNIT_TEST(PausedBootstrapUnchangedCredentialRetryAfterConsumerFailure) {
-         RetryPausedBootstrapWithPublicConfig(true, false);
+     // parts of static groups get new generations when the pile becomes unsynced; donors and VDisks being destroyed are
+     // separate entries of older generations, which must stay as they are (otherwise they look as active ones)
+     Y_UNIT_TEST(ResetStaticGroupPilePartsKeepsDonors) {
+```
+
+**File**: `ydb/core/blobstorage/nodewarden/node_warden_impl.cpp` (modified, +6/-0)
+```diff
+@@ -1946,6 +1946,12 @@ bool NKikimr::NStorage::DeriveStorageConfig(const NKikimrConfig::TAppConfig& app
+         bsTo->ClearBscSettings();
      }
+ 
++    if (bsFrom.HasBridgeSyncRateBytesPerSecond()) {
++        bsTo->SetBridgeSyncRateBytesPerSecond(bsFrom.GetBridgeSyncRateBytesPerSecond());
++    } else {
++        bsTo->ClearBridgeSyncRateBytesPerSecond();
++    }
++
+     // copy PDiskConfig from DefineHostConfig/DefineBox if this section is managed automatically
+     if (!hasStaticGroupInfo(bsFrom.GetServiceSet()) && config->GetSelfManagementConfig().GetEnabled()) {
+         THashMap<std::tuple<ui32, TString>, NKikimrBlobStorage::TPDiskConfig> pdiskConfigs;
+```
+
+---
+
+### Incident Patch 3: `85452744` (2026-11-04)
+**Commit Message**: Fix bridge discovery waits and unmute metadata tests (#58157)
+
+**File**: `.github/config/muted_ya.txt` (modified, +0/-6)
+```diff
+@@ -49,8 +49,6 @@ ydb/core/transfer/ut/functional Transfer.RetentionGapDoesNotFailTransfer
+ ydb/core/tx/replication/controller/ut_schema_change StreamRetry.PausedBootstrapCredentialRetry
+ ydb/core/tx/replication/service/ut_topic_reader RemoteTopicReader.RetentionGapAfterSessionStartWithLaterMessageReportsDataLoss
+ ydb/core/tx/replication/service/ut_topic_reader RemoteTopicReader.RetentionGapBeforeSessionStartWithLaterMessageReportsDataLoss
+-ydb/core/tx/scheme_board/ut_populator TPopulatorQuorumTest.ColdDeletionWithPathAfterSubscriptionWaitsForReplicaQuorum
+-ydb/core/tx/scheme_board/ut_populator TPopulatorQuorumTest.ColdDeletionWithPathWaitsForReplicaQuorum
+ ydb/core/tx/schemeshard/ut_restore unittest.[*/*] chunk
+ ydb/core/util/ut TCircularOperationQueueTest.ShouldShuffle
+ ydb/core/viewer/tests test.py.TestViewer.test_topic_data_cdc
+@@ -314,8 +312,6 @@ ydb/tests/functional/blobstorage test_vdisks.py.TestTinyVDisks.test_disabled
+ ydb/tests/functional/blobstorage test_vdisks.py.TestTinyVDisks.test_disabled_enabled
+ ydb/tests/functional/blobstorage test_vdisks.py.TestTinyVDisks.test_enabled
+ ydb/tests/functional/blobstorage test_vdisks.py.TestTinyVDisks.test_enabled_disabled
+-ydb/tests/functional/bridge test_discovery.py.TestDiscovery.test_basic
+-ydb/tests/functional/bridge test_discovery.py.TestDiscovery.test_update_piles
+ ydb/tests/functional/bridge test_mixed_storage.py.TestMixedStorageDatabases.test_create_grow_and_promote
+ ydb/tests/functional/bridge test_state_storage_selfheal.py.TestBridgeStateStorageSelfHeal.test_automatic_selfheal[reassign-primary]
+ ydb/tests/functional/bridge test_state_storage_selfheal.py.TestBridgeStateStorageSelfHeal.test_automatic_selfheal[reassign-secondary-r2]
+@@ -336,8 +332,6 @@ ydb/tests/functional/config test_config_migration.py.TestConfigMigrationFromV2Wi
+ ydb/tests/functional/config test_config_migration.py.TestConfigMigrationWithMixedDiskTypes.test_mixed_disk_types_extracted_during_migration
+ ydb/tests/functional/config test_config_migration.py.TestConfigMigrationWithSecurityConfig.test_security_config_preserved_during_migration
+ ydb/tests/functional/config test_config_migration.py.TestConfigMigrationWithStoragePoolTypes.test_storage_pool_types_extracted_during_migration
+-ydb/tests/functional/config test_distconf_reassign_state_storage.py.TestKiKiMRDistConfReassignStateStorageBadCases.test_cluster_change_state_storage
+-ydb/tests/functional/config test_distconf_self_heal.py.TestKiKiMRDistConfSelfHealParallelCall2.test
+ ydb/tests/functional/dstool test_canonical_requests.py.Test.test_group_take_snapshot
+ ydb/tests/functional/federation_test unittest.[*/*] chunk
+ ydb/tests/functional/mirror3dc test_mirror3dc.py.TestMirror3dc.test_exclude_one_dc
+```
+
+**File**: `.github/config/muted_ya_asan.txt` (modified, +0/-2)
+```diff
+@@ -57,8 +57,6 @@ ydb/core/tx/replication/controller/ut_schema_change StreamRetry.ResetSurvivesRes
+ ydb/core/tx/replication/controller/ut_schema_change TargetDiscoveryResults.ReplacedDiscovery+NewFirst
+ ydb/core/tx/replication/controller/ut_schema_change TargetDiscoveryResults.ReplacedDiscovery-NewFirst
+ ydb/core/tx/replication/controller/ut_schema_change TargetDiscoveryResults.TerminalStateIgnoresDiscovery+Drop
+-ydb/core/tx/scheme_board/ut_populator TPopulatorQuorumTest.ColdDeletionWithPathAfterSubscriptionWaitsForReplicaQuorum
+-ydb/core/tx/scheme_board/ut_populator TPopulatorQuorumTest.ColdDeletionWithPathWaitsForReplicaQuorum
+ ydb/core/tx/schemeshard/ut_stats TStoragePoolsStatsPersistence.DatabaseUsageAfterRestartDuringMoveWithShardIdxStats
+ ydb/library/actors/interconnect/ut DynamicProxy.RaceCheck10
+ ydb/library/nmslib/test/run_test_integr exectest.run[test_integr]
+```
+
+**File**: `ydb/tests/functional/bridge/test_discovery.py` (modified, +26/-18)
+```diff
+@@ -1,4 +1,5 @@
+ from common import BridgeKiKiMRTest
++from ydb.tests.library.common.wait_for import retry_assertions
+ 
+ from ydb.public.api.grpc.ydb_discovery_v1_pb2_grpc import DiscoveryServiceStub
+ from ydb.public.api.protos.ydb_bridge_common_pb2 import PileState
+@@ -13,13 +14,13 @@
+ 
+ class TestDiscovery(BridgeKiKiMRTest):
+     def list_endpoints(self):
+-        channel = grpc.insecure_channel(self.cluster.nodes[1].endpoint)
+-        stub = DiscoveryServiceStub(channel)
+-        request = discovery.ListEndpointsRequest(database="/Root")
+-        response = stub.ListEndpoints(request)
++        with grpc.insecure_channel(self.cluster.nodes[1].endpoint) as channel:
++            stub = DiscoveryServiceStub(channel)
++            request = discovery.ListEndpointsRequest(database="/Root")
++            response = stub.ListEndpoints(request, timeout=self.bridge_rpc_timeout)
+ 
+         result = discovery.ListEndpointsResult()
+-        response.operation.result.Unpack(result)
++        assert_that(response.operation.result.Unpack(result), str(response))
+         return result, response.operation.status
+ 
+     def check_endpoints(self, result):
+@@ -28,20 +29,28 @@ def check_endpoints(self, result):
+         for endpoint in result.endpoints:
+             assert_that(endpoint.bridge_pile_name, is_(expected_pile_names[endpoint.node_id]))
+ 
++    def wait_for_discovery(self, expected_states):
++        def check():
++            try:
++                result, status = self.list_endpoints()
++            except grpc.RpcError as error:
++                if error.code() not in (grpc.StatusCode.UNAVAILABLE, grpc.StatusCode.DEADLINE_EXCEEDED):
++                    raise
++                raise AssertionError(f"Discovery is not ready: {error}") from error
++            assert_that(status, is_(StatusIds.SUCCESS))
++            self.check_endpoints(result)
++            self.check_states(result, expected_states)
++
++        retry_assertions(check, timeout_seconds=120, step_seconds=0.5)
++
+     def test_basic(self):
+-        result, status = self.list_endpoints()
+-        assert_that(status, is_(StatusIds.SUCCESS))
+-        self.check_endpoints(result)
+-        self.check_states(result, {
++        self.wait_for_discovery({
+             "r1": PileState.PRIMARY,
+             "r2": PileState.SYNCHRONIZED,
+         })
+ 
+     def test_update_piles(self):
+-        result, status = self.list_endpoints()
+-        assert_that(status, is_(StatusIds.SUCCESS))
+-        self.check_endpoints(result)
+-        self.check_states(result, {
++        self.wait_for_discovery({
+             "r1": PileState.PRIMARY,
+             "r2": PileState.SYNCHRONIZED,
+         })
+@@ -50,12 +59,11 @@ def test_update_piles(self):
+             PileState(pile_name="r2", state=PileState.PROMOTED),
+         ]
+         self.update_cluster_state(self.bridge_client, updates)
+-        self.wait_for_cluster_state(self.bridge_client, {"r1": PileState.PRIMARY, "r2": PileState.PROMOTED})
++        self.wait_for_cluster_state(
++            self.bridge_client, {"r1": PileState.PRIMARY, "r2": PileState.PROMOTED}, timeout_seconds=120,
++        )
+ 
+-        result, status = self.list_endpoints()
+-        assert_that(status, is_(StatusIds.SUCCESS))
+-        self.check_endpoints(result)
+-        self.check_states(result, {
++        self.wait_for_discovery({
+             "r1": PileState.PRIMARY,
+             "r2": PileState.PROMOTED,
+         })
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #58152** (2026-11-04): Update muted_ya (relwithdebinfo) in main (@ydbot)
-- **PR #58146** (2026-11-04): Update muted_ya (relwithdebinfo) in main (@ydbot)
-- **PR #58136** (2026-11-04): EXT-2580 Log unexpected tablet death at heavier level (@UgnineSirdis)
-- **PR #58135** (2026-11-04): Fix simulated deadlines in paused replication bootstrap retry tests (@CyberROFL)
-- **PR #58133** (2026-11-04): Update muted_ya (relwithdebinfo) in main (@ydbot)
-- **PR #58132** (2026-11-04): Stabilize StateStorage follower recovery test warmup (@mregrock)
+- **PR #58217** (2026-11-05): Update muted_ya (relwithdebinfo) in main (@ydbot)
+- **PR #58215** (2026-11-05): Update muted_ya (release-asan) in stable-26-4-1 (@ydbot)
+- **PR #58209** (2026-11-05): Revert "Document bridge cluster lifecycle and mixed storage (#57823)" (@alexvru)
+- **PR #58208** (2026-11-05): Update muted_ya (release-asan) in main (@ydbot)
+- **PR #58207** (2026-11-05): Update muted_ya (release-asan) in stable-26-4-1 (@ydbot)
+- **PR #58205** (2026-11-05): Update muted_ya (relwithdebinfo) in stable-26-3-1 (@ydbot)
 
 ---
 
@@ -2568,30 +2646,33 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. EXT-2580 Hive log UI actions (#57953)
+## X. Revert "Document bridge cluster lifecycle and mixed storage (#57823)" (#58209)
 
 **RULE**:
-When implementing operations in `ydb/core/mind/hive/balancer.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ydb-platform/ydb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `ydb/docs/en/core/concepts/bridge.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ydb-platform/ydb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b24a3efb`: EXT-2580 Hive log UI actions (#57953). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6c50d2c3`: Revert "Document bridge cluster lifecycle and mixed storage (#57823)" (#58209). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `ydb/core/mind/hive/balancer.cpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `ydb/docs/en/core/concepts/bridge.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-bool THive::StartHiveBalancer(TBalancerSettings&& settings) {
-        return true;
-    return false;
+This article describes a special operating mode of the {{ ydb-short-name }} cluster in which data is stored with synchronous replication between multiple parts of the cluster called [pile](glossary.md#pile).
+The bridge mode is an extension on top of the basic distributed storage modes: each pile is built using one of the {{ ydb-short-name }} [operating modes](topology.md#cluster-config) (for example, `mirror-3-dc` or `block-4-2`) and is fault-tolerant on its own; bridge adds synchronous replication between piles on top of that, plus managed failover/switchover of load between them. This provides an extra layer of fault tolerance on top of the chosen topologies. Bridge mode requires more hardware and is more complex to operate; it is especially useful for clusters deployed across two data centers and for systems with higher availability requirements — for example, when you need to remain available if three out of four data centers fail.
+In bridge mode, cluster nodes are split into several [piles](glossary.md#pile) (typically one pile per datacenter). If one of the piles fails, the cluster becomes unavailable until the command to disable that pile is executed. After it is disabled, t
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-void THive::StartHiveBalancer(TBalancerSettings&& settings) {
+Bridge mode is a {{ ydb-short-name }} cluster operating mode that stores data with synchronous replication between multiple parts of the cluster called [piles](glossary.md#pile).
+Bridge mode extends the basic distributed storage modes: each pile uses one of the {{ ydb-short-name }} [operating modes](topology.md#cluster-config), for example `mirror-3-dc` or `block-4-2`, and is fault-tolerant on its own. Bridge adds synchronous replication between piles and managed failover and switchover of load between them. This provides an extra layer of fault tolerance on top of the selected topology. Bridge mode requires more hardware and is more complex to operate; it is especially useful for clusters deployed across two data centers and for systems with higher availability requirements, for example when availability must survive three out of four data centers failing.
+In bridge mode, cluster nodes are split into several [piles](glossary.md#pile), typically one pile per data center. If a pile fails, bridged storage becomes unavailable until the command to disable that pile is executed. After it is disabled, the cluster resumes operation.
+{{ ydb-short-name }} supports an arbitrary number of pil
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b24a3efb` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6c50d2c3` are properly handled with clean fallback behavior.

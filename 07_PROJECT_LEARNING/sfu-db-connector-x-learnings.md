@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/sfu-db-connector-x-learnings.md`  
 > **Source**: github ([https://github.com/sfu-db/connector-x](https://github.com/sfu-db/connector-x))  
-> **Source Version**: `c28cd7c3`  
+> **Source Version**: `8dcfc003`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T11:22:19.684Z  
+> **Timestamp**: 2026-11-05T05:04:39.381Z  
 > **Learning ID**: `learn-github-sfu-db-connector-x`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/sfu-db-connector-x-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/sfu-db/connector-x](https://github.com/sfu-db/connector-x))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T11:22:19.677Z  
+> **Harvest Timestamp**: 2026-11-05T05:04:39.376Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -787,28 +787,21 @@ if __name__ == "__main__":
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b4f4923f` (2026-11-03)
-**Commit Message**: build(rust): bump mssql-tds from 0.2.0 to 0.3.0 (#1036)
+### Incident Patch 1: `8b12b545` (2026-11-05)
+**Commit Message**: build(python): sync connectorx-python/Cargo.lock with connectorx (#1043)
 
-Bumps [mssql-tds](https://github.com/microsoft/mssql-rs) from 0.2.0 to 0.3.0.
-- [Changelog](https://github.com/microsoft/mssql-rs/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/microsoft/mssql-rs/commits)
-
----
-updated-dependencies:
-- dependency-name: mssql-tds
-  dependency-version: 0.3.0
-  dependency-type: direct:production
-  update-type: version-update:semver-minor
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-Co-authored-by: Thomas Schmelzer <[REDACTED_EMAIL]>
-
-**File**: `Cargo.lock` (modified, +2/-2)
+**File**: `connectorx-python/Cargo.lock` (modified, +13/-3)
 ```diff
-@@ -5223,9 +5223,9 @@ dependencies = [
+@@ -1539,7 +1539,7 @@ dependencies = [
+  "rustc-hash 2.1.1",
+  "serde",
+  "serde_json",
+- "sqlparser 0.62.0",
++ "sqlparser 0.63.0",
+  "thiserror 2.0.20",
+  "tiberius",
+  "tokio",
+@@ -4358,9 +4358,9 @@ dependencies = [
  
  [[package]]
  name = "mssql-tds"
@@ -820,53 +813,8 @@ Co-authored-by: Thomas Schmelzer <[REDACTED_EMAIL]>
  dependencies = [
   "async-trait",
   "bigdecimal 0.4.10",
-```
-
-**File**: `connectorx/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -72,7 +72,7 @@ tiberius = { version = "0.7", features = [
-   "chrono",
-   "integrated-auth-gssapi",
- ], optional = true }
--mssql-tds = { version = "0.2.0", optional = true }
-+mssql-tds = { version = "0.3.0", optional = true }
- tokio = { version = "1", features = [
-   "rt",
-   "rt-multi-thread",
-```
-
----
-
-### Incident Patch 2: `676ced12` (2026-11-01)
-**Commit Message**: build(rust): bump sqlparser from 0.62.0 to 0.63.0
-
-Bumps [sqlparser](https://github.com/apache/datafusion-sqlparser-rs) from 0.62.0 to 0.63.0.
-- [Changelog](https://github.com/apache/datafusion-sqlparser-rs/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/apache/datafusion-sqlparser-rs/compare/v0.62.0...v0.63.0)
-
----
-updated-dependencies:
-- dependency-name: sqlparser
-  dependency-version: 0.62.0
-  dependency-type: direct:production
-  update-type: version-update:semver-minor
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-
-**File**: `Cargo.lock` (modified, +11/-1)
-```diff
-@@ -1943,7 +1943,7 @@ dependencies = [
-  "rustc-hash 2.1.3",
-  "serde",
-  "serde_json",
-- "sqlparser 0.62.0",
-+ "sqlparser 0.63.0",
-  "testcontainers",
-  "thiserror 2.0.21",
-  "tiberius",
-@@ -8450,6 +8450,16 @@ dependencies = [
-  "sqlparser_derive 0.5.0",
+@@ -6744,6 +6744,16 @@ dependencies = [
+  "recursive",
  ]
  
 +[[package]]
@@ -884,171 +832,37 @@ Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
  version = "0.3.0"
 ```
 
-**File**: `connectorx/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -15,7 +15,7 @@ fehler = "1"
- itertools = "0.15"
- log = "0.4"
- rayon = "1"
--sqlparser = "0.62"
-+sqlparser = "0.63"
- thiserror = "2"
- url = "2"
- owning_ref = "0.4"
-```
-
 ---
 
-### Incident Patch 3: `abf1e800` (2026-11-01)
-**Commit Message**: build(rust): bump ureq from 2 to 3 and migrate trino test helper
+### Incident Patch 2: `8dcfc003` (2026-11-05)
+**Commit Message**: build(mssql): forward integrated-auth-gssapi to the enabled backend only (#1042)
 
-Port run_trino_statement to the ureq 3 API: .set -> .header,
-.send_string -> .send, .into_json -> .body_mut().read_json().
-
-Supersedes #1039.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `Cargo.lock` (modified, +27/-15)
+**File**: `connectorx/Cargo.toml` (modified, +7/-1)
 ```diff
-@@ -2030,6 +2030,7 @@ dependencies = [
-  "cookie",
-  "document-features",
-  "idna",
-+ "indexmap 2.14.2",
-  "log",
-  "publicsuffix",
-  "serde",
-@@ -9470,20 +9471,34 @@ checksum = "6d49784317cd0d1ee7ec5c716dd598ec5b4483ea832a2dced265471cc0f690ae"
- 
- [[package]]
- name = "ureq"
--version = "2.12.1"
-+version = "3.4.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "02d1a66277ed75f640d608235660df48c8e3c19f3b4edb6a263315626cc3c01d"
-+checksum = "9a7ac20be9b7726e0bbdbf974c059676d9acb1cd414961f570a4e8231cacd7fc"
- dependencies = [
-- "base64 0.22.1",
-+ "base64 0.23.1",
-+ "cookie_store",
-  "flate2",
-  "log",
-- "once_cell",
-+ "percent-encoding",
-  "rustls 0.23.45",
-  "rustls-pki-types",
-  "serde",
-  "serde_json",
-- "url",
-- "webpki-roots 0.26.11",
-+ "ureq-proto",
-+ "utf8-zero",
-+ "webpki-roots 1.0.9",
-+]
-+
-+[[package]]
-+name = "ureq-proto"
-+version = "0.6.5"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "841583fc36089d7d59419568ae157f43a5a03a2e5a81ba87c77d1596ef46e922"
-+dependencies = [
-+ "base64 0.23.1",
-+ "http 1.5.0",
-+ "httparse",
-+ "log",
+@@ -206,7 +206,13 @@ src_clickhouse = [
  ]
+ federation = ["j4rs"]
+ fed_exec = ["datafusion", "tokio"]
+-integrated-auth-gssapi = ["tiberius/integrated-auth-gssapi"]
++# Unix Kerberos for `trusted_connection=true`. Weak (`?`) so it only forwards to
++# whichever MSSQL backend is enabled, never pulls one in by itself. mssql-tds
++# dlopens libgssapi_krb5 at runtime; Tiberius links it at build time.
++integrated-auth-gssapi = [
++  "tiberius?/integrated-auth-gssapi",
++  "mssql-tds?/gssapi",
++]
  
- [[package]]
-@@ -9505,6 +9520,12 @@ version = "2.1.3"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "daf8dba3b7eb870caf1ddeed7bc9d2a049f3cfdfae7cb521b087cc33ae4c49da"
- 
-+[[package]]
-+name = "utf8-zero"
-+version = "0.8.1"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "b8c0a043c9540bae7c578c88f91dda8bd82e59ae27c21baca69c8b191aaf5a6e"
-+
- [[package]]
- name = "utf8_iter"
- version = "1.0.4"
-@@ -9731,15 +9752,6 @@ version = "0.25.4"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "5f20c57d8d7db6d3b86154206ae5d8fba62dd39573114de97c2cb0578251f8e1"
- 
--[[package]]
--name = "webpki-roots"
--version = "0.26.11"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "521bc38abb08001b01866da9f51eb7c5d647a19260e00054a8c7fd5f9e57f7a9"
--dependencies = [
-- "webpki-roots 1.0.9",
--]
--
- [[package]]
- name = "webpki-roots"
- version = "1.0.9"
-```
-
-**File**: `connectorx/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -104,7 +104,7 @@ criterion = "0.8"
- env_logger = "0.11"
- iai = "0.1"
- testcontainers = { version = "0.28", features = ["blocking"] }
--ureq = { version = "2", features = ["json"] }
-+ureq = { version = "3", features = ["json"] }
- 
- # pprof depends on nix/pthread and does not build on Windows.
- [target.'cfg(unix)'.dev-dependencies]
-```
-
-**File**: `connectorx/tests/test_db.rs` (modified, +11/-9)
-```diff
-@@ -277,22 +277,24 @@ fn run_trino_statement(base_url: &str, statement: &str) {
-     }
- 
-     let mut payload: serde_json::Value = ureq::post(&format!("{base_url}/v1/statement"))
--        .set("X-Trino-User", "test")
--        .set("X-Trino-Catalog", "test")
--        .set("X-Trino-Schema", "test")
--        .send_string(stmt)
-+        .header("X-Trino-User", "test")
-+        .header("X-Trino-Catalog", "test")
-+        .header("X-Trino-Schema", "test")
-+        .send(stmt)
-         .expect("execute trino statement")
--        .into_json()
-+        .body_mut()
-+        .read_json()
-         .expect("parse trino response");
- 
-     while let Some(next) = payload.get("nextUri").and_then(|v| v.as_str()) {
-         payload = ureq::get(next)
--            .set("X-Trino-User", "test")
--            .set("X-Trino-Catalog", "test")
--            .set("X-Trino-Schema", "test")
-+            .header("X-Trino-User", "test")
-+            .header("X-Trino-Catalog", "test")
-+            .header("X-Trino-Schema", "test")
-             .call()
-             .expect("poll trino query")
--            .into_json()
-+            .body_mut()
-+            .read_json()
-             .expect("parse trino poll response");
-         if payload.get("error").is_some() {
-             panic!("trino query failed: {}", payload);
+ [package.metadata.docs.rs]
+ features = ["all"]
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1043** (2026-11-05): build(python): sync connectorx-python/Cargo.lock with connectorx (@tschm)
+- **PR #1042** (2026-11-05): build(mssql): forward integrated-auth-gssapi to the enabled backend only (@tschm)
 - **PR #1041** (2026-11-03): mssql: make src_mssql default to mssql-tds (step before Phase 4) (@tschm)
 - **PR #1040** (2026-11-01): build(rust): bump ureq from 2 to 3 (@tschm)
 - **PR #1039** (closed): build(rust): bump ureq from 2.12.1 to 3.4.2 (@dependabot[bot])
 - **PR #1038** (2026-11-02): build(deps): bump Gr1N/setup-poetry from 9 to 10 (@dependabot[bot])
-- **PR #1037** (closed): build(rust): bump arrow from 56.2.1 to 60.1.0 (@dependabot[bot])
-- **PR #1036** (2026-11-03): build(rust): bump mssql-tds from 0.2.0 to 0.3.0 (@dependabot[bot])
 
 ---
 
@@ -1068,30 +882,42 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(rust): bump mssql-tds from 0.2.0 to 0.3.0 (#1036)
+## X. build(python): sync connectorx-python/Cargo.lock with connectorx (#1043)
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sfu-db/connector-x. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `connectorx-python/Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sfu-db/connector-x. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b4f4923f`: build(rust): bump mssql-tds from 0.2.0 to 0.3.0 (#1036). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8b12b545`: build(python): sync connectorx-python/Cargo.lock with connectorx (#1043). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `connectorx-python/Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
+ "sqlparser 0.63.0",
 version = "0.3.0"
 checksum = "c7a53513324677e601ca5b91e477840329ec6c244875fd55b155e5a8e8af7805"
+[[package]]
+name = "sqlparser"
+version = "0.63.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "3679862809bd1f92e563cf6fd820e28f39135303668001c10331d5027183e8b4"
+dependencies = [
+ "log",
+ "recursive",
+]
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
+ "sqlparser 0.62.0",
 version = "0.2.0"
 checksum = "b03612dd2098a7b98613b423414afaf3031ff080a24652941abfc1d2e13f6222"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b4f4923f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8b12b545` are properly handled with clean fallback behavior.

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/koderover-zadig-learnings.md`  
 > **Source**: github ([https://github.com/koderover/zadig](https://github.com/koderover/zadig))  
-> **Source Version**: `97df5a8b`  
+> **Source Version**: `47243e2f`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T20:46:46.013Z  
+> **Timestamp**: 2026-11-05T10:50:44.754Z  
 > **Learning ID**: `learn-github-koderover-zadig`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/koderover-zadig-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/koderover/zadig](https://github.com/koderover/zadig))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T20:46:46.006Z  
+> **Harvest Timestamp**: 2026-11-05T10:50:44.748Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1158,705 +1158,792 @@ func FileExists(filePath string) (bool, error) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `97df5a8b` (2026-11-04)
-**Commit Message**: feat: support split image variables for CR workloads (#5037)
-
-* feat: support split image variables for CR workloads
-
-* fix: render delivery image variables from environment templates
-
-* fix: match delivery image parts against source images
-
-* fix: validate only referenced delivery image parts
-
-* refactor: unify image part lookup and remove digest guard
-
-* fix: return partially rendered yaml on image variable errors
-
-* refactor: share image keys and reuse delivery render queries
-
-* fix: preserve unresolved image previews and guard null delivery images
-
-* refactor: simplify delivery image field replacement
+### Incident Patch 1: `dd411330` (2026-11-05)
+**Commit Message**: fix(security): refine report serving and password recovery responses
 
 Signed-off-by: Cynthia <[REDACTED_EMAIL]>
 
----------
-
-Signed-off-by: Cynthia <[REDACTED_EMAIL]>
-
-**File**: `pkg/microservice/aslan/core/common/service/kube/parse.go` (modified, +52/-31)
+**File**: `pkg/microservice/aslan/core/system/service/system_cache.go` (modified, +4/-1)
 ```diff
-@@ -35,11 +35,6 @@ const (
- 	productRegexString   = `\$Product\$`
- 	serviceRegexString   = `\$Service\$`
- 	clusterRegexString   = `\$ClusterName\$`
--
--	// $<module>-image$ - per service-module image substitution.
--	// Module names follow the K8s container name spec; we allow the broader
--	// [A-Za-z0-9_-]+ to match what parseContainer already accepts.
--	moduleImageRegexString = `\$([A-Za-z0-9_-]+)-image\$`
- )
- 
- var (
-@@ -52,8 +47,6 @@ var (
- 	envNameRegex   = regexp.MustCompile(envRegexString)
- 	serviceRegex   = regexp.MustCompile(serviceRegexString)
- 	clusterRegex   = regexp.MustCompile(clusterRegexString)
--
--	moduleImageRegex = regexp.MustCompile(moduleImageRegexString)
- )
- 
- // ParseSysKeys 渲染系统变量键值
-@@ -66,54 +59,82 @@ func ParseSysKeys(namespace, envName, productName, serviceName, clusterName, ori
- 	return ori
+@@ -231,7 +231,10 @@ func CleanImageCache(logger *zap.SugaredLogger) error {
  }
  
--// ParseModuleImageKeys substitutes $<module>-image$ placeholders in yaml using
--// the provided container list (container.Name -> container.Image). Containers
--// with an empty or placeholder-shaped Image are skipped — they cannot resolve
--// anything.
--//
--// If allowUnresolved is false, any $<module>-image$ placeholder still present
--// after substitution causes an error naming the offending module(s). Callers
--// on the initial-deploy path (no built image yet) should pass true.
-+// ParseModuleImageKeys substitutes complete and split image variables from the
-+// final container images. Replacement values are prepared before scanning YAML;
-+// split errors are reported only when the corresponding variable is referenced.
-+// When allowUnresolved is true, missing or invalid images leave their unresolved
-+// variables unchanged without returning an error.
-+// The returned YAML includes all successful replacements, even on error.
-+// Variables without replacement values remain unchanged.
- func ParseModuleImageKeys(yaml string, containers []*commonmodels.Container, allowUnresolved bool) (string, error) {
-+	replacements := make(map[string]string)
-+	replacementErrors := make(map[string]error)
- 	for _, c := range containers {
- 		if c == nil || c.Name == "" || c.Image == "" {
- 			continue
- 		}
- 		if commonutil.IsModuleImagePlaceholder(c.Image) {
- 			continue
- 		}
--		// Also skip the Zadig workflow-task-create placeholder convention
--		// (e.g. "{{ NOT BE RENDERED }}"). Substituting it into the YAML
--		// produces flow-style garbage that downstream YAML decoders choke
--		// on. For built-in workload kinds, ReplaceWorkloadImages still
--		// writes this placeholder into container.image structurally, so the
--		// preview yaml round-trips. For non-built-in kinds (CRDs, etc.),
--		// the $<name>-image$ placeholder stays as text — paired with
--		// AllowUnresolvedModuleImages on the caller, this is fine.
-+		// Workflow task previews may carry a non-image sentinel.
- 		trimmedImage := strings.TrimSpace(c.Image)
- 		if strings.HasPrefix(trimmedImage, "{{") && strings.HasSuffix(trimmedImage, "}}") {
- 			continue
- 		}
--		pattern := regexp.MustCompile(`\$` + regexp.QuoteMeta(c.Name) + `-image\$`)
--		yaml = pattern.ReplaceAllLiteralString(yaml, c.Image)
-+		key := commonutil.ModuleImageKey(c.Name)
-+		if _, exists := replacements[key]; exists {
-+			continue
-+		}
-+		replacements[key] = c.Image
-+
-+		parts, err := commonutil.ParseModuleImageParts(c.Image)
-+		if err != nil {
-+			for _, variable := range commonutil.ModuleImagePartVariables {
-+				key := commonutil.ModuleImagePartKey(c.Name, variable.Part)
-+				replacementErrors[key] = fmt.Errorf("module %q variable %s: %w", c.Name, key, err)
-+			}
-+			continue
-+		}
-+		for _, variable := range commonutil.ModuleImagePartVariables {
-+			key := commonutil.ModuleImagePartKey(c.Name, variable.Part)
-+			value, ok := parts.PartValue(variable.Part)
-+			if !ok {
-+				replacementErrors[key] = fmt.Errorf("module %q variable %s: unsupported image part %q", c.Name, key, variable.Part)
-+				continue
-+			}
-+			replacements[key] = value
-+		}
- 	}
- 
-+	yaml = commonutil.ModuleImageRegex.ReplaceAllStringFunc(yaml, func(key string) string {
-+		if value, exists := replacements[key]; exists {
-+			return value
-+		}
-+		return key
-+	})
-+
- 	if allowUnresolved {
- 		return yaml, nil
- 	}
- 
--	matches := moduleImageRegex.FindAllStringSubmatch(yaml, -1)
-+	for _, key := range commonutil.ModuleImageRegex.FindAllString(yaml, -1) {
-+		if err := replacementErrors[key]; err != nil {
-+			return yaml, err
-+		}
+ func CleanSharedStorage() error {
+-	return os.RemoveAll(config2.DataPath())
++	if err := os.RemoveAll(config2.DataPath()); err != nil {
++		return err
 +	}
-+
-+	matches := commonutil.ModuleImageRegex.FindAllString(yaml, -1)
- 	if len(matches) == 0 {
- 		return yaml, nil
- 	}
- 	seen := make(map[string]struct{}, len(matches))
- 	unresolved := make([]string, 0, len(matches))
--	for _, m := range matches {
--		if _, ok := seen[m[1]]; ok {
-+	for _, key := range matches {
-+		if _, ok := seen[key]; ok {
- 			continue
- 		}
--		seen[m[1]] = struct{}{}
--		unresolved = append(unresolved, m[1])
-+		seen[key] = struct{}{}
-+		unresolved = append(unresolved, key)
- 	}
--	return yaml, fmt.Errorf("unresolved $<module>-image$ placeholder(s): %s", strings.Join(unresolved, ", "))
-+	ret
-```
-
-**File**: `pkg/microservice/aslan/core/common/service/kube/render.go` (modified, +2/-2)
-```diff
-@@ -67,7 +67,7 @@ type GeneSvcYamlOption struct {
- 	UnInstall                     bool
- 	Containers                    []*models.Container
- 	// AllowUnresolvedModuleImages skips the post-render check that errors
--	// when a $<module>-image$ placeholder remains in the YAML. Set this on
-+	// when a complete or split module image variable remains in the YAML. Set this on
- 	// initial-deploy code paths where the image hasn't been built yet.
- 	AllowUnresolvedModuleImages bool
++	return os.MkdirAll(config2.DataPath(), os.ModePerm)
  }
-@@ -1021,7 +1021,7 @@ func GenerateRenderedYaml(option *GeneSvcYamlOption) (string, int, []*WorkloadRe
- 	if err != nil {
- 		return "", 0, nil, fmt.Errorf("failed to replace workload images: %v", err)
- 	}
--	// Second image-substitution pass — text-level $<module>-image$ replacement
-+	// Second image-substitution pass — complete and split module image variables
- 	// for any workload kind not handled by ReplaceWorkloadImages (e.g. DaemonSets,
- 	// Argo Rollouts, other CRDs).
- 	fullRenderedYaml, err = ParseModuleImageKeys(fullRenderedYaml, mergedContainers, option.AllowUnresolvedModuleImages)
+ 
+ // GetOrCreateCleanCacheState 获取清理镜像缓存状态，如果数据库中没有数据返回一个临时对象
 ```
 
-**File**: `pkg/microservice/aslan/core/common/util/module_image.go` (added, +117/-0)
+**File**: `pkg/microservice/aslan/core/vm/service/vm.go` (modified, +4/-1)
 ```diff
-@@ -0,0 +1,117 @@
-+/*
-+Copyright 2026 The KodeRover Authors.
-+
-+Licensed under the Apache License, Version 2.0 (the "License");
-+you may not use this file except in compliance with the License.
-+You may obtain a copy of the License at
-+
-+    http://www.apache.org/licenses/LICENSE-2.0
-+
-+Unless required by applicable law or agreed to in writing, software
-+distributed under the License is distributed on an "AS IS" BASIS,
-+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+See the License for the specific language governing permissions and
-+limitations under the License.
-+*/
-+
-+package util
-+
-+import (
-+	"fmt"
-+	"regexp"
-+	"strings"
-+
-+	"github.com/distribution/reference"
-+)
-+
-+const moduleImageKeyFormat = "$%s-image%s$"
-+
-+// ModuleImageKey returns the complete-image placeholder for a module.
-+func ModuleImageKey(module string) string {
-+	return fmt.Sprintf(moduleImageKeyFormat, module, "")
-+}
-+
-+// ModuleImagePartKey returns a split-image placeholder for a module.
-+func ModuleImagePartKey(module, part string) string {
-+	return fmt.Sprintf(moduleImageKeyFormat, module, "-"+part)
-+}
-+
-+// ModuleImagePartVariables defines the supported image parts and their display order.
-+var ModuleImagePartVariables = []struct {
-+	Part        string
-+	Description string
-+}{
-+	{Part: "registry", Description: "镜像仓库地址，包含端口"},
-+	{Part: "namespace", Description: "镜像多级路径"},
-+	{Part: "name", Description: "镜像名"},
-+	{Part: "tag", Description: "镜像标签"},
-+}
-+
-+// ModuleImageRegex captures the module name and optional image part.
-+var ModuleImageRegex = func() *regexp.Regexp {
-+	parts := make([]string, 0, len(ModuleImagePartVariables))
-+	for _, variable := range ModuleImagePartVariables {
-+		parts = append(parts, regexp.QuoteMeta(variable.Part))
-+	}
-+	return regexp.MustCompile(fmt.Sprintf(regexp.QuoteMeta(moduleImageKeyFormat), `([A-Za-z0-9_-]+)`, `(?:-(`+strings.Join(parts, "|")+`))?`))
-+}()
-+
-+// IsModuleImagePlaceholder also recognizes unresolved variables inside a composed image.
-+func IsModuleImagePlaceholder(image string) bool {
-+	return ModuleImageRegex.MatchString(image)
-+}
-+
-+// ModuleImageParts is derived from a complete image at render time and is not persisted.
-+type ModuleImageParts struct {
-+	Registry  string
-+	Namespace string
-+	Name      string
-+	Tag       string
-+}
-+
-+// PartValue distinguishes unsupported parts from supported parts with empty values.
-+func (p *ModuleImageParts) PartValue(part string) (string, bool) {
-+	switch part {
-+	case "registry":
-+		return p.Registry, true
-+	case "namespace":
-+		return p.Namespace, true
-+	case "name":
-+		return p.Name, true
-+	case "tag":
-+		return p.Tag, true
-+	default:
-+		return "", false
-+	}
-+}
-+
-+// ParseModuleImageParts preserves explicitly supplied registry and path components.
-+func ParseModuleImageParts(image string) (*ModuleImageParts, error) {
-+	// Parse, unlike ParseNormalizedNamed, does not add docker.io or library.
-+	ref, err := reference.Parse(image)
-+	if err != nil {
-+		return nil, fmt.Errorf("invalid image %q: %w", image, err)
-+	}
-+	named, ok := ref.(reference.Named)
-+	if !ok {
-+		return nil, fmt.Errorf("image %q has no name", image)
-+	}
-+	parts := &ModuleImageParts{}
-+	if tagged, ok := ref.(reference.Tagged); ok {
-+		parts.Tag = tagged.Tag()
-+	}
-+
-+	path := named.Name()
-+	if first, remainder, ok := strings.Cut(path, "/"); ok &&
-+		(first == "localhost" || strings.ContainsAny(first, ".:") || first != strings.ToLower(first)) {
-+		parts.Registry = first
-+		path = remainder
-+	}
-+	if index := strings.LastIndex(path, "/"); index >= 0 {
-+		parts.Namespace = path[:index]
-+		parts.Name = path[index+1:]
-+	} else {
-+		parts.Name = path
-+	}
-+	return parts, nil
-+}
-```
-
-**File**: `pkg/microservice/aslan/core/common/util/service.go` (modified, +0/-10)
-```diff
-@@ -19,7 +19,6 @@ package util
- import (
- 	"errors"
- 	"fmt"
--	"regexp"
- 	"strings"
- 
- 	"gopkg.in/yaml.v2"
-@@ -44,17 +43,8 @@ var (
- 		{setting.PathSearchComponentImage: "image.repository", setting.PathSearchComponentTag: "image.tag"},
- 		{setting.PathSearchComponentImage: "image"},
- 	}
--
--	moduleImagePlaceholderRegex = regexp.MustCompile(`^\$[A-Za-z0-9_-]+-image\$$`)
- )
- 
--// IsModuleImagePlaceholder reports whether s is exactly a $<module>-image$
--// placeholder string (no surrounding text). Used to avoid persisting an
--// unresolved placeholder as a stored image URI.
--func IsModuleImagePlaceholder(s string) bool {
--	return moduleImagePlaceholderRegex.MatchString(s)
--}
--
- // FoldManualModulesInto merges user-declared manual modules into an already-
- // populated auto-container slice in place. The intended call site is right
- // after SetCurrentContainerImages on a service template: that call fills the
-```
-
-**File**: `pkg/microservice/aslan/core/delivery/service/image_parts.go` (added, +302/-0)
-```diff
-@@ -0,0 +1,302 @@
-+/*
-+Copyright 2026 The KodeRover Authors.
-+
-+Licensed under the Apache License, Version 2.0 (the "License");
-+you may not use this file except in compliance with the License.
-+You may obtain a copy of the License at
-+
-+    http://www.apache.org/licenses/LICENSE-2.0
-+
-+Unless required by applicable law or agreed to in writing, software
-+distributed under the License is distributed on an "AS IS" BASIS,
-+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+See the License for the specific language governing permissions and
-+limitations under the License.
-+*/
-+
-+package service
-+
-+import (
-+	"fmt"
-+	"io"
-+	"strings"
-+
-+	"gopkg.in/yaml.v3"
-+
-+	commonmodels "github.com/koderover/zadig/v2/pkg/microservice/aslan/core/common/repository/models"
-+	"github.com/koderover/zadig/v2/pkg/microservice/aslan/core/common/service/kube"
-+	commonutil "github.com/koderover/zadig/v2/pkg/microservice/aslan/core/common/util"
-+	"github.com/koderover/zadig/v2/pkg/setting"
-+	"github.com/koderover/zadig/v2/pkg/util"
-+)
-+
-+type deliveryImageFields struct {
-+	patterns map[*yaml.Node]string
-+	parts    map[string]bool
-+}
-+
-+// templateYaml retains image placeholders to locate fields in serviceYaml.
-+// Referenced fields must match the source and have nonempty target image parts.
-+func replaceDeliveryServiceImagesWithTemplate(serviceYaml, templateYaml, namespace string, images []*commonmodels.DeliveryVersionImage) (string, error) {
-+	// 1. 解析模板和服务 YAML，每个文档（以 --- 分隔）对应一个资源节点。
-+	// templateDocs 保留镜像占位符；serviceDocs 保存待校验和替换的实际值。
-+	templateDocs, err := deliveryImageDocuments(templateYaml)
-+	if err != nil {
-+		return "", err
-+	}
-+	serviceDocs, err := deliveryImageDocuments(serviceYaml)
-+	if err != nil {
-+		return "", err
-+	}
-+
-+	// 2. 按模块整理源镜像和目标镜像，分别用于校验当前值和生成替换值。
-+	sources := make([]*commonmodels.Container, 0, len(images))
-+	targets := make([]*commonmodels.Container, 0, len(images))
-+	for _, image := range images {
-+		if image != nil {
-+			sources = append(sources, &commonmodels.Container{Name: image.ContainerName, Image: image.SourceImage})
-+			targets = append(targets, &commonmodels.Container{Name: image.ContainerName, Image: image.TargetImage})
-+		}
-+	}
-+
-+	// 3. 按 API 版本、资源类型、命名空间和名称建立模板索引，供服务资源匹配。
-+	templateByResource := make(map[string]*yaml.Node, len(templateDocs))
-+	for _, node := range templateDocs {
-+		key, err := deliveryImageResourceKey(node, namespace, sources)
-+		if err != nil {
-+			return "", err
-+		}
-+		templateByResource[key] = node
-+	}
-+
-+	// 4. 逐个匹配服务资源，定位拆分字段；源值匹配且目标分量非空时，才按模块替换。
-+	// 同时标记拆分字段，防止后续完整镜像替换绕过校验。
-+	protected := make(map[*yaml.Node]bool)
-+	changed := false
-+	for _, document := range serviceDocs {
-+		key, err := deliveryImageResourceKey(document, namespace, nil)
-+		if err != nil {
-+			return "", err
-+		}
-+		tmpl := templateByResource[key]
-+		if tmpl == nil {
-+			continue
-+		}
-+		modules := collectDeliveryImageFields(tmpl, document, protected)
-+		replaced, err := replaceDeliveryImageFields(modules, images, sources)
-+		if err != nil {
-+			return "", err
-+		}
-+		changed = changed || replaced
-+	}
-+
-+	// 5. 未定位到实际的拆分字段时，沿用原有的完整镜像替换逻辑并返回。
-+	if len(protected) == 0 {
-+		service := &commonmodels.DeliveryVersionService{YamlContent: serviceYaml, Images: images}
-+		err := updateDeliveryServiceImageInYaml(service, setting.DeliveryVersionSourceFromEnv)
-+		return service.YamlContent, err
-+	}
-+
-+	// 6. 替换其他字段中的完整源镜像，跳过已标记的拆分字段。
-+	for _, document := range serviceDocs {
-+		visitDeliveryImageFields(document, document, func(_, node *yaml.Node) bool {
-+			if protected[node] {
-+				return false
-+			}
-+			value := node.Value
-+			for _, image := range images {
-+				if image != nil && image.SourceImage != "" && image.TargetImage != "" {
-+					value = strings.ReplaceAll(value, image.SourceImage, image.TargetImage)
-+				}
-+			}
-+			if value != node.Value {
-+				node.Value, node.Tag, changed = value, "!!str", true
-+			}
-+			return true
-+		})
-+	}
-+
-+	// 7. 字段发生更新时，将资源节点重新序列化并合并为服务 YAML。
-+	if changed {
-+		manifests := make([]string, 0, len(serviceDocs))
-+		for _, document := range serviceDocs {
-+			data, err := yaml.Marshal(document)
-+			if err != nil {
-+				return "", err
-+			}
-+			manifests = append(manifests, string(data))
-+		}
-+		serviceYaml = util.JoinYamls(manifests)
-+	}
-+
-+	// 8. 按容器名称更新工作负载中的镜像，保持原有工作负载替换行为。
-+	result, _, err := kube.ReplaceWorkloadImages(serviceYaml, targets)
-+	return result, err
-+}
-+
-+// collectDeliveryImageFields 根据模板占位符，按模块收集实际资源中的拆分镜像字段。
-+// protected 记录这些字段，避免后续完整镜像替换绕过拆分字段的校验。
-+func collectDeliveryImageFields(template, actual *yaml.Node, protected map[*yaml.Node]bool) map[string]*deliveryImageFields {
-+	modules := make(map[string]*deliveryImageFields)
-+	visitDeliveryImageFields(template, actual, func(pattern, node *yaml.Node) bool {
-+		for _, match := range commonutil.ModuleImageRegex.FindAllStringSubmatch(pattern.Value, -1) {
-+			if match[2] == "" {
-+				continue
-+			}
-+			fields := modules[match[1]]
-+			if fields == nil {
-+				fields = &deliveryImageFields{patterns: make(
-```
-
-**File**: `pkg/microservice/aslan/core/delivery/service/version_v2.go` (modified, +66/-17)
-```diff
-@@ -166,11 +166,13 @@ func buildDeliveryImagesV2(targetRegistry *commonmodels.RegistryNamespace, regis
- 		updateVersionStatusV2(deliveryVersion.Version, deliveryVersion.ProjectName, deliveryVersion.Status, deliveryVersion.Error)
- 	}()
- 
--	// update service image in yaml
--	for _, service := range deliveryVersion.Services {
--		err = updateDeliveryServiceImageInYaml(service, deliveryVersion.Source)
--		if err != nil {
--			return fmt.Errorf("failed to update service image in yaml, serviceName: %s, err: %s", service.ServiceName, err)
-+	// Environment-sourced YAML is already updated before the version is saved.
-+	if deliveryVersion.Source != setting.DeliveryVersionSourceFromEnv {
-+		for _, service := range deliveryVersion.Services {
-+			err = updateDeliveryServiceImageInYaml(service, deliveryVersion.Source)
-+			if err != nil {
-+				return fmt.Errorf("failed to update service image in yaml, serviceName: %s, err: %w", service.ServiceName, err)
-+			}
- 		}
+@@ -656,7 +656,7 @@ func ReportAgentJob(args *ReportJobArgs, logger *zap.SugaredLogger) (*ReportAgen
+ 		return nil, fmt.Errorf("token is required")
  	}
  
-@@ -214,6 +216,9 @@ func updateDeliveryServiceImageInYaml(service *commonmodels.DeliveryVersionServi
- 
- 	containers := make([]*commonmodels.Container, 0, len(service.Images))
- 	for _, image := range service.Images {
-+		if image == nil {
-+			continue
-+		}
- 		containers = append(containers, &commonmodels.Container{
- 			Name:      image.ContainerName,
- 			ImageName: image.ImageName,
-@@ -227,7 +232,7 @@ func updateDeliveryServiceImageInYaml(service *commonmodels.DeliveryVersionServi
- 	}
- 
- 	for _, image := range service.Images {
--		if image.SourceImage == "" || image.TargetImage == "" || image.SourceImage == image.TargetImage {
-+		if image == nil || image.SourceImage == "" || image.TargetImage == "" || image.SourceImage == image.TargetImage {
- 			continue
- 		}
- 		replacedYaml = strings.ReplaceAll(replacedYaml, image.SourceImage, image.TargetImage)
-@@ -682,6 +687,9 @@ func checkDeliveryVersionRegistry(args *CreateDeliveryVersionRequest, registryMa
- 
- 	for _, service := range args.Services {
- 		for _, image := range service.Images {
-+			if image == nil {
-+				return nil, fmt.Errorf("image entry must not be null, projectName: %s, serviceName: %s", args.ProjectName, service.ServiceName)
-+			}
- 			if !image.PushImage {
- 				continue
- 			}
-@@ -1201,10 +1209,10 @@ func fillK8SDeliveryVersionYamlContent(args *CreateDeliveryVersionRequest) error
- 		Production: &args.Production,
+-	_, err := commonrepo.NewPrivateKeyColl().Find(commonrepo.FindPrivateKeyOption{
++	vm, err := commonrepo.NewPrivateKeyColl().Find(commonrepo.FindPrivateKeyOption{
+ 		Token: args.Token,
  	})
  	if err != nil {
--		return fmt.Errorf("failed to find env, projectName: %s, envName: %s, err: %v", args.ProjectName, args.EnvName, err)
-+		return fmt.Errorf("failed to find env, projectName: %s, envName: %s, err: %w", args.ProjectName, args.EnvName, err)
+@@ -670,6 +670,9 @@ func ReportAgentJob(args *ReportJobArgs, logger *zap.SugaredLogger) (*ReportAgen
+ 		logger.Errorf("failed to find job %s, error: %s", args.JobID, err)
+ 		return nil, fmt.Errorf("failed to find job %s, error: %s", args.JobID, err)
  	}
++	if job.VMID != vm.ID.Hex() {
++		return nil, fmt.Errorf("job %s does not belong to this agent", args.JobID)
++	}
  
--	return fillDeliveryVersionServicesYamlContent(env, args.Services)
-+	return fillDeliveryVersionServicesYamlContent(env, args.Services, true)
- }
- 
- func fillDeliveryVersionYamlContentForDetail(version *commonmodels.DeliveryVersionV2, logger *zap.SugaredLogger) {
-@@ -1225,7 +1233,7 @@ func fillDeliveryVersionYamlContentForDetail(version *commonmodels.DeliveryVersi
+ 	// if job is cancelled or timeout, stop agent job
+ 	if job.Status == string(config.StatusCancelled) || job.Status == string(config.StatusTimeout) {
+```
+
+**File**: `pkg/microservice/aslan/core/workflow/testing/handler/test_task.go` (modified, +32/-15)
+```diff
+@@ -24,7 +24,9 @@ import (
+ 	"io"
+ 	"io/fs"
+ 	"net/http"
++	"net/url"
+ 	"os"
++	"path"
+ 	"path/filepath"
+ 	"strconv"
+ 	"strings"
+@@ -330,6 +332,8 @@ func GetTestTaskHtmlReportInfo(c *gin.Context) {
+ func serveHTMLTestReport(c *gin.Context, htmlReportDir string) {
+ 	// Scripts may run for interactive reports, but never with the main site's origin.
+ 	c.Header("Content-Security-Policy", "sandbox allow-scripts")
++	// Sandboxed reports have an opaque origin and need CORS to load report data.
++	c.Header("Access-Control-Allow-Origin", "*")
+ 	root, err := os.OpenRoot(htmlReportDir)
+ 	if err != nil {
+ 		c.AbortWithStatus(http.StatusNotFound)
+@@ -350,35 +354,53 @@ func serveHTMLTestReport(c *gin.Context, htmlReportDir string) {
  		return
  	}
- 
--	if err = fillDeliveryVersionServicesYamlContent(env, version.Services); err != nil {
-+	if err = fillDeliveryVersionServicesYamlContent(env, version.Services, false); err != nil {
- 		logger.Errorf("failed to fill delivery version yaml content, version: %s, projectName: %s, err: %v", version.Version, version.ProjectName, err)
- 	}
- }
-@@ -1239,28 +1247,69 @@ func hasEmptyDeliveryVersionYamlContent(services []*commonmodels.DeliveryVersion
- 	return false
- }
- 
--func fillDeliveryVersionServicesYamlContent(env *commonmodels.Product, services []*commonmodels.DeliveryVersionService) error {
-+func fillDeliveryVersionServicesYamlContent(env *commonmodels.Product, services []*commonmodels.DeliveryVersionService, replaceImageParts bool) error {
- 	if env == nil {
- 		return fmt.Errorf("env is nil")
- 	}
- 
- 	serviceMap := env.GetServiceMap()
-+	clusterName := ""
-+	clusterLoaded := false
- 	for _, service := range services {
--		if service == nil || service.YamlContent != "" {
-+		if service == nil || (service.YamlContent != "" && !replaceImageParts) {
- 			continue
+ 	if info.IsDir() {
+-		// Require an index file to preserve gin.Dir(..., false)'s disabled directory listings.
+-		index, err := root.Stat(filepath.Join(relativePath, "index.html"))
+-		if err != nil || !index.Mode().IsRegular() {
+-			c.AbortWithStatus(http.StatusNotFound)
++		if !strings.HasSuffix(filePath, "/") {
++			redirectURL := url.URL{Path: path.Base(filePath) + "/", RawQuery: c.Request.URL.RawQuery}
++			c.Header("Location", redirectURL.String())
++			c.AbortWithStatus(http.StatusMovedPermanently)
+ 			return
  		}
++		// Match the file server's optional directory index without listing files.
++		relativePath = filepath.Join(relativePath, "index.html")
+ 	}
+-	c.FileFromFS(filePath, http.FS(root.FS()))
++	file, err := root.Open(relativePath)
++	if err != nil {
++		if info.IsDir() {
++			c.Status(http.StatusOK)
++			return
++		}
++		c.AbortWithStatus(http.StatusNotFound)
++		return
++	}
++	defer file.Close()
++	fileInfo, err := file.Stat()
++	if err != nil || !fileInfo.Mode().IsRegular() {
++		if info.IsDir() {
++			c.Status(http.StatusOK)
++			return
++		}
++		c.AbortWithStatus(http.StatusNotFound)
++		return
++	}
++	http.ServeContent(c.Writer, c.Request, fileInfo.Name(), fileInfo.ModTime(), file)
+ }
  
- 		envSvc := serviceMap[service.ServiceName]
- 		if envSvc == nil {
--			return fmt.Errorf("not found service %s in env %s", service.ServiceName, env.EnvName)
-+			return fmt.Errorf("service not found, projectName: %s, envName: %s, serviceName: %s", env.ProductName, env.EnvName, service.ServiceName)
-+		}
-+		templateProject := envSvc.ProductName
-+		if templateProject == "" {
-+			templateProject = env.ProductName
-+		}
-+		svcTmpl, err := repository.QueryTemplateService(&commonrepo.ServiceFindOption{
-+			ServiceName: envSvc.ServiceName,
-+			ProductName: templateProject,
-+			Type:        envSvc.Type,
-+			Revision:    envSvc.Revision,
-+		}, env.Production)
-+		if err != nil {
-+			return fmt.Errorf("failed to find env service template, projectName: %s, envName: %s, serviceName: %s, err: %w", env.ProductName, env.EnvName, service.ServiceName, err)
+ func findDefaultHtmlReportFilePath(root *os.Root, htmlFilepath string) (string, error) {
+-	// user specified path, just return
++	// Only select a default HTML file for the report root.
+ 	if htmlFilepath != "/" {
+ 		return htmlFilepath, nil
+ 	}
+-
+-	// user not specified, find default html file path for user
+ 	files, err := fs.ReadDir(root.FS(), ".")
+ 	if err != nil {
+ 		return "", fmt.Errorf("failed to read dir %s, err :%s", root.Name(), err)
+ 	}
+ 
+ 	fileName := ""
+-	foundIndex := false
+ 	for _, file := range files {
+ 		info, err := root.Stat(file.Name())
+ 		if err == nil && info.Mode().IsRegular() {
+ 			if file.Name() == "index.html" {
+-				foundIndex = true
++				fileName = file.Name()
+ 				break
+ 			}
+ 			if fileName == "" && filepath.Ext(file.Name()) == ".html" {
+@@ -387,11 +409,6 @@ func findDefaultHtmlReportFilePath(root *os.Root, htmlFilepath string) (string,
  		}
+ 	}
  
--		yamlContent, err := kube.RenderEnvService(env, envSvc.GetServiceRender()
+-	if foundIndex {
+-		// return / avoid always 301 redirect
+-		return "/", nil
+-	}
+-
+ 	if fileName != "" {
+ 		htmlFilepath = "/" + fileName
+ 		return htmlFilepath, nil
 ```
 
-**File**: `pkg/microservice/aslan/core/service/service/manual_module.go` (modified, +4/-15)
+**File**: `pkg/microservice/user/core/handler/user/user.go` (modified, +1/-3)
 ```diff
-@@ -19,7 +19,6 @@ package service
- import (
- 	"context"
- 	"fmt"
--	"regexp"
+@@ -552,9 +552,7 @@ func Retrieve(c *gin.Context) {
+ 	ctx := internalhandler.NewContext(c)
+ 	defer func() { internalhandler.JSONResponse(c, ctx) }()
+ 	// Do not expose account-specific failure details.
+-	if err := permission.Retrieve(c.Query("account"), ctx.Logger); err != nil {
+-		ctx.RespErr = fmt.Errorf("重置密码错误：%s", err)
+-	}
++	ctx.RespErr = permission.Retrieve(c.Query("account"), ctx.Logger)
+ }
  
- 	"go.mongodb.org/mongo-driver/bson/primitive"
+ func UpdatePassword(c *gin.Context) {
+```
+
+**File**: `pkg/microservice/user/core/service/permission/user.go` (modified, +15/-15)
+```diff
+@@ -820,10 +820,22 @@ func DeleteCollaborationModeByUid(uid string) error {
+ var retrieveHemlTemplate []byte
+ 
+ func Retrieve(account string, logger *zap.SugaredLogger) error {
++	// Check shared configuration before looking up the account so every account gets the same error.
++	systemConfigClient := systemconfig.New()
++	email, err := systemConfigClient.GetEmailHost()
++	if err != nil {
++		logger.Errorf("Retrieve GetEmailHost error, error msg:%s", err)
++		return fmt.Errorf("找回密码服务暂不可用，请联系管理员")
++	}
++	emailSvc, err := systemConfigClient.GetEmailService()
++	if err != nil {
++		logger.Errorf("Retrieve GetEmailService error, error msg:%s", err)
++		return fmt.Errorf("找回密码服务暂不可用，请联系管理员")
++	}
+ 	user, err := orm.GetUser(account, config.SystemIdentityType, repository.DB)
+ 	if err != nil {
+ 		logger.Errorf("Retrieve GetUser:%s error, error msg:%s ", account, err)
+-		return fmt.Errorf("Retrieve GetUser:%s error, error msg:%s ", account, err)
++		return fmt.Errorf("找回密码服务暂不可用，请联系管理员")
+ 	}
+ 	if user == nil {
+ 		logger.Errorf("Retrieve account:%s user not exist", account)
+@@ -849,26 +861,15 @@ func Retrieve(account string, logger *zap.SugaredLogger) error {
+ 	})
+ 	if err != nil {
+ 		logger.Errorf("Retrieve user:%s create token error, error msg:%s", user.Account, err)
+-		return err
++		return nil
+ 	}
+ 	v := url.Values{}
+ 	v.Add("idtoken", token)
+ 	retrieveURL := configbase.SystemAddress() + "/signin?" + v.Encode()
+ 	body, err := mail.RenderEmailTemplate(retrieveURL, string(retrieveHemlTemplate))
+ 	if err != nil {
+ 		logger.Errorf("Retrieve renderEmailTemplate error, error msg:%s ", err)
+-		return fmt.Errorf("Retrieve renderEmailTemplate error, error msg:%s ", err)
+-	}
+-	systemConfigClient := systemconfig.New()
+-	email, err := systemConfigClient.GetEmailHost()
+-	if err != nil {
+-		logger.Errorf("Retrieve GetEmailHost error, error msg:%s", err)
+-		return fmt.Errorf("Retrieve GetEmailHost error, error msg:%s ", err)
+-	}
+-	emailSvc, err := systemConfigClient.GetEmailService()
+-	if err != nil {
+-		logger.Errorf("Retrieve GetEmailService error, error msg:%s", err)
+-		return fmt.Errorf("Retrieve GetEmailService error, error msg:%s ", err)
++		return nil
+ 	}
+ 
+ 	err = mail.SendEmail(&mail.EmailParams{
+@@ -884,7 +885,6 @@ func Retrieve(account string, logger *zap.SugaredLogger) error {
+ 	})
+ 	if err != nil {
+ 		logger.Errorf("Retrieve SendEmail error, error msg:%s ", err)
+-		return err
+ 	}
+ 	return nil
+ }
+```
+
+---
+
+### Incident Patch 2: `d40e1497` (2026-11-03)
+**Commit Message**: fix(security): harden authentication flows and environment access
+
+Signed-off-by: Cynthia <[REDACTED_EMAIL]>
+
+**File**: `pkg/microservice/aslan/core/service/handler/environment.go` (modified, +60/-2)
+```diff
+@@ -23,6 +23,7 @@ import (
+ 
+ 	"github.com/gin-gonic/gin"
+ 	"github.com/koderover/zadig/v2/pkg/types"
++	"k8s.io/apimachinery/pkg/util/sets"
+ 
+ 	commonutil "github.com/koderover/zadig/v2/pkg/microservice/aslan/core/common/util"
+ 	"github.com/koderover/zadig/v2/pkg/microservice/aslan/core/service/service"
+@@ -40,10 +41,53 @@ import (
+ // @Success 200 			{object}  	service.DeployableEnvResp
+ // @Router /api/aslan/service/services/{name}/environments/deployable [get]
+ func GetDeployableEnvs(c *gin.Context) {
+-	ctx := internalhandler.NewContext(c)
++	ctx, err := internalhandler.NewContextWithAuthorization(c)
+ 	defer func() { internalhandler.JSONResponse(c, ctx) }()
+ 
++	if err != nil {
++		ctx.RespErr = fmt.Errorf("failed to get authorization info: %s", err)
++		ctx.UnAuthorized = true
++		return
++	}
++	projectName := c.Query("projectName")
++	if projectName == "" {
++		ctx.RespErr = fmt.Errorf("projectName is required")
++		return
++	}
++
+ 	production := c.Query("production") == "true"
++	hasPermission := ctx.Resources.IsSystemAdmin
++	if production {
++		if projectInfo := ctx.Resources.ProjectAuthInfo[projectName]; projectInfo != nil {
++			if projectInfo.IsProjectAdmin ||
++				(projectInfo.ProductionEnv != nil && projectInfo.ProductionEnv.View) {
++				hasPermission = true
++			}
++		}
++	} else {
++		if projectInfo := ctx.Resources.ProjectAuthInfo[projectName]; projectInfo != nil {
++			if projectInfo.IsProjectAdmin ||
++				(projectInfo.Env != nil && projectInfo.Env.View) {
++				hasPermission = true
++			}
++		}
++	}
++
++	envFilter := sets.NewString()
++	if !hasPermission {
++		permittedEnv, err := internalhandler.ListCollaborationEnvironmentsPermission(ctx.UserID, projectName)
++		if err != nil {
++			ctx.RespErr = fmt.Errorf("failed to get environment permissions: %s", err)
++			ctx.UnAuthorized = true
++			return
++		}
++		if permittedEnv == nil || len(permittedEnv.ReadEnvList) == 0 {
++			ctx.UnAuthorized = true
++			return
++		}
++		envFilter.Insert(permittedEnv.ReadEnvList...)
++	}
++
+ 	if production {
+ 		err := commonutil.CheckZadigProfessionalLicense()
+ 		if err != nil {
+@@ -52,7 +96,21 @@ func GetDeployableEnvs(c *gin.Context) {
+ 		}
+ 	}
+ 
+-	ctx.Resp, ctx.RespErr = service.GetDeployableEnvs(c.Param("name"), c.Query("projectName"), production)
++	resp, err := service.GetDeployableEnvs(c.Param("name"), projectName, production)
++	if err != nil {
++		ctx.RespErr = err
++		return
++	}
++	if !hasPermission {
++		envs := make([]*service.DeployableEnv, 0)
++		for _, env := range resp.Envs {
++			if envFilter.Has(env.EnvName) {
++				envs = append(envs, env)
++			}
++		}
++		resp.Envs = envs
++	}
++	ctx.Resp = resp
+ }
+ 
+ // GetKubeWorkloads api used to force user to have get environments privilege to use, now it is removed.
+```
+
+**File**: `pkg/microservice/systemconfig/core/codehost/service/codehost.go` (modified, +28/-24)
+```diff
+@@ -224,21 +224,35 @@ type state struct {
+ 	RedirectURL string `json:"redirect_url"`
+ }
+ 
++func parseCodeHostRedirectURL(rawURL string) (*url.URL, error) {
++	systemURL, err := url.Parse(zadigconfig.SystemAddress())
++	if err != nil || (systemURL.Scheme != "http" && systemURL.Scheme != "https") || systemURL.Host == "" || systemURL.User != nil {
++		return nil, fmt.Errorf("invalid system address")
++	}
++	redirectURL, err := url.Parse(rawURL)
++	if err != nil || redirectURL.User != nil || strings.Contains(rawURL, `\`) ||
++		!strings.EqualFold(redirectURL.Scheme, systemURL.Scheme) || !strings.EqualFold(redirectURL.Host, systemURL.Host) {
++		return nil, fmt.Errorf("invalid redirect URL")
++	}
++	return redirectURL, nil
++}
++
+ func AuthCodeHost(redirectURI string, codeHostID int, logger *zap.SugaredLogger) (string, error) {
+-	codeHost, err := GetCodeHost(codeHostID, false, logger)
++	redirectParsedURL, err := parseCodeHostRedirectURL(redirectURI)
+ 	if err != nil {
+-		logger.Errorf("GetCodeHost:%d err:%s", codeHostID, err)
+ 		return "", err
+ 	}
+-	redirectParsedURL, err := url.Parse(redirectURI)
++	codeHost, err := GetCodeHost(codeHostID, false, logger)
+ 	if err != nil {
+-		logger.Errorf("Parse redirectURI:%s err:%s", redirectURI, err)
++		logger.Errorf("GetCodeHost:%d err:%s", codeHostID, err)
+ 		return "", err
+ 	}
+-	redirectParsedURL.Path = callback
+-	// we need to ignore query parameters to keep grant valid
+-	redirectParsedURL.RawQuery = ""
+-	oauth, err := newOAuth(codeHost.Type, redirectParsedURL.String(), codeHost.ApplicationId, codeHost.ClientSecret, codeHost.Address)
++	callbackURL := url.URL{
++		Scheme: redirectParsedURL.Scheme,
++		Host:   redirectParsedURL.Host,
++		Path:   callback,
++	}
++	oauth, err := newOAuth(codeHost.Type, callbackURL.String(), codeHost.ApplicationId, codeHost.ClientSecret, codeHost.Address)
+ 	if err != nil {
+ 		logger.Errorf("NewOAuth:%s err:%s", codeHost.Type, err)
+ 		return "", err
+@@ -268,14 +282,13 @@ func HandleCallback(stateStr string, r *http.Request, logger *zap.SugaredLogger)
+ 		logger.Errorf("Unmarshal err:%s", err)
+ 		return "", err
+ 	}
+-	redirectParsedURL, err := url.Parse(sta.RedirectURL)
++	redirectParsedURL, err := parseCodeHostRedirectURL(sta.RedirectURL)
+ 	if err != nil {
+-		logger.Errorf("ParseURL:%s err:%s", sta.RedirectURL, err)
+ 		return "", err
+ 	}
+ 	codehost, err := GetCodeHost(sta.CodeHostID, false, logger)
+ 	if err != nil {
+-		return handle(redirectParsedURL, err)
++		return "", err
+ 	}
+ 	callbackURL := url.URL{
+ 		Scheme: redirectParsedURL.Scheme,
+@@ -286,21 +299,21 @@ func HandleCallback(stateStr string, r *http.Request, logger *zap.SugaredLogger)
+ 	o, err := newOAuth(codehost.Type, callbackURL.String(), codehost.ApplicationId, codehost.ClientSecret, codehost.Address)
+ 	if err != nil {
+ 		logger.Errorf("newOAuth err:%s", err)
+-		return handle(redirectParsedURL, err)
++		return "", err
+ 	}
+ 	token, err := o.HandleCallback(r, codehost)
+ 	if err != nil {
+ 		logger.Errorf("HandleCallback err:%s", err)
+-		return handle(redirectParsedURL, err)
++		return "", err
+ 	}
+ 	codehost.AccessToken = token.AccessToken
+ 	codehost.RefreshToken = token.RefreshToken
+ 	if _, err := UpdateCodeHostToken(codehost, logger); err != nil {
+ 		logger.Errorf("UpdateCodeHostByToken err:%s", err)
+-		return handle(redirectParsedURL, err)
++		return "", err
+ 	}
+ 	logger.Infof("success update codehost ready status")
+-	return handle(redirectParsedURL, nil)
++	return redirectParsedURL.String(), nil
+ }
+ 
+ func newOAuth(provider, callbackURL, clientID, clientSecret, address string) (*oauth.OAuth, error) {
+@@ -324,15 +337,6 @@ func newOAuth(provider, callbackURL, clientID, clientSecret, address string) (*o
+ 	return nil, errors.New("illegal provider")
+ }
+ 
+-func handle(url *url.URL, err error) (string, error) {
+-	if err != nil {
+-		url.Query().Add("err", err.Error())
+-	} else {
+-		url.Query().Add("success", "true")
+-	}
+-	return url.String(), nil
+-}
+-
+ func ValidateCodeHost(ctx *internalhandler.Context, codeHost *models.CodeHost) error {
+ 	if codeHost.AuthType == types.SSHAuthType {
+ 		// 解析主机地址
+```
+
+**File**: `pkg/microservice/user/config/consts.go` (modified, +0/-5)
+```diff
+@@ -16,12 +16,7 @@ limitations under the License.
+ 
+ package config
+ 
+-import (
+-	"github.com/koderover/zadig/v2/pkg/setting"
+-)
+-
+ const (
+-	AppState           = setting.ProductName + "user"
+ 	SystemIdentityType = "system"
+ 	OauthIdentityType  = "oauth"
+ 	FeiShuEmailHost    = "smtp.feishu.cn"
+```
+
+**File**: `pkg/microservice/user/core/handler/login/third_party.go` (modified, +40/-5)
+```diff
+@@ -23,6 +23,7 @@ import (
+ 	"fmt"
+ 	"net/http"
+ 	"strings"
++	"time"
+ 
+ 	"github.com/coreos/go-oidc/v3/oidc"
+ 	"github.com/gin-gonic/gin"
+@@ -48,6 +49,22 @@ func provider() *oidc.Provider {
+ 	return provider
+ }
+ 
++func thirdPartyLoginCookie() *http.Cookie {
++	secure := strings.HasPrefix(strings.ToLower(configbase.SystemAddress()), "https://")
++	name := "zadig_login_state"
++	if secure {
++		name = "__Host-" + name
++	}
++	return &http.Cookie{
++		Name:     name,
++		Path:     "/",
++		MaxAge:   int(login.ThirdPartyLoginStateTTL / time.Second),
++		Secure:   secure,
++		HttpOnly: true,
++		SameSite: http.SameSiteLaxMode,
++	}
++}
++
+ // @Summary 发起第三方登录
+ // @Description 跳转到 Dex/OIDC 登录入口
+ // @Tags user
+@@ -65,12 +82,17 @@ func Login(c *gin.Context) {
+ 		RedirectURL:  config.RedirectURI(),
+ 	}
+ 
+-	authCodeURL := oauth2Config.AuthCodeURL(config.AppState, oauth2.AccessTypeOffline)
+ 	systemConfig, err := aslan.New(configbase.AslanServiceAddress()).GetDefaultLogin()
+ 	if err != nil {
+ 		ctx.RespErr = err
+ 		return
+ 	}
++	state, browserToken, err := login.CreateThirdPartyLoginState()
++	if err != nil {
++		ctx.RespErr = err
++		return
++	}
++	authCodeURL := oauth2Config.AuthCodeURL(state, oauth2.AccessTypeOffline)
+ 	defaultLogin := ""
+ 	replaceURL := configbase.SystemAddress() + "/dex/auth"
+ 	if systemConfig.DefaultLogin != setting.DefaultLoginLocal {
+@@ -79,6 +101,9 @@ func Login(c *gin.Context) {
+ 	}
+ 	authCodeURL = strings.Replace(authCodeURL, config.IssuerURL()+"/auth", replaceURL, -1)
+ 
++	cookie := thirdPartyLoginCookie()
++	cookie.Value = browserToken
++	http.SetCookie(c.Writer, cookie)
+ 	c.Redirect(http.StatusSeeOther, authCodeURL)
+ }
+ 
+@@ -145,6 +170,20 @@ func Callback(c *gin.Context) {
+ 	ctx := internalhandler.NewContext(c)
+ 	defer func() { internalhandler.JSONResponse(c, ctx) }()
+ 
++	cookie := thirdPartyLoginCookie()
++	browserToken, err := c.Cookie(cookie.Name)
++	if err != nil {
++		ctx.RespErr = fmt.Errorf("missing login browser cookie")
++		return
++	}
++	// Atomically validate and consume state before exchanging the authorization code.
++	if err := login.ConsumeThirdPartyLoginState(c.Query("state"), browserToken); err != nil {
++		ctx.RespErr = err
++		return
++	}
++	cookie.MaxAge = -1
++	http.SetCookie(c.Writer, cookie)
++
+ 	// Authorization redirect callback from OAuth2 auth flow.
+ 	if errMsg := c.Query("error"); errMsg != "" {
+ 		ctx.RespErr = e.ErrCallBackUser.AddDesc(errMsg)
+@@ -155,10 +194,6 @@ func Callback(c *gin.Context) {
+ 		ctx.RespErr = e.ErrCallBackUser.AddDesc(fmt.Sprintf("no code in request: %q", c.Request.Form))
+ 		return
+ 	}
+-	if state := c.Query("state"); state != config.AppState {
+-		ctx.RespErr = e.ErrCallBackUser.AddDesc(fmt.Sprintf("expected state %q got %q", config.AppState, state))
+-		return
+-	}
+ 	claims, err := verifyAndDecode(c.Request.Context(), code)
+ 	if err != nil {
+ 		ctx.RespErr = err
+```
+
+**File**: `pkg/microservice/user/core/handler/user/user.go` (modified, +4/-1)
+```diff
+@@ -551,7 +551,10 @@ func SignUp(c *gin.Context) {
+ func Retrieve(c *gin.Context) {
+ 	ctx := internalhandler.NewContext(c)
+ 	defer func() { internalhandler.JSONResponse(c, ctx) }()
+-	ctx.Resp, ctx.RespErr = permission.Retrieve(c.Query("account"), ctx.Logger)
++	// Do not expose account-specific failure details.
++	if err := permission.Retrieve(c.Query("account"), ctx.Logger); err != nil {
++		ctx.RespErr = fmt.Errorf("failed to process password reset request")
++	}
+ }
+ 
+ func UpdatePassword(c *gin.Context) {
+```
+
+**File**: `pkg/microservice/user/core/service/login/third_party.go` (modified, +42/-0)
+```diff
+@@ -19,14 +19,56 @@ package login
+ import (
+ 	"fmt"
+ 	"net/url"
++	"time"
+ 
  	"go.uber.org/zap"
-@@ -32,15 +31,6 @@ import (
- 	"github.com/koderover/zadig/v2/pkg/util"
+ 
++	"github.com/koderover/zadig/v2/pkg/microservice/user/config"
+ 	"github.com/koderover/zadig/v2/pkg/microservice/user/core/repository/models"
+ 	"github.com/koderover/zadig/v2/pkg/shared/client/systemconfig"
++	"github.com/koderover/zadig/v2/pkg/tool/cache"
+ 	"github.com/koderover/zadig/v2/pkg/tool/log"
  )
  
--// moduleImagePlaceholderRegex matches `$<name>-image$` anywhere in a string
--// and captures the name. Mirrors moduleImageRegex in kube/parse.go — kept in
--// a third copy here to avoid an import cycle (service/service → kube has
--// other forward deps).
--//
--// TODO: consolidate the three copies (kube/parse.go, util/service.go, here)
--// once we have a leaf package both can import safely.
--var moduleImagePlaceholderRegex = regexp.MustCompile(`\$([A-Za-z0-9_-]+)-image\$`)
--
- // ManualModuleCreateReq is the API payload for declaring a new manual module.
- // Manual modules attach to a K8s YAML service template and are version-
- // agnostic — they remain visible across every revision of the service.
-@@ -272,8 +262,8 @@ func ResolveServiceModules(projectName, serviceName string, production bool, rev
- 	return repository.ResolveServiceModules(context.Background(), projectName, serviceName, production, revision)
++const ThirdPartyLoginStateTTL = 5 * time.Minute
++
++func CreateThirdPartyLoginState() (state, browserToken string, err error) {
++	state, err = randomOAuthValue(32)
++	if err != nil {
++		log.Errorf("Failed to generate random state for third-party login, err: %s", err)
++		return "", "", err
++	}
++	browserToken, err = randomOAuthValue(32)
++	if err != nil {
++		log.Errorf("Failed to generate random browser token for third-party login, err: %s", err)
++		return "", "", err
++	}
++	err = cache.NewRedisCache(config.RedisUserTokenDB()).Write(
++		oauthKey("login-state", hashOAuthValue(state)), hashOAuthValue(browserToken), ThirdPartyLoginStateTTL,
++	)
++	if err != nil {
++		log.Errorf("Failed to write third-party login state to cache, err: %s", err)
++		return "", "", err
++	}
++	return state, browserToken, nil
++}
++
++func ConsumeThirdPartyLoginState(state, browserToken string) error {
++	if state == "" || browserToken == "" {
++		return fmt.Errorf("missing login state or browser cookie")
++	}
++	consumed, err := cache.NewRedisCache(config.RedisUserTokenDB()).CompareAndDelete(
++		oauthKey("login-state", hashOAuthValue(state)), hashOAuthValue(browserToken),
++	)
++	if err != nil {
++		return err
++	}
++	if !consumed {
++		return fmt.Errorf("invalid or expired login state")
++	}
++	return nil
++}
++
+ type enabledStatus struct {
+ 	Enabled bool `json:"enabled"`
  }
- 
--// ValidatePlaceholderResolution scans the rendered YAML for $<name>-image$
--// placeholders and returns the names that don't match any known module
-+// ValidatePlaceholderResolution scans complete and split image variables
-+// and returns the names that don't match any known module
- // (parsed containers ∪ manual modules). The caller decides what to do —
- // callers in this package log + include in the response, never reject the
- // save (per the design rule that git-imported templates must not be
-@@ -320,7 +310,7 @@ func extractPlaceholderNames(yaml string) []string {
- 	if yaml == "" {
- 		return nil
- 	}
--	matches := moduleImagePlaceholderRegex.FindAllStringSubmatch(yaml, -1)
-+	matches := commonutil.ModuleImageRegex.FindAllStringSubmatch(yaml, -1)
- 	out := make([]string, 0, len(matches))
- 	for _, m := range matches {
- 		if len(m) >= 2 {
-@@ -357,8 +347,7 @@ func ensureServiceExists(projectName, serviceName string, production bool) error
- 
- // isValidModuleName accepts the same character set as parseContainer accepts
- // for K8s container names (the broader [A-Za-z0-9_-]+ form, matching what
--// the moduleImageRegex in kube/parse.go expects). The regex anchors the
--// whole string.
-+// the shared ModuleImageRegex expects).
- func isValidModuleName(name string) bool {
- 	if name == "" {
- 		return false
 ```
 
-**File**: `pkg/microservice/aslan/core/service/service/service.go` (modified, +17/-1)
+**File**: `pkg/microservice/user/core/service/permission/authn.go` (modified, +8/-14)
 ```diff
-@@ -235,7 +235,7 @@ func buildServiceSystemVariables(args *commonmodels.Service, serviceModules []*S
- 		if module == nil || module.Container == nil || module.Name == "" {
- 			continue
- 		}
--		key := fmt.Sprintf("$%s-image$", module.Name)
-+		key := commonutil.ModuleImageKey(module.Name)
- 		if _, ok := seen[key]; ok {
- 			continue
- 		}
-@@ -244,6 +244,22 @@ func buildServiceSystemVariables(args *commonmodels.Service, serviceModules []*S
- 			Key:   key,
- 			Value: module.Image,
- 		})
-+
-+		parts, err := commonutil.ParseModuleImageParts(module.Image)
-+		if err != nil {
-+			parts = &commonutil.ModuleImageParts{}
-+		}
-+		for _, variable := range commonutil.ModuleImagePartVariables {
-+			value, ok := parts.PartValue(variable.Part)
-+			if !ok {
-+				continue
-+			}
-+			systemVariables = append(systemVariables, &Variable{
-+				Key:         commonutil.ModuleImagePartKey(module.Name, variable.Part),
-+				Value:       value,
-+				Description: variable.Description,
-+			})
-+		}
+@@ -32,15 +32,14 @@ import (
+ )
+ 
+ const (
+-	larkWebhookURLRegExp       = `^\/api\/aslan\/system\/lark\/\w+\/webhook$`
+-	dingTalkWebhookURLRegExp   = `^\/api\/aslan\/system\/dingtalk\/\w+\/webhook$`
+-	workwxWebhookURLRegExp     = `^\/api\/aslan\/system\/workwx\/\w+\/webhook$`
+-	envWorkloadUrlRegExp       = `^\/api\/aslan\/environment\/environments\/[\w-]+\/check\/workloads\/k8services$`
+-	envShareEnableURLRegExp    = `^\/api\/aslan\/environment\/environments\/[\w-]+\/check\/sharenv\/enable\/ready$`
+-	envShareDisableURLRegExp   = `^\/api\/aslan\/environment\/environments\/[\w-]+\/check\/sharenv\/disable\/ready$`
+-	serviceDeployableURLRegExp = `^\/api\/aslan\/service\/services\/[\w-]+\/environments\/deployable$`
+-	generalWebhookURLRegExp    = `^\/api\/aslan\/workflow\/v4\/generalhook\/[\w-]+\/[^/]+\/webhook$`
+-	codeHostAuthURLRegExp      = `^\/api\/v1\/codehosts\/\w+\/auth$`
++	larkWebhookURLRegExp     = `^\/api\/aslan\/system\/lark\/\w+\/webhook$`
++	dingTalkWebhookURLRegExp = `^\/api\/aslan\/system\/dingtalk\/\w+\/webhook$`
++	workwxWebhookURLRegExp   = `^\/api\/aslan\/system\/workwx\/\w+\/webhook$`
++	envWorkloadUrlRegExp     = `^\/api\/aslan\/environment\/environments\/[\w-]+\/check\/workloads\/k8services$`
++	envShareEnableURLRegExp  = `^\/api\/aslan\/environment\/environments\/[\w-]+\/check\/sharenv\/enable\/ready$`
++	envShareDisableURLRegExp = `^\/api\/aslan\/environment\/environments\/[\w-]+\/check\/sharenv\/disable\/ready$`
++	generalWebhookURLRegExp  = `^\/api\/aslan\/workflow\/v4\/generalhook\/[\w-]+\/[^/]+\/webhook$`
++	codeHostAuthURLRegExp    = `^\/api\/v1\/codehosts\/\w+\/auth$`
+ 	// workflowTestTaskReportURLRegExp = `^\/api\/aslan\/testing\/report\/workflowv4\/[\w-]+\/id\/\w+\/job\/[^/]+$`
+ 	// testingTaskReportURLRegExp      = `^\/api\/aslan\/testing\/testtask\/[\w-]+\/\w+\/[^/]+$`
+ )
+@@ -249,11 +248,6 @@ func IsPublicURL(reqPath, method string) bool {
+ 		return true
  	}
  
- 	return systemVariables
+-	match, _ = regexp.MatchString(serviceDeployableURLRegExp, realPath)
+-	if match && method == http.MethodGet {
+-		return true
+-	}
+-
+ 	match, _ = regexp.MatchString(generalWebhookURLRegExp, realPath)
+ 	if match && method == http.MethodPost {
+ 		return true
+```
+
+**File**: `pkg/microservice/user/core/service/permission/user.go` (modified, +11/-16)
+```diff
+@@ -114,10 +114,6 @@ type SyncUserInfo struct {
+ 	Phone        string `json:"phone"`
+ }
+ 
+-type RetrieveResp struct {
+-	Email string `json:"email"`
+-}
+-
+ type UserSetting struct {
+ 	Theme        string `json:"theme"`
+ 	LogBgColor   string `json:"log_bg_color"`
+@@ -823,18 +819,19 @@ func DeleteCollaborationModeByUid(uid string) error {
+ //go:embed retrieve.html
+ var retrieveHemlTemplate []byte
+ 
+-func Retrieve(account string, logger *zap.SugaredLogger) (*RetrieveResp, error) {
++func Retrieve(account string, logger *zap.SugaredLogger) error {
+ 	user, err := orm.GetUser(account, config.SystemIdentityType, repository.DB)
+ 	if err != nil {
+ 		logger.Errorf("Retrieve GetUser:%s error, error msg:%s ", account, err)
+-		return nil, fmt.Errorf("Retrieve GetUser:%s error, error msg:%s ", account, err)
++		return fmt.Errorf("Retrieve GetUser:%s error, error msg:%s ", account, err)
+ 	}
+ 	if user == nil {
+-		return nil, fmt.Errorf("user not exist")
++		logger.Errorf("Retrieve account:%s user not exist", account)
++		return fmt.Errorf("user not exist")
+ 	}
+ 	if len(user.Email) == 0 {
+ 		logger.Errorf("the account:%s has not email", account)
+-		return nil, fmt.Errorf("the account has not email")
++		return fmt.Errorf("the account has not email")
+ 	}
+ 
+ 	token, err := login.CreateToken(&login.Claims{
+@@ -852,26 +849,26 @@ func Retrieve(account string, logger *zap.SugaredLogger) (*RetrieveResp, error)
+ 	})
+ 	if err != nil {
+ 		logger.Errorf("Retrieve user:%s create token error, error msg:%s", user.Account, err)
+-		return nil, err
++		return err
+ 	}
+ 	v := url.Values{}
+ 	v.Add("idtoken", token)
+ 	retrieveURL := configbase.SystemAddress() + "/signin?" + v.Encode()
+ 	body, err := mail.RenderEmailTemplate(retrieveURL, string(retrieveHemlTemplate))
+ 	if err != nil {
+ 		logger.Errorf("Retrieve renderEmailTemplate error, error msg:%s ", err)
+-		return nil, fmt.Errorf("Retrieve renderEmailTemplate error, error msg:%s ", err)
++		return fmt.Errorf("Retrieve renderEmailTemplate error, error msg:%s ", err)
+ 	}
+ 	systemConfigClient := systemconfig.New()
+ 	email, err := systemConfigClient.GetEmailHost()
+ 	if err != nil {
+ 		logger.Errorf("Retrieve GetEmailHost error, error msg:%s", err)
+-		return nil, fmt.Errorf("Retrieve GetEmailHost error, error msg:%s ", err)
++		return fmt.Errorf("Retrieve GetEmailHost error, error msg:%s ", err)
+ 	}
+ 	emailSvc, err := systemConfigClient.GetEmailService()
+ 	if err != nil {
+ 		logger.Errorf("Retrieve GetEmailService error, error msg:%s", err)
+-		return nil, fmt.Errorf("Retrieve GetEmailService error, error msg:%s ", err)
++		return fmt.Errorf("Retrieve GetEmailService error, error msg:%s ", err)
+ 	}
+ 
+ 	err = mail.SendEmail(&mail.EmailParams{
+@@ -887,11 +884,9 @@ func Retrieve(account string, logger *zap.SugaredLogger) (*RetrieveResp, error)
+ 	})
+ 	if err != nil {
+ 		logger.Errorf("Retrieve SendEmail error, error msg:%s ", err)
+-		return nil, err
++		return err
+ 	}
+-	return &RetrieveResp{
+-		Email: user.Email,
+-	}, nil
++	return nil
+ }
+ 
+ func CreateUser(args *User, logger *zap.SugaredLogger) (*models.User, error) {
+```
+
+---
+
+### Incident Patch 3: `46775c38` (2026-11-04)
+**Commit Message**: fix(user): hide account-specific password retrieval failures
+
+Signed-off-by: Cynthia <[REDACTED_EMAIL]>
+
+**File**: `pkg/microservice/user/core/handler/user/user.go` (modified, +1/-1)
+```diff
+@@ -553,7 +553,7 @@ func Retrieve(c *gin.Context) {
+ 	defer func() { internalhandler.JSONResponse(c, ctx) }()
+ 	// Do not expose account-specific failure details.
+ 	if err := permission.Retrieve(c.Query("account"), ctx.Logger); err != nil {
+-		ctx.RespErr = fmt.Errorf("failed to process password reset request")
++		ctx.RespErr = fmt.Errorf("重置密码错误：%s", err)
+ 	}
+ }
+ 
+```
+
+**File**: `pkg/microservice/user/core/service/permission/user.go` (modified, +2/-2)
+```diff
+@@ -827,11 +827,11 @@ func Retrieve(account string, logger *zap.SugaredLogger) error {
+ 	}
+ 	if user == nil {
+ 		logger.Errorf("Retrieve account:%s user not exist", account)
+-		return fmt.Errorf("user not exist")
++		return nil
+ 	}
+ 	if len(user.Email) == 0 {
+ 		logger.Errorf("the account:%s has not email", account)
+-		return fmt.Errorf("the account has not email")
++		return nil
+ 	}
+ 
+ 	token, err := login.CreateToken(&login.Claims{
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5057** (2026-11-05): fix(security): harden authentication, callbacks and resource access (@Cynthia-0203)
 - **PR #5055** (2026-11-03): fix(workflow): validate freestyle variables by job type (@Cynthia-0203)
 - **PR #5051** (2026-11-03): fix: skip CRDs from disabled Helm subcharts (@Cynthia-0203)
 - **PR #5050** (2026-11-03): feat: mask git tokens in build pod logs (@Cynthia-0203)
 - **PR #5049** (2026-11-03): fix: use /rest/api/2/search/jql for Jira Cloud issue search (@torrresagus)
 - **PR #5048** (2026-11-03): feat: add system integration permissions (@Cynthia-0203)
-- **PR #5047** (2026-10-26): cherry pick #5045 to release 5.0.0 (@PetrusZ)
 
 ---
 
@@ -1876,73 +1963,31 @@ Signed-off-by: Cynthia <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. support split image variables for CR workloads (#5037)
+## X. security): refine report serving and password recovery responses
 
 **RULE**:
-When implementing operations in `pkg/microservice/aslan/core/common/service/kube/parse.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in koderover/zadig. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/microservice/aslan/core/system/service/system_cache.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in koderover/zadig. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `97df5a8b`: support split image variables for CR workloads (#5037). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `dd411330`: security): refine report serving and password recovery responses. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/microservice/aslan/core/common/service/kube/parse.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/microservice/aslan/core/system/service/system_cache.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-// ParseModuleImageKeys substitutes complete and split image variables from the
-// final container images. Replacement values are prepared before scanning YAML;
-// split errors are reported only when the corresponding variable is referenced.
-// When allowUnresolved is true, missing or invalid images leave their unresolved
-// variables unchanged without returning an error.
-// The returned YAML includes all successful replacements, even on error.
-// Variables without replacement values remain unchanged.
-	replacements := make(map[string]string)
-	replacementErrors := make(map[string]error)
-		// Workflow task previews may carry a non-image sentinel.
-		key := commonutil.ModuleImageKey(c.Name)
-		if _, exists := replacements[key]; exists {
-			continue
-		}
-		replacements[key] = c.Image
-
-		parts, err := commonutil.ParseModuleImageParts(c.Image)
-		if err != nil {
-			for _, variable := range commonutil.ModuleImagePartVariables {
-				key := commonutil.ModuleImagePartKey(c.Name, variable.Part)
-				replacementErrors[key] = fmt.Errorf("module %q variable %s: %w", c.Name, key, err)
-			}
-			continue
-		}
-		for _, variable := range commonutil.ModuleImagePartVariables {
-			key := commonutil.ModuleImage
+	if err := os.RemoveAll(config2.DataPath()); err != nil {
+		return err
+	}
+	return os.MkdirAll(config2.DataPath(), os.ModePerm)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-
-	// $<module>-image$ - per service-module image substitution.
-	// Module names follow the K8s container name spec; we allow the broader
-	// [A-Za-z0-9_-]+ to match what parseContainer already accepts.
-	moduleImageRegexString = `\$([A-Za-z0-9_-]+)-image\$`
-
-	moduleImageRegex = regexp.MustCompile(moduleImageRegexString)
-// ParseModuleImageKeys substitutes $<module>-image$ placeholders in yaml using
-// the provided container list (container.Name -> container.Image). Containers
-// with an empty or placeholder-shaped Image are skipped — they cannot resolve
-// anything.
-//
-// If allowUnresolved is false, any $<module>-image$ placeholder still present
-// after substitution causes an error naming the offending module(s). Callers
-// on the initial-deploy path (no built image yet) should pass true.
-		// Also skip the Zadig workflow-task-create placeholder convention
-		// (e.g. "{{ NOT BE RENDERED }}"). Substituting it into the YAML
-		// produces flow-style garbage that downstream YAML decoders choke
-		// on. For built-in workload kinds, ReplaceWorkloadImages still
-		// writes this placeholder into container.image structurally, so the
-		// preview yaml round-trips. For non-built-in kinds (CR
+	return os.RemoveAll(config2.DataPath())
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `97df5a8b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `dd411330` are properly handled with clean fallback behavior.

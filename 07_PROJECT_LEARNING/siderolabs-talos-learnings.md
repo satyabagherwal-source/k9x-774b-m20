@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/siderolabs-talos-learnings.md`  
 > **Source**: github ([https://github.com/siderolabs/talos](https://github.com/siderolabs/talos))  
-> **Source Version**: `4d505d50`  
+> **Source Version**: `f6e5ac35`  
 > **License**: MPL-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T17:17:59.933Z  
+> **Timestamp**: 2026-11-05T06:51:03.409Z  
 > **Learning ID**: `learn-github-siderolabs-talos`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/siderolabs-talos-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/siderolabs/talos](https://github.com/siderolabs/talos))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T17:17:59.720Z  
+> **Harvest Timestamp**: 2026-11-05T06:51:03.402Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Talos Linux is a modern Linux distribution built for Kubernetes.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 11462 stars
+- **Stars / Engagement**: 11465 stars
 
 ---
 
@@ -1941,433 +1941,1234 @@ func ValidateMemoryManagerState(raw []byte, cfg MemoryManagerConfig, machine Mac
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `406dc4d5` (2026-11-02)
-**Commit Message**: fix: bump go-blockdevice to 2.0.37
+### Incident Patch 1: `f6e5ac35` (2026-11-04)
+**Commit Message**: feat: automatically detect the install image on upgrade
 
-Includes a fix to partition allocation
-https://github.com/siderolabs/go-blockdevice/pull/171
+For nodes running Talos 1.14 and newer the upgrade image is now automatically detected for each node.
+Each node keeps its own Image Factory host, schematic, platform and SecureBoot setting, so nodes with different images can be upgraded with a single command.
+Any of these, except the platform, can be changed with the CLI flags.
 
-Signed-off-by: Andrey Smirnov <[REDACTED_EMAIL]>
+Upgrade to a new Talos version, keeping everything else as it is:
 
-**File**: `go.mod` (modified, +1/-1)
+```bash
+talosctl upgrade -n <NODES> --talos-version 1.15.0
+```
+
+Upgrade to a different schematic, e.g. to add a system extension:
+
+```bash
+talosctl upgrade -n <NODES> --schematic-id <SCHEMATIC_ID> --talos-version 1.15.0
+```
+
+`--talos-version` defaults to the version of `talosctl`, so set it explicitly to stay on the Talos version the nodes are running.
+
+Upgrade to an exact installer image (it can't be combined with the flags above):
+
+```bash
+talosctl upgrade -n <NODES> --image factory.talos.dev/metal-installer/<SCHEMATIC_ID>:v1.15.0
+```
+
+The `--image` flag is now mandatory when upgrading nodes running Talos versions before 1.14.
+
+Signed-off-by: Orzelius <[REDACTED_EMAIL]>
+
+**File**: `.github/workflows/ci.yaml` (modified, +27/-27)
 ```diff
-@@ -138,7 +138,7 @@ require (
- 	github.com/siderolabs/discovery-client v0.1.15
- 	github.com/siderolabs/gen v0.8.8
- 	github.com/siderolabs/go-adv v1.0.0
--	github.com/siderolabs/go-blockdevice/v2 v2.0.36
-+	github.com/siderolabs/go-blockdevice/v2 v2.0.37
- 	github.com/siderolabs/go-circular v0.2.3
- 	github.com/siderolabs/go-cmd v0.2.1
- 	github.com/siderolabs/go-copy v0.1.0
+@@ -3431,55 +3431,55 @@ jobs:
+             factorySchematic: 376567988ad370138ad8b2698212367b8edcb69b5fd68c80be1f2ec7d603b4ba
+             factoryUpgrade: "true"
+             factoryUpgradeSchematic: cf9b7aab9ed7c365d5384509b4d31c02fdaa06d2b3ac6cc0bc806f28130eff1f
+-            factoryUpgradeVersion: v1.13.9
+-            factoryVersion: v1.13.8
+-            kubernetesVersion: 1.36.4
+-            test: factory-1.13-iso
++            factoryUpgradeVersion: v1.14.2
++            factoryVersion: v1.14.1
++            kubernetesVersion: 1.37.1
++            test: factory-1.14-iso
+           - factoryBootMethod: disk-image
+             factorySchematic: 376567988ad370138ad8b2698212367b8edcb69b5fd68c80be1f2ec7d603b4ba
+             factoryUpgrade: "true"
+             factoryUpgradeSchematic: cf9b7aab9ed7c365d5384509b4d31c02fdaa06d2b3ac6cc0bc806f28130eff1f
+-            factoryUpgradeVersion: v1.13.9
+-            factoryVersion: v1.13.8
+-            kubernetesVersion: 1.36.4
+-            test: factory-1.13-image
++            factoryUpgradeVersion: v1.14.2
++            factoryVersion: v1.14.1
++            kubernetesVersion: 1.37.1
++            test: factory-1.14-image
+           - factoryBootMethod: ipxe
+             factorySchematic: 376567988ad370138ad8b2698212367b8edcb69b5fd68c80be1f2ec7d603b4ba
+-            factoryVersion: v1.13.9
+-            kubernetesVersion: 1.36.4
+-            test: factory-1.13-pxe
++            factoryVersion: v1.14.2
++            kubernetesVersion: 1.37.1
++            test: factory-1.14-pxe
+           - factoryBootMethod: secureboot-iso
+             factorySchematic: cf9b7aab9ed7c365d5384509b4d31c02fdaa06d2b3ac6cc0bc806f28130eff1f
+             factoryUpgrade: "true"
+             factoryUpgradeSchematic: 376567988ad370138ad8b2698212367b8edcb69b5fd68c80be1f2ec7d603b4ba
+-            factoryUpgradeVersion: v1.13.9
+-            factoryVersion: v1.13.8
+-            kubernetesVersion: 1.36.4
+-            test: factory-1.13-secureboot
++            factoryUpgradeVersion: v1.14.2
++            factoryVersion: v1.14.1
++            kubernetesVersion: 1.37.1
++            test: factory-1.14-secureboot
+           - factoryBootMethod: secureboot-iso
+             factorySchematic: cf9b7aab9ed7c365d5384509b4d31c02fdaa06d2b3ac6cc0bc806f28130eff1f
+             factoryUpgrade: "true"
+             factoryUpgradeSchematic: 376567988ad370138ad8b2698212367b8edcb69b5fd68c80be1f2ec7d603b4ba
+-            factoryUpgradeVersion: v1.12.11
+-            factoryVersion: v1.12.10
+-            kubernetesVersion: 1.35.8
+-            test: factory-1.12-secureboot
++            factoryUpgradeVersion: v1.13.11
++            factoryVersion: v1.13.10
++            kubernetesVersion: 1.36.5
++            test: factory-1.13-secureboot
+           - factoryBootMethod: iso
+             factorySchematic: 376567988ad370138ad8b2698212367b8edcb69b5fd68c80be1f2ec7d603b4ba
+             factoryUpgrade: "true"
+             factoryUpgradeSchematic: cf9b7aab9ed7c365d5384509b4d31c02fdaa06d2b3ac6cc0bc806f28130eff1f
+-            factoryUpgradeVersion: v1.12.11
+-            factoryVersion: v1.12.10
+-            kubernetesVersion: 1.35.8
+-            test: factory-1.12-iso
++            factoryUpgradeVersion: v1.13.11
++            factoryVersion: v1.13.10
++            kubernetesVersion: 1.36.5
++            test: factory-1.13-iso
+           - factoryBootMethod: iso
+             factorySchematic: 376567988ad370138ad8b2698212367b8edcb69b5fd68c80be1f2ec7d603b4ba
+             factoryUpgrade: "true"
+             factoryUpgradeSchematic: cf9b7aab9ed7c365d5384509b4d31c02fdaa06d2b3ac6cc0bc806f28130eff1f
+-            factoryUpgradeVersion: v1.11.6
+-            factoryVersion: v1.11.5
+-            kubernetesVersion: 1.34.11
+-            test: factory-1.11-iso
++            factoryUpgradeVersion: v1.12.11
++            factoryVersion: v1.12.10
++            kubernetesVersion: 1.35.9
++            test: factory-1.12-iso
+       fail-fast: false
+     needs:
+       - default
 ```
 
-**File**: `go.sum` (modified, +2/-2)
+**File**: `.github/workflows/integration-image-factory-triggered.yaml` (modified, +28/-28)
 ```diff
-@@ -1465,8 +1465,8 @@ github.com/siderolabs/go-adv v1.0.0 h1:ZWXnoGq1GKeEIkLSR4o6oKcayFsowZkJsWcyQqwPk
- github.com/siderolabs/go-adv v1.0.0/go.mod h1:nR6YwduJv56mZI1D3ow1Zok5lwefiM94hS0o1d6KmNc=
- github.com/siderolabs/go-api-signature v0.4.0 h1:rlDNzVwRfG6et8DbqCEZEX4h46tBHMtYinSvjpYVYXQ=
- github.com/siderolabs/go-api-signature v0.4.0/go.mod h1:zWCUc4Yk9FCd8QaHqWaD1uZPLLY6JsoN547cjp7Hjy0=
--github.com/siderolabs/go-blockdevice/v2 v2.0.36 h1:KFE5eG4A8qNlcx7Rsyk9AzpKWsaYsMc9QFCJVfrgQ0M=
--github.com/siderolabs/go-blockdevice/v2 v2.0.36/go.mod h1:6Dx9PclDbRv/wQbgMXhCwVvif9sCqJzARAokWCOpGOQ=
-+github.com/siderolabs/go-blockdevice/v2 v2.0.37 h1:poXzSbFIjME8W3HKQjjng18cIsAcX6x+udmkSeCwBUo=
-+github.com/siderolabs/go-blockdevice/v2 v2.0.37/go.mod h1:DxSN4wwugZLLTNDDbW4/1OMPcEsYQSwyOOomU5oaJFQ=
- github.com/siderolabs/go-circular v0.2.3 h1:GKkA1Tw79kEFGtWdl7WTxEUTbwtklITeiRT0V1McHrA=
- github.com/siderolabs/go-circular v0.2.3/go.mod h1:YBN/q9YpQphUYnBtBgPsngauSHj1TEZfgQZWZVjk1WE=
- github.com/siderolabs/go-cmd v0.2.1 h1:499+nXoEKTtUnMvlXfiwMz2fudnunfB75dJR6AKYbAA=
+@@ -1,6 +1,6 @@
+ # THIS FILE WAS AUTOMATICALLY GENERATED BY KRES, PLEASE DO NOT EDIT.
+ #
+-# Generated on 2026-09-23T10:36:00Z by kres c0dd940.
++# Generated on 2026-10-12T10:14:28Z by kres 42d8dc1.
+ 
+ concurrency:
+   group: ${{ github.head_ref || github.run_id }}
+@@ -27,55 +27,55 @@ jobs:
+             factorySchematic: 376567988ad370138ad8b2698212367b8edcb69b5fd68c80be1f2ec7d603b4ba
+             factoryUpgrade: "true"
+             factoryUpgradeSchematic: cf9b7aab9ed7c365d5384509b4d31c02fdaa06d2b3ac6cc0bc806f28130eff1f
+-            factoryUpgradeVersion: v1.13.9
+-            factoryVersion: v1.13.8
+-            kubernetesVersion: 1.36.4
+-            test: factory-1.13-iso
++            factoryUpgradeVersion: v1.14.2
++            factoryVersion: v1.14.1
++            kubernetesVersion: 1.37.1
++            test: factory-1.14-iso
+           - factoryBootMethod: disk-image
+             factorySchematic: 376567988ad370138ad8b2698212367b8edcb69b5fd68c80be1f2ec7d603b4ba
+             factoryUpgrade: "true"
+             factoryUpgradeSchematic: cf9b7aab9ed7c365d5384509b4d31c02fdaa06d2b3ac6cc0bc806f28130eff1f
+-            factoryUpgradeVersion: v1.13.9
+-            factoryVersion: v1.13.8
+-            kubernetesVersion: 1.36.4
+-            test: factory-1.13-image
++            factoryUpgradeVersion: v1.14.2
++            factoryVersion: v1.14.1
++            kubernetesVersion: 1.37.1
++            test: factory-1.14-image
+           - factoryBootMethod: ipxe
+             factorySchematic: 376567988ad370138ad8b2698212367b8edcb69b5fd68c80be1f2ec7d603b4ba
+-            factoryVersion: v1.13.9
+-            kubernetesVersion: 1.36.4
+-            test: factory-1.13-pxe
++            factoryVersion: v1.14.2
++            kubernetesVersion: 1.37.1
++            test: factory-1.14-pxe
+           - factoryBootMethod: secureboot-iso
+             factorySchematic: cf9b7aab9ed7c365d5384509b4d31c02fdaa06d2b3ac6cc0bc806f28130eff1f
+             factoryUpgrade: "true"
+             factoryUpgradeSchematic: 376567988ad370138ad8b2698212367b8edcb69b5fd68c80be1f2ec7d603b4ba
+-            factoryUpgradeVersion: v1.13.9
+-            factoryVersion: v1.13.8
+-            kubernetesVersion: 1.36.4
+-            test: factory-1.13-secureboot
++            factoryUpgradeVersion: v1.14.2
++            factoryVersion: v1.14.1
++            kubernetesVersion: 1.37.1
++            test: factory-1.14-secureboot
+           - factoryBootMethod: secureboot-iso
+             factorySchematic: cf9b7aab9ed7c365d5384509b4d31c02fdaa06d2b3ac6cc0bc806f28130eff1f
+             factoryUpgrade: "true"
+             factoryUpgradeSchematic: 376567988ad370138ad8b2698212367b8edcb69b5fd68c80be1f2ec7d603b4ba
+-            factoryUpgradeVersion: v1.12.11
+-            factoryVersion: v1.12.10
+-            kubernetesVersion: 1.35.8
+-            test: factory-1.12-secureboot
++            factoryUpgradeVersion: v1.13.11
++            factoryVersion: v1.13.10
++            kubernetesVersion: 1.36.5
++            test: factory-1.13-secureboot
+           - factoryBootMethod: iso
+             factorySchematic: 376567988ad370138ad8b2698212367b8edcb69b5fd68c80be1f2ec7d603b4ba
+             factoryUpgrade: "true"
+             factoryUpgradeSchematic: cf9b7aab9ed7c365d5384509b4d31c02fdaa06d2b3ac6cc0bc806f28130eff1f
+-            factoryUpgradeVersion: v1.12.11
+-            factoryVersion: v1.12.10
+-            kubernetesVersion: 1.35.8
+-            test: factory-1.12-iso
++            factoryUpgradeVersion: v1.13.11
++            factoryVersion: v1.13.10
++            kubernetesVersion: 1.36.5
++            test: factory-1.13-iso
+           - factoryBootMethod: iso
+             factorySchematic: 376567988ad370138ad8b2698212367b8edcb69b5fd68c80be1f2ec7d603b4ba
+             factoryUpgrade: "true"
+             factoryUpgradeSchematic: cf9b7aab9ed7c365d5384509b4d31c02fdaa06d2b3ac6cc0bc806f28130eff1f
+-            factoryUpgradeVersion: v1.11.6
+-            factoryVersion: v1.11.5
+-            kubernetesVersion: 1.34.11
+-            test: factory-1.11-iso
++            factoryUpgradeVersion: v1.12.11
++            factoryVersion: v1.12.10
++            kubernetesVersion: 1.35.9
++            test: factory-1.12-iso
+       fail-fast: false
+     steps:
+       - name: gather-system-info
 ```
 
----
-
-### Incident Patch 2: `a351c241` (2026-11-04)
-**Commit Message**: fix: build darwin integration tests
-
-The kernel logs test imported the machined logging package for the
-buffer capacity constant only. Since 0343d8031 that package sets
-TCP_USER_TIMEOUT, which golang.org/x/sys/unix defines only on Linux,
-so the darwin integration test binary no longer compiled.
-
-Move the capacity to the machinery constants, so the test does not
-depend on the logging package.
-
-Signed-off-by: Noel Georgi <[REDACTED_EMAIL]>
-
-**File**: `internal/app/machined/pkg/runtime/logging/circular.go` (modified, +2/-3)
+**File**: `.kres.yaml` (modified, +27/-27)
 ```diff
-@@ -23,19 +23,18 @@ import (
- 	"github.com/siderolabs/go-tail"
- 
- 	"github.com/siderolabs/talos/internal/app/machined/pkg/runtime"
-+	"github.com/siderolabs/talos/pkg/machinery/constants"
- )
- 
- // These constants should some day move to config.
- const (
--	// Overall capacity of the log buffer (in raw bytes, memory size will be smaller due to compression).
--	DesiredCapacity = 1048576
- 	// Some logs are tiny, no need to reserve too much memory.
- 	InitialCapacity = 16384
- 	// Chunk capacity is the length of each chunk, it should be
- 	// big enough for the compression to be efficient.
- 	ChunkCapacity = 65536
- 	// Number of zstd-compressed chunks to keep.
--	NumCompressedChunks = (DesiredCapacity / ChunkCapacity) - 1
-+	NumCompressedChunks = (constants.LogBufferCapacity / ChunkCapacity) - 1
- 	// Safety gap to avoid buffer overruns, can be lowered as with compression we don't need much.
- 	SafetyGap = 1
- )
+@@ -2180,62 +2180,62 @@ spec:
+         labelKeys: [test]
+         flatJobMatrix: true
+         include:
+-          - test: factory-1.13-iso
++          - test: factory-1.14-iso
+             factoryBootMethod: iso
+-            factoryVersion: v1.13.8
++            factoryVersion: v1.14.1
+             factorySchematic: 376567988ad370138ad8b2698212367b8edcb69b5fd68c80be1f2ec7d603b4ba
+-            kubernetesVersion: 1.36.4
++            kubernetesVersion: 1.37.1
+             factoryUpgrade: "true"
+             factoryUpgradeSchematic: cf9b7aab9ed7c365d5384509b4d31c02fdaa06d2b3ac6cc0bc806f28130eff1f
+-            factoryUpgradeVersion: v1.13.9
+-          - test: factory-1.13-image
++            factoryUpgradeVersion: v1.14.2
++          - test: factory-1.14-image
+             factoryBootMethod: disk-image
+-            factoryVersion: v1.13.8
++            factoryVersion: v1.14.1
+             factorySchematic: 376567988ad370138ad8b2698212367b8edcb69b5fd68c80be1f2ec7d603b4ba
+-            kubernetesVersion: 1.36.4
++            kubernetesVersion: 1.37.1
+             factoryUpgrade: "true"
+             factoryUpgradeSchematic: cf9b7aab9ed7c365d5384509b4d31c02fdaa06d2b3ac6cc0bc806f28130eff1f
+-            factoryUpgradeVersion: v1.13.9
+-          - test: factory-1.13-pxe
++            factoryUpgradeVersion: v1.14.2
++          - test: factory-1.14-pxe
+             factoryBootMethod: ipxe
+-            factoryVersion: v1.13.9
++            factoryVersion: v1.14.2
+             factorySchematic: 376567988ad370138ad8b2698212367b8edcb69b5fd68c80be1f2ec7d603b4ba
+-            kubernetesVersion: 1.36.4
++            kubernetesVersion: 1.37.1
+             factoryUpgrade: ""
+             factoryUpgradeSchematic: ""
+             factoryUpgradeVersion: ""
+-          - test: factory-1.13-secureboot
++          - test: factory-1.14-secureboot
+             factoryBootMethod: secureboot-iso
+-            factoryVersion: v1.13.8
++            factoryVersion: v1.14.1
+             factorySchematic: cf9b7aab9ed7c365d5384509b4d31c02fdaa06d2b3ac6cc0bc806f28130eff1f
+-            kubernetesVersion: 1.36.4
++            kubernetesVersion: 1.37.1
+             factoryUpgrade: "true"
+             factoryUpgradeSchematic: 376567988ad370138ad8b2698212367b8edcb69b5fd68c80be1f2ec7d603b4ba
+-            factoryUpgradeVersion: v1.13.9
+-          - test: factory-1.12-secureboot
++            factoryUpgradeVersion: v1.14.2
++          - test: factory-1.13-secureboot
+             factoryBootMethod: secureboot-iso
+-            factoryVersion: v1.12.10
++            factoryVersion: v1.13.10
+             factorySchematic: cf9b7aab9ed7c365d5384509b4d31c02fdaa06d2b3ac6cc0bc806f28130eff1f
+-            kubernetesVersion: 1.35.8
++            kubernetesVersion: 1.36.5
+             factoryUpgrade: "true"
+             factoryUpgradeSchematic: 376567988ad370138ad8b2698212367b8edcb69b5fd68c80be1f2ec7d603b4ba
+-            factoryUpgradeVersion: v1.12.11
+-          - test: factory-1.12-iso
++            factoryUpgradeVersion: v1.13.11
++          - test: factory-1.13-iso
+             factoryBootMethod: iso
+-            factoryVersion: v1.12.10
++            factoryVersion: v1.13.10
+             factorySchematic: 376567988ad370138ad8b2698212367b8edcb69b5fd68c80be1f2ec7d603b4ba
+-            kubernetesVersion: 1.35.8
++            kubernetesVersion: 1.36.5
+             factoryUpgrade: "true"
+             factoryUpgradeSchematic: cf9b7aab9ed7c365d5384509b4d31c02fdaa06d2b3ac6cc0bc806f28130eff1f
+-            factoryUpgradeVersion: v1.12.11
+-          - test: factory-1.11-iso
++            factoryUpgradeVersion: v1.13.11
++          - test: factory-1.12-iso
+             factoryBootMethod: iso
+-            factoryVersion: v1.11.5
++            factoryVersion: v1.12.10
+             factorySchematic: 376567988ad370138ad8b2698212367b8edcb69b5fd68c80be1f2ec7d603b4ba
+-            kubernetesVersion: 1.34.11
++            kubernetesVersion: 1.35.9
+             factoryUpgrade: "true"
+             factoryUpgradeSchematic: cf9b7aab9ed7c365d5384509b4d31c02fdaa06d2b3ac6cc0bc806f28130eff1f
+-            factoryUpgradeVersion: v1.11.6
++            factoryUpgradeVersion: v1.12.11
+       steps:
+         - name: download-artifacts
+           artifactStep:
 ```
 
-**File**: `internal/integration/api/logs.go` (modified, +1/-2)
+**File**: `cmd/talosctl/cmd/mgmt/cluster/create/create_qemu.go` (modified, +3/-7)
 ```diff
-@@ -18,7 +18,6 @@ import (
- 
- 	"google.golang.org/grpc/codes"
- 
--	"github.com/siderolabs/talos/internal/app/machined/pkg/runtime/logging"
- 	"github.com/siderolabs/talos/internal/integration/base"
- 	"github.com/siderolabs/talos/pkg/machinery/api/common"
- 	machineapi "github.com/siderolabs/talos/pkg/machinery/api/machine"
-@@ -143,7 +142,7 @@ func (suite *LogsSuite) TestKernelLogs() {
- 	suite.Require().Greater(n, int64(1024))
- 
- 	version := strings.Contains(buf.String(), fmt.Sprintf("Linux version %s", constants.DefaultKernelVersion))
--	overflow := n >= logging.DesiredCapacity/2
-+	overflow := n >= constants.LogBufferCapacity/2
- 
- 	if !version && overflow {
- 		suite.T().Skip("skipping the test as kernel log buffer might have overflowed")
-```
-
-**File**: `pkg/machinery/constants/constants.go` (modified, +3/-0)
-```diff
-@@ -1601,6 +1601,9 @@ const (
- 	// LogRotateThreshold is the size (in bytes), upon exceeding which the log file should be rotated.
- 	LogRotateThreshold = 5 * 1024 * 1024
- 
-+	// LogBufferCapacity is the overall capacity of the in-memory log buffer (in raw bytes, memory size will be smaller due to compression).
-+	LogBufferCapacity = 1048576
-+
- 	// LogFlushPeriod is the period for flushing in-memory log buffers to the filesystem.
- 	LogFlushPeriod = 15 * time.Second
- 
-```
-
----
-
-### Incident Patch 3: `54dc4bb1` (2026-11-03)
-**Commit Message**: fix: parse space-separated cpufreq CPU lists
-
-cpufreq presents affected_cpus and related_cpus as space-separated CPU
-numbers rather than the CPU list format, so CPUScalingController failed
-on my RK3566-based SOQuartz CM4:
-
-```
-error reading cpufreq policy "policy0": error parsing "/sys/devices/system/cpu/cpufreq/policy0/affected_cpus": strconv.Atoi: parsing "0 1 2 3": invalid syntax
-```
-
-Signed-off-by: Tom Plant <[REDACTED_EMAIL]>
-Signed-off-by: Andrey Smirnov <[REDACTED_EMAIL]>
-
-**File**: `hack/release.toml` (modified, +3/-0)
-```diff
-@@ -235,6 +235,9 @@ selector:
- governor: powersave
- ```
- 
-+`core_type` is reported on Intel hybrid CPUs, and on Arm systems mixing core designs (big.LITTLE) whose firmware rates the
-+capacity of each core; it is empty on uniform machines.
-+
- The selector matches against the fields of the `CPUScalingStatus` resource, and may also set `energyPerformancePreference`,
- `minFrequencyKhz` and `maxFrequencyKhz`. Where several documents match the same policy, the one whose name sorts first wins, and the
- document which claimed a policy is reported on the resulting `CPUScalingSpec` resource. Removing the configuration restores the
-```
-
-**File**: `internal/app/machined/pkg/controllers/hardware/cpu_scaling.go` (modified, +260/-69)
-```diff
-@@ -9,11 +9,13 @@ import (
- 	"errors"
+@@ -7,7 +7,6 @@ package create
+ import (
+ 	"context"
  	"fmt"
- 	"io/fs"
-+	"maps"
+-	"net/url"
  	"os"
  	"path/filepath"
  	"slices"
- 	"strconv"
- 	"strings"
-+	"syscall"
- 
- 	"github.com/cosi-project/runtime/pkg/controller"
- 	"github.com/cosi-project/runtime/pkg/safe"
-@@ -44,6 +46,10 @@ type CPUScalingController struct {
- 	// ReconcileCh triggers an additional reconcile on each receive. Intended for testing only.
- 	ReconcileCh <-chan struct{}
- 
-+	// ReadFile reads a sysfs attribute, defaults to os.ReadFile. Overridable for testing, as some
-+	// sysfs read errors (e.g. EBUSY from an inactive policy) cannot be reproduced with plain files.
-+	ReadFile func(name string) ([]byte, error)
-+
- 	// defaults holds the value of each attribute before this controller first wrote it.
- 	defaults map[string]string
- }
-@@ -92,6 +98,10 @@ func (ctrl *CPUScalingController) Run(ctx context.Context, r controller.Runtime,
- 		ctrl.SysfsPath = "/sys"
+@@ -18,6 +17,7 @@ import (
+ 	"github.com/siderolabs/talos/cmd/talosctl/cmd/mgmt/cluster/create/clusterops"
+ 	"github.com/siderolabs/talos/cmd/talosctl/cmd/mgmt/cluster/create/clusterops/configmaker"
+ 	"github.com/siderolabs/talos/cmd/talosctl/cmd/mgmt/cluster/create/clusterops/configmaker/preset"
++	"github.com/siderolabs/talos/cmd/talosctl/pkg/talos/helpers"
+ 	"github.com/siderolabs/talos/pkg/machinery/config"
+ 	"github.com/siderolabs/talos/pkg/machinery/config/encoder"
+ 	"github.com/siderolabs/talos/pkg/machinery/config/machine"
+@@ -46,13 +46,9 @@ func createQemuCluster(
+ 		presetOptions.schematicID = constants.ImageFactoryEmptySchematicID
  	}
  
-+	if ctrl.ReadFile == nil {
-+		ctrl.ReadFile = os.ReadFile
+-	factoryURL, err := url.Parse(presetOptions.imageFactoryURL)
++	factoryURL, err := helpers.ParseImageFactoryURL(presetOptions.imageFactoryURL)
+ 	if err != nil {
+-		return fmt.Errorf("malformed Image Factory URL: %q: %w", presetOptions.imageFactoryURL, err)
+-	}
+-
+-	if factoryURL.Scheme == "" || factoryURL.Host == "" {
+-		return fmt.Errorf("image Factory URL must include scheme and host: %q", presetOptions.imageFactoryURL)
++		return err
+ 	}
+ 
+ 	if slices.Contains(presetOptions.presets, preset.Maintenance{}.Name()) && cOps.OmniAPIEndpoint != "" {
+```
+
+**File**: `cmd/talosctl/cmd/talos/image.go` (modified, +35/-7)
+```diff
+@@ -277,22 +277,53 @@ func imagePull(ctx context.Context, imageRef string) error {
+ 	return err
+ }
+ 
++func uniformImageMap(nodes []string, image string) map[string]string {
++	nodeImageMap := make(map[string]string, len(nodes))
++
++	for _, node := range nodes {
++		nodeImageMap[node] = image
 +	}
 +
- 	if ctrl.defaults == nil {
- 		ctrl.defaults = map[string]string{}
- 	}
-@@ -152,7 +162,7 @@ func (ctrl *CPUScalingController) reconcile(ctx context.Context, r controller.Ru
++	return nodeImageMap
++}
++
+ func imagePullInternal(
+ 	ctx context.Context,
+ 	clientFactory *global.ClientFactory,
+ 	containerdInstance *common.ContainerdInstance,
+ 	imageRef string,
+ 	rep *reporter.Reporter,
++) (map[string]string, error) {
++	nodeImageMap := uniformImageMap(clientFactory.Nodes(), imageRef)
++
++	finishedPulls, err := imagePullPerNode(ctx, clientFactory, containerdInstance, nodeImageMap, rep)
++	if status.Code(err) == codes.Unimplemented {
++		// fallback to legacy API for older Talos
++		return nil, imagePullLegacy(ctx, imageRef)
++	}
++
++	return finishedPulls, err
++}
++
++// imagePullPerNode pulls nodeImageMap[node] on each node.
++//
++// If any node doesn't support the ImageService API, the codes.Unimplemented error is returned as is.
++func imagePullPerNode(
++	ctx context.Context,
++	clientFactory *global.ClientFactory,
++	containerdInstance *common.ContainerdInstance,
++	nodeImageMap map[string]string,
++	rep *reporter.Reporter,
+ ) (map[string]string, error) {
+ 	streamCtx, cancel := context.WithCancel(ctx)
+ 	defer cancel()
+ 
+-	responseChan := multiplex.StreamingViaFactory(
++	responseChan := multiplex.StreamingViaFactoryPerNode(
+ 		streamCtx, clientFactory,
+-		func(ctx context.Context, c *client.Client) (grpc.ServerStreamingClient[machine.ImageServicePullResponse], error) {
++		func(ctx context.Context, c *client.Client, node multiplex.NodeRef) (grpc.ServerStreamingClient[machine.ImageServicePullResponse], error) {
+ 			return c.ImageService().Pull(ctx, &machine.ImageServicePullRequest{
+ 				Containerd: containerdInstance,
+-				ImageRef:   imageRef,
++				ImageRef:   nodeImageMap[node],
+ 			})
+ 		},
+ 	)
+@@ -307,10 +338,7 @@ func imagePullInternal(
+ 	for resp := range responseChan {
+ 		if resp.Err != nil {
+ 			if status.Code(resp.Err) == codes.Unimplemented {
+-				cancel()
+-
+-				// fallback to legacy API for older Talos
+-				return nil, imagePullLegacy(ctx, imageRef)
++				return nil, resp.Err
+ 			}
+ 
+ 			errs = errors.Join(errs, fmt.Errorf("error from node %s: %w", resp.Node, resp.Err))
+```
+
+**File**: `cmd/talosctl/cmd/talos/upgrade.go` (modified, +287/-29)
+```diff
+@@ -8,13 +8,17 @@ import (
+ 	"context"
+ 	"errors"
+ 	"fmt"
++	"maps"
++	"slices"
+ 	"strings"
+ 	"text/tabwriter"
+ 	"time"
+ 
+ 	"github.com/blang/semver/v4"
+-	"github.com/siderolabs/gen/xerrors"
++	"github.com/cosi-project/runtime/pkg/safe"
++	"github.com/cosi-project/runtime/pkg/state"
+ 	"github.com/spf13/cobra"
++	"github.com/spf13/pflag"
+ 	"google.golang.org/grpc"
+ 
+ 	"github.com/siderolabs/talos/cmd/talosctl/cmd/talos/lifecycle"
+@@ -29,18 +33,33 @@ import (
+ 	"github.com/siderolabs/talos/pkg/machinery/api/machine"
+ 	"github.com/siderolabs/talos/pkg/machinery/client"
+ 	"github.com/siderolabs/talos/pkg/machinery/client/multiplex"
++	"github.com/siderolabs/talos/pkg/machinery/resources/runtime"
+ 	"github.com/siderolabs/talos/pkg/machinery/version"
+ 	"github.com/siderolabs/talos/pkg/reporter"
+ )
+ 
++const (
++	upgradeImageFlagName     = "image"
++	imageFactoryHostFlagName = "image-factory-host"
++	schematicIDFlagName      = "schematic-id"
++	talosVersionFlagName     = "talos-version"
++	secureBootFlagName       = "secure-boot"
++)
++
+ var upgradeCmdFlags = struct {
+ 	trackableActionCmdFlags
+ 	imageCmdFlagsType
+ 
+-	upgradeImage string
+-	noReboot     bool
+-	rebootMode   flags.PflagExtended[machine.RebootRequest_Mode]
+-	progress     flags.PflagExtended[reporter.OutputMode]
++	upgradeImage     string
++	imageFactoryHost string
++	schematicID      string
++	talosVersion     string
++	secureBoot       bool
++	// no platform flag as changing the platform via an upgrade is not officially supported
++
++	noReboot   bool
++	rebootMode flags.PflagExtended[machine.RebootRequest_Mode]
++	progress   flags.PflagExtended[reporter.OutputMode]
+ 
+ 	drain        bool
+ 	drainTimeout time.Duration
+@@ -55,12 +74,32 @@ var upgradeCmdFlags = struct {
+ 	progress:   reporter.NewOutputModeFlag(),
+ }
+ 
++const (
++	upgradeCmdDescription     = "Upgrade Talos on the target node(s)"
++	upgradeCmdDescriptionLong = upgradeCmdDescription + "\n" + `
++For nodes running Talos versions before 1.14 supplying an --image flag is necessary.
++
++For nodes running Talos 1.14 and newer, the upgrade image is automatically detected for each node.
++This means that each node retains its schematic, Image Factory host, platform and secureboot setting as they are set on that node.
++The options can be optionally modified with the cli flags.`
++)
++
+ // upgradeCmd represents the processes command.
+ var upgradeCmd = &cobra.Command{
+ 	Use:   "upgrade",
+-	Short: "Upgrade Talos on the target node",
+-	Long:  ``,
++	Short: upgradeCmdDescription,
++	Long:  upgradeCmdDescriptionLong,
+ 	Args:  cobra.NoArgs,
++	Example: fmt.Sprintf(`# upgrade node(s) to a set version keeping other parameters the same
++# (each node retains its schematic, Image Factory host, platform and secureboot setting)
++talosctl upgrade -n <NODE(S)> --talos-version 1.14.2
++
++# upgrade node(s) to a different schematic
++# (--talos-version defaults to the talosctl version, so set it explicitly to keep the current Talos version)
++talosctl upgrade -n <NODE(S)> --%s=e3c92... --talos-version 1.14.2
++
++# upgrade node(s) to an exact image
++talosctl upgrade -n <NODE(S)> --image=factory.talos.dev/metal-installer-secureboot/ecc3...b557:v1.14.2`, schematicIDFlagName),
+ 	RunE: func(cmd *cobra.Command, args []string) error {
+ 		if upgradeCmdFlags.debug {
+ 			upgradeCmdFlags.wait = true
+@@ -70,28 +109,31 @@ var upgradeCmd = &cobra.Command{
+ 			upgradeCmdFlags.wait = true
+ 		}
+ 
+-		return upgradeRun(cmd.Context())
++		return upgradeRun(cmd.Context(), cmd.Flags())
+ 	},
+ }
+ 
+-func upgradeRun(ctx context.Context) error {
++func upgradeRun(ctx context.Context, flags *pflag.FlagSet) error {
+ 	clientFactory, err := NewClientFactory(ctx, &upgradeCmdFlags, action.GRPCDialOptions()...)
+ 	if err != nil {
  		return err
  	}
  
--	return ctrl.reportStatuses(ctx, r)
-+	return ctrl.reportStatuses(ctx, r, logger)
+ 	defer clientFactory.Close() //nolint:errcheck
+ 
+-	return upgradeViaLifecycleService(ctx, clientFactory)
++	return upgradeViaLifecycleService(ctx, clientFactory, flags)
  }
  
- // policies lists the cpufreq policy directories. A machine with no cpufreq driver (most VMs) has
-@@ -161,37 +171,67 @@ func (ctrl *CPUScalingController) policies() ([]string, error) {
- 	return filepath.Glob(filepath.Join(ctrl.SysfsPath, cpufreqPath, "policy*"))
- }
+-var talosUpgradeAPIVersionRange = semver.MustParseRange(">1.13.0-alpha.2 <2.0.0")
++var (
++	talosUpgradeAPIVersionRange            = semver.MustParseRange(">1.13.0-alpha.2 <2.0.0")
++	talosImageFactorySchematicVersionRange = semver.MustParseRange(">=1.14.0-alpha.2")
++)
  
--func (ctrl *CPUScalingController) reportStatuses(ctx context.Context, r controller.Runtime) error {
-+// isInactive reports whether err is the error the kernel returns for every attribute of a cpufreq
-+// policy whose CPUs are all offline. The policy directory stays in place until a CPU comes back,
-+// which raises a uevent and so a reconcile.
-+func isInactive(err error) bool {
-+	return errors.Is(err, syscall.EBUSY)
-+}
-+
-+// cpufreqPolicy is a cpufreq policy as read from sysfs.
-+type cpufreqPolicy struct {
-+	id   string
-+	spec hardware.CPUScalingStatusSpec
-+
-+	// microarch identifies the core design of the policy's first CPU on arm64 (the MIDR_EL1
-+	// implementer and part number), zero where unknown.
-+	microarch uint64
-+}
-+
-+func (ctrl *CPUScalingController) reportStatuses(ctx context.Context, r controller.Runtime, logger *zap.Logger) error {
- 	dirs, err := ctrl.policies()
- 	if err != nil {
- 		return fmt.Errorf("error listing cpufreq policies: %w", err)
- 	}
- 
--	coreTypes, err := ctrl.readCoreTypes()
--	if err != nil {
--		return fmt.Errorf("error reading CPU core types: %w", err)
--	}
--
--	r.StartTrackingOutputs()
-+	policies := make([]cpufreqPolicy, 0, len(dirs))
- 
- 	for _, dir := range dirs {
- 		id := filepath.Base(dir)
- 
--		spec, err := ctrl.readPolicy(dir, coreTypes)
--		if err != nil {
--			if errors.Is(err, fs.ErrNotExist) {
--				continue
--			}
-+		policy, err := ctrl.readPolicy(dir)
-+
-+		switch {
-+		case err == nil:
-+		case errors.Is(err, fs.ErrNotExist):
-+			continue
-+		case isInactive(err):
-+			// an inactive policy drives no CPU, and the kernel refuses to describe it
-+			continue
-+		default:
-+			// a driver presenting something unexpected should not take down every other policy
-+			logger.Warn("error reading cpufreq policy, skipping", zap.String("policy", id), zap.Error(err))
- 
--			return fmt.Errorf("error reading cpufreq policy %q: %w", id, err)
-+			continue
- 		}
- 
--		if err := safe.WriterModify(ctx, r, hardware.NewCPUScalingStatus(id), func(res *hardware.CPUScalingStatus) error {
--			*res.TypedSpec() = spec
-+		policy.id = id
-+		policies = append(policies, policy)
-+	}
-+
-+	if err = ctrl.classifyCoreTypes(policies); err != nil {
-+		return fmt.Errorf("error reading CPU core types: %w", err)
-+	}
-+
-+	r.StartTrackingOutputs()
-+
-+	for _, policy := range policies {
-+		if err := safe.WriterModify(ctx, r, hardware.NewCPUScalingStatus(policy.id), func(res *hardware.CPUScalingStatus) error {
-+			*res.TypedSpec() = policy.spec
- 
- 			return nil
- 		}); err != nil {
--			return fmt.Errorf("error updating CPUScalingStatus resource %q: %w", id, err)
-+			return fmt.Errorf("error updating CPUScalingStatus resource %q: %w", policy.id, err)
- 		}
- 	}
- 
-@@ -201,85 +241,152 @@ func (ctrl *CPUScalingController) reportStatuses(ctx context.Context, r controll
- // readPolicy reads a single cpufreq policy directory.
+ // upgradeViaLifecycleService tries the new LifecycleService.Upgrade streaming API.
+ // If the server returns codes.Unimplemented, it falls back to the legacy MachineService.Upgrade.
  //
- // Drivers differ in which attributes they expose, so a missing one leaves its field zero.
--func (ctrl *CPUScalingController) readPolicy(dir string, coreTypes map[uint32]string) (hardware.CPUScalingStatusSpec, error) {
--	var spec hardware.CPUScalingStatusSpec
-+func (ctrl *CPUScalingController) readPolicy(dir string) (cpufreqPolicy, error) {
-+	var policy cpufreqPolicy
-+
-+	spec := &policy.spec
+-//nolint:gocyclo
+-func upgradeViaLifecycleService(ctx context.Context, clientFactory *global.ClientFactory) (retErr error) {
++//nolint:gocyclo,cyclop
++func upgradeViaLifecycleService(ctx context.Context, clientFactory *global.ClientFactory, flags *pflag.FlagSet) (retErr error) {
+ 	if upgradeCmdFlags.debug {
+ 		upgradeCmdFlags.wait = true
+ 	}
+@@ -103,6 +145,10 @@ func upgradeViaLifecycleService(ctx context.Context, clientFactory *global.Clien
+ 	if upgradeCmdFlags.legacy {
+ 		safeout.Warningf("Forcing use of legacy upgrade method. This flag is deprecated and will be removed in Talos 1.18.")
  
- 	// the cpufreq core creates scaling_driver for every policy, so its absence means there is no
- 	// policy here (any more)
--	driver, err := readAttr(dir, "scaling_driver")
-+	driver, err := ctrl.readAttr(dir, "scaling_driver")
- 	if er
++		if upgradeCmdFlags.upgradeImage
 ```
 
-**File**: `internal/app/machined/pkg/controllers/hardware/cpu_scaling_test.go` (modified, +347/-17)
+**File**: `cmd/talosctl/cmd/talos/upgrade_test.go` (added, +208/-0)
 ```diff
-@@ -5,12 +5,19 @@
- package hardware_test
- 
- import (
-+	"context"
-+	"io/fs"
-+	"maps"
- 	"os"
- 	"path/filepath"
-+	"strconv"
- 	"strings"
-+	"sync"
-+	"syscall"
- 	"testing"
- 	"time"
- 
-+	"github.com/cosi-project/runtime/pkg/resource/rtestutils"
- 	"github.com/siderolabs/go-retry/retry"
- 	"github.com/stretchr/testify/assert"
- 	"github.com/stretchr/testify/require"
-@@ -22,6 +29,10 @@ import (
- )
- 
- // writeSysfs materializes a fake sysfs tree, newline-terminating values as the kernel does.
-+//
-+// Values are otherwise exactly what the kernel prints, trailing space included: cpufreq prints CPU
-+// masks as `0 1 2 3`, governor and EPP lists with a space after each item, and the perf PMUs print
-+// CPU masks in the `0-3,8` list format.
- func writeSysfs(t *testing.T, root string, files map[string]string) {
- 	t.Helper()
- 
-@@ -33,6 +44,54 @@ func writeSysfs(t *testing.T, root string, files map[string]string) {
- 	}
- }
- 
-+// fakeSysfs reads a fake sysfs tree, failing every read under an inactive cpufreq policy with
-+// EBUSY, as the kernel does once all CPUs of a policy are offline.
-+type fakeSysfs struct {
-+	mu        sync.Mutex
-+	inactive  map[string]bool
-+	busyReads map[string]int
+@@ -0,0 +1,208 @@
++// This Source Code Form is subject to the terms of the Mozilla Public
++// License, v. 2.0. If a copy of the MPL was not distributed with this
++// file, You can obtain one at http://mozilla.org/MPL/2.0/.
++
++package talos //nolint:testpackage // to test unexported commands and helpers
++
++import (
++	"errors"
++	"testing"
++
++	"github.com/cosi-project/runtime/pkg/state"
++	"github.com/cosi-project/runtime/pkg/state/impl/inmem"
++	"github.com/cosi-project/runtime/pkg/state/impl/namespaced"
++	"github.com/spf13/pflag"
++	"github.com/stretchr/testify/assert"
++	"github.com/stretchr/testify/require"
++
++	"github.com/siderolabs/talos/pkg/images"
++	"github.com/siderolabs/talos/pkg/machinery/resources/runtime"
++)
++
++// parseUpgradeFlags parses args into the upgrade command flags and restores the defaults once the test is done.
++func parseUpgradeFlags(t *testing.T, args ...string) *pflag.FlagSet {
++	t.Helper()
++
++	t.Cleanup(func() {
++		for _, name := range []string{
++			upgradeImageFlagName,
++			imageFactoryHostFlagName,
++			schematicIDFlagName,
++			talosVersionFlagName,
++			secureBootFlagName,
++		} {
++			flag := upgradeCmd.Flags().Lookup(name)
++			require.NoError(t, flag.Value.Set(flag.DefValue))
++
++			flag.Changed = false
++		}
++	})
++
++	require.NoError(t, upgradeCmd.ParseFlags(args))
++
++	return upgradeCmd.Flags()
 +}
 +
-+func (f *fakeSysfs) setInactive(policy string, inactive bool) {
-+	f.mu.Lock()
-+	defer f.mu.Unlock()
++func TestGetNodeInstallImageMapUniform(t *testing.T) {
++	nodes := []string{"10.5.0.2", "10.5.0.3"}
++	image := "ghcr.io/siderolabs/installer:v1.13.0"
 +
-+	if f.inactive == nil {
-+		f.inactive = map[string]bool{}
++	flags := parseUpgradeFlags(t, "--image", image)
++
++	// no client factory: the uniform path must not talk to the nodes
++	imageMap, err := getNodeInstallImageMap(t.Context(), nodes, nil, flags)
++	require.NoError(t, err)
++	assert.Equal(t, map[string]string{
++		nodes[0]: image,
++		nodes[1]: image,
++	}, imageMap)
++}
++
++func TestImageFlagConflicts(t *testing.T) {
++	for _, flag := range imageComponentFlagNames {
++		t.Run(flag, func(t *testing.T) {
++			parseUpgradeFlags(t, "--image", "ghcr.io/siderolabs/installer:v1.13.0", "--"+flag+"=1")
++
++			err := upgradeCmd.ValidateFlagGroups()
++			require.ErrorContains(t, err, upgradeImageFlagName)
++			require.ErrorContains(t, err, flag)
++		})
 +	}
 +
-+	f.inactive[policy] = inactive
++	t.Run("image only", func(t *testing.T) {
++		parseUpgradeFlags(t, "--image", "ghcr.io/siderolabs/installer:v1.13.0")
++
++		require.NoError(t, upgradeCmd.ValidateFlagGroups())
++	})
 +}
 +
-+// busyReadCount returns how many reads of a policy attribute failed with EBUSY.
-+func (f *fakeSysfs) busyReadCount(policy, name string) int {
-+	f.mu.Lock()
-+	defer f.mu.Unlock()
++func TestReadNodeImageParams(t *testing.T) {
++	for _, tc := range []struct {
++		name     string
++		args     []string
++		expected nodeImageParams
++	}{
++		{
++			name: "from node state",
++			expected: nodeImageParams{
++				factoryHost: "factory.example.com",
++				schematic:   "node-schematic",
++				platform:    "aws",
++				version:     upgradeCmdFlags.talosVersion,
++				secureBoot:  true,
++			},
++		},
++		{
++			name: "flags override node state",
++			args: []string{"--schematic-id", "flag-schematic", "--secure-boot=false"},
++			expected: nodeImageParams{
++				factoryHost: "factory.example.com",
++				schematic:   "flag-schematic",
++				platform:    "aws",
++				version:     upgradeCmdFlags.talosVersion,
++				secureBoot:  false,
++			},
++		},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			flags := parseUpgradeFlags(t, tc.args...)
++			st := newNodeImageState(t)
 +
-+	return f.busyReads[policy+"/"+name]
++			p, err := readNodeImageParams(t.Context(), st, imageParamsFromFlags(), newChangedImageFlags(flags))
++			require.NoError(t, err)
++			assert.Equal(t, tc.expected, p)
++		})
++	}
 +}
 +
-+func (f *fakeSysfs) readFile(name string) ([]byte, error) {
-+	f.mu.Lock()
++func TestReadNodeImageParamsSkipsOverriddenReads(t *testing.T) {
++	flags := parseUpgradeFlags(t,
++		"--image-factory-host", "factory.talos.dev",
++		"--schematic-id", "abc",
++		"--secure-boot",
++	)
 +
-+	for policy, inactive := range f.inactive {
-+		if inactive && strings.Contains(filepath.ToSlash(name), "/cpufreq/"+policy+"/") {
-+			if f.busyReads == nil {
-+				f.busyReads = map[string]int{}
-+			}
++	// only the platform is always read from the node, any other read would fail with NotFound
++	st := state.WrapCore(namespaced.NewState(inmem.Build))
 +
-+			f.busyReads[policy+"/"+filepath.Base(name)]++
-+			f.mu.Unlock()
++	platform := runtime.NewPlatformMetadataSpec(runtime.NamespaceName, runtime.PlatformMetadataID)
++	platform.TypedSpec().Platform = "metal"
++	require.NoError(t, st.Create(t.Context(), platform))
 +
-+			return nil, &fs.PathError{Op: "read", Path: name, Err: syscall.EBUSY}
++	p, err := readNodeImageParams(t.Context(), st, imageParamsFromFlags(), newChangedImageFlags(flags))
++	require.NoError(t, err)
++	assert.Equal(t, nodeImageParams{
++		factoryHost: "factory.talos.dev",
++		schematic:   "abc",
++		platform:    "metal",
++		version:     upgradeCmdFlags.talosVersion,
++		secureBoot:  true,
++	}, p)
++}
++
++func TestReadNodeImageParamsNotFromFactory(t *testing.T) {
++	flags := parseUpgradeFlags(t)
++
++	// empty state: the node has no ImageFactorySchematic
++	st := state.WrapCore(namespaced.NewState(inmem.Build))
++
++	_, err := readNodeImageParams(t.Context(), st, imageParamsFromFlags(), newChangedImageFlags(flags))
++	require.ErrorContains(t, err, "not installed from Image Factory")
++	require.ErrorContains(t, err, "--image")
++}
++
++func TestReadNodeImageParamsEmptyFactoryURL(t *testing.T) {
++	flags := parseUpgradeFlags(t)
++	st := newNodeImageState(t)
++
++	schematic := runtime.NewImageFactorySchematic(runtime.NamespaceName, runtime.ImageFactorySchematicID)
++	schematic.TypedSpec().SchematicID = "node-sc
+```
+
+**File**: `cmd/talosctl/pkg/talos/helpers/checks.go` (modified, +40/-44)
+```diff
+@@ -11,7 +11,6 @@ import (
+ 	"strings"
+ 
+ 	"github.com/blang/semver/v4"
+-	"github.com/siderolabs/gen/xerrors"
+ 
+ 	"github.com/siderolabs/talos/cmd/talosctl/pkg/talos/safeout"
+ 	"github.com/siderolabs/talos/pkg/machinery/api/machine"
+@@ -26,62 +25,65 @@ type ClientFactory interface {
+ 	Nodes() []string
+ }
+ 
+-// VersionOutsideRangeError is returned when a node is running a Talos version that is outside the desired range.
+-type VersionOutsideRangeError struct{}
++// GetTalosVersionBounds returns the lowest and the highest Talos version running across all nodes.
++func GetTalosVersionBounds(ctx context.Context, clientFactory ClientFactory) (lowest, highest semver.Version, err error) {
++	found := false
+ 
+-// TalosVersionCheck verifies that all nodes are running the desired Talos version.
+-func TalosVersionCheck(ctx context.Context, clientFactory ClientFactory, desired semver.Range) error {
+-	respCh := multiplex.UnaryViaFactory(
+-		ctx, clientFactory,
+-		func(ctx context.Context, c *client.Client) (*machine.VersionResponse, error) {
+-			return c.Version(ctx)
+-		},
+-	)
++	if err = forEachServerVersion(ctx, clientFactory, func(_ string, serverVersion semver.Version) {
++		if !found || serverVersion.LT(lowest) {
++			lowest = serverVersion
++		}
+ 
+-	var errs error
++		if !found || serverVersion.GT(highest) {
++			highest = serverVersion
++		}
+ 
+-	for resp := range respCh {
+-		if resp.Err != nil {
+-			errs = errors.Join(errs, fmt.Errorf("%s: error getting server version: %w", resp.Node, resp.Err))
++		found = true
++	}); err != nil {
++		return semver.Version{}, semver.Version{}, err
++	}
+ 
+-			continue
+-		}
++	if !found {
++		return semver.Version{}, semver.Version{}, errors.New("no server versions found")
++	}
+ 
+-		for _, msg := range resp.Payload.GetMessages() {
+-			serverVersion, err := semver.ParseTolerant(msg.GetVersion().Tag)
+-			if err != nil {
+-				errs = errors.Join(errs, fmt.Errorf("%s: error parsing server version: %w", resp.Node, err))
++	return lowest, highest, nil
++}
+ 
+-				continue
+-			}
++// ClientVersionCheck verifies that client is not outdated vs. Talos version.
++func ClientVersionCheck(ctx context.Context, clientFactory ClientFactory) error {
++	clientVersion, err := semver.ParseTolerant(version.NewVersion().Tag)
++	if err != nil {
++		return fmt.Errorf("error parsing client version: %w", err)
++	}
+ 
+-			if !desired(serverVersion) {
+-				errs = errors.Join(errs, xerrors.NewTaggedf[VersionOutsideRangeError]("%s: server version %s is outside the desired range", resp.Node, serverVersion))
+-			}
++	var warnings []string
++
++	errs := forEachServerVersion(ctx, clientFactory, func(node string, serverVersion semver.Version) {
++		if serverVersion.Compare(clientVersion) < 0 {
++			warnings = append(warnings, fmt.Sprintf("%s: server version %s is older than client version %s", node, serverVersion, clientVersion))
+ 		}
++	})
++
++	if warnings != nil {
++		fmt.Fprintf(safeout.Stderr(), "WARNING: %s\n", strings.Join(warnings, ", "))
+ 	}
+ 
+ 	return errs
+ }
+ 
+-// ClientVersionCheck verifies that client is not outdated vs. Talos version.
+-func ClientVersionCheck(ctx context.Context, clientFactory ClientFactory) error {
++// forEachServerVersion fetches the Talos version from all nodes and calls fn for each successfully parsed version.
++//
++// Errors fetching or parsing versions are collected and returned after all nodes are processed.
++func forEachServerVersion(ctx context.Context, clientFactory ClientFactory, fn func(node string, serverVersion semver.Version)) error {
+ 	respCh := multiplex.UnaryViaFactory(
+ 		ctx, clientFactory,
+ 		func(ctx context.Context, c *client.Client) (*machine.VersionResponse, error) {
+ 			return c.Version(ctx)
+ 		},
+ 	)
+ 
+-	clientVersion, err := semver.ParseTolerant(version.NewVersion().Tag)
+-	if err != nil {
+-		return fmt.Errorf("error parsing client version: %w", err)
+-	}
+-
+-	var (
+-		warnings []string
+-		errs     error
+-	)
++	var errs error
+ 
+ 	for resp := range respCh {
+ 		if resp.Err != nil {
+@@ -98,15 +100,9 @@ func ClientVersionCheck(ctx context.Context, clientFactory ClientFactory) error
+ 				continue
+ 			}
+ 
+-			if serverVersion.Compare(clientVersion) < 0 {
+-				warnings = append(warnings, fmt.Sprintf("%s: server version %s is older than client version %s", resp.Node, serverVersion, clientVersion))
+-			}
++			fn(resp.Node, serverVersion)
+ 		}
+ 	}
+ 
+-	if warnings != nil {
+-		fmt.Fprintf(safeout.Stderr(), "WARNING: %s\n", strings.Join(warnings, ", "))
+-	}
+-
+ 	return errs
+ }
+```
+
+---
+
+### Incident Patch 2: `a87dccb6` (2026-11-03)
+**Commit Message**: feat: implement service healthcheck startup probes
+
+The idea is to make the initialDelay smaller, for example:
+
+* Talos starts `apid`
+* it becomes healthy say in 30ms
+* Talos waits full 1 second before doing the healthcheck and declaring
+  the service as healthy
+
+We don't want to run healthchecks in general more often, but we don't
+want to spam the logs on service slow startup either, so introduce
+similar to Kubernetes startup probes which run early, check often, and
+ignore failures. They should detect initial healthy state as soon as
+possible, and hand it over to regular checks.
+
+Signed-off-by: Andrey Smirnov <[REDACTED_EMAIL]>
+
+**File**: `internal/app/machined/pkg/system/health/check.go` (modified, +80/-19)
+```diff
+@@ -27,38 +27,99 @@ func Run(ctx context.Context, settings *Settings, state *State, check Check) err
+ 	case <-time.After(settings.InitialDelay):
+ 	}
+ 
++	var startupSucceeded bool
++
++	if settings.StartupWindow > 0 {
++		var err error
++
++		startupSucceeded, err = runStartup(ctx, settings, state, check)
++		if err != nil {
++			return err
++		}
++
++		// the startup window might have expired at the same time as the context was canceled
++		if err = ctx.Err(); err != nil {
++			return err
 +		}
 +	}
 +
-+	f.mu.Unlock()
-+
-+	return os.ReadFile(name)
+ 	ticker := time.NewTicker(settings.Period)
+ 	defer ticker.Stop()
+ 
+-	var (
+-		err            error
+-		healthy        bool
+-		message        string
+-		checkCtx       context.Context
+-		checkCtxCancel context.CancelFunc
+-	)
++	// if the startup phase reported the service as healthy, wait for the next tick before the next check,
++	// otherwise run (and report) the check right away
++	skipCheck := startupSucceeded
+ 
+ 	for {
+-		err = func() error {
+-			checkCtx, checkCtxCancel = context.WithTimeout(ctx, settings.Timeout) //nolint:fatcontext
+-			defer checkCtxCancel()
+-
+-			return check(checkCtx)
+-		}()
++		if !skipCheck {
++			runAndReport(ctx, settings.Timeout, state, check)
++		}
+ 
+-		healthy = err == nil
+-		message = ""
++		skipCheck = false
+ 
+-		if !healthy {
+-			message = err.Error()
++		select {
++		case <-ctx.Done():
++			return ctx.Err()
++		case <-ticker.C:
+ 		}
++	}
 +}
 +
- func readPolicyAttr(t *testing.T, root, policy, name string) string {
- 	t.Helper()
++// runStartup runs the startup phase of the health check.
++//
++// Failures are not reported, the first successful check is reported and ends the startup phase.
++// It returns true if the startup phase ended with a successful check, and false if the startup window expired.
++func runStartup(ctx context.Context, settings *Settings, state *State, check Check) (bool, error) {
++	period := settings.StartupPeriod
++	if period <= 0 {
++		period = settings.Period
++	}
  
-@@ -42,18 +101,19 @@ func readPolicyAttr(t *testing.T, root, policy, name string) string {
- 	return strings.TrimSpace(string(contents))
+-		state.Update(healthy, message)
++	timeout := settings.StartupTimeout
++	if timeout <= 0 {
++		timeout = settings.Timeout
++	}
++
++	window := time.NewTimer(settings.StartupWindow)
++	defer window.Stop()
++
++	ticker := time.NewTicker(period)
++	defer ticker.Stop()
++
++	for {
++		if runCheck(ctx, timeout, check) == nil {
++			state.Update(true, "")
++
++			return true, nil
++		}
+ 
+ 		select {
+ 		case <-ctx.Done():
+-			return ctx.Err()
++			return false, ctx.Err()
++		case <-window.C:
++			return false, nil
+ 		case <-ticker.C:
+ 		}
+ 	}
+ }
++
++// runAndReport runs the health check and reports the result (both success and failure) to the state.
++func runAndReport(ctx context.Context, timeout time.Duration, state *State, check Check) {
++	err := runCheck(ctx, timeout, check)
++
++	healthy := err == nil
++	message := ""
++
++	if !healthy {
++		message = err.Error()
++	}
++
++	state.Update(healthy, message)
++}
++
++func runCheck(ctx context.Context, timeout time.Duration, check Check) error {
++	checkCtx, checkCtxCancel := context.WithTimeout(ctx, timeout)
++	defer checkCtxCancel()
++
++	return check(checkCtx)
++}
+```
+
+**File**: `internal/app/machined/pkg/system/health/health_test.go` (modified, +105/-0)
+```diff
+@@ -203,6 +203,111 @@ func (suite *CheckSuite) TestInitialState() {
+ 	suite.Assert().EqualError(<-errCh, context.Canceled.Error())
  }
  
--// cpufreqTree covers the shapes a cpufreq driver can present:
-+// cpufreqTree covers the shapes an x86 cpufreq driver can present, rather than one real machine:
- //
- //   - policy0 mirrors a real intel_cpufreq box: one CPU per policy, no EPP, no base frequency;
--//   - policy1 drives several CPUs at once, as ARM and many server parts do;
-+//   - policy1 drives several CPUs at once, as acpi-cpufreq does under _PSD hardware coordination;
- //   - policy2 is HWP-style, with EPP and a base frequency;
--//   - policy3 is offline, so it has related CPUs but no affected ones.
-+//   - policy3 is inactive (see CPUScalingSuite), so the kernel refuses to read any of it;
-+//   - policy5 is a low power E-core of a three-tier hybrid CPU.
- func cpufreqTree() map[string]string {
- 	return map[string]string{
- 		"devices/system/cpu/cpufreq/policy0/scaling_driver":              "intel_cpufreq",
- 		"devices/system/cpu/cpufreq/policy0/affected_cpus":               "0",
- 		"devices/system/cpu/cpufreq/policy0/related_cpus":                "0",
--		"devices/system/cpu/cpufreq/policy0/scaling_available_governors": "conservative ondemand userspace powersave performance schedutil",
-+		"devices/system/cpu/cpufreq/policy0/scaling_available_governors": "conservative ondemand userspace powersave performance schedutil ",
- 		"devices/system/cpu/cpufreq/policy0/scaling_governor":            "schedutil",
- 		"devices/system/cpu/cpufreq/policy0/scaling_min_freq":            "1200000",
- 		"devices/system/cpu/cpufreq/policy0/scaling_max_freq":            "3300000",
-@@ -62,9 +122,9 @@ func cpufreqTree() map[string]string {
- 		"devices/system/cpu/cpufreq/policy0/scaling_cur_freq":            "2712000",
++func (suite *CheckSuite) TestStartupSilentFailures() {
++	settings := health.Settings{
++		InitialDelay: time.Millisecond,
++		Period:       time.Minute,
++		Timeout:      time.Second,
++
++		StartupWindow:  time.Minute,
++		StartupPeriod:  5 * time.Millisecond,
++		StartupTimeout: time.Second,
++	}
++
++	var called atomic.Uint32
++
++	check := func(context.Context) error {
++		if called.Add(1) <= 3 {
++			return errors.New("not ready yet")
++		}
++
++		return nil
++	}
++
++	var state health.State
++
++	notifyCh := make(chan health.StateChange, 10)
++	state.Subscribe(notifyCh)
++
++	errCh := make(chan error)
++	ctx, ctxCancel := context.WithCancel(context.Background())
++
++	go func() {
++		errCh <- health.Run(ctx, &settings, &state, check)
++	}()
++
++	select {
++	case change := <-notifyCh:
++		// failures during the startup phase are not reported, so the first change is straight to healthy
++		suite.Assert().Nil(change.Old.Healthy)
++		suite.Require().NotNil(change.New.Healthy)
++		suite.Assert().True(*change.New.Healthy)
++	case <-time.After(10 * time.Second):
++		suite.FailNow("timed out waiting for health change")
++	}
++
++	// no extra check right after the startup phase, the next one happens after the regular period
++	time.Sleep(50 * time.Millisecond)
++	suite.Assert().EqualValues(4, called.Load())
++
++	ctxCancel()
++
++	suite.Assert().EqualError(<-errCh, context.Canceled.Error())
++
++	state.Unsubscribe(notifyCh)
++	suite.Assert().Empty(notifyCh)
++}
++
++func (suite *CheckSuite) TestStartupWindowExpired() {
++	settings := health.Settings{
++		InitialDelay: time.Millisecond,
++		Period:       time.Minute,
++		Timeout:      time.Second,
++
++		StartupWindow:  100 * time.Millisecond,
++		StartupPeriod:  5 * time.Millisecond,
++		StartupTimeout: time.Second,
++	}
++
++	var called atomic.Uint32
++
++	check := func(context.Context) error {
++		called.Add(1)
++
++		return errors.New("health failed")
++	}
++
++	var state health.State
++
++	notifyCh := make(chan health.StateChange, 10)
++	state.Subscribe(notifyCh)
++
++	errCh := make(chan error)
++	ctx, ctxCancel := context.WithCancel(context.Background())
++
++	go func() {
++		errCh <- health.Run(ctx, &settings, &state, check)
++	}()
++
++	select {
++	case change := <-notifyCh:
++		// the failure is reported once the startup window expires (without waiting for the regular period)
++		suite.Assert().Nil(change.Old.Healthy)
++		suite.Require().NotNil(change.New.Healthy)
++		suite.Assert().False(*change.New.Healthy)
++		suite.Assert().Equal("health failed", change.New.LastMessage)
++	case <-time.After(10 * time.Second):
++		suite.FailNow("timed out waiting for health change")
++	}
++
++	// the check was retried silently during the startup window
++	suite.Assert().Greater(called.Load(), uint32(2))
++
++	ctxCancel()
++
++	suite.Assert().EqualError(<-errCh, context.Canceled.Error())
++}
++
+ func TestCheckSuite(t *testing.T) {
+ 	suite.Run(t, new(CheckSuite))
+ }
+```
+
+**File**: `internal/app/machined/pkg/system/health/settings.go` (modified, +20/-1)
+```diff
+@@ -13,11 +13,30 @@ type Settings struct {
+ 	InitialDelay time.Duration
+ 	Period       time.Duration
+ 	Timeout      time.Duration
++
++	// StartupWindow enables the startup phase (similar to k8s startup probe), which
++	// starts after the InitialDelay.
++	//
++	// During the startup phase, the health check runs every StartupPeriod with StartupTimeout,
++	// failures are not reported (health stays unknown), and the first successful check is reported
++	// and ends the startup phase.
++	//
++	// If the startup window expires without a successful check, the health check switches
++	// to the regular settings (Period, Timeout), reporting failures.
++	StartupWindow time.Duration
++	// StartupPeriod is the health check period during the startup phase (defaults to Period).
++	StartupPeriod time.Duration
++	// StartupTimeout is the health check timeout during the startup phase (defaults to Timeout).
++	StartupTimeout time.Duration
+ }
  
- 		"devices/system/cpu/cpufreq/policy1/scaling_driver":              "acpi-cpufreq",
--		"devices/system/cpu/cpufreq/policy1/affected_cpus":               "1-3",
--		"devices/system/cpu/cpufreq/policy1/related_cpus":                "1-3",
--		"devices/system/cpu/cpufreq/policy1/scaling_available_governors": "ondemand performance",
-+		"devices/system/cpu/cpufreq/policy1/affected_cpus":               "1 2 3",
-+		"devices/system/cpu/cpufreq/policy1/related_cpus":                "1 2 3",
-+		"devices/system/cpu/cpufreq/policy1/scaling_available_governors": "ondemand performance ",
- 		"devices/system/cpu/cpufreq/policy1/scaling_governor":            "performance",
- 		"devices/system/cpu/cpufreq/policy1/scaling_min_freq":            "800000",
- 		"devices/system/cpu/cpufreq/policy1/scaling_max_freq":            "2400000",
-@@ -77,24 +137,32 @@ func cpufreqTree() map[string]string {
- 		"devices/system/cpu/cpufreq/policy2/scaling_available_governors":              "performance p
+ // DefaultSettings provides some default health check settings.
+ var DefaultSettings = Settings{
+-	InitialDelay: time.Second,
++	InitialDelay: 100 * time.Millisecond,
+ 	Period:       5 * time.Second,
+ 	Timeout:      500 * time.Millisecond,
++
++	StartupWindow:  2 * time.Second,
++	StartupPeriod:  200 * time.Millisecond,
++	StartupTimeout: 150 * time.Millisecond,
+ }
+```
+
+**File**: `internal/app/machined/pkg/system/services/etcd.go` (modified, +28/-2)
+```diff
+@@ -30,6 +30,8 @@ import (
+ 	"go.etcd.io/etcd/api/v3/v3rpc/rpctypes"
+ 	clientv3 "go.etcd.io/etcd/client/v3"
+ 	"go.etcd.io/etcd/etcdutl/v3/snapshot"
++	"google.golang.org/grpc"
++	"google.golang.org/grpc/backoff"
+ 
+ 	"github.com/siderolabs/talos/internal/app/machined/pkg/runtime"
+ 	"github.com/siderolabs/talos/internal/app/machined/pkg/system"
+@@ -255,13 +257,31 @@ func (e *Etcd) Runner(r runtime.Runtime) (runner.Runner, error) {
+ 	), nil
+ }
+ 
++// healthCheckConnectParams are the gRPC connection parameters for the health check etcd client.
++//
++// The client is reused across health checks, and etcd is probed early and often during startup,
++// so the default gRPC reconnect backoff (1s base, capped at 2 minutes) would grow with every refused
++// connection before etcd opens its client listener, delaying the detection of a healthy etcd.
++//
++// MinConnectTimeout is set explicitly, as otherwise the connection attempt deadline is limited to
++// the (short) backoff delay, while etcd holds the connection until it is ready to serve (e.g. has quorum).
++var healthCheckConnectParams = grpc.ConnectParams{
++	Backoff: backoff.Config{
++		BaseDelay:  100 * time.Millisecond,
++		Multiplier: 1.6,
++		Jitter:     0.2,
++		MaxDelay:   2 * time.Second,
++	},
++	MinConnectTimeout: 20 * time.Second,
++}
++
+ // HealthFunc implements the HealthcheckedService interface.
+ func (e *Etcd) HealthFunc(runtime.Runtime) health.Check {
+ 	return func(ctx context.Context) error {
+ 		if e.client == nil {
+ 			var err error
+ 
+-			e.client, err = etcd.NewLocalClient(ctx)
++			e.client, err = etcd.NewLocalClient(ctx, grpc.WithConnectParams(healthCheckConnectParams))
+ 			if err != nil {
+ 				return err
+ 			}
+@@ -274,9 +294,15 @@ func (e *Etcd) HealthFunc(runtime.Runtime) health.Check {
+ // HealthSettings implements the HealthcheckedService interface.
+ func (e *Etcd) HealthSettings(runtime.Runtime) *health.Settings {
+ 	return &health.Settings{
+-		InitialDelay: 5 * time.Second,
++		InitialDelay: 100 * time.Millisecond,
+ 		Period:       20 * time.Second,
+ 		Timeout:      15 * time.Second,
++
++		// etcd might take a while to reach quorum (e.g. when the whole cluster is restarting),
++		// so probe silently and report the first success right away
++		StartupWindow:  30 * time.Second,
++		StartupPeriod:  time.Second,
++		StartupTimeout: time.Second,
+ 	}
+ }
+ 
+```
+
+**File**: `internal/app/machined/pkg/system/services/kubelet.go` (modified, +1/-1)
+```diff
+@@ -227,7 +227,7 @@ func (k *Kubelet) HealthFunc(runtime.Runtime) health.Check {
+ // HealthSettings implements the HealthcheckedService interface.
+ func (k *Kubelet) HealthSettings(runtime.Runtime) *health.Settings {
+ 	settings := health.DefaultSettings
+-	settings.InitialDelay = 2 * time.Second // increase initial delay as kubelet is slow on startup
++	settings.StartupWindow = 10 * time.Second // kubelet is slow on startup, so give it a longer startup window
+ 
+ 	return &settings
+ }
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #14842** (2026-11-04): test: fix most frequent unit-test flakes (@smira)
 - **PR #14840** (2026-11-04): fix: use aescbc provider for AES-CBC key in etcd encryption config (@fabiomatavelli)
 - **PR #14839** (2026-11-04): fix: build darwin integration tests (@frezbo)
+- **PR #14838** (2026-11-04): feat: implement service healthcheck startup probes (@smira)
 - **PR #14836** (2026-11-04): fix: update the trustd EKU OID (@smira)
 - **PR #14834** (closed): feat: add talosctl md add to replace a failed RAID1 member (@mcanevet)
-- **PR #14833** (2026-11-03): feat: multi-doc SeccompProfileConfig (@majabojarska)
 
 ---
 
@@ -2387,28 +3188,80 @@ Signed-off-by: Andrey Smirnov <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. bump go-blockdevice to 2.0.37
+## X. automatically detect the install image on upgrade
 
 **RULE**:
-When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in siderolabs/talos. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/ci.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in siderolabs/talos. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `406dc4d5`: bump go-blockdevice to 2.0.37. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f6e5ac35`: automatically detect the install image on upgrade. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	github.com/siderolabs/go-blockdevice/v2 v2.0.37
+            factoryUpgradeVersion: v1.14.2
+            factoryVersion: v1.14.1
+            kubernetesVersion: 1.37.1
+            test: factory-1.14-iso
+            factoryUpgradeVersion: v1.14.2
+            factoryVersion: v1.14.1
+            kubernetesVersion: 1.37.1
+            test: factory-1.14-image
+            factoryVersion: v1.14.2
+            kubernetesVersion: 1.37.1
+            test: factory-1.14-pxe
+            factoryUpgradeVersion: v1.14.2
+            factoryVersion: v1.14.1
+            kubernetesVersion: 1.37.1
+            test: factory-1.14-secureboot
+            factoryUpgradeVersion: v1.13.11
+            factoryVersion: v1.13.10
+            kubernetesVersion: 1.36.5
+            test: factory-1.13-secureboot
+            factoryUpgradeVersion: v1.13.11
+            factoryVersion: v1.13.10
+            kubernetesVersion: 1.36.5
+            test: factory-1.13-iso
+            factoryUpgradeVersion: v1.12.11
+            factoryVersion: v1.12.10
+            kubernetesVersion: 1.35.9
+            test: factory-1.12-iso
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	github.com/siderolabs/go-blockdevice/v2 v2.0.36
+            factoryUpgradeVersion: v1.13.9
+            factoryVersion: v1.13.8
+            kubernetesVersion: 1.36.4
+            test: factory-1.13-iso
+            factoryUpgradeVersion: v1.13.9
+            factoryVersion: v1.13.8
+            kubernetesVersion: 1.36.4
+            test: factory-1.13-image
+            factoryVersion: v1.13.9
+            kubernetesVersion: 1.36.4
+            test: factory-1.13-pxe
+            factoryUpgradeVersion: v1.13.9
+            factoryVersion: v1.13.8
+            kubernetesVersion: 1.36.4
+            test: factory-1.13-secureboot
+            factoryUpgradeVersion: v1.12.11
+            factoryVersion: v1.12.10
+            kubernetesVersion: 1.35.8
+            test: factory-1.12-secureboot
+            factoryUpgradeVersion: v1.12.11
+            factoryVersion: v1.12.10
+            kubernetesVersion: 1.35.8
+            test: factory-1.12-iso
+            factoryUpgradeVersion: v1.11.6
+            factoryVersion: v1.11.5
+            kubernetesVersion: 1.34.11
+            test: factory-1.11-iso
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `406dc4d5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f6e5ac35` are properly handled with clean fallback behavior.

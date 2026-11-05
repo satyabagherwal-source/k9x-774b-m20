@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/genkit-ai-genkit-learnings.md`  
 > **Source**: github ([https://github.com/genkit-ai/genkit](https://github.com/genkit-ai/genkit))  
-> **Source Version**: `8ee17216`  
+> **Source Version**: `6aab26ea`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T18:06:13.934Z  
+> **Timestamp**: 2026-11-05T08:42:43.169Z  
 > **Learning ID**: `learn-github-genkit-ai-genkit`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/genkit-ai-genkit-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/genkit-ai/genkit](https://github.com/genkit-ai/genkit))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T18:06:13.203Z  
+> **Harvest Timestamp**: 2026-11-05T08:40:20.069Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2031,697 +2031,1639 @@ export function setUserSettings(s: Record<string, string | boolean | number>) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5e8663ef` (2026-11-04)
-**Commit Message**: fix(py): skip MCP ResourceLink blocks instead of emitting dead resource parts (#6990)
+### Incident Patch 1: `b1aff696` (2026-11-05)
+**Commit Message**: fix(py): a failing tool cancels and awaits the other tools in its turn (#6952)
 
-**File**: `py/packages/genkit-mcp/src/genkit_mcp/_tools.py` (modified, +5/-6)
+**File**: `py/packages/genkit/src/genkit/_ai/_generate.py` (modified, +169/-26)
 ```diff
-@@ -27,7 +27,6 @@
-     CallToolResult,
-     EmbeddedResource,
-     ImageContent,
--    ResourceLink,
-     TextContent,
-     TextResourceContents,
-     Tool as McpTool,
-@@ -121,9 +120,11 @@ def call_result_to_multipart(result: CallToolResult) -> MultipartToolResponse:
+@@ -680,7 +680,7 @@ def augment_with_context(
  
-     Text blocks are concatenated into ``output``, parsed as JSON only when the
-     text begins with ``{`` or ``[``. ``structuredContent`` wins over text when
--    present. Image, audio and blob resource blocks become media parts, and a
--    resource link becomes a resource part. An error result yields an ``error``
--    output and drops any media, so the model can read the failure and retry.
-+    present. Image, audio, and blob resource blocks become media parts; text
-+    resource blocks append to text output; resource links are skipped since
-+    Genkit Python does not expose resource actions. An error result yields an
-+    ``error`` output and drops any media, so the model can read the failure and
-+    retry.
+ def raise_if_aborted(abort_signal: asyncio.Event) -> None:
+     if abort_signal.is_set():
+-        raise GenkitError(status='ABORTED', message='Generation aborted.')
++        raise GenkitError(status='CANCELLED', message='Generation aborted.')
  
-     Args:
-         result: What ``ClientSession.call_tool`` returned.
-@@ -146,8 +147,6 @@ def call_result_to_multipart(result: CallToolResult) -> MultipartToolResponse:
-             text_output += block.text
-         elif isinstance(block, (ImageContent, AudioContent)):
-             content.append(_media_part(block.mimeType, block.data))
--        elif isinstance(block, ResourceLink):
--            content.append(Part.model_validate({'resource': {'uri': str(block.uri)}}))
-         elif isinstance(block, EmbeddedResource):
-             resource = block.resource
-             if isinstance(resource, TextResourceContents):
+ 
+ def define_generate_action(ai: _aio.Genkit) -> None:
+@@ -852,6 +852,9 @@ async def run_generate(
+             current_turn=current_turn,
+             call=call,
+         )
++    except asyncio.CancelledError as exc:
++        stamp_cancelled_error(exc=exc, messages=call.messages)
++        raise
+     except (Exception, _StreamingCallbackError) as exc:
+         if streaming_callback_cause(exc=exc) is None:
+             raise
+@@ -1271,10 +1274,34 @@ def log_dropped_failure(exc: BaseException, *, model: str | None = None, tool: s
+     logger.error('%s raised, returning finish_reason=failed', culprit, exc_info=exc, **fields)
+ 
+ 
+-def raise_if_foreign_cancel(*, exc: BaseException, abort_signal: asyncio.Event) -> None:
++def stamp_cancelled_error(
++    *,
++    exc: asyncio.CancelledError,
++    messages: list[Message],
++) -> None:
++    """Attach the closed history onto a foreign CancelledError as ``messages``.
++
++    The history ends at the last completed round. The unfinished turn is
++    dropped, as on a failed or aborted response. Only the exception is
++    stamped, never the current task: a long-lived caller task would carry
++    stale history into later calls. Read it back with
++    ``genkit._core._compat.cancelled_history``, which handles 3.10 re-raising
++    a fresh ``CancelledError`` on await.
++    """
++    exc.__dict__['messages'] = [as_message(m) for m in messages]
++
++
++def raise_if_foreign_cancel(
++    *,
++    exc: BaseException,
++    abort_signal: asyncio.Event,
++    messages: list[Message] | None = None,
++) -> None:
+     # abort_signal is our own stop. A wait_for / task.cancel() has to
+     # surface as CancelledError so the deadline still works.
+     if isinstance(exc, asyncio.CancelledError) and not abort_signal.is_set():
++        if messages is not None:
++            stamp_cancelled_error(exc=exc, messages=messages)
+         raise
+ 
+ 
+@@ -1506,7 +1533,11 @@ def remember_response(result: object) -> None:
+             name=resolved.model.name,
+         )
+     except TURN_FAILURES as exc:
+-        raise_if_foreign_cancel(exc=exc, abort_signal=ctx.abort_signal)
++        raise_if_foreign_cancel(
++            exc=exc,
++            abort_signal=ctx.abort_signal,
++            messages=call.messages,
++        )
+         # A hook can raise before the model ever built a request. Build it here
+         # so the caller still gets back what they asked for; the cost is only
+         # paid on the failure path.
+@@ -1595,7 +1626,11 @@ async def generate_turn(
+             current_turn=current_turn,
+         )
+     except TURN_FAILURES as exc:
+-        raise_if_foreign_cancel(exc=exc, abort_signal=ctx.abort_signal)
++        raise_if_foreign_cancel(
++            exc=exc,
++            abort_signal=ctx.abort_signal,
++            messages=call.messages,
++        )
+         return box_from_exc(
+             response=call.earned(),
+             messages=call.messages,
+@@ -1879,7 +1914,11 @@ async def run_tools_or_stop(
+             on_tool_chunk=make_tool_chunk_streamer(chunks=chunks, ctx=ctx),
+         )
+     except TURN_FAILURES as exc:
+-        raise_if_foreign_cancel(exc=exc, abort_signal=ctx.abort_signal)
++        raise_if_foreign_cancel(
++            exc=exc,
++            abort_signal=ctx.abort_signal,
++            messages=list(options.messages),
++        )
+         return box_from_exc(
+             response=response,
+             messages=list(options.messages),
+@@ -2283,7 +2322,10 @@ async def next_fn(p: ToolHookParams, c: MiddlewareContext) -> MultipartToolRespo
+             logger.debug('tool triggered an interrupt', tool=trp.tool_request.name)
+             return (None, interrupt_request_part(trp, intr))
+ 
+-    outs = await asyncio.gather(*[run_one_tool(tool, trp) for _, tool, trp in work])
++    outs = await gather_turn(
++        [run_one_tool(tool, trp) for _, tool, trp in work],
++        watched_abort=mw_pipeline.ctx.abort_signal,
++    )
+ 
+     has_interrupts = False
+     response_parts: list[Part] = []
+@@ -2314,6 +2356,70 @@ async def next_fn(p: ToolHookParams, c: MiddlewareContext) -> MultipartToolRespo
+     return (None, Message(role=Role.TOOL, content=response_parts))
+ 
+ 
++async def gather_turn(
++    coros: Sequence[Awaitable[T]],
++    *,
++    watched_abort: asyncio.Event | None,
++) -> list[T]:
++    """Run one turn's tools concurrently. If one fails or cancels, cancel and await the rest.
++
++    ``asyncio.gather`` raises the first failure but leaves the other tools
++    running, so they would keep committing side effects after generate
++    returned. It also cancels all children directly on outer cancellation
++    before ``except`` runs, which would deliver a second cancel during
++    ``finally`` cleanup. ``asyncio.w
 ```
 
-**File**: `py/packages/genkit-mcp/tests/mcp_tools_test.py` (modified, +17/-3)
+**File**: `py/packages/genkit/src/genkit/_core/_compat.py` (modified, +33/-1)
 ```diff
-@@ -43,7 +43,7 @@
- from pydantic import AnyUrl
- from structlog.testing import capture_logs
+@@ -19,7 +19,7 @@
+ import asyncio
+ import functools
+ import sys
+-from typing import Any, TypeVar, overload as overload
++from typing import TYPE_CHECKING, Any, TypeVar, overload as overload
  
--from genkit import Part
-+from genkit import MultipartToolResponse, Part
- from genkit.plugin_api import Action
+ # StrEnum - use strenum package for cross-version compatibility
+ # Note: StrEnum was added to stdlib in Python 3.11, but we use strenum for 3.10 compat
+@@ -31,9 +31,41 @@
+     from strenum import StrEnum as StrEnum  # noqa: E402
+ from typing_extensions import override as override  # noqa: E402
+ 
++if TYPE_CHECKING:
++    from genkit._core._model import Message
++
+ _T = TypeVar('_T')
  
  
-@@ -135,7 +135,7 @@ def test_call_result_to_multipart_drops_server_error_flags_from_a_success() -> N
- 
- 
- def test_call_result_to_multipart_maps_multipart_content_and_meta() -> None:
--    """Media, resource links, and embedded resources use Genkit multipart parts."""
-+    """Media and blob resources become media parts, text resources append to output, and resource links are skipped."""
-     result = CallToolResult(
-         content=[
-             text('before'),
-@@ -171,10 +171,24 @@ def test_call_result_to_multipart_maps_multipart_content_and_meta() -> None:
-         Part.from_media(url='data:image/png;base64,image-data', content_type='image/png'),
-         Part.from_media(url='data:audio/mpeg;base64,audio-data', content_type='audio/mpeg'),
-         Part.from_media(url='data:application/pdf;base64,blob-data', content_type='application/pdf'),
--        Part.model_validate({'resource': {'uri': 'https://example.test/docs'}}),
++def cancelled_history(exc: BaseException) -> 'list[Message] | None':
++    """Return the history that generate attached to a cancel, or None.
++
++    On a foreign cancel, generate sets ``messages`` on the ``CancelledError``
++    it re-raises: the history up to the last completed round, with no
++    partial turn.
++
++    - Direct ``task.cancel()`` on 3.11+ re-raises that same ``CancelledError``.
++    - ``asyncio.wait_for`` and ``asyncio.timeout`` raise ``TimeoutError``
++      (``asyncio.TimeoutError`` on 3.10) with the ``CancelledError`` on
++      ``__cause__``.
++    - On 3.10, each task hop raises a fresh ``CancelledError`` with the
++      previous one on ``__context__``.
++    """
++    cur: BaseException | None = exc
++    seen: set[int] = set()
++    while cur is not None and id(cur) not in seen:
++        seen.add(id(cur))
++        if isinstance(cur, (TimeoutError, asyncio.TimeoutError)):
++            cur = cur.__cause__
++            continue
++        if isinstance(cur, asyncio.CancelledError) and 'messages' in cur.__dict__:
++            return cur.__dict__['messages']
++        if sys.version_info >= (3, 11):
++            return None
++        cur = cur.__context__
++    return None
++
++
+ def _wake_waiter(waiter: asyncio.Future[None], _task: object) -> None:
+     """Resolve ``waiter`` once when the watched task finishes."""
+     if not waiter.done():
+```
+
+**File**: `py/packages/genkit/tests/genkit/ai/generate_test.py` (modified, +694/-0)
+```diff
+@@ -33,6 +33,7 @@
+ )
+ from genkit._ai._model import text_from_content, text_from_message
+ from genkit._ai._tools import Interrupt, ToolContext, define_tool
++from genkit._core._compat import cancelled_history
+ from genkit._core._error import ErrorReason, GenkitError, PublicError, _StreamingCallbackError
+ from genkit._core._middleware import _MiddlewareMetadata
+ from genkit._core._model import GenerateActionOptions, ModelRequest, Resume
+@@ -2485,6 +2486,303 @@ async def tool_c() -> str:
      ]
  
  
-+def test_call_result_to_multipart_skips_resource_link() -> None:
-+    """Resource links are skipped without emitting dead resource parts or breaking JSON text output."""
-+    link = ResourceLink(
-+        type='resource_link',
-+        name='docs',
-+        uri=AnyUrl('https://example.test/docs'),
++def _model_calls_tools(*names: str) -> ModelResponse:
++    return ModelResponse(
++        finish_reason=FinishReason.STOP,
++        message=Message(
++            role=Role.MODEL,
++            content=[Part(tool_request=ToolRequest(name=n, ref=f'ref-{n}', input={})) for n in names],
++        ),
 +    )
-+
-+    standalone = call_result_to_multipart(CallToolResult(content=[link]))
-+    assert standalone == MultipartToolResponse(output=None, content=None)
-+
-+    with_json = call_result_to_multipart(CallToolResult(content=[text('{"ok": true}'), link]))
-+    assert with_json == MultipartToolResponse(output={'ok': True}, content=None)
-+
-+
- def test_call_result_to_multipart_labels_a_blob_without_a_mime_type_as_octet_stream() -> None:
-     result = CallToolResult(
-         content=[EmbeddedResource(type='resource', resource=BlobResourceContents(uri=AnyUrl('file:///x'), blob='YQ=='))]
-```
-
----
-
-### Incident Patch 2: `f87aafe3` (2026-11-03)
-**Commit Message**: fix(py): name the action in served-action failure logs (#7034)
-
-**File**: `py/packages/genkit-django/src/genkit_django/_handler.py` (modified, +8/-7)
-```diff
-@@ -37,12 +37,13 @@
- _JSON_SEPARATORS = (',', ':')
- 
- 
--def _log_failure(*, error: Exception, where: str) -> None:
--    """Log a served-flow failure; 5xx includes the traceback."""
-+def _log_failure(*, error: Exception, flow: str, where: str) -> None:
-+    """Log a served-action failure, naming the action; 5xx includes the traceback."""
-+    extra = {'genkit_action': flow}
-     if error_status(error) >= 500:
--        logger.exception('served flow %s failed', where)
-+        logger.exception('served action %r %s failed', flow, where, extra=extra)
-     else:
--        logger.warning('served flow %s failed: %s', where, error)
-+        logger.warning('served action %r %s failed: %s', flow, where, error, extra=extra)
- 
- 
- def _to_dict(obj: Any) -> Any:  # noqa: ANN401
-@@ -172,7 +173,7 @@ async def handler(request: HttpRequest) -> HttpResponseBase:
-                     # Django's own denial; re-raise so it stays 403/404/400.
-                     raise
-                 except Exception as e:
--                    _log_failure(error=e, where='context provider')
-+                    _log_failure(error=e, flow=flow.name, where='context provider')
-                     return _error_response(e)
- 
-             init = body.get('init')
-@@ -189,7 +190,7 @@ async def event_stream() -> AsyncIterator[str]:
-                         result = await stream_response.response
-                         yield f'data: {json.dumps({"result": _to_dict(result)}, separators=_JSON_SEPARATORS)}\n\n'
-                     except Exception as e:
--                        _log_failure(error=e, where='stream')
-+                        _log_failure(error=e, flow=flow.name, where='stream')
-                         yield f'data: {json.dumps({"error": error_body(e)}, separators=_JSON_SEPARATORS)}\n\n'
- 
-                 return StreamingHttpResponse(event_stream(), content_type='text/event-stream')
-@@ -198,7 +199,7 @@ async def event_stream() -> AsyncIterator[str]:
-                 response = await flow.run(input=action_input, context=action_context, init=init)
-                 return JsonResponse({'result': _to_dict(response.response)})
-             except Exception as e:
--                _log_failure(error=e, where='run')
-+                _log_failure(error=e, flow=flow.name, where='run')
-                 return _error_response(e)
- 
-         return handler
-```
-
-**File**: `py/packages/genkit-django/tests/django_test.py` (modified, +21/-0)
-```diff
-@@ -18,6 +18,7 @@
- """Tests for the Django plugin."""
- 
- import json
-+import logging
- import sys
- import types
- from collections.abc import Iterator
-@@ -503,3 +504,23 @@ async def test_context_provider_reads_raw_django_request(urlconf: None) -> None:
- 
-     assert response.status_code == 200
-     assert json.loads(response.content) == {'result': 'table T7'}
 +
 +
 +@pytest.mark.asyncio
-+async def test_django_failure_logs_name_the_flow(
-+    urlconf: None,  # noqa: ARG001
-+    caplog: pytest.LogCaptureFixture,
-+) -> None:
-+    """Failure lines say which flow failed: 5xx with traceback, 4xx without."""
-+    client = AsyncClient()
-+    with caplog.at_level(logging.DEBUG, logger='genkit_django._handler'):
-+        await client.post('/error_flow', data=json.dumps({'data': 'x'}), content_type='application/json')
-+        await client.post('/public_flow', data=json.dumps({'data': '99'}), content_type='application/json')
++async def test_failing_tool_cancels_and_awaits_other_tools_in_turn() -> None:
++    """One tool fails: the other is cancelled before generate returns and never commits."""
++    ai = Genkit()
++    pm, _ = define_scripted_model(ai)
++    charges: list[str] = []
++    charge_started = asyncio.Event()
++    charge_cancelled = asyncio.Event()
 +
-+    records = [r for r in caplog.records if r.name == 'genkit_django._handler']
-+    assert [r.getMessage() for r in records] == [
-+        "served action 'raise_error' run failed",
-+        "served action 'raise_public' run failed: NOT_FOUND: no order 99",
-+    ]
-+    assert records[0].exc_info is not None
-+    assert records[1].exc_info is None
-```
-
-**File**: `py/packages/genkit-fastapi/src/genkit_fastapi/_handler.py` (modified, +11/-9)
-```diff
-@@ -79,12 +79,13 @@ async def _read_json_request_body(*, request: Request) -> object:
-         raise PublicError('INVALID_ARGUMENT', 'request body must be valid JSON') from err
- 
- 
--def _log_failure(*, error: Exception, where: str) -> None:
--    """Log a served-flow failure; 5xx includes the traceback."""
-+def _log_failure(*, error: Exception, flow: str, where: str) -> None:
-+    """Log a served-action failure, naming the action; 5xx includes the traceback."""
-+    extra = {'genkit_action': flow}
-     if error_status(error) >= 500:
--        logger.exception('served flow %s failed', where)
-+        logger.exception('served action %r %s failed', flow, where, extra=extra)
-     else:
--        logger.warning('served flow %s failed: %s', where, error)
-+        logger.warning('served action %r %s failed: %s', flow, where, error, extra=extra)
- 
- 
- def format_stream_error(error: Exception) -> str:
-@@ -143,7 +144,7 @@ async def _handle_action_request(
-     try:
-         body = await _read_json_request_body(request=request)
-     except PublicError as err:
--        _log_failure(error=err, where='run')
-+        _log_failure(error=err, flow=action.name, where='run')
-         return json_error_response(err)
-     try:
-         if extract_input is not None and isinstance(body, dict):
-@@ -168,7 +169,7 @@ async def event_stream() -> AsyncIterator[str]:
-             try:
-                 stream_handle = action_obj.stream(input=action_input, context=context, init=resolved_init)
-             except Exception as e:
--                _log_failure(error=e, where='stream')
-+                _log_failure(error=e, flow=action_obj.name, where='stream')
-                 yield format_stream_error(e)
-                 return
-             async for line in to_sse(stream_handle):
-@@ -182,7 +183,7 @@ async def event_stream() -> AsyncIterator[str]:
-             return Response(status_code=empty_status)
-         return {'result': to_dict(response.response)}
-     except Exception as e:
--        _log_failure(error=e, where='run')
-+        _log_failure(error=e, flow=action_obj.name, where='run')
-         return json_error_response(e)
- 
- 
-@@ -249,7 +250,8 @@ async def handler(request: Request) -> Response | dict[str, Any]:
-                 # The wrapper's own HTTP response (e.g. 503 while the action isn't ready).
-                 raise
-             except Exception as e:
--                _log_failure(error=e, where='handler')
-+                flow_name = getattr(fn, '__name__', '<unknown>')
-+                _log_failure(error=e, flow=flow_name, where='handler')
-                 return json_error_response(e)
- 
-             # This decorator reads context from the request itself. Routes that
-@@ -271,7 +273,7 @@ async def handler(request: Request) -> Response | dict[str, Any]:
-                     # handles it so a 401 from context_provider stays a 401.
-                     raise
-                 except Exception as e:
--                    _log_failure(error=e, where='context provider')
-+                    _log_failure(error=e, flow=action.name, where='context provider')
-                     return json_error_response(e)
- 
-             return await handle_genkit_request(
-```
-
-**File**: `py/packages/genkit-fastapi/tests/agent_handler_test.py` (modified, +22/-0)
-```diff
-@@ -6,6 +6,7 @@
- from __future__ import annotations
- 
- import json
-+import logging
- import re
- from typing import Any
- 
-@@ -280,6 +281,27 @@ def test_serve_agent_init_mismatch_returns_agent_init_error(
-     assert err.reason is reason
- 
- 
-+def test_serve_agent_stream_failure_log_names_the_agent(caplog: pytest.LogCaptureFixture) -> None:
-+    """A streamed agent failure logs the agent's action name via to_sse."""
-+    with caplog.at_level(logging.WARNING):
-+        response = client(build_agent('orderAgent', server_managed=True)).post(
-+            '/api/chat?stream=true',
-+            json={
-+                'data': {'message': {'role': 'user', 'content': [{'text': 'Hi'}]}},
-+                'init': {'state': {'custom': {'table': 4}}},
-+            },
-+        )
++    @ai.tool(name='check_allergens')
++    async def check_allergens() -> str:
++        await charge_started.wait()
++        raise GenkitError(status='UNAVAILABLE', message='allergen db down')
 +
-+    msg = (
-+        "Cannot send 'state' to agent 'orderAgent': this agent uses a server-managed store. "
-+        "Send 'snapshotId' or 'sessionId' instead."
++    @ai.tool(name='charge_card')
++    async def charge_card() -> str:
++        charge_started.set()
++        try:
++            await asyncio.sleep(0.05)
++        except asyncio.CancelledError:
++            charge_cancelled.set()
++            raise
++        charges.append('order-42')
++        return 'charged'
++
++    pm.responses.append(_model_calls_tools('check_allergens', 'charge_card'))
++
++    response = await generate_action(
++        CallScope(ai),
++        GenerateActionOptions(
++            model='scriptedModel',
++            messages=[Message(role=Role.USER, content=[Part.from_text('order')])],
++            tools=['check_allergens', 'charge_card'],
++        ),
 +    )
-+    assert sse_events(response.text) == [{'error': {'message': msg, 'status': 'FAILED_PRECONDITION'}}]
-+    assert [(r.levelname, r.getMessage(), r.exc_info is not None) for r in caplog.records] == [
-+        ('WARNING', f"served action 'orderAgent' stream failed: FAILED_PRECONDITION: {msg}", False),
-+    ]
++
++    assert response.error is not None
++    assert response.error.message == 'allergen db down'
++    assert charge_cancelled.is_set()
++    await asyncio.sleep(0.1)
++    assert charges == []
 +
 +
- _UUID = re.compile(r'[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}')
- 
- 
-```
-
-**File**: `py/packages/genkit-fastapi/tests/fastapi_test.py` (modified, +58/-9)
-```diff
-@@ -19,6 +19,7 @@
- 
- import asyncio
- import datetime
-+import functools
- import json
- import logging
- from typing import Any, cast
-@@ -642,6 +643,7 @@ async def ask(_: str) -> str:
- 
-     assert response.status_code == 500
-     assert any(record.exc_info for record in caplog.records)
-+    assert [r.getMessage() for r in caplog.records if r.exc_info] == ["served action 'ask' run failed"]
- 
- 
- def test_served_flow_client_error_logs_one_warning_without_traceback(caplog: pytest.LogCaptureFixture) -> None:
-@@ -661,6 +663,7 @@ async def lookup_order(_: str) -> str:
-     assert response.status_code == 404
-     assert [record.levelno for record in records] == [logging.WARNING]
-     assert records[0].exc_info is None
-+    assert records[0].getMessage() == "served action 'lookup_order' run failed: NOT_FOUND: order not found"
- 
- 
- def test_fastapi_stream_provider_401_sends_sse_internal_error(caplog: pytest.LogCaptureFixture) -> None:
-@@ -682,7 +685,7 @@ async def ask(_: str) -> str:
- 
-     assert sse_error_event(response.text) == {'message': 'Internal Error', 'status': 'INTERNAL'}
-     assert 'API key not valid' not in response.text
--    assert [(r.levelname, r.getMessage()) for r in caplog.records] == [('ERROR', 'served flow stream failed')]
-+    assert [(r.levelname, r.getMessage()) for r in caplog.records] == [('ERROR', "served action 'ask' stream failed")]
- 
- 
- def test_fastapi_stream_public_error_with_nested_model_details_sends_error_event() -> None:
-@@ -712,20 +715,32 @@ async def lookup(_: str) -> None:
-     }
- 
- 
--def test_fastapi_malformed_json_body_returns_400_valid_json_message() -> None:
--    """A FastAPI POST that is not JSON is 400 request body must be valid JSON."""
-+def test_fastapi_malformed_json_body_returns_400_valid_json_message(caplog: pytest.LogCaptureFixture) -> None:
-+    """A FastAPI POST that is not JSON is 400 request body must be valid JSON and logs the flow name."""
-     client = TestClient(create_app())
--    response = client.post(
--        '/chat',
--        content=b'{bad',
--        headers={'content-type': 'application/json'},
--    )
-+    with caplog.at_level(logging.DEBUG, logger='genkit_fastapi._handler'):
-+        response = client.post(
-+            '/chat',
-+            content=b'{bad',
-+            headers={'content-type': 'application/json'},
++@pytest.mark.asyncio
++async def test_abort_during_parallel_tools_lets_each_cleanup_finish() -> None:
++    """Abort while two tools run: each finally completes before generate returns (no second cancel)."""
++    ai = Genkit(model='scriptedModel')
++    pm, _ = define_scripted_model(ai)
++    abort_signal = asyncio.Event()
++    started: list[str] = []
++    both_started = asyncio.Event()
++    released: list[str] = []
++
++    async def hold(name: str, cleanup_s: float) -> str:
++        started.append(name)
++        if len(started) == 2:
++            both_started.set()
++        try:
++            # Ignores abort_signal; execute_tool_request's watcher cancels it.
++            await asyncio.sleep(10)
++        finally:
++            await asyncio.sleep(cleanup_s)
++            released.append(name)
++        return 'held'
++
++    @ai.tool(name='hold_table')
++    async def hold_table() -> str:
++        return await hold('table', 0)
++
++    @ai.tool(name='hold_inventory')
++    async def hold_inventory() -> str:
++        return await hold('inventory', 0.05)
++
++    pm.responses = [_model_calls_tools('hold_table', 'hold_inventory')]
++
++    task = asyncio.create_task(
++        generate_action(
++            CallScope(ai),
++            GenerateActionOptions(
++                model='scriptedModel',
++                messages=[Message(role=Role.USER, content=[Part.from_text('book')])],
++                tools=['hold_table', 'hold_inventory'],
++            ),
++            abort_signal=abort_signal,
 +        )
- 
-     assert response.status_code == 400
-     assert response.json() == {
-         'message': 'request body must be valid JSON',
-         'status': 'INVALID_ARGUMENT',
-     }
-+    records = [r for r in caplog.records if r.name == 'genkit_fastapi._handler']
-+    assert [
-+        (r.levelno, r.getMessage(), r.exc_info is not None, getattr(r, 'genkit_action', None)) for r in records
-+    ] == [
-+        (
-+            logging.WARNING,
-+            "served action 'say_hi' run failed: INVALID_ARGUMENT: request body must be valid JSON",
-+            False,
-+            'say_hi',
-+        )
-+    ]
- 
- 
- def test_fastapi_context_provider_route_malformed_json_returns_400() -> None:
-@@ -800,6 +815,40 @@ async def chat_route():
-     assert response.json() == {'message': 'Internal Error', 'status': 'INTERNAL'}
- 
- 
-+def test_fastapi_handler_wrapper_failure_logs_wrapper_name_or_unknown(caplog: pytest.LogCaptureFixture) -> None:
-+    """A failing route wrapper logs its __name__, or '<unknown>' when the callable has none."""
-+    ai = Genkit()
-+    app = FastAPI()
++    )
++    await asyncio.wait_for(both_started.wait(), timeout=2.0)
++    abort_signal.set()
++    response = await asyncio.wait_for(task, timeout=2.0)
 +
-+    @app.post('/named', response_model=None)
-+    @genkit_fastapi_handler(ai)
-+    async def wrapped_route() -> Any:
-+        raise RuntimeError('db pool closed')
-+
-+    async def load_route(_name: str) -> Any:
-+        raise RuntimeError('db pool closed')
-+
-+    app.post('/partial', response_model=None)(genkit_fastapi_handler(ai)(functools.partial(load_route, 'orders')))
-+
-+    client = TestClient(app)
-+    with caplog.at_level(logging.DEBUG, logger='genkit_fastapi._handler'):
-+        named_resp = client.post('/named', json={'data': 'x'})
-+        partial_resp = client.post('/partial', json={'data': 'x'})
-+
-+    assert named_resp.status_code == 500
-+    assert partial_resp.status_code == 500
-+    assert named_resp.json() == {'message': 'Internal Error', 'status': 'INTERNAL'}
-+    assert partial_resp.json() == {'message': 'Internal Error', 'status': 'INTERNAL'}
-+
-+    records = [r for r in caplog.records if r.name == 'genkit_fastapi._handler']
-+    assert [
-+        (r.levelno, r.getMessage(), r.exc_info is not None, getattr(r, 'genkit_action', None)) for r in records
-+    ] == [
-+        (logging.ERROR, "served action 'wrapped_route' handler failed", True, 'wrapped_route'),
-+        (logging.ERROR, "served action '<unknown>' handler failed", True, '<unknown>'),
-+    ]
++    assert response.finish_reason == FinishReason.ABORTED
++    assert sorted(released) == ['inventory', 'table']
 +
 +
- def test_fastapi_context_provider_http_exception_keeps_its_status() -> None:
-     """An HTTPException from context_provider is the app's own response, not a 500."""
-     ai = Genkit()
-@@ -1072,7 +1121,7 @@ def test_to_sse_logs_the_served_failure(caplog: pytest.LogCaptureFixture) -> Non
-         _sse_lines(_Turn(c
++@pytest.mark.asyncio
++async def test_failed_tool_turn_leaves_no_unretrieved_task_exceptions() -> None:
++    """A sibling that fails during teardown is retrieved; the first failure is the one raised."""
++    loop = asyncio.get_running_loop()
++    reported: list[dict[str, Any]] = []
++    previous = loop.get_exception_handler()
++    loop.set_exception_handler(lambda _loop, context: reported.append(context))
++    try:
++        ai = Genkit()
++        pm, _ = define_scripted_model(ai)
++        void_started = asyncio.Event()
++
++        @ai.tool(name='check_allergens')
++        async def check_allergens() -> str:
++            await void_started.wait()
++            raise GenkitError(status='UNAVAILABLE', message='allergen db down')
++
++        void_cleaned_up = asyncio.Event()
++
++        @ai.tool(name='void_order')
++        async def void_order() -> str:
++            void_started.set()
++            try:
++                await asyncio.sleep(10)
++            except asyncio.Can
 ```
 
-**File**: `py/packages/genkit-flask/src/genkit_flask/_handler.py` (modified, +9/-8)
+**File**: `py/packages/genkit/tests/genkit/ai/tool_cancel_cleanup_test.py` (added, +356/-0)
 ```diff
-@@ -37,12 +37,13 @@
- _JSON_SEPARATORS = (',', ':')
- 
- 
--def _log_failure(*, error: Exception, where: str) -> None:
--    """Log a served-flow failure; 5xx includes the traceback."""
-+def _log_failure(*, error: Exception, flow: str, where: str) -> None:
-+    """Log a served-action failure, naming the action; 5xx includes the traceback."""
-+    extra = {'genkit_action': flow}
-     if error_status(error) >= 500:
--        logger.exception('served flow %s failed', where)
-+        logger.exception('served action %r %s failed', flow, where, extra=extra)
-     else:
--        logger.warning('served flow %s failed: %s', where, error)
-+        logger.warning('served action %r %s failed: %s', flow, where, error, extra=extra)
- 
- 
- def _error_response(error: Exception, status: int | None = None) -> Response:
-@@ -147,7 +148,7 @@ async def handler() -> FlaskRouteReturn:
-             try:
-                 input_data = _parse_request_json()
-             except PublicError as e:
--                _log_failure(error=e, where='run')
-+                _log_failure(error=e, flow=flow.name, where='run')
-                 return _error_response(e)
-             try:
-                 action_input = read_body(input_data)
-@@ -168,7 +169,7 @@ async def handler() -> FlaskRouteReturn:
-                     # The app's own abort(401) passes through.
-                     raise
-                 except Exception as e:
--                    _log_failure(error=e, where='context provider')
-+                    _log_failure(error=e, flow=flow.name, where='context provider')
-                     return _error_response(e)
- 
-             init = input_data.get('init')
-@@ -183,7 +184,7 @@ async def async_gen() -> AsyncIterator[str]:
-                         result = await stream_response.response
-                         yield f'data: {json.dumps({"result": _to_dict(result)}, separators=_JSON_SEPARATORS)}\n\n'
-                     except Exception as e:
--                        _log_failure(error=e, where='stream')
-+                        _log_failure(error=e, flow=flow.name, where='stream')
-                         yield f'data: {json.dumps({"error": error_body(e)}, separators=_JSON_SEPARATORS)}\n\n'
- 
-                 iter = _iter_over_async(async_gen(), loop)
-@@ -193,7 +194,7 @@ async def async_gen() -> AsyncIterator[str]:
-                     response = await flow.run(input=action_input, context=action_context, init=init)
-                     return {'result': _to_dict(response.response)}
-                 except Exception as e:
--                    _log_failure(error=e, where='run')
-+                    _log_failure(error=e, flow=flow.name, where='run')
-                     return _error_response(e)
- 
-         return handler
-```
-
-**File**: `py/packages/genkit-flask/tests/flask_test.py` (modified, +67/-10)
-```diff
-@@ -18,8 +18,10 @@
- """Tests for the Flask plugin."""
- 
- import json
-+import logging
- from typing import Any
- 
+@@ -0,0 +1,356 @@
++# Copyright 2026 Google LLC
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++#     http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
++#
++# SPDX-License-Identifier: Apache-2.0
++
++"""Tests for async cleanup and exception retrieval when tool execution is cancelled."""
++
++from __future__ import annotations
++
++import asyncio
++import contextlib
++import gc
++from collections.abc import AsyncIterator
++from typing import Any
++
 +import pytest
- from flask import Flask, abort
- from genkit_flask import genkit_flask_handler
- from pydantic import BaseModel
-@@ -301,23 +303,35 @@ async def lookup(_: str) -> None:
-     assert chunks[-1] == b'data: {"error":{"message":"no order 99","status":"NOT_FOUND"}}\n\n'
- 
- 
--def test_flask_malformed_json_body_returns_400_valid_json_message() -> None:
--    """A Flask POST that is not JSON is 400 request body must be valid JSON."""
--    response = (
--        create_app()
--        .test_client()
--        .post(
--            '/chat',
--            data='{bad',
--            content_type='application/json',
-+def test_flask_malformed_json_body_returns_400_valid_json_message(caplog: pytest.LogCaptureFixture) -> None:
-+    """A Flask POST that is not JSON is 400 request body must be valid JSON and logs the flow name."""
-+    with caplog.at_level(logging.DEBUG, logger='genkit_flask._handler'):
-+        response = (
-+            create_app()
-+            .test_client()
-+            .post(
-+                '/chat',
-+                data='{bad',
-+                content_type='application/json',
-+            )
-         )
--    )
- 
-     assert response.status_code == 400
-     assert json.loads(response.data) == {
-         'message': 'request body must be valid JSON',
-         'status': 'INVALID_ARGUMENT',
-     }
-+    records = [r for r in caplog.records if r.name == 'genkit_flask._handler']
-+    assert [
-+        (r.levelno, r.getMessage(), r.exc_info is not None, getattr(r, 'genkit_action', None)) for r in records
-+    ] == [
-+        (
-+            logging.WARNING,
-+            "served action 'say_hi' run failed: INVALID_ARGUMENT: request body must be valid JSON",
-+            False,
-+            'say_hi',
-+        )
-+    ]
- 
- 
- def test_flask_provider_401_returns_500_internal_error() -> None:
-@@ -442,3 +456,46 @@ async def chat(_: str) -> str:
-     response = app.test_client().post('/chat', json={'data': 'x'})
- 
-     assert response.status_code == 401
++
++from genkit import FinishReason, Genkit, GenkitError, Message, ModelResponse, Part, Role
++from genkit._ai._generate import execute_tool_request, resolve_tool
++from genkit._ai._tools import Interrupt
++from genkit._core._middleware import MiddlewareContext
++from genkit.model import ToolRequest
++from genkit.testing import define_scripted_model
 +
 +
-+def test_flask_failure_logs_name_the_flow(caplog: pytest.LogCaptureFixture) -> None:
-+    """Failure lines say which flow failed: 5xx with traceback, 4xx without."""
++def _model_calls_tool(*, name: str, ref: str) -> ModelResponse:
++    return ModelResponse(
++        finish_reason=FinishReason.STOP,
++        message=Message(
++            role=Role.MODEL,
++            content=[Part(tool_request=ToolRequest(name=name, input={}, ref=ref))],
++        ),
++    )
++
++
++@pytest.mark.asyncio
++async def test_execute_tool_request_cancel_awaits_async_context_manager_cleanup() -> None:
++    """Cancelling execute_tool_request awaits the tool's async context manager teardown before unwinding."""
 +    ai = Genkit()
-+    app = Flask(__name__)
-+    app.config.update({'TESTING': True})
++    lease_events: list[str] = []
++    acquired = asyncio.Event()
 +
-+    @app.post('/order')
-+    @genkit_flask_handler(ai)
-+    @ai.flow()
-+    async def place_order(_: str) -> None:
-+        raise ValueError('kitchen on fire')
++    @contextlib.asynccontextmanager
++    async def inventory_lease() -> AsyncIterator[None]:
++        lease_events.append('acquired')
++        acquired.set()
++        try:
++            yield
++        finally:
++            await asyncio.sleep(0)
++            await asyncio.sleep(0)
++            lease_events.append('released')
 +
-+    client = app.test_client()
-+    with caplog.at_level(logging.DEBUG, logger='genkit_flask._handler'):
-+        assert client.post('/order', json={'data': 'soup'}).status_code == 500
++    @ai.tool(name='hold_inventory')
++    async def hold_inventory() -> str:
++        async with inventory_lease():
++            await asyncio.sleep(10)
++        return 'held'
 +
-+    records = [r for r in caplog.records if r.name == 'genkit_flask._handler']
-+    assert [r.getMessage() for r in records] == ["served action 'place_order' run failed"]
-+    assert records[0].exc_info is not None
++    action = await resolve_tool(ai._registry, 'hold_inventory')
++    trp = Part.from_tool_request(name='hold_inventory', ref='r1', input={})
++    ctx = MiddlewareContext(ai)
++
++    task = asyncio.create_task(execute_tool_request(tool=action, tool_request_part=trp, ctx=ctx))
++    await acquired.wait()
++    task.cancel()
++
++    with pytest.raises(asyncio.CancelledError):
++        await task
++
++    assert lease_events == ['acquired', 'released']
++    assert asyncio.all_tasks() == {asyncio.current_task()}
 +
 +
-+def test_flask_client_error_log_names_the_flow(caplog: pytest.LogCaptureFixture) -> None:
-+    """A 4xx warning names the flow and carries no traceback."""
-+    ai = Genkit()
-+    app = Flask(__name__)
-+    app.config.update({'TESTING': True})
++@pytest.mark.asyncio
++async def test_generate_cancel_awaits_tool_async_finally_cleanup_before_unwinding() -> None:
++    """Cancelling ai.generate mid-tool waits for the tool's async finally block to complete before returning."""
++    ai = Genkit(model='scriptedModel')
++    pm, _ = define_scripted_model(ai)
++    seat_locked = asyncio.Event()
++    seat_released = False
 +
-+    @app.post('/allergens')
-+    @genkit_flask_handler(ai)
-+    @ai.flow()
-+    async def check_allergens(_: str) -> None:
-+        raise PublicError('INVALID_ARGUMENT', 'we do not serve peanuts')
++    @contextlib.asynccontextmanager
++    async def seat_hold() -> AsyncIterator[None]:
++        nonlocal seat_released
++        seat_locked.set()
++        try:
++            yield
++        finally:
++            await asyncio.sleep(0)
++            await asyncio.sleep(0)
++            seat_released = True
 +
-+    with caplog.at_level(logging.DEBUG, logger='genkit_flask._handler'):
-+        assert app.test_client().post('/allergens', json={'data': 'peanuts'}).status_code == 400
++    @ai.tool(name='lock_seat')
++    async def lock_seat() -> str:
++        async with seat_hold():
++            await asyncio.sleep(10)
++        return '12A'
 +
-+    records = [r for r in caplog.records if r.name == 'genkit_flask._handler']
-+    assert [r.getMessage() for r in records] == [
-+        "served action 'check_allergens' run failed: INVALID_ARGUMENT: we do not serve peanuts"
-+    ]
-+    assert records[0].exc_info is None
++    pm.responses = [_model_calls_tool(name='lock_seat', ref='r1')]
++
++    gen_task = asyncio.create_task(ai.generate(prompt='Reserve seat 12A', tools=['lock_seat']))
++    await seat_locked.wait()
++    gen_task.cancel()
++
++    with pytest.raises(asyncio.CancelledError):
++        await gen_task
++
++    assert seat_released is True
++
++
++@pytest.mark.asyncio
++async def test_generate_cancel_with_multiple_tools_awaits_every_tool_async_finally_cleanup() -> None:
++    """With 2+ parallel tools, a single task.cancel() cancels each tool once and lets finally blocks finish."""
++    ai = Genkit(model='scriptedModel')
++    pm, _ = define_scripted_model(ai)
++    seat_locked = asyncio.Event()
++    baggage_locked = asyncio.Event()
++    cleaned: list[str] = []
++
++    @contextlib.asynccontextmanager
++    async def hold_resource(label: str, ready: asyncio.Event) -> AsyncIterator[None]:
++        ready.set()
++        try:
++            yield
++        finally:
++            await asyncio.sleep(0)
++            await asyncio.sleep(0)
++            cleaned.append(label)
++
++    @ai.tool(name='lock_seat')
++    async def lock_seat() -> str:
++        async with hold_resource('seat', seat_locked):
++            await asyncio.sleep(10)
++        return '12A'
++
++    @ai.tool(name='hold_bagg
 ```
 
-**File**: `py/packages/genkit/src/genkit/_core/_action.py` (modified, +4/-1)
+**File**: `py/packages/genkit/tests/genkit/core/compat_test.py` (modified, +100/-1)
 ```diff
-@@ -259,6 +259,7 @@ def __init__(
-     ) -> None:
-         self._stream = stream
-         self._response = response
-+        self._action_name: str | None = None
+@@ -9,7 +9,9 @@
  
-     @property
-     def stream(self) -> AsyncIterator[ChunkT_co]:
-@@ -1300,7 +1301,9 @@ async def run(send_chunk: Callable[[ChunkT], None]) -> ActionResponse[OutputT]:
-             )
+ import pytest
  
-         channel, task = start_stream(run)
--        return StreamResponse(stream=channel, response=mirror_result(task, lambda result: result.response))
-+        stream_response = StreamResponse(stream=channel, response=mirror_result(task, lambda result: result.response))
-+        stream_response._action_name = self.name
-+        return stream_response
+-from genkit._core._compat import await_unchained
++from genkit import Message, Part, Role
++from genkit._ai._generate import stamp_cancelled_error
++from genkit._core._compat import await_unchained, cancelled_history
  
-     def _initialize_io_schemas(
-         self,
+ 
+ @pytest.mark.asyncio
+@@ -139,3 +141,100 @@ async def nested(depth: int) -> None:
+             await outer
+     finally:
+         sys.setrecursionlimit(previous_limit)
++
++
++def _order_history() -> list[Message]:
++    return [Message(role=Role.USER, content=[Part.from_text('book dinner for 2')])]
++
++
++@pytest.mark.asyncio
++async def test_cancelled_history_reads_stamp_across_task_hops() -> None:
++    """History stamped inside a cancelled task is found after awaiting through two task hops."""
++    history = _order_history()
++    started = asyncio.Event()
++
++    async def reserve() -> None:
++        try:
++            started.set()
++            await asyncio.sleep(10)
++        except asyncio.CancelledError as exc:
++            stamp_cancelled_error(exc=exc, messages=history)
++            raise
++
++    async def book() -> None:
++        await asyncio.create_task(reserve())
++
++    task = asyncio.create_task(book())
++    await started.wait()
++    task.cancel()
++    with pytest.raises(asyncio.CancelledError) as exc_info:
++        await task
++
++    found = cancelled_history(exc_info.value)
++    assert found is not None
++    assert [m.text for m in found] == ['book dinner for 2']
++    assert 'message' not in exc_info.value.__dict__
++    # 3.10 hands back a fresh CancelledError; 3.11+ returns the stamped one.
++    assert (exc_info.value.__dict__.get('messages') is None) == (sys.version_info < (3, 11))
++
++
++def test_cancelled_history_returns_none_without_stamp() -> None:
++    """Unstamped cancels and unrelated errors have no history."""
++    assert cancelled_history(asyncio.CancelledError()) is None
++    assert cancelled_history(ValueError('kitchen closed')) is None
++
++
++def test_cancelled_history_walks_context_only_on_310() -> None:
++    """A stamp on __context__ is read on 3.10 only; 3.11+ reads the exception itself."""
++    history = _order_history()
++    stamped = asyncio.CancelledError()
++    stamp_cancelled_error(exc=stamped, messages=history)
++    fresh = asyncio.CancelledError()
++    fresh.__context__ = stamped
++
++    found = cancelled_history(fresh)
++    if sys.version_info < (3, 11):
++        assert found is not None
++        assert [m.text for m in found] == ['book dinner for 2']
++    else:
++        assert found is None
++
++
++def test_cancelled_history_stops_on_context_cycle() -> None:
++    """A self-referencing __context__ chain terminates."""
++    a = asyncio.CancelledError()
++    b = asyncio.CancelledError()
++    a.__context__ = b
++    b.__context__ = a
++    assert cancelled_history(a) is None
++
++
++@pytest.mark.asyncio
++async def test_cancelled_history_reads_stamp_from_wait_for_and_timeout() -> None:
++    """wait_for and asyncio.timeout raise TimeoutError with the stamped CancelledError on __cause__."""
++    history = _order_history()
++
++    async def reserve() -> None:
++        try:
++            await asyncio.sleep(10)
++        except asyncio.CancelledError as exc:
++            stamp_cancelled_error(exc=exc, messages=history)
++            raise
++
++    with pytest.raises((TimeoutError, asyncio.TimeoutError)) as wait_for_exc:
++        await asyncio.wait_for(reserve(), timeout=0.01)
++
++    found = cancelled_history(wait_for_exc.value)
++    assert found is not None
++    assert [m.text for m in found] == ['book dinner for 2']
++
++    if sys.version_info >= (3, 11):
++        with pytest.raises(TimeoutError) as timeout_exc:
++            async with asyncio.timeout(0.01):
++                await reserve()
++
++        found_timeout = cancelled_history(timeout_exc.value)
++        assert found_timeout is not None
++        assert [m.text for m in found_timeout] == ['book dinner for 2']
++
++    assert cancelled_history(TimeoutError('unrelated socket timeout')) is None
 ```
 
 ---
 
-### Incident Patch 3: `8ee17216` (2026-11-04)
-**Commit Message**: fix(py): name each Flask handler view after its flow so two routes don't collide (#7035)
+### Incident Patch 2: `6aab26ea` (2026-11-05)
+**Commit Message**: fix(py): cancel streamed actions on HTTP SSE client disconnect (#7056)
 
-**File**: `py/packages/genkit-flask/README.md` (modified, +5/-0)
+**File**: `py/packages/genkit-django/README.md` (modified, +1/-1)
 ```diff
-@@ -38,4 +38,9 @@ async def greet_user(name: str) -> str:
-     return res.text
+@@ -45,7 +45,7 @@ urlpatterns = [
+ ]
  ```
  
-+The endpoint name defaults to the flow's name with dots replaced by underscores
-+(e.g., `greet_user`). To override the endpoint name or prevent clashes with an
-+existing view, pass `endpoint=` to the route decorator (e.g.,
-+`@app.post('/api/greet', endpoint='custom_greet')`).
-+
- Requires Flask 3.1+.
+-The view requires Django's ASGI server (Django 4.1+):
++The view requires Django's ASGI server (Django 5.0+):
+ 
+ ```bash
+ uvicorn myproject.asgi:application
 ```
 
-**File**: `py/packages/genkit-flask/src/genkit_flask/_handler.py` (modified, +13/-1)
+**File**: `py/packages/genkit-django/pyproject.toml` (modified, +1/-3)
 ```diff
-@@ -122,7 +122,12 @@ def genkit_flask_handler(
-     ai: Genkit,
-     context_provider: ContextProvider | None = None,
- ) -> Callable[[Action], Callable[..., Awaitable[FlaskRouteReturn]]]:
--    """A decorator for serving Genkit flows via a flask sever.
-+    """A decorator for serving Genkit flows via a Flask server.
-+
-+    The returned view function is named after the flow (dots replaced with
-+    underscores) so multiple handlers in one Flask app do not collide on
-+    the default endpoint name. Pass ``endpoint=`` to Flask's route decorator
-+    (e.g., ``@app.post('/chat', endpoint='custom_chat')``) to override it.
- 
-     ```python
-     from genkit import FlowContext
-@@ -203,6 +208,13 @@ async def async_gen() -> AsyncIterator[str]:
-                     _log_failure(error=e, flow=flow.name, where='run')
-                     return _error_response(e)
- 
-+        # Flask's default endpoint is the view function's __name__. Name the
-+        # view after the flow, as if @app.post had decorated the flow itself,
-+        # so two handlers in one app don't both register as 'handler'.
-+        # Flask rejects dots in view names.
-+        view_name = flow.name.replace('.', '_')
-+        handler.__name__ = view_name
-+        handler.__qualname__ = view_name
-         return handler
- 
-     return decorator
+@@ -20,10 +20,8 @@ classifiers = [
+   "Development Status :: 4 - Beta",
+   "Environment :: Console",
+   "Environment :: Web Environment",
+-  "Framework :: Django",
+   "Framework :: AsyncIO",
+   "Framework :: Django",
+-  "Framework :: Django :: 4.2",
+   "Framework :: Django :: 5.0",
+   "Framework :: Django :: 5.1",
+   "Framework :: Pydantic",
+@@ -46,7 +44,7 @@ classifiers = [
+ dependencies = [
+   "genkit>=0.12.0,<2",
+   "pydantic>=2.11",
+-  "django>=4.2",
++  "django>=5.0",
+ ]
+ description = "A Genkit flow as a Django view"
+ keywords = [
 ```
 
-**File**: `py/packages/genkit-flask/tests/flask_test.py` (modified, +31/-0)
+**File**: `py/packages/genkit-django/src/genkit_django/_handler.py` (modified, +7/-3)
 ```diff
-@@ -499,3 +499,34 @@ async def check_allergens(_: str) -> None:
-         "served action 'check_allergens' run failed: INVALID_ARGUMENT: we do not serve peanuts"
+@@ -17,6 +17,7 @@
+ """Genkit Django handler for serving flows as HTTP endpoints."""
+ 
+ import asyncio
++import contextlib
+ import json
+ import logging
+ from collections.abc import AsyncIterator, Awaitable, Callable, Mapping
+@@ -118,7 +119,7 @@ async def say_hi(name: str, ctx: FlowContext) -> str:
      ]
-     assert records[0].exc_info is None
-+
-+
-+def test_two_handlers_in_one_app_get_their_own_endpoints() -> None:
-+    """Each route registers under its flow's name, so a second route doesn't collide."""
+     ```
+ 
+-    Requires Django ASGI (Django 4.1+). The returned view is `csrf_exempt`
++    Requires Django ASGI (Django 5.0+). The returned view is `csrf_exempt`
+     because this is a JSON API.
+ 
+     Args:
+@@ -182,8 +183,11 @@ async def event_stream() -> AsyncIterator[str]:
+                         _log_failure(error=e, flow=flow.name, where='stream')
+                         yield error_sse(e)
+                         return
+-                    async for line in to_sse(stream_response):
+-                        yield line
++                    # a client that hangs up closes this generator; aclosing makes
++                    # that cancel the flow right away instead of whenever it's collected.
++                    async with contextlib.aclosing(to_sse(stream_response)) as lines:
++                        async for line in lines:
++                            yield line
+ 
+                 return StreamingHttpResponse(event_stream(), content_type='text/event-stream; charset=utf-8')
+ 
+```
+
+**File**: `py/packages/genkit-django/tests/django_test.py` (modified, +61/-0)
+```diff
+@@ -17,6 +17,7 @@
+ 
+ """Tests for the Django plugin."""
+ 
++import asyncio
+ import json
+ import logging
+ import sys
+@@ -26,6 +27,7 @@
+ 
+ import pytest
+ from django.core.exceptions import PermissionDenied
++from django.core.handlers.asgi import ASGIHandler
+ from django.http import HttpRequest
+ from django.test import AsyncClient
+ from django.test.utils import override_settings
+@@ -506,6 +508,65 @@ async def test_context_provider_reads_raw_django_request(urlconf: None) -> None:
+     assert json.loads(response.content) == {'result': 'table T7'}
+ 
+ 
++@pytest.mark.asyncio
++async def test_django_streaming_client_disconnect_cancels_flow(monkeypatch: pytest.MonkeyPatch) -> None:
++    """A client that hangs up after the first SSE chunk of a streamed flow view cancels the flow."""
 +    ai = Genkit()
++    flow_cancelled = asyncio.Event()
++
++    @genkit_django_handler(ai)
++    @ai.flow()
++    async def slow(_: str, ctx: FlowContext) -> str:
++        ctx.send_chunk(1)
++        try:
++            await asyncio.Event().wait()
++        except asyncio.CancelledError:
++            flow_cancelled.set()
++            raise
++        return 'never'
++
++    module = types.ModuleType('genkit_django_disconnect_urls')
++    module.urlpatterns = [path('slow', slow)]  # type: ignore[attr-defined]  # pyrefly: ignore[missing-attribute]
++    monkeypatch.setitem(sys.modules, 'genkit_django_disconnect_urls', module)
++
++    first_chunk = asyncio.Event()
++    request_read = False
++    bodies: list[bytes] = []
++
++    async def receive() -> dict[str, Any]:
++        nonlocal request_read
++        if not request_read:
++            request_read = True
++            return {'type': 'http.request', 'body': json.dumps({'data': 'x'}).encode(), 'more_body': False}
++        await first_chunk.wait()
++        return {'type': 'http.disconnect'}
++
++    async def send(message: dict[str, Any]) -> None:
++        if message['type'] == 'http.response.body' and message.get('body'):
++            bodies.append(message['body'])
++            first_chunk.set()
++
++    scope = {
++        'type': 'http',
++        'asgi': {'version': '3.0'},
++        'http_version': '1.1',
++        'method': 'POST',
++        'scheme': 'http',
++        'path': '/slow',
++        'raw_path': b'/slow',
++        'root_path': '',
++        'query_string': b'',
++        'headers': [(b'content-type', b'application/json'), (b'accept', b'text/event-stream')],
++        'client': ('testclient', 50000),
++        'server': ('testserver', 80),
++    }
++    with override_settings(ROOT_URLCONF='genkit_django_disconnect_urls'):
++        await asyncio.wait_for(ASGIHandler()(scope, receive, send), timeout=5)
++
++    assert bodies == [b'data: {"message":1}\n\n']
++    assert flow_cancelled.is_set()
++
++
+ @pytest.mark.asyncio
+ async def test_django_failure_logs_name_the_flow(
+     urlconf: None,  # noqa: ARG001
+```
+
+**File**: `py/packages/genkit-fastapi/src/genkit_fastapi/_handler.py` (modified, +6/-2)
+```diff
+@@ -19,6 +19,7 @@
+ from __future__ import annotations
+ 
+ import asyncio
++import contextlib
+ import json
+ import logging
+ from collections.abc import AsyncIterator, Awaitable, Callable, Mapping
+@@ -173,8 +174,11 @@ async def event_stream() -> AsyncIterator[str]:
+                 _log_failure(error=e, flow=action_obj.name, where='stream')
+                 yield error_sse(e)
+                 return
+-            async for line in to_sse(stream_handle):
+-                yield line
++            # a client that hangs up closes this generator; aclosing makes
++            # that cancel the flow right away instead of whenever it's collected.
++            async with contextlib.aclosing(to_sse(stream_handle)) as lines:
++                async for line in lines:
++                    yield line
+ 
+         return StreamingResponse(event_stream(), media_type='text/event-stream')
+ 
+```
+
+**File**: `py/packages/genkit-fastapi/tests/fastapi_test.py` (modified, +68/-0)
+```diff
+@@ -22,6 +22,7 @@
+ import functools
+ import json
+ import logging
++from collections.abc import MutableMapping
+ from typing import Any, cast
+ 
+ import pytest
+@@ -1249,3 +1250,70 @@ async def custom_ack(request: Request) -> Response:
+     assert err.status_code == 404
+     assert err.headers['x-trace-id'] == 'trace-42'
+     assert err.content == b'{"message":"order missing","status":"NOT_FOUND"}'
++
++
++async def post_sse_then_hang_up(app: FastAPI, path: str) -> list[bytes]:
++    """POST `{"data": "x"}` asking for SSE, then disconnect right after the first body chunk arrives."""
++    first_chunk = asyncio.Event()
++    request_read = False
++    bodies: list[bytes] = []
++
++    async def receive() -> dict[str, Any]:
++        nonlocal request_read
++        if not request_read:
++            request_read = True
++            return {'type': 'http.request', 'body': json.dumps({'data': 'x'}).encode(), 'more_body': False}
++        await first_chunk.wait()
++        return {'type': 'http.disconnect'}
++
++    async def send(message: MutableMapping[str, Any]) -> None:
++        if message['type'] == 'http.response.body' and message.get('body'):
++            bodies.append(message['body'])
++            first_chunk.set()
++
++    scope = {
++        'type': 'http',
++        'asgi': {'version': '3.0', 'spec_version': '2.3'},
++        'http_version': '1.1',
++        'method': 'POST',
++        'scheme': 'http',
++        'path': path,
++        'raw_path': path.encode(),
++        'root_path': '',
++        'query_string': b'',
++        'headers': [(b'content-type', b'application/json'), (b'accept', b'text/event-stream')],
++        'client': ('testclient', 50000),
++        'server': ('testserver', 80),
++    }
++    await asyncio.wait_for(app(scope, receive, send), timeout=5)
++    return bodies
++
++
++@pytest.mark.asyncio
++async def test_fastapi_streaming_client_disconnect_cancels_flow() -> None:
++    """A client that hangs up after the first SSE chunk cancels the flow and lets awaiting `finally:` finish."""
++    ai = Genkit()
++    flow_cancelled = asyncio.Event()
++    cleanup_finished = asyncio.Event()
++
++    @ai.flow()
++    async def slow(_: str, ctx: FlowContext) -> str:
++        ctx.send_chunk(1)
++        try:
++            await asyncio.Event().wait()
++        except asyncio.CancelledError:
++            flow_cancelled.set()
++            raise
++        finally:
++            await asyncio.sleep(0.02)
++            cleanup_finished.set()
++        return 'never'
++
++    app = FastAPI()
++    app.include_router(serve_flow(slow, base_path='/slow'))
++
++    bodies = await post_sse_then_hang_up(app, '/slow')
++
++    assert bodies == [b'data: {"message":1}\n\n']
++    assert flow_cancelled.is_set()
++    await asyncio.wait_for(cleanup_finished.wait(), timeout=1.0)
+```
+
+**File**: `py/packages/genkit-flask/src/genkit_flask/_handler.py` (modified, +22/-10)
+```diff
+@@ -17,10 +17,11 @@
+ """Genkit Flask plugin."""
+ 
+ import asyncio
++import contextlib
+ import json
+ import logging
+ from asyncio import AbstractEventLoop
+-from collections.abc import AsyncIterable, AsyncIterator, Awaitable, Callable, Iterable
++from collections.abc import AsyncIterable, AsyncIterator, Awaitable, Callable, Generator
+ from typing import Any, TypeVar, cast
+ 
+ from flask import Response, request
+@@ -86,7 +87,7 @@ def _create_loop() -> AbstractEventLoop:
+         return asyncio.new_event_loop()
+ 
+ 
+-def _iter_over_async(ait: AsyncIterable[T], loop: AbstractEventLoop) -> Iterable[T]:
++def _iter_over_async(ait: AsyncIterable[T], loop: AbstractEventLoop) -> Generator[T, None, None]:
+     """Synchronously iterates over an AsyncIterable using a specified event loop."""
+     ait_iter = ait.__aiter__()
+ 
+@@ -97,12 +98,20 @@ async def get_next() -> tuple[bool, T | None]:
+         except StopAsyncIteration:
+             return True, None
+ 
+-    while True:
+-        done, obj = loop.run_until_complete(get_next())
+-        if done:
+-            break
+-        assert obj is not None
+-        yield obj
++    try:
++        while True:
++            done, obj = loop.run_until_complete(get_next())
++            if done:
++                break
++            assert obj is not None
++            yield obj
++    finally:
++        # Werkzeug closes this iterator when the client hangs up. The async side
++        # only runs while we drive the loop, so close it here or the flow never
++        # hears about it.
++        aclose = getattr(ait_iter, 'aclose', None)
++        if aclose is not None and not loop.is_closed() and not loop.is_running():
++            loop.run_until_complete(aclose())
+ 
+ 
+ class _FlaskRequestData(RequestData):
+@@ -190,8 +199,11 @@ async def async_gen() -> AsyncIterator[str]:
+                         _log_failure(error=e, flow=flow.name, where='stream')
+                         yield error_sse(e)
+                         return
+-                    async for line in to_sse(stream_response):
+-                        yield line
++                    # closing this generator has to cancel the flow before the
++                    # loop stops; nothing runs the loop afterwards to collect it.
++                    async with contextlib.aclosing(to_sse(stream_response)) as lines:
++                        async for line in lines:
++                            yield line
+ 
+                 return Response(_iter_over_async(async_gen(), loop), mimetype='text/event-stream')
+             try:
+```
+
+**File**: `py/packages/genkit-flask/tests/flask_test.py` (modified, +80/-0)
+```diff
+@@ -17,13 +17,18 @@
+ 
+ """Tests for the Flask plugin."""
+ 
++import asyncio
+ import json
+ import logging
++import threading
++import warnings
++from collections.abc import AsyncIterator
+ from typing import Any
+ 
+ import pytest
+ from flask import Flask, abort
+ from genkit_flask import genkit_flask_handler
++from genkit_flask._handler import _iter_over_async
+ from pydantic import BaseModel
+ 
+ from genkit import FlowContext, Genkit, GenkitError, PublicError
+@@ -458,6 +463,81 @@ async def chat(_: str) -> str:
+     assert response.status_code == 401
+ 
+ 
++def test_flask_streaming_client_disconnect_cancels_flow() -> None:
++    """A client that hangs up after the first SSE chunk cancels the flow and lets awaiting `finally:` finish."""
++    ai = Genkit()
++    flow_cancelled = threading.Event()
++    cleanup_finished = threading.Event()
 +    app = Flask(__name__)
 +    app.config.update({'TESTING': True})
 +
-+    @app.post('/menu')
++    @app.post('/slow')
 +    @genkit_flask_handler(ai)
 +    @ai.flow()
-+    async def suggest_dish(cuisine: str) -> str:
-+        return f'{cuisine} tasting menu'
++    async def slow(_: str, ctx: FlowContext) -> str:
++        ctx.send_chunk(1)
++        try:
++            await asyncio.Event().wait()
++        except asyncio.CancelledError:
++            flow_cancelled.set()
++            raise
++        finally:
++            await asyncio.sleep(0.02)
++            cleanup_finished.set()
++        return 'never'
 +
-+    @app.post('/allergens')
-+    @genkit_flask_handler(ai)
-+    @ai.flow()
-+    async def check_allergens(dish: str) -> str:
-+        return f'{dish}: contains peanuts'
++    response = app.test_client().post(
++        '/slow', json={'data': 'x'}, headers={'accept': 'text/event-stream'}, buffered=False
++    )
++    first = next(iter(response.response))
++    # Werkzeug closes the response iterator when the client goes away.
++    response.close()
 +
-+    @app.post('/specials')
-+    @genkit_flask_handler(ai)
-+    @ai.flow(name='menu.specials')
-+    async def specials(_: str) -> str:
-+        return 'smoked salmon tartine'
++    assert first == b'data: {"message":1}\n\n'
++    assert flow_cancelled.is_set()
++    assert cleanup_finished.is_set()
 +
-+    client = app.test_client()
-+    assert client.post('/menu', json={'data': 'thai'}).json == {'result': 'thai tasting menu'}
-+    assert client.post('/allergens', json={'data': 'pad thai'}).json == {'result': 'pad thai: contains peanuts'}
-+    assert client.post('/specials', json={'data': ''}).json == {'result': 'smoked salmon tartine'}
-+    assert {'suggest_dish', 'check_allergens', 'menu_specials'} <= set(app.view_functions)
++
++def test_flask_iter_over_async_skips_aclose_when_loop_closed() -> None:
++    """Closing `_iter_over_async` after `loop.close()` does not raise `RuntimeError` or leak an unawaited coroutine."""
++    loop = asyncio.new_event_loop()
++
++    async def source() -> AsyncIterator[str]:
++        yield 'first'
++        yield 'second'
++
++    sync_iter = _iter_over_async(source(), loop)
++    assert next(sync_iter) == 'first'
++    loop.close()
++
++    with warnings.catch_warnings():
++        warnings.simplefilter('error', RuntimeWarning)
++        sync_iter.close()
++
++
++def test_flask_iter_over_async_skips_aclose_when_loop_running() -> None:
++    """Closing `_iter_over_async` while `loop` is busy does not raise `RuntimeError` or leak a coroutine."""
++    loop = asyncio.new_event_loop()
++
++    async def source() -> AsyncIterator[str]:
++        yield 'first'
++        yield 'second'
++
++    sync_iter = _iter_over_async(source(), loop)
++    assert next(sync_iter) == 'first'
++
++    async def close_while_busy() -> None:
++        assert loop.is_running()
++        with warnings.catch_warnings():
++            warnings.simplefilter('error', RuntimeWarning)
++            sync_iter.close()
++
++    try:
++        loop.run_until_complete(close_while_busy())
++    finally:
++        loop.close()
++
++
+ def test_flask_failure_logs_name_the_flow(caplog: pytest.LogCaptureFixture) -> None:
+     """Failure lines say which flow failed: 5xx with traceback, 4xx without."""
+     ai = Genkit()
+```
+
+---
+
+### Incident Patch 3: `71011247` (2026-11-05)
+**Commit Message**: fix(py)!: web adapters return Response and serialize outputs uniformly (#7038)
+
+**File**: `py/packages/genkit-django/src/genkit_django/_handler.py` (modified, +22/-34)
+```diff
+@@ -23,19 +23,25 @@
+ from typing import Any, cast
+ 
+ from django.core.exceptions import PermissionDenied, SuspiciousOperation
+-from django.http import Http404, HttpRequest, HttpResponse, HttpResponseBase, JsonResponse, StreamingHttpResponse
++from django.http import Http404, HttpRequest, HttpResponse, HttpResponseBase, StreamingHttpResponse
+ from django.views.decorators.csrf import csrf_exempt
+-from pydantic import BaseModel
+ 
+ from genkit import Genkit, GenkitError, PublicError
+ from genkit.plugin_api import Action
+-from genkit.web import ContextProvider, RequestData, error_body, error_status, read_body, wants_stream
++from genkit.web import (
++    ContextProvider,
++    RequestData,
++    error_json,
++    error_sse,
++    error_status,
++    read_body,
++    result_json,
++    to_sse,
++    wants_stream,
++)
+ 
+ logger = logging.getLogger(__name__)  # noqa: TID251
+ 
+-# Compact JSON (no spaces) for smaller wire payload.
+-_JSON_SEPARATORS = (',', ':')
+-
+ 
+ def _log_failure(*, error: Exception, flow: str, where: str) -> None:
+     """Log a served-action failure to the host web server's stdlib logger, naming the action.
+@@ -53,30 +59,11 @@ def _log_failure(*, error: Exception, flow: str, where: str) -> None:
+         logger.warning('served action %r %s failed: %s', flow, where, error, extra=extra)
+ 
+ 
+-def _to_dict(obj: Any) -> Any:  # noqa: ANN401
+-    """Recursively convert Pydantic models inside ``obj`` to plain JSON-friendly types.
+-
+-    Flows can return a Pydantic model, a list of Pydantic models, or a dict whose
+-    values are Pydantic models. Django's ``JsonResponse`` and ``json.dumps`` don't
+-    know how to serialize ``BaseModel`` instances natively, so descend into lists,
+-    tuples, and dicts to convert every model we find.
+-    """
+-    if isinstance(obj, BaseModel):
+-        return obj.model_dump()
+-    if isinstance(obj, list):
+-        return [_to_dict(item) for item in obj]
+-    if isinstance(obj, tuple):
+-        return [_to_dict(item) for item in obj]
+-    if isinstance(obj, dict):
+-        return {k: _to_dict(v) for k, v in obj.items()}
+-    return obj
+-
+-
+ def _error_response(err: Exception, status: int | None = None) -> HttpResponse:
+     """Return a JSON error body; status comes from the error unless overridden."""
+     return HttpResponse(
+         status=error_status(err) if status is None else status,
+-        content=json.dumps(error_body(err), separators=_JSON_SEPARATORS).encode('utf-8'),
++        content=error_json(err).encode('utf-8'),
+         content_type='application/json',
+     )
+ 
+@@ -191,20 +178,21 @@ async def handler(request: HttpRequest) -> HttpResponseBase:
+                 async def event_stream() -> AsyncIterator[str]:
+                     try:
+                         stream_response = flow.stream(input=action_input, context=action_context, init=init)
+-                        async for chunk in stream_response.stream:
+-                            yield f'data: {json.dumps({"message": _to_dict(chunk)}, separators=_JSON_SEPARATORS)}\n\n'
+-
+-                        result = await stream_response.response
+-                        yield f'data: {json.dumps({"result": _to_dict(result)}, separators=_JSON_SEPARATORS)}\n\n'
+                     except Exception as e:
+                         _log_failure(error=e, flow=flow.name, where='stream')
+-                        yield f'data: {json.dumps({"error": error_body(e)}, separators=_JSON_SEPARATORS)}\n\n'
++                        yield error_sse(e)
++                        return
++                    async for line in to_sse(stream_response):
++                        yield line
+ 
+-                return StreamingHttpResponse(event_stream(), content_type='text/event-stream')
++                return StreamingHttpResponse(event_stream(), content_type='text/event-stream; charset=utf-8')
+ 
+             try:
+                 response = await flow.run(input=action_input, context=action_context, init=init)
+-                return JsonResponse({'result': _to_dict(response.response)})
++                return HttpResponse(
++                    content=result_json(response.response).encode('utf-8'),
++                    content_type='application/json',
++                )
+             except Exception as e:
+                 _log_failure(error=e, flow=flow.name, where='run')
+                 return _error_response(e)
+```
+
+**File**: `py/packages/genkit-django/tests/django_test.py` (modified, +4/-4)
+```diff
+@@ -148,7 +148,7 @@ async def void_flow() -> dict[str, str]:
+     @genkit_django_handler(ai)
+     @ai.flow()
+     async def close_tab(table: int) -> Receipt:
+-        return {'table': table}  # type: ignore[return-value]
++        return {'table': table, 'note': None}  # type: ignore[return-value]
+ 
+     @genkit_django_handler(ai)
+     @ai.flow()
+@@ -440,13 +440,13 @@ async def test_django_flow_with_default_and_null_data_uses_python_default(urlcon
+ 
+ 
+ @pytest.mark.asyncio
+-async def test_django_flow_returning_partial_dict_for_model_sends_defaults(urlconf: None) -> None:  # noqa: ARG001
+-    """POST to a `-> Receipt` flow that returns `{'table': 4}` includes `note: null`."""
++async def test_django_flow_returning_dict_for_model_omits_none_fields(urlconf: None) -> None:  # noqa: ARG001
++    """POST to a `-> Receipt` flow that returns `{'table': 4, 'note': None}` omits `note` on the wire."""
+     client = AsyncClient()
+     response = await client.post('/close_tab', data=json.dumps({'data': 4}), content_type='application/json')
+ 
+     assert response.status_code == 200
+-    assert json.loads(response.content) == {'result': {'table': 4, 'note': None}}
++    assert json.loads(response.content) == {'result': {'table': 4}}
+ 
+ 
+ @pytest.mark.asyncio
+```
+
+**File**: `py/packages/genkit-fastapi/README.md` (modified, +2/-2)
+```diff
+@@ -153,7 +153,7 @@ from fastapi import Depends, Request
+ from genkit_fastapi import handle_genkit_request
+ 
+ 
+-@app.post('/api/deploy', response_model=None)
++@app.post('/api/deploy')
+ async def deploy_endpoint(request: Request, user: User = Depends(current_user)):
+     return await handle_genkit_request(
+         request,
+@@ -170,7 +170,7 @@ For custom route definitions, you can also use `@genkit_fastapi_handler`:
+ from genkit_fastapi import genkit_fastapi_handler
+ 
+ 
+-@app.post('/custom-chat', response_model=None)
++@app.post('/custom-chat')
+ @genkit_fastapi_handler(ai)
+ @ai.flow()
+ async def custom_chat(prompt: str) -> str:
+```
+
+**File**: `py/packages/genkit-fastapi/src/genkit_fastapi/_handler.py` (modified, +27/-32)
+```diff
+@@ -26,29 +26,30 @@
+ 
+ from fastapi import APIRouter, Depends, Request, Response
+ from fastapi.responses import StreamingResponse
+-from pydantic import BaseModel
+ from starlette.exceptions import HTTPException as StarletteHTTPException
+ 
+ from genkit import Genkit, GenkitError, PublicError
+ from genkit.plugin_api import Action
+-from genkit.web import ContextProvider, RequestData, error_body, error_status, read_body, to_sse, wants_stream
++from genkit.web import (
++    ContextProvider,
++    RequestData,
++    error_json,
++    error_sse,
++    error_status,
++    read_body,
++    result_json,
++    to_sse,
++    wants_stream,
++)
+ 
+ logger = logging.getLogger(__name__)  # noqa: TID251
+ 
+-# Compact JSON (no spaces) for smaller wire payload.
+-JSON_SEPARATORS = (',', ':')
+-
+ InputT = TypeVar('InputT')
+ OutputT = TypeVar('OutputT')
+ ChunkT = TypeVar('ChunkT')
+ InitT = TypeVar('InitT')
+ 
+ 
+-def to_dict(obj: Any) -> Any:  # noqa: ANN401
+-    """Convert object to dict if it's a Pydantic model, otherwise return as-is."""
+-    return obj.model_dump(by_alias=True, exclude_none=True) if isinstance(obj, BaseModel) else obj
+-
+-
+ class FastAPIRequestData(RequestData):
+     """Wraps FastAPI request data for Genkit context."""
+ 
+@@ -66,7 +67,7 @@ def json_error_response(error: Exception, status_code: int | None = None) -> Res
+     """Build a compact JSON error response from an exception."""
+     return Response(
+         status_code=error_status(error) if status_code is None else status_code,
+-        content=json.dumps(error_body(error), separators=JSON_SEPARATORS),
++        content=error_json(error),
+         media_type='application/json',
+     )
+ 
+@@ -94,25 +95,19 @@ def _log_failure(*, error: Exception, flow: str, where: str) -> None:
+         logger.warning('served action %r %s failed: %s', flow, where, error, extra=extra)
+ 
+ 
+-def format_stream_error(error: Exception) -> str:
+-    """Format a stream failure as a canonical SSE data event."""
+-    err_json = json.dumps({'error': error_body(error)}, separators=JSON_SEPARATORS)
+-    return f'data: {err_json}\n\n'
+-
+-
+ async def handle_genkit_request(
+     request: Request,
+     *,
+     action: Action[InputT, OutputT, ChunkT, InitT],
+     context: dict[str, object] | None = None,
+     init: InitT | dict[str, Any] | None = None,
+-) -> Response | dict[str, Any]:
++) -> Response:
+     """Run one Genkit action request and return its FastAPI response.
+ 
+     This is the wire contract every stable route sits on. It reads ``{"data": ...}``
+     or ``{}`` plus body ``init``, then either streams SSE frames —
+     ``data: {"message": ...}`` chunks followed by a final ``data: {"result": ...}``
+-    — or returns a one-shot ``{"result": ...}``.
++    — or returns a one-shot ``{"result": ...}`` JSON ``Response``.
+ 
+     ``context`` and ``init`` are handed straight to the action, so you can resolve
+     auth and per-request state however you like and pass them in. That makes this
+@@ -127,7 +122,7 @@ async def handle_genkit_request(
+         init: Optional init payload passed through to the action.
+ 
+     Returns:
+-        A streaming SSE response, a ``{"result": ...}`` dict, or an error Response.
++        A FastAPI ``Response`` carrying the JSON result, SSE stream, or error body.
+     """
+     return await _handle_action_request(
+         request=request,
+@@ -146,7 +141,7 @@ async def _handle_action_request(
+     extract_input: Callable[[dict[str, Any]], object] | None = None,
+     resolve_init: Callable[[dict[str, Any], Mapping[str, str]], object] | None = None,
+     empty_status: int | None = None,
+-) -> Response | dict[str, Any]:
++) -> Response:
+     try:
+         body = await _read_json_request_body(request=request)
+     except PublicError as err:
+@@ -176,7 +171,7 @@ async def event_stream() -> AsyncIterator[str]:
+                 stream_handle = action_obj.stream(input=action_input, context=context, init=resolved_init)
+             except Exception as e:
+                 _log_failure(error=e, flow=action_obj.name, where='stream')
+-                yield format_stream_error(e)
++                yield error_sse(e)
+                 return
+             async for line in to_sse(stream_handle):
+                 yield line
+@@ -187,7 +182,7 @@ async def event_stream() -> AsyncIterator[str]:
+         response = await action_obj.run(input=action_input, context=context, init=resolved_init)
+         if response.response is None and empty_status is not None:
+             return Response(status_code=empty_status)
+-        return {'result': to_dict(response.response)}
++        return Response(content=result_json(response.response), media_type='application/json')
+     except Exception as e:
+         _log_failure(error=e, flow=action_obj.name, where='run')
+         return json_error_response(e)
+@@ -198,13 +193,13 @@ def genkit_fastapi_handler(
+     context_provider: ContextProvider | None = None,
+ ) -> Callable[
+     [Callable[[], Awaitable[Action[InputT, OutputT, ChunkT, InitT]]] | Action[InputT, OutputT, Chunk
+```
+
+**File**: `py/packages/genkit-fastapi/tests/agent_handler_test.py` (modified, +5/-5)
+```diff
+@@ -11,7 +11,7 @@
+ from typing import Any
+ 
+ import pytest
+-from fastapi import FastAPI, HTTPException, Request
++from fastapi import FastAPI, HTTPException, Request, Response
+ from fastapi.responses import StreamingResponse
+ from fastapi.testclient import TestClient
+ from genkit_fastapi import handle_genkit_request
+@@ -197,8 +197,8 @@ def test_handle_genkit_request_agent_route_with_data_envelope_runs_turn() -> Non
+     agent = build_agent('handRolledAgent')
+     app = FastAPI()
+ 
+-    @app.post('/custom', response_model=None)
+-    async def custom(request: Request) -> object:
++    @app.post('/custom')
++    async def custom(request: Request) -> Response:
+         # A real app would build this context and init from its own Depends params.
+         return await handle_genkit_request(
+             request,
+@@ -320,8 +320,8 @@ def test_hand_rolled_routes_send_the_same_frames_as_serve_agent() -> None:
+     via_to_sse = build_agent('toSseFrames')
+     app = FastAPI()
+ 
+-    @app.post('/request', response_model=None)
+-    async def request_route(request: Request) -> object:
++    @app.post('/request')
++    async def request_route(request: Request) -> Response:
+         return await handle_genkit_request(request, action=via_request)
+ 
+     @app.post('/to_sse')
+```
+
+**File**: `py/packages/genkit-fastapi/tests/fastapi_nested_types_test.py` (modified, +1/-1)
+```diff
+@@ -34,7 +34,7 @@ def test_fastapi_flow_returning_model_with_nested_message_unchanged() -> None:
+     ai = Genkit()
+     app = FastAPI()
+ 
+-    @app.post('/turn', response_model=None)
++    @app.post('/turn')
+     @genkit_fastapi_handler(ai)
+     @ai.flow()
+     async def turn(_: str) -> Turn:
+```
+
+**File**: `py/packages/genkit-fastapi/tests/fastapi_test.py` (modified, +101/-18)
+```diff
+@@ -25,11 +25,12 @@
+ from typing import Any, cast
+ 
+ import pytest
+-from fastapi import Depends, FastAPI, HTTPException, Request
++from fastapi import Depends, FastAPI, HTTPException, Request, Response
+ from fastapi.responses import StreamingResponse
+ from fastapi.testclient import TestClient
+ from genkit_fastapi import genkit_fastapi_handler, handle_genkit_request, serve_flow
+-from pydantic import BaseModel, field_validator
++from pydantic import BaseModel, ConfigDict, field_validator
++from pydantic.alias_generators import to_camel
+ from starlette.exceptions import HTTPException as StarletteHTTPException
+ 
+ from genkit import (
+@@ -72,7 +73,7 @@ def create_app() -> FastAPI:
+     ai = Genkit()
+     app = FastAPI()
+ 
+-    @app.post('/chat', response_model=None)
++    @app.post('/chat')
+     @genkit_fastapi_handler(ai)
+     @ai.flow()
+     async def say_hi(name: str, ctx: FlowContext) -> dict[str, str]:
+@@ -441,7 +442,7 @@ async def provider(request_data: RequestData) -> dict[str, object]:
+             'input': request_data.input,
+         }
+ 
+-    @app.post('/echo', response_model=None)
++    @app.post('/echo')
+     @genkit_fastapi_handler(ai, context_provider=provider)
+     @ai.flow()
+     async def echo(_: str, ctx: FlowContext) -> dict[str, object]:
+@@ -473,7 +474,7 @@ def test_request_data_duplicate_authorization_is_comma_joined() -> None:
+     async def provider(request_data: RequestData) -> dict[str, object]:
+         return {'authorization': request_data.headers.get('authorization')}
+ 
+-    @app.post('/echo', response_model=None)
++    @app.post('/echo')
+     @genkit_fastapi_handler(ai, context_provider=provider)
+     @ai.flow()
+     async def echo(_: str, ctx: FlowContext) -> dict[str, object]:
+@@ -497,7 +498,7 @@ def test_request_data_duplicate_x_forwarded_for_is_comma_joined() -> None:
+     async def provider(request_data: RequestData) -> dict[str, object]:
+         return {'xff': request_data.headers.get('x-forwarded-for')}
+ 
+-    @app.post('/echo', response_model=None)
++    @app.post('/echo')
+     @genkit_fastapi_handler(ai, context_provider=provider)
+     @ai.flow()
+     async def echo(_: str, ctx: FlowContext) -> dict[str, object]:
+@@ -526,7 +527,7 @@ async def chat(_: str) -> str:
+ 
+     app = FastAPI()
+ 
+-    @app.post('/chat', response_model=None)
++    @app.post('/chat')
+     @genkit_fastapi_handler(ai, context_provider=deny)
+     async def chat_route():
+         return chat
+@@ -601,7 +602,7 @@ def test_fastapi_flow_returning_dict_for_model_sends_model_dump() -> None:
+     async def close_tab(table: int) -> Receipt:
+         return {'table': table, 'note': None}  # type: ignore[return-value]
+ 
+-    @app.post('/close_tab', response_model=None)
++    @app.post('/close_tab')
+     @genkit_fastapi_handler(ai)
+     async def close_tab_route():
+         return close_tab
+@@ -760,7 +761,7 @@ async def chat(_: str) -> str:
+ 
+     app = FastAPI()
+ 
+-    @app.post('/chat', response_model=None)
++    @app.post('/chat')
+     @genkit_fastapi_handler(ai, context_provider=deny)
+     async def chat_route():
+         return chat
+@@ -789,7 +790,7 @@ async def chat(_: str) -> str:
+ 
+     app = FastAPI()
+ 
+-    @app.post('/chat', response_model=None)
++    @app.post('/chat')
+     @genkit_fastapi_handler(ai)  # pyright: ignore[reportArgumentType]
+     def chat_route():
+         return chat
+@@ -805,7 +806,7 @@ def test_fastapi_handler_wrapper_returning_non_action_returns_json_internal_erro
+     ai = Genkit()
+     app = FastAPI()
+ 
+-    @app.post('/chat', response_model=None)
++    @app.post('/chat')
+     @genkit_fastapi_handler(ai)  # pyright: ignore[reportArgumentType]
+     async def chat_route():
+         return 'not an action'
+@@ -821,15 +822,15 @@ def test_fastapi_handler_wrapper_failure_logs_wrapper_name_or_unknown(caplog: py
+     ai = Genkit()
+     app = FastAPI()
+ 
+-    @app.post('/named', response_model=None)
++    @app.post('/named')
+     @genkit_fastapi_handler(ai)
+     async def wrapped_route() -> Any:
+         raise RuntimeError('db pool closed')
+ 
+     async def load_route(_name: str) -> Any:
+         raise RuntimeError('db pool closed')
+ 
+-    app.post('/partial', response_model=None)(genkit_fastapi_handler(ai)(functools.partial(load_route, 'orders')))
++    app.post('/partial')(genkit_fastapi_handler(ai)(functools.partial(load_route, 'orders')))
+ 
+     client = TestClient(app)
+     with caplog.at_level(logging.DEBUG, logger='genkit_fastapi._handler'):
+@@ -863,7 +864,7 @@ async def chat(_: str) -> str:
+ 
+     app = FastAPI()
+ 
+-    @app.post('/chat', response_model=None)
++    @app.post('/chat')
+     @genkit_fastapi_handler(ai, context_provider=require_token)
+     async def chat_route():
+         return chat
+@@ -905,7 +906,7 @@ async def chat(_: str) -> str:
+ 
+     app = FastAPI()
+ 
+-    @app.post('/chat', response_model=None)
++    @app.post('/chat')
+     @genkit_fastapi_handler(ai, context_provider=require_token)
+     async def chat_route():
+         return chat
+@@ -922,7 +923,7 @@ def test_fastapi_wrapper_http_
+```
+
+**File**: `py/packages/genkit-flask/src/genkit_flask/_handler.py` (modified, +27/-34)
+```diff
+@@ -21,21 +21,27 @@
+ import logging
+ from asyncio import AbstractEventLoop
+ from collections.abc import AsyncIterable, AsyncIterator, Awaitable, Callable, Iterable
+-from typing import Any, TypeAlias, TypeVar, cast
++from typing import Any, TypeVar, cast
+ 
+ from flask import Response, request
+-from pydantic import BaseModel
+ from werkzeug.exceptions import HTTPException
+ 
+ from genkit import Genkit, GenkitError, PublicError
+ from genkit.plugin_api import Action
+-from genkit.web import ContextProvider, RequestData, error_body, error_status, read_body, wants_stream
++from genkit.web import (
++    ContextProvider,
++    RequestData,
++    error_json,
++    error_sse,
++    error_status,
++    read_body,
++    result_json,
++    to_sse,
++    wants_stream,
++)
+ 
+ logger = logging.getLogger(__name__)  # noqa: TID251
+ 
+-# Compact JSON (no spaces) for smaller wire payload.
+-_JSON_SEPARATORS = (',', ':')
+-
+ 
+ def _log_failure(*, error: Exception, flow: str, where: str) -> None:
+     """Log a served-action failure to the host web server's stdlib logger, naming the action.
+@@ -55,7 +61,7 @@ def _log_failure(*, error: Exception, flow: str, where: str) -> None:
+ def _error_response(error: Exception, status: int | None = None) -> Response:
+     return Response(
+         status=error_status(error) if status is None else status,
+-        response=json.dumps(error_body(error), separators=_JSON_SEPARATORS),
++        response=error_json(error),
+         mimetype='application/json',
+     )
+ 
+@@ -69,11 +75,6 @@ def _parse_request_json() -> object:
+         raise PublicError('INVALID_ARGUMENT', 'request body must be valid JSON') from err
+ 
+ 
+-def _to_dict(obj: Any) -> Any:  # noqa: ANN401
+-    """Convert object to dict if it's a Pydantic model, otherwise return as-is."""
+-    return obj.model_dump() if isinstance(obj, BaseModel) else obj
+-
+-
+ T = TypeVar('T')
+ 
+ 
+@@ -104,10 +105,6 @@ async def get_next() -> tuple[bool, T | None]:
+         yield obj
+ 
+ 
+-# Type alias for Flask-compatible route handler return type
+-FlaskRouteReturn: TypeAlias = Response | dict[str, object] | Iterable[Any]
+-
+-
+ class _FlaskRequestData(RequestData):
+     def __init__(self, input_data: dict[str, Any]) -> None:
+         super().__init__(
+@@ -121,7 +118,7 @@ def __init__(self, input_data: dict[str, Any]) -> None:
+ def genkit_flask_handler(
+     ai: Genkit,
+     context_provider: ContextProvider | None = None,
+-) -> Callable[[Action], Callable[..., Awaitable[FlaskRouteReturn]]]:
++) -> Callable[[Action], Callable[..., Awaitable[Response]]]:
+     """A decorator for serving Genkit flows via a Flask server.
+ 
+     The returned view function is named after the flow (dots replaced with
+@@ -151,11 +148,11 @@ async def say_hi(name: str, ctx: FlowContext) -> str:
+     """
+     loop = _create_loop()
+ 
+-    def decorator(flow: Action) -> Callable[..., Awaitable[FlaskRouteReturn]]:
++    def decorator(flow: Action) -> Callable[..., Awaitable[Response]]:
+         if not isinstance(flow, Action):
+             raise GenkitError(status='INVALID_ARGUMENT', message='must apply @genkit_flask_handler on a @flow')
+ 
+-        async def handler() -> FlaskRouteReturn:
++        async def handler() -> Response:
+             try:
+                 input_data = _parse_request_json()
+             except PublicError as e:
+@@ -189,24 +186,20 @@ async def handler() -> FlaskRouteReturn:
+                 async def async_gen() -> AsyncIterator[str]:
+                     try:
+                         stream_response = flow.stream(input=action_input, context=action_context, init=init)
+-                        async for chunk in stream_response.stream:
+-                            yield f'data: {json.dumps({"message": _to_dict(chunk)}, separators=_JSON_SEPARATORS)}\n\n'
+-
+-                        result = await stream_response.response
+-                        yield f'data: {json.dumps({"result": _to_dict(result)}, separators=_JSON_SEPARATORS)}\n\n'
+                     except Exception as e:
+                         _log_failure(error=e, flow=flow.name, where='stream')
+-                        yield f'data: {json.dumps({"error": error_body(e)}, separators=_JSON_SEPARATORS)}\n\n'
++                        yield error_sse(e)
++                        return
++                    async for line in to_sse(stream_response):
++                        yield line
+ 
+-                iter = _iter_over_async(async_gen(), loop)
+-                return iter
+-            else:
+-                try:
+-                    response = await flow.run(input=action_input, context=action_context, init=init)
+-                    return {'result': _to_dict(response.response)}
+-                except Exception as e:
+-                    _log_failure(error=e, flow=flow.name, where='run')
+-                    return _error_response(e)
++                return Response(_iter_over_async(async_gen(), loop), mimetype='text/event-stream')
++            try:
++                response = await flow.run(input=action_input, context=action_contex
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7035** (2026-11-04): fix(py): name each Flask handler view after its flow so two routes don't collide (@huangjeff5)
-- **PR #7034** (2026-11-03): fix(py): name the action in served-action failure logs (@huangjeff5)
-- **PR #7032** (2026-11-03): fix(py): log the model or tool exception that generate boxes as internal error (@huangjeff5)
-- **PR #7029** (2026-11-03): build(py): bound intra-repo genkit version ranges across plugins and extras (@huangjeff5)
-- **PR #7028** (2026-11-03): chore(js/testapps): migrate flow-simple-ai from @google/generative-ai to @google/genai (@MichaelDoyle)
-- **PR #7021** (2026-11-03): chore(js/testapps): update safe minor and in-range dependencies (@MichaelDoyle)
+- **PR #7089** (closed): build(deps): bump minimatch, genkit-cli and rimraf in /samples/js-menu (@dependabot[bot])
+- **PR #7088** (closed): build(deps): bump protobufjs from 7.4.0 to 7.6.6 in /samples/js-menu (@dependabot[bot])
+- **PR #7077** (2026-11-04): fix(cli): reuse telemetry server URL across MCP runtime starts (@MichaelDoyle)
+- **PR #7069** (closed): build(deps): bump the tools-dependencies group in /genkit-tools with 19 updates (@dependabot[bot])
+- **PR #7068** (closed): build(deps-dev): bump the root-dependencies group with 10 updates (@dependabot[bot])
+- **PR #7067** (closed): build(deps): bump the go-dependencies group in /go with 30 updates (@dependabot[bot])
 
 ---
 
@@ -2741,37 +3683,65 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. py): skip MCP ResourceLink blocks instead of emitting dead resource parts (#6990
+## X. py): a failing tool cancels and awaits the other tools in its turn (#6952)
 
 **RULE**:
-When implementing operations in `py/packages/genkit-mcp/src/genkit_mcp/_tools.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in genkit-ai/genkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `py/packages/genkit/src/genkit/_ai/_generate.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in genkit-ai/genkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5e8663ef`: py): skip MCP ResourceLink blocks instead of emitting dead resource parts (#6990). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b1aff696`: py): a failing tool cancels and awaits the other tools in its turn (#6952). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `py/packages/genkit-mcp/src/genkit_mcp/_tools.py`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `py/packages/genkit/src/genkit/_ai/_generate.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-    present. Image, audio, and blob resource blocks become media parts; text
-    resource blocks append to text output; resource links are skipped since
-    Genkit Python does not expose resource actions. An error result yields an
-    ``error`` output and drops any media, so the model can read the failure and
-    retry.
+        raise GenkitError(status='CANCELLED', message='Generation aborted.')
+    except asyncio.CancelledError as exc:
+        stamp_cancelled_error(exc=exc, messages=call.messages)
+        raise
+def stamp_cancelled_error(
+    *,
+    exc: asyncio.CancelledError,
+    messages: list[Message],
+) -> None:
+    """Attach the closed history onto a foreign CancelledError as ``messages``.
+
+    The history ends at the last completed round. The unfinished turn is
+    dropped, as on a failed or aborted response. Only the exception is
+    stamped, never the current task: a long-lived caller task would carry
+    stale history into later calls. Read it back with
+    ``genkit._core._compat.cancelled_history``, which handles 3.10 re-raising
+    a fresh ``CancelledError`` on await.
+    """
+    exc.__dict__['messages'] = [as_message(m) for m in messages]
+
+
+def raise_if_foreign_cancel(
+    *,
+    exc: BaseException,
+    abort_signal: asyncio.Event,
+    messages: list[Message] | None = None,
+) -> None:
+        if messages is not None:
+            stamp_cancelled_error(exc=exc, messages=messages)
+        raise_if_foreign_cancel(
+            exc=exc,
+            abort_signal=ctx.abort_signal,
+           
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-    ResourceLink,
-    present. Image, audio and blob resource blocks become media parts, and a
-    resource link becomes a resource part. An error result yields an ``error``
-    output and drops any media, so the model can read the failure and retry.
-        elif isinstance(block, ResourceLink):
-            content.append(Part.model_validate({'resource': {'uri': str(block.uri)}}))
+        raise GenkitError(status='ABORTED', message='Generation aborted.')
+def raise_if_foreign_cancel(*, exc: BaseException, abort_signal: asyncio.Event) -> None:
+        raise_if_foreign_cancel(exc=exc, abort_signal=ctx.abort_signal)
+        raise_if_foreign_cancel(exc=exc, abort_signal=ctx.abort_signal)
+        raise_if_foreign_cancel(exc=exc, abort_signal=ctx.abort_signal)
+    outs = await asyncio.gather(*[run_one_tool(tool, trp) for _, tool, trp in work])
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5e8663ef` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b1aff696` are properly handled with clean fallback behavior.

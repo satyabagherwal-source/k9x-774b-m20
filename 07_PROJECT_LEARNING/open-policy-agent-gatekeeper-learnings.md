@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/open-policy-agent-gatekeeper-learnings.md`  
 > **Source**: github ([https://github.com/open-policy-agent/gatekeeper](https://github.com/open-policy-agent/gatekeeper))  
-> **Source Version**: `e492e24c`  
+> **Source Version**: `f253de70`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T03:14:19.012Z  
+> **Timestamp**: 2026-11-05T04:57:37.418Z  
 > **Learning ID**: `learn-github-open-policy-agent-gatekeeper`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/open-policy-agent-gatekeeper-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/open-policy-agent/gatekeeper](https://github.com/open-policy-agent/gatekeeper))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T03:14:17.802Z  
+> **Harvest Timestamp**: 2026-11-05T04:57:37.273Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 🐊 Policy Controller for Kubernetes
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 4299 stars
+- **Stars / Engagement**: 4302 stars
 
 ---
 
@@ -1246,11 +1246,11 @@ const (
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #4892** (2026-11-04): **Disk export treats violation text as audit control events**
+  *Symptoms*: **What steps did you take and what happened:**  With audit export enabled and a valid disk Connection, an audited violation whose message is `audit is started` or `audit is completed` is interpreted as an audit lifecycle event, even though its `eventType` is `violation_audited`.  This was reproduced using a real Rego policy that returns an object annotation as its violation message, through the production audit result processing, `violationMsg`, `export.System`, and disk driver.  For each case, use a fresh disk Connection and publish the following sequence with the same audit ID:  1. The genuine audit-start control record. 2. An audited violation with an ordinary message. 3. An audited violation with the message under test. 4. Another audited violation with an ordinary message. 5. The genuine audit-completion control record.  The three violations have `eventType: violation_audited`; the genuine control records use the existing audit control format.  Decoded output:  | Message under test | Records in the completed file | Result | |---|---:|---| | `ordinary middle` | 5 | All three violations and both control records are present. | | `audit is started` | 4 | The middle violation is rejected and absent from the file. | | `audit is completed` | 3 | The middle violation is written, then the file is finalized before the remaining violation and genuine completion. |  The start-message collision returns:  ```text error handling audit start: audit file already open for audit run 2026-1
+
 - **Issue #4770** (2026-10-09): **Fix status-only startup without initializing the constraint client**
   *Symptoms*: Parent issue: #3964 Related bug fix: #3928, #4423  **What steps did you take and what happened:**  Start Gatekeeper with only the status operation:  ```text --operation=status ```  `operations.HasValidationOperations()` currently returns `true` for `operations.Status`, so `setupControllers` initializes the constraint/OPA client. However, only the audit and webhook operations add enforcement points. The frameworks constraint client rejects initialization with no enforcement points:  ```text must specify at least one enforcement point with client.EnforcementPoints ```  The same predicate also starts the ConstraintTemplate and Constraint ingestion controllers, even though the documented status operation only aggregates per-pod status resources.  **What did you expect to happen:**  A status-only Gatekeeper process should start successfully and run the controllers needed to aggregate status. It should not initialize the constraint/OPA client or run constraint/template ingestion and data-sync controllers solely because `status` is selected.  **Suggested scope:**  - Separate the concepts of "needs constraint evaluation/ingestion" and "needs status aggregation" instead of using `HasValidationOperations()` for both. - Register ConstraintTemplate/Constraint status aggregators independently from the ConstraintTemplate ingestion controller. - Update all `HasValidationOperations()` call sites consistently, including readiness and sync behavior. - Keep required dependencies non-nil for eve
-
-- **Issue #4734** (2026-08-19): **[Release Request] Backport CVE fixes to v3.23.x branch and cut v3.23.1 patch release**
-  *Symptoms*: **What steps did you take and what happened:**  - I am running on the version branch release-3.23 - Scanners are reporting CVE-2026-56852, which is fixed in master as part of #4699  - GO-2026-5880 in oras.land/oras-go/v2@v2.6.1, fixed by https://github.com/open-policy-agent/gatekeeper/pull/4674 (6055855777825aacf16efa6adc4c7c40bbf17a97). https://github.com/open-policy-agent/gatekeeper/pull/4739 - Go standard-library vulnerabilities in Go 1.26.5, fixed in Go 1.26.6. The production builder images (Dockerfile and gator.Dockerfile) should be updated on master first and then backported. https://github.com/open-policy-agent/gatekeeper/pull/4740  **What did you expect to happen:**  - Expect it to be available in v3.23.1  **Anything else you would like to add:** [Miscellaneous information that will assist in solving the issue.]   **Environment:**  - Gatekeeper version: 3.23.0 - Kubernetes version: (use `kubectl version`):
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1267,747 +1267,477 @@ const (
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e492e24c` (2026-10-22)
-**Commit Message**: refactor: separate Config process exclusions from validation data sync (#4784)
+### Incident Patch 1: `ea96f392` (2026-11-04)
+**Commit Message**: fix: abort incomplete disk audit runs after write failures (#4894)
 
-Signed-off-by: Charles Cheng <[REDACTED_EMAIL]>
-Signed-off-by: anneheartrecord <[REDACTED_EMAIL]>
 Signed-off-by: Jaydip Gabani <[REDACTED_EMAIL]>
-Co-authored-by: Jaydip Gabani <[REDACTED_EMAIL]>
 Co-authored-by: Copilot <[REDACTED_EMAIL]>
 
-**File**: `main.go` (modified, +55/-35)
+**File**: `pkg/export/disk/audit_file.go` (modified, +38/-0)
 ```diff
-@@ -547,14 +547,16 @@ func setupControllers(ctx context.Context, mgr ctrl.Manager, tracker *readiness.
- 		return err
+@@ -54,6 +54,9 @@ func (conn *Connection) handleAuditStart(auditID string, topic string) error {
+ 	if conn.File != nil {
+ 		return fmt.Errorf("audit file already open for audit run %s", conn.currentAuditRun)
  	}
++	if err := conn.removeAbortedAuditFile(); err != nil {
++		return err
++	}
  
--	wm, err := watch.New(dc)
-+	wm, err := newWatchManager(dc)
+ 	dir, err := auditDirPath(conn.Path, topic)
  	if err != nil {
- 		setupLog.Error(err, "unable to create watch manager")
- 		return err
- 	}
--	if err := mgr.Add(wm); err != nil {
--		setupLog.Error(err, "unable to register watch manager with the manager")
--		return err
-+	if wm != nil {
-+		if err := mgr.Add(wm); err != nil {
-+			setupLog.Error(err, "unable to register watch manager with the manager")
-+			return err
-+		}
- 	}
- 
- 	// processExcluder is used for namespace exclusion for specified processes in config
-@@ -563,41 +565,47 @@ func setupControllers(ctx context.Context, mgr ctrl.Manager, tracker *readiness.
- 	// Setup all Controllers
- 	setupLog.Info("setting up controllers")
- 
--	// Events ch will be used to receive events from dynamic watches registered
--	// via the registrar below.
--	events := make(chan event.GenericEvent, 1024)
--	reg, err := wm.NewRegistrar(
--		cachemanager.RegistrarName,
--		events)
--	if err != nil {
--		setupLog.Error(err, "unable to set up watch registrar for cache manager")
--		return err
--	}
--
--	syncMetricsCache := syncutil.NewMetricsCache()
-+	// The cache manager and everything hanging off it only exist for operations
-+	// that sync referential data for validation. Other operations read process
-+	// exclusions from the Config resource without any of this.
-+	var (
-+		events chan event.GenericEvent
-+		cm     *cachemanager.CacheManager
-+	)
-+	if operations.HasValidationOperations() {
-+		// Events ch will be used to receive events from dynamic watches registered
-+		// via the registrar below.
-+		events = make(chan event.GenericEvent, 1024)
-+		reg, err := wm.NewRegistrar(
-+			cachemanager.RegistrarName,
-+			events)
-+		if err != nil {
-+			setupLog.Error(err, "unable to set up watch registrar for cache manager")
-+			return err
-+		}
- 
--	cmConfig := &cachemanager.Config{
--		SyncMetricsCache: syncMetricsCache,
--		Tracker:          tracker,
--		ProcessExcluder:  processExcluder,
--		Registrar:        reg,
--		Reader:           mgr.GetCache(),
--	}
-+		cmConfig := &cachemanager.Config{
-+			SyncMetricsCache: syncutil.NewMetricsCache(),
-+			Tracker:          tracker,
-+			ProcessExcluder:  processExcluder,
-+			Registrar:        reg,
-+			Reader:           mgr.GetCache(),
-+		}
- 
--	if client != nil {
--		cmConfig.CfClient = client
--	}
-+		if client != nil {
-+			cmConfig.CfClient = client
-+		}
- 
--	cm, err := cachemanager.NewCacheManager(cmConfig)
--	if err != nil {
--		setupLog.Error(err, "unable to create cache manager")
--		return err
--	}
-+		cm, err = cachemanager.NewCacheManager(cmConfig)
-+		if err != nil {
-+			setupLog.Error(err, "unable to create cache manager")
-+			return err
-+		}
- 
--	err = mgr.Add(pruner.NewExpectationsPruner(cm, tracker))
--	if err != nil {
--		setupLog.Error(err, "adding expectations pruner to manager")
--		return err
-+		if err := mgr.Add(pruner.NewExpectationsPruner(cm, tracker)); err != nil {
-+			setupLog.Error(err, "adding expectations pruner to manager")
-+			return err
-+		}
- 	}
- 
- 	opts := controller.Dependencies{
-@@ -676,6 +684,18 @@ func newExportSystem() *export.System {
- 	return nil
+@@ -121,6 +124,41 @@ func (conn *Connection) handleAuditEnd(topic string) error {
+ 	return conn.cleanupOldAuditFiles(topic)
  }
  
-+// newWatchManager constructs the watch manager only for processes that sync
-+// validation data. Its registrars belong to the cache manager and the
-+// constraint template controller, and neither is set up for other operations,
-+// so a status-only, generate-only or mutation-only pod would otherwise run a
-+// watch manager that never watches anything.
-+func newWatchManager(dc watch.RemovableCache) (*watch.Manager, error) {
-+	if !operations.HasValidationOperations() {
-+		return nil, nil
++// abortAuditRun discards the active run after a failed write or finalization so
++// incomplete output is never published and later records cannot reach it. A run
++// that was already published has no remaining run file and is left unchanged.
++func (conn *Connection) abortAuditRun(runFile string) error {
++	var closeErr error
++	if conn.File != nil {
++		// Close releases the descriptor and its lock even when it reports an
++		// error; os.ErrClosed means an earlier failed close already released it.
++		if err := conn.File.Close(); err != nil && !errors.Is(err, os.ErrClosed) {
++			closeErr = fmt.Errorf("closing aborted audit file: %w", err)
++		}
++		conn.File = nil
 +	}
-+	return watch.New(dc)
++	conn.currentAuditRun = ""
++	conn.abortedAuditFile = runFile
++	return errors.Join(closeErr, conn.removeAbortedAuditFile())
 +}
 +
- // newExpansionSystem constructs an expansion.System only for processes with
- // validation operations (audit and the validating webhook), the only callers
- // of Expand. They invoke Expand unconditionally, independent of whether
-```
-
-**File**: `main_test.go` (modified, +37/-0)
-```diff
-@@ -373,3 +373,40 @@ func Test_newExpansionSystem(t *testing.T) {
- 		})
- 	}
- }
-+
-+// Validates that newWatchManager only constructs a watch manager for processes
-+// that sync validation data (audit and webhook). Nothing registers a watch
-+// on other processes, so setupControllers should not start one there.
-+func Test_newWatchManager(t *testing.T) {
-+	tests := map[string]struct {
-+		assigned []operations.Operation
-+		wantNil  bool
-+	}{
-+		"audit only":               {assigned: []operations.Operation{operations.Audit}, wantNil: false},
-+		"webhook only":             {assigned: []operations.Operation{operations.Webhook}, wantNil: false},
-+		"audit and status":         {assigned: []operations.Operation{operations.Audit, operations.Status}, wantNil: false},
-+		"status only":              {assigned: []operations.Operation{operations.Status}, wantNil: true},
-+		"generate only":            {assigned: []operations.Operation{operations.Generate}, wantNil: true},
-+		"mutation-webhook only":    {assigned: []operations.Operation{operations.MutationWebhook}, wantNil: true},
-+		"mutation-status only":     {assigned: []operations.Operation{operations.MutationStatus}, wantNil: true},
-+		"mutation-controller only": {assigned: []operations.Operation{operations.MutationController}, wantNil: true},
++// removeAbortedAuditFile is retried before each run starts, so a Connection
++// owns at most one unremovable aborted file.
++func (conn *Connection) removeAbortedAuditFile() error {
++	if conn.abortedAuditFile == "" {
++		return nil
 +	}
-+
-+	for name, tc := range tests {
-+		t.Run(name, func(t *testing.T) {
-+			restore, err := operations.SetForTest(tc.assigned...)
-+			if err != nil {
-+				t.Fatal(err)
-+			}
-+			defer restore()
-+
-+			got, err := newWatchManager(nil)
-+			if err != nil {
-+				t.Fatal(err)
-+			}
-+			if (got == nil) != tc.wantNil {
-+				t.Errorf("newWatchManager() = %v, wantNil %v", got, tc.wantNil)
-+			}
-+		})
++	err := os.Remove(conn.abortedAuditFile)
++	if err != nil && !os.IsNotExist(err) {
++		return fmt.Errorf("removing aborted audit file: %w", err)
 +	}
-+}
-```
-
-**File**: `pkg/controller/config/config_capability_test.go` (added, +135/-0)
-```diff
-@@ -0,0 +1,135 @@
-+/*
-+
-+Licensed under the Apache License, Version 2.0 (the "License");
-+you may not use this file except in compliance with the License.
-+You may obtain a copy of the License at
-+
-+    http://www.apache.org/licenses/LICENSE-2.0
-+
-+Unless required by applicable law or agreed to in writing, software
-+distributed under the License is distributed on an "AS IS" BASIS,
-+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+See the License for the specific language governing permissions and
-+limitations under the License.
-+*/
-+
-+package config
-+
-+import (
-+	"context"
-+	"testing"
-+
-+	configv1alpha1 "github.com/open-policy-agent/gatekeeper/v3/apis/config/v1alpha1"
-+	statusv1beta1 "github.com/open-policy-agent/gatekeeper/v3/apis/status/v1beta1"
-+	"github.com/open-policy-agent/gatekeeper/v3/pkg/controller/config/process"
-+	"github.com/open-policy-agent/gatekeeper/v3/pkg/fakes"
-+	"github.com/open-policy-agent/gatekeeper/v3/pkg/operations"
-+	"github.com/open-policy-agent/gatekeeper/v3/pkg/readiness"
-+	"github.com/open-policy-agent/gatekeeper/v3/pkg/wildcard"
-+	"github.com/stretchr/testify/require"
-+	v1 "k8s.io/api/core/v1"
-+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-+	"k8s.io/apimachinery/pkg/types"
-+	"sigs.k8s.io/controller-runtime/pkg/client"
-+	"sigs.k8s.io/controller-runtime/pkg/reconcile"
-+)
-+
-+// TestAdderRegistersWithoutDataSync pins that the Config controller is built
-+// for operation sets that do not sync validation data - mutation-only pods
-+// included, because this reconciler is the only consumer of
-+// Config.spec.readiness.statsEnabled - and that a missing dependency still
-+// fails setup loudly instead of silently skipping registration.
-+func TestAdderRegistersWithoutDataSync(t *testing.T) {
-+	for _, op := range []operations.Operation{
-+		operations.Status,
-+		operations.Generate,
-+		operations.MutationWebhook,
-+		operations.MutationStatus,
-+		operations.MutationController,
-+	} {
-+		t.Run(string(op), func(t *testing.T) {
-+			restore, err := operations.SetForTest(op)
-+			require.NoError(t, err)
-+			t.Cleanup(restore)
-+
-+			mgr, _ := setupManager(t)
-+			require.NoError(t, (&Adder{ProcessExcluder: process.New()}).Add(mgr))
-+
-+			// Without a process excluder there is nowhere to put the exclusions
-+			// the reconciler parses, so setup has to fail.
-+			mgr, _ = setupManager(t)
-+			require.Error(t, (&Adder{}).Add(mgr))
-+		})
++	if err == nil {
++		log.Info("Removed incomplete audit file", "filename", conn.abortedAuditFile)
 +	}
-+}
-+
-+// TestReconcileWithoutDataSync covers the mutation-webhook-only pod: process
-+// exclusions from the Config resource still land, with no cache manager and no
-+// constraint client behind it.
-+func TestReconcileWithoutDataSync(t *testing.T) {
-+	restore, err := operations.SetForTest(operations.MutationWebhook)
-+	require.NoError(t, err)
-+	t.Cleanup(restore)
-+
-+	ctx := context.Background()
-+	mgr, _ := setupManager(t)
-+
-+	// Read and write directly: this test drives Reconcile by hand rather than
-+	// starting the manager.
-+	c, err := client.New(cfg, client.Options{Scheme: mgr.GetScheme()})
-+	require.NoError(t, err)
-+
-+	instance := &configv1alpha1.Config{
-+		ObjectMeta: metav1.ObjectMeta{
-+			Name:      "config",
-+			Namespace: "gatekeeper-system",
-+		},
-+		Spec: configv1alpha1.ConfigSpec{
-+			Sync: configv1alpha1.Sync{
-+				SyncOnly: []configv1alpha1.SyncOnlyEntry{
-+					{Group: "", Version: "v1", Kind: "Pod"},
-+				},
-+			},
-+			Match: []configv1alpha1.MatchEntry{
-+				{
-+					ExcludedNamespaces: []wildcard.Wildcard{"excluded-ns"},
-+					Processes:          []string{"mutation-webhook"},
-+				},
-+			},
-+		},
-+	}
-+	require.NoError(t, c.Create(ctx, instance))
-+	t.Cleanup(func() { require.NoError(t, client.IgnoreNotFound(c.Delete(ctx, instance))) })
-+
-+	tracker, err := readiness.SetupTrackerNoReadyz(mgr, false, false, false)
-+	require.NoError(t, err)
-+
-+	pod := fakes.Pod(
-+		fakes.WithNamespace("gatekeeper-system"),
-+		fakes.WithName("no-pod"),
-+	)
-+	processExcluder := process.New()
-+
-+	rec, err := newReconciler(mgr, nil, processExcluder, tracker, func(context.Context) (*v1.Pod, error) { return pod, nil }, nil)
-+	require.NoError(t, err)
-+	rec.reader = c
-+	rec.writer = c
-+	rec.statusClient = c
-+
-+	_, err = rec.Reconcile(ctx, reconcile.Request{NamespacedName: types.NamespacedName{
-+		Namespace: instance.GetNamespace(),
-+		Name:      instance.GetName(),
-+	}})
-+	require.NoError(t, err)
-+
-+	require.Equal(t, []string{"excluded-ns"}, processExcluder.GetExcludedNamespaces(process.Mutation),
-+		"mutation webhook exclusions should be applied without a cache manager")
-+
-+	// ConfigPodStatus is still reported for this operation set.
-+	statusName, err := statusv1beta1.KeyForConfig(pod.Name, instance.GetNamespace(), instance.GetName())
-+	require.NoError(t, err)
-+	status := &statusv1beta1.ConfigPodStatus{}
-+	require.NoError(t, c.Get(ctx, types.NamespacedName{Namespace: pod.Namespace, Name: statusName}, status))
-+	require.Empty(t, status.Status.Errors)
-+	t.Cleanup(func() { require.NoError(t, client.IgnoreNotFound(c.Delete(ctx, status))) })
-+}
-```
-
-**File**: `pkg/controller/config/config_controller.go` (modified, +71/-25)
-```diff
-@@ -156,15 +156,19 @@ func (e *ChannelFullError) Temporary() bool {
- type Adder struct {
- 	Tracker      *readiness.Tracker
- 	CacheManager *cm.CacheManager
--	CtEvents     chan<- event.GenericEvent
-+	// ProcessExcluder holds the namespace exclusions the admission, audit and
-+	// sync paths read. It is required even when validation data sync is off.
-+	ProcessExcluder *process.Excluder
-+	CtEvents        chan<- event.GenericEvent
- 	// GetPod returns an instance of the currently running Gatekeeper pod
- 	GetPod func(context.Context) (*corev1.Pod, error)
- }
- 
- // Add creates a new ConfigController and adds it to the Manager with default RBAC. The Manager will set fields on the Controller
- // and Start it when the Manager is Started.
- func (a *Adder) Add(mgr manager.Manager) error {
--	r, err := newReconciler(mgr, a.CacheManager, a.Tracker, a.GetPod, a.CtEvents)
-+	// Every operation needs Config reconciliation for its readiness-statistics setting.
-+	r, err := newReconciler(mgr, a.CacheManager, a.ProcessExcluder, a.Tracker, a.GetPod, a.CtEvents)
- 	if err != nil {
- 		return err
- 	}
-@@ -180,6 +184,10 @@ func (a *Adder) InjectCacheManager(cm *cm.CacheManager) {
- 	a.CacheManager = cm
- }
- 
-+func (a *Adder) InjectProcessExcluder(processExcluder *process.Excluder) {
-+	a.ProcessExcluder = processExcluder
-+}
-+
- func (a *Adder) InjectGetPod(getPod func(ctx context.Context) (*corev1.Pod, error)) {
- 	a.GetPod = getPod
- }
-@@ -188,21 +196,26 @@ func (a *Adder) InjectConstraintTemplateEvent(ctEvents chan event.GenericEvent)
- 	a.CtEvents = ctEvents
- }
- 
--// newReconciler returns a new reconcile.Reconciler.
--func newReconciler(mgr manager.Manager, cm *cm.CacheManager, tracker *readiness.Tracker, getPod func(context.Context) (*corev1.Pod, error), ctEvents chan<- event.GenericEvent) (*ReconcileConfig, error) {
--	if cm == nil {
--		return nil, fmt.Errorf("cacheManager must be non-nil")
-+// newReconciler returns a new reconcile.Reconciler. cm is only required when
-+// the pod syncs validation data; processExcluder is always required.
-+func newReconciler(mgr manager.Manager, cm *cm.CacheManager, processExcluder *process.Excluder, tracker *readiness.Tracker, getPod func(context.Context) (*corev1.Pod, error), ctEvents chan<- event.GenericEvent) (*ReconcileConfig, error) {
-+	if processExcluder == nil {
-+		return nil, fmt.Errorf("processExcluder must be non-nil")
-+	}
-+	if cm == nil && operations.HasValidationOperations() {
-+		return nil, fmt.Errorf("cacheManager must be non-nil when validation data sync is required")
- 	}
- 
- 	return &ReconcileConfig{
--		reader:       mgr.GetCache(),
--		writer:       mgr.GetClient(),
--		statusClient: mgr.GetClient(),
--		scheme:       mgr.GetScheme(),
--		cacheManager: cm,
--		tracker:      tracker,
--		getPod:       getPod,
--		ctEvents:     ctEvents,
-+		reader:          mgr.GetCache(),
-+		writer:          mgr.GetClient(),
-+		statusClient:    mgr.GetClient(),
-+		scheme:          mgr.GetScheme(),
-+		cacheManager:    cm,
-+		processExcluder: processExcluder,
-+		tracker:         tracker,
-+		getPod:          getPod,
-+		ctEvents:        ctEvents,
- 	}, nil
- }
- 
-@@ -237,8 +250,10 @@ type ReconcileConfig struct {
- 	writer       client.Writer
- 	statusClient client.StatusClient
- 
--	scheme       *runtime.Scheme
--	cacheManager *cm.CacheManager
-+	scheme *runtime.Scheme
-+	// cacheManager is nil when the pod does not sync validation data.
-+	cacheManager    *cm.CacheManager
-+	processExcluder *process.Excluder
- 
- 	tracker *readiness.Tracker
- 
-@@ -250,6 +265,31 @@ type ReconcileConfig struct {
- 	dirtyTemplates map[string]*v1beta1.ConstraintTemplate
- }
- 
-+// excludeProcesses installs the exclusions parsed from the Config resource.
-+// While validation data is being synced the cache manager owns the excluder:
-+// swapping it there also schedules the re-list the new exclusions require.
-+func (r *ReconcileConfig) excludeProcesses(newExcluder *process.Excluder) {
-+	if r.cacheManager != nil {
-+		r.cacheManager.ExcludeProcesses(newExcluder)
-+		return
-+	}
-+
-+	if r.processExcluder.Equals(newExcluder) {
-+		return
-+	}
-+	r.processExcluder.Replace(newExcluder)
-+}
-+
-+// excluderChangedForProcess reports whether the exclusions for the given
-+// process differ from the ones currently installed.
-+func (r *ReconcileConfig) excluderChangedForProcess(p process.Process, newExcluder *process.Excluder) bool {
-+	if r.cacheManager != nil {
-+		return r.cacheManager.ExcluderChangedForProcess(p, newExcluder)
-+	}
-+
-+	return !r.processExcluder.EqualsForProcess(p, newExcluder)
-+}
-+
- // +kubebuilder:rbac:groups=*,resources=*,verbs=get;list;watch
- // +kubebuilder:rbac:groups=config.gatekeeper.sh,resources=configs,verbs=get;list;watch;create;update;patch;delete
- // +kubebuilder:rbac:groups=config.gatekeeper.sh,resources=configs/status,verbs=get;update;patch
-@@ -304,14 +344,16 @@ func (r *ReconcileConfig) Reconcile(ctx context.Context, request reconcile.Reque
- 		r.tracker.DisableStats()
- 	}
- 
-+	notifyGenerate := operations.IsAssigned(operations.Generate) && *transform.S
-```
-
-**File**: `pkg/controller/config/config_controller_test.go` (modified, +3/-3)
-```diff
-@@ -253,7 +253,7 @@ func TestReconcile(t *testing.T) {
- 		fakes.WithName("no-pod"),
- 	)
- 
--	rec, err := newReconciler(mgr, cacheManager, tracker, func(context.Context) (*v1.Pod, error) { return pod, nil }, nil)
-+	rec, err := newReconciler(mgr, cacheManager, processExcluder, tracker, func(context.Context) (*v1.Pod, error) { return pod, nil }, nil)
- 	require.NoError(t, err)
- 
- 	// Wrap the Controller Reconcile function so it writes each request to a map when it is finished reconciling.
-@@ -545,7 +545,7 @@ func setupController(ctx context.Context, mgr manager.Manager, wm *watch.Manager
- 		fakes.WithName("no-pod"),
- 	)
- 
--	rec, err := newReconciler(mgr, cacheManager, tracker, func(context.Context) (*v1.Pod, error) { return pod, nil }, nil)
-+	rec, err := newReconciler(mgr, cacheManager, processExcluder, tracker, func(context.Context) (*v1.Pod, error) { return pod, nil }, nil)
- 	if err != nil {
- 		return nil, fmt.Errorf("creating reconciler: %w", err)
- 	}
-@@ -723,7 +723,7 @@ func TestConfig_Retries(t *testing.T) {
- 		fakes.WithName("no-pod"),
- 	)
- 
--	rec, _ := newReconciler(mgr, cacheManager, tracker, func(context.Context) (*v1.Pod, error) { return pod, nil }, nil)
-+	rec, _ := newReconciler(mgr, cacheManager, processExcluder, tracker, func(context.Context) (*v1.Pod, error) { return pod, nil }, nil)
- 	err = add(mgr, rec)
- 	if err != nil {
- 		t.Fatal(err)
-```
-
-**File**: `pkg/controller/controller.go` (modified, +47/-12)
-```diff
-@@ -32,6 +32,7 @@ import (
- 	"github.com/open-policy-agent/gatekeeper/v3/pkg/export"
- 	"github.com/open-policy-agent/gatekeeper/v3/pkg/fakes"
- 	"github.com/open-policy-agent/gatekeeper/v3/pkg/mutation"
-+	"github.com/open-policy-agent/gatekeeper/v3/pkg/operations"
- 	"github.com/open-policy-agent/gatekeeper/v3/pkg/readiness"
- 	"github.com/open-policy-agent/gatekeeper/v3/pkg/util"
- 	"github.com/open-policy-agent/gatekeeper/v3/pkg/watch"
-@@ -130,6 +131,32 @@ type Dependencies struct {
- 	WebhookConfigCache *webhookconfigcache.WebhookConfigCache
- }
- 
-+// Validate rejects a dependency plan that does not match the assigned
-+// operations. Every controller we go on to register expects its own
-+// dependencies to be non-nil, so a mismatch has to fail setup rather than
-+// surface later as a nil dereference.
-+func (deps *Dependencies) Validate() error {
-+	if operations.HasValidationOperations() {
-+		if deps.CacheMgr == nil {
-+			return fmt.Errorf("cache manager is required for operations %v", operations.AssignedStringList())
-+		}
-+		if deps.SyncEventsCh == nil {
-+			return fmt.Errorf("sync events channel is required for operations %v", operations.AssignedStringList())
-+		}
-+		if deps.WatchManger == nil {
-+			return fmt.Errorf("watch manager is required for operations %v", operations.AssignedStringList())
-+		}
-+	} else if deps.CacheMgr != nil {
-+		return fmt.Errorf("cache manager was built but no operation in %v syncs validation data", operations.AssignedStringList())
-+	}
-+
-+	if deps.ProcessExcluder == nil {
-+		return fmt.Errorf("process excluder is required for operations %v", operations.AssignedStringList())
-+	}
-+
++	conn.abortedAuditFile = ""
 +	return nil
 +}
 +
- type defaultPodGetter struct {
- 	client client.Client
- 	scheme *runtime.Scheme
-@@ -176,6 +203,10 @@ func (g *defaultPodGetter) GetPod(ctx context.Context) (*corev1.Pod, error) {
- 
- // AddToManager adds all Controllers to the Manager.
- func AddToManager(m manager.Manager, deps *Dependencies) error {
-+	if err := deps.Validate(); err != nil {
-+		return fmt.Errorf("invalid controller dependencies: %w", err)
-+	}
-+
- 	if *remoteCluster && *debugUseFakePod {
- 		return fmt.Errorf("--enable-remote-cluster and --debug-use-fake-pod are mutually exclusive")
- 	}
-@@ -227,19 +258,23 @@ func AddToManager(m manager.Manager, deps *Dependencies) error {
- 		}
- 	}
- 
--	// Adding the CacheManager as a runnable;
--	// manager will start CacheManager.
--	if err := m.Add(deps.CacheMgr); err != nil {
--		return fmt.Errorf("error adding cache manager as a runnable: %w", err)
--	}
-+	// The cache manager and the sync controller only exist for operations that
-+	// sync validation data.
-+	if deps.CacheMgr != nil {
-+		// Adding the CacheManager as a runnable;
-+		// manager will start CacheManager.
-+		if err := m.Add(deps.CacheMgr); err != nil {
-+			return fmt.Errorf("error adding cache manager as a runnable: %w", err)
-+		}
- 
--	syncAdder := syncc.Adder{
--		Events:       deps.SyncEventsCh,
--		CacheManager: deps.CacheMgr,
--	}
--	// Create subordinate controller - we will feed it events dynamically via watch
--	if err := syncAdder.Add(m); err != nil {
--		return fmt.Errorf("registering sync controller: %w", err)
-+		syncAdder := syncc.Adder{
-+			Events:       deps.SyncEventsCh,
-+			CacheManager: deps.CacheMgr,
-+		}
-+		// Create subordinate controller - we will feed it events dynamically via watch
-+		if err := syncAdder.Add(m); err != nil {
-+			return fmt.Errorf("registering sync controller: %w", err)
-+		}
- 	}
- 
- 	for _, a := range Injectors {
+ func (conn *Connection) unlockAndCloseFile() error {
+ 	if conn.File == nil {
+ 		return fmt.Errorf("no file to close")
 ```
 
-**File**: `pkg/controller/controller_test.go` (added, +148/-0)
+**File**: `pkg/export/disk/audit_write_failure_test.go` (added, +370/-0)
 ```diff
-@@ -0,0 +1,148 @@
-+/*
-+
-+Licensed under the Apache License, Version 2.0 (the "License");
-+you may not use this file except in compliance with the License.
-+You may obtain a copy of the License at
-+
-+    http://www.apache.org/licenses/LICENSE-2.0
-+
-+Unless required by applicable law or agreed to in writing, software
-+distributed under the License is distributed on an "AS IS" BASIS,
-+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+See the License for the specific language governing permissions and
-+limitations under the License.
-+*/
-+
-+package controller
+@@ -0,0 +1,370 @@
++package disk
 +
 +import (
++	"context"
++	"encoding/json"
++	"errors"
++	"io/fs"
++	"os"
++	"os/exec"
++	"os/signal"
++	"path/filepath"
++	"slices"
++	"strings"
++	"syscall"
 +	"testing"
 +
-+	cm "github.com/open-policy-agent/gatekeeper/v3/pkg/cachemanager"
-+	"github.com/open-policy-agent/gatekeeper/v3/pkg/controller/config/process"
-+	"github.com/open-policy-agent/gatekeeper/v3/pkg/operations"
-+	"github.com/open-policy-agent/gatekeeper/v3/pkg/watch"
-+	"sigs.k8s.io/controller-runtime/pkg/event"
++	exportutil "github.com/open-policy-agent/gatekeeper/v3/pkg/export/util"
 +)
 +
-+func TestDependenciesValidate(t *testing.T) {
-+	dataSyncDeps := func() *Dependencies {
-+		return &Dependencies{
-+			CacheMgr:        &cm.CacheManager{},
-+			SyncEventsCh:    make(chan event.GenericEvent, 1),
-+			WatchManger:     &watch.Manager{},
-+			ProcessExcluder: process.New(),
++// auditWriteFaultChildEnv marks the re-executed test process that lowers
++// RLIMIT_FSIZE. The limit applies to every thread in a process, so it is never
++// changed in the parent test process.
++const auditWriteFaultChildEnv = "GATEKEEPER_DISK_AUDIT_WRITE_FAULT_CHILD"
++
++const (
++	auditFaultConnection = "audit-connection"
++	auditFaultTopic      = "audit-channel"
++	auditFaultViolation  = "you must provide labels: owner"
++	priorAuditID         = "2026-10-28T09:55:00Z"
++	failedAuditID        = "2026-10-28T10:00:00Z"
++	blockedAuditID       = "2026-10-28T10:02:00Z"
++	recoveryAuditID      = "2026-10-28T10:05:00Z"
++)
++
++// TestAuditWriteFailureAbortsRun forces real regular-file write failures with
++// EFBIG and verifies that the failed run is never published, later runs stay
++// isolated, and unrelated output on the same Connection path is preserved.
++func TestAuditWriteFailureAbortsRun(t *testing.T) {
++	if os.Getenv(auditWriteFaultChildEnv) != "1" {
++		cmd := exec.Command(os.Args[0], "-test.run=^TestAuditWriteFailureAbortsRun$", "-test.v") //nolint:gosec // os.Args[0] is the current test binary and the test name is constant.
++		cmd.Env = append(os.Environ(), auditWriteFaultChildEnv+"=1")
++		out, err := cmd.CombinedOutput()
++		if err != nil || !strings.Contains(string(out), "--- PASS: TestAuditWriteFailureAbortsRun (") {
++			t.Fatalf("write fault child process failed: %v\n%s", err, out)
++		}
++		return
++	}
++	// Exceeding RLIMIT_FSIZE raises SIGXFSZ; ignoring it in this child makes the
++	// write return EFBIG like other storage write errors.
++	signal.Ignore(syscall.SIGXFSZ)
++
++	for _, tc := range []struct {
++		name string
++		// failAt indexes the failed run's start, violation, second violation, and completion records.
++		failAt         int
++		allowedBytes   int64
++		removalBlocked bool
++	}{
++		{name: "zero-byte start", failAt: 0},
++		{name: "partial start", failAt: 0, allowedBytes: 12},
++		{name: "zero-byte violation", failAt: 2},
++		{name: "partial violation", failAt: 2, allowedBytes: 12},
++		{name: "zero-byte completion", failAt: 3},
++		{name: "partial completion", failAt: 3, allowedBytes: 12},
++		{name: "completion with blocked removal", failAt: 3, removalBlocked: true},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			if tc.removalBlocked && os.Geteuid() == 0 {
++				t.Skip("directory permissions do not prevent removal by root")
++			}
++			root := t.TempDir()
++			topicDir := filepath.Join(root, auditFaultTopic)
++			writer := newAdmissionWriter()
++			createAdmissionConnection(t, writer, auditFaultConnection, root, 2)
++			publish := func(msg any) error {
++				return writer.Publish(context.Background(), auditFaultConnection, msg, auditFaultTopic)
++			}
++
++			// A completed audit and admission output share the Connection path and
++			// must survive both the failure and recovery unchanged.
++			priorRecords := auditRunRecords(priorAuditID, "prior-pod")
++			for i := range priorRecords {
++				if err := publish(priorRecords[i]); err != nil {
++					t.Fatalf("Publish(prior %s) error = %v", priorRecords[i].Message, err)
++				}
++			}
++			for _, name := range []string{"admitted-1", "admitted-2", "admitted-3"} {
++				if err := publish(admissionPayload(t, name)); err != nil {
++					t.Fatalf("Publish(admission %s) error = %v", name, err)
++				}
++			}
++			preserved := readDirFiles(t, topicDir)
++			if len(preserved) != 3 {
++				t.Fatalf("expected prior audit, ready admission, and open admission files, got %v", mapKeys(preserved))
++			}
++
++			failedRecords := auditRunRecords(failedAuditID, "failed-pod-1", "failed-pod-2")
++			for i := range tc.failAt {
++				if err := publish(failedRecords[i]); err != nil {
++					t.Fatalf("Publish(failed run %s) error = %v", failedRecords[i].Message, err)
++				}
++			}
++			if tc.removalBlocked {
++				setDirMode(t, topicDir, 0o555)
++			}
++			failedFile := filepath.Join(topicDir, auditRunFileName(failedAuditID, "txt"))
++			restoreLimit := limitFileSize(t, fileSize(t, failedFile)+tc.allowedBytes)
++			err := publish(failedRecords[tc.failAt])
++			restoreLimit()
++			if !errors.Is(err, syscall.EFBIG) {
++				t.Errorf("failed write error = %v, want EFBIG", err)
++			}
++			if tc.removalBlocked && !errors.Is(err, fs.ErrPermission) {
++				t.Errorf("failed write error = %v, want the incomplete file removal failure reported", err)
++			}
++			// The remaining records of the failed run must not reach its file.
++			for i := tc.failAt + 1; i < len(failedRecords); i++ {
++				if err := publish(failedRecords[i]); err == nil {
++					t.Errorf("Publish(failed run %s) succeeded after the run failed", failedRecords[i].Message)
++				}
++			}
++			if _, err := os.Stat(filepath.Join(topicDir, auditRunFileName(failedAuditID, "log"))); !os.IsNotExist(err) {
++				t.E
+```
+
+**File**: `pkg/export/disk/connection_test.go` (modified, +12/-0)
+```diff
+@@ -1226,6 +1226,18 @@ func TestPublishClearsFileAfterAuditEndRenameError(t *testing.T) {
+ 	if conn.File != nil {
+ 		t.Fatal("expected closed file to be cleared after audit end rename error")
+ 	}
++	if _, err := os.Stat(path.Join(tmpPath, "topic1", "audit1.txt")); !os.IsNotExist(err) {
++		t.Fatalf("expected unpublished audit run file to be removed, stat error = %v", err)
++	}
++
++	for _, message := range []string{util.AuditStartedMsg, util.AuditCompletedMsg} {
++		if err := writer.Publish(context.Background(), "conn1", util.ExportMsg{ID: "audit2", Message: message}, "topic1"); err != nil {
++			t.Fatalf("Publish(next audit %s) error = %v", message, err)
 +		}
 +	}
++	if _, err := os.Stat(path.Join(tmpPath, "topic1", "audit2.log")); err != nil {
++		t.Fatalf("expected next audit run to be published: %v", err)
++	}
+ }
+ 
+ // TestConcurrentPublishUpdateCloseConnection exercises concurrent Publish,
+```
+
+**File**: `pkg/export/disk/disk.go` (modified, +8/-2)
+```diff
+@@ -3,6 +3,7 @@ package disk
+ import (
+ 	"context"
+ 	"encoding/json"
++	"errors"
+ 	"fmt"
+ 	"os"
+ 	"sync"
+@@ -27,6 +28,9 @@ type Connection struct {
+ 
+ 	// current audit run file name
+ 	currentAuditRun string
++	// abortedAuditFile is a failed run's incomplete file that could not be
++	// removed. It is never published and is removed before another run starts.
++	abortedAuditFile string
+ 	// admission owns private alpha limits and resources that must close with the Connection.
+ 	admission admissionState
+ }
+@@ -392,15 +396,17 @@ func (r *Writer) Publish(ctx context.Context, connectionName string, data interf
+ 		return fmt.Errorf("publish canceled: %w", err)
+ 	}
+ 
++	runFile := conn.File.Name()
+ 	_, err := conn.File.Write(append(jsonData, '\n'))
+ 	if err != nil {
+-		return fmt.Errorf("error writing message to disk: %w", err)
++		connChanged = true
++		return fmt.Errorf("error writing message to disk: %w", errors.Join(err, conn.abortAuditRun(runFile)))
+ 	}
+ 
+ 	if violation.EventType == "" && violation.Message == util.AuditCompletedMsg {
+ 		connChanged = true
+ 		if err := conn.handleAuditEnd(topic); err != nil {
+-			return fmt.Errorf("error handling audit end: %w", err)
++			return fmt.Errorf("error handling audit end: %w", errors.Join(err, conn.abortAuditRun(runFile)))
+ 		}
+ 		conn.File = nil
+ 		conn.currentAuditRun = ""
+```
+
+**File**: `website/docs/export.md` (modified, +2/-0)
+```diff
+@@ -482,6 +482,8 @@ The disk driver writes each audit run as newline-delimited JSON. Audit control r
+     | maxAuditResults | (alpha) Maximum number of audit results that can be stored in the export path.                                                      | 3                 |
+     | closedConnectionTTL | (alpha) Optional duration string controlling how long a failed closed Connection remains eligible for cleanup retries. Accepted values are `"1m"` through `"10m"`. The chart leaves it unset and the driver defaults to `"10m"`. | `"10m"` |
+ 
++    Each audit run is written to `<audit-run-id>.txt` in the channel directory and renamed to `<audit-run-id>.log` after its completion record is written, so readers should consume only `.log` files. A failed or partial record write aborts the run: the publish error is reported, the file is closed, and removal of the incomplete `.txt` file is attempted. Finalization failures before the rename use the same abort path. Remaining records of the failed run are rejected rather than retried. The next audit starts a new file once storage recovers, without a `Connection` change or restart; if the incomplete file could not be removed, the next start retries removal and fails until removal succeeds. Aborting a run does not remove completed `.log` files or admission files. Errors after the rename, such as permission or retention-cleanup failures, are still reported without discarding the completed run.
 +
-+	tests := []struct {
-+		name     string
-+		assigned []operations.Operation
-+		deps     func() *Dependencies
-+		wantErr  bool
+     **Note**: After the audit pod starts, verify that it contains two running containers.
+ 
+     ```shell
+```
+
+---
+
+### Incident Patch 2: `19ddeb3d` (2026-11-05)
+**Commit Message**: chore: bump postcss-selector-parser from 6.0.10 to 6.1.5 in /website (#4900)
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `website/yarn.lock` (modified, +3/-3)
+```diff
+@@ -6428,9 +6428,9 @@ postcss-reduce-transforms@^5.1.0:
+     postcss-value-parser "^4.2.0"
+ 
+ postcss-selector-parser@^6.0.2, postcss-selector-parser@^6.0.4, postcss-selector-parser@^6.0.5, postcss-selector-parser@^6.0.9:
+-  version "6.0.10"
+-  resolved "https://registry.yarnpkg.com/postcss-selector-parser/-/postcss-selector-parser-6.0.10.tgz#79b61e2c0d1bfc2602d549e11d0876256f8df88d"
+-  integrity sha512-IQ7TZdoaqbT+LCpShg46jnZVlhWD2w6iQYAcYXfHARZ7X1t/UGhhceQDs5X0cGqKvYlHNOuv7Oa1xmb0oQuA3w==
++  version "6.1.5"
++  resolved "https://registry.yarnpkg.com/postcss-selector-parser/-/postcss-selector-parser-6.1.5.tgz#20e988ce8eab87575d54824d9800236c5fd872ca"
++  integrity sha512-TEHFzb5KRDKaOgJ4TYE+0jyJtFbjLvkdVOu0fZ2b6MTWzoqZd4Le+61aEppWkvTlYePgOX4ATL1wsAIPMLTw6Q==
+   dependencies:
+     cssesc "^3.0.0"
+     util-deprecate "^1.0.2"
+```
+
+---
+
+### Incident Patch 3: `6bd45796` (2026-11-04)
+**Commit Message**: fix: distinguish disk audit controls from violation text (#4893)
+
+Signed-off-by: Jaydip Gabani <[REDACTED_EMAIL]>
+Co-authored-by: Copilot <[REDACTED_EMAIL]>
+
+**File**: `pkg/export/disk/connection_test.go` (modified, +102/-0)
+```diff
+@@ -2,7 +2,9 @@ package disk
+ 
+ import (
+ 	"context"
++	"encoding/json"
+ 	"fmt"
++	"io"
+ 	"os"
+ 	"path"
+ 	"slices"
+@@ -12,6 +14,7 @@ import (
+ 	"testing"
+ 	"time"
+ 
++	"github.com/google/go-cmp/cmp"
+ 	"github.com/open-policy-agent/gatekeeper/v3/pkg/export/util"
+ 	"k8s.io/apimachinery/pkg/util/wait"
+ 	"k8s.io/client-go/util/retry"
+@@ -999,6 +1002,105 @@ func TestPublish(t *testing.T) {
+ 	}
+ }
+ 
++func TestPublishAuditControlMessages(t *testing.T) {
++	for _, representation := range []struct {
++		name   string
++		encode func(t *testing.T, msg util.ExportMsg) interface{}
 +	}{
 +		{
-+			name:     "data sync operations with a complete plan",
-+			assigned: []operations.Operation{operations.Audit},
-+			deps:     dataSyncDeps,
-+		},
-+		{
-+			name:     "data sync operations without a process excluder",
-+			assigned: []operations.Operation{operations.Audit},
-+			deps: func() *Dependencies {
-+				deps := dataSyncDeps()
-+				deps.ProcessExcluder = nil
-+				return deps
-+			},
-+			wantErr: true,
-+		},
-+		{
-+			name:     "data sync operations without a cache manager",
-+			assigned: []operations.Operation{operations.Audit},
-+			deps: func() *Dependencies {
-+				deps := dataSyncDeps()
-+				deps.CacheMgr = nil
-+				return deps
-+			},
-+			wantErr: true,
-+		},
-+		{
-+			name:     "data sync operations without sync events",
-+			assigned: []operations.Operation{operations.Webhook},
-+			deps: func() *Dependencies {
-+				deps := dataSyncDeps()
-+				deps.SyncEventsCh = nil
-+				return deps
-+			},
-+			wantErr: true,
-+		},
-+		{
-+			name:     "data sync operations without a watch manager",
-+			assigned: []operations.Operation{operations.Webhook},
-+			deps: func() *Dependencies {
-+				deps := dataSyncDeps()
-+				deps.WatchManger = nil
-+				return deps
-+			},
-+			wantErr: true,
-+		},
-+		{
-+			name:     "mutation webhook keeps process exclusions without data sync",
-+			assigned: []operations.Operation{operations.MutationWebhook},
-+			deps: func() *Dependencies {
-+				return &Dependencies{ProcessExcluder: process.New()}
++			name: "value",
++			encode: func(_ *testing.T, msg util.ExportMsg) interface{} {
++				return msg
 +			},
 +		},
 +		{
-+			name:     "mutation webhook without a process excluder",
-+			assigned: []operations.Operation{operations.MutationWebhook},
-+			deps:     func() *Dependencies { return &Dependencies{} },
-+			wantErr:  true,
++			name: "pointer",
++			encode: func(_ *testing.T, msg util.ExportMsg) interface{} {
++				return &msg
++			},
 +		},
 +		{
-+			name:     "cache manager built for operations that do not sync data",
-+			assigned: []operations.Operation{operations.MutationWebhook},
-+			deps: func() *Dependencies {
-+				return &Dependencies{
-+					CacheMgr:        &cm.CacheManager{},
-+					ProcessExcluder: process.New(),
++			name: "raw JSON",
++			encode: func(t *testing.T, msg util.ExportMsg) interface{} {
++				t.Helper()
++				data, err := json.Marshal(msg)
++				if err != nil {
++					t.Fatalf("Marshal() error = %v", err)
 +				}
-+			},
-+			wantErr: true,
-+		},
-+		{
-+			// Mutation status syncs no data, but the Config controller still
-+			// registers for the readiness stats switch and needs somewhere to
-+			// put the exclusions it parses.
-+			name:     "mutation status needs only a process excluder",
-+			assigned: []operations.Operation{operations.MutationStatus},
-+			deps: func() *Dependencies {
-+				return &Dependencies{ProcessExcluder: process.New()}
++				return json.RawMessage(data)
 +			},
 +		},
-+		{
-+			name:     "mutation status without a process excluder",
-+			assigned: []operations.Operation{operations.MutationStatus},
-+			deps:     func() *Dependencies { return &Dependencies{} },
-+			wantErr:  true,
-+		},
-+	}
++	} {
++		t.Run(representation.name, func(t *testing.T) {
++			for _, tt := range []struct {
++				name    string
++				message string
++			}{
++				{name: "ordinary violation", message: "policy violation"},
++				{name: "start text violation", message: util.AuditStartedMsg},
++				{name: "completion text violation", message: util.AuditCompletedMsg},
++			} {
++				t.Run(tt.name, func(t *testing.T) {
++					writer := newTestWriter(closeAndRemoveFilesWithRetry)
++					outputPath := t.TempDir()
++					requireCreateConnection(t, writer, "conn1", diskConfig(outputPath, 3))
++					t.Cleanup(func() {
++						if err := writer.CloseConnection("conn1"); err != nil {
++							t.Errorf("CloseConnection() error = %v", err)
++						}
++					})
 +
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			restore, err := operations.SetForTest(tt.assigned...)
-+			if err != nil {
-+				t.Fatal(err)
-+			}
-+			t.Cleanup(restore)
++					messages := []util.ExportMsg{
++						{ID: "audit1", Message: util.AuditStartedMsg},
++						{ID: "audit1", EventType: "violation_audited", Message: "earlier violation", ResourceName: "earlier-pod"},
++						{ID: "audit1", EventType: "violation_audited", Message: tt.message, ResourceName: "tested-pod"},
++						{ID: "audit1", EventType: "violation_audited", Message: "later violation", ResourceName: "later-pod"},
++						{ID: "audit1", Message: util.AuditCompletedMsg},
++					}
++					readyFile := path.Join(outputPath, "topic1", "audit1.log")
++					for i, msg := range messages {
++						if err := writer.Publish(context.Background(), "conn1", representation.encode(t, msg), "topic1"); err != nil {
++							t.Errorf("Publish(record %d) error = %v", i, err)
++						}
++						if i < len(messages)-1 {
++							if _, err := os.Stat(readyFile); !os.IsNotExist(err) {
++								t.Errorf("ready file must not exist before audit completion, after record %d: %v", i, err)
++							}
++						}
++					}
++					files, err := listFiles(path.Join(outputPath, "topic1"))
++					if err != nil {
++						t.Fatalf("listFiles() error = %v", err)
++					}
++					if !slices.Equal(files, []string{readyFile}) {
++						t.Errorf("expected only completed audit file %s, got %v", readyFile, files)
++					}
 +
-+			err = tt.deps().Validate()
-+			if tt.wantErr && err == nil {
-+				t.Fatal("Validate() = nil, want error")
-+			}
-+			if !tt.wantErr && err != nil {
-+				t.Fatalf("Validate() = %v, want nil", err)
++					file, err := os.Open(readyFile)
++					if err != nil {
++						t.Fatalf("Open() error = %v", err)
++					}
++					defer file.Close()
++					var got []util.ExportMsg
++					decoder := json.NewDecoder(file)
++					for {
++						var msg util.ExportMsg
++						if err := decoder.Decode(&msg); err == io.EOF {
++							break
++						} else if err != nil {
++							t.Fatalf("Decode() error = %v", err)
++						}
++						got = append(got, msg)
++					}
++					if diff := cmp.Diff(messages, got); diff != "" {
++						t.Errorf("decoded audit records differ (-want +got):\n%s", diff)
++					}
++				})
 +			}
 +		})
 +	}
 +}
++
+ func TestPublishHonorsCanceledContext(t *testing.T) {
+ 	writer := &Writer{
+ 		openConnections: make(map[string]Connection),
 ```
 
-**File**: `pkg/operations/operations.go` (modified, +1/-3)
+**File**: `pkg/export/disk/disk.go` (modified, +2/-2)
 ```diff
-@@ -150,9 +150,7 @@ func AssignedStringList() []string {
- 	return operations.assignedStringList
- }
+@@ -375,7 +375,7 @@ func (r *Writer) Publish(ctx context.Context, connectionName string, data interf
+ 		}
+ 	}()
  
--// HasValidationOperations returns `true` if there
--// are any operations that would require a constraint or template controller
--// or a sync controller.
-+// HasValidationOperations reports whether audit or validating-webhook operations are assigned.
- func HasValidationOperations() bool {
- 	return IsAssigned(Audit) || IsAssigned(Webhook)
- }
+-	if violation.Message == util.AuditStartedMsg {
++	if violation.EventType == "" && violation.Message == util.AuditStartedMsg {
+ 		err := conn.handleAuditStart(violation.ID, topic)
+ 		if err != nil {
+ 			return fmt.Errorf("error handling audit start: %w", err)
+@@ -397,7 +397,7 @@ func (r *Writer) Publish(ctx context.Context, connectionName string, data interf
+ 		return fmt.Errorf("error writing message to disk: %w", err)
+ 	}
+ 
+-	if violation.Message == util.AuditCompletedMsg {
++	if violation.EventType == "" && violation.Message == util.AuditCompletedMsg {
+ 		connChanged = true
+ 		if err := conn.handleAuditEnd(topic); err != nil {
+ 			return fmt.Errorf("error handling audit end: %w", err)
+```
+
+**File**: `website/docs/export.md` (modified, +2/-0)
+```diff
+@@ -412,6 +412,8 @@ This quick start enables the demonstration admission reader. It logs completed a
+ 
+ ### Quick start with exporting violations on node storage using Disk driver via emptyDir
+ 
++The disk driver writes each audit run as newline-delimited JSON. Audit control records contain the audit `id` and `message` (`audit is started` or `audit is completed`) and omit `eventType`. These controls open the run's `.txt` file and finalize it as a ready `.log` file. Audit violation records use `eventType: violation_audited`; their policy-supplied `message` is always data, even when it matches either control message.
++
+ #### Configure Gatekeeper with Export enabled to Disk
+ 
+ 1. Deploy Gatekeeper with disk export configurations.
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4882** (2026-10-21): chore: bump follow-redirects from 1.16.0 to 1.16.1 in /website (@dependabot[bot])
-- **PR #4881** (2026-10-21): fix: prevent cache manager hot-loop when synced GVK cannot be listed (@wangyusheng1985)
-- **PR #4879** (2026-10-21): chore: bump the all group across 1 directory with 9 updates (@dependabot[bot])
-- **PR #4877** (closed): chore: bump golang from `2f84bc9` to `4766793` in /build/tooling (@dependabot[bot])
-- **PR #4873** (2026-10-20): fix: reject path integers that overflow int64 and wrap to a positive value (@ogulcanaydogan)
-- **PR #4869** (closed): chore: bump the all group with 8 updates (@dependabot[bot])
+- **PR #4905** (2026-11-05): ci: update kubernetes test versions to 1.35-1.37 (@abhisheksheth28)
+- **PR #4904** (2026-11-05): chore: bump node-forge from 1.4.0 to 1.4.3 in /website (@dependabot[bot])
+- **PR #4903** (2026-11-05): chore: bump joi from 17.13.8 to 17.13.9 in /website (@dependabot[bot])
+- **PR #4900** (2026-11-05): chore: bump postcss-selector-parser from 6.0.10 to 6.1.5 in /website (@dependabot[bot])
+- **PR #4899** (2026-11-05): chore: bump go.yaml.in/yaml/v3 from 3.0.5 to 3.0.6 (@dependabot[bot])
+- **PR #4897** (2026-11-05): chore: bump kubectl from v1.37.1 to v1.37.2 (@dependabot[bot])
 
 ---
 
@@ -2027,97 +1757,57 @@ Co-authored-by: Copilot <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. separate Config process exclusions from validation data sync (#4784)
+## X. abort incomplete disk audit runs after write failures (#4894)
 
 **RULE**:
-When implementing operations in `main.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in open-policy-agent/gatekeeper. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/export/disk/audit_file.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in open-policy-agent/gatekeeper. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e492e24c`: separate Config process exclusions from validation data sync (#4784). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ea96f392`: abort incomplete disk audit runs after write failures (#4894). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `main.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/export/disk/audit_file.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	wm, err := newWatchManager(dc)
-	if wm != nil {
-		if err := mgr.Add(wm); err != nil {
-			setupLog.Error(err, "unable to register watch manager with the manager")
-			return err
+	if err := conn.removeAbortedAuditFile(); err != nil {
+		return err
+	}
+// abortAuditRun discards the active run after a failed write or finalization so
+// incomplete output is never published and later records cannot reach it. A run
+// that was already published has no remaining run file and is left unchanged.
+func (conn *Connection) abortAuditRun(runFile string) error {
+	var closeErr error
+	if conn.File != nil {
+		// Close releases the descriptor and its lock even when it reports an
+		// error; os.ErrClosed means an earlier failed close already released it.
+		if err := conn.File.Close(); err != nil && !errors.Is(err, os.ErrClosed) {
+			closeErr = fmt.Errorf("closing aborted audit file: %w", err)
 		}
-	// The cache manager and everything hanging off it only exist for operations
-	// that sync referential data for validation. Other operations read process
-	// exclusions from the Config resource without any of this.
-	var (
-		events chan event.GenericEvent
-		cm     *cachemanager.CacheManager
-	)
-	if operations.HasValidationOperations() {
-		// Events ch will be used to receive events from dynamic watches registered
-		// via the registrar below.
-		events = make(chan event.GenericEvent, 1024)
-		reg, err := wm.NewRegistrar(
-			cachemanager.RegistrarName,
-			events)
-		if err != nil {
-			setupLog.Error(err, "unable to set up watch registrar for cache manager")
-			return err
-		}
-		cmConfig := &cachemanager.Config{
-			SyncMetricsCache: syncutil.NewMetricsCache(),
-			Tracker:          tracker,
-			ProcessExcluder:  processExcluder,
-			Registrar:        reg,
-			Reader:           mgr.GetCache(),
-		}
-		if client != nil {
-			cmConfig.CfClient = client
-		}
-		cm, err = cachemanager.NewCacheManager(cmConfig)
-		if err != nil
+		conn.File = nil
+	}
+	conn.currentAuditRun = ""
+	conn.abortedAuditFile = runFile
+	return errors.Join(closeErr, conn.removeAbortedAuditFile())
+}
+
+// removeAbortedAuditFile is retried before each run starts, so a Connection
+// owns at most one unremovable aborted file.
+func (conn *Connection) removeAbortedAuditFile() error {
+	if conn.abortedAuditFile == "" {
+		return nil
+	}
+	err := os.Remove(conn.abortedAuditFile)
+	if err != nil && !os.IsNotExist(err) {
+		return fmt.Errorf("removing abor
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	wm, err := watch.New(dc)
-	if err := mgr.Add(wm); err != nil {
-		setupLog.Error(err, "unable to register watch manager with the manager")
-		return err
-	// Events ch will be used to receive events from dynamic watches registered
-	// via the registrar below.
-	events := make(chan event.GenericEvent, 1024)
-	reg, err := wm.NewRegistrar(
-		cachemanager.RegistrarName,
-		events)
-	if err != nil {
-		setupLog.Error(err, "unable to set up watch registrar for cache manager")
-		return err
-	}
-
-	syncMetricsCache := syncutil.NewMetricsCache()
-	cmConfig := &cachemanager.Config{
-		SyncMetricsCache: syncMetricsCache,
-		Tracker:          tracker,
-		ProcessExcluder:  processExcluder,
-		Registrar:        reg,
-		Reader:           mgr.GetCache(),
-	}
-	if client != nil {
-		cmConfig.CfClient = client
-	}
-	cm, err := cachemanager.NewCacheManager(cmConfig)
-	if err != nil {
-		setupLog.Error(err, "unable to create cache manager")
-		return err
-	}
-	err = mgr.Add(pruner.NewExpectationsPruner(cm, tracker))
-	if err != nil {
-		setupLog.Error(err, "adding expectations pruner to manager")
-		return err
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e492e24c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ea96f392` are properly handled with clean fallback behavior.

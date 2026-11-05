@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/restatedev-restate-learnings.md`  
 > **Source**: github ([https://github.com/restatedev/restate](https://github.com/restatedev/restate))  
-> **Source Version**: `b074c52f`  
+> **Source Version**: `9886a813`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T19:15:26.004Z  
+> **Timestamp**: 2026-11-05T13:27:02.709Z  
 > **Learning ID**: `learn-github-restatedev-restate`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/restatedev-restate-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/restatedev/restate](https://github.com/restatedev/restate))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T19:15:24.476Z  
+> **Harvest Timestamp**: 2026-11-05T13:27:02.571Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Restate is the platform for building resilient applications that tolerate all infrastructure faults w/o the need for a PhD.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 4657 stars
+- **Stars / Engagement**: 4665 stars
 
 ---
 
@@ -1634,443 +1634,111 @@ async fn list(env: &CliEnv, opts: &List) -> Result<()> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b074c52f` (2026-11-03)
-**Commit Message**: Service protocol v8 (#5520)
+### Incident Patch 1: `49053364` (2026-11-02)
+**Commit Message**: [release] Document the hotfix release process
 
-* Service protocol v8: new messages, usual wiring
+A hotfix of vX.Y.Z is the SemVer pre-release X.Y.Z-hotfix.N, built from a
+hotfix/X.Y.Z-hotfix.N branch cut from the release tag. Pushing the tag
+vX.Y.Z-hotfix.N publishes it through release.yml like a release
+candidate; an image-only hotfix is a manual Docker build of the branch
+without a tag. The pre-release label keeps hotfixes off "latest" in every
+channel, while still passing the X.Y.Z-dev feature gates.
 
-* Service protocol v8: implementation of the new ephemeral commands/notifications
+Also list the CI trigger for hotfix/* branches.
 
-* Service protocol v8: protocol dissector
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-* Service protocol v8: ci smoke test
+[release] Shorten the hotfix runbook
 
-* fix merge conflict
+Keep the general process and leave out details that were specific to the
+v1.8.1-hotfix.2 release.
 
-* Drop stale indexes_v1 experimental flag and fix protocol v8 rollback bound
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `.github/workflows/ci.yml` (modified, +17/-0)
+**File**: `docs/dev/README.md` (modified, +2/-0)
 ```diff
-@@ -276,6 +276,23 @@ jobs:
-         RESTATE_experimental_enable_protocol_v7=true
-       testArtifactOutput: sdk-typescript-protocol-v7-test-report
+@@ -16,4 +16,6 @@ This directory contains documentation relevant for Restate developers.
  
-+  sdk-typescript-protocol-v8:
-+    name: Run SDK-Typescript integration tests with Protocol V8
-+    permissions:
-+      contents: read
-+      issues: read
-+      checks: write
-+      pull-requests: write
-+      actions: read
-+    secrets: inherit
-+    needs: docker
-+    uses: restatedev/sdk-typescript/.github/workflows/integration.yaml@main
-+    with:
-+      restateCommit: ${{ github.event.pull_request.head.sha || github.sha }}
-+      envVars: |
-+        RESTATE_experimental_enable_protocol_v8=true
-+      testArtifactOutput: sdk-typescript-protocol-v8-test-report
+ [release-testing.md](release-testing.md) contains the release testing checklist and process for testing before a major/minor release.
+ 
++[hotfix.md](hotfix.md) explains how to release a hotfix of a released version.
 +
-   sdk-typescript-bilrost-schema:
-     name: Run SDK-Typescript integration tests with Bilrost schema encoding
-     permissions:
+ [bilrost-migration-guidelines](bilrost-migration-guidelines.md) guidelines on how to create bilrost messages and how to migrate current serde messages to bilrost without breaking compatibility
+\ No newline at end of file
 ```
 
-**File**: `Cargo.lock` (modified, +1/-0)
+**File**: `docs/dev/build-and-ci.md` (modified, +1/-1)
 ```diff
-@@ -9285,6 +9285,7 @@ name = "restate-worker-api"
- version = "1.8.2-dev"
- dependencies = [
-  "bytes",
-+ "bytestring",
-  "codederror",
-  "derive_more",
-  "futures",
-```
-
-**File**: `crates/invoker-impl/src/error.rs` (modified, +8/-0)
-```diff
-@@ -91,6 +91,14 @@ pub(crate) enum InvokerError {
-     #[error("malformed ProposeRunCompletionMessage, missing result field")]
-     #[code(restate_errors::RT0012)]
-     MalformedProposeRunCompletion,
-+    #[error("malformed GetStateEphemeralCommandMessage, the key is not a valid UTF-8 string: {0}")]
-+    #[code(restate_errors::RT0012)]
-+    MalformedGetStateEphemeralCommand(#[source] std::str::Utf8Error),
-+    #[error(
-+        "cannot process GetStateEphemeralCommandMessage, this service type doesn't have state access"
-+    )]
-+    #[code(restate_errors::RT0012)]
-+    GetStateEphemeralCommandWithoutStateAccess,
+@@ -112,7 +112,7 @@ The dev-tools image is versioned and pinned in consuming workflows. When updatin
  
-     #[error("error when trying to read the journal: {0}")]
-     #[code(restate_errors::RT0006)]
+ ### Main CI Pipeline (`ci.yml`)
+ 
+-Triggered on: PRs, pushes to `main` and `release/*` branches, and as part of releases. Existing `release-*` maintenance branches remain supported during the naming transition.
++Triggered on: PRs, pushes to `main`, `release/*`, and `hotfix/*` branches, and as part of releases. Existing `release-*` maintenance branches remain supported during the naming transition.
+ 
+ `ci.yml` is maintained directly. Cargo-dist generates `release.yml`, which calls `ci.yml` through the `local-artifacts-jobs = ["./ci", ...]` configuration in `dist-workspace.toml`.
+ 
 ```
 
-**File**: `crates/invoker-impl/src/invocation_task/mod.rs` (modified, +19/-7)
+**File**: `docs/dev/hotfix.md` (added, +34/-0)
 ```diff
-@@ -87,6 +87,10 @@ const SERVICE_PROTOCOL_VERSION_V6: HeaderValue =
- const SERVICE_PROTOCOL_VERSION_V7: HeaderValue =
-     HeaderValue::from_static("application/vnd.restate.invocation.v7");
- 
-+#[allow(clippy::declare_interior_mutable_const)]
-+const SERVICE_PROTOCOL_VERSION_V8: HeaderValue =
-+    HeaderValue::from_static("application/vnd.restate.invocation.v8");
+@@ -0,0 +1,34 @@
++# Hotfix Releases
 +
- #[allow(clippy::declare_interior_mutable_const)]
- const X_RESTATE_SERVER: HeaderName = HeaderName::from_static("x-restate-server");
- 
-@@ -264,6 +268,8 @@ pub(super) struct InvocationTask<DMR> {
- 
-     // throttling
-     action_token_bucket: Option<TokenBucket>,
++Prefer a regular patch release that follows the [release process](release.md). Use a hotfix when users need fixes on top of a released version `vX.Y.Z` before the next patch release is available.
 +
-+    allow_protocol_v8: bool,
- }
- 
- /// This is needed to split the run_internal in multiple loop functions and have shortcircuiting.
-@@ -340,6 +346,7 @@ where
-         limit_key: LimitKey<ReString>,
-         idempotency_key: Option<ReString>,
-         max_awaited_future_depth: usize,
-+        allow_protocol_v8: bool,
-     ) -> Self {
-         Self {
-             client,
-@@ -360,6 +367,7 @@ where
-             limit_key,
-             idempotency_key,
-             max_awaited_future_depth,
-+            allow_protocol_v8,
-         }
-     }
- 
-@@ -487,13 +495,16 @@ where
-                 );
- 
-                 let chosen_service_protocol_version = shortcircuit!(
--                    ServiceProtocolVersion::pick(&deployment.supported_protocol_versions)
--                        .ok_or_else(|| {
--                            InvokerError::IncompatibleServiceEndpoint(
--                                deployment.id,
--                                deployment.supported_protocol_versions.clone(),
--                            )
--                        })
-+                    ServiceProtocolVersion::pick(
-+                        &deployment.supported_protocol_versions,
-+                        self.allow_protocol_v8
-+                    )
-+                    .ok_or_else(|| {
-+                        InvokerError::IncompatibleServiceEndpoint(
-+                            deployment.id,
-+                            deployment.supported_protocol_versions.clone(),
-+                        )
-+                    })
-                 );
- 
-                 (
-@@ -589,6 +600,7 @@ fn service_protocol_version_to_header_value(
-         ServiceProtocolVersion::V5 => SERVICE_PROTOCOL_VERSION_V5,
-         ServiceProtocolVersion::V6 => SERVICE_PROTOCOL_VERSION_V6,
-         ServiceProtocolVersion::V7 => SERVICE_PROTOCOL_VERSION_V7,
-+        ServiceProtocolVersion::V8 => SERVICE_PROTOCOL_VERSION_V8,
-     }
- }
- 
-```
-
-**File**: `crates/invoker-impl/src/invocation_task/service_protocol_runner_v4.rs` (modified, +87/-16)
-```diff
-@@ -309,7 +309,7 @@ where
-         state_read: Option<StatePreloadPolicy>,
-         mut http_stream_tx: InvokerBodySender,
-         decoder_stream: &mut S,
--        invocation_reader: IR,
-+        mut invocation_reader: IR,
-         outbound_budget: &mut LocalMemoryPool,
-         attempt_span: &mut ServiceSpan,
-     ) -> TerminalLoopState<()>
-@@ -390,7 +390,7 @@ where
-                 self.bidi_stream_loop(
-                     http_stream_tx,
-                     decoder_stream,
--                    invocation_reader,
-+                    &mut invocation_reader,
-                     // The bidi stream loop will never read from a journal v1 as it will be migrated
-                     // by the time the bidi stream loop needs to read notifications from it.
-                     // todo remove once we drop support for journal v1
-@@ -413,8 +413,13 @@ where
-         // We don't have the invoker_rx, so we simply consume the response
-         trace!("Sender side of the request has been dropped, now processing the response");
- 
--        self.response_stream_loop(decoder_stream, attempt_span)
--            .await
-+        self.response_stream_loop(
-+            decoder_stream,
-+            &mut invocation_reader,
-+            outbound_budget,
-+            attempt_span,
-+        )
-+        .await
-     }
- 
-     fn prepare_request(
-@@ -588,7 +593,7 @@ where
-         &mut self,
-         mut http_stream_tx: InvokerBodySender,
-         http_stream_rx: &mut S,
--        mut invocation_reader: IR,
-+        invocation_reader: &mut IR,
-         journal_kind: JournalKind,
-         replayed_journal_length: EntryIndex,
-         outbound_budget: &mut LocalMemoryPool,
-@@ -671,7 +676,14 @@ where
-                         }
-                         Some(DecoderStreamItem::Parts(parts)) => shortcircuit!(self.handle_response_headers(parts)),
-                         Some(DecoderStreamItem::Message(message_header, message)) => {
--                            shortcircuit!(self.handle_message(message_header, message, attempt_span));
-+                            shortcircuit!(self.handle_message(
-+                                message_header,
-+                                message,
-+                                Some(&mut http_stream_tx),
-+                                invocation_reader,
-+                                outbound_budget,
-+                                attempt_span,
-+                            ).await);
-                         }
-                     }
- 
-@@ -690,13 +702,16 @@ where
-         }
-     }
- 
--    async fn response_stream_loop<S>(
-+    async fn response_stream_loop<S, IR>(
-         &mut self,
-         http_stream_rx: &mut S,
-+        invocation_reader: &mut IR,
-+        outbound_budget: &mut LocalMemoryPool,
-         attempt_span: &mut ServiceSpan,
-     ) -> TerminalLoopState<()>
-     where
-         S: Stream<Item = Result<DecoderStreamItem, InvokerError>> + Unpin,
-+        IR: InvocationReader,
-     {
-         loop {
-             tokio::select! {
-@@ -710,7 +725,14 @@ where
-                         }
-                         Some(DecoderStreamItem::Parts(parts)) => shortcircuit!(self.handle_response_headers(parts)),
-                         Some(DecoderStreamItem::Message(message_header, message)) => {
--                            shortcircuit!(self.handle_message(message_header, message, attempt_span));
-+                            shortcircuit!(self.handle_message(
-+                                message_header,
-+                                message,
-+                                None,
-+                                invocation_reader,
-+                                outbound_budget,
-+                                attempt_span,
-+                            ).await);
-                         }
-                     }
-                 },
-@@ -968,10 +990,14 @@ where
-         self.command_index += 1;
-     }
- 
--    fn handle_message(
-+    /// `http_stream_tx` is `None` once the request stream is closed.
-+    async fn handle_message<IR: InvocationReader>(
-         &mut self,
-         mh: MessageHeader,
-         message: Message,
-+        http_stream_tx: Option<&mut InvokerBodySender>,
-+        invocation_reader: &mut IR,
-+        outbound_budget: &mut LocalMemoryPool,
-         attempt_span: &mut ServiceSpan,
-     ) -> TerminalLoopState<()> {
-         trace!(
-@@ -984,12 +1010,55 @@ where
-             Message::Start { .. } => {
-                 TerminalLoopState::Failed(InvokerError::UnexpectedMessageV4(MessageType::Start))
-             }
--            Message::CommandAck(_) => TerminalLoopState::Failed(InvokerError::UnexpectedMessageV4(
--                MessageType::CommandAck,
--            )),
--            Message::ProposeRunCompletionAck(_) => TerminalLoopState::Failed(
--                InvokerError::UnexpectedMessageV4(MessageType::ProposeRunCompletionAck),
--            ),
-+            // These we are only supposed to send from the runtime
-+            m @ Message::CommandAck(_)
-+            | m @ Me
-```
-
-**File**: `crates/invoker-impl/src/lib.rs` (modified, +6/-0)
-```diff
-@@ -146,6 +146,7 @@ struct DefaultInvocationTaskRunner<Schemas> {
-     client: ServiceClient,
-     schemas: Live<Schemas>,
-     action_token_bucket: Option<TokenBucket>,
-+    allow_protocol_v8: bool,
- }
- 
- impl<IR, Schemas> InvocationTaskRunner<IR> for DefaultInvocationTaskRunner<Schemas>
-@@ -189,6 +190,7 @@ where
-                 limit_key,
-                 idempotency_key,
-                 opts.max_awaited_future_depth,
-+                self.allow_protocol_v8,
-             )
-             .run(storage_reader, budget),
-         )
-@@ -273,6 +275,10 @@ impl<StorageReader, Schemas> Service<StorageReader, Schemas> {
-                     client,
-                     schemas: Live::clone(&schemas),
-                     action_token_bucket,
-+                    allow_protocol_v8: Configuration::pinned()
-+                        .common
-+                        .experimental
-+                        .is_protocol_v8_enabled(),
-                 },
-                 schemas,
-                 invocation_tasks: Default::default(),
-```
-
-**File**: `crates/invoker-impl/src/test_util.rs` (modified, +9/-0)
-```diff
-@@ -57,6 +57,15 @@ impl InvocationReader for EmptyStorageReader {
-     ) -> Result<Option<(JournalEntry, LocalMemoryLease)>, Infallible> {
-         Ok(None)
-     }
++A hotfix is released as the SemVer pre-release `X.Y.Z-hotfix.N`, so it never becomes the latest release. Don't use `X.Y.Z+hotfix.N`: npm and Docker can't publish build metadata as a separate version, and the release tooling would treat the hotfix as a stable release. As a pre-release, a hotfix still passes the `X.Y.Z-dev` feature gates, so it can enable every feature of `X.Y.Z`.
 +
-+    async fn read_state_entry_budgeted(
-+        &mut self,
-+        _service_id: &ServiceId,
-+        _key: &bytestring::ByteString,
-+        _budget: &mut LocalMemoryPool,
-+    ) -> Result<Option<(Bytes, LocalMemoryLease)>, Infallible> {
-+        Ok(None)
-+    }
- }
- 
- pub struct EmptyStorageReaderTransaction;
-```
-
-**File**: `crates/service-protocol-v4/src/lib.rs` (modified, +11/-3)
-```diff
-@@ -35,6 +35,8 @@ pub mod proto {
-         CommandAckMessage,
-         ProposeRunCompletionMessage,
-         ProposeRunCompletionAckMessage,
-+        GetStateEphemeralCommandMessage,
-+        GetStateEphemeralNotificationMessage,
-         CallCommandMessage,
-         OneWayCallCommandMessage,
-         AwaitingOnMessage,
-@@ -523,7 +525,9 @@ mod dto {
-                     let suspension_v6 = self.as_suspension_v6();
-                     prost::Message::encode(&suspension_v6, buf)?;
-                 }
--                ServiceProtocolVersion::V7 => prost::Message::encode(self, buf)?,
-+                ServiceProtocolVersion::V7 | ServiceProtocolVersion::V8 => {
-+                    prost::Message::encode(self, buf)?
-+                }
-             };
- 
-             Ok(())
-@@ -551,7 +555,9 @@ mod dto {
-                     let suspension_v6 = self.as_suspension_v6();
-                     prost::Message::encoded_len(&suspension_v6)
-                 }
--                ServiceProtocolVersion::V7 => prost::Message::encoded_len(self),
-+                ServiceProtocolVersion::V7 | ServiceProtocolVersion::V8 => {
-+                    prost::Message::encoded_len(self)
-+                }
-             }
-         }
-     }
-@@ -576,7 +582,9 @@ mod dto {
-                 | ServiceProtocolVersion::V4
-                 | ServiceProtocolVersion::V5
-                 | ServiceProtocolVersion::V6 => SuspensionMessageV6::decode(buf)?.into(),
--                ServiceProtocolVersion::V7 => <SuspensionMessage as prost::Message>::decode(buf)?,
-+                ServiceProtocolVersion::V7 | ServiceProtocolVersion::V8 => {
-+                    <SuspensionMessage as prost::Message>::decode(buf)?
-+                }
-             };
- 
-             Ok(msg)
-```
-
----
-
-### Incident Patch 2: `0149af09` (2026-11-03)
-**Commit Message**: [clock] Keep the cached wall clock on its own cache line
-
-`WallClock::recent_ms` and `recent_us` are read on hot paths from every
-core, such as log-server requests and the vqueues scheduler. The cached
-timestamp was a plain static, so the linker could place a frequently
-written static on the same cache line and turn those reads into cache
-misses. It is now `CachePadded`, which costs 128 bytes.
-
-**File**: `Cargo.lock` (modified, +1/-0)
-```diff
-@@ -7746,6 +7746,7 @@ dependencies = [
-  "rand 0.10.2",
-  "restate-clock",
-  "restate-platform",
-+ "restate-util-cache-padded",
-  "restate-workspace-hack",
-  "schemars 1.2.2",
-  "serde",
-```
-
-**File**: `crates/clock/Cargo.toml` (modified, +1/-0)
-```diff
-@@ -16,6 +16,7 @@ test-util = []
- restate-workspace-hack = { workspace = true }
- 
- restate-platform = { workspace = true }
-+restate-util-cache-padded = { workspace = true }
- 
- bilrost = { workspace = true }
- jiff = { workspace = true, optional = true }
-```
-
-**File**: `crates/clock/src/wall_clock.rs` (modified, +7/-1)
-```diff
-@@ -12,6 +12,8 @@ use std::sync::atomic::AtomicU64;
- use std::sync::atomic::Ordering;
- use std::time::SystemTime;
- 
-+use restate_util_cache_padded::CachePadded;
++## Naming
 +
- use crate::time::MillisSinceEpoch;
++| Item | Name |
++| --- | --- |
++| Branch | `hotfix/X.Y.Z-hotfix.N` |
++| Cargo and Helm version | `X.Y.Z-hotfix.N` |
++| Git tag | `vX.Y.Z-hotfix.N` |
++
++Use the next unused `N` for every hotfix of the same release.
++
++## Releasing a hotfix
++
++1. Create `hotfix/X.Y.Z-hotfix.N` from `vX.Y.Z` and cherry-pick the fixes with `git cherry-pick -x`.
++1. Set the version to `X.Y.Z-hotfix.N` in [/Cargo.toml](/Cargo.toml) and [charts/restate-helm/Chart.yaml](/charts/restate-helm/Chart.yaml), run `cargo check` to update [Cargo.lock](/Cargo.lock), and commit.
++1. Push the branch. CI runs on the push.
++1. Tag the tested commit as `vX.Y.Z-hotfix.N` and push the tag. The [release.yml](/.github/workflows/release.yml) workflow publishes the hotfix like a release candidate: a GitHub pre-release with binaries, Docker images, npm packages (dist-tag `next`), and the Helm chart. Homebrew is skipped.
++1. Verify that the artifacts are available and add the list of fixes to the description of the GitHub release.
++1. Include the fixes in the next regular patch release.
++
++## Image-only hotfix
++
++To ship only a GHCR image, prepare the branch the same way but don't push a tag, since any tag containing `X.Y.Z` starts the full release. Instead, run the `Build Docker image` workflow on the branch:
++
++```sh
++gh workflow run docker.yml --repo restatedev/restate --ref hotfix/X.Y.Z-hotfix.N
++```
++
++The image is pushed as `ghcr.io/restatedev/restate:hotfix-X.Y.Z-hotfix.N`. Give users its digest and keep the branch, which is the only reference to the image's source.
+```
+
+**File**: `docs/dev/release.md` (modified, +2/-0)
+```diff
+@@ -24,6 +24,8 @@ Runtime and SDKs follow independent artifact versioning. Restate server and SDK
  
- use super::Clock;
-@@ -26,7 +28,11 @@ use super::Clock;
- ///
- /// The server's `main()` function starts the upkeep thread as early as possible to remove
- /// the possibility where this could occur.
--static RECENT_UNIX_TIMESTAMP_US: AtomicU64 = const { AtomicU64::new(0) };
-+///
-+/// Kept on its own cache line: hot paths on every core read it, and a frequently written
-+/// static placed next to it by the linker would turn those reads into cache misses.
-+static RECENT_UNIX_TIMESTAMP_US: CachePadded<AtomicU64> =
-+    const { CachePadded::new(AtomicU64::new(0)) };
+ Use `release/X.Y` for release branches across repositories (for example, `release/1.8`). Keep patch and release-candidate versions in tags.
  
- /// Production implementation of [`Clock`] backed by system time.
- ///
++When users need fixes on top of a released version before the next patch release, release a hotfix `X.Y.Z-hotfix.N` from a `hotfix/X.Y.Z-hotfix.N` branch, following the [hotfix process](hotfix.md).
++
+ ## Pre-release
+ 
+ Before releasing, make sure all the issues tagged with release-blocker have either been solved, or PRs are ready to solve them:
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5739** (2026-11-03): [clock] Keep the cached wall clock on its own cache line (@AhmedSoliman)
-- **PR #5738** (2026-11-03): [futures-util] Keep the monotonic token counter on its own cache line (@AhmedSoliman)
-- **PR #5734** (2026-11-03): [futures-util] Never wrap or repeat monotonic tokens (@AhmedSoliman)
-- **PR #5733** (2026-11-03): [util] Add restate-util-cache-padded and use it in Bifrost (@AhmedSoliman)
-- **PR #5731** (2026-11-03): [Bifrost] Hotfix trim-point panic on the service-protocol-v8-stats build (@pcholakov)
-- **PR #5730** (2026-11-02): [Config] Rename storage-lifecycle-threads to storage-lifecycle-bg-threads (@AhmedSoliman)
+- **PR #5763** (2026-11-05): Enable serde_json preserve_order explicitly (@AhmedSoliman)
+- **PR #5762** (2026-11-05): Bump bilrost to 0.1016.3 (@AhmedSoliman)
+- **PR #5760** (2026-11-05): Bump networking and TLS dependencies (@AhmedSoliman)
+- **PR #5759** (2026-11-05): Bump Arrow to 59.3.2 and DataFusion to 55.2.0 (@AhmedSoliman)
+- **PR #5757** (closed): Enable serde_json preserve_order explicitly (@AhmedSoliman)
+- **PR #5756** (2026-11-05): Bump zstd 0.13 to 0.13.4, drop RUSTSEC-2026-0391 ignore (@AhmedSoliman)
 
 ---
 
@@ -2090,36 +1758,21 @@ misses. It is now `CachePadded`, which costs 128 bytes.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Service protocol v8 (#5520)
+## X. [release] Document the hotfix release process
 
 **RULE**:
-When implementing operations in `.github/workflows/ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in restatedev/restate. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/dev/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in restatedev/restate. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b074c52f`: Service protocol v8 (#5520). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `49053364`: [release] Document the hotfix release process. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/dev/README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-  sdk-typescript-protocol-v8:
-    name: Run SDK-Typescript integration tests with Protocol V8
-    permissions:
-      contents: read
-      issues: read
-      checks: write
-      pull-requests: write
-      actions: read
-    secrets: inherit
-    needs: docker
-    uses: restatedev/sdk-typescript/.github/workflows/integration.yaml@main
-    with:
-      restateCommit: ${{ github.event.pull_request.head.sha || github.sha }}
-      envVars: |
-        RESTATE_experimental_enable_protocol_v8=true
-      testArtifactOutput: sdk-typescript-protocol-v8-test-report
+[hotfix.md](hotfix.md) explains how to release a hotfix of a released version.
 
 ```
 
@@ -2130,4 +1783,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b074c52f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `49053364` are properly handled with clean fallback behavior.

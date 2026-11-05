@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md`  
 > **Source**: github ([https://github.com/PeerDB-io/peerdb](https://github.com/PeerDB-io/peerdb))  
-> **Source Version**: `bbd630ae`  
+> **Source Version**: `8a3660f9`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T20:39:32.924Z  
+> **Timestamp**: 2026-11-05T10:43:46.460Z  
 > **Learning ID**: `learn-github-peerdb-io-peerdb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/PeerDB-io/peerdb](https://github.com/PeerDB-io/peerdb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T20:39:01.746Z  
+> **Harvest Timestamp**: 2026-11-05T10:43:46.452Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Fast, Simple and a cost effective tool to replicate data from Postgres to Data Warehouses, Queues and Storage
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 3314 stars
+- **Stars / Engagement**: 3315 stars
 
 ---
 
@@ -1861,328 +1861,413 @@ func getChainedRoleSessionName() string {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `bbd630ae` (2026-11-04)
-**Commit Message**: docs: add tricky-areas.md (#5013)
+### Incident Patch 1: `8a3660f9` (2026-11-04)
+**Commit Message**: classify ClickHouse Avro Date out-of-range as destination modified (#5021)
 
-Adds `docs/tricky-areas.md`: a short map of the parts of the codebase
-that need extra care in review.
-Each area has why it is tricky and what to watch for in a PR.
+### Error (sanitized)
 
-Two areas to start:
+Postgres to ClickHouse initial load fails when ClickHouse reads a
+pre-1970 date into a `Date` column. Today it emits `errorClass=OTHER`,
+`errorCode=321`.
 
-- Mirror config vs workflow state: `CDCFlowWorkflow` carries a
-creation-time `cfg` and a live `state`, signals update only the state,
-and code reads either copy.
-- Per-mirror behaviour: internal versions, destination flags and dynamic
-settings have different lifetimes, and mixing them changes what a
-running mirror writes.
-
-`.claude/CLAUDE.md`, `.claude/REVIEW.md` and `CONTRIBUTING.md` point at
-the doc so both reviewers and the Claude review runs pick it up.
-
----------
-
-Co-authored-by: Ilia Demianenko <[REDACTED_EMAIL]>
-
-**File**: `.claude/CLAUDE.md` (modified, +1/-0)
-```diff
-@@ -8,6 +8,7 @@ See `docs/` for detailed architecture and design documents:
- 
- - `docs/peerdb-architecture.md` — Architecture overview: system components, connector matrix, data flows (CDC, QRep, snapshot), type system, configuration, and observability.
- - `docs/deep-dive-design-document.md` — Implementation-level deep dive: code-level details for each CDC connector, normalization engine, snapshot system, workflow orchestration, and known limitations.
-+- `docs/tricky-areas.md` — Tricky code areas: what to watch for in a PR and known traps. Read the matching section before changing or reviewing files under its paths.
- 
- ## CI test results
- 
+```
+failed to sync records: QRepSync Error: ClickHouse exec error: code: 321, message: Input value -1224 exceeds the range of type Date, which is [0, 65535]: (in file/uri ...0000.avro): While executing AvroRowInputFormat: While executing ReadFromObjectStorage
 ```
 
-**File**: `.claude/REVIEW.md` (modified, +1/-0)
+### Investigation
+
+PeerDB maps Postgres `date` to `Date32`
+([`kind.go`](https://github.com/PeerDB-io/peerdb/blob/main/flow/shared/types/kind.go#L232)),
+so a `Date` column means the customer created or changed it. ClickHouse
+throws this exact message only for a `Date` target
+([source](https://github.com/ClickHouse/ClickHouse/blob/abbc002369b8bf2b54abbf54dd02a662a685c4db/src/Processors/Formats/Impl/AvroRowInputFormat.cpp#L380-L389)).
+The customer can fix it by switching the column to `Date32` and
+resyncing.
+
+### Change
+
+- New branch in the ClickHouse code 321 case, after the decimal check.
+It matches `"exceeds the range of type Date, "` and returns
+`NOTIFY_DESTINATION_MODIFI
+
+**File**: `flow/alerting/classifier.go` (modified, +6/-0)
 ```diff
-@@ -1,2 +1,3 @@
- - High severity: Changes should not include addition of outputs through stdout, stderr or logs that might contain PII or Secret information. Play special attention to printing passwords and access tokens.
- - High severity: When changes are bumping dependencies (this is often the case when the PR author is `app/renovate`), check whether the version bump brings regressions. For this: Read the upstream release notes and commit log for the bumped range in the library repository. Highlight your findings in the PR review.
-+- High severity: For changed files under a path listed in `docs/tricky-areas.md`, read that area's section and check the change against its "What to watch for in a PR" points. Name the section in the finding. If the change fixes a trap or contradicts the section, ask for the section to be updated in the same PR.
+@@ -1286,6 +1286,12 @@ func GetErrorClass(ctx context.Context, err error) (ErrorClass, ErrorInfo) {
+ 			if ClickHouseDecimalParsingRe.MatchString(chException.Message) {
+ 				return ErrorUnsupportedDatatype, chErrorInfo
+ 			}
++			//nolint:lll
++			// PeerDB maps dates to Date32, so a Date column that rejects a value outside 1970-2149 was set by the user:
++			// https://github.com/ClickHouse/ClickHouse/blob/abbc002369b8bf2b54abbf54dd02a662a685c4db/src/Processors/Formats/Impl/AvroRowInputFormat.cpp#L380-L389
++			if strings.Contains(chException.Message, "exceeds the range of type Date, ") {
++				return ErrorNotifyDestinationModified, chErrorInfo
++			}
+ 		case chproto.ErrBadArguments:
+ 			if ClickHouseDecimalInsertRe.MatchString(chException.Message) {
+ 				return ErrorUnsupportedDatatype, chErrorInfo
 ```
 
-**File**: `CONTRIBUTING.md` (modified, +4/-0)
+**File**: `flow/alerting/classifier_test.go` (modified, +31/-0)
 ```diff
-@@ -35,3 +35,7 @@ CI selects Tilt-tagged tests by package. E2e packages map to source jobs as foll
- | `mongo_clickhouse`, `switchboard_mongo` | `mongo_clickhouse` |
- | `cockroachdb_clickhouse` | `cockroachdb_clickhouse` |
- | `bigquery_clickhouse` | `bigquery_clickhouse` |
+@@ -268,6 +268,37 @@ func TestClickHouseAvroDecimalErrorShouldBeUnsupportedDatatype(t *testing.T) {
+ 	}
+ }
+ 
++func TestClickHouseAvroDateOutOfRangeShouldBeDestinationModified(t *testing.T) {
++	err := &clickhouse.Exception{
++		Code: int32(chproto.ErrValueIsOutOfRangeOfDataType),
++		//nolint:lll
++		Message: `Input value -1224 exceeds the range of type Date, which is [0, 65535]: (in file/uri clickpipes-svc-3bd17e20-1032-4251-bcf3-6d49358a5e4f/clone_mirror_f8d0710c__40e5__4879__b39e__3d93f745477f_public_boughed_46e3147e_4925_4580_b822_b908137eb985/clone_mirror_f8d0710c__40e5__4879__b39e__3d93f745477f_public_boughed_46e3147e_4925_4580_b822_b908137eb985/37800a62-d8c4-4c11-97e4-d7aa76ff8cc3.000000.avro): While executing AvroRowInputFormat: While executing ReadFromObjectStorage`,
++	}
++	errorClass, errInfo := GetErrorClass(t.Context(), fmt.Errorf("failed to sync records: %w",
++		exceptions.NewClickHouseQRepSyncError(
++			peerdb_clickhouse.NewExecError(err, peerdb_clickhouse.ExecTraits{}), "boughed", "default")))
++	assert.Equal(t, ErrorNotifyDestinationModified, errorClass, "Unexpected error class")
++	assert.Equal(t, ErrorInfo{
++		Source: ErrorSourceClickHouse,
++		Code:   strconv.Itoa(int(chproto.ErrValueIsOutOfRangeOfDataType)),
++	}, errInfo, "Unexpected error info")
++}
 +
-+## Tricky areas
++func TestClickHouseAvroDate32OutOfRangeShouldBeOther(t *testing.T) {
++	err := &clickhouse.Exception{
++		Code:    int32(chproto.ErrValueIsOutOfRangeOfDataType),
++		Message: `Input value -44641 exceeds the range of type Date32, which is [-25567, 120529]: While executing AvroRowInputFormat`,
++	}
++	errorClass, errInfo := GetErrorClass(t.Context(), fmt.Errorf("failed to sync records: %w",
++		exceptions.NewClickHouseQRepSyncError(
++			peerdb_clickhouse.NewExecError(err, peerdb_clickhouse.ExecTraits{}), "boughed", "default")))
++	assert.Equal(t, ErrorOther, errorClass, "Unexpected error class")
++	assert.Equal(t, ErrorInfo{
++		Source: ErrorSourceClickHouse,
++		Code:   strconv.Itoa(int(chproto.ErrValueIsOutOfRangeOfDataType)),
++	}, errInfo, "Unexpected error info")
++}
 +
-+[`docs/tricky-areas.md`](docs/tricky-areas.md) lists the tricky areas of the codebase, what to watch for in a PR and the traps we have hit. Read it for the area you are changing, and add a bullet when you learn something new.
-```
-
-**File**: `docs/tricky-areas.md` (added, +54/-0)
-```diff
-@@ -0,0 +1,54 @@
-+# Tricky areas
-+
-+A map of the parts of the codebase that need extra care, so that people reviewing or changing them know where
-+to pay attention. Each area has a short explanation of why it is
-+tricky and what to watch for in a PR. If an area becomes simpler after a refactor, trim or remove its section in
-+the same PR.
-+
-+Architecture lives in [`peerdb-architecture.md`](peerdb-architecture.md) and
-+[`deep-dive-design-document.md`](deep-dive-design-document.md); this document points into them instead of
-+repeating them.
-+
-+| Area | Paths |
-+|---|---|
-+| [Mirror config vs workflow state](#mirror-config-vs-workflow-state) | `flow/workflows/`, `flow/activities/flowable.go`, `flow/activities/flowable_core.go`, `protos/flow.proto` |
-+| [Per-mirror behaviour: versions, flags, settings](#per-mirror-behaviour-versions-flags-settings) | `flow/shared/constants.go`, `flow/internal/dynamicconf.go`, `flow/cmd/handler.go`, `flow/cmd/validate_mirror.go`, `flow/connectors/clickhouse/validate.go` |
-+
-+---
-+
-+## Mirror config vs workflow state
-+
-+**Why it is tricky.** `CDCFlowWorkflow` carries two copies of a mirror's configuration: `cfg`, the config it was
-+created with, and `state.SyncFlowOptions`, which holds the live table mappings, batch size and idle timeout. A
-+config-update signal writes those three into `state`, and only env overrides and the BigQuery query-CDC config
-+into `cfg`; nothing else in `cfg` changes until a resync. The catalog row `flows.config_proto` is a merged snapshot
-+for API readers, not an input to the running workflow. Activities such as `SyncFlow` receive both copies, so code
-+can read the stale one and still pass every test that never changes a mirror after creation.
-+
-+**What to watch for in a PR.**
-+
-+- An activity reading table mappings, batch size or idle timeout from `cfg` instead of `SyncFlowOptions`.
-+- A new field on `CDCFlowConfigUpdate` with no home in `state` and in `updateFlowConfigWithLatestSettings`.
-+- A per-table or per-column setting tested only through mirror creation. A table added to a running mirror is
-+  loaded with its own mappings but replicated with the parent's, so only CDC sees the stale copy.
-+- A new path that operates on config but doesn't sync it to catalog, or updates catalog but not the workflow state
-+
-+---
-+
-+## Per-mirror behaviour: versions, flags, settings
-+
-+**Why it is tricky.** Three mechanisms pin what a mirror writes, each with a different lifetime. `Version` is set
-+from `PEERDB_FORCE_INTERNAL_VERSION` at creation and again only when a completed or failed mirror is resynced by
-+recreation. Flags from `GetFlags` record destination capabilities at creation and are never re-detected. A dynamic
-+setting resolves from the mirror's env, then the catalog, then the process environment, and a non-immediate value
-+is written back into the env map it was resolved with, so one pinned into `cfg.Env` at creation lasts the mirror's
-+lifetime while an activity's copy lasts one call. A decision taken from the mechanism with the wrong lifetime
-+changes the output of a running mirror.
-+
-+**What to watch for in a PR.**
-+
-+- A change to what is written for a column type that existing mirrors use, without a new `InternalVersion_*` gate
-+  and a test for a mirror at the previous version.
-+- Carefully thread all transformations the column value goes through, as it can change at different layers.
-+  Changes that are bugfixes (replacing nonsensical data with something more reasonable) are okay without a bump.
-+- Flags re-detected outside creation, or a flag that stores a decision rather than a capability.
+ func TestClickHouseSelectFromDestinationDuringQrepAsMvError(t *testing.T) {
+ 	// Simulate an Avro decimal error
+ 	err := &clickhouse.Exception{
 ```
 
 ---
 
-### Incident Patch 2: `ef872445` (2026-11-04)
-**Commit Message**: perf(clickhouse): load multiple staged batches per raw table insert (#4996)
+### Incident Patch 2: `e1761f8c` (2026-11-04)
+**Commit Message**: support server-side changeStreamPreAndPostImages (#4990)
 
-Normalize copies staged Avro files into the raw table one INSERT per
-batch. ClickHouse decodes a single Avro file on one stream, so this step
-is bound to ~1 core (seen in prod: ~55s CPU ≈ 57s wall per 100k-row
-batch, with `max_threads=89`). `max_insert_threads` does not help since
-the source is the bottleneck.
+On a sharded cluster, native `updateLookup` fetches update sequentially,
+which can lead to perf bottleneck. `changeStreamPreAndPostImages` builds
+post-image from applying updates to locally stored pre-image,
+eliminating the extra mongos-to-shards latency, and improve CDC
+throughput. This PR adds support for this feature by switching from
+`default` to `whenAvailable` when
+`PEERDB_MONGODB_CLIENT_SIDE_UPDATE_LOOKUP=true`.
 
-Adds `PEERDB_CLICKHOUSE_RAW_COPY_FILES_PER_INSERT` (default `1`, current
-behavior). With N > 1, up to N batch files are loaded by one `INSERT ...
-SELECT * FROM s3(f1) UNION ALL SELECT * FROM s3(f2) ...`, so each file
-gets its own stream. Rows already carry `_peerdb_batch_id`, so no
-per-file metadata is needed. Works for both S3 and GCS (signed `url()`)
-staging. The raw table checkpoint advances per INSERT.
+For collections with `changeStreamPreAndPostImages` enabled, MongoDB
+supplies each update's post-image in the event, so PeerDB does not
+perform client-side lookup for those updates. For collections without
+`changeStreamPreAndPostImages` enabled, or for those that are enabled
+but pre-image has expired, updates would arrives without a post-image
+and these documents will be fetched client-side.
 
-Default is kept at 1 because a single-file raw insert already peaks at
-~15 GB memory for large documents; N files in parallel can multiply
-that.
+Fixes: DBI-1276
 
-🤖 Generated with [Claude Code](https://claude.com/claude-code)
-
----------
-
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `flow/connectors/clickhouse/avro_sync.go` (modified, +19/-9)
+**File**: `flow/connectors/mongo/cdc.go` (modified, +15/-4)
 ```diff
-@@ -40,17 +40,27 @@ func NewClickHouseAvroSyncMethod(
+@@ -455,11 +455,15 @@ func (c *MongoConnector) PullRecords(
+ 		// https://www.mongodb.com/docs/manual/reference/method/cursor.batchSize/
+ 		SetBatchSize(0)
+ 
++	// By default, the change stream looks up each update's document server-side.
++	fullDocumentMode := options.UpdateLookup
+ 	if c.clientUpdateLookup {
+-		changeStreamOpts.SetFullDocument(options.Default)
+-	} else {
+-		changeStreamOpts.SetFullDocument(options.UpdateLookup)
++		// Collections with changeStreamPreAndPostImages get the post-image for free. Updates without one
++		// (option disabled, or pre-image expired) arrive with fullDocument: null and are looked up client-side.
++		fullDocumentMode = options.WhenAvailable
  	}
- }
++	changeStreamOpts.SetFullDocument(fullDocumentMode)
++	c.logger.Info("[mongo] change stream full document mode", slog.String("mode", string(fullDocumentMode)))
  
--func (s *ClickHouseAvroSyncMethod) CopyStageToDestination(ctx context.Context, avroFile utils.AvroFile) error {
--	stagingTableFunction, err := s.staging.TableFunctionExpr(ctx, avroFile.FilePath, stagingFormat)
--	if err != nil {
--		s.logger.Error("failed to build staging table function",
--			slog.String("avroFilePath", avroFile.FilePath),
--			slog.Any("error", err))
--		return fmt.Errorf("failed to build staging table function: %w", err)
-+// CopyStagesToDestination loads all staged files with a single INSERT. Each file becomes its own
-+// UNION ALL branch, so ClickHouse reads and decodes them in parallel instead of on one stream.
-+func (s *ClickHouseAvroSyncMethod) CopyStagesToDestination(ctx context.Context, avroFiles []utils.AvroFile) error {
-+	if len(avroFiles) == 0 {
-+		return nil
-+	}
-+
-+	selects := make([]string, 0, len(avroFiles))
-+	for _, avroFile := range avroFiles {
-+		stagingTableFunction, err := s.staging.TableFunctionExpr(ctx, avroFile.FilePath, stagingFormat)
-+		if err != nil {
-+			s.logger.Error("failed to build staging table function",
-+				slog.String("avroFilePath", avroFile.FilePath),
-+				slog.Any("error", err))
-+			return fmt.Errorf("failed to build staging table function: %w", err)
-+		}
-+		selects = append(selects, "SELECT * FROM "+stagingTableFunction)
- 	}
- 
--	query := fmt.Sprintf("INSERT INTO %s SELECT * FROM %s",
--		peerdb_clickhouse.QuoteIdentifier(s.config.DestinationTableIdentifier), stagingTableFunction)
-+	query := fmt.Sprintf("INSERT INTO %s %s",
-+		peerdb_clickhouse.QuoteIdentifier(s.config.DestinationTableIdentifier), strings.Join(selects, " UNION ALL "))
- 	return s.exec(ctx, query)
- }
- 
-```
-
-**File**: `flow/connectors/clickhouse/normalize.go` (modified, +30/-11)
-```diff
-@@ -15,6 +15,7 @@ import (
- 	chproto "github.com/ClickHouse/clickhouse-go/v2/lib/proto"
- 	"golang.org/x/sync/errgroup"
- 
-+	"github.com/PeerDB-io/peerdb/flow/connectors/utils"
- 	"github.com/PeerDB-io/peerdb/flow/generated/protos"
- 	"github.com/PeerDB-io/peerdb/flow/internal"
- 	chinternal "github.com/PeerDB-io/peerdb/flow/internal/clickhouse"
-@@ -660,22 +661,32 @@ func (c *ClickHouseConnector) getDistinctTableNamesInBatch(
- 	return tableNames, nil
- }
- 
--func (c *ClickHouseConnector) copyAvroStageToDestination(
-+// copyAvroStagesRangeToDestination loads batches (startBatchID, endBatchID] into the raw table with one INSERT.
-+func (c *ClickHouseConnector) copyAvroStagesRangeToDestination(
- 	ctx context.Context,
- 	flowJobName string,
--	syncBatchID int64,
-+	startBatchID int64,
-+	endBatchID int64,
- 	env map[string]string,
- 	version uint32,
- ) error {
- 	avroSyncMethod := c.avroSyncMethod(flowJobName, env, version)
--	avroFile, err := GetAvroStage(ctx, flowJobName, syncBatchID)
--	if err != nil {
--		return fmt.Errorf("failed to get avro stage: %w", err)
-+	avroFiles := make([]utils.AvroFile, 0, endBatchID-startBatchID)
-+	defer func() {
-+		for _, avroFile := range avroFiles {
-+			avroFile.Cleanup(ctx)
-+		}
-+	}()
-+	for batchID := startBatchID + 1; batchID <= endBatchID; batchID++ {
-+		avroFile, err := GetAvroStage(ctx, flowJobName, batchID)
-+		if err != nil {
-+			return fmt.Errorf("failed to get avro stage: %w", err)
-+		}
-+		avroFiles = append(avroFiles, avroFile)
- 	}
--	defer avroFile.Cleanup(ctx)
- 
--	if err := avroSyncMethod.CopyStageToDestination(ctx, avroFile); err != nil {
--		return fmt.Errorf("failed to copy stage to destination: %w", err)
-+	if err := avroSyncMethod.CopyStagesToDestination(ctx, avroFiles); err != nil {
-+		return fmt.Errorf("failed to copy stages to destination: %w", err)
- 	}
- 	return nil
- }
-@@ -693,9 +704,17 @@ func (c *ClickHouseConnector) copyAvroStagesToDestination(
- 	c.logger.Info("[clickhouse] pushing s3 data to raw table",
- 		slog.Int64("batchID", lastCopiedBatchID), slog.Int64("endBatchID", endBatchID))
- 
--	for batchID := lastCopiedBatchID + 1; batchID <= endBatchID; batchID++ {
--		if err := c.copyAvroStageToDestination(ctx, flowJobName, batchID, env, version); err != nil {
--			return fmt.Errorf("failed to copy avro stage to destination: %w", err)
-+	filesPerInsert, err := internal.PeerDBGroupNormalizeRawInsertParallelism(ctx, env)
-+	if err != nil || filesPerInsert <= 0 {
-+		c.logger.Warn("failed to lookup PEERDB_GROUP_NORMALIZE_RAW_INSERT_PARALLELISM, copying 1 file per insert",
-+			slog.Any("error", err))
-+		filesPerInsert = 1
-+	}
-+
-+	for startBatchID := lastCopiedBatchID; startBatchID < endBatchID; startBatchID += filesPerInsert {
-+		batchID := min(startBatchID+filesPerInsert, endBatchID)
-+		if err := c.copyAvroStagesRangeToDestination(ctx, flowJobName, startBatchID, batchID, env, version); err != nil {
-+			return fmt.Errorf("failed to copy avro stages to destination: %w", err)
+ 	if preimageTables := tablesWithDeletePreimage(req.TableNameMapping, c.excludedOps); len(preimageTables) > 0 {
+ 		// whenAvailable, never required: a pre-image can be missing even for a collection that has
+@@ -519,7 +523,7 @@ func (c *MongoConnector) PullRecords(
  		}
- 		c.logger.Info("[clickhouse] setting last batch id in raw table",
- 			slog.Int64("batchID", batchID))
+ 	}()
+ 
+-	var recordCount uint32
++	var recordCount, updatesWithoutPostImage uint32
+ 	var deltaBytesProcessed, cumulativeBytesProcessed atomic.Int64
+ 	var receiveTime, processTime, parallelProcessTime, addRecordTime atomic.Int64
+ 	pullStart := time.Now()
+@@ -543,6 +547,10 @@ func (c *MongoConnector) PullRecords(
+ 			slog.Int64("bytes", cumulativeBytesProcessed.Load()),
+ 			slog.Int("channelLen", req.RecordStream.ChannelLen()),
+ 			slog.Float64("elapsedMinutes", time.Since(pullStart).Minutes()))
++		if updatesWithoutPostImage > 0 {
++			c.logger.Info("[mongo] update events without a post-image were looked up client-side",
++				slog.Uint64("count", uint64(updatesWithoutPostImage)))
++		}
+ 	}()
+ 	// Structured ingestion is a per-table setting: resolve each structured table's projector once,
+ 	// against the table schema persisted at setup. Decode workers share the projectors, which is safe
+@@ -812,6 +820,9 @@ func (c *MongoConnector) PullRecords(
+ 			commitTimeNanos:      commitTimeNanos,
+ 			clusterTime:          changeEvent.ClusterTime,
+ 		}
++		if c.clientUpdateLookup && event.operationType == operationTypeUpdate && event.maybeFullDocument == nil {
++			updatesWithoutPostImage++
++		}
+ 		switch event.operationType {
+ 		case operationTypeInsert, operationTypeReplace, operationTypeUpdate, operationTypeDelete:
+ 			// Happy path.
 ```
 
-**File**: `flow/connectors/clickhouse/s3_iam_role_test.go` (modified, +5/-3)
+**File**: `flow/connectors/mongo/document_lookup.go` (modified, +6/-4)
 ```diff
-@@ -63,17 +63,19 @@ func TestIAMRoleCanIssueSelectFromS3(t *testing.T) {
- 	avroSync := NewClickHouseAvroSyncMethod(&protos.QRepConfig{
- 		DestinationTableIdentifier: table.TableIdentifier,
- 	}, conn)
--	require.NoError(t, avroSync.CopyStageToDestination(ctx, utils.AvroFile{
-+	avroFile := utils.AvroFile{
- 		FilePath:        "test-iam-role-can-issue-select-from-s3/datafile.avro.zst",
- 		StorageLocation: utils.AvroS3Storage,
- 		NumRecords:      3,
--	}))
-+	}
-+	// same file twice exercises the multi-file UNION ALL insert
-+	require.NoError(t, avroSync.CopyStagesToDestination(ctx, []utils.AvroFile{avroFile, avroFile}))
+@@ -50,7 +50,6 @@ const (
  
- 	query, err := conn.query(ctx, `SELECT COUNT(*) FROM default.`+table.TableIdentifier)
- 	require.NoError(t, err)
- 	for query.Next() {
- 		var count uint64
- 		require.NoError(t, query.Scan(&count))
--		require.Equal(t, uint64(3), count)
-+		require.Equal(t, uint64(6), count)
+ // hydrateUpdateEvents hydrates the update events' `fullDocument` field using client-side lookup.
+ func (c *MongoConnector) hydrateUpdateEvents(ctx context.Context, events []encodedMongoEvent) (int64, error) {
+-	var requests []*documentLookupRequest
+ 	requestsMap := make(map[documentLookupKey]*documentLookupRequest)
+ 	for i := range events {
+ 		event := &events[i]
+@@ -85,10 +84,13 @@ func (c *MongoConnector) hydrateUpdateEvents(ctx context.Context, events []encod
+ 			keyFields:         strings.Join(fields, keyFieldSeparator),
+ 		}
+ 		requestsMap[key] = request
+-		requests = append(requests, request)
  	}
- }
+ 
+-	groupedRequests := groupLookupRequests(requests)
++	if len(requestsMap) == 0 {
++		return 0, nil
++	}
++
++	groupedRequests := groupLookupRequests(requestsMap)
+ 
+ 	pref := protoToReadPref[c.config.ReadPreference]
+ 	var fetchedSize atomic.Int64
+@@ -164,7 +166,7 @@ func (c *MongoConnector) batchLookup(
+ 
+ // groupLookupRequests splits requests by source table and key fields into queries of up to
+ // lookupQueryBatchSize requests.
+-func groupLookupRequests(requests []*documentLookupRequest) [][]*documentLookupRequest {
++func groupLookupRequests(requests map[documentLookupKey]*documentLookupRequest) [][]*documentLookupRequest {
+ 	type batchKey struct{ sourceTable, keyFields string }
+ 	var groupedRequests [][]*documentLookupRequest
+ 	batches := make(map[batchKey][]*documentLookupRequest)
 ```
 
-**File**: `flow/internal/dynamicconf.go` (modified, +13/-0)
+**File**: `flow/connectors/mongo/document_lookup_test.go` (modified, +44/-7)
 ```diff
-@@ -336,6 +336,15 @@ var DynamicSettings = [...]*protos.DynamicSetting{
- 		ApplyMode:        protos.DynconfApplyMode_APPLY_MODE_IMMEDIATE,
- 		TargetForSetting: protos.DynconfTarget_CLICKHOUSE,
- 	},
-+	{
-+		Name: "PEERDB_GROUP_NORMALIZE_RAW_INSERT_PARALLELISM",
-+		Description: "Number of staged batch files loaded into the ClickHouse raw table by a single INSERT during normalize. " +
-+			"Each file is read by its own stream, so values above 1 parallelize reading and decoding Avro",
-+		DefaultValue:     "1",
-+		ValueType:        protos.DynconfValueType_INT,
-+		ApplyMode:        protos.DynconfApplyMode_APPLY_MODE_IMMEDIATE,
-+		TargetForSetting: protos.DynconfTarget_CLICKHOUSE,
-+	},
- 	{
- 		Name: "PEERDB_CLICKHOUSE_PARALLEL_VIEW_PROCESSING",
- 		Description: "Enables parallel_view_processing setting on clickhouse, pushing to attached materialized views " +
-@@ -979,6 +988,10 @@ func PeerDBClickHouseParallelViewProcessing(ctx context.Context, env map[string]
- 	return dynamicConfBool(ctx, env, "PEERDB_CLICKHOUSE_PARALLEL_VIEW_PROCESSING")
- }
+@@ -2,6 +2,7 @@ package connmongo
  
-+func PeerDBGroupNormalizeRawInsertParallelism(ctx context.Context, env map[string]string) (int64, error) {
-+	return dynamicConfSigned[int64](ctx, env, "PEERDB_GROUP_NORMALIZE_RAW_INSERT_PARALLELISM")
+ import (
+ 	"slices"
++	"strconv"
+ 	"testing"
+ 
+ 	"github.com/stretchr/testify/require"
+@@ -94,15 +95,16 @@ func TestRawValueKeyDistinguishesTypes(t *testing.T) {
+ 
+ func TestGroupLookupQueries(t *testing.T) {
+ 	compound := "region" + keyFieldSeparator + "_id"
+-	var requests []*documentLookupRequest
++	requests := make(map[documentLookupKey]*documentLookupRequest)
++	add := func(request *documentLookupRequest) {
++		requests[documentLookupKey{sourceTable: request.sourceTable, key: strconv.Itoa(len(requests))}] = request
++	}
+ 	for range lookupQueryBatchSize + 1 {
+-		requests = append(requests, &documentLookupRequest{sourceTable: "app.orders", keyFields: idOnlyKeyFields})
++		add(&documentLookupRequest{sourceTable: "app.orders", keyFields: idOnlyKeyFields})
+ 	}
+-	requests = append(requests,
+-		&documentLookupRequest{sourceTable: "app.users", keyFields: idOnlyKeyFields},
+-		&documentLookupRequest{sourceTable: "app.orders", keyFields: compound},
+-		&documentLookupRequest{sourceTable: "app.orders", keyFields: compound},
+-	)
++	add(&documentLookupRequest{sourceTable: "app.users", keyFields: idOnlyKeyFields})
++	add(&documentLookupRequest{sourceTable: "app.orders", keyFields: compound})
++	add(&documentLookupRequest{sourceTable: "app.orders", keyFields: compound})
+ 
+ 	queries := groupLookupRequests(requests)
+ 
+@@ -176,3 +178,38 @@ func TestDocumentKeyOfMatchesRequestKey(t *testing.T) {
+ 	require.Equal(t, requestKey(&documentLookupRequest{documentKey: nullElements}), documentKeyOf(missing, fields),
+ 		"a missing shard key field matches a null documentKey value")
+ }
++
++func TestDecodeEventLeavesMissingPostImageNil(t *testing.T) {
++	// With fullDocument: "whenAvailable", an update whose pre-image is missing carries fullDocument: null.
++	// It must decode to nil, because the lookup only fetches updates without a document.
++	raw, err := bson.Marshal(bson.D{
++		{Key: "operationType", Value: "update"},
++		{Key: "documentKey", Value: bson.D{{Key: "_id", Value: int32(1)}}},
++		{Key: "fullDocument", Value: nil},
++	})
++	require.NoError(t, err)
++	var changeEvent ChangeEvent
++	require.NoError(t, decodeEvent(raw, &changeEvent))
++	require.Nil(t, changeEvent.FullDocument)
 +}
 +
- func PeerDBClickHouseParallelNormalize(ctx context.Context, env map[string]string) (int, error) {
- 	return dynamicConfSigned[int](ctx, env, "PEERDB_CLICKHOUSE_PARALLEL_NORMALIZE")
++func TestHydrateUpdateEventsSkipsUpdatesWithPostImage(t *testing.T) {
++	document, err := bson.Marshal(bson.D{{Key: "_id", Value: int32(1)}, {Key: "v", Value: 2}})
++	require.NoError(t, err)
++	postImage := bson.Raw(document)
++	documentKey, err := bson.Marshal(bson.D{{Key: "_id", Value: int32(1)}})
++	require.NoError(t, err)
++	events := []encodedMongoEvent{{
++		operationType:     operationTypeUpdate,
++		sourceTableName:   "db.coll",
++		documentKey:       documentKey,
++		maybeFullDocument: &postImage,
++		clusterTime:       bson.Timestamp{T: 1, I: 1},
++	}}
++
++	// The connector has no client, so any lookup query would fail: every update already has its document.
++	fetched, err := (&MongoConnector{clientUpdateLookup: true}).hydrateUpdateEvents(t.Context(), events)
++	require.NoError(t, err)
++	require.Zero(t, fetched)
++	require.Equal(t, &postImage, events[0].maybeFullDocument)
++}
+```
+
+**File**: `flow/e2e/mongo_clickhouse/mongo_test.go` (modified, +97/-0)
+```diff
+@@ -1348,6 +1348,103 @@ func (s MongoClickhouseSuite) Test_Delete_Preimage_Validation() {
+ 	require.NoError(t, err)
  }
+ 
++func (s MongoClickhouseSuite) Test_CDC_Client_Side_Lookup_Post_Images() {
++	t := s.T()
++
++	const parallelDocumentLookupComment = "PeerDB parallel document lookup"
++
++	srcDatabase := e2e.GetTestDatabase(s.Suffix())
++	srcTable := "test_use_post_images"
++	dstTable := "test_use_post_images_dst"
++
++	connectionGen := e2e.FlowConnectionGenerationConfig{
++		FlowJobName:   e2e.AddSuffix(s, srcTable),
++		TableMappings: e2e.TableMappings(s, srcTable, dstTable),
++		Destination:   s.Peer().Name,
++	}
++	flowConnConfig := s.generateFlowConnectionConfigsDefaultEnv(connectionGen)
++	flowConnConfig.Env["PEERDB_MONGODB_CLIENT_SIDE_UPDATE_LOOKUP"] = "true"
++
++	db := s.Source().(*e2e.MongoSource).AdminClient().Database(srcDatabase)
++	preAndPostImages := options.CreateCollection().SetChangeStreamPreAndPostImages(bson.D{{Key: "enabled", Value: true}})
++	require.NoError(t, db.CreateCollection(t.Context(), srcTable, preAndPostImages))
++	collection := db.Collection(srcTable)
++
++	// Only PeerDB's lookup queries are profiled, which shows which updates needed a lookup.
++	require.NoError(t, db.RunCommand(t.Context(), bson.D{
++		{Key: "profile", Value: 2},
++		{Key: "filter", Value: bson.D{{Key: "command.comment", Value: parallelDocumentLookupComment}}},
++	}).Err())
++	t.Cleanup(func() {
++		_ = db.RunCommand(context.Background(), bson.D{{Key: "profile", Value: 0}}).Err()
++	})
++	lookedUpIDs := func() map[bson.ObjectID]struct{} {
++		cursor, err := db.Collection("system.profile").Find(t.Context(), bson.D{
++			{Key: "command.aggregate", Value: srcTable},
++			{Key: "command.comment", Value: parallelDocumentLookupComment},
++		})
++		require.NoError(t, err)
++		defer cursor.Close(t.Context())
++		ids := map[bson.ObjectID]struct{}{}
++		for cursor.Next(t.Context()) {
++			in, err := cursor.Current.LookupErr("command", "pipeline", "0", "$match", "_id", "$in")
++			require.NoError(t, err, "expected an _id lookup to batch with $in")
++			values, err := in.Array().Values()
++			require.NoError(t, err)
++			for _, value := range values {
++				ids[value.ObjectID()] = struct{}{}
++			}
++		}
++		require.NoError(t, cursor.Err())
++		return ids
++	}
++
++	tc := e2e.NewTemporalClient(t)
++	env := e2e.ExecutePeerflow(t, tc, flowConnConfig)
++	e2e.SetupCDCFlowStatusQuery(t, env, flowConnConfig)
++
++	const numDocs = 300
++	docs := make([]any, 0, numDocs)
++	for i := range numDocs {
++		docs = append(docs, bson.D{{Key: "key", Value: i}, {Key: "v", Value: 0}})
++	}
++	insertRes, err := collection.InsertMany(t.Context(), docs)
++	require.NoError(t, err)
++	e2e.EnvWaitForEqualTablesWithNames(env, s, "insert events", srcTable, dstTable, "_id,doc")
++
++	// Tests that updates with a post-image need no lookup.
++	updateRes, err := collection.UpdateMany(t.Context(), bson.D{}, bson.D{{Key: "$inc", Value: bson.D{{Key: "v", Value: 1}}}})
++	require.NoError(t, err)
++	require.Equal(t, int64(numDocs), updateRes.ModifiedCount)
++	// The post-image is the document right after the update, so it survives a later delete.
++	_, err = collection.UpdateOne(t.Context(), bson.D{{Key: "key", Value: 0}},
++		bson.D{{Key: "$set", Value: bson.D{{Key: "v", Value: -1}}}})
++	require.NoError(t, err)
++	_, err = collection.DeleteOne(t.Context(), bson.D{{Key: "key", Value: 0}})
++	require.NoError(t, err)
++	e2e.EnvWaitForEqualTablesWithNames(env, s, "updates with post-images", srcTable, dstTable, "_id,doc")
++	require.Empty(t, lookedUpIDs(), "updates with a post-image must not be looked up")
++
++	// Tests that an update without a post-image is looked up instead of written without its document.
++	require.NoError(t, db.RunCommand(t.Context(), bson.D{
++		{Key: "collMod", Value: srcTable},
++		{Key: "changeStreamPreAndPostImages", Value: bson.D{{Key: "enabled", Value: false}}},
++	}).Err())
++	const numWithoutPostImage = 10
++	expectedLookups := make(map[bson.ObjectID]struct{}, numWithoutPostImage)
++	for i := 1; i <= numWithoutPostImage; i++ {
++		_, err := collection.UpdateOne(t.Context(), bson.D{{Key: "key", Value: i}},
++			bson.D{{Key: "$set", Value: bson.D{{Key: "v", Value: 100 + i}}}})
++		require.NoError(t, err)
++		expectedLookups[insertRes.InsertedIDs[i].(bson.ObjectID)] = struct{}{}
++	}
++	e2e.EnvWaitForEqualTablesWithNames(env, s, "updates without post-images", srcTable, dstTable, "_id,doc")
++
++	env.Cancel(t.Context())
++	e2e.RequireEnvCanceled(t, env)
++	require.Equal(t, expectedLookups, lookedUpIDs(), "only the updates without a post-image are looked up")
++}
++
+ func (s MongoClickhouseSuite) Test_Simple_Flow_Partitioned_ObjectID_Uniform() {
+ 	t := s.T()
+ 	srcDatabase := e2e.GetTestDatabase(s.Suffix())
+```
+
+**File**: `flow/internal/dynamicconf.go` (modified, +4/-2)
+```diff
+@@ -625,8 +625,10 @@ var DynamicSettings = [...]*protos.DynamicSetting{
+ 		TargetForSetting: protos.DynconfTarget_ALL,
+ 	},
+ 	{
+-		Name:             "PEERDB_MONGODB_CLIENT_SIDE_UPDATE_LOOKUP",
+-		Description:      "Fetch update documents in bounded parallel batches outside the change stream. ",
++		Name: "PEERDB_MONGODB_CLIENT_SIDE_UPDATE_LOOKUP",
++		Description: "If true, PeerDB fetches update documents in bounded parallel batches outside the change stream. " +
++			"The exception is if the collections already have changeStreamPreAndPostImages enabled, then it will use the " +
++			"post-image supplied in the change stream event, only missing documents are queried.",
+ 		DefaultValue:     "false",
+ 		ValueType:        protos.DynconfValueType_BOOL,
+ 		ApplyMode:        protos.DynconfApplyMode_APPLY_MODE_AFTER_RESUME,
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5021** (2026-11-04): classify ClickHouse Avro Date out-of-range as destination modified (@ilidemi)
+- **PR #5018** (2026-11-04): Wrap BigQuery source time and export errors for classification (@dtunikov)
 - **PR #5016** (closed): mongo: kill change stream cursor leaked on context timeout (@dtunikov)
 - **PR #5015** (2026-11-03): classify DocumentDB too many cursors error as recoverable (@dtunikov)
 - **PR #5014** (2026-11-03): feat: upgrade `docker-compose.yml` stable image tags (@github-actions[bot])
 - **PR #5013** (2026-11-04): docs: add tricky-areas.md (@gheorghepucea)
-- **PR #5011** (closed): fix(mysql): render GTID sets as strings in replication logs (@ilidemi)
-- **PR #5010** (2026-11-02): Revert "clickhouse: drop the 25.3 check for PEERDB_CLICKHOUSE_ENABLE_JSON" (#5000) (@gheorghepucea)
 
 ---
 
@@ -2202,21 +2287,26 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs: add tricky-areas.md (#5013)
+## X. classify ClickHouse Avro Date out-of-range as destination modified (#5021)
 
 **RULE**:
-When implementing operations in `.claude/CLAUDE.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in PeerDB-io/peerdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `flow/alerting/classifier.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in PeerDB-io/peerdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `bbd630ae`: docs: add tricky-areas.md (#5013). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8a3660f9`: classify ClickHouse Avro Date out-of-range as destination modified (#5021). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/CLAUDE.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `flow/alerting/classifier.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-- `docs/tricky-areas.md` — Tricky code areas: what to watch for in a PR and known traps. Read the matching section before changing or reviewing files under its paths.
+			//nolint:lll
+			// PeerDB maps dates to Date32, so a Date column that rejects a value outside 1970-2149 was set by the user:
+			// https://github.com/ClickHouse/ClickHouse/blob/abbc002369b8bf2b54abbf54dd02a662a685c4db/src/Processors/Formats/Impl/AvroRowInputFormat.cpp#L380-L389
+			if strings.Contains(chException.Message, "exceeds the range of type Date, ") {
+				return ErrorNotifyDestinationModified, chErrorInfo
+			}
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2226,4 +2316,4 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `bbd630ae` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8a3660f9` are properly handled with clean fallback behavior.

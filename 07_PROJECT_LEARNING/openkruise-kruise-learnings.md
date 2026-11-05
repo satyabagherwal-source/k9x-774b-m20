@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/openkruise-kruise-learnings.md`  
 > **Source**: github ([https://github.com/openkruise/kruise](https://github.com/openkruise/kruise))  
-> **Source Version**: `4fdf516e`  
+> **Source Version**: `c6d10667`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T14:07:26.706Z  
+> **Timestamp**: 2026-11-05T09:12:28.067Z  
 > **Learning ID**: `learn-github-openkruise-kruise`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/openkruise-kruise-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/openkruise/kruise](https://github.com/openkruise/kruise))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T14:07:26.349Z  
+> **Harvest Timestamp**: 2026-11-05T09:12:28.059Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Automated management of large-scale applications on Kubernetes (incubating project under CNCF)
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 5359 stars
+- **Stars / Engagement**: 5376 stars
 
 ---
 
@@ -1211,11 +1211,11 @@ func main() {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #2626** (2026-10-20): **docs(changelog): add v1.9.1 and v1.9.2 release notes**
-  *Symptoms*: ## Summary - Add `v1.9.1` and `v1.9.2` sections to `CHANGELOG.md`, covering the v1.9 release line since v1.9.0. - Each entry links its upstream PR and credits the author, following the existing changelog house style.  ## Contents **v1.9.1** — Bug Fixes - GKE/EKS server-version parse panic in `ShouldUpdateResourceByResize` (#2502)  **v1.9.2** — Security / Bug Fixes / Misc - Security: disable pprof by default in kruise-manager and kruise-daemon (#2613) - Bug Fixes: WorkloadSpread nil parallelism/replicas (#2568), PUB nil replicas (#2529), NodePodProbe nil labels (#2500), controller-manager restarts (#2382), AdvancedCronJob child-Job watch (#2594), DaemonSet legacy owner refs (#2518), CloneSet OnDelete NotReady (#2291), calculator malformed numbers (#2595), UnitedDeployment error formatting (#2597), PodProbeMarker field paths (#2602), ImagePullJob digest join (#2556) - Misc: release-1.9 CI action bumps (golangci-lint-action v9.3.0, trivy-action v0.36.0)  ## Test plan - [ ] Docs-only change; verify Markdown renders correctly and PR/author links resolve.
+- **Issue #2649** (2026-11-05): **[release-1.9] Backport Nov 5 controller fixes**
+  *Symptoms*: ## Summary - Backport five fixes merged into master on 2026-11-05:   - `c6e343cc1`: reconcile WorkloadSpread when a Pod becomes unschedulable.   - `df39dca75`: prevent an empty custom-workload scale selector from matching every Pod.   - `c8edcbce7`: wait for PVC and StorageClass caches in StatefulSet test setup.   - `174e02a85`: clear CloneSet's stale ProgressDeadlineExceeded condition on a new update revision.   - `c6d106679`: do not count failed BroadcastJob Pod creations as active. - Preserve release-1.9 APIs: adapt the CloneSet backport to existing `v1alpha1` types; no API promotion/removal, CRD, generated-client, or webhook changes. - Exclude `0a6738682`, which fixes only CloneSet `v1beta1` validation; release-1.9's `v1alpha1` validation already uses the correct assignment.  ## Test plan - [x] `go test -race ./pkg/controller/workloadspread ./pkg/util/controllerfinder ./pkg/controller/statefulset ./pkg/controller/cloneset ./pkg/controller/broadcastjob` with Kubernetes 1.32.0 envtest assets. - [x] `go test -race ./pkg/webhook/cloneset/validating ./pkg/controller/cloneset/utils ./pkg/util/workloadspread`. - [x] Verify formatting, `git diff --check`, and unchanged API definitions, CRDs, and generated clients. - [x] Backport-specific static code review.
 
-- **Issue #2625** (2026-10-19): **fix(ci): bump trivy-action to v0.36.0 and golangci-lint-action to v9.3.0**
-  *Symptoms*: ## What this PR does  Fixes the chronically failing `golangci-lint` CI job on `release-1.9` by aligning `.github/workflows/ci.yaml` with `master` (whose CI is green). Two version bumps:  ```diff        - name: Lint golang code -        uses: golangci/golangci-lint-action@4afd733a84b1f43292c63897423277bb7f4313a9 # v8.0.0 +        uses: golangci/golangci-lint-action@ba0d7d2ec06a0ea1cb5fa41b2e4a3ab91d21278a # v9.3.0          with:            version: ${{ env.GOLANGCI_VERSION }}            args: --verbose -          skip-pkg-cache: true -          mod: readonly        - name: Run Trivy vulnerability scanner in repo mode -        uses: aquasecurity/trivy-action@b6643a29fecd7f34b3597bc6acb0a98b03d33ff8 # master +        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0 ```  After these changes the `ci.yaml` lint job is **byte-identical to `master`**.  ## Why  **1. golangci-lint-action v8.0.0 → v9.3.0** — the job fails with: > restore cache failed: Dependencies cache is empty or broken (you need to run 'go mod download' or 'go mod vendor' first)  This is emitted by golangci-lint-action v8.0.0's dependency-cache logic. `master` already resolved it by bumping to v9.3.0 (`ba0d7d2e`). The stale `skip-pkg-cache` / `mod` inputs (removed in v4+) are dropped as well.  **2. trivy-action `master` pin → v0.36.0** — the trivy step was pinned to `b6643a29 # master`, a floating branch commit whose default trivy CLI is **v0.65.0**. Upstream deleted the v0.65.0–v0.6
+- **Issue #2648** (2026-11-05): **[BUG] WorkloadSpread Adaptive rescheduling can stall when a Pod becomes Unschedulable**
+  *Symptoms*: # [BUG] WorkloadSpread Adaptive rescheduling can stall when a Pod becomes Unschedulable after reconciliation  ## What happened?  A Pod assigned to the first subset of an Adaptive WorkloadSpread did not automatically fall back to the next subset, despite `rescheduleCriticalSeconds: 1`.  The controller reconciled the WorkloadSpread several times during Pod creation, then did not reconcile this WorkloadSpread again for approximately 25 minutes. I manually evicted the Pod afterward. The eviction admission handler updated the WorkloadSpread status, and the subsequent reconciliation immediately detected that the first subset was unschedulable. The replacement Pod was assigned to the second subset.  The eviction was **manually initiated**, not an automatic action by the Adaptive rescheduling controller.  ## What did you expect to happen?  When a managed Pod becomes `Pending` with an empty `spec.nodeName` and `PodScheduled=False, reason=Unschedulable`, the controller should reconcile its WorkloadSpread and evaluate the configured rescheduling timeout.  If the timeout has already elapsed, the controller should mark the subset unschedulable and delete the Pod so that the workload can create a replacement in an eligible fallback subset. Otherwise, it should schedule a check for the remaining timeout.  ## Configuration  The affected workload is a CloneSet. The following simplified demo illustrates the relevant setup, rather than reproducing the production configuration. Assume no availab
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1232,66 +1232,376 @@ func main() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4fdf516e` (2026-10-19)
-**Commit Message**: docs(changelog): add v1.9.1 and v1.9.2 release notes
+### Incident Patch 1: `0a673868` (2026-11-05)
+**Commit Message**: fix(cloneset): prevent maxSurge variable shadowing in v1beta1 validation (#2617)
 
-Add CHANGELOG entries for the v1.9 release line since v1.9.0:
-- v1.9.1: GKE/EKS server-version parse panic fix (#2502)
-- v1.9.2: security (pprof default) plus WorkloadSpread, PUB,
-  NodePodProbe, controller-manager restart, AdvancedCronJob,
-  DaemonSet, CloneSet OnDelete, calculator, UnitedDeployment,
-  PodProbeMarker and ImagePullJob digest fixes.
+In validateUpdateStrategyV1beta1(), maxSurge was declared in the outer
+scope (var maxSurge int) but re-declared using := inside the
+rollingUpdate.MaxSurge != nil block (maxSurge, maxSurgeErr := ...).
+This shadowed the outer variable, leaving it at 0.
 
-Each entry links its upstream PR and credits the author.
+As a result, the subsequent combined check
+replicas > 0 && maxUnavailable < 1 && maxSurge < 1
+always evaluated maxSurge < 1 as true, incorrectly rejecting valid
+surge-only rolling update configurations (e.g. maxUnavailable=0 and
+maxSurge=1).
 
-Signed-off-by: 守辰 <[REDACTED_EMAIL]>
+Fix the shadowing by declaring maxSurgeErr beforehand and assigning to
+the existing maxSurge variable.
 
-**File**: `CHANGELOG.md` (modified, +29/-0)
+Signed-off-by: bhuvan-somisetty <[REDACTED_EMAIL]>
+
+**File**: `pkg/webhook/cloneset/validating/validation.go` (modified, +2/-1)
 ```diff
-@@ -1,5 +1,34 @@
- # Change Log
+@@ -384,8 +384,9 @@ func validateUpdateStrategyV1beta1(strategy *v1beta1.CloneSetUpdateStrategy, rep
  
-+## v1.9.2
-+> Change log since v1.9.1
+ 		// Validate MaxSurge
+ 		var maxSurge int
++		var maxSurgeErr error
+ 		if rollingUpdate.MaxSurge != nil {
+-			maxSurge, maxSurgeErr := util.GetScaledValueFromIntOrPercent(rollingUpdate.MaxSurge, replicas, true)
++			maxSurge, maxSurgeErr = util.GetScaledValueFromIntOrPercent(rollingUpdate.MaxSurge, replicas, true)
+ 			if maxSurgeErr != nil {
+ 				allErrs = append(allErrs, field.Invalid(rollingUpdatePath.Child("maxSurge"), rollingUpdate.MaxSurge.String(),
+ 					fmt.Sprintf("failed GetScaledValueFromIntOrPercent for maxSurge: %v", maxSurgeErr)))
+```
+
+**File**: `pkg/webhook/cloneset/validating/validation_test.go` (modified, +92/-0)
+```diff
+@@ -772,3 +772,95 @@ func TestValidateImagePreDownloadParallelism(t *testing.T) {
+ 		})
+ 	}
+ }
 +
-+### Security
-+- Disable pprof by default in kruise-manager and kruise-daemon to avoid unauthenticated resource-exhaustion exposure on the admission-webhook process. ([#2613](https://github.com/openkruise/kruise/pull/2613), [@furykerry](https://github.com/furykerry))
++// TestValidateUpdateStrategyV1beta1MaxSurgeShadow is a regression test for the variable shadowing
++// bug in validateUpdateStrategyV1beta1 where `maxSurge, maxSurgeErr :=` inside the if-block
++// created a new inner variable, leaving the outer maxSurge always 0.  As a result the
++// combined check `maxUnavailable < 1 && maxSurge < 1` at line 400 incorrectly rejected
++// configurations with maxUnavailable=0 and maxSurge>0, which are perfectly valid.
++func TestValidateUpdateStrategyV1beta1MaxSurgeShadow(t *testing.T) {
++	maxUnavailable := intstr.FromInt32(0)
++	maxSurge := intstr.FromInt32(1)
++	partition := intstr.FromInt32(0)
 +
-+### Bug Fixes
-+- Fix kruise-controller-manager crash (nil pointer dereference) when WorkloadSpread manages a Job without spec.parallelism, or Deployment/StatefulSet/ReplicaSet/CloneSet without replicas; safely default to 1 via ptr.Deref across the event handler, controller, util and controllerfinder. ([#2568](https://github.com/openkruise/kruise/pull/2568), [@neo0007777](https://github.com/neo0007777))
-+- Fix PodUnavailableBudget panic on nil Spec.Replicas during update event. ([#2529](https://github.com/openkruise/kruise/pull/2529), [@vishalmore90](https://github.com/vishalmore90))
-+- Fix NodePodProbe panic caused by nil labels. ([#2500](https://github.com/openkruise/kruise/pull/2500), [@Jayant-kernel](https://github.com/Jayant-kernel))
-+- Fix occasional restarts of kruise-controller-manager by registering built-in API field indexes first (fail fast) and retrying CRD field-index registration until discovery observes the resource. ([#2382](https://github.com/openkruise/kruise/pull/2382), [@PersistentJZH](https://github.com/PersistentJZH))
-+- Fix AdvancedCronJob never being enqueued on child Job completion/failure by watching batchv1.Job with owner AdvancedCronJob instead of BroadcastJob, which left status.active stale. ([#2594](https://github.com/openkruise/kruise/pull/2594), [@bhuvan-somisetty](https://github.com/bhuvan-somisetty))
-+- Fix DaemonSet not reconciling v1alpha1-created Pods after upgrade by resolving Pod owner references via Group/Kind, and skip parsing owner refs from unrelated controllers. ([#2518](https://github.com/openkruise/kruise/pull/2518), [@Colvin-Y](https://github.com/Colvin-Y))
-+- Fix Pods remaining NotReady when CloneSet UpdateStrategy is set to OnDelete. ([#2291](https://github.com/openkruise/kruise/pull/2291), [@zmberg](https://github.com/zmberg))
-+- Fix calculator rejecting malformed numbers instead of silently reading them as 0. ([#2595](https://github.com/openkruise/kruise/pull/2595), [@anishmehta24](https://github.com/anishmehta24))
-+- Fix UnitedDeployment validation error printing a pointer address by dereferencing expectedReplicas (*int32) when formatting the message. ([#2597](https://github.com/openkruise/kruise/pull/2597), [@bhuvan-somisetty](https://github.com/bhuvan-somisetty))
-+- Fix PodProbeMarker validation webhook reporting flat field paths instead of indexed slice paths (e.g. spec.probes[i].probe, spec.probes[i].markerPolicy[j]). ([#2602](https://github.com/openkruise/kruise/pull/2602), [@bhuvan-somisetty](https://github.com/bhuvan-somisetty))
-+- Fix ImagePullJob with a digest failing on every node by joining image name and digest with "@" instead of ":", adding daemonutil.JoinImageNameTag and fixing CRI pull paths, ContainsImage, secret auth-info parsing and related logs/events/status. ([#2556](https://github.com/openkruise/kruise/pull/2556), [@qnduncan](https://github.com/qnduncan))
++	tests := []struct {
++		name          string
++		strategy      *v1beta1.CloneSetUpdateStrategy
++		replicas      int
++		expectErr     bool
++		forbiddenPath string
++	}{
++		{
++			// maxUnavailable=0, maxSurge=1 is a valid surge-only rolling update.
++			// Before the fix the combined check saw outer maxSurge==0 and raised
++			// a spurious "maxUnavailable and maxSurge should not both be less than 1" error.
++			name: "valid maxUnavailable=0 maxSurge=1 should not error",
++			strategy: &v1beta1.CloneSetUpdateStrategy{
++				Type: v1beta1.RollingUpdateCloneSetUpdateStrategyType,
++				RollingUpdate: &v1beta1.RollingUpdateCloneSetStrategy{
++					PodUpdatePolicy: v1beta1.RecreateCloneSetPodUpdateStrategyType,
++					MaxUnavailable:  &maxUnavailable,
++					MaxSurge:        &maxSurge,
++					Partition:       &partition,
++				},
++			},
++			replicas:  3,
++			expectErr: false,
++		},
++		{
++			// maxUnavailable=0, maxSurge=0: genuinely invalid; both are less than 1.
++			name: "invalid maxUnavailable=0 maxSurge=0 should error",
++			strategy: &v1beta1.CloneSetUpdateStrategy{
++				Type: v1beta1.RollingUpdateCloneSetUpdateStrategyType,
++				RollingUpdate: &v1beta1.RollingUpdateCloneSetStrategy{
++					PodUpdatePolicy: v1beta1.RecreateCloneSetPodUpdateStrategyType,
++					MaxUnavailable:  &maxUnavailable,
++					MaxSurge:        func() *intstr.IntOrString { s := intstr.FromInt32(0); return &s }(),
++					Partition:       &partition,
++				},
++			},
++			replicas:      3,
++			expectErr:     true,
++			forbiddenPath: "updateStrategy.rollingUpdate.maxUnavailable",
++		},
++		{
++			// InPlaceOnly + maxSurge>0 must still be rejected.
++			name: "InPlaceOnly with maxSurge=1 should error",
++			strategy: &v1beta1.CloneSetUpdateStrategy{
++				Type: v1beta1.RollingUpdateCloneSetUpdateStrategyType,
++				RollingUpdate: &v1beta1.RollingUpdateCloneSetStrategy{
++					PodUpdatePolicy: v1beta1.InPlaceOnlyCloneSetPodUpdateStrategyType,
++					MaxUnavailable:  &maxUnavailable,
++					MaxSurge:        &maxSurge,
++					Partition:       &partition,
++				},
++			},
++			replicas:      3,
++			expectErr:     true,
++			forbiddenPath: "updateStrategy.rollingUpdate.maxSurge",
++		},
++	}
 +
-+### Misc (Chores and tests)
-+- Bump golangci-lint-action to v9.3.0 to fix cache-restore failure on the release-1.9 CI. (release-1.9 branch)
-+- Bump trivy-action to v0.36.0 to fix the lint job failing on a floating master pin whose default trivy CLI was deleted upstream (HTTP 404). (release-1.9 branch)
-+
-+## v1.9.1
-+> Change log since v1.9.0
-+
-+### Bug Fixes
-+- Fix controller panic on startup in ShouldUpdateResourceByResize when the K8s server version carries cloud build metadata (e.g. v1.28+gke.1, v1.30+eks.1), which coreos/go-semver.New cannot parse; strip the leading 'v', clean each dotted component to digits only, and add a deferred recover() to return false safely. ([#2502](https://github.com/openkruise/kruise/pull/2502), [@furykerry](https://github.com/furykerry))
-+
- ## v1.9.0
- > Change log since v1.8.2
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			allErrs := validateUpdateStrategyV1beta1(tt.strategy, tt.replicas, field.NewPath("updateStrategy"))
++			hasErr := len(allErrs) > 0
++			if hasErr != tt.expectErr {
++				t.Errorf("expected error=%v, got error=%v, errs=%v", tt.expectErr, hasErr, allErrs)
++				return
++			}
++			if tt.expectErr && tt.forbiddenPath != "" {
++				found := false
++				for _, e := range allErrs {
++					if e.Field == tt.forbiddenPath {
++						found = true
++						break
++					}
++				}
++				if !found {
++					t.Errorf("expected error at field %q, got: %v", tt.forbiddenPath, allErrs)
++				}
++			}
++		})
++	}
++}
+```
+
+---
+
+### Incident Patch 2: `c6e343cc` (2026-10-22)
+**Commit Message**: fix(workloadspread): reconcile when a pod becomes unschedulable
+
+With the adaptive schedule strategy, a pod is rescheduled to another
+subset once it has been unschedulable for rescheduleCriticalSeconds.
+The timeout is only checked during a reconcile, and the reconcile that
+first sees the PodScheduled=False/Unschedulable condition is the one
+that requeues for it.
+
+The pod update handler only enqueued the WorkloadSpread when a pod
+became inactive or changed revision. The scheduler usually reports a
+pod unschedulable after the reconciles triggered by its creation have
+already run, so nothing requeued the WorkloadSpread and the pod stayed
+pending in its subset until some unrelated event caused a reconcile.
+
+Enqueue the WorkloadSpread when a pod becomes unschedulable.
+
+Signed-off-by: Ishaan400 <[REDACTED_EMAIL]>
+
+**File**: `pkg/controller/workloadspread/workloadspread_event_handler.go` (modified, +19/-0)
+```diff
+@@ -66,7 +66,26 @@ func (p *podEventHandler) Update(ctx context.Context, evt event.TypedUpdateEvent
  
+ 	if kubecontroller.IsPodActive(oldPod) && !kubecontroller.IsPodActive(newPod) || wsutil.GetPodVersion(oldPod) != wsutil.GetPodVersion(newPod) {
+ 		p.handlePod(q, newPod, UpdateEventAction)
++		return
++	}
++
++	// The adaptive strategy reschedules a Pod only once it has been reported unschedulable, and the
++	// reconcile that sees this condition is the one that requeues for rescheduleCriticalSeconds.
++	// The scheduler usually reports it after the reconciles triggered by the Pod creation have run,
++	// so enqueue when the Pod becomes unschedulable.
++	if !isPodUnschedulable(oldPod) && isPodUnschedulable(newPod) {
++		p.handlePod(q, newPod, UpdateEventAction)
++	}
++}
++
++// isPodUnschedulable returns true if the scheduler has reported the Pod as unschedulable.
++func isPodUnschedulable(pod *corev1.Pod) bool {
++	for _, condition := range pod.Status.Conditions {
++		if condition.Type == corev1.PodScheduled {
++			return condition.Status == corev1.ConditionFalse && condition.Reason == corev1.PodReasonUnschedulable
++		}
+ 	}
++	return false
+ }
+ 
+ func (p *podEventHandler) Delete(ctx context.Context, evt event.TypedDeleteEvent[*corev1.Pod], q workqueue.TypedRateLimitingInterface[reconcile.Request]) {
+```
+
+**File**: `pkg/controller/workloadspread/workloadspread_event_handler_test.go` (modified, +82/-0)
+```diff
+@@ -231,6 +231,88 @@ func TestPodEventHandler(t *testing.T) {
+ 	}
+ }
+ 
++func TestPodEventHandlerUpdateUnschedulable(t *testing.T) {
++	injectWorkloadSpread := &wsutil.InjectWorkloadSpread{
++		Name:   "test-workloadSpread",
++		Subset: "subset-demo",
++	}
++	by, _ := json.Marshal(injectWorkloadSpread)
++
++	scheduledCondition := func(status corev1.ConditionStatus, reason, message string) []corev1.PodCondition {
++		return []corev1.PodCondition{{Type: corev1.PodScheduled, Status: status, Reason: reason, Message: message}}
++	}
++	pendingPod := func(annotated bool, conditions []corev1.PodCondition) *corev1.Pod {
++		pod := podDemo.DeepCopy()
++		pod.Spec.NodeName = ""
++		pod.Status.Phase = corev1.PodPending
++		pod.Status.Conditions = conditions
++		if annotated {
++			pod.Annotations = map[string]string{wsutil.MatchedWorkloadSpreadSubsetAnnotations: string(by)}
++		}
++		return pod
++	}
++
++	cases := []struct {
++		name          string
++		oldPod        *corev1.Pod
++		newPod        *corev1.Pod
++		expectEnqueue bool
++	}{
++		{
++			name:          "pod becomes unschedulable",
++			oldPod:        pendingPod(true, nil),
++			newPod:        pendingPod(true, scheduledCondition(corev1.ConditionFalse, corev1.PodReasonUnschedulable, "0/3 nodes are available")),
++			expectEnqueue: true,
++		},
++		{
++			name:          "pod becomes unschedulable after its scheduling gates are removed",
++			oldPod:        pendingPod(true, scheduledCondition(corev1.ConditionFalse, corev1.PodReasonSchedulingGated, "")),
++			newPod:        pendingPod(true, scheduledCondition(corev1.ConditionFalse, corev1.PodReasonUnschedulable, "0/3 nodes are available")),
++			expectEnqueue: true,
++		},
++		{
++			name:          "unschedulable pod only gets a new message",
++			oldPod:        pendingPod(true, scheduledCondition(corev1.ConditionFalse, corev1.PodReasonUnschedulable, "0/3 nodes are available")),
++			newPod:        pendingPod(true, scheduledCondition(corev1.ConditionFalse, corev1.PodReasonUnschedulable, "0/4 nodes are available")),
++			expectEnqueue: false,
++		},
++		{
++			name:          "pod not managed by a WorkloadSpread becomes unschedulable",
++			oldPod:        pendingPod(false, nil),
++			newPod:        pendingPod(false, scheduledCondition(corev1.ConditionFalse, corev1.PodReasonUnschedulable, "0/3 nodes are available")),
++			expectEnqueue: false,
++		},
++	}
++
++	for _, cs := range cases {
++		t.Run(cs.name, func(t *testing.T) {
++			handler := &podEventHandler{}
++			updateQ := workqueue.NewTypedRateLimitingQueue(
++				workqueue.DefaultTypedControllerRateLimiter[reconcile.Request](),
++			)
++			updateEvt := event.TypedUpdateEvent[*corev1.Pod]{
++				ObjectOld: cs.oldPod,
++				ObjectNew: cs.newPod,
++			}
++			handler.Update(context.TODO(), updateEvt, updateQ)
++
++			expectLen := 0
++			if cs.expectEnqueue {
++				expectLen = 1
++			}
++			if updateQ.Len() != expectLen {
++				t.Fatalf("unexpected update event handle queue size, expected %d actual %d", expectLen, updateQ.Len())
++			}
++			if cs.expectEnqueue {
++				key, _ := updateQ.Get()
++				if key.Namespace != cs.newPod.Namespace || key.Name != injectWorkloadSpread.Name {
++					t.Errorf("matching WorkloadSpread %s/%s failed, got %s", cs.newPod.Namespace, injectWorkloadSpread.Name, key)
++				}
++			}
++		})
++	}
++}
++
+ func TestGetWorkloadSpreadForCloneSet(t *testing.T) {
+ 	cases := []struct {
+ 		name                 string
+```
+
+---
+
+### Incident Patch 3: `c6d10667` (2026-10-16)
+**Commit Message**: fix(broadcastjob): do not count failed pod creations as active
+
+Signed-off-by: Sarthak Sharma <[REDACTED_EMAIL]>
+
+**File**: `pkg/controller/broadcastjob/broadcastjob_controller.go` (modified, +1/-0)
+```diff
+@@ -460,6 +460,7 @@ func (r *ReconcileBroadcastJob) reconcilePods(job *appsv1beta1.BroadcastJob,
+ 					if err != nil {
+ 						defer utilruntime.HandleError(err)
+ 						errCh <- err
++						return
+ 					}
+ 					// If succeed, increase active counter
+ 					activeLock.Lock()
+```
+
+**File**: `pkg/controller/broadcastjob/broadcastjob_controller_test.go` (modified, +50/-0)
+```diff
+@@ -37,6 +37,7 @@ import (
+ 	"k8s.io/klog/v2"
+ 	"sigs.k8s.io/controller-runtime/pkg/client"
+ 	"sigs.k8s.io/controller-runtime/pkg/client/fake"
++	"sigs.k8s.io/controller-runtime/pkg/client/interceptor"
+ 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
+ 
+ 	appsv1beta1 "github.com/openkruise/kruise/apis/apps/v1beta1"
+@@ -676,3 +677,52 @@ func patchPodName(pod *v1.Pod) {
+ 		pod.Name = pod.GenerateName + string(uuid.NewUUID())
+ 	}
+ }
++
++// Test scenario:
++// 3 nodes without pod running
++// parallelism = 3
++// every pod creation fails, so no pod must be counted as active
++func TestReconcileJobCreatePodFailedNotCountedAsActive(t *testing.T) {
++	scheme := runtime.NewScheme()
++	utilruntime.Must(appsv1beta1.AddToScheme(scheme))
++	utilruntime.Must(v1.AddToScheme(scheme))
++
++	job := createJob("job-create-fail", intstr.FromInt(3))
++	node1 := createNode("node1")
++	node2 := createNode("node2")
++	node3 := createNode("node3")
++
++	reconcileJob := createReconcileJob(scheme, job, node1, node2, node3)
++	reconcileJob.Client = interceptor.NewClient(reconcileJob.Client.(client.WithWatch), interceptor.Funcs{
++		Create: func(ctx context.Context, c client.WithWatch, obj client.Object, opts ...client.CreateOption) error {
++			if _, ok := obj.(*v1.Pod); ok {
++				return fmt.Errorf("injected pod create error")
++			}
++			return c.Create(ctx, obj, opts...)
++		},
++	})
++
++	request := reconcile.Request{
++		NamespacedName: types.NamespacedName{
++			Name:      "job-create-fail",
++			Namespace: "default",
++		},
++	}
++
++	_, err := reconcileJob.Reconcile(context.TODO(), request)
++	assert.Error(t, err)
++
++	retrievedJob := &appsv1beta1.BroadcastJob{}
++	err = reconcileJob.Get(context.TODO(), request.NamespacedName, retrievedJob)
++	assert.NoError(t, err)
++
++	podList := &v1.PodList{}
++	err = reconcileJob.List(context.TODO(), podList, client.InNamespace(request.Namespace))
++	assert.NoError(t, err)
++
++	// no pod was created
++	assert.Empty(t, podList.Items)
++	// failed creations must not be counted as active
++	assert.Equal(t, int32(0), retrievedJob.Status.Active)
++	assert.Equal(t, int32(3), retrievedJob.Status.Desired)
++}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2649** (2026-11-05): [release-1.9] Backport Nov 5 controller fixes (@furykerry)
+- **PR #2642** (2026-11-05): fix(controllerfinder): don't match every pod for an empty scale selector (@sarankumar1325)
+- **PR #2635** (2026-11-05): fix(statefulset): wait for PVC and StorageClass caches in test setup (@photoszzt)
+- **PR #2634** (2026-11-05): fix(workloadspread): reconcile when a pod becomes unschedulable (@Ishaan400)
 - **PR #2626** (2026-10-20): docs(changelog): add v1.9.1 and v1.9.2 release notes (@furykerry)
 - **PR #2625** (2026-10-19): fix(ci): bump trivy-action to v0.36.0 and golangci-lint-action to v9.3.0 (@furykerry)
-- **PR #2615** (2026-10-19): fix: cherry-pick bug fixes from master to release-1.9 (no API promotions) (@furykerry)
-- **PR #2614** (closed): fix(imagepulljob): join image name and digest with "@" instead of ":" [cherry-pick to release-1.9] (@furykerry)
-- **PR #2613** (2026-10-14): fix: disable pprof by default in kruise-manager and kruise-daemon (@furykerry)
-- **PR #2602** (2026-10-12): fix: correct field paths in PodProbeMarker validation webhook (@bhuvan-somisetty)
 
 ---
 
@@ -1311,38 +1621,29 @@ Signed-off-by: 守辰 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs(changelog): add v1.9.1 and v1.9.2 release notes
+## X. cloneset): prevent maxSurge variable shadowing in v1beta1 validation (#2617)
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in openkruise/kruise. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/webhook/cloneset/validating/validation.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in openkruise/kruise. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4fdf516e`: docs(changelog): add v1.9.1 and v1.9.2 release notes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0a673868`: cloneset): prevent maxSurge variable shadowing in v1beta1 validation (#2617). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/webhook/cloneset/validating/validation.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-## v1.9.2
-> Change log since v1.9.1
-
-### Security
-- Disable pprof by default in kruise-manager and kruise-daemon to avoid unauthenticated resource-exhaustion exposure on the admission-webhook process. ([#2613](https://github.com/openkruise/kruise/pull/2613), [@furykerry](https://github.com/furykerry))
-
-### Bug Fixes
-- Fix kruise-controller-manager crash (nil pointer dereference) when WorkloadSpread manages a Job without spec.parallelism, or Deployment/StatefulSet/ReplicaSet/CloneSet without replicas; safely default to 1 via ptr.Deref across the event handler, controller, util and controllerfinder. ([#2568](https://github.com/openkruise/kruise/pull/2568), [@neo0007777](https://github.com/neo0007777))
-- Fix PodUnavailableBudget panic on nil Spec.Replicas during update event. ([#2529](https://github.com/openkruise/kruise/pull/2529), [@vishalmore90](https://github.com/vishalmore90))
-- Fix NodePodProbe panic caused by nil labels. ([#2500](https://github.com/openkruise/kruise/pull/2500), [@Jayant-kernel](https://github.com/Jayant-kernel))
-- Fix occasional restarts of kruise-controller-manager by registering built-in API field indexes first (fail fast) and retrying CRD field-index registr
+		var maxSurgeErr error
+			maxSurge, maxSurgeErr = util.GetScaledValueFromIntOrPercent(rollingUpdate.MaxSurge, replicas, true)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+			maxSurge, maxSurgeErr := util.GetScaledValueFromIntOrPercent(rollingUpdate.MaxSurge, replicas, true)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4fdf516e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0a673868` are properly handled with clean fallback behavior.

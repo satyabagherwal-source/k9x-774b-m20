@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md`  
 > **Source**: github ([https://github.com/yugabyte/yugabyte-db](https://github.com/yugabyte/yugabyte-db))  
-> **Source Version**: `c5d0e262`  
+> **Source Version**: `539f7491`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T10:57:42.753Z  
+> **Timestamp**: 2026-11-05T06:44:10.394Z  
 > **Learning ID**: `learn-github-yugabyte-yugabyte-db`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/yugabyte/yugabyte-db](https://github.com/yugabyte/yugabyte-db))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T10:57:42.502Z  
+> **Harvest Timestamp**: 2026-11-05T06:44:10.385Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: YugabyteDB - the cloud native distributed SQL database for mission-critical applications.
 - **Primary Language / Ecosystem**: C
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 10649 stars
+- **Stars / Engagement**: 10651 stars
 
 ---
 
@@ -2248,13 +2248,11 @@ class _SshRemoteShell(object):
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #36810** (2026-11-04): **[pg19] test: Fix yb.orig.extensions for upstream pg_stat_statements and error-message changes**
-  *Symptoms*: ## Summary  `TestPgRegressExtension` fails on pg19 in `yb.orig.extensions`, which still expects PostgreSQL 15 output. Four upstream changes cause it; YB master, still on PG 15, has none of them.  - **`pg_stat_statements_reset()`** returns the time of the reset since PG 17 ([dc9f8a79830](https://github.com/postgres/postgres/commit/dc9f8a798307244d791b71f666f50de319799e7c)), so its output differs on every run. Call it as `pg_stat_statements_reset() is not null as t`, the form upstream's own tests switched to in that commit. - **`blk_read_time`** was renamed `shared_blk_read_time` in PG 17 ([13d00729d42](https://github.com/postgres/postgres/commit/13d00729d422c84b1764c24251abcc785ea4adb1)), so the three `pg_stat_statements` queries fail with `column "blk_read_time" does not exist`. Use the new name. - **Function lookup errors** print a more specific DETAIL instead of the generic HINT since [83a56419457](https://github.com/postgres/postgres/commit/83a56419457ec0eff2eddfed8eb3aba86bede9cc) (PG 19). Rebless. - **`queryid`:** the check added by [365c75be320](https://github.com/yugabyte/yugabyte-db/commit/365c75be320083de965542989beba9d403622dc3) pins one EXPLAIN query's ID to catch YB node types inserted mid-list. pg19 numbers node types differently from master, so the ID changed. Rebless to pg19's value.  ## Test Plan  `./yb_build.sh release --java-test 'org.yb.pgsql.TestPgRegressExtension#testPgRegressExtension'` 
+- **Issue #36967** (2026-11-05): **[#35980] YSQL: Skip the COPY fast path for partitioned colocated tables**
+  *Symptoms*: ## Summary  ### Problem  With `yb_fast_path_for_colocated_copy = on`, COPY into a partitioned table in a colocated database keeps rows that a partition's foreign key or trigger rejects. COPY reports the error, but every row is already stored, including the one that violates the rule.  ```sql CREATE DATABASE fpfk WITH colocation = true; \c fpfk CREATE TABLE cref(id int PRIMARY KEY); INSERT INTO cref VALUES (1); CREATE TABLE cfp(id int PRIMARY KEY, r int) PARTITION BY RANGE (id); CREATE TABLE cfp1 PARTITION OF cfp FOR VALUES FROM (1) TO (1000); ALTER TABLE cfp1 ADD CONSTRAINT cfp1_fk FOREIGN KEY (r) REFERENCES cref(id); SET yb_fast_path_for_colocated_copy = on; COPY cfp FROM STDIN WITH (FORMAT csv); 1,1 2,999 3,1 \. ```  Expected: the COPY fails and loads 0 rows, as it does with the setting off, or into a non-partitioned table with the same foreign key. Actual: `ERROR: insert or update on table "cfp1" violates foreign key constraint "cfp1_fk"`, and all 3 rows are in `cfp`, including `(2, 999)`.  ### Root cause  The check that turns on the fast path reads only the COPY target, while a partition can have foreign keys and triggers its parent doesn't.  - The fast path ([17d55c435ed3](https://github.com/yugabyte/yugabyte-db/commit/17d55c435ed351cd8b35f36e5790ad28545f1282), behind `yb_fast_path_for_colocated_copy` since [0046ce749196](https://github.com/yugabyte/yugabyte-db/commit/0046ce74919682f183804f19dad4c29964dd0965)) writes rows without a distributed transaction, so a foreign k
 
-- **Issue #36801** (2026-11-03): **[DEVOPS-4012] build: add csi link for pending DB workflows**
-  *Symptoms*: 
-  **Post-Mortem & Fix Analysis**:
-  >   <!-- Reviewable:start --> This change is [<img src="https://reviewable.io/review_button.svg" height="34" align="absmiddle" alt="Reviewable"/>](https://reviewable.io/reviews/yugabyte/yugabyte-db/36801) <!-- Reviewable:end --> 
+- **Issue #36959** (2026-11-05): **[#34985] YSQL: Mark yb_index_check() parallel unsafe and yb_get_current_transaction_priority() parallel restricted**
+  *Symptoms*: ## Summary  ### Problem  `yb_index_check()` and `yb_get_current_transaction_priority()` are labeled PARALLEL SAFE, so with `force_parallel_mode = on` the planner runs them in a parallel worker (a Gather with Single Copy). There they fail:  | Function | In a parallel worker | Expected | | --- | --- | --- | | `yb_index_check('idx'::regclass)` | ERROR: cannot update SecondarySnapshot during a parallel operation | 0 rows (index is consistent) | | `yb_get_current_transaction_priority()`, after a write in the transaction | 0.000000000 (Normal priority transaction) | the transaction's priority, e.g. Highest priority transaction |  Normal plans don't put these functions under a Gather. The bug shows with `force_parallel_mode`, which test tools and randomized testing (SQLancer) set.  ### Root cause  - `yb_index_check()`: labeled PARALLEL SAFE since it was added in [10de037ad68](https://github.com/yugabyte/yugabyte-db/commit/10de037ad68e8ca068d648de9ad41ac1727d9e29). Its default multi-snapshot mode, added in [7886fda5ef4](https://github.com/yugabyte/yugabyte-db/commit/7886fda5ef4daf9a34ac69cface2e2d238a241e3), takes a new snapshot for each batch (`GetLatestSnapshot()`), which PG refuses in parallel mode, in the leader as well as in workers. - `yb_get_current_transaction_priority()`: it reads the priority YB keeps in the backend process (`PgTxnManager::priority_`). The leader copies only the session id, two serial numbers and the subtransaction id to its workers, so a worker has no prio
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2271,164 +2269,94 @@ class _SshRemoteShell(object):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `578e49d6` (2026-11-03)
-**Commit Message**: [#36659] YSQL: Fix a use-after-free in PgTxnTest.SelectForUpdateExclusiveRead (#36693)
+### Incident Patch 1: `e477a4d7` (2026-11-05)
+**Commit Message**: [#36676] DocDB: Disable quiescent tablets by default (#36677)
 
 ## Summary
 
-The test starts each of its ten threads right after opening that
-thread's connection, and each thread takes a reference to its element
-of the conns vector. The main thread then keeps calling emplace_back
-for the following connections. Each time the vector grows, it moves
-its PGConns to a new buffer and frees the old one, so any thread that
-has not yet called FetchRow is left with a reference into freed
-memory. A moved-from PGConn holds a null PGconn, which libpq rejects
-quietly, so most of the time this went unnoticed. When the freed
-memory had already been reused, PQexec read a garbage PGconn and the
-test binary crashed with SIGSEGV in appendPQExpBufferStr, which is
-the failure in the issue.
+Quiescent tablets (#35782) replace the WAL segments of an idle tablet
+with a quiescent marker. They were enabled by default, but the feature
+is new and needs more bake time before it ships enabled in a stable
+release.
 
-The bug has been in the test since it was written. It is hit only when
-the main thread's next Connect() and the reallocation it triggers
-complete between a thread's start and its call to FetchRow, so the
-faster a connection starts, the more often that happens. The failure
-rate rose on 2026.1 right after the backport of "[#34309] YSQL: Keep a
-prefetch recorded when the database's slot arrives la
+- `quiescent_tablet_idle_sec` now defaults to 0, which keeps tablets out
+of the quiescent mode. Set it (e.g. to the old default, 600) to turn the
+feature on.
+- While the flag is 0, the background check skips the queue and runs
+once an hour instead of every 60s. Raising the flag from 0 at runtime is
+picked up within an hour, including for tablets registered while it was
+0. With the flag set, scheduling is unchanged.
+- Lazy WAL segment allocation from #35782 stays on. It is independent of
+the quiescent mode and also speeds up restarts outside it; a tablet
+starts its first segment on its first append after a restart instead of
+at bootstrap.
+- The `enable_quiescent_tablets` AutoFlag is unchanged. It marks that
+every node can handle quiescent tablets, not that the feature is on.
+With the flag at 0, its only effect is that leaders send
+`all_replicated_op_id` in consensus requests.
+- A TODO marks the
 
-**File**: `src/yb/yql/pgwrapper/pg_txn-test.cc` (modified, +3/-0)
+**File**: `src/yb/tablet/tablet_peer.cc` (modified, +2/-1)
 ```diff
-@@ -515,6 +515,9 @@ TEST_F_EX(PgTxnTest, SelectForUpdateExclusiveRead, PgTxnTestFailOnConflict) {
+@@ -128,7 +128,8 @@ DEFINE_RUNTIME_uint32(log_retention_diagnostics_min_age_secs, 0,
+     "the first retained segment is at least this old in seconds. 0 disables.");
+ TAG_FLAG(log_retention_diagnostics_min_age_secs, advanced);
  
-   bool read_succeeded[kNumThreads] {};
-   std::vector<PGConn> conns;
-+  // Each thread holds a reference to its element of conns, so conns must not reallocate while the
-+  // later connections are added.
-+  conns.reserve(kNumThreads);
+-DEFINE_RUNTIME_int32(quiescent_tablet_idle_sec, 600,
++// TODO: Restore the default to 600 when enabling quiescent tablets by default.
++DEFINE_RUNTIME_int32(quiescent_tablet_idle_sec, 0,
+     "A tablet enters the quiescent mode after nothing was appended to its log for this many "
+     "seconds. 0 disables entering the mode.");
  
-   for (int thread_idx = 0; thread_idx < kNumThreads; ++thread_idx) {
-     conns.emplace_back(ASSERT_RESULT(Connect()));
 ```
 
----
-
-### Incident Patch 2: `a036dae4` (2026-11-04)
-**Commit Message**: [#36393] DocDB: Fix yb-master startup race crashing CppCassandraDriverTest.TestJsonBType (#36394)
-
-## Summary
-
-At master startup, `ObjectLockInfoManager::Impl::Start()` can run while
-`Clear()` runs from sys catalog load; `Clear()` could start the new
-`TSLocalLockManager` before `waiting_txn_registry_` was set, and
-`Start()` then started that same manager again outside `mutex_`.
-Starting its `Poller` twice creates a second scheduling chain that
-`Shutdown()` doesn't wait for, so yb-master crashes in `Poller::Poll`
-with a use-after-free. `Start()` now sets `waiting_txn_registry_` and
-starts the current lock manager while holding `mutex_`. `Clear()` now
-starts the new manager only if `waiting_txn_registry_` is already set,
-so each lock manager is started exactly once.
-
----
-_Produced fully automatically by csi-fix.py: Claude Opus (5.5) analyzed
-the failure logs, wrote the change, and verified it locally._
-
-## Test plan
-
-./yb_build.sh release --clang21 --cxx-test cassandra_cpp_driver-test
---gtest-filter CppCassandraDriverTest.TestJsonBType -n 180
---stop-at-failure -- -p 6
-Ran the above locally with no failures.
-Before the fix, this test reproduced locally (same test command and -p /
-env 
-
-**File**: `src/yb/master/object_lock_info_manager.cc` (modified, +18/-13)
+**File**: `src/yb/tserver/ts_tablet_manager.cc` (modified, +10/-3)
 ```diff
-@@ -212,22 +212,20 @@ class ObjectLockInfoManager::Impl {
-     poller_.Start(
-         &catalog_manager_.Scheduler(),
-         MonoDelta::FromMilliseconds(FLAGS_object_lock_cleanup_interval_ms));
--    waiting_txn_registry_ = std::make_unique<docdb::LocalWaitingTxnRegistry>(
-+    auto waiting_txn_registry = std::make_unique<docdb::LocalWaitingTxnRegistry>(
-         master_.client_future(), clock_, master_.permanent_uuid(), lock_manager_thread_pool_.get());
-     waiting_txn_registry_poller_ = std::make_unique<rpc::Poller>(
-         master_.permanent_uuid(), std::bind(&docdb::LocalWaitingTxnRegistry::SendWaitForGraph,
--        waiting_txn_registry_.get()));
--    tserver::TSLocalLockManagerPtr lock_manager = nullptr;
-+        waiting_txn_registry.get()));
-     {
-+      // Races with Clear() during sys catalog load; each lock manager must be started exactly once.
-       LockGuard lock(mutex_);
-+      waiting_txn_registry_ = std::move(waiting_txn_registry);
-       object_lock_infos_map_.clear();
-       if (local_lock_manager_) {
--        lock_manager = local_lock_manager_;
-+        local_lock_manager_->Start(waiting_txn_registry_.get());
-       }
-     }
--    if (lock_manager) {
--      lock_manager->Start(waiting_txn_registry_.get());
--    }
-     waiting_txn_registry_poller_->Start(
-         &master_.messenger()->scheduler(), FLAGS_send_wait_for_report_interval_ms * 1ms);
-   }
-@@ -249,10 +247,14 @@ class ObjectLockInfoManager::Impl {
-       waiting_txn_registry_poller_->Shutdown();
-       waiting_txn_registry_poller_.reset();
-     }
--    if (waiting_txn_registry_) {
--      waiting_txn_registry_->StartShutdown();
--      waiting_txn_registry_->CompleteShutdown();
--      waiting_txn_registry_.reset();
-+    std::unique_ptr<docdb::LocalWaitingTxnRegistry> waiting_txn_registry;
-+    {
-+      LockGuard lock(mutex_);
-+      waiting_txn_registry = std::move(waiting_txn_registry_);
-+    }
-+    if (waiting_txn_registry) {
-+      waiting_txn_registry->StartShutdown();
-+      waiting_txn_registry->CompleteShutdown();
-     }
-   }
- 
-@@ -439,7 +441,7 @@ class ObjectLockInfoManager::Impl {
-   // threads, and poll_running_ both serializes them and orders their accesses to this map.
-   std::unordered_map<TabletServerId, std::shared_ptr<CountDownLatch>>
-       expired_lease_epoch_cleanup_tasks_;
--  std::unique_ptr<docdb::LocalWaitingTxnRegistry> waiting_txn_registry_;
-+  std::unique_ptr<docdb::LocalWaitingTxnRegistry> waiting_txn_registry_ GUARDED_BY(mutex_);
-   std::unique_ptr<rpc::Poller> waiting_txn_registry_poller_;
- 
-   // Set while a Poll is queued or running, so that a slow Poll is skipped rather than overlapped.
-@@ -1742,7 +1744,10 @@ void ObjectLockInfoManager::Impl::Clear() {
-   local_lock_manager_.reset(new tserver::TSLocalLockManager(
-       clock_, master_.tablet_server(), master_, lock_manager_thread_pool_.get(),
-       master_.metric_entity()));
--  local_lock_manager_->Start(waiting_txn_registry_.get());
-+  // Otherwise Start() has not run yet and will start it.
-+  if (waiting_txn_registry_) {
-+    local_lock_manager_->Start(waiting_txn_registry_.get());
-+  }
+@@ -512,9 +512,10 @@ std::string SnapshotIdToString(const std::string& snapshot_id) {
+   return uuid.IsNil() ? snapshot_id : uuid.ToString();
  }
  
- std::optional<uint64_t> ObjectLockInfoManager::Impl::GetLeaseEpoch(const std::string& ts_uuid) {
+-// The longest wait between quiescent checks, so that new tablets and quiescent_tablet_idle_sec
+-// raised from 0 are picked up. Other flag changes reach a tablet at its next queued check.
+-// A shorter idle period shortens the wait, so a new tablet is checked within two idle periods.
++// The longest wait between quiescent checks while quiescent_tablet_idle_sec is set, so that new
++// tablets are picked up. While it is 0, checks run hourly, so a raise from 0 is picked up within
++// an hour. Other flag changes reach a tablet at its next queued check. A shorter idle period
++// shortens the wait, so a new tablet is checked within two idle periods.
+ constexpr auto kQuiescentTabletsMaxCheckInterval = 60s;
+ 
+ } // namespace
+@@ -4477,6 +4478,12 @@ void TSTabletManager::EnterQuiescentModeForIdleTablets() {
+     quiescent_tablets_bg_task_->SetInterval(1s);
+     return;
+   }
++  // Tablets registered while disabled are queued 1s out, so after the flag is raised they are
++  // due at the next run.
++  if (FLAGS_quiescent_tablet_idle_sec <= 0) {
++    quiescent_tablets_bg_task_->SetInterval(1h);
++    return;
++  }
+   const auto now = CoarseMonoClock::Now();
+   auto next_run = now + std::min<CoarseDuration>(
+       kQuiescentTabletsMaxCheckInterval, tablet::QuiescentTabletIdleTime());
 ```
 
 ---
 
-### Incident Patch 3: `aa934ad4` (2026-11-04)
-**Commit Message**: [#36555] DocDB: Fix XClusterGuardedLeaseLeadershipTest.LeaselessTServerGivesUpLeadershipToLaggingFollowers hang (#36556)
+### Incident Patch 2: `7acac460` (2026-11-05)
+**Commit Message**: [#36559] DocDB: Fix NotSupportedTabletSplitITest.SplittingWithXClusterReplicationOnConsumer (#36560)
 
 ## Summary
 
-The test makes followers hold each Raft update for `45s *
-kTimeMultiplier` (135s under TSAN) through `TEST_DelayUpdate`, and that
-hold was a single `std::this_thread::sleep_for` taken while
-`update_mutex_` is held, so resetting the delay to zero did not end a
-hold already in progress. While they kept sleeping, the followers
-refused every vote ("already servicing an update"), and the old leader
-refused too because its log is longer, so no new leader was elected
-within the test's 90s wait. `RaftConsensus::Update` now sleeps in `10ms`
-steps and stops as soon as the hold expires or `TEST_delay_update_` is
-reset to `MonoDelta::kZero`.
+`SplitTabletAndCheckForNotSupported` restarts the cluster with
+`cluster_->RestartSync()`. After the restart, the master learns each
+tablet's new leader only when a tserver heartbeat reports it. In
+`SplittingWithXClusterReplicationOnConsumer`, the split after
+`delete_universe_replication` is expected to succeed, but it was issued
+once with no retry. If the master's replica locations still listed only
+followers, the split failed with `No leader found for tablet`. The test
+now wraps that split in `WaitFor` and retries only on `No leader found`
+errors. Any other error still fails the test.
 
 ---
 _Produced fully automatically by csi-fix.py: Claude Opus (5.5) analyzed
@@ -2436,50 +2364,106 @@ the failure logs, wrote the change, and verified it locally._
 
 ## Test plan
 
-./yb_build.sh tsan --clang21 --cxx-test xcluster_guarded_lease-test
+./yb_build.sh fastdebug --gcc15 --cxx-test xcluster-tablet-split-itest
 --gtest-filter
-XClusterGuardedLeaseLeadershipTest.LeaselessTServerGivesUpLeadershipToLaggingFollowers
--n 100 --stop-at-failure -- -p 6
-Ran the above locally with no failures.
-Before the fix, this test repro
+NotSupportedTabletSplitITest.SplittingWithXClusterReplicationOnConsumer
+-n 100 YB_TEST_YB_CONTROLLER=0
+YB_ENABLE_YSQL_CONN_MGR_IN_JAVA_TESTS=true --stop-at-failure -- -p 6
+./yb_build.sh release --clang21 --cxx-test xcluster-tablet-split-itest
+--gtest-fi
 
-**File**: `src/yb/consensus/raft_consensus.cc` (modified, +6/-1)
+**File**: `src/yb/integration-tests/xcluster/xcluster-tablet-split-itest.cc` (modified, +11/-1)
 ```diff
-@@ -1757,7 +1757,12 @@ Status RaftConsensus::Update(
+@@ -1422,7 +1422,17 @@ TEST_F(NotSupportedTabletSplitITest, SplittingWithXClusterReplicationOnConsumer)
+   // Now delete replication and verify that the tablet can now be split.
+   ASSERT_OK(tools::RunAdminToolCommand(
+       cluster_->GetMasterAddresses(), "delete_universe_replication", kProducerClusterId));
+-  ASSERT_OK(SplitTabletAndValidate(split_hash_code, kDefaultNumRows));
++  // After the restart, the master may not have learned the tablet leader from heartbeats yet.
++  ASSERT_OK(WaitFor([&]() -> Result<bool> {
++    auto s = SplitTabletAndValidate(split_hash_code, kDefaultNumRows);
++    if (s.ok()) {
++      return true;
++    }
++    if (s.status().message().ToBuffer().find("No leader found") != std::string::npos) {
++      return false;
++    }
++    return s.status();
++  }, 30s * kTimeMultiplier, "Split tablet after deleting xCluster replication"));
  
-     auto delay = TEST_delay_update_.load(std::memory_order_acquire);
-     if (delay != MonoDelta::kZero) {
--      std::this_thread::sleep_for(delay.ToSteadyDuration());
-+      // Resetting the delay to zero ends a hold that is already in progress.
-+      const auto hold_end = CoarseMonoClock::now() + delay.ToSteadyDuration();
-+      while (CoarseMonoClock::now() < hold_end &&
-+             TEST_delay_update_.load(std::memory_order_acquire) != MonoDelta::kZero) {
-+        std::this_thread::sleep_for(10ms);
-+      }
-     } else if (FLAGS_TEST_delay_update_consensus_requests_ms != 0) {
-       std::this_thread::sleep_for(1ms * FLAGS_TEST_delay_update_consensus_requests_ms);
-     }
+   producer_cluster->Shutdown();
+ }
 ```
 
-**File**: `src/yb/consensus/raft_consensus.h` (modified, +1/-0)
+---
+
+### Incident Patch 3: `db05da8b` (2026-11-05)
+**Commit Message**: [#36581] DocDB: Fix XClusterFailoverWithDDLTest.MultiDatabaseFailoverWithRetry by waiting for target role drop (#36582)
+
+## Summary
+
+A tserver refuses DMLs when the namespace is in read-only mode, or when
+its xCluster role is `AUTOMATIC_TARGET` or `UNAVAILABLE`. `UNAVAILABLE`
+refuses them because `enforce_xcluster_guarded_lease` is on. During
+failover the master switches the role to `NOT_AUTOMATIC_MODE` in
+`DropDDLReplicationExtensionIfExists`, but tservers receive that in a
+later heartbeat than the one that clears read-only mode.
+`WaitForFailoverCompletion` only waited for read-only mode to clear, so
+the `after_restore` INSERT sometimes reached a tserver that still had
+the `AUTOMATIC_TARGET` role and failed. `WaitForFailoverCompletion` now
+also waits until every consumer tserver reports `NOT_AUTOMATIC_MODE` for
+each of the namespaces.
+
+---
+_Produced fully automatically by csi-fix.py: Claude Opus (5.5) analyzed
+the failure logs, wrote the change, and verified it locally._
+
+## Test plan
+
+./yb_build.sh fastdebug --gcc15 --cxx-test xcluster_failover-test
+--gtest-filter
+XClusterFailoverWithDDLTest.MultiDatabaseFailoverWithRetry -n 100
+YB_TEST_YB_CONTROLLER=0 YB_ENABLE_YSQL_CONN_MGR_IN_
+
+**File**: `src/yb/integration-tests/xcluster/xcluster_failover-test.cc` (modified, +14/-0)
 ```diff
-@@ -303,6 +303,7 @@ class RaftConsensus : public std::enable_shared_from_this<RaftConsensus>,
-     reject_mode_.store(value, std::memory_order_release);
-   }
+@@ -27,6 +27,10 @@
  
-+  // Delays each Update by duration. Setting it to zero also releases any hold in progress.
-   void TEST_DelayUpdate(MonoDelta duration) {
-     TEST_delay_update_.store(duration, std::memory_order_release);
-   }
+ #include "yb/rpc/rpc_controller.h"
+ 
++#include "yb/tserver/mini_tablet_server.h"
++#include "yb/tserver/tablet_server.h"
++#include "yb/tserver/tserver_xcluster_context_if.h"
++
+ #include "yb/util/backoff_waiter.h"
+ #include "yb/util/result.h"
+ #include "yb/util/test_macros.h"
+@@ -106,6 +110,16 @@ class XClusterFailoverWithDDLTest : public XClusterDDLReplicationTestBase {
+     for (const auto& ns : namespace_ids) {
+       RETURN_NOT_OK(
+           WaitForReadOnlyModeOnAllTServers(ns, /*is_read_only=*/false, &consumer_cluster_));
++      // AUTOMATIC_TARGET and UNAVAILABLE roles also refuse DMLs and reach TServers via their own
++      // heartbeat.
++      for (auto& tserver : consumer_cluster_.mini_cluster_->mini_tablet_servers()) {
++        RETURN_NOT_OK(WaitFor(
++            [&]() -> Result<bool> {
++              return tserver->server()->GetXClusterContext().GetXClusterRole(ns) ==
++                     XClusterNamespaceInfoPB_XClusterRole_NOT_AUTOMATIC_MODE;
++            },
++            kTimeout, Format("Wait for namespace $0 to drop target role", ns)));
++      }
+     }
+     RETURN_NOT_OK(WaitForSnapshotCleanup());
+     RETURN_NOT_OK(WaitForFailoverCleanup());
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #36810** (2026-11-04): [pg19] test: Fix yb.orig.extensions for upstream pg_stat_statements and error-message changes (@teyenc)
-- **PR #36801** (closed): [DEVOPS-4012] build: add csi link for pending DB workflows (@svarnau)
-- **PR #36800** (2026-11-03): [pg19] test: Update TestPgRegressPlanner expected output for upstream PG 16 changes (@teyenc)
-- **PR #36788** (2026-11-03): [pg19] test: Re-enable yb.orig.hypo_hints in hypopg's schedules (@teyenc)
-- **PR #36779** (2026-11-03): [BACKPORT 2026.1][#28675] DocDB: Add lag column to list_all_master yb-admin (@khosrow)
-- **PR #36776** (2026-11-03): [BACKPORT 2026.1][#36659] YSQL: Fix a use-after-free in PgTxnTest.SelectForUpdateExclusiveRead (#36693) (@myang2021)
+- **PR #36967** (2026-11-05): [#35980] YSQL: Skip the COPY fast path for partitioned colocated tables (@teyenc)
+- **PR #36959** (2026-11-05): [#34985] YSQL: Mark yb_index_check() parallel unsafe and yb_get_current_transaction_priority() parallel restricted (@teyenc)
+- **PR #36938** (2026-11-05): [#36904] YSQL: Wait for the root spans before counting them in TestExtendedQueryProtocolPreparedStatementReuse (@ellabaron-code)
+- **PR #36933** (2026-11-05): [#34036] YSQL: Wait for an ASH sample in TestYbAsh#testPreparedStatements (@hkimura)
+- **PR #36924** (2026-11-04): [#35077] DocDB: Fix build of VectorLSMMetadataModifyChunkFrontiers after #36764 (@druzac)
+- **PR #36911** (2026-11-04): [PLAT-21238] YBA: Stop loading every universe and key history row where few fields are used (@artem-mindrov)
 
 ---
 
@@ -2499,30 +2483,29 @@ Before the fix, this test repro
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [#36659] YSQL: Fix a use-after-free in PgTxnTest.SelectForUpdateExclusiveRead (#
+## X. [#36676] DocDB: Disable quiescent tablets by default (#36677)
 
 **RULE**:
-When implementing operations in `src/yb/yql/pgwrapper/pg_txn-test.cc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in yugabyte/yugabyte-db. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/yb/tablet/tablet_peer.cc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in yugabyte/yugabyte-db. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `578e49d6`: [#36659] YSQL: Fix a use-after-free in PgTxnTest.SelectForUpdateExclusiveRead (#36693). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e477a4d7`: [#36676] DocDB: Disable quiescent tablets by default (#36677). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/yb/yql/pgwrapper/pg_txn-test.cc`.
+Subsystems managing C data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/yb/tablet/tablet_peer.cc`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c
 // Verified production-grade fix pattern:
-  // Each thread holds a reference to its element of conns, so conns must not reallocate while the
-  // later connections are added.
-  conns.reserve(kNumThreads);
+// TODO: Restore the default to 600 when enabling quiescent tablets by default.
+DEFINE_RUNTIME_int32(quiescent_tablet_idle_sec, 0,
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+DEFINE_RUNTIME_int32(quiescent_tablet_idle_sec, 600,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `578e49d6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e477a4d7` are properly handled with clean fallback behavior.

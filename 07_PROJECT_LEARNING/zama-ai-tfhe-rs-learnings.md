@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md`  
 > **Source**: github ([https://github.com/zama-ai/tfhe-rs](https://github.com/zama-ai/tfhe-rs))  
-> **Source Version**: `a834a81e`  
+> **Source Version**: `ea97d611`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-02T14:46:31.009Z  
+> **Timestamp**: 2026-11-05T14:30:12.763Z  
 > **Learning ID**: `learn-github-zama-ai-tfhe-rs`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zama-ai/tfhe-rs](https://github.com/zama-ai/tfhe-rs))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-02T14:46:30.071Z  
+> **Harvest Timestamp**: 2026-11-05T14:30:12.569Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: TFHE-rs: A Pure Rust implementation of the TFHE Scheme for Boolean and Integer Arithmetics Over Encrypted Data.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 1677 stars
+- **Stars / Engagement**: 1678 stars
 
 ---
 
@@ -1927,577 +1927,434 @@ public:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a834a81e` (2026-11-02)
-**Commit Message**: chore(bench): migrate zk benchmark to the spec
+### Incident Patch 1: `ea97d611` (2026-11-05)
+**Commit Message**: chore(gpu): refactor ci to better cover classical pbs (#4127)
 
-* chore(bench): move zk spec tag into the path for more readability
-
-* chore(bench): move zk pke bench to tfhe-benchmark crate
-
-* chore(bench): migrate tfhe-zk-pok to the spec
-
-* chore(ci): update ci around zk bench
-
-* chore(bench): rename a zkscheme into zkproofvariantkind for more clarity
-
-**File**: `.github/workflows/generate_svgs.yml` (modified, +5/-5)
+**File**: `.github/workflows/benchmark_gpu_4090.yml` (removed, +0/-209)
 ```diff
-@@ -156,14 +156,15 @@ jobs:
-   # -----------------------------------------------------------
-   # ZK benchmarks tables
-   # -----------------------------------------------------------
-+  # All three use the Rust extractor: the Python one cannot parse spec ids.
+@@ -1,209 +0,0 @@
+-# Run benchmarks on an RTX 4090 machine and return parsed results to Slab CI bot.
+-name: benchmark_gpu_4090
+-
+-env:
+-  CARGO_TERM_COLOR: always
+-  RESULTS_FILENAME: parsed_benchmark_results_${{ github.sha }}.json
+-  ACTION_RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+-  RUST_BACKTRACE: "full"
+-  RUST_MIN_STACK: "8388608"
+-  SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
+-  SLACK_ICON: https://pbs.twimg.com/profile_images/1274014582265298945/OjBKP9kn_400x400.png
+-  SLACK_USERNAME: ${{ secrets.BOT_USERNAME }}
+-  SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+-  BIT_SIZES_SET: FAST
+-
+-on:
+-  # Allows you to run this workflow manually from the Actions tab as an alternative.
+-  workflow_dispatch:
+-  pull_request:
+-    types: [labeled]
+-  schedule:
+-    # Weekly benchmarks will be triggered each Friday at 9p.m.
+-    - cron: "0 21 * * 5"
+-
+-permissions:
+-  contents: read
+-
+-# zizmor: ignore[concurrency-limits] each job manage its concurrency
+-
+-jobs:
+-  cuda-integer-benchmarks:
+-    name: benchmark_gpu_4090/cuda-integer-benchmarks
+-    if: ${{ github.event_name == 'workflow_dispatch' ||
+-      github.event_name == 'schedule' && github.repository == 'zama-ai/tfhe-rs' ||
+-      contains(github.event.label.name, '4090_bench') }}
+-    concurrency:
+-      group: ${{ github.workflow_ref }}_cuda_integer_bench
+-      cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+-    runs-on: ["self-hosted", "4090-desktop"]
+-    timeout-minutes: 1440 # 24 hours
+-    steps:
+-      - name: Checkout tfhe-rs
+-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+-        with:
+-          fetch-depth: 0
+-          persist-credentials: "false"
+-          token: ${{ secrets.REPO_CHECKOUT_TOKEN }}
+-
+-      - name: Get benchmark details
+-        run: |
+-          COMMIT_DATE=$(git --no-pager show -s --format=%cd --date=iso8601-strict "${SHA}");
+-          {
+-            echo "BENCH_DATE=$(date --iso-8601=seconds)";
+-            echo "COMMIT_DATE=${COMMIT_DATE}";
+-            echo "COMMIT_HASH=$(git describe --tags --dirty)";
+-          } >> "${GITHUB_ENV}"
+-        env:
+-          SHA: ${{ github.sha }}
+-
+-      - name: Install rust
+-        uses: dtolnay/rust-toolchain@683b588c487a69d01f6c6ddf40f036ff682cc2c8 # zizmor: ignore[stale-action-refs] this action doesn't create releases
+-        with:
+-          toolchain: nightly
+-
+-      - name: Checkout Slab repo
+-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+-        with:
+-          repository: zama-ai/slab
+-          path: slab
+-          ref: a0d3a61d593fc69bcdd13cb834323f8645258246
+-          persist-credentials: "false"
+-          token: ${{ secrets.REPO_CHECKOUT_TOKEN }}
+-
+-      - name: Run integer benchmarks
+-        run: |
+-          make BENCH_OP_FLAVOR=default bench_integer_multi_bit_gpu
+-
+-      - name: Parse results
+-        run: |
+-          cargo run --release -p tfhe-benchmark-parser -- -i target/criterion -o "${RESULTS_FILENAME}" \
+-          --database tfhe_rs \
+-          --hardware "rtx4090" \
+-          --backend cuda \
+-          --project-version "${COMMIT_HASH}" \
+-          --branch "${REF_NAME}" \
+-          --commit-date "${COMMIT_DATE}" \
+-          --bench-date "${BENCH_DATE}" \
+-          --walk-subdirs
+-        env:
+-          REF_NAME: ${{ github.ref_name }}
+-
+-      - name: Upload parsed results artifact
+-        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+-        with:
+-          name: ${{ github.sha }}_integer_multi_bit_gpu_default
+-          path: ${{ env.RESULTS_FILENAME }}
+-
+-      - name: Send data to Slab
+-        shell: bash
+-        run: |
+-          python3 slab/scripts/data_sender.py "${RESULTS_FILENAME}" "${JOB_SECRET}" \
+-          --slab-url "${SLAB_URL}"
+-        env:
+-          JOB_SECRET: ${{ secrets.JOB_SECRET }}
+-          SLAB_URL: ${{ secrets.SLAB_URL }}
+-
+-      - name: Slack Notification
+-        if: ${{ failure() || (cancelled() && github.event_name != 'pull_request') }}
+-        continue-on-error: true
+-        uses: rtCamp/action-slack-notify@33ca3be66c6f378fe1610fd1d5258632dbed5e58
+-        env:
+-          SLACK_COLOR: ${{ job.status }}
+-          SLACK_MESSAGE: "Integer RTX 4090 full benchmarks finished with status: ${{ job.status }}. (${{ env.ACTION_RUN_URL }})"
+-
+-  cuda-core-crypto-benchmarks:
+-    name: benchmark_gpu_4090/cuda-core-crypto-benchmarks
+-    if: ${{ github.event_name == 'workflow_dispatch' || github.event_name == 'schedule' || contains(github.event.label.name, '4090_bench') }}
+-    needs: cuda-integer-benchmarks
+-    concurrency:
+-      group: ${{ github.workflow_ref }}_cuda_core_crypto_bench
+-      cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+-    runs-on: ["self-hosted", "4090-desktop"]
+-    timeout-minutes: 1440 # 24 hours
+-
+-    steps:
+-      - name: Checkout tfhe-rs
+-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+-        with:
+-       
+```
+
+**File**: `.github/workflows/gpu_fast_tests.yml` (modified, +5/-11)
+```diff
+@@ -1,4 +1,8 @@
+-# Compile and test tfhe-cuda-backend on an AWS instance
++# Push-time GPU smoke test: user-doc and high-level-API tests on a single L40
++# Scaleway instance. test_core_crypto_gpu, test_integer_compression_gpu,
++# test_cuda_backend and test_c_api_gpu are intentionally left out: they're
++# already covered by gpu_core_hlapi_h100_2gpu_par on approval, and running
++# them again here would just duplicate that coverage on every push.
+ name: gpu_fast_tests
  
-   cpu-zk-server-latency-table:
-     name: generate_documentation_svgs/cpu-zk-server-latency-table
--    uses: ./.github/workflows/generate_svg_common.yml
-+    uses: ./.github/workflows/generate_svg_rust_common.yml
-     if: inputs.generate-cpu-svgs
+ env:
+@@ -126,20 +130,10 @@ jobs:
+         run: |
+           nvidia-cuda-mps-control -d
+ 
+-      - name: Run core crypto and internal CUDA backend tests
+-        run: |
+-          make test_core_crypto_gpu
+-          make test_integer_compression_gpu
+-          make test_cuda_backend
+-
+       - name: Run user docs tests
+         run: |
+           make test_user_doc_gpu
+ 
+-      - name: Test C API
+-        run: |
+-          make test_c_api_gpu
+-
+       - name: Run High Level API Tests
+         run: |
+           make test_high_level_api_gpu_fast
+```
+
+**File**: `.github/workflows/gpu_full_multi_gpu_tests.yml` (modified, +8/-6)
+```diff
+@@ -22,8 +22,9 @@ env:
+ on:
+   # Allows you to run this workflow manually from the Actions tab as an alternative.
+   workflow_dispatch:
+-  pull_request:
+-    types: [labeled]
++  schedule:
++    # Every Wednesday at midnight Paris time (winter time, 1a.m. in summer time)
++    - cron: "0 23 * * 3"
+ 
+ permissions:
+   contents: read
+@@ -34,6 +35,8 @@ jobs:
+   should-run:
+     name: gpu_full_multi_gpu_tests/should-run
+     runs-on: ubuntu-latest
++    if: github.event_name != 'schedule' ||
++      (github.event_name == 'schedule' && github.repository == 'zama-ai/tfhe-rs')
+     permissions:
+       pull-requests: read # Needed to check for file change
+     outputs:
+@@ -128,14 +131,13 @@ jobs:
+       - name: Enable nvidia multi-process service
+         run: |
+           nvidia-cuda-mps-control -d
+-      - name: Run multi-bit CUDA integer compression tests
++      - name: Run CUDA integer compression tests
+         run: |
+           BIG_TESTS_INSTANCE=TRUE make test_integer_compression_gpu
+ 
+-      # No need to test core_crypto and classic PBS in integer since it's already tested on single GPU.
+-      - name: Run multi-bit CUDA integer tests
++      - name: Run classical CUDA integer tests
+         run: |
+-          BIG_TESTS_INSTANCE=TRUE NO_BIG_PARAMS_GPU=TRUE make test_integer_multi_bit_gpu_ci
++          BIG_TESTS_INSTANCE=TRUE NO_BIG_PARAMS_GPU=TRUE make test_integer_gpu_ci
+ 
+       - name: Run user docs tests
+         run: |
+```
+
+**File**: `.github/workflows/gpu_h100_long_run_tests.yml` (modified, +0/-1)
+```diff
+@@ -19,7 +19,6 @@ on:
+   schedule:
+     # Weekly tests will be triggered every weekday at 1a.m.
+     - cron: "0 1 * * MON-FRI"
+-  pull_request:
+ 
+ permissions:
+   contents: read
+```
+
+**File**: `.github/workflows/gpu_integer_classic_tests_h100_2gpu_par.yml` (modified, +7/-1)
+```diff
+@@ -1,4 +1,8 @@
+-# Run signed and unsigned integer GPU classic tests in parallel on a 2xH100 machine
++# Run signed and unsigned integer GPU classic tests in parallel on a 2xH100 machine.
++# Restricted to message_2_carry_2 params (FAST_TESTS=TRUE): the full classical
++# param sweep is already covered on cron by gpu_4090_tests (make test_gpu ->
++# test_integer_gpu --all-but-noise, every 2 days), so there's no need to pay
++# for it again on every approval.
+ name: gpu_integer_classic_tests_h100_2gpu_par
+ 
+ env:
+@@ -12,6 +16,8 @@ env:
+   SLACK_USERNAME: ${{ secrets.BOT_USERNAME }}
+   SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+   SLACKIFY_MARKDOWN: true
++  FAST_TESTS: TRUE
++  NIGHTLY_TESTS: FALSE
+   IS_PULL_REQUEST: ${{ github.event_name == 'pull_request' }}
+   PULL_REQUEST_MD_LINK: ""
+   CHECKOUT_TOKEN: ${{ secrets.REPO_CHECKOUT_TOKEN || secrets.GITHUB_TOKEN }}
+```
+
+**File**: `.github/workflows/gpu_integer_long_run_tests.yml` (modified, +3/-1)
+```diff
+@@ -20,6 +20,7 @@ on:
+     # Weekly tests will be triggered every Monday at 8p.m.
+     - cron: "0 1 * * MON-FRI"
+   pull_request:
++    types: [labeled]
+ 
+ permissions:
+   contents: read
+@@ -63,7 +64,8 @@ jobs:
+     needs: [should-run]
+     if: github.event_name == 'workflow_dispatch' ||
+       (github.event_name == 'schedule' && github.repository == 'zama-ai/tfhe-rs') ||
+-      needs.should-run.outputs.is_needed_in_gpu_ci == 'true'
++      (github.event_name == 'pull_request' && github.event.action == 'labeled' &&
++      github.event.label.name == 'approved' && needs.should-run.outputs.is_needed_in_gpu_ci == 'true')
+     uses: ./.github/workflows/slab_setup.yml
      with:
-       backend: cpu
--      hardware_name: hpc7a.96xlarge
-+      hardware_name: hpc8a.96xlarge
-       layer: integer
-       bench_subset: zk
-       pbs_kind: classical
-@@ -177,11 +178,11 @@ jobs:
- 
-   cpu-zk-server-throughput-table:
-     name: generate_documentation_svgs/cpu-zk-server-throughput-table
--    uses: ./.github/workflows/generate_svg_common.yml
-+    uses: ./.github/workflows/generate_svg_rust_common.yml
-     if: inputs.generate-cpu-svgs
-     with:
-       backend: cpu
--      hardware_name: hpc7a.96xlarge
-+      hardware_name: hpc8a.96xlarge
-       layer: integer
-       bench_subset: zk
-       pbs_kind: classical
-@@ -193,7 +194,6 @@ jobs:
-       DATA_EXTRACTOR_DATABASE_HOST: ${{ secrets.DATA_EXTRACTOR_DATABASE_HOST }}
-       DATA_EXTRACTOR_DATABASE_PASSWORD: ${{ secrets.DATA_EXTRACTOR_DATABASE_PASSWORD }}
- 
--  # Uses the Rust extractor: the Python one cannot parse spec ids.
-   cpu-zk-client-latency-table:
-     name: generate_documentation_svgs/cpu-zk-client-latency-table
-     uses: ./.github/workflows/generate_svg_rust_common.yml
+       backend: terraform
 ```
 
-**File**: `Cargo.lock` (modified, +0/-1)
-```diff
-@@ -3893,7 +3893,6 @@ dependencies = [
-  "ark-ff",
-  "ark-poly",
-  "bincode",
-- "criterion",
-  "getrandom 0.2.17",
-  "itertools 0.15.0",
-  "num-bigint 0.5.1",
-```
-
-**File**: `Makefile` (modified, +5/-3)
-```diff
-@@ -2372,14 +2372,16 @@ bench_hlapi_erc7984_hpu: install_rs_check_toolchain
- .PHONY: bench_tfhe_zk_pok # Run benchmarks for the tfhe_zk_pok crate
- bench_tfhe_zk_pok: install_rs_check_toolchain
- 	RUSTFLAGS="$(RUSTFLAGS)" \
--	cargo $(CARGO_RS_CHECK_TOOLCHAIN) bench -p tfhe-zk-pok --
-+	cargo $(CARGO_RS_CHECK_TOOLCHAIN) bench \
-+	--bench zk-pke-v1 --bench zk-pke-v2 \
-+	--features=zk-pok -p tfhe-benchmark --
- 
- .PHONY: bench_tfhe_zk_pok_gpu # Run benchmarks for the tfhe_zk_pok crate using GPU acceleration
- bench_tfhe_zk_pok_gpu: install_rs_check_toolchain
- 	RUSTFLAGS="$(RUSTFLAGS)" __TFHE_RS_BENCH_TYPE=$(BENCH_TYPE) \
- 	cargo $(CARGO_RS_CHECK_TOOLCHAIN) bench \
--	--package tfhe-zk-pok \
--	--features=gpu --profile release
-+	--bench zk-pke-v1 --bench zk-pke-v2 \
-+	--features=gpu-zk -p tfhe-benchmark --profile release
- 
- .PHONY: bench_hlapi_noise_squash # Run benchmarks for noise squash operation
- bench_hlapi_noise_squash: install_rs_check_toolchain
-```
-
-**File**: `tfhe-benchmark/Cargo.toml` (modified, +12/-0)
-```diff
-@@ -253,6 +253,18 @@ path = "benches/zk/msm.rs"
- harness = false
- required-features = ["zk-pok"]
- 
-+[[bench]]
-+name = "zk-pke-v1"
-+path = "benches/zk/pke_v1.rs"
-+harness = false
-+required-features = ["zk-pok"]
-+
-+[[bench]]
-+name = "zk-pke-v2"
-+path = "benches/zk/pke_v2.rs"
-+harness = false
-+required-features = ["zk-pok"]
-+
- [[bin]]
- name = "boolean_key_sizes"
- path = "src/bin/boolean_key_sizes.rs"
-```
-
-**File**: `tfhe-benchmark/benches/core_crypto/ks_bench.rs` (modified, +31/-15)
-```diff
-@@ -19,7 +19,7 @@ fn keyswitch<Scalar: UnsignedTorus + CastInto<usize> + Serialize>(
-     criterion: &mut Criterion,
-     parameters: &[(String, BenchPbsParams<Scalar>)],
- ) {
--    let cc_bench = CoreCryptoBench::Keyswitch;
-+    let cc_bench = CoreCryptoBench::Keyswitch(None);
-     let bench_type = get_bench_type();
-     let mut bench_group = criterion.benchmark_group(cc_bench.to_string());
- 
-@@ -347,7 +347,8 @@ mod cuda {
-     };
-     use benchmark::BenchPbsParams;
-     use benchmark_spec::{
--        get_bench_type, BenchmarkSpec, BenchmarkType, CoreCryptoBench, CudaKeyswitchConfig,
-+        get_bench_type, BenchmarkSpec, BenchmarkType, CoreCryptoBench, KsIndices, KsVariant,
-+        PrecisionTag,
-     };
-     use criterion::{Criterion, Throughput};
-     use itertools::Itertools;
-@@ -365,14 +366,27 @@ mod cuda {
- 
-     use tfhe::core_crypto::prelude::*;
- 
-+    fn ks_variant(uses_gemm_ks: bool, uses_trivial_indices: bool) -> KsVariant {
-+        let indices = if uses_trivial_indices {
-+            KsIndices::TrivialIndices
-+        } else {
-+            KsIndices::ComplexIndices
-+        };
-+        if uses_gemm_ks {
-+            KsVariant::Gemm(indices)
-+        } else {
-+            KsVariant::Classical(indices)
-+        }
-+    }
-+
-     fn cuda_keyswitch_classical_and_gemm<
-         Scalar: UnsignedTorus + CastInto<usize> + CastFrom<u64> + Serialize,
-         KeyswitchScalar: UnsignedTorus + CastFrom<Scalar>,
-     >(
-         criterion: &mut Criterion,
-         parameters: &[(String, BenchPbsParams<Scalar>)],
-     ) {
--        let cc_bench = CoreCryptoBench::Keyswitch;
-+        let cc_bench = CoreCryptoBench::Keyswitch(None);
-         let bench_type = get_bench_type();
-         let mut bench_group = criterion.benchmark_group(cc_bench.to_string());
- 
-@@ -473,11 +487,15 @@ mod cuda {
-                     let h_indexes = [Scalar::ZERO];
-                     let cuda_indexes = CudaIndexes::new(&h_indexes, &streams, 0);
- 
--                    let ks_config = CudaKeyswitchConfig::new(ks_bits, None, None);
-+                    let uses_trivial_indices = true;
-+                    let uses_gemm_ks = false;
-                     let benchmark_spec = BenchmarkSpec::new_cuda_core_crypto(
--                        cc_bench,
-+                        CoreCryptoBench::Keyswitch(Some(ks_variant(
-+                            uses_gemm_ks,
-+                            uses_trivial_indices,
-+                        ))),
-                         name,
--                        Some(ks_config.into()),
-+                        Some(PrecisionTag::Bits(ks_bits).into()),
-                         bench_type,
-                     );
-                     let bench_id = benchmark_spec.to_string();
-@@ -490,9 +508,9 @@ mod cuda {
-                                     &mut output_ct_gpu,
-                                     &cuda_indexes.d_input,
-                                     &cuda_indexes.d_output,
--                                    true,
-+                                    uses_trivial_indices,
-                                     &streams,
--                                    false,
-+                                    uses_gemm_ks,
-                                 );
- 
-                                 black_box(&mut ct_gpu);
-@@ -515,15 +533,13 @@ mod cuda {
- 
-                     for uses_gemm_ks in [false, true] {
-                         for uses_trivial_indices in [false, true] {
--                            let ks_config = CudaKeyswitchConfig::new(
--                                ks_bits,
--                                Some(uses_gemm_ks),
--                                Some(uses_trivial_indices),
--                            );
-                             let benchmark_spec = BenchmarkSpec::new_cuda_core_crypto(
--                                cc_bench,
-+                                CoreCryptoBench::Keyswitch(Some(ks_variant(
-+                                    uses_gemm_ks,
-+                                    uses_trivial_indices,
-+                                ))),
-                                 name,
--                                Some(ks_config.into()),
-+                                Some(PrecisionTag::Bits(ks_bits).into()),
-                                 bench_type,
-                             );
-                             let bench_id = benchmark_spec.to_string();
-```
-
-**File**: `tfhe-benchmark/benches/integer/zk_pke.rs` (modified, +52/-43)
-```diff
-@@ -2,7 +2,7 @@ use benchmark::params_aliases::*;
- use benchmark::utilities::{throughput_num_threads, write_to_json, OperatorType};
- use benchmark_spec::{
-     get_bench_type, BenchmarkMetric, BenchmarkSpec, BenchmarkType, ComputeLoad, CsvResultWriter,
--    IntegerBench, ZkPkeBench, ZkPkeConfig, ZkScheme,
-+    IntegerBench, ZkPkeBench, ZkPkeConfig, ZkProofVariant, ZkProofVariantKind,
- };
- use criterion::{criterion_group, Criterion, Throughput};
- use rand::prelude::*;
-@@ -62,42 +62,37 @@ fn compute_load_config() -> Vec<ZkComputeLoad> {
-     conf
- }
- 
--fn zk_scheme(param_pke: CompactPublicKeyEncryptionParameters) -> ZkScheme {
-+fn zk_scheme(param_pke: CompactPublicKeyEncryptionParameters) -> ZkProofVariantKind {
-     match param_pke.zk_scheme {
--        SupportedCompactPkeZkScheme::V1 => ZkScheme::V1,
--        SupportedCompactPkeZkScheme::V2 => ZkScheme::V2,
-+        SupportedCompactPkeZkScheme::V1 => ZkProofVariantKind::V1,
-+        SupportedCompactPkeZkScheme::V2 => ZkProofVariantKind::V2,
-         SupportedCompactPkeZkScheme::ZkNotSupported => {
-             panic!("these benches need parameters supporting a zk scheme")
-         }
-     }
- }
- 
--/// The tag of anything measured on a proven list: all four axes are relevant.
--fn proven_list_tag(
--    bits: usize,
--    crs_size: usize,
--    compute_load: ZkComputeLoad,
--    scheme: ZkScheme,
--) -> ZkPkeConfig {
-+fn proof_variant(compute_load: ZkComputeLoad, scheme: ZkProofVariantKind) -> ZkProofVariant {
-+    ZkProofVariant::new(
-+        scheme,
-+        match compute_load {
-+            ZkComputeLoad::Proof => ComputeLoad::Proof,
-+            ZkComputeLoad::Verify => ComputeLoad::Verify,
-+        },
-+    )
-+}
-+
-+fn proven_list_tag(bits: usize, crs_size: usize) -> ZkPkeConfig {
-     ZkPkeConfig {
-         bits_packed: Some(bits as u32),
-         crs_bits: crs_size as u32,
--        compute_load: Some(match compute_load {
--            ZkComputeLoad::Proof => ComputeLoad::Proof,
--            ZkComputeLoad::Verify => ComputeLoad::Verify,
--        }),
--        scheme,
-     }
- }
- 
--/// A CRS is built before anything is packed into a proof or a load is picked,
--/// and its size depends on neither.
--fn crs_tag(crs_size: usize, scheme: ZkScheme) -> ZkPkeConfig {
-+fn crs_tag(crs_size: usize) -> ZkPkeConfig {
-     ZkPkeConfig {
-         bits_packed: None,
-         crs_bits: crs_size as u32,
--        compute_load: None,
--        scheme,
-     }
- }
- 
-@@ -185,9 +180,9 @@ fn cpu_pke_zk_proof(c: &mut Criterion) {
- 
-                 for compute_load in compute_load_config() {
-                     let spec = zk_spec(
--                        ZkPkeBench::Proof,
-+                        ZkPkeBench::Proof(proof_variant(compute_load, scheme)),
-                         param_name,
--                        proven_list_tag(*bits, crs_size, compute_load, scheme),
-+                        proven_list_tag(*bits, crs_size),
-                         get_bench_type(),
-                     );
-                     let bench_id = spec.to_string();
-@@ -298,9 +293,9 @@ fn cpu_pke_zk_verify(c: &mut Criterion, results_file: &Path) {
-             println!("CRS size: {}", crs_data.len());
- 
-             let crs_spec = zk_spec(
--                ZkPkeBench::Crs,
-+                ZkPkeBench::Crs(scheme),
-                 param_name,
--                crs_tag(crs_size, scheme),
-+                crs_tag(crs_size),
-                 BenchmarkMetric::KeySize,
-             );
- 
-@@ -318,11 +313,16 @@ fn cpu_pke_zk_verify(c: &mut Criterion, results_file: &Path) {
-                 let shortint_params: PBSParameters = param_fhe.into();
- 
-                 for compute_load in compute_load_config() {
--                    let config = proven_list_tag(*bits, crs_size, compute_load, scheme);
--                    let spec_verify =
--                        zk_spec(ZkPkeBench::Verify, param_name, config, get_bench_type());
-+                    let variant = proof_variant(compute_load, scheme);
-+                    let config = proven_list_tag(*bits, crs_size);
-+                    let spec_verify = zk_spec(
-+                        ZkPkeBench::Verify(variant),
-+                        param_name,
-+                        config,
-+                        get_bench_type(),
-+                    );
-                     let spec_verify_and_expand = zk_spec(
--                        ZkPkeBench::VerifyAndExpand,
-+                        ZkPkeBench::VerifyAndExpand(variant),
-                         param_name,
-                         config,
-                         get_bench_type(),
-@@ -350,7 +350,7 @@ fn cpu_pke_zk_verify(c: &mut Criterion, results_file: &Path) {
-                             );
- 
-                             let proven_list_spec = zk_spec(
--                                ZkPkeBench::ProvenList,
-+                                ZkPkeBench::ProvenList(variant),
-                                 param_name,
-                                 config,
-                                 BenchmarkMetric::KeySize,
-@@ -373
-```
-
-**File**: `tfhe-benchmark/benches/zk/pke_v1.rs` (renamed, +19/-9)
+**File**: `.github/workflows/gpu_noise_level_checks.yml` (modified, +3/-1)
 ```diff
 @@ -1,8 +1,10 @@
-+use benchmark_spec::zk::pke::{PkeBench, PkeProof, PkeVerify};
-+use benchmark_spec::Backend;
- use criterion::{criterion_group, criterion_main, Criterion};
- use rand::Rng;
- use tfhe_zk_pok::proofs::pke::{prove, verify};
- use tfhe_zk_pok::proofs::ComputeLoad;
--use utils::{write_to_json, PKEV1_TEST_PARAMS, PKEV2_TEST_PARAMS};
-+use utils::{pke_spec, spec_compute_load, write_pke_record, PKEV1_TEST_PARAMS, PKEV2_TEST_PARAMS};
+ # Run signed and unsigned GPU integer tests with the gpu-debug-noise-check
+ # feature so that the CHECK_NOISE_LEVEL assertions in the CUDA backend are
+ # active, without the multi-GPU emulation that requires a multi-GPU host.
++# Classical params only (message_2_carry_2) — multi-bit is excluded from
++# both steps below.
+ # Runs on a single L40S Scaleway instance (Hyperstack fallback), triggered
+-# automatically on every PR that touches GPU code, alongside gpu_fast_tests.
++# once a PR that touches GPU code is labeled 'approved' (see approve_label.yml).
+ name: gpu_noise_level_checks
  
- #[path = "./utils.rs"]
- mod utils;
-@@ -24,11 +26,15 @@ fn bench_pke_v1_prove(c: &mut Criterion) {
-         (PKEV2_TEST_PARAMS, "PKEV2_TEST_PARAMS"),
-     ] {
-         let (public_param, public_commit, private_commit, metadata) = init_params_v1(params);
--        let effective_t = params.t >> 1;
--        let bits = (params.k as u32) * effective_t.ilog2();
- 
-         for load in [ComputeLoad::Proof, ComputeLoad::Verify] {
--            let bench_id = format!("{bench_name}::{param_name}_{bits}_bits_packed_{load}");
-+            let spec = pke_spec(
-+                PkeBench::Proof(PkeProof::V1(spec_compute_load(load))),
-+                Backend::Cpu,
-+                params,
-+                param_name,
-+            );
-+            let bench_id = spec.to_string();
- 
-             let seed: u128 = rng.gen();
- 
-@@ -44,7 +50,7 @@ fn bench_pke_v1_prove(c: &mut Criterion) {
-                 })
-             });
- 
--            write_to_json(&bench_id, params, param_name, bench_shortname);
-+            write_pke_record(&spec, params, bench_shortname);
-         }
-     }
- }
-@@ -64,11 +70,15 @@ fn bench_pke_v1_verify(c: &mut Criterion) {
-         (PKEV2_TEST_PARAMS, "PKEV2_TEST_PARAMS"),
-     ] {
-         let (public_param, public_commit, private_commit, metadata) = init_params_v1(params);
--        let effective_t = params.t >> 1;
--        let bits = (params.k as u32) * effective_t.ilog2();
- 
-         for load in [ComputeLoad::Proof, ComputeLoad::Verify] {
--            let bench_id = format!("{bench_name}::{param_name}_{bits}_bits_packed_{load}");
-+            let spec = pke_spec(
-+                PkeBench::Verify(PkeVerify::V1(spec_compute_load(load))),
-+                Backend::Cpu,
-+                params,
-+                param_name,
-+            );
-+            let bench_id = spec.to_string();
- 
-             let seed: u128 = rng.gen();
- 
-@@ -86,7 +96,7 @@ fn bench_pke_v1_verify(c: &mut Criterion) {
-                 })
-             });
- 
--            write_to_json(&bench_id, params, param_name, bench_shortname);
-+            write_pke_record(&spec, params, bench_shortname);
-         }
-     }
- }
+ env:
 ```
 
-**File**: `tfhe-benchmark/benches/zk/pke_v2.rs` (renamed, +62/-25)
+**File**: `.github/workflows/gpu_signed_integer_tests.yml` (removed, +0/-182)
 ```diff
-@@ -1,12 +1,32 @@
-+use benchmark_spec::zk::pke::{PkeBench, PkeProof, PkeVerify, ZkBound, ZkPairingMode};
-+use benchmark_spec::Backend;
- use criterion::{criterion_group, criterion_main, Criterion};
- use rand::Rng;
- use tfhe_zk_pok::proofs::pke_v2::{prove, verify, Bound, VerificationPairingMode};
- use tfhe_zk_pok::proofs::ComputeLoad;
--use utils::{init_params_v2, write_to_json, PKEV1_TEST_PARAMS, PKEV2_TEST_PARAMS};
-+use utils::{
-+    init_params_v2, pke_spec, spec_compute_load, write_pke_record, PKEV1_TEST_PARAMS,
-+    PKEV2_TEST_PARAMS,
-+};
- 
- #[path = "./utils.rs"]
- mod utils;
- 
-+fn spec_bound(bound: Bound, load: ComputeLoad) -> ZkBound {
-+    let load = spec_compute_load(load);
-+    match bound {
-+        Bound::CS => ZkBound::Cs(load),
-+        Bound::GHL => ZkBound::Ghl(load),
-+    }
-+}
-+
-+fn spec_pairing_mode(mode: VerificationPairingMode, bound: ZkBound) -> ZkPairingMode {
-+    match mode {
-+        VerificationPairingMode::TwoSteps => ZkPairingMode::TwoSteps(bound),
-+        VerificationPairingMode::Batched => ZkPairingMode::Batched(bound),
-+    }
-+}
-+
- fn bench_pke_v2_prove(c: &mut Criterion) {
-     let bench_shortname = "pke_zk_proof_v2";
-     let bench_name = format!("tfhe_zk_pok::{bench_shortname}");
-@@ -26,10 +46,14 @@ fn bench_pke_v2_prove(c: &mut Criterion) {
-         [Bound::CS, Bound::GHL]
-     ) {
-         let (public_param, public_commit, private_commit, metadata) = init_params_v2(params, bound);
--        let effective_t = params.t >> 1;
--        let bits = (params.k as u32) * effective_t.ilog2();
- 
--        let bench_id = format!("{bench_name}::{param_name}_{bits}_bits_packed_{load}_{bound:?}");
-+        let spec = pke_spec(
-+            PkeBench::Proof(PkeProof::V2(spec_bound(bound, load))),
-+            Backend::Cpu,
-+            params,
-+            param_name,
-+        );
-+        let bench_id = spec.to_string();
-         println!("{bench_id}");
- 
-         let seed: u128 = rng.gen();
-@@ -46,7 +70,7 @@ fn bench_pke_v2_prove(c: &mut Criterion) {
-             })
-         });
- 
--        write_to_json(&bench_id, params, param_name, bench_shortname);
-+        write_pke_record(&spec, params, bench_shortname);
-     }
- }
- 
-@@ -73,12 +97,17 @@ fn bench_pke_v2_verify(c: &mut Criterion) {
-         ]
-     ) {
-         let (public_param, public_commit, private_commit, metadata) = init_params_v2(params, bound);
--        let effective_t = params.t >> 1;
--        let bits = (params.k as u32) * effective_t.ilog2();
- 
--        let bench_id = format!(
--            "{bench_name}::{param_name}_{bits}_bits_packed_{load}_{bound:?}_{pairing_mode:?}"
-+        let spec = pke_spec(
-+            PkeBench::Verify(PkeVerify::V2(spec_pairing_mode(
-+                pairing_mode,
-+                spec_bound(bound, load),
-+            ))),
-+            Backend::Cpu,
-+            params,
-+            param_name,
-         );
-+        let bench_id = spec.to_string();
-         println!("{bench_id}");
- 
-         let seed: u128 = rng.gen();
-@@ -103,11 +132,11 @@ fn bench_pke_v2_verify(c: &mut Criterion) {
-             })
-         });
- 
--        write_to_json(&bench_id, params, param_name, bench_shortname);
-+        write_pke_record(&spec, params, bench_shortname);
-     }
- }
- 
--#[cfg(feature = "gpu")]
-+#[cfg(feature = "gpu-zk")]
- mod gpu {
-     use super::*;
-     use tfhe_zk_pok::gpu::pke_v2 as gpu_pke_v2;
-@@ -132,11 +161,14 @@ mod gpu {
-         ) {
-             let (public_param, public_commit, private_commit, metadata) =
-                 init_params_v2(params, bound);
--            let effective_t = params.t >> 1;
--            let bits = (params.k as u32) * effective_t.ilog2();
- 
--            let bench_id =
--                format!("{bench_name}::{param_name}_{bits}_bits_packed_{load}_{bound:?}");
-+            let spec = pke_spec(
-+                PkeBench::Proof(PkeProof::V2(spec_bound(bound, load))),
-+                Backend::Cuda,
-+                params,
-+                param_name,
-+            );
-+            let bench_id = spec.to_string();
-             println!("{bench_id}");
- 
-             let seed: u128 = rng.gen();
-@@ -153,7 +185,7 @@ mod gpu {
-                 })
-             });
- 
--            write_to_json(&bench_id, params, param_name, bench_shortname);
-+            write_pke_record(&spec, params, bench_shortname);
-         }
-     }
- 
-@@ -181,12 +213,17 @@ mod gpu {
-         ) {
-             let (public_param, public_commit, private_commit, metadata) =
-                 init_params_v2(params, bound);
--            let effective_t = params.t >> 1;
--            let bits = (params.k as u32) * effective_t.ilog2();
- 
--            let bench_id = format!(
--                "{bench_name}::{param_name}_{bits}_bits_packed_{load}_{bound:?}_{pairing_mode:?}"
-+            let spec = pke_spec(
-+                PkeBench::Verify(PkeVerify::V2(spec_pairing_mode(
-+                    pairing_mode,
-+                    spec_bound(bound, load),
-+                ))),
-+                Backend::Cuda,
-+                params,
-+        
+@@ -1,182 +0,0 @@
+-# Compile and test tfhe-cuda-backend signed integer on an AWS instance
+-name: gpu_signed_integer_tests
+-
+-env:
+-  CARGO_TERM_COLOR: always
+-  ACTION_RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+-  RUSTFLAGS: "-C target-cpu=native"
+-  RUST_BACKTRACE: "full"
+-  RUST_MIN_STACK: "8388608"
+-  SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
+-  SLACK_ICON: https://pbs.twimg.com/profile_images/1274014582265298945/OjBKP9kn_400x400.png
+-  SLACK_USERNAME: ${{ secrets.BOT_USERNAME }}
+-  SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+-  SLACKIFY_MARKDOWN: true
+-  FAST_TESTS: TRUE
+-  NIGHTLY_TESTS: FALSE
+-  IS_PULL_REQUEST: ${{ github.event_name == 'pull_request' }}
+-  PULL_REQUEST_MD_LINK: ""
+-  CHECKOUT_TOKEN: ${{ secrets.REPO_CHECKOUT_TOKEN || secrets.GITHUB_TOKEN }}
+-  # Secrets will be available only to zama-ai organization members
+-  SECRETS_AVAILABLE: ${{ secrets.JOB_SECRET != '' }}
+-
+-on:
+-  # Allows you to run this workflow manually from the Actions tab as an alternative.
+-  workflow_dispatch:
+-  pull_request:
+-
+-permissions:
+-  contents: read
+-
+-# zizmor: ignore[concurrency-limits] concurrency is managed after instance setup to ensure safe provisioning
+-
+-jobs:
+-  should-run:
+-    name: gpu_signed_integer_tests/should-run
+-    runs-on: ubuntu-latest
+-    permissions:
+-      pull-requests: read # Needed to check for file change
+-    outputs:
+-      gpu_test: ${{ env.IS_PULL_REQUEST == 'false' || steps.changed-files.outputs.gpu_any_changed }}
+-    steps:
+-      - name: Checkout tfhe-rs
+-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+-        with:
+-          fetch-depth: 0
+-          persist-credentials: "false"
+-          token: ${{ env.CHECKOUT_TOKEN }}
+-
+-      - name: Check for file changes
+-        id: changed-files
+-        uses: tj-actions/changed-files@9426d40962ed5378910ee2e21d5f8c6fcbf2dd96 # v47.0.6
+-        with:
+-          files_yaml: |
+-            gpu:
+-              - tfhe/Cargo.toml
+-              - tfhe/build.rs
+-              - backends/tfhe-cuda-backend/**
+-              - tfhe/src/core_crypto/gpu/**
+-              - tfhe/src/integer/server_key/radix_parallel/tests_unsigned/**
+-              - tfhe/src/integer/server_key/radix_parallel/tests_signed/**
+-              - tfhe/src/integer/server_key/radix_parallel/tests_cases_unsigned.rs
+-              - tfhe/src/integer/gpu/**
+-              - tfhe/src/shortint/parameters/**
+-              - tfhe/src/high_level_api/**
+-              - tfhe/src/c_api/**
+-              - '.github/workflows/gpu_signed_integer_tests.yml'
+-              - scripts/integer-tests.sh
+-              - '.github/actions/gpu_setup/action.yml'
+-              - ci/slab.toml
+-
+-  setup-instance:
+-    name: gpu_signed_integer_tests/setup-instance
+-    needs: should-run
+-    if: github.event_name != 'pull_request' ||
+-      needs.should-run.outputs.gpu_test == 'true'
+-    uses: ./.github/workflows/slab_setup.yml
+-    with:
+-      backend: terraform
+-      profile: scaleway-small-gpu
+-      fallback-runner: gpu_ubuntu-22.04
+-    permissions:
+-      contents: read
+-      id-token: write # Needed to join the Slab tailnet via OIDC
+-    secrets:
+-      SLAB_ACTION_TOKEN: ${{ secrets.SLAB_ACTION_TOKEN }}
+-      SLAB_BASE_URL: ${{ secrets.SLAB_BASE_URL }}
+-      JOB_SECRET: ${{ secrets.JOB_SECRET }}
+-      TS_SLAB_OAUTH_CLIENT_ID: ${{ secrets.TS_SLAB_OAUTH_CLIENT_ID }}
+-      TS_SLAB_OAUTH_AUDIENCE: ${{ secrets.TS_SLAB_OAUTH_AUDIENCE }}
+-
+-  cuda-signed-integer-tests:
+-    name: gpu_signed_integer_tests/cuda-signed-integer-tests
+-    needs: [should-run, setup-instance]
+-    if: github.event_name != 'pull_request' ||
+-      (github.event_name == 'pull_request' && needs.setup-instance.result != 'skipped')
+-    concurrency:
+-      group: ${{ github.workflow_ref }}
+-      cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+-    runs-on: ${{ needs.setup-instance.outputs.runner-name }}
+-    strategy:
+-      fail-fast: false
+-      # explicit include-based build matrix, of known valid options
+-      matrix:
+-        include:
+-          - os: ubuntu-22.04
+-            cuda: "12.8 12.2"
+-            gcc: 12
+-    steps:
+-      - name: Checkout tfhe-rs
+-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+-        with:
+-          persist-credentials: "false"
+-          token: ${{ env.CHECKOUT_TOKEN }}
+-
+-      - name: Setup cloud GPU machine dependencies
+-        uses: ./.github/actions/gpu_setup
+-        with:
+-          cuda-version: ${{ matrix.cuda }}
+-          gcc-version: ${{ matrix.gcc }}
+-          cloud-provider: ${{ needs.setup-instance.outputs.cloud-provider }}
+-
+-      - name: Install latest stable
+-        uses: dtolnay/rust-toolchain@683b588c487a69d01f6c6ddf40f036ff682cc2c8 # zizmor: ignore[stale-action-refs] this action doesn't create releases
+-        with:
+-          toolchain: stable
+-      - name: Enable nvidia multi-process service
+-        run: |
+-          nvidia-cud
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4142** (closed): Ns/feat/stream ciphertext list (@nsarlin-zama)
+- **PR #4141** (2026-11-05): chore(ci): setup tailscale ci to make slab work again (@SouchonTheo)
+- **PR #4135** (2026-11-05): chore(zk): add itertools as dev-dependency (@nsarlin-zama)
+- **PR #4127** (2026-11-05): chore(gpu): refactor ci to better cover classical pbs (@agnesLeroy)
 - **PR #4125** (2026-10-30): chore: add some missing dependency tracking in dependabot (@IceTDrinker)
 - **PR #4124** (2026-10-30): chore: upgrade CODEOWNERS to always have reviews (@IceTDrinker)
-- **PR #4122** (2026-10-30): chore(zk): remove unused itertools dep (@nsarlin-zama)
-- **PR #4121** (2026-10-28): chore(tfhe-lints): bump dylint 6.3.0 (@nsarlin-zama)
-- **PR #4116** (2026-10-29): fix(gpu): fix cmux metadata (@guillermo-oyarzun)
-- **PR #4115** (2026-10-28): chore(deps-dev): bump fast-uri from 3.1.7 to 3.1.9 in /tfhe/web_wasm_parallel_tests (@dependabot[bot])
 
 ---
 
@@ -2511,42 +2368,3 @@ Observed empirical fixes and code patches:
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. bench): migrate zk benchmark to the spec
-
-**RULE**:
-When implementing operations in `.github/workflows/generate_svgs.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zama-ai/tfhe-rs. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `a834a81e`: bench): migrate zk benchmark to the spec. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/generate_svgs.yml`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```rust
-// Verified production-grade fix pattern:
-  # All three use the Rust extractor: the Python one cannot parse spec ids.
-    uses: ./.github/workflows/generate_svg_rust_common.yml
-      hardware_name: hpc8a.96xlarge
-    uses: ./.github/workflows/generate_svg_rust_common.yml
-      hardware_name: hpc8a.96xlarge
-```
-
-**NEGATIVE CONSTRAINT**:
-```rust
-// Anti-pattern to NEVER write (induced failure mode):
-    uses: ./.github/workflows/generate_svg_common.yml
-      hardware_name: hpc7a.96xlarge
-    uses: ./.github/workflows/generate_svg_common.yml
-      hardware_name: hpc7a.96xlarge
-  # Uses the Rust extractor: the Python one cannot parse spec ids.
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a834a81e` are properly handled with clean fallback behavior.

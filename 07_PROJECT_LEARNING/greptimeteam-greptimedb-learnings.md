@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md`  
 > **Source**: github ([https://github.com/GreptimeTeam/greptimedb](https://github.com/GreptimeTeam/greptimedb))  
-> **Source Version**: `351f4207`  
+> **Source Version**: `2cb47360`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T11:09:30.729Z  
+> **Timestamp**: 2026-11-05T06:51:09.079Z  
 > **Learning ID**: `learn-github-greptimeteam-greptimedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/GreptimeTeam/greptimedb](https://github.com/GreptimeTeam/greptimedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T11:09:29.922Z  
+> **Harvest Timestamp**: 2026-11-05T06:51:09.073Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The open-source observability database. One columnar engine for metrics, logs, and traces, on object storage.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 6784 stars
+- **Stars / Engagement**: 6786 stars
 
 ---
 
@@ -1651,11 +1651,14 @@ mod tests {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #10149** (2026-11-04): **fix: test**
-  *Symptoms*: I hereby agree to the terms of the [GreptimeDB CLA](https://github.com/GreptimeTeam/.github/blob/main/CLA.md).  ## Refer to a related PR or issue link (optional)  ## What's changed and what's your intention?  Minor fixture fix  ## PR Checklist Please convert it to a draft if some of the following conditions are not met.  - [ ] I have written the necessary rustdoc comments. - [ ] I have added the necessary unit tests and integration tests. - [ ] This PR requires documentation updates. - [ ] API changes are backward compatible. - [ ] Schema or data changes are backward compatible. - [ ] This PR needs to be backported to release branches, and I have added the `backport-<target>` labels (e.g. `backport-v1.3` targets `release/v1.3`).  ## Merge timing  - [x] Merge during the nightly window <!-- nightly-merge -->  <!-- Eligible PRs enter the merge queue hourly from 02:10 through 08:10 Beijing time (UTC+8), up to five per run. Uncheck to opt out and remove the `merge nightly` label; this does not enable immediate merging. Maintainers can use **Merge when ready** to merge earlier. Changing this checkbox does not cancel an existing queue entry or manually enabled auto-merge. --> 
+- **Issue #10170** (2026-11-05): **test(compat): exercise the bloom-token case only below v1.3.0**
+  *Symptoms*: I hereby agree to the terms of the [GreptimeDB CLA](https://github.com/GreptimeTeam/.github/blob/main/CLA.md).  ## What's changed and what's your intention?  `Compatibility Test (recent releases)` fails on `fulltext_bloom_tokens` for the v1.3.0 → current upgrade:  ``` expected: | false | 1 |      actual: | true  | 2 | expected: | true  | 1 | ```  The case reads a fulltext bloom SST in the **first** format and asserts its rows stay visible next to a current one. Its `from_range` started at `v1.0.0`, but the released v1.3.0 binary already writes `bloom_version: 2` (the token alignment fix is in it), so setup produces two current-format SSTs and "one old, one new" can never hold. The v1.2.1 run of the same case passes, which is what pointed at the window rather than the index.  Narrow `from_range` to the releases that still write the first format. The runner's constraint language has `>=`, `<=`, `==` and `=` only, and several entries are alternatives rather than a conjunction, so `<=v1.2.99` is the bound that excludes v1.3.0 while keeping v1.2.x and older — including the nightly window that samples extra versions.  Verified locally with the compat runner: - `--from-version v1.2.1 --dry-run` selects the case; - `--from-version v1.3.0 --dry-run` prints `Skipping case 'fulltext_bloom_tokens': from_range ["<=v1.2.99"] does not match version 'v1.3.0'`; - `update-compat-versions.py --check --published-only --check-anchors` passes.  ## PR Checklist - [x] I have written the necessary ru
 
-- **Issue #10146** (2026-11-04): **fix(ci): increase nightly JSONBench runner root volume**
-  *Symptoms*: I hereby agree to the terms of the [GreptimeDB CLA](https://github.com/GreptimeTeam/.github/blob/main/CLA.md).  ## Refer to a related PR or issue link (optional)  [Failed Nightly JSONBench run](https://github.com/GreptimeTeam/greptimedb/actions/runs/41781882983/job/126415640930)  ## What's changed and what's your intention?  Nightly JSONBench exhausted the runner's 8 GiB AMI-default root volume, crashing the GitHub Actions worker with `No space left on device`. The dataset volume is mounted read-only; database storage, WAL, and compaction files still use the root volume.  Configure a 500 GiB root volume for Nightly JSONBench and forward the optional `ec2-volume-size` input through the shared start-runner action. Other workflows retain the AMI default when they omit this input.  Validation: YAML parsing, input wiring checks across all seven start-runner calls, and `git diff --check` passed. The AWS workflow has not been rerun; actual peak disk usage remains unmeasured. Rust tests and build checks were not run because this change only updates Actions YAML.  ## PR Checklist  - [x] I have written the necessary rustdoc comments. (Not applicable: Actions YAML only.) - [x] I have added the necessary unit tests and integration tests. (Static YAML and input wiring checks; no new runtime logic.) - [ ] This PR requires documentation updates. - [x] API changes are backward compatible. (The new action input is optional.) - [x] Schema or data changes are backward compatible. (No schema or 
+- **Issue #10166** (2026-11-05): **fix(grpc): propagate cancellation for read query execution**
+  *Symptoms*: I hereby agree to the terms of the [GreptimeDB CLA](https://github.com/GreptimeTeam/.github/blob/main/CLA.md).  ## What's changed and what's your intention?  Enable cascading cancellation for logical-plan and PromQL queries across the gRPC request and execution-runtime boundary. Previously, dropping a request future detached the spawned execution task, allowing it to keep running. Wrap the task in `AbortOnDropHandle` only for `LogicalPlan` and `PromRangeQuery` requests so cancellation also drops their pending execution futures.  Preserve the existing detached-task behavior for SQL, inserts, deletes, DDL, `InsertIntoPlan`, and unrecognized query payloads. SQL text may contain writes or DDL, and interrupting a state-changing operation between asynchronous steps can leave partially updated state. Retain the explanatory comment and its cancellation-safety reference. The inline path without a separate runtime, runtime selection, and join-error handling remain unchanged. There are no wire-format or storage-format changes.  Regression tests cover both paths:  - Logical-plan and PromQL execution is dropped when the caller is cancelled, with and without a separate runtime. - Spawned SQL, write, delete, DDL, and insert-plan execution can still finish normally after the caller is cancelled. The tests also preserve the existing inline cancellation behavior when no separate runtime is configured.  This change covers cancellation before `do_query` returns an `Output`; subsequent result-str
+  **Post-Mortem & Fix Analysis**:
+  > @codex review
+  > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":"dcf05262f632a77acd628fde575d43de5579aac9","has_any_findings":false,"has_unresolved_findings":false,"status":"completed"},"security_review":{"commit_sha":null,"has_any_findings":null,"has_unresolved_findings":null,"status":null}} -->  ## Codex Review Summary  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 📝 **Code Review** | ✅ **Completed** <relative-time datetime="2026-11-05T02:37:20.026788Z">2026-11-05T02:37:20.026788Z</relative-time> | `dcf0526` | Manual request |    <details> <summary>ℹ️ About Codex in GitHub</summary> <br/>  [Your team has set up Codex to review pull requests in this repo](https://chatgpt.com/codex/cloud/settings/general). Reviews are triggered when you - Open a pull request for review - Mark a draft as ready - Comment "@codex review" or "@codex security review".  C
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1672,645 +1675,591 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `351f4207` (2026-11-04)
-**Commit Message**: fix(meta): invalidate all datanode tables on address change (#9986)
+### Incident Patch 1: `557843dd` (2026-11-04)
+**Commit Message**: fix(catalog): use advertised peer address as process identity (#10153)
 
-When a datanode restarts with a new address, metasrv invalidated cached
-table routes only for the tables in that heartbeat's region stats. The
-first heartbeat after a restart often reports few or no regions (e.g.
-with init_regions_in_background), so frontends kept dialing the old
-address until metadata_cache_ttl expired.
+* fix(catalog): use advertised peer address as process identity
 
-Read the previous address via prev_kv when saving it, and when it
-changed (or a failed save of the same epoch is retried) invalidate
-every table registered for the datanode in __dn_table.
+The process manager identified the local frontend by its public gRPC
+address, while metasrv discovers peers by the address advertised in the
+heartbeat (the internal gRPC address when configured). With separate
+public and internal listeners, list_all_processes failed to exclude the
+local node, queried its own management service as a remote frontend, and
+appended the local registry again, so every local query was listed twice.
+The same mismatch broke routing of KILL to other frontends.
 
-Signed-off-by: Floris Smit <[REDACTED_EMAIL]>
-Co-authored-by: Weny Xu <[REDACTED_EMAIL]>
+Identify a frontend by the address it advertises to metasrv:
+- add FrontendOptions::peer_addr, shared by the heartbeat and the process
+  manager, and FrontendOptions::create_process_manager to wire it once;
+- use the advertised address as the process identity, for self-exclusion
+  in list_all_processes, and for local/remote routing in kill_process.
 
-**File**: `src/meta-srv/AGENTS.md` (modified, +2/-0)
+Process ids now carry the address other frontends use to reach the node.
+When no internal gRPC listener is configured this is the public gRPC
+address, so the previous behavior is unchanged. The internal listener is
+the on
+
+**File**: `src/catalog/src/process_manager.rs` (modified, +29/-12)
 ```diff
-@@ -43,6 +43,8 @@ abstraction, election, key encoding, and the DDL manager live in `common-meta`;
-   `handler/utils.rs` for per-node address persistence. Datanode address
-   updates retain the statistics handler's per-node ordering. Address epochs are
-   confirmed only after a successful save; cache invalidation remains best effort.
-+  A changed datanode address invalidates every table on that node (`__dn_table`),
-+  not only the tables in the current heartbeat.
- - **Datanode process fence**: before the handler chain, the leader's heartbeat
-   session checks a datanode request's non-zero `node_epoch` against the highest
-   one recorded under `__datanode_epoch`, read and raised through the leader
+@@ -41,8 +41,14 @@ pub type ProcessManagerRef = Arc<ProcessManager>;
+ 
+ /// Query process manager.
+ pub struct ProcessManager {
+-    /// Local frontend server address,
+-    server_addr: String,
++    /// Address this frontend advertises to the cluster.
++    ///
++    /// It is the heartbeat peer address, which is also the only address other
++    /// frontends use to reach this node's process management service. The same
++    /// value identifies processes owned by this frontend and routes kill
++    /// requests, so discovery addresses and process addresses share one
++    /// namespace.
++    peer_addr: String,
+     /// Next process id for local queries.
+     next_id: AtomicU32,
+     /// Running process per catalog.
+@@ -79,11 +85,15 @@ impl Display for QueryStatement {
+ }
+ 
+ impl ProcessManager {
+-    /// Create a [ProcessManager] instance with server address and kv client.
+-    pub fn new(server_addr: String, meta_client: Option<MetaClientRef>) -> Self {
++    /// Creates a [ProcessManager] for the frontend identified by `peer_addr`.
++    ///
++    /// `peer_addr` must be the address the frontend advertises to metasrv, not
++    /// its public gRPC address: discovered peers are matched by that address to
++    /// exclude this node from remote listings and to route kill requests.
++    pub fn new(peer_addr: String, meta_client: Option<MetaClientRef>) -> Self {
+         let frontend_selector = meta_client.map(MetaClientSelector::new);
+         Self {
+-            server_addr,
++            peer_addr,
+             next_id: Default::default(),
+             catalogs: Default::default(),
+             frontend_selector,
+@@ -111,7 +121,7 @@ impl ProcessManager {
+             query,
+             start_timestamp: current_time_millis(),
+             client,
+-            frontend: self.server_addr.clone(),
++            frontend: self.peer_addr.clone(),
+         };
+         let cancellation_handle = Arc::new(CancellationHandle::default());
+         let cancellable_process = CancellableProcess::new(cancellation_handle.clone(), process);
+@@ -168,6 +178,10 @@ impl ProcessManager {
+ 
+     /// Lists running processes from every selected frontend and the local registry.
+     ///
++    /// The local frontend is excluded from the remote selection by its advertised
++    /// peer address, which is what [`MetaClientSelector`] discovers. Its processes
++    /// are appended from the local registry exactly once.
++    ///
+     /// Returns an error if a remote frontend cannot provide its process list.
+     pub async fn list_all_processes(
+         &self,
+@@ -176,7 +190,7 @@ impl ProcessManager {
+         let mut processes = vec![];
+         if let Some(remote_frontend_selector) = self.frontend_selector.as_ref() {
+             let frontends = remote_frontend_selector
+-                .select(|peer| peer.addr != self.server_addr)
++                .select(|peer| peer.addr != self.peer_addr)
+                 .await
+                 .context(error::InvokeFrontendSnafu)?;
+             for mut f in frontends {
+@@ -194,29 +208,32 @@ impl ProcessManager {
+     }
+ 
+     /// Kills query with provided catalog and id.
++    ///
++    /// `peer_addr` is the frontend address from the process id, which is the
++    /// advertised peer address of the frontend that owns the process.
+     pub async fn kill_process(
+         &self,
+-        server_addr: String,
++        peer_addr: String,
+         catalog: String,
+         id: ProcessId,
+     ) -> error::Result<bool> {
+-        if server_addr == self.server_addr {
++        if peer_addr == self.peer_addr {
+             self.kill_local_process(catalog, id).await
+         } else {
+             let mut nodes = self
+                 .frontend_selector
+                 .as_ref()
+                 .context(error::MetaClientMissingSnafu)?
+-                .select(|peer| peer.addr == server_addr)
++                .select(|peer| peer.addr == peer_addr)
+                 .await
+                 .context(error::InvokeFrontendSnafu)?;
+             ensure!(
+                 !nodes.is_empty(),
+-                error::FrontendNotFoundSnafu { addr: server_addr }
++                error::FrontendNotFoundSnafu { addr: peer_addr }
+             );
+ 
+             let request = KillProcessRequest {
+-                server_addr,
++                server_addr: peer_addr,
+                 catalog,
+                 process_id: id,
+             };
 ```
 
-**File**: `src/meta-srv/src/handler/collect_stats_handler.rs` (modified, +205/-8)
+**File**: `src/cmd/src/frontend.rs` (modified, +1/-6)
 ```diff
-@@ -16,14 +16,17 @@ use std::cmp::Ordering;
+@@ -27,7 +27,6 @@ use catalog::kvbackend::{
+     CachedKvBackendBuilder, CatalogManagerConfiguratorRef, KvBackendCatalogManagerBuilder,
+     new_read_only_meta_kv_backend,
+ };
+-use catalog::process_manager::ProcessManager;
+ use clap::Parser;
+ use client::client_manager::NodeClients;
+ use common_base::Plugins;
+@@ -53,7 +52,6 @@ use plugins::frontend::context::{
+     CatalogManagerConfigureContext, DistributedCatalogManagerConfigureContext,
+ };
+ use plugins::options::PluginOptionsDeserializerImpl;
+-use servers::addrs;
+ use servers::grpc::GrpcOptions;
+ use servers::tls::{TlsMode, TlsOption, merge_tls_option};
+ use snafu::{OptionExt, ResultExt};
+@@ -489,10 +487,7 @@ impl StartCommand {
+         ));
+         plugins.insert::<InformationExtensionRef>(information_extension.clone());
+ 
+-        let process_manager = Arc::new(ProcessManager::new(
+-            addrs::resolve_addr(&opts.grpc.bind_addr, Some(&opts.grpc.server_addr)),
+-            Some(meta_client.clone()),
+-        ));
++        let process_manager = opts.create_process_manager(Some(meta_client.clone()));
+ 
+         let builder = KvBackendCatalogManagerBuilder::new(
+             information_extension,
+```
+
+**File**: `src/frontend/src/frontend.rs` (modified, +49/-2)
+```diff
+@@ -14,6 +14,7 @@
+ 
  use std::sync::Arc;
  
- use api::v1::meta::{HeartbeatRequest, Peer, Role};
-+use common_meta::DatanodeId;
- use common_meta::datanode::{DatanodeStatKey, DatanodeStatValue, Stat};
- use common_meta::instruction::CacheIdent;
- use common_meta::key::MetadataKey;
--use common_meta::key::node_address::NodeAddressKey;
-+use common_meta::key::node_address::{NodeAddressKey, NodeAddressValue};
- use common_meta::rpc::store::PutRequest;
- use common_telemetry::{error, warn};
- use dashmap::DashMap;
-+use futures::TryStreamExt;
++use catalog::process_manager::{ProcessManager, ProcessManagerRef};
+ use common_base::readable_size::ReadableSize;
+ use common_base::secrets::SecretString;
+ use common_config::config::Configurable;
+@@ -22,7 +23,7 @@ use common_memory_manager::OnExhaustedPolicy;
+ use common_options::datanode::DatanodeClientOptions;
+ use common_options::memory::MemoryOptions;
+ use common_telemetry::logging::{LoggingOptions, SlowQueryOptions, TracingOptions};
+-use meta_client::MetaClientOptions;
++use meta_client::{MetaClientOptions, MetaClientRef};
+ use pipeline::PipelineOptions;
+ use query::options::QueryOptions;
+ use serde::{Deserialize, Serialize};
+@@ -133,6 +134,33 @@ impl Default for FrontendOptions {
+     }
+ }
+ 
++impl FrontendOptions {
++    /// Returns the address this frontend advertises to the rest of the cluster.
++    ///
++    /// It is used as the heartbeat peer address and as the identity of the
++    /// frontend in the process list. When a dedicated internal gRPC server is
++    /// configured, it is that server's address, because the internal server is
++    /// the one that serves the frontend management service and peers connect to
++    /// it. Otherwise the public gRPC address is used: the peer address only
++    /// promises to be reachable by other components.
++    pub fn peer_addr(&self) -> String {
++        let grpc = self.internal_grpc.as_ref().unwrap_or(&self.grpc);
++        servers::addrs::resolve_addr(&grpc.bind_addr, Some(&grpc.server_addr))
++    }
++
++    /// Creates the process manager that tracks this frontend's running queries.
++    ///
++    /// The manager identifies this frontend by [`Self::peer_addr`], the same
++    /// address other frontends discover from metasrv. It must not use the public
++    /// gRPC address: a frontend with a dedicated internal gRPC server would fail
++    /// to recognize itself among the discovered peers, list its own queries
++    /// twice, and send `KILL` requests to an address that does not serve the
++    /// frontend management service.
++    pub fn create_process_manager(&self, meta_client: Option<MetaClientRef>) -> ProcessManagerRef {
++        Arc::new(ProcessManager::new(self.peer_addr(), meta_client))
++    }
++}
++
+ impl Configurable for FrontendOptions {
+     fn env_list_keys() -> Option<&'static [&'static str]> {
+         Some(&[
+@@ -217,7 +245,7 @@ mod tests {
+     use meta_client::MetaClientRef;
+     use meta_client::client::MetaClientBuilder;
+     use servers::batcher::BatchingProtocol;
+-    use servers::grpc::{FlightCompression, GRPC_SERVER};
++    use servers::grpc::{FlightCompression, GRPC_SERVER, GrpcOptions};
+     use servers::http::HTTP_SERVER;
+     use servers::http::result::greptime_result_v1::GreptimedbV1Response;
+     use servers::server::Server;
+@@ -287,6 +315,25 @@ mod tests {
+         );
+     }
+ 
++    #[test]
++    fn test_peer_addr_prefers_internal_grpc_server() {
++        let mut options = FrontendOptions::default();
++        options.grpc.bind_addr = "127.0.0.1:4001".to_string();
++        options.grpc.server_addr = "10.0.0.1:4001".to_string();
++
++        assert_eq!("10.0.0.1:4001", options.peer_addr());
++
++        options.internal_grpc = Some(GrpcOptions {
++            bind_addr: "127.0.0.1:4010".to_string(),
++            server_addr: "10.0.0.1".to_string(),
++            ..Default::default()
++        });
++
++        // The port falls back to the internal bind address when the advertised
++        // address does not carry one.
++        assert_eq!("10.0.0.1:4010", options.peer_addr());
++    }
++
+     #[test]
+     fn test_pipeline_host_access_config() {
+         let defaults: FrontendOptions = toml::from_str("").unwrap();
+```
+
+**File**: `src/frontend/src/heartbeat.rs` (modified, +0/-12)
+```diff
+@@ -39,7 +39,6 @@ use common_stat::ResourceStatRef;
+ use common_telemetry::{debug, error, info, warn};
+ use meta_client::client::heartbeat::HeartbeatConfig;
+ use meta_client::client::{HeartbeatSender, HeartbeatStream, MetaClient};
+-use servers::addrs;
  use snafu::ResultExt;
-+use store_api::storage::TableId;
- use tokio::sync::Mutex;
- 
- use crate::error::{self, Result};
-@@ -196,14 +199,43 @@ async fn update_datanode_address(updater: &NodeAddressUpdater, ctx: &Context, st
-         .inspect_err(|e| {
-             error!(e; "Failed to update datanode address, node: {}, address: {}", stat.id, stat.addr);
-         });
--    if let Ok(true) = updated {
--        let cache_idents = stat
--            .table_ids()
--            .into_iter()
--            .map(CacheIdent::TableId)
--            .collect::<Vec<_>>();
--        utils::invalidate_address_caches(ctx, stat.id, &cache_idents).await;
-+    let Ok(Some(saved)) = updated else {
-+        return;
-+    };
-+
-+    let mut table_ids = stat.table_ids();
-+    // Cached table routes embed the address, and a restarted datanode's first
-+    // heartbeat may report few regions, so invalidate every table on the node.
-+    // A failed earlier attempt may already have stored the new address, which
-+    // hides the change from this save.
-+    if saved.retried || address_changed(saved.output.as_ref(), &stat.addr) {
-+        match datanode_table_ids(ctx, stat.id).await {
-+            Ok(ids) => table_ids.extend(ids),
-+            Err(e) => {
-+                error!(e; "Failed to list tables of datanode {} for address invalidation", stat.id)
-+            }
-+        }
+ use tokio::sync::mpsc::Receiver;
+ use tokio::sync::{Mutex, mpsc};
+@@ -749,14 +748,3 @@ impl HeartbeatTask {
+         self.runner.cancellation.is_cancelled()
      }
-+    let cache_idents = table_ids
-+        .into_iter()
-+        .map(CacheIdent::TableId)
-+        .collect::<Vec<_>>();
-+    utils::invalidate_address_caches(ctx, stat.id, &cache_idents).await;
-+}
-+
-+/// A missing or undecodable previous address counts as changed.
-+fn address_changed(previous: Option<&NodeAddressValue>, addr: &str) -> bool {
-+    previous.is_none_or(|previous| previous.peer.addr != addr)
-+}
-+
-+async fn datanode_table_ids(ctx: &Context, datanode_id: DatanodeId) -> Result<Vec<TableId>> {
-+    ctx.table_metadata_manager
-+        .datanode_table_manager()
-+        .tables(datanode_id)
-+        .map_ok(|value| value.table_id)
-+        .try_collect()
-+        .await
-+        .context(error::TableMetadataManagerSnafu)
  }
- 
- #[cfg(test)]
-@@ -214,8 +246,11 @@ mod tests {
-     use std::thread;
-     use std::time::Duration;
- 
-+    use common_meta::cache_invalidator::{CacheInvalidator, Context as InvalidationContext};
-     use common_meta::datanode::DatanodeStatKey;
-     use common_meta::error::{Error as MetaError, Result as MetaResult};
-+    use common_meta::key::datanode_table::{DatanodeTableKey, DatanodeTableValue, RegionInfo};
-+    use common_meta::key::{MetadataValue, RegionRoleSet};
-     use common_meta::kv_backend::{KvBackend, KvBackendRef, ResettableKvBackend, TxnService};
-     use common_meta::rpc::store::{
-         BatchDeleteRequest, BatchDeleteResponse, BatchGetRequest, BatchGetResponse,
-@@ -537,6 +572,168 @@ mod tests {
-         }
-     }
- 
-+    #[derive(Default)]
-+    struct RecordingCacheInvalidator {
-+        calls: StdMutex<Vec<Vec<CacheIdent>>>,
-+    }
-+
-+    impl RecordingCacheInvalidator {
-+        fn table_ids_per_call(&self) -> Vec<Vec<TableId>> {
-+            self.calls
-+                .lock()
-+                .unwrap()
-+                .iter()
-+                .map(|idents| {
-+                    let mut ids = idents
-+                        .iter()
-+                        .map(|ident| match ident {
-+                            CacheIdent::TableId(id) => *id,
-+                            other => panic!("unexpected cache ident: {other:?}"),
-+                        })
-+                        .collect::<Vec<_>>();
-+                    ids.sort_unstable();
-+                    ids
-+                })
-+                .collect()
-+        }
-+    }
-+
-+    #[async_trait::async_trait]
-+    impl CacheInvalidator for RecordingCacheInvalidator {
-+        async fn invalidate(
-+            &self,
-+            _: &InvalidationContext,
-+            idents: &[CacheIdent],
-+        ) -> MetaResult<()> {
-+            self.calls.lock().unwrap().push(idents.to_vec());
-+            Ok(())
-+        }
-+
-+        fn invalidate_all(&self) -> MetaResult<()> {
-+            Ok(())
-+        }
-+    }
-+
-+    async fn register_datanode_tables(ctx: &Context, datanode_id: u64, table_ids: &[TableId]) {
-+        for table_id in table_ids {
-+            let value = DatanodeTableValue::new(
-+                *table_id,
-+                RegionRoleSet::new(vec![0], vec![]),
-+                RegionInfo::default(),
-+         
+-
+-pub(crate) fn frontend_peer_addr(opts: &FrontendOptions) -> String {
+-    // if internal grpc is configured, use its address as the peer address
+-    // otherwise use the public grpc address, because peer address only promises to be reachable
+-    // by other components, it doesn't matter whether it's internal or external
+-    if let Some(internal) = &opts.internal_grpc {
+-        addrs::resolve_addr(&internal.bind_addr, Some(&internal.server_addr))
+-    } else {
+-        addrs::resolve_addr(&opts.grpc.bind_addr, Some(&opts.grpc.server_addr))
+-    }
+-}
 ```
 
-**File**: `src/meta-srv/src/handler/remap_flow_peer_handler.rs` (modified, +1/-1)
+**File**: `src/frontend/src/instance/builder.rs` (modified, +1/-2)
 ```diff
-@@ -54,7 +54,7 @@ impl HeartbeatHandler for RemapFlowPeerHandler {
-                 // Address errors must not prevent later heartbeat handlers from running.
-                 error!(e; "Failed to update flownode address, peer: {:?}", peer);
-             });
--        if let Ok(true) = updated {
-+        if let Ok(Some(_)) = updated {
-             let cache_idents = [CacheIdent::FlowNodeAddressChange(peer.id)];
-             utils::invalidate_address_caches(ctx, peer.id, &cache_idents).await;
+@@ -58,7 +58,6 @@ use snafu::{OptionExt, ResultExt};
+ use crate::error::{self, DataFusionSnafu, ExternalSnafu, Result};
+ use crate::events::EventHandlerImpl;
+ use crate::frontend::FrontendOptions;
+-use crate::heartbeat::frontend_peer_addr;
+ use crate::instance::Instance;
+ use crate::instance::entity_graph::EntityGraphProviderImpl;
+ use crate::instance::otlp::TraceAuxCache;
+@@ -345,7 +344,7 @@ impl FrontendBuilder {
+             kv_catalog.set_entity_graph_provider(provider);
          }
+ 
+-        let frontend_peer_addr = frontend_peer_addr(&self.options);
++        let frontend_peer_addr = self.options.peer_addr();
+         let statement_executor = StatementExecutor::new(
+             self.catalog_manager.clone(),
+             query_engine.clone(),
 ```
 
-**File**: `src/meta-srv/src/handler/utils.rs` (modified, +46/-22)
+**File**: `tests-integration/src/cluster.rs` (modified, +1/-2)
 ```diff
-@@ -44,19 +44,27 @@ struct NodeAddressEpochs {
-     saved_epoch: Option<u64>,
+@@ -32,7 +32,6 @@ use catalog::information_extension::DistributedInformationExtension;
+ use catalog::kvbackend::{
+     CachedKvBackendBuilder, KvBackendCatalogManagerBuilder, new_read_only_meta_kv_backend,
+ };
+-use catalog::process_manager::ProcessManager;
+ use client::Client;
+ use client::client_manager::NodeClients;
+ use cmd::frontend::create_heartbeat_task;
+@@ -634,7 +633,7 @@ impl GreptimeDbClusterBuilder {
+             catalog_manager,
+             datanode_clients,
+             meta_client.clone(),
+-            Arc::new(ProcessManager::new(fe_opts.grpc.server_addr.clone(), None)),
++            fe_opts.create_process_manager(None),
+         )
+         .with_local_file_access(self.local_file_access.clone())
+         .with_local_cache_invalidator(cache_registry)
+```
+
+**File**: `tests-integration/tests/grpc.rs` (modified, +200/-18)
+```diff
+@@ -58,7 +58,8 @@ use datatypes::arrow::array::{
+ use datatypes::arrow::datatypes::{DataType, Field};
+ use datatypes::arrow::ipc::writer::StreamWriter;
+ use datatypes::arrow::record_batch::RecordBatch as ArrowRecordBatch;
+-use meta_client::client::MetaClientBuilder;
++use frontend::frontend::FrontendOptions;
++use meta_client::client::{MetaClient, MetaClientBuilder};
+ use meta_srv::mocks::{self, MockInfo};
+ use otel_arrow_rust::otlp::metrics::MetricType as ArrowMetricType;
+ use otel_arrow_rust::proto::opentelemetry::arrow::v1::arrow_metrics_service_client::ArrowMetricsServiceClient;
+@@ -70,7 +71,7 @@ use otel_arrow_rust::schema::consts as arrow_consts;
+ use rstest_reuse::apply;
+ use servers::grpc::builder::GrpcServerBuilder;
+ use servers::grpc::frontend_grpc_handler::FrontendGrpcHandler;
+-use servers::grpc::{GrpcServer, GrpcServerConfig};
++use servers::grpc::{GrpcOptions, GrpcServer, GrpcServerConfig};
+ use servers::http::prometheus::{
+     PromData, PromQueryResult, PromSampleValue, PromSeriesMatrix, PromSeriesVector,
+     PrometheusJsonResponse, PrometheusResponse,
+@@ -549,6 +550,17 @@ pub async fn test_grpc_auth(store_type: StorageType) {
  }
  
-+/// The outcome of a successful address save.
-+pub(crate) struct SavedAddress<T> {
-+    pub(crate) output: T,
-+    /// An earlier save of this epoch failed or was cancelled, but its write
-+    /// may still have reached the store.
-+    pub(crate) retried: bool,
+ async fn start_process_rpc_server(process_manager: Option<ProcessManagerRef>) -> GrpcServer {
++    start_process_rpc_server_at(
++        process_manager,
++        "127.0.0.1:0".parse::<SocketAddr>().unwrap(),
++    )
++    .await
 +}
 +
- impl NodeAddressUpdater {
--    /// Saves a new or previously failed epoch. Returns true only when this call
--    /// saved the address, or false when the heartbeat is stale or already saved.
-+    /// Saves a new or previously failed epoch. Returns `None` when the
-+    /// heartbeat is stale or already saved.
-     /// Cache invalidation is separate and does not affect acknowledgement.
--    pub(crate) async fn update_if_needed<F, Fut>(
-+    pub(crate) async fn update_if_needed<T, F, Fut>(
-         &self,
-         node: (Role, u64),
-         epoch: u64,
-         save: F,
--    ) -> Result<bool>
-+    ) -> Result<Option<SavedAddress<T>>>
-     where
-         F: FnOnce() -> Fut,
--        Fut: Future<Output = Result<()>>,
-+        Fut: Future<Output = Result<T>>,
-     {
-         // Never retain a DashMap guard across await, even while waiting for a
-         // different node: its entry may live in the same shard.
-@@ -66,34 +74,43 @@ impl NodeAddressUpdater {
-         };
-         let mut state = state.lock().await;
-         if state.seen_epoch.is_some_and(|seen| epoch < seen) || state.saved_epoch == Some(epoch) {
--            return Ok(false);
-+            return Ok(None);
-         }
- 
-         // Seeing an epoch rejects stale heartbeats, but only a successful save
-         // suppresses retries of that same epoch. Cancellation also leaves it retryable.
-+        let retried = state.seen_epoch == Some(epoch);
-         state.seen_epoch = Some(epoch);
--        save().await?;
-+        let output = save().await?;
-         state.saved_epoch = Some(epoch);
--        Ok(true)
-+        Ok(Some(SavedAddress { output, retried }))
++async fn start_process_rpc_server_at(
++    process_manager: Option<ProcessManagerRef>,
++    addr: SocketAddr,
++) -> GrpcServer {
+     let runtime: Runtime = RuntimeBuilder::default()
+         .worker_threads(2)
+         .thread_name("process-rpc-test")
+@@ -559,16 +571,32 @@ async fn start_process_rpc_server(process_manager: Option<ProcessManagerRef>) ->
+         builder = builder.frontend_grpc_handler(FrontendGrpcHandler::new(process_manager));
      }
+     let mut server = builder.build();
+-    server
+-        .start("127.0.0.1:0".parse::<SocketAddr>().unwrap())
+-        .await
+-        .unwrap();
++    server.start(addr).await.unwrap();
+     server
  }
  
--/// Persists an address through the leader cache.
--pub(crate) async fn save_node_address(ctx: &Context, key: Vec<u8>, peer: Peer) -> Result<()> {
-+/// Persists an address through the leader cache and returns the one it
-+/// replaced, treating an undecodable value as absent.
-+pub(crate) async fn save_node_address(
-+    ctx: &Context,
-+    key: Vec<u8>,
-+    peer: Peer,
-+) -> Result<Option<NodeAddressValue>> {
-     let address = NodeAddressValue::new(peer);
-     let value = address
-         .try_as_raw_value()
-         .context(InvalidNodeInfoFormatSnafu)?;
--    ctx.leader_cached_kv_backend
-+    let resp = ctx
-+        .leader_cached_kv_backend
+-async fn register_process_rpc_peer(mock: &MockInfo, addr: String) {
++/// Reserves a loopback address for a test server.
++///
++/// A process manager must be created with the address it advertises before its
++/// gRPC listener starts, so pick a free port first and bind it right after.
++fn reserve_loopback_addr() -> SocketAddr {
++    std::net::TcpListener::bind("127.0.0.1:0")
++        .unwrap()
++        .local_addr()
++        .unwrap()
++}
++
++async fn build_meta_client_for_mock(mock: &MockInfo) -> Arc<MetaClient> {
++    let mut meta_client = MetaClientBuilder::frontend_default_options()
++        .channel_manager(mock.channel_manager.clone())
++        .build();
++    meta_client.start(&[&mock.server_addr]).await.unwrap();
++    Arc::new(meta_client)
++}
++
++async fn register_process_rpc_peer(mock: &MockInfo, node_id: u64, addr: String) {
+     let node_info = NodeInfo {
+-        peer: Peer { id: 1, addr },
++        peer: Peer { id: node_id, addr },
+         last_activity_ts: util::current_time_millis(),
+         status: NodeStatus::Frontend(FrontendStatus::default()),
+         version: String::new(),
+@@ -588,7 +616,7 @@ async fn register_process_rpc_peer(mock: &MockInfo, addr: String) {
          .put(PutRequest {
-             key,
-             value,
--            prev_kv: false,
-+            prev_kv: true,
-         })
-         .await
-         .context(KvBackendSnafu)?;
-     info!("Successfully updated node address: {:?}", address.peer);
--    Ok(())
-+    Ok(resp
-+        .prev_kv
-+        .and_then(|kv| NodeAddressValue::try_from_raw_value(&kv.value).ok()))
+             key: Vec::from(&NodeInfoKey {
+                 role: Role::Frontend,
+-                node_id: 1,
++                node_id,
+             }),
+             value: node_info.try_into().unwrap(),
+             prev_kv: false,
+@@ -601,15 +629,9 @@ async fn build_process_manager_with_remote_peer(
+     mock: &MockInfo,
+     remote_addr: String,
+ ) -> ProcessManagerRef {
+-    register_process_rpc_peer(mock, remote_addr).await;
+-    let mut meta_client = MetaClientBuilder::frontend_default_options()
+-        .channel_manager(mock.channel_manager.clone())
+-        .build();
+-    meta_client.start(&[&mock.server_addr]).await.unwrap();
+-    Arc::new(ProcessManager::new(
+-        "local".to_string(),
+-        Some(Arc::new(meta_client)),
+-    ))
++    register_process_rpc_peer(mock, 1, remote_addr).await;
++    let meta_client = build_meta_client_for_mock(mock).await;
++    Arc::new(ProcessManager::new("local".to_string(), Some(meta_client)))
  }
  
- /// Preserves the existing best-effort notification behavior. Notification
-@@ -127,7 +144,7 @@ mod tests {
-         let key = (Role::Datanode, 1);
-         assert!(
-             updater
--                .update_if_needed(key, 2, || async {
-+                .update_if_needed::<(), _, _>(key, 2, || async {
-                     crate::error::UnexpectedSnafu {
-                         violated: "injected save failure",
-                     }
-@@ -137,32 +154,36 @@ mod tests {
-                 .is_err()
-         );
-         assert!(
--            !updater
--                .update_if_needed(key, 1, || async {
-+            updater
-+                .update_if_needed::<(), _, _>(key, 1, || async {
-                     panic!("stale heartbeat must not save");
-                 })
-                 .await
-                 .unwrap()
-+                .is_none()
-         );
-         assert!(
-             updater
-                 .update_if_needed(key, 2, || async { Ok(()) })
-                 .await
-                 .unwrap()
-+                .is_some_and(|saved| saved.retried)
-         );
-         assert!(
--            !updater
--                .update_if_needed(key, 2, || async {
-+            updater
-+                .update_if_needed::<(), _, _>(key, 2, || async {
-                     panic!("successful epoch must not save again");
-                 })
-                 .await
-                 .unwrap()
-+                .is_none()
-         );
-         assert!(
-             updater
-                 .update_if_needed(key, 3, || async { Ok(()) })
-                 .await
-                 .unwrap()
-+                .is_some_and(|saved| !saved.retried)
-         );
-     }
+ #[tokio::test(flavor = "multi_thread")]
+@@ -700,6 +722,166 @@ async fn test_list_all_processes_collects_remote_and_local_catalog() {
+     );
+ }
  
-@@ -190,6 +211,7 @@ mod tests {
-             .await
-             .unwrap()
-             .unwrap()
-+            .is_some()
-         );
-     }
- 
-@@ -248,6 +270,7 @@ mod tests {
-                                         })
-                                         .await
-                    
++/// Regression test for frontends with separate public and internal gRPC
++/// addresses.
++///
++/// The local process manager must recognize itself by the peer address it
++/// advertises to metasrv (the internal gRPC address), not by its public gRPC
++/// address. Otherwise it queries its own management service as if it were a
++/// remote frontend and then appends the local registry a second time, so every
++/// local query is listed twice.
++#[tokio::test(flavor = "multi_thread")]
++async fn test_list_all_processes_excludes_local_peer_with_internal_grpc() {
++    let mock = mocks::mock_with_memstore().await;
 ```
 
 ---
 
-### Incident Patch 2: `e38b84a9` (2026-11-04)
-**Commit Message**: fix(mito2): prevent automatic compaction candidate starvation (#9946)
+### Incident Patch 2: `b21b1cdb` (2026-11-04)
+**Commit Message**: fix(function): require ADMIN statement privileges to execute admin functions (#10120)
 
-* fix(mito2): prevent automatic compaction candidate starvation
+* fix(function): require ADMIN statement privileges to execute admin functions
 
-Signed-off-by: Lei, HUANG <[REDACTED_EMAIL]>
+Read-only accounts could execute the admin UDFs (flush_table,
+compact_table, flush_flow, gc_regions, migrate_region, reconcile_*,
+build_index, ...) through ordinary SELECT statements: SELECT is a
+read-only statement so it passes the statement-level privilege check,
+and the functions were only guarded by the greptime-catalog scope
+check inside the UDF. That let read-only users trigger WAL flushes,
+manifest version bumps, compactions, flow-sink writes and, in
+distributed mode, region GC/migration and SST deletion.
 
-* fix(mito2): share fair compaction candidate planning
+Wrap the privilege check into the admin_fn macro itself, next to the
+existing greptime-catalog check: before executing, every #[admin_fn]
+function now requires the same privileges as its ADMIN statement. The
+check synthesizes the PermissionReq::SqlStatement request an
+ADMIN <fn>(...) statement produces and evaluates it with the same
+PermissionCheckerRef plugin the frontend installs, so query invocation
+(SELECT <fn>(...), EXPLAIN, views, flows) and the ADMIN statement path
+are gated identically — in particular
 
-Signed-off-by: Lei, HUANG <[REDACTED_EMAIL]>
-
-* fix(mito2): include L0 peers in fair closed merges
-
-Signed-off-by: Lei, HUANG <[REDACTED_EMAIL]>
-
-* feat(mito2): observe TWCS planning and promoted picks
-
-Signed-off-by: Lei, HUANG <[REDACTED_EMAIL]>
-
-* refactor(mito2): move compaction pick history into scheduler
-
-Signed-off-by: Lei, HUANG <[REDACTED_EMAIL]>
-
-* refactor(mito2): simplify compaction pick history helpers
-
-Separate history observation from selection and gate test-only access.\nSimplify candidate collection and consolidate redundant tests.
-
-Signed-off-by: Lei, HUANG <[REDACTED_EMAIL]>
-
-* refactor(mito2): acknowledge fair picks at selection
-
-A selected key consumes its fairness turn when the plan is accepted instead of after a successful execution. Drop the pending-selection state, input-id matching and execution hooks; rejected or failed attempts retry with normal priority, so a promoted key can no longer hold the front slot indefinitely.
-
-
-**File**: `src/mito2/AGENTS.md` (modified, +5/-0)
+**File**: `Cargo.lock` (modified, +1/-0)
 ```diff
-@@ -99,6 +99,11 @@ Tests live next to the code as `*_test.rs` (e.g. `src/mito2/src/engine/flush_tes
-   only close/drop unregisters them. See `compaction/scheduler/state.rs`.
- - Local compaction units use the snapshot-free `CompactionContext`. Retaining a
-   full `CompactionRegion` in a unit pins other units' inputs and delays SST purge.
-+- Candidate waiting history is owned by the region scheduler (`scheduler/history.rs`).
-+  Background planning works on a private snapshot; only a fenced result may replace
-+  resident history, and an accepted plan consumes the fairness turn for each selected
-+  key. Execution success or failure must not rewrite waiting ages. TWCS discovery
-+  must not mutate scheduler state.
- - In flat batches, equal `__primary_key` dictionary keys imply the same series, but
-   not the reverse: `wrap_pk_binary_to_dict` gives every row its own key. Compare key
-   bytes when grouping rows by series.
+@@ -2501,6 +2501,7 @@ dependencies = [
+  "arrow 59.2.0",
+  "arrow-schema 59.2.0",
+  "async-trait",
++ "auth",
+  "axum 0.8.4",
+  "bincode",
+  "catalog",
 ```
 
-**File**: `src/mito2/src/compaction/last_non_null.rs` (modified, +251/-69)
+**File**: `src/common/function/Cargo.toml` (modified, +1/-0)
 ```diff
-@@ -58,49 +58,61 @@ impl Picker for LastNonNullPicker {
-         let max_outputs = self.base_picker.max_background_tasks;
- 
-         // Find all possible compaction seeds
--        let Some(mut all_seeds) = self
-+        let Some(all_seeds) = self
-             .base_picker
-             .pick_with_output_limit(region, None)
-             .await?
-         else {
-             return Ok(None);
-         };
--        let version = region.current_version.clone();
--        common_runtime::spawn_blocking_compact(move || {
--            let expired: HashSet<_> = all_seeds
--                .expired_ssts
--                .iter()
--                .map(FileHandle::file_id)
--                .collect();
--            // Include busy files and all levels/windows. Request ranges and
--            // TWCS size/file-count limits only constrain seeds, not correctness.
--            let all_files = version
--                .ssts
--                .levels()
--                .iter()
--                .flat_map(|level| level.files())
--                .filter(|file| !expired.contains(&file.file_id()))
--                .cloned()
--                .collect();
--            all_seeds.outputs =
--                build_closed_outputs(all_seeds.outputs, all_files, &version.metadata);
--            all_seeds.outputs.retain(|output| {
--                inputs_precede_memtables(&output.inputs, version.memtable_min_sequence)
--            });
--            if let Some(limit) = max_outputs {
--                // Only eligible closures consume the budget. Keep the high-priority
--                // tail because the compactor pops from the end of the output list.
--                let excess = all_seeds.outputs.len().saturating_sub(limit);
--                all_seeds.outputs.drain(..excess);
--            }
--            (!all_seeds.outputs.is_empty() || !all_seeds.expired_ssts.is_empty())
--                .then_some(all_seeds)
--        })
--        .await
--        .context(JoinSnafu)
-+        let (output, _) = close_outputs(region, all_seeds, max_outputs).await?;
-+        Ok(output)
+@@ -20,6 +20,7 @@ api.workspace = true
+ arrow.workspace = true
+ arrow-schema.workspace = true
+ async-trait.workspace = true
++auth.workspace = true
+ bincode = "=1.3.3"
+ catalog.workspace = true
+ common-base.workspace = true
+```
+
+**File**: `src/common/function/src/admin/flush_compact_table.rs` (modified, +59/-0)
+```diff
+@@ -768,4 +768,63 @@ mod tests {
+             .is_err()
+         );
      }
- }
- 
-+/// Attempts seeds in priority order until valid closures fill the output budget.
-+/// Returns indices into the original seed list for all attempted/absorbed seeds,
-+/// including rejected closures but excluding seeds left behind by the budget.
-+pub(crate) async fn close_outputs(
-+    region: &CompactionRegion,
-+    mut all_seeds: PickerOutput,
-+    max_outputs: Option<usize>,
-+) -> Result<(Option<PickerOutput>, Vec<usize>)> {
-+    let version = region.current_version.clone();
-+    common_runtime::spawn_blocking_compact(move || {
-+        let expired: HashSet<_> = all_seeds
-+            .expired_ssts
-+            .iter()
-+            .map(FileHandle::file_id)
-+            .collect();
-+        // Include busy files and all levels/windows. Request ranges and
-+        // TWCS size/file-count limits only constrain seeds, not correctness.
-+        let all_files = version
-+            .ssts
-+            .levels()
-+            .iter()
-+            .flat_map(|level| level.files())
-+            .filter(|file| !expired.contains(&file.file_id()))
-+            .cloned()
-+            .collect();
-+        let (outputs, attempted_seeds) = build_closed_outputs(
-+            all_seeds.outputs,
-+            all_files,
-+            &version.metadata,
-+            ClosureLimits {
-+                max_outputs,
-+                memtable_min_sequence: version.memtable_min_sequence,
-+            },
++
++    #[tokio::test]
++    async fn test_flush_table_requires_admin_privilege() {
++        use auth::{
++            DefaultPermissionChecker, Identity, Password, PermissionCheckerRef, UserProvider,
++            static_user_provider_from_option,
++        };
++        use common_base::Plugins;
++        use common_error::status_code::StatusCode;
++
++        async fn user(username: &str, mode: &str) -> auth::UserInfoRef {
++            let provider = static_user_provider_from_option(&format!(
++                "static_user_provider:cmd:{username}:{mode}={username}_pwd"
++            ))
++            .unwrap();
++            provider
++                .authenticate(
++                    Identity::UserId(username, None),
++                    Password::PlainText(format!("{username}_pwd").into()),
++                )
++                .await
++                .unwrap()
++        }
++
++        let plugins = Plugins::new();
++        plugins.insert::<PermissionCheckerRef>(DefaultPermissionChecker::arc());
++
++        let func_args = || datafusion::logical_expr::ScalarFunctionArgs {
++            args: vec![ColumnarValue::Array(Arc::new(StringArray::from(vec![
++                "test",
++            ])))],
++            arg_fields: vec![Arc::new(Field::new("arg_0", DataType::Utf8, false))],
++            return_field: Arc::new(Field::new("result", DataType::UInt64, true)),
++            number_rows: 1,
++            config_options: Arc::new(datafusion_common::config::ConfigOptions::default()),
++        };
++
++        let factory: ScalarFunctionFactory = FlushTableFunction::factory().into();
++
++        let func_ctx =
++            crate::permission::test_function_context(plugins.clone(), user("ro_user", "ro").await);
++        let provider = factory.provide(func_ctx);
++        let f = provider.as_async().unwrap();
++        let error = f.invoke_async_with_args(func_args()).await.unwrap_err();
++        assert_eq!(
++            StatusCode::PermissionDenied,
++            common_query::error::datafusion_status_code::<common_query::error::Error>(&error, None)
 +        );
-+        all_seeds.outputs = outputs;
-+        let output = (!all_seeds.outputs.is_empty() || !all_seeds.expired_ssts.is_empty())
-+            .then_some(all_seeds);
-+        (output, attempted_seeds)
-+    })
-+    .await
-+    .context(JoinSnafu)
-+}
 +
- /// Imported SSTs can be newer than pending writes. A merge must not attach an
- /// old field to a sequence above an intermediate version left in a memtable.
- pub(super) fn inputs_precede_memtables(
-@@ -116,14 +128,22 @@ pub(super) fn inputs_precede_memtables(
-     })
- }
- 
-+/// Constraints checked on complete closures, never on partial seed inputs.
-+#[derive(Default)]
-+struct ClosureLimits {
-+    max_outputs: Option<usize>,
-+    memtable_min_sequence: Option<SequenceNumber>,
-+}
-+
- /// Each seed and snapshot file is consumed at most once. Absorbing a seed also
- /// absorbs its disconnected members: a merge stream must never be split across
- /// independently scheduled outputs.
- fn build_closed_outputs(
-     seeds: Vec<CompactionOutput>,
-     files: Vec<FileHandle>,
-     metadata: &RegionMetadataRef,
--) -> Vec<CompactionOutput> {
-+    limits: ClosureLimits,
-+) -> (Vec<CompactionOutput>, Vec<usize>) {
-     // Maps every seed input to its seed, so a closure that reaches that input
-     // can absorb the rest of the seed instead of letting it schedule separately.
-     let seed_by_file: HashMap<_, _> = seeds
-@@ -137,17 +157,29 @@ fn build_closed_outputs(
-     let mut outputs = Vec::new();
-     // The compactor pops from the end; retain TWCS's seed prio
-```
-
-**File**: `src/mito2/src/compaction/picker.rs` (modified, +26/-15)
-```diff
-@@ -140,21 +140,7 @@ pub fn new_picker(
-         // within each disjoint, half-open output range, including LastNonNull.
-         Arc::new(WindowedCompactionPicker::new(window).with_time_range(time_range)) as Arc<_>
-     } else {
--        let picker = match &region_options.compaction {
--            CompactionOptions::Twcs(twcs_opts) => TwcsPicker {
--                trigger_file_num: twcs_opts.active_window_trigger_file_num,
--                active_window_l1_merge_trigger: twcs_opts.active_window_l1_merge_trigger,
--                inactive_window_trigger_file_num: twcs_opts.inactive_window_trigger_file_num,
--                inactive_window_l1_merge_trigger: twcs_opts.inactive_window_l1_merge_trigger,
--                time_window_seconds: twcs_opts.time_window_seconds(),
--                max_output_file_size: twcs_opts.max_output_file_size.map(|r| r.as_bytes()),
--                append_mode: region_options.append_mode,
--                merge_mode: region_options.merge_mode(),
--                max_background_tasks,
--                time_range,
--                all_windows_inactive: manual,
--            },
--        };
-+        let picker = new_twcs_picker(region_options, max_background_tasks, time_range, manual);
-         if region_options.merge_mode() == MergeMode::LastNonNull {
-             // LastNonNull correctness spans windows and levels, so wrap the seed
-             // picker instead of trusting TWCS's independent windows.
-@@ -165,6 +151,31 @@ pub fn new_picker(
-     }
- }
- 
-+/// Builds the stateless TWCS strategy used for discovery and legacy picks.
-+pub(crate) fn new_twcs_picker(
-+    region_options: &RegionOptions,
-+    max_background_tasks: Option<usize>,
-+    time_range: Option<TimestampRange>,
-+    manual: bool,
-+) -> TwcsPicker {
-+    match &region_options.compaction {
-+        CompactionOptions::Twcs(twcs_opts) => TwcsPicker {
-+            trigger_file_num: twcs_opts.active_window_trigger_file_num,
-+            active_window_l1_merge_trigger: twcs_opts.active_window_l1_merge_trigger,
-+            inactive_window_trigger_file_num: twcs_opts.inactive_window_trigger_file_num,
-+            inactive_window_l1_merge_trigger: twcs_opts.inactive_window_l1_merge_trigger,
-+            time_window_seconds: twcs_opts.time_window_seconds(),
-+            max_output_file_size: twcs_opts.max_output_file_size.map(|r| r.as_bytes()),
-+            append_mode: region_options.append_mode,
-+            merge_mode: region_options.merge_mode(),
-+            max_background_tasks,
-+            time_range,
-+            all_windows_inactive: manual,
-+            metrics: Default::default(),
-+        },
++        let func_ctx =
++            crate::permission::test_function_context(plugins, user("rw_user", "rw").await);
++        let provider = factory.provide(func_ctx);
++        let f = provider.as_async().unwrap();
++        let error = f.invoke_async_with_args(func_args()).await.unwrap_err();
++        assert_ne!(
++            StatusCode::PermissionDenied,
++            common_query::error::datafusion_status_code::<common_query::error::Error>(&error, None)
++        );
 +    }
-+}
-+
- /// Finds all expired SSTs across levels.
- pub(super) fn get_expired_ssts(
-     levels: &[LevelMeta],
+ }
 ```
 
-**File**: `src/mito2/src/compaction/scheduler.rs` (modified, +9/-4)
+**File**: `src/common/function/src/lib.rs` (modified, +5/-0)
 ```diff
-@@ -12,6 +12,7 @@
- // See the License for the specific language governing permissions and
- // limitations under the License.
+@@ -15,6 +15,7 @@
+ mod admin;
+ mod flush_flow;
+ mod macros;
++mod permission;
+ mod system;
+ mod uddsketch_compat;
  
-+pub(crate) mod history;
- mod local;
- mod planning;
- mod state;
-@@ -27,6 +28,8 @@ use common_telemetry::{debug, error, info, warn};
- use common_time::range::TimestampRange;
- pub(crate) use planning::CompactionPickFinished;
- pub use planning::CompactionRequest;
-+#[cfg(test)]
-+pub(crate) use planning::pick_automatic_for_test;
- pub(crate) use state::CompactionExecution;
- use state::{CompactionStatus, CompactionTrigger, DdlExecution, PendingCompaction};
- use store_api::storage::RegionId;
-@@ -561,6 +564,9 @@ impl CompactionScheduler {
-         // Publish the picking phase before dispatching background planning.
-         let plan_id = Self::next_plan_id(&mut self.next_plan_id);
-         status.start_picking_with_trigger(plan_id, trigger);
-+        let pick_history = (trigger == CompactionTrigger::Automatic
-+            && matches!(compact_options, compact_request::Options::Regular(_)))
-+        .then(|| status.pick_history.clone());
-         let request = status.new_compaction_request(
-             self.request_sender.clone(),
-             self.engine_config.clone(),
-@@ -569,6 +575,7 @@ impl CompactionScheduler {
-             self.listener.clone(),
-             schema_metadata_manager,
-             max_parallelism,
-+            pick_history,
-         );
-         status.merge_waiter(waiter);
-         self.dispatch_compaction_planning(plan_id, request, compact_options, time_range, trigger);
-@@ -610,6 +617,7 @@ impl CompactionScheduler {
-             self.listener.clone(),
-             schema_metadata_manager,
-             max_parallelism,
-+            None,
-         );
-         status.merge_waiter(waiter);
-         // Bump the counter through a disjoint field borrow so the `status`
-@@ -639,10 +647,6 @@ impl CompactionScheduler {
-         schema_metadata_manager: SchemaMetadataManagerRef,
-         made_progress: bool,
-     ) -> CompactionTransition {
--        if !self.region_status.contains_key(&region_id) {
--            return CompactionTransition::NoAction;
--        }
--
-         if let Some(ddls) = self.take_ready_ddls(region_id) {
-             return CompactionTransition::DdlReady(ddls);
-         }
-@@ -698,6 +702,7 @@ impl CompactionScheduler {
-             self.listener.clone(),
-             schema_metadata_manager,
-             MAX_PARALLEL_COMPACTION,
-+            Some(status.pick_history.clone()),
-         );
-         // Bump the counter through a disjoint field borrow so the `status`
-         // borrow stays alive; nothing could have removed the status since it
+@@ -27,3 +28,7 @@ pub mod helper;
+ pub mod scalars;
+ pub mod state;
+ pub mod utils;
++
++// Public for `admin_fn` expansions in downstream crates; the module stays private.
++#[doc(hidden)]
++pub use permission::ensure_admin_privilege;
 ```
 
-**File**: `src/mito2/src/compaction/scheduler/history.rs` (added, +215/-0)
+**File**: `src/common/function/src/permission.rs` (added, +130/-0)
 ```diff
-@@ -0,0 +1,215 @@
+@@ -0,0 +1,130 @@
 +// Copyright 2023 Greptime Team
 +//
 +// Licensed under the Apache License, Version 2.0 (the "License");
@@ -2325,449 +2274,474 @@ A selected key consumes its fairness turn when the plan is accepted instead of a
 +// See the License for the specific language governing permissions and
 +// limitations under the License.
 +
-+use std::cmp::Reverse;
-+use std::collections::{HashMap, HashSet};
-+use std::time::{Duration, Instant};
++use auth::{PermissionChecker, PermissionCheckerRef, PermissionReq, PermissionResp};
++use common_error::ext::BoxedError;
++use common_query::error::PermissionDeniedSnafu;
++use datafusion_common::DataFusionError;
++use sql::ast::{FunctionArguments, Ident, ObjectName};
++use sql::statements::admin::Admin;
++use sql::statements::statement::Statement;
 +
-+use prometheus::IntCounterVec;
++use crate::function::FunctionContext;
 +
-+use crate::compaction::twcs::{PickClass, WindowCandidate};
-+use crate::metrics::TWCS_SELECTED_CANDIDATES;
++/// Checks ADMIN statement privileges for an `admin_fn`-generated UDF.
++pub fn ensure_admin_privilege(
++    func_ctx: &FunctionContext,
++    fn_name: &str,
++) -> datafusion_common::Result<()> {
++    let admin_stmt = Statement::Admin(Admin::Func(sql::ast::Function {
++        name: ObjectName::from(vec![Ident::new(fn_name)]),
++        uses_odbc_syntax: false,
++        parameters: FunctionArguments::None,
++        args: FunctionArguments::None,
++        filter: None,
++        null_treatment: None,
++        over: None,
++        within_group: vec![],
++    }));
 +
-+/// Waiting compensation starts after one minute. This is a promotion threshold,
-+/// not a deadline: an executing batch is never preempted to run an overdue pick.
-+/// It is checked at pick time and does not wake the scheduler on its own.
-+const PROMOTION_DELAY: Duration = Duration::from_secs(60);
-+
-+/// A work identity survives file replacement and picking epochs, but not a region
-+/// incarnation. Different classes in the same window retain independent ages.
-+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-+pub(crate) struct PickKey {
-+    /// Window identity, independent of the current input files.
-+    pub(crate) window: i64,
-+    /// Work category whose waiting age is tracked independently in this window.
-+    pub(crate) class: PickClass,
-+}
-+
-+impl From<&WindowCandidate> for PickKey {
-+    fn from(candidate: &WindowCandidate) -> Self {
-+        Self {
-+            window: candidate.window,
-+            class: candidate.pick.class,
++    let checker = func_ctx.state.plugins.get::<PermissionCheckerRef>();
++    match checker.as_ref().check_permission_with_context(
++        func_ctx.query_ctx.current_user(),
++        PermissionReq::SqlStatement(&admin_stmt),
++        Some(&func_ctx.query_ctx.current_schema()),
++    ) {
++        Ok(PermissionResp::Allow) => Ok(()),
++        Ok(PermissionResp::Reject) | Err(_) => {
++            let err = PermissionDeniedSnafu {
++                err_msg: format!(
++                    "Executing the admin function '{fn_name}' requires the privileges of an ADMIN statement"
++                ),
++            }
++            .build();
++            Err(DataFusionError::External(Box::new(BoxedError::new(err))))
 +        }
 +    }
 +}
 +
-+/// Region-resident scheduling metadata. It owns no file handles or reservations.
-+/// Planning works on a private snapshot; the accepted plan consumes one fairness
-+/// turn per selected key. Execution success or failure does not rewrite ages.
-+#[derive(Debug, Clone)]
-+pub(crate) struct PickHistory {
-+    /// First observation or last fairness turn for each eligible key.
-+    /// Repeated picks preserve this timestamp until the key is selected.
-+    waiting: HashMap<PickKey, Instant>,
-+    selected_metrics: IntCounterVec,
-+}
-+
-+impl Default for PickHistory {
-+    fn default() -> Self {
-+        Self {
-+            waiting: HashMap::new(),
-+            selected_metrics: TWCS_SELECTED_CANDIDATES.clone(),
-+        }
-+    }
-+}
-+
-+/// Ascending fairness order: promoted work, oldest age, class, then newest window.
-+#[derive(Debug, PartialEq, Eq, PartialOrd, Ord)]
-+struct PickPriority {
-+    not_promoted: bool,
-+    since: Option<Instant>,
-+    class: PickClass,
-+    window: Reverse<i64>,
-+}
-+
-+impl PickHistory {
-+    /// Refreshes all eligible identities before selection limits hide any work.
-+    /// Preserves surviving ages and drops absent keys without changing selection.
-+    fn observe(&mut self, keys: impl Iterator<Item = PickKey>, now: Instant) {
-+        let live: HashSet<_> = keys.collect();
-+        self.waiting.retain(|key, _| live.contains(key));
-+        for key in live {
-+            self.waiting.entry(key).or_insert(now);
-+        }
-+    }
-+
-+    /// Returns an ascending sort key: promoted work first, oldest waiting first.
-+    /// Below [`PROMOTION_DELAY`], age does not affect class/newest-window ordering.
-+    /// One shared `now` keeps the comparator consistent across the entire sort.
-+    fn priority(&self, key: PickKey, now: Instant) -> PickPriority {
-+        let overdue = self
-+            .waiting
-+            .get(&key)
-+            .copied()
-+            .filter(|since| now.saturating_duration_since(*since) >= PROMOTION_DELAY);
-+        PickPriority {
-+            not_promoted: overdue.is_none(),
-+            since: overdue,
-+            class: key.class,
-+            window: Reverse(key.window),
-+        }
-+    }
-+
-+    /// Consumes the fairness turn for `key`. Only an accepted plan installs the
-+    /// private snapshot, so rejected or stale plans never advance resident ages.
-+    fn serve(&mut self, key: PickKey, now: Instant) {
-+        self.waiting.insert(key, now);
-+    }
-+
-+    /// Observes all eligible work and ranks one alternative per window without
-+    /// consuming a fairness turn. The caller acknowledges only attempted work
-+    /// after applying its output budget and semantic closure policy.
-+    pub(crate) fn rank_candidates(
-+        &mut self,
-+        mut candidates: Vec<WindowCandidate>,
-+        now: Instant,
-+    ) -> Vec<WindowCandidate> {
-+        self.observe(candidates.iter().map(PickKey::from), now);
-+        candidates.sort_by_key(|candidate| self.priority(PickKey::from(candidate), now));
-+        // Alternatives may share files or semantic dependencies within a window.
-+        let mut windows = HashSet::new();
-+        candidates.retain(|can
-```
-
-**File**: `src/mito2/src/compaction/scheduler/planning.rs` (modified, +99/-26)
-```diff
-@@ -31,7 +31,9 @@ use tokio::sync::mpsc::{self, Sender};
- use crate::access_layer::AccessLayerRef;
- use crate::cache::CacheManagerRef;
- use crate::compaction::compactor::{CompactionRegion, CompactionVersion};
--use crate::compaction::picker::{PickerOutput, new_picker};
-+use crate::compaction::last_non_null;
-+use crate::compaction::picker::{PickerOutput, new_picker, new_twcs_picker};
-+use crate::compaction::scheduler::history::{PickHistory, PickKey};
- use crate::compaction::scheduler::state::{
-     CompactingFiles, CompactionExecution, CompactionPhase, CompactionTrigger,
- };
-@@ -44,7 +46,7 @@ use crate::metrics::{
-     COMPACTION_MEMORY_REJECTED, COMPACTION_STAGE_ELAPSED, INFLIGHT_COMPACTION_COUNT,
- };
- use crate::region::ManifestContextRef;
--use crate::region::options::RegionOptions;
-+use crate::region::options::{MergeMode, RegionOptions};
- use crate::request::{BackgroundNotify, OutputTx, WorkerRequest, WorkerRequestWithTime};
- use crate::schedule::remote_job_scheduler::{
-     CompactionJob, DefaultNotifier, RemoteJob, RemoteJobSchedulerRef,
-@@ -55,6 +57,8 @@ use crate::worker::WorkerListener;
- 
- /// Region compaction request.
- pub struct CompactionRequest {
-+    /// Private snapshot for automatic regular planning; manual requests carry none.
-+    pub(crate) pick_history: Option<PickHistory>,
-     pub(crate) engine_config: Arc<MitoConfig>,
-     pub(crate) current_version: CompactionVersion,
-     pub(crate) access_layer: AccessLayerRef,
-@@ -78,7 +82,8 @@ impl CompactionRequest {
- /// Result returned to the worker after background compaction planning.
- pub(crate) enum CompactionPlanningResult {
-     Prepared(PreparedCompaction),
--    NoPlan,
-+    /// Returns automatic history even for an empty plan, to prune stale eligibility.
-+    NoPlan(Option<PickHistory>),
-     Error(Arc<Error>),
- }
- 
-@@ -89,7 +94,7 @@ impl fmt::Debug for CompactionPlanningResult {
-                 .debug_tuple("Prepared")
-                 .field(&prepared.compaction_region.region_id)
-                 .finish(),
--            Self::NoPlan => f.write_str("NoPlan"),
-+            Self::NoPlan(_) => f.write_str("NoPlan"),
-             Self::Error(err) => f.debug_tuple("Error").field(err).finish(),
-         }
-     }
-@@ -104,12 +109,64 @@ pub(crate) struct CompactionPickFinished {
- }
- 
- pub(crate) struct PreparedCompaction {
-+    /// Updated automatic snapshot, installed only after the worker accepts the plan.
-+    /// Manual planning returns `None` and leaves resident waiting ages unchanged.
-+    pick_history: Option<PickHistory>,
-     pub(super) compaction_region: CompactionRegion,
-     pub(super) picker_output: PickerOutput,
-     start_time: Instant,
-     ttl: TimeToLive,
- }
- 
-+/// Scheduler policy applied between stateless discovery and semantic closure.
-+/// Runs on the planning runtime with a private history snapshot, never on the
-+/// worker or through a shared mutex. Stale results cannot mutate resident state.
-+async fn pick_automatic(
-+    region: &CompactionRegion,
-+    history: &mut PickHistory,
-+    max_outputs: Option<usize>,
-+    time_range: Option<TimestampRange>,
-+) -> Result<Option<PickerOutput>> {
-+    let picker = new_twcs_picker(&region.region_options, max_outputs, time_range, false);
-+    let mut candidates = picker.discover(region).await?;
-+    let last_non_null = region.region_options.merge_mode() == MergeMode::LastNonNull;
-+    let now = Instant::now();
-+    candidates.candidates = history.rank_candidates(candidates.candidates, now);
-+    if !last_non_null {
-+        candidates
-+            .candidates
-+            .truncate(max_outputs.unwrap_or(usize::MAX));
-+    }
-+    // finish() reverses candidates for the compactor's pop order. Keep seed
-+    // identities in that same order without retaining them in execution state.
-+    let keys: Vec<_> = candidates
-+        .candidates
-+        .iter()
-+        .rev()
-+        .map(PickKey::from)
-+        .collect();
-+    let output = candidates.finish().await?;
-+    if last_non_null {
-+        let (output, attempted_seeds) =
-+            last_non_null::close_outputs(region, output, max_outputs).await?;
-+        history.acknowledge(attempted_seeds.into_iter().map(|index| keys[index]), now);
-+        Ok(output)
-+    } else {
-+        history.acknowledge(keys.into_iter(), now);
-+        Ok((!output.outputs.is_empty() || !output.expired_ssts.is_empty()).then_some(output))
-+    }
-+}
-+
-+/// Exercises automatic selection and closure from cross-module regression tests.
 +#[cfg(test)]
-+pub(crate) async fn pick_automatic_for_test(
-+    region: &CompactionRegion,
-+    history: &mut PickHistory,
-+    max_outputs: Option<usize>,
-+) -> Result<Option<PickerOutput>> {
-+    pick_automatic(region, history, max_outputs, None).await
++pub(crate) fn test_function_context(
++    plugins: common_base::Plugins,
++    user: auth::UserInfoRef,
++) -> FunctionContext {
++    let query_ctx = session::context::QueryContext::arc();
++    query_ctx.set_current_user(user);
++    FunctionContext {
++        query_ctx,
++        state: std::sync::Arc::new(crate::state::FunctionState {
++            plugins,
++            ..Default::default()
++        }),
++    }
 +}
 +
- impl CompactionScheduler {
-     pub(super) fn dispatch_compaction_planning(
-         &self,
-@@ -201,22 +258,16 @@ impl CompactionScheduler {
-             )
-         });
- 
--        // Avoid queuing serial outputs from a stale snapshot. Repicking after each
--        /
-```
-
-**File**: `src/mito2/src/compaction/scheduler/state.rs` (modified, +6/-0)
-```diff
-@@ -28,6 +28,7 @@ use crate::access_layer::AccessLayerRef;
- use crate::cache::CacheManagerRef;
- use crate::compaction::compactor::CompactionVersion;
- use crate::compaction::picker::PickerOutput;
-+use crate::compaction::scheduler::history::PickHistory;
- use crate::compaction::scheduler::local::LocalCompaction;
- use crate::compaction::scheduler::planning::CompactionRequest;
- use crate::config::MitoConfig;
-@@ -319,6 +320,8 @@ impl DdlExecution {
- 
- /// Scheduling state retained for the lifetime of a loaded region.
- pub(super) struct CompactionStatus {
-+    /// Resident automatic-pick history, retained across batches until region unload.
-+    pub(crate) pick_history: PickHistory,
-     /// Id of the region.
-     pub(super) region_id: RegionId,
-     /// Version control of the region.
-@@ -350,6 +353,7 @@ impl CompactionStatus {
-         access_layer: AccessLayerRef,
-     ) -> CompactionStatus {
-         CompactionStatus {
-+            pick_history: PickHistory::default(),
-             region_id,
-             version_control,
-             access_layer,
-@@ -524,11 +528,13 @@ impl CompactionStatus {
-         listener: WorkerListener,
-         schema_metadata_manager: SchemaMetadataManagerRef,
-         max_parallelism: usize,
-+        pick_history: Option<PickHistory>,
-     ) -> CompactionRequest {
-         let current_version = CompactionVersion::from(self.version_control.current().version);
-         let start_time = Instant::now();
- 
-         CompactionRequest {
-+            pick_history,
-             engine_config,
-             current_version,
-             access_layer: self.access_layer.clone(),
-```
-
-**File**: `src/mito2/src/compaction/scheduler_test.rs` (modified, +259/-7)
-```diff
-@@ -13,7 +13,7 @@
- // limitations under the License.
- 
- use std::assert_matches;
--use std::time::Duration;
-+use std::time::{Duration, Instant};
- 
- use api::v1::region::StrictWindow;
- use api::v1::region::compact_request::Options;
-@@ -28,10 +28,12 @@ use tokio::sync::{Barrier, mpsc, oneshot};
- 
- use crate::compaction::memory_manager::{CompactionMemoryGuard, new_compaction_memory_manager};
- use crate::compaction::picker::PickerOutput;
-+use crate::compaction::scheduler::history::PickKey;
- use crate::compaction::scheduler::planning::CompactionPlanningResult;
- use crate::compaction::scheduler::state::{CompactingFiles, CompactionPhase};
- use crate::compaction::scheduler::*;
- use crate::compaction::test_util::new_file_handle;
-+use crate::compaction::twcs::PickClass;
- use crate::compaction::{CompactionOutput, find_dynamic_options};
- use crate::config::MitoConfig;
- use crate::error::InvalidSchedulerStateSnafu;
-@@ -412,6 +414,137 @@ async fn test_resident_region_survives_terminal_cycles_and_truncate() {
-     assert!(!scheduler.region_status.contains_key(&id));
- }
- 
-+#[tokio::test]
-+async fn test_pick_history_survives_cycles_but_not_region_replacement() {
-+    let env = SchedulerEnv::new().await;
-+    let (tx, _rx) = mpsc::channel(8);
-+    let mut scheduler = env.mock_compaction_scheduler(tx);
-+    let version = Arc::new(VersionControlBuilder::new().build());
-+    let id = version.region_id();
-+    scheduler.register_region(&version, &env.access_layer);
-+    let key = PickKey {
-+        window: 0,
-+        class: PickClass::FileReduction,
++#[cfg(test)]
++mod tests {
++    use auth::{
++        DefaultPermissionChecker, Identity, Password, PermissionCheckerRef, UserProvider,
++        static_user_provider_from_option,
 +    };
-+    let start = Instant::now();
-+    scheduler
-+        .region_status
-+        .get_mut(&id)
-+        .unwrap()
-+        .pick_history
-+        .observe_for_test([key].into_iter(), start);
-+    let later = start + Duration::from_secs(120);
-+    let priority = scheduler.region_status[&id]
-+        .pick_history
-+        .promoted_since_for_test(key, later);
-+    assert!(priority.is_some());
-+    scheduler.region_status.get_mut(&id).unwrap().become_idle();
-+    scheduler.register_region(&version, &env.access_layer);
-+    assert_eq!(
-+        priority,
-+        scheduler.region_status[&id]
-+            .pick_history
-+            .promoted_since_for_test(key, later)
-+    );
-+    scheduler.on_compaction_failed(id, Arc::new(InvalidSchedulerStateSnafu.build()));
-+    assert_eq!(
-+        priority,
-+        scheduler.region_status[&id]
-+            .pick_history
-+            .promoted_since_for_test(key, later)
-+    );
-+    let manifest = env
-+        .mock_manifest_context(version.current().version.metadata.clone())
-+        .await;
-+    let (schemas, _) = mock_schema_metadata_manager();
-+    let mut request = scheduler.region_status[&id].new_compaction_request(
-+        scheduler.request_sender.clone(),
-+        scheduler.engine_config.clone(),
-+        scheduler.cache_manager.clone(),
-+        &manifest,
-+        scheduler.listener.clone(),
-+        schemas,
-+        1,
-+        Some(scheduler.region_status[&id].pick_history.clone()),
-+    );
-+    let history = request.pick_history.as_mut().unwrap();
-+    assert_eq!(priority, history.promoted_since_for_test(key, later));
-+    history.observe_for_test(std::iter::empty(), later);
-+    assert_eq!(
-+        priority,
-+        scheduler.region_status[&id]
-+            .pick_history
-+            .promoted_since_for_test(key, later)
-+    );
-+    let replacement = Arc::new(VersionControlBuilder::new().build());
-+    scheduler.register_region(&replacement, &env.access_layer);
-+    assert!(
-+        scheduler.region_status[&id]
-+            .pick_history
-+            .promoted_since_for_test(key, later)
-+            .is_none()
-+    );
++    use common_base::Plugins;
++    use common_error::status_code::StatusCode;
++
++    use super::*;
++
++    async fn user(username: &str, mode: &str) -> auth::UserInfoRef {
++        let provider = static_user_provider_from_option(&format!(
++            "static_user_provider:cmd:{username}:{mode}={username}_pwd"
++        ))
++        .unwrap();
++        provider
++            .authenticate(
++                Identity::UserId(username, None),
++                Password::PlainText(format!("{username}_pwd").into()),
++            )
++            .await
++            .unwrap()
++    }
++
++    fn denied_status(error: &DataFusionError) -> StatusCode {
++        common_query::error::datafusion_status_code::<common_query::error::Error>(error, None)
++    }
++
++    #[tokio::test]
++    async fn test_admin_privilege_without_checker_allows() {
++        let func_ctx = test_function_context(Plugins::default(), user("anyone", "ro").await);
++        ensure_admin_privilege(&func_ctx, "flush_table").unwrap();
++    }
++
++    #[tokio::test]
++    async fn test_admin_privilege_readonly_user_denied() {
++        let plugins = Plugins::new();
++        plugins.insert::<PermissionCheckerRef>(DefaultPermissionChecker::arc());
++        let func_ctx = test_function_context(plugins, user("ro_user", "ro").await);
++
++        let error = ensure_admin_privilege(&func_ctx, "flush_table")
++            .expect_err("read-only user must be denied");
++        assert_eq!(StatusCode::PermissionDenied, denied_status(&error));
++    }
++
++    #[tokio::test]
++    async fn test_admin_privilege_readwrite_user_allowed() {
++        let plugins = Plugins::new();
++        plugins.insert::<PermissionCheckerRef>(DefaultPermissionChecker::arc());
++        let func_ctx = test_function_context(plugins, user("rw_user", "rw").await);
++
++        ensure_admin_privilege(&func_ctx, "flush_table").unwrap();
++    }
++}
+```
+
+**File**: `src/common/function/tests/admin_fn.rs` (added, +53/-0)
+```diff
+@@ -0,0 +1,53 @@
++// Copyright 2023 Greptime Team
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//     http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++use common_function::function::FunctionContext;
++use common_function::function_factory::ScalarFunctionFactory;
++use common_function::handlers::ProcedureServiceHandlerRef;
++use common_macro::admin_fn;
++use common_query::error::{MissingProcedureServiceHandlerSnafu, Result};
++use datafusion_expr::{Signature, Volatility};
++use datatypes::value::{Value, ValueRef};
++use session::context::QueryContextRef;
++
++// Integration tests compile as a separate crate, matching downstream users of
++// the macro. All generated paths must be accessible through `common_function`.
++#[admin_fn(
++    name = ExternalAdminFunction,
++    display_name = external_admin,
++    sig_fn = signature,
++    ret = uint64,
++    user_path = common_function
++)]
++async fn external_admin(
++    _handler: &ProcedureServiceHandlerRef,
++    _query_ctx: &QueryContextRef,
++    _params: &[ValueRef<'_>],
++) -> Result<Value> {
++    Ok(Value::from(0u64))
 +}
 +
-+#[rstest::rstest]
-+#[case::accepted_empty_plan(false)]
-+#[case::failed_plan(true)]
-+#[tokio::test]
-+async fn test_empty_plan_prunes_history_but_failed_plan_preserves_it(#[case] failed: bool) {
-+    let env = SchedulerEnv::new().await;
-+    let (tx, _rx) = mpsc::channel(4);
-+    let mut scheduler = env.mock_compaction_scheduler(tx);
-+    let version = Arc::new(VersionControlBuilder::new().build());
-+    let id = version.region_id();
-+    let manifest = env
-+        .mock_manifest_context(version.current().version.metadata.clone())
++fn signature() -> Signature {
++    Signature::nullary(Volatility::Volatile)
++}
++
++#[test]
++fn test_admin_fn_from_external_crate() {
++    let factory: ScalarFunctionFactory = ExternalAdminFunction::factory().into();
++    let udf = factory.provide(FunctionContext::default());
++
++    assert_eq!(udf.name(), "external_admin");
++    assert_eq!(udf.signature(), &signature());
++    assert!(udf.as_async().is_some());
++}
+```
+
+**File**: `src/common/macro/src/admin_fn.rs` (modified, +5/-0)
+```diff
+@@ -311,6 +311,11 @@ fn build_struct(
+                 // Safety check: Ensure under the `greptime` catalog for security
+                 #user_path::ensure_greptime!(self.func_ctx);
+ 
++                #user_path::ensure_admin_privilege(
++                    &self.func_ctx,
++                    #display_name,
++                )?;
++
+                 // Zero-argument functions also execute once per input row.
+                 let rows_num = columns.first().map_or(args.number_rows, |column| column.len());
+                 #validate_rows
+```
+
+**File**: `tests-integration/src/instance.rs` (modified, +131/-0)
+```diff
+@@ -291,6 +291,137 @@ mod tests {
+         )
+     }
+ 
++    #[tokio::test(flavor = "multi_thread")]
++    async fn test_select_admin_function_requires_admin_privilege() {
++        use auth::{
++            DefaultPermissionChecker, Identity, Password, PermissionCheckerRef, UserProvider,
++            static_user_provider_from_option,
++        };
++
++        let plugins = Plugins::new();
++        plugins.insert::<PermissionCheckerRef>(DefaultPermissionChecker::arc());
++        let standalone =
++            GreptimeDbStandaloneBuilder::new("test_select_admin_function_requires_admin_privilege")
++                .with_plugin(plugins)
++                .build()
++                .await;
++        let instance = standalone.fe_instance();
++
++        create_table(
++            instance,
++            "CREATE TABLE admin_fn_demo(host STRING, ts TIMESTAMP TIME INDEX)",
++        )
 +        .await;
-+    let (schemas, _) = mock_schema_metadata_manager();
-+    scheduler.register_region(&version, &env.access_layer);
-+    let status = scheduler.region_status.get_mut(&id).unwrap();
-+    let key = PickKey {
-+        window: 0,
-+        class: PickClass::FileReduction,
-+    };
-+    let start = Instant::now();
-+    let now = start + Duration::from_secs(120);
-+    status
-+        .pick_history
-+        .observe_for_test([key].into_iter(), start);
-+    status.start_picking_with_trigger(7, CompactionTrigger::Automatic);
-+    let mut planned_history = status.pick_history.clone();
-+    planned_history.observe_for_test(std::iter::empty(), now);
-+    assert!(
-+        status
-+            .pick_history
-+            .promoted_since_for_test(key, now)
-+            .is_som
++
++        async fn user_ctx(username: &str, mode: &str) -> QueryContextRef {
++            let provider = static_user_provider_from_option(&format!(
++                "static_user_provider:cmd:{username}:{mode}={username}_pwd"
++            ))
++            .unwrap();
++            let user = provider
++                .authenticate(
++                    Identity::UserId(username, None),
++                    Password::PlainText(format!("{username}_pwd").into()),
++                )
++                .await
++                .unwrap();
++            let ctx = QueryContext::arc();
++            ctx.set_current_user(user);
++            ctx
++        }
++
++        async fn assert_select_admin_denied(instance: &Instance, ctx: &QueryContextRef) {
++            for sql in [
++                "SELECT flush_table('admin_fn_demo')",
++                "SELECT compact_table('admin_fn_demo')",
++                "SELECT flush_region(0)",
++                "SELECT compact_region(0)",
++                "SELECT migrate_region(1, 2, 3)",
++                "SELECT gc_regions(0)",
++                "SELECT gc_table('admin_fn_demo')",
++                "SELECT build_index('admin_fn_demo')",
++                "SELECT build_series_index('admin_fn_demo')",
++                "SELECT flush_flow('admin_fn_demo')",
++                "SELECT reconcile_catalog()",
++                "SELECT reconcile_database('public')",
++                "SELECT reconcile_table('admin_fn_demo')",
++            ] {
++                let mut results = SqlQueryHandler::do_query(instance, sql, ctx.clone()).await;
++                let output = results
++                    .remove(0)
++                    .unwrap_or_else(|e| panic!("unexpected error for {sql}: {e}"));
++                let OutputData::Stream(stream) = output.data else {
++                    panic!("{sql} must return a stream, got {:?}", output.data)
++                };
++                let err = common_recordbatch::util::collect_batches(stream)
++                    .await
++                    .expect_err("read-only user must be denied");
++                assert_eq!(
++                    StatusCode::PermissionDenied,
++                    err.status_code(),
++                    "unexpected error for {sql}: {err}"
++                );
++            }
++        }
++
++        let readonly_ctx = user_ctx("ro_user", "ro").await;
++        let readwrite_ctx = user_ctx("rw_user", "rw").await;
++
++        assert_select_admin_denied(instance, &readonly_ctx).await;
++
++        let mut results = SqlQueryHandler::do_query(
++            instance.as_ref(),
++            "ADMIN FLUSH_TABLE('admin_fn_demo')",
++            readwrite_ctx.clone(),
++        )
++        .await;
++        assert!(
++            results.remove(0).is_ok(),
++            "ADMIN FLUSH_TABLE must keep working for read-write users"
++        );
++
++        for sql in [
++            "SELECT flush_table('admin_fn_demo')",
++            "SELECT compact_table('admin_fn_demo')",
++        ] {
++            let mut results =
++                SqlQueryHandler::do_query(instance.as_ref(), sql, readwrite_ctx.clone()).await;
++            let output = results
++                .remove(0)
++                .unwrap_or_else(|e| panic!("unexpected error for {sql}: {e}"));
++            let OutputData::Stream(stream) = output.data else {
++                panic!("{sql} must return a stream");
++            };
++            let batches = common_recordbatch::util::collect_batches(stream)
++                .await
++                .unwrap_or_else(|e| panic!("unexpected error for {sql}: {e}"));
++            assert_eq!(
++                1,
++                batches.iter().count(),
++                "{sql} must return one record batch"
++            );
++        }
++
++        let mut results = SqlQueryHandler::do_query(
++            instance.as_ref(),
++            "ADMIN FLUSH_TABLE('admin_fn_demo')",
++            readonly_ctx.clone(),
++        )
++        .await;
++        let err = results.remove(0).unwrap_err();
++        assert_eq!(
++            StatusCode::PermissionDenied,
++            err.status_code(),
++            "unexpected error: {err}"
+
 ```
 
 ---
 
-### Incident Patch 3: `4633c37d` (2026-11-04)
-**Commit Message**: fix: test (#10149)
+### Incident Patch 3: `2cb47360` (2026-11-05)
+**Commit Message**: fix(grpc): propagate cancellation for read query execution (#10166)
 
-fix: fixture
+* x
 
-Signed-off-by: shuiyisong <[REDACTED_EMAIL]>
+* fix(grpc): restrict cascading cancellation to read query variants
 
-**File**: `src/cmd/src/frontend.rs` (modified, +3/-1)
+Signed-off-by: luofucong <[REDACTED_EMAIL]>
+
+---------
+
+Signed-off-by: luofucong <[REDACTED_EMAIL]>
+
+**File**: `src/servers/src/grpc/greptime_handler.rs` (modified, +151/-15)
 ```diff
-@@ -850,7 +850,9 @@ mod tests {
-         assert!(!debug.contains("cli-secret"));
-         assert!(debug.contains("[REDACTED]"));
+@@ -22,7 +22,8 @@ use std::time::Instant;
  
--        let fe_opts = command.load_options(&Default::default()).unwrap().component;
-+        let mut fe_opts = command.load_options(&Default::default()).unwrap().component;
-+        // Downstream frontend plugins require a meta client outside standalone mode.
-+        fe_opts.meta_client = Some(MetaClientOptions::default());
+ use api::helper::request_type;
+ use api::v1::greptime_request::Request as QueryRequest;
+-use api::v1::{GreptimeRequest, RequestHeader};
++use api::v1::query_request::Query;
++use api::v1::{GreptimeRequest, QueryRequest as ApiQueryRequest, RequestHeader};
+ use auth::UserProviderRef;
+ use common_catalog::consts::{DEFAULT_CATALOG_NAME, DEFAULT_SCHEMA_NAME};
+ use common_catalog::parse_catalog_and_schema_from_db_string;
+@@ -42,6 +43,7 @@ use session::hints::{INSERT_SKIP_WAL_HINT, READ_PREFERENCE_HINT, is_reserved_ext
+ use snafu::{OptionExt, ResultExt};
+ use tokio::sync::mpsc;
+ use tokio::sync::mpsc::error::TrySendError;
++use tokio_util::task::AbortOnDropHandle;
+ use tonic::Status;
  
-         let mut plugins = Plugins::new();
-         plugins::setup_frontend_plugins_pre_build(&mut plugins, &[], &fe_opts, None)
+ use crate::error::{InvalidQuerySnafu, JoinTaskSnafu, Result, UnknownHintSnafu};
+@@ -108,6 +110,13 @@ impl GreptimeRequestHandler {
+     ) -> impl Future<Output = Result<Output>> + Send + 'static {
+         let handler = self.handler.clone();
+         let runtime = self.runtime.clone();
++        // SQL can contain writes or DDL; only explicit read-query variants are cancellable.
++        let cancel_on_drop = matches!(
++            &query,
++            QueryRequest::Query(ApiQueryRequest {
++                query: Some(Query::LogicalPlan(_) | Query::PromRangeQuery(_)),
++            })
++        );
+         let request_type = request_type(&query).to_string();
+         let db = query_ctx.get_db_string();
+         let timer = RequestTimer::new(db.clone(), request_type);
+@@ -135,20 +144,17 @@ impl GreptimeRequestHandler {
+ 
+             match runtime {
+                 Some(runtime) => {
+-                    // Executes requests in another runtime to
+-                    // 1. prevent the execution from being cancelled unexpected by Tonic runtime;
+-                    //   - Refer to our blog for the rational behind it:
+-                    //     https://www.greptime.com/blogs/2023-01-12-hidden-control-flow.html
+-                    //   - Obtaining a `JoinHandle` to get the panic message (if there's any).
+-                    //     From its docs, `JoinHandle` is cancel safe. The task keeps running even it's handle been dropped.
+-                    // 2. avoid the handler blocks the gRPC runtime incidentally.
+-                    runtime
+-                        .spawn(result_future)
+-                        .await
+-                        .context(JoinTaskSnafu)
+-                        .inspect_err(|e| {
+-                            timer.record(e.status_code());
+-                        })?
++                    let task = runtime.spawn(result_future);
++                    let result = if cancel_on_drop {
++                        AbortOnDropHandle::new(task).await
++                    } else {
++                        // Writes must outlive the RPC to avoid cancellation between state updates.
++                        // https://www.greptime.com/blogs/2023-01-12-hidden-control-flow.html
++                        task.await
++                    };
++                    result.context(JoinTaskSnafu).inspect_err(|e| {
++                        timer.record(e.status_code());
++                    })?
+                 }
+                 None => result_future.await,
+             }
+@@ -317,20 +323,150 @@ impl Drop for RequestTimer {
+ 
+ #[cfg(test)]
+ mod tests {
++    use std::error::Error as StdError;
++    use std::result::Result as StdResult;
++    use std::time::Duration;
++
++    use async_trait::async_trait;
+     use chrono::FixedOffset;
+     use common_error::ext::BoxedError;
+     use common_error::{GREPTIME_DB_HEADER_ERROR_CODE, GREPTIME_DB_HEADER_ERROR_RETRY_HINT};
+     use common_time::Timezone;
++    use futures::stream::{self, BoxStream};
+     use query::options::FLOW_SCHEDULED_TIME_MILLIS;
++    use session::context::QueryContext;
+     use session::hints::{
+         INITIAL_REMOTE_DYN_FILTER_REGISTRATIONS_EXTENSION_KEY, READ_PREFERENCE_EXTENSION_KEY,
+         REMOTE_QUERY_ID_EXTENSION_KEY,
+     };
+     use snafu::ResultExt;
++    use tokio::sync::Notify;
++    use tokio::time::timeout;
+     use tonic::Code;
+ 
+     use super::*;
+     use crate::error::{ExecuteGrpcRequestSnafu, InvalidParameterSnafu};
++    use crate::query_handler::grpc::GrpcQueryHandler;
++
++    struct BlockingQueryHandler {
++        started: Arc<Notify>,
++        finished: Arc<Notify>,
++        resume: Arc<Notify>,
++        completed: Arc<Notify>,
++    }
++
++    struct QueryFinished(Arc<Notify>);
++
++    impl Drop for QueryFinished {
++        fn drop(&mut self) {
++            self.0.notify_one();
++        }
++    }
++
++    #[async_trait]
++    impl GrpcQueryHandler for BlockingQueryHandler {
++        async fn do_query(&self, _: QueryRequest, _: QueryContextRef) -> Result<Output> {
++            let _finished = QueryFinished(self.finished.clone());
++            self.started.notify_one();
++            self.resume.notified().await;
++            self.completed.notify_one();
++            Ok(Output::new_with_affected_rows(1))
++        }
++
++        
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #10149** (2026-11-04): fix: test (@shuiyisong)
-- **PR #10146** (2026-11-04): fix(ci): increase nightly JSONBench runner root volume (@MichaelScofield)
-- **PR #10139** (closed): feat(mito2): certify logical row counts of compaction outputs (@Aumnertic)
-- **PR #10130** (2026-11-04): refactor(meta): separate migration construction and drain child tracking (@WenyXu)
-- **PR #10123** (2026-11-04): fix: register trigger procedure loaders through DdlManager (@fengys1996)
-- **PR #10118** (2026-11-03): fix: include peer context in distributed query errors (@WenyXu)
+- **PR #10170** (2026-11-05): test(compat): exercise the bloom-token case only below v1.3.0 (@discord9)
+- **PR #10166** (2026-11-05): fix(grpc): propagate cancellation for read query execution (@MichaelScofield)
+- **PR #10161** (closed): feat: expose live compaction tasks in information schema (@WenyXu)
+- **PR #10158** (closed): docs(ci): clarify AWS runner region configuration (@WenyXu)
+- **PR #10156** (2026-11-05): fix(ci): prepare Ubuntu build runners and default EC2 disks to 500 GiB (@WenyXu)
+- **PR #10153** (2026-11-04): fix(catalog): use advertised peer address as process identity (@v0y4g3r)
 
 ---
 
@@ -2787,29 +2761,61 @@ Signed-off-by: shuiyisong <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. meta): invalidate all datanode tables on address change (#9986)
+## X. catalog): use advertised peer address as process identity (#10153)
 
 **RULE**:
-When implementing operations in `src/meta-srv/AGENTS.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in GreptimeTeam/greptimedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/catalog/src/process_manager.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in GreptimeTeam/greptimedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `351f4207`: meta): invalidate all datanode tables on address change (#9986). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `557843dd`: catalog): use advertised peer address as process identity (#10153). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/meta-srv/AGENTS.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/catalog/src/process_manager.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-  A changed datanode address invalidates every table on that node (`__dn_table`),
-  not only the tables in the current heartbeat.
+    /// Address this frontend advertises to the cluster.
+    ///
+    /// It is the heartbeat peer address, which is also the only address other
+    /// frontends use to reach this node's process management service. The same
+    /// value identifies processes owned by this frontend and routes kill
+    /// requests, so discovery addresses and process addresses share one
+    /// namespace.
+    peer_addr: String,
+    /// Creates a [ProcessManager] for the frontend identified by `peer_addr`.
+    ///
+    /// `peer_addr` must be the address the frontend advertises to metasrv, not
+    /// its public gRPC address: discovered peers are matched by that address to
+    /// exclude this node from remote listings and to route kill requests.
+    pub fn new(peer_addr: String, meta_client: Option<MetaClientRef>) -> Self {
+            peer_addr,
+            frontend: self.peer_addr.clone(),
+    /// The local frontend is excluded from the remote selection by its advertised
+    /// peer address, which is what [`MetaClientSelector`] discovers. Its processes
+    /// are appended from the local registry exactly once.
+    ///
+                .select(|peer| peer.addr != self.peer_addr)
+    ///
+    /// `peer
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+    /// Local frontend server address,
+    server_addr: String,
+    /// Create a [ProcessManager] instance with server address and kv client.
+    pub fn new(server_addr: String, meta_client: Option<MetaClientRef>) -> Self {
+            server_addr,
+            frontend: self.server_addr.clone(),
+                .select(|peer| peer.addr != self.server_addr)
+        server_addr: String,
+        if server_addr == self.server_addr {
+                .select(|peer| peer.addr == server_addr)
+                error::FrontendNotFoundSnafu { addr: server_addr }
+                server_addr,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `351f4207` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `557843dd` are properly handled with clean fallback behavior.

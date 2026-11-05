@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/fabio-rovai-open-ontologies-learnings.md`  
 > **Source**: github ([https://github.com/fabio-rovai/open-ontologies](https://github.com/fabio-rovai/open-ontologies))  
-> **Source Version**: `ef6638a9`  
+> **Source Version**: `375fbc47`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T20:53:19.674Z  
+> **Timestamp**: 2026-11-05T10:58:07.770Z  
 > **Learning ID**: `learn-github-fabio-rovai-open-ontologies`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/fabio-rovai-open-ontologies-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/fabio-rovai/open-ontologies](https://github.com/fabio-rovai/open-ontologies))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T20:53:19.669Z  
+> **Harvest Timestamp**: 2026-11-05T10:58:07.762Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Plan, apply and roll back changes to a production ontology, with a blast radius report and a proof an auditor can re-check.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 2810 stars
+- **Stars / Engagement**: 2818 stars
 
 ---
 
@@ -1754,462 +1754,55 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ef6638a9` (2026-11-04)
-**Commit Message**: Merge pull request #363 from fabio-rovai/deps/calamine-0.38
+### Incident Patch 1: `ce10d03a` (2026-11-04)
+**Commit Message**: The lean job's Poly/ML missed its evicted cache while isabelle.in.tum.de refused connections and failed before any test ran; added isabelle.sketis.net as a second host under the same digest and raised the step to 10 minutes to fix it
 
-XLSX ingest reads with calamine 0.38, so main's audit passes again
-
-**File**: `.cargo/audit.toml` (modified, +26/-40)
+**File**: `.github/workflows/ci.yml` (modified, +20/-3)
 ```diff
-@@ -1,48 +1,34 @@
- [advisories]
- ignore = [
--    # quick-xml denial of service advisories, both patched in 0.41.0. This
--    # project's direct dependency is still quick-xml 0.37 (see Cargo.toml), and
--    # Cargo.lock resolves exactly one quick-xml, version 0.37.5, shared by that
--    # direct dependency, calamine 0.30.1, and oxrdfxml 0.2.5 and sparesults
--    # 0.3.5. Those two come from the oxigraph fork that [patch.crates-io] in
--    # Cargo.toml pins by rev, not from crates.io, so no upstream release can
--    # move them on its own. Bumping the direct pin alone would not clear the
--    # advisory either, because the fork's oxrdfxml and sparesults still require
--    # quick-xml "0.37" and the 0.37.5 lockfile entry would stay.
--    # Our own call site is Ingest::parse_xml in src/ingest.rs, which uses a
--    # plain quick_xml Reader and never constructs an NsReader or calls
-+    # quick-xml denial of service advisories, both patched in 0.41.0.
-+    # Cargo.lock holds two quick-xml, so a bare `cargo tree -i quick-xml` asks
-+    # which. `cargo tree -i quick-xml@0.37.5`, with or without --all-features,
-+    # names three users of the advised one: this crate's direct dependency
-+    # (quick-xml 0.37 in Cargo.toml), oxrdfxml 0.2.5 through oxrdfio and
-+    # oxigraph, and sparesults 0.3.5 through oxigraph and spareval.
-+    # `cargo tree -i quick-xml@0.42.0` names calamine 0.38.0 alone, and 0.42.0
-+    # is patched. oxrdfxml and sparesults come from the oxigraph fork that
-+    # [patch.crates-io] in Cargo.toml pins by rev, not from crates.io, so no
-+    # upstream release can move them on its own. Bumping the direct pin alone
-+    # would not clear the advisory either, because the fork's oxrdfxml and
-+    # sparesults still require quick-xml "0.37" and the 0.37.5 lockfile entry
-+    # would stay.
-+    # Our own call sites are two. DataIngester::parse_xml in src/ingest.rs uses
-+    # a plain quick_xml Reader and never constructs an NsReader or calls
-     # attributes(), so it falls outside the affected code paths of both
--    # advisories. The oxigraph RDF/XML path falls inside them, because oxrdfxml
--    # parses with NsReader and iterates start tag attributes, and that path is
--    # reachable from third-party input: src/marketplace.rs accepts the "rdfxml"
--    # format for community packs fetched over HTTP, and src/server.rs loads
--    # that fetched content into the store. The risk accepted here is
--    # availability only, and the HTTP transport binds 127.0.0.1 by default.
-+    # advisories. The RIF Core reader in src/rulesyntax.rs (`rules-import
-+    # --from rif` on the CLI and in batch, and onto_rules_import) builds an
-+    # NsReader and iterates attributes, so it falls inside both, on a local
-+    # file its caller names. The oxigraph RDF/XML path falls inside them too,
-+    # because oxrdfxml parses with NsReader and iterates start tag attributes,
-+    # and that path is reachable from third-party input: src/marketplace.rs
-+    # accepts the "rdfxml" format for community packs fetched over HTTP, and
-+    # src/server.rs loads that fetched content into the store. The risk
-+    # accepted here is availability only, and the HTTP transport binds
-+    # 127.0.0.1 by default.
-     # Remove these entries once the patched fork's oxrdfxml and sparesults
-     # build on quick-xml 0.41 or later, or the patch is dropped for an oxigraph
--    # release whose crates do.
-+    # release whose crates do, and the direct dependency moves with them.
-     "RUSTSEC-2026-0194",
-     "RUSTSEC-2026-0195",
--    # zip archive-extraction advisories (symlink escape, SUID/SGID bits kept,
--    # permissions applied through symlinks, and since 2 Nov 2026 an abort on a
--    # symlink entry with a large declared size), all patched only in zip 9.0.0.
--    # Every one of them is in ZipArchive::extract / ZipStreamReader::extract,
--    # which write an archive out to disk. The one remaining path to an affected
--    # zip is calamine 0.30.1 -> zip 4.6.1 (`cargo tree --all-features -i zip`),
--    # and calamine never extracts: it opens the workbook with ZipArchive::new
--    # and reads entries into memory with by_name and by_index, and its source
--    # contains no call to extract or ZipStreamReader. calamine 0.37.0
--    # (18 Oct 2026) requires zip "^9.0", so moving Cargo.toml's calamine from
--    # 0.30 to 0.37 clears all three. That bump crosses seven breaking calamine
--    # releases and also pulls in quick-xml "^0.42" beside the 0.37.5 above, so
--    # it is a change to the spreadsheet reader to be made and tested on its
--    # own, not a lockfile edit.
--    # The other path, duckdb's build-dependency libduckdb-sys, was cleared by
--    # updating duckdb to 1.10506.1, which requires zip "^9". That same update
--    # dropped rust_decimal and with it rkyv, so the RUSTSEC-2026-0235 entry
--    # that stood here is gone. Remove these with that calamine bump.
--    "RUSTSEC-2026-0367",
--    "RUSTSEC-2026-0368",
--    "RUSTSEC-2026-0369",
--    
-```
-
-**File**: `CHANGELOG.md` (modified, +48/-0)
-```diff
-@@ -214,6 +214,54 @@ All notable changes to Open Ontologies are documented here.
-   `--locked`. A lockfile update clears three `cargo audit` warnings (tokio,
-   event-listener, chacha20), and an ignore entry that matched nothing is gone.
- 
-+- **XLSX ingest reads with calamine 0.38, and `cargo audit` no longer finds
-+  zip 4.6.1 or calamine 0.30.** calamine 0.30 required zip 4, and zip 4.6.1
-+  carries four advisories patched only in zip 9, RUSTSEC-2026-0367, 0368, 0369
-+  and 0429, which `.cargo/audit.toml` ignored; the last reached the advisory
-+  database on 2 Nov 2026. All four are in `ZipArchive::extract` or
-+  `ZipStreamReader::extract`, which calamine never calls. calamine 0.37 and
-+  later require zip 9, and the four ignores are gone. RUSTSEC-2026-0436, a
-+  panic and unbounded allocation in calamine's CFB parser on a malformed
-+  compound file, failed the scheduled audit of main on 3 Nov 2026 and is
-+  patched in 0.38.0. The CFB parser reads XLS files and VBA projects, and
-+  ingest opens only XLSX and never reads a VBA project, but the audit fails
-+  on the lockfile whatever the call sites, and 0.38.0 is the release. No call
-+  site changed. 0.38.0 also reads an XLSX package whose workbook part is not
-+  `xl/workbook.xml`, by following `_rels/.rels`, and decodes every `_xHHHH_`
-+  escape, surrogate pairs included, where 0.37 decoded `_x00HH_` alone.
-+  Measured on calamine 0.37.0 against 0.30, on 28 workbooks of ordinary content (the four
-+  committed fixtures, and 24 built to cover every cell type, 32 built-in and
-+  44 custom number formats in both date systems, rich, phonetic and inline
-+  strings, offset and sparse layouts, formulas and Strict OOXML), the rows
-+  `parse_xlsx_file` returns, the header order and the datatypes `onto_induce`
-+  infers are identical. On 37 workbooks built to isolate the changes in
-+  calamine's changelog, and in three of 63 LibreOffice 26.2 re-saves, cells
-+  that calamine 0.30 read wrongly now read as the workbook says. An empty
-+  shared string, `<si/>` or one holding only a phonetic run, no longer moves
-+  every later shared string onto the wrong cell. An empty `<v/>` in a
-+  shared-string, boolean or untyped cell is empty, where the first two read
-+  the first shared string and `true`, so none of them makes its row the header
-+  any more. A boolean `FALSE` is false. Excel's `_x00HH_` escapes are decoded,
-+  so the `_x000D_` Excel writes for a carriage return is one. A custom number
-+  format is tested for dates after its entities are decoded, so
-+  `"Week of "d mmm yyyy` formats a date, and a `*` fill takes the next
-+  character literally, so `0*s` formats a number. The East Asian built-in
-+  formats 27 to 36 and 50 to 58 are dates, and a 1904 workbook that prefixes
-+  its SpreadsheetML elements is read in the 1904 system. Rich text after a
-+  plain run, CDATA, and an inline string after a redundant `<v>` are read, and
-+  a worksheet outside `xl/worksheets/`, or bound under a prefix other than
-+  `r:`, opens. Text follows XML and Excel: a literal CR LF reads as LF, while
-+  `&#13;` stays a carriage return, and a `<t>` without `xml:space="preserve"`
-+  loses its leading and trailing ASCII whitespace, which can change a header
-+  name. Two malformed inputs are now refused: a boolean cell whose value is
-+  not `0`, `1`, `true` or `false`, and a package with no `_rels/.rels`. A
-+  shared-string index past the end of the table is an error where it was a
-+  panic. Three malformed cells changed the other way: a `<v>` placed after an
-+  inline string, against the schema's order, or holding a digit as a character
-+  reference, now reads as empty, and an `<is/>` with no `<t>` is an empty
-+  string, as `<is><t/></is>` already was. `tests/ingest_xlsx_cell_test.rs`
-+  holds five of the corrections, and each of its tests fails on calamine 0.30.
-+
- - **`reason --profile owl-dl` says `consistent: null` when the search that
-   would decide it did not finish** (#355). The headline was `tbox &&
-   abox.consistent`, and both default to consistent when their search runs
-```
-
-**File**: `Cargo.lock` (modified, +21/-45)
-```diff
-@@ -124,15 +124,6 @@ dependencies = [
-  "num-traits",
- ]
- 
--[[package]]
--name = "arbitrary"
--version = "1.4.2"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "c3d036a3c4ab069c7b410a2ce876bd74808d2d0888a82667669f8e783a898bf1"
--dependencies = [
-- "derive_arbitrary",
--]
--
- [[package]]
- name = "arrow"
- version = "58.3.0"
-@@ -555,11 +546,12 @@ dependencies = [
- 
- [[package]]
- name = "atoi_simd"
--version = "0.16.1"
-+version = "0.18.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "c2a49e05797ca52e312a0c658938b7d00693ef037799ef7187678f212d7684cf"
-+checksum = "f3cdb3708a128e559a30fb830e8a77a5022ee6902806925c216658652b452a44"
- dependencies = [
-  "debug_unsafe",
-+ "rustversion",
- ]
- 
- [[package]]
-@@ -744,9 +736,9 @@ checksum = "8ae3f5d315924270530207e2a68396c3cc547f6dca3fbdca317cfb1a51edb593"
- 
- [[package]]
- name = "calamine"
--version = "0.30.1"
-+version = "0.38.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "b1a9acfeb1555aa8def91fe8ff208aadaea850c109968ec35ac965edbe7d210b"
-+checksum = "f431b67cba6122a1f7d26b7adafc71bbdf07026095fe811f5efc025d8748e1d8"
- dependencies = [
-  "atoi_simd",
-  "byteorder",
-@@ -755,9 +747,9 @@ dependencies = [
-  "encoding_rs",
-  "fast-float2",
-  "log",
-- "quick-xml",
-+ "quick-xml 0.42.0",
-  "serde",
-- "zip 4.6.1",
-+ "zip",
- ]
- 
- [[package]]
-@@ -1221,17 +1213,6 @@ dependencies = [
-  "syn 1.0.109",
- ]
- 
--[[package]]
--name = "derive_arbitrary"
--version = "1.4.2"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "1e567bd82dcff979e4b03460c307b3cdc9e96fde3d73bed1496d2bc75d9dd62a"
--dependencies = [
-- "proc-macro2",
-- "quote",
-- "syn 2.0.118",
--]
--
- [[package]]
- name = "derive_builder"
- version = "0.20.2"
-@@ -2241,7 +2222,7 @@ dependencies = [
-  "tar",
-  "ureq",
-  "vcpkg",
-- "zip 9.0.4",
-+ "zip",
- ]
- 
- [[package]]
-@@ -2737,7 +2718,7 @@ dependencies = [
-  "oxigraph",
-  "parquet",
-  "proptest",
-- "quick-xml",
-+ "quick-xml 0.37.5",
-  "rayon",
-  "reqwest",
-  "rmcp",
-@@ -2913,7 +2894,7 @@ dependencies = [
-  "oxilangtag",
-  "oxiri",
-  "oxrdf",
-- "quick-xml",
-+ "quick-xml 0.37.5",
-  "thiserror",
- ]
- 
-@@ -3233,11 +3214,20 @@ version = "0.37.5"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "331e97a1af0bf59823e6eadffe373d7b27f485be8748f71471c662c1f269b7fb"
- dependencies = [
-- "encoding_rs",
-  "memchr",
-  "serde",
- ]
- 
-+[[package]]
-+name = "quick-xml"
-+version = "0.42.0"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "41b1177fdf999d2321d3fb46ff47159d9c1fb9ad66a4879f8c50a0b504615e9b"
-+dependencies = [
-+ "encoding_rs",
-+ "memchr",
-+]
-+
- [[package]]
- name = "quote"
- version = "1.0.46"
-@@ -4039,7 +4029,7 @@ dependencies = [
-  "json-event-parser",
-  "memchr",
-  "oxrdf",
-- "quick-xml",
-+ "quick-xml 0.37.5",
-  "thiserror",
- ]
- 
-@@ -5754,20 +5744,6 @@ dependencies = [
-  "syn 2.0.118",
- ]
- 
--[[package]]
--name = "zip"
--version = "4.6.1"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "caa8cd6af31c3b31c6631b8f483848b91589021b28fffe50adada48d4f4d2ed1"
--dependencies = [
-- "arbitrary",
-- "crc32fast",
-- "flate2",
-- "indexmap",
-- "memchr",
-- "zopfli",
--]
--
- [[package]]
- name = "zip"
- version = "9.0.4"
-```
-
-**File**: `Cargo.toml` (modified, +1/-1)
-```diff
-@@ -56,7 +56,7 @@ rayon = "1.10"
- csv = "1"
- quick-xml = { version = "0.37", features = ["serialize"] }
- serde_yaml = "0.9"
--calamine = { version = "0.30", features = ["dates"] }
-+calamine = { version = "0.38", features = ["chrono"] }
- arrow = { version = "60", default-features = false, features = ["csv", "json"] }
- parquet = { version = "60", default-features = false, features = ["arrow"] }
- sqlx = { version = "0.8", default-features = false, features = ["runtime-tokio", "postgres"], optional = true }
-```
-
-**File**: `tests/ingest_xlsx_cell_test.rs` (added, +288/-0)
-```diff
-@@ -0,0 +1,288 @@
-+// SPDX-FileCopyrightText: 2026 Fabio Rovai
-+// SPDX-License-Identifier: MIT
-+
-+//! Cells that calamine 0.30 read wrongly, read as the workbook says.
-+//!
-+//! Each workbook is assembled here from its XML parts, so the input behind
-+//! every assertion is on the page. The archive is stored, not deflated: the
-+//! reader does not care, and the test needs no zip library.
-+use open_ontologies::ingest::DataIngester;
-+
-+const MAIN: &str = "http://schemas.openxmlformats.org/spreadsheetml/2006/main";
-+const REL: &str = "http://schemas.openxmlformats.org/officeDocument/2006/relationships";
-+const PKG: &str = "http://schemas.openxmlformats.org/package/2006/relationships";
-+
-+fn crc32(data: &[u8]) -> u32 {
-+    let mut crc = !0u32;
-+    for &byte in data {
-+        crc ^= u32::from(byte);
-+        for _ in 0..8 {
-+            crc = (crc >> 1) ^ (0xEDB8_8320 & (crc & 1).wrapping_neg());
-+        }
-+    }
-+    !crc
-+}
-+
-+/// A zip archive of `parts`, each stored uncompressed.
-+fn stored_zip(parts: &[(&str, String)]) -> Vec<u8> {
-+    let (mut out, mut directory) = (Vec::new(), Vec::new());
-+    for (name, body) in parts {
-+        let (name, body) = (name.as_bytes(), body.as_bytes());
-+        let offset = out.len() as u32;
-+        // Version needed, flags, method (stored), time, date (1980-01-01),
-+        // CRC-32, compressed and uncompressed size, name length, extra length.
-+        let mut fields = Vec::new();
-+        for half in [20u16, 0, 0, 0, 0x21] {
-+            fields.extend_from_slice(&half.to_le_bytes());
-+        }
-+        for word in [crc32(body), body.len() as u32, body.len() as u32] {
-+            fields.extend_from_slice(&word.to_le_bytes());
-+        }
-+        for half in [name.len() as u16, 0] {
-+            fields.extend_from_slice(&half.to_le_bytes());
-+        }
-+        out.extend_from_slice(&0x0403_4b50u32.to_le_bytes());
-+        out.extend_from_slice(&fields);
-+        out.extend_from_slice(name);
-+        out.extend_from_slice(body);
-+        // Version made by, the same fields, then comment length, disk number,
-+        // internal and external attributes, and where the local header starts.
-+        directory.extend_from_slice(&0x0201_4b50u32.to_le_bytes());
-+        directory.extend_from_slice(&20u16.to_le_bytes());
-+        directory.extend_from_slice(&fields);
-+        directory.extend_from_slice(&[0; 10]);
-+        directory.extend_from_slice(&offset.to_le_bytes());
-+        directory.extend_from_slice(name);
-+    }
-+    // End of central directory: disk numbers, the entry count for this disk
-+    // and in all, the directory's size and offset, and no comment.
-+    let (start, size, count) = (out.len() as u32, directory.len() as u32, parts.len() as u16);
-+    out.extend_from_slice(&directory);
-+    out.extend_from_slice(&0x0605_4b50u32.to_le_bytes());
-+    out.extend_from_slice(&[0; 4]);
-+    for half in [count, count] {
-+        out.extend_from_slice(&half.to_le_bytes());
-+    }
-+    for word in [size, start] {
-+        out.extend_from_slice(&word.to_le_bytes());
-+    }
-+    out.extend_from_slice(&[0; 2]);
-+    out
-+}
-+
-+/// A one-sheet workbook. `rows` is the content of `<sheetData>`, `shared`
-+/// the `<si>` elements of the shared string table, and `formats` the
-+/// `numFmtId` of each cell style, where style `s="i"` is `formats[i]`.
-+/// `custom` declares number formats as (id, formatCode attribute text).
-+fn workbook(
-+    dir: &tempfile::TempDir,
-+    rows: &str,
-+    shared: &[&str],
-+    formats: &[u32],
-+    custom: &[(u32, &str)],
-+) -> String {
-+    let num_fmts: String = custom
-+        .iter()
-+        .map(|(id, code)| format!(r#"<numFmt numFmtId="{id}" formatCode="{code}"/>"#))
-+        .collect();
-+    let xfs: String = formats
-+        .iter()
-+        .map(|id| format!(r#"<xf numFmtId="{id}" xfId="0" applyNumberFormat="1"/>"#))
-+        .collect();
-+    let parts = [
-+        (
-+            "[Content_Types].xml",
-+            concat!(
-+                r#"<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">"#,
-+                r#"<Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>"#,
-+                r#"<Default Extension="xml" ContentType="application/xml"/>"#,
-+                r#"<Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/>"#,
-+                r#"</Types>"#
-+            )
-+            .to_string(),
-+        ),
-+        (
-+            "_rels/.rels",
-+            format!(
-+                r#"<Relationships xmlns="{PKG}"><Relationship Id="rId1" Type="{REL}/officeDocument" Target="xl/workbook.xml"/></Relationships>"#
-+            ),
-+        ),
-+        (
-+            "xl/workbook.xml",
-+            format!(
-+                r#"<workbook xmlns="{MAIN}" xmlns:r="{REL}"><sheets><sheet name="Sheet1" sheetId="1" r:id="rId1"/></sheets></workbook>"#
-+            ),
-+        ),
-+        (
-+            "x
-```
-
----
-
-### Incident Patch 2: `97ddf543` (2026-11-04)
-**Commit Message**: tests/ingest_xlsx_cell_test.rs arrived without the SPDX header every other Rust file now has, added it
-
-**File**: `tests/ingest_xlsx_cell_test.rs` (modified, +3/-0)
-```diff
-@@ -1,3 +1,6 @@
-+// SPDX-FileCopyrightText: 2026 Fabio Rovai
-+// SPDX-License-Identifier: MIT
-+
- //! Cells that calamine 0.30 read wrongly, read as the workbook says.
- //!
- //! Each workbook is assembled here from its XML parts, so the input behind
+@@ -1045,14 +1045,31 @@ jobs:
+           key: polyml-5.9.2-2-${{ runner.arch }}
+       - name: Install Poly/ML, the second kernel's runtime
+         if: steps.polyml.outputs.cache-hit != 'true'
+-        timeout-minutes: 5
++        timeout-minutes: 10
+         run: |
+           set -euo pipefail
+           # Pinned by digest, not by name. The component URL is stable and the
+           # tarball is not signed, so the hash is the only thing that says the
+           # bytes CI links against are the bytes that were checked by hand.
+-          curl -fsSL --retry 5 --retry-all-errors --connect-timeout 20 --max-time 300 -o /tmp/polyml.tar.gz https://isabelle.in.tum.de/components/polyml-5.9.2-2.tar.gz
+-          echo "67351868c05440d72a514ca60e8ee1d3252b288d746eb7ad236bda5fcaf12272  /tmp/polyml.tar.gz" | sha256sum -c -
++          #
++          # Two hosts, because the cache is not enough on its own. The Actions
++          # cache sits at its 10 GB limit with the Rust build caches, so this
++          # 3 MB entry is evicted whenever a lockfile change brings a new set of
++          # them, and on 4 Nov 2026 the next run found it gone while
++          # isabelle.in.tum.de refused connections: the required lean job failed
++          # without running a test. isabelle.sketis.net is the Isabelle
++          # component mirror and served the same 38,740,810 bytes, digest
++          # 67351868..., that day. Each host's bytes must pass the same hash.
++          got=
++          for url in https://isabelle.in.tum.de/components/polyml-5.9.2-2.tar.gz \
++                     https://isabelle.sketis.net/components/polyml-5.9.2-2.tar.gz; do
++            if curl -fsSL --retry 3 --retry-all-errors --connect-timeout 20 --max-time 300 -o /tmp/polyml.tar.gz "$url" \
++              && echo "67351868c05440d72a514ca60e8ee1d3252b288d746eb7ad236bda5fcaf12272  /tmp/polyml.tar.gz" | sha256sum -c -; then
++              got=$url; break
++            fi
++            echo "::warning::Poly/ML not fetched from $url; trying the next host"
++          done
++          [ -n "$got" ] || { echo "::error::no host served Poly/ML 5.9.2-2 with the pinned digest"; exit 1; }
+           mkdir -p ~/polyml
+           # One platform directory out of the eight in the tarball, unwrapped so
+           # POLYDIR is the same path whatever the runner's architecture is: 20 MB
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #363** (2026-11-04): XLSX ingest reads with calamine 0.38, so main's audit passes again (@fabio-rovai)
 - **PR #362** (2026-11-04): Add SPDX license headers to Rust source (@fabio-rovai)
+- **PR #361** (2026-11-04): CI/CD: pinned Rust, release gates, calamine 0.38, clean audits (@fabio-rovai)
 - **PR #360** (2026-11-02): Fix main's audit: parquet 60 drops vulnerable thrift; zip extract advisory joins the documented group (@fabio-rovai)
 - **PR #359** (2026-11-02): Decision: a pull request fails cargo audit only on an advisory it brings in (@fabio-rovai)
 - **PR #358** (2026-11-02): CI/CD: pinned images and tools, a release that dry-runs on PRs and publishes in order (@fabio-rovai)
-- **PR #357** (2026-11-01): Fix #352, #353, #354, #355: owl-dl undecided headline, n-ary disjointness in defects, batch reason budgets, lint documentation properties (@fabio-rovai)
 
 ---
 
@@ -2229,59 +1822,47 @@ XLSX ingest reads with calamine 0.38, so main's audit passes again
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #363 from fabio-rovai/deps/calamine-0.38
+## X. The lean job's Poly/ML missed its evicted cache while isabelle.in.tum.de refused
 
 **RULE**:
-When implementing operations in `.cargo/audit.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in fabio-rovai/open-ontologies. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in fabio-rovai/open-ontologies. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ef6638a9`: Merge pull request #363 from fabio-rovai/deps/calamine-0.38. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ce10d03a`: The lean job's Poly/ML missed its evicted cache while isabelle.in.tum.de refused connections and failed before any test ran; added isabelle.sketis.net as a second host under the same digest and raised the step to 10 minutes to fix it. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.cargo/audit.toml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    # quick-xml denial of service advisories, both patched in 0.41.0.
-    # Cargo.lock holds two quick-xml, so a bare `cargo tree -i quick-xml` asks
-    # which. `cargo tree -i quick-xml@0.37.5`, with or without --all-features,
-    # names three users of the advised one: this crate's direct dependency
-    # (quick-xml 0.37 in Cargo.toml), oxrdfxml 0.2.5 through oxrdfio and
-    # oxigraph, and sparesults 0.3.5 through oxigraph and spareval.
-    # `cargo tree -i quick-xml@0.42.0` names calamine 0.38.0 alone, and 0.42.0
-    # is patched. oxrdfxml and sparesults come from the oxigraph fork that
-    # [patch.crates-io] in Cargo.toml pins by rev, not from crates.io, so no
-    # upstream release can move them on its own. Bumping the direct pin alone
-    # would not clear the advisory either, because the fork's oxrdfxml and
-    # sparesults still require quick-xml "0.37" and the 0.37.5 lockfile entry
-    # would stay.
-    # Our own call sites are two. DataIngester::parse_xml in src/ingest.rs uses
-    # a plain quick_xml Reader and never constructs an NsReader or calls
-    # advisories. The RIF Core reader in src/rulesyntax.rs (`rules-import
-    # --from rif` on the CLI and in batch, and on
+        timeout-minutes: 10
+          #
+          # Two hosts, because the cache is not enough on its own. The Actions
+          # cache sits at its 10 GB limit with the Rust build caches, so this
+          # 3 MB entry is evicted whenever a lockfile change brings a new set of
+          # them, and on 4 Nov 2026 the next run found it gone while
+          # isabelle.in.tum.de refused connections: the required lean job failed
+          # without running a test. isabelle.sketis.net is the Isabelle
+          # component mirror and served the same 38,740,810 bytes, digest
+          # 67351868..., that day. Each host's bytes must pass the same hash.
+          got=
+          for url in https://isabelle.in.tum.de/components/polyml-5.9.2-2.tar.gz \
+                     https://isabelle.sketis.net/components/polyml-5.9.2-2.tar.gz; do
+            if curl -fsSL --retry 3 --retry-all-errors --connect-timeout 20 --max-time 300 -o /tmp/polyml.tar.gz "$url" \
+              && echo "67351868c05440d72a514ca60e8ee1d3252b288d746eb7ad236bda5fcaf12272  /tmp/polyml.tar.gz" | sha256sum -c -; then
+              got=$url; break
+            fi
+            echo "::warning::Poly/ML not fetched from $url; tryin
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-    # quick-xml denial of service advisories, both patched in 0.41.0. This
-    # project's direct dependency is still quick-xml 0.37 (see Cargo.toml), and
-    # Cargo.lock resolves exactly one quick-xml, version 0.37.5, shared by that
-    # direct dependency, calamine 0.30.1, and oxrdfxml 0.2.5 and sparesults
-    # 0.3.5. Those two come from the oxigraph fork that [patch.crates-io] in
-    # Cargo.toml pins by rev, not from crates.io, so no upstream release can
-    # move them on its own. Bumping the direct pin alone would not clear the
-    # advisory either, because the fork's oxrdfxml and sparesults still require
-    # quick-xml "0.37" and the 0.37.5 lockfile entry would stay.
-    # Our own call site is Ingest::parse_xml in src/ingest.rs, which uses a
-    # plain quick_xml Reader and never constructs an NsReader or calls
-    # advisories. The oxigraph RDF/XML path falls inside them, because oxrdfxml
-    # parses with NsReader and iterates start tag attributes, and that path is
-    # reachable from third-party input: src/marketplace.rs accepts the "rdfxml"
-    # format for community packs fetched over HTTP, and src/server.rs loads
-    # that fetched content into the store. The risk
+        timeout-minutes: 5
+          curl -fsSL --retry 5 --retry-all-errors --connect-timeout 20 --max-time 300 -o /tmp/polyml.tar.gz https://isabelle.in.tum.de/components/polyml-5.9.2-2.tar.gz
+          echo "67351868c05440d72a514ca60e8ee1d3252b288d746eb7ad236bda5fcaf12272  /tmp/polyml.tar.gz" | sha256sum -c -
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ef6638a9` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ce10d03a` are properly handled with clean fallback behavior.

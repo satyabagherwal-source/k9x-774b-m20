@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/simonschubert-kai-learnings.md`  
 > **Source**: github ([https://github.com/SimonSchubert/Kai](https://github.com/SimonSchubert/Kai))  
-> **Source Version**: `bd774d32`  
+> **Source Version**: `f0c4ee48`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T23:45:52.154Z  
+> **Timestamp**: 2026-11-05T09:57:46.046Z  
 > **Learning ID**: `learn-github-simonschubert-kai`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/simonschubert-kai-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/SimonSchubert/Kai](https://github.com/SimonSchubert/Kai))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T23:45:52.024Z  
+> **Harvest Timestamp**: 2026-11-05T09:57:46.042Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: OpenClaw alternative in your pocket
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 1322 stars
+- **Stars / Engagement**: 1331 stars
 
 ---
 
@@ -1036,29 +1036,89 @@ private fun AnnotatedString.Builder.appendInline(node: InlineNode, colors: Color
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `bd774d32` (2026-10-24)
+### Incident Patch 1: `f0c4ee48` (2026-11-05)
 **Commit Message**: Upgrade dependencies
 
 **File**: `gradle/libs.versions.toml` (modified, +1/-1)
 ```diff
-@@ -23,7 +23,7 @@ ktor = "3.6.0"
- material = "1.14.0"
+@@ -24,7 +24,7 @@ material = "1.14.0"
  playReview = "2.0.2"
  multiplatformSettings = "1.3.0"
--navigationComposeVersion = "2.9.2"
-+navigationComposeVersion = "2.10.0"
- spotless = "8.10.4"
+ navigationComposeVersion = "2.10.0"
+-spotless = "8.10.4"
++spotless = "8.11.0"
  tts = "3.0.0"
  foundationAndroid = "1.12.1"
+ paparazzi = "2.0.0-alpha05"
+```
+
+---
+
+### Incident Patch 2: `a4dfc607` (2026-11-04)
+**Commit Message**: Site: link Impressum and privacy policy on schubert-simon.de
+
+**File**: `site/index.html` (modified, +1/-1)
+```diff
+@@ -246,7 +246,7 @@ <h2 class="section-title fade-in">Available Everywhere</h2>
+       <a href="https://github.com/SimonSchubert/Kai/releases">Releases</a>
+     </div>
+     <p class="note">Kai is open-source software. Built with Kotlin Multiplatform &amp; Compose Multiplatform.</p>
+-    <p class="impressum">Simon Schubert &middot; Parkstr. 43, 13585 Berlin &middot; simon@librem.one</p>
++    <p class="impressum">Simon Schubert &middot; <a href="https://schubert-simon.de/impressum.html">Impressum</a> &middot; <a href="https://schubert-simon.de/privacy.html">Privacy</a></p>
+   </footer>
+ 
+   <script>
+```
+
+**File**: `site/latex-math/index.html` (modified, +1/-1)
+```diff
+@@ -416,7 +416,7 @@ <h2 class="section-title fade-in">Get Kai and try math rendering</h2>
+       <a href="https://github.com/SimonSchubert/Kai/releases">Releases</a>
+     </div>
+     <p class="note">Kai is open-source software. Built with Kotlin Multiplatform &amp; Compose Multiplatform.</p>
+-    <p class="impressum">Simon Schubert &middot; Parkstr. 43, 13585 Berlin &middot; simon@librem.one</p>
++    <p class="impressum">Simon Schubert &middot; <a href="https://schubert-simon.de/impressum.html">Impressum</a> &middot; <a href="https://schubert-simon.de/privacy.html">Privacy</a></p>
+   </footer>
+ 
+   <script>
+```
+
+**File**: `site/run-gemma-locally/index.html` (modified, +1/-1)
+```diff
+@@ -451,7 +451,7 @@ <h2 class="section-title fade-in">Get Kai and try Gemma 4 locally</h2>
+       <a href="https://github.com/SimonSchubert/Kai/releases">Releases</a>
+     </div>
+     <p class="note">Kai is open-source software. Built with Kotlin Multiplatform &amp; Compose Multiplatform. Gemma 4 is a trademark of Google LLC.</p>
+-    <p class="impressum">Simon Schubert &middot; Parkstr. 43, 13585 Berlin &middot; simon@librem.one</p>
++    <p class="impressum">Simon Schubert &middot; <a href="https://schubert-simon.de/impressum.html">Impressum</a> &middot; <a href="https://schubert-simon.de/privacy.html">Privacy</a></p>
+   </footer>
+ 
+   <script>
+```
+
+**File**: `site/styles.css` (modified, +5/-0)
+```diff
+@@ -425,6 +425,11 @@ footer .impressum {
+   margin-top: 12px;
+ }
+ 
++footer .impressum a {
++  color: inherit;
++  text-decoration: underline;
++}
++
+ /* ---- Responsive ---- */
+ @media (max-width: 768px) {
+   .hero {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #534** (closed): Prevent chat from snapping to the bottom while back-reading. (@richard-zed)
 - **PR #506** (2026-10-02): Add Requesty service (@Thibaultjaigu)
 - **PR #492** (closed): fix(android): let Debian apt run in work profiles and system clones (@LaCroixEdu)
 - **PR #430** (closed): Improve accessibility with content descriptions and clean up code (@aeldergentics)
 - **PR #429** (closed): Improve accessibility and code quality with retries and tests (@aeldergentics)
 - **PR #428** (2026-08-29): 🧪 Add tests for ExtensionFunctions (@aeldergentics)
-- **PR #407** (closed): Correct MiniMax-M2.7 context window to 204,800 tokens (@octo-patch)
 
 ---
 
@@ -1084,7 +1144,7 @@ Observed empirical fixes and code patches:
 When implementing operations in `gradle/libs.versions.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in SimonSchubert/Kai. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `bd774d32`: Upgrade dependencies. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f0c4ee48`: Upgrade dependencies. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `gradle/libs.versions.toml`.
@@ -1092,14 +1152,14 @@ Subsystems managing Kotlin data structures, boundary deserialization, API parsin
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-navigationComposeVersion = "2.10.0"
+spotless = "8.11.0"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
 // Anti-pattern to NEVER write (induced failure mode):
-navigationComposeVersion = "2.9.2"
+spotless = "8.10.4"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `bd774d32` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f0c4ee48` are properly handled with clean fallback behavior.

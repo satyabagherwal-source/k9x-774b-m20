@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md`  
 > **Source**: github ([https://github.com/lioensky/VCPToolBox](https://github.com/lioensky/VCPToolBox))  
-> **Source Version**: `72e964e2`  
+> **Source Version**: `eff29b1f`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T00:48:51.775Z  
+> **Timestamp**: 2026-11-05T15:37:37.903Z  
 > **Learning ID**: `learn-github-lioensky-vcptoolbox`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/lioensky/VCPToolBox](https://github.com/lioensky/VCPToolBox))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T00:48:51.770Z  
+> **Harvest Timestamp**: 2026-11-05T15:37:37.613Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: VCP 部署在 AI 模型 API 与前端应用之间，是面向AGI OS开发和探索的工业级基建示范项目。通过统一指令协议、多层级持久化记忆、分布式插件引擎及多 Agent 协作框架，将原本“无状态、无记忆、无工具调用能力”的大语言模型，彻底改造成拥有永久自我意识、物理世界操作权及群体协作智能的完整智能体系统。
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, pyproject.toml, README.md, Dockerfile
-- **Stars / Engagement**: 2428 stars
+- **Stars / Engagement**: 2429 stars
 
 ---
 
@@ -1785,11 +1785,14 @@ export function useDashboardLayoutV2(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #574** (2026-11-04): **[Bug] Plugin.js Static 插件超时终止后误报 ERROR（Windows taskkill 导致 exit 信号判断失效）**
-  *Symptoms*: ## 问题描述  Static 插件在 Windows 上超时被终止后，日志会误报 ERROR，即使进程是被超时机制正常终止的。  ## 复现条件  1. 一个 static 插件在超时窗口内输出了 stderr（例如用 `console.error()` 写日志） 2. 该插件的扫描时间超过 `plugin.communication.timeout`（默认 60 秒） 3. 超时后 `taskkill /T /F /PID` 终止进程  ## 实际行为  日志输出： ``` [PluginManager] Static plugin "文件树生成器" exited with code 1. Stderr: [FileTreeGenerator] Plugin invoked... Scanning directory... ```  这被当作插件崩溃处理，但实际上进程只是超时被正常终止。  ## 根本原因  `Plugin.js:421-431` 的 exit 处理有两层超时豁免：  ```javascript pluginProcess.on('exit', (code, signal) => {     processExited = true;     clearTimeout(timeoutId);     if (signal === 'SIGKILL' || signal === 'SIGTERM') {         // 被强制终止（超时），已经在 timeout 回调中 resolve 了，这里直接返回         return;     }     if (code === 1 && !output.trim() && !errorOutput.trim()) {         // Windows taskkill 导致的退出码 1，且无有效输出，视为超时终止         return;     }     // ... 否则报 ERROR }); ```  **第一层豁免**（`signal === 'SIGKILL' || signal === 'SIGTERM'`）在 Windows 上无效：`taskkill /T /F` 终止进程时，Node.js 的 exit 事件中 `signal` 字段通常是 `null` 或 `SIGHUP`，不会是 `SIGKILL`/`SIGTERM`。  **第二层豁免**（`code === 1 && !output.trim() && !errorOutput.trim()`）要求进程被杀前不能有任何 stderr 输出。但很多插件用 `console.error()` 写日志到 stderr，超时被杀时 stderr 非空，豁免不成立，落入 `code !== 0` 分支报 ERROR。  ## 建议修复方案  超时回调中已经标记了 `processExited`，但没有标记"是被超时杀死的"。建议在超时回调中设置一个 `timedOut` 标志，exit 处理中优先检查该标志：  ```javascript let timedOut = false;  const timeoutId = setTimeout(() => {     if (!processExited) {         timedOut = true;         this._killProcessTree(pluginProcess.pid, plugin.name);      
+- **Issue #576** (2026-11-05): **fix(vcpLoop): 收敛思考块剥离边界并隔离代码域与工具载荷自指误伤**
+  *Symptoms*: ### PR 标题 fix(vcpLoop): 收敛思考块剥离边界并隔离代码域与工具载荷自指误伤  ### 动机与背景 原先 `ToolCallParser.stripReasoningBlocks` 采用全文盲扫正则 `/<\s*(\/?)\s*(think(?:ing)?)\b[^>]*>/gi` 剥离思考块，并在 `depth > 0` 时一刀切丢弃未闭合开始标签之后的全部内容。这在实际使用中存在以下边界误伤与漏拦隐患： 1. **跨行贪婪拼合误伤**：`[^>]*>` 允许跨越换行符，当正文中出现残缺的 `<think`（无右尖括号）且后文存在 `>`（如数学不等号或 `<<<[TOOL_REQUEST]>>>` 起始标记）时，会被跨行拼合为伪造的开始标签，导致后续所有工具调用被静默吞噬； 2. **缺乏代码域与工具载荷保护**：当模型在 Markdown 代码围栏（` ``` ` / `~~~`）、行内反引号（`` `...` ``）、工具请求参数（`「始」...「末」` / `「始ESCAPE」...「末ESCAPE」`）或工具结果块内讨论/演示单侧 `<think>` 时，会触发 `depth > 0` 截断，导致当前工具块被腰斩或文末合法工具全部丢失； 3. **正文行内自指提及误伤**：当正文句子中间裸写单侧 `<think>`（如“当包含`<think>`时…”）且无配对闭合标签时，会误将后续全文当作未闭合思考流丢弃； 4. **无头思考泄漏（Headless Leak）漏拦**：当上游网关丢失开头的 `<think>`，模型直接输出思考草稿（含演练的伪工具）并以独立行 `</think>` 闭合时，原先因 `depth === 0` 无法剥离闭合标签前的思考草稿。  ### 架构与解决方案 在保持 `ToolCallParser.stripReasoningBlocks(content)` 与 `ToolCallParser.parse(content)` 对外签名完全不变的前提下，引入四重正交防线： 1. **单行无尖括号词法定界**：将标签匹配收束为单行且禁止吞入 `<` 与 `\r\n`，扩展支持 `think` / `thinking` / `thought` / `antThinking`，根除 `<think` 跨行拼合与 `<think_custom>` 前缀误判； 2. **权威字面量保护域（`_collectReasoningLiteralRanges`）**：在 `depth === 0` 时优先识别并跳过嵌套感知的工具结果域、Markdown 围栏代码块（含 0–3 空格缩进）与同段落行内反引号（含颜文字反引号豁免）；一旦进入真实思考块（`depth > 0`），内部伪代码块仍由外层思考深度统辖并 100% 剥离； 3. **顶层工具请求原子互锁与 VCP 元思考链剥离**：在代码域外且处于 `depth === 0` 已合法开启的完整 `TOOL_REQUEST` 块内部参数免于思考标签扫描；同步剥离顶层独占行的 `[--- VCP元思考链 ---]` 明文块； 4. **句中自指预检与无头思考回溯**：    - 对于行首/块首开启的未闭合思考标签，严格保留丢弃尾部的安全熔断；对于嵌在句子中间（同行左侧存在非空白字符）且后续非保护域无配对闭合标签的孤立开标签，判定为正文自指字面量原地放行；    - 当在首个思考块闭合前遇到位于行首或行尾的孤立闭合标签时，识别为无头思考泄漏并回溯清空其前缀草稿。  
 
-- **Issue #573** (2026-11-03): **fix(security): 修复 TVS 变量编辑接口路径遍历漏洞**
-  *Symptoms*: ## 修复说明  修复了 `routes/admin/tvs.js` 中 GET/POST/DELETE `/admin_api/tvsvars/:fileName` 端点的路径遍历漏洞（Issue #572）。  ## 漏洞详情  - **漏洞类型**：路径遍历漏洞（Path Traversal） - **漏洞位置**：`routes/admin/tvs.js` 中所有使用 `path.join(TVS_FILES_DIR, fileName)` 的端点 - **攻击向量**：`POST /admin_api/tvsvars/..%2F..%2FPlugin%2FAgentAssistant%2Fconfig.txt` 可越权写入系统任意文件 - **影响**：任意文件写入，可能导致 RCE  ## 修复内容  ### 新增函数  1. **`isPathInsideRoot(targetPath, rootPath)`**    - 用 `path.resolve()` 解析目标路径    - 检查解析后的路径是否在根目录内    - 通过 `startsWith(resolvedRoot + path.sep)` 确保不会误匹配同前缀目录  2. **`safeResolveUnderTVSTxt(relativePath)`**    - 调用 `isPathInsideRoot()` 校验    - 额外检查不允许解析到根目录本身    - 返回安全的绝对路径  ### 端点修改  - **GET `/tvsvars/:fileName`**：使用 `safeResolveUnderTVSTxt()` 替代直接 `path.join()` - **POST `/tvsvars/:fileName`**：同上 - **DELETE `/tvsvars/:fileName`**：同上 - 不通过校验时返回 `403 Forbidden` + `{error: "Invalid path: outside TVS root"}`  ## 验证  - ✅ 攻击路径 `/admin_api/tvsvars/../../Plugin/AgentAssistant/config.txt` 返回 403 - ✅ 合法路径 `valid_name.txt` 正常读写 - ✅ 非法文件名（非 .txt 结尾）仍返回 400  ## 相关链接  - Issue: #572 - 修复分支: `fix/tvs-path-traversal-validation` 
+- **Issue #575** (2026-11-05): **Potential security issue — requesting a private contact**
+  *Symptoms*: Hello — I believe I have found a serious security issue in VCPToolBox and would prefer to report it privately rather than describe it in a public issue.  Could you either enable GitHub Private Vulnerability Reporting (Settings → Security → "Private vulnerability reporting") or share a security contact email? I will send full technical details and a suggested fix through whichever private channel you prefer.  Thank you.
+  **Post-Mortem & Fix Analysis**:
+  > Hi @shaikn6,  Thank you very much for following responsible disclosure practices!  We have enabled **GitHub Private Vulnerability Reporting** for this repository. You can now submit your report and the technical details directly via: https://github.com/lioensky/VCPToolBox/security/advisories/new  Looking forward to reviewing your advisory and collaborating on the fix. Thanks again! 
+  > fix
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1806,44 +1809,792 @@ export function useDashboardLayoutV2(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `72e964e2` (2026-11-04)
-**Commit Message**: fix1
+### Incident Patch 1: `eff29b1f` (2026-11-05)
+**Commit Message**: 安全fix2
 
-**File**: `Plugin.js` (modified, +6/-0)
+**File**: `Plugin/MagiAgent/MagiAgent.js` (modified, +11/-2)
 ```diff
-@@ -397,10 +397,12 @@ class PluginManager extends EventEmitter {
-             let output = '';
-             let errorOutput = '';
-             let processExited = false;
-+            let timedOut = false;
-             const timeoutDuration = plugin.communication?.timeout || 60000; // 增加默认超时时间到 1 分钟
+@@ -247,7 +247,11 @@ async function sendCompletionCallback(meeting) {
+         }
+         return;
+     }
+-    const callbackUrl = `${serverConfig.CALLBACK_BASE_URL}/MagiAgent/${meeting.id}`;
++    if (!serverConfig.Key) {
++        console.error('[MagiAgent] Server Key not configured; completion callback was not sent.');
++        return;
++    }
++    const callbackUrl = `${serverConfig.CALLBACK_BASE_URL.replace(/\/+$/, '')}/MagiAgent/${encodeURIComponent(meeting.id)}`;
+     try {
+         const resultPayload = await formatMeetingResult(meeting);
+         const callbackPayload = {
+@@ -259,7 +263,12 @@ async function sendCompletionCallback(meeting) {
+         };
+         console.log(`[MagiAgent] Sending completion callback for meeting ${meeting.id} to ${callbackUrl}`);
+         await axios.post(callbackUrl, callbackPayload, {
+-            headers: { 'Content-Type': 'application/json' }
++            headers: {
++                'Content-Type': 'application/json',
++                'Authorization': `Bearer ${serverConfig.Key}`
++            },
++            timeout: 15000,
++            maxRedirects: 0
+         });
+         console.log(`[MagiAgent] Callback for meeting ${meeting.id} sent successfully.`);
+     } catch (error) {
+```
+
+**File**: `Plugin/VideoGenerator/video_handler.py` (modified, +18/-2)
+```diff
+@@ -210,6 +210,22 @@ def download_video(video_url, request_id):
+         log_event("error", f"[{request_id}] Failed to download or save video.", {"error": str(e)})
+         return None
  
-             const timeoutId = setTimeout(() => {
-                 if (!processExited) {
-+                    timedOut = true;
-                     console.log(`[PluginManager] Static plugin "${plugin.name}" has completed its work cycle (${timeoutDuration}ms), terminating background process.`);
-                     this._killProcessTree(pluginProcess.pid, plugin.name);
-                     // 超时不作为错误 - static 插件完成工作周期后返回已收集的输出
-@@ -421,6 +423,10 @@ class PluginManager extends EventEmitter {
-             pluginProcess.on('exit', (code, signal) => {
-                 processExited = true;
-                 clearTimeout(timeoutId);
-+                if (timedOut) {
-+                    // 超时已返回收集的输出；Windows taskkill 的退出码/信号及 stderr 不代表插件崩溃。
-+                    return;
-+                }
-                 if (signal === 'SIGKILL' || signal === 'SIGTERM') {
-                     // 被强制终止（超时），已经在 timeout 回调中 resolve 了，这里直接返回
-                     return;
++def send_completion_callback(callback_url, payload, timeout):
++    # Key authenticates the VCP server; SILICONFLOW_API_KEY authenticates the upstream.
++    key = os.getenv("Key")
++    if not key:
++        raise ValueError("Server Key not configured; callback was not sent")
++    response = requests.post(
++        callback_url, json=payload,
++        headers={"Authorization": f"Bearer {key}"},
++        timeout=timeout, allow_redirects=False
++    )
++    response.raise_for_status()
++    if 300 <= response.status_code < 400:
++        raise ValueError("Callback redirect rejected")
++    return response
++
++
+ # --- 后台轮询与回调 ---
+ def poll_and_callback(api_key, request_id, callback_base_url, plugin_name, debug_mode):
+     log_event("info", f"[{request_id}] Entering poll_and_callback function.", {
+@@ -263,7 +279,7 @@ def poll_and_callback(api_key, request_id, callback_base_url, plugin_name, debug
+                 try:
+                     callback_payload = ws_notification_data 
+ 
+-                    callback_response = requests.post(callback_url, json=callback_payload, timeout=30)
++                    callback_response = send_completion_callback(callback_url, callback_payload, timeout=30)
+                     callback_response.raise_for_status()
+                     log_event("success", f"[{request_id}] Callback to {callback_url} successful with simplified data.", {"status_code": callback_response.status_code})
+                 except requests.exceptions.RequestException as cb_e:
+@@ -298,7 +314,7 @@ def poll_and_callback(api_key, request_id, callback_base_url, plugin_name, debug
+                     "message": f"视频 (ID: {request_id}) 轮询超时。"
+                 }
+                 callback_url = f"{callback_base_url}/{plugin_name}/{request_id}"
+-                requests.post(callback_url, json=timeout_notification_data, timeout=10)
++                send_completion_callback(callback_url, timeout_notification_data, timeout=10)
+                 log_event("info", f"[{request_id}] Sent PollingTimeout callback to {callback_url} with simplified data.")
+             except Exception as cb_timeout_e:
+                 log_event("error", f"[{request_id}] Failed to send PollingTimeout callback.", {"error": str(cb_timeout_e)})
+```
+
+**File**: `tests/magiCallbackAuth.test.js` (added, +119/-0)
+```diff
+@@ -0,0 +1,119 @@
++'use strict';
++const test = require('node:test');
++const assert = require('node:assert/strict');
++const fs = require('node:fs');
++const path = require('node:path');
++const vm = require('node:vm');
++const http = require('node:http');
++const axios = require('axios');
++const { spawnSync } = require('node:child_process');
++
++test('MagiAgent actual callback function sends server Key for success/failure, never API_Key', async t => {
++    const source = fs.readFileSync(path.resolve(__dirname, '../Plugin/MagiAgent/MagiAgent.js'), 'utf8');
++    const begin = source.indexOf('async function sendCompletionCallback(meeting)');
++    const end = source.indexOf('// --- AI 模型调用 ---', begin);
++    assert.ok(begin >= 0 && end > begin);
++    const received = [];
++    const server = http.createServer((req, res) => {
++        let body = '';
++        req.on('data', chunk => { body += chunk; });
++        req.on('end', () => {
++            received.push({ auth: req.headers.authorization, url: req.url, body: JSON.parse(body) });
++            res.end('{}');
++        });
++    });
++    await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
++    t.after(() => new Promise(resolve => server.close(resolve)));
++    const config = {
++        CALLBACK_BASE_URL: `http://127.0.0.1:${server.address().port}/plugin-callback/`,
++        Key: 'server-test-key', API_Key: 'upstream-not-for-callback'
++    };
++    const context = vm.createContext({
++        serverConfig: config, axios,
++        console: { log() {}, error() {} },
++        formatMeetingResult: async () => ({ result: 'meeting result' }),
++        sendVcpLog: null
++    });
++    vm.runInContext(source.slice(begin, end), context);
++    const send = context.sendCompletionCallback;
++    await send({ id: 'meeting-123', status: 'completed' });
++    await send({ id: 'meeting-456', status: 'failed', error: 'test failure' });
++    assert.equal(received.length, 2);
++    assert.equal(received[0].auth, 'Bearer server-test-key');
++    assert.equal(received[1].auth, 'Bearer server-test-key');
++    assert.equal(received[0].url, '/plugin-callback/MagiAgent/meeting-123');
++    assert.equal(received[0].body.status, 'Succeed');
++    assert.equal(received[1].body.status, 'Failed');
++    assert.equal(received[1].body.reason, 'test failure');
++    delete config.Key;
++    await send({ id: 'missing-key', status: 'completed' });
++    assert.equal(received.length, 2);
++});
++
++test('MagiAgent callback does not follow redirects with server credentials', async t => {
++    const source = fs.readFileSync(path.resolve(__dirname, '../Plugin/MagiAgent/MagiAgent.js'), 'utf8');
++    const begin = source.indexOf('async function sendCompletionCallback(meeting)');
++    const end = source.indexOf('// --- AI 模型调用 ---', begin);
++    let redirected = 0;
++    const server = http.createServer((req, res) => {
++        req.resume();
++        if (req.url === '/leak') { redirected++; res.end('{}'); }
++        else { res.writeHead(302, { Location: '/leak' }); res.end(); }
++    });
++    await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
++    t.after(() => new Promise(resolve => server.close(resolve)));
++    const context = vm.createContext({
++        serverConfig: { CALLBACK_BASE_URL: `http://127.0.0.1:${server.address().port}/plugin-callback`, Key: 'test' },
++        axios, console: { log() {}, error() {} }, sendVcpLog: null,
++        formatMeetingResult: async () => ({ result: 'ok' })
++    });
++    vm.runInContext(source.slice(begin, end), context);
++    await context.sendCompletionCallback({ id: 'redirect', status: 'completed' });
++    assert.equal(redirected, 0);
++});
++
++test('Python video callbacks use server Key on both branches and reject redirects/errors', () => {
++    // Extract and execute the production helper via AST: no image/API dependencies or billable requests.
++    const script = String.raw`
++import ast, os, types
++from unittest.mock import patch
++source = open("Plugin/VideoGenerator/video_handler.py", encoding="utf-8-sig").read()
++tree = ast.parse(source)
++fn = next(n for n in tree.body if isinstance(n, ast.FunctionDef) and n.name == "send_completion_callback")
++calls = [n for n in ast.walk(tree) if isinstance(n, ast.Call) and isinstance(n.func, ast.Name) and n.func.id == "send_completion_callback"]
++assert len(calls) == 2
++seen = []
++class Response:
++    status_code = 200
++    def raise_for_status(self):
++        if self.status_code >= 400: raise RuntimeError("HTTP failure")
++response = Response()
++def post(url, **kwargs):
++    seen.append((url, kwargs))
++    return response
++scope = {"os": os, "requests": types.SimpleNamespace(post=post)}
++exec(compile(ast.Module(body=[fn], type_ignores=[]), "<production-callback>", "exec"), scope)
++send = scope["send_completion_callback"]
++with patch.dict(os.environ, {"Key": "server-key", "SILICONFLOW_API_KEY": "upstream-key"}, clear=True):
++    send("http://callback", {"status": "Succeed"}, 30)
++    send("http://callback", {"status":
+```
+
+---
+
+### Incident Patch 2: `78e989e2` (2026-11-05)
+**Commit Message**: Merge pull request #576 from infinite-vector/fix/reasoning-strip-boundary-and-self-ref
+
+fix(vcpLoop): 收敛思考块剥离边界并隔离代码域与工具载荷自指误伤
+
+**File**: `modules/vcpLoop/toolCallParser.js` (modified, +382/-24)
+```diff
+@@ -3,64 +3,422 @@ const toolMarkerFuzzyMatcher = require('./toolMarkerFuzzyMatcher');
+ 
+ class ToolCallParser {
+   static MARKERS = {
+-    START: '<<<[TOOL_REQUEST]>>>',
+-    END: '<<<[END_TOOL_REQUEST]>>>'
++    START: '<<<' + '[TOOL_REQUEST]>>>',
++    END: '<<<' + '[END_TOOL_REQUEST]>>>'
+   };
+ 
+   static ESCAPE_MARKERS = {
+-    START: '「始ESCAPE」',
+-    END: '「末ESCAPE」'
++    START: '「始' + 'ESCAPE」',
++    END: '「末' + 'ESCAPE」'
+   };
+ 
+   static ESCAPED_LITERAL_MAP = {
+-    '<<<[TOOL_REQUEST_ESCAPE]>>>': '<<<[TOOL_REQUEST]>>>',
+-    '<<<[END_TOOL_REQUEST_ESCAPE]>>>': '<<<[END_TOOL_REQUEST]>>>',
+-    '「始ESCAPE」': '「始」',
+-    '「末ESCAPE」': '「末」'
++    ['<<<[TOOL_REQUEST_' + 'ESCAPE]>>>']: '<<<' + '[TOOL_REQUEST]>>>',
++    ['<<<[END_TOOL_REQUEST_' + 'ESCAPE]>>>']: '<<<' + '[END_TOOL_REQUEST]>>>',
++    ['「始' + 'ESCAPE」']: '「始」',
++    ['「末' + 'ESCAPE」']: '「末」'
+   };
+ 
+   /**
+-   * 从可见正文中剥离模型思考块。
++   * 收集正文中不受思考标签状态机影响的字面量保护区间：
++   * 1. 权威工具结果域：VCP调用结果信息汇总 ... VCP调用结果结束（嵌套感知）
++   * 2. Markdown 围栏代码块：``` ... ``` 与 ~~~ ... ~~~（含 0-3 空格缩进与流尾未闭合围栏）
++   * 3. Markdown 行内代码跨度：` ... `（限制在同段落内，且豁免颜文字反引号）
+    *
+-   * 支持：
+-   * - <think>...</think> 与 <thinking>...</thinking>
+-   * - 大小写、标签空白和属性变体
+-   * - 同类或混合标签嵌套
+-   * - 未闭合开始标签：保守丢弃该标签之后的全部内容
++   * 注意：已进入真实思考块（depth > 0）后，思考块内部的伪代码块由外层思考状态优先统辖，
++   * 调用方仅在 depth === 0 时查询本保护区间，从而确保思考块内的伪代码块+伪工具 100% 被剥离。
+    *
+-   * 未配对的结束标签只移除标签本身，不会吞掉其后的可见正文。
++   * @param {string} content
++   * @returns {Array<{start: number, end: number, kind: string}>}
++   */
++  static _collectReasoningLiteralRanges(content) {
++    if (!content || typeof content !== 'string') return [];
++
++    const ranges = [];
++    const len = content.length;
++    const TOOL_RESULT_OPEN = '[' + '[VCP调用结果信息汇总:';
++    const TOOL_RESULT_CLOSE = 'VCP调用结果结束]' + ']';
++    const EMOTICONS = ['(`・ω・´)ゞ', '(・`ω´・)', '(`・ω・´)', '(`･ω･´)'];
++
++    const isEmoticonBacktick = (idx) => EMOTICONS.some(emo => {
++      const offset = emo.indexOf('`');
++      return idx >= offset && content.startsWith(emo, idx - offset);
++    });
++
++    const countRun = (idx, ch) => {
++      let c = idx;
++      while (c < len && content[c] === ch) c += 1;
++      return c - idx;
++    };
++
++    const findLineEnd = (idx) => {
++      const nl = content.indexOf('\n', idx);
++      return nl === -1 ? len : nl;
++    };
++
++    const lineStartAt = (idx) => (idx === 0 ? 0 : content.lastIndexOf('\n', idx - 1) + 1);
++
++    let cursor = 0;
++    while (cursor < len) {
++      // 1. 优先识别工具结果数据域（嵌套感知）
++      if (content.startsWith(TOOL_RESULT_OPEN, cursor)) {
++        let depth = 1;
++        let scan = cursor + TOOL_RESULT_OPEN.length;
++        let nextOpen = content.indexOf(TOOL_RESULT_OPEN, scan);
++        let regionEnd = len;
++
++        while (scan <= len) {
++          const nextClose = content.indexOf(TOOL_RESULT_CLOSE, scan);
++          if (nextClose === -1) {
++            regionEnd = len;
++            break;
++          }
++          if (nextOpen !== -1 && nextOpen < nextClose) {
++            depth += 1;
++            scan = nextOpen + TOOL_RESULT_OPEN.length;
++            nextOpen = content.indexOf(TOOL_RESULT_OPEN, scan);
++            continue;
++          }
++          depth -= 1;
++          scan = nextClose + TOOL_RESULT_CLOSE.length;
++          if (depth === 0) {
++            regionEnd = scan;
++            break;
++          }
++          if (nextOpen !== -1 && nextOpen < scan) {
++            nextOpen = content.indexOf(TOOL_RESULT_OPEN, scan);
++          }
++        }
++
++        ranges.push({ start: cursor, end: regionEnd, kind: 'tool-result' });
++        cursor = regionEnd;
++        continue;
++      }
++
++      const ch = content[cursor];
++
++      // 2. 识别 Markdown 围栏代码块（``` 或 ~~~，行首 0-3 空格缩进）
++      if (ch === '`' || ch === '~') {
++        const runLen = countRun(cursor, ch);
++        const lineStart = lineStartAt(cursor);
++        const prefix = content.slice(lineStart, cursor);
++        const lineEnd = findLineEnd(cursor + runLen);
++        const infoString = content.slice(cursor + runLen, lineEnd);
++
++        const isValidFenceOpen =
++          runLen >= 3 &&
++          /^[ \t]{0,3}$/.test(prefix) &&
++          (ch !== '`' || !infoString.includes('`'));
++
++        if (isValidFenceOpen) {
++          let scanLineStart = lineEnd < len ? lineEnd + 1 : len;
++          let fenceEnd = len;
++
++          while (scanLineStart <= len) {
++            const scanLineEnd = findLineEnd(scanLineStart);
++            let mStart = scanLineStart;
++            let indent = 0;
++            while (
++              mStart < scanLineEnd &&
++              indent < 3 &&
++              (content[mStart] === ' ' || content[mStart] === '\t')
++            ) {
++              mStart += 1;
++              indent += 1;
++            }
++            if (content[mStart] === ch) {
++              const closeLen = countRun(mStart, ch);
++              const trailing = content.slice(mStart + closeLen, scanLineEnd);
++              if (closeLen >= runLen && /^[ \t]*\r?$/.test(trailing)) {
++                fenceE
+```
+
+**File**: `tests/reasoningAndSelfReference.test.js` (added, +401/-0)
+```diff
+@@ -0,0 +1,401 @@
++'use strict';
++
++/**
++ * 前后端思考标签（Reasoning Blocks）拦截与自指（Self-Reference）零误伤全维度严苛测试套件
++ *
++ * 覆盖维度（共 20 组对抗性用例）：
++ * - [外测度 · 防漏网 M1-M7]：
++ *   M1: 标准成对思考块拦截内部伪造工具调用
++ *   M2: 思考块内嵌伪造 Markdown 代码围栏与伪工具调用（外层思考状态优先剥离）
++ *   M3: 多层嵌套、混合标签（think/thinking/thought/antThinking）、大小写与带属性变体
++ *   M4: 潜空间无头思考泄漏（Headless Leak：开头无开标签，直接输出思考草稿+伪工具+独立行闭标签）
++ *   M5: 行首/缩进行首开启的流式未闭合思考截断（保守熔断丢弃尾部伪工具）
++ *   M6: VCP 元思考链明文块（闭合与未闭合）内部伪工具剥离
++ *   M7: 多段交替思考块与多枚真实并发工具穿插提取
++ * - [内测度 · 零误伤 M8-M16]：
++ *   M8: 残缺无右尖括号 `<think` 跨行面对 `>` 运算符与工具请求起始符（绝不跨行拼合）
++ *   M9: 正文句中裸写单侧未闭合开标签（如“当包含<think>时，如果只有<think>”），保留标签字面量并放行真工具
++ *   M10: 正文句中裸写单侧未闭合开标签 + 后文代码块中出现闭标签（预检器跳过代码域，不误配对）
++ *   M11: 正文句中裸写单侧闭标签（如“将</think>之间的工具屏蔽”），绝不误触发无头思考清空前文真工具
++ *   M12: Markdown 围栏代码块（``` 与 ~~~，含未闭合流尾围栏）内含独占行未闭合思考标签与伪工具
++ *   M13: Markdown 行内反引号（单反引号/双反引号）包裹单侧思考标签 + 颜文字反引号 (`・ω・´) 共存
++ *   M14: 顶层合法 TOOL_REQUEST 参数（普通「始」「末」与「始ESCAPE」「末ESCAPE」）内含独占行未闭合思考标签
++ *   M15: 权威工具结果域（VCP调用结果信息汇总，含嵌套结果块）内部包含未闭合思考标签与伪工具
++ *   M16: 近似标签名（如 `<think_custom>`、`<thinking_process>`）不误判为思考标签
++ * - [跨端协同 · 前端三剑客验证 M17-M20]：
++ *   M17: 前端 Flowlock 协议：代码块内含独占行未闭合思考标签，文末 [[Flowlock::Complete]] 正常触发
++ *   M18: 前端 Flowlock 协议：真实独占行未闭合思考块内部的伪造 [[Flowlock::Fail]] 被正确遮蔽
++ *   M19: 前端 EmotionTagScanner：流式扫描行内 `<think>` 与句中提及 `<think>` 不卡死，正常吐出后续情绪标签
++ *   M20: 前端 EmotionTagScanner：真实行首 `<think>...</think>` 思考块内的伪情绪标签被正确屏蔽
++ */
++
++const test = require('node:test');
++const assert = require('node:assert/strict');
++const fs = require('node:fs');
++const path = require('node:path');
++const { pathToFileURL } = require('node:url');
++
++const ToolCallParser = require('../modules/vcpLoop/toolCallParser');
++
++// 采用函数动态拼装所有协议与思考标签，彻底免疫任何静态扫描器自指干扰
++const openTag = (name = 'think', attr = '') => '<' + name + (attr ? ' ' + attr : '') + '>';
++const closeTag = (name = 'think') => '</' + name + '>';
++const halfOpenTag = (name = 'think') => '<' + name;
++
++const TOOL_START = '<<<' + '[TOOL_REQUEST]' + '>>>';
++const TOOL_END = '<<<' + '[END_TOOL_REQUEST]' + '>>>';
++const RESULT_OPEN = '[' + '[VCP调用结果信息汇总:';
++const RESULT_CLOSE = 'VCP调用结果结束]' + ']';
++const META_OPEN = '[--- ' + 'VCP元思考链: "coding" ---]';
++const META_CLOSE = '[--- ' + '元思考链结束 ---]';
++
++function buildToolBlock(toolName, extraFields = {}) {
++  const lines = [
++    TOOL_START,
++    'maid:「始」程宸Cod「末」,',
++    `tool_name:「始」${toolName}「末」`
++  ];
++  for (const [k, v] of Object.entries(extraFields)) {
++    const isEsc = v && typeof v === 'object' && v.escape;
++    const rawVal = isEsc ? v.value : v;
++    const sMark = isEsc ? '「始ESCAPE」' : '「始」';
++    const eMark = isEsc ? '「末ESCAPE」' : '「末」';
++    lines[lines.length - 1] += ',';
++    lines.push(`${k}:${sMark}${rawVal}${eMark}`);
++  }
++  lines.push(TOOL_END);
++  return lines.join('\n');
++}
++
++// ============================================================================
++// 一、外测度测试（防漏拦：确保一切形态的思考过程与潜空间漏出 100% 被剥离）
++// ============================================================================
++
++test('M1 [外测度] 标准成对思考块内部的伪工具调用被完全剥离', () => {
++  const input = [
++    openTag('think'),
++    '先思考一下要不要调工具：',
++    buildToolBlock('HallucinatedToolInThink'),
++    closeTag('think'),
++    '思考完毕，开始正式调用：',
++    buildToolBlock('RealToolAfterThink')
++  ].join('\n');
++
++  const calls = ToolCallParser.parse(input);
++  assert.equal(calls.length, 1);
++  assert.equal(calls[0].name, 'RealToolAfterThink');
++});
++
++test('M2 [外测度] 真实思考块内部夹带伪代码块与伪工具时，由外层思考深度统辖并 100% 剥离', () => {
++  const input = [
++    openTag('thinking'),
++    '我在思考里写一段代码块草稿：',
++    '```javascript',
++    buildToolBlock('FakeToolInsideThoughtCodeFence'),
++    '```',
++    buildToolBlock('FakeToolDirectInThought'),
++    closeTag('thinking'),
++    buildToolBlock('VerifiedRealTool')
++  ].join('\n');
++
++  const calls = ToolCallParser.parse(input);
++  assert.equal(calls.length, 1);
++  assert.equal(calls[0].name, 'VerifiedRealTool');
++});
++
++test('M3 [外测度] 多层混合嵌套、大小写、空白与带属性思考标签（think/thinking/thought/antThinking）', () => {
++  const input = [
++    openTag('THINKING', 'mode="deep" step="1"'),
++    '外层思考',
++    openTag('thought'),
++    buildToolBlock('NestedFake1'),
++    openTag('antThinking', 'id="claude"'),
++    buildToolBlock('NestedFake2'),
++    closeTag('antThinking'),
++    closeTag('thought'),
++    buildToolBlock('OuterFake3'),
++    closeTag('THINKING'),
++    '可见正文',
++    buildToolBlock('FinalRealTool')
++  ].join('\n');
++
++  const calls = ToolCallParser.parse(input);
++  assert.equal(calls.length, 1);
++  assert.equal(calls[0].name, 'FinalRealTool');
++});
++
++test('M4 [外测度] 潜空间无头思考泄漏（Headless Leak）：开头的 <think> 丢失、直接裸出思考草稿与独立行 </think>', () => {
++  const input = [
++    '用户让我排查问题，我先在心里演练一下调用：',
++    buildToolBlock('LeakedDraftTool1'),
++    '不对，参数写错了，再演练一次：',
++    buildToolBlock('LeakedDraftTool2'),
++    closeTag('think'),
++    '好的，现在我正式向用户发起真实工具调用：',
++    buildToolBlock('AuthenticToolAfterHeadless')
++  ].join('\n');
+```
+
+---
+
+### Incident Patch 3: `9448dc78` (2026-11-05)
+**Commit Message**: fix(vcpLoop): 收敛思考块剥离边界并隔离代码域与工具载荷自指误伤
+
+**File**: `modules/vcpLoop/toolCallParser.js` (modified, +382/-24)
+```diff
+@@ -3,64 +3,422 @@ const toolMarkerFuzzyMatcher = require('./toolMarkerFuzzyMatcher');
+ 
+ class ToolCallParser {
+   static MARKERS = {
+-    START: '<<<[TOOL_REQUEST]>>>',
+-    END: '<<<[END_TOOL_REQUEST]>>>'
++    START: '<<<' + '[TOOL_REQUEST]>>>',
++    END: '<<<' + '[END_TOOL_REQUEST]>>>'
+   };
+ 
+   static ESCAPE_MARKERS = {
+-    START: '「始ESCAPE」',
+-    END: '「末ESCAPE」'
++    START: '「始' + 'ESCAPE」',
++    END: '「末' + 'ESCAPE」'
+   };
+ 
+   static ESCAPED_LITERAL_MAP = {
+-    '<<<[TOOL_REQUEST_ESCAPE]>>>': '<<<[TOOL_REQUEST]>>>',
+-    '<<<[END_TOOL_REQUEST_ESCAPE]>>>': '<<<[END_TOOL_REQUEST]>>>',
+-    '「始ESCAPE」': '「始」',
+-    '「末ESCAPE」': '「末」'
++    ['<<<[TOOL_REQUEST_' + 'ESCAPE]>>>']: '<<<' + '[TOOL_REQUEST]>>>',
++    ['<<<[END_TOOL_REQUEST_' + 'ESCAPE]>>>']: '<<<' + '[END_TOOL_REQUEST]>>>',
++    ['「始' + 'ESCAPE」']: '「始」',
++    ['「末' + 'ESCAPE」']: '「末」'
+   };
+ 
+   /**
+-   * 从可见正文中剥离模型思考块。
++   * 收集正文中不受思考标签状态机影响的字面量保护区间：
++   * 1. 权威工具结果域：VCP调用结果信息汇总 ... VCP调用结果结束（嵌套感知）
++   * 2. Markdown 围栏代码块：``` ... ``` 与 ~~~ ... ~~~（含 0-3 空格缩进与流尾未闭合围栏）
++   * 3. Markdown 行内代码跨度：` ... `（限制在同段落内，且豁免颜文字反引号）
+    *
+-   * 支持：
+-   * - <think>...</think> 与 <thinking>...</thinking>
+-   * - 大小写、标签空白和属性变体
+-   * - 同类或混合标签嵌套
+-   * - 未闭合开始标签：保守丢弃该标签之后的全部内容
++   * 注意：已进入真实思考块（depth > 0）后，思考块内部的伪代码块由外层思考状态优先统辖，
++   * 调用方仅在 depth === 0 时查询本保护区间，从而确保思考块内的伪代码块+伪工具 100% 被剥离。
+    *
+-   * 未配对的结束标签只移除标签本身，不会吞掉其后的可见正文。
++   * @param {string} content
++   * @returns {Array<{start: number, end: number, kind: string}>}
++   */
++  static _collectReasoningLiteralRanges(content) {
++    if (!content || typeof content !== 'string') return [];
++
++    const ranges = [];
++    const len = content.length;
++    const TOOL_RESULT_OPEN = '[' + '[VCP调用结果信息汇总:';
++    const TOOL_RESULT_CLOSE = 'VCP调用结果结束]' + ']';
++    const EMOTICONS = ['(`・ω・´)ゞ', '(・`ω´・)', '(`・ω・´)', '(`･ω･´)'];
++
++    const isEmoticonBacktick = (idx) => EMOTICONS.some(emo => {
++      const offset = emo.indexOf('`');
++      return idx >= offset && content.startsWith(emo, idx - offset);
++    });
++
++    const countRun = (idx, ch) => {
++      let c = idx;
++      while (c < len && content[c] === ch) c += 1;
++      return c - idx;
++    };
++
++    const findLineEnd = (idx) => {
++      const nl = content.indexOf('\n', idx);
++      return nl === -1 ? len : nl;
++    };
++
++    const lineStartAt = (idx) => (idx === 0 ? 0 : content.lastIndexOf('\n', idx - 1) + 1);
++
++    let cursor = 0;
++    while (cursor < len) {
++      // 1. 优先识别工具结果数据域（嵌套感知）
++      if (content.startsWith(TOOL_RESULT_OPEN, cursor)) {
++        let depth = 1;
++        let scan = cursor + TOOL_RESULT_OPEN.length;
++        let nextOpen = content.indexOf(TOOL_RESULT_OPEN, scan);
++        let regionEnd = len;
++
++        while (scan <= len) {
++          const nextClose = content.indexOf(TOOL_RESULT_CLOSE, scan);
++          if (nextClose === -1) {
++            regionEnd = len;
++            break;
++          }
++          if (nextOpen !== -1 && nextOpen < nextClose) {
++            depth += 1;
++            scan = nextOpen + TOOL_RESULT_OPEN.length;
++            nextOpen = content.indexOf(TOOL_RESULT_OPEN, scan);
++            continue;
++          }
++          depth -= 1;
++          scan = nextClose + TOOL_RESULT_CLOSE.length;
++          if (depth === 0) {
++            regionEnd = scan;
++            break;
++          }
++          if (nextOpen !== -1 && nextOpen < scan) {
++            nextOpen = content.indexOf(TOOL_RESULT_OPEN, scan);
++          }
++        }
++
++        ranges.push({ start: cursor, end: regionEnd, kind: 'tool-result' });
++        cursor = regionEnd;
++        continue;
++      }
++
++      const ch = content[cursor];
++
++      // 2. 识别 Markdown 围栏代码块（``` 或 ~~~，行首 0-3 空格缩进）
++      if (ch === '`' || ch === '~') {
++        const runLen = countRun(cursor, ch);
++        const lineStart = lineStartAt(cursor);
++        const prefix = content.slice(lineStart, cursor);
++        const lineEnd = findLineEnd(cursor + runLen);
++        const infoString = content.slice(cursor + runLen, lineEnd);
++
++        const isValidFenceOpen =
++          runLen >= 3 &&
++          /^[ \t]{0,3}$/.test(prefix) &&
++          (ch !== '`' || !infoString.includes('`'));
++
++        if (isValidFenceOpen) {
++          let scanLineStart = lineEnd < len ? lineEnd + 1 : len;
++          let fenceEnd = len;
++
++          while (scanLineStart <= len) {
++            const scanLineEnd = findLineEnd(scanLineStart);
++            let mStart = scanLineStart;
++            let indent = 0;
++            while (
++              mStart < scanLineEnd &&
++              indent < 3 &&
++              (content[mStart] === ' ' || content[mStart] === '\t')
++            ) {
++              mStart += 1;
++              indent += 1;
++            }
++            if (content[mStart] === ch) {
++              const closeLen = countRun(mStart, ch);
++              const trailing = content.slice(mStart + closeLen, scanLineEnd);
++              if (closeLen >= runLen && /^[ \t]*\r?$/.test(trailing)) {
++                fenceE
+```
+
+**File**: `tests/reasoningAndSelfReference.test.js` (added, +401/-0)
+```diff
+@@ -0,0 +1,401 @@
++'use strict';
++
++/**
++ * 前后端思考标签（Reasoning Blocks）拦截与自指（Self-Reference）零误伤全维度严苛测试套件
++ *
++ * 覆盖维度（共 20 组对抗性用例）：
++ * - [外测度 · 防漏网 M1-M7]：
++ *   M1: 标准成对思考块拦截内部伪造工具调用
++ *   M2: 思考块内嵌伪造 Markdown 代码围栏与伪工具调用（外层思考状态优先剥离）
++ *   M3: 多层嵌套、混合标签（think/thinking/thought/antThinking）、大小写与带属性变体
++ *   M4: 潜空间无头思考泄漏（Headless Leak：开头无开标签，直接输出思考草稿+伪工具+独立行闭标签）
++ *   M5: 行首/缩进行首开启的流式未闭合思考截断（保守熔断丢弃尾部伪工具）
++ *   M6: VCP 元思考链明文块（闭合与未闭合）内部伪工具剥离
++ *   M7: 多段交替思考块与多枚真实并发工具穿插提取
++ * - [内测度 · 零误伤 M8-M16]：
++ *   M8: 残缺无右尖括号 `<think` 跨行面对 `>` 运算符与工具请求起始符（绝不跨行拼合）
++ *   M9: 正文句中裸写单侧未闭合开标签（如“当包含<think>时，如果只有<think>”），保留标签字面量并放行真工具
++ *   M10: 正文句中裸写单侧未闭合开标签 + 后文代码块中出现闭标签（预检器跳过代码域，不误配对）
++ *   M11: 正文句中裸写单侧闭标签（如“将</think>之间的工具屏蔽”），绝不误触发无头思考清空前文真工具
++ *   M12: Markdown 围栏代码块（``` 与 ~~~，含未闭合流尾围栏）内含独占行未闭合思考标签与伪工具
++ *   M13: Markdown 行内反引号（单反引号/双反引号）包裹单侧思考标签 + 颜文字反引号 (`・ω・´) 共存
++ *   M14: 顶层合法 TOOL_REQUEST 参数（普通「始」「末」与「始ESCAPE」「末ESCAPE」）内含独占行未闭合思考标签
++ *   M15: 权威工具结果域（VCP调用结果信息汇总，含嵌套结果块）内部包含未闭合思考标签与伪工具
++ *   M16: 近似标签名（如 `<think_custom>`、`<thinking_process>`）不误判为思考标签
++ * - [跨端协同 · 前端三剑客验证 M17-M20]：
++ *   M17: 前端 Flowlock 协议：代码块内含独占行未闭合思考标签，文末 [[Flowlock::Complete]] 正常触发
++ *   M18: 前端 Flowlock 协议：真实独占行未闭合思考块内部的伪造 [[Flowlock::Fail]] 被正确遮蔽
++ *   M19: 前端 EmotionTagScanner：流式扫描行内 `<think>` 与句中提及 `<think>` 不卡死，正常吐出后续情绪标签
++ *   M20: 前端 EmotionTagScanner：真实行首 `<think>...</think>` 思考块内的伪情绪标签被正确屏蔽
++ */
++
++const test = require('node:test');
++const assert = require('node:assert/strict');
++const fs = require('node:fs');
++const path = require('node:path');
++const { pathToFileURL } = require('node:url');
++
++const ToolCallParser = require('../modules/vcpLoop/toolCallParser');
++
++// 采用函数动态拼装所有协议与思考标签，彻底免疫任何静态扫描器自指干扰
++const openTag = (name = 'think', attr = '') => '<' + name + (attr ? ' ' + attr : '') + '>';
++const closeTag = (name = 'think') => '</' + name + '>';
++const halfOpenTag = (name = 'think') => '<' + name;
++
++const TOOL_START = '<<<' + '[TOOL_REQUEST]' + '>>>';
++const TOOL_END = '<<<' + '[END_TOOL_REQUEST]' + '>>>';
++const RESULT_OPEN = '[' + '[VCP调用结果信息汇总:';
++const RESULT_CLOSE = 'VCP调用结果结束]' + ']';
++const META_OPEN = '[--- ' + 'VCP元思考链: "coding" ---]';
++const META_CLOSE = '[--- ' + '元思考链结束 ---]';
++
++function buildToolBlock(toolName, extraFields = {}) {
++  const lines = [
++    TOOL_START,
++    'maid:「始」程宸Cod「末」,',
++    `tool_name:「始」${toolName}「末」`
++  ];
++  for (const [k, v] of Object.entries(extraFields)) {
++    const isEsc = v && typeof v === 'object' && v.escape;
++    const rawVal = isEsc ? v.value : v;
++    const sMark = isEsc ? '「始ESCAPE」' : '「始」';
++    const eMark = isEsc ? '「末ESCAPE」' : '「末」';
++    lines[lines.length - 1] += ',';
++    lines.push(`${k}:${sMark}${rawVal}${eMark}`);
++  }
++  lines.push(TOOL_END);
++  return lines.join('\n');
++}
++
++// ============================================================================
++// 一、外测度测试（防漏拦：确保一切形态的思考过程与潜空间漏出 100% 被剥离）
++// ============================================================================
++
++test('M1 [外测度] 标准成对思考块内部的伪工具调用被完全剥离', () => {
++  const input = [
++    openTag('think'),
++    '先思考一下要不要调工具：',
++    buildToolBlock('HallucinatedToolInThink'),
++    closeTag('think'),
++    '思考完毕，开始正式调用：',
++    buildToolBlock('RealToolAfterThink')
++  ].join('\n');
++
++  const calls = ToolCallParser.parse(input);
++  assert.equal(calls.length, 1);
++  assert.equal(calls[0].name, 'RealToolAfterThink');
++});
++
++test('M2 [外测度] 真实思考块内部夹带伪代码块与伪工具时，由外层思考深度统辖并 100% 剥离', () => {
++  const input = [
++    openTag('thinking'),
++    '我在思考里写一段代码块草稿：',
++    '```javascript',
++    buildToolBlock('FakeToolInsideThoughtCodeFence'),
++    '```',
++    buildToolBlock('FakeToolDirectInThought'),
++    closeTag('thinking'),
++    buildToolBlock('VerifiedRealTool')
++  ].join('\n');
++
++  const calls = ToolCallParser.parse(input);
++  assert.equal(calls.length, 1);
++  assert.equal(calls[0].name, 'VerifiedRealTool');
++});
++
++test('M3 [外测度] 多层混合嵌套、大小写、空白与带属性思考标签（think/thinking/thought/antThinking）', () => {
++  const input = [
++    openTag('THINKING', 'mode="deep" step="1"'),
++    '外层思考',
++    openTag('thought'),
++    buildToolBlock('NestedFake1'),
++    openTag('antThinking', 'id="claude"'),
++    buildToolBlock('NestedFake2'),
++    closeTag('antThinking'),
++    closeTag('thought'),
++    buildToolBlock('OuterFake3'),
++    closeTag('THINKING'),
++    '可见正文',
++    buildToolBlock('FinalRealTool')
++  ].join('\n');
++
++  const calls = ToolCallParser.parse(input);
++  assert.equal(calls.length, 1);
++  assert.equal(calls[0].name, 'FinalRealTool');
++});
++
++test('M4 [外测度] 潜空间无头思考泄漏（Headless Leak）：开头的 <think> 丢失、直接裸出思考草稿与独立行 </think>', () => {
++  const input = [
++    '用户让我排查问题，我先在心里演练一下调用：',
++    buildToolBlock('LeakedDraftTool1'),
++    '不对，参数写错了，再演练一次：',
++    buildToolBlock('LeakedDraftTool2'),
++    closeTag('think'),
++    '好的，现在我正式向用户发起真实工具调用：',
++    buildToolBlock('AuthenticToolAfterHeadless')
++  ].join('\n');
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #576** (2026-11-05): fix(vcpLoop): 收敛思考块剥离边界并隔离代码域与工具载荷自指误伤 (@infinite-vector)
 - **PR #573** (closed): fix(security): 修复 TVS 变量编辑接口路径遍历漏洞 (@934842025)
 - **PR #571** (2026-11-02): fix(rivermemo): separate wormhole RRF ranking from baseline scores (@Cimo-Yu)
 - **PR #568** (2026-11-01): docs(desktop): 同步 VCP桌面知识至 DesktopRemote 1.5.0 并新增索引 (@infinite-vector)
 - **PR #567** (2026-11-01): feat(tdb): 升级 TriviumDB 至 0.9.0 并接入原生只读内存与存储诊断接口 (@infinite-vector)
 - **PR #565** (2026-10-30): fix(knowledge-base): 完善向量基线与存储元数据生命周期自净回收闭环 (@infinite-vector)
-- **PR #564** (2026-10-30): fix(bilibili): return only requested content for snapshot calls (@miaotouy)
 
 ---
 
@@ -1863,33 +2614,39 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in Plugin.js
+## X. Empirical Invariant Guard in MagiAgent.js
 
 **RULE**:
-When implementing operations in `Plugin.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lioensky/VCPToolBox. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Plugin/MagiAgent/MagiAgent.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lioensky/VCPToolBox. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `72e964e2`: fix1. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `eff29b1f`: 安全fix2. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `Plugin.js`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `Plugin/MagiAgent/MagiAgent.js`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-            let timedOut = false;
-                    timedOut = true;
-                if (timedOut) {
-                    // 超时已返回收集的输出；Windows taskkill 的退出码/信号及 stderr 不代表插件崩溃。
-                    return;
-                }
+    if (!serverConfig.Key) {
+        console.error('[MagiAgent] Server Key not configured; completion callback was not sent.');
+        return;
+    }
+    const callbackUrl = `${serverConfig.CALLBACK_BASE_URL.replace(/\/+$/, '')}/MagiAgent/${encodeURIComponent(meeting.id)}`;
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${serverConfig.Key}`
+            },
+            timeout: 15000,
+            maxRedirects: 0
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+    const callbackUrl = `${serverConfig.CALLBACK_BASE_URL}/MagiAgent/${meeting.id}`;
+            headers: { 'Content-Type': 'application/json' }
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `72e964e2` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `eff29b1f` are properly handled with clean fallback behavior.

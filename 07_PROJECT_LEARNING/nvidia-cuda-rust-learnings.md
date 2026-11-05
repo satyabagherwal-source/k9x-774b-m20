@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nvidia-cuda-rust-learnings.md`  
 > **Source**: github ([https://github.com/NVIDIA/cuda-rust](https://github.com/NVIDIA/cuda-rust))  
-> **Source Version**: `00f6624c`  
+> **Source Version**: `e706cab3`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T09:40:21.184Z  
+> **Timestamp**: 2026-11-05T09:44:34.088Z  
 > **Learning ID**: `learn-github-nvidia-cuda-rust`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nvidia-cuda-rust-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NVIDIA/cuda-rust](https://github.com/NVIDIA/cuda-rust))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T09:39:57.515Z  
+> **Harvest Timestamp**: 2026-11-05T09:44:33.281Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: NVIDIA's CUDA platform for Rust. Host runtime crates plus Tile (cutile-rs) and SIMT (cuda-oxide) kernel programming models in idiomatic Rust.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3976 stars
+- **Stars / Engagement**: 3982 stars
 
 ---
 
@@ -2279,1404 +2279,222 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a38e8446` (2026-11-03)
-**Commit Message**: fix(mir-importer): lower is_val_statically_known to false (#1359)
+### Incident Patch 1: `2378e98b` (2026-11-04)
+**Commit Message**: fix(cuda-host): serialize host-callback-gated GPU tests in shared_launch_lifetimes (NVBug 7043934) (#1742)
 
 ## What This PR Does
 
-Lowers `core::intrinsics::is_val_statically_known` (and
-`std::intrinsics::is_val_statically_known`) in `mir-importer` to a
-constant `false`, unblocking integer `.pow()`, `.checked_pow()`,
-`.overflowing_pow()`, `.saturating_pow()`, `.wrapping_pow()`, `.ilog()`,
-and `.checked_ilog()` in GPU kernels.
-
----
-
-### Why `pow` and `ilog` Failed on the Device
-
-Rust's `libcore` implementations of `checked_pow`, `overflowing_pow`,
-and `checked_ilog` call
-`core::intrinsics::is_val_statically_known(base)` to check whether
-`base` is a compile-time constant power of two (so a constant base like
-`2u32.pow(n)` can use a bit shift `1 << n` instead of a multiplication
-loop). Because `is_val_statically_known` is an optimization hint that is
-always allowed to return `false`, lowering it to `MirConstantOp(false)`
-+ `MirGotoOp` in `mir-importer` preserves exact Rust semantics and
-directs `libcore` to its standard loop implementation.
+Fixes **NVBug 7043934** (`cuda-host` `shared_launch_lifetimes` failing
+intermittently under default parallel `cargo test` execution):
 
 ```text
-BEFORE:
-  x.checked_pow(e) / x.ilog(10) ──► calls core::intrinsics::is_val_statically_known
-                                ──► mir-importer bail-out: "Unsupported construct..."
+BEFORE (4 test threads in parallel on primary context):
+  Thread A parks driver callback thread inside `cuLaunchHostFunc` (10s recv_timeout)
+  Threads B/C/D block on driver module/allocation APIs or callback queue
+  ──► Callback gates time out at 10s / 20s / 30s before `.is_pending()` is checked
 
-
-
-**File**: `cuda-oxide/crates/mir-importer/src/translator/terminator/helpers.rs` (modified, +68/-1)
-```diff
-@@ -23,7 +23,7 @@ use crate::translator::values::{ValueMap, establish_declared_pointer_type};
- use crate::translator::{payload_store, rvalue};
- use dialect_mir::{
-     attributes::MirPointerKindAuthorityAttr,
--    ops::{MirCallOp, MirConstructArrayOp, MirGotoOp},
-+    ops::{MirCallOp, MirConstantOp, MirConstructArrayOp, MirGotoOp},
-     types::{MirArrayType, MirPtrType},
- };
- use pliron::basic_block::BasicBlock;
-@@ -735,6 +735,73 @@ pub fn emit_unit_noop_intrinsic(
-     )
- }
- 
-+/// Emits a `bool`-returning intrinsic whose result is a fixed constant.
-+///
-+/// Used for `core::intrinsics::is_val_statically_known`, which may return
-+/// `false` for any argument. The argument is a MIR operand with no side
-+/// effects, so it is not evaluated.
-+#[allow(clippy::too_many_arguments)]
-+pub fn emit_bool_constant_intrinsic(
-+    ctx: &mut Context,
-+    body: &mir::Body,
-+    destination: &mir::Place,
-+    target: &Option<usize>,
-+    block_ptr: Ptr<BasicBlock>,
-+    prev_op: Option<Ptr<Operation>>,
-+    value_map: &mut ValueMap,
-+    block_map: &[Ptr<BasicBlock>],
-+    loc: Location,
-+    intrinsic_name: &str,
-+    value: bool,
-+) -> TranslationResult<Ptr<Operation>> {
-+    use pliron::builtin::attributes::IntegerAttr;
-+    use pliron::utils::apint::APInt;
-+
-+    let (prepared_destination, prepared_last_op) = prepare_destination_write(
-+        ctx,
-+        body,
-+        destination,
-+        value_map,
-+        block_ptr,
-+        prev_op,
-+        loc.clone(),
-+    )?;
-+
-+    let bool_ty = IntegerType::get(ctx, 1, Signedness::Signless);
-+    let const_op = Operation::new(
-+        ctx,
-+        MirConstantOp::get_concrete_op_info(),
-+        vec![bool_ty.into()],
-+        vec![],
-+        vec![],
-+        0,
-+    );
-+    const_op.deref_mut(ctx).set_loc(loc.clone());
-+    MirConstantOp::new(const_op).set_attr_value(
-+        ctx,
-+        IntegerAttr::new(
-+            bool_ty,
-+            APInt::from_u64(u64::from(value), std::num::NonZeroUsize::new(1).unwrap()),
-+        ),
-+    );
-+    insert_op(ctx, const_op, block_ptr, prepared_last_op);
-+
-+    let const_val = const_op.deref(ctx).get_result(0);
-+    let no_target_msg = format!("{} call without target not supported", intrinsic_name);
-+    emit_prepared_result_and_goto(
-+        ctx,
-+        prepared_destination,
-+        const_val,
-+        target,
-+        block_ptr,
-+        const_op,
-+        value_map,
-+        block_map,
-+        loc,
-+        &no_target_msg,
-+    )
-+}
-+
- #[cfg(test)]
- // Tests build kinded fixture types directly; production code mints via facts::PointerOrigin.
- #[allow(clippy::disallowed_methods)]
+AFTER:
+  Guard the 4 host-callback-gated tests with `HOST_CALLBACK_GATE_LOCK`
+  ──► All 4 tests keep their multi-stream async assertions and finish in ~0.2s
 ```
-
-**File**: `cuda-oxide/crates/mir-importer/src/translator/terminator/mod.rs` (modified, +19/-0)
-```diff
-@@ -2998,6 +2998,25 @@ fn try_dispatch_intrinsic(
-                 name,
-             )?))
-         }
-+        // `false` is a valid answer for any argument. libcore calls this from
-+        // integer `checked_pow`/`overflowing_pow` and `checked_ilog`, so
-+        // rejecting it also rejects integer `pow` and `ilog`, which call them.
-+        "core::intrinsics::is_val_statically_known"
-+        | "std::intrinsics::is_val_statically_known" => {
-+            Ok(Some(helpers::emit_bool_constant_intrinsic(
-+                ctx,
-+                body,
-+                destination,
-+                target,
-+                block_ptr,
-+                prev_op,
-+                value_map,
-+                block_map,
-+                loc,
-+                name,
-+                false,
-+            )?))
-+        }
-         "core::intrinsics::copy" | "std::intrinsics::copy" => Ok(Some(emit_ptr_memmove(
-             ctx,
-             body,
-```
-
-**File**: `cuda-oxide/crates/rustc-codegen-cuda/examples/checked_arith/src/main.rs` (modified, +125/-0)
-```diff
-@@ -17,6 +17,11 @@
- //! Unsigned `u8` and signed `i8` cases cover both overflow and non-overflow
- //! paths, including `Some(0)` so it cannot be confused with `None`.
- //!
-+//! The `pow_family` kernel covers integer `pow`, `checked_pow`,
-+//! `overflowing_pow`, `saturating_pow`, `wrapping_pow`, `ilog` and
-+//! `checked_ilog`, which failed to compile while `is_val_statically_known`
-+//! was unsupported.
-+//!
- //! Run:
- //!   cargo oxide run checked_arith
- //!   CUDA_OXIDE_NO_OPT=1 cargo oxide run checked_arith
-@@ -136,6 +141,75 @@ mod kernels {
-             };
-         }
-     }
-+
-+    /// Exercise the integer `pow` family and `ilog`. libcore implements them
-+    /// with `is_val_statically_known`, so they must compile for the device.
-+    ///
-+    /// Encodings:
-+    /// - `checked_pow`: `None` -> 0, `Some(v)` -> bit 32 set, `v` in bits 0..31
-+    /// - `overflowing_pow`: result in bits 0..31, overflow flag in bit 32
-+    /// - `pow` on `u64`: the plain result; every input here is in range
-+    #[kernel]
-+    pub fn pow_family(
-+        base: &[i32],
-+        exp: &[u32],
-+        mut checked_out: DisjointSlice<u64>,
-+        mut overflowing_out: DisjointSlice<u64>,
-+        mut misc_out: DisjointSlice<u64>,
-+        mut pow_out: DisjointSlice<u64>,
-+    ) {
-+        let i = thread::index_1d().get();
-+        if i >= base.len() {
-+            return;
-+        }
-+        let (b, e) = (base[i], exp[i]);
-+
-+        if let Some(o) = checked_out.get_mut(thread::index_1d()) {
-+            *o = match b.checked_pow(e) {
-+                Some(value) => (1 << 32) | value as u32 as u64,
-+                None => 0,
-+            };
-+        }
-+
-+        if let Some(o) = overflowing_out.get_mut(thread::index_1d()) {
-+            let (value, overflow) = (b as u32).overflowing_pow(e);
-+            *o = value as u64 | ((overflow as u64) << 32);
-+        }
-+
-+        if let Some(o) = misc_out.get_mut(thread::index_1d()) {
-+            let saturating = (b as u8).saturating_pow(e) as u64;
-+            let wrapping = (b as i16).wrapping_pow(e) as u16 as u64;
-+            let ilog = match (b as u32).checked_ilog(10) {
-+                Some(value) => 0x80 | value as u64,
-+                None => 0,
-+            };
-+            let ilog10 = (b.unsigned_abs() | 1).ilog(10) as u64;
-+            *o = saturating | (wrapping << 8) | (ilog << 24) | (ilog10 << 32);
-+        }
-+
-+        if let Some(o) = pow_out.get_mut(thread::index_1d()) {
-+            *o = (b.unsigned_abs() as u64).pow(e);
-+        }
-+    }
-+}
-+
-+fn expected_pow_family(b: i32, e: u32) -> (u64, u64, u64, u64) {
-+    let checked = match b.checked_pow(e) {
-+        Some(value) => (1 << 32) | value as u32 as u64,
-+        None => 0,
-+    };
-+    let (value, overflow) = (b as u32).overflowing_pow(e);
-+    let overflowing = value as u64 | ((overflow as u64) << 32);
-+    let saturating = (b as u8).saturating_pow(e) as u64;
-+    let wrapping = (b as i16).wrapping_pow(e) as u16 as u64;
-+    let ilog = match (b as u32).checked_ilog(10) {
-+        Some(value) => 0x80 | value as u64,
-+        None => 0,
-+    };
-+    let ilog10 = (b.unsigned_abs() | 1).ilog(10) as u64;
-+    let misc = saturating | (wrapping << 8) | (ilog << 24) | (ilog10 << 32);
-+    let pow = (b.unsigned_abs() as u64).pow(e);
-+    (checked, overflowing, misc, pow)
- }
- 
- fn check(label: &str, got: u32, expected_result: u8, expected_overflow: bool) -> bool {
-@@ -300,6 +374,40 @@ fn main() {
-     let checked_i8_sub = checked_i8_sub_dev.to_host_vec(&stream).unwrap();
-     let checked_i8_mul = checked_i8_mul_dev.to_host_vec(&stream).unwrap();
- 
-+    // --- integer pow family and ilog ---
-+    //
-+    // Includes a zero exponent, negative bases with odd exponents, and both
-+    // in-range and overflowing results (7^12 and 46341^2 overflow i32).
-+    let pow_base: Vec<i32> = vec![2, -3, 10, 0, 1, -1, 7, 46341];
-+    let pow_exp: Vec<u32> = vec![10, 5, 9, 0, 100, 3, 12, 2];
-+    let pow_n = pow_base.len();
-+    let pow_base_dev = DeviceBuffer::from_host(&stream, &pow_base).unwrap();
-+    let pow_exp_dev = DeviceBuffer::from_host(&stream, &pow_exp).unwrap();
-+    let mut pow_checked_dev = DeviceBuffer::<u64>::zeroed(&stream, pow_n).unwrap();
-+    let mut pow_overflowing_dev = DeviceBuffer::<u64>::zeroed(&stream, pow_n).unwrap();
-+    let mut pow_misc_dev = DeviceBuffer::<u64>::zeroed(&stream, pow_n).unwrap();
-+    let mut pow_plain_dev = DeviceBuffer::<u64>::zeroed(&stream, pow_n).unwrap();
-+
-+    // SAFETY: launch shape/resources match the kernel; buffers cover its accesses.
-+    unsafe {
-+        module.pow_family(
-+            &stream,
-+            LaunchConfig::for_num_elems(pow_n as u32),
-+            &pow_base_dev,
-+            &pow_exp_dev,
-+            &mut pow_checked_dev,
-+            &mut pow_overflowing_dev,
-+            &mut pow_misc_dev,
-+            &mut pow_plain_dev,
-+        )
-+    }
-+    .expect("pow_family launch");
-+
-+    let pow_checked = pow_checked_dev.to_host_vec(&stream).unwrap();
-+    let pow_ove
-```
-
----
-
-### Incident Patch 2: `00f6624c` (2026-11-04)
-**Commit Message**: fix(cuda-oxide): resolve --device-debug compile/merge failures in clamp, WGMMA, and multi-crate PTX (#1738)
-
-## What This PR Does
-
-Resolves the three `--device-debug` compile and module-load failures
-(**NVBugs 7038282**, **7038557**, **7038682** and **GH #1219**):
-
-| NVBug / Issue | Example(s) | Root Cause | Fix |
-
-|:-----------------------|:-----------------------------------|:-----------------------------------------------------------------------------|:------------------------------------------------------------------------------|
-| **7038282 / GH #1219** | `warp_sums`, `partial_warp_reduce` | Dead
-`core::fmt::rt::ArgumentType` allocas from dropped `clamp` panic block |
-Prune zero-use entry `MirAllocaOp`s after block translation |
-| **7038557** | `cross_crate_merged_symbols` | Un-inlined `.visible
-.func` helpers collide when merging crate PTX bundles | Disambiguate
-colliding `.func` symbols across bundles in `merge_ptx_bundles` |
-| **7038682 / GH #1219** | `wgmma_mma_bf16` | Skipping `mem2reg` leaves
-WGMMA reborrows and loop descriptors in stack slots| Run `mem2reg` for
-WGMMA MMA modules and accept `mir.dbg_value` in WGMMA loops |
-
----
-
-### 1. Dead Panic-Block Allocas Under `--d
-
-**File**: `cuda-oxide/crates/cuda-host/src/embedded.rs` (modified, +116/-11)
-```diff
-@@ -162,10 +162,12 @@ pub fn merge_ptx_bundles<'a>(
-     let mut merged = String::new();
-     let mut found_any = false;
- 
--    // Keep each bundle's debug file indices distinct in the merged module.
-+    // Keep each bundle's debug file indices and helper `.func` names distinct
-+    // in the merged module.
-     let mut file_index_offset = 0;
-+    let mut seen_functions = std::collections::HashSet::new();
- 
--    for bundle in bundles {
-+    for (bundle_index, bundle) in bundles.into_iter().enumerate() {
-         if let Some(ptx_bytes) = bundle.payload(ArtifactPayloadKind::Ptx) {
-             let ptx_str = std::str::from_utf8(ptx_bytes)
-                 .map_err(|_| EmbeddedModuleError::UnsupportedPayload {
-@@ -174,13 +176,17 @@ pub fn merge_ptx_bundles<'a>(
-                 .trim_end_matches('\0');
- 
-             let strip_headers = found_any;
--            let (body, max_file_index) =
--                prepare_bundle_body(ptx_str, strip_headers, file_index_offset).map_err(
--                    |reason| EmbeddedModuleError::InvalidPtx {
--                        name: bundle.name.clone(),
--                        reason,
--                    },
--                )?;
-+            let (body, max_file_index) = prepare_bundle_body_with_functions(
-+                ptx_str,
-+                strip_headers,
-+                file_index_offset,
-+                bundle_index,
-+                &mut seen_functions,
-+            )
-+            .map_err(|reason| EmbeddedModuleError::InvalidPtx {
-+                name: bundle.name.clone(),
-+                reason,
-+            })?;
-             file_index_offset = file_index_offset.max(max_file_index);
-             merged.push_str(&body);
-             if !body.ends_with('\n') {
-@@ -196,17 +202,63 @@ pub fn merge_ptx_bundles<'a>(
-     Ok(merged)
- }
- 
--/// Strip repeated headers and shift debug indices past the previous bundles.
--/// Returns the rewritten text and its highest debug file index.
-+/// Single-bundle test wrapper around [`prepare_bundle_body_with_functions`]
-+/// that starts with an empty seen-function set at bundle index zero.
-+#[cfg(test)]
- fn prepare_bundle_body(
-     ptx: &str,
-     strip_headers: bool,
-     file_index_offset: u64,
-+) -> Result<(String, u64), String> {
-+    let mut seen_functions = std::collections::HashSet::new();
-+    prepare_bundle_body_with_functions(
-+        ptx,
-+        strip_headers,
-+        file_index_offset,
-+        0,
-+        &mut seen_functions,
-+    )
-+}
-+
-+/// Strip repeated headers, disambiguate colliding helper `.func` symbols, and
-+/// shift debug indices past the previous bundles. Returns the rewritten text
-+/// and its highest debug file index.
-+fn prepare_bundle_body_with_functions(
-+    ptx: &str,
-+    strip_headers: bool,
-+    file_index_offset: u64,
-+    bundle_index: usize,
-+    seen_functions: &mut std::collections::HashSet<String>,
- ) -> Result<(String, u64), String> {
-     let document = ptx_parse::Document::parse(ptx).map_err(|error| error.to_string())?;
-     let mut edits = ptx_parse::EditScript::new();
-     let mut max_file_index = 0u64;
- 
-+    let mut bundle_functions = std::collections::HashSet::new();
-+    let mut colliding_functions = std::collections::HashMap::new();
-+    for callable in document.callables() {
-+        if callable.kind() == ptx_parse::CallableKind::Function && !callable.is_extern() {
-+            let name = callable.name();
-+            bundle_functions.insert(name.to_string());
-+            if seen_functions.contains(name) {
-+                colliding_functions.insert(name, format!("{name}__bundle_{bundle_index}"));
-+            }
-+        }
-+    }
-+    seen_functions.extend(bundle_functions);
-+
-+    if !colliding_functions.is_empty() {
-+        for token in document.tokens() {
-+            if token.kind() == ptx_parse::TokenKind::Word
-+                && let Some(renamed) = colliding_functions.get(token.text(ptx))
-+            {
-+                edits
-+                    .replace(token.span(), renamed.clone())
-+                    .map_err(|error| error.to_string())?;
-+            }
-+        }
-+    }
-+
-     for directive in document.directives() {
-         match directive.name() {
-             ".version" | ".target" | ".address_size" if strip_headers => {
-@@ -555,6 +607,59 @@ mod tests {
-         );
-     }
- 
-+    #[test]
-+    fn merged_bundles_disambiguate_colliding_helper_functions() {
-+        let first = ptx_bundle(
-+            "first",
-+            "\
-+.version 8.9
-+.target sm_80, debug
-+.address_size 64
-+.visible .func (.param .b64 retval) shared_helper()
-+{
-+\tret;
-+}
-+.visible .entry a()
-+{
-+\tcall.uni (r0), shared_helper, ();
-+\tret;
-+}
-+",
-+        );
-+        let second = ptx_bundle(
-+            "second",
-+            "\
-+.version 8.9
-+.target sm_80, debug
-+.address_size 64
-+.visible .func (.param .b64 retval) shared_helper()
-+{
-+\tret;
-+}
-+.visible .entry b()
-+{
-+\tcall.uni (r0), shared_helper, ();
-+\tret;
-+}
-+",
-+        );
-+
-+        let merged = merge_ptx_bundles([&first,
-```
-
-**File**: `cuda-oxide/crates/cuda-oxide-codegen/src/prep.rs` (modified, +37/-0)
-```diff
-@@ -95,6 +95,17 @@ pub fn prepare_mir_module(
-                     .to_string(),
-             ));
-         }
-+        if has_wgmma_mma_operations(ctx, module) {
-+            let mut analyses = pliron::pass::AnalysisManager::default();
-+            pliron::opts::mem2reg::mem2reg(module, ctx, &mut analyses).map_err(|error| {
-+                PipelineError::Verification {
-+                    name: "mem2reg".to_string(),
-+                    message: error.disp(ctx).to_string(),
-+                    operation: None,
-+                }
-+            })?;
-+            verify_operation(ctx, module, "module post-wgmma-debug-mem2reg")?;
-+        }
-         return Ok(Vec::new());
-     }
- 
-@@ -236,6 +247,32 @@ pub fn prepare_mir_module(
-     Ok(warnings)
- }
- 
-+/// Return whether `root` contains any pointer-form WGMMA MMA operation whose
-+/// accumulator lifetime must be fused into register SSA values before lowering.
-+fn has_wgmma_mma_operations(ctx: &Context, root: Ptr<Operation>) -> bool {
-+    use dialect_nvvm::ops::{
-+        WgmmaMmaM64N64K8F32Tf32Op, WgmmaMmaM64N64K16F32Bf16Op, WgmmaMmaM64N64K16F32F16Op,
-+        WgmmaMmaM64N128K16F32Bf16Op,
-+    };
-+
-+    let mut pending = vec![root];
-+    while let Some(operation) = pending.pop() {
-+        if Operation::is_op::<WgmmaMmaM64N64K16F32Bf16Op>(operation, ctx)
-+            || Operation::is_op::<WgmmaMmaM64N64K16F32F16Op>(operation, ctx)
-+            || Operation::is_op::<WgmmaMmaM64N64K8F32Tf32Op>(operation, ctx)
-+            || Operation::is_op::<WgmmaMmaM64N128K16F32Bf16Op>(operation, ctx)
-+        {
-+            return true;
-+        }
-+        for region in operation.deref(ctx).regions() {
-+            for block in region.deref(ctx).iter(ctx) {
-+                pending.extend(block.deref(ctx).iter(ctx));
-+            }
-+        }
-+    }
-+    false
-+}
-+
- fn has_high_level_cute_operations(ctx: &Context, root: Ptr<Operation>) -> bool {
-     let mut pending = vec![root];
-     while let Some(operation) = pending.pop() {
-```
-
-**File**: `cuda-oxide/crates/mir-importer/src/translator/body.rs` (modified, +25/-0)
-```diff
-@@ -2665,6 +2665,31 @@ pub fn translate_body(
-         }
-     }
- 
-+    // Remove entry-block allocas that have zero uses after translating all
-+    // reachable blocks (such as locals belonging exclusively to unreachable
-+    // blocks or dropped panic-formatting blocks like `core::fmt::rt::Argument`).
-+    // In normal builds `mem2reg` erases unused allocas; pruning them here keeps
-+    // `--device-debug` (which skips `mem2reg`) from lowering dead panic types.
-+    use pliron::linked_list::ContainsLinkedList;
-+    let dead_allocas: Vec<Ptr<Operation>> = block_map[0]
-+        .deref(ctx)
-+        .iter(ctx)
-+        .filter(|&op| {
-+            Operation::get_op::<dialect_mir::ops::MirAllocaOp>(op, ctx).is_some()
-+                && op.deref(ctx).get_result(0).uses(ctx).is_empty()
-+        })
-+        .collect();
-+    if !dead_allocas.is_empty() {
-+        use pliron::irbuild::{
-+            listener::Recorder,
-+            rewriter::{IRRewriter, Rewriter},
-+        };
-+        let mut rewriter = IRRewriter::<Recorder>::default();
-+        for dead in dead_allocas {
-+            rewriter.erase_operation(ctx, dead);
-+        }
-+    }
-+
-     Ok(op_ptr)
- }
- 
-```
-
-**File**: `cuda-oxide/crates/mir-lower/src/wgmma_deferred_accumulator.rs` (modified, +8/-3)
-```diff
-@@ -58,9 +58,10 @@
- use dialect_mir::attributes::MirCastKindAttr;
- use dialect_mir::{
-     ops::{
--        MirAddOp, MirArrayElementAddrOp, MirCastOp, MirCondBranchOp, MirConstantOp, MirFuncOp,
--        MirGeOp, MirGotoOp, MirGtOp, MirLeOp, MirLoadOp, MirLtOp, MirNoUnrollHintOp, MirNotOp,
--        MirStorageDeadOp, MirStorageLiveOp, MirStoreOp, MirSubOp,
-+        MirAddOp, MirArrayElementAddrOp, MirCastOp, MirCondBranchOp, MirConstantOp,
-+        MirDbgValueListOp, MirDbgValueOp, MirFuncOp, MirGeOp, MirGotoOp, MirGtOp, MirLeOp,
-+        MirLoadOp, MirLtOp, MirNoUnrollHintOp, MirNotOp, MirStorageDeadOp, MirStorageLiveOp,
-+        MirStoreOp, MirSubOp,
-     },
-     types::{MirArrayType, MirPtrType, address_space},
- };
-@@ -290,6 +291,8 @@ fn counted_loop_operation_is_supported(ctx: &Context, operation: Ptr<Operation>)
-     // `#[nounroll]` on the K loop leaves a hint in it until lowering. Fusion
-     // replaces the loop and moves the request onto the fused operation
-     Operation::get_op::<MirNoUnrollHintOp>(operation, ctx).is_some()
-+        || Operation::get_op::<MirDbgValueOp>(operation, ctx).is_some()
-+        || Operation::get_op::<MirDbgValueListOp>(operation, ctx).is_some()
-         || Operation::get_op::<MirConstantOp>(operation, ctx).is_some()
-         || Operation::get_op::<ConstantOp>(operation, ctx).is_some()
-         || Operation::get_op::<MirStorageLiveOp>(operation, ctx).is_some()
-@@ -1605,6 +1608,8 @@ fn apply_pointer_fallback(
- 
- fn is_ignorable(ctx: &Context, op: Ptr<Operation>) -> bool {
-     Operation::get_op::<MirNoUnrollHintOp>(op, ctx).is_some()
-+        || Operation::get_op::<MirDbgValueOp>(op, ctx).is_some()
-+        || Operation::get_op::<MirDbgValueListOp>(op, ctx).is_some()
-         || Operation::get_op::<MirConstantOp>(op, ctx).is_some()
-         || Operation::get_op::<ConstantOp>(op, ctx).is_some()
-         || Operation::get_op::<MirStorageLiveOp>(op, ctx).is_some()
-```
-
----
-
-### Incident Patch 3: `8a04da1b` (2026-11-03)
-**Commit Message**: fix(mir-lower): lower float % to libdevice fmod (#1537)
-
-## What This PR Does
-
-Lowers floating-point `mir.rem` (`%`, `%=`, and `rem_euclid`) to
-libdevice `__nv_fmodf` / `__nv_fmod` instead of `llvm.frem`, and records
-float `mir.rem` as strict libdevice use in
-`cuda-oxide-codegen::select_pre_lowering_backend`.
-
----
-
-### Why `llvm.frem` Miscompiled Float `%` on NVPTX
-
-In Rust, floating-point `a % b` is exact C `fmod(a, b)`. LLVM's NVPTX
-backend expands `llvm.frem` to naive floating-point `a - trunc(a / b) *
-b`, which drifts by multiples of `b` when `a / b` exceeds mantissa
-precision, loses the sign of `-0.0 % 3.0`, and overflows to `-inf` on
-`f64::MAX % f64::MIN_POSITIVE`.
-
-```text
-Computing `1e20_f64 % 7.0` on the GPU:
-
-BEFORE (emitted `llvm.frem`):
-  NVPTX expands `frem` to `a - trunc(a / b) * b` in fp64 ──► returns `-6144.0` (38/104 cases fail)
-
-AFTER (calls libdevice `__nv_fmod` / `__nv_fmodf`):
-  Calls exact libdevice `fmod`                           ──► returns `2.0` (104/104 match host bit-for-bit)
-```
-
----
 
 ## Verification
 
-* **GPU Execution (`RTX 5090`, `sm_120a`)**: `cargo oxide run
-float_rem_smoke` matches host `fmod` bit-for-bit across all `26 x 4 =
-104` `f32`/`f64` `%` a
+- [x] 3 consecutive parallel runs of `cargo test -p cuda-host --features
+async --test shared_launch_lifetimes -- --ignored --nocapture` (`4 / 4
+PASS` in `0.21s`)
+- [x] `cargo clippy -p cuda-host --features async --all-targets -- -D
+warnings`
+- [x] `cargo oxide fmt --check`
 
-**File**: `cuda-oxide/crates/cuda-oxide-codegen/src/pipeline.rs` (modified, +123/-2)
+Signed-off-by: nihalpasham <[REDACTED_EMAIL]>
+
+**File**: `cuda-oxide/crates/cuda-host/tests/shared_launch_lifetimes.rs` (modified, +24/-11)
 ```diff
-@@ -1064,8 +1064,9 @@ fn select_pre_lowering_backend(
-     // Only strict use participates in the emit-NVVM-IR decision; otherwise a
-     // kernel using only rounding or sign ops would drag in the libNVVM
-     // dependency it no longer needs.
--    let uses_strict_libdevice =
--        typed_mir_uses_libdevice(ctx, module) || module_uses_libdevice(ctx, module);
-+    let uses_strict_libdevice = typed_mir_uses_libdevice(ctx, module)
-+        || typed_mir_has_float_rem(ctx, module)
-+        || module_uses_libdevice(ctx, module);
-     let uses_backend_dependent_libdevice = typed_mir_calls_match(
-         ctx,
-         module,
-@@ -1101,6 +1102,37 @@ fn typed_mir_uses_libdevice(ctx: &Context, module: Ptr<Operation>) -> bool {
-     })
+@@ -12,13 +12,20 @@ use cuda_core::{Context, DeviceBuffer, LaunchConfig};
+ use std::{
+     future::Future,
+     pin::Pin,
+-    sync::{Arc, mpsc},
++    sync::{Arc, Mutex, mpsc},
+     task::{Context as TaskContext, Waker},
+     time::Duration,
+ };
+ 
+ const PTX: &str = ".version 7.0\n.target sm_52\n.address_size 64\n.visible .entry use_slice(.param .u64 ptr, .param .u64 len) { ret; }";
+ 
++/// CUDA's driver callback thread services `cuLaunchHostFunc` callbacks for the
++/// primary context sequentially, and driver module/allocation calls can block
++/// while a host callback is parked. Serialize these host-callback-gated tests
++/// so default multi-threaded `cargo test` runs do not contend on the driver's
++/// callback worker and trip the 10-second gate timeout.
++static HOST_CALLBACK_GATE_LOCK: Mutex<()> = Mutex::new(());
++
+ struct Gate(mpsc::Sender<()>);
+ impl Drop for Gate {
+     fn drop(&mut self) {
+@@ -27,6 +34,9 @@ impl Drop for Gate {
  }
  
-+/// Whether `module` contains a float `mir.rem`.
-+///
-+/// Float remainder lowers to libdevice `__nv_fmod` / `__nv_fmodf` under
-+/// every intrinsic backend (see `mir_lower::convert::ops::arithmetic`), so
-+/// it is strict libdevice use that carries no `mir.call` to inspect.
-+fn typed_mir_has_float_rem(ctx: &Context, op: Ptr<Operation>) -> bool {
-+    use pliron::builtin::type_interfaces::FloatTypeInterface;
-+    use pliron::r#type::{Typed, type_cast};
-+
-+    if Operation::get_op::<dialect_mir::ops::MirRemOp>(op, ctx).is_some() {
-+        let lhs_ty = op.deref(ctx).get_operand(0).get_type(ctx);
-+        if type_cast::<dyn FloatTypeInterface>(&*lhs_ty.deref(ctx)).is_some() {
-+            return true;
-+        }
-+    }
-+
-+    let op_ref = op.deref(ctx);
-+    for region in op_ref.regions() {
-+        let region_ref = region.deref(ctx);
-+        for block in region_ref.iter(ctx) {
-+            let block_ref = block.deref(ctx);
-+            for child_op in block_ref.iter(ctx) {
-+                if typed_mir_has_float_rem(ctx, child_op) {
-+                    return true;
-+                }
-+            }
-+        }
-+    }
-+    false
-+}
-+
- /// Walk `op` and its regions and return whether any `mir.call` callee
- /// satisfies `matches`.
- fn typed_mir_calls_match(
-@@ -1802,6 +1834,95 @@ mod tests {
-         }
+ fn pending_launch_keeps_access(forget: bool, atomic: bool) {
++    let _guard = HOST_CALLBACK_GATE_LOCK
++        .lock()
++        .unwrap_or_else(|poisoned| poisoned.into_inner());
+     let context = Context::new(0).unwrap();
+     let stream = context.new_stream().unwrap();
+     let other = context.new_stream().unwrap();
+@@ -49,13 +59,6 @@ fn pending_launch_keeps_access(forget: bool, atomic: bool) {
+         cuda_host::push_async_writable_device_slice(&mut builder, &mut buffer);
+         drop(buffer);
      }
- 
-+    /// Build a typed MIR module whose kernel takes two `f32` arguments and
-+    /// one `i32` argument and applies `mir.rem` to the pair `rem_float`
-+    /// selects: the float pair or the integer argument with itself.
-+    fn typed_mir_rem_module(ctx: &mut Context, rem_float: bool) -> Ptr<Operation> {
-+        use pliron::basic_block::BasicBlock;
-+        use pliron::builtin::attributes::TypeAttr;
-+        use pliron::builtin::op_interfaces::SymbolOpInterface;
-+        use pliron::builtin::types::{FP32Type, FunctionType, IntegerType, Signedness};
-+        use pliron::op::Op;
-+        use pliron::r#type::TypeHandle;
-+
-+        dialect_mir::register(ctx);
-+        dialect_nvvm::register(ctx);
-+        let module = pliron::builtin::ops::ModuleOp::new(ctx, "test".try_into().unwrap());
-+        let module_op = module.get_operation();
-+
-+        let f32_ty: TypeHandle = FP32Type::get(ctx).into();
-+        let i32_ty: TypeHandle = IntegerType::get(ctx, 32, Signedness::Signed).into();
-+        let arg_tys = vec![f32_ty, f32_ty, i32_ty];
-+        let function_type = FunctionType::get(ctx, arg_tys.clone(), vec![]);
-+        let function_op = Operation::new(
-+            ctx,
-+            dialect_mir::ops::MirFuncOp::get_concrete_op_info(),
-+            vec![],
-+            vec![],
-+            vec![],
-+            1,
-+        );
-+        let function =
-+            dialect_mir::ops::MirFuncOp::new(ctx, function_op, TypeAttr::new(function_type.into()));
-+        function.set_symbol_name(ctx, "kernel".try_into().unwrap());
-+
-+        let body = function_op.deref(ctx).get_region(0);
-+        let block = BasicBlock::new(ctx, None, arg_tys);
-+        block.insert_at_back(body, ctx);
-+        let (lhs, rhs, result_ty) = if rem_float {
-+            (
-+                block.deref(ctx).get_argument(0),
-+                block.deref(ctx).get_argument(1),
-+                f32_ty,
-+            )
-+        } else {
-+            (
-+                block.deref(ctx).get_argument(2),
-+                block.deref(ctx).get_argument(2),
-+                i32_ty,
-+            )
-+        };
-+        let rem = Operation::new(
-+            ctx,
-+            dialect_mir::ops::MirRemOp::get_concrete_op_info(),
-+            vec![result_ty],
-+            vec![lhs, rhs],
-+            vec![],
-+            0,
-+        );
-+        rem.insert_at_back(block, ctx);
-+
-+        let module_body = module_op.deref(ctx).get_region(0);
-+        let module_block = module_body.deref(ctx).iter(ctx).next().unwrap();
-+        function_op.insert_at_back(module_block, ctx);
-+        module_op
-+    }
-+
-+    /// Float `mir.rem` lowers to `__nv_fmodf` under every backend, so the
-+    /// prediction must flag libdevice before lowering or the post-lowering
-+    /// consistency check would abort the build. Integer `mir.rem` lowers to
-+    /// `srem`/`urem` and contributes nothing.
-+    #[test]
-+    fn float_rem_module_is_predicted_as_st
+-    let (tx, rx) = mpsc::channel();
+-    stream
+-        .launch_host_function(move || {
+-            let _ = rx.recv_timeout(Duration::from_secs(10));
+-        })
+-        .unwrap();
+-    let gate = Gate(tx);
+     // SAFETY: PTX declares exactly the pointer/length packet above and no
+     // memory accesses. The descriptors still model a writable kernel argument,
+     // so this test can observe exclusion without deliberately racing GPU memory.
+@@ -69,6 +72,13 @@ fn pending_launch_keeps_access(forget: bool, atomic: bool) {
+     let mut future = launch
+         .schedule(&SingleStream::from_stream(stream.clone()))
+         .unwrap();
++    let (tx, rx) = mpsc::channel();
++    stream
++        .launch_host_function(move || {
++            let _ = rx.recv_timeout(Duration::from_secs(10));
++        })
++        .unwrap();
++    let gate = Gate(tx);
+     assert!(
+         Pin::new(&mut future)
+             .poll(&mut TaskContext::from_waker(Waker::noop()))
+@@ -121,6 +131,9 @@ fn shared_atomic_arguments_exclude_ordinary_reads_after_drop() {
+ #[test]
+ #[ignore = "requires a live CUDA GPU"]
+ fn device_box_preserves_concurrent_read_permissions() {
++    let _guard = HOST_CALLBACK_GATE_LOCK
++        .lock()
++        .unwrap_or_else(|poisoned| poisoned.into_inner());
+     let context = Context::new(0).unwrap();
+     let stream = context.new_stream().unwrap();
+     let other = context.new_stream().unwrap();
+@@ -148,16 +161,16 @@ fn device_box_preserves_concurrent_read_permissions() {
+         // the no-op kernel never dereferences the modeled shared slices.
+         unsafe { builder.finalize_unchecked(LaunchConfig::for_num_elems(32)) }
+     };
++    let mut first = make_launch()
++        .schedule(&SingleStream::from_stream(stream.clone()))
++        .unwrap();
+     let (tx, rx) = mpsc::channel();
+     stream
+         .launch_host_function(move || {
+             let _ = rx.recv_timeout(Duration::from_secs(10));
+         })
+         .unwrap();
+     let gate = Gate(tx);
+-    let mut first = make_launch()
+-        .schedule(&SingleStream::from_stream(stream.clone()))
+-        .unwrap();
+     assert!(
+         Pin::new(&mut first)
+             .poll(&mut TaskContext::from_waker(Waker::noop()))
 ```
 
-**File**: `cuda-oxide/crates/mir-lower/src/convert/ops/arithmetic.rs` (modified, +94/-7)
+---
+
+### Incident Patch 2: `64f9a2bc` (2026-11-04)
+**Commit Message**: fix(cargo-oxide,llvm-export): preserve inlined helper arguments and locals in --device-debug (#1739)
+
+## What This PR Does
+
+Fixes **NVBug 7038936** (inlined device functions showing `No
+arguments.` and `No locals.` in `cuda-gdb` under `--device-debug`):
+
+```text
+BEFORE (cargo oxide build vecadd --device-debug):
+  1. cargo-oxide passes ReleaseLike without `-Cdebuginfo=2`, so rustc's MIR
+     inliner drops callee `var_debug_info` when inlining device helpers
+  2. Inlined local bindings are placed in nested DILexicalBlocks whose PC
+     ranges collapse on return expressions
+  ──► `(cuda-gdb) info args` -> `No arguments.`
+  ──► `(cuda-gdb) info locals` -> `No locals.`
+
+AFTER:
+  1. Include `-Cdebuginfo=2` in `FULL_DEBUG_MIR_RUSTFLAGS` so rustc's MIR
+     inliner preserves callee `var_debug_info` and parameter/local places
+  2. Scope inlined locals directly to the inlined `DISubprogram`
+  ──► `(cuda-gdb) bt` -> `#0 kernels::scale (v=384, f=1) at src/main.rs:41`
+  ──► `(cuda-gdb) info args` -> `v = 384`, `f = 1`
+  ──► `(cuda-gdb) info locals` -> `scaled = ...`
+```
+
+## Verification
+
+- [x] `cargo test -p cargo-oxide` (`283 / 283 PASS`)
+- [x] `cargo test -p llvm-export --all-targets` (`170 /
+
+**File**: `cuda-oxide/crates/cargo-oxide/src/commands/codegen_env.rs` (modified, +4/-2)
 ```diff
-@@ -13,7 +13,8 @@
- //! | Category      | MIR Operations                    | LLVM Operations                              |
- //! |---------------|-----------------------------------|----------------------------------------------|
- //! | Integer Arith | `add`, `sub`, `mul`, `div`, `rem` | `add`, `sub`, `mul`, `sdiv`/`udiv`, `srem`/`urem` |
--//! | Float Arith   | `add`, `sub`, `mul`, `div`, `rem` | `fadd`, `fsub`, `fmul`, `fdiv`, `frem`       |
-+//! | Float Arith   | `add`, `sub`, `mul`, `div`        | `fadd`, `fsub`, `fmul`, `fdiv`               |
-+//! | Float Rem     | `rem`                             | `call __nv_fmodf` / `call __nv_fmod`         |
- //! | Unary         | `neg`, `not`                      | `fneg` / `sub 0, x`, `xor`                   |
- //! | Bitwise       | `and`, `or`, `xor`, `not`         | `and`, `or`, `xor`                           |
- //! | Shifts        | `shl`, `shr`                      | `shl`, `lshr`/`ashr`                         |
-@@ -30,6 +31,7 @@
- use crate::convert::intrinsics::common::call_intrinsic;
- use crate::convert::types::convert_type;
- use crate::convert::types::{StructLayoutInfo, build_struct_slot_map};
-+use crate::helpers;
- use dialect_mir::types::MirTupleType;
- use llvm_export::attributes::{
-     FCmpPredicateAttr, FastmathFlags, FastmathFlagsAttr, ICmpPredicateAttr,
-@@ -39,6 +41,7 @@ use llvm_export::op_interfaces::{BinArithOp, CastOpInterface, IntBinArithOpWithO
- use llvm_export::ops as llvm;
- use llvm_export::types as llvm_types;
- use pliron::builtin::attributes::IntegerAttr;
-+use pliron::builtin::op_interfaces::CallOpCallable;
- use pliron::builtin::types::{FP32Type, FP64Type, IntegerType, Signedness};
- use pliron::context::{Context, Ptr};
- use pliron::irbuild::dialect_conversion::{DialectConversionRewriter, OperandsInfo};
-@@ -244,7 +247,8 @@ pub(crate) fn convert_div(
-     Ok(())
- }
- 
--/// Convert `mir.rem` to `llvm.srem` (signed), `llvm.urem` (unsigned), or `llvm.frem` (float).
-+/// Convert `mir.rem` to `llvm.srem` (signed), `llvm.urem` (unsigned), or a
-+/// libdevice `fmod` call (float).
+@@ -433,8 +433,10 @@ fn command_requests_full_device_debug_with_env(
  ///
- /// Uses pre-conversion MIR operand type signedness to select between signed
- /// and unsigned integer remainder.
-@@ -256,11 +260,11 @@ pub(crate) fn convert_rem(
- ) -> Result<()> {
-     let (lhs, rhs) = get_binary_operands(op, ctx)?;
+ /// We avoid `-Zmir-opt-level=0` because its extra MIR shapes do not all import.
+ /// These controls affect full-debug builds only.
+-pub(super) const FULL_DEBUG_MIR_RUSTFLAGS: &[&str] =
+-    &["-Zmir-enable-passes=-ScalarReplacementOfAggregates,-SingleUseConsts"];
++pub(super) const FULL_DEBUG_MIR_RUSTFLAGS: &[&str] = &[
++    "-Cdebuginfo=2",
++    "-Zmir-enable-passes=-ScalarReplacementOfAggregates,-SingleUseConsts",
++];
  
--    let llvm_op = if is_float_type(ctx, lhs) {
--        let frem = llvm::FRemOp::new(ctx, lhs, rhs);
--        add_fastmath_flags(ctx, frem.get_operation());
--        frem.get_operation()
--    } else if is_signed_int_op(ctx, op, operands_info)? {
-+    if is_float_type(ctx, lhs) {
-+        return convert_float_rem(ctx, rewriter, op, lhs, rhs);
-+    }
-+
-+    let llvm_op = if is_signed_int_op(ctx, op, operands_info)? {
-         llvm::SRemOp::new(ctx, lhs, rhs).get_operation()
-     } else {
-         llvm::URemOp::new(ctx, lhs, rhs).get_operation()
-@@ -271,6 +275,89 @@ pub(crate) fn convert_rem(
-     Ok(())
- }
- 
-+/// libdevice entry point for `f64` remainder.
-+pub const LIBDEVICE_FMOD_F64: &str = "__nv_fmod";
-+/// libdevice entry point for `f32` remainder (also used for `f16` after widening).
-+pub const LIBDEVICE_FMOD_F32: &str = "__nv_fmodf";
-+
-+/// Convert float `mir.rem` to a libdevice `fmod` call.
-+///
-+/// Rust float `%` is C `fmod`: exact for every finite operand pair, with
-+/// the sign of the dividend. `llvm.frem` is not a usable lowering on NVPTX,
-+/// whose backend expands it to `a - trunc(a / b) * b` in floating point.
-+/// That drifts by whole multiples of `b` once `a / b` is too large to be an
-+/// exact integer (`1e20_f64 % 7.0` gave `-6144.0` instead of `2.0`), loses
-+/// the sign of a zero result, and overflows to infinity when `a / b` does.
-+///
-+/// `f16` has no libdevice entry. It widens to `f32`, where `fmod` of two
-+/// `f16` values is still exact and its result is representable in `f16`,
-+/// then narrows back.
-+fn convert_float_rem(
-+    ctx: &mut Context,
-+    rewriter: &mut DialectConversionRewriter,
-+    op: Ptr<Operation>,
-+    lhs: Value,
-+    rhs: Value,
-+) -> Result<()> {
-+    let loc = op.deref(ctx).loc().clone();
-+    let value_ty = lhs.get_type(ctx);
-+    let (callee, call_ty) = if value_ty.deref(ctx).is::<FP64Type>() {
-+        (LIBDEVICE_FMOD_F64, value_ty)
-+    } else {
-+        (LIBDEVICE_FMOD_F32, FP32Type::get(ctx).into())
-+    };
-+    let widen = value_ty != call_ty;
-+
-+    let (a, b) = if widen {
-+        let a = llvm::FPExtOp::new(ctx, lhs, call_ty).get_operation();
-+        set_empty_fastmath_flags(ctx, a);
-+        rewriter.insert_operation(ctx, a);
-+        let b = llvm::FPExtOp::new(ctx, rhs, call_ty).get_operation();
-+        set_empty_fastmath_flags(ctx, b);
-+        rewriter.insert_operation(ctx, b);
-+        (a.deref(ctx).get_result(0), b.deref(ctx).get_result(0))
-+    } else {
-+        (lhs, rhs)
-+    };
-+
-+    let func_ty = llvm_types::FuncType::get(ctx, call_ty, vec![call_ty, call_ty], false);
-+    let parent_block = op
-+        .deref(ctx)
-+        .get_parent_block()
-+        .ok_or_el
+ pub(super) fn append_full_debug_rustflags(
+     encoded: &mut String,
 ```
 
-**File**: `cuda-oxide/crates/mir-lower/tests/lowering_test/math_conversions.rs` (modified, +70/-0)
+**File**: `cuda-oxide/crates/cargo-oxide/src/commands/tests.rs` (modified, +2/-0)
 ```diff
-@@ -3265,3 +3265,73 @@ fn test_float_to_int_unchecked_rejects_wide_destination() {
-         .to_string();
-     assert!(error.contains("wider than 64 bits"), "{error}");
- }
-+
-+/// Rust float `%` is C `fmod`, exact for every finite pair. NVPTX expands
-+/// `llvm.frem` inexactly (`a - trunc(a / b) * b`), so float `mir.rem` must
-+/// lower to a libdevice `fmod` call on both widths, while integer `mir.rem`
-+/// keeps lowering to `srem` / `urem`.
-+#[test]
-+fn test_float_rem_lowers_to_libdevice_fmod() -> Result<(), anyhow::Error> {
-+    use mir_lower::convert::ops::arithmetic::{LIBDEVICE_FMOD_F32, LIBDEVICE_FMOD_F64};
-+    use pliron::builtin::types::{FP32Type, FP64Type, IntegerType, Signedness};
-+    use pliron::r#type::TypeHandle;
-+
-+    let mut ctx = make_test_ctx();
-+    let f32_ty: TypeHandle = FP32Type::get(&ctx).into();
-+    let f64_ty: TypeHandle = FP64Type::get(&ctx).into();
-+    let i32_ty: TypeHandle = IntegerType::get(&ctx, 32, Signedness::Signed).into();
-+    let u32_ty: TypeHandle = IntegerType::get(&ctx, 32, Signedness::Unsigned).into();
-+    let (module_ptr, entry) = build_test_kernel(
-+        &mut ctx,
-+        vec![f32_ty, f32_ty, f64_ty, f64_ty, i32_ty, u32_ty],
-+    );
-+    let arg = |ctx: &Context, i: usize| entry.deref(ctx).get_argument(i);
-+    let operands = [
-+        (arg(&ctx, 0), arg(&ctx, 1), f32_ty),
-+        (arg(&ctx, 2), arg(&ctx, 3), f64_ty),
-+        (arg(&ctx, 4), arg(&ctx, 4), i32_ty),
-+        (arg(&ctx, 5), arg(&ctx, 5), u32_ty),
-+    ];
-+    for (lhs, rhs, result_ty) in operands {
-+        let rem = Operation::new(
-+            &mut ctx,
-+            mir::MirRemOp::get_concrete_op_info(),
-+            vec![result_ty],
-+            vec![lhs, rhs],
-+            vec![],
-+            0,
-+        );
-+        rem.insert_at_back(entry, &ctx);
-+    }
-+    append_return(&mut ctx, entry);
-+
-+    mir_lower::lower_mir_to_llvm(&mut ctx, module_ptr).map_err(|e| anyhow::anyhow!("{}", e))?;
-+
-+    let mut callees = Vec::new();
-+    let mut frem = 0usize;
-+    let mut srem = 0usize;
-+    let mut urem = 0usize;
-+    for body_op in lowered_kernel_body(&ctx, module_ptr) {
-+        if let Some(call) = Operation::get_op::<llvm::CallOp>(body_op, &ctx)
-+            && let CallOpCallable::Direct(sym) = call.callee(&ctx)
-+        {
-+            callees.push(sym.to_string());
-+        }
-+        frem += usize::from(Operation::get_op::<llvm::FRemOp>(body_op, &ctx).is_some());
-+        srem += usize::from(Operation::get_op::<llvm::SRemOp>(body_op, &ctx).is_some());
-+        urem += usize::from(Operation::get_op::<llvm::URemOp>(body_op, &ctx).is_some());
-+    }
-+
-+    assert_eq!(
-+        callees,
-+        vec![
-+            LIBDEVICE_FMOD_F32.to_string(),
-+            LIBDEVICE_FMOD_F64.to_string()
-+        ],
-+        "float mir.rem must lower to libdevice fmod on each width"
-+    );
-+    assert_eq!(frem, 0, "float mir.rem must not lower to llvm.frem");
-+    assert_eq!(srem, 1, "signed mir.rem must lower to llvm.srem");
-+    assert_eq!(urem, 1, "unsigned mir.rem must lower to llvm.urem");
-+    Ok(())
-+}
+@@ -5850,6 +5850,7 @@ fn full_device_debug_applies_only_the_targeted_debug_controls() {
+             "base",
+             "--cfg",
+             FULL_DEBUG_GET_MUT_OUTLINE_CFG,
++            "-Cdebuginfo=2",
+             "-Zmir-enable-passes=-ScalarReplacementOfAggregates,-SingleUseConsts"
+         ]
+     );
+@@ -5873,6 +5874,7 @@ fn numeric_full_debug_alias_selects_the_same_rustc_controls() {
+             "base",
+             "--cfg",
+             FULL_DEBUG_GET_MUT_OUTLINE_CFG,
++            "-Cdebuginfo=2",
+             "-Zmir-enable-passes=-ScalarReplacementOfAggregates,-SingleUseConsts"
+         ]
+     );
 ```
 
-**File**: `cuda-oxide/crates/rustc-codegen-cuda/examples/float_rem_smoke/Cargo.lock` (added, +630/-0)
+**File**: `cuda-oxide/crates/llvm-export/src/export/debug.rs` (modified, +3/-1)
 ```diff
-@@ -0,0 +1,630 @@
-+# This file is automatically @generated by Cargo.
-+# It is not intended for manual editing.
-+version = 4
-+
-+[[package]]
-+name = "aho-corasick"
-+version = "1.1.4"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "ddd31a130427c27518df266943a5308ed92d4b226cc639f5a8f1002816174301"
-+dependencies = [
-+ "memchr",
-+]
-+
-+[[package]]
-+name = "anyhow"
-+version = "1.0.102"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "7f202df86484c868dbad7eaa557ef785d5c66295e41b460ef922eca0723b842c"
-+
-+[[package]]
-+name = "bindgen"
-+version = "0.72.1"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "993776b509cfb49c750f11b8f07a46fa23e0a1386ffc01fb1e7d343efc387895"
-+dependencies = [
-+ "bitflags",
-+ "cexpr",
-+ "clang-sys",
-+ "itertools",
-+ "log",
-+ "prettyplease",
-+ "proc-macro2",
-+ "quote",
-+ "regex",
-+ "rustc-hash",
-+ "shlex",
-+ "syn",
-+]
-+
-+[[package]]
-+name = "bitflags"
-+version = "2.13.0"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "b4388bee8683e3d04af747c73422af53102d2bd24d9eadb6cbc100baef4b43f8"
-+
-+[[package]]
-+name = "block-buffer"
-+version = "0.10.4"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "3078c7629b62d3f0439517fa394996acacc5cbc91c5a20d8c658e77abd503a71"
-+dependencies = [
-+ "generic-array",
-+]
-+
-+[[package]]
-+name = "bytemuck"
-+version = "1.25.0"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "c8efb64bd706a16a1bdde310ae86b351e4d21550d98d056f22f8a7f7a2183fec"
-+dependencies = [
-+ "bytemuck_derive",
-+]
-+
-+[[package]]
-+name = "bytemuck_derive"
-+version = "1.10.2"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "f9abbd1bc6865053c427f7198e6af43bfdedc55ab791faed4fbd361d789575ff"
-+dependencies = [
-+ "proc-macro2",
-+ "quote",
-+ "syn",
-+]
-+
-+[[package]]
-+name = "cexpr"
-+version = "0.6.0"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "6fac387a98bb7c37292057cffc56d62ecb629900026402633ae9160df93a8766"
-+dependencies = [
-+ "nom",
-+]
-+
-+[[package]]
-+name = "cfg-if"
-+version = "1.0.4"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "9330f8b2ff13f34540b44e946ef35111825727b38d33286ef986142615121801"
-+
-+[[package]]
-+name = "clang-sys"
-+version = "1.8.1"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "0b023947811758c97c59bf9d1c188fd619ad4718dcaa767947df1cadb14f39f4"
-+dependencies = [
-+ "glob",
-+ "libc",
-+ "libloading",
-+]
-+
-+[[package]]
-+name = "cpufeatures"
-+version = "0.2.17"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "59ed5838eebb26a2bb2e58f6d5b5316989ae9d08bab10e0e6d103e656d1b0280"
-+dependencies = [
-+ "libc",
-+]
-+
-+[[package]]
-+name = "crc32fast"
-+version = "1.5.0"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "9481c1c90cbf2ac953f07c8d4a58aa3945c425b7185c9154d67a65e4230da511"
-+dependencies = [
-+ "cfg-if",
-+]
-+
-+[[package]]
-+name = "crunchy"
-+version = "0.2.4"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "460fbee9c2c2f33933d720630a6a0bac33ba7053db5344fac858d4b8952d77d5"
-+
-+[[package]]
-+name = "crypto-common"
-+version = "0.1.7"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "78c8292055d1c1df0cce5d180393dc8cce0abec0a7102adb6c7b1eef6016d60a"
-+dependencies = [
-+ "generic-array",
-+ "typenum",
-+]
-+
-+[[package]]
-+name = "cuda-artifact-finalizer"
-+version = "0.3.0"
-+dependencies = [
-+ "libnvvm-sys",
-+ "nvjitlink-sys",
-+ "serde",
-+ "sha2",
-+ "thiserror",
-+]
-+
-+[[package]]
-+name = "cuda-bindings"
-+version = "0.5.0"
-+dependencies = [
-+ "bindgen",
-+ "libloading",
-+ "prettyplease",
-+ "proc-macro2",
-+ "quote",
-+ "syn",
-+]
-+
-+[[package]]
-+name = "cuda-core"
-+version = "0.5.0"
-+dependencies = [
-+ "anyhow",
-+ "bytemuck",
-+ "cuda-bindings",
-+ "cuda-core-derive",
-+ "cuda-repr",
-+ "half",
-+ "oxide-artifacts",
-+]
-+
-+[[package]]
-+name = "cuda-core-derive"
-+version = "0.5.0"
-+dependencies = [
-+ "proc-macro2",
-+ "quote",
-+ "syn",
-+]
-+
-+[[package]]
-+name = "cuda-device"
-+version = "0.3.0"
-+dependencies = [
-+ "bytemuck",
-+ "cuda-macros",
-+ "cuda-repr",
-+]
-+
-+[[package]]
-+name = "cuda-host"
-+version = "0.3.0"
-+dependencies = [
-+ "cuda-artifact-finalizer",
-+ "cuda-core",
-+ "cuda-device",
-+ "cuda-macros",
-+ "half",
-+ "libc",
-+ "oxide-artifacts",
-+ "ptx-parse",
-+ "sha2",
-+ "thiserror",
-+]
-+
-+[[package]]
-+name = "cuda-macros"
-+version = "0.3.0"
-+dependencies = [
-+ "oxide-tile-export",
-+ "proc-macro2",
-+ "quote",
-+ "reserved-oxide-symbols",
-+ "syn",
-+]
-+
-+[[package]]
-+name = "cuda-repr"
-+version = "0.5.0"
-+
-+[[package]]
-+name = "cuda-target-spec"
-+version = "0.3.0"
-+
-+[[package]]
-+name = "digest"
-+version = "0.10.7"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "9ed9a281f7bc9b7576e61468ba615a66a5c8cfdff42420a70aa82701a3b1e292"
-+dependencies = [
-+ "block-buffer",
-+ "crypto-common",
-+]
-+
-
-```
-
-**File**: `cuda-oxide/crates/rustc-codegen-cuda/examples/float_rem_smoke/Cargo.toml` (added, +13/-0)
-```diff
-@@ -0,0 +1,13 @@
-+[package]
-+name = "float_rem_smoke"
-+version = "0.1.0"
-+edition = "2024"
-+license = "Apache-2.0"
-+
-+# Standalone crate (not part of parent workspace).
-+[workspace]
-+
-+[dependencies]
-+cuda-device = { path = "../../../cuda-device" }
-+cuda-host = { path = "../../../cuda-host" }
-+cuda-core = { path = "../../../../../cuda-core" }
-```
-
-**File**: `cuda-oxide/crates/rustc-codegen-cuda/examples/float_rem_smoke/README.md` (added, +34/-0)
-```diff
-@@ -0,0 +1,34 @@
-+# float_rem_smoke
-+
-+## Float `%` is exact
-+
-+This example checks that the float remainder operator (`%`, `%=` and the
-+`rem_euclid` helper built on it) in device code matches the host for the
-+same operands, bit for bit.
-+
-+## What This Example Does
-+
-+- Four kernels (`%` and `rem_euclid`, one per float width) compute
-+  `xs[i] % ys[i]` per element.
-+- The host evaluates the same expressions with stdlib `f{32,64}` and
-+  compares bit patterns. Rust float remainder is C `fmod`, which is exact
-+  for every finite operand pair, so no tolerance is needed.
-+- The operand set includes quotients far beyond `2^53` (`1e20 % 7.0`,
-+  `3e17 % 0.7`), sign combinations, signed zero, subnormal divisors, and
-+  NaN/infinity edge cases. The large-quotient cases are the regression:
-+  a lowering that computes `a - trunc(a / b) * b` is off by thousands
-+  there.
-+
-+Exits 0 on PASS, 1 on FAIL.
-+
-+## Pipeline
-+
-+The kernels lower `%` to libdevice `__nv_fmodf` / `__nv_fmod`, so the
-+pipeline resolves them the same way it resolves the other libdevice math
-+calls (IR-level link or libNVVM, depending on the toolkit).
-+
-+## Run
-+
-+```bash
-+cargo oxide run float_rem_smoke
-+```
-```
-
-**File**: `cuda-oxide/crates/rustc-codegen-cuda/examples/float_rem_smoke/src/main.rs` (added, +227/-0)
-```diff
-@@ -0,0 +1,227 @@
-+/*
-+ * SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
-+ * SPDX-License-Identifier: Apache-2.0
-+ */
-+
-+//! Smoke test for float `%` in device code.
-+//!
-+//! Rust defines `a % b` on floats as C `fmod`: the result is exact for every
-+//! finite pair, `a - n * b` for the truncated integer quotient `n`, with the
-+//! sign of `a`. Lowering `%` to LLVM `frem` is not enough on NVPTX, whose
-+//! backend expands `frem` to `a - trunc(a / b) * b` in floating point. Once
-+//! `a / b` is too large to be an exact integer in the operand width, the
-+//! expansion drifts by whole multiples of `b`: `1e20_f64 % 7.0` came back as
-+//! `-6144.0` instead of `2.0`.
-+//!
-+//! Each kernel computes the same expression the host computes, and the host
-+//! compares the bit patterns (NaN matches NaN). `%=` and `rem_euclid` are
-+//! covered because both reach the same remainder lowering.
-+//!
-+//! Run:
-+//!     cargo oxide run float_rem_smoke
-+//!
-+//! Exits 0 on PASS, 1 on FAIL.
-+
-+use cuda_core::LaunchConfig;
-+use cuda_core::{CudaContext, DeviceBuffer};
-+use cuda_device::{DisjointSlice, kernel, thread};
-+use cuda_host::{cuda_module, ltoir};
-+
-+#[cuda_module]
-+mod kernels {
-+    use super::*;
-+
-+    #[kernel]
-+    pub fn rem_f32(xs: &[f32], ys: &[f32], mut out: DisjointSlice<f32>) {
-+        let idx = thread::index_1d();
-+        let i = idx.get();
-+        if i < xs.len()
-+            && i < ys.len()
-+            && let Some(slot) = out.get_mut(idx)
+@@ -575,7 +575,9 @@ impl<'a> ModuleExportState<'a> {
+                 scope: callee_scope,
+                 inlined_at,
+             }
+-        } else if let Some(span) = source_scope_data.span.as_ref() {
++        } else if parent.inlined_at.is_none()
++            && let Some(span) = source_scope_data.span.as_ref()
 +        {
-+            let mut r = xs[i];
-+            r %= ys[i];
-+            *slot = r;
-+        }
-+    }
-+
-+    #[kernel]
-+    pub fn rem_f64(xs: &[f64], ys: &[f64], mut out: DisjointSlice<f64>) {
-+        let idx = thread::index_1d();
-+        let i = idx.get();
-+        if i < xs.len()
-+            && i < ys.len()
-+            && let Some(slot) = out.get_mut(idx)
-+        {
-+            *slot = xs[i] % ys[i];
-+        }
-+    }
-+
-+    #[kernel]
-+    pub fn rem_euclid_f32(xs: &[f32], ys: &[f32], mut out: DisjointSlice<f32>) {
-+        let idx = thread::index_1d();
-+        let i = idx.get();
-+        if i < xs.len()
-+            && i < ys.len()
-+            && let Some(slot) = out.get_mut(idx)
-+        {
-+            *slot = xs[i].rem_euclid(ys[i]);
-+        }
-+    }
-+
-+    #[kernel]
-+    pub fn rem_euclid_f64(xs: &[f64], ys: &[f64], mut out: DisjointSlice<f64>) {
-+        let idx = thread::index_1d();
-+        let i = idx.get();
-+        if i < xs.len()
-+            && i < ys.len()
-+            && let Some(slot) = out.get_mut(idx)
-+        {
-+            *slot = xs[i].rem_euclid(ys[i]);
-+        }
-+    }
-+}
-+
-+/// Operand pairs. The host-side cast to `f32` keeps the two widths on the
-+/// same table; the f32 cases are still large-quotient cases after rounding.
-+fn operands_f64() -> Vec<(f64, f64)> {
-+    vec![
-+        // Large quotients: trunc(a / b) is not an exact integer anymore.
-+        (1e20, 7.0),
-+        (-1e20, 7.0),
-+        (1e20, -3.0),
-+        (-1e20, -3.0),
-+        (3e17, 0.7),
-+        (f64::from(0xCAFE_BABE_u32), 3.0),
-+        (f64::MAX, 3.0),
-+        (f64::MAX, f64::MIN_POSITIVE),
-+        (1e300, 1e-300),
-+        // Small quotients, where the naive expansion also happens to work.
-+        (5.5, 2.0),
-+        (-5.5, 2.0),
-+        (5.5, -2.0),
-+        (-5.5, -2.0),
-+        (0.0, 3.0),
-+        (-0.0, 3.0),
-+        (2.0, 8.0),
-+        (-2.0, 8.0),
-+        (7.0, 7.0),
-+        (-7.0, 7.0),
-+        // Subnormal divisor, infinite and NaN edges.
-+        (1.0, 5e-324),
-+        (1.0, f64::INFINITY),
-+        (-1.0, f64::INFINITY),
-+        (f64::INFINITY, 2.0),
-+        (2.0, 0.0),
-+        (f64::NAN, 2.0),
-+        (2.0, f64::NAN),
-+    ]
-+}
-+
-+fn same_f32(a: f32, b: f32) -> bool {
-+    (a.is_nan() && b.is_nan()) || a.to_bits() == b.to_bits()
-+}
-+
-+fn same_f64(a: f64, b: f64) -> bool {
-+    (a.is_nan() && b.is_nan()) || a.to_bits() == b.to_bits()
-+}
-+
-+fn main() -> Result<(), Box<dyn std::error::Error>> {
-+    println!("=== float_rem_smoke: f32/f64 % against host fmod ===\n");
-+
-+    let ctx = CudaContext::new(0)?;
-+    let stream = ctx.default_stream();
-+    let module = ltoir::load_kernel_module(&ctx, "float_rem_smoke")?;
-+    let module = kernels::from_module(module)?;
-+
-+    let pairs = operands_f64();
-+    let xs_f64: Vec<f64> = pairs.iter().map(|p| p.0).collect();
-+    let ys_f64: Vec<f64> = pairs.iter().map(|p| p.1).collect();
-+    let xs_f32: Vec<f32> = xs_f64.iter().map(|&v| v as f32).collect();
-+    let ys_f32: Vec<f32> = ys_f64.iter().map(|&v| v as f32).collect();
-+    let n = pairs.len();
-+    let cfg = LaunchConfig::for_num_elems(n as u32);
-+
-+    let xs32 = DeviceBuffer::from_host(&stream, &xs_f32)?;
-+    let ys32 = DeviceBuffer::from_host(&stream, &ys_f32)?;
-+    let xs64 = DeviceBuffer::from_host(&stream, &xs_f64)?;
-+    let ys64 = DeviceBuffer::from_host(&stream, &ys_f64)?;
-+
-+    let mut out_rem_f32 = DeviceBuffer::<f32>::zeroed(&stream, n)?;
-+    let mut out_rem_f64 = De
+             ResolvedDebugScope {
+                 scope: self.ensure_debug_lexical_block(parent.scope, span)?,
+                 inlined_at: parent.inlined_at,
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1745** (2026-11-05): release(v0.5.0): CUDA 13.5 communication and tile-library support (@elibol)
+- **PR #1744** (closed): feat(cutile): CUDA 13.5 communication and tile-library support (@elibol)
+- **PR #1742** (2026-11-04): fix(cuda-host): serialize host-callback-gated GPU tests in shared_launch_lifetimes (NVBug 7043934) (@nihalpasham)
+- **PR #1741** (2026-11-04): feat(mir-importer): emit host-style { data_ptr, length } DWARF structs for slice and str fat pointers (@nihalpasham)
+- **PR #1739** (2026-11-04): fix(cargo-oxide,llvm-export): preserve inlined helper arguments and locals in --device-debug (@nihalpasham)
 - **PR #1738** (2026-11-04): fix(cuda-oxide): resolve --device-debug compile/merge failures in clamp, WGMMA, and multi-crate PTX (@nihalpasham)
-- **PR #1735** (2026-11-04): fix(cuda-oxide): anchor relative DIFile paths, emit 32-bit AS3 pointer DWARF, and preserve store !dbg (@nihalpasham)
-- **PR #1733** (2026-11-04): fix(mir-importer): unwrap rustc_public Debug template in libm inline asm (NVBug 7024210) (@nihalpasham)
-- **PR #1703** (2026-11-02): fix(cuda-oxide): order mbarrier init, pre-arrival try_wait, and arrival in shared_memory_helper (@nihalpasham)
-- **PR #1702** (2026-11-02): fix(cuda-oxide): resolve SWQA v0.5.0 failures on A100, R100, and ARM64 (@nihalpasham)
-- **PR #1701** (2026-11-02): refactor(cute-rs): unify layout algebra in cute-layout and eliminate hand-rolled kernel index math (@nihalpasham)
 
 ---
 
@@ -3696,64 +2514,61 @@ float_rem_smoke` matches host `fmod` bit-for-bit across all `26 x 4 =
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. mir-importer): lower is_val_statically_known to false (#1359)
+## X. cuda-host): serialize host-callback-gated GPU tests in shared_launch_lifetimes (
 
 **RULE**:
-When implementing operations in `cuda-oxide/crates/mir-importer/src/translator/terminator/helpers.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NVIDIA/cuda-rust. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cuda-oxide/crates/cuda-host/tests/shared_launch_lifetimes.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NVIDIA/cuda-rust. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a38e8446`: mir-importer): lower is_val_statically_known to false (#1359). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2378e98b`: cuda-host): serialize host-callback-gated GPU tests in shared_launch_lifetimes (NVBug 7043934) (#1742). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `cuda-oxide/crates/mir-importer/src/translator/terminator/helpers.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `cuda-oxide/crates/cuda-host/tests/shared_launch_lifetimes.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    ops::{MirCallOp, MirConstantOp, MirConstructArrayOp, MirGotoOp},
-/// Emits a `bool`-returning intrinsic whose result is a fixed constant.
-///
-/// Used for `core::intrinsics::is_val_statically_known`, which may return
-/// `false` for any argument. The argument is a MIR operand with no side
-/// effects, so it is not evaluated.
-#[allow(clippy::too_many_arguments)]
-pub fn emit_bool_constant_intrinsic(
-    ctx: &mut Context,
-    body: &mir::Body,
-    destination: &mir::Place,
-    target: &Option<usize>,
-    block_ptr: Ptr<BasicBlock>,
-    prev_op: Option<Ptr<Operation>>,
-    value_map: &mut ValueMap,
-    block_map: &[Ptr<BasicBlock>],
-    loc: Location,
-    intrinsic_name: &str,
-    value: bool,
-) -> TranslationResult<Ptr<Operation>> {
-    use pliron::builtin::attributes::IntegerAttr;
-    use pliron::utils::apint::APInt;
+    sync::{Arc, Mutex, mpsc},
+/// CUDA's driver callback thread services `cuLaunchHostFunc` callbacks for the
+/// primary context sequentially, and driver module/allocation calls can block
+/// while a host callback is parked. Serialize these host-callback-gated tests
+/// so default multi-threaded `cargo test` runs do not contend on the driver's
+/// callback worker and trip the 10-second gate timeout.
+static HOST_CALLBACK_GATE_LOCK: Mutex<()> = Mutex::new(());
 
-    let (prepared_destination, prepared_last_op) = prepare_destination_write(
-        ctx,
-        body,
-        destination,
-        value_map,
-        block_ptr,
-        prev_op,
-        loc.clone(),
-    )?;
-
-    let bool_ty = IntegerType::get(ctx, 1, Signedness::Signless);
-    let const_op = Operation::new(
-        ctx,
-        MirConstantOp::get_concrete_op_inf
+    let _guard = HOST_CALLBACK_GATE_LOCK
+        .lock()
+        .unwrap_or_else(|poisoned| poisoned.into_inner());
+    let (tx, rx) = mpsc::channel();
+    stream
+        .launch_host_function(move || {
+            let _ = rx.recv_timeout(Duration::from_secs(10));
+        })
+        .unwrap();
+    let gate = Gate(tx);
+    let _guard = HOST_CALLBACK_GATE_LOCK
+        .lock()
+        .unwrap_or_else(|poisoned| poisoned.into_inner());
+    let mut first = make_launch()
+        .schedule(&SingleStream::from_stream(stream.clone()))
+        .unwrap();
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-    ops::{MirCallOp, MirConstructArrayOp, MirGotoOp},
+    sync::{Arc, mpsc},
+    let (tx, rx) = mpsc::channel();
+    stream
+        .launch_host_function(move || {
+            let _ = rx.recv_timeout(Duration::from_secs(10));
+        })
+        .unwrap();
+    let gate = Gate(tx);
+    let mut first = make_launch()
+        .schedule(&SingleStream::from_stream(stream.clone()))
+        .unwrap();
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a38e8446` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2378e98b` are properly handled with clean fallback behavior.

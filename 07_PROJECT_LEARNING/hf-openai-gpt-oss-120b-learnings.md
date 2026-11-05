@@ -3,7 +3,7 @@
 > **Source Version**: `hf-openai-gp`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T14:39:24.212Z  
+> **Timestamp**: 2026-11-05T05:32:14.611Z  
 > **Learning ID**: `learn-huggingface-openai-gpt-oss-120b`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-openai-gpt-oss-120b-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/openai/gpt-oss-120b](https://huggingface.co/openai/gpt-oss-120b))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T14:39:23.452Z  
+> **Harvest Timestamp**: 2026-11-05T05:32:13.874Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: text-generation
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 2628619 downloads | 5471 likes
+- **Stars / Engagement**: 2453806 downloads | 5490 likes
 
 ---
 

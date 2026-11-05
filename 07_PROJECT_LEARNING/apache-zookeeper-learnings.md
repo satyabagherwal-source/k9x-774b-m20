@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/apache-zookeeper-learnings.md`  
 > **Source**: github ([https://github.com/apache/zookeeper](https://github.com/apache/zookeeper))  
-> **Source Version**: `a9d2ce60`  
+> **Source Version**: `87e85f28`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T10:20:21.262Z  
+> **Timestamp**: 2026-11-05T06:15:10.873Z  
 > **Learning ID**: `learn-github-apache-zookeeper`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/apache-zookeeper-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/apache/zookeeper](https://github.com/apache/zookeeper))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T10:20:20.766Z  
+> **Harvest Timestamp**: 2026-11-05T06:15:10.865Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1800,13 +1800,15 @@ def cherry_pick(pr_num, merge_hash, default_branch):
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #2487** (2026-11-04): **ZOOKEEPER-5116: Pin website and CI build runner to ubuntu-24.04 to fix website and CI build**
-  *Symptoms*: ### Pin website CI runner to ubuntu-24.04  Playwright's bundled browsers are compiled against ICU 74 which is not available on Ubuntu 26.04 (the current ubuntu-latest). Pin the runner to ubuntu-24.04 where the required system libraries (libicudata.so.74, libicui18n.so.74, libicuuc.so.74, libxml2.so.2) are available.  Co-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>  ###  Pin CI build runner to ubuntu-24.04  The newer GCC on Ubuntu 26.04 is stricter about strchr() returning const char* when given a const char* input (aligning with C23 semantics), which triggers -Werror=discarded-qualifiers.  ### About runner pinning  Ubuntu 24.04 LTS reaches end of life in April 2029, but GitHub typically drops runner images ~6 months after EOL, so realistically mid-to-late 2029.  For the website the longer-term fix is upgrading Playwright to a version that supports the newer Ubuntu (and its ICU version). Worth revisiting when Playwright releases support for 26.04, at which point you can switch back to ubuntu-latest.  ### Use newer actions/cache version  To be consistent with other usages of cache action.
-
-- **Issue #2476** (2026-10-20): **ZOOKEEPER-5097: Make DataTree snapshot serialization iterative**
-  *Symptoms*: DataTree.serializeNode walked the tree recursively, one frame per znode level, which does not scale to very deep trees. Rewrite it as an iterative pre-order traversal over an explicit heap stack, removing the dependency on tree depth. Traversal order, per-node locking and emitted records are unchanged, so the on-disk snapshot format is identical. Adds a regression test that serializes a very deep chain on a small-stack thread and checks it round-trips.  Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>
+- **Issue #2492** (2026-11-04): **ZOOKEEPER-5116: Pin CI build runner to ubuntu-24.04 to fix CI build**
+  *Symptoms*: Reviewers: kezhuw Author: PDavid Closes #2487 from PDavid/ZOOKEEPER-5116  (cherry picked from commit a9d2ce608314851c71eb09754d4c4698ff489ff5)
   **Post-Mortem & Fix Analysis**:
-  > Merged. Thanks @kezhuw @PDavid !
+  > Cherry-picked the master commit which if course did not apply cleanly because there is no website build in this branch.
+
+- **Issue #2491** (2026-11-04): **ZOOKEEPER-5116: Pin CI build runner to ubuntu-24.04 to fix CI build**
+  *Symptoms*: Reviewers: kezhuw Author: PDavid Closes #2487 from PDavid/ZOOKEEPER-5116  (cherry picked from commit a9d2ce608314851c71eb09754d4c4698ff489ff5)
+  **Post-Mortem & Fix Analysis**:
+  > Cherry-picked the master commit which if course did not apply cleanly because there is no website build in this branch.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1823,125 +1825,99 @@ def cherry_pick(pr_num, merge_hash, default_branch):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a9d2ce60` (2026-11-04)
-**Commit Message**: ZOOKEEPER-5116: Pin website and CI build runner to ubuntu-24.04 to fix website and CI build
+### Incident Patch 1: `87e85f28` (2026-11-04)
+**Commit Message**: ZOOKEEPER-5108: Client SASL settings set to true with trailing whitespace are read as false
 
-Reviewers: kezhuw
-Author: PDavid
-Closes #2487 from PDavid/ZOOKEEPER-5116
+Reviewers: kezhuw, anmolnar
+Author: dajiaohuang
+Closes #2484 from dajiaohuang/ZOOKEEPER-5108
 
-**File**: `.github/workflows/ci.yaml` (modified, +1/-1)
+**File**: `zookeeper-server/src/main/java/org/apache/zookeeper/SaslServerPrincipal.java` (modified, +2/-12)
 ```diff
-@@ -46,7 +46,7 @@ jobs:
-             args: '-Pfull-build verify -Dtest=_ -DfailIfNoTests=false'
-       fail-fast: false
-     timeout-minutes: 360
--    runs-on: ubuntu-latest
-+    runs-on: ubuntu-24.04
-     steps:
-     - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
-     - name: Set up JDK ${{ matrix.profile.jdk }}
+@@ -58,19 +58,9 @@ static String getServerPrincipal(WrapperInetSocketAddress addr, ZKClientConfig c
+             ZKClientConfig.ZK_SASL_CLIENT_USERNAME_DEFAULT);
+         String hostName = addr.getHostName();
+ 
+-        boolean canonicalize = true;
+-        String canonicalizeText = clientConfig.getProperty(
++        boolean canonicalize = clientConfig.getBoolean(
+             ZKClientConfig.ZK_SASL_CLIENT_CANONICALIZE_HOSTNAME,
+-            ZKClientConfig.ZK_SASL_CLIENT_CANONICALIZE_HOSTNAME_DEFAULT);
+-        try {
+-            canonicalize = Boolean.parseBoolean(canonicalizeText);
+-        } catch (IllegalArgumentException ea) {
+-            LOG.warn(
+-                "Could not parse config {} \"{}\" into a boolean using default {}",
+-                ZKClientConfig.ZK_SASL_CLIENT_CANONICALIZE_HOSTNAME,
+-                canonicalizeText,
+-                canonicalize);
+-        }
++            Boolean.parseBoolean(ZKClientConfig.ZK_SASL_CLIENT_CANONICALIZE_HOSTNAME_DEFAULT));
+ 
+         if (canonicalize) {
+             WrapperInetAddress ia = addr.getAddress();
 ```
 
-**File**: `.github/workflows/website.yaml` (modified, +4/-2)
+**File**: `zookeeper-server/src/main/java/org/apache/zookeeper/client/ZKClientConfig.java` (modified, +1/-1)
 ```diff
-@@ -30,7 +30,9 @@ jobs:
-   site:
-     name: website-site
-     timeout-minutes: 120
--    runs-on: ubuntu-latest
-+    # Playwright's bundled browsers are compiled against ICU 74 which is not available on  Ubuntu 26.04 (the current ubuntu-latest).
-+    # TODO: Upgrade Playwright to version that supports the newer Ubuntu (and its ICU version) and switch back to ubuntu-latest.
-+    runs-on: ubuntu-24.04
-     steps:
-     - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
-     - name: Set up JDK 25
-@@ -51,7 +53,7 @@ jobs:
-       working-directory: zookeeper-website
-       run: npm ci
-     - name: Cache Playwright browsers
--      uses: actions/cache@v4
-+      uses: actions/cache@2c8a9bd7457de244a408f35966fab2fb45fda9c8 # v6.0.0
-       with:
-         path: ~/.cache/ms-playwright
-         key: playwright-${{ runner.os }}-${{ hashFiles('zookeeper-website/package-lock.json') }}
+@@ -148,7 +148,7 @@ protected void handleBackwardCompatibility() {
+      * @return true if the SASL client is enabled.
+      */
+     public boolean isSaslClientEnabled() {
+-        return Boolean.valueOf(getProperty(ENABLE_CLIENT_SASL_KEY, ENABLE_CLIENT_SASL_DEFAULT));
++        return getBoolean(ENABLE_CLIENT_SASL_KEY, Boolean.parseBoolean(ENABLE_CLIENT_SASL_DEFAULT));
+     }
+ 
+     /**
 ```
 
----
-
-### Incident Patch 2: `0a267109` (2026-11-03)
-**Commit Message**: Fix code style issues
-
-**File**: `zookeeper-website/app/pages/_landing/security/content.md` (modified, +26/-26)
+**File**: `zookeeper-server/src/test/java/org/apache/zookeeper/ClientCanonicalizeTest.java` (modified, +16/-0)
 ```diff
-@@ -96,16 +96,16 @@ CVSS 4.0: 8.7 (high) CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:N/VI:N/VA:H/SC:N/SI:N/
+@@ -61,6 +61,22 @@ public void testClientNoCanonicalization() throws IOException, InterruptedExcept
+         assertEquals("zookeeper/zookeeper.apache.org", principal, "The computed principal does appears to have been canonicalized incorrectly");
+     }
  
- **Description:**
++    @Test
++    public void testClientCanonicalizationWithTrailingWhitespace() {
++        SaslServerPrincipal.WrapperInetSocketAddress addr = mock(SaslServerPrincipal.WrapperInetSocketAddress.class);
++        SaslServerPrincipal.WrapperInetAddress ia = mock(SaslServerPrincipal.WrapperInetAddress.class);
++
++        when(addr.getHostName()).thenReturn("zookeeper.apache.org");
++        when(addr.getAddress()).thenReturn(ia);
++        when(ia.getCanonicalHostName()).thenReturn("zk1.apache.org");
++        when(ia.getHostAddress()).thenReturn("127.0.0.1");
++
++        ZKClientConfig conf = new ZKClientConfig();
++        conf.setProperty(ZKClientConfig.ZK_SASL_CLIENT_CANONICALIZE_HOSTNAME, "true ");
++        String principal = SaslServerPrincipal.getServerPrincipal(addr, conf);
++        assertEquals("zookeeper/zk1.apache.org", principal, "The principal should be canonicalized");
++    }
++
+     @Test
+     public void testClientCanonicalizationToIp() throws IOException, InterruptedException {
+         SaslServerPrincipal.WrapperInetSocketAddress addr = mock(SaslServerPrincipal.WrapperInetSocketAddress.class);
+```
+
+**File**: `zookeeper-server/src/test/java/org/apache/zookeeper/test/SaslClientTest.java` (modified, +1/-1)
+```diff
+@@ -49,7 +49,7 @@ public void testSaslClientDisabled() {
+         System.clearProperty(ZKClientConfig.ENABLE_CLIENT_SASL_KEY);
+         assertTrue(new ZKClientConfig().isSaslClientEnabled(), "SASL client disabled");
  
--Uncontrolled recursion in Apache ZooKeeper. The server serializes its data tree to a snapshot by recursing one stack frame 
--per znode level, with no depth bound. A client permitted to create znodes (the default root ACL is open) can build a 
--chain of nested znodes deep enough that taking a snapshot exhausts the JVM stack and kills the snapshot thread; sizes 
--stay within jute.maxbuffer, so existing limits do not prevent it. This is a denial of service that becomes persistent: 
--on restart the server rebuilds the deep tree from its transaction log and fails again while taking the startup snapshot, 
--so it does not return to service, and recovery can entail data loss. The same log affects a leader and its followers, so 
-+Uncontrolled recursion in Apache ZooKeeper. The server serializes its data tree to a snapshot by recursing one stack frame
-+per znode level, with no depth bound. A client permitted to create znodes (the default root ACL is open) can build a
-+chain of nested znodes deep enough that taking a snapshot exhausts the JVM stack and kills the snapshot thread; sizes
-+stay within jute.maxbuffer, so existing limits do not prevent it. This is a denial of service that becomes persistent:
-+on restart the server rebuilds the deep tree from its transaction log and fails again while taking the startup snapshot,
-+so it does not return to service, and recovery can entail data loss. The same log affects a leader and its followers, so
- it can spread across an ensemble.
- 
--This issue affects Apache ZooKeeper 3.8.0 through 3.8.7 and 3.9.0 through 3.9.6. Users are recommended to upgrade to 3.8.8 
--or 3.9.7, which fix the issue. As a workaround, use ACLs and authentication to restrict znode creation rather than relying 
-+This issue affects Apache ZooKeeper 3.8.0 through 3.8.7 and 3.9.0 through 3.9.6. Users are recommended to upgrade to 3.8.8
-+or 3.9.7, which fix the issue. As a workaround, use ACLs and authentication to restrict znode creation rather than relying
- on the default open root ACL.
- 
- This issue is being tracked as ZOOKEEPER-5097
-@@ -136,11 +136,11 @@ CVSS 4.0: 8.7 (high) CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:N/VI:N/VA:H/SC:N/SI:N/
- 
- **Description:**
- 
--Improper handling of exceptional conditions in the quota subsystem of Apache ZooKeeper allows an attacker able to write 
--under the /zookeeper/quota subtree — unauthenticated on default deployments, where that subtree is world-writable — to 
-+Improper handling of exceptional conditions in the quota subsystem of Apache ZooKeeper allows an attacker able to write
-+under the /zookeeper/quota subtree — unauthenticated on default deployments, where that subtree is world-writable — to
- crash the server's critical request-processing thread and render the on-disk data directory permanently unbootable.
- 
--This issue affects Apache ZooKeeper up to and including 3.9.6. Users are recommended to upgrade to version 3.8.8 or 3.9.7, 
-+This issue affects Apache ZooKeeper up to and including 3.9.6. Users are recommended to upgrade to version 3.8.8 or 3.9.7,
- which fixes the issue.
- 
- **Credit:** cunyi li <xiaoheihei1107@gmail.com> (reporter)
-@@ -165,15 +165,15 @@ CVSS 4.0: 8.6 (high) CVSS:4.0/AV:N/AC:L/AT:N/PR:L/UI:N/VC:H/VI:H/VA:N/SC:N/SI:N/
- 
- Improper Authorization vulnerability in Apache ZooKeeper.
- 
--When SASL authentication is enabled on the client port, the server's SASL callback handler grants every authorization 
--identity (authzid) that a client requests, without checking it against the principal the client authenticated as. The 
--server then tries to replace the requested identity with a canonical form of the authenticated principal, derived from 
--the zookeeper.security.auth_to_local rules. If no rule applies to the principal, canonicalization fails and the error is 
-+When SASL authentication is enabled on the client port, the server's SASL callback handler grants every authorization
-+identity (authzid) that a client requests, without checking it against the principal the client authenticated as. The
-+server then tries to replace the requested identity with a canonical form of the authenticated principal, derived from
-+the zookeeper.security.auth_to_local rules. If no rule applies to the principal, canonicalization fails and the error is
- only logged. The client-requested authzid then becomes the session's SASL identity for all ACL checks.
- 
--An authenticated client whose principal is not covered by the auth_to_local rules can therefore claim any SASL identity. 
--With the default rules, this includes any Kerberos principal from a realm other than the server's default realm, such as 
--a principal from a cross-realm trusted realm. The client then gets the permissions granted to that identity in sasl ACLs. 
-+An authenticated client whose principal is not covered by the auth_to_local rules can therefore claim any SASL identity.
-+With the defau
+-        for (String value : Arrays.asList("true", "TRUE")) {
++        for (String value : Arrays.asList("true", "TRUE", "true ")) {
+             System.setProperty(ZKClientConfig.ENABLE_CLIENT_SASL_KEY, value);
+             assertTrue(new ZKClientConfig().isSaslClientEnabled(), "SASL client disabled");
+         }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2492** (2026-11-04): ZOOKEEPER-5116: Pin CI build runner to ubuntu-24.04 to fix CI build (@PDavid)
+- **PR #2491** (2026-11-04): ZOOKEEPER-5116: Pin CI build runner to ubuntu-24.04 to fix CI build (@PDavid)
 - **PR #2487** (2026-11-04): ZOOKEEPER-5116: Pin website and CI build runner to ubuntu-24.04 to fix website and CI build (@PDavid)
+- **PR #2484** (2026-11-04): ZOOKEEPER-5108: Client SASL settings set to true with trailing whitespace are read as false (@dajiaohuang)
 - **PR #2476** (2026-10-20): ZOOKEEPER-5097: Make DataTree snapshot serialization iterative (@anmolnar)
 - **PR #2475** (2026-10-26): ZOOKEEPER-5103: Address memory leaks in the C client (@apurtell)
-- **PR #2474** (closed): Preserve configured client hostname verification with Netty 4.2 (@xiangfu0)
-- **PR #2473** (2026-10-20): ZOOKEEPER-4922: Audit JAAS login, logout and Kerberos ticket renewal (@ikxeno)
-- **PR #2470** (2026-10-05): ZOOKEEPER-5054: Netty client should allow every supported TLS ciphers (addendum) (@meszibalu)
 
 ---
 
@@ -1961,28 +1937,40 @@ Closes #2487 from PDavid/ZOOKEEPER-5116
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ZOOKEEPER-5116: Pin website and CI build runner to ubuntu-24.04 to fix website a
+## X. ZOOKEEPER-5108: Client SASL settings set to true with trailing whitespace are re
 
 **RULE**:
-When implementing operations in `.github/workflows/ci.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/zookeeper. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `zookeeper-server/src/main/java/org/apache/zookeeper/SaslServerPrincipal.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/zookeeper. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a9d2ce60`: ZOOKEEPER-5116: Pin website and CI build runner to ubuntu-24.04 to fix website and CI build. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `87e85f28`: ZOOKEEPER-5108: Client SASL settings set to true with trailing whitespace are read as false. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci.yaml`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `zookeeper-server/src/main/java/org/apache/zookeeper/SaslServerPrincipal.java`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-    runs-on: ubuntu-24.04
+        boolean canonicalize = clientConfig.getBoolean(
+            Boolean.parseBoolean(ZKClientConfig.ZK_SASL_CLIENT_CANONICALIZE_HOSTNAME_DEFAULT));
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Anti-pattern to NEVER write (induced failure mode):
-    runs-on: ubuntu-latest
+        boolean canonicalize = true;
+        String canonicalizeText = clientConfig.getProperty(
+            ZKClientConfig.ZK_SASL_CLIENT_CANONICALIZE_HOSTNAME_DEFAULT);
+        try {
+            canonicalize = Boolean.parseBoolean(canonicalizeText);
+        } catch (IllegalArgumentException ea) {
+            LOG.warn(
+                "Could not parse config {} \"{}\" into a boolean using default {}",
+                ZKClientConfig.ZK_SASL_CLIENT_CANONICALIZE_HOSTNAME,
+                canonicalizeText,
+                canonicalize);
+        }
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a9d2ce60` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `87e85f28` are properly handled with clean fallback behavior.

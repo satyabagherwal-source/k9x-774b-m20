@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md`  
 > **Source**: github ([https://github.com/ClickHouse/ClickHouse](https://github.com/ClickHouse/ClickHouse))  
-> **Source Version**: `6398cafb`  
+> **Source Version**: `39b9f2d5`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T18:35:43.255Z  
+> **Timestamp**: 2026-11-05T09:25:40.096Z  
 > **Learning ID**: `learn-github-clickhouse-clickhouse`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ClickHouse/ClickHouse](https://github.com/ClickHouse/ClickHouse))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T18:35:42.912Z  
+> **Harvest Timestamp**: 2026-11-05T09:20:38.933Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: ClickHouse® is a real-time analytics database management system
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 50745 stars
+- **Stars / Engagement**: 50751 stars
 
 ---
 
@@ -1338,513 +1338,102 @@ private:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6ad305e6` (2026-11-04)
-**Commit Message**: Merge pull request #126817 from Jonathan-Ackerman/execution-timeout
+### Incident Patch 1: `bdbd1b83` (2026-11-05)
+**Commit Message**: Merge pull request #129202 from groeneai/fix-05043-fault-main-thread
 
-Fix `max_estimated_execution_time` behavior inconsistency and update docs
+Send the fault in test `05043_crash_report_without_global_context` to the parked thread
 
-**File**: `src/Core/Settings.cpp` (modified, +7/-13)
+**File**: `tests/queries/0_stateless/05043_crash_report_without_global_context.sh` (modified, +14/-2)
 ```diff
-@@ -4063,18 +4063,6 @@ FORMAT Null;
-     DECLARE(Seconds, max_execution_time, 0, R"(
- The maximum query execution time in seconds.
- 
--The `max_execution_time` parameter can be a bit tricky to understand.
--It operates based on interpolation relative to the current query execution speed
--(this behaviour is controlled by [`timeout_before_checking_execution_speed`](/reference/settings/session-settings/other#timeout_before_checking_execution_speed)).
--
--ClickHouse will interrupt a query if the projected execution time exceeds the
--specified `max_execution_time`. By default, the `timeout_before_checking_execution_speed`
--is set to 10 seconds. This means that after 10 seconds of query execution, ClickHouse
--will begin estimating the total execution time. If, for example, `max_execution_time`
--is set to 3600 seconds (1 hour), ClickHouse will terminate the query if the estimated
--time exceeds this 3600-second limit. If you set `timeout_before_checking_execution_speed`
--to 0, ClickHouse will use the clock time as the basis for `max_execution_time`.
--
- If query runtime exceeds the specified number of seconds, the behavior will be
- determined by the 'timeout_overflow_mode', which by default is set to `throw`.
- 
-@@ -4158,11 +4146,17 @@ expires. If the execution speed is high, the execution speed will be reduced.
-     DECLARE(Seconds, timeout_before_checking_execution_speed, 10, R"(
- Checks that execution speed is not too slow (no less than `min_execution_speed`),
- after the specified time in seconds has expired.
-+
-+If set to `0`, the execution speed limits are checked from the start of the query,
-+but [`max_estimated_execution_time`](/reference/settings/session-settings/max#max_estimated_execution_time)
-+is not checked at all.
- )", 0) \
-     DECLARE(Seconds, max_estimated_execution_time, 0, R"(
- Maximum query estimate execution time in seconds. Checked on every data block
- when [`timeout_before_checking_execution_speed`](/reference/settings/session-settings/other#timeout_before_checking_execution_speed)
--expires.
-+expires. It operates based on extrapolation relative to the current query execution
-+speed. If you set `timeout_before_checking_execution_speed` to 0, then this setting
-+will not be checked.
- )", 0, \
-         {"24.1", 0, 0, "Separate max_execution_time and max_estimated_execution_time"}) \
-     \
-```
-
-**File**: `src/QueryPipeline/ExecutionSpeedLimits.cpp` (modified, +5/-2)
-```diff
-@@ -48,9 +48,12 @@ void ExecutionSpeedLimits::throttle(
-     size_t total_rows_to_read, UInt64 total_elapsed_microseconds,
-     OverflowMode timeout_overflow_mode) const
- {
-+    const bool check_estimated_time = timeout_overflow_mode == OverflowMode::THROW && max_estimated_execution_time != 0
-+        && timeout_before_checking_execution_speed != 0 && total_rows_to_read != 0;
-+
-     if ((min_execution_rps != 0 || max_execution_rps != 0
-          || min_execution_bps != 0 || max_execution_bps != 0
--         || (total_rows_to_read != 0 && timeout_before_checking_execution_speed != 0))
-+         || check_estimated_time)
-         && (static_cast<Int64>(total_elapsed_microseconds) > timeout_before_checking_execution_speed.totalMicroseconds()))
-     {
-         /// Do not count sleeps in throttlers
-@@ -79,7 +82,7 @@ void ExecutionSpeedLimits::throttle(
-                     min_execution_bps);
- 
-             /// If the predicted execution time is longer than `max_estimated_execution_time`.
--            if (timeout_overflow_mode == OverflowMode::THROW && max_estimated_execution_time != 0 && total_rows_to_read && read_rows)
-+            if (check_estimated_time && read_rows)
-             {
-                 /// We impose additional constraints to make estimation more reliable.
-                 /// At least 1% of the rows must be read, or at least 1% of the time must be spent.
-```
-
-**File**: `tests/queries/0_stateless/05407_max_estimated_execution_time_independence_from_other_settings.reference` (added, +2/-0)
-```diff
-@@ -0,0 +1,2 @@
-+0
-+0
-```
-
-**File**: `tests/queries/0_stateless/05407_max_estimated_execution_time_independence_from_other_settings.sql` (added, +6/-0)
-```diff
-@@ -0,0 +1,6 @@
-+-- Reset the speed limits set by the test profile (tests/config/users.d/limits.yaml), so that the first query runs without any.
-+SET max_execution_speed = 0, max_execution_speed_bytes = 0;
-+
-+SELECT sum(sleepEachRow(0.001)) FROM numbers(200) SETTINGS max_block_size=1, max_estimated_execution_time=0.1, timeout_before_checking_execution_speed=0;
-+-- The addition of `min_execution_speed=1` should not change whether or not `max_estimated_execution_time` gets checked.
-+SELECT sum(sleepEachRow(0.001)) FROM numbers(200) SETTINGS max_block_size=1, max_estimated_execution_time=0.1, timeout_before_checking_execution_speed=0, min_execution_speed=1;
-```
-
----
-
-### Incident Patch 2: `6398cafb` (2026-11-04)
-**Commit Message**: Merge pull request #128992 from groeneai/fix-parameterized-view-qualified-name-legacy-lookup
-
-Resolve a database-qualified parameterized view call in INSERT SELECT and EXPLAIN SYNTAX the same way as in SELECT
-
-**File**: `src/Analyzer/TableFunctionNode.cpp` (modified, +4/-0)
-```diff
-@@ -1,4 +1,5 @@
- #include <Analyzer/TableFunctionNode.h>
-+#include <Analyzer/Identifier.h>
- 
- #include <Common/assert_cast.h>
- #include <Common/SipHash.h>
-@@ -196,6 +197,9 @@ ASTPtr TableFunctionNode::toASTImpl(const ConvertToASTOptions & options) const
-     auto table_function_ast = make_intrusive<ASTFunction>();
- 
-     table_function_ast->name = isSentQualified(*this) ? storage_id.getFullNameNotQuoted() : table_function_name;
-+    /// The analyzer reads a two-part parameterized view name as `db.view`.
-+    if (isParameterizedView() && Identifier{table_function_ast->name}.getPartsSize() == 2)
-+        table_function_ast->setIsCompoundName(true);
- 
-     const auto & arguments = getArguments();
-     table_function_ast->children.push_back(arguments.toAST(options));
-```
-
-**File**: `src/Interpreters/Context.cpp` (modified, +16/-12)
-```diff
-@@ -158,6 +158,7 @@
- #include <Interpreters/StorageID.h>
- #include <Interpreters/SystemLog.h>
- #include <Interpreters/InterpreterSelectQueryAnalyzer.h>
-+#include <Analyzer/Utils.h>
- #include <Interpreters/AsynchronousInsertQueue.h>
- #include <Interpreters/DatabaseCatalog.h>
- #include <Interpreters/JIT/CompiledExpressionCache.h>
-@@ -3532,22 +3533,25 @@ static bool findIdentifier(const ASTFunction * function)
- StoragePtr Context::executeTableFunction(const ASTPtr & table_expression, const ASTSelectQuery * select_query_hint)
- {
-     ASTFunction * function = assert_cast<ASTFunction *>(table_expression.get());
--    String database_name = getCurrentDatabase();
--    String table_name = function->name;
-+    /// Same split as the analyzer: a stored `` `db.view`(...) `` has no compound-name flag.
-+    auto [database_name, table_name] = extractDatabaseAndTableNameForParameterizedView(function->name, shared_from_this());
- 
--    if (function->isCompoundName())
-+    auto is_parameterized_view = [](const StoragePtr & storage)
-     {
--        std::vector<std::string> parts;
--        splitInto<'.'>(parts, function->name);
-+        const auto * view = storage ? storage->as<StorageView>() : nullptr;
-+        return view && view->isParameterizedView();
-+    };
- 
--        if (parts.size() == 2)
--        {
--            database_name = std::move(parts[0]);
--            table_name = std::move(parts[1]);
--        }
-+    StoragePtr table;
-+    if (!table_name.empty())
-+        table = DatabaseCatalog::instance().tryGetTable({database_name, table_name}, getQueryContext());
-+    /// A view whose own name has a dot: `` `v.x`(...) ``.
-+    if (!is_parameterized_view(table) && !function->isCompoundName() && table_name != function->name)
-+    {
-+        database_name = getCurrentDatabase();
-+        table_name = function->name;
-+        table = DatabaseCatalog::instance().tryGetTable({database_name, table_name}, getQueryContext());
-     }
--
--    StoragePtr table = DatabaseCatalog::instance().tryGetTable({database_name, table_name}, getQueryContext());
-     if (table)
-     {
-         if (table.get()->isView() && table->as<StorageView>() && table->as<StorageView>()->isParameterizedView())
-```
-
-**File**: `src/Interpreters/InterpreterExplainQuery.cpp` (modified, +16/-16)
-```diff
-@@ -2,6 +2,7 @@
- #include <Interpreters/InterpreterFactory.h>
- #include <Interpreters/InterpreterExplainQuery.h>
- 
-+#include <Analyzer/Utils.h>
- #include <DataTypes/DataTypesNumber.h>
- #include <QueryPipeline/BlockIO.h>
- #include <QueryPipeline/QueryPipelineBuilder.h>
-@@ -180,24 +181,23 @@ namespace
-             if (TableFunctionFactory::instance().isTableFunctionName(func->name))
-                 return;
- 
--            String database_name = query_context->getCurrentDatabase();
--            String table_name = func->name;
--            if (func->isCompoundName())
-+            auto is_parameterized_view = [](const StoragePtr & candidate)
-             {
--                std::vector<std::string> parts;
--                splitInto<'.'>(parts, func->name);
--                if (parts.size() != 2)
--                    return;
--                database_name = parts[0];
--                table_name = parts[1];
-+                const auto * view = candidate ? candidate->as<StorageView>() : nullptr;
-+                return view && view->isParameterizedView();
-+            };
-+
-+            auto [database_name, table_name] = extractDatabaseAndTableNameForParameterizedView(func->name, query_context);
-+            StoragePtr storage;
-+            if (!table_name.empty())
-+                storage = DatabaseCatalog::instance().tryGetTable({database_name, table_name}, query_context);
-+            /// A view whose own name has a dot: `` `v.x`(...) ``.
-+            if (!is_parameterized_view(storage) && !func->isCompoundName() && table_name != func->name)
-+            {
-+                table_name = func->name;
-+                storage = DatabaseCatalog::instance().tryGetTable({query_context->getCurrentDatabase(), table_name}, query_context);
-             }
--
--            auto storage = DatabaseCatalog::instance().tryGetTable({database_name, table_name}, query_context);
--            if (!storage)
--                return;
--
--            const auto * storage_view = storage->as<StorageView>();
--            if (!storage_view || !storage_view->isParameterizedView())
-+            if (!is_parameterized_view(storage))
-                 return;
- 
-             auto metadata = storage->getInMemoryMetadataPtr(query_context, false);
-```
-
-**File**: `src/Parsers/ASTFunction.cpp` (modified, +29/-2)
-```diff
-@@ -24,7 +24,9 @@
- #include <Parsers/ASTSubquery.h>
- #include <Parsers/ASTSetQuery.h>
- #include <Parsers/ASTWindowDefinition.h>
-+#include <Parsers/CommonParsers.h>
- #include <Parsers/FunctionSecretArgumentsFinderAST.h>
-+#include <Poco/String.h>
- 
- 
- using namespace std::literals;
-@@ -540,6 +542,31 @@ static bool functionNameNeedsQuoting(const String & name, const ASTPtr & argumen
-             && arguments->children[0]->as<ASTSubquery>());
+@@ -158,6 +158,18 @@ report_checks() {
+         || echo "$label: no null dereference"
  }
  
-+/// A compound name (`db.view(...)`) is written part by part: one quoted `db.view` token parses back as a one-part name.
-+/// A keyword part is quoted: `1 IN partition.pv(1)` does not parse.
-+static void writeFunctionName(
-+    WriteBuffer & ostr, const IAST::FormatSettings & settings, const String & name, bool is_compound_name, const ASTPtr & arguments)
-+{
-+    if (!is_compound_name)
-+    {
-+        ostr << (functionNameNeedsQuoting(name, arguments) ? backQuote(name) : backQuoteIfNeed(name));
-+        return;
-+    }
-+
-+    const auto & keywords = getKeyWordSet();
-+    std::string_view rest = name;
-+    while (true)
-+    {
-+        const size_t dot = rest.find('.');
-+        const String part(rest.substr(0, dot));
-+        settings.writeIdentifier(ostr, part, /*ambiguous=*/keywords.contains(Poco::toUpper(part)));
-+        if (dot == std::string_view::npos)
-+            break;
-+        ostr << '.';
-+        rest.remove_prefix(dot + 1);
-+    }
++# The fault belongs in the parked thread, which is the main one. `kill` signals the whole process, so
++# any thread not blocking the signal can take it, the signal listener included, and a handler running
++# on the listener waits for itself and reports nothing.
++fault_main_thread() {
++    python3 -c "
++import ctypes, signal, sys
++pid = int(sys.argv[1])
++if ctypes.CDLL(None, use_errno=True).tgkill(pid, pid, int(signal.SIGSEGV)) != 0:
++    sys.exit('tgkill failed: errno %d' % ctypes.get_errno())
++" "$1"
 +}
 +
- void ASTFunction::formatImplWithoutAlias(WriteBuffer & ostr, const FormatSettings & settings, FormatState & state, FormatStateStacked frame) const
- {
-     frame.expression_list_prepend_whitespace = false;
-@@ -562,7 +589,7 @@ void ASTFunction::formatImplWithoutAlias(WriteBuffer & ostr, const FormatSetting
-         std::string nl_or_nothing = settings.one_line ? "" : "\n";
-         std::string indent_str = settings.one_line ? "" : std::string(4u * frame.indent, ' ');
-         if (!name.empty())
--            ostr << (functionNameNeedsQuoting(name, arguments) ? backQuote(name) : backQuoteIfNeed(name));
-+            writeFunctionName(ostr, settings, name, isCompoundName(), arguments);
-         ostr << "(";
-         ostr << nl_or_nothing;
-         FormatStateStacked frame_nested = frame;
-@@ -1075,7 +1102,7 @@ void ASTFunction::formatImplWithoutAlias(WriteBuffer & ostr, const FormatSetting
-     if (is_plain_not_call)
-         ostr << name;
-     else if (!name.empty())
--        ostr << (functionNameNeedsQuoting(name, arguments) ? backQuote(name) : backQuoteIfNeed(name));
-+        writeFunctionName(ostr, settings, name, isCompoundName(), arguments);
+ ##########################################################################################
+ # Arm 1: keeper. The UUID is read before the global context is created, so the context is absent.
+ ##########################################################################################
+@@ -225,7 +237,7 @@ done
+ # process has not passed that point.
+ grep -q 'Initializing DateLUT' "$klog" && { echo "keeper: the global context already exists"; exit 1; }
  
-     SecretArgumentsResult secret_arguments;
-     if (arguments && !settings.show_secrets)
-```
-
-**File**: `tests/queries/0_stateless/05493_parameterized_view_qualified_name_insert_select.reference` (added, +29/-0)
-```diff
-@@ -0,0 +1,29 @@
-+into ReplicatedMergeTree
-+3
-+into Distributed
-+3
-+refreshable view reloaded from metadata, feeding a materialized view
-+3	1
-+3	1
-+refreshable view in a Replicated database
-+3
-+EXPLAIN SYNTAX inlines the view
-+1
-+the formatted query keeps the two parts of the name
-+SELECT * FROM db.pv(p = 1)
-+SELECT * FROM `my-db`.pv(p = 1)
-+SELECT * FROM `db.pv`(p = 1)
-+a keyword part stays quoted and parses back
-+SELECT * FROM `null`.pv(p = 1)	1
-+SELECT 1 IN `null`.pv(1)	1
-+SELECT * FROM `not`.pv(p = 1)	1
-+SELECT 1 IN `not`.pv(1)	1
-+SELECT 1 IN `partition`.pv(1)	1
-+the analyzer writes the stored spelling as two parts
-+1
-+a view whose own name has a dot
-+1
-+a view whose own name has a dot, when the split names a table that is not a parameterized view
-+1
-+an unquoted v.x(...) is the view x of database v, not the view v.x
-+0
-```
-
-**File**: `tests/queries/0_stateless/05493_parameterized_view_qualified_name_insert_select.sh` (added, +109/-0)
-```diff
-@@ -0,0 +1,109 @@
-+#!/usr/bin/env bash
-+# Tags: zookeeper, no-replicated-database
-+# no-replicated-database: the test creates a Replicated database itself.
-+
-+# Older versions stored a call `db.view(...)` of a parameterized view as `` `db.view`(...) ``.
-+# INSERT ... SELECT into a replicated or distributed table, a refreshable materialized view
-+# reloaded from such metadata or defined in a Replicated database, and EXPLAIN SYNTAX must
-+# resolve that spelling to the view `view` of database `db`, as SELECT does.
-+
-+CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
-+# shellcheck source=../shell_config.sh
-+. "$CURDIR"/../shell_config.sh
-+
-+a="${CLICKHOUSE_DATABASE}_a"
-+r="${CLICKHOUSE_DATABASE}_r"
-+
-+${CLICKHOUSE_CLIENT} -q "
-+    CREATE DATABASE ${a} ENGINE = Atomic;
-+    CREATE TABLE ${a}.src (d DateTime, x UInt8) ENGINE = MergeTree ORDER BY d;
-+    INSERT INTO ${a}.src SELECT toDateTime(number), 1 + (number >= 3) FROM numbers(5);
-+    CREATE VIEW ${a}.pv AS SELECT d, x FROM ${a}.src WHERE x = {p:UInt8};
-+"
-+
-+# Only a non-zero parallel_distributed_insert_select sends the INSERT through the checks that failed.
-+# Parallel replicas are off: every replica of the test cluster would read the whole view, so the count would be wrong.
-+echo 'into ReplicatedMergeTree'
-+${CLICKHOUSE_CLIENT} -q "
-+    CREATE TABLE ${a}.t_repl (d DateTime, x UInt8) ENGINE = ReplicatedMergeTree('/clickhouse/tables/{database}/t_repl', '1') ORDER BY d;
-+    INSERT INTO ${a}.t_repl SELECT * FROM \`${a}.pv\`(p = 1) SETTINGS parallel_distributed_insert_select = 2, enable_parallel_replicas = 0;
-+    SELECT count() FROM ${a}.t_repl;
-+"
-+
-+echo 'into Distributed'
-+${CLICKHOUSE_CLIENT} -q "
-+    CREATE TABLE ${a}.t_local (d DateTime, x UInt8) ENGINE = MergeTree ORDER BY d;
-+    CREATE TABLE ${a}.dist AS ${a}.t_local ENGINE = Distributed(test_shard_localhost, ${a}, t_local);
-+    INSERT INTO ${a}.dist SELECT * FROM \`${a}.pv\`(p = 1) SETTINGS parallel_distributed_insert_select = 2, enable_parallel_replicas = 0, distributed_foreground_insert = 1;
-+    SELECT count() FROM ${a}.t_local;
-+"
-+
-+# DETACH/ATTACH reads the view's definition back from its metadata file, as a server restart does.
-+# The view may refresh on ATTACH as well, so the checks do not depend on the number of refreshes.
-+echo 'refreshable view reloaded from metadata, feeding a materialized view'
-+${CLICKHOUSE_CLIENT} -q "
-+    CREATE TABLE ${a}.t_rmv (d DateTime, x UInt8) ENGINE = ReplicatedMergeTree('/clickhouse/tables/{database}/t_rmv', '1') ORDER BY d;
-+    CREATE TABLE ${a}.sink (d DateTime, x UInt8) ENGINE = MergeTree ORDER BY d;
-+    CREATE MATERIALIZED VIEW ${a}.mv_sink TO ${a}.sink AS SELECT d, x FROM ${a}.t_rmv;
-+    CREATE MATERIALIZED VIEW ${a}.rmv REFRESH EVERY 1 YEAR APPEND TO ${a}.t_rmv EMPTY AS SELECT * FROM \`${a}.pv\`(p = 1);
-+    DETACH TABLE ${a}.rmv;
-+    ATTACH TABLE ${a}.rmv;
-+    SYSTEM REFRESH VIEW ${a}.rmv;
-+    SYSTEM WAIT VIEW ${a}.rmv;
-+    SELECT uniqExact(d), count() > 0 FROM ${a}.t_rmv;
-+    SELECT uniqExact(d), count() = (SELECT count() FROM ${a}.t_rmv) FROM ${a}.sink;
-+"
-+
-+echo 'refreshable view in a Replicated database'
-+${CLICKHOUSE_CLIENT} --distributed_ddl_output_mode=none -q "
-+    CREATE DATABASE ${r} ENGINE = Replicated('/test/{database}/parameterized_view_qualified_name', 's1', 'r1');
-+    CREATE TABLE ${r}.src (d DateTime, x UInt8) ENGINE = MergeTree ORDER BY d;
-+    INSERT INTO ${r}.src SELECT toDateTime(number), 1 + (number >= 3) FROM numbers(5);
-+    CREATE VIEW ${r}.pv AS SELECT d, x FROM ${r}.src WHERE x = {p:UInt8};
-+    CREATE TABLE ${r}.t_repl (d DateTime, x UInt8) ENGINE = ReplicatedMergeTree ORDER BY d;
-+    CREATE MATERIALIZED VIEW ${r}.rmv REFRESH EVERY 1 YEAR APPEND TO ${r}.t_repl EMPTY AS SELECT * FROM \`${r}.pv\`(p = 1);
-+    SYSTEM REFRESH VIEW ${r}.rmv;
-+    SYSTEM WAIT VIEW ${r}.rmv;
-+    SELECT count() FROM ${r}.t_repl;
-+"
-+
-+echo 'EXPLAIN SYNTAX inlines the view'
-+${CLICKHOUSE_CLIENT} -q "SELECT countIf(explain LIKE '%FROM ${a}.src%') > 0 FROM (EXPLAIN SYNTAX SELECT * FROM \`${a}.pv\`(p = 1))"
-+
-+echo 'the formatted query keeps the two parts of the name'
-+${CLICKHOUSE_CLIENT} -q "
-+    SELECT formatQuerySingleLine('SELECT * FROM db.pv(p = 1)');
-+    SELECT formatQuerySingleLine('SELECT * FROM \`my-db\`.pv(p = 1)');
-+    SELECT formatQuerySingleLine('SELECT * FROM \`db.pv\`(p = 1)');
-+"
-+
-+echo 'a keyword part stays quoted and parses back'
-+${CLICKHOUSE_CLIENT} -q "
-+    SELECT formatQuerySingleLine(q) AS f, formatQuerySingleLine(f) = f
-+    FROM (SELECT arrayJoin([
-+        'SELECT * FROM \`null\`.pv(p = 1)', 'SELECT 1 IN \`null\`.pv(1)',
-+        'SELECT * FROM \`not\`.pv(p = 1)', 'SELECT 1 IN \`not\`.pv(1)',
-+        'SELECT 1 IN \`partition\`.pv(1)']) AS q);
-+"
-+
-+# This is the query the analyzer sends to other servers, for example for a subquery in IN.
-+echo 'the analyzer writes the stored spelling as two parts'
-+${CLICKHOUSE_CLIENT} -q "SELECT countIf(explain LIKE '%FROM ${a}.pv(p = 1)%') FROM (EXPLAIN QUERY TREE
+-kill -SEGV "$keeper_pid"
++fault_main_thread "$keeper_pid"
+ report_checks "$kdir" "keeper" "$keeper_pid" "$kerr" "$klog"
+ 
+ ##########################################################################################
+@@ -296,5 +308,5 @@ done
+ [ -s "$sdir/data/status" ] || { echo "server: the global context does not exist yet"; exit 1; }
+ grep -q 'Initializing DateLUT' "$slog" && { echo "server: the server UUID is already loaded"; exit 1; }
+ 
+-kill -SEGV "$server_pid"
++fault_main_thread "$server_pid"
+ report_checks "$sdir" "server" "$server_pid" "$serr" "$slog"
 ```
 
 ---
 
-### Incident Patch 3: `cb8ea0ea` (2026-11-04)
-**Commit Message**: Merge pull request #128788 from hsusul/fix/round-to-exp2-nan
+### Incident Patch 2: `39b9f2d5` (2026-11-05)
+**Commit Message**: Merge pull request #129259 from ClickHouse/arsenmuk/fix-seaweedfs-local-run
 
-Return NaN from roundToExp2 for NaN
+Fix SeaweedFS setup failing on a repeated local stateless run
 
-**File**: `src/Functions/roundToExp2.cpp` (modified, +6/-0)
+**File**: `ci/jobs/scripts/functional_tests/setup_seaweedfs.sh` (modified, +3/-1)
 ```diff
-@@ -1,3 +1,4 @@
-+#include <cmath>
- #include <type_traits>
- #include <base/bit_cast.h>
- #include <Functions/FunctionFactory.h>
-@@ -31,13 +32,17 @@ template <typename T>
- requires std::is_same_v<T, Float32>
- inline T roundDownToPowerOfTwo(T x)
- {
-+    if (std::isnan(x))
-+        return x;
-     return bit_cast<T>(bit_cast<UInt32>(x) & ~((1ULL << 23) - 1));
+@@ -140,7 +140,9 @@ start_seaweedfs() {
  }
  
- template <typename T>
- requires std::is_same_v<T, Float64>
- inline T roundDownToPowerOfTwo(T x)
- {
-+    if (std::isnan(x))
-+        return x;
-     return bit_cast<T>(bit_cast<UInt64>(x) & ~((1ULL << 52) - 1));
- }
- 
-@@ -57,6 +62,7 @@ inline T roundDownToPowerOfTwo(T)
-   * - negative powers are also used (example: roundToExp2(0.7) = 0.5);
-   * - if number is zero, return zero;
-   * - if number is less than zero, the result is symmetrical: roundToExp2(x) = -roundToExp2(-x). (example: roundToExp2(-0.3) = -0.25);
-+  * - if number is NaN, return it unchanged (zeroing the mantissa would turn it into infinity).
-   */
- 
- template <typename T>
+ setup_seaweedfs() {
+-  echo "s3.bucket.create -name test" | weed shell -master "localhost:11112"
++  if ! echo "s3.bucket.list" | weed shell -master "localhost:11112" | awk '$1 == "test" { found = 1 } END { exit !found }'; then
++    echo "s3.bucket.create -name test" | weed shell -master "localhost:11112"
++  fi
+   # writes fail until the initial volume allocation is done on a cold start,
+   # so wait until a real write succeeds
+   local counter=0
 ```
 
-**File**: `tests/queries/0_stateless/05494_round_to_exp2_nan.reference` (added, +13/-0)
-```diff
-@@ -0,0 +1,13 @@
-+1
-+1
-+1
-+1
-+1
-+1
-+1
-+1
-+1
-+1
-+inf	-inf	0.25	4	-0.25
-+inf	-inf	0.25	4	-0.25
-+inf	-inf	0.25	4	-0.25
-```
+---
 
-**File**: `tests/queries/0_stateless/05494_round_to_exp2_nan.sql` (added, +20/-0)
+### Incident Patch 3: `f37c6e75` (2026-11-05)
+**Commit Message**: Merge pull request #129206 from groeneai/fix-01111-random-table-names
+
+Fix repeated table names in `01111_create_drop_replicated_db_stress`
+
+**File**: `tests/queries/0_stateless/01111_create_drop_replicated_db_stress.sh` (modified, +3/-1)
 ```diff
-@@ -0,0 +1,20 @@
-+-- `roundToExp2` of NaN must return NaN, not infinity.
-+
-+SELECT isNaN(roundToExp2(nan));
-+SELECT isNaN(roundToExp2(toFloat32(nan)));
-+SELECT isNaN(roundToExp2(materialize(nan)));
-+SELECT isNaN(roundToExp2(materialize(toFloat32(nan))));
-+
-+-- NaN with the sign bit set.
-+SELECT isNaN(roundToExp2(reinterpretAsFloat64(toUInt64(0xFFF8000000000000))));
-+SELECT isNaN(roundToExp2(reinterpretAsFloat32(toUInt32(0xFFC00000))));
-+SELECT isNaN(roundToExp2(materialize(reinterpretAsFloat64(toUInt64(0xFFF8000000000000)))));
-+SELECT isNaN(roundToExp2(materialize(reinterpretAsFloat32(toUInt32(0xFFC00000)))));
-+
-+-- NaN with the smallest mantissa.
-+SELECT isNaN(roundToExp2(materialize(reinterpretAsFloat64(toUInt64(0x7FF0000000000001)))));
-+SELECT isNaN(roundToExp2(materialize(reinterpretAsFloat32(toUInt32(0x7F800001)))));
-+
-+SELECT roundToExp2(inf), roundToExp2(-inf), roundToExp2(0.3), roundToExp2(5.5), roundToExp2(-0.3);
-+SELECT roundToExp2(toFloat32(inf)), roundToExp2(toFloat32(-inf)), roundToExp2(toFloat32(0.3)), roundToExp2(toFloat32(5.5)), roundToExp2(toFloat32(-0.3));
-+SELECT roundToExp2(materialize(inf)), roundToExp2(materialize(-inf)), roundToExp2(materialize(0.3)), roundToExp2(materialize(5.5)), roundToExp2(materialize(-0.3));
+@@ -56,8 +56,10 @@ function create_table()
+     while [ $SECONDS -lt "$TIMELIMIT" ]; do
+         database=$($CLICKHOUSE_CLIENT -q "select name from system.databases where name like '${CLICKHOUSE_DATABASE}%' order by rand() limit 1")
+         if [ -z "$database" ]; then continue; fi
++        # Expanded outside the pipeline: bash reseeds $RANDOM in every pipeline child, so names would repeat.
++        local table="rmt_${RANDOM}_${RANDOM}_${RANDOM}"
+         $CLICKHOUSE_CLIENT --lock_acquire_timeout=120 --distributed_ddl_task_timeout=0 -q \
+-        "create table $database.rmt_${RANDOM}_${RANDOM}_${RANDOM} (n int) engine=ReplicatedMergeTree order by tuple() -- suppress $CLICKHOUSE_TEST_ZOOKEEPER_PREFIX" \
++        "create table $database.$table (n int) engine=ReplicatedMergeTree order by tuple() -- suppress $CLICKHOUSE_TEST_ZOOKEEPER_PREFIX" \
+         2>&1| grep -Fa "Exception: " | grep -Fv "Macro 'uuid' in engine arguments is" | grep -Fv "Cannot enqueue query" | grep -Fv "ZooKeeper session expired" | grep -Fv UNKNOWN_DATABASE | grep -Fv TABLE_IS_DROPPED | grep -Fv UNFINISHED | grep -Fv TIMEOUT_EXCEEDED | grep -Fv QUERY_WAS_CANCELLED
+         sleep 0.$RANDOM
+     done
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #129322** (closed): JIT: compile comparisons of dates of the same type (@scanhex12)
-- **PR #129319** (2026-11-04): Backport #128607 to 26.8: Initialize parquet reader a bit earlier (@robot-ch-test-poll4)
-- **PR #129312** (2026-11-04): Docs: add Managed Postgres GA pricing and deactivation (@deeox)
-- **PR #129310** (2026-11-04): Revert "Mark a query as cancelled in the process list when its TCP client cancels it" (@alexey-milovidov)
-- **PR #129306** (2026-11-04): Backport #128955 to 26.10: Hide secrets in `system.s3_queue_settings` and `system.azure_queue_settings` (@robot-ch-test-poll)
-- **PR #129301** (closed): Cherry pick #127690 to 26.10: Replace the apache/orc library with a native ORC reader and writer (@robot-ch-test-poll4)
+- **PR #129427** (2026-11-05): Backport #127416 to 26.10: Fix `Cannot fold actions for projection` when the join order optimizer reorders an outer join converted to INNER (@robot-clickhouse-ci-1)
+- **PR #129413** (2026-11-05): Backport #120110 to 26.10: Make DPsub the default join order algorithm, with the CD-C conflict detector (@robot-ch-test-poll2)
+- **PR #129406** (2026-11-05): Backport #122526 to 26.10: Keep an OR without join keys as one JOIN ON condition (@robot-clickhouse-ci-1)
+- **PR #129397** (2026-11-04): Run `xmllint` in the style check without a shell (@fm4v)
+- **PR #129390** (2026-11-05): Praktika: update submodules in parallel when creating the submodule cache (@groeneai)
+- **PR #129388** (2026-11-05): Keep the no-early-exit `bitmapHasAny` operands of the `bitmap_cardinality` performance test in the L1 cache (@groeneai)
 
 ---
 
@@ -1864,46 +1453,42 @@ Return NaN from roundToExp2 for NaN
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #126817 from Jonathan-Ackerman/execution-timeout
+## X. Merge pull request #129202 from groeneai/fix-05043-fault-main-thread
 
 **RULE**:
-When implementing operations in `src/Core/Settings.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ClickHouse/ClickHouse. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tests/queries/0_stateless/05043_crash_report_without_global_context.sh`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ClickHouse/ClickHouse. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6ad305e6`: Merge pull request #126817 from Jonathan-Ackerman/execution-timeout. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `bdbd1b83`: Merge pull request #129202 from groeneai/fix-05043-fault-main-thread. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/Core/Settings.cpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `tests/queries/0_stateless/05043_crash_report_without_global_context.sh`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
+# The fault belongs in the parked thread, which is the main one. `kill` signals the whole process, so
+# any thread not blocking the signal can take it, the signal listener included, and a handler running
+# on the listener waits for itself and reports nothing.
+fault_main_thread() {
+    python3 -c "
+import ctypes, signal, sys
+pid = int(sys.argv[1])
+if ctypes.CDLL(None, use_errno=True).tgkill(pid, pid, int(signal.SIGSEGV)) != 0:
+    sys.exit('tgkill failed: errno %d' % ctypes.get_errno())
+" "$1"
+}
 
-If set to `0`, the execution speed limits are checked from the start of the query,
-but [`max_estimated_execution_time`](/reference/settings/session-settings/max#max_estimated_execution_time)
-is not checked at all.
-expires. It operates based on extrapolation relative to the current query execution
-speed. If you set `timeout_before_checking_execution_speed` to 0, then this setting
-will not be checked.
+fault_main_thread "$keeper_pid"
+fault_main_thread "$server_pid"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-The `max_execution_time` parameter can be a bit tricky to understand.
-It operates based on interpolation relative to the current query execution speed
-(this behaviour is controlled by [`timeout_before_checking_execution_speed`](/reference/settings/session-settings/other#timeout_before_checking_execution_speed)).
-
-ClickHouse will interrupt a query if the projected execution time exceeds the
-specified `max_execution_time`. By default, the `timeout_before_checking_execution_speed`
-is set to 10 seconds. This means that after 10 seconds of query execution, ClickHouse
-will begin estimating the total execution time. If, for example, `max_execution_time`
-is set to 3600 seconds (1 hour), ClickHouse will terminate the query if the estimated
-time exceeds this 3600-second limit. If you set `timeout_before_checking_execution_speed`
-to 0, ClickHouse will use the clock time as the basis for `max_execution_time`.
-
-expires.
+kill -SEGV "$keeper_pid"
+kill -SEGV "$server_pid"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6ad305e6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `bdbd1b83` are properly handled with clean fallback behavior.

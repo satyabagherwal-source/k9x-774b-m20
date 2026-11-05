@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zvec-ai-zvec-grep-learnings.md`  
 > **Source**: github ([https://github.com/zvec-ai/zvec-grep](https://github.com/zvec-ai/zvec-grep))  
-> **Source Version**: `3d60e062`  
+> **Source Version**: `407a3851`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T19:47:58.031Z  
+> **Timestamp**: 2026-11-05T14:05:54.175Z  
 > **Learning ID**: `learn-github-zvec-ai-zvec-grep`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zvec-ai-zvec-grep-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zvec-ai/zvec-grep](https://github.com/zvec-ai/zvec-grep))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T19:47:56.900Z  
+> **Harvest Timestamp**: 2026-11-05T14:02:29.005Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Local-first search across your workspace, built for humans and AI agents.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 4230 stars
+- **Stars / Engagement**: 4231 stars
 
 ---
 
@@ -1118,1076 +1118,710 @@ def render_report(report: dict[str, Any]) -> str:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3d60e062` (2026-11-04)
-**Commit Message**: feat(rust): extract and persist code graphs during indexing (#291)
+### Incident Patch 1: `407a3851` (2026-11-05)
+**Commit Message**: fix(search): preserve source boundaries and bounded preview evidence (#361)
 
-**File**: `rust/crates/zg-cli/src/render.rs` (modified, +6/-0)
-```diff
-@@ -1050,6 +1050,9 @@ mod output_tests {
-             visibility: None,
-             language: None,
-             documentation: None,
-+            arity: None,
-+            is_exported: false,
-+            is_declaration: false,
-         }));
-         for source in [ContextSource::Index, ContextSource::Rg] {
-             result.source = source;
-@@ -1407,6 +1410,9 @@ mod output_tests {
-                 visibility: None,
-                 language: None,
-                 documentation: None,
-+                arity: None,
-+                is_exported: false,
-+                is_declaration: false,
-             }));
-             let mut buffer = Vec::new();
-             write_item_preview(
-```
+Expand displayed search content to complete boundary lines within each indexed entity while preserving original evidence coordinates.
 
-**File**: `rust/crates/zg-daemon/src/job_scheduler.rs` (modified, +200/-1)
+Keep bounded previews anchored to the original fragment so restored prefixes do not hide visible evidence. Add regression coverage for source coordinates, Unicode, line endings, and CLI/server/MCP presentation.
+
+**File**: `rust/crates/zg-cli/src/preview.rs` (modified, +70/-0)
 ```diff
-@@ -198,10 +198,18 @@ impl IndexJobScheduler {
-             // Once another caller relies on a job, request cancellation must not stop it.
-             active.shared.store(true, Ordering::Release);
-             let active_snapshot = lock(&active.snapshot).clone();
-+            // A graph switch is a saved configuration change: a job that already
-+            // started under the other value cannot apply it, so the request needs
-+            // its own job instead of being absorbed by the active one.
-+            let graph_setting_request = {
-+                let current = lock(&active.options);
-+                changes_graph_setting(current.as_ref(), &options)
-+            };
-             let needs_followup = reason == JobReason::Watch
-                 || active_snapshot.reason == JobReason::Watch
-                 || options.rebuild
--                || has_selection_update(&options);
-+                || has_selection_update(&options)
-+                || graph_setting_request;
-             if needs_followup && active_snapshot.state == JobState::Queued {
-                 let queued_full_manual = active_snapshot.reason == JobReason::Manual
-                     && reason == JobReason::Watch
-@@ -590,6 +598,9 @@ fn merge_options(current: &mut Option<IndexOptions>, mut incoming: IndexOptions)
-     }
-     current.reset_paths |= incoming.reset_paths;
-     current.rebuild |= incoming.rebuild;
-+    // A saved configuration switch follows the same rule as scan updates: an
-+    // explicit value wins, including false, and omission keeps the earlier one.
-+    merge_update(&mut current.graph_indexing, incoming.graph_indexing.take());
-     merge_update(
-         &mut current.scan.included_formats,
-         incoming.scan.included_formats.take(),
-@@ -743,6 +754,14 @@ fn merge_runtime_options(current: &mut IndexOptions, incoming: &mut IndexOptions
-     }
+@@ -63,6 +63,76 @@ pub fn split_lines(content: &str) -> impl Iterator<Item = &str> {
+         .chain((content.is_empty() || content.ends_with('\n')).then_some(""))
  }
  
-+/// A request changes the saved graph switch when it names a value that differs
-+/// from the one the queued job would apply; an omitted value never changes it.
-+fn changes_graph_setting(current: Option<&IndexOptions>, incoming: &IndexOptions) -> bool {
-+    incoming.graph_indexing.is_some_and(|requested| {
-+        current.and_then(|current| current.graph_indexing) != Some(requested)
-+    })
++/// Keep the fragment's 160-character budget independently of restored line
++/// prefixes. Add at most 32 prefix characters and mark any omitted context.
++pub(crate) fn short_source_line(item: &ContextItem, offset: usize, line: &str) -> String {
++    bounded_source_line(item, offset, line, truncate_chars)
 +}
 +
- fn merge_update<T>(current: &mut Option<T>, incoming: Option<T>) {
-     if incoming.is_some() {
-         *current = incoming;
-@@ -1808,6 +1827,186 @@ mod tests {
-         }
-     }
- 
-+    #[tokio::test]
-+    async fn graph_setting_requests_are_merged_and_never_absorbed() {
-+        for queued in [false, true] {
-+            let executor = Arc::new(RecordingExecutor {
-+                calls: Mutex::new(Vec::new()),
-+                started: Notify::new(),
-+                releases: tokio::sync::Semaphore::new(0),
-+            });
-+            let scheduler = IndexJobScheduler::new(
-+                executor.clone(),
-+                SchedulerConfig {
-+                    concurrency: 1,
-+                    queue_capacity: 8,
-+                },
-+            );
-+            if queued {
-+                scheduler
-+                    .submit(
-+                        PathBuf::from("/blocker"),
-+                        IndexOptions::default(),
-+                        JobReason::Manual,
-+                    )
-+                    .expect("occupy worker");
-+                executor.started.notified().await;
-+            }
-+            let root = PathBuf::from("/workspace");
-+            let first = scheduler
-+                .submit(root.clone(), IndexOptions::default(), JobReason::Manual)
-+                .expect("initial index");
-+            if !queued {
-+                executor.started.notified().await;
-+            }
-+            // A running job cannot apply a switch it did not start with, so the
-+            // request needs its own job instead of being absorbed by that one.
-+            let enable = scheduler
-+                .submit(
-+                    root.clone(),
-+                    IndexOptions {
-+                        graph_indexing: Some(true),
-+                        ..IndexOptions::default()
-+                    },
-+                    JobReason::Manual,
-+                )
-+                .expect("enable graph");
-+            assert_eq!(
-+                enable.job.id == first.job.id,
-+                queued,
-+                "a running job must not swallow the graph switch"
-+            );
-+            // A later explicit false replaces the queued true.
-+            let disable = scheduler
-+                .submit(
-+                    root.clone(),
-+                    IndexOptions {
-+                        graph_indexing: Some(false),
-+                        rebuild: true,
-+                        ..IndexOptions::default()
-+                    },
-+                    JobReason::Manual,
-+                )
-+                .expect("disable graph");
-+            assert_eq!(disable.job.id, enable.job.id);
-+            // An omission keeps the value the ea
-```
-
-**File**: `rust/crates/zg-daemon/src/workspace_runtime.rs` (modified, +6/-0)
-```diff
-@@ -1352,6 +1352,7 @@ fn index_template(options: &IndexOptions) -> IndexOptions {
-     template.reset_paths = false;
-     template.changes.clear();
-     template.scan = ScanRulesUpdate::default();
-+    template.graph_indexing = None;
-     template.embedding = None;
-     template
- }
-@@ -2416,6 +2417,7 @@ mod tests {
-                         max_depth: Some(None),
-                         ..ScanRulesUpdate::default()
-                     },
-+                    graph_indexing: Some(true),
-                     ..IndexOptions::default()
-                 },
-                 true,
-@@ -2444,6 +2446,10 @@ mod tests {
-             let watched = &calls[2];
-             assert_eq!(watched.embedding_concurrency, None);
-             assert_eq!(watched.scan, ScanRulesUpdate::default());
-+            assert_eq!(
-+                watched.graph_indexing, None,
-+                "the graph switch is a saved setting, never a replayed request"
-+            );
-             assert!(!watched.rebuild);
-             assert!(!watched.reset_paths);
-             assert!(!watched.allow_remote);
-```
-
-**File**: `rust/crates/zg-engine/src/api/index.rs` (modified, +9/-0)
-```diff
-@@ -25,6 +25,15 @@ pub mod options {
-         pub root: Option<PathBuf>,
-         /// Build from empty storage and replace the active index only after success.
-         pub rebuild: bool,
-+        /// Turns walk-time code graph indexing on or off for this workspace.
-+        ///
-+        /// Omitted keeps the saved setting, and a workspace saved before this
-+        /// option existed indexes without a graph. Changing the setting requires
-+        /// `rebuild`: the graph and the rest of the index must describe the same
-+        /// build, so a refresh that flips the switch is rejected and the published
-+        /// index stays untouched.
-+        #[serde(default, skip_serializing_if = "Option::is_none")]
-+        pub graph_indexing: Option<bool>,
-         /// Automatic refreshes require an existing enabled index instead of creating one.
-         /// This admission policy is runtime-only and never accepted from transport requests.
-         #[serde(skip)]
-```
-
-**File**: `rust/crates/zg-engine/src/authorization.rs` (modified, +1/-0)
-```diff
-@@ -1254,6 +1254,7 @@ mod tests {
-                             ..Default::default()
-                         },
-                     )]),
-+                    false,
-                     crate::domain::FTS_CONFIG,
-                 )
-                 .expect("index descriptor"),
-```
-
-**File**: `rust/crates/zg-engine/src/domain/graph.rs` (modified, +21/-5)
-```diff
-@@ -5,8 +5,18 @@ use std::collections::BTreeMap;
- use serde::{Deserialize, Serialize};
- 
- use super::metadata::SymbolType;
-+use super::source::TextRange;
- 
--/// Edge kinds produced by the extraction layer.
-+/// Kinds produced by the extraction layer.
-+///
-+/// Resolved edges and buffered name references share this vocabulary because
-+/// they become rows of the same table: the pending queue stores the kind the
-+/// resolved edge will carry. Resolution state is therefore structural, not a
-+/// kind — a [`PendingRef`] has no target, a [`FileEdge`] requires one — and the
-+/// store keeps the same split in its `status` column.
-+///
-+/// `Contains` comes only from containment, which is collected as a resolved
-+/// edge during the walk, so a buffered name reference never carries it.
- #[derive(Clone, Copy, Debug, Deserialize, Eq, Hash, PartialEq, Serialize)]
- #[serde(rename_all = "snake_case")]
- pub(crate) enum GraphEdgeKind {
-@@ -15,6 +25,7 @@ pub(crate) enum GraphEdgeKind {
-     Imports,
-     Extends,
-     Implements,
-+    Declares,
- }
- 
- /// Evidence provenance recorded on persisted edges.
-@@ -74,15 +85,17 @@ pub(crate) struct FileGraphNode {
-     /// `scope::name` breadcrumb joined with `::`, or the bare name.
-     pub qualified_name: String,
-     pub language: String,
--    pub start_line: usize,
--    pub end_line: usize,
--    pub start_column: usize,
--    pub end_column: usize,
-+    /// Extent of the entity in its source, absent when the entity carries no
-+    /// text range (a whole-file or byte-only range has no coordinates).
-+    pub range: Option<TextRange>,
-     pub signature: Option<String>,
-     pub doc: Option<String>,
-     pub arity: Option<usize>,
-     pub visibility: Option<String>,
-     pub is_exported: bool,
-+    /// Pure declaration without a body (C/C++ prototypes, in-class member
-+    /// declarations); definitions shadow them in name-based binding.
-+    pub is_declaration: bool,
- }
- 
- /// Per-file graph extraction output, assembled after the walk and partition.
-@@ -94,18 +107,21 @@ pub(crate) struct FileGraphResult {
- }
- 
- impl GraphEdgeKind {
-+    #[allow(dead_code)]
-     pub(crate) const fn as_str(self) -> &'static str {
-         match self {
-             Self::Contains => "contains",
-             Self::Calls => "calls",
-             Self::Imports => "imports",
-             Self::Extends => "extends",
-             Self::Implements => "implements",
-+            Self::Declares => "declares",
-         }
-     }
- }
- 
- impl EdgeProvenance {
-+    #[allow(dead_code)]
-     pub(crate) const fn as_str(self) -> &'static str {
-         match self {
-             Self::FileLocal => "file_local",
-```
-
-**File**: `rust/crates/zg-engine/src/domain/index.rs` (modified, +75/-1)
-```diff
-@@ -46,6 +46,7 @@ pub(crate) struct IndexDescriptor {
-     default_embedding_model: EmbeddingModelInfo,
-     embedding_routes: BTreeMap<ContentKind, EmbeddingModelInfo>,
-     embedding_configs: BTreeMap<String, ModelConfig<EncryptedApiKey>>,
-+    graph_indexing: bool,
-     #[serde(skip)]
-     fts: FtsConfig,
- }
-@@ -60,13 +61,15 @@ impl<'de> Deserialize<'de> for IndexDescriptor {
-             embedding_routes: BTreeMap<ContentKind, EmbeddingModelInfo>,
-             #[serde(default, deserialize_with = "deserialize_unique_map")]
-             embedding_configs: BTreeMap<String, ModelConfig<EncryptedApiKey>>,
-+            graph_indexing: bool,
-         }
- 
-         let fields = Fields::deserialize(deserializer)?;
-         Self::new(
-             fields.default_embedding_model,
-             fields.embedding_routes,
-             fields.embedding_configs,
-+            fields.graph_indexing,
-             FTS_CONFIG,
-         )
-         .map_err(serde::de::Error::custom)
-@@ -135,6 +138,7 @@ impl IndexDescriptor {
-         default_embedding_model: EmbeddingModelInfo,
-         embedding_routes: BTreeMap<ContentKind, EmbeddingModelInfo>,
-         embedding_configs: BTreeMap<String, ModelConfig<EncryptedApiKey>>,
-+        graph_indexing: bool,
-         fts: FtsConfig,
-     ) -> EngineResult<Self> {
-         for (kind, embedding) in &embedding_routes {
-@@ -170,10 +174,24 @@ impl IndexDescriptor {
-             default_embedding_model,
-             embedding_routes,
-             embedding_configs,
-+            graph_indexing,
-             fts,
-         })
-     }
- 
-+    /// Whether the persisted index carries the walk-time code graph.
-+    pub(crate) fn graph_indexing(&self) -> bool {
-+        self.graph_indexing
-+    }
++/// The single-line summary keeps its existing UTF-16 budget while using the
++/// same evidence window as the compact preview.
++pub(crate) fn minimal_source_line(item: &ContextItem, offset: usize, line: &str) -> String {
++    bounded_source_line(item, offset, line, truncate_utf16)
++}
 +
-+    /// Records whether the published index carries the walk-time code graph.
-+    /// Production sets the switch through [`Self::new`]; tests use this to
-+    /// derive a variant of a fixture descriptor.
-+    #[cfg(test)]
-+    pub(crate) fn set_graph_indexing(&mut self, enabled: bool) {
-+        self.graph_indexing = enabled;
++fn bounded_source_line(
++    item: &ContextItem,
++    offset: usize,
++    line: &str,
++    truncate: fn(&str, usize) -> String,
++) -> String {
++    const SOURCE_CHARS: usize = 160;
++    const PREFIX_CHARS: usize = 32;
++    let ordinary = truncate(line, SOURCE_CHARS);
++    if ordinary == line {
++        return ordinary;
 +    }
-+
-     pub(crate) fn default_embedding_model(&self) -> &EmbeddingModelInfo {
-         &self.default_embedding_model
-     }
-@@ -244,6 +262,16 @@ impl IndexDescriptor {
-                 .embedding
-                 .ensure_index_compatible(&other_index.embedding)?;
-         }
-+        if self.graph_indexing != other.graph_indexing {
-+            let existing = if self.graph_indexing {
-+                "stores the code graph"
-+            } else {
-+                "has no code graph"
-+            };
-+            return Err(EngineError::invalid_argument(format!(
-+                "existing index {existing}; rebuild the index to change graph indexing",
-+            )));
++    let prefix_bytes = match (&item.excerpt_range, &item.content_range) {
++        (
++            Some(ContentRange::Text {
++                start_line,
++                start_byte_column,
++                ..
++            }),
++            ContentRange::Text {
++                start_line: first,
++                start_byte_column: first_column,
++                ..
++            },
++        ) if first.checked_add(offset) == Some(*start_line) => {
++            start_byte_column.saturating_sub(if offset == 0 { *first_column } else { 0 })
 +        }
-         Ok(())
-     }
- }
-@@ -278,6 +306,7 @@ mod tests {
-             .expect("embedding"),
-             BTreeMap::new(),
-             BTreeMap::new(),
-+            false,
-             FTS_CONFIG,
-         )
-         .expect("index descriptor")
-@@ -288,7 +317,10 @@ mod tests {
-         for state in [
-             IndexState::Uninitialized,
-             IndexState::Disabled,
--            IndexState::Enabled(Box::new(descriptor())),
-+            IndexState::Enabled(Box::new(IndexDescriptor {
-+                graph_indexing: true,
-+                ..descriptor()
-+            })),
-         ] {
-             let json = serde_json::to_string(&state).expect("encode index");
-             assert_eq!(
-@@ -307,6 +339,48 @@ mod tests {
-         }
-     }
- 
-+    #[test]
-+    fn graph_setting_mismatch_requires_a_rebuild() {
-+        let published = descriptor();
-+        let requested = IndexDescriptor {
-+            graph_indexing: true,
-+            ..descriptor()
-+        };
-+        let error = published
-+            .ensure_index_compatible(&requested)
-+            .expect_err("graph setting changed");
-+        assert!(
-+            error.message().contains("has no code graph"),
-+            "{}",
-+            error.message()
-+        );
-+        let error = requested
-+            .ensure_index_compatible(&published)
-+            .expect_err("graph setting changed");
-+        assert!(
-+            error.message().contains("stores the code graph"),
-+            "{}",
-+            error.message()
-+        );
-+        published
-+            .ensure_index_compatible(&descriptor())
-+            .expect("matching graph setting");
++        _ => 0,
++    };
++    // Invalid or mismatched coordinates retain the normal line-prefix preview.
++    let prefix = line.get(..prefix_bytes).unwrap_or_default();
++    if prefix.is_empty() {
++        return ordinary;
 +    }
++    let start = prefix
++        .char_indices()
++        .rev()
++        .nth(PREFIX_CHARS - 1)
++        .map_or(0, |(start, _)| start);
++    let mut text = if start == 0 {
++        String::new()
++    } else {
++        "...".to_owned()
++    };
++    text.push_str(&prefix[start..]);
++    text.push_str(&truncate(&line[prefix.len()..], SOURCE_CHARS));
++    text
++}
 +
-+    #[test]
-+    fn descriptor_requires_the_graph_setting() {
-+        let encoded =
-+            serde_json::to_string(&IndexState::Enabled(Box::new(descriptor()))).expect("encode");
-+        assert!(encoded.contains("\"graphIndexing\":false"));
-+
-+        let incomplete = encoded.replace(",\"graphIndexing\":false", "");
-+        assert_ne!(incomplete, encoded);
-+        assert!(
-+            serde_json::from_str::<IndexState>(&incomplete).is_err(),
-+            "a descriptor must state whether the build carries a graph"
-+        );
++fn truncate_chars(line: &str, max: usize) -> String {
++    let mut chars = line.chars();
++    let mut text: String = chars.by_ref().take(max).collect();
++    if chars.next().is_some() {
++        text.push_str("...");
 +    }
++    text
++}
 +
-     #[test]
-     fn index_metadata_rejects_
+ /// Applies the Node.js UTF-16 length limit without splitting a Unicode scalar.
+ #[must_use]
+ pub fn truncate_utf16(value: &str, max: usize) -> String {
 ```
 
-**File**: `rust/crates/zg-engine/src/domain/metadata.rs` (modified, +13/-1)
+**File**: `rust/crates/zg-cli/src/render/compact.rs` (modified, +3/-7)
 ```diff
-@@ -44,7 +44,7 @@ impl IndexField {
- 
- // --- Code ---
- 
--#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
-+#[derive(Clone, Debug, Default, Deserialize, Eq, PartialEq, Serialize)]
- pub struct CodeMetadata {
-     pub symbol_type: Option<SymbolType>,
-     pub symbol_name: Option<String>,
-@@ -55,6 +55,18 @@ pub struct CodeMetadata {
-     pub documentation: Option<String>,
-     pub visibility: Option<Visibility>,
-     pub language: Option<Language>,
-+    /// Declared parameter count of function-shaped symbols, with the
-+    /// implicit receiver excluded.
-+    pub arity: Option<usize>,
-+    /// Whether the symbol is importable from outside its module.
-+    #[serde(default)]
-+    pub is_exported: bool,
-+    /// True for pure declarations (C/C++ prototypes, in-class member
-+    /// declarations) that never carry a body. Name-based binding prefers the
-+    /// definition when both exist for the same symbol; a lone declaration is
-+    /// the only known location and stays bindable.
-+    #[serde(default)]
-+    pub is_declaration: bool,
- }
- 
- impl CodeMetadata {
-```
-
----
-
-### Incident Patch 2: `ec141d61` (2026-11-04)
-**Commit Message**: feat(bench): add model inference micro-benchmark (#362)
-
-* feat(bench): add model inference micro-benchmark
-
-* fix(bench): verify cached artifacts and publish complete rounds
-
-* test(bench): compare GGUF cache paths using native path semantics
-
-**File**: `rust/crates/zg-engine/src/models/artifacts/inspection.rs` (modified, +15/-10)
-```diff
-@@ -10,16 +10,23 @@ use super::{
+@@ -7,7 +7,8 @@ use zg_engine::api::context::result::{
  };
  
- pub(crate) async fn model_is_cached(entry: EmbeddingCatalogEntry, cache: Option<&Path>) -> bool {
-+    cached_source(entry, cache).await.is_some()
-+}
-+
-+pub(in crate::models) async fn cached_source(
-+    entry: EmbeddingCatalogEntry,
-+    cache: Option<&Path>,
-+) -> Option<ArtifactSource> {
-     let backend = match entry {
-         EmbeddingCatalogEntry::LlamaCpp(_) => LocalModelBackend::LlamaCpp,
-         EmbeddingCatalogEntry::Model2Vec(_) => LocalModelBackend::Model2Vec,
-         EmbeddingCatalogEntry::Transformers(_) => LocalModelBackend::Transformers,
--        EmbeddingCatalogEntry::Qwen(_) => return false,
-+        EmbeddingCatalogEntry::Qwen(_) => return None,
-     };
-     let cache = cache.map_or_else(|| default_model_cache(backend), Path::to_path_buf);
-     let cache = cache.as_path();
-     let (download, sources) = match entry {
--        EmbeddingCatalogEntry::Qwen(_) => return false,
-+        EmbeddingCatalogEntry::Qwen(_) => return None,
-         EmbeddingCatalogEntry::LlamaCpp(model) => (
-             model.download,
-             [
-@@ -55,9 +62,7 @@ pub(crate) async fn model_is_cached(entry: EmbeddingCatalogEntry, cache: Option<
-             ],
-         ),
-         EmbeddingCatalogEntry::Model2Vec(model) => {
--            let Some(model_file) = Path::new(model.model_file).file_name() else {
--                return false;
--            };
-+            let model_file = Path::new(model.model_file).file_name()?;
-             (
-                 model.download,
-                 [
-@@ -84,18 +89,18 @@ pub(crate) async fn model_is_cached(entry: EmbeddingCatalogEntry, cache: Option<
-             )
-         }
-     };
--    for source in &sources {
--        let Ok(manifest) = Manifest::new(entry.reference(), source, download.artifacts) else {
-+    for source in sources {
-+        let Ok(manifest) = Manifest::new(entry.reference(), &source, download.artifacts) else {
-             continue;
+ use crate::{
+-    OutputOptions, PreviewMode, highlight::QueryHighlighter, output_path, theme::StatusTheme,
++    OutputOptions, PreviewMode, highlight::QueryHighlighter, output_path,
++    preview::short_source_line, theme::StatusTheme,
+ };
+ 
+ pub(super) fn write_items(
+@@ -107,12 +108,7 @@ pub(super) fn write_item_preview(
+     let from = if short { anchor.saturating_sub(3) } else { 0 };
+     for (offset, line) in lines.iter().enumerate().skip(from).take(max_lines) {
+         let line = if short {
+-            let mut chars = line.chars();
+-            let mut text: String = chars.by_ref().take(160).collect();
+-            if chars.next().is_some() {
+-                text.push_str("...");
+-            }
+-            text
++            short_source_line(item, offset, line)
+         } else {
+             (*line).to_owned()
          };
--        if validate_snapshot(source, download.artifacts, &manifest, None)
-+        if validate_snapshot(&source, download.artifacts, &manifest, None)
-             .await
-             .unwrap_or(false)
-         {
--            return true;
-+            return Some(source);
-         }
+```
+
+**File**: `rust/crates/zg-cli/src/render/context.rs` (modified, +2/-2)
+```diff
+@@ -19,7 +19,7 @@ use crate::{
+     OutputOptions, PreviewMode,
+     highlight::QueryHighlighter,
+     output_path,
+-    preview::{source_preview, split_lines, truncate_utf16 as truncate},
++    preview::{minimal_source_line, source_preview, split_lines, truncate_utf16 as truncate},
+     theme::StatusTheme,
+ };
+ 
+@@ -475,7 +475,7 @@ fn source_lines(
+             let prefix = first.map_or(String::new(), |first| (first + offset).to_string());
+             let line = source.lines[offset];
+             let text = if preview == PreviewMode::None {
+-                truncate(line, 160)
++                minimal_source_line(item, offset, line)
+             } else {
+                 line.to_owned()
+             };
+```
+
+**File**: `rust/crates/zg-cli/tests/search_presentation.rs` (modified, +110/-1)
+```diff
+@@ -1,5 +1,5 @@
+ use zg_cli::{ColorMode, OutputOptions, PreviewMode, write_context_with_options};
+-use zg_engine::api::context::ContextResult;
++use zg_engine::api::context::{ContextResult, result::ContentRange};
+ 
+ fn grouped_result() -> ContextResult {
+     let fixtures: serde_json::Value =
+@@ -330,6 +330,115 @@ fn short_marks_truncated_source_lines_and_full_preserves_them() {
      }
--    false
-+    None
  }
  
- #[cfg(test)]
-```
-
-**File**: `rust/crates/zg-engine/src/models/artifacts/mod.rs` (modified, +2/-0)
-```diff
-@@ -14,6 +14,8 @@ mod spec;
- 
- pub(super) use cache_paths::{LocalModelBackend, default_model_cache};
- pub(super) use downloader::{ResolveArtifacts, resolve_model_artifacts};
-+#[cfg(test)]
-+pub(super) use inspection::cached_source;
- pub(crate) use inspection::model_is_cached;
- #[cfg(test)]
- pub(super) use progress::ArtifactDownloadProgress;
-```
-
-**File**: `rust/crates/zg-engine/src/models/artifacts/source.rs` (modified, +1/-1)
-```diff
-@@ -74,7 +74,7 @@ impl ArtifactSource {
-         self
-     }
- 
--    pub(super) fn local_path(
-+    pub(in crate::models) fn local_path(
-         &self,
-         artifact: &ArtifactConfig,
-     ) -> Result<PathBuf, ArtifactDownloadError> {
-```
-
-**File**: `rust/crates/zg-engine/src/models/tests/mod.rs` (modified, +1/-0)
-```diff
-@@ -1,4 +1,5 @@
- mod catalog_main_oracle;
- mod model2vec_main_oracle;
- mod model_layer_bench;
-+mod model_micro_bench;
- mod real_model_smoke;
-```
-
-**File**: `rust/crates/zg-engine/src/models/tests/model_micro_bench.rs` (added, +99/-0)
-```diff
-@@ -0,0 +1,99 @@
-+//! Model inference micro-benchmark; see rust/micro-bench/model/README.md.
-+use std::{
-+    env,
-+    sync::Arc,
-+    time::{Duration, Instant},
-+};
-+
-+use serde_json::{Value, json};
-+
-+use crate::{
-+    domain::{Content, model::EmbeddingPurpose},
-+    models::{
-+        ModelRuntimeLease, ModelRuntimeManager,
-+        spi::{EmbeddingOptions, EmbeddingPrepareOptions},
-+    },
-+};
-+
-+mod fixed_shape;
-+mod support;
-+use support::Config;
-+
-+struct Data {
-+    inputs: Vec<Vec<Content>>,
-+    batch: usize,
-+    nominal_tokens: usize,
-+    descriptions: Vec<Value>,
-+}
-+
-+fn number(name: &str, default: usize) -> usize {
-+    let value = env::var(name).map_or(default, |s| {
-+        s.parse().expect("positive integer configuration")
-+    });
-+    assert!(value > 0, "positive benchmark configuration");
-+    value
-+}
-+
-+fn seconds(value: usize) -> Duration {
-+    Duration::from_secs(u64::try_from(value).expect("duration fits u64"))
-+}
-+
-+fn nanos(value: Duration) -> u64 {
-+    u64::try_from(value.as_nanos()).expect("duration fits u64 nanoseconds")
-+}
-+
-+fn count(value: usize) -> f64 {
-+    f64::from(u32::try_from(value).expect("count fits u32"))
-+}
-+
-+fn phase(name: &str, origin: Instant) {
-+    println!(
-+        "ZG_BENCH_EVENT={}",
-+        json!({"phase":name,"at_ns":nanos(origin.elapsed())})
-+    );
-+}
-+
-+#[derive(Clone, serde::Serialize)]
-+struct Row {
-+    id: usize,
-+    scheduled_ns: u64,
-+    issued_ns: u64,
-+    finished_ns: u64,
-+    status: &'static str,
-+    vectors: usize,
-+    input_indices: Vec<usize>,
-+}
-+
-+fn quantiles(mut values: Vec<u64>) -> Value {
-+    values.sort_unstable();
-+    let quantile = |percent: usize| {
-+        let rank = (values.len() * percent).div_ceil(100);
-+        values
-+            .get(rank.saturating_sub(1))
-+            .map(|&n| Duration::from_nanos(n).as_secs_f64() * 1000.0)
-+    };
-+    json!({"n":values.len(),"p50_ms":quantile(50),"p95_ms":if values.len()>=100 {quantile(95)} else {None},
-+        "p99_ms":if values.len()>=1000 {quantile(99)} else {None}})
-+}
-+
-+fn summary(rows: &[Row], elapsed: Duration, nominal_tokens_per_batch: usize) -> Value {
-+    let successful: Vec<_> = rows.iter().filter(|r| r.status == "completed").collect();
-+    let completed_vectors: usize = successful.iter().map(|r| r.vectors).sum();
-+    json!({"scheduled":rows.len(),"issued":rows.len(),"completed":successful.len(),
-+        "timeout":rows.iter().filter(|r|r.status=="timeout").count(),"errors":rows.iter().filter(|r|r.status=="error").count(),
-+        "elapsed_seconds":elapsed.as_secs_f64(),"vectors_per_second":count(completed_vectors)/elapsed.as_secs_f64(),
-+        "nominal_tokens_per_second":count(successful.len())*count(nominal_tokens_per_batch)/elapsed.as_secs_f64(),
-+        "call_latency":quantiles(successful.iter().map(|r|r.finished_ns-r.issued_ns).collect())})
-+}
-+
-+fn emit_rows(phase: &str, rows: &[Row]) {
-+    println!("ZG_BENCH_ROWS={}", json!({"phase":phase,"rows":rows}));
++#[test]
++fn bounded_previews_keep_fragment_text_after_restoring_a_long_line_prefix() {
++    let fragment = format!("node.name,{}needle", "x".repeat(143));
++    for prefix in [" ".repeat(200), "中😀".repeat(100)] {
++        let line = format!("{prefix}{fragment}tail");
++        for before in ["", "before\r\n"] {
++            let matched_line = 50 + usize::from(!before.is_empty());
++            let column_origin = if before.is_empty() { 4 } else { 0 };
++            let mut result = grouped_result();
++            result.group_results.clear();
++            let item = &mut result.items[0];
++            item.content = format!("{before}{line}");
++            item.content_range = ContentRange::Text {
++                start_line: 50,
++                end_line: matched_line,
++                start_byte_offset: 100,
++                end_byte_offset: 100 + item.content.len(),
++                start_byte_column: 4,
++                end_byte_column: column_origin + line.len(),
++            };
++            item.range = item.content_range.clone();
++            item.excerpt_range = Some(ContentRange::Text {
++                start_line: matched_line,
++                end_line: matched_line,
++                start_byte_offset: 100 + before.len() + prefix.len(),
++                end_byte_offset: 100 + before.len() + prefix.len() + fragment.len(),
++                start_byte_column: column_origin + prefix.len(),
++                end_byte_column: column_origin + prefix.len() + fragment.len(),
++            });
++            let original = result.clone();
++            for preview in [PreviewMode::None, PreviewMode::Short, PreviewMode::Full] {
++                for terminal in [false, true] {
++                    let mut bytes = Vec::new();
++                    write_context_with_options(
++                        &mut bytes,
++                        &result,
++                        OutputOptions {
++                            preview,
++                            color: ColorMode::Never,
++                            ..OutputOptions::default()
++                        },
++                        terminal,
++                    )
++                    .expect("fragment preview");
++                    let output = String::from_utf8(bytes).expect("UTF-8");
++                    let label = if preview == PreviewMode::None {
++                        format!("{matched_line}\t")
++                    } else {
++                        format!("  {matched_line}: ")
++                    };
++                    let displayed = output
++                        .lines()
++                        .find_map(|line| line.strip_prefix(&label))
++                        .expect("matched source line");
++                    assert!(displayed.contains(&fragment), "{preview:?}: {output}");
++                    if preview == PreviewMode::Full {
++                        assert_eq!(displayed, line);
++                    } else {
++                        assert!(displayed.starts_with("...") && displayed.ends_with("..."));
++                        assert!(displayed.chars().count() <= 198, "bounded source context");
++                    }
++                    assert_eq!(
++                        result, original,
++                        "rendering preserves retrieval and source coordinates"
++                    );
++                }
++            }
++        }
++    }
 +}
 +
 +#[test]
-+fn nearest_rank_and_insufficient_tail_samples() {
-+    assert_eq!(quantiles((1..=1000).collect())["p99_ms"], json!(0.000_99));
-+    assert!(quantiles(vec![1; 99])["p95_ms"].is_null());
-+    assert!(quantiles(vec![1; 999])["p99_ms"].is_null());
-+    assert!(quantiles(Vec::new())["p50_ms"].is_null());
-+}
-```
-
-**File**: `rust/crates/zg-engine/src/models/tests/model_micro_bench/fixed_shape.rs` (added, +325/-0)
-```diff
-@@ -0,0 +1,325 @@
-+//! Fixed nominal input size and batch shape, using production CLI concurrency.
-+use std::sync::Mutex;
-+
-+use futures_util::future::join_all;
-+use sha2::{Digest, Sha256};
-+
-+use super::{
-+    Arc, Config, Content, Data, Duration, EmbeddingOptions, EmbeddingPrepareOptions,
-+    EmbeddingPurpose, Instant, ModelRuntimeLease, ModelRuntimeManager, Row, Value, emit_rows, json,
-+    nanos, number, phase, seconds, summary, support,
-+};
-+
-+const GENERATOR: &str = "nominal-words-v1";
-+const WORDS: [&str; 8] = [
-+    "search", "store", "read", "update", "check", "process", "share", "return",
-+];
-+
-+fn inputs(target: usize, batch: usize) -> Data {
-+    let mut data = Data {
-+        inputs: Vec::new(),
-+        batch,
-+        nominal_tokens: target,
-+        descriptions: Vec::new(),
-+    };
-+    for index in 0..WORDS.len() {
-+        // L is a configured input-size label. No tokenizer probe or model
-+        // correctness check is performed by this performance benchmark.
-+        let text = (0..target)
-+            .map(|offset| WORDS[(index + offset) % WORDS.len()])
-+            .collect::<Vec<_>>()
-+            .join(" ");
-+        data.descriptions.push(json!({
-+            "id":format!("input-{index:02}"),"generator":GENERATOR,
-+            "text_sha256":hex::encode(Sha256::digest(text.as_bytes())),"bytes":text.len(),
-+        }));
-+        data.inputs.push(vec![Content::Text(text)]);
-+    }
-+    data
-+}
-+
-+fn indices(id: usize, data: &Data) -> Vec<usize> {
-+    (0..data.batch)
-+        .map(|i| (id * data.batch + i) % data.inputs.len())
-+        .collect()
-+}
-+
-+fn batch(data: &Data, id: usize) -> Vec<Vec<Content>> {
-+    indices(id, data)
-+        .into_iter()
-+        .map(|i| data.inputs[i].clone())
-+        .collect()
-+}
-+
-+fn cycle_batches(inputs: usize, batch: usize) -> usize {
-+    let (mut a, mut b) = (inputs, batch);
-+    while b != 0 {
-+        (a, b) = (b, a % b);
-+    }
-+    inputs / a
-+}
-+
-+async fn warmup(model: &ModelRuntimeLease, data: &Data, workers: usize) -> Value {
-+    let shapes = cycle_batches(data.inputs.len(), data.batch);
-+    let waves = shapes.max(3);
-+    for wave in 0..waves {
-+        let input = batch(data, wave % shapes);
-+        let results =
-+            join_all((0..workers).map(|_| model.embed(&input, EmbeddingOptions::default(), None)))
-+                .await;
-+        for result in results {
-+            result.expect("embedding warmup");
-+        }
-+    }
-+    json!({"worker_waves":waves,"workers":workers,"batch_shapes":shapes})
-+}
-+
-+#[derive(Default)]
-+struct Schedule {
-+    next: usize,
-+    completed: usize,
-+    minimum: usize,
-+    cycle: usize,
-+    stop_at: Option<usize>,
-+    failed: bool,
-+    capped: bool,
-+}
-+
-+impl Schedule {
-+    fn take(&mut self, elapsed: Duration, duration: Duration, maximum: Duration) -> Option<usize> {
-+        if self.failed || self.capped {
-+            return None;
-+        }
-+        if elapsed >= maximum {
-+            self.capped = true;
-+            return None;
-+        }
-+        if self.stop_at.is_none() && elapsed >= duration && self.completed >= self.minimum {
-+            self.stop_at = Some(self.next.div_ceil(self.cycle) * self.cycle);
-+        }
-+        if self.stop_at.is_some_and(|end| self.next >= end) {
-+            return None;
-+        }
-+        let id = self.next;
-+        self.next += 1;
-+        Some(id)
-+    }
-+
-+    fn finish(&mut self, successful: bool) {
-+        if successful {
-+            self.completed += 1;
-+        } else {
-+            self.failed = true;
-+        }
-+    }
-+}
-+
-+async fn request(model: &ModelRuntimeLease, data: &Data, origin: Instant, id: usize) -> Row {
-+    let selected = indices(id, data);
-+    let texts: Vec<_> = selected.iter().map(|&i| data.inputs[i].clone()).collect();
-+    let options = EmbeddingOptions {
-+        purpose: EmbeddingPurpose::Document,
-+        ..Default::default()
-+    };
-+    let started = Instant::now();
-+    let output = model.embed(&texts, options, None).await;
-+    let finished = Instant::now();
-+    let status = if output.is_ok() { "completed" } else { "error" };
-+    if let Err(error) = &output {
-+        eprintln!("embedding batch {id} failed: {error}");
-+    }
-+    let vectors = output.map_or(0, |result| result.vectors.len());
-+    Row {
-+        id,
-+        scheduled_ns: nanos(started.duration_since(origin)),
-+        issued_ns: nanos(started.duration_since(origin)),
-+        finished_ns: nanos(finished.duration_since(origin)),
-+        status,
-+        vectors,
-+        input_indices: selected,
-+    }
-+}
-+
-+async fn measure(
-+    model: &Arc<ModelRuntimeLease>,
-+    data: &Arc<Data>,
-+    workers: usize,
-+    origin: Instant,
-+) -> (Vec<Row>, Value) {
-+    let duration = seconds(number("ZG_MODEL_BENCH_SECONDS", 15));
-+    let maximum = seconds(number("ZG_MODEL_BENCH_MAX_SECONDS", 120));
-+    let minimum = number("ZG_MODEL_BENCH_MIN_BATCHES", 100);
-+    assert!(
-+        maximum >= duration,
-+        "maximum duration must cover 
-```
-
-**File**: `rust/crates/zg-engine/src/models/tests/model_micro_bench/support.rs` (added, +247/-0)
-```diff
-@@ -0,0 +1,247 @@
-+use crate::{
-+    domain::model::{Device, ModelConfig},
-+    models::{
-+        ModelRuntimeLease, ModelRuntimeManager, ModelRuntimeRequest,
-+        artifacts::{ArtifactDownloadConfig, cached_source},
-+        catalog::{
-+            EmbeddingCatalogEntry, get_embedding_model_catalog_entry, list_embedding_models,
-+        },
-+        runtime::{batch_concurrency, resolve_index_concurrency},
-+        spi::EmbeddingPrepareOptions,
-+    },
-+};
-+use serde_json::{Value, json};
-+use sha2::{Digest, Sha256};
-+use std::{
-+    env,
-+    fs::File,
-+    io::Read,
-+    path::{Path, PathBuf},
-+    sync::Arc,
-+};
-+
-+pub(super) struct Config {
-+    pub reference: String,
-+    pub cache: PathBuf,
-+    pub device: Device,
-+    pub requested: Option<usize>,
-+    pub index_limit: Option<usize>,
-+    pub entry: EmbeddingCatalogEntry,
-+}
-+
-+impl Config {
-+    pub fn environment() -> Self {
-+        let reference = env::var("ZG_MODEL_BENCH_MODEL").expect("explicit local model");
-+        let entry = get_embedding_model_catalog_entry(&reference).expect("catalog model");
-+        assert!(
-+            !matches!(entry, EmbeddingCatalogEntry::Qwen(_)),
-+            "remote models are not authorized"
-+        );
-+        let requested = match env::var("ZG_MODEL_BENCH_CONCURRENCY").as_deref() {
-+            Ok("default") | Err(_) => None,
-+            Ok(value) => Some(value.parse().expect("CLI positive concurrency")),
-+        };
-+        let index_limit =
-+            resolve_index_concurrency(&reference, requested).expect("CLI concurrency resolution");
-+        let device = match env::var("ZG_MODEL_BENCH_DEVICE").as_deref() {
-+            Ok("cpu") => Device::Cpu,
-+            Ok("metal") => Device::Metal,
-+            #[cfg(feature = "cuda")]
-+            Ok("cuda") => Device::Cuda,
-+            #[cfg(not(feature = "cuda"))]
-+            Ok("cuda") => panic!("CUDA requires a CUDA build"),
-+            _ => panic!("device must be cpu, metal or cuda"),
-+        };
-+        Self {
-+            reference,
-+            entry,
-+            requested,
-+            index_limit,
-+            device,
-+            cache: PathBuf::from(env::var_os("ZG_MODEL_BENCH_CACHE").expect("explicit cache")),
-+        }
-+    }
-+
-+    pub fn acquire(&self, manager: &ModelRuntimeManager) -> Arc<ModelRuntimeLease> {
-+        Arc::new(
-+            manager
-+                .acquire(ModelRuntimeRequest::new(
-+                    &self.reference,
-+                    ModelConfig {
-+                        cache_dir: Some(self.cache.clone()),
-+                        device: Some(self.device),
-+                        ..Default::default()
-+                    },
-+                    self.index_limit,
-+                ))
-+                .expect("runtime acquisition"),
++fn minimal_preview_preserves_its_utf16_limit_without_a_restored_prefix() {
++    for (content, expected) in [
++        ("a".repeat(160), "a".repeat(160)),
++        ("a".repeat(161), format!("{}...", "a".repeat(159))),
++        (
++            format!("{}😀", "a".repeat(158)),
++            format!("{}😀", "a".repeat(158)),
++        ),
++        (
++            format!("{}😀b", "a".repeat(158)),
++            format!("{}...", "a".repeat(158)),
++        ),
++    ] {
++        let mut result = grouped_result();
++        result.group_results.clear();
++        result.items[0].content = content;
++        result.items[0].excerpt_range = None;
++        let mut bytes = Vec::new();
++        write_context_with_options(
++            &mut bytes,
++            &result,
++            OutputOptions {
++                preview: PreviewMode::None,
++                color: ColorMode::Never,
++                ..OutputOptions::default()
++            },
++            false,
 +        )
-+    }
-+
-+    pub fn workers(&self, model: &ModelRuntimeLease) -> usize {
-+        // Same successful-work admission as indexing's resolve_index_batch_policy.
-+        batch_concurrency(&self.reference, self.index_limit)
-+            .unwrap_or(model.concurrency_defaults().initial)
-+    }
-+}
-+
-+fn download(entry: EmbeddingCatalogEntry) -> &'static ArtifactDownloadConfig {
-+    match entry {
-+        EmbeddingCatalogEntry::LlamaCpp(e) => e.download,
-+        EmbeddingCatalogEntry::Model2Vec(e) => e.download,
-+        EmbeddingCatalogEntry::Transformers(e) => e.download,
-+        EmbeddingCatalogEntry::Qwen(_) => panic!("local models only"),
++        .expect("minimal render");
++        let output = String::from_utf8(bytes).expect("UTF-8");
++        assert_eq!(
++            output.lines().find_map(|line| line.strip_prefix("50\t")),
++            Some(expected.as_str())
++        );
 +    }
 +}
 +
-+fn metadata(entry: EmbeddingCatalogEntry) -> Value {
-+    let (batch, limit, semantics) = match entry {
-+        EmbeddingCatalogEntry::LlamaCpp(e) => (
-+            e.max_batch_size,
-+            e.context_size,
-+            json!({"format":e.format,"dtype":"Q8_0","pooling":"native model metadata","normalize":false}),
-+        ),
-+        EmbeddingCatalogEntry::Model2Vec(e) => (
-+            e.max_batch_size,
-+            e.max_input_tokens,
-+            json!({"dtype":"safetensors","normalize":e.normalize,"pooling":"mean excluding unknown ids","query_prefix":e.query_prefix,"document_prefix":e.document_prefix}),
-+        ),
-+        EmbeddingCatalogEntry::Transformers(e) => (
-+            e.max_batch_size,
-+            e.max_input_tokens,
-+            json!({"dtype":e.dtype,"pooling":e.pooling,"normalize":e.normalize,"query_prefix":e.query_prefix,"document_prefix":e.document_prefix}),
-+        ),
-+        EmbeddingCatalogEntry::Qwen(_) => panic!("local only"),
-+    };
-+    let d = download(entry);
-+    json!({"model":entry.reference(),"backend":entry.backend(),"dimension":entry.dimension(),"max_batch_size":batch,
-+        "max_input_tokens":limit,"semantics":semantics,"revision":d.hugging_face.revision,
-+        "fallback_revision":d.model_scope.revision,"artifacts":d.artifacts.iter().map(|a|json!({"path":a.path,"size":a.size,"sha256":a.sha256})).collect::<Vec<_>>()})
-+}
-+
-+pub(super) async fn verify_artifacts(entry: EmbeddingCatalogEntry, cache: &Path) -> Value {
-+    let mut meta = metadata(entry);
-+    let source = c
+ #[test]
 ```
 
-**File**: `rust/micro-bench/model/README.md` (added, +217/-0)
+**File**: `rust/crates/zg-engine/src/pipelines/indexed_search/context.rs` (modified, +60/-24)
 ```diff
-@@ -0,0 +1,217 @@
-+# Model module micro-benchmark contract v5
+@@ -493,8 +493,12 @@ fn context_item_target(hit: &SearchHit) -> Result<ContextItemTarget, EngineError
+             fragment.id.as_str()
+         ))
+     };
+-    let (content, excerpt_range) = match (fragment.range, hit.entity.content()) {
+-        (Range::Full, content) => (content_to_text(content), None),
++    let (content, content_range, excerpt_range) = match (fragment.range, hit.entity.content()) {
++        (Range::Full, content) => (
++            content_to_text(content),
++            hit.entity.source_range().into(),
++            None,
++        ),
+         (Range::Byte(range), Content::Text(text) | Content::Code(text)) => {
+             let start = usize::try_from(range.start_offset()).map_err(|_| {
+                 invalid_fragment(EngineError::invalid_argument(
+@@ -506,22 +510,43 @@ fn context_item_target(hit: &SearchHit) -> Result<ContextItemTarget, EngineError
+                     "fragment end offset exceeds platform limits",
+                 ))
+             })?;
+-            let content = crate::utils::slice_text(text, start, end).map_err(invalid_fragment)?;
+             let lines = crate::utils::line_byte_offsets(text);
+             let local = crate::utils::text_range_from_offsets(text, &lines, start, end)
+                 .map_err(invalid_fragment)?;
+-            let source = match hit.entity.source_range() {
+-                Range::Full => local,
+-                Range::Text(origin) => {
+-                    crate::utils::map_text_range(local, origin).map_err(invalid_fragment)?
+-                }
+-                Range::Byte(_) => {
+-                    return Err(invalid_fragment(EngineError::invalid_argument(
+-                        "fragment content coordinates cannot be mapped to this entity source",
+-                    )));
+-                }
++            let to_source = |local| match hit.entity.source_range() {
++                Range::Full => Ok(local),
++                Range::Text(origin) => crate::utils::map_text_range(local, origin),
++                Range::Byte(_) => Err(EngineError::invalid_argument(
++                    "fragment content coordinates cannot be mapped to this entity source",
++                )),
++            };
++            let source = to_source(local).map_err(invalid_fragment)?;
++            // Overlap may put fragment boundaries inside a token. Present complete
++            // boundary lines from the indexed entity, retaining the exact evidence
++            // coordinates separately. Empty spans must stay empty.
++            let (display_start, display_end) = if start == end {
++                (start, end)
++            } else {
++                (
++                    lines[local.start_line() - 1],
++                    if local.end_byte_column() == 0 {
++                        end
++                    } else {
++                        lines.get(local.end_line()).copied().unwrap_or(text.len())
++                    },
++                )
+             };
+-            (content.to_owned(), Some(Range::Text(source).into()))
++            let display =
++                crate::utils::text_range_from_offsets(text, &lines, display_start, display_end)
++                    .map_err(invalid_fragment)?;
++            let content_range = to_source(display).map_err(invalid_fragment)?;
++            let content = crate::utils::slice_text(text, display_start, display_end)
++                .map_err(invalid_fragment)?;
++            (
++                content.to_owned(),
++                Range::Text(content_range).into(),
++                Some(Range::Text(source).into()),
++            )
+         }
+         _ => {
+             return Err(invalid_fragment(EngineError::invalid_argument(
+@@ -531,9 +556,7 @@ fn context_item_target(hit: &SearchHit) -> Result<ContextItemTarget, EngineError
+     };
+     Ok(ContextItemTarget {
+         content,
+-        content_range: excerpt_range
+-            .clone()
+-            .unwrap_or_else(|| hit.entity.source_range().into()),
++        content_range,
+         content_role: ContextContentRole::Source,
+         excerpt_range,
+     })
+@@ -605,6 +628,9 @@ fn content_to_text(content: &Content) -> String {
+     }
+ }
+ 
++#[cfg(test)]
++mod fragment_tests;
 +
-+One case is **model × input length L in words × batch size B × CLI
-+embedding concurrency C × requested device**. One timed workload, `embedding`,
-+measures batch-call latency, throughput and external resource usage.
+ #[cfg(test)]
+ mod tests {
+     use std::path::PathBuf;
+@@ -621,7 +647,7 @@ mod tests {
+     use super::{normalize_context_request, select_and_rank_context_items};
+ 
+     #[test]
+-    fn best_fragment_preserves_original_content_and_source_range() {
++    fn best_fragment_preserves_evidence_and_expands_display_within_entity() {
+         use crate::{
+             domain::{
+                 ByteRange, Content, Entity, EntityFragment, EntityId, FileId, FileIndexStatus,
+@@ -638,6 +664,9 @@ mod tests {
+         let fragment_source_range = Range::Text(
+             TextRange::from_coordinates(10, 21, 2, 3, 3, 2).expect("fragment source range"),
+         );
++        let display_range = Range::Text(
++            TextRange::from_coordinates(9, 25, 2, 4, 2, 0).expect("display source range"),
++        );
+         let con
+```
+
+**File**: `rust/crates/zg-engine/src/pipelines/indexed_search/context/fragment_tests.rs` (added, +153/-0)
+```diff
+@@ -0,0 +1,153 @@
++use crate::{
++    api::context::result::MatchedBy,
++    domain::{
++        ByteRange, Content, Entity, EntityFragment, EntityId, FileId, FileIndexStatus, FileRecord,
++        FileSnapshot, FragmentId, Range, SourcePath,
++    },
++    pipelines::indexed_search::pipeline::{SearchEvidence, SearchHit},
++};
 +
-+The measurement boundary is the existing private model module. It includes
-+runtime admission, input formatting, tokenization, native computation and the
-+engine's normal postprocessing. Scanning, chunking, storage and retrieval are
-+outside this boundary. Model correctness is covered by the model tests, not this
-+micro-benchmark: there are no token-length, vector-value, normalization,
-+repeatability or truncation checks, and no boundary-audit prerequisite. The
-+benchmark adds no backend/runtime statistics probes.
++fn hit_with_fragment(source: &str, start: usize, end: usize) -> SearchHit {
++    let file_id = FileId::new(1);
++    let content = Content::Code(source.to_owned());
++    let id = EntityId::new(file_id, &content, Range::Full).expect("entity ID");
++    let fragment = EntityFragment {
++        id: FragmentId::new(&id, 0),
++        range: Range::Byte(ByteRange::new(start as u64, end as u64).expect("fragment offsets")),
++    };
++    // Keep the entity valid while allowing malformed search evidence in validation tests.
++    let stored_fragment = EntityFragment {
++        range: Range::Full,
++        ..fragment.clone()
++    };
++    SearchHit {
++        entity: Entity::new(
++            id,
++            file_id,
++            Range::Full,
++            content,
++            None,
++            vec![stored_fragment],
++        )
++        .expect("entity"),
++        file: FileRecord::new(
++            file_id,
++            SourcePath::new("example.py").expect("source path"),
++            FileSnapshot {
++                size_bytes: source.len() as u64,
++                modified_epoch_ms: None,
++                content_hash: None,
++            },
++            FileIndexStatus::NotIndexed,
++        )
++        .expect("file"),
++        evidence: vec![SearchEvidence { fragment }],
++        rank: 1,
++        score: 1.0,
++        matched_by: MatchedBy::Fts,
++        trace: None,
++    }
++}
 +
-+## Matrix and input generation
++#[test]
++fn byte_fragments_display_complete_boundary_lines() {
++    for newline in ["\n", "\r\n"] {
++        for (line, selected) in [
++            ("            node.name,", "e.name,"),
++            (
++                "    @only_required_for_messages(\"invalid-metaclass\")",
++                "ages(\"invalid-metaclass\")",
++            ),
++            ("    value = \"中😀βeta\"", "😀β"),
++        ] {
++            let source = format!("before{newline}{line}{newline}after");
++            let start = source.find(selected).expect("selected text");
++            let end = start + selected.len();
++            let hit = hit_with_fragment(&source, start, end);
++            let target = super::context_item_target(&hit).expect("source fragment");
++            assert_eq!(target.content, format!("{line}{newline}"));
++            let local = crate::utils::text_range_from_offsets(
++                &source,
++                &crate::utils::line_byte_offsets(&source),
++                start,
++                end,
++            )
++            .expect("matched range");
++            assert_eq!(target.excerpt_range, Some(Range::Text(local).into()));
++            assert_eq!(target.content_range.start_line(), Some(2));
++            assert_eq!(target.content_range.last_line(), Some(2));
++            assert_eq!(hit.entity.content(), &Content::Code(source));
++        }
++    }
++}
 +
-+Defaults:
++#[test]
++fn boundary_aligned_empty_and_invalid_fragments_are_preserved() {
++    let source = "A中😀\r\nβeta\n尾";
++    for (start, end) in [(0, 10), (10, 16), (16, 19), (0, 0), (12, 12), (19, 19)] {
++        let hit = hit_with_fragment(source, start, end);
++        let target = super::context_item_target(&hit).expect("valid fragment");
++        assert_eq!(target.content, source[start..end]);
++        assert_eq!(target.excerpt_range, Some(target.content_range));
++    }
++    for (start, end) in [(2, 12), (1, 11), (0, 999)] {
++        let hit = hit_with_fragment(source, start, end);
++        let error = super::context_item_target(&hit)
++            .err()
++            .expect("invalid fragment");
++        assert_eq!(error.code(), crate::EngineError::STORAGE_FAILURE);
++    }
++}
 +
-+- All local catalog models; no remote or paid models.
-+- Input lengths L (whitespace-separated words): `32 256 1024`.
-+- Batch sizes B: `1 4 16`.
-+- CLI embedding concurrency C: `default 1 2 4 8`.
-+- Requested devices: `cpu metal`; CUDA is selectable with a CUDA build.
-+- One process round per executable case; use `--rounds` to request repeats.
++#[test]
++fn overlapping_python_fragments_are_displayed_as_source_lines() {
++    use crate::{
++        domain::FileFormat,
++        extraction::{ChunkOptions, TextSource, extract_for_indexing},
++    };
 +
-+Resolve each configured L to `min(L, model.max_input_tokens)` and B to
-+`min(B, model.max_batch_size)`, then deduplicate those values per model. This is
-+configuration resolution against catalog limits, not validation of tokenized
-+inputs. Store requested tiers and resolved cases in the manifest. Case paths are:
++    let source = TextSource {
++        relative_path: SourcePath::new("example.py").expect("path"),
++        formats: vec![FileFormat::Python],
++        text: format!(
++            "class Boundary:\n{}",
++            "    def visit(self):\n        return self.attribute_name\n".repeat(80)
++        ),
++    };
++    let extraction = extract_for_indexing(&source, ChunkOptions::default()).expect("extraction");
++    let mut partial_starts = 0;
++    for entity in extraction.fragments {
++        let Content::Code(text) = entity.content else {
++            continue;
++        };
++        let lines: Vec<_> = text.lines().collect();
++        for fragment in entity.fragments {
++            let Range::Byte(bytes) = fragment.range else {
++                continue;
++            };
++            let start = usize::try_from(bytes.start_offset()).expect("start");
++            let end = usize::try_from(bytes.end_offset()).exp
+```
+
+**File**: `rust/crates/zg-engine/tests/engine_storage.rs` (modified, +37/-20)
+```diff
+@@ -575,35 +575,52 @@ async fn long_entities_store_original_content_once_and_project_fragment_metadata
+             .await?;
+         assert_eq!(result.items.len(), 1);
+         let item = &result.items[0];
+-        let Some(zg_engine::api::context::result::ContentRange::Text {
+-            start_line,
+-            end_line,
++        let zg_engine::api::context::result::ContentRange::Text {
+             start_byte_offset,
+             end_byte_offset,
+-            start_byte_column,
+-            end_byte_column,
+-        }) = &item.excerpt_range
++            ..
++        } = &item.content_range
+         else {
+-            panic!("text source excerpt");
++            panic!("text source content");
+         };
+-        assert_eq!(Some(&item.content_range), item.excerpt_range.as_ref());
+         assert_eq!(
+             source.get(*start_byte_offset..*end_byte_offset),
+             Some(item.content.as_str())
+         );
+-        for (offset, line, column) in [
+-            (*start_byte_offset, *start_line, *start_byte_column),
+-            (*end_byte_offset, *end_line, *end_byte_column),
++        assert!(*start_byte_offset == 0 || source.as_bytes()[start_byte_offset - 1] == b'\n');
++        assert!(
++            *end_byte_offset == source.len() || source.as_bytes()[end_byte_offset - 1] == b'\n'
++        );
++        for range in [
++            &item.content_range,
++            item.excerpt_range.as_ref().expect("matched fragment"),
+         ] {
+-            let prefix = &source[..offset];
+-            assert_eq!(
+-                line,
+-                prefix.bytes().filter(|byte| *byte == b'\n').count() + 1
+-            );
+-            assert_eq!(
+-                column,
+-                prefix.rfind('\n').map_or(offset, |last| offset - last - 1)
+-            );
++            let zg_engine::api::context::result::ContentRange::Text {
++                start_line,
++                end_line,
++                start_byte_offset: matched_start,
++                end_byte_offset: matched_end,
++                start_byte_column,
++                end_byte_column,
++            } = range
++            else {
++                panic!("text source range");
++            };
++            assert!(start_byte_offset <= matched_start && matched_end <= end_byte_offset);
++            for (offset, line, column) in [
++                (*matched_start, *start_line, *start_byte_column),
++                (*matched_end, *end_line, *end_byte_column),
++            ] {
++                let prefix = &source[..offset];
++                assert_eq!(
++                    line,
++                    prefix.bytes().filter(|byte| *byte == b'\n').count() + 1
++                );
++                assert_eq!(
++                    column,
++                    prefix.rfind('\n').map_or(offset, |last| offset - last - 1)
++                );
++            }
+         }
+         assert_eq!(
+             item.content_role,
+```
+
+**File**: `rust/crates/zg-transport-mcp/src/search_format/tests.rs` (modified, +109/-1)
+```diff
+@@ -140,6 +140,93 @@ fn generated_outline_cases() -> Vec<McpSearchPresentationCase> {
+         .collect()
+ }
+ 
++fn line_aligned_fragment_cases() -> Vec<McpSearchPresentationCase> {
++    let mut cases = Vec::new();
++    for newline in ["\n", "\r\n"] {
++        for (line, matched) in [
++            ("            node.name,", "e.name,"),
++            (
++                "    @only_required_for_messages(\"invalid-metaclass\")",
++                "ages(\"invalid-metaclass\")",
++            ),
++        ] {
++            let start = "before".len() + newline.len();
++            let end = start + line.len() + newline.len();
++            let matched_start = start + line.find(matched).expect("matched suffix");
++            let mut value = fixtures().remove(0).result;
++            value["items"].as_array_mut().expect("items").truncate(1);
++            let item = &mut value["items"][0];
++            item["rank"] = 1.into();
++            item["relative_path"] = "example.py".into();
++            item["metadata"] = serde_json::Value::Null;
++            item["range"] = serde_json::json!({
++                "kind": "text", "start_line": 1, "end_line": 3,
++                "start_byte_offset": 0, "end_byte_offset": end + "after".len(),
++                "start_byte_column": 0, "end_byte_column": "after".len()
++            });
++            item["content_range"] = serde_json::json!({
++                "kind": "text", "start_line": 2, "end_line": 3,
++                "start_byte_offset": start, "end_byte_offset": end,
++                "start_byte_column": 0, "end_byte_column": 0
++            });
++            item["excerpt_range"] = serde_json::json!({
++                "kind": "text", "start_line": 2, "end_line": 2,
++                "start_byte_offset": matched_start, "end_byte_offset": start + line.len(),
++                "start_byte_column": matched_start - start, "end_byte_column": line.len()
++            });
++            item["content"] = format!("{line}{newline}").into();
++            let expected = format!("freshness: fresh\n#1 example.py:1-3\n  2: {line}\n");
++            cases.push(McpSearchPresentationCase {
++                id: format!("complete-fragment-lines-{newline:?}-{matched}"),
++                result: value,
++                expected_short: expected.clone(),
++                expected_full: expected,
++            });
++        }
++    }
++    cases
++}
 +
-+```text
-+MODEL/DEVICE/lL/bBATCH/cCONCURRENCY/r01/result.json
-+```
++fn long_line_fragment_cases() -> Vec<McpSearchPresentationCase> {
++    let mut cases = Vec::new();
++    for newline in ["\n", "\r\n"] {
++        for (prefix, retained_prefix) in [
++            ("p".repeat(300), "p".repeat(29)),
++            ("中😀".repeat(150), format!("😀{}", "中😀".repeat(14))),
++        ] {
++            // Keep a needle at the very end of the original 160-character preview.
++            let fragment = format!("e.name,{}needle", "x".repeat(147));
++            let line = format!("{prefix}nod{fragment}tail");
++            let start = "before".len() + newline.len();
++            let end = start + line.len() + newline.len();
++            let matched_start = start + prefix.len() + "nod".len();
++            let mut case = line_aligned_fragment_cases().remove(0);
++            let item = &mut case.result["items"][0];
++            item["range"]["end_byte_offset"] = (end + "after".len()).into();
++            item["content_range"] = serde_json::json!({
++                "kind": "text", "start_line": 2, "end_line": 3,
++                "start_byte_offset": start, "end_byte_offset": end,
++                "start_byte_column": 0, "end_byte_column": 0
++            });
++            item["excerpt_range"] = serde_json::json!({
++                "kind": "text", "start_line": 2, "end_line": 2,
++                "start_byte_offset": matched_start,
++                "end_byte_offset": matched_start + fragment.len(),
++                "start_byte_column": prefix.len() + "nod".len(),
++                "end_byte_column": prefix.len() + "nod".len() + fragment.len()
++            });
++            item["content"] = format!("{line}{newline}").into();
++            case.id = format!("long-line-fragment-{}-{newline:?}", prefix.len());
++            case.expected_short = format!(
++                "freshness: fresh\n#1 example.py:1-3\n  2: ...{retained_prefix}nod{fragment}...\n"
++            );
++            case.expected_full = format!("freshness: fresh\n#1 example.py:1-3\n  2: {line}\n");
++            cases.push(case);
++        }
++    }
++    cases
++}
 +
-+Generate a deterministic pool of eight input variants, each containing L
-+whitespace-separated words. Use the same `EmbeddingPurpose::Document` format for
-+every call. Record generator identity, input hashes and byte counts. Do not run a
-+tokenizer probe or inspect how the backend transforms the inputs. Prefixes,
-+special tokens, token filtering and truncation remain ordinary engine behavior.
-+
-+**L is the number of whitespace-separated words per generated input, not the
-+tokenizer's token count.** The report uses the compact label `L=32`. Input-word
-+throughput remains in raw and aggregate JSON but is not displayed in the table.
-+The raw field names `input_tokens` and
-+`nominal_tokens_per_second` are retained for compatibility. Identical L values
-+do not establish identical native token counts across models.
-+
-+Timed workers draw batches from a deterministic shared queue. Keep B and C fixed
-+within a case. A successful batch means that the embedding API returned `Ok`;
-+record the number of returned vectors without asserting its size or contents.
-+
-+## Concurrency and device configuration
-+
-+Use production `resolve_index_concurrency` and `batch_concurrency`. Clear inherited
-+indexing concurrency overrides so `default` uses the backend default:
-+
-+- llama.cpp has one in-flight batch; C controls native context parallelism within it.
-+- Transformers/ONNX uses the production in-flight batch limit, capped at eight;
-+  its current default is one.
-+- model2vec uses its production default (currently two) or the explicit budget.
-+
-+Record requested C, resolved runtime budget and configured in-flight batch count.
-+`default` remains a distinct case from an explicit value even if they resolve to
-+the same budget. Do not add extra batch workers on top of a native context budget.
-+
-+The fixed first column records the **requested device only**. Actual execution device
-+and fallback are not verified. External GPU utilization is a resource observation,
-+not evidence that this case executed on that GPU. Do not infer a provider from
-+CPU/GPU activity.
-+
-+The known CPU-only model2vec capability can skip non-CPU cases. Save a bound
-+`case-status.json` with the reason, keep its table row, and omit its measurement
-+rounds. A skip record cannot coexist with measured rounds. Other backends are not
-+preclassified as unsupported from their names.
-+
-+## Timing and rounds
-+
-+Each round uses a fresh process and runtime manager. Prepare the model and input
-+pool, then warm at least three worker waves while covering the input-pool batch
-+cycle. Warmup calls exercise the engine without comparing outputs; call failures
-+remain execution failures. Preparation and warmup are outside measurement.
-+
-+Run one continuous closed-loop phase: each completed worker immediately takes
-+its next batch. The baseline targets both **15 seconds** and **100 completed
-+batches**, ending at a balanced input-cycle boundary. Stop new submissions after
-+**120 seconds** and drain already-issued calls. Preserve an unmet sample target
-+when the cap fires. The cap does not cancel native work or bound total wall time.
-+The process watchdog defaults to **1,800 seconds**.
-+
-+Smoke uses one second, at least three completed batches and a ten-second dispatch
-+cap. Label it as a short validation run; it is excluded from performance
-+comparison even when multiple rounds are requested.
-+
-+Shuffle cases independently
+ fn grouped_cases() -> Vec<McpSearchPresentationCase> {
+     let mut case = fixtures().remove(1);
+     case.id = "separate-query-group-results".into();
+@@ -179,6 +266,27 @@ fn global_staleness_cases() -> Vec<McpSearchPresentationCase> {
+         .collect()
+ }
+ 
++#[test]
++fn both_previews_preserve_complete_lines_around_partial_matches() {
++    for case in line_aligned_fragment_cases()
++        .into_iter()
++        .chain(long_line_fragment_cases())
++    {
++        let result: ContextResult = serde_json::from_value(case.result).expect("context");
++    
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #365** (2026-11-05): feat(engine): query persisted callers and callees (@liulx20)
 - **PR #364** (2026-11-03): docs: allow package scripts in npm installation commands (@egolearner)
 - **PR #362** (2026-11-04): feat(bench): add model inference micro-benchmark (@feihongxu0824)
+- **PR #361** (2026-11-05): fix(search): preserve source boundaries and bounded preview evidence (@Cuiyus)
 - **PR #360** (2026-11-02): fix(mcp): align output schemas with serialized results (@egolearner)
 - **PR #358** (2026-11-03): fix(models): honor Model2Vec catalog token limits (@feihongxu0824)
-- **PR #357** (2026-11-03): refactor(engine): share query admission and glob filtering (@liulx20)
-- **PR #356** (2026-11-02): fix(npm): deduplicate installed native payload files (@egolearner)
 
 ---
 
@@ -2207,26 +1841,54 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. rust): extract and persist code graphs during indexing (#291)
+## X. search): preserve source boundaries and bounded preview evidence (#361)
 
 **RULE**:
-When implementing operations in `rust/crates/zg-cli/src/render.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zvec-ai/zvec-grep. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `rust/crates/zg-cli/src/preview.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zvec-ai/zvec-grep. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3d60e062`: rust): extract and persist code graphs during indexing (#291). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `407a3851`: search): preserve source boundaries and bounded preview evidence (#361). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `rust/crates/zg-cli/src/render.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `rust/crates/zg-cli/src/preview.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-            arity: None,
-            is_exported: false,
-            is_declaration: false,
-                arity: None,
-                is_exported: false,
-                is_declaration: false,
+/// Keep the fragment's 160-character budget independently of restored line
+/// prefixes. Add at most 32 prefix characters and mark any omitted context.
+pub(crate) fn short_source_line(item: &ContextItem, offset: usize, line: &str) -> String {
+    bounded_source_line(item, offset, line, truncate_chars)
+}
+
+/// The single-line summary keeps its existing UTF-16 budget while using the
+/// same evidence window as the compact preview.
+pub(crate) fn minimal_source_line(item: &ContextItem, offset: usize, line: &str) -> String {
+    bounded_source_line(item, offset, line, truncate_utf16)
+}
+
+fn bounded_source_line(
+    item: &ContextItem,
+    offset: usize,
+    line: &str,
+    truncate: fn(&str, usize) -> String,
+) -> String {
+    const SOURCE_CHARS: usize = 160;
+    const PREFIX_CHARS: usize = 32;
+    let ordinary = truncate(line, SOURCE_CHARS);
+    if ordinary == line {
+        return ordinary;
+    }
+    let prefix_bytes = match (&item.excerpt_range, &item.content_range) {
+        (
+            Some(ContentRange::Text {
+                start_line,
+                start_byte_column,
+                ..
+            }),
+            ContentRange::Text {
+                start_line: first,
+      
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2236,4 +1898,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3d60e062` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `407a3851` are properly handled with clean fallback behavior.

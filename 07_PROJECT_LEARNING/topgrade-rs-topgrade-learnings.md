@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/topgrade-rs-topgrade-learnings.md`  
 > **Source**: github ([https://github.com/topgrade-rs/topgrade](https://github.com/topgrade-rs/topgrade))  
-> **Source Version**: `155a490a`  
+> **Source Version**: `94f3d94c`  
 > **License**: GPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T18:42:13.062Z  
+> **Timestamp**: 2026-11-05T13:13:34.001Z  
 > **Learning ID**: `learn-github-topgrade-rs-topgrade`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/topgrade-rs-topgrade-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/topgrade-rs/topgrade](https://github.com/topgrade-rs/topgrade))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T18:42:11.260Z  
+> **Harvest Timestamp**: 2026-11-05T13:13:33.995Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Upgrade all the things
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md
-- **Stars / Engagement**: 4734 stars
+- **Stars / Engagement**: 4738 stars
 
 ---
 
@@ -1495,165 +1495,142 @@ impl<'a> ExecutionContext<'a> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a8144203` (2026-11-03)
-**Commit Message**: fix(antigravity): skip the 2.0 app, add the ide extensions step (#2465)
+### Incident Patch 1: `94f3d94c` (2026-11-05)
+**Commit Message**: fix(claude-code): don't fail with EOF on long output (#2062)
 
-**File**: `locales/app.yml` (modified, +9/-0)
+**File**: `src/executor.rs` (modified, +57/-0)
 ```diff
-@@ -1728,3 +1728,12 @@ _version: 2
-   zh_TW: "不支援更新 Zed %{channel} 通道"
-   de: "Updates für den Zed-Kanal %{channel} werden nicht unterstützt"
-   ko: "Zed %{channel} 채널은 업데이트를 지원하지 않습니다"
-+"The antigravity binary at {path} is the Antigravity 2.0 app, which has no extensions":
-+  en: "The antigravity binary at %{path} is the Antigravity 2.0 app, which has no extensions"
-+  lt: "„antigravity“ failas %{path} yra „Antigravity 2.0“ programa, kuri neturi plėtinių"
-+  es: "El binario de antigravity en %{path} es la aplicación Antigravity 2.0, que no tiene extensiones"
-+  fr: "Le binaire antigravity situé à %{path} est l'application Antigravity 2.0, qui n'a pas d'extensions"
-+  zh_CN: "%{path} 处的 antigravity 二进制文件是 Antigravity 2.0 应用，它没有扩展"
-+  zh_TW: "%{path} 處的 antigravity 二進位檔是 Antigravity 2.0 應用程式，它沒有擴充功能"
-+  de: "Das antigravity-Binary unter %{path} ist die Antigravity 2.0-App, die keine Erweiterungen hat"
-+  ko: "%{path}의 antigravity 바이너리는 확장 기능이 없는 Antigravity 2.0 앱입니다"
-```
-
-**File**: `src/step.rs` (modified, +5/-0)
-```diff
-@@ -25,6 +25,7 @@ pub enum Step {
-     AndroidStudio,
-     Antigravity,
-     AntigravityCli,
-+    AntigravityIde,
-     AppMan,
-     AppManager,
-     Aqua,
-@@ -228,6 +229,9 @@ impl Step {
-                 generic::run_antigravity_extensions_update(ctx)
-             })?,
-             AntigravityCli => runner.execute(*self, "Antigravity CLI", || generic::run_antigravity_cli(ctx))?,
-+            AntigravityIde => runner.execute(*self, "Antigravity IDE extensions", || {
-+                generic::run_antigravity_ide_extensions_update(ctx)
-+            })?,
-             AppMan => {}
-             AppManager =>
-             {
-@@ -883,6 +887,7 @@ pub(crate) fn default_steps() -> Vec<Step> {
-         Choosenim,
-         Cargo,
-         Antigravity,
-+        AntigravityIde,
-         Cursor,
-         CursorAgent,
-         Flutter,
-```
-
-**File**: `src/steps/generic.rs` (modified, +151/-5)
-```diff
-@@ -553,6 +553,7 @@ pub fn run_vcpkg_update(ctx: &ExecutionContext) -> Result<()> {
- 
- enum VSCodeVariant {
-     Antigravity,
-+    AntigravityIde,
-     Code,
-     CodeInsiders,
-     Codium,
-@@ -565,6 +566,7 @@ impl VSCodeVariant {
-     fn name(&self) -> &'static str {
-         match self {
-             VSCodeVariant::Antigravity => "Antigravity",
-+            VSCodeVariant::AntigravityIde => "Antigravity IDE",
-             VSCodeVariant::Code => "VSCode",
-             VSCodeVariant::CodeInsiders => "VSCode Insiders",
-             VSCodeVariant::Codium => "VSCodium",
-@@ -577,6 +579,7 @@ impl VSCodeVariant {
-     fn bin_name(&self) -> &'static str {
-         match self {
-             VSCodeVariant::Antigravity => "antigravity",
-+            VSCodeVariant::AntigravityIde => "antigravity-ide",
-             VSCodeVariant::Code => "code",
-             VSCodeVariant::CodeInsiders => "code-insiders",
-             VSCodeVariant::Codium => "codium",
-@@ -589,6 +592,7 @@ impl VSCodeVariant {
-     fn display_name(&self) -> &'static str {
-         match self {
-             VSCodeVariant::Antigravity => "Antigravity extensions",
-+            VSCodeVariant::AntigravityIde => "Antigravity IDE extensions",
-             VSCodeVariant::Code => "Visual Studio Code extensions",
-             VSCodeVariant::CodeInsiders => "Visual Studio Code Insiders extensions",
-             VSCodeVariant::Codium => "VSCodium extensions",
-@@ -600,20 +604,27 @@ impl VSCodeVariant {
- 
-     fn supports_profiles(&self) -> bool {
-         match self {
--            VSCodeVariant::Antigravity | VSCodeVariant::Code | VSCodeVariant::CodeInsiders | VSCodeVariant::Cursor => {
--                true
--            }
-+            VSCodeVariant::Antigravity
-+            | VSCodeVariant::AntigravityIde
-+            | VSCodeVariant::Code
-+            | VSCodeVariant::CodeInsiders
-+            | VSCodeVariant::Cursor => true,
-             VSCodeVariant::Codium | VSCodeVariant::CodiumInsiders | VSCodeVariant::Windsurf => false,
-         }
+@@ -151,6 +151,21 @@ impl Executor {
+         self
      }
  
-+    fn requires_hub_check(&self) -> bool {
-+        matches!(self, VSCodeVariant::Antigravity)
++    /// See `std::process::Command::stdout`
++    pub fn stdout<T: Into<Stdio>>(&mut self, cfg: T) -> &mut Executor {
++        let stdio = cfg.into();
++        match self {
++            Executor::Wet(c) | Executor::Damp(c) => {
++                c.stdout(stdio);
++            }
++            Executor::Dry(c) => {
++                c.stdout = Some(stdio);
++            }
++        }
++
++        self
 +    }
 +
-     fn extensions_root(&self, home_dir: &Path, configured_root: Option<&OsStr>) -> PathBuf {
-         if let Some(configured_root) = configured_root.filter(|root| !root.is_empty()) {
-             return PathBuf::from(configured_root);
-         }
- 
-         let directory = match self {
-             VSCodeVariant::Antigravity => ".antigravity",
-+            VSCodeVariant::AntigravityIde => ".antigravity-ide",
-             VSCodeVariant::Code => ".vscode",
-             VSCodeVariant::CodeInsiders => ".vscode-insiders",
-             VSCodeVariant::Codium => ".vscode-oss",
-@@ -628,6 +639,7 @@ impl VSCodeVariant {
-     fn process_names(&self) -> &'static [&'static str] {
-         match self {
-             VSCodeVariant::Antigravity => &["antigravity", "Antigravity"],
-+            VSCodeVariant::AntigravityIde => &["antigravity-ide", "Antigravity IDE"],
-             VSCodeVariant::Code => &["code", "Code"],
-             VSCodeVariant::CodeInsiders => &["code-insiders", "Code - Insiders"],
-             VSCodeVariant::Codium => &["codium", "VSCodium"],
-@@ -640,6 +652,7 @@ impl VSCodeVariant {
-     fn app_bundle_name(&self) -> &'static str {
-         match self {
-             VSCodeVariant::Antigravity => "Antigravity.app",
-+            VSCodeVariant::AntigravityIde => "Antigravity IDE.app",
-             VSCodeVariant::Code => "Visual Studio Code.app",
-             VSCodeVariant::CodeInsiders => "Visual Studio Code - Insiders.app",
-             VSCodeVariant::Codium => "VSCodium.app",
-@@ -682,6 +695,27 @@ impl VSCodeVariant {
-     }
+     #[allow(dead_code)]
+     /// See `std::process::Command::remove_env`
+     pub fn env_remove<K>(&mut self, key: K) -> &mut Executor
+@@ -293,6 +308,7 @@ pub struct DryCommand {
+     envs: Vec<(OsString, OsString)>,
+     env_removals: Vec<OsString>,
+     stdin: Option<Stdio>,
++    stdout: Option<Stdio>,
  }
  
-+/// Whether `bin` belongs to the Antigravity 2.0 app, which ships under the same `antigravity`
-+/// name as the VSCode-based IDE. Its marker sits at `<root>/resources/app.asar` (the standard
-+/// Electron layout; measured on the Linux 2.26.0 tarball) and at
-+/// `<App>.app/Contents/Resources/app.asar` in a macOS bundle.
-+///
-+/// `app.asar` positively identifies the Electron hub; VSCode-based installs
-+/// (`resources/app/out/cli.js`) and anything unrecognized must keep running, so this check only
-+/// ever skips on the hub marker.
-+///
-+/// Consequence: a hub reached through a wrapper script outside its install tree is not
-+/// recognized, and its `--version` still opens the GUI. Closing that gap means resolving wrapper
-+/// targets, which is what skips the wrapper-launched VSCode IDE installs this check exists to keep
-+/// updating.
-+fn is_antigravity_hub(bin: &Path) -> bool {
-+    let bin = fs::canonicalize(bin).unwrap_or_else(|_| bin.to_path_buf());
-+    bin.ancestors().any(|dir| {
-+        dir.join("resources").join("app.asar").is_file()
-+            || dir.join("Contents").join("Resources").join("app.asar").is_file()
-+    })
-+}
+ impl DryCommand {
+@@ -304,6 +320,7 @@ impl DryCommand {
+             envs: Vec::new(),
+             env_removals: Vec::new(),
+             stdin: None,
++            stdout: None,
+         }
+     }
+ 
+@@ -324,6 +341,9 @@ impl DryCommand {
+         if let Some(stdin) = self.stdin {
+             cmd.stdin(stdin);
+         }
++        if let Some(stdout) = self.stdout {
++            cmd.stdout(stdout);
++        }
+         cmd
+     }
+ }
+@@ -470,6 +490,43 @@ mod test {
+         }
+     }
+ 
++    #[test]
++    fn test_dry_stdout_persistence() {
++        use std::io::{Read, Seek};
 +
- fn is_safe_obsolete_extension_name(name: &str) -> bool {
-     let components = Path::new(name).components().collect::<Vec<_>>();
-     matches!(components.as_sli
++        let (program, args): (&str, Vec<&str>) = if cfg!(windows) {
++            ("cmd", vec!["/C", "echo stdout_test_value"])
++        } else {
++            ("sh", vec!["-c", "echo stdout_test_value"])
++        };
++
++        let mut dry = DryCommand::new(program);
++        for arg in args {
++            dry.args.push(arg.into());
++        }
++
++        let mut tmpfile = tempfile::tempfile().expect("Failed to create temp file");
++        let child_stdout = tmpfile.try_clone().expect("Failed to clone temp file");
++
++        let mut executor = Executor::Dry(dry);
++        executor.stdout(Stdio::from(child_stdout));
++        let mut executor = executor.always();
++
++        let output = executor.output().expect("Failed to execute");
++        match output {
++            ExecutorOutput::Wet(o) => {
++                assert!(o.status.success());
++                assert!(o.stdout.is_empty(), "Stdout reached the pipe instead of the file");
++            }
++            ExecutorOutput::Dry => panic!("Expected Wet output after .always()"),
++        }
++
++        let mut written = String::new();
++        tmpfile.seek(std::io::SeekFrom::Start(0)).expect("Failed to seek");
++        tmpfile.read_to_string(&mut written).expect("Failed to read temp file");
++        assert_eq!(written.trim(), "stdout_test_value");
++    }
++
+     /// Test that env vars set on a Dry executor are preserved when converted with .always().
+     #[test]
+     fn test_dry_env_persistence() {
+```
+
+**File**: `src/steps/generic.rs` (modified, +15/-5)
+```diff
+@@ -19,7 +19,7 @@ use std::path::{Component, Path, PathBuf};
+ use std::sync::LazyLock;
+ use std::{fs, io::Write};
+ use sysinfo::{ProcessRefreshKind, RefreshKind, System, UpdateKind};
+-use tempfile::tempfile_in;
++use tempfile::{tempdir, tempfile_in};
+ use tracing::{debug, error, warn};
+ 
+ use crate::HOME_DIR;
+@@ -2777,11 +2777,21 @@ pub fn run_claude_code_plugins(ctx: &ExecutionContext) -> Result<()> {
+     })?;
+     let marketplaces: HashSet<String> = marketplaces.into_iter().map(|m| m.name).collect();
+ 
+-    let output = ctx
+-        .execute(&claude)
++    // The list was reported cut at 64 KiB when read from a pipe, so it goes through a file:
++    // https://github.com/topgrade-rs/topgrade/pull/2062#issuecomment-4703754240
++    let temp_dir = tempdir().context("Failed to create temp dir for `claude plugin list`")?;
++    let json_path = temp_dir.path().join("plugins.json");
++    let json_file = fs::File::create(&json_path).context("Failed to create temp file for `claude plugin list`")?;
++
++    ctx.execute(&claude)
+         .args(["plugin", "list", "--json"])
+-        .output_checked_utf8()?;
+-    let plugins: Vec<ClaudePlugin> = serde_json::from_str(&output.stdout).wrap_err_with(|| {
++        .stdout(json_file)
++        .output_checked()?;
++
++    let plugins: Vec<ClaudePlugin> = serde_json::from_reader(std::io::BufReader::new(
++        fs::File::open(&json_path).context("Failed to read `claude plugin list --json` output")?,
++    ))
++    .wrap_err_with(|| {
+         output_changed_message!(
+             "claude plugin list --json",
+             "json output is invalid or does not match expected structure"
 ```
 
 #### Recent Merged Pull Requests:
@@ -1682,29 +1659,60 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. antigravity): skip the 2.0 app, add the ide extensions step (#2465)
+## X. claude-code): don't fail with EOF on long output (#2062)
 
 **RULE**:
-When implementing operations in `locales/app.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in topgrade-rs/topgrade. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/executor.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in topgrade-rs/topgrade. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a8144203`: antigravity): skip the 2.0 app, add the ide extensions step (#2465). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `94f3d94c`: claude-code): don't fail with EOF on long output (#2062). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `locales/app.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/executor.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-"The antigravity binary at {path} is the Antigravity 2.0 app, which has no extensions":
-  en: "The antigravity binary at %{path} is the Antigravity 2.0 app, which has no extensions"
-  lt: "„antigravity“ failas %{path} yra „Antigravity 2.0“ programa, kuri neturi plėtinių"
-  es: "El binario de antigravity en %{path} es la aplicación Antigravity 2.0, que no tiene extensiones"
-  fr: "Le binaire antigravity situé à %{path} est l'application Antigravity 2.0, qui n'a pas d'extensions"
-  zh_CN: "%{path} 处的 antigravity 二进制文件是 Antigravity 2.0 应用，它没有扩展"
-  zh_TW: "%{path} 處的 antigravity 二進位檔是 Antigravity 2.0 應用程式，它沒有擴充功能"
-  de: "Das antigravity-Binary unter %{path} ist die Antigravity 2.0-App, die keine Erweiterungen hat"
-  ko: "%{path}의 antigravity 바이너리는 확장 기능이 없는 Antigravity 2.0 앱입니다"
+    /// See `std::process::Command::stdout`
+    pub fn stdout<T: Into<Stdio>>(&mut self, cfg: T) -> &mut Executor {
+        let stdio = cfg.into();
+        match self {
+            Executor::Wet(c) | Executor::Damp(c) => {
+                c.stdout(stdio);
+            }
+            Executor::Dry(c) => {
+                c.stdout = Some(stdio);
+            }
+        }
+
+        self
+    }
+
+    stdout: Option<Stdio>,
+            stdout: None,
+        if let Some(stdout) = self.stdout {
+            cmd.stdout(stdout);
+        }
+    #[test]
+    fn test_dry_stdout_persistence() {
+        use std::io::{Read, Seek};
+
+        let (program, args): (&str, Vec<&str>) = if cfg!(windows) {
+            ("cmd", vec!["/C", "echo stdout_test_value"])
+        } else {
+            ("sh", vec!["-c", "echo stdout_test_value"])
+        };
+
+        let mut dry = DryCommand::new(program);
+        for arg in args {
+            dry.args.push(arg.into());
+        }
+
+        let mut tmpfile = tempfile::tempfile().expect("Failed to create temp file");
+        let child_stdout = tmpfile.try_clone().expect("Failed to clone temp file");
+
+        let mut executor = Executor::Dry(dry);
+        executor.stdout(Stdio::f
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1714,4 +1722,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a8144203` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `94f3d94c` are properly handled with clean fallback behavior.

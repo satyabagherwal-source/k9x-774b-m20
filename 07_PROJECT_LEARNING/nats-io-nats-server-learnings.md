@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nats-io-nats-server-learnings.md`  
 > **Source**: github ([https://github.com/nats-io/nats-server](https://github.com/nats-io/nats-server))  
-> **Source Version**: `a441962c`  
+> **Source Version**: `9bad2e8d`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T16:50:13.224Z  
+> **Timestamp**: 2026-11-05T06:28:50.722Z  
 > **Learning ID**: `learn-github-nats-io-nats-server`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nats-io-nats-server-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/nats-io/nats-server](https://github.com/nats-io/nats-server))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T16:50:12.411Z  
+> **Harvest Timestamp**: 2026-11-05T06:28:50.627Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: High-Performance server for NATS.io, the cloud and edge native messaging system.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 21000 stars
+- **Stars / Engagement**: 21001 stars
 
 ---
 
@@ -2726,832 +2726,186 @@ func (l *Logger) Tracef(format string, v ...any) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `bd9dff78` (2026-11-04)
-**Commit Message**: Fix filestore recovery panic and preserve stream data on failure (#8844)
+### Incident Patch 1: `9bad2e8d` (2026-11-04)
+**Commit Message**: [FIXED] Revocations re-check importers on every account update (#8851)
 
-Return the original error when JetStream recovery encounters an
-unreadable block, instead of panicking while unlocking a nil store
-(#8840). Capture the original store in the defer and remove the
-duplicate unlock.
-
-Failed recovery now preserves existing stream files and avoids
-subtracting capacity that was never reserved. It still unregisters
-queues created during setup.
-
-Validation:
-- Reproduced the panic on the base and directory deletion with the
-panic-only fix.
-- Passed 14 focused recovery, retention, restart, and restore tests with
-the race detector, including the new regressions.
-- Passed golangci-lint v2.13.0 and goimports checks.
-
-**File**: `server/filestore.go` (modified, +8/-8)
+**File**: `server/accounts.go` (modified, +4/-26)
 ```diff
-@@ -472,11 +472,12 @@ func newFileStoreWithCreatedAndMode(fcfg FileStoreConfig, cfg StreamConfig, crea
- 	ats.Register()
+@@ -3643,9 +3643,6 @@ func (s *Server) updateAccountClaimsWithRefresh(a *Account, ac *jwt.AccountClaim
  
- 	// If we error before completion make sure to cleanup.
--	defer func() {
-+	defer func(fs *fileStore) {
- 		if err != nil {
--			ats.Unregister()
-+			// The state flusher has not started, and recovery may be incomplete.
-+			fs.stop(false, false)
- 		}
--	}()
-+	}(fs)
+ 	jsEnabled := s.JetStreamEnabled()
  
- 	// Set flush in place to AsyncFlush which by default is false.
- 	fs.fip = !fcfg.AsyncFlush
-@@ -561,15 +562,14 @@ func newFileStoreWithCreatedAndMode(fcfg FileStoreConfig, cfg StreamConfig, crea
- 	// Use defer to ensure the lock is released if any of the enforcement operations
- 	// run into issues to avoid potential deadlocks on exit.
- 	unlocked := false
--	defer func() {
-+	defer func(fs *fileStore) {
- 		if !unlocked {
- 			fs.mu.Unlock()
- 		}
--	}()
-+	}(fs)
- 
- 	// Recover per-message state like TTLs and schedules.
- 	if err = fs.recoverPerMessageState(); err != nil {
--		fs.mu.Unlock()
- 		return nil, err
- 	}
- 
-@@ -7277,7 +7277,7 @@ func (fs *fileStore) startAgeChk() {
- 
- // Lock should be held.
- func (fs *fileStore) resetAgeChk(delta int64) {
--	if fs.recovering {
-+	if fs.recovering || fs.isClosed() {
- 		return
- 	}
- 	// If we're already expiring messages, it will make sure to reset.
-@@ -7363,7 +7363,7 @@ func (fs *fileStore) expireMsgs() {
- 	var sm *StoreMsg
- 
- 	fs.mu.Lock()
--	if fs.recovering {
-+	if fs.recovering || fs.isClosed() {
- 		fs.cancelAgeChk()
- 		fs.mu.Unlock()
- 		return
-```
-
-**File**: `server/filestore_test.go` (modified, +117/-0)
-```diff
-@@ -1359,6 +1359,123 @@ func TestFileStoreRemoveOutOfOrderRecovery(t *testing.T) {
- 	})
- }
- 
-+func TestFileStoreRecoveryErrorDoesNotPanic(t *testing.T) {
-+	for _, test := range []struct {
-+		name     string
-+		cfg      StreamConfig
-+		wantMsgs uint64
-+	}{
-+		{name: "MaxAge", cfg: StreamConfig{MaxAge: time.Minute}},
-+		{name: "MaxMsgs", cfg: StreamConfig{MaxMsgs: 1}, wantMsgs: 1},
-+		{name: "MaxBytes", cfg: StreamConfig{MaxBytes: 1}},
-+		{name: "MaxMsgsPerSubject", cfg: StreamConfig{MaxMsgsPer: 1}, wantMsgs: 1},
-+		{name: "PerMessageState", cfg: StreamConfig{Sources: []*StreamSource{{Name: "SOURCE"}}}, wantMsgs: 2},
-+	} {
-+		t.Run(test.name, func(t *testing.T) {
-+			fcfg := FileStoreConfig{StoreDir: t.TempDir(), BlockSize: 64}
-+			cfg := StreamConfig{Name: "TEST", Storage: FileStorage}
-+			fs, err := newFileStore(fcfg, cfg)
-+			require_NoError(t, err)
-+			defer fs.Stop()
-+
-+			ts := time.Now().Add(-time.Hour).UnixNano()
-+			for seq := uint64(1); seq <= 2; seq++ {
-+				require_NoError(t, fs.StoreRawMsg("foo", nil, bytes.Repeat([]byte("A"), 64), seq, ts, 0, false))
-+			}
-+			require_Equal(t, fs.numMsgBlocks(), 2)
-+			blockPath := fs.getFirstBlock().mfn
-+			require_NoError(t, fs.Stop())
-+
-+			original, err := os.ReadFile(blockPath)
-+			require_NoError(t, err)
-+			// Keep the stream index and last block intact so recovery reaches the unreadable block.
-+			meta := CompressionInfo{Algorithm: S2Compression, OriginalSize: uint64(len(original))}
-+			require_NoError(t, os.WriteFile(blockPath, meta.MarshalMetadata(), defaultFilePerms))
-+
-+			cfg = test.cfg
-+			cfg.Name, cfg.Storage = "TEST", FileStorage
-+			recovered, err := newFileStore(fcfg, cfg)
-+			if recovered != nil {
-+				defer recovered.Stop()
-+			}
-+			require_Error(t, err, errors.New("compressed buffer is too short"))
-+			require_True(t, recovered == nil)
-+
-+			require_NoError(t, os.WriteFile(blockPath, original, defaultFilePerms))
-+			recovered, err = newFileStore(fcfg, cfg)
-+			require_NoError(t, err)
-+			defer recovered.Stop()
-+			require_Equal(t, recovered.State().Msgs, test.wantMsgs)
-+		})
-+	}
-+}
-+
-+func TestFileStoreRecoveryErrorStopsAgeCheck(t *testing.T) {
-+	fcfg := FileStoreConfig{StoreDir: t.TempDir(), BlockSize: 64}
-+	cfg := StreamConfig{Name: "TEST", Storage: FileStorage}
-+	fs, err := newFileStore(fcfg, cfg)
-+	require_NoError(t, err)
-+	defer fs.Stop()
-+	for seq := uint64(1); seq <= 2; seq++ {
-+		require_NoError(t, fs.StoreRawMsg("foo", nil, bytes.Repeat([]byte("A"), 64), seq, time.Now().UnixNano(), 0, false))
-+	}
-+	require_Equal(t, fs.numMsgBlocks(), 2)
-+	blockPath, lastBlockPath := fs.getFirstBlock().mfn, fs.lmb.mfn
-+	require_NoError(t, fs.Stop())
-+	original := make(map[string][]byte)
-+	for _, path := range []string{blockPath, lastBlockPath, filepath.Join(fcfg.StoreDir, msgDir, streamStreamStateFile)} {
-+		data, err := os.ReadFile(path)
-+		require_NoError(t, err)
-+		original[path] = data
-+	}
-+	meta := CompressionInfo{Algorithm: S2Compression, OriginalSize: uint64(len(original[blockPath]))}
-+	require_NoError(t, os.WriteFile(blockPath, meta.MarshalMetadata(), defaultFilePerms))
-+
-+	const maxAge = time.Second
-+	cfg.MaxAge, cfg.MaxMsgsPer = maxAge, 1
-+	recovered, err := newFileStore(fcfg, cfg)
-+	require_Error(t, err, errors.New("compressed buffer is too short"))
-+	require_True(t, recovered == nil)
-+	indexPath := filepath.Join(fcfg.StoreDir, msgDir, streamStreamStateFile)
-+	index, err := os.ReadFile(indexPath)
-+	require_NoError(t, err)
-+	require_True(t, bytes.Equal(index, original[indexPath]))
-+
-+	require_NoError(t, os.WriteFile(blockPath, original[blockPath], defaultFilePerms))
-+	cfg.MaxAge, cfg.MaxMsgsPer = 0, 0
-+	recovered, err = newFileStore(fcfg, cfg)
-+	require_NoError(t, err)
-+	defer recovered.Stop()
-+	// Allow the failed store's age timer to fire after the repaired store is open.
-+	time.Sleep(2 * maxAge)
-+	for _, path := range []string{blockPath, lastBlockPath} {
-+		data, err := os.ReadFile(path)
-+		require_NoError(t, err)
-+		require_True(t, bytes.Equal(data, original[path]))
-+	}
-+	require_Equal(t, recovered.State().Msgs, 2)
-+}
-+
-+func TestFileStoreClosedAgeCheck(t *testing.T) {
-+	fs, err := newFileStore(FileStoreConfig{StoreDir: t.TempDir()}, StreamConfig{
-+		Name: "TEST", Storage: FileStorage, MaxAge: time.Hour,
-+	})
-+	require_NoError(t, err)
-+	defer fs.Stop()
-+	_, _, err = fs.StoreMsg("foo", nil, []byte("hello"), 0)
-+	require_NoError(t, err)
-+	require_NoError(t, fs.Stop())
-+
-+	// A timer callback may already be queued when Stop cancels the timer.
-+	fs.expireMsgs()
-+	fs.mu.Lock()
-+	defer fs.mu.Unlock()
-+	defer fs.cancelAgeChk()
-+	require_True(t, fs.ageChk == nil)
-+	fs.resetAgeChk(0)
-+	require_True(t, fs.ageChk == nil)
-+}
-+
- func TestFileStoreAgeLimitRecovery(t *testing.T) {
- 	maxAge := 1 * time.Second
- 
-```
-
-**File**: `server/jetstream_test.go` (modified, +104/-0)
-```diff
-@@ -12798,6 +12798,110 @@ func TestJetStreamMemoryCorruption(t *testing.T) {
- 	}
- }
- 
-+func TestJetStreamRecoverStreamErrorPreservesData(t *testing.T) {
-+	s := RunBasicJetStreamServer(t)
-+	defer s.Shutdown()
-+	acc := s.GlobalAccount()
-+	storeDir := filepath.Join(s.JetStreamConfig().StoreDir, globalAccountName, streamsDir, "TEST")
-+	cfg := StreamConfig{Name: "TEST", Storage: FileStorage, Subjects: []string{"foo"}, MaxBytes: 1024}
-+	fs, err := newFileStore(FileStoreConfig{StoreDir: storeDir, BlockSize: 64}, cfg)
-+	require_NoError(t, err)
-+	defer fs.Stop()
-+	for seq := uint64(1); seq <= 2; seq++ {
-+		require_NoError(t, fs.StoreRawMsg("foo", nil, bytes.Repeat([]byte("A"), 64), seq, time.Now().Add(-time.Hour).UnixNano(), 0, false))
-+	}
-+	require_Equal(t, fs.numMsgBlocks(), 2)
-+	blockPath := fs.getFirstBlock().mfn
-+	lastBlockPath := fs.lmb.mfn
-+	require_NoError(t, fs.Stop())
-+
-+	original, err := os.ReadFile(blockPath)
-+	require_NoError(t, err)
-+	lastBlock, err := os.ReadFile(lastBlockPath)
-+	require_NoError(t, err)
-+	meta := CompressionInfo{Algorithm: S2Compression, OriginalSize: uint64(len(original))}
-+	corrupt := meta.MarshalMetadata()
-+	require_NoError(t, os.WriteFile(blockPath, corrupt, defaultFilePerms))
-+
-+	cfg.MaxAge = time.Minute
-+	for _, test := range []struct {
-+		name string
-+		add  func(*StreamConfig) (*stream, error)
-+	}{
-+		{"Recover", acc.recoverStream},
-+		{"Create", acc.addStream},
-+	} {
-+		t.Run(test.name, func(t *testing.T) {
-+			mset, err := test.add(&cfg)
-+			require_Error(t, err, errors.New("compressed buffer is too short"))
-+			require_True(t, mset == nil)
-+			for path, expected := range map[string][]byte{blockPath: corrupt, lastBlockPath: lastBlock} {
-+				actual, err := os.ReadFile(path)
-+				require_NoError(t, err)
-+				require_True(t, bytes.Equal(actual, expected))
-+			}
-+			_, reserved, err := s.JetStreamReservedResources()
-+			require_NoError(t, err)
-+			require_Equal(t, reserved, 0)
-+			_, err = acc.lookupStream("TEST")
-+			require_Error(t, err)
-+			_, registered := s.ipQueues.Load("[ACC:$G] stream 'TEST' messages")
-+			require_False(t, registered)
-+		})
-+	}
-+
-+	require_NoError(t, os.WriteFile(blockPath, original, defaultFilePerms))
-+	cfg.MaxAge = 0
-+	mset, err := acc.recoverStream(&cfg)
-+	require_NoError(t, err)
-+	require_Equal(t, mset.state().Msgs, 2)
-+	require_NoError(t, mset.delete())
-+	_, err = os.Stat(storeDir)
-+	require_True(t, os.IsNotExist(err))
-+}
-+
-+func TestJetStreamCreateStreamStoreErrorCleanup(t *testing.T) {
-+	for _, existing := range []bool{false, true} {
-+		t.Run(fmt.Sprintf("Existing=%t", existing), func(t *testing.T) {
-+			opts := DefaultTestOptions
-+			opts.Port = -1
-+			opts.JetStream = true
-+			opts.StoreDir = t.TempDir()
-+			// Fail encryption setup after the file store creates its directories.
-+			opts.JetStreamKey = "test-key"
-+			opts.JetStreamCipher = NoCipher
-+			s := RunServer(&opts)
-+			defer s.Shutdown()
-+
-+			storeDir := filepath.Join(s.JetStreamConfig().StoreDir, globalAccountName, streamsDir, "TEST")
-+			marker := filepath.Join(storeDir, "existing")
-+			if existing {
-+				require_NoError(t, os.MkdirAll(storeDir, defaultDirPerms))
-+				require_NoError(t, os.WriteFile(marker, []byte("keep"), defaultFilePerms))
-+			}
-+			acc := s.GlobalAccount()
-+			mset, err := acc.addStream(&StreamConfig{Name: "TEST", Storage: FileStorage, MaxBytes: 1024})
-+			require_Error(t, err, errUnknownCipher)
-+			require_True(t, mset == nil)
-+			if existing {
-+				data, err := os.ReadFile(marker)
-+				require_NoError(t, err)
-+				require_Equal(t, string(data), "keep")
-+			} else {
-+				_, err := os.Stat(storeDir)
-+				require_True(t, os.IsNotExist(err))
-+			}
-+			_, reserved, err := s.JetStreamReservedResources()
-+			require_NoError(t, err)
-+			require_Equal(t, reserved, 0)
-+			_, err = acc.lookupStream("TEST")
-+			require_Error(t, err)
-+			_, registered := s.ipQueues.Load("[ACC:$G] stream 'TEST' messages")
-+			require_False(t, registered)
-+		})
-+	}
-+}
-+
- func TestJetStreamRecoverBadStreamSubjects(t *testing.T) {
- 	s := RunBasicJetStreamServer(t)
- 	sd := s.JetStreamConfig().StoreDir
-```
-
-**File**: `server/stream.go` (modified, +11/-2)
-```diff
-@@ -1126,8 +1126,17 @@ func (a *Account) addStreamWithAssignmentAndMode(config *StreamConfig, fsConfig
- 		fsCfg.SyncOnFlush = true
- 	}
- 
-+	var removeStoreDir bool
-+	if cfg.Storage == FileStorage && !recovering {
-+		_, err := os.Stat(storeDir)
-+		removeStoreDir = os.IsNotExist(err)
-+	}
- 	if err := mset.setupStore(fsCfg, recovering || restoring); err != nil {
--		mset.stop(true, false)
-+		// Resources have not been reserved, and an existing directory may contain recovery data.
-+		mset.stop(false, false)
-+		if removeStoreDir {
-+			os.RemoveAll(storeDir)
-+		}
- 		return nil, NewJSStreamStoreFailedError(err)
- 	}
- 
-@@ -8858,7 +8867,7 @@ func (mset *stream) stop(deleteFlag, advisory bool) error {
- 	sysc := mset.sysc
- 	mset.sysc = nil
- 
--	if deleteFlag {
-+	if deleteFlag || mset.store == nil {
- 		// Unregistering ipQueues do not prevent them from push/pop
- 		// just will remove them from the central monitoring map
- 		mset.msgs.unregister()
-```
-
----
-
-### Incident Patch 2: `5d7f13c7` (2026-11-03)
-**Commit Message**: Fix filestore recovery panic and preserve stream data
-
-Capture the original file store for deferred unlocking and avoid a
-duplicate unlock when per-message recovery fails.
-
-Keep existing stream files and capacity reservations intact on recovery
-errors while unregistering queues created during the failed setup.
-
-Signed-off-by: Ryan Leung <[REDACTED_EMAIL]>
-
-**File**: `server/filestore.go` (modified, +2/-3)
-```diff
-@@ -561,15 +561,14 @@ func newFileStoreWithCreatedAndMode(fcfg FileStoreConfig, cfg StreamConfig, crea
- 	// Use defer to ensure the lock is released if any of the enforcement operations
- 	// run into issues to avoid potential deadlocks on exit.
- 	unlocked := false
--	defer func() {
-+	defer func(fs *fileStore) {
- 		if !unlocked {
- 			fs.mu.Unlock()
- 		}
--	}()
-+	}(fs)
- 
- 	// Recover per-message state like TTLs and schedules.
- 	if err = fs.recoverPerMessageState(); err != nil {
--		fs.mu.Unlock()
- 		return nil, err
- 	}
- 
-```
-
-**File**: `server/filestore_test.go` (modified, +51/-0)
-```diff
-@@ -1359,6 +1359,57 @@ func TestFileStoreRemoveOutOfOrderRecovery(t *testing.T) {
- 	})
- }
- 
-+func TestFileStoreRecoveryErrorDoesNotPanic(t *testing.T) {
-+	for _, test := range []struct {
-+		name     string
-+		cfg      StreamConfig
-+		wantMsgs uint64
-+	}{
-+		{name: "MaxAge", cfg: StreamConfig{MaxAge: time.Minute}},
-+		{name: "MaxMsgs", cfg: StreamConfig{MaxMsgs: 1}, wantMsgs: 1},
-+		{name: "MaxBytes", cfg: StreamConfig{MaxBytes: 1}},
-+		{name: "MaxMsgsPerSubject", cfg: StreamConfig{MaxMsgsPer: 1}, wantMsgs: 1},
-+		{name: "PerMessageState", cfg: StreamConfig{Sources: []*StreamSource{{Name: "SOURCE"}}}, wantMsgs: 2},
-+	} {
-+		t.Run(test.name, func(t *testing.T) {
-+			fcfg := FileStoreConfig{StoreDir: t.TempDir(), BlockSize: 64}
-+			cfg := StreamConfig{Name: "TEST", Storage: FileStorage}
-+			fs, err := newFileStore(fcfg, cfg)
-+			require_NoError(t, err)
-+			defer fs.Stop()
-+
-+			ts := time.Now().Add(-time.Hour).UnixNano()
-+			for seq := uint64(1); seq <= 2; seq++ {
-+				require_NoError(t, fs.StoreRawMsg("foo", nil, bytes.Repeat([]byte("A"), 64), seq, ts, 0, false))
-+			}
-+			require_Equal(t, fs.numMsgBlocks(), 2)
-+			blockPath := fs.getFirstBlock().mfn
-+			require_NoError(t, fs.Stop())
-+
-+			original, err := os.ReadFile(blockPath)
-+			require_NoError(t, err)
-+			// Keep the stream index and last block intact so recovery reaches the unreadable block.
-+			meta := CompressionInfo{Algorithm: S2Compression, OriginalSize: uint64(len(original))}
-+			require_NoError(t, os.WriteFile(blockPath, meta.MarshalMetadata(), defaultFilePerms))
-+
-+			cfg = test.cfg
-+			cfg.Name, cfg.Storage = "TEST", FileStorage
-+			recovered, err := newFileStore(fcfg, cfg)
-+			if recovered != nil {
-+				defer recovered.Stop()
-+			}
-+			require_Error(t, err, errors.New("compressed buffer is too short"))
-+			require_True(t, recovered == nil)
-+
-+			require_NoError(t, os.WriteFile(blockPath, original, defaultFilePerms))
-+			recovered, err = newFileStore(fcfg, cfg)
-+			require_NoError(t, err)
-+			defer recovered.Stop()
-+			require_Equal(t, recovered.State().Msgs, test.wantMsgs)
-+		})
-+	}
-+}
-+
- func TestFileStoreAgeLimitRecovery(t *testing.T) {
- 	maxAge := 1 * time.Second
- 
-```
-
-**File**: `server/jetstream_test.go` (modified, +52/-0)
-```diff
-@@ -12798,6 +12798,58 @@ func TestJetStreamMemoryCorruption(t *testing.T) {
- 	}
- }
- 
-+func TestJetStreamRecoverStreamErrorPreservesData(t *testing.T) {
-+	s := RunBasicJetStreamServer(t)
-+	defer s.Shutdown()
-+	acc := s.GlobalAccount()
-+	storeDir := filepath.Join(s.JetStreamConfig().StoreDir, globalAccountName, streamsDir, "TEST")
-+	cfg := StreamConfig{Name: "TEST", Storage: FileStorage, Subjects: []string{"foo"}, MaxBytes: 1024}
-+	fs, err := newFileStore(FileStoreConfig{StoreDir: storeDir, BlockSize: 64}, cfg)
-+	require_NoError(t, err)
-+	defer fs.Stop()
-+	for seq := uint64(1); seq <= 2; seq++ {
-+		require_NoError(t, fs.StoreRawMsg("foo", nil, bytes.Repeat([]byte("A"), 64), seq, time.Now().Add(-time.Hour).UnixNano(), 0, false))
-+	}
-+	require_Equal(t, fs.numMsgBlocks(), 2)
-+	blockPath := fs.getFirstBlock().mfn
-+	lastBlockPath := fs.lmb.mfn
-+	require_NoError(t, fs.Stop())
-+
-+	original, err := os.ReadFile(blockPath)
-+	require_NoError(t, err)
-+	lastBlock, err := os.ReadFile(lastBlockPath)
-+	require_NoError(t, err)
-+	meta := CompressionInfo{Algorithm: S2Compression, OriginalSize: uint64(len(original))}
-+	corrupt := meta.MarshalMetadata()
-+	require_NoError(t, os.WriteFile(blockPath, corrupt, defaultFilePerms))
-+
-+	cfg.MaxAge = time.Minute
-+	mset, err := acc.recoverStream(&cfg)
-+	require_Error(t, err, errors.New("compressed buffer is too short"))
-+	require_True(t, mset == nil)
-+	for path, expected := range map[string][]byte{blockPath: corrupt, lastBlockPath: lastBlock} {
-+		actual, err := os.ReadFile(path)
-+		require_NoError(t, err)
-+		require_True(t, bytes.Equal(actual, expected))
-+	}
-+	_, reserved, err := s.JetStreamReservedResources()
-+	require_NoError(t, err)
-+	require_Equal(t, reserved, 0)
-+	_, err = acc.lookupStream("TEST")
-+	require_Error(t, err)
-+	_, registered := s.ipQueues.Load("[ACC:$G] stream 'TEST' messages")
-+	require_False(t, registered)
-+
-+	require_NoError(t, os.WriteFile(blockPath, original, defaultFilePerms))
-+	cfg.MaxAge = 0
-+	mset, err = acc.recoverStream(&cfg)
-+	require_NoError(t, err)
-+	require_Equal(t, mset.state().Msgs, 2)
-+	require_NoError(t, mset.delete())
-+	_, err = os.Stat(storeDir)
-+	require_True(t, os.IsNotExist(err))
-+}
-+
- func TestJetStreamRecoverBadStreamSubjects(t *testing.T) {
- 	s := RunBasicJetStreamServer(t)
- 	sd := s.JetStreamConfig().StoreDir
-```
-
-**File**: `server/stream.go` (modified, +2/-2)
-```diff
-@@ -1127,7 +1127,7 @@ func (a *Account) addStreamWithAssignmentAndMode(config *StreamConfig, fsConfig
- 	}
- 
- 	if err := mset.setupStore(fsCfg, recovering || restoring); err != nil {
--		mset.stop(true, false)
-+		mset.stop(!recovering, false)
- 		return nil, NewJSStreamStoreFailedError(err)
- 	}
- 
-@@ -8858,7 +8858,7 @@ func (mset *stream) stop(deleteFlag, advisory bool) error {
- 	sysc := mset.sysc
- 	mset.sysc = nil
- 
--	if deleteFlag {
-+	if deleteFlag || mset.store == nil {
- 		// Unregistering ipQueues do not prevent them from push/pop
- 		// just will remove them from the central monitoring map
- 		mset.msgs.unregister()
-```
-
----
-
-### Incident Patch 3: `27a01ea0` (2026-11-04)
-**Commit Message**: [FIXED] Recovery scans not persisted & walking every block (#8849)
-
-This PR fixes storing the per-message state indexes after a recovery
-scan, even if there were no messages published afterward, and allowing a
-backward scan to skip blocks (like the forward scans already could)
-which allows a new source with no matching messages to not walk every
-block.
-
-**File**: `server/filestore.go` (modified, +106/-14)
-```diff
-@@ -2382,6 +2382,8 @@ func (fs *fileStore) recoverPerMessageState() error {
- 			if err := fs.recoverSourcesBackwardScan(sourcesSeq, sourcesScan); err != nil {
- 				return err
+-	streamTokenExpirationChanged := false
+-	serviceTokenExpirationChanged := false
+-
+ 	for _, e := range ac.Exports {
+ 		// Account scoped mapping functions (e.g. {{account-hash()}}) are resolved into literals here, once.
+ 		subject, err := expandSubjectPlaceholders(string(e.Subject), pctx)
+@@ -3697,41 +3694,22 @@ func (s *Server) updateAccountClaimsWithRefresh(a *Account, ac *jwt.AccountClaim
  			}
-+			// Persist the recovered state, so the next start doesn't scan again.
-+			fs.dirty++
  		}
- 		return nil
- 	}
-@@ -2487,6 +2489,8 @@ func (fs *fileStore) recoverPerMessageState() error {
- 			mb.finishedWithCache()
- 			mb.mu.Unlock()
- 		}
-+		// Persist the recovered state, so the next start doesn't scan again.
-+		fs.dirty++
- 	}
- 	return nil
- }
-@@ -3697,6 +3701,62 @@ func (fs *fileStore) selectSkipFirstBlock(bi int, start, stop uint32) (int, erro
- 	return bi + 1, nil
- }
  
-+// This is used to see if we can selectively jump back blocks based on filter subject and a starting block index.
-+// Will return -1 and ErrStoreEOF if no matches at all or no more from where we are.
-+func (fs *fileStore) checkSkipLastBlock(filter string, wc bool, bi int) (int, error) {
-+	// If we match everything, just move to previous blk.
-+	if filter == _EMPTY_ || filter == fwcs {
-+		return bi - 1, nil
-+	}
-+	if wc && fs.psim.Size() > highCardinalityThreshold {
-+		return bi - 1, nil
-+	}
-+	start, stop := fs.filteredBlockRange(filter, wc)
-+	if stop == 0 {
-+		return -1, ErrStoreEOF
-+	}
-+	return fs.selectSkipLastBlock(bi, start, stop)
-+}
-+
-+// This is used to see if we can selectively jump back blocks based on filter subjects and a starting block index.
-+// Will return -1 and ErrStoreEOF if no matches at all or no more from where we are.
-+func (fs *fileStore) checkSkipLastBlockMulti(sl *gsl.SimpleSublist, bi int) (int, error) {
-+	// Don't bother if full wildcard.
-+	if sl.MatchesFullWildcard() || fs.psim.Size() > highCardinalityThreshold {
-+		return bi - 1, nil
-+	}
-+	// Move through psim to gather start and stop bounds.
-+	// Only subjects with msgs before bi can move stop, since we missed searching bi.
-+	mbi, guard := fs.blks[bi].getIndex(), fs.blks[bi-1].getIndex()
-+	start, stop := uint32(math.MaxUint32), uint32(0)
-+	stree.IntersectGSL(fs.psim, sl, func(_ []byte, psi *psi) bool {
-+		start = min(start, psi.fblk)
-+		if psi.fblk < mbi {
-+			stop = max(stop, psi.lblk)
-+		}
-+		// One of the subjects matches the previous block, so there's no point in carrying on trying to skip.
-+		return stop < guard
-+	})
-+	return fs.selectSkipLastBlock(bi, start, stop)
-+}
-+
-+func (fs *fileStore) selectSkipLastBlock(bi int, start, stop uint32) (int, error) {
-+	// All matching msgs are behind us.
-+	// Greater than AND equal is important because we were called because we missed searching bi.
-+	if start >= fs.blks[bi].getIndex() {
-+		return -1, ErrStoreEOF
-+	}
-+	// If stop is < previous index return dereference of fs.blks index.
-+	if stop < fs.blks[bi-1].getIndex() {
-+		if mb := fs.bim[stop]; mb != nil {
-+			ni, _ := fs.selectMsgBlockWithIndex(atomic.LoadUint64(&mb.last.seq))
-+			return ni, nil
-+		}
-+	}
-+	// Otherwise just bump to the previous one.
-+	return bi - 1, nil
-+}
-+
- // Optimized way for getting all num pending matching a filter subject.
- // Lock should be held.
- func (fs *fileStore) numFilteredPending(filter string, ss *SimpleState) error {
-@@ -9734,6 +9794,10 @@ func (fs *fileStore) LoadNextMsgMulti(sl *gsl.SimpleSublist, start uint64, smp *
- 			} else if err != ErrStoreMsgNotFound {
- 				return nil, 0, err
- 			} else {
-+				// Check if we can expire.
-+				if expireOk {
-+					mb.tryForceExpireCache()
-+				}
- 				// Nothing found in this block. We missed, if first block (bi) check psim.
- 				// Similar to above if start <= first seq.
- 				// TODO(dlc) - For v2 track these by filter subject since they will represent filtered consumers.
-@@ -9749,13 +9813,9 @@ func (fs *fileStore) LoadNextMsgMulti(sl *gsl.SimpleSublist, start uint64, smp *
- 					// Right now we can only spin on first, so if we have interior sparseness need to favor checking per block fss if loaded.
- 					// For v2 will track all blocks that have matches for psim.
- 					if nbi > i {
--						i = nbi - 1 // For the iterator condition i++
-+						i = nbi - 1 // Offset the loop's i++
- 					}
- 				}
--				// Check if we can expire.
--				if expireOk {
--					mb.tryForceExpireCache()
+-		var revocationChanged *bool
+ 		var ea *exportAuth
+ 
+ 		a.mu.Lock()
+ 		switch e.Type {
+ 		case jwt.Stream:
+-			revocationChanged = &streamTokenExpirationChanged
+ 			if se, ok := a.exports.streams[subject]; ok && se != nil {
+ 				ea = &se.exportAuth
+ 			}
+ 		case jwt.Service:
+-			revocationChanged = &serviceTokenExpirationChanged
+ 			if se, ok := a.exports.services[subject]; ok && se != nil {
+ 				ea = &se.exportAuth
+ 			}
+ 		}
++		// Revocation changes are detected when comparing the exports against old below.
+ 		if ea != nil {
+-			oldRevocations := ea.actsRevoked
+-			if len(e.Revocations) == 0 {
+-				// remove all, no need to evaluate existing imports
+-				ea.actsRevoked = nil
+-			} else if len(oldRevocations) == 0 {
+-				// add all, existing imports need to be re evaluated
+-				ea.actsRevoked = e.Revocations
+-				*revocationChanged = true
+-			} else {
+-				ea.actsRevoked = e.Revocations
+-				// diff, existing imports need to be conditionally re evaluated, depending on:
+-				// if a key was added, or it's timestamp increased
+-				for k, t := range e.Revocations {
+-					if tOld, ok := oldRevocations[k]; !ok || tOld < t {
+-						*revocationChanged = true
+-					}
 -				}
- 			}
+-			}
++			ea.actsRevoked = e.Revocations
+ 		}
+ 		a.mu.Unlock()
+ 	}
+@@ -3797,7 +3775,7 @@ func (s *Server) updateAccountClaimsWithRefresh(a *Account, ac *jwt.AccountClaim
  		}
  	}
-@@ -9807,6 +9867,10 @@ func (fs *fileStore) LoadNextMsg(filter string, wc bool, start uint64, sm *Store
- 			} else if err != ErrStoreMsgNotFound {
- 				return nil, 0, err
- 			} else {
-+				// Check if we can expire.
-+				if expireOk {
-+					mb.tryForceExpireCache()
-+				}
- 				// Nothing found in this block. We missed, if first block (bi) check psim.
- 				// Similar to above if start <= first seq.
- 				// TODO(dlc) - For v2 track these by filter subject since they will represent filtered consumers.
-@@ -9824,13 +9888,9 @@ func (fs *fileStore) LoadNextMsg(filter string, wc bool, start uint64, sm *Store
- 					// Right now we can only spin on first, so if we have interior sparseness need to favor checking per block fss if loaded.
- 					// For v2 will track all blocks that have matches for psim.
- 					if nbi > i {
--						i = nbi - 1
+ 	// Now check if stream exports have changed.
+-	if !a.checkStreamExportsEqual(old) || signersChanged || streamTokenExpirationChanged {
++	if !a.checkStreamExportsEqual(old) || signersChanged {
+ 		clients := map[*client]struct{}{}
+ 		// We need to check all accounts that have an import claim from this account.
+ 		awcsti := map[string]struct{}{}
+@@ -3832,7 +3810,7 @@ func (s *Server) updateAccountClaimsWithRefresh(a *Account, ac *jwt.AccountClaim
+ 		}
+ 	}
+ 	// Now check if service exports have changed.
+-	if !a.checkServiceExportsEqual(old) || signersChanged || serviceTokenExpirationChanged {
++	if !a.checkServiceExportsEqual(old) || signersChanged {
+ 		// We must only allow one goroutine to go through here, otherwise we could deadlock
+ 		// due to locking two accounts in succession.
+ 		s.mu.Lock()
 ```
 
-**File**: `server/filestore_test.go` (modified, +206/-0)
+**File**: `server/jwt_test.go` (modified, +33/-9)
 ```diff
-@@ -12465,6 +12465,68 @@ func TestFileStoreSourcesRecoveredOneMessageAfterFlush(t *testing.T) {
- 	require_Equal(t, fs.SourcesState()["ORIGIN > >"].Seq, last)
- }
+@@ -4870,9 +4870,15 @@ func TestJWTActivationRevocation(t *testing.T) {
+ 			Type:     jwt.Stream,
+ 			TokenReq: true,
+ 		})
++		// Revoke an account that doesn't import, which must not affect the importer.
++		_, otherPub := createKey(t)
++		aExpClaim.Exports[0].RevokeAt(otherPub, time.Now())
+ 		aExp1Jwt := encodeClaim(t, aExpClaim, aExpPub)
+ 		aExpCreds := newUser(t, aExpKp)
  
-+func TestFileStorePerMessageStateIndexWrittenWithoutNewMessages(t *testing.T) {
-+	tests := []struct {
-+		title  string
-+		file   string
-+		enable func(cfg *StreamConfig)
-+	}{
-+		{
-+			title:  "Sources",
-+			file:   sourcesStreamStateFile,
-+			enable: func(cfg *StreamConfig) { cfg.Sources = []*StreamSource{{Name: "ORIGIN"}} },
-+		},
-+		{
-+			title:  "TTL",
-+			file:   filepath.Join(msgDir, ttlStreamStateFile),
-+			enable: func(cfg *StreamConfig) { cfg.AllowMsgTTL = true },
-+		},
-+		{
-+			title:  "Schedules",
-+			file:   filepath.Join(msgDir, msgSchedulingStreamStateFile),
-+			enable: func(cfg *StreamConfig) { cfg.AllowMsgSchedules = true },
-+		},
-+	}
-+	for _, test := range tests {
-+		for _, restart := range []bool{false, true} {
-+			t.Run(fmt.Sprintf("%s/Restart=%v", test.title, restart), func(t *testing.T) {
-+				dir := t.TempDir()
-+				fcfg := FileStoreConfig{StoreDir: dir}
-+				cfg := StreamConfig{Name: "zzz", Subjects: []string{"foo"}, Storage: FileStorage}
++		aExpClaim.Tags.Add("unrelated")
++		aExp2Jwt := encodeClaim(t, aExpClaim, aExpPub)
 +
-+				fs, err := newFileStore(fcfg, cfg)
-+				require_NoError(t, err)
-+				_, _, err = fs.StoreMsg("foo", nil, nil, 0)
-+				require_NoError(t, err)
-+				require_NoError(t, fs.forceWriteFullState())
-+
-+				test.enable(&cfg)
-+				if restart {
-+					require_NoError(t, fs.Stop())
-+					fs, err = newFileStore(fcfg, cfg)
-+					require_NoError(t, err)
-+				} else {
-+					require_NoError(t, fs.UpdateConfig(&cfg))
-+				}
-+				// Nothing else is stored before stopping.
-+				require_NoError(t, fs.Stop())
-+
-+				_, err = os.Stat(filepath.Join(dir, test.file))
-+				require_NoError(t, err)
-+
-+				// The index is current, so the next start has nothing to scan or write.
-+				fs, err = newFileStore(fcfg, cfg)
-+				require_NoError(t, err)
-+				defer fs.Stop()
-+				fs.mu.RLock()
-+				dirty := fs.dirty
-+				fs.mu.RUnlock()
-+				require_Equal(t, dirty, 0)
-+			})
-+		}
-+	}
-+}
-+
- func TestFileStoreSourcesRecoveredFromPre210Header(t *testing.T) {
- 	dir := t.TempDir()
- 	fcfg := FileStoreConfig{StoreDir: dir}
-@@ -12505,6 +12567,150 @@ func TestFileStoreSourcesRecoveredFromPre210Header(t *testing.T) {
- 	require_Equal(t, fs.SourcesState()["ORIGIN > >"].Seq, last)
- }
+ 		aImpKp, aImpPub := createKey(t)
  
-+func TestFileStoreSourcesBackwardScanSkipsUnmatchedFilter(t *testing.T) {
-+	origin1 := &StreamSource{Name: "ORIGIN1", FilterSubject: "s1.>"}
-+	origin2 := &StreamSource{Name: "ORIGIN2", FilterSubject: "s2.>"}
-+	origin3 := &StreamSource{Name: "ORIGIN3", FilterSubject: "s1.>"}
-+	for _, test := range []struct {
-+		title       string
-+		removeIndex bool
-+		source      *StreamSource
-+		walkAll     bool
-+	}{
-+		// Adding a source with nothing stored for it.
-+		{title: "AddedSource", source: origin2},
-+		// Starting without the sources index, as on the first start after an upgrade.
-+		// ORIGIN1 resolves in the last block, then only ORIGIN2 is left.
-+		{title: "MissingIndex", removeIndex: true, source: origin2},
-+		// The filter matches stored subjects, but all carry ORIGIN1's header, so it walks every block.
-+		{title: "MatchingSubjects", source: origin3, walkAll: true},
-+	} {
-+		t.Run(test.title, func(t *testing.T) {
-+			dir := t.TempDir()
-+			fcfg := FileStoreConfig{StoreDir: dir, BlockSize: 256}
-+			cfg := StreamConfig{Name: "zzz", Subjects: []string{">"}, Storage: FileStorage, Sources: []*StreamSource{origin1}}
-+			fs, err := newFileStore(fcfg, cfg)
+ 		ac := &jwt.ActivationClaims{}
+@@ -4888,10 +4894,10 @@ func TestJWTActivationRevocation(t *testing.T) {
+ 		}
+ 
+ 		aExpClaim.Exports[0].RevokeAt(revPubKey, time.Now())
+-		aExp2Jwt := encodeClaim(t, aExpClaim, aExpPub)
++		aExp3Jwt := encodeClaim(t, aExpClaim, aExpPub)
+ 
+ 		aExpClaim.Exports[0].ClearRevocation(revPubKey)
+-		aExp3Jwt := encodeClaim(t, aExpClaim, aExpPub)
++		aExp4Jwt := encodeClaim(t, aExpClaim, aExpPub)
+ 
+ 		aImpClaim := jwt.NewAccountClaims(aImpPub)
+ 		aImpClaim.Name = "Import"
+@@ -4921,7 +4927,7 @@ func TestJWTActivationRevocation(t *testing.T) {
+ 			defer removeDir(t, dirSrv) // clean jwt directory
+ 
+ 			updateJwt(t, srv.ClientURL(), sysCreds, sysJwt, 1)   // update system account jwt
+-			updateJwt(t, srv.ClientURL(), sysCreds, aExp2Jwt, 1) // set account jwt without revocation
++			updateJwt(t, srv.ClientURL(), sysCreds, aExp3Jwt, 1) // set account jwt with revocation
+ 			updateJwt(t, srv.ClientURL(), sysCreds, aImpJwt, 1)
+ 
+ 			ncExp1 := natsConnect(t, srv.ClientURL(), nats.UserCredentials(aExpCreds))
+@@ -4945,7 +4951,7 @@ func TestJWTActivationRevocation(t *testing.T) {
+ 			defer removeDir(t, dirSrv) // clean jwt directory
+ 
+ 			updateJwt(t, srv.ClientURL(), sysCreds, sysJwt, 1)   // update system account jwt
+-			updateJwt(t, srv.ClientURL(), sysCreds, aExp1Jwt, 1) // set account jwt without revocation
++			updateJwt(t, srv.ClientURL(), sysCreds, aExp1Jwt, 1) // set account jwt with unrelated revocation
+ 			updateJwt(t, srv.ClientURL(), sysCreds, aImpJwt, 1)
+ 
+ 			ncExp1 := natsConnect(t, srv.ClientURL(), nats.UserCredentials(aExpCreds))
+@@ -4962,19 +4968,37 @@ func TestJWTActivationRevocation(t *testing.T) {
+ 			require_NoError(t, err)
+ 			require_Equal(t, string(m1.Data), "1")
+ 
+-			updateJwt(t, srv.ClientURL(), sysCreds, aExp2Jwt, 1) // set account jwt with revocation
++			// The import adds a shadow subscription to the exporting account.
++			aExp, err := srv.LookupAccount(aExpPub)
 +			require_NoError(t, err)
-+			for i := range 100 {
-+				hdr := genHeader(nil, JSStreamSource, fmt.Sprintf("ORIGIN1 %d s1.> > s1.x", i+1))
-+				_, _, err = fs.StoreMsg("s1.x", hdr, nil, 0)
-+				require_NoError(t, err)
-+			}
-+			require_True(t, fs.numMsgBlocks() >= 10)
++			r := aExp.sl.Match("foo")
++			require_Len(t, len(r.psubs), 1)
++			shadow := r.psubs[0]
 +
-+			// Restart, so the per-block subject state is no longer in memory.
-+			require_NoError(t, fs.Stop())
-+			if test.removeIndex {
-+				require_NoError(t, os.Remove(filepath.Join(dir, sourcesStreamStateFile)))
-+				cfg.Sources = append(cfg.Sources, test.source)
-+			}
-+			fs, err = newFileStore(fcfg, cfg)
++			updateJwt(t, srv.ClientURL(), sysCreds, aExp2Jwt, 1) // set account jwt with unchanged revocations
+ 
+ 			require_NoError(t, ncExp1.Publish("foo", []byte("2")))
++			m2, err := sub.NextMsg(time.Second)
 +			require_NoError(t, err)
-+			defer fs.Stop()
-+			if !test.removeIndex {
-+				cfg.Sources = append(cfg.Sources, test.source)
-+				require_NoError(t, fs.UpdateConfig(&cfg))
-+			}
-+			state := fs.SourcesState()
-+			require_Equal(t, state[origin1.composeIName()].Seq, 100)
-+			require_Equal(t, state[test.source.composeIName()].Seq, 0)
++			require_Equal(t, string(m2.Data), "2")
++			// Re-checking the import would have replaced the shadow subscription.
++			r = aExp.sl.Match("foo")
++			require_Len(t, len(r.psubs), 1)
++			require_Equal(t, r.psubs[0], shadow)
 +
-+			var loaded int
-+			fs.mu.RLock()
-+			for _, mb := range fs.blks {
-+				mb.mu.Lock()
-+				if !mb.fssNotLoaded() {
-+					loaded++
-+				}
-+				mb.mu.Unlock()
-+			}
-+			fs.mu.RUnlock()
-+			if test.walkAll {
-+				require_Equal(t, loaded, fs.numMsgBlocks())
-+			} else {
-+				require_True(t, loaded <= 1)
-+			}
-+		})
-+	}
-+}
++			updateJwt(t, srv.ClientURL(), sysCreds, aExp3Jwt, 1) // set account jwt with revocation
 +
-+func TestFileStoreLoadPrevMsgSkipsBlocks(t *testing.T) {
-+	run := func(t *testing.T, filters []string, removeLast bool) {
-+		fcfg := FileStoreConfig{StoreDir: t.TempDir(), BlockSize: 256}
-+		cfg := StreamConfig{Name: "zzz", Subjects: []string{"foo.*"}, Storage: FileStorage}
-+		fs, err := newFile
++			require_NoError(t, ncExp1.Publish("foo", []byte("3")))
+ 			_, err = sub.NextMsg(time.Second)
+ 			require_Error(t, err)
+ 			require_Equal(t, err.Error(), "nats: timeout")
+ 
+-			updateJwt(t, srv.ClientURL(), sysCreds, aExp3Jwt, 1) // set account with revocation cleared
++			updateJwt(t, srv.ClientURL(), sysCreds, aExp4Jwt, 1) // set account with revocation cleared
+ 
+-			require_NoError(t, ncExp1.Publish("foo", []byte("3")))
+-			m2, err := sub.NextMsg(time.Second)
++			require_NoError(t, ncExp1.Publish("foo", []byte("4")))
++			m3, err := sub.NextMsg(time.Second)
+ 			require_NoError(t, err)
+-			require_Equal(t, string(m2.Data), "3")
++			require_Equal(t, string(m3.Data), "4")
+ 		})
+ 	}
+ 	t.Run("specific-key", func(t *testing.T) {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #8851** (2026-11-04): [FIXED] Revocations re-check importers on every account update (@MauriceVanVeen)
 - **PR #8850** (2026-11-04): [FIXED] Clustered healthz ignores write errors on R1 streams (@MauriceVanVeen)
 - **PR #8849** (2026-11-04): [FIXED] Recovery scans not persisted & walking every block (@MauriceVanVeen)
 - **PR #8847** (2026-11-04): (2.15) NRG: Removed unmanaged peer could rejoin as leader (@MauriceVanVeen)
 - **PR #8846** (2026-11-04): [FIXED] Duplicate route RS+ leaks leafnode and gateway interest (@MauriceVanVeen)
 - **PR #8844** (2026-11-04): Fix filestore recovery panic and preserve stream data on failure (@rleungx)
-- **PR #8843** (2026-11-04): [FIXED] Missing offline checks for unsupported streams and consumers (@MauriceVanVeen)
 
 ---
 
@@ -3571,42 +2925,56 @@ block.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. filestore recovery panic and preserve stream data on failure (#8844)
+## X. [FIXED] Revocations re-check importers on every account update (#8851)
 
 **RULE**:
-When implementing operations in `server/filestore.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nats-io/nats-server. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `server/accounts.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nats-io/nats-server. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `bd9dff78`: filestore recovery panic and preserve stream data on failure (#8844). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9bad2e8d`: [FIXED] Revocations re-check importers on every account update (#8851). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `server/filestore.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `server/accounts.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	defer func(fs *fileStore) {
-			// The state flusher has not started, and recovery may be incomplete.
-			fs.stop(false, false)
-	}(fs)
-	defer func(fs *fileStore) {
-	}(fs)
-	if fs.recovering || fs.isClosed() {
-	if fs.recovering || fs.isClosed() {
+		// Revocation changes are detected when comparing the exports against old below.
+			ea.actsRevoked = e.Revocations
+	if !a.checkStreamExportsEqual(old) || signersChanged {
+	if !a.checkServiceExportsEqual(old) || signersChanged {
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	defer func() {
-			ats.Unregister()
-	}()
-	defer func() {
-	}()
-		fs.mu.Unlock()
-	if fs.recovering {
-	if fs.recovering {
+	streamTokenExpirationChanged := false
+	serviceTokenExpirationChanged := false
+
+		var revocationChanged *bool
+			revocationChanged = &streamTokenExpirationChanged
+			revocationChanged = &serviceTokenExpirationChanged
+			oldRevocations := ea.actsRevoked
+			if len(e.Revocations) == 0 {
+				// remove all, no need to evaluate existing imports
+				ea.actsRevoked = nil
+			} else if len(oldRevocations) == 0 {
+				// add all, existing imports need to be re evaluated
+				ea.actsRevoked = e.Revocations
+				*revocationChanged = true
+			} else {
+				ea.actsRevoked = e.Revocations
+				// diff, existing imports need to be conditionally re evaluated, depending on:
+				// if a key was added, or it's timestamp increased
+				for k, t := range e.Revocations {
+					if tOld, ok := oldRevocations[k]; !ok || tOld < t {
+						*revocationChanged = true
+					}
+				}
+			}
+	if !a.checkStreamExportsEqual(old) || signersChanged || streamTokenExpirationChanged {
+	if !a.checkServiceExportsEqual(old) || signersChanged || serviceTokenExpirationChanged {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `bd9dff78` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9bad2e8d` are properly handled with clean fallback behavior.

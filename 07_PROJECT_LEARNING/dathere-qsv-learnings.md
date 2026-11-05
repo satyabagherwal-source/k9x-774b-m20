@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source**: github ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
-> **Source Version**: `658388c9`  
+> **Source Version**: `7dc4e9ca`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T03:09:16.090Z  
+> **Timestamp**: 2026-11-05T12:58:36.597Z  
 > **Learning ID**: `learn-github-dathere-qsv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T03:09:15.884Z  
+> **Harvest Timestamp**: 2026-11-05T12:58:36.592Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Blazing-fast, Neuro-symbolic Data-Wrangling toolkit
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3818 stars
+- **Stars / Engagement**: 3819 stars
 
 ---
 
@@ -2203,103 +2203,193 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `658388c9` (2026-11-04)
-**Commit Message**: deps: Bump toml to 1.2.0 and update dependencies
+### Incident Patch 1: `7dc4e9ca` (2026-11-05)
+**Commit Message**: Point csvlens at fork with bumped deps
 
-Raise the toml requirement in Cargo.toml from 1.1 to 1.2.0+spec-1.1.0.
+Switch the csvlens git dependency from YS-L/csvlens (rev 6acf060) to the jqnatividad fork's deps-bump-2026-11 branch.
 
-Cargo.lock also picks up cached 4.1.1, toml_edit 0.25.18 and toml_writer 1.2.0.
+The fork's updated dependencies pull in arrow 60.1.0 (new arrow-cmp crate), atoi 3.1.1, generator 0.8.12 and windows-core/link/result/strings 0.100.0. winnow and finl_unicode get patch bumps.
 
-**File**: `Cargo.lock` (modified, +11/-11)
+**File**: `Cargo.lock` (modified, +138/-67)
 ```diff
-@@ -1231,9 +1231,9 @@ dependencies = [
+@@ -446,9 +446,9 @@ checksum = "d3fb67a6e08acf24fdeccbac2cb6ac4305825bd1f117462e0e6f2f193345ad56"
  
  [[package]]
- name = "cached"
--version = "4.1.0"
-+version = "4.1.1"
+ name = "arrow"
+-version = "59.3.2"
++version = "60.1.0"
  source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "6f886e989b5b6e7991606f2550e45a99e130024465ba8d67f9f9b256eb7044bf"
-+checksum = "48ba6df8863aa2bfacfae483d8dfefa52403115f559a46c4d84897bec8753d6a"
+-checksum = "3f04e0a89cc175eaf3740282537851e6fd9d7276f97730b9d0ea2859c11a85df"
++checksum = "d965156f2220e94dcf676e04322b7b0b41c97e85cb3e1c365b8e56d0f70be999"
+ dependencies = [
+  "arrow-arith",
+  "arrow-array",
+@@ -465,9 +465,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "arrow-arith"
+-version = "59.3.2"
++version = "60.1.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "157943c720919e8f5b6731407ce5cd4c9a5ef47a75bf10edaf24b7081b5763ef"
++checksum = "ca16fdd1daeb1eccefb42df52ec65448ef33eec72488598675d46dfa9ce58923"
+ dependencies = [
+  "arrow-array",
+  "arrow-buffer",
+@@ -479,9 +479,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "arrow-array"
+-version = "59.3.2"
++version = "60.1.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "72b5b1682924f11ecf6929689c16cbc69efbb6dd141b06ad98ee1cb10d858c43"
++checksum = "0f3d22a41d3df78b71df0b685af219ae3a94188ab98d6fb29c958eb55c3247f4"
  dependencies = [
   "ahash",
-  "blocking",
-@@ -3588,7 +3588,7 @@ dependencies = [
-  "serde",
-  "serde_derive",
-  "sysinfo 0.38.4",
-- "toml 1.1.8+spec-1.1.0",
-+ "toml 1.2.0+spec-1.1.0",
-  "uuid",
+  "arrow-buffer",
+@@ -497,9 +497,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "arrow-buffer"
+-version = "59.3.2"
++version = "60.1.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "b5d687afc6c927965a8a759f3b68de91933d9dfa2e1bb6e156bac84b85665e92"
++checksum = "7bd46a530bc1a8e763102fc36c1dc0f51f3ffa150c78e7f5658ccb54b1458ade"
+ dependencies = [
+  "bytes",
+  "half",
+@@ -509,9 +509,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "arrow-cast"
+-version = "59.3.2"
++version = "60.1.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "3f23c3379feede42135ef27ca60e67f6e643cd4343ae74e4c8b16c83f55afd85"
++checksum = "baa83a0752814a1922d5ee75032524ca9bbfb7f60ee35a67ed4ab8b275260aaf"
+ dependencies = [
+  "arrow-array",
+  "arrow-buffer",
+@@ -528,11 +528,22 @@ dependencies = [
+  "ryu",
  ]
  
-@@ -6872,7 +6872,7 @@ version = "3.5.0"
++[[package]]
++name = "arrow-cmp"
++version = "60.1.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "1913e57a64fbf2c4502fa6d54b547d6a1ae59e3146cbc15321d47468c937abd1"
++dependencies = [
++ "arrow-array",
++ "arrow-buffer",
++ "arrow-schema",
++]
++
+ [[package]]
+ name = "arrow-csv"
+-version = "59.3.2"
++version = "60.1.0"
  source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "e67ba7e9b2b56446f1d419b1d807906278ffa1a658a8a5d8a39dcb1f5a78614f"
+-checksum = "85b1984628b091b8319b3c305fce21d04f9e9b2578bb733b0d0108462ae1d698"
++checksum = "e4572af05fadde76a063139805c089d0915b7eb64ed5bef14456c6e458a80b28"
  dependencies = [
-- "toml_edit 0.25.17+spec-1.1.0",
-+ "toml_edit 0.25.18+spec-1.1.0",
+  "arrow-array",
+  "arrow-cast",
+@@ -545,9 +556,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "arrow-data"
+-version = "59.3.2"
++version = "60.1.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "bb0a031c7ff5e2bdb443117054fb466af1d4df5b7f0ecbe197713dc8b113b1ba"
++checksum = "415b7fbc4cf56b080bb5677a4ae74211b5c79e571ed37a1d547633ec07f3b43b"
+ dependencies = [
+  "arrow-buffer",
+  "arrow-schema",
+@@ -558,22 +569,23 @@ dependencies = [
+ 
+ [[package]]
+ name = "arrow-ord"
+-version = "59.3.2"
++version = "60.1.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "561b8209faa2cd489764b7fd07d7cb9e8d274d78048c38de59f77c41140cb834"
++checksum = "4c58f2ae6dd1480fc413f7320a547e39dcc499c23d4f36ca19572b685811e6e4"
+ dependencies = [
+  "arrow-array",
+  "arrow-buffer",
++ "arrow-cmp",
+  "arrow-data",
+  "arrow-schema",
+  "arrow-select",
  ]
  
  [[package]]
-@@ -7139,7 +7139,7 @@ dependencies = [
-  "time",
-  "titlecase",
-  "tokio",
-- "toml 1.1.8+spec-1.1.0",
-+ "toml 1.2.0+spec-1.1.0",
-  "toon-format",
-  "unicode-width",
-  "url",
-@@ -9557,9 +9557,9 @@ dependencies = [
- 
- [[package]]
- name = "toml"
--version = "1.1.8+spec-1.1.0"
-+version = "1.2.0+spec-1.1.0"
+ name = "arrow-row"
+-version = "59.3.2"
++version = "60.1.0"
  source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "20489e00e4d8741d6be680764cc12e270655e375a20d1011e844a9c3379e678d"
-+checksum = "c5ffcdf8f50436dbbfd675c1fe1b8e0854f42b7defea8584bdebe1aee900e561"
+-checksum = "0d8c68b87a569f92b90c46cb0a09d86bd9609ddc9b1bf1fc5a503c8c6907c14e"
++checksum = "68f9db8345b0638416d3b56d117d262d13070fdef788c6d75b53a180215c477e"
  dependencies = [
-  "indexmap 2.14.2",
-  "serde_core",
-@@ -9604,9 +9604,9 @@ dependencies = [
+  "arrow-array",
+  "arrow-buffer",
+@@ -584,29 +596,30 @@ dependencies = [
  
  [[package]]
- name = "toml_edit"
--version = "0.25.17+spec-1.1.0"
-+version = "0.25.18+spec-1.1.0"
+ name = "arrow-schema"
+-version = "59.3.2"
++version = "60.1.0"
  source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "e3641d5bbb5349a79e1020a242d251efbc546ad8048d133958323ce9c40a9c9c"
-+checksum = "1ec6e78bd70db9420d8d212fa9dc97f116448a1ceff5d00eabb991d407e21396"
+-checksum = "e87acb0c6bf6237fca7a50d7b51e801c98a18a5fe6f3bb34f7d77b85ca165388"
++checksum = "de2c8e714b466404cdc1189e89f892426efea614d938e16c15518c340cd43ba3"
+ 
+ [[package]]
+ name = "arrow-select"
+-version = "59.3.2"
++version = "60.1.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "c844141958d805b47d1208e0d12aac53fcf388ce8011639fe82aa492adde0bb4"
++checksum = "a5af3f6656c5f2c6944f93d9a357a7f204c93d5f349385a44cf46c4a26fbcf30"
  dependencies = [
-  "indexmap 2.14.2",
-  "toml_datetime 1.1.2+spec-1.1.0",
-@@ -9631,9 +9631,9 @@ checksum = "5d99f8c9a7727884afe522e9bd5edbfc91a3312b36a77b5fb8926e4c31a41801"
+  "ahash",
+  "arrow-array",
+  "arrow-buffer",
++ "arrow-cmp",
+  "arrow-data",
+  "arrow-schema",
+  "num-traits",
+ ]
  
  [[package]]
- name = "toml_writer"
--version = "1.1.3+spec-1.1.0"
-+version = "1.2.0+spec-1.1.0"
+ name = "arrow-string"
+-version = "59.3.2"
++version = "60.1.0"
  source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "06bdbd8cfc056b8d2e2e85f29b56a3bdbecb527cef81eb39e3e7b98af4652770"
-+checksum = "009dbb7700f11c55ef83aebbe4c0e9cf1f1ac0844bd8d6f00dc38f302026e13a"
- 
- [[package]]
- name = "toon-format"
+-checksum = "bc130892b1a9552da77971924b390e06cf375d1f7e4344a7b7b40ca4426fa470"
++checksum = "ab1be9306b9a413b5b004e2a5a19caac728870d76e8891b351f040d554c93862"
+ dependencies = [
+  "arrow-array",
+  "arrow-buffer",
+@@
 ```
 
-**File**: `Cargo.toml` (modified, +1/-1)
+**File**: `Cargo.toml` (modified, +2/-2)
 ```diff
-@@ -480,7 +480,7 @@ serde_urlencoded = { version = "0.7", optional = true }
- sha2 = { version = "0.11", optional = true }
- simdutf8 = "0.1"
- spreadsheet-ods = { version = "1", optional = true }
--toml = "1.1"
-+toml = "1.2.0+spec-1.1.0"
- toon-format = { version = "0.7", default-features = false }
- smallvec = "1"
- snap = "1"
+@@ -552,8 +552,8 @@ csv-index = { git = "https://github.com/dathere/rust-csv", branch = "qsv-tuned"
+ # csv-core = { path = "../rust-csv/csv-core" }
+ # csv-index = { path = "../rust-csv/csv-index" }
+ 
+-# use latest upstream now that our PR has been merged
+-csvlens = { git = "https://github.com/YS-L/csvlens", rev = "6acf060" }
++# use our patched fork of csvlens until our PR is merged
++csvlens = { git = "https://github.com/jqnatividad/csvlens", branch = "deps-bump-2026-11" }
+ 
+ # use our patched fork of csvs_convert to bump dependencies until our PR is merged
+ csvs_convert = { git = "https://github.com/jqnatividad/csvs_convert", branch = "replace-streaming-stats-redux", optional = true }
 ```
 
 #### Recent Merged Pull Requests:
@@ -2328,13 +2418,13 @@ Cargo.lock also picks up cached 4.1.1, toml_edit 0.25.18 and toml_writer 1.2.0.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps: Bump toml to 1.2.0 and update dependencies
+## X. Point csvlens at fork with bumped deps
 
 **RULE**:
 When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `658388c9`: deps: Bump toml to 1.2.0 and update dependencies. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7dc4e9ca`: Point csvlens at fork with bumped deps. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
@@ -2342,34 +2432,68 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-version = "4.1.1"
-checksum = "48ba6df8863aa2bfacfae483d8dfefa52403115f559a46c4d84897bec8753d6a"
- "toml 1.2.0+spec-1.1.0",
- "toml_edit 0.25.18+spec-1.1.0",
- "toml 1.2.0+spec-1.1.0",
-version = "1.2.0+spec-1.1.0"
-checksum = "c5ffcdf8f50436dbbfd675c1fe1b8e0854f42b7defea8584bdebe1aee900e561"
-version = "0.25.18+spec-1.1.0"
-checksum = "1ec6e78bd70db9420d8d212fa9dc97f116448a1ceff5d00eabb991d407e21396"
-version = "1.2.0+spec-1.1.0"
-checksum = "009dbb7700f11c55ef83aebbe4c0e9cf1f1ac0844bd8d6f00dc38f302026e13a"
+version = "60.1.0"
+checksum = "d965156f2220e94dcf676e04322b7b0b41c97e85cb3e1c365b8e56d0f70be999"
+version = "60.1.0"
+checksum = "ca16fdd1daeb1eccefb42df52ec65448ef33eec72488598675d46dfa9ce58923"
+version = "60.1.0"
+checksum = "0f3d22a41d3df78b71df0b685af219ae3a94188ab98d6fb29c958eb55c3247f4"
+version = "60.1.0"
+checksum = "7bd46a530bc1a8e763102fc36c1dc0f51f3ffa150c78e7f5658ccb54b1458ade"
+version = "60.1.0"
+checksum = "baa83a0752814a1922d5ee75032524ca9bbfb7f60ee35a67ed4ab8b275260aaf"
+[[package]]
+name = "arrow-cmp"
+version = "60.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1913e57a64fbf2c4502fa6d54b547d6a1ae59e3146cbc15321d47468c937abd1"
+dependencies = [
+ "arrow-array",
+ "arrow-buffer",
+ "arrow-schema",
+]
+
+version = "60.1.0"
+checksum = "e4572af05fadde76a063139805c089d0915b7eb64ed5bef14456c6e458a80b28"
+version = "60.1.0"
+checksum = "415b7fbc4cf56b080bb5677a4ae74211b5c79e571ed37a1d547633ec07f3b43b"
+version = "60.1.0"
+checksum = "4c58f2ae6dd1480fc413f7320a547e39dcc499c23d4f36ca19572b685811e6e4"
+ "arrow-cmp",
+version = "60.1.0"
+checksum = "68f9db8345b0638416d3b56d117d262d13070fdef788c6d75b53a180215c477e"
+version = "60.1.0"
+checksum = "de2c8e714b466404cdc
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-version = "4.1.0"
-checksum = "6f886e989b5b6e7991606f2550e45a99e130024465ba8d67f9f9b256eb7044bf"
- "toml 1.1.8+spec-1.1.0",
- "toml_edit 0.25.17+spec-1.1.0",
- "toml 1.1.8+spec-1.1.0",
-version = "1.1.8+spec-1.1.0"
-checksum = "20489e00e4d8741d6be680764cc12e270655e375a20d1011e844a9c3379e678d"
-version = "0.25.17+spec-1.1.0"
-checksum = "e3641d5bbb5349a79e1020a242d251efbc546ad8048d133958323ce9c40a9c9c"
-version = "1.1.3+spec-1.1.0"
-checksum = "06bdbd8cfc056b8d2e2e85f29b56a3bdbecb527cef81eb39e3e7b98af4652770"
+version = "59.3.2"
+checksum = "3f04e0a89cc175eaf3740282537851e6fd9d7276f97730b9d0ea2859c11a85df"
+version = "59.3.2"
+checksum = "157943c720919e8f5b6731407ce5cd4c9a5ef47a75bf10edaf24b7081b5763ef"
+version = "59.3.2"
+checksum = "72b5b1682924f11ecf6929689c16cbc69efbb6dd141b06ad98ee1cb10d858c43"
+version = "59.3.2"
+checksum = "b5d687afc6c927965a8a759f3b68de91933d9dfa2e1bb6e156bac84b85665e92"
+version = "59.3.2"
+checksum = "3f23c3379feede42135ef27ca60e67f6e643cd4343ae74e4c8b16c83f55afd85"
+version = "59.3.2"
+checksum = "85b1984628b091b8319b3c305fce21d04f9e9b2578bb733b0d0108462ae1d698"
+version = "59.3.2"
+checksum = "bb0a031c7ff5e2bdb443117054fb466af1d4df5b7f0ecbe197713dc8b113b1ba"
+version = "59.3.2"
+checksum = "561b8209faa2cd489764b7fd07d7cb9e8d274d78048c38de59f77c41140cb834"
+version = "59.3.2"
+checksum = "0d8c68b87a569f92b90c46cb0a09d86bd9609ddc9b1bf1fc5a503c8c6907c14e"
+version = "59.3.2"
+checksum = "e87acb0c6bf6237fca7a50d7b51e801c98a18a5fe6f3bb34f7d77b85ca165388"
+version = "59.3.2"
+checksum = "c844141958d805b47d1208e0d12aac53fcf388ce8011639fe82aa492adde0bb4"
+version = "59.3.2"
+checksum = "bc130892b1a9552da77971924b390e06cf375d1f7e4344a7b7b40ca4426fa470"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `658388c9` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7dc4e9ca` are properly handled with clean fallback behavior.

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/lancedb-lancedb-learnings.md`  
 > **Source**: github ([https://github.com/lancedb/lancedb](https://github.com/lancedb/lancedb))  
-> **Source Version**: `2dedde9b`  
+> **Source Version**: `5def2611`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T22:34:55.299Z  
+> **Timestamp**: 2026-11-05T13:20:32.085Z  
 > **Learning ID**: `learn-github-lancedb-lancedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/lancedb-lancedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/lancedb/lancedb](https://github.com/lancedb/lancedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T22:34:55.291Z  
+> **Harvest Timestamp**: 2026-11-05T13:20:32.080Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Developer-friendly OSS embedded retrieval library for multimodal AI. Search More; Manage Less.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 11843 stars
+- **Stars / Engagement**: 11847 stars
 
 ---
 
@@ -1214,11 +1214,11 @@ pub fn rename_column(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #4825** (2026-11-04): **fix: tag the final release commit after syncing lockfiles**
-  *Symptoms*: Release tags currently point to the version bump before the lockfile amend, so tagged CLI builds fail with `--locked` even though the branch has the synced lockfile.  Keep the newly created, unpublished tag on the final amended release commit before pushing. Existing published tags and packages remain unchanged.  [Remote preview dry run](https://github.com/lancedb/lancedb/actions/runs/41764901500) passed and moved the local tag after the lockfile amend; no tag was pushed. 
+- **Issue #4874** (2026-11-05): **fix: remove unmaintained pin-utils from AWS dependencies**
+  *Symptoms*: `cargo deny` rejects `pin-utils 0.1.0` as unmaintained under RUSTSEC-2026-0441; there is no patched release. The dependency comes from the AWS Smithy graph. Refresh that graph to include [smithy-rs #4882](https://github.com/smithy-lang/smithy-rs/pull/4882), replacing the obsolete `aws-smithy-types = ">=1.3.6, <1.7"` constraint with `1.9.1`.  The lockfile audit attributes every changed package identity and resolved dependency edge to the AWS graph. Existing git dependency pins are preserved. The selected AWS crates declare Rust 1.94.1, within the workspace's unchanged 1.95.0 requirement.  Validation at the exact candidate on the development EC2 host, both exit 0:  - `mbx +1.97.1 deny check advisories bans licenses sources` - `mbx +1.97.1 check --quiet --locked -p lancedb --tests --features remote,aws,dynamodb,bedrock`  The second command compiles the selected test targets; it is not a runtime integration test. Full all-features compilation remains unverified: an earlier attempt stopped in lance-linalg because the host Clang 15 does not support the required `_Float16` target. 
 
-- **Issue #4823** (2026-11-04): **fix(docs): redirect enterprise overview to architecture**
-  *Symptoms*: The removed Enterprise landing page left the `/enterprise` and `/enterprise/deployment` redirects pointing at a missing page, breaking the SDK documentation-link test. Point both redirects at the existing architecture overview, which describes Embedded and Enterprise.  The exact failing Rust test fails on current main and passes with these redirect changes. This repairs the inherited failure blocking #4821. 
+- **Issue #4872** (2026-11-05): **fix(deps): ignore RUSTSEC-2026-0441 pin-utils unmaintained**
+  *Symptoms*: `cargo deny` fails on main because RUSTSEC-2026-0441 marks `pin-utils` as unmaintained. Add an exception reviewed on 2026-11-05, with the advisory and upstream discussion links and a reminder to revisit it when updating AWS dependencies.  `pin-utils` is transitive through `aws-smithy-http`, `aws-smithy-runtime`, and `aws-smithy-types`, including the `aws-config` → `lance-io` path. RustSec lists no safe upgrade; clearing the advisory requires upstream migration to supported pinning primitives.  Validation on commit dede2c783fda73500cee2b05feffe1b70d56624c:  - Before the change, `cargo deny check advisories` failed on RUSTSEC-2026-0441. - `cargo deny check advisories` passes after the change. - `cargo deny check advisories bans licenses sources` passes all four checks, matching the Rust CI deny job. - `git diff HEAD^ HEAD --check` passes. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1235,585 +1235,726 @@ pub fn rename_column(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `de95ed3f` (2026-11-04)
-**Commit Message**: docs: overhaul curation, feature engineering, security and deployment guides (#4748)
+### Incident Patch 1: `69ac2158` (2026-11-05)
+**Commit Message**: fix: preserve take_row_ids request order (#4826)
 
-A broad documentation pass across the areas LanceDB Enterprise and
-Embedded
-diverge on most:
+`take_row_ids` used an `IN` filter, so the backend could reorder rows
+and collapse duplicate IDs. That can silently misalign training rows
+with labels or sample weights.
 
-**Data Curation** -- GPU Function execution, Slurm scheduling (and what
-Slurm is, for readers new to it), blob late materialization as its own
-page, joins, aggregation/profiling, sampling, near-duplicate detection,
-chunking, distributed shuffle, and IVF-partition clustering.
+Restore the requested order and duplicate occurrences in the shared Rust
+take path for native and remote tables, and retain that information
+through Python query serialization. Missing or deleted IDs are omitted.
+Explicit Rust `order_by` overrides request order, and pagination applies
+after restoring occurrences. Empty projections and `_rowid` projection
+aliases retain their output schema.
 
-**Feature Engineering** -- computed columns and materialized views,
-restructured to lead with the Function-based path and show the SQL form
-side by side with Python throughout; a single Auto Refresh page instead
-of
-duplicating scheduling details on every refresh page; adaptive
-execution;
-checkpointing; GPU and Slurm placement for refresh workers; a Training
-Cache page for the PyTorch data loader's automatic cache benefit.
+RTE tables reject unsupported takes with the existing base-table
+guidance before checking the internal row-ID projection used for
+ordering. An explicit `use_rte(False)` reads the base table with the
+same requested order and occurrences.
 
-**Security & Governance** -- an Audit Log reference (schema, access,
-grants), Secrets promoted to an ordinary catalog object with their own
-SQL
-DDL and a vending/rotation guide, and privilege-table fixes verified
-against the authorization source.
+A pre-existing fixture defect also blocked CI:
+`test_table_add_in_threadpool` responded without reading uploads,
+allowing a connection reset during response decoding. This PR includes a
+fix confined to that test's handler: consume each request body before
+responding and verify one create row plus ten inserted rows. This was
+not a regression in t
 
-**Deployment & Maintenance** -- Horizontal Scaling and OpenTelemetry
-
-**File**: `.github/vale/styles/LanceDB/ProductNames.yml` (modified, +6/-6)
+**File**: `docs/web/curation/selective-sampling.mdx` (modified, +31/-10)
 ```diff
-@@ -10,7 +10,7 @@ swap:
-   'LanceDB (?:cloud|CLOUD)': LanceDB Cloud
-   'LanceDB (?:enterprise|ENTERPRISE)': LanceDB Enterprise
-   'LanceDB\s+Distributed': LanceDB Enterprise
--  '(?:HuggingFace|Huggingface|Hugging face)': Hugging Face
-+  '(?:Hugging Face|Hugging face|Huggingface)': HuggingFace
-   Langchain: LangChain
-   Typescript: TypeScript
-   VoyageAI: Voyage AI
-@@ -22,12 +22,12 @@ tests:
-       1:32:LanceDB.ProductNames:Use 'LanceDB Cloud' instead of 'LanceDB cloud'.
-       1:49:LanceDB.ProductNames:Use 'LanceDB Enterprise' instead of 'LanceDB enterprise'.
-   - name: corrects names seen misspelled in the current pages
--    input: Load a HuggingFace model, build a Langchain retriever in Typescript and call VoyageAI.
-+    input: Load a Hugging Face model, build a Langchain retriever in Typescript and call VoyageAI.
-     want: |
--      1:8:LanceDB.ProductNames:Use 'Hugging Face' instead of 'HuggingFace'.
--      1:35:LanceDB.ProductNames:Use 'LangChain' instead of 'Langchain'.
--      1:58:LanceDB.ProductNames:Use 'TypeScript' instead of 'Typescript'.
--      1:78:LanceDB.ProductNames:Use 'Voyage AI' instead of 'VoyageAI'.
-+      1:8:LanceDB.ProductNames:Use 'HuggingFace' instead of 'Hugging Face'.
-+      1:37:LanceDB.ProductNames:Use 'LangChain' instead of 'Langchain'.
-+      1:60:LanceDB.ProductNames:Use 'TypeScript' instead of 'Typescript'.
-+      1:80:LanceDB.ProductNames:Use 'Voyage AI' instead of 'VoyageAI'.
-   - name: leaves package names, identifiers and code alone
-     input: |
-       The lancedb package exposes `HuggingFaceEmbeddings` and LanceDBConnection; see `Typescript` in code.
-```
-
-**File**: `CONTRIBUTING.md` (modified, +5/-8)
-```diff
-@@ -150,18 +150,15 @@ example.
- ### Say where a feature works
+@@ -57,16 +57,37 @@ let rows_by_offset = tbl.take_offsets(vec![0, 1, 2]).execute().await?;
+ </CodeGroup>
  
- Use `availability` in a page's frontmatter to describe the support covered by
--that page. Each product (`oss` for LanceDB Embedded, `enterprise` for LanceDB
--Enterprise) is either `available` or `unavailable`; use the summary
--and body for setup requirements, SDK differences and unsupported operations.
--For example, a page about signing in to Enterprise could declare:
-+that page. Each product (`embedded` for LanceDB Embedded, `enterprise` for
-+LanceDB Enterprise) is `available` or `unavailable`. Use the body for setup
-+requirements, SDK differences and unsupported operations. For example, a page
-+about signing in to Enterprise could declare:
- 
- ```yaml
- availability:
--  oss: unavailable
-+  embedded: unavailable
-   enterprise: available
--  summary: >-
--    These sign-in instructions apply to LanceDB Enterprise. LanceDB
--    Embedded has no server to sign in to.
- ```
- 
- Check these claims with the feature owner. Don't use `varies`, treat an API
-```
-
-**File**: `docs/web-tests/py/test_build_with_ai_agents.py` (removed, +0/-109)
-```diff
-@@ -1,109 +0,0 @@
--# SPDX-License-Identifier: Apache-2.0
--# SPDX-FileCopyrightText: Copyright The LanceDB Authors
--
--# --8<-- [start:camelot_schema]
--from lancedb.pydantic import LanceModel
--from pydantic import ConfigDict
--
--
--class Stats(LanceModel):
--    model_config = ConfigDict(strict=True, extra="forbid")
--
--    strength: int
--    courage: int
--    magic: int
--    wisdom: int
--
--
--class Character(LanceModel):
--    model_config = ConfigDict(strict=True, extra="forbid")
--
--    id: int
--    name: str
--    role: str
--    description: str
--    stats: Stats
--    image_filename: str
--    image: bytes
--# --8<-- [end:camelot_schema]
--
--
--# --8<-- [start:camelot_batches]
--import json
--from collections.abc import Iterator
--from pathlib import Path
--
--
--def validated_batches(
--    input_path: Path, batch_size: int
--) -> Iterator[list[dict]]:
--    raw_records = json.loads(input_path.read_text())
--    asset_root = input_path.parent.parent
--    batch: list[dict] = []
--
--    for raw in raw_records:
--        payload = dict(raw)
--        image_path = asset_root / payload.pop("img")
--        payload["image_filename"] = image_path.name
--        payload["image"] = image_path.read_bytes()
--
--        character = Character.model_validate(payload)
--        batch.append(character.model_dump(mode="python"))
--
--        if len(batch) == batch_size:
--            yield batch
--            batch = []
--
--    if batch:
--        yield batch
--# --8<-- [end:camelot_batches]
--
--
--# --8<-- [start:camelot_oss_ingestion]
--import lancedb
--
--
--def ingest_oss(
--    input_path: Path,
--    uri: str = "data/camelot.lancedb",
--    table_name: str = "camelot_multimodal",
--    batch_size: int = 64,
--):
--    db = lancedb.connect(uri)
--    if table_name in db.list_tables():
--        raise ValueError(
--            f"Table {table_name!r} already exists. Choose a fresh table name."
--        )
--
--    table = db.create_table(table_name, schema=Character)
--    for batch in validated_batches(input_path, batch_size):
--        table.add(batch)
--
--    table.optimize()
--    return table
--
--
--if __name__ == "__main__":
--    ingest_oss(Path("data/camelot.json"))
--# --8<-- [end:camelot_oss_ingestion]
--
--
--def test_camelot_oss_ingestion(tmp_path):
--    source = Path(
--        "docs/web/static/assets/tutorials/build-with-ai-agents/camelot/data/camelot.json"
--    )
--    table = ingest_oss(
--        source,
--        uri=str(tmp_path / "camelot.lancedb"),
--        table_name="camelot",
--    )
--
--    rows = (
--        table.search()
--        .select(["id", "name", "image", "image_filename"])
--        .limit(8)
--        .to_list()
--    )
--    assert len(rows) == 8
--    assert all(row["image"] for row in rows)
--    assert all(row["image_filename"].endswith(".jpg") for row in rows)
-```
-
-**File**: `docs/web-tests/py/test_curation_sampling.py` (modified, +1/-1)
-```diff
-@@ -3,14 +3,14 @@
- 
- 
- def test_sample_dataset():
--    # --8<-- [start:sample_dataset]
-     from tempfile import TemporaryDirectory
- 
-     import lancedb
-     from lancedb.permutation import Permutation, permutation_builder
- 
-     with TemporaryDirectory(prefix="lancedb-sampling-") as uri:
-         db = lancedb.connect(uri)
-+        # --8<-- [start:sample_dataset]
-         table = db.create_table("records", [{"id": i} for i in range(10)])
-         splits = (
-             permutation_builder(table).split_random(counts=[3, 7], seed=42).execute()
-```
-
-**File**: `docs/web-tests/py/test_embedding.py` (modified, +6/-0)
-```diff
-@@ -25,6 +25,8 @@ def test_create_embedding_function():
- @pytest.mark.skip(reason="OpenAI is not available in the test environment")
- def test_embeddings_openai():
-     # --8<-- [start:openai_embeddings]
-+    import lancedb
+ Both methods return a query builder; call `.to_arrow()`, `.to_list()` or
+-similar to execute it. Repeated *offsets* produce repeated rows, so
+-`take_offsets` also supports sampling with replacement -- `take_row_ids`
+-does not: a row ID repeated in the input list still returns that row only
+-once, since the lookup is a set membership test. Neither method guarantees
+-result order matches the order of the input list; for `take_row_ids`, pass
+-`with_row_id=True` to add `_rowid` to the output and align the results
+-yourself if you need to. `take_offsets` tracks `_rowoffset` internally to
+-restore repeated rows, but drops that column from the output again
+-afterward unless you explicitly `select` it -- add `_rowoffset` to your
+-selection when you need it to align a `take_offsets` result yourself.
++similar to execute it.
 +
-     db = lancedb.connect("/tmp/db")
-     func = get_registry().get("openai").create(name="text-embedding-ada-002")
- 
-@@ -46,6 +48,8 @@ class Words(LanceModel):
- async def test_embeddings_openai_async():
-     uri = "memory://"
-     # --8<-- [start:async_openai_embeddings]
-+    import lancedb
++<Note>
++The guarantees for row IDs below apply to SDK releases containing
++[the ordering fix in #4826](https://github.com/lancedb/lancedb/pull/4826).
++Earlier releases may collapse repeated IDs and return rows in a different
++order.
++</Note>
 +
-     db = await lancedb.connect_async(uri)
-     func = get_registry().get("openai").create(name="text-embedding-ada-002")
- 
-@@ -65,6 +69,8 @@ class Words(LanceModel):
- @pytest.mark.skip(reason="OpenAI is not available in the test environment")
- def test_embeddings_manual_query():
-     # --8<-- [start:manual_query_embeddings]
-+    import lancedb
++`take_row_ids` returns matching rows in the order of the input IDs and
++preserves repeated IDs in both LanceDB Embedded and LanceDB Enterprise. For example,
++`take_row_ids([1005, 1001, 1005])` returns row 1005, row 1001, then row 1005
++again if both IDs exist. Missing or deleted IDs are omitted. This supports
++sampling with replacement. In Rust, an explicit nonempty
++`QueryBase::order_by` list overrides the requested order; limits and offsets
++apply after restoring repeated rows.
 +
-     db = lancedb.connect("/tmp/db")
-     func = get_registry().get("openai").create(name="text-embedding-ada-002")
++`take_offsets` also preserves repeated offsets, but does not guarantee
++input order. It tracks `_rowoffset` internally to restore repeated rows
++and drops that column from the output unless you explicitly `select` it.
++Add `_rowoffset` to your selection when you need to align a `take_offsets`
++result with the input offsets.
++
++<Note>
++Ordered takes by row ID collect all matching batches, combine them into one
++batch and reorder the rows before returning output batches. Even
++`to_batches(max_batch_length=1)` only limits the returned batch size; it
++does not bound working memory. For large requests or rows with large
++column values, split the input IDs into smaller requests and use
++`.select(...)` to fetch only the columns you need.
++</Note>
  
+ Offsets are mostly useful for sampling: the valid range is always
+ `[0, len(table))`, so you can draw a random sample of offsets without
 ```
 
-**File**: `docs/web-tests/py/test_function.py` (modified, +15/-2)
+**File**: `python/python/lancedb/_lancedb.pyi` (modified, +1/-0)
 ```diff
-@@ -42,8 +42,8 @@ def double(value: float) -> float:
- 
- # --8<-- [end:function_define]
- 
--# The definition the walkthrough registers. The Enterprise test registers a copy
--# of it under a name that only its run uses.
-+# The definitions the walkthrough registers. The Enterprise test registers a
-+# copy of each under a name that only its run uses.
- WALKTHROUGH_DOUBLE = double
- 
- 
-@@ -69,6 +69,8 @@ def close(self):
- 
- # --8<-- [end:function_class_define]
- 
-+WALKTHROUGH_EMBED = embed
-+
- 
- # A Function version as the service returns it after registration: the SDK's
- # shared golden reply, with the name and signature of the definition above.
-@@ -241,6 +243,9 @@ def test_function_enterprise(monkeypatch):
-     run = uuid.uuid4().hex[:12]
-     table_name = f"function_demo_{run}"
-     double = udf(name=f"double_{run}")(WALKTHROUGH_DOUBLE.__wrapped__)
-+    embed = udf(name=f"embed_{run}", pip=["sentence-transformers"])(
-+        WALKTHROUGH_EMBED.__wrapped__
-+    )
-     create_table = db.create_table
- 
-     def create_run_table(name, *args, **kwargs):
-@@ -251,6 +256,7 @@ def create_run_table(name, *args, **kwargs):
- 
-     table = None
-     version = None
-+    embedder = None
-     try:
-         # --8<-- [start:function_create_table]
-         import pyarrow as pa
-@@ -294,11 +300,18 @@ def create_run_table(name, *args, **kwargs):
-             (2.0, 4.0),
-             (3.0, 6.0),
-         ]
-+
-+        # --8<-- [start:function_class_register]
-+        embedder = db.create_function_async(embed).wait()
-+        # --8<-- [end:function_class_register]
-+        assert embedder.name == f"embed_{run}"
-     finally:
-         if table is not None:
-             db.drop_table(table_name)
-         if version is not None:
-             db.drop_function(version.name, version=version.version)
-+        if embedder is not None:
-+            db.drop_function(embedder.name, version=embedder.version)
- 
- 
- class ReachedConnection(Exception):
+@@ -897,6 +897,7 @@ class PyQueryRequest:
+     limit: Optional[int]
+     offset: Optional[int]
+     take_offsets: Optional[List[int]]
++    take_row_ids: Optional[List[int]]
+     filter: Optional[Union[str, bytes]]
+     full_text_search: Optional[FullTextQuery]
+     select: Optional[Union[str, List[str]]]
 ```
 
-**File**: `docs/web-tests/py/test_indexing.py` (modified, +2/-1)
+**File**: `python/python/lancedb/query.py` (modified, +5/-0)
 ```diff
-@@ -334,6 +334,7 @@ def test_vector_index_hnsw(tmp_db):
- 
- 
- def test_vector_index_binary(tmp_db):
-+    db = tmp_db
-     table_name = "hamming-index-tbl"
-     ndim = 256
-     schema = pa.schema(
-@@ -344,7 +345,7 @@ def test_vector_index_binary(tmp_db):
+@@ -236,6 +236,7 @@ def _query_is_plain_scan(query: Query) -> bool:
+         query.vector is None
+         and query.full_text_query is None
+         and query.take_offsets is None
++        and query.take_row_ids is None
+         and not query.postfilter
+         and not query.order_by
      )
+@@ -1009,6 +1010,9 @@ class Query(pydantic.BaseModel):
+     # This is populated when a take query is converted to this serializable form.
+     take_offsets: Optional[List[int]] = None
  
-     # --8<-- [start:vector_index_binary_schema]
--    table = tmp_db.create_table(table_name, schema=schema, mode="overwrite")
-+    table = db.create_table(table_name, schema=schema, mode="overwrite")
-     # --8<-- [end:vector_index_binary_schema]
++    # Row IDs whose requested order and duplicate occurrences must be restored.
++    take_row_ids: Optional[List[int]] = None
++
+     # if true, will only search the indexed data
+     fast_search: Optional[bool] = None
  
-     data = []
+@@ -1034,6 +1038,7 @@ def from_inner(cls, req: PyQueryRequest) -> Self:
+         query.limit = req.limit
+         query.offset = req.offset
+         query.take_offsets = req.take_offsets
++        query.take_row_ids = req.take_row_ids
+         query.filter = req.filter
+         query.full_text_query = req.full_text_search
+         query.columns = req.select
 ```
 
-**File**: `docs/web-tests/py/test_ingestion_examples.py` (modified, +38/-43)
+**File**: `python/python/lancedb/table.py` (modified, +24/-7)
 ```diff
-@@ -3,13 +3,13 @@
+@@ -132,6 +132,7 @@ def _requires_local_namespace_execution(query: Query) -> bool:
+     # The namespace QueryTable request does not support these query options.
+     return (
+         query.take_offsets is not None
++        or query.take_row_ids is not None
+         or query.search_effort is not None
+         or query.approx_mode is not None
+     )
+@@ -2556,9 +2557,8 @@ def take_row_ids(
+         Row ids are not stable and are relative to the current version of the table.
+         They can change due to compaction and updates.
+ 
+-        No guarantees are made regarding the order in which results are returned.  If
+-        you desire an output order that matches the order of the given ids, you will
+-        need to add the row id column to the output and align it yourself.
++        Results follow the requested row-id order. Repeated IDs produce repeated
++        rows; missing or deleted IDs are omitted. This also applies to remote tables.
+ 
+         Unlike offsets, row ids are not 0-indexed and no assumptions should be made
+         about the possible range of row ids.  In order to use this method you must
+@@ -7256,10 +7256,24 @@ def _sync_query_to_async(
+         | AsyncQuery
+         | AsyncTakeQuery
+     ):
+-        if query.take_offsets is not None:
+-            take_query = self.take_offsets(query.take_offsets)
+-            if query.columns:
+-                take_query = take_query.select(query.columns)
++        if query.take_offsets is not None or query.take_row_ids is not None:
++            if query.take_offsets is not None and query.take_row_ids is not None:
++                raise ValueError("Only one of take_offsets and take_row_ids may be set")
++            take_query = (
++                self.take_row_ids(query.take_row_ids)
++                if query.take_row_ids is not None
++                else self.take_offsets(query.take_offsets)
++            )
++            if query.columns is not None:
++                columns = query.columns
++                # Native requests serialize dynamic projections as (name, SQL) pairs.
++                if (
++                    isinstance(columns, list)
++                    and columns
++                    and isinstance(columns[0], tuple)
++                ):
++                    columns = dict(columns)
++                take_query = take_query.select(columns)
+             if query.use_rte is not None:
+                 take_query = take_query.use_rte(query.use_rte)
+             if query.with_row_id:
+@@ -8119,6 +8133,9 @@ def take_row_ids(
+         """
+         Take a list of row ids from the table.
+ 
++        Results follow the requested row-id order. Repeated IDs produce repeated
++        rows; missing or deleted IDs are omitted. This also applies to remote tables.
++
+         Row ids are not stable and are relative to the current version of the table.
+         They can change due to compaction and updates.
+ 
+```
+
+**File**: `python/python/tests/test_merge_insert_lsm.py` (modified, +17/-8)
+```diff
+@@ -278,7 +278,7 @@ def test_lsm_read_unsupported_shape_errors_without_use_rte_false(tmp_path):
+ 
+     # with_row_id is unsupported by the LSM scanner; on an RTE table the default
+     # (auto-routed) read hard-errors instead of silently reading a stale base.
+-    with pytest.raises(Exception):
++    with pytest.raises(Exception, match=r"with_row_id.*use_rte\(false\)"):
+         table.search().with_row_id(True).to_arrow()
+ 
+     # use_rte(False) is the escape hatch: it reads the base table only.
+@@ -563,19 +563,28 @@ def test_lsm_read_time_travel_errors(tmp_path):
+     assert sorted(base["id"].to_pylist()) == [1, 2, 3]
  
  
- def test_create_table_from_dicts():
--    # --8<-- [start:create_table_from_dicts]
-     from tempfile import TemporaryDirectory
- 
-     import lancedb
- 
-     with TemporaryDirectory(prefix="lancedb-ingestion-") as uri:
-         db = lancedb.connect(uri)
-+        # --8<-- [start:create_table_from_dicts]
-         data = [
-             {"vector": [1.1, 1.2], "lat": 45.5, "long": -122.7},
-             {"vector": [0.2, 1.8], "lat": 40.1, "long": -74.1},
-@@ -24,13 +24,13 @@ def test_create_table_from_dicts():
- 
- 
- def test_create_table_conflict_handling():
--    # --8<-- [start:create_table_conflict_handling]
-     from tempfile import TemporaryDirectory
- 
-     import lancedb
- 
-     with TemporaryDirectory(prefix="lancedb-ingestion-") as uri:
-         db = lancedb.connect(uri)
-+        # --8<-- [start:create_table_conflict_handling]
-         data = [{"vector": [1.1, 1.2], "lat": 45.5, "long": -122.7}]
-         db.create_table("conflict_table", data)
-         # Idempotent open: reuse the existing table if it exists.
-@@ -45,13 +45,13 @@ def test_create_table_conflict_handling():
- 
- 
- def test_create_table_custom_schema():
--    # --8<-- [start:create_table_custom_schema]
-     from tempfile import TemporaryDirectory
- 
-     import lancedb
- 
-     with TemporaryDirectory(prefix="lancedb-ingestion-") as uri:
-         db = lancedb.connect(uri)
-+        # --8<-- [start:create_table_custom_schema]
-         import pyarrow as pa
- 
-         custom_schema = pa.schema(
-@@ -76,13 +76,13 @@ def test_create_table_custom_schema():
+-def test_lsm_read_take_row_ids_errors(tmp_path):
++@pytest.mark.parametrize("with_row_id", [False, True])
++@pytest.mark.parametrize("use_rte", [None, True])
++def test_lsm_read_take_row_ids_errors(tmp_path, with_row_id, use_rte):
+     db = lancedb.connect(tmp_path, read_consistency_interval=timedelta(seconds=0))
+     table = db.create_table("t", _reader([1, 2, 3]))
+     table.set_unenforced_primary_key("id")
+     table.enable_rte(RTEWriteSpec.unsharded())
+     _lsm_upsert(table, [4])
+-    # take-by-row-id auto-routes through the LSM scanner, which has no stable _rowid,
+-    # so it hard-errors instead of failing with an opaque column-not-found error.
+-    with pytest.raises(Exception, match="row id"):
+-        table.take_row_ids([0, 1]).to_arrow()
++    # Automatic and explicit RTE routing must explain the unsupported take,
++    # including when row IDs are only requested internally for ordering.
++    take = table.take_row_ids([1, 0, 1, 2**64 - 1], with_row_id=with_row_id)
++    if use_rte is not None:
++        take = take.use_rte(use_rte)
++    with pytest.raises(Exception, match=r"take by row id.*use_rte\(false\)"):
++        take.to_arrow()
+     # use_rte(False) is the escape hatch: it reads the base table.
+-    base = table.take_row_ids([0, 1]).use_rte(False).to_arrow()
+-    assert base.num_rows == 2
++    base = take.use_rte(False).to_arrow()
++    assert base["id"].to_pylist() == [2, 1, 2]
++    assert base["value"].to_pylist() == [1, 0, 1]
++    assert ("_rowid" in base.column_names) == with_row_id
++    if with_row_id:
++        assert base["_rowid"].to_pylist() == [1, 0, 1]
  
  
- def test_create_table_from_pandas():
--    # --8<-- [start:create_table_from_pandas]
-     from tempfile import TemporaryDirectory
+ def test_lsm_read_fts_postfilter_errors(tmp_path):
+```
+
+**File**: `python/python/tests/test_query.py` (modified, +34/-13)
+```diff
+@@ -2417,13 +2417,36 @@ def test_take_queries(tmp_path):
+     assert sorted(converted["idx"].to_pylist()) == [2, 5, 5, 17]
  
-     import lancedb
- 
-     with TemporaryDirectory(prefix="lancedb-ingestion-") as uri:
-         db = lancedb.connect(uri)
-+        # --8<-- [start:create_table_from_pandas]
-         import pandas as pd
- 
-         data = pd.DataFrame(
-@@ -98,13 +98,13 @@ def test_create_table_from_pandas():
- 
- 
- def test_create_table_from_polars():
--    # --8<-- [start:create_table_from_polars]
-     from tempfile import TemporaryDirectory
- 
-     import lancedb
- 
-     with TemporaryDirectory(prefix="lancedb-ingestion-") as uri:
-         db = lancedb.connect(uri)
-+        # --8<-- [start:create_table_from_polars]
-         import polars as pl
- 
-         data = pl.DataFrame(
-@@ -122,13 +122,13 @@ def test_create_table_from_polars():
- 
- 
- def test_create_table_from_arrow():
--    # --8<-- [start:create_table_from_arrow]
-     from tempfile import TemporaryDirectory
- 
-     import lancedb
- 
-     with TemporaryDirectory(prefix="lancedb-ingestion-") as uri:
-         db = lancedb.connect(uri)
-+        # --8<-- [start:create_table_from_arrow]
-         import numpy as np
-         import pyarrow as pa
- 
-@@ -158,13 +158,13 @@ def test_create_table_from_arrow():
- 
- 
- def test_create_table_from_pydantic():
--    # --8<-- [start:create_table_from_pydantic]
-     from tempfile import TemporaryDirectory
- 
-     import lancedb
- 
-     with TemporaryDirectory(prefix="lancedb-ingestion-") as uri:
-         db = lancedb.connect(uri)
-+        # --8<-- [start:create_table_from_pydantic]
-         from lancedb.pydantic import LanceModel, Vector
- 
-         class Content(LanceModel):
-@@ -186,13 +186,13 @@ def imdb_url(self) -> str:
+     # Take by row id
+-    assert list(
+-        sorted(table.take_row_ids([5, 2, 17]).to_pandas()["idx"].to_list())
+-    ) == [
+-        2,
+-        5,
+-        17,
+-    ]
++    assert table.take_row_ids([5, 2, 17]).to_pandas()["idx"].to_list() == [5, 2, 17]
++
++
++@pytest.mark.parametrize("selection", [None, [], ["idx"], {"_rowid": "100 - idx"}])
++@pytest.mark.parametrize("empty", [False, True])
++def test_take_row_ids_order_and_roundtrip(tmp_path, selection, empty):
++    table = lancedb.connect(tmp_path).create_table("test", pa.table({"idx": [0, 1]}))
++    table.add(pa.table({"idx": [2, 3]}))
++    rows = table.search().with_row_id(True).to_arrow().to_pylist()
++    row_ids = {row["idx"]: row["_rowid"] for row in rows}
++    table.delete("idx = 1")
++    requested = (
++        [] if empty else [row_ids[3], row_ids[1], row_ids[3], 2**64 - 1, row_ids[0]]
++    )
++    take = table.take_row_ids(requested)
++    if selection is not None:
++        take = take.select(selection)
++    actual = take.to_arrow()
++    assert actual.num_rows == (0 if empty else 3)
++    if selection == {"_rowid": "100 - idx"}:
++        assert actual.column_names == ["_rowid"]
++        assert actual["_rowid"].to_pylist() == ([] if empty else [97, 97, 100])
++    elif selection == []:
++        assert actual.num_columns == 0
++    else:
++        assert actual.column_names == ["idx"]
++        assert actual["idx"].to_pylist() == ([] if empty else [3, 3, 0])
++    query = take.to_query_object()
++    assert query.take_row_ids == requested
++    assert table._execute_query(query).read_all() == actual
  
  
- def test_create_table_nested_schema():
--    # --8<-- [start:create_table_nested_schema]
-     from tempfile import TemporaryDirectory
+ def test_take_queries_with_row_id(tmp_path):
+@@ -2432,6 +2455,7 @@ def test_take_queries_with_row_id(tmp_path):
  
-     import lancedb
+     by_row_id = table.take_row_ids([5, 2, 17], with_row_id=True).to_arrow()
+     assert "_rowid" in by_row_id.column_names
++    assert by_row_id["_rowid"].to_pylist() == [5, 2, 17]
+     by_offset = table.take_offsets([5, 2, 17], with_row_id=True).to_arrow()
+     assert "_rowid" in by_offset.column_names
  
-     with TemporaryDirectory(prefix="lancedb-ingestion-") as uri:
-         db = lancedb.connect(uri)
-+        # --8<-- [start:create_table_nested_schema]
-         from lancedb.pydantic import LanceModel, Vector
-         from pydantic import BaseModel
+@@ -2446,6 +2470,7 @@ async def test_take_queries_with_row_id_async(tmp_path):
  
-@@ -213,13 +213,13 @@ class NestedSchema(LanceModel):
+     by_row_id = await table.take_row_ids([5, 2, 17], with_row_id=True).to_arrow()
+     assert "_rowid" in by_row_id.column_names
++    assert by_row_id["_rowid"].to_pylist() == [5, 2, 17]
+     by_offset = await table.take_offsets([5, 2, 17], with_row_id=True).to_arrow()
+     assert "_rowid" in by_offset.column_names
  
+@@ -2472,16 +2497,12 @@ def test_take_queries_to_batches(tmp_path):
+     rs = list(table.take_row_ids([5, 2, 17]).to_batches())
+     assert all(isinstance(b, pa.RecordBatch) for b in rs)
+     assert sum(b.num_rows for b in rs) == 3
+-    assert sorted(v for b in rs for v in b.column("idx").to_pylist()) == [2, 5, 17]
++    assert [v for b in rs for v in b.column("idx").to_pylist()] == [5, 2, 17]
  
- def test_create_empty_table():
--    # --8<-- [start:create_empty_table]
-     from tempfile import TemporaryDirectory
- 
-     import lancedb
- 
-     with TemporaryDirectory(prefix="lancedb-ingestion-") as uri:
-         db = lancedb.connect(uri)
-+        # --8<-- [start:create_empty_table]
-         import pyarrow as pa
- 
-         schema = pa.schema(
-@@ -237,13 +237,13 @@ def test_create_empty_table():
- 
- 
- def test_create_empty_table_pydantic():
--    # --8<-- [start:create_empty_table_pydantic]
-     from tempfile import TemporaryDirectory
- 
-     import lancedb
- 
-     with TemporaryDirectory(prefix="lancedb-ingestion-") as uri:
-         db = lancedb.connect(uri)
-+        # --8<-- [start:create_empty_table_pydantic]
-         from lancedb.pydantic import LanceModel, Vector
- 
-         class Item(LanceModel):
-@@ -261,13 +261,13 @@ class Item(LanceModel):
+     # Take with select projection → to_batches preserves the projection
+     rs = list(table.take_row_ids([5, 2, 17]).select(["label"]).to_batches())
+     assert all(b.schema.names == ["label"] for b in rs)
+-    assert sorted(v for b in rs for v in b.column("label").to_pylist()) == [
+-        "17",
+-        "2",
+-        "5",
+-    ]
++    assert [v for b in rs for v in b.column("label").to_pylist()] == ["5", "2", "17"]
  
  
- def test_open_existing_table():
--    # --8<-- [start:open_existing_table]
-     from tempfile import TemporaryDirectory
+ def test_getitems(tmp_path):
+```
+
+**File**: `python/python/tests/test_remote_db.py` (modified, +57/-2)
+```diff
+@@ -1422,7 +1422,26 @@ def handler(request):
  
-     import lancedb
  
-     with TemporaryDirectory(prefix="lancedb-ingestion-") as uri:
-         db = lancedb.connect(uri)
-+        # --8<-- [start:open_existing_table]
-         # Create a table first
-         data = [{"vector": [1.1, 1.2], "lat": 4
+ def test_table_add_in_threadpool():
++    received = []
++
+     def handler(request):
++        # Consume uploads before responding: closing with unread bytes can reset
++        # the connection while the client is still reading the response.
++        if request.headers.get("Transfer-Encoding") == "chunked":
++            body = bytearray()
++            while size := int(request.rfile.readline().split(b";")[0], 16):
++                body.extend(request.rfile.read(size))
++                assert request.rfile.read(2) == b"\r\n"
++            assert request.rfile.read(2) == b"\r\n"
++        else:
++            body = request.rfile.read(int(request.headers.get("Content-Length", 0)))
++        if request.path in (
++            "/v1/table/test/create/?mode=create",
++            "/v1/table/test/insert/",
++        ):
++            received.append(
++                (request.path, pa.ipc.open_stream(body).read_all().to_pylist())
++            )
+         if request.path == "/v1/table/test/insert/":
+             request.send_response(200)
+             request.end_headers()
+@@ -1461,6 +1480,9 @@ def handler(request):
+             for future in futures:
+                 future.result()
+ 
++    assert [rows for path, rows in received if "/create/" in path] == [[{"id": 1}]]
++    assert [rows for path, rows in received if "/insert/" in path] == [[{"id": 1}]] * 10
++
+ 
+ def test_table_create_indices():
+     # Track received index creation requests to validate name parameter
+@@ -3232,8 +3254,41 @@ def handler(body):
+     assert bodies[-1]["with_row_id"] is True
+ 
+     with query_test_table(handler) as table:
+-        table.take_row_ids([0, 1]).to_arrow()
+-    assert "with_row_id" not in bodies[-1]
++        result = table.take_row_ids([0, 1]).to_arrow()
++        assert result.column_names == ["id"]
++    assert bodies[-1]["with_row_id"] is True
++
++
++@pytest.mark.parametrize("with_row_id", [False, True])
++@pytest.mark.parametrize("selection", [None, [], ["id"], ["_rowid", "id"]])
++def test_remote_take_row_ids_order_and_roundtrip(with_row_id, selection):
++    def handler(body):
++        assert body["with_row_id"] is True
++        assert "_rowid IN" in body["filter"]
++        assert "take_row_ids" not in body
++        assert "_rowid" not in body.get("columns", [])
++        data = pa.table(
++            {
++                "id": pa.chunked_array([[1, 5], [17]]),
++                "_rowid": pa.chunked_array([[1, 5], [17]], type=pa.uint64()),
++            }
++        )
++        return data.select(body.get("columns", ["id"]) + ["_rowid"])
++
++    with query_test_table(handler) as table:
++        take = table.take_row_ids([17, 5, 2**64 - 1, 17, 1], with_row_id=with_row_id)
++        if selection is not None:
++            take = take.select(selection)
++        result = take.to_batches(max_batch_length=1).read_all()
++        assert result.num_rows == 4
++        expected_columns = ["id"] if selection is None else list(selection)
++        if with_row_id:
++            expected_columns = [name for name in expected_columns if name != "_rowid"]
++            expected_columns.append("_rowid")
++        assert result.column_names == expected_columns
++        for column in expected_columns:
++            assert result[column].to_pylist() == [17, 5, 17, 1]
++        assert table._execute_query(take.to_query_object()).read_all() == result
+ 
+ 
+ def test_query_sync_minimal():
+```
+
+**File**: `python/src/query.rs` (modified, +3/-0)
+```diff
+@@ -355,6 +355,7 @@ pub struct PyQueryRequest {
+     pub limit: Option<usize>,
+     pub offset: Option<usize>,
+     pub take_offsets: Option<Vec<u64>>,
++    pub take_row_ids: Option<Vec<u64>>,
+     pub filter: Option<PyQueryFilter>,
+     pub full_text_search: Option<PyLanceDB<FtsQuery>>,
+     pub select: PySelect,
+@@ -387,6 +388,7 @@ impl From<AnyQuery> for PyQueryRequest {
+                 limit: query_request.limit,
+                 offset: query_request.offset,
+                 take_offsets: query_request.take_offsets,
++                take_row_ids: query_request.take_row_ids,
+                 filter: query_request.filter.map(PyQueryFilter),
+                 full_text_search: query_request
+                     .full_text_search
+@@ -419,6 +421,7 @@ impl From<AnyQuery> for PyQueryRequest {
+                 limit: vector_query.base.limit,
+                 offset: vector_query.base.offset,
+                 take_offsets: vector_query.base.take_offsets,
++                take_row_ids: vector_query.base.take_row_ids,
+                 filter: vector_query.base.filter.map(PyQueryFilter),
+                 full_text_search: None,
+                 select_source_columns: PySelect::source_columns(&vector_query.base.select),
 ```
 
 ---
 
-### Incident Patch 2: `82cc4e82` (2026-11-04)
-**Commit Message**: fix: tag the final release commit after syncing lockfiles (#4825)
+### Incident Patch 2: `5def2611` (2026-11-05)
+**Commit Message**: fix(deps): ignore RUSTSEC-2026-0441 pin-utils unmaintained (#4872)
 
-Release tags currently point to the version bump before the lockfile
-amend, so tagged CLI builds fail with `--locked` even though the branch
-has the synced lockfile.
+`cargo deny` fails on main because RUSTSEC-2026-0441 marks `pin-utils`
+as unmaintained. Add an exception reviewed on 2026-11-05, with the
+advisory and upstream discussion links and a reminder to revisit it when
+updating AWS dependencies.
 
-Keep the newly created, unpublished tag on the final amended release
-commit before pushing. Existing published tags and packages remain
-unchanged.
+`pin-utils` is transitive through `aws-smithy-http`,
+`aws-smithy-runtime`, and `aws-smithy-types`, including the `aws-config`
+→ `lance-io` path. RustSec lists no safe upgrade; clearing the advisory
+requires upstream migration to supported pinning primitives.
 
-[Remote preview dry
-run](https://github.com/lancedb/lancedb/actions/runs/41764901500) passed
-and moved the local tag after the lockfile amend; no tag was pushed.
+Validation on commit dede2c783fda73500cee2b05feffe1b70d56624c:
 
-**File**: `.github/workflows/make-release-commit.yml` (modified, +5/-0)
+- Before the change, `cargo deny check advisories` failed on
+RUSTSEC-2026-0441.
+- `cargo deny check advisories` passes after the change.
+- `cargo deny check advisories bans licenses sources` passes all four
+checks, matching the Rust CI deny job.
+- `git diff HEAD^ HEAD --check` passes.
+
+**File**: `deny.toml` (modified, +8/-0)
 ```diff
-@@ -62,7 +62,12 @@ jobs:
-         run: |
-           pip install bump-my-version PyGithub packaging
-           bash ci/bump_version.sh ${{ inputs.type }} ${{ inputs.bump-minor }}
-+          release_tag=$(git describe --tags --exact-match HEAD)
-           bash ci/update_lockfiles.sh --amend
-+          # Keep the unpublished tag on the commit that includes the synced lockfile.
-+          if [ "$(git rev-parse "${release_tag}^{}")" != "$(git rev-parse HEAD)" ]; then
-+            git tag --force --annotate "$release_tag" --message "$(git log -1 --format=%s)" HEAD
-+          fi
-       - name: Push new version tag
-         if: ${{ !inputs.dry_run }}
-         uses: ad-m/github-push-action@881a6320fdb16eb5318c5054f31c218aec2b324c # v1.3.0
+@@ -131,6 +131,14 @@ ignore = [
+     { id = "RUSTSEC-2026-0391", reason = "zstd 0.13 via arrow-ipc 58; affected with_context API is unused" },
+     { id = "RUSTSEC-2026-0398", reason = "zstd-safe 7 via arrow-ipc 58; affected seekable API is not enabled" },
+     { id = "RUSTSEC-2026-0403", reason = "zstd-safe 7 via arrow-ipc 58; affected streaming decoder API is unused" },
++
++    # pin-utils: unmaintained; reviewed 2026-11-05. Transitive via
++    # aws-smithy-http/runtime/types, including aws-config -> lance-io.
++    # No safe upgrade exists; clearing requires AWS Smithy to migrate to
++    # core::pin::pin!, pin-project, or pin-project-lite. Revisit on AWS updates.
++    # https://rustsec.org/advisories/RUSTSEC-2026-0441
++    # https://github.com/rustsec/advisory-db/issues/3314
++    { id = "RUSTSEC-2026-0441", reason = "pin-utils unmaintained via AWS Smithy; no safe upgrade, awaiting upstream migration" },
+ ]
+ 
+ 
 ```
 
 ---
 
-### Incident Patch 3: `aeab69e8` (2026-11-04)
-**Commit Message**: fix(docs): redirect enterprise overview to architecture (#4823)
+### Incident Patch 3: `1e40ef68` (2026-11-05)
+**Commit Message**: fix: remove unmaintained pin-utils from AWS dependencies (#4874)
 
-The removed Enterprise landing page left the `/enterprise` and
-`/enterprise/deployment` redirects pointing at a missing page, breaking
-the SDK documentation-link test. Point both redirects at the existing
-architecture overview, which describes Embedded and Enterprise.
+`cargo deny` rejects `pin-utils 0.1.0` as unmaintained under
+RUSTSEC-2026-0441; there is no patched release. The dependency comes
+from the AWS Smithy graph. Refresh that graph to include [smithy-rs
+#4882](https://github.com/smithy-lang/smithy-rs/pull/4882), replacing
+the obsolete `aws-smithy-types = ">=1.3.6, <1.7"` constraint with
+`1.9.1`.
 
-The exact failing Rust test fails on current main and passes with these
-redirect changes. This repairs the inherited failure blocking #4821.
+The lockfile audit attributes every changed package identity and
+resolved dependency edge to the AWS graph. Existing git dependency pins
+are preserved. The selected AWS crates declare Rust 1.94.1, within the
+workspace's unchanged 1.95.0 requirement.
 
-**File**: `docs/web/docs.json` (modified, +2/-2)
+Validation at the exact candidate on the development EC2 host, both exit
+0:
+
+- `mbx +1.97.1 deny check advisories bans licenses sources`
+- `mbx +1.97.1 check --quiet --locked -p lancedb --tests --features
+remote,aws,dynamodb,bedrock`
+
+The second command compiles the selected test targets; it is not a
+runtime integration test. Full all-features compilation remains
+unverified: an earlier attempt stopped in lance-linalg because the host
+Clang 15 does not support the required `_Float16` target.
+
+**File**: `Cargo.lock` (modified, +317/-262)
 ```diff
-@@ -41,7 +41,7 @@
-     },
-     {
-       "source": "/enterprise",
--      "destination": "/enterprise/index"
-+      "destination": "/#architecture"
-     },
-     {
-       "source": "/enterprise/intelligent-scheduling",
-@@ -89,7 +89,7 @@
-     },
-     {
-       "source": "/enterprise/deployment",
--      "destination": "/enterprise/index#deployment-and-governance"
-+      "destination": "/#architecture"
-     },
-     {
-       "source": "/feature-engineering/data-evolution",
+@@ -626,9 +626,9 @@ checksum = "c08606f8c3cbf4ce6ec8e28fb0014a2c086708fe954eaa885384a6165172e7e8"
+ 
+ [[package]]
+ name = "aws-config"
+-version = "1.8.16"
++version = "1.13.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "50f156acdd2cf55f5aa53ee416c4ac851cf1222694506c0b1f78c85695e9ca9d"
++checksum = "939e256cfe0ed68e96d32f194339d88210d5c10685cff0787400158f852c6819"
+ dependencies = [
+  "aws-credential-types",
+  "aws-runtime",
+@@ -640,12 +640,13 @@ dependencies = [
+  "aws-smithy-json",
+  "aws-smithy-runtime",
+  "aws-smithy-runtime-api",
++ "aws-smithy-schema",
+  "aws-smithy-types",
+  "aws-types",
+  "bytes",
+  "fastrand",
+  "hex",
+- "http 1.5.0",
++ "http",
+  "sha1 0.10.6",
+  "time",
+  "tokio",
+@@ -656,9 +657,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "aws-credential-types"
+-version = "1.2.14"
++version = "1.3.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "8f20799b373a1be121fe3005fba0c2090af9411573878f224df44b42727fcaf7"
++checksum = "576e8da35751dc85409ec1cd15999f692c277a1fbe9336780fe6f15e49dd637d"
+ dependencies = [
+  "aws-smithy-async",
+  "aws-smithy-runtime-api",
+@@ -692,9 +693,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "aws-runtime"
+-version = "1.7.3"
++version = "1.10.2"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "5dcd93c82209ac7413532388067dce79be5a8780c1786e5fae3df22e4dee2864"
++checksum = "9a0cc2144962cc5e358467b16e3d82981b1d424a7c3d34602be0036103814a1a"
+ dependencies = [
+  "aws-credential-types",
+  "aws-sigv4",
+@@ -708,10 +709,8 @@ dependencies = [
+  "bytes",
+  "bytes-utils",
+  "fastrand",
+- "http 0.2.12",
+- "http 1.5.0",
+- "http-body 0.4.6",
+- "http-body 1.1.0",
++ "http",
++ "http-body",
+  "percent-encoding",
+  "pin-project-lite",
+  "tracing",
+@@ -720,10 +719,11 @@ dependencies = [
+ 
+ [[package]]
+ name = "aws-sdk-bedrockruntime"
+-version = "1.130.0"
++version = "1.153.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "3e2f7bca252e3c5c8f0ed12c5501bf8b0fbadb937cd9fdd71a0ebd9d7526540f"
++checksum = "89b8aeb4b1b6d5f9d377264cff21b4e4d773e66ee3c5582b4099a8fbc702bdb3"
+ dependencies = [
++ "arc-swap",
+  "aws-credential-types",
+  "aws-runtime",
+  "aws-sigv4",
+@@ -734,23 +734,24 @@ dependencies = [
+  "aws-smithy-observability",
+  "aws-smithy-runtime",
+  "aws-smithy-runtime-api",
++ "aws-smithy-schema",
+  "aws-smithy-types",
+  "aws-types",
+  "bytes",
+  "fastrand",
+- "http 0.2.12",
+- "http 1.5.0",
++ "http",
+  "http-body-util",
+  "regex-lite",
+  "tracing",
+ ]
+ 
+ [[package]]
+ name = "aws-sdk-dynamodb"
+-version = "1.111.0"
++version = "1.137.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "fc418346e3cb248c7d59e642acbcb06488b7c7cd2ba6ebc79e8003f618c60099"
++checksum = "41515f51bd2b5608268336bda372065e8fd5d1ca2f684b63e5c25ae4abb62c53"
+ dependencies = [
++ "arc-swap",
+  "aws-credential-types",
+  "aws-runtime",
+  "aws-smithy-async",
+@@ -759,22 +760,24 @@ dependencies = [
+  "aws-smithy-observability",
+  "aws-smithy-runtime",
+  "aws-smithy-runtime-api",
++ "aws-smithy-schema",
+  "aws-smithy-types",
+  "aws-types",
+  "bytes",
+  "fastrand",
+- "http 0.2.12",
+- "http 1.5.0",
++ "http",
+  "regex-lite",
+  "tracing",
++ "url",
+ ]
+ 
+ [[package]]
+ name = "aws-sdk-kms"
+-version = "1.106.0"
++version = "1.129.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "2336350f96efcf9c2552b7fdb4dd07a0c1fef11f22b28fb020a9e33e7925cf9d"
++checksum = "5c5cdb29ad25d71c9ee54c408a672c98d90a24a0ea6eb063025483e0e894b411"
+ dependencies = [
++ "arc-swap",
+  "aws-credential-types",
+  "aws-runtime",
+  "aws-smithy-async",
+@@ -783,22 +786,23 @@ dependencies = [
+  "aws-smithy-observability",
+  "aws-smithy-runtime",
+  "aws-smithy-runtime-api",
++ "aws-smithy-schema",
+  "aws-smithy-types",
+  "aws-types",
+  "bytes",
+  "fastrand",
+- "http 0.2.12",
+- "http 1.5.0",
++ "http",
+  "regex-lite",
+  "tracing",
+ ]
+ 
+ [[package]]
+ name = "aws-sdk-s3"
+-version = "1.132.0"
++version = "1.157.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "5575840a3a6b11f6011463ebe359320dfe5b67babb5e9b06fed6ddf809a9ab40"
++checksum = "6ea9794c741520d8baec9462bcd0ad12164d4f5f78d008a8da9d6a0b7222caa8"
+ dependencies = [
++ "arc-swap",
+  "aws-credential-types",
+  "aws-runtime",
+  "aws-sigv4",
+@@ -810,17 +814,17 @@ dependencies = [
+  "aws-smithy-observability",
+  "aws-smithy-runtime",
+  "aws-smithy-runtime-api",
++ "aws-smithy-schema",
+  "aws-smithy-types",
+  "aws-smithy-xml",
+  "aws-types",
+  "bytes",
+  "fastrand",
+  "hex",
+  "hmac 0.13.0",
+- "http 0.2.12",
+- "http 1.5.0",
+- "http-body 1.1.0",
+- "lru",
++ "http",
++ "http-body",
++ "lru 0.18.5",
+  "percent-encoding",
+  "regex-lite",
+  "sha2 0.11.0",
+@@ -830,10 +834,11 @@ dependencies = [
+ 
+ [[package]]
+ name = "aws-sdk-sso"
+-version = "1.98.0"
++version = "1.119.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "d69c77aafa20460c68b6b3213c84f6423b6e76dbf89accd3e1789a686ffd9489"
++checksum = "3c414f25ec4aa9dc18f5cc8f55
+```
+
+**File**: `Cargo.toml` (modified, +1/-2)
+```diff
+@@ -49,8 +49,7 @@ arrow-select = "59.2.0"
+ arrow-cast = "59.2.0"
+ arrow-flight = { version = "59.2.0", features = ["flight-sql-experimental"] }
+ async-trait = "0"
+-# Smithy JSON 0.63 requires the pre-1.7 Document representation; allow the MSRV pin.
+-aws-smithy-types = ">=1.3.6, <1.7"
++aws-smithy-types = "1.9.1"
+ base64 = "0.22"
+ bytes = "1"
+ datafusion = { version = "55.0.0", default-features = false }
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4832** (2026-11-04): feat(python)!: expose typed query errors and request metadata (@BubbleCal)
-- **PR #4825** (2026-11-04): fix: tag the final release commit after syncing lockfiles (@jackye1995)
-- **PR #4824** (2026-11-04): feat(sql): return durable materialized view job handles (@Xuanwo)
-- **PR #4823** (2026-11-04): fix(docs): redirect enterprise overview to architecture (@Xuanwo)
-- **PR #4822** (2026-11-04): style: re-theme Mermaid diagrams to the brand palette, light and dark (@jackye1995)
-- **PR #4821** (2026-11-04): feat: support pinned Hugging Face model declarations (@Xuanwo)
+- **PR #4875** (2026-11-05): test: match SDK documentation fallback URL (@Xuanwo)
+- **PR #4874** (2026-11-05): fix: remove unmaintained pin-utils from AWS dependencies (@Xuanwo)
+- **PR #4872** (2026-11-05): fix(deps): ignore RUSTSEC-2026-0441 pin-utils unmaintained (@Xuanwo)
+- **PR #4871** (2026-11-05): fix(node): normalize record batches before IPC serialization (@BubbleCal)
+- **PR #4870** (2026-11-05): fix: nav, redirect and badge cleanup across several pages (@jackye1995)
+- **PR #4869** (2026-11-05): test: allow hidden pages in SDK documentation links (@Xuanwo)
 
 ---
 
@@ -1833,38 +1974,62 @@ redirect changes. This repairs the inherited failure blocking #4821.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs: overhaul curation, feature engineering, security and deployment guides (#4
+## X. preserve take_row_ids request order (#4826)
 
 **RULE**:
-When implementing operations in `.github/vale/styles/LanceDB/ProductNames.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lancedb/lancedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/web/curation/selective-sampling.mdx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lancedb/lancedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `de95ed3f`: docs: overhaul curation, feature engineering, security and deployment guides (#4748). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `69ac2158`: preserve take_row_ids request order (#4826). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/vale/styles/LanceDB/ProductNames.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/web/curation/selective-sampling.mdx`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-  '(?:Hugging Face|Hugging face|Huggingface)': HuggingFace
-    input: Load a Hugging Face model, build a Langchain retriever in Typescript and call VoyageAI.
-      1:8:LanceDB.ProductNames:Use 'HuggingFace' instead of 'Hugging Face'.
-      1:37:LanceDB.ProductNames:Use 'LangChain' instead of 'Langchain'.
-      1:60:LanceDB.ProductNames:Use 'TypeScript' instead of 'Typescript'.
-      1:80:LanceDB.ProductNames:Use 'Voyage AI' instead of 'VoyageAI'.
+similar to execute it.
+
+<Note>
+The guarantees for row IDs below apply to SDK releases containing
+[the ordering fix in #4826](https://github.com/lancedb/lancedb/pull/4826).
+Earlier releases may collapse repeated IDs and return rows in a different
+order.
+</Note>
+
+`take_row_ids` returns matching rows in the order of the input IDs and
+preserves repeated IDs in both LanceDB Embedded and LanceDB Enterprise. For example,
+`take_row_ids([1005, 1001, 1005])` returns row 1005, row 1001, then row 1005
+again if both IDs exist. Missing or deleted IDs are omitted. This supports
+sampling with replacement. In Rust, an explicit nonempty
+`QueryBase::order_by` list overrides the requested order; limits and offsets
+apply after restoring repeated rows.
+
+`take_offsets` also preserves repeated offsets, but does not guarantee
+input order. It tracks `_rowoffset` internally to restore repeated rows
+and drops that column from the output unless you explicitly `select` it.
+Add `_rowoffset` to your selection when you need to align a `take_offsets`
+result with the input offsets.
+
+<Note>
+Ordered takes by row ID collect all matching batches, combine them into one
+batch and reorder the rows before returning output b
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-  '(?:HuggingFace|Huggingface|Hugging face)': Hugging Face
-    input: Load a HuggingFace model, build a Langchain retriever in Typescript and call VoyageAI.
-      1:8:LanceDB.ProductNames:Use 'Hugging Face' instead of 'HuggingFace'.
-      1:35:LanceDB.ProductNames:Use 'LangChain' instead of 'Langchain'.
-      1:58:LanceDB.ProductNames:Use 'TypeScript' instead of 'Typescript'.
-      1:78:LanceDB.ProductNames:Use 'Voyage AI' instead of 'VoyageAI'.
+similar to execute it. Repeated *offsets* produce repeated rows, so
+`take_offsets` also supports sampling with replacement -- `take_row_ids`
+does not: a row ID repeated in the input list still returns that row only
+once, since the lookup is a set membership test. Neither method guarantees
+result order matches the order of the input list; for `take_row_ids`, pass
+`with_row_id=True` to add `_rowid` to the output and align the results
+yourself if you need to. `take_offsets` tracks `_rowoffset` internally to
+restore repeated rows, but drops that column from the output again
+afterward unless you explicitly `select` it -- add `_rowoffset` to your
+selection when you need it to align a `take_offsets` result yourself.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `de95ed3f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `69ac2158` are properly handled with clean fallback behavior.

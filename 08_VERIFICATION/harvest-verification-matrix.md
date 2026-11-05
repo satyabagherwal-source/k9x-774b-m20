@@ -7509,3 +7509,207 @@
 | `CYCLE-20261105-8USB` | `2026-11-05T04:43:35.771Z` | `GitoxideLabs/gitoxide` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7106` | Yes (`054b00dd...`) |
 | `CYCLE-20261105-8ZGT` | `2026-11-05T04:43:41.837Z` | `nginx/kubernetes-ingress` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7107` | Yes (`c503448f...`) |
 | `CYCLE-20261105-93M3` | `2026-11-05T04:43:47.211Z` | `gluesql/gluesql` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7108` | Yes (`1ce2062e...`) |
+| `CYCLE-20261105-HRFP` | `2026-11-05T04:50:31.333Z` | `ricursiveAI/Ripple-65B-Preview` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-ricursiveai-ripple-65b-preview-learnings.md` | Yes (`6cd918f8...`) |
+| `CYCLE-20261105-HSJ9` | `2026-11-05T04:50:32.757Z` | `black-forest-labs/FLUX.1-schnell` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-schnell-learnings.md` | Yes (`fda7f391...`) |
+| `CYCLE-20261105-QWR2` | `2026-11-05T04:57:38.126Z` | `open-policy-agent/gatekeeper` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7110` | Yes (`7cb5f799...`) |
+| `CYCLE-20261105-QXA4` | `2026-11-05T04:57:38.812Z` | `MiniMaxAI/MiniMax-H3` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7109, Rule 7111, Rule 7112` | Yes (`357a97dd...`) |
+| `CYCLE-20261105-ZOER` | `2026-11-05T05:04:27.219Z` | `Qwen/Qwen3.8-Flash-Next` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3.8-flash-next-learnings.md` | Yes (`e2f49090...`) |
+| `CYCLE-20261105-ZYAN` | `2026-11-05T05:04:40.031Z` | `sfu-db/connector-x` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7113` | Yes (`5a744c58...`) |
+| `CYCLE-20261105-F2GE` | `2026-11-05T05:16:25.262Z` | `deepseek-ai/DeepSeek-V4-Pro` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4-pro-learnings.md` | Yes (`9a074774...`) |
+| `CYCLE-20261105-OPSR` | `2026-11-05T05:23:55.419Z` | `etcd-io/etcd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7114` | Yes (`82c4d0a2...`) |
+| `CYCLE-20261105-OQN9` | `2026-11-05T05:23:56.517Z` | `gardener/gardener` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7115` | Yes (`21384324...`) |
+| `CYCLE-20261105-QMKR` | `2026-11-05T05:25:24.555Z` | `Tongyi-MAI/Z-Image-Turbo` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1047, Rule 7116` | Yes (`039d58ce...`) |
+| `CYCLE-20261105-ZF60` | `2026-11-05T05:32:14.856Z` | `openai/gpt-oss-120b` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-gpt-oss-120b-learnings.md` | Yes (`b549ff88...`) |
+| `CYCLE-20261105-ZK7Y` | `2026-11-05T05:32:21.406Z` | `modelcontextprotocol/kotlin-sdk` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7117` | Yes (`2b8ee8ee...`) |
+| `CYCLE-20261105-ZTYT` | `2026-11-05T05:32:34.037Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md` | Yes (`72e0c32b...`) |
+| `CYCLE-20261105-85V0` | `2026-11-05T05:39:02.700Z` | `meta-llama/Meta-Llama-3-8B-Instruct` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-meta-llama-meta-llama-3-8b-instruct-learnings.md` | Yes (`3343ba0b...`) |
+| `CYCLE-20261105-87BA` | `2026-11-05T05:39:04.582Z` | `mfontanini/presenterm` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7118` | Yes (`c2a767d3...`) |
+| `CYCLE-20261105-8H8V` | `2026-11-05T05:39:17.455Z` | `apache/shardingsphere` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7119` | Yes (`de983435...`) |
+| `CYCLE-20261105-HYS5` | `2026-11-05T05:46:40.085Z` | `zai-org/GLM-5.2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-zai-org-glm-5.2-learnings.md` | Yes (`4f81ebc5...`) |
+| `CYCLE-20261105-Q88P` | `2026-11-05T05:53:05.593Z` | `openai/gpt-oss-20b` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-gpt-oss-20b-learnings.md` | Yes (`0ea95747...`) |
+| `CYCLE-20261105-QEC6` | `2026-11-05T05:53:13.494Z` | `maziyarpanahi/openmed` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7120` | Yes (`b65be452...`) |
+| `CYCLE-20261105-QEER` | `2026-11-05T05:53:13.587Z` | `emberstack/kubernetes-reflector` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7121` | Yes (`f0ac7cdb...`) |
+| `CYCLE-20261105-QIWL` | `2026-11-05T05:53:19.413Z` | `apple/foundationdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7122` | Yes (`aeca0a90...`) |
+| `CYCLE-20261105-ZQKQ` | `2026-11-05T06:00:29.258Z` | `pingcap/tidb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7123` | Yes (`6f95a053...`) |
+| `CYCLE-20261105-ZRV5` | `2026-11-05T06:00:30.929Z` | `bigscience/bloom` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7124, Rule 986, Rule 7125` | Yes (`d72c93df...`) |
+| `CYCLE-20261105-ZVMH` | `2026-11-05T06:00:35.801Z` | `arangodb/arangodb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7126` | Yes (`c029547f...`) |
+| `CYCLE-20261105-ZW6Z` | `2026-11-05T06:00:36.539Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7127` | Yes (`d55b8ab3...`) |
+| `CYCLE-20261105-8XWD` | `2026-11-05T06:07:38.653Z` | `stabilityai/stable-diffusion-3-medium` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-stabilityai-stable-diffusion-3-medium-learnings.md` | Yes (`c3884ebd...`) |
+| `CYCLE-20261105-97UE` | `2026-11-05T06:07:51.542Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7128` | Yes (`383705f7...`) |
+| `CYCLE-20261105-997M` | `2026-11-05T06:07:53.314Z` | `trinodb/trino` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/trinodb-trino-learnings.md` | Yes (`e2b3eb33...`) |
+| `CYCLE-20261105-IBVU` | `2026-11-05T06:14:56.682Z` | `meta-llama/Llama-2-7b-chat-hf` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-meta-llama-llama-2-7b-chat-hf-learnings.md` | Yes (`da061060...`) |
+| `CYCLE-20261105-IHFQ` | `2026-11-05T06:15:03.878Z` | `buresdv/Cork` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7129` | Yes (`bd72db1b...`) |
+| `CYCLE-20261105-IJ4F` | `2026-11-05T06:15:06.063Z` | `goharbor/harbor` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7130` | Yes (`35e4b92b...`) |
+| `CYCLE-20261105-IKOU` | `2026-11-05T06:15:08.094Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7131` | Yes (`e1184c9f...`) |
+| `CYCLE-20261105-INFQ` | `2026-11-05T06:15:11.654Z` | `apache/zookeeper` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7132` | Yes (`7ae8f317...`) |
+| `CYCLE-20261105-QVHV` | `2026-11-05T06:21:35.347Z` | `mistralai/Mixtral-8x7B-Instruct-v0.1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-mistralai-mixtral-8x7b-instruct-v0.1-learnings.md` | Yes (`4df4459b...`) |
+| `CYCLE-20261105-081Z` | `2026-11-05T06:28:51.527Z` | `nats-io/nats-server` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7133` | Yes (`637dcf1c...`) |
+| `CYCLE-20261105-0CMV` | `2026-11-05T06:28:57.463Z` | `meta-llama/Llama-2-7b` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7134, Rule 7135, Rule 7136` | Yes (`40aa3ba9...`) |
+| `CYCLE-20261105-0D8M` | `2026-11-05T06:28:58.246Z` | `StarRocks/starrocks` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7137` | Yes (`29fe7e61...`) |
+| `CYCLE-20261105-0E4W` | `2026-11-05T06:28:59.408Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7138` | Yes (`37a63573...`) |
+| `CYCLE-20261105-9WML` | `2026-11-05T06:36:23.277Z` | `deepseek-ai/DeepSeek-V3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v3-learnings.md` | Yes (`c44817b5...`) |
+| `CYCLE-20261105-JNRG` | `2026-11-05T06:43:58.348Z` | `apache/pinot` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7139` | Yes (`2f9dc2e4...`) |
+| `CYCLE-20261105-JQX9` | `2026-11-05T06:44:02.445Z` | `Edge0/Audio8-TTS-Realistic-Air` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-edge0-audio8-tts-realistic-0.6b-learnings.md` | Yes (`9dd0d0cb...`) |
+| `CYCLE-20261105-JXQ7` | `2026-11-05T06:44:11.263Z` | `yugabyte/yugabyte-db` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7140` | Yes (`5fd1b874...`) |
+| `CYCLE-20261105-SLXZ` | `2026-11-05T06:50:55.895Z` | `baidu/Unlimited-OCR` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baidu-unlimited-ocr-learnings.md` | Yes (`0468a447...`) |
+| `CYCLE-20261105-SS96` | `2026-11-05T06:51:04.074Z` | `siderolabs/talos` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7141` | Yes (`614b2899...`) |
+| `CYCLE-20261105-SWMJ` | `2026-11-05T06:51:09.739Z` | `GreptimeTeam/greptimedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7142` | Yes (`d31ed1f0...`) |
+| `CYCLE-20261105-21L8` | `2026-11-05T06:58:16.076Z` | `Aleph-Alpha/Kolibri-1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-aleph-alpha-kolibri-1-learnings.md` | Yes (`02116a10...`) |
+| `CYCLE-20261105-26G7` | `2026-11-05T06:58:22.375Z` | `jellyfin/Swiftfin` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7143` | Yes (`608e96e3...`) |
+| `CYCLE-20261105-28QW` | `2026-11-05T06:58:25.352Z` | `moby/buildkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7144` | Yes (`b2266d56...`) |
+| `CYCLE-20261105-2DQG` | `2026-11-05T06:58:31.816Z` | `ydb-platform/ydb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7145` | Yes (`4682c966...`) |
+| `CYCLE-20261105-2E5W` | `2026-11-05T06:58:32.372Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7146` | Yes (`bc34831a...`) |
+| `CYCLE-20261105-BZLM` | `2026-11-05T07:06:00.058Z` | `FermionResearch/Phonon-2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7147, Rule 7148` | Yes (`12634f3c...`) |
+| `CYCLE-20261105-L5I5` | `2026-11-05T07:13:07.613Z` | `exyte/PopupView` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7149` | Yes (`df20eb6d...`) |
+| `CYCLE-20261105-L9YQ` | `2026-11-05T07:13:13.394Z` | `openbmb/MiniCPM-OCR-1.0` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7150, Rule 7151, Rule 7152` | Yes (`ec9651b2...`) |
+| `CYCLE-20261105-UHF2` | `2026-11-05T07:20:22.958Z` | `Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw-learnings.md` | Yes (`157ac6c1...`) |
+| `CYCLE-20261105-UPXI` | `2026-11-05T07:20:33.990Z` | `projectdiscovery/nuclei` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7153` | Yes (`452ce2e0...`) |
+| `CYCLE-20261105-3TIO` | `2026-11-05T07:27:38.544Z` | `pablodawson/MiniMax-H3-360-Orbit-LoRA` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-pablodawson-minimax-h3-360-orbit-lora-learnings.md` | Yes (`0d1b214c...`) |
+| `CYCLE-20261105-3V8U` | `2026-11-05T07:27:40.782Z` | `actix/actix-web` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7154` | Yes (`64ba778a...`) |
+| `CYCLE-20261105-46FF` | `2026-11-05T07:27:55.275Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7155` | Yes (`d33d2a6f...`) |
+| `CYCLE-20261105-CURE` | `2026-11-05T07:34:40.058Z` | `Venastine-Research/Xing4.0-29B-A4B-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-venastine-research-xing4.0-29b-a4b-gguf-learnings.md` | Yes (`b318cd6d...`) |
+| `CYCLE-20261105-D2H7` | `2026-11-05T07:34:50.059Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7156` | Yes (`a82fb321...`) |
+| `CYCLE-20261105-MA2B` | `2026-11-05T07:41:59.795Z` | `NaiveAI/Naive-N0.5-Flash` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-naiveai-naive-n0.5-flash-learnings.md` | Yes (`a9df434d...`) |
+| `CYCLE-20261105-Z567` | `2026-11-05T07:51:59.983Z` | `grpc/grpc-rust` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7157` | Yes (`85e2e957...`) |
+| `CYCLE-20261105-Z8RM` | `2026-11-05T07:52:04.642Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7128` | Yes (`5114d0e9...`) |
+| `CYCLE-20261105-15QG` | `2026-11-05T07:53:34.024Z` | `openai/clip-vit-base-patch32` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7158, Rule 7159, Rule 7160` | Yes (`6d0925d8...`) |
+| `CYCLE-20261105-B70X` | `2026-11-05T08:01:22.257Z` | `MariaDB/server` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7161` | Yes (`8a5ae444...`) |
+| `CYCLE-20261105-CHOX` | `2026-11-05T08:02:22.737Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7162` | Yes (`86ed51d8...`) |
+| `CYCLE-20261105-D7G7` | `2026-11-05T08:02:56.119Z` | `thebaselab/codeapp` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/thebaselab-codeapp-learnings.md` | Yes (`c15e583b...`) |
+| `CYCLE-20261105-E0RP` | `2026-11-05T08:03:34.117Z` | `embassy-rs/embassy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7163` | Yes (`cd02347e...`) |
+| `CYCLE-20261105-E7PX` | `2026-11-05T08:03:43.125Z` | `sentence-transformers/all-mpnet-base-v2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sentence-transformers-all-mpnet-base-v2-learnings.md` | Yes (`a77b1df8...`) |
+| `CYCLE-20261105-STJF` | `2026-11-05T08:15:04.587Z` | `BAAI/bge-reranker-v2-m3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-reranker-v2-m3-learnings.md` | Yes (`197559f4...`) |
+| `CYCLE-20261105-TFVU` | `2026-11-05T08:15:33.546Z` | `vespa-engine/vespa` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7164` | Yes (`ac4acbd4...`) |
+| `CYCLE-20261105-EDXH` | `2026-11-05T08:31:50.789Z` | `rainbow-me/rainbow` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7166` | Yes (`2023ae52...`) |
+| `CYCLE-20261105-EEMF` | `2026-11-05T08:31:51.687Z` | `jonatasgrosman/wav2vec2-large-xlsr-53-japanese` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7165, Rule 7167, Rule 7168` | Yes (`38eefabb...`) |
+| `CYCLE-20261105-FMJN` | `2026-11-05T08:32:48.611Z` | `easegress-io/easegress` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7169` | Yes (`6b485ff7...`) |
+| `CYCLE-20261105-Q6BC` | `2026-11-05T08:41:00.792Z` | `FacebookAI/xlm-roberta-base` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-facebookai-xlm-roberta-base-learnings.md` | Yes (`b8d7e48c...`) |
+| `CYCLE-20261105-SDPD` | `2026-11-05T08:42:43.681Z` | `genkit-ai/genkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7170` | Yes (`e7198587...`) |
+| `CYCLE-20261105-25F1` | `2026-11-05T08:50:19.501Z` | `kgateway-dev/kgateway` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7171` | Yes (`3d165bc8...`) |
+| `CYCLE-20261105-2738` | `2026-11-05T08:50:21.668Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md` | Yes (`baf58ec7...`) |
+| `CYCLE-20261105-27YD` | `2026-11-05T08:50:22.789Z` | `RediSearch/RediSearch` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7172` | Yes (`9ebecf01...`) |
+| `CYCLE-20261105-4JQF` | `2026-11-05T08:52:11.367Z` | `openai-community/gpt2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-community-gpt2-learnings.md` | Yes (`f5de1681...`) |
+| `CYCLE-20261105-KVB2` | `2026-11-05T09:04:52.862Z` | `Qwen/Qwen3-VL-8B-Instruct` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-vl-8b-instruct-learnings.md` | Yes (`eade2f2b...`) |
+| `CYCLE-20261105-L34E` | `2026-11-05T09:05:02.990Z` | `dragonflydb/dragonfly` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7173` | Yes (`9beb91d5...`) |
+| `CYCLE-20261105-UENQ` | `2026-11-05T09:12:17.846Z` | `nomic-ai/nomic-embed-text-v1.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nomic-ai-nomic-embed-text-v1.5-learnings.md` | Yes (`2283e5cf...`) |
+| `CYCLE-20261105-UN5T` | `2026-11-05T09:12:28.865Z` | `openkruise/kruise` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7174` | Yes (`d951db78...`) |
+| `CYCLE-20261105-UQO2` | `2026-11-05T09:12:33.410Z` | `duckdb/duckdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7175` | Yes (`c5744335...`) |
+| `CYCLE-20261105-5LQS` | `2026-11-05T09:21:00.244Z` | `google/gemma-4-26B-A4B-it` | Commit diff / Patch analysis | `VERIFIED` | `Rule 969, Rule 7176, Rule 7177` | Yes (`ef4890f4...`) |
+| `CYCLE-20261105-BMC9` | `2026-11-05T09:25:40.953Z` | `ClickHouse/ClickHouse` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7178` | Yes (`02fb9217...`) |
+| `CYCLE-20261105-PDBC` | `2026-11-05T09:36:22.440Z` | `intfloat/multilingual-e5-small` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-intfloat-multilingual-e5-small-learnings.md` | Yes (`8cf3e181...`) |
+| `CYCLE-20261105-ZWW6` | `2026-11-05T09:44:34.374Z` | `argmaxinc/whisperkit-coreml` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-argmaxinc-whisperkit-coreml-learnings.md` | Yes (`14b47f9d...`) |
+| `CYCLE-20261105-ZX98` | `2026-11-05T09:44:34.844Z` | `NVIDIA/cuda-rust` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7179` | Yes (`09c5d8e7...`) |
+| `CYCLE-20261105-08W4` | `2026-11-05T09:44:49.924Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7180` | Yes (`7fcd3ca8...`) |
+| `CYCLE-20261105-8FQ1` | `2026-11-05T09:51:12.025Z` | `Qwen/Qwen3-8B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-8b-learnings.md` | Yes (`b9ee8b3b...`) |
+| `CYCLE-20261105-GRQI` | `2026-11-05T09:57:40.842Z` | `cloudwego/volo` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7181` | Yes (`46d10f58...`) |
+| `CYCLE-20261105-GW0B` | `2026-11-05T09:57:46.379Z` | `SimonSchubert/Kai` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3545` | Yes (`1754b948...`) |
+| `CYCLE-20261105-GWUP` | `2026-11-05T09:57:47.473Z` | `google/vit-base-patch16-224` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7182, Rule 7183` | Yes (`9da218ac...`) |
+| `CYCLE-20261105-VCM4` | `2026-11-05T10:09:01.084Z` | `ntex-rs/ntex` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7184` | Yes (`593a6042...`) |
+| `CYCLE-20261105-VCRD` | `2026-11-05T10:09:01.273Z` | `BAAI/bge-base-en-v1.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-base-en-v1.5-learnings.md` | Yes (`bdbf6ac3...`) |
+| `CYCLE-20261105-VJES` | `2026-11-05T10:09:09.892Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7185` | Yes (`89bbd2a2...`) |
+| `CYCLE-20261105-4BTL` | `2026-11-05T10:15:59.961Z` | `Xudong-Huang/may` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7186` | Yes (`d531bc4b...`) |
+| `CYCLE-20261105-4G2E` | `2026-11-05T10:16:05.462Z` | `prof18/feed-flow` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7187` | Yes (`7b3b2e3c...`) |
+| `CYCLE-20261105-4HKF` | `2026-11-05T10:16:07.407Z` | `google/gemma-4-31B-it` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-gemma-4-31b-it-learnings.md` | Yes (`35905d2b...`) |
+| `CYCLE-20261105-4HPY` | `2026-11-05T10:16:07.606Z` | `skyhook-io/radar` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7188` | Yes (`0c99b35d...`) |
+| `CYCLE-20261105-4JFK` | `2026-11-05T10:16:09.824Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7189` | Yes (`54555d51...`) |
+| `CYCLE-20261105-4LHY` | `2026-11-05T10:16:12.502Z` | `volcengine/OpenViking` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7190` | Yes (`fea3cef9...`) |
+| `CYCLE-20261105-DIBA` | `2026-11-05T10:23:08.278Z` | `vercel-labs/agent-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7191` | Yes (`60d4e780...`) |
+| `CYCLE-20261105-DQKW` | `2026-11-05T10:23:18.992Z` | `Mintplex-Labs/anything-llm` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7192` | Yes (`6af55c3f...`) |
+| `CYCLE-20261105-HPMI` | `2026-11-05T10:26:24.379Z` | `sentence-transformers/paraphrase-multilingual-mpnet-base-v2` | Commit diff / Patch analysis | `VERIFIED` | `Rule EXISTING, Rule 3160` | Yes (`8fd07dfa...`) |
+| `CYCLE-20261105-UUOG` | `2026-11-05T10:36:37.456Z` | `Bingsu/adetailer` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-bingsu-adetailer-learnings.md` | Yes (`f1c8b8f4...`) |
+| `CYCLE-20261105-3V6F` | `2026-11-05T10:43:38.007Z` | `lilylilith/QI_2.1_AnyAngle` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-lilylilith-qi_2.1_anyangle-learnings.md` | Yes (`4774c6f8...`) |
+| `CYCLE-20261105-42BT` | `2026-11-05T10:43:47.273Z` | `PeerDB-io/peerdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7193` | Yes (`a03871e6...`) |
+| `CYCLE-20261105-CVYP` | `2026-11-05T10:50:38.929Z` | `BAAI/bge-large-en-v1.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-large-en-v1.5-learnings.md` | Yes (`d1c805b7...`) |
+| `CYCLE-20261105-D0YV` | `2026-11-05T10:50:45.415Z` | `koderover/zadig` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7194` | Yes (`fdadf2f9...`) |
+| `CYCLE-20261105-MBQK` | `2026-11-05T10:57:59.276Z` | `zai-org/GLM-5.3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-zai-org-glm-5.3-learnings.md` | Yes (`713ab4ba...`) |
+| `CYCLE-20261105-MIXD` | `2026-11-05T10:58:08.593Z` | `fabio-rovai/open-ontologies` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7195` | Yes (`0944db45...`) |
+| `CYCLE-20261105-MOHG` | `2026-11-05T10:58:15.796Z` | `milvus-io/milvus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7196` | Yes (`aff96c17...`) |
+| `CYCLE-20261105-ZTHH` | `2026-11-05T11:08:28.805Z` | `Dicklesworthstone/destructive_command_guard` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7197` | Yes (`00058eaa...`) |
+| `CYCLE-20261105-ZZXC` | `2026-11-05T11:08:37.152Z` | `zama-ai/tfhe-rs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7198` | Yes (`cc6be31d...`) |
+| `CYCLE-20261105-16K5` | `2026-11-05T11:09:32.405Z` | `mudler/locate-anything.cpp-gguf` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-mudler-locate-anything.cpp-gguf-learnings.md` | Yes (`ae0ec327...`) |
+| `CYCLE-20261105-AG08` | `2026-11-05T11:16:44.552Z` | `mikepenz/multiplatform-markdown-renderer` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7199` | Yes (`12d2804e...`) |
+| `CYCLE-20261105-ALJA` | `2026-11-05T11:16:51.718Z` | `jialinyyzz/humanizer` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7200, Rule 7201, Rule 7202` | Yes (`f94fb6f1...`) |
+| `CYCLE-20261105-IX5R` | `2026-11-05T11:23:20.031Z` | `autotrust/JEV-27B-VL` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-jev-27b-vl-learnings.md` | Yes (`731d214e...`) |
+| `CYCLE-20261105-IZNN` | `2026-11-05T11:23:23.267Z` | `yvgude/lean-ctx` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7203` | Yes (`8c46193c...`) |
+| `CYCLE-20261105-J7OT` | `2026-11-05T11:23:33.677Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7204` | Yes (`49565666...`) |
+| `CYCLE-20261105-SG9H` | `2026-11-05T11:30:44.693Z` | `autotrust/GEV-26B-Decide` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-learnings.md` | Yes (`a636c09e...`) |
+| `CYCLE-20261105-SKYT` | `2026-11-05T11:30:50.789Z` | `chrisbanes/skills` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7205` | Yes (`acbde899...`) |
+| `CYCLE-20261105-SOQ7` | `2026-11-05T11:30:55.663Z` | `projectdiscovery/nuclei` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7206` | Yes (`0731a8c1...`) |
+| `CYCLE-20261105-1QIQ` | `2026-11-05T11:37:57.890Z` | `google/embeddinggemma-2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-embeddinggemma-2-learnings.md` | Yes (`aa28788a...`) |
+| `CYCLE-20261105-BBMQ` | `2026-11-05T11:45:25.154Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7208` | Yes (`3cf5257e...`) |
+| `CYCLE-20261105-BC67` | `2026-11-05T11:45:25.855Z` | `canberkkkkkk/ema-lightning` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7207, Rule 7209, Rule 7210` | Yes (`d6a85807...`) |
+| `CYCLE-20261105-BDXD` | `2026-11-05T11:45:28.129Z` | `weaviate/weaviate` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7211` | Yes (`7f53e127...`) |
+| `CYCLE-20261105-LAR9` | `2026-11-05T11:53:10.581Z` | `unsloth/embeddinggemma-2-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-unsloth-embeddinggemma-2-gguf-learnings.md` | Yes (`351efccb...`) |
+| `CYCLE-20261105-LFJL` | `2026-11-05T11:53:16.785Z` | `touchlab/Kermit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7212` | Yes (`cc573839...`) |
+| `CYCLE-20261105-U6QH` | `2026-11-05T12:00:05.273Z` | `autotrust/GLM5.3-Flash-E224-DGX-Spark` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-glm5.3-flash-e224-dgx-spark-learnings.md` | Yes (`e0d336f0...`) |
+| `CYCLE-20261105-32BY` | `2026-11-05T12:06:59.470Z` | `LiquidAI/d1-3B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-liquidai-d1-3b-learnings.md` | Yes (`2dd84fc5...`) |
+| `CYCLE-20261105-3C97` | `2026-11-05T12:07:12.331Z` | `clockworklabs/SpacetimeDB` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7213` | Yes (`1af2da4b...`) |
+| `CYCLE-20261105-CR8T` | `2026-11-05T12:14:31.661Z` | `DamascenoRafael/reminders-menubar` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7214` | Yes (`d58f4ff1...`) |
+| `CYCLE-20261105-CV4H` | `2026-11-05T12:14:36.689Z` | `gravitl/netmaker` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7215` | Yes (`f8c5a65e...`) |
+| `CYCLE-20261105-CXBG` | `2026-11-05T12:14:39.532Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7180` | Yes (`299db654...`) |
+| `CYCLE-20261105-CXL9` | `2026-11-05T12:14:39.885Z` | `Cactus-Compute/whistle` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7216, Rule 7217, Rule 7218` | Yes (`f9a3a835...`) |
+| `CYCLE-20261105-NHTB` | `2026-11-05T12:22:52.655Z` | `orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-orcarouter-qwen3.8-flash-next-uncensored-gguf-learnings.md` | Yes (`387de9c9...`) |
+| `CYCLE-20261105-VPQW` | `2026-11-05T12:29:16.184Z` | `autotrust/GEV-26B-Decide-NVFP4` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-nvfp4-learnings.md` | Yes (`0a63b3d9...`) |
+| `CYCLE-20261105-VYAK` | `2026-11-05T12:29:27.260Z` | `microsoft/agent-governance-toolkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7219` | Yes (`10c44bc1...`) |
+| `CYCLE-20261105-W18E` | `2026-11-05T12:29:31.070Z` | `t8y2/dbx` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7220` | Yes (`6920cba9...`) |
+| `CYCLE-20261105-4XPZ` | `2026-11-05T12:36:26.423Z` | `N1nEmAn/sapper-v2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7221` | Yes (`924b6a91...`) |
+| `CYCLE-20261105-4ZNY` | `2026-11-05T12:36:28.942Z` | `SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf-learnings.md` | Yes (`37b0b002...`) |
+| `CYCLE-20261105-58U3` | `2026-11-05T12:36:40.827Z` | `zarf-dev/zarf` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7222` | Yes (`631644b5...`) |
+| `CYCLE-20261105-DZA6` | `2026-11-05T12:43:28.350Z` | `Qwen/Qwen3-4B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-4b-learnings.md` | Yes (`31a6a268...`) |
+| `CYCLE-20261105-NHHZ` | `2026-11-05T12:50:51.863Z` | `ConwayResearch/Underdog-Saluki-27B-1.0` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7223, Rule 7224` | Yes (`cedca00f...`) |
+| `CYCLE-20261105-X45I` | `2026-11-05T12:58:21.126Z` | `nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotron-3.5-transcribe-30b-a4b-learnings.md` | Yes (`4a5bb7b1...`) |
+| `CYCLE-20261105-X577` | `2026-11-05T12:58:22.483Z` | `domcyrus/rustnet` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7225` | Yes (`f2883801...`) |
+| `CYCLE-20261105-XG3O` | `2026-11-05T12:58:36.612Z` | `alibaba/zvec` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7226` | Yes (`78a8f10f...`) |
+| `CYCLE-20261105-XGKZ` | `2026-11-05T12:58:37.235Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7227` | Yes (`3c3dec7c...`) |
+| `CYCLE-20261105-5UC9` | `2026-11-05T13:05:08.313Z` | `Qwen/Qwen-Image-2.1-Turbo` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen-image-2.1-turbo-learnings.md` | Yes (`2d3b142b...`) |
+| `CYCLE-20261105-655A` | `2026-11-05T13:05:22.318Z` | `langchain4j/langchain4j` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7228` | Yes (`70cdea69...`) |
+| `CYCLE-20261105-7OXQ` | `2026-11-05T13:06:34.622Z` | `yikart/AiToEarn` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7229` | Yes (`68ffeefa...`) |
+| `CYCLE-20261105-GNE3` | `2026-11-05T13:13:32.523Z` | `Phocinae/Phocinae-Largha-150M-v1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-phocinae-phocinae-largha-150m-v1-learnings.md` | Yes (`3465b2bb...`) |
+| `CYCLE-20261105-GOZK` | `2026-11-05T13:13:34.592Z` | `topgrade-rs/topgrade` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7230` | Yes (`24c3a9ef...`) |
+| `CYCLE-20261105-GVH4` | `2026-11-05T13:13:43.000Z` | `openyurtio/openyurt` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7231` | Yes (`695f2c26...`) |
+| `CYCLE-20261105-PBZH` | `2026-11-05T13:20:17.645Z` | `microsoft/FrogNano-4B-2609` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-microsoft-frognano-4b-2609-learnings.md` | Yes (`51f7c872...`) |
+| `CYCLE-20261105-PNJC` | `2026-11-05T13:20:32.616Z` | `lancedb/lancedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7232` | Yes (`b0deb395...`) |
+| `CYCLE-20261105-Y0X2` | `2026-11-05T13:27:03.206Z` | `restatedev/restate` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7233` | Yes (`0a2d652b...`) |
+| `CYCLE-20261105-Y5YW` | `2026-11-05T13:27:09.752Z` | `aquasecurity/trivy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7234` | Yes (`7ad1a6f3...`) |
+| `CYCLE-20261105-Y706` | `2026-11-05T13:27:11.094Z` | `FrancisRing/Prism` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7235, Rule 7236` | Yes (`0a82d404...`) |
+| `CYCLE-20261105-6GZG` | `2026-11-05T13:33:37.276Z` | `nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nerkyor-qwen3.8-27b-coder390-efficientthink-opus5.5-gpt6astra-grok4.7-dsv4pro-k3-sft-rloo-mtp-dflash2-learnings.md` | Yes (`716a55d1...`) |
+| `CYCLE-20261105-6PA4` | `2026-11-05T13:33:48.028Z` | `pulumi/pulumi` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7237` | Yes (`366b72e2...`) |
+| `CYCLE-20261105-F3AU` | `2026-11-05T13:40:19.446Z` | `RevenueCat/purchases-ios` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7238` | Yes (`f7129c4f...`) |
+| `CYCLE-20261105-F7XE` | `2026-11-05T13:40:25.442Z` | `databendlabs/databend` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7239` | Yes (`0f1bb727...`) |
+| `CYCLE-20261105-F83F` | `2026-11-05T13:40:25.659Z` | `facebook/sam3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-facebook-sam3-learnings.md` | Yes (`8eb09a74...`) |
+| `CYCLE-20261105-OLO7` | `2026-11-05T13:47:43.159Z` | `AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf-learnings.md` | Yes (`7c4cd035...`) |
+| `CYCLE-20261105-OSVN` | `2026-11-05T13:47:52.499Z` | `aws/aws-cdk` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7240` | Yes (`40bba363...`) |
+| `CYCLE-20261105-OWAJ` | `2026-11-05T13:47:56.923Z` | `paradedb/paradedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7241` | Yes (`0e740c49...`) |
+| `CYCLE-20261105-XSUF` | `2026-11-05T13:54:52.359Z` | `feder-cr/Jobs_Applier_AI_Agent` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7242` | Yes (`7d7ce121...`) |
+| `CYCLE-20261105-XUGD` | `2026-11-05T13:54:54.445Z` | `speridlabs/iris-3b` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-speridlabs-iris-3b-learnings.md` | Yes (`e352aef7...`) |
+| `CYCLE-20261105-7R95` | `2026-11-05T14:02:36.857Z` | `0xCUB3/wBlock` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7243` | Yes (`5e8298b1...`) |
+| `CYCLE-20261105-7VOE` | `2026-11-05T14:02:42.591Z` | `infiniflow/infinity` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7244` | Yes (`ecbe9cdc...`) |
+| `CYCLE-20261105-C048` | `2026-11-05T14:05:54.968Z` | `zvec-ai/zvec-grep` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7245` | Yes (`14c13ff8...`) |
+| `CYCLE-20261105-DA3R` | `2026-11-05T14:06:54.567Z` | `abenzerps/Qwen-Image-2.1-Turbo-Quantized` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-uncensored-quantized-learnings.md` | Yes (`d1520966...`) |
+| `CYCLE-20261105-LXBA` | `2026-11-05T14:13:37.894Z` | `Louis-CFM/coucou` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7246` | Yes (`1f650e4b...`) |
+| `CYCLE-20261105-M233` | `2026-11-05T14:13:44.079Z` | `autotrust/JEV-35B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5004, Rule 7247, Rule 7248` | Yes (`5179d46e...`) |
+| `CYCLE-20261105-M5HI` | `2026-11-05T14:13:48.486Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7249` | Yes (`ffcce903...`) |
+| `CYCLE-20261105-XOAA` | `2026-11-05T14:22:46.066Z` | `openbmb/MiniCPM-V-4.7-35B-A3B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7250, Rule 7251, Rule 7252` | Yes (`742baf9b...`) |
+| `CYCLE-20261105-XQHP` | `2026-11-05T14:22:48.925Z` | `meshery/meshery` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7253` | Yes (`673ab467...`) |
+| `CYCLE-20261105-XTE8` | `2026-11-05T14:22:52.688Z` | `crate/crate` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7254` | Yes (`4c1e9612...`) |
+| `CYCLE-20261105-74ES` | `2026-11-05T14:30:06.868Z` | `openbmb/MiniCPM-V-4.7-1B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7255, Rule 7256, Rule 7257` | Yes (`4db6aab4...`) |
+| `CYCLE-20261105-7961` | `2026-11-05T14:30:13.033Z` | `zama-ai/tfhe-rs` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md` | Yes (`0bbe5fe9...`) |
+| `CYCLE-20261105-O7HJ` | `2026-11-05T14:43:24.007Z` | `autotrust/JEV-35B-NVFP4` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-jev-35b-nvfp4-learnings.md` | Yes (`91c2ebd9...`) |
+| `CYCLE-20261105-XYZB` | `2026-11-05T14:50:59.543Z` | `LiquidAI/LFM2.5-24B-A2B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7258, Rule 7259, Rule 7260` | Yes (`2d64e54d...`) |
+| `CYCLE-20261105-XZAB` | `2026-11-05T14:50:59.939Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7261` | Yes (`25510fa6...`) |
+| `CYCLE-20261105-7WXJ` | `2026-11-05T14:58:43.447Z` | `fishaudio/drama-3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-fishaudio-drama-3-learnings.md` | Yes (`42de5eed...`) |
+| `CYCLE-20261105-H94V` | `2026-11-05T15:05:59.167Z` | `dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-dealignai-deepseek-v4.1-flash-uncensored-fp8-learnings.md` | Yes (`348b4965...`) |
+| `CYCLE-20261105-HJ0V` | `2026-11-05T15:06:11.983Z` | `trufflesecurity/trufflehog` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7262` | Yes (`17b00c6c...`) |
+| `CYCLE-20261105-QBEE` | `2026-11-05T15:13:02.006Z` | `vllm-sr/d3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-vllm-sr-d3-learnings.md` | Yes (`2e18488a...`) |
+| `CYCLE-20261105-01MT` | `2026-11-05T15:20:35.909Z` | `agent-of-empires/agent-of-empires` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7263` | Yes (`cb28df1b...`) |
+| `CYCLE-20261105-04PY` | `2026-11-05T15:20:39.910Z` | `LiquidAI/LFM2.5-24B-A2B-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7264` | Yes (`1e2f2db1...`) |
+| `CYCLE-20261105-0AD7` | `2026-11-05T15:20:47.227Z` | `xerj-org/xerj` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7265` | Yes (`b7b56e85...`) |
+| `CYCLE-20261105-C8S3` | `2026-11-05T15:30:05.043Z` | `black-forest-labs/flux-3-image-klein` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-black-forest-labs-flux-3-image-klein-learnings.md` | Yes (`e60566fb...`) |
+| `CYCLE-20261105-CGJS` | `2026-11-05T15:30:15.112Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7266` | Yes (`455ebac2...`) |
+| `CYCLE-20261105-LWZD` | `2026-11-05T15:37:36.313Z` | `pyannote/speaker-diarization-community-1` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7267, Rule 7268, Rule 7269` | Yes (`f76c81bc...`) |
+| `CYCLE-20261105-LYG7` | `2026-11-05T15:37:38.215Z` | `lioensky/VCPToolBox` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md` | Yes (`5da2dea5...`) |
+| `CYCLE-20261105-V38O` | `2026-11-05T15:44:44.328Z` | `meta-models/Muse-Spark-Open-816B-A42B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-meta-models-muse-spark-open-816b-a42b-learnings.md` | Yes (`f71280bb...`) |
+| `CYCLE-20261105-VAZU` | `2026-11-05T15:44:54.378Z` | `Checkmarx/kics` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7270` | Yes (`9154310c...`) |
+| `CYCLE-20261105-4H3V` | `2026-11-05T15:52:02.203Z` | `black-forest-labs/flux-3-image-klein-comfy` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-black-forest-labs-flux-3-image-klein-comfy-learnings.md` | Yes (`36a516ab...`) |
+| `CYCLE-20261105-DUDS` | `2026-11-05T15:59:19.312Z` | `openbmb/MiniCPM-V-4.7-35B-A3B-gguf` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-35b-a3b-gguf-learnings.md` | Yes (`ca8540dc...`) |
+| `CYCLE-20261105-DW69` | `2026-11-05T15:59:21.633Z` | `codewhale-hq/Codewhale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7271` | Yes (`34572659...`) |
