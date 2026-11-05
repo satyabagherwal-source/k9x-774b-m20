@@ -7768,3 +7768,5 @@ Every entry in this ledger must capture:
 | `learn-github-helixdb-helix-db` | `https://github.com/HelixDB/helix-db` | `48427266` | Multi-dimensional audit evidence | 2026-11-05T18:45:49.323Z |
 | `learn-github-sxyazi-yazi` | `https://github.com/sxyazi/yazi` | `6882e1ac` | Multi-dimensional audit evidence | 2026-11-05T18:53:36.557Z |
 | `learn-github-prometheus-prometheus` | `https://github.com/prometheus/prometheus` | `62aca180` | Multi-dimensional audit evidence | 2026-11-05T18:53:43.362Z |
+| `learn-github-pointfreeco-sqlite-data` | `https://github.com/pointfreeco/sqlite-data` | `567ff298` | Multi-dimensional audit evidence | 2026-11-05T19:00:17.994Z |
+| `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `00354062` | Multi-dimensional audit evidence | 2026-11-05T19:00:24.225Z |

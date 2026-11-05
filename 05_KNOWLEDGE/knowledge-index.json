@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T18:53:43.269Z",
+  "last_updated": "2026-11-05T19:00:24.152Z",
   "total_verified_learnings": 1219,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -7269,11 +7269,16 @@
       "slug": "cilium-cilium",
       "platform": "github",
       "source_url": "https://github.com/cilium/cilium",
-      "source_version": "83db4fd8",
-      "content_hash": "25510fa6da68997e418d4cf8d87fda89bae597ba851254610be655e288107c06",
+      "source_version": "00354062",
+      "content_hash": "c63451d8b1829eeea9a4720c9e719052b6afba73215d78d945be32b8a13fe0fd",
       "dossier_path": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "clustermesh: add port validations",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 1827,
           "title": "datapath: Fix NAT46x64 gateway prefix conversion panic",
@@ -7520,7 +7525,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T14:50:59.825Z",
+      "verified_at": "2026-11-05T19:00:24.137Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -48994,11 +48999,16 @@
       "slug": "pointfreeco-sqlite-data",
       "platform": "github",
       "source_url": "https://github.com/pointfreeco/sqlite-data",
-      "source_version": "43de040a",
-      "content_hash": "3e5fdbb0aedc1f8ca28c37fa89130585f524f232844f0e0d196a5da7b0afc299",
+      "source_version": "567ff298",
+      "content_hash": "4ac2589c8f0a164978cc720c3c2f1a2d018c8fcaf354b2c8e4ccb8436e236630",
       "dossier_path": "07_PROJECT_LEARNING/pointfreeco-sqlite-data-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pointfreeco-sqlite-data-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "ID `@Fetch*.load` events to fix cancel race (#536)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2986,
           "title": "Box `@Fetch*` property wrappers in SwiftUI state when possible (#486)",
@@ -49015,7 +49025,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T18:47:40.371Z",
+      "verified_at": "2026-11-05T19:00:17.918Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

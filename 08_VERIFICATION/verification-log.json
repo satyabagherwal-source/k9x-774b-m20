@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261104-ZIIJ",
-    "timestamp": "2026-11-04T17:52:28.795Z",
-    "repository": "XHToken/Spark-X2.6-4B",
-    "learningId": "learn-huggingface-xhtoken-spark-x2-6-4b",
-    "contentHash": "d4254ea94df8adebbd8c3e6135b68da546d95364009eb7953bcaea38be74cb38",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261104-ZMYT",
-    "timestamp": "2026-11-04T17:52:34.565Z",
-    "repository": "vespa-engine/vespa",
-    "learningId": "learn-github-vespa-engine-vespa",
-    "contentHash": "b317ef57ba0f00597f450647255e71bef8554fa5812dac2777c9896d563e8458",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261104-8ESO",
     "timestamp": "2026-11-04T17:59:23.880Z",
     "repository": "alexpasmantier/television",
@@ -7490,6 +7460,36 @@
     "repository": "prometheus/prometheus",
     "learningId": "learn-github-prometheus-prometheus",
     "contentHash": "9ece711744d167bb8dbcce8e460ede3001e5f0e8effa0038ec1d77b23bcf779b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-UKZR",
+    "timestamp": "2026-11-05T19:00:17.991Z",
+    "repository": "pointfreeco/sqlite-data",
+    "learningId": "learn-github-pointfreeco-sqlite-data",
+    "contentHash": "4ac2589c8f0a164978cc720c3c2f1a2d018c8fcaf354b2c8e4ccb8436e236630",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-UPSR",
+    "timestamp": "2026-11-05T19:00:24.219Z",
+    "repository": "cilium/cilium",
+    "learningId": "learn-github-cilium-cilium",
+    "contentHash": "c63451d8b1829eeea9a4720c9e719052b6afba73215d78d945be32b8a13fe0fd",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

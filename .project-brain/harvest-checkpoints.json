@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-05T18:53:43.374Z",
+  "last_updated": "2026-11-05T19:00:24.232Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5136,14 +5136,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-cilium-cilium",
-      "content_hash": "25510fa6da68997e418d4cf8d87fda89bae597ba851254610be655e288107c06",
-      "verified_at": "2026-11-05T14:50:59.960Z",
+      "content_hash": "c63451d8b1829eeea9a4720c9e719052b6afba73215d78d945be32b8a13fe0fd",
+      "verified_at": "2026-11-05T19:00:24.232Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T14:50:59.960Z"
+      "last_updated": "2026-11-05T19:00:24.232Z"
     },
     "SeekStorm/SeekStorm": {
       "repository": "SeekStorm/SeekStorm",
@@ -14976,14 +14976,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pointfreeco-sqlite-data",
-      "content_hash": "3e5fdbb0aedc1f8ca28c37fa89130585f524f232844f0e0d196a5da7b0afc299",
-      "verified_at": "2026-11-03T18:47:40.505Z",
+      "content_hash": "4ac2589c8f0a164978cc720c3c2f1a2d018c8fcaf354b2c8e4ccb8436e236630",
+      "verified_at": "2026-11-05T19:00:18.001Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T18:47:40.505Z"
+      "last_updated": "2026-11-05T19:00:18.001Z"
     },
     "sveltejs/svelte": {
       "repository": "sveltejs/svelte",

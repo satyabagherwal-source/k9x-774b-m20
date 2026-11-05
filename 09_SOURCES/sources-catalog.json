@@ -3343,10 +3343,10 @@
     "repository": "cilium/cilium",
     "platform": "github",
     "sourceUrl": "https://github.com/cilium/cilium",
-    "sourceVersion": "83db4fd8",
+    "sourceVersion": "00354062",
     "license": "Apache-2.0",
-    "contentHash": "25510fa6da68997e418d4cf8d87fda89bae597ba851254610be655e288107c06",
-    "lastHarvestedAt": "2026-11-05T14:50:59.943Z",
+    "contentHash": "c63451d8b1829eeea9a4720c9e719052b6afba73215d78d945be32b8a13fe0fd",
+    "lastHarvestedAt": "2026-11-05T19:00:24.225Z",
     "learningId": "learn-github-cilium-cilium"
   },
   "seekstorm-seekstorm": {
@@ -9953,10 +9953,10 @@
     "repository": "pointfreeco/sqlite-data",
     "platform": "github",
     "sourceUrl": "https://github.com/pointfreeco/sqlite-data",
-    "sourceVersion": "43de040a",
+    "sourceVersion": "567ff298",
     "license": "MIT",
-    "contentHash": "3e5fdbb0aedc1f8ca28c37fa89130585f524f232844f0e0d196a5da7b0afc299",
-    "lastHarvestedAt": "2026-11-03T18:47:40.497Z",
+    "contentHash": "4ac2589c8f0a164978cc720c3c2f1a2d018c8fcaf354b2c8e4ccb8436e236630",
+    "lastHarvestedAt": "2026-11-05T19:00:17.994Z",
     "learningId": "learn-github-pointfreeco-sqlite-data"
   },
   "sveltejs-svelte": {

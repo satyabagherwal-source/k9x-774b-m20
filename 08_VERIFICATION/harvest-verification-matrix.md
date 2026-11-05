@@ -7759,3 +7759,5 @@
 | `CYCLE-20261105-BYPZ` | `2026-11-05T18:45:49.319Z` | `HelixDB/helix-db` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`28df4fb0...`) |
 | `CYCLE-20261105-LZ8P` | `2026-11-05T18:53:36.553Z` | `sxyazi/yazi` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2533` | Yes (`8e09d479...`) |
 | `CYCLE-20261105-M4HQ` | `2026-11-05T18:53:43.358Z` | `prometheus/prometheus` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`9ece7117...`) |
+| `CYCLE-20261105-UKZR` | `2026-11-05T19:00:17.991Z` | `pointfreeco/sqlite-data` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`4ac2589c...`) |
+| `CYCLE-20261105-UPSR` | `2026-11-05T19:00:24.219Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`c63451d8...`) |
