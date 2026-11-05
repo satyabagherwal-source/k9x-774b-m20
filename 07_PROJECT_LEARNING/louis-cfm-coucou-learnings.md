@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/louis-cfm-coucou-learnings.md`  
 > **Source**: github ([https://github.com/Louis-CFM/coucou](https://github.com/Louis-CFM/coucou))  
-> **Source Version**: `e9fc337f`  
+> **Source Version**: `74363634`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T11:44:06.021Z  
+> **Timestamp**: 2026-11-05T14:13:37.386Z  
 > **Learning ID**: `learn-github-louis-cfm-coucou`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/louis-cfm-coucou-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Louis-CFM/coucou](https://github.com/Louis-CFM/coucou))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T11:39:03.335Z  
+> **Harvest Timestamp**: 2026-11-05T14:13:37.228Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A tiny friend in your Mac's notch and on your iPhone that keeps an eye on your AI coding agents: Claude Code, Codex, Cursor, Gemini CLI, Antigravity and more. Approve from the notch or your Lock Screen.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 6919 stars
+- **Stars / Engagement**: 6975 stars
 
 ---
 
@@ -1873,649 +1873,497 @@ final class UploadSequenceEngine {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `861d443d` (2026-11-02)
-**Commit Message**: Windows and Linux: the closed island always wakes, Mochi lives in it, and a forgotten call stops by itself
+### Incident Patch 1: `d8a93fc3` (2026-11-03)
+**Commit Message**: Fix the Mac and Windows checks: Sendable identity capture, Windows strings shared with the Mac catalog
 
-A cursor-poll tick still running as the island folded could make the
-folded window click-through again after set_collapsed made it take the
-mouse: nothing could ever wake the island (the closed island froze, and
-before it the wake strip vanished). The poll now stops before the window
-folds, sets click-through only under the gate's lock while it is open,
-and, folded, glances at the cursor four times a second and wakes the
-island itself when it is on it.
+- AndroidLinkServer: carry the SecIdentity into the @Sendable state handler in an unchecked box (Swift 6 error).
+- The Mac catalog's Android phone texts now carry the exact translations Windows already had for the same English, and extra.json drops those texts (the test forbids both); strings.json and android/i18n/REVIEW.md regenerated. 'Your shortcut' is now Louis's Mac entry (flow.shortcut.title), as the test requires.
 
-Mochi in the closed island blinks and looks around every few seconds, as
-on a Mac without a notch, with the loop asleep in between.
+Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
 
-A call left recording ran the microphone and Parakeet for hours (8 h in
-one log), then took as long again to write. It now stops by itself after
-15 minutes with nobody speaking, or after 4 hours, and says so.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_01LJm3SRL9k3gBPaVtfPhwcT
-
-**File**: `windows/src-tauri/src/island.rs` (modified, +46/-1)
+**File**: `NotchBuddy/Resources/Localizable.xcstrings` (modified, +42/-42)
 ```diff
-@@ -114,6 +114,16 @@ impl PollGate {
-         }
-     }
- 
-+    /// Waits until the gate opens or `timeout` passes; true when it is open.
-+    pub(crate) fn wait_active_for(&self, timeout: Duration) -> bool {
-+        let guard = self.active.lock().unwrap();
-+        if *guard {
-+            return true;
-+        }
-+        let (guard, _) = self.cv.wait_timeout(guard, timeout).unwrap();
-+        *guard
-+    }
-+
-     pub(crate) fn is_active(&self) -> bool {
-         *self.active.lock().unwrap()
-     }
-@@ -491,13 +501,26 @@ pub fn spawn_cursor_poll(app: AppHandle, gate: Arc<PollGate>) {
-         // find no cursor costs CPU for nothing.
-         let (period, screen_every) = if platform::CURSOR_POLL { (16, 30) } else { (500, 1) };
-         loop {
--            gate.wait_until_active();
-+            // Parked. Folded on Windows, a glance at the cursor four times a
-+            // second: on the closed island, it is told to wake up, whether or
-+            // not the webview delivers the pointer to such a small window.
-+            loop {
-+                if gate.wait_active_for(Duration::from_millis(250)) {
-+                    break;
-+                }
-+                if platform::CURSOR_POLL && gate.collapsed.load(Ordering::Relaxed) {
-+                    wake_if_hovered(&app, &gate);
-+                }
-+            }
-             let mut last = (f64::MIN, f64::MIN);
-             let mut ticks: u32 = 0;
-             // The cursor was far at the last tick, and the page has been told.
-             let mut far = false;
-             while gate.is_active() {
-                 std::thread::sleep(Duration::from_millis(if far { FAR_PERIOD_MS } else { period }));
-+                if !gate.is_active() {
-+                    break;
-+                }
- 
-                 // Monitors get plugged in, unplugged, rearranged and rescaled, and
-                 // an island pinned to coordinates that no longer exist is an island
-@@ -565,6 +588,14 @@ pub fn spawn_cursor_poll(app: AppHandle, gate: Arc<PollGate>) {
- 
-                 let accept = on_island || dragging;
-                 if gate.ignoring.load(Ordering::Relaxed) == accept {
-+                    // Under the gate's lock, and only while it is open: a tick
-+                    // still running as the island folds must not make the
-+                    // closed island click-through after set_collapsed made it
-+                    // take the mouse — nothing would ever wake it again.
-+                    let active = gate.active.lock().unwrap();
-+                    if !*active {
-+                        break;
-+                    }
-                     gate.ignoring.store(!accept, Ordering::Relaxed);
-                     let _ = win.set_ignore_cursor_events(!accept);
+@@ -99100,7 +99100,7 @@
+         "de" : {
+           "stringUnit" : {
+             "state" : "translated",
+-            "value" : "Android-Handy"
++            "value" : "Android-Telefon"
+           }
+         },
+         "en" : {
+@@ -99142,13 +99142,13 @@
+         "ko" : {
+           "stringUnit" : {
+             "state" : "translated",
+-            "value" : "Android 폰"
++            "value" : "Android 휴대폰"
+           }
+         },
+         "pt-BR" : {
+           "stringUnit" : {
+             "state" : "translated",
+-            "value" : "Telefone Android"
++            "value" : "Celular Android"
+           }
+         },
+         "ru" : {
+@@ -99388,7 +99388,7 @@
+         "ar" : {
+           "stringUnit" : {
+             "state" : "translated",
+-            "value" : "إظهار رمز الإقران"
++            "value" : "إظهار رمز الاقتران"
+           }
+         },
+         "bn" : {
+@@ -99412,25 +99412,25 @@
+         "es" : {
+           "stringUnit" : {
+             "state" : "translated",
+-            "value" : "Mostrar código de vinculación"
++            "value" : "Mostrar código de emparejamiento"
+           }
+         },
+         "fr" : {
+           "stringUnit" : {
+             "state" : "translated",
+-            "value" : "Afficher le code d'appairage"
++            "value" : "Afficher le code d'association"
+           }
+         },
+         "hi" : {
+           "stringUnit" : {
+             "state" : "translated",
+-            "value" : "पेयरिंग कोड दिखाएं"
++            "value" : "पेयरिंग कोड दिखाएँ"
+           }
+         },
+         "id" : {
+           "stringUnit" : {
+             "state" : "translated",
+-            "value" : "Tampilkan kode pemasangan"
++            "value" : "Tampilkan kode penyandingan"
+           }
+         },
+         "ja" : {
+@@ -99654,7 +99654,7 @@
+         "ru" : {
+           "stringUnit" : {
+             "state" : "translated",
+-            "value" : "Копировать ссылку"
++            "value" : "Скопировать ссылку"
+           }
+         },
+         "th" : {
+@@ -99688,7 +99688,7 @@
+         "ar" : {
+           "stringUnit" : {
+             "state" : "translated",
+-            "value" : "إعادة الإقران"
++            "value" : "إعادة الاقتران"
+           }
+         },
+         "bn" : {
+@@ -99712,13 +99712,13 @@
+         "es" : {
+           "stringUnit" : {
+             "state" : "translated",
+-            "value" : "Vincular de nuevo"
++            "value" : "Emparejar de nuevo"
+           }
+         },
+         "fr" : {
+           "stringUnit" : {
+             "state" : "translated",
+-            "value" : "Appairer à nouveau"
++            "value" : "Associer à nouveau"
+           }
+         },
+         "hi" : {
+@@ -99730,13 +99730,13 @@
+         "id" : {
+           "stringUnit" : {
+             "state" : "translated",
+-            "value" : "Pasangkan lagi"
++            "value" : "Sandingkan ulang"
+           }
+         },
+         "ja" : {
+           "stringUnit" : {
+             "state" : "translated",
+-            "value" : "再ペアリング"
++            "value" : "もう一度ペアリング"
+           }
+         },
+         "ko" : {
+@@ -99748,13 +99748,13 @@
+         "pt-BR" : {
+           "stringUnit" : {
+             "state" : "translated",
+-            "value" : "Parear novamente"
++            "value" : "Parear de novo"
+           }
+         },
+         "ru" : {
+           "stringUnit" : {
+             "state" : "translated",
+-            "value" : "Выполнить сопряжение заново"
++            "value" : "Сопрячь заново"
+           }
+         },
+         "th" : {
+@@ -100288,19 +100288,19 @@
+         "ar" : {
+           "stringUnit" : {
+             "state" : "translated",
+-            "value" : "عرض تفاصيل الجلسات على الهاتف"
++            "value" : "إظهار تفاصيل الجلسة على الهاتف"
+           }
+         },
+         "bn" : {
+           "stringUnit" : {
+             "state" : "translated",
+-            "value" : "ফোনে সেশনের বিস্তারিত দেখান"
++            "value" : "ফোনে সেশনের বিবরণ দেখান"
+           }
+         },
+         "de" : {
+           "stringUnit" : {
+             "state" : "translated",
+-            "value" : "Sitzungsdetails auf dem Handy anzeigen"
++            "value" : "Sitzungsdetails auf dem Telefon anzeigen"
+           }
+         },
+         "en" : {
+@@ -100312,19 +100312,19 @@
+         "es" : {
+           "stringUnit" : {
+             "state" : "translated",
+-            "value" : "Mostrar los detalles de las sesiones en el teléfono"
++            "value" : "Mostrar los detalles de la sesión en el teléfono"
+           }
+         },
+         "fr" : {
+           "stringUnit" : {
+             "state" : "translated",
+-            "value" : "Afficher les détails des sessions sur le téléphone"
++            "value" : "Afficher les détails de la session sur le téléphone"
+           }
+         },
+         "hi" : {
+           "stringUnit" : {
+             "state" : "translated",
+-            "value" : "फ़ोन पर सेशन का विवरण दिखाएं"
++            "value" : "फ़ोन पर सत्र का विवरण दिखाएँ"
+           }
+         },
+```
+
+**File**: `NotchBuddy/Sources/App/AndroidLink/AndroidLinkServer.swift` (modified, +9/-1)
+```diff
+@@ -115,6 +115,8 @@ final class AndroidLinkServer: @unchecked Sendable {
+         for (k, v) in txt { record[k] = v }
+         made.service = NWListener.Service(name: AndroidLinkProtocol.instanceName(name), type: AndroidLinkProtocol.serviceType,
+                                           domain: nil, txtRecord: record)
++        // SecIdentity is a CF type without Sendable; it is only read again to retry on another port.
++        let retryIdentity = AndroidLinkUncheckedBox(identity)
+         made.stateUpdateHandler = { [weak self, weak made] state in
+             guard let self, let made, self.listener === made || self.listener == nil else { return }
+             switch state {
+@@ -125,7 +127,7 @@ final class AndroidLinkServer: @unchecked Sendable {
+                 self.listener = nil
+                 // The default port is busy: take any other.
+                 if port != nil, case .posix(let code) = error, code == .EADDRINUSE {
+-                    self.listen(identity: identity, txt: txt, port: nil)
++                    self.listen(identity: retryIdentity.value, txt: txt, port: nil)
+                 } else {
+                     self.onState?(.failed(error.localizedDescription))
                  }
-@@ -581,6 +612,20 @@ pub fn spawn_cursor_poll(app: AppHandle, gate: Arc<PollGate>) {
-     });
- }
- 
-+/// The cursor is on the folded window: it takes the mouse, and the page hears
-+/// `closed-hover` (it opens the compact island).
-+fn wake_if_hovered(app: &AppHandle, gate: &PollGate) {
-+    let Some(win) = window(app) else { return };
-+    let (Ok(origin), Ok(size), Some((cx, cy))) = (win.outer_position(), win.inner_size(), cursor_physical()) else { return };
-+    let x = cx - origin.x as f64;
-+    let y = cy - origin.y as f64;
-+    if x >= 0.0 && y >= 0.0 && x <= size.width as f64 && y <= size.height as f64 + 2.0 {
-+        gate.ignoring.store(false, Ordering::Relaxed);
-+        let _ = win.set_ignore_cursor_events(false);
-+        let _ = win.emit("closed-hover", ());
-+    }
-+}
-+
- /// Re-applies click-through after the window or the island changed shape.
- ///
- /// With the cursor poll (Windows) the window takes the mouse again and the next
-```
-
-**File**: `windows/src-tauri/src/lib.rs` (modified, +5/-0)
-```diff
-@@ -172,6 +172,11 @@ fn set_collapsed(app: AppHandle, shared: State<Shared>, collapsed: bool, width:
-     // An older page sends no size: the wake strip, as before.
-     let size = island::clamp_collapsed((width.unwrap_or(island::STRIP_W), height.unwrap_or(island::STRIP_H)));
-     *shared.gate.collapsed_size.lock().unwrap() = size;
-+    // The poll stops first: a tick of it after this could make the closed
-+    // island click-through again (see spawn_cursor_poll).
-+    if collapsed {
-+        shared.gate.set_active(false);
-+    }
-     island::apply_geometry(&app, &pref, collapsed.then_some(size));
-     // The closed island must always take the mouse, and a resize invalidates the flag.
-     island::refresh_click_through(&app, &shared.gate);
-```
-
-**File**: `windows/src-tauri/src/notes/mod.rs` (modified, +52/-0)
-```diff
-@@ -337,8 +337,24 @@ fn spawn_live(
-     stop: Arc<AtomicBool>,
- ) {
-     std::thread::spawn(move || {
-+        let started = std::time::Instant::now();
-+        let mut last_words = std::time::Instant::now();
-         while !stop.load(Ordering::Relaxed) {
-             std::thread::sleep(Duration::from_secs(1));
-+            // A call left recording by mistake keeps the microphone and the
-+            // voice model busy for hours, then takes as long again to write:
-+            // it stops by itself after a long silence, or a very long call.
-+            if let Some(why) = auto_stop(started.elapsed(), last_words.elapsed()) {
-+                crate::log::line(format!("notes: stopped by itself ({why:?})"));
-+                // `stop` here is the live loop's flag: the module's function.
-+                crate::notes::stop(&app);
-+                let text = match why {
-+                    AutoStop::Silence => t("Nobody has spoken for 15 minutes: Coucou stopped recording the call."),
-+                    AutoStop::Length => t("The call has been recorded for 4 hours: Coucou stopped recording it."),
-+                };
-+                pill::announce(&app, "mic", "#F7B32B", text, None, 30);
-+                break;
-+            }
-             let mut channels = vec![(mic.clone(), builder::ME)];
-             if let Some(s) = &system {
-                 channels.push((s.clone(), "others"));
-@@ -351,6 +367,7 @@ fn spawn_live(
-                 if text.is_empty() || stop.load(Ordering::Relaxed) {
-                     continue;
-                 }
-+                last_words = std::time::Instant::now();
-                 let end = start + samples.len() as f64 / speech::SAMPLE_RATE as f64;
-                 taker.change(&app, &id, |n| {
-                     n.lines.push(Line { id: crate::flow::text::new_id(), speaker: speaker.into(), start, end, text });
-@@ -361,6 +378,27 @@ fn spawn_live(
-     });
- }
- 
-+/// Why a call stopped recording by itself.
-+#[derive(Debug, Clone, Copy, PartialEq)]
-+enum AutoStop {
-+    Silence,
-+    Length,
-+}
-+
-+/// Longest stretch with nobody speaking, and longest call.
-+const SILENCE_LIMIT: Duration = Duration::from_secs(15 * 60);
-+const LENGTH_LIMIT: Duration = Duration::from_secs(4 * 3600);
-+
-+fn auto_stop(recording: Duration, since_words: Duration) -> Option<AutoStop> {
-+    if recording >= LENGTH_LIMIT {
-+        Some(AutoStop::Length)
-+    } else if since_words >= SILENCE_LIMIT {
-+        Some(AutoStop::Silence)
-+    } else {
-+        None
-+    }
-+}
-+
- pub fn stop(app: &AppHandle) {
-     let Some(taker) = get(app) else { return };
-     let Some(mut rec) = taker.recording.lock().unwrap().take() else { return };
-@@ -716,3 +754,17 @@ pub fn notes_export(taker: State<Arc<NoteTaker>>, id: String) -> Result<String,
-     crate::platform::reveal_folder(&dir.to_string_lossy());
-     Ok(path.to_string_lossy().to_string())
- }
-+
-+#[cfg(test)]
-+mod auto_stop_tests {
-+    use super::*;
-+
-+    #[test]
-+    fn a_forgotten_call_stops_by_itself() {
-+        let min = |m: u64| Duration::from_secs(m * 60);
-+        assert_eq!(auto_stop(min(60), min(2)), None);
-+        assert_eq!(auto_stop(min(60), min(15)), Some(AutoStop::Silence));
-+        assert_eq!(auto_stop(min(240), min(1)), Some(AutoStop::Length));
-+        assert_eq!(auto_stop(min(14), min(14)), None);
-+    }
-+}
-```
-
-**File**: `windows/src/i18n/extra.json` (modified, +30/-0)
-```diff
-@@ -7488,6 +7488,36 @@
-       "tr": "Çalan şarkı",
-       "ko": "재생 중인 음악",
-       "ja": "再生中の曲"
-+    },
-+    "Nobody has spoken for 15 minutes: Coucou stopped recording the call.": {
-+      "zh-Hans": "已有 15 分钟没人说话：Coucou 已停止录制通话。",
-+      "hi": "15 मिनट से कोई नहीं बोला: Coucou ने कॉल की रिकॉर्डिंग रोक दी।",
-+      "es": "Nadie ha hablado en 15 minutos: Coucou dejó de grabar la llamada.",
-+      "ar": "لم يتحدث أحد منذ 15 دقيقة: أوقف Coucou تسجيل المكالمة.",
-+      "fr": "Personne n'a parlé depuis 15 minutes : Coucou a arrêté d'enregistrer l'appel.",
-+      "bn": "১৫ মিনিট ধরে কেউ কথা বলেনি: Coucou কলের রেকর্ডিং বন্ধ করেছে।",
-+      "pt-BR": "Ninguém fala há 15 minutos: o Coucou parou de gravar a chamada.",
-+      "ru": "Уже 15 минут никто не говорит: Coucou остановил запись звонка.",
-+      "id": "Tidak ada yang bicara selama 15 menit: Coucou berhenti merekam panggilan.",
-+      "de": "Seit 15 Minuten hat niemand gesprochen: Coucou hat die Aufnahme des Anrufs beendet.",
-+      "tr": "15 dakikadır kimse konuşmadı: Coucou aramayı kaydetmeyi durdurdu.",
-+      "ko": "15분 동안 아무도 말하지 않아 Coucou가 통화 녹음을 멈췄습니다.",
-+      "ja": "15 分間だれも話していないため、Coucou は通話の録音を止めました。"
-+    },
-+    "The call has been recorded for 4 hours: Coucou stopped recording it.": {
-+      "zh-Hans": "通话已录制 4 小时：Coucou 已停止录制。",
-+      "hi": "कॉल 4 घंटे से रिकॉर्ड हो रही थी: Coucou ने रिकॉर्डिंग रोक दी।",
-+      "es": "La llamada lleva 4 horas grabándose: Coucou dejó de grabarla.",
-+      "ar": "استمر تسجيل المكالمة 4 ساعات: أوقف Coucou التسجيل.",
-+      "fr": "L'appel est enregistré depuis 4 heures : Coucou a arrêté l'enregistrement.",
-+      "bn": "কলটি ৪ ঘণ্টা ধরে রেকর্ড হচ্ছিল: Coucou রেকর্ডিং বন্ধ করেছে।",
-+      "pt-BR": "A chamada está sendo gravada há 4 horas: o Coucou parou de gravá-la.",
-+      "ru": "Звонок записывается уже 4 часа: Coucou остановил запись.",
-+      "id": "Panggilan sudah direkam selama 4 jam: Coucou berhenti merekamnya.",
-+      "de": "Der Anruf wurde 4 Stunden lang aufgenommen: Coucou hat die Aufnahme beendet.",
-+      "tr": "Arama 4 saattir kaydediliyor: Coucou kaydı durdurdu.",
-+      "ko": "통화를 4시간 동안 녹음해 Coucou가 녹음을 멈췄습니다.",
-+      "ja": "通話を 4 時間録音したため、Coucou は録音を止めました。"
+@@ -395,3 +397,9 @@ final class AndroidLinkConnection: @unchecked Sendable {
+         })
      }
-   }
  }
-```
-
-**File**: `windows/src/island/island.ts` (modified, +45/-1)
-```diff
-@@ -75,6 +75,11 @@ export class Island {
-   private closedKey = "";
-   /** Width of the closed island for what it shows now. */
-   private closedW = 120;
-+  /** Mochi's little life in the closed island: where he looks, and until when
-+   *  the loop runs for what he is doing (a blink, a glance). */
-+  private closedLook = { x: 0, y: 0 };
-+  private closedAwakeUntil = 0;
-+  private closedLife: number | null = null;
-   /** The size the window was last folded to, so a new one is only sent on a change. */
-   private collapsedTo = { w: 0, h: 0 };
-   private countdown!: HTMLElement;
-@@ -449,6 +454,7 @@ export class Island {
-     // Folding all the way: the closed island's width for what it will show.
-     if (mode === "hidden") this.updateClosed();
-     else this.closedEl.classList.remove("on");
-+    this.scheduleClosedLife();
-     this.updateWindowCollapsed();
-     this.animateGeometry(modeOrder(mode) < modeOrder(prev));
-     State.notify();
-@@ -841,6 +847,39 @@ export class Island {
-     }
-   }
- 
-+  /**
-+   * Mochi in the closed island now and then blinks or glances around, as he
-+   * does on a Mac without a notch: a few frames every few seconds, the loop
-+   * asleep in between. Nothing runs for the other closed islands.
-+   */
-+  private scheduleClosedLife() {
-+    if (this.closedLife != null) window.clearTimeout(this.closedLife);
-+    this.closedLife = null;
-+    if (State.mode !== "hidden" || closedIsland(State.settings.closedIsland) !== "mochi") {
-+      this.closedLook = { x: 0, y: 0 };
-+      return;
-+    }
-+    this.closedLife = window.setTimeout(() => {
-+      this.closedLife = null;
-+      if (State.mode !== "hidden" || State.paused) return this.scheduleClosedLife();
-+      if (Math.random() < 0.55) {
-+        this.engine.blink();
-+      } else {
-+        this.closedLook = { x: (Math.random() * 2 - 1) * 0.8, y: (Math.random() * 2 - 1) * 0.3 };
-+      }
-+      this.closedAwakeUntil = performance.now() + 700;
-+      this.ensureRunning();
-+      this.scheduleClosedLife();
-+    }, 2500 + Math.random() * 3500);
-+  }
 +
-+  /** The pointer is on the folded window (Rust's `closed-hover`): the island wakes. */
-+  wakeFromClosed() {
-+    if (State.mode !== "hidden") return;
-+    Sound.resume();
-+    this.fsm.mouseEntered();
-+  }
-+
-   /** Tells Rust the folded window's size: the closed island's, or none (the strip). */
-   private sendCollapsedSize(force = false) {
-     const size = this.closedShows ? { w: this.closedW, h: CLOSED_H } : { w: 0, h: 0 };
-@@ -1178,7 +1217,8 @@ export class Island {
-     const botMoving = !this.botCx.settled || !this.botCy.settled || !this.botSize.settled;
-     // Closed, only the folding — and Mochi reaching his place in the closed island.
-     const busy = State.mode === "hidden"
--      ? settling || (botMoving && closedIsland(State.settings.closedIsland) === "mochi")
-+      ? settling || (closedIsland(State.settings.closedIsland) === "mochi" &&
-+        (botMoving || nowMs < this.closedAwakeUntil))
-       : settling ||
-         !this.botCx.settled || !this.botCy.settled || !this.botSize.settled ||
-         greetingActive || this.engine.busy || UploadSeq.isActive || viewAnimating;
-@@ -1304,12 +1344,15 @@ export class Island {
- 
-   /** BotCanvasView.lookX / lookY — tanh of the distance to the bot. */
-   private lookX(): number {
-+    // In the closed island the cursor isn't followed: he looks around by himself.
-+    if (State.mode === "hidden") return this.closedLook.x;
-     const rect = this.islandRect();
-     const botScreenX = rect.x + this.botCx.value;
-     return Math.tanh((State.mouse.x - botScreenX) / 260);
-   }
- 
-   private lookY(): number {
-+    if (State.mode === "hidden") return this.closedLook.y;
-     return -Math.tanh((State.mouse.y - this.botCy.value) / 200);
-   }
- 
-@@ -1425,6 +1468,7 @@ export class Island {
-       this.animateGeometry(true);
-       if (this.collapsed) this.sendCollapsedSize();
-     }
-+    this.scheduleClosedLife();
-     Sound.setEnabled(State.settings.soundEnabled);
-     Sound.setVolume(State.settings.soundVolume);
-     this.fsm.homeToPetitDelay = State.settings.autoCloseInterval;
-```
-
-**File**: `windows/src/main.ts` (modified, +1/-0)
-```diff
-@@ -63,6 +63,7 @@ async function main() {
- 
-   await onEvent<{ x: number; y: number }>("cursor", ({ x, y }) => island.onCursor(x, y));
-   await onEvent<boolean>("pointer-inside", (inside) => island.setPointerInside(inside));
-+  await onEvent<null>("closed-hover", () => island.wakeFromClosed());
- 
-   /** Pause has to reach Rust too, or the pollers keep calling out. */
-   const setPaused = (on: boolean) => {
-```
-
----
-
-### Incident Patch 2: `f61c428c` (2026-11-03)
-**Commit Message**: Release prep: Windows and Linux 0.5.9
-
-The island never disappears (Mochi or the time when closed, ✕ to fold),
-dictation keeps your language, any dictation key, silence while you speak
-on Windows, the Coucou window comes alive, a forgotten call stops by
-itself; Claude API models (#1000) and Flow saves (#1003) by @lazarevtill.
-CHANGELOG, README and What's new in the 14 languages.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_01LJm3SRL9k3gBPaVtfPhwcT
-
-**File**: `CHANGELOG.md` (modified, +13/-0)
-```diff
-@@ -1,5 +1,18 @@
- # Changelog
- 
-+## Windows and Linux 0.5.9 — November 3, 2026
-+
-+- **The island never disappears** — once closed, a small island stays at the top of the screen, as on a Mac without a notch: Mochi in it (he blinks and looks around), or the time, the date, your Claude usage or what's playing (Settings → General → Closed island shows). Hovering it brings the compact island, and it always wakes up again
-+- **✕ folds the open island** — at the top right, as on the Mac, with the Mac's icons in the header; the Claude plan card fills its card again
-+- **Dictation keeps your language** — it no longer starts in English and switches mid-sentence when you speak right away
-+- **Your own dictation key** — Left Ctrl, Left Alt and Left Shift join the list, or record a shortcut of your own (Alt + Shift + F, F9…). On Windows its letter no longer reaches the app in front, and a held Alt or Win opens no menu
-+- **Silence while you speak** *(Windows)* — videos, music and calls go quiet while Coucou listens to you, then come back (Flow → Settings → Microphone)
-+- **The Coucou window comes alive on Windows** — the particles and the little Mochis of each page now show, on the deep black, and follow your voice while you dictate; thin scrollbars without arrows, one box for the settings search
-+- **A forgotten call stops by itself** — the Notetaker stops recording after 15 minutes with nobody speaking, or after 4 hours
-+- **Lighter on the processor** — the island no longer follows a cursor that is far from it, and the closed island polls nothing
-+- **Claude API models** — the model picker lists your account's models and keeps your choice (#1000 by @lazarevtill)
-+- **Flow keeps your edits** — a dictionary, snippet, style or history change that can't be saved says so and lets you retry (#1003 by @lazarevtill)
-+
- ## 0.5.8 — October 31, 2026
- 
- Fixes by @Ohualtex.
-```
-
-**File**: `README.md` (modified, +3/-2)
-```diff
-@@ -181,6 +181,7 @@ Windows and Linux are released together, under the `windows-v*` and `linux-v*` t
- 
- | Windows & Linux | Date | Highlights |
- |---------|------|------------|
-+| 0.5.9 · [Windows](https://github.com/Louis-CFM/coucou/releases/tag/windows-v0.5.9) · [Linux](https://github.com/Louis-CFM/coucou/releases/tag/linux-v0.5.9) | Nov 3, 2026 | The island never disappears (Mochi or the time when closed), ✕ to fold it, dictation keeps your language, your own dictation key, silence while you speak |
- | 0.5.8 · [Windows](https://github.com/Louis-CFM/coucou/releases/tag/windows-v0.5.8) · [Linux](https://github.com/Louis-CFM/coucou/releases/tag/linux-v0.5.8) | Oct 31, 2026 | 14 fixes and features by @Ohualtex: permission requests queue, Claude Desktop cards and pill, plan usage in the compact island, Flow pill in a corner |
- | 0.5.7 · [Windows](https://github.com/Louis-CFM/coucou/releases/tag/windows-v0.5.7) · [Linux](https://github.com/Louis-CFM/coucou/releases/tag/linux-v0.5.7) | Oct 31, 2026 | Mail with classic Outlook on Windows: search, filters, automatic sorting, mail plans from the chat; search the settings |
- | 0.5.6 · [Windows](https://github.com/Louis-CFM/coucou/releases/tag/windows-v0.5.6) · [Linux](https://github.com/Louis-CFM/coucou/releases/tag/linux-v0.5.6) | Oct 30, 2026 | Chat on your own AI subscription (Claude Code, Antigravity, Gemini CLI, Codex, Cursor, Copilot); Korean and Japanese |
-@@ -262,7 +263,7 @@ Download **[Coucou-Windows.msi](https://github.com/Louis-CFM/coucou/releases/dow
- 
- This is only because the app isn't signed with a paid certificate yet. Coucou is open source, and Microsoft Defender scans the installer as clean.
- 
--**Windows and Linux 0.5.8** bring 14 fixes and features by @Ohualtex: permission requests wait their turn, Claude Desktop cards on Windows and its pill on Linux, plan usage in the compact island. **0.5.7** bring **Mail** to Windows with classic Outlook (search, automatic sorting, mail plans from the chat) and a search field for the settings. **0.5.6** chat on your own AI subscription (Claude Code, Antigravity, Gemini CLI, Codex, Cursor, Copilot) and speak Korean and Japanese. **0.5.5** answer on your Claude plan through Claude Code when no API key is saved. **0.5.4** bring 25 reliability fixes from the community. **0.5.3** bring **WhatsApp** to the island (experimental), with the gateway installed in one click. **0.5.2** turn Mochi blue when a new version waits and show what it brings after the update; they add **GitLab and Gitea** pills. **0.5.1** tell you when a new version is out (once you agree) and, on Windows, install it in one click; they also speak German and Turkish. **0.5.0** caught up with the Mac: Coucou is now an app with its own window in the taskbar, **Flow dictation** anywhere (hold right Ctrl, speak, let go) with Parakeet running offline on your computer, the **Notetaker** for your calls, and **« OK Coucou »** to talk to Mochi, powered by Claude with your key. On Linux, dictation works on X11 and Wayland. 0.4.0 paired with [Coucou for Android](#coucou-for-android): approve, answer and chat from your Android phone (Settings → Android phone, off by default). 0.3.0 added open on hover, your own sounds, a colour of your own for each Mochi and the Mochi-to-desktop shortcut; on Linux, the Spotify pill with Mochi dancing to it, global shortcuts on Wayland and "Open terminal" that brings the terminal forward. 0.2.0 caught up with the Mac: Codex, Copilot CLI, Muse Code and six more agents with approvals from the island, answers to Claude's questions, live diffs, GitHub pull requests and CI, plan usage, local models, the wardrobe, Mochi on the desktop, keyboard shortcuts, the weekly recap and 10 languages. See the [changelog](CHANGELOG.md).
-+**Windows and Linux 0.5.9** keep a small island at the top of the screen once it is closed (Mochi, the time or your Claude usage in it), fold it with ✕, keep your language when you dictate, take any dictation key you like and, on Windows, quiet the other apps while you speak. **0.5.8** bring 14 fixes and features by @Ohualtex: permission requests wait their turn, Claude Desktop cards on Windows and its pill on Linux, plan usage in the compact island. **0.5.7** bring **Mail** to Windows with classic Outlook (search, automatic sorting, mail plans from the chat) and a search field for the settings. **0.5.6** chat on your own AI subscription (Claude Code, Antigravity, Gemini CLI, Codex, Cursor, Copilot) and speak Korean and Japanese. **0.5.5** answer on your Claude plan through Claude Code when no API key is saved. **0.5.4** bring 25 reliability fixes from the community. **0.5.3** bring **WhatsApp** to the island (experimental), with the gateway installed in one click. **0.5.2** turn Mochi blue when a new version waits and show what it brings after the update; they add **GitLab and Gitea** pills. **0.5.1** tell you when a new version is out (once you agree) and, on Windows, install it in one click; they also speak Ge
-```
-
-**File**: `linux/arch/PKGBUILD` (modified, +1/-1)
-```diff
-@@ -4,7 +4,7 @@
- 
- pkgname=coucou-git
- _pkgname=coucou
--pkgver=0.5.8
-+pkgver=0.5.9
- pkgrel=1
- pkgdesc="Mochi lives at the top of your screen and keeps an eye on your Claude Code sessions"
- arch=('x86_64' 'aarch64')
-```
-
-**File**: `windows/Cargo.lock` (modified, +2/-2)
-```diff
-@@ -804,7 +804,7 @@ dependencies = [
- 
- [[package]]
- name = "coucou"
--version = "0.5.8"
-+version = "0.5.9"
- dependencies = [
-  "arboard",
-  "cpal",
-@@ -841,7 +841,7 @@ dependencies = [
- 
- [[package]]
- name = "coucou-hook"
--version = "0.5.8"
-+version = "0.5.9"
- dependencies = [
-  "libc",
-  "serde_json",
-```
-
-**File**: `windows/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -3,7 +3,7 @@ members = ["src-tauri", "hook"]
- resolver = "2"
- 
- [workspace.package]
--version = "0.5.8"
-+version = "0.5.9"
- edition = "2021"
- license = "MIT"
- 
-```
-
-**File**: `windows/package-lock.json` (modified, +2/-2)
-```diff
-@@ -1,12 +1,12 @@
- {
-   "name": "coucou-windows",
--  "version": "0.5.8",
-+  "version": "0.5.9",
-   "lockfileVersion": 3,
-   "requires": true,
-   "packages": {
-     "": {
-       "name": "coucou-windows",
--      "version": "0.5.8",
-+      "version": "0.5.9",
-       "dependencies": {
-         "@tauri-apps/api": "^2"
-       },
-```
-
-**File**: `windows/package.json` (modified, +1/-1)
-```diff
-@@ -1,7 +1,7 @@
- {
-   "name": "coucou-windows",
-   "private": true,
--  "version": "0.5.8",
-+  "version": "0.5.9",
-   "type": "module",
-   "scripts": {
-     "dev": "vite",
-```
-
-**File**: `windows/src-tauri/tauri.conf.json` (modified, +1/-1)
-```diff
-@@ -1,7 +1,7 @@
- {
-   "$schema": "https://schema.tauri.app/config/2",
-   "productName": "Coucou",
--  "version": "0.5.8",
-+  "version": "0.5.9",
-   "identifier": "fr.louisraille.coucou",
-   "build": {
-     "beforeDevCommand": "npm run dev",
-```
-
----
-
-### Incident Patch 3: `968710a7` (2026-11-02)
-**Commit Message**: Windows and Linux: dictation keeps its language from the first word; one box for the settings search
-
-A dictation starts the moment the key goes down: the microphone opens
-with a click and the first word is already under way. Parakeet, which
-guesses the language by itself, then often started in English and went
-on mixing ('Okay, that marche plutôt bien. Moi, le truc is that…'). Each
-stretch now reaches the model with half a second of silence before it and
-a little after, as a call always has, and stays in the language spoken.
-Word times are shifted back, so the Notetaker's timeline is unchanged.
-
-The window's text-field style drew a second box inside the sidebar's
-search field.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_01LJm3SRL9k3gBPaVtfPhwcT
-
-**File**: `windows/src-tauri/src/speech/mod.rs` (modified, +58/-3)
-```diff
-@@ -338,6 +338,26 @@ pub struct Transcript {
- /// quietest, near this length.
- const MAX_CHUNK_SECONDS: f64 = 28.0;
- 
-+/// Silence given to the model before and after each stretch, in samples.
-+///
-+/// A dictation starts the moment the key goes down: the microphone opens with
-+/// a little click and the first word is already under way. Parakeet, which
-+/// guesses the language by itself, then often starts in English and keeps
-+/// going ("Okay, that marche plutôt bien. Moi, le truc is that…"). Half a
-+/// second of silence first, as a call always has, and it hears the language
-+/// that is spoken (tests: `a_sudden_start_keeps_its_language`).
-+const LEAD_SILENCE: usize = SAMPLE_RATE as usize / 2;
-+const TAIL_SILENCE: usize = SAMPLE_RATE as usize * 3 / 10;
-+
-+/// `chunk` between the silences the model is given it with.
-+pub fn padded(chunk: &[f32]) -> Vec<f32> {
-+    let mut out = Vec::with_capacity(LEAD_SILENCE + chunk.len() + TAIL_SILENCE);
-+    out.resize(LEAD_SILENCE, 0.0);
-+    out.extend_from_slice(chunk);
-+    out.resize(out.len() + TAIL_SILENCE, 0.0);
-+    out
++/// Carries a value the compiler cannot prove Sendable into a @Sendable closure.
++private struct AndroidLinkUncheckedBox<T>: @unchecked Sendable {
++    let value: T
++    init(_ value: T) { self.value = value }
 +}
-+
- /// Transcribes 16 kHz mono audio.
- pub fn transcribe(samples: &[f32]) -> Option<Transcript> {
-     let rec = recognizer()?;
-@@ -347,11 +367,19 @@ pub fn transcribe(samples: &[f32]) -> Option<Transcript> {
-             continue;
-         }
-         let stream = rec.create_stream();
--        stream.accept_waveform(SAMPLE_RATE as i32, chunk);
-+        let audio = padded(chunk);
-+        stream.accept_waveform(SAMPLE_RATE as i32, &audio);
-         rec.decode(&stream);
-         let Some(result) = stream.get_result() else { continue };
--        let start = offset as f64 / SAMPLE_RATE as f64;
--        let words = words_from_tokens(&result.tokens, result.timestamps.as_deref().unwrap_or(&[]), start, chunk.len() as f64 / SAMPLE_RATE as f64);
-+        // The words' times count from the start of the silence: take it off.
-+        let start = (offset as f64 - LEAD_SILENCE as f64) / SAMPLE_RATE as f64;
-+        let mut words = words_from_tokens(&result.tokens, result.timestamps.as_deref().unwrap_or(&[]), start, audio.len() as f64 / SAMPLE_RATE as f64);
-+        // A word the model places a hair into the silence starts with the audio.
-+        let from = offset as f64 / SAMPLE_RATE as f64;
-+        for w in &mut words {
-+            w.start = w.start.max(from);
-+            w.end = w.end.max(w.start);
-+        }
-         let text = result.text.trim();
-         if !text.is_empty() {
-             if !out.text.is_empty() {
-@@ -459,6 +487,33 @@ mod tests {
- /// With the models downloaded: `COUCOU_TEST_WAV=… cargo test -- --ignored speech`.
- #[cfg(test)]
- mod with_models {
-+    #[test]
-+    fn the_model_hears_silence_around_the_words() {
-+        let chunk = vec![0.5f32; 1000];
-+        let audio = super::padded(&chunk);
-+        assert_eq!(audio.len(), super::LEAD_SILENCE + 1000 + super::TAIL_SILENCE);
-+        assert!(audio[..super::LEAD_SILENCE].iter().all(|&s| s == 0.0));
-+        assert_eq!(&audio[super::LEAD_SILENCE..super::LEAD_SILENCE + 1000], &chunk[..]);
-+        assert!(audio[super::LEAD_SILENCE + 1000..].iter().all(|&s| s == 0.0));
-+    }
-+
-+    /// A dictation that starts with the microphone's click and the first word
-+    /// already under way (a French one, from `COUCOU_SUDDEN_WAV`, 16 kHz):
-+    /// Parakeet used to write half of it in English.
-+    /// `cargo test -p coucou --lib a_sudden_start -- --ignored --nocapture`
-+    #[test]
-+    #[ignore]
-+    fn a_sudden_start_keeps_its_language() {
-+        let path = std::env::var("COUCOU_SUDDEN_WAV").expect("COUCOU_SUDDEN_WAV");
-+        let samples = super::audio::read_wav(std::path::Path::new(&path)).unwrap();
-+        let t = super::transcribe(&samples).expect("models");
-+        println!("{}", t.text);
-+        let english = ["that", "is", "for", "it", "when", "the"];
-+        let words: Vec<String> = t.text.split(|c: char| !c.is_alphabetic()).map(str::to_lowercase).collect();
-+        assert!(!words.iter().any(|w| english.contains(&w.as_str())), "{}", t.text);
-+        assert!(t.words.first().is_some_and(|w| w.start >= 0.0));
-+    }
-+
-     #[test]
-     #[ignore]
-     fn transcribes_a_recording() {
 ```
 
-**File**: `windows/src/hub/hub.css` (modified, +14/-0)
+**File**: `android/i18n/REVIEW.md` (modified, +6/-6)
 ```diff
-@@ -96,6 +96,20 @@ body.hub-window {
-   padding: 0;
- }
+@@ -12,15 +12,15 @@ Louis's. A fix is a change to the language's file in `i18n/translations/`, then
  
-+/* The window's text fields (settings.css, input[type="text"]) weigh more than
-+   one class and drew a second box inside this one: the field is the box. */
-+.hub-search .hub-search-input,
-+.hub-search .hub-search-input:focus {
-+  border: 0;
-+  background: transparent;
-+  box-shadow: none;
-+  outline: none;
-+  height: auto;
-+  padding: 0;
-+  margin: 0;
-+  border-radius: 0;
-+}
-+
- .hub-search-input::placeholder {
-   color: var(--hub-muted);
- }
+ ## Español (es)
+ 
+-381 of 454 strings and 6 plural groups.
++383 of 454 strings and 6 plural groups.
+ 
+-`app_name`, `about_credit`, `about_repo`, `licences_title`, `licences_intro`, `about_assets`, `widget_description`, `widget_glance_label`, `widget_solo_label`, `widget_list_label`, `widget_solo_description`, `widget_list_description`, `widget_mochi_description`, `widget_badge_description`, `widget_big_label`, `widget_big_description`, `widget_pill_label`, `widget_pill_description`, `widget_alert_label`, `widget_alert_description`, `widget_ring_description`, `widget_today_label`, `widget_today_description`, `widget_mood_label`, `widget_mood_description`, `widget_today_unit`, `widget_usage_off`, `widget_big_usage_off`, `widget_big_usage_off_line`, `widget_ring_cd`, `widget_today_cd`, `widget_pill_cd`, `widget_initial_title`, `widget_initial_line`, `widget_initial_count`, `widget_btn_home`, `widget_btn_chat_cd`, `widget_btn_settings_cd`, `widget_btn_recent_cd`, `widget_btn_session_cd`, `widget_btn_pair_cd`, `widget_sample_claude`, `widget_sample_claude_short`, `widget_sample_codex`, `widget_sample_gemini`, `widget_sample_approval`, `widget_sample_working`, `widget_sample_finished`, `widget_sample_header`, `widget_sample_one`, `widget_sample_two_waiting`, `widget_sample_ring_pct`, `widget_sample_ring_label`, `widget_sample_pct_a`, `widget_sample_pct_b`, `widget_sample_codex_week`, `widget_sample_today`, `widget_sample_two_agents`, `widget_sample_thinking`, `widget_sample_idle`, `widget_sample_waiting`, `pair_button`, `approval_title`, `action_unpair`, `demo_leave`, `gallery`, `pair_paste_short`, `pairing_headline`, `pairing_help`, `pairing_credit`, `pairing_about`, `paste_title`, `paste_hint`, `approval_later`, `approval_wants`, `approval_too_long`, `approval_on_computer`, `approval_caution`, `approval_show_cmd`, `approval_hide_cmd`, `question_title`, `question_body`, `question_see_answer`, `question_position`, `question_pick_many`, `question_send`, `question_confirm_title`, `question_sent`, `question_not_sent`, `question_see`, `home_running`, `home_empty_title`, `home_empty_hint`, `recent_all`, `status_looking`, `discovery_title`, `discovery_body`, `discovery_enter_address`, `address_title`, `address_hint`, `address_save`, `address_bad`, `chat_off_not_paired_body`, `chat_off_offline_body`, `chat_off_title`, `chat_nomodel_title`, `chat_off_hint`, `chat_go_pair`, `chat_go_settings`, `tab_home`, `tab_home_alert`, `design_note`, `pair_clipboard`, `notif_unlock`, `msg_not_pending`, `msg_bad_link`, `msg_rejected`, `msg_link_error`, `msg_need_lock`, `approval_hint`, `overlay_title`, `overlay_hint`, `msg_overlay_permission`, `settings_sound`, `notify_done`, `notify_done_hint`, `quiet_hours`, `quiet_hint`, `quiet_from`, `history_empty`, `history_note`, `notif_finished`, `notif_error`, `notif_question`, `notif_ratelimit`, `island_answer_on_pc`, `state_ready`, `state_working`, `state_thinking`, `state_searching`, `state_approval`, `state_question`, `state_error`, `state_finished`, `state_ratelimit`, `state_sleeping`, `state_dizzy`, `link_pair`, `link_approval`, `overlay_missing`, `settings_section_computer`, `settings_section_away`, `relay_use`, `relay_use_hint`, `relay_line_none`, `relay_line_off`, `relay_line_direct`, `relay_line_via`, `relay_line_waiting`, `relay_line_access`, `relay_line_taken`, `relay_line_rate`, `relay_line_unreachable`, `relay_line_away`, `channel_link`, `channel_link_description`, `channel_updates_description`, `channel_approvals_quiet`, `channel_approvals_quiet_description`, `channel_approvals`, `channel_approvals_description`, `language_system`, `language_picker_hint`, `settings_theme`, `theme_light`, `theme_dark`, `settings_dynamic`, `settings_dynamic_hint`, `settings_motion`, `motion_on`, `motion_off`, `settings_motion_hint`, `settings_section_notices`, `settings_section_requests`, `settings_no_wake`, `settings_no_wake_hint`, `settings_vibration`, `vibration_standard`, `vibration_short`, `vibration_off`, `settings_requests_note`, `settings_section_more`, `settings_section_about`, `settings_computer_none`, `chat_note`, `chat_empty`, `chat_stop`, `chat_clear_title`, `chat_clear_body`, `chat_model`, `chat_count`, `chat_ref_too_long`, `chat_ref_no_model`, `chat_ref_busy`, `chat_ref_offline`, `chat_err_off`, `chat_err_not_allowed`, `chat_err_busy`, `chat_err_rate`, `chat_err_too_long`, `chat_err_empty`, `chat_err_no_key`, `chat_err_unreachable`, `chat_err_auth`, `chat_err_provider`, `chat_err_canceled`, `chat_err_internal`, `chat_err_connection`, `chat_err_interrupted`, `session_details`, `session_last`, `session_steps`, `session_step_working`, `session_step_done`, `session_no_steps`, `session_hint`, `session_ended`, `session_project`, `scan_button`, `scan_title`, `scan_hint`, `scan_not_pairing`, `scan_why`, `scan_allow`, `scan_blocked`, `scan_paste_instead`, `scan_camera_error`, `pair_confirm_t
+```
+
+**File**: `windows/src/i18n/extra.json` (modified, +0/-120)
+```diff
+@@ -4264,21 +4264,6 @@
+       "ko": "네트워크가 바뀌어도 휴대폰이 이 컴퓨터를 알아서 다시 찾아요. 이 스위치가 켜져 있을 때만 로컬 네트워크에 알려요. 일부 핫스폿이나 게스트 네트워크에선 막힐 수 있어요.",
+       "ja": "ネットワークが変わっても、スマートフォンはこのパソコンを自動で見つけ直します。このスイッチがオンの間だけ、ローカルネットワークに告知されます。一部のホットスポットやゲストネットワークではブロックされます。"
+     },
+-    "Let the phone answer Claude Code's questions": {
+-      "zh-Hans": "允许手机回答 Claude Code 的提问",
+-      "hi": "फ़ोन को Claude Code के सवालों के जवाब देने दें",
+-      "es": "Dejar que el teléfono responda a las preguntas de Claude Code",
+-      "ar": "السماح للهاتف بالإجابة عن أسئلة Claude Code",
+-      "fr": "Laisser le téléphone répondre aux questions de Claude Code",
+-      "bn": "ফোনকে Claude Code-এর প্রশ্নের উত্তর দিতে দিন",
+-      "pt-BR": "Deixar o celular responder às perguntas do Claude Code",
+-      "ru": "Разрешить телефону отвечать на вопросы Claude Code",
+-      "id": "Izinkan ponsel menjawab pertanyaan Claude Code",
+-      "de": "Fragen von Claude Code auf dem Telefon beantworten",
+-      "tr": "Telefon Claude Code'un sorularını yanıtlayabilsin",
+-      "ko": "휴대폰에서 Claude Code 질문에 답하기",
+-      "ja": "スマートフォンから Claude Code の質問に答える"
+-    },
+     "The phone shows each question with its options. Every answer is confirmed with the phone's fingerprint or screen lock.": {
+       "zh-Hans": "手机会显示每个问题及其选项。每个回答都需要用手机的指纹或锁屏来确认。",
+       "hi": "फ़ोन हर सवाल को उसके विकल्पों के साथ दिखाता है। हर जवाब की पुष्टि फ़ोन के फ़िंगरप्रिंट या स्क्रीन लॉक से होती है।",
+@@ -4294,21 +4279,6 @@
+       "ko": "휴대폰에 질문과 선택지가 떠요. 답할 때마다 휴대폰 지문이나 화면 잠금으로 확인해요.",
+       "ja": "スマートフォンに質問と選択肢が表示されます。回答はすべてスマートフォンの指紋認証または画面ロックで確認されます。"
+     },
+-    "Android phone": {
+-      "zh-Hans": "Android 手机",
+-      "hi": "Android फ़ोन",
+-      "es": "Teléfono Android",
+-      "ar": "هاتف Android",
+-      "fr": "Téléphone Android",
+-      "bn": "Android ফোন",
+-      "pt-BR": "Celular Android",
+-      "ru": "Телефон Android",
+-      "id": "Ponsel Android",
+-      "de": "Android-Telefon",
+-      "tr": "Android telefon",
+-      "ko": "Android 휴대폰",
+-      "ja": "Android スマートフォン"
+-    },
+     "Send your agents' sessions to Coucou for Android and answer permission requests from the phone. Off by default; it only listens on your local network.": {
+       "zh-Hans": "把你的智能体会话发送到 Coucou for Android，并在手机上回应权限请求。默认关闭；仅在本地网络中监听。",
+       "hi": "अपने एजेंट के सत्र Coucou for Android को भेजें और फ़ोन से अनुमति के अनुरोधों का जवाब दें। डिफ़ॉल्ट रूप से बंद; यह केवल आपके स्थानीय नेटवर्क पर सुनता है।",
+@@ -4369,21 +4339,6 @@
+       "ko": "켜지 못했어요: {error}",
+       "ja": "オンにできませんでした：{error}"
+     },
+-    "Show pairing code": {
+-      "zh-Hans": "显示配对码",
+-      "hi": "पेयरिंग कोड दिखाएँ",
+-      "es": "Mostrar código de emparejamiento",
+-      "ar": "إظهار رمز الاقتران",
+-      "fr": "Afficher le code d'association",
+-      "bn": "পেয়ারিং কোড দেখান",
+-      "pt-BR": "Mostrar código de pareamento",
+-      "ru": "Показать код сопряжения",
+-      "id": "Tampilkan kode penyandingan",
+-      "de": "Kopplungscode anzeigen",
+-      "tr": "Eşleştirme kodunu göster",
+-      "ko": "페어링 코드 보기",
+-      "ja": "ペアリングコードを表示"
+-    },
+     "Phones connected: {count}": {
+       "zh-Hans": "已连接的手机：{count}",
+       "hi": "जुड़े फ़ोन: {count}",
+@@ -4414,36 +4369,6 @@
+       "ko": "Android용 Coucou에서 카메라로 이 코드를 스캔하거나 링크를 붙여넣어 주세요.",
+       "ja": "Android 版 Coucou で、このコードをカメラで読み取るかリンクを貼り付けてください。"
+     },
+-    "Copy link": {
+-      "zh-Hans": "复制链接",
+-      "hi": "लिंक कॉपी करें",
+-      "es": "Copiar enlace",
+-      "ar": "نسخ الرابط",
+-      "fr": "Copier le lien",
+-      "bn": "লিংক কপি করুন",
+-      "pt-BR": "Copiar link",
+-      "ru": "Скопировать ссылку",
+-      "id": "Salin tautan",
+-      "de": "Link kopieren",
+-      "tr": "Bağlantıyı kopyala",
+-      "ko": "링크 복사",
+-      "ja": "リンクをコピー"
+-    },
+-    "Pair again": {
+-      "zh-Hans": "重新配对",
+-      "hi": "फिर से पेयर करें",
+-      "es": "Emparejar de nuevo",
+-      "ar": "إعادة الاقتران",
+-      "fr": "Associer à nouveau",
+-      "bn": "আবার পেয়ার করুন",
+-      "pt-BR": "Parear de novo",
+-      "ru": "Сопрячь заново",
+-      "id": "Sandingkan ulang",
+-      "de": "Erneut koppeln",
+-      "tr": "Yeniden eşleştir",
+-      "ko": "다시 페어링",
+-      "ja": "もう一度ペアリング"
+-    },
+     "The phone that was paired is disconnected and needs the new code.": {
+       "zh-Hans": "已配对的手机会断开连接，并需要新的配对码。",
+       "hi": "जो फ़ोन पेयर था वह डिस्कनेक्ट हो जाएगा और उसे नया कोड चाहिए।",
+@@ -4579,21 +4504,6 @@
+       "ko": "준비된 제공업체가 없어요. 먼저 API 키를 넣거나 로컬 모델을 연결해 주세요.",
+       "ja": "使えるプロバイダがありません：先に API キーを追加するか、ローカルモデルに接続してください。"
+     },
+-    "Show session details on the phone": {
+-      "zh-Hans": "在手机上显示会话详情",
+-      "hi": "फ़ोन पर सत्र का विवरण दिखाएँ",
+-      "es": "Mostrar los detalles de la sesión en el teléfono",
+-      "ar": "إظهار تفاصيل الجلسة على الهاتف",
+-      "fr": "Afficher les détails de la session sur le téléphone",
+-      "bn": "ফোনে সেশনের বিবরণ দেখান",
+-      "pt-BR": "Mostrar os detalhes da sessão no celular",
+-      "ru": "Показывать детали сессии на телефоне",
+
+```
+
+**File**: `windows/src/i18n/strings.json` (modified, +42/-42)
+```diff
+@@ -744,12 +744,12 @@
+    "ar": "هاتف Android",
+    "fr": "Téléphone Android",
+    "bn": "Android ফোন",
+-   "pt-BR": "Telefone Android",
++   "pt-BR": "Celular Android",
+    "ru": "Телефон Android",
+    "id": "Ponsel Android",
+-   "de": "Android-Handy",
++   "de": "Android-Telefon",
+    "tr": "Android telefon",
+-   "ko": "Android 폰",
++   "ko": "Android 휴대폰",
+    "ja": "Android スマートフォン"
+   },
+   "Annotate": {
+@@ -2260,7 +2260,7 @@
+    "fr": "Copier le lien",
+    "bn": "লিংক কপি করুন",
+    "pt-BR": "Copiar link",
+-   "ru": "Копировать ссылку",
++   "ru": "Скопировать ссылку",
+    "id": "Salin tautan",
+    "de": "Link kopieren",
+    "tr": "Bağlantıyı kopyala",
+@@ -4804,18 +4804,18 @@
+   },
+   "Let the phone answer Claude Code's questions": {
+    "zh-Hans": "允许手机回答 Claude Code 的提问",
+-   "hi": "फ़ोन को Claude Code के सवालों का जवाब देने दें",
+-   "es": "Permitir que el teléfono responda a las preguntas de Claude Code",
+-   "ar": "السماح للهاتف بالرد على أسئلة Claude Code",
++   "hi": "फ़ोन को Claude Code के सवालों के जवाब देने दें",
++   "es": "Dejar que el teléfono responda a las preguntas de Claude Code",
++   "ar": "السماح للهاتف بالإجابة عن أسئلة Claude Code",
+    "fr": "Laisser le téléphone répondre aux questions de Claude Code",
+    "bn": "ফোনকে Claude Code-এর প্রশ্নের উত্তর দিতে দিন",
+-   "pt-BR": "Permitir que o telefone responda às perguntas do Claude Code",
++   "pt-BR": "Deixar o celular responder às perguntas do Claude Code",
+    "ru": "Разрешить телефону отвечать на вопросы Claude Code",
+    "id": "Izinkan ponsel menjawab pertanyaan Claude Code",
+-   "de": "Das Handy Fragen von Claude Code beantworten lassen",
+-   "tr": "Telefonun Claude Code sorularını yanıtlamasına izin ver",
+-   "ko": "폰에서 Claude Code의 질문에 답하기",
+-   "ja": "Claude Code の質問にスマートフォンから回答する"
++   "de": "Fragen von Claude Code auf dem Telefon beantworten",
++   "tr": "Telefon Claude Code'un sorularını yanıtlayabilsin",
++   "ko": "휴대폰에서 Claude Code 질문에 답하기",
++   "ja": "スマートフォンから Claude Code の質問に答える"
+   },
+   "Lets Coucou for Android, on the same Wi-Fi, see your agent sessions and answer permission requests. Off by default. Coucou listens on your local network only while this is on.": {
+    "zh-Hans": "允许同一 Wi-Fi 下的 Coucou for Android 查看你的智能体会话并回应权限请求。默认关闭。仅在开启时,Coucou 才会监听你的本地网络。",
+@@ -7385,17 +7385,17 @@
+   "Pair again": {
+    "zh-Hans": "重新配对",
+    "hi": "फिर से पेयर करें",
+-   "es": "Vincular de nuevo",
+-   "ar": "إعادة الإقران",
+-   "fr": "Appairer à nouveau",
++   "es": "Emparejar de nuevo",
++   "ar": "إعادة الاقتران",
++   "fr": "Associer à nouveau",
+    "bn": "আবার পেয়ার করুন",
+-   "pt-BR": "Parear novamente",
+-   "ru": "Выполнить сопряжение заново",
+-   "id": "Pasangkan lagi",
++   "pt-BR": "Parear de novo",
++   "ru": "Сопрячь заново",
++   "id": "Sandingkan ulang",
+    "de": "Erneut koppeln",
+    "tr": "Yeniden eşleştir",
+    "ko": "다시 페어링",
+-   "ja": "再ペアリング"
++   "ja": "もう一度ペアリング"
+   },
+   "Pairing again disconnects the phone that was paired.": {
+    "zh-Hans": "重新配对会断开之前已配对的手机。",
+@@ -9304,48 +9304,48 @@
+   },
+   "Show my plan usage on the phone": {
+    "zh-Hans": "在手机上显示我的套餐用量",
+-   "hi": "फ़ोन पर मेरे प्लान का उपयोग दिखाएं",
+-   "es": "Mostrar el uso de mi plan en el teléfono",
++   "hi": "फ़ोन पर मेरे प्लान का उपयोग दिखाएँ",
++   "es": "Mostrar en el teléfono el uso de mi plan",
+    "ar": "عرض استهلاك خطتي على الهاتف",
+-   "fr": "Afficher l'utilisation de mon forfait sur le téléphone",
++   "fr": "Afficher sur le téléphone l'utilisation de mon forfait",
+    "bn": "ফোনে আমার প্ল্যানের ব্যবহার দেখান",
+-   "pt-BR": "Mostrar o uso do meu plano no telefone",
+-   "ru": "Показывать расход моего тарифа на телефоне",
++   "pt-BR": "Mostrar no celular o uso do meu plano",
++   "ru": "Показывать на телефоне использование моего тарифа",
+    "id": "Tampilkan penggunaan paket saya di ponsel",
+-   "de": "Meine Plannutzung auf dem Handy anzeigen",
++   "de": "Meine Plannutzung auf dem Telefon anzeigen",
+    "tr": "Plan kullanımımı telefonda göster",
+-   "ko": "폰에 내 플랜 사용량 표시",
+-   "ja": "スマートフォンにプランの使用量を表示"
++   "ko": "휴대폰에서 요금제 사용량 보기",
++   "ja": "プランの使用状況をスマートフォンに表示"
+   },
+   "Show pairing code": {
+    "zh-Hans": "显示配对码",
+-   "hi": "पेयरिंग कोड दिखाएं",
+-   "es": "Mostrar código de vinculación",
+-   "ar": "إظهار رمز الإقران",
+-   "fr": "Afficher le code d'appairage",
++   "hi": "पेयरिंग कोड दिखाएँ",
++   "es": "Mostrar código de emparejamiento",
++   "ar": "إظهار رمز الاقتران",
++   "fr": "Afficher le code d'association",
+    "bn": "পেয়ারিং কোড দেখান",
+    "pt-BR": "Mostrar código de pareamento",
+    "ru": "Показать код сопряжения",
+-   "id": "Tampilkan kode pemasangan",
++   "id": "Tampilkan kode penyandingan",
+    "de": "Kopplungscode anzeigen",
+    "tr": "Eşleştirme kodunu göster",
+    "ko": "페어링 코드 보기",
+    "ja": "ペアリングコードを表示"
+   },
+   "Show session details on the phone": {
+    "zh-Hans": "在手机上显示会话详情",
+-   "hi": "फ़ोन पर सेशन का विवरण दिखाएं",
+-   "es": "Mostrar los detalles de las sesiones en el teléfono",
+-   "ar": "عرض تفاصيل الجلسات على الهاتف",
+-   "f
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1054** (2026-11-03): Android 0.4.0: the Mac can link with Coucou for Android (@Rhytam23)
 - **PR #1052** (2026-11-03): Flow (Mac): mute while dictating, Copy card, custom shortcut (@Louis-CFM)
 - **PR #1050** (closed): Volume and brightness keys in the notch, with Mochi (GitHub build) Feature/system hud (@CristianMusto)
 - **PR #1048** (2026-11-03): Windows and Linux 0.5.9: the island never disappears, dictation keeps your language, your own key, silence while you speak (@Louis-CFM)
 - **PR #1033** (2026-10-31): Windows and Linux: Claude API models and Flow save errors (#1000, #1003 by @lazarevtill) (@Louis-CFM)
 - **PR #1020** (closed): File shelf: dropped files wait in the notch (@CyberAakash)
-- **PR #1019** (2026-10-31): App Store 2.0 — Mac and iPhone (@Louis-CFM)
 
 ---
 
@@ -2535,55 +2383,70 @@ Claude-Session: https://claude.ai/code/session_01LJm3SRL9k3gBPaVtfPhwcT
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Windows and Linux: the closed island always wakes, Mochi lives in it, and a forg
+## X. the Mac and Windows checks: Sendable identity capture, Windows strings shared wi
 
 **RULE**:
-When implementing operations in `windows/src-tauri/src/island.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Louis-CFM/coucou. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `NotchBuddy/Resources/Localizable.xcstrings`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Louis-CFM/coucou. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `861d443d`: Windows and Linux: the closed island always wakes, Mochi lives in it, and a forgotten call stops by itself. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d8a93fc3`: the Mac and Windows checks: Sendable identity capture, Windows strings shared with the Mac catalog. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `windows/src-tauri/src/island.rs`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `NotchBuddy/Resources/Localizable.xcstrings`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-    /// Waits until the gate opens or `timeout` passes; true when it is open.
-    pub(crate) fn wait_active_for(&self, timeout: Duration) -> bool {
-        let guard = self.active.lock().unwrap();
-        if *guard {
-            return true;
-        }
-        let (guard, _) = self.cv.wait_timeout(guard, timeout).unwrap();
-        *guard
-    }
-
-            // Parked. Folded on Windows, a glance at the cursor four times a
-            // second: on the closed island, it is told to wake up, whether or
-            // not the webview delivers the pointer to such a small window.
-            loop {
-                if gate.wait_active_for(Duration::from_millis(250)) {
-                    break;
-                }
-                if platform::CURSOR_POLL && gate.collapsed.load(Ordering::Relaxed) {
-                    wake_if_hovered(&app, &gate);
-                }
-            }
-                if !gate.is_active() {
-                    break;
-                }
-                    // Under the gate's lock, and only while it is open: a tick
-                    // still running as the island folds must not make the
-                    // closed island click-through after set_collapsed made it
-  
+            "value" : "Android-Telefon"
+            "value" : "Android 휴대폰"
+            "value" : "Celular Android"
+            "value" : "إظهار رمز الاقتران"
+            "value" : "Mostrar código de emparejamiento"
+            "value" : "Afficher le code d'association"
+            "value" : "पेयरिंग कोड दिखाएँ"
+            "value" : "Tampilkan kode penyandingan"
+            "value" : "Скопировать ссылку"
+            "value" : "إعادة الاقتران"
+            "value" : "Emparejar de nuevo"
+            "value" : "Associer à nouveau"
+            "value" : "Sandingkan ulang"
+            "value" : "もう一度ペアリング"
+            "value" : "Parear de novo"
+            "value" : "Сопрячь заново"
+            "value" : "إظهار تفاصيل الجلسة على الهاتف"
+            "value" : "ফোনে সেশনের বিবরণ দেখান"
+            "value" : "Sitzungsdetails auf dem Telefon anzeigen"
+            "value" : "Mostrar los detalles de la sesión en el teléfono"
+            "value" : "Afficher les détails de la session sur le téléphone"
+            "value" : "फ़ोन पर सत्र का विवरण दिखाएँ"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Anti-pattern to NEVER write (induced failure mode):
-            gate.wait_until_active();
+            "value" : "Android-Handy"
+            "value" : "Android 폰"
+            "value" : "Telefone Android"
+            "value" : "إظهار رمز الإقران"
+            "value" : "Mostrar código de vinculación"
+            "value" : "Afficher le code d'appairage"
+            "value" : "पेयरिंग कोड दिखाएं"
+            "value" : "Tampilkan kode pemasangan"
+            "value" : "Копировать ссылку"
+            "value" : "إعادة الإقران"
+            "value" : "Vincular de nuevo"
+            "value" : "Appairer à nouveau"
+            "value" : "Pasangkan lagi"
+            "value" : "再ペアリング"
+            "value" : "Parear novamente"
+            "value" : "Выполнить сопряжение заново"
+            "value" : "عرض تفاصيل الجلسات على الهاتف"
+            "value" : "ফোনে সেশনের বিস্তারিত দেখান"
+            "value" : "Sitzungsdetails auf dem Handy anzeigen"
+            "value" : "Mostrar los detalles de las sesiones en el teléfono"
+            "value" : "Afficher les détails des sessions sur le téléphone"
+            "value" : "फ़ोन पर सेशन का विवरण दिखाएं"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `861d443d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d8a93fc3` are properly handled with clean fallback behavior.

@@ -7695,3 +7695,6 @@ Every entry in this ledger must capture:
 | `learn-github-infiniflow-infinity` | `https://github.com/infiniflow/infinity` | `2fffa346` | Multi-dimensional audit evidence | 2026-11-05T14:02:42.594Z |
 | `learn-github-zvec-ai-zvec-grep` | `https://github.com/zvec-ai/zvec-grep` | `407a3851` | Multi-dimensional audit evidence | 2026-11-05T14:05:54.972Z |
 | `learn-huggingface-abenzerps-qwen-image-2-1-uncensored-quantized` | `https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-Quantized` | `hf-abenzer` | Multi-dimensional audit evidence | 2026-11-05T14:06:54.571Z |
+| `learn-github-louis-cfm-coucou` | `https://github.com/Louis-CFM/coucou` | `74363634` | Multi-dimensional audit evidence | 2026-11-05T14:13:37.897Z |
+| `learn-huggingface-autotrust-jev-35b` | `https://huggingface.co/autotrust/JEV-35B` | `hf-autotru` | Multi-dimensional audit evidence | 2026-11-05T14:13:44.081Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `5492684f` | Multi-dimensional audit evidence | 2026-11-05T14:13:48.488Z |

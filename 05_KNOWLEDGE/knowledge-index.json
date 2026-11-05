@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T14:06:54.463Z",
+  "last_updated": "2026-11-05T14:13:48.434Z",
   "total_verified_learnings": 1218,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -39252,8 +39252,8 @@
       "slug": "louis-cfm-coucou",
       "platform": "github",
       "source_url": "https://github.com/Louis-CFM/coucou",
-      "source_version": "e9fc337f",
-      "content_hash": "c36786b08d516e8dda978813896c3099251aca6c5d4cdbae7a8145bfa11ed278",
+      "source_version": "74363634",
+      "content_hash": "1f650e4b1e8a7fda1976ce916433d912eb102b7240fe5e63a78e4a3490548b67",
       "dossier_path": "07_PROJECT_LEARNING/louis-cfm-coucou-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/louis-cfm-coucou-learnings.md",
       "promoted_rules": [
@@ -39271,6 +39271,11 @@
           "number": 6512,
           "title": "Windows and Linux: the closed island always wakes, Mochi lives in it, and a forg",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7246,
+          "title": "the Mac and Windows checks: Sendable identity capture, Windows strings shared wi",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -39278,7 +39283,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T11:44:06.670Z",
+      "verified_at": "2026-11-05T14:13:37.817Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -45178,8 +45183,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "8f122c9e",
-      "content_hash": "89bbd2a255e187cd0e8cad00c97e076e0e1ba513483cb99b41c8eb3fe7bafcc1",
+      "source_version": "5492684f",
+      "content_hash": "ffcce9031feb6f30a5e8d0531b9a031abb8c35dbab039c438fc1fdd98bfefcf6",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -45462,6 +45467,11 @@
           "number": 7185,
           "title": "Add ARC dataset for puzzle 6e02f1e3",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7249,
+          "title": "Rename debug input_instances key",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -45469,7 +45479,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T10:09:09.767Z",
+      "verified_at": "2026-11-05T14:13:48.420Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -72176,7 +72186,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/autotrust/JEV-35B",
       "source_version": "hf-autotrust-jev-35b",
-      "content_hash": "d28367d7c749b3bc512d3a2ebdd82c48f44a19144dc8b48f483e1b1f8fdbaa52",
+      "content_hash": "5179d46e7ffc46cd26f434c64e7482737439a537fcd5fd556736a4a809f37121",
       "dossier_path": "07_PROJECT_LEARNING/hf-autotrust-jev-35b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-autotrust-jev-35b-learnings.md",
       "promoted_rules": [
@@ -72194,6 +72204,21 @@
           "number": 4238,
           "title": "NVFP4 Quantization for Memory-Constrained Deployment",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5004,
+          "title": "Hybrid Attention Interleaving for Long-Context Efficiency",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 7247,
+          "title": "NVFP4 Quantization for Decision-Consistent Inference",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7248,
+          "title": "Single-Pass Decision Scoring vs. Multi-Step Reasoning",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -72201,7 +72226,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T23:49:44.295Z",
+      "verified_at": "2026-11-05T14:13:44.014Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -148998,14 +149023,14 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 5004,
       "title": "Hybrid Attention Interleaving for Long-Context Efficiency",
-      "source_url": "https://huggingface.co/ornith-ai/Ornith-1.5-122B",
-      "source_version": "hf-ornith-ai-ornith-1.5-122b",
+      "source_url": "https://huggingface.co/autotrust/JEV-35B",
+      "source_version": "hf-autotrust-jev-35b",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-27T21:01:37.427Z"
+      "verified_at": "2026-11-05T14:13:44.014Z"
     },
     "rule-5005": {
       "learning_id": "rule-5005",
@@ -182876,6 +182901,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-05T14:05:54.856Z"
+    },
+    "rule-7246": {
+      "learning_id": "rule-7246",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7246,
+      "title": "the Mac and Windows checks: Sendable identity capture, Windows strings shared wi",
+      "source_url": "https://github.com/Louis-CFM/coucou",
+      "source_version": "74363634",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T14:13:37.817Z"
+    },
+    "rule-7247": {
+      "learning_id": "rule-7247",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7247,
+      "title": "NVFP4 Quantization for Decision-Consistent Inference",
+      "source_url": "https://huggingface.co/autotrust/JEV-35B",
+      "source_version": "hf-autotrust-jev-35b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T14:13:44.014Z"
+    },
+    "rule-7248": {
+      "learning_id": "rule-7248",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7248,
+      "title": "Single-Pass Decision Scoring vs. Multi-Step Reasoning",
+      "source_url": "https://huggingface.co/autotrust/JEV-35B",
+      "source_version": "hf-autotrust-jev-35b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T14:13:44.014Z"
+    },
+    "rule-7249": {
+      "learning_id": "rule-7249",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7249,
+      "title": "Rename debug input_instances key",
+      "source_url": "https://github.com/NucleoidAI/Nucleoid",
+      "source_version": "5492684f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T14:13:48.421Z"
     }
   },
   "aliases": {

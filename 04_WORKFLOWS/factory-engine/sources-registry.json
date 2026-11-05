@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-05T14:06:57.113Z",
-    "lastVerified": "2026-11-05T14:06:57.113Z",
+    "lastChecked": "2026-11-05T14:13:51.047Z",
+    "lastVerified": "2026-11-05T14:13:51.047Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -444,22 +444,21 @@
     "revisionIdentifier": "444fdf06"
   },
   "nucleoidai-nucleoid": {
-    "name": "Nucleoid",
+    "name": "NucleoidAI/Nucleoid",
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-05T13:40:21.972Z",
-    "lastVerified": "2026-11-05T13:40:21.972Z",
+    "lastChecked": "2026-11-05T14:13:47.906Z",
+    "lastVerified": "2026-11-05T14:13:47.906Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "89bbd2a255e187cd0e8cad00c97e076e0e1ba513483cb99b41c8eb3fe7bafcc1",
+    "contentHash": "ffcce9031feb6f30a5e8d0531b9a031abb8c35dbab039c438fc1fdd98bfefcf6",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "8f122c9e"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "tabbyml-tabby": {
     "name": "tabby",
@@ -1595,9 +1594,9 @@
   "lunasec-io-lunasec": {
     "name": "lunasec",
     "officialUrl": "https://github.com/lunasec-io/lunasec",
-    "lastChecked": "2026-11-05T10:50:42.451Z",
+    "lastChecked": "2026-11-05T14:13:38.171Z",
     "revisionIdentifier": "c6bb0762",
-    "lastVerified": "2026-11-05T10:50:42.451Z"
+    "lastVerified": "2026-11-05T14:13:38.171Z"
   },
   "valeriansaliou-sonic": {
     "name": "sonic",
@@ -2699,9 +2698,9 @@
   "caviraoss-longmemory": {
     "name": "LongMemory",
     "officialUrl": "https://github.com/CaviraOSS/LongMemory",
-    "lastChecked": "2026-11-04T23:27:35.040Z",
+    "lastChecked": "2026-11-05T14:13:40.679Z",
     "revisionIdentifier": "8badf44d48d0d72a07e1ea3daf1ecbd76ae1a357",
-    "lastVerified": "2026-11-04T23:27:35.040Z"
+    "lastVerified": "2026-11-05T14:13:40.679Z"
   },
   "ratatui-ratatui": {
     "name": "ratatui",
@@ -5466,12 +5465,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "crossplane-crossplane": {
-    "name": "crossplane/crossplane",
+    "name": "crossplane",
     "officialUrl": "https://github.com/crossplane/crossplane",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-05T00:14:58.396Z",
-    "lastVerified": "2026-11-05T00:14:58.396Z",
+    "lastChecked": "2026-11-05T14:13:35.619Z",
+    "lastVerified": "2026-11-05T14:13:35.619Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-crossplane-crossplane",
@@ -5480,7 +5479,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "6e727661"
   },
   "sfu-db-connector-x": {
     "name": "sfu-db/connector-x",
@@ -8557,13 +8557,13 @@
     "officialUrl": "https://huggingface.co/autotrust/JEV-35B",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-31T23:49:43.370Z",
-    "lastVerified": "2026-10-31T23:49:43.370Z",
+    "lastChecked": "2026-11-05T14:13:31.103Z",
+    "lastVerified": "2026-11-05T14:13:31.103Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-autotrust-jev-35b",
-    "contentHash": "d28367d7c749b3bc512d3a2ebdd82c48f44a19144dc8b48f483e1b1f8fdbaa52",
-    "promotedRulesCount": 0,
+    "contentHash": "5179d46e7ffc46cd26f434c64e7482737439a537fcd5fd556736a4a809f37121",
+    "promotedRulesCount": 3,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
@@ -11000,14 +11000,14 @@
     "officialUrl": "https://github.com/Louis-CFM/coucou",
     "sourceType": "github",
     "technology": "Swift",
-    "lastChecked": "2026-11-03T11:39:03.335Z",
-    "lastVerified": "2026-11-03T11:39:03.335Z",
+    "lastChecked": "2026-11-05T14:13:37.228Z",
+    "lastVerified": "2026-11-05T14:13:37.228Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-louis-cfm-coucou",
-    "contentHash": "c36786b08d516e8dda978813896c3099251aca6c5d4cdbae7a8145bfa11ed278",
+    "contentHash": "1f650e4b1e8a7fda1976ce916433d912eb102b7240fe5e63a78e4a3490548b67",
     "promotedRulesCount": 1,
-    "recentFixesCount": 17,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -13622,12 +13622,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "matthart1983-netwatch": {
-    "name": "matthart1983/netwatch",
+    "name": "netwatch",
     "officialUrl": "https://github.com/matthart1983/netwatch",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-04T19:55:20.365Z",
-    "lastVerified": "2026-11-04T19:55:20.365Z",
+    "lastChecked": "2026-11-05T14:13:28.164Z",
+    "lastVerified": "2026-11-05T14:13:28.164Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-matthart1983-netwatch",
@@ -13636,7 +13636,8 @@
     "recentFixesCount": 11,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "ee7d2174"
   },
   "hf-prunaai-p-h3-image-comfy": {
     "name": "PrunaAI/P-H3-Image-Comfy",

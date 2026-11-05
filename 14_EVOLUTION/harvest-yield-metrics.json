@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-05T14:06:54.576Z",
-  "total_cycles_completed": 7663,
-  "total_learnings_persisted": 7663,
-  "total_rules_promoted": 7309,
+  "last_updated": "2026-11-05T14:13:48.492Z",
+  "total_cycles_completed": 7666,
+  "total_learnings_persisted": 7666,
+  "total_rules_promoted": 7314,
   "history": [
-    {
-      "timestamp": "2026-11-05T03:46:21.433Z",
-      "repository": "google-t5/t5-small",
-      "learningId": "learn-huggingface-google-t5-t5-small",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T03:46:28.674Z",
-      "repository": "jacklandrin/OnlySwitch",
-      "learningId": "learn-github-jacklandrin-onlyswitch",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T03:46:30.326Z",
-      "repository": "opentofu/opentofu",
-      "learningId": "learn-github-opentofu-opentofu",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-05T03:46:32.623Z",
       "repository": "sigstore/cosign",
@@ -1403,6 +1382,27 @@
       "repository": "abenzerps/Qwen-Image-2.1-Turbo-Quantized",
       "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-quantized",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T14:13:37.900Z",
+      "repository": "Louis-CFM/coucou",
+      "learningId": "learn-github-louis-cfm-coucou",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T14:13:44.085Z",
+      "repository": "autotrust/JEV-35B",
+      "learningId": "learn-huggingface-autotrust-jev-35b",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T14:13:48.492Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

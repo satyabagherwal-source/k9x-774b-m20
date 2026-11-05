@@ -1355,8 +1355,8 @@
     "sourceUrl": "https://huggingface.co/autotrust/JEV-35B",
     "sourceVersion": "hf-autotrust-jev-35b",
     "license": "Open-Source",
-    "contentHash": "d28367d7c749b3bc512d3a2ebdd82c48f44a19144dc8b48f483e1b1f8fdbaa52",
-    "lastHarvestedAt": "2026-10-31T23:49:44.417Z",
+    "contentHash": "5179d46e7ffc46cd26f434c64e7482737439a537fcd5fd556736a4a809f37121",
+    "lastHarvestedAt": "2026-11-05T14:13:44.081Z",
     "learningId": "learn-huggingface-autotrust-jev-35b"
   },
   "hf-openbmb-minicpm-v-4.7-35b-a3b": {
@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "8f122c9e",
+    "sourceVersion": "5492684f",
     "license": "Apache-2.0",
-    "contentHash": "89bbd2a255e187cd0e8cad00c97e076e0e1ba513483cb99b41c8eb3fe7bafcc1",
-    "lastHarvestedAt": "2026-11-05T10:09:09.896Z",
+    "contentHash": "ffcce9031feb6f30a5e8d0531b9a031abb8c35dbab039c438fc1fdd98bfefcf6",
+    "lastHarvestedAt": "2026-11-05T14:13:48.488Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -9303,10 +9303,10 @@
     "repository": "Louis-CFM/coucou",
     "platform": "github",
     "sourceUrl": "https://github.com/Louis-CFM/coucou",
-    "sourceVersion": "e9fc337f",
+    "sourceVersion": "74363634",
     "license": "MIT",
-    "contentHash": "c36786b08d516e8dda978813896c3099251aca6c5d4cdbae7a8145bfa11ed278",
-    "lastHarvestedAt": "2026-11-03T11:44:06.780Z",
+    "contentHash": "1f650e4b1e8a7fda1976ce916433d912eb102b7240fe5e63a78e4a3490548b67",
+    "lastHarvestedAt": "2026-11-05T14:13:37.897Z",
     "learningId": "learn-github-louis-cfm-coucou"
   },
   "lxml-lxml": {

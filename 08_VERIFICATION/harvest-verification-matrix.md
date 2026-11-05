@@ -7686,3 +7686,6 @@
 | `CYCLE-20261105-7VOE` | `2026-11-05T14:02:42.591Z` | `infiniflow/infinity` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7244` | Yes (`ecbe9cdc...`) |
 | `CYCLE-20261105-C048` | `2026-11-05T14:05:54.968Z` | `zvec-ai/zvec-grep` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7245` | Yes (`14c13ff8...`) |
 | `CYCLE-20261105-DA3R` | `2026-11-05T14:06:54.567Z` | `abenzerps/Qwen-Image-2.1-Turbo-Quantized` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-uncensored-quantized-learnings.md` | Yes (`d1520966...`) |
+| `CYCLE-20261105-LXBA` | `2026-11-05T14:13:37.894Z` | `Louis-CFM/coucou` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7246` | Yes (`1f650e4b...`) |
+| `CYCLE-20261105-M233` | `2026-11-05T14:13:44.079Z` | `autotrust/JEV-35B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5004, Rule 7247, Rule 7248` | Yes (`5179d46e...`) |
+| `CYCLE-20261105-M5HI` | `2026-11-05T14:13:48.486Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7249` | Yes (`ffcce903...`) |
