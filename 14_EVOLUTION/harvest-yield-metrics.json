@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-05T12:50:51.872Z",
-  "total_cycles_completed": 7634,
-  "total_learnings_persisted": 7634,
-  "total_rules_promoted": 7288,
+  "last_updated": "2026-11-05T12:58:37.243Z",
+  "total_cycles_completed": 7638,
+  "total_learnings_persisted": 7638,
+  "total_rules_promoted": 7291,
   "history": [
-    {
-      "timestamp": "2026-11-05T02:25:41.344Z",
-      "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
-      "learningId": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T02:25:52.664Z",
-      "repository": "bee-san/Ciphey",
-      "learningId": "learn-github-bee-san-ciphey",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T02:25:57.180Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T02:32:58.577Z",
-      "repository": "PrunaAI/P-H3-Image-Comfy",
-      "learningId": "learn-huggingface-prunaai-p-h3-image-comfy",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-05T02:33:00.436Z",
       "repository": "unsloth/Qwen3.8-27B-GGUF",
@@ -1403,6 +1375,34 @@
       "repository": "ConwayResearch/Underdog-Saluki-27B-1.0",
       "learningId": "learn-huggingface-conwayresearch-underdog-saluki-27b-1-0",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T12:58:21.133Z",
+      "repository": "nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B",
+      "learningId": "learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T12:58:22.490Z",
+      "repository": "domcyrus/rustnet",
+      "learningId": "learn-github-domcyrus-rustnet",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T12:58:36.620Z",
+      "repository": "alibaba/zvec",
+      "learningId": "learn-github-alibaba-zvec",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T12:58:37.243Z",
+      "repository": "dathere/qsv",
+      "learningId": "learn-github-dathere-qsv",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

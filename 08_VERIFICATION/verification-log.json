@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261104-LZ5S",
-    "timestamp": "2026-11-04T07:26:05.632Z",
-    "repository": "NucleoidAI/Nucleoid",
-    "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "e12a2e26d80800b3b6859a9d0a9c2b6aae56901adc54f63943ff949aa513b004",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261104-VAJV",
-    "timestamp": "2026-11-04T07:33:20.299Z",
-    "repository": "avajs/ava",
-    "learningId": "learn-github-avajs-ava",
-    "contentHash": "1b7c5393c1d429be2159e225acf02615fd8d44889e4630d06fa37ed11b95861f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261104-VAYV",
-    "timestamp": "2026-11-04T07:33:20.839Z",
-    "repository": "RunanywhereAI/runanywhere-sdks",
-    "learningId": "learn-github-runanywhereai-runanywhere-sdks",
-    "contentHash": "38badb1580063ef272cd8a8db036ca898d39572d75ec4500db378d9a70bd8222",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261104-VCIU",
-    "timestamp": "2026-11-04T07:33:22.854Z",
-    "repository": "rook/rook",
-    "learningId": "learn-github-rook-rook",
-    "contentHash": "cf11bf5a370192bdca45277e76d5eeeb623f1deb28782b359567ecb042feb414",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261104-W57B",
     "timestamp": "2026-11-04T07:34:00.023Z",
     "repository": "kucherenko/jscpd",
@@ -7492,6 +7432,66 @@
     "contentHash": "cedca00f58d098d165bc70a6051aa9d4c249f9ff078a1202c3453f43040ecfc2",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-X45I",
+    "timestamp": "2026-11-05T12:58:21.126Z",
+    "repository": "nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B",
+    "learningId": "learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b",
+    "contentHash": "4a5bb7b1a9c3ae31771c09883a21728a0ec243aa70c94f382835e66aef989577",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-X577",
+    "timestamp": "2026-11-05T12:58:22.483Z",
+    "repository": "domcyrus/rustnet",
+    "learningId": "learn-github-domcyrus-rustnet",
+    "contentHash": "f2883801afed4fb0dce8e294353cd81cc4659d3981fc18e10a71b12d1ad8a0ff",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-XG3O",
+    "timestamp": "2026-11-05T12:58:36.612Z",
+    "repository": "alibaba/zvec",
+    "learningId": "learn-github-alibaba-zvec",
+    "contentHash": "78a8f10f27921dd6db8bcdc30c2310c1e433c704ca3c3f61fc8b4a5036c60659",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-XGKZ",
+    "timestamp": "2026-11-05T12:58:37.235Z",
+    "repository": "dathere/qsv",
+    "learningId": "learn-github-dathere-qsv",
+    "contentHash": "3c3dec7c6cf0f221120f9f05734c71bc9bde37ee8529e41448e30feb10746172",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

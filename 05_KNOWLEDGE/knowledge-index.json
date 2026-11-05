@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T12:50:51.778Z",
+  "last_updated": "2026-11-05T12:58:37.165Z",
   "total_verified_learnings": 1216,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -1656,8 +1656,8 @@
       "slug": "alibaba-zvec",
       "platform": "github",
       "source_url": "https://github.com/alibaba/zvec",
-      "source_version": "0d48b774",
-      "content_hash": "09aa0dc149704766f26d781a22c38746df63b644947d27aa7389da72c3bf2d16",
+      "source_version": "b1670ff1",
+      "content_hash": "78a8f10f27921dd6db8bcdc30c2310c1e433c704ca3c3f61fc8b4a5036c60659",
       "dossier_path": "07_PROJECT_LEARNING/alibaba-zvec-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/alibaba-zvec-learnings.md",
       "promoted_rules": [
@@ -1715,6 +1715,11 @@
           "number": 6995,
           "title": "c_api): check malloc() result in zvec_doc_get_pk_copy before use (#863)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7226,
+          "title": "reduce DiskANN PQ training and neighbor storage memory (#877)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -1722,7 +1727,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T22:12:46.707Z",
+      "verified_at": "2026-11-05T12:58:36.524Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -9597,8 +9602,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "658388c9",
-      "content_hash": "8df076c18b1f110b7abec7b3e07b5618bf256b58160020774aaab2805861dd3b",
+      "source_version": "7dc4e9ca",
+      "content_hash": "3c3dec7c6cf0f221120f9f05734c71bc9bde37ee8529e41448e30feb10746172",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -9941,6 +9946,11 @@
           "number": 6734,
           "title": "deps: Bump toml to 1.2.0 and update dependencies",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7227,
+          "title": "Point csvlens at fork with bumped deps",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -9948,7 +9958,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T03:09:16.722Z",
+      "verified_at": "2026-11-05T12:58:37.145Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -10952,8 +10962,8 @@
       "slug": "domcyrus-rustnet",
       "platform": "github",
       "source_url": "https://github.com/domcyrus/rustnet",
-      "source_version": "ac58d1f0",
-      "content_hash": "7ed17eed171b397e4eb17a2004eb24d14206a6077fa29d3ce746037b8a84986e",
+      "source_version": "fff807d1",
+      "content_hash": "f2883801afed4fb0dce8e294353cd81cc4659d3981fc18e10a71b12d1ad8a0ff",
       "dossier_path": "07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md",
       "promoted_rules": [
@@ -11001,6 +11011,11 @@
           "number": 6899,
           "title": "deps): bump zip from 9.1.3 to 9.2.0 in the rust-dependencies group (#712)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7225,
+          "title": "discard pending RTT probes on TCP keepalives (#716)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -11008,7 +11023,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T18:35:29.959Z",
+      "verified_at": "2026-11-05T12:58:22.393Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -154916,7 +154931,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B",
       "source_version": "hf-nvidia-nvidia-nemotron-3.5-transcribe-30b-a4b",
-      "content_hash": "fe9f9ebc9bb3266809719fd7b9a03803fc42a429b47d0ede1065129696970275",
+      "content_hash": "4a5bb7b1a9c3ae31771c09883a21728a0ec243aa70c94f382835e66aef989577",
       "dossier_path": "07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotron-3.5-transcribe-30b-a4b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotron-3.5-transcribe-30b-a4b-learnings.md",
       "promoted_rules": [
@@ -154941,7 +154956,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T22:33:05.394Z",
+      "verified_at": "2026-11-05T12:58:21.024Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -182421,6 +182436,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-05T12:50:51.756Z"
+    },
+    "rule-7225": {
+      "learning_id": "rule-7225",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7225,
+      "title": "discard pending RTT probes on TCP keepalives (#716)",
+      "source_url": "https://github.com/domcyrus/rustnet",
+      "source_version": "fff807d1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T12:58:22.393Z"
+    },
+    "rule-7226": {
+      "learning_id": "rule-7226",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7226,
+      "title": "reduce DiskANN PQ training and neighbor storage memory (#877)",
+      "source_url": "https://github.com/alibaba/zvec",
+      "source_version": "b1670ff1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T12:58:36.524Z"
+    },
+    "rule-7227": {
+      "learning_id": "rule-7227",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7227,
+      "title": "Point csvlens at fork with bumped deps",
+      "source_url": "https://github.com/dathere/qsv",
+      "source_version": "7dc4e9ca",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T12:58:37.145Z"
     }
   },
   "aliases": {

@@ -7657,3 +7657,7 @@
 | `CYCLE-20261105-58U3` | `2026-11-05T12:36:40.827Z` | `zarf-dev/zarf` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7222` | Yes (`631644b5...`) |
 | `CYCLE-20261105-DZA6` | `2026-11-05T12:43:28.350Z` | `Qwen/Qwen3-4B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-4b-learnings.md` | Yes (`31a6a268...`) |
 | `CYCLE-20261105-NHHZ` | `2026-11-05T12:50:51.863Z` | `ConwayResearch/Underdog-Saluki-27B-1.0` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7223, Rule 7224` | Yes (`cedca00f...`) |
+| `CYCLE-20261105-X45I` | `2026-11-05T12:58:21.126Z` | `nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotron-3.5-transcribe-30b-a4b-learnings.md` | Yes (`4a5bb7b1...`) |
+| `CYCLE-20261105-X577` | `2026-11-05T12:58:22.483Z` | `domcyrus/rustnet` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7225` | Yes (`f2883801...`) |
+| `CYCLE-20261105-XG3O` | `2026-11-05T12:58:36.612Z` | `alibaba/zvec` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7226` | Yes (`78a8f10f...`) |
+| `CYCLE-20261105-XGKZ` | `2026-11-05T12:58:37.235Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7227` | Yes (`3c3dec7c...`) |

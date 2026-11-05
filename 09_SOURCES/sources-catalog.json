@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "658388c9",
+    "sourceVersion": "7dc4e9ca",
     "license": "NOASSERTION",
-    "contentHash": "8df076c18b1f110b7abec7b3e07b5618bf256b58160020774aaab2805861dd3b",
-    "lastHarvestedAt": "2026-11-04T03:09:16.830Z",
+    "contentHash": "3c3dec7c6cf0f221120f9f05734c71bc9bde37ee8529e41448e30feb10746172",
+    "lastHarvestedAt": "2026-11-05T12:58:37.238Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -6823,10 +6823,10 @@
     "repository": "domcyrus/rustnet",
     "platform": "github",
     "sourceUrl": "https://github.com/domcyrus/rustnet",
-    "sourceVersion": "ac58d1f0",
+    "sourceVersion": "fff807d1",
     "license": "Apache-2.0",
-    "contentHash": "7ed17eed171b397e4eb17a2004eb24d14206a6077fa29d3ce746037b8a84986e",
-    "lastHarvestedAt": "2026-11-04T18:35:30.054Z",
+    "contentHash": "f2883801afed4fb0dce8e294353cd81cc4659d3981fc18e10a71b12d1ad8a0ff",
+    "lastHarvestedAt": "2026-11-05T12:58:22.486Z",
     "learningId": "learn-github-domcyrus-rustnet"
   },
   "futurice-pepperoni-app-kit": {
@@ -7293,10 +7293,10 @@
     "repository": "alibaba/zvec",
     "platform": "github",
     "sourceUrl": "https://github.com/alibaba/zvec",
-    "sourceVersion": "0d48b774",
+    "sourceVersion": "b1670ff1",
     "license": "Apache-2.0",
-    "contentHash": "09aa0dc149704766f26d781a22c38746df63b644947d27aa7389da72c3bf2d16",
-    "lastHarvestedAt": "2026-11-04T22:12:46.835Z",
+    "contentHash": "78a8f10f27921dd6db8bcdc30c2310c1e433c704ca3c3f61fc8b4a5036c60659",
+    "lastHarvestedAt": "2026-11-05T12:58:36.615Z",
     "learningId": "learn-github-alibaba-zvec"
   },
   "zenbu-labs-terminal-browser": {
@@ -11425,8 +11425,8 @@
     "sourceUrl": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B",
     "sourceVersion": "hf-nvidia-nvidia-nemotron-3.5-transcribe-30b-a4b",
     "license": "Open-Source",
-    "contentHash": "fe9f9ebc9bb3266809719fd7b9a03803fc42a429b47d0ede1065129696970275",
-    "lastHarvestedAt": "2026-10-31T22:33:05.502Z",
+    "contentHash": "4a5bb7b1a9c3ae31771c09883a21728a0ec243aa70c94f382835e66aef989577",
+    "lastHarvestedAt": "2026-11-05T12:58:21.129Z",
     "learningId": "learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b"
   },
   "hf-liquidai-lfm3-omni-2b": {

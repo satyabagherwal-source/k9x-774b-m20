@@ -7666,3 +7666,7 @@ Every entry in this ledger must capture:
 | `learn-github-zarf-dev-zarf` | `https://github.com/zarf-dev/zarf` | `be6d4c52` | Multi-dimensional audit evidence | 2026-11-05T12:36:40.831Z |
 | `learn-huggingface-qwen-qwen3-4b` | `https://huggingface.co/Qwen/Qwen3-4B` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-11-05T12:43:28.354Z |
 | `learn-huggingface-conwayresearch-underdog-saluki-27b-1-0` | `https://huggingface.co/ConwayResearch/Underdog-Saluki-27B-1.0` | `hf-conwayr` | Multi-dimensional audit evidence | 2026-11-05T12:50:51.867Z |
+| `learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b` | `https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B` | `hf-nvidia-` | Multi-dimensional audit evidence | 2026-11-05T12:58:21.129Z |
+| `learn-github-domcyrus-rustnet` | `https://github.com/domcyrus/rustnet` | `fff807d1` | Multi-dimensional audit evidence | 2026-11-05T12:58:22.486Z |
+| `learn-github-alibaba-zvec` | `https://github.com/alibaba/zvec` | `b1670ff1` | Multi-dimensional audit evidence | 2026-11-05T12:58:36.615Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `7dc4e9ca` | Multi-dimensional audit evidence | 2026-11-05T12:58:37.238Z |
