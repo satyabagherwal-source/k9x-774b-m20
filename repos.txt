@@ -4888,3 +4888,7 @@ https://huggingface.co/ccore/Qwen3.5-4B-GLB-3D-Coder
 # --- Automatically Discovered by AI Scout Engine [2026-11-05T21:39:57.200Z] ---
 # [AI-AGENTS] davila7/claude-code-templates (18183 score) - Open-source registry and CLI for Claude Code components: agents, commands, skill
 https://github.com/davila7/claude-code-templates
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-05T22:47:38.836Z] ---
+# [MOBILE-CROSS-PLATFORM] a2ui-project/a2ui (9353 score) - Open-source generative UI framework: agents stream declarative JSON, and apps re
+https://github.com/a2ui-project/a2ui

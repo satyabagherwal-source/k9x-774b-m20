@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/moby-buildkit-learnings.md`  
 > **Source**: github ([https://github.com/moby/buildkit](https://github.com/moby/buildkit))  
-> **Source Version**: `b9d02e6e`  
+> **Source Version**: `d2de4602`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T06:58:24.515Z  
+> **Timestamp**: 2026-11-05T22:47:57.639Z  
 > **Learning ID**: `learn-github-moby-buildkit`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/moby-buildkit-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/moby/buildkit](https://github.com/moby/buildkit))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T06:58:24.508Z  
+> **Harvest Timestamp**: 2026-11-05T22:47:57.502Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: concurrent, cache-efficient, and Dockerfile-agnostic builder toolkit
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 10368 stars
+- **Stars / Engagement**: 10372 stars
 
 ---
 
@@ -2298,8 +2298,8 @@ func isPathEscapesRootError(err error) bool {
 - **Issue #7372** (2026-11-05): **client: skip testImageCacheRejectsUnverifiedDiffIDs on dockerd graphdriver**
   *Symptoms*: 
 
-- **Issue #7367** (2026-11-04): **source/http: add retry jitter and Retry-After handling**
-  *Symptoms*: follow-up https://github.com/moby/buildkit/pull/7258  This adds jitter to the shared exponential backoff so concurrent HTTP and registry requests are less likely to retry together after a failure. The existing attempt limit and cancellation behavior are preserved.  HTTP source downloads also retry 429 and 503 responses, honoring `Retry-After`. Server-requested delays have a separate, configurable limit of 30 seconds by default, allowing longer waits without changing the exponential backoff budget. Delays above that limit fail immediately rather than triggering an early retry. Failed response bodies are closed before waiting, and the cached HEAD probe remains best-effort and falls back to GET.  cc @astokes-docker
+- **Issue #7371** (2026-11-05): **build(deps): bump github/codeql-action/upload-sarif from 4.39.1 to 4.39.2**
+  *Symptoms*: Bumps [github/codeql-action/upload-sarif](https://github.com/github/codeql-action) from 4.39.1 to 4.39.2. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/github/codeql-action/releases">github/codeql-action/upload-sarif's releases</a>.</em></p> <blockquote> <h2>v4.39.2</h2> <ul> <li>Update default CodeQL bundle version to <a href="https://github.com/github/codeql-action/releases/tag/codeql-bundle-v2.27.4">2.27.4</a>. <a href="https://redirect.github.com/github/codeql-action/pull/4284">#4284</a></li> <li><em>Upcoming breaking change</em>: CodeQL version 2.22.3 and earlier were discontinued on 16 October 2026 alongside GitHub Enterprise Server 3.18, and will be unsupported by the next minor release of the CodeQL Action. Added a deprecation warning for customers using these versions of CodeQL. <a href="https://redirect.github.com/github/codeql-action/pull/4266">#4266</a></li> <li>Starting with macOS 27 and Xcode 27, traced analyses are unsupported. See <a href="https://github.blog/changelog/2026-10-19-codeql-changes-for-macos-27-xcode-27-and-swift-6-4/">this blog post for more information</a>. The CodeQL Action will now try to identify if a workflow is about to perform a traced analysis on version 27 or above of macOS or Xcode. If so, the CodeQL Action will emit a corresponding warning that will also be visible on the <a href="https://docs.github.com/en/code-security/how-tos/find-and-fix-code-vulnerabilities/manage-your-configuration/use
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2316,547 +2316,53 @@ func isPathEscapesRootError(err error) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9fab8633` (2026-11-04)
-**Commit Message**: Merge pull request #7355 from tonistiigi/solver-ref-fixes
+### Incident Patch 1: `d2de4602` (2026-11-05)
+**Commit Message**: Merge pull request #7371 from moby/dependabot/github_actions/github/codeql-action/upload-sarif-4.39.2
 
-solver: fix ref counting issues on cancellation cases
+build(deps): bump github/codeql-action/upload-sarif from 4.39.1 to 4.39.2
 
-**File**: `client/client_test.go` (modified, +1/-0)
+**File**: `.github/workflows/buildkit.yml` (modified, +2/-2)
 ```diff
-@@ -285,6 +285,7 @@ func TestClientGatewayIntegration(t *testing.T) {
- 		testClientGatewayRepeatedExecError,
- 		testClientBuildOpExecErrorReleased,
- 		testClientGatewayExecErrorReleasedDuringLoad,
-+		testClientGatewaySolveReleasedAfterDiscard,
- 		testClientGatewayExecFileActionError,
- 		testClientGatewaySlowCacheExecError,
+@@ -161,7 +161,7 @@ jobs:
+       -
+         name: Upload SARIF report
+         if: ${{ github.ref == 'refs/heads/master' && github.repository == 'moby/buildkit' }}
+-        uses: github/codeql-action/upload-sarif@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
++        uses: github/codeql-action/upload-sarif@1fc58d04a4d4374f921bdac573c3811c240f9c26 # v4.39.2
+         with:
+           sarif_file: ${{ env.DESTDIR }}/govulncheck.out
+ 
+@@ -326,7 +326,7 @@ jobs:
+           jq . ${{ steps.scout.outputs.result-file }}
+       -
+         name: Upload SARIF report
+-        uses: github/codeql-action/upload-sarif@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
++        uses: github/codeql-action/upload-sarif@1fc58d04a4d4374f921bdac573c3811c240f9c26 # v4.39.2
+         with:
+           sarif_file: ${{ steps.scout.outputs.result-file }}
  
 ```
 
-**File**: `client/gateway_shared_error_test.go` (modified, +67/-0)
+**File**: `.github/workflows/frontend.yml` (modified, +1/-1)
 ```diff
-@@ -249,3 +249,70 @@ func testClientBuildOpExecErrorReleased(t *testing.T, sb integration.Sandbox) {
- 	require.NoError(t, err)
- 	checkAllReleasable(t, c, sb, true)
- }
-+
-+// testClientGatewaySolveReleasedAfterDiscard checks that the refs of a solve
-+// that finishes after the gateway is discarded are released.
-+func testClientGatewaySolveReleasedAfterDiscard(t *testing.T, sb integration.Sandbox) {
-+	requiresLinux(t)
-+	ctx, cancel := context.WithTimeoutCause(sb.Context(), time.Minute, errors.New("released late solve test timed out"))
-+	defer cancel()
-+
-+	c, err := New(ctx, sb.Address())
-+	require.NoError(t, err)
-+	defer c.Close()
-+
-+	id := identity.NewID()
-+	// The exec succeeds only after a marker appears in a shared cache mount.
-+	// The marker is written once the first build has returned, so the solve
-+	// always finishes after the gateway is discarded.
-+	cache := llb.AsPersistentCacheDir(id, llb.CacheMountShared)
-+	def, err := llb.Image("busybox:latest").Run(
-+		llb.Shlexf("sh -c 'echo %s; i=0; while [ ! -e /cache/go ] && [ $i -lt 300 ]; do sleep 0.1; i=$((i+1)); done'", id),
-+		llb.AddMount("/cache", llb.Scratch(), cache),
-+	).Root().Marshal(ctx)
-+	require.NoError(t, err)
-+	markerDef, err := llb.Image("busybox:latest").Run(
-+		llb.Shlexf("sh -c 'echo %s; touch /cache/go'", id),
-+		llb.AddMount("/cache", llb.Scratch(), cache),
-+	).Root().Marshal(ctx)
-+	require.NoError(t, err)
-+
-+	started := make(chan struct{})
-+	statusCh := make(chan *SolveStatus)
-+	statusDone := make(chan struct{})
-+	go func() {
-+		defer close(statusDone)
-+		var once sync.Once
-+		for st := range statusCh {
-+			for _, v := range st.Vertexes {
-+				if v.Started != nil && strings.Contains(v.Name, id) {
-+					once.Do(func() { close(started) })
-+				}
-+			}
-+		}
-+	}()
-+
-+	solveErr := make(chan error, 1)
-+	_, err = c.Build(ctx, SolveOpt{}, "buildkit_test", func(ctx context.Context, gc gwclient.Client) (*gwclient.Result, error) {
-+		go func() {
-+			_, err := gc.Solve(ctx, gwclient.SolveRequest{Definition: def.ToPB(), Evaluate: true})
-+			solveErr <- err
-+		}()
-+		// return while the exec is running so the gateway is discarded
-+		select {
-+		case <-started:
-+		case <-ctx.Done():
-+			return nil, errors.WithStack(context.Cause(ctx))
-+		}
-+		return gwclient.NewResult(), nil
-+	}, statusCh)
-+	require.NoError(t, err)
-+	<-statusDone
-+
-+	// the gateway has been discarded, let the exec finish
-+	_, err = c.Solve(ctx, markerDef, SolveOpt{}, nil)
-+	require.NoError(t, err)
-+	require.ErrorContains(t, <-solveErr, "gateway forwarder is closing")
-+
-+	checkAllReleasable(t, c, sb, true)
-+}
-```
-
-**File**: `frontend/gateway/gateway.go` (modified, +10/-0)
-```diff
-@@ -838,6 +838,16 @@ func (lbf *llbBridgeForwarder) Solve(ctx context.Context, req *pb.SolveRequest)
+@@ -226,7 +226,7 @@ jobs:
+           jq . ${{ steps.scout.outputs.result-file }}
+       -
+         name: Upload SARIF report
+-        uses: github/codeql-action/upload-sarif@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
++        uses: github/codeql-action/upload-sarif@1fc58d04a4d4374f921bdac573c3811c240f9c26 # v4.39.2
+         with:
+           sarif_file: ${{ steps.scout.outputs.result-file }}
  
- 	lbf.mu.Lock()
- 
-+	if lbf.discarded {
-+		// A solve that finished after Discard has no one to release its refs.
-+		lbf.mu.Unlock()
-+		res.EachRef(func(r solver.ResultProxy) error {
-+			r.Release(context.TODO())
-+			return nil
-+		})
-+		return nil, stack.Enable(status.Error(codes.Unavailable, "gateway forwarder is closing"))
-+	}
-+
- 	if res.Refs != nil {
- 		ids := make(map[string]string, len(res.Refs))
- 		defs := make(map[string]*opspb.Definition, len(res.Refs))
-```
-
-**File**: `solver/edge.go` (modified, +14/-6)
-```diff
-@@ -732,6 +732,14 @@ func (e *edge) processDepSlowCacheReq(index int, dep *dep) {
- // respondToIncoming responds to all incoming requests. completing or
- // updating them when possible
- func (e *edge) respondToIncoming(incoming []pipeSender, allPipes []pipeReceiver) (edgeStatusType, bool) {
-+	// Requests can be canceled concurrently. Decide on one snapshot so a late
-+	// cancel cannot finish the last request while outgoing work is active; it
-+	// is handled on the next dispatch.
-+	canceled := make([]bool, len(incoming))
-+	for i, req := range incoming {
-+		canceled[i] = req.Request().Canceled
-+	}
-+
- 	// detect the result state for the requests
- 	allIncomingCanComplete := true
- 	desiredState := e.state
-@@ -740,8 +748,8 @@ func (e *edge) respondToIncoming(incoming []pipeSender, allPipes []pipeReceiver)
- 	// check incoming requests
- 	// check if all requests can be either answered or canceled
- 	if !e.isComplete() {
--		for _, req := range incoming {
--			if !req.Request().Canceled {
-+		for i, req := range incoming {
-+			if !canceled[i] {
- 				allCanceled = false
- 				if r := req.Request().Payload; desiredState < r.desiredState {
- 					desiredState = r.desiredState
-@@ -768,8 +776,8 @@ func (e *edge) respondToIncoming(incoming []pipeSender, allPipes []pipeReceiver)
- 
- 		// can close all but one requests
- 		var leaveOpen pipeSender
--		for _, req := range incoming {
--			if !req.Request().Canceled {
-+		for i, req := range incoming {
-+			if !canceled[i] {
- 				leaveOpen = req
- 				break
- 			}
-@@ -793,9 +801,9 @@ func (e *edge) respondToIncoming(incoming []pipeSender, allPipes []pipeReceiver)
- 	}
- 
- 	// update incoming based on current state
--	for _, req := range incoming {
-+	for i, req := range incoming {
- 		r := req.Request().Payload
--		if req.Request().Canceled {
-+		if canceled[i] {
- 			e.finishIncoming(req)
- 		} else if !e.hasActiveOutgoing && e.state >= r.desiredState {
- 			e.finishIncoming(req)
-```
-
-**File**: `solver/edge_test.go` (added, +42/-0)
-```diff
-@@ -0,0 +1,42 @@
-+package solver
-+
-+import (
-+	"testing"
-+
-+	"github.com/stretchr/testify/require"
-+)
-+
-+// cancelOnRead cancels the request the first time the edge reads it, after
-+// respondToIncoming has started deciding on its incoming requests.
-+type cancelOnRead struct {
-+	pipeSender
-+	cancel func()
-+	reads  int
-+}
-+
-+func (p *cancelOnRead) Request() pipeRequest {
-+	r := p.pipeSender.Request()
-+	p.reads++
-+	if p.reads == 1 {
-+		p.cancel()
-+	}
-+	return r
-+}
-+
-+func TestCancelDuringRespondKeepsIncomingUntilOutgoingDrains(t *testing.T) {
-+	p := newPipe(pipeRequest{Payload: &edgeRequest{desiredState: edgeStatusComplete}})
-+	req := &cancelOnRead{pipeSender: p.Sender, cancel: p.Receiver.Cancel}
-+	e := &edge{hasActiveOutgoing: true}
-+
-+	e.respondToIncoming([]pipeSender{req}, nil)
-+	require.False(t, p.Sender.Status().Completed, "last incoming request completed with active outgoing")
-+
-+	// The next dispatch sees the cancel and asks outgoing work to drain.
-+	_, done := e.respondToIncoming([]pipeSender{req}, nil)
-+	require.True(t, done)
-+	require.False(t, p.Sender.Status().Completed)
-+
-+	e.hasActiveOutgoing = false
-+	e.respondToIncoming([]pipeSender{req}, nil)
-+	require.True(t, p.Sender.Status().Completed)
-+}
-```
-
-**File**: `solver/jobs.go` (modified, +36/-3)
-```diff
-@@ -434,7 +434,9 @@ func (sb *subBuilder) EachValue(ctx context.Context, key string, fn func(any) er
- }
- 
- type Job struct {
--	mu            sync.Mutex // protects completedTime, pw, span
-+	mu            sync.Mutex // protects completedTime, pw, span, builds, discarded
-+	builds        int
-+	discarded     bool
- 	list          *Solver
- 	pr            *progress.MultiReader
- 	pw            progress.Writer
-@@ -846,11 +848,17 @@ func (jl *Solver) deleteIfUnreferenced(k digest.Digest, st *state) {
- }
- 
- func (j *Job) Build(ctx context.Context, e Edge) (CachedResultWithProvenance, error) {
-+	j.mu.Lock()
-+	if j.discarded {
-+		j.mu.Unlock()
-+		return nil, errors.Errorf("build on discarded job %s", j.id)
-+	}
-+	j.builds++
- 	if span := trace.SpanFromContext(ctx); span.SpanContext().IsValid() {
--		j.mu.Lock()
- 		j.span = span
--		j.mu.Unlock()
- 	}
-+	j.mu.Unlock()
-+	defer j.buildDone()
- 
- 	v, err := j.list.load(ctx, e.Vertex, nil, j)
- 	if err != nil {
-@@ -919,7 +927,32 @@ func (j *Job) CloseProgress() {
- 	j.pw.Close()
- }
- 
-+// buildDone finishes a pending Discard when the last running build returns.
-+func (j *Job) buildDone() {
-+	j.mu.Lock()
-+	j.builds--
-+	last := j.discarded && j.builds == 0
-+	j.mu.Unlock()
-+	if last {
-+		j.discard()
-+	}
-+}
-+
-+// Discard releases the job's states. While builds are still running the states
-+// are released when the last one returns, so results that complete after
-+// Discard are released with their state.
- func (j *Job) Discard() error {
-+	j.mu.Lock()
-+	j.discarded = true
-+	running := j.builds > 0
-+	j.mu.Unlock()
-+	if running {
-+		return nil
-+	}
-+	return j.discard()
-+}
-+
-+func (j *Job) discard() error {
- 	j.list.mu.Lock()
- 	defer j.list.mu.Unlock()
- 
-```
-
-**File**: `solver/scheduler_test.go` (modified, +5/-3)
-```diff
-@@ -1297,6 +1297,8 @@ func TestExecErrorRefsReleasedAfterJobDiscard(t *testing.T) {
- 
- 	// A failed exec can finish after its job has released the vertex.
- 	require.NoError(t, j.Discard())
-+	_, err = j.Build(ctx, g)
-+	require.ErrorContains(t, err, "build on discarded job")
- 	resumeExec()
- 	select {
- 	case err := <-done:
-@@ -1608,15 +1610,15 @@ func TestMultipleCacheSources(t *testing.T) {
- 		}),
- 	}
- 
--	res, err = j1.Build(ctx, g2)
-+	res, err = j2.Build(ctx, g2)
- 	require.NoError(t, err)
- 	require.Equal(t, "result2", unwrap(res))
- 
- 	require.Equal(t, int64(2), cacheManager.loadCounter)
- 	require.Equal(t, int64(0), cacheManager2.loadCounter)
- 
--	require.NoError(t, j1.Discard())
--	j1 = nil
-+	require.NoError(t, j2.Discard())
-+	j2 = nil
- }
- 
- func TestRepeatBuildWithIgnoreCache(t *testing.T) {
-```
-
----
-
-### Incident Patch 2: `56eec589` (2026-11-04)
-**Commit Message**: Merge pull request #7323 from thaJeztah/grpcnotrace
-
-build: disable gRPC tracing to reduce binary size
-
-**File**: `Dockerfile` (modified, +2/-2)
-```diff
-@@ -99,7 +99,7 @@ RUN --mount=target=. --mount=target=/root/.cache,type=cache \
-   --mount=target=/go/pkg/mod,type=cache \
-   --mount=source=/tmp/.ldflags,target=/tmp/.ldflags,from=buildkit-version <<EOT
-   set -ex
--  xx-go build ${GOBUILDFLAGS} -ldflags "$(cat /tmp/.ldflags)" -o /usr/bin/buildctl ./cmd/buildctl
-+  xx-go build ${GOBUILDFLAGS} -tags 'grpcnotrace' -ldflags "$(cat /tmp/.ldflags)" -o /usr/bin/buildctl ./cmd/buildctl
-   xx-verify --static /usr/bin/buildctl
-   if [ "$(xx-info os)" = "linux" ] && ! xx-info is-cross; then /usr/bin/buildctl --version; fi
- EOT
-@@ -118,7 +118,7 @@ RUN --mount=target=. --mount=target=/root/.cache,type=cache \
-   --mount=target=/go/pkg/mod,type=cache \
-   --mount=source=/tmp/.ldflags,target=/tmp/.ldflags,from=buildkit-version <<EOT
-   set -ex
--  xx-go build ${GOBUILDFLAGS} -gcflags="${GOGCFLAGS}" -ldflags "$(cat /tmp/.ldflags) -extldflags '-static'" -tags "osusergo netgo static_build seccomp ${BUILDKITD_TAGS}" -o /usr/bin/buildkitd ./cmd/buildkitd
-+  xx-go build ${GOBUILDFLAGS} -gcflags="${GOGCFLAGS}" -ldflags "$(cat /tmp/.ldflags) -extldflags '-static'" -tags "osusergo netgo static_build seccomp grpcnotrace ${BUILDKITD_TAGS}" -o /usr/bin/buildkitd ./cmd/buildkitd
-   xx-verify ${VERIFYFLAGS} /usr/bin/buildkitd
- 
-   # buildkitd --version can be flaky when running through emulation related to
-```
-
----
-
-### Incident Patch 3: `85a6674b` (2026-11-04)
-**Commit Message**: Merge pull request #7351 from ggjulio/fix-cache-export-partial-chain
-
-remotecache: never export a partial layer chain
-
-**File**: `cache/remotecache/v1/chains_test.go` (modified, +77/-0)
-```diff
-@@ -1,14 +1,19 @@
- package cacheimport
- 
- import (
-+	"context"
- 	"encoding/json"
- 	"testing"
- 	"time"
- 
-+	"github.com/containerd/containerd/v2/core/content"
- 	"github.com/containerd/containerd/v2/core/images"
-+	cerrdefs "github.com/containerd/errdefs"
-+	cacheimporttypes "github.com/moby/buildkit/cache/remotecache/v1/types"
- 	"github.com/moby/buildkit/solver"
- 	digest "github.com/opencontainers/go-digest"
- 	ocispecs "github.com/opencontainers/image-spec/specs-go/v1"
-+	"github.com/pkg/errors"
- 	"github.com/stretchr/testify/require"
- )
- 
-@@ -162,3 +167,75 @@ func TestMarshalLayerMediaTypes(t *testing.T) {
- func dgst(s string) digest.Digest {
- 	return digest.FromBytes([]byte(s))
- }
-+
-+// countingProvider fails Info for a blob once it has been checked more than failAfter times, modelling a blob
-+// that becomes unavailable while the config is being marshaled.
-+type countingProvider struct {
-+	failAfter map[digest.Digest]int
-+	calls     map[digest.Digest]int
-+}
-+
-+func (p *countingProvider) Info(_ context.Context, dgst digest.Digest) (content.Info, error) {
-+	p.calls[dgst]++
-+	if n, ok := p.failAfter[dgst]; ok && p.calls[dgst] > n {
-+		return content.Info{}, errors.Wrapf(cerrdefs.ErrNotFound, "blob %s", dgst)
-+	}
-+	return content.Info{Digest: dgst}, nil
-+}
-+
-+func (p *countingProvider) ReaderAt(context.Context, ocispecs.Descriptor) (content.ReaderAt, error) {
-+	return nil, cerrdefs.ErrNotImplemented
-+}
-+
-+func TestMarshalUnavailableBlob(t *testing.T) {
-+	chain := []ocispecs.Descriptor{{Digest: dgst("d0")}, {Digest: dgst("d1")}, {Digest: dgst("d2")}}
-+
-+	marshal := func(t *testing.T, p *countingProvider) *cacheimporttypes.CacheConfig {
-+		cc := NewCacheChains()
-+		base, ok, err := cc.Add(outputKey(dgst("base"), 0), nil, nil)
-+		require.NoError(t, err)
-+		require.True(t, ok)
-+		// built with append: a one-element literal makes gosec report G602 on deps[i][j] in Add
-+		var deps [][]solver.CacheLink
-+		deps = append(deps, []solver.CacheLink{{Src: base}})
-+		_, ok, err = cc.Add(outputKey(dgst("run"), 0), deps, []solver.CacheExportResult{{
-+			CreatedAt: time.Now(),
-+			Result:    &solver.Remote{Descriptors: chain, Provider: p},
-+		}})
-+		require.NoError(t, err)
-+		require.True(t, ok)
-+		cfg, _, err := cc.Marshal(t.Context())
-+		require.NoError(t, err)
-+		return cfg
-+	}
-+
-+	t.Run("unavailable", func(t *testing.T) {
-+		// the bottom blob is gone: the result is dropped, nothing of its chain is exported
-+		cfg := marshal(t, &countingProvider{failAfter: map[digest.Digest]int{dgst("d0"): 0}, calls: map[digest.Digest]int{}})
-+		require.Empty(t, cfg.Layers)
-+		for _, r := range cfg.Records {
-+			require.Empty(t, r.Results)
-+		}
-+	})
-+
-+	t.Run("becomes unavailable", func(t *testing.T) {
-+		// the bottom blob passes the first check and fails afterwards: the chain is exported whole or not at all,
-+		// never rooted on d1 or d2
-+		cfg := marshal(t, &countingProvider{failAfter: map[digest.Digest]int{dgst("d0"): 1}, calls: map[digest.Digest]int{}})
-+		for _, l := range cfg.Layers {
-+			for l.ParentIndex != -1 {
-+				l = cfg.Layers[l.ParentIndex]
-+			}
-+			require.Equal(t, dgst("d0"), l.Blob, "layer chain rooted on %s instead of the image root", l.Blob)
-+		}
-+		for _, r := range cfg.Records {
-+			for _, res := range r.Results {
-+				n, l := 1, cfg.Layers[res.LayerIndex]
-+				for l.ParentIndex != -1 {
-+					l, n = cfg.Layers[l.ParentIndex], n+1
-+				}
-+				require.Equal(t, len(chain), n)
-+			}
-+		}
-+	})
-+}
-```
-
-**File**: `cache/remotecache/v1/utils.go` (modified, +25/-32)
-```diff
-@@ -10,6 +10,7 @@ import (
- 	cerrdefs "github.com/containerd/errdefs"
- 	cacheimporttypes "github.com/moby/buildkit/cache/remotecache/v1/types"
- 	"github.com/moby/buildkit/solver"
-+	"github.com/moby/buildkit/util/bklog"
- 	"github.com/moby/buildkit/util/compression"
- 	digest "github.com/opencontainers/go-digest"
- 	"github.com/pkg/errors"
-@@ -136,48 +137,40 @@ func marshalRemote(ctx context.Context, r *solver.Remote, state *marshalState) s
- 
- 	if r.Provider != nil {
- 		for _, d := range r.Descriptors {
--			if _, err := r.Provider.Info(ctx, d.Digest); err != nil {
--				if !cerrdefs.IsNotImplemented(err) {
--					return ""
--				}
-+			if _, err := r.Provider.Info(ctx, d.Digest); err != nil && !cerrdefs.IsNotImplemented(err) {
-+				bklog.G(ctx).WithError(err).Warnf("skipping cache result: blob %s is not available", d.Digest)
-+				return ""
- 			}
- 		}
- 	}
- 
- 	var parentID string
--	if len(r.Descriptors) > 1 {
--		r2 := &solver.Remote{
--			Descriptors: r.Descriptors[:len(r.Descriptors)-1],
--			Provider:    r.Provider,
-+	for _, desc := range r.Descriptors {
-+		if desc.MediaType != "" {
-+			desc = compression.ConvertAllLayerMediaTypes(ctx, true, desc)[0]
- 		}
--		parentID = marshalRemote(ctx, r2, state)
--	}
--	desc := r.Descriptors[len(r.Descriptors)-1]
--	if desc.MediaType != "" {
--		desc = compression.ConvertAllLayerMediaTypes(ctx, true, desc)[0]
--	}
- 
--	state.descriptors[desc.Digest] = DescriptorProviderPair{
--		Descriptor: desc,
--		Provider:   r.Provider,
--	}
-+		state.descriptors[desc.Digest] = DescriptorProviderPair{
-+			Descriptor: desc,
-+			Provider:   r.Provider,
-+		}
- 
--	id := desc.Digest.String() + parentID
-+		id := desc.Digest.String() + parentID
- 
--	if _, ok := state.chainsByID[id]; ok {
--		return id
--	}
--
--	state.chainsByID[id] = len(state.layers)
--	l := cacheimporttypes.CacheLayer{
--		Blob:        desc.Digest,
--		ParentIndex: -1,
--	}
--	if parentID != "" {
--		l.ParentIndex = state.chainsByID[parentID]
-+		if _, ok := state.chainsByID[id]; !ok {
-+			state.chainsByID[id] = len(state.layers)
-+			l := cacheimporttypes.CacheLayer{
-+				Blob:        desc.Digest,
-+				ParentIndex: -1,
-+			}
-+			if parentID != "" {
-+				l.ParentIndex = state.chainsByID[parentID]
-+			}
-+			state.layers = append(state.layers, l)
-+		}
-+		parentID = id
- 	}
--	state.layers = append(state.layers, l)
--	return id
-+	return parentID
- }
- 
- func marshalItem(ctx context.Context, it *item, state *marshalState) error {
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #7372** (2026-11-05): client: skip testImageCacheRejectsUnverifiedDiffIDs on dockerd graphdriver (@tonistiigi)
+- **PR #7371** (2026-11-05): build(deps): bump github/codeql-action/upload-sarif from 4.39.1 to 4.39.2 (@dependabot[bot])
 - **PR #7367** (2026-11-04): source/http: add retry jitter and Retry-After handling (@crazy-max)
 - **PR #7366** (2026-11-04): deps updates for v0.35 (@tonistiigi)
 - **PR #7364** (2026-11-04): imagerefchecker: don't match chains with missing blobs (@tonistiigi)
 - **PR #7363** (2026-11-04): s3: fix partial reads in the cache reader (@crazy-max)
-- **PR #7361** (2026-11-04): s3: fix resuming interrupted cache downloads (@gajohnson)
 
 ---
 
@@ -2876,28 +2382,30 @@ remotecache: never export a partial layer chain
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #7355 from tonistiigi/solver-ref-fixes
+## X. Merge pull request #7371 from moby/dependabot/github_actions/github/codeql-actio
 
 **RULE**:
-When implementing operations in `client/client_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in moby/buildkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/buildkit.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in moby/buildkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9fab8633`: Merge pull request #7355 from tonistiigi/solver-ref-fixes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d2de4602`: Merge pull request #7371 from moby/dependabot/github_actions/github/codeql-action/upload-sarif-4.39.2. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `client/client_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/buildkit.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-		testClientGatewaySolveReleasedAfterDiscard,
+        uses: github/codeql-action/upload-sarif@1fc58d04a4d4374f921bdac573c3811c240f9c26 # v4.39.2
+        uses: github/codeql-action/upload-sarif@1fc58d04a4d4374f921bdac573c3811c240f9c26 # v4.39.2
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+        uses: github/codeql-action/upload-sarif@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
+        uses: github/codeql-action/upload-sarif@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9fab8633` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d2de4602` are properly handled with clean fallback behavior.

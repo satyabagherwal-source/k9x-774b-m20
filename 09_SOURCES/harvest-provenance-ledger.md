@@ -7815,3 +7815,6 @@ Every entry in this ledger must capture:
 | `learn-github-iliyami-macsai` | `https://github.com/iliyami/MacSai` | `3ae87e70` | Multi-dimensional audit evidence | 2026-11-05T22:40:09.296Z |
 | `learn-github-siderolabs-talos` | `https://github.com/siderolabs/talos` | `d04aa46b` | Multi-dimensional audit evidence | 2026-11-05T22:40:12.998Z |
 | `learn-github-trinodb-trino` | `https://github.com/trinodb/trino` | `89d09f46` | Multi-dimensional audit evidence | 2026-11-05T22:40:17.795Z |
+| `learn-github-a2ui-project-a2ui` | `https://github.com/a2ui-project/a2ui` | `f7b795e4` | Multi-dimensional audit evidence | 2026-11-05T22:47:51.223Z |
+| `learn-huggingface-diffuspace-clover-35b-a3b-preview` | `https://huggingface.co/Diffuspace/Clover-35B-A3B-Preview` | `hf-diffusp` | Multi-dimensional audit evidence | 2026-11-05T22:47:57.427Z |
+| `learn-github-moby-buildkit` | `https://github.com/moby/buildkit` | `d2de4602` | Multi-dimensional audit evidence | 2026-11-05T22:47:58.839Z |

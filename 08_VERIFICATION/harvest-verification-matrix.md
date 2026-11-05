@@ -7806,3 +7806,6 @@
 | `CYCLE-20261105-PBGS` | `2026-11-05T22:40:09.292Z` | `iliyami/MacSai` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`a61e1065...`) |
 | `CYCLE-20261105-PEBN` | `2026-11-05T22:40:12.995Z` | `siderolabs/talos` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`c750ad7c...`) |
 | `CYCLE-20261105-PI0W` | `2026-11-05T22:40:17.792Z` | `trinodb/trino` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`3f2cced6...`) |
+| `CYCLE-20261105-Z7VW` | `2026-11-05T22:47:51.212Z` | `a2ui-project/a2ui` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`b4c2fc4b...`) |
+| `CYCLE-20261105-ZCOG` | `2026-11-05T22:47:57.424Z` | `Diffuspace/Clover-35B-A3B-Preview` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule 6393, Rule 3579` | Yes (`fc18345a...`) |
+| `CYCLE-20261105-ZDRO` | `2026-11-05T22:47:58.836Z` | `moby/buildkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`7ea70990...`) |

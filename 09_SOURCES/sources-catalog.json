@@ -2113,10 +2113,10 @@
     "repository": "moby/buildkit",
     "platform": "github",
     "sourceUrl": "https://github.com/moby/buildkit",
-    "sourceVersion": "b9d02e6e",
+    "sourceVersion": "d2de4602",
     "license": "Apache-2.0",
-    "contentHash": "b2266d564c77c1851e3a7721adcbada6b6efc8e798dbe05c831badf2fda9495d",
-    "lastHarvestedAt": "2026-11-05T06:58:25.362Z",
+    "contentHash": "7ea70990272520398e8b214502460c4c2efaeb421f7de884f141348f47ea7ee0",
+    "lastHarvestedAt": "2026-11-05T22:47:58.839Z",
     "learningId": "learn-github-moby-buildkit"
   },
   "microsoft-agent-governance-toolkit": {
@@ -11505,8 +11505,8 @@
     "sourceUrl": "https://huggingface.co/Diffuspace/Clover-35B-A3B-Preview",
     "sourceVersion": "hf-diffuspace-clover-35b-a3b-preview",
     "license": "Open-Source",
-    "contentHash": "72c4831c27d25acea0c5f624ba885931b7ee7e55fc379bea3fbbc2666a67d420",
-    "lastHarvestedAt": "2026-11-02T17:54:17.062Z",
+    "contentHash": "fc18345a4a8e641b582bc0fefeb6affa2673d80dfe0d9c9a955e6075c14200a4",
+    "lastHarvestedAt": "2026-11-05T22:47:57.427Z",
     "learningId": "learn-huggingface-diffuspace-clover-35b-a3b-preview"
   },
   "cherryhq-cherry-studio": {
@@ -12028,5 +12028,15 @@
     "contentHash": "759160bcfbab3ba90253223c76772ee4125352250bc90d8877d008c5d3184595",
     "lastHarvestedAt": "2026-11-05T21:40:04.324Z",
     "learningId": "learn-github-davila7-claude-code-templates"
+  },
+  "a2ui-project-a2ui": {
+    "repository": "a2ui-project/a2ui",
+    "platform": "github",
+    "sourceUrl": "https://github.com/a2ui-project/a2ui",
+    "sourceVersion": "f7b795e4",
+    "license": "Apache-2.0",
+    "contentHash": "b4c2fc4b9fb77f079f8dad115145b927a7fea35fe5aff1ba5a6ae8f0d9be009e",
+    "lastHarvestedAt": "2026-11-05T22:47:51.223Z",
+    "learningId": "learn-github-a2ui-project-a2ui"
   }
 }

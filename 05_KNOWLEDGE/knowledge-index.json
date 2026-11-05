@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T22:40:17.714Z",
-  "total_verified_learnings": 1221,
+  "last_updated": "2026-11-05T22:47:58.783Z",
+  "total_verified_learnings": 1222,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -42856,11 +42856,16 @@
       "slug": "moby-buildkit",
       "platform": "github",
       "source_url": "https://github.com/moby/buildkit",
-      "source_version": "b9d02e6e",
-      "content_hash": "b2266d564c77c1851e3a7721adcbada6b6efc8e798dbe05c831badf2fda9495d",
+      "source_version": "d2de4602",
+      "content_hash": "7ea70990272520398e8b214502460c4c2efaeb421f7de884f141348f47ea7ee0",
       "dossier_path": "07_PROJECT_LEARNING/moby-buildkit-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/moby-buildkit-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Merge pull request #7371 from moby/dependabot/github_actions/github/codeql-actio",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 1692,
           "title": "build(deps): bump github/codeql-action/upload-sarif",
@@ -42922,7 +42927,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T06:58:25.225Z",
+      "verified_at": "2026-11-05T22:47:58.768Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -126050,15 +126055,15 @@
       "learning_id": "rule-3579",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 3579,
-      "title": "MoE Expert Routing Determinism & Load Balancing Invariant",
-      "source_url": "https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B-NVFP4",
-      "source_version": "hf-meta-models-muse-spark-open-816b-a42b-nvfp4",
+      "title": "MoE Expert Routing Determinism",
+      "source_url": "https://huggingface.co/Diffuspace/Clover-35B-A3B-Preview",
+      "source_version": "hf-diffuspace-clover-35b-a3b-preview",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-26T11:32:00.788Z"
+      "verified_at": "2026-11-05T22:47:57.356Z"
     },
     "rule-3580": {
       "learning_id": "rule-3580",
@@ -157764,10 +157769,20 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Diffuspace/Clover-35B-A3B-Preview",
       "source_version": "hf-diffuspace-clover-35b-a3b-preview",
-      "content_hash": "72c4831c27d25acea0c5f624ba885931b7ee7e55fc379bea3fbbc2666a67d420",
+      "content_hash": "fc18345a4a8e641b582bc0fefeb6affa2673d80dfe0d9c9a955e6075c14200a4",
       "dossier_path": "07_PROJECT_LEARNING/hf-diffuspace-clover-35b-a3b-preview-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-diffuspace-clover-35b-a3b-preview-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Parallel Decoding Termination Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": 3579,
+          "title": "MoE Expert Routing Determinism",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
         {
           "number": 5537,
           "title": "Dynamic Block-Diffusion Progress Guarantee Invariant",
@@ -157782,6 +157797,11 @@
           "number": 5539,
           "title": "Asymmetric Hybrid Linear-Attention / GQA State Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6393,
+          "title": "Hybrid Attention Layer Type Consistency",
+          "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
           "number": 6479,
@@ -157804,7 +157824,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-02T17:54:16.955Z",
+      "verified_at": "2026-11-05T22:47:57.356Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -170429,15 +170449,15 @@
       "learning_id": "rule-6393",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 6393,
-      "title": "Hybrid Attention Layer Type Consistency Invariant",
-      "source_url": "https://huggingface.co/nvidia/Qwen3.8-Flash-Next-FP4-Local",
-      "source_version": "hf-nvidia-qwen3.8-flash-next-fp4-local",
+      "title": "Hybrid Attention Layer Type Consistency",
+      "source_url": "https://huggingface.co/Diffuspace/Clover-35B-A3B-Preview",
+      "source_version": "hf-diffuspace-clover-35b-a3b-preview",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-01T01:40:30.080Z"
+      "verified_at": "2026-11-05T22:47:57.356Z"
     },
     "rule-6394": {
       "learning_id": "rule-6394",
@@ -183896,6 +183916,39 @@
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
       "verified_at": "2026-11-05T21:40:04.197Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-github-a2ui-project-a2ui": {
+      "learning_id": "learn-github-a2ui-project-a2ui",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "a2ui-project/a2ui",
+      "repository": "a2ui-project/a2ui",
+      "slug": "a2ui-project-a2ui",
+      "platform": "github",
+      "source_url": "https://github.com/a2ui-project/a2ui",
+      "source_version": "f7b795e4",
+      "content_hash": "b4c2fc4b9fb77f079f8dad115145b927a7fea35fe5aff1ba5a6ae8f0d9be009e",
+      "dossier_path": "07_PROJECT_LEARNING/a2ui-project-a2ui-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/a2ui-project-a2ui-learnings.md",
+      "promoted_rules": [
+        {
+          "number": null,
+          "title": "docs(site): add Swappable Inference Formats concept guide (#3969)",
+          "status": "WITHHELD_REJECT"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-05T22:47:51.140Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

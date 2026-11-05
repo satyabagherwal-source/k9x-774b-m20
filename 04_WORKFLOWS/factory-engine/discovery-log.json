@@ -20452,5 +20452,20 @@
     "qualityScore": 18183,
     "verifiedOrg": false,
     "discoveredAt": "2026-11-05T21:36:05.441Z"
+  },
+  {
+    "name": "a2ui",
+    "fullName": "a2ui-project/a2ui",
+    "url": "https://github.com/a2ui-project/a2ui",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "Open-source generative UI framework: agents stream declarative JSON, and apps render it with native components in React, Angular, Lit, Flutter, SwiftUI and Jetpack Compose.",
+    "stars": 16985,
+    "forks": 1368,
+    "openIssues": 540,
+    "language": "TypeScript",
+    "qualityScore": 9353,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-11-05T22:45:57.117Z"
   }
 ]

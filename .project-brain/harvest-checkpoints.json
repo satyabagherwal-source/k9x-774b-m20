@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-05T22:40:17.804Z",
+  "last_updated": "2026-11-05T22:47:58.851Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3306,14 +3306,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-moby-buildkit",
-      "content_hash": "b2266d564c77c1851e3a7721adcbada6b6efc8e798dbe05c831badf2fda9495d",
-      "verified_at": "2026-11-05T06:58:25.382Z",
+      "content_hash": "7ea70990272520398e8b214502460c4c2efaeb421f7de884f141348f47ea7ee0",
+      "verified_at": "2026-11-05T22:47:58.851Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T06:58:25.382Z"
+      "last_updated": "2026-11-05T22:47:58.851Z"
     },
     "microsoft/agent-governance-toolkit": {
       "repository": "microsoft/agent-governance-toolkit",
@@ -17301,14 +17301,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-diffuspace-clover-35b-a3b-preview",
-      "content_hash": "72c4831c27d25acea0c5f624ba885931b7ee7e55fc379bea3fbbc2666a67d420",
-      "verified_at": "2026-11-02T17:54:17.071Z",
+      "content_hash": "fc18345a4a8e641b582bc0fefeb6affa2673d80dfe0d9c9a955e6075c14200a4",
+      "verified_at": "2026-11-05T22:47:57.445Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-02T17:54:17.071Z"
+      "last_updated": "2026-11-05T22:47:57.445Z"
     },
     "CherryHQ/cherry-studio": {
       "repository": "CherryHQ/cherry-studio",
@@ -18104,6 +18104,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-05T21:40:04.334Z"
+    },
+    "a2ui-project/a2ui": {
+      "repository": "a2ui-project/a2ui",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-a2ui-project-a2ui",
+      "content_hash": "b4c2fc4b9fb77f079f8dad115145b927a7fea35fe5aff1ba5a6ae8f0d9be009e",
+      "verified_at": "2026-11-05T22:47:51.230Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-05T22:47:51.230Z"
     }
   },
   "repos": {
