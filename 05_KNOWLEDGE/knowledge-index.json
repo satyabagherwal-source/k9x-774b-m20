@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T02:11:38.273Z",
+  "last_updated": "2026-11-05T02:18:13.055Z",
   "total_verified_learnings": 1210,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -13448,8 +13448,8 @@
       "slug": "fallow-rs-fallow",
       "platform": "github",
       "source_url": "https://github.com/fallow-rs/fallow",
-      "source_version": "7cead47b",
-      "content_hash": "b5ae6b59ab7a1a36f7ef47669e1a660b4c0ab153b5b5b636b62ec549737d7224",
+      "source_version": "a275a777",
+      "content_hash": "fc910c9ed45e53cb525c65cd0d9e3fcc6962b57a8477cd3fa0ffa9d39b974aa8",
       "dossier_path": "07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md",
       "promoted_rules": [
@@ -13517,6 +13517,11 @@
           "number": 6661,
           "title": "resolve): credit an uninstalled package for a Vite asset query import (#4181)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7071,
+          "title": "cache): key the graph cache on lockfiles and install markers (#4192)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -13524,7 +13529,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T23:39:18.242Z",
+      "verified_at": "2026-11-05T02:18:06.194Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -25613,7 +25618,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
       "source_version": "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-coder-gguf",
-      "content_hash": "717480b25d63cafccd9ddae639436f0a49b708626d3c9fd0e285f2cb7b873a22",
+      "content_hash": "bff7e519ea31431ee5c64137cfc4f6cde739029213a649e4fa77af03ccc5410b",
       "dossier_path": "07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-flash-next-gsq-rco-coder-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-flash-next-gsq-rco-coder-gguf-learnings.md",
       "promoted_rules": [
@@ -25656,7 +25661,7 @@
         "learn-huggingface-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf-mv47md9a",
         "learn-huggingface-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf-mv4kw31t"
       ],
-      "verified_at": "2026-10-31T11:46:39.227Z",
+      "verified_at": "2026-11-05T02:18:03.821Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -35603,8 +35608,8 @@
       "slug": "kcl-lang-kcl",
       "platform": "github",
       "source_url": "https://github.com/kcl-lang/kcl",
-      "source_version": "5e193f62",
-      "content_hash": "e2a10b7c1c8fcb45d6466364eec290550a166f5b593c7d1e2e977a991d3c99d8",
+      "source_version": "c7226d05",
+      "content_hash": "0751c1516dfca93122a13e698cc7d9ede434e8e2d9b1cb246ea5c4a7d32bdcbd",
       "dossier_path": "07_PROJECT_LEARNING/kcl-lang-kcl-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kcl-lang-kcl-learnings.md",
       "promoted_rules": [
@@ -35652,6 +35657,11 @@
           "number": 6747,
           "title": "Export subcommand [--target=golang] (#2259)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7072,
+          "title": "Export subcommand [--target=java] (#2261)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -35659,7 +35669,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T03:44:13.440Z",
+      "verified_at": "2026-11-05T02:18:13.041Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -179329,6 +179339,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-05T02:11:38.250Z"
+    },
+    "rule-7071": {
+      "learning_id": "rule-7071",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7071,
+      "title": "cache): key the graph cache on lockfiles and install markers (#4192)",
+      "source_url": "https://github.com/fallow-rs/fallow",
+      "source_version": "a275a777",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T02:18:06.194Z"
+    },
+    "rule-7072": {
+      "learning_id": "rule-7072",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7072,
+      "title": "Export subcommand [--target=java] (#2261)",
+      "source_url": "https://github.com/kcl-lang/kcl",
+      "source_version": "c7226d05",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T02:18:13.041Z"
     }
   },
   "aliases": {

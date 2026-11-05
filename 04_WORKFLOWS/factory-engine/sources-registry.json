@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-05T02:11:40.910Z",
-    "lastVerified": "2026-11-05T02:11:40.910Z",
+    "lastChecked": "2026-11-05T02:18:15.662Z",
+    "lastVerified": "2026-11-05T02:18:15.662Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -356,9 +356,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-05T01:47:45.018Z",
+    "lastChecked": "2026-11-05T02:18:15.487Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-05T01:47:45.018Z"
+    "lastVerified": "2026-11-05T02:18:15.487Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -905,9 +905,9 @@
   "chrispybacon-dev-dockflare": {
     "name": "DockFlare",
     "officialUrl": "https://github.com/ChrispyBacon-dev/DockFlare",
-    "lastChecked": "2026-11-04T22:45:32.721Z",
+    "lastChecked": "2026-11-05T02:18:10.453Z",
     "revisionIdentifier": "9c7bed82",
-    "lastVerified": "2026-11-04T22:45:32.721Z"
+    "lastVerified": "2026-11-05T02:18:10.453Z"
   },
   "nirdiamant-rag_techniques": {
     "name": "RAG_Techniques",
@@ -2168,14 +2168,14 @@
     "officialUrl": "https://github.com/fallow-rs/fallow",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-03T23:39:15.685Z",
-    "lastVerified": "2026-11-03T23:39:15.685Z",
+    "lastChecked": "2026-11-05T02:18:05.724Z",
+    "lastVerified": "2026-11-05T02:18:05.724Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-fallow-rs-fallow",
-    "contentHash": "b5ae6b59ab7a1a36f7ef47669e1a660b4c0ab153b5b5b636b62ec549737d7224",
+    "contentHash": "fc910c9ed45e53cb525c65cd0d9e3fcc6962b57a8477cd3fa0ffa9d39b974aa8",
     "promotedRulesCount": 1,
-    "recentFixesCount": 4,
+    "recentFixesCount": 10,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -3273,12 +3273,12 @@
     "officialUrl": "https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-31T11:46:38.197Z",
-    "lastVerified": "2026-10-31T11:46:38.197Z",
+    "lastChecked": "2026-11-05T02:18:03.110Z",
+    "lastVerified": "2026-11-05T02:18:03.110Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf",
-    "contentHash": "717480b25d63cafccd9ddae639436f0a49b708626d3c9fd0e285f2cb7b873a22",
+    "contentHash": "bff7e519ea31431ee5c64137cfc4f6cde739029213a649e4fa77af03ccc5410b",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -4001,9 +4001,9 @@
   "llphant-llphant": {
     "name": "LLPhant",
     "officialUrl": "https://github.com/LLPhant/LLPhant",
-    "lastChecked": "2026-11-04T03:00:16.412Z",
+    "lastChecked": "2026-11-05T02:18:12.975Z",
     "revisionIdentifier": "6305ae46",
-    "lastVerified": "2026-11-04T03:00:16.412Z"
+    "lastVerified": "2026-11-05T02:18:12.975Z"
   },
   "mufeedvh-code2prompt": {
     "name": "mufeedvh/code2prompt",
@@ -6466,12 +6466,12 @@
     "officialUrl": "https://github.com/kcl-lang/kcl",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-04T03:44:12.597Z",
-    "lastVerified": "2026-11-04T03:44:12.597Z",
+    "lastChecked": "2026-11-05T02:18:12.615Z",
+    "lastVerified": "2026-11-05T02:18:12.615Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-kcl-lang-kcl",
-    "contentHash": "e2a10b7c1c8fcb45d6466364eec290550a166f5b593c7d1e2e977a991d3c99d8",
+    "contentHash": "0751c1516dfca93122a13e698cc7d9ede434e8e2d9b1cb246ea5c4a7d32bdcbd",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
@@ -9006,9 +9006,9 @@
   "swiftkickmobile-swiftmessages": {
     "name": "SwiftMessages",
     "officialUrl": "https://github.com/SwiftKickMobile/SwiftMessages",
-    "lastChecked": "2026-10-31T19:23:43.916Z",
+    "lastChecked": "2026-11-05T02:18:05.533Z",
     "revisionIdentifier": "c0ff6c65",
-    "lastVerified": "2026-10-31T19:23:43.916Z"
+    "lastVerified": "2026-11-05T02:18:05.533Z"
   },
   "hf-nvidia-qwen3.8-flash-next-fp4-local": {
     "name": "nvidia/Qwen3.8-Flash-Next-FP4-Local",

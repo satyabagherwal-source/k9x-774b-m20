@@ -7454,3 +7454,6 @@
 | `CYCLE-20261105-GVRY` | `2026-11-05T02:01:52.606Z` | `metalbear-co/mirrord` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7067` | Yes (`5479c29f...`) |
 | `CYCLE-20261105-TDY2` | `2026-11-05T02:11:36.026Z` | `MochiDiffusion/MochiDiffusion` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7068` | Yes (`047da123...`) |
 | `CYCLE-20261105-TFQV` | `2026-11-05T02:11:38.359Z` | `PSRben/VisionHOPE` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7069, Rule 7070` | Yes (`a0463eb6...`) |
+| `CYCLE-20261105-1P86` | `2026-11-05T02:18:03.894Z` | `ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-flash-next-gsq-rco-coder-gguf-learnings.md` | Yes (`bff7e519...`) |
+| `CYCLE-20261105-1R1Z` | `2026-11-05T02:18:06.263Z` | `fallow-rs/fallow` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7071` | Yes (`fc910c9e...`) |
+| `CYCLE-20261105-1WC3` | `2026-11-05T02:18:13.107Z` | `kcl-lang/kcl` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7072` | Yes (`0751c151...`) |

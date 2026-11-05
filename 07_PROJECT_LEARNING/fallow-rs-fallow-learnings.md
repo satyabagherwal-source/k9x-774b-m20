@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md`  
 > **Source**: github ([https://github.com/fallow-rs/fallow](https://github.com/fallow-rs/fallow))  
-> **Source Version**: `7cead47b`  
+> **Source Version**: `a275a777`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T23:39:17.614Z  
+> **Timestamp**: 2026-11-05T02:18:05.729Z  
 > **Learning ID**: `learn-github-fallow-rs-fallow`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/fallow-rs/fallow](https://github.com/fallow-rs/fallow))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T23:39:15.685Z  
+> **Harvest Timestamp**: 2026-11-05T02:18:05.724Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Codebase intelligence for TypeScript and JavaScript. Health, complexity hotspots, duplication, architecture boundaries, circular dependencies, design-system drift, and unused code, from one graph. CLI, GitHub Action, LSP, MCP, and VS Code. Rust, MIT licensed.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 5296 stars
+- **Stars / Engagement**: 5299 stars
 
 ---
 
@@ -1450,680 +1450,29 @@ pub use fallow_types::path_util::{
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7cead47b` (2026-11-03)
-**Commit Message**: fix(resolve): credit an uninstalled package for a Vite asset query import (#4181)
+### Incident Patch 1: `fcabf464` (2026-11-04)
+**Commit Message**: fix(cache): key the graph cache on lockfiles and install markers (#4192)
 
-* fix(resolve): credit an uninstalled package for a Vite asset query import
+* fix(cache): key the graph cache on lockfiles and install markers
 
-A bare import with a Vite asset query, for example `pkg/dist/a.wasm?url`,
-failed the package name check because of the `?`. Before the package was
-installed, the import was an unresolved import and the package did not
-count as used. The same subpath without a query credits the package.
+An install into an existing node_modules did not change the graph cache
+key. A warm run then used the import resolutions of the run before the
+install. The resolver input hash now reads the lockfiles and the install
+markers of npm, pnpm and Yarn for the root, the workspace roots and the
+directories above the root.
 
-The resolver now strips a query that holds only Vite asset parameters
-(`url`, `raw`, `worker`, `sharedworker`, `inline`, `no-inline`, `init`)
-when the package is not installed, and classifies the path the same as
-the plain subpath. A file that is missing from an installed package stays
-an unresolved import with the full specifier. An unknown query also stays
-unresolved.
-
-The graph cache version changes, because a cache from an earlier run
-replays the old classification on an unchanged tree.
+Closes #4188
 
 Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
 
-* fix(resolve): credit workspace source and key the cache on installs
+* fix(cache): key the graph cache on the package names of a Bun install
 
-A Vite asset query import of a linked workspace package now runs the workspace and alias fallbacks before the install check. The res
-
-**File**: `changelog.d/fix-vite-asset-query-imports.md` (added, +3/-0)
-```diff
-@@ -0,0 +1,3 @@
-+### Fixed
-+
-+- **`fallow dead-code` no longer reports a package import with a Vite asset query as unresolved when the package is not installed.** An import such as `pkg/dist/engine.wasm?url` or `pkg/build/worker.mjs?worker&inline` was an unresolved import before `node_modules` existed, and the package did not count as used. Fallow now treats the import the same as the plain subpath: the package counts as used and no finding appears. The supported query parameters are `url`, `raw`, `worker`, `sharedworker`, `inline`, `no-inline` and `init`. A query import of a workspace package credits the workspace source file, with or without the `node_modules` link. A file that is missing from an installed package is still an unresolved import. The graph cache now records whether `node_modules` exists at the project root and at each workspace root, so an install after a cached run does not replay the old result. The graph cache version changed, so a graph cache from an earlier run does not replay the old result.
-```
-
-**File**: `crates/core/src/resolution_inputs.rs` (modified, +25/-0)
-```diff
-@@ -65,9 +65,34 @@ pub fn resolution_inputs_hash(
-         target.hash(&mut hasher);
-     }
- 
-+    let mut install_states = node_modules_states(root, workspaces);
-+    install_states.sort_unstable();
-+    install_states.len().hash(&mut hasher);
-+    for state in &install_states {
-+        state.hash(&mut hasher);
-+    }
-+
-     hasher.finish()
- }
- 
-+/// Return `(path, exists)` for the `node_modules` directory of the project
-+/// root and of each workspace root.
-+///
-+/// The resolver reports a bare import with a Vite asset query as unresolved
-+/// only when the package is installed, so an install changes the result
-+/// without an edit to a source file or a manifest. Only the existence keys the
-+/// mode: a modification time changes on every fresh install in CI and would
-+/// make each restored cache miss.
-+fn node_modules_states(root: &Path, workspaces: &[WorkspaceInfo]) -> Vec<(String, bool)> {
-+    std::iter::once(root)
-+        .chain(workspaces.iter().map(|ws| ws.root.as_path()))
-+        .map(|dir| {
-+            let path = dir.join("node_modules");
-+            (portable_key(root, &path), path.is_dir())
-+        })
-+        .collect()
-+}
-+
- /// `package.json` fields whose paths the resolver follows for a package
- /// import. `exports` is read separately because it nests.
- const PACKAGE_ENTRY_FIELDS: &[&str] = &["main", "module", "types", "typings"];
-```
-
-**File**: `crates/core/tests/integration_test.rs` (modified, +2/-0)
-```diff
-@@ -490,6 +490,8 @@ mod scoped_used_class_members;
- mod scss_partials;
- #[path = "integration_test/super_method_calls.rs"]
- mod super_method_calls;
-+#[path = "integration_test/vite_asset_query_imports.rs"]
-+mod vite_asset_query_imports;
- #[path = "integration_test/vite_sass_crediting.rs"]
- mod vite_sass_crediting;
- 
-```
-
-**File**: `crates/core/tests/integration_test/vite_asset_query_imports.rs` (added, +253/-0)
-```diff
-@@ -0,0 +1,253 @@
-+use super::common::{create_config, create_config_with_cache};
-+use std::path::Path;
-+
-+const PACKAGE_JSON: &str = r#"{"name":"vite-asset-queries","private":true,"dependencies":{"plain-pkg":"1.0.0","@scope/mapped-pkg":"1.0.0"},"devDependencies":{"vite":"*"}}"#;
-+
-+fn write(root: &Path, path: &str, source: &str) {
-+    let path = root.join(path);
-+    std::fs::create_dir_all(path.parent().expect("parent")).expect("directory");
-+    std::fs::write(path, source).expect("fixture file");
-+}
-+
-+fn project(entry: &str, installed: bool) -> tempfile::TempDir {
-+    let dir = tempfile::tempdir().expect("project");
-+    let root = dir.path();
-+    write(root, "package.json", PACKAGE_JSON);
-+    write(root, "src/index.ts", entry);
-+    if installed {
-+        write(
-+            root,
-+            "node_modules/plain-pkg/package.json",
-+            r#"{"name":"plain-pkg","version":"1.0.0","main":"index.js"}"#,
-+        );
-+        write(
-+            root,
-+            "node_modules/plain-pkg/index.js",
-+            "module.exports = {};",
-+        );
-+        write(
-+            root,
-+            "node_modules/plain-pkg/build/worker.min.mjs",
-+            "self.onmessage = () => {};",
-+        );
-+        write(
-+            root,
-+            "node_modules/@scope/mapped-pkg/package.json",
-+            r#"{"name":"@scope/mapped-pkg","version":"1.0.0","exports":{".":"./dist/index.js","./dist/*":"./dist/*"}}"#,
-+        );
-+        write(
-+            root,
-+            "node_modules/@scope/mapped-pkg/dist/index.js",
-+            "export {};",
-+        );
-+        write(root, "node_modules/@scope/mapped-pkg/dist/engine.wasm", "");
-+        write(
-+            root,
-+            "node_modules/@scope/mapped-pkg/dist/worker.js",
-+            "export {};",
-+        );
-+    }
-+    dir
-+}
-+
-+struct Findings {
-+    unresolved: Vec<String>,
-+    unused_dependencies: Vec<String>,
-+}
-+
-+fn analyze(root: &Path) -> Findings {
-+    let mut config = create_config(root.to_path_buf());
-+    config.entry_patterns = vec!["src/index.ts".to_string()];
-+    let results = fallow_core::analyze(&config).expect("analysis");
-+    Findings {
-+        unresolved: results
-+            .unresolved_imports
-+            .iter()
-+            .map(|finding| finding.import.specifier.clone())
-+            .collect(),
-+        unused_dependencies: results
-+            .unused_dependencies
-+            .iter()
-+            .map(|finding| finding.dep.package_name.clone())
-+            .collect(),
-+    }
-+}
-+
-+const QUERY_IMPORTS: &str = "\
-+import a from 'plain-pkg/build/worker.min.mjs?url';
-+import b from 'plain-pkg/build/worker.min.mjs?raw';
-+import c from 'plain-pkg/build/worker.min.mjs?worker&inline';
-+import d from '@scope/mapped-pkg/dist/engine.wasm?url';
-+import e from '@scope/mapped-pkg/dist/engine.wasm?init';
-+import f from '@scope/mapped-pkg/dist/worker.js?sharedworker';
-+import g from '@scope/mapped-pkg/dist/engine.wasm?url&no-inline';
-+console.log(a, b, c, d, e, f, g);
-+";
-+
-+#[test]
-+fn query_imports_of_an_installed_package_resolve_and_credit_it() {
-+    let dir = project(QUERY_IMPORTS, true);
-+    let findings = analyze(dir.path());
-+    assert!(findings.unresolved.is_empty(), "{:?}", findings.unresolved);
-+    assert!(
-+        findings.unused_dependencies.is_empty(),
-+        "{:?}",
-+        findings.unused_dependencies
-+    );
-+}
-+
-+#[test]
-+fn query_imports_of_an_uninstalled_package_credit_it() {
-+    let dir = project(QUERY_IMPORTS, false);
-+    let findings = analyze(dir.path());
-+    assert!(
-+        findings.unresolved.is_empty(),
-+        "an uninstalled package cannot prove the file is missing: {:?}",
-+        findings.unresolved
-+    );
-+    assert!(
-+        findings.unused_dependencies.is_empty(),
-+        "both packages must count as used: {:?}",
-+        findings.unused_dependencies
-+    );
-+}
-+
-+#[test]
-+fn missing_file_of_an_installed_package_with_query_stays_unresolved() {
-+    let dir = project(
-+        "import a from 'plain-pkg/build/missing.mjs?url';\nimport b from '@scope/mapped-pkg/dist/missing.wasm?raw';\nconsole.log(a, b);\n",
-+        true,
-+    );
-+    assert_eq!(
-+        analyze(dir.path()).unresolved,
-+        vec![
-+            "plain-pkg/build/missing.mjs?url".to_string(),
-+            "@scope/mapped-pkg/dist/missing.wasm?raw".to_string(),
-+        ]
-+    );
-+}
-+
-+#[test]
-+fn unknown_query_on_an_uninstalled_package_stays_unresolved() {
-+    let dir = project(
-+        "import a from 'plain-pkg/build/worker.min.mjs?custom';\nconsole.log(a);\n",
-+        false,
-+    );
-+    assert_eq!(
-+        analyze(dir.path()).unresolved,
-+        vec!["plain-pkg/build/worker.min.mjs?custom".to_string()]
-+    );
-+}
-+
-+/// Build a workspace project whose `ui` package exports its `dist` output,
-+/// but has only source files.
-+fn workspace_project() -> tempfile::TempDir {
-+    let dir = tempfile::tempdir().expect("project");
-+    let root = dir.path();
-+    write(
-+        root,
-+        "package.json",
-+   
-```
-
-**File**: `crates/graph/src/cache/mod.rs` (modified, +1/-1)
-```diff
-@@ -40,7 +40,7 @@ pub use store::{GRAPH_CACHE_FILE, GraphCacheStore};
- /// Never reuse a version number that a published build wrote, even from a
- /// development commit. Git history and the CHANGELOG record the reason for
- /// each bump.
--pub const GRAPH_CACHE_VERSION: u32 = 99;
-+pub const GRAPH_CACHE_VERSION: u32 = 100;
- 
- /// Cached form of a resolved target.
- ///
-```
-
-**File**: `crates/graph/src/resolve/mod.rs` (modified, +1/-0)
-```diff
-@@ -35,6 +35,7 @@ mod tests;
- mod tsconfig_scope;
- mod types;
- mod upgrades;
-+mod url_suffix;
- mod work;
- mod workspace_alias;
- 
-```
-
-**File**: `crates/graph/src/resolve/specifier.rs` (modified, +14/-24)
-```diff
-@@ -33,6 +33,9 @@ use super::path_info::{
- use super::react_native::{build_condition_names, build_extensions};
- use super::tsconfig_scope::{glob_values_match, resolve_tsconfig_relative_path};
- use super::types::{DenoImportMapEntry, ResolveContext, ResolveResult};
-+use super::url_suffix::{
-+    resolve_failed_bare_asset_query_specifier, strip_url_suffix, strip_vite_asset_query,
-+};
- use super::workspace_alias::{
-     resolve_failed_bare_package_specifier, try_aliased_workspace_package_fallback,
- };
-@@ -471,12 +474,6 @@ fn specifier_matches_alias_prefix(specifier: &str, prefix: &str) -> bool {
-     remainder.is_empty() || prefix.ends_with('/') || remainder.starts_with('/')
- }
- 
--fn strip_url_suffix(specifier: &str) -> &str {
--    specifier
--        .find(['?', '#'])
--        .map_or(specifier, |idx| &specifier[..idx])
--}
--
- fn static_mount_url_path(specifier: &str) -> Option<String> {
-     let lookup = strip_url_suffix(specifier);
-     if lookup.starts_with("../") {
-@@ -1893,6 +1890,16 @@ fn resolve_failed_regular_specifier(
-     if is_plain_css_file(from_file) && is_bare_style_subpath(specifier) {
-         return ResolveResult::Unresolvable(specifier.to_string());
-     }
-+    if is_bare && let Some(base) = strip_vite_asset_query(specifier) {
-+        return resolve_failed_bare_asset_query_specifier(
-+            ctx,
-+            from_file,
-+            specifier,
-+            base,
-+            from_style || is_style_file(from_file),
-+            matches_tsconfig_path_alias,
-+        );
-+    }
-     if is_bare && is_valid_package_name(specifier) {
-         return resolve_failed_bare_package_specifier(
-             ctx,
-@@ -2050,7 +2057,7 @@ mod tests {
-         resolve_tsconfig_extends_candidate, resolve_tsconfig_extends_path,
-         resolve_tsconfig_reference_path, serves_static_dir_mounts,
-         should_preserve_node_modules_style_file, specifier_matches_alias_prefix,
--        static_dir_relative_path, static_mount_url_path, strip_url_suffix, tsconfig_extends_values,
-+        static_dir_relative_path, static_mount_url_path, tsconfig_extends_values,
-         with_appended_extension, with_exact_extension,
-     };
- 
-@@ -2369,23 +2376,6 @@ mod tests {
-         );
-     }
- 
--    // ---- strip_url_suffix (lines 419-423) ----
--
--    #[test]
--    fn strip_url_suffix_removes_query_string() {
--        assert_eq!(strip_url_suffix("./style.css?inline"), "./style.css");
--    }
--
--    #[test]
--    fn strip_url_suffix_removes_hash_fragment() {
--        assert_eq!(strip_url_suffix("./page.html#section"), "./page.html");
--    }
--
--    #[test]
--    fn strip_url_suffix_passes_through_plain_specifier() {
--        assert_eq!(strip_url_suffix("react"), "react");
--    }
--
-     // ---- static_mount_url_path ----
- 
-     #[test]
-```
-
-**File**: `crates/graph/src/resolve/url_suffix.rs` (added, +131/-0)
-```diff
-@@ -0,0 +1,131 @@
-+//! Query and fragment suffixes of import specifiers (`./a.css?inline`,
-+//! `pkg/a.wasm?url`, `./page.html#top`).
-+
-+use std::path::Path;
-+
-+use super::path_info::is_valid_package_name;
-+use super::types::{ResolveContext, ResolveResult};
-+use super::workspace_alias::resolve_failed_bare_package_specifier;
-+
-+/// Return the specifier without its query string or hash fragment.
-+pub(super) fn strip_url_suffix(specifier: &str) -> &str {
-+    specifier
-+        .find(['?', '#'])
-+        .map_or(specifier, |idx| &specifier[..idx])
-+}
-+
-+/// Vite asset query parameters that the bundler strips before it resolves
-+/// the path (`?url`, `?raw`, `?worker&inline`, and similar).
-+const VITE_ASSET_QUERY_PARAMS: &[&str] = &[
-+    "url",
-+    "raw",
-+    "worker",
-+    "sharedworker",
-+    "inline",
-+    "no-inline",
-+    "init",
-+];
-+
-+/// Return the path part of a specifier whose query holds only Vite asset
-+/// query parameters.
-+pub(super) fn strip_vite_asset_query(specifier: &str) -> Option<&str> {
-+    let (base, query) = specifier.split_once('?')?;
-+    (!base.is_empty()
-+        && query
-+            .split('&')
-+            .all(|param| VITE_ASSET_QUERY_PARAMS.contains(&param)))
-+    .then_some(base)
-+}
-+
-+/// Classify a bare package subpath with a Vite asset query that the resolver
-+/// could not resolve.
-+///
-+/// The workspace and alias fallbacks run first, the same as for the plain
-+/// subpath, so a workspace package gets the same result with or without its
-+/// `node_modules` link. The resolver strips the query, so an installed
-+/// external package means the file is really missing. When the package is not
-+/// installed, the import cannot be checked, so it credits the package the
-+/// same as the plain subpath does. An unresolved result keeps the full
-+/// specifier, so the report and `ignoreUnresolvedImports` match the text in
-+/// the source file.
-+pub(super) fn resolve_failed_bare_asset_query_specifier(
-+    ctx: &ResolveContext<'_>,
-+    from_file: &Path,
-+    specifier: &str,
-+    base: &str,
-+    style_context: bool,
-+    matches_tsconfig_path_alias: bool,
-+) -> ResolveResult {
-+    if !is_valid_package_name(base) {
-+        return ResolveResult::Unresolvable(specifier.to_string());
-+    }
-+    match resolve_failed_bare_package_specifier(
-+        ctx,
-+        from_file,
-+        base,
-+        style_context,
-+        matches_tsconfig_path_alias,
-+    ) {
-+        ResolveResult::Unresolvable(_) => ResolveResult::Unresolvable(specifier.to_string()),
-+        ResolveResult::NpmPackage(package_name)
-+            if is_package_installed(from_file, &package_name) =>
-+        {
-+            ResolveResult::Unresolvable(specifier.to_string())
-+        }
-+        resolved => resolved,
-+    }
-+}
-+
-+/// True when a `node_modules` directory in an ancestor of `from_file` holds
-+/// the package, which is the lookup that Node and the resolver do.
-+fn is_package_installed(from_file: &Path, package_name: &str) -> bool {
-+    from_file
-+        .ancestors()
-+        .skip(1)
-+        .any(|dir| dir.join("node_modules").join(package_name).is_dir())
-+}
-+
-+#[cfg(test)]
-+mod tests {
-+    use super::{is_package_installed, strip_url_suffix, strip_vite_asset_query};
-+
-+    #[test]
-+    fn strip_url_suffix_removes_query_string() {
-+        assert_eq!(strip_url_suffix("./style.css?inline"), "./style.css");
-+    }
-+
-+    #[test]
-+    fn strip_url_suffix_removes_hash_fragment() {
-+        assert_eq!(strip_url_suffix("./page.html#section"), "./page.html");
-+    }
-+
-+    #[test]
-+    fn strip_url_suffix_passes_through_plain_specifier() {
-+        assert_eq!(strip_url_suffix("react"), "react");
-+    }
-+
-+    #[test]
-+    fn strip_vite_asset_query_accepts_known_params_only() {
-+        assert_eq!(strip_vite_asset_query("pkg/a.wasm?url"), Some("pkg/a.wasm"));
-+        assert_eq!(
-+            strip_vite_asset_query("pkg/w.js?worker&inline"),
-+            Some("pkg/w.js")
-+        );
-+        assert_eq!(strip_vite_asset_query("pkg/a.js"), None);
-+        assert_eq!(strip_vite_asset_query("pkg/a.js?url&custom"), None);
-+        assert_eq!(strip_vite_asset_query("pkg/a.js?"), None);
-+        assert_eq!(strip_vite_asset_query("?url"), None);
-+    }
-+
-+    #[test]
-+    #[cfg_attr(miri, ignore)]
-+    fn installed_package_is_found_in_an_ancestor_node_modules() {
-+        let dir = tempfile::tempdir().expect("project");
-+        let root = dir.path();
-+        std::fs::create_dir_all(root.join("node_modules/@scope/pkg")).expect("package");
-+        std::fs::create_dir_all(root.join("apps/web/src")).expect("source");
-+        let importer = root.join("apps/web/src/index.ts");
-+        assert!(is_package_installed(&importer, "@scope/pkg"));
-+        assert!(!is_package_installed(&importer, "other-pkg"));
-+    }
-+}
-```
-
----
-
-### Incident Patch 2: `4040f972` (2026-11-03)
-**Commit Message**: fix(vscode): keep sidebar groups open after a refresh (#4161)
-
-VS Code makes the id of a tree item from its label when the item has no id. The group labels show a count, for example "Unused Component Inputs (13)". When a refresh changes the count, the id changes and VS Code closes the group.
-
-Each group item in the Unused Code, Health, Security and Runtime Coverage views now sets a stable id. VS Code then keeps the expansion state across refreshes.
-
-Closes #4090
-
-Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
-
-**File**: `changelog.d/fix-vscode-tree-keep-expanded.md` (added, +8/-0)
-```diff
-@@ -0,0 +1,8 @@
-+### Fixed
-+
-+- **The VS Code sidebar keeps an open group open after a refresh.** Before, a
-+  group such as `Unused Component Inputs (13)` closed when a refresh changed
-+  the count in its label. Each group in the Unused Code, Health, Security and
-+  Runtime Coverage views now has a stable id, so VS Code keeps the expansion
-+  state.
-+  (Closes [#4090](https://github.com/fallow-rs/fallow/issues/4090))
-```
-
-**File**: `editors/vscode/src/coverageView.ts` (modified, +2/-0)
-```diff
-@@ -20,6 +20,8 @@ class CoverageGroupItem extends vscode.TreeItem {
-     readonly children: ReadonlyArray<CoverageLeafItem>,
-   ) {
-     super(`${label} (${children.length})`, vscode.TreeItemCollapsibleState.Collapsed);
-+    // A stable id keeps the expansion state when a refresh changes the count in the label.
-+    this.id = `coverageGroup:${label}`;
-     this.contextValue = "coverageGroup";
-     this.iconPath = new vscode.ThemeIcon(icon);
-   }
-```
-
-**File**: `editors/vscode/src/healthTreeView.ts` (modified, +2/-0)
-```diff
-@@ -34,6 +34,8 @@ class HealthSectionItem extends vscode.TreeItem {
-   ) {
-     const base = HEALTH_SECTION_LABELS[section];
-     super(count > 0 ? `${base} (${count})` : base, vscode.TreeItemCollapsibleState.Collapsed);
-+    // A stable id keeps the expansion state when a refresh changes the count in the label.
-+    this.id = `healthSection:${section}`;
-     this.contextValue = `healthSection.${section}`;
-     this.iconPath = new vscode.ThemeIcon(HEALTH_SECTION_ICONS[section]);
-   }
-```
-
-**File**: `editors/vscode/src/securityTreeView.ts` (modified, +2/-0)
-```diff
-@@ -62,6 +62,8 @@ class SecurityGroupItem extends vscode.TreeItem {
-     findings: ReadonlyArray<SecurityFindingItem>,
-   ) {
-     super(`${groupLabel} (${findings.length})`, vscode.TreeItemCollapsibleState.Collapsed);
-+    // A stable id keeps the expansion state when a refresh changes the count in the label.
-+    this.id = `securityGroup:${groupLabel}`;
-     this.findings = findings;
-     this.description = "security candidates to verify";
-     this.tooltip = [CANDIDATE_TOOLTIP_PREFIX, "", `${groupLabel}: ${findings.length}`].join("\n");
-```
-
-**File**: `editors/vscode/src/treeView.ts` (modified, +2/-0)
-```diff
-@@ -104,6 +104,8 @@ class CategoryItem extends vscode.TreeItem {
-       `${ISSUE_CATEGORY_LABELS[category]} (${issues.length})`,
-       vscode.TreeItemCollapsibleState.Collapsed,
-     );
-+    // A stable id keeps the expansion state when a refresh changes the count in the label.
-+    this.id = `category:${category}`;
-     this.issues = issues;
-     this.contextValue = "category";
-     this.iconPath = new vscode.ThemeIcon(CATEGORY_ICONS[category] ?? "warning");
-```
-
-**File**: `editors/vscode/test/coverageView.test.ts` (added, +38/-0)
-```diff
-@@ -0,0 +1,38 @@
-+import { describe, expect, it, vi } from "vitest";
-+
-+vi.mock("vscode", async () => {
-+  const { createTreeViewVscodeMock } = await import("./vscodeTreeMock.js");
-+  return createTreeViewVscodeMock("/workspace");
-+});
-+
-+import type { TestTreeItem } from "./vscodeTreeMock.js";
-+import { RuntimeCoverageTreeProvider } from "../src/coverageView.js";
-+import type { RuntimeCoverageHotPath, RuntimeCoverageReport } from "../src/types.js";
-+
-+const hotPath = (name: string): RuntimeCoverageHotPath => ({
-+  id: `fallow:hot:${name}`,
-+  path: "src/a.ts",
-+  function: name,
-+  line: 1,
-+  end_line: 0,
-+  invocations: 1,
-+  percentile: 0,
-+});
-+
-+const report = (hotPaths: ReadonlyArray<RuntimeCoverageHotPath>): RuntimeCoverageReport =>
-+  ({ hot_paths: hotPaths, findings: [] }) as unknown as RuntimeCoverageReport;
-+
-+describe("RuntimeCoverageTreeProvider", () => {
-+  it("keeps a stable group id when the group count changes", () => {
-+    const provider = new RuntimeCoverageTreeProvider();
-+    provider.update(report([hotPath("a")]));
-+    const before = (provider.getChildren() as TestTreeItem[])[0];
-+
-+    provider.update(report([hotPath("a"), hotPath("b")]));
-+    const after = (provider.getChildren() as TestTreeItem[])[0];
-+
-+    expect(after?.label).toBe("Hot Paths (2)");
-+    expect(before?.id).toBeDefined();
-+    expect(after?.id).toBe(before?.id);
-+  });
-+});
-```
-
-**File**: `editors/vscode/test/healthTreeView.test.ts` (modified, +19/-0)
-```diff
-@@ -247,3 +247,22 @@ describe("HealthTreeProvider file-length findings", () => {
-     expect(complexityTargetOf(row as never)).toBeUndefined();
-   });
- });
-+
-+describe("HealthTreeProvider section ids", () => {
-+  it("keeps a stable section id when the section count changes", () => {
-+    const provider = new HealthTreeProvider();
-+    provider.update(hiddenCouplingReport());
-+    const before = (provider.getChildren() as TestTreeItem[])[0];
-+
-+    const report = hiddenCouplingReport() as unknown as {
-+      change_coupling: { total_pairs: number };
-+    };
-+    report.change_coupling.total_pairs = 4;
-+    provider.update(report as unknown as HealthOutput);
-+    const after = (provider.getChildren() as TestTreeItem[])[0];
-+
-+    expect(after?.label).toBe("Hidden Change Coupling (4)");
-+    expect(before?.id).toBeDefined();
-+    expect(after?.id).toBe(before?.id);
-+  });
-+});
-```
-
-**File**: `editors/vscode/test/securityTreeView.test.ts` (modified, +24/-0)
-```diff
-@@ -263,4 +263,28 @@ describe("SecurityTreeProvider", () => {
- 
-     expect(provider.getChildren()).toEqual([]);
-   });
-+
-+  it("keeps a stable group id when the finding count changes", () => {
-+    const sink = (line: number): SecurityFindingInput => ({
-+      kind: "tainted-sink",
-+      category: "dangerous-html",
-+      cwe: 79,
-+      path: "src/app.tsx",
-+      line,
-+      col: 4,
-+      evidence: "innerHTML reaches req.query.html",
-+      trace: [],
-+      actions: [],
-+    });
-+    const provider = new SecurityTreeProvider();
-+    provider.update(result([sink(1)]));
-+    const before = (provider.getChildren() as TestTreeItem[])[0];
-+
-+    provider.update(result([sink(1), sink(2)]));
-+    const after = (provider.getChildren() as TestTreeItem[])[0];
-+
-+    expect(after?.label).toBe("dangerous-html (CWE-79) (2)");
-+    expect(before?.id).toBeDefined();
-+    expect(after?.id).toBe(before?.id);
-+  });
- });
-```
-
----
-
-### Incident Patch 3: `0b835ae9` (2026-11-03)
-**Commit Message**: fix(audit): count @effect/vitest tests in weakened-tests (#4167)
-
-* fix(audit): count @effect/vitest tests in weakened-tests
-
-The removed-tests check counted it.effect(...) as zero tests, so a move from it(...) to it.effect(...) gave a false finding.
-
-Closes #4095
-
-Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
-
-* test(audit): check that effect members need a test root
+Bun writes no install marker in node_modules. When the lockfile already
+lists a package, a Bun install does not change the lockfile, so a warm
+run used the resolutions of the run before the install. For each
+directory with bun.lock or bun.lockb, the graph cache key now includes
+the package names in node_modules, the scoped names, and the entries of
+the isolated store.
 
 Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
 
@@ -2131,60 +1480,948 @@ Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
 
 Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
 
-**File**: `changelog.d/fix-effect-vitest-test-cases.md` (added, +4/-0)
+**File**: `changelog.d/fix-graph-cache-install-state.md` (added, +4/-0)
 ```diff
 @@ -0,0 +1,4 @@
 +### Fixed
 +
-+- **`fallow audit` counts `@effect/vitest` tests.** The `weakened-tests (removed-tests)` check now counts `it.effect`, `it.live`, `it.scoped`, `it.scopedLive` and `it.prop` as test cases. It also counts chains such as `it.effect.skip`, `it.effect.each` and `it.effect.prop`. A move from `it(...)` to `it.effect(...)` no longer gives a removed-tests finding. `it.layer` and `it.flakyTest` do not register a test, so the check does not count them.
-+  (Closes [#4095](https://github.com/fallow-rs/fallow/issues/4095))
++- **The graph cache now misses after a package install into an existing `node_modules`.** Before this fix, a run after `npm install`, `pnpm install` or `yarn install` could use the import resolutions of the run before the install. The graph cache key now includes the content of the lockfile and of the install marker that the package manager writes in `node_modules` (`.package-lock.json`, `.pnpm/lock.yaml`, `.yarn-state.yml`, `.yarn-integrity`). Bun writes no install marker, so for a project with `bun.lock` or `bun.lockb` the key also includes the package names in `node_modules`. Fallow reads these files for the project root, for each workspace root, and for each directory above the root. Fallow does not walk `node_modules`, and a fresh install with the same content keeps the cache.
++  (Closes [#4188](https://github.com/fallow-rs/fallow/issues/4188))
 ```
 
-**File**: `crates/api/src/diff_risk/text.rs` (modified, +20/-0)
+**File**: `crates/core/src/resolution_inputs.rs` (modified, +186/-2)
 ```diff
-@@ -34,6 +34,14 @@ const TEST_CASE_MEMBERS: &[&str] = &[
-     "fixme",
-     "skipIf",
-     "runIf",
-+    // `@effect/vitest`: `it.effect`, `it.live`, `it.scoped`, `it.scopedLive`
-+    // and the property test `it.prop`. `it.layer` and `it.flakyTest` do not
-+    // register a test, so they stay out.
-+    "effect",
-+    "live",
-+    "scoped",
-+    "scopedLive",
-+    "prop",
- ];
- /// Members of `expect` that are an assertion (`expect.soft(x)`).
- const EXPECT_ASSERTION_MEMBERS: &[&str] = &["soft", "poll"];
-@@ -662,6 +670,18 @@ mod tests {
-         assert_eq!(test_case_count(src), 3);
+@@ -7,6 +7,12 @@
+ //! `oxc_resolver` discovers next to a source file, plus its `extends` and
+ //! `references` chain. An edit to one of these files changes import targets
+ //! without a change to any source file, so the mode must cover them.
++//!
++//! The resolver also reads `node_modules`, so an install changes import
++//! targets too. A walk of `node_modules` costs too much, so the hash reads the
++//! lockfile and the install marker that the package manager writes on each
++//! install. Bun writes no install marker, so for a Bun project the hash reads
++//! the package names at the top level of `node_modules`.
+ 
+ use std::hash::{Hash, Hasher};
+ use std::path::{Path, PathBuf};
+@@ -24,6 +30,37 @@ const PACKAGE_MANIFESTS: &[&str] = &["package.json", "deno.json", "deno.jsonc"];
+ /// owning `tsconfig.json` (automatic tsconfig discovery).
+ const NEAREST_CONFIGS: &[&str] = &["package.json", "tsconfig.json"];
+ 
++/// Lockfiles and install markers that change when a package manager adds,
++/// removes or updates a package in `node_modules`. Each path is relative to
++/// the project root or to a workspace root.
++///
++/// The hash reads the content of each file, not the modification time. A
++/// fresh install in CI writes the same content with a new time, so a time
++/// would make each restored cache miss. `node_modules/.modules.yaml` of pnpm
++/// holds an install timestamp, so the hash reads the copy of the lockfile in
++/// `node_modules/.pnpm/lock.yaml` instead.
++const INSTALL_STATE_FILES: &[&str] = &[
++    "package-lock.json",
++    "npm-shrinkwrap.json",
++    "pnpm-lock.yaml",
++    "yarn.lock",
++    "bun.lock",
++    "bun.lockb",
++    "node_modules/.package-lock.json",
++    "node_modules/.pnpm/lock.yaml",
++    "node_modules/.yarn-state.yml",
++    "node_modules/.yarn-integrity",
++];
++
++/// Lockfiles of Bun. Bun writes no install marker in `node_modules`, so a
++/// directory with one of these files keys the package names in its
++/// `node_modules` (see [`bun_install_listings`]).
++const BUN_LOCKFILES: &[&str] = &["bun.lock", "bun.lockb"];
++
++/// The directory in `node_modules` where the isolated linker of Bun puts one
++/// `<name>@<version>` directory for each installed package.
++const BUN_STORE_DIR: &str = ".bun";
++
+ /// Hash the workspace `(name, root)` pairs and the content of every resolver
+ /// input file. Every path is spelled relative to `root`, so a copy of the
+ /// project under another absolute path hashes the same.
+@@ -72,6 +109,13 @@ pub fn resolution_inputs_hash(
+         state.hash(&mut hasher);
      }
  
-+    #[test]
-+    fn test_case_count_counts_effect_vitest_members() {
-+        let src = "it.effect('a', f);\nit.live('b', f);\nit.scoped('c', f);\nit.scopedLive('d', f);\nit.prop('e', arbs, f);\nit.effect.skip('f', f);\nit.effect.each([1])('g', f);\nit.effect.prop('h', arbs, f);\nit.layer(Live)('i', f);\nit.flakyTest(eff);\n";
-+        assert_eq!(test_case_count(src), 8);
++    let mut bun_listings = bun_install_listings(root, workspaces);
++    bun_listings.sort_unstable();
++    bun_listings.len().hash(&mut hasher);
++    for listing in &bun_listings {
++        listing.hash(&mut hasher);
 +    }
 +
-+    #[test]
-+    fn test_case_count_needs_a_test_root_for_effect_vitest_members() {
-+        let src = "foo.live('a', f);\ndescribe.scoped('b', f);\nlayer.effect('c', f);\n";
-+        assert_eq!(test_case_count(src), 0);
+     hasher.finish()
+ }
+ 
+@@ -82,7 +126,8 @@ pub fn resolution_inputs_hash(
+ /// only when the package is installed, so an install changes the result
+ /// without an edit to a source file or a manifest. Only the existence keys the
+ /// mode: a modification time changes on every fresh install in CI and would
+-/// make each restored cache miss.
++/// make each restored cache miss. The lockfiles and install markers in
++/// [`INSTALL_STATE_FILES`] key an install into an existing `node_modules`.
+ fn node_modules_states(root: &Path, workspaces: &[WorkspaceInfo]) -> Vec<(String, bool)> {
+     std::iter::once(root)
+         .chain(workspaces.iter().map(|ws| ws.root.as_path()))
+@@ -93,6 +138,58 @@ fn node_modules_states(root: &Path, workspaces: &[WorkspaceInfo]) -> Vec<(String
+         .collect()
+ }
+ 
++/// Return `(path, package names)` for the `node_modules` directory next to
++/// each Bun lockfile at the project root, at a workspace root, or above the
++/// root.
++///
++/// A Bun install into an existing `node_modules` does not change the lockfile
++/// when the lockfile already lists the package, for example after a pull of a
++/// lockfile change. The names are the top-level entries, the entries of each
++/// `@scope` directory, and the `<name>@<version>` entries of the isolated
++/// store. The list does not read file content or a modification time, so a
++/// fresh install of the same packages keeps the hash. Other dot entries are
++/// tool caches such as `.cache`, so the list skips them.
++fn bun_install_listings(root: &Path, workspaces: &[WorkspaceInfo]) -> Vec<(String, Vec<String>)> {
++    let dirs: FxHashSet<&Path> = std::iter::once(root)
++        .chain(workspaces.iter().map(|ws| ws.root.as_path()))
++        .chain(root.ancestors().skip(1))
++        .collect();
++    dirs.into_iter()
++        .filter(|dir| BUN_LOCKFILES.iter().any(|name| dir.join(name).is_file()))
++        .filter_map(|dir| {
++            let node_modules = dir.join("node_modules");
++            let names = node_modules_package_names(&node_modules)?;
++            Some((portable_key(root, &node_modules), names))
++        })
++        .collect()
++}
++
++fn node_modules_package_names(node_modules: &Path) -> Option<Vec<String>> {
++ 
+```
+
+**File**: `crates/core/tests/integration_test/vite_asset_query_imports.rs` (modified, +91/-0)
+```diff
+@@ -251,3 +251,94 @@ fn install_after_a_cached_run_reports_a_missing_query_file() {
+         .collect();
+     assert_eq!(unresolved, vec!["plain-pkg/build/missing.mjs?url"]);
+ }
++
++/// Run a cached analysis on a project whose `node_modules` holds only
++/// `other-pkg`. Then install `plain-pkg` the way a package manager does: the
++/// install adds the package and writes the lockfile and the install marker.
++/// The warm run must see the installed package and report the missing file.
++///
++/// Bun writes no install marker. For `marker: None` the lockfile lists
++/// `plain-pkg` before the cold run and the install does not change it, as
++/// after a pull of a lockfile change.
++fn assert_install_into_existing_node_modules_misses_cache(lockfile: &str, marker: Option<&str>) {
++    let temp = tempfile::tempdir().expect("temp");
++    let root = temp.path().join("project");
++    write(&root, "package.json", PACKAGE_JSON);
++    write(
++        &root,
++        "src/index.ts",
++        "import a from 'plain-pkg/build/missing.mjs?url';\nconsole.log(a);\n",
++    );
++    write(
++        &root,
++        "node_modules/other-pkg/package.json",
++        r#"{"name":"other-pkg","version":"1.0.0"}"#,
++    );
++    let installed = "other-pkg@1.0.0\nplain-pkg@1.0.0\n";
++    match marker {
++        Some(marker) => {
++            write(&root, lockfile, "other-pkg@1.0.0\n");
++            write(&root, marker, "other-pkg@1.0.0\n");
++        }
++        None => write(&root, lockfile, installed),
++    }
++    let mut config = create_config_with_cache(root.clone(), temp.path().join("cache"));
++    config.entry_patterns = vec!["src/index.ts".to_string()];
++    let before = fallow_core::analyze(&config).expect("cold analysis");
++    assert!(before.unresolved_imports.is_empty());
++
++    write(
++        &root,
++        "node_modules/plain-pkg/package.json",
++        r#"{"name":"plain-pkg","version":"1.0.0","main":"index.js"}"#,
++    );
++    write(
++        &root,
++        "node_modules/plain-pkg/index.js",
++        "module.exports = {};",
++    );
++    if let Some(marker) = marker {
++        write(&root, lockfile, installed);
++        write(&root, marker, installed);
++    }
++    let after = fallow_core::analyze(&config).expect("analysis after install");
++    let unresolved: Vec<&str> = after
++        .unresolved_imports
++        .iter()
++        .map(|finding| finding.import.specifier.as_str())
++        .collect();
++    assert_eq!(
++        unresolved,
++        vec!["plain-pkg/build/missing.mjs?url"],
++        "the install into node_modules with {lockfile} must make the graph cache miss"
++    );
++}
++
++#[test]
++fn npm_install_into_existing_node_modules_misses_graph_cache() {
++    assert_install_into_existing_node_modules_misses_cache(
++        "package-lock.json",
++        Some("node_modules/.package-lock.json"),
++    );
++}
++
++#[test]
++fn pnpm_install_into_existing_node_modules_misses_graph_cache() {
++    assert_install_into_existing_node_modules_misses_cache(
++        "pnpm-lock.yaml",
++        Some("node_modules/.pnpm/lock.yaml"),
++    );
++}
++
++#[test]
++fn yarn_install_into_existing_node_modules_misses_graph_cache() {
++    assert_install_into_existing_node_modules_misses_cache(
++        "yarn.lock",
++        Some("node_modules/.yarn-state.yml"),
++    );
++}
++
++#[test]
++fn bun_install_into_existing_node_modules_misses_graph_cache() {
++    assert_install_into_existing_node_modules_misses_cache("bun.lock", None);
++}
+```
+
+---
+
+### Incident Patch 2: `a1ddbb8d` (2026-11-04)
+**Commit Message**: feat(security): recognize more callees in existing sink categories (#4220)
+
+A comparison with the JS and TS sink list of another public scanner
+showed callees that fallow did not report. The largest gap was named
+node:fs imports: `import { readFileSync } from "node:fs"` gave no
+path-traversal candidate.
+
+New callees:
+
+- command-injection: shelljs `shell.exec`, and `execFile` and
+  `execFileSync` from node:child_process.
+- ssti: `Handlebars.compile`, `pug.render`, `_.template`,
+  `lodash.template`.
+- ssrf: more axios and got methods, a bare `axios()` with a built URL,
+  and `http.get` and `https.get` with Node module provenance.
+- unsafe-deserialization: js-yaml `loadAll`.
+- xxe: `libxmljs.parseXml`.
+- jquery-html: `$.parseHTML`.
+- route-send-file: Express `res.download`.
+- path-traversal: named node:fs imports, and the fs write, append,
+  delete and copy calls.
+
+Build and CLI code calls fs and execFile with computed paths all the
+time. The new fs and execFile rows therefore use the `path.join`
+source gate. A bare fs callee must be the binding of the node:fs
+import. The existing member rows keep their source match, because a
+module can pass its node:fs import on as `fs`.
+
+Signed-off
+
+**File**: `changelog.d/feat-security-sink-gaps.md` (added, +13/-0)
+```diff
+@@ -0,0 +1,13 @@
++### Added
++
++- **`fallow security` recognizes more callees in existing sink categories.** The new callees are:
++  - `command-injection`: `shell.exec` from `shelljs`, and `execFile` and `execFileSync` from `node:child_process`. `execFile` runs no shell, so it reports only when the argument or the module reads untrusted input.
++  - `ssti`: `Handlebars.compile`, `pug.render`, `_.template` and `lodash.template`.
++  - `ssrf`: `axios.put`, `axios.patch`, `axios.delete`, `axios.head`, a bare `axios()` call with a template, a concatenation or a call result as its URL, the `got` method calls, and `http.get` and `https.get` from the Node modules. An `axios(config)` call stays quiet, and so does an `http.get` that the module does not import from `node:http`.
++  - `unsafe-deserialization`: `loadAll` from `js-yaml`.
++  - `xxe`: `libxmljs.parseXml`.
++  - `jquery-html`: `$.parseHTML` and `jQuery.parseHTML`.
++  - `route-send-file`: `res.download` and `response.download` in Express projects.
++  - `path-traversal`: named `node:fs` and `node:fs/promises` imports such as `import { readFileSync } from "node:fs"`, and the `fs` write, append, delete and copy calls. These rows report only when the argument or the module reads untrusted input, as the `path.join` row does. A local helper with the same name as an `fs` function stays quiet.
++
++  Existing candidates do not change.
+```
+
+**File**: `crates/core/tests/integration_test/security_catalogue_categories.rs` (modified, +79/-0)
+```diff
+@@ -1363,3 +1363,82 @@ fn llm_call_injection_langchain_invoke_does_not_fire() {
+         "the excluded LangChain .invoke callee must not be flagged"
+     );
+ }
++
++// ── catalogue gaps: callee variants of existing categories ───────────────────
++
++const CATALOGUE_GAP_SINKS: [(&str, &str, u32); 16] = [
++    ("src/exec-file.ts", "command-injection", 78),
++    ("src/shelljs.ts", "command-injection", 78),
++    ("src/ssti-handlebars.ts", "ssti", 1336),
++    ("src/ssti-lodash.ts", "ssti", 1336),
++    ("src/ssti-pug-render.ts", "ssti", 1336),
++    ("src/ssrf-axios-put.ts", "ssrf", 918),
++    ("src/ssrf-axios-call.ts", "ssrf", 918),
++    ("src/ssrf-got-get.ts", "ssrf", 918),
++    ("src/ssrf-https-get.ts", "ssrf", 918),
++    ("src/yaml-load-all.ts", "unsafe-deserialization", 502),
++    ("src/xxe-libxmljs.ts", "xxe", 611),
++    ("src/jquery-parse-html.ts", "jquery-html", 79),
++    ("src/send-download.ts", "route-send-file", 22),
++    ("src/fs-named-import.ts", "path-traversal", 22),
++    ("src/fs-promises-named.ts", "path-traversal", 22),
++    ("src/fs-write-sync.ts", "path-traversal", 22),
++];
++
++#[test]
++fn catalogue_gap_sinks_fire_once() {
++    let results = analyze_with_security_sink("security-sink-catalogue-gaps");
++    for (suffix, category, cwe) in CATALOGUE_GAP_SINKS {
++        assert_candidate(&results, suffix, category, cwe);
++        assert_eq!(
++            anchored_count(&results, suffix),
++            1,
++            "{suffix} should produce exactly one candidate"
++        );
++    }
++}
++
++#[test]
++fn catalogue_gap_lookalikes_do_not_fire() {
++    let results = analyze_with_security_sink("security-sink-catalogue-gaps");
++    for (suffix, reason) in [
++        (
++            "src/fs-local-helper.ts",
++            "a local readFile helper is not the node:fs binding",
++        ),
++        (
++            "src/axios-config-object.ts",
++            "an axios() config object is not a URL argument",
++        ),
++        (
++            "src/http-client-local.ts",
++            "http.get without the node:http import is not a Node request",
++        ),
++        (
++            "src/shell-local.ts",
++            "shell.exec without the shelljs import is not a shell call",
++        ),
++        (
++            "src/fs-literal.ts",
++            "a literal file path is not a candidate",
++        ),
++        (
++            "src/axios-config-variable.ts",
++            "an axios() config variable is not a URL argument",
++        ),
++        (
++            "src/download-client.ts",
++            "a storage client download is not a route file send",
++        ),
++        (
++            "src/exec-file-tooling.ts",
++            "execFile of a computed binary without untrusted input is not a candidate",
++        ),
++        (
++            "src/fs-build-path.ts",
++            "a computed path without untrusted input is not a candidate",
++        ),
++    ] {
++        assert!(!anchored_on(&results, suffix), "{suffix}: {reason}");
++    }
++}
+```
+
+**File**: `crates/security/data/security_matchers.toml` (modified, +177/-5)
+```diff
+@@ -186,6 +186,45 @@ arg_index = 0
+ import_provenance = "node:child_process"
+ evidence_template = "Non-literal command passed to {callee}(). Candidate for verification: confirm the command/args are not attacker-controlled."
+ 
++[[matcher]]
++id = "command-injection"
++cwe = 78
++title = "OS command injection sink"
++effect = "shell"
++sink_shape = "member-call"
++callee_patterns = ["shell.exec", "shelljs.exec"]
++arg_index = 0
++import_provenance = "shelljs"
++evidence_template = "Non-literal command passed to {callee}(). Candidate for verification: confirm the command/args are not attacker-controlled."
++
++# `execFile` runs no shell, and tooling code runs computed binary paths all the
++# time. These rows therefore need untrusted input in the argument or module.
++[[matcher]]
++id = "command-injection"
++cwe = 78
++title = "OS command injection sink"
++effect = "shell"
++sink_shape = "member-call"
++callee_patterns = ["child_process.execFile", "child_process.execFileSync"]
++arg_index = 0
++import_provenance = "node:child_process"
++requires_module_source = true
++ignored_source_kinds = ["process-argv"]
++evidence_template = "Non-literal program path passed to {callee}(). Candidate for verification: confirm the program is not attacker-controlled."
++
++[[matcher]]
++id = "command-injection"
++cwe = 78
++title = "OS command injection sink"
++effect = "shell"
++sink_shape = "call"
++callee_patterns = ["execFile", "execFileSync"]
++arg_index = 0
++import_provenance = "node:child_process"
++requires_module_source = true
++ignored_source_kinds = ["process-argv"]
++evidence_template = "Non-literal program path passed to {callee}(). Candidate for verification: confirm the program is not attacker-controlled."
++
+ # ── CWE-94/95: Code injection ───────────────────────────────────────────────
+ [[matcher]]
+ id = "code-injection"
+@@ -458,10 +497,64 @@ cwe = 918
+ title = "Server-side request forgery sink"
+ effect = "network"
+ sink_shape = "member-call"
+-callee_patterns = ["axios.get", "axios.post", "http.request", "https.request", "superagent.get", "undici.request"]
++callee_patterns = [
++  "axios.get",
++  "axios.post",
++  "axios.put",
++  "axios.patch",
++  "axios.delete",
++  "axios.head",
++  "got.get",
++  "got.post",
++  "got.put",
++  "got.patch",
++  "got.delete",
++  "http.request",
++  "https.request",
++  "superagent.get",
++  "undici.request",
++]
+ arg_index = 0
+ evidence_template = "Non-literal URL passed to {callee}(). Candidate for verification: confirm the destination is not attacker-controlled."
+ 
++# A bare axios() call usually takes a config object, inline or in a variable,
++# so this row admits only a template, a concatenation or a call result.
++[[matcher]]
++id = "ssrf"
++cwe = 918
++title = "Server-side request forgery sink"
++effect = "network"
++sink_shape = "call"
++callee_patterns = ["axios"]
++arg_index = 0
++arg_kinds = ["template-with-subst", "concat", "call"]
++import_provenance = "axios"
++evidence_template = "Non-literal URL passed to {callee}(). Candidate for verification: confirm the destination is not attacker-controlled."
++
++# An Angular HttpClient is often a local named `http`, so `get` needs the Node
++# module import.
++[[matcher]]
++id = "ssrf"
++cwe = 918
++title = "Server-side request forgery sink"
++effect = "network"
++sink_shape = "member-call"
++callee_patterns = ["http.get"]
++arg_index = 0
++import_provenance = "node:http"
++evidence_template = "Non-literal URL passed to {callee}(). Candidate for verification: confirm the destination is not attacker-controlled."
++
++[[matcher]]
++id = "ssrf"
++cwe = 918
++title = "Server-side request forgery sink"
++effect = "network"
++sink_shape = "member-call"
++callee_patterns = ["https.get"]
++arg_index = 0
++import_provenance = "node:https"
++evidence_template = "Non-literal URL passed to {callee}(). Candidate for verification: confirm the destination is not attacker-controlled."
++
+ [[matcher]]
+ id = "ssrf"
+ cwe = 918
+@@ -525,7 +618,8 @@ evidence_template = "A non-public env secret reaches the body/options of {callee
+ # that build code also imports, and a module two imports away, stay quiet,
+ # because a dev server imports its config and its whole build pipeline.
+ # CLI arguments do not count: the user who runs a CLI owns its file system.
+-# The direct file-system rows below stay ungated.
++# The `fs.readFile` and `fs.rename` rows stay ungated. The other file-system
++# rows use this gate.
+ [[matcher]]
+ id = "path-traversal"
+ cwe = 22
+@@ -551,6 +645,62 @@ arg_index = 0
+ import_provenance = "node:fs"
+ evidence_template = "Non-literal file-system path passed to {callee}(). Candidate for verification: confirm the input cannot escape the intended directory (reject `..`)."
+ 
++# The rows below cover the other write and delete calls, and named imports
++# (`import { readFile } from "node:fs/promises"`). Build and CLI code calls
++# them with computed paths all the time, so they use the `path.join` source
++# gate. A bare callee must be the local binding of the `node:fs` import.
++[[matcher]]
++id = "path-traversal"
++cwe = 22
++tit
+```
+
+**File**: `crates/security/src/provenance.rs` (modified, +5/-1)
+```diff
+@@ -6,7 +6,7 @@
+ //! name such as `get` never counts as `https.get` in a module that does not
+ //! import `node:https`.
+ 
+-use fallow_types::extract::ModuleInfo;
++use fallow_types::extract::{ModuleInfo, SinkShape};
+ 
+ use crate::Matcher;
+ 
+@@ -53,6 +53,10 @@ impl Matcher {
+     pub fn requires_binding_trace(&self) -> bool {
+         BINDING_TRACE_ROWS.contains(&self.id.as_str())
+             || (self.id == "weak-crypto" && self.is_literal_aware())
++            // A bare `readFile(path)` is a file-system call only when it is the
++            // named import. The member rows keep the looser source match,
++            // because a module can pass its `node:fs` import on as `fs`.
++            || (self.id == "path-traversal" && self.sink_shape == SinkShape::Call)
+     }
+ 
+     /// Whether the module satisfies the row's import provenance for the
+```
+
+**File**: `tests/fixtures/security-sink-catalogue-gaps/package.json` (added, +17/-0)
+```diff
+@@ -0,0 +1,17 @@
++{
++  "name": "security-sink-catalogue-gaps-fixture",
++  "version": "0.0.0",
++  "private": true,
++  "dependencies": {
++    "axios": "1.0.0",
++    "express": "4.0.0",
++    "got": "14.0.0",
++    "handlebars": "4.0.0",
++    "jquery": "3.0.0",
++    "js-yaml": "3.0.0",
++    "libxmljs": "1.0.0",
++    "lodash": "4.0.0",
++    "pug": "3.0.0",
++    "shelljs": "0.8.0"
++  }
++}
+```
+
+**File**: `tests/fixtures/security-sink-catalogue-gaps/src/axios-config-object.ts` (added, +5/-0)
+```diff
+@@ -0,0 +1,5 @@
++import axios from "axios";
++
++export async function send(id: string): Promise<void> {
++  await axios({ method: "post", url: "/api/items", data: { id } });
++}
+```
+
+**File**: `tests/fixtures/security-sink-catalogue-gaps/src/axios-config-variable.ts` (added, +5/-0)
+```diff
+@@ -0,0 +1,5 @@
++import axios from "axios";
++
++export async function send(config: object): Promise<void> {
++  await axios(config);
++}
+```
+
+**File**: `tests/fixtures/security-sink-catalogue-gaps/src/download-client.ts` (added, +8/-0)
+```diff
+@@ -0,0 +1,8 @@
++// An Express project with a storage client that has a `download` method.
++interface Storage {
++  download(key: string): Promise<Uint8Array>;
++}
++
++export async function fetchObject(storage: Storage, key: string): Promise<Uint8Array> {
++  return storage.download(key);
++}
+```
+
+---
+
+### Incident Patch 3: `bd9fb02b` (2026-11-04)
+**Commit Message**: fix(extract): credit the default export of a new URL module path (#4200)
+
+Code can name a module with new URL("./lib/sign.ts", import.meta.url)
+and hand the path to a loader, such as a build tool or a script runner.
+The loader calls the default export of the module. Before, the edge
+credited the file only, so dead-code reported the default export as
+unused.
+
+The edge now credits the default export when the path has an
+extension. Other exports stay reportable. These edges keep the
+file-only credit:
+
+- a direct argument of a Worker or SharedWorker constructor, also
+  inside parentheses or a TypeScript cast;
+- a path without an extension;
+- a source that module.register() loads, because the register edge
+  already credits the loader hook exports.
+
+The cached extraction facts change, so CACHE_VERSION goes to 409 and
+GRAPH_CACHE_VERSION goes to 102.
+
+Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
+
+**File**: `changelog.d/fix-new-url-runtime-entry.md` (added, +3/-0)
+```diff
+@@ -0,0 +1,3 @@
++### Fixed
++
++- **`new URL("./lib/sign.ts", import.meta.url)` now credits the `default` export of the module.** A build tool or a script runner loads such a module by path and calls its default export. Before, the analysis credited the file but reported its `default` export as unused. Other exports stay reportable. A module that a `Worker` or `SharedWorker` constructor gets, a directory URL, and a loader hook module of `module.register()` keep their earlier credit. The cached extraction facts change, so `CACHE_VERSION` goes to 409 and `GRAPH_CACHE_VERSION` goes to 102.
+```
+
+**File**: `crates/core/tests/integration_test.rs` (modified, +2/-0)
+```diff
+@@ -714,6 +714,8 @@ mod namespace_class_static_member;
+ mod namespace_spy_call_member;
+ #[path = "integration_test/new_url_node_modules_package.rs"]
+ mod new_url_node_modules_package;
++#[path = "integration_test/new_url_runtime_entry.rs"]
++mod new_url_runtime_entry;
+ #[path = "integration_test/node_modules_bin_path.rs"]
+ mod node_modules_bin_path;
+ #[path = "integration_test/npm_alias_dependency_binaries.rs"]
+```
+
+**File**: `crates/core/tests/integration_test/new_url_runtime_entry.rs` (added, +35/-0)
+```diff
+@@ -0,0 +1,35 @@
++//! A `new URL("./x.ts", import.meta.url)` path can name a module that a
++//! runtime loader loads by path, such as a build tool or a script runner. The
++//! loader calls the default export, so the analysis credits `default`. Other
++//! exports stay reportable. A direct argument of a `Worker` constructor and a
++//! directory URL credit no export.
++
++use super::common::{create_config, fixture_path};
++
++#[cfg_attr(miri, ignore)]
++#[test]
++fn new_url_module_path_credits_the_default_export() {
++    let root = fixture_path("new-url-runtime-entry");
++    let config = create_config(root);
++    let results = fallow_core::analyze(&config).expect("analysis should succeed");
++
++    let mut unused: Vec<String> = results
++        .unused_exports
++        .iter()
++        .map(|finding| {
++            let path = finding.export.path.to_string_lossy().replace('\\', "/");
++            let file = path.rsplit('/').next().unwrap_or_default().to_string();
++            format!("{file}:{}", finding.export.export_name)
++        })
++        .collect();
++    unused.sort();
++    assert_eq!(
++        unused,
++        [
++            "index.ts:default",
++            "signer.ts:signerName",
++            "worker.ts:default"
++        ],
++        "a new URL module path credits only `default`, and not for a worker or a directory"
++    );
++}
+```
+
+**File**: `crates/extract/src/cache/types.rs` (modified, +1/-1)
+```diff
+@@ -10,7 +10,7 @@ use crate::MemberKind;
+ /// extraction semantics change, and give the reason in the commit message and
+ /// the CHANGELOG. A stale version serves old extraction results from a warm
+ /// cache. The `assert_cached_type_size!` guards below catch shape changes.
+-pub(super) const CACHE_VERSION: u32 = 408;
++pub(super) const CACHE_VERSION: u32 = 409;
+ 
+ /// Duplication token cache version. Bump it when duplicate tokenization,
+ /// normalization, or the on-disk token cache schema changes, and give the
+```
+
+**File**: `crates/extract/src/visitor/mod.rs` (modified, +2/-4)
+```diff
+@@ -694,10 +694,8 @@ pub(crate) struct ModuleInfoExtractor {
+     /// specifier local the graph already treats as a whole-object observation.
+     /// See issue #2377.
+     structured_namespace_reference_spans: FxHashSet<Span>,
+-    /// Spans of `new URL(path, import.meta.url)` expressions passed directly
+-    /// to a filesystem call or to `fileURLToPath`. The path names a file on
+-    /// disk, not a module the code loads, so the reference is speculative.
+-    filesystem_path_new_url_spans: FxHashSet<Span>,
++    /// Context of `new URL(path, import.meta.url)` edges in this file.
++    new_url_context: visit_impl::NewUrlContext,
+     /// `(root local, namespace local)` for a namespace placed in an object
+     /// literal bound to that root (`const api = { ns }`). The placement itself
+     /// is precise, so a bare reference to the root is what hands the namespace
+```
+
+**File**: `crates/extract/src/visitor/tests.rs` (modified, +64/-0)
+```diff
+@@ -10861,6 +10861,70 @@ fn new_url_import_meta_url_tracked() {
+     );
+ }
+ 
++fn new_url_destructured_names(source: &str, specifier: &str) -> Vec<String> {
++    let info = parse(source);
++    info.dynamic_imports
++        .iter()
++        .find(|d| d.source == specifier)
++        .map(|d| d.destructured_names.clone())
++        .expect("new URL edge")
++}
++
++#[test]
++fn new_url_module_path_credits_default_export() {
++    assert_eq!(
++        new_url_destructured_names(
++            "export const sign = new URL('./lib/sign.ts', import.meta.url);",
++            "./lib/sign.ts",
++        ),
++        ["default"]
++    );
++}
++
++#[test]
++fn new_url_worker_argument_credits_no_export() {
++    for source in [
++        "new Worker(new URL('./worker.ts', import.meta.url));",
++        "new SharedWorker(new URL('./worker.ts', import.meta.url));",
++        "new Worker((new URL('./worker.ts', import.meta.url)));",
++        "new Worker(new URL('./worker.ts', import.meta.url) as URL);",
++    ] {
++        assert!(
++            new_url_destructured_names(source, "./worker.ts").is_empty(),
++            "a worker runs the module as a script: {source}"
++        );
++    }
++}
++
++#[test]
++fn new_url_directory_credits_no_export() {
++    assert!(
++        new_url_destructured_names("new URL('./services', import.meta.url);", "./services")
++            .is_empty()
++    );
++}
++
++#[test]
++fn new_url_registered_loader_credits_only_hooks() {
++    let info = parse(
++        "import { register } from 'node:module';\n\
++         const hooks = new URL('./hooks.ts', import.meta.url);\n\
++         register(hooks);",
++    );
++    let names: Vec<&[String]> = info
++        .dynamic_imports
++        .iter()
++        .filter(|d| d.source == "./hooks.ts")
++        .map(|d| d.destructured_names.as_slice())
++        .collect();
++    assert!(
++        names
++            .iter()
++            .all(|names| !names.contains(&"default".to_string())),
++        "a registered loader edge credits only hook exports: {names:?}"
++    );
++}
++
+ #[test]
+ fn new_url_non_relative_not_tracked() {
+     let info = parse("new URL('https://example.com', import.meta.url);");
+```
+
+**File**: `crates/extract/src/visitor/visit_impl.rs` (modified, +4/-25)
+```diff
+@@ -7,7 +7,6 @@ use oxc_ast_visit::walk;
+ use oxc_semantic::ScopeFlags;
+ use oxc_span::{GetSpan, Span};
+ use rustc_hash::{FxHashMap, FxHashSet};
+-use std::path::PathBuf;
+ 
+ use crate::{
+     AngularComponentFieldArrayTypeFact, AngularThisSpreadFact, ComputedEnumKeyUseFact,
+@@ -119,7 +118,7 @@ mod visit_taint_sources;
+ pub(super) use visit_chain_names::jsx_member_object_name;
+ pub use visit_chain_names::push_member_tag_accesses;
+ use visit_chain_names::{call_receiver_name, static_member_object_name, type_name_member_path};
+-pub(super) use visit_dynamic_imports::ComponentLoaderImport;
++pub(super) use visit_dynamic_imports::{ComponentLoaderImport, NewUrlContext};
+ pub(super) use visit_factory_returns::count_returns_in_statements;
+ use visit_factory_returns::{
+     FactoryReturnFunctionInput, classify_factory_assigned_value, collect_self_scope_assignments,
+@@ -3654,6 +3653,7 @@ impl<'a> Visit<'a> for ModuleInfoExtractor {
+         walk::walk_program(self, program);
+         self.finish_local_import_loaders();
+         self.finish_promise_import_bindings();
++        self.finish_register_loader_new_urls();
+         self.record_jsx_import_source_pragma(program);
+     }
+ 
+@@ -4714,30 +4714,9 @@ impl<'a> Visit<'a> for ModuleInfoExtractor {
+         self.record_queue_worker_constructor_param_sources(expr);
+         self.record_callee_use(&expr.callee, expr.span.start, true);
+         self.record_new_url_package_reference(expr);
++        self.record_worker_new_url_arguments(expr);
+ 
+-        if let Some(source) = new_url_import_source(expr) {
+-            // A speculative reference credits its target when it resolves, and
+-            // the resolver drops it silently when it does not. Two rules make a
+-            // `new URL(specifier, import.meta.url)` speculative:
+-            // - The specifier has no file extension, so it may name a directory
+-            //   (`new URL("./services", import.meta.url)`). See issue #840.
+-            // - The expression is a direct argument of a filesystem call or of
+-            //   `fileURLToPath`, so it names a file on disk. The file can be an
+-            //   output that does not exist yet, or a probe for an optional file.
+-            // Other specifiers with an extension (`new URL("./worker.js", ...)`) stay
+-            // not speculative, so a missing file is still an `unresolved-import`.
+-            let is_speculative = PathBuf::from(&source).extension().is_none()
+-                || self.filesystem_path_new_url_spans.contains(&expr.span);
+-            self.dynamic_imports.push(DynamicImportInfo {
+-                source,
+-                span: expr.span,
+-                destructured_names: Vec::new(),
+-                local_name: None,
+-                is_speculative,
+-                value_escapes: false,
+-            });
+-            self.mark_import_load_kind(expr.span, ImportLoadKind::OutOfThread);
+-        }
++        self.record_new_url_edge(expr);
+ 
+         self.capture_declarative_validation_new_expression(expr);
+         self.capture_new_expression_sink(expr);
+```
+
+**File**: `crates/extract/src/visitor/visit_impl_dynamic_imports.rs` (modified, +84/-1)
+```diff
+@@ -15,6 +15,25 @@ pub(in crate::visitor) enum ComponentLoaderImport {
+     NextDynamic,
+ }
+ 
++/// Context of `new URL(path, import.meta.url)` edges in one file.
++#[derive(Debug, Default)]
++pub(in crate::visitor) struct NewUrlContext {
++    /// Spans of URLs passed directly to a filesystem call or to
++    /// `fileURLToPath`. The path names a file on disk, not a module the code
++    /// loads, so the reference is speculative.
++    pub(in crate::visitor) filesystem_path_spans: FxHashSet<Span>,
++    /// Spans of URLs passed directly to a `Worker` or `SharedWorker`
++    /// constructor. A worker module runs as a script, so the edge credits the
++    /// file and no export.
++    pub(in crate::visitor) worker_spans: FxHashSet<Span>,
++    /// Sources that `module.register()` loads as Node loader hooks. A URL
++    /// edge to such a source credits only the hook exports.
++    pub(in crate::visitor) register_loader_sources: FxHashSet<String>,
++}
++
++/// Constructors that run a module as a worker script.
++const WORKER_CONSTRUCTORS: &[&str] = &["Worker", "SharedWorker"];
++
+ impl<'a> ModuleInfoExtractor {
+     /// Record each `new URL(path, import.meta.url)` passed directly to a
+     /// filesystem call, so `visit_new_expression` marks it speculative.
+@@ -26,11 +45,75 @@ impl<'a> ModuleInfoExtractor {
+             if let Argument::NewExpression(new_expr) = arg
+                 && new_url_import_source(new_expr).is_some()
+             {
+-                self.filesystem_path_new_url_spans.insert(new_expr.span);
++                self.new_url_context
++                    .filesystem_path_spans
++                    .insert(new_expr.span);
+             }
+         }
+     }
+ 
++    /// Record each `new URL(path, import.meta.url)` passed directly to a
++    /// `Worker` or `SharedWorker` constructor, so `visit_new_expression`
++    /// credits the worker file and no export.
++    pub(super) fn record_worker_new_url_arguments(&mut self, expr: &NewExpression<'_>) {
++        if !matches!(&expr.callee, Expression::Identifier(callee) if WORKER_CONSTRUCTORS.contains(&callee.name.as_str()))
++        {
++            return;
++        }
++        if let Some(Expression::NewExpression(new_expr)) = expr
++            .arguments
++            .first()
++            .and_then(Argument::as_expression)
++            .map(Expression::get_inner_expression)
++            && new_url_import_source(new_expr).is_some()
++        {
++            self.new_url_context.worker_spans.insert(new_expr.span);
++        }
 +    }
 +
-     #[test]
-     fn assertion_count_counts_expect_assert_and_should() {
-         let src = "expect(a).toBe(1);\nexpect.soft(b).toBe(2);\nassert.equal(c, 3);\nassert(d);\nx.should.equal(4);\nexpect.assertions(2);\n// expect(e)\n";
++    /// Record the edge of a `new URL(path, import.meta.url)` expression.
++    pub(super) fn record_new_url_edge(&mut self, expr: &NewExpression<'_>) {
++        let Some(source) = new_url_import_source(expr) else {
++            return;
++        };
++        // A speculative reference credits its target when it resolves, and
++        // the resolver drops it silently when it does not. Two rules make a
++        // `new URL(specifier, import.meta.url)` speculative:
++        // - The specifier has no file extension, so it may name a directory
++        //   (`new URL("./services", import.meta.url)`). See issue #840.
++        // - The expression is a direct argument of a filesystem call or of
++        //   `fileURLToPath`, so it names a file on disk. The file can be an
++        //   output that does not exist yet, or a probe for an optional file.
++        // Other specifiers with an extension (`new URL("./worker.js", ...)`) stay
++        // not speculative, so a missing file is still an `unresolved-import`.
++        let has_extension = std::path::Path::new(&source).extension().is_some();
++        let is_speculative = !has_extension
++            || self
++                .new_url_context
++                .filesystem_path_spans
++                .contains(&expr.span);
++        // A module path with an extension can name a runtime entry: a build
++        // tool or a script runner loads the module by path and calls its
++        // default export. So the edge credits `default`. A worker module runs
++        // as a script and a directory URL names no module, so those edges
++        // credit the file only.
++        let destructured_names =
++            if has_extension && !self.new_url_context.worker_spans.contains(&expr.span) {
++                vec![NEW_URL_LOADER_EXPORT.to_string()]
++            } else {
++                Vec::new()
++            };
++        self.dynamic_imports.push(DynamicImportInfo {
++            source,
++            span: expr.span,
++            destructured_names,
++            local_name: None,
++            is_speculative,
++            value_escapes: false,
++        });
++        self.mark_import_load_kind(expr.span, ImportLoadKind::OutOfThread);
++    }
++
+     fn push_relative_dynamic_import_pattern(
+         &mut self,
+         prefix: String,
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4181** (2026-11-03): fix(resolve): credit an uninstalled package for a Vite asset query import (@BartWaardenburg)
-- **PR #4167** (2026-11-03): fix(audit): count @effect/vitest tests in weakened-tests (@BartWaardenburg)
-- **PR #4166** (2026-11-03): refactor(report-protocol): share the gate map and the exit code constants (@BartWaardenburg)
-- **PR #4165** (2026-11-03): feat(mutation): check named tests with --kill-matrix-for (@BartWaardenburg)
-- **PR #4164** (2026-11-03): chore: check long .mjs and .ts files with fallow audit (@BartWaardenburg)
-- **PR #4163** (2026-11-03): fix(mutation): give the Vitest mutant to Node child processes (@BartWaardenburg)
+- **PR #4223** (2026-11-04): refactor: move the crate boundary tests to cargo-fallow rules (@BartWaardenburg)
+- **PR #4222** (2026-11-04): chore: check the Rust workspace with cargo-fallow (@BartWaardenburg)
+- **PR #4221** (2026-11-04): feat(config): add workspaces.settings and supportEntry (@BartWaardenburg)
+- **PR #4220** (2026-11-04): feat(security): recognize more callees in existing sink categories (@BartWaardenburg)
+- **PR #4219** (2026-11-04): docs(contributing): ask authors to know the impact of a change (@BartWaardenburg)
+- **PR #4218** (2026-11-04): docs(contributing): add rules for changes written with coding agents (@BartWaardenburg)
 
 ---
 
@@ -2204,23 +2441,24 @@ Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. resolve): credit an uninstalled package for a Vite asset query import (#4181)
+## X. cache): key the graph cache on lockfiles and install markers (#4192)
 
 **RULE**:
-When implementing operations in `changelog.d/fix-vite-asset-query-imports.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in fallow-rs/fallow. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `changelog.d/fix-graph-cache-install-state.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in fallow-rs/fallow. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7cead47b`: resolve): credit an uninstalled package for a Vite asset query import (#4181). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `fcabf464`: cache): key the graph cache on lockfiles and install markers (#4192). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog.d/fix-vite-asset-query-imports.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog.d/fix-graph-cache-install-state.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
 ### Fixed
 
-- **`fallow dead-code` no longer reports a package import with a Vite asset query as unresolved when the package is not installed.** An import such as `pkg/dist/engine.wasm?url` or `pkg/build/worker.mjs?worker&inline` was an unresolved import before `node_modules` existed, and the package did not count as used. Fallow now treats the import the same as the plain subpath: the package counts as used and no finding appears. The supported query parameters are `url`, `raw`, `worker`, `sharedworker`, `inline`, `no-inline` and `init`. A query import of a workspace package credits the workspace source file, with or without the `node_modules` link. A file that is missing from an installed package is still an unresolved import. The graph cache now records whether `node_modules` exists at the project root and at each workspace root, so an install after a cached run does not replay the old result. The graph cache version changed, so a graph cache from an earlier run does not replay the old result.
+- **The graph cache now misses after a package install into an existing `node_modules`.** Before this fix, a run after `npm install`, `pnpm install` or `yarn install` could use the import resolutions of the run before the install. The graph cache key now includes the content of the lockfile and of the install marker that the package manager writes in `node_modules` (`.package-lock.json`, `.pnpm/lock.yaml`, `.yarn-state.yml`, `.yarn-integrity`). Bun writes no install marker, so for a project with `bun.lock` or `bun.lockb` the key also includes the package names in `node_modules`. Fallow reads these files for the project root, for each workspace root, and for each directory above the root. Fallow does not walk `node_modules`, and a fresh install with the same content keeps the cache.
+  (Closes [#4188](https://github.com/fallow-rs/fallow/issues/4188))
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2230,4 +2468,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7cead47b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `fcabf464` are properly handled with clean fallback behavior.

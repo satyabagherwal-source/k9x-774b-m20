@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-05T02:11:38.369Z",
-  "total_cycles_completed": 7431,
-  "total_learnings_persisted": 7431,
-  "total_rules_promoted": 7121,
+  "last_updated": "2026-11-05T02:18:13.113Z",
+  "total_cycles_completed": 7434,
+  "total_learnings_persisted": 7434,
+  "total_rules_promoted": 7123,
   "history": [
-    {
-      "timestamp": "2026-11-04T17:37:26.123Z",
-      "repository": "orcarouter/OrcaCyber-Nano-1.0",
-      "learningId": "learn-huggingface-orcarouter-orcacyber-nano-1-0",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T17:37:28.799Z",
-      "repository": "tailscale/tailscale",
-      "learningId": "learn-github-tailscale-tailscale",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T17:45:11.470Z",
-      "repository": "RecursiveSI/flint",
-      "learningId": "learn-huggingface-recursivesi-flint",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-04T17:45:14.216Z",
       "repository": "lingodotdev/lingo.dev",
@@ -1403,6 +1382,27 @@
       "repository": "PSRben/VisionHOPE",
       "learningId": "learn-huggingface-psrben-visionhope",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T02:18:03.906Z",
+      "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
+      "learningId": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T02:18:06.270Z",
+      "repository": "fallow-rs/fallow",
+      "learningId": "learn-github-fallow-rs-fallow",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T02:18:13.113Z",
+      "repository": "kcl-lang/kcl",
+      "learningId": "learn-github-kcl-lang-kcl",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

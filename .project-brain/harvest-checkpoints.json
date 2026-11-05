@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-05T02:11:38.373Z",
+  "last_updated": "2026-11-05T02:18:13.123Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -755,14 +755,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf",
-      "content_hash": "717480b25d63cafccd9ddae639436f0a49b708626d3c9fd0e285f2cb7b873a22",
-      "verified_at": "2026-10-31T11:46:39.354Z",
+      "content_hash": "bff7e519ea31431ee5c64137cfc4f6cde739029213a649e4fa77af03ccc5410b",
+      "verified_at": "2026-11-05T02:18:03.908Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T11:46:39.354Z"
+      "last_updated": "2026-11-05T02:18:03.908Z"
     },
     "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF": {
       "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
@@ -4896,14 +4896,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-fallow-rs-fallow",
-      "content_hash": "b5ae6b59ab7a1a36f7ef47669e1a660b4c0ab153b5b5b636b62ec549737d7224",
-      "verified_at": "2026-11-03T23:39:18.368Z",
+      "content_hash": "fc910c9ed45e53cb525c65cd0d9e3fcc6962b57a8477cd3fa0ffa9d39b974aa8",
+      "verified_at": "2026-11-05T02:18:06.279Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T23:39:18.368Z"
+      "last_updated": "2026-11-05T02:18:06.279Z"
     },
     "expo/create-react-native-app": {
       "repository": "expo/create-react-native-app",
@@ -8691,14 +8691,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kcl-lang-kcl",
-      "content_hash": "e2a10b7c1c8fcb45d6466364eec290550a166f5b593c7d1e2e977a991d3c99d8",
-      "verified_at": "2026-11-04T03:44:13.512Z",
+      "content_hash": "0751c1516dfca93122a13e698cc7d9ede434e8e2d9b1cb246ea5c4a7d32bdcbd",
+      "verified_at": "2026-11-05T02:18:13.122Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T03:44:13.512Z"
+      "last_updated": "2026-11-05T02:18:13.122Z"
     },
     "apache/incubator-pegasus": {
       "repository": "apache/incubator-pegasus",

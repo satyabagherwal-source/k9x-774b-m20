@@ -7463,3 +7463,6 @@ Every entry in this ledger must capture:
 | `learn-github-metalbear-co-mirrord` | `https://github.com/metalbear-co/mirrord` | `89bfc07c` | Multi-dimensional audit evidence | 2026-11-05T02:01:52.610Z |
 | `learn-github-mochidiffusion-mochidiffusion` | `https://github.com/MochiDiffusion/MochiDiffusion` | `d23807f2` | Multi-dimensional audit evidence | 2026-11-05T02:11:36.030Z |
 | `learn-huggingface-psrben-visionhope` | `https://huggingface.co/PSRben/VisionHOPE` | `hf-psrben-` | Multi-dimensional audit evidence | 2026-11-05T02:11:38.363Z |
+| `learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf` | `https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF` | `hf-ista-da` | Multi-dimensional audit evidence | 2026-11-05T02:18:03.902Z |
+| `learn-github-fallow-rs-fallow` | `https://github.com/fallow-rs/fallow` | `a275a777` | Multi-dimensional audit evidence | 2026-11-05T02:18:06.266Z |
+| `learn-github-kcl-lang-kcl` | `https://github.com/kcl-lang/kcl` | `c7226d05` | Multi-dimensional audit evidence | 2026-11-05T02:18:13.109Z |

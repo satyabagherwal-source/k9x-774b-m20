@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261103-LC2J",
-    "timestamp": "2026-11-03T17:53:46.843Z",
-    "repository": "wzh4869/AppPorts",
-    "learningId": "learn-github-wzh4869-appports",
-    "contentHash": "6dfb915d489dfad597f15939038bbd348fcc4dae6a024f837d22124c4689e984",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261103-LEG6",
-    "timestamp": "2026-11-03T17:53:49.926Z",
-    "repository": "moby/buildkit",
-    "learningId": "learn-github-moby-buildkit",
-    "contentHash": "cb66f1f004b6f55d02d93dc0828651eeeb2b0443bec00d27e1e13529f4365460",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261103-LGU4",
-    "timestamp": "2026-11-03T17:53:53.020Z",
-    "repository": "rustls/rustls",
-    "learningId": "learn-github-rustls-rustls",
-    "contentHash": "e591b21a0f159dd2cce75332bbb4cc5fdd3750b5d4fe39f91ca4dd58e48fb914",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261103-LI5L",
     "timestamp": "2026-11-03T17:53:54.729Z",
     "repository": "RediSearch/RediSearch",
@@ -7492,6 +7447,51 @@
     "contentHash": "a0463eb6ae2be5f7994f6b5743146c18653dc69b1cdbb71b95d5381fb15f1ab0",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-1P86",
+    "timestamp": "2026-11-05T02:18:03.894Z",
+    "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
+    "learningId": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf",
+    "contentHash": "bff7e519ea31431ee5c64137cfc4f6cde739029213a649e4fa77af03ccc5410b",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-1R1Z",
+    "timestamp": "2026-11-05T02:18:06.263Z",
+    "repository": "fallow-rs/fallow",
+    "learningId": "learn-github-fallow-rs-fallow",
+    "contentHash": "fc910c9ed45e53cb525c65cd0d9e3fcc6962b57a8477cd3fa0ffa9d39b974aa8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-1WC3",
+    "timestamp": "2026-11-05T02:18:13.107Z",
+    "repository": "kcl-lang/kcl",
+    "learningId": "learn-github-kcl-lang-kcl",
+    "contentHash": "0751c1516dfca93122a13e698cc7d9ede434e8e2d9b1cb246ea5c4a7d32bdcbd",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
