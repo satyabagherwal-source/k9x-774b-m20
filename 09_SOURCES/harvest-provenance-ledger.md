@@ -7704,3 +7704,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-openbmb-minicpm-v-4-7-1b` | `https://huggingface.co/openbmb/MiniCPM-V-4.7-1B` | `hf-openbmb` | Multi-dimensional audit evidence | 2026-11-05T14:30:06.871Z |
 | `learn-github-zama-ai-tfhe-rs` | `https://github.com/zama-ai/tfhe-rs` | `ea97d611` | Multi-dimensional audit evidence | 2026-11-05T14:30:13.036Z |
 | `learn-huggingface-autotrust-jev-35b-nvfp4` | `https://huggingface.co/autotrust/JEV-35B-NVFP4` | `hf-autotru` | Multi-dimensional audit evidence | 2026-11-05T14:43:24.010Z |
+| `learn-huggingface-liquidai-lfm2-5-24b-a2b` | `https://huggingface.co/LiquidAI/LFM2.5-24B-A2B` | `hf-liquida` | Multi-dimensional audit evidence | 2026-11-05T14:50:59.547Z |
+| `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `83db4fd8` | Multi-dimensional audit evidence | 2026-11-05T14:50:59.943Z |

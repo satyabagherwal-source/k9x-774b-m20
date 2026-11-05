@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source**: github ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
-> **Source Version**: `851f91a9`  
+> **Source Version**: `83db4fd8`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T11:23:33.174Z  
+> **Timestamp**: 2026-11-05T14:50:59.143Z  
 > **Learning ID**: `learn-github-cilium-cilium`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T11:23:33.170Z  
+> **Harvest Timestamp**: 2026-11-05T14:50:58.991Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: eBPF-based Networking, Security, and Observability
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod
-- **Stars / Engagement**: 25775 stars
+- **Stars / Engagement**: 25779 stars
 
 ---
 
@@ -1259,13 +1259,17 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #49840** (2026-11-05): **cilium-cli: Discover Gateway API versions for sysdump**
-  *Symptoms*: Fixed API versions prevent sysdump from collecting Gateway API resources when installed CRDs only expose other versions. For example, older CRDs provide TCPRoute and UDPRoute at v1alpha2, while newer standard CRDs provide TLSRoute only at v1.  Discover the preferred available version for each Gateway API resource, including CiliumGatewayClassConfig. Resources that are not installed are still skipped.  Additionally  ``` cilium-cli: Fix TCPRoute sysdump filename  Rename gatewayapi-tcroutes-<ts>.yaml to gatewayapi-tcproutes-<ts>.yaml to match the resource name and other Gateway API filenames. ```  Note: I manually tested by running the same version of the cilium-cli against `v1.19` & `main`.  Note 2: This could be something that we want to improve for sysdumping K8s resources in general. I thought that it's best to focus on Gateway API related resources first where the issue is more pressing due to the frequent version changes.   Note 3: I hope it's ok that some unrelated formatting changes in `sysdump[_test].go` are included. But these shouldn't affect any backporting as CLI is `main`-only anyway
-
-- **Issue #49837** (2026-11-04): **cilium-cli: add explicit timeout to ensure health check termination**
-  *Symptoms*: Otherwise, the test would continue running forever until manually stopped (or the CI timeout hits) in case the health status does not converge. The timeout is set to five minutes, which should be generous enough to not risk causing flakes. 
+- **Issue #49856** (2026-11-05): **ci: Clear legacy SPIRE values during upgrade tests**
+  *Symptoms*: The shared cilium-config action sets `--nodes-without-cilium`, which causes the CLI to save SPIRE agent affinity under `authentication.mutual.spire` when installing older charts, even when SPIRE is disabled.  These values persist during upgrades and fail validation after the SPIRE values move under `encryption.ztunnel.spire`.  Therefore, this commit explicitly clears the legacy values when upgrading to the newest chart.  Required for https://github.com/cilium/cilium/pull/48942
   **Post-Mortem & Fix Analysis**:
   > /test
+  > /ci-l7
+
+- **Issue #49853** (2026-11-05): **datapath: Revert the ENABLE_NODEPORT runtime config**
+  *Symptoms*: This reverts #49820.  I ran Runtime Test (privileged) and Integration Test 10 times each in parallel, with and without these reverts on the same main base 851f91a943, and these are the results.  With #49820, Runtime Test (privileged) [[1]](https://github.com/cilium/cilium/actions/runs/42007084673) failed 6 out of 10, and Integration Test [[2]](https://github.com/cilium/cilium/actions/runs/42003749259) failed 4 out of 10 on amd64 and 0 out of 10 on arm64. Every failure is a pkg/datapath/loader test that hits its 10 s timeout while clang compiles bpf_lxc or bpf_host [[3]](https://github.com/cilium/cilium/actions/runs/42007084673/job/127176661381) [[4]](https://github.com/cilium/cilium/actions/runs/42007084673/job/127176661393) [[5]](https://github.com/cilium/cilium/actions/runs/42007084673/job/127176661389) [[6]](https://github.com/cilium/cilium/actions/runs/42007084673/job/127176661880) [[7]](https://github.com/cilium/cilium/actions/runs/42007084673/job/127176661366) [[8]](https://github.com/cilium/cilium/actions/runs/42007084673/job/127176661536) [[9]](https://github.com/cilium/cilium/actions/runs/42003749259/job/127165210980) [[10]](https://github.com/cilium/cilium/actions/runs/42003749259/job/127165210909) [[11]](https://github.com/cilium/cilium/actions/runs/42003749259/job/127165210999) [[12]](https://github.com/cilium/cilium/actions/runs/42003749259/job/127165210529).  Without #49820, Runtime Test (privileged) [[13]](https://github.com/cilium/cilium/actions/runs/420103542
+  **Post-Mortem & Fix Analysis**:
+  > /ci-runtime
+  > /ci-integration
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1282,143 +1286,115 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7813fae2` (2026-11-04)
-**Commit Message**: cilium-cli: Fix TCPRoute sysdump filename
+### Incident Patch 1: `401baa61` (2026-10-27)
+**Commit Message**: ipam: Count attached prefixes on top of the AllocationMap
 
-Rename gatewayapi-tcroutes-<ts>.yaml to gatewayapi-tcproutes-<ts>.yaml
-to match the resource name and other Gateway API filenames.
+The available IPv4 count is taken from the attached CIDRs whenever a
+provider reports them. Those can include addresses that are attached but
+not available for assignment, and miss addresses that are, such as the
+Azure primary address.
 
-Signed-off-by: Marco Hofstetter <[REDACTED_EMAIL]>
+Count the AllocationMap and add the addresses of attached IPv4 prefixes.
 
-**File**: `cilium-cli/k8s/client.go` (modified, +2/-2)
+Signed-off-by: Jared Ledvina <[REDACTED_EMAIL]>
+
+**File**: `operator/pkg/ipam/nodemanager/node.go` (modified, +9/-12)
 ```diff
-@@ -1419,6 +1419,6 @@ func (c *Client) GetOpenshiftClusterVersion(ctx context.Context) (*OpenshiftClus
- 	return &cv, nil
- }
- 
--func (c *Client) GetServerPreferredResources() ([]*metav1.APIResourceList, error) {
--	return c.Clientset.Discovery().ServerPreferredResources()
-+func (c *Client) GetServerPreferredResources(ctx context.Context) ([]*metav1.APIResourceList, error) {
-+	return c.Clientset.Discovery().ServerPreferredResourcesWithContext(ctx)
- }
-```
-
-**File**: `cilium-cli/sysdump/client.go` (modified, +1/-1)
-```diff
-@@ -24,7 +24,7 @@ import (
- )
- 
- type KubernetesClient interface {
--	GetServerPreferredResources() ([]*metav1.APIResourceList, error)
-+	GetServerPreferredResources(ctx context.Context) ([]*metav1.APIResourceList, error)
- 	AutodetectFlavor(ctx context.Context) k8s.Flavor
- 	CopyFromPod(ctx context.Context, namespace, pod, container, fromFile, destFile string, retryLimit int) error
- 	CreateEphemeralContainer(ctx context.Context, pod *corev1.Pod, ec *corev1.EphemeralContainer) (*corev1.Pod, error)
-```
-
-**File**: `cilium-cli/sysdump/constants.go` (modified, +1/-1)
-```diff
-@@ -120,7 +120,7 @@ const (
- 	httpRoutesFileName                       = "gatewayapi-httproutes-<ts>.yaml"
- 	tlsRoutesFileName                        = "gatewayapi-tlsroutes-<ts>.yaml"
- 	grpcRoutesFileName                       = "gatewayapi-grpcroutes-<ts>.yaml"
--	tcpRoutesFileName                        = "gatewayapi-tcroutes-<ts>.yaml"
-+	tcpRoutesFileName                        = "gatewayapi-tcproutes-<ts>.yaml"
- 	udpRoutesFileName                        = "gatewayapi-udproutes-<ts>.yaml"
- 	backendTLSPoliciesFileName               = "gatewayapi-backendtlspolicies-<ts>.yaml"
- 	referenceGrantsFileName                  = "gatewayapi-referencegrants-<ts>.yaml"
-```
-
-**File**: `cilium-cli/sysdump/gateway_api_test.go` (modified, +19/-1)
-```diff
-@@ -22,12 +22,17 @@ type discoveryClient struct {
- 	resources      []*metav1.APIResourceList
- 	discoveryErr   error
- 	discoveryCalls int
-+	discoveryCtx   context.Context
- 	listed         []schema.GroupVersionResource
- 	listErr        error
- }
- 
--func (c *discoveryClient) GetServerPreferredResources() ([]*metav1.APIResourceList, error) {
-+func (c *discoveryClient) GetServerPreferredResources(ctx context.Context) ([]*metav1.APIResourceList, error) {
- 	c.discoveryCalls++
-+	c.discoveryCtx = ctx
-+	if err := ctx.Err(); err != nil {
-+		return nil, err
-+	}
- 	return c.resources, c.discoveryErr
- }
- 
-@@ -81,6 +86,19 @@ func TestGatewayAPIVersions(t *testing.T) {
+@@ -747,19 +747,16 @@ func (n *Node) recalculate(ctx context.Context) {
+ 		n.stats.IPv4.AssignedStaticIP = n.resource.Status.IPAM.AssignedStaticIP.Addr
  	}
+ 
+-	// Providers backing the multi-pool allocator report the attached CIDRs,
+-	// which are the source of truth for the available IPv4 count since the
+-	// AllocationMap does not list addresses of delegated prefixes. Providers
+-	// backing the CRD allocator return nil and only rely on the AllocationMap.
+-	if attached := n.ops.GetAttachedCIDRs(); attached != nil {
+-		n.stats.IPv4.AvailableIPs = 0
+-		for _, c := range attached {
+-			if c.Addr().Is4() {
+-				n.stats.IPv4.AvailableIPs += 1 << (32 - c.Bits())
+-			}
++	// The AllocationMap lists the addresses available for assignment, but not
++	// the addresses of delegated prefixes, so the IPv4 prefixes reported by
++	// GetAttachedCIDRs are counted on top of it. Single attached addresses
++	// are left to the AllocationMap, since providers may report addresses
++	// that are attached but not available for assignment.
++	n.stats.IPv4.AvailableIPs = len(n.ipv4Alloc.available)
++	for _, c := range n.ops.GetAttachedCIDRs() {
++		if c.Addr().Is4() && c.Bits() < 32 {
++			n.stats.IPv4.AvailableIPs += 1 << (32 - c.Bits())
+ 		}
+-	} else {
+-		n.stats.IPv4.AvailableIPs = len(n.ipv4Alloc.available)
+ 	}
+ 	n.stats.IPv4.RemainingInterfaces = stats.RemainingAvailableInterfaceCount
+ 	n.stats.IPv4.Capacity = stats.NodeCapacity
+```
+
+**File**: `operator/pkg/ipam/nodemanager/node_manager.go` (modified, +6/-6)
+```diff
+@@ -102,12 +102,12 @@ type NodeOperations interface {
+ 
+ 	// GetAttachedCIDRs returns the CIDRs currently attached to the node's
+ 	// network interfaces, as observed by the cloud-specific implementation.
+-	// Used to compute the available IPv4 count, and by multi-pool mode to
+-	// reconcile the tracking map against ground truth (drop CIDRs no longer
+-	// attached, seed releases that survived an operator restart).
+-	// Implementations that do not support multi-pool must return nil, so
+-	// that the available IPv4 count is taken from the AllocationMap
+-	// returned by ResyncInterfacesAndIPs instead.
++	// Used by multi-pool mode to reconcile the tracking map against ground
++	// truth (drop CIDRs no longer attached, seed releases that survived an
++	// operator restart), and to add the addresses of attached IPv4 prefixes
++	// to the available IPv4 count taken from the AllocationMap returned by
++	// ResyncInterfacesAndIPs. Implementations that do not support
++	// multi-pool may return nil.
+ 	GetAttachedCIDRs() []netip.Prefix
+ 
+ 	// PrepareCIDRRelease maps released CIDRs back to their source
+```
+
+**File**: `operator/pkg/ipam/nodemanager/node_test.go` (modified, +14/-1)
+```diff
+@@ -457,8 +457,9 @@ func TestRecalculateIPv6Only(t *testing.T) {
  }
  
-+func TestGatewayAPIDiscoveryCancellation(t *testing.T) {
-+	ctx, cancel := context.WithCancel(context.Background())
-+	cancel()
-+	client := &discoveryClient{}
-+	c := &Collector{Client: client}
-+	for _, task := range c.getGatewayAPITasks() {
-+		require.ErrorIs(t, task.Task(ctx), context.Canceled)
-+	}
-+	require.Same(t, ctx, client.discoveryCtx)
-+	require.Equal(t, 1, client.discoveryCalls)
-+	require.Empty(t, client.listed)
-+}
+ func TestRecalculateAvailableIPs(t *testing.T) {
+-	t.Run("every IPv4 address of attached CIDRs is counted", func(t *testing.T) {
++	t.Run("every IPv4 address of attached prefixes is counted", func(t *testing.T) {
+ 		n := newPoolDemandNode(t, 8, 0)
++		n.ops.(*nodeOperationsMock).allocatedIPs = []string{"10.0.0.1"}
+ 		n.ops.(*nodeOperationsMock).attachedCIDRs = []netip.Prefix{
+ 			netip.MustParsePrefix("10.0.0.1/32"),
+ 			netip.MustParsePrefix("10.0.0.16/28"),
+@@ -469,6 +470,18 @@ func TestRecalculateAvailableIPs(t *testing.T) {
+ 		require.Equal(t, 17, n.Stats().IPv4.AvailableIPs)
+ 	})
+ 
++	t.Run("attached addresses missing from the allocation map are not counted", func(t *testing.T) {
++		n := newPoolDemandNode(t, 8, 0)
++		n.ops.(*nodeOperationsMock).allocatedIPs = []string{"10.0.0.1", "10.0.0.2"}
++		n.ops.(*nodeOperationsMock).attachedCIDRs = []netip.Prefix{
++			netip.MustParsePrefix("10.0.0.2/32"),
++			netip.MustParsePrefix("10.0.0.3/32"),
++		}
++		n.recalculate(t.Context())
 +
- func TestGatewayAPIDiscoveryErrors(t *testing.T) {
- 	failure := errors.New("discovery unavailable")
- 	for _, tt := range []struct {
-```
-
-**File**: `cilium-cli/sysdump/sysdump.go` (modified, +8/-2)
-```diff
-@@ -2111,7 +2111,11 @@ func (c *Collector) getSPIRETasks() []Task {
- func (c *Collector) getGatewayAPITasks() []Task {
- 	// Discover each resource's preferred API version because supported versions
- 	// vary across installed Gateway API CRD releases.
--	discover := sync.OnceValues(c.Client.GetServerPreferredResources)
-+	var (
-+		discoverOnce sync.Once
-+		lists        []*metav1.APIResourceList
-+		discoveryErr error
-+	)
- 	resources := []struct {
- 		name          string
- 		groupResource schema.GroupResource
-@@ -2135,7 +2139,9 @@ func (c *Collector) getGatewayAPITasks() []Task {
- 			Description: "Collecting " + resource.name + " entries",
- 			Quick:       true,
- 			Task: func(ctx context.Context) error {
--				lists, discoveryErr := discover()
-+				discoverOnce.Do(func() {
-+					lists, discoveryErr = c.Client.GetServerPreferredResources(ctx)
-+				})
- 				gvr, found, err := preferredResource(resource.groupResource, lists, discoveryErr)
- 				if err != nil {
- 					return fmt.Errorf("failed to discover %s: %w", resource.name, err)
-```
-
-**File**: `cilium-cli/sysdump/sysdump_test.go` (modified, +1/-1)
-```diff
-@@ -870,6 +870,6 @@ func TestFormatNodeDiskUsageRow(t *testing.T) {
- 	assert.Contains(t, row, "Unknown")
- }
- 
--func (c *fakeClient) GetServerPreferredResources() ([]*metav1.APIResourceList, error) {
-+func (c *fakeClient) GetServerPreferredResources(_ context.Context) ([]*metav1.APIResourceList, error) {
- 	return nil, nil
- }
++		require.Equal(t, 2, n.Stats().IPv4.AvailableIPs)
++	})
++
+ 	t.Run("allocation map is counted when no attached CIDRs are reported", func(t *testing.T) {
+ 		n := newPoolDemandNode(t, 8, 0)
+ 		n.ops.(*nodeOperationsMock).allocatedIPs = []string{"10.0.0.1", "10.0.0.2"}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #49856** (2026-11-05): ci: Clear legacy SPIRE values during upgrade tests (@mhofstetter)
+- **PR #49853** (closed): datapath: Revert the ENABLE_NODEPORT runtime config (@aanm)
 - **PR #49840** (2026-11-05): cilium-cli: Discover Gateway API versions for sysdump (@mhofstetter)
 - **PR #49837** (2026-11-04): cilium-cli: add explicit timeout to ensure health check termination (@giorio94)
 - **PR #49833** (2026-11-04): .github: Make the vulnerability report components optional (@aanm)
 - **PR #49832** (2026-11-04): datapath: convert `ENABLE_IPV4` #ifdefs to `is_defined()` in bpf_lxc.c (@ekoops)
-- **PR #49827** (2026-11-04): fix: pass the real IPsec config to node handler (@vakalapa)
-- **PR #49820** (2026-11-04): Reapply "datapath: turn `ENABLE_NODEPORT` into runtime config" (@ekoops)
 
 ---
 
@@ -1438,30 +1414,47 @@ Signed-off-by: Marco Hofstetter <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. cilium-cli: Fix TCPRoute sysdump filename
+## X. ipam: Count attached prefixes on top of the AllocationMap
 
 **RULE**:
-When implementing operations in `cilium-cli/k8s/client.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `operator/pkg/ipam/nodemanager/node.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7813fae2`: cilium-cli: Fix TCPRoute sysdump filename. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `401baa61`: ipam: Count attached prefixes on top of the AllocationMap. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cilium-cli/k8s/client.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `operator/pkg/ipam/nodemanager/node.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-func (c *Client) GetServerPreferredResources(ctx context.Context) ([]*metav1.APIResourceList, error) {
-	return c.Clientset.Discovery().ServerPreferredResourcesWithContext(ctx)
+	// The AllocationMap lists the addresses available for assignment, but not
+	// the addresses of delegated prefixes, so the IPv4 prefixes reported by
+	// GetAttachedCIDRs are counted on top of it. Single attached addresses
+	// are left to the AllocationMap, since providers may report addresses
+	// that are attached but not available for assignment.
+	n.stats.IPv4.AvailableIPs = len(n.ipv4Alloc.available)
+	for _, c := range n.ops.GetAttachedCIDRs() {
+		if c.Addr().Is4() && c.Bits() < 32 {
+			n.stats.IPv4.AvailableIPs += 1 << (32 - c.Bits())
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-func (c *Client) GetServerPreferredResources() ([]*metav1.APIResourceList, error) {
-	return c.Clientset.Discovery().ServerPreferredResources()
+	// Providers backing the multi-pool allocator report the attached CIDRs,
+	// which are the source of truth for the available IPv4 count since the
+	// AllocationMap does not list addresses of delegated prefixes. Providers
+	// backing the CRD allocator return nil and only rely on the AllocationMap.
+	if attached := n.ops.GetAttachedCIDRs(); attached != nil {
+		n.stats.IPv4.AvailableIPs = 0
+		for _, c := range attached {
+			if c.Addr().Is4() {
+				n.stats.IPv4.AvailableIPs += 1 << (32 - c.Bits())
+			}
+	} else {
+		n.stats.IPv4.AvailableIPs = len(n.ipv4Alloc.available)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7813fae2` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `401baa61` are properly handled with clean fallback behavior.

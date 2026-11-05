@@ -1445,8 +1445,8 @@
     "sourceUrl": "https://huggingface.co/LiquidAI/LFM2.5-24B-A2B",
     "sourceVersion": "hf-liquidai-lfm2.5-24b-a2b",
     "license": "Open-Source",
-    "contentHash": "d3d3d5df2f49cfe6542274ca05855dc8a6c8e997497f2b1be33eae0b027f7677",
-    "lastHarvestedAt": "2026-11-01T00:19:06.644Z",
+    "contentHash": "2d64e54deb24e72be59e038907e759b6cd94fdaca587f5520a16677aeb42fda6",
+    "lastHarvestedAt": "2026-11-05T14:50:59.547Z",
     "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b"
   },
   "hf-fishaudio-drama-3": {
@@ -3343,10 +3343,10 @@
     "repository": "cilium/cilium",
     "platform": "github",
     "sourceUrl": "https://github.com/cilium/cilium",
-    "sourceVersion": "851f91a9",
+    "sourceVersion": "83db4fd8",
     "license": "Apache-2.0",
-    "contentHash": "495656668889490839cde2518eca48cf1c7d128452d8d38d7bbc99e759f80eb8",
-    "lastHarvestedAt": "2026-11-05T11:23:33.679Z",
+    "contentHash": "25510fa6da68997e418d4cf8d87fda89bae597ba851254610be655e288107c06",
+    "lastHarvestedAt": "2026-11-05T14:50:59.943Z",
     "learningId": "learn-github-cilium-cilium"
   },
   "seekstorm-seekstorm": {

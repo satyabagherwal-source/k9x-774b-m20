@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-05T14:43:35.087Z",
-    "lastVerified": "2026-11-05T14:43:35.087Z",
+    "lastChecked": "2026-11-05T14:51:02.514Z",
+    "lastVerified": "2026-11-05T14:51:02.514Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -444,12 +444,12 @@
     "revisionIdentifier": "444fdf06"
   },
   "nucleoidai-nucleoid": {
-    "name": "NucleoidAI/Nucleoid",
+    "name": "Nucleoid",
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-05T14:13:47.906Z",
-    "lastVerified": "2026-11-05T14:13:47.906Z",
+    "lastChecked": "2026-11-05T14:50:57.451Z",
+    "lastVerified": "2026-11-05T14:50:57.451Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -458,7 +458,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "5492684f"
   },
   "tabbyml-tabby": {
     "name": "tabby",
@@ -1952,12 +1953,12 @@
     "officialUrl": "https://github.com/cilium/cilium",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-05T11:23:33.170Z",
-    "lastVerified": "2026-11-05T11:23:33.170Z",
+    "lastChecked": "2026-11-05T14:50:58.991Z",
+    "lastVerified": "2026-11-05T14:50:58.991Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-cilium-cilium",
-    "contentHash": "495656668889490839cde2518eca48cf1c7d128452d8d38d7bbc99e759f80eb8",
+    "contentHash": "25510fa6da68997e418d4cf8d87fda89bae597ba851254610be655e288107c06",
     "promotedRulesCount": 1,
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
@@ -2992,9 +2993,9 @@
   "zilliztech-attu": {
     "name": "attu",
     "officialUrl": "https://github.com/zilliztech/attu",
-    "lastChecked": "2026-11-05T00:00:12.919Z",
+    "lastChecked": "2026-11-05T14:50:54.908Z",
     "revisionIdentifier": "d51e1c78",
-    "lastVerified": "2026-11-05T00:00:12.919Z"
+    "lastVerified": "2026-11-05T14:50:54.908Z"
   },
   "asciinema-asciinema": {
     "name": "asciinema",
@@ -5733,12 +5734,12 @@
     "lastVerified": "2026-11-04T18:13:41.011Z"
   },
   "gocd-gocd": {
-    "name": "gocd/gocd",
+    "name": "gocd",
     "officialUrl": "https://github.com/gocd/gocd",
     "sourceType": "github",
     "technology": "Java",
-    "lastChecked": "2026-11-05T00:48:46.444Z",
-    "lastVerified": "2026-11-05T00:48:46.444Z",
+    "lastChecked": "2026-11-05T14:50:49.976Z",
+    "lastVerified": "2026-11-05T14:50:49.976Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-gocd-gocd",
@@ -5747,7 +5748,8 @@
     "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "a88de55f"
   },
   "hf-openbmb-minicpm-ocr-1.0": {
     "name": "openbmb/MiniCPM-OCR-1.0",
@@ -7856,9 +7858,9 @@
   "railwayapp-nixpacks": {
     "name": "nixpacks",
     "officialUrl": "https://github.com/railwayapp/nixpacks",
-    "lastChecked": "2026-11-04T20:24:54.367Z",
+    "lastChecked": "2026-11-05T14:50:42.463Z",
     "revisionIdentifier": "144b4f9a",
-    "lastVerified": "2026-11-04T20:24:54.367Z"
+    "lastVerified": "2026-11-05T14:50:42.463Z"
   },
   "hf-liquidai-d1-3b": {
     "name": "LiquidAI/d1-3B",
@@ -8742,12 +8744,12 @@
     "officialUrl": "https://huggingface.co/LiquidAI/LFM2.5-24B-A2B",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-01T00:17:17.898Z",
-    "lastVerified": "2026-11-01T00:17:17.898Z",
+    "lastChecked": "2026-11-05T14:50:45.125Z",
+    "lastVerified": "2026-11-05T14:50:45.125Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b",
-    "contentHash": "d3d3d5df2f49cfe6542274ca05855dc8a6c8e997497f2b1be33eae0b027f7677",
+    "contentHash": "2d64e54deb24e72be59e038907e759b6cd94fdaca587f5520a16677aeb42fda6",
     "promotedRulesCount": 3,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -11097,9 +11099,9 @@
   "kitlangton-hex": {
     "name": "Hex",
     "officialUrl": "https://github.com/kitlangton/Hex",
-    "lastChecked": "2026-11-03T12:13:26.596Z",
+    "lastChecked": "2026-11-05T14:50:47.489Z",
     "revisionIdentifier": "3e300721",
-    "lastVerified": "2026-11-03T12:13:26.596Z"
+    "lastVerified": "2026-11-05T14:50:47.489Z"
   },
   "syntax-tree-hast-util-to-html": {
     "name": "hast-util-to-html",

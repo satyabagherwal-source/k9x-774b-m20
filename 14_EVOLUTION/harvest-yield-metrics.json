@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-05T14:43:24.016Z",
-  "total_cycles_completed": 7672,
-  "total_learnings_persisted": 7672,
-  "total_rules_promoted": 7322,
+  "last_updated": "2026-11-05T14:50:59.949Z",
+  "total_cycles_completed": 7674,
+  "total_learnings_persisted": 7674,
+  "total_rules_promoted": 7326,
   "history": [
-    {
-      "timestamp": "2026-11-05T04:00:44.023Z",
-      "repository": "envoyproxy/envoy",
-      "learningId": "learn-github-envoyproxy-envoy",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T04:07:10.806Z",
-      "repository": "timm/mobilenetv3_small_100.lamb_in1k",
-      "learningId": "learn-huggingface-timm-mobilenetv3_small_100-lamb_in1k",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-05T04:07:19.623Z",
       "repository": "k3s-io/k3s",
@@ -1403,6 +1389,20 @@
       "repository": "autotrust/JEV-35B-NVFP4",
       "learningId": "learn-huggingface-autotrust-jev-35b-nvfp4",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T14:50:59.553Z",
+      "repository": "LiquidAI/LFM2.5-24B-A2B",
+      "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T14:50:59.949Z",
+      "repository": "cilium/cilium",
+      "learningId": "learn-github-cilium-cilium",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]
