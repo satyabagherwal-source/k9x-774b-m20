@@ -7630,3 +7630,6 @@ Every entry in this ledger must capture:
 | `learn-github-peerdb-io-peerdb` | `https://github.com/PeerDB-io/peerdb` | `8a3660f9` | Multi-dimensional audit evidence | 2026-11-05T10:43:47.277Z |
 | `learn-huggingface-baai-bge-large-en-v1-5` | `https://huggingface.co/BAAI/bge-large-en-v1.5` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-11-05T10:50:38.932Z |
 | `learn-github-koderover-zadig` | `https://github.com/koderover/zadig` | `47243e2f` | Multi-dimensional audit evidence | 2026-11-05T10:50:45.418Z |
+| `learn-huggingface-zai-org-glm-5-3` | `https://huggingface.co/zai-org/GLM-5.3` | `hf-zai-org` | Multi-dimensional audit evidence | 2026-11-05T10:57:59.280Z |
+| `learn-github-fabio-rovai-open-ontologies` | `https://github.com/fabio-rovai/open-ontologies` | `375fbc47` | Multi-dimensional audit evidence | 2026-11-05T10:58:08.597Z |
+| `learn-github-milvus-io-milvus` | `https://github.com/milvus-io/milvus` | `d3063b15` | Multi-dimensional audit evidence | 2026-11-05T10:58:15.800Z |

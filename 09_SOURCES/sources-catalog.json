@@ -65,8 +65,8 @@
     "sourceUrl": "https://huggingface.co/zai-org/GLM-5.3",
     "sourceVersion": "hf-zai-org-glm-5.3",
     "license": "Open-Source",
-    "contentHash": "19238a3929cb7f90337a90961ea0ce003598f83651363f19b006ece21c416200",
-    "lastHarvestedAt": "2026-10-31T20:11:46.071Z",
+    "contentHash": "713ab4badd503600d63dda62fbb4b7daeda132dd6d5da168621b1dce3df5db70",
+    "lastHarvestedAt": "2026-11-05T10:57:59.280Z",
     "learningId": "learn-huggingface-zai-org-glm-5-3"
   },
   "hf-mudler-locate-anything.cpp-gguf": {
@@ -6673,10 +6673,10 @@
     "repository": "milvus-io/milvus",
     "platform": "github",
     "sourceUrl": "https://github.com/milvus-io/milvus",
-    "sourceVersion": "f830e57c",
+    "sourceVersion": "d3063b15",
     "license": "Apache-2.0",
-    "contentHash": "ac3186c24a74f82f6408f7270eddb246eb5f0d847f137bd0f9699f7bf514e4c2",
-    "lastHarvestedAt": "2026-11-04T20:10:10.983Z",
+    "contentHash": "aff96c17b9470fc4ec47c6da52533cab6a5279d438b81efe98405c86cd50dc76",
+    "lastHarvestedAt": "2026-11-05T10:58:15.800Z",
     "learningId": "learn-github-milvus-io-milvus"
   },
   "ynqa-jnv": {
@@ -11443,10 +11443,10 @@
     "repository": "fabio-rovai/open-ontologies",
     "platform": "github",
     "sourceUrl": "https://github.com/fabio-rovai/open-ontologies",
-    "sourceVersion": "ef6638a9",
+    "sourceVersion": "375fbc47",
     "license": "MIT",
-    "contentHash": "d7a4adf1a516b421fd64881e745abb158c5e96a44c538a92f3bccc04db404e58",
-    "lastHarvestedAt": "2026-11-04T20:53:20.153Z",
+    "contentHash": "0944db45602655979a6afa06b81279583a1e989d0649848ee6fb63b2b850f4bf",
+    "lastHarvestedAt": "2026-11-05T10:58:08.597Z",
     "learningId": "learn-github-fabio-rovai-open-ontologies"
   },
   "hf-liquidai-lfm3-vl-2b": {

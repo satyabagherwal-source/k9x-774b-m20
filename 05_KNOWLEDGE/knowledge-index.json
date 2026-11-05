@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T10:50:45.344Z",
+  "last_updated": "2026-11-05T10:58:15.708Z",
   "total_verified_learnings": 1215,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -32832,7 +32832,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/zai-org/GLM-5.3",
       "source_version": "hf-zai-org-glm-5.3",
-      "content_hash": "19238a3929cb7f90337a90961ea0ce003598f83651363f19b006ece21c416200",
+      "content_hash": "713ab4badd503600d63dda62fbb4b7daeda132dd6d5da168621b1dce3df5db70",
       "dossier_path": "07_PROJECT_LEARNING/hf-zai-org-glm-5.3-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-zai-org-glm-5.3-learnings.md",
       "promoted_rules": [
@@ -32919,7 +32919,7 @@
         "learn-huggingface-hf-zai-org-glm-5-3-mv413j49",
         "learn-huggingface-hf-zai-org-glm-5-3-mv4f1uxu"
       ],
-      "verified_at": "2026-10-31T20:11:45.953Z",
+      "verified_at": "2026-11-05T10:57:59.150Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -41966,8 +41966,8 @@
       "slug": "milvus-io-milvus",
       "platform": "github",
       "source_url": "https://github.com/milvus-io/milvus",
-      "source_version": "f830e57c",
-      "content_hash": "ac3186c24a74f82f6408f7270eddb246eb5f0d847f137bd0f9699f7bf514e4c2",
+      "source_version": "d3063b15",
+      "content_hash": "aff96c17b9470fc4ec47c6da52533cab6a5279d438b81efe98405c86cd50dc76",
       "dossier_path": "07_PROJECT_LEARNING/milvus-io-milvus-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/milvus-io-milvus-learnings.md",
       "promoted_rules": [
@@ -42040,6 +42040,11 @@
           "number": 6949,
           "title": "release MinioChunkManager's AWS SDK reference when the process exits (#55131)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7196,
+          "title": "keep the search timestamp in the search requery (#55068)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -42047,7 +42052,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T20:10:10.867Z",
+      "verified_at": "2026-11-05T10:58:15.684Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -156150,8 +156155,8 @@
       "slug": "fabio-rovai-open-ontologies",
       "platform": "github",
       "source_url": "https://github.com/fabio-rovai/open-ontologies",
-      "source_version": "ef6638a9",
-      "content_hash": "d7a4adf1a516b421fd64881e745abb158c5e96a44c538a92f3bccc04db404e58",
+      "source_version": "375fbc47",
+      "content_hash": "0944db45602655979a6afa06b81279583a1e989d0649848ee6fb63b2b850f4bf",
       "dossier_path": "07_PROJECT_LEARNING/fabio-rovai-open-ontologies-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/fabio-rovai-open-ontologies-learnings.md",
       "promoted_rules": [
@@ -156184,6 +156189,11 @@
           "number": 6968,
           "title": "Merge pull request #363 from fabio-rovai/deps/calamine-0.38",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7195,
+          "title": "The lean job's Poly/ML missed its evicted cache while isabelle.in.tum.de refused",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -156191,7 +156201,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T20:53:20.088Z",
+      "verified_at": "2026-11-05T10:58:08.481Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -181823,6 +181833,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-05T10:50:45.324Z"
+    },
+    "rule-7195": {
+      "learning_id": "rule-7195",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7195,
+      "title": "The lean job's Poly/ML missed its evicted cache while isabelle.in.tum.de refused",
+      "source_url": "https://github.com/fabio-rovai/open-ontologies",
+      "source_version": "375fbc47",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T10:58:08.481Z"
+    },
+    "rule-7196": {
+      "learning_id": "rule-7196",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7196,
+      "title": "keep the search timestamp in the search requery (#55068)",
+      "source_url": "https://github.com/milvus-io/milvus",
+      "source_version": "d3063b15",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T10:58:15.684Z"
     }
   },
   "aliases": {

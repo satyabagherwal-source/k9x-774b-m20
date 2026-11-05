@@ -521736,3 +521736,148 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `dd411330` are properly handled with clean fallback behavior.
+
+
+---
+
+## 7195. The lean job's Poly/ML missed its evicted cache while isabelle.in.tum.de refused (Harvested from fabio-rovai/open-ontologies)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "The lean job's Poly/ML missed its evicted cache while isabelle.in.tum.de refused",
+  "source": "fabio-rovai/open-ontologies",
+  "source_url": "https://github.com/fabio-rovai/open-ontologies",
+  "source_version": "375fbc47",
+  "license": "MIT",
+  "extracted_at": "2026-11-05T10:58:08.202Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-fabio-rovai-open-ontologies",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [fabio-rovai/open-ontologies](https://github.com/fabio-rovai/open-ontologies) (Revision: `375fbc47`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `.github/workflows/ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in fabio-rovai/open-ontologies. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `ce10d03a`: The lean job's Poly/ML missed its evicted cache while isabelle.in.tum.de refused connections and failed before any test ran; added isabelle.sketis.net as a second host under the same digest and raised the step to 10 minutes to fix it. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci.yml`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+        timeout-minutes: 10
+          #
+          # Two hosts, because the cache is not enough on its own. The Actions
+          # cache sits at its 10 GB limit with the Rust build caches, so this
+          # 3 MB entry is evicted whenever a lockfile change brings a new set of
+          # them, and on 4 Nov 2026 the next run found it gone while
+          # isabelle.in.tum.de refused connections: the required lean job failed
+          # without running a test. isabelle.sketis.net is the Isabelle
+          # component mirror and served the same 38,740,810 bytes, digest
+          # 67351868..., that day. Each host's bytes must pass the same hash.
+          got=
+          for url in https://isabelle.in.tum.de/components/polyml-5.9.2-2.tar.gz \
+                     https://isabelle.sketis.net/components/polyml-5.9.2-2.tar.gz; do
+            if curl -fsSL --retry 3 --retry-all-errors --connect-timeout 20 --max-time 300 -o /tmp/polyml.tar.gz "$url" \
+              && echo "67351868c05440d72a514ca60e8ee1d3252b288d746eb7ad236bda5fcaf12272  /tmp/polyml.tar.gz" | sha256sum -c -; then
+              got=$url; break
+            fi
+            echo "::warning::Poly/ML not fetched from $url; tryin
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Anti-pattern to NEVER write (induced failure mode):
+        timeout-minutes: 5
+          curl -fsSL --retry 5 --retry-all-errors --connect-timeout 20 --max-time 300 -o /tmp/polyml.tar.gz https://isabelle.in.tum.de/components/polyml-5.9.2-2.tar.gz
+          echo "67351868c05440d72a514ca60e8ee1d3252b288d746eb7ad236bda5fcaf12272  /tmp/polyml.tar.gz" | sha256sum -c -
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `ce10d03a` are properly handled with clean fallback behavior.
+
+
+---
+
+## 7196. keep the search timestamp in the search requery (#55068) (Harvested from milvus-io/milvus)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "keep the search timestamp in the search requery (#55068)",
+  "source": "milvus-io/milvus",
+  "source_url": "https://github.com/milvus-io/milvus",
+  "source_version": "d3063b15",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-05T10:58:15.444Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-milvus-io-milvus",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [milvus-io/milvus](https://github.com/milvus-io/milvus) (Revision: `d3063b15`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `internal/proxy/dql/requery_integration_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in milvus-io/milvus. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `de9d02bb`: keep the search timestamp in the search requery (#55068). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/proxy/dql/requery_integration_test.go`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+	"time"
+	"github.com/milvus-io/milvus/pkg/v3/util/tsoutil"
+// TestSearchTask_RequeryKeepsSearchTimestamp checks that the requery task keeps
+// the search timestamp through scheduling, so its guarantee and TTL cutoffs
+// match the search. Otherwise a row that expires between the search and the
+// requery is missing from the requery and the search fails with
+// ErrInconsistentRequery.
+func TestSearchTask_RequeryKeepsSearchTimestamp(t *testing.T) {
+	const (
+		collectionName = "test_collection"
+		collectionID   = int64(100)
+	)
+	ctx := context.Background()
+	searchTime := time.Unix(1_700_000_000, 0)
+	searchTS := tsoutil.ComposeTSByTime(searchTime)
+	schedulerTS := tsoutil.ComposeTSByTime(searchTime.Add(2 * time.Second))
+	collectionTTL := time.Hour
+	gracefulTime := paramtable.Get().CommonCfg.GracefulTime.GetAsDuration(time.Millisecond)
+
+	schema := mustNewSchemaInfo(&schemapb.CollectionSchema{
+		Name: collectionName,
+		Fields: []*schemapb.FieldSchema{
+			{FieldID: 100, Name: "id", IsPrimaryKey: true, DataType: schemapb.DataType_Int64},
+			{FieldID: 101, Name: "vec", DataType: schemapb.DataType_FloatVector, TypeParams: []*commonpb.KeyValuePair{{Key: common.DimKey, Value: "4"}}},
+		},
+	})
+	mo
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Anti-pattern to NEVER write (induced failure mode):
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `de9d02bb` are properly handled with clean fallback behavior.

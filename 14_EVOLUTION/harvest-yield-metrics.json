@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-05T10:50:45.423Z",
-  "total_cycles_completed": 7598,
-  "total_learnings_persisted": 7598,
-  "total_rules_promoted": 7257,
+  "last_updated": "2026-11-05T10:58:15.805Z",
+  "total_cycles_completed": 7601,
+  "total_learnings_persisted": 7601,
+  "total_rules_promoted": 7259,
   "history": [
-    {
-      "timestamp": "2026-11-05T00:29:38.107Z",
-      "repository": "akhilaaa3/Jev-Omni",
-      "learningId": "learn-huggingface-akhilaaa3-jev-omni",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T00:29:44.230Z",
-      "repository": "pointfreeco/swift-composable-architecture",
-      "learningId": "learn-github-pointfreeco-swift-composable-architecture",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T00:29:52.224Z",
-      "repository": "xerj-org/xerj",
-      "learningId": "learn-github-xerj-org-xerj",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-05T00:36:46.081Z",
       "repository": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-05T10:50:45.423Z",
       "repository": "koderover/zadig",
       "learningId": "learn-github-koderover-zadig",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T10:57:59.286Z",
+      "repository": "zai-org/GLM-5.3",
+      "learningId": "learn-huggingface-zai-org-glm-5-3",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T10:58:08.603Z",
+      "repository": "fabio-rovai/open-ontologies",
+      "learningId": "learn-github-fabio-rovai-open-ontologies",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T10:58:15.805Z",
+      "repository": "milvus-io/milvus",
+      "learningId": "learn-github-milvus-io-milvus",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

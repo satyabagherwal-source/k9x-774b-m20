@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-05T10:50:45.434Z",
+  "last_updated": "2026-11-05T10:58:15.819Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1730,14 +1730,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-zai-org-glm-5-3",
-      "content_hash": "19238a3929cb7f90337a90961ea0ce003598f83651363f19b006ece21c416200",
-      "verified_at": "2026-10-31T20:11:46.081Z",
+      "content_hash": "713ab4badd503600d63dda62fbb4b7daeda132dd6d5da168621b1dce3df5db70",
+      "verified_at": "2026-11-05T10:57:59.289Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T20:11:46.081Z"
+      "last_updated": "2026-11-05T10:57:59.289Z"
     },
     "mudler/locate-anything.cpp-gguf": {
       "repository": "mudler/locate-anything.cpp-gguf",
@@ -10071,14 +10071,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-milvus-io-milvus",
-      "content_hash": "ac3186c24a74f82f6408f7270eddb246eb5f0d847f137bd0f9699f7bf514e4c2",
-      "verified_at": "2026-11-04T20:10:11.001Z",
+      "content_hash": "aff96c17b9470fc4ec47c6da52533cab6a5279d438b81efe98405c86cd50dc76",
+      "verified_at": "2026-11-05T10:58:15.818Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T20:10:11.001Z"
+      "last_updated": "2026-11-05T10:58:15.818Z"
     },
     "ynqa/jnv": {
       "repository": "ynqa/jnv",
@@ -17211,14 +17211,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-fabio-rovai-open-ontologies",
-      "content_hash": "d7a4adf1a516b421fd64881e745abb158c5e96a44c538a92f3bccc04db404e58",
-      "verified_at": "2026-11-04T20:53:20.166Z",
+      "content_hash": "0944db45602655979a6afa06b81279583a1e989d0649848ee6fb63b2b850f4bf",
+      "verified_at": "2026-11-05T10:58:08.614Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T20:53:20.166Z"
+      "last_updated": "2026-11-05T10:58:08.614Z"
     },
     "LiquidAI/LFM3-VL-2B": {
       "repository": "LiquidAI/LFM3-VL-2B",

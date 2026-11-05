@@ -7621,3 +7621,6 @@
 | `CYCLE-20261105-42BT` | `2026-11-05T10:43:47.273Z` | `PeerDB-io/peerdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7193` | Yes (`a03871e6...`) |
 | `CYCLE-20261105-CVYP` | `2026-11-05T10:50:38.929Z` | `BAAI/bge-large-en-v1.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-large-en-v1.5-learnings.md` | Yes (`d1c805b7...`) |
 | `CYCLE-20261105-D0YV` | `2026-11-05T10:50:45.415Z` | `koderover/zadig` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7194` | Yes (`fdadf2f9...`) |
+| `CYCLE-20261105-MBQK` | `2026-11-05T10:57:59.276Z` | `zai-org/GLM-5.3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-zai-org-glm-5.3-learnings.md` | Yes (`713ab4ba...`) |
+| `CYCLE-20261105-MIXD` | `2026-11-05T10:58:08.593Z` | `fabio-rovai/open-ontologies` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7195` | Yes (`0944db45...`) |
+| `CYCLE-20261105-MOHG` | `2026-11-05T10:58:15.796Z` | `milvus-io/milvus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7196` | Yes (`aff96c17...`) |
