@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/oven-sh-bun-learnings.md`  
 > **Source**: github ([https://github.com/oven-sh/bun](https://github.com/oven-sh/bun))  
-> **Source Version**: `e57d89ba`  
+> **Source Version**: `b1007f11`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T22:20:06.517Z  
+> **Timestamp**: 2026-11-05T17:21:53.516Z  
 > **Learning ID**: `learn-github-oven-sh-bun`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/oven-sh-bun-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/oven-sh/bun](https://github.com/oven-sh/bun))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T22:20:06.508Z  
+> **Harvest Timestamp**: 2026-11-05T17:21:53.509Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Incredibly fast JavaScript runtime, bundler, test runner, and package manager – all in one
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 96546 stars
+- **Stars / Engagement**: 96568 stars
 
 ---
 
@@ -999,640 +999,443 @@ struct us_poll_t {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `cdfa19bb` (2026-11-04)
-**Commit Message**: Remove 128 `unsafe` blocks from the event loop, spawn, `bun_jsc`, `node:fs` and `fs.watch` (#47893)
+### Incident Patch 1: `b1007f11` (2026-11-05)
+**Commit Message**: Remove 125 `unsafe` blocks from IPC, N-API, `bun:ffi`, `node:zlib`, c-ares, BoringSSL, `node:quic` and the parser (#47944)
 
 ### What does this PR do?
 
-42 separate changes, one commit each: 14 in the event loop, the I/O
-crate and spawn, 14 in the rest of `bun_jsc`, and 14 in `node:fs`,
-`fs.watch` and their neighbours. They follow #47291, #47317, #47338,
-#47382, #47393, #47414 and #47871 and work the same way: signatures name
-the type and the lifetime that the value already has, hand-written
-pointer code becomes plain ownership and borrows that the compiler
-checks, and what was never needed is deleted.
+35 separate changes, one commit each: 10 in IPC, N-API, `bun:ffi` and
+their neighbours, 15 in `node:zlib`, the c-ares and BoringSSL bindings
+and `node:quic`, and 10 in the parser, the printer, CSS, `Bun.Image` and
+smaller crates. They follow #47291, #47317, #47338, #47382, #47393,
+#47414, #47871, #47893, #47895, #47901 and #47940 and work the same way:
+signatures name the type and the lifetime that the value already has,
+hand-written pointer code becomes plain ownership and borrows that the
+compiler checks, and what was never needed is deleted.
 
-Together: **128 fewer `unsafe` blocks, 14 fewer `unsafe fn`s, 6 fewer
-`unsafe impl`s and 1 fewer `unsafe extern` block**, +632/−1383 over 64
-files. No safe function became `unsafe`, and no wrapper type was added.
-**[Where the compiled code changes](#where-the-compiled-code-changes)
-lists every place where the program does different work.**
+Together: **125 fewer `unsafe` blocks, 17 fewer `unsafe fn`s and 4 fewer
+`unsafe impl`s**, +870/−1499 over 58 files. No safe function became
+`unsafe`, and no wrapper type was added. **[Where the compiled code
+changes](#where-the-compiled-code-changes) lists every place where the
+program does different work.**
 
 | # | Change | `unsafe` | Diff |
 |---|---|---|---|
-| 1 | spawn: the waiter thread's singleton is a plain `static` | −4
-blocks, −1 `unsafe impl` | +28/−79, 1 file |
-| 2 | io: `FilePoll` and `EventLoopCtx` borrow the uws loop as `&Loop` |
-−1 `unsafe fn` | +42/−97, 7 files 
+| 1 | ipc: `CHANNEL` holds `&'static IPCInstance`, boxed once the
+transport is up | −9 blocks, −1 `unsafe fn` | +34/−74, 3 files |
+| 2
 
-**File**: `src/bun_alloc/basic.rs` (modified, +2/-3)
+**File**: `src/aot/compile.rs` (modified, +10/-14)
 ```diff
-@@ -9,10 +9,9 @@ use crate::{Alignment, AllocatorVTable, StdAllocator};
- #[inline(always)]
- pub(crate) unsafe fn mi_free_checked(ptr: *mut c_void, size: usize, align: usize) {
-     if cfg!(debug_assertions) {
--        // SAFETY: `mi_is_in_heap_region` accepts any pointer; remaining calls
--        // are sound by the caller contract above.
-+        debug_assert!(mimalloc::mi_is_in_heap_region(ptr));
-+        // SAFETY: caller contract above.
-         unsafe {
--            debug_assert!(mimalloc::mi_is_in_heap_region(ptr));
-             if mimalloc::must_use_aligned_alloc(align) {
-                 mimalloc::mi_free_size_aligned(ptr, size, align);
-             } else {
-```
-
-**File**: `src/event_loop/AnyEventLoop.rs` (modified, +1/-1)
-```diff
-@@ -377,7 +377,7 @@ impl EventLoopHandle {
-     /// (the trait) and the `*mut Loop` deref dance in scope. `uws_loop` is the
-     /// process-global loop returned by `AnyEventLoop::r#loop()` — never null.
-     #[inline]
--    pub fn set_as_parent_of(self, uws_loop: &mut UwsLoop) {
-+    pub fn set_as_parent_of(self, uws_loop: &UwsLoop) {
-         let (tag, ptr) = self.into_tag_ptr();
-         uws_loop.internal_loop_data.set_parent_raw(tag, ptr);
-     }
-```
-
-**File**: `src/event_loop/ConcurrentTask.rs` (modified, +2/-3)
-```diff
-@@ -298,9 +298,8 @@ pub struct ConcurrentTask {
- impl Default for ConcurrentTask {
-     fn default() -> Self {
-         Self {
--            // SAFETY: all-zero is a valid bit pattern for `Task` (plain tag
--            // byte + raw pointer); caller must set a real task before use.
--            task: unsafe { bun_core::ffi::zeroed_unchecked() },
-+            // A placeholder: the caller must set a real task before use.
-+            task: Task::new(TaskTag(0), core::ptr::null_mut(), ContextId::NONE),
-             next: Link::new(),
-             auto_delete: false,
-         }
-```
-
-**File**: `src/event_loop/MiniEventLoop.rs` (modified, +15/-30)
-```diff
-@@ -104,31 +104,7 @@ pub fn init_global(
-         // materialized here (see fn doc — avoids aliased `&'static mut` UB).
-         return GLOBAL.with(|g| g.get());
-     }
--    let loop_ = MiniEventLoop::init();
--    // §Forbidden bans `Box::leak` for `&'static`; this is a
--    // thread-lifetime singleton, so use `heap::alloc` (intrusive ownership)
--    // and store the raw pointer in the thread-local.
--    let global_ptr: *mut MiniEventLoop = bun_core::heap::into_raw(Box::new(loop_));
--    // SAFETY: `global_ptr` was just allocated via `heap::alloc`; this thread
--    // holds the only reference for the duration of first-init. The `GLOBAL`
--    // thread-local is NOT yet published (set below, after this `&mut` is dropped),
--    // so no reader of `GLOBAL` nor a re-entrant `init_global()` can observe
--    // the pointer while this exclusive borrow is live. The `&mut` is scoped to
--    // this function body — NOT `'static` — and ends before we publish/return the
--    // raw ptr.
--    let global = unsafe { &mut *global_ptr };
--
--    // sys-level API is `set_parent_raw(tag, ptr)`. Tag 1 = JS,
--    // tag 2 = mini (`EventLoopHandle` discriminant + 1).
--    {
--        let (tag, ptr) = EventLoopHandle::init_mini(global_ptr).into_tag_ptr();
--        // SAFETY: see `loop_ptr()` invariant.
+@@ -632,20 +632,16 @@ impl KeepsFreeBlocksBelowThePeak {
+ 
+     fn resident_now() -> usize {
+         let mut resident = 0;
+-        let unused = core::ptr::null_mut();
+-        // SAFETY: it writes a number through each pointer that is not null.
 -        unsafe {
--            (*global.loop_ptr())
--                .internal_loop_data
--                .set_parent_raw(tag, ptr)
--        };
+-            bun_alloc::mimalloc::mi_process_info(
+-                unused,
+-                unused,
+-                unused,
+-                &raw mut resident,
+-                unused,
+-                unused,
+-                unused,
+-                unused,
+-            );
+-        }
++        bun_alloc::mimalloc::mi_process_info(
++            None,
++            None,
++            None,
++            Some(&mut resident),
++            None,
++            None,
++            None,
++            None,
++        );
+         resident
+     }
+ }
+```
+
+**File**: `src/aot/emit/output.rs` (modified, +1/-3)
+```diff
+@@ -19,9 +19,7 @@ impl<'a> OutputSlice<'a> {
+ 
+     pub(super) fn put_words(&mut self, words: &[u32]) {
+         if cfg!(target_endian = "little") {
+-            let first_byte = words.as_ptr().cast::<u8>();
+-            // SAFETY: every byte of a `u32` is initialized, and a byte is aligned anywhere.
+-            self.put_bytes(unsafe { std::slice::from_raw_parts(first_byte, size_of_val(words)) });
++            self.put_bytes(bun_core::slice_as_bytes(words));
+         } else {
+             words
+                 .iter()
+```
+
+**File**: `src/aot/engine.rs` (modified, +2/-3)
+```diff
+@@ -72,8 +72,7 @@ bun_core::impl_zeroable!(CompileOptions);
+ 
+ fn default_record() -> CompileOptions {
+     let mut record: CompileOptions = zeroed();
+-    // SAFETY: the engine writes one `CompileOptions` through the pointer before it returns.
+-    unsafe { Bun__AOT__initializeOptions(&raw mut record) };
++    Bun__AOT__initializeOptions(&mut record);
+     record
+ }
+ 
+@@ -627,7 +626,7 @@ static REGION_THREADS: HostThreadPool = HostThreadPool {
+ };
+ 
+ unsafe extern "C" {
+-    fn Bun__AOT__initializeOptions(options: *mut CompileOptions);
++    safe fn Bun__AOT__initializeOptions(options: &mut CompileOptions);
+     fn Bun__AOT__applyOptionWord(
+         options: *mut CompileOptions,
+         word: BunAOTBytes,
+```
+
+**File**: `src/aot/engine/testing.rs` (modified, +7/-7)
+```diff
+@@ -18,11 +18,6 @@ pub(super) fn to_words(bytes: &[u8]) -> Vec<u64> {
+     bytes.chunks(8).map(to_word).collect()
+ }
+ 
+-pub(super) fn bytes_of(words: &[u64]) -> &[u8] {
+-    // SAFETY: every byte of an initialized `u64` is initialized, and the slice ends with `words`.
+-    unsafe { core::slice::from_raw_parts(words.as_ptr().cast::<u8>(), size_of_val(words)) }
+-}
+-
+ fn bytes_of_records<T: ResultRecord>(records: &[T]) -> &[u8] {
+     // SAFETY: an abi record has no padding (its generated assertions fix its size and every offset), so every byte is initialized, and the slice ends with `records`.
+     unsafe { core::slice::from_raw_parts(records.as_ptr().cast::<u8>(), size_of_val(records)) }
+@@ -57,7 +52,9 @@ impl Sections {
+     fn as_bytes(&self) -> [BunAOTBytes; Section::COUNT] {
+         Section::ALL.map(|section| {
+             let index = section as usize;
+-            BunAOTBytes::from_slice(&bytes_of(&self.words[index])[..self.lengths[index]])
++            BunAOTBytes::from_slice(
++                &bun_core::slice_as_bytes(&self.words[index])[..self.lengths[index]],
++            )
+         })
+     }
+ }
+@@ -98,7 +95,10 @@ impl ResultRecords<'_> {
+         let sections = Sections::new()
+             .with(Section::Image, self.image)
+             .with(Section::Text, self.text)
+-            .with(Section::LimitValues, bytes_of(&limit_values))
++            .with(
++                Section::LimitValues,
++                bun_core::slice_as_bytes(&limit_values),
++            )
+             .with_records(self.unseen_code)
+             .with_records(self.builtins_used)
+             .with_records(self.features_used)
+```
+
+**File**: `src/aot/engine/tests.rs` (modified, +6/-3)
+```diff
+@@ -5,7 +5,7 @@ use bun_options_types::aot_options::BuildReportRequest;
+ use bun_removable_features::{Feature, TrimFeature};
+ 
+ use super::ResultSection as Section;
+-use super::testing::{Sections, bytes_of, with_result};
++use super::testing::{Sections, with_result};
+ use super::*;
+ use crate::ir::generated::{Architecture, CheckSet, StatisticId};
+ use crate::statistics::is_lowered_by_all;
+@@ -457,8 +457,11 @@ fn sections_are_read_as_typed_elements() {
+     let module = offset_of!(AccessCountRecord, module);
+     let access_counts = [4, 9].map(|word| patched_record::<AccessCountRecord>(&[(module, word)]));
+     let sections = Sections::new()
+-        .with(Section::LimitValues, bytes_of(&limit_values))
+-        .with(Section::Statistics, bytes_of(&statistics))
++        .with(
++            Section::LimitValues,
++            bun_core::slice_as_bytes(&limit_values),
++        )
++        .with(Section::Statistics, bun_core::slice_as_bytes(&statistics))
+         .with(Section::EntryModuleIds, &entry_module_ids)
+         .with(Section::AccessCounts, &access_counts.concat());
+     with_result(&sections, |result| {
+```
+
+**File**: `src/aot/statistics.rs` (modified, +10/-14)
+```diff
+@@ -299,20 +299,16 @@ fn process_info() -> (Duration, usize, usize) {
+     if !bun_alloc::USE_MIMALLOC {
+         return (Duration::ZERO, 0, 0);
+     }
+-    let unused = core::ptr::null_mut();
+-    // SAFETY: it writes a number through each pointer that is not null.
+-    unsafe {
+-        bun_alloc::mimalloc::mi_process_info(
+-            unused,
+-            &raw mut user,
+-            &raw mut system,
+-            &raw mut resident,
+-            &raw mut peak,
+-            unused,
+-            unused,
+-            unused,
+-        );
 -    }
-+    let mut global = MiniEventLoop::init();
- 
-     // The process-global loader is stored as `AtomicPtr<Loader>`.
-     global.env = env
-@@ -155,11 +131,20 @@ pub fn init_global(
++    bun_alloc::mimalloc::mi_process_info(
++        None,
++        Some(&mut user),
++        Some(&mut system),
++        Some(&mut resident),
++        Some(&mut peak),
++        None,
++        None,
++        None,
++    );
+     (
+         Duration::from_millis((user + system) as u64),
+         resident,
+```
+
+**File**: `src/ast/binding.rs` (modified, +7/-92)
+```diff
+@@ -74,113 +74,29 @@ impl Binding {
+             data: t.alloc_into_b(bump),
          }
      }
- 
--    // Publish the thread-local pointer only AFTER the scoped `&mut *global_ptr`
--    // above is no longer used — publishing earlier would let a callee that reads
--    // `GLOBAL` re-derive a `&mut` aliasing `global` (UB). Nothing between the
--    // `&mut` borrow and here reads `GLOBAL` (`EventLoopHandle::init_mini` /
--    // `into_tag_ptr` only copy the pointer value).
-+    let uws_loop = global.loop_ptr();
-+    // §Forbidden bans `Box::leak` for `&'static`; this is a
-+    // thread-lifetime singleton, so use `heap::alloc` (intrusive ownership)
-+    // and store the raw pointer in the thread-local.
-+    let global_ptr: *mut MiniEventLoop = bun_core::heap::into_raw(Box::new(global));
-+
-+    // sys-level API is `set_parent_raw(tag, ptr)`. Tag 1 = JS,
-+    // tag 2 = mini (`EventLoopHandle` discriminant + 1).
-+    {
-+        let (tag, ptr) = EventLoopHandle::init_mini(global_ptr).into_tag_ptr();
-+        // SAFETY: see `loop_ptr()` invariant.
-+        unsafe { (*uws_loop).internal_loop_data.set_parent_raw(tag, ptr) };
-+    }
-+
-     GLOBAL.with(|g| g.set(global_ptr));
-     GLOBAL_INITIALIZED.with(|g| g.set(true));
-     global_ptr
-```
-
-**File**: `src/event_loop/SpawnSyncEventLoop.rs` (modified, +6/-14)
-```diff
-@@ -134,23 +134,15 @@ mod handler {
- }
- 
- impl SpawnSyncEventLoop {
--    // In-place init: `self.event_loop` is captured by `setParentEventLoop`
--    // below, so `Self` MUST NOT move after `init` returns (no-move invariant
--    // upheld by the caller). The caller provides uninitialized storage, hence
--    // `MaybeUninit<Self>` (out-param ctor exception). `false` leaves it uninitialized.
--    pub fn init(
--        this: &mut core::mem::MaybeUninit<Self>,
--        vm: *mut (), /* SAFETY: erased *mut VirtualMachine */
--    ) -> bool {
-+    /// `None` if the isolated loop cannot be created. Boxed: the Windows timeout timer keeps the address.
-+    pub fn init(vm: *mut () /* SAFETY: erased *mut VirtualMachine */) -> Option<Box<Self>> {
-         // `uws::Loop::create` takes a `LoopHandler` impl with associated-const fn ptrs.
--        let Some(loop_) = uws::Loop::create::<handler::Handler>() else {
--            return false;
--        };
-+        let loop_ = uws::Loop::create::<handler::Handler>()?;
- 
-         // A fresh `jsc::EventLoop` whose `uws_loop` is the isolated loop.
-         let event_loop = __bun_spawn_sync_create_event_loop(vm, loop_.as_ptr());
- 
--        let this = this.write(Self {
-+        let this = Box::new(Self {
-             uws_loop: loop_,
-             #[cfg(windows)]
-             uv_timer: Cell::new(None),
-@@ -169,7 +161,7 @@ impl SpawnSyncEventLoop {
-         let loop_data = &this.uws_loop().internal_loop_data;
-         loop_data.set_parent_raw(tag, ptr);
-         loop_data.jsc_vm.set(core::ptr::null());
--        true
-+        Some(this)
-     }
- 
-     /// Erased `*mut bun_jsc::event_loop::EventLoop` (heap-owned via
-@@ -332,7 +324,7 @@ impl PreparedSpawnSyncEventLoop<'_> {
-             self.uv_timer
-                 .set(Some(bun_core::heap::into_raw_nn(uv_timer)));
-             let uv_loop = self.uws_loop().uv_loop();
--            // The loop is boxed by `RareData` and outlives its timer.
-+            // The loop is boxed by `init` and outlives its timer.
-             let data = core::ptr::from_ref::<SpawnSyncEventLoop>(self.inner)
-                 .cast_mut()
-                 .cast();
-```
-
-**File**: `src/install/PackageManager.rs` (modified, +1/-1)
-```diff
-@@ -2734,7 +2734,7 @@ pub fn init(
-         let uws_loop = manager.event_loop.r#loop();
-         // SAFETY: `uws_loop` is the live process-global `uws::Loop` (`r#loop()` above);
-         // the handle's backref is `manager.event_loop`, owned by the singleton.
--        let uws_loop = unsafe { &mut *uws_loop };
-+        let uws_loop = unsafe { &*uws_loop };
-         EventLoopHandle::from_any(&mut manager.event_loop).set_as_parent_of(uws_loop);
-     }
-     {
-```
-
-**File**: `src/io/ParentDeathWatchdog.rs` (modified, +3/-4)
-```diff
-@@ -32,12 +32,14 @@
- //! watchdog closes both gaps from Bun's side without requiring the shim to
- //! cooperate.
- 
-+#[cfg(any(target_os = "linux", target_os = "android", target_os = "macos"))]
- use core::ffi::c_int;
- use core::sync::atomic::{AtomicBool, Ordering};
- 
- #[cfg(any(target_os = "linux", target_os = "android"))]
- use bun_core::ZStr;
- use bun_core::env_var;
-+use bun_spawn_sys::ffi::kill;
- #[cfg(any(target_os = "linux", target_os = "android", target_os = "macos"))]
- use bun_sys::Fd;
- #[cfg(any(target_os = "linux", target_os = "android"))]
-@@ -151,9 +153,6 @@ unsafe extern "C" {
-     safe fn getpid() -> libc::pid_t;
-     #[cfg(target_os = "macos")]
-     safe fn getppid() -> libc::pid_t;
--    // safe: by-value `pid_t`/`c_int` only; bad pid → `ESRCH`, bad sig →
--    // `EINVAL`, never UB. Async-signal-safe.
--    safe fn kill(pid: libc::pid_t, sig: c_int) -> c_int;
-     // safe: out-param is `&mut c_int` (non-null, valid for write); kernel only
-     // writes the slot and reports failure via the return value — bad pid →
-     // `ECHILD`, never UB. Async-signal-safe.
-@@ -300,7 +299,7 @@ pub fn install_on_event_loop(handle: EventLoopCtx) {
-         // SAFETY: `poll` was just allocated by `FilePoll::init`; sole `&mut`
-         // borrow; `register` does not re-derive the loop.
-         match unsafe { &mut *poll }.register(
--            handle.loop_mut(),
-+            handle.platform_event_loop(),
-             crate::file_poll::Flags::Process,
-             true,
-         ) {
-```
-
-**File**: `src/io/PipeReader.rs` (modified, +4/-8)
-```diff
-@@ -806,7 +806,7 @@ impl PosixBufferedReader {
-                     // SAFETY: caller contract; the borrow ends before the dispatch.
-                     let (filled, stop) = unsafe { (*this).fill_scratch(file_type, fd, scratch) };
-                     // SAFETY: caller contract; borrow ends at `;`.
--                    unsafe { Self::close_if_final(this, stop.as_ref()) };
-+                    unsafe { (*this).close_if_final(stop.as_ref()) };
-                     let keep_going = if filled == 0 {
-                         true
-                     } else if streaming {
-@@ -825,7 +825,7 @@ impl PosixBufferedReader {
-                     // SAFETY: caller contract; the borrow ends before the dispatch.
-                     let stop = unsafe { (*this).fill_buffer(file_type, fd, streaming) };
-                     // SAFETY: caller contract; borrow ends at `;`.
--                    unsafe { Self::close_if_final(this, stop.as_ref()) };
-+                    unsafe { (*this).close_if_final(stop.as_ref()) };
-                     // SAFETY: caller contract; borrow ends at `;`.
-                     let keep_going = if !streaming || unsafe { (*this)._buffer.is_empty() } {
-                         true
-@@ -916,13 +916,9 @@ impl PosixBufferedReader {
-     }
- 
-     /// Closes before the final chunk is delivered, so a consumer that pulls again from inside `on_read_chunk` finds the reader done instead of reading past EOF or the byte budget.
+-}
+-
+-// ──────────────────────────────────────────────────────────────────────────
+-// ToExpr — Rust cannot store `*mut P<'a, const ..>` in a non-generic field
+-// nor take a fn item as a const generic, so the wrapper is type-erased:
+-// `wrap` is a plain fn pointer that casts the erased `ctx` back to the
+-// concrete `P` instantiation. The `*ExprType` context is **not** stored — it
+-// is supplied at call time (`Binding::to_expr(.., ctx, ..)`) so the raw
+-// pointer's Stacked-Borrows tag is a child of the *live* `&mut P` at the call
+-// site rather than a stale tag captured during `prepare_for_visit_pass`
+-// (which every later `&mut self` retag would invalidate). The struct is
+-// `Copy` so the recursive `to_expr` can pass it by value.
+-// ──────────────────────────────────────────────────────────────────────────
+-
+-#[derive(Copy, Clone)]
+-pub struct ToExprWrapper {
+-    /// Back-reference to `P.arena`. `BackRef` invariant: the arena is owned by
+-    /// `P<'a>` and outlives every `ToExprWrapper` (which is stored on `P` and
+-    /// only used during the visit pass). `None` only for the pre-wire
+-    /// `dangling()` placeholder; niche-packed so layout matches `*const Arena`.
+-    arena: Option<bun_ptr::BackRef<Arena>>,
+-    wrap: fn(*mut core::ffi::c_void, crate::Loc, Ref) -> Expr,
+-}
+-
+-impl ToExprWrapper {
+-    /// Placeholder used in `P::init` before `prepare_for_visit_pass` wires the
+-    /// arena + trampoline.
+-    pub const fn dangling() -> Self {
+-        Self {
+-            arena: None,
+-            wrap: |_, _, _| unreachable!("ToExprWrapper used before prepare_for_visit_pass"),
+-        }
+-    }
+-
+-    /// `ExprType` is erased to `c_void`; callers (P.rs) supply a trampoline
+-    /// closure that casts back to `*mut P<..>` and dispatches to
+-    /// `P::wrap_identifier_{namespace,hoisting}`. Non-capturing closures
+-    /// coerce to fn pointers, so this stays zero-cost.
+-    /// The `*mut P` itself is passed per-call via `Binding::to_expr`.
+-    #[inline]
+-    pub fn new(arena: &Arena, wrap: fn(*mut core::ffi::c_void, crate::Loc, Ref) -> Expr) -> Self {
+-        Self {
+-            arena: Some(bun_ptr::BackRef::new(arena)),
+-            wrap,
+-        }
+-    }
+-
+-    #[inline]
+-    pub(crate) fn wrap_identifier(
+-        &self,
+-        ctx: *mut core::ffi::c_void,
+-        loc: crate::Loc,
+-        ref_: Ref,
+-    ) -> Expr {
+-        (self.wrap)(ctx, loc, ref_)
+-    }
+-
+-    #[inline]
+-    pub(crate) fn arena(&self) -> &Arena {
+-        // `BackRef::get` encapsulates the deref under the owner-outlives-holder
+-        // invariant; `expect` mirrors the prior `debug_assert!(!null)`.
+-        self.arena
+-            .as_ref()
+-            .expect("ToExprWrapper not wired (prepare_for_visit_pass)")
+-            .get()
+-    }
+-}
+-
+-impl Binding {
+-    /// `ctx` is the type-erased `*mut P<..>` derived from the *caller's live*
+-    /// `&mut P` (e.g. `core::ptr::addr_of_mut!(*p) as *mut c_void`). Threading
+-    /// it per-call keeps the raw pointer's provenance under the active Unique
+-    /// borrow, avoiding the stale-tag UB of storing it long-term.
 -    ///
--    /// # Safety
--    /// `this` is the live reader.
--    unsafe fn close_if_final(this: *mut Self, stop: Option<&Stop>) {
-+    fn close_if_final(&mut self, stop: Option<&Stop>) {
-         if matches!(stop, Some(Stop::Eof | Stop::OverBudget)) {
--            // SAFETY: caller contract; borrow ends at `;`.
--            unsafe { (*this).close_without_reporting() };
-+            self.close_without_reporting();
-         }
-     }
+-    /// Accepts the wrapper by `Borrow` so both the by-value call-site in
+-    /// `visitStmt.rs` (`p.to_expr_wrapper_namespace`) and the `&mut` call-site
+-    /// in `maybe.rs` (`&mut p.to_expr_wrapper_hoisted`) type-check without
+-    /// edits — `T: Borrow<T>` and `&mut T: Borrow<T>` are both blanket impls.
+-    pub fn to_expr<W>(binding: &Binding, ctx: *mut core::ffi::c_void, wrapper: W) -> Expr
+-    where
+-        W: core::borrow::Borrow<ToExprWrapper>,
+-    {
+-        Self::to_expr_inner(binding, ctx, *wrapper.borrow())
+-    }
  
+-    fn to_expr_inner(
++    pub fn to_expr<C>(
+         binding: &Binding,
+-        ctx: *mut core::ffi::c_void,
+-        wrapper: ToExprWrapper,
++        bump: &Arena,
++        ctx: &mut C,
++        wrap_identifier: impl Fn(&mut C, crate::Loc, Ref) -> Expr + Copy,
+     ) -> Expr {
+         let loc = binding.loc;
+         match binding.data {
+             B::BMissing(_) => Expr {
+                 data: ExprData::EMissing(E::Missing {}),
+                 loc,
+             },
+-            B::BIdentifier(b) => wrapper.wrap_identifier(ctx, loc, b.r#ref),
++            B::BIdentifier(b) => wrap_identifier(ctx, loc, b.r#ref),
+             B::BArray(b) => {
+                 let b = b.get();
+-                let bump = wrapper.arena();
+                 let items = b.items();
+                 let len = items.len();
+                 let mut exprs = bun_alloc::ArenaVec::with_capacity_in(len, bump);
+                 let mut i: usize = 0;
+                 while i < len {
+                     let item = &items[i];
+-                    let expr = Self::to_expr_inner(&item.binding, ctx, wrapper);
++                    let expr = Self::to_expr(&item.binding, bump, ctx, wrap_identifier);
+                     let converted = if b.has_sprea
 ```
 
----
-
-### Incident Patch 2: `e57d89ba` (2026-11-04)
-**Commit Message**: Make `epoll_ctl`, `kevent`, six uSockets loop imports and `Bun__FFI__closeFunctions` unsafe to call (#47940)
-
-### What does this PR do?
-
-Eight follow-ups, one commit each. Four of them correct a signature from
-#47231, #47291, #47338 or #47895 that promised more than it can keep,
-and the fifth adds the null check that the review of #47901 asked for.
-The last three come from the review of this PR: a comment of change 1
-that was wrong, the kqueue sibling of `epoll_ctl`, and a gap in the
-contracts of both.
-
-A `safe fn` import, like any safe function, promises that no call that
-compiles can go wrong: for every argument, in every state, on every
-thread. Reading the C and C++ behind those PRs once more with that
-question turned up nine functions that ask for more than their arguments
-can carry (the two wrappers of `epoll_ctl`, six imports of the uSockets
-loop and one of `bun:ffi`), a tenth that was a safe function before
-those PRs (`bun_sys::kevent`), and one pair of out-parameters that asked
-C++ for more than they need.
-
-Together: **21 more `unsafe` blocks and 3 more `unsafe fn`s**, +116/−47
-over 10 files. **On Linux the compiled code is the same; see [Where the
-compiled code changes](#w
-
-**File**: `src/bun_alloc/heap_breakdown.rs` (modified, +4/-4)
+**File**: `src/ast/e.rs` (modified, +16/-40)
 ```diff
-@@ -30,11 +30,11 @@ impl Zone {
-     /// `'static`: `malloc_set_zone_name` may keep the pointer instead of copying.
-     #[cfg(target_os = "macos")]
-     pub fn init(name: &'static CStr) -> &'static Zone {
--        // SAFETY: malloc_create_zone is safe to call with (0, 0); returns a
--        // process-lifetime zone pointer. `name` is NUL-terminated and outlives the
--        // process.
-+        let zone = malloc_create_zone(0, 0);
-+        assert!(!zone.is_null(), "malloc_create_zone failed");
-+        // SAFETY: the zone is not null and nothing destroys it. `name` is NUL-terminated and
-+        // outlives the process.
-         unsafe {
--            let zone = malloc_create_zone(0, 0);
-             malloc_set_zone_name(zone, name.as_ptr());
-             &*zone
-         }
-```
-
-**File**: `src/io/posix_event_loop.rs` (modified, +7/-2)
-```diff
-@@ -626,7 +626,11 @@ impl FilePoll {
-                 EPOLL::CTL_ADD
-             };
- 
--            let ctl = linux::epoll_ctl(watcher_fd, op, fd.native(), Some(&event));
-+            // SAFETY: `watcher_fd` is the epoll instance of `loop_`, whose dispatch decodes a
-+            // `Pollable`. `deinit` removes the entry, or leaves one that `EPOLLONESHOT` disarmed
-+            // when it fired, which is not reported again. `Store::put` then holds the slot back,
-+            // marked `IgnoreUpdates`, until a tick returns, when no event fetched for it is left.
-+            let ctl = unsafe { linux::epoll_ctl(watcher_fd, op, fd.native(), Some(&event)) };
-             self.flags.insert(Flags::WasEverRegistered);
-             if let Some(errno) = errno_sys(ctl, sys::Tag::epoll_ctl) {
-                 self.deactivate(loop_);
-@@ -940,7 +944,8 @@ impl FilePoll {
-         {
-             use bun_sys::linux::{self, EPOLL};
-             // CTL_DEL keys on fd alone, so both directions are removed together.
--            let ctl = linux::epoll_ctl(watcher_fd, EPOLL::CTL_DEL, fd.native(), None);
-+            // SAFETY: CTL_DEL registers nothing.
-+            let ctl = unsafe { linux::epoll_ctl(watcher_fd, EPOLL::CTL_DEL, fd.native(), None) };
- 
-             match sys::get_errno(ctl) {
-                 sys::E::SUCCESS => {}
-```
-
-**File**: `src/runtime/ffi/ffi_body.rs` (modified, +4/-2)
-```diff
-@@ -1361,10 +1361,12 @@ impl FFI {
-     pub(crate) fn close<'a>(&self, this_value: JsWrapper<'a, Self>, cx: &mut JsScope<'a>) {
-         unsafe extern "C" {
-             /// Type-checks `library` (`dynamicDowncast`) before use.
--            safe fn Bun__FFI__closeFunctions(global: &JSGlobalObject, library: JSValue) -> bool;
-+            fn Bun__FFI__closeFunctions(global: &JSGlobalObject, library: JSValue) -> bool;
-         }
-         jsc::mark_binding();
--        let is_running = Bun__FFI__closeFunctions(cx.global(), this_value.to_js());
-+        // SAFETY: C++ indexes `functionsValue` unchecked up to its length. It is empty or the array
-+        // that `cc` filled from 0 to its length, which JS never sees.
-+        let is_running = unsafe { Bun__FFI__closeFunctions(cx.global(), this_value.to_js()) };
-         if is_running {
-             // The running call returns into the compiled code, so leak it instead of letting `do_close` free it.
-             self.shared_state.set(None);
-```
-
-**File**: `src/runtime/webcore/TextDecoder.rs` (modified, +6/-5)
-```diff
-@@ -4,6 +4,7 @@ use crate::webcore::jsc::{self as jsc, JSGlobalObject, JSString, JSValue};
- use bun_core::strings;
- use bun_jsc::HostReturn as _;
- use bun_jsc::bindgen::{self, JsHeap, JsLocal, JsScope};
-+use core::mem::MaybeUninit;
- use std::collections::TryReserveError;
- 
- use jsc::StringJsc as _;
-@@ -496,10 +497,10 @@ pub(crate) extern "C" fn TextDecoder__createForStream(
-     label: JSValue,
-     fatal: bool,
-     ignore_bom: bool,
--    out_utf8_fast_path: &mut bool,
--    out_encoding: &mut EncodingLabel,
-+    out_utf8_fast_path: &mut MaybeUninit<bool>,
-+    out_encoding: &mut MaybeUninit<EncodingLabel>,
- ) -> *mut TextDecoder {
--    *out_utf8_fast_path = false;
-+    out_utf8_fast_path.write(false);
-     let encoding = if label.is_undefined() {
-         EncodingLabel::Utf8
-     } else {
-@@ -524,9 +525,9 @@ pub(crate) extern "C" fn TextDecoder__createForStream(
-             }
-         }
-     };
--    *out_encoding = encoding;
-+    out_encoding.write(encoding);
-     if matches!(encoding, EncodingLabel::Utf8) && !fatal {
--        *out_utf8_fast_path = true;
-+        out_utf8_fast_path.write(true);
-         return core::ptr::null_mut();
-     }
-     bun_core::heap::into_raw(Box::new(TextDecoder {
-```
-
-**File**: `src/spawn/process.rs` (modified, +13/-7)
-```diff
-@@ -3603,12 +3603,17 @@ mod spawn_process_body {
-             }
- 
-             let mut receipts: [libc::kevent; 5] = bun_core::ffi::zeroed();
--            match bun_sys::kevent(
--                kq_fd,
--                &changes_buf[..changes_len],
--                &mut receipts[..changes_len],
--                None,
--            ) {
-+            // SAFETY: the loop below reads `udata` as a number. The one other reader of `kq_fd`,
-+            // `NoOrphansTracker::killTracked`, throws the events away.
-+            let registered = unsafe {
-+                bun_sys::kevent(
-+                    kq_fd,
-+                    &changes_buf[..changes_len],
-+                    &mut receipts[..changes_len],
-+                    None,
-+                )
-+            };
-+            match registered {
-                 Err(err) => return Some(Err(err)),
-                 Ok(_) => {}
-             }
-@@ -3652,7 +3657,8 @@ mod spawn_process_body {
-             let mut child_exited = false;
-             let mut child_status: Option<Status> = None;
-             loop {
--                let got = match bun_sys::kevent(kq_fd, &[], &mut events[..], None) {
-+                // SAFETY: an empty changelist registers nothing.
-+                let got = match unsafe { bun_sys::kevent(kq_fd, &[], &mut events[..], None) } {
-                     Err(err) => return Some(Err(err)),
-                     Ok(c) => c,
-                 };
-```
-
-**File**: `src/sys/lib.rs` (modified, +20/-4)
-```diff
-@@ -5590,9 +5590,20 @@ pub mod linux {
-         unsafe { libc::ppoll(fds.as_mut_ptr(), fds.len() as _, timeout, sigmask) }
-     }
-     /// `EPOLL_CTL_DEL` takes no `event`.
-+    ///
-+    /// # Safety
-+    /// Whoever waits on `epfd` gets `event.u64` back and may dereference it. It must be what they
-+    /// expect for as long as `fd` is registered, and until they are done with the events that
-+    /// they had fetched by then.
-     #[inline]
--    pub fn epoll_ctl(epfd: c_int, op: c_int, fd: c_int, event: Option<&epoll_event>) -> c_int {
--        super::linux_syscall::epoll_ctl(epfd, op, fd, event)
-+    pub unsafe fn epoll_ctl(
-+        epfd: c_int,
-+        op: c_int,
-+        fd: c_int,
-+        event: Option<&epoll_event>,
-+    ) -> c_int {
-+        // SAFETY: the caller's contract.
-+        unsafe { super::linux_syscall::epoll_ctl(epfd, op, fd, event) }
-     }
- 
-     // ── raw syscall thunks ──
-@@ -7518,16 +7529,21 @@ pub fn kqueue() -> Maybe<Fd> {
- 
- /// `kevent()` — slice-wrapped Maybe form. Retries on EINTR.
- /// Returns the number of events written into `eventlist`.
-+///
-+/// # Safety
-+/// Whoever waits on `fd` gets the `udata` of each change back and may dereference it. It must be
-+/// what they expect for as long as the change is registered, and until they are done with the
-+/// events that they had fetched by then.
- #[cfg(any(target_os = "macos", target_os = "freebsd"))]
--pub fn kevent(
-+pub unsafe fn kevent(
-     fd: Fd,
-     changelist: &[libc::kevent],
-     eventlist: &mut [libc::kevent],
-     timeout: Option<&libc::timespec>,
- ) -> Maybe<usize> {
-     loop {
-         // SAFETY: fd is a valid kqueue; slices give exact (ptr,len); timeout
--        // is either null or a valid timespec.
-+        // is either null or a valid timespec. The caller answers for each `udata`.
-         let rc = unsafe {
-             libc::kevent(
-                 fd.native(),
-```
-
-**File**: `src/sys/linux_syscall.rs` (modified, +10/-2)
-```diff
-@@ -420,11 +420,19 @@ pub(crate) fn read_raw(fd: i32, buf: &mut [u8]) -> isize {
- ///   (c) synthesizing EINVAL for unknown `op` values ourselves rather than
- ///       letting the kernel reject them.
- /// Passing the raw quad straight through avoids all three.
-+///
-+/// # Safety
-+/// As for `linux::epoll_ctl`.
- #[inline]
--pub(crate) fn epoll_ctl(epfd: i32, op: i32, fd: i32, event: Option<&libc::epoll_event>) -> i32 {
-+pub(crate) unsafe fn epoll_ctl(
-+    epfd: i32,
-+    op: i32,
-+    fd: i32,
-+    event: Option<&libc::epoll_event>,
-+) -> i32 {
-     let event = event.map_or(core::ptr::null(), core::ptr::from_ref);
-     // SAFETY: the kernel validates `epfd`/`op`/`fd`; `event` is live, or null, which is
--    // EFAULT for every `op` but CTL_DEL.
-+    // EFAULT for every `op` but CTL_DEL. The caller answers for `event.u64`.
-     unsafe { libc::syscall(libc::SYS_epoll_ctl, epfd, op, fd, event) as i32 }
+@@ -992,11 +992,6 @@ pub struct JsonTape {
+     pub encoding: StrEncoding,
  }
  
-```
-
-**File**: `src/uws_sys/Loop.rs` (modified, +46/-18)
-```diff
-@@ -239,12 +239,17 @@ impl PosixLoop {
-     pub fn drain_quic_if_necessary(&self) {
-         if !self.internal_loop_data.nq_head.get().is_null() {
-             // Full pass with close dispatch deferred to the next loop point.
--            c::us_nq_loop_drain(self);
-+            // SAFETY: `self` is this thread's live loop. The walk holds its successor while JS
-+            // runs, and relies on an endpoint staying rooted until its close is delivered.
-+            unsafe { c::us_nq_loop_drain(self) };
+-// SAFETY: only the parsing thread writes it; shared use afterwards is read-only.
+-unsafe impl Send for JsonTape {}
+-// SAFETY: see the `Send` impl.
+-unsafe impl Sync for JsonTape {}
+-
+ impl JsonTape {
+     const STR_CHUNK: usize = 4096;
+ 
+@@ -1297,43 +1292,24 @@ impl Default for Object {
+ 
+ /// Dotted-key path used by the INI parser (`get_or_put_object`).
+ ///
+-/// Node types are lifetime-free, so `next` is a raw `*mut Rope`
+-/// into the bump arena. Segments are bulk-freed at arena reset.
+-pub struct Rope {
++/// Segments live in the bump arena and are bulk-freed at arena reset.
++pub struct Rope<'a> {
+     pub head: Expr,
+-    pub next: *mut Rope,
++    pub next: Option<&'a mut Rope<'a>>,
+ }
+-impl Rope {
+-    pub fn append(&mut self, expr: Expr, bump: &Bump) -> Result<*mut Rope, AllocError> {
++impl<'a> Rope<'a> {
++    pub fn append(&mut self, expr: Expr, bump: &'a Bump) {
+         // Walk to the tail iteratively: recursing once per node overflows the
+         // native stack on adversarially deep ropes (e.g. an `.npmrc` section
+         // header with thousands of dot-separated segments).
+-        //
+-        // Arena-allocated Rope nodes are uniquely owned by the chain at this
+-        // point; route through `StoreRef::DerefMut` (the arena-backed handle
+-        // whose deref is centralised in `nodes.rs`).
+-        let mut tail = StoreRef::from_bump(self);
+-        while let Some(next) = core::ptr::NonNull::new(tail.next).map(StoreRef::from_non_null) {
+-            tail = next;
+-        }
+-        let rope: *mut Rope = bump.alloc(Rope {
++        let mut tail = &mut self.next;
++        while let Some(next) = tail {
++            tail = &mut next.next;
++        }
++        *tail = Some(bump.alloc(Rope {
+             head: expr,
+-            next: core::ptr::null_mut(),
+-        });
+-        tail.next = rope;
+-        Ok(rope)
+-    }
+-
+-    /// Re-borrow `next` as `Option<&Rope>`. Same `StoreRef` arena contract:
+-    /// the pointee is a bump allocation valid until arena reset. Centralises
+-    /// the one `unsafe` so the `get_or_put_object`/`get_rope` walkers
+-    /// don't repeat `if !next.is_null() { unsafe { &*next } }` at every hop.
+-    #[inline]
+-    pub(crate) fn next_ref<'a>(&self) -> Option<&'a Rope> {
+-        // SAFETY: `next` is either null or a bump-arena allocation valid until
+-        // arena reset. Read-only borrow; no `&mut` alias is
+-        // outstanding at any caller (the chain is fully built before walking).
+-        unsafe { self.next.cast_const().as_ref() }
++            next: None,
++        }));
+     }
+ }
+ 
+@@ -1422,15 +1398,15 @@ impl Object {
+ 
+     /// Walks `rope` segments, creating nested objects as needed, and returns
+     /// the leaf `E.Object` expression.
+-    pub fn get_or_put_object(&mut self, rope: &Rope, _bump: &Bump) -> Result<Expr, SetError> {
++    pub fn get_or_put_object(&mut self, rope: &Rope<'_>, _bump: &Bump) -> Result<Expr, SetError> {
+         let head_key = match rope.head.data.e_string() {
+             Some(s) => s.data,
+             None => return Err(SetError::Clobber),
+         };
+         if let Some(existing) = self.get(&head_key) {
+             match existing.data {
+                 crate::expr::Data::EArray(array) => {
+-                    let Some(next) = rope.next_ref() else {
++                    let Some(next) = rope.next.as_deref() else {
+                         return Err(SetError::Clobber);
+                     };
+                     if let Some(last) = array.items.last() {
+@@ -1442,7 +1418,7 @@ impl Object {
+                     return Err(SetError::Clobber);
+                 }
+                 crate::expr::Data::EObject(mut object) => {
+-                    if let Some(next) = rope.next_ref() {
++                    if let Some(next) = rope.next.as_deref() {
+                         return object.get_or_put_object(next, _bump);
+                     }
+                     return Ok(existing);
+@@ -1451,7 +1427,7 @@ impl Object {
+             }
          }
-         if !self.internal_loop_data.has_quic() {
-             return;
-         }
--        c::us_quic_loop_flush_if_pending(self);
-+        // SAFETY: `self` is this thread's live loop. `processing` keeps this out of every lsquic
-+        // callback but the `on_stream_open` that `us_quic_socket_make_stream` makes, and that one
-+        // does not flush.
-+        unsafe { c::us_quic_loop_flush_if_pending(self) };
-     }
  
-     /// `None` if epoll/kqueue cannot be created (EMFILE).
-@@ -262,18 +267,25 @@ impl PosixLoop {
-     }
- 
-     pub fn tick(&self) {
--        c::us_loop_run_bun_tick(self, None, NOW_NS_UNKNOWN);
-+        // SAFETY: as in `tick_with_timeout`.
-+        unsafe { c::us_loop_run_bun_tick(self, None, NOW_NS_UNKNOWN) };
-     }
- 
-     pub fn tick_without_idle(&self) {
--        c::us_loop_run_bun_tick(self, Some(&Timespec { sec: 0, nsec: 0 }), NOW_NS_UNKNOWN);
-+        // SAFETY: as in `tick_with_timeout`.
-+        unsafe {
-+            c::us_loop_run_bun_tick(self, Some(&Timespec { sec: 0, nsec: 0 }), NOW_NS_UNKNOWN)
-+        };
-     }
- 
-     /// `now_ns` is the CLOCK_MONOTONIC reading the caller took to pick `timespec` (see
-     /// `timer::All::get_timeout`), reused by the JS park hook's idle-sweep rate limit rather
-     /// than read again. `NOW_NS_UNKNOWN` if the caller has none to share.
-     pub fn tick_with_timeout(&self, timespec: Option<&Timespec>, now_ns: u64) {
--        c::us_loop_run_bun_tick(self, timespec, now_ns);
-+        // SAFETY: `self` is this thread's live loop, and `jsc_vm` is null or its live VM. A handler
-+        // may tick (`tick_depth`), but that refills the receive buffer and can dispatch the same
-+        // socket again: such a handler is done with what the dispatch lent it.
-+        unsafe { c::us_loop_run_bun_tick(self, timespec, now_ns) };
-     }
- 
-     /// Free everything queued on `loop->data.closed_head` /
-@@ -298,7 +310,10 @@ impl PosixLoop {
-     /// loop — covers Listener/App-owned groups that `RareData`'s static field
-     /// list doesn't enumerate. Returns whether any group was linked.
-     pub fn close_all_groups(&self) -> bool {
--        c::us_loop_close_all_groups(self) != 0
-+        // SAFETY: `self` is this thread's live loop. The walk reads its successor after the close
-+        // handlers ran, so none may free another group. The one caller runs at teardown, with the
-+        // owners of the groups stopped and script forbidden.
-+        unsafe { c::us_loop_close_all_groups(self) != 0 }
-     }
- 
-     pub fn should_enable_date_header_timer(&self) -> bool {
-@@ -393,22 +408,29 @@ impl WindowsLoop {
-     /// Windows the park hook is driven from `us_loop_run` (libuv.c), which reads libuv's
-     /// already-refreshed clock via `uv_now` rather than taking one of its own.
-     pub fn tick_with_timeout(&self, _: Option<&Timespec>, _now_ns: u64) {
--        c::us_loop_run(self);
-+        // SAFETY: as in `run`.
-+        unsafe { c::us_loop_run(self) };
-     }
- 
-     pub fn tick_without_idle(&self) {
--        c::us_loop_pump(self);
-+        // SAFETY: as in `run`.
-+        unsafe { c::us_loop_pump(self) };
-     }
- 
-     pub fn drain_quic_if_necessary(&self) {
-         if !self.internal_loop_data.nq_head.get().is_null() {
-             // Full pass with close dispatch deferred to the next loop point.
--            c::us_nq_loop_drain(self);
-+            // SAFETY: `self` is this thread's live loop. The walk holds its successor while JS
-+            // runs, and relies on an endpoint staying rooted until its close is delivered.
-+            unsafe { c::us_nq_loop_drain(self) };
-         }
-         if !self.internal_loop_data.has_quic() {
-             return;
-         }
--        c::us_quic_loop_flush_if_pending(self);
-+        // SAFETY: `self` is this thread's live loop. `processing` keeps this out of every lsquic
-+        // callback but the `on_stream_open` that `us_quic_socket_make_stream` makes, and that one
-+        // does not flush.
-+        unsafe { c::us_quic_loop_flush_if_pending(self) };
-     }
- 
-     /// `None` if `uv_loop_init` fails (handle exhaustion).
-@@ -421,7 +443,10 @@ impl WindowsLoop {
-     }
- 
-     pub fn run(&self) {
--        c::us_loop_run(self);
-+        // SAFETY: `self` is this thread's live loop, and `jsc_vm` is null or its live VM. A handler
-+        // may tick (`tick_depth`, `poll_cb_depth`), though libuv does not provide for `uv_run` in a
-+        // callback: such a handler is done with what the dispatch lent it, its hand
+-        if let Some(next) = rope.next_ref() {
++        if let Some(next) = rope.next.as_deref() {
+             let obj = Expr::init(Object::default(), rope.head.loc);
+             let out = match obj.data {
+                 crate::expr::Data::EObject(mut o) => o.get_or_put_object(next, _bump)?,
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #47944** (2026-11-05): Remove 125 `unsafe` blocks from IPC, N-API, `bun:ffi`, `node:zlib`, c-ares, BoringSSL, `node:quic` and the parser (@dylan-conway)
 - **PR #47940** (2026-11-04): Make `epoll_ctl`, `kevent`, six uSockets loop imports and `Bun__FFI__closeFunctions` unsafe to call (@dylan-conway)
 - **PR #47901** (2026-11-04): Remove 98 `unsafe` blocks from `bun_threading`, `bun_alloc`, the bundler and the transpiler (@dylan-conway)
 - **PR #47900** (2026-11-04): install: send configured credentials to tarball URLs that the project names (@dylan-conway)
 - **PR #47895** (2026-11-04): Remove 131 `unsafe` blocks from `Blob`, `Bun.write`, `FileSink`, `fetch`, `Response` and the S3 client (@dylan-conway)
 - **PR #47893** (2026-11-04): Remove 128 `unsafe` blocks from the event loop, spawn, `bun_jsc`, `node:fs` and `fs.watch` (@dylan-conway)
-- **PR #47874** (closed): fix(node:fs): resolve macOS paths without reading the target (@operator-concept)
 
 ---
 
@@ -1652,31 +1455,50 @@ compiled code changes](#w
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Remove 128 `unsafe` blocks from the event loop, spawn, `bun_jsc`, `node:fs` and 
+## X. Remove 125 `unsafe` blocks from IPC, N-API, `bun:ffi`, `node:zlib`, c-ares, Bori
 
 **RULE**:
-When implementing operations in `src/bun_alloc/basic.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in oven-sh/bun. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/aot/compile.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in oven-sh/bun. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `cdfa19bb`: Remove 128 `unsafe` blocks from the event loop, spawn, `bun_jsc`, `node:fs` and `fs.watch` (#47893). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b1007f11`: Remove 125 `unsafe` blocks from IPC, N-API, `bun:ffi`, `node:zlib`, c-ares, BoringSSL, `node:quic` and the parser (#47944). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/bun_alloc/basic.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/aot/compile.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        debug_assert!(mimalloc::mi_is_in_heap_region(ptr));
-        // SAFETY: caller contract above.
+        bun_alloc::mimalloc::mi_process_info(
+            None,
+            None,
+            None,
+            Some(&mut resident),
+            None,
+            None,
+            None,
+            None,
+        );
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-        // SAFETY: `mi_is_in_heap_region` accepts any pointer; remaining calls
-        // are sound by the caller contract above.
-            debug_assert!(mimalloc::mi_is_in_heap_region(ptr));
+        let unused = core::ptr::null_mut();
+        // SAFETY: it writes a number through each pointer that is not null.
+        unsafe {
+            bun_alloc::mimalloc::mi_process_info(
+                unused,
+                unused,
+                unused,
+                &raw mut resident,
+                unused,
+                unused,
+                unused,
+                unused,
+            );
+        }
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `cdfa19bb` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b1007f11` are properly handled with clean fallback behavior.

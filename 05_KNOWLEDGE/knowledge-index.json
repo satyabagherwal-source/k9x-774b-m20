@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T17:14:50.597Z",
+  "last_updated": "2026-11-05T17:22:01.154Z",
   "total_verified_learnings": 1218,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -3404,11 +3404,16 @@
       "slug": "argoproj-argo-workflows",
       "platform": "github",
       "source_url": "https://github.com/argoproj/argo-workflows",
-      "source_version": "4440cc62",
-      "content_hash": "cf605227441dda91c60f361da9d282e51b17879b5fa27817631f6afaac1411aa",
+      "source_version": "611c91b4",
+      "content_hash": "68ef25a8f6ab5b961ffbbb3e8c676aecfe2c39708142b32eac92848f5c6b25b7",
       "dossier_path": "07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "controller): allow {{retries}} variable in timeout with retryStrategy (#17314) (",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2145,
           "title": "deps): update step-security/harden-runner action to v2.22.1 (main) (#17202)",
@@ -3475,7 +3480,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T02:47:42.727Z",
+      "verified_at": "2026-11-05T17:22:01.134Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -47644,11 +47649,16 @@
       "slug": "oven-sh-bun",
       "platform": "github",
       "source_url": "https://github.com/oven-sh/bun",
-      "source_version": "e57d89ba",
-      "content_hash": "50de829d661300f4bda062b954b19367ff13c4aeb8edcbd85907dcec083087a9",
+      "source_version": "b1007f11",
+      "content_hash": "f82bc675a304e4dce171975c51cce94ad2e0ddb5023792c6e3cba26cac5f1513",
       "dossier_path": "07_PROJECT_LEARNING/oven-sh-bun-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/oven-sh-bun-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Remove 125 `unsafe` blocks from IPC, N-API, `bun:ffi`, `node:zlib`, c-ares, Bori",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2491,
           "title": "`bun check`: 1.4x to 7.8x faster on large projects. Fixes for `bun check`, `bun",
@@ -47715,7 +47725,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T22:20:07.227Z",
+      "verified_at": "2026-11-05T17:21:54.550Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -73834,7 +73844,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/datalab-to/indra-ocr",
       "source_version": "hf-datalab-to-indra-ocr",
-      "content_hash": "1617373b21e5dab951dd534cca85ce65699f4463157c84ead14a45f9dd7945ef",
+      "content_hash": "ba6182b860472c5fcfb1a3506874185ac2c4e7f7536340daef4635b433ea0be6",
       "dossier_path": "07_PROJECT_LEARNING/hf-datalab-to-indra-ocr-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-datalab-to-indra-ocr-learnings.md",
       "promoted_rules": [
@@ -73884,7 +73894,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-01T02:16:04.701Z",
+      "verified_at": "2026-11-05T17:21:50.773Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

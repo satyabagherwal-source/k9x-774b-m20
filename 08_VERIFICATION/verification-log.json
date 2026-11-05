@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261104-CHA7",
-    "timestamp": "2026-11-04T11:02:39.487Z",
-    "repository": "nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4",
-    "learningId": "learn-huggingface-nvidia-nvidia-nemotron-3-5-super-vl-120b-a12b-nvfp4",
-    "contentHash": "f9510553a6bffcac5fdf301a8a8a3452e61bb72d018594be0591854634d9c8c2",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261104-L8DB",
-    "timestamp": "2026-11-04T11:09:27.839Z",
-    "repository": "mistralai/Timestral-209M",
-    "learningId": "learn-huggingface-mistralai-timestral-209m",
-    "contentHash": "0c822443015e7820c5a1368a6c56494c09323e3fa4ebc59b6aeb71c9906d073d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261104-LAZH",
-    "timestamp": "2026-11-04T11:09:31.229Z",
-    "repository": "GreptimeTeam/greptimedb",
-    "learningId": "learn-github-greptimeteam-greptimedb",
-    "contentHash": "ff4142e0b8d3b27c363be80a61d1e5181c9fd92e2c1752fedd18f271e6dc5beb",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261104-6YRF",
     "timestamp": "2026-11-04T16:34:17.595Z",
     "repository": "nvidia/DeepSeek-V4.1-Flash-1017-NVFP4",
@@ -7492,6 +7447,51 @@
     "contentHash": "09ba6d961ac2f8ba9be033e57fcd97ea51a142563e26b8d42be08a5e700c8a65",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-BZ1F",
+    "timestamp": "2026-11-05T17:21:50.883Z",
+    "repository": "datalab-to/indra-ocr",
+    "learningId": "learn-huggingface-datalab-to-indra-ocr",
+    "contentHash": "ba6182b860472c5fcfb1a3506874185ac2c4e7f7536340daef4635b433ea0be6",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-C1XV",
+    "timestamp": "2026-11-05T17:21:54.643Z",
+    "repository": "oven-sh/bun",
+    "learningId": "learn-github-oven-sh-bun",
+    "contentHash": "f82bc675a304e4dce171975c51cce94ad2e0ddb5023792c6e3cba26cac5f1513",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-C719",
+    "timestamp": "2026-11-05T17:22:01.245Z",
+    "repository": "argoproj/argo-workflows",
+    "learningId": "learn-github-argoproj-argo-workflows",
+    "contentHash": "68ef25a8f6ab5b961ffbbb3e8c676aecfe2c39708142b32eac92848f5c6b25b7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

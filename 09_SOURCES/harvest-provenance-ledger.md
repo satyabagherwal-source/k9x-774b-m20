@@ -7733,3 +7733,6 @@ Every entry in this ledger must capture:
 | `learn-github-astral-sh-ruff` | `https://github.com/astral-sh/ruff` | `1dd3e9ec` | Multi-dimensional audit evidence | 2026-11-05T17:07:19.415Z |
 | `learn-github-doobidoo-mcp-memory-service` | `https://github.com/doobidoo/mcp-memory-service` | `4ff3fcc6` | Multi-dimensional audit evidence | 2026-11-05T17:07:33.407Z |
 | `learn-huggingface-liquidai-lfm3-omni-2b` | `https://huggingface.co/LiquidAI/LFM3-Omni-2B` | `hf-liquida` | Multi-dimensional audit evidence | 2026-11-05T17:14:50.726Z |
+| `learn-huggingface-datalab-to-indra-ocr` | `https://huggingface.co/datalab-to/indra-ocr` | `hf-datalab` | Multi-dimensional audit evidence | 2026-11-05T17:21:50.886Z |
+| `learn-github-oven-sh-bun` | `https://github.com/oven-sh/bun` | `b1007f11` | Multi-dimensional audit evidence | 2026-11-05T17:21:54.646Z |
+| `learn-github-argoproj-argo-workflows` | `https://github.com/argoproj/argo-workflows` | `611c91b4` | Multi-dimensional audit evidence | 2026-11-05T17:22:01.249Z |

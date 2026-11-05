@@ -7724,3 +7724,6 @@
 | `CYCLE-20261105-TALV` | `2026-11-05T17:07:19.411Z` | `astral-sh/ruff` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`2e68b4fe...`) |
 | `CYCLE-20261105-TLEJ` | `2026-11-05T17:07:33.403Z` | `doobidoo/mcp-memory-service` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`9d36bfc0...`) |
 | `CYCLE-20261105-2YU9` | `2026-11-05T17:14:50.721Z` | `LiquidAI/LFM3-Omni-2B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-liquidai-lfm3-omni-2b-learnings.md` | Yes (`09ba6d96...`) |
+| `CYCLE-20261105-BZ1F` | `2026-11-05T17:21:50.883Z` | `datalab-to/indra-ocr` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-datalab-to-indra-ocr-learnings.md` | Yes (`ba6182b8...`) |
+| `CYCLE-20261105-C1XV` | `2026-11-05T17:21:54.643Z` | `oven-sh/bun` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`f82bc675...`) |
+| `CYCLE-20261105-C719` | `2026-11-05T17:22:01.245Z` | `argoproj/argo-workflows` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`68ef25a8...`) |

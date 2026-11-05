@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-05T17:15:02.116Z",
-    "lastVerified": "2026-11-05T17:15:02.116Z",
+    "lastChecked": "2026-11-05T17:22:03.839Z",
+    "lastVerified": "2026-11-05T17:22:03.839Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -357,9 +357,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-05T16:52:45.078Z",
+    "lastChecked": "2026-11-05T17:22:02.044Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-05T16:52:45.078Z"
+    "lastVerified": "2026-11-05T17:22:02.044Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -921,9 +921,9 @@
   "chrispybacon-dev-dockflare": {
     "name": "DockFlare",
     "officialUrl": "https://github.com/ChrispyBacon-dev/DockFlare",
-    "lastChecked": "2026-11-05T13:13:38.764Z",
+    "lastChecked": "2026-11-05T17:21:56.915Z",
     "revisionIdentifier": "9c7bed82",
-    "lastVerified": "2026-11-05T13:13:38.764Z"
+    "lastVerified": "2026-11-05T17:21:56.915Z"
   },
   "nirdiamant-rag_techniques": {
     "name": "RAG_Techniques",
@@ -3939,9 +3939,9 @@
   "supervc-stack-vectorchord": {
     "name": "VectorChord",
     "officialUrl": "https://github.com/supervc-stack/VectorChord",
-    "lastChecked": "2026-11-05T02:01:59.811Z",
+    "lastChecked": "2026-11-05T17:21:59.344Z",
     "revisionIdentifier": "0768657e",
-    "lastVerified": "2026-11-05T02:01:59.811Z"
+    "lastVerified": "2026-11-05T17:21:59.344Z"
   },
   "fujiapple852-trippy": {
     "name": "trippy",
@@ -6756,14 +6756,14 @@
     "officialUrl": "https://github.com/argoproj/argo-workflows",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-05T02:47:42.393Z",
-    "lastVerified": "2026-11-05T02:47:42.393Z",
+    "lastChecked": "2026-11-05T17:21:59.713Z",
+    "lastVerified": "2026-11-05T17:21:59.713Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-argoproj-argo-workflows",
-    "contentHash": "cf605227441dda91c60f361da9d282e51b17879b5fa27817631f6afaac1411aa",
-    "promotedRulesCount": 0,
-    "recentFixesCount": 9,
+    "contentHash": "68ef25a8f6ab5b961ffbbb3e8c676aecfe2c39708142b32eac92848f5c6b25b7",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -8551,14 +8551,14 @@
     "officialUrl": "https://github.com/oven-sh/bun",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-04T22:20:06.508Z",
-    "lastVerified": "2026-11-04T22:20:06.508Z",
+    "lastChecked": "2026-11-05T17:21:53.509Z",
+    "lastVerified": "2026-11-05T17:21:53.509Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-oven-sh-bun",
-    "contentHash": "50de829d661300f4bda062b954b19367ff13c4aeb8edcbd85907dcec083087a9",
+    "contentHash": "f82bc675a304e4dce171975c51cce94ad2e0ddb5023792c6e3cba26cac5f1513",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -9177,13 +9177,13 @@
     "officialUrl": "https://huggingface.co/datalab-to/indra-ocr",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-01T02:15:53.161Z",
-    "lastVerified": "2026-11-01T02:15:53.161Z",
+    "lastChecked": "2026-11-05T17:21:49.745Z",
+    "lastVerified": "2026-11-05T17:21:49.745Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-datalab-to-indra-ocr",
-    "contentHash": "1617373b21e5dab951dd534cca85ce65699f4463157c84ead14a45f9dd7945ef",
-    "promotedRulesCount": 3,
+    "contentHash": "ba6182b860472c5fcfb1a3506874185ac2c4e7f7536340daef4635b433ea0be6",
+    "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
@@ -11460,9 +11460,9 @@
   "iplug2-iplug2": {
     "name": "iPlug2",
     "officialUrl": "https://github.com/iPlug2/iPlug2",
-    "lastChecked": "2026-11-03T16:58:37.562Z",
+    "lastChecked": "2026-11-05T17:21:51.931Z",
     "revisionIdentifier": "d82b2e99",
-    "lastVerified": "2026-11-03T16:58:37.562Z"
+    "lastVerified": "2026-11-05T17:21:51.931Z"
   },
   "digitalbazaar-pyld": {
     "name": "digitalbazaar/pyld",
