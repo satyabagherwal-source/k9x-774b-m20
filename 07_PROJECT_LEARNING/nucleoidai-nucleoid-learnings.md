@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source**: github ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
-> **Source Version**: `9bd304a7`  
+> **Source Version**: `a6054657`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T02:25:56.953Z  
+> **Timestamp**: 2026-11-05T05:32:33.758Z  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T02:25:56.947Z  
+> **Harvest Timestamp**: 2026-11-05T05:32:33.752Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1006,62 +1006,65 @@ export function enlarge(matrix, rows: number, cols: number) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9bd304a7` (2026-11-05)
-**Commit Message**: NUC 81 Object Spread Entries
+### Incident Patch 1: `a6054657` (2026-11-05)
+**Commit Message**: NUC 82 Depth-Limited Reasoning Selections
 
 Accepted. The independent evaluator accepted the proposal in continuous
-mode against 55fbddc and its 937-case baseline, the 926 accepted cases
+mode against 9bd304a and its 948-case baseline, the 937 accepted cases
 plus 11 extra baselines, which it re-recorded byte-identically. The
-required token comparison ran (Runtime features, existing comparable):
-11 cases use fewer lexer tokens, 926 the same and none more. No
-accepted spelling ties or beats a candidate case, and no policy check
-failed.
+required token comparison ran (Reasoning enhancement): 11 cases use
+fewer lexer tokens, 937 the same and none more. No fair accepted
+spelling ties or beats a candidate case, and no policy check failed.
 
 Hard criteria, checked independently and again on the integrated tree:
 cargo build --all-targets, warning-denied Clippy and cargo fmt --check
-pass; the full cargo test passes (93 suites, 2,444 passed, 0 failed,
-25 ignored) with all 2,428 accepted test identities present and 41
-added; all 926 pinned accepted programs and the 11 extra baselines
-replay; a 19,935-program differential of accepted programs is
-unchanged apart from clock readings, and every program a 2,385-program
-spread grid changes was an error at the accepted revision.
+pass; the full cargo test passes (94 suites, 2,484 passed, 0 failed,
+25 ignored) with all 2,469 accepted test identities present and 40
+added; all 937 pinned accepted programs and the 11 extra baselines
+replay; a 15,593-program differential of accepted programs is
+unchanged apart from clock readings, and every program an
+18,850-program depth grid changes was a parse error at the accepted
+revision.
 
-NUC 81 adds spread entries to object literals: {...SOURCE, key: value}
-copies the entries of the object SOURCE holds, left to right, with
-later entries winning and each key keeping its first position. A null
+NUC 82 adds the reasoning stage SELECTION |> depth(LIMIT). It keeps the
+steps of a selection that lie within LIMIT edges of where the most
+recent why or affects began, by shortest path and in the wal
 
-**File**: `README.md` (modified, +27/-0)
+**File**: `README.md` (modified, +30/-0)
 ```diff
-@@ -1735,6 +1735,33 @@ assert: [hall.mean, building], [20, 18]
-   does. See the
-   [root contract](nucleoid.spec.md#list-and-population-averages).
+@@ -1762,6 +1762,36 @@ assert: [lamp.listing, draft], [{id: "lamp", name: "lamp", price: 60, stock: 3,
+   property it declares, so `listing` never holds an older listing. See the
+   [root contract](nucleoid.spec.md#object-spread-entries).
  
-+## Object spread entries
++## Depth-limited reasoning selections
 +
-+**Spread entries keep derived listings in step with their products**
++**Depth keeps an alarm's explanation to its direct causes**
 +
 +```nuc
-+class Product(name, price):
-+    this.name = name
-+    this.price = price
-+$Product.listing = {...$Product, currency: "USD"}
-+lamp = Product("lamp", 40)
-+draft = {...lamp.listing, price: lamp.price * 0.75}
-+assert: [lamp.listing.price, draft.price], [40, 30]
-+lamp.price = 60
-+lamp.stock = 3
-+assert: [lamp.listing, draft], [{id: "lamp", name: "lamp", price: 60, stock: 3, currency: "USD"}, {id: "lamp", name: "lamp", price: 45, stock: 3, currency: "USD"}]
++pressure = 120
++limit = 100
++temperature = 70
++manual = false
++strained = pressure > limit
++hot = temperature > 90
++alarm = [strained, hot, manual].includes(true)
++causes = alarm |> why |> depth(1)
++assert: causes.map(step -> step.node), ["alarm", "strained", "hot", "manual"]
++assert: (why alarm).length, 7
++pressure = 90
++temperature = 95
++assert: causes.map(step -> step.holds), [true, false, true, false]
 +```
 +
-+- [NUC 81](docs/nuc-0081.md) adds spread entries to object literals:
-+  `...SOURCE` copies the entries of the object `SOURCE` holds, in order, and a
-+  later entry for the same key replaces its value. `$Product.listing` copies
-+  each product and adds a currency, and `draft` copies the listing with a
-+  discounted price.
-+- A spread stays live: a changed price and the new `stock` entry reach both
-+  records. A class-level rule that spreads its own receiver leaves out the
-+  property it declares, so `listing` never holds an older listing. See the
-+  [root contract](nucleoid.spec.md#object-spread-entries).
++- [NUC 82](docs/nuc-0082.md) adds the reasoning stage `|> depth(LIMIT)`. It
++  keeps the steps of a selection that lie within `LIMIT` steps of where the
++  walk that selected them began, in their order, so `alarm |> why |> depth(1)`
++  is the alarm and the facts it reads directly: four steps, where
++  `why alarm` selects seven.
++- The selection stays live: new pressures and temperatures update the steps
++  it keeps, and a limit read from a variable re-derives it when the variable
++  changes. See the
++  [root contract](nucleoid.spec.md#depth-limited-reasoning-selections).
 +
  ## Benchmark
  
@@ -1070,148 +1073,151 @@ later entries winning and each key keeping its first position. A null
 
 **File**: `dataset/nucleoid.spec.jsonl` (modified, +8/-0)
 ```diff
-@@ -633,3 +633,11 @@
- {"id":"spec-0633","description":"Nucleoid uses averages in functions methods and conditional expressions","code":"class Team(name, scores):\n    this.name = name\n    this.scores = scores\n    def mean(): return this.scores.average()\ndef variance(team) => team.scores.average(score -> score * score) - team.mean() ** 2\nred = Team(\"red\", [3, 5])\nblue = Team(\"blue\", [6])\nleague = Team.average(team -> team.mean())\nleader = red.mean() > blue.mean() ? red.name : blue.name\nspread = variance(red)\nassert: [league, leader, spread], [5, \"blue\", 1]\nblue.scores.push(2)\nred.scores.push(7)\nTeam(\"green\", [1])\nassert: [league, leader, spread], [3.3333333333333335, \"red\", 2.666666666666668]","return":null}
- {"id":"spec-0634","description":"Nucleoid keeps average as an ordinary name beside the average query","code":"average = 2\nreport = {average: 5}\ndef double average => average * 2\nclass Bag(items):\n    this.items = items\n    def average(): return this.items.average(item -> item * item)\nbag = Bag([1, 3])\nlevel = bag.items.average() + average + report.average\nbags = Bag.average(each -> each.average())\nassert: [level, bag.average(), bags, double(average)], [9, 5, 5, 4]\nassert: bag.items.average, null\nbag.items.push(5)\naverage = 4\nBag([6])\nassert: [level, bags], [12, 23.833333333333332]","return":null}
- {"id":"spec-0635","description":"Nucleoid rolls back failed average updates","code":"def checked(value):\n    if value > 100:\n        throw \"TOO_LARGE\"\n    return value\namounts = [10, 20]\nmean = amounts.average(checked)\nfailure = \"\"\ntry:\n    amounts.push(500)\ncatch error:\n    failure = error\nassert: [failure, amounts, mean], [\"TOO_LARGE\", [10, 20], 15]\namounts.push(30)\nassert: mean, 20\nclass Item(price): this.price = price\npen = Item(3)\ntypical = Item.average(item -> checked(item.price))\nfailure = \"\"\ntry:\n    Item(500)\ncatch error:\n    failure = error\nassert: [failure, Item.length, typical], [\"TOO_LARGE\", 1, 3]\nsuppose:\n    Item(5)\n    assert: typical, 4\nassert: [Item.length, typical], [1, 3]","return":null}
-+{"id":"spec-0636","description":"Nucleoid copies object entries into records with spread entries","code":"base = {name: \"tea\", price: 4, stock: 10}\nsale = {...base, price: 3, tag: \"sale\"}\nfloor = {price: 9, ...base}\nassert: [sale, floor], [{name: \"tea\", price: 3, stock: 10, tag: \"sale\"}, {price: 4, name: \"tea\", stock: 10}]\nassert: [sale == base, floor == base, base.tag], [false, false, null]\nbase.name = \"oolong\"\nbase.price = 6\nbase.size = 2\ndelete base.stock\nassert: [sale, floor], [{name: \"oolong\", price: 3, size: 2, tag: \"sale\"}, {price: 6, name: \"oolong\", size: 2}]\ntag = \"new\"\nfresh = {tag, ...base price: 5,}\nassert: fresh, {tag: \"new\", name: \"oolong\", price: 5, size: 2}","return":null}
-+{"id":"spec-0637","description":"Nucleoid keeps spread entries live as their sources change","code":"base = {name: \"tea\", price: 4}\nitem = {...base, qty: 2}\nline = {...item, total: item.price * item.qty}\nassert: line, {name: \"tea\", price: 4, qty: 2, total: 8}\nbase.price = 5\nbase.size = \"large\"\ndelete base.name\nassert: line, {price: 5, size: \"large\", qty: 2, total: 10}\nbase = {name: \"jam\", price: 3}\nassert: [item, line], [{name: \"jam\", price: 3, qty: 2}, {name: \"jam\", price: 3, qty: 2, total: 6}]","return":null}
-+{"id":"spec-0638","description":"Nucleoid merges records with several spread entries","code":"defaults = {color: \"red\", size: 2, gift: false}\ncustom = {size: 3}\norder = {...defaults, ...custom, id: 7}\nassert: order, {color: \"red\", size: 3, gift: false, id: 7}\ncustom.gift = true\ncustom.note = \"rush\"\nassert: order, {color: \"red\", size: 3, gift: true, note: \"rush\", id: 7}\ndelete custom.size\ndefaults.color = \"blue\"\nassert: order, {color: \"blue\", size: 2, gift: true, note: \"rush\", id: 7}","return":null}
-+{"id":"spec-0639","description":"Nucleoid spreads instances into records and class level rules","code":"class Room(name, temp):\n    this.name = name\n    this.temp = temp\n$Room.card = {...$Room, unit: \"C\"}\nlab = Room(\"lab\", 20)\nlab.temp = 25\nlab.floor = 2\nassert: lab.card, {id: \"lab\", name: \"lab\", temp: 25, floor: 2, unit: \"C\"}\nhall = Room(\"hall\", 18)\ncopy = {...hall, temp: 19}\nassert: (why copy)[0].from, [\"hall\", \"hall.id\", \"hall.name\", \"hall.card\"]\nhall.name = \"foyer\"\nassert: copy, {id: \"hall\", name: \"foyer\", temp: 19, card: {id: \"hall\", name: \"foyer\", temp: 18, unit: \"C\"}}","return":null}
-+{"id":"spec-0640","description":"Nucleoid spreads entries in functions methods and lambdas","code":"class Point(x, y):\n    this.x = x\n    this.y = y\n    def shifted dx => {...this, x: this.x + dx}\ndef flat p => {...p, z: 0}\np = Point(1, 2)\nq = Point(3, 4)\nup = flat(p)\nfar = p.shifted(10)\ngrid = [p, q].map(lambda pt: {...pt, area: pt.x * pt.y})\nassert: [up, far], [{id: \"p\", x: 1, y: 2, z: 0}, {id: \"p\", x: 11, y: 2}]\np.y
+@@ -641,3 +641,11 @@
+ {"id":"spec-0641","description":"Nucleoid spreads only objects and evaluates each source once","code":"owner = null\ncard = {...owner, seen: true}\nassert: card, null\nowner = {name: \"ada\", role: \"dev\"}\nassert: card, {name: \"ada\", role: \"dev\", seen: true}\nbox = {}\npacked = {...box.lid, open: false}\nassert: packed, {open: false}\nbox.lid = {color: \"tan\", size: 3}\nassert: packed, {color: \"tan\", size: 3, open: false}\nclass Tag(label, uses):\n    this.label = label\n    this.uses = uses\nmade = {...Tag(\"new\", 0), qty: 1}\nassert: [made.label, made.uses, made.qty, Tag.length], [\"new\", 0, 1, 1]\nsizes = [1, 2]\ntry:\n    broken = {...sizes}\ncatch error:\n    assert: error, TypeError(\"sizes is not an object\")","return":null}
+ {"id":"spec-0642","description":"Nucleoid leaves the declared property out of spreads of its own object","code":"class Order(total, items):\n    this.total = total\n    this.items = items\n$Order.view = {...$Order, paid: false}\norder = Order(10, 2)\norder.total = 12\norder.total = 14\nassert: order.view, {id: \"order\", total: 14, items: 2, paid: false}\ncart = {tea: 4, jam: 2}\ncart.copy = {...cart, n: 1}\ncart.tea = 5\ncart.oat = 1\nassert: cart.copy, {tea: 5, jam: 2, oat: 1, n: 1}","return":null}
+ {"id":"spec-0643","description":"Nucleoid rolls back failed spread updates","code":"def checked(count):\n    if count > 9:\n        throw \"TOO_MANY\"\n    return count\ncart = {tea: 4, jam: 3}\norder = {...cart, count: checked(cart.tea)}\nfailure = \"\"\ntry:\n    cart.tea = 50\ncatch error:\n    failure = error\nassert: [failure, cart.tea, order], [\"TOO_MANY\", 4, {tea: 4, jam: 3, count: 4}]\ntry:\n    cart.oats = 2\n    delete cart.jam\n    assert: order, {tea: 4, oats: 2, count: 4}\n    throw \"DECLINED\"\ncatch error:\n    pass\nassert: order, {tea: 4, jam: 3, count: 4}\nplan = suppose:\n    cart.rye = 5\n    order.rye\nassert: [plan, order.rye], [5, null]\ncart.rye = 1\nassert: order, {tea: 4, jam: 3, rye: 1, count: 4}","return":null}
++{"id":"spec-0644","description":"Nucleoid narrows explanations to a reasoning depth","code":"base = 1\nseed = base + 1\nstep = seed + 1\nnext = step * 2\nresult = next + step\nown = result |> why |> depth(0)\nnear = result |> why |> depth(1)\nwide = result |> why |> depth(2)\nassert(own.map(s -> s.node), [\"result\"])\nassert(near.map(s -> s.node), [\"result\", \"next\", \"step\"])\nassert(near[0].from, [\"next\", \"step\"])\nassert(wide.map(s -> s.node), [\"result\", \"next\", \"step\", \"seed\"])\nbase = 5\nstep = base * 3\nassert(near.map(s -> s.holds), [45, 30, 15])\nassert(wide.map(s -> s.node), [\"result\", \"next\", \"step\", \"base\"])\nresult = 7\nassert(own.map(s -> s.state), [\"stated\"])","return":null}
++{"id":"spec-0645","description":"Nucleoid measures reasoning depth along the shortest path","code":"rate = 2\nfee = rate + 1\ncharge = fee * 2\nbase = rate * 3\ntotal = base + charge\ntwo = total |> why |> depth(2)\nassert(two.map(s -> s.node), [\"total\", \"base\", \"charge\", \"fee\", \"rate\"])\nbase = 10\nassert(two.map(s -> s.node), [\"total\", \"base\", \"charge\", \"fee\"])\nassert((why total).length, 5)\nrate = 4\nassert(two.map(s -> s.holds), [20, 10, 10, 5])","return":null}
++{"id":"spec-0646","description":"Nucleoid narrows impact selections to direct dependents","code":"price = 10\ntax = price * 2\ntotal = price + tax\nlabel = total * 3\ndirect = price |> affects |> depth(1)\nagain = tax |> why |> affects |> depth(1)\nassert((affects price).map(s -> s.node), [\"tax\", \"total\", \"label\"])\nassert(direct.map(s -> s.node), [\"tax\", \"total\"])\nassert(again.map(s -> s.node), [\"tax\", \"total\"])\nlabel = price + 1\nassert(direct.map(s -> s.node), [\"tax\", \"total\", \"label\"])\nassert(again.map(s -> s.node), [\"tax\", \"total\", \"label\"])\nprice = 4\nassert(direct.map(s -> s.holds), [8, 12, 5])","return":null}
++{"id":"spec-0647","description":"Nucleoid keeps depth selections live as limits and rules change","code":"base = 1\nmid = base + 1\ntop = mid * 2\nlimit = 1\nnear = top |> why |> depth(limit)\nassert(near.map(s -> s.node), [\"top\", \"mid\"])\nlimit = 2\nassert(near.map(s -> s.node), [\"top\", \"mid\", \"base\"])\nextra = 5\nmid = extra + base\nassert(near.map(s -> s.node), [\"top\", \"mid\", \"extra\", \"base\"])\nassert(near[0].holds, 12)\nlimit = 0\nassert(near.map(s -> s.node), [\"top\"])\ntop = 3\nlimit = 1\nassert(near.map(s -> s.state), [\"stated\"])","return":null}
++{"id":"spec-0648","description":"Nucleoid composes depth with state filters and later walks","code":"base = 2\nrate = base * 2\nfee = 1\ncost = rate * 4\nprice = cost + fee\nfacts = price |> why |> depth(2) |> stated\ntouched = price |> why |> stated |> affects |> depth(1)\nalone = price |> depth(2)\nassert(facts.map(s -> s.node), [\"fee\"])\nassert(touched.map(s -> s.node), [\"rate\", \"price\"])\nassert(alone.map(s -> s.node), [\"price\"])\nfee = base + 1\nassert(facts.map(s -> s.node), [\"base\"])\nasse
 ```
 
-**File**: `dataset/nucleoid.synth.56.jsonl` (added, +8/-0)
+**File**: `dataset/nucleoid.synth.57.jsonl` (added, +8/-0)
 ```diff
 @@ -0,0 +1,8 @@
-+{"id":"synth-56-0001","description":"A spread entry copies a record's entries into a new record that adds its own","code":"base = {name: \"tea\", price: 4}\nsale = {...base, tag: \"sale\"}\n[sale.name, sale.price, sale.tag, base.tag]","return":"[\"tea\",4,\"sale\",null]"}
-+{"id":"synth-56-0002","description":"Entries apply from left to right, so a later entry wins and a key keeps its first position","code":"defaults = {theme: \"light\", size: 12, font: \"mono\"}\nprefs = {size: 14}\nsettings = {...defaults, ...prefs, theme: \"dark\"}\nkeys = []\nfor key, value of settings: keys.push(key + \"=\" + value)\nkeys","return":"[\"theme=dark\",\"size=14\",\"font=mono\"]"}
-+{"id":"synth-56-0003","description":"A spread stays live as its source gains, changes and loses entries","code":"item = {name: \"lamp\", price: 40}\nlisting = {...item, currency: \"USD\"}\nitem.price = 35\nitem.stock = 3\ndelete item.name\nlisting","return":"{\"price\":35,\"stock\":3,\"currency\":\"USD\"}"}
-+{"id":"synth-56-0004","description":"A class-level rule that spreads its instance copies the id first and leaves out the property it declares","code":"class Order(total):\n    this.total = total\n$Order.view = {...$Order, paid: false}\norder = Order(10)\norder.total = 12\norder.view","return":"{\"id\":\"order\",\"total\":12,\"paid\":false}"}
-+{"id":"synth-56-0005","description":"A spread of a null source waits for the source, and an unset property copies nothing","code":"owner = null\ncard = {...owner, seen: true}\nfirst := card\nowner = {name: \"ada\"}\nbox = {}\npacked = {...box.lid, open: false}\n[first, card, packed]","return":"[null,{\"name\":\"ada\",\"seen\":true},{\"open\":false}]"}
-+{"id":"synth-56-0006","description":"Spreading a value that is not an object raises a TypeError","code":"sizes = [1, 2]\nfailure = \"\"\ntry:\n    record = {...sizes}\ncatch error:\n    failure = error\nfailure","return":"\"TypeError: sizes is not an object\""}
-+{"id":"synth-56-0007","description":"Lambdas and named arrows build records with spread entries","code":"points = [{x: 1, y: 2}, {x: 3, y: 4}]\ndef lift p => {...p, z: 0}\n[points.map(lambda p: {...p, x: p.x * 10}), lift(points[0])]","return":"[[{\"x\":10,\"y\":2},{\"x\":30,\"y\":4}],{\"x\":1,\"y\":2,\"z\":0}]"}
-+{"id":"synth-56-0008","description":"Explanations render a spread entry once, as it is written","code":"lab = {name: \"lab\", temp: 20}\nview = {...lab, unit: \"C\"}\n(why view)[0].rule","return":"\"view = {...lab,\\\"unit\\\":\\\"C\\\"}\""}
++{"id":"synth-57-0001","description":"A depth stage keeps a value and the facts it reads directly, in the order why lists them","code":"price = 10\nqty = 3\nshipping = 5\nsubtotal = price * qty\ntotal = subtotal + shipping\n(total |> why |> depth(1)).map(step -> step.node)","return":"[\"total\",\"subtotal\",\"shipping\"]"}
++{"id":"synth-57-0002","description":"Depth counts the shortest path, so a fact read two steps away stays within depth 2 although the walk reaches it through a longer path","code":"base = 1\nu = base + 1\ns = u + 1\nq = s * 2\np = u * 3\nt = p + q\n[(why t).map(step -> step.node), (t |> why |> depth(2)).map(step -> step.node)]","return":"[[\"t\",\"p\",\"q\",\"s\",\"u\",\"base\"],[\"t\",\"p\",\"q\",\"s\",\"u\"]]"}
++{"id":"synth-57-0003","description":"Depth 1 after affects selects the direct dependents of a value and depth 0 selects nothing","code":"price = 10\ntax = price * 2\ntotal = price + tax\nlabel = total * 3\n[(affects price).map(step -> step.node), (price |> affects |> depth(1)).map(step -> step.node), price |> affects |> depth(0)]","return":"[[\"tax\",\"total\",\"label\"],[\"tax\",\"total\"],[]]"}
++{"id":"synth-57-0004","description":"A depth limit read from a variable keeps the selection live as the limit changes","code":"a = 1\nb = a + 1\nc = b * 2\nlimit = 1\nnear = c |> why |> depth(limit)\nlimit = 2\nnear.map(step -> step.node)","return":"[\"c\",\"b\",\"a\"]"}
++{"id":"synth-57-0005","description":"A limit that is not known yet leaves the selection null until it is set","code":"a = 1\nc = a + 1\nclass Plan\nplan = Plan()\nnear = c |> why |> depth(plan.depth)\nwaiting := near\nplan.depth = 0\n[waiting, near.map(step -> step.node)]","return":"[null,[\"c\"]]"}
++{"id":"synth-57-0006","description":"A depth limit that is not a non-negative integer raises a TypeError naming the limit","code":"a = 1\nc = a + 1\nn = 1.5\ntry:\n    c |> why |> depth(n)\ncatch error:\n    out = error\nout","return":"\"TypeError: n is not a non-negative integer\""}
++{"id":"synth-57-0007","description":"A binding named depth shadows the stage, as bindings shadow the stated and derived filters","code":"a = 1\nc = a + 1\ndepth = 2\ntry:\n    c |> why |> depth(1)\ncatch error:\n    out = error\nout","return":"\"TypeError: depth is not an operation\""}
++{"id":"synth-57-0008","description":"A class-level rule gives every instance the direct causes of its own total","code":"class Order(qty, price):\n    this.qty = qty\n    this.price = price\n$Order.units = $Order.qty * 10\n$Order.total = $Order.units * $Order.price\n$Order.causes = $Order.total |> why |> depth(1)\npen = Order(2, 3)\ncup = Order(1, 9)\n[pen.causes.map(step -> step.node), cup.causes.map(step -> step.holds)]","return":"[[\"pen.total\",\"pen.units\",\"pen.price\"],[90,10,9]]"}
 ```
 
-**File**: `docs/README.md` (modified, +55/-0)
+**File**: `docs/README.md` (modified, +56/-3)
 ```diff
-@@ -545,6 +545,59 @@ assert(summary.kind, "alert")
-   Existing computed-key writes, exporter splitting and receiver-frame limits
-   are not repaired.
+@@ -3088,6 +3088,54 @@ assert(conclusions[0].state, "derived")
+   `facts = (why result).filter(step => step.state == "stated")` and
+   `conclusions = (why result).filter(step => step.state == "derived")`.
  
-+### Object spread entries
++### Depth-limited selections
 +
 +```
-+defaults = {theme: "light", size: 12}
-+prefs = {size: 14}
-+settings = {...defaults, ...prefs}
-+assert(settings.theme, "light")
-+assert(settings.size, 14)
-+prefs.theme = "dark"
-+defaults.font = "mono"
-+assert(settings.theme, "dark")
-+assert(settings.font, "mono")
-+delete prefs.size
-+settings.size
++price = 10
++qty = 3
++shipping = 5
++subtotal = price * qty
++total = subtotal + shipping
++direct = total |> why |> depth(1)
++assert(direct.map(step => step.node), ["total", "subtotal", "shipping"])
++assert((why total).length, 5)
++price = 12
++direct.map(step => step.holds)
 +```
 +
-+- This is the complete `Nucleoid derives records with spread entries`
++- This is the complete `Nucleoid limits explanations to direct causes with depth`
 +  program in `tests/reference.md`, without its title and expected-return
-+  metadata; it returns `12`.
-+- [NUC 81](nuc-0081.md) adds spread entries to object literals:
-+  `...SOURCE` copies the entries of the object `SOURCE` holds, in insertion
-+  order. They are the entries an entry loop visits: an instance's `id` first,
-+  `null` values included, undefined slots left out. A copy is shallow, so a
-+  nested object or list is the same value in both records.
-+- Entries apply from left to right, and each source is evaluated once. A
-+  later entry for a key the object already holds replaces its value and keeps
-+  the key's first position, so `{...point, x: 5}` lists `x` first and
-+  `{x: 9, ...point}` takes `x` from `point`.
-+- A spread is three adjacent dots wherever a key may begin. A keyed entry may
-+  follow it without a comma, as in `{...base qty: 1}`; a spread after a value
-+  or another spread needs one. Statement-leading braces and anonymous arrow
-+  bodies in braces stay blocks, so `({...a})` and `lambda p: {...p}` write
-+  objects. `[...xs]`, `f(...xs)` and `{x, ...rest} = p` keep their syntax
-+  errors.
-+- A `null` source or an undefined property copies nothing. Reading a `null`
-+  source is an ordinary null read, so the declaration is `null` until its
-+  source holds an object, while copied `null` values never settle it. Any
-+  other value raises `TypeError("<source> is not an object")`.
-+- A declaration that spreads stays live. It depends on every entry it copies,
-+  except one a later keyed entry replaces, and observes its source's set of
-+  entries, so a changed, deleted or added entry and a rebound source
-+  re-evaluate it. `why` lists the dependencies of the explicit record that
-+  names the same entries, `--graph` shows the observation as
-+  `observes {...<object id>}`, and rollback restores entries, their order and
-+  observations together.
-+- While a property declaration evaluates its value, a spread of the object
-+  that owns the property leaves that property out, so
-+  `$Order.view = {...$Order, paid: false}` never nests an older view. Two
-+  class-level rules that spread the same receiver read each other and raise
-+  `TypeError("Circular Dependency")` when an instance applies both.
++  metadata; it returns `[41,36,5]`.
++- [NUC 82](nuc-0082.md) adds the stage `selection |> depth(limit)`. It keeps
++  the steps whose distance from where the walk that selected them began is at
++  most `limit`, in their order and with their fields unchanged, so
++  `total |> why |> depth(1)` is `total` and what it reads directly, while
++  `why total` selects every fact behind it.
++- A step's distance is the length of the shortest path by which the most
++  recent `why` or `affects` reached it from its input, whatever order the walk
++  lists the steps in. `why` keeps its inputs at distance 0; every `affects`
++  step is at distance 1 or more, so `price |> affects |> depth(1)` is what
++  reads the price directly and `depth(0)` after `affects` is empty. A
++  reference's own step and `model` are at distance 0, and `stated`, `derived`
++  and `depth` keep distances, so they compose in either order.
++- The limit is an expression evaluated in place, so `depth(n)` follows `n`. It
++  must be a non-negative integer; any other value raises
++  `TypeError("<limit> is not a non-negative integer")`. A `null` or undefined
++  limit makes the selection undefined, which a declaration stores as `null`
++  until the limit is known.
++- Only `|>` followed by `depth` and `(` is the stage; `depth` stays an
++  ordinary name everywhere else, and a bare `|> depth` keeps its parse-time
++  `TypeError("depth is not an operation")`. A local or parameter, variable,
++  function or class named `depth` shadows the stage, as bindings shadow the
++  state filters: the stage then raises `TypeError("depth is not an operation")`
++  before selecting its source.
++- The selection stays live through every observation its source made,
++  including the steps it drops, and through what its limit reads. It renders
++  as `selection|>depth(limit)`.
 +- The authoritative contract is the
-+  [object spread entries](../nucleoid.spec.md#object-spread-entries) section.
++  [depth-limited reasoning selections](../nucleoid.spec.md#depth-limited-reasoning-selections)
++  section.
 +
- ### Operators
+ ### Live structure
  
- - Arithmetic: `+`, `-`, `*`, `/`, `%`, and exponentiation `**`; see below.
-@@ -3213,6 +3266,7 @@ Messages are exact and are part of the observable behaviour of the language.
+ - A reasoning assignment follows both values and graph structure.
+@@ -3119,9 +3167,10 @@ c = b * 2
+ - The accepted specification already implements selections, pipelines,
+   `model`, `why`, and `affects`; the NUC 48 candidate adds only the two
+   state filters, [NUC 62](nuc-0062.md) adds NUC 11's `all` and `any`
+-  quantifiers, and [NUC 65](nuc-0065.md) adds its `suppose` hypotheticals
+-  without `diff`. Other NUC 11 operations remain proposals, not
+-  dependencies.
++  quantifiers, [NUC 65](nuc-0065.md) adds its `suppose` hypotheticals
++  without `diff`, and the [NUC 82](nuc-0082.md) candidate adds its `depth`
++  stage without the `depth(x, n)` call form. Other NUC 11 operations remain
++  proposals, not dependencies.
+ 
+ ### Quantifiers
+ 
+@@ -3265,6 +3314,7 @@ Messages are exact and are part of the observable behaviour of the language.
+ | A supplied `mode` selector that is not a function, including `null`, even on an empty receiver | `mode expects a function` |
  | Missing or non-function `maxBy` or `minBy` selector, including `null`, even on an empty receiver | `maxBy expects a function` or `minBy expects a function` |
  | An `all` or `any` quantifier over a value that is neither null nor a list or a declared class's instances | `<collection> is not a collection` |
++| A `depth` stage limit that is neither `null`, undefined nor a non-negative integer number | `<limit> is not a non-negative integer` |
  | A two-name `for key, value of source` loop over a value that is not an object | `<source> is not an object` |
-+| A spread entry `...source` whose source is neither an object nor `null` or undefined | `<source> is not an object` |
+ | A spread entry `...source` whose source is neither an object nor `null` or undefined | `<source> is not an object` |
  | Assigning a `suppose` block whose last statement is not an expression | `suppose has no value` |
- | `:=` on a class-level property outside a class-level rule | `Cannot use ':=' on a class-level property` |
- | A `:=` declaration whose value nests lists 192 levels or more | `Maximum expression depth exceeded` |
-@@ -3377,6 +3431,7 @@ def name amount: type:                 one typed parameter, indented only (NUC 2
- { statement; statement }               block
- record = { amount, label }             object shorthand (candidate NUC 17)
- record = {amount: amount unit: "C"}    optional explicit-property comma (NUC 44)
-+record = {...base, qty: 1}             copy base's entries in order; later entries win (NUC 81)
- 
- throw value                            raise a value
- return expression                      yield from a block or function
+@@ -3468,6 +3518,9 @@ stated reference                      filter one reference without traversing (N
+ derived reference                     filter one reference without traversing (NUC 48 candidate)
+ model |> stated                       filter the current model by stated state (NUC 48 candidate)
+ model |> derived                      filter the current model by derived state (NUC 48 candidate)
++reference |> why |> depth(1)          the reference and what it reads directly (NUC 82)
++reference |> affects |> depth(1)      what reads the reference directly (NUC 82)
++
 ```
 
-**File**: `docs/examples.md` (modified, +33/-0)
+**File**: `docs/examples.md` (modified, +28/-0)
 ```diff
-@@ -3299,6 +3299,39 @@ assert: [Number.isNaN(chair.rating), chair.featured], [true, false]
-   [NUC 80](nuc-0080.md) and the
-   [root contract](../nucleoid.spec.md#list-and-population-averages).
+@@ -3332,6 +3332,34 @@ assert: desk.label, {id: "ada", name: "ada", city: "Lyon", zip: "69001", item: "
+   customer's fields. See [NUC 81](nuc-0081.md) and the
+   [root contract](../nucleoid.spec.md#object-spread-entries).
  
-+## Object spread entries
++## Depth-limited reasoning selections
 +
-+**Spread entries keep shipping labels in step with their customers**
++**Depth keeps the direct effects of a part's cost in view**
 +
 +```nuc
-+class Customer(name, city):
-+    this.name = name
-+    this.city = city
-+class Order(customer, item, qty):
-+    this.customer = customer
-+    this.item = item
-+    this.qty = qty
-+$Order.label = {...$Order.customer, item: $Order.item, qty: $Order.qty}
-+ada = Customer("ada", "Paris")
-+lamp = Order(ada, "lamp", 1)
-+desk = Order(ada, "desk", 2)
-+assert: lamp.label, {id: "ada", name: "ada", city: "Paris", item: "lamp", qty: 1}
-+ada.city = "Lyon"
-+ada.zip = "69001"
-+desk.qty = 3
-+assert: desk.label, {id: "ada", name: "ada", city: "Lyon", zip: "69001", item: "desk", qty: 3}
-+[lamp.label.city, lamp.label.zip, desk.label.qty]
-+# return: ["Lyon","69001",3]
++class Part(cost):
++    this.cost = cost
++bolt = Part(2)
++gear = Part(5)
++motor = bolt.cost * 4 + gear.cost
++robot = motor * 2 + 10
++kit = bolt.cost * 10
++direct = bolt.cost |> affects |> depth(1)
++assert: direct.map(step -> step.node), ["motor", "kit"]
++assert: (affects bolt.cost).length, 3
++bolt.cost = 3
++[direct.length, direct[0].holds, direct[1].holds]
++# return: [2,17,30]
 +```
 +
-+- `$Order.label` copies every entry of the order's customer, its `id`
-+  first, and adds the order's item and quantity. Each order gets its own
-+  label from the same rule.
-+- The labels follow their sources: Ada's move to Lyon, her new `zip` entry
-+  and the desk's new quantity re-evaluate them without naming any of the
-+  customer's fields. See [NUC 81](nuc-0081.md) and the
-+  [root contract](../nucleoid.spec.md#object-spread-entries).
++- `bolt.cost |> affects |> depth(1)` selects what reads the bolt's cost
++  directly, the motor and the kit, and leaves out the robot, which reads it
++  only through the motor; `affects bolt.cost` selects all three.
++- The selection follows the model: a new cost updates both steps it keeps,
++  and a new direct reader of the cost would join it. See
++  [NUC 82](nuc-0082.md) and the
++  [root contract](../nucleoid.spec.md#depth-limited-reasoning-selections).
 +
  ## Copyright
  
@@ -1220,193 +1226,195 @@ later entries winning and each key keeping its first position. A null
 
 **File**: `docs/nuc-0000.md` (modified, +2/-0)
 ```diff
-@@ -79,6 +79,7 @@ Created: 31-Jul-2026
- | [70](nuc-0070.md) | Object Entry Loops | Automatic-Accepted: independent evaluation rejected it because a rolled-back `delete` re-appended the key; its loops ship through NUC 72, which fixed that |
- | [72](nuc-0072.md) | Object Entry Loops with Ordered Rollback | Accepted |
- | [74](nuc-0074.md) | Final Rest Parameters | Accepted |
-+| [81](nuc-0081.md) | Object Spread Entries | Accepted |
+@@ -117,6 +117,7 @@ Created: 31-Jul-2026
+ | [48](nuc-0048.md) | State-Filtered Reasoning Selections | Accepted |
+ | [62](nuc-0062.md) | Universal and Existential Quantifiers | Accepted |
+ | [65](nuc-0065.md) | Hypothetical Suppose Blocks | Accepted |
++| [82](nuc-0082.md) | Depth-Limited Reasoning Selections | Accepted |
  
- ### Utility enhancement
+ ### Language compatibility
  
-@@ -215,6 +216,7 @@ Created: 31-Jul-2026
- | [78](nuc-0078.md) | Extends Clauses for Subclasses | Standards Track | Language compatibility | Accepted |
+@@ -217,6 +218,7 @@ Created: 31-Jul-2026
  | [79](nuc-0079.md) | Property Selector Arguments | Standards Track | Syntax enhancement | Accepted |
  | [80](nuc-0080.md) | List and Population Averages | Standards Track | Utility enhancement | Accepted |
-+| [81](nuc-0081.md) | Object Spread Entries | Standards Track | Runtime features | Accepted |
+ | [81](nuc-0081.md) | Object Spread Entries | Standards Track | Runtime features | Accepted |
++| [82](nuc-0082.md) | Depth-Limited Reasoning Selections | Standards Track | Reasoning enhancement | Accepted |
  
  ## Copyright
  
 ```
 
-**File**: `docs/nuc-0081.md` (added, +957/-0)
+**File**: `docs/nuc-0082.md` (added, +842/-0)
 ```diff
-@@ -0,0 +1,957 @@
-+# NUC 81 -- Object Spread Entries
+@@ -0,0 +1,842 @@
++# NUC 82 -- Depth-Limited Reasoning Selections
 +
 +```
-+NUC: 81
-+Title: Object Spread Entries
++NUC: 82
++Title: Depth-Limited Reasoning Selections
 +Author: Claude <noreply@anthropic.com>
 +Status: Accepted
 +Type: Standards Track
-+Category: Runtime features
++Category: Reasoning enhancement
 +Created: 04-Nov-2026
-+Requires: 8, 17, 18, 44, 45, 57, 65, 66, 72, 74
++Requires: 8, 12, 14, 45, 48, 57, 62, 65
 +```
 +
 +## Abstract
 +
-+- Object literals gain spread entries. `{...SOURCE, key: value}` copies the
-+  entries of the object `SOURCE` holds into the new object, in their
-+  insertion order, so `{...point, z: 0}` extends a record and
-+  `{...defaults, ...overrides}` merges two.
-+- Entries apply from left to right, and each source is evaluated once. A
-+  later entry for a key the object already holds replaces its value and
-+  keeps the key's first position, as a repeated key does in an accepted
-+  literal. A spread copies exactly the entries an entry loop visits: `null`
-+  values are copied, undefined slots are not.
-+- A `null` or undefined source copies nothing, and reading a `null` source is
-+  an ordinary null read, so a declaration waits for an unknown source. Every
-+  other value that is not an object raises
-+  `TypeError("<source> is not an object")`, the message of
-+  [NUC 72](nuc-0072.md)'s entry loops.
-+- A spread in a standing declaration stays live. It depends on the entries it
-+  copies and observes its source's set of entries, so changing, deleting or
-+  adding an entry, or replacing the binding its source reads, evaluates the
-+  declaration again. A derived record stays equal to the explicit record
-+  that names every entry its source holds. Programs without spreads
-+  propagate exactly as before.
-+- While a property declaration evaluates its value, a spread of the object
-+  that owns the property leaves that property out, so the class-level rule
-+  `$Order.view = {...$Order, paid: false}` never copies an older view into a
-+  newer one.
-+- No keyword, token or error type is added. Three adjacent dots start a spread
-+  only where an object-literal entry may begin, as [NUC 74](nuc-0074.md)
-+  recognizes them only in parameter lists. Every accepted program keeps its
-+  parse and behavior; only inputs that raised
-+  `SyntaxError("Expected a key but found '.'")` at such an entry change. The
-+  public `Expr` enum gains `Expr::SpreadObject`, the public `ast` module gains
-+  the enum `ObjectEntry`, and the public `ShapeKey` enum gains
-+  `ShapeKey::Entries`; they need human SemVer review. No project version is
-+  changed. The authoritative contract is
-+  [Object spread entries](../nucleoid.spec.md#object-spread-entries).
++- Add the pipeline stage `SELECTION |> depth(LIMIT)`. It keeps the steps of
++  `SELECTION` that lie within `LIMIT` steps of where the walk that selected
++  them began, in their order and with every field unchanged, so
++  `alarm |> why |> depth(1)` is the alarm and the facts it reads directly,
++  and `price |> affects |> depth(1)` is what reads the price directly.
++- A step's distance is the length of the shortest path by which the most
++  recent `why` or `affects` reached it from that stage's input. `why` keeps
++  its inputs at distance 0; `affects` never selects a node by the empty path,
++  so its steps are at distance 1 or more. Steps that no walk produced are at
++  distance 0, and `stated`, `derived` and `depth` keep distances.
++- `LIMIT` is an expression evaluated in place, so `depth(n)` follows `n`. It
++  must be a non-negative integer; other values raise
++  `TypeError("<limit> is not a non-negative integer")`. A `null` or undefined
++  limit makes the selection undefined, which a declaration stores as `null`
++  until the limit is known.
++- Only `|>` followed by `depth` and a `(` token is the stage. `depth` stays an
++  ordinary identifier everywhere else, and a binding named `depth` shadows the
++  stage as bindings shadow NUC 48's `stated` and `derived`. Selections stay
++  live, observe what their sources observed, and render as
++  `SOURCE|>depth(LIMIT)`.
++- No keyword, token or error type is added. Every accepted program keeps its
++  parse and behavior; only inputs that were errors at the accepted revision
++  change. The public `Expr` enum gains `Expr::Depth`, which needs human SemVer
++  review. No project version is changed. The authoritative contract is
++  [Depth-limited reasoning selections](../nucleoid.spec.md#depth-limited-reasoning-selections).
 +- **Outcome: Accepted.** The independent evaluation and the caller's
 +  integrated-tree checks passed all three hard criteria, and the independent
 +  evaluator decided Accepted. The required token comparison ran in
-+  continuous mode: 11 cases use fewer tokens, 926 the same and none more. No
-+  policy check failed. The evaluation corrects one claim above: where the
-+  parser backtracks, some spreads that raised a different syntax error at
-+  the accepted revision now run too, such as `{x, y} = {...p}`; every
-+  changed input was an error at the accepted revision.
++  continuous mode: 11 cases use fewer tokens, 937 the same and none more. No
++  policy check failed. The evaluation corrects one claim below: subscript
++  slices give shorter fair accepted spellings than the recorded
++  counterparts, so the margins are 10 to 69 tokens rather than 10 to 88;
++  every case still uses fewer tokens than any fair accepted spelling found.
 +
 +## Motivation
 +
-+- A world model derives records from records: an order line from a product,
-+  a shipping label from a customer and an order, the settings in effect from
-+  defaults and a user's preferences, a sale beside the regular listing, an
-+  instance's public view. Each derived record keeps the fields of its source
-+  and changes or adds a few.
-+- Accepted Nucleoid cannot copy an object's entries. `{...a}` raises
-+  `SyntaxError("Expected a key but found '.'")`, `Object.assign({}, a)`
-+  raises `ReferenceError("Object is not defined")`, `JSON` is not defined,
-+  and computed writes such as `a[k] = 2` raise
-+  `SyntaxError("Cannot assign to a[k]")`, so NUC 72's entry loops can read
-+  every entry but cannot write one into another object. NUC 74 lists
-+  call-site spread among what it does not add.
-+- The accepted spellings therefore name every field by hand, as
-+  `line = {name: item.name price: item.price size: item.size qty: item.qty total: item.price * item.qty}`
-+  does. They repeat the source for every field and break as the model grows:
-+  - a field the source gains later is missing from every derived record that
-+    does not name it ahead of time, as `size: item.size` does above;
-+  - merging records needs `??` for every key both may hold,
-+    `{size: custom.size ?? defaults.size gift: custom.gift ?? defaults.gift}`,
-+    and still misses keys neither literal names;
-+  - [NUC 67](nuc-0067.md)'s destructuring shortens the reads, but a
-+    destructured name of a missing or deleted key reads `null`, and the
-+    null-read rule then settles every record that reads it to `null`;
-+  - a class-level rule that copies its receiver lists each field, and a rule
-+    that reads its own property raises `TypeError("Circular Dependency")`.
-+- JavaScript's `{...a, b: 1}`, Python's `{**a, "b": 1}`, Kotlin's
-+  `a.copy(b = 1)`, C#'s `a with { B = 1 }` 
++- A world model is read through its explanations. `why` and `affects` are
++  transitive: `why total` lists every fact a total was ever derived from, and
++  `affects price` everything that rests on the price, however far away. In a
++  model of any size that closure is long, and most of it is not what a
++  question about the total is asking.
++- An LLM that maintains a model needs explanations sized for its context:
++  the direct causes of a value, or what a change touches first. Handing it
++  the whole closure spends tokens on steps it did not ask about and hides the
++  ones it did.
++- Accepted Nucleoid can only filter a closure after the fact. The direct
++  causes of `c` are `c` and the steps named in its `from` list, so the
++  accepted spelling is
++  `trace = why c` with `near = trace.slice(0, trace[0].from.length + 1)`,
++  which depends on the walk's listing order, or a `filter` over `from` lists.
++  Two steps out needs a quantifier over the first ring, and a limit held in a
++  variable needs one spelling per distance. Impact needs
++  `(affects a).filter(s -> s.from.includes("a"))`, which repeats the source
++  as a string.
++- NUC 11 plans `depth(n)`, "the selection narrowed to nodes within `n` steps of
++  where the chain began", as part of its fourth stage. This NUC specifies that
++  one stage on its own, without NUC 11's other stages or its `depth(x, n)`
++  call form.
++- Each of the eleven new cases uses 10 to 88 fewer lexer tokens than the most
++  compact behavior-equivalent accepted program found for it.
++
++## Rationale
++
++- **Category and selection.** The caller selected Reasoning enhancement by one
++  tool-backed uniform draw over the five categories NUC 1's registry marks
++  eligible for automatic selection: index 3 with probability 1/5 and no
++  redraw, in continuous mode. Within it the caller chose NUC 11's planned
++  `depth(n)` stage: the next item of NUC 11's roadmap, bounded, sizing
++  explanations for LLM context, with live accepted counterparts. The
++  category's token gate therefore applies; runtime applicability does not.
++- **Optional evidence.** No hint was supplied. Advisory usefulness is
++  unscored (`missing_rubric`), not zero. Strategy learning is
++  `not_configured`, so this revision is unattributed, with no policy,
++  se
 ```
 
-**File**: `nucleoid.spec.md` (modified, +233/-0)
+**File**: `nucleoid.spec.md` (modified, +245/-0)
 ```diff
-@@ -3768,6 +3768,97 @@ statement positions; caught values and transaction recovery are unchanged.
-   `Nucleoid restores object entries in place when it rolls back` specify the
-   executable behavior.
+@@ -2133,6 +2133,93 @@ statement positions; caught values and transaction recovery are unchanged.
+   accepted `.filter(step => step.state == ...)` counterparts, including the
+   individual-reference counterparts' `.slice(0, 1)`, assertions and returns.
  
-+## Object spread entries
++## Depth-limited reasoning selections
 +
-+- [NUC 81](docs/nuc-0081.md) adds spread entries to object literals:
-+  `{...SOURCE, key: value}` copies the entries of the object `SOURCE` holds
-+  into the new object. No keyword, token or error type is added.
-+- A spread entry is three dots at consecutive columns of one line, followed
-+  by one expression, its source. It may begin wherever a key may: first in
-+  the braces or after a comma, with the line breaks a key allows before it.
-+  The source is parsed as an entry's value is, so it ends at a comma, at the
-+  closing brace, or before a following keyed entry written without a comma,
-+  as in `{...base qty: 1}`. Keyed, shorthand and spread entries mix in any
-+  order, and one trailing comma is allowed: `{tag, ...base stock: 0,}`.
-+- A spread that follows a value or another spread needs a comma before it:
-+  `{y: 2 ...a}` keeps `SyntaxError("Expected a property but found '.'")`,
-+  because the value reads the dots as a member access. Shorthand entries keep
-+  needing a comma or the closing brace after them.
-+- Spreads are entries of object literals written as expressions, in
-+  assignments, arguments, list items, returns, named-arrow and `lambda`
-+  bodies, parentheses, template interpolations, nested literals,
-+  constructors, methods, class-level rules and every suite. A brace that
-+  begins a statement is still a block, so `{...a, y: 2}` as a statement keeps
-+  `SyntaxError("Unexpected '.'")`, and an anonymous arrow body in braces is
-+  still a block; `({...a})`, `lambda p: {...p}` and `def f p => {...p}` write
-+  objects. `[...xs]`, `f(...xs)` and `{x, ...rest} = p` keep their syntax
-+  errors.
-+- The entries are evaluated once each, from left to right. A keyed entry
-+  stores its value. A spread evaluates its source once and copies the
-+  source's entries in their insertion order, the entries an entry loop
-+  visits: an instance's `id` first, then its other properties in the order
-+  they were stored; every property whose value is not undefined, `null`
-+  values included. A slot whose value is undefined is not copied. The result
-+  is a new object that belongs to no class, and a copied object or list is
-+  the same value in both records.
-+- An entry for a key the object already holds replaces its value and keeps
-+  the key's first position, as a repeated key does: with
-+  `point = {x: 1, y: 2}`, `{...point, x: 5}` lists `x` then `y` with `x` 5,
-+  and `{x: 9, ...point}` takes `x` from `point`.
-+- Copying an entry is not a read of a binding, so a copied `null` does not
-+  settle a declaration to `null`. The source's own reads follow the existing
-+  rules: after `owner = null`, `card = {...owner, seen: true}` is `null`,
-+  and it becomes a record when `owner` holds one. An undefined source, such
-+  as a property never set, copies nothing, and the literal `null` copies
-+  nothing. An undefined name raises `ReferenceError("<name> is not defined")`
-+  as before.
-+- Every other source raises `TypeError("<source> is not an object")`, with the
-+  source in canonical form, as entry loops do: a list, a string, a number, a
-+  boolean, a class outside a class-level rule, a function, a date and a
-+  regular expression. After `sizes = [1, 2]`, `{...sizes}` raises
-+  `TypeError("sizes is not an object")`. The error is positioned at the
-+  running top-level statement and rolls back its transaction.
-+- While a property declaration evaluates its value, a spread of the object
-+  that owns the declared property leaves that property out:
-+  `cart.copy = {...cart}` copies every other entry of `cart`, and the
-+  class-level rule `$Order.view = {...$Order}` every other entry of each
-+  order. This holds in
-+  every suite, in constructors, class-level rules and value assignments, and
-+  in the functions they call. An assignment used as an expression evaluates
-+  its value before its target and copies every entry.
-+- A declaration that spreads stays live. Its source's reads are dependencies
-+  as usual. It also depends on every entry it copies, except an entry that a
-+  later keyed entry of the same literal replaces, and it observes the set of
-+  entries of the source object. Changing a copied entry, deleting an entry,
-+  adding an entry and replacing the binding the source reads each evaluate it
-+  again, so a derived record stays equal to the explicit record that names
-+  every entry its source holds. Evaluating it again creates a new object, as
-+  every object literal declaration does. `{...a.value}` follows the entries
-+  of the object `a` held when the declaration was stored, and `b := {...a}`
-+  copies once.
-+- Entry-set observations are not graph nodes or value dependencies: `why`
-+  lists the same dependencies as the explicit record, `affects`, `model` and
-+  the reasoning stages are unch
++- [NUC 82](docs/nuc-0082.md) adds the pipeline stage `SELECTION |> depth(LIMIT)`.
++  It keeps the steps of `SELECTION` whose distance is at most `LIMIT`, in their
++  order and with their `node`, `holds`, `rule`, `state` and `from` fields
++  unchanged, and drops the others.
++- A step's distance is the number of edges on the shortest path by which the
++  most recent walking stage reached it from that stage's input selection:
++  `why` follows dependencies and `affects` follows dependents, skipping
++  reasoning observers as the walks do. Edges count whether or not the nodes
++  along them are selected, so pending nodes, which no selection lists, are
++  walked as before. Distances are shortest paths whatever order the walk
++  lists the steps in.
++- `why` keeps its input steps at distance 0, so `c |> why |> depth(1)` selects
++  `c` and the nodes it reads directly. `affects` never selects a node by the
++  empty path, so every step it selects is at distance 1 or more:
++  `a |> affects |> depth(1)` selects the direct dependents of `a`,
++  `a |> affects |> depth(0)` selects nothing, and an input that is also a
++  dependent of another input takes its shortest non-empty path.
++- Steps that no walk produced, the one-step selection of a reference and
++  `model`, are at distance 0. `stated`, `derived` and `depth` keep the
++  distances of the steps they keep, so `depth` and the state filters compose
++  in either order, and a later walk measures distances from its own input.
++  Prefix stages compose as before: `why c |> depth(1)` is
++  `(why c) |> depth(1)`.
++- `LIMIT` is one expression in parentheses, evaluated in place each time the
++  selection is evaluated, after the source selection. A declaration therefore
++  depends on what the limit reads, so `near = c |> why |> depth(n)` is
++  evaluated again when `n` changes. It must be a non-negative integer number;
++  `-0` is `0`, and a limit larger than every distance keeps every step.
++- A limit that evaluates to `null` or to undefined makes the reasoning
++  expression undefined: the stage keeps nothing that could be known, the
++  stages after it are not applied and their limits are not evaluated. A
++  declaration stores that undefined value as `null` until the limit is known,
++  a quantifier over it tests no member and yields undefined, and reads from
++  it, such as `.length` or `.map(...)`, give `null`, as they do from a `null`
++  binding.
++- Every other limit raises `TypeError("<limit> is not a non-negative integer")`,
++  where `<limit>` is the limit expression's path or canonical source, named as
++  quantifier errors name their collection, so `$Plan.depth` is `Plan.depth`.
++  This covers negative numbers, fractions, `NaN`, infinities, booleans,
++  strings, lists, objects, instances, classes, functions, dates and regular
++  expressions. After `n = 1.5`, `c |> why |> depth(n)` raises
++  `TypeError("n is not a non-negative integer")`, and `c |> why |> depth(-1)`
++  raises `TypeError("-1 is not a non-negative integer")`. The error is
++  positioned at the running top-level statement and rolls back its
++  transaction.
++- Only `|>` followed by the name `depth` and then a `(` token is the stage, so
++  `|> depth (1)` is the stage too. `depth` remains an ordinary lexer
++  identifier: variables, parameters, properties, keys, functions and methods
++  named `depth` keep their accepted meanings, there is no prefix form
++  `depth c`, and `depth(c, 1)` remains an ordinary call. A bare `|> depth`
++  keeps the parse-time `TypeError("depth is not an operation")`, and so does
++  `|> depth` followed by a line break and then `(` outside parentheses and
++  brackets, where a line break is a token. `|> depth()` raises
++  `SyntaxError("Unexpected ')'")` and `|> depth(1, 2)` raises
++  `SyntaxError("Expected ')' but found ','")`, as the parenthesized
++  expressions `()` and `(1, 2)` do.
++- A local or parameter, state variable, function or class named `depth`
++  shadows the stage, as the accepted `stated` and `derived` filters are
++  shadowed: the stage then raises `TypeError("depth is not an operation")`
++  before selecting its source. A binding declared after a standing selection
++  makes the selection's next evaluation raise, which fails and rolls back the
++  statement that triggered it, as it does for the state filters. The accepted
++  `why` and `affects` shadowing behavior does not change.
++- An invalid source keeps its existing diagnostic and is checked before the
++  limit is evaluated: `1 |> depth(1)` raises `TypeError("Cannot explain 1")`
++  and `missing |> depth(1)` raises
++  `ReferenceError("missing is not defined")`.
++- Like the state filters, `depth` preserves every value and structural
++  observati
 ```
 
 #### Recent Merged Pull Requests:
@@ -1435,13 +1443,13 @@ later entries winning and each key keeping its first position. A null
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. NUC 81 Object Spread Entries
+## X. NUC 82 Depth-Limited Reasoning Selections
 
 **RULE**:
 When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9bd304a7`: NUC 81 Object Spread Entries. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a6054657`: NUC 82 Depth-Limited Reasoning Selections. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
@@ -1449,32 +1457,35 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-## Object spread entries
+## Depth-limited reasoning selections
 
-**Spread entries keep derived listings in step with their products**
+**Depth keeps an alarm's explanation to its direct causes**
 
 ```nuc
-class Product(name, price):
-    this.name = name
-    this.price = price
-$Product.listing = {...$Product, currency: "USD"}
-lamp = Product("lamp", 40)
-draft = {...lamp.listing, price: lamp.price * 0.75}
-assert: [lamp.listing.price, draft.price], [40, 30]
-lamp.price = 60
-lamp.stock = 3
-assert: [lamp.listing, draft], [{id: "lamp", name: "lamp", price: 60, stock: 3, currency: "USD"}, {id: "lamp", name: "lamp", price: 45, stock: 3, currency: "USD"}]
+pressure = 120
+limit = 100
+temperature = 70
+manual = false
+strained = pressure > limit
+hot = temperature > 90
+alarm = [strained, hot, manual].includes(true)
+causes = alarm |> why |> depth(1)
+assert: causes.map(step -> step.node), ["alarm", "strained", "hot", "manual"]
+assert: (why alarm).length, 7
+pressure = 90
+temperature = 95
+assert: causes.map(step -> step.holds), [true, false, true, false]
 ```
 
-- [NUC 81](docs/nuc-0081.md) adds spread entries to object literals:
-  `...SOURCE` copies the entries of the object `SOURCE` holds, in order, and a
-  later entry for the same key replaces its value. `$Product.listing` copies
-  each product and adds a currency, and `draft` copies the listing with a
-  discounted price.
-- A spread stays live: a changed price and the new `stock` entry reach both
-  records. A class-level rule that spreads its own receiver leaves out the
-  property it declares, so `listing` never holds an older listing. See the
-  [root contract](nucleoid.spec.md#object-spread-entries).
+- [NUC 82](docs/nuc-0082.md) adds the reasoning stage `|> depth(LIMIT)`. It
+  keeps the steps of a selection that lie within `LIMIT` steps of where the
+  walk that selected them began, in their order, so `alarm |> why |> depth(1)`
+  is the alarm and the facts it reads directly: four steps, where
+  `why alarm` selects seven.
+- The selection stays live: new pressures and temperatures update the steps
+  it keeps, and a limit read from a variable re-derives it when the variable
+  changes. See the
+  [root contract](nucleoid.spec.md#depth-limited-reasoning-selections).
 
 ```
 
@@ -1485,4 +1496,4 @@ assert: [lamp.listing, draft], [{id: "lamp", name: "lamp", price: 60, stock: 3, 
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9bd304a7` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a6054657` are properly handled with clean fallback behavior.

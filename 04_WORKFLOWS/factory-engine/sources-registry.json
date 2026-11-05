@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-05T05:25:27.135Z",
-    "lastVerified": "2026-11-05T05:25:27.135Z",
+    "lastChecked": "2026-11-05T05:32:36.581Z",
+    "lastVerified": "2026-11-05T05:32:36.581Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -444,22 +444,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "nucleoidai-nucleoid": {
-    "name": "Nucleoid",
+    "name": "NucleoidAI/Nucleoid",
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-05T04:57:40.398Z",
-    "lastVerified": "2026-11-05T04:57:40.398Z",
+    "lastChecked": "2026-11-05T05:32:33.752Z",
+    "lastVerified": "2026-11-05T05:32:33.752Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "69ce0805e65d92f2d2c4ef99724fac3250601cce7235d5c796a747e8743bd4cd",
+    "contentHash": "72e0c32ba8841347279bab6656eed3022c8dc32d1dae20dac7165f435ce1d93c",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "9bd304a7"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "tabbyml-tabby": {
     "name": "tabby",
@@ -731,9 +730,9 @@
   "hashicorp-boundary": {
     "name": "boundary",
     "officialUrl": "https://github.com/hashicorp/boundary",
-    "lastChecked": "2026-11-05T02:01:57.375Z",
+    "lastChecked": "2026-11-05T05:32:21.442Z",
     "revisionIdentifier": "eeb38a1a",
-    "lastVerified": "2026-11-05T02:01:57.375Z"
+    "lastVerified": "2026-11-05T05:32:21.442Z"
   },
   "qdrant-qdrant": {
     "name": "qdrant",
@@ -984,9 +983,9 @@
   "devspace-sh-devspace": {
     "name": "devspace",
     "officialUrl": "https://github.com/devspace-sh/devspace",
-    "lastChecked": "2026-11-04T10:20:10.516Z",
+    "lastChecked": "2026-11-05T05:32:18.856Z",
     "revisionIdentifier": "8ff62607",
-    "lastVerified": "2026-11-04T10:20:10.516Z"
+    "lastVerified": "2026-11-05T05:32:18.856Z"
   },
   "bee-san-ciphey": {
     "name": "bee-san/Ciphey",
@@ -3663,9 +3662,9 @@
   "nasiko-labs-nasiko": {
     "name": "nasiko",
     "officialUrl": "https://github.com/Nasiko-Labs/nasiko",
-    "lastChecked": "2026-11-04T02:39:34.888Z",
+    "lastChecked": "2026-11-05T05:32:11.271Z",
     "revisionIdentifier": "10a08581",
-    "lastVerified": "2026-11-04T02:39:34.888Z"
+    "lastVerified": "2026-11-05T05:32:11.271Z"
   },
   "hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2": {
     "name": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
@@ -4821,12 +4820,12 @@
     "officialUrl": "https://huggingface.co/openai/gpt-oss-120b",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-31T14:39:23.452Z",
-    "lastVerified": "2026-10-31T14:39:23.452Z",
+    "lastChecked": "2026-11-05T05:32:13.874Z",
+    "lastVerified": "2026-11-05T05:32:13.874Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-openai-gpt-oss-120b",
-    "contentHash": "d4302148471f46a54e84cd7263747c2589fa2cc3ec4c05bdc31e96bd69b01eeb",
+    "contentHash": "b549ff888715a52a992c246d1514c87fa6d97d8fec09c12676e8d2988f10e94b",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -5670,9 +5669,9 @@
   "cockroachdb-cockroach": {
     "name": "cockroach",
     "officialUrl": "https://github.com/cockroachdb/cockroach",
-    "lastChecked": "2026-11-04T09:25:12.173Z",
+    "lastChecked": "2026-11-05T05:32:24.335Z",
     "revisionIdentifier": "d30c905f",
-    "lastVerified": "2026-11-04T09:25:12.173Z"
+    "lastVerified": "2026-11-05T05:32:24.335Z"
   },
   "hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw": {
     "name": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
@@ -9593,22 +9592,21 @@
     "lastVerified": "2026-11-02T17:24:21.995Z"
   },
   "modelcontextprotocol-kotlin-sdk": {
-    "name": "kotlin-sdk",
+    "name": "modelcontextprotocol/kotlin-sdk",
     "officialUrl": "https://github.com/modelcontextprotocol/kotlin-sdk",
     "sourceType": "github",
     "technology": "Kotlin",
-    "lastChecked": "2026-10-31T23:02:01.826Z",
-    "lastVerified": "2026-10-31T23:02:01.826Z",
+    "lastChecked": "2026-11-05T05:32:20.723Z",
+    "lastVerified": "2026-11-05T05:32:20.723Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-modelcontextprotocol-kotlin-sdk",
-    "contentHash": "5e5afead30bfc1ea32e077703517c2113b0151210953b046eca57886dfebc6ed",
+    "contentHash": "2b8ee8eea002869a093a21b2dd24adb04575d355cf9efb17bac5a79410f3281e",
     "promotedRulesCount": 1,
-    "recentFixesCount": 3,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "2a028188"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "turbopress-x-seo-auditing-software": {
     "name": "seo-auditing-software",

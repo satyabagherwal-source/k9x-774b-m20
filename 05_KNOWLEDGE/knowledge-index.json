@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T05:25:24.469Z",
+  "last_updated": "2026-11-05T05:32:33.927Z",
   "total_verified_learnings": 1214,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -28175,7 +28175,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/openai/gpt-oss-120b",
       "source_version": "hf-openai-gpt-oss-120b",
-      "content_hash": "d4302148471f46a54e84cd7263747c2589fa2cc3ec4c05bdc31e96bd69b01eeb",
+      "content_hash": "b549ff888715a52a992c246d1514c87fa6d97d8fec09c12676e8d2988f10e94b",
       "dossier_path": "07_PROJECT_LEARNING/hf-openai-gpt-oss-120b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-openai-gpt-oss-120b-learnings.md",
       "promoted_rules": [
@@ -28213,7 +28213,7 @@
         "learn-huggingface-hf-openai-gpt-oss-120b-mv4ayjzd",
         "learn-huggingface-hf-openai-gpt-oss-120b-mv4oc8h1"
       ],
-      "verified_at": "2026-10-31T14:39:24.367Z",
+      "verified_at": "2026-11-05T05:32:14.758Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -42437,8 +42437,8 @@
       "slug": "modelcontextprotocol-kotlin-sdk",
       "platform": "github",
       "source_url": "https://github.com/modelcontextprotocol/kotlin-sdk",
-      "source_version": "2a028188",
-      "content_hash": "5e5afead30bfc1ea32e077703517c2113b0151210953b046eca57886dfebc6ed",
+      "source_version": "d38499e8",
+      "content_hash": "2b8ee8eea002869a093a21b2dd24adb04575d355cf9efb17bac5a79410f3281e",
       "dossier_path": "07_PROJECT_LEARNING/modelcontextprotocol-kotlin-sdk-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/modelcontextprotocol-kotlin-sdk-learnings.md",
       "promoted_rules": [
@@ -42456,6 +42456,11 @@
           "number": 5526,
           "title": "server)!: return a protocol error for unknown tools (#1120)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7117,
+          "title": "server): settle Streamable HTTP batch responses in linear time (#1145)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -42463,7 +42468,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-29T17:03:35.171Z",
+      "verified_at": "2026-11-05T05:32:21.311Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -44768,8 +44773,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "9bd304a7",
-      "content_hash": "69ce0805e65d92f2d2c4ef99724fac3250601cce7235d5c796a747e8743bd4cd",
+      "source_version": "a6054657",
+      "content_hash": "72e0c32ba8841347279bab6656eed3022c8dc32d1dae20dac7165f435ce1d93c",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -45029,7 +45034,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T02:25:57.071Z",
+      "verified_at": "2026-11-05T05:32:33.908Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -180303,6 +180308,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-05T05:25:24.446Z"
+    },
+    "rule-7117": {
+      "learning_id": "rule-7117",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7117,
+      "title": "server): settle Streamable HTTP batch responses in linear time (#1145)",
+      "source_url": "https://github.com/modelcontextprotocol/kotlin-sdk",
+      "source_version": "d38499e8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T05:32:21.311Z"
     }
   },
   "aliases": {

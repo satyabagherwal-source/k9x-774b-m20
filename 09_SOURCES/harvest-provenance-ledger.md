@@ -7528,3 +7528,6 @@ Every entry in this ledger must capture:
 | `learn-github-etcd-io-etcd` | `https://github.com/etcd-io/etcd` | `65da6386` | Multi-dimensional audit evidence | 2026-11-05T05:23:55.423Z |
 | `learn-github-gardener-gardener` | `https://github.com/gardener/gardener` | `a8e47203` | Multi-dimensional audit evidence | 2026-11-05T05:23:56.521Z |
 | `learn-huggingface-tongyi-mai-z-image-turbo` | `https://huggingface.co/Tongyi-MAI/Z-Image-Turbo` | `hf-tongyi-` | Multi-dimensional audit evidence | 2026-11-05T05:25:24.559Z |
+| `learn-huggingface-openai-gpt-oss-120b` | `https://huggingface.co/openai/gpt-oss-120b` | `hf-openai-` | Multi-dimensional audit evidence | 2026-11-05T05:32:14.865Z |
+| `learn-github-modelcontextprotocol-kotlin-sdk` | `https://github.com/modelcontextprotocol/kotlin-sdk` | `d38499e8` | Multi-dimensional audit evidence | 2026-11-05T05:32:21.409Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `a6054657` | Multi-dimensional audit evidence | 2026-11-05T05:32:34.041Z |
