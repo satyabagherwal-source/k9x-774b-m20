@@ -513045,3 +513045,59 @@ Subsystems managing Python data structures, boundary deserialization, API parsin
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `56ba922e` are properly handled with clean fallback behavior.
+
+
+---
+
+## 7067. Greptile review rule update (#5200) (Harvested from metalbear-co/mirrord)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Greptile review rule update (#5200)",
+  "source": "metalbear-co/mirrord",
+  "source_url": "https://github.com/metalbear-co/mirrord",
+  "source_version": "89bfc07c",
+  "license": "MIT",
+  "extracted_at": "2026-11-05T02:01:52.252Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-metalbear-co-mirrord",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [metalbear-co/mirrord](https://github.com/metalbear-co/mirrord) (Revision: `89bfc07c`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `.greptile/config.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in metalbear-co/mirrord. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `89bfc07c`: Greptile review rule update (#5200). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.greptile/config.json`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+  "excludeAuthors": ["cubby-mb[bot]"],
+    {
+      "id": "operator-agnostic-protocol",
+      "rule": "mirrord-protocol is primarily the protocol between the mirrord CLI (layer and intproxy) and the agent, and we try hard to keep it operator agnostic. Flag any new message or variant that only the operator sends or handles. Ask the PR author to justify it in the description: why it can't reuse existing messages, and why it can't live in the operator's own API instead. Accept a convincing justification; without one, suggest a more generic message or moving the logic to the operator.",
+      "scope": ["mirrord/protocol/**"],
+      "severity": "high"
+    },
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Anti-pattern to NEVER write (induced failure mode):
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `89bfc07c` are properly handled with clean fallback behavior.

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T01:54:40.419Z",
+  "last_updated": "2026-11-05T02:01:52.521Z",
   "total_verified_learnings": 1210,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -31342,7 +31342,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
       "source_version": "hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf",
-      "content_hash": "21b167d749b9807f0780ac6a9999c6a0cb84befa186b1d5ffcb77918ebb963f8",
+      "content_hash": "ea0132bc06f1e1ba5b85ff72a63a91b45346ed350f1259742f42c57361737811",
       "dossier_path": "07_PROJECT_LEARNING/hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf-learnings.md",
       "promoted_rules": [
@@ -31445,7 +31445,7 @@
         "learn-huggingface-hf-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf-mv47apdo",
         "learn-huggingface-hf-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf-mv4kkyvs"
       ],
-      "verified_at": "2026-10-31T11:32:51.805Z",
+      "verified_at": "2026-11-05T02:01:50.923Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -40544,8 +40544,8 @@
       "slug": "metalbear-co-mirrord",
       "platform": "github",
       "source_url": "https://github.com/metalbear-co/mirrord",
-      "source_version": "fbe27c3e",
-      "content_hash": "a72ea04a9b9ad201f83ad6f0c99dfad4902b84eb051335d83a814d4bbd644301",
+      "source_version": "89bfc07c",
+      "content_hash": "5479c29fe91f23dae9f00b597c8231ef76837eecfce2fb260b4440492dad4f95",
       "dossier_path": "07_PROJECT_LEARNING/metalbear-co-mirrord-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/metalbear-co-mirrord-learnings.md",
       "promoted_rules": [
@@ -40603,6 +40603,11 @@
           "number": 6654,
           "title": "up custom modes branching: let built-in modes' queues follow incoming",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7067,
+          "title": "Greptile review rule update (#5200)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -40610,7 +40615,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T23:20:13.059Z",
+      "verified_at": "2026-11-05T02:01:52.498Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -179253,6 +179258,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-05T01:47:47.413Z"
+    },
+    "rule-7067": {
+      "learning_id": "rule-7067",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7067,
+      "title": "Greptile review rule update (#5200)",
+      "source_url": "https://github.com/metalbear-co/mirrord",
+      "source_version": "89bfc07c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T02:01:52.498Z"
     }
   },
   "aliases": {

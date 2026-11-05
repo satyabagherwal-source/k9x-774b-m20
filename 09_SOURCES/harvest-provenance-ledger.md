@@ -7459,3 +7459,5 @@ Every entry in this ledger must capture:
 | `learn-github-checkmarx-kics` | `https://github.com/Checkmarx/kics` | `a0325326` | Multi-dimensional audit evidence | 2026-11-05T01:47:43.063Z |
 | `learn-github-doobidoo-mcp-memory-service` | `https://github.com/doobidoo/mcp-memory-service` | `a2ee57d3` | Multi-dimensional audit evidence | 2026-11-05T01:47:47.508Z |
 | `learn-huggingface-alissonerdx-bfs-best-face-swap` | `https://huggingface.co/Alissonerdx/BFS-Best-Face-Swap` | `hf-alisson` | Multi-dimensional audit evidence | 2026-11-05T01:54:40.505Z |
+| `learn-huggingface-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf` | `https://huggingface.co/ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF` | `hf-ukisai-` | Multi-dimensional audit evidence | 2026-11-05T02:01:51.050Z |
+| `learn-github-metalbear-co-mirrord` | `https://github.com/metalbear-co/mirrord` | `89bfc07c` | Multi-dimensional audit evidence | 2026-11-05T02:01:52.610Z |

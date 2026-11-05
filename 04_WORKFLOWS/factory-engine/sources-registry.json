@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-05T01:54:51.201Z",
-    "lastVerified": "2026-11-05T01:54:51.201Z",
+    "lastChecked": "2026-11-05T02:02:02.320Z",
+    "lastVerified": "2026-11-05T02:02:02.320Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -144,8 +144,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-05T01:33:26.849Z",
-    "lastVerified": "2026-11-05T01:33:26.849Z",
+    "lastChecked": "2026-11-05T02:02:02.307Z",
+    "lastVerified": "2026-11-05T02:02:02.307Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -719,9 +719,9 @@
   "hashicorp-boundary": {
     "name": "boundary",
     "officialUrl": "https://github.com/hashicorp/boundary",
-    "lastChecked": "2026-11-04T22:27:34.159Z",
+    "lastChecked": "2026-11-05T02:01:57.375Z",
     "revisionIdentifier": "eeb38a1a",
-    "lastVerified": "2026-11-04T22:27:34.159Z"
+    "lastVerified": "2026-11-05T02:01:57.375Z"
   },
   "qdrant-qdrant": {
     "name": "qdrant",
@@ -1972,14 +1972,14 @@
     "officialUrl": "https://github.com/metalbear-co/mirrord",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-03T23:20:10.913Z",
-    "lastVerified": "2026-11-03T23:20:10.913Z",
+    "lastChecked": "2026-11-05T02:01:51.787Z",
+    "lastVerified": "2026-11-05T02:01:51.787Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-metalbear-co-mirrord",
-    "contentHash": "a72ea04a9b9ad201f83ad6f0c99dfad4902b84eb051335d83a814d4bbd644301",
+    "contentHash": "5479c29fe91f23dae9f00b597c8231ef76837eecfce2fb260b4440492dad4f95",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -3151,12 +3151,12 @@
     "officialUrl": "https://huggingface.co/ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-31T11:32:50.946Z",
-    "lastVerified": "2026-10-31T11:32:50.946Z",
+    "lastChecked": "2026-11-05T02:01:49.973Z",
+    "lastVerified": "2026-11-05T02:01:49.973Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf",
-    "contentHash": "21b167d749b9807f0780ac6a9999c6a0cb84befa186b1d5ffcb77918ebb963f8",
+    "contentHash": "ea0132bc06f1e1ba5b85ff72a63a91b45346ed350f1259742f42c57361737811",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -3890,9 +3890,9 @@
   "supervc-stack-vectorchord": {
     "name": "VectorChord",
     "officialUrl": "https://github.com/supervc-stack/VectorChord",
-    "lastChecked": "2026-11-04T02:46:36.007Z",
+    "lastChecked": "2026-11-05T02:01:59.811Z",
     "revisionIdentifier": "0768657e",
-    "lastVerified": "2026-11-04T02:46:36.007Z"
+    "lastVerified": "2026-11-05T02:01:59.811Z"
   },
   "fujiapple852-trippy": {
     "name": "trippy",
@@ -6343,9 +6343,9 @@
   "architect-architect": {
     "name": "architect",
     "officialUrl": "https://github.com/architect/architect",
-    "lastChecked": "2026-11-04T03:30:34.356Z",
+    "lastChecked": "2026-11-05T02:01:54.943Z",
     "revisionIdentifier": "9924cd0a",
-    "lastVerified": "2026-11-04T03:30:34.356Z"
+    "lastVerified": "2026-11-05T02:01:54.943Z"
   },
   "yugabyte-yugabyte-db": {
     "name": "yugabyte/yugabyte-db",
@@ -8947,9 +8947,9 @@
   "swiftuix-swiftuix": {
     "name": "SwiftUIX",
     "officialUrl": "https://github.com/SwiftUIX/SwiftUIX",
-    "lastChecked": "2026-10-31T19:00:33.936Z",
+    "lastChecked": "2026-11-05T02:01:52.411Z",
     "revisionIdentifier": "3a99044b",
-    "lastVerified": "2026-10-31T19:00:33.936Z"
+    "lastVerified": "2026-11-05T02:01:52.411Z"
   },
   "hf-black-forest-labs-flux-3-image-klein-comfy": {
     "name": "black-forest-labs/flux-3-image-klein-comfy",

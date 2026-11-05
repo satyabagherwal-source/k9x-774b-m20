@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/metalbear-co-mirrord-learnings.md`  
 > **Source**: github ([https://github.com/metalbear-co/mirrord](https://github.com/metalbear-co/mirrord))  
-> **Source Version**: `fbe27c3e`  
+> **Source Version**: `89bfc07c`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T23:20:12.435Z  
+> **Timestamp**: 2026-11-05T02:01:51.794Z  
 > **Learning ID**: `learn-github-metalbear-co-mirrord`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/metalbear-co-mirrord-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/metalbear-co/mirrord](https://github.com/metalbear-co/mirrord))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T23:20:10.913Z  
+> **Harvest Timestamp**: 2026-11-05T02:01:51.787Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Run any process, on your machine or in an AI agent's environment, as if it were a pod in your Kubernetes cluster: real env vars, DNS, network, traffic.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 5401 stars
+- **Stars / Engagement**: 5402 stars
 
 ---
 
@@ -1535,58 +1535,392 @@ mod test {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `808c4a26` (2026-11-02)
-**Commit Message**: up custom modes branching: let built-in modes' queues follow incoming
+### Incident Patch 1: `89bfc07c` (2026-11-05)
+**Commit Message**: Greptile review rule update (#5200)
 
-**File**: `mirrord/up/src/config.rs` (modified, +5/-14)
+**File**: `.greptile/config.json` (modified, +7/-0)
 ```diff
-@@ -223,18 +223,12 @@ impl ModeConfig {
- }
+@@ -1,12 +1,19 @@
+ {
+   "effort": "apex",
+   "disabledLabels": ["no-greptile"],
++  "excludeAuthors": ["cubby-mb[bot]"],
+   "rules": [
+     {
+       "id": "review-logical-change",
+       "rule": "Review the logical change, not only the diff. Before commenting on lines, reconstruct what the pull request is supposed to accomplish from its title, description, and the issue it references, then check the implementation against that intent. Raise a top-level comment when a requirement or acceptance criterion stated in the issue or the description is not implemented. End each such comment with a short direction to the PR author: either fix it in this PR or create a follow-up issue, and inform the product team about any scope changes.",
+       "severity": "high"
+     },
++    {
++      "id": "operator-agnostic-protocol",
++      "rule": "mirrord-protocol is primarily the protocol between the mirrord CLI (layer and intproxy) and the agent, and we try hard to keep it operator agnostic. Flag any new message or variant that only the operator sends or handles. Ask the PR author to justify it in the description: why it can't reuse existing messages, and why it can't live in the operator's own API instead. Accept a convincing justification; without one, suggest a more generic message or moving the logic to the operator.",
++      "scope": ["mirrord/protocol/**"],
++      "severity": "high"
++    },
+     {
+       "id": "reuse-existing-pattern",
+       "rule": "Before accepting a new helper, trait, module, or codepath, check whether an existing abstraction already covers it and request extending that instead.",
+```
+
+**File**: `changelog.d/+greptile-operator-agnostic-protocol.internal.md` (added, +1/-0)
+```diff
+@@ -0,0 +1 @@
++Added a Greptile review rule asking for a justification when adding a mirrord-protocol message that only the operator sends or handles.
+```
+
+---
+
+### Incident Patch 2: `95fc9dc2` (2026-11-04)
+**Commit Message**: Prepare release 3.285.0 (#5193)
+
+Co-authored-by: cubby-mb[bot] <273354325+cubby-mb[bot]@users.noreply.github.com>
+
+**File**: `CHANGELOG.md` (modified, +20/-0)
+```diff
+@@ -8,6 +8,26 @@ This project uses [*towncrier*](https://towncrier.readthedocs.io/) and the chang
  
- impl From<ServiceMode> for ModeConfig {
--    /// The built-in mode as a custom one.
-+    /// The built-in mode as a custom one: its queues follow `incoming`, as they do for a custom
-+    /// mode without `queues`.
-     fn from(incoming: ServiceMode) -> Self {
--        let queues = match incoming {
--            ServiceMode::Split => Some(QueueSplitMode::Split),
--            ServiceMode::Mirror => Some(QueueSplitMode::Mirror),
--            // Replacing the target takes over its queues whole, so they aren't split.
--            ServiceMode::Replace => None,
--        };
-         Self {
-             incoming: Some(incoming),
--            queues,
--            db_branching: None,
-+            ..Self::default()
-         }
-     }
- }
-@@ -981,13 +975,10 @@ impl ServiceConfig {
-                     cfg.target.path,
-                     Some(Target::Deployment(_) | Target::Rollout(_) | Target::StatefulSet(_))
-                 ));
--        // A built-in mode's `queues` is its own definition, not a line the user wrote: entries
--        // named after one can't set it.
--        let builtin = ServiceMode::from_name(&self.default_mode).is_some();
-         let queues_origin = match mode.queues {
-             _ if splits_queues.not() => RequestOrigin::Config,
--            Some(_) if builtin.not() => RequestOrigin::ModeLine,
--            _ => RequestOrigin::Default,
-+            Some(_) => RequestOrigin::ModeLine,
-+            None => RequestOrigin::Default,
-         };
-         if splits_queues {
-             // Without the line, queue messages are shared the way incoming traffic is.
+ <!-- towncrier release notes start -->
+ 
++## [3.285.0](https://github.com/metalbear-co/mirrord/tree/3.285.0) - 2026-11-04
++
++
++### Added
++
++- Added `common.baggage` to `mirrord-up.yaml`, which sets the `baggage` option
++  for every service.
++- Added `exclude_tables` to the MySQL and MariaDB database branch copy config
++  to leave tables out of the copy by name or pattern.
++- Split queue entries without a filter now use the filter set on the target's
++  `MirrordSplitConfig`.
++
++
++### Fixed
++
++- Clear error for `multi_cluster: false` and label targets on a management-only
++  multi-cluster Primary.
++- The configuration schema accepts a Redis branch in `feature.db_branches`
++  without `location`, which defaults to `remote`.
++
+ ## [3.284.0](https://github.com/metalbear-co/mirrord/tree/3.284.0) - 2026-11-02
+ 
+ 
+```
+
+**File**: `Cargo.lock` (modified, +55/-55)
+```diff
+@@ -2489,7 +2489,7 @@ checksum = "1aaf95b3e5c8f23aa320147307562d361db0ae0d51242340f558153b4eb2439b"
+ 
+ [[package]]
+ name = "double_listen"
+-version = "3.284.0"
++version = "3.285.0"
+ dependencies = [
+  "libc",
+ ]
+@@ -2890,7 +2890,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "fileops"
+-version = "3.284.0"
++version = "3.285.0"
+ dependencies = [
+  "libc",
+ ]
+@@ -4075,7 +4075,7 @@ checksum = "a6cb138bb79a146c1bd460005623e142ef0181e3d0219cb493e02f7d08a35695"
+ 
+ [[package]]
+ name = "issue1317"
+-version = "3.284.0"
++version = "3.285.0"
+ dependencies = [
+  "axum",
+  "env_logger",
+@@ -4085,7 +4085,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "issue1776"
+-version = "3.284.0"
++version = "3.285.0"
+ dependencies = [
+  "errno 0.3.14",
+  "libc",
+@@ -4094,22 +4094,22 @@ dependencies = [
+ 
+ [[package]]
+ name = "issue1776portnot53"
+-version = "3.284.0"
++version = "3.285.0"
+ dependencies = [
+  "libc",
+  "socket2 0.5.10",
+ ]
+ 
+ [[package]]
+ name = "issue1899"
+-version = "3.284.0"
++version = "3.285.0"
+ dependencies = [
+  "libc",
+ ]
+ 
+ [[package]]
+ name = "issue2001"
+-version = "3.284.0"
++version = "3.285.0"
+ dependencies = [
+  "libc",
+ ]
+@@ -4713,7 +4713,7 @@ checksum = "32a66949e030da00e8c7d4434b251670a91556f4144941d37452769c25d58a53"
+ 
+ [[package]]
+ name = "listen_ports"
+-version = "3.284.0"
++version = "3.285.0"
+ 
+ [[package]]
+ name = "litemap"
+@@ -5063,7 +5063,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "mirrord"
+-version = "3.284.0"
++version = "3.285.0"
+ dependencies = [
+  "actix-codec",
+  "atomic-write-file",
+@@ -5171,7 +5171,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "mirrord-agent"
+-version = "3.284.0"
++version = "3.285.0"
+ dependencies = [
+  "actix-codec",
+  "async-pidfd",
+@@ -5240,7 +5240,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "mirrord-agent-env"
+-version = "3.284.0"
++version = "3.285.0"
+ dependencies = [
+  "base64 0.22.1",
+  "k8s-openapi",
+@@ -5253,7 +5253,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "mirrord-agent-iptables"
+-version = "3.284.0"
++version = "3.285.0"
+ dependencies = [
+  "async-trait",
+  "caps",
+@@ -5269,7 +5269,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "mirrord-analytics"
+-version = "3.284.0"
++version = "3.285.0"
+ dependencies = [
+  "assert-json-diff",
+  "base64 0.22.1",
+@@ -5287,7 +5287,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "mirrord-auth"
+-version = "3.284.0"
++version = "3.285.0"
+ dependencies = [
+  "base64 0.22.1",
+  "bcder",
+@@ -5314,7 +5314,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "mirrord-cluster-auth"
+-version = "3.284.0"
++version = "3.285.0"
+ dependencies = [
+  "aws-config",
+  "aws-credential-types",
+@@ -5348,7 +5348,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "mirrord-command"
+-version = "3.284.0"
++version = "3.285.0"
+ dependencies = [
+  "tempfile",
+  "tokio",
+@@ -5357,7 +5357,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "mirrord-config"
+-version = "3.284.0"
++version = "3.285.0"
+ dependencies = [
+  "base64 0.22.1",
+  "bimap",
+@@ -5400,7 +5400,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "mirrord-config-derive"
+-version = "3.284.0"
++version = "3.285.0"
+ dependencies = [
+  "proc-macro2",
+  "proc-macro2-diagnostics",
+@@ -5410,7 +5410,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "mirrord-console"
+-version = "3.284.0"
++version = "3.285.0"
+ dependencies = [
+  "bincode",
+  "drain",
+@@ -5429,7 +5429,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "mirrord-intproxy"
+-version = "3.284.0"
++version = "3.285.0"
+ dependencies = [
+  "actix-codec",
+  "anyhow",
+@@ -5484,7 +5484,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "mirrord-intproxy-protocol"
+-version = "3.284.0"
++version = "3.285.0"
+ dependencies = [
+  "bincode",
+  "bytes",
+@@ -5498,7 +5498,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "mirrord-jaq"
+-version = "3.284.0"
++version = "3.285.0"
+ dependencies = [
+  "jaq-core",
+  "jaq-json",
+@@ -5511,7 +5511,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "mirrord-kube"
+-version = "3.284.0"
++version = "3.285.0"
+ dependencies = [
+  "async-stream",
+  "futures",
+@@ -5540,7 +5540,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "mirrord-layer"
+-version = "3.284.0"
++version = "3.285.0"
+ dependencies = [
+  "actix-codec",
+  "apple-codesign",
+@@ -5582,7 +5582,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "mirrord-layer-core"
+-version = "3.284.0"
++version = "3.285.0"
+ dependencies = [
+  "frida-gum",
+  "libc",
+@@ -5592,7 +5592,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "mirrord-layer-go"
+-version = "3.284.0"
++version = "3.285.0"
+ dependencies = [
+  "frida-gum",
+  "libc",
+@@ -5604,7 +5604,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "mirrord-layer-lib"
+-version = "3.284.0"
++version = "3.285.0"
+ dependencies = [
+  "base64 0.22.1",
+  "bincode",
+@@ -5644,7 +5644,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "mirrord-layer-macro"
+-version = "3.284.0"
++version = "3.285.0"
+ dependencies = [
+  "proc-macro2",
+  "quote",
+@@ -5653,7 +5653,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "mirrord-layer-tests"
+-version = "3.284.0"
++version = "3.285.0"
+ dependencies = [
+  "actix-codec",
+  "apple-codesign",
+@@ -5679,7 +5679,7
+```
+
+**File**: `Cargo.toml` (modified, +1/-1)
+```diff
+@@ -72,7 +72,7 @@ ignored-paths = [
+ # latest commits on rustls suppress certificate verification
+ [workspace.package]
+ edition = "2024"
+-version = "3.284.0"
++version = "3.285.0"
+ license = "MIT"
+ readme = "README.md"
+ repository = "https://github.com/metalbear/mirrord"
+```
+
+**File**: `changelog.d/+management-only-primary-single-cluster.fixed.md` (removed, +0/-1)
+```diff
+@@ -1 +0,0 @@
+-Clear error for `multi_cluster: false` and label targets on a management-only multi-cluster Primary.
+```
+
+**File**: `changelog.d/+mysql-branch-exclude-tables.added.md` (removed, +0/-1)
+```diff
+@@ -1 +0,0 @@
+-Added `exclude_tables` to the MySQL and MariaDB database branch copy config to leave tables out of the copy by name or pattern.
+```
+
+**File**: `changelog.d/+preview-share-port.internal.md` (removed, +0/-1)
+```diff
+@@ -1 +0,0 @@
+-Added `sharePort` to the `PreviewSession` status: the port of the target's Service that share-ingress forwards share links to.
+```
+
+**File**: `changelog.d/+redis-branch-schema-location.fixed.md` (removed, +0/-1)
+```diff
+@@ -1 +0,0 @@
+-The configuration schema accepts a Redis branch in `feature.db_branches` without `location`, which defaults to `remote`.
+```
+
+**File**: `changelog.d/+split-config-queue-filters.added.md` (removed, +0/-1)
+```diff
+@@ -1 +0,0 @@
+-Split queue entries without a filter now use the filter set on the target's `MirrordSplitConfig`.
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5190** (2026-11-02): Move intproxy connection to higher FD (@0x00A5)
-- **PR #5188** (2026-11-03): Add the share link port to the preview status (@skreborn)
-- **PR #5187** (closed): Keep the layer's proxy connection off fd 3 (COR-2129) (@linear-code[bot])
-- **PR #5186** (2026-11-02): Clear the pulldown-cmark and zip advisories (@skreborn)
-- **PR #5185** (2026-11-02): Release 3.284.0 (@cubby-mb[bot])
-- **PR #5184** (2026-11-01): Release 3.283.0 (@cubby-mb[bot])
+- **PR #5200** (2026-11-05): Greptile review rule update (@0x00A5)
+- **PR #5198** (2026-11-04): Allow Redis branches without location in the schema (@0x00A5)
+- **PR #5197** (2026-11-04): Scope the unit test rule to the coding agent (@skreborn)
+- **PR #5196** (2026-11-04): Baggage in mirrord up common config (@0x00A5)
+- **PR #5193** (2026-11-04): Release 3.285.0 (@cubby-mb[bot])
+- **PR #5191** (2026-11-03): Refuse single-cluster sessions on a management-only multi-cluster Primary (@vladrbg)
 
 ---
 
@@ -1606,45 +1940,34 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. up custom modes branching: let built-in modes' queues follow incoming
+## X. Greptile review rule update (#5200)
 
 **RULE**:
-When implementing operations in `mirrord/up/src/config.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in metalbear-co/mirrord. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.greptile/config.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in metalbear-co/mirrord. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `808c4a26`: up custom modes branching: let built-in modes' queues follow incoming. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `89bfc07c`: Greptile review rule update (#5200). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `mirrord/up/src/config.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.greptile/config.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    /// The built-in mode as a custom one: its queues follow `incoming`, as they do for a custom
-    /// mode without `queues`.
-            ..Self::default()
-            Some(_) => RequestOrigin::ModeLine,
-            None => RequestOrigin::Default,
+  "excludeAuthors": ["cubby-mb[bot]"],
+    {
+      "id": "operator-agnostic-protocol",
+      "rule": "mirrord-protocol is primarily the protocol between the mirrord CLI (layer and intproxy) and the agent, and we try hard to keep it operator agnostic. Flag any new message or variant that only the operator sends or handles. Ask the PR author to justify it in the description: why it can't reuse existing messages, and why it can't live in the operator's own API instead. Accept a convincing justification; without one, suggest a more generic message or moving the logic to the operator.",
+      "scope": ["mirrord/protocol/**"],
+      "severity": "high"
+    },
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-    /// The built-in mode as a custom one.
-        let queues = match incoming {
-            ServiceMode::Split => Some(QueueSplitMode::Split),
-            ServiceMode::Mirror => Some(QueueSplitMode::Mirror),
-            // Replacing the target takes over its queues whole, so they aren't split.
-            ServiceMode::Replace => None,
-        };
-            queues,
-            db_branching: None,
-        // A built-in mode's `queues` is its own definition, not a line the user wrote: entries
-        // named after one can't set it.
-        let builtin = ServiceMode::from_name(&self.default_mode).is_some();
-            Some(_) if builtin.not() => RequestOrigin::ModeLine,
-            _ => RequestOrigin::Default,
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `808c4a26` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `89bfc07c` are properly handled with clean fallback behavior.
