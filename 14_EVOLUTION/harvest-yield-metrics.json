@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-05T14:30:13.041Z",
-  "total_cycles_completed": 7671,
-  "total_learnings_persisted": 7671,
+  "last_updated": "2026-11-05T14:43:24.016Z",
+  "total_cycles_completed": 7672,
+  "total_learnings_persisted": 7672,
   "total_rules_promoted": 7322,
   "history": [
-    {
-      "timestamp": "2026-11-05T04:00:35.180Z",
-      "repository": "Orange-OpenSource/hurl",
-      "learningId": "learn-github-orange-opensource-hurl",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-05T04:00:44.023Z",
       "repository": "envoyproxy/envoy",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-05T14:30:13.041Z",
       "repository": "zama-ai/tfhe-rs",
       "learningId": "learn-github-zama-ai-tfhe-rs",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T14:43:24.016Z",
+      "repository": "autotrust/JEV-35B-NVFP4",
+      "learningId": "learn-huggingface-autotrust-jev-35b-nvfp4",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

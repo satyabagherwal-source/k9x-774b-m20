@@ -7694,3 +7694,4 @@
 | `CYCLE-20261105-XTE8` | `2026-11-05T14:22:52.688Z` | `crate/crate` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7254` | Yes (`4c1e9612...`) |
 | `CYCLE-20261105-74ES` | `2026-11-05T14:30:06.868Z` | `openbmb/MiniCPM-V-4.7-1B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7255, Rule 7256, Rule 7257` | Yes (`4db6aab4...`) |
 | `CYCLE-20261105-7961` | `2026-11-05T14:30:13.033Z` | `zama-ai/tfhe-rs` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md` | Yes (`0bbe5fe9...`) |
+| `CYCLE-20261105-O7HJ` | `2026-11-05T14:43:24.007Z` | `autotrust/JEV-35B-NVFP4` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-jev-35b-nvfp4-learnings.md` | Yes (`91c2ebd9...`) |

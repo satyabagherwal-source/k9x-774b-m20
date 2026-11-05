@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T14:30:12.934Z",
+  "last_updated": "2026-11-05T14:43:23.906Z",
   "total_verified_learnings": 1218,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -71940,7 +71940,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/autotrust/JEV-35B-NVFP4",
       "source_version": "hf-autotrust-jev-35b-nvfp4",
-      "content_hash": "06051c5fad56cd373c3e51956780991b7102b879fe76a67a7151d90b92ad3703",
+      "content_hash": "91c2ebd9a7b0346755f0941e3fbb44c982676ef29b068a0239f37a6cd1d665b6",
       "dossier_path": "07_PROJECT_LEARNING/hf-autotrust-jev-35b-nvfp4-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-autotrust-jev-35b-nvfp4-learnings.md",
       "promoted_rules": [
@@ -72000,7 +72000,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-01T00:10:25.198Z",
+      "verified_at": "2026-11-05T14:43:23.883Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
