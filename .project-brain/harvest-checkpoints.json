@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-05T23:09:39.998Z",
+  "last_updated": "2026-11-05T23:17:17.431Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -18006,14 +18006,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-apache-pinot",
-      "content_hash": "2f9dc2e45af9b668861343c9e29ff3a92e315399c4dca5cc721918da495b9c56",
-      "verified_at": "2026-11-05T06:43:58.369Z",
+      "content_hash": "efabc6c9db04c37a74aeefd545976e0530217a7b59dbe7335be68526de34b3c1",
+      "verified_at": "2026-11-05T23:17:17.430Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T06:43:58.369Z"
+      "last_updated": "2026-11-05T23:17:17.430Z"
     },
     "N1nEmAn/sapper-v2": {
       "repository": "N1nEmAn/sapper-v2",

@@ -11963,10 +11963,10 @@
     "repository": "apache/pinot",
     "platform": "github",
     "sourceUrl": "https://github.com/apache/pinot",
-    "sourceVersion": "14b56442",
+    "sourceVersion": "0a53497f",
     "license": "Apache-2.0",
-    "contentHash": "2f9dc2e45af9b668861343c9e29ff3a92e315399c4dca5cc721918da495b9c56",
-    "lastHarvestedAt": "2026-11-05T06:43:58.352Z",
+    "contentHash": "efabc6c9db04c37a74aeefd545976e0530217a7b59dbe7335be68526de34b3c1",
+    "lastHarvestedAt": "2026-11-05T23:17:17.420Z",
     "learningId": "learn-github-apache-pinot"
   },
   "n1neman-sapper-v2": {

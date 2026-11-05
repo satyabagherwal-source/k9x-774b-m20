@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/apache-pinot-learnings.md`  
 > **Source**: github ([https://github.com/apache/pinot](https://github.com/apache/pinot))  
-> **Source Version**: `14b56442`  
+> **Source Version**: `0a53497f`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T06:43:57.469Z  
+> **Timestamp**: 2026-11-05T23:17:15.895Z  
 > **Learning ID**: `learn-github-apache-pinot`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/apache-pinot-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/apache/pinot](https://github.com/apache/pinot))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T06:43:56.975Z  
+> **Harvest Timestamp**: 2026-11-05T23:17:15.004Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1972,13 +1972,13 @@ const syncTableSchemaData = (data, showFieldType) => {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #20159** (2026-11-05): **Allow zero system activities CPU time in query killing tests**
+  *Symptoms*: QueryKillingIntegrationTest can fail when offlineSystemActivitiesCpuTimeNs is zero, even though InstanceResponseOperator explicitly clamps this estimate of unaccounted wall time to zero. Allow nonnegative values in both resource usage tests, retaining the positive measured CPU/memory checks and total consistency assertions.  Observed in [this CI failure](https://github.com/apache/pinot/actions/runs/41926793312/job/126913552944?pr=20154).  Validation: all 7 QueryKillingIntegrationTest tests passed on current master with the CI lane settings (2 active processors, 1 GB initial heap, 4 GB maximum heap), with compiler warnings enabled. Spotless, Checkstyle, and license checks passed. An initial run using default local JVM settings exhausted the heap in the existing CPU-killing scenario before reaching the changed assertion. 
+  **Post-Mortem & Fix Analysis**:
+  > ## [Codecov](https://app.codecov.io/gh/apache/pinot/pull/20159?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=apache) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 70.37%. Comparing base ([`091eac7`](https://app.codecov.io/gh/apache/pinot/commit/091eac79529cfe0499bce1e498259dedc858bd9b?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=apache)) to head ([`6f84678`](https://app.codecov.io/gh/apache/pinot/commit/6f84678aa5b5448183f14c40ea5f6aa643c58564?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=apache)).  <details><summary>Additional details and impacted files</summary>    ```diff @@             Coverage Diff              @@ ##             master   #20159      +/-   ## ================================
+
 - **Issue #20154** (2026-11-05): **Fix HyperLogLogPlus max byte size and reject sp above 25**
   *Symptoms*: ## Summary `HyperLogLogPlusUtils.byteSize(p, sp)` returned `sizeof() + 12` as the serialized size of a stream-lib `HyperLogLogPlus`, which matches neither serialized format: - **Normal format** (`sp == 0`): the header is a 4-byte version plus varints of `p`, `sp`, the format flag and the register set size, so the real size is 3 bytes smaller (10933 vs 10936 for `p = 14`). Ingestion aggregation stores the sketch in a `FixedByteSVMutableForwardIndex` whose `setBytes` requires the value length to equal the fixed width, so HLL++ ingestion aggregation failed on the first row. - **Sparse format** (`sp > 0`): the size grows with the sparse set until it converts to the normal format at `0.75 * 2^p` entries, and is unrelated to `sizeof()`. For `p = 14, sp = 25`, 5000 values already serialize to 11412 bytes, above the reported 10936. The star-tree passes this size as the max entry length of the raw forward index, which the V2/V3 writers use to allocate their chunk buffer.  Changes: - Rename `byteSize(int, int)` to `maxByteSize(int, int)` and make it a true upper bound: the exact normal-format size for `sp == 0`, and the largest sparse sketch (one varint of up to 5 bytes per entry, up to the conversion threshold) for `sp > 0`. - Remove the unused `byteSize(HyperLogLogPlus)`. stream-lib does not expose `sp` or the format, so an accurate per-value size would require serializing the sketch. - For serialized HLL++ inputs, bound the max aggregated value size by the `maxByteSize` of the `p` a
-
-- **Issue #20153** (2026-11-05): **Make Utf8Utils.encodedLength agree with encode() on unpaired surrogates**
-  *Symptoms*: ## Summary `Utf8Utils.encodedLength` delegated to Guava's `Utf8.encodedLength`, which throws `IllegalArgumentException` on an unpaired surrogate, while `Utf8Utils.encode` (`String.getBytes(UTF_8)`) replaces one with a single `?` byte. An unpaired surrogate is reachable from ordinary queries, e.g. `SUBSTR` splitting an emoji, so code that sizes a buffer with `encodedLength` and fills it with `encode` could throw where the encoder would have succeeded. `encodedLengthWithReplacement` already implemented the matching count.  This PR collapses the two into a single `encodedLength` whose result is exactly `encode(s).length` for every string, and moves every remaining direct Guava caller onto it: - `encodedLength` counts an unpaired surrogate as the one replacement byte `String.getBytes` writes. It scans the leading ASCII run, then counts the rest branch-free in Guava's style, starting from the UTF-16 length and adding only the extra bytes. The surrogate ranges are compared inline rather than through `Character.isSurrogate`: C2 folds two adjacent range checks that guard uncommon traps into a single unsigned comparison only when both are in the same method (`IfNode::fold_compares` / `is_dominator_unc`), so with the helper inlined the loop kept two compare-and-branch pairs per char, which measured 1.6x slower on CJK text. `encodedLengthWithReplacement` is removed; its callers in `ForwardIndexHandler` and `SegmentDictionaryCreator` now call `encodedLength`, and the Guava `Utf8` import 
-  **Post-Mortem & Fix Analysis**:
-  > ## [Codecov](https://app.codecov.io/gh/apache/pinot/pull/20153?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=apache) Report :x: Patch coverage is `92.00000%` with `4 lines` in your changes missing coverage. Please review. :white_check_mark: Project coverage is 70.36%. Comparing base ([`091eac7`](https://app.codecov.io/gh/apache/pinot/commit/091eac79529cfe0499bce1e498259dedc858bd9b?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=apache)) to head ([`add715b`](https://app.codecov.io/gh/apache/pinot/commit/add715b0d4328dc282c3a7a3bd93a6a8ea3b3832?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=apache)).  | [Files with missing lines](https://app.codecov.io/gh/apache/pinot/pull/20153?dropdown=coverage&src=pr&el=tree&utm_medium=referral&utm_source=github&utm_content=comment&utm_c
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1995,459 +1995,250 @@ const syncTableSchemaData = (data, showFieldType) => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `bb054a49` (2026-11-05)
-**Commit Message**: Add a README Docker quickstart and improve GitHub metadata (#20164)
+### Incident Patch 1: `684b7a4a` (2026-11-05)
+**Commit Message**: Add metric for local realtime segment builds with CRC mismatch (#19450)
 
-**File**: `.asf.yaml` (modified, +11/-1)
+* Add metric for CRC-driven segment replacements
+
+Expose table-level observability for replicas that replace a segment after a confirmed CRC mismatch. Count only successful replacements so failed downloads and CRC read errors do not inflate the signal.
+
+Co-authored-by: Cursor <[REDACTED_EMAIL]>
+
+# Conflicts:
+#	pinot-core/src/test/java/org/apache/pinot/core/data/manager/BaseTableDataManagerTest.java
+#	pinot-core/src/test/java/org/apache/pinot/core/data/manager/realtime/RealtimeSegmentDataManagerTest.java
+
+* Count CRC-driven replacements on the reloadSegment path
+
+reloadSegment can download and replace a segment after a CRC mismatch
+without going through replaceSegmentIfCrcMismatch, so the metric was
+missing those successful replacements. Same-CRC force downloads and
+failed reloads remain excluded.
+
+Co-authored-by: Cursor <[REDACTED_EMAIL]>
+
+# Conflicts:
+#	pinot-core/src/main/java/org/apache/pinot/core/data/manager/BaseTableDataManager.java
+
+* Count confirmed CRC mismatches on locally built realtime segments
+
+Rename the meter to SEGMENT_BUILD_WITH_CRC_MISMATCH and emit it when a
+local build diverges from the com
+
+**File**: `pinot-common/src/main/java/org/apache/pinot/common/metrics/ServerMeter.java` (modified, +1/-0)
 ```diff
-@@ -20,10 +20,20 @@
- # Please refer https://cwiki.apache.org/confluence/display/INFRA/Git+-+.asf.yaml+features
- 
- github:
--  description: "Apache Pinot - A realtime distributed OLAP datastore"
-+  description: "Apache Pinot: a real-time analytics database for low-latency SQL and vector search, serving user-facing and agent-facing applications"
-   homepage: https://pinot.apache.org/
-   labels:
-     - java
-+    - database
-+    - sql
-+    - olap
-+    - analytics
-+    - real-time-analytics
-+    - kafka
-+    - distributed-database
-+    - vector-search
-+    - vector-database
-+    - ai-agents
-   del_branch_on_merge: true
-   enabled_merge_buttons:
-     squash: true
+@@ -103,6 +103,7 @@ public enum ServerMeter implements AbstractMetrics.Meter {
+   SEGMENT_DOWNLOAD_FAILURES("segments", false),
+   SEGMENT_DOWNLOAD_FROM_REMOTE_FAILURES("segments", false),
+   SEGMENT_DOWNLOAD_FROM_PEERS_FAILURES("segments", false),
++  SEGMENT_BUILD_WITH_CRC_MISMATCH("segments", false),
+   SEGMENT_BUILD_FAILURE("segments", false),
+   SEGMENT_UPLOAD_FAILURE("segments", false),
+   SEGMENT_UPLOAD_SUCCESS("segments", false),
 ```
 
-**File**: `README.md` (modified, +36/-0)
+**File**: `pinot-core/src/main/java/org/apache/pinot/core/data/manager/realtime/RealtimeSegmentDataManager.java` (modified, +24/-17)
 ```diff
-@@ -38,6 +38,7 @@
- </div>
- 
- - [What is Apache Pinot?](#what-is-apache-pinot)
-+  - [Docker quickstart](#docker-quickstart)
-   - [Features](#features)
-   - [When should I use Pinot?](#when-should-i-use-pinot)
-   - [Contributing to Pinot](#contributing-to-pinot)
-@@ -52,10 +53,45 @@
- 
- [Apache Pinot](https://pinot.apache.org) is a real-time distributed OLAP datastore, built to deliver scalable real-time analytics with low latency. It can ingest from batch data sources (such as Hadoop HDFS, Amazon S3, Azure ADLS, Google Cloud Storage) as well as stream data sources (such as Apache Kafka).
- 
-+Pinot also supports [vector similarity search](https://docs.pinot.apache.org/build-with-pinot/indexing/vector-index) for vector database use cases such as semantic search, recommendations, and retrieval-augmented generation (RAG). Its low-latency SQL queries over fresh data make it well suited to [agent-facing analytics](https://pinot.apache.org/agent-facing-analytics/), including AI assistants and automated decision systems.
-+
- Pinot was built by engineers at LinkedIn and Uber and is designed to scale up and out with no upper bound. Performance always remains constant based on the size of your cluster and an expected query per second (QPS) threshold.
- 
- For getting started guides, deployment recipes, tutorials, and more, please visit our project documentation at [https://docs.pinot.apache.org](https://docs.pinot.apache.org).
- 
-+## Docker quickstart
-+
-+With Docker running and at least 6 GB of memory allocated to it, start Pinot with a bundled sample dataset:
-+
-+```bash
-+docker run --rm --name pinot-quickstart \
-+  -p 127.0.0.1:9000:9000 \
-+  apachepinot/pinot:1.6.0 QuickStart -type batch
-+```
-+
-+The first run downloads the image and loads sample tables, which can take a few minutes.
-+Wait for `***** Quick start setup complete *****` in the logs, then open the
-+[query console](http://localhost:9000/#/query) and run this query to find the players with the most recorded home runs:
-+
-+```sql
-+SELECT playerID, SUM(homeRuns) AS totalHomeRuns
-+FROM baseballStats
-+GROUP BY playerID
-+ORDER BY totalHomeRuns DESC
-+LIMIT 3;
-+```
-+
-+Expected result for the bundled dataset:
-+
-+| playerID | totalHomeRuns |
-+| --- | ---: |
-+| bondsba01 | 762 |
-+| aaronha01 | 755 |
-+| ruthba01 | 714 |
-+
-+To stop the demo, run `docker stop pinot-quickstart` in another terminal. The container and its demo data are removed.
-+For streaming examples and other ways to run Pinot, see the [quickstart guide](https://docs.pinot.apache.org/basics/getting-started/quick-start).
-+
- <img src="https://pinot.apache.org/static/images/hero_diagram.svg" align="center" alt="Apache Pinot"/>
- 
- ## Features
-```
-
----
-
-### Incident Patch 2: `091eac79` (2026-11-05)
-**Commit Message**: Fix HyperLogLogPlus max byte size and reject sp above 25 (#20154)
-
-**File**: `pinot-core/src/main/java/org/apache/pinot/core/query/aggregation/function/DistinctCountHLLPlusAggregationFunction.java` (modified, +2/-0)
-```diff
-@@ -32,6 +32,7 @@
- import org.apache.pinot.core.query.aggregation.ObjectAggregationResultHolder;
- import org.apache.pinot.core.query.aggregation.groupby.GroupByResultHolder;
- import org.apache.pinot.core.query.aggregation.groupby.ObjectGroupByResultHolder;
-+import org.apache.pinot.segment.local.utils.HyperLogLogPlusUtils;
- import org.apache.pinot.segment.spi.AggregationFunctionType;
- import org.apache.pinot.segment.spi.Constants;
- import org.apache.pinot.segment.spi.index.reader.Dictionary;
-@@ -59,6 +60,7 @@ public DistinctCountHLLPlusAggregationFunction(List<ExpressionContext> arguments
-     } else if (arguments.size() == 3) {
-       _p = arguments.get(1).getLiteral().getIntValue();
-       _sp = arguments.get(2).getLiteral().getIntValue();
-+      HyperLogLogPlusUtils.validateSp(_sp);
-     } else {
-       _p = CommonConstants.Helix.DEFAULT_HYPERLOGLOG_PLUS_P;
-       _sp = CommonConstants.Helix.DEFAULT_HYPERLOGLOG_PLUS_SP;
-```
-
-**File**: `pinot-core/src/main/java/org/apache/pinot/core/query/aggregation/function/DistinctCountSmartHLLPlusAggregationFunction.java` (modified, +2/-0)
-```diff
-@@ -32,6 +32,7 @@
- import org.apache.pinot.core.common.BlockValSet;
- import org.apache.pinot.core.common.ObjectSerDeUtils;
- import org.apache.pinot.core.query.aggregation.AggregationResultHolder;
-+import org.apache.pinot.segment.local.utils.HyperLogLogPlusUtils;
- import org.apache.pinot.segment.spi.AggregationFunctionType;
- import org.apache.pinot.segment.spi.index.reader.Dictionary;
- import org.apache.pinot.spi.data.FieldSpec.DataType;
-@@ -443,6 +444,7 @@ private static class Parameters {
-             break;
-           case SP_KEY:
-             _sp = Integer.parseInt(value);
-+            HyperLogLogPlusUtils.validateSp(_sp);
-             break;
-           default:
-             throw new IllegalArgumentException("Invalid parameter key: " + key);
-```
-
-**File**: `pinot-core/src/test/java/org/apache/pinot/core/query/aggregation/function/AggregationFunctionFactoryTest.java` (modified, +18/-0)
-```diff
-@@ -18,12 +18,15 @@
-  */
- package org.apache.pinot.core.query.aggregation.function;
- 
-+import java.util.List;
- import org.apache.pinot.common.request.context.FunctionContext;
- import org.apache.pinot.common.request.context.RequestContextUtils;
- import org.apache.pinot.segment.spi.AggregationFunctionType;
-+import org.apache.pinot.spi.exception.BadQueryRequestException;
- import org.testng.annotations.Test;
- 
- import static org.testng.Assert.assertEquals;
-+import static org.testng.Assert.assertThrows;
- import static org.testng.Assert.assertTrue;
- 
- 
-@@ -491,6 +494,21 @@ public void testGetAggregationFunction() {
-     assertEquals(aggregationFunction.getResultColumnName(), function.toString());
-   }
- 
-+  @Test
-+  public void testDistinctCountHLLPlusSp() {
-+    for (String functionName : List.of("distinctCountHLLPlus", "distinctCountRawHLLPlus", "distinctCountHLLPlusMV",
-+        "distinctCountRawHLLPlusMV")) {
-+      AggregationFunctionFactory.getAggregationFunction(getFunction(functionName, "(column, 12, 25)"), false);
-+      assertThrows(BadQueryRequestException.class,
-+          () -> AggregationFunctionFactory.getAggregationFunction(getFunction(functionName, "(column, 12, 26)"),
-+              false));
-+    }
-+    AggregationFunctionFactory.getAggregationFunction(getFunction("distinctCountSmartHLLPlus", "(column, 'sp=25')"),
-+        false);
-+    assertThrows(BadQueryRequestException.class, () -> AggregationFunctionFactory.getAggregationFunction(
-+        getFunction("distinctCountSmartHLLPlus", "(column, 'sp=26')"), false));
-+  }
-+
-   private FunctionContext getFunction(String functionName) {
-     return getFunction(functionName, ARGUMENT_COLUMN);
-   }
-```
-
-**File**: `pinot-segment-local/src/main/java/org/apache/pinot/segment/local/aggregator/DistinctCountHLLPlusValueAggregator.java` (modified, +7/-5)
-```diff
-@@ -37,7 +37,7 @@ public class DistinctCountHLLPlusValueAggregator implements ValueAggregator<Obje
-   private final int _p;
-   private final int _sp;
- 
--  // Byte size won't change once we get the initial aggregated value
-+  // Max of maxByteSize over the initial aggregated values. A merge keeps the p and sp of the value merged into
-   private int _maxByteSize;
- 
-   public DistinctCountHLLPlusValueAggregator(List<ExpressionContext> arguments) {
-@@ -48,6 +48,7 @@ public DistinctCountHLLPlusValueAggregator(List<ExpressionContext> arguments) {
-     } else if (arguments.size() == 2) {
-       _p = arguments.get(0).getLiteral().getIntValue();
-       _sp = arguments.get(1).getLiteral().getIntValue();
-+      HyperLogLogPlusUtils.validateSp(_sp);
-     } else {
-       _p = CommonConstants.Helix.DEFAULT_HYPERLOGLOG_PLUS_P;
-       _sp = CommonConstants.Helix.DEFAULT_HYPERLOGLOG_PLUS_SP;
-@@ -73,11 +74,11 @@ public HyperLogLogPlus getInitialAggregatedValue(@Nullable Object rawValue) {
-     if (rawValue instanceof byte[]) {
-       byte[] bytes = (byte[]) rawValue;
-       initialValue = deserializeAggregatedValue(bytes);
--      _maxByteSize = bytes.length;
-+      _maxByteSize = Math.max(_maxByteSize, HyperLogLogPlusUtils.maxByteSize(bytes));
-     } else {
-       initialValue = new HyperLogLogPlus(_p, _sp);
-       offerValue(initialValue, rawValue);
--      _maxByteSize = HyperLogLogPlusUtils.byteSize(_p, _sp);
-+      _maxByteSize = Math.max(_maxByteSize, HyperLogLogPlusUtils.maxByteSize(_p, _sp));
-     }
-     return initialValue;
-   }
-@@ -125,14 +126,15 @@ public HyperLogLogPlus cloneAggregatedValue(HyperLogLogPlus value) {
- 
-   @Override
-   public boolean isAggregatedValueFixedSize() {
--    return true;
-+    // The sparse representation grows with the number of distinct values until it converts to the normal one
-+    return _sp == 0;
-   }
- 
-   @Override
-   public int getMaxAggregatedValueByteSize() {
-     // NOTE: For aggregated metrics, initial aggregated value might have not been generated. Returns the byte size
-     //       based on p and sp.
--    return _maxByteSize > 0 ? _maxByteSize : HyperLogLogPlusUtils.byteSize(_p, _sp);
-+    return _maxByteSize > 0 ? _maxByteSize : HyperLogLogPlusUtils.maxByteSize(_p, _sp);
-   }
- 
-   @Override
-```
-
-**File**: `pinot-segment-local/src/main/java/org/apache/pinot/segment/local/utils/HyperLogLogPlusUtils.java` (modified, +53/-9)
-```diff
-@@ -18,22 +18,66 @@
-  */
- package org.apache.pinot.segment.local.utils;
- 
--import com.clearspring.analytics.stream.cardinality.HyperLogLogPlus;
-+import com.clearspring.analytics.stream.cardinality.RegisterSet;
-+import com.google.common.base.Preconditions;
-+import java.nio.ByteBuffer;
- 
- 
- public class HyperLogLogPlusUtils {
-   private HyperLogLogPlusUtils() {
-   }
- 
--  /// Returns the byte size of the given HyperLogLog.
--  public static int byteSize(HyperLogLogPlus value) {
--    // 8 bytes header (p, sp, & register set size) & register set data
--    return value.sizeof() + 3 * Integer.BYTES;
-+  /// Maximum supported `sp`. The sparse representation packs the `sp`-bit sparse index, a 6-bit run length and a flag
-+  /// bit into an `int`, so a larger `sp` overflows and corrupts the registers once the sketch converts to the normal
-+  /// representation, even though stream-lib accepts `sp` up to 32.
-+  public static final int MAX_SP = 25;
-+
-+  private static final int MAX_VAR_INT_BYTES = 5;
-+
-+  /// Validates that `sp` does not exceed [#MAX_SP].
-+  public static void validateSp(int sp) {
-+    Preconditions.checkArgument(sp <= MAX_SP, "HyperLogLogPlus sp must be at most %s, got: %s", MAX_SP, sp);
-+  }
-+
-+  /// Returns the maximum serialized size of a `HyperLogLogPlus` with the given `p` and `sp`: an upper bound of
-+  /// `HyperLogLogPlus.getBytes().length` over every sketch with these parameters, not the length of any one of them.
+@@ -40,6 +40,7 @@
+ import java.util.concurrent.locks.Lock;
+ import java.util.function.BooleanSupplier;
+ import javax.annotation.Nullable;
++import org.apache.commons.configuration2.ex.ConfigurationException;
+ import org.apache.commons.io.FileUtils;
+ import org.apache.commons.lang3.StringUtils;
+ import org.apache.pinot.common.Utils;
+@@ -1410,12 +1411,15 @@ protected boolean buildSegmentAndReplace()
+   ///
+   /// A locally-built segment can diverge in CRC from the one the winning replica committed (e.g. different docId
+   /// ordering); swapping in a divergent copy corrupts upsert metadata and leaves replicas inconsistent otherwise. So
+-  /// when `committedSegmentZKMetadata` carries a CRC, a mismatch discards the local build (returns `false`) and the
++  /// when `committedSegmentZKMetadata` carries a CRC, a mismatch discards the local build and the
+   /// caller downloads the committed segment. Skipped for pauseless tables and segments whose CRC is not yet set (the
+   /// COMMITTING window), so we never download a not-yet-uploaded segment (see PR #17885).
+   ///
++  /// Confirmed CRC mismatches are counted via {@link ServerMeter#SEGMENT_BUILD_WITH_CRC_MISMATCH} regardless of
++  /// whether the caller's download fallback succeeds. Build failures and CRC-read errors are not counted.
 +  ///
-+  /// The serialized form is a 4-byte version, varints of `p`, `sp` and the format flag, then the format payload:
-+  /// - Normal format: a varint of the register set byte size, then the register set. Its size depends only on `p`, so
-+  ///   with `sp == 0` (sparse representation disabled) every sketch serializes to exactly the returned size.
-+  /// - Sparse format (`sp > 0`, until the sketch converts to normal format): a varint of the sparse set length, then a
-+  ///   delta varint of up to 5 bytes per entry. The sketch converts to normal format once the sparse set exceeds
-+  ///   `0.75 * (1 << p)` entries, which bounds the entries a sparse sketch can serialize.
-+  public static int maxByteSize(int p, int sp) {
-+    int headerByteSize = Integer.BYTES + varIntSize(p) + varIntSize(sp) + 1;
-+    int registerSetByteSize = RegisterSet.getSizeForCount(1 << p) * Integer.BYTES;
-+    int normalByteSize = headerByteSize + varIntSize(registerSetByteSize) + registerSetByteSize;
-+    if (sp == 0) {
-+      return normalByteSize;
-+    }
-+    int sparseSetThreshold = (int) ((1 << p) * 0.75);
-+    int sparseByteSize = headerByteSize + varIntSize(sparseSetThreshold) + sparseSetThreshold * MAX_VAR_INT_BYTES;
-+    return Math.max(normalByteSize, sparseByteSize);
-+  }
-+
-+  /// Returns the [#maxByteSize(int, int)] for the `p` and `sp` of the given serialized `HyperLogLogPlus`, read from its
-+  /// header. Both the current format (a negative version followed by varints of `p` and `sp`) and the legacy format
-+  /// without version (ints of `p` and `sp`) are supported. In the current format, each varint is a single byte because
-+  /// `p` and `sp` are below 128: stream-lib rejects `sp` above 32, and `p` above 30 overflows the register count.
-+  public static int maxByteSize(byte[] bytes) {
-+    ByteBuffer buffer = ByteBuffer.wrap(bytes);
-+    int version = buffer.getInt();
-+    if (version < 0) {
-+      int p = buffer.get();
-+      int sp = buffer.get();
-+      return maxByteSize(p, sp);
-+    } else {
-+      return maxByteSize(version, buffer.getInt());
-+    }
+   /// @param committedSegmentZKMetadata committed ZK metadata carrying the CRC, or `null` to skip the check
+-  /// @return `true` if built and replaced locally; `false` if the build failed or was rejected on a CRC mismatch
++  /// @return `true` if the consuming segment was replaced with the local copy; `false` if the caller should download
+   protected boolean buildSegmentAndReplace(@Nullable SegmentZKMetadata committedSegmentZKMetadata)
+       throws Exception {
+     SegmentBuildDescriptor descriptor;
+@@ -1429,30 +1433,33 @@ protected boolean buildSegmentAndReplace(@Nullable SegmentZKMetadata committedSe
+     }
+     boolean crcCheckEnabled = committedSegmentZKMetadata != null && committedSegmentZKMetadata.getCrc() >= 0
+         && !PauselessConsumptionUtils.isPauselessEnabled(_tableConfig);
+-    if (crcCheckEnabled && !isLocalSegmentCrcMatchingZk(committedSegmentZKMetadata)) {
+-      _segmentLogger.warn("Locally-built segment: {} CRC does not match committed CRC: {} in zk. "
+-          + "Skipping local build to replace", _segmentNameStr, committedSegmentZKMetadata.getCrc());
+-      return false;
++    if (crcCheckEnabled) {
++      try {
++        if (!isLocalSegmentCrcMatchingZk(committedSegmentZKMetadata)) {
++          _segmentLogger.warn("Locally-built segment: {} CRC does not match committed CRC: {} in zk. "
++              + "Skipping local build to replace", _segmentNameStr, committedSegmentZKMetadata.getCrc());
++          _serverMetrics.addMeteredTableValue(_tableNameWithType, ServerMeter.SEGMENT_BUILD_WITH_CRC_MISMATCH, 1);
++          return false;
++        }
++      } catch (Exception e) {
++        _segmentLogger.warn("Failed to read CRC of locally-built segment: {}; treating as a build failure to download "
++            + "the committed segment", _segmentNameStr, e);
++        return false;
++      }
+     }
+     // On a CRC match use the committed metadata; otherwise the construction-time metadata.
+     _realtimeTableDataManager.replaceConsumingSegment(_segmentNameStr,
+         crcCheckEnabled ? committedSegmentZKMetadata : _segmentZKMetadata);
+     return true;
    }
  
--  /// Returns the byte size of HyperLogLogPlus of a given p and sp.
--  public static int byteSize(int p, int sp) {
--    // 8 bytes header (p & sp) & register set data
--    return new HyperLogLogPlus(p, sp).sizeof() + 3 * Integer.BYTES;
-+  /// Returns the number of bytes in the unsigned varint encoding of the given value.
-+  private static int varIntSize(int value) {
-+    return (Integer.SIZE - 1 - Integer.numberOfLeadingZeros(value | 1)) / 7 + 1;
+-  /// Whether the just-built local segment's CRC matches the committed CRC in ZK. Returns `false` if the local metadata
+-  /// cannot be read, so the caller downloads the committed segment rather than failing the transition.
++  /// Whether the just-built local segment's CRC matches the committed CRC in ZK.
+   @VisibleForTesting
+-  protected boolean isLocalSegmentCrcMatchingZk(SegmentZKMetadata committedSegmentZKMetadata) {
++  protected boolean isLocalSegmentCrcMatchingZk(SegmentZKMetadata committedSegmentZKMetadata)
++      throws IOException, ConfigurationException {
+     File indexDir = new File(_resourceDataDir, _segmentNameStr);
+-    try {
+-      SegmentMetadataImpl localMetadata = new SegmentMetadataImpl(indexDir);
+-      return BaseTableDataManager.hasSameCRC(committedSegmentZKMetadata, localMetadata);
+-    } catch (Exception e) {
+-      _segmentLogger.warn("Failed to read CRC of locally-built segment: {}; treating as CRC mismatch to download the "
+-          + "committed segment", _segmentNameStr, e);
+-      return false;
+-    }
++    SegmentMetadataImpl localMetadata = new SegmentMetadataImpl(indexDir);
++    return BaseTableDataManager.hasSameCRC(committedSegmentZKMetadata, localMetadata);
    }
- }
+ 
+   /// Closes the stream consumer so that no more data can be consumed into this segment. Does NOT release the consumer
 ```
 
-**File**: `pinot-segment-local/src/main/java/org/apache/pinot/segment/local/utils/TableConfigUtils.java` (modified, +13/-0)
+**File**: `pinot-core/src/test/java/org/apache/pinot/core/data/manager/BaseTableDataManagerTest.java` (modified, +18/-0)
 ```diff
-@@ -53,6 +53,7 @@
- import org.apache.pinot.segment.local.aggregator.ValueAggregatorFactory;
- import org.apache.pinot.segment.local.recordtransformer.SchemaConformingTransformer;
- import org.apache.pinot.segment.local.segment.index.loader.IndexLoadingConfig;
-+import org.apache.pinot.segment.local.startree.StarTreeBuilderUtils;
- import org.apache.pinot.segment.spi.AggregationFunctionType;
- import org.apache.pinot.segment.spi.index.DictionaryIndexConfig;
- import org.apache.pinot.segment.spi.index.FieldIndexConfigs;
-@@ -2320,6 +2321,18 @@ private static void validateStarTreeIndexConfigs(List<StarTreeIndexConfig> starT
-             LOGGER.warn("StarTreeIndex config duplication: {} already matches existing function column pair: {}. ",
-                 columnPair, storedType);
-           }
-+          // Create the value aggregator the same way the star-tree builder does, so that invalid function parameters
-+          // fail the config validation instead of the segment creation
-+          AggregationFunctionType storedFunctionType = storedType.getFunctionType();
-+          Map<String, Object> functionParameters = aggregationConfig.getFunctionParameters();
-+          try {
-+            ValueAggregatorFactory.getValueAggregator(storedFunctionType,
-+                StarTreeBuilderUtils.expressionContextFromFunctionParameters(storedFunctionType,
-+                    functionParameters != null ? functionParameters : Map.of()));
-+          } catch (Exception e) {
-+            throw new IllegalStateException("Invalid function parameters in StarTreeIndex config: " + aggregationConfig,
-+                e);
-+          }
-           String column = columnPair.getColumn();
-           if (!column.equals(AggregationFunctionColumnPair.STAR)) {
-             aggregatedColumns.add(column);
-```
-
-**File**: `pinot-segment-local/src/test/java/org/apache/pinot/segment/local/aggregator/DistinctCountHLLPlusValueAggregatorTest.java` (added, +55/-0)
-```diff
-@@ -0,0 +1,55 @@
-+/**
-+ * Licensed to the Apache Software Foundation (ASF) under one
-+ * or more contributor license agreements.  See the NOTICE file
-+ * distributed with this work for additional information
-+ * regarding copyright ownership.  The ASF licenses this file
-+ * to you under the Apache License, Version 2.0 (the
-+ * "License"); you may not use this file except in compliance
-+ * with the License.  You may obtain a copy of the License at
-+ *
-+ *   http://www.apache.org/licenses/LICENSE-2.0
-+ *
-+ * Unless required by applicable law or agreed to in writing,
-+ * software distributed under the License is distributed on an
-+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-+ * KIND, either express or implied.  See the License for the
-+ * specific language governing permissions and limitations
-+ * under the License.
-+ */
-+package org.apache.pinot.segment.local.aggregator;
-+
-+import com.clearspring.analytics.stream.cardinality.HyperLogLogPlus;
-+import java.util.List;
-+import org.apache.pinot.segment.local.utils.HyperLogLogPlusUtils;
-+import org.testng.annotations.Test;
-+
-+import static org.testng.Assert.assertEquals;
-+import static org.testng.Assert.assertTrue;
-+
-+
-+public class DistinctCountHLLPlusValueAggregatorTest {
-+
+@@ -939,6 +939,24 @@ public void testReplaceSegmentNoop()
+     assertFalse(tableDataManager.getSegmentDataDir(segmentName).exists());
+   }
+ 
 +  @Test
-+  public void testMaxAggregatedValueByteSizeForSerializedValues() {
-+    // Default p and sp, which differ from the ones of the serialized values
-+    DistinctCountHLLPlusValueAggregator aggregator = new DistinctCountHLLPlusValueAggregator(List.of());
-+    int p = 12;
-+    int sp = 20;
++  public void testReplaceSegmentSkippedWhenCrcCheckDisabled()
++      throws Exception {
++    SegmentZKMetadata zkMetadata = createRawSegment(SegmentVersion.v3, 5);
++    InstanceDataManagerConfig instanceDataManagerConfig = createDefaultInstanceDataManagerConfig();
++    when(instanceDataManagerConfig.shouldCheckCRCOnSegmentLoad()).thenReturn(false);
 +
-+    HyperLogLogPlus value = aggregator.getInitialAggregatedValue(serialize(aggregator, p, sp, 0, 10));
-+    value = aggregator.applyRawValue(value, serialize(aggregator, p, sp, 10, 2000));
-+    aggregator.getInitialAggregatedValue(serialize(aggregator, p, sp, 0, 5));
++    BaseTableDataManager tableDataManager = createTableManager(instanceDataManagerConfig);
++    File indexDir = createSegment(SegmentVersion.v3, 3);
++    tableDataManager.addNewOnlineSegment(zkMetadata, new IndexLoadingConfig());
++    assertEquals(new SegmentMetadataImpl(indexDir).getTotalDocs(), 3);
 +
-+    int maxByteSize = aggregator.getMaxAggregatedValueByteSize();
-+    assertEquals(maxByteSize, HyperLogLogPlusUtils.maxByteSize(p, sp));
-+    assertTrue(aggregator.serializeAggregatedValue(value).length <= maxByteSize);
++    ImmutableSegmentDataManager segmentDataManager = createImmutableSegmentDataManager(SEGMENT_NAME, 0);
++    tableDataManager.replaceSegmentIfCrcMismatch(segmentDataManager, zkMetadata, new IndexLoadingConfig());
++    // CRC check disabled: local copy is kept even though CRCs differ.
++    assertEquals(new SegmentMetadataImpl(indexDir).getTotalDocs(), 3);
 +  }
 +
-+  private static byte[] serialize(DistinctCountHLLPlusValueAggregator aggregator, int p, int sp, int start, int end) {
-+    HyperLogLogPlus hllPlus = new HyperLogLogPlus(p, sp);
-+    for (int i = start; i < end; i++) {
-+      hllPlus.offer(i);
-+    }
-+    return aggregator.serializeAggregatedValue(hllPlus);
-+  }
-+}
+   @Test
+   public void testReplaceSegmentNewDataWithAsyncSegmentRefresh()
+       throws Exception {
 ```
 
-**File**: `pinot-segment-local/src/test/java/org/apache/pinot/segment/local/aggregator/ValueAggregatorTest.java` (modified, +4/-0)
+**File**: `pinot-core/src/test/java/org/apache/pinot/core/data/manager/realtime/RealtimeSegmentDataManagerTest.java` (modified, +152/-29)
 ```diff
-@@ -54,6 +54,10 @@ public static Object[][] fixedSizeAggregatedValue() {
-         {AggregationFunctionType.DISTINCTCOUNTBITMAP, List.of(), false},
-         {AggregationFunctionType.DISTINCTCOUNTHLL, List.of(), true},
-         {AggregationFunctionType.DISTINCTCOUNTHLLPLUS, List.of(), true},
-+        {AggregationFunctionType.DISTINCTCOUNTHLLPLUS, List.of(
-+            ExpressionContext.forLiteral(Literal.intValue(12)),
-+            ExpressionContext.forLiteral(Literal.intValue(20))
-+        ), false},
-         {AggregationFunctionType.DISTINCTCOUNTULL, List.of(), true},
-         {AggregationFunctionType.DISTINCTCOUNTTHETASKETCH, List.of(), false},
-         {AggregationFunctionType.DISTINCTCOUNTTUPLESKETCH, List.of(), true},
-```
-
----
-
-### Incident Patch 3: `361346ce` (2026-11-03)
-**Commit Message**: Bump org.webjars:swagger-ui from 5.34.0 to 5.34.1 (#20142)
-
-Bumps [org.webjars:swagger-ui](https://github.com/swagger-api/swagger-ui) from 5.34.0 to 5.34.1.
-- [Release notes](https://github.com/swagger-api/swagger-ui/releases)
-- [Commits](https://github.com/swagger-api/swagger-ui/compare/v5.34.0...v5.34.1)
-
----
-updated-dependencies:
-- dependency-name: org.webjars:swagger-ui
-  dependency-version: 5.34.1
-  dependency-type: direct:production
-  update-type: version-update:semver-patch
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `pom.xml` (modified, +1/-1)
-```diff
-@@ -198,7 +198,7 @@
-     <jersey.version>2.48</jersey.version>
-     <hk2.version>2.6.1</hk2.version>
-     <swagger.version>1.6.16</swagger.version>
--    <swagger-ui.version>5.34.0</swagger-ui.version>
-+    <swagger-ui.version>5.34.1</swagger-ui.version>
-     <hadoop.version>3.4.3</hadoop.version>
-     <jsonpath.version>2.10.0</jsonpath.version>
-     <jsonsmart.version>2.6.0</jsonsmart.version>
+@@ -37,6 +37,7 @@
+ import java.util.function.BooleanSupplier;
+ import java.util.function.Supplier;
+ import javax.annotation.Nullable;
++import org.apache.commons.configuration2.ex.ConfigurationException;
+ import org.apache.commons.io.FileUtils;
+ import org.apache.helix.HelixManager;
+ import org.apache.pinot.common.metadata.segment.SegmentZKMetadata;
+@@ -102,6 +103,9 @@
+ import static org.mockito.Mockito.verify;
+ import static org.mockito.Mockito.when;
+ import static org.testng.Assert.assertEquals;
++import static org.testng.Assert.assertFalse;
++import static org.testng.Assert.assertThrows;
++import static org.testng.Assert.assertTrue;
+ 
+ 
+ // TODO Re-write this test using the stream abstraction
+@@ -778,14 +782,18 @@ public void testOnlineTransitionAfterStop()
+     }
+ 
+     // Test downloadAndReplace is called after buildAndReplace fails.
+-    try (FakeRealtimeSegmentDataManager segmentDataManager = createFakeSegmentManager()) {
++    ServerMetrics buildFailureServerMetrics = mock(ServerMetrics.class);
++    try (FakeRealtimeSegmentDataManager segmentDataManager =
++        createFakeSegmentManager(false, new TimeSupplier(), null, null, null, buildFailureServerMetrics)) {
+       segmentDataManager._failSegmentBuildAndReplace = true;
+       segmentDataManager._stopWaitTimeMs = 0;
+       segmentDataManager._state.set(segmentDataManager, RealtimeSegmentDataManager.State.HOLDING);
+       segmentDataManager.setCurrentOffset(finalOffsetValue);
+       segmentDataManager.goOnlineFromConsuming(metadata);
+       Assert.assertTrue(segmentDataManager._downloadAndReplaceCalled);
+       Assert.assertTrue(segmentDataManager._buildAndReplaceCalled);
++      verify(buildFailureServerMetrics, never())
++          .addMeteredTableValue(anyString(), eq(ServerMeter.SEGMENT_BUILD_WITH_CRC_MISMATCH), eq(1L));
+     }
+   }
+ 
+@@ -892,11 +900,15 @@ public void testOnlineTransitionSkipsLocalBuildOnCrcMismatch()
+     long finalOffsetValue = START_OFFSET_VALUE + 600;
+ 
+     // Upsert + committed CRC set + local CRC mismatch -> discard local build, download the committed segment.
+-    try (FakeRealtimeSegmentDataManager segmentDataManager = createFakeSegmentManager()) {
++    ServerMetrics crcMismatchServerMetrics = mock(ServerMetrics.class);
++    try (FakeRealtimeSegmentDataManager segmentDataManager =
++        createFakeSegmentManager(false, new TimeSupplier(), null, null, null, crcMismatchServerMetrics)) {
+       when(segmentDataManager._tableDataManager.isUpsertEnabled()).thenReturn(true);
+       runGoOnlineForCrcGuard(segmentDataManager, crcMetadata(finalOffsetValue, 12345L), false, finalOffsetValue);
+-      Assert.assertTrue(segmentDataManager._buildAndReplaceCalled);
+-      Assert.assertTrue(segmentDataManager._downloadAndReplaceCalled);
++      assertTrue(segmentDataManager._buildAndReplaceCalled);
++      assertTrue(segmentDataManager._downloadAndReplaceCalled);
++      verify(crcMismatchServerMetrics)
++          .addMeteredTableValue(anyString(), eq(ServerMeter.SEGMENT_BUILD_WITH_CRC_MISMATCH), eq(1L));
+     }
+ 
+     // Non-upsert + committed CRC set + local CRC mismatch -> discard local build, download the committed segment.
+@@ -908,51 +920,175 @@ public void testOnlineTransitionSkipsLocalBuildOnCrcMismatch()
+     }
+ 
+     // Upsert + committed CRC set + local CRC match -> build locally, no download, swap in committed metadata.
+-    try (FakeRealtimeSegmentDataManager segmentDataManager = createFakeSegmentManager()) {
++    ServerMetrics matchingUpsertServerMetrics = mock(ServerMetrics.class);
++    try (FakeRealtimeSegmentDataManager segmentDataManager =
++        createFakeSegmentManager(false, new TimeSupplier(), null, null, null, matchingUpsertServerMetrics)) {
+       when(segmentDataManager._tableDataManager.isUpsertEnabled()).thenReturn(true);
+       SegmentZKMetadata committedMetadata = crcMetadata(finalOffsetValue, 12345L);
+       runGoOnlineForCrcGuard(segmentDataManager, committedMetadata, true, finalOffsetValue);
+       Assert.assertTrue(segmentDataManager._buildAndReplaceCalled);
+       Assert.assertFalse(segmentDataManager._downloadAndReplaceCalled);
++      verify(matchingUpsertServerMetrics, never())
++          .addMeteredTableValue(anyString(), eq(ServerMeter.SEGMENT_BUILD_WITH_CRC_MISMATCH), eq(1L));
+       verify(segmentDataManager._tableDataManager)
+           .replaceConsumingSegment(eq(SEGMENT_NAME_STR), same(committedMetadata));
+     }
+ 
+     // Non-upsert + committed CRC set + local CRC match -> build locally, no download, swap in committed metadata.
+-    try (FakeRealtimeSegmentDataManager segmentDataManager = createFakeSegmentManager()) {
++    ServerMetrics matchingNonUpsertServerMetrics = mock(ServerMetrics.class);
++    try (FakeRealtimeSegmentDataManager segmentDataManager =
++        createFakeSegmentManager(false, new TimeSupplier(), null, null, null, matchingNonUpsertServerMetrics)) {
+       when(segmentDataManager._tableDataManager.isUpsertEnabled()).thenReturn(false);
+       SegmentZKMetadata committedMetadata = 
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #20164** (2026-11-05): Add a README Docker quickstart and improve GitHub metadata (@xiangfu0)
+- **PR #20163** (closed): Retry Confluent schema registry outages instead of dropping the message (@anshul98ks123)
+- **PR #20159** (2026-11-05): Allow zero system activities CPU time in query killing tests (@Jackie-Jiang)
+- **PR #20158** (2026-11-05): Let ControllerTest subclasses set the cluster configs a controller starts with (@Jackie-Jiang)
 - **PR #20156** (2026-11-05): Bump dnsjava:dnsjava from 3.7.0 to 3.7.1 (@dependabot[bot])
 - **PR #20155** (2026-11-04): Use a single Dependabot label (@xiangfu0)
-- **PR #20154** (2026-11-05): Fix HyperLogLogPlus max byte size and reject sp above 25 (@Jackie-Jiang)
-- **PR #20153** (2026-11-05): Make Utf8Utils.encodedLength agree with encode() on unpaired surrogates (@Jackie-Jiang)
-- **PR #20152** (2026-11-04): Name upsert validDocIds bitmaps read from or written to disk *OnDiskBitmap (@deepthi912)
 
 ---
 
@@ -2467,38 +2258,28 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Add a README Docker quickstart and improve GitHub metadata (#20164)
+## X. Add metric for local realtime segment builds with CRC mismatch (#19450)
 
 **RULE**:
-When implementing operations in `.asf.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/pinot. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pinot-common/src/main/java/org/apache/pinot/common/metrics/ServerMeter.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/pinot. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `bb054a49`: Add a README Docker quickstart and improve GitHub metadata (#20164). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `684b7a4a`: Add metric for local realtime segment builds with CRC mismatch (#19450). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `.asf.yaml`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `pinot-common/src/main/java/org/apache/pinot/common/metrics/ServerMeter.java`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-  description: "Apache Pinot: a real-time analytics database for low-latency SQL and vector search, serving user-facing and agent-facing applications"
-    - database
-    - sql
-    - olap
-    - analytics
-    - real-time-analytics
-    - kafka
-    - distributed-database
-    - vector-search
-    - vector-database
-    - ai-agents
+  SEGMENT_BUILD_WITH_CRC_MISMATCH("segments", false),
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Anti-pattern to NEVER write (induced failure mode):
-  description: "Apache Pinot - A realtime distributed OLAP datastore"
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `bb054a49` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `684b7a4a` are properly handled with clean fallback behavior.

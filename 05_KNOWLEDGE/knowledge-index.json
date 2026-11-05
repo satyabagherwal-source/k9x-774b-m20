@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T23:09:39.881Z",
+  "last_updated": "2026-11-05T23:17:17.269Z",
   "total_verified_learnings": 1222,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -181861,11 +181861,16 @@
       "slug": "apache-pinot",
       "platform": "github",
       "source_url": "https://github.com/apache/pinot",
-      "source_version": "14b56442",
-      "content_hash": "2f9dc2e45af9b668861343c9e29ff3a92e315399c4dca5cc721918da495b9c56",
+      "source_version": "0a53497f",
+      "content_hash": "efabc6c9db04c37a74aeefd545976e0530217a7b59dbe7335be68526de34b3c1",
       "dossier_path": "07_PROJECT_LEARNING/apache-pinot-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/apache-pinot-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Add metric for local realtime segment builds with CRC mismatch (#19450)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 7139,
           "title": "Add a README Docker quickstart and improve GitHub metadata (#20164)",
@@ -181877,7 +181882,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T06:43:58.220Z",
+      "verified_at": "2026-11-05T23:17:17.234Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
