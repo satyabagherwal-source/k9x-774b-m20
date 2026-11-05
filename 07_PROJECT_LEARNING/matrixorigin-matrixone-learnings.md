@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md`  
 > **Source**: github ([https://github.com/matrixorigin/matrixone](https://github.com/matrixorigin/matrixone))  
-> **Source Version**: `e997c817`  
+> **Source Version**: `3d54f0c1`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T02:19:24.108Z  
+> **Timestamp**: 2026-11-05T01:33:31.382Z  
 > **Learning ID**: `learn-github-matrixorigin-matrixone`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/matrixorigin/matrixone](https://github.com/matrixorigin/matrixone))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T02:19:23.808Z  
+> **Harvest Timestamp**: 2026-11-05T01:33:31.375Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: AI-native HTAP database with Git-for-Data and built-in vector search, serving as the data and memory backbone for intelligent agents and applications.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 2061 stars
+- **Stars / Engagement**: 2062 stars
 
 ---
 
@@ -2349,11 +2349,11 @@ func runWorker(ctx context.Context, r WorkerRequest, control *workerControl) (ou
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #32108** (2026-11-04): **fix(python): preserve numeric table builder scale**
-  *Symptoms*: ## What type of PR is this?  - [x] BUG  ## Which issue(s) this PR fixes:  Fixes #32091  ## What this PR does / why we need it:  VectorTableBuilder.add_numeric_column accepted scale but discarded it for FLOAT and DOUBLE. With precision=10 and scale=2, FLOAT compiled as FLOAT(10), while DOUBLE raised ArgumentError because SQLAlchemy requires both precision and scale.  Forward scale alongside precision to the MySQL FLOAT/DOUBLE constructors. Add 11 tests covering scale zero and two, unchanged decimal/numeric behavior, omitted precision/scale, FLOAT precision-only support, and generated MatrixOne DDL.  Validation on base c337122982537dcf957705cb6fc5f7f9bdc6a0f6, Python 3.12 and SQLAlchemy 2.1.6:  - Before fix: four regression failures, seven passing controls. - After fix: full offline suite passed, 2990 tests plus 106 subtests. - Black, fatal Flake8 checks (E9,F63,F7,F82), and git diff --check passed.  Two files changed. Validation covers column construction and DDL compilation; no live-server execution is claimed.
+- **Issue #32194** (2026-11-05): **fix(hnsw): a CDC batch keeps the sign of -0 on every architecture**
+  *Symptoms*: ## What type of PR is this?  - [ ] API-change - [x] BUG - [ ] Improvement - [ ] Documentation - [ ] Feature - [ ] Test and CI - [ ] Code Refactoring  ## Which issue(s) this PR fixes:  issue #32193  ## What this PR does / why we need it:  An HNSW CDC batch (`VectorIndexCdc`) lost the sign of a `-0` vector element. sonic writes `-0` as `0` on arm64, and reads `-0` as `0` on every architecture, which float64 batches still went through. A synced vector holding `-0` was stored as `+0`.  Float32 and float64 batches are now encoded and decoded with `encoding/json`, as float32 decoding already was. Integer element types keep sonic.  Validation: - `TestVectorIndexCdcFloat32RoundTrip` passes on darwin/arm64, where it failed on main (`entry 0 value 7 (-0)`). - The same test now checks a float64 `-0` too; that check fails without the fix on every architecture, because sonic decodes `-0` as `0`. - `pkg/vectorindex` and `pkg/iscp` pass; lint is clean.  🤖 Generated with [Claude Code](https://claude.com/claude-code) 
 
-- **Issue #32103** (2026-11-03): **fix(plan): support LENGTH/OCTET_LENGTH/CHAR_LENGTH on BIT columns**
-  *Symptoms*: ## What type of PR is this?  - [ ] API-change - [x] BUG - [ ] Improvement - [ ] Documentation - [ ] Feature - [ ] Test and CI - [ ] Code Refactoring  ## Which issue(s) this PR fixes:  Related to #31183  ## What this PR does / why we need it:  ### Root cause  `LENGTH`/`OCTET_LENGTH` are backed by the `LENGTH` built-in and `CHAR_LENGTH`/`CHARACTER_LENGTH` by `LENGTH_UTF8` (`pkg/sql/plan/function/function_id.go`). Both were registered with `checkFn: stringDomainFixedTypeMatch`, which never admits `types.T_bit` (BIT's implicit-cast rule row only targets INT64/UINT64), so every call on a BIT column failed function binding with ERROR 20203 `invalid argument ...`. BIT literals worked because they are binary-string constants and never reach that type-match path.  ### Change  - `pkg/sql/plan/function/type_check.go`: new `lengthTypeMatch` — a single BIT argument binds directly with no implicit cast, so the declared width M is preserved; all other inputs keep the previous string-domain behavior. BIT's global implicit-cast rules are untouched. - `pkg/sql/plan/function/list_builtIn.go`: `LENGTH` and `LENGTH_UTF8` use `lengthTypeMatch` and each gains a BIT overload returning INT64, evaluated by the new executor. - `pkg/sql/plan/function/func_unary.go`: new `LengthBit` executor returns `(width+7)/8`, i.e. ceil(M/8), for declared widths 1..64. This matches MySQL 8.0 fixed storage width (`Field_bit::pack_length()`); BIT values stringify with the binary charset, so the character count equals t
+- **Issue #32191** (2026-11-04): **fix(hashbuild): bound collected runtime-filter keys**
+  *Symptoms*: ## What type of PR is this?  - [ ] API-change - [x] BUG - [x] Improvement - [ ] Documentation - [ ] Feature - [ ] Test and CI - [x] Code Refactoring  ## Which issue(s) this PR fixes:  Related to #30125.  ## What this PR does / why we need it:  HashBuild currently collects runtime-filter keys into one growing vector per key component. These vectors span the entire build and can reach the single-allocation ceiling independently of retained join batches.  Collect keys in aligned batches of at most 8,192 rows, splitting earlier at actual payload and encoding byte limits. Preserve component slots and leave uniqueness decisions to the hash table. Admit chunk-directory storage before allocation and restore the previous tail after an append failure. Join rollback failures with the original error, finish remaining cleanup, and discard invalid collections rather than retrying or publishing partially restored keys.  Preserve the ordinary IN wire format and single-chunk fast path. Encode fixed-width runs directly into the final admitted buffer and sort there. For variable-width runs, bulk-copy each area once and merge/rebase the sorted descriptors, preserving shared values without a whole-build temporary vector or per-key payload copies. Evaluate composite-key expressions per aligned batch with reusable executors.  Publish membership keys as one complete, immutable, reference-counted chunked payload. Retain ownership through compiler receipt and lazy-reader lifetimes, and consume all chu
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2370,12 +2370,12 @@ func runWorker(ctx context.Context, r WorkerRequest, control *workerControl) (ou
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1876b2f9` (2026-11-03)
-**Commit Message**: fix(fileservice): bound MinIO range reads without draining on close (#32053)
+### Incident Patch 1: `948cfbc1` (2026-11-04)
+**Commit Message**: fix(vector): return append rollback failures instead of panicking (#32167)
 
 ## What type of PR is this?
 
-- [ ] API-change
+- [x] API-change
 - [x] BUG
 - [ ] Improvement
 - [ ] Documentation
@@ -2385,106 +2385,26 @@ Observed empirical fixes and code patches:
 
 ## Which issue(s) this PR fixes:
 
-Fixes #31692
+Related to issue #32143. This contains allocation-error handling; it does not make oversized allocations succeed.
 
 ## What this PR does / why we need it:
 
-MinIO bounded reads limited returned bytes but requested an open-ended object suffix and drained it on Close, amplifying small reads into large downloads.
+An allocation refusal must remain a returned query error, even when append cleanup cannot restore its checkpoint. RollbackAppend currently panics on invalid checkpoint bounds or missing restoration metadata, which can replace the original allocation error during failure cleanup.
 
-- Set the HTTP Range upper bound on every initial/retry request and avoid Seek overwriting it. Close bounded readers without draining unread data; preserve unbounded-read behavior.
-- Preserve ETag/VersionID conditions and retry offsets. Centralize byte limiting, handle nil starts, reject empty/reversed ranges, and close readers after initialization failures.
-- Add deterministic regression coverage for actual HTTP response bytes, range boundaries, uncached S3FS consumers, partial-response retries, identity failures, early close, and cancellation.
+Make RollbackAppend return a terminal allocation-invariant error instead of panicking. Validate restoration bounds and attempted-row arithmetic before mutation, and retain owned capacity for eventual Free. Preserve the original error object unchanged when rollback succeeds; retain both causes when rollback fails so invariant failures cannot be treated as retryable memory pressure.
 
-Local validation on macOS arm64 with Go 1.27.1:
-- `mo-cgo-test -json -count=1 -timeout=600s ./pkg/fileservice` and the corresponding `-race` run passed (7 existing skips; no n
+Update every production rollback caller to propagate the result, including retained join batches, MergeTop, Order, mult
 
-**File**: `pkg/fileservice/minio_sdk.go` (modified, +20/-12)
+**File**: `pkg/container/vector/rollback_error_test.go` (added, +79/-0)
 ```diff
-@@ -395,11 +395,7 @@ func (a *MinioSDK) ReadObjectWithIdentity(
- 		r.Close()
- 		return nil, mapMinioConditionalReadError(err)
- 	}
--	r = mapReadCloserErrors(r, mapMinioConditionalReadError)
--	if max == nil {
--		return r, nil
--	}
--	return &readCloser{r: io.LimitReader(r, *max-*min), closeFunc: r.Close}, nil
-+	return mapReadCloserErrors(r, mapMinioConditionalReadError), nil
- }
- 
- func mapMinioConditionalReadError(err error) error {
-@@ -506,15 +502,10 @@ func (a *MinioSDK) Read(
- 	// eager read to expose file not found error
- 	_, err = r.Read(nil)
- 	if err != nil {
-+		r.Close()
- 		return nil, err
- 	}
--	if max == nil {
--		return r, nil
--	}
--	return &readCloser{
--		r:         io.LimitReader(r, int64(*max-*min)),
--		closeFunc: r.Close,
--	}, nil
-+	return r, nil
- }
- 
- func (a *MinioSDK) Delete(
-@@ -641,8 +632,16 @@ func (a *MinioSDK) getObjectWithOptions(
- 	if min == nil {
- 		min = ptrTo[int64](0)
- 	}
-+	if max != nil && *max <= *min {
-+		return nil, moerr.NewEmptyRangeNoCtx(key)
-+	}
- 	r, err := newRetryableReader(
- 		func(offset int64) (io.ReadCloser, error) {
-+			if max != nil {
-+				if err := options.SetRange(offset, *max-1); err != nil {
-+					return nil, err
-+				}
-+			}
- 			obj, err := DoWithRetryContext(
- 				ctx,
- 				"s3 get object",
-@@ -658,8 +657,14 @@ func (a *MinioSDK) getObjectWithOptions(
- 			if err != nil {
- 				return nil, err
- 			}
-+			if max != nil {
-+				// Seek would replace the bounded Range with an open-ended one.
-+				// Close the bounded response directly, without draining unread data.
-+				return obj, nil
-+			}
- 			if offset > 0 {
- 				if _, err := obj.Seek(offset, 0); err != nil {
-+					obj.Close()
- 					return nil, err
- 				}
- 			}
-@@ -678,6 +683,9 @@ func (a *MinioSDK) getObjectWithOptions(
- 	if err != nil {
- 		return nil, err
- 	}
-+	if max != nil {
-+		return &readCloser{r: io.LimitReader(r, *max-*min), closeFunc: r.Close}, nil
-+	}
- 	return r, nil
- }
- 
-```
-
-**File**: `pkg/fileservice/minio_sdk_range_lifecycle_test.go` (added, +349/-0)
-```diff
-@@ -0,0 +1,349 @@
+@@ -0,0 +1,79 @@
 +// Copyright 2026 Matrix Origin
 +//
 +// Licensed under the Apache License, Version 2.0 (the "License");
 +// you may not use this file except in compliance with the License.
 +// You may obtain a copy of the License at
 +//
-+//     http://www.apache.org/licenses/LICENSE-2.0
++//      http://www.apache.org/licenses/LICENSE-2.0
 +//
 +// Unless required by applicable law or agreed to in writing, software
 +// distributed under the License is distributed on an "AS IS" BASIS,
@@ -2492,278 +2412,512 @@ Local validation on macOS arm64 with Go 1.27.1:
 +// See the License for the specific language governing permissions and
 +// limitations under the License.
 +
-+package fileservice
++package vector
 +
 +import (
-+	"context"
-+	"fmt"
-+	"io"
-+	"net/http"
-+	"net/http/httptest"
-+	"strconv"
++	"errors"
++	"math"
 +	"strings"
-+	"sync"
-+	"sync/atomic"
 +	"testing"
-+	"testing/iotest"
-+	"time"
 +
-+	"github.com/matrixorigin/matrixone/pkg/common/moerr"
-+	"github.com/minio/minio-go/v7"
-+	"github.com/minio/minio-go/v7/pkg/credentials"
++	"github.com/matrixorigin/matrixone/pkg/common/mpool"
++	"github.com/matrixorigin/matrixone/pkg/container/types"
 +	"github.com/stretchr/testify/require"
 +)
 +
-+// Object.Close releases its response from the SDK worker, so counters and the
-+// completion signal must also be safe to observe from the test goroutine.
-+type minioRangeBody struct {
-+	io.Reader
-+	reads, bytes, closes atomic.Int64
-+	closed               chan struct{}
-+	once                 sync.Once
-+}
-+
-+func (b *minioRangeBody) Read(p []byte) (int, error) {
-+	b.reads.Add(1)
-+	n, err := b.Reader.Read(p)
-+	b.bytes.Add(int64(n))
-+	return n, err
-+}
-+
-+func (b *minioRangeBody) Close() error {
-+	b.closes.Add(1)
-+	b.once.Do(func() { close(b.closed) })
-+	return nil
-+}
-+
-+func (b *minioRangeBody) waitClosed(t *testing.T) {
-+	t.Helper()
-+	select {
-+	case <-b.closed:
-+	case <-time.After(5 * time.Second):
-+		t.Fatal("MinIO response was not closed")
-+	}
-+	require.Equal(t, int64(1), b.closes.Load())
-+}
-+
-+func newMinioRangeTestSDK(t *testing.T, transport http.RoundTripper) *MinioSDK {
-+	t.Helper()
-+	client, err := minio.New("minio.invalid", &minio.Options{
-+		Creds: credentials.NewStaticV4("", "", ""), Region: "us-east-1", Transport: transport,
-+	})
-+	require.NoError(t, err)
-+	return &MinioSDK{bucket: "bucket", client: client}
-+}
-+
-+func minioRangeTestResponse(req *http.Request, body io.ReadCloser, size int) *http.Response {
-+	return &http.Response{
-+		StatusCode: http.StatusPartialContent, Request: req, Body: body, ContentLength: int64(size),
-+		Header: http.Header{
-+			"Content-Length": {strconv.Itoa(size)},
-+			"Last-Modified":  {time.Unix(1, 0).UTC().Format(http.TimeFormat)},
-+			"Etag":           {`"etag"`},
-+		},
-+	}
-+}
-+
-+func openMinioRangeTestReader(t *testing.T, sdk *MinioSDK, identity string) io.ReadCloser {
-+	t.Helper()
-+	min, max := int64(1), int64(6)
-+	var reader io.ReadCloser
-+	var err error
-+	if identity == "" {
-+		reader, err = sdk.Read(t.Context(), "object", &min, &max)
-+	} else {
-+		expected := ObjectIdentity{ETag: "etag", Size: 16}
-+		if identity == "version" {
-+			expected.VersionID = "version"
-+		}
-+		reader, err = sdk.ReadObjectWithIdentity(t.Context(), "object", &min, &max, expected)
-+	}
-+	require.NoError(t, err)
-+	t.Cleanup(func() { _ = reader.Close() })
-+	return reader
-+}
-+
-+func TestMinioSDKBoundedCloseDoesNotRead(t *testing.T) {
-+	for _, tc := range []struct {
-+		name, identity string
-+		take           int
-+	}{
-+		{name: "unread"},
-+		{name: "partial", take: 2},
-+		{name: "full", take: 5},
-+		{name: "etag", identity: "etag", take: 2},
-+		{name: "version", identity: "version", take: 2},
-+	} {
-+		t.Run(tc.name, func(t *testing.T) {
-+			body := &minioRangeBody{Reader: strings.NewReader("12345"), closed: make(chan struct{})}
-+			sdk := newMinioRangeTestSDK(t, roundTripperFunc(func(req *http.Request) (*http.Response, error) {
-+				return minioRangeTestResponse(req, body, 5), nil
-+			}))
-+			reader := openMinioRangeTestReader(t, sdk, tc.identity)
-+			prefix := make([]byte, tc.take)
-+			_, err := io.ReadFull(reader, prefix)
-+			require.NoError(t, err)
-+			require.Equal(t, "12345"[:tc.take], string(prefix))
-+			reads := body.reads.Load()
-+			require.NoError(t, reader.Close())
-+			body.waitClosed(t)
-+			require.Equal(t, reads, body.reads.Load(), "Close must not read the response")
-+			require.Equal(t, int64(tc.take), body.bytes.Load())
++func TestRollbackAppendRejectsBeforeMutation(t *testing.T) {
++	for _, name := range []string{"length", "area", "negative", "overflow", "prepared", "string", "binary"} {
++		t.Run(name, func(t *testing.T) {
++			mp := mpool.MustNewZero()
++			v := NewVec(types.T_varchar.ToType())
++			defer func() { v.Free(mp); require.Zero(t, mp.CurrNB()); require.Zero(t, mp.OnHeapCurrNB()) }()
++			require.NoError(t, AppendBytes(v, []byte(strings.Repeat("a", 64)), false, mp))
++			v.SetSorted(true)
++			cp := v.MakeAppendCheckpoint()
++			attempted := 1
++			switch name {
++			case "length":
++				cp.length++
++			case "area":
++				cp.areaLength++
++			case "negative":
++				attempted = -1
++			case "overflow":
++				attempted = math.MaxInt
++			case "prepared":
++				cp.hadPrepareParamKinds = true
++			case "string":
++				cp.hadStringSources = true
++			case "binary":
++				cp.hadBinaryStringRows = true
++			}
++			err := v.RollbackAppend(cp, attempted)
++			require.ErrorIs(t, err, mpool.ErrAllocationAccountInvariant)
++			require.False(t, mpool.IsRetryableAllocationCapacity(errors.Join(mpool.ErrAllocationAccountCapacity, err)))
++			require.Equal(t, 1, v.Length())
++			require.Equal(t, 64, len(v.GetArea()))
++			require.True(t, v.GetSorted())
++			require.Equal(t, strings.Repeat("a", 64), v.GetStringAt(0))
 +		})
 +	}
 +}
 +
-+func TestMinioSDKBoundedReadRetry(t *testing.T) {
-+	for _, tc := range []struct {
-+		name, identity string
-+		prefix         bool
-+		failure        int
-+	}{
-+		{name: "delivered prefix", prefix: true},
-+		{name: "bytes and error in one read"},
-+		{name: "etag", identity: "etag", prefix: true},
-+		{name: "version", identity: "version", prefix: true},
-+		{name: "etag changed", identity: "etag", prefix: true, failure: http.StatusPreconditionFailed},
-+		{name: "version gone", identity: "version", prefix: true, failure: http.StatusNotFound},
-+		{name: "reopen denied", prefix: true, failure: http.StatusForbidden},
-+	} {
-+		t.Run(tc.name, func(t *testing.T) {
-+			first := &minioRangeBody{
-+				Reader: io.MultiReader(strings.NewReader("12"), iotest.ErrReader(io.ErrUnexpectedEOF)),
-+				
++func TestAppendAllocatorLimitReturnsErrorAndKeepsPrefix(t *testing.T) {
++	old := mpool.CapLimit
++	mpool.CapLimit = 128
++	t.Cleanup(func() { mpool.CapLimit = old })
++	mp := mpool.MustNewZero()
++	v := NewVec(types.T_varchar.ToType())
++	defer func() { v.Free(mp); require.Zero(t, mp.CurrNB()); require.Zero(t, mp.OnHeapCurrNB()) }()
++	first := strings.Repeat("a", 64)
++	require.NoError(t, AppendBytes(v, []byte(first), false, mp))
++	err := AppendBytes(v, []byte(strings.Repeat("b", 64)), false, mp)
++	require.ErrorIs(t, err, mpool.ErrAllocationAllocatorLimit)
++	require.NotErrorIs(t, err, mpool.ErrAllocationAccountInvariant)
++	require.Equal(t, 1, v.Length())
++	require.Equal(t, first, v.GetStringAt(0))
++}
 ```
 
-**File**: `pkg/fileservice/minio_sdk_range_test.go` (added, +135/-0)
+**File**: `pkg/container/vector/vector.go` (modified, +44/-26)
 ```diff
-@@ -0,0 +1,135 @@
-+// Copyright 2026 Matrix Origin
-+//
-+// Licensed under the Apache License, Version 2.0 (the "License");
-+// you may not use this file except in compliance with the License.
-+// You may obtain a copy of the License at
-+//
-+//     http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+
-+package fileservice
-+
-+import (
-+	"context"
-+	"io"
-+	"net/http"
-+	"net/http/httptest"
-+	"strings"
-+	"sync/atomic"
-+	"testing"
-+	"time"
-+
-+	"github.com/stretchr/testify/assert"
-+	"github.com/stretchr/testify/require"
-+)
-+
-+type minioRangeResponse struct {
-+	http.ResponseWriter
-+	bytes int
+@@ -18,6 +18,7 @@ import (
+ 	"bytes"
+ 	"cmp"
+ 	"encoding/binary"
++	"errors"
+ 	"fmt"
+ 	"io"
+ 	"math"
+@@ -483,14 +484,37 @@ func (v *Vector) MakeAppendCheckpoint() AppendCheckpoint {
+ 	}
+ }
+ 
+-// RollbackAppend restores the logical state captured before an attempted
+-// append. attemptedRows is needed because grouping bits can be published
+-// before a varlen copy fails and advances length.
+-func (v *Vector) RollbackAppend(checkpoint AppendCheckpoint, attemptedRows int) {
+-	if checkpoint.length < 0 || checkpoint.length > v.length ||
++// JoinAppendRollbackError preserves a successful rollback's original error
++// identity, including direct MO errors used at protocol boundaries.
++func JoinAppendRollbackError(cause, rollbackErr error) error {
++	if rollbackErr == nil {
++		return cause
++	}
++	return errors.Join(cause, rollbackErr)
 +}
 +
-+func (w *minioRangeResponse) Write(p []byte) (int, error) {
-+	n, err := w.ResponseWriter.Write(p)
-+	w.bytes += n
-+	return n, err
-+}
-+
-+func TestMinioSDKReadRanges(t *testing.T) {
-+	const data = "0123456789abcdef"
-+	for _, tc := range []struct {
-+		name, wantRange, identity, consumer string
-+		min, max                            *int64
-+		want                                string
-+	}{
-+		{name: "bounded", min: ptrTo[int64](1), max: ptrTo[int64](4), wantRange: "bytes=1-3", want: "123"},
-+		{name: "zero start", min: ptrTo[int64](0), max: ptrTo[int64](4), wantRange: "bytes=0-3", want: "0123"},
-+		{name: "nil start", max: ptrTo[int64](4), wantRange: "bytes=0-3", want: "0123"},
-+		{name: "first byte", max: ptrTo[int64](1), wantRange: "bytes=0-0", want: "0"},
-+		{name: "one byte", min: ptrTo[int64](1), max: ptrTo[int64](2), wantRange: "bytes=1-1", want: "1"},
-+		{name: "tail", min: ptrTo[int64](13), max: ptrTo[int64](16), wantRange: "bytes=13-15", want: "def"},
-+		{name: "past end", min: ptrTo[int64](13), max: ptrTo[int64](20), wantRange: "bytes=13-19", want: "def"},
-+		{name: "unbounded", want: data},
-+		{name: "unbounded suffix", min: ptrTo[int64](1), wantRange: "bytes=1-", want: data[1:]},
-+		{name: "etag", identity: "etag", min: ptrTo[int64](1), max: ptrTo[int64](4), wantRange: "bytes=1-3", want: "123"},
-+		{name: "version", identity: "version", min: ptrTo[int64](1), max: ptrTo[int64](4), wantRange: "bytes=1-3", want: "123"},
-+		{name: "identity nil start", identity: "etag", max: ptrTo[int64](4), wantRange: "bytes=0-3", want: "0123"},
-+		{name: "file service buffered", consumer: "buffered", min: ptrTo[int64](1), max: ptrTo[int64](4), wantRange: "bytes=1-3", want: "123"},
-+		{name: "file service stream", consumer: "stream", min: ptrTo[int64](1), max: ptrTo[int64](4), wantRange: "bytes=1-3", want: "123"},
-+	} {
-+		t.Run(tc.name, func(t *testing.T) {
-+			type transfer struct {
-+				rangeHeader, ifMatch, version string
-+				bytes                         int
-+			}
-+			transfers := make(chan transfer, 1)
-+			var gets atomic.Int32
-+			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-+				w.Header().Set("ETag", `"etag"`)
-+				response := &minioRangeResponse{ResponseWriter: w}
-+				http.ServeContent(response, r, "object", time.Unix(1, 0), strings.NewReader(data))
-+				if r.Method == http.MethodGet {
-+					gets.Add(1)
-+					select {
-+					case transfers <- transfer{r.Header.Get("Range"), r.Header.Get("If-Match"), r.URL.Query().Get("versionId"), response.bytes}:
-+					default:
++// RollbackAppend restores an append checkpoint, retaining owned capacity.
++// Invalid checkpoints return a terminal invariant error before any mutation.
++// attemptedRows includes metadata published before a payload append failed.
++func (v *Vector) RollbackAppend(checkpoint AppendCheckpoint, attemptedRows int) error {
++	invalid := func(message string) error {
++		return errors.Join(mpool.ErrAllocationAccountInvariant, moerr.NewInternalErrorNoCtx(message))
++	}
++	if v == nil || checkpoint.length < 0 || checkpoint.length > v.length ||
+ 		checkpoint.areaLength < 0 || checkpoint.areaLength > len(v.area) ||
+-		attemptedRows < 0 {
+-		panic("invalid vector append checkpoint")
++		attemptedRows < 0 || attemptedRows > math.MaxInt-checkpoint.length {
++		return invalid("invalid vector append checkpoint")
++	}
++	// Validate the complete restoration before changing lengths or metadata.
++	if checkpoint.hadPrepareParamKinds && len(v.prepareParamKinds) < checkpoint.length {
++		return invalid("prepared parameter sidecar lost during append rollback")
++	}
++	metadataLength := v.physicalMetadataRowCountForLength(checkpoint.length)
++	if checkpoint.hadStringSources && len(v.stringSources) < metadataLength {
++		return invalid("string source sidecar lost during append rollback")
++	}
++	if checkpoint.hadBinaryStringRows && !(!v.binaryStringRowsActive && checkpoint.binaryStringRowsUniform) && (v.binaryStringRows == nil || !v.binaryStringRowsActive) {
++		return invalid("binary-string sidecar lost during append rollback")
+ 	}
+ 	end := max(v.length, checkpoint.length+attemptedRows)
+ 	nulls.RemoveRange(&v.nsp, uint64(checkpoint.length), uint64(end))
+@@ -502,9 +526,6 @@ func (v *Vector) RollbackAppend(checkpoint AppendCheckpoint, attemptedRows int)
+ 	v.areaDisjoint = checkpoint.areaDisjoint && v.areaDisjoint
+ 	v.sorted = checkpoint.sorted
+ 	if checkpoint.hadPrepareParamKinds {
+-		if len(v.prepareParamKinds) < checkpoint.length {
+-			panic("prepared parameter sidecar lost during append rollback")
+-		}
+ 		clear(v.prepareParamKinds[checkpoint.length:])
+ 		v.prepareParamKinds = v.prepareParamKinds[:checkpoint.length]
+ 	} else {
+@@ -514,9 +535,6 @@ func (v *Vector) RollbackAppend(checkpoint AppendCheckpoint, attemptedRows int)
+ 	v.prepareParamKindSeen = checkpoint.prepareParamKindSeen
+ 	if checkpoint.hadStringSources {
+ 		metadataLength := v.physicalMetadataRowCountForLength(checkpoint.length)
+-		if len(v.stringSources) < metadataLength {
+-			panic("string source sidecar lost during append rollback")
+-		}
+ 		clear(v.stringSources[metadataLength:])
+ 		v.stringSources = v.stringSources[:metadataLength]
+ 	} else {
+@@ -526,8 +544,6 @@ func (v *Vector) RollbackAppend(checkpoint AppendCheckpoint, attemptedRows int)
+ 	if checkpoint.hadBinaryStringRows {
+ 		if !v.binaryStringRowsActive && checkpoint.binaryStringRowsUniform {
+ 			v.setBinaryStringScalar(checkpoint.binaryString)
+-		} else if v.binaryStringRows == nil || !v.binaryStringRowsActive {
+-			panic("binary-string sidecar lost during append rollback")
+ 		} else {
+ 			v.binaryStringRows.RemoveRange(uint64(checkpoint.length), uint64(end))
+ 			v.textStringRows.RemoveRange(uint64(checkpoint.length), uint64(end))
+@@ -536,6 +552,7 @@ func (v *Vector) RollbackAppend(checkpoint AppendCheckpoint, attemptedRows int)
+ 	} else {
+ 		v.setBinaryStringScalar(checkpoint.binaryString)
+ 	}
++	return nil
+ }
+ 
+ // Size of data, I think this function is inherently broken.  This
+@@ -10142,7 +10159,7 @@ func AppendFixedWithStringSource[T any](vec *Vector, val T, isNull bool, source
+ 	checkpoint := vec.MakeAppendCheckpoint()
+ 	defer func() {
+ 		if err != nil {
+-			vec.RollbackAppend(checkpoint, 1)
++			err = JoinAppendRollbackError(err, vec.RollbackAppend(checkpoint, 1))
+ 		}
+ 	}()
+ 	return appendOneFixedWithSource(vec, val, isNull, &source, mp)
+@@ -10202,7 +10219,7 @@ func AppendBytesWithWriter(vec *Vector, size int, mp *mpool.MPool, writer func([
+ 	checkpoint := vec.MakeAppendCheckpoint()
+ 	defer func() {
+ 		if err != nil {
+-			vec.RollbackAppend(checkpoint, 1)
++			err = JoinAppendRollbackError(err, vec.RollbackAppend(checkpoint, 1))
+ 		}
+ 	}()
+ 	if err = vec.prepareOrdinaryAppendMetadata(1, mp); e
+```
+
+**File**: `pkg/sql/colexec/external/parquet.go` (modified, +21/-21)
+```diff
+@@ -2274,7 +2274,7 @@ func (h *ParquetHandler) getMapperWithStaging(sc *parquet.Column, dt plan.Type,
+ 			}
+ 			checkpoint := vec.MakeAppendCheckpoint()
+ 			rollback := func(err error) error {
+-				vec.RollbackAppend(checkpoint, numRows)
++				err = vector.JoinAppendRollbackError(err, vec.RollbackAppend(checkpoint, numRows))
+ 				return err
+ 			}
+ 			targetType := types.MustTypeFromPlan(dt)
+@@ -2937,7 +2937,7 @@ func processStringToTimeAssignment(mp *columnMapper, page parquet.Page, proc *pr
+ 	}
+ 	checkpoint := vec.MakeAppendCheckpoint()
+ 	if err := vec.UnionBatch(result.GetResultVector(), 0, text.Length(), nil, proc.Mp()); err != nil {
+-		vec.RollbackAppend(checkpoint, text.Length())
++		err = vector.JoinAppendRollbackError(err, vec.RollbackAppend(checkpoint, text.Length()))
+ 		return err
+ 	}
+ 	return nil
+@@ -3017,7 +3017,7 @@ func processStringToFixedWithTrim[T any](
+ 	vec.SetLength(numRows + length)
+ 	ret := vector.MustFixedColWithTypeCheck[T](vec)
+ 	rollback := func(err error) error {
+-		vec.RollbackAppend(checkpoint, numRows)
++		err = vector.JoinAppendRollbackError(err, vec.RollbackAppend(checkpoint, numRows))
+ 		return err
+ 	}
+ 
+@@ -3110,7 +3110,7 @@ func processStringToJson(
+ 	}
+ 	checkpoint := vec.MakeAppendCheckpoint()
+ 	rollback := func(err error) error {
+-		vec.RollbackAppend(checkpoint, numRows)
++		err = vector.JoinAppendRollbackError(err, vec.RollbackAppend(checkpoint, numRows))
+ 		return err
+ 	}
+ 	for i := 0; i < numRows; i++ {
+@@ -3217,7 +3217,7 @@ func processStringToArrayEnc[T types.ArrayElement](
+ 	}
+ 	checkpoint := vec.MakeAppendCheckpoint()
+ 	rollback := func(err error) error {
+-		vec.RollbackAppend(checkpoint, numRows)
++		err = vector.JoinAppendRollbackError(err, vec.RollbackAppend(checkpoint, numRows))
+ 		return err
+ 	}
+ 	for i := 0; i < numRows; i++ {
+@@ -3443,7 +3443,7 @@ func processParquetListValuesToArrayEnc[T types.ArrayElement](
+ 	}
+ 	checkpoint := vec.MakeAppendCheckpoint()
+ 	rollback := func(err error) error {
+-		vec.RollbackAppend(checkpoint, numRows)
++		err = vector.JoinAppendRollbackError(err, vec.RollbackAppend(checkpoint, numRows))
+ 		return err
+ 	}
+ 
+@@ -3575,7 +3575,7 @@ func processParquetValuesToFixed[T any](
+ 	}
+ 	checkpoint := vec.MakeAppendCheckpoint()
+ 	rollback := func(err error) error {
+-		vec.RollbackAppend(checkpoint, len(values))
++		err = vector.JoinAppendRollbackError(err, vec.RollbackAppend(checkpoint, len(values)))
+ 		return err
+ 	}
+ 	for i, v := range values {
+@@ -3626,7 +3626,7 @@ func processParquetValuesToBytes(
+ 	}
+ 	checkpoint := vec.MakeAppendCheckpoint()
+ 	rollback := func(err error) error {
+-		vec.RollbackAppend(checkpoint, len(values))
++		err = vector.JoinAppendRollbackError(err, vec.RollbackAppend(checkpoint, len(values)))
+ 		return err
+ 	}
+ 	for i, v := range values {
+@@ -3681,7 +3681,7 @@ func processParquetValuesToStagingBytes(
+ 	}
+ 	checkpoint := vec.MakeAppendCheckpoint()
+ 	rollback := func(err error) error {
+-		vec.RollbackAppend(checkpoint, len(values))
++		err = vector.JoinAppendRollbackError(err, vec.RollbackAppend(checkpoint, len(values)))
+ 		return err
+ 	}
+ 	for i, v := range values {
+@@ -3811,7 +3811,7 @@ func processParquetValuesToJson(
+ 	}
+ 	checkpoint := vec.MakeAppendCheckpoint()
+ 	rollback := func(err error) error {
+-		vec.RollbackAppend(checkpoint, len(values))
++		err = vector.JoinAppendRollbackError(err, vec.RollbackAppend(checkpoint, len(values)))
+ 		return err
+ 	}
+ 	for i, v := range values {
+@@ -4899,7 +4899,7 @@ func copyPlainBoolPageToVec(page parquet.Page, proc *process.Process, vec *vecto
+ 	ret := vector.MustFixedColWithTypeCheck[bool](vec)
+ 	reader := page.Values()
+ 	rollback := func(err error) error {
+-		vec.RollbackAppend(checkpoint, n)
++		err = vector.JoinAppendRollbackError(err, vec.RollbackAppend(checkpoint, n))
+ 		return err
+ 	}
+ 	if !nc.noNulls {
+@@ -5624,7 +5624,9 @@ func (h *ParquetHandler) getDataByPage(bat *batch.Batch, param *ExternalParam, p
+ 				bat, length, length+int(toRead), batchBytesBefore, param)
+ 			accepted = int64(acceptedRows - length)
+ 			if accepted < toRead {
+-				h.rollbackPageAppend(bat, checkpoints, int(toRead))
++				if rollbackErr := h.rollbackPageAppend(bat, checkpoints, int(toRead)); rollbackErr != nil {
++					return rollbackErr
++				}
+ 				warnings.Reset()
+ 				if accepted == 0 {
+ 					break
+@@ -5755,8 +5757,7 @@ func (h *ParquetHandler) mapCurrentPageRows(
+ 	for i, colIdx := range h.dataColIndices {
+ 		vec := bat.Vecs[colIdx]
+ 		if vec == nil {
+-			h.rollbackPageAppend(bat, checkpoints[:i], int(rows))
+-			return nil, moerr.NewInternalErrorf(param.Ctx, "parquet output column %d is not allocated", colIdx)
++			return nil, vector.JoinAppendRollbackError(moerr.NewInternalErrorf(param.Ctx, "parquet output column %d is not allocated", colIdx), h.rollbackPageAppend(bat, checkpoints[:i], int(rows)))
+ 		}
+ 		checkpoints[i] = vec.MakeAppendCheckpoint()
+ 		startLength := vec.Length()
+@@ -5768,14 +5769,12 @@ func (h *ParquetHandler) mapCurrentPageRows(
+ 			MapTime: time.Since(mapStart).Nanoseconds(),
+```
+
+**File**: `pkg/sql/colexec/external/parquet_nested.go` (modified, +18/-17)
+```diff
+@@ -182,18 +182,22 @@ func (h *ParquetHandler) getDataByRow(bat *batch.Batch, param *ExternalParam, pr
+ 			if err := h.processRow(row, bat, param, proc); err != nil {
+ 				for colIdx, vec := range bat.Vecs {
+ 					if vec != nil {
+-						vec.RollbackAppend(checkpoints[colIdx], 1)
++						err = vector.JoinAppendRollbackError(err, vec.RollbackAppend(checkpoints[colIdx], 1))
+ 					}
+ 				}
+ 				return err
+ 			}
+ 			if h.parquetBatchAtByteBudget(bat, rowsRead+1, param) {
+ 				if rowsRead > 0 {
++					var err error
+ 					for colIdx, vec := range bat.Vecs {
+ 						if vec != nil {
+-							vec.RollbackAppend(checkpoints[colIdx], 1)
++							err = vector.JoinAppendRollbackError(err, vec.RollbackAppend(checkpoints[colIdx], 1))
+ 						}
+ 					}
++					if err != nil {
++						return err
 +					}
+ 					batchBoundary = true
+ 					break
+ 				}
+@@ -269,12 +273,13 @@ func (h *ParquetHandler) getDataByRowAndPage(bat *batch.Batch, param *ExternalPa
+ 	eof := false
+ 	batchBoundary := false
+ 
+-	rollbackRows := func(checkpoints []vector.AppendCheckpoint, attemptedRows int) {
++	rollbackRows := func(checkpoints []vector.AppendCheckpoint, attemptedRows int) (err error) {
+ 		for colIdx, vec := range bat.Vecs {
+ 			if vec != nil {
+-				vec.RollbackAppend(checkpoints[colIdx], attemptedRows)
++				err = vector.JoinAppendRollbackError(err, vec.RollbackAppend(checkpoints[colIdx], attemptedRows))
+ 			}
+ 		}
++		return err
+ 	}
+ 
+ 	for length < batchLimit && !h.parquetBatchAtByteBudget(bat, length, param) {
+@@ -344,17 +349,14 @@ func (h *ParquetHandler) getDataByRowAndPage(bat *batch.Batch, param *ExternalPa
+ 		batchBytesBefore := h.physicalBatchSize(bat)
+ 		for _, row := range rowBuf[:n] {
+ 			if err := context.Cause(proc.Ctx); err != nil {
+-				rollbackRows(checkpoints, n)
+-				return err
++				return vector.JoinAppendRollbackError(err, rollbackRows(checkpoints, n))
+ 			}
+ 			if err := h.processNestedRow(row, bat, param, proc); err != nil {
+-				rollbackRows(checkpoints, n)
+-				return err
++				return vector.JoinAppendRollbackError(err, rollbackRows(checkpoints, n))
+ 			}
+ 		}
+ 		if _, err := h.mapCurrentPageRows(bat, param, mappingProc, int64(n)); err != nil {
+-			rollbackRows(checkpoints, n)
+-			return h.closePagesOnError(param.Ctx, err)
++			return h.closePagesOnError(param.Ctx, vector.JoinAppendRollbackError(err, rollbackRows(checkpoints, n)))
+ 		}
+ 
+ 		accepted := n
+@@ -366,26 +368,25 @@ func (h *ParquetHandler) getDataByRowAndPage(bat *batch.Batch, param *ExternalPa
+ 				accepted = 0
+ 			}
+ 			if accepted < n {
+-				rollbackRows(checkpoints, n)
++				if rollbackErr := rollbackRows(checkpoints, n); rollbackErr != nil {
++					return rollbackErr
 +				}
-+			}))
-+			t.Cleanup(server.Close)
-+			ctx, cancel := context.WithTimeout(t.Context(), 5*time.Second)
-+			t.Cleanup(cancel)
-+			sdk, err := NewMinioSDK(ctx, ObjectStorageArguments{
-+				Endpoint: server.URL, Region: "us-east-1", Bucket: "bucket",
-+				NoDefaultCredentials: true, NoBucketValidation: true,
-+			}, nil)
-+			require.NoError(t, err)
-+			var reader io.ReadCloser
-+			if tc.consumer != "" {
-+				fs := &S3FS{name: "range", storage: sdk, ioMerger: NewIOMerger()}
-+				vector := &IOVector{FilePath: "object", Policy: SkipAllCache, Entries: []IOEntry{{Offset: *tc.min, Size: *tc.max - *tc.min}}}
-+				t.Cleanup(vector.Release)
-+				if tc.consumer == "stream" {
-+					vector.Entries[0].ReadCloserForRead = &reader
-+				}
-+				require.NoError(t, fs.Read(ctx, vector))
-+				if tc.consumer == "buffered" {
-+					reader = io.NopCloser(strings.NewReader(string(vector.Entries[0].Data)))
-+				}
-+			} else if tc.identity != "" {
-+				identity := ObjectIdentity{ETag: "etag", Size: int64(len(data))}
-+				if tc.identity == "version" {
-+					identity.VersionID = "version"
-+				}
-+				reader, err = sdk.ReadObjectWithIdentity(ctx, "object", tc.min, tc.max, identity)
-+				require.NoError(t, err)
-+			} else {
-+				reader, err = sdk.Read(ctx, "object", tc.min, tc.max)
-+				require.NoError(t, err)
+ 				warnings.Reset()
+ 				if accepted > 0 {
+ 					for _, row := range rowBuf[:accepted] {
+ 						if err := h.processNestedRow(row, bat, param, proc); err != nil {
+-							rollbackRows(checkpoints, accepted)
+-							return err
++							return vector.JoinAppendRollbackError(err, rollbackRows(checkpoints, accepted))
+ 						}
+ 					}
+ 					if _, err := h.mapCurrentPageRows(bat, param, mappingProc, int64(accepted)); err != nil {
+-						rollbackRows(checkpoints, accepted)
+-						return h.closePagesOnError(param.Ctx, err)
++						return h.closePagesOnError(param.Ctx, vector.JoinAppendRollbackError(err, rollbackRows(checkpoints, accepted)))
+ 					}
+ 				}
+ 				// The row reader has already decoded n rows. Rewind the unread
+ 				// suffix so the next batch starts at the same logical row as the
+ 				// scalar page offsets.
+ 				if err := h.rowReader.SeekToRow(rowStart + int64(length+accepted)); err != nil {
+-					rollbackRows(checkpoints, accepted)
+-					return moerr.ConvertGoError(param.Ctx, err)
++					return vector.JoinAppendRollbackError(moerr.ConvertGoError(param.Ctx, err), rollbackRows(checkpoints, accepted))
+ 				}
+ 				batchBoundary = true
+ 			}
+```
+
+**File**: `pkg/sql/colexec/join_util.go` (modified, +13/-6)
+```diff
+@@ -104,6 +104,9 @@ func (bs *Batches) CopyIntoBatchesWithAllocation(
+ 			tailCheckpoints = localTailCheckpoints[:len(originalTail.Vecs)]
+ 		}
+ 		for i := range originalTail.Vecs {
++			if err := originalTail.Vecs[i].MaterializeOwned(proc.Mp()); err != nil {
++				return err
 +			}
-+			t.Cleanup(func() { _ = reader.Close() })
-+			got, err := io.ReadAll(reader)
-+			require.NoError(t, err)
-+			require.NoError(t, reader.Close())
-+			require.Equal(t, tc.want, string(got))
-+			select {
-+			cas
+ 			tailCheckpoints[i] = originalTail.Vecs[i].MakeAppendCheckpoint()
+ 		}
+ 	}
+@@ -118,13 +121,14 @@ func (bs *Batches) CopyIntoBatchesWithAllocation(
+ 		bs.Buf = nil
+ 	}
+ 	if originalTail != nil {
++		var rollbackErr error
+ 		for i := range originalTail.Vecs {
+-			originalTail.Vecs[i].RollbackAppend(
+-				tailCheckpoints[i],
+-				DefaultBatchSize-originalTailRows,
+-			)
++			rollbackErr = vector.JoinAppendRollbackError(rollbackErr, originalTail.Vecs[i].RollbackAppend(tailCheckpoints[i], DefaultBatchSize-originalTailRows))
+ 		}
+-		originalTail.SetRowCount(originalTailRows)
++		if rollbackErr == nil {
++			originalTail.SetRowCount(originalTailRows)
++		}
++		err = vector.JoinAppendRollbackError(err, rollbackErr)
+ 	}
+ 	bs.MemSize = originalMemSize
+ 	return err
+@@ -301,12 +305,15 @@ func appendToFixedSizeFromOffset(dst *batch.Batch, src *batch.Batch, offset int,
+ 		checkpoints = localCheckpoints[:len(dst.Vecs)]
+ 	}
+ 	for i := range dst.Vecs {
++		if err := dst.Vecs[i].MaterializeOwned(proc.Mp()); err != nil {
++			return 0, err
++		}
+ 		checkpoints[i] = dst.Vecs[i].MakeAppendCheckpoint()
+ 	}
+ 	for i := range dst.Vecs {
+ 		if err = dst.Vecs[i].UnionBatch(src.Vecs[i], int64(offset), length, nil, proc.Mp()); err != nil {
+ 			for j := 0; j <= i; j++ {
+-				dst.Vecs[j].RollbackAppend(checkpoints[j], length)
++				err = vector.JoinAppendRollbackError(err, dst.Vecs[j].RollbackAppend(checkpoints[j], length))
+ 			}
+ 			return 0, err
+ 		}
+```
+
+**File**: `pkg/sql/colexec/mergetop/top.go` (modified, +1/-1)
+```diff
+@@ -299,7 +299,7 @@ func (ctr *container) processBatch(limit uint64, bat *batch.Batch, proc *process
+ 				proc.Mp(),
+ 			); err != nil {
+ 				for i := range checkpoints {
+-					ctr.bat.Vecs[i].RollbackAppend(checkpoints[i], processCount)
++					err = vector.JoinAppendRollbackError(err, ctr.bat.Vecs[i].RollbackAppend(checkpoints[i], processCount))
+ 				}
+ 				return err
+ 			}
+```
+
+**File**: `pkg/sql/colexec/multi_update/s3writer_delegate.go` (modified, +3/-3)
+```diff
+@@ -614,12 +614,12 @@ func (writer *s3WriterDelegate) prepareDeleteBatches(
+ 			rowIDCheckpoint := rowIDDst.MakeAppendCheckpoint()
+ 			pkCheckpoint := pkDst.MakeAppendCheckpoint()
+ 			if err := vector.AppendFixed(rowIDDst, rowID, false, proc.GetMPool()); err != nil {
+-				rowIDDst.RollbackAppend(rowIDCheckpoint, 1)
++				err = vector.JoinAppendRollbackError(err, rowIDDst.RollbackAppend(rowIDCheckpoint, 1))
+ 				return nil, err
+ 			}
+ 			if err := pkDst.UnionOne(bat.GetVector(PkIdx), int64(i), proc.GetMPool()); err != nil {
+-				rowIDDst.RollbackAppend(rowIDCheckpoint, 1)
+-				pkDst.RollbackAppend(pkCheckpoint, 1)
++				err = vector.JoinAppendRollbackError(err, rowIDDst.RollbackAppend(rowIDCheckpoint, 1))
++				err = vector.JoinAppendRollbackError(err, pkDst.RollbackAppend(pkCheckpoint, 1))
+ 				return nil, err
+ 			}
+ 			block.bat.SetRowCount(rowIDDst.Length())
+```
+
+**File**: `pkg/sql/colexec/order/order.go` (modified, +1/-2)
+```diff
+@@ -331,8 +331,7 @@ func (ctr *container) appendBatchAccounted(
+ 		}
+ 		if err != nil {
+ 			for j := range ctr.batWaitForSort.Vecs {
+-				ctr.batWaitForSort.Vecs[j].RollbackAppend(
+-					checkpoints[j], bat.Vecs[j].Length())
++				err = vector.JoinAppendRollbackError(err, ctr.batWaitForSort.Vecs[j].RollbackAppend(checkpoints[j], bat.Vecs[j].Length()))
+ 			}
+ 			return err
+ 		}
 ```
 
 ---
 
-### Incident Patch 2: `d2451d5c` (2026-11-03)
-**Commit Message**: fix: bound compression scratch growth and oversized merge batches (#32052)
+### Incident Patch 2: `4e0a1864` (2026-11-04)
+**Commit Message**: fix(disttae): bound long-transaction workspace maintenance and close orphan-cleanup ownership (#30988)
 
 ## What type of PR is this?
 
@@ -2777,142 +2931,411 @@ Local validation on macOS arm64 with Go 1.27.1:
 
 ## Which issue(s) this PR fixes:
 
-Fixes #32051
+Related to #25590
 
 ## What this PR does / why we need it:
 
-A legal LZ4 scratch request slightly above 1 GiB was rounded to 2 GiB, exceeding mpool's single-allocation limit and panicking. Retain power-of-two growth where it fits; allocate the exact requested size when rounding alone would cross the limit. Actual allocation failures retain the existing panic behavior.
+Long explicit transactions repeatedly updating the same primary-key rows rescan superseded workspace history at statement boundaries and during reads. This PR keeps incremental per-table views and compacts superseded entries so maintenance follows the live working set. The issue's UPDATE, REPLACE and DELETE+INSERT cases are covered by focused workspace tests and SQL cases.
 
-Check the output batch size after every appended row in both sorted merge and reshape. Flush the block and finish the object once its size exceeds 1.5 × target object size (192 MiB for a 128 MiB target), using the existing writer path. Keep the schema row limit and source transfer stride unchanged. The threshold is soft: one indivisible row may exceed it.
+Persistence and compaction also need a complete ownership contract: every unpublished object must reserve bounded capacity and remain owned until publication or cleanup. The implementation centralizes that contract in the workspace/engine, retains failed cleanup work, and drains it with bounded batches/backoff and a single shutdown budget. Local writers and remote fragments share the same same-version admission contract running on one build; remote ownership transfer prov
 
-Only critical regression coverage is added:
-
-- Compression capacity at 1 GiB and mpool's allocation boundary, without GiB-sized test allocations.
-- Sorted merge and reshape with skewed rows and a deleted row: persist
-
-**File**: `pkg/objectio/writer.go` (modified, +11/-2)
+**File**: `pkg/fileservice/local_fs.go` (modified, +7/-0)
 ```diff
-@@ -143,22 +143,31 @@ func arenaNextPow2(n int) int {
+@@ -1028,6 +1028,13 @@ func deleteLocalFile(mu *sync.RWMutex, dirFiles map[string]*os.File, nativePath
  
- // CompressBuf returns a scratch buffer for LZ4 compression, growing as needed.
- // The buffer is retained across arena Reset() calls.  We round up to the next
--// power of 2 so that minor size variations don't trigger repeated allocations.
-+// power of 2 unless that capacity exceeds mpool's single-allocation limit.
- func (a *WriteArena) CompressBuf(minSize int) []byte {
- 	if len(a.compressBuf) < minSize {
- 		if a.compressBuf != nil {
- 			arenaMPool.Free(a.compressBuf)
- 			a.compressBuf = nil // nil immediately so a panic in Alloc doesn't leave a dangling pointer
- 		}
- 		var err error
--		a.compressBuf, err = arenaMPool.Alloc(arenaNextPow2(minSize), true)
-+		a.compressBuf, err = arenaMPool.Alloc(arenaCompressBufSize(minSize), true)
- 		if err != nil {
- 			panic(err)
- 		}
+ 	err = os.Remove(nativePath)
+ 	if err != nil {
++		// A concurrent deletion already removed the file between this
++		// check's Stat and its Remove: the file is gone, which is the
++		// documented not-found outcome, not an error (the cleanup
++		// subsystem's drains race benignly over one-ownership names).
++		if os.IsNotExist(err) {
++			return nil
++		}
+ 		return err
  	}
- 	return a.compressBuf[:minSize]
+ 
+```
+
+**File**: `pkg/objectio/injects.go` (modified, +111/-0)
+```diff
+@@ -121,13 +121,60 @@ const (
+ 	// -> NewCompile -> UpdateSnapshotWriteOffset.
+ 	FJ_CNReenterSnapshotOffsetOnGetTable = "fj/cn/reenter_snapshot_offset_on_get_table"
+ 
++	// FJ_CNWorkspaceMergeRowidAllocFailed is a test-only fault that makes
++	// the >=30-entries merge pass of the admission merge fail exactly at
++	// its combined-batch rowid regeneration. Before the round-6 rewrite
++	// of issue #25590 this fired AFTER the merge had already destroyed
++	// the combined sources, which left the retained batch mixing the
++	// rowids of several blocks with no reader-safe invariants left.
++	FJ_CNWorkspaceMergeRowidAllocFailed = "fj/cn/workspace_merge_rowid_alloc_failed"
++
++	// FJ_CNWorkspaceCompactPublishFailed is a test-only fault that makes
++	// the object-compaction pass of the admission merge fail exactly at
++	// the post-lookup re-publication of another object sharing a metadata
++	// batch with a compacted (dirty) object — the mpool-fallible window
++	// between the compaction's table resolution and the pending-deletion
++	// rewrite. Before the round-7 fix of issue #25590 this fired where the
++	// compaction still wiped pending deletedBlocks unconditionally while
++	// the dirty object had not been rewritten yet, so the retried
++	// admission resurrected the rows those marks deleted.
++	FJ_CNWorkspaceCompactPublishFailed = "fj/cn/workspace_compact_publish_failed"
++
+ 	// FJ_CNDumpResolveWindowWait is a test-only orchestration point inside the
+ 	// unlocked table-resolution window of a workspace dump. Armed with the
+ 	// WAIT action, it parks the dumping goroutine right before the transaction
+ 	// lock is re-acquired, so a test can deterministically mutate the
+ 	// workspace from another goroutine while the window is open.
+ 	FJ_CNDumpResolveWindowWait = "fj/cn/dump_resolve_window_wait"
+ 
++	// FJ_CNWorkspaceRecordStageFailed is a test-only fault that fails one
++	// table's S3 metadata record inside its fallible preparation (the
++	// staged record phase of issue #25590's object compaction): armed
++	// with the table's name — or empty to fire for every record — it
++	// makes the record fail AFTER an earlier replacement of the same
++	// pass has already staged, which is the exact window the round-20
++	// atomicity contract covers: nothing the failed record prepared may
++	// survive a partially failed pass as a live workspace entry.
++	FJ_CNWorkspaceRecordStageFailed = "fj/cn/workspace_record_stage_failed"
++
++	// The four FJ_CNDump{Insert,Delete}{Write,Sync}Failed keys are test-only
++	// faults inside the fallible publication phase of the workspace dumps
++	// (Transaction.dumpInsertBatchLocked / dumpDeleteBatchLocked). They let a
++	// test fail the publication deterministically — before the writer Write,
++	// or between Write and Sync — to pin that a failed dump leaves the
++	// workspace intact instead of discarding staged sources whose
++	// replacement file entries were never published (issue #25590).
++	FJ_CNDumpInsertWriteFailed = "fj/cn/dump_insert_write_fails"
++	FJ_CNDumpInsertSyncFailed  = "fj/cn/dump_insert_sync_fails"
++	FJ_CNDumpDeleteWriteFailed = "fj/cn/dump_delete_write_fails"
++	FJ_CNDumpDeleteSyncFailed  = "fj/cn/dump_delete_sync_fails"
++
++	// FJ_CNDumpDeleteCloseFailed fails the tombstone writer's Close AFTER
++	// the replacement entry is recorded, pinning that such a table counts
++	// as published (retiring to its sources would double-apply the
++	// tombstones) while the dump still reports the error.
++	FJ_CNDumpDeleteCloseFailed = "fj/cn/dump_delete_close_fails"
++
+ 	// FJ_ArrowLoadRolloutWait is a test-only post-admission/pre-publication
+ 	// barrier. Arrow's reader triggers it after a range has been admitted and
+ 	// converted, but before the batch is published to the LOAD pipeline, so a
+@@ -388,13 +435,77 @@ func CNReenterSnapshotOffsetOnGetTableInjected() (injected bool, rogueUpdate boo
+ 	return true, iarg == 2, iarg != 1
  }
  
-+func arenaCompressBufSize(minSize int) int {
-+	size := arenaNextPow2(minSize)
-+	limit := mpool.MaxAllocationSize()
-+	if int64(minSize) <= limit && int64(size) > limit {
-+		return minSize
-+	}
-+	return size
++// CNWorkspaceMergeRowidAllocFailedInjected reports whether the
++// FJ_CNWorkspaceMergeRowidAllocFailed fault is active: when it is, the
++// admission merge's staged publication fails before the regenerated rowids
++// of the combined raw-insert batch are installed.
++func CNWorkspaceMergeRowidAllocFailedInjected() bool {
++	return SimpleInjected(FJ_CNWorkspaceMergeRowidAllocFailed)
 +}
 +
- // FreeBuffers releases the off-heap allocations and serialization scratch.
- // Call this before dropping an arena that won't be returned to the pool.
- func (a *WriteArena) FreeBuffers() {
-```
-
-**File**: `pkg/objectio/writer_test.go` (modified, +10/-0)
-```diff
-@@ -493,6 +493,16 @@ func TestWriteArena(t *testing.T) {
- 		require.GreaterOrEqual(t, len(a.compressBuf), 200)
- 	})
- 
-+	t.Run("compress capacity respects allocation boundary", func(t *testing.T) {
-+		// Exercise the real GiB boundary without allocating a GiB buffer.
-+		limit := int(mpool.MaxAllocationSize())
-+		require.Equal(t, 1<<30, arenaCompressBufSize(1<<30))
-+		require.Equal(t, 1<<30+1, arenaCompressBufSize(1<<30+1))
-+		require.Equal(t, limit, arenaCompressBufSize(limit))
-+		// An illegal request must still reach Alloc's existing failure path.
-+		require.Greater(t, arenaCompressBufSize(limit+1), limit)
-+	})
++// CNWorkspaceCompactPublishFailedInjected reports whether the
++// FJ_CNWorkspaceCompactPublishFailed fault is active: when it is, the
++// object-compaction pass' re-publication of a metadata-batch-sharing
++// object fails after the compaction's table lookup has resolved, so the
++// pass returns mid-batch with the dirty object's rewrite still pending.
++func CNWorkspaceCompactPublishFailedInjected() bool {
++	return SimpleInjected(FJ_CNWorkspaceCompactPublishFailed)
++}
 +
- 	t.Run("zero-size arena falls back to exact make", func(t *testing.T) {
- 		a := NewArena(0)
- 		b := a.Alloc(10)
++// CNWorkspaceRecordStageFailedInjected reports whether the table's S3
++// record belongs to the FJ_CNWorkspaceRecordStageFailed fault — armed by
++// table name (or with no name to refuse every record): the staged record
++// fails at 
 ```
 
-**File**: `pkg/vm/engine/tae/mergesort/merger.go` (modified, +1/-5)
+**File**: `pkg/objectio/ioutil/sink_pool.go` (modified, +35/-1)
 ```diff
-@@ -195,7 +195,6 @@ func (m *merger[T]) merge(ctx context.Context) error {
- 	defer releaseF()
+@@ -55,11 +55,24 @@ type poolSinkJob struct {
+ 	mp      *mpool.MPool
+ 	fs      fileservice.FileService
+ 	result  *pipelineResult
++	// capacityHook, when the owning sinker carries one, gates each
++	// spilling object right before the pool's sync worker would make it
++	// durable — the SAME edge-of-persistence contract as the sync path's
++	// syncFileSinker, so a pipelined writer cannot push its objects past
++	// an admission bound its non-pipelined sibling respects (issue
++	// #25590 round-19 review). A refused job persists nothing and only
++	// the job's error surfaces.
++	capacityHook UncommittedCapacityHook
+ }
  
- 	mp := m.host.GetMPool()
--	bigblk := false
- 	for m.heap.Len() != 0 {
+ type poolSyncJob struct {
+ 	fSinker FileSinker
+ 	result  *pipelineResult
++	// capacityHook gates one spilling object before the sync worker
++	// persists it — the same edge-of-persistence contract as
++	// syncFileSinker, so pipelined writers respect the admission bound
++	// (issue #25590 round-19 review). Refusal persists nothing.
++	capacityHook UncommittedCapacityHook
+ }
+ 
+ // pipelineResult tracks accumulated results and errors for one Sinker's
+@@ -168,7 +181,11 @@ func (p *SinkPool) runSinkWorker() {
+ 		// Forward to sync worker. Do NOT call r.pending.Done() here;
+ 		// the sync worker calls it after completing the IO.
  		select {
- 		case <-ctx.Done():
-@@ -235,9 +234,7 @@ func (m *merger[T]) merge(ctx context.Context) error {
- 
- 		m.stats.blkRowCnt++
- 		m.stats.objRowCnt++
--		if m.stats.blkRowCnt%100 == 0 && m.stats.targetObjSize > 0 {
--			bigblk = m.buffer.Size() > int(m.stats.targetObjSize)*3/2
--		}
-+		bigblk := m.stats.isBlockOversized(m.buffer)
- 		// write new block
- 		if m.stats.blkRowCnt == int(m.rowPerBlk) || bigblk {
- 			m.stats.blkRowCnt = 0
-@@ -264,7 +261,6 @@ func (m *merger[T]) merge(ctx context.Context) error {
- 				m.stats.objBlkCnt = 0
- 				m.stats.objRowCnt = 0
- 				m.stats.objCnt++
--				bigblk = false
- 			}
+-		case p.syncChan <- &poolSyncJob{fSinker: fSinker, result: r}:
++		case p.syncChan <- &poolSyncJob{
++			fSinker:      fSinker,
++			result:       r,
++			capacityHook: job.capacityHook,
++		}:
+ 		case <-r.ctx.Done():
+ 			fSinker.Close()
+ 			r.setError(context.Cause(r.ctx))
+@@ -191,6 +208,23 @@ func (p *SinkPool) runSyncWorker() {
+ 			continue
  		}
  
++		// The hook gate runs before the pool's Sync exactly like
++		// syncFileSinker runs it on the sync path: a refusal aborts the
++		// object before anything goes durable — nothing lands in
++		// r.unpublished because the object never met storage — and the
++		// error fails the writer's Sync through result.getError (issue
++		// #25590 round-19 review).
++		if job.capacityHook != nil {
++			if name := activeFileSinkerObjectName(job.fSinker); name != "" {
++				if err := job.capacityHook(name); err != nil {
++					job.fSinker.Close()
++					r.setError(err)
++					r.pending.Done()
++					continue
++				}
++			}
++		}
++
+ 		syncStart := time.Now()
+ 		stats, err := job.fSinker.Sync(r.ctx)
+ 		atomic.AddInt64(&r.syncNs, int64(time.Since(syncStart)))
 ```
 
-**File**: `pkg/vm/engine/tae/mergesort/reshaper.go` (modified, +3/-2)
+**File**: `pkg/objectio/ioutil/sinker.go` (modified, +119/-13)
 ```diff
-@@ -116,7 +116,8 @@ func reshape(ctx context.Context, host MergeTaskHost) error {
- 				stats.blkRowCnt++
- 				stats.objRowCnt++
+@@ -415,6 +415,9 @@ type Sinker struct {
+ 		tailSizeCap         int
+ 		offHeap             bool
+ 		chunkedColumnPolicy objectio.ChunkedColumnPolicy
++		// capacityHook gates each object right before it persists; nil
++		// in every caller without an engine capacity ledger.
++		capacityHook UncommittedCapacityHook
+ 	}
+ 	fSinker struct {
+ 		executor FileSinker
+@@ -548,12 +551,26 @@ func DeleteUnpublishedObjects(
+ 	return len(unique), nil
+ }
  
--				if stats.blkRowCnt == int(maxRowCnt) {
-+				bigblk := stats.isBlockOversized(buffer)
-+				if stats.blkRowCnt == int(maxRowCnt) || bigblk {
- 					if writer == nil {
- 						writer = host.PrepareNewWriter()
- 					}
-@@ -131,7 +132,7 @@ func reshape(ctx context.Context, host MergeTaskHost) error {
+-// DeletePersisted deletes every object that this sinker has persisted, or may
+-// have persisted after a commit-ambiguous Sync error, but has not transferred
+-// out of its lifecycle yet. It returns the exact ownership snapshot on both
+-// success and failure. The tracked references are retained when deletion fails
+-// so the caller may retry or hand them off before closing the sinker.
+-func (sinker *Sinker) DeletePersisted(ctx context.Context) ([]string, error) {
++// PersistedNames takes this sinker's exact ownership snapshot — every
++// object it persisted, or may have persisted after a commit-ambiguous
++// Sync error, and has not transferred out of its lifecycle yet — WITHOUT
++// deleting anything (issue #25590 round-15 review): a caller on a
++// lock-holding or user-blocking path (a transaction's statement
++// admission) can transfer the names to its asynchronous cleanup owner
++// instead of synchronously deleting them on a file service whose
++// deletion a stalled context cannot move. The snapshot follows the same
++// completeness rule as DeletePersisted: a still-running pipeline is
++// drained first so no sibling write's file can be missed, and the tracked
++// references stay inside the sinker — closing it drops them exactly as
++// DeletePersisted's callers have always done after taking the snapshot.
++func (sinker *Sinker) PersistedNames() []string {
++	return sinker.persistedSnapshot()
++}
++
++// persistedSnapshot assembles the persisted/possibly-persisted name
++// snapshot shared by DeletePersisted (which deletes it) and
++// PersistedNames (which only hands it out).
++func (sinker *Sinker) persistedSnapshot() []string {
+ 	if sinker.pipe.enabled && sinker.pipe.result != nil {
+ 		// A failed pipeline may still have successful sibling writes. Wait for
+ 		// all of them before taking the ownership snapshot.
+@@ -577,7 +594,16 @@ func (sinker *Sinker) DeletePersisted(ctx context.Context) ([]string, error) {
+ 		files = append(files, sinker.pipe.result.unpublished...)
+ 		sinker.pipe.result.mu.RUnlock()
+ 	}
+-	files = normalizeUnpublishedObjectNames(files)
++	return normalizeUnpublishedObjectNames(files)
++}
++
++// DeletePersisted deletes every object that this sinker has persisted, or may
++// have persisted after a commit-ambiguous Sync error, but has not transferred
++// out of its lifecycle yet. It returns the exact ownership snapshot on both
++// success and failure. The tracked references are retained when deletion fails
++// so the caller may retry or hand them off before closing the sinker.
++func (sinker *Sinker) DeletePersisted(ctx context.Context) ([]string, error) {
++	files := sinker.persistedSnapshot()
+ 	_, err := DeleteUnpublishedObjects(ctx, sinker.fs, files...)
+ 	if err != nil {
+ 		return files, err
+@@ -718,11 +744,12 @@ func (sinker *Sinker) pipelineSubmit(ctx context.Context, data []*batch.Batch) e
+ 	}
+ 	waitStart := time.Now()
+ 	err := GetDefaultSinkPool().Submit(&poolSinkJob{
+-		data:    data,
+-		factory: sinker.fSinker.factory,
+-		mp:      sinker.mp,
+-		fs:      sinker.fs,
+-		result:  sinker.pipe.result,
++		data:         data,
++		factory:      sinker.fSinker.factory,
++		mp:           sinker.mp,
++		fs:           sinker.fs,
++		result:       sinker.pipe.result,
++		capacityHook: sinker.config.capacityHook,
+ 	})
+ 	atomic.AddInt64(&sinker.timing.waitNs, int64(time.Since(waitStart)))
+ 	return err
+@@ -815,6 +842,76 @@ func (sinker *Sinker) trySpill(ctx context.Context) error {
+ 	return err
+ }
  
- 					buffer.CleanOnlyData()
- 
--					if stats.needNewObject() {
-+					if stats.needNewObject() || bigblk {
- 						if err := syncObject(ctx, writer, host); err != nil {
- 							return err
- 						}
++// UncommittedCapacityHook gates one object sitting on the edge of
++// persistence: the file sinker calls it right BEFORE its Sync would make
++// the object durable, with the object's name, and a returned error aborts
++// that spill before anything persists. The engine uses this hook to
++// reserve capacity for each unpublished object as it is created, in
++// object units rather than writer units, so a workspace dump whose
++// writer spills several objects consumes one reservation per object and
++// a refusal stops the spilling writer with no partially-persisted
++// object behind it (issue #25590 round-18 review).
++type UncommittedCapacityHook func(name string) error
++
++// WithUncommittedCapacityHook installs the capacity hook consulted
++// before each object persists. It is nil in production unless the
++// caller's persistence is bounded by an engine admission ledger.
++func WithUncommittedCapacityHook(hook UncommittedCapacityHook) SinkerOption {
++	return func(sinker *Sinker) {
++		sinker.config.capacityHook = hook
++	}
++}
++
++// SinkerOwner is the structural interface to a workspace 
 ```
 
-**File**: `pkg/vm/engine/tae/mergesort/row_size_test.go` (added, +169/-0)
+**File**: `pkg/objectio/ioutil/sinker_test.go` (modified, +27/-0)
 ```diff
-@@ -0,0 +1,169 @@
+@@ -237,3 +237,30 @@ func TestSinkerDeletePersistedAfterAmbiguousSyncFailure(t *testing.T) {
+ 	_, err = baseFS.StatFile(ctx, fs.persisted)
+ 	require.True(t, moerr.IsMoErrCode(err, moerr.ErrFileNotFound))
+ }
++
++func TestSinkerResetDiscardsTransferredFailureNames(t *testing.T) {
++	ctx := context.Background()
++	proc := testutil.NewProc(t)
++	baseFS, err := fileservice.NewMemoryFS("shared", fileservice.DisabledCacheConfig, nil)
++	require.NoError(t, err)
++	t.Cleanup(func() { baseFS.Close(ctx) })
++	fs := &persistThenErrorFS{FileService: baseFS}
++	_, typs, _, sinker := makeTestSinker(proc.Mp(), fs)
++	t.Cleanup(func() { require.NoError(t, sinker.Close()) })
++	bat := containers.MockBatch(typs, 2, 2, nil)
++	t.Cleanup(bat.Close)
++	require.NoError(t, sinker.Write(ctx, containers.ToCNBatch(bat)))
++	require.ErrorContains(t, sinker.Sync(ctx), "injected post-persist sync failure")
++	owned := sinker.PersistedNames()
++	require.Equal(t, []string{fs.persisted}, owned)
++	require.Equal(t, owned, sinker.GetUnpublishedFiles())
++
++	sinker.Reset()
++	require.Empty(t, sinker.PersistedNames())
++	require.Empty(t, sinker.GetUnpublishedFiles())
++	require.Equal(t, []string{fs.persisted}, owned, "the transferred snapshot is independent")
++	_, err = baseFS.StatFile(ctx, fs.persisted)
++	require.NoError(t, err, "Reset must leave physical cleanup to the owner")
++	sinker.Reset()
++	require.Empty(t, sinker.PersistedNames())
++}
+```
+
+**File**: `pkg/sql/colexec/cn_segment_map.go` (modified, +28/-19)
+```diff
+@@ -15,7 +15,6 @@
+ package colexec
+ 
+ import (
+-	"bytes"
+ 	"encoding/binary"
+ 	"sync"
+ 
+@@ -40,6 +39,34 @@ type CnSegmentMap struct {
+ 	sync.Mutex
+ 	// tag whether a segment is generated by this txn
+ 	mp map[string]int32
++	// refs counts, per map entry, the ledgers that claimed it through
++	// PutCnSegment — the dual-claim shape a coordinator's re-record of an
++	// adopted transferred object builds on this CN (issue #25590
++	// round-55 review): two workspaces of one transaction can register
++	// the same (txnID, table, segment) — the fragment's mirror and the
++	// recording workspace — so a map entry retires only when EVERY
++	// claiming ledger has reached its terminal. It is read and written
++	// only under the mutex.
++	refs map[string]int
++}
++
++// TxnWorkspaceSegments records exactly the CN segment-map entries ONE
++// workspace registered, so the workspace's terminal can remove exactly
++// those entries at a cost proportional to its own registrations. The
++// whole-map prefix sweep the retire path previously ran cost up to
++// milliseconds once unrelated live transactions registered hundreds of
++// thousands of segments (issue #25590 review finding P2), and — because
++// a remote statement's fragment mirror workspaces share the user
++// transaction's ID — one fragment's settlement could also unregister
++// segments a concurrent fragment of the same live transaction had
++// registered on this CN, corrupting later in-transaction delete
++// routing (GetCnSegmentType). The zero value is a workspace that
++// registered no segment; retiring it never opens the segment mutex. All
++// ledger access happens through the owning server's segment-map mutex
++// (register on Put, retire on removal), so the ledger needs no
++// separate synchronization.
++type TxnWorkspaceSegments struct {
++	keys map[string]struct{}
+ }
+ 
+ func IsDeletionOnTxnUnCommit(
+@@ -70,22 +97,4 @@ func segmentKey(txnID []byte, tableId uint64, segId *types.Segmentid) string {
+ 	return string(key)
+ }
+ 
+-func segmentKeyPrefix(txnID []byte) []byte {
+-	if len(txnID) > maxTxnIDLen {
+-		txnID = txnID[:maxTxnIDLen]
+-	}
+-	prefix := make([]byte, 2+len(txnID))
+-	binary.BigEndian.PutUint16(prefix[:2], uint16(len(txnID)))
+-	copy(prefix[2:], txnID)
+-	return prefix
+-}
+-
+-func segmentKeyHasTxn(key string, txnID []byte) bool {
+-	prefix := segmentKeyPrefix(txnID)
+-	if len(key) < len(prefix) {
+-		return false
+-	}
+-	return bytes.HasPrefix([]byte(key), prefix)
+-}
+-
+ const maxTxnIDLen = int(^uint16(0))
+```
+
+**File**: `pkg/sql/colexec/cn_segment_map_test.go` (added, +288/-0)
+```diff
+@@ -0,0 +1,288 @@
 +// Copyright 2026 Matrix Origin
 +//
 +// Licensed under the Apache License, Version 2.0 (the "License");
 +// you may not use this file except in compliance with the License.
 +// You may obtain a copy of the License at
 +//
-+// http://www.apache.org/licenses/LICENSE-2.0
++//	http://www.apache.org/licenses/LICENSE-2.0
 +//
 +// Unless required by applicable law or agreed to in writing, software
 +// distributed under the License is distributed on an "AS IS" BASIS,
@@ -2920,419 +3343,888 @@ Only critical regression coverage is added:
 +// See the License for the specific language governing permissions and
 +// limitations under the License.
 +
-+package mergesort
++package colexec
 +
 +import (
-+	"bytes"
-+	"context"
++	"encoding/binary"
++	"fmt"
 +	"testing"
++	"time"
 +
-+	"github.com/matrixorigin/matrixone/pkg/common/mpool"
-+	"github.com/matrixorigin/matrixone/pkg/container/batch"
-+	"github.com/matrixorigin/matrixone/pkg/container/nulls"
-+	"github.com/matrixorigin/matrixone/pkg/container/types"
-+	"github.com/matrixorigin/matrixone/pkg/container/vector"
-+	"github.com/matrixorigin/matrixone/pkg/fileservice"
++	"github.com/matrixorigin/matrixone/pkg/common/runtime"
 +	"github.com/matrixorigin/matrixone/pkg/objectio"
-+	"github.com/matrixorigin/matrixone/pkg/objectio/ioutil"
-+	"github.com/matrixorigin/matrixone/pkg/pb/api"
-+	"github.com/matrixorigin/matrixone/pkg/testutil"
 +	"github.com/stretchr/testify/require"
 +)
 +
-+func TestMergeFlushesOversizedRows(t *testing.T) {
-+	for _, sorted := range []bool{true, false} {
-+		name := "reshape"
-+		if sorted {
-+			name = "sorted merge"
++// newSegmentMapTestServer installs a fresh server for the default runtime
++// and restores whatever server the process had before, so segment-map
++// cases never observe state another test left behind.
++func newSegmentMapTestServer(t *testing.T) *Server {
++	t.Helper()
++	rt := runtime.ServiceRuntime("")
++	previous, existed := rt.GetGlobalVariables(runtime.ColexecServer)
++	server := NewServer("")
++	t.Cleanup(func() {
++		if existed {
++			rt.SetGlobalVariables(runtime.ColexecServer, previous)
++		} else {
++			rt.CompareAndDeleteGlobalVariables(runtime.ColexecServer, server)
 +		}
-+		t.Run(name, func(t *testing.T) {
-+			ctx := context.Background()
-+			mp := mpool.MustNewZero()
-+			fs := testutil.NewSharedFS()
-+			host := &sizeLimitMergeHost{
-+				jsonReadbackMergeHost: jsonReadbackMergeHost{mp: mp, loaded: make([]bool, 2)},
-+				fs:                    fs,
-+				sortKey:               -1,
-+				deletes:               []*nulls.Nulls{{}, {}},
-+			}
-+			if sorted {
-+				host.sortKey = 0
-+			}
-+			t.Cleanup(func() {
-+				if host.transfer != nil {
-+					host.transfer.Release()
-+				}
-+				for _, run := range host.runs {
-+					run.Clean(mp)
-+				}
-+				fs.Close(ctx)
-+				require.Zero(t, mp.CurrNB())
-+				mpool.DeleteMPool(mp)
-+			})
-+			// Use a scaled byte budget: even a single large row may exceed it.
-+			payloadSizes := []int{1, 1, 300, 1, 1, 80, 80, 1}
-+			for run := range 2 {
-+				bat := batch.NewWithSize(2)
-+				bat.Attrs = []string{"key", "payload"}
-+				bat.Vecs[0] = vector.NewVec(types.T_int64.ToType())
-+				bat.Vecs[1] = vector.NewVec(types.T_varchar.ToType())
-+				host.runs = append(host.runs, bat)
-+				for row := range 4 {
-+					key := row*2 + run
-+					require.NoError(t, vector.AppendFixed(bat.Vecs[0], int64(key), false, mp))
-+					require.NoError(t, vector.AppendBytes(bat.Vecs[1], bytes.Repeat([]byte{'x'}, payloadSizes[key]), false, mp))
-+				}
-+				bat.SetRowCount(4)
-+			}
-+			host.deletes[0].Add(2) // key 4 must retain the NoTransfer sentinel.
-+
-+			if sorted {
-+				require.NoError(t, mergeObjs(ctx, host, 0))
-+			} else {
-+				require.NoError(t, reshape(ctx, host))
-+			}
-+			require.NotNil(t, host.transfer)
-+			require.Equal(t, 8, host.transfer.Stride, "source block stride must not shrink with output blocks")
-+			require.Len(t, host.commitEntry.CreatedObjs, 3, "flush before the row limit and before 100 rows")
-+
-+			var actual []int64
-+			output := make([][][]int64, 0, len(host.commitEntry.CreatedObjs)) // object -> block -> keys
-+			for _, raw := range host.commitEntry.CreatedObjs {
-+				stat := objectio.ObjectStats(raw)
-+				reader, err := ioutil.NewFileReaderNoCache(fs, stat.ObjectName().String())
-+				require.NoError(t, err)
-+				bats, release, err := reader.LoadAllColumns(ctx, []uint16{0, 1}, mp)
-+				require.NoError(t, err)
-+				var blocks [][]int64
-+				for _, bat := range bats {
-+					keys := append([]int64(nil), vector.MustFixedColWithTypeCheck[int64](bat.Vecs[0])...)
-+					blocks = append(blocks, keys)
-+					actual = append(actual, keys...)
-+					// All rows before the last fit the budget: only one row can
-+					// overshoot it, including when that row alone is oversized.
-+					prefixSize := 0
-+					for row, key := range keys {
-+						require.LessOrEqual(t, prefixSize, 192)
-+						value := bat.Vecs[1].GetBytesAt(row)
-+						require.Equal(t, bytes.Repeat([]byte{'x'}, payloadSizes[key]), value)
-+						prefixSize += 8 + types.VarlenaSize
-+						if len(value) > types.VarlenaInlineSize {
-+							prefixSize += len(value)
-+						}
-+					}
-+				}
-+				output = append(output, blocks)
-+				release()
-+			}
-+			expected := []int64{0, 2, 6, 1, 3, 5, 7}
-+			if sorted {
-+				expected = []int64{0, 1, 2, 3, 5, 6, 7}
-+			}
-+			require.Equal(t, expected, actual)
-+			for run := range 2 {
-+				mapping := host.transfer.GetBlockMap(run)
-+				for row := range 4 {
-+					key := int64(row*2 + run)
-+					dest := mapping[row]
-+					if key == 4 {
-+						require.Equal(t, api.NoTransfer, dest.ObjIdx)
-+						continue
-+					}
-+					require.Less(t, int(dest.ObjIdx), len(output))
-+					blocks := output[dest.ObjIdx]
-+					require.Less(t, int(dest.BlkIdx), len(blocks))
-+					keys := bl
-```
-
-**File**: `pkg/vm/engine/tae/mergesort/types.go` (modified, +7/-0)
-```diff
-@@ -15,6 +15,7 @@
- package mergesort
- 
- import (
-+	"github.com/matrixorigin/matrixone/pkg/container/batch"
- 	"github.com/matrixorigin/matrixone/pkg/container/vector"
- 	"github.com/matrixorigin/matrixone/pkg/sort"
- 	"github.com/matrixorigin/matrixone/pkg/vm/engine/tae/options"
-@@ -73,6 +74,12 @@ type mergeStats struct {
- 	blkRowCnt, objRowCnt, objBlkCnt, objCnt int
- }
- 
-+// Check the soft byte limit after each appended row so only that row can
-+// overshoot the limit, including when a single row is itself oversized.
-+func (s *mergeStats) isBlockOversized(bat *batch.Batch) bool {
-+	return s.targetObjSize > 0 && bat.Size() > int(s.targetObjSize)*3/2
++	})
++	return server
 +}
 +
- func (s *mergeStats) needNewObject() bool {
- 	if s.targetObjSize == 0 {
- 		if s.blkPerObj == 0 {
++// TestTxnWorkspaceSegmentsRetireExactlyOwnRegistrations pins the issue
++// #25590 review finding P2 contract on the segment map itself: a
++// workspace's retirement deletes exactly the entries the workspace
++// registered — never entries registered by other workspaces, including
++// workspaces that share the same transaction ID (fragments of one
++// distributed transaction do exactly that), and never extra entries of
++// other transactions. The pre-fix per-txnID prefix sweep violated both
++// halves: it cost a whole-CN map scan under the shared mutex on every
++// fragment settlement, and a shared-txnID fragment settlement removed
++// another live fragment's registrations.
++func TestTxnWorkspaceSegmentsRetireExactlyOwnRegistrations(t *testing.T) {
++	srv := newSegmentMapTestServer(t)
++
++	txnID := []byte("shared-user-txn")
++	foreignTxnID := []byte("unrelated-txn")
++	const tableA = uint64(42)
++	const tableB = uint64(43)
++
++	writerA := &TxnWorkspaceSegments{}
++	writerB := &TxnWorkspaceSegments{}
++	foreign := &TxnWorkspaceSegments{}
++
++	sidA := objectio.NewSegmentid()
++	sidB := objectio.NewSegmentid()
++	sidForeign := objectio.NewSegmentid()
++
++	// Two workspaces of the SAME user transaction register distinct
++	// segments; an unrelated transaction registers a third entry.
++	srv.PutCnSegment(writerA, txnID, tableA, sidA, TxnWorkspaceUnCommitType)
++	srv.PutCnSegment(writerB, txnID, tableB, sidB, TxnWorkspaceUnCommitType)
++	srv.PutCnSegment(foreign, foreignTxnID, tableA, sidForeign, TxnWorkspaceUnCommitType)
++
++	require.Equal(t, int32(TxnWorkspaceUnCommitType),
++		srv.GetCnSegmentType(sidA, tableA, txnID))
++	require.Equal(t, int32(TxnWorkspaceUnCommitType),
++		srv.GetCnSegmentType(sidB, tableB, txnID))
++	require.Equal(t, int32(TxnWorkspaceUnCommitType),
++		srv.GetCnSegmentType(sidForeign, tableA, foreignTxnID))
++
++	// A repeated registration of the same segment dedupes in the ledger,
++	// so retirement stays proportional to distinct registrations.
++	srv.PutCnSegment(writerA, txnID, tableA, sidA, TxnWorkspaceUnCommitType)
++
++	// Retire writerA: exactly its own segment disappears. Pre-fix this
++	// swept writerB's and foreign's entries away too, because every entry
++	// with the same txnID prefix — and, for the full-scan cost, every
++	// foreign entry — was compared under the shared mutex.
++	srv.RetireTxnWorkspaceSegments(writerA)
++
++	require.Zero(t, srv.GetCnSegmentType(sidA, tableA, txnID),
++		"the retiring workspace's own registration must be removed at its terminal")
++	require.Equal(t, int32(TxnWorkspaceUnCommitType),
++		srv.GetCnSegmentType(sidB, tableB, txnID),
++		"another fragment workspace of the SAME user transaction keeps its registration")
++	require.Equal(t, int32(TxnWorkspaceUnCommitType),
++		srv.GetCnSegmentType(sidForeign, tableA, foreignTxnID),
++		"an unrelated transaction's registration keeps untouched")
++
++	// The ledger is cleared, so a second terminal — a double settlement —
++	// is a no-op, and the remaining writer's own terminal removes its
++	// entry exactly.
++	srv.RetireTxnWorkspaceSegments(writerA)
++	require.Equal(t, int32(TxnWorkspaceUnCommitType),
++		srv.GetCnSegmentType(sidB, tableB, txnID))
++	srv.RetireTxnWorkspaceSegments(writerB)
++	require.Zero(t, srv.GetCnSegmentType(sidB, tableB, txnID))
++
++	// A zero-value ledger — the ordinary read-only remote fragment case —
++	// retires with nothing to remove.
++	srv.RetireTxnWorkspaceSegments(&TxnWorkspaceSegments{})
++
++	// The remaining consumers still see the surviving entries.
++	require.Equal(t, int32(TxnWorkspa
+```
+
+**File**: `pkg/sql/colexec/deletion/relay_object_names.go` (added, +141/-0)
+```diff
+@@ -0,0 +1,141 @@
++// Copyright 2026 Matrix Origin
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//	http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++// relay_object_names.go derives the storage-object names a standalone
++// remote DELETE fragment's result stream carries (issue #25590
++// round-23 review, finding 3).
++//
++// A remote deletion operator (Deletion.RemoteDelete) flushes what it
++// persisted through the fragment result stream itself:
++// makeDelRemoteBatch's five-vector layout [BlockMeta_Delete_ID,
++// BlockMeta_DeltaLoc, BlockMeta_Type, BlockMeta_Partition,
++// BlockMeta_Deletes_Length]. Two row classes share that stream, and
++// only one of them names an object: for each CN-flushed S3 tombstone
++// the row's DeltaLoc column carries the MARSHALED tombstone stats
++// batch (a [ObjectMeta_ObjectStats] batch, one serialized ObjectStats
++// row per tombstone object) and its Type column is FlushDeltaLoc; a
++// per-block row carries the retained row-id batch and a block class
++// in Type, owning nothing. The pre-r23 intake recognized none of it:
++// a clean, drained standalone-delete fragment settled transferred,
++// released its local owner, and a cancellation before the coordinator's
++// record left the tombstone files enumerable nowhere.
++//
++// The recognizer is attribute-anchored and excludes the row-only class
++// by the producer's own Type discriminator; a DeltaLoc that cannot
++// decode rejects the ack instead of adopting a subset of the tombstones
++// the delete persisted.
++package deletion
++
++import (
++	"github.com/matrixorigin/matrixone/pkg/catalog"
++	"github.com/matrixorigin/matrixone/pkg/common/moerr"
++	"github.com/matrixorigin/matrixone/pkg/common/mpool"
++	"github.com/matrixorigin/matrixone/pkg/container/batch"
++	"github.com/matrixorigin/matrixone/pkg/container/types"
++	"github.com/matrixorigin/matrixone/pkg/container/vector"
++	"github.com/matrixorigin/matrixone/pkg/objectio"
++)
++
++// ProducesRemotePersistedObjectMetadata is the mode-authenticated
++// provenance edge the coordinator's remote-object admission asserts
++// (issue #25590 round-24 review finding F2, design r11 D2): the remote
++// deletion layout names tombstone objects only when a real remote
++// S3-flushing deletion produced it. A local delete (RemoteDelete off)
++// is a stream whose rows are ordinary data - the very same
++// makeDelRemoteBatch-shaped rows from such an operator must never reach
++// the recognizer, where they would either reject a legitimate stream
++// fail-closed or adopt embedded stats as cleanup obligations.
++func (deletion *Deletion) ProducesRemotePersistedObjectMetadata() bool {
++	return deletion.RemoteDelete
++}
++
++// ProducesRemotePersistedObjectMetadata mirrors the raw operator's mode
++// on the partition wrapper: the wrapper's raw field is only visible
++// inside this package, so the compile-side admission consumes the mode
++// through this predicate alone, never by reaching into the wrapper.
++func (op *PartitionDelete) ProducesRemotePersistedObjectMetadata() bool {
++	return op.raw != nil && op.raw.RemoteDelete
++}
++
++// TryExtractRemoteDeleteObjectNames returns ok=true only for a batch
++// carrying the standalone deletion operator's remote layout, with one
++// canonical name per flushed tombstone object, or an error when a
++// FlushDeltaLoc row cannot prove the object it claims.
++func TryExtractRemoteDeleteObjectNames(
++	bat *batch.Batch, mp *mpool.MPool,
++) (names []string, ok bool, err error) {
++	if bat == nil || len(bat.Vecs) < 4 || bat.Vecs[0].Length() == 0 {
++		return nil, false, nil
++	}
++	if len(bat.Attrs) < 4 ||
++		bat.Attrs[0] != catalog.BlockMeta_Delete_ID ||
++		bat.Attrs[1] != catalog.BlockMeta_DeltaLoc ||
++		bat.Attrs[2] != catalog.BlockMeta_Type ||
++		bat.Attrs[3] != catalog.BlockMeta_Partition {
++		return nil, false, nil
++	}
++	if bat.Vecs[0].GetType().Oid != types.T_text ||
++		bat.Vecs[1].GetType().Oid != types.T_text ||
++		bat.Vecs[2].GetType().Oid != types.T_int8 ||
++		bat.Vecs[3].GetType().Oid != types.T_int32 {
++		return nil, false, nil
++	}
++	classes := vector.MustFixedColNoTypeCheck[int8](bat.Vecs[2])
++	data, area := vector.MustVarlenaRawData(bat.Vecs[1])
++	seen := make(map[string]struct{})
++	inner := batch.NewOffHeapEmpty()
++	defer inner.Clean(mp)
++	for i, class := range classes {
++		if class != int8(FlushDeltaLoc) {
++			// A retained block's rows stayed in the workspace; the
++			// producer's own class marker says no tombstone object.
++			continue
++		}
++		blob := data[i].GetByteSlice(area)
++		if len(blob) == 0 {
++			re
 ```
 
 ---
 
-### Incident Patch 3: `d036bcf4` (2026-11-03)
-**Commit Message**: fix(python): disable implicit autoincrement for noninteger keys (#32095)
+### Incident Patch 3: `2b16c3ab` (2026-11-04)
+**Commit Message**: fix(sql): accept JSON in remaining string functions (#30883)
 
 ## What type of PR is this?
 
-- [ ] API-change
 - [x] BUG
-- [ ] Improvement
-- [ ] Documentation
-- [ ] Feature
 - [x] Test and CI
-- [ ] Code Refactoring
 
 ## Which issue(s) this PR fixes:
 
-Fixes #31650
+Related to #28905. Keep the issue open until deployed QA acceptance.
 
 ## What this PR does / why we need it:
 
-SQLAlchemy 1.4 and 2.0 implicitly mark a single numeric primary key as auto-incrementing. MatrixOne only supports AUTO_INCREMENT on integer columns, so simplified DOUBLE/DECIMAL primary keys compile into invalid DDL.
+Support JSON operands in MD5, SHA/SHA1, SHA2, COMPRESS, QUOTE and SOUNDEX. Bind JSON operands directly and render complete visible JSON bytes inside each consumer without inserting a CONCAT expression or intermediate text vector. This preserves quotes, escape bytes and values above 65,535 bytes without a bounded VARCHAR cast. SHA2 integer-argument normalization, non-JSON behavior, ordinary CAST/assignment semantics, SQL NULL versus JSON null, and selection masks remain unchanged. QUOTE/SOUNDEX retain unbounded result metadata; COMPRESS retains its binary result.
 
-Normalize accepted TypeEngine classes to instances, and decide implicit AUTO_INCREMENT in MatrixOne's DDL compiler using the type resolved by the actual compilation dialect. This preserves integer behavior across sync/async drivers, wrapper types, and dialect variants while suppressing implicit autoincrement for noninteger types. Explicit AUTO_INCREMENT requests remain explicit.
+**Deployment contract: full offline upgrade.** Stop the cluster and replace all MatrixOne service binaries before accepting queries or resuming work; every CN must run the new binary. Mixed old/new CN execution and binary rollback are unsupported. The current implementation binds JSON directly. A retained seven-consumer predecessor-expression test replays the earl
 
-Validation:
-- Before the original fix on SQLAlchemy 1.4.54: 2 failed / 7 passed; DOUBLE and DECIMAL DDL contained unwanted AUTO_INCREMENT.
-- Review regressions reproduced wrapper, differing-affinity variant, and async driver-dependent failures before their fixes.
-- Owning contract file:
-
-**File**: `clients/python/matrixone/sqlalchemy_ext/dialect.py` (modified, +28/-2)
+**File**: `pkg/common/morpc/backend_test.go` (modified, +4/-2)
 ```diff
-@@ -19,7 +19,12 @@
- import sqlalchemy
- from sqlalchemy import event
- from sqlalchemy.sql.elements import ClauseElement
--from sqlalchemy.dialects.mysql.base import MySQLTypeCompiler, MySQLDialect, ischema_names as mysql_ischema_names
-+from sqlalchemy.dialects.mysql.base import (
-+    MySQLDDLCompiler,
-+    MySQLTypeCompiler,
-+    MySQLDialect,
-+    ischema_names as mysql_ischema_names,
-+)
+@@ -1716,19 +1716,21 @@ func TestSendWithCannotConnect(t *testing.T) {
+ 			defer cancel()
+ 			req := &testMessage{id: 1}
+ 			f, err := b.Send(ctx, req)
+-			assert.NoError(t, err)
++			require.NoError(t, err)
+ 			defer f.Close()
  
- from .vector_type import VectorType, VectorPrecision
- from .._local_infile import _physical_driver
-@@ -276,10 +281,27 @@ def visit_VECTOR(self, type_, **kw):
-         return type_.get_col_spec() if hasattr(type_, 'get_col_spec') else 'VECTOR'
- 
- 
-+class MatrixOneDDLCompiler(MySQLDDLCompiler):
-+    """Render implicit AUTO_INCREMENT only for the type this dialect sees."""
-+
-+    def get_column_specification(self, column, **kw):
-+        specification = super().get_column_specification(column, **kw)
-+        resolved_type = column.type.dialect_impl(self.dialect)
-+        auto_increment = ' AUTO_INCREMENT'
-+        if (
-+            column.autoincrement == 'auto'
-+            and resolved_type._type_affinity is not sqlalchemy.Integer
-+            and specification.endswith(auto_increment)
-+        ):
-+            specification = specification[: -len(auto_increment)]
-+        return specification
-+
-+
- # Register the dialect
- MatrixOneDialect.statement_compiler = MatrixOneCompiler
- MatrixOneDialect.type_compiler = MatrixOneTypeCompiler
- MatrixOneDialect.type_compiler_cls = MatrixOneTypeCompiler
-+MatrixOneDialect.ddl_compiler = MatrixOneDDLCompiler
- 
- 
- # MatrixOneVectorType removed - use VectorType from vector_type.py instead
-@@ -333,7 +355,11 @@ def adapt_engine_dialect(engine):
-     dialect.__class__ = type(
-         'MatrixOne_' + driver_type.__name__,
-         (driver_type, MatrixOneDialect),
--        {'supports_statement_cache': True, 'statement_compiler': MatrixOneCompiler},
-+        {
-+            'supports_statement_cache': True,
-+            'statement_compiler': MatrixOneCompiler,
-+            'ddl_compiler': MatrixOneDDLCompiler,
-+        },
-     )
-     dialect.ischema_names = dict(dialect.ischema_names, **_mo_ischema_names)
-     compiler = MatrixOneTypeCompiler(dialect)
-```
-
-**File**: `clients/python/matrixone/sqlalchemy_ext/table_builder.py` (modified, +6/-4)
-```diff
-@@ -65,6 +65,7 @@ def simplified_table(name, columns, primary_key=None, **kwargs):
-     if any(key not in columns for key in keys):
-         raise ValueError('primary_key must name existing columns')
-     definitions = []
-+    dtype: TypeEngine
-     for column_name, definition in columns.items():
-         options = {}
-         inline_primary = False
-@@ -121,13 +122,14 @@ def simplified_table(name, columns, primary_key=None, **kwargs):
-                         dtype = constructor(fsp=precision)
-                 else:
-                     dtype = constructor(*(int(arg) for arg in args), **type_options)
--        elif isinstance(definition, TypeEngine) or (
--            isinstance(definition, type) and issubclass(definition, TypeEngine)
--        ):
-+        elif isinstance(definition, TypeEngine):
-             dtype = definition
-+        elif isinstance(definition, type) and issubclass(definition, TypeEngine):
-+            dtype = definition()
-         else:
-             raise TypeError('Column types must be strings or SQLAlchemy types')
--        definitions.append(Column(column_name, dtype, primary_key=column_name in keys or inline_primary, **options))
-+        is_primary = column_name in keys or inline_primary
-+        definitions.append(Column(column_name, dtype, primary_key=is_primary, **options))
-     metadata = kwargs.pop('metadata', None) or MetaData()
-     return Table(name, metadata, *definitions, **kwargs)
+ 			resp, err := f.Get()
+ 			assert.Error(t, err)
+ 			assert.Nil(t, resp)
+ 		},
+ 		WithBackendFilter(func(Message, string) bool {
++			// Keep the short reconnect budget out of healthy fixture setup.
++			// The filter and subsequent reconnects share the write-loop owner.
++			rb.options.connectTimeout = time.Millisecond * 200
+ 			assert.NoError(t, rb.conn.Disconnect())
+ 			rb.remote = ""
+ 			return true
+ 		}),
+-		WithBackendConnectTimeout(time.Millisecond*200),
+ 	)
+ }
  
 ```
 
-**File**: `clients/python/tests/offline/contracts/test_mapped_query_identity.py` (modified, +110/-1)
+**File**: `pkg/frontend/show_account_test.go` (modified, +27/-10)
 ```diff
-@@ -6,7 +6,20 @@
- from unittest.mock import AsyncMock, Mock
+@@ -21,6 +21,7 @@ import (
+ 	"math/rand"
+ 	"strings"
+ 	"testing"
++	"testing/synctest"
+ 	"time"
  
- import pytest
--from sqlalchemy import Column, Enum, Integer, JSON, String, TypeDecorator, create_engine, select
-+from sqlalchemy import (
-+    BigInteger,
-+    Column,
-+    Enum,
-+    Integer,
-+    JSON,
-+    MetaData,
-+    Numeric,
-+    String,
-+    Table,
-+    TypeDecorator,
-+    create_engine,
-+    select,
-+)
- from sqlalchemy.orm import aliased, declarative_base
- from sqlalchemy.schema import CreateTable
+ 	"github.com/golang/mock/gomock"
+@@ -451,9 +452,12 @@ func Test_updateStorageUsageCache(t *testing.T) {
+ }
  
-@@ -32,6 +45,19 @@ def process_result_value(self, value, dialect):
-         return value[len('encoded:') :] if value.startswith('encoded:') else value
+ func Test_checkStorageUsageCache_V2(t *testing.T) {
++	synctest.Test(t, testCheckStorageUsageCacheV2)
++}
++
++func testCheckStorageUsageCacheV2(t *testing.T) {
+ 	origCache := cnUsageCache
+ 	cnUsageCache = logtail.NewStorageUsageCache(logtail.WithLazyThreshold(1))
+-	cnUsageCache = logtail.NewStorageUsageCache(logtail.WithLazyThreshold(1))
+ 	t.Cleanup(func() {
+ 		cnUsageCache = origCache
+ 	})
+@@ -476,16 +480,24 @@ func Test_checkStorageUsageCache_V2(t *testing.T) {
+ 		require.Equal(t, rep.Sizes[i], usages[int64(i)][0])
+ 	}
  
+-	require.Eventually(t, func() bool {
+-		_, ok = checkStorageUsageCache([][]int64{rep.AccIds})
+-		return !ok
+-	}, time.Second+200*time.Millisecond, 10*time.Millisecond)
++	// Advance the bubble's fake clock, not wall time. Synchronous checks
++	// cannot leave an Eventually predicate racing the cache cleanup.
++	time.Sleep(time.Second - time.Nanosecond)
++	_, ok = checkStorageUsageCache([][]int64{rep.AccIds})
++	require.True(t, ok, "cache must remain valid before the expiry boundary")
++	time.Sleep(time.Nanosecond)
++	usages, ok = checkStorageUsageCache([][]int64{rep.AccIds})
++	require.False(t, ok, "cache must expire at the lazy threshold")
++	require.Nil(t, usages)
+ }
  
-+class WrappedInteger(TypeDecorator):
-+    impl = Integer
-+    cache_ok = True
+ func Test_checkStorageUsageCache(t *testing.T) {
++	synctest.Test(t, testCheckStorageUsageCache)
++}
 +
-+
-+class AsyncDriverInteger(TypeDecorator):
-+    impl = Integer
-+    cache_ok = True
-+
-+    def load_dialect_impl(self, dialect):
-+        return Integer() if dialect.driver == 'aiomysql' else Numeric()
-+
-+
- class State(enum.Enum):
-     READY = 'ready'
++func testCheckStorageUsageCache(t *testing.T) {
+ 	origCache := cnUsageCache
+ 	cnUsageCache = logtail.NewStorageUsageCache(logtail.WithLazyThreshold(1))
+-	cnUsageCache = logtail.NewStorageUsageCache(logtail.WithLazyThreshold(1))
+ 	t.Cleanup(func() {
+ 		cnUsageCache = origCache
+ 	})
+@@ -510,10 +522,15 @@ func Test_checkStorageUsageCache(t *testing.T) {
+ 		require.Equal(t, rep.SnapshotSizes[i], usages[int64(i)][1])
+ 	}
  
-@@ -149,6 +175,89 @@ def test_simplified_types_and_primary_keys(definition, expected):
-     table = simplified_table('typed', {'key': definition}, primary_key='key')
-     ddl = str(CreateTable(table).compile(dialect=MatrixOneDialect()))
-     assert expected in ddl and 'PRIMARY KEY' in ddl and table.c.key.primary_key
-+    assert 'AUTO_INCREMENT' not in ddl
-+
-+
-+def test_simplified_integer_primary_key_keeps_implicit_auto_increment():
-+    table = simplified_table('typed', {'key': 'int'}, primary_key='key')
-+    ddl = str(CreateTable(table).compile(dialect=MatrixOneDialect()))
-+    assert 'INTEGER' in ddl and 'PRIMARY KEY' in ddl and 'AUTO_INCREMENT' in ddl
-+
-+
-+@pytest.mark.parametrize(
-+    'definition',
-+    [
-+        WrappedInteger,
-+        WrappedInteger(),
-+        Integer().with_variant(BigInteger(), 'matrixone'),
-+    ],
-+)
-+def test_simplified_wrapped_integer_primary_key_keeps_implicit_auto_increment(definition):
-+    table = simplified_table('typed', {'key': definition}, primary_key='key')
-+    ddl = str(CreateTable(table).compile(dialect=MatrixOneDialect()))
-+    assert 'PRIMARY KEY' in ddl and 'AUTO_INCREMENT' in ddl
-+
-+
-+def test_simplified_dialect_integer_variant_keeps_sqlalchemy_autoincrement():
-+    definition = Numeric().with_variant(Integer(), 'matrixone')
-+    table = simplified_table('typed', {'key': definition}, primary_key='key')
-+    control = Table('control', MetaData(), Column('key', definition, primary_key=True))
-+    actual = str(CreateTable(table).compile(dialect=MatrixOneDialect()))
-+    expected = str(CreateTable(control).compile(dialect=MatrixOneDialect()))
-+    assert table.c.key.autoincrement == control.c.key.autoincrement == 'auto'
-+    assert ('AUTO_INCREMENT' in actual) == ('AUTO_INCREMENT' in expected)
-+
-+
-+def test_implicit_autoincrement_filter_preserves_column_comment():
-+    table = Table(
-+        'typed',
-+        MetaData(),
-+        Column('key', Numeric(), primary_key=True, comment='keep AUTO_INCREMENT text'),
-+    )
-+    ddl = str(CreateTable(table).compile(dialect=MatrixOneDialect()))
-+    assert "COMMENT 'keep AUTO_INCREMENT text'" in ddl
-+    assert ddl.count('AUTO_INCREMENT') == 1
-+
-+
-+@pytest.mark.asyncio
-+async def test_async_create_table_uses_actual_driver_for_implicit_auto_increment():
-+    from sqlalchemy.ext.asyncio import create_async_engine
-+    from matrixone.sqlalchemy_ext.dialect import adapt_engine_dialect
-+
-+    sync_dialect = MatrixOneDialect()
-+    sync_dialect.driver = 'pymysql'
-+    sync_table = simplified_table('sync_typed', {'key': AsyncDriverInteger}, primary_key='key')
-+    sync_ddl = str(CreateTable(sync_table).compile(dialect=sync_dialect))
-+    assert 'INTEGER' not in sync_ddl and 'AUTO_INCREMENT' not in sync_ddl
-+
-+    dialect_owner = create_async_engine('mysql+aiomysql://')
-+    adapt_engine_dialect(dialect_owner.sync_engine)
-+    dialect = dialect_owner.sync_engine.dialect
-+    emitted = []
-+
-+    class Connection:
-+        async def execute(self, statement):
-+            emitted.append(str(statement.compile(dialect=dialect)))
-+
-+    class Begin:
-+        async def __aenter__(self):
-+            return Connection()
-+
-+        async def __aexit__(self, *args):
-+            pass
-+
-+    class Engine:
-+        def begin(self):
-+            return Begin()
-+
-+    client = AsyncClient()
-+    client._engine = Engine()
-+    try:
-+        await client.create_table('typed', {'key': AsyncDriverInteger}, primary_key='key')
-+    finally:
-+        await dialect_owner.dispose()
-+    assert len(emitted) == 1
-+    assert 'INTEGER' in emitted[0] and 'PRIMARY KEY' in emitted[0] and 'AUTO_INCREMENT' in emitted[0]
+-	require.Eventually(t, func() bool {
+-		_, ok = checkStorageUsageCache([][]int64{rep.AccIds})
+-		return !ok
+-	}, time.Second+200*time.Millisecond, 10*time.Millisecond)
++	// The virtual-clock boundary is independent of scheduler delays and
++	// has no polling goroutine that can outlive cache restoration.
++	time.Sleep(time.Second - time.Nanosecond)
++	_, ok = checkStorageUsageCache([][]int64{rep.AccIds})
++	require.True(t, ok, "cache must remain valid before the expiry boundary")
++	time.Sleep(time.Nanosecond)
++	usages, ok = checkStorageUsageCache([][]int64{rep.AccIds})
++	require.False(t, ok, "cache must expire at the lazy threshold")
++	require.Nil(t, usages)
+ }
  
+ func Test_GetObjectCount_V2(t *testing.T) {
+```
+
+**File**: `pkg/sql/plan/base_binder.go` (modified, +0/-1)
+```diff
+@@ -9385,7 +9385,6 @@ func bindFuncExprImplByPlanExpr(
+ 			}
+ 		}
+ 	}
+-
+ 	// Temporal precision is also the display width stored in derived schemas.
+ 	// Keep the two metadata fields aligned after unit-dependent refinement.
+ 	switch name {
+```
+
+**File**: `pkg/sql/plan/function/func_binary.go` (modified, +14/-2)
+```diff
+@@ -7862,7 +7862,7 @@ func EndsWith(ivecs []*vector.Vector, result vector.FunctionResultWrapper, proc
+ }
  
- def test_unknown_primary_key_fails_instead_of_being_ignored():
+ // https://dev.mysql.com/doc/refman/8.0/en/encryption-functions.html#function_sha2
+-func SHA2Func(args []*vector.Vector, result vector.FunctionResultWrapper, _ *process.Process, length int, selectList *FunctionSelectList) (err error) {
++func SHA2Func(args []*vector.Vector, result vector.FunctionResultWrapper, proc *process.Process, length int, selectList *FunctionSelectList) (err error) {
+ 	res := vector.MustFunctionResult[types.Varlena](result)
+ 	strs := vector.GenerateFunctionStrParameter(args[0])
+ 	shaTypes := vector.GenerateFunctionFixedTypeParameter[int64](args[1])
+@@ -7875,6 +7875,12 @@ func SHA2Func(args []*vector.Vector, result vector.FunctionResultWrapper, _ *pro
+ 			continue
+ 		}
+ 		str, isnull1 := strs.GetStrValue(i)
++		if args[0].GetType().Oid == types.T_json {
++			str, isnull1, err = getJSONStringConsumerValue(proc.Ctx, strs, i)
++			if err != nil {
++				return err
++			}
++		}
+ 		shaType, isnull2 := shaTypes.GetValue(i)
+ 
+ 		if isnull1 || isnull2 {
+@@ -7905,7 +7911,7 @@ func SHA2Func(args []*vector.Vector, result vector.FunctionResultWrapper, _ *pro
+ // as '256tail' selects SHA-256 while a non-numeric value becomes zero. The
+ // string wrapper preserves binary bytes and avoids the lossy implicit cast to
+ // VARCHAR that would otherwise happen before execution.
+-func SHA2StringLengthFunc(args []*vector.Vector, result vector.FunctionResultWrapper, _ *process.Process, length int, selectList *FunctionSelectList) (err error) {
++func SHA2StringLengthFunc(args []*vector.Vector, result vector.FunctionResultWrapper, proc *process.Process, length int, selectList *FunctionSelectList) (err error) {
+ 	res := vector.MustFunctionResult[types.Varlena](result)
+ 	strs := vector.GenerateFunctionStrParameter(args[0])
+ 	shaLengths := vector.GenerateFunctionStrParameter(args[1])
+@@ -7928,6 +7934,12 @@ func SHA2StringLengthFunc(args []*vector.Vector, result vector.FunctionResultWra
+ 			continue
+ 		}
+ 		str, isnull1 := strs.GetStrValue(i)
++		if args[0].GetType().Oid == types.T_json {
++			str, isnull1, err = getJSONStringConsumerValue(proc.Ctx, strs, i)
++			if err != nil {
++				return err
++			}
++		}
+ 		var isnull2 bool
+ 		var shaType int64
+ 		if lengthIsConst {
+```
+
+**File**: `pkg/sql/plan/function/func_json_string_consumers_test.go` (modified, +330/-0)
+```diff
+@@ -15,12 +15,22 @@
+ package function
+ 
+ import (
++	"bytes"
++	"compress/zlib"
+ 	"context"
++	"crypto/md5"
++	"crypto/sha1"
++	"crypto/sha256"
++	"encoding/binary"
++	"encoding/hex"
++	"io"
++	"strings"
+ 	"testing"
+ 
+ 	"github.com/matrixorigin/matrixone/pkg/container/types"
+ 	"github.com/matrixorigin/matrixone/pkg/container/vector"
+ 	"github.com/matrixorigin/matrixone/pkg/testutil"
++	"github.com/matrixorigin/matrixone/pkg/vm/process"
+ 	"github.com/stretchr/testify/require"
+ )
+ 
+@@ -63,6 +73,76 @@ func TestJSONStringConsumerJSONOverloads(t *testing.T) {
+ 	}
+ }
+ 
++func TestJSONStringConsumerRemainingFunctionsKeepJSONAsSource(t *testing.T) {
++	cases := []struct {
++		name         string
++		args         []types.Type
++		wantOverload int32
++		wantCast     bool
++	}{
++		{name: "md5", args: []types.Type{types.T_json.ToType()}, wantOverload: 0},
++		{name: "sha1", args: []types.Type{types.T_json.ToType()}, wantOverload: 0},
++		{name: "sha2", args: []types.Type{types.T_json.ToType(), types.T_int64.ToType()}, wantOverload: 0},
++		{name: "sha2", args: []types.Type{types.T_json.ToType(), types.T_varchar.ToType()}, wantOverload: 0, wantCast: true},
++		{name: "compress", args: []types.Type{types.T_json.ToType()}, wantOverload: 0},
++		{name: "quote", args: []types.Type{types.T_json.ToType()}, wantOverload: 0},
++		{name: "soundex", args: []types.Type{types.T_json.ToType()}, wantOverload: 0},
++	}
++	for _, tc := range cases {
++		t.Run(tc.name+"/"+tc.args[len(tc.args)-1].Oid.String(), func(t *testing.T) {
++			resolved, err := GetFunctionByName(context.Background(), tc.name, tc.args)
++			require.NoError(t, err)
++			_, overloadIndex := DecodeOverloadID(resolved.GetEncodedOverloadID())
++			require.Equal(t, tc.wantOverload, overloadIndex)
++			casts, shouldCast := resolved.ShouldDoImplicitTypeCast()
++			require.Equal(t, tc.wantCast, shouldCast)
++			if shouldCast {
++				require.Equal(t, []types.Type{types.T_json.ToType(), types.T_int64.ToType()}, casts)
++			}
++		})
++	}
++}
++
++func TestJSONStringConsumerNonJSONTypesKeepExistingOverloads(t *testing.T) {
++	varcharType := types.T_varchar.ToType()
++	cases := []struct {
++		name string
++		args []types.Type
++	}{
++		{name: "md5", args: []types.Type{varcharType}},
++		{name: "sha1", args: []types.Type{varcharType}},
++		{name: "sha2", args: []types.Type{varcharType, types.T_int64.ToType()}},
++		{name: "compress", args: []types.Type{varcharType}},
++		{name: "quote", args: []types.Type{varcharType}},
++		{name: "soundex", args: []types.Type{varcharType}},
++	}
++	for _, tc := range cases {
++		t.Run(tc.name, func(t *testing.T) {
++			resolved, err := GetFunctionByName(context.Background(), tc.name, tc.args)
++			require.NoError(t, err)
++			_, shouldCast := resolved.ShouldDoImplicitTypeCast()
++			require.False(t, shouldCast)
++		})
++	}
++}
++
++func TestJSONStringConsumerJSONResultBounds(t *testing.T) {
++	for _, tc := range []struct {
++		name string
++		want types.Type
++	}{
++		{name: "compress", want: types.T_blob.ToType()},
++		{name: "quote", want: types.NewWithCharset(types.T_text, 0, 0, types.CharsetUTF8MB4Bin)},
++		{name: "soundex", want: types.NewWithCharset(types.T_text, types.MaxLongTextLen, 0, types.CharsetUTF8)},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			resolved, err := GetFunctionByName(context.Background(), tc.name, []types.Type{types.T_json.ToType()})
++			require.NoError(t, err)
++			require.Equal(t, tc.want, resolved.GetReturnType())
++		})
++	}
++}
++
+ func TestJSONStringConsumerRegisteredExecutors(t *testing.T) {
+ 	proc := testutil.NewProcess(t)
+ 	t.Cleanup(proc.Free)
+@@ -132,6 +212,215 @@ func TestJSONStringConsumerRegisteredExecutors(t *testing.T) {
+ 	}
+ }
+ 
++func runRegisteredJSONStringConsumer(
++	t *testing.T,
++	proc *process.Process,
++	name string,
++	argTypes []types.Type,
++	values []any,
++) []byte {
++	t.Helper()
++	require.Len(t, values, len(argTypes))
++	resolved, err := GetFunctionByName(proc.Ctx, name, argTypes)
++	require.NoError(t, err)
++	inputs := make([]*vector.Vector, len(argTypes))
++	for i := range argTypes {
++		inputs[i] = newVectorByType(proc.Mp(), argTypes[i], values[i], nil)
++	}
++	defer func() {
++		for _, input := range inputs {
++			input.Free(proc.Mp())
++		}
++	}()
++	if targets, shouldCast := resolved.ShouldDoImplicitTypeCast(); shouldCast {
++		require.Len(t, targets, len(inputs))
++		for i, targetType := range targets {
++			if argTypes[i].Eq(targetType) {
++				continue
++			}
++			// Reproduce the binder-owned integer parameter conversion instead
++			// of passing the original string vector to an INT64 executor.
++			integerTarget, integerContext := IntegerArgumentTarget(name, i)
++			require.True(t, integerContext)
++			require.Equal(t, integerTarget, targetType.Oid)
++			target := vector.NewVec(targetType)
++			defer target.Free(proc.Mp())
++			converted, err := RunFunctionDirectly(proc, EncodeOverloadID(CAST, IntegerArgumentCastOverload), []*vector.Vector{inputs[i], target}, 1)
++			require.NoError(t, err)
++			inputs[i].Free(proc.Mp())
++			inputs[i] = converted
++		}
++	}
++	result, err := RunFu
+```
+
+**File**: `pkg/sql/plan/function/func_unary.go` (modified, +39/-5)
+```diff
+@@ -1485,7 +1485,8 @@ func QuoteString(str string) string {
+ func Quote(ivecs []*vector.Vector, result vector.FunctionResultWrapper, proc *process.Process, length int, selectList *FunctionSelectList) error {
+ 	parameter := vector.GenerateFunctionStrParameter(ivecs[0])
+ 	rs := vector.MustFunctionResult[types.Varlena](result)
+-	isUTF8Text := isExplicitUTF8Charset(ivecs[0].GetType().Charset)
++	isJSON := ivecs[0].GetType().Oid == types.T_json
++	isUTF8Text := isJSON || isExplicitUTF8Charset(ivecs[0].GetType().Charset)
+ 	for row := uint64(0); row < uint64(length); row++ {
+ 		if selectList != nil && (selectList.IgnoreAllRow() ||
+ 			(!selectList.ShouldEvalAllRow() && selectList.Contains(row))) {
+@@ -1494,7 +1495,10 @@ func Quote(ivecs []*vector.Vector, result vector.FunctionResultWrapper, proc *pr
+ 			}
+ 			continue
+ 		}
+-		value, null := parameter.GetStrValue(row)
++		value, null, err := getJSONStringConsumerValue(proc.Ctx, parameter, row)
++		if err != nil {
++			return err
++		}
+ 		if null {
+ 			if err := rs.AppendBytes([]byte("NULL"), false); err != nil {
+ 				return err
+@@ -5870,6 +5874,33 @@ func soundexTextString(str string) string {
+ }
+ 
+ func Soundex(ivecs []*vector.Vector, result vector.FunctionResultWrapper, proc *process.Process, length int, selectList *FunctionSelectList) error {
++	if ivecs[0].GetType().Oid == types.T_json {
++		parameter := vector.GenerateFunctionStrParameter(ivecs[0])
++		rs := vector.MustFunctionResult[types.Varlena](result)
++		for row := uint64(0); row < uint64(length); row++ {
++			if functionRowSkipped(selectList, row) {
++				if err := rs.AppendBytes(nil, true); err != nil {
++					return err
++				}
++				continue
++			}
++			value, isNull, err := getJSONStringConsumerValue(proc.Ctx, parameter, row)
++			if err != nil {
++				return err
++			}
++			if isNull {
++				if err := rs.AppendBytes(nil, true); err != nil {
++					return err
++				}
++				continue
++			}
++			resultValue := functionUtil.QuickStrToBytes(soundexTextString(functionUtil.QuickBytesToStr(value)))
++			if err := rs.AppendBytes(resultValue, false); err != nil {
++				return err
++			}
++		}
++		return nil
++	}
+ 	textSoundex := SoundexString
+ 	if isExplicitUTF8Charset(ivecs[0].GetType().Charset) {
+ 		textSoundex = soundexTextString
+@@ -9356,7 +9387,7 @@ func Unhex(parameters []*vector.Vector, result vector.FunctionResultWrapper, pro
+ }
+ 
+ func Md5(parameters []*vector.Vector, result vector.FunctionResultWrapper, proc *process.Process, length int, selectList *FunctionSelectList) error {
+-	return opUnaryBytesToBytes(parameters, result, proc, length, func(data []byte) []byte {
++	return jsonStringConsumerUnaryBytesToBytes(parameters, result, proc, length, func(data []byte) []byte {
+ 		sum := md5.Sum(data)
+ 		return []byte(hex.EncodeToString(sum[:]))
+ 	}, selectList)
+@@ -9761,7 +9792,10 @@ func Compress(parameters []*vector.Vector, result vector.FunctionResultWrapper,
+ 			continue
+ 		}
+ 
+-		data, null := source.GetStrValue(i)
++		data, null, err := getJSONStringConsumerValue(proc.Ctx, source, i)
++		if err != nil {
++			return err
++		}
+ 		if null {
+ 			if err := rs.AppendBytes(nil, true); err != nil {
+ 				return err
+@@ -14039,7 +14073,7 @@ func SHA1Func(
+ 	length int,
+ 	selectList *FunctionSelectList,
+ ) error {
+-	return opUnaryBytesToBytes(parameters, result, proc, length, func(v []byte) []byte {
++	return jsonStringConsumerUnaryBytesToBytes(parameters, result, proc, length, func(v []byte) []byte {
+ 		sum := sha1.Sum(v)
+ 		return []byte(hex.EncodeToString(sum[:]))
+ 	}, selectList)
+```
+
+**File**: `pkg/sql/plan/function/json_string_consumers.go` (modified, +88/-0)
+```diff
+@@ -18,6 +18,7 @@ import (
+ 	"context"
+ 	"github.com/matrixorigin/matrixone/pkg/container/types"
+ 	"github.com/matrixorigin/matrixone/pkg/container/vector"
++	"github.com/matrixorigin/matrixone/pkg/vm/process"
+ )
+ 
+ const jsonStringConsumerOverloadID = 1
+@@ -54,3 +55,90 @@ func jsonStringConsumerReturnType(parameters []types.Type) types.Type {
+ 	}
+ 	return types.NewWithCharset(types.T_text, 0, 0, types.CharsetUTF8MB4Bin)
+ }
++
++func jsonStringConsumerResultParameters(parameters []types.Type) []types.Type {
++	// JSON visible text has no VARCHAR width bound. Preserve that fact when
++	// deriving output metadata as well as when consuming the runtime value.
++	if len(parameters) == 0 || parameters[0].Oid != types.T_json {
++		return parameters
++	}
++	result := append([]types.Type(nil), parameters...)
++	result[0] = jsonStringConsumerReturnType(parameters[:1])
++	return result
++}
++
++// Keep JSON in its source type so each consumer can hash or transform the
++// complete visible JSON bytes without an implicit VARCHAR width limit.
++func jsonStringConsumerUnaryFixedTypeMatch(overloads []overload, inputs []types.Type) checkResult {
++	return jsonStringConsumerTypeMatch(overloads, inputs, fixedTypeMatch)
++}
++
++func jsonStringConsumerUnaryDomainTypeMatch(overloads []overload, inputs []types.Type) checkResult {
++	return jsonStringConsumerTypeMatch(overloads, inputs, stringDomainFixedTypeMatch)
++}
++
++// Keep JSON as the bound input so the executor can serialize its complete
++// visible bytes without an intermediate string expression or width bound.
++func jsonStringConsumerTypeMatch(
++	overloads []overload,
++	inputs []types.Type,
++	match func([]overload, []types.Type) checkResult,
++) checkResult {
++	if len(inputs) == 0 || inputs[0].Oid != types.T_json {
++		return match(overloads, inputs)
++	}
++	prepared := append([]types.Type(nil), inputs...)
++	prepared[0] = types.T_varchar.ToType()
++	matched := match(overloads, prepared)
++	if matched.status == succeedMatched {
++		return newCheckResultWithSuccess(matched.idx)
++	}
++	if matched.status != succeedWithCast || len(matched.finalType) != len(inputs) {
++		return matched
++	}
++	castTypes := append([]types.Type(nil), matched.finalType...)
++	castTypes[0] = inputs[0]
++	for i := range inputs {
++		if !inputs[i].Eq(castTypes[i]) {
++			return newCheckResultWithCast(matched.idx, castTypes)
++		}
++	}
++	return newCheckResultWithSuccess(matched.idx)
++}
++
++func jsonStringConsumerUnaryBytesToBytes(
++	parameters []*vector.Vector,
++	result vector.FunctionResultWrapper,
++	proc *process.Process,
++	length int,
++	resultFn func([]byte) []byte,
++	selectList *FunctionSelectList,
++) error {
++	if parameters[0].GetType().Oid != types.T_json {
++		return opUnaryBytesToBytes(parameters, result, proc, length, resultFn, selectList)
++	}
++	source := vector.GenerateFunctionStrParameter(parameters[0])
++	rs := vector.MustFunctionResult[types.Varlena](result)
++	for row := uint64(0); row < uint64(length); row++ {
++		if functionRowSkipped(selectList, row) {
++			if err := rs.AppendBytes(nil, true); err != nil {
++				return err
++			}
++			continue
++		}
++		value, isNull, err := getJSONStringConsumerValue(proc.Ctx, source, row)
++		if err != nil {
++			return err
++		}
++		if isNull {
++			if err := rs.AppendBytes(nil, true); err != nil {
++				return err
++			}
++			continue
++		}
++		if err := rs.AppendBytes(resultFn(value), false); err != nil {
++			return err
++		}
++	}
++	return nil
++}
+```
+
+**File**: `pkg/sql/plan/function/list_builtIn.go` (modified, +16/-16)
+```diff
+@@ -4553,14 +4553,14 @@ var supportedStringBuiltIns = []FuncNew{
+ 		functionId: COMPRESS,
+ 		class:      plan.Function_STRICT,
+ 		layout:     STANDARD_FUNCTION,
+-		checkFn:    stringDomainFixedTypeMatch,
++		checkFn:    jsonStringConsumerUnaryDomainTypeMatch,
+ 
+ 		Overloads: []overload{
+ 			{
+ 				overloadId: 0,
+ 				args:       []types.T{types.T_varchar},
+ 				retType: func(parameters []types.Type) types.Type {
+-					return compressReturnType(parameters)
++					return compressReturnType(jsonStringConsumerResultParameters(parameters))
+ 				},
+ 				newOp: func() executeLogicOfOverload {
+ 					return Compress
+@@ -4570,7 +4570,7 @@ var supportedStringBuiltIns = []FuncNew{
+ 				overloadId: 1,
+ 				args:       []types.T{types.T_char},
+ 				retType: func(parameters []types.Type) types.Type {
+-					return compressReturnType(parameters)
++					return compressReturnType(jsonStringConsumerResultParameters(parameters))
+ 				},
+ 				newOp: func() executeLogicOfOverload {
+ 					return Compress
+@@ -4580,7 +4580,7 @@ var supportedStringBuiltIns = []FuncNew{
+ 				overloadId: 2,
+ 				args:       []types.T{types.T_text},
+ 				retType: func(parameters []types.Type) types.Type {
+-					return compressReturnType(parameters)
++					return compressReturnType(jsonStringConsumerResultParameters(parameters))
+ 				},
+ 				newOp: func() executeLogicOfOverload {
+ 					return Compress
+@@ -4590,7 +4590,7 @@ var supportedStringBuiltIns = []FuncNew{
+ 				overloadId: 3,
+ 				args:       []types.T{types.T_blob},
+ 				retType: func(parameters []types.Type) types.Type {
+-					return compressReturnType(parameters)
++					return compressReturnType(jsonStringConsumerResultParameters(parameters))
+ 				},
+ 				newOp: func() executeLogicOfOverload {
+ 					return Compress
+@@ -5203,14 +5203,14 @@ var supportedStringBuiltIns = []FuncNew{
+ 		functionId: QUOTE,
+ 		class:      plan.Function_STRICT,
+ 		layout:     STANDARD_FUNCTION,
+-		checkFn:    stringDomainFixedTypeMatch,
++		checkFn:    jsonStringConsumerUnaryDomainTypeMatch,
+ 
+ 		Overloads: []overload{
+ 			{
+ 				overloadId: 0,
+ 				args:       []types.T{types.T_varchar},
+ 				retType: func(parameters []types.Type) types.Type {
+-					return quoteReturnType(parameters)
++					return quoteReturnType(jsonStringConsumerResultParameters(parameters))
+ 				},
+ 				newOp: func() executeLogicOfOverload {
+ 					return Quote
+@@ -5220,7 +5220,7 @@ var supportedStringBuiltIns = []FuncNew{
+ 				overloadId: 1,
+ 				args:       []types.T{types.T_char},
+ 				retType: func(parameters []types.Type) types.Type {
+-					return quoteReturnType(parameters)
++					return quoteReturnType(jsonStringConsumerResultParameters(parameters))
+ 				},
+ 				newOp: func() executeLogicOfOverload {
+ 					return Quote
+@@ -5230,7 +5230,7 @@ var supportedStringBuiltIns = []FuncNew{
+ 				overloadId: 2,
+ 				args:       []types.T{types.T_text},
+ 				retType: func(parameters []types.Type) types.Type {
+-					return quoteReturnType(parameters)
++					return quoteReturnType(jsonStringConsumerResultParameters(parameters))
+ 				},
+ 				newOp: func() executeLogicOfOverload {
+ 					return Quote
+@@ -7389,14 +7389,14 @@ var supportedStringBuiltIns = []FuncNew{
+ 		functionId: SOUNDEX,
+ 		class:      plan.Function_STRICT,
+ 		layout:     STANDARD_FUNCTION,
+-		checkFn:    stringDomainFixedTypeMatch,
++		checkFn:    jsonStringConsumerUnaryDomainTypeMatch,
+ 
+ 		Overloads: []overload{
+ 			{
+ 				overloadId: 0,
+ 				args:       []types.T{types.T_varchar},
+ 				retType: func(parameters []types.Type) types.Type {
+-					return soundexReturnType(parameters)
++					return soundexReturnType(jsonStringConsumerResultParameters(parameters))
+ 				},
+ 				newOp: func() executeLogicOfOverload {
+ 					return Soundex
+@@ -7406,7 +7406,7 @@ var supportedStringBuiltIns = []FuncNew{
+ 				overloadId: 1,
+ 				args:       []types.T{types.T_char},
+ 				retType: func(parameters []types.Type) types.Type {
+-					return soundexReturnType(parameters)
++					return soundexReturnType(jsonStringConsumerResultParameters(parameters))
+ 				},
+ 				newOp: func() executeLogicOfOverload {
+ 					return Soundex
+@@ -7416,7 +7416,7 @@ var supportedStringBuiltIns = []FuncNew{
+ 				overloadId: 2,
+ 				args:       []types.T{types.T_text},
+ 				retType: func(parameters []types.Type) types.Type {
+-					return soundexReturnType(parameters)
++					return soundexReturnType(jsonStringConsumerResultParameters(parameters))
+ 				},
+ 				newOp: func() executeLogicOfOverload {
+ 					return Soundex
+@@ -7432,7 +7432,7 @@ var supportedStringBuiltIns = []FuncNew{
+ 		integerParameters: []integerParameter{{position: 1, target: types.T_int64}},
+ 		bindingOverloads:  []int{0},
+ 		layout:            STANDARD_FUNCTION,
+-		checkFn:           stringDomainFixedTypeMatch,
++		checkFn:           jsonStringConsumerUnaryDomainTypeMatch,
+ 
+ 		Overloads: []overload{
+ 			{
+@@ -9516,7 +9516,7 @@ var supportedMathBuiltIns = []FuncNew{
+ 		functionId: MD5,
+ 		class:      plan.Function_STRICT,
+ 		layout:     STANDARD_FUNCTION,
+-		checkFn:    fixedTypeMat
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #32108** (2026-11-04): fix(python): preserve numeric table builder scale (@MatrixAdventurer)
-- **PR #32103** (2026-11-03): fix(plan): support LENGTH/OCTET_LENGTH/CHAR_LENGTH on BIT columns (@gouhongshen)
-- **PR #32095** (2026-11-03): fix(python): disable implicit autoincrement for noninteger keys (@MatrixAdventurer)
-- **PR #32092** (2026-11-03): Fix JSON numeric comparisons beyond FLOAT range (@iamlinjunhong)
-- **PR #32090** (closed): fix(import): prevent legacy transaction memory self-waits (@aptend)
-- **PR #32089** (2026-11-03): Improve SORT ROLLUP reuse for MIN and MAX (@iamlinjunhong)
+- **PR #32194** (2026-11-05): fix(hnsw): a CDC batch keeps the sign of -0 on every architecture (@cpegeric)
+- **PR #32191** (2026-11-04): fix(hashbuild): bound collected runtime-filter keys (@aunjgr)
+- **PR #32186** (2026-11-04): fix(vector): return append rollback failures on 4.2-dev (@aunjgr)
+- **PR #32184** (2026-11-04): fix(python): reject overflowing CDC CLI durations (@MatrixAdventurer)
+- **PR #32182** (2026-11-05): fix(median): correct unaccounted results across chunks (@XuPeng-SH)
+- **PR #32181** (2026-11-04): fix(plan): serve a selected MATCH through views, derived tables and CTEs (#31715) (@cpegeric)
 
 ---
 
@@ -3352,58 +4244,61 @@ Validation:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. fileservice): bound MinIO range reads without draining on close (#32053)
+## X. vector): return append rollback failures instead of panicking (#32167)
 
 **RULE**:
-When implementing operations in `pkg/fileservice/minio_sdk.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in matrixorigin/matrixone. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/container/vector/rollback_error_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in matrixorigin/matrixone. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1876b2f9`: fileservice): bound MinIO range reads without draining on close (#32053). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `948cfbc1`: vector): return append rollback failures instead of panicking (#32167). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/fileservice/minio_sdk.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/container/vector/rollback_error_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	return mapReadCloserErrors(r, mapMinioConditionalReadError), nil
-		r.Close()
-	return r, nil
-	if max != nil && *max <= *min {
-		return nil, moerr.NewEmptyRangeNoCtx(key)
-	}
-			if max != nil {
-				if err := options.SetRange(offset, *max-1); err != nil {
-					return nil, err
-				}
-			}
-			if max != nil {
-				// Seek would replace the bounded Range with an open-ended one.
-				// Close the bounded response directly, without draining unread data.
-				return obj, nil
-			}
-					obj.Close()
-	if max != nil {
-		return &readCloser{r: io.LimitReader(r, *max-*min), closeFunc: r.Close}, nil
-	}
+// Copyright 2026 Matrix Origin
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+package vector
+
+import (
+	"errors"
+	"math"
+	"strings"
+	"testing"
+
+	"github.com/matrixorigin/matrixone/pkg/common/mpool"
+	"github.com/matrixorigin/matrixone/pkg/container/types"
+	"github.com/stretchr/testify/require"
+)
+
+func TestRollbackAppendRejectsBeforeMutation(t *testing.T) {
+	for _, name := range []string{"length", "area", "negative", "overflow", "prepared", "string", "binary"} {
+		t.Run(name, func(t *testing.T) {
+			mp := mpool.MustNewZero()
+			v := NewVec(types.T_varchar.ToType())
+			defer func() { v.Free(mp); require.Zero(t, mp.CurrNB()); require.Zero(t, mp.OnHeapCurrNB()) }()
+			require.NoErro
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	r = mapReadCloserErrors(r, mapMinioConditionalReadError)
-	if max == nil {
-		return r, nil
-	}
-	return &readCloser{r: io.LimitReader(r, *max-*min), closeFunc: r.Close}, nil
-	if max == nil {
-		return r, nil
-	}
-	return &readCloser{
-		r:         io.LimitReader(r, int64(*max-*min)),
-		closeFunc: r.Close,
-	}, nil
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1876b2f9` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `948cfbc1` are properly handled with clean fallback behavior.

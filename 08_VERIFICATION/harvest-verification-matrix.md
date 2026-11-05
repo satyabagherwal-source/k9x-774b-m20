@@ -7441,3 +7441,6 @@
 | `CYCLE-20261105-SV6U` | `2026-11-05T01:15:12.486Z` | `thaw-app/Thaw` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/thaw-app-thaw-learnings.md` | Yes (`07cf412c...`) |
 | `CYCLE-20261105-1XY2` | `2026-11-05T01:22:15.962Z` | `unsloth/Qwen-Image-2.1-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-unsloth-qwen-image-2.1-gguf-learnings.md` | Yes (`3c44c7f4...`) |
 | `CYCLE-20261105-28SA` | `2026-11-05T01:22:30.010Z` | `neuron-core/neuron-ai` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7058` | Yes (`6a412037...`) |
+| `CYCLE-20261105-G3A6` | `2026-11-05T01:33:16.062Z` | `XiaomiMiMo/MiMo-V2.6-Pro-RL` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-pro-rl-learnings.md` | Yes (`ca795f8d...`) |
+| `CYCLE-20261105-G93D` | `2026-11-05T01:33:23.593Z` | `DNSControl/dnscontrol` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7059` | Yes (`bad63c99...`) |
+| `CYCLE-20261105-GFM2` | `2026-11-05T01:33:32.042Z` | `matrixorigin/matrixone` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7060` | Yes (`66061551...`) |

@@ -7450,3 +7450,6 @@ Every entry in this ledger must capture:
 | `learn-github-thaw-app-thaw` | `https://github.com/thaw-app/Thaw` | `fa2b68af` | Multi-dimensional audit evidence | 2026-11-05T01:15:12.490Z |
 | `learn-huggingface-unsloth-qwen-image-2-1-gguf` | `https://huggingface.co/unsloth/Qwen-Image-2.1-GGUF` | `hf-unsloth` | Multi-dimensional audit evidence | 2026-11-05T01:22:15.973Z |
 | `learn-github-neuron-core-neuron-ai` | `https://github.com/neuron-core/neuron-ai` | `cb45461a` | Multi-dimensional audit evidence | 2026-11-05T01:22:30.014Z |
+| `learn-huggingface-xiaomimimo-mimo-v2-6-pro-rl` | `https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Pro-RL` | `hf-xiaomim` | Multi-dimensional audit evidence | 2026-11-05T01:33:16.072Z |
+| `learn-github-dnscontrol-dnscontrol` | `https://github.com/DNSControl/dnscontrol` | `1a192aab` | Multi-dimensional audit evidence | 2026-11-05T01:33:23.597Z |
+| `learn-github-matrixorigin-matrixone` | `https://github.com/matrixorigin/matrixone` | `3d54f0c1` | Multi-dimensional audit evidence | 2026-11-05T01:33:32.046Z |

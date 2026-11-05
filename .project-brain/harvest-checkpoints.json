@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-05T01:22:30.032Z",
+  "last_updated": "2026-11-05T01:33:32.061Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -680,14 +680,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-xiaomimimo-mimo-v2-6-pro-rl",
-      "content_hash": "9b79e6cf26fdc8f1540cfba97ae7c9f2501577beeaf296cf9ada1b26f3ff937a",
-      "verified_at": "2026-10-31T11:02:41.745Z",
+      "content_hash": "ca795f8d17adf41b09e377904cba46dcf018e360ca8578761355a86806907a33",
+      "verified_at": "2026-11-05T01:33:16.081Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T11:02:41.745Z"
+      "last_updated": "2026-11-05T01:33:16.081Z"
     },
     "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF": {
       "repository": "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
@@ -4881,14 +4881,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-matrixorigin-matrixone",
-      "content_hash": "45c928eeb95a06f9c40492fbaec5ea3fed9dba85abdb3226b32c6df61c84e9b5",
-      "verified_at": "2026-11-04T02:19:24.849Z",
+      "content_hash": "66061551b49cf6c4a5af999b4a15e1a6a1f4580dde898a4c4fd9decdaf29820b",
+      "verified_at": "2026-11-05T01:33:32.060Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T02:19:24.849Z"
+      "last_updated": "2026-11-05T01:33:32.060Z"
     },
     "fallow-rs/fallow": {
       "repository": "fallow-rs/fallow",
@@ -8241,14 +8241,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dnscontrol-dnscontrol",
-      "content_hash": "39a0ca62a2e340dc38d364749d67f4cd79e735b99081bac2c7670173ee4ec216",
-      "verified_at": "2026-11-02T17:24:33.351Z",
+      "content_hash": "bad63c997932c638acaea9a5c91100c6dbb2ccbb6482e5c58931dcf8f46d92c7",
+      "verified_at": "2026-11-05T01:33:23.611Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-02T17:24:33.351Z"
+      "last_updated": "2026-11-05T01:33:23.611Z"
     },
     "ydb-platform/ydb": {
       "repository": "ydb-platform/ydb",

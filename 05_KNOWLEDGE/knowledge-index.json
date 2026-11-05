@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T01:22:29.925Z",
+  "last_updated": "2026-11-05T01:33:31.944Z",
   "total_verified_learnings": 1210,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -10653,8 +10653,8 @@
       "slug": "dnscontrol-dnscontrol",
       "platform": "github",
       "source_url": "https://github.com/DNSControl/dnscontrol",
-      "source_version": "6badb1c8",
-      "content_hash": "39a0ca62a2e340dc38d364749d67f4cd79e735b99081bac2c7670173ee4ec216",
+      "source_version": "1a192aab",
+      "content_hash": "bad63c997932c638acaea9a5c91100c6dbb2ccbb6482e5c58931dcf8f46d92c7",
       "dossier_path": "07_PROJECT_LEARNING/dnscontrol-dnscontrol-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dnscontrol-dnscontrol-learnings.md",
       "promoted_rules": [
@@ -10692,6 +10692,11 @@
           "number": 6469,
           "title": "build(deps-dev): bump prettier from 3.9.9 to 3.9.10 (#5061)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7059,
+          "title": "build(deps): bump step-security/harden-runner from 2.22.2 to 2.22.3 (#5065)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -10699,7 +10704,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-02T17:24:33.237Z",
+      "verified_at": "2026-11-05T01:33:23.482Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -32115,7 +32120,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Pro-RL",
       "source_version": "hf-xiaomimimo-mimo-v2.6-pro-rl",
-      "content_hash": "9b79e6cf26fdc8f1540cfba97ae7c9f2501577beeaf296cf9ada1b26f3ff937a",
+      "content_hash": "ca795f8d17adf41b09e377904cba46dcf018e360ca8578761355a86806907a33",
       "dossier_path": "07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-pro-rl-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-pro-rl-learnings.md",
       "promoted_rules": [
@@ -32227,7 +32232,7 @@
         "learn-huggingface-hf-xiaomimimo-mimo-v2-6-pro-rl-mv46ytbg",
         "learn-huggingface-hf-xiaomimimo-mimo-v2-6-pro-rl-mv4k8xf7"
       ],
-      "verified_at": "2026-10-31T11:02:41.637Z",
+      "verified_at": "2026-11-05T01:33:15.959Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -39495,8 +39500,8 @@
       "slug": "matrixorigin-matrixone",
       "platform": "github",
       "source_url": "https://github.com/matrixorigin/matrixone",
-      "source_version": "e997c817",
-      "content_hash": "45c928eeb95a06f9c40492fbaec5ea3fed9dba85abdb3226b32c6df61c84e9b5",
+      "source_version": "3d54f0c1",
+      "content_hash": "66061551b49cf6c4a5af999b4a15e1a6a1f4580dde898a4c4fd9decdaf29820b",
       "dossier_path": "07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md",
       "promoted_rules": [
@@ -39549,6 +39554,11 @@
           "number": 6723,
           "title": "fileservice): bound MinIO range reads without draining on close (#32053)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7060,
+          "title": "vector): return append rollback failures instead of panicking (#32167)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -39556,7 +39566,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T02:19:24.730Z",
+      "verified_at": "2026-11-05T01:33:31.924Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -179101,6 +179111,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-05T01:22:29.898Z"
+    },
+    "rule-7059": {
+      "learning_id": "rule-7059",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7059,
+      "title": "build(deps): bump step-security/harden-runner from 2.22.2 to 2.22.3 (#5065)",
+      "source_url": "https://github.com/DNSControl/dnscontrol",
+      "source_version": "1a192aab",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T01:33:23.482Z"
+    },
+    "rule-7060": {
+      "learning_id": "rule-7060",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7060,
+      "title": "vector): return append rollback failures instead of panicking (#32167)",
+      "source_url": "https://github.com/matrixorigin/matrixone",
+      "source_version": "3d54f0c1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T01:33:31.924Z"
     }
   },
   "aliases": {
