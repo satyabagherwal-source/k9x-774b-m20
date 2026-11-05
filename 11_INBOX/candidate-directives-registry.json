@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-05T00:48:52.045Z",
+  "last_updated": "2026-11-05T01:00:36.129Z",
   "directives": [
     {
       "id": "CD-001",
@@ -3841,6 +3841,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Generic header title rejected",
       "learning_id": "learn-github-lioensky-vcptoolbox"
+    },
+    {
+      "id": "CD-A2ZL",
+      "directive_title": "Merge pull request #2214 from sharkdp/release-10.5.1",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "sharkdp/fd",
+      "source_commit": "193d0df1",
+      "date_staged": "2026-11-05",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **VERIFICATION METHOD** automated verification protocol",
+      "learning_id": "learn-github-sharkdp-fd"
     }
   ]
 }

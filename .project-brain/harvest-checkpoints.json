@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-05T00:51:30.775Z",
+  "last_updated": "2026-11-05T01:00:46.266Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -635,14 +635,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash",
-      "content_hash": "a29ccc111d9d1546d54da772f13eb61631d061b8f6d58e82c1ac8e666d7e1f87",
-      "verified_at": "2026-10-31T10:33:48.755Z",
+      "content_hash": "70c3b9359e1db10cdb9768bd0ee06d21265600e23f9c5595fbde5e7b4040f3d2",
+      "verified_at": "2026-11-05T01:00:46.266Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T10:33:48.755Z"
+      "last_updated": "2026-11-05T01:00:46.266Z"
     },
     "akatz-ai/MiniMax-H3-Character-Swap-LoRA": {
       "repository": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
@@ -3951,14 +3951,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-sharkdp-fd",
-      "content_hash": "fcfe61700e6c3bfd912a53eae4c312342c76b6455e741044922d4dd4e270071b",
-      "verified_at": "2026-11-03T22:15:17.788Z",
+      "content_hash": "50b162e8cee2d158ad5c53f4780fda137b60cae8dc64ef3e983f9e9bfd3a8711",
+      "verified_at": "2026-11-05T01:00:36.132Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T22:15:17.788Z"
+      "last_updated": "2026-11-05T01:00:36.132Z"
     },
     "maotoumao/MusicFree": {
       "repository": "maotoumao/MusicFree",

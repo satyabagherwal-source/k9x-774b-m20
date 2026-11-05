@@ -515,8 +515,8 @@
     "sourceUrl": "https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash",
     "sourceVersion": "hf-deepseek-ai-deepseek-v4.1-flash",
     "license": "Open-Source",
-    "contentHash": "a29ccc111d9d1546d54da772f13eb61631d061b8f6d58e82c1ac8e666d7e1f87",
-    "lastHarvestedAt": "2026-10-31T10:33:48.747Z",
+    "contentHash": "70c3b9359e1db10cdb9768bd0ee06d21265600e23f9c5595fbde5e7b4040f3d2",
+    "lastHarvestedAt": "2026-11-05T01:00:46.252Z",
     "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash"
   },
   "hf-akatz-ai-minimax-h3-character-swap-lora": {
@@ -2543,10 +2543,10 @@
     "repository": "sharkdp/fd",
     "platform": "github",
     "sourceUrl": "https://github.com/sharkdp/fd",
-    "sourceVersion": "cc4e40fa",
+    "sourceVersion": "193d0df1",
     "license": "Apache-2.0",
-    "contentHash": "fcfe61700e6c3bfd912a53eae4c312342c76b6455e741044922d4dd4e270071b",
-    "lastHarvestedAt": "2026-11-03T22:15:17.779Z",
+    "contentHash": "50b162e8cee2d158ad5c53f4780fda137b60cae8dc64ef3e983f9e9bfd3a8711",
+    "lastHarvestedAt": "2026-11-05T01:00:36.125Z",
     "learningId": "learn-github-sharkdp-fd"
   },
   "maotoumao-musicfree": {

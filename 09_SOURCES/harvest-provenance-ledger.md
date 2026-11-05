@@ -7441,3 +7441,5 @@ Every entry in this ledger must capture:
 | `learn-github-lioensky-vcptoolbox` | `https://github.com/lioensky/VCPToolBox` | `72e964e2` | Multi-dimensional audit evidence | 2026-11-05T00:48:52.039Z |
 | `learn-huggingface-inclusionai-ming-image-0-1-design` | `https://huggingface.co/inclusionAI/Ming-Image-0.1-Design` | `hf-inclusi` | Multi-dimensional audit evidence | 2026-11-05T00:49:02.410Z |
 | `learn-github-sharkdp-bat` | `https://github.com/sharkdp/bat` | `b47e6865` | Multi-dimensional audit evidence | 2026-11-05T00:51:30.760Z |
+| `learn-github-sharkdp-fd` | `https://github.com/sharkdp/fd` | `193d0df1` | Multi-dimensional audit evidence | 2026-11-05T01:00:36.125Z |
+| `learn-huggingface-deepseek-ai-deepseek-v4-1-flash` | `https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-11-05T01:00:46.252Z |

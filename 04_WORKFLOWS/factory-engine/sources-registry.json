@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-05T00:51:33.319Z",
-    "lastVerified": "2026-11-05T00:51:33.319Z",
+    "lastChecked": "2026-11-05T01:00:48.839Z",
+    "lastVerified": "2026-11-05T01:00:48.839Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -144,8 +144,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-05T00:22:41.623Z",
-    "lastVerified": "2026-11-05T00:22:41.623Z",
+    "lastChecked": "2026-11-05T01:00:46.564Z",
+    "lastVerified": "2026-11-05T01:00:46.564Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -1275,14 +1275,14 @@
     "officialUrl": "https://github.com/sharkdp/fd",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-03T22:15:13.798Z",
-    "lastVerified": "2026-11-03T22:15:13.798Z",
+    "lastChecked": "2026-11-05T01:00:35.767Z",
+    "lastVerified": "2026-11-05T01:00:35.767Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-sharkdp-fd",
-    "contentHash": "fcfe61700e6c3bfd912a53eae4c312342c76b6455e741044922d4dd4e270071b",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 4,
+    "contentHash": "50b162e8cee2d158ad5c53f4780fda137b60cae8dc64ef3e983f9e9bfd3a8711",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -2364,12 +2364,12 @@
     "revisionIdentifier": "b1a36daf"
   },
   "aleo-labs-protocol-snarkos": {
-    "name": "aleo-labs-protocol/snarkOS",
+    "name": "snarkOS",
     "officialUrl": "https://github.com/aleo-labs-protocol/snarkOS",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-04T21:26:18.529Z",
-    "lastVerified": "2026-11-04T21:26:18.529Z",
+    "lastChecked": "2026-11-05T01:00:41.613Z",
+    "lastVerified": "2026-11-05T01:00:41.613Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aleo-labs-protocol-snarkos",
@@ -2378,7 +2378,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "66955b13"
   },
   "databendlabs-databend": {
     "name": "databendlabs/databend",
@@ -2766,13 +2767,13 @@
     "officialUrl": "https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-31T10:33:47.766Z",
-    "lastVerified": "2026-10-31T10:33:47.766Z",
+    "lastChecked": "2026-11-05T01:00:34.174Z",
+    "lastVerified": "2026-11-05T01:00:34.174Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash",
-    "contentHash": "a29ccc111d9d1546d54da772f13eb61631d061b8f6d58e82c1ac8e666d7e1f87",
-    "promotedRulesCount": 0,
+    "contentHash": "70c3b9359e1db10cdb9768bd0ee06d21265600e23f9c5595fbde5e7b4040f3d2",
+    "promotedRulesCount": 3,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
@@ -3372,9 +3373,9 @@
   "vearch-vearch": {
     "name": "vearch",
     "officialUrl": "https://github.com/vearch/vearch",
-    "lastChecked": "2026-11-04T01:51:19.573Z",
+    "lastChecked": "2026-11-05T01:00:44.008Z",
     "revisionIdentifier": "bae78b18",
-    "lastVerified": "2026-11-04T01:51:19.573Z"
+    "lastVerified": "2026-11-05T01:00:44.008Z"
   },
   "imsnif-bandwhich": {
     "name": "bandwhich",
@@ -5772,9 +5773,9 @@
   "aquasecurity-tfsec": {
     "name": "tfsec",
     "officialUrl": "https://github.com/aquasecurity/tfsec",
-    "lastChecked": "2026-11-04T02:33:10.642Z",
+    "lastChecked": "2026-11-05T01:00:39.066Z",
     "revisionIdentifier": "b692c20b",
-    "lastVerified": "2026-11-04T02:33:10.642Z"
+    "lastVerified": "2026-11-05T01:00:39.066Z"
   },
   "rqlite-rqlite": {
     "name": "rqlite",
@@ -8657,9 +8658,9 @@
   "mohamedrejeb-compose-rich-editor": {
     "name": "compose-rich-editor",
     "officialUrl": "https://github.com/MohamedRejeb/compose-rich-editor",
-    "lastChecked": "2026-10-31T17:50:10.704Z",
+    "lastChecked": "2026-11-05T01:00:36.564Z",
     "revisionIdentifier": "b972d50f",
-    "lastVerified": "2026-10-31T17:50:10.704Z"
+    "lastVerified": "2026-11-05T01:00:36.564Z"
   },
   "facebook-folly": {
     "name": "meta/folly",

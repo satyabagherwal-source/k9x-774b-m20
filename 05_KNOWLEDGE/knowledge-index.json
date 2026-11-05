@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T00:51:30.684Z",
+  "last_updated": "2026-11-05T01:00:46.170Z",
   "total_verified_learnings": 1210,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -23578,7 +23578,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash",
       "source_version": "hf-deepseek-ai-deepseek-v4.1-flash",
-      "content_hash": "a29ccc111d9d1546d54da772f13eb61631d061b8f6d58e82c1ac8e666d7e1f87",
+      "content_hash": "70c3b9359e1db10cdb9768bd0ee06d21265600e23f9c5595fbde5e7b4040f3d2",
       "dossier_path": "07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4.1-flash-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4.1-flash-learnings.md",
       "promoted_rules": [
@@ -23663,6 +23663,21 @@
           "number": 5224,
           "title": "Layer-Decoupled Latent State Projection Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7054,
+          "title": "KV Cache Decoupling via Encoder-Decoder Projection",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7055,
+          "title": "Static Attention Mode Assignment for Sparse Attention",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7056,
+          "title": "SWA Bounded Replay for Sliding Window Attention",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -23683,7 +23698,7 @@
         "learn-huggingface-hf-deepseek-ai-deepseek-v4-1-flash-mv46mzeq",
         "learn-huggingface-hf-deepseek-ai-deepseek-v4-1-flash-mv4jxf1e"
       ],
-      "verified_at": "2026-10-31T10:33:48.650Z",
+      "verified_at": "2026-11-05T01:00:46.155Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -52729,8 +52744,8 @@
       "slug": "sharkdp-fd",
       "platform": "github",
       "source_url": "https://github.com/sharkdp/fd",
-      "source_version": "cc4e40fa",
-      "content_hash": "fcfe61700e6c3bfd912a53eae4c312342c76b6455e741044922d4dd4e270071b",
+      "source_version": "193d0df1",
+      "content_hash": "50b162e8cee2d158ad5c53f4780fda137b60cae8dc64ef3e983f9e9bfd3a8711",
       "dossier_path": "07_PROJECT_LEARNING/sharkdp-fd-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sharkdp-fd-learnings.md",
       "promoted_rules": [
@@ -52785,7 +52800,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T22:15:17.666Z",
+      "verified_at": "2026-11-05T01:00:36.015Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -179006,6 +179021,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-05T00:51:30.665Z"
+    },
+    "rule-7054": {
+      "learning_id": "rule-7054",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7054,
+      "title": "KV Cache Decoupling via Encoder-Decoder Projection",
+      "source_url": "https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash",
+      "source_version": "hf-deepseek-ai-deepseek-v4.1-flash",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T01:00:46.155Z"
+    },
+    "rule-7055": {
+      "learning_id": "rule-7055",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7055,
+      "title": "Static Attention Mode Assignment for Sparse Attention",
+      "source_url": "https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash",
+      "source_version": "hf-deepseek-ai-deepseek-v4.1-flash",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T01:00:46.155Z"
+    },
+    "rule-7056": {
+      "learning_id": "rule-7056",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7056,
+      "title": "SWA Bounded Replay for Sliding Window Attention",
+      "source_url": "https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash",
+      "source_version": "hf-deepseek-ai-deepseek-v4.1-flash",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T01:00:46.155Z"
     }
   },
   "aliases": {

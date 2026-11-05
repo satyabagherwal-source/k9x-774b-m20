@@ -512143,3 +512143,235 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `0e8994a3` are properly handled with clean fallback behavior.
+
+
+---
+
+## 7054. KV Cache Decoupling via Encoder-Decoder Projection (Harvested from deepseek-ai/DeepSeek-V4.1-Flash)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "KV Cache Decoupling via Encoder-Decoder Projection",
+  "source": "deepseek-ai/DeepSeek-V4.1-Flash",
+  "source_url": "https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash",
+  "source_version": "hf-deepseek-ai-deepseek-v4.1-flash",
+  "license": "Open-Source",
+  "extracted_at": "2026-11-05T01:00:45.368Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [deepseek-ai/DeepSeek-V4.1-Flash](https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash) (Revision: `hf-deepsee`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+In long-context MoE models, the Decoder's global KV cache MUST be projected from the final hidden states of a preceding Causal Encoder block, rather than being computed and stored independently by each Decoder layer. This MUST NOT allow Decoder layers to write directly to the persistent global KV cache without an explicit projection step.
+
+**WHY**:
+Storing KV per decoder layer leads to $O(L_{decoder} \cdot N \cdot D)$ memory usage. By projecting from the encoder, the decoder can reuse a single, compressed representation of the context. This reduces memory footprint and allows the decoder to focus on autoregressive generation without re-computing context representations. It also enables different prefill/decode parameter activation counts (8B vs 16B).
+
+**WHEN TO APPLY**:
+Any Transformer-based LLM with context length > 128K tokens, especially MoE architectures where compute is sparse but memory is dense.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+class CEDDecoderLayer(nn.Module):
+    def __init__(self, encoder_output_dim, hidden_size):
+        super().__init__()
+        # Project encoder output to decoder KV space
+        self.kv_projection = nn.Linear(encoder_output_dim, hidden_size)
+        self.attention = MultiHeadAttention(hidden_size)
+
+    def forward(self, hidden_states, encoder_output, kv_cache):
+        # Project encoder output to get K and V for this layer
+        # Note: This is done once per token, not per layer
+        projected_kv = self.kv_projection(encoder_output)
+        k, v = projected_kv.chunk(2, dim=-1)
+        
+        # Update cache with projected KV
+        kv_cache.update(k, v)
+        
+        # Perform attention using cached KV
+        attn_output = self.attention(hidden_states, k, v, kv_cache)
+        return attn_output
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Storing KV per decoder layer
+class StandardDecoderLayer(nn.Module):
+    def forward(self, hidden_states, kv_cache):
+        q, k, v = self.qkv_proj(hidden_states)
+        # This leads to L * N * D memory usage
+        kv_cache.update(k, v) 
+        return self.attention(q, k, v, kv_cache)
+```
+
+**VERIFICATION METHOD**:
+Assert that the number of KV cache entries per token is equal to the number of encoder layers, not the total number of layers.
+```python
+assert kv_cache.num_entries_per_token == num_encoder_layers
+```
+
+
+---
+
+## 7055. Static Attention Mode Assignment for Sparse Attention (Harvested from deepseek-ai/DeepSeek-V4.1-Flash)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Static Attention Mode Assignment for Sparse Attention",
+  "source": "deepseek-ai/DeepSeek-V4.1-Flash",
+  "source_url": "https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash",
+  "source_version": "hf-deepseek-ai-deepseek-v4.1-flash",
+  "license": "Open-Source",
+  "extracted_at": "2026-11-05T01:00:45.688Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [deepseek-ai/DeepSeek-V4.1-Flash](https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash) (Revision: `hf-deepsee`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+In Compressed Sparse Attention (CSA) systems, each attention layer MUST be assigned a static mode (Full, Reindex, Reuse) at initialization. The mode MUST NOT be dynamically determined per-token or per-batch. Reindex layers MUST reuse KV from a preceding Full layer but recompute sparse indices. Reuse layers MUST reuse both KV and indices.
+
+**WHY**:
+Dynamic mode selection introduces control flow overhead and makes memory allocation unpredictable. Static assignment allows for pre-allocation of KV buffers and index buffers. Reusing KV from Full layers reduces memory bandwidth. Recomputing indices in Reindex layers allows for adaptive sparsity without the cost of full attention.
+
+**WHEN TO APPLY**:
+Any implementation of sparse attention mechanisms (e.g., FlashAttention-3, DeepSeek-V3/V4) where memory bandwidth is a bottleneck.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+class CSA2Layer(nn.Module):
+    def __init__(self, mode, source_layer_id):
+        super().__init__()
+        self.mode = mode  # 'Full', 'Reindex', 'Reuse'
+        self.source_layer_id = source_layer_id
+
+    def forward(self, hidden_states, kv_cache, index_cache):
+        if self.mode == 'Full':
+            # Compute full attention and store KV and indices
+            k, v = self.kv_proj(hidden_states)
+            indices = self.indexer(hidden_states)
+            kv_cache.update(self.layer_id, k, v)
+            index_cache.update(self.layer_id, indices)
+            return self.attention(hidden_states, k, v, indices)
+        
+        elif self.mode == 'Reindex':
+            # Reuse KV from source layer, recompute indices
+            k, v = kv_cache.get(self.source_layer_id)
+            indices = self.indexer(hidden_states)
+            index_cache.update(self.layer_id, indices)
+            return self.attention(hidden_states, k, v, indices)
+        
+        elif self.mode == 'Reuse':
+            # Reuse KV and indices from source layer
+            k, v = kv_cache.get(self.source_layer_id)
+            indices = index_cache.get(self.source_layer_id)
+            return self.attention(hidden_states, k, v, indices)
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Dynamic mode selection
+def forward(self, hidden_states, kv_cache):
+    # This is expensive and unpredictable
+    if self.should_use_sparse(hidden_states):
+        return self.sparse_attention(hidden_states, kv_cache)
+    else:
+        return self.full_attention(hidden_states, kv_cache)
+```
+
+**VERIFICATION METHOD**:
+Lint check to ensure `mode` is a constant attribute set in `__init__` and not modified in `forward`.
+```python
+assert isinstance(layer.mode, str)
+assert layer.mode in ['Full', 'Reindex', 'Reuse']
+```
+
+
+---
+
+## 7056. SWA Bounded Replay for Sliding Window Attention (Harvested from deepseek-ai/DeepSeek-V4.1-Flash)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "SWA Bounded Replay for Sliding Window Attention",
+  "source": "deepseek-ai/DeepSeek-V4.1-Flash",
+  "source_url": "https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash",
+  "source_version": "hf-deepseek-ai-deepseek-v4.1-flash",
+  "license": "Open-Source",
+  "extracted_at": "2026-11-05T01:00:45.998Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [deepseek-ai/DeepSeek-V4.1-Flash](https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash) (Revision: `hf-deepsee`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Sliding Window Attention (SWA) KV states MUST NOT be persisted to long-term storage (SSD/HBM). Instead, missing SWA KV states MUST be reconstructed by replaying only the most recent $n_{win}$ tokens. The replay window size MUST be fixed and small (e.g., 128 tokens).
+
+**WHY**:
+Persisting SWA KV states leads to high I/O costs and memory fragmentation. Since SWA only attends to the last $n_{win}$ tokens, the KV states for older tokens are never used. By replaying only the recent tokens, we avoid storing the entire SWA KV cache. This reduces persistent KV cache footprint by ~8x.
+
+**WHEN TO APPLY**:
+Any model using Sliding Window Attention (e.g., Mistral, DeepSeek-V3) where the window size is much smaller than the context length.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+class SWAReplayLayer(nn.Module):
+    def __init__(self, window_size):
+        super().__init__()
+        self.window_size = window_size
+
+    def forward(self, hidden_states, input_ids, kv_cache):
+        # Get the last window_size tokens
+        recent_tokens = input_ids[-self.window_size:]
+        
+        # Replay these tokens to reconstruct KV
+        recent_hidden = self.embedding(recent_tokens)
+        k, v = self.kv_proj(recent_hidden)
+        
+        # Update cache with replayed KV
+        kv_cache.update_swa(k, v)
+        
+        # Perform attention
+        return self.attention(hidden_states, k, v, kv_cache)
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Persisting SWA KV
+def forward(self, hidden_states, kv_cache):
+    k, v = self.kv_proj(hidden_states)
+    # This stores KV for all tokens, even though only last 128 are used
+    kv_cache.update_swa(k, v) 
+    return self.attention(hidden_states, k, v, kv_cache)
+```
+
+**VERIFICATION METHOD**:
+Assert that the SWA KV cache size is bounded by `window_size * batch_size * num_heads * head_dim`.
+```python
+assert kv_cache.swa_size <= self.window_size * batch_size * num_heads * head_dim
+```

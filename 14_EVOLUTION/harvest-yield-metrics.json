@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-05T00:51:30.764Z",
-  "total_cycles_completed": 7409,
-  "total_learnings_persisted": 7409,
-  "total_rules_promoted": 7103,
+  "last_updated": "2026-11-05T01:00:46.256Z",
+  "total_cycles_completed": 7411,
+  "total_learnings_persisted": 7411,
+  "total_rules_promoted": 7106,
   "history": [
-    {
-      "timestamp": "2026-11-04T16:43:10.583Z",
-      "repository": "czy0729/Bangumi",
-      "learningId": "learn-github-czy0729-bangumi",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T16:43:12.889Z",
-      "repository": "meta-models/Muse-Spark-Open-816B-A42B-NVFP4",
-      "learningId": "learn-huggingface-meta-models-muse-spark-open-816b-a42b-nvfp4",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-04T16:50:12.899Z",
       "repository": "reflection/Beam-1.0-501B-A23B",
@@ -1403,6 +1389,20 @@
       "repository": "sharkdp/bat",
       "learningId": "learn-github-sharkdp-bat",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T01:00:36.130Z",
+      "repository": "sharkdp/fd",
+      "learningId": "learn-github-sharkdp-fd",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T01:00:46.256Z",
+      "repository": "deepseek-ai/DeepSeek-V4.1-Flash",
+      "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]
