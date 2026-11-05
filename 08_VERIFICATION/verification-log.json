@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261104-A8S4",
-    "timestamp": "2026-11-04T18:28:49.012Z",
-    "repository": "duckdb/duckdb",
-    "learningId": "learn-github-duckdb-duckdb",
-    "contentHash": "fbf44d62836252888b4fa48a6ef4550e0c57888b15f5277a13c93fff70731af0",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261104-IU83",
     "timestamp": "2026-11-04T18:35:30.051Z",
     "repository": "domcyrus/rustnet",
@@ -7490,6 +7475,21 @@
     "repository": "Bitterbot-AI/bitterbot-desktop",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
     "contentHash": "719eee9fc41f7823806f66fe2d7406a1be95ad286cf00f5a9a941af03acecc86",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-Q7BQ",
+    "timestamp": "2026-11-05T19:52:52.886Z",
+    "repository": "kube-rs/kube",
+    "learningId": "learn-github-kube-rs-kube",
+    "contentHash": "31e8f199005376520054cf9023a3ce4fe658b8fdbef8a114897c6fd116c597dc",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

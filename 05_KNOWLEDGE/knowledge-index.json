@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T19:45:34.639Z",
+  "last_updated": "2026-11-05T19:52:52.786Z",
   "total_verified_learnings": 1220,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -37263,11 +37263,16 @@
       "slug": "kube-rs-kube",
       "platform": "github",
       "source_url": "https://github.com/kube-rs/kube",
-      "source_version": "e737551c",
-      "content_hash": "9dbc7e969ac89093b199dcd9c720c491e4a929b9b85a2f864e3fc5e5a88a4b0d",
+      "source_version": "660c438c",
+      "content_hash": "31e8f199005376520054cf9023a3ce4fe658b8fdbef8a114897c6fd116c597dc",
       "dossier_path": "07_PROJECT_LEARNING/kube-rs-kube-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kube-rs-kube-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Show missing feature requirements on kube-client items in docs (#2141)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2259,
           "title": "Retry-After overflow panic in the default retry policy (#2097)",
@@ -37319,7 +37324,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T10:05:36.870Z",
+      "verified_at": "2026-11-05T19:52:52.761Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

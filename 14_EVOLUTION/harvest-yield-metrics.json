@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-05T19:45:34.739Z",
-  "total_cycles_completed": 7751,
-  "total_learnings_persisted": 7751,
-  "total_rules_promoted": 7396,
+  "last_updated": "2026-11-05T19:52:52.896Z",
+  "total_cycles_completed": 7752,
+  "total_learnings_persisted": 7752,
+  "total_rules_promoted": 7397,
   "history": [
-    {
-      "timestamp": "2026-11-05T08:02:22.746Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-05T08:02:56.130Z",
       "repository": "thebaselab/codeapp",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-05T19:45:34.739Z",
       "repository": "Bitterbot-AI/bitterbot-desktop",
       "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T19:52:52.896Z",
+      "repository": "kube-rs/kube",
+      "learningId": "learn-github-kube-rs-kube",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -6843,10 +6843,10 @@
     "repository": "kube-rs/kube",
     "platform": "github",
     "sourceUrl": "https://github.com/kube-rs/kube",
-    "sourceVersion": "e737551c",
+    "sourceVersion": "660c438c",
     "license": "Apache-2.0",
-    "contentHash": "9dbc7e969ac89093b199dcd9c720c491e4a929b9b85a2f864e3fc5e5a88a4b0d",
-    "lastHarvestedAt": "2026-11-04T10:05:36.986Z",
+    "contentHash": "31e8f199005376520054cf9023a3ce4fe658b8fdbef8a114897c6fd116c597dc",
+    "lastHarvestedAt": "2026-11-05T19:52:52.890Z",
     "learningId": "learn-github-kube-rs-kube"
   },
   "weaviate-weaviate": {

@@ -7783,3 +7783,4 @@ Every entry in this ledger must capture:
 | `learn-github-max-sixty-worktrunk` | `https://github.com/max-sixty/worktrunk` | `79f19f64` | Multi-dimensional audit evidence | 2026-11-05T19:45:20.795Z |
 | `learn-github-projectcontour-contour` | `https://github.com/projectcontour/contour` | `aa861529` | Multi-dimensional audit evidence | 2026-11-05T19:45:27.232Z |
 | `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `3ea3f553` | Multi-dimensional audit evidence | 2026-11-05T19:45:34.733Z |
+| `learn-github-kube-rs-kube` | `https://github.com/kube-rs/kube` | `660c438c` | Multi-dimensional audit evidence | 2026-11-05T19:52:52.890Z |

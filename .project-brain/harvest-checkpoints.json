@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-05T19:45:34.743Z",
+  "last_updated": "2026-11-05T19:52:52.900Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -10326,14 +10326,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kube-rs-kube",
-      "content_hash": "9dbc7e969ac89093b199dcd9c720c491e4a929b9b85a2f864e3fc5e5a88a4b0d",
-      "verified_at": "2026-11-04T10:05:36.996Z",
+      "content_hash": "31e8f199005376520054cf9023a3ce4fe658b8fdbef8a114897c6fd116c597dc",
+      "verified_at": "2026-11-05T19:52:52.899Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T10:05:36.996Z"
+      "last_updated": "2026-11-05T19:52:52.899Z"
     },
     "weaviate/weaviate": {
       "repository": "weaviate/weaviate",
