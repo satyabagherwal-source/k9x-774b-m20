@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-05T17:29:13.940Z",
-    "lastVerified": "2026-11-05T17:29:13.940Z",
+    "lastChecked": "2026-11-05T17:36:43.781Z",
+    "lastVerified": "2026-11-05T17:36:43.781Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -144,8 +144,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-05T17:07:27.691Z",
-    "lastVerified": "2026-11-05T17:07:27.691Z",
+    "lastChecked": "2026-11-05T17:36:42.036Z",
+    "lastVerified": "2026-11-05T17:36:42.036Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -1098,9 +1098,9 @@
   "mimblewimble-grin": {
     "name": "grin",
     "officialUrl": "https://github.com/mimblewimble/grin",
-    "lastChecked": "2026-11-05T13:27:07.589Z",
+    "lastChecked": "2026-11-05T17:36:37.093Z",
     "revisionIdentifier": "dbaff34f",
-    "lastVerified": "2026-11-05T13:27:07.589Z"
+    "lastVerified": "2026-11-05T17:36:37.093Z"
   },
   "influxdata-influxdb": {
     "name": "influxdb",
@@ -4049,9 +4049,9 @@
   "llphant-llphant": {
     "name": "LLPhant",
     "officialUrl": "https://github.com/LLPhant/LLPhant",
-    "lastChecked": "2026-11-05T02:18:12.975Z",
+    "lastChecked": "2026-11-05T17:36:39.470Z",
     "revisionIdentifier": "6305ae46",
-    "lastVerified": "2026-11-05T02:18:12.975Z"
+    "lastVerified": "2026-11-05T17:36:39.470Z"
   },
   "mufeedvh-code2prompt": {
     "name": "code2prompt",
@@ -6908,14 +6908,14 @@
     "officialUrl": "https://github.com/rook/rook",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-05T03:02:55.998Z",
-    "lastVerified": "2026-11-05T03:02:55.998Z",
+    "lastChecked": "2026-11-05T17:36:39.378Z",
+    "lastVerified": "2026-11-05T17:36:39.378Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-rook-rook",
-    "contentHash": "8b0009a9535ed6426f4593ee6f3d83195816886565dfc4a8e5041eada154713d",
+    "contentHash": "b5974e7f0dedda029afdeff23bb2060e164c90c3c55a0490451afac9871b0668",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -8642,12 +8642,12 @@
     "officialUrl": "https://github.com/pola-rs/polars",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-04T22:34:42.935Z",
-    "lastVerified": "2026-11-04T22:34:42.935Z",
+    "lastChecked": "2026-11-05T17:36:32.152Z",
+    "lastVerified": "2026-11-05T17:36:32.152Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-pola-rs-polars",
-    "contentHash": "7a702b79cd21a123353e6b5d2bc7b60d93fa71c8705711f3b81f0554e90b518d",
+    "contentHash": "9de6a9f7020de2f0cf22cb56420c540b9c6fbd8849dc01b585f0e80a13f3ca52",
     "promotedRulesCount": 1,
     "recentFixesCount": 9,
     "closedIssuesCount": 2,
@@ -9249,9 +9249,9 @@
   "addy0-com-free-open-technical-seo-crawler": {
     "name": "free-open-technical-SEO-crawler",
     "officialUrl": "https://github.com/Addy0-com/free-open-technical-SEO-crawler",
-    "lastChecked": "2026-11-02T14:24:41.100Z",
+    "lastChecked": "2026-11-05T17:36:29.476Z",
     "revisionIdentifier": "7e5d3c5",
-    "lastVerified": "2026-11-02T14:24:41.100Z"
+    "lastVerified": "2026-11-05T17:36:29.476Z"
   },
   "siteline-swiftui-introspect": {
     "name": "swiftui-introspect",
@@ -11499,8 +11499,8 @@
     "officialUrl": "https://github.com/iziz/libPhoneNumber-iOS",
     "sourceType": "github",
     "technology": "Objective-C",
-    "lastChecked": "2026-11-03T17:14:11.002Z",
-    "lastVerified": "2026-11-03T17:14:11.002Z",
+    "lastChecked": "2026-11-05T17:36:31.961Z",
+    "lastVerified": "2026-11-05T17:36:31.961Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-iziz-libphonenumber-ios",

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T17:29:11.280Z",
+  "last_updated": "2026-11-05T17:36:41.081Z",
   "total_verified_learnings": 1218,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -49035,11 +49035,16 @@
       "slug": "pola-rs-polars",
       "platform": "github",
       "source_url": "https://github.com/pola-rs/polars",
-      "source_version": "35a2cb73",
-      "content_hash": "7a702b79cd21a123353e6b5d2bc7b60d93fa71c8705711f3b81f0554e90b518d",
+      "source_version": "095d0b94",
+      "content_hash": "9de6a9f7020de2f0cf22cb56420c540b9c6fbd8849dc01b585f0e80a13f3ca52",
       "dossier_path": "07_PROJECT_LEARNING/pola-rs-polars-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pola-rs-polars-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Don't treat `is_in` with a multi-row literal as elementwise (#30617)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2501,
           "title": "Check SQL casts to STRUCT[]/MAP[] and specify cast failure (#30026)",
@@ -49116,7 +49121,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T22:34:43.640Z",
+      "verified_at": "2026-11-05T17:36:34.743Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -51881,11 +51886,16 @@
       "slug": "rook-rook",
       "platform": "github",
       "source_url": "https://github.com/rook/rook",
-      "source_version": "7c69f415",
-      "content_hash": "8b0009a9535ed6426f4593ee6f3d83195816886565dfc4a8e5041eada154713d",
+      "source_version": "ea53dbf8",
+      "content_hash": "b5974e7f0dedda029afdeff23bb2060e164c90c3c55a0490451afac9871b0668",
       "dossier_path": "07_PROJECT_LEARNING/rook-rook-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rook-rook-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Merge pull request #18648 from billyridgway/wridgway/system-user-fix",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 1692,
           "title": "build(deps): bump github/codeql-action/upload-sarif",
@@ -51942,7 +51952,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T03:02:56.630Z",
+      "verified_at": "2026-11-05T17:36:41.058Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

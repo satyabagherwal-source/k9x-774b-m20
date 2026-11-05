@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/pola-rs-polars-learnings.md`  
 > **Source**: github ([https://github.com/pola-rs/polars](https://github.com/pola-rs/polars))  
-> **Source Version**: `35a2cb73`  
+> **Source Version**: `095d0b94`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T22:34:42.943Z  
+> **Timestamp**: 2026-11-05T17:36:33.446Z  
 > **Learning ID**: `learn-github-pola-rs-polars`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pola-rs-polars-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pola-rs/polars](https://github.com/pola-rs/polars))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T22:34:42.935Z  
+> **Harvest Timestamp**: 2026-11-05T17:36:32.152Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Extremely fast Query Engine for DataFrames, written in Rust
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 40257 stars
+- **Stars / Engagement**: 40263 stars
 
 ---
 
@@ -1668,13 +1668,13 @@ pub fn check_same_len(lhs: &dyn Array, rhs: &dyn Array) -> PolarsResult<()> {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #30599** (2026-11-05): **`null` struct incorrectly equals `{'x': null}` struct in uniqueness test**
+  *Symptoms*: ### Checks  - [x] I have checked that this issue has not already been reported. - [x] I have confirmed this bug exists on the [latest version](https://pypi.org/project/polars/) of Polars.  ### Reproducible example  ```python import polars as pl  s = pl.Series("s", [{"a": None}, None, {"a": 1}])  # A null struct and {a: null} are treated as one value. print(s.is_unique().to_list())  # [False, False, True] print(s.is_duplicated().to_list())  # [True, True, False]  # Every other uniqueness operation keeps them apart. print(s.n_unique())  # 3 print(s.unique(maintain_order=True).to_list())  # [{'a': None}, None, {'a': 1}] print(s.is_first_distinct().to_list())  # [True, True, True] print(s.to_frame().is_unique().to_list())  # [True, True, True] print(s.to_frame().group_by("s").len().height)  # 3  assert s.is_unique().to_list() == [True, True, True]  # fails ```   ### Log output  ```shell [:~/git/polars-2]└2 <.venv> f0fa14b+ ± pt running script: python3 "/home/amber/git/scratch/test.py"  [False, False, True] [True, True, False] 3 [{'a': None}, None, {'a': 1}] [True, True, True] [True, True, True] 3 Traceback (most recent call last):   File "/home/amber/git/scratch/test.py", line 33, in <module>     assert s.is_unique().to_list() == [True, True, True]  # fails            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ AssertionError ```  ### Issue description  `null` structs incorrectly equal structs that have `null` as their only value when I use `Expr.is_unique()` and other of those
+
 - **Issue #30582** (2026-11-04): **`arg_max`/`arg_min` returns the last tied position**
   *Symptoms*: ### Checks  - [x] I have checked that this issue has not already been reported. - [x] I have confirmed this bug exists on the [latest version](https://pypi.org/project/polars/) of Polars.  ### Reproducible example  ```python import polars as pl  df = pl.DataFrame({"g": [1, 1, 1], "x": [1, 2, 2]}) sorted_df = df.with_columns(pl.col("x").set_sorted())  expected = df.select(pl.col("x").arg_max()).item() print(f"{expected=}")  # expected=1 print(sorted_df.select(pl.col("x").arg_max()).item())  # 2  expected = df.group_by("g").agg(pl.col("x").arg_max())["x"].item() print(f"{expected=}")  # expected=1 print(sorted_df.group_by("g").agg(pl.col("x").arg_max())["x"].item())  # 2 ```   ### Log output  ```shell total memory: 93.731 GiB (100642918400 bytes) async thread count: 22 blocking thread count: 512 run sink_mem run StackExec run sink_mem run ProjectionExec expected=1 run sink_mem run ProjectionExec 2 run sink_mem run GroupbyExec keys/aggregates are not partitionable: running default HASH AGGREGATION expected=1 run sink_mem run GroupbyExec keys/aggregates are not partitionable: running default HASH AGGREGATION 2 ```  ### Issue description  `arg_max`/`arg_min` on a sorted column returns the last tied position    ### Expected behavior  Expected the first occurrence of the maximum. `1` in all cases above. The sorted fast path takes the last non-null value, which is the last of the tied maxima. `arg_min` on a column sorted descending has the same problem.  ### Installed versions  <deta
   **Post-Mortem & Fix Analysis**:
   > Not a bug, `arg_min` (intentionally) does not specify which is returned on ties https://docs.pola.rs/api/python/stable/reference/expressions/api/polars.Expr.arg_min.html#polars.Expr.arg_min.
-
-- **Issue #30551** (2026-11-04): **In-group `reverse`/`sort`/`cum_sum` followed by `sort_by(...).head(n)` reads out of bounds**
-  *Symptoms*: ### Checks  - [x] I have checked that this issue has not already been reported. - [x] I have confirmed this bug exists on the [latest version](https://pypi.org/project/polars/) of Polars.  ### Reproducible example  ```python import polars as pl  df = pl.DataFrame({"g": [1, 1, 2], "o": [2, 1, 3], "v": [10, 20, 30]}) out = df.group_by("g", maintain_order=True).agg(pl.col("v").reverse().sort_by("o").head(1)) print(out["v"].to_list())  # expected [[10], [30]] ```  ### Log output  ```shell thread 'polars-1' panicked at crates/polars-core/src/frame/group_by/aggregations/agg_list.rs:107:58: range end index 3 out of range for slice of length 2 ... pyo3_runtime.PanicException: range end index 3 out of range for slice of length 2 ```  ### Issue description  Inside `group_by().agg()`, an op that reorders or recomputes each group (`reverse`, `sort`, `sort_by`, `shift`, `diff`, `cum_sum`, `rank`) followed by `sort_by(...)` and then `head`/`tail`/`slice` panics, or returns values from other groups or values that are not in the column; the result can change from run to run. Element-wise ops (`fill_null(0)`, `+ 1`) are fine, and so is `reverse().sort_by("o")` without the slice. Both engines, and `over(order_by=...)`. A build with UB checks aborts ("Undefined Behavior check … non-unwinding panic. aborting"), so this reads out of bounds.  ### Expected behavior  `[[10], [30]]`.  ### Installed versions  Reproduces on 2.1.0 and main (0b47007ab6).  Found and generated with Claude Code and Codex 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1691,531 +1691,729 @@ pub fn check_same_len(lhs: &dyn Array, rhs: &dyn Array) -> PolarsResult<()> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3bb0c7e9` (2026-11-04)
-**Commit Message**: test: Keep capfd output when an xdist worker crashes (#30532)
+### Incident Patch 1: `be404e63` (2026-11-05)
+**Commit Message**: fix: Don't treat `is_in` with a multi-row literal as elementwise (#30617)
 
-**File**: `py-polars/tests/conftest.py` (modified, +68/-34)
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `crates/polars-plan/src/plans/aexpr/properties/general.rs` (modified, +3/-3)
 ```diff
-@@ -1,6 +1,7 @@
- from __future__ import annotations
+@@ -138,8 +138,8 @@ pub fn is_prop<P: Fn(&AExpr) -> bool>(
+     }
  
- import io
-+import itertools
- import os
- import sys
- import tempfile
-@@ -29,29 +30,60 @@ def pytest_addoption(parser: pytest.Parser) -> None:
- _xdist_crash_config: pytest.Config | None = None
- _xdist_crash_log_dir: tempfile.TemporaryDirectory[str] | None = None
+     match ae {
+-        // Literals that aren't being projected are allowed to be non-scalar, so we don't add them
+-        // for inspection. (e.g. `is_in(<literal>)`).
++        // A single-value right-hand side of `is_in` is broadcast, so it needn't be inspected. A
++        // multi-row literal is zipped row by row.
+         #[cfg(feature = "is_in")]
+         Function {
+             function: IRFunctionExpr::Boolean(IRBooleanFunction::IsIn { .. }),
+@@ -150,7 +150,7 @@ pub fn is_prop<P: Fn(&AExpr) -> bool>(
+                 assert_eq!(input.len(), 2); // A.is_in(B)
+                 let rhs = rhs.node();
  
--# How much of a crashed worker's captured output we echo, in bytes.
-+# How much of each captured stream of a crashed worker we echo, in bytes.
- _XDIST_CRASH_OUTPUT_LIMIT = 64 * 1024
- 
- 
--def _crash_log_path(log_dir: str | Path, worker_id: str, stream: str) -> Path:
--    return Path(log_dir) / f"{worker_id}.{stream}"
--
--
--def _capture_to_file(capman: Any, stream: str, path: Path) -> None:
--    """Redirect pytest's fd-level capture of `stream` to a persistent file."""
--    capture = getattr(capman._global_capturing, stream, None)
--    tmpfile = getattr(capture, "tmpfile", None)
--    targetfd = getattr(capture, "targetfd", None)
--    if tmpfile is None or targetfd is None:
--        return  # Not capturing this stream at fd level (`-s`, `--capture=sys`).
--
-+def _persist_capture(capture: Any, path: Path) -> None:
-+    """Make an fd-level pytest capture write to `path`, deleted when it ends."""
-     # This is rather hacky but the tempfile pytest creates is passed to multiple
-     # places before now, so it would be too late to replace that file object
-     # with something we control. So we instead change the underlying file
-     # descriptors to point at our path of choice.
-     with path.open("wb+", buffering=0) as f:
--        os.dup2(f.fileno(), tmpfile.fileno())
--        os.dup2(f.fileno(), targetfd)
-+        os.dup2(f.fileno(), capture.tmpfile.fileno())
-+        if capture._state == "started":
-+            os.dup2(f.fileno(), capture.targetfd)
-+    capture._polars_crash_log_path = path
-+
-+
-+def _persist_fd_captures(capman: Any, log_dir: str, worker_id: str) -> None:
-+    """Persist the output of all fd-level captures of this xdist worker.
-+
-+    Files are named `<worker_id>.<n>.<stream>`, where `n` counts up from 0 for
-+    the global capture, so a crash report can print them in creation order.
-+    """
-+    from _pytest.capture import FDCaptureBase
-+
-+    def path(n: int, targetfd: int) -> Path:
-+        stream = "out" if targetfd == 1 else "err"
-+        return Path(log_dir) / f"{worker_id}.{n:06}.{stream}"
-+
-+    # The global capture started before this conftest was loaded.
-+    global_capture = getattr(capman, "_global_capturing", None)
-+    for stream in ("out", "err"):
-+        capture = getattr(global_capture, stream, None)
-+        if isinstance(capture, FDCaptureBase):
-+            _persist_capture(capture, path(0, capture.targetfd))
-+
-+    # Captures created later, such as those of `capfd` in each test phase.
-+    counter = itertools.count(1)
-+    orig_init = FDCaptureBase.__init__
-+    orig_done = FDCaptureBase.done
-+
-+    def init(self: FDCaptureBase[Any], targetfd: int) -> None:
-+        orig_init(self, targetfd)
-+        if targetfd in (1, 2):
-+            _persist_capture(self, path(next(counter), targetfd))
-+
-+    def done(self: FDCaptureBase[Any]) -> None:
-+        orig_done(self)
-+        log_path = getattr(self, "_polars_crash_log_path", None)
-+        if log_path is not None:
-+            log_path.unlink(missing_ok=True)
-+
-+    FDCaptureBase.__init__ = init  # type: ignore[method-assign]
-+    FDCaptureBase.done = done  # type: ignore[method-assign]
- 
- 
- def pytest_configure(config: pytest.Config) -> None:
-@@ -71,13 +103,10 @@ def pytest_configure(config: pytest.Config) -> None:
-         return
- 
-     try:
--        for stream in ("out", "err"):
--            _capture_to_file(
--                capman, stream, _crash_log_path(log_dir, worker_id, stream)
--            )
-+        _persist_fd_captures(capman, log_dir, worker_id)
-     except Exception as exc:
-         # Never let this break an otherwise fine test run.
--        print(f"failed to redirect fd capture: {exc!r}", file=sys.stderr)
-+        print(f"failed to persist fd captures: {exc!r}", file=sys.stderr)
- 
- 
- @pytest.hookimpl(optionalhook=True)
-@@ -98,17 +127,25 @@ def pytest_unconfigure(config: pytest.Config) -> None:
-         _xdist_crash_log_dir = None
- 
- 
--def _read_crash_output(worker_id: str, stream: str) -> str:
-+def _read_crash_output(worker_id: str) -> list[str]:
-+    """Return a section per capture that was still active when the worker crashed."""
-     if _xdist_crash_log_dir is None:
--        return ""
--    path = _crash_log_path(_xdist_crash_log_dir.name, worker_id, stream)
--    try:
--        data = path.read_bytes()
--    except OSError:
--        return ""
--    if len(data) > _XDIST_CRASH_OUTPUT_LIMIT:
--        data = b"<truncated>\n" + data[-_XDIST_CRASH_OUTPUT_LIMIT:]
--    return data.decode("utf-8", errors="replace").strip()
-+        return []
-+    sections = []
-+    for path in sorted(Path(_xdist_crash_log_dir.name).glob(f"{worker_id}.*")):
-+        try:
-+            data = path.read_bytes()
-+        except 
-```
-
----
-
-### Incident Patch 2: `35a2cb73` (2026-11-04)
-**Commit Message**: perf: Avoid rescanning null runs in the streaming merge-join (#30575)
-
-Co-authored-by: Amber Sprenkels <[REDACTED_EMAIL]>
-
-**File**: `crates/polars-ops/src/frame/join/merge_join.rs` (modified, +16/-10)
-```diff
-@@ -2,14 +2,16 @@ use std::borrow::Cow;
- use std::cmp::Ordering;
- use std::iter::repeat_n;
- 
-+use bytemuck::TransparentWrapper;
- use polars_arrow::array::Array;
- use polars_arrow::array::builder::ShareStrategy;
- use polars_core::frame::builder::DataFrameBuilder;
- use polars_core::prelude::*;
- use polars_core::with_match_physical_numeric_polars_type;
- use polars_defs::join::{JoinArgs, JoinType};
- use polars_utils::itertools::Itertools;
--use polars_utils::total_ord::TotalOrd;
-+use polars_utils::sort::reorder_cmp;
-+use polars_utils::total_ord::{TotalOrd, TotalOrdWrap};
- use polars_utils::{IdxSize, format_pl_smallstr};
- 
- use crate::series::coalesce_columns;
-@@ -23,6 +25,7 @@ pub fn match_keys(
-     gather_probe_unmatched: Option<&mut Vec<IdxSize>>,
-     build_emit_unmatched: bool,
-     descending: bool,
-+    nulls_last: bool,
-     nulls_equal: bool,
-     limit_results: usize,
-     build_row_offset: &mut usize,
-@@ -39,6 +42,7 @@ pub fn match_keys(
-                 gather_probe_unmatched,
-                 build_emit_unmatched,
-                 descending,
-+                nulls_last,
-                 nulls_equal,
-                 limit_results,
-                 build_row_offset,
-@@ -94,6 +98,7 @@ fn match_keys_impl<'a, T: PolarsDataType>(
-     mut gather_probe_unmatched: Option<&mut Vec<IdxSize>>,
-     build_emit_unmatched: bool,
-     descending: bool,
-+    nulls_last: bool,
-     nulls_equal: bool,
-     limit_results: usize,
-     build_row_offset: &mut usize,
-@@ -114,22 +119,23 @@ fn match_keys_impl<'a, T: PolarsDataType>(
-         }
- 
-         let build_keyval = unsafe { build_key.get_unchecked(*build_row_offset) };
--        let build_keyval = build_keyval.as_ref();
-         let mut build_keyval_matched = false;
- 
-         if nulls_equal || build_keyval.is_some() {
-             for probe_idx in *probe_row_offset..probe_key.len() {
-                 let probe_keyval = unsafe { probe_key.get_unchecked(probe_idx) };
--                let probe_keyval = probe_keyval.as_ref();
- 
--                let mut ord: Ordering = match (&build_keyval, &probe_keyval) {
--                    (None, None) if nulls_equal => Ordering::Equal,
--                    (Some(l), Some(r)) => TotalOrd::tot_cmp(*l, *r),
--                    _ => continue,
--                };
--                if descending {
--                    ord = ord.reverse();
-+                // Row-encoded keys are null wherever any key column is null, so a null probe
-+                // key has no place in the order.
-+                if !nulls_equal && probe_keyval.is_none() {
-+                    continue;
+-                if matches!(expr_arena.get(rhs), AExpr::Literal { .. }) {
++                if is_single_literal_ae(rhs, expr_arena) {
+                     stack.extend([input[0].node()]);
+                     return;
                  }
-+                let ord = reorder_cmp(
-+                    TotalOrdWrap::wrap_ref(&build_keyval),
-+                    TotalOrdWrap::wrap_ref(&probe_keyval),
-+                    descending,
-+                    nulls_last,
-+                );
- 
-                 match ord {
-                     Ordering::Equal => {
 ```
 
-**File**: `crates/polars-stream/src/nodes/joins/merge_join.rs` (modified, +1/-0)
+**File**: `py-polars/tests/unit/operations/test_is_in.py` (modified, +14/-0)
 ```diff
-@@ -506,6 +506,7 @@ async fn compute_join_and_send(
-             gather_probe_unmatched,
-             params.build_params().emit_unmatched,
-             params.key_descending,
-+            params.key_nulls_last,
-             params.args.nulls_equal,
-             morsel_size,
-             &mut build_row_offset,
-```
-
-**File**: `py-polars/tests/unit/streaming/test_streaming_join.py` (modified, +40/-2)
-```diff
-@@ -1,6 +1,7 @@
- from __future__ import annotations
- 
- import re
-+import time
- from datetime import datetime, timedelta
- from typing import TYPE_CHECKING, Any, Literal
- 
-@@ -616,16 +617,19 @@ def test_merge_join_exprs() -> None:
- @pytest.mark.parametrize("nulls_last", [False, True])
- @pytest.mark.parametrize("nulls_equal", [False, True])
- @pytest.mark.parametrize("on", [["key"], ["key", "key_ext"]])
-+@pytest.mark.parametrize("chunk_size", [4, None])
- def test_merge_join_many_partitions(
-     how: JoinStrategy,
-     maintain_order: MaintainOrderJoin,
-     descending: bool,
-     nulls_last: bool,
-     nulls_equal: bool,
-     on: list[str],
-+    chunk_size: int | None,
- ) -> None:
-     # Small morsels split each window into many partitions, and the long runs of 0 and
--    # null are split again on the build side. The left keys go on past the right ones.
-+    # null are split again on the build side. With the default morsel size the window is
-+    # a single partition. The left keys go on past the right ones.
-     left_keys = (
-         [None] * 20
-         + [0] * 25
-@@ -661,7 +665,7 @@ def sorted_lf(keys: list[int | None], name: str) -> pl.LazyFrame:
-     assert "merge-join" in dot, "merge-join not used in plan"
- 
-     expected = q.collect(engine="in-memory")
--    with pl.Config(streaming_chunk_size=4):
-+    with pl.Config(streaming_chunk_size=chunk_size):
-         actual = q.collect(engine="streaming")
-         actual_all, actual_head = pl.collect_all([q, q.head(3)], engine="streaming")
-     check_row_order = maintain_order != "none"
-@@ -672,6 +676,40 @@ def sorted_lf(keys: list[int | None], name: str) -> pl.LazyFrame:
-         assert_frame_equal(actual_head, expected.head(3))
- 
- 
-+@pytest.mark.slow
-+@pytest.mark.may_fail_cloud  # reason: timing
-+@pytest.mark.parametrize("null_run_side", ["left", "right"])
-+@pytest.mark.parametrize("nulls_last", [False, True])
-+def test_merge_join_null_run_linear_time(null_run_side: str, nulls_last: bool) -> None:
-+    # A run of nulls, shorter than a morsel, next to many other keys must not be scanned
-+    # again for every one of those keys. The outliers sit beyond the keys, on the far
-+    # side from the nulls.
-+    n = 90_000
-+    keys = pl.Series(range(n), dtype=pl.Int64)
-+    outliers = [-(10**12), -(10**12) + 1] if nulls_last else [10**12, 10**12 + 1]
-+    null_run = pl.Series([None] * n + outliers, dtype=pl.Int64)
-+    left, right = (null_run, keys) if null_run_side == "left" else (keys, null_run)
-+
-+    q = (
-+        pl.LazyFrame({"key": left})
-+        .sort("key", nulls_last=nulls_last)
-+        .join(
-+            pl.LazyFrame({"key": right}).sort("key", nulls_last=nulls_last),
-+            on="key",
-+            nulls_equal=True,
-+            maintain_order="left_right",
-+        )
-+    )
-+    dot = q.show_graph(engine="streaming", plan_stage="physical", raw_output=True)
-+    assert "merge-join" in dot, "merge-join not used in plan"
-+
-+    t0 = time.time()
-+    result = q.collect(engine="streaming")
-+    t1 = time.time()
-+    assert result.height == 0
-+    assert (t1 - t0) < 2
+@@ -2162,3 +2162,17 @@ def test_single_value_list_agg_state_edge_cases_23995() -> None:
+     out = df.group_by("g").agg(pl.col("xs").list.set_union(pl.Series([[1]])))
+     assert out.schema == {"g": pl.Int64, "xs": pl.List(pl.List(pl.Int64))}
+     assert out.height == 0
 +
 +
- @pytest.mark.parametrize("df_level_hint", [False, True])
- @pytest.mark.parametrize("left_descending", [False, True])
- @pytest.mark.parametrize("right_descending", [False, True])
++def test_is_in_row_wise_series_is_not_elementwise() -> None:
++    df = pl.DataFrame({"a": [0, 1, 2, 3], "b": [1, 2, 3, 4]})
++    haystack = pl.Series([[1], [9], [3]])
++
++    # The filters must not be fused, as `haystack` lines up with the filtered rows.
++    lf = df.lazy().filter(pl.col("b") > 1).filter(pl.col("a").is_in(haystack))
++    assert lf.collect()["a"].to_list() == [1, 3]
++
++    # The chunks must not be evaluated in parallel.
++    chunked = pl.concat([df[:2], df[2:]], rechunk=False)
++    out = chunked.with_columns(r=pl.col("a").is_in(pl.Series([[0], [9], [2], [9]])))
++    assert out["r"].to_list() == [True, False, True, False]
 ```
 
 ---
 
-### Incident Patch 3: `942a8178` (2026-11-04)
-**Commit Message**: fix: Pyarrow predicate pushdown is_in semantics (#30536)
+### Incident Patch 2: `120ebdbb` (2026-11-05)
+**Commit Message**: fix: Correct the hint in the strict struct cast error (#30470)
 
-**File**: `crates/polars-plan/src/plans/python/pyarrow.rs` (modified, +70/-37)
+**File**: `crates/polars-core/src/utils/series.rs` (modified, +2/-2)
 ```diff
-@@ -3,7 +3,7 @@ use std::fmt::Write;
- use polars_core::datatypes::AnyValue;
- #[cfg(feature = "dtype-datetime")]
- use polars_core::prelude::TimeZone;
--use polars_core::prelude::{DataType, ExplodeOptions, Schema, TimeUnit};
-+use polars_core::prelude::{ChunkCompareEq, DataType, ExplodeOptions, NamedFrom, Schema, TimeUnit};
- use polars_core::series::Series;
- use polars_utils::pl_str::PlSmallStr;
- use pyo3::prelude::*;
-@@ -38,43 +38,40 @@ pub(crate) fn needle_isin_haystack(
-         return None;
-     }
+@@ -18,8 +18,8 @@ pub fn check_is_valid_struct_cast(
+         polars_err!(
+             InvalidOperation:
+             "cast from `{}` to `{}` failed in column '{}': {}\n\n\
+-            Ensure that any output struct has the same number of fields as the input, and that all struct field names in the output are present in the input.\n\
+-            Use `strict=False` to force the cast, and Polars will select the first n fields from the struct.",
++            A strict cast requires the output struct to have the same field names as the input, in the same order.\n\
++            Use `strict=False` to match fields by name: output fields missing from the input become null, and extra input fields are dropped.",
+             input_dtype,
+             output_dtype,
+             output_name,
+```
+
+**File**: `docs/source/releases/upgrade/2.md` (modified, +5/-6)
+```diff
+@@ -1487,10 +1487,9 @@ representation first if you need the statistic, e.g. `.dt.total_microseconds().s
  
-+    // A null haystack gives null for every row, which `isin` can't express.
-     let mut haystack_series = if let LiteralValue::Series(s) = lv
-         && s.dtype().is_list()
-         && s.len() == 1
-+        && s.null_count() == 0
-     {
--        if s.null_count() == 0 {
--            s.explode(ExplodeOptions {
--                empty_as_null: false,
--                keep_nulls: false,
--            })
--            .ok()?
--        } else {
--            Series::full_null(PlSmallStr::EMPTY, 0, &DataType::Null)
--        }
-+        s.explode(ExplodeOptions {
-+            empty_as_null: false,
-+            keep_nulls: false,
-+        })
-+        .ok()?
-     } else if let Some(AnyValue::List(s)) = lv.to_any_value() {
-         s
--    } else if lv.is_null() {
--        Series::full_null(PlSmallStr::EMPTY, 0, &DataType::Null)
-     } else {
-         return None;
-     };
+ ### Disable invalid struct casts when `strict=True`
  
--    let converted_len = haystack_series.len()
--        - if nulls_equal {
--            0
--        } else {
--            haystack_series.null_count()
--        };
-+    if !nulls_equal {
-+        haystack_series = haystack_series.drop_nulls();
-+    }
-+    // PyArrow's `isin` distinguishes `-0.0` from `0.0`, Polars does not.
-+    if haystack_series.dtype().is_float() && haystack_series.equal(0.0f64).ok()?.any() {
-+        let zeros = Series::new(PlSmallStr::EMPTY, [0.0f64, -0.0])
-+            .cast(haystack_series.dtype())
-+            .ok()?;
-+        haystack_series.append(&zeros).ok()?;
-+    }
+-Casting between two `Struct` dtypes with a different number of fields, or with mismatched field
+-names, used to silently succeed by taking the first _n_ matching fields. The same kind of silent
+-truncation `struct.rename_fields()` used to do (see below). Under the default `strict=True` it now
+-raises; pass `strict=False` to keep the old truncating behavior.
++Casting between two `Struct` dtypes with a different number of fields, or with different field names
++or field order, used to silently succeed. Under the default `strict=True` it now raises; pass
++`strict=False` to match fields by name, filling missing fields with null and dropping extra ones.
  
--    if list_limit.is_some_and(|limit| converted_len > limit) {
-+    if list_limit.is_some_and(|limit| haystack_series.len() > limit) {
-         return None;
-     }
--    if converted_len == 0 {
-+    if haystack_series.is_empty() {
-         return Some(IsInHaystack::Empty);
-     }
--    if !nulls_equal {
--        haystack_series = haystack_series.drop_nulls();
--    }
-     Some(IsInHaystack::Series(haystack_series))
+ !!! danger
+ 
+@@ -1519,8 +1518,8 @@ Traceback (most recent call last):
+ ...
+ polars.exceptions.InvalidOperationError: cast from `struct[2]` to `struct[1]` failed in column 'x': structs do not have the same number of fields: 2 vs 1
+ 
+-Ensure that any output struct has the same number of fields as the input, and that all struct field names in the output are present in the input.
+-Use `strict=False` to force the cast, and Polars will select the first n fields from the struct.
++A strict cast requires the output struct to have the same field names as the input, in the same order.
++Use `strict=False` to match fields by name: output fields missing from the input become null, and extra input fields are dropped.
+ ```
+ 
+ Use instead, to keep the previous behavior:
+```
+
+---
+
+### Incident Patch 3: `219e117d` (2026-11-05)
+**Commit Message**: fix: Read inner struct fields and report unknown qualifiers in SQL subqueries (#30348)
+
+**File**: `crates/polars-sql/src/context.rs` (modified, +37/-5)
+```diff
+@@ -280,6 +280,9 @@ pub struct SQLContext {
+     /// Whether a qualifier may only name a relation that a `FROM` declares, also before any
+     /// `FROM` is processed. Kept by the contexts of subqueries.
+     pub(crate) strict_relations: bool,
++    /// How many subqueries enclose this scope. CTEs, derived tables and set operands don't
++    /// count: they read no enclosing scope.
++    pub(crate) nesting: usize,
  }
  
-@@ -706,15 +703,29 @@ pub fn aexpr_to_pyarrow<'py>(
-     expr_arena: &Arena<AExpr>,
-     schema: &Schema,
- ) -> Option<Bound<'py, PyAny>> {
--    match expr_arena.get(predicate) {
-+    aexpr_to_pyarrow_impl(py, pc, predicate, expr_arena, schema, true)
-+}
-+
-+// `null_as_false` is set when a null result filters out the row just like
-+// `false` does, so the conversion may give `false` where Polars gives null.
-+fn aexpr_to_pyarrow_impl<'py>(
-+    py: Python<'py>,
-+    pc: &Bound<'py, PyAny>,
-+    node: Node,
-+    expr_arena: &Arena<AExpr>,
-+    schema: &Schema,
-+    null_as_false: bool,
-+) -> Option<Bound<'py, PyAny>> {
-+    let convert = |node: Node| aexpr_to_pyarrow_impl(py, pc, node, expr_arena, schema, false);
-+    match expr_arena.get(node) {
-         AExpr::BinaryExpr { left, right, op } => {
-             if matches!(op, Operator::Xor) {
-                 if !(returns_boolean(*left, expr_arena) && returns_boolean(*right, expr_arena)) {
-                     return None;
+ /// The first relation of the current `FROM` and the (joined table, column) pairs
+@@ -346,6 +349,7 @@ impl Default for SQLContext {
+             catalog_spellings: Default::default(),
+             statement_time: Default::default(),
+             strict_relations: false,
++            nesting: 0,
+         }
+     }
+ }
+@@ -934,6 +938,7 @@ impl SQLContext {
+             catalog_spellings: self.catalog_spellings.clone(),
+             statement_time: self.statement_time.clone(),
+             strict_relations: self.strict_relations,
++            nesting: self.nesting + 1,
+ 
+             ..Default::default()
+         }
+@@ -1126,6 +1131,8 @@ impl SQLContext {
+         F: FnOnce(&mut Self) -> PolarsResult<LazyFrame>,
+     {
+         let mut ctx = self.isolated();
++        // Not a subquery scope; a subquery caller counts one itself.
++        ctx.nesting = self.nesting;
+ 
+         // Execute query with clean state (eg: nested/subquery)
+         let lf = query(&mut ctx)?;
+@@ -1312,28 +1319,46 @@ impl SQLContext {
+     }
+ 
+     /// Check the SELECT and WHERE expressions of a block for ambiguous unqualified
+-    /// columns (if there were joins).
+-    pub(crate) fn check_select_column_refs(&self, select_stmt: &Select) -> PolarsResult<()> {
++    /// columns (if there were joins). `schema` is the schema of the joined frame.
++    pub(crate) fn check_select_column_refs(
++        &self,
++        select_stmt: &Select,
++        schema: &Schema,
++    ) -> PolarsResult<()> {
+         let Some(base) = &self.join_base else {
+             return Ok(());
+         };
+         if self.joined_aliases.is_empty() {
+             return Ok(());
+         }
+-        let check_expr = |e| {
++        let check_expr = |e: &SQLExpr| {
+             check_for_ambiguous_column_refs(
+                 e,
+                 &self.joined_aliases,
+                 &base.table_name,
+                 &base.using_cols,
+                 &self.active_relations,
++                schema,
+             )
+         };
+         for item in &select_stmt.projection {
+             match item {
+                 SelectItem::UnnamedExpr(e) | SelectItem::ExprWithAlias { expr: e, .. } => {
+                     check_expr(e)?
+                 },
++                // `s.*` reads a struct column `s` when no relation is named `s`.
++                SelectItem::QualifiedWildcard(
++                    SelectItemQualifiedWildcardKind::ObjectName(name),
++                    _,
++                ) => {
++                    let parts = name
++                        .0
++                        .iter()
++                        .filter_map(|p| p.as_ident().cloned())
++                        .chain([Ident::new("*")])
++                        .collect();
++                    check_expr(&SQLExpr::CompoundIdentifier(parts))?
++                },
+                 _ => {},
+             }
+         }
+@@ -2323,6 +2348,10 @@ impl SQLContext {
+                 let (keep_left, keep_right) = join_keeps_inputs(&join.join_operator);
+                 if !keep_left {
+                     kept.clear();
++                    // The columns of the left relations are gone, so are their aliases.
++                    for relation in &left_relations {
++                        self.joined_aliases.remove(relation);
++                    }
                  }
+                 if keep_right {
+                     kept.push(&join.relation);
+@@ -2915,15 +2944,15 @@ impl SQLContext {
+         };
  
--                let l = aexpr_to_pyarrow(py, pc, *left, expr_arena, schema)?;
--                let r = aexpr_to_pyarrow(py, pc, *right, expr_arena, schema)?;
-+                let l = convert(*left)?;
-+                let r = convert(*right)?;
-                 let any = l.call_method1("__or__", (&r,)).ok()?;
-                 let both = l
-                     .call_method1("__and__", (&r,))
-@@ -728,8 +739,17 @@ pub fn aexpr_to_pyarrow<'py>(
-             let method = binary_op_method(op)?;
-             reject_inexact_arithmetic(*left, *right, *op, expr_arena, schema)?;
+         self.set_join_base(&select_stmt.from);
+-        self.check_select_column_refs(select_stmt)?;
++        let mut schema = self.get_frame_schema(&mut lf)?;
++        self.check_select_column_refs(select_stmt, &schema)?;
  
--            let l = aexpr_to_pyarrow(py, pc, *left, expr_arena, schema)?;
--            let r = aexpr_to_pyarrow(py, pc, *right, expr_arena, schema)?;
-+            // Under Kleene logic a null operand of `&` or `|` gives the same
-+            // filter result as a `false` one.
-+            let operand_null_as_false = null_as_false
-+                && matches!(
-+                    op,
-+                    Operator::And | Operator::Or | Operator::LogicalAnd | Operator::LogicalOr
-+                );
-+            let l =
-+                aexpr_to_pyarrow_impl(py, pc, *left, expr_arena, schema, operand_null_as_false)?;
-+            let r =
-+                aexpr_to_pyarrow_impl(py, pc, *right, expr_arena, schema, operand_null_as_false)?;
-             l.call_method1(method, (r,)).ok()
-         },
-         AExpr::Column(name) => pc.call_method1("field", (name,)).ok(),
-@@ -746,25 +766,38 @@ pub fn aexpr_to_pyarrow<'py>(
-             input,
-             ..
-         } => {
--            let col = aexpr_to_pya
+         // Apply `WHERE` constraint (using residual filter for implicit joins)
+         let where_expr = if implicit_join_filter.is_some() {
+             implicit_join_filter.as_ref()
+         } else {
+             select_stmt.selection.as_ref()
+         };
+-        let mut schema = self.get_frame_schema(&mut lf)?;
+ 
+         // Shared by every pass over this frame: WHERE, the projection list and HAVING.
+         let mut bindings = SubqueryBindings::new();
+@@ -4308,6 +4337,7 @@ impl SQLContext {
+             &left.name,
+             &self.join_using_cols,
+             &self.active_relations,
++            &schema,
+         )?;
+         let join_base = self.join_base.replace(JoinBase {
+             table_name: left.name.to_string(),
+@@ -4480,12 +4510,14 @@ impl SQLContext {
+         {
+             return Ok(false);
+         }
++        // `check` passed qualified columns only, so no struct path needs t
 ```
 
-**File**: `py-polars/tests/unit/io/test_pyarrow_dataset.py` (modified, +41/-4)
+**File**: `crates/polars-sql/src/sql_expr.rs` (modified, +15/-2)
 ```diff
-@@ -442,8 +442,7 @@ def test_pyarrow_dataset_is_in_predicate_pushdown_nulls_equality(
-     result = q.collect()
-     capture = capfd.readouterr().err
+@@ -724,7 +724,16 @@ impl SQLExprVisitor<'_> {
+     fn execute_subquery(&mut self, subquery: &Subquery) -> PolarsResult<LazyFrame> {
+         // note: we have to execute subqueries in an isolated scope to prevent
+         // propagating any context/arena mutation into the rest of the query
+-        self.ctx.execute_isolated(|ctx| ctx.execute_query(subquery))
++        self.ctx
++            .execute_isolated(|ctx| {
++                ctx.nesting += 1;
++                ctx.execute_query(subquery)
++            })
++            .map_err(|e| {
++                self.ctx
++                    .unknown_qualifier_err(subquery, self.active_schema)
++                    .unwrap_or(e)
++            })
+     }
  
--    assert "converted pyarrow predicate: <pyarrow.compute.Expression false>" in capture
--    assert "residual predicate: None" in capture
-+    assert "residual predicate: None" not in capture
+     /// Visit a `[NOT] EXISTS (subquery)` expression that no earlier rewrite claimed. An
+@@ -753,7 +762,11 @@ impl SQLExprVisitor<'_> {
+         if is_correlated_subquery(subquery, self.ctx.catalog_spellings())
+             || self.has_unnest(subquery)
+         {
+-            return Err(unsupported());
++            // A name of neither scope is an error of the query, not of this position.
++            return Err(self
++                .ctx
++                .unknown_qualifier_err(subquery, self.active_schema)
++                .unwrap_or_else(unsupported));
+         }
+         // An unqualified outer column makes the subquery correlated.
+         let outer_err = |e, this: &Self| {
+```
+
+**File**: `crates/polars-sql/src/sql_visitors.rs` (modified, +43/-1)
+```diff
+@@ -185,9 +185,36 @@ struct AmbiguousColumnVisitor<'a> {
+     base_table_name: &'a str,
+     using_cols: &'a [(String, String)],
+     relations: &'a [RelationName],
++    schema: &'a Schema,
+     subquery_depth: usize,
+ }
  
-     assert_frame_equal(q.collect(), expected)
-     assert_frame_equal(df.filter(pred), expected)
-@@ -458,13 +457,51 @@ def test_pyarrow_dataset_is_in_predicate_pushdown_nulls_equality(
++impl AmbiguousColumnVisitor<'_> {
++    /// Check a struct path whose first part `name` names no relation: it is ambiguous if
++    /// the joined frame has more than one column `name`, one of them a struct.
++    fn check_struct_path(&self, name: &str) -> PolarsResult<()> {
++        let columns: PlHashSet<&str> = self
++            .joined_aliases
++            .values()
++            .filter_map(|cols| cols.get(name).map(String::as_str))
++            .chain(self.schema.contains(name).then_some(name))
++            .collect();
++        let has_struct = columns
++            .iter()
++            .any(|c| matches!(self.schema.get(c), Some(DataType::Struct(_))));
++        if columns.len() > 1 && has_struct {
++            check_ambiguous_column(
++                name,
++                self.joined_aliases,
++                self.base_table_name,
++                self.using_cols,
++                self.relations,
++            )?;
++        }
++        Ok(())
++    }
++}
++
+ impl SQLVisitor for AmbiguousColumnVisitor<'_> {
+     type Break = PolarsError;
  
-     plmonkeypatch.setenv("POLARS_VERBOSE_SENSITIVE", "0")
+@@ -205,7 +232,20 @@ impl SQLVisitor for AmbiguousColumnVisitor<'_> {
+         if self.subquery_depth > 0 {
+             return ControlFlow::Continue(());
+         }
+-        if let SQLExpr::Identifier(ident) = expr {
++        let col = match expr {
++            SQLExpr::Identifier(ident) => Some(ident),
++            // A struct path (`s.f`) whose first part names no relation reads that column.
++            SQLExpr::CompoundIdentifier(parts)
++                if match_qualifier(parts, self.relations.iter()).is_none() =>
++            {
++                if let Err(err) = self.check_struct_path(&parts[0].value) {
++                    return ControlFlow::Break(err);
++                }
++                None
++            },
++            _ => None,
++        };
++        if let Some(ident) = col {
+             if let Err(err) = check_ambiguous_column(
+                 &ident.value,
+                 self.joined_aliases,
+@@ -279,6 +319,7 @@ pub(crate) fn check_for_ambiguous_column_refs(
+     base_table_name: &str,
+     using_cols: &[(String, String)],
+     relations: &[RelationName],
++    schema: &Schema,
+ ) -> PolarsResult<()> {
+     match dyn_visit::visit(
+         expr,
+@@ -287,6 +328,7 @@ pub(crate) fn check_for_ambiguous_column_refs(
+             base_table_name,
+             using_cols,
+             relations,
++            schema,
+             subquery_depth: 0,
+         },
+     ) {
+```
+
+**File**: `crates/polars-sql/src/subquery.rs` (modified, +135/-29)
+```diff
+@@ -29,7 +29,8 @@ use sqlparser::ast::{
+ use crate::catalog::CatalogSpellings;
+ use crate::context::{
+     CORRELATED_COL_PREFIX, FilterMode, RelationName, TableInfo, combine_conditions,
+-    declared_relations, flatten_and_conditions, get_table_name, match_qualifier, relation_name,
++    declared_relations, flatten_and_conditions, get_table_name, join_idents, match_qualifier,
++    relation_name,
+ };
+ use crate::dyn_visit::{self, visit_expressions, visit_expressions_mut};
+ use crate::functions::PolarsSQLFunctions;
+@@ -220,7 +221,10 @@ impl SQLContext {
+             left_keys.push(key);
+         }
  
--    assert "converted pyarrow predicate: <pyarrow.compute.Expression false>" in capture
--    assert "residual predicate: None" in capture
-+    assert "residual predicate: None" not in capture
+-        let mut inner_lf = self.execute_isolated(|ctx| ctx.execute_query(subquery))?;
++        let mut inner_lf = self.execute_isolated(|ctx| {
++            ctx.nesting += 1;
++            ctx.execute_query(subquery)
++        })?;
+         let inner_schema = self.get_frame_schema(&mut inner_lf)?;
+         if left_keys.len() == 1 {
+             polars_ensure!(inner_schema.len() == 1, SQLSyntax: "SQL subquery returns more than one column");
+@@ -576,11 +580,68 @@ impl SQLContext {
+             )?;
+         }
+         self.set_join_base(&select.from);
+-        self.check_select_column_refs(select)?;
+         let inner_schema = self.get_frame_schema(&mut inner_lf)?;
++        self.check_select_column_refs(select, &inner_schema)?;
+         Ok(Some((inner_names, inner_lf, inner_schema)))
+     }
  
-     assert_frame_equal(q.collect(), expected)
-     assert_frame_equal(df.filter(pred), expected)
++    /// The error for a dotted name of `subquery` whose first part names no relation or
++    /// column of the subquery, nor of this query (`outer_schema`), as this query reports
++    /// it. Only for a subquery that no other subquery encloses, whose names can't read a
++    /// scope further out; names in nested subqueries are not checked.
++    pub(crate) fn unknown_qualifier_err(
++        &self,
++        subquery: &Query,
++        outer_schema: Option<&Schema>,
++    ) -> Option<PolarsError> {
++        let SetExpr::Select(select) = subquery.body.as_ref() else {
++            return None;
++        };
++        if self.nesting > 0 {
++            return None;
++        }
++        let mut inner = self.isolated();
++        let (inner_names, _, inner_schema) = inner.resolve_subquery_from(select).ok()??;
++        let known = |parts: &[Ident]| {
++            match_qualifier(parts, inner_names.iter()).is_some()
++                || inner_schema.contains(&parts[0].value)
++                // An ambiguous qualifier is an error of its own, raised elsewhere.
++                || !matches!(self.resolve_qualifier(parts), Ok(None))
++                || outer_schema.is_some_and(|schema| schema.contains(&parts[0].value))
++        };
++        let projection = select.projection.iter().filter_map(|item| match item {
++            SelectItem::UnnamedExpr(e) | SelectItem::ExprWithAlias { expr: e, .. } => Some(e),
++            _ => None,
++        });
++        let mut unknown = None;
++        for expr in projection.chain(&select.selection).chain(&select.having) {
++            let _ = visit_top_level_compound_idents(expr, |parts| {
++                if known(parts) {
++                    return ControlFlow::Continue(());
++                }
++                unknown = Some(parts.to_vec());
++                ControlFlow::Break(())
++            });
++            if unknown.is_some() {
++                break;
++            }
++        }
++        let parts = unknown?;
++        let hint = (1..parts.len())
++            .rev()
++            .find_map(|len| {
++                let qualifier = join_idents(&parts[..len]);
++                inner
++                    .hidden_by_alias_hint(&qualifier)
++                    .or_else(|| self.hidden_by_alias_hint(&qualifier))
++            })
++            .unwrap_or_default();
++        Some(polars_err!(
++            SQLInterface: "no table or struct column named '{}' found{}",
++            parts[0], hint
++        ))
++    }
++
+     // Split a subquery's WHERE conjuncts into a `SubqueryConjuncts`, or `None`
+     // when a conjunct is neither a correlation key pair nor an inner-only
+     // filter (an outer column in a non-equi shape, an unresolvable name).
+@@ -2285,34 +2346,40 @@ impl SQLContext {
+ 
+         let flag_name = format_pl_smallstr!("{prefix}exists");
+         let uncorrelated_where = corr_preds.is_empty() && general.is_empty();
++        let Some(aggregates) =
++            exists_aggregates(&ctx, subquery, select, &inner_names, &inner_schema)
++        else {
++            return Ok(None);
++        };
++        if aggregates {
++            // The rows are not read, but the inner filters must still be valid.
++            let mut filtered = local_filters
++                .iter()
++                .cloned()
++                .fold(inner_lf.clone(), LazyFrame::filter);
++            ctx.get_frame_schema(&mut filtered)?;
++        }
+         // An uncorrelated subquery is one value, which `visit_exists` takes.
+         if uncorrelated_where && !is_correlated_subquery(subquery, self.catalog_spellings()) {
+-            let exists =
+-           
+```
+
+**File**: `py-polars/tests/unit/sql/test_correlated_subqueries.py` (modified, +220/-0)
+```diff
+@@ -1871,6 +1871,135 @@ def test_subquery_struct_field_is_not_correlated(projection: str, field: str) ->
+     )
  
  
-+def test_pyarrow_dataset_is_in_predicate_pushdown_null_and_zero_30531() -> None:
-+    df = pl.DataFrame({"k": [None, 2, 3], "f": [-0.0, 0.0, None]})
-+    lf = pl.scan_pyarrow_dataset(
-+        ds.dataset(df.to_arrow(compat_level=pl.CompatLevel.oldest()))
++@pytest.mark.parametrize(
++    ("exists", "expected"), [("EXISTS", [1, 2]), ("NOT EXISTS", [])]
++)
++@pytest.mark.parametrize("field", ["s.id", "c.s.id", "a.id", "c.a.id"])
++def test_exists_subquery_struct_field_is_not_correlated(
++    exists: str, expected: list[int], field: str
++) -> None:
++    # `s` and `a` are struct columns of `c`; `a` is also the outer relation.
++    assert_sql_matches(
++        frames={
++            "a": pl.DataFrame({"id": [1, 2]}),
++            "c": pl.DataFrame(
++                {
++                    "id": [1, 3],
++                    "s": [{"id": 1}, {"id": 2}],
++                    "a": [{"id": 1}, {"id": 2}],
++                }
++            ),
++        },
++        query=f"SELECT a.id FROM a WHERE {exists} (SELECT 1 FROM c WHERE {field} = c.id)",
++        compare_with="duckdb",
++        check_row_order=False,
++        expected={"id": expected},
++        engines=ENGINES,
 +    )
 +
-+    assert_frame_equal(
-+        lf.filter(~pl.col("k").is_in([2, 5])).collect(),
-+        pl.DataFrame({"k": [3], "f": [None]}, schema=df.schema),
-+    )
-+    assert_frame_equal(
-+        lf.filter(pl.col("f").is_in([0.0])).collect(),
-+        pl.DataFrame({"k": [None, 2], "f": [-0.0, 0.0]}, schema=df.schema),
-+    )
-+    assert_frame_equal(
-+        lf.filter(pl.col("f").is_in([-0.0])).collect(),
-+        pl.DataFrame({"k": [None, 2], "f": [-0.0, 0.0]}, schema=df.schema),
-+    )
-+    assert_frame_equal(
-+        lf.filter(~pl.col("k").is_in(pl.Series([], dtype=pl.Int64))).collect(),
-+        pl.DataFrame({"k": [2, 3], "f": [0.0, None]}, schema=df.schema),
-+    )
-+    assert_frame_equal(
-+        lf.filter(~pl.col("k").is_in(pl.lit(None, dtype=pl.List(pl.Int64)))).collect(),
-+        df.clear(),
-+    )
-+    assert_frame_equal(
-+        lf.filter(pl.col("f").is_in([-0.0, None], nulls_equal=True)).collect(),
-+        df,
-+    )
 +
-+    df = pl.DataFrame({"f": [-0.0, 0.0, 1.0]}, schema={"f": pl.Float32})
-+    lf = pl.scan_pyarrow_dataset(ds.dataset(df.to_arrow()))
-+    assert_frame_equal(
-+        lf.filter(pl.col("f").is_in([0.0])).collect(),
-+        pl.DataFrame({"f": [-0.0, 0.0]}, schema=df.schema),
-+    )
++def _struct_scope_frames() -> dict[str, pl.DataFrame]:
++    return {
++        "o": pl.DataFrame({"id": [1, 2], "f": [10, 2]}),
++        "o2": pl.DataFrame({"id": [1, 2], "s": [{"f": 10}, {"f": 2}]}),
++        "i": pl.DataFrame({"k": [1, 2], "s": [{"f": 1}, {"f": 5}]}),
++        "i_plain": pl.DataFrame({"k": [1, 2], "s": [1, 5]}),
++        "tf": pl.DataFrame({"f": [2]}),
++    }
 +
 +
- def test_pyarrow_dataset_comm_subplan_elim(tmp_path: Path) -> None:
-     df0 = pl.DataFrame({"a": [1, 2, 3]})
++@pytest.mark.parametrize(
++    ("query", "expected"),
++    [
++        # a plain column `s` is no struct path, so `s.f` reads the outer relation
++        (
++            "SELECT id FROM o AS s WHERE EXISTS (SELECT 1 FROM i_plain WHERE s.f = i_plain.k)",
++            {"id": [2]},
++        ),
++        # the inner struct column hides the outer one
++        (
++            "SELECT id FROM o2 WHERE EXISTS (SELECT 1 FROM i WHERE s.f = i.k)",
++            {"id": [1, 2]},
++        ),
++        # in one scope, the relation `s` wins over the struct column `s`
++        (
++            "SELECT id, (SELECT MAX(s.f) FROM i JOIN tf AS s ON TRUE) AS m FROM o",
++            {"id": [1, 2], "m": [2, 2]},
++        ),
++    ],
++)
++def test_subquery_struct_path_scope(query: str, expected: dict[str, Any]) -> None:
++    assert_sql_matches(
++        frames=_struct_scope_frames(),
++        query=query,
++        compare_with="duckdb",
++        check_row_order=False,
++        expected=expected,
++        engines=ENGINES,
++    )
++
++
++@pytest.mark.parametrize(
++    "query",
++    [
++        "SELECT id FROM o AS s WHERE EXISTS (SELECT 1 FROM i WHERE s.g = i.k)",
++        # an aggregate returns one row whatever WHERE keeps, but WHERE is still checked
++        "SELECT id FROM o WHERE EXISTS (SELECT COUNT(*) FROM i WHERE s.g = 1)",
++        "SELECT id FROM o WHERE EXISTS (SELECT COUNT(*) FROM i WHERE i.s.g = 1)",
++        "SELECT id FROM o WHERE NOT EXISTS "
++        "(SELECT COUNT(*) FROM i WHERE i.k = o.id AND s.g = 1)",
++    ],
++)
++def test_subquery_missing_struct_field_is_an_error(query: str) -> None:
++    with pytest.raises(pl.exceptions.StructFieldNotFoundError):
++        pl.SQLContext(_struct_scope_frames()).execute(query, eager=True)
++
++
++@pytest.mark.parametrize(
++    ("query", "expected"),
++    [
++        (
++            "SELECT id FROM a AS k WHERE EXISTS "
++            "(SELECT 1 FROM c JOIN d ON c.k = d.k WHERE k.id = c.id)",
++            [(1,)],
++        ),
++        (
++            "SELECT id, (SELECT MAX(c.id) FROM c JOIN d ON c.k = d.k WHERE k.id = c.id) "
++            "AS m FROM a AS k ORDER BY id",
++            [(1, 1), (2, None)],
++        ),
++    ],
++)
++def test_subquery_dotted_name_over_joined_plain_columns(
++    query: str, expected: list[tuple[Any, ...]]
++) -> None:
++    # `k` is a plain column of both joined relations, so `k.id` reads the outer `k`
++    ctx = pl.SQLContext(
++        a=pl.DataFrame({"id": [1, 2]}),
++        c=pl.DataFrame({"id": [1, 3], "k": [7, 8]}),
++        d=pl.DataFrame({"id": [1, 3], "k": [7, 9]}),
++    )
++    assert ctx.execute(query, eager=True).rows() == expected
++
++
++@pytest.mark.parametrize("join", ["d JOIN cs", "cs JOIN d"])
++def test_subquery_dotted_name_over_joined_struct_and_plain_column(join: str) -> None:
++    # `k.f` can read the struct `cs.k` or the outer `k`
++    ctx = pl.SQLContext(
++        o=pl.DataFrame({"id": [1, 2], "f": [10, 2]}),
++        cs=pl.DataFrame({"id": [1, 3], "k": [{"f": 1}, {"f": 3}]}),
++        d=pl.DataFrame({"id": [1, 3], "k": [2, 9]}),
++    )
++    query = f"""
++        SELECT id FROM o AS k
++        WHERE EXISTS (SELECT 1 FROM {join} ON cs.id = d.id WHERE k.f = d.k)
++    """
++    with pytest.raises(
++        pl.exceptions.SQLInterfaceError, match=r'ambiguous reference to column "k"'
++    ):
++        ctx.execute(query, eager=True)
++
++
+ @pytest.mark.parametrize(
+     ("query", "expected"),
+     [
+@@ -2190,6 +2319,34 @@ def test_correlated_subquery_inner_subquery_filter_join_tree() -> None:
+     )
  
+ 
++@pytest.mark.parametrize(
++    "condition",
++    [
++        "EXISTS (SEL
+```
+
+**File**: `py-polars/tests/unit/sql/test_joins.py` (modified, +90/-0)
+```diff
+@@ -2095,6 +2095,96 @@ def test_ambiguous_column_detection_in_joins() -> None:
+         )
+ 
+ 
++@pytest.mark.parametrize(
++    "query",
++    [
++        "SELECT s.f FROM a JOIN c ON a.k = c.k",
++        "SELECT a.k FROM a JOIN c ON a.k = c.k WHERE s.f > 15",
++        "SELECT s.* FROM a JOIN c ON a.k = c.k",
++    ],
++)
++def test_ambiguous_struct_path_in_joins(query: str) -> None:
++    # `s` is a struct column of both relations, as `k` is a column of both
++    frames = {
++        "a": pl.DataFrame({"k": [1, 2], "s": [{"f": 10}, {"f": 20}]}),
++        "c": pl.DataFrame({"k": [1, 2], "s": [{"f": 77}, {"f": 88}]}),
++    }
++    with pytest.raises(
++        SQLInterfaceError,
++        match=r'ambiguous reference to column "s" \(use one of: a\.s, c\.s\)',
++    ):
++        pl.SQLContext(frames).execute(query, eager=True)
++
++    res = pl.SQLContext(frames).execute(
++        "SELECT a.s.f AS x, c.s.f AS y FROM a JOIN c ON a.k = c.k ORDER BY x",
++        eager=True,
++    )
++    assert res.rows() == [(10, 77), (20, 88)]
++
++    # a USING column is one column
++    frames["c"] = pl.DataFrame({"k": [1, 2], "s": [{"f": 10}, {"f": 99}]})
++    res = pl.SQLContext(frames).execute(
++        "SELECT s.f FROM a JOIN c USING (s)", eager=True
++    )
++    assert res.rows() == [(10,)]
++
++
++@pytest.mark.parametrize(
++    ("query", "expected"),
++    [
++        (
++            "SELECT s.f FROM a JOIN b ON a.id = b.id RIGHT SEMI JOIN c ON a.id = c.id",
++            30,
++        ),
++        (
++            "SELECT s.* FROM a JOIN b ON a.id = b.id RIGHT SEMI JOIN c ON a.id = c.id",
++            30,
++        ),
++        (
++            "SELECT s.f FROM a JOIN b ON a.id = b.id RIGHT SEMI JOIN c ON a.id = c.id "
++            "JOIN c AS d USING (s)",
++            30,
++        ),
++        ("SELECT id FROM a JOIN b ON a.id = b.id RIGHT SEMI JOIN c ON a.id = c.id", 1),
++    ],
++)
++def test_columns_after_right_semi_join(query: str, expected: int) -> None:
++    # only the columns of `c` survive the right semi join, also one named like the
++    # joined `b.s`
++    frames = {
++        "a": pl.DataFrame({"id": [1], "s": [{"f": 10}]}),
++        "b": pl.DataFrame({"id": [1], "s": [{"f": 20}]}),
++        "c": pl.DataFrame({"id": [1], "s": [{"f": 30}], "s:b": [{"f": 40}]}),
++    }
++    res = pl.SQLContext(frames).execute(query, eager=True)
++    assert res.rows() == [(expected,)]
++
++
++@pytest.mark.parametrize(
++    ("query", "expected"),
++    [
++        (
++            "SELECT b.x FROM a JOIN b ON a.id = b.id, c RIGHT SEMI JOIN d ON c.id = d.id",
++            2,
++        ),
++        (
++            "SELECT id FROM o WHERE EXISTS (SELECT 1 FROM a JOIN b ON a.id = b.id, "
++            "c RIGHT SEMI JOIN d ON c.id = d.id WHERE b.x = 2 AND o.id = a.id)",
++            1,
++        ),
++    ],
++)
++def test_right_semi_join_keeps_earlier_from_item(query: str, expected: int) -> None:
++    # the right semi join drops `c`, not `b` of the earlier FROM item
++    frames = {
++        name: pl.DataFrame({"id": [1], "x": [x]})
++        for name, x in [("a", 1), ("b", 2), ("c", 3), ("d", 4)]
++    }
++    frames["o"] = pl.DataFrame({"id": [1]})
++    res = pl.SQLContext(frames).execute(query, eager=True)
++    assert res.rows() == [(expected,)]
++
++
+ def test_join_relations_sharing_last_name_part() -> None:
+     # `tpch.lineitem` and `tpch_sf100.lineitem` are both called `lineitem`; the join
+     # itself is fine, only a qualifier naming both is ambiguous
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #30587** (2026-11-04): refactor(rust): Convert DSL expressions to IR by reference (@orlp)
-- **PR #30584** (2026-11-04): fix: Fix schema errors for `UInt128` cum ops and `Null` truediv (@dsprenkels)
-- **PR #30581** (2026-11-04): docs(python): Update distributed engine support labels (@dsprenkels)
-- **PR #30578** (closed): feat(python): Support regex separators in read_csv (@Jeanorochka)
-- **PR #30577** (closed): feat(python): Support regex separators in read_csv (@Jeanorochka)
-- **PR #30576** (closed): feat(python): Support regex separators in read_csv (@Jeanorochka)
+- **PR #30617** (2026-11-05): fix: Don't treat `is_in` with a multi-row literal as elementwise (@dancsi)
+- **PR #30614** (2026-11-05): fix: Raise instead of panicking on `struct.field` selectors in `Expr.meta` (@dancsi)
+- **PR #30611** (closed): fix: Don't treat `is_in` with a multi-row literal as elementwise (@dancsi)
+- **PR #30607** (2026-11-05): ci: Install polars-nanook instead of deprecated polars-cloud (@ritchie46)
+- **PR #30606** (2026-11-05): docs: Point Polars Cloud links at Polars Nanook (@EndPositive)
+- **PR #30602** (2026-11-05): chore(rust): Get rid of the pin-utils dependency (@dsprenkels)
 
 ---
 
@@ -2235,81 +2433,32 @@ Co-authored-by: Amber Sprenkels <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. test: Keep capfd output when an xdist worker crashes (#30532)
+## X. Don't treat `is_in` with a multi-row literal as elementwise (#30617)
 
 **RULE**:
-When implementing operations in `py-polars/tests/conftest.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pola-rs/polars. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/polars-plan/src/plans/aexpr/properties/general.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pola-rs/polars. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3bb0c7e9`: test: Keep capfd output when an xdist worker crashes (#30532). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `be404e63`: Don't treat `is_in` with a multi-row literal as elementwise (#30617). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `py-polars/tests/conftest.py`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/polars-plan/src/plans/aexpr/properties/general.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-import itertools
-# How much of each captured stream of a crashed worker we echo, in bytes.
-def _persist_capture(capture: Any, path: Path) -> None:
-    """Make an fd-level pytest capture write to `path`, deleted when it ends."""
-        os.dup2(f.fileno(), capture.tmpfile.fileno())
-        if capture._state == "started":
-            os.dup2(f.fileno(), capture.targetfd)
-    capture._polars_crash_log_path = path
-
-
-def _persist_fd_captures(capman: Any, log_dir: str, worker_id: str) -> None:
-    """Persist the output of all fd-level captures of this xdist worker.
-
-    Files are named `<worker_id>.<n>.<stream>`, where `n` counts up from 0 for
-    the global capture, so a crash report can print them in creation order.
-    """
-    from _pytest.capture import FDCaptureBase
-
-    def path(n: int, targetfd: int) -> Path:
-        stream = "out" if targetfd == 1 else "err"
-        return Path(log_dir) / f"{worker_id}.{n:06}.{stream}"
-
-    # The global capture started before this conftest was loaded.
-    global_capture = getattr(capman, "_global_capturing", None)
-    for stream in ("out", "err"):
-        capture = getattr(global_capture, stream, None)
-        if isinstance(capture, FDCaptureBase
+        // A single-value right-hand side of `is_in` is broadcast, so it needn't be inspected. A
+        // multi-row literal is zipped row by row.
+                if is_single_literal_ae(rhs, expr_arena) {
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-# How much of a crashed worker's captured output we echo, in bytes.
-def _crash_log_path(log_dir: str | Path, worker_id: str, stream: str) -> Path:
-    return Path(log_dir) / f"{worker_id}.{stream}"
-
-
-def _capture_to_file(capman: Any, stream: str, path: Path) -> None:
-    """Redirect pytest's fd-level capture of `stream` to a persistent file."""
-    capture = getattr(capman._global_capturing, stream, None)
-    tmpfile = getattr(capture, "tmpfile", None)
-    targetfd = getattr(capture, "targetfd", None)
-    if tmpfile is None or targetfd is None:
-        return  # Not capturing this stream at fd level (`-s`, `--capture=sys`).
-
-        os.dup2(f.fileno(), tmpfile.fileno())
-        os.dup2(f.fileno(), targetfd)
-        for stream in ("out", "err"):
-            _capture_to_file(
-                capman, stream, _crash_log_path(log_dir, worker_id, stream)
-            )
-        print(f"failed to redirect fd capture: {exc!r}", file=sys.stderr)
-def _read_crash_output(worker_id: str, stream: str) -> str:
-        return ""
-    path = _crash_log_path(_xdist_crash_log_dir.name, worker_id, stream)
-    try:
-        data = path.read_bytes()
-    except OSError:
-        return ""
-    if len(data) > _
+        // Literals that aren't being projected are allowed to be non-scalar, so we don't add them
+        // for inspection. (e.g. `is_in(<literal>)`).
+                if matches!(expr_arena.get(rhs), AExpr::Literal { .. }) {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3bb0c7e9` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `be404e63` are properly handled with clean fallback behavior.

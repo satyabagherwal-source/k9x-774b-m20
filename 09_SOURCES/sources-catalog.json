@@ -5963,10 +5963,10 @@
     "repository": "rook/rook",
     "platform": "github",
     "sourceUrl": "https://github.com/rook/rook",
-    "sourceVersion": "7c69f415",
+    "sourceVersion": "ea53dbf8",
     "license": "Apache-2.0",
-    "contentHash": "8b0009a9535ed6426f4593ee6f3d83195816886565dfc4a8e5041eada154713d",
-    "lastHarvestedAt": "2026-11-05T03:02:56.757Z",
+    "contentHash": "b5974e7f0dedda029afdeff23bb2060e164c90c3c55a0490451afac9871b0668",
+    "lastHarvestedAt": "2026-11-05T17:36:41.175Z",
     "learningId": "learn-github-rook-rook"
   },
   "genkit-ai-genkit": {
@@ -7743,10 +7743,10 @@
     "repository": "pola-rs/polars",
     "platform": "github",
     "sourceUrl": "https://github.com/pola-rs/polars",
-    "sourceVersion": "35a2cb73",
+    "sourceVersion": "095d0b94",
     "license": "MIT",
-    "contentHash": "7a702b79cd21a123353e6b5d2bc7b60d93fa71c8705711f3b81f0554e90b518d",
-    "lastHarvestedAt": "2026-11-04T22:34:43.767Z",
+    "contentHash": "9de6a9f7020de2f0cf22cb56420c540b9c6fbd8849dc01b585f0e80a13f3ca52",
+    "lastHarvestedAt": "2026-11-05T17:36:34.870Z",
     "learningId": "learn-github-pola-rs-polars"
   },
   "mrkai77-loop": {
