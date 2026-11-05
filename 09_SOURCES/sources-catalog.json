@@ -785,8 +785,8 @@
     "sourceUrl": "https://huggingface.co/timm/mobilenetv3_small_100.lamb_in1k",
     "sourceVersion": "hf-timm-mobilenetv3_small_100.lamb_in1k",
     "license": "Open-Source",
-    "contentHash": "6e8dc0c36904e11435ed2ff6fbe3f914819c110dc71540dbe9a8d0a8b10913c9",
-    "lastHarvestedAt": "2026-10-31T13:27:07.131Z",
+    "contentHash": "87b1ef0a0b341ecb95d6b7012b228316d43c321d8473c0e926891b9757372b91",
+    "lastHarvestedAt": "2026-11-05T04:07:10.803Z",
     "learningId": "learn-huggingface-timm-mobilenetv3_small_100-lamb_in1k"
   },
   "hf-amazon-chronos-2": {
@@ -6313,10 +6313,10 @@
     "repository": "k3s-io/k3s",
     "platform": "github",
     "sourceUrl": "https://github.com/k3s-io/k3s",
-    "sourceVersion": "2b723db5",
+    "sourceVersion": "f5cba99a",
     "license": "Apache-2.0",
-    "contentHash": "57580d88c284a838d0ad1b1fa83fb53f543308f951f77d5519e2a63f4fbb77d4",
-    "lastHarvestedAt": "2026-11-04T08:35:09.442Z",
+    "contentHash": "843695b4097e4f52cdef8c7e71cd5cc2977e28ff3c7b766dd4b5ff5b94ab07ec",
+    "lastHarvestedAt": "2026-11-05T04:07:19.619Z",
     "learningId": "learn-github-k3s-io-k3s"
   },
   "open-source-legal-opencontracts": {

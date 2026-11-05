@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-05T04:00:46.590Z",
-    "lastVerified": "2026-11-05T04:00:46.590Z",
+    "lastChecked": "2026-11-05T04:07:22.392Z",
+    "lastVerified": "2026-11-05T04:07:22.392Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -144,8 +144,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-05T03:40:00.242Z",
-    "lastVerified": "2026-11-05T03:40:00.242Z",
+    "lastChecked": "2026-11-05T04:07:22.383Z",
+    "lastVerified": "2026-11-05T04:07:22.383Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -2134,8 +2134,8 @@
     "officialUrl": "https://github.com/trufflesecurity/trufflehog",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-05T00:29:44.541Z",
-    "lastVerified": "2026-11-05T00:29:44.541Z",
+    "lastChecked": "2026-11-05T04:07:17.430Z",
+    "lastVerified": "2026-11-05T04:07:17.430Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-trufflesecurity-trufflehog",
@@ -2969,9 +2969,9 @@
   "asciinema-asciinema": {
     "name": "asciinema",
     "officialUrl": "https://github.com/asciinema/asciinema",
-    "lastChecked": "2026-11-04T01:20:25.346Z",
+    "lastChecked": "2026-11-05T04:07:07.339Z",
     "revisionIdentifier": "cf66ef4c",
-    "lastVerified": "2026-11-04T01:20:25.346Z"
+    "lastVerified": "2026-11-05T04:07:07.339Z"
   },
   "hf-xiaomimimo-mimo-v2.6-pro-rl": {
     "name": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
@@ -4139,12 +4139,12 @@
     "officialUrl": "https://huggingface.co/timm/mobilenetv3_small_100.lamb_in1k",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-31T13:27:06.284Z",
-    "lastVerified": "2026-10-31T13:27:06.284Z",
+    "lastChecked": "2026-11-05T04:07:09.993Z",
+    "lastVerified": "2026-11-05T04:07:09.993Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-timm-mobilenetv3_small_100-lamb_in1k",
-    "contentHash": "6e8dc0c36904e11435ed2ff6fbe3f914819c110dc71540dbe9a8d0a8b10913c9",
+    "contentHash": "87b1ef0a0b341ecb95d6b7012b228316d43c321d8473c0e926891b9757372b91",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -4911,9 +4911,9 @@
   "cozodb-cozo": {
     "name": "cozo",
     "officialUrl": "https://github.com/cozodb/cozo",
-    "lastChecked": "2026-11-04T07:49:10.012Z",
+    "lastChecked": "2026-11-05T04:07:19.813Z",
     "revisionIdentifier": "481af058",
-    "lastVerified": "2026-11-04T07:49:10.012Z"
+    "lastVerified": "2026-11-05T04:07:19.813Z"
   },
   "telemt-telemt": {
     "name": "telemt",
@@ -7433,14 +7433,14 @@
     "officialUrl": "https://github.com/k3s-io/k3s",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-04T08:35:07.817Z",
-    "lastVerified": "2026-11-04T08:35:07.817Z",
+    "lastChecked": "2026-11-05T04:07:19.104Z",
+    "lastVerified": "2026-11-05T04:07:19.104Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-k3s-io-k3s",
-    "contentHash": "57580d88c284a838d0ad1b1fa83fb53f543308f951f77d5519e2a63f4fbb77d4",
+    "contentHash": "843695b4097e4f52cdef8c7e71cd5cc2977e28ff3c7b766dd4b5ff5b94ab07ec",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -9327,9 +9327,9 @@
   "apppear-chartview": {
     "name": "ChartView",
     "officialUrl": "https://github.com/AppPear/ChartView",
-    "lastChecked": "2026-10-31T21:26:44.343Z",
+    "lastChecked": "2026-11-05T04:07:12.333Z",
     "revisionIdentifier": "df0b2641",
-    "lastVerified": "2026-10-31T21:26:44.343Z"
+    "lastVerified": "2026-11-05T04:07:12.333Z"
   },
   "hf-liquidai-lfm3-vl-2b": {
     "name": "LiquidAI/LFM3-VL-2B",

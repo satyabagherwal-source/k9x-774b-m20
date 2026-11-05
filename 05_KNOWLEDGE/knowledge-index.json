@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T04:00:43.927Z",
+  "last_updated": "2026-11-05T04:07:19.564Z",
   "total_verified_learnings": 1213,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -31235,7 +31235,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/timm/mobilenetv3_small_100.lamb_in1k",
       "source_version": "hf-timm-mobilenetv3_small_100.lamb_in1k",
-      "content_hash": "6e8dc0c36904e11435ed2ff6fbe3f914819c110dc71540dbe9a8d0a8b10913c9",
+      "content_hash": "87b1ef0a0b341ecb95d6b7012b228316d43c321d8473c0e926891b9757372b91",
       "dossier_path": "07_PROJECT_LEARNING/hf-timm-mobilenetv3_small_100.lamb_in1k-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-timm-mobilenetv3_small_100.lamb_in1k-learnings.md",
       "promoted_rules": [
@@ -31293,7 +31293,7 @@
         "learn-huggingface-hf-timm-mobilenetv3_small_100-lamb_in1k-mv49kikk",
         "learn-huggingface-hf-timm-mobilenetv3_small_100-lamb_in1k-mv4mxoq2"
       ],
-      "verified_at": "2026-10-31T13:27:07.061Z",
+      "verified_at": "2026-11-05T04:07:10.727Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -35358,8 +35358,8 @@
       "slug": "k3s-io-k3s",
       "platform": "github",
       "source_url": "https://github.com/k3s-io/k3s",
-      "source_version": "2b723db5",
-      "content_hash": "57580d88c284a838d0ad1b1fa83fb53f543308f951f77d5519e2a63f4fbb77d4",
+      "source_version": "f5cba99a",
+      "content_hash": "843695b4097e4f52cdef8c7e71cd5cc2977e28ff3c7b766dd4b5ff5b94ab07ec",
       "dossier_path": "07_PROJECT_LEARNING/k3s-io-k3s-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/k3s-io-k3s-learnings.md",
       "promoted_rules": [
@@ -35412,6 +35412,11 @@
           "number": 6781,
           "title": "bashisms in install.sh",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7100,
+          "title": "Bump Spegel to v0.8.1 (#14931)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -35419,7 +35424,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T08:35:09.373Z",
+      "verified_at": "2026-11-05T04:07:19.550Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -179948,6 +179953,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-05T04:00:43.904Z"
+    },
+    "rule-7100": {
+      "learning_id": "rule-7100",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7100,
+      "title": "Bump Spegel to v0.8.1 (#14931)",
+      "source_url": "https://github.com/k3s-io/k3s",
+      "source_version": "f5cba99a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T04:07:19.550Z"
     }
   },
   "aliases": {
