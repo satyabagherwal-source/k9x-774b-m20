@@ -7556,3 +7556,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-meta-llama-llama-2-7b` | `https://huggingface.co/meta-llama/Llama-2-7b` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-11-05T06:28:57.467Z |
 | `learn-github-starrocks-starrocks` | `https://github.com/StarRocks/starrocks` | `d0391e8c` | Multi-dimensional audit evidence | 2026-11-05T06:28:58.250Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `9318a957` | Multi-dimensional audit evidence | 2026-11-05T06:28:59.413Z |
+| `learn-huggingface-deepseek-ai-deepseek-v3` | `https://huggingface.co/deepseek-ai/DeepSeek-V3` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-11-05T06:36:23.288Z |

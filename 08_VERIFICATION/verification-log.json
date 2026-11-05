@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261103-HX2H",
-    "timestamp": "2026-11-03T22:59:03.209Z",
-    "repository": "watchexec/watchexec",
-    "learningId": "learn-github-watchexec-watchexec",
-    "contentHash": "2960559587f5ba48ba15b35c9cd6dcd6d76770d50d5507846bd46f9f83552ce9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261103-I1CY",
     "timestamp": "2026-11-03T22:59:08.770Z",
     "repository": "makecindy/cindy",
@@ -7492,6 +7477,21 @@
     "contentHash": "37a635731e8a41acddd750c38003966b81da163c6ede4b5fd382281d001d7a0b",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-9WML",
+    "timestamp": "2026-11-05T06:36:23.277Z",
+    "repository": "deepseek-ai/DeepSeek-V3",
+    "learningId": "learn-huggingface-deepseek-ai-deepseek-v3",
+    "contentHash": "c44817b5b6b6be5fc707b2cc4e25d2fe2293913af7b6871938051aaca5e3c2ac",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
