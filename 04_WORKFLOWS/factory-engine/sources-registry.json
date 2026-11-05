@@ -4,8 +4,8 @@
     "officialUrl": "https://github.com/rustls/rustls",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-05T08:00:42.693Z",
-    "lastVerified": "2026-11-05T08:00:42.693Z",
+    "lastChecked": "2026-11-05T12:07:05.776Z",
+    "lastVerified": "2026-11-05T12:07:05.776Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-rustls-rustls",
@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-05T12:00:16.711Z",
-    "lastVerified": "2026-11-05T12:00:16.711Z",
+    "lastChecked": "2026-11-05T12:07:14.876Z",
+    "lastVerified": "2026-11-05T12:07:14.876Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -357,9 +357,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-05T11:38:09.206Z",
+    "lastChecked": "2026-11-05T12:07:10.747Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-05T11:38:09.206Z"
+    "lastVerified": "2026-11-05T12:07:10.747Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -1274,12 +1274,12 @@
     "officialUrl": "https://github.com/clockworklabs/SpacetimeDB",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-04T21:18:55.958Z",
-    "lastVerified": "2026-11-04T21:18:55.958Z",
+    "lastChecked": "2026-11-05T12:07:11.657Z",
+    "lastVerified": "2026-11-05T12:07:11.657Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-clockworklabs-spacetimedb",
-    "contentHash": "3697ece97ee185d37cf546acb818b90c1f2dc77844462cccd2e80aa0b33ccd6f",
+    "contentHash": "1af2da4bd81245783451ff3a926bc76b327e2d2d35b625ae1969a07ce2e55f53",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
@@ -4369,12 +4369,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "agent-field-agentfield": {
-    "name": "Agent-Field/agentfield",
+    "name": "agentfield",
     "officialUrl": "https://github.com/Agent-Field/agentfield",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-04T22:05:19.067Z",
-    "lastVerified": "2026-11-04T22:05:19.067Z",
+    "lastChecked": "2026-11-05T12:07:03.228Z",
+    "lastVerified": "2026-11-05T12:07:03.228Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-agent-field-agentfield",
@@ -4383,7 +4383,8 @@
     "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "118b90ba"
   },
   "spacejam-sled": {
     "name": "sled",
@@ -6704,9 +6705,9 @@
   "vercel-labs-opensrc": {
     "name": "opensrc",
     "officialUrl": "https://github.com/vercel-labs/opensrc",
-    "lastChecked": "2026-11-04T17:52:11.686Z",
+    "lastChecked": "2026-11-05T12:06:55.708Z",
     "revisionIdentifier": "b51de608",
-    "lastVerified": "2026-11-04T17:52:11.686Z"
+    "lastVerified": "2026-11-05T12:06:55.708Z"
   },
   "hf-qwen-qwen3-8b": {
     "name": "Qwen/Qwen3-8B",
@@ -7861,13 +7862,13 @@
     "officialUrl": "https://huggingface.co/LiquidAI/d1-3B",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-31T21:26:42.050Z",
-    "lastVerified": "2026-10-31T21:26:42.050Z",
+    "lastChecked": "2026-11-05T12:06:58.221Z",
+    "lastVerified": "2026-11-05T12:06:58.221Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-liquidai-d1-3b",
-    "contentHash": "7e5f39f1dd53e1c38e10599b7df63995393cb2ac0be9cfa52d50585a557cfb28",
-    "promotedRulesCount": 3,
+    "contentHash": "2dd84fc501a3ebf2ac66f676148e3662029acd1c9c4b076bc27cd6b2708c6a7d",
+    "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
@@ -10581,9 +10582,9 @@
   "aakira-napier": {
     "name": "Napier",
     "officialUrl": "https://github.com/AAkira/Napier",
-    "lastChecked": "2026-11-02T17:24:24.465Z",
+    "lastChecked": "2026-11-05T12:07:00.771Z",
     "revisionIdentifier": "50835e2e",
-    "lastVerified": "2026-11-02T17:24:24.465Z"
+    "lastVerified": "2026-11-05T12:07:00.771Z"
   },
   "santifer-santifer-irepair": {
     "name": "santifer-irepair",

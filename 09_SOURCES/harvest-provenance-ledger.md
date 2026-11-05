@@ -7651,3 +7651,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-unsloth-embeddinggemma-2-gguf` | `https://huggingface.co/unsloth/embeddinggemma-2-GGUF` | `hf-unsloth` | Multi-dimensional audit evidence | 2026-11-05T11:53:10.586Z |
 | `learn-github-touchlab-kermit` | `https://github.com/touchlab/Kermit` | `44bd2980` | Multi-dimensional audit evidence | 2026-11-05T11:53:16.790Z |
 | `learn-huggingface-autotrust-glm5-3-flash-e224-dgx-spark` | `https://huggingface.co/autotrust/GLM5.3-Flash-E224-DGX-Spark` | `hf-autotru` | Multi-dimensional audit evidence | 2026-11-05T12:00:05.276Z |
+| `learn-huggingface-liquidai-d1-3b` | `https://huggingface.co/LiquidAI/d1-3B` | `hf-liquida` | Multi-dimensional audit evidence | 2026-11-05T12:06:59.474Z |
+| `learn-github-clockworklabs-spacetimedb` | `https://github.com/clockworklabs/SpacetimeDB` | `17a3f3a6` | Multi-dimensional audit evidence | 2026-11-05T12:07:12.335Z |
