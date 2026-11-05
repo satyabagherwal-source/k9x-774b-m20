@@ -7782,3 +7782,5 @@
 | `CYCLE-20261105-1XNF` | `2026-11-05T21:25:59.067Z` | `Bitterbot-AI/bitterbot-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`715bfd52...`) |
 | `CYCLE-20261105-AQBE` | `2026-11-05T21:32:49.466Z` | `codewhale-hq/Codewhale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7271` | Yes (`e41776c3...`) |
 | `CYCLE-20261105-AWA4` | `2026-11-05T21:32:57.196Z` | `unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-unsloth-nvidia-nemotron-3.5-bolt-e4b-gguf-learnings.md` | Yes (`d238bb55...`) |
+| `CYCLE-20261105-K1UO` | `2026-11-05T21:40:04.320Z` | `davila7/claude-code-templates` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`759160bc...`) |
+| `CYCLE-20261105-KDE3` | `2026-11-05T21:40:19.275Z` | `sfu-db/connector-x` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/sfu-db-connector-x-learnings.md` | Yes (`203db3d8...`) |

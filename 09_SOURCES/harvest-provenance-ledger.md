@@ -7791,3 +7791,5 @@ Every entry in this ledger must capture:
 | `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `edd9f02f` | Multi-dimensional audit evidence | 2026-11-05T21:25:59.071Z |
 | `learn-github-codewhale-hq-codewhale` | `https://github.com/Hmbown/Codewhale` | `885ef69f` | Multi-dimensional audit evidence | 2026-11-05T21:32:49.469Z |
 | `learn-huggingface-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf` | `https://huggingface.co/unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF` | `hf-unsloth` | Multi-dimensional audit evidence | 2026-11-05T21:32:57.199Z |
+| `learn-github-davila7-claude-code-templates` | `https://github.com/davila7/claude-code-templates` | `3b2daa1a` | Multi-dimensional audit evidence | 2026-11-05T21:40:04.324Z |
+| `learn-github-sfu-db-connector-x` | `https://github.com/sfu-db/connector-x` | `45300870` | Multi-dimensional audit evidence | 2026-11-05T21:40:19.279Z |

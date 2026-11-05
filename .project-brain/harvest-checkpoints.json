@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-05T21:32:57.208Z",
+  "last_updated": "2026-11-05T21:40:19.292Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -7131,14 +7131,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-sfu-db-connector-x",
-      "content_hash": "5a744c58e99e8b612013b7bbe0d745308ba005a96ead6d4d13d6125666785428",
-      "verified_at": "2026-11-05T05:04:40.049Z",
+      "content_hash": "203db3d89fd3874f283ab7c1a65eb234e1456ba3e7679d28324c8a7f099c7d75",
+      "verified_at": "2026-11-05T21:40:19.292Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T05:04:40.049Z"
+      "last_updated": "2026-11-05T21:40:19.292Z"
     },
     "stenciljs/core": {
       "repository": "stenciljs/core",
@@ -18089,6 +18089,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-05T19:38:03.751Z"
+    },
+    "davila7/claude-code-templates": {
+      "repository": "davila7/claude-code-templates",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-davila7-claude-code-templates",
+      "content_hash": "759160bcfbab3ba90253223c76772ee4125352250bc90d8877d008c5d3184595",
+      "verified_at": "2026-11-05T21:40:04.334Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-05T21:40:04.334Z"
     }
   },
   "repos": {

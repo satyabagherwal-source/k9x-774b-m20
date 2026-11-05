@@ -20437,5 +20437,20 @@
     "downloads": 12206,
     "qualityScore": 3710,
     "discoveredAt": "2026-11-05T19:35:42.716Z"
+  },
+  {
+    "name": "claude-code-templates",
+    "fullName": "davila7/claude-code-templates",
+    "url": "https://github.com/davila7/claude-code-templates",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Open-source registry and CLI for Claude Code components: agents, commands, skills, hooks, MCPs, settings and mods",
+    "stars": 33145,
+    "forks": 3869,
+    "openIssues": 467,
+    "language": "Python",
+    "qualityScore": 18183,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-11-05T21:36:05.441Z"
   }
 ]

@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-05T21:32:57.204Z",
-  "total_cycles_completed": 7759,
-  "total_learnings_persisted": 7759,
-  "total_rules_promoted": 7403,
+  "last_updated": "2026-11-05T21:40:19.288Z",
+  "total_cycles_completed": 7761,
+  "total_learnings_persisted": 7761,
+  "total_rules_promoted": 7404,
   "history": [
-    {
-      "timestamp": "2026-11-05T08:32:48.620Z",
-      "repository": "easegress-io/easegress",
-      "learningId": "learn-github-easegress-io-easegress",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T08:41:00.799Z",
-      "repository": "FacebookAI/xlm-roberta-base",
-      "learningId": "learn-huggingface-facebookai-xlm-roberta-base",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-05T08:42:43.688Z",
       "repository": "genkit-ai/genkit",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-05T21:32:57.204Z",
       "repository": "unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF",
       "learningId": "learn-huggingface-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T21:40:04.330Z",
+      "repository": "davila7/claude-code-templates",
+      "learningId": "learn-github-davila7-claude-code-templates",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T21:40:19.288Z",
+      "repository": "sfu-db/connector-x",
+      "learningId": "learn-github-sfu-db-connector-x",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

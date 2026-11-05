@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-05T17:29:11.406Z",
+  "last_updated": "2026-11-05T21:40:19.286Z",
   "directives": [
     {
       "id": "CD-001",
@@ -3962,6 +3962,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-nucleoidai-nucleoid"
+    },
+    {
+      "id": "CD-KDEE",
+      "directive_title": "Merge pull request #1055 from oystersuki/docs/error-handling",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "sfu-db/connector-x",
+      "source_commit": "45300870",
+      "date_staged": "2026-11-05",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-sfu-db-connector-x"
     }
   ]
 }

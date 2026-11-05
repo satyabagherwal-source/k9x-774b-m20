@@ -4673,10 +4673,10 @@
     "repository": "sfu-db/connector-x",
     "platform": "github",
     "sourceUrl": "https://github.com/sfu-db/connector-x",
-    "sourceVersion": "8dcfc003",
+    "sourceVersion": "45300870",
     "license": "MIT",
-    "contentHash": "5a744c58e99e8b612013b7bbe0d745308ba005a96ead6d4d13d6125666785428",
-    "lastHarvestedAt": "2026-11-05T05:04:40.035Z",
+    "contentHash": "203db3d89fd3874f283ab7c1a65eb234e1456ba3e7679d28324c8a7f099c7d75",
+    "lastHarvestedAt": "2026-11-05T21:40:19.279Z",
     "learningId": "learn-github-sfu-db-connector-x"
   },
   "stenciljs-core": {
@@ -12018,5 +12018,15 @@
     "contentHash": "61eb1300a7b2202ba2be191703e35b421fdb08b1a99267106b2f8bb2a0f38932",
     "lastHarvestedAt": "2026-11-05T19:38:03.732Z",
     "learningId": "learn-huggingface-ccore-qwen3-5-4b-glb-3d-coder"
+  },
+  "davila7-claude-code-templates": {
+    "repository": "davila7/claude-code-templates",
+    "platform": "github",
+    "sourceUrl": "https://github.com/davila7/claude-code-templates",
+    "sourceVersion": "3b2daa1a",
+    "license": "MIT",
+    "contentHash": "759160bcfbab3ba90253223c76772ee4125352250bc90d8877d008c5d3184595",
+    "lastHarvestedAt": "2026-11-05T21:40:04.324Z",
+    "learningId": "learn-github-davila7-claude-code-templates"
   }
 }

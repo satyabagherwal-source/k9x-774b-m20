@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261104-B87D",
-    "timestamp": "2026-11-04T18:57:34.537Z",
-    "repository": "callstack/agent-device",
-    "learningId": "learn-github-callstack-agent-device",
-    "contentHash": "427256d5640acf53ae92a08d520446d82b7a6dc974737d4ba44cec940ef2cf6c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261104-B8ZF",
-    "timestamp": "2026-11-04T18:57:35.547Z",
-    "repository": "karmada-io/karmada",
-    "learningId": "learn-github-karmada-io-karmada",
-    "contentHash": "c41669fc4a69dd645c4a03516e810a9881e5fff4e5d44bcc1a3ed19621f90ead",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261104-BANO",
     "timestamp": "2026-11-04T18:57:37.716Z",
     "repository": "KRAFTON/Raon-1-mini-preview",
@@ -7490,6 +7460,36 @@
     "repository": "unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF",
     "learningId": "learn-huggingface-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf",
     "contentHash": "d238bb557c44e115e1392290800e08f76ae0261a823b775e0f11c0c3d6614ad6",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-K1UO",
+    "timestamp": "2026-11-05T21:40:04.320Z",
+    "repository": "davila7/claude-code-templates",
+    "learningId": "learn-github-davila7-claude-code-templates",
+    "contentHash": "759160bcfbab3ba90253223c76772ee4125352250bc90d8877d008c5d3184595",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-KDE3",
+    "timestamp": "2026-11-05T21:40:19.275Z",
+    "repository": "sfu-db/connector-x",
+    "learningId": "learn-github-sfu-db-connector-x",
+    "contentHash": "203db3d89fd3874f283ab7c1a65eb234e1456ba3e7679d28324c8a7f099c7d75",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

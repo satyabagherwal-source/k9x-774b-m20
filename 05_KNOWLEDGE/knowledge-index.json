@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T21:32:57.094Z",
-  "total_verified_learnings": 1220,
+  "last_updated": "2026-11-05T21:40:19.166Z",
+  "total_verified_learnings": 1221,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -53472,8 +53472,8 @@
       "slug": "sfu-db-connector-x",
       "platform": "github",
       "source_url": "https://github.com/sfu-db/connector-x",
-      "source_version": "8dcfc003",
-      "content_hash": "5a744c58e99e8b612013b7bbe0d745308ba005a96ead6d4d13d6125666785428",
+      "source_version": "45300870",
+      "content_hash": "203db3d89fd3874f283ab7c1a65eb234e1456ba3e7679d28324c8a7f099c7d75",
       "dossier_path": "07_PROJECT_LEARNING/sfu-db-connector-x-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sfu-db-connector-x-learnings.md",
       "promoted_rules": [
@@ -53533,7 +53533,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T05:04:39.941Z",
+      "verified_at": "2026-11-05T21:40:19.137Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -183758,6 +183758,39 @@
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
       "verified_at": "2026-11-05T19:38:03.619Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-github-davila7-claude-code-templates": {
+      "learning_id": "learn-github-davila7-claude-code-templates",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "davila7/claude-code-templates",
+      "repository": "davila7/claude-code-templates",
+      "slug": "davila7-claude-code-templates",
+      "platform": "github",
+      "source_url": "https://github.com/davila7/claude-code-templates",
+      "source_version": "3b2daa1a",
+      "content_hash": "759160bcfbab3ba90253223c76772ee4125352250bc90d8877d008c5d3184595",
+      "dossier_path": "07_PROJECT_LEARNING/davila7-claude-code-templates-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/davila7-claude-code-templates-learnings.md",
+      "promoted_rules": [
+        {
+          "number": null,
+          "title": "Improve security scan reporting for fork PRs (#1309)",
+          "status": "WITHHELD_REJECT"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-05T21:40:04.197Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
