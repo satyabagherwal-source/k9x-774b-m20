@@ -7779,3 +7779,4 @@
 | `CYCLE-20261105-ZNOL` | `2026-11-05T20:00:13.989Z` | `gardener/gardener` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`7a1af57e...`) |
 | `CYCLE-20261105-7XPZ` | `2026-11-05T20:06:40.247Z` | `sharkdp/bat` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`5d528c10...`) |
 | `CYCLE-20261105-854X` | `2026-11-05T20:06:49.857Z` | `microsoft/agent-governance-toolkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`21f9bf62...`) |
+| `CYCLE-20261105-1XNF` | `2026-11-05T21:25:59.067Z` | `Bitterbot-AI/bitterbot-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`715bfd52...`) |

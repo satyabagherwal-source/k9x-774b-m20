@@ -2303,10 +2303,10 @@
     "repository": "Bitterbot-AI/bitterbot-desktop",
     "platform": "github",
     "sourceUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-    "sourceVersion": "3ea3f553",
+    "sourceVersion": "edd9f02f",
     "license": "MIT",
-    "contentHash": "719eee9fc41f7823806f66fe2d7406a1be95ad286cf00f5a9a941af03acecc86",
-    "lastHarvestedAt": "2026-11-05T19:45:34.733Z",
+    "contentHash": "715bfd52cb88e3ff2f26b1de2c263ccd00db6f3d1666f57bcc6b04eff89f1d3b",
+    "lastHarvestedAt": "2026-11-05T21:25:59.071Z",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop"
   },
   "adobe-react-spectrum": {

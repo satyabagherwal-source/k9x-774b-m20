@@ -7788,3 +7788,4 @@ Every entry in this ledger must capture:
 | `learn-github-gardener-gardener` | `https://github.com/gardener/gardener` | `37d22916` | Multi-dimensional audit evidence | 2026-11-05T20:00:13.993Z |
 | `learn-github-sharkdp-bat` | `https://github.com/sharkdp/bat` | `956522a3` | Multi-dimensional audit evidence | 2026-11-05T20:06:40.250Z |
 | `learn-github-microsoft-agent-governance-toolkit` | `https://github.com/microsoft/agent-governance-toolkit` | `ea260c54` | Multi-dimensional audit evidence | 2026-11-05T20:06:49.859Z |
+| `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `edd9f02f` | Multi-dimensional audit evidence | 2026-11-05T21:25:59.071Z |

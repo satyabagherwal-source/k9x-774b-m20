@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261104-RLSJ",
-    "timestamp": "2026-11-04T18:42:19.027Z",
-    "repository": "Comfy-Org/Fibo-2.0",
-    "learningId": "learn-huggingface-comfy-org-fibo-2-0",
-    "contentHash": "bc30b4c54d066eb8382c80d1266080452661bc903cdda1c596ee0d7ac61dc526",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261104-ROJJ",
     "timestamp": "2026-11-04T18:42:22.591Z",
     "repository": "nolabs-ai/nono",
@@ -7490,6 +7475,21 @@
     "repository": "microsoft/agent-governance-toolkit",
     "learningId": "learn-github-microsoft-agent-governance-toolkit",
     "contentHash": "21f9bf6236ed2bf9b4b2d375a9ab35ecb8ffdb651511d205641777ed1ef6c591",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-1XNF",
+    "timestamp": "2026-11-05T21:25:59.067Z",
+    "repository": "Bitterbot-AI/bitterbot-desktop",
+    "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
+    "contentHash": "715bfd52cb88e3ff2f26b1de2c263ccd00db6f3d1666f57bcc6b04eff89f1d3b",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

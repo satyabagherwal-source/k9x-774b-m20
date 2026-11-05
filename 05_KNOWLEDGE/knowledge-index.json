@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T20:06:49.770Z",
+  "last_updated": "2026-11-05T21:25:58.974Z",
   "total_verified_learnings": 1220,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -5270,14 +5270,19 @@
       "slug": "bitterbot-ai-bitterbot-desktop",
       "platform": "github",
       "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-      "source_version": "3ea3f553",
-      "content_hash": "719eee9fc41f7823806f66fe2d7406a1be95ad286cf00f5a9a941af03acecc86",
+      "source_version": "edd9f02f",
+      "content_hash": "715bfd52cb88e3ff2f26b1de2c263ccd00db6f3d1666f57bcc6b04eff89f1d3b",
       "dossier_path": "07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "add learning strategy lab and benchmark evidence (#363)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "memory): default procedural learning to shadow capture (#364)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -5486,7 +5491,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T19:45:34.616Z",
+      "verified_at": "2026-11-05T21:25:58.945Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

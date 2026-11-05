@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-05T20:06:52.449Z",
-    "lastVerified": "2026-11-05T20:06:52.449Z",
+    "lastChecked": "2026-11-05T21:26:01.622Z",
+    "lastVerified": "2026-11-05T21:26:01.622Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -144,14 +144,14 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-05T19:45:32.889Z",
-    "lastVerified": "2026-11-05T19:45:32.889Z",
+    "lastChecked": "2026-11-05T21:25:56.715Z",
+    "lastVerified": "2026-11-05T21:25:56.715Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
-    "contentHash": "719eee9fc41f7823806f66fe2d7406a1be95ad286cf00f5a9a941af03acecc86",
+    "contentHash": "715bfd52cb88e3ff2f26b1de2c263ccd00db6f3d1666f57bcc6b04eff89f1d3b",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -413,8 +413,8 @@
     "officialUrl": "https://github.com/openziti/zrok",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-05T16:06:08.429Z",
-    "lastVerified": "2026-11-05T16:06:08.429Z",
+    "lastChecked": "2026-11-05T21:25:46.886Z",
+    "lastVerified": "2026-11-05T21:25:46.886Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-openziti-zrok",
@@ -1080,8 +1080,8 @@
     "officialUrl": "https://github.com/Kong/kubernetes-ingress-controller",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-05T05:39:06.900Z",
-    "lastVerified": "2026-11-05T05:39:06.900Z",
+    "lastChecked": "2026-11-05T21:25:44.473Z",
+    "lastVerified": "2026-11-05T21:25:44.473Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-kong-kubernetes-ingress-controller",
@@ -1283,12 +1283,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "sharkdp-fd": {
-    "name": "sharkdp/fd",
+    "name": "fd",
     "officialUrl": "https://github.com/sharkdp/fd",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-05T01:00:35.767Z",
-    "lastVerified": "2026-11-05T01:00:35.767Z",
+    "lastChecked": "2026-11-05T21:25:36.880Z",
+    "lastVerified": "2026-11-05T21:25:36.880Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-sharkdp-fd",
@@ -1297,7 +1297,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "193d0df1"
   },
   "hf-qwen-qwen-image-2.1": {
     "name": "Qwen/Qwen-Image-2.1",
@@ -5364,9 +5365,9 @@
   "orbitinghail-sqlsync": {
     "name": "sqlsync",
     "officialUrl": "https://github.com/orbitinghail/sqlsync",
-    "lastChecked": "2026-11-05T04:50:42.113Z",
+    "lastChecked": "2026-11-05T21:25:49.257Z",
     "revisionIdentifier": "7dc1af6b",
-    "lastVerified": "2026-11-05T04:50:42.113Z"
+    "lastVerified": "2026-11-05T21:25:49.257Z"
   },
   "async-rs-async-std": {
     "name": "async-std",
@@ -9479,9 +9480,9 @@
   "jeffli1993-seo-audit-skill": {
     "name": "seo-audit-skill",
     "officialUrl": "https://github.com/JeffLi1993/seo-audit-skill",
-    "lastChecked": "2026-11-02T16:18:37.464Z",
+    "lastChecked": "2026-11-05T21:25:39.282Z",
     "revisionIdentifier": "523bdfb2",
-    "lastVerified": "2026-11-02T16:18:37.464Z"
+    "lastVerified": "2026-11-05T21:25:39.282Z"
   },
   "mohamedrejeb-calf": {
     "name": "Calf",
@@ -12024,9 +12025,9 @@
   "planetable-planet": {
     "name": "Planet",
     "officialUrl": "https://github.com/Planetable/Planet",
-    "lastChecked": "2026-11-03T20:49:28.607Z",
+    "lastChecked": "2026-11-05T21:25:41.905Z",
     "revisionIdentifier": "5294e71c",
-    "lastVerified": "2026-11-03T20:49:28.607Z"
+    "lastVerified": "2026-11-05T21:25:41.905Z"
   },
   "mswjs-msw": {
     "name": "msw",

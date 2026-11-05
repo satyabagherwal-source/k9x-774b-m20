@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-05T20:06:49.866Z",
+  "last_updated": "2026-11-05T21:25:59.078Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3591,14 +3591,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-bitterbot-ai-bitterbot-desktop",
-      "content_hash": "719eee9fc41f7823806f66fe2d7406a1be95ad286cf00f5a9a941af03acecc86",
-      "verified_at": "2026-11-05T19:45:34.742Z",
+      "content_hash": "715bfd52cb88e3ff2f26b1de2c263ccd00db6f3d1666f57bcc6b04eff89f1d3b",
+      "verified_at": "2026-11-05T21:25:59.078Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T19:45:34.742Z"
+      "last_updated": "2026-11-05T21:25:59.078Z"
     },
     "adobe/react-spectrum": {
       "repository": "adobe/react-spectrum",

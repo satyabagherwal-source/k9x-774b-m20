@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-05T20:06:49.863Z",
-  "total_cycles_completed": 7756,
-  "total_learnings_persisted": 7756,
-  "total_rules_promoted": 7401,
+  "last_updated": "2026-11-05T21:25:59.075Z",
+  "total_cycles_completed": 7757,
+  "total_learnings_persisted": 7757,
+  "total_rules_promoted": 7402,
   "history": [
-    {
-      "timestamp": "2026-11-05T08:15:33.556Z",
-      "repository": "vespa-engine/vespa",
-      "learningId": "learn-github-vespa-engine-vespa",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-05T08:31:50.799Z",
       "repository": "rainbow-me/rainbow",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-05T20:06:49.863Z",
       "repository": "microsoft/agent-governance-toolkit",
       "learningId": "learn-github-microsoft-agent-governance-toolkit",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T21:25:59.075Z",
+      "repository": "Bitterbot-AI/bitterbot-desktop",
+      "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
