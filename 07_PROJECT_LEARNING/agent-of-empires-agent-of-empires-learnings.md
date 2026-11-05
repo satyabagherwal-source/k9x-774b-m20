@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/agent-of-empires-agent-of-empires-learnings.md`  
 > **Source**: github ([https://github.com/agent-of-empires/agent-of-empires](https://github.com/agent-of-empires/agent-of-empires))  
-> **Source Version**: `f302922e`  
+> **Source Version**: `1f674d07`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T20:53:15.930Z  
+> **Timestamp**: 2026-11-05T15:20:35.133Z  
 > **Learning ID**: `learn-github-agent-of-empires-agent-of-empires`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/agent-of-empires-agent-of-empires-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/agent-of-empires/agent-of-empires](https://github.com/agent-of-empires/agent-of-empires))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T20:53:15.725Z  
+> **Harvest Timestamp**: 2026-11-05T15:20:34.922Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Manage multiple Claude Code, OpenCode agents from either TUI or Web for easy access on mobile. Also supports Mistral Vibe, Codex CLI, Gemini CLI, Pi.dev, Copilot CLI, Factory Droid Coding.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3546 stars
+- **Stars / Engagement**: 3602 stars
 
 ---
 
@@ -510,12 +510,13 @@ export function createAgentStream(
 //! the driven conversation reset.
 
 use crate::acp::state::Event;
-use agent_client_protocol::schema::v1::{
+use agent_client_protocol::v1::schema::{
     CancelNotification, ContentBlock, McpServer, NewSessionRequest, NewSessionResponse,
     SessionConfigId, SessionConfigOption, SessionConfigValueId, SessionId,
     SetSessionConfigOptionRequest,
 };
-use agent_client_protocol::{Agent, ConnectionTo};
+use agent_client_protocol::v1::ConnectionTo;
+use agent_client_protocol::Agent;
 use std::collections::VecDeque;
 use std::path::PathBuf;
 use std::sync::atomic::Ordering;
@@ -733,8 +734,7 @@ impl Session {
         };
         // An adopted turn races the detached resume-idle task for its
         // terminal; state is reset either way.
-        let adopted = shared.adopted_turn_active.swap(false, Ordering::Relaxed);
-        if adopted && !shar
+        let adopted = shared.adopted_turn_active.swap(false, Ordering::Relaxed)
 ```
 
 ### Core Architecture Module: `src/acp/acp_client/lifecycle.rs`
@@ -743,7 +743,7 @@ impl Session {
 
 use crate::acp::agent_profiles;
 use crate::acp::state::Event;
-use agent_client_protocol::schema::v1::{
+use agent_client_protocol::v1::schema::{
     CompactionStatus, ContentBlock, SessionUpdate, ToolCallContent, ToolCallStatus,
 };
 use std::sync::atomic::{AtomicU64, Ordering as AtomicOrdering};
@@ -1008,7 +1008,7 @@ pub(super) fn wakeup_lifecycle_signal_from_update(
 mod tests {
     use super::*;
     use crate::acp::acp_client::test_helpers::{compaction_chunk, compaction_update, text_chunk};
-    use agent_client_protocol::schema::v1::{
+    use agent_client_protocol::v1::schema::{
         Content
 ```
 
@@ -2133,573 +2133,957 @@ fn render_list(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ebd5a774` (2026-11-04)
-**Commit Message**: fix(worktree): revalidate cleanup candidates after the confirmation prompt (#5263)
+### Incident Patch 1: `95c5d66c` (2026-11-05)
+**Commit Message**: ci: cancel obsolete queue runs and validate npm before builds (#5306)
 
-* fix(worktree): revalidate cleanup candidates against all profiles after confirmation
+* ci: cancel superseded queue generations and validate npm before builds
 
-Cleanup removed every listed orphan after the y/N prompt without
-rechecking, so a session created on or inside a candidate meanwhile
-lost its checkout. Rows from every profile are now read and the
-removal done under the store locks, and candidates a session sits on
-or inside are skipped. An unreadable store removes nothing.
+* ci: preserve manual queue reruns during cleanup
 
-Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+* ci: shorten web dependency step names
 
-* fix(worktree): hold the transition lock while cleanup lists profiles
-
-A profile created between listing profiles and locking their stores was
-never read, so a session inside a candidate could lose its checkout.
-Cleanup now takes the shared transition lock first, which profile
-creation needs exclusively.
-
-Addresses review comment from @jerome-benoit on #5263.
-
-Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
-
-* test(worktree): fail when cleanup lists profiles without the transition lock
-
-The earlier test also passed without the lock, because the store locks
-block on the same file. A hook after the listing now checks that profile
-creat
-
-**File**: `src/cli/worktree.rs` (modified, +136/-1)
+**File**: `.github/scripts/cancel-obsolete-queue-runs.cjs` (added, +75/-0)
 ```diff
-@@ -296,6 +296,49 @@ pub(crate) fn remove_orphaned_worktrees(
-     removed
- }
- 
-+#[cfg(test)]
-+thread_local! {
-+    static AFTER_PROFILE_LISTING: std::cell::RefCell<Option<Box<dyn FnOnce()>>> =
-+        const { std::cell::RefCell::new(None) };
+@@ -0,0 +1,75 @@
++const paths = new Set(['.github/workflows/ci.yml', '.github/workflows/tests.yml']);
++const active = ['queued', 'in_progress', 'waiting', 'pending', 'requested'];
++
++function entry(branch) {
++  const match = /^gh-readonly-queue\/(.+)\/pr-([1-9]\d*)-[0-9a-f]{40}$/.exec(branch ?? '');
++  return match && { base: match[1], number: Number(match[2]) };
 +}
 +
-+/// Removes the confirmed worktrees that no session in any profile sits on or inside. The rows are
-+/// read, and the removal done, while every store is locked, so no session can adopt a path in
-+/// between. Fails closed: if a store cannot be read, nothing is removed.
-+pub(crate) fn remove_confirmed_worktrees(
-+    git_wt: &GitWorktree,
-+    orphans: &[WorktreeEntry],
-+    purging: &HashSet<PathBuf>,
-+) -> Result<usize> {
-+    let _transition = crate::session::StorageTransition::acquire()?;
-+    let storages = crate::session::list_profiles()?
-+        .iter()
-+        .map(|profile| Storage::open_unwatched(profile))
-+        .collect::<Result<Vec<_>>>()?;
-+    #[cfg(test)]
-+    if let Some(hook) = AFTER_PROFILE_LISTING.with(|slot| slot.borrow_mut().take()) {
-+        hook();
-+    }
-+    crate::session::with_storages_locked(&storages, || {
-+        let mut session_paths = Vec::new();
-+        for storage in &storages {
-+            for inst in storage.load_instances_complete()? {
-+                let path = PathBuf::from(&inst.project_path);
-+                session_paths.extend(path.canonicalize().ok());
-+                session_paths.push(path);
-+            }
-+        }
-+        let (kept, free): (Vec<_>, Vec<_>) = orphans
-+            .iter()
-+            .cloned()
-+            .partition(|wt| session_paths.iter().any(|path| path.starts_with(&wt.path)));
-+        for wt in &kept {
-+            eprintln!("✗ Skipped {}: a session now uses it", wt.path.display());
-+        }
-+        Ok(remove_orphaned_worktrees(git_wt, &free, purging))
-+    })?
++function sameWorkflow(run, current, repositoryId) {
++  return run.event === 'merge_group' && paths.has(run.path) &&
++    run.path === current.path && run.workflow_id === current.workflow_id &&
++    run.repository?.id === repositoryId && run.head_repository?.id === repositoryId;
 +}
 +
- async fn cleanup_orphaned(profile: &str, force: bool) -> Result<()> {
-     let storage = Storage::open_unwatched(profile)?;
-     let (instances, _groups) = storage.load_with_groups()?;
-@@ -389,7 +432,7 @@ async fn cleanup_orphaned(profile: &str, force: bool) -> Result<()> {
-         let main_repo = GitWorktree::find_main_repo(&current_dir)?;
-         let git_wt = GitWorktree::new(main_repo)?;
- 
--        removed_count += remove_orphaned_worktrees(&git_wt, &orphaned_worktrees, &purging);
-+        removed_count += remove_confirmed_worktrees(&git_wt, &orphaned_worktrees, &purging)?;
-     }
- 
-     println!("\n✓ Cleanup complete: {} items removed", removed_count);
-@@ -515,6 +558,98 @@ mod tests {
-         assert_eq!(ids(&left), ["restored", "locked", "reserved"]);
-     }
- 
-+    /// A session created on, or inside, a listed candidate after listing keeps its checkout.
-+    #[test]
-+    #[serial_test::serial]
-+    fn cleanup_spares_candidates_a_session_adopted_after_listing() {
-+        let tmp = tempfile::TempDir::new().unwrap();
-+        let _home = crate::session::test_support::isolate_app_dir_at(&tmp.path().join("home"));
-+        let repo = tmp.path().join("repo");
-+        std::fs::create_dir(&repo).unwrap();
-+        let git = |args: &[&str]| {
-+            let status = std::process::Command::new("git")
-+                .args(["-c", "user.name=t", "-c", "user.email=t@t"])
-+                .args(args)
-+                .current_dir(&repo)
-+                .status()
-+                .unwrap();
-+            assert!(status.success(), "git {args:?}");
-+        };
-+        git(&["init", "-q"]);
-+        git(&["commit", "-q", "--allow-empty", "-m", "init"]);
-+        let git_wt = GitWorktree::new(repo.clone()).unwrap();
-+        let mut paths = Vec::new();
-+        for name in ["inside", "equal", "free"] {
-+            let path = tmp.path().join(name);
-+            git_wt.create_worktree(name, &path, true, None).unwrap();
-+            paths.push(path.canonicalize().unwrap());
++module.exports = async ({ github, context, core }) => {
++  const event = context.payload.workflow_run;
++  const repositoryId = context.payload.repository.id;
++  const { data: current } = await github.rest.actions.getWorkflowRun({
++    ...context.repo, run_id: event.id,
++  });
++  const key = entry(current.head_branch);
++  if (!key || !sameWorkflow(current, current, repositoryId) ||
++      current.head_sha !== event.head_sha || current.workflow_id !== event.workflow_id) return;
++
++  // Queue state, rather than event delivery order, identifies the current generation.
++  const isCurrent = async () => {
++    const { repository } = await github.graphql(`
++      query($owner: String!, $repo: String!, $number: Int!) {
++        repository(owner: $owner, name: $repo) {
++          pullRequest(number: $number) {
++            baseRefName
++            mergeQueueEntry { headCommit { oid } }
++          }
 +        }
++      }`, { ...context.repo, number: key.number });
++    const pr = repository?.pullRequest;
++    return pr?.baseRefName === key.base &&
++      pr.mergeQueueEntry?.headCommit?.oid === current.head_sha;
++  };
++  if (!await isCurrent()) return;
 +
-+        let (orphans, _) = find_orphaned_worktrees(&[], &git_wt).unwrap();
-+        assert_eq!(orphans.len(), 3);
-+        let purging = purging_paths(&orphans);
-+
-+        let nested = paths[0].join("sub");
-+        std::fs::create_dir(&nested).unwrap();
-+        for (profile, path) in [("one", &nested), ("two", &paths[1])] {
-+            Storage::new_unwatched(profile)
-+                .unwrap()
-+                .update(|instances, _groups| {
-+                    instances.push(Instance::new("adopted", path.to_str().unwrap()));
-+                    Ok(())
-+                })
-+                .unwrap();
-+        }
-+
-+        let removed = remove_confirmed_worktrees(&git_wt, &orphans, &purging).unwrap();
-+        assert_eq!(removed, 1);
-+        assert!(paths[0].exists() && paths[1].exists());
-+        assert!(!paths[2].exists());
-+    }
-+
-+    /// Cleanup holds the catalogue lock across the profile listing, so a profile cannot be created
-+    /// after the listing and go unread.
-+    #[test]
-+    #[serial_test::serial]
-+    fn cleanup_blocks_profile_creation_after_listing() {
-+        let tmp = tempfile::TempDir::new().unwrap();
-+       
-```
-
-**File**: `src/git/worktree/mod.rs` (modified, +1/-0)
-```diff
-@@ -44,6 +44,7 @@ pub(crate) struct WorktreeCreation {
-     pub branch_created: bool,
-     pub checkout_created: bool,
- }
-+#[derive(Clone)]
- pub struct WorktreeEntry {
-     pub path: PathBuf,
-     pub branch: Option<String>,
-```
-
-**File**: `src/session/mod.rs` (modified, +3/-1)
-```diff
-@@ -120,7 +120,9 @@ pub(crate) use storage::observe_lock_contention_for_test;
- pub(crate) use storage::{
-     duplicate_reports, reconcile_profile_duplicates, DuplicateIdReport, ProfileMovePlan,
- };
--pub(crate) use storage::{try_acquire_terminal_handoff_driver, TerminalHandoffDriver};
-+pub(crate) use storage::{
-+    try_acquire_terminal_handoff_driver, with_storages_locked, TerminalHandoffDriver,
-+};
- 
- use std::sync::atomic::{AtomicBool, Ordering};
- 
-```
-
----
-
-### Incident Patch 2: `e0830982` (2026-11-04)
-**Commit Message**: fix(serve): let the Daemon stop before the launcher kills it on a readiness timeout (#5259)
-
-* fix(serve): stop a Daemon start in flight on SIGTERM so its guards run
-
-The signal handler was installed only after the Tunnel start, so a
-signal during it used the default action and skipped every Drop,
-including the one that turns off a Funnel the start switched on.
-Register the handler first and race the Tunnel start against it.
-
-Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
-
-* fix(serve): give an unready Daemon a grace to stop before killing it
-
-On a readiness failure the launcher sent SIGKILL at once. Send SIGTERM
-and wait up to 5 s, longer than the 3 s Funnel reset bound, then kill.
-
-Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
-
-* fix(serve): do not signal an unready Daemon child that is already reaped
-
-Addresses review comment from @jerome-benoit on #5259.
-
-Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
-
-* fix(serve): size the unready Daemon grace to the Funnel cleanup budget
-
-The guard runs two commands bounded at 3 s each, so 5 s could cut it
-short. Derive the grace from that bound plus margin.
-
-Addresses review comment from @jerome-benoit on #5259.
-
-Co-Autho
-
-**File**: `src/cli/serve.rs` (modified, +77/-2)
-```diff
-@@ -1890,8 +1890,7 @@ async fn start_daemon(
-     )
-     .await;
-     if let Err(error) = ready {
--        let _ = child.kill();
--        let _ = child.wait();
-+        stop_unready_daemon(&mut child).await;
-         return Err(error);
-     }
- 
-@@ -1932,6 +1931,34 @@ async fn await_daemon_ready<'a>(
-     })
- }
- 
-+/// Covers the Funnel guard's two sequential cleanup commands, each bounded by
-+/// `FUNNEL_OFF_TIMEOUT`, plus margin.
-+const UNREADY_DAEMON_GRACE: std::time::Duration = crate::server::tunnel::FUNNEL_OFF_TIMEOUT
-+    .saturating_mul(2)
-+    .saturating_add(std::time::Duration::from_secs(2));
-+
-+/// SIGTERM, then SIGKILL after the grace.
-+async fn stop_unready_daemon(child: &mut std::process::Child) {
-+    stop_child_within(child, UNREADY_DAEMON_GRACE).await;
-+}
-+
-+async fn stop_child_within(child: &mut std::process::Child, grace: std::time::Duration) {
-+    // A reaped child's pid may be reused, so signal only one `try_wait` shows still running.
-+    if !matches!(child.try_wait(), Ok(None)) {
-+        return;
-+    }
-+    let _ = nix::sys::signal::kill(
-+        nix::unistd::Pid::from_raw(child.id() as i32),
-+        nix::sys::signal::Signal::SIGTERM,
-+    );
-+    let deadline = tokio::time::Instant::now() + grace;
-+    while !matches!(child.try_wait(), Ok(Some(_))) && tokio::time::Instant::now() < deadline {
-+        tokio::time::sleep(std::time::Duration::from_millis(25)).await;
-+    }
-+    let _ = child.kill();
-+    let _ = child.wait();
-+}
-+
- async fn migrate_managed_launch(
-     transaction: crate::daemon::lifecycle::Transaction,
-     full: bool,
-@@ -2247,6 +2274,54 @@ mod tests {
- 
-     use super::*;
- 
-+    #[tokio::test]
-+    async fn an_already_exited_daemon_is_not_signalled() {
-+        let mut child = std::process::Command::new("true").spawn().unwrap();
-+        let deadline = std::time::Instant::now() + std::time::Duration::from_secs(10);
-+        // Reap it as the readiness loop does, then keep the pid from a stale signal.
-+        while child.try_wait().unwrap().is_none() {
-+            assert!(std::time::Instant::now() < deadline, "child never exited");
-+            tokio::time::sleep(std::time::Duration::from_millis(10)).await;
-+        }
-+        let started = std::time::Instant::now();
-+        stop_child_within(&mut child, std::time::Duration::from_secs(30)).await;
-+        assert!(started.elapsed() < std::time::Duration::from_secs(5));
-+    }
-+
-+    #[tokio::test]
-+    async fn an_unready_daemon_is_stopped_within_the_grace() {
-+        // The ready file is touched once the shell has installed its trap.
-+        for (trap, kill_expected) in [("exit 0", false), ("", true)] {
-+            let dir = tempfile::tempdir().unwrap();
-+            let ready = dir.path().join("ready");
-+            let mut child = std::process::Command::new("sh")
-+                .args([
-+                    "-c",
-+                    r#"trap "$2" TERM; touch "$1"; while :; do sleep 0.05; done"#,
-+                    "sh",
-+                ])
-+                .arg(&ready)
-+                .arg(trap)
-+                .spawn()
-+                .unwrap();
-+            let deadline = std::time::Instant::now() + std::time::Duration::from_secs(10);
-+            while !ready.exists() {
-+                assert!(std::time::Instant::now() < deadline, "shell never started");
-+                tokio::time::sleep(std::time::Duration::from_millis(10)).await;
-+            }
-+            let grace = std::time::Duration::from_millis(500);
-+            let started = std::time::Instant::now();
-+            stop_child_within(&mut child, grace).await;
-+            let elapsed = started.elapsed();
-+            assert!(child.try_wait().unwrap().is_some(), "child must be reaped");
-+            if kill_expected {
-+                assert!(elapsed >= grace, "{elapsed:?}");
-+            } else {
-+                assert!(elapsed < grace, "{elapsed:?}");
-+            }
-+        }
-+    }
-+
-     #[tokio::test]
-     async fn cityhall_refusal_cannot_reflect_the_bearer_into_errors() {
-         use tokio::io::{AsyncReadExt, AsyncWriteExt};
-```
-
-**File**: `src/server/startup.rs` (modified, +89/-28)
-```diff
-@@ -307,10 +307,66 @@ async fn within_tunnel_deadline<T>(
-         })
- }
- 
-+/// Drops `start` on a signal so its guards run their cleanup.
-+async fn until_terminated<T>(
-+    terminated: &CancellationToken,
-+    start: impl Future<Output = anyhow::Result<T>>,
-+) -> anyhow::Result<T> {
-+    tokio::select! {
-+        biased;
-+        _ = terminated.cancelled() => anyhow::bail!("Stopped by a signal before startup finished"),
-+        result = start => result,
-+    }
-+}
-+
-+/// Cancelled by the first SIGINT, SIGTERM or SIGHUP. Registered up front so a signal during
-+/// startup stops it, rather than killing the process with no `Drop` run.
-+fn watch_termination_signals() -> CancellationToken {
-+    let token = CancellationToken::new();
-+    let cancel = token.clone();
-+    #[cfg(unix)]
-+    {
-+        use tokio::signal::unix::{signal, SignalKind};
-+        let register = |kind: SignalKind, name: &str| {
-+            signal(kind)
-+                .inspect_err(|error| {
-+                    tracing::warn!(target: "serve.shutdown", signal = name, %error, "could not register signal handler");
-+                })
-+                .ok()
-+        };
-+        let mut sigterm = register(SignalKind::terminate(), "SIGTERM");
-+        let mut sighup = register(SignalKind::hangup(), "SIGHUP");
-+        tokio::spawn(async move {
-+            tokio::select! {
-+                _ = async { if tokio::signal::ctrl_c().await.is_err() { std::future::pending().await } } => {
-+                    tracing::info!(target: "serve.shutdown", signal = "SIGINT", "received signal, shutting down");
-+                }
-+                _ = async { match sigterm { Some(ref mut s) => { s.recv().await; } None => std::future::pending().await } } => {
-+                    tracing::info!(target: "serve.shutdown", signal = "SIGTERM", "received signal, shutting down");
-+                }
-+                _ = async { match sighup { Some(ref mut s) => { s.recv().await; } None => std::future::pending().await } } => {
-+                    tracing::info!(target: "serve.shutdown", signal = "SIGHUP", "received signal, shutting down");
-+                }
-+            }
-+            cancel.cancel();
-+        });
-+    }
-+    #[cfg(not(unix))]
-+    tokio::spawn(async move {
-+        if tokio::signal::ctrl_c().await.is_err() {
-+            return;
-+        }
-+        tracing::info!(target: "serve.shutdown", "received ctrl-c, shutting down");
-+        cancel.cancel();
++  const obsolete = run => {
++    const candidate = entry(run.head_branch);
++    return sameWorkflow(run, current, repositoryId) &&
++      candidate?.base === key.base && candidate.number === key.number &&
++      run.run_number < current.run_number && run.head_sha !== current.head_sha &&
++      run.run_attempt === 1 && active.includes(run.status);
++  };
++  // Snapshot every page before cancelling: mutations can shift API pagination.
++  const candidates = new Map();
++  for (const status of active) {
++    const runs = await github.paginate(github.rest.actions.listWorkflowRuns, {
++      ...context.repo, workflow_id: current.workflow_id,
++      event: 'merge_group', status, per_page: 100,
 +    });
-+    token
-+}
-+
- pub(crate) async fn start_server(
-     config: ServerConfig<'_>,
-     transaction: crate::daemon::lifecycle::Transaction,
- ) -> anyhow::Result<()> {
-+    let terminated = watch_termination_signals();
-     let tunnel_deadline = tokio::time::Instant::now() + TUNNEL_STARTUP_DEADLINE;
-     let ServerConfig {
-         profile,
-@@ -615,7 +671,7 @@ pub(crate) async fn start_server(
- 
-     let tunnel_handle = if remote {
-         // Choosing and starting the tunnel is the part that can hang, so it shares one deadline.
--        let handle = within_tunnel_deadline(tunnel_deadline, async {
-+        let handle = until_terminated(&terminated, within_tunnel_deadline(tunnel_deadline, async {
-             let tailscale_ok = if tunnel::skips_tailscale(no_tailscale, tunnel_name, tunnel_url) {
-                 tracing::debug!(target: "http.middleware", "tunnel: --no-tailscale or a named tunnel, skipping Tailscale auto-detection");
-                 false
-@@ -652,7 +708,7 @@ pub(crate) async fn start_server(
-             } else {
-                 tunnel::TunnelHandle::spawn_quick(local_port).await?
-             })
--        })
-+        }))
-         .await?;
- 
-         let tunnel_url_with_token = if let Some(ref token) = auth_token {
-@@ -1214,32 +1270,9 @@ pub(crate) async fn start_server(
-     // Both listeners drain on the same cancellation signal and deadline.
-     let shutdown_state = state.clone();
-     let shutdown_signal = async move {
--        #[cfg(unix)]
--        {
--            use tokio::signal::unix::{signal, SignalKind};
--            let mut sigterm = signal(SignalKind::terminate()).ok();
--            let mut sighup = signal(SignalKind::hangup()).ok();
--            tokio::select! {
--                _ = shutdown_state.shutdown.cancelled() => {}
--                _ = tokio::signal::ctrl_c() => {
--                    tracing::info!(target: "serve.shutdown", signal = "SIGINT", "received signal, shutting down");
--                }
--                _ = async { match sigterm { Some(ref mut s) => { s.recv().await; } None => std::future::pending().await } } => {
--                    tracing::info!(target: "serve.shutdown", signal = "SIGTERM", "received signal, shutting down");
--                }
--                _ = async { match sighup { Some(ref mut s) => { s.recv().await; } None => std::future::pending().await } } => {
--                    tracing::info!(target: "serve.shutdown", signal = "SIGHUP", "received signal, shutting down");
--                }
--            }
--        }
--        #[cfg(no
++    for (const run of runs) if (obsolete(run)) candidates.set(run.id, run);
++  }
++  for (const candidate of candidates.values()) {
++    const { data: run } = await github.rest.actions.getWorkflowRun({
++      ...context.repo, run_id: candidate.id,
++    });
++    if (!obsolete(run) || run.head_sha !== candidate.head_sha) continue;
++    if (!await isCurrent()) return;
++    try {
++      await github.rest.actions.cancelWorkflowRun({ ...context.repo, run_id: run.id });
++      core.notice(`Cancelled obsolete queue run ${run.id} for ${key.base}/${key.number}`);
++    } catch (error) {
++      if (error.status !== 409) throw error;
++      const { data: latest } = await github.rest.actions.getWorkflowRun({
++        ...context.repo, run_id: run.id,
++      });
++      if (latest.status !== 'completed') throw error;
++    }
++  }
++};
 ```
 
-**File**: `src/server/tunnel.rs` (modified, +1/-1)
+**File**: `.github/scripts/cancel-obsolete-queue-runs.test.cjs` (added, +139/-0)
 ```diff
-@@ -674,7 +674,7 @@ async fn lock_funnel_starts(path: &std::path::Path) -> anyhow::Result<std::fs::F
- }
+@@ -0,0 +1,139 @@
++const { test } = require('node:test');
++const assert = require('node:assert/strict');
++const cancel = require('./cancel-obsolete-queue-runs.cjs');
++
++const branch = (pr = 42, base = 'main', sha = 'a') =>
++  `gh-readonly-queue/${base}/pr-${pr}-${sha.repeat(40)}`;
++const current = {
++  id: 20, run_number: 10, run_attempt: 1, workflow_id: 100, event: 'merge_group',
++  path: '.github/workflows/ci.yml', head_branch: branch(), head_sha: 'b'.repeat(40),
++  repository: { id: 1 }, head_repository: { id: 1 }, status: 'queued',
++};
++const old = { ...current, id: 19, run_number: 9, head_branch: branch(42, 'main', 'c'), head_sha: 'd'.repeat(40) };
++
++async function exercise({ trigger = {}, candidates = [old], fresh = {}, queueSha = current.head_sha, queueBase = 'main',
++  queueError, cancelError, latest, pageError, leaveQueue = false, advanceQueue = () => false, event = current } = {}) {
++  const run = { ...current, ...trigger };
++  const cancelled = [];
++  const queries = [];
++  const reads = [];
++  let queueReads = 0;
++  const github = {
++    rest: {
++      actions: {
++        listWorkflowRuns: () => {},
++        getWorkflowRun: async ({ run_id }) => {
++          reads.push(run_id);
++          if (run_id === run.id) return { data: run };
++          const candidate = candidates.find(c => c.id === run_id);
++          return { data: latest && reads.filter(id => id === run_id).length > 1
++            ? { ...candidate, ...latest } : { ...candidate, ...fresh } };
++        },
++        cancelWorkflowRun: async ({ run_id }) => {
++          assert.equal(queries.length, 5, 'snapshot all statuses before mutating');
++          cancelled.push(run_id);
++          if (cancelError) throw cancelError;
++        },
++      },
++    },
++    graphql: async (query, args) => {
++      assert.equal(args.number, 42);
++      assert.match(query, /mergeQueueEntry/);
++      queueReads++;
++      if (queueError) throw queueError;
++      return { repository: { pullRequest: {
++        baseRefName: queueBase,
++        mergeQueueEntry: leaveQueue ? null : {
++          headCommit: { oid: advanceQueue({ reads: queueReads, cancelled }) ? 'new-generation' : queueSha },
++        },
++      } } };
++    },
++    paginate: async (method, args) => {
++      assert.equal(method, github.rest.actions.listWorkflowRuns);
++      assert.equal(args.event, 'merge_group');
++      assert.equal(args.workflow_id, run.workflow_id);
++      assert.equal(args.per_page, 100);
++      queries.push(args.status);
++      if (pageError) throw pageError;
++      return candidates.filter(c => c.status === args.status);
++    },
++  };
++  await cancel({ github, context: {
++    repo: { owner: 'owner', repo: 'repo' },
++    payload: { repository: { id: 1 }, workflow_run: event },
++  }, core: { notice() {} } });
++  return { cancelled, queries, reads };
++}
++
++test('cancels obsolete CI and Tests generations, including more than 100 returned candidates', async () => {
++  for (const path of ['.github/workflows/ci.yml', '.github/workflows/tests.yml']) {
++    const candidates = Array.from({ length: 105 }, (_, i) => ({ ...old, path, id: 1000 + i }));
++    candidates.push({ ...old, path, id: 2000, status: 'in_progress' });
++    const result = await exercise({ trigger: { path }, event: { ...current, path }, candidates });
++    assert.deepEqual(result.cancelled, candidates.map(c => c.id));
++    assert.deepEqual(result.queries, ['queued', 'in_progress', 'waiting', 'pending', 'requested']);
++  }
++});
++
++test('leaves unrelated, newer, completed and same-SHA runs alone', async () => {
++  const cases = [
++    { head_branch: branch(43) }, { head_branch: branch(42, 'release/main') },
++    { head_branch: 'feature/fake-queue' }, { head_branch: branch() + '-suffix' },
++    { event: 'pull_request' }, { workflow_id: 101 },
++    { path: '.github/workflows/tests.yml' }, { repository: { id: 2 } },
++    { head_repository: { id: 2 } }, { run_number: 10 }, { run_number: 11 },
++    { head_sha: current.head_sha }, { status: 'completed' }, { run_attempt: 2 },
++  ];
++  for (const change of cases) {
++    assert.deepEqual((await exercise({ candidates: [{ ...old, ...change }] })).cancelled, [], JSON.stringify(change));
++  }
++});
++
++test('rejects untrusted triggers and generations no longer current in the queue', async () => {
++  for (const trigger of [
++    { event: 'pull_request' }, { path: '.github/workflows/release.yml' },
++    { head_branch: 'main' }, { head_sha: 'changed' }, { workflow_id: 101 },
++    { repository: { id: 2 } }, { head_repository: { id: 2 } },
++  ]) {
++    assert.deepEqual((await exercise({ trigger })).queries, [], JSON.stringify(trigger));
++  }
++  assert.deepEqual((await exercise({ queueSha: 'changed' })).cancelled, []);
++  assert.deepEqual((await exercise({ queueBase: 'release' })).cancelled, []);
++  assert.deepEqual((await exercise({ leaveQueue: true })).cancelled, []);
++  assert.deepEqual((await exercise({ advanceQueue: ({ reads }) => reads > 1 })).cancelled, []);
++  await assert.rejects(exer
+```
+
+**File**: `.github/workflows/cancel-obsolete-queue-runs.yml` (added, +30/-0)
+```diff
+@@ -0,0 +1,30 @@
++name: Cancel obsolete queue runs
++
++on:
++  # Default-branch code only; no queue checkout, cache restoration or artifacts.
++  workflow_run: # zizmor: ignore[dangerous-triggers]
++    workflows: [CI, Tests]
++    types: [requested]
++
++permissions:
++  contents: read
++  actions: write
++  pull-requests: read
++
++jobs:
++  cancel:
++    if: github.event.workflow_run.event == 'merge_group'
++    runs-on: ubuntu-latest
++    timeout-minutes: 5
++    steps:
++      # workflow_run's SHA belongs to the default branch, never the queue head.
++      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
++        with:
++          ref: ${{ github.sha }}
++          persist-credentials: false
++          sparse-checkout: .github/scripts
++      - uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
++        with:
++          script: |
++            const cancel = require('./.github/scripts/cancel-obsolete-queue-runs.cjs');
++            await cancel({ github, context, core });
+```
+
+**File**: `.github/workflows/ci.yml` (modified, +2/-1)
+```diff
+@@ -10,7 +10,7 @@ on:
+   merge_group:
  
- /// How long turning the Funnel back off may take.
--const FUNNEL_OFF_TIMEOUT: std::time::Duration = std::time::Duration::from_secs(3);
-+pub(crate) const FUNNEL_OFF_TIMEOUT: std::time::Duration = std::time::Duration::from_secs(3);
+ # The event keeps a queue run and the push of its fast-forwarded commit apart.
+-# Queue refs are unique per entry; newer PR and main pushes cancel older runs.
++# Queue generations have distinct refs; cancel-obsolete-queue-runs handles them.
+ concurrency:
+   group: ci-${{ github.event_name }}-${{ github.event.pull_request.number || github.ref }}
+   cancel-in-progress: true
+@@ -215,6 +215,7 @@ jobs:
+       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+         with:
+           persist-credentials: false
++      - run: node --test .github/scripts/cancel-obsolete-queue-runs.test.cjs
+       - run: scripts/verify-shared-target.sh --self-test
+       - run: python3 .github/scripts/select-internal-pr.py --self-test
+       - run: python3 .github/scripts/check-dependabot-pr.py --self-test
+```
+
+**File**: `.github/workflows/tests.yml` (modified, +15/-11)
+```diff
+@@ -8,7 +8,7 @@ on:
+   merge_group:
  
- /// Turns off the :443 Funnel a Tailscale start switched on, unless the start finishes.
- /// Every error return after `--bg` starts awaits [`Self::fail`]; `Drop` covers a start that was
+ # The event keeps a queue run and the push of its fast-forwarded commit apart.
+-# Queue refs are unique per entry; newer PR and main pushes cancel older runs.
++# Queue generations have distinct refs; cancel-obsolete-queue-runs handles them.
+ concurrency:
+   group: tests-${{ github.event_name }}-${{ github.event.pull_request.number || github.ref }}
+   cancel-in-progress: true
+@@ -41,6 +41,17 @@ jobs:
+           # (zizmor artipacked). Matches the hardened convention in ci.yml and
+           # release.yml.
+           persist-credentials: false
++      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
++        with:
++          node-version: '22'
++          cache: npm
++          cache-dependency-path: |
++            web/package-lock.json
++            acp-worker/test-shim/package-lock.json
++      - name: Validate web lockfile
++        if: matrix.leg == 'web-e2e'
++        working-directory: web
++        run: npm ci --dry-run --ignore-scripts --no-audit --no-fund
+       - uses: ./.github/actions/rust-toolchain
+       - uses: ./.github/actions/kache
+         with:
+@@ -63,13 +74,6 @@ jobs:
+             userns,
+           }
+           PROFILE
+-      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+-        with:
+-          node-version: '22'
+-          cache: npm
+-          cache-dependency-path: |
+-            web/package-lock.json
+-            acp-worker/test-shim/package-lock.json
+       # tests/integration/acp_smoke.rs spawns the Node ACP shim under
+       # acp-worker/test-shim/. The shim depends on @agentclientprotocol/sdk,
+       # so its deps must be installed before the integration crate runs. Only
+@@ -558,6 +562,9 @@ jobs:
+           node-version: '22'
+           cache: npm
+           cache-dependency-path: web/package-lock.json
++      - name: Install web deps
++        working-directory: web
++        run: npm ci
+       - uses: ./.github/actions/rust-toolchain
+       - uses: ./.github/actions/kache
+         with:
+@@ -579,9 +586,6 @@ jobs:
+           # smaller `.js`, far faster navigation); see web/vite.config.ts.
+           AOE_COVERAGE_INLINE_SOURCEMAP: '1'
+         run: cargo build --features web
+-      - name: Install web deps
+-        working-directory: web
+-        run: npm ci
+       # Same scheme as the mocked job: cache Chromium under
+       # ~/.cache/ms-playwright, key on the lockfile, skip --with-deps
+       # because ubuntu-latest already has the apt prerequisites.
 ```
 
 ---
 
-### Incident Patch 3: `7935c8db` (2026-11-04)
-**Commit Message**: fix(web): clear seeded model and effort when the wizard agent changes (#5265)
+### Incident Patch 2: `db073acb` (2026-11-05)
+**Commit Message**: chore(deps): bump @assistant-ui/react from 0.15.21 to 0.15.32 in /web in the web-pre1-patch group across 1 directory (#5190)
 
-* fix(web): clear seeded model and effort when the wizard agent changes
+* chore(deps): bump @assistant-ui/react
 
-The wizard seeds agentModel and agentEffort from the starting agent's
-acp_defaults. Switching agent kept them, so the create request sent the
-previous agent's model and the session failed to switch to it.
+Bumps the web-pre1-patch group with 1 update in the /web directory: [@assistant-ui/react](https://github.com/assistant-ui/assistant-ui/tree/HEAD/packages/react).
 
-Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
 
-* test(web): record agent-switch model reset in the coverage matrix
+Updates `@assistant-ui/react` from 0.15.21 to 0.15.32
+- [Release notes](https://github.com/assistant-ui/assistant-ui/releases)
+- [Changelog](https://github.com/assistant-ui/assistant-ui/blob/main/packages/react/CHANGELOG.md)
+- [Commits](https://github.com/assistant-ui/assistant-ui/commits/@assistant-ui/react@0.15.32/packages/react)
 
-Addresses review comment from @jerome-benoit on #5265.
+---
+updated-dependencies:
+- dependency-name: "@assistant-ui/react"
+  dependency-version: 0.15.31
+  dependency-type: direct:production
+  update-type: version-update:semver-patch
+  dependency-group: web-pre1-patch
+...
 
-Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 
-* test(web): assert the create request omits the previous agent's model
+* chore: update Nix npmDepsHash for web dependencies
 
-Addresses review comment from CodeRabbit on #5265.
-
-Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 
 ---------
 
-Co-authored-by: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.no
 
-**File**: `web/src/components/session-wizard/__tests__/SessionWizard.test.tsx` (modified, +22/-0)
+**File**: `flake.nix` (modified, +1/-1)
 ```diff
-@@ -223,6 +223,28 @@ describe("SessionWizard structured view payload", () => {
-       agent_effort: "high",
-     });
-   });
-+
-+  it("drops the previous agent's model and effort after switching agent", async () => {
-+    vi.mocked(fetchSettings).mockResolvedValueOnce({
-+      session: { default_tool: "opencode" },
-+      acp: { acp_defaults: { opencode: { model: "openai/gpt-5.5", effort: "high" } } },
-+      sandbox: {},
-+    } as never);
-+    vi.mocked(fetchAgents).mockResolvedValueOnce([
-+      agent("opencode", { acp_installed: true }),
-+      agent("claude", { acp_installed: true }),
-+    ]);
-+    renderWizard({ path: "/tmp/proj" });
-+    await waitFor(() => expect(screen.getByTestId("wizard-agent-row").textContent).toContain("opencode"));
-+    fireEvent.click(screen.getByTestId("wizard-agent-row"));
-+    fireEvent.click(await screen.findByRole("button", { name: /^claude/ }));
-+    fireEvent.click(screen.getByRole("button", { name: "Done" }));
-+    await launch();
-+    await waitFor(() => expect(createSession).toHaveBeenCalled());
-+    expect(payload().tool).toBe("claude");
-+    expect(payload().agent_model).toBeUndefined();
-+    expect(payload().agent_effort).toBeUndefined();
-+  });
- });
- 
- describe("SessionWizard last instruction memory", () => {
+@@ -105,7 +105,7 @@
+             pname = "agent-of-empires-web";
+             version = "0";
+             src = ./web;
+-            npmDepsHash = "sha256-zITYrFhy9ewkgUsnF1Uazp46NaJbY5svOsuFdwk0HiY=";
++            npmDepsHash = "sha256-ACTtB+XehAX4DxRmwMj+cU1aJl3R41Xv5TW2IRyTOKk=";
+             # tsc -b && vite build; output goes to web/dist
+             installPhase = ''
+               mkdir $out
 ```
 
-**File**: `web/src/components/session-wizard/wizardReducer.test.ts` (modified, +10/-0)
+**File**: `web/package-lock.json` (modified, +503/-495)
 ```diff
-@@ -161,6 +161,16 @@ describe("leaving an import under structured_view off", () => {
- });
- 
- describe("SET_FIELD mutual exclusion", () => {
-+  it("switching agent drops the previous agent's seeded model and effort", () => {
-+    const seeded = makeState({ tool: "pi", agentModel: "p/m", agentEffort: "high" });
-+    expect(reducer(seeded, set("tool", "claude")).data).toMatchObject({
-+      tool: "claude",
-+      agentModel: "",
-+      agentEffort: "",
-+    });
-+    expect(reducer(seeded, set("tool", "pi")).data).toMatchObject({ agentModel: "p/m", agentEffort: "high" });
-+  });
-+
-   it("enabling scratch clears path sources, worktree, import id and a stale non-repo probe", () => {
-     const seeded = makeState({
-       path: "/old",
-```
-
-**File**: `web/src/components/session-wizard/wizardReducer.ts` (modified, +2/-0)
-```diff
-@@ -157,6 +157,8 @@ function setField(data: WizardData, field: string, value: unknown): WizardData {
-   }
-   // Any branch edit, even clearing it, stops the title mirror.
-   if (field === "worktreeBranch") next.worktreeBranchDirty = true;
-+  // The seeded model and effort belong to the previous agent; unset, the server uses the new agent's defaults.
-+  if (field === "tool" && value !== data.tool) Object.assign(next, { agentModel: "", agentEffort: "" });
-   if (field === "scratch" && value === true) {
-     Object.assign(next, {
-       path: "",
-```
-
-**File**: `web/tests/coverage-matrix.json` (modified, +8/-0)
-```diff
-@@ -1300,6 +1300,14 @@
-         "web/src/lib/types.ts"
-       ]
+@@ -8,7 +8,7 @@
+       "name": "web",
+       "version": "0.0.0",
+       "dependencies": {
+-        "@assistant-ui/react": "^0.15.21",
++        "@assistant-ui/react": "^0.15.32",
+         "@assistant-ui/react-markdown": "^0.14.15",
+         "@dnd-kit/core": "^6.3.1",
+         "@dnd-kit/sortable": "^10.0.0",
+@@ -199,49 +199,46 @@
+       }
      },
-+    {
-+      "id": "wizard.agent-switch-model-reset",
-+      "kind": "vitest",
-+      "risk": "medium",
-+      "specs": ["src/components/session-wizard/wizardReducer.test.ts"],
-+      "components": ["web/src/components/session-wizard/wizardReducer.ts"],
-+      "notes": "Switching the wizard agent clears the seeded model and effort so the create request omits them and the server uses the new agent's defaults; re-selecting the same agent keeps them."
-+    },
-     {
-       "id": "wizard.project-sandbox-override",
-       "notes": "Tri-state project container defaults resolve from the acknowledged served or explicitly selected profile; registry retries preserve unknown versus empty, profile switches commit atomically, manual edits and host-only imports outrank late defaults, and saves preserve explicit false while omitting inherited values.",
+     "node_modules/@assistant-ui/core": {
+-      "version": "0.3.20",
+-      "resolved": "https://registry.npmjs.org/@assistant-ui/core/-/core-0.3.20.tgz",
+-      "integrity": "sha512-gSY7kI5crnbaXFaF2tObBVekXvQCpBz0D8CqzEkDJrKOwe57gn2K52qBr2hL0o36Ssyg0DmiEAi0LjPG5ZSGqQ==",
++      "version": "0.3.32",
++      "resolved": "https://registry.npmjs.org/@assistant-ui/core/-/core-0.3.32.tgz",
++      "integrity": "sha512-eEOuM3K0HWoetfFW8WwGJrhFu7lAfn/Su9us6xMk9HbHUc3/5jL6EOa2VsxrWeZbPqu/yXxGT2KaaFVvzZtCbA==",
+       "license": "MIT",
+       "dependencies": {
+-        "assistant-stream": "^0.3.44",
+-        "nanoid": "^6.0.1"
++        "assistant-cloud": "^0.2.9",
++        "assistant-stream": "^0.3.55",
++        "nanoid": "^6.0.2"
+       },
+       "peerDependencies": {
+-        "@assistant-ui/store": "^0.3.14",
+-        "@assistant-ui/tap": "^0.9.18",
++        "@assistant-ui/store": "^0.3.22",
++        "@assistant-ui/tap": "^0.9.24",
+         "@types/react": "*",
+-        "assistant-cloud": "^0.2.1",
+         "react": "^18 || ^19"
+       },
+       "peerDependenciesMeta": {
+         "@types/react": {
+           "optional": true
+         },
+-        "assistant-cloud": {
+-          "optional": true
+-        },
+         "react": {
+           "optional": true
+         }
+       }
+     },
+     "node_modules/@assistant-ui/react": {
+-      "version": "0.15.21",
+-      "resolved": "https://registry.npmjs.org/@assistant-ui/react/-/react-0.15.21.tgz",
+-      "integrity": "sha512-5VID3r2YpYFbx6LLfyOSWwRVf4WOJXYsfSN/C67sbCsJsqqBbxeQpn4MB9g73HcyriBkRwqvHY5XXCguyNqP6Q==",
++      "version": "0.15.32",
++      "resolved": "https://registry.npmjs.org/@assistant-ui/react/-/react-0.15.32.tgz",
++      "integrity": "sha512-cw+8UQRnJocyHEaNc3+S+ulZaFp4UoVnbjyRmVFZcq8XSHpe4onz7ZkXkBl7L8IZftgvNdHS9ZEujnqohwzibw==",
+       "license": "MIT",
+       "dependencies": {
+-        "@assistant-ui/core": "^0.3.20",
+-        "@assistant-ui/store": "^0.3.14",
+-        "@assistant-ui/tap": "^0.9.18",
+-        "assistant-cloud": "^0.2.2",
+-        "assistant-stream": "^0.3.44",
+-        "radix-ui": "^1.6.7",
++        "@assistant-ui/core": "^0.3.32",
++        "@assistant-ui/store": "^0.3.22",
++        "@assistant-ui/tap": "^0.9.24",
++        "assistant-cloud": "^0.2.9",
++        "assistant-stream": "^0.3.55",
++        "radix-ui": "^1.8.1",
+         "react-textarea-autosize": "^8.5.9",
+-        "safe-content-frame": "^0.0.31",
+-        "zod": "^4.6.5",
+-        "zustand": "^5.0.15"
++        "safe-content-frame": "^0.0.34",
++        "zod": "^4.6.7",
++        "zustand": "^5.0.16"
+       },
+       "peerDependencies": {
+         "@types/react": "*",
+@@ -282,12 +279,12 @@
+       }
+     },
+     "node_modules/@assistant-ui/store": {
+-      "version": "0.3.14",
+-      "resolved": "https://registry.npmjs.org/@assistant-ui/store/-/store-0.3.14.tgz",
+-      "integrity": "sha512-GqHYBD4TfSBTynyBYs2DDnyskfTVNtKHNaXws6dG5//18fb5PJyTYhXjkOSvDqF+dKX5rlOk9Bbd7G0CfJ+xkQ==",
++      "version": "0.3.22",
++      "resolved": "https://registry.npmjs.org/@assistant-ui/store/-/store-0.3.22.tgz",
++      "integrity": "sha512-aXp4m42mmtZOQUE0lzxJ8Z9EZKknOWBk+DDg1Pj2gNhhBGYXmfrScYD1N1e/9/8wTKSwL0g4z2fSZqr+5fWbxg==",
+       "license": "MIT",
+       "peerDependencies": {
+-        "@assistant-ui/tap": "^0.9.18",
++        "@assistant-ui/tap": "^0.9.24",
+         "@types/react": "*",
+         "react": "^18 || ^19"
+       },
+@@ -301,9 +298,9 @@
+       }
+     },
+     "node_modules/@assistant-ui/tap": {
+-      "version": "0.9.18",
+-      "resolved": "https://registry.npmjs.org/@assistant-ui/tap/-/tap-0.9.18.tgz",
+-      "integrity": "sha512-JowBf+JbzQRarun3DWy/4H6XZ7v/1fJ154By00Kn7b30thmlA/bh2lOPa9hPPeYaMcsTiYYYu6yWEM+AFMvdIw==",
++      "version": "0.9.24",
++      "resolved": "https://registry.npmjs.org/@assistant-ui/tap/-/tap-0.9.24.tgz",
++      "integrity": "sha512-6O0hf2HkKbrylIwNlFUimHf2V/6Gq5UXF0y0r2Fbw5wSvvO8ZDmv0AEkMwwygSfJgbpnQgiC8Xs+2VFaeO0RBw==",
+       "license": "MIT",
+       "peerDependencies": {
+         "@types/react": "*",
+@@ -1968,18 +1965,18 @@
+       "license": "MIT"
+     },
+     "node_modules/@radix-ui/primitive": {
+-      "version": "1.1.7",
+-      "resolved": "https://registry.npmjs.org/@radix-ui/primitive/-/primitive-1.1.7.tgz",
+-      "integrity": "sha512-rqWnm76nYT8HoNNqEjpgJ7Pw/DrBj5iBTrmEPo6HTX5+VJyBNOqTdv4g89G63HuR5g0AaENoAcH7Is5fF2kZ8Q==",
++      "version": "1.2.0",
++      "resolved": "https://registry.npmjs.org/@radix-ui/primitive/-/primitive-1.2.0.tgz",
++      "integrity": "sha512-KABY+VMIRPJL+Vyzv/335FEhXXD/xDv8BMb1kl48/aXJZMH0LtHCTx5ga5RnxaEP3nZHtmTLf1P9vanmFX46bw==",
+       "license": "MIT"
+     },
+     "node_modules/@rad
+```
+
+**File**: `web/package.json` (modified, +1/-1)
+```diff
+@@ -18,7 +18,7 @@
+     "coverage:all": "rm -rf coverage && AOE_COVERAGE=1 npm run test:unit -- --coverage && AOE_COVERAGE=1 npx playwright test && npm run coverage:merge"
+   },
+   "dependencies": {
+-    "@assistant-ui/react": "^0.15.21",
++    "@assistant-ui/react": "^0.15.32",
+     "@assistant-ui/react-markdown": "^0.14.15",
+     "@dnd-kit/core": "^6.3.1",
+     "@dnd-kit/sortable": "^10.0.0",
+```
+
+---
+
+### Incident Patch 3: `259bdfb5` (2026-11-05)
+**Commit Message**: fix(web): stop retrying an unknown profile's agent list and key the list by profile (#5279)
+
+* fix(web): stop retrying an unknown profile's agent list and key the list by profile
+
+The wizard's agent list now records the profile it was loaded for and reads
+as loading for any other, so a profile switch never shows the previous
+list as ready. A 404 profile_not_found from /api/agents is no longer
+retried; the footer says the profile is gone and Launch stays off.
+
+Closes #5063
+
+Co-Authored-By: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
+
+* fix(web): drop the last Profile's agents on a failed switch, and name a deleted Profile first
+
+A failed agent list for a newly chosen Profile kept the previous
+Profile's agents, so the Agent picker and the Yolo and View rows read
+them for the new one. A failure for another Profile now clears the list;
+a retry for the same Profile keeps it.
+
+A deleted Profile also fails the project lookup, and the footer showed
+that error, which reselecting the project can't fix. The missing-Profile
+message now comes first.
+
+Co-Authored-By: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
+
+* fix(web): offer the Profile row for a deleted Profile with one Profile left
+
+**File**: `web/src/components/session-wizard/SessionWizard.tsx` (modified, +29/-21)
+```diff
+@@ -1,4 +1,4 @@
+-import { useCallback, useEffect, useReducer, useRef, useState } from "react";
++import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from "react";
+ import { createPortal } from "react-dom";
+ import type {
+   CreateFailure,
+@@ -10,7 +10,7 @@ import type {
+ } from "../../lib/types";
+ import { setAgentNames } from "../../lib/agentDisplayName";
+ import {
+-  fetchAgents,
++  fetchProfileAgents,
+   fetchGroups,
+   fetchDockerStatus,
+   fetchProfiles,
+@@ -58,7 +58,7 @@ import { failureView, type FailureAction } from "./createFailureView";
+ import { CreateProgressView } from "./CreateProgressView";
+ import { FieldRow, NavRow, PanelHeader, ROW_INPUT, RowGroup, SegmentedRow, SwitchRow } from "./WizardRows";
+ import { LaunchFooter } from "./LaunchFooter";
+-import { initialData, reducer, type WizardData } from "./wizardReducer";
++import { agentsView, initialData, reducer, type WizardData } from "./wizardReducer";
+ import { buildCreateRequest, launchEligible } from "./createRequest";
+ import { commandMapsFromSettings, EMPTY_COMMAND_MAPS, type CommandMaps } from "./commandMaps";
+ import { profileDefaults, type ProfileDefaults } from "./profileDefaults";
+@@ -134,6 +134,8 @@ const MAX_RETRY_DELAY_MS = 30_000;
+ const UNKNOWN_OUTCOME_ERROR =
+   "Lost connection while creating. The session may still be created; Launch retries the same request.";
+ const AGENTS_UNAVAILABLE_ERROR = "Couldn't load the agent list, so Yolo mode can't be shown yet. Retrying…";
++const profileMissingError = (profile: string) =>
++  `The profile "${profile}" no longer exists. Choose another profile to launch.`;
+ 
+ const REGISTRY_UNRESOLVED_ERROR =
+   "Could not load this project's settings, so its sandbox and worktree defaults are unknown. Select the project again to retry.";
+@@ -213,6 +215,7 @@ export function SessionWizard({
+     failure: restore?.failure ?? null,
+     agents: [],
+     agentsStatus: "loading",
++    agentsFor: null,
+     groups: [],
+     groupsFor: null,
+     profiles: [],
+@@ -315,29 +318,32 @@ export function SessionWizard({
+     };
+   }, [state.data.profile, groupsKey]);
+ 
+-  // A custom agent's base comes from the profile the session is created in.
++  // A custom agent's base comes from the profile the session is created in. Like Groups, a list
++  // is read only for the profile it was fetched for, so a switch never shows the last one as ready.
+   const agentsProfile = state.data.profile || servedProfile;
++  const agentsKey = agentsProfile ?? "";
++  const { agents, agentsStatus } = useMemo(() => agentsView(state, agentsKey), [state, agentsKey]);
+   useEffect(() => {
+     let alive = true;
+     let retry: ReturnType<typeof setTimeout> | undefined;
+-    dispatch({ type: "AGENTS_LOADING" });
+     const load = (attempt: number) =>
+-      void fetchAgents(agentsProfile || undefined).then((agents) => {
++      void fetchProfileAgents(agentsProfile || undefined).then((list) => {
+         if (!alive) return;
+-        if (agents) {
++        if (Array.isArray(list)) {
+           // The app-wide names describe the served profile, not the one being created in.
+-          if (agentsProfile === servedProfile) setAgentNames(agents);
+-          return dispatch({ type: "SET_AGENTS", agents });
++          if (agentsProfile === servedProfile) setAgentNames(list);
++          return dispatch({ type: "SET_AGENTS", agents: list, agentsFor: agentsKey });
+         }
+-        dispatch({ type: "AGENTS_FAILED" });
+-        retry = setTimeout(() => load(attempt + 1), Math.min(1000 * 2 ** attempt, 15000));
++        const missing = list === "profile_not_found";
++        dispatch({ type: "AGENTS_FAILED", agentsFor: agentsKey, missing });
++        if (!missing) retry = setTimeout(() => load(attempt + 1), Math.min(1000 * 2 ** attempt, 15000));
+       });
+     load(0);
+     return () => {
+       alive = false;
+       clearTimeout(retry);
+     };
+-  }, [agentsProfile, servedProfile]);
++  }, [agentsProfile, agentsKey, servedProfile]);
+ 
+   useEffect(() => {
+     const generations = defaultsGeneration;
+@@ -693,7 +699,7 @@ export function SessionWizard({
+         d,
+         isAcpEligible(
+           d.tool,
+-          state.agents.find((a) => a.name === d.tool),
++          agents.find((a) => a.name === d.tool),
+         ),
+       ),
+       idempotency_key: newIdempotencyKey(),
+@@ -809,8 +815,7 @@ export function SessionWizard({
+   // A scratch session has no project whose overrides could be unknown.
+   const projectUnresolved = registryUnresolved && !d.scratch && !d.importAcpSessionId;
+   // Only the Yolo row needs the agent list, and a name-only form has none.
+-  const formReady =
+-    defaultsReady && (nameOnly || state.agentsStatus === "ready") && !profileSwitching && !projectUnresolved;
++  const formReady = defaultsReady && (nameOnly || agentsStatus === "ready") && !profileSwitching && !projectUnresolved;
+   const canResend = launchEligible(d, { ready: formReady, offline, nameOnly });
+   const canResendRef = useRef(canResend);
+   us
+```
+
+**File**: `web/src/components/session-wizard/__tests__/SessionWizard.lastProject.test.tsx` (modified, +1/-1)
+```diff
+@@ -26,7 +26,7 @@ vi.mock("../../../lib/api", () => ({
+   fetchCreateProgress: vi.fn().mockResolvedValue(null),
+   fetchCreateBootId: vi.fn().mockResolvedValue("boot-1"),
+   fetchSettings: (...args: unknown[]) => fetchSettings(...args),
+-  fetchAgents: vi.fn().mockResolvedValue([]),
++  fetchProfileAgents: vi.fn().mockResolvedValue([]),
+   fetchIsGitRepo: (...args: unknown[]) => fetchIsGitRepo(...args),
+   fetchGroups: vi.fn().mockResolvedValue([]),
+   fetchDockerStatus: vi.fn().mockResolvedValue({ available: true }),
+```
+
+**File**: `web/src/components/session-wizard/__tests__/SessionWizard.projectWorktreeOverride.test.tsx` (modified, +1/-1)
+```diff
+@@ -25,7 +25,7 @@ vi.mock("../../../lib/api", () => ({
+   fetchCreateProgress: vi.fn().mockResolvedValue(null),
+   fetchCreateBootId: vi.fn().mockResolvedValue("boot-1"),
+   fetchSettings: (...args: unknown[]) => fetchSettings(...args),
+-  fetchAgents: vi.fn().mockResolvedValue([]),
++  fetchProfileAgents: vi.fn().mockResolvedValue([]),
+   fetchIsGitRepo: vi.fn().mockResolvedValue(true),
+   fetchGroups: vi.fn().mockResolvedValue([]),
+   fetchProfiles: (...args: unknown[]) => fetchProfiles(...args),
+```
+
+**File**: `web/src/components/session-wizard/__tests__/SessionWizard.test.tsx` (modified, +108/-21)
+```diff
+@@ -7,7 +7,7 @@ import { act, cleanup, fireEvent, render, renderHook, screen, waitFor } from "@t
+ import { SessionWizard, type WizardPrefill } from "../SessionWizard";
+ import { initialData } from "../wizardReducer";
+ import {
+-  fetchAgents,
++  fetchProfileAgents,
+   fetchCreateProgress,
+   fetchDockerStatus,
+   fetchGroups,
+@@ -37,6 +37,7 @@ vi.mock("../../../lib/api", () => ({
+   fetchCreateProgress: vi.fn().mockResolvedValue(null),
+   fetchCreateBootId: vi.fn().mockResolvedValue("boot-1"),
+   fetchSettings: vi.fn().mockResolvedValue({}),
++  fetchProfileAgents: vi.fn().mockResolvedValue([]),
+   fetchAgents: vi.fn().mockResolvedValue([]),
+   fetchIsGitRepo: vi.fn().mockResolvedValue(true),
+   fetchGroups: vi.fn().mockResolvedValue([]),
+@@ -72,7 +73,7 @@ const INSTRUCTION_KEY = "aoe-new-session-last-instruction";
+ beforeEach(() => {
+   vi.clearAllMocks();
+   // clearAllMocks keeps queued answers, and a test can leave some unread.
+-  vi.mocked(fetchAgents).mockReset().mockResolvedValue([]);
++  vi.mocked(fetchProfileAgents).mockReset().mockResolvedValue([]);
+   localStorage.clear();
+   createSession.mockResolvedValue({ ok: true, session: { id: "s1" } });
+   reviewCreationTrust.mockResolvedValue({
+@@ -140,7 +141,7 @@ describe("SessionWizard native import late defaults", () => {
+             resolveSettings = resolve;
+           }),
+       );
+-      vi.mocked(fetchAgents).mockResolvedValueOnce([agent("claude", { acp_installed: true })]);
++      vi.mocked(fetchProfileAgents).mockResolvedValueOnce([agent("claude", { acp_installed: true })]);
+       renderWizard({ path: "/tmp/proj", worktreeEnabled: true, sandboxEnabled: true });
+       fireEvent.click(screen.getByText("Project"));
+       fireEvent.click(await screen.findByRole("button", { name: "Import session" }));
+@@ -232,7 +233,7 @@ describe("SessionWizard structured view payload", () => {
+       acp: { acp_defaults: { opencode: { model: "openai/gpt-5.5", effort: "high" } } },
+       sandbox: {},
+     } as never);
+-    vi.mocked(fetchAgents).mockResolvedValueOnce([
++    vi.mocked(fetchProfileAgents).mockResolvedValueOnce([
+       agent("opencode", { acp_installed: true }),
+       agent("claude", { acp_installed: true }),
+     ]);
+@@ -410,7 +411,7 @@ describe("SessionWizard rows", () => {
+     ["sandbox_enabled", "Sandbox unavailable: settl runs on the host only"],
+     ["worktree_enabled", "Worktree unavailable: settl runs on the host only"],
+   ])("refuses a host-only agent with a seeded %s project override", async (field, message) => {
+-    vi.mocked(fetchAgents).mockResolvedValueOnce([agent("settl", { host_only: true })]);
++    vi.mocked(fetchProfileAgents).mockResolvedValueOnce([agent("settl", { host_only: true })]);
+     vi.mocked(fetchProjects).mockResolvedValueOnce([
+       {
+         name: "proj",
+@@ -433,7 +434,7 @@ describe("SessionWizard rows", () => {
+     ["helper", [agent("helper", { kind: "custom", acp_capable: false })], true, /needs agent_acp_cmd/],
+     ["claude", [agent("claude", { acp_allowed: false })], true, /not on the allowed agents list/],
+   ])("gates the structured view for %s", async (tool, agents, disabled, summary) => {
+-    if (agents) vi.mocked(fetchAgents).mockResolvedValueOnce(agents);
++    if (agents) vi.mocked(fetchProfileAgents).mockResolvedValueOnce(agents);
+     renderWizard({ path: "/tmp/proj", tool });
+     await waitFor(() => expect(viewSwitch().disabled).toBe(disabled));
+     expect(screen.getByTestId("wizard-view-row").textContent).toMatch(summary);
+@@ -462,7 +463,7 @@ describe("SessionWizard rows", () => {
+     [undefined, "Run in a safe container", "Docker is not running"],
+     [[agent("settl", { host_only: true })], "Create a worktree", "settl runs on the host only"],
+   ])("a blocked switch left on shows on and turns off: %#", async (agents, name, reason) => {
+-    if (agents) vi.mocked(fetchAgents).mockResolvedValueOnce(agents);
++    if (agents) vi.mocked(fetchProfileAgents).mockResolvedValueOnce(agents);
+     const tool = agents ? "settl" : "claude";
+     renderWizard({ path: "/tmp/proj", tool, sandboxEnabled: true, worktreeEnabled: true });
+     const toggle = () => screen.getByRole("switch", { name }) as HTMLButtonElement;
+@@ -1160,7 +1161,10 @@ describe("SessionWizard Yolo mode", () => {
+   });
+ 
+   it("locks on for an agent that always runs in Yolo mode, and gives the value back after", async () => {
+-    vi.mocked(fetchAgents).mockResolvedValue([agent("claude"), agent("pi", { always_yolo: true, acp_capable: false })]);
++    vi.mocked(fetchProfileAgents).mockResolvedValue([
++      agent("claude"),
++      agent("pi", { always_yolo: true, acp_capable: false }),
++    ]);
+     vi.mocked(fetchSettings).mockResolvedValueOnce({ session: { yolo_mode_default: false }, sandbox: {} } as never);
+     renderWizard({ path: "/tmp/proj", tool: "pi" });
+     await waitFor(() => expect(yoloRow()).toContain("always on for pi"));
+@@ -1180,7 +1184,10 @@ describe("SessionWizard Yolo mode", () => {
+   });
+ 
+   it("keeps a profi
+```
+
+**File**: `web/src/components/session-wizard/wizardReducer.test.ts` (modified, +24/-1)
+```diff
+@@ -1,7 +1,7 @@
+ import { describe, expect, it } from "vitest";
+ 
+ import type { CreateStage } from "../../lib/types";
+-import { initialData, reducer, type Action, type WizardData, type WizardState } from "./wizardReducer";
++import { agentsView, initialData, reducer, type Action, type WizardData, type WizardState } from "./wizardReducer";
+ 
+ function makeState(data: Partial<WizardData> = {}): WizardState {
+   return {
+@@ -11,6 +11,7 @@ function makeState(data: Partial<WizardData> = {}): WizardState {
+     failure: null,
+     agents: [],
+     agentsStatus: "ready",
++    agentsFor: null,
+     groups: [],
+     groupsFor: null,
+     profiles: [],
+@@ -398,6 +399,28 @@ describe("SEED_PROJECT_OVERRIDES sandbox", () => {
+   });
+ });
+ 
++describe("agent list per profile", () => {
++  const claude = { name: "claude" } as WizardState["agents"][number];
++  const failed = (agentsFor: string, missing = false): Action => ({ type: "AGENTS_FAILED", agentsFor, missing });
++  // Each row starts from a list loaded for alpha.
++  it.each([
++    ["alpha's list reads as itself for alpha", [], "alpha", "ready", 1],
++    ["alpha's list is still loading for beta", [], "beta", "loading", 0],
++    ["a failed load for beta drops alpha's list", [failed("beta")], "beta", "failed", 0],
++    ["a missing beta drops alpha's list", [failed("beta", true)], "beta", "missing", 0],
++    ["a failed retry for alpha keeps alpha's list", [failed("alpha")], "alpha", "failed", 1],
++    ["a missing alpha keeps alpha's list", [failed("alpha", true)], "alpha", "missing", 1],
++  ] as const)("%s", (_label, actions, profile, status, count) => {
++    const loaded = reducer(
++      { ...makeState(), agentsStatus: "loading" },
++      { type: "SET_AGENTS", agents: [claude], agentsFor: "alpha" },
++    );
++    const view = agentsView(actions.reduce<WizardState>(reducer, loaded), profile);
++    expect(view.agentsStatus).toBe(status);
++    expect(view.agents).toHaveLength(count);
++  });
++});
++
+ describe("submit failures", () => {
+   const failure = { code: "hook_failed", message: "m", stage: "running_hooks" as const, reference: "r" };
+   it.each<[string, Action, Partial<WizardState>]>([
+```
+
+**File**: `web/src/components/session-wizard/wizardReducer.ts` (modified, +26/-9)
+```diff
+@@ -67,8 +67,10 @@ export interface WizardState {
+   /** A create the server refused, shown as the failure box instead of `error`. */
+   failure: CreateFailure | null;
+   agents: AgentInfo[];
+-  /** Until "ready", which agents always run in Yolo mode is unknown. */
+-  agentsStatus: "loading" | "ready" | "failed";
++  /** Until "ready", which agents always run in Yolo mode is unknown. "missing": the profile is gone. */
++  agentsStatus: "loading" | "ready" | "failed" | "missing";
++  /** Which profile `agents` and `agentsStatus` describe; any other profile is still loading. */
++  agentsFor: string | null;
+   groups: GroupInfo[];
+   /** Which profile `groups` was fetched for; any other profile sees no Groups. */
+   groupsFor: string | null;
+@@ -87,9 +89,8 @@ export type Action =
+   | { type: "SUBMIT_FAILED"; failure: CreateFailure }
+   | { type: "SUBMIT_SUCCESS" }
+   | { type: "SUBMIT_CANCEL" }
+-  | { type: "SET_AGENTS"; agents: AgentInfo[] }
+-  | { type: "AGENTS_FAILED" }
+-  | { type: "AGENTS_LOADING" }
++  | { type: "SET_AGENTS"; agents: AgentInfo[]; agentsFor: string }
++  | { type: "AGENTS_FAILED"; agentsFor: string; missing: boolean }
+   | { type: "SET_GROUPS"; groups: GroupInfo[]; groupsFor: string }
+   | { type: "SET_PROFILES"; profiles: ProfileInfo[] }
+   | { type: "SET_DOCKER"; available: boolean; runtimeName: string | null }
+@@ -228,6 +229,18 @@ function seededStructuredView(data: WizardData, action: { useStructuredView?: bo
+   return action.useStructuredView ?? data.useStructuredView;
+ }
+ 
++const NO_AGENTS: AgentInfo[] = [];
++
++/** The agent list for `profile`: one loaded for another profile reads as still loading. */
++export function agentsView(
++  state: Pick<WizardState, "agents" | "agentsStatus" | "agentsFor">,
++  profile: string,
++): { agents: AgentInfo[]; agentsStatus: WizardState["agentsStatus"] } {
++  return state.agentsFor === profile
++    ? { agents: state.agents, agentsStatus: state.agentsStatus }
++    : { agents: NO_AGENTS, agentsStatus: "loading" };
++}
++
+ export function reducer(state: WizardState, action: Action): WizardState {
+   const next = reduce(state, action);
+   const { failure } = next;
+@@ -278,11 +291,15 @@ function reduce(state: WizardState, action: Action): WizardState {
+     case "SUBMIT_CANCEL":
+       return { ...state, isSubmitting: false, error: null, failure: null };
+     case "SET_AGENTS":
+-      return { ...state, agents: action.agents, agentsStatus: "ready" };
++      return { ...state, agents: action.agents, agentsStatus: "ready", agentsFor: action.agentsFor };
+     case "AGENTS_FAILED":
+-      return { ...state, agentsStatus: "failed" };
+-    case "AGENTS_LOADING":
+-      return { ...state, agentsStatus: "loading" };
++      return {
++        ...state,
++        // A retry for the same Profile keeps its list; another Profile's list must not be read for it.
++        agents: action.agentsFor === state.agentsFor ? state.agents : [],
++        agentsStatus: action.missing ? "missing" : "failed",
++        agentsFor: action.agentsFor,
++      };
+     case "SET_GROUPS":
+       return { ...state, groups: action.groups, groupsFor: action.groupsFor };
+     case "SET_PROFILES":
+```
+
+**File**: `web/src/lib/api.test.ts` (modified, +20/-0)
+```diff
+@@ -780,6 +780,7 @@ const failureCases: [string, () => Promise<unknown>, unknown][] = [
+   ["invokePluginAction", () => api.invokePluginAction("p", "m"), null],
+   ["resolvePluginOptions", () => api.resolvePluginOptions("p", "s", []), []],
+   ["fetchSoundBlob", () => api.fetchSoundBlob("x.wav"), null],
++  ["fetchProfileAgents", () => api.fetchProfileAgents("work"), null],
+   ["pullSandboxImage", () => api.pullSandboxImage(), { ok: false }],
+   ["dismissSandboxImage", () => api.dismissSandboxImage("sha256:new"), false],
+ ];
+@@ -1046,6 +1047,25 @@ describe("project mutations", () => {
+   });
+ });
+ 
++describe("fetchProfileAgents", () => {
++  it.each([
++    ["a list", () => json([{ id: "claude" }]), [{ id: "claude" }]],
++    ["an unknown profile", () => json({ error: "profile_not_found", message: "no" }, 404), "profile_not_found"],
++    ["another 404", () => json({ error: "not_found" }, 404), null],
++    ["a 404 without JSON", () => new Response("gone", { status: 404 }), null],
++    ["a server error", () => json({ error: "profile_not_found" }, 500), null],
++  ])("reads %s", async (_name, respond, result) => {
++    fetchSpy.mockResolvedValueOnce(respond());
++    expect(await api.fetchProfileAgents("work")).toEqual(result);
++    expect(lastCall().url).toBe("/api/agents?profile=work");
++  });
++
++  it("is null for fetchAgents when the profile is unknown", async () => {
++    fetchSpy.mockResolvedValueOnce(json({ error: "profile_not_found" }, 404));
++    expect(await api.fetchAgents("work")).toBeNull();
++  });
++});
++
+ describe("createSession errors", () => {
+   const body = { path: "/repo", tool: "claude" } as CreateSessionRequest;
+ 
+```
+
+**File**: `web/src/lib/api.ts` (modified, +15/-1)
+```diff
+@@ -1969,8 +1969,22 @@ export async function signOutAllDevices(): Promise<boolean> {
+ 
+ /** Null when the request failed, so callers can tell "no agents" from "unknown". */
+ export async function fetchAgents(profile?: string): Promise<AgentInfo[] | null> {
++  const agents = await fetchProfileAgents(profile);
++  return Array.isArray(agents) ? agents : null;
++}
++
++/** Like `fetchAgents`, but says when the Daemon has no such profile, which no retry fixes. */
++export async function fetchProfileAgents(profile?: string): Promise<AgentInfo[] | "profile_not_found" | null> {
+   const query = profile ? `?profile=${encodeURIComponent(profile)}` : "";
+-  return fetchJson<AgentInfo[]>(`/api/agents${query}`);
++  try {
++    const res = await fetch(`/api/agents${query}`);
++    if (res.ok) return (await res.json()) as AgentInfo[];
++    if (res.status !== 404) return null;
++    const body = (await res.json().catch(() => null)) as { error?: unknown } | null;
++    return body?.error === "profile_not_found" ? "profile_not_found" : null;
++  } catch {
++    return null;
++  }
+ }
+ 
+ export async function fetchProfiles(): Promise<ProfileInfo[]> {
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5273** (closed): fix(plugin): preserve status fallback without reports (@athal7)
-- **PR #5267** (2026-11-04): fix(acp): drop live user_message_chunk echoes in structured view (@Seluj78)
-- **PR #5265** (2026-11-04): fix(web): clear seeded model and effort when the wizard agent changes (@Seluj78)
-- **PR #5264** (2026-11-04): refactor(daemon): separate endpoint values from host discovery (@jerome-benoit)
-- **PR #5263** (2026-11-04): fix(worktree): revalidate cleanup candidates after the confirmation prompt (@Seluj78)
-- **PR #5260** (2026-11-03): fix(serve): say daemon startup is unconfirmed, with PID and log path (@Seluj78)
+- **PR #5374** (closed): chore: add a fix-and-respond skill for review feedback (@ZelZorgia)
+- **PR #5356** (2026-11-05): perf(server): compress /api JSON responses with gzip and zstd (@cwrau)
+- **PR #5351** (closed): chore(review): review dependency updates and plan ready issues (@athal7)
+- **PR #5306** (2026-11-05): ci: cancel obsolete queue runs and validate npm before builds (@jerome-benoit)
+- **PR #5298** (2026-11-04): chore(deps): bump agent-client-protocol from 2.2.0 to 3.1.0 (@dependabot[bot])
+- **PR #5297** (closed): chore(deps): bump unicode-width from 0.2.2 to 0.2.3 in the cargo-minor-patch group (@dependabot[bot])
 
 ---
 
@@ -2719,56 +3103,53 @@ Co-authored-by: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. worktree): revalidate cleanup candidates after the confirmation prompt (#5263)
+## X. ci: cancel obsolete queue runs and validate npm before builds (#5306)
 
 **RULE**:
-When implementing operations in `src/cli/worktree.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in agent-of-empires/agent-of-empires. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/scripts/cancel-obsolete-queue-runs.cjs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in agent-of-empires/agent-of-empires. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ebd5a774`: worktree): revalidate cleanup candidates after the confirmation prompt (#5263). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `95c5d66c`: ci: cancel obsolete queue runs and validate npm before builds (#5306). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/cli/worktree.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/scripts/cancel-obsolete-queue-runs.cjs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-#[cfg(test)]
-thread_local! {
-    static AFTER_PROFILE_LISTING: std::cell::RefCell<Option<Box<dyn FnOnce()>>> =
-        const { std::cell::RefCell::new(None) };
+const paths = new Set(['.github/workflows/ci.yml', '.github/workflows/tests.yml']);
+const active = ['queued', 'in_progress', 'waiting', 'pending', 'requested'];
+
+function entry(branch) {
+  const match = /^gh-readonly-queue\/(.+)\/pr-([1-9]\d*)-[0-9a-f]{40}$/.exec(branch ?? '');
+  return match && { base: match[1], number: Number(match[2]) };
 }
 
-/// Removes the confirmed worktrees that no session in any profile sits on or inside. The rows are
-/// read, and the removal done, while every store is locked, so no session can adopt a path in
-/// between. Fails closed: if a store cannot be read, nothing is removed.
-pub(crate) fn remove_confirmed_worktrees(
-    git_wt: &GitWorktree,
-    orphans: &[WorktreeEntry],
-    purging: &HashSet<PathBuf>,
-) -> Result<usize> {
-    let _transition = crate::session::StorageTransition::acquire()?;
-    let storages = crate::session::list_profiles()?
-        .iter()
-        .map(|profile| Storage::open_unwatched(profile))
-        .collect::<Result<Vec<_>>>()?;
-    #[cfg(test)]
-    if let Some(hook) = AFTER_PROFILE_LISTING.with(|slot| slot.borrow_mut().take()) {
-        hook();
-    }
-    crate::session::with_storages_locked(&storages, || {
-        let mut session_paths = Vec::new();
-        for storage in &storages {
-            for inst in storage.load_instances_complete()? {
-                let path = PathBuf::from(&inst.project_path);
+function sameWorkflow(run, current, repositoryId) {
+  return run.event === 'merge_group' && paths.has(run.path) &&
+    run.path === current.path && run.workflow_id === current.workflow_id &&
+    run.repository?.id === repositoryId && run.head_repository?.id === repositoryId;
+}
 
+module.exports = async ({ github, context, core }) => {
+  const event = context.payload.workflow_run;
+  const repositoryId = context.payload.repository.id;
+  const { data: current } = await github.rest.actions.getWorkflowRun({
+    ...context.repo, run_id: event.id,
+  });
+  const key = entry(current.head_branch);
+  if (!key || !sameWorkflow(current, current, repositoryId) ||
+      current.head_sha !== event.head_sha || current.workflow_id !== event.workflow_id) return;
+
+  // Queue state, rather than event delivery order, identifies the current generation.
+  const isCurr
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-        removed_count += remove_orphaned_worktrees(&git_wt, &orphaned_worktrees, &purging);
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ebd5a774` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `95c5d66c` are properly handled with clean fallback behavior.

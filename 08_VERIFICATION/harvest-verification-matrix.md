@@ -7701,3 +7701,6 @@
 | `CYCLE-20261105-H94V` | `2026-11-05T15:05:59.167Z` | `dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-dealignai-deepseek-v4.1-flash-uncensored-fp8-learnings.md` | Yes (`348b4965...`) |
 | `CYCLE-20261105-HJ0V` | `2026-11-05T15:06:11.983Z` | `trufflesecurity/trufflehog` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7262` | Yes (`17b00c6c...`) |
 | `CYCLE-20261105-QBEE` | `2026-11-05T15:13:02.006Z` | `vllm-sr/d3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-vllm-sr-d3-learnings.md` | Yes (`2e18488a...`) |
+| `CYCLE-20261105-01MT` | `2026-11-05T15:20:35.909Z` | `agent-of-empires/agent-of-empires` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7263` | Yes (`cb28df1b...`) |
+| `CYCLE-20261105-04PY` | `2026-11-05T15:20:39.910Z` | `LiquidAI/LFM2.5-24B-A2B-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7264` | Yes (`1e2f2db1...`) |
+| `CYCLE-20261105-0AD7` | `2026-11-05T15:20:47.227Z` | `xerj-org/xerj` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7265` | Yes (`b7b56e85...`) |

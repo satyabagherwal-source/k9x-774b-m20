@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-05T08:50:21.679Z",
+  "last_updated": "2026-11-05T15:20:39.920Z",
   "directives": [
     {
       "id": "CD-001",
@@ -3929,6 +3929,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-nucleoidai-nucleoid"
+    },
+    {
+      "id": "CD-04Q8",
+      "directive_title": "Quantization-Aware Distillation (QAD) Artifact Separation",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "LiquidAI/LFM2.5-24B-A2B-GGUF",
+      "source_commit": "hf-liquidai-",
+      "date_staged": "2026-11-05",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-huggingface-liquidai-lfm2-5-24b-a2b-gguf"
     }
   ]
 }

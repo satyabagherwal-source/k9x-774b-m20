@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-05T15:13:02.014Z",
-  "total_cycles_completed": 7678,
-  "total_learnings_persisted": 7678,
-  "total_rules_promoted": 7327,
+  "last_updated": "2026-11-05T15:20:47.236Z",
+  "total_cycles_completed": 7681,
+  "total_learnings_persisted": 7681,
+  "total_rules_promoted": 7330,
   "history": [
-    {
-      "timestamp": "2026-11-05T04:21:46.608Z",
-      "repository": "ClementTsang/bottom",
-      "learningId": "learn-github-clementtsang-bottom",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T04:28:54.674Z",
-      "repository": "slatedb/slatedb",
-      "learningId": "learn-github-slatedb-slatedb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T04:28:56.267Z",
-      "repository": "meta-llama/Meta-Llama-3-8B",
-      "learningId": "learn-huggingface-meta-llama-meta-llama-3-8b",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-05T04:36:02.737Z",
       "repository": "openai/whisper-large-v3",
@@ -1403,6 +1382,27 @@
       "repository": "vllm-sr/d3",
       "learningId": "learn-huggingface-vllm-sr-d3",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T15:20:35.919Z",
+      "repository": "agent-of-empires/agent-of-empires",
+      "learningId": "learn-github-agent-of-empires-agent-of-empires",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T15:20:39.930Z",
+      "repository": "LiquidAI/LFM2.5-24B-A2B-GGUF",
+      "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b-gguf",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T15:20:47.236Z",
+      "repository": "xerj-org/xerj",
+      "learningId": "learn-github-xerj-org-xerj",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

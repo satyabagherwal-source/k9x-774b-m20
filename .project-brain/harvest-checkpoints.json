@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-05T15:13:02.018Z",
+  "last_updated": "2026-11-05T15:20:47.250Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2361,14 +2361,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-liquidai-lfm2-5-24b-a2b-gguf",
-      "content_hash": "821d459aa5ba4aef31d118f87d029ca13ff124c12de66a9de443804bb3eb1423",
-      "verified_at": "2026-11-01T00:49:26.138Z",
+      "content_hash": "1e2f2db1ea9cadc04591572082f018d31c11cd4795c73d310bfd752de32d4efe",
+      "verified_at": "2026-11-05T15:20:39.934Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-01T00:49:26.138Z"
+      "last_updated": "2026-11-05T15:20:39.934Z"
     },
     "amplifthq/openmeld": {
       "repository": "amplifthq/openmeld",
@@ -4281,14 +4281,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-xerj-org-xerj",
-      "content_hash": "794b3a35d19621b5223f4d67f2c97206d9b7cf250db659ba540472f24713f624",
-      "verified_at": "2026-11-05T00:29:52.234Z",
+      "content_hash": "b7b56e85cfded78dda8cddcf723e14c69dd29b1e47a9599f7371ca344546afe7",
+      "verified_at": "2026-11-05T15:20:47.249Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T00:29:52.234Z"
+      "last_updated": "2026-11-05T15:20:47.249Z"
     },
     "markmead/hyperui": {
       "repository": "markmead/hyperui",
@@ -11211,14 +11211,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-agent-of-empires-agent-of-empires",
-      "content_hash": "c02400cdcec71e6469908bf2e16a216c5bc8161497ecce329c89609eeed6ffc9",
-      "verified_at": "2026-11-04T20:53:16.415Z",
+      "content_hash": "cb28df1b710a94f0e3d241698b61ab6864fc27e700bc030233391798be09a0d6",
+      "verified_at": "2026-11-05T15:20:35.932Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T20:53:16.415Z"
+      "last_updated": "2026-11-05T15:20:35.932Z"
     },
     "NativeScript/NativeScript": {
       "repository": "NativeScript/NativeScript",

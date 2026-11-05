@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T15:13:01.918Z",
+  "last_updated": "2026-11-05T15:20:47.139Z",
   "total_verified_learnings": 1218,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -889,8 +889,8 @@
       "slug": "agent-of-empires-agent-of-empires",
       "platform": "github",
       "source_url": "https://github.com/agent-of-empires/agent-of-empires",
-      "source_version": "f302922e",
-      "content_hash": "c02400cdcec71e6469908bf2e16a216c5bc8161497ecce329c89609eeed6ffc9",
+      "source_version": "1f674d07",
+      "content_hash": "cb28df1b710a94f0e3d241698b61ab6864fc27e700bc030233391798be09a0d6",
       "dossier_path": "07_PROJECT_LEARNING/agent-of-empires-agent-of-empires-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/agent-of-empires-agent-of-empires-learnings.md",
       "promoted_rules": [
@@ -963,6 +963,11 @@
           "number": 6967,
           "title": "worktree): revalidate cleanup candidates after the confirmation prompt (#5263)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7263,
+          "title": "ci: cancel obsolete queue runs and validate npm before builds (#5306)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -970,7 +975,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T20:53:16.338Z",
+      "verified_at": "2026-11-05T15:20:35.797Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -62254,8 +62259,8 @@
       "slug": "xerj-org-xerj",
       "platform": "github",
       "source_url": "https://github.com/xerj-org/xerj",
-      "source_version": "344a95f6",
-      "content_hash": "794b3a35d19621b5223f4d67f2c97206d9b7cf250db659ba540472f24713f624",
+      "source_version": "83c9f0d1",
+      "content_hash": "b7b56e85cfded78dda8cddcf723e14c69dd29b1e47a9599f7371ca344546afe7",
       "dossier_path": "07_PROJECT_LEARNING/xerj-org-xerj-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/xerj-org-xerj-learnings.md",
       "promoted_rules": [
@@ -62343,6 +62348,11 @@
           "number": 7047,
           "title": "tests): stop debug cargo test stack overflows, and name the missing 127.0.0.2 al",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7265,
+          "title": "api): refuse a malformed _bulk action line for the whole request (#2938)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -62350,7 +62360,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T00:29:52.126Z",
+      "verified_at": "2026-11-05T15:20:47.116Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -71319,7 +71329,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/LiquidAI/LFM2.5-24B-A2B-GGUF",
       "source_version": "hf-liquidai-lfm2.5-24b-a2b-gguf",
-      "content_hash": "821d459aa5ba4aef31d118f87d029ca13ff124c12de66a9de443804bb3eb1423",
+      "content_hash": "1e2f2db1ea9cadc04591572082f018d31c11cd4795c73d310bfd752de32d4efe",
       "dossier_path": "07_PROJECT_LEARNING/hf-liquidai-lfm2.5-24b-a2b-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-liquidai-lfm2.5-24b-a2b-gguf-learnings.md",
       "promoted_rules": [
@@ -71382,6 +71392,11 @@
           "number": 5451,
           "title": "Quantization-Aware Distillation (QAD) Recovery Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7264,
+          "title": "Metadata-Driven Inference Contract",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -71389,7 +71404,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-01T00:49:26.011Z",
+      "verified_at": "2026-11-05T15:20:39.801Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -183204,6 +183219,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-05T15:06:11.860Z"
+    },
+    "rule-7263": {
+      "learning_id": "rule-7263",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7263,
+      "title": "ci: cancel obsolete queue runs and validate npm before builds (#5306)",
+      "source_url": "https://github.com/agent-of-empires/agent-of-empires",
+      "source_version": "1f674d07",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T15:20:35.797Z"
+    },
+    "rule-7264": {
+      "learning_id": "rule-7264",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7264,
+      "title": "Metadata-Driven Inference Contract",
+      "source_url": "https://huggingface.co/LiquidAI/LFM2.5-24B-A2B-GGUF",
+      "source_version": "hf-liquidai-lfm2.5-24b-a2b-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T15:20:39.801Z"
+    },
+    "rule-7265": {
+      "learning_id": "rule-7265",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7265,
+      "title": "api): refuse a malformed _bulk action line for the whole request (#2938)",
+      "source_url": "https://github.com/xerj-org/xerj",
+      "source_version": "83c9f0d1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T15:20:47.116Z"
     }
   },
   "aliases": {

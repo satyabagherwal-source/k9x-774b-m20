@@ -1525,8 +1525,8 @@
     "sourceUrl": "https://huggingface.co/LiquidAI/LFM2.5-24B-A2B-GGUF",
     "sourceVersion": "hf-liquidai-lfm2.5-24b-a2b-gguf",
     "license": "Open-Source",
-    "contentHash": "821d459aa5ba4aef31d118f87d029ca13ff124c12de66a9de443804bb3eb1423",
-    "lastHarvestedAt": "2026-11-01T00:49:26.128Z",
+    "contentHash": "1e2f2db1ea9cadc04591572082f018d31c11cd4795c73d310bfd752de32d4efe",
+    "lastHarvestedAt": "2026-11-05T15:20:39.914Z",
     "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b-gguf"
   },
   "amplifthq-openmeld": {
@@ -2763,10 +2763,10 @@
     "repository": "xerj-org/xerj",
     "platform": "github",
     "sourceUrl": "https://github.com/xerj-org/xerj",
-    "sourceVersion": "344a95f6",
+    "sourceVersion": "83c9f0d1",
     "license": "Apache-2.0",
-    "contentHash": "794b3a35d19621b5223f4d67f2c97206d9b7cf250db659ba540472f24713f624",
-    "lastHarvestedAt": "2026-11-05T00:29:52.219Z",
+    "contentHash": "b7b56e85cfded78dda8cddcf723e14c69dd29b1e47a9599f7371ca344546afe7",
+    "lastHarvestedAt": "2026-11-05T15:20:47.230Z",
     "learningId": "learn-github-xerj-org-xerj"
   },
   "markmead-hyperui": {
@@ -7443,10 +7443,10 @@
     "repository": "agent-of-empires/agent-of-empires",
     "platform": "github",
     "sourceUrl": "https://github.com/agent-of-empires/agent-of-empires",
-    "sourceVersion": "f302922e",
+    "sourceVersion": "1f674d07",
     "license": "MIT",
-    "contentHash": "c02400cdcec71e6469908bf2e16a216c5bc8161497ecce329c89609eeed6ffc9",
-    "lastHarvestedAt": "2026-11-04T20:53:16.403Z",
+    "contentHash": "cb28df1b710a94f0e3d241698b61ab6864fc27e700bc030233391798be09a0d6",
+    "lastHarvestedAt": "2026-11-05T15:20:35.913Z",
     "learningId": "learn-github-agent-of-empires-agent-of-empires"
   },
   "nativescript-nativescript": {

@@ -7710,3 +7710,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-dealignai-deepseek-v4-1-flash-uncensored-fp8` | `https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8` | `hf-dealign` | Multi-dimensional audit evidence | 2026-11-05T15:05:59.172Z |
 | `learn-github-trufflesecurity-trufflehog` | `https://github.com/trufflesecurity/trufflehog` | `6ced18b7` | Multi-dimensional audit evidence | 2026-11-05T15:06:11.987Z |
 | `learn-huggingface-vllm-sr-d3` | `https://huggingface.co/vllm-sr/d3` | `hf-vllm-sr` | Multi-dimensional audit evidence | 2026-11-05T15:13:02.009Z |
+| `learn-github-agent-of-empires-agent-of-empires` | `https://github.com/agent-of-empires/agent-of-empires` | `1f674d07` | Multi-dimensional audit evidence | 2026-11-05T15:20:35.913Z |
+| `learn-huggingface-liquidai-lfm2-5-24b-a2b-gguf` | `https://huggingface.co/LiquidAI/LFM2.5-24B-A2B-GGUF` | `hf-liquida` | Multi-dimensional audit evidence | 2026-11-05T15:20:39.914Z |
+| `learn-github-xerj-org-xerj` | `https://github.com/xerj-org/xerj` | `83c9f0d1` | Multi-dimensional audit evidence | 2026-11-05T15:20:47.230Z |
