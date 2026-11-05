@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-05T09:57:47.490Z",
+  "last_updated": "2026-11-05T10:09:09.911Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1655,14 +1655,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-baai-bge-base-en-v1-5",
-      "content_hash": "43ede19b66110bd8347db33f1ca1ab3ee672dfa54163b2036293efec33d31ee6",
-      "verified_at": "2026-10-31T19:14:31.235Z",
+      "content_hash": "bdbf6ac3b6c00da66aa0d77633e78e01670533d277a8d58a6b228809778e9283",
+      "verified_at": "2026-11-05T10:09:01.284Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T19:14:31.235Z"
+      "last_updated": "2026-11-05T10:09:01.284Z"
     },
     "sentence-transformers/paraphrase-multilingual-mpnet-base-v2": {
       "repository": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "baf58ec7129091ea759607be048744b8625590273319835069f84b8cf6b56840",
-      "verified_at": "2026-11-05T08:50:21.685Z",
+      "content_hash": "89bbd2a255e187cd0e8cad00c97e076e0e1ba513483cb99b41c8eb3fe7bafcc1",
+      "verified_at": "2026-11-05T10:09:09.910Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T08:50:21.685Z"
+      "last_updated": "2026-11-05T10:09:09.910Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -8811,14 +8811,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ntex-rs-ntex",
-      "content_hash": "22f0dc33312c41a8cef607749eadd7b641631fed95af2cab0f9d9e6c338ca0cb",
-      "verified_at": "2026-11-04T10:12:25.286Z",
+      "content_hash": "593a6042e65599a6735f3f730a02926ee0410c5b484c5c950a5b15ff75ca0ad7",
+      "verified_at": "2026-11-05T10:09:01.109Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T10:12:25.286Z"
+      "last_updated": "2026-11-05T10:09:01.109Z"
     },
     "learnapollo/learnapollo": {
       "repository": "learnapollo/learnapollo",

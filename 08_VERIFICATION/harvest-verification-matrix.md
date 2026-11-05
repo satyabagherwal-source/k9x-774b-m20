@@ -7604,3 +7604,6 @@
 | `CYCLE-20261105-GRQI` | `2026-11-05T09:57:40.842Z` | `cloudwego/volo` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7181` | Yes (`46d10f58...`) |
 | `CYCLE-20261105-GW0B` | `2026-11-05T09:57:46.379Z` | `SimonSchubert/Kai` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3545` | Yes (`1754b948...`) |
 | `CYCLE-20261105-GWUP` | `2026-11-05T09:57:47.473Z` | `google/vit-base-patch16-224` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7182, Rule 7183` | Yes (`9da218ac...`) |
+| `CYCLE-20261105-VCM4` | `2026-11-05T10:09:01.084Z` | `ntex-rs/ntex` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7184` | Yes (`593a6042...`) |
+| `CYCLE-20261105-VCRD` | `2026-11-05T10:09:01.273Z` | `BAAI/bge-base-en-v1.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-base-en-v1.5-learnings.md` | Yes (`bdbf6ac3...`) |
+| `CYCLE-20261105-VJES` | `2026-11-05T10:09:09.892Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7185` | Yes (`89bbd2a2...`) |

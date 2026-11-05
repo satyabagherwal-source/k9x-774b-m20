@@ -7613,3 +7613,6 @@ Every entry in this ledger must capture:
 | `learn-github-cloudwego-volo` | `https://github.com/cloudwego/volo` | `35e91302` | Multi-dimensional audit evidence | 2026-11-05T09:57:40.845Z |
 | `learn-github-simonschubert-kai` | `https://github.com/SimonSchubert/Kai` | `f0c4ee48` | Multi-dimensional audit evidence | 2026-11-05T09:57:46.382Z |
 | `learn-huggingface-google-vit-base-patch16-224` | `https://huggingface.co/google/vit-base-patch16-224` | `hf-google-` | Multi-dimensional audit evidence | 2026-11-05T09:57:47.476Z |
+| `learn-github-ntex-rs-ntex` | `https://github.com/ntex-rs/ntex` | `0b7efd36` | Multi-dimensional audit evidence | 2026-11-05T10:09:01.088Z |
+| `learn-huggingface-baai-bge-base-en-v1-5` | `https://huggingface.co/BAAI/bge-base-en-v1.5` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-11-05T10:09:01.276Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `8f122c9e` | Multi-dimensional audit evidence | 2026-11-05T10:09:09.896Z |

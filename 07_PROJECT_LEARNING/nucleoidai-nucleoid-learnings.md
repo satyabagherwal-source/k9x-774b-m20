@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source**: github ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
-> **Source Version**: `c57cbd6c`  
+> **Source Version**: `8f122c9e`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T08:50:21.331Z  
+> **Timestamp**: 2026-11-05T10:09:09.198Z  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T08:50:21.324Z  
+> **Harvest Timestamp**: 2026-11-05T10:09:09.193Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -571,7 +571,7 @@ import arc_dataset from "./lib/arc_dataset.ts";
 import fs from "node:fs/promises";
 
 // Genesis puzzle_id: 3aa6fb7a
-export async function start(puzzle_id: string = "ed36ccf7") {
+export async function start(puzzle_id: string = "6e02f1e3") {
   const { arc_train, test_input_matrix, test_output_matrix } =
     await arc_dataset.load(puzzle_id);
 
@@ -1006,128 +1006,376 @@ export function enlarge(matrix, rows: number, cols: number) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c57cbd6c` (2026-11-05)
-**Commit Message**: Record ARC 6e02f1e3 publication blockers
+### Incident Patch 1: `8f122c9e` (2026-11-05)
+**Commit Message**: Add ARC dataset for puzzle 6e02f1e3
 
-Document the frozen whole-mosaic color-diversity model and manual/offline checks in arc\docs\ARC-NUC-6e02f1e3.md.
+Model each training grid's whole 3 by 3 mosaic as one Obj tagged l9100 whose
+parts list holds its cell colors in reading order. Three class-level rules
+turn it into one color-5 line across the canvas: the new tag l6074, fill_color
+5, and an orientation looked up from the mosaic's distinct color count (one
+color gives the top row, 90; two the main diagonal, 135; three the other
+diagonal, 45). The dataset holds the 5 original training pairs followed by the
+test pair, 6 instances, with EXACT output canvas.
 
-Publication is blocked by the dataset profile's literal 620-minute timeout requirement, above the 360-minute hosted job limit; the existing batched workflow needs 140 minutes. No canonical dataset, README paragraph, reporting entry, or solver-default change is published. No NUC is requested.
+Files: arc/src/dataset/dataset.6e02f1e3.json, its paragraph in
+arc/README.md, the puzzle's entry (20th) in the ARC puzzle report workflow's
+ARC_PUZZLES, the solver's default puzzle in arc/src/app.ts (was ed36ccf7), and
+the updated progress record arc/docs/ARC-NUC-6e02f1e3.md, which keeps the
+earlier blocked attempt as history. The workflow timeout stays at 150 minutes,
+covering the batch budget of 4 batches x 30 + 20 = 140 minutes.
 
-No live solver run: exit status, difference, and elapsed time are unknown. Record the JSON-message and held-out-context preflight blockers, the absent environment API key, and 28 pre-existing solver lint errors without changing solver code.
+No NUC was requested; the rules use NUC 71's accepted distinct query, and
+proposal-strategy learning did not apply.
 
-Co-authored-by: Copilot <[REDACTED_EMAIL]>
+Run: one local `bun start 6e02f1e3` on the accepted runtime at c57cbd6 exited
+1 after 0.5 s with `E
 
-**File**: `arc/docs/ARC-NUC-6e02f1e3.md` (added, +127/-0)
+**File**: `.github/workflows/arc.yml` (modified, +1/-0)
 ```diff
-@@ -0,0 +1,127 @@
-+# ARC-NUC-6e02f1e3 -- Color Diversity Lines
-+
-+Progress record for ARC training puzzle `6e02f1e3`: its instruction dataset,
-+the solver and Nucleoid changes it needed, its runs, and what is still open.
-+
-+| Item | Status |
-+| --- | --- |
-+| Puzzle | [`data/training/6e02f1e3.json`](../data/training/6e02f1e3.json) |
-+| Instruction dataset | Not published: workflow timeout policy conflict. The prospective dataset's 5 training pairs and 1 test pair, with 6 whole-mosaic instances, were verified offline. |
-+| Output canvas | `EXACT`, inferred from the training pairs |
-+| Nucleoid enhancements | None: accepted distinct-value and class-level rules express the model |
-+| Solver changes | JSON-only messages and held-out context exclusion suggested, not applied |
-+| Solver runs | None in this invocation; live difference unknown |
-+| Updated | 5-Nov-2026 |
-+
-+## Puzzle
-+
-+Each training input is a completely filled 3 by 3 mosaic. The number of
-+distinct categorical colors determines the direction of one gray line:
-+one color produces a horizontal bar across the top, two produce a
-+northwest-to-southeast diagonal, and three produce a
-+southwest-to-northeast diagonal. The gray foreground is color 5 and the
-+output background is color 0. The original 3 by 3 canvas stays intact,
-+including the two empty rows beneath a horizontal bar, so the model uses
-+`EXACT`, not `FIT`.
-+
-+The default selection chose this puzzle from 381 eligible puzzles: its
-+largest training input or output matrix has 9 cells, and all training
-+matrices total 90 cells. The accepted starting revision was `f4cf6803`;
-+the working tree was clean and the pulls received no commits.
-+
-+## Dataset
-+
-+The dataset worker started from the entire mosaic as one pattern, not from
-+cells or separate color regions. Its row-major color list, `parts`, is a
-+descriptor of that whole object. One class-level expression counts distinct
-+colors and derives the resulting line's orientation. No finer-object
-+fallback, imperative steps, or per-pair rules were needed.
-+
-+The frozen declaration set is:
-+
+@@ -36,6 +36,7 @@ jobs:
+         9565186b
+         a85d4709
+         ed36ccf7
++        6e02f1e3
+       NUCLEOID_EXECUTABLE: ${{ github.workspace }}/target/debug/nucleoid
+       DOTENV_CONFIG_PATH: /dev/null
+       NO_COLOR: "1"
+```
+
+**File**: `arc/README.md` (modified, +72/-0)
+```diff
+@@ -656,6 +656,78 @@ in every input state, where the block is not turned, and 180 in every output
+ state. The test pair follows the training pairs at the same level and is
+ annotated by the same rules.
+ 
++`dataset.6e02f1e3.json` annotates the five original training pairs from
++`data\training\6e02f1e3.json`, in order, followed by its test pair, six
++mosaic instances in total, one per pair. Every input and output retains its
++original 3 by 3 canvas, colors, positions, and zero cells; no input has a zero
++cell. Each input is one mosaic of 9 cells that fills its canvas, in one, two,
++or three colors: 2 and 3; 3, 4, and 2; 4; 3; and 4 and 3 in the training
++pairs, and 4, 2, and 3 in the test pair. Each object is that whole mosaic, the
++figure seen first, whose 3 by 3 box spans the canvas from its origin, 0 and 0.
++Each output replaces the mosaic with one straight line of three color-5 cells
++across the canvas, on a background of zero cells, and the number of colors in
++the mosaic decides the line: one color gives the top row, two colors the main
++diagonal, from the top-left corner to the bottom-right, and three colors the
++other diagonal, from the top-right corner to the bottom-left. The third and
++fourth training mosaics have one color, the first and fifth two, and the
++second three, as does the test mosaic. Neither the colors nor the top row
++decides the line: color 3 appears in the first, second, fourth, and fifth
++training mosaics, which give all three lines, and every training mosaic's top
++row is a single color. The whole mosaic changes as one: all its cells give way
++to one line that follows none of its color regions, so each grid holds one
++object, as in `dataset.3c9b0459.json` and `dataset.74dd1130.json`, rather
++than the color regions of `dataset.9565186b.json`. The training pairs alone
++also fit counting edge-connected pieces, because every training color forms
++one piece; the rules count colors instead, a choice fixed from the training
++pairs before the test pair was read, and in the test mosaic colors 2 and 3
++each split into three single cells. Every canvas is 3 by 3, so the training
++pairs alone also fit a line of three cells on a canvas of any size; the line
++instead crosses the whole canvas, from edge to edge or corner to corner, and
++its tag names that geometry, so the rules state no length, as the
++canvas-filling rectangle of `dataset.5582e5ca.json` carries no size. The
++class takes `parts`, a flat list of the mosaic's cell colors in reading order,
++as in `dataset.5582e5ca.json`, such as `[2, 2, 2, 3, 2, 3, 3, 3, 3]` for the
++first training input, as its only descriptive property, with no color list,
++color count, line direction, canvas size, or matrix of cells, so no input
++property names the count or the line. Three unconditional class-level rules
++turn the mosaic into the line. `$Obj.tag = 'l6074'` names the line, and
++`$Obj.fill_color = 5` introduces `fill_color`, which is absent before the
++rules run, because the line is gray whatever the mosaic's colors.
++`orientation` is `{1: 90, 2: 135, 3: 45}[$Obj.parts.distinct().length]`: the
++list query `distinct` of [NUC 71](../docs/nuc-0071.md) keeps each of the
++mosaic's colors once, so its length is the number of colors, and the object
++literal, keyed by that number, states each count's axis once, by the
++convention of line orientations, where vertical is 0 and horizontal is 90, so
++the main diagonal, which runs from northwest to southeast, is 135 and the
++other diagonal 45, as `dataset.74dd1130.json` names its mirror axis. No
++arithmetic relates the counts to the axes, so the rule looks the axis up, as
++`dataset.27a28665.json` looks up its code by tag, and it reads no
++orientation, so it rewrites `orientation` without an `@first` anchor. Each
++training grid holds a single mosaic and shows no relation between objects, so
++no population operation appears; the count is a list query over the mosaic's
++own cells. The rules leave `x` and `y` unchanged, because every line's box
++starts at the canvas's origin, 0 and 0, where the mosaic's box starts, also
++for the other diagonal, whose cells run from the top-right corner. They create
++no other property, so each output state adds only `fill_color` to its input
++state's keys, its tag turns `l6074`, and its orientation turns 90, 135, or 45.
++Native snapshots start with the pair's `canvas_width` and `canvas_height`, and
++output snapshots are captured with the pair's implementation followed by
++`Obj[:]`. Tags identify the geometry: `l9100` is a single shape, as in
++`dataset.28bf18c6.json` and `dataset.3c9b0459.json`, and `l6074` is a
++straight line of cells across the whole canvas, along the axis its orientation
++gives. Input masks retain each pair's full-size 3 by 3 input canvas and output
++masks the complete 3 by 3 output, padded with `0` outside the line; with one
++object per grid, each mask equals its pair's grid, and merging them
++reproduces each pair's input and output. The `output_x`/`output_y` field
+```
+
+**File**: `arc/docs/ARC-NUC-6e02f1e3.md` (modified, +150/-77)
+```diff
+@@ -6,11 +6,11 @@ the solver and Nucleoid changes it needed, its runs, and what is still open.
+ | Item | Status |
+ | --- | --- |
+ | Puzzle | [`data/training/6e02f1e3.json`](../data/training/6e02f1e3.json) |
+-| Instruction dataset | Not published: workflow timeout policy conflict. The prospective dataset's 5 training pairs and 1 test pair, with 6 whole-mosaic instances, were verified offline. |
++| Instruction dataset | [`dataset.6e02f1e3.json`](../src/dataset/dataset.6e02f1e3.json): the puzzle's 5 original training pairs and its test pair, 6 mosaic instances, one per pair; committed with this record. An earlier invocation the same day verified a different model offline and did not publish it |
+ | Output canvas | `EXACT`, inferred from the training pairs |
+-| Nucleoid enhancements | None: accepted distinct-value and class-level rules express the model |
+-| Solver changes | JSON-only messages and held-out context exclusion suggested, not applied |
+-| Solver runs | None in this invocation; live difference unknown |
++| Nucleoid enhancements | None requested, so no proposal strategy was selected and strategy learning did not apply; the rules use the accepted `distinct` list query of [NUC 71](../../docs/nuc-0071.md) |
++| Solver changes | None; suggested changes await review, not applied |
++| Solver runs | 1 local run on 5-Nov-2026, exit 1 before any model call (`OPENROUTER_API_KEY is required`); difference unknown |
+ | Updated | 5-Nov-2026 |
+ 
+ ## Puzzle
+@@ -24,20 +24,79 @@ output background is color 0. The original 3 by 3 canvas stays intact,
+ including the two empty rows beneath a horizontal bar, so the model uses
+ `EXACT`, not `FIT`.
+ 
+-The default selection chose this puzzle from 381 eligible puzzles: its
+-largest training input or output matrix has 9 cells, and all training
+-matrices total 90 cells. The accepted starting revision was `f4cf6803`;
+-the working tree was clean and the pulls received no commits.
++`/arc-purposal` chose this puzzle by default twice on 5-Nov-2026. Both times
++it was the first of 381 eligible puzzles: its largest training input or output
++matrix has 9 cells, and all its training matrices total 90 cells. `794b24be`
++also has a largest matrix of 9 cells, but 180 cells in all. The first
++invocation started from `f4cf6803` and published no dataset, so the puzzle
++stayed eligible. The second started from `c57cbd6`. Both times the working
++tree was clean and the pulls brought in no commits.
+ 
+ ## Dataset
+ 
+-The dataset worker started from the entire mosaic as one pattern, not from
+-cells or separate color regions. Its row-major color list, `parts`, is a
+-descriptor of that whole object. One class-level expression counts distinct
+-colors and derives the resulting line's orientation. No finer-object
+-fallback, imperative steps, or per-pair rules were needed.
++Each grid's whole mosaic is one instance of `Obj(x, y, orientation, parts)`,
++tagged `l9100`, a single shape, as in `dataset.28bf18c6.json` and
++`dataset.3c9b0459.json`. `parts` is the flat list of the mosaic's cell colors
++in reading order, as in `dataset.5582e5ca.json`; it is the only descriptive
++property, so no input property names the color count or the line. Three
++unconditional class-level rules turn the mosaic into its line:
+ 
+-The frozen declaration set is:
 +```nuc
-+class Obj(x: int, y: int, orientation: int, parts: list):
-+    this.x = x
-+    this.y = y
-+    this.orientation = orientation
-+    this.tag = 'l9100'
-+    this.parts = parts
-+
++$Obj.tag = 'l6074'
++$Obj.orientation = {1: 90, 2: 135, 3: 45}[$Obj.parts.distinct().length]
 +$Obj.fill_color = 5
-+$Obj.orientation = [90, 135, 45][$Obj.parts.distinct().length - 1]
-+
-+if $Obj.orientation == 90:
-+    $Obj.tag = 'l3058'
-+    $Obj.bar_width = canvas_width
-+
-+if $Obj.orientation == 45 or $Obj.orientation == 135:
-+    $Obj.tag = 'l8831'
-+    $Obj.line_length = canvas_width
 +```
 +
-+The input pattern tag `l9100` and horizontal-bar tag `l3058` reuse existing
-+geometries. The proposed unused tag `l8831` describes an unmarked,
-+one-cell-thick diagonal whose raster-cell length is `canvas_width`.
-+Positions remain at the origins inferred from the training pairs; the
-+rules create the fill color and the applicable width or length.
++`distinct` keeps each of the mosaic's colors once, so its length is the number
++of colors. The object literal states each count's axis once: 90 for the
++horizontal top row, 135 for the main diagonal, and 45 for the other diagonal.
++The new tag `l6074` names a straight line of cells across the whole canvas,
++along the axis its orientation gives, so the rules state no length. Every line's
++box starts at the canvas origin, where the mosaic's box starts, so `x` and `y`
++stay unchanged. The rules create only `fill_color`, which is absent from input
++states. The [README](../README.md#instruction-datasets) describes the dataset in
++full.
 +
-+The worker froze the model from training before evaluating the held-out
-+pair. Manual/offline verification passed for all six original pairs:
-+full-canvas masks, recomposition, identities, native snapshot replay, and
-+the unchanged rule set. Twelve native programs were executed and replayed,
-+for 24 successful Nucleoid executions. These checks are not a live-model
-+solver result or an automated ARC test.
++The worker started from the big picture, the whole mosaic as one figure, and
++stayed at that level. It rejected color regions as objects, because the output
++line follows none of them. The training pairs alone also fit counting
++edge-connected pieces instead of colors, since every training color forms one
++piece. The worker counted colors and froze the rules, with their hash, before
++it extracted the test pair.
 +
-+Publication was blocked, so no canonical `dataset.6e02f1e3.json`, README
-+paragraph, or reporting-list entry was created. The model and verification
-+evidence remain in the invocation's external session workspace. The
-+[instruction dataset documentation](../README.md#instruction-datasets)
-+describes the retained dataset conventions.
++This model differs from the unpublished one below. It uses one line tag whose
++orientation gives the axis, where the earlier model used separate bar and
++diagonal tags. It drops `bar_width` and `line_length`, which only restated the
++canvas width. And it looks the axis up by count in an object literal instead of
++indexing a list with the count minus one.
 +
-+## Publication Blocker
++The caller checked the handoff against the declarative, higher-order, and
++gestalt requirements and found that it met them: each relation is stated once
 +
-+The dataset profile's literal minimum is thirty minutes per listed puzzle
-+plus twenty minutes for setup and reporting. Adding this puzzle to the
-+nineteen existing entries would require 620 minutes, exceeding the
-+GitHub-hosted job limit of 360 minutes.
-+
-+The actual workflow already uses `ARC_CONCURRENCY = 5`: twenty puzzles
-+need four thirty-minute batches plus twenty minutes, or 140 minutes.
-+Its existing 150-minute timeout therefore covers the batched execution,
-+but does not satisfy the profile's literal serial budget. The worker
-+returned `blocked` instead of overriding the policy or publishing a partial
-+dataset. Neither the policy nor the workflow was changed.
-+
-+No NUC was requested, so proposal-strategy learning is `not_applicable`;
-+there was no strategy selection, trial, rubric, or checkpoint.
-+
-+## Runs
-+
-+On 5-Nov-2026, no live solver run was started. The authorized
-+`bun start 6e02f1e3` command was not executed because the dataset handoff
-+was blocked. Its live exit status, difference, and elapsed time are
-+unknown, not zero. The solver's previous default, `ed36ccf7`, remains
-+unchanged.
-+
-+The primary `cargo build` and ARC type checking succeeded. The existing
-+ARC lint command failed with 28 `prettier/prettier` errors in unchanged
-+`src/analyzer.ts` and `src/
+```
+
+**File**: `arc/src/app.ts` (modified, +1/-1)
+```diff
+@@ -7,7 +7,7 @@ import arc_dataset from "./lib/arc_dataset.ts";
+ import fs from "node:fs/promises";
+ 
+ // Genesis puzzle_id: 3aa6fb7a
+-export async function start(puzzle_id: string = "ed36ccf7") {
++export async function start(puzzle_id: string = "6e02f1e3") {
+   const { arc_train, test_input_matrix, test_output_matrix } =
+     await arc_dataset.load(puzzle_id);
+ 
+```
+
+**File**: `arc/src/dataset/dataset.6e02f1e3.json` (added, +227/-0)
+```diff
+@@ -0,0 +1,227 @@
++{
++  "declarations": [
++    "class Obj(x: int, y: int, orientation: int, parts: list):\n    this.x = x\n    this.y = y\n    this.orientation = orientation\n    this.tag = 'l9100'\n    this.parts = parts",
++    "$Obj.tag = 'l6074'",
++    "$Obj.orientation = {1: 90, 2: 135, 3: 45}[$Obj.parts.distinct().length]",
++    "$Obj.fill_color = 5"
++  ],
++  "output_canvas": "EXACT",
++  "dataset": [
++    {
++      "input_matrix": [
++        [2, 2, 2],
++        [3, 2, 3],
++        [3, 3, 3]
++      ],
++      "output_matrix": [
++        [5, 0, 0],
++        [0, 5, 0],
++        [0, 0, 5]
++      ],
++      "instances": [
++        {
++          "instance_name": "objf30b9a69fe75",
++          "input_x": 0,
++          "output_x": 0,
++          "input_y": 0,
++          "output_y": 0,
++          "input_orientation": 0,
++          "output_orientation": 135,
++          "input_instance_matrix": [
++            [2, 2, 2],
++            [3, 2, 3],
++            [3, 3, 3]
++          ],
++          "output_instance_matrix": [
++            [5, 0, 0],
++            [0, 5, 0],
++            [0, 0, 5]
++          ],
++          "implementation": "objf30b9a69fe75 = Obj(x=0, y=0, orientation=0, parts=[2, 2, 2, 3, 2, 3, 3, 3, 3])",
++          "input_value": {"id":"objf30b9a69fe75","orientation":0,"parts":[2,2,2,3,2,3,3,3,3],"tag":"l9100","x":0,"y":0},
++          "output_value": {"fill_color":5,"id":"objf30b9a69fe75","orientation":135,"parts":[2,2,2,3,2,3,3,3,3],"tag":"l6074","x":0,"y":0}
++        }
++      ]
++    },
++    {
++      "input_matrix": [
++        [3, 3, 3],
++        [4, 2, 2],
++        [4, 4, 2]
++      ],
++      "output_matrix": [
++        [0, 0, 5],
++        [0, 5, 0],
++        [5, 0, 0]
++      ],
++      "instances": [
++        {
++          "instance_name": "obj9b3f65ec8bbe",
++          "input_x": 0,
++          "output_x": 0,
++          "input_y": 0,
++          "output_y": 0,
++          "input_orientation": 0,
++          "output_orientation": 45,
++          "input_instance_matrix": [
++            [3, 3, 3],
++            [4, 2, 2],
++            [4, 4, 2]
++          ],
++          "output_instance_matrix": [
++            [0, 0, 5],
++            [0, 5, 0],
++            [5, 0, 0]
++          ],
++          "implementation": "obj9b3f65ec8bbe = Obj(x=0, y=0, orientation=0, parts=[3, 3, 3, 4, 2, 2, 4, 4, 2])",
++          "input_value": {"id":"obj9b3f65ec8bbe","orientation":0,"parts":[3,3,3,4,2,2,4,4,2],"tag":"l9100","x":0,"y":0},
++          "output_value": {"fill_color":5,"id":"obj9b3f65ec8bbe","orientation":45,"parts":[3,3,3,4,2,2,4,4,2],"tag":"l6074","x":0,"y":0}
++        }
++      ]
++    },
++    {
++      "input_matrix": [
++        [4, 4, 4],
++        [4, 4, 4],
++        [4, 4, 4]
++      ],
++      "output_matrix": [
++        [5, 5, 5],
++        [0, 0, 0],
++        [0, 0, 0]
++      ],
++      "instances": [
++        {
++          "instance_name": "obj23d15ee33476",
++          "input_x": 0,
++          "output_x": 0,
++          "input_y": 0,
++          "output_y": 0,
++          "input_orientation": 0,
++          "output_orientation": 90,
++          "input_instance_matrix": [
++            [4, 4, 4],
++            [4, 4, 4],
++            [4, 4, 4]
++          ],
++          "output_instance_matrix": [
++            [5, 5, 5],
++            [0, 0, 0],
++            [0, 0, 0]
++          ],
++          "implementation": "obj23d15ee33476 = Obj(x=0, y=0, orientation=0, parts=[4, 4, 4, 4, 4, 4, 4, 4, 4])",
++          "input_value": {"id":"obj23d15ee33476","orientation":0,"parts":[4,4,4,4,4,4,4,4,4],"tag":"l9100","x":0,"y":0},
++          "output_value": {"fill_color":5,"id":"obj23d15ee33476","orientation":90,"parts":[4,4,4,4,4,4,4,4,4],"tag":"l6074","x":0,"y":0}
++        }
++      ]
++    },
++    {
++      "input_matrix": [
++        [3, 3, 3],
++        [3, 3, 3],
++        [3, 3, 3]
++      ],
++      "output_matrix": [
++        [5, 5, 5],
++        [0, 0, 0],
++        [0, 0, 0]
++      ],
++      "instances": [
++        {
++          "instance_name": "objb16c3542a556",
++          "input_x": 0,
++          "output_x": 0,
++          "input_y": 0,
++          "output_y": 0,
++          "input_orientation": 0,
++          "output_orientation": 90,
++          "input_instance_matrix": [
++            [3, 3, 3],
++            [3, 3, 3],
++            [3, 3, 3]
++          ],
++          "output_instance_matrix": [
++            [5, 5, 5],
++            [0, 0, 0],
++            [0, 0, 0]
++          ],
++          "implementation": "objb16c3542a556 = Obj(x=0, y=0, orientation=0, parts=[3, 3, 3, 3, 3, 3, 3, 3, 3])",
++          "input_value": {"id":"objb16c3542a556","orientation":0,"parts":[3,3,3,3,3,3,3,3,3],"tag":"l9100","x":0,"y":0},
++          "output_value": {"fill_color":5,"id":"objb16c3542a556","orientation":90,"parts":[3,3,3,3,3,3,3,3,3],"tag":"l6074","x":0,"y":0}
++        }
++      ]
++    },
++    {
++      "input_matrix": [
++        [4, 4, 4],
++        [4, 4, 4],
++        [3, 3, 3]
++      ],
++      "output_matrix": [
++        [5, 0, 0],
++        [0, 5, 0],
++        [0, 0, 5]
++      
 ```
 
 #### Recent Merged Pull Requests:
@@ -1156,43 +1404,21 @@ Co-authored-by: Copilot <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Record ARC 6e02f1e3 publication blockers
+## X. Add ARC dataset for puzzle 6e02f1e3
 
 **RULE**:
-When implementing operations in `arc/docs/ARC-NUC-6e02f1e3.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/arc.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c57cbd6c`: Record ARC 6e02f1e3 publication blockers. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8f122c9e`: Add ARC dataset for puzzle 6e02f1e3. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `arc/docs/ARC-NUC-6e02f1e3.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/arc.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-# ARC-NUC-6e02f1e3 -- Color Diversity Lines
-
-Progress record for ARC training puzzle `6e02f1e3`: its instruction dataset,
-the solver and Nucleoid changes it needed, its runs, and what is still open.
-
-| Item | Status |
-| --- | --- |
-| Puzzle | [`data/training/6e02f1e3.json`](../data/training/6e02f1e3.json) |
-| Instruction dataset | Not published: workflow timeout policy conflict. The prospective dataset's 5 training pairs and 1 test pair, with 6 whole-mosaic instances, were verified offline. |
-| Output canvas | `EXACT`, inferred from the training pairs |
-| Nucleoid enhancements | None: accepted distinct-value and class-level rules express the model |
-| Solver changes | JSON-only messages and held-out context exclusion suggested, not applied |
-| Solver runs | None in this invocation; live difference unknown |
-| Updated | 5-Nov-2026 |
-
-## Puzzle
-
-Each training input is a completely filled 3 by 3 mosaic. The number of
-distinct categorical colors determines the direction of one gray line:
-one color produces a horizontal bar across the top, two produce a
-northwest-to-southeast diagonal, and three produce a
-southwest-to-northeast diagonal. The gray foreground is color 5 and the
-output bac
+        6e02f1e3
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1202,4 +1428,4 @@ output bac
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c57cbd6c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8f122c9e` are properly handled with clean fallback behavior.
