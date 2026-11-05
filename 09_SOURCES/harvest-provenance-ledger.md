@@ -7609,3 +7609,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-argmaxinc-whisperkit-coreml` | `https://huggingface.co/argmaxinc/whisperkit-coreml` | `hf-argmaxi` | Multi-dimensional audit evidence | 2026-11-05T09:44:34.378Z |
 | `learn-github-nvidia-cuda-rust` | `https://github.com/NVIDIA/cuda-rust` | `e706cab3` | Multi-dimensional audit evidence | 2026-11-05T09:44:34.847Z |
 | `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/limbo` | `3b6bbb46` | Multi-dimensional audit evidence | 2026-11-05T09:44:49.927Z |
+| `learn-huggingface-qwen-qwen3-8b` | `https://huggingface.co/Qwen/Qwen3-8B` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-11-05T09:51:12.028Z |

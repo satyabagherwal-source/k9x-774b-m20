@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261104-T7VN",
-    "timestamp": "2026-11-04T01:27:48.515Z",
-    "repository": "saltstack/salt",
-    "learningId": "learn-github-saltstack-salt",
-    "contentHash": "30d7c7b379cf1b94eb34dbb582e1d5ac5dedd321ce703b77a971f106a1d05768",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261104-TAR7",
     "timestamp": "2026-11-04T01:27:52.243Z",
     "repository": "cilium/cilium",
@@ -7492,6 +7477,21 @@
     "contentHash": "7fcd3ca82bfa2b3233c9ac55fa432a054d7cb4106d989fd7453acd35e6123df3",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-8FQ1",
+    "timestamp": "2026-11-05T09:51:12.025Z",
+    "repository": "Qwen/Qwen3-8B",
+    "learningId": "learn-huggingface-qwen-qwen3-8b",
+    "contentHash": "b9ee8b3ba53efd7e55f390c3c8155571601bab95a16ecd9e73633c32b75906f6",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

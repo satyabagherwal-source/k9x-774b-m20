@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-05T09:44:52.480Z",
-    "lastVerified": "2026-11-05T09:44:52.480Z",
+    "lastChecked": "2026-11-05T09:51:23.619Z",
+    "lastVerified": "2026-11-05T09:51:23.619Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -245,8 +245,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-05T09:12:28.817Z",
-    "lastVerified": "2026-11-05T09:12:28.817Z",
+    "lastChecked": "2026-11-05T09:51:23.609Z",
+    "lastVerified": "2026-11-05T09:51:23.609Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -993,8 +993,8 @@
     "officialUrl": "https://github.com/bee-san/Ciphey",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-05T05:53:12.162Z",
-    "lastVerified": "2026-11-05T05:53:12.162Z",
+    "lastChecked": "2026-11-05T09:51:18.557Z",
+    "lastVerified": "2026-11-05T09:51:18.557Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bee-san-ciphey",
@@ -3346,9 +3346,9 @@
   "cdk-team-cdk": {
     "name": "CDK",
     "officialUrl": "https://github.com/cdk-team/CDK",
-    "lastChecked": "2026-11-04T19:55:23.586Z",
+    "lastChecked": "2026-11-05T09:51:15.959Z",
     "revisionIdentifier": "69da22ad",
-    "lastVerified": "2026-11-04T19:55:23.586Z"
+    "lastVerified": "2026-11-05T09:51:15.959Z"
   },
   "lioensky-vcptoolbox": {
     "name": "lioensky/VCPToolBox",
@@ -5572,12 +5572,12 @@
     "revisionIdentifier": "d4f206e3"
   },
   "mlua-rs-mlua": {
-    "name": "mlua-rs/mlua",
+    "name": "mlua",
     "officialUrl": "https://github.com/mlua-rs/mlua",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-04T09:57:40.415Z",
-    "lastVerified": "2026-11-04T09:57:40.415Z",
+    "lastChecked": "2026-11-05T09:51:08.580Z",
+    "lastVerified": "2026-11-05T09:51:08.580Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-mlua-rs-mlua",
@@ -5586,7 +5586,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "a0ad4535"
   },
   "hf-aleph-alpha-kolibri-1": {
     "name": "Aleph-Alpha/Kolibri-1",
@@ -6708,12 +6709,12 @@
     "officialUrl": "https://huggingface.co/Qwen/Qwen3-8B",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-31T18:52:29.740Z",
-    "lastVerified": "2026-10-31T18:52:29.740Z",
+    "lastChecked": "2026-11-05T09:51:11.182Z",
+    "lastVerified": "2026-11-05T09:51:11.182Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-qwen-qwen3-8b",
-    "contentHash": "270a069314ac1c3ed2428df7c6fb333ce40f913dc678152799162a4a068ed708",
+    "contentHash": "b9ee8b3ba53efd7e55f390c3c8155571601bab95a16ecd9e73633c32b75906f6",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -7719,12 +7720,12 @@
     "lastVerified": "2026-11-04T22:05:11.204Z"
   },
   "open-source-legal-opencontracts": {
-    "name": "Open-Source-Legal/OpenContracts",
+    "name": "OpenContracts",
     "officialUrl": "https://github.com/Open-Source-Legal/OpenContracts",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-04T19:09:00.100Z",
-    "lastVerified": "2026-11-04T19:09:00.100Z",
+    "lastChecked": "2026-11-05T09:51:21.115Z",
+    "lastVerified": "2026-11-05T09:51:21.115Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-open-source-legal-opencontracts",
@@ -7733,7 +7734,8 @@
     "recentFixesCount": 15,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "fab192a5"
   },
   "bgreenwell-doxx": {
     "name": "doxx",
@@ -10214,9 +10216,9 @@
   "shifthackz-stable-diffusion-kmp": {
     "name": "Stable-Diffusion-KMP",
     "officialUrl": "https://github.com/ShiftHackZ/Stable-Diffusion-KMP",
-    "lastChecked": "2026-11-02T15:00:42.951Z",
+    "lastChecked": "2026-11-05T09:51:13.560Z",
     "revisionIdentifier": "4b060c7e",
-    "lastVerified": "2026-11-02T15:00:42.951Z"
+    "lastVerified": "2026-11-05T09:51:13.560Z"
   },
   "crawlcove-crawlcove-sitemap-validator": {
     "name": "crawlcove-sitemap-validator",

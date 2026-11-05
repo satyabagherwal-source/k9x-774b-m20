@@ -7600,3 +7600,4 @@
 | `CYCLE-20261105-ZWW6` | `2026-11-05T09:44:34.374Z` | `argmaxinc/whisperkit-coreml` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-argmaxinc-whisperkit-coreml-learnings.md` | Yes (`14b47f9d...`) |
 | `CYCLE-20261105-ZX98` | `2026-11-05T09:44:34.844Z` | `NVIDIA/cuda-rust` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7179` | Yes (`09c5d8e7...`) |
 | `CYCLE-20261105-08W4` | `2026-11-05T09:44:49.924Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7180` | Yes (`7fcd3ca8...`) |
+| `CYCLE-20261105-8FQ1` | `2026-11-05T09:51:12.025Z` | `Qwen/Qwen3-8B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-8b-learnings.md` | Yes (`b9ee8b3b...`) |
