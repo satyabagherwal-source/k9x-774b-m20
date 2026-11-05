@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-05T03:46:38.425Z",
-    "lastVerified": "2026-11-05T03:46:38.425Z",
+    "lastChecked": "2026-11-05T03:53:36.724Z",
+    "lastVerified": "2026-11-05T03:53:36.724Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -356,9 +356,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-05T03:20:44.738Z",
+    "lastChecked": "2026-11-05T03:53:33.492Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-05T03:20:44.738Z"
+    "lastVerified": "2026-11-05T03:53:33.492Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -1933,12 +1933,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "cilium-cilium": {
-    "name": "cilium/cilium",
+    "name": "cilium",
     "officialUrl": "https://github.com/cilium/cilium",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-05T00:15:02.887Z",
-    "lastVerified": "2026-11-05T00:15:02.887Z",
+    "lastChecked": "2026-11-05T03:53:28.408Z",
+    "lastVerified": "2026-11-05T03:53:28.408Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-cilium-cilium",
@@ -1947,7 +1947,8 @@
     "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "cff73042"
   },
   "langchain4j-langchain4j": {
     "name": "langchain4j/langchain4j",
@@ -2827,9 +2828,9 @@
   "rigellute-spotify-tui": {
     "name": "spotify-tui",
     "officialUrl": "https://github.com/Rigellute/spotify-tui",
-    "lastChecked": "2026-11-04T01:00:36.823Z",
+    "lastChecked": "2026-11-05T03:53:18.368Z",
     "revisionIdentifier": "c4dcf6b9",
-    "lastVerified": "2026-11-04T01:00:36.823Z"
+    "lastVerified": "2026-11-05T03:53:18.368Z"
   },
   "hf-akatz-ai-minimax-h3-character-swap-lora": {
     "name": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
@@ -4026,13 +4027,13 @@
     "officialUrl": "https://huggingface.co/amazon/chronos-2",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-31T13:13:53.391Z",
-    "lastVerified": "2026-10-31T13:13:53.391Z",
+    "lastChecked": "2026-11-05T03:53:21.302Z",
+    "lastVerified": "2026-11-05T03:53:21.302Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-amazon-chronos-2",
-    "contentHash": "c7f46e4e9c353e32a7dfb3900383c2e3460179a1b72184a7024695c8010b478d",
-    "promotedRulesCount": 0,
+    "contentHash": "fd809f993f6887eb95fb28bbd0750e957880b35e6235940889588f9a1b39a909",
+    "promotedRulesCount": 3,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
@@ -4777,9 +4778,9 @@
   "qovery-replibyte": {
     "name": "Replibyte",
     "officialUrl": "https://github.com/Qovery/Replibyte",
-    "lastChecked": "2026-11-04T07:33:22.918Z",
+    "lastChecked": "2026-11-05T03:53:30.904Z",
     "revisionIdentifier": "5504db91",
-    "lastVerified": "2026-11-04T07:33:22.918Z"
+    "lastVerified": "2026-11-05T03:53:30.904Z"
   },
   "grpc-grpc-rust": {
     "name": "grpc/grpc-rust",
@@ -7260,12 +7261,12 @@
     "officialUrl": "https://github.com/temporalio/temporal",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-04T08:21:49.711Z",
-    "lastVerified": "2026-11-04T08:21:49.711Z",
+    "lastChecked": "2026-11-05T03:53:30.448Z",
+    "lastVerified": "2026-11-05T03:53:30.448Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-temporalio-temporal",
-    "contentHash": "bcc8f927390f8423bb8b738f02d31c61726f5b70650fac6a8d10b0036483506b",
+    "contentHash": "5d4fce6025ee35dbd6c5cd1f09d7e86f2850daa02082d1a2b455efed0e122654",
     "promotedRulesCount": 1,
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
@@ -9280,9 +9281,9 @@
   "alin23-lunar": {
     "name": "Lunar",
     "officialUrl": "https://github.com/alin23/Lunar",
-    "lastChecked": "2026-10-31T21:08:03.246Z",
+    "lastChecked": "2026-11-05T03:53:23.367Z",
     "revisionIdentifier": "06950e25",
-    "lastVerified": "2026-10-31T21:08:03.246Z"
+    "lastVerified": "2026-11-05T03:53:23.367Z"
   },
   "davo20019-seo-analysis": {
     "name": "seo-analysis",

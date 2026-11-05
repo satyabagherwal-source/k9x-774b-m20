@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-05T03:46:35.874Z",
-  "total_cycles_completed": 7468,
-  "total_learnings_persisted": 7468,
-  "total_rules_promoted": 7148,
+  "last_updated": "2026-11-05T03:53:34.145Z",
+  "total_cycles_completed": 7470,
+  "total_learnings_persisted": 7470,
+  "total_rules_promoted": 7152,
   "history": [
-    {
-      "timestamp": "2026-11-04T19:15:26.561Z",
-      "repository": "restatedev/restate",
-      "learningId": "learn-github-restatedev-restate",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T19:15:36.483Z",
-      "repository": "orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF",
-      "learningId": "learn-huggingface-orcarouter-deepseek-v4-1-flash-1017-abliterated-gguf",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-04T19:15:37.704Z",
       "repository": "tickernelz/opencode-mem",
@@ -1403,6 +1389,20 @@
       "repository": "typedb/typedb",
       "learningId": "learn-github-typedb-typedb",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T03:53:31.269Z",
+      "repository": "temporalio/temporal",
+      "learningId": "learn-github-temporalio-temporal",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T03:53:34.145Z",
+      "repository": "amazon/chronos-2",
+      "learningId": "learn-huggingface-amazon-chronos-2",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

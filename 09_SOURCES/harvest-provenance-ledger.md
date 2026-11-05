@@ -7500,3 +7500,5 @@ Every entry in this ledger must capture:
 | `learn-github-opentofu-opentofu` | `https://github.com/opentofu/opentofu` | `9f21216f` | Multi-dimensional audit evidence | 2026-11-05T03:46:30.322Z |
 | `learn-github-sigstore-cosign` | `https://github.com/sigstore/cosign` | `92514f9f` | Multi-dimensional audit evidence | 2026-11-05T03:46:32.619Z |
 | `learn-github-typedb-typedb` | `https://github.com/typedb/typedb` | `bcf3dc11` | Multi-dimensional audit evidence | 2026-11-05T03:46:35.870Z |
+| `learn-github-temporalio-temporal` | `https://github.com/temporalio/temporal` | `1193f14b` | Multi-dimensional audit evidence | 2026-11-05T03:53:31.265Z |
+| `learn-huggingface-amazon-chronos-2` | `https://huggingface.co/amazon/chronos-2` | `hf-amazon-` | Multi-dimensional audit evidence | 2026-11-05T03:53:34.140Z |

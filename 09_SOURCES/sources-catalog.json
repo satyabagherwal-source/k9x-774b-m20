@@ -795,8 +795,8 @@
     "sourceUrl": "https://huggingface.co/amazon/chronos-2",
     "sourceVersion": "hf-amazon-chronos-2",
     "license": "Open-Source",
-    "contentHash": "c7f46e4e9c353e32a7dfb3900383c2e3460179a1b72184a7024695c8010b478d",
-    "lastHarvestedAt": "2026-10-31T13:13:54.994Z",
+    "contentHash": "fd809f993f6887eb95fb28bbd0750e957880b35e6235940889588f9a1b39a909",
+    "lastHarvestedAt": "2026-11-05T03:53:34.140Z",
     "learningId": "learn-huggingface-amazon-chronos-2"
   },
   "hf-compvis-stable-diffusion-v1-4": {
@@ -6463,10 +6463,10 @@
     "repository": "temporalio/temporal",
     "platform": "github",
     "sourceUrl": "https://github.com/temporalio/temporal",
-    "sourceVersion": "d1670007",
+    "sourceVersion": "1193f14b",
     "license": "MIT",
-    "contentHash": "bcc8f927390f8423bb8b738f02d31c61726f5b70650fac6a8d10b0036483506b",
-    "lastHarvestedAt": "2026-11-04T08:21:57.159Z",
+    "contentHash": "5d4fce6025ee35dbd6c5cd1f09d7e86f2850daa02082d1a2b455efed0e122654",
+    "lastHarvestedAt": "2026-11-05T03:53:31.265Z",
     "learningId": "learn-github-temporalio-temporal"
   },
   "mintplex-labs-anything-llm": {

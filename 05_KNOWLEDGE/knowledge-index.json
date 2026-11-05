@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T03:46:35.806Z",
+  "last_updated": "2026-11-05T03:53:34.064Z",
   "total_verified_learnings": 1213,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -18793,7 +18793,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/amazon/chronos-2",
       "source_version": "hf-amazon-chronos-2",
-      "content_hash": "c7f46e4e9c353e32a7dfb3900383c2e3460179a1b72184a7024695c8010b478d",
+      "content_hash": "fd809f993f6887eb95fb28bbd0750e957880b35e6235940889588f9a1b39a909",
       "dossier_path": "07_PROJECT_LEARNING/hf-amazon-chronos-2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-amazon-chronos-2-learnings.md",
       "promoted_rules": [
@@ -18811,6 +18811,21 @@
           "number": "EXISTING",
           "title": "Arcsinh Normalization for Scale Invariance",
           "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 7095,
+          "title": "Probabilistic Output Head Must Use Discrete Quantile Binning for Stability",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7096,
+          "title": "Input Normalization MUST Use Robust Transformations (arcsinh) for Time-Series Data",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7097,
+          "title": "Group Attention MUST Be Used for Multivariate Time-Series to Enable Cross-Series Learning",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -18831,7 +18846,7 @@
         "learn-huggingface-hf-amazon-chronos-2-mv49o8cx",
         "learn-huggingface-hf-amazon-chronos-2-mv4n1u6n"
       ],
-      "verified_at": "2026-10-31T13:13:54.870Z",
+      "verified_at": "2026-11-05T03:53:34.045Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -57133,8 +57148,8 @@
       "slug": "temporalio-temporal",
       "platform": "github",
       "source_url": "https://github.com/temporalio/temporal",
-      "source_version": "d1670007",
-      "content_hash": "bcc8f927390f8423bb8b738f02d31c61726f5b70650fac6a8d10b0036483506b",
+      "source_version": "1193f14b",
+      "content_hash": "5d4fce6025ee35dbd6c5cd1f09d7e86f2850daa02082d1a2b455efed0e122654",
       "dossier_path": "07_PROJECT_LEARNING/temporalio-temporal-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/temporalio-temporal-learnings.md",
       "promoted_rules": [
@@ -57207,6 +57222,11 @@
           "number": 6774,
           "title": "Enable cgo for test targets when the race detector is on (#12689)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7094,
+          "title": "stale Cassandra-only wording on HistoryTaskDLQEnabled (#12919)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -57214,7 +57234,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T08:21:57.049Z",
+      "verified_at": "2026-11-05T03:53:31.148Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -179834,6 +179854,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-05T03:46:35.792Z"
+    },
+    "rule-7094": {
+      "learning_id": "rule-7094",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7094,
+      "title": "stale Cassandra-only wording on HistoryTaskDLQEnabled (#12919)",
+      "source_url": "https://github.com/temporalio/temporal",
+      "source_version": "1193f14b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T03:53:31.148Z"
+    },
+    "rule-7095": {
+      "learning_id": "rule-7095",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7095,
+      "title": "Probabilistic Output Head Must Use Discrete Quantile Binning for Stability",
+      "source_url": "https://huggingface.co/amazon/chronos-2",
+      "source_version": "hf-amazon-chronos-2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T03:53:34.045Z"
+    },
+    "rule-7096": {
+      "learning_id": "rule-7096",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7096,
+      "title": "Input Normalization MUST Use Robust Transformations (arcsinh) for Time-Series Data",
+      "source_url": "https://huggingface.co/amazon/chronos-2",
+      "source_version": "hf-amazon-chronos-2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T03:53:34.045Z"
+    },
+    "rule-7097": {
+      "learning_id": "rule-7097",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7097,
+      "title": "Group Attention MUST Be Used for Multivariate Time-Series to Enable Cross-Series Learning",
+      "source_url": "https://huggingface.co/amazon/chronos-2",
+      "source_version": "hf-amazon-chronos-2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T03:53:34.045Z"
     }
   },
   "aliases": {

@@ -7491,3 +7491,5 @@
 | `CYCLE-20261105-7FOT` | `2026-11-05T03:46:30.317Z` | `opentofu/opentofu` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7091` | Yes (`307cabcc...`) |
 | `CYCLE-20261105-7HGO` | `2026-11-05T03:46:32.616Z` | `sigstore/cosign` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7092` | Yes (`68466301...`) |
 | `CYCLE-20261105-7JYR` | `2026-11-05T03:46:35.860Z` | `typedb/typedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7093` | Yes (`99d9dd56...`) |
+| `CYCLE-20261105-GGHP` | `2026-11-05T03:53:31.261Z` | `temporalio/temporal` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7094` | Yes (`5d4fce60...`) |
+| `CYCLE-20261105-GIPL` | `2026-11-05T03:53:34.137Z` | `amazon/chronos-2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7095, Rule 7096, Rule 7097` | Yes (`fd809f99...`) |

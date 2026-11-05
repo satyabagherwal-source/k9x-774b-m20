@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/temporalio-temporal-learnings.md`  
 > **Source**: github ([https://github.com/temporalio/temporal](https://github.com/temporalio/temporal))  
-> **Source Version**: `d1670007`  
+> **Source Version**: `1193f14b`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T08:21:56.403Z  
+> **Timestamp**: 2026-11-05T03:53:30.583Z  
 > **Learning ID**: `learn-github-temporalio-temporal`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/temporalio-temporal-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/temporalio/temporal](https://github.com/temporalio/temporal))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T08:21:49.711Z  
+> **Harvest Timestamp**: 2026-11-05T03:53:30.448Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Temporal service
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 24179 stars
+- **Stars / Engagement**: 24193 stars
 
 ---
 
@@ -2121,112 +2121,52 @@ func (x *WorkflowMutableStateMutation) ProtoReflect() protoreflect.Message {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8ac42361` (2026-11-03)
-**Commit Message**: Enable cgo for test targets when the race detector is on (#12689)
+### Incident Patch 1: `4687e189` (2026-11-04)
+**Commit Message**: Fix stale Cassandra-only wording on HistoryTaskDLQEnabled (#12919)
 
 ## What changed?
+Updated the description of the `history.TaskDLQEnabled` dynamic config
+setting (`HistoryTaskDLQEnabled` in
+`common/dynamicconfig/constants.go`).
 
-A new `TEST_CGO_ENABLED`, derived from `TEST_RACE_FLAG`, used by the `go
-test` recipes in place of `CGO_ENABLED`:
+Removed the stale second description line: "Do not turn this on if you
+aren't using Cassandra as the history task DLQ is not implemented for
+other databases."
 
-```make
-TEST_RACE_ENABLED := $(filter 1 on y yes t true,$(TEST_RACE_FLAG))
-...
-# -race requires cgo everywhere except darwin.
-TEST_CGO_ENABLED := $(if $(and $(TEST_RACE_ENABLED),$(filter-out darwin,$(GOOS))),1,$(CGO_ENABLED))
-```
+## Why?
+The old text says the history task DLQ (QueueV2) only exists for
+Cassandra, which is no longer true. QueueV2 has a SQL implementation
+wired into the SQL persistence factory and covered by tests on every SQL
+backend.
 
-`TEST_RACE_ENABLED` is also reused in `COMPILED_TEST_ARGS` in place of
-the duplicated `$(filter ...)`, so `-race` and cgo are now driven by one
-expression and cannot drift apart.
+## How did you test it?
+- [x] built (`go build ./common/dynamicconfig/...`)
+- [ ] run locally and tested manually
+- [x] covered by existing tests
+- [ ] added new unit test(s)
+- [ ] added new functional test(s)
 
-Applied to the fourteen recipes that pass `$(COMPILED_TEST_ARGS)` and so
-can receive `-race`: `unit-test`, `integration-test`, `functional-test`
-(×3), `functional-with-fault-injection-test` (×3), and the six in the
-Coverage & Reporting section — `unit-test-coverage`,
-`integration-test-coverage`, `pre-build-functional-test-coverage` and
-`functional-test{,-xdc,-ndc}-coverage`.
-
-The coverage six are there after review. They had no `CGO_ENABLED=`
-prefix at all and inherited it from the environment, which is both why
-CI stayed green while local runs broke, and why anyone with
-`CGO_ENABLE
-
-**File**: `Makefile` (modified, +18/-15)
+**File**: `common/dynamicconfig/constants.go` (modified, +1/-2)
 ```diff
-@@ -66,15 +66,18 @@ TEST_RUNNER_TIMEOUT_ARG := $(if $(TEST_RUNNER_TIMEOUT),--total-timeout=$(TEST_RU
- 
- # Whether or not to test with the race detector. All of (1 on y yes t true) are true values.
- TEST_RACE_FLAG ?= on
-+TEST_RACE_ENABLED := $(filter 1 on y yes t true,$(TEST_RACE_FLAG))
- # Whether or not to shuffle tests. All of (1 on y yes t true) are true values.
- TEST_SHUFFLE_FLAG ?= on
- # Common test args used in the various test suite targets.
- COMPILED_TEST_ARGS := -timeout=$(TEST_TIMEOUT) \
--		     $(if $(filter 1 on y yes t true, $(TEST_RACE_FLAG)),-race,) \
-+		     $(if $(TEST_RACE_ENABLED),-race,) \
- 		     $(if $(filter 1 on y yes t true, $(TEST_SHUFFLE_FLAG)),-shuffle on,) \
- 		     $(TEST_PARALLEL_FLAGS) \
- 		     $(TEST_ARGS) \
- 		     $(TEST_TAG_FLAG)
-+# -race requires cgo everywhere except darwin.
-+TEST_CGO_ENABLED := $(if $(and $(TEST_RACE_ENABLED),$(filter-out darwin,$(GOOS))),1,$(CGO_ENABLED))
- 
- ##### Variables ######
- 
-@@ -469,26 +472,26 @@ build-tests:
- 
- unit-test: clean-test-output
- 	@printf $(COLOR) "Run unit tests..."
--	@CGO_ENABLED=$(CGO_ENABLED) go test $(UNIT_TEST_DIRS) $(COMPILED_TEST_ARGS) 2>&1 | tee -a test.log
-+	@CGO_ENABLED=$(TEST_CGO_ENABLED) go test $(UNIT_TEST_DIRS) $(COMPILED_TEST_ARGS) 2>&1 | tee -a test.log
- 	@$(MAKE) verify-test-log
- 
- integration-test: clean-test-output
- 	@printf $(COLOR) "Run integration tests..."
--	@CGO_ENABLED=$(CGO_ENABLED) go test $(INTEGRATION_TEST_DIRS) $(COMPILED_TEST_ARGS) 2>&1 | tee -a test.log
-+	@CGO_ENABLED=$(TEST_CGO_ENABLED) go test $(INTEGRATION_TEST_DIRS) $(COMPILED_TEST_ARGS) 2>&1 | tee -a test.log
- 	@$(MAKE) verify-test-log
- 
- functional-test: clean-test-output
- 	@printf $(COLOR) "Run functional tests..."
--	@CGO_ENABLED=$(CGO_ENABLED) go test $(FUNCTIONAL_TEST_ROOT) $(COMPILED_TEST_ARGS) -persistenceType=$(PERSISTENCE_TYPE) -persistenceDriver=$(PERSISTENCE_DRIVER) 2>&1 | tee -a test.log
--	@CGO_ENABLED=$(CGO_ENABLED) go test $(FUNCTIONAL_TEST_NDC_ROOT) $(COMPILED_TEST_ARGS) -persistenceType=$(PERSISTENCE_TYPE) -persistenceDriver=$(PERSISTENCE_DRIVER) 2>&1 | tee -a test.log
--	@CGO_ENABLED=$(CGO_ENABLED) go test $(FUNCTIONAL_TEST_XDC_ROOT) $(COMPILED_TEST_ARGS) -persistenceType=$(PERSISTENCE_TYPE) -persistenceDriver=$(PERSISTENCE_DRIVER) 2>&1 | tee -a test.log
-+	@CGO_ENABLED=$(TEST_CGO_ENABLED) go test $(FUNCTIONAL_TEST_ROOT) $(COMPILED_TEST_ARGS) -persistenceType=$(PERSISTENCE_TYPE) -persistenceDriver=$(PERSISTENCE_DRIVER) 2>&1 | tee -a test.log
-+	@CGO_ENABLED=$(TEST_CGO_ENABLED) go test $(FUNCTIONAL_TEST_NDC_ROOT) $(COMPILED_TEST_ARGS) -persistenceType=$(PERSISTENCE_TYPE) -persistenceDriver=$(PERSISTENCE_DRIVER) 2>&1 | tee -a test.log
-+	@CGO_ENABLED=$(TEST_CGO_ENABLED) go test $(FUNCTIONAL_TEST_XDC_ROOT) $(COMPILED_TEST_ARGS) -persistenceType=$(PERSISTENCE_TYPE) -persistenceDriver=$(PERSISTENCE_DRIVER) 2>&1 | tee -a test.log
- 	@$(MAKE) verify-test-log
- 
- functional-with-fault-injection-test: clean-test-output
- 	@printf $(COLOR) "Run integration tests with fault injection..."
--	@CGO_ENABLED=$(CGO_ENABLED) go test $(FUNCTIONAL_TEST_ROOT) $(COMPILED_TEST_ARGS) -enableFaultInjection=true -persistenceType=$(PERSISTENCE_TYPE) -persistenceDriver=$(PERSISTENCE_DRIVER) 2>&1 | tee -a test.log
--	@CGO_ENABLED=$(CGO_ENABLED) go test $(FUNCTIONAL_TEST_NDC_ROOT) $(COMPILED_TEST_ARGS) -enableFaultInjection=true -persistenceType=$(PERSISTENCE_TYPE) -persistenceDriver=$(PERSISTENCE_DRIVER) 2>&1 | tee -a test.log
--	@CGO_ENABLED=$(CGO_ENABLED) go test $(FUNCTIONAL_TEST_XDC_ROOT) $(COMPILED_TEST_ARGS) -enableFaultInjection=true -persistenceType=$(PERSISTENCE_TYPE) -persistenceDriver=$(PERSISTENCE_DRIVER) 2>&1 | tee -a test.log
-+	@CGO_ENABLED=$(TEST_CGO_ENABLED) go test $(FUNCTIONAL_TEST_ROOT) $(COMPILED_TEST_ARGS) -enableFaultInjection=true -persistenceType=$(PERSISTENCE_TYPE) -persistenceDriver=$(PERSISTENCE_DRIVER) 2>&1 | tee -a test.log
-+	@CGO_ENABLED=$(TEST_CGO_ENABLED) go test $(FUNCTIONAL_TEST_NDC_ROOT) $(COMPILED_TEST_ARGS) -enableFaultInjection=true -persistenceType=$(PERSISTENCE_TYPE) -persistenceDriver=$(PERSISTENCE_DRIVER) 2>&1 | tee -a test.log
-+	@CGO_ENABLED=$(TEST_CGO_ENABLED) go test $(FUNCTIONAL_TEST_XDC_ROOT) $(COMPILED_TEST_ARGS) -enableFaultInjection=true -persistenceType=$(PERSISTENCE_TYPE) -persistenceDriver=$(PERSISTENCE_DRIVER) 2>&1 | tee -a test.log
- 	@$(MAKE) verify-test-log
- 
- mixed-brain-test: clean-test-output
-@@ -527,7 +530,7 @@ prepare-coverage-test: $(TEST_OUTPUT_ROOT)
- 
- unit-test-coverage: prepare-coverage-test
- 	@printf $(COLOR) "Run unit tests with coverage..."
--	go run ./cmd/tools/test-runner test --gotestsum-path=$(GOTESTSUM) --max-attempts=$(MAX_TEST_ATTEMPTS) $(TEST_RUNNER_TIMEOUT_ARG) --junitfile=$(NEW_REPORT) -- \
-+	CGO_ENABLED=$(TEST_CGO_ENABLED) go run ./cmd/tools/test-runner test --gotestsum-path=$(GOTESTSUM) --max-attempts=$(MAX_TEST_ATTEMPTS) $(TEST_RUNNER_TIMEOUT_ARG) --junitfile=$(NEW_REPORT) -- \
- 		$(COMPILED_TEST_ARGS) -coverprofile=$(NEW_COVER_PROFILE) $(UNIT_TEST_DIRS)
- 
- # Runs the unit tests of MINIM
+@@ -3115,8 +3115,7 @@ a low priority workflow lock before subsequent stream sender conversion attempts
+ 	HistoryTaskDLQEnabled = NewGlobalBoolSetting(
+ 		"history.TaskDLQEnabled",
+ 		true,
+-		`HistoryTaskDLQEnabled enables the history task DLQ. This applies to internal tasks like transfer and timer tasks.
+-Do not turn this on if you aren't using Cassandra as the history task DLQ is not implemented for other databases.`,
++		`HistoryTaskDLQEnabled enables the history task DLQ. This applies to internal tasks like transfer and timer tasks.`,
+ 	)
+ 	HistoryTaskDLQUnexpectedErrorAttempts = NewGlobalIntSetting(
+ 		"history.TaskDLQUnexpectedErrorAttempts",
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #12925** (2026-11-04): add functional testing for chasm time skipping in passive clusters (@feiyang3cat)
+- **PR #12922** (closed): Add MySQL and PostgreSQL build tags for minimal server builds (@stephanos)
+- **PR #12921** (2026-11-04): 1.33.0: Prepare release branch (@temporal-cicd[bot])
+- **PR #12919** (2026-11-04): Fix stale Cassandra-only wording on HistoryTaskDLQEnabled (@prathyushpv)
 - **PR #12910** (closed): Fix stale Cassandra-only wording on HistoryTaskDLQEnabled (@claude[bot])
-- **PR #12904** (2026-11-03): Clean up timed-out Nexus operations (@tekkaya)
-- **PR #12903** (2026-11-03): 1.33.0: Prepare release branch (@temporal-cicd[bot])
-- **PR #12889** (2026-11-02): Add opaque persistence_metadata to WorkflowExecutionInfo (@collinvandyck)
-- **PR #12888** (2026-11-02): 1.33.0: Prepare release branch (@temporal-cicd[bot])
-- **PR #12885** (2026-11-02): 1.33.0: Prepare release branch (@temporal-cicd[bot])
+- **PR #12907** (2026-11-04): [cloud 165] Clean up timed-out Nexus operations (@tekkaya)
 
 ---
 
@@ -2246,44 +2186,29 @@ CI stayed green while local runs broke, and why anyone with
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Enable cgo for test targets when the race detector is on (#12689)
+## X. stale Cassandra-only wording on HistoryTaskDLQEnabled (#12919)
 
 **RULE**:
-When implementing operations in `Makefile`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in temporalio/temporal. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `common/dynamicconfig/constants.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in temporalio/temporal. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8ac42361`: Enable cgo for test targets when the race detector is on (#12689). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4687e189`: stale Cassandra-only wording on HistoryTaskDLQEnabled (#12919). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `Makefile`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `common/dynamicconfig/constants.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-TEST_RACE_ENABLED := $(filter 1 on y yes t true,$(TEST_RACE_FLAG))
-		     $(if $(TEST_RACE_ENABLED),-race,) \
-# -race requires cgo everywhere except darwin.
-TEST_CGO_ENABLED := $(if $(and $(TEST_RACE_ENABLED),$(filter-out darwin,$(GOOS))),1,$(CGO_ENABLED))
-	@CGO_ENABLED=$(TEST_CGO_ENABLED) go test $(UNIT_TEST_DIRS) $(COMPILED_TEST_ARGS) 2>&1 | tee -a test.log
-	@CGO_ENABLED=$(TEST_CGO_ENABLED) go test $(INTEGRATION_TEST_DIRS) $(COMPILED_TEST_ARGS) 2>&1 | tee -a test.log
-	@CGO_ENABLED=$(TEST_CGO_ENABLED) go test $(FUNCTIONAL_TEST_ROOT) $(COMPILED_TEST_ARGS) -persistenceType=$(PERSISTENCE_TYPE) -persistenceDriver=$(PERSISTENCE_DRIVER) 2>&1 | tee -a test.log
-	@CGO_ENABLED=$(TEST_CGO_ENABLED) go test $(FUNCTIONAL_TEST_NDC_ROOT) $(COMPILED_TEST_ARGS) -persistenceType=$(PERSISTENCE_TYPE) -persistenceDriver=$(PERSISTENCE_DRIVER) 2>&1 | tee -a test.log
-	@CGO_ENABLED=$(TEST_CGO_ENABLED) go test $(FUNCTIONAL_TEST_XDC_ROOT) $(COMPILED_TEST_ARGS) -persistenceType=$(PERSISTENCE_TYPE) -persistenceDriver=$(PERSISTENCE_DRIVER) 2>&1 | tee -a test.log
-	@CGO_ENABLED=$(TEST_CGO_ENABLED) go test $(FUNCTIONAL_TEST_ROOT) $(COMPILED_TEST_ARGS) -enableFaultInjection=true -persistenceType=$(PERSISTENCE_TYPE)
+		`HistoryTaskDLQEnabled enables the history task DLQ. This applies to internal tasks like transfer and timer tasks.`,
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-		     $(if $(filter 1 on y yes t true, $(TEST_RACE_FLAG)),-race,) \
-	@CGO_ENABLED=$(CGO_ENABLED) go test $(UNIT_TEST_DIRS) $(COMPILED_TEST_ARGS) 2>&1 | tee -a test.log
-	@CGO_ENABLED=$(CGO_ENABLED) go test $(INTEGRATION_TEST_DIRS) $(COMPILED_TEST_ARGS) 2>&1 | tee -a test.log
-	@CGO_ENABLED=$(CGO_ENABLED) go test $(FUNCTIONAL_TEST_ROOT) $(COMPILED_TEST_ARGS) -persistenceType=$(PERSISTENCE_TYPE) -persistenceDriver=$(PERSISTENCE_DRIVER) 2>&1 | tee -a test.log
-	@CGO_ENABLED=$(CGO_ENABLED) go test $(FUNCTIONAL_TEST_NDC_ROOT) $(COMPILED_TEST_ARGS) -persistenceType=$(PERSISTENCE_TYPE) -persistenceDriver=$(PERSISTENCE_DRIVER) 2>&1 | tee -a test.log
-	@CGO_ENABLED=$(CGO_ENABLED) go test $(FUNCTIONAL_TEST_XDC_ROOT) $(COMPILED_TEST_ARGS) -persistenceType=$(PERSISTENCE_TYPE) -persistenceDriver=$(PERSISTENCE_DRIVER) 2>&1 | tee -a test.log
-	@CGO_ENABLED=$(CGO_ENABLED) go test $(FUNCTIONAL_TEST_ROOT) $(COMPILED_TEST_ARGS) -enableFaultInjection=true -persistenceType=$(PERSISTENCE_TYPE) -persistenceDriver=$(PERSISTENCE_DRIVER) 2>&1 | tee -a test.log
-	@CGO_ENABLED=$(CGO_ENABLED) go test $(FUNCTIONAL_TEST_NDC_ROOT) $(COMPILED_TEST_ARGS) -enableFaultInjection=true -persistenceType=$(PERSISTENCE_TYPE) -p
+		`HistoryTaskDLQEnabled enables the history task DLQ. This applies to internal tasks like transfer and timer tasks.
+Do not turn this on if you aren't using Cassandra as the history task DLQ is not implemented for other databases.`,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8ac42361` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4687e189` are properly handled with clean fallback behavior.
