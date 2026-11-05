@@ -4868,3 +4868,7 @@ https://github.com/apache/pinot
 # --- Automatically Discovered by AI Scout Engine [2026-11-05T12:36:20.542Z] ---
 # [AI-AGENTS] N1nEmAn/sapper-v2 (1058 score) - Autonomous pentest legion — AI commander + worker swarm + layered fact-intent gr
 https://github.com/N1nEmAn/sapper-v2
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-05T13:04:59.164Z] ---
+# [AI-AGENTS] yikart/AiToEarn (15292 score) - Let's use AI to Earn!
+https://github.com/yikart/AiToEarn

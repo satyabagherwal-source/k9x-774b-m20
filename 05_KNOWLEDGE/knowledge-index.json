@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T12:58:37.165Z",
-  "total_verified_learnings": 1216,
+  "last_updated": "2026-11-05T13:06:34.556Z",
+  "total_verified_learnings": 1217,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -29563,7 +29563,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Qwen/Qwen-Image-2.1-Turbo",
       "source_version": "hf-qwen-qwen-image-2.1-turbo",
-      "content_hash": "d420479906e212b3ee33fd81d9b5dbac78b3710dc1acaaeff164e5d18b9491c3",
+      "content_hash": "2d3b142bb1216935026d596f1d940340538543e389ef19980e0f01670968c2e7",
       "dossier_path": "07_PROJECT_LEARNING/hf-qwen-qwen-image-2.1-turbo-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-qwen-qwen-image-2.1-turbo-learnings.md",
       "promoted_rules": [
@@ -29664,7 +29664,7 @@
         "learn-huggingface-hf-qwen-qwen-image-2-1-turbo-mv455o5m",
         "learn-huggingface-hf-qwen-qwen-image-2-1-turbo-mv4if4tl"
       ],
-      "verified_at": "2026-10-31T22:39:51.827Z",
+      "verified_at": "2026-11-05T13:05:08.232Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -37967,8 +37967,8 @@
       "slug": "langchain4j-langchain4j",
       "platform": "github",
       "source_url": "https://github.com/langchain4j/langchain4j",
-      "source_version": "a82bcc47",
-      "content_hash": "0737dd76b0f1d00f25101c72710783aca083da77f6ad688356911c9d794ef4b3",
+      "source_version": "4001574c",
+      "content_hash": "70cdea6936c76a491cb1e59c21b6e24e83dd54fb515667166f138f3dda5d95f7",
       "dossier_path": "07_PROJECT_LEARNING/langchain4j-langchain4j-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/langchain4j-langchain4j-learnings.md",
       "promoted_rules": [
@@ -38031,6 +38031,11 @@
           "number": 6998,
           "title": "VertexAiGeminiStreamingChatModelIT for unsupported parameters reported through o",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7228,
+          "title": "Update dependency io.netty:netty-bom to v4.1.140.Final (#6976)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -38038,7 +38043,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T22:20:17.883Z",
+      "verified_at": "2026-11-05T13:05:22.247Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -182478,6 +182483,67 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-05T12:58:37.145Z"
+    },
+    "rule-7228": {
+      "learning_id": "rule-7228",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7228,
+      "title": "Update dependency io.netty:netty-bom to v4.1.140.Final (#6976)",
+      "source_url": "https://github.com/langchain4j/langchain4j",
+      "source_version": "4001574c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T13:05:22.247Z"
+    },
+    "learn-github-yikart-aitoearn": {
+      "learning_id": "learn-github-yikart-aitoearn",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "yikart/AiToEarn",
+      "repository": "yikart/AiToEarn",
+      "slug": "yikart-aitoearn",
+      "platform": "github",
+      "source_url": "https://github.com/yikart/AiToEarn",
+      "source_version": "153627da",
+      "content_hash": "68ffeefa52f3d64b35ada2fb7218ba41d27abbdf76d103e7e5b571cb3952104a",
+      "dossier_path": "07_PROJECT_LEARNING/yikart-aitoearn-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/yikart-aitoearn-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 7229,
+          "title": "facebook): raise outdated 90s Reels duration cap",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-05T13:06:34.542Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-7229": {
+      "learning_id": "rule-7229",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7229,
+      "title": "facebook): raise outdated 90s Reels duration cap",
+      "source_url": "https://github.com/yikart/AiToEarn",
+      "source_version": "153627da",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T13:06:34.542Z"
     }
   },
   "aliases": {

@@ -375,8 +375,8 @@
     "sourceUrl": "https://huggingface.co/Qwen/Qwen-Image-2.1-Turbo",
     "sourceVersion": "hf-qwen-qwen-image-2.1-turbo",
     "license": "Open-Source",
-    "contentHash": "d420479906e212b3ee33fd81d9b5dbac78b3710dc1acaaeff164e5d18b9491c3",
-    "lastHarvestedAt": "2026-10-31T22:39:51.942Z",
+    "contentHash": "2d3b142bb1216935026d596f1d940340538543e389ef19980e0f01670968c2e7",
+    "lastHarvestedAt": "2026-11-05T13:05:08.316Z",
     "learningId": "learn-huggingface-qwen-qwen-image-2-1-turbo"
   },
   "hf-xingchen-agi-xing4.0-29b-a4b": {
@@ -7353,10 +7353,10 @@
     "repository": "langchain4j/langchain4j",
     "platform": "github",
     "sourceUrl": "https://github.com/langchain4j/langchain4j",
-    "sourceVersion": "a82bcc47",
+    "sourceVersion": "4001574c",
     "license": "Apache-2.0",
-    "contentHash": "0737dd76b0f1d00f25101c72710783aca083da77f6ad688356911c9d794ef4b3",
-    "lastHarvestedAt": "2026-11-04T22:20:18.009Z",
+    "contentHash": "70cdea6936c76a491cb1e59c21b6e24e83dd54fb515667166f138f3dda5d95f7",
+    "lastHarvestedAt": "2026-11-05T13:05:22.328Z",
     "learningId": "learn-github-langchain4j-langchain4j"
   },
   "railwayapp-nixpacks": {
@@ -11978,5 +11978,15 @@
     "contentHash": "924b6a9101e36089f6e4e107c701eb045752be3de6dcd55786e1fa58e581d13b",
     "lastHarvestedAt": "2026-11-05T12:36:26.426Z",
     "learningId": "learn-github-n1neman-sapper-v2"
+  },
+  "yikart-aitoearn": {
+    "repository": "yikart/AiToEarn",
+    "platform": "github",
+    "sourceUrl": "https://github.com/yikart/AiToEarn",
+    "sourceVersion": "153627da",
+    "license": "MIT",
+    "contentHash": "68ffeefa52f3d64b35ada2fb7218ba41d27abbdf76d103e7e5b571cb3952104a",
+    "lastHarvestedAt": "2026-11-05T13:06:34.625Z",
+    "learningId": "learn-github-yikart-aitoearn"
   }
 }

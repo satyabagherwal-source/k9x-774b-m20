@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-05T12:58:37.252Z",
+  "last_updated": "2026-11-05T13:06:34.639Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1820,14 +1820,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-qwen-qwen-image-2-1-turbo",
-      "content_hash": "d420479906e212b3ee33fd81d9b5dbac78b3710dc1acaaeff164e5d18b9491c3",
-      "verified_at": "2026-10-31T22:39:51.951Z",
+      "content_hash": "2d3b142bb1216935026d596f1d940340538543e389ef19980e0f01670968c2e7",
+      "verified_at": "2026-11-05T13:05:08.323Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T22:39:51.951Z"
+      "last_updated": "2026-11-05T13:05:08.323Z"
     },
     "Phocinae/Phocinae-Largha-150M-v1": {
       "repository": "Phocinae/Phocinae-Largha-150M-v1",
@@ -11076,14 +11076,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-langchain4j-langchain4j",
-      "content_hash": "0737dd76b0f1d00f25101c72710783aca083da77f6ad688356911c9d794ef4b3",
-      "verified_at": "2026-11-04T22:20:18.026Z",
+      "content_hash": "70cdea6936c76a491cb1e59c21b6e24e83dd54fb515667166f138f3dda5d95f7",
+      "verified_at": "2026-11-05T13:05:22.343Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T22:20:18.026Z"
+      "last_updated": "2026-11-05T13:05:22.343Z"
     },
     "railwayapp/nixpacks": {
       "repository": "railwayapp/nixpacks",
@@ -18029,6 +18029,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-05T12:36:26.441Z"
+    },
+    "yikart/AiToEarn": {
+      "repository": "yikart/AiToEarn",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-yikart-aitoearn",
+      "content_hash": "68ffeefa52f3d64b35ada2fb7218ba41d27abbdf76d103e7e5b571cb3952104a",
+      "verified_at": "2026-11-05T13:06:34.639Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-05T13:06:34.639Z"
     }
   },
   "repos": {

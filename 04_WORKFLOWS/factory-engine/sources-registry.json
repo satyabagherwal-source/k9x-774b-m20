@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-05T12:58:39.780Z",
-    "lastVerified": "2026-11-05T12:58:39.780Z",
+    "lastChecked": "2026-11-05T13:06:37.183Z",
+    "lastVerified": "2026-11-05T13:06:37.183Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -354,9 +354,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-05T12:36:41.002Z",
+    "lastChecked": "2026-11-05T13:05:19.599Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-05T12:36:41.002Z"
+    "lastVerified": "2026-11-05T13:05:19.599Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -799,8 +799,8 @@
     "officialUrl": "https://github.com/DefGuard/defguard",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-05T09:35:21.484Z",
-    "lastVerified": "2026-11-05T09:35:21.484Z",
+    "lastChecked": "2026-11-05T13:05:14.637Z",
+    "lastVerified": "2026-11-05T13:05:14.637Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-defguard-defguard",
@@ -1968,14 +1968,14 @@
     "officialUrl": "https://github.com/langchain4j/langchain4j",
     "sourceType": "github",
     "technology": "Java",
-    "lastChecked": "2026-11-04T22:20:17.155Z",
-    "lastVerified": "2026-11-04T22:20:17.155Z",
+    "lastChecked": "2026-11-05T13:05:21.786Z",
+    "lastVerified": "2026-11-05T13:05:21.786Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-langchain4j-langchain4j",
-    "contentHash": "0737dd76b0f1d00f25101c72710783aca083da77f6ad688356911c9d794ef4b3",
+    "contentHash": "70cdea6936c76a491cb1e59c21b6e24e83dd54fb515667166f138f3dda5d95f7",
     "promotedRulesCount": 1,
-    "recentFixesCount": 3,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -4873,9 +4873,9 @@
   "vinceanalytics-vince": {
     "name": "vince",
     "officialUrl": "https://github.com/vinceanalytics/vince",
-    "lastChecked": "2026-11-04T23:06:16.941Z",
+    "lastChecked": "2026-11-05T13:05:12.168Z",
     "revisionIdentifier": "fc06f7a2",
-    "lastVerified": "2026-11-04T23:06:16.941Z"
+    "lastVerified": "2026-11-05T13:05:12.168Z"
   },
   "skyzh-mini-lsm": {
     "name": "mini-lsm",
@@ -8174,12 +8174,12 @@
     "officialUrl": "https://huggingface.co/Qwen/Qwen-Image-2.1-Turbo",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-31T22:39:50.654Z",
-    "lastVerified": "2026-10-31T22:39:50.654Z",
+    "lastChecked": "2026-11-05T13:05:07.530Z",
+    "lastVerified": "2026-11-05T13:05:07.530Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-qwen-qwen-image-2-1-turbo",
-    "contentHash": "d420479906e212b3ee33fd81d9b5dbac78b3710dc1acaaeff164e5d18b9491c3",
+    "contentHash": "2d3b142bb1216935026d596f1d940340538543e389ef19980e0f01670968c2e7",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -10750,9 +10750,9 @@
   "rechsteiner-parchment": {
     "name": "Parchment",
     "officialUrl": "https://github.com/rechsteiner/Parchment",
-    "lastChecked": "2026-11-02T21:43:26.284Z",
+    "lastChecked": "2026-11-05T13:05:09.675Z",
     "revisionIdentifier": "dfb23ea5",
-    "lastVerified": "2026-11-02T21:43:26.284Z"
+    "lastVerified": "2026-11-05T13:05:09.675Z"
   },
   "webrecorder-pywb": {
     "name": "webrecorder/pywb",
@@ -13732,6 +13732,23 @@
     "contentHash": "924b6a9101e36089f6e4e107c701eb045752be3de6dcd55786e1fa58e581d13b",
     "promotedRulesCount": 1,
     "recentFixesCount": 4,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "yikart-aitoearn": {
+    "name": "yikart/AiToEarn",
+    "officialUrl": "https://github.com/yikart/AiToEarn",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-11-05T13:05:05.468Z",
+    "lastVerified": "2026-11-05T13:05:05.468Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-yikart-aitoearn",
+    "contentHash": "68ffeefa52f3d64b35ada2fb7218ba41d27abbdf76d103e7e5b571cb3952104a",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 7,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

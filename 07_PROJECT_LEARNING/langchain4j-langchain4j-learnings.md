@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/langchain4j-langchain4j-learnings.md`  
 > **Source**: github ([https://github.com/langchain4j/langchain4j](https://github.com/langchain4j/langchain4j))  
-> **Source Version**: `a82bcc47`  
+> **Source Version**: `4001574c`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T22:20:17.164Z  
+> **Timestamp**: 2026-11-05T13:05:21.790Z  
 > **Learning ID**: `learn-github-langchain4j-langchain4j`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/langchain4j-langchain4j-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/langchain4j/langchain4j](https://github.com/langchain4j/langchain4j))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T22:20:17.155Z  
+> **Harvest Timestamp**: 2026-11-05T13:05:21.786Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: LangChain4j is an idiomatic, open-source Java library for building LLM-powered applications on the JVM. It offers a unified API over popular LLM providers and vector stores, and makes implementing tool calling (including MCP support), agents and RAG easy. It integrates seamlessly with enterprise Java frameworks like Quarkus and Spring Boot.
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 13356 stars
+- **Stars / Engagement**: 13360 stars
 
 ---
 
@@ -838,332 +838,112 @@ public class TokenStreamToStringFlowAdapter : TokenStreamAdapter {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a82bcc47` (2026-11-04)
-**Commit Message**: Fix VertexAiGeminiStreamingChatModelIT for unsupported parameters reported through onError (#6983)
+### Incident Patch 1: `4001574c` (2026-11-05)
+**Commit Message**: Update dependency io.netty:netty-bom to v4.1.140.Final (#6976)
 
-## Change
-Since #6964, `VertexAiGeminiStreamingChatModel` reports an unsupported
-request parameter (for example `stopSequences`) to the handler's
-`onError()` instead of throwing it from `chat(request, handler)`. The
-shared
-`AbstractStreamingChatModelIT.should_fail_if_stopSequences_parameter_is_not_supported`
-still expected the exception to be thrown, so it failed on `main` after
-waiting 30 seconds.
+This PR contains the following updates:
 
-- `AbstractStreamingChatModelIT` gets a hook,
-`reportsUnsupportedParametersThroughOnError()` (default `false`). When a
-model returns `true`, the test checks that `chat(request, handler)` does
-not throw and that the handler's `onError()` receives the
-`UnsupportedFeatureException`.
-- `VertexAiGeminiStreamingChatModelIT` returns `true`.
-
-Other streaming models are not affected.
-
-## General checklist
-- [X] There are no breaking changes (API, behaviour)
-- [X] I have added unit and/or integration tests for my change
-- [ ] The tests cover both positive and negative cases
-- [ ] I have manually run all the unit and integration tests in the
-module I have added/changed, and they are all green (the c
-
-**File**: `langchain4j-core/src/test/java/dev/langchain4j/model/chat/common/AbstractStreamingChatModelIT.java` (modified, +19/-0)
-```diff
-@@ -16,6 +16,7 @@
- import org.junit.jupiter.api.condition.EnabledIf;
- import org.junit.jupiter.params.ParameterizedTest;
- import org.junit.jupiter.params.provider.MethodSource;
-+import org.mockito.ArgumentCaptor;
- 
- import java.util.ArrayList;
- import java.util.List;
-@@ -166,6 +167,14 @@ protected boolean supportsStreamingCancellation() {
-         return true;
-     }
- 
-+    /**
-+     * Whether the model reports a request it cannot handle (e.g. an unsupported parameter) to the handler's
-+     * {@code onError()} instead of throwing it from {@code chat(request, handler)}.
-+     */
-+    protected boolean reportsUnsupportedParametersThroughOnError() {
-+        return false;
-+    }
-+
-     @Override
-     protected boolean assertThreads() {
-         return streamingModes().equals(List.of(StreamingMode.HANDLER));
-@@ -399,6 +408,16 @@ public void onComplete() {
-                     .hasMessageContaining("not support");
-             assertThat(onNextCalled).isFalse();
-             assertThat(onCompleteCalled).isFalse();
-+        } else if (reportsUnsupportedParametersThroughOnError()) {
-+            StreamingChatResponseHandler handler = mock(StreamingChatResponseHandler.class);
-+            assertThatCode(() -> model.chat(chatRequest, handler)).doesNotThrowAnyException();
-+            ArgumentCaptor<Throwable> error = ArgumentCaptor.forClass(Throwable.class);
-+            verify(handler, timeout(30_000)).onError(error.capture());
-+            assertThat(error.getValue())
-+                    .isExactlyInstanceOf(UnsupportedFeatureException.class)
-+                    .hasMessageContaining("stopSequences")
-+                    .hasMessageContaining("not support");
-+            verify(handler, never()).onCompleteResponse(any());
-         } else {
-             StreamingChatResponseHandler handler = mock(StreamingChatResponseHandler.class);
-             assertThatThrownBy(() -> model.chat(chatRequest, handler))
-```
-
-**File**: `langchain4j-vertex-ai-gemini/src/test/java/dev/langchain4j/model/vertexai/gemini/common/VertexAiGeminiStreamingChatModelIT.java` (modified, +5/-0)
-```diff
-@@ -48,6 +48,11 @@ protected boolean supportsStopSequencesParameter() {
-         return false; // TODO implement
-     }
- 
-+    @Override
-+    protected boolean reportsUnsupportedParametersThroughOnError() {
-+        return true;
-+    }
-+
-     @Override
-     protected boolean supportsToolChoiceRequired() {
-         return false; // TODO implement
-```
+| Package | Change |
+[Age](https://docs.renovatebot.com/merge-confidence/) |
+[Confidence](https://docs.renovatebot.com/merge-confidence/) |
+|---|---|---|---|
+| [io.netty:netty-bom](https://netty.io/)
+([source](https://redirect.github.com/netty/netty)) | `4.1.139.Final` →
+`4.1.140.Final` |
+![age](https://developer.mend.io/api/mc/badges/age/maven/io.netty:netty-bom/4.1.140.Final?slim=true)
+|
+![confidence](https://developer.mend.io/api/mc/badges/confidence/maven/io.netty:netty-bom/4.1.139.Final/4.1.140.Final?slim=true)
+|
 
 ---
 
-### Incident Patch 2: `aad19f6c` (2026-11-04)
-**Commit Message**: fix(mcp): coerce scope values to the declared parameter types (#6938)
-
-## Issue
-Closes #6937
-
-## Change
-
-`McpClientAgentInvoker`'s typed path built its invocation arguments
-inline, duplicating a subset of `AgentUtil.agentInvocationArguments()`:
-it read each value from the scope and threw `MissingArgumentException`
-when a required one was absent (added in #5477), but it skipped
-`adaptValueToType()`, skipped `AgentArgument.defaultValue()`, and never
-wrote the coerced value back to the scope.
-
-This delegates the typed path to
-`AgentUtil.agentInvocationArguments(agenticScope, arguments)`, which is
-what `A2AClientAgentInvoker` already does. Behaviour for the untyped
-path is unchanged.
-
-Concretely, an agent method declared as
-
-```java
-@Agent(description = "List records")
-String list(@V("limit") int limit);
-```
-
-used to fail with `AgentInvocationException: Failed to invoke agent
-method ... / Caused by: IllegalArgumentException: argument type
-mismatch` whenever `limit` sat in the scope as a `String`, and now sends
-`{"limit":5}`. The hand-written `inputKeys` field and helper are gone
-because nothing else used them.
-
-## Tests
-
-Two tests in `McpAgentTest`:
-
-- `typed_mcp_agent_coerces_scope_va
-
-**File**: `langchain4j-agentic-mcp/src/main/java/dev/langchain4j/agentic/mcp/McpClientAgentInvoker.java` (modified, +2/-29)
-```diff
-@@ -1,5 +1,6 @@
- package dev.langchain4j.agentic.mcp;
- 
-+import static dev.langchain4j.agentic.internal.AgentUtil.agentInvocationArguments;
- import static dev.langchain4j.agentic.internal.AgentUtil.argumentsFromMethod;
- import static dev.langchain4j.agentic.internal.AgentUtil.untypedAgentInvocationArguments;
- 
-@@ -17,15 +18,12 @@
- import dev.langchain4j.agentic.scope.AgenticScope;
- import java.lang.reflect.Method;
- import java.lang.reflect.Type;
--import java.util.HashMap;
- import java.util.List;
- import java.util.Map;
--import java.util.stream.Stream;
- 
- public class McpClientAgentInvoker implements AgentInvoker {
- 
-     private String agentId;
--    private final String[] inputKeys;
-     private final Map<String, String> inputDescriptions;
- 
-     private final McpClientInstance mcpClientInstance;
-@@ -43,21 +41,12 @@ public McpClientAgentInvoker(McpClientInstance mcpClientInstance, Method method)
-         this.toolName = mcpClientInstance.toolName();
-         this.toolDescription = mcpClientInstance.toolDescription();
-         this.agentId = name();
--        this.inputKeys = inputKeys(mcpClientInstance);
-         this.inputDescriptions = mcpClientInstance.inputDescriptions();
-         this.arguments = isUntyped()
-                 ? mcpClientInstance.arguments()
-                 : McpSchemaToType.mergeDescriptions(argumentsFromMethod(method), inputDescriptions);
-     }
- 
--    private String[] inputKeys(McpClientInstance mcpClientInstance) {
--        return isUntyped()
--                ? mcpClientInstance.inputKeys()
--                : Stream.of(method.getParameters())
--                        .map(AgentInvoker::parameterName)
--                        .toArray(String[]::new);
--    }
--
-     @Override
-     public String name() {
-         return toolName;
-@@ -128,23 +117,7 @@ public AgentInvocationArguments toInvocationArguments(AgenticScope agenticScope)
-             }
-             return untypedAgentInvocationArguments(agenticScope);
-         }
--        return agentInvocationArguments(agenticScope);
--    }
--
--    private AgentInvocationArguments agentInvocationArguments(AgenticScope agenticScope) {
--        Map<String, Object> namedArgs = new HashMap<>();
--        Object[] positionalArgs = new Object[inputKeys.length];
--
--        int i = 0;
--        for (String argName : inputKeys) {
--            Object argValue = agenticScope.readState(argName);
--            if (argValue == null) {
--                throw new MissingArgumentException(argName);
--            }
--            positionalArgs[i++] = argValue;
--            namedArgs.put(argName, argValue);
--        }
--        return new AgentInvocationArguments(namedArgs, positionalArgs);
-+        return agentInvocationArguments(agenticScope, arguments);
-     }
- 
-     private boolean isUntyped() {
-```
-
-**File**: `langchain4j-agentic-mcp/src/test/java/dev/langchain4j/agentic/mcp/McpAgentTest.java` (modified, +52/-0)
-```diff
-@@ -20,6 +20,7 @@
- import dev.langchain4j.agentic.scope.AgentInvocation;
- import dev.langchain4j.agentic.scope.AgenticScope;
- import dev.langchain4j.agentic.scope.ResultWithAgenticScope;
-+import dev.langchain4j.internal.Json;
- import dev.langchain4j.mcp.client.McpClient;
- import dev.langchain4j.model.chat.request.json.JsonAnyOfSchema;
- import dev.langchain4j.model.chat.request.json.JsonArraySchema;
-@@ -809,4 +810,55 @@ void typed_mcp_agent_in_workflow_throws_on_missing_required_input() {
-                 .isInstanceOf(MissingArgumentException.class)
-                 .hasMessageContaining("language");
-     }
-+
-+    public interface TypedLimitAgent {
-+
-+        @Agent(description = "List records")
-+        String list(@V("limit") int limit);
-+    }
-+
-+    private static McpClient mockLimitClient() {
-+        McpClient mcpClient = mock(McpClient.class);
-+        ToolSpecification toolSpec = ToolSpecification.builder()
-+                .name("list_records")
-+                .description("List records")
-+                .parameters(JsonObjectSchema.builder()
-+                        .addProperty("limit", new JsonIntegerSchema())
-+                        .build())
-+                .build();
-+        when(mcpClient.listTools()).thenReturn(List.of(toolSpec));
-+        mockToolResult(mcpClient, "ok");
-+        return mcpClient;
-+    }
-+
-+    @Test
-+    void typed_mcp_agent_coerces_scope_values_to_the_declared_parameter_types() {
-+        McpClient mcpClient = mockLimitClient();
-+
-+        TypedLimitAgent records =
-+                McpAgent.builder(mcpClient, TypedLimitAgent.class).build();
-+        UntypedAgent pipeline =
-+                AgenticServices.sequenceBuilder().subAgents(records).build();
-+
-+        // A previous agent's String output leaves a String in the scope, while the agent method declares an int.
-+        pipeline.invoke(Map.of("limit", "5"));
-+
-+        ArgumentCaptor<ToolExecutionRequest> captor = ArgumentCaptor.forClass(ToolExecutionRequest.class);
-+        verify(mcpClient).executeTool(captor.capture());
-+
-+        assertThat(Json.fromJson(captor.getValue().arguments(), Map.class)).containsEntry("limit", 5);
-+    }
-+
-+    @Test
-+    void typed_mcp_agent_rejects_a_scope_value_that_cannot_be_coerced() {
-+        McpClient mcpClient = mockLimitClient();
-+
-+        TypedLimitAgent records =
-+                McpAgent.builder(mcpClient, TypedLimitAgent.class).build();
-+        UntypedAgent pipeline =
-+                AgenticServices.sequenceBuilder().subAgents(records).build();
-+
-+        assertThatThrownBy(() -> pipeline.invoke(Map.of("limit", "not-a-number")))
-+                .isInstanceOf(NumberFormatException.class);
-+    }
- }
-```
+> [!WARNING]
+> Some dependencies could not be looked up. Check the [Dependency
+Dashboard](../issues/2069) for more information.
 
 ---
 
-### Incident Patch 3: `ac10f8c4` (2026-11-04)
-**Commit Message**: Build the modules before generating Javadoc in the docs workflow (#6968)
+### Configuration
 
-## Issue
-No linked issue. The "Documentation: build and deploy" workflow failed
-on main after #6112:
+📅 **Schedule**: (UTC)
 
-```
-Could not find artifact dev.langchain4j:langchain4j-hibernate:jar:tests:1.24.0-beta34-SNAPSHOT in central-portal-snapshots
-```
+- Branch creation
+  - At any time (no schedule defined)
+- Automerge
+  - At any time (no schedule defined)
 
-## Change
-The workflow ran `mvn javadoc:aggregate -DskipTests` without building
-the modules. So Maven took the repository's own artifacts from Central
-snapshots, and the build failed whenever main was ahead of the latest
-snapshot:
-- after a new test-jar: `langchain4j-hibernate:tests`, added in #6112;
-- after a version bump: `langchain4j-core:tests:1.24.0-SNAPSHOT`, on
-2026-10-29.
+🚦 **Automerge**: Disabled by config. Please merge this manually once you
+are satisfied.
 
-It now runs `mvn -B -DskipTests -DembeddingsSkipDownload -T8C
-test-compile javadoc:aggregate`. Maven uses the classes compiled in the
-same build, the same way the Java CI workflow does (`test
-javadoc:aggregate`). The Javadoc is also built from the current code,
-not from the last snapshot.
+♻ **Rebasing**: Whenever PR becomes conflicted, or you tick the
+rebase/retry checkbox.
 
-Checked locally on main (a3f92b0d6):
-- the old command fails with the same error as CI;
-- the new command passes, and the generated Javadoc includes
-`MilvusDatabaseKind` from the new module.
+🔕 **Ignore**: Close this PR and you won't be reminded about this update
+again.
 
-The docs job takes a bit 
+---
 
-**File**: `.github/workflows/docs.yaml` (modified, +1/-1)
+- [ ] <!-- rebase
+
+**File**: `code-execution-engines/langchain4j-code-execution-engine-azure-acads/pom.xml` (modified, +1/-1)
 ```diff
-@@ -34,7 +34,7 @@ jobs:
-           cache: 'maven'
- 
-       - name: Generate Javadoc
--        run: mvn javadoc:aggregate -DskipTests
-+        run: mvn -B -DskipTests -DembeddingsSkipDownload -T8C test-compile javadoc:aggregate
- 
-       - name: Set up Node.js
-         uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+@@ -19,7 +19,7 @@
+             <dependency>
+                 <groupId>io.netty</groupId>
+                 <artifactId>netty-bom</artifactId>
+-                <version>4.1.139.Final</version>
++                <version>4.1.140.Final</version>
+                 <type>pom</type>
+                 <scope>import</scope>
+             </dependency>
+```
+
+**File**: `document-loaders/langchain4j-document-loader-azure-storage-blob/pom.xml` (modified, +1/-1)
+```diff
+@@ -17,7 +17,7 @@
+             <dependency>
+                 <groupId>io.netty</groupId>
+                 <artifactId>netty-bom</artifactId>
+-                <version>4.1.139.Final</version>
++                <version>4.1.140.Final</version>
+                 <type>pom</type>
+                 <scope>import</scope>
+             </dependency>
+```
+
+**File**: `langchain4j-azure-cosmos-nosql/pom.xml` (modified, +1/-1)
+```diff
+@@ -18,7 +18,7 @@
+             <dependency>
+                 <groupId>io.netty</groupId>
+                 <artifactId>netty-bom</artifactId>
+-                <version>4.1.139.Final</version>
++                <version>4.1.140.Final</version>
+                 <type>pom</type>
+                 <scope>import</scope>
+             </dependency>
+```
+
+**File**: `langchain4j-azure-open-ai/pom.xml` (modified, +1/-1)
+```diff
+@@ -31,7 +31,7 @@
+             <dependency>
+                 <groupId>io.netty</groupId>
+                 <artifactId>netty-bom</artifactId>
+-                <version>4.1.139.Final</version>
++                <version>4.1.140.Final</version>
+                 <type>pom</type>
+                 <scope>import</scope>
+             </dependency>
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #6983** (2026-11-04): Fix VertexAiGeminiStreamingChatModelIT for unsupported parameters reported through onError (@dliubarskyi)
+- **PR #6977** (closed): Update dependency org.hibernate.nosql:hibernate-milvus to v1.0.0-SNAPSHOT (@renovate[bot])
+- **PR #6976** (2026-11-05): Update dependency io.netty:netty-bom to v4.1.140.Final (@renovate[bot])
+- **PR #6970** (closed): Update dependency com.datastax.astra:astra-db-client to v1.2.7 (@renovate[bot])
+- **PR #6969** (closed): Replace dependency io.weaviate:client with io.weaviate:client6 (@renovate[bot])
 - **PR #6968** (2026-11-04): Build the modules before generating Javadoc in the docs workflow (@dliubarskyi)
-- **PR #6964** (2026-11-04): Pass the AI Service invocation id to model, embedding store and content retriever listeners (@dliubarskyi)
-- **PR #6963** (2026-11-04): Limit the size of messages received by the Streamable HTTP and WebSocket MCP transports (backport of #6954 to 1.19.x) (@jmartisk)
-- **PR #6962** (2026-11-04): Limit the size of messages received by the Streamable HTTP and WebSocket MCP transports (backport of #6954 to 1.11.x) (@jmartisk)
-- **PR #6959** (2026-11-03): Add ScoringModelListener to observe scoring (re-ranking) model calls (@dliubarskyi)
 
 ---
 
@@ -1183,46 +963,28 @@ The docs job takes a bit
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. VertexAiGeminiStreamingChatModelIT for unsupported parameters reported through o
+## X. Update dependency io.netty:netty-bom to v4.1.140.Final (#6976)
 
 **RULE**:
-When implementing operations in `langchain4j-core/src/test/java/dev/langchain4j/model/chat/common/AbstractStreamingChatModelIT.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in langchain4j/langchain4j. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `code-execution-engines/langchain4j-code-execution-engine-azure-acads/pom.xml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in langchain4j/langchain4j. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a82bcc47`: VertexAiGeminiStreamingChatModelIT for unsupported parameters reported through onError (#6983). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4001574c`: Update dependency io.netty:netty-bom to v4.1.140.Final (#6976). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `langchain4j-core/src/test/java/dev/langchain4j/model/chat/common/AbstractStreamingChatModelIT.java`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `code-execution-engines/langchain4j-code-execution-engine-azure-acads/pom.xml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-import org.mockito.ArgumentCaptor;
-    /**
-     * Whether the model reports a request it cannot handle (e.g. an unsupported parameter) to the handler's
-     * {@code onError()} instead of throwing it from {@code chat(request, handler)}.
-     */
-    protected boolean reportsUnsupportedParametersThroughOnError() {
-        return false;
-    }
-
-        } else if (reportsUnsupportedParametersThroughOnError()) {
-            StreamingChatResponseHandler handler = mock(StreamingChatResponseHandler.class);
-            assertThatCode(() -> model.chat(chatRequest, handler)).doesNotThrowAnyException();
-            ArgumentCaptor<Throwable> error = ArgumentCaptor.forClass(Throwable.class);
-            verify(handler, timeout(30_000)).onError(error.capture());
-            assertThat(error.getValue())
-                    .isExactlyInstanceOf(UnsupportedFeatureException.class)
-                    .hasMessageContaining("stopSequences")
-                    .hasMessageContaining("not support");
-            verify(handler, never()).onCompleteResponse(any());
+                <version>4.1.140.Final</version>
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+                <version>4.1.139.Final</version>
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a82bcc47` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4001574c` are properly handled with clean fallback behavior.

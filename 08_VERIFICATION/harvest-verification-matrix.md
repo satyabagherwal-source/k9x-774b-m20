@@ -7661,3 +7661,6 @@
 | `CYCLE-20261105-X577` | `2026-11-05T12:58:22.483Z` | `domcyrus/rustnet` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7225` | Yes (`f2883801...`) |
 | `CYCLE-20261105-XG3O` | `2026-11-05T12:58:36.612Z` | `alibaba/zvec` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7226` | Yes (`78a8f10f...`) |
 | `CYCLE-20261105-XGKZ` | `2026-11-05T12:58:37.235Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7227` | Yes (`3c3dec7c...`) |
+| `CYCLE-20261105-5UC9` | `2026-11-05T13:05:08.313Z` | `Qwen/Qwen-Image-2.1-Turbo` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen-image-2.1-turbo-learnings.md` | Yes (`2d3b142b...`) |
+| `CYCLE-20261105-655A` | `2026-11-05T13:05:22.318Z` | `langchain4j/langchain4j` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7228` | Yes (`70cdea69...`) |
+| `CYCLE-20261105-7OXQ` | `2026-11-05T13:06:34.622Z` | `yikart/AiToEarn` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7229` | Yes (`68ffeefa...`) |

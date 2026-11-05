@@ -7670,3 +7670,6 @@ Every entry in this ledger must capture:
 | `learn-github-domcyrus-rustnet` | `https://github.com/domcyrus/rustnet` | `fff807d1` | Multi-dimensional audit evidence | 2026-11-05T12:58:22.486Z |
 | `learn-github-alibaba-zvec` | `https://github.com/alibaba/zvec` | `b1670ff1` | Multi-dimensional audit evidence | 2026-11-05T12:58:36.615Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `7dc4e9ca` | Multi-dimensional audit evidence | 2026-11-05T12:58:37.238Z |
+| `learn-huggingface-qwen-qwen-image-2-1-turbo` | `https://huggingface.co/Qwen/Qwen-Image-2.1-Turbo` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-11-05T13:05:08.316Z |
+| `learn-github-langchain4j-langchain4j` | `https://github.com/langchain4j/langchain4j` | `4001574c` | Multi-dimensional audit evidence | 2026-11-05T13:05:22.328Z |
+| `learn-github-yikart-aitoearn` | `https://github.com/yikart/AiToEarn` | `153627da` | Multi-dimensional audit evidence | 2026-11-05T13:06:34.625Z |
