@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-05T00:07:40.285Z",
+  "last_updated": "2026-11-05T00:15:03.723Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -560,14 +560,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-taichuai-zdtaichu5-0-9b",
-      "content_hash": "1faaf1b95c22ed9115fcf2cf76d5643222cd0dbf0f023c328741caba112ad34d",
-      "verified_at": "2026-10-31T09:53:59.341Z",
+      "content_hash": "6cf68b75b3d36b7483df22318d7591cdc46bf915b6c03753092bf3dd72ab45b7",
+      "verified_at": "2026-11-05T00:14:57.730Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T09:53:59.341Z"
+      "last_updated": "2026-11-05T00:14:57.730Z"
     },
     "Comfy-Org/Qwen-Image-2.1": {
       "repository": "Comfy-Org/Qwen-Image-2.1",
@@ -3516,14 +3516,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-automattic-harper",
-      "content_hash": "763c1567b491e322839ee4398a300f37dd71e8f4097d3656c018c6bd72dd112d",
-      "verified_at": "2026-11-03T21:17:16.241Z",
+      "content_hash": "9d8704a7db8f0ec12d796b97908693a3002764e2b7432739300b5c1383b5fed5",
+      "verified_at": "2026-11-05T00:14:52.487Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T21:17:16.241Z"
+      "last_updated": "2026-11-05T00:14:52.487Z"
     },
     "sudheerj/reactjs-interview-questions": {
       "repository": "sudheerj/reactjs-interview-questions",
@@ -5136,14 +5136,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-cilium-cilium",
-      "content_hash": "853567fce6f4f1fc99fe521e554298e5c35dc82b72cc54c3076028b35c87ca47",
-      "verified_at": "2026-11-04T20:46:50.122Z",
+      "content_hash": "4325bde0c36a7aa0e5d47d504bf7ce145db4aea4b4e23e04254a13d3daa21c10",
+      "verified_at": "2026-11-05T00:15:03.722Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T20:46:50.122Z"
+      "last_updated": "2026-11-05T00:15:03.722Z"
     },
     "SeekStorm/SeekStorm": {
       "repository": "SeekStorm/SeekStorm",
@@ -7566,14 +7566,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-crossplane-crossplane",
-      "content_hash": "cbbd1e35d65f1cd82389abab265a59619ab1d1b4779d8d332a5fabd056e47139",
-      "verified_at": "2026-11-04T01:58:25.975Z",
+      "content_hash": "1ecaf6101f90fb960f51e81e12a1e5adc4848360d7fa71d9097a0485b2de0b19",
+      "verified_at": "2026-11-05T00:14:59.336Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T01:58:25.975Z"
+      "last_updated": "2026-11-05T00:14:59.336Z"
     },
     "apple/foundationdb": {
       "repository": "apple/foundationdb",

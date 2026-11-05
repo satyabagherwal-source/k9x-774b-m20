@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261103-SVLZ",
-    "timestamp": "2026-11-03T12:51:42.983Z",
-    "repository": "sparrowcode/AlertKit",
-    "learningId": "learn-github-sparrowcode-alertkit",
-    "contentHash": "0014c0bc8595a07bb99578f891092e0e2f2ecdb38cfe7ddc3acef4e12381610c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261103-T2OM",
-    "timestamp": "2026-11-03T12:51:52.150Z",
-    "repository": "trinodb/trino",
-    "learningId": "learn-github-trinodb-trino",
-    "contentHash": "a6f86025631bd0965fb5c7a3516acbca345df0134fad554daa424fa1e3eab685",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261103-A5XQ",
-    "timestamp": "2026-11-03T13:05:09.518Z",
-    "repository": "nginx/kubernetes-ingress",
-    "learningId": "learn-github-nginx-kubernetes-ingress",
-    "contentHash": "e84efc2b83afe16957c128a4a28b408ba56b29f77c544f2c0086829025787547",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261103-A92J",
-    "timestamp": "2026-11-03T13:05:13.579Z",
-    "repository": "apache/zookeeper",
-    "learningId": "learn-github-apache-zookeeper",
-    "contentHash": "022104b3a51662d83b8d5ab8ff73838a947e7f4932a26f6568322ea8b5460155",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261103-M884",
     "timestamp": "2026-11-03T15:34:30.436Z",
     "repository": "seleniumbase/SeleniumBase",
@@ -7490,6 +7430,66 @@
     "repository": "iii-hq/iii",
     "learningId": "learn-github-iii-hq-iii",
     "contentHash": "92f99417b0fdbf9a21024d896e0586b081a43981219973bb845d558a12ce3430",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-N9YR",
+    "timestamp": "2026-11-05T00:14:52.467Z",
+    "repository": "Automattic/harper",
+    "learningId": "learn-github-automattic-harper",
+    "contentHash": "9d8704a7db8f0ec12d796b97908693a3002764e2b7432739300b5c1383b5fed5",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-NE0E",
+    "timestamp": "2026-11-05T00:14:57.710Z",
+    "repository": "TaichuAI/ZDTaichu5.0-9B",
+    "learningId": "learn-huggingface-taichuai-zdtaichu5-0-9b",
+    "contentHash": "6cf68b75b3d36b7483df22318d7591cdc46bf915b6c03753092bf3dd72ab45b7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-NF90",
+    "timestamp": "2026-11-05T00:14:59.316Z",
+    "repository": "crossplane/crossplane",
+    "learningId": "learn-github-crossplane-crossplane",
+    "contentHash": "1ecaf6101f90fb960f51e81e12a1e5adc4848360d7fa71d9097a0485b2de0b19",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-NIMU",
+    "timestamp": "2026-11-05T00:15:03.702Z",
+    "repository": "cilium/cilium",
+    "learningId": "learn-github-cilium-cilium",
+    "contentHash": "4325bde0c36a7aa0e5d47d504bf7ce145db4aea4b4e23e04254a13d3daa21c10",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

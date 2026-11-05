@@ -7422,3 +7422,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-ista-daslab-qwen3-8-27b-gsq-rco-gguf` | `https://huggingface.co/ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF` | `hf-ista-da` | Multi-dimensional audit evidence | 2026-11-05T00:00:13.702Z |
 | `learn-huggingface-orcarouter-orcasaq-2-27b` | `https://huggingface.co/orcarouter/OrcaSAQ-2-27B` | `hf-orcarou` | Multi-dimensional audit evidence | 2026-11-05T00:07:39.691Z |
 | `learn-github-iii-hq-iii` | `https://github.com/iii-hq/iii` | `d67b85fd` | Multi-dimensional audit evidence | 2026-11-05T00:07:40.264Z |
+| `learn-github-automattic-harper` | `https://github.com/Automattic/harper` | `6bdbadfd` | Multi-dimensional audit evidence | 2026-11-05T00:14:52.471Z |
+| `learn-huggingface-taichuai-zdtaichu5-0-9b` | `https://huggingface.co/TaichuAI/ZDTaichu5.0-9B` | `hf-taichua` | Multi-dimensional audit evidence | 2026-11-05T00:14:57.714Z |
+| `learn-github-crossplane-crossplane` | `https://github.com/crossplane/crossplane` | `6e727661` | Multi-dimensional audit evidence | 2026-11-05T00:14:59.320Z |
+| `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `cff73042` | Multi-dimensional audit evidence | 2026-11-05T00:15:03.706Z |

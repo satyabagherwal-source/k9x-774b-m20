@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/automattic-harper-learnings.md`  
 > **Source**: github ([https://github.com/Automattic/harper](https://github.com/Automattic/harper))  
-> **Source Version**: `54140784`  
+> **Source Version**: `6bdbadfd`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T21:17:15.700Z  
+> **Timestamp**: 2026-11-05T00:14:51.643Z  
 > **Learning ID**: `learn-github-automattic-harper`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/automattic-harper-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Automattic/harper](https://github.com/Automattic/harper))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T21:17:15.695Z  
+> **Harvest Timestamp**: 2026-11-05T00:14:51.541Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Offline, privacy-first grammar checker. Fast, open-source, Rust-powered
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 17389 stars
+- **Stars / Engagement**: 17412 stars
 
 ---
 
@@ -1429,431 +1429,419 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c1c9849d` (2026-11-02)
-**Commit Message**: fix: broken build due to outdated dep
+### Incident Patch 1: `6bdbadfd` (2026-11-04)
+**Commit Message**: fix(web): remove SveltePress (#4803)
 
-**File**: `pnpm-lock.yaml` (modified, +13/-30)
+**File**: `AGENTS.md` (modified, +8/-6)
 ```diff
-@@ -9243,8 +9243,8 @@ packages:
-     resolution: {integrity: sha512-p/nXbhSEcu3pZRdkW1OfJhpsVtW1gd4Wa1fnQc9YLiTfAjn0312eMKimbdIQzuZl9aa9xUGaRlP9T/CJE/ditQ==}
-     engines: {node: '>=0.10.0'}
+@@ -1,9 +1,10 @@
+ # Harper Docs Map for Agents
  
--  jsonwebtoken@9.0.2:
--    resolution: {integrity: sha512-PRp66vJ865SSqOlgqS8hujT5U4AOgMfhrwYIuIhfKaoSCZcirrmASQr8CX7cUg+RMih+hgznrjp99o+W4pJLHQ==}
-+  jsonwebtoken@9.0.3:
-+    resolution: {integrity: sha512-MT/xP0CrubFRNLNKvxJ2BYfy53Zkm++5bX9dtuPbqAeQpTVe0MQTFhao8+Cp//EmJp244xt6Drw/GVEGCUj40g==}
-     engines: {node: '>=12', npm: '>=6'}
+-This repository’s documentation site is powered by Vite + SvelteKit + SveltePress.
++This repository’s documentation site uses Vite, SvelteKit, mdsvex, and rehype-highlight.
  
-   jsx-ast-utils@3.3.5:
-@@ -9254,17 +9254,11 @@ packages:
-   jszip@3.10.1:
-     resolution: {integrity: sha512-xXDvecyTpGLrqFrvkrUSoxxfJI5AH7U8zxxtVclpsUtMCq4JQ290LY8AW5c7Ggnr/Y/oK+bQMbqK2qmtk3pN4g==}
+-Use `packages/web/vite.config.ts` as the source of truth for documentation scope:
+-- Sidebar and important doc routes are defined in `packages/web/vite.config.ts`.
++Use `packages/web/src/lib/docs/config.ts` as the source of truth for documentation scope:
++- Sidebar, navigation, site metadata, and search settings are defined in `packages/web/src/lib/docs/config.ts`.
++- `packages/web/vite.config.ts` contains build configuration, not the documentation sidebar.
+ - Route `/docs/...` maps to `packages/web/src/routes/docs/...`.
+ - Most docs are in `+page.md`; some are `+page.svelte` or route helpers.
  
--  jwa@1.4.1:
--    resolution: {integrity: sha512-qiLX/xhEEFKUAJ6FiBMbes3w9ATzyk5W7Hvzpa/SLYdxNtng+gcurvrI7TbACjIXlsJyr05/S1oUhZrc63evQA==}
-+  jwa@2.0.1:
-+    resolution: {integrity: sha512-hRF04fqJIP8Abbkq5NKGN0Bbr3JxlQ+qhZufXVr0DvujKy93ZCbXZMHDL4EOtodSbCWxOqR8MS1tXA5hwqCXDg==}
+@@ -17,7 +18,7 @@ Agents should remind humans of this when possible.
  
--  jwa@2.0.0:
--    resolution: {integrity: sha512-jrZ2Qx916EA+fq9cEAeCROWPTfCwi1IVHqT2tapuqLEVVDKFDENFw1oL+MwrTvH6msKxsd1YTDVw6uKEcsrLEA==}
--
--  jws@3.2.2:
--    resolution: {integrity: sha512-YHlZCB6lMTllWDtSPHz/ZXTsi8S00usEV6v1tjq8tOUZzw7DpSDWVXjXDre6ed1w/pd495ODpHZYSdkRTsa0HA==}
--
--  jws@4.0.0:
--    resolution: {integrity: sha512-KDncfTmOZoOMTFG4mBlG0qUIOlc03fmzH+ru6RgYVZhPkyiy/92Owlt/8UEN+a4TXR1FQetfIpJE8ApdvdVxTg==}
-+  jws@4.0.1:
-+    resolution: {integrity: sha512-EKI/M/yqPncGUUh44xz0PxSidXFr/+r0pA70+gIYhjv+et7yxM+s29Y+VGDkovRofQem0fs7Uvf4+YmAdyRduA==}
+ ## Read First
  
-   keytar@7.9.0:
-     resolution: {integrity: sha512-VPD8mtVtm5JNtA2AErl6Chp06JBfy7diFQ7TQQhdpWOl6MrCRB+eRbvAZUsbGQS9kiMq0coJsy0W0vHpDCkWsQ==}
-@@ -13752,7 +13746,7 @@ snapshots:
-       '@azure/msal-browser': 4.7.0
-       '@azure/msal-node': 3.3.0
-       events: 3.3.0
--      jws: 4.0.0
-+      jws: 4.0.1
-       open: 10.1.0
-       stoppable: 1.1.0
-       tslib: 2.8.1
-@@ -13772,7 +13766,7 @@ snapshots:
-   '@azure/msal-node@3.3.0':
-     dependencies:
-       '@azure/msal-common': 15.2.1
--      jsonwebtoken: 9.0.2
-+      jsonwebtoken: 9.0.3
-       uuid: 8.3.2
+-1. `packages/web/vite.config.ts`: Sidebar source of truth and canonical map of important docs routes.
++1. `packages/web/src/lib/docs/config.ts`: Sidebar source of truth and canonical map of important docs routes. For website architecture, Markdown authoring, theme/search behavior, and validation, read `packages/web/src/routes/docs/contributors/website/+page.md`.
+ 2. `packages/web/src/routes/docs/about/+page.md`: High-level product overview, privacy model, versioning policy, and ecosystem context.
+ 3. `packages/web/src/routes/docs/weir/+page.md`: Weir rule language reference with syntax, expression types, and examples.
+ 4. `packages/web/src/routes/docs/rules/+page.svelte`: Live/generated rule catalog (rule names, defaults, and descriptions).
+@@ -74,7 +75,7 @@ Agents should remind humans of this when possible.
+ - `packages/web/src/routes/docs/contributors/visual-studio-code/+page.md`: How to run, debug, test, and package the VS Code extension locally.
+ - `packages/web/src/routes/docs/contributors/chrome-extension/+page.md`: Internal architecture and local development notes for the browser extensions.
+ - `packages/web/src/routes/docs/contributors/desktop/+page.md`: Placeholder for Harper Desktop contributor documentation.
+-- `packages/web/src/routes/docs/contributors/website/+page.md`: Local development, preview, and validation for writewithharper.com (SvelteKit/SveltePress).
++- `packages/web/src/routes/docs/contributors/website/+page.md`: Local development, preview, and validation for writewithharper.com (SvelteKit/mdsvex).
+ - `packages/web/src/routes/docs/contributors/wordpress/+page.md`: How to build and run the WordPress plugin locally.
+ - `packages/web/src/routes/docs/contributors/obsidian/+page.md`: Obsidian-plugin contributor workflow and plugin-specific constraints.
+ - `packages/web/src/routes/docs/contributors/review/+page.md`: PR reviewer playbook, including ways to fetch artifacts and test patches locally.
+@@ -84,7 +85,8 @@ Agents should remind humans of this when possible.
  
-   '@babel/code-frame@7.26.2':
-@@ -24463,9 +24457,9 @@ snapshots:
+ ## Documentation Route Helpers (Non-`+page.md`)
  
-   jsonpointer@5.0.1: {}
+-- `packages/web/src/routes/docs/about/+page.ts`: Route behavior helper (`ssr = false`) for the About page.
++- `packages/web/src/routes/docs/rules/+page.ts`: Disables SSR for the browser-rendered rule catalog.
++- `packages/web/src/routes/docs/rules/+page.server.ts`: Loads rule descriptions and defaults with the inlined Harper WASM binary.
+ - `packages/web/src/routes/docs/harperjs/CDN/example/+server.ts`: Serves the HTML example used by the `harper.js` CDN documentation page.
  
--  jsonwebtoken@9.0.2:
-+  jsonwebtoken@9.0.3:
-     dependencies:
--      jws: 3.2.2
-+      jws: 4.0.1
-       lodash.includes: 4.3.0
-       lodash.isboolean: 3.0.3
-       lodash.isinteger: 4.0.4
-@@ -24490,26 +24484,15 @@ snapshots:
-       readable-stream: 2.3.8
-       setimmediate: 1.0.5
- 
--  jwa@1.4.1:
--    dependencies:
--      buffer-equal-constant-time: 1.0.1
--      ecdsa-sig-formatter: 1.0.11
--      safe-buffer: 5.2.1
--
--  jwa@2.0.0:
-+  jwa@2.0.1:
-     dependencies:
-       buffer-equal-constant-time: 1.0.1
-       ecdsa-sig-formatter: 1.0.11
-       safe-buffer: 5.2.1
- 
--  jws@3.2.2:
--    dependencies:
--      jwa: 1.4.1
--      safe-buffer: 5.2.1
--
--  jws@4.0.0:
-+  jws@4.0.1:
-     dependencies:
--      jwa: 2.0.0
-+      jwa: 2.0.1
-       safe-buffer: 5.2.1
- 
-   keytar@7.9.0:
+ ## External Sidebar Targets (No Local Source File)
 ```
 
----
-
-### Incident Patch 2: `4001b8b5` (2026-11-02)
-**Commit Message**: fix(web): present correct metadata in head (#4764)
-
-**File**: `packages/web/src/app.d.ts` (modified, +2/-0)
+**File**: `biome.json` (modified, +0/-1)
 ```diff
-@@ -1,3 +1,5 @@
-+/// <reference types="@sveltepress/vite/types" />
+@@ -25,7 +25,6 @@
+ 			"!**/harper-wasm/pkg",
+ 			"!**/.vscode-test",
+ 			"!**/.svelte-kit",
+-			"!**/.sveltepress",
+ 			"!**/packages/obsidian-plugin/main.js",
+ 			"!**/pnpm-lock.yaml",
+ 			"!**/package-lock.json",
+```
+
+**File**: `justfile` (modified, +1/-1)
+```diff
+@@ -22,7 +22,7 @@ soft-clean:
+   rm -rf "{{justfile_directory()}}"/packages/lint-framework/{dist}
+   rm -rf "{{justfile_directory()}}"/packages/obsidian-plugin/{harper-obsidian-plugin.zip,main.js}
+   rm -rf "{{justfile_directory()}}"/packages/vscode-plugin/{.vscode-test,bin,build}
+-  rm -rf "{{justfile_directory()}}"/packages/web/{.svelte-kit,.sveltepress,build}
++  rm -rf "{{justfile_directory()}}"/packages/web/{.svelte-kit,build}
+   rm -rf "{{justfile_directory()}}"/packages/wordpress-plugin/{build,harper.zip}
+   rm -rf "{{justfile_directory()}}"/harper-desktop/{.svelte-kit,build,package}
+   rm -rf "{{justfile_directory()}}"/harper-wasm/pkg
+```
+
+**File**: `packages/web/.gitignore` (modified, +0/-1)
+```diff
+@@ -2,7 +2,6 @@
+ node_modules
+ /build
+ /.svelte-kit
+-/.sveltepress
+ /package
+ .env
+ .env.*
+```
+
+**File**: `packages/web/mdsvex.config.js` (added, +33/-0)
+```diff
+@@ -0,0 +1,33 @@
++import { fileURLToPath } from 'node:url';
++import rehypeHighlight from 'rehype-highlight';
 +
++/**
++ * Escape code text after highlighting, before mdsvex serializes it as a Svelte template.
++ * Keep highlight spans intact and leave prose, embedded HTML, and Svelte expressions alone.
++ * The highlighter is disabled below without mdsvex's early code escaping, so entities such
++ * as `&lt;` and literal braces are escaped exactly once and retain their original text.
++ */
++function rehypeEscapeHighlightedCode() {
++	function visit(node, inCodeBlock = false) {
++		const isCodeBlock = inCodeBlock || (node.type === 'element' && node.tagName === 'pre');
++		if (isCodeBlock && node.type === 'text') {
++			const entities = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '{': '&#123;', '}': '&#125;' };
++			node.value = node.value.replace(/[&<>{}]/g, (character) => entities[character]);
++		}
++		for (const child of node.children ?? []) visit(child, isCodeBlock);
++	}
++	return (tree) => visit(tree);
++}
++
++export default {
++	extensions: ['.md'],
++	layout: fileURLToPath(new URL('./src/lib/docs/MarkdownLayout.svelte', import.meta.url)),
++	smartypants: false,
++	// `highlight: false` escapes code before rehype can highlight it. Disable only the
++	// highlighter instead, and let the final rehype plugin perform code escaping once.
++	highlight: { highlighter: false },
++	rehypePlugins: [
++		[rehypeHighlight, { detect: false, ignoreMissing: true }],
++		rehypeEscapeHighlightedCode,
++	],
++};
+```
+
+**File**: `packages/web/package.json` (modified, +2/-2)
+```diff
+@@ -20,6 +20,8 @@
+ 		"drizzle-kit": "^0.31.5",
+ 		"esbuild": "^0.28.1",
+ 		"flowbite": "^3.1.2",
++		"mdsvex": "^0.12.6",
++		"rehype-highlight": "^7.0.2",
+ 		"svelte": "^5.57.3",
+ 		"svelte-check": "^4.1.5",
+ 		"tailwindcss": "^4.1.16",
+@@ -32,8 +34,6 @@
+ 	"dependencies": {
+ 		"@docsearch/css": "^3.9.0",
+ 		"@docsearch/js": "^3.9.0",
+-		"@sveltepress/theme-default": "^8.11.0",
+-		"@sveltepress/vite": "^1.10.0",
+ 		"brace": "^0.11.1",
+ 		"chart.js": "^4.4.8",
+ 		"components": "workspace:*",
+```
+
+**File**: `packages/web/src/app.css` (modified, +5/-12)
+```diff
+@@ -4,6 +4,9 @@
+ 
+ @custom-variant dark (&:where(.dark, .dark *));
+ 
++/* Apply after the element selector; exclude embedded UI and all of its descendants. */
++@custom-variant docs-prose (&:not(:where([data-docs-embed], [data-docs-embed] *)));
++
+ @theme {
+ 	--font-serif: Domine, serif;
+ 
+@@ -94,9 +97,8 @@
+ 	--docsearch-hit-color: var(--marketing-ink);
+ }
+ 
+-/* Outrank SveltePress's :root:root and :root:root.dark brand defaults only.
+-   Keep its dark-mode text and surface colors intact. */
+-html:root:root:root {
++/* Shared search brand colors for documentation and marketing pages. */
++:root {
+ 	--docsearch-primary-color: var(--marketing-amber);
+ 	--docsearch-highlight-color: var(--marketing-amber);
+ }
+@@ -146,15 +148,6 @@ p {
+ 	@apply leading-[130%] [&:not(:first-child)]:mt-6;
+ }
+ 
+-.theme-default--page-layout .content > h2 {
+-	margin-top: 2rem;
+-	padding-top: 1rem;
+-}
+-
+-.theme-default--page-layout .content p + .svp-code-block-wrapper {
+-	margin-top: 1rem;
+-}
+-
+ a {
+ 	@apply underline-offset-4 text-black dark:text-white;
+ }
+```
+
+**File**: `packages/web/src/app.d.ts` (modified, +0/-2)
+```diff
+@@ -1,5 +1,3 @@
+-/// <reference types="@sveltepress/vite/types" />
+-
  // See https://kit.svelte.dev/docs/types#app
  // for information about these interfaces
  declare global {
 ```
 
-**File**: `packages/web/src/app.html` (modified, +0/-22)
-```diff
-@@ -7,17 +7,10 @@
-   <meta name="language" content="en" />
-   <meta name="robots" content="index,follow" />
- 
--  <title>Harper | Privacy-First Offline Grammar Checker for Developers & Writers</title>
--
--  <meta name="description"
--    content="Harper is a blazing-fast, open-source grammar & spell checker that runs entirely on your device, covering US, UK, Canadian, Australian & Indian English—no data ever leaves your machine. Harper is the only grammar checker that doesn't use AI." />
--
-   <meta name="keywords"
-     content="Harper, grammar checker, spell checker, privacy-first, offline, open source, fast grammar tool, developer writing, markdown checker" />
-   <meta name="author" content="Elijah Potter" />
- 
--  <link rel="canonical" href="https://writewithharper.com/" />
--
-   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
-   <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
-@@ -29,15 +22,7 @@
-   <meta property="og:type" content="website" />
-   <meta property="og:site_name" content="Harper" />
-   <meta property="og:locale" content="en_US" />
--  <meta property="og:url" content="https://writewithharper.com/" />
--  <meta property="og:title" content="Harper | Privacy-First Offline Grammar Checker" />
--  <meta property="og:description"
--    content="Harper checks your writing instantly—fast, lightweight and utterly private—so you can polish every clause without surrendering a single keystroke." />
--
-   <meta name="twitter:card" content="summary_large_image" />
--  <meta name="twitter:title" content="Harper | Privacy-First Offline Grammar Checker" />
--  <meta name="twitter:description"
--    content="Blazing-fast, open-source grammar & spell checking that never sends your words to the cloud." />
-   <meta property="og:image" content="https://writewithharper.com/social_image.png" />
-   <meta property="og:image:alt" content="Stylised ‘Harper’ wordmark on a clean pastel backdrop" />
-   <meta property="og:image:type" content="image/png" />
-@@ -73,13 +58,6 @@
-     }
-   </script>
- 
--  <title>Harper: Free, Open Source Grammar Checker</title>
--  <meta name="description" content="Harper checks your writing fast, without compromising your privacy." />
--  <link rel="canonical" href="https://writewithharper.com" />
--  <meta property="og:title" content="Harper: Free, Open Source Grammar Checker" />
--  <meta property="og:description" content="Harper checks your writing fast, without compromising your privacy." />
--  <meta property="og:url" content="https://writewithharper.com" />
--
-   <script>
-     (() => {
-       var stored = localStorage.getItem('SVELTEPRESS_DARK_MODE') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'on' : 'off');
-```
+---
 
-**File**: `packages/web/src/lib/PageMetadata.svelte` (added, +23/-0)
+### Incident Patch 2: `c448c402` (2026-11-04)
+**Commit Message**: fix(web): CSS problems from SveltePress upgrade
+
+**File**: `packages/web/src/app.css` (modified, +18/-8)
 ```diff
-@@ -0,0 +1,23 @@
-+<script lang="ts">
-+import type { ResolvedPageMetadata } from './seo';
-+
-+/** SveltePress owns document titles/descriptions on docs pages; this component owns the other tags. */
-+interface Props extends ResolvedPageMetadata {
-+	includeDocumentMetadata?: boolean;
+@@ -84,7 +84,6 @@
+ 	--marketing-underline: #c96442;
+ 	--marketing-grass: #2f8a5b;
+ 
+-	--docsearch-primary-color: var(--marketing-amber);
+ 	--docsearch-text-color: var(--marketing-ink);
+ 	--docsearch-muted-color: var(--marketing-ink-3);
+ 	--docsearch-searchbox-background: #fff;
+@@ -93,6 +92,12 @@
+ 	--docsearch-footer-background: #fbfaf6;
+ 	--docsearch-hit-background: #fff;
+ 	--docsearch-hit-color: var(--marketing-ink);
 +}
 +
-+let { title, description, canonical, includeDocumentMetadata = true }: Props = $props();
-+</script>
-+
-+<svelte:head>
-+	{#if includeDocumentMetadata}
-+		<title>{title}</title>
-+		<meta name="description" content={description} />
-+	{/if}
-+	<link rel="canonical" href={canonical} />
-+	<meta property="og:url" content={canonical} />
-+	<meta property="og:title" content={title} />
-+	<meta property="og:description" content={description} />
-+	<meta name="twitter:title" content={title} />
-+	<meta name="twitter:description" content={description} />
-+</svelte:head>
-```
-
-**File**: `packages/web/src/lib/marketing/SveltePressPageLayout.svelte` (modified, +8/-0)
-```diff
-@@ -1,15 +1,23 @@
- <script>
-+import siteConfig from 'virtual:sveltepress/site';
- import DefaultPageLayout from '@sveltepress/theme-default/PageLayout.svelte';
- import { page } from '$app/stores';
-+import PageMetadata from '$lib/PageMetadata.svelte';
-+import { resolvePageMetadata } from '$lib/seo';
++/* Outrank SveltePress's :root:root and :root:root.dark brand defaults only.
++   Keep its dark-mode text and surface colors intact. */
++html:root:root:root {
++	--docsearch-primary-color: var(--marketing-amber);
+ 	--docsearch-highlight-color: var(--marketing-amber);
+ }
  
- const { fm, children, heroImage, titleAction, ...rest } = $props();
+@@ -118,17 +123,17 @@ ol {
+ }
  
- const marketingRoutes = new Set(['/', '/get', '/desktop', '/install-browser-extension']);
- const isMarketingRoute = $derived(
- 	marketingRoutes.has($page.url.pathname.replace(/\/$/, '') || '/'),
- );
-+const metadata = $derived(
-+	resolvePageMetadata($page.url.pathname, fm, siteConfig, isMarketingRoute),
-+);
- </script>
+ h1 {
+-	@apply text-4xl font-extrabold tracking-tight lg:text-5xl py-4;
++	@apply text-4xl font-extrabold tracking-tight lg:text-5xl;
+ 	font-family: Domine, serif;
+ }
  
-+<PageMetadata {...metadata} includeDocumentMetadata={isMarketingRoute} />
-+
- {#if isMarketingRoute}
- 	{@render children?.()}
- {:else}
-```
-
-**File**: `packages/web/src/lib/seo.ts` (added, +39/-0)
-```diff
-@@ -0,0 +1,39 @@
-+const siteOrigin = 'https://writewithharper.com';
-+
-+/** Page frontmatter fields used for document and social metadata. */
-+export interface MetadataInput {
-+	title?: string;
-+	description?: string;
+ h2 {
+-	@apply text-3xl font-semibold tracking-tight py-4;
++	@apply text-3xl font-semibold tracking-tight;
+ 	font-family: Domine, serif;
+ }
+ 
+ h3 {
+-	@apply text-2xl font-semibold tracking-tight py-4;
++	@apply text-2xl font-semibold tracking-tight;
+ 	font-family: Domine, serif;
+ }
+ 
+@@ -141,6 +146,15 @@ p {
+ 	@apply leading-[130%] [&:not(:first-child)]:mt-6;
+ }
+ 
++.theme-default--page-layout .content > h2 {
++	margin-top: 2rem;
++	padding-top: 1rem;
 +}
 +
-+/** Final metadata shared by the page head and SveltePress layout. */
-+export interface ResolvedPageMetadata {
-+	title: string;
-+	description: string;
-+	canonical: string;
++.theme-default--page-layout .content p + .svp-code-block-wrapper {
++	margin-top: 1rem;
 +}
 +
-+/** Use the production origin and a slash-normalized path, without query or fragment data. */
-+export function canonicalUrl(pathname: string): string {
-+	const url = new URL(siteOrigin);
-+	url.pathname = pathname.split(/[?#]/)[0].replace(/\/+$/, '') || '/';
-+	return url.href;
-+}
-+
-+/** Match SveltePress title/description defaults; marketing pages use their titles without a suffix. */
-+export function resolvePageMetadata(
-+	pathname: string,
-+	frontmatter: MetadataInput,
-+	site: Required<MetadataInput>,
-+	standaloneTitle = false,
-+): ResolvedPageMetadata {
-+	return {
-+		title: frontmatter.title
-+			? standaloneTitle
-+				? frontmatter.title
-+				: `${frontmatter.title} - ${site.title}`
-+			: site.title,
-+		description: frontmatter.description || site.description,
-+		canonical: canonicalUrl(pathname),
-+	};
-+}
-```
-
-**File**: `packages/web/src/routes/+page.svelte` (modified, +3/-9)
-```diff
-@@ -1,6 +1,8 @@
--<script module>
-+<script module lang="ts">
- export const frontmatter = {
- 	home: false,
-+	title: 'Free Grammar & Spell Checker — Private, No AI',
-+	description: 'Harper is the free, private, open-source grammar checker that runs on your device.',
- };
- </script>
+ a {
+ 	@apply underline-offset-4 text-black dark:text-white;
+ }
+@@ -202,10 +216,6 @@ textarea {
+ 	}
+ }
  
-@@ -160,14 +162,6 @@ onMount(() => {
- 
- </script>
- 
--<svelte:head>
--	<title>Free Grammar & Spell Checker — Private, No AI</title>
--	<meta
--		name="description"
--		content="Harper is the free, private, open-source grammar checker that runs on your device."
--	/>
--</svelte:head>
+-.header {
+-	padding-top: 6px;
+-}
 -
- <div class="min-h-screen bg-[#f6f1e6] text-[#1c1a16] dark:bg-black dark:text-white">
- 	<MarketingHeader active="home" />
- 
+ th[align="center"] {
+ 	text-align: center;
+ }
 ```
 
-**File**: `packages/web/src/routes/desktop/+page.svelte` (modified, +7/-8)
+**File**: `packages/web/src/lib/marketing/MarketingFooter.svelte` (modified, +3/-3)
 ```diff
-@@ -1,3 +1,10 @@
-+<script module lang="ts">
-+export const frontmatter = {
-+	title: 'Harper Desktop',
-+	description: 'Harper Desktop brings private grammar checking to text fields across macOS.',
-+};
-+</script>
-+
- <script lang="ts">
- import AppLogoTile from '$lib/marketing/AppLogoTile.svelte';
- import DesktopMockups from '$lib/marketing/DesktopMockups.svelte';
-@@ -29,14 +36,6 @@ const faqs = [
- ];
- </script>
+@@ -27,7 +27,7 @@ const currentYear = new Date().getFullYear();
+ 		</div>
  
--<svelte:head>
--	<title>Harper Desktop</title>
--	<meta
--		name="description"
--		content="Harper Desktop brings private grammar checking to text fields across macOS."
--	/>
--</svelte:head>
--
- <div class="min-h-screen bg-[#f6efe2] text-[#1c1a16] dark:bg-black dark:text-white">
- 	<MarketingHeader active="desktop" />
+ 		<div class="flex flex-col gap-2.5">
+-			<h2 class='!m-0 py-0 text-[0.66rem] font-extrabold tracking-[0.14em] text-primary uppercase dark:text-primary-300 [font-family:"JetBrains_Mono",monospace]'>
++			<h2 class='!m-0 py-0 text-[0.66rem] font-extrabold tracking-[0.14em] !text-primary uppercase dark:!text-primary-300 [font-family:"JetBrains_Mono",monospace]'>
+ 				Get Harper
+ 			</h2>
+ 			<a class="!text-black/70 no-underline hover:!text-black hover:no-underline dark:!text-white/70 dark:hover:!text-white" href="/desktop">Harper Desktop</a>
+@@ -38,7 +38,7 @@ const currentYear = new Date().getFullYear();
+ 		</div>
  
+ 		<div class="flex flex-col gap-2.5">
+-			<h2 class='!m-0 py-0 text-[0.66rem] font-extrabold tracking-[0.14em] text-primary uppercase dark:text-primary-300 [font-family:"JetBrains_Mono",monospace]'>
++			<h2 class='!m-0 py-0 text-[0.66rem] font-extrabold tracking-[0.14em] !text-primary uppercase dark:!text-primary-300 [font-family:"JetBrains_Mono",monospace]'>
+ 				Resources
+ 			</h2>
+ 			<a class="!text-black/70 no-underline hover:!text-black hover:no-underline dark:!text-white/70 dark:hover:!text-white" href="/docs/about">Documentation</a>
+@@ -49,7 +49,7 @@ const currentYear = new Date().getFullYear();
+ 		</div>
+ 
+ 		<div class="flex flex-col gap-2.5">
+-			<h2 class='!m-0 py-0 text-[0.66rem] font-extrabold tracking-[0.14em] text-primary uppercase dark:text-primary-300 [font-family:"JetBrains_Mono",monospace]'>
++			<h2 class='!m-0 py-0 text-[0.66rem] font-extrabold tracking-[0.14em] !text-primary uppercase dark:!text-primary-300 [font-family:"JetBrains_Mono",monospace]'>
+ 				Community
+ 			</h2>
+ 			<a class="!text-black/70 no-underline hover:!text-black hover:no-underline dark:!text-white/70 dark:hover:!text-white" href={marketingLinks.github}>GitHub</a>
 ```
 
-**File**: `packages/web/src/routes/docs/about/+page.md` (modified, +12/-8)
+**File**: `packages/web/src/lib/marketing/PrivacySpeedCards.svelte` (modified, +2/-2)
 ```diff
-@@ -1,33 +1,37 @@
- ---
- title: What Is Harper?
-+description: Learn how Harper checks English grammar, how releases are versioned, and which projects use Harper.
- ---
- 
- Harper is a grammar checker designed to run anywhere there is text (so really, anywhere).
- Most Harper users are catching their mistakes in [Neovim](./integrations/neovim), [Obsidian](./integrations/obsidian), or [Visual Studio Code](./integrations/visual-studio-code).
- 
- <script>
--    import { Editor } from "harper-editor"
-     import { onMount } from "svelte"
-+    import { createEditorLinter } from "$lib/createEditorLinter"
- 
-     let linter = null
-+    let Editor = null
- 
-     onMount(async () => {
--        const [{ WorkerLinter }, { slimBinary }] = await Promise.all([
--            import("harper.js"),
--            import("harper.js/slimBinary"),
-+        const [editorModule, instance] = await Promise.all([
-+            import("harper-editor"),
-+            createEditorLinter(),
-         ])
- 
--        linter = new WorkerLinter({ binary: slimBinary })
--        await linter.setup()
-+        Editor = editorModule.Editor
-+        linter = instance
-     })
- </script>
- 
- <div class="h-96">
--    {#if linter}
--        <Editor
-+    {#if Editor && linter}
-+        <svelte:component this={Editor}
-             content={`You can try out a editor that uses\nHarper under the hood here.\n\nIt is rnning in your browser right now. \n\nNo server required!`}
-             {linter}
-         />
-+    {:else}
-+        <p role="status">Loading Harper's grammar engine...</p>
-     {/if}
- </div>
- 
+@@ -8,7 +8,7 @@ export let desktop = false;
+ 	<article
+ 		class="flex min-h-44 flex-col gap-4 overflow-hidden rounded-2xl border border-black/10 bg-white p-6 text-black dark:border-white/10 dark:bg-black dark:text-white md:p-8"
+ 	>
+-		<h2 class="m-0 py-0 text-[clamp(2rem,4vw,2.25rem)] leading-[1.08] font-semibold tracking-normal">
++		<h2 class="m-0 py-0 text-[clamp(2rem,4vw,2.25rem)] leading-[1.08] font-semibold tracking-normal !text-inherit">
+ 			{desktop ? 'Your words never leave your device.' : 'Harper is completely private.'}
+ 		</h2>
+ 		<p class="!m-0 text-sm leading-relaxed text-black/70 dark:text-white/70">
+@@ -51,7 +51,7 @@ export let desktop = false;
+ 	<article
+ 		class="flex min-h-44 flex-col gap-4 overflow-hidden rounded-2xl bg-black p-6 text-white dark:bg-white dark:text-black md:p-8"
+ 	>
+-		<h2 class="m-0 py-0 text-[clamp(2rem,4vw,2.25rem)] leading-[1.08] font-semibold tracking-normal">
++		<h2 class="m-0 py-0 text-[clamp(2rem,4vw,2.25rem)] leading-[1.08] font-semibold tracking-normal !text-inherit">
+ 			Suggestions in under 10ms.
+ 		</h2>
+ 		<p class="!m-0 text-sm leading-relaxed text-white/70 dark:text-black/70">
 ```
 
 ---
 
-### Incident Patch 3: `1349a868` (2026-11-02)
-**Commit Message**: fix: add "gatekeep" to `irregular_verbs.json` (#4785)
+### Incident Patch 3: `3e08646c` (2026-11-04)
+**Commit Message**: fix(chrome-ext): Typst editors did not properly use `<br>` (#4732)
 
-Co-authored-by: Elijah Potter <[REDACTED_EMAIL]>
-
-**File**: `harper-core/irregular_verbs.json` (modified, +1/-0)
+**File**: `packages/chrome-plugin/tests/testUtils.ts` (modified, +2/-1)
 ```diff
-@@ -41,6 +41,7 @@
- 	["forget", "forgot", "forgotten"],
- 	["forgo", "forwent", "forgone"],
- 	["freeze", "froze", "frozen"],
-+	["gatekeep", "gatekept", "gatekept"],
- 	"// get -- got -- gotten",
- 	["get", "got", "got"],
- 	["give", "gave", "given"],
+@@ -93,8 +93,9 @@ export async function replaceEditorContent(editorEl: Locator, text: string, soft
+ 		if (needsCharacterInput) {
+ 			// Draft.js needs character key events at a normal typing cadence for its selection model.
+ 			await editorEl.pressSequentially(lines[i], { delay: 200 });
+-		} else {
++		} else if (lines[i]) {
+ 			// Native text input updates the editor model without exposing partial words to linting.
++			// Firefox rejects empty insertText calls; the break key below creates empty lines.
+ 			await editorEl.page().keyboard.insertText(lines[i]);
+ 		}
+ 		if (i < lines.length - 1) {
 ```
 
-**File**: `harper-core/src/linting/regular_irregulars.rs` (modified, +12/-0)
+**File**: `packages/chrome-plugin/tests/typst.spec.ts` (modified, +25/-0)
 ```diff
-@@ -363,6 +363,18 @@ mod tests {
-                 "Rune is a TUI editor, so I fed the same terminal sequences to the old and new apps.",
-             );
-         }
-+
-+        #[test]
-+        fn fix_gatekepped() {
-+            use crate::Dialect;
-+            use crate::spell::FstDictionary;
-+
-+            assert_suggestion_result(
-+                "Foundational principles between languages are the same, I don’t understand why positions are gatekeeped based on implementation trivia.",
-+                crate::linting::LintGroup::new_curated(FstDictionary::curated(), Dialect::American),
-+                "Foundational principles between languages are the same, I don’t understand why positions are gatekept based on implementation trivia.",
-+            );
-+        }
-     }
+@@ -24,6 +24,31 @@ test('Typst CodeMirror editor can apply a suggestion', async ({ page }) => {
+ 	await expect(editor).toContainText('This is a test');
+ });
  
-     mod adjectives {
++for (const blankLines of [1, 3, 5]) {
++	test(`Typst CodeMirror can apply a suggestion after ${blankLines} blank lines`, async ({
++		page,
++	}) => {
++		test.slow();
++		await page.goto(TEST_PAGE_URL, { waitUntil: 'domcontentloaded' });
++
++		const editor = page.locator('.cm-editor .cm-content[contenteditable="true"]').first();
++		await expect(editor).toBeVisible({ timeout: 30000 });
++		await replaceEditorContent(
++			editor,
++			`This is correct.${'\n'.repeat(blankLines + 1)}This is an test`,
++		);
++
++		await assertHighlightCount(page, 1);
++
++		expect(await clickHarperHighlight(page)).toBe(true);
++		await page.getByTitle('Click to replace "an" with "a"').click();
++
++		await expect(editor).toContainText('This is correct.');
++		await expect(editor).toContainText('This is a test');
++		await assertHighlightCount(page, 0);
++	});
++}
++
+ test('Typst CodeMirror handles multiline suggestions distinctly', async ({ page }) => {
+ 	test.setTimeout(120000);
+ 	await page.goto(TEST_PAGE_URL, { waitUntil: 'domcontentloaded' });
+```
+
+**File**: `packages/lint-framework/src/lint/domUtils.ts` (modified, +2/-1)
+```diff
+@@ -95,6 +95,7 @@ export function leafNodes(node: Node): Node[] {
+ /**
+  * Given an element and a Span of text inside it, compute the Range that represents the region of the DOM represented.
+  * Accounts for `<br>` elements which `innerText` converts to newlines.
++ * CodeMirror spans already exclude line breaks, so its placeholder `<br>` elements count as zero.
+  * @param target
+  * @param span
+  */
+@@ -110,7 +111,7 @@ export function getRangeForTextSpan(target: Element, span: Span): Range | null {
+ 		const child = children[i] as HTMLElement;
+ 
+ 		if (child.nodeName === 'BR') {
+-			traversed += 1;
++			traversed += child.closest('.cm-line') ? 0 : 1;
+ 			continue;
+ 		}
+ 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4803** (2026-11-04): fix(web): remove SveltePress (@elijah-potter)
+- **PR #4802** (2026-11-04): feat: we see us → we see each other (@hippietrail)
+- **PR #4799** (2026-11-04): feat: what so ever → whatsoever (@hippietrail)
+- **PR #4798** (2026-11-04): feat: all that's X are → all that's X is (@hippietrail)
+- **PR #4796** (2026-11-03): chore(chrome-ext): add spell checker to extension title (@elijah-potter)
 - **PR #4793** (2026-11-03): feat: round about → roundabout (@hippietrail)
-- **PR #4790** (2026-11-03): docs: start PR template with link to agent policy (@hippietrail)
-- **PR #4787** (2026-11-02): feat: Upgrade Vite to v8 and disable SSR on broken pages (@elijah-potter)
-- **PR #4785** (2026-11-02): fix: add "gatekeep" to `irregular_verbs.json` (@hippietrail)
-- **PR #4784** (closed): Fix for suggest "a lot" and "lots" for "a lots", not only "a lot's". (@gerardrecinto)
-- **PR #4780** (2026-11-03): feat: expand "blanketed statement" to "blanked", "blanker", and plurals (@hippietrail)
 
 ---
 
@@ -1873,69 +1861,40 @@ Co-authored-by: Elijah Potter <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. broken build due to outdated dep
+## X. web): remove SveltePress (#4803)
 
 **RULE**:
-When implementing operations in `pnpm-lock.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Automattic/harper. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `AGENTS.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Automattic/harper. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c1c9849d`: broken build due to outdated dep. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6bdbadfd`: web): remove SveltePress (#4803). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `pnpm-lock.yaml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `AGENTS.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-  jsonwebtoken@9.0.3:
-    resolution: {integrity: sha512-MT/xP0CrubFRNLNKvxJ2BYfy53Zkm++5bX9dtuPbqAeQpTVe0MQTFhao8+Cp//EmJp244xt6Drw/GVEGCUj40g==}
-  jwa@2.0.1:
-    resolution: {integrity: sha512-hRF04fqJIP8Abbkq5NKGN0Bbr3JxlQ+qhZufXVr0DvujKy93ZCbXZMHDL4EOtodSbCWxOqR8MS1tXA5hwqCXDg==}
-  jws@4.0.1:
-    resolution: {integrity: sha512-EKI/M/yqPncGUUh44xz0PxSidXFr/+r0pA70+gIYhjv+et7yxM+s29Y+VGDkovRofQem0fs7Uvf4+YmAdyRduA==}
-      jws: 4.0.1
-      jsonwebtoken: 9.0.3
-  jsonwebtoken@9.0.3:
-      jws: 4.0.1
-  jwa@2.0.1:
-  jws@4.0.1:
-      jwa: 2.0.1
+This repository’s documentation site uses Vite, SvelteKit, mdsvex, and rehype-highlight.
+Use `packages/web/src/lib/docs/config.ts` as the source of truth for documentation scope:
+- Sidebar, navigation, site metadata, and search settings are defined in `packages/web/src/lib/docs/config.ts`.
+- `packages/web/vite.config.ts` contains build configuration, not the documentation sidebar.
+1. `packages/web/src/lib/docs/config.ts`: Sidebar source of truth and canonical map of important docs routes. For website architecture, Markdown authoring, theme/search behavior, and validation, read `packages/web/src/routes/docs/contributors/website/+page.md`.
+- `packages/web/src/routes/docs/contributors/website/+page.md`: Local development, preview, and validation for writewithharper.com (SvelteKit/mdsvex).
+- `packages/web/src/routes/docs/rules/+page.ts`: Disables SSR for the browser-rendered rule catalog.
+- `packages/web/src/routes/docs/rules/+page.server.ts`: Loads rule descriptions and defaults with the inlined Harper WASM binary.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-  jsonwebtoken@9.0.2:
-    resolution: {integrity: sha512-PRp66vJ865SSqOlgqS8hujT5U4AOgMfhrwYIuIhfKaoSCZcirrmASQr8CX7cUg+RMih+hgznrjp99o+W4pJLHQ==}
-  jwa@1.4.1:
-    resolution: {integrity: sha512-qiLX/xhEEFKUAJ6FiBMbes3w9ATzyk5W7Hvzpa/SLYdxNtng+gcurvrI7TbACjIXlsJyr05/S1oUhZrc63evQA==}
-  jwa@2.0.0:
-    resolution: {integrity: sha512-jrZ2Qx916EA+fq9cEAeCROWPTfCwi1IVHqT2tapuqLEVVDKFDENFw1oL+MwrTvH6msKxsd1YTDVw6uKEcsrLEA==}
-
-  jws@3.2.2:
-    resolution: {integrity: sha512-YHlZCB6lMTllWDtSPHz/ZXTsi8S00usEV6v1tjq8tOUZzw7DpSDWVXjXDre6ed1w/pd495ODpHZYSdkRTsa0HA==}
-
-  jws@4.0.0:
-    resolution: {integrity: sha512-KDncfTmOZoOMTFG4mBlG0qUIOlc03fmzH+ru6RgYVZhPkyiy/92Owlt/8UEN+a4TXR1FQetfIpJE8ApdvdVxTg==}
-      jws: 4.0.0
-      jsonwebtoken: 9.0.2
-  jsonwebtoken@9.0.2:
-      jws: 3.2.2
-  jwa@1.4.1:
-    dependencies:
-      buffer-equal-constant-time: 1.0.1
-      ecdsa-sig-formatter: 1.0.11
-      safe-buffer: 5.2.1
-
-  jwa@2.0.0:
-  jws@3.2.2:
-    dependencies:
-      jwa: 1.4.1
-      safe-buffer: 5.2.1
-
-  jws@4.0.0:
-      jwa: 2.0.0
+This repository’s documentation site is powered by Vite + SvelteKit + SveltePress.
+Use `packages/web/vite.config.ts` as the source of truth for documentation scope:
+- Sidebar and important doc routes are defined in `packages/web/vite.config.ts`.
+1. `packages/web/vite.config.ts`: Sidebar source of truth and canonical map of important docs routes.
+- `packages/web/src/routes/docs/contributors/website/+page.md`: Local development, preview, and validation for writewithharper.com (SvelteKit/SveltePress).
+- `packages/web/src/routes/docs/about/+page.ts`: Route behavior helper (`ssr = false`) for the About page.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c1c9849d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6bdbadfd` are properly handled with clean fallback behavior.

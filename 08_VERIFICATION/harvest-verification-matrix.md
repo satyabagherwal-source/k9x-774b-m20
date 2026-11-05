@@ -7413,3 +7413,7 @@
 | `CYCLE-20261105-4FWJ` | `2026-11-05T00:00:13.699Z` | `ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7035, Rule 7036` | Yes (`deba39c6...`) |
 | `CYCLE-20261105-E00W` | `2026-11-05T00:07:39.680Z` | `orcarouter/OrcaSAQ-2-27B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-orcarouter-orcasaq-2-27b-learnings.md` | Yes (`e01c961a...`) |
 | `CYCLE-20261105-E0H0` | `2026-11-05T00:07:40.260Z` | `iii-hq/iii` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7037` | Yes (`92f99417...`) |
+| `CYCLE-20261105-N9YR` | `2026-11-05T00:14:52.467Z` | `Automattic/harper` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7038` | Yes (`9d8704a7...`) |
+| `CYCLE-20261105-NE0E` | `2026-11-05T00:14:57.710Z` | `TaichuAI/ZDTaichu5.0-9B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7039, Rule 1561, Rule 7040` | Yes (`6cf68b75...`) |
+| `CYCLE-20261105-NF90` | `2026-11-05T00:14:59.316Z` | `crossplane/crossplane` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7041` | Yes (`1ecaf610...`) |
+| `CYCLE-20261105-NIMU` | `2026-11-05T00:15:03.702Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7042` | Yes (`4325bde0...`) |

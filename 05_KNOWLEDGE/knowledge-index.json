@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T00:07:40.166Z",
+  "last_updated": "2026-11-05T00:15:03.619Z",
   "total_verified_learnings": 1210,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -4212,8 +4212,8 @@
       "slug": "automattic-harper",
       "platform": "github",
       "source_url": "https://github.com/Automattic/harper",
-      "source_version": "54140784",
-      "content_hash": "763c1567b491e322839ee4398a300f37dd71e8f4097d3656c018c6bd72dd112d",
+      "source_version": "6bdbadfd",
+      "content_hash": "9d8704a7db8f0ec12d796b97908693a3002764e2b7432739300b5c1383b5fed5",
       "dossier_path": "07_PROJECT_LEARNING/automattic-harper-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/automattic-harper-learnings.md",
       "promoted_rules": [
@@ -4281,6 +4281,11 @@
           "number": 6614,
           "title": "broken build due to outdated dep",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7038,
+          "title": "web): remove SveltePress (#4803)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -4288,7 +4293,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T21:17:16.170Z",
+      "verified_at": "2026-11-05T00:14:52.342Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -7159,8 +7164,8 @@
       "slug": "cilium-cilium",
       "platform": "github",
       "source_url": "https://github.com/cilium/cilium",
-      "source_version": "6c1f8d15",
-      "content_hash": "853567fce6f4f1fc99fe521e554298e5c35dc82b72cc54c3076028b35c87ca47",
+      "source_version": "cff73042",
+      "content_hash": "4325bde0c36a7aa0e5d47d504bf7ce145db4aea4b4e23e04254a13d3daa21c10",
       "dossier_path": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "promoted_rules": [
@@ -7388,6 +7393,11 @@
           "number": 6966,
           "title": "docs: explain IPv6 cluster-pool \"node CIDR size is too big\" error",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7042,
+          "title": "ci: Raise the Release Helm job timeout to 55 minutes",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -7395,7 +7405,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T20:46:49.992Z",
+      "verified_at": "2026-11-05T00:15:03.584Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -8807,8 +8817,8 @@
       "slug": "crossplane-crossplane",
       "platform": "github",
       "source_url": "https://github.com/crossplane/crossplane",
-      "source_version": "20a45168",
-      "content_hash": "cbbd1e35d65f1cd82389abab265a59619ab1d1b4779d8d332a5fabd056e47139",
+      "source_version": "6e727661",
+      "content_hash": "1ecaf6101f90fb960f51e81e12a1e5adc4848360d7fa71d9097a0485b2de0b19",
       "dossier_path": "07_PROJECT_LEARNING/crossplane-crossplane-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/crossplane-crossplane-learnings.md",
       "promoted_rules": [
@@ -8836,6 +8846,11 @@
           "number": 6713,
           "title": "composite): don't reconcile an XR we already finished deleting",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7041,
+          "title": "Merge pull request #7989 from crossplane/renovate/main-lock-file-maintenance",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -8843,7 +8858,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T01:58:25.847Z",
+      "verified_at": "2026-11-05T00:14:59.201Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -30842,7 +30857,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/TaichuAI/ZDTaichu5.0-9B",
       "source_version": "hf-taichuai-zdtaichu5.0-9b",
-      "content_hash": "1faaf1b95c22ed9115fcf2cf76d5643222cd0dbf0f023c328741caba112ad34d",
+      "content_hash": "6cf68b75b3d36b7483df22318d7591cdc46bf915b6c03753092bf3dd72ab45b7",
       "dossier_path": "07_PROJECT_LEARNING/hf-taichuai-zdtaichu5.0-9b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-taichuai-zdtaichu5.0-9b-learnings.md",
       "promoted_rules": [
@@ -30990,8 +31005,8 @@
         },
         {
           "number": 1561,
-          "title": "Enforce Down‑sampling Ratio Consistency",
-          "status": "PROMOTED_AND_VERIFIED"
+          "title": "Enforce Down‑Sampling Ratio Consistency",
+          "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
           "number": 1562,
@@ -31057,6 +31072,16 @@
           "number": 6156,
           "title": "[Vision‑Encoder Configuration Consistency Rule]",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7039,
+          "title": "Consistent Special‑Token Mapping Across All Subsystems",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7040,
+          "title": "Preserve BOS/EOS Token Integrity in Generation",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -31077,7 +31102,7 @@
         "learn-huggingface-hf-taichuai-zdtaichu5-0-9b-mv45zyde",
         "learn-huggingface-hf-taichuai-zdtaichu5-0-9b-mv4ja6oo"
       ],
-      "verified_at": "2026-10-31T09:53:59.226Z",
+      "verified_at": "2026-11-05T00:14:57.583Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -94721,15 +94746,15 @@
       "learning_id": "rule-1561",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 1561,
-      "title": "Enforce Down‑sampling Ratio Consistency (Harvested from TaichuAI/ZDTaichu5.0-9B)",
-      "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
-      "source_version": "HEAD",
+      "title": "Enforce Down‑Sampling Ratio Consistency",
+      "source_url": "https://huggingface.co/TaichuAI/ZDTaichu5.0-9B",
+      "source_version": "hf-taichuai-zdtaichu5.0-9b",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-18T11:19:25.820Z"
+      "verified_at": "2026-11-05T00:14:57.583Z"
     },
     "rule-1562": {
       "learning_id": "rule-1562",
@@ -178697,6 +178722,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-05T00:07:40.132Z"
+    },
+    "rule-7038": {
+      "learning_id": "rule-7038",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7038,
+      "title": "web): remove SveltePress (#4803)",
+      "source_url": "https://github.com/Automattic/harper",
+      "source_version": "6bdbadfd",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T00:14:52.342Z"
+    },
+    "rule-7039": {
+      "learning_id": "rule-7039",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7039,
+      "title": "Consistent Special‑Token Mapping Across All Subsystems",
+      "source_url": "https://huggingface.co/TaichuAI/ZDTaichu5.0-9B",
+      "source_version": "hf-taichuai-zdtaichu5.0-9b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T00:14:57.583Z"
+    },
+    "rule-7040": {
+      "learning_id": "rule-7040",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7040,
+      "title": "Preserve BOS/EOS Token Integrity in Generation",
+      "source_url": "https://huggingface.co/TaichuAI/ZDTaichu5.0-9B",
+      "source_version": "hf-taichuai-zdtaichu5.0-9b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T00:14:57.583Z"
+    },
+    "rule-7041": {
+      "learning_id": "rule-7041",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7041,
+      "title": "Merge pull request #7989 from crossplane/renovate/main-lock-file-maintenance",
+      "source_url": "https://github.com/crossplane/crossplane",
+      "source_version": "6e727661",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T00:14:59.202Z"
+    },
+    "rule-7042": {
+      "learning_id": "rule-7042",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7042,
+      "title": "ci: Raise the Release Helm job timeout to 55 minutes",
+      "source_url": "https://github.com/cilium/cilium",
+      "source_version": "cff73042",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T00:15:03.584Z"
     }
   },
   "aliases": {

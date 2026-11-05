@@ -455,8 +455,8 @@
     "sourceUrl": "https://huggingface.co/TaichuAI/ZDTaichu5.0-9B",
     "sourceVersion": "hf-taichuai-zdtaichu5.0-9b",
     "license": "Open-Source",
-    "contentHash": "1faaf1b95c22ed9115fcf2cf76d5643222cd0dbf0f023c328741caba112ad34d",
-    "lastHarvestedAt": "2026-10-31T09:53:59.331Z",
+    "contentHash": "6cf68b75b3d36b7483df22318d7591cdc46bf915b6c03753092bf3dd72ab45b7",
+    "lastHarvestedAt": "2026-11-05T00:14:57.714Z",
     "learningId": "learn-huggingface-taichuai-zdtaichu5-0-9b"
   },
   "hf-phocinae-phocinae-largha-150m-v1": {
@@ -2253,10 +2253,10 @@
     "repository": "Automattic/harper",
     "platform": "github",
     "sourceUrl": "https://github.com/Automattic/harper",
-    "sourceVersion": "54140784",
+    "sourceVersion": "6bdbadfd",
     "license": "Apache-2.0",
-    "contentHash": "763c1567b491e322839ee4398a300f37dd71e8f4097d3656c018c6bd72dd112d",
-    "lastHarvestedAt": "2026-11-03T21:17:16.236Z",
+    "contentHash": "9d8704a7db8f0ec12d796b97908693a3002764e2b7432739300b5c1383b5fed5",
+    "lastHarvestedAt": "2026-11-05T00:14:52.471Z",
     "learningId": "learn-github-automattic-harper"
   },
   "sudheerj-reactjs-interview-questions": {
@@ -3343,10 +3343,10 @@
     "repository": "cilium/cilium",
     "platform": "github",
     "sourceUrl": "https://github.com/cilium/cilium",
-    "sourceVersion": "6c1f8d15",
+    "sourceVersion": "cff73042",
     "license": "Apache-2.0",
-    "contentHash": "853567fce6f4f1fc99fe521e554298e5c35dc82b72cc54c3076028b35c87ca47",
-    "lastHarvestedAt": "2026-11-04T20:46:50.105Z",
+    "contentHash": "4325bde0c36a7aa0e5d47d504bf7ce145db4aea4b4e23e04254a13d3daa21c10",
+    "lastHarvestedAt": "2026-11-05T00:15:03.706Z",
     "learningId": "learn-github-cilium-cilium"
   },
   "seekstorm-seekstorm": {
@@ -4963,10 +4963,10 @@
     "repository": "crossplane/crossplane",
     "platform": "github",
     "sourceUrl": "https://github.com/crossplane/crossplane",
-    "sourceVersion": "20a45168",
+    "sourceVersion": "6e727661",
     "license": "Apache-2.0",
-    "contentHash": "cbbd1e35d65f1cd82389abab265a59619ab1d1b4779d8d332a5fabd056e47139",
-    "lastHarvestedAt": "2026-11-04T01:58:25.965Z",
+    "contentHash": "1ecaf6101f90fb960f51e81e12a1e5adc4848360d7fa71d9097a0485b2de0b19",
+    "lastHarvestedAt": "2026-11-05T00:14:59.320Z",
     "learningId": "learn-github-crossplane-crossplane"
   },
   "apple-foundationdb": {
