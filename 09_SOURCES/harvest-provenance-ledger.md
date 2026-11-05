@@ -7603,3 +7603,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-nomic-ai-nomic-embed-text-v1-5` | `https://huggingface.co/nomic-ai/nomic-embed-text-v1.5` | `hf-nomic-a` | Multi-dimensional audit evidence | 2026-11-05T09:12:17.850Z |
 | `learn-github-openkruise-kruise` | `https://github.com/openkruise/kruise` | `c6d10667` | Multi-dimensional audit evidence | 2026-11-05T09:12:28.869Z |
 | `learn-github-duckdb-duckdb` | `https://github.com/duckdb/duckdb` | `e15e8959` | Multi-dimensional audit evidence | 2026-11-05T09:12:33.414Z |
+| `learn-huggingface-google-gemma-4-26b-a4b-it` | `https://huggingface.co/google/gemma-4-26B-A4B-it` | `hf-google-` | Multi-dimensional audit evidence | 2026-11-05T09:21:00.248Z |
+| `learn-github-clickhouse-clickhouse` | `https://github.com/ClickHouse/ClickHouse` | `39b9f2d5` | Multi-dimensional audit evidence | 2026-11-05T09:25:40.957Z |

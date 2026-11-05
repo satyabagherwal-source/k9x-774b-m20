@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261104-BHY1",
-    "timestamp": "2026-11-04T01:14:01.753Z",
-    "repository": "Orange-OpenSource/hurl",
-    "learningId": "learn-github-orange-opensource-hurl",
-    "contentHash": "d88e3a3d6f9e9e1a79af8296bc0f5c7e3f22491fd319db2f139becf44c85a40e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261104-BNHI",
-    "timestamp": "2026-11-04T01:14:08.934Z",
-    "repository": "aquasecurity/trivy",
-    "learningId": "learn-github-aquasecurity-trivy",
-    "contentHash": "10276e33a4dbf57cc8d5333fdc5ef3f3e69cc54cebadbf0b5e7011d5fb9192ce",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261104-JYM0",
     "timestamp": "2026-11-04T01:20:36.600Z",
     "repository": "karakeep-app/karakeep",
@@ -7490,6 +7460,36 @@
     "repository": "duckdb/duckdb",
     "learningId": "learn-github-duckdb-duckdb",
     "contentHash": "c574433550a85ade0bceb15d374e391f3646cba676c4a728d834dae158e28d1c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-5LQS",
+    "timestamp": "2026-11-05T09:21:00.244Z",
+    "repository": "google/gemma-4-26B-A4B-it",
+    "learningId": "learn-huggingface-google-gemma-4-26b-a4b-it",
+    "contentHash": "ef4890f4e8c0489ef6b5678f30a5014287c4c0e38328d2c31bdb095474f2e46a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-BMC9",
+    "timestamp": "2026-11-05T09:25:40.953Z",
+    "repository": "ClickHouse/ClickHouse",
+    "learningId": "learn-github-clickhouse-clickhouse",
+    "contentHash": "02fb9217fa5e447974f1e776f69edd9c07dd8e98999e2ac80ff5d3c6c2f86c9d",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

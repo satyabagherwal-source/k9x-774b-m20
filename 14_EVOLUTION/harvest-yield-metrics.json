@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-05T09:12:33.420Z",
-  "total_cycles_completed": 7571,
-  "total_learnings_persisted": 7571,
-  "total_rules_promoted": 7234,
+  "last_updated": "2026-11-05T09:25:40.963Z",
+  "total_cycles_completed": 7573,
+  "total_learnings_persisted": 7573,
+  "total_rules_promoted": 7238,
   "history": [
-    {
-      "timestamp": "2026-11-04T23:20:54.015Z",
-      "repository": "infiniflow/infinity",
-      "learningId": "learn-github-infiniflow-infinity",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T23:20:56.221Z",
-      "repository": "SupersonicLabs/Julia-1",
-      "learningId": "learn-huggingface-supersoniclabs-julia-1",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-04T23:27:26.078Z",
       "repository": "Comfy-Org/Wan-2.2",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-05T09:12:33.420Z",
       "repository": "duckdb/duckdb",
       "learningId": "learn-github-duckdb-duckdb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T09:21:00.253Z",
+      "repository": "google/gemma-4-26B-A4B-it",
+      "learningId": "learn-huggingface-google-gemma-4-26b-a4b-it",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T09:25:40.963Z",
+      "repository": "ClickHouse/ClickHouse",
+      "learningId": "learn-github-clickhouse-clickhouse",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

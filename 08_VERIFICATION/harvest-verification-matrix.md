@@ -7594,3 +7594,5 @@
 | `CYCLE-20261105-UENQ` | `2026-11-05T09:12:17.846Z` | `nomic-ai/nomic-embed-text-v1.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nomic-ai-nomic-embed-text-v1.5-learnings.md` | Yes (`2283e5cf...`) |
 | `CYCLE-20261105-UN5T` | `2026-11-05T09:12:28.865Z` | `openkruise/kruise` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7174` | Yes (`d951db78...`) |
 | `CYCLE-20261105-UQO2` | `2026-11-05T09:12:33.410Z` | `duckdb/duckdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7175` | Yes (`c5744335...`) |
+| `CYCLE-20261105-5LQS` | `2026-11-05T09:21:00.244Z` | `google/gemma-4-26B-A4B-it` | Commit diff / Patch analysis | `VERIFIED` | `Rule 969, Rule 7176, Rule 7177` | Yes (`ef4890f4...`) |
+| `CYCLE-20261105-BMC9` | `2026-11-05T09:25:40.953Z` | `ClickHouse/ClickHouse` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7178` | Yes (`02fb9217...`) |

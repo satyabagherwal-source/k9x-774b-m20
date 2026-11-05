@@ -1185,8 +1185,8 @@
     "sourceUrl": "https://huggingface.co/google/gemma-4-26B-A4B-it",
     "sourceVersion": "hf-google-gemma-4-26b-a4b-it",
     "license": "Open-Source",
-    "contentHash": "e0d9436914e3dbece929045542e52a2a38765f5b8f7cd9c87a271672be178bc4",
-    "lastHarvestedAt": "2026-10-31T18:22:09.316Z",
+    "contentHash": "ef4890f4e8c0489ef6b5678f30a5014287c4c0e38328d2c31bdb095474f2e46a",
+    "lastHarvestedAt": "2026-11-05T09:21:00.248Z",
     "learningId": "learn-huggingface-google-gemma-4-26b-a4b-it"
   },
   "infisical-infisical": {
@@ -6073,10 +6073,10 @@
     "repository": "ClickHouse/ClickHouse",
     "platform": "github",
     "sourceUrl": "https://github.com/ClickHouse/ClickHouse",
-    "sourceVersion": "6398cafb",
+    "sourceVersion": "39b9f2d5",
     "license": "Apache-2.0",
-    "contentHash": "bf84840f9823a3cbeed80dfc1cc52451df8c55d4949efc1b9c64c71c238cfef3",
-    "lastHarvestedAt": "2026-11-04T18:35:43.884Z",
+    "contentHash": "02fb9217fa5e447974f1e776f69edd9c07dd8e98999e2ac80ff5d3c6c2f86c9d",
+    "lastHarvestedAt": "2026-11-05T09:25:40.957Z",
     "learningId": "learn-github-clickhouse-clickhouse"
   },
   "dockview-dockview": {

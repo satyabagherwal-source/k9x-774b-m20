@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-05T09:12:33.432Z",
+  "last_updated": "2026-11-05T09:25:40.975Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1565,14 +1565,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-google-gemma-4-26b-a4b-it",
-      "content_hash": "e0d9436914e3dbece929045542e52a2a38765f5b8f7cd9c87a271672be178bc4",
-      "verified_at": "2026-10-31T18:22:09.324Z",
+      "content_hash": "ef4890f4e8c0489ef6b5678f30a5014287c4c0e38328d2c31bdb095474f2e46a",
+      "verified_at": "2026-11-05T09:21:00.264Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T18:22:09.324Z"
+      "last_updated": "2026-11-05T09:21:00.264Z"
     },
     "intfloat/multilingual-e5-small": {
       "repository": "intfloat/multilingual-e5-small",
@@ -9231,14 +9231,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-clickhouse-clickhouse",
-      "content_hash": "bf84840f9823a3cbeed80dfc1cc52451df8c55d4949efc1b9c64c71c238cfef3",
-      "verified_at": "2026-11-04T18:35:43.891Z",
+      "content_hash": "02fb9217fa5e447974f1e776f69edd9c07dd8e98999e2ac80ff5d3c6c2f86c9d",
+      "verified_at": "2026-11-05T09:25:40.974Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T18:35:43.891Z"
+      "last_updated": "2026-11-05T09:25:40.974Z"
     },
     "dockview/dockview": {
       "repository": "dockview/dockview",

@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-05T09:12:35.982Z",
-    "lastVerified": "2026-11-05T09:12:35.982Z",
+    "lastChecked": "2026-11-05T09:25:43.513Z",
+    "lastVerified": "2026-11-05T09:25:43.513Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -356,9 +356,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-05T08:40:16.126Z",
+    "lastChecked": "2026-11-05T09:20:35.601Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-05T08:40:16.126Z"
+    "lastVerified": "2026-11-05T09:20:35.601Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -730,9 +730,9 @@
   "hashicorp-boundary": {
     "name": "boundary",
     "officialUrl": "https://github.com/hashicorp/boundary",
-    "lastChecked": "2026-11-05T05:32:21.442Z",
+    "lastChecked": "2026-11-05T09:20:30.688Z",
     "revisionIdentifier": "eeb38a1a",
-    "lastVerified": "2026-11-05T05:32:21.442Z"
+    "lastVerified": "2026-11-05T09:20:30.688Z"
   },
   "qdrant-qdrant": {
     "name": "qdrant",
@@ -3145,12 +3145,12 @@
     "lastVerified": "2026-11-04T04:04:43.143Z"
   },
   "beclab-olares": {
-    "name": "beclab/Olares",
+    "name": "Olares",
     "officialUrl": "https://github.com/beclab/Olares",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-04T19:33:51.073Z",
-    "lastVerified": "2026-11-04T19:33:51.073Z",
+    "lastChecked": "2026-11-05T09:20:28.174Z",
+    "lastVerified": "2026-11-05T09:20:28.174Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-beclab-olares",
@@ -3159,7 +3159,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "2e0f254a"
   },
   "liyupi-yu-ai-agent": {
     "name": "yu-ai-agent",
@@ -5365,9 +5366,9 @@
   "async-rs-async-std": {
     "name": "async-std",
     "officialUrl": "https://github.com/async-rs/async-std",
-    "lastChecked": "2026-11-04T09:24:59.256Z",
+    "lastChecked": "2026-11-05T09:20:20.616Z",
     "revisionIdentifier": "844b5525",
-    "lastVerified": "2026-11-04T09:24:59.256Z"
+    "lastVerified": "2026-11-05T09:20:20.616Z"
   },
   "hf-meta-llama-llama-2-7b": {
     "name": "meta-llama/Llama-2-7b",
@@ -6550,13 +6551,13 @@
     "officialUrl": "https://huggingface.co/google/gemma-4-26B-A4B-it",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-31T18:22:08.308Z",
-    "lastVerified": "2026-10-31T18:22:08.308Z",
+    "lastChecked": "2026-11-05T09:20:23.171Z",
+    "lastVerified": "2026-11-05T09:20:23.171Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-google-gemma-4-26b-a4b-it",
-    "contentHash": "e0d9436914e3dbece929045542e52a2a38765f5b8f7cd9c87a271672be178bc4",
-    "promotedRulesCount": 0,
+    "contentHash": "ef4890f4e8c0489ef6b5678f30a5014287c4c0e38328d2c31bdb095474f2e46a",
+    "promotedRulesCount": 3,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
@@ -7567,14 +7568,14 @@
     "officialUrl": "https://github.com/ClickHouse/ClickHouse",
     "sourceType": "github",
     "technology": "C++",
-    "lastChecked": "2026-11-04T18:35:42.912Z",
-    "lastVerified": "2026-11-04T18:35:42.912Z",
+    "lastChecked": "2026-11-05T09:20:38.933Z",
+    "lastVerified": "2026-11-05T09:20:38.933Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-clickhouse-clickhouse",
-    "contentHash": "bf84840f9823a3cbeed80dfc1cc52451df8c55d4949efc1b9c64c71c238cfef3",
+    "contentHash": "02fb9217fa5e447974f1e776f69edd9c07dd8e98999e2ac80ff5d3c6c2f86c9d",
     "promotedRulesCount": 1,
-    "recentFixesCount": 13,
+    "recentFixesCount": 11,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -10170,9 +10171,9 @@
   "rickclephas-kmp-nativecoroutines": {
     "name": "KMP-NativeCoroutines",
     "officialUrl": "https://github.com/rickclephas/KMP-NativeCoroutines",
-    "lastChecked": "2026-11-02T14:24:43.619Z",
+    "lastChecked": "2026-11-05T09:20:25.616Z",
     "revisionIdentifier": "54a45fbb",
-    "lastVerified": "2026-11-02T14:24:43.619Z"
+    "lastVerified": "2026-11-05T09:20:25.616Z"
   },
   "aliarifsoydas-sitemap-checker": {
     "name": "sitemap-checker",

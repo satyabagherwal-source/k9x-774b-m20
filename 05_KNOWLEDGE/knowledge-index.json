@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T09:12:33.324Z",
+  "last_updated": "2026-11-05T09:25:40.862Z",
   "total_verified_learnings": 1215,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -7681,8 +7681,8 @@
       "slug": "clickhouse-clickhouse",
       "platform": "github",
       "source_url": "https://github.com/ClickHouse/ClickHouse",
-      "source_version": "6398cafb",
-      "content_hash": "bf84840f9823a3cbeed80dfc1cc52451df8c55d4949efc1b9c64c71c238cfef3",
+      "source_version": "39b9f2d5",
+      "content_hash": "02fb9217fa5e447974f1e776f69edd9c07dd8e98999e2ac80ff5d3c6c2f86c9d",
       "dossier_path": "07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md",
       "promoted_rules": [
@@ -7780,6 +7780,11 @@
           "number": 6900,
           "title": "Merge pull request #126817 from Jonathan-Ackerman/execution-timeout",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7178,
+          "title": "Merge pull request #129202 from groeneai/fix-05043-fault-main-thread",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -7787,7 +7792,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T18:35:43.793Z",
+      "verified_at": "2026-11-05T09:25:40.829Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -25032,7 +25037,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/google/gemma-4-26B-A4B-it",
       "source_version": "hf-google-gemma-4-26b-a4b-it",
-      "content_hash": "e0d9436914e3dbece929045542e52a2a38765f5b8f7cd9c87a271672be178bc4",
+      "content_hash": "ef4890f4e8c0489ef6b5678f30a5014287c4c0e38328d2c31bdb095474f2e46a",
       "dossier_path": "07_PROJECT_LEARNING/hf-google-gemma-4-26b-a4b-it-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-google-gemma-4-26b-a4b-it-learnings.md",
       "promoted_rules": [
@@ -25049,6 +25054,21 @@
         {
           "number": 964,
           "title": "Sparse MoE Top-K Dynamic Capacity Gating & Softmax Renormalization Rule",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 969,
+          "title": "Hybrid Attention Layer Interleaving Invariant",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 7176,
+          "title": "MoE Expert Activation Sparsity Guard",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7177,
+          "title": "Dual RoPE Configuration Isolation",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -25069,7 +25089,7 @@
         "learn-huggingface-hf-google-gemma-4-26b-a4b-it-mv3z9d9l",
         "learn-huggingface-hf-google-gemma-4-26b-a4b-it-mv4dv0ce"
       ],
-      "verified_at": "2026-10-31T18:22:09.218Z",
+      "verified_at": "2026-11-05T09:21:00.119Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -87113,14 +87133,14 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 969,
       "title": "Hybrid Attention Layer Interleaving Invariant",
-      "source_url": "https://huggingface.co/XHToken/Spark-X2.6-4B",
-      "source_version": "hf-xhtoken-spark-x2.6-4b",
+      "source_url": "https://huggingface.co/google/gemma-4-26B-A4B-it",
+      "source_version": "hf-google-gemma-4-26b-a4b-it",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-04T17:52:28.681Z"
+      "verified_at": "2026-11-05T09:21:00.119Z"
     },
     "rule-970": {
       "learning_id": "rule-970",
@@ -181457,6 +181477,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-05T09:12:33.301Z"
+    },
+    "rule-7176": {
+      "learning_id": "rule-7176",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7176,
+      "title": "MoE Expert Activation Sparsity Guard",
+      "source_url": "https://huggingface.co/google/gemma-4-26B-A4B-it",
+      "source_version": "hf-google-gemma-4-26b-a4b-it",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T09:21:00.119Z"
+    },
+    "rule-7177": {
+      "learning_id": "rule-7177",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7177,
+      "title": "Dual RoPE Configuration Isolation",
+      "source_url": "https://huggingface.co/google/gemma-4-26B-A4B-it",
+      "source_version": "hf-google-gemma-4-26b-a4b-it",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T09:21:00.119Z"
+    },
+    "rule-7178": {
+      "learning_id": "rule-7178",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7178,
+      "title": "Merge pull request #129202 from groeneai/fix-05043-fault-main-thread",
+      "source_url": "https://github.com/ClickHouse/ClickHouse",
+      "source_version": "39b9f2d5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T09:25:40.830Z"
     }
   },
   "aliases": {
